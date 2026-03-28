@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VoltGuard – Elektrik, Otomasyon, Elektronik ve Mekanik alanlarında profesyonel mühendislik çözümleri. İzmir ve çevresi için güvenilir teknik hizmetler.">
+  <meta name="keywords" content="elektrik mühendislik, PLC otomasyon, SCADA, elektronik, mekanik, SMM, enerji kalitesi, İzmir, Kemalpaşa, VoltGuard">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https:; connect-src 'self' https://challenges.cloudflare.com; frame-src https://www.google.com https://www.google.com.tr https://challenges.cloudflare.com; upgrade-insecure-requests">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+  <meta property="og:title" content="VoltGuard | Endüstriyel Mühendislik Çözümleri">
+  <meta property="og:description" content="Elektrik, Otomasyon, Elektronik ve Mekanik alanlarında kapsamlı mühendislik hizmetleri.">
+  <meta property="og:url" content="https://voltguard.com.tr">
+  <title>VoltGuard | Endüstriyel Mühendislik Çözümleri</title>
+  <link rel="icon" type="image/png" href="public/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==================== PRELOADER ==================== -->
+  <div class="preloader" id="preloader">
+    <div class="preloader__inner">
+      <div class="preloader__bolt"><i class="fas fa-bolt"></i></div>
+      <div class="preloader__bar"><div class="preloader__bar-fill"></div></div>
+      <span class="preloader__text">VoltGuard</span>
+    </div>
+  </div>
+
+  <!-- ==================== SCROLL PROGRESS ==================== -->
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="#anasayfa" class="nav__logo" aria-label="VoltGuard Ana Sayfa">
+        <div class="logo-mark">
+          <span class="logo-mark__volt">VOLT</span>
+          <span class="logo-mark__bolt"><i class="fas fa-bolt"></i></span>
+          <span class="logo-mark__guard">GUARD</span>
+        </div>
+        <span class="logo-mark__tagline">Engineering Solutions</span>
+      </a>
+
+      <ul class="nav__menu" id="navMenu" role="menubar">
+        <li role="none"><a href="#anasayfa"   class="nav__link" role="menuitem">Ana Sayfa</a></li>
+        <li role="none"><a href="#hakkimizda" class="nav__link" role="menuitem">Hakkımızda</a></li>
+        <li role="none"><a href="#hizmetler"  class="nav__link" role="menuitem">Hizmetlerimiz</a></li>
+        <li role="none"><a href="#neden-biz"  class="nav__link" role="menuitem">Neden Biz?</a></li>
+        <li role="none"><a href="#guvenlik"   class="nav__link" role="menuitem">Güvenlik</a></li>
+        <li role="none"><a href="#projeler"   class="nav__link" role="menuitem">Projeler</a></li>
+        <li role="none"><a href="#iletisim"   class="nav__link" role="menuitem">İletişim</a></li>
+      </ul>
+
+      <a href="#iletisim" class="btn btn--accent nav__cta">
+        <i class="fas fa-paper-plane"></i> Teklif Al
+      </a>
+      <button class="nav__toggle" id="navToggle" aria-label="Menüyü aç/kapat" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ==================== HERO ==================== -->
+  <section class="hero" id="anasayfa">
+    <div class="hero__bg" aria-hidden="true">
+      <img src="public/TrafoBakimYuksekGerilim.jpeg" alt="" class="hero__bg-img"
+           onerror="this.style.display='none'">
+      <div class="hero__decoration"><i class="fas fa-bolt"></i></div>
+      <!-- Floating particles -->
+      <div class="hero__particles" aria-hidden="true">
+        <span class="particle"></span><span class="particle"></span><span class="particle"></span>
+        <span class="particle"></span><span class="particle"></span><span class="particle"></span>
+        <span class="particle"></span><span class="particle"></span><span class="particle"></span>
+        <span class="particle"></span><span class="particle"></span><span class="particle"></span>
+      </div>
+    </div>
+    <div class="hero__overlay" aria-hidden="true"></div>
+
+    <div class="container hero__content">
+      <span class="hero__badge">
+        <i class="fas fa-bolt"></i> Profesyonel Mühendislik Çözümleri
+      </span>
+      <h1 class="hero__title">
+        Endüstriyel Gücünüzü<br>
+        <span class="hero__title--accent" id="heroTyping"></span>
+        <span class="hero__cursor">|</span>
+        ile Yönetin
+      </h1>
+      <p class="hero__subtitle">
+        Elektrik, Otomasyon, Elektronik ve Mekanik alanlarında kapsamlı mühendislik hizmetleri ile
+        işletmenizin güvenliğini, verimliliğini ve sürekliliğini güvence altına alıyoruz.
+      </p>
+      <div class="hero__actions">
+        <a href="#iletisim" class="btn btn--accent btn--lg">
+          <i class="fas fa-paper-plane"></i> Teklif Al
+        </a>
+        <a href="#hizmetler" class="btn btn--outline-white btn--lg">
+          <i class="fas fa-cogs"></i> Hizmetlerimiz
+        </a>
+      </div>
+    </div>
+
+    <div class="hero__stats" aria-label="Kurumsal istatistikler">
+      <div class="container">
+        <div class="hero__stats-grid">
+          <div class="hero__stat">
+            <span class="hero__stat-number" data-count="4">0</span>
+            <span class="hero__stat-label">Uzmanlık Alanı</span>
+          </div>
+          <div class="hero__stat">
+            <span class="hero__stat-number" data-count="50" data-suffix="+">0</span>
+            <span class="hero__stat-label">Tamamlanan Proje</span>
+          </div>
+          <div class="hero__stat">
+            <span class="hero__stat-number" data-count="100" data-suffix="%">0</span>
+            <span class="hero__stat-label">Müşteri Memnuniyeti</span>
+          </div>
+          <div class="hero__stat">
+            <span class="hero__stat-number" data-count="7" data-suffix="/24">0</span>
+            <span class="hero__stat-label">Teknik Destek</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PROJELER / REFERANSLAR ==================== -->
+  <section class="projects section" id="projeler">
+    <div class="wave-divider wave-divider--top" aria-hidden="true">
+      <svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,60 C360,0 720,60 1080,20 C1260,0 1380,30 1440,20 L1440,0 L0,0 Z" fill="currentColor"/></svg>
+    </div>
+    <div class="container">
+
+      <div class="section__header reveal">
+        <span class="section__badge">Projeler &amp; Referanslar</span>
+        <h2 class="section__title">Gerçekleştirdiğimiz Çalışmalar</h2>
+        <p class="section__desc">
+          Endüstriyel tesislerden ticari yapılara kadar farklı sektörlerde başarıyla tamamladığımız
+          projelerden örnekler.
+        </p>
+      </div>
+
+      <div class="projects__grid">
+
+        <div class="project-card project-card--overlay reveal" data-delay="0">
+          <img src="public/panokurulumuverevizyonu.jpg"
+               alt="Elektrik Pano Kurulumu ve Revizyonu" loading="lazy"
+               onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none'">
+          <div class="project-card__overlay-content">
+            <div class="project-card__tags">
+              <span class="project-card__category">Elektrik</span>
+              <span class="project-card__year"><i class="fas fa-calendar-alt"></i> 2025</span>
+            </div>
+            <h3 class="project-card__title">Pano Kurulumu &amp; Revizyonu</h3>
+            <p class="project-card__desc">Endüstriyel tesiste komple elektrik pano kurulumu, devreye alma ve enerji kalitesi raporlaması.</p>
+            <div class="project-card__meta">
+              <span><i class="fas fa-industry"></i> Endüstriyel Tesis</span>
+              <span><i class="fas fa-check-circle"></i> Tamamlandı</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card project-card--overlay reveal" data-delay="1">
+          <img src="public/Trafoolcum.jpeg"
+               alt="Trafo Ölçüm ve Enerji Kalitesi Analizi" loading="lazy"
+               onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none'">
+          <div class="project-card__overlay-content">
+            <div class="project-card__tags">
+              <span class="project-card__category">Enerji Kalitesi</span>
+              <span class="project-card__year"><i class="fas fa-calendar-alt"></i> 2025</span>
+            </div>
+            <h3 class="project-card__title">Trafo Ölçüm &amp; Enerji Analizi</h3>
+            <p class="project-card__desc">Periyodik trafo ölçümleri, enerji kalitesi analizi ve kapsamlı raporlama ile verimlilik artışı.</p>
+            <div class="project-card__meta">
+              <span><i class="fas fa-bolt"></i> Enerji Sektörü</span>
+              <span><i class="fas fa-check-circle"></i> Tamamlandı</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card project-card--overlay reveal" data-delay="2">
+          <img src="public/HarmonikFiltreliKompanzasyon.jpg"
+               alt="Harmonik Filtreli Kompanzasyon" loading="lazy"
+               onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none'">
+          <div class="project-card__overlay-content">
+            <div class="project-card__tags">
+              <span class="project-card__category">Kompanzasyon</span>
+              <span class="project-card__year"><i class="fas fa-calendar-alt"></i> 2024</span>
+            </div>
+            <h3 class="project-card__title">Harmonik Filtreli Kompanzasyon</h3>
+            <p class="project-card__desc">Harmonik analizi, filtreleme çözümü ve güç faktörü düzeltme sistemi tasarımı ile kurulumu.</p>
+            <div class="project-card__meta">
+              <span><i class="fas fa-industry"></i> Üretim Tesisi</span>
+              <span><i class="fas fa-check-circle"></i> Tamamlandı</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card project-card--overlay reveal" data-delay="0">
+          <img src="public/TrafoBakimYuksekGerilim.jpeg"
+               alt="Trafo Bakımı – Yüksek Gerilim" loading="lazy"
+               onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none'">
+          <div class="project-card__overlay-content">
+            <div class="project-card__tags">
+              <span class="project-card__category">Yüksek Gerilim</span>
+              <span class="project-card__year"><i class="fas fa-calendar-alt"></i> 2024</span>
+            </div>
+            <h3 class="project-card__title">Trafo Bakımı &amp; Yüksek Gerilim</h3>
+            <p class="project-card__desc">Yüksek gerilim trafo periyodik bakımı, kontrol ve güvenlik testleri çalışması.</p>
+            <div class="project-card__meta">
+              <span><i class="fas fa-bolt"></i> Enerji Altyapısı</span>
+              <span><i class="fas fa-check-circle"></i> Tamamlandı</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card project-card--overlay reveal" data-delay="1">
+          <img src="public/Yenilenebilirenerji.jpg"
+               alt="Yenilenebilir Enerji Projesi" loading="lazy"
+               onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none'">
+          <div class="project-card__overlay-content">
+            <div class="project-card__tags">
+              <span class="project-card__category">Yenilenebilir Enerji</span>
+              <span class="project-card__year"><i class="fas fa-calendar-alt"></i> 2024</span>
+            </div>
+            <h3 class="project-card__title">Yenilenebilir Enerji Sistemi</h3>
+            <p class="project-card__desc">Güneş enerjisi entegrasyonu, izleme ve enerji yönetimi çözümleri tasarımı ile kurulumu.</p>
+            <div class="project-card__meta">
+              <span><i class="fas fa-solar-panel"></i> Güneş Enerjisi</span>
+              <span><i class="fas fa-check-circle"></i> Tamamlandı</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card project-card--overlay reveal" data-delay="2">
+          <img src="public/EgitimSetleri.jpeg"
+               alt="Eğitim Setleri – Teknik Eğitim" loading="lazy"
+               onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none'">
+          <div class="project-card__overlay-content">
+            <div class="project-card__tags">
+              <span class="project-card__category">Teknik Eğitim</span>
+              <span class="project-card__year"><i class="fas fa-calendar-alt"></i> 2025</span>
+            </div>
+            <h3 class="project-card__title">Endüstriyel Eğitim Sistemleri</h3>
+            <p class="project-card__desc">PLC, otomasyon ve elektrik konularında uygulamalı teknik eğitim setleri tasarımı ve kurulumu.</p>
+            <div class="project-card__meta">
+              <span><i class="fas fa-graduation-cap"></i> Eğitim</span>
+              <span><i class="fas fa-check-circle"></i> Tamamlandı</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="projects__cta reveal">
+        <p>Projeniz hakkında görüşmek ister misiniz?</p>
+        <a href="#iletisim" class="btn btn--accent btn--md">
+          Bizimle İletişime Geçin <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== HAKKIMIZDA ==================== -->
+  <section class="about section" id="hakkimizda">
+    <div class="container">
+      <div class="about__grid">
+
+        <div class="about__content reveal-left">
+          <span class="section__badge">Hakkımızda</span>
+          <h2 class="section__title">Mühendislik Deneyimini<br>Güvenilirlikle Buluşturuyoruz</h2>
+          <p class="about__text">
+            VoltGuard olarak elektrik, otomasyon, elektronik ve mekanik alanlarında kapsamlı mühendislik
+            hizmetleri sunuyoruz. Uzman kadromuz ile endüstriyel tesislerden ticari yapılara kadar geniş
+            bir yelpazede güvenilir, sürdürülebilir ve yenilikçi teknolojik çözümler geliştiriyoruz.
+          </p>
+          <p class="about__text">
+            Müşterilerimizin operasyonel süreçlerini optimize etmek, enerji verimliliğini artırmak ve
+            üretim kesintilerini en aza indirmek için güncel teknolojileri ve mühendislik standartlarını
+            titizlikle uyguluyoruz.
+          </p>
+          <ul class="about__features">
+            <li><i class="fas fa-check-circle"></i> SMM lisanslı uzman mühendisler</li>
+            <li><i class="fas fa-check-circle"></i> Anahtar teslim proje yönetimi</li>
+            <li><i class="fas fa-check-circle"></i> Periyodik bakım ve teknik destek</li>
+            <li><i class="fas fa-check-circle"></i> Ulusal ve uluslararası standartlara uyum</li>
+          </ul>
+          <a href="#iletisim" class="btn btn--primary btn--md">
+            Bizimle İletişime Geçin <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="about__image reveal-right">
+          <div class="about__img-wrapper">
+            <!-- Kullanıcı fotoğrafı: public/Trafoisletmesorumlulugu.jpeg -->
+            <img src="public/Trafoisletmesorumlulugu.jpeg"
+                 alt="VoltGuard – Trafo İşletme Sorumluluğu"
+                 loading="lazy"
+                 onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none'">
+            <div class="about__img-badge">
+              <i class="fas fa-shield-alt"></i>
+              <span>Güvenilir<br>Çözümler</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== HİZMETLERİMİZ ==================== -->
+  <section class="services section section--gray" id="hizmetler">
+    <div class="container">
+
+      <div class="section__header reveal">
+        <span class="section__badge">Hizmetlerimiz</span>
+        <h2 class="section__title">Kapsamlı Mühendislik Çözümleri</h2>
+        <p class="section__desc">
+          Elektrik tesisatından endüstriyel otomasyona, gömülü sistemlerden mekanik çözümlere kadar
+          dört ana alanda tam entegre mühendislik hizmetleri sunuyoruz.
+        </p>
+      </div>
+
+      <div class="services__grid">
+
+        <!-- Elektrik -->
+        <div class="service-card reveal" data-delay="0">
+          <div class="service-card__icon service-card__icon--electric">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <h3 class="service-card__title">Elektrik Hizmetleri</h3>
+          <p class="service-card__desc">
+            SMM hizmetlerinden trafo işletme sorumluluğuna, enerji kalitesi analizinden topraklama
+            sistemlerine kadar tam kapsamlı elektrik mühendisliği çözümleri.
+          </p>
+          <ul class="service-card__list">
+            <li>SMM (Serbest Müşavir Mühendislik) Hizmetleri</li>
+            <li>Trafo İşletme Sorumluluğu</li>
+            <li>Periyodik Kontrol ve Ölçüm Hizmetleri</li>
+            <li>Harmonik Analiz ve Filtreleme Çözümleri</li>
+            <li>Elektrik Pano Kurulumu ve Revizyonu</li>
+            <li>Tesis Kurulumu, Revizyonu ve Arıza Giderme</li>
+            <li>Topraklama ve Yıldırımdan Korunma Sistemleri</li>
+            <li>Enerji Kalitesi Ölçümleri ve Raporlama</li>
+          </ul>
+          <a href="#iletisim" class="service-card__link">Bilgi Al <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <!-- Elektronik -->
+        <div class="service-card reveal" data-delay="1">
+          <div class="service-card__icon service-card__icon--electronic">
+            <i class="fas fa-microchip"></i>
+          </div>
+          <h3 class="service-card__title">Elektronik &amp; Gömülü Sistemler</h3>
+          <p class="service-card__desc">
+            Mikrodenetleyici tabanlı özel çözümlerden PCB tasarımına, IoT uygulamalarından
+            endüstriyel veri toplama sistemlerine kadar geniş kapsamlı elektronik mühendisliği.
+          </p>
+          <ul class="service-card__list">
+            <li>Gömülü Yazılım Geliştirme</li>
+            <li>Mikrodenetleyici Tabanlı Sistemler (STM, PIC, Arduino vb.)</li>
+            <li>Özel Elektronik Kart Tasarımı (PCB Tasarımı)</li>
+            <li>Endüstriyel Elektronik Çözümler</li>
+            <li>Veri Toplama ve İzleme Sistemleri</li>
+            <li>IoT (Nesnelerin İnterneti) Uygulamaları</li>
+            <li>Sensör ve Ölçüm Sistemleri Entegrasyonu</li>
+          </ul>
+          <a href="#iletisim" class="service-card__link">Bilgi Al <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <!-- Otomasyon -->
+        <div class="service-card reveal" data-delay="2">
+          <div class="service-card__icon service-card__icon--automation">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h3 class="service-card__title">Otomasyon Sistemleri</h3>
+          <p class="service-card__desc">
+            PLC yazılım geliştirmeden SCADA kurulumuna, motor kontrol sistemlerinden çaktan izleme
+            çözümlerine kadar tam kapsamlı endüstriyel otomasyon hizmetleri.
+          </p>
+          <ul class="service-card__list">
+            <li>PLC Yazılım Geliştirme (Siemens, Schneider vb.)</li>
+            <li>SCADA Sistemi Kurulumu ve İzleme</li>
+            <li>Endüstriyel Otomasyon Projelendirme</li>
+            <li>Makine Otomasyonu ve Proses Kontrolü</li>
+            <li>Sürücü (VFD) ve Motor Kontrol Sistemleri</li>
+            <li>Uzaktan İzleme ve Kontrol Sistemleri</li>
+            <li>Sistem Entegrasyonu ve Devreye Alma</li>
+          </ul>
+          <a href="#iletisim" class="service-card__link">Bilgi Al <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <!-- Mekanik -->
+        <div class="service-card reveal" data-delay="3">
+          <div class="service-card__icon service-card__icon--mechanical">
+            <i class="fas fa-cog"></i>
+          </div>
+          <h3 class="service-card__title">Mekanik Sistemler</h3>
+          <p class="service-card__desc">
+            Endüstriyel makine tasarımından üretim hattı kurulumuna, hidrolik sistemlerden mekanik
+            modernizasyona kadar kapsamlı mekanik mühendislik hizmetleri.
+          </p>
+          <ul class="service-card__list">
+            <li>Endüstriyel Makine Tasarımı ve İmalatı</li>
+            <li>Mekanik Sistem Kurulumu ve Revizyonu</li>
+            <li>Üretim Hatları Kurulumu ve Optimizasyonu</li>
+            <li>Konveyör Sistemleri Tasarım ve Kurulumu</li>
+            <li>Hidrolik ve Pnömatik Sistem Çözümleri</li>
+            <li>Pompa, Fan ve Motor Sistemleri</li>
+            <li>Çelik Konstrüksiyon ve Mekanik Montaj</li>
+            <li>Makine Modernizasyonu (Retrofit)</li>
+          </ul>
+          <a href="#iletisim" class="service-card__link">Bilgi Al <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ÇALIŞMA SÜRECİMİZ ==================== -->
+  <section class="process section" id="surec">
+    <div class="container">
+
+      <div class="section__header reveal">
+        <span class="section__badge">Nasıl Çalışıyoruz?</span>
+        <h2 class="section__title">4 Adımda Proje Sürecimiz</h2>
+        <p class="section__desc">
+          Her projede sistematik ve şeffaf bir süreç izleyerek en yüksek kaliteyi garanti ediyoruz.
+        </p>
+      </div>
+
+      <div class="process__timeline">
+        <div class="process__step reveal" data-delay="0">
+          <div class="process__step-number">01</div>
+          <div class="process__step-icon"><i class="fas fa-search"></i></div>
+          <h3 class="process__step-title">Analiz &amp; Keşif</h3>
+          <p class="process__step-desc">Tesisinizi yerinde inceliyor, teknik ihtiyaçlarınızı detaylı olarak analiz ediyoruz.</p>
+        </div>
+        <div class="process__step reveal" data-delay="1">
+          <div class="process__step-number">02</div>
+          <div class="process__step-icon"><i class="fas fa-drafting-compass"></i></div>
+          <h3 class="process__step-title">Tasarım &amp; Planlama</h3>
+          <p class="process__step-desc">Size özel mühendislik çözümü tasarlıyor, proje planını ve zaman çizelgesini oluşturuyoruz.</p>
+        </div>
+        <div class="process__step reveal" data-delay="2">
+          <div class="process__step-number">03</div>
+          <div class="process__step-icon"><i class="fas fa-tools"></i></div>
+          <h3 class="process__step-title">Uygulama &amp; Kurulum</h3>
+          <p class="process__step-desc">Uzman ekibimizle projeyi hayata geçiriyor, tüm kurulum ve devreye alma işlemlerini tamamlıyoruz.</p>
+        </div>
+        <div class="process__step reveal" data-delay="3">
+          <div class="process__step-number">04</div>
+          <div class="process__step-icon"><i class="fas fa-headset"></i></div>
+          <h3 class="process__step-title">Destek &amp; Bakım</h3>
+          <p class="process__step-desc">Proje sonrası 7/24 teknik destek ve periyodik bakım hizmetleri ile yanınızda olmaya devam ediyoruz.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== NEDEN BİZ ==================== -->
+  <section class="why-us section" id="neden-biz">
+    <div class="container">
+
+      <div class="section__header reveal">
+        <span class="section__badge">Neden VoltGuard?</span>
+        <h2 class="section__title">Bizi Tercih Etmeniz için<br>Güçlü Nedenler</h2>
+        <p class="section__desc">
+          Müşterilerimize sunduğumuz değerler ve taahhütlerimiz ile sektörde güvenilir bir çözüm
+          ortağı olmayı önceliğimiz olarak görüyoruz.
+        </p>
+      </div>
+
+      <div class="why-us__grid">
+        <div class="why-card reveal" data-delay="0">
+          <div class="why-card__icon"><i class="fas fa-user-tie"></i></div>
+          <h3 class="why-card__title">Uzman Kadro</h3>
+          <p class="why-card__desc">Alanında uzman, lisanslı mühendis ve teknisyenlerden oluşan deneyimli ekibimiz ile kesintisiz hizmet veriyoruz.</p>
+        </div>
+        <div class="why-card reveal" data-delay="1">
+          <div class="why-card__icon"><i class="fas fa-shield-alt"></i></div>
+          <h3 class="why-card__title">Güvenlik Odaklı</h3>
+          <p class="why-card__desc">Tüm çalışmalarımızda ulusal ve uluslararası güvenlik standartlarını titizlikle uyguluyoruz.</p>
+        </div>
+        <div class="why-card reveal" data-delay="2">
+          <div class="why-card__icon"><i class="fas fa-clock"></i></div>
+          <h3 class="why-card__title">Zamanında Teslimat</h3>
+          <p class="why-card__desc">Proje planlaması ve zaman yönetiminde disiplinli yaklaşımımızla işlerinizi belirlenen sürede teslim ediyoruz.</p>
+        </div>
+        <div class="why-card reveal" data-delay="0">
+          <div class="why-card__icon"><i class="fas fa-headset"></i></div>
+          <h3 class="why-card__title">7/24 Teknik Destek</h3>
+          <p class="why-card__desc">Arıza ve acil durumlar için haftanın 7 günü 24 saat ulaşılabilir teknik destek hizmetimiz ile yanınızdayız.</p>
+        </div>
+        <div class="why-card reveal" data-delay="1">
+          <div class="why-card__icon"><i class="fas fa-project-diagram"></i></div>
+          <h3 class="why-card__title">Anahtar Teslim Projeler</h3>
+          <p class="why-card__desc">Tasarım, mühendislik, kurulum ve devreye alma süreçlerinin tamamını tek çatı altında yönetiyoruz.</p>
+        </div>
+        <div class="why-card reveal" data-delay="2">
+          <div class="why-card__icon"><i class="fas fa-chart-line"></i></div>
+          <h3 class="why-card__title">Verimlilik Odaklı</h3>
+          <p class="why-card__desc">Enerji verimliliği ve operasyonel optimizasyon çözümlerimiz ile müşterilerimizin maliyetlerini düşürüyoruz.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== GÜVEN GÖSTERGELERİ ==================== -->
+  <section class="trust section section--gray" aria-label="Güven göstergeleri">
+    <div class="container">
+      <div class="trust__inner reveal">
+        <h3 class="trust__title">Sektörde Güvenilir Çözüm Ortağınız</h3>
+        <div class="trust__badges">
+          <div class="trust__badge">
+            <i class="fas fa-certificate"></i>
+            <span>SMM Lisanslı</span>
+          </div>
+          <div class="trust__badge">
+            <i class="fas fa-hard-hat"></i>
+            <span>İSG Uyumlu</span>
+          </div>
+          <div class="trust__badge">
+            <i class="fas fa-file-contract"></i>
+            <span>TSE Standartları</span>
+          </div>
+          <div class="trust__badge">
+            <i class="fas fa-handshake"></i>
+            <span>Sözleşmeli Hizmet</span>
+          </div>
+          <div class="trust__badge">
+            <i class="fas fa-award"></i>
+            <span>Kalite Garantisi</span>
+          </div>
+          <div class="trust__badge">
+            <i class="fas fa-headset"></i>
+            <span>7/24 Destek</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== GUVENLIK VE UYUM ==================== -->
+  <section class="security section" id="guvenlik" aria-label="Güvenlik ve uyumluluk">
+    <div class="container">
+      <div class="section__header reveal">
+        <span class="section__badge">Güvenlik ve Uyum</span>
+        <h2 class="section__title">Saha Güvenliği Kadar Dijital Güvenlikte de Titiziz</h2>
+        <p class="section__desc">
+          VoltGuard, yalnızca sahadaki elektriksel güvenliği değil, veri gizliliği, süreç izlenebilirliği ve iş sürekliliğini de
+          kurumsal standardın bir parçası olarak yönetir.
+        </p>
+      </div>
+
+      <div class="security__grid">
+        <article class="security-card reveal" data-delay="0">
+          <div class="security-card__icon"><i class="fas fa-user-shield"></i></div>
+          <h3 class="security-card__title">Yetkilendirme ve Erişim</h3>
+          <p class="security-card__desc">Kritik sistemlerde rol bazlı erişim prensibiyle izinsiz müdahale risklerini minimize ediyoruz.</p>
+        </article>
+
+        <article class="security-card reveal" data-delay="1">
+          <div class="security-card__icon"><i class="fas fa-database"></i></div>
+          <h3 class="security-card__title">Yedekleme Sürekliliği</h3>
+          <p class="security-card__desc">Proje verileri ve konfigürasyon kayıtları, kontrollü yedekleme stratejileriyle korunur.</p>
+        </article>
+
+        <article class="security-card reveal" data-delay="2">
+          <div class="security-card__icon"><i class="fas fa-file-shield"></i></div>
+          <h3 class="security-card__title">KVKK Bilinçli Süreç</h3>
+          <p class="security-card__desc">Müşteri iletişim verileri yalnızca onaylı amaçlarla işlenir ve üçüncü taraflarla paylaşılmaz.</p>
+        </article>
+
+        <article class="security-card reveal" data-delay="3">
+          <div class="security-card__icon"><i class="fas fa-tower-broadcast"></i></div>
+          <h3 class="security-card__title">7/24 Operasyonel İzleme</h3>
+          <p class="security-card__desc">Kritik operasyonlarda hızlı aksiyon için izleme, alarm ve teknik geri dönüş kanalları aktif tutulur.</p>
+        </article>
+      </div>
+
+      <div class="security__status reveal">
+        <span class="security__pill"><i class="fas fa-lock"></i> SSL Aktif</span>
+        <span class="security__pill"><i class="fas fa-shield-check"></i> Güvenlik Kontrol Listesi</span>
+        <span class="security__pill"><i class="fas fa-history"></i> İzlenebilir Operasyon Kayıtları</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CTA BANNER ==================== -->
+  <section class="cta-banner" aria-label="İletişim çağrısı">
+    <div class="container cta-banner__content reveal">
+      <div class="cta-banner__text">
+        <h2>Projeniz için Ücretsiz Teknik Danışmanlık Alın</h2>
+        <p>Teknik ihtiyaçlarınızı değerlendiriyor, size özel çözüm önerileri sunuyoruz.</p>
+      </div>
+      <div class="cta-banner__actions">
+        <a href="tel:+905454346735" class="btn btn--white btn--md">
+          <i class="fas fa-phone-alt"></i> 0 545 434 67 35
+        </a>
+        <a href="#iletisim" class="btn btn--accent btn--md">
+          Teklif Formu <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== İLETİŞİM ==================== -->
+  <section class="contact section" id="iletisim">
+    <div class="container">
+
+      <div class="section__header reveal">
+        <span class="section__badge">İletişim</span>
+        <h2 class="section__title">Teknik Çözümlerimiz için<br>Bizimle İletişime Geçin</h2>
+        <p class="section__desc">
+          Proje talepleriniz, teknik danışmanlık ve destek için aşağıdaki kanallardan bize ulaşabilirsiniz.
+        </p>
+      </div>
+
+      <div class="contact__grid">
+
+        <!-- İletişim Bilgileri -->
+        <div class="contact__info reveal-left">
+          <h3 class="contact__info-title">İletişim Bilgileri</h3>
+
+          <div class="contact__item">
+            <div class="contact__item-icon"><i class="fas fa-user-tie"></i></div>
+            <div class="contact__item-body">
+              <span class="contact__item-label">Yetkili Kişi</span>
+              <span class="contact__item-value">Emrullah GÜNAY</span>
+            </div>
+          </div>
+
+          <div class="contact__item">
+            <div class="contact__item-icon"><i class="fas fa-phone-alt"></i></div>
+            <div class="contact__item-body">
+              <span class="contact__item-label">Telefon</span>
+              <a href="tel:+905454346735" class="contact__item-value contact__item-link">
+                0 545 434 67 35
+              </a>
+            </div>
+          </div>
+
+          <div class="contact__item">
+            <div class="contact__item-icon"><i class="fas fa-envelope"></i></div>
+            <div class="contact__item-body">
+              <span class="contact__item-label">E-posta</span>
+              <a href="mailto:info@voltguard.com.tr" class="contact__item-value contact__item-link">
+                info@voltguard.com.tr
+              </a>
+            </div>
+          </div>
+
+          <div class="contact__item">
+            <div class="contact__item-icon"><i class="fas fa-globe"></i></div>
+            <div class="contact__item-body">
+              <span class="contact__item-label">Web Sitesi</span>
+              <a href="https://voltguard.com.tr" class="contact__item-value contact__item-link"
+                 target="_blank" rel="noopener">
+                voltguard.com.tr
+              </a>
+            </div>
+          </div>
+
+          <div class="contact__item">
+            <div class="contact__item-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div class="contact__item-body">
+              <span class="contact__item-label">Adres</span>
+              <address class="contact__item-value">
+                Mehmet Akif Ersoy Mahallesi<br>
+                233/6 Sokak No:47 Kat:3 Daire:9<br>
+                Kemalpaşa / İzmir
+              </address>
+            </div>
+          </div>
+        </div>
+
+        <!-- İletişim Formu -->
+        <div class="contact__form-wrapper reveal-right">
+          <form class="contact__form" id="contactForm" action="contact.php" method="post" novalidate>
+            <h3 class="contact__form-title">Mesaj Gönderin</h3>
+            <p class="contact__form-security"><i class="fas fa-shield-alt"></i> Form iletimi güvenlik kontrolleriyle korunmaktadır.</p>
+
+            <div class="form__row">
+              <div class="form__group">
+                <label for="name" class="form__label">Ad Soyad <span aria-hidden="true">*</span></label>
+                <input type="text" id="name" name="name" class="form__input"
+                       placeholder="Adınız Soyadınız" required autocomplete="name">
+              </div>
+              <div class="form__group">
+                <label for="phone" class="form__label">Telefon <span aria-hidden="true">*</span></label>
+                <input type="tel" id="phone" name="phone" class="form__input"
+                       placeholder="05XX XXX XX XX" required autocomplete="tel"
+                       inputmode="numeric" pattern="[0-9\s\+\-\(\)]{10,17}">
+              </div>
+            </div>
+
+            <div class="form__group">
+              <label for="email" class="form__label">E-posta</label>
+              <input type="email" id="email" name="email" class="form__input"
+                     placeholder="ornek@email.com" autocomplete="email">
+            </div>
+
+            <div class="form__group">
+              <label for="subject" class="form__label">Hizmet Alanı <span aria-hidden="true">*</span></label>
+              <select id="subject" name="subject" class="form__input" required>
+                <option value="">Hizmet seçiniz...</option>
+                <option value="elektrik">Elektrik Hizmetleri</option>
+                <option value="elektronik">Elektronik &amp; Gömülü Sistemler</option>
+                <option value="otomasyon">Otomasyon Sistemleri</option>
+                <option value="mekanik">Mekanik Sistemler</option>
+                <option value="diger">Diğer / Genel Danışmanlık</option>
+              </select>
+            </div>
+
+            <div class="form__group">
+              <label for="message" class="form__label">Mesajınız <span aria-hidden="true">*</span></label>
+              <textarea id="message" name="message" class="form__input form__textarea"
+                        placeholder="Projenizi veya talebinizi kısaca açıklayın..."
+                        rows="5" maxlength="1000" required></textarea>
+              <div class="form__meta">
+                <span class="form__counter" id="messageCounter">0 / 1000</span>
+              </div>
+            </div>
+
+            <div class="form__group form__hp" aria-hidden="true">
+              <label for="website" class="form__label">Web Sitesi</label>
+              <input type="text" id="website" name="website" class="form__input" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="form__consent">
+              <input type="checkbox" id="consent" name="consent" required>
+              <label for="consent">KVKK kapsamında bilgilerimin iletişim amacıyla işlenmesini onaylıyorum.</label>
+            </div>
+
+            <div class="form__captcha">
+              <div class="cf-turnstile"
+                   data-sitekey="REPLACE_WITH_TURNSTILE_SITE_KEY"
+                   data-theme="light"
+                   data-language="tr"
+                   data-retry="auto"></div>
+            </div>
+
+            <input type="hidden" id="formTimestamp" name="formTimestamp" value="">
+
+            <button type="submit" class="btn btn--accent btn--full">
+              <i class="fas fa-paper-plane"></i> Mesaj Gönder
+            </button>
+            <p class="form__note">
+              * Zorunlu alanlar. Bilgileriniz gizli tutulur ve üçüncü taraflarla paylaşılmaz.
+            </p>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- Google Maps -->
+      <div class="contact__map reveal">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3125.9!2d27.42!3d38.42!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzjCsDI1JzEyLjAiTiAyN8KwMjUnMTIuMCJF!5e0!3m2!1sen!2str!4v1"
+          width="100%" height="320" style="border:0; border-radius:20px;"
+          allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="VoltGuard Konum - Kemalpaşa, İzmir"></iframe>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__grid">
+
+        <div class="footer__brand">
+          <a href="#anasayfa" class="footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <div class="logo-mark logo-mark--footer">
+              <span class="logo-mark__volt">VOLT</span>
+              <span class="logo-mark__bolt"><i class="fas fa-bolt"></i></span>
+              <span class="logo-mark__guard">GUARD</span>
+            </div>
+            <span class="logo-mark__tagline">Engineering Solutions</span>
+          </a>
+          <p class="footer__desc">
+            Elektrik, Otomasyon, Elektronik ve Mekanik alanlarında kapsamlı mühendislik hizmetleri
+            sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.
+          </p>
+          <div class="footer__contact-quick">
+            <a href="tel:+905454346735" class="footer__contact-item">
+              <i class="fas fa-phone-alt"></i> 0 545 434 67 35
+            </a>
+            <a href="mailto:info@voltguard.com.tr" class="footer__contact-item">
+              <i class="fas fa-envelope"></i> info@voltguard.com.tr
+            </a>
+          </div>
+        </div>
+
+        <div class="footer__links">
+          <h4 class="footer__heading">Hızlı Erişim</h4>
+          <ul class="footer__nav">
+            <li><a href="#anasayfa">Ana Sayfa</a></li>
+            <li><a href="#hakkimizda">Hakkımızda</a></li>
+            <li><a href="#hizmetler">Hizmetlerimiz</a></li>
+            <li><a href="#neden-biz">Neden Biz?</a></li>
+            <li><a href="#guvenlik">Güvenlik</a></li>
+            <li><a href="#projeler">Projeler</a></li>
+            <li><a href="#iletisim">İletişim</a></li>
+          </ul>
+        </div>
+
+        <div class="footer__services-list">
+          <h4 class="footer__heading">Hizmet Alanları</h4>
+          <ul class="footer__nav">
+            <li><a href="#hizmetler">Elektrik Hizmetleri</a></li>
+            <li><a href="#hizmetler">Elektronik &amp; Gömülü Sistemler</a></li>
+            <li><a href="#hizmetler">Otomasyon Sistemleri</a></li>
+            <li><a href="#hizmetler">Mekanik Sistemler</a></li>
+          </ul>
+        </div>
+
+        <div class="footer__address">
+          <h4 class="footer__heading">Adres</h4>
+          <address class="footer__address-text">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>
+              Mehmet Akif Ersoy Mahallesi<br>
+              233/6 Sokak No:47 Kat:3 Daire:9<br>
+              Kemalpaşa / İzmir
+            </span>
+          </address>
+          <p class="footer__person">
+            <i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY
+          </p>
+        </div>
+
+      </div>
+
+      <div class="footer__bottom">
+        <p>&copy; <span id="year"></span> VoltGuard. Tüm hakları saklıdır.</p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+        <p>voltguard.com.tr</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp Floating Button -->
+  <a href="https://wa.me/905454346735?text=Merhaba%2C%20VoltGuard%20web%20sitenizden%20ula%C5%9F%C4%B1yorum.%20Teknik%20destek%20almak%20istiyorum."
+     class="whatsapp-float" id="whatsappFloat"
+     target="_blank" rel="noopener noreferrer"
+     aria-label="WhatsApp ile iletişime geçin">
+    <i class="fab fa-whatsapp"></i>
+    <span class="whatsapp-float__tooltip">Bize yazın!</span>
+  </a>
+
+  <!-- Scroll-to-Top -->
+  <button class="scroll-top" id="scrollTop" aria-label="Sayfanın başına dön">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <!-- Mobile Sticky CTA -->
+  <div class="mobile-cta" id="mobileCta">
+    <a href="tel:+905454346735" class="mobile-cta__btn mobile-cta__btn--call">
+      <i class="fas fa-phone-alt"></i> Ara
+    </a>
+    <a href="https://wa.me/905454346735" class="mobile-cta__btn mobile-cta__btn--wp" target="_blank" rel="noopener noreferrer">
+      <i class="fab fa-whatsapp"></i> WhatsApp
+    </a>
+    <a href="#iletisim" class="mobile-cta__btn mobile-cta__btn--form">
+      <i class="fas fa-paper-plane"></i> Teklif Al
+    </a>
+  </div>
+
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
