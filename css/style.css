@@ -179,6 +179,23 @@ button {
   white-space: nowrap;
   line-height: 1;
   min-height: 44px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,.4), transparent);
+  transition: left .55s ease;
+}
+
+.btn:hover::after {
+  left: 130%;
 }
 
 .btn--lg  { padding: .875rem 2rem;  font-size: 1rem; }
@@ -504,6 +521,22 @@ button {
   z-index: 0;
 }
 
+.hero__spotlight {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,158,11,.22) 0%, rgba(245,158,11,.08) 35%, transparent 72%);
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: 1;
+  transform: translate3d(-50%, -50%, 0);
+  left: 72%;
+  top: 38%;
+  opacity: .85;
+  transition: opacity var(--t-base);
+}
+
 /* Real hero background photo */
 .hero__bg-img {
   position: absolute;
@@ -595,6 +628,34 @@ button {
   border: 1px solid rgba(245,158,11,.3);
   margin-bottom: 1.5rem;
   animation: fadeInDown .8s ease both;
+}
+
+.hero__live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.16);
+  color: rgba(255,255,255,.86);
+  font-family: var(--font-heading);
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .02em;
+  padding: .45rem .85rem;
+  border-radius: var(--r-full);
+  margin-bottom: 1rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeInDown .8s ease .08s both;
+}
+
+.hero__live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34,197,94,.55);
+  animation: pulseDot 1.8s infinite;
 }
 
 .hero__title {
@@ -1818,6 +1879,29 @@ button {
   border-color: rgba(245,158,11,.4);
 }
 
+.project-card--overlay::selection {
+  background: rgba(245,158,11,.25);
+}
+
+.project-card--overlay .project-card__overlay-content::after {
+  content: '';
+  position: absolute;
+  top: -120%;
+  left: -40%;
+  width: 50%;
+  height: 220%;
+  transform: rotate(18deg);
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,.15), transparent);
+  opacity: 0;
+  transition: all .55s ease;
+  pointer-events: none;
+}
+
+.project-card--overlay:hover .project-card__overlay-content::after {
+  left: 115%;
+  opacity: 1;
+}
+
 /* =====================================================
    HERO PARTICLES
    ===================================================== */
@@ -2285,6 +2369,12 @@ button {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes pulseDot {
+  0% { box-shadow: 0 0 0 0 rgba(34,197,94,.5); }
+  70% { box-shadow: 0 0 0 11px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+
 /* =====================================================
    RESPONSIVE — 1024px
    ===================================================== */
@@ -2361,6 +2451,20 @@ button {
   .hero__actions .btn {
     justify-content: center;
     width: 100%;
+  }
+
+  .hero__live-pill {
+    font-size: .72rem;
+    padding: .4rem .72rem;
+    margin-bottom: .85rem;
+  }
+
+  .hero__spotlight {
+    width: 280px;
+    height: 280px;
+    left: 68%;
+    top: 30%;
+    opacity: .65;
   }
 
   .hero__title {
@@ -2542,6 +2646,11 @@ button {
 
   .hero__subtitle {
     font-size: .93rem;
+  }
+
+  .hero__live-pill {
+    max-width: 100%;
+    line-height: 1.45;
   }
 
   .cta-banner__actions .btn {

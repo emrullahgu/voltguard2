@@ -58,6 +58,8 @@
   ------------------------------------------------- */
   var heroBgImg = qs('.hero__bg-img');
   var heroDecoration = qs('.hero__decoration');
+  var heroSpotlight = qs('#heroSpotlight');
+  var heroSection = qs('#anasayfa');
 
   function updateParallax() {
     var scrollY = window.scrollY;
@@ -76,6 +78,24 @@
     updateScrollProgress();
     updateParallax();
   }, { passive: true });
+
+  if (heroSpotlight && heroSection && window.matchMedia('(min-width: 769px)').matches) {
+    heroSection.addEventListener('mousemove', function (e) {
+      var rect = heroSection.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+      heroSpotlight.style.left = x + 'px';
+      heroSpotlight.style.top = y + 'px';
+      heroSpotlight.style.opacity = '0.95';
+    });
+
+    heroSection.addEventListener('mouseleave', function () {
+      heroSpotlight.style.opacity = '0.7';
+      heroSpotlight.style.left = '72%';
+      heroSpotlight.style.top = '38%';
+    });
+  }
+
   updateHeader();
   updateScrollProgress();
 
