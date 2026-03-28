@@ -74,6 +74,7 @@ body {
   background-color: var(--clr-white);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 img {
@@ -113,7 +114,7 @@ button {
 }
 
 .section {
-  padding: 5rem 0;
+  padding: clamp(3.5rem, 6vw, 5rem) 0;
 }
 
 .section--gray {
@@ -151,6 +152,7 @@ button {
   color: var(--clr-dark);
   line-height: 1.25;
   margin-bottom: .9rem;
+  text-wrap: balance;
 }
 
 .section__desc {
@@ -176,6 +178,7 @@ button {
   border: 2px solid transparent;
   white-space: nowrap;
   line-height: 1;
+  min-height: 44px;
 }
 
 .btn--lg  { padding: .875rem 2rem;  font-size: 1rem; }
@@ -599,9 +602,10 @@ button {
   font-size: clamp(2.2rem, 5vw, 3.9rem);
   font-weight: 800;
   color: var(--clr-white);
-  line-height: 1.15;
+  line-height: 1.12;
   margin-bottom: 1.5rem;
   animation: fadeInUp .9s ease .1s both;
+  text-wrap: balance;
 }
 
 .hero__title--accent {
@@ -968,6 +972,7 @@ button {
   box-shadow: var(--shadow-xl);
   transition: transform var(--t-base), box-shadow var(--t-base);
   background: var(--clr-dark);
+  will-change: transform;
 }
 
 .project-card--overlay img {
@@ -1273,6 +1278,7 @@ button {
   padding: 2.5rem;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--clr-border);
+  backdrop-filter: blur(8px);
 }
 
 .contact__form-title {
@@ -2194,9 +2200,9 @@ button {
   left: 0;
   right: 0;
   z-index: 997;
-  background: var(--clr-dark);
+  background: rgba(10,22,40,.92);
   border-top: 1px solid rgba(255,255,255,.1);
-  padding: .5rem;
+  padding: .5rem .5rem calc(.5rem + env(safe-area-inset-bottom));
   gap: .5rem;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -2222,6 +2228,7 @@ button {
   text-align: center;
   white-space: nowrap;
   transition: all var(--t-base);
+  min-height: 42px;
 }
 
 .mobile-cta__btn--call {
@@ -2299,7 +2306,7 @@ button {
     --header-h: 64px;
   }
 
-  .section { padding: 3.5rem 0; }
+  .section { padding: 3.2rem 0; }
 
   /* Mobile nav */
   .nav__menu {
@@ -2307,10 +2314,10 @@ button {
     top: var(--header-h);
     left: 0;
     width: 100%;
-    background-color: var(--clr-dark);
+    background: rgba(10,22,40,.92);
     flex-direction: column;
     align-items: stretch;
-    padding: .75rem 1rem 1rem;
+    padding: .75rem 1rem 1.1rem;
     gap: .2rem;
     transform: translateY(-100%);
     opacity: 0;
@@ -2318,6 +2325,10 @@ button {
     pointer-events: none;
     border-top: 1px solid rgba(255,255,255,.09);
     z-index: 999;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    max-height: calc(100vh - var(--header-h));
+    overflow-y: auto;
   }
 
   .nav__menu.open {
@@ -2327,8 +2338,9 @@ button {
   }
 
   .nav__link {
-    padding: .8rem 1rem;
+    padding: .92rem 1rem;
     display: block;
+    font-size: .95rem;
   }
 
   .nav__toggle { display: flex; }
@@ -2349,6 +2361,15 @@ button {
   .hero__actions .btn {
     justify-content: center;
     width: 100%;
+  }
+
+  .hero__title {
+    font-size: clamp(1.9rem, 8vw, 2.8rem);
+  }
+
+  .hero__subtitle {
+    font-size: .98rem;
+    line-height: 1.7;
   }
 
   /* About */
@@ -2393,11 +2414,29 @@ button {
 
   /* Projects */
   .projects__grid {
-    grid-template-columns: 1fr 1fr;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(78%, 320px);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    gap: .95rem;
+    padding-bottom: .4rem;
+    margin-inline: -0.2rem;
+  }
+
+  .projects__grid::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .projects__grid::-webkit-scrollbar-thumb {
+    background: rgba(245,158,11,.55);
+    border-radius: var(--r-full);
   }
 
   .project-card--overlay {
     aspect-ratio: 4 / 3;
+    scroll-snap-align: start;
   }
 
   /* Wave divider */
@@ -2430,7 +2469,7 @@ button {
     width: 50px;
     height: 50px;
     font-size: 1.45rem;
-    bottom: 5rem;
+    bottom: calc(5rem + env(safe-area-inset-bottom));
     left: 1.5rem;
   }
 
@@ -2440,7 +2479,7 @@ button {
 
   /* Scroll-to-top — above mobile CTA */
   .scroll-top {
-    bottom: 5rem;
+    bottom: calc(5rem + env(safe-area-inset-bottom));
   }
 
   /* Mobile CTA bar */
@@ -2472,7 +2511,7 @@ button {
 
   /* Extra bottom padding for footer to avoid mobile CTA overlap */
   .footer {
-    padding-bottom: 4.5rem;
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
 }
 
@@ -2496,13 +2535,22 @@ button {
     font-size: 1.55rem;
   }
 
+  .hero__title {
+    font-size: clamp(1.72rem, 9.5vw, 2.15rem);
+    line-height: 1.14;
+  }
+
+  .hero__subtitle {
+    font-size: .93rem;
+  }
+
   .cta-banner__actions .btn {
     width: 100%;
     justify-content: center;
   }
 
   .projects__grid {
-    grid-template-columns: 1fr;
+    grid-auto-columns: minmax(86%, 300px);
   }
 
   .project-card--overlay {
@@ -2528,7 +2576,21 @@ button {
   }
 
   .mobile-cta__btn {
-    font-size: .72rem;
-    padding: .6rem .3rem;
+    font-size: .75rem;
+    padding: .62rem .35rem;
+  }
+}
+
+/* =====================================================
+   MOTION ACCESSIBILITY
+   ===================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
