@@ -1,0 +1,18 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/voltgua2/public_html/
+    - /bin/cp -R index.html $DEPLOYPATH
+    - /bin/cp -R contact.php $DEPLOYPATH
+    - /bin/cp -R manifest.json $DEPLOYPATH
+    - /bin/cp -R robots.txt $DEPLOYPATH
+    - /bin/cp -R sitemap.xml $DEPLOYPATH
+    - /bin/cp -R .htaccess $DEPLOYPATH
+    - /bin/mkdir -p $DEPLOYPATH/assets
+    - /bin/cp -R assets/* $DEPLOYPATH/assets/
+    - /bin/mkdir -p $DEPLOYPATH/css
+    - /bin/cp -R css/* $DEPLOYPATH/css/
+    - /bin/mkdir -p $DEPLOYPATH/js
+    - /bin/cp -R js/* $DEPLOYPATH/js/
+    - /bin/mkdir -p $DEPLOYPATH/public
+    - /bin/cp -R public/* $DEPLOYPATH/public/
