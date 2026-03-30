@@ -26,7 +26,25 @@
     setTimeout(function () {
       preloader.classList.add('hidden');
     }, 1300);
+
+    /* CSP-safe image error handling (replaces inline onerror) */
+    qsAll('img[loading="lazy"], .hero__bg-img').forEach(function (img) {
+      if (img.complete && img.naturalWidth === 0) {
+        handleImageError(img);
+      } else {
+        img.addEventListener('error', function () {
+          handleImageError(img);
+        });
+      }
+    });
   });
+
+  function handleImageError(img) {
+    img.classList.add('img-error');
+    if (img.closest('.project-card--overlay') || img.closest('.about__img-wrapper')) {
+      img.parentElement.classList.add('img-placeholder');
+    }
+  }
 
   /* ------------------------------------------------
      1. HEADER — scroll effect
@@ -74,10 +92,20 @@
   }
 
   window.addEventListener('scroll', function () {
-    updateHeader();
-    updateScrollProgress();
-    updateParallax();
+    if (!scrollTicking) {
+      requestAnimationFrame(function () {
+        updateHeader();
+        updateScrollProgress();
+        updateParallax();
+        updateActiveNav();
+        updateFloatingButtons();
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
   }, { passive: true });
+
+  var scrollTicking = false;
 
   if (heroSpotlight && heroSection && window.matchMedia('(min-width: 769px)').matches) {
     heroSection.addEventListener('mousemove', function (e) {
@@ -174,7 +202,7 @@
     });
   }
 
-  window.addEventListener('scroll', updateActiveNav, { passive: true });
+  /* Note: updateActiveNav is called within the unified rAF scroll handler above */
   updateActiveNav();
 
   /* ------------------------------------------------
@@ -240,6 +268,7 @@
   });
 
   window.addEventListener('scroll', updateFloatingButtons, { passive: true });
+  /* Note: updateFloatingButtons is called within the unified rAF scroll handler above */
   updateFloatingButtons();
 
   /* ------------------------------------------------
@@ -334,6 +363,21 @@
     if (messageField) {
       messageField.addEventListener('input', syncCounter);
       syncCounter();
+    }
+
+    /* Auto-format phone input for Turkish numbers */
+    var phoneInput = qs('#phone', contactForm);
+    if (phoneInput) {
+      phoneInput.addEventListener('input', function () {
+        var digits = this.value.replace(/\D/g, '');
+        if (digits.length > 11) digits = digits.slice(0, 11);
+        var formatted = '';
+        if (digits.length > 0) formatted = digits.slice(0, 4);
+        if (digits.length > 4) formatted += ' ' + digits.slice(4, 7);
+        if (digits.length > 7) formatted += ' ' + digits.slice(7, 9);
+        if (digits.length > 9) formatted += ' ' + digits.slice(9, 11);
+        this.value = formatted;
+      });
     }
 
     contactForm.addEventListener('submit', function (e) {

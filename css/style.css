@@ -77,6 +77,40 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Custom selection colour */
+::selection {
+  background: rgba(245,158,11,.22);
+  color: var(--clr-dark);
+}
+
+::-moz-selection {
+  background: rgba(245,158,11,.22);
+  color: var(--clr-dark);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--clr-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--clr-accent), var(--clr-electric));
+  border-radius: var(--r-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--clr-accent-dark);
+}
+
+html {
+  scrollbar-color: var(--clr-accent) var(--clr-dark);
+  scrollbar-width: thin;
+}
+
 img {
   max-width: 100%;
   height: auto;
@@ -224,7 +258,7 @@ button {
   background-color: var(--clr-accent-dark);
   border-color: var(--clr-accent-dark);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(245,158,11,.4);
+  box-shadow: 0 8px 24px rgba(245,158,11,.4), 0 0 0 4px rgba(245,158,11,.12);
 }
 
 .btn--outline-white {
@@ -274,6 +308,11 @@ button {
 /* =====================================================
    IMAGE PLACEHOLDER (when real image is missing)
    ===================================================== */
+/* Image error fallback (handled via JS, CSP-safe) */
+img.img-error {
+  display: none !important;
+}
+
 .img-placeholder {
   background: linear-gradient(135deg, var(--clr-navy) 0%, var(--clr-dark) 100%);
   display: flex;
@@ -1272,10 +1311,24 @@ button {
 
 /* Info panel */
 .contact__info {
-  background-color: var(--clr-dark);
+  background: linear-gradient(160deg, var(--clr-dark) 0%, #0d1f3c 60%, #152a4a 100%);
   border-radius: var(--r-lg);
   padding: 2.5rem;
   color: var(--clr-white);
+  position: relative;
+  overflow: hidden;
+}
+
+.contact__info::before {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,158,11,.1) 0%, transparent 70%);
+  top: -60px;
+  right: -60px;
+  pointer-events: none;
 }
 
 .contact__info-title {
@@ -1605,6 +1658,12 @@ button {
   color: rgba(255,255,255,.35);
 }
 
+.footer__bottom p:first-child {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+}
+
 /* =====================================================
    SCROLL-TO-TOP BUTTON
    ===================================================== */
@@ -1796,7 +1855,7 @@ button {
 
 .whatsapp-float:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 28px rgba(37,211,102,.55);
+  box-shadow: 0 6px 28px rgba(37,211,102,.55), 0 0 0 6px rgba(37,211,102,.15);
   color: #fff;
 }
 
@@ -1842,6 +1901,11 @@ button {
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--clr-border);
+  transition: box-shadow var(--t-base);
+}
+
+.contact__map:hover {
+  box-shadow: var(--shadow-xl);
 }
 
 .contact__map iframe {

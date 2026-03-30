@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 header('Content-Type: application/json; charset=UTF-8');
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()');
 
 function respond(int $statusCode, bool $success, string $message): void
 {
@@ -40,6 +44,15 @@ if ($websiteTrap !== '') {
 
 if ($name === '' || $phone === '' || $subject === '' || $message === '') {
     respond(422, false, 'Lütfen zorunlu alanları doldurun.');
+}
+
+if (mb_strlen($name) > 100) {
+    respond(422, false, 'Ad soyad çok uzun.');
+}
+
+$allowedSubjects = ['elektrik', 'elektronik', 'otomasyon', 'mekanik', 'diger'];
+if (!in_array($subject, $allowedSubjects, true)) {
+    respond(422, false, 'Geçersiz hizmet alanı seçimi.');
 }
 
 if ($consent !== 'on') {
@@ -124,12 +137,15 @@ $subjectMap = [
 ];
 $subjectLabel = $subjectMap[$subject] ?? $subject;
 
+$safeName = str_replace(["\r", "\n"], ' ', $name);
+$safeEmail = str_replace(["\r", "\n"], '', $email);
+
 $mailTo = 'info@voltguard.com.tr';
 $mailSubject = 'VoltGuard İletişim Formu - ' . $subjectLabel;
 $mailBody = "Yeni iletişim formu mesajı:\n\n"
-    . "Ad Soyad: {$name}\n"
+    . "Ad Soyad: {$safeName}\n"
     . "Telefon: {$phone}\n"
-    . "E-posta: " . ($email !== '' ? $email : '-') . "\n"
+    . "E-posta: " . ($safeEmail !== '' ? $safeEmail : '-') . "\n"
     . "Hizmet Alanı: {$subjectLabel}\n"
     . "IP: " . ($_SERVER['REMOTE_ADDR'] ?? '-') . "\n"
     . "Tarih: " . date('Y-m-d H:i:s') . "\n\n"
@@ -140,7 +156,7 @@ $mailHeaders = [
     'MIME-Version: 1.0',
     'Content-Type: text/plain; charset=UTF-8',
     'From: VoltGuard <' . $fromAddress . '>',
-    'Reply-To: ' . ($email !== '' ? $email : $fromAddress),
+    'Reply-To: ' . ($safeEmail !== '' ? $safeEmail : $fromAddress),
     'X-Mailer: PHP/' . phpversion(),
 ];
 
