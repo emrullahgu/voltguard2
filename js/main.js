@@ -91,6 +91,8 @@
     }
   }
 
+  var scrollTicking = false;
+
   window.addEventListener('scroll', function () {
     if (!scrollTicking) {
       requestAnimationFrame(function () {
@@ -104,8 +106,6 @@
       scrollTicking = true;
     }
   }, { passive: true });
-
-  var scrollTicking = false;
 
   if (heroSpotlight && heroSection && window.matchMedia('(min-width: 769px)').matches) {
     heroSection.addEventListener('mousemove', function (e) {
@@ -267,7 +267,6 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  window.addEventListener('scroll', updateFloatingButtons, { passive: true });
   /* Note: updateFloatingButtons is called within the unified rAF scroll handler above */
   updateFloatingButtons();
 
