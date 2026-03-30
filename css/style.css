@@ -2703,3 +2703,63 @@ button {
     scroll-behavior: auto !important;
   }
 }
+
+/* =====================================================
+   SKIP TO CONTENT — Erişilebilirlik
+   ===================================================== */
+.skip-to-content {
+  position: absolute;
+  top: -120%;
+  left: 1rem;
+  padding: .6rem 1.4rem;
+  background: var(--clr-accent);
+  color: var(--clr-dark);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: .9rem;
+  border-radius: 0 0 var(--r-sm) var(--r-sm);
+  z-index: 99999;
+  transition: top .2s ease;
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  top: 0;
+  outline: 3px solid var(--clr-dark);
+  outline-offset: 2px;
+}
+
+/* =====================================================
+   FOCUS-VISIBLE — Klavye Navigasyonu
+   ===================================================== */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--clr-accent);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--clr-accent);
+  outline-offset: 3px;
+}
+
+.nav__link:focus-visible {
+  outline: 2px solid var(--clr-accent);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+.form__input:focus-visible {
+  outline: none; /* border + box-shadow ile yönetilir */
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--clr-accent);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(245,158,11,.2);
+}

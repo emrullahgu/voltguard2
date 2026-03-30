@@ -141,6 +141,14 @@
     }
   });
 
+  /* Close menu on Escape key */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && navMenu.classList.contains('open')) {
+      closeMenu();
+      navToggle.focus();
+    }
+  });
+
   /* ------------------------------------------------
      3. ACTIVE NAV LINK — highlight on scroll
   ------------------------------------------------- */
