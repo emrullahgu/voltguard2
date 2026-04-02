@@ -890,16 +890,54 @@
         </div>
       </div>
 
-      <div class="footer__signature">
-        <div class="footer__signature-line" aria-hidden="true"></div>
-        <a href="https://voltguard.com.tr" class="footer__signature-badge" aria-label="VoltGuard Engineering imzası">
-          <span class="footer__signature-bolt" aria-hidden="true"><i class="fas fa-bolt"></i></span>
-          <span class="footer__signature-text">
-            <span class="footer__signature-label">Tasarım & Geliştirme</span>
-            <span class="footer__signature-brand">VoltGuard<span class="footer__signature-eng">Engineering</span></span>
+      <div class="footer__signature reveal" aria-label="VoltGuard Engineering imzası">
+        <!-- SVG devre izi — sol -->
+        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          </circle>
+        </svg>
+
+        <!-- Sol junction node -->
+        <span class="sig-node" aria-hidden="true"></span>
+
+        <!-- Merkez imza badge -->
+        <a href="https://voltguard.com.tr" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+          <!-- Dönen conic halka -->
+          <span class="sig-badge__ring" aria-hidden="true"></span>
+          <!-- Arka plan glow -->
+          <span class="sig-badge__aurora" aria-hidden="true"></span>
+          <!-- İkon -->
+          <span class="sig-badge__icon" aria-hidden="true">
+            <i class="fas fa-bolt"></i>
           </span>
+          <!-- Metin -->
+          <span class="sig-badge__body">
+            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+            <span class="sig-badge__brand">
+              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+              <span class="sig-badge__eng">Engineering</span>
+            </span>
+          </span>
+          <!-- Yıl etiketi -->
+          <span class="sig-badge__year" aria-hidden="true">
+            <i class="fas fa-microchip"></i> 2026
+          </span>
+          <!-- Shimmer geçişi -->
+          <span class="sig-badge__shimmer" aria-hidden="true"></span>
         </a>
-        <div class="footer__signature-line" aria-hidden="true"></div>
+
+        <!-- Sağ junction node -->
+        <span class="sig-node" aria-hidden="true"></span>
+
+        <!-- SVG devre izi — sağ -->
+        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+          </circle>
+        </svg>
       </div>
     </div>
   </footer>

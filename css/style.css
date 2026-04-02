@@ -2670,6 +2670,45 @@ img.img-error {
     text-align: center;
   }
 
+  /* Signature responsive — 768px */
+  .sig-trace {
+    display: none;
+  }
+
+  .sig-node {
+    width: 7px;
+    height: 7px;
+  }
+
+  .sig-node::after {
+    inset: -3px;
+  }
+
+  .sig-badge {
+    padding: .5rem .85rem .5rem .5rem;
+    gap: .6rem;
+    margin: 0 .15rem;
+  }
+
+  .sig-badge__icon {
+    width: 32px;
+    height: 32px;
+    font-size: .68rem;
+  }
+
+  .sig-badge__icon::after {
+    display: none;
+  }
+
+  .sig-badge__brand {
+    font-size: .84rem;
+  }
+
+  .sig-badge__year {
+    padding: .15rem .4rem;
+    font-size: .5rem;
+  }
+
   /* Form */
   .form__row {
     grid-template-columns: 1fr;
@@ -2755,6 +2794,45 @@ img.img-error {
     font-size: .75rem;
     padding: .62rem .35rem;
   }
+
+  /* Signature — 480px */
+  .sig-trace,
+  .sig-node {
+    display: none;
+  }
+
+  .footer__signature {
+    padding: 1.5rem 0 1.75rem;
+  }
+
+  .sig-badge {
+    padding: .45rem .7rem .45rem .45rem;
+    gap: .5rem;
+    margin: 0;
+  }
+
+  .sig-badge__icon {
+    width: 28px;
+    height: 28px;
+    font-size: .6rem;
+  }
+
+  .sig-badge__label {
+    font-size: .48rem;
+    letter-spacing: .1em;
+  }
+
+  .sig-badge__brand {
+    font-size: .76rem;
+  }
+
+  .sig-badge__eng {
+    font-size: .6rem;
+  }
+
+  .sig-badge__year {
+    display: none;
+  }
 }
 
 /* =====================================================
@@ -2832,88 +2910,332 @@ button:focus-visible {
 }
 
 /* =====================================================
-   FOOTER SIGNATURE — Modern Branded Credit
+   FOOTER SIGNATURE — SVG Circuit Premium Design
    ===================================================== */
 .footer__signature {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.25rem;
-  padding: 1.5rem 0 1.75rem;
+  gap: 0;
+  padding: 2.25rem 0 2.5rem;
+  position: relative;
 }
 
-.footer__signature-line {
+/* ---- SVG Circuit Traces ---- */
+.sig-trace {
   flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(245,158,11,.25), transparent);
+  height: 20px;
+  min-width: 0;
+  overflow: visible;
 }
 
-.footer__signature-badge {
+.sig-trace__path {
+  fill: none;
+  stroke: rgba(245,158,11,.18);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sig-trace__dot {
+  fill: var(--clr-accent);
+  filter: drop-shadow(0 0 4px rgba(245,158,11,.7)) drop-shadow(0 0 10px rgba(245,158,11,.3));
+}
+
+/* ---- Junction Nodes ---- */
+.sig-node {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--clr-accent);
+  flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 0 8px rgba(245,158,11,.5), 0 0 16px rgba(245,158,11,.15);
+  animation: sigNodePulse 3s ease-in-out infinite;
+}
+
+.sig-node::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(245,158,11,.2);
+  animation: sigNodeRing 3s ease-in-out infinite;
+}
+
+@keyframes sigNodePulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(245,158,11,.4), 0 0 14px rgba(245,158,11,.12); }
+  50%      { box-shadow: 0 0 12px rgba(245,158,11,.7), 0 0 24px rgba(245,158,11,.25); }
+}
+
+@keyframes sigNodeRing {
+  0%, 100% { transform: scale(1); opacity: .6; }
+  50%      { transform: scale(1.4); opacity: 0; }
+}
+
+/* ---- Main Badge ---- */
+.sig-badge {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: .7rem;
-  padding: .55rem 1.25rem .55rem .65rem;
+  gap: .8rem;
+  padding: .65rem 1.1rem .65rem .65rem;
   border-radius: var(--r-full);
-  border: 1px solid rgba(245,158,11,.15);
-  background: rgba(245,158,11,.04);
-  transition: all var(--t-base);
+  border: 1px solid rgba(245,158,11,.18);
+  background: linear-gradient(160deg, rgba(10,22,40,.97), rgba(13,31,60,.92));
+  transition: all .5s cubic-bezier(.25,.8,.25,1);
   flex-shrink: 0;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 1;
+  text-decoration: none;
+  margin: 0 .25rem;
 }
 
-.footer__signature-badge:hover {
-  border-color: rgba(245,158,11,.4);
-  background: rgba(245,158,11,.08);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(245,158,11,.12), 0 0 0 4px rgba(245,158,11,.04);
+.sig-badge:focus-visible {
+  outline: 2px solid var(--clr-accent);
+  outline-offset: 3px;
 }
 
-.footer__signature-bolt {
+.sig-badge:hover {
+  border-color: rgba(245,158,11,.5);
+  background: linear-gradient(160deg, rgba(10,22,40,.99), rgba(30,58,95,.55));
+  transform: translateY(-4px) scale(1.04);
+  box-shadow:
+    0 12px 48px rgba(245,158,11,.22),
+    0 0 0 3px rgba(245,158,11,.06),
+    0 4px 16px rgba(0,0,0,.3);
+}
+
+/* Conic rotating ring */
+.sig-badge__ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    rgba(245,158,11,.6) 6%,
+    transparent 12%,
+    transparent 33%,
+    rgba(59,130,246,.45) 39%,
+    transparent 45%,
+    transparent 66%,
+    rgba(245,158,11,.3) 72%,
+    transparent 78%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: sigRingRotate 8s linear infinite;
+  opacity: 0;
+  transition: opacity .5s ease;
+  pointer-events: none;
+}
+
+.sig-badge:hover .sig-badge__ring {
+  opacity: 1;
+}
+
+@keyframes sigRingRotate {
+  to { transform: rotate(360deg); }
+}
+
+/* Aurora ambient glow */
+.sig-badge__aurora {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 30% 50%,
+    rgba(245,158,11,.1) 0%,
+    rgba(59,130,246,.06) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity .6s ease;
+  z-index: -1;
+  filter: blur(14px);
+  pointer-events: none;
+  animation: sigAuroraDrift 6s ease-in-out infinite alternate;
+}
+
+.sig-badge:hover .sig-badge__aurora {
+  opacity: 1;
+}
+
+@keyframes sigAuroraDrift {
+  0%   { background-position: 30% 50%; transform: scale(1) rotate(0deg); }
+  100% { background-position: 70% 50%; transform: scale(1.1) rotate(3deg); }
+}
+
+/* Bolt icon */
+.sig-badge__icon {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--clr-accent), #ef4444);
+  background: linear-gradient(150deg, var(--clr-accent) 0%, #ef4444 100%);
   color: var(--clr-dark);
-  font-size: .7rem;
-  box-shadow: 0 0 10px rgba(245,158,11,.35);
-  animation: boltPulse 2.5s ease-in-out infinite;
+  font-size: .78rem;
   flex-shrink: 0;
+  transition: transform .4s cubic-bezier(.4,0,.2,1), box-shadow .4s ease;
+  box-shadow:
+    0 0 12px rgba(245,158,11,.5),
+    0 0 28px rgba(245,158,11,.12),
+    inset 0 1px 3px rgba(255,255,255,.2);
+  animation: sigIconGlow 3.5s ease-in-out infinite;
 }
 
-.footer__signature-text {
+.sig-badge__icon::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(245,158,11,.2);
+  animation: sigIconDashSpin 12s linear infinite;
+}
+
+.sig-badge:hover .sig-badge__icon {
+  transform: rotate(15deg) scale(1.18);
+  box-shadow:
+    0 0 22px rgba(245,158,11,.7),
+    0 0 50px rgba(245,158,11,.25),
+    inset 0 1px 3px rgba(255,255,255,.3);
+}
+
+@keyframes sigIconGlow {
+  0%, 100% { box-shadow: 0 0 12px rgba(245,158,11,.45), 0 0 28px rgba(245,158,11,.1), inset 0 1px 3px rgba(255,255,255,.2); }
+  50%      { box-shadow: 0 0 18px rgba(245,158,11,.65), 0 0 38px rgba(245,158,11,.18), inset 0 1px 3px rgba(255,255,255,.25); }
+}
+
+@keyframes sigIconDashSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Badge text body */
+.sig-badge__body {
   display: flex;
   flex-direction: column;
   gap: 0;
   line-height: 1;
 }
 
-.footer__signature-label {
+.sig-badge__label {
   font-family: var(--font-heading);
-  font-size: .58rem;
+  font-size: .56rem;
   font-weight: 500;
-  letter-spacing: .12em;
+  letter-spacing: .14em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.35);
+  color: rgba(255,255,255,.28);
+  transition: color .4s ease, letter-spacing .4s ease;
 }
 
-.footer__signature-brand {
+.sig-badge:hover .sig-badge__label {
+  color: rgba(255,255,255,.6);
+  letter-spacing: .18em;
+}
+
+.sig-badge__brand {
   font-family: var(--font-heading);
-  font-size: .88rem;
+  font-size: .95rem;
   font-weight: 700;
-  letter-spacing: .04em;
-  background: linear-gradient(135deg, var(--clr-white) 30%, var(--clr-accent));
+  letter-spacing: .03em;
+  margin-top: 3px;
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+}
+
+.sig-badge__volt {
+  background: linear-gradient(135deg, var(--clr-white) 20%, var(--clr-accent-light));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-top: 2px;
 }
 
-.footer__signature-eng {
-  font-weight: 500;
-  margin-left: .25em;
-  opacity: .7;
+.sig-badge__guard {
+  background: linear-gradient(135deg, var(--clr-accent), var(--clr-electric));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sig-badge__eng {
+  font-weight: 400;
+  font-size: .7rem;
+  margin-left: .35em;
+  background: linear-gradient(135deg, rgba(255,255,255,.6), rgba(255,255,255,.3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: opacity .3s ease;
+}
+
+.sig-badge:hover .sig-badge__eng {
+  opacity: .85;
+}
+
+/* Year tag */
+.sig-badge__year {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .22rem .55rem;
+  border-radius: var(--r-full);
+  border: 1px solid rgba(245,158,11,.15);
+  background: rgba(245,158,11,.05);
+  font-family: var(--font-heading);
+  font-size: .54rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: rgba(245,158,11,.6);
+  flex-shrink: 0;
+  transition: all .4s ease;
+}
+
+.sig-badge__year i {
+  font-size: .48rem;
+}
+
+.sig-badge:hover .sig-badge__year {
+  border-color: rgba(245,158,11,.4);
+  background: rgba(245,158,11,.12);
+  color: var(--clr-accent);
+  box-shadow: 0 0 12px rgba(245,158,11,.1);
+}
+
+/* Light shimmer sweep */
+.sig-badge__shimmer {
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255,255,255,.02) 30%,
+    rgba(245,158,11,.1) 50%,
+    rgba(255,255,255,.02) 70%,
+    transparent 100%
+  );
+  transform: skewX(-15deg);
+  animation: sigShimmerSweep 6s ease-in-out infinite 2s;
+  pointer-events: none;
+}
+
+@keyframes sigShimmerSweep {
+  0%   { left: -120%; }
+  35%  { left: 120%; }
+  100% { left: 120%; }
 }
 
 /* =====================================================
