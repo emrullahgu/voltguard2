@@ -18,14 +18,29 @@
   }
 
   /* ------------------------------------------------
+     Motion / viewport preferences (live)
+  ------------------------------------------------- */
+  var reduceMotionMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var desktopMQ = window.matchMedia('(min-width: 769px)');
+  var prefersReducedMotion = reduceMotionMQ.matches;
+
+  if (reduceMotionMQ.addEventListener) {
+    reduceMotionMQ.addEventListener('change', function (e) {
+      prefersReducedMotion = e.matches;
+    });
+  }
+
+  /* ------------------------------------------------
      0. PRELOADER
   ------------------------------------------------- */
   var preloader = qs('#preloader');
 
   window.addEventListener('load', function () {
-    setTimeout(function () {
-      preloader.classList.add('hidden');
-    }, 1300);
+    if (preloader) {
+      setTimeout(function () {
+        preloader.classList.add('hidden');
+      }, 1300);
+    }
 
     /* CSP-safe image error handling (replaces inline onerror) */
     qsAll('img[loading="lazy"], .hero__bg-img').forEach(function (img) {
@@ -52,6 +67,7 @@
   var header = qs('#header');
 
   function updateHeader() {
+    if (!header) return;
     if (window.scrollY > 60) {
       header.classList.add('scrolled');
     } else {
@@ -65,6 +81,7 @@
   var scrollProgress = qs('#scrollProgress');
 
   function updateScrollProgress() {
+    if (!scrollProgress) return;
     var scrollTop = window.scrollY;
     var docHeight = document.documentElement.scrollHeight - window.innerHeight;
     var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
@@ -80,6 +97,7 @@
   var heroSection = qs('#anasayfa');
 
   function updateParallax() {
+    if (prefersReducedMotion) return;
     var scrollY = window.scrollY;
     if (scrollY < window.innerHeight) {
       if (heroBgImg) {
@@ -107,8 +125,9 @@
     }
   }, { passive: true });
 
-  if (heroSpotlight && heroSection && window.matchMedia('(min-width: 769px)').matches) {
+  if (heroSpotlight && heroSection) {
     heroSection.addEventListener('mousemove', function (e) {
+      if (!desktopMQ.matches || prefersReducedMotion) return;
       var rect = heroSection.getBoundingClientRect();
       var x = e.clientX - rect.left;
       var y = e.clientY - rect.top;
@@ -145,37 +164,39 @@
     navToggle.setAttribute('aria-expanded', 'true');
   }
 
-  navToggle.addEventListener('click', function () {
-    if (navMenu.classList.contains('open')) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
-  });
+  if (navToggle && navMenu) {
+    navToggle.addEventListener('click', function () {
+      if (navMenu.classList.contains('open')) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
 
-  /* Close menu when a nav link is clicked */
-  qsAll('.nav__link').forEach(function (link) {
-    link.addEventListener('click', closeMenu);
-  });
+    /* Close menu when a nav link is clicked */
+    qsAll('.nav__link').forEach(function (link) {
+      link.addEventListener('click', closeMenu);
+    });
 
-  /* Close menu on outside click */
-  document.addEventListener('click', function (e) {
-    if (
-      navMenu.classList.contains('open') &&
-      !navMenu.contains(e.target) &&
-      !navToggle.contains(e.target)
-    ) {
-      closeMenu();
-    }
-  });
+    /* Close menu on outside click */
+    document.addEventListener('click', function (e) {
+      if (
+        navMenu.classList.contains('open') &&
+        !navMenu.contains(e.target) &&
+        !navToggle.contains(e.target)
+      ) {
+        closeMenu();
+      }
+    });
 
-  /* Close menu on Escape key */
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && navMenu.classList.contains('open')) {
-      closeMenu();
-      navToggle.focus();
-    }
-  });
+    /* Close menu on Escape key */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && navMenu.classList.contains('open')) {
+        closeMenu();
+        navToggle.focus();
+      }
+    });
+  }
 
   /* ------------------------------------------------
      3. ACTIVE NAV LINK — highlight on scroll
@@ -242,10 +263,12 @@
 
   function updateFloatingButtons() {
     var y = window.scrollY;
-    if (y > 420) {
-      scrollTopBtn.classList.add('visible');
-    } else {
-      scrollTopBtn.classList.remove('visible');
+    if (scrollTopBtn) {
+      if (y > 420) {
+        scrollTopBtn.classList.add('visible');
+      } else {
+        scrollTopBtn.classList.remove('visible');
+      }
     }
     if (whatsappFloat) {
       if (y > 200) {
@@ -263,9 +286,11 @@
     }
   }
 
-  scrollTopBtn.addEventListener('click', function () {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+  if (scrollTopBtn) {
+    scrollTopBtn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 
   /* Note: updateFloatingButtons is called within the unified rAF scroll handler above */
   updateFloatingButtons();
@@ -331,6 +356,15 @@
     var counterEl = qs('#messageCounter', contactForm);
     var timestampField = qs('#formTimestamp', contactForm);
     var captchaFieldName = 'cf-turnstile-response';
+    /* Turnstile is optional until a real site key is set. With the placeholder key,
+       hide the widget and don't require a token (server also falls back gracefully). */
+    var captchaWidget = qs('.cf-turnstile', contactForm);
+    var captchaSitekey = captchaWidget ? (captchaWidget.getAttribute('data-sitekey') || '') : '';
+    var captchaEnabled = !!captchaWidget && captchaSitekey !== '' && captchaSitekey.indexOf('REPLACE_WITH') !== 0;
+    if (!captchaEnabled) {
+      var capWrap = qs('.form__captcha', contactForm);
+      if (capWrap) { capWrap.style.display = 'none'; }
+    }
 
     function getCaptchaToken() {
       var tokenField = contactForm.querySelector('input[name="' + captchaFieldName + '"]');
@@ -458,7 +492,8 @@
         hasError = true;
       }
 
-      if (!getCaptchaToken()) {
+      if (captchaEnabled && !getCaptchaToken()) {
+        markInvalid(qs('.form__captcha', contactForm));
         hasError = true;
       }
 
@@ -505,7 +540,10 @@
         })
         .catch(function (error) {
           resetCaptcha();
-          showNotification(error.message || 'Gönderim sırasında bir hata oluştu.', 'error');
+          var msg = (error && error.name === 'TypeError')
+            ? 'Bağlantı hatası. İnternet bağlantınızı kontrol edip tekrar deneyin.'
+            : ((error && error.message) || 'Gönderim sırasında bir hata oluştu.');
+          showNotification(msg, 'error');
         })
         .finally(function () {
           submitBtn.disabled = false;
@@ -614,8 +652,12 @@
     setTimeout(typeLoop, delay);
   }
 
-  /* Start typing after preloader */
-  setTimeout(typeLoop, 1500);
+  /* Start typing after preloader (skip the animation when reduced motion is requested) */
+  if (prefersReducedMotion) {
+    if (typingEl) { typingEl.textContent = typingWords[0]; }
+  } else {
+    setTimeout(typeLoop, 1500);
+  }
 
   /* ------------------------------------------------
      11. ANIMATED STAT COUNTERS
@@ -630,6 +672,12 @@
     statNumbers.forEach(function (el) {
       var target = parseInt(el.getAttribute('data-count'), 10);
       var suffix = el.getAttribute('data-suffix') || '';
+
+      if (prefersReducedMotion) {
+        el.textContent = target + suffix;
+        return;
+      }
+
       var duration = 2000;
       var startTime = null;
 
@@ -670,24 +718,23 @@
   ------------------------------------------------- */
   var projectCards = qsAll('.project-card--overlay');
 
-  if (window.matchMedia('(min-width: 769px)').matches) {
-    projectCards.forEach(function (card) {
-      card.addEventListener('mousemove', function (e) {
-        var rect = card.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-        var centerX = rect.width / 2;
-        var centerY = rect.height / 2;
-        var rotateX = ((y - centerY) / centerY) * -6;
-        var rotateY = ((x - centerX) / centerX) * 6;
-        card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale(1.02)';
-      });
-
-      card.addEventListener('mouseleave', function () {
-        card.style.transform = '';
-      });
+  projectCards.forEach(function (card) {
+    card.addEventListener('mousemove', function (e) {
+      if (!desktopMQ.matches || prefersReducedMotion) return;
+      var rect = card.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+      var centerX = rect.width / 2;
+      var centerY = rect.height / 2;
+      var rotateX = ((y - centerY) / centerY) * -6;
+      var rotateY = ((x - centerX) / centerX) * 6;
+      card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale(1.02)';
     });
-  }
+
+    card.addEventListener('mouseleave', function () {
+      card.style.transform = '';
+    });
+  });
 
   /* ------------------------------------------------
      13. SMOOTH SCROLL FOR MOBILE CTA
@@ -706,5 +753,304 @@
       }
     });
   });
+
+  /* ------------------------------------------------
+     15. HERO ENERGY CIRCUIT — interactive canvas
+  ------------------------------------------------- */
+  (function () {
+    var canvas = qs('#heroCircuit');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    var ACCENT = '245,158,11';
+    var ELECTRIC = '59,130,246';
+    var LINK_DIST = 132;
+    var nodes = [], pulses = [];
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = 0, h = 0;
+    var mouse = { x: -9999, y: -9999 };
+    var running = false, rafId = null, inView = true;
+
+    function build() {
+      var count = Math.max(16, Math.min(58, Math.round((w * h) / 22000)));
+      nodes = [];
+      for (var i = 0; i < count; i++) {
+        nodes.push({
+          x: Math.random() * w, y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.25,
+          r: Math.random() * 1.5 + 1
+        });
+      }
+    }
+    function resize() {
+      var rect = canvas.getBoundingClientRect();
+      var nw = rect.width, nh = rect.height;
+      if (nw === 0 || nh === 0) return;
+      var changed = Math.round(nw) !== Math.round(w) || Math.round(nh) !== Math.round(h);
+      w = nw; h = nh;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (changed || nodes.length === 0) build();
+    }
+    function spawnPulse() {
+      if (nodes.length < 2) return;
+      var ai = (Math.random() * nodes.length) | 0, best = -1, bestD = LINK_DIST;
+      for (var j = 0; j < nodes.length; j++) {
+        if (j === ai) continue;
+        var dx = nodes[ai].x - nodes[j].x, dy = nodes[ai].y - nodes[j].y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < bestD) { bestD = d; best = j; }
+      }
+      if (best >= 0) pulses.push({ a: ai, b: best, t: 0, speed: 0.012 + Math.random() * 0.02 });
+    }
+    function frame() {
+      ctx.clearRect(0, 0, w, h);
+      var i, n;
+      for (i = 0; i < nodes.length; i++) {
+        n = nodes[i];
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 0 || n.x > w) n.vx *= -1;
+        if (n.y < 0 || n.y > h) n.vy *= -1;
+        var dxm = mouse.x - n.x, dym = mouse.y - n.y, dm2 = dxm * dxm + dym * dym;
+        if (dm2 < 19600) { n.vx += dxm * 0.0009; n.vy += dym * 0.0009; }
+        n.vx = Math.max(-0.7, Math.min(0.7, n.vx));
+        n.vy = Math.max(-0.7, Math.min(0.7, n.vy));
+      }
+      var a, b;
+      for (a = 0; a < nodes.length; a++) {
+        for (b = a + 1; b < nodes.length; b++) {
+          var ddx = nodes[a].x - nodes[b].x, ddy = nodes[a].y - nodes[b].y;
+          var dist = Math.sqrt(ddx * ddx + ddy * ddy);
+          if (dist < LINK_DIST) {
+            var o = (1 - dist / LINK_DIST) * 0.5;
+            ctx.strokeStyle = 'rgba(' + ELECTRIC + ',' + o.toFixed(3) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(nodes[a].x, nodes[a].y);
+            ctx.lineTo(nodes[b].x, nodes[b].y);
+            ctx.stroke();
+          }
+        }
+      }
+      for (i = 0; i < nodes.length; i++) {
+        n = nodes[i];
+        ctx.fillStyle = 'rgba(' + ACCENT + ',0.9)';
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      for (var p = pulses.length - 1; p >= 0; p--) {
+        var pu = pulses[p];
+        pu.t += pu.speed;
+        var na = nodes[pu.a], nb = nodes[pu.b];
+        if (pu.t >= 1 || !na || !nb) { pulses.splice(p, 1); continue; }
+        var px = na.x + (nb.x - na.x) * pu.t, py = na.y + (nb.y - na.y) * pu.t;
+        var grd = ctx.createRadialGradient(px, py, 0, px, py, 6);
+        grd.addColorStop(0, 'rgba(' + ACCENT + ',0.95)');
+        grd.addColorStop(1, 'rgba(' + ACCENT + ',0)');
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      if (pulses.length < 6 && Math.random() < 0.045) spawnPulse();
+    }
+    function loop() { frame(); rafId = requestAnimationFrame(loop); }
+    function start() { if (running) return; if (w === 0) resize(); if (inView && w > 0) { running = true; loop(); } }
+    function stop() { running = false; if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+    function kick() { resize(); if (prefersReducedMotion) frame(); else start(); }
+
+    window.addEventListener('mousemove', function (e) {
+      var r = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+    }, { passive: true });
+    window.addEventListener('resize', kick);
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) { inView = e.isIntersecting; if (inView) kick(); else stop(); });
+      }).observe(canvas);
+    }
+    kick();
+    window.addEventListener('load', kick);
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop(); else if (inView && !prefersReducedMotion) start();
+    });
+  })();
+
+  /* ------------------------------------------------
+     16. AKTİF EMI FİLTRE — oscilloscope demo
+  ------------------------------------------------- */
+  (function () {
+    var canvas = qs('#emiScope');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    var toggle = qs('#emiToggle');
+    var stateEl = qs('#emiState');
+    var roThd = qs('#roThd'), roPf = qs('#roPf');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = 0, h = 0, running = false, rafId = null, inView = true;
+    var filterOn = false, phase = 0, mix = 0;
+
+    function resize() {
+      var r = canvas.getBoundingClientRect();
+      w = r.width; h = r.height;
+      if (w === 0 || h === 0) return;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function drawGrid() {
+      ctx.strokeStyle = 'rgba(59,130,246,0.10)';
+      ctx.lineWidth = 1;
+      var s = Math.max(22, w / 16), x, y;
+      for (x = 0; x <= w; x += s) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+      for (y = 0; y <= h; y += s) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+      ctx.strokeStyle = 'rgba(59,130,246,0.22)';
+      ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+    }
+    function sample(t) {
+      var base = Math.sin(t);
+      var noisy = base
+        + 0.32 * Math.sin(3 * t + 0.6)
+        + 0.18 * Math.sin(5 * t + 1.2)
+        + 0.12 * Math.sin(7 * t)
+        + 0.07 * Math.sin(11 * t + 0.4)
+        + 0.05 * Math.sin(t * 37.7);
+      return base * mix + (noisy / 1.4) * (1 - mix);
+    }
+    function draw() {
+      if (w === 0) return;
+      ctx.clearRect(0, 0, w, h);
+      drawGrid();
+      var amp = h * 0.30;
+      var col = (mix > 0.5) ? '245,158,11' : '59,130,246';
+      ctx.lineWidth = 2.4;
+      ctx.lineJoin = 'round';
+      ctx.shadowBlur = 14;
+      ctx.shadowColor = 'rgba(' + col + ',0.85)';
+      ctx.strokeStyle = 'rgba(' + col + ',1)';
+      ctx.beginPath();
+      var cycles = 3;
+      for (var px = 0; px <= w; px++) {
+        var t = (px / w) * Math.PI * 2 * cycles + phase;
+        var y = h / 2 - sample(t) * amp;
+        if (px === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+    function setReadouts() {
+      if (roThd) {
+        roThd.textContent = (filterOn ? 2.8 : 38.5).toFixed(1) + ' %';
+        roThd.classList.toggle('readout__value--good', filterOn);
+        roThd.classList.toggle('readout__value--bad', !filterOn);
+      }
+      if (roPf) {
+        roPf.textContent = (filterOn ? 0.99 : 0.82).toFixed(2);
+        roPf.classList.toggle('readout__value--good', filterOn);
+        roPf.classList.toggle('readout__value--bad', !filterOn);
+      }
+    }
+    function setFilter(on) {
+      filterOn = on;
+      if (toggle) {
+        toggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+        toggle.classList.toggle('is-on', on);
+        var txt = qs('.scope__toggle-text', toggle);
+        if (txt) txt.textContent = on ? 'Filtreyi Kapat' : 'Filtreyi Aç';
+      }
+      if (stateEl) {
+        stateEl.textContent = on ? 'FİLTRE AKTİF' : 'FİLTRE KAPALI';
+        stateEl.classList.toggle('is-on', on);
+      }
+      setReadouts();
+      if (prefersReducedMotion) { mix = on ? 1 : 0; draw(); }
+    }
+    function loop() {
+      if (!prefersReducedMotion) phase -= 0.03;
+      var target = filterOn ? 1 : 0;
+      mix += (target - mix) * 0.08;
+      draw();
+      rafId = requestAnimationFrame(loop);
+    }
+    function start() { if (running) return; if (w === 0) resize(); if (inView && w > 0) { running = true; loop(); } }
+    function stop() { running = false; if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+    function kickScope() { resize(); if (prefersReducedMotion) draw(); else start(); }
+
+    if (toggle) toggle.addEventListener('click', function () { setFilter(!filterOn); });
+    window.addEventListener('resize', function () { resize(); draw(); });
+
+    setReadouts();
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) { inView = e.isIntersecting; if (inView) kickScope(); else stop(); });
+      }, { threshold: 0.15 }).observe(canvas);
+    } else {
+      kickScope();
+    }
+    kickScope();
+    window.addEventListener('load', function () { resize(); draw(); });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop(); else if (inView && !prefersReducedMotion) start();
+    });
+  })();
+
+  /* ------------------------------------------------
+     14. COOKIE CONSENT — gates the Apollo tracker behind opt-in
+  ------------------------------------------------- */
+  (function () {
+    var CONSENT_KEY = 'vg_cookie_consent';
+    var banner = qs('#cookieConsent');
+
+    function loadApollo() {
+      if (typeof window.vgInitApollo === 'function') {
+        window.vgInitApollo();
+      }
+    }
+    function readConsent() {
+      try { return localStorage.getItem(CONSENT_KEY); } catch (e) { return null; }
+    }
+    function writeConsent(value) {
+      try { localStorage.setItem(CONSENT_KEY, value); } catch (e) { /* no-op */ }
+    }
+
+    var current = readConsent();
+
+    if (current === 'granted') {
+      /* Returning visitor who already opted in */
+      loadApollo();
+    } else if (current !== 'denied' && banner) {
+      /* No choice recorded yet — present the banner */
+      banner.hidden = false;
+      requestAnimationFrame(function () { banner.classList.add('visible'); });
+    }
+
+    if (banner) {
+      var hideBanner = function () {
+        banner.classList.remove('visible');
+        setTimeout(function () { banner.hidden = true; }, 400);
+      };
+      var acceptBtn = qs('#cookieAccept', banner);
+      var rejectBtn = qs('#cookieReject', banner);
+
+      if (acceptBtn) {
+        acceptBtn.addEventListener('click', function () {
+          writeConsent('granted');
+          hideBanner();
+          loadApollo();
+        });
+      }
+      if (rejectBtn) {
+        rejectBtn.addEventListener('click', function () {
+          writeConsent('denied');
+          hideBanner();
+        });
+      }
+    }
+  })();
 
 })();

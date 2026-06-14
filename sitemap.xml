@@ -1,9 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://voltguard.com.tr/</loc>
-    <lastmod>2026-03-30</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://voltguard.com.tr/public/og-image.png</image:loc>
+      <image:title>VoltGuard | Endüstriyel Mühendislik Çözümleri</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://voltguard.com.tr/public/haberler/h1.jpg</image:loc>
+      <image:title>Aktif EMI Filtre iş birliği</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://voltguard.com.tr/public/haberler/h8.jpg</image:loc>
+      <image:title>Take Off İstanbul – Roketsan standı</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/bilgi-bankasi.html</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url><loc>https://voltguard.com.tr/bilgi/topraklama.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/yildirimdan-korunma.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/yuksek-gerilim-isletme-sorumlulugu.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/trafo-periyodik-bakim.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/reaktif-guc-kompanzasyonu.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/elektrik-tesisati-periyodik-kontrol.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/smm-serbest-musavir-muhendislik.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/elektrik-ic-tesis-projelendirme.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/kuvvetli-akim-tesisleri.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/yangin-algilama-uyari-sistemleri.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/enerjisiz-calisma-is-guvenligi.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/scada-iec-61850.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/ts-hd-60364-tesisat-standartlari.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/lisanssiz-uretim-ges.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url>
+    <loc>https://voltguard.com.tr/gizlilik.html</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/public/voltguard-katalog.pdf</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>

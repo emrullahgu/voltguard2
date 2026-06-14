@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=UTF-8');
 header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()');
 
@@ -24,9 +24,43 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $turnstileSecret = getenv('TURNSTILE_SECRET_KEY') ?: 'REPLACE_WITH_TURNSTILE_SECRET_KEY';
 
-if ($turnstileSecret === 'REPLACE_WITH_TURNSTILE_SECRET_KEY') {
-    respond(500, false, 'Turnstile secret key is not configured on server.');
+// Turnstile is OPTIONAL until keys are configured. When the secret is not set, the
+// form still works but falls back to honeypot + server-side rate limiting + validation.
+// As soon as TURNSTILE_SECRET_KEY is provided, CAPTCHA verification is enforced again.
+$captchaConfigured = ($turnstileSecret !== 'REPLACE_WITH_TURNSTILE_SECRET_KEY' && $turnstileSecret !== '');
+if (!$captchaConfigured) {
+    error_log('VoltGuard contact.php: Turnstile not configured; proceeding without CAPTCHA (honeypot + rate limit active).');
 }
+
+/* --- Basic per-IP rate limiting (file-based, best-effort) --- */
+$rateLimitMax = 5;          // allowed submissions
+$rateLimitWindow = 600;     // per 10 minutes (seconds)
+// Prefer the real client IP when the site is proxied (e.g. Cloudflare), so the
+// rate-limit bucket is per-visitor rather than per-proxy.
+$clientIp = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+$rateDir = sys_get_temp_dir() . '/vg_rate';
+if (!is_dir($rateDir)) {
+    @mkdir($rateDir, 0700, true);
+}
+$rateFile = $rateDir . '/' . hash('sha256', $clientIp);
+$nowTs = time();
+$hits = [];
+if (is_file($rateFile)) {
+    $rawHits = @file_get_contents($rateFile);
+    if (is_string($rawHits) && $rawHits !== '') {
+        $decodedHits = json_decode($rawHits, true);
+        if (is_array($decodedHits)) {
+            $hits = array_values(array_filter($decodedHits, static function ($t) use ($nowTs, $rateLimitWindow) {
+                return is_int($t) && ($nowTs - $t) < $rateLimitWindow;
+            }));
+        }
+    }
+}
+if (count($hits) >= $rateLimitMax) {
+    respond(429, false, 'Çok fazla deneme yaptınız. Lütfen birkaç dakika sonra tekrar deneyin.');
+}
+$hits[] = $nowTs;
+@file_put_contents($rateFile, json_encode($hits), LOCK_EX);
 
 $name = trim((string)($_POST['name'] ?? ''));
 $phone = trim((string)($_POST['phone'] ?? ''));
@@ -82,9 +116,17 @@ if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 $nowMs = (int)floor(microtime(true) * 1000);
-if ($formTimestamp <= 0 || ($nowMs - $formTimestamp) < 2500 || ($nowMs - $formTimestamp) > 86400000) {
+$formAge = $nowMs - $formTimestamp;
+/* Allow up to ~2 minutes of client/server clock skew ($formAge may be slightly negative),
+   and reject only clearly invalid timestamps (missing or older than 24h). The "submitted
+   too fast" heuristic is dropped: it is client-controlled (no real bot value) and caused
+   false rejections for users whose device clock is ahead. Real bot defense is Turnstile +
+   the server-side rate limit above. */
+if ($formTimestamp <= 0 || $formAge < -120000 || $formAge > 86400000) {
     respond(422, false, 'Form doğrulaması başarısız oldu. Lütfen tekrar deneyin.');
 }
+
+if ($captchaConfigured) {
 
 if ($captchaToken === '') {
     respond(422, false, 'Lütfen güvenlik doğrulamasını tamamlayın.');
@@ -93,7 +135,7 @@ if ($captchaToken === '') {
 $verifyPayload = http_build_query([
     'secret' => $turnstileSecret,
     'response' => $captchaToken,
-    'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
+    'remoteip' => ($clientIp !== 'unknown' ? $clientIp : ''),
 ]);
 
 $verifyRaw = false;
@@ -125,8 +167,24 @@ if ($verifyRaw === false) {
 
 $verifyResult = json_decode($verifyRaw, true);
 if (!is_array($verifyResult) || empty($verifyResult['success'])) {
+    if (is_array($verifyResult) && !empty($verifyResult['error-codes'])) {
+        error_log('VoltGuard contact.php: Turnstile errors: ' . implode(',', (array)$verifyResult['error-codes']));
+    }
     respond(422, false, 'Güvenlik doğrulaması geçersiz. Lütfen tekrar deneyin.');
 }
+
+/* Bind the token to our hostname (defense against token reuse from another origin).
+   Only enforced when Cloudflare returns a hostname; configurable via env. */
+$expectedHost = getenv('TURNSTILE_EXPECTED_HOSTNAME') ?: 'voltguard.com.tr';
+$verifiedHost = isset($verifyResult['hostname']) ? (string)$verifyResult['hostname'] : '';
+if ($verifiedHost !== '' && $expectedHost !== ''
+    && strcasecmp($verifiedHost, $expectedHost) !== 0
+    && strcasecmp($verifiedHost, 'www.' . $expectedHost) !== 0) {
+    error_log('VoltGuard contact.php: Turnstile hostname mismatch: ' . $verifiedHost);
+    respond(422, false, 'Güvenlik doğrulaması geçersiz. Lütfen tekrar deneyin.');
+}
+
+} // end if ($captchaConfigured)
 
 $subjectMap = [
     'elektrik' => 'Elektrik Hizmetleri',
@@ -139,15 +197,16 @@ $subjectLabel = $subjectMap[$subject] ?? $subject;
 
 $safeName = str_replace(["\r", "\n"], ' ', $name);
 $safeEmail = str_replace(["\r", "\n"], '', $email);
+$safePhone = str_replace(["\r", "\n"], ' ', $phone);
 
 $mailTo = 'info@voltguard.com.tr';
 $mailSubject = 'VoltGuard İletişim Formu - ' . $subjectLabel;
 $mailBody = "Yeni iletişim formu mesajı:\n\n"
     . "Ad Soyad: {$safeName}\n"
-    . "Telefon: {$phone}\n"
+    . "Telefon: {$safePhone}\n"
     . "E-posta: " . ($safeEmail !== '' ? $safeEmail : '-') . "\n"
     . "Hizmet Alanı: {$subjectLabel}\n"
-    . "IP: " . ($_SERVER['REMOTE_ADDR'] ?? '-') . "\n"
+    . "IP: " . $clientIp . "\n"
     . "Tarih: " . date('Y-m-d H:i:s') . "\n\n"
     . "Mesaj:\n{$message}\n";
 
@@ -163,6 +222,14 @@ $mailHeaders = [
 $mailSent = @mail($mailTo, '=?UTF-8?B?' . base64_encode($mailSubject) . '?=', $mailBody, implode("\r\n", $mailHeaders));
 
 if (!$mailSent) {
+    // Persist the lead to the server log so it is recoverable if mail delivery failed.
+    error_log(sprintf(
+        'VoltGuard contact.php: mail() failed; lead not delivered. Name=%s Phone=%s Email=%s Subject=%s',
+        $safeName,
+        $safePhone,
+        ($safeEmail !== '' ? $safeEmail : '-'),
+        $subjectLabel
+    ));
     respond(500, false, 'Mesaj gönderilemedi. Lütfen telefon ile iletişime geçin.');
 }
 

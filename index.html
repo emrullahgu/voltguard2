@@ -4,26 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0a1628">
-  <meta name="color-scheme" content="light dark">
+  <meta name="color-scheme" content="light only">
   <meta name="description" content="VoltGuard – Elektrik, Otomasyon, Elektronik ve Mekanik alanlarında profesyonel mühendislik çözümleri. İzmir ve çevresi için güvenilir teknik hizmetler.">
   <meta name="keywords" content="elektrik mühendislik, PLC otomasyon, SCADA, elektronik, mekanik, SMM, enerji kalitesi, İzmir, Bayraklı, Folkart Towers, Manas Bulvarı, endüstriyel mühendislik, VoltGuard">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://assets.apollo.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https:; connect-src 'self' https://challenges.cloudflare.com https://*.apollo.io; frame-src https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests">
+  <!-- Discoverability: allow large image/snippet previews for Google rich results & AI answer engines -->
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="author" content="VoltGuard">
+  <meta name="geo.region" content="TR-35">
+  <meta name="geo.placename" content="Bayraklı, İzmir">
+  <meta name="geo.position" content="38.4622;27.1729">
+  <meta name="ICBM" content="38.4622, 27.1729">
+  <!-- Content-Security-Policy is delivered as a real HTTP response header in .htaccess
+       so that frame-ancestors is enforced and the policy applies to every response. -->
   <meta property="og:title" content="VoltGuard | Endüstriyel Mühendislik Çözümleri">
   <meta property="og:description" content="Elektrik, Otomasyon, Elektronik ve Mekanik alanlarında kapsamlı mühendislik hizmetleri.">
-  <meta property="og:url" content="https://voltguard.com.tr">
+  <meta property="og:url" content="https://voltguard.com.tr/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="tr_TR">
   <meta property="og:site_name" content="VoltGuard">
-  <meta property="og:image" content="https://voltguard.com.tr/public/logo.png">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="VoltGuard | Endüstriyel Mühendislik Çözümleri">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="VoltGuard | Endüstriyel Mühendislik Çözümleri">
   <meta name="twitter:description" content="Elektrik, Otomasyon, Elektronik ve Mekanik alanlarında kapsamlı mühendislik hizmetleri.">
-  <meta name="twitter:image" content="https://voltguard.com.tr/public/logo.png">
-  <link rel="canonical" href="https://voltguard.com.tr">
+  <meta name="twitter:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta name="twitter:image:alt" content="VoltGuard | Endüstriyel Mühendislik Çözümleri">
+  <link rel="canonical" href="https://voltguard.com.tr/">
   <title>VoltGuard | Endüstriyel Mühendislik Çözümleri</title>
-  <link rel="icon" type="image/png" href="public/logo.png">
-  <link rel="apple-touch-icon" href="public/logo.png">
+  <link rel="icon" type="image/png" href="public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="public/apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,34 +46,109 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "ProfessionalService",
-    "name": "VoltGuard",
-    "description": "Elektrik, Otomasyon, Elektronik ve Mekanik alanlarında profesyonel mühendislik çözümleri.",
-    "url": "https://voltguard.com.tr",
-    "logo": "https://voltguard.com.tr/public/logo.png",
-    "telephone": "+905454346735",
-    "email": "info@voltguard.com.tr",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Adalet Mahallesi Manas Bulvarı Folkart Towers B Kule No:39 Kat:25 Kapı No:2511",
-      "addressLocality": "Bayraklı",
-      "addressRegion": "İzmir",
-      "addressCountry": "TR"
-    },
-    "openingHoursSpecification": {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
-      "opens": "08:00",
-      "closes": "18:00"
-    },
-    "sameAs": [
-      "https://www.instagram.com/voltguard_/",
-      "https://www.linkedin.com/company/voltguard"
-    ],
-    "areaServed": { "@type": "City", "name": "İzmir" }
+    "@graph": [
+      {
+        "@type": ["Organization", "ProfessionalService"],
+        "@id": "https://voltguard.com.tr/#organization",
+        "name": "VoltGuard",
+        "legalName": "VoltGuard Mühendislik",
+        "alternateName": "VoltGuard Engineering Solutions",
+        "url": "https://voltguard.com.tr/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://voltguard.com.tr/public/icon-512.png",
+          "width": 512,
+          "height": 512
+        },
+        "image": "https://voltguard.com.tr/public/og-image.png",
+        "description": "Elektrik, otomasyon, elektronik ve mekanik alanlarında profesyonel mühendislik çözümleri sunan VoltGuard; SMM hizmetleri, trafo işletme sorumluluğu, enerji kalitesi, PLC/SCADA otomasyon ve Ar-Ge (Aktif EMI Filtre) çalışmaları yürütür.",
+        "slogan": "Endüstriyel Gücünüzü Güvenle Yönetin",
+        "telephone": "+905454346735",
+        "email": "info@voltguard.com.tr",
+        "priceRange": "₺₺",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Adalet Mahallesi Manas Bulvarı Folkart Towers B Kule No:39 Kat:25 Kapı No:2511",
+          "addressLocality": "Bayraklı",
+          "addressRegion": "İzmir",
+          "postalCode": "35530",
+          "addressCountry": "TR"
+        },
+        "geo": { "@type": "GeoCoordinates", "latitude": 38.4622, "longitude": 27.1729 },
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "08:00",
+          "closes": "18:00"
+        },
+        "areaServed": [
+          { "@type": "City", "name": "İzmir" },
+          { "@type": "Country", "name": "Türkiye" }
+        ],
+        "founder": { "@type": "Person", "name": "Emrullah Günay" },
+        "knowsAbout": [
+          "Elektrik mühendisliği",
+          "SMM (Serbest Müşavir Mühendislik)",
+          "Trafo işletme sorumluluğu",
+          "Enerji kalitesi ve harmonik analiz",
+          "Reaktif güç kompanzasyonu",
+          "Topraklama ve yıldırımdan korunma",
+          "PLC ve SCADA otomasyon",
+          "Endüstriyel elektronik ve gömülü sistemler",
+          "Aktif EMI filtre",
+          "Elektromanyetik uyumluluk (EMC)",
+          "Mekanik sistemler ve üretim hatları"
+        ],
+        "sameAs": [
+          "https://www.instagram.com/voltguard_/",
+          "https://www.linkedin.com/company/voltguard"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+905454346735",
+          "contactType": "customer service",
+          "areaServed": "TR",
+          "availableLanguage": ["Turkish"]
+        },
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "VoltGuard Hizmet Kataloğu",
+          "itemListElement": [
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Elektrik Hizmetleri", "description": "SMM, trafo işletme sorumluluğu, periyodik kontrol ve ölçüm, harmonik analiz, pano kurulumu, topraklama ve yıldırımdan korunma." } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Elektronik ve Gömülü Sistemler", "description": "Gömülü yazılım, mikrodenetleyici tabanlı sistemler, PCB tasarımı, IoT ve veri toplama çözümleri." } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Otomasyon Sistemleri", "description": "PLC yazılım, SCADA, motor ve sürücü (VFD) kontrol, uzaktan izleme ve sistem entegrasyonu." } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Mekanik Sistemler", "description": "Endüstriyel makine tasarımı, üretim hattı kurulumu, hidrolik ve pnömatik sistemler, retrofit." } }
+          ]
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://voltguard.com.tr/#website",
+        "url": "https://voltguard.com.tr/",
+        "name": "VoltGuard",
+        "inLanguage": "tr-TR",
+        "publisher": { "@id": "https://voltguard.com.tr/#organization" }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://voltguard.com.tr/#faq",
+        "mainEntity": [
+          { "@type": "Question", "name": "VoltGuard hangi hizmetleri sunuyor?", "acceptedAnswer": { "@type": "Answer", "text": "VoltGuard; elektrik (SMM, trafo işletme sorumluluğu, enerji kalitesi ve harmonik analiz, pano kurulumu, topraklama ve yıldırımdan korunma), otomasyon (PLC/SCADA), elektronik & gömülü sistemler ve mekanik sistemler alanlarında anahtar teslim mühendislik hizmetleri sunar." } },
+          { "@type": "Question", "name": "VoltGuard hangi bölgelere hizmet veriyor?", "acceptedAnswer": { "@type": "Answer", "text": "Merkezimiz İzmir Bayraklı Folkart Towers'tadır. İzmir ve çevresine saha hizmeti veriyor, proje bazlı olarak Türkiye genelinde çalışıyoruz." } },
+          { "@type": "Question", "name": "SMM (Serbest Müşavir Mühendislik) hizmeti veriyor musunuz?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. Lisanslı mühendislerimizle SMM hizmetleri ve trafo işletme sorumluluğu sağlıyoruz." } },
+          { "@type": "Question", "name": "Trafo işletme sorumluluğu ve periyodik kontrol hizmeti var mı?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. Trafo bakımı, periyodik ölçüm, enerji kalitesi analizi ve raporlama hizmetleri sunuyoruz." } },
+          { "@type": "Question", "name": "Keşif ve teklif ücretli mi?", "acceptedAnswer": { "@type": "Answer", "text": "Hayır. Teknik ihtiyacınızı değerlendirip ücretsiz danışmanlık ve teklif desteği sağlıyoruz." } },
+          { "@type": "Question", "name": "Acil arıza durumunda ne kadar sürede destek alırım?", "acceptedAnswer": { "@type": "Answer", "text": "7/24 teknik destek hattımızla acil durumlarda hızlı dönüş yapıyoruz." } },
+          { "@type": "Question", "name": "Aktif EMI Filtre projeniz nedir?", "acceptedAnswer": { "@type": "Answer", "text": "Ege Üniversitesi'nde tez projesi olarak başlayan, Roketsan ve Havelsan iş birliğinde yürütülen, savunma sanayiine yönelik elektromanyetik uyumluluk (EMC) Ar-Ge çalışmamızdır." } },
+          { "@type": "Question", "name": "VoltGuard ile nasıl iletişime geçebilirim?", "acceptedAnswer": { "@type": "Answer", "text": "0 545 434 67 35 numarasından, info@voltguard.com.tr e-posta adresinden veya sitedeki iletişim formundan bize ulaşabilirsiniz." } }
+        ]
+      }
+    ]
   }
   </script>
-  <script>function initApollo(){var n=Math.random().toString(36).substring(7),o=document.createElement("script");o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n,o.async=!0,o.defer=!0,o.onload=function(){window.trackingFunctions.onLoad({appId:"69eb7a1d94994c001d4419c6"})},document.head.appendChild(o)}initApollo();</script>
+  <!-- Apollo.io visitor tracker: DEFINED here but only loaded after explicit cookie
+       consent (see the cookie-consent logic in js/main.js). It no longer runs on load. -->
+  <script>window.vgInitApollo=function(){if(window.__vgApolloLoaded)return;window.__vgApolloLoaded=!0;var n=Math.random().toString(36).substring(7),o=document.createElement("script");o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n,o.async=!0,o.defer=!0,o.onload=function(){window.trackingFunctions&&window.trackingFunctions.onLoad({appId:"69eb7a1d94994c001d4419c6"})},document.head.appendChild(o)};</script>
 </head>
 <body>
   <a href="#anasayfa" class="skip-to-content">Ana içeriğe geç</a>
@@ -90,14 +177,14 @@
         <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
       </a>
 
-      <ul class="nav__menu" id="navMenu" role="menubar">
-        <li role="none"><a href="#anasayfa"   class="nav__link" role="menuitem">Ana Sayfa</a></li>
-        <li role="none"><a href="#projeler"   class="nav__link" role="menuitem">Projeler</a></li>
-        <li role="none"><a href="#hakkimizda" class="nav__link" role="menuitem">Hakkımızda</a></li>
-        <li role="none"><a href="#hizmetler"  class="nav__link" role="menuitem">Hizmetlerimiz</a></li>
-        <li role="none"><a href="#neden-biz"  class="nav__link" role="menuitem">Neden Biz?</a></li>
-        <li role="none"><a href="#guvenlik"   class="nav__link" role="menuitem">Güvenlik</a></li>
-        <li role="none"><a href="#iletisim"   class="nav__link" role="menuitem">İletişim</a></li>
+      <ul class="nav__menu" id="navMenu" aria-label="Ana menü">
+        <li><a href="#anasayfa"   class="nav__link">Ana Sayfa</a></li>
+        <li><a href="#projeler"   class="nav__link">Projeler</a></li>
+        <li><a href="#haberler"   class="nav__link">Haberler</a></li>
+        <li><a href="#hakkimizda" class="nav__link">Hakkımızda</a></li>
+        <li><a href="#hizmetler"  class="nav__link">Hizmetlerimiz</a></li>
+        <li><a href="bilgi-bankasi.html" class="nav__link">Bilgi Bankası</a></li>
+        <li><a href="#iletisim"   class="nav__link">İletişim</a></li>
       </ul>
 
       <a href="#iletisim" class="btn btn--accent nav__cta">
@@ -114,6 +201,8 @@
     <div class="hero__bg" aria-hidden="true">
       <img src="public/TrafoBakimYuksekGerilim.jpeg" alt="" class="hero__bg-img">
       <div class="hero__decoration"><i class="fas fa-bolt"></i></div>
+      <!-- Live energy-circuit canvas (interactive, reduced-motion aware) -->
+      <canvas id="heroCircuit" class="hero__circuit" aria-hidden="true"></canvas>
       <!-- Floating particles -->
       <div class="hero__particles" aria-hidden="true">
         <span class="particle"></span><span class="particle"></span><span class="particle"></span>
@@ -133,10 +222,10 @@
         <span class="hero__live-dot" aria-hidden="true"></span>
         2026 Proje Planlaması Açık • Hızlı Keşif ve Teklif Desteği
       </div>
-      <h1 class="hero__title">
+      <h1 class="hero__title" aria-label="Endüstriyel Gücünüzü VoltGuard ile Yönetin">
         Endüstriyel Gücünüzü<br>
-        <span class="hero__title--accent" id="heroTyping"></span>
-        <span class="hero__cursor">|</span>
+        <span class="hero__title--accent" id="heroTyping" aria-hidden="true"></span>
+        <span class="hero__cursor" aria-hidden="true">|</span>
         ile Yönetin
       </h1>
       <p class="hero__subtitle">
@@ -157,19 +246,19 @@
       <div class="container">
         <div class="hero__stats-grid">
           <div class="hero__stat">
-            <span class="hero__stat-number" data-count="4">0</span>
+            <span class="hero__stat-number" data-count="4">4</span>
             <span class="hero__stat-label">Uzmanlık Alanı</span>
           </div>
           <div class="hero__stat">
-            <span class="hero__stat-number" data-count="50" data-suffix="+">0</span>
+            <span class="hero__stat-number" data-count="50" data-suffix="+">50+</span>
             <span class="hero__stat-label">Tamamlanan Proje</span>
           </div>
           <div class="hero__stat">
-            <span class="hero__stat-number" data-count="100" data-suffix="%">0</span>
+            <span class="hero__stat-number" data-count="100" data-suffix="%">100%</span>
             <span class="hero__stat-label">Müşteri Memnuniyeti</span>
           </div>
           <div class="hero__stat">
-            <span class="hero__stat-number" data-count="7" data-suffix="/24">0</span>
+            <span class="hero__stat-number" data-count="7" data-suffix="/24">7/24</span>
             <span class="hero__stat-label">Teknik Destek</span>
           </div>
         </div>
@@ -306,6 +395,247 @@
         </a>
       </div>
 
+    </div>
+  </section>
+
+  <!-- ==================== HABERLER & GÜNCEL ==================== -->
+  <section class="news section section--gray" id="haberler">
+    <div class="container">
+
+      <div class="section__header reveal">
+        <span class="section__badge">Haberler &amp; Güncel</span>
+        <h2 class="section__title">VoltGuard'dan Haberler</h2>
+        <p class="section__desc">
+          Saha çalışmalarımız, Ar-Ge projelerimiz ve katıldığımız etkinliklerden öne çıkanlar.
+        </p>
+      </div>
+
+      <div class="news__grid">
+
+        <article class="news-card reveal" data-delay="0">
+          <div class="news-card__media">
+            <img src="public/haberler/h1.jpg" alt="VoltGuard ekibi Ege Üniversitesi Rektörü Prof. Dr. Musa Alcı ile" loading="lazy">
+            <span class="news-card__cat">Ar-Ge &amp; Savunma</span>
+          </div>
+          <div class="news-card__body">
+            <h3 class="news-card__title">Rektörümüz ile Aktif EMI Filtre İş Birliği</h3>
+            <p class="news-card__text">
+              Ege Üniversitesi Rektörü ve hocamız Prof. Dr. Musa Alcı ile bir araya gelerek, tez
+              projemiz olarak başlayan ve bugün Roketsan ile Havelsan iş birliğinde yürüttüğümüz
+              Aktif EMI Filtre çalışmamızı paylaştık. Savunma sanayiinde elektromanyetik uyumluluk
+              alanında katma değerli çözümler üretmeye devam ediyoruz.
+            </p>
+          </div>
+        </article>
+
+        <article class="news-card reveal" data-delay="1">
+          <div class="news-card__media">
+            <img src="public/haberler/h8.jpg" alt="VoltGuard, Take Off İstanbul'da Roketsan standında" loading="lazy">
+            <span class="news-card__cat">Girişimcilik</span>
+          </div>
+          <div class="news-card__body">
+            <h3 class="news-card__title">Take Off İstanbul – Roketsan Standı</h3>
+            <p class="news-card__text">
+              Take Off İstanbul sürecinde bizleri standına davet eden ROKETSAN'a teşekkür ederiz.
+              İki gün boyunca girişimimizi tanıtma, ürün vizyonumuzu aktarma ve yatırımcılarla
+              nitelikli görüşmeler gerçekleştirme fırsatı bulduk. Yüksek katma değerli teknolojiler
+              geliştirmeye devam ediyoruz.
+            </p>
+          </div>
+        </article>
+
+        <article class="news-card reveal" data-delay="2">
+          <div class="news-card__media">
+            <img src="public/haberler/h5.jpg" alt="Ege Üniversitesi Elektrik-Elektronik Mühendisliği bitirme tezi sunumları" loading="lazy">
+            <span class="news-card__cat">Etkinlik</span>
+          </div>
+          <div class="news-card__body">
+            <h3 class="news-card__title">Bitirme Tezi Sunumları</h3>
+            <p class="news-card__text">
+              Ege Üniversitesi Elektrik-Elektronik Mühendisliği Bölümü öğrencilerinin bitirme tezi
+              sunumlarına katıldık. Genç mühendis adaylarının yenilikçi fikirlerini ve projelerini
+              yakından inceleme fırsatı bulduk; üniversite-sanayi iş birliğine katkı sunmaya devam ediyoruz.
+            </p>
+          </div>
+        </article>
+
+        <article class="news-card reveal" data-delay="0">
+          <div class="news-card__media">
+            <img src="public/haberler/h6.jpg" alt="Genç Beyinler Yeni Fikirler etkinliğinde jüri üyeliği" loading="lazy">
+            <span class="news-card__cat">Etkinlik</span>
+          </div>
+          <div class="news-card__body">
+            <h3 class="news-card__title">Genç Beyinler Yeni Fikirler – Jüri Üyeliği</h3>
+            <p class="news-card__text">
+              "Genç Beyinler Yeni Fikirler" etkinliğinde hakem olarak yer aldık. Gençlerin teknoloji
+              odaklı projelerini değerlendirmek ve sektör tecrübemizle katkı sunmak bizim için
+              değerliydi. Yenilikçi fikirleri ve genç mühendisleri desteklemeye devam edeceğiz.
+            </p>
+          </div>
+        </article>
+
+        <article class="news-card reveal" data-delay="1">
+          <div class="news-card__media">
+            <img src="public/haberler/h7.jpg" alt="MÜSİAD İzmir Geleneksel Bahar ve Aile Şenliği" loading="lazy">
+            <span class="news-card__cat">Etkinlik</span>
+          </div>
+          <div class="news-card__body">
+            <h3 class="news-card__title">MÜSİAD İzmir Bahar ve Aile Şenliği</h3>
+            <p class="news-card__text">
+              MÜSİAD'ın 36. kuruluş yıl dönümü kapsamında düzenlenen MÜSİAD İzmir Geleneksel Bahar ve
+              Aile Şenliği'ne katıldık. Nazik davetleri için MÜSİAD İzmir Başkanı Sn. Gökhan Temur'a ve
+              tüm MÜSİAD İzmir ailesine teşekkür eder, nice güçlü yıllar dileriz.
+            </p>
+          </div>
+        </article>
+
+        <article class="news-card reveal" data-delay="2">
+          <div class="news-card__media">
+            <img src="public/haberler/h9.jpg" alt="KESAİD kahvaltı buluşması" loading="lazy">
+            <span class="news-card__cat">Etkinlik</span>
+          </div>
+          <div class="news-card__body">
+            <h3 class="news-card__title">KESAİD Kahvaltısı</h3>
+            <p class="news-card__text">
+              KESAİD Kahvaltısı'nda değerli iş insanları ve akademisyenlerle bir araya geldik. Nazik ev
+              sahipliği için KESAİD YK Başkanı Sn. Yeşim Işıklı'ya teşekkür ederiz. Sektörün geleceğine
+              dair fikir alışverişi yaptığımız, yeni iş birlikleri için güçlü bir zemin oluşturan verimli
+              bir buluşma oldu.
+            </p>
+          </div>
+        </article>
+
+        <article class="news-card reveal" data-delay="0">
+          <div class="news-card__media">
+            <img src="public/haberler/h11.jpg" alt="TÜDAŞ Tedarikçi Günü etkinliği" loading="lazy">
+            <span class="news-card__cat">Etkinlik</span>
+          </div>
+          <div class="news-card__body">
+            <h3 class="news-card__title">TÜDAŞ Tedarikçi Günü</h3>
+            <p class="news-card__text">
+              TÜDAŞ Tedarikçi Günü'nde yerimizi aldık. Sektör paydaşlarıyla bir araya gelerek iş birliği
+              fırsatlarını değerlendirdik ve yeni bağlantılar kurduk.
+            </p>
+          </div>
+        </article>
+
+        <article class="news-card reveal" data-delay="1">
+          <div class="news-card__media">
+            <img src="public/haberler/h2.jpg" alt="Trafo kontrolü ve arıza tespiti saha çalışması" loading="lazy">
+            <span class="news-card__cat">Saha Çalışması</span>
+          </div>
+          <div class="news-card__body">
+            <h3 class="news-card__title">Trafo Kontrolü ve Arıza Tespiti</h3>
+            <p class="news-card__text">
+              Gerçekleştirdiğimiz saha çalışmasında trafo kontrolü ve arıza tespiti süreçlerini
+              tamamladık. Sistemin çalışma durumu değerlendirildi, risk oluşturabilecek noktalar
+              belirlendi ve gerekli teknik analizler yapıldı. Enerji sürekliliği için sahada çözüm
+              üretmeye devam ediyoruz.
+            </p>
+          </div>
+        </article>
+
+        <article class="news-card reveal" data-delay="2">
+          <div class="news-card__media">
+            <img src="public/haberler/h3.jpg" alt="VoltGuard elektrik pano kurulumu" loading="lazy">
+            <span class="news-card__cat">Saha Çalışması</span>
+          </div>
+          <div class="news-card__body">
+            <h3 class="news-card__title">Pano Kurulumu Tamamlandı</h3>
+            <p class="news-card__text">
+              Tesisin ihtiyaçlarına uygun, düzenli ve güvenilir bir elektrik dağıtım yapısı kurduk.
+              Ekipman yerleşimi, kablo güzergâhları, bağlantı kontrolleri ve devreye alma adımlarını
+              titizlikle yürüttük. Amacımız enerji sürekliliğini destekleyen, uzun vadede güvenli bir
+              altyapı sunmak.
+            </p>
+          </div>
+        </article>
+
+        <article class="news-card reveal" data-delay="0">
+          <div class="news-card__media">
+            <img src="public/haberler/h4.jpg" alt="Elektrik panosu revizyon çalışması" loading="lazy">
+            <span class="news-card__cat">Saha Çalışması</span>
+          </div>
+          <div class="news-card__body">
+            <h3 class="news-card__title">Elektrik Panosu Revizyonu</h3>
+            <p class="news-card__text">
+              Gerçekleştirdiğimiz pano revize çalışmasıyla mevcut elektrik panosunu daha güvenli,
+              düzenli ve verimli bir yapıya kavuşturduk. Pano içi düzenlemeler, bağlantı kontrolleri ve
+              ekipman yerleşimleri titizlikle ele alınarak enerji altyapısının daha sağlıklı çalışmasına
+              katkı sağlandı.
+            </p>
+          </div>
+        </article>
+
+        <article class="news-card reveal" data-delay="1">
+          <div class="news-card__media">
+            <img src="public/haberler/h10.jpg" alt="Profesyonel elektriksel ölçüm hizmeti" loading="lazy">
+            <span class="news-card__cat">Hizmet</span>
+          </div>
+          <div class="news-card__body">
+            <h3 class="news-card__title">Profesyonel Ölçüm Hizmetleri</h3>
+            <p class="news-card__text">
+              Tesisinizin elektriksel ölçümleri, kalibreli cihazlar ve uzman ekibimizle profesyonel
+              şekilde gerçekleştirilir. Enerji kalitesi ve güvenli işletme için periyodik ölçüm ve
+              raporlama hizmeti sunuyoruz.
+            </p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MÜHENDİSLİK VİTRİNİ — AKTİF EMI FİLTRE DEMO ==================== -->
+  <section class="showcase section" id="emi-demo" aria-labelledby="emiDemoTitle">
+    <div class="container">
+      <div class="section__header reveal">
+        <span class="section__badge">Mühendislik Vitrini</span>
+        <h2 class="section__title" id="emiDemoTitle">Aktif EMI Filtre — Canlı Demo</h2>
+        <p class="section__desc">
+          Geliştirdiğimiz aktif EMI filtre yaklaşımını canlandıran etkileşimli bir gösterim.
+          Düğmeye basın; gürültülü sinyalin nasıl temiz bir sinüse dönüştüğünü canlı izleyin.
+        </p>
+      </div>
+
+      <div class="scope reveal">
+        <div class="scope__screen">
+          <canvas id="emiScope" aria-hidden="true"></canvas>
+          <span class="scope__tag">OSİLOSKOP · CH1</span>
+          <span class="scope__state" id="emiState">FİLTRE KAPALI</span>
+        </div>
+
+        <div class="scope__panel">
+          <div class="scope__readouts">
+            <div class="readout">
+              <span class="readout__label">Frekans</span>
+              <span class="readout__value" id="roFreq">50.0 Hz</span>
+            </div>
+            <div class="readout">
+              <span class="readout__label">Gerilim</span>
+              <span class="readout__value" id="roVolt">230 V</span>
+            </div>
+            <div class="readout">
+              <span class="readout__label">THD (Bozulma)</span>
+              <span class="readout__value readout__value--bad" id="roThd">38.5 %</span>
+            </div>
+            <div class="readout">
+              <span class="readout__label">Güç Faktörü</span>
+              <span class="readout__value readout__value--bad" id="roPf">0.82</span>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn--accent btn--md scope__toggle" id="emiToggle" aria-pressed="false">
+            <i class="fas fa-power-off" aria-hidden="true"></i>
+            <span class="scope__toggle-text">Filtreyi Aç</span>
+          </button>
+
+          <p class="scope__hint">
+            Filtre kapalıyken sinyalde harmonik bozulma ve yüksek THD görülür; filtre açıldığında dalga formu
+            temiz bir sinüse döner, güç faktörü iyileşir.
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -464,6 +794,38 @@
     </div>
   </section>
 
+  <!-- ==================== KATALOG ==================== -->
+  <section class="catalog section" id="katalog" aria-label="Kurumsal katalog">
+    <div class="container">
+      <div class="catalog__inner reveal">
+        <div class="catalog__media">
+          <a class="catalog__doc" href="public/voltguard-katalog.pdf" target="_blank" rel="noopener" aria-label="VoltGuard kurumsal kataloğunu yeni sekmede aç">
+            <i class="fas fa-file-pdf" aria-hidden="true"></i>
+            <span class="catalog__doc-label">VoltGuard<br>Kurumsal Katalog</span>
+            <span class="catalog__doc-badge">PDF</span>
+          </a>
+        </div>
+        <div class="catalog__content">
+          <span class="section__badge">Kataloğumuz</span>
+          <h2 class="section__title">Hizmet ve Çözümlerimizi Yakından İnceleyin</h2>
+          <p class="catalog__text">
+            Elektrik, otomasyon, elektronik ve mekanik alanlarındaki hizmetlerimizi, mühendislik
+            yaklaşımımızı ve referans çalışmalarımızı bir arada bulabileceğiniz kurumsal kataloğumuzu
+            görüntüleyebilir veya indirebilirsiniz.
+          </p>
+          <div class="catalog__actions">
+            <a href="public/voltguard-katalog.pdf" class="btn btn--accent btn--md" target="_blank" rel="noopener">
+              <i class="fas fa-eye"></i> Kataloğu Görüntüle
+            </a>
+            <a href="public/voltguard-katalog.pdf" class="btn btn--outline-white btn--md" download>
+              <i class="fas fa-download"></i> PDF İndir
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ==================== ÇALIŞMA SÜRECİMİZ ==================== -->
   <section class="process section" id="surec">
     <div class="container">
@@ -559,7 +921,7 @@
   <section class="trust section section--gray" aria-label="Güven göstergeleri">
     <div class="container">
       <div class="trust__inner reveal">
-        <h3 class="trust__title">Sektörde Güvenilir Çözüm Ortağınız</h3>
+        <h2 class="trust__title">Sektörde Güvenilir Çözüm Ortağınız</h2>
         <div class="trust__badges">
           <div class="trust__badge">
             <i class="fas fa-certificate"></i>
@@ -632,6 +994,68 @@
         <span class="security__pill"><i class="fas fa-lock"></i> SSL Aktif</span>
         <span class="security__pill"><i class="fas fa-shield-halved"></i> Güvenlik Kontrol Listesi</span>
         <span class="security__pill"><i class="fas fa-history"></i> İzlenebilir Operasyon Kayıtları</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SSS / FAQ ==================== -->
+  <section class="faq section section--gray" id="sss" aria-label="Sık sorulan sorular">
+    <div class="container">
+      <div class="section__header reveal">
+        <span class="section__badge">SSS</span>
+        <h2 class="section__title">Sık Sorulan Sorular</h2>
+        <p class="section__desc">VoltGuard hizmetleri hakkında en çok merak edilenler.</p>
+      </div>
+
+      <div class="faq__list reveal">
+        <details class="faq-item">
+          <summary class="faq-item__q">VoltGuard hangi hizmetleri sunuyor? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+          <div class="faq-item__a">
+            <p>VoltGuard; elektrik (SMM, trafo işletme sorumluluğu, enerji kalitesi ve harmonik analiz, pano kurulumu, topraklama ve yıldırımdan korunma), otomasyon (PLC/SCADA), elektronik &amp; gömülü sistemler ve mekanik sistemler alanlarında anahtar teslim mühendislik hizmetleri sunar.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-item__q">VoltGuard hangi bölgelere hizmet veriyor? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+          <div class="faq-item__a">
+            <p>Merkezimiz İzmir Bayraklı Folkart Towers'tadır. İzmir ve çevresine saha hizmeti veriyor, proje bazlı olarak Türkiye genelinde çalışıyoruz.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-item__q">SMM (Serbest Müşavir Mühendislik) hizmeti veriyor musunuz? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+          <div class="faq-item__a">
+            <p>Evet. Lisanslı mühendislerimizle SMM hizmetleri ve trafo işletme sorumluluğu sağlıyoruz.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-item__q">Trafo işletme sorumluluğu ve periyodik kontrol hizmeti var mı? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+          <div class="faq-item__a">
+            <p>Evet. Trafo bakımı, periyodik ölçüm, enerji kalitesi analizi ve raporlama hizmetleri sunuyoruz.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-item__q">Keşif ve teklif ücretli mi? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+          <div class="faq-item__a">
+            <p>Hayır. Teknik ihtiyacınızı değerlendirip ücretsiz danışmanlık ve teklif desteği sağlıyoruz.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-item__q">Acil arıza durumunda ne kadar sürede destek alırım? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+          <div class="faq-item__a">
+            <p>7/24 teknik destek hattımızla acil durumlarda hızlı dönüş yapıyoruz.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-item__q">Aktif EMI Filtre projeniz nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+          <div class="faq-item__a">
+            <p>Ege Üniversitesi'nde tez projesi olarak başlayan, Roketsan ve Havelsan iş birliğinde yürütülen, savunma sanayiine yönelik elektromanyetik uyumluluk (EMC) Ar-Ge çalışmamızdır.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-item__q">VoltGuard ile nasıl iletişime geçebilirim? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+          <div class="faq-item__a">
+            <p>0 545 434 67 35 numarasından, info@voltguard.com.tr e-posta adresinden veya sitedeki iletişim formundan bize ulaşabilirsiniz.</p>
+          </div>
+        </details>
       </div>
     </div>
   </section>
@@ -778,7 +1202,7 @@
 
             <div class="form__consent">
               <input type="checkbox" id="consent" name="consent" required>
-              <label for="consent">KVKK kapsamında bilgilerimin iletişim amacıyla işlenmesini onaylıyorum.</label>
+              <label for="consent"><a href="gizlilik.html" target="_blank" rel="noopener">KVKK</a> kapsamında bilgilerimin iletişim amacıyla işlenmesini onaylıyorum.</label>
             </div>
 
             <div class="form__captcha">
@@ -849,9 +1273,16 @@
             <li><a href="#anasayfa">Ana Sayfa</a></li>
             <li><a href="#hakkimizda">Hakkımızda</a></li>
             <li><a href="#hizmetler">Hizmetlerimiz</a></li>
+            <li><a href="#surec">Sürecimiz</a></li>
             <li><a href="#neden-biz">Neden Biz?</a></li>
             <li><a href="#guvenlik">Güvenlik</a></li>
             <li><a href="#projeler">Projeler</a></li>
+            <li><a href="#haberler">Haberler</a></li>
+            <li><a href="#emi-demo">Canlı Demo</a></li>
+            <li><a href="#katalog">Katalog</a></li>
+            <li><a href="#sss">SSS</a></li>
+            <li><a href="bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
             <li><a href="#iletisim">İletişim</a></li>
           </ul>
         </div>
@@ -883,7 +1314,7 @@
       </div>
 
       <div class="footer__bottom">
-        <p>&copy; <span id="year"></span> VoltGuard. Tüm hakları saklıdır.</p>
+        <p>&copy; <span id="year"></span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
         <div class="footer__social">
           <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
           <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
@@ -968,6 +1399,21 @@
     <a href="#iletisim" class="mobile-cta__btn mobile-cta__btn--form">
       <i class="fas fa-paper-plane"></i> Teklif Al
     </a>
+  </div>
+
+  <!-- ==================== ÇEREZ ONAYI (Cookie Consent) ==================== -->
+  <div class="cookie-consent" id="cookieConsent" role="dialog" aria-live="polite" aria-label="Çerez tercihi" hidden>
+    <div class="cookie-consent__body">
+      <p class="cookie-consent__text">
+        Bu site, zorunlu çerezlerin yanı sıra <strong>onayınıza bağlı olarak</strong> ziyaretçi analitiği
+        (Apollo.io) kullanır. Tercihinizi dilediğiniz zaman değiştirebilirsiniz.
+        Ayrıntılar: <a href="gizlilik.html" target="_blank" rel="noopener">Gizlilik &amp; Çerez Politikası</a>.
+      </p>
+      <div class="cookie-consent__actions">
+        <button type="button" class="cookie-consent__btn cookie-consent__btn--reject" id="cookieReject">Reddet</button>
+        <button type="button" class="cookie-consent__btn cookie-consent__btn--accept" id="cookieAccept">Kabul Et</button>
+      </div>
+    </div>
   </div>
 
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>

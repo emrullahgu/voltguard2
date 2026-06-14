@@ -1,0 +1,52 @@
+# VoltGuard
+
+> VoltGuard, İzmir merkezli; elektrik, otomasyon, elektronik ve mekanik alanlarında profesyonel mühendislik çözümleri sunan bir mühendislik firmasıdır. SMM hizmetleri, trafo işletme sorumluluğu, enerji kalitesi, PLC/SCADA otomasyon ve savunma sanayiine yönelik Aktif EMI Filtre Ar-Ge çalışmaları yürütür.
+
+VoltGuard (VoltGuard Engineering Solutions), Ege Üniversitesi kökenli genç bir mühendislik girişimidir. Kurucularından biri Emrullah Günay'dır. Aktif EMI Filtre projesi, savunma sanayii için Roketsan ve Havelsan iş birliğinde geliştirilmektedir.
+
+- **Konum:** Adalet Mahallesi Manas Bulvarı, Folkart Towers B Kule No:39 Kat:25, Bayraklı / İzmir, Türkiye
+- **Hizmet bölgesi:** İzmir ve çevresi; proje bazlı olarak Türkiye geneli
+- **Telefon:** +90 545 434 67 35
+- **E-posta:** info@voltguard.com.tr
+- **Çalışma saatleri:** Hafta içi 08:00–18:00; acil teknik destek 7/24
+
+## Hizmetler
+- **Elektrik:** SMM (Serbest Müşavir Mühendislik), trafo işletme sorumluluğu, periyodik kontrol ve ölçüm, harmonik analiz ve filtreleme, enerji kalitesi raporlama, pano kurulumu ve revizyonu, topraklama ve yıldırımdan korunma sistemleri.
+- **Elektronik & Gömülü Sistemler:** gömülü yazılım, mikrodenetleyici tabanlı sistemler (STM, PIC, Arduino), özel PCB tasarımı, IoT, veri toplama ve izleme sistemleri.
+- **Otomasyon:** PLC yazılım geliştirme (Siemens, Schneider), SCADA kurulumu, motor ve sürücü (VFD) kontrol, uzaktan izleme, sistem entegrasyonu ve devreye alma.
+- **Mekanik:** endüstriyel makine tasarımı ve imalatı, üretim hattı kurulumu, konveyör sistemleri, hidrolik/pnömatik çözümler, makine modernizasyonu (retrofit).
+
+## Ar-Ge
+- **Aktif EMI Filtre:** Savunma sanayiine yönelik elektromanyetik uyumluluk (EMC) çözümü. Ege Üniversitesi'nde tez projesi olarak başladı; Roketsan ve Havelsan iş birliğinde geliştiriliyor.
+
+## Bağlantılar
+- [Ana sayfa](https://voltguard.com.tr/)
+- [Hizmetlerimiz](https://voltguard.com.tr/#hizmetler)
+- [Sık Sorulan Sorular (SSS)](https://voltguard.com.tr/#sss)
+- [Haberler & Güncel](https://voltguard.com.tr/#haberler)
+- [Projeler & Referanslar](https://voltguard.com.tr/#projeler)
+- [Kurumsal Katalog (PDF)](https://voltguard.com.tr/public/voltguard-katalog.pdf)
+- [Gizlilik ve Çerez Politikası](https://voltguard.com.tr/gizlilik.html)
+- [İletişim](https://voltguard.com.tr/#iletisim)
+
+## Bilgi Bankası (uzman rehber içerikler)
+VoltGuard mühendislerinin hazırladığı, mevzuata dayalı özgün rehberler:
+- [Bilgi Bankası (tüm konular)](https://voltguard.com.tr/bilgi-bankasi.html)
+- [Mevzuat & Standartlar Kütüphanesi (40+ belge özeti)](https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html)
+- [Topraklama Tesisatı ve Periyodik Kontrolü](https://voltguard.com.tr/bilgi/topraklama.html)
+- [Yıldırımdan Korunma (Paratoner) Sistemleri](https://voltguard.com.tr/bilgi/yildirimdan-korunma.html)
+- [Yüksek Gerilim Tesisleri İşletme Sorumluluğu](https://voltguard.com.tr/bilgi/yuksek-gerilim-isletme-sorumlulugu.html)
+- [Transformatör (Trafo) Periyodik Bakımı](https://voltguard.com.tr/bilgi/trafo-periyodik-bakim.html)
+- [Reaktif Güç Kompanzasyonu ve Harmonikler](https://voltguard.com.tr/bilgi/reaktif-guc-kompanzasyonu.html)
+- [Elektrik Tesisatı Periyodik Kontrolü](https://voltguard.com.tr/bilgi/elektrik-tesisati-periyodik-kontrol.html)
+- [SMM (Serbest Müşavir Mühendislik) Nedir?](https://voltguard.com.tr/bilgi/smm-serbest-musavir-muhendislik.html)
+- [Elektrik İç Tesis Projelendirme](https://voltguard.com.tr/bilgi/elektrik-ic-tesis-projelendirme.html)
+- [Elektrik Kuvvetli Akım Tesisleri](https://voltguard.com.tr/bilgi/kuvvetli-akim-tesisleri.html)
+- [Yangın Algılama ve Uyarı Sistemleri](https://voltguard.com.tr/bilgi/yangin-algilama-uyari-sistemleri.html)
+- [Enerjisiz Çalışma ve Elektrikte İş Güvenliği](https://voltguard.com.tr/bilgi/enerjisiz-calisma-is-guvenligi.html)
+- [SCADA Sistemleri ve IEC 61850](https://voltguard.com.tr/bilgi/scada-iec-61850.html)
+- [Elektrik Tesisat Standartları: TS HD 60364](https://voltguard.com.tr/bilgi/ts-hd-60364-tesisat-standartlari.html)
+- [Lisanssız Elektrik Üretimi ve GES](https://voltguard.com.tr/bilgi/lisanssiz-uretim-ges.html)
+
+## İletişim
+Teklif ve teknik danışmanlık için: +90 545 434 67 35 · info@voltguard.com.tr · https://voltguard.com.tr/

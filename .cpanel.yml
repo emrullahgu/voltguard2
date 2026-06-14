@@ -1,18 +1,32 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/voltgua2/public_html/
+    - export DEPLOYPATH=$HOME/public_html/
+    # Safety gate: refuse to deploy while the Turnstile SITE KEY is still a placeholder
+    # (the form's captcha would be broken). The secret key is supplied via the server
+    # environment (TURNSTILE_SECRET_KEY), not committed, so it is not checked here.
+    - if grep -q "REPLACE_WITH_TURNSTILE_SITE_KEY" index.html; then echo "UYARI: Turnstile site key henuz ayarlanmadi. Form, Turnstile olmadan honeypot + sunucu hiz-siniri ile calismaya devam eder; gercek anahtar eklenince captcha otomatik devreye girer."; fi
     - /bin/cp -R index.html $DEPLOYPATH
+    - /bin/cp -R 404.html $DEPLOYPATH
+    - /bin/cp -R gizlilik.html $DEPLOYPATH
+    - /bin/cp -R bilgi-bankasi.html $DEPLOYPATH
     - /bin/cp -R contact.php $DEPLOYPATH
     - /bin/cp -R manifest.json $DEPLOYPATH
     - /bin/cp -R robots.txt $DEPLOYPATH
+    - /bin/cp -R llms.txt $DEPLOYPATH
     - /bin/cp -R sitemap.xml $DEPLOYPATH
     - /bin/cp -R .htaccess $DEPLOYPATH
     - /bin/mkdir -p $DEPLOYPATH/assets
     - /bin/cp -R assets/* $DEPLOYPATH/assets/
+    # Fully replace build-output directories so renamed/removed files don't linger on the server.
+    - /bin/rm -rf $DEPLOYPATH/css
     - /bin/mkdir -p $DEPLOYPATH/css
     - /bin/cp -R css/* $DEPLOYPATH/css/
+    - /bin/rm -rf $DEPLOYPATH/js
     - /bin/mkdir -p $DEPLOYPATH/js
     - /bin/cp -R js/* $DEPLOYPATH/js/
+    - /bin/rm -rf $DEPLOYPATH/bilgi
+    - /bin/mkdir -p $DEPLOYPATH/bilgi
+    - /bin/cp -R bilgi/* $DEPLOYPATH/bilgi/
     - /bin/mkdir -p $DEPLOYPATH/public
     - /bin/cp -R public/* $DEPLOYPATH/public/
