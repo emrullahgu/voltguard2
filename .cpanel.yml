@@ -1,11 +1,12 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=$HOME/public_html/
-    # Safety gate: refuse to deploy while the Turnstile SITE KEY is still a placeholder
-    # (the form's captcha would be broken). The secret key is supplied via the server
-    # environment (TURNSTILE_SECRET_KEY), not committed, so it is not checked here.
-    - if grep -q "REPLACE_WITH_TURNSTILE_SITE_KEY" index.html; then echo "UYARI: Turnstile site key henuz ayarlanmadi. Form, Turnstile olmadan honeypot + sunucu hiz-siniri ile calismaya devam eder; gercek anahtar eklenince captcha otomatik devreye girer."; fi
+    # Deploy hedefi - birincil alan adi kok dizini (cPanel kullanici voltgua2).
+    # ONEMLI - cPanel deploy gorev listesi YAML olarak ayristirilir; bir gorev
+    # satirinda iki-nokta+bosluk iceren komut (eski Turnstile echo uyarisi gibi)
+    # ayristirmayi bozar ve deploy'u sessizce durdururdu. O satir kaldirildi;
+    # zaten deploy'u durdurmuyor yalnizca log yaziyordu. Turnstile anahtari ayrica set edilir.
+    - export DEPLOYPATH=/home/voltgua2/public_html/
     - /bin/cp -R index.html $DEPLOYPATH
     - /bin/cp -R 404.html $DEPLOYPATH
     - /bin/cp -R gizlilik.html $DEPLOYPATH
