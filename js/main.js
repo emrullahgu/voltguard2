@@ -152,19 +152,33 @@
   var navToggle = qs('#navToggle');
   var navMenu   = qs('#navMenu');
 
+  /* Keep the off-screen mobile menu out of the tab order / a11y tree when closed.
+     On desktop the menu is always visible, so it must stay interactive. */
+  function syncMenuInert() {
+    if (!navMenu) return;
+    navMenu.inert = desktopMQ.matches ? false : !navMenu.classList.contains('open');
+  }
+
   function closeMenu() {
     navToggle.classList.remove('open');
     navMenu.classList.remove('open');
     navToggle.setAttribute('aria-expanded', 'false');
+    syncMenuInert();
   }
 
   function openMenu() {
     navToggle.classList.add('open');
     navMenu.classList.add('open');
     navToggle.setAttribute('aria-expanded', 'true');
+    syncMenuInert();
   }
 
   if (navToggle && navMenu) {
+    syncMenuInert();
+    if (desktopMQ.addEventListener) {
+      desktopMQ.addEventListener('change', syncMenuInert);
+    }
+
     navToggle.addEventListener('click', function () {
       if (navMenu.classList.contains('open')) {
         closeMenu();
@@ -206,20 +220,19 @@
 
   function updateActiveNav() {
     var scrollY = window.scrollY + 100;
+    var currentId = null;
 
     sections.forEach(function (section) {
       var top    = section.offsetTop;
       var height = section.offsetHeight;
-      var id     = section.getAttribute('id');
-
       if (scrollY >= top && scrollY < top + height) {
-        navLinks.forEach(function (link) {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === '#' + id) {
-            link.classList.add('active');
-          }
-        });
+        currentId = section.getAttribute('id');
       }
+    });
+
+    /* Hiçbir bölüm eşleşmezse (sayfa başı/footer) tüm bağlantılar pasifleşir. */
+    navLinks.forEach(function (link) {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + currentId);
     });
   }
 
@@ -331,12 +344,14 @@
   function clearInvalidState(form) {
     qsAll('.is-invalid', form).forEach(function (el) {
       el.classList.remove('is-invalid');
+      el.removeAttribute('aria-invalid');
     });
   }
 
   function markInvalid(el) {
     if (!el) return;
     el.classList.add('is-invalid');
+    el.setAttribute('aria-invalid', 'true');
   }
 
   function isValidTrMobile(phone) {
@@ -391,6 +406,10 @@
 
     if (timestampField) {
       timestampField.value = String(Date.now());
+      /* bfcache (geri/ileri) ile dönüldüğünde damgayı tazele ki sunucu doğrulaması tutarlı kalsın. */
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted) { timestampField.value = String(Date.now()); }
+      });
     }
 
     if (messageField) {
@@ -402,13 +421,26 @@
     var phoneInput = qs('#phone', contactForm);
     if (phoneInput) {
       phoneInput.addEventListener('input', function () {
+        var hasPlus = /^\s*\+/.test(this.value);
         var digits = this.value.replace(/\D/g, '');
-        if (digits.length > 11) digits = digits.slice(0, 11);
-        var formatted = '';
-        if (digits.length > 0) formatted = digits.slice(0, 4);
-        if (digits.length > 4) formatted += ' ' + digits.slice(4, 7);
-        if (digits.length > 7) formatted += ' ' + digits.slice(7, 9);
-        if (digits.length > 9) formatted += ' ' + digits.slice(9, 11);
+        var formatted;
+        if (digits.slice(0, 2) === '90') {
+          /* Uluslararası 90… biçimi: 12 haneye kadar koru (validator/sunucu kabul ediyor). */
+          digits = digits.slice(0, 12);
+          formatted = (hasPlus ? '+' : '') + digits.slice(0, 2);
+          if (digits.length > 2) formatted += ' ' + digits.slice(2, 5);
+          if (digits.length > 5) formatted += ' ' + digits.slice(5, 8);
+          if (digits.length > 8) formatted += ' ' + digits.slice(8, 10);
+          if (digits.length > 10) formatted += ' ' + digits.slice(10, 12);
+        } else {
+          /* Yerel 05XX… biçimi. */
+          if (digits.length > 11) digits = digits.slice(0, 11);
+          formatted = '';
+          if (digits.length > 0) formatted = digits.slice(0, 4);
+          if (digits.length > 4) formatted += ' ' + digits.slice(4, 7);
+          if (digits.length > 7) formatted += ' ' + digits.slice(7, 9);
+          if (digits.length > 9) formatted += ' ' + digits.slice(9, 11);
+        }
         this.value = formatted;
       });
     }
@@ -451,14 +483,9 @@
         return;
       }
 
-      /* Bots often submit too quickly after page load */
-      if (timestampField) {
-        var startedAt = parseInt(timestampField.value || '0', 10);
-        if (!startedAt || now - startedAt < 2500) {
-          showNotification('Lütfen formu dikkatlice doldurup tekrar deneyin.', 'error');
-          return;
-        }
-      }
+      /* Not: "çok hızlı gönderim" sezgiseli kaldırıldı — sunucu (contact.php) da bunu
+         uygulamıyor ve saati ileri olan cihazlarda meşru kullanıcıları yanlışlıkla
+         engelliyordu. Bot savunması honeypot + cooldown + sunucu rate-limit + Turnstile. */
 
       var hasError = false;
 
@@ -562,6 +589,9 @@
 
     var el = document.createElement('div');
     el.className = 'vg-notification';
+    /* Announce to screen readers: errors assertively, success politely. */
+    el.setAttribute('role', type === 'success' ? 'status' : 'alert');
+    el.setAttribute('aria-live', type === 'success' ? 'polite' : 'assertive');
 
     var icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
     var bg   = type === 'success' ? '#10b981' : '#ef4444';
@@ -626,6 +656,8 @@
 
   function typeLoop() {
     if (!typingEl) return;
+    /* Oturum sırasında "hareketi azalt" açılırsa animasyonu durdur, metni sabitle. */
+    if (prefersReducedMotion) { typingEl.textContent = typingWords[wordIndex]; return; }
     var currentWord = typingWords[wordIndex];
 
     if (isDeleting) {
@@ -863,6 +895,7 @@
     function kick() { resize(); if (prefersReducedMotion) frame(); else start(); }
 
     window.addEventListener('mousemove', function (e) {
+      if (!inView || prefersReducedMotion) return; /* görüş dışında gereksiz layout okuması yapma */
       var r = canvas.getBoundingClientRect();
       mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
     }, { passive: true });
@@ -1052,5 +1085,14 @@
       }
     }
   })();
+
+  /* ------------------------------------------------
+     17. SERVICE WORKER — offline destek (ağ-öncelikli, bayat içerik servis etmez)
+  ------------------------------------------------- */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js').catch(function () { /* no-op */ });
+    });
+  }
 
 })();

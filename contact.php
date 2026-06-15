@@ -18,8 +18,51 @@ function respond(int $statusCode, bool $success, string $message): void
     exit;
 }
 
+/* IPv4/IPv6 CIDR eşleşmesi (inet_pton + bit maskesi). */
+function vg_ip_in_cidr(string $ip, string $cidr): bool
+{
+    if (strpos($cidr, '/') === false) {
+        return false;
+    }
+    [$subnet, $bits] = explode('/', $cidr, 2);
+    $bits = (int)$bits;
+    $ipBin = @inet_pton($ip);
+    $subBin = @inet_pton($subnet);
+    if ($ipBin === false || $subBin === false || strlen($ipBin) !== strlen($subBin)) {
+        return false;
+    }
+    $bytes = intdiv($bits, 8);
+    $rem = $bits % 8;
+    if ($bytes > 0 && strncmp($ipBin, $subBin, $bytes) !== 0) {
+        return false;
+    }
+    if ($rem === 0) {
+        return true;
+    }
+    $mask = 0xff << (8 - $rem) & 0xff;
+    return (ord($ipBin[$bytes]) & $mask) === (ord($subBin[$bytes]) & $mask);
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     respond(405, false, 'Method not allowed.');
+}
+
+/* Cross-origin POST koruması (defense-in-depth): Origin/Referer mevcutsa host eşleşmeli.
+   Hiç gönderilmediğinde (eski tarayıcı/privacy) reddetme — yalnızca yanlış host'u reddet. */
+$allowedHosts = ['voltguard.com.tr', 'www.voltguard.com.tr'];
+$reqOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$refHost = $reqOrigin !== ''
+    ? parse_url($reqOrigin, PHP_URL_HOST)
+    : parse_url((string)($_SERVER['HTTP_REFERER'] ?? ''), PHP_URL_HOST);
+if (is_string($refHost) && $refHost !== '' && !in_array(strtolower($refHost), $allowedHosts, true)) {
+    respond(403, false, 'Geçersiz istek kaynağı.');
+}
+
+/* İstek gövdesi boyutu üst sınırı. post_max_size aşıldığında $_POST boş gelir;
+   bunu ayrıca yakalayıp yanıltıcı "zorunlu alan" hatası yerine net mesaj döneriz. */
+$contentLength = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
+if ($contentLength > 32768 || (empty($_POST) && $contentLength > 0)) {
+    respond(413, false, 'İstek çok büyük.');
 }
 
 $turnstileSecret = getenv('TURNSTILE_SECRET_KEY') ?: 'REPLACE_WITH_TURNSTILE_SECRET_KEY';
@@ -35,18 +78,47 @@ if (!$captchaConfigured) {
 /* --- Basic per-IP rate limiting (file-based, best-effort) --- */
 $rateLimitMax = 5;          // allowed submissions
 $rateLimitWindow = 600;     // per 10 minutes (seconds)
-// Prefer the real client IP when the site is proxied (e.g. Cloudflare), so the
-// rate-limit bucket is per-visitor rather than per-proxy.
-$clientIp = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+// CF-Connecting-IP başlığına YALNIZCA istek gerçek bir Cloudflare IP aralığından
+// geliyorsa güven; aksi halde başlık istemci tarafından sahte gönderilip rate-limit
+// kovası ve Turnstile remoteip atlatılabilir. Liste: https://www.cloudflare.com/ips/
+$cfRanges = [
+    '173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22',
+    '141.101.64.0/18', '108.162.192.0/18', '190.93.240.0/20', '188.114.96.0/20',
+    '197.234.240.0/22', '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/13',
+    '104.24.0.0/14', '172.64.0.0/13', '131.0.72.0/22',
+    '2400:cb00::/32', '2606:4700::/32', '2803:f800::/32', '2405:b500::/32',
+    '2405:8100::/32', '2a06:98c0::/29', '2c0f:f248::/32',
+];
+$remoteAddr = $_SERVER['REMOTE_ADDR'] ?? '';
+$cfHeaderIp = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? '';
+$isFromCloudflare = false;
+if ($remoteAddr !== '') {
+    foreach ($cfRanges as $range) {
+        if (vg_ip_in_cidr($remoteAddr, $range)) {
+            $isFromCloudflare = true;
+            break;
+        }
+    }
+}
+if ($isFromCloudflare && $cfHeaderIp !== '' && filter_var($cfHeaderIp, FILTER_VALIDATE_IP)) {
+    $clientIp = $cfHeaderIp;
+} elseif ($remoteAddr !== '') {
+    $clientIp = $remoteAddr;
+} else {
+    $clientIp = 'unknown';
+}
 $rateDir = sys_get_temp_dir() . '/vg_rate';
 if (!is_dir($rateDir)) {
     @mkdir($rateDir, 0700, true);
 }
 $rateFile = $rateDir . '/' . hash('sha256', $clientIp);
 $nowTs = time();
-$hits = [];
-if (is_file($rateFile)) {
-    $rawHits = @file_get_contents($rateFile);
+// Tek tutamaç üzerinde flock ile atomik oku-değiştir-yaz: eşzamanlı isteklerin
+// aynı eski sayacı okuyup limiti aşmasını (TOCTOU) engeller.
+$rateFp = @fopen($rateFile, 'c+');
+if ($rateFp !== false && flock($rateFp, LOCK_EX)) {
+    $rawHits = stream_get_contents($rateFp);
+    $hits = [];
     if (is_string($rawHits) && $rawHits !== '') {
         $decodedHits = json_decode($rawHits, true);
         if (is_array($decodedHits)) {
@@ -55,12 +127,19 @@ if (is_file($rateFile)) {
             }));
         }
     }
+    if (count($hits) >= $rateLimitMax) {
+        flock($rateFp, LOCK_UN);
+        fclose($rateFp);
+        respond(429, false, 'Çok fazla deneme yaptınız. Lütfen birkaç dakika sonra tekrar deneyin.');
+    }
+    $hits[] = $nowTs;
+    rewind($rateFp);
+    ftruncate($rateFp, 0);
+    fwrite($rateFp, json_encode($hits));
+    fflush($rateFp);
+    flock($rateFp, LOCK_UN);
+    fclose($rateFp);
 }
-if (count($hits) >= $rateLimitMax) {
-    respond(429, false, 'Çok fazla deneme yaptınız. Lütfen birkaç dakika sonra tekrar deneyin.');
-}
-$hits[] = $nowTs;
-@file_put_contents($rateFile, json_encode($hits), LOCK_EX);
 
 $name = trim((string)($_POST['name'] ?? ''));
 $phone = trim((string)($_POST['phone'] ?? ''));
@@ -80,8 +159,12 @@ if ($name === '' || $phone === '' || $subject === '' || $message === '') {
     respond(422, false, 'Lütfen zorunlu alanları doldurun.');
 }
 
-if (mb_strlen($name) > 100) {
-    respond(422, false, 'Ad soyad çok uzun.');
+if (mb_strlen($name) < 2 || mb_strlen($name) > 100) {
+    respond(422, false, 'Lütfen geçerli bir ad soyad giriniz.');
+}
+
+if (mb_strlen($phone) > 32) {
+    respond(422, false, 'Geçerli bir telefon numarası giriniz.');
 }
 
 $allowedSubjects = ['elektrik', 'elektronik', 'otomasyon', 'mekanik', 'diger'];
@@ -195,9 +278,15 @@ $subjectMap = [
 ];
 $subjectLabel = $subjectMap[$subject] ?? $subject;
 
-$safeName = str_replace(["\r", "\n"], ' ', $name);
-$safeEmail = str_replace(["\r", "\n"], '', $email);
-$safePhone = str_replace(["\r", "\n"], ' ', $phone);
+// CRLF + diğer kontrol karakterlerini temizle (mail gövdesi/başlık ve log hijyeni).
+$cleanCtrl = static function (string $v): string {
+    // Bayt düzeyinde (u bayrağı yok): kontrol baytları ASCII tek bayttır, çok baytlı
+    // UTF-8 dizilerini (>=0x80) etkilemez; geçersiz UTF-8'de veri kaybı riski olmaz.
+    return (string)preg_replace('/[\x00-\x1F\x7F]/', ' ', $v);
+};
+$safeName = $cleanCtrl($name);
+$safeEmail = str_replace(["\r", "\n", "\t"], '', $email);
+$safePhone = $cleanCtrl($phone);
 
 $mailTo = 'info@voltguard.com.tr';
 $mailSubject = 'VoltGuard İletişim Formu - ' . $subjectLabel;
@@ -223,12 +312,14 @@ $mailSent = @mail($mailTo, '=?UTF-8?B?' . base64_encode($mailSubject) . '?=', $m
 
 if (!$mailSent) {
     // Persist the lead to the server log so it is recoverable if mail delivery failed.
+    // Mesaj gövdesini de logla ki mail teslimi başarısız olsa bile lead kurtarılabilsin.
     error_log(sprintf(
-        'VoltGuard contact.php: mail() failed; lead not delivered. Name=%s Phone=%s Email=%s Subject=%s',
+        'VoltGuard contact.php: mail() failed; lead not delivered. Name=%s Phone=%s Email=%s Subject=%s Message=%.500s',
         $safeName,
         $safePhone,
         ($safeEmail !== '' ? $safeEmail : '-'),
-        $subjectLabel
+        $subjectLabel,
+        $cleanCtrl($message)
     ));
     respond(500, false, 'Mesaj gönderilemedi. Lütfen telefon ile iletişime geçin.');
 }

@@ -3,6 +3,15 @@
    Endüstriyel Mühendislik Çözümleri
    ===================================================== */
 
+/* Sayfalar arası yumuşak geçiş (Chrome 126+ cross-document view transitions;
+   desteklemeyen tarayıcılar sessizce yok sayar). Ana sayfa ↔ bilgi bankası
+   gezinmesini "tam sayfa sıçraması" yerine zarif bir geçişe dönüştürür. */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}
+
 /* =====================================================
    CSS CUSTOM PROPERTIES
    ===================================================== */
@@ -171,7 +180,7 @@ button {
   align-items: center;
   gap: .4rem;
   background-color: rgba(245,158,11,.1);
-  color: var(--clr-accent-dark);
+  color: var(--clr-accent-text);
   font-family: var(--font-heading);
   font-size: .78rem;
   font-weight: 600;
@@ -530,7 +539,11 @@ img.img-error {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0;
+  /* Visible bars stay 28x20, but padding+negative margin grow the touch
+     target to ~52x44 (WCAG 2.5.5) without shifting the header layout. */
+  padding: 12px;
+  margin: -12px;
+  box-sizing: content-box;
   flex-shrink: 0;
 }
 
@@ -553,6 +566,7 @@ img.img-error {
 .hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh; /* mobil adres çubuğu açıkken alt içeriğin kırpılmasını önler */
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1075,7 +1089,10 @@ img.img-error {
   aspect-ratio: 4 / 3;
   cursor: default;
   box-shadow: var(--shadow-xl);
-  transition: transform var(--t-base), box-shadow var(--t-base);
+  /* Tilt (JS ile geliştirilir): tek transition kaynağı burada tanımlı. */
+  transform-style: preserve-3d;
+  perspective: 800px;
+  transition: transform .4s ease, box-shadow var(--t-base);
   background: var(--clr-dark);
 }
 
@@ -1490,7 +1507,7 @@ img.img-error {
 
 .form__counter {
   font-size: .75rem;
-  color: var(--clr-text-light);
+  color: var(--clr-text-muted);
 }
 
 .form__counter.limit {
@@ -1545,7 +1562,7 @@ img.img-error {
 
 .form__note {
   font-size: .76rem;
-  color: var(--clr-text-light);
+  color: var(--clr-text-muted);
   text-align: center;
   margin-top: .2rem;
   line-height: 1.5;
@@ -2399,15 +2416,6 @@ img.img-error {
    position are consolidated into the base .form__input / .form__group rules above. */
 
 /* =====================================================
-   PROJECT CARD TILT (enhanced via JS)
-   ===================================================== */
-.project-card--overlay {
-  transform-style: preserve-3d;
-  perspective: 800px;
-  transition: transform .4s ease, box-shadow var(--t-base);
-}
-
-/* =====================================================
    KEYFRAME ANIMATIONS
    ===================================================== */
 @keyframes fadeInDown {
@@ -2462,19 +2470,24 @@ img.img-error {
     gap: .2rem;
     transform: translateY(-100%);
     opacity: 0;
-    transition: transform var(--t-base), opacity var(--t-base);
+    /* Kapalıyken görünmez VE klavye/ekran okuyucu için erişilemez (off-screen
+       linkler tab sırasından çıkar). visibility kapanış animasyonu bitince gizlenir. */
+    visibility: hidden;
+    transition: transform var(--t-base), opacity var(--t-base), visibility 0s linear var(--t-base);
     pointer-events: none;
     border-top: 1px solid rgba(255,255,255,.09);
     z-index: 999;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    max-height: calc(100vh - var(--header-h));
+    max-height: calc(100dvh - var(--header-h));
     overflow-y: auto;
   }
 
   .nav__menu.open {
     transform: translateY(0);
     opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
     pointer-events: all;
   }
 
@@ -2719,10 +2732,6 @@ img.img-error {
 
   .why-us__grid {
     grid-template-columns: 1fr;
-  }
-
-  .hero__stats-grid {
-    grid-template-columns: repeat(2, 1fr);
   }
 
   .hero__stat-number {
@@ -3249,20 +3258,6 @@ button:focus-visible {
 }
 
 /* =====================================================
-   PROJECT CARD SHIMMER ON LOAD
-   ===================================================== */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.project-card--overlay.visible::after {
-  animation: shimmer 2s ease forwards;
-  animation-delay: .5s;
-  background-size: 200% 100%;
-}
-
-/* =====================================================
    FOOTER LEGAL LINK
    ===================================================== */
 .footer__legal-link {
@@ -3765,7 +3760,7 @@ button:focus-visible {
   font-weight: 700;
   letter-spacing: .05em;
   text-transform: uppercase;
-  color: var(--clr-accent-dark);
+  color: var(--clr-accent-text);
   background: rgba(245, 158, 11, .12);
   padding: .3rem .8rem;
   border-radius: var(--r-full);

@@ -16,9 +16,11 @@ deployment:
     - /bin/cp -R llms.txt $DEPLOYPATH
     - /bin/cp -R sitemap.xml $DEPLOYPATH
     - /bin/cp -R .htaccess $DEPLOYPATH
+    - /bin/cp -R sw.js $DEPLOYPATH
+    # Fully replace asset/output directories so renamed/removed files don't linger on the server.
+    - /bin/rm -rf $DEPLOYPATH/assets
     - /bin/mkdir -p $DEPLOYPATH/assets
     - /bin/cp -R assets/* $DEPLOYPATH/assets/
-    # Fully replace build-output directories so renamed/removed files don't linger on the server.
     - /bin/rm -rf $DEPLOYPATH/css
     - /bin/mkdir -p $DEPLOYPATH/css
     - /bin/cp -R css/* $DEPLOYPATH/css/
@@ -28,5 +30,6 @@ deployment:
     - /bin/rm -rf $DEPLOYPATH/bilgi
     - /bin/mkdir -p $DEPLOYPATH/bilgi
     - /bin/cp -R bilgi/* $DEPLOYPATH/bilgi/
+    - /bin/rm -rf $DEPLOYPATH/public
     - /bin/mkdir -p $DEPLOYPATH/public
     - /bin/cp -R public/* $DEPLOYPATH/public/

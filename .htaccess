@@ -80,6 +80,17 @@
 FileETag None
 
 # ─────────────────────────────────────
+# CSS/JS — her dağıtımda taze içerik
+# (hash'siz dosya adları + uzun cache "bayat stil/script" riskini doğurur;
+#  no-cache ile tarayıcı her seferinde Last-Modified üzerinden revalide eder/304 alır)
+# ─────────────────────────────────────
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# ─────────────────────────────────────
 # Protect sensitive files
 # ─────────────────────────────────────
 <FilesMatch "\.(env|log|ini|bak|sql|sh)$">

@@ -3,6 +3,8 @@
   "short_name": "VoltGuard",
   "description": "Elektrik, Otomasyon, Elektronik ve Mekanik alanlarında profesyonel mühendislik çözümleri.",
   "start_url": "/",
+  "id": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0a1628",
   "theme_color": "#0a1628",
@@ -10,19 +12,19 @@
   "lang": "tr",
   "icons": [
     {
-      "src": "public/icon-192.png",
+      "src": "/public/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "public/icon-512.png",
+      "src": "/public/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "public/maskable-512.png",
+      "src": "/public/maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
