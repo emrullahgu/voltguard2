@@ -88,6 +88,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Yatay taşma koruması (html'deki clip'e ek): reveal animasyonları gizli durumda
+     içeriği yana ittiğinde mobilde sağda boşluk/yatay kaydırma oluşmasını engeller. */
+  overflow-x: clip;
 }
 
 /* Custom selection colour */
@@ -3544,8 +3547,8 @@ button:focus-visible {
   list-style: none;
   padding: 1.1rem 1.3rem;
   font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 1.02rem;
+  font-weight: 700;
+  font-size: 1.05rem;
   color: var(--clr-dark);
   display: flex;
   align-items: center;
