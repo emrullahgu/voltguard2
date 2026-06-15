@@ -1850,6 +1850,16 @@ img.img-error {
   transform: translate(0) scale(1);
 }
 
+/* Mobilde yatay reveal kaymasını dikeye çevir: dar ekranda translateX(±40px),
+   öğe görünür olana kadar içeriği viewport dışına itip sağda boşluk / yatay
+   kaydırma oluşturuyordu. Dikey kayma aynı animasyon hissini taşma olmadan verir. */
+@media (max-width: 768px) {
+  .reveal-left,
+  .reveal-right {
+    transform: translateY(28px);
+  }
+}
+
 /* =====================================================
    WHATSAPP FLOATING BUTTON
    ===================================================== */
