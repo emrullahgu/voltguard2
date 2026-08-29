@@ -1469,7 +1469,18 @@
     </div>
   </div>
 
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script>
+    (function () {
+      var widget = document.querySelector('.cf-turnstile');
+      var sitekey = widget ? (widget.getAttribute('data-sitekey') || '') : '';
+      if (!widget || !sitekey || sitekey.indexOf('REPLACE_WITH') === 0) return;
+      var script = document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }());
+  </script>
   <script src="js/main.js"></script>
   <noscript>
     <style>
