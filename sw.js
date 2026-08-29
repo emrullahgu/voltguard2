@@ -4,7 +4,7 @@
    (bayat CSS/JS riski yok); yalnızca çevrimdışıyken önbellekten yanıt verilir.
    Sürüm artırıldığında eski önbellekler temizlenir.
    ===================================================== */
-const VERSION = 'vg-2026-08-29-ges-video';
+const VERSION = 'vg-2026-08-29-katalog';
 const CORE = [
   '/',
   '/index.html',

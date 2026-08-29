@@ -26,6 +26,18 @@
       <image:loc>https://voltguard.com.tr/public/haberler/ege-teknopark-topluluk-bulusmasi.jpg</image:loc>
       <image:title>Ege Teknopark topluluk buluşması</image:title>
     </image:image>
+    <image:image>
+      <image:loc>https://voltguard.com.tr/public/sertifika-tusas-liftup-katilim-belgesi.jpg</image:loc>
+      <image:title>TUSAŞ LIFT UP Katılım Belgesi</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://voltguard.com.tr/public/trafo-kiosk-vinc-montaji.jpg</image:loc>
+      <image:title>Trafo kiosk vinç ile montajı</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://voltguard.com.tr/public/titiz-duzenli-kablo-tavasi.jpg</image:loc>
+      <image:title>Renk kodlu düzenli kablo tavası uygulaması</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://voltguard.com.tr/bilgi-bankasi.html</loc>
@@ -42,6 +54,22 @@
   <url>
     <loc>https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html</loc>
     <lastmod>2026-06-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/bilgi/scada-aritma-tesisi-otomasyonu.html</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://voltguard.com.tr/public/scada-biyolojik-aritma-proses-ekrani.jpg</image:loc>
+      <image:title>Biyolojik arıtma tesisi SCADA proses ekranı</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/bilgi/malzeme-ekipman-tedarik-rehberi.html</loc>
+    <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
