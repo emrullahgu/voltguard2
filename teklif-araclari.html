@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GES kurulum maliyeti, trafo işletme sorumluluğu ve periyodik kontrol için VoltGuard ön değerlendirme ve teklif araçları.">
+  <meta name="robots" content="index, follow, max-snippet:-1">
+  <base href="/">
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama-araclari/">
+  <title>Elektrik Hesaplama Araçları | GES, Trafo ve Kontrol | VoltGuard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/calculator-config.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "VoltGuard Teklif Araçları",
+    "url": "https://voltguard.com.tr/hesaplama-araclari/",
+    "description": "GES kurulum maliyeti, trafo işletme sorumluluğu ve periyodik elektrik kontrolü için ön değerlendirme araçları.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "tr-TR",
+    "isAccessibleForFree": true,
+    "provider": { "@id": "https://voltguard.com.tr/#organization" },
+    "featureList": ["GES maliyet hesabı", "Trafo işletme sorumluluğu ön değerlendirmesi", "Periyodik kontrol kapsam hesabı"]
+  }
+  </script>
+  <style>
+    .tool-page { background: #f1f5f9; min-height: 100vh; }
+    .tool-header { background: #0a1628; color: #fff; padding: 1rem 0; }
+    .tool-header__inner { max-width: 1200px; padding: 0 1.5rem; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .tool-brand { color: #fff; font-family: "Outfit", sans-serif; font-size: 1.25rem; font-weight: 800; }
+    .tool-brand i { color: #f59e0b; margin-right: .4rem; }
+    .tool-back { color: #dbeafe; font-weight: 600; font-size: .92rem; }
+    .tool-hero { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 3.5rem 0 2.75rem; }
+    .tool-hero__inner, .tool-main { max-width: 1200px; padding: 0 1.5rem; margin: auto; }
+    .tool-eyebrow { color: #b45309; font: 700 .78rem "Outfit", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    .tool-hero h1 { color: #0a1628; font: 800 clamp(2rem, 4vw, 3.3rem)/1.1 "Outfit", sans-serif; margin: .5rem 0 .85rem; }
+    .tool-hero p { color: #475569; max-width: 720px; font-size: 1.04rem; }
+    .tool-main { padding-top: 2rem; padding-bottom: 4rem; }
+    .tool-categories { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; margin-bottom: 2rem; }
+    .tool-category { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; color: #334155; min-height: 92px; padding: .85rem; font: 700 .88rem "Outfit", sans-serif; }
+    .tool-category i { color: #b45309; display: block; font-size: 1.15rem; margin-bottom: .5rem; }
+    .tool-category--active { background: #fffbeb; border-color: #f59e0b; color: #0a1628; }
+    .tool-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; margin-bottom: 1.25rem; }
+    .tool-tab { min-height: 72px; background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; color: #334155; font: 700 .95rem "Outfit", sans-serif; text-align: left; padding: .8rem 1rem; }
+    .tool-tab i { color: #b45309; font-size: 1.15rem; margin-right: .5rem; }
+    .tool-tab[aria-selected="true"] { border-color: #f59e0b; background: #fffbeb; color: #0a1628; box-shadow: 0 0 0 2px rgba(245,158,11,.18); }
+    .tool-panel { display: none; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr); gap: 1.25rem; }
+    .tool-panel.active { display: grid; }
+    .tool-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: clamp(1.2rem, 3vw, 2rem); }
+    .tool-card h2 { font: 800 1.55rem "Outfit", sans-serif; color: #0a1628; margin-bottom: .4rem; }
+    .tool-card__intro { color: #64748b; margin-bottom: 1.4rem; }
+    .tool-fields { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .tool-field { display: grid; gap: .4rem; }
+    .tool-field--wide { grid-column: 1 / -1; }
+    .tool-field label { color: #334155; font-size: .9rem; font-weight: 600; }
+    .tool-field input, .tool-field select { width: 100%; border: 1px solid #cbd5e1; border-radius: 5px; padding: .75rem .8rem; color: #0f172a; font: inherit; background: #fff; }
+    .tool-field input:focus, .tool-field select:focus { outline: 3px solid rgba(59,130,246,.2); border-color: #3b82f6; }
+    .tool-result { background: #0a1628; color: #fff; border-radius: 8px; padding: clamp(1.2rem, 3vw, 2rem); display: flex; flex-direction: column; justify-content: space-between; gap: 1.1rem; }
+    .tool-result__label { color: #fcd34d; font: 700 .78rem "Outfit", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    .tool-result__amount { font: 800 clamp(1.75rem, 4vw, 2.65rem)/1.1 "Outfit", sans-serif; margin: .4rem 0; }
+    .tool-result__detail { color: #cbd5e1; line-height: 1.6; font-size: .93rem; }
+    .tool-result__list { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; color: #e2e8f0; font-size: .9rem; }
+    .tool-result__list i { color: #f59e0b; width: 1.2rem; }
+    .tool-request { background: #f59e0b; color: #0a1628; border: 0; border-radius: 5px; cursor: pointer; padding: .85rem 1rem; font: 800 .95rem "Outfit", sans-serif; }
+    .tool-download { background: transparent; color: #fff; border: 1px solid #94a3b8; border-radius: 5px; cursor: pointer; padding: .8rem 1rem; font: 700 .9rem "Outfit", sans-serif; }
+    .tool-download:hover, .tool-download:focus-visible { border-color: #f59e0b; color: #fcd34d; }
+    .tool-share { background: transparent; color: #dbeafe; border: 0; cursor: pointer; font: 600 .85rem "Outfit", sans-serif; padding: .2rem 0; text-align: left; }
+    .tool-share:hover, .tool-share:focus-visible { color: #fcd34d; text-decoration: underline; }
+    .tool-share-status { color: #bbf7d0; font-size: .8rem; min-height: 1.2em; }
+    .tool-note { margin-top: 1.25rem; background: #eff6ff; border-left: 3px solid #3b82f6; color: #334155; padding: .85rem 1rem; font-size: .86rem; line-height: 1.6; }
+    .tool-source { color: #64748b; font-size: .82rem; margin: 1.5rem 0 0; }
+    .tool-source a { color: #b45309; text-decoration: underline; }
+    @media (max-width: 760px) { .tool-categories, .tool-tabs, .tool-panel, .tool-fields { grid-template-columns: 1fr; } .tool-field--wide { grid-column: auto; } .tool-header__inner { padding: 0 1.1rem; } .tool-hero__inner, .tool-main { padding-left: 1.1rem; padding-right: 1.1rem; } }
+  </style>
+</head>
+<body class="tool-page">
+  <header class="tool-header"><div class="tool-header__inner"><a href="index.html" class="tool-brand"><i class="fas fa-bolt"></i>VoltGuard</a><a class="tool-back" href="index.html">Ana Sayfaya Dön</a></div></header>
+  <main>
+    <section class="tool-hero"><div class="tool-hero__inner"><span class="tool-eyebrow">Mühendislik ön değerlendirme merkezi</span><h1>Elektrik hesaplama araçları</h1><p>GES yatırımı, trafo işletme sorumluluğu ve periyodik kontrol için kapsamınızı birkaç adımda oluşturun. Hesabı telefon numarası vermeden görün; PDF ön fizibilite veya mühendislik keşfi aşamasında bize ulaşın.</p></div></section>
+    <section class="tool-main" aria-label="Teklif araçları">
+      <div class="tool-categories" aria-label="Hesaplama kategorileri">
+        <div class="tool-category tool-category--active"><i class="fas fa-solar-panel"></i>GES</div>
+        <div class="tool-category tool-category--active"><i class="fas fa-tower-broadcast"></i>Trafo ve OG</div>
+        <div class="tool-category tool-category--active"><i class="fas fa-clipboard-check"></i>Periyodik Kontrol</div>
+        <div class="tool-category tool-category--active"><i class="fas fa-bolt"></i>Elektrik Hesapları</div>
+        <div class="tool-category tool-category--active"><i class="fas fa-compass-drafting"></i>Elektrik Proje</div>
+        <div class="tool-category tool-category--active"><i class="fas fa-chart-line"></i>Enerji Verimliliği</div>
+        <div class="tool-category tool-category--active"><i class="fas fa-gears"></i>Mekanik</div>
+      </div>
+      <div class="tool-tabs" role="tablist" aria-label="Hizmet seçimi">
+        <button class="tool-tab" role="tab" aria-selected="true" aria-controls="ges-panel" id="ges-tab"><i class="fas fa-solar-panel"></i>GES Maliyet Hesabı</button>
+        <button class="tool-tab" role="tab" aria-selected="false" aria-controls="trafo-panel" id="trafo-tab"><i class="fas fa-tower-broadcast"></i>Trafo İşletme Sorumluluğu</button>
+        <button class="tool-tab" role="tab" aria-selected="false" aria-controls="kontrol-panel" id="kontrol-tab"><i class="fas fa-clipboard-check"></i>Periyodik Kontrol</button>
+        <button class="tool-tab" role="tab" aria-selected="false" aria-controls="teknik-panel" id="teknik-tab"><i class="fas fa-calculator"></i>Teknik Hesaplar</button>
+      </div>
+
+      <section class="tool-panel active" id="ges-panel" role="tabpanel" aria-labelledby="ges-tab">
+        <div class="tool-card"><h2>GES kurulum maliyeti</h2><p class="tool-card__intro">Çatı veya arazi projeniz için yaklaşık yatırım büyüklüğü ve yıllık üretim potansiyeli.</p><div class="tool-fields">
+          <div class="tool-field"><label for="ges-bill">Aylık elektrik faturası (TL)</label><input id="ges-bill" type="number" min="0" placeholder="Örn. 150000" inputmode="numeric"></div>
+          <div class="tool-field"><label for="ges-consumption">Aylık tüketim (kWh)</label><input id="ges-consumption" type="number" min="0" value="35000" inputmode="numeric"></div>
+          <div class="tool-field"><label for="ges-unit-price">Birim elektrik bedeli (TL/kWh)</label><input id="ges-unit-price" type="number" min="0.1" step="0.01" value="3.50" inputmode="decimal"></div>
+          <div class="tool-field"><label for="ges-area">Kullanılabilir alan (m²)</label><input id="ges-area" type="number" min="1" value="1500" inputmode="numeric"></div>
+          <div class="tool-field"><label for="ges-type">Kurulum tipi</label><select id="ges-type"><option value="1">Çatı GES</option><option value="1.12">Arazi GES</option></select></div>
+          <div class="tool-field"><label for="ges-city">Proje ili</label><select id="ges-city"><option value="1600">İzmir</option><option value="1550">Ege Bölgesi</option><option value="1450">Diğer bölgeler</option></select></div>
+          <div class="tool-field"><label for="ges-day-ratio">Gündüz tüketim oranı</label><select id="ges-day-ratio"><option value="0.65">%65</option><option value="0.8" selected>%80</option><option value="0.95">%95</option></select></div>
+          <div class="tool-field"><label for="ges-connection">Bağlantı tercihi</label><select id="ges-connection"><option>Öz tüketim odaklı</option><option>Şebeke bağlantılı</option></select></div>
+        </div><p class="tool-note">Bu sonuç ön değerlendirmedir. Çatı statiği, gölgelenme, bağlantı kapasitesi, çağrı mektubu, proje/onay süreçleri ve KDV kesin teklif sırasında değerlendirilir.</p></div>
+        <aside class="tool-result"><div><span class="tool-result__label">Ön GES fizibilitesi</span><div class="tool-result__amount" id="ges-amount">-</div><p class="tool-result__detail" id="ges-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i><span id="ges-production"></span></li><li><i class="fas fa-check"></i><span id="ges-coverage"></span></li><li><i class="fas fa-check"></i><span id="ges-savings"></span></li><li><i class="fas fa-check"></i><span id="ges-equipment"></span></li></ul><button class="tool-download" data-pdf-title="GES On Fizibilite Raporu"> <i class="fas fa-file-pdf"></i> PDF ön fizibilite indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="GES maliyet hesabı">Mühendislik keşfi talep edin</button></aside>
+      </section>
+
+      <section class="tool-panel" id="trafo-panel" role="tabpanel" aria-labelledby="trafo-tab">
+        <div class="tool-card"><h2>Trafo işletme sorumluluğu</h2><p class="tool-card__intro">Tesisinizin güç ve bakım gereksinimlerine göre aylık hizmet ön değerlendirmesi.</p><div class="tool-fields">
+          <div class="tool-field"><label for="trafo-power">Trafo gücü (kVA)</label><input id="trafo-power" type="number" min="1" value="1000" inputmode="numeric"></div>
+          <div class="tool-field"><label for="trafo-count">Trafo sayısı</label><input id="trafo-count" type="number" min="1" value="1" inputmode="numeric"></div>
+          <div class="tool-field"><label for="trafo-plan">Ziyaret planı</label><select id="trafo-plan"><option value="1">Aylık kontrol</option><option value="1.35">İki haftada bir kontrol</option></select></div>
+          <div class="tool-field"><label for="trafo-need">Ek gereksinim</label><select id="trafo-need"><option value="1">Standart takip</option><option value="1.2">Ölçüm ve raporlama</option></select></div>
+        </div><p class="tool-note">İşletme sorumluluğu bedeli; tesisin gerilim seviyesi, güç, saha erişimi, ölçüm kapsamı ve yürürlükteki EMO asgari ücret hükümlerine göre kesinleşir.</p></div>
+        <aside class="tool-result"><div><span class="tool-result__label">Aylık ön değerlendirme</span><div class="tool-result__amount" id="trafo-amount">-</div><p class="tool-result__detail" id="trafo-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i>Yetkili mühendis takibi</li><li><i class="fas fa-check"></i>Planlı saha kontrolü</li></ul><button class="tool-download" data-pdf-title="Trafo Isletme Sorumlulugu"><i class="fas fa-file-pdf"></i> PDF özeti indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="Trafo işletme sorumluluğu">Bu kapsamla fiyat al</button></aside>
+      </section>
+
+      <section class="tool-panel" id="kontrol-panel" role="tabpanel" aria-labelledby="kontrol-tab">
+        <div class="tool-card"><h2>Periyodik kontrol kapsamı</h2><p class="tool-card__intro">Tesisiniz için gerekli elektriksel kontrol ve raporlama iş yükünü önceden görün.</p><div class="tool-fields">
+          <div class="tool-field"><label for="control-type">Kontrol türü</label><select id="control-type"><option value="1">Elektrik tesisatı</option><option value="1.1">Topraklama ve paratoner</option><option value="1.25">Kapsamlı elektrik kontrolü</option></select></div>
+          <div class="tool-field"><label for="control-area">Tesis alanı (m²)</label><input id="control-area" type="number" min="1" value="2500" inputmode="numeric"></div>
+          <div class="tool-field"><label for="control-panels">Pano sayısı</label><input id="control-panels" type="number" min="0" value="8" inputmode="numeric"></div>
+          <div class="tool-field"><label for="control-urgency">Talep zamanı</label><select id="control-urgency"><option value="1">Planlı</option><option value="1.25">Acil</option></select></div>
+        </div><p class="tool-note">Kapsam; tesis gezisi, cihazlı ölçüm, uygunsuzlukların sınıflandırılması ve raporlamayı esas alır. Nihai fiyat için yerinde keşif ve güncel mevzuat değerlendirmesi gerekir.</p></div>
+        <aside class="tool-result"><div><span class="tool-result__label">Öngörülen çalışma</span><div class="tool-result__amount" id="control-amount">-</div><p class="tool-result__detail" id="control-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i><span id="control-scope"></span></li><li><i class="fas fa-check"></i>Rapor ve uygunsuzluk özeti</li></ul><button class="tool-download" data-pdf-title="Periyodik Elektrik Kontrolu"><i class="fas fa-file-pdf"></i> PDF özeti indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="Periyodik elektrik kontrolü">Bu kapsamla fiyat al</button></aside>
+      </section>
+
+      <section class="tool-panel" id="teknik-panel" role="tabpanel" aria-labelledby="teknik-tab">
+        <div class="tool-card"><h2 id="technical-title">Teknik hesaplar</h2><p class="tool-card__intro" id="technical-intro">Elektrik, enerji verimliliği, proje ve mekanik ön değerlendirmelerini seçin.</p><div class="tool-fields">
+          <div class="tool-field tool-field--wide"><label for="technical-tool">Hesaplama aracı</label><select id="technical-tool">
+            <option value="project">Elektrik Proje Çizim Ücreti</option><option value="transformer">Trafo Gücü Hesaplama</option><option value="powerIncrease">Güç Artırımı Maliyet Hesabı</option><option value="compensation">Kompanzasyon ve Kondansatör</option><option value="harmonic">Harmonik Risk Analizi</option><option value="cable">Kablo Kesiti Hesaplama</option><option value="voltageDrop">Gerilim Düşümü Hesaplama</option><option value="shortCircuit">Kısa Devre Akımı</option><option value="generator">Jeneratör Gücü</option><option value="ups">UPS Gücü ve Akü Süresi</option><option value="ev">Elektrikli Araç Şarj İstasyonu</option><option value="grounding">Topraklama Risk Ön Değerlendirmesi</option><option value="lightning">Paratoner ve Yıldırımdan Korunma</option><option value="fire">Yangın Algılama Ön Keşfi</option><option value="lighting">Aydınlatma ve Lux Hesabı</option><option value="invoice">Enerji Faturası Analizi</option><option value="efficiency">Enerji Verimliliği Potansiyeli</option><option value="mechanical">Pompa Gücü Hesaplama</option><option value="factory">Fabrika Elektrik Altyapısı</option>
+          </select></div>
+          <div class="tool-field"><label for="technical-a" id="technical-a-label">Yapı alanı (m²)</label><input id="technical-a" type="number" min="0" value="1000" inputmode="decimal"></div>
+          <div class="tool-field"><label for="technical-b" id="technical-b-label">Kurulu güç (kW)</label><input id="technical-b" type="number" min="0" value="100" inputmode="decimal"></div>
+          <div class="tool-field"><label for="technical-c" id="technical-c-label">Eşzamanlılık oranı (%)</label><input id="technical-c" type="number" min="0" value="70" inputmode="decimal"></div>
+          <div class="tool-field"><label for="technical-d" id="technical-d-label">Güç faktörü / verim (%)</label><input id="technical-d" type="number" min="0" value="90" inputmode="decimal"></div>
+        </div><p class="tool-note" id="technical-note">Teknik hesaplar ön değerlendirme sağlar. Nihai ekipman seçimi, saha koşulları, standartlar ve yetkili mühendis incelemesiyle yapılır.</p></div>
+        <aside class="tool-result"><div><span class="tool-result__label">Teknik ön değerlendirme</span><div class="tool-result__amount" id="technical-amount">-</div><p class="tool-result__detail" id="technical-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i><span id="technical-scope"></span></li><li><i class="fas fa-check"></i>Sonuç varsayımlara dayanır, mühendislik doğrulaması gerekir.</li></ul><button class="tool-download" data-pdf-title="Teknik On Degerlendirme"><i class="fas fa-file-pdf"></i> PDF özeti indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="teknik hesaplama">Bu sonuçla teklif al</button></aside>
+      </section>
+      <p class="tool-source">Hesaplamalar bağlayıcı teklif değildir. Kesin mühendislik ve uygulama bedelleri, yürürlükteki <a href="https://www.emo.org.tr/" target="_blank" rel="noopener">EMO</a> düzenlemeleri, ilgili <a href="https://www.tedas.gov.tr/" target="_blank" rel="noopener">TEDAŞ</a> teknik şartnameleri, keşif ve piyasa koşullarıyla belirlenir.</p>
+    </section>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <script>
+    (function () {
+      'use strict';
+      var formatCurrency = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 });
+      var getNumber = function (id) { return Math.max(0, Number(document.getElementById(id).value) || 0); };
+      var getValue = function (id) { return Number(document.getElementById(id).value); };
+      var updateGes = function () { var config = window.VoltGuardCalculatorConfig.pricing; var unitPrice = getNumber('ges-unit-price') || config.defaultElectricityUnitPrice; var monthlyConsumption = getNumber('ges-consumption') || Math.round(getNumber('ges-bill') / unitPrice); var annualConsumption = monthlyConsumption * 12; var productionPerKwp = getValue('ges-city'); var targetPower = annualConsumption ? annualConsumption * getValue('ges-day-ratio') / productionPerKwp : 1; var areaPower = getNumber('ges-area') / 5.5; var power = Math.max(1, Math.round(Math.min(targetPower, areaPower))); var multiplier = getValue('ges-type'); var production = Math.round(power * productionPerKwp); var selfConsumption = Math.min(production, annualConsumption); var low = power * multiplier * config.gesInvestmentLowPerKwp; var high = power * multiplier * config.gesInvestmentHighPerKwp; var savings = selfConsumption * unitPrice; var payback = savings ? ((low + high) / 2 / savings).toFixed(1) : '-'; var panels = Math.ceil(power * 1000 / config.panelWatt); var inverter = Math.round(power * config.inverterAcRatio); document.getElementById('ges-amount').textContent = formatCurrency.format(low) + ' - ' + formatCurrency.format(high); document.getElementById('ges-detail').textContent = power + ' kWp ' + (multiplier > 1 ? 'arazi' : 'çatı') + ' GES için tahmini yatırım aralığı. Ortalama geri dönüş: ' + payback + ' yıl.'; document.getElementById('ges-production').textContent = 'Yıllık üretim potansiyeli: ' + new Intl.NumberFormat('tr-TR').format(production) + ' kWh'; document.getElementById('ges-coverage').textContent = annualConsumption ? 'Öz tüketim karşılama oranı: yaklaşık %' + Math.min(100, Math.round(selfConsumption / annualConsumption * 100)) : 'Tüketim girerek karşılama oranını görün'; document.getElementById('ges-savings').textContent = 'Yıllık tasarruf potansiyeli: ' + formatCurrency.format(savings); document.getElementById('ges-equipment').textContent = 'Önerilen ekipman: yaklaşık ' + panels + ' panel, ' + inverter + ' kW inverter'; };
+      var updateTrafo = function () { var power = Math.max(1, getNumber('trafo-power')); var base = 4500 + Math.ceil(power / 500) * 1250; var estimate = base * Math.max(1, getNumber('trafo-count')) * getValue('trafo-plan') * getValue('trafo-need'); document.getElementById('trafo-amount').textContent = 'Yaklaşık ' + formatCurrency.format(estimate) + ' / ay'; document.getElementById('trafo-detail').textContent = getNumber('trafo-count') + ' adet, ' + power + ' kVA trafo için seçilen takip ve ziyaret planı.'; };
+      var updateControl = function () { var panels = getNumber('control-panels'); var area = getNumber('control-area'); var days = Math.max(1, Math.ceil((area / 1800 + panels / 10) * getValue('control-type') * getValue('control-urgency'))); document.getElementById('control-amount').textContent = days + ' iş günü'; document.getElementById('control-detail').textContent = new Intl.NumberFormat('tr-TR').format(area) + ' m² tesis ve ' + panels + ' pano için öngörülen saha ve raporlama süresi.'; document.getElementById('control-scope').textContent = panels + ' pano için görsel kontrol ve ölçüm planı'; };
+      var technicalTools = {
+        project: ['Elektrik Proje Çizim Ücreti', 'Yapı alanı (m²)', 'Kurulu güç (kW)', 'Kapsam katsayısı (%)', 'Bölge katsayısı (%)', [1000,100,100,100]],
+        transformer: ['Trafo Gücü Hesaplama', 'Toplam kurulu güç (kW)', 'Eşzamanlılık (%)', 'Güç faktörü (%)', 'Büyüme rezervi (%)', [600,70,90,20]],
+        powerIncrease: ['Güç Artırımı Maliyet Hesabı', 'Ek ihtiyaç (kVA)', 'Hat mesafesi (m)', 'Pano/hücre katsayısı (%)', 'İşçilik katsayısı (%)', [500,100,100,100]],
+        compensation: ['Kompanzasyon ve Kondansatör', 'Aktif güç (kW)', 'Mevcut cos phi (%)', 'Hedef cos phi (%)', 'Harmonik yük oranı (%)', [500,80,98,20]],
+        harmonic: ['Harmonik Risk Analizi', 'Doğrusal olmayan yük (kW)', 'Toplam yük (kW)', 'THDi (%)', 'THDv (%)', [200,500,30,5]],
+        cable: ['Kablo Kesiti Hesaplama', 'Yük gücü (kW)', 'Hat uzunluğu (m)', 'Gerilim (V)', 'İzin verilen düşüm (%)', [150,100,400,3]],
+        voltageDrop: ['Gerilim Düşümü Hesaplama', 'Hat akımı (A)', 'Kablo kesiti (mm²)', 'Hat uzunluğu (m)', 'Gerilim (V)', [200,120,100,400]],
+        shortCircuit: ['Kısa Devre Akımı', 'Trafo gücü (kVA)', 'Trafo uk (%)', 'AG gerilimi (V)', 'Kablo etkisi (%)', [1000,6,400,10]],
+        generator: ['Jeneratör Gücü Hesaplama', 'Toplam yük (kW)', 'Motor yol alma katsayısı (%)', 'Eşzamanlılık (%)', 'Güç faktörü (%)', [300,130,75,80]],
+        ups: ['UPS Gücü ve Akü Süresi', 'Kritik yük (kW)', 'Güç faktörü (%)', 'Yedekleme süresi (dk)', 'Akü verimi (%)', [50,90,30,85]],
+        ev: ['Elektrikli Araç Şarj İstasyonu', 'Şarj noktası adedi', 'Her nokta gücü (kW)', 'Eşzamanlılık (%)', 'Mevcut boş güç (kW)', [10,22,60,50]],
+        grounding: ['Topraklama Risk Ön Değerlendirmesi', 'Ölçülen topraklama direnci (ohm)', 'Tesis türü katsayısı', 'Elektrot sayısı', 'Ölçüm yaşı (ay)', [4,1,6,12]],
+        lightning: ['Paratoner ve Yıldırımdan Korunma', 'Yapı yüksekliği (m)', 'Çatı alanı (m²)', 'Risk katsayısı', 'Yapı çevresi açıklığı (%)', [20,1000,2,80]],
+        fire: ['Yangın Algılama Ön Keşfi', 'Tesis alanı (m²)', 'Kat sayısı', 'Yüksek tavan oranı (%)', 'Adresli sistem katsayısı', [3000,2,30,1]],
+        lighting: ['Aydınlatma ve Lux Hesabı', 'Alan (m²)', 'Hedef lux', 'Armatür lümeni', 'Bakım faktörü (%)', [1000,300,18000,80]],
+        invoice: ['Enerji Faturası Analizi', 'Aylık tüketim (kWh)', 'Birim bedel (TL/kWh)', 'Reaktif oranı (%)', 'Sözleşme gücü (kW)', [50000,3.5,25,250]],
+        efficiency: ['Enerji Verimliliği Potansiyeli', 'Yıllık tüketim (kWh)', 'Birim bedel (TL/kWh)', 'Tasarruf potansiyeli (%)', 'Yatırım bütçesi (TL)', [600000,3.5,12,500000]],
+        mechanical: ['Pompa Gücü Hesaplama', 'Debi (m³/h)', 'Basma yüksekliği (m)', 'Pompa verimi (%)', 'Motor verimi (%)', [100,40,70,90]],
+        factory: ['Fabrika Elektrik Altyapısı', 'Motor yükleri (kW)', 'Kompresör/HVAC (kW)', 'Diğer yükler (kW)', 'Eşzamanlılık (%)', [300,100,80,70]]
+      };
+      var technicalInput = function (id) { return Math.max(0, Number(document.getElementById(id).value) || 0); };
+      var technicalResult = function () { var key = document.getElementById('technical-tool').value; var a = technicalInput('technical-a'), b = technicalInput('technical-b'), c = technicalInput('technical-c'), d = technicalInput('technical-d'), amount, detail, scope; if (key === 'project') { amount = formatCurrency.format(a * 55 * (c / 100) * (d / 100)) + ' başlangıç bütçesi'; detail = 'Elektrik proje kapsamı, onaylar ve disiplinler arası koordinasyonla kesinleşir.'; scope = 'Yaklaşık ' + Math.ceil(a / 1000) + ' pafta/zonluk proje planlaması'; } else if (key === 'transformer' || key === 'factory') { var kw = key === 'factory' ? a + b + c : a * b / 100; var kva = Math.ceil(kw / (key === 'factory' ? d / 100 : c / 100) * (key === 'factory' ? 1.2 : 1 + d / 100)); var standard = [250,400,630,800,1000,1250,1600,2000].find(function (value) { return value >= kva; }) || Math.ceil(kva / 500) * 500; amount = standard + ' kVA önerilen trafo'; detail = 'Hesaplanan ihtiyaç: yaklaşık ' + kva + ' kVA.'; scope = 'Talep gücü, büyüme rezervi ve OG süreçleri mühendislik doğrulamasına tabidir.'; } else if (key === 'powerIncrease') { amount = formatCurrency.format(a * 3200 * (1 + b / 1000) * c / 100 * d / 100) + ' ön bütçe'; detail = a + ' kVA ek güç ve ' + b + ' m hat varsayımıyla hesaplandı.'; scope = 'Trafo, hücre, kablo, pano, test ve proje kalemleri keşifte netleşir.'; } else if (key === 'compensation') { var kvar = Math.round(a * (Math.tan(Math.acos(b / 100)) - Math.tan(Math.acos(c / 100)))); amount = Math.max(0, kvar) + ' kVAr kompanzasyon ihtiyacı'; detail = c + '% hedef güç faktörü için ön hesap.'; scope = d > 15 ? 'Harmonik riski nedeniyle reaktörlü kompanzasyon ve ölçüm önerilir.' : 'Kademe, sigorta ve kontaktör seçimi için pano incelemesi gerekir.'; } else if (key === 'harmonic') { var risk = (a / Math.max(1, b)) * 100 + c + d; amount = risk > 70 ? 'Yüksek harmonik riski' : risk > 35 ? 'Orta harmonik riski' : 'Düşük harmonik riski'; detail = 'Doğrusal olmayan yük ve THD değerlerine göre ön risk sınıfı.'; scope = risk > 35 ? 'Harmonik ölçümü, reaktörlü kompanzasyon veya aktif filtre analizi önerilir.' : 'Periyodik enerji kalitesi ölçümü önerilir.'; } else if (key === 'cable') { var current = a * 1000 / (Math.sqrt(3) * Math.max(1, c) * .9); var section = [16,25,35,50,70,95,120,150,185,240].find(function (value) { return value * 1.25 >= current; }) || 300; amount = section + ' mm² bakır kablo ön seçimi'; detail = Math.round(current) + ' A hesap akımı ve ' + b + ' m hat için ön seçim.'; scope = 'Döşeme şekli, sıcaklık, gruplama ve kısa devre dayanımı ayrıca doğrulanmalıdır.'; } else if (key === 'voltageDrop') { var drop = (Math.sqrt(3) * a * b * 0.018 * c / Math.max(1, d)) / 10; amount = '%' + drop.toFixed(2) + ' gerilim düşümü'; detail = a + ' A, ' + b + ' mm² ve ' + c + ' m hat için yaklaşık değer.'; scope = drop > 3 ? 'İzin verilen düşüm için daha büyük kesit veya kısa hat değerlendirin.' : 'Ön gerilim düşümü hedef aralıkta görünüyor.'; } else if (key === 'shortCircuit') { var ik = Math.round(a * 1000 / (Math.sqrt(3) * c) / (b / 100)); amount = new Intl.NumberFormat('tr-TR').format(ik) + ' A trafo çıkışı kısa devre akımı'; detail = 'Kablo empedansı öncesi teorik AG bara değeri.'; scope = 'Kesici kesme kapasitesi saha kısa devre hesabıyla seçilmelidir.'; } else if (key === 'generator') { var generator = Math.ceil(a * (b / 100) * (c / 100) / (d / 100) / 25) * 25; amount = generator + ' kVA önerilen jeneratör'; detail = 'Yük, yol alma ve eşzamanlılık varsayımlarıyla.'; scope = 'Motor yol alma akımları ve kritik yükler için detaylı senaryo gerekir.'; } else if (key === 'ups') { var ups = Math.ceil(a / (b / 100) / 5) * 5; amount = ups + ' kVA UPS önerisi'; detail = c + ' dakika için yaklaşık ' + Math.round(a * c / 60 / (d / 100)) + ' kWh akü enerjisi gerekir.'; scope = 'Akü seçimi, deşarj eğrisi ve kritik yük profiliyle doğrulanır.'; } else if (key === 'ev') { var charge = Math.round(a * b * c / 100); amount = charge + ' kW eşzamanlı şarj yükü'; detail = 'Mevcut boş güç: ' + d + ' kW.'; scope = charge > d ? 'Güç artırımı veya dinamik yük yönetimi önerilir.' : 'Mevcut güç ön değerlendirmede yeterli görünüyor.'; } else if (key === 'grounding') { amount = a <= 2 ? 'Düşük topraklama direnci' : a <= 5 ? 'İzleme gerekli' : 'İyileştirme riski'; detail = a + ' ohm ölçüm, ' + c + ' elektrot ve ' + d + ' aylık ölçüm yaşıyla.'; scope = 'Nihai uygunluk, tesis türü ve yetkili ölçüm raporuyla belirlenir.'; } else if (key === 'lightning') { amount = a > 20 || c > 2 ? 'Yüksek koruma önceliği' : 'Standart koruma önceliği'; detail = a + ' m yapı ve ' + b + ' m² çatı için ön risk sınıfı.'; scope = 'Risk analizi TS EN 62305 ve yerinde keşifle yapılmalıdır.'; } else if (key === 'fire') { var detectors = Math.ceil(a / 60 * b * (1 + c / 100)); amount = detectors + ' dedektör ön ihtiyacı'; detail = a + ' m² ve ' + b + ' kat için ön keşif.'; scope = 'Panel, loop, siren ve modüller mimari plana göre netleşir.'; } else if (key === 'lighting') { var fixtures = Math.ceil(a * b / (c * (d / 100))); amount = fixtures + ' adet armatür ön ihtiyacı'; detail = b + ' lux hedefiyle hesaplanan aydınlatma seviyesi.'; scope = 'Yerleşim, kamaşma ve homojenlik için aydınlatma projesi gerekir.'; } else if (key === 'invoice') { var annual = a * b * 12, penalty = c > 20 ? 'Reaktif ceza riski tespit edildi.' : 'Reaktif oranı ön değerlendirmede kabul edilebilir.'; amount = formatCurrency.format(annual) + ' yıllık enerji maliyeti'; detail = penalty; scope = 'GES, kompanzasyon ve sözleşme gücü optimizasyonu için fatura analizi önerilir.'; } else if (key === 'efficiency') { var saving = a * b * c / 100; amount = formatCurrency.format(saving) + ' yıllık tasarruf potansiyeli'; detail = formatCurrency.format(d) + ' yatırım için yaklaşık ' + (d / Math.max(1, saving)).toFixed(1) + ' yıl geri dönüş.'; scope = 'VFD, LED, basınçlı hava ve GES senaryoları detaylandırılabilir.'; } else { var pump = a / 3600 * b * 9.81 / Math.max(.1, c / 100) / Math.max(.1, d / 100); amount = pump.toFixed(1) + ' kW pompa motoru'; detail = a + ' m³/h debi ve ' + b + ' m basma yüksekliğiyle.'; scope = 'Pompa eğrisi, NPSH ve boru kayıpları seçimi etkiler.'; } document.getElementById('technical-amount').textContent = amount; document.getElementById('technical-detail').textContent = detail; document.getElementById('technical-scope').textContent = scope; };
+      var configureTechnical = function () { var tool = technicalTools[document.getElementById('technical-tool').value]; document.getElementById('technical-title').textContent = tool[0]; document.getElementById('technical-intro').textContent = tool[0] + ' için dört temel proje girdisiyle anlık ön değerlendirme alın.'; ['a', 'b', 'c', 'd'].forEach(function (letter, index) { document.getElementById('technical-' + letter + '-label').textContent = tool[index + 1]; document.getElementById('technical-' + letter).value = tool[5][index]; }); document.querySelector('#teknik-panel .tool-download').dataset.pdfTitle = tool[0]; document.querySelector('#teknik-panel .tool-request').dataset.tool = tool[0]; technicalResult(); };
+      var updates = [updateGes, updateTrafo, updateControl, technicalResult];
+      document.querySelectorAll('input, select').forEach(function (field) { field.addEventListener('input', function () { updates.forEach(function (update) { update(); }); }); field.addEventListener('change', function () { updates.forEach(function (update) { update(); }); }); });
+      document.querySelectorAll('[role="tab"]').forEach(function (tab) { tab.addEventListener('click', function () { document.querySelectorAll('[role="tab"]').forEach(function (item) { item.setAttribute('aria-selected', 'false'); }); document.querySelectorAll('[role="tabpanel"]').forEach(function (panel) { panel.classList.remove('active'); }); tab.setAttribute('aria-selected', 'true'); document.getElementById(tab.getAttribute('aria-controls')).classList.add('active'); }); });
+      document.getElementById('technical-tool').addEventListener('change', configureTechnical);
+      document.querySelectorAll('.tool-request').forEach(function (button) { button.addEventListener('click', function () { var activePanel = document.querySelector('.tool-panel.active'); var summary = activePanel.querySelector('.tool-result__amount').textContent; var text = 'Merhaba, VoltGuard web sitesindeki ' + button.dataset.tool + ' aracını kullandım. Ön değerlendirme sonucum: ' + summary + '. Detaylı teklif ve keşif bilgisi almak istiyorum.'; window.open('https://wa.me/905454346735?text=' + encodeURIComponent(text), '_blank', 'noopener'); }); });
+      var restoreCalculation = function () { var params = new URLSearchParams(window.location.search); var panelId = params.get('arac'); if (panelId && document.getElementById(panelId + '-panel')) { document.getElementById(panelId + '-tab').click(); } document.querySelectorAll('input[id], select[id]').forEach(function (field) { if (params.has(field.id)) { field.value = params.get(field.id); } }); if (params.has('technical-tool')) { configureTechnical(); ['technical-a', 'technical-b', 'technical-c', 'technical-d'].forEach(function (id) { if (params.has(id)) { document.getElementById(id).value = params.get(id); } }); } };
+      document.querySelectorAll('.tool-share').forEach(function (button) { button.addEventListener('click', function () { var panel = document.querySelector('.tool-panel.active'); var params = new URLSearchParams(); params.set('arac', panel.id.replace('-panel', '')); panel.querySelectorAll('input[id], select[id]').forEach(function (field) { params.set(field.id, field.value); }); var url = window.location.origin + '/hesaplama-araclari/?' + params.toString(); var status = panel.querySelector('.tool-share-status'); var copied = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(url) : Promise.reject(); copied.then(function () { status.textContent = 'Hesap bağlantısı kopyalandı.'; }).catch(function () { window.prompt('Hesap bağlantınızı kopyalayın:', url); status.textContent = 'Hesap bağlantısı hazır.'; }); }); });
+      restoreCalculation();
+      var toPdfText = function (text) { return text.replace(/[ğĞ]/g, 'g').replace(/[ıİ]/g, 'i').replace(/[şŞ]/g, 's').replace(/[çÇ]/g, 'c').replace(/[öÖ]/g, 'o').replace(/[üÜ]/g, 'u').replace(/[₺]/g, 'TL'); };
+      document.querySelectorAll('.tool-download').forEach(function (button) { button.addEventListener('click', function () { if (!window.jspdf) { return; } var panel = document.querySelector('.tool-panel.active'); var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' }); var title = button.dataset.pdfTitle; var result = panel.querySelector('.tool-result__amount').textContent.trim(); var detail = panel.querySelector('.tool-result__detail').textContent.trim(); var lines = []; panel.querySelectorAll('.tool-field').forEach(function (field) { var label = field.querySelector('label').textContent.trim(); var control = field.querySelector('input, select'); var value = control.tagName === 'SELECT' ? control.options[control.selectedIndex].text : control.value; lines.push(toPdfText(label + ': ' + value)); }); doc.setFillColor(10, 22, 40); doc.rect(0, 0, 210, 36, 'F'); doc.setTextColor(255, 255, 255); doc.setFontSize(22); doc.text('VoltGuard', 15, 17); doc.setFontSize(11); doc.text('Muhendislik on degerlendirme ozeti', 15, 26); doc.setTextColor(15, 23, 42); doc.setFontSize(18); doc.text(toPdfText(title), 15, 50); doc.setFontSize(10); doc.setTextColor(71, 85, 105); doc.text('Olusturma tarihi: ' + new Intl.DateTimeFormat('tr-TR').format(new Date()), 15, 58); doc.setTextColor(15, 23, 42); doc.setFontSize(12); doc.text('Sonuc', 15, 73); doc.setFontSize(16); doc.text(toPdfText(result), 15, 83); doc.setFontSize(10); doc.setTextColor(71, 85, 105); doc.text(doc.splitTextToSize(toPdfText(detail), 175), 15, 91); doc.setTextColor(15, 23, 42); doc.setFontSize(12); doc.text('Hesaplama girdileri', 15, 111); doc.setFontSize(10); doc.text(lines, 15, 120, { lineHeightFactor: 1.8 }); doc.setDrawColor(203, 213, 225); doc.line(15, 180, 195, 180); doc.setTextColor(71, 85, 105); doc.setFontSize(8.5); doc.text(doc.splitTextToSize('Bu belge baglayici teklif degildir. Kesin bedel; yerinde kesif, yurutlukteki EMO duzenlemeleri, ilgili TEDAS teknik gereklilikleri ve piyasa kosullariyla belirlenir.', 180), 15, 188); doc.setTextColor(10, 22, 40); doc.setFontSize(10); doc.text('voltguard.com.tr | +90 545 434 67 35 | info@voltguard.com.tr', 15, 280); doc.save('voltguard-' + title.toLowerCase().replace(/\s+/g, '-') + '-on-degerlendirme.pdf'); }); });
+      restoreCalculation();
+      updates.forEach(function (update) { update(); });
+    }());
+  </script>
+</body>
+</html>

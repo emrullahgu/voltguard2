@@ -4,14 +4,16 @@
    (bayat CSS/JS riski yok); yalnızca çevrimdışıyken önbellekten yanıt verilir.
    Sürüm artırıldığında eski önbellekler temizlenir.
    ===================================================== */
-const VERSION = 'vg-2026-06-14';
+const VERSION = 'vg-2026-08-29';
 const CORE = [
   '/',
   '/index.html',
   '/css/style.css',
   '/js/main.js',
+  '/js/calculator-config.js',
   '/manifest.json',
   '/404.html',
+  '/hesaplama-araclari/',
   '/public/icon-192.png'
 ];
 
