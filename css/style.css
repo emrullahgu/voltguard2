@@ -1752,9 +1752,11 @@ img.img-error {
   gap: 1.2rem;
 }
 
-.preloader__bolt {
-  font-size: 2.5rem;
-  color: var(--clr-accent);
+.preloader__logo {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  border-radius: 18px;
   animation: preloaderPulse 1s ease-in-out infinite;
 }
 
