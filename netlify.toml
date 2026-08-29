@@ -1,0 +1,10 @@
+[[redirects]]
+  from = "/teklif-araclari.html"
+  to = "/hesaplama-araclari/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama-araclari/"
+  to = "/teklif-araclari.html"
+  status = 200
