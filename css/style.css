@@ -1008,15 +1008,39 @@ img.img-error {
 .service-card {
   background-color: var(--clr-white);
   border-radius: var(--r-lg);
-  padding: 2rem 2rem 1.75rem;
+  padding: 0;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--clr-border);
   display: flex;
   flex-direction: column;
-  gap: .9rem;
   transition: all var(--t-base);
   position: relative;
   overflow: hidden;
+}
+
+.service-card__cover {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--clr-bg-gray);
+}
+
+.service-card__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--t-slow);
+}
+
+.service-card:hover .service-card__cover img {
+  transform: scale(1.06);
+}
+
+.service-card__body {
+  padding: 1.75rem 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
 }
 
 .service-card::before {
@@ -1060,6 +1084,7 @@ img.img-error {
 .service-card__icon--energy      { background-color: rgba(22,163,74,.12);   color: #16a34a; }
 
 .service-card--wide { grid-column: 1 / -1; }
+.service-card--wide .service-card__cover { aspect-ratio: 21 / 5; }
 
 .service-card__list--columns {
   column-count: 2;
@@ -1131,6 +1156,39 @@ img.img-error {
 /* =====================================================
    WHY US
    ===================================================== */
+.why-us__banner {
+  position: relative;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.why-us__banner img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+}
+
+.why-us__banner-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(180deg, transparent, rgba(10,22,40,.85));
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: .92rem;
+  font-weight: 600;
+}
+
+.why-us__banner-caption i { color: var(--clr-accent); }
+
 .why-us__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -2744,6 +2802,8 @@ img.img-error {
   .why-us__grid {
     grid-template-columns: 1fr 1fr;
   }
+
+  .why-us__banner img { height: 200px; }
 
   /* Trust badges */
   .trust__badges {

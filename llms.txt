@@ -4,7 +4,7 @@
 
 VoltGuard (VoltGuard Engineering Solutions), Ege Üniversitesi kökenli genç bir mühendislik girişimidir. Kurucularından biri Emrullah Günay'dır. Aktif EMI Filtre projesi, savunma sanayii için Roketsan ve Havelsan iş birliğinde geliştirilmektedir.
 
-- **Konum:** Adalet Mahallesi Manas Bulvarı, Folkart Towers No:39 İç Kapı No:2511, Bayraklı / İzmir, Türkiye
+- **Konum:** Ege Üniversitesi Kampüsü, Erzene Mahallesi Ankara Caddesi No:172/69, Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir, Türkiye
 - **Hizmet bölgesi:** İzmir ve çevresi; proje bazlı olarak Türkiye geneli
 - **Telefon:** +90 545 434 67 35
 - **E-posta:** info@voltguard.com.tr
