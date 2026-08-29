@@ -43,9 +43,10 @@
     .tool-hero p { color: #475569; max-width: 720px; font-size: 1.04rem; }
     .tool-main { padding-top: 2rem; padding-bottom: 4rem; }
     .tool-categories { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; margin-bottom: 2rem; }
-    .tool-category { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; color: #334155; min-height: 92px; padding: .85rem; font: 700 .88rem "Outfit", sans-serif; }
+    .tool-category { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; color: #334155; cursor: pointer; min-height: 92px; padding: .85rem; font: 700 .88rem "Outfit", sans-serif; text-align: left; }
     .tool-category i { color: #b45309; display: block; font-size: 1.15rem; margin-bottom: .5rem; }
     .tool-category--active { background: #fffbeb; border-color: #f59e0b; color: #0a1628; }
+    .tool-category:hover, .tool-category:focus-visible { border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245,158,11,.18); }
     .tool-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; margin-bottom: 1.25rem; }
     .tool-tab { min-height: 72px; background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; color: #334155; font: 700 .95rem "Outfit", sans-serif; text-align: left; padding: .8rem 1rem; }
     .tool-tab i { color: #b45309; font-size: 1.15rem; margin-right: .5rem; }
@@ -85,13 +86,13 @@
     <section class="tool-hero"><div class="tool-hero__inner"><span class="tool-eyebrow">Mühendislik ön değerlendirme merkezi</span><h1>Elektrik hesaplama araçları</h1><p>GES yatırımı, trafo işletme sorumluluğu ve periyodik kontrol için kapsamınızı birkaç adımda oluşturun. Hesabı telefon numarası vermeden görün; PDF ön fizibilite veya mühendislik keşfi aşamasında bize ulaşın.</p></div></section>
     <section class="tool-main" aria-label="Teklif araçları">
       <div class="tool-categories" aria-label="Hesaplama kategorileri">
-        <div class="tool-category tool-category--active"><i class="fas fa-solar-panel"></i>GES</div>
-        <div class="tool-category tool-category--active"><i class="fas fa-tower-broadcast"></i>Trafo ve OG</div>
-        <div class="tool-category tool-category--active"><i class="fas fa-clipboard-check"></i>Periyodik Kontrol</div>
-        <div class="tool-category tool-category--active"><i class="fas fa-bolt"></i>Elektrik Hesapları</div>
-        <div class="tool-category tool-category--active"><i class="fas fa-compass-drafting"></i>Elektrik Proje</div>
-        <div class="tool-category tool-category--active"><i class="fas fa-chart-line"></i>Enerji Verimliliği</div>
-        <div class="tool-category tool-category--active"><i class="fas fa-gears"></i>Mekanik</div>
+        <button class="tool-category tool-category--active" type="button" data-panel="ges"><i class="fas fa-solar-panel"></i>GES</button>
+        <button class="tool-category tool-category--active" type="button" data-panel="trafo"><i class="fas fa-tower-broadcast"></i>Trafo ve OG</button>
+        <button class="tool-category tool-category--active" type="button" data-panel="kontrol"><i class="fas fa-clipboard-check"></i>Periyodik Kontrol</button>
+        <button class="tool-category tool-category--active" type="button" data-panel="teknik" data-technical-tool="cable"><i class="fas fa-bolt"></i>Elektrik Hesapları</button>
+        <button class="tool-category tool-category--active" type="button" data-panel="teknik" data-technical-tool="project"><i class="fas fa-compass-drafting"></i>Elektrik Proje</button>
+        <button class="tool-category tool-category--active" type="button" data-panel="teknik" data-technical-tool="efficiency"><i class="fas fa-chart-line"></i>Enerji Verimliliği</button>
+        <button class="tool-category tool-category--active" type="button" data-panel="teknik" data-technical-tool="mechanical"><i class="fas fa-gears"></i>Mekanik</button>
       </div>
       <div class="tool-tabs" role="tablist" aria-label="Hizmet seçimi">
         <button class="tool-tab" role="tab" aria-selected="true" aria-controls="ges-panel" id="ges-tab"><i class="fas fa-solar-panel"></i>GES Maliyet Hesabı</button>
@@ -186,6 +187,7 @@
       var updates = [updateGes, updateTrafo, updateControl, technicalResult];
       document.querySelectorAll('input, select').forEach(function (field) { field.addEventListener('input', function () { updates.forEach(function (update) { update(); }); }); field.addEventListener('change', function () { updates.forEach(function (update) { update(); }); }); });
       document.querySelectorAll('[role="tab"]').forEach(function (tab) { tab.addEventListener('click', function () { document.querySelectorAll('[role="tab"]').forEach(function (item) { item.setAttribute('aria-selected', 'false'); }); document.querySelectorAll('[role="tabpanel"]').forEach(function (panel) { panel.classList.remove('active'); }); tab.setAttribute('aria-selected', 'true'); document.getElementById(tab.getAttribute('aria-controls')).classList.add('active'); }); });
+      document.querySelectorAll('.tool-category[data-panel]').forEach(function (category) { category.addEventListener('click', function () { var panel = category.dataset.panel; document.getElementById(panel + '-tab').click(); if (category.dataset.technicalTool) { var technicalTool = document.getElementById('technical-tool'); technicalTool.value = category.dataset.technicalTool; technicalTool.dispatchEvent(new Event('change')); } document.getElementById(panel + '-panel').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); }); });
       document.getElementById('technical-tool').addEventListener('change', configureTechnical);
       document.querySelectorAll('.tool-request').forEach(function (button) { button.addEventListener('click', function () { var activePanel = document.querySelector('.tool-panel.active'); var summary = activePanel.querySelector('.tool-result__amount').textContent; var text = 'Merhaba, VoltGuard web sitesindeki ' + button.dataset.tool + ' aracını kullandım. Ön değerlendirme sonucum: ' + summary + '. Detaylı teklif ve keşif bilgisi almak istiyorum.'; window.open('https://wa.me/905454346735?text=' + encodeURIComponent(text), '_blank', 'noopener'); }); });
       var restoreCalculation = function () { var params = new URLSearchParams(window.location.search); var panelId = params.get('arac'); if (panelId && document.getElementById(panelId + '-panel')) { document.getElementById(panelId + '-tab').click(); } document.querySelectorAll('input[id], select[id]').forEach(function (field) { if (params.has(field.id)) { field.value = params.get(field.id); } }); if (params.has('technical-tool')) { configureTechnical(); ['technical-a', 'technical-b', 'technical-c', 'technical-d'].forEach(function (id) { if (params.has(id)) { document.getElementById(id).value = params.get(id); } }); } };
