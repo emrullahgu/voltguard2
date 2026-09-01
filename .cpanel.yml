@@ -11,6 +11,7 @@ deployment:
     - /bin/cp -R 404.html $DEPLOYPATH
     - /bin/cp -R gizlilik.html $DEPLOYPATH
     - /bin/cp -R bilgi-bankasi.html $DEPLOYPATH
+    - /bin/cp -R teklif-araclari.html $DEPLOYPATH
     - /bin/cp -R contact.php $DEPLOYPATH
     - /bin/cp -R manifest.json $DEPLOYPATH
     - /bin/cp -R robots.txt $DEPLOYPATH
