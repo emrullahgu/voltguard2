@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Elektrik tesisatı ve güç sistemlerine giriş: gerilim/akım/güç kavramları, tek hat şeması okuma, pano hiyerarşisi, trafo, kompanzasyon, harmonik ve topraklamanın tesisattaki yeri.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Elektrik Tesisatı ve Güç Sistemlerine Giriş (Başlangıç) | VoltGuard Akademi</title>
+  <link rel="canonical" href="https://voltguard.com.tr/akademi/elektrik-tesisati-guc-sistemleri-giris.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Elektrik Tesisatı ve Güç Sistemlerine Giriş (Başlangıç) | VoltGuard Akademi">
+  <meta property="og:description" content="Gerilim/akım/güç kavramları, tek hat şeması okuma, pano hiyerarşisi, trafo, kompanzasyon, harmonik ve topraklamanın tesisattaki yeri.">
+  <meta property="og:url" content="https://voltguard.com.tr/akademi/elektrik-tesisati-guc-sistemleri-giris.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/elektrik-tesisati-guc-sistemleri-giris.html#course","name":"Elektrik Tesisatı ve Güç Sistemlerine Giriş","description":"Gerilim/akım/güç kavramları, tek hat şeması okuma, pano hiyerarşisi, trafo, kompanzasyon, harmonik ve topraklamanın tesisattaki yeri.","educationalLevel":"Başlangıç","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-09-05","provider":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Elektrik Tesisatı ve Güç Sistemlerine Giriş","item":"https://voltguard.com.tr/akademi/elektrik-tesisati-guc-sistemleri-giris.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Tek hat şeması (single line diagram) nedir?","acceptedAnswer":{"@type":"Answer","text":"Tek hat şeması, üç fazlı bir elektrik tesisatının tüm fazlarını tek bir çizgiyle temsil eden basitleştirilmiş bir şemadır. Trafo, ana dağıtım panosu, tali panolar, koruma cihazları ve yükler arasındaki bağlantı hiyerarşisini göstererek tesisatın genel mimarisini anlamayı sağlar."}},{"@type":"Question","name":"Ana dağıtım panosu ile tali pano arasındaki fark nedir?","acceptedAnswer":{"@type":"Answer","text":"Ana dağıtım panosu (ADP), enerjiyi trafodan veya sayaçtan alıp tesisin ana hatlarına dağıtan ilk kademedir. Tali panolar ise ADP'den beslenip belirli bir bölüm, kat veya makineye enerji dağıtan alt kademelerdir. Bu hiyerarşi, arıza durumunda seçici (selektif) koruma sağlamak için önemlidir."}},{"@type":"Question","name":"Bu dersten sonra hangi konuya geçmeliyim?","acceptedAnswer":{"@type":"Answer","text":"Temel kavramları öğrendikten sonra topraklama, reaktif güç kompanzasyonu ve trafo periyodik bakımı konularındaki VoltGuard Bilgi Bankası rehberlerine geçilmesi, ardından PLC/otomasyon veya elektronik modüllerinden birine devam edilmesi önerilir."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../akademi.html">VoltGuard Akademi</a> &rsaquo; <span>Elektrik Tesisatı ve Güç Sistemlerine Giriş</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektrik Tesisatı &amp; Güç Sistemleri</span>
+    <span class="akademi-level akademi-level--baslangic">Başlangıç Seviyesi</span>
+    <h1>Elektrik Tesisatı ve Güç Sistemlerine Giriş</h1>
+    <p class="article__summary">Mesleğe yeni başlayanlar ve öğrenciler için hazırlanan bu derste; gerilim, akım ve güç kavramlarını, tek hat şeması okumayı, pano hiyerarşisini ve trafo, kompanzasyon, harmonik, topraklama gibi konuların bir tesisattaki yerini öğreneceksiniz.</p>
+
+    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Temel elektriksel büyüklükler, tek hat şeması okuma mantığı, pano hiyerarşisi ve koruma kademeleri, ve bir tesisatta trafo/kompanzasyon/harmonik/topraklamanın birbiriyle ilişkisi.</div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Gerilim (V), akım (A) ve güç (W/kW) arasındaki ilişki, tüm elektrik hesaplarının temelidir: P = V × I (tek faz) veya P = √3 × V × I × cosφ (üç faz).</li><li>Tek hat şeması, bir tesisin enerji dağıtım mimarisini basitleştirilmiş biçimde gösterir ve arıza/bakım çalışmalarında ilk başvurulan belgedir.</li><li>Pano hiyerarşisi (ana dağıtım → tali pano → yük), koruma cihazlarının seçici (selektif) çalışmasının temelini oluşturur.</li><li>Trafo, kompanzasyon, harmonik ve topraklama; birbirinden bağımsız değil, aynı tesisatın farklı katmanlarını oluşturan birbiriyle etkileşimli konulardır.</li></ul></div>
+
+    <h2>Temel Kavramlar: Gerilim, Akım, Güç ve Faz</h2>
+    <p>Elektrik tesisatını anlamanın ilk adımı, üç temel büyüklüğü net biçimde ayırt edebilmektir. Gerilim (V), iki nokta arasındaki potansiyel farkı; akım (A), bir iletkenden birim zamanda geçen yük miktarını; güç (W veya kW) ise birim zamanda yapılan işi ifade eder. Türkiye'de konut ve küçük işyerlerinde tek fazlı 230V, sanayi tesislerinde ise üç fazlı 400V şebeke yaygındır. Üç fazlı sistemde üç ayrı gerilim dalgası birbirinden 120 derece faz farkıyla üretilir; bu sayede aynı güç, tek faza göre daha ince kablo ve daha dengeli bir yükle taşınabilir.</p>
+    <p>Motor, trafo, bobin gibi endüktif yükler çektiği akımın bir kısmını iş üretmeyen "reaktif güç" olarak tüketir; bu da güç faktörü (cosφ) kavramını doğurur. Güç faktörü 1'e ne kadar yakınsa, sistem o kadar verimli çalışır. Bu kavram, ileride kompanzasyon dersinde daha detaylı işlenecektir.</p>
+
+    <h2>Tek Hat Şeması Okumayı Öğrenmek</h2>
+    <p>Tek hat şeması (single line diagram), üç fazlı bir sistemin tüm fazlarını tek bir çizgiyle temsil eden, tesisatın "haritası" niteliğindeki bir çizimdir. Şemada trafo, ana kesici, sayaç, ana dağıtım panosu, tali panolar, kompanzasyon panosu ve büyük yükler (motor, aydınlatma grupları vb.) sembollerle ve bağlantı çizgileriyle gösterilir. Her koruma cihazının (sigorta, TMŞ, kesici) yanında genellikle anma akımı ve kesme kapasitesi gibi teknik veriler de belirtilir.</p>
+    <ul class="article__list">
+      <li><strong>Kaynak:</strong> Şebeke bağlantı noktası, trafo veya jeneratör.</li>
+      <li><strong>Ana kademe:</strong> Ana kesici, sayaç ve ana dağıtım panosu (ADP).</li>
+      <li><strong>Tali kademe:</strong> Kat/bölüm/makine panoları ve bunların koruma cihazları.</li>
+      <li><strong>Yük:</strong> Aydınlatma, priz, motor, ısıtıcı gibi son tüketim noktaları.</li>
+    </ul>
+    <p>Bir tek hat şemasını okuyabilmek, sahada arıza ararken veya yeni bir devre eklerken doğru noktayı bulmanın ilk şartıdır.</p>
+
+    <h2>Pano Hiyerarşisi ve Koruma Kademeleri</h2>
+    <p>Bir tesisatta enerji, kaynaktan tüketime doğru kademeli bir hiyerarşiyle dağıtılır: önce ana dağıtım panosu, ardından bölüm/kat tali panoları, en sonunda da yük devreleri. Her kademede bir koruma cihazı (sigorta, TMŞ veya kesici) bulunur ve bu cihazların akım/zaman ayarları, bir arızada yalnızca en yakın kademenin açması (selektivite) için birbiriyle koordineli seçilir. Bu sayede bir katta oluşan kısa devre, tüm binayı değil yalnızca ilgili tali panoyu etkiler.</p>
+
+    <h2>Trafo, Kompanzasyon, Harmonik ve Topraklamanın Tesisattaki Yeri</h2>
+    <p>Bu dört konu, bir tesisatın farklı katmanlarında birbirini tamamlar: <strong>Trafo</strong>, orta gerilim enerjisini alçak gerilime dönüştürerek tesisin güç kaynağıdır. <strong>Kompanzasyon</strong>, motor ve trafo gibi endüktif yüklerin çektiği reaktif gücü dengeleyerek hem ceza öder hem tesisat verimini artırır. <strong>Harmonikler</strong>, sürücü ve elektronik cihazlar gibi doğrusal olmayan yüklerin şebekeye yaydığı bozulmalardır ve kompanzasyon sistemlerinin doğru tasarlanmasını gerektirir. <strong>Topraklama</strong> ise tüm bu sistemin can ve mal güvenliği temelidir; bir yalıtım hatasında tehlikeli gerilimleri güvenli seviyeye indirir.</p>
+    <p>Bu kavramların her biri VoltGuard Bilgi Bankası'nda ayrı ayrı derinlemesine işlenmiştir: <a href="../bilgi/trafo-periyodik-bakim.html">Trafo Periyodik Bakımı</a>, <a href="../bilgi/reaktif-guc-kompanzasyonu.html">Reaktif Güç Kompanzasyonu ve Harmonikler</a>, <a href="../bilgi/topraklama.html">Topraklama Tesisatı</a>.</p>
+
+    <h2>Sırada Ne Var?</h2>
+    <p>Bu giriş dersini tamamladıktan sonra önerilen öğrenme yolu:</p>
+    <ul class="article__list">
+      <li><strong>Orta seviye:</strong> Kompanzasyon ve harmonik filtreleme derinlemesine (yakında) — bu arada <a href="../bilgi/reaktif-guc-kompanzasyonu.html">Reaktif Güç Kompanzasyonu ve Harmonikler</a> rehberini inceleyebilirsiniz.</li>
+      <li><strong>İleri seviye:</strong> Trafo işletmesi ve kısa devre koordinasyonu (yakında) — bu arada <a href="../bilgi/trafo-periyodik-bakim.html">Trafo Periyodik Bakımı</a> rehberini inceleyebilirsiniz.</li>
+      <li>Paralel olarak <a href="../akademi/plc-endustriyel-otomasyon-giris.html">PLC ve Endüstriyel Otomasyona Giriş</a> dersine geçebilirsiniz.</li>
+    </ul>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Tek hat şeması (single line diagram) nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Tek hat şeması, üç fazlı bir elektrik tesisatının tüm fazlarını tek bir çizgiyle temsil eden basitleştirilmiş bir şemadır. Trafo, ana dağıtım panosu, tali panolar, koruma cihazları ve yükler arasındaki bağlantı hiyerarşisini göstererek tesisatın genel mimarisini anlamayı sağlar.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Ana dağıtım panosu ile tali pano arasındaki fark nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Ana dağıtım panosu (ADP), enerjiyi trafodan veya sayaçtan alıp tesisin ana hatlarına dağıtan ilk kademedir. Tali panolar ise ADP'den beslenip belirli bir bölüm, kat veya makineye enerji dağıtan alt kademelerdir. Bu hiyerarşi, arıza durumunda seçici (selektif) koruma sağlamak için önemlidir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Bu dersten sonra hangi konuya geçmeliyim? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Temel kavramları öğrendikten sonra topraklama, reaktif güç kompanzasyonu ve trafo periyodik bakımı konularındaki VoltGuard Bilgi Bankası rehberlerine geçilmesi, ardından PLC/otomasyon veya elektronik modüllerinden birine devam edilmesi önerilir.</p></div></details>
+
+    <p class="kb-disclaimer">Bu içerik eğitim amaçlıdır ve mühendislik projelendirmesi veya sertifikalı eğitim yerine geçmez. Gerçek tesisatlarda çalışma yapmadan önce iş güvenliği kurallarına ve yürürlükteki mevzuata uyulmalı, uygulamalı eğitim yetkili kişiler eşliğinde alınmalıdır.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Uygulamalı elektrik eğitimi veya staj fırsatları için bize ulaşın</strong><span>VoltGuard mühendislik ekibiyle iletişime geçin.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../akademi.html" class="kb-card__more">&larr; Tüm dersler: VoltGuard Akademi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

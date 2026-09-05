@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Elektronik ve mikrodenetleyici temelleri: direnç/kondansatör/diyot/transistör, mikrodenetleyici nedir, GPIO ve analog-dijital kavramı, PCB tasarım akışı, EMI/EMC'ye giriş.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Elektronik ve Mikrodenetleyici Temelleri (Başlangıç) | VoltGuard Akademi</title>
+  <link rel="canonical" href="https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Elektronik ve Mikrodenetleyici Temelleri (Başlangıç) | VoltGuard Akademi">
+  <meta property="og:description" content="Direnç/kondansatör/diyot/transistör, mikrodenetleyici nedir, GPIO ve analog-dijital kavramı, PCB tasarım akışı, EMI/EMC'ye giriş.">
+  <meta property="og:url" content="https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html#course","name":"Elektronik ve Mikrodenetleyici Temelleri","description":"Direnç/kondansatör/diyot/transistör, mikrodenetleyici nedir, GPIO ve analog-dijital kavramı, PCB tasarım akışı, EMI/EMC'ye giriş.","educationalLevel":"Başlangıç","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-09-05","provider":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Elektronik ve Mikrodenetleyici Temelleri","item":"https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Mikrodenetleyici (mikrokontrolör) nedir?","acceptedAnswer":{"@type":"Answer","text":"Mikrodenetleyici, işlemci, bellek ve giriş/çıkış birimlerini tek bir çip üzerinde barındıran, belirli bir görevi yerine getirmek üzere programlanan küçük bir bilgisayardır. Arduino ve STM32 gibi geliştirme kartları, öğrenmeye başlamak için yaygın kullanılan platformlardır."}},{"@type":"Question","name":"GPIO nedir?","acceptedAnswer":{"@type":"Answer","text":"GPIO (General Purpose Input/Output), bir mikrodenetleyicinin yazılım üzerinden giriş veya çıkış olarak yapılandırılabilen genel amaçlı pinleridir. Bir GPIO pini örneğin bir butonun durumunu okumak (giriş) veya bir LED'i yakıp söndürmek (çıkış) için kullanılabilir."}},{"@type":"Question","name":"EMI ve EMC nedir, neden önemlidir?","acceptedAnswer":{"@type":"Answer","text":"EMI (Elektromanyetik Girişim), bir cihazın yaydığı veya başka bir cihazdan aldığı istenmeyen elektromanyetik sinyallerdir. EMC (Elektromanyetik Uyumluluk) ise bir cihazın hem çevresine aşırı girişim yaymadan hem de çevresindeki girişimlerden fazla etkilenmeden çalışabilme yeteneğidir. Özellikle sürücü, anahtarlamalı güç kaynağı ve yüksek frekanslı devrelerde EMC uyumluluğu, cihazın güvenilirliği ve mevzuata uygunluğu için kritik önemdedir."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../akademi.html">VoltGuard Akademi</a> &rsaquo; <span>Elektronik ve Mikrodenetleyici Temelleri</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektronik &amp; Gömülü Sistemler</span>
+    <span class="akademi-level akademi-level--baslangic">Başlangıç Seviyesi</span>
+    <h1>Elektronik ve Mikrodenetleyici Temelleri</h1>
+    <p class="article__summary">Elektronik ve gömülü sistemlere ilk adımı atanlar için hazırlanan bu derste; temel elektronik bileşenleri, mikrodenetleyici kavramını, GPIO ve analog/dijital sinyalleri, PCB tasarım akışını ve EMI/EMC'nin neden önemli olduğunu öğreneceksiniz.</p>
+
+    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Direnç/kondansatör/diyot/transistör temel işlevleri, mikrodenetleyici mimarisi, GPIO kavramı, şematikten PCB'ye tasarım akışı ve EMI/EMC'ye giriş.</div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Direnç, kondansatör, diyot ve transistör; hemen hemen tüm elektronik devrelerin temel yapı taşlarıdır.</li><li>Mikrodenetleyici, işlemci + bellek + I/O birimlerini tek çipte birleştiren küçük bir bilgisayardır; Arduino/STM32 gibi kartlar öğrenmeye başlamak için yaygın kullanılır.</li><li>GPIO pinleri yazılımla giriş veya çıkış olarak yapılandırılabilir; analog sinyaller ADC (analog-dijital çevirici) ile sayısal değere dönüştürülür.</li><li>Bir elektronik ürün, şematik tasarım → PCB yerleşimi (layout) → gerber üretim dosyası → üretim/montaj akışıyla hayata geçer.</li><li>EMI/EMC, özellikle anahtarlamalı güç kaynağı ve sürücü gibi yüksek frekanslı devrelerde ürünün güvenilirliği ve mevzuata uygunluğu için göz ardı edilemez bir tasarım kriteridir.</li></ul></div>
+
+    <h2>Temel Elektronik Bileşenler</h2>
+    <ul class="article__list">
+      <li><strong>Direnç:</strong> Akım akışına karşı koyarak akımı sınırlar veya gerilim bölücü oluşturur; birimi ohm (Ω)'dur.</li>
+      <li><strong>Kondansatör:</strong> Elektrik enerjisini elektrik alanı biçiminde depolar; filtreleme, gerilim yumuşatma ve zamanlama devrelerinde kullanılır.</li>
+      <li><strong>Diyot:</strong> Akımın yalnızca bir yönde geçmesine izin verir; doğrultma (AC'den DC'ye çevirme) ve ters gerilim koruması için kullanılır.</li>
+      <li><strong>Transistör:</strong> Küçük bir sinyalle daha büyük bir akımı anahtarlamayı veya yükseltmeyi (amplifikasyon) sağlayan yarı iletken bileşendir; hem analog hem dijital devrelerin temelidir.</li>
+    </ul>
+    <p>Bu dört bileşenin farklı kombinasyonları; güç kaynakları, sensör arayüzleri, motor sürücü katları ve haberleşme devreleri gibi hemen her elektronik alt sistemin temelini oluşturur.</p>
+
+    <h2>Mikrodenetleyici Nedir?</h2>
+    <p>Mikrodenetleyici (mikrokontrolör), bir işlemci çekirdeğini, program/veri belleğini ve giriş-çıkış birimlerini tek bir entegre devre üzerinde birleştiren, belirli bir görevi yerine getirmek üzere programlanan küçük bir bilgisayardır. Genel amaçlı bilgisayarların aksine, genellikle tek bir uygulamaya (bir cihazın kontrolüne) adanmıştır ve düşük güç tüketimiyle çalışacak şekilde tasarlanır. Arduino (kolay giriş için) ve STM32 (endüstriyel/performans odaklı projeler için) gibi geliştirme kartları, mikrodenetleyici programlamayı öğrenmeye başlamak için en yaygın tercih edilen platformlardır.</p>
+
+    <h2>GPIO ve Analog/Dijital Kavramı</h2>
+    <p>GPIO (General Purpose Input/Output), bir mikrodenetleyicinin yazılım üzerinden giriş veya çıkış olarak yapılandırılabilen genel amaçlı bacaklarıdır. Bir GPIO pini giriş olarak ayarlandığında bir butonun veya sensörün durumunu (yüksek/düşük seviye) okuyabilir; çıkış olarak ayarlandığında ise bir LED'i, rölesi veya küçük bir yükü sürebilir. Gerçek dünyadaki büyüklükler (sıcaklık, ışık, gerilim) genellikle sürekli (analog) değişir; mikrodenetleyicinin bu değerleri işleyebilmesi için ADC (analog-dijital çevirici) birimi, analog gerilimi sayısal bir değere dönüştürür. Tersine, bir analog çıkış üretmek gerektiğinde DAC (dijital-analog çevirici) veya PWM (darbe genişlik modülasyonu) teknikleri kullanılır.</p>
+
+    <h2>PCB Tasarım Akışına Genel Bakış</h2>
+    <p>Bir elektronik devre fikri, seri üretime kadar birkaç temel aşamadan geçer. Önce devrenin mantıksal bağlantılarını gösteren <strong>şematik</strong> çizilir. Ardından bu şematikteki bileşenler fiziksel bir plaka üzerine <strong>PCB yerleşimi (layout)</strong> ile yerleştirilir ve bakır iz (trace) rotaları çizilir. Tasarım tamamlandığında, üretici fabrikaya gönderilecek <strong>gerber dosyaları</strong> oluşturulur. Son olarak plaka üretilir, bileşenler monte edilir (SMD/THT montaj) ve fonksiyon testi yapılır. Her aşamada sinyal bütünlüğü, ısınma ve elektromanyetik uyumluluk gibi faktörler göz önünde bulundurulmalıdır.</p>
+
+    <h2>EMI/EMC'ye Giriş: Neden Önemli?</h2>
+    <p>EMI (Elektromanyetik Girişim), bir cihazın çevresine yaydığı veya çevresinden aldığı istenmeyen elektromanyetik sinyallerdir. EMC (Elektromanyetik Uyumluluk) ise bir cihazın hem aşırı girişim yaymadan hem de dış girişimlerden fazla etkilenmeden, amacına uygun biçimde çalışabilme yeteneğidir. Özellikle anahtarlamalı güç kaynakları, motor sürücüleri (VFD) ve yüksek hızlı dijital devreler, önemli miktarda elektromanyetik gürültü üretebilir; bu gürültü hem yakındaki hassas elektronik cihazları etkileyebilir hem de ürünün ilgili EMC standartlarına uygunluk testlerinden geçememesine yol açabilir. Bu nedenle PCB yerleşimi, kablolama ve filtreleme kararları alınırken EMC en baştan tasarıma dahil edilmelidir.</p>
+
+    <h2>Sırada Ne Var?</h2>
+    <ul class="article__list">
+      <li><strong>Orta seviye:</strong> Mikrodenetleyici programlama ve sensör/haberleşme entegrasyonu (I2C, SPI, UART) (yakında).</li>
+      <li><strong>İleri seviye:</strong> PCB tasarımı ve EMI/EMC uyumluluk testleri (yakında).</li>
+      <li>Paralel olarak <a href="../akademi/ges-enerji-verimliligi-giris.html">GES ve Enerji Verimliliği Temellerine</a> geçebilirsiniz.</li>
+    </ul>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Mikrodenetleyici (mikrokontrolör) nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Mikrodenetleyici, işlemci, bellek ve giriş/çıkış birimlerini tek bir çip üzerinde barındıran, belirli bir görevi yerine getirmek üzere programlanan küçük bir bilgisayardır. Arduino ve STM32 gibi geliştirme kartları, öğrenmeye başlamak için yaygın kullanılan platformlardır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">GPIO nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>GPIO (General Purpose Input/Output), bir mikrodenetleyicinin yazılım üzerinden giriş veya çıkış olarak yapılandırılabilen genel amaçlı pinleridir. Bir GPIO pini örneğin bir butonun durumunu okumak (giriş) veya bir LED'i yakıp söndürmek (çıkış) için kullanılabilir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">EMI ve EMC nedir, neden önemlidir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>EMI (Elektromanyetik Girişim), bir cihazın yaydığı veya başka bir cihazdan aldığı istenmeyen elektromanyetik sinyallerdir. EMC (Elektromanyetik Uyumluluk) ise bir cihazın hem çevresine aşırı girişim yaymadan hem de çevresindeki girişimlerden fazla etkilenmeden çalışabilme yeteneğidir. Özellikle sürücü, anahtarlamalı güç kaynağı ve yüksek frekanslı devrelerde EMC uyumluluğu, cihazın güvenilirliği ve mevzuata uygunluğu için kritik önemdedir.</p></div></details>
+
+    <p class="kb-disclaimer">Bu içerik eğitim amaçlıdır ve sertifikalı elektronik/gömülü sistem eğitimi veya mühendislik projelendirmesi yerine geçmez. Devre üzerinde çalışırken elektriksel güvenlik kurallarına uyulmalıdır.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Elektronik, gömülü sistem veya PCB projeleriniz için destek alın</strong><span>VoltGuard mühendislik ekibiyle iletişime geçin.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../akademi.html" class="kb-card__more">&larr; Tüm dersler: VoltGuard Akademi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

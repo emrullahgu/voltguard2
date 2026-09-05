@@ -12,6 +12,13 @@
 
   RewriteRule ^teklif-araclari\.html$ /hesaplama-araclari/ [R=301,L]
   RewriteRule ^hesaplama-araclari/?$ /teklif-araclari.html [L]
+
+  RewriteRule ^hesaplama/kablo-kesiti-hesaplama\.html$ /hesaplama/kablo-kesiti-hesaplama/ [R=301,L]
+  RewriteRule ^hesaplama/kablo-kesiti-hesaplama/?$ /hesaplama/kablo-kesiti-hesaplama.html [L]
+  RewriteRule ^hesaplama/trafo-akimi-hesaplama\.html$ /hesaplama/trafo-akimi-hesaplama/ [R=301,L]
+  RewriteRule ^hesaplama/trafo-akimi-hesaplama/?$ /hesaplama/trafo-akimi-hesaplama.html [L]
+  RewriteRule ^hesaplama/kompanzasyon-hesaplama\.html$ /hesaplama/kompanzasyon-hesaplama/ [R=301,L]
+  RewriteRule ^hesaplama/kompanzasyon-hesaplama/?$ /hesaplama/kompanzasyon-hesaplama.html [L]
 </IfModule>
 
 # ─────────────────────────────────────

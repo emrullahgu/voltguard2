@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="PLC çıkışına bağlı kontaktör bobini neden titriyor (chattering)? Gerilim düşümü, çıkış modülü akım sınırı ve bobin uyumsuzluğu açısından teknik gerekçeli cevap.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>PLC Çıkışına Bağlı Kontaktör Bobini Neden Titriyor? | VoltGuard'a Sor</title>
+  <link rel="canonical" href="https://voltguard.com.tr/sor/plc-kontaktor-bobini-titremesi.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="PLC Çıkışına Bağlı Kontaktör Bobini Neden Titriyor? | VoltGuard'a Sor">
+  <meta property="og:description" content="Gerilim düşümü, çıkış modülü akım sınırı ve bobin uyumsuzluğu açısından teknik gerekçeli cevap.">
+  <meta property="og:url" content="https://voltguard.com.tr/sor/plc-kontaktor-bobini-titremesi.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"QAPage","@id":"https://voltguard.com.tr/sor/plc-kontaktor-bobini-titremesi.html#qa","mainEntity":{"@type":"Question","name":"PLC çıkışına bağlı kontaktör bobini neden titriyor (chattering)?","text":"PLC'nin dijital çıkışından sürdüğümüz bir kontaktörün bobini bazen sürekli 'vınlıyor', kontaklar tam oturmuyor gibi bir ses geliyor. Bu neden olabilir?","answerCount":1,"upvoteCount":0,"datePublished":"2026-09-05","author":{"@type":"Organization","name":"VoltGuard"},"acceptedAnswer":{"@type":"Answer","text":"En sık nedenler: PLC çıkış modülünün kontaktör bobini akımını tam karşılayamaması (gerilim düşümü), bobin gerilim sınıfının besleme gerilimiyle uyuşmaması, çıkış modülünün rölé/transistör tipinin bobin karakteristiğine uygun olmaması ve gevşek/yüksek dirençli bir bağlantı noktası. Ölçümle doğrulamak için bobin uçlarındaki gerçek gerilim, PLC çıkışının anma akım sınırıyla karşılaştırılmalıdır.","datePublished":"2026-09-05","author":{"@type":"Organization","name":"VoltGuard"}}},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard'a Sor","item":"https://voltguard.com.tr/sor.html"},{"@type":"ListItem","position":3,"name":"PLC Çıkışına Bağlı Kontaktör Bobini Neden Titriyor?","item":"https://voltguard.com.tr/sor/plc-kontaktor-bobini-titremesi.html"}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../sor.html">VoltGuard'a Sor</a> &rsaquo; <span>PLC-Kontaktör Bobin Titremesi</span>
+  </nav>
+
+  <main class="article">
+    <div class="qa-tags"><span class="qa-tag">Otomasyon</span><span class="qa-tag qa-tag--equipment">PLC / Kontaktör</span><span class="qa-tag qa-tag--problem">Arıza Nedeni</span></div>
+    <h1>PLC Çıkışına Bağlı Kontaktör Bobini Neden Titriyor (Chattering)?</h1>
+
+    <div class="kb-keyfacts"><h2>Soru</h2><ul><li>"PLC'nin dijital çıkışından sürdüğümüz bir kontaktörün bobini bazen sürekli 'vınlıyor', kontaklar tam oturmuyor gibi bir ses geliyor. Bu neden olabilir?"</li></ul></div>
+
+    <h2>Kısa Cevap</h2>
+    <p>Bu belirtinin en sık nedeni, kontaktör bobinine giden gerilimin, bobinin sağlıklı çekmesi (pull-in) için gereken minimum değerin altında kalmasıdır. Bunun başlıca kaynakları: PLC çıkış modülünün bobin akımını tam karşılayamaması, bobin gerilim sınıfı ile besleme geriliminin uyuşmaması, çıkış tipinin (röle/transistör) bobin karakteristiğine uygun olmaması ve devredeki gevşek/yüksek dirençli bir bağlantı noktasıdır.</p>
+
+    <h2>Neden Bu Kadar Sık Görülür? Teknik Gerekçe</h2>
+    <p>Bir kontaktör bobini, kontakları tam ve kalıcı olarak çekebilmesi için belirli bir minimum gerilime (genelde anma geriliminin %85'i civarı) ihtiyaç duyar. Bu değerin altında kalan bir gerilim, bobinin manyetik alanının kontakları tam oturtamamasına, bu da mekanik titreşime (chattering) ve karakteristik bir vınlama sesine yol açar. PLC'nin dijital çıkış modülleri genellikle sınırlı bir akım kapasitesine (örneğin 0,5A civarı) sahiptir; eğer bobin akımı bu sınıra yakınsa veya modül üzerinde birden fazla çıkış aynı anda yüksek akım çekiyorsa, modül üzerindeki iç gerilim düşümü bobine ulaşan gerilimi azaltabilir.</p>
+    <p>İkinci olası neden, bobinin DC/AC gerilim sınıfının besleme kaynağıyla tam örtüşmemesidir; örneğin 24V DC bobin yerine yanlışlıkla farklı bir gerilim sınıfının takılmış olması benzer bir belirti verir. Üçüncü olası neden ise devredeki bir bağlantı noktasının (klemens, konnektör) zamanla gevşemesi veya oksitlenmesi sonucu ek bir seri direnç oluşması ve bunun gerilim düşümünü artırmasıdır. Son olarak, PLC çıkışının tipi (röle çıkışı mı, transistör/tranzistör çıkışı mı) bobinin endüktif karakteristiğiyle uyumlu değilse (örneğin uygun serbest geçiş diyodu/bastırma devresi olmadan sürülen transistör çıkışı), anahtarlama davranışı bozulabilir.</p>
+
+    <h2>Ölçümle Nasıl Doğrularsınız?</h2>
+    <ul class="article__list">
+      <li><strong>Bobin uçlarında gerilim ölçümü:</strong> Kontaktör enerjiliyken bobin uçlarındaki gerçek gerilimi ölçün ve bobin etiketindeki anma değeriyle (ve %85 alt sınırla) karşılaştırın.</li>
+      <li><strong>PLC çıkış akımı kontrolü:</strong> PLC çıkış modülünün teknik veri sayfasından kanal başına izin verilen azami akımı kontrol edin ve bobin akımıyla karşılaştırın.</li>
+      <li><strong>Bağlantı noktası kontrolü:</strong> Klemens ve konnektörlerde gevşeklik/oksitlenme olup olmadığını gözle ve gerekiyorsa termal kamerayla (ısınan nokta) kontrol edin.</li>
+      <li><strong>Bobin etiketi kontrolü:</strong> Takılı bobinin gerilim sınıfının (DC/AC, volt değeri) besleme kaynağıyla eşleştiğini doğrulayın.</li>
+    </ul>
+
+    <h2>Çözüm Önerileri</h2>
+    <ul class="article__list">
+      <li>PLC çıkışının akım kapasitesi yetersizse, doğrudan sürmek yerine araya bir röle (interface relay) koyarak kontaktör bobinini bu rölenin kontağı üzerinden besleyin.</li>
+      <li>Bobin gerilim sınıfının besleme kaynağıyla birebir uyumlu olduğunu teyit edin ve gerekiyorsa doğru bobini takın.</li>
+      <li>Gevşek/oksitlenmiş bağlantı noktalarını temizleyip sıkın; periyodik bakımda bağlantı sıkılığını kontrol edin.</li>
+      <li>Transistör çıkışlarında endüktif yük için uygun bastırma (flyback diyot vb.) düzeninin bulunduğundan emin olun.</li>
+    </ul>
+
+    <h2>Benzer Sorular</h2>
+    <ul class="article__list">
+      <li><a href="../sor/kompanzasyon-kontaktor-ariza-nedenleri.html">Kompanzasyon panosundaki kontaktör neden sık arıza yapıyor?</a></li>
+      <li><a href="../akademi/plc-endustriyel-otomasyon-giris.html">PLC, HMI ve SCADA'ya Giriş (VoltGuard Akademi)</a></li>
+    </ul>
+
+    <p class="kb-disclaimer">Bu cevap genel teknik bilgi amaçlıdır; belirli bir arızanın kesin teşhisi yerinde ölçüm ve yetkili bir elektrik/otomasyon mühendisinin değerlendirmesini gerektirir. Panolarda çalışırken enerjisiz çalışma kurallarına uyulmalıdır.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Otomasyon panonuzda tekrarlayan bir arıza mı var?</strong><span>VoltGuard mühendisleriyle ölçüm ve arıza tespiti planlayın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../sor.html" class="kb-card__more">&larr; Tüm sorular: VoltGuard'a Sor</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

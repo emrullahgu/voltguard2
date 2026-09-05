@@ -8,3 +8,36 @@
   from = "/hesaplama-araclari/"
   to = "/teklif-araclari.html"
   status = 200
+
+[[redirects]]
+  from = "/hesaplama/kablo-kesiti-hesaplama.html"
+  to = "/hesaplama/kablo-kesiti-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/kablo-kesiti-hesaplama/"
+  to = "/hesaplama/kablo-kesiti-hesaplama.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/trafo-akimi-hesaplama.html"
+  to = "/hesaplama/trafo-akimi-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/trafo-akimi-hesaplama/"
+  to = "/hesaplama/trafo-akimi-hesaplama.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/kompanzasyon-hesaplama.html"
+  to = "/hesaplama/kompanzasyon-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/kompanzasyon-hesaplama/"
+  to = "/hesaplama/kompanzasyon-hesaplama.html"
+  status = 200

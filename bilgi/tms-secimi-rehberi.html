@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="TMŞ (Termik Manyetik Şalter) seçimi nasıl yapılır: Ib ≤ In ≤ Iz kuralı, kesme kapasitesi, eğri tipi ve selektivite kriterleriyle VoltGuard mühendislik rehberi.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>TMŞ (Termik Manyetik Şalter) Seçimi Nasıl Yapılır? | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/bilgi/tms-secimi-rehberi.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="TMŞ (Termik Manyetik Şalter) Seçimi Nasıl Yapılır? | VoltGuard">
+  <meta property="og:description" content="TMŞ seçimi nasıl yapılır: Ib ≤ In ≤ Iz kuralı, kesme kapasitesi, eğri tipi ve selektivite kriterleriyle VoltGuard mühendislik rehberi.">
+  <meta property="og:url" content="https://voltguard.com.tr/bilgi/tms-secimi-rehberi.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/tms-secimi-rehberi.html#article","headline":"TMŞ (Termik Manyetik Şalter) Seçimi Nasıl Yapılır?","description":"TMŞ seçimi nasıl yapılır: Ib ≤ In ≤ Iz kuralı, kesme kapasitesi, eğri tipi ve selektivite kriterleriyle VoltGuard mühendislik rehberi.","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-09-05","articleSection":"Elektrik Hesapları","image":"https://voltguard.com.tr/public/og-image.png","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/tms-secimi-rehberi.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"TMŞ Seçimi Nasıl Yapılır?","item":"https://voltguard.com.tr/bilgi/tms-secimi-rehberi.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"TMŞ ile sigorta arasındaki fark nedir?","acceptedAnswer":{"@type":"Answer","text":"Otomat sigortalar (MCB) genellikle 125A'e kadar sabit anma akımlı, konut/işyeri tipi koruma cihazlarıdır. TMŞ (kompakt tip devre kesici / MCCB) ise daha yüksek akım ve kesme kapasitelerinde üretilir, çoğu zaman ayarlanabilir termik ve manyetik koruma eşiklerine sahiptir ve ana dağıtım panolarında, trafo çıkışlarında ve büyük motor beslemelerinde kullanılır."}},{"@type":"Question","name":"TMŞ seçerken nelere dikkat edilir?","acceptedAnswer":{"@type":"Answer","text":"Temel kural Ib ≤ In ≤ Iz'dir: yük akımı, TMŞ anma akımından küçük veya eşit; TMŞ anma akımı da kablonun taşıyabileceği akımdan küçük veya eşit olmalıdır. Ayrıca TMŞ'nin kesme kapasitesi (Icu/Ics), o noktadaki olası kısa devre akımından büyük olmalı; eğri tipi ve ayarları yük karakteristiğine (motor, trafo, aydınlatma) göre seçilmelidir."}},{"@type":"Question","name":"Ayarlanabilir TMŞ nedir?","acceptedAnswer":{"@type":"Answer","text":"Ayarlanabilir TMŞ'lerde termik (aşırı yük) ve manyetik (kısa devre) açma eşikleri belirli bir aralıkta kullanıcı tarafından ayarlanabilir. Bu sayede aynı gövde büyüklüğündeki bir cihaz farklı yük akımlarına uyarlanabilir ve kademeler arası selektivite (koordinasyon) daha kolay sağlanır."}},{"@type":"Question","name":"TMŞ kesme kapasitesi nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Kesme kapasitesi, TMŞ'nin güvenle açabileceği azami kısa devre akımını gösterir ve o noktadaki beklenen kısa devre akımı bir kısa devre hesabıyla (trafo gücü, kablo empedansı, şebeke kısa devre gücü dikkate alınarak) belirlenir. Seçilecek TMŞ'nin kesme kapasitesi, bu hesaplanan değerden büyük olmalıdır."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>TMŞ Seçimi Nasıl Yapılır?</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektrik Hesapları</span>
+    <h1>TMŞ (Termik Manyetik Şalter) Seçimi Nasıl Yapılır?</h1>
+    <p class="article__summary">TMŞ (termik manyetik şalter / kompakt tip devre kesici), ana dağıtım panolarından motor beslemelerine kadar birçok noktada aşırı yük ve kısa devre koruması sağlar. Doğru seçim; yük akımı, kablo kapasitesi, kesme gücü ve eğri tipinin birlikte değerlendirilmesini gerektirir.</p>
+
+    <div class="kb-quickanswer">
+      <span class="kb-quickanswer__label">Kısa Cevap</span>
+      <strong class="kb-quickanswer__value">Temel kural: Ib ≤ In ≤ Iz</strong>
+      <span class="kb-quickanswer__note">Yük akımı (Ib), TMŞ'nin anma akımından (In) küçük veya eşit olmalı; TMŞ anma akımı da kablonun taşıyabileceği akımdan (Iz) küçük veya eşit olmalıdır. Ayrıca kesme kapasitesi, olası kısa devre akımını karşılamalıdır.</span>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>TMŞ seçiminde temel kural Ib ≤ In ≤ Iz'dir: yük akımı, anma akımı ve kablonun taşıma kapasitesi bu sırayla birbirini karşılamalıdır.</li><li>Kesme kapasitesi (Icu/Ics), TMŞ'nin bulunduğu noktadaki olası kısa devre akımından büyük olmalıdır; aksi halde kısa devrede cihaz kendisi hasar görebilir.</li><li>Eğri tipi (B/C/D benzeri manyetik ayar), yükün ilk yol alma/inrush akımına göre seçilir; motor ve trafo gibi yükler için daha toleranslı ayarlar gerekir.</li><li>Ayarlanabilir TMŞ'lerde termik ve manyetik eşikler belirli aralıkta ayarlanarak selektivite (kademeli koordinasyon) sağlanabilir.</li><li>Büyük TMŞ'lerde LSI/LSIG gibi ek koruma fonksiyonları (uzun süre, kısa süre, anlık, toprak arızası) selektif koordinasyonu kolaylaştırır.</li></ul></div>
+
+    <h2>TMŞ Nedir?</h2>
+    <p>TMŞ (termik manyetik şalter), aşırı yük durumunda termik (bimetal) eleman üzerinden gecikmeli, kısa devre durumunda ise manyetik eleman üzerinden anlık açma yapan bir devre kesicidir. Uluslararası literatürde genellikle MCCB (Molded Case Circuit Breaker) olarak adlandırılan bu cihazlar, konut tipi otomat sigortalara (MCB) göre daha yüksek akım ve kesme kapasitelerinde üretilir; birçok modelde termik ve manyetik açma eşikleri ayarlanabilir. Ana dağıtım panosu girişleri, trafo alçak gerilim çıkışları, jeneratör çıkışları ve büyük motor beslemeleri TMŞ'nin en sık kullanıldığı noktalardır.</p>
+
+    <h2>TMŞ Seçiminde Temel Kural: Ib ≤ In ≤ Iz</h2>
+    <p>Koruma cihazı seçiminin evrensel kuralı üç değerin doğru sıralanmasıdır:</p>
+    <ul class="article__list">
+      <li><strong>Ib:</strong> Devrenin taşıması beklenen gerçek yük akımı.</li>
+      <li><strong>In:</strong> Seçilecek TMŞ'nin anma (nominal) akımı.</li>
+      <li><strong>Iz:</strong> Devrede kullanılan kablonun sürekli olarak güvenle taşıyabileceği akım.</li>
+    </ul>
+    <p>Bu üç değer Ib ≤ In ≤ Iz sırasını sağlamalıdır: TMŞ, yükün gerçek akımını karşılayacak kadar büyük seçilmeli, ama kabloyu koruyabilmesi için kablonun taşıma kapasitesini aşmamalıdır. Ayrıca açma akımının (kesin açma), kablonun ısıl dayanım sınırının belirli bir katsayı üzerinde kalmaması da standartlarda ayrıca şart koşulur.</p>
+
+    <h2>Kesme Kapasitesi (Icu / Ics) Neden Önemlidir?</h2>
+    <p>Kesme kapasitesi, TMŞ'nin güvenle açabileceği azami kısa devre akımını ifade eder. Bir TMŞ'nin bulunduğu noktadaki olası kısa devre akımı; trafo gücüne, trafo empedansına, kablo/bara empedansına ve şebekenin kısa devre gücüne bağlıdır ve ayrı bir kısa devre hesabıyla belirlenir. Seçilecek TMŞ'nin kesme kapasitesi bu hesaplanan değerden mutlaka büyük olmalıdır; aksi halde bir kısa devre anında TMŞ akımı kesmek yerine kendisi hasar görebilir ve arıza yayılabilir. Icu (nihai kesme kapasitesi) ve Ics (servis kesme kapasitesi) arasındaki fark, cihazın kısa devreden sonra tekrar kullanılabilirliğiyle ilgilidir ve kritik beslemelerde Ics'nin Icu'ya yakın seçilmesi tercih edilir.</p>
+
+    <h2>Eğri Tipi ve Ayar Seçimi</h2>
+    <p>TMŞ'lerin manyetik açma ayarı, tıpkı otomat sigortalardaki B/C/D eğrileri gibi, yükün ilk yol alma (inrush) akımına göre seçilir. Motorlar yol alırken anma akımlarının birkaç katı akım çeker; trafo ve büyük kondansatör bankaları da enerjilenme anında yüksek geçici akım darbesi oluşturur. Bu yükler için manyetik açma eşiği daha yüksek/gecikmeli seçilmezse, TMŞ normal işletme sırasında gereksiz yere açabilir. Aydınlatma ve dirençsel yükler gibi düşük inrush'lu devrelerde ise daha hassas bir ayar tercih edilerek kısa devre koruması hızlandırılabilir.</p>
+
+    <h2>Selektivite (Kademeli Koruma) ve Ayarlanabilir TMŞ'ler</h2>
+    <p>Birden fazla koruma cihazının seri bağlı olduğu bir sistemde (örneğin ana TMŞ → tali TMŞ → sigorta), bir arıza anında yalnızca arızaya en yakın cihazın açması ve üst kademelerin kapalı kalması istenir; buna selektivite (seçicilik) denir. Ayarlanabilir TMŞ'lerde termik (uzun süre gecikmeli), manyetik (kısa süre gecikmeli/anlık) ve gerekiyorsa toprak arızası (ground fault) eşikleri ayrı ayrı ayarlanabildiği için, kademeler arasında zaman ve akım bazlı seçicilik sağlamak daha kolaydır. Büyük güç dağıtım panolarında bu ayarların doğru yapılması, bir arızanın sadece ilgili hattı değil tüm tesisi karartmasını önler.</p>
+
+    <h2>Örnek Seçim Senaryosu</h2>
+    <p>400V üç fazlı, 100 kW kurulu güçte ve cosφ 0,85 olan bir yük için TMŞ seçimini adım adım inceleyelim:</p>
+    <ul class="article__list">
+      <li>Yük akımı: Ib = P / (√3 × V × cosφ) = 100.000 / (1,732 × 400 × 0,85) ≈ 169,8 A</li>
+      <li>Standart kademelerden Ib'nin hemen üzerindeki bir anma akımı seçilir; örneğin 200 A'lik bir TMŞ (In = 200 A > Ib = 169,8 A).</li>
+      <li>Besleme kablosunun taşıma kapasitesi (Iz), seçilen 200 A'den büyük veya eşit olacak şekilde boyutlandırılmalıdır.</li>
+      <li>TMŞ'nin kesme kapasitesi, o noktadaki hesaplanan kısa devre akımından büyük seçilir.</li>
+    </ul>
+    <p>VoltGuard, İzmir merkezli elektrik mühendisliği hizmetleri kapsamında pano projelendirmesinde TMŞ/sigorta seçimini yük analizi, kısa devre hesabı ve selektivite koordinasyonunu birlikte değerlendirerek yapar.</p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">TMŞ ile sigorta arasındaki fark nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Otomat sigortalar (MCB) genellikle 125A'e kadar sabit anma akımlı, konut/işyeri tipi koruma cihazlarıdır. TMŞ (kompakt tip devre kesici / MCCB) ise daha yüksek akım ve kesme kapasitelerinde üretilir, çoğu zaman ayarlanabilir termik ve manyetik koruma eşiklerine sahiptir ve ana dağıtım panolarında, trafo çıkışlarında ve büyük motor beslemelerinde kullanılır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">TMŞ seçerken nelere dikkat edilir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Temel kural Ib ≤ In ≤ Iz'dir: yük akımı, TMŞ anma akımından küçük veya eşit; TMŞ anma akımı da kablonun taşıyabileceği akımdan küçük veya eşit olmalıdır. Ayrıca TMŞ'nin kesme kapasitesi, o noktadaki olası kısa devre akımından büyük olmalı; eğri tipi ve ayarları yük karakteristiğine göre seçilmelidir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Ayarlanabilir TMŞ nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Ayarlanabilir TMŞ'lerde termik (aşırı yük) ve manyetik (kısa devre) açma eşikleri belirli bir aralıkta kullanıcı tarafından ayarlanabilir. Bu sayede aynı gövde büyüklüğündeki bir cihaz farklı yük akımlarına uyarlanabilir ve kademeler arası selektivite daha kolay sağlanır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">TMŞ kesme kapasitesi nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Kesme kapasitesi, TMŞ'nin güvenle açabileceği azami kısa devre akımını gösterir ve o noktadaki beklenen kısa devre akımı bir kısa devre hesabıyla (trafo gücü, kablo empedansı, şebeke kısa devre gücü dikkate alınarak) belirlenir. Seçilecek TMŞ'nin kesme kapasitesi, bu hesaplanan değerden büyük olmalıdır.</p></div></details>
+
+    <div class="kb-sources"><h2>Resmî Kaynaklar</h2><ul><li><a href="https://www.tse.org.tr" target="_blank" rel="noopener">Türk Standardları Enstitüsü (TSE) - TS EN 60947-2 Devre Kesiciler Standardı</a></li><li><a href="https://www.emo.org.tr" target="_blank" rel="noopener">TMMOB Elektrik Mühendisleri Odası (EMO) - Teknik yayınlar</a></li></ul></div>
+    <p class="kb-disclaimer">Bu içerik yalnızca bilgilendirme amaçlıdır ve mühendislik projelendirmesi yerine geçmez. Örnek hesaplar ideal/dengeli sistem varsayımıyla yapılmıştır; gerçek seçimde kısa devre hesabı, selektivite koordinasyonu ve ilgili standartların uygulanması gerekir. Kesin TMŞ seçimi için yetkili bir elektrik mühendisinden görüş alınması önerilir.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Pano projelendirme ve koruma koordinasyonu için destek alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../bilgi-bankasi.html" class="kb-card__more">&larr; Tüm konular: Bilgi Bankası</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

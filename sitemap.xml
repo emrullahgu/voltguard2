@@ -41,9 +41,47 @@
   </url>
   <url>
     <loc>https://voltguard.com.tr/bilgi-bankasi.html</loc>
-    <lastmod>2026-06-14</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/akademi.html</loc>
+    <lastmod>2026-09-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url><loc>https://voltguard.com.tr/akademi/elektrik-tesisati-guc-sistemleri-giris.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/akademi/plc-endustriyel-otomasyon-giris.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/akademi/ges-enerji-verimliligi-giris.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url>
+    <loc>https://voltguard.com.tr/sor.html</loc>
+    <lastmod>2026-09-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url><loc>https://voltguard.com.tr/sor/kompanzasyon-kontaktor-ariza-nedenleri.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/sor/plc-kontaktor-bobini-titremesi.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/sor/motor-bir-fazda-dusuk-akim.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/sor/ges-inverter-gece-tuketimi.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url>
+    <loc>https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/</loc>
+    <lastmod>2026-09-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/hesaplama/trafo-akimi-hesaplama/</loc>
+    <lastmod>2026-09-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/hesaplama/kompanzasyon-hesaplama/</loc>
+    <lastmod>2026-09-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://voltguard.com.tr/hesaplama-araclari/</loc>
@@ -87,6 +125,11 @@
   <url><loc>https://voltguard.com.tr/bilgi/scada-iec-61850.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://voltguard.com.tr/bilgi/ts-hd-60364-tesisat-standartlari.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://voltguard.com.tr/bilgi/lisanssiz-uretim-ges.html</loc><lastmod>2026-06-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/kva-amper-hesaplama.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/kablo-kesiti-akim-tasima-tablosu.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/sigorta-amper-kw-tablosu.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/tms-secimi-rehberi.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/kacak-akim-rolesi-ariza-nedenleri.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url>
     <loc>https://voltguard.com.tr/gizlilik.html</loc>
     <lastmod>2026-08-29</lastmod>

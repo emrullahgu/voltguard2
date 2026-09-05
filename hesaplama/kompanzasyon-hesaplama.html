@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Kompanzasyon hesaplama: aktif güç ve güç faktörüne göre gerekli kVAr kondansatör gücünü anında hesaplayan ücretsiz araç, formül, örnek hesap ve sık sorulan sorular.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Kompanzasyon Hesaplama Aracı ve Formülü (kVAr) | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/kompanzasyon-hesaplama/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Kompanzasyon Hesaplama Aracı ve Formülü (kVAr) | VoltGuard">
+  <meta property="og:description" content="Aktif güç ve güç faktörüne göre gerekli kVAr kondansatör gücünü anında hesaplayan ücretsiz araç, formül, örnek hesap ve sık sorulan sorular.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/kompanzasyon-hesaplama/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/kompanzasyon-hesaplama/#article","headline":"Kompanzasyon Hesaplama Aracı ve Formülü (kVAr)","description":"Aktif güç ve güç faktörüne göre gerekli kVAr kondansatör gücünü anında hesaplayan ücretsiz araç, formül, örnek hesap ve sık sorulan sorular.","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-09-05","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/kompanzasyon-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Kompanzasyon Hesaplama","item":"https://voltguard.com.tr/hesaplama/kompanzasyon-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Kompanzasyon (kVAr) nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Gerekli kondansatör gücü kVAr = Aktif güç (kW) × (tan(mevcut φ) − tan(hedef φ)) formülüyle bulunur. Mevcut ve hedef güç faktörleri (cosφ) açıya çevrilip tanjantları alınır ve farkları aktif güçle çarpılır."}},{"@type":"Question","name":"Hedef güç faktörü kaç olmalı?","acceptedAnswer":{"@type":"Answer","text":"Genel hedef, güç faktörünü mümkün olduğunca 1'e yaklaştırmaktır; uygulamada dağıtım şirketinin belirlediği ceza sınırının üzerinde bir değer hedeflenir. Kesin sınırlar için yürürlükteki mevzuat esas alınmalıdır."}},{"@type":"Question","name":"Harmonik varsa bu hesap değişir mi?","acceptedAnswer":{"@type":"Answer","text":"Hesabın kendisi değişmez ancak uygulanacak sistemin tipi değişir. Yüksek harmonikli tesislerde reaktörsüz (klasik) kondansatör bankaları rezonans riski taşır; bu durumda reaktör destekli (detuned) veya aktif filtreli kompanzasyon sistemleri tercih edilmelidir."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../teklif-araclari.html">Hesaplama Merkezi</a> &rsaquo; <span>Kompanzasyon Hesaplama</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektrik Hesapları</span>
+    <h1>Kompanzasyon Hesaplama Aracı ve Formülü (kVAr)</h1>
+    <p class="article__summary">Aktif gücünüzü, mevcut ve hedef güç faktörünüzü girin; gerekli kondansatör gücünü (kVAr) anında görün. Aşağıda formülü, örnek bir hesabı ve sık sorulan soruları da bulabilirsiniz.</p>
+
+    <div class="mini-calc">
+      <div class="mini-calc__fields">
+        <div class="mini-calc__field"><label for="kc-power">Aktif güç (kW)</label><input id="kc-power" type="number" min="0" value="100" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="kc-current">Mevcut cosφ (%)</label><input id="kc-current" type="number" min="1" max="99" value="75" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="kc-target">Hedef cosφ (%)</label><input id="kc-target" type="number" min="1" max="100" value="98" inputmode="decimal"></div>
+      </div>
+      <div class="mini-calc__result">
+        <span class="mini-calc__result-label">Ön Sonuç</span>
+        <span class="mini-calc__result-value" id="kc-result">-</span>
+        <span class="mini-calc__result-note" id="kc-detail"></span>
+      </div>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Gerekli kompanzasyon gücü: kVAr = Aktif güç × (tan(mevcut φ) − tan(hedef φ)).</li><li>Hedef güç faktörü, dağıtım şirketinin reaktif ceza uyguladığı sınırın üzerinde seçilmelidir.</li><li>Harmonikli tesislerde reaktörsüz kondansatör bankaları yerine reaktör destekli (detuned) sistemler tercih edilmelidir.</li></ul></div>
+
+    <h2>Formül ve Hesaplama Mantığı</h2>
+    <p>Reaktif güç kompanzasyonunda amaç, tesisin çektiği iş görmeyen reaktif gücü bir kondansatör bankasıyla üreterek şebekeden çekilen reaktif bileşeni azaltmaktır. Gerekli kondansatör gücü şu formülle hesaplanır: <strong>kVAr = kW × (tan(arccos(cosφ<sub>mevcut</sub>)) − tan(arccos(cosφ<sub>hedef</sub>)))</strong>. Burada kW tesisin aktif gücü, cosφ<sub>mevcut</sub> ölçülen güç faktörü, cosφ<sub>hedef</sub> ise ulaşılmak istenen güç faktörüdür.</p>
+
+    <h2>Örnek Hesap</h2>
+    <p>100 kW aktif güç çeken, mevcut güç faktörü 0,75 olan bir tesisi, hedef güç faktörü 0,98'e çıkarmak istediğinizi varsayalım: kVAr = 100 × (tan(arccos(0,75)) − tan(arccos(0,98))) = 100 × (0,882 − 0,203) ≈ <strong>68 kVAr</strong>. Bu, tesise eklenmesi gereken yaklaşık kondansatör gücünü gösterir; kademe sayısı ve reaktör ihtiyacı harmonik ölçümüyle netleştirilir.</p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Kompanzasyon (kVAr) nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Gerekli kondansatör gücü kVAr = Aktif güç (kW) × (tan(mevcut φ) − tan(hedef φ)) formülüyle bulunur. Mevcut ve hedef güç faktörleri (cosφ) açıya çevrilip tanjantları alınır ve farkları aktif güçle çarpılır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Hedef güç faktörü kaç olmalı? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Genel hedef, güç faktörünü mümkün olduğunca 1'e yaklaştırmaktır; uygulamada dağıtım şirketinin belirlediği ceza sınırının üzerinde bir değer hedeflenir. Kesin sınırlar için yürürlükteki mevzuat esas alınmalıdır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Harmonik varsa bu hesap değişir mi? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Hesabın kendisi değişmez ancak uygulanacak sistemin tipi değişir. Yüksek harmonikli tesislerde reaktörsüz (klasik) kondansatör bankaları rezonans riski taşır; bu durumda reaktör destekli (detuned) veya aktif filtreli kompanzasyon sistemleri tercih edilmelidir.</p></div></details>
+
+    <p class="kb-disclaimer">Bu araç yalnızca ön değerlendirme amaçlıdır ve mühendislik projelendirmesi yerine geçmez. Kademe sayısı, reaktör ihtiyacı ve pano tasarımı için yetkili bir elektrik mühendisinden görüş alınması önerilir.</p>
+    <p>Daha fazla ilgili kaynak: <a href="../bilgi/reaktif-guc-kompanzasyonu.html">Reaktif Güç Kompanzasyonu ve Harmonikler</a>, <a href="../teklif-araclari.html">VoltGuard Mühendislik Hesaplama Merkezi</a> (harmonik risk analizi ve daha fazlası).</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Kompanzasyon ve harmonik filtreleme için mühendislik desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../teklif-araclari.html" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      function update() {
+        var kw = Math.max(0, Number(document.getElementById('kc-power').value) || 0);
+        var current = Math.min(99, Math.max(1, Number(document.getElementById('kc-current').value) || 1));
+        var target = Math.min(100, Math.max(1, Number(document.getElementById('kc-target').value) || 1));
+        var kvar = kw * (Math.tan(Math.acos(current / 100)) - Math.tan(Math.acos(target / 100)));
+        document.getElementById('kc-result').textContent = Math.max(0, Math.round(kvar)) + ' kVAr';
+        document.getElementById('kc-detail').textContent = 'cosφ ' + current + '% → ' + target + '% için gerekli ön kondansatör gücü.';
+      }
+      document.getElementById('kc-power').addEventListener('input', update);
+      document.getElementById('kc-current').addEventListener('input', update);
+      document.getElementById('kc-target').addEventListener('input', update);
+      update();
+    }());
+  </script>
+</body>
+</html>
