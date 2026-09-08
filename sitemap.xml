@@ -55,6 +55,14 @@
   <url><loc>https://voltguard.com.tr/akademi/plc-endustriyel-otomasyon-giris.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://voltguard.com.tr/akademi/ges-enerji-verimliligi-giris.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/akademi/kompanzasyon-harmonik-orta.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/akademi/ladder-programlama-modbus-orta.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/akademi/scada-iec-61850-mimari-ileri.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/akademi/mikrodenetleyici-i2c-spi-uart-orta.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/akademi/pcb-tasarim-emi-emc-ileri.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/akademi/ges-proje-sebeke-baglanti-orta.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/akademi/enerji-verimliligi-etudu-vfd-ileri.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
   <url>
     <loc>https://voltguard.com.tr/sor.html</loc>
     <lastmod>2026-09-05</lastmod>
@@ -65,6 +73,23 @@
   <url><loc>https://voltguard.com.tr/sor/plc-kontaktor-bobini-titremesi.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://voltguard.com.tr/sor/motor-bir-fazda-dusuk-akim.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://voltguard.com.tr/sor/ges-inverter-gece-tuketimi.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/sor/kablo-neden-isiniyor.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/sor/faz-notr-220v-mi-230v-mi.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/sor/motor-termik-sik-atiyor.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/sor/kacak-akim-rolesi-ilk-anda-atiyor.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/sor/cosfi-098-fatura-reaktif-ceza.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/sor/modbus-rtu-haberlesme-kesiliyor.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://voltguard.com.tr/muhendis-merkezi.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://voltguard.com.tr/mm/pano-kontrol-formu.html</loc><lastmod>2026-09-08</lastmod><changefreq>quarterly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/mm/trafo-bakim-checklisti.html</loc><lastmod>2026-09-08</lastmod><changefreq>quarterly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/mm/kompanzasyon-kontrol-formu.html</loc><lastmod>2026-09-08</lastmod><changefreq>quarterly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/mm/motor-bakim-formu.html</loc><lastmod>2026-09-08</lastmod><changefreq>quarterly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/mm/periyodik-kontrol-checklistleri.html</loc><lastmod>2026-09-08</lastmod><changefreq>quarterly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/mm/elektrik-kesif-formu.html</loc><lastmod>2026-09-08</lastmod><changefreq>quarterly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/mm/ges-kesif-formu.html</loc><lastmod>2026-09-08</lastmod><changefreq>quarterly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/mm/kablo-metraj-sablonu.html</loc><lastmod>2026-09-08</lastmod><changefreq>quarterly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://voltguard.com.tr/mm/pano-malzeme-listesi.html</loc><lastmod>2026-09-08</lastmod><changefreq>quarterly</changefreq><priority>0.6</priority></url>
   <url>
     <loc>https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/</loc>
     <lastmod>2026-09-05</lastmod>
@@ -83,6 +108,18 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url><loc>https://voltguard.com.tr/hesaplama/gerilim-dusumu-hesaplama.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/hesaplama/motor-akimi-hesaplama.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/hesaplama/kw-kva-amper-donusturucu.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/hesaplama/sigorta-tms-secimi.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/hesaplama/motor-koruma-kontaktor-secimi.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/hesaplama/kisa-devre-akimi-hesaplama.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/hesaplama/jenerator-gucu-hesaplama.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/hesaplama/topraklama-hesaplama.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/hesaplama/ges-uretim-hesaplama.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/hesaplama/inverter-dc-ac-kablo-secimi.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/hesaplama/aydinlatma-lux-hesaplama.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url>
     <loc>https://voltguard.com.tr/hesaplama-araclari/</loc>
     <lastmod>2026-08-29</lastmod>
@@ -130,6 +167,16 @@
   <url><loc>https://voltguard.com.tr/bilgi/sigorta-amper-kw-tablosu.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://voltguard.com.tr/bilgi/tms-secimi-rehberi.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://voltguard.com.tr/bilgi/kacak-akim-rolesi-ariza-nedenleri.html</loc><lastmod>2026-09-05</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/gerilim-dusumu-nedir.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/motor-akimi-nominal-tablosu.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/kw-kva-amper-donusum.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/kisa-devre-akimi-nedir.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/topraklama-degeri-kac-olmali.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/kacak-akim-rolesi-secimi.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/harmonik-nedir-sorunlari.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/vfd-frekans-invertoru-nedir.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://voltguard.com.tr/bilgi/ges-kac-panel-lazim.html</loc><lastmod>2026-09-08</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url>
     <loc>https://voltguard.com.tr/gizlilik.html</loc>
     <lastmod>2026-08-29</lastmod>

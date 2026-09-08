@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Ücretsiz Üye Ol | VoltGuard Tools</title>
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="doc-shell">
+  <main class="vg-auth-shell">
+    <section class="vg-auth-card" aria-labelledby="kayit-title">
+      <a href="../index.html" style="display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--clr-dark);margin-bottom:1rem;font-family:'Outfit',sans-serif;font-weight:800">
+        <img src="../public/icon-192.png" alt="" width="36" height="36" style="border-radius:8px"> VoltGuard Tools
+      </a>
+      <h1 id="kayit-title">Ücretsiz üye olun</h1>
+      <p class="vg-auth-card__sub">Hesaplamalarınızı kaydedin, favori araçlarınızı işaretleyin, projeler oluşturun. Ücretsiz ve kredi kartsız.</p>
+
+      <div id="kayit-err" class="vg-auth-error" hidden></div>
+
+      <form id="kayit-form" class="vg-auth-form" autocomplete="on" novalidate>
+        <div>
+          <label for="name">Ad Soyad</label>
+          <input id="name" type="text" name="name" autocomplete="name" required minlength="2">
+        </div>
+        <div>
+          <label for="email">E-posta</label>
+          <input id="email" type="email" name="email" autocomplete="email" required>
+        </div>
+        <div>
+          <label for="password">Şifre (en az 8 karakter)</label>
+          <input id="password" type="password" name="password" autocomplete="new-password" required minlength="8">
+        </div>
+        <div>
+          <label for="password2">Şifre tekrar</label>
+          <input id="password2" type="password" name="password2" autocomplete="new-password" required minlength="8">
+        </div>
+        <label style="display:flex;gap:.5rem;align-items:flex-start;font-size:.85rem;color:var(--clr-text-muted)">
+          <input id="terms" type="checkbox" required style="margin-top:.3rem;width:auto">
+          <span><a href="../gizlilik.html" target="_blank" rel="noopener">Gizlilik ve Çerez Politikası</a>'nı okudum, kabul ediyorum.</span>
+        </label>
+        <button type="submit"><i class="fas fa-user-plus" aria-hidden="true"></i> Ücretsiz üye ol</button>
+      </form>
+
+      <p class="vg-auth-alt">Zaten hesabınız var mı? <a href="giris.html">Giriş yapın</a></p>
+      <p class="vg-auth-alt"><a href="../index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Ana sayfaya dön</a></p>
+
+      <div class="vg-auth-notice">
+        <strong>Gizlilik notu:</strong> Bu üyelik sisteminde bilgileriniz yalnızca bu tarayıcıda (localStorage) saklanır. VoltGuard sunucularına gönderilmez, üçüncü tarafla paylaşılmaz. Cihaz veya tarayıcı verisi silindiğinde hesap kaybolur; yedeklemek için hesap panelindeki dışa aktarma özelliğini kullanın.
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/voltguard-auth.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var user = window.VG.Auth.currentUser();
+      if (user) { location.replace('panel.html'); return; }
+      var form = document.getElementById('kayit-form');
+      var err = document.getElementById('kayit-err');
+      form.addEventListener('submit', async function (ev) {
+        ev.preventDefault();
+        err.hidden = true;
+        if (form.password.value !== form.password2.value) {
+          err.textContent = 'Şifreler eşleşmiyor.';
+          err.hidden = false;
+          return;
+        }
+        try {
+          await window.VG.Auth.register(form.name.value, form.email.value, form.password.value);
+          location.replace('panel.html');
+        } catch (e) {
+          err.textContent = e.message || 'Kayıt başarısız.';
+          err.hidden = false;
+        }
+      });
+    }());
+  </script>
+</body>
+</html>

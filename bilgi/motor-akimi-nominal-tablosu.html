@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Motor akımı nasıl hesaplanır? Nominal akım tablosu, kalkış akımı, yumuşak yolverici ve VFD ile akımın nasıl değiştiğine dair pratik rehber.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Motor Akımı Nasıl Hesaplanır? Nominal Akım Tablosu | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/bilgi/motor-akimi-nominal-tablosu.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Motor Akımı Nasıl Hesaplanır? | VoltGuard">
+  <meta property="og:description" content="Nominal akım tablosu, kalkış akımı, yumuşak yolverici ve VFD ile akımın nasıl değiştiği.">
+  <meta property="og:url" content="https://voltguard.com.tr/bilgi/motor-akimi-nominal-tablosu.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/motor-akimi-nominal-tablosu.html#article","headline":"Motor Akımı Nasıl Hesaplanır? Nominal Akım Tablosu","description":"Motor akımı hesabı, nominal akım tablosu, kalkış akımı ve yumuşak yol verme etkileri.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/motor-akimi-nominal-tablosu.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Motor akımı nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Üç fazlı asenkron motorda I = P × 1000 / (√3 × U × cosφ × η) formülü kullanılır. Burada P mil gücü, U hat gerilimi, cosφ güç faktörü, η motor verimidir."}},{"@type":"Question","name":"5,5 kW motor kaç amper çeker?","acceptedAnswer":{"@type":"Answer","text":"400 V üç fazda cosφ ≈ 0,85 ve η ≈ 0,87 kabulüyle yaklaşık 10,8 A çeker. Etikette yazan In hesap sonucundan önce esas alınmalıdır."}},{"@type":"Question","name":"Motor kalkış akımı nedir?","acceptedAnswer":{"@type":"Answer","text":"Doğrudan yol vermede motor kalkış akımı nominal akımın 5-8 katı seviyesindedir ve birkaç saniye sürer. Yıldız-üçgen yol verme bu akımı ~1/3'e indirir; yumuşak yolverici veya VFD ile 1,3-1,5 katına indirilebilir."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>Motor Akımı Hesaplama</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektrik Hesapları</span>
+    <h1>Motor Akımı Nasıl Hesaplanır? Nominal Akım Tablosu</h1>
+    <p class="article__summary">Motor akımı; kablo kesiti, koruma cihazı ve kontaktör seçiminin çıkış noktasıdır. Bu rehberde motor akımı formülünü, kalkış akımı sürelerini ve yaygın motor güçleri için hazır nominal akım tablosunu bulacaksınız.</p>
+
+    <div class="kb-quickanswer">
+      <span class="kb-quickanswer__label">Kısa Cevap</span>
+      <strong class="kb-quickanswer__value">I = P × 1000 / (√3 × U × cosφ × η) — üç faz asenkron motor</strong>
+      <span class="kb-quickanswer__note">Tek fazlı motorda √3 katsayısı olmaz. Motor etiketindeki In değeri, hesap sonucundan önce esas kabul edilmelidir.</span>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Motor akım hesabında güç faktörü (cosφ) ve verim (η) mutlaka dikkate alınmalıdır.</li><li>IE3 motorlarda tipik η değerleri: 4 kW %85, 15 kW %90, 55 kW %93, 132 kW %94.</li><li>Kalkış akımı; DOL'de 5-8×In, yıldız-üçgen'de ~1/3 oranında, yumuşak yolverici / VFD'de 1,3-1,5×In seviyesindedir.</li><li>Motor koruma şalteri (MPCB) In değerine ayarlanır; kontaktör In üzerinde bir üst standarda seçilir.</li></ul></div>
+
+    <h2>Motor Akım Formülü</h2>
+    <ul class="article__list">
+      <li><strong>Üç faz:</strong> I (A) = P (kW) × 1000 ÷ (√3 × U × cosφ × η)</li>
+      <li><strong>Tek faz:</strong> I (A) = P (kW) × 1000 ÷ (U × cosφ × η)</li>
+      <li><strong>DC motor:</strong> I (A) = P (kW) × 1000 ÷ (U × η)</li>
+    </ul>
+    <p>Formüldeki P, motorun mil gücüdür (etikette kW). Şebekeden çekilen elektrik gücü ise (P<sub>in</sub>) verim nedeniyle P<sub>in</sub> = P / η olur. Kablo ve koruma seçimlerinde In değeri esas alınır.</p>
+
+    <h2>Yaygın Motor Güçleri İçin Nominal Akım (400 V, üç faz, IE2)</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Güç (kW)</th><th>Beygir (HP)</th><th>Tipik In (A)</th><th>Kalkış (DOL ~7×In)</th><th>Yıldız-üçgen kalkış</th></tr></thead>
+      <tbody>
+        <tr><td>0,75</td><td>1,0</td><td>1,8</td><td>~13 A</td><td>~5 A</td></tr>
+        <tr><td>1,5</td><td>2,0</td><td>3,5</td><td>~25 A</td><td>~9 A</td></tr>
+        <tr><td>2,2</td><td>3,0</td><td>4,9</td><td>~34 A</td><td>~12 A</td></tr>
+        <tr><td>4,0</td><td>5,5</td><td>8,3</td><td>~58 A</td><td>~21 A</td></tr>
+        <tr><td>5,5</td><td>7,5</td><td>10,8</td><td>~76 A</td><td>~27 A</td></tr>
+        <tr><td>7,5</td><td>10</td><td>14,4</td><td>~101 A</td><td>~36 A</td></tr>
+        <tr><td>11</td><td>15</td><td>21,0</td><td>~147 A</td><td>~52 A</td></tr>
+        <tr><td>15</td><td>20</td><td>28,5</td><td>~200 A</td><td>~71 A</td></tr>
+        <tr><td>22</td><td>30</td><td>41,0</td><td>~287 A</td><td>~102 A</td></tr>
+        <tr><td>30</td><td>40</td><td>55,0</td><td>~385 A</td><td>~137 A</td></tr>
+        <tr><td>45</td><td>60</td><td>82,0</td><td>~574 A</td><td>~204 A</td></tr>
+        <tr><td>55</td><td>75</td><td>99,0</td><td>~693 A</td><td>~247 A</td></tr>
+        <tr><td>75</td><td>100</td><td>134,0</td><td>~938 A</td><td>~334 A</td></tr>
+        <tr><td>110</td><td>150</td><td>194,0</td><td>~1358 A</td><td>~484 A</td></tr>
+        <tr><td>160</td><td>220</td><td>278,0</td><td>~1946 A</td><td>~693 A</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Kalkış Akımı ve Süresi</h2>
+    <ul class="article__list">
+      <li><strong>Doğrudan yol verme (DOL):</strong> Kalkış akımı 5-8×In; süre 1-4 s. Küçük motorlarda (≤ 5,5 kW) yaygın.</li>
+      <li><strong>Yıldız-üçgen (Y-Δ):</strong> Kalkış akımı DOL'ün ~1/3'ü. 5,5-90 kW arası motorlarda ekonomik çözüm. Kalkış momenti de 1/3'e iner.</li>
+      <li><strong>Yumuşak yolverici (soft starter):</strong> Kalkış akımı 2-4×In; süre 5-30 s ayarlanabilir. Pompa, konveyör, kompresör için ideal.</li>
+      <li><strong>VFD:</strong> Kalkış akımı 1-1,5×In; sürekli hız kontrolü ve enerji tasarrufu bonus. Yeni tesislerde tercih edilir.</li>
+    </ul>
+
+    <h2>Motor Akımının Uygulama Yerleri</h2>
+    <ol class="article__list">
+      <li>Kablo kesitinin belirlenmesi (In × 1,25 emniyet payı)</li>
+      <li>Motor koruma şalteri (MPCB) ayarı (dial In değerine kilitlenir)</li>
+      <li>Kontaktör seçimi (AC-3 kategorisinde In üstündeki ilk standart kademe)</li>
+      <li>Sürücü (VFD) anma akımı seçimi (VFD In ≥ motor In × 1,1)</li>
+      <li>Jeneratör boyutlandırması (motor kalkışı için ekstra rezerv)</li>
+      <li>Termik röle ayarı (In değerine yakın)</li>
+    </ol>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Motor akımı nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Üç faz asenkron motorda I = P × 1000 / (√3 × U × cosφ × η) formülü kullanılır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">5,5 kW motor kaç amper çeker? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>400 V üç fazda cosφ ≈ 0,85 ve η ≈ 0,87 kabulüyle yaklaşık 10,8 A çeker.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Motor kalkış akımı ne kadar? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>DOL'de 5-8×In, yıldız-üçgen'de ~1/3 seviyesine iner. VFD ile 1,3×In'e kadar düşürülebilir.</p></div></details>
+
+    <p class="kb-disclaimer">Bu içerik bilgilendirme amaçlıdır. Motor koruma tasarımı için etiket, üretici katalog ve yetkili mühendis görüşü esas alınmalıdır.</p>
+    <p>İlgili kaynaklar: <a href="../hesaplama/motor-akimi-hesaplama.html">Motor Akımı Hesaplama Aracı</a>, <a href="../hesaplama/motor-koruma-kontaktor-secimi.html">Motor Koruma Şalteri ve Kontaktör Seçimi</a>, <a href="../bilgi/vfd-frekans-invertoru-nedir.html">VFD Nedir?</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Motor pano tasarımı ve enerji verimliliği için destek alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../bilgi-bankasi.html" class="kb-card__more">&larr; Tüm rehberler: Bilgi Bankası</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

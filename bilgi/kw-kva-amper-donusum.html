@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="kW - kVA - Amper arasındaki farklar ve dönüşüm formülleri: aktif güç, görünür güç, güç faktörü ilişkisi. Hazır dönüşüm tablosu.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>kW - kVA - Amper Arasındaki Fark ve Dönüşüm Formülleri | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/bilgi/kw-kva-amper-donusum.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="kW - kVA - Amper Arasındaki Fark ve Dönüşüm | VoltGuard">
+  <meta property="og:description" content="Aktif güç, görünür güç, güç faktörü ilişkisi ve hazır dönüşüm tablosu.">
+  <meta property="og:url" content="https://voltguard.com.tr/bilgi/kw-kva-amper-donusum.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/kw-kva-amper-donusum.html#article","headline":"kW - kVA - Amper Arasındaki Fark ve Dönüşüm","description":"Aktif güç, görünür güç, güç faktörü ilişkisi ve hazır dönüşüm tablosu.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/kw-kva-amper-donusum.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"kW ve kVA farkı nedir?","acceptedAnswer":{"@type":"Answer","text":"kW aktif gücü, yani gerçek iş üreten gücü ifade eder. kVA ise görünür gücü; aktif ve reaktif bileşenlerin vektörel toplamıdır. Aralarındaki oran güç faktörüdür: kW = kVA × cosφ."}},{"@type":"Question","name":"kW mı kVA mı esas alınır?","acceptedAnswer":{"@type":"Answer","text":"Trafo, jeneratör, UPS gibi ekipmanlar kVA cinsinden boyutlandırılır çünkü etikette görünen güç kullanılır. Motor ve bilgisayar gibi tüketici cihazlar kW cinsinden etiketlenir. Fatura ise hem aktif kWh hem reaktif kVArh olarak gelir."}},{"@type":"Question","name":"1 kW kaç amper?","acceptedAnswer":{"@type":"Answer","text":"400 V üç fazlı sistemde cosφ = 0,85 için 1 kW yaklaşık 1,7 A'dir. 230 V tek fazda cosφ = 0,85 için 1 kW yaklaşık 5,1 A'dir. Formül: I = P × 1000 / (√3 × U × cosφ) üç faz."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>kW - kVA - Amper Dönüşümü</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektrik Hesapları</span>
+    <h1>kW - kVA - Amper Arasındaki Fark ve Dönüşüm Formülleri</h1>
+    <p class="article__summary">Elektrik dünyasında en sık karıştırılan üç birim: kW (aktif güç), kVA (görünür güç) ve A (amper). Doğru boyutlandırma ve fatura analizi için bu üçünün ilişkisini bilmek gerekir. Bu rehberde farkları, dönüşüm formüllerini ve hazır dönüşüm tablosunu bulacaksınız.</p>
+
+    <div class="kb-quickanswer">
+      <span class="kb-quickanswer__label">Kısa Cevap</span>
+      <strong class="kb-quickanswer__value">kW = kVA × cosφ; kVA = kW ÷ cosφ.</strong>
+      <span class="kb-quickanswer__note">İki birim arasındaki köprü güç faktörüdür (cosφ). Ampere geçiş için ayrıca gerilim ve faz sayısı bilinmelidir.</span>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>kW aktif gücü, kVAr reaktif gücü, kVA ise görünür gücü ifade eder: kVA² = kW² + kVAr².</li><li>Güç faktörü cosφ = kW / kVA oranıdır ve 0-1 arasında değişir.</li><li>Trafo, jeneratör ve UPS kVA cinsinden; motor ve tüketici cihazlar kW cinsinden etiketlenir.</li><li>Kablo ve koruma cihazı seçiminde amper esas alınır.</li><li>Faturada aktif kWh ödenir; reaktif kVArh belirli bir orandan sonra cezalıdır.</li></ul></div>
+
+    <h2>Üç Birim ve Fizik Anlamı</h2>
+    <ul class="article__list">
+      <li><strong>kW (kilowatt) — Aktif Güç (P):</strong> Şebekeden alınıp gerçekten iş üreten güç. Motor mili, aydınlatma ışığı, ısıtıcı sıcaklığı gibi çıktıları üretir.</li>
+      <li><strong>kVAr (kilovar) — Reaktif Güç (Q):</strong> Motor bobinleri, trafo çekirdeği gibi endüktif elemanlarda manyetik alan oluşturmak için harcanan; iş üretmeyen güç.</li>
+      <li><strong>kVA (kilovolt-amper) — Görünür Güç (S):</strong> Aktif ve reaktif bileşenlerin vektörel toplamı. Ekipmanların bakırının ve yalıtımının dayanması gereken gerçek yük.</li>
+      <li><strong>A (amper) — Akım (I):</strong> Bir iletkenden birim zamanda geçen elektrik yükü. Kablo ısınması ve koruma cihazı bu değere göre boyutlandırılır.</li>
+    </ul>
+
+    <h2>Güç Faktörü ve Üçgen</h2>
+    <p>Aktif, reaktif ve görünür güç bir dik üçgen oluşturur:</p>
+    <ul class="article__list">
+      <li>Yatay kenar: kW (aktif)</li>
+      <li>Dikey kenar: kVAr (reaktif)</li>
+      <li>Hipotenüs: kVA (görünür)</li>
+      <li>İki kenar arasındaki açı: φ (fi)</li>
+      <li>cosφ = kW / kVA</li>
+    </ul>
+    <p>cosφ ne kadar 1'e yakınsa sistem o kadar verimlidir. Endüktif yüklerde cosφ 0,7-0,85 aralığındadır; kompanzasyon ile 0,95-0,99'a çekilir.</p>
+
+    <h2>Dönüşüm Formülleri</h2>
+    <ul class="article__list">
+      <li><strong>kW → kVA:</strong> kVA = kW ÷ cosφ</li>
+      <li><strong>kVA → kW:</strong> kW = kVA × cosφ</li>
+      <li><strong>kW → A (3 faz):</strong> A = kW × 1000 ÷ (√3 × U × cosφ)</li>
+      <li><strong>kW → A (1 faz):</strong> A = kW × 1000 ÷ (U × cosφ)</li>
+      <li><strong>kVA → A (3 faz):</strong> A = kVA × 1000 ÷ (√3 × U)</li>
+      <li><strong>kVA → A (1 faz):</strong> A = kVA × 1000 ÷ U</li>
+      <li><strong>A → kVA (3 faz):</strong> kVA = √3 × U × A ÷ 1000</li>
+    </ul>
+
+    <h2>Örnek Hesap</h2>
+    <p>100 kW aktif güç çeken bir tesis, 400 V üç faz, cosφ = 0,85: kVA = 100 ÷ 0,85 ≈ 117,6 kVA; A = 100 × 1000 ÷ (1,732 × 400 × 0,85) ≈ 170 A. Kompanzasyonla cosφ 1'e çıkarılırsa: kVA = 100 kVA; A = 144 A. Şebekeden çekilen akım ~%15 azalır.</p>
+
+    <h2>Hazır Dönüşüm Tablosu (400 V üç faz, cosφ = 0,85)</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>kW</th><th>kVA</th><th>A</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>1,18</td><td>1,7</td></tr>
+        <tr><td>5</td><td>5,88</td><td>8,5</td></tr>
+        <tr><td>10</td><td>11,76</td><td>17,0</td></tr>
+        <tr><td>15</td><td>17,65</td><td>25,5</td></tr>
+        <tr><td>22</td><td>25,88</td><td>37,4</td></tr>
+        <tr><td>30</td><td>35,29</td><td>50,9</td></tr>
+        <tr><td>45</td><td>52,94</td><td>76,4</td></tr>
+        <tr><td>55</td><td>64,71</td><td>93,4</td></tr>
+        <tr><td>75</td><td>88,24</td><td>127,3</td></tr>
+        <tr><td>100</td><td>117,65</td><td>169,8</td></tr>
+        <tr><td>132</td><td>155,29</td><td>224,1</td></tr>
+        <tr><td>160</td><td>188,24</td><td>271,7</td></tr>
+        <tr><td>200</td><td>235,29</td><td>339,7</td></tr>
+        <tr><td>250</td><td>294,12</td><td>424,6</td></tr>
+        <tr><td>400</td><td>470,59</td><td>679,3</td></tr>
+        <tr><td>500</td><td>588,24</td><td>849,2</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Hangi Ekipman Hangi Birimle Etiketlenir?</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Ekipman</th><th>Etiket birimi</th><th>Not</th></tr></thead>
+      <tbody>
+        <tr><td>Motor</td><td>kW (mil gücü)</td><td>Elektriksel giriş P/η</td></tr>
+        <tr><td>Trafo</td><td>kVA</td><td>Görünür güç limitli</td></tr>
+        <tr><td>Jeneratör</td><td>kVA (prime)</td><td>kW = kVA × 0,8 tipik</td></tr>
+        <tr><td>UPS</td><td>kVA</td><td>Modern IGBT'de kW = kVA</td></tr>
+        <tr><td>Isıtıcı / rezistif</td><td>kW</td><td>cosφ = 1</td></tr>
+        <tr><td>Aydınlatma (LED)</td><td>W</td><td>Sürücü verimliliği dahil</td></tr>
+        <tr><td>Kompanzasyon kondansatörü</td><td>kVAr</td><td>Reaktif güç</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">kW ve kVA farkı nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>kW aktif gücü, kVA görünür gücü ifade eder. Aralarındaki oran güç faktörüdür.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">kW mı kVA mı esas alınır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Trafo, jeneratör ve UPS kVA cinsinden boyutlandırılır. Motor ve tüketici cihazlar kW olarak etiketlenir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">1 kW kaç amper? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>400 V üç faz, cosφ = 0,85 için ~1,7 A. 230 V tek faz için ~5,1 A.</p></div></details>
+
+    <p class="kb-disclaimer">Bu içerik bilgilendirme amaçlıdır. Nihai boyutlandırma; harmonik, motor kalkışı ve eşzamanlılık gibi faktörlerle birlikte mühendislik hesabı gerektirir.</p>
+    <p>İlgili kaynaklar: <a href="../hesaplama/kw-kva-amper-donusturucu.html">kW-kVA-Amper Dönüştürücü</a>, <a href="../bilgi/kva-amper-hesaplama.html">kVA Kaç Amper Rehberi</a>, <a href="../bilgi/reaktif-guc-kompanzasyonu.html">Reaktif Güç Kompanzasyonu</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Trafo, jeneratör ve UPS boyutlandırma için destek alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../bilgi-bankasi.html" class="kb-card__more">&larr; Tüm rehberler: Bilgi Bankası</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

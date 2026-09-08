@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Kaçak akım rölesi ilk kapama anında atıyor sonra kalıyor? İzolasyon kaybı, kondansatör inrush ve UPS/VFD kaçakları için ölçüm ve çözüm önerileri.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Kaçak Akım Rölesi İlk Anda Atıyor Sonra Kalıyor - Sebebi Ne? | VoltGuard'a Sor</title>
+  <link rel="canonical" href="https://voltguard.com.tr/sor/kacak-akim-rolesi-ilk-anda-atiyor.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Kaçak Akım Rölesi İlk Anda Atıyor - Sebebi Ne? | VoltGuard'a Sor">
+  <meta property="og:description" content="İzolasyon kaybı, kondansatör inrush ve UPS/VFD kaçakları için ölçüm ve çözüm önerileri.">
+  <meta property="og:url" content="https://voltguard.com.tr/sor/kacak-akim-rolesi-ilk-anda-atiyor.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"QAPage","@id":"https://voltguard.com.tr/sor/kacak-akim-rolesi-ilk-anda-atiyor.html#qa","mainEntity":{"@type":"Question","name":"Kaçak akım rölesi ilk kapama anında atıyor sonra kalıyor, sebebi ne?","text":"Rölemi manuel açtığımda 1-2 saniye sonra atıyor. Tekrar denediğimde bazen 5-6 defa denedikten sonra kalıyor, sonra saatlerce sorunsuz çalışıyor. Sabahları bu davranış daha sık. Sebebi ne olabilir?","answerCount":1,"upvoteCount":0,"datePublished":"2026-09-08","author":{"@type":"Organization","name":"VoltGuard"},"acceptedAnswer":{"@type":"Answer","text":"İlk kapama anında atma davranışının en yaygın üç nedeni: (1) EMC filtreleri ve elektronik yüklerin bir bölümünün başlangıç anında geçici toplam Y-kondansatör kaçağı IΔn eşiğini aşması, (2) Nemli mevsimde/ortamda izolasyon direncinin düşmesi ve kondensat suyu sürüklendiğinde eşiği geçmesi, (3) Yerleşik cihazlarda sızıntı akımlarının toplamının rölenin nominal eşiğinin %30-50'sini geçmesi. Çözüm: iki panelli hiyerarşik röle (üstte 100/300 mA S tipi, altta 30 mA A tipi) ve tesisi zone'lara bölmek. Ayrıca VFD/inverter varsa B tipi röle şart."}},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard'a Sor","item":"https://voltguard.com.tr/sor.html"},{"@type":"ListItem","position":3,"name":"Kaçak Akım Rölesi İlk Anda Atıyor","item":"https://voltguard.com.tr/sor/kacak-akim-rolesi-ilk-anda-atiyor.html"}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../sor.html">VoltGuard'a Sor</a> &rsaquo; <span>Kaçak Akım Rölesi İlk Anda Atıyor</span>
+  </nav>
+
+  <main class="article">
+    <div class="qa-tags"><span class="qa-tag">Elektrik</span><span class="qa-tag qa-tag--equipment">Kaçak Akım Rölesi</span><span class="qa-tag qa-tag--problem">Arıza / Ölçüm</span></div>
+    <h1>Kaçak Akım Rölesi İlk Anda Atıyor Sonra Kalıyor - Sebebi Ne?</h1>
+
+    <div class="kb-keyfacts"><h2>Soru</h2><ul><li>"Rölemi manuel açtığımda 1-2 saniye sonra atıyor. Tekrar denediğimde bazen 5-6 defa denedikten sonra kalıyor, sonra saatlerce sorunsuz çalışıyor. Sabahları bu davranış daha sık. Sebebi ne olabilir?"</li></ul></div>
+
+    <h2>Kısa Cevap</h2>
+    <p>Bu tipik bir <strong>toplam kaçak akım birikimi</strong> problemidir. Tek bir cihazın büyük kaçağı değil, çok sayıda cihazın normal sızıntı akımının toplamının rölenin eşiğine yaklaştığı durumdur. İlk kapama anında elektronik cihaz güç kaynakları geçici darbe verir ve toplam anlık kaçak eşiği aşar; röle atar. Sonra sistem stabilize olur ve tolerans içinde kalır. Sabah sık olmasının nedeni, gece nemi izolasyonu düşürmesidir. Çözüm: <strong>iki kademeli röle</strong> (üstte 100/300 mA S tipi, altta 30 mA A tipi) ve tesisi 3-5 zon'a bölmek.</p>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Modern elektronik cihazlarda normal sızıntı akımı 0,25-3,5 mA arasındadır.</li><li>Bir 30 mA röle, cihaz sayısı arttıkça toplam sızıntı akımı sınıra yaklaşabilir.</li><li>Kural: toplam sürekli sızıntı ≤ IΔn / 2 (yani 30 mA için 15 mA'nın altında).</li><li>Nem, izolasyon direncini düşürerek kaçak akımı artırır (özellikle 90% RH üstünde).</li><li>VFD, GES inverter, EV şarj için mutlaka B tipi röle kullanılmalıdır.</li></ul></div>
+
+    <h2>Teknik Gerekçe: Sızıntı Akımı Nedir?</h2>
+    <p>Elektronik yüklerin EMI/EMC filtreleri, faz ile toprak (PE) arasına yerleştirilmiş Y kondansatörleri içerir. Bu kondansatörlerin görevi yüksek frekans gürültüsünü toprağa boşaltmaktır. Ancak 50 Hz'te bile bu kondansatörler üzerinden küçük bir "sızıntı akımı" akar (tipik 0,25-3,5 mA). IEC 60950 ve IEC 62368 bu değeri sınıflara ayırır:</p>
+    <ul class="article__list">
+      <li>Bilgi teknolojisi cihazı (bilgisayar, monitör): &lt; 3,5 mA</li>
+      <li>Portatif cihaz: &lt; 0,25 mA</li>
+      <li>Fiş bağlantılı ev cihazı: &lt; 0,75 mA</li>
+      <li>Sabit bağlantı (buzdolabı, çamaşır mak.): &lt; 3,5 mA</li>
+      <li>Endüstriyel PLC güç kaynağı: 2-5 mA</li>
+      <li>VFD (frekans dönüştürücü): 30 mA'ye kadar (topraklama filtreleri nedeniyle)</li>
+    </ul>
+    <p>Bir 30 mA röleye 10 bilgisayar bağlıysa toplam sürekli sızıntı 15-25 mA olur; kritik sınırın çok yakınına gelinir. Kompresör, fan gibi motor başlangıcında ekstra geçici akım röleyi tetikleyebilir.</p>
+
+    <h2>Neden İlk Kapamada Atıyor?</h2>
+    <p>Röle çalıştığında tüm elektronik cihazlar aynı anda enerjilenir. Cihaz güç kaynakları içindeki yumuşak başlangıç kondansatörleri şarj olurken toprakla ilişkili X ve Y kondansatörleri geçici bir <strong>inrush kaçak akımı</strong> yaratır. Bu darbe milisaniyeler sürer ama 30 mA sınırını 40-50 ms süreyle geçebilir. Zamanla cihazlar tek tek ısındıkça sürekli sızıntı azalır ve sistem stabilize olur.</p>
+    <p>Sabah sık atma sebebi: gece boyunca nem izolasyonu düşürür ve toprakla temas yüzeylerinde kondensat (yoğuşma) birikir. Isınmayla nem uçtuğunda izolasyon geri gelir, röle stabil kalır.</p>
+
+    <h2>Ölçümle Nasıl Doğrularsınız?</h2>
+    <ul class="article__list">
+      <li><strong>Sızıntı akımı klemp:</strong> Sürekli sızıntı akımını AC leakage clamp (0,001 mA hassasiyetli) ile ölçün. Toplam &lt; 15 mA olmalı.</li>
+      <li><strong>İzolasyon direnci:</strong> Panoyu enerjisizleştirip 500 V DC izolasyon megerıyle her devrenin izolasyon direncini ölçün. 1 MΩ altındaki devreleri işaretleyin.</li>
+      <li><strong>Zone testi:</strong> Devreleri tek tek kapatıp röleyi izleyin; hangi kombinasyonda atma tekrarlıyor tespit edin.</li>
+      <li><strong>Röle test butonu:</strong> T butonuyla açma süresini ölçün; 40 ms üzeri açma zamanı röle yaşlanmış demektir.</li>
+      <li><strong>Nemli mevsim karşılaştırma:</strong> Yaz kuru mevsimde aynı davranış devam ediyor mu kontrol edin; sadece kışın var ise nem sorunu netleşir.</li>
+    </ul>
+
+    <h2>Çözüm Önerileri</h2>
+    <ol class="article__list">
+      <li><strong>Zone bölme + hiyerarşik röle:</strong> Ana panoda 100 mA veya 300 mA S tipi selektif röle; her tali panoda 30 mA A tipi röle. Böylece bir zon atsa diğerleri çalışmaya devam eder.</li>
+      <li><strong>Elektronik cihazları ayrı devrede topla:</strong> Bilgisayar, PLC, UPS gibi yüksek sızıntılı yükleri 30 mA yerine 300 mA röle altında toplayın (yaşam koruma değil, yangın koruma amaçlı).</li>
+      <li><strong>VFD ve GES inverter için B tipi:</strong> DC bileşen içeren yüklerde A tipi röle "kör" kalır; B tipi kullanın.</li>
+      <li><strong>Nem kontrolü:</strong> Pano ısıtıcısı, kablo geçişlerinde silikon sızdırmazlık, IP54+ pano kapağı kullanın. Kritik cihazların terminal kutularında nem alıcı silikajel yerleştirin.</li>
+      <li><strong>Sızıntı akımı azaltıcı Y kondansatör:</strong> EMC filtresini seçerken düşük leakage variant tercih edin (özellikle medikal cihazlarda).</li>
+      <li><strong>İzolasyon iyileştirme:</strong> Ölçümde 1 MΩ altına düşen devrelerin kablosunu, terminalini veya son cihazını yenileyin.</li>
+    </ol>
+
+    <h2>Benzer Sorular</h2>
+    <ul class="article__list">
+      <li><a href="../bilgi/kacak-akim-rolesi-ariza-nedenleri.html">Kaçak Akım Rölesi Neden Atar? (Bilgi Bankası)</a></li>
+      <li><a href="../bilgi/kacak-akim-rolesi-secimi.html">Kaçak Akım Rölesi Seçimi: 30 mA mı 300 mA mı? (Bilgi Bankası)</a></li>
+      <li><a href="../bilgi/topraklama-degeri-kac-olmali.html">Topraklama Direnci Kaç Olmalı? (Bilgi Bankası)</a></li>
+    </ul>
+
+    <p class="kb-disclaimer">Bu cevap genel teknik bilgi amaçlıdır. Kaçak akım rölesi devreye alınmadan panoya müdahale edilmemelidir; yetkili elektrik mühendisi eşliğinde çalışılmalıdır.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Panoda tekrarlayan kaçak akım atmalarını ölçtürün</strong><span>VoltGuard mühendisleriyle sızıntı akımı analizi planlayın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../sor.html" class="kb-card__more">&larr; Tüm sorular: VoltGuard'a Sor</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

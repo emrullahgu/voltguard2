@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="PLC nedir, nasıl çalışır? Tarama döngüsü, giriş-çıkış modülleri, ladder logic ve tesislerde PLC'nin hangi işleri yaptığını anlatan başlangıç rehberi.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>PLC Nedir, Nasıl Çalışır? Tarama Döngüsü ve I/O Rehberi | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="PLC Nedir, Nasıl Çalışır? | VoltGuard">
+  <meta property="og:description" content="Tarama döngüsü, giriş-çıkış modülleri, ladder logic ve tesislerde PLC'nin hangi işleri yaptığı.">
+  <meta property="og:url" content="https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html#article","headline":"PLC Nedir, Nasıl Çalışır? Tarama Döngüsü ve I/O Rehberi","description":"Tarama döngüsü, giriş-çıkış modülleri, ladder logic ve tesislerde PLC'nin hangi işleri yaptığı.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Endüstriyel Otomasyon","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"PLC Nedir?","item":"https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"PLC nedir?","acceptedAnswer":{"@type":"Answer","text":"PLC (Programmable Logic Controller), sanayi tesislerinde makineleri ve süreçleri kontrol etmek için tasarlanmış, endüstriyel ortama dayanıklı özel bir bilgisayardır. Röle mantığı yerine yazılım tabanlı kontrol yapar; giriş sinyallerini okur, program mantığını uygular ve çıkışları yönetir."}},{"@type":"Question","name":"PLC nasıl çalışır?","acceptedAnswer":{"@type":"Answer","text":"PLC her tarama döngüsünde üç adımdan geçer: (1) tüm girişleri okur ve giriş imgesine kopyalar, (2) kullanıcı programını satır satır işler, (3) çıkış imgesindeki değerleri fiziksel çıkışlara yazar. Bu döngü tipik olarak 1-50 ms sürer."}},{"@type":"Question","name":"PLC nerelerde kullanılır?","acceptedAnswer":{"@type":"Answer","text":"Konveyör hatları, paketleme makineleri, arıtma tesisleri, HVAC kontrolü, jeneratör senkronizasyonu, pompa istasyonları, trafo merkezleri (bay control unit), asansör kontrolü ve pekçok proses otomasyon uygulamasında kullanılır."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>PLC Nedir?</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Endüstriyel Otomasyon</span>
+    <h1>PLC Nedir, Nasıl Çalışır? Tarama Döngüsü ve I/O Rehberi</h1>
+    <p class="article__summary">PLC (Programmable Logic Controller), sanayi tesislerinde makineleri ve süreçleri kontrol eden endüstriyel bilgisayarlardır. Röle mantığının yerini alan yazılım tabanlı kontrol yöntemi, arıtma tesislerinden konveyörlere, jeneratör senkronizasyonundan trafo merkezlerine kadar geniş bir alanda kullanılır. Bu rehberde PLC'nin çalışma mantığı, tarama döngüsü, I/O modülleri ve gerçek uygulama örneklerini bulacaksınız.</p>
+
+    <div class="kb-quickanswer">
+      <span class="kb-quickanswer__label">Kısa Cevap</span>
+      <strong class="kb-quickanswer__value">PLC, endüstriyel ortama dayanıklı programlanabilir bir kontrolcüdür.</strong>
+      <span class="kb-quickanswer__note">Girişleri okur, kullanıcı programını işler, çıkışları yönetir; bu tarama döngüsü tipik olarak 1-50 ms sürer.</span>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>PLC, IEC 61131-3 standardına göre programlanır: Ladder Diagram (LD), Function Block (FBD), Structured Text (ST), Instruction List (IL) ve Sequential Function Chart (SFC).</li><li>Her tarama döngüsünde giriş oku → program işle → çıkış yaz sıralaması işler.</li><li>Modern PLC'ler CPU + kaset, güç kaynağı, I/O modülleri ve haberleşme modüllerinden oluşur.</li><li>Endüstri 4.0'la birlikte PLC + IoT gateway + edge computing yaygınlaşmıştır.</li><li>Türkiye'de Siemens S7-1200/1500, Schneider M221/M340, Beckhoff CX serisi ve Delta AS200 sık kullanılır.</li></ul></div>
+
+    <h2>PLC'nin Tarihçesi ve Temel Fikir</h2>
+    <p>1968 yılında General Motors, otomobil fabrikasında sık değişen kontrol devrelerini röle sistemleriyle yeniden yapmanın maliyetli olduğunu fark etti. Bu ihtiyacı karşılamak için Modicon firması ilk PLC'yi (Modicon 084) geliştirdi: fiziksel röleler yerine yazılım mantığı; herhangi bir değişiklik programlama yoluyla yapılabiliyordu. Bu, endüstriyel otomasyonun devrimi oldu.</p>
+    <p>Bugün bir PLC; CPU, hafıza, dijital ve analog giriş-çıkış modülleri, güç kaynağı ve haberleşme portlarından oluşur. Boyutları avuç içinden dolap boyuna, işlem gücü basit lojikten karmaşık PID kontrol ve motion control'e kadar uzanır.</p>
+
+    <h2>PLC Tarama Döngüsü</h2>
+    <p>PLC çalışırken sürekli aynı üç adımı tekrarlar; buna <strong>tarama (scan) döngüsü</strong> denir:</p>
+    <ol class="article__list">
+      <li><strong>Girişleri oku:</strong> Sensör, buton, limit anahtarı gibi tüm fiziksel girişler bir kerede okunur ve dahili "giriş imgesi" tablosuna yazılır.</li>
+      <li><strong>Programı işle:</strong> Kullanıcının yazdığı Ladder (veya diğer dil) mantığı satır satır çalıştırılır. Sadece giriş imgesi kullanılır; sonuçlar çıkış imgesine yazılır.</li>
+      <li><strong>Çıkışları yaz:</strong> Çıkış imgesindeki değerler fiziksel röle/transistör çıkışlarına gönderilir; motorlar, valfler, lambalar açılır veya kapanır.</li>
+    </ol>
+    <p>Tipik tarama süresi 1-50 ms'dir. Kritik hız gerektiren yüksek hızlı sayaç ve enkoder uygulamaları için PLC'lerde özel modüller (HSC, interrupt) bulunur.</p>
+
+    <h2>PLC I/O Modülleri</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Modül tipi</th><th>Amaç</th><th>Tipik cihaz</th></tr></thead>
+      <tbody>
+        <tr><td>Dijital giriş (DI)</td><td>Aç/kapa sinyal okuma</td><td>Buton, limit switch, sensör (24 VDC PNP/NPN)</td></tr>
+        <tr><td>Dijital çıkış (DO)</td><td>Aç/kapa kontrol</td><td>Röle, kontaktör bobini, sinyal lambası</td></tr>
+        <tr><td>Analog giriş (AI)</td><td>Sürekli değer okuma</td><td>Basınç, sıcaklık, seviye (0-10 V, 4-20 mA)</td></tr>
+        <tr><td>Analog çıkış (AO)</td><td>Sürekli kontrol</td><td>VFD hız referansı, proportional valf (4-20 mA)</td></tr>
+        <tr><td>PT100/Termokupl</td><td>Doğrudan sıcaklık ölçüm</td><td>Direnç termometresi, termokupl (K, J, T tipi)</td></tr>
+        <tr><td>Yüksek hızlı sayaç (HSC)</td><td>Enkoder / darbe</td><td>Enkoder, akış sayacı</td></tr>
+        <tr><td>Haberleşme (COM)</td><td>Ağ bağlantısı</td><td>Modbus RTU/TCP, Profinet, EtherCAT, IO-Link</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>PLC Programlama Dilleri (IEC 61131-3)</h2>
+    <ul class="article__list">
+      <li><strong>Ladder Diagram (LD):</strong> Röle şemasına benzeyen görsel dil; klasik otomasyoncular için en tanıdık.</li>
+      <li><strong>Function Block Diagram (FBD):</strong> Bloklar arası akış; süreç kontrolü ve PID gibi tekrarlı bloklarda etkili.</li>
+      <li><strong>Structured Text (ST):</strong> Pascal benzeri metin tabanlı dil; karmaşık algoritma ve matematik için.</li>
+      <li><strong>Instruction List (IL):</strong> Assembler benzeri düşük seviye dil; artık sınırlı kullanılır.</li>
+      <li><strong>Sequential Function Chart (SFC):</strong> Adım-geçiş tabanlı; batch proses ve sıralı işletim için ideal.</li>
+    </ul>
+
+    <h2>Nerelerde Kullanılır?</h2>
+    <ul class="article__list">
+      <li>İçme suyu ve atık su arıtma tesisleri</li>
+      <li>Konveyör ve paketleme hatları</li>
+      <li>Pompa istasyonları (booster, terfi)</li>
+      <li>HVAC ve bina otomasyonu (BMS)</li>
+      <li>Jeneratör paralel ve senkronizasyon</li>
+      <li>Trafo merkezleri (bay control unit - IEC 61850)</li>
+      <li>Kağıt, çelik, cam ve otomotiv üretim hatları</li>
+      <li>GES kontrol ve izleme sistemleri</li>
+    </ul>
+
+    <h2>PLC + HMI + SCADA Mimari</h2>
+    <p>Sahada PLC tek başına kullanılmaz; genellikle üç katmanlı mimariye entegre edilir:</p>
+    <ul class="article__list">
+      <li><strong>PLC:</strong> Saha kontrolü ve gerçek zamanlı I/O yönetimi (ms seviyesi)</li>
+      <li><strong>HMI (Human Machine Interface):</strong> Operatör dokunmatik ekranı; hızlı komut ve alarm</li>
+      <li><strong>SCADA (Supervisory Control And Data Acquisition):</strong> Merkezi izleme, kayıt (historian), raporlama ve uzaktan kontrol</li>
+    </ul>
+    <p>Örneğin bir arıtma tesisinde her hat için ayrı PLC saha kontrolü yapar; operatör panelde HMI ile hattı yönetir; müdüriyet katındaki bilgisayardan SCADA tüm tesisin durumunu izler.</p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">PLC nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Endüstriyel ortama dayanıklı, programlanabilir bir kontrolcüdür. Girişleri okur, program mantığını uygular ve çıkışları yönetir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">PLC nasıl çalışır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Her tarama döngüsünde giriş oku → program işle → çıkış yaz sıralaması işler. Tipik döngü 1-50 ms sürer.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">PLC nerelerde kullanılır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Arıtma tesisleri, konveyör hatları, HVAC, pompa istasyonları, jeneratör senkronizasyonu, trafo merkezleri ve GES gibi çok geniş bir alanda kullanılır.</p></div></details>
+
+    <p class="kb-disclaimer">Bu içerik başlangıç seviyesi bilgilendirmedir. Uygulamalı PLC eğitimi için <a href="../akademi/plc-endustriyel-otomasyon-giris.html">VoltGuard Akademi</a>'yi ziyaret edin.</p>
+    <p>İlgili kaynaklar: <a href="../akademi/plc-endustriyel-otomasyon-giris.html">PLC/HMI/SCADA'ya Giriş (Akademi)</a>, <a href="../bilgi/scada-iec-61850.html">SCADA ve IEC 61850</a>, <a href="../bilgi/scada-aritma-tesisi-otomasyonu.html">Arıtma Tesisi SCADA Uygulaması</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>PLC/SCADA otomasyon projeleri için mühendislik desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../bilgi-bankasi.html" class="kb-card__more">&larr; Tüm rehberler: Bilgi Bankası</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Gerilim düşümü hesaplama aracı: akım, kesit, mesafe ve gerilime göre yüzde düşümü anında hesaplar. Formül, örnek çözüm ve sık sorulan sorular.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Gerilim Düşümü Hesaplama Aracı ve Formülü (%) | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/gerilim-dusumu-hesaplama/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Gerilim Düşümü Hesaplama Aracı ve Formülü (%) | VoltGuard">
+  <meta property="og:description" content="Akım, kesit, mesafe ve gerilime göre yüzde düşümü anında hesaplar. Formül, örnek çözüm ve sık sorulan sorular.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/gerilim-dusumu-hesaplama/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/gerilim-dusumu-hesaplama/#article","headline":"Gerilim Düşümü Hesaplama Aracı ve Formülü (%)","description":"Akım, kesit, mesafe ve gerilime göre yüzde düşümü anında hesaplar. Formül, örnek çözüm ve sık sorulan sorular.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/gerilim-dusumu-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Gerilim Düşümü Hesaplama","item":"https://voltguard.com.tr/hesaplama/gerilim-dusumu-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Gerilim düşümü nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Üç fazlı sistemde ΔU(%) = (√3 × I × L × ρ / S) / U × 100 formülü kullanılır. Burada I akım (A), L hat uzunluğu (m), ρ iletken direnç katsayısı (bakır için yaklaşık 0,0175 Ω·mm²/m), S kesit (mm²), U hat gerilimidir (V). Tek fazlı sistemde √3 yerine 2 katsayısı kullanılır."}},{"@type":"Question","name":"Aydınlatma ve priz devrelerinde izin verilen düşüm ne kadar?","acceptedAnswer":{"@type":"Answer","text":"Türkiye'de yaygın kabul; aydınlatmada %3, motor/kuvvet devrelerinde %5 üst sınırıdır. Uzun hatlı GES, EV şarj, dalgıç pompa gibi projelerde ayrıca tasarım hedefi olarak %1-2 arası daha sıkı sınırlar seçilebilir."}},{"@type":"Question","name":"Kesit büyüdükçe gerilim düşümü nasıl değişir?","acceptedAnswer":{"@type":"Answer","text":"Gerilim düşümü, iletken kesitiyle ters orantılıdır: aynı akım ve uzunlukta kesit iki katına çıkarsa yüzdesel düşüm yaklaşık yarıya iner. Bu yüzden uzun hatlarda akım kriterinden değil, gerilim düşümü kriterinden daha büyük bir kesit seçmek gerekebilir."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../teklif-araclari.html">Hesaplama Merkezi</a> &rsaquo; <span>Gerilim Düşümü Hesaplama</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektrik Hesapları</span>
+    <h1>Gerilim Düşümü Hesaplama Aracı ve Formülü (%)</h1>
+    <p class="article__summary">Hat akımınızı, kablo kesitini, uzunluğu ve gerilimi girin; yüzde gerilim düşümünü anında görün. Aşağıda formül, adım adım bir örnek ve sık sorulan sorular yer alır.</p>
+
+    <div class="mini-calc">
+      <div class="mini-calc__fields">
+        <div class="mini-calc__field"><label for="vd-current">Hat akımı (A)</label><input id="vd-current" type="number" min="0" value="80" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="vd-section">Kesit (mm²)</label><input id="vd-section" type="number" min="0.5" value="25" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="vd-length">Hat uzunluğu (m)</label><input id="vd-length" type="number" min="1" value="60" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="vd-voltage">Sistem gerilimi (V)</label><select id="vd-voltage"><option value="400" selected>400 V (üç faz)</option><option value="230">230 V (tek faz)</option></select></div>
+      </div>
+      <div class="mini-calc__result">
+        <span class="mini-calc__result-label">Ön Sonuç</span>
+        <span class="mini-calc__result-value" id="vd-result">-</span>
+        <span class="mini-calc__result-note" id="vd-detail"></span>
+      </div>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Üç faz için ΔU(%) = √3 × I × L × ρ / (S × U) × 100, tek faz için 2 × I × L × ρ / (S × U) × 100 formülü kullanılır.</li><li>Aydınlatmada %3, motor ve kuvvet devrelerinde %5 en yaygın izin verilen üst sınırlardır.</li><li>Uzun hatlarda akım değil, çoğu zaman gerilim düşümü kesiti belirler.</li></ul></div>
+
+    <h2>Formül ve Hesaplama Mantığı</h2>
+    <p>Bir iletkenin uçları arasında oluşan gerilim kaybı; iletken direnci (R = ρ × L / S) ile akımın çarpımından doğar. Yüzdesel gerilim düşümü, bu kaybın sistem geriliminin yüzdesi olarak ifade edilmesidir. Türkiye'de yaygın kullanılan pratik formüller:</p>
+    <ul class="article__list">
+      <li><strong>Üç faz:</strong> ΔU(%) = √3 × I × L × ρ ÷ (S × U) × 100</li>
+      <li><strong>Tek faz:</strong> ΔU(%) = 2 × I × L × ρ ÷ (S × U) × 100</li>
+    </ul>
+    <p>Burada <em>ρ</em> (rho) iletkenin özdirenç katsayısıdır; bakır için yaklaşık 0,0175 Ω·mm²/m alınır. Bu araç bakır iletken kabulüyle çalışır; alüminyum iletken için ρ ≈ 0,028 ile düzeltilmelidir.</p>
+
+    <h2>Örnek Hesap</h2>
+    <p>80 A akım çeken, 25 mm² kesitli, 60 m uzunluğunda ve 400 V üç fazlı bir motor besleme hattı için hesap: ΔU(%) = 1,732 × 80 × 60 × 0,0175 ÷ (25 × 400) × 100 = 145,4 ÷ 10.000 × 100 ≈ <strong>%1,45</strong>. Bu değer %5 sınırının altında olduğu için kesit gerilim düşümü açısından uygundur.</p>
+
+    <h2>Standart İzin Verilen Sınırlar</h2>
+    <ul class="article__list">
+      <li>Aydınlatma devreleri: ≤ %3</li>
+      <li>Priz ve motor/kuvvet devreleri: ≤ %5</li>
+      <li>GES DC kabloları: tipik tasarım hedefi ≤ %1</li>
+      <li>GES AC bağlantı: ≤ %1-2 (santral toplam kayıp hedefi için)</li>
+      <li>Elektrikli araç şarj istasyonu: ≤ %3 tercih edilir</li>
+    </ul>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Gerilim düşümü nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Üç fazlı sistemde ΔU(%) = √3 × I × L × ρ / (S × U) × 100 formülü kullanılır. Tek fazlı sistemde √3 yerine 2 katsayısı gelir. I hat akımı, L uzunluk, ρ bakır için 0,0175 Ω·mm²/m, S kesit, U hat gerilimidir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Aydınlatma ve priz devrelerinde izin verilen düşüm ne kadar? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Yaygın kabul, aydınlatmada %3, motor/kuvvet devrelerinde %5 üst sınırıdır. Uzun GES ve EV şarj hatlarında %1-2 gibi daha sıkı hedefler seçilebilir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Kesit büyüdükçe gerilim düşümü nasıl değişir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Kesit iki katına çıkarsa yüzdesel düşüm yaklaşık yarıya iner. Uzun hatlarda akım kriterinden daha büyük bir kesit gerekmesinin sebebi budur.</p></div></details>
+
+    <p class="kb-disclaimer">Bu araç yalnızca ön değerlendirme amaçlıdır. Kesin kesit seçimi; döşeme yöntemi, ortam sıcaklığı, gruplama düzeltmesi ve kısa devre dayanımı da hesaba katılarak yetkili bir elektrik mühendisi tarafından yapılmalıdır.</p>
+    <p>Daha fazla ilgili kaynak: <a href="../hesaplama/kablo-kesiti-hesaplama.html">Kablo Kesiti Hesaplama</a>, <a href="../bilgi/kablo-kesiti-akim-tasima-tablosu.html">Kablo Akım Taşıma Tablosu</a>, <a href="../teklif-araclari.html">VoltGuard Hesaplama Merkezi</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Uzun hatlarda kesit ve gerilim düşümü optimizasyonu için destek alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../teklif-araclari.html" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var RHO = 0.0175;
+      function update() {
+        var i = Math.max(0, Number(document.getElementById('vd-current').value) || 0);
+        var s = Math.max(0.5, Number(document.getElementById('vd-section').value) || 0.5);
+        var l = Math.max(0, Number(document.getElementById('vd-length').value) || 0);
+        var u = Number(document.getElementById('vd-voltage').value);
+        var isThreePhase = u === 400;
+        var factor = isThreePhase ? Math.sqrt(3) : 2;
+        var drop = (factor * i * l * RHO) / (s * u) * 100;
+        var pct = Math.round(drop * 100) / 100;
+        document.getElementById('vd-result').textContent = pct + ' %';
+        var ok = drop <= 5 ? 'sınırın altında' : 'sınırın üzerinde';
+        document.getElementById('vd-detail').textContent = (isThreePhase ? 'Üç faz' : 'Tek faz') + ' bakır iletken için hesaplanan yüzdesel düşüm; %5 motor/kuvvet sınırının ' + ok + '.';
+      }
+      ['vd-current','vd-section','vd-length','vd-voltage'].forEach(function(id){document.getElementById(id).addEventListener('input',update);document.getElementById(id).addEventListener('change',update);});
+      update();
+    }());
+  </script>
+  <script src="../js/voltguard-auth.js"></script>
+  <script src="../js/voltguard-tools.js"></script>
+</body></html>

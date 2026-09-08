@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Trafo işletmesi, kısa devre analizi ve koruma koordinasyonu ileri seviye ders: IEC 60909, TT/TN/IT sistemleri, selektivite ve arıza analizi.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Trafo İşletmesi ve Kısa Devre Koordinasyonu (İleri) | VoltGuard Akademi</title>
+  <link rel="canonical" href="https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Trafo İşletmesi ve Kısa Devre Koordinasyonu (İleri) | VoltGuard Akademi">
+  <meta property="og:description" content="IEC 60909, TT/TN/IT sistemleri, selektivite ve arıza analizi.">
+  <meta property="og:url" content="https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html#course","name":"Trafo İşletmesi ve Kısa Devre Koordinasyonu (İleri)","description":"IEC 60909, TT/TN/IT sistemleri, selektivite ve arıza analizi.","educationalLevel":"İleri","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","provider":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Trafo İşletmesi ve Kısa Devre Koordinasyonu (İleri)","item":"https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html"}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../akademi.html">VoltGuard Akademi</a> &rsaquo; <span>Trafo İşletmesi ve Kısa Devre Koordinasyonu</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektrik Tesisatı &amp; Güç Sistemleri</span>
+    <span class="akademi-level akademi-level--ileri">İleri Seviye</span>
+    <h1>Trafo İşletmesi ve Kısa Devre Koordinasyonu</h1>
+    <p class="article__summary">İleri seviye bu derste; dağıtım trafolarının işletim parametrelerini, IEC 60909'a göre kısa devre analizini, TT/TN/IT topraklama sistemlerinin arıza akımlarını ve TMŞ selektivite koordinasyonunu ele alacağız. Ön koşul: <a href="kompanzasyon-harmonik-orta.html">Kompanzasyon ve Harmonik (Orta)</a> dersi ve <a href="../bilgi/kisa-devre-akimi-nedir.html">Kısa Devre Akımı Nedir</a> rehberi.</p>
+
+    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Trafo işletim modu ve derating faktörleri, IEC 60909 metodolojisi, TT/TN/IT arıza akımı hesabı ve TMŞ zaman-akım koordinasyon eğrileriyle selektivite.</div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Trafo işletim ömrü çevre sıcaklığı, yük profili ve harmonik yüke bağlıdır; sıcaklık her 6 °C artışında yaşlanma iki katına çıkar.</li><li>IEC 60909 dört farklı kısa devre türü için sistematik hesap tanımlar: 3-faz, faz-faz, faz-faz-toprak, faz-toprak.</li><li>TT sisteminde toprak arıza akımı düşüktür; TN'de yüksektir; IT'de ilk arızada devre çalışır.</li><li>Selektivite için Icu × zaman eğrilerinin kesişmemesi ve akım kademelemesi birlikte sağlanmalıdır.</li><li>Modern elektronik açtırıcılı TMŞ'ler ayarlanabilir I-t eğrileriyle esnek selektivite sağlar.</li></ul></div>
+
+    <h2>Dağıtım Trafosunun İşletim Parametreleri</h2>
+    <ul class="article__list">
+      <li><strong>Nominal güç (Sn):</strong> Etikette yazan kVA değeri; çevre sıcaklığı 40 °C, yükseklik 1000 m'yi geçmeyen koşullar için geçerlidir.</li>
+      <li><strong>Uk (%):</strong> Kısa devre gerilim yüzdesi; genelde 4-8 arası. Ik'yı belirler.</li>
+      <li><strong>Vector grubu:</strong> Dyn11 en yaygın (Delta primer, yıldız sekonder, +30° faz kayması).</li>
+      <li><strong>Kayıp yükü:</strong> P<sub>0</sub> (boşta) ve P<sub>k</sub> (yüklü) — ekonomik yüke etki eder.</li>
+      <li><strong>Sıcaklık artışı:</strong> Yağ +55 K / +65 K, sargı +55 K / +65 K / +80 K (izole sınıfına göre).</li>
+      <li><strong>Yalıtım seviyesi:</strong> BIL (Basic Insulation Level); 36 kV için 170 kV, 24 kV için 125 kV BIL tipiktir.</li>
+    </ul>
+
+    <h2>Trafo Yükleme ve Yaşlanma</h2>
+    <p>IEC 60076-7 (Loading Guide) trafoyu üç yük moduna ayırır:</p>
+    <ul class="article__list">
+      <li><strong>Normal cyclic loading:</strong> Günlük çevrimde ortalama yük ≤ nominal, tepe yük 1,3×Sn saatlerce.</li>
+      <li><strong>Long-time emergency:</strong> Uzun süre 1,5×Sn; yaşlanma 4-8 kat hızlanır.</li>
+      <li><strong>Short-time emergency:</strong> Kısa süre 2×Sn; kritik durum; yaşlanma 20 kat.</li>
+    </ul>
+    <p>Sürekli aşırı yük veya harmonik yük (K-factor), yağ ve sargı sıcaklığını artırır. Kural: sıcak nokta sıcaklığı 6 K artınca yalıtım ömrü yarıya iner (Arrhenius). Bu nedenle trafo IEC 60567'ye göre yağ analizi (DGA - Dissolved Gas Analysis) ile düzenli izlenir.</p>
+
+    <h2>IEC 60909'a Göre Kısa Devre Hesabı</h2>
+    <p>IEC 60909, dört tür kısa devre için sistematik metodoloji tanımlar:</p>
+    <ol class="article__list">
+      <li><strong>Ik" (initial symmetric):</strong> İlk yarım devir sonundaki simetrik akım.</li>
+      <li><strong>ip (peak):</strong> İlk pikin genliği; ip = κ × √2 × Ik".</li>
+      <li><strong>Ib (breaking):</strong> Şalterin açma anındaki akım (t=0,02-0,25 s).</li>
+      <li><strong>Ik (steady-state):</strong> Uzun süreli kararlı hal akımı.</li>
+    </ol>
+    <p>Standart, sistem empedansı için pozitif dizi (Z<sub>1</sub>), negatif dizi (Z<sub>2</sub>) ve sıfır dizi (Z<sub>0</sub>) modelini kullanır. Simetrik olmayan arızalar (faz-faz, faz-faz-toprak, faz-toprak) için farklı kombinasyonlar hesaplanır.</p>
+
+    <h2>Topraklama Sistemleri ve Arıza Akımı</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Sistem</th><th>Trafo nötr</th><th>Yük gövde</th><th>Arıza akımı</th><th>Uygulama</th></tr></thead>
+      <tbody>
+        <tr><td>TT</td><td>Toprağa direk</td><td>Ayrı toprak elektrot</td><td>Düşük (RCD gerekir)</td><td>Konut, ticari</td></tr>
+        <tr><td>TN-S</td><td>Toprağa direk</td><td>PE ile trafo toprağına döner</td><td>Yüksek</td><td>Sanayi, hastane</td></tr>
+        <tr><td>TN-C</td><td>Toprağa direk</td><td>PEN tek iletken</td><td>Yüksek (yasaklı yeni tesis)</td><td>Eski tesis</td></tr>
+        <tr><td>TN-C-S</td><td>Toprağa direk</td><td>Ana pano sonrası ayrılan</td><td>Yüksek</td><td>Sanayi ara çözüm</td></tr>
+        <tr><td>IT</td><td>İzole veya Z ile toprağa</td><td>Ayrı toprak</td><td>Çok düşük (ilk arıza tolere)</td><td>Hastane OR, madencilik</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>TMŞ Zaman-Akım Koordinasyonu (Selektivite)</h2>
+    <p>Bir tesiste birden fazla koruma cihazı seri bağlıysa, alt kademedeki arıza yalnızca en yakın koruma cihazını açmalıdır. Bu, iki kriterle sağlanır:</p>
+    <ul class="article__list">
+      <li><strong>Akım kademelemesi:</strong> Üst kademe In ≥ Alt kademe In × 1,6</li>
+      <li><strong>Zaman kademelemesi:</strong> Üst kademe açma süresi, alt kademe açma süresinden en az 100-200 ms uzun</li>
+    </ul>
+    <p>Modern TMŞ'lerde elektronik açtırıcı ayarları LSIG olarak ifade edilir:</p>
+    <ul class="article__list">
+      <li><strong>L (Long-time):</strong> Aşırı yük — I<sub>r</sub> × t eğrisi.</li>
+      <li><strong>S (Short-time):</strong> Ara kısa devre — I<sub>sd</sub> × t.</li>
+      <li><strong>I (Instantaneous):</strong> Anlık kısa devre — I<sub>i</sub>.</li>
+      <li><strong>G (Ground fault):</strong> Toprak arıza — I<sub>g</sub> × t.</li>
+    </ul>
+    <p>Zone Selective Interlocking (ZSI): Ana ve tali TMŞ elektroniği haberleşir; alt kademe açıyorsa üst kademe daha kısa açma gecikmesi kullanır (ancak alt kademe açtığı için tetiklenmez). Ark flash risk analizi için önemli bir tekniktir.</p>
+
+    <h2>Örnek Vaka: 1000 kVA Fabrika Kısa Devre Analizi</h2>
+    <p>1000 kVA / 34,5-0,4 kV, uk = %6, Dyn11 trafo düşünelim. Trafo çıkışı Ik" ≈ 24 kA. Ana bara 5 m uzaklıkta, kablo 4 × 240 mm² Cu → Ik" ana barada ~23,5 kA. Tali bara 30 m uzaklıkta, kablo 3 × 95 mm² → Ik" tali barada ~15 kA. Motor besleme 50 m uzaklıkta, kablo 25 mm² → Ik" motor panosunda ~5 kA.</p>
+    <p>Bu değerlere göre koruma seçimi: Ana TMŞ 1600 A/50 kA Icu, LSIG elektronik; tali TMŞ 400 A/36 kA Icu, LSIG; motor MCCB 63 A/25 kA Icu. Selektivite koordinasyon eğrisi üretici yazılımıyla (Curve Direct, Ecodial vb.) doğrulanır.</p>
+
+    <h2>Yazılım Araçları</h2>
+    <ul class="article__list">
+      <li><strong>ETAP:</strong> Full transient / short-circuit / arc flash analizi (endüstri standardı)</li>
+      <li><strong>DIgSILENT PowerFactory:</strong> Enerji sistemi ve şebeke simülasyonu</li>
+      <li><strong>Schneider Ecodial:</strong> Tesis boyutlandırma ve koordinasyon</li>
+      <li><strong>ABB DOC:</strong> Pano tasarımı ve TMŞ koordinasyon</li>
+      <li><strong>Neplan:</strong> Elektrik enerji hesap ve koruma analizi</li>
+    </ul>
+
+    <h2>Sıradaki Konu</h2>
+    <p>Bu ileri dersi tamamladıktan sonra pratik uygulama için:</p>
+    <ul class="article__list">
+      <li>Uygulamalı: <a href="../hesaplama/kisa-devre-akimi-hesaplama.html">Kısa Devre Akımı Hesaplama</a></li>
+      <li>Uygulamalı: <a href="../hesaplama/sigorta-tms-secimi.html">Sigorta / TMŞ Seçim Aracı</a></li>
+      <li>Tema derinleştirme: <a href="../bilgi/trafo-periyodik-bakim.html">Trafo Periyodik Bakımı</a></li>
+    </ul>
+
+    <p class="kb-disclaimer">Bu içerik ileri seviye eğitim amaçlıdır ve gerçek proje yerine geçmez. Kısa devre hesabı ve koruma koordinasyonu için proje bazlı yetkili mühendis çalışması gereklidir.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Kısa devre analizi ve koruma koordinasyonu için mühendislik desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../akademi.html" class="kb-card__more">&larr; Tüm dersler: VoltGuard Akademi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

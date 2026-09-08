@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Hesabım | VoltGuard Tools</title>
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../teklif-araclari.html">Tools</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="vg-panel">
+    <aside class="vg-panel__nav" aria-label="Hesap menüsü">
+      <a href="panel.html" class="is-active"><i class="fas fa-gauge-high"></i> Panel</a>
+      <a href="gecmis.html"><i class="fas fa-clock-rotate-left"></i> Geçmiş Hesaplamalar</a>
+      <a href="favoriler.html"><i class="fas fa-star"></i> Favori Araçlar</a>
+      <a href="projeler.html"><i class="fas fa-folder-tree"></i> Projeler</a>
+      <a href="dokumanlar.html"><i class="fas fa-book-open"></i> Dokümanlarım</a>
+      <button type="button" class="vg-panel__logout" id="logout-btn"><i class="fas fa-arrow-right-from-bracket"></i> Çıkış yap</button>
+    </aside>
+
+    <section class="vg-panel__main">
+      <div class="vg-panel__welcome">
+        <h1 id="welcome-title">Merhaba</h1>
+        <p>VoltGuard Tools panelinden hesaplamalarınızı, favorilerinizi ve projelerinizi tek yerden yönetin.</p>
+      </div>
+
+      <div class="vg-panel__stats">
+        <div class="vg-stat"><span class="vg-stat__label">Kayıtlı Hesap</span><span class="vg-stat__value" id="stat-history">0</span><span class="vg-stat__hint">Geçmiş hesaplamalar</span></div>
+        <div class="vg-stat"><span class="vg-stat__label">Favori Araç</span><span class="vg-stat__value" id="stat-fav">0</span><span class="vg-stat__hint">Hızlı erişim listesi</span></div>
+        <div class="vg-stat"><span class="vg-stat__label">Proje</span><span class="vg-stat__value" id="stat-proj">0</span><span class="vg-stat__hint">Aktif proje sayısı</span></div>
+        <div class="vg-stat"><span class="vg-stat__label">Doküman</span><span class="vg-stat__value" id="stat-doc">0</span><span class="vg-stat__hint">Kişisel kütüphane</span></div>
+      </div>
+
+      <div class="vg-section">
+        <h2><i class="fas fa-clock-rotate-left"></i> Son hesaplamalar</h2>
+        <div id="recent-list" class="vg-history-list"></div>
+      </div>
+
+      <div class="vg-section">
+        <h2><i class="fas fa-star"></i> Favori araçlar</h2>
+        <div id="recent-fav" class="vg-favorites-list"></div>
+      </div>
+
+      <div class="vg-section">
+        <h2><i class="fas fa-download"></i> Verilerimi dışa aktar</h2>
+        <p style="color:var(--clr-text-muted);margin:.35rem 0 1rem">Tüm hesaplamalarınızı, favorilerinizi, projelerinizi ve dokümanlarınızı JSON formatında indirin. Cihaz değiştirirken veya yedek almak için kullanabilirsiniz.</p>
+        <button class="vg-mini-btn" id="export-btn"><i class="fas fa-file-arrow-down"></i> JSON olarak indir</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/voltguard-auth.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var Auth = window.VG.Auth;
+      var user = Auth.requireAuth('giris.html');
+      if (!user) return;
+
+      document.getElementById('welcome-title').textContent = 'Merhaba, ' + user.name;
+
+      var history = Auth.getHistory();
+      var favs = Auth.getFavorites();
+      var projs = Auth.getProjects();
+      var docs = Auth.getDocuments();
+
+      document.getElementById('stat-history').textContent = history.length;
+      document.getElementById('stat-fav').textContent = favs.length;
+      document.getElementById('stat-proj').textContent = projs.length;
+      document.getElementById('stat-doc').textContent = docs.length;
+
+      var recent = document.getElementById('recent-list');
+      if (!history.length) {
+        recent.innerHTML = '<div class="vg-empty">Henüz kayıtlı hesabınız yok. <a href="../teklif-araclari.html">Hesaplama Merkezi</a>\'nden bir araç açıp "Hesabıma kaydet" butonuna basın.</div>';
+      } else {
+        recent.innerHTML = history.slice(0, 5).map(renderHistory).join('');
+      }
+
+      var favWrap = document.getElementById('recent-fav');
+      if (!favs.length) {
+        favWrap.innerHTML = '<div class="vg-empty">Favori aracınız yok. <a href="../teklif-araclari.html">Araçları keşfedin</a> ve yıldıza tıklayın.</div>';
+      } else {
+        favWrap.innerHTML = favs.slice(0, 5).map(function (f) {
+          return '<div class="vg-favorite-item"><h3><i class="fas fa-star" style="color:var(--clr-accent-text)"></i> ' + esc(f.toolName) + '</h3><div class="vg-favorite-item__actions"><a class="vg-mini-btn" href="' + escAttr(f.toolUrl) + '"><i class="fas fa-arrow-up-right-from-square"></i> Aç</a></div></div>';
+        }).join('');
+      }
+
+      document.getElementById('logout-btn').addEventListener('click', function () {
+        if (confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+          Auth.logout();
+          location.href = '../index.html';
+        }
+      });
+
+      document.getElementById('export-btn').addEventListener('click', function () {
+        var data = Auth.exportAll();
+        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'voltguard-tools-yedek-' + new Date().toISOString().slice(0, 10) + '.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      function renderHistory(h) {
+        var when = new Date(h.savedAt).toLocaleString('tr-TR');
+        return '<div class="vg-history-item">'
+          + '<h3><a href="' + escAttr(h.toolUrl || '#') + '" style="color:inherit;text-decoration:none">' + esc(h.toolName) + '</a></h3>'
+          + '<div class="vg-history-item__meta">' + esc(when) + '</div>'
+          + '<div class="vg-history-item__value">' + esc(h.result && h.result.value ? h.result.value : '-') + '</div>'
+          + '<div class="vg-history-item__actions">'
+          +   '<a class="vg-mini-btn" href="gecmis.html"><i class="fas fa-list"></i> Detay</a>'
+          + '</div>'
+          + '</div>';
+      }
+
+      function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
+      function escAttr(s) { return esc(s).replace(/`/g, '&#96;'); }
+    }());
+  </script>
+</body>
+</html>

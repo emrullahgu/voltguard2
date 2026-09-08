@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Kaçak akım rölesi (RCD) 30 mA mı 300 mA mı seçilmeli? A, AC, B, F tipi farkları ve nerede hangi tipin kullanılacağı için pratik rehber.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Kaçak Akım Rölesi Seçimi: 30 mA mı 300 mA mı? A / AC / B Tipi | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/bilgi/kacak-akim-rolesi-secimi.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Kaçak Akım Rölesi Seçimi: 30 mA mı 300 mA mı? | VoltGuard">
+  <meta property="og:description" content="A, AC, B, F tipi farkları ve nerede hangi tipin kullanılacağı için pratik rehber.">
+  <meta property="og:url" content="https://voltguard.com.tr/bilgi/kacak-akim-rolesi-secimi.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/kacak-akim-rolesi-secimi.html#article","headline":"Kaçak Akım Rölesi Seçimi: 30 mA mı 300 mA mı?","description":"A, AC, B, F tipi farkları ve nerede hangi tipin kullanılacağı için pratik rehber.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Elektrik Güvenliği","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/kacak-akim-rolesi-secimi.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"Kaçak Akım Rölesi Seçimi","item":"https://voltguard.com.tr/bilgi/kacak-akim-rolesi-secimi.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"30 mA mı 300 mA mı seçilmeli?","acceptedAnswer":{"@type":"Answer","text":"Prizler ve doğrudan insan temasının olduğu son devrelerde 30 mA hayat koruma tipi röle kullanılır. Ana ve tali panolarda seçicilik amacıyla 100-300 mA yangın koruma tipi röle tercih edilir. İki kademe birlikte kullanılırsa selektif koruma sağlanır."}},{"@type":"Question","name":"A tipi ve AC tipi kaçak akım rölesi farkı nedir?","acceptedAnswer":{"@type":"Answer","text":"AC tipi sadece sinüsoidal AC kaçakları algılar. A tipi ise darbeli DC bileşen içeren kaçakları da algılar; modern SMPS'li cihazlar, LED sürücü, klima ve elektronik yükler için A tipi önerilir. Türkiye'de 2018 sonrası yönetmelik A tipi kullanımını zorunlu kılmıştır."}},{"@type":"Question","name":"B tipi kaçak akım rölesi nerede gerekir?","acceptedAnswer":{"@type":"Answer","text":"B tipi hem AC hem de saf DC kaçakları algılar. VFD sürücü çıkışı, üç fazlı fotovoltaik inverter, elektrikli araç şarj istasyonu (Mode 3/4) ve UPS gibi DC bileşen üretebilen ekipmanlarda B tipi zorunludur."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>Kaçak Akım Rölesi Seçimi</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektrik Güvenliği</span>
+    <h1>Kaçak Akım Rölesi Seçimi: 30 mA mı 300 mA mı? A / AC / B Tipi</h1>
+    <p class="article__summary">Kaçak akım rölesi (RCD/RCCB); hayat koruma, yangın koruma ve seçicilik amacıyla panolarda farklı akım eşikleri ve tipleriyle kullanılır. Bu rehberde, sahada en sık sorulan "30 mA mı 300 mA mı", "A tipi mi AC tipi mi" sorularının cevaplarını, tipik hataları ve doğru seçim tablosunu bulacaksınız.</p>
+
+    <div class="kb-quickanswer">
+      <span class="kb-quickanswer__label">Kısa Cevap</span>
+      <strong class="kb-quickanswer__value">Priz devresi: 30 mA A tipi. Ana pano: 100-300 mA A tipi. VFD/GES: B tipi.</strong>
+      <span class="kb-quickanswer__note">Her elektrikli cihaz devresi 30 mA hayat koruma tipiyle korunmalı; ana kolonlarda seçicilik için 100-300 mA yangın koruma tipi eklenmelidir.</span>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>30 mA hayat koruma; 300 mA yangın koruma amaçlı kullanılır.</li><li>AC tipi sadece AC kaçakları; A tipi darbeli DC bileşenli kaçakları algılar. Türkiye'de A tipi zorunludur.</li><li>B tipi, saf DC kaçakları da algılar; VFD, GES inverteri ve EV şarj istasyonu için gereklidir.</li><li>Ana pano + tali pano kademelemesi ile "selektif" koruma sağlanır: alt açar, ana açmaz.</li><li>Kaçak akım rölesi TEST butonuyla ayda bir denenmelidir.</li></ul></div>
+
+    <h2>Kaçak Akım Rölesi Nedir?</h2>
+    <p>Kaçak akım rölesi (RCD - Residual Current Device), bir devrenin faz ve nötrden geçen akımların vektörel toplamını sürekli izler. Normal koşullarda bu toplam sıfırdır; toprağa doğru bir kaçak varsa toplam sıfırdan farklı olur ve röle önceden ayarlı eşiği (IΔn) aştığında devreyi çok kısa sürede (< 40 ms) keser.</p>
+
+    <h2>30 mA vs 300 mA: Amaç Farklı</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Eşik</th><th>Amaç</th><th>Uygulama</th></tr></thead>
+      <tbody>
+        <tr><td>10 mA</td><td>Ekstra hassas</td><td>Sağlık, çocuk odası, banyo bebek arabası prizi</td></tr>
+        <tr><td>30 mA</td><td>Hayat koruma</td><td>Ev, ofis, iş yeri son priz devreleri; elektrikli el aleti</td></tr>
+        <tr><td>100 mA</td><td>Yangın koruma ara kademe</td><td>Tali pano bölünmesi, aydınlatma kolonları</td></tr>
+        <tr><td>300 mA</td><td>Yangın koruma / seçicilik</td><td>Ana pano, kolon başları, sanayi ana besleme</td></tr>
+        <tr><td>500 mA</td><td>Yalnız yangın koruma</td><td>Trafo çıkışı, çok büyük tesis ana kolonu</td></tr>
+      </tbody>
+    </table></div>
+    <p>İnsan vücudundan geçen 30 mA'lık akım en fazla 40 ms sürerse tehlikeli değildir; bu yüzden priz ve dolaysız temas riski olan tüm devreler 30 mA ile korunmalıdır. Ana panoda ise selektivite için 300 mA (veya "S" - selektif) tip kullanılır. Aksi hâlde küçük bir kaçak tüm binayı karartır.</p>
+
+    <h2>A / AC / B / F Tipi Farkları</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Tip</th><th>Algıladığı kaçak</th><th>Kullanım alanı</th></tr></thead>
+      <tbody>
+        <tr><td>AC</td><td>Sadece sinüsoidal AC</td><td>Eski konut. Türkiye'de yeni kullanım yasak/uygunsuzdur.</td></tr>
+        <tr><td>A</td><td>AC + darbeli DC (yarım dalga)</td><td>Modern konut, ofis, LED sürücüler, klima, tek fazlı elektronik yükler</td></tr>
+        <tr><td>F</td><td>A tipi + darbe akımı</td><td>Tek fazlı VFD sürücü ile beslenen küçük motorlar</td></tr>
+        <tr><td>B</td><td>A + saf DC</td><td>3 fazlı VFD sürücü, GES inverter, EV şarj Mode 3/4, UPS DC bağı</td></tr>
+        <tr><td>B+</td><td>B + 20 kHz'e kadar geniş bant</td><td>Yüksek frekans içerikli sürücü çıkışı, MRI, medikal görüntüleme</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Selektivite: 2 Kademeli Koruma</h2>
+    <p>Kaçak akım rölelerinin panoda kademelenmesi, bir alt kolon açtığında üst kolonun açmamasını sağlar. İki koşul birlikte sağlanmalıdır:</p>
+    <ul class="article__list">
+      <li><strong>Akım koşulu:</strong> Üst kademe IΔn ≥ 3 × Alt kademe IΔn (ör. üstte 300 mA, altta 30 mA)</li>
+      <li><strong>Zaman koşulu:</strong> Üst kademe "S" (selektif) tip olmalı; anlık değil, 40-200 ms gecikmeli açmalıdır.</li>
+    </ul>
+    <p>Yalnızca akım kademelemesi ile selektivite garantilenmez; üst rölenin "S" markası ya da gecikme ayarı olmalıdır.</p>
+
+    <h2>Test Butonu ve Periyodik Kontrol</h2>
+    <p>Her kaçak akım rölesi üzerinde bir T (test) butonu bulunur. Bu buton 6 mA veya daha fazla bir arıza akımı simüle eder ve rölenin doğru açtığı doğrulanır. Ev tesisatlarında ayda bir; sanayide haftalık veya vardiya başı test yapılması önerilir. Test sonuçları topraklama karnesine kaydedilmelidir. Ayrıca ölçüm cihazı ile açma süresi (< 40 ms) yılda bir sağlanmalıdır.</p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">30 mA mı 300 mA mı seçilmeli? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Priz ve doğrudan temas devrelerinde 30 mA; ana pano ve kolonlarda 100-300 mA seçilir. İki kademe birlikte kullanılırsa selektif koruma sağlanır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">A tipi ve AC tipi farkı nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>AC tipi sadece sinüsoidal AC; A tipi darbeli DC bileşenli kaçakları da algılar. Türkiye'de A tipi kullanımı zorunludur.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">B tipi nerede gerekir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>VFD, GES inverter, EV şarj (Mode 3/4) ve UPS gibi DC bileşen üretebilen ekipmanlarda B tipi zorunludur.</p></div></details>
+
+    <p class="kb-disclaimer">Bu içerik bilgilendirme amaçlıdır. Kesin seçim için tesis tipi, mevzuat ve saha koşulları esas alınarak yetkili mühendis görüşü alınmalıdır.</p>
+    <p>İlgili kaynaklar: <a href="../bilgi/kacak-akim-rolesi-ariza-nedenleri.html">Kaçak Akım Rölesi Neden Atar?</a>, <a href="../bilgi/tms-secimi-rehberi.html">TMŞ Seçim Rehberi</a>, <a href="../hesaplama/sigorta-tms-secimi.html">Sigorta / TMŞ Seçim Aracı</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Pano koruma koordinasyonu ve selektivite tasarımı için destek alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../bilgi-bankasi.html" class="kb-card__more">&larr; Tüm rehberler: Bilgi Bankası</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

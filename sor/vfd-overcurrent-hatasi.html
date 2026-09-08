@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="VFD üzerinde OverCurrent (OC) hatası nedenleri: motor kilitlenme, yanlış V/f eğrisi, kısa devre koruması, motor kablosu uzunluğu ve rampalar.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>VFD OverCurrent (OC) Hatası - Sebepleri ve Çözümü | VoltGuard'a Sor</title>
+  <link rel="canonical" href="https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="VFD OverCurrent (OC) Hatası - Sebepleri ve Çözümü | VoltGuard'a Sor">
+  <meta property="og:description" content="Motor kilitlenme, yanlış V/f eğrisi, kısa devre koruması, motor kablosu uzunluğu ve rampalar.">
+  <meta property="og:url" content="https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"QAPage","@id":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html#qa","mainEntity":{"@type":"Question","name":"VFD üzerinde OverCurrent (OC) hatası neden çıkıyor?","text":"Frekans invertörümüz (VFD) motoru çalıştırırken ya da rampalarken OC (OverCurrent) hatası veriyor. Bazen kalkış anında, bazen tam hızda çalışırken. Sebebi ne olabilir?","answerCount":1,"upvoteCount":0,"datePublished":"2026-09-08","author":{"@type":"Organization","name":"VoltGuard"},"acceptedAnswer":{"@type":"Answer","text":"OC hatası VFD çıkış akımının anlık olarak IGBT dayanım limitini geçtiği durumdur. Yaygın nedenler: (1) Çok hızlı rampa (accel/decel time çok kısa), (2) Motor mekanik yükü çok yüksek (rulman sıkışma, iş yolu tıkanıklığı), (3) V/f eğrisi yanlış (boost çok yüksek), (4) Motor gücü VFD'den büyük veya undersized, (5) Motor kablosu 30 m'yi geçmesi ve dv/dt filtre yokluğu, (6) Motor sargı arızası. Rampayı 2-3 kat uzatıp deneyin; hata devam ederse motor mekaniği kontrol edilmelidir."}},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard'a Sor","item":"https://voltguard.com.tr/sor.html"},{"@type":"ListItem","position":3,"name":"VFD OverCurrent Hatası","item":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html"}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../sor.html">VoltGuard'a Sor</a> &rsaquo; <span>VFD OverCurrent Hatası</span>
+  </nav>
+
+  <main class="article">
+    <div class="qa-tags"><span class="qa-tag">Otomasyon</span><span class="qa-tag qa-tag--equipment">VFD / Motor</span><span class="qa-tag qa-tag--problem">Arıza / Ayar</span></div>
+    <h1>VFD OverCurrent (OC) Hatası - Sebepleri ve Çözümü</h1>
+
+    <div class="kb-keyfacts"><h2>Soru</h2><ul><li>"Frekans invertörümüz (VFD) motoru çalıştırırken ya da rampalarken OC (OverCurrent) hatası veriyor. Bazen kalkış anında, bazen tam hızda çalışırken. Sebebi ne olabilir?"</li></ul></div>
+
+    <h2>Kısa Cevap</h2>
+    <p>OverCurrent (OC), VFD çıkış akımının IGBT'nin izin verdiği anlık pik değerini (tipik 200% × In) aşması durumunda tetiklenen mikrosaniye seviyesinde bir korumadır. En yaygın altı neden: <strong>(1)</strong> rampa süresi (accel/decel time) çok kısa, <strong>(2)</strong> motor mekanik yükü aşırı, <strong>(3)</strong> V/f eğrisi yanlış (boost çok yüksek), <strong>(4)</strong> VFD gücü motor için yetersiz, <strong>(5)</strong> uzun motor kablosu + dv/dt filtresi yokluğu, <strong>(6)</strong> motor sargı arızası. Hata anında oluşan frekans ve akım değeri VFD hata kaydından okunmalıdır.</p>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>OC koruması IGBT'yi ani hasardan koruyan donanımsal bir korumadır; yazılım tarafında değişmez.</li><li>Modern VFD'lerde OC eşiği %180-220 × In arası kalibrelenir.</li><li>Yumuşak kalkış / vektör kontrol OC olaylarını azaltır.</li><li>Motor - VFD kablosu 30 m üstü ise dv/dt veya sinüs filtresi şart.</li><li>OC hatası tekrarlıyorsa değişkenler (frekans, akım) mutlaka kayıt altına alınmalıdır.</li></ul></div>
+
+    <h2>OC ile OL (OverLoad) Farkı</h2>
+    <p>İki hatayı karıştırmak yaygındır. <strong>OverCurrent (OC)</strong>, mikrosaniye içinde tetiklenen anlık bir korumadır; IGBT'yi hasardan korur. <strong>OverLoad (OL)</strong> ise motor koruma amaçlıdır ve dakikalarca süren aşırı yük sonucu tetiklenir. OC her zaman "anlık bir olay" sonucu çıkar; OL "yavaş yavaş biriken ısı" sonucudur. Bu ayırım kök neden analizinde belirleyicidir.</p>
+
+    <h2>6 Yaygın Neden</h2>
+    <ol class="article__list">
+      <li><strong>Çok hızlı rampa:</strong> Fabrika ayarı 2-5 s olarak gelir. Yüksek atalet momenti olan yükte (fan, presse, mikser) motor akım çekişi rampada IGBT sınırını aşar. 10-30 s deneyin.</li>
+      <li><strong>Yüksek mekanik yük:</strong> Rulman sıkışma, kaplin bozukluğu, iş parçası tıkanıklığı motor akımını yükseltir. Motoru mekanikten ayırıp deneyin; hata kalmıyorsa mekanik sorun kesindir.</li>
+      <li><strong>V/f eğrisi ayarı:</strong> Torque boost (düşük hızda ekstra gerilim) fazla ayarlanırsa düşük frekansta motor akımı fırlar. Fabrika ayarında bırakın veya auto-tune yapın.</li>
+      <li><strong>Yanlış VFD boyutlandırma:</strong> VFD'nin nominal akımı (In) motor In × 1,1 üzerinde olmalı. Değişken tork uygulamalarında bu yeterli; sabit tork uygulamalarında bir kademe büyük VFD tercih edin.</li>
+      <li><strong>Uzun motor kablosu:</strong> 30 m üzeri kablo IGBT anahtarlama dalgalarını yansıtır; motor sargı uçlarında 2 × DC bara gerilimi (yaklaşık 1200 V pik) oluşur. dv/dt veya sinüs filtresi eklenmezse VFD OC verir ve motor yalıtımı zarar görür.</li>
+      <li><strong>Motor sargı kısa devresi / toprak arızası:</strong> Sargı içi kısa devre veya toprak arıza durumunda VFD çıkışında normal olmayan akım geçer. Megger ile sargı-toprak ve sargı-sargı izolasyon kontrolü yapılmalı.</li>
+    </ol>
+
+    <h2>Hata Anında Ne Kontrol Etmeli?</h2>
+    <ul class="article__list">
+      <li>Hata kaydında yazan <strong>frekans</strong>: 0-5 Hz arasında OC ise V/f eğrisi veya mekanik problem, tam hızda OC ise motor / kablo problemi.</li>
+      <li><strong>Akım değeri</strong>: OC eşiği kaç ampere ayarlı ve gerçek akım kaç? Fark az ise sınır aşımı, çok ise donanım problemi.</li>
+      <li><strong>Hata sıklığı</strong>: Ilk çalıştırmada mı, yoğun kullanımda mı, sıcak havada mı? Zamansal bağıntı ipucu verir.</li>
+      <li><strong>Fault stack</strong>: Modern VFD'lerde son 10 hata ve o anki değerler kayıtlıdır (Yaskawa U3-01, Siemens Faults menu, ABB parameters group 04).</li>
+    </ul>
+
+    <h2>Ölçümle Nasıl Doğrularsınız?</h2>
+    <ul class="article__list">
+      <li><strong>Pens ampermetre:</strong> Motor kalkış akımını gerçek zamanlı okuyun. Rampa boyunca max akımı not edin.</li>
+      <li><strong>Osiloskop:</strong> Motor girişi V ve I dalga şekli. Yüksek dv/dt görülüyorsa filtre gerekli.</li>
+      <li><strong>Megger ile motor sargısı:</strong> Sargı-toprak izolasyonu &gt; 1 MΩ olmalı.</li>
+      <li><strong>Motor sargı direnç ölçümü:</strong> Üç sargı direnci arasında %5 fark olmamalı.</li>
+      <li><strong>Rulman termal kamerası:</strong> Yük yokken bile rulmanda 15 °C üstü sıcaklık artışı mekanik problemi işaret eder.</li>
+    </ul>
+
+    <h2>Çözüm Önerileri</h2>
+    <ol class="article__list">
+      <li>Rampa süresini 2-3 katına çıkarın (accel: 5 s → 15 s, decel: 5 s → 15 s).</li>
+      <li>V/f eğrisinde otomatik ayarı (auto-tune) çalıştırın; motor plaka verilerini VFD'ye tam girin.</li>
+      <li>Vektör kontrol (sensorless vector, FOC) moduna geçin; düşük hızda daha iyi moment kontrolü sağlar.</li>
+      <li>30 m üstü kabloda dv/dt filtresi; 100 m üstü uygulamada sinüs filtresi kullanın.</li>
+      <li>Motor kablosunu <strong>ekranlı</strong> (CY, EMV) tipe geçirin; ekranı iki uçtan topraklayın.</li>
+      <li>Yumuşak kalkış için "S-curve" (yumuşak eğri rampa) etkinleştirin.</li>
+      <li>Enerji tasarrufu modu (energy save) kapatın; bazen düşük yükte agresif optimizasyon OC tetikleyebilir.</li>
+      <li>Motor eski / sarım yenilenmişse etiket In değerini VFD'ye tam girin; küçük tolerans kritiktir.</li>
+      <li>DC bara gerilimini ölçün; frenleme durumunda &gt; 800 V ise fren direnci veya rejeneratif ünite ekleyin.</li>
+    </ol>
+
+    <h2>Benzer Sorular</h2>
+    <ul class="article__list">
+      <li><a href="../sor/motor-termik-sik-atiyor.html">Motor termik rölesi sık atıyor?</a></li>
+      <li><a href="../sor/motor-bir-fazda-dusuk-akim.html">Üç fazlı motorun bir fazında düşük akım okunuyor?</a></li>
+      <li><a href="../bilgi/vfd-frekans-invertoru-nedir.html">VFD Nedir? (Bilgi Bankası)</a></li>
+      <li><a href="../hesaplama/motor-akimi-hesaplama.html">Motor Akımı Hesaplama Aracı</a></li>
+    </ul>
+
+    <p class="kb-disclaimer">Bu cevap genel teknik bilgi amaçlıdır. VFD ayarları üretici kataloğuna göre yapılmalı; kritik proses ekipmanlarında yetkili teknik servisle çalışılmalıdır.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>VFD ayar, filtre ve motor koordinasyonu için destek alın</strong><span>VoltGuard mühendisleriyle keşif planlayın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../sor.html" class="kb-card__more">&larr; Tüm sorular: VoltGuard'a Sor</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

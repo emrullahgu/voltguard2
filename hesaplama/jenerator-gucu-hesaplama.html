@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Jeneratör gücü hesaplama aracı: toplam yük, güç faktörü, motor kalkışı ve yedek payına göre önerilen kVA jeneratör gücü.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Jeneratör Gücü Hesaplama Aracı ve Boyutlandırma Rehberi | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/jenerator-gucu-hesaplama/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Jeneratör Gücü Hesaplama Aracı | VoltGuard">
+  <meta property="og:description" content="Toplam yük, güç faktörü, motor kalkışı ve yedek payına göre önerilen jeneratör gücü.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/jenerator-gucu-hesaplama/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/jenerator-gucu-hesaplama/#article","headline":"Jeneratör Gücü Hesaplama Aracı ve Boyutlandırma Rehberi","description":"Toplam yük, güç faktörü, motor kalkışı ve yedek payına göre önerilen jeneratör gücü.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/jenerator-gucu-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Jeneratör Gücü Hesaplama","item":"https://voltguard.com.tr/hesaplama/jenerator-gucu-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Jeneratör gücü nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Toplam yük (kW) ortalama güç faktörüne (genellikle 0,8) bölünerek kVA'ya çevrilir. Sonuca motor kalkış darbesi katsayısı ve %20-25 yedek büyüme payı eklenerek jeneratörün seçileceği kVA gücü bulunur."}},{"@type":"Question","name":"Jeneratör prime power ile stand-by farkı nedir?","acceptedAnswer":{"@type":"Answer","text":"Prime Power (PRP), jeneratörün sürekli çalıştırılabileceği ve yıllık sınırsız saat sürdüğü güçtür. Stand-by ise sadece şebeke kesildiğinde devreye giren yedek modu ifade eder; yıllık çalışma saati sınırlıdır ve genellikle PRP değerinden ~%10 yüksek etiketlenir."}},{"@type":"Question","name":"Motor yol alma jeneratör boyutunu nasıl etkiler?","acceptedAnswer":{"@type":"Answer","text":"Jeneratör alternatörü büyük motor kalkışlarında gerilim çöküntüsüne düşer. Doğrudan yol vermede genellikle motor kW gücünün 2,5-3 katı; yumuşak yolvericilerde 1,3-1,5 katı kadar rezerv gerekir. Çok sayıda büyük motor varsa jeneratör kademeli devreye alma senaryosuyla boyutlandırılır."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../teklif-araclari.html">Hesaplama Merkezi</a> &rsaquo; <span>Jeneratör Gücü Hesaplama</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Enerji &amp; Yedekleme</span>
+    <h1>Jeneratör Gücü Hesaplama Aracı ve Boyutlandırma Rehberi</h1>
+    <p class="article__summary">Toplam kW yükünüzü, ortalama güç faktörünü, en büyük motor kW gücünü ve büyüme payını girin; jeneratör için önerilen kVA değerini anında görün.</p>
+
+    <div class="mini-calc">
+      <div class="mini-calc__fields">
+        <div class="mini-calc__field"><label for="jn-load">Toplam yük (kW)</label><input id="jn-load" type="number" min="0" value="200" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="jn-cos">Ortalama cosφ</label><input id="jn-cos" type="number" min="0.5" max="1" step="0.01" value="0.8" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="jn-motor">En büyük motor (kW)</label><input id="jn-motor" type="number" min="0" value="30" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="jn-start">Yol verme tipi</label><select id="jn-start"><option value="3">Doğrudan yol verme (×3)</option><option value="2" selected>Yıldız-üçgen (×2)</option><option value="1.3">Yumuşak yolverici / VFD (×1,3)</option></select></div>
+        <div class="mini-calc__field"><label for="jn-margin">Büyüme yedek payı (%)</label><input id="jn-margin" type="number" min="0" max="100" value="20" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="jn-simult">Eşzamanlılık oranı</label><input id="jn-simult" type="number" min="30" max="100" value="80" inputmode="decimal"></div>
+      </div>
+      <div class="mini-calc__result">
+        <span class="mini-calc__result-label">Ön Sonuç</span>
+        <span class="mini-calc__result-value" id="jn-result">-</span>
+        <span class="mini-calc__result-note" id="jn-detail"></span>
+      </div>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Jeneratör kVA cinsinden boyutlandırılır; toplam kW yükü cosφ = 0,8 ile kVA'ya çevrilir.</li><li>Doğrudan yol verilecek büyük motorlar için jeneratörde 2,5-3 katı geçici güç rezervi gerekir.</li><li>Yumuşak yolverici veya VFD, jeneratör boyutunu belirgin ölçüde küçültür.</li><li>Yedek payı olarak %20-25 eklenir; sık yük genişlemesi olan tesislerde bu değer artırılır.</li></ul></div>
+
+    <h2>Hesap Adımları</h2>
+    <ol class="article__list">
+      <li><strong>Sabit yükün görünür gücü:</strong> S1 (kVA) = Toplam kW × Eşzamanlılık ÷ cosφ</li>
+      <li><strong>Motor kalkış rezervi:</strong> S2 (kVA) = En büyük motor kW × Yol verme katsayısı ÷ cosφ</li>
+      <li><strong>Toplam:</strong> S = S1 + S2</li>
+      <li><strong>Büyüme payı:</strong> S<sub>final</sub> = S × (1 + Yedek payı %)</li>
+      <li><strong>Standart kademe:</strong> S<sub>final</sub>'in bir üstündeki standart jeneratör kVA'sı seçilir (110, 165, 220, 275, 330, 385, 440, 500, 605, 715, 825, 900, 1000, 1250 kVA vb.).</li>
+    </ol>
+
+    <h2>Örnek Hesap</h2>
+    <p>200 kW toplam yük, cosφ = 0,8, en büyük motor 30 kW yıldız-üçgen ile yol alan bir tesis: S1 = 200 × 0,8 ÷ 0,8 = 200 kVA. S2 = 30 × 2 ÷ 0,8 = 75 kVA. Toplam = 275 kVA. Yedek payı %20 ile 330 kVA çıkar. Bir üstü standart kademe olarak <strong>330-385 kVA prime power jeneratör</strong> önerilir.</p>
+
+    <h2>Prime Power ve Stand-by Farkı</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Mod</th><th>Kullanım</th><th>Yıllık saat</th><th>Ortalama yük</th></tr></thead>
+      <tbody>
+        <tr><td>Continuous (COP)</td><td>Sürekli ana kaynak</td><td>Sınırsız</td><td>%100'e kadar</td></tr>
+        <tr><td>Prime (PRP)</td><td>Sürekli / bağımsız güç</td><td>Sınırsız</td><td>~%70-80</td></tr>
+        <tr><td>Stand-by (ESP)</td><td>Sadece şebeke kesintisinde</td><td>~500 s/yıl</td><td>%80'e kadar</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Jeneratör gücü nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Toplam kW yükü cosφ = 0,8 ile kVA'ya çevrilir; motor kalkışı ve %20-25 yedek eklenerek standart kademeye yuvarlanır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Jeneratör prime ve stand-by farkı nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Prime, sürekli çalıştırılabilen bağımsız güç; stand-by, sadece şebeke kesintisinde devreye giren yedek moddur.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Motor yol alma jeneratör boyutunu nasıl etkiler? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>DOL'de motor kW'ının 2,5-3 katı; yumuşak yolvericide 1,3-1,5 katı rezerv gerekir.</p></div></details>
+
+    <p class="kb-disclaimer">Bu araç yalnızca ön değerlendirme sağlar. Nihai jeneratör seçimi; harmonik yük profili, kritik yük kategorisi, alternatör reaktansları ve saha kabul testleri ile netleşir.</p>
+    <p>Daha fazla ilgili kaynak: <a href="../hesaplama/ups-gucu-hesaplama.html">UPS Gücü Hesaplama</a>, <a href="../hesaplama/kw-kva-amper-donusturucu.html">kW-kVA-Amper Dönüşümü</a>, <a href="../teklif-araclari.html">VoltGuard Hesaplama Merkezi</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Kritik tesis yedekleme (jeneratör + UPS) dizaynı için destek alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../teklif-araclari.html" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var STD = [65,90,110,150,165,200,220,275,330,385,440,500,550,605,660,715,825,900,1000,1100,1250,1400,1600,1800,2000];
+      function update() {
+        var load = Math.max(0, Number(document.getElementById('jn-load').value) || 0);
+        var cos = Math.min(1, Math.max(0.5, Number(document.getElementById('jn-cos').value) || 0.8));
+        var motor = Math.max(0, Number(document.getElementById('jn-motor').value) || 0);
+        var startFactor = Number(document.getElementById('jn-start').value);
+        var margin = Math.max(0, Number(document.getElementById('jn-margin').value) || 0) / 100;
+        var simult = Math.min(1, Math.max(0.3, Number(document.getElementById('jn-simult').value) || 80) / 100);
+        var s1 = (load * simult) / cos;
+        var s2 = (motor * startFactor) / cos;
+        var total = (s1 + s2) * (1 + margin);
+        var pick = STD.find(function(n){ return n >= total; }) || STD[STD.length - 1];
+        document.getElementById('jn-result').textContent = pick + ' kVA';
+        document.getElementById('jn-detail').textContent = 'Sabit yük ' + Math.round(s1) + ' kVA + motor kalkış rezervi ' + Math.round(s2) + ' kVA. Yedek payı sonrası ' + Math.round(total) + ' kVA gerekiyor.';
+      }
+      ['jn-load','jn-cos','jn-motor','jn-start','jn-margin','jn-simult'].forEach(function(id){document.getElementById(id).addEventListener('input',update);document.getElementById(id).addEventListener('change',update);});
+      update();
+    }());
+  </script>
+  <script src="../js/voltguard-auth.js"></script>
+  <script src="../js/voltguard-tools.js"></script>
+</body></html>

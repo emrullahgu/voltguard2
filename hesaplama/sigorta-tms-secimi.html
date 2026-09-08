@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Sigorta ve TMŞ seçim aracı: yük gücü, gerilim ve kablo taşıma kapasitesine göre standart anma akımı ve eğri tipi öneren araç, formül ve tablo.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Sigorta / TMŞ Seçim Aracı ve Ib ≤ In ≤ Iz Kuralı | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/sigorta-tms-secimi/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Sigorta / TMŞ Seçim Aracı ve Ib ≤ In ≤ Iz Kuralı | VoltGuard">
+  <meta property="og:description" content="Yük gücü, gerilim ve kablo taşıma kapasitesine göre standart anma akımı ve eğri tipi öneren ücretsiz araç.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/sigorta-tms-secimi/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/sigorta-tms-secimi/#article","headline":"Sigorta / TMŞ Seçim Aracı ve Ib ≤ In ≤ Iz Kuralı","description":"Yük gücü, gerilim ve kablo taşıma kapasitesine göre standart anma akımı ve eğri tipi öneren araç.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/sigorta-tms-secimi/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Sigorta / TMŞ Seçimi","item":"https://voltguard.com.tr/hesaplama/sigorta-tms-secimi/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Sigorta ve TMŞ seçiminin temel kuralı nedir?","acceptedAnswer":{"@type":"Answer","text":"Temel kural Ib ≤ In ≤ Iz'dir. Ib devrenin hesap akımı, In koruma cihazının anma akımı, Iz ise kablonun izin verilen sürekli akımıdır. Bu üç değerin sıralaması, hem yükün beslenmesini hem kablonun aşırı yüke karşı korunmasını garanti eder."}},{"@type":"Question","name":"B, C ve D eğri tipi arasındaki fark nedir?","acceptedAnswer":{"@type":"Answer","text":"B eğrisi (3-5×In) aydınlatma ve rezistif yüklerde; C eğrisi (5-10×In) genel amaçlı priz ve karma yüklerde; D eğrisi (10-20×In) motor, trafo primer, PLC güç kaynağı gibi darbeli yüklerde tercih edilir."}},{"@type":"Question","name":"C16 sigorta kaç kW yükü besler?","acceptedAnswer":{"@type":"Answer","text":"230 V tek fazlı bir devrede C16'nın taşıyabileceği maksimum sürekli yük yaklaşık 3,5 kW'tır (cosφ = 1 kabulü). 400 V üç fazlı sistemde ise yaklaşık 9,6 kW yükü besler. Yol alma darbeli motor uygulamalarında D eğrisi tercih edilmelidir."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../teklif-araclari.html">Hesaplama Merkezi</a> &rsaquo; <span>Sigorta / TMŞ Seçimi</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektrik Hesapları</span>
+    <h1>Sigorta / TMŞ Seçim Aracı ve Ib ≤ In ≤ Iz Kuralı</h1>
+    <p class="article__summary">Devre yükünüzü ve kablo taşıma kapasitesini girin; uygun standart anma akımı ve eğri tipi önerisini anında görün. Aşağıda temel seçim mantığı, örnek çözüm ve sık sorulan sorular yer alır.</p>
+
+    <div class="mini-calc">
+      <div class="mini-calc__fields">
+        <div class="mini-calc__field"><label for="fu-power">Yük gücü (kW)</label><input id="fu-power" type="number" min="0" step="0.1" value="5" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="fu-voltage">Sistem gerilimi (V)</label><select id="fu-voltage"><option value="400" selected>400 V (üç faz)</option><option value="230">230 V (tek faz)</option></select></div>
+        <div class="mini-calc__field"><label for="fu-cos">Güç faktörü cosφ</label><input id="fu-cos" type="number" min="0.5" max="1" step="0.05" value="0.85" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="fu-load">Yük tipi</label><select id="fu-load"><option value="B">Aydınlatma / rezistif (B eğrisi)</option><option value="C" selected>Priz / karma (C eğrisi)</option><option value="D">Motor / trafo primer (D eğrisi)</option></select></div>
+        <div class="mini-calc__field tool-field--wide"><label for="fu-iz">Kablo taşıma kapasitesi Iz (A)</label><input id="fu-iz" type="number" min="0" value="32" inputmode="decimal"></div>
+      </div>
+      <div class="mini-calc__result">
+        <span class="mini-calc__result-label">Ön Sonuç</span>
+        <span class="mini-calc__result-value" id="fu-result">-</span>
+        <span class="mini-calc__result-note" id="fu-detail"></span>
+      </div>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Temel seçim kuralı: Ib ≤ In ≤ Iz. Yük akımı ≤ koruma anma akımı ≤ kablo taşıma kapasitesi olmalıdır.</li><li>Standart anma akımları: 6, 10, 13, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630 A.</li><li>Eğri tipi yükün darbe karakterine göre seçilir: B (rezistif), C (karma), D (motor).</li><li>Kesme kapasitesi (Icu), pano bara noktasındaki maksimum kısa devre akımından büyük olmalıdır.</li></ul></div>
+
+    <h2>Ib ≤ In ≤ Iz Kuralı</h2>
+    <p>Uluslararası standart (IEC 60364-4-43) tarafından öngörülen bu üç adımlı kural, hem yükün sorunsuz beslenmesini hem kablonun aşırı yüke karşı korunmasını sağlar:</p>
+    <ul class="article__list">
+      <li><strong>Ib (design current):</strong> Devrenin hesaplanmış yük akımı. Formülü: Ib = P × 1000 / (√3 × U × cosφ) üç faz için.</li>
+      <li><strong>In (nominal current):</strong> Sigorta ya da TMŞ'nin anma akımı; standart kademelerden seçilir.</li>
+      <li><strong>Iz (ampacity):</strong> Kablonun döşeme yöntemine, sıcaklığa ve gruplamaya göre düzeltilmiş sürekli taşıma kapasitesi.</li>
+    </ul>
+    <p>Ayrıca ikinci koşul olarak <strong>I2 ≤ 1,45 × Iz</strong> aranır; burada I2, koruma cihazının sürekli çalıştıran akımıdır. Modern gG sigortalarda ve TMŞ'lerde bu koşul standart üretimde sağlanır.</p>
+
+    <h2>Eğri Tipleri ve Uygulama Alanları</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Eğri</th><th>Anlık açma bölgesi</th><th>Tipik uygulama</th></tr></thead>
+      <tbody>
+        <tr><td>B</td><td>3-5 × In</td><td>Aydınlatma, rezistif ısıtıcı, priz devreleri</td></tr>
+        <tr><td>C</td><td>5-10 × In</td><td>Genel amaçlı priz, karma yükler, küçük motor</td></tr>
+        <tr><td>D</td><td>10-20 × In</td><td>Motor, trafo primer, PLC güç kaynağı, kaynak makinesi</td></tr>
+        <tr><td>K</td><td>8-14 × In</td><td>Endüstriyel yükler, motor koruma tercih edilen (özel)</td></tr>
+        <tr><td>Z</td><td>2-3 × In</td><td>Hassas elektronik cihaz koruması</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Örnek Hesap</h2>
+    <p>5 kW aydınlatma yükünü 400 V üç fazlı hattan, 10 mm² kablo (Iz ≈ 45 A) ile beslediğinizi varsayalım: Ib = 5.000 / (1,732 × 400 × 1) ≈ 7,2 A. Aday In değerleri: 10 A ve 13 A. 10 A yeterlidir ve 45 A'lık kabloya göre 10 ≤ 45 koşulu rahatlıkla sağlanır. Aydınlatma olduğu için <strong>B10 tipi</strong> otomat sigorta önerilir.</p>
+
+    <h2>Kesme Kapasitesi (Icu) Seçimi</h2>
+    <p>Konut ve küçük ticari tesislerde 6-10 kA TMŞ genellikle yeterlidir. Sanayi tesislerinde, özellikle trafo çıkışlarında 25-50 kA gerekebilir. Kesme kapasitesi seçimi için o noktadaki üç faz kısa devre akımı hesaplanmalıdır; bunun için <a href="../hesaplama/kisa-devre-akimi-hesaplama.html">Kısa Devre Akımı Hesaplama</a> aracını kullanabilirsiniz.</p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Sigorta ve TMŞ seçiminin temel kuralı nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Temel kural Ib ≤ In ≤ Iz'dir. Yük akımı ≤ koruma anma akımı ≤ kablo taşıma kapasitesi olmalıdır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">B, C ve D eğri tipleri arasındaki fark nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>B (3-5×In) aydınlatma ve rezistif; C (5-10×In) genel priz ve karma; D (10-20×In) motor ve trafo primer için tercih edilir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">C16 sigorta kaç kW yükü besler? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>230 V tek fazda ~3,5 kW, 400 V üç fazda ~9,6 kW (cosφ = 1 varsayımıyla). Motor uygulamalarında D eğrisi tercih edilmelidir.</p></div></details>
+
+    <p class="kb-disclaimer">Bu araç yalnızca ön değerlendirme amaçlıdır. Selektivite (seçicilik), Icu koordinasyonu ve son kablo Iz düzeltmeleri için yetkili bir elektrik mühendisi görüşü alınmalıdır.</p>
+    <p>Daha fazla ilgili kaynak: <a href="../bilgi/tms-secimi-rehberi.html">TMŞ Seçim Rehberi</a>, <a href="../bilgi/sigorta-amper-kw-tablosu.html">Sigorta Amper-kW Tablosu</a>, <a href="../hesaplama/kisa-devre-akimi-hesaplama.html">Kısa Devre Akımı Hesabı</a>, <a href="../teklif-araclari.html">VoltGuard Hesaplama Merkezi</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Pano tasarımı ve selektivite koordinasyonu için mühendislik desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../teklif-araclari.html" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var STANDARD = [6,10,13,16,20,25,32,40,50,63,80,100,125,160,200,250,315,400,500,630];
+      function update() {
+        var p = Math.max(0, Number(document.getElementById('fu-power').value) || 0);
+        var u = Number(document.getElementById('fu-voltage').value);
+        var cos = Math.min(1, Math.max(0.5, Number(document.getElementById('fu-cos').value) || 0.85));
+        var iz = Math.max(0, Number(document.getElementById('fu-iz').value) || 0);
+        var curve = document.getElementById('fu-load').value;
+        var isThreePhase = u === 400;
+        var ib = isThreePhase ? (p * 1000) / (Math.sqrt(3) * u * cos) : (p * 1000) / (u * cos);
+        var pick = STANDARD.find(function(n){ return n >= ib && (iz === 0 || n <= iz); });
+        var msg;
+        if (!pick) { msg = 'Yük akımı ' + Math.round(ib * 10) / 10 + ' A; kablo Iz değerini büyütün veya paralel iletken düşünün.'; document.getElementById('fu-result').textContent = '-'; }
+        else { document.getElementById('fu-result').textContent = curve + pick + ' (' + pick + ' A)'; msg = 'Hesap akımı Ib ≈ ' + Math.round(ib * 10) / 10 + ' A. Ib ≤ In ≤ Iz kuralı sağlanıyor. Eğri tipi seçilen yüke uygun.'; }
+        document.getElementById('fu-detail').textContent = msg;
+      }
+      ['fu-power','fu-voltage','fu-cos','fu-iz','fu-load'].forEach(function(id){document.getElementById(id).addEventListener('input',update);document.getElementById(id).addEventListener('change',update);});
+      update();
+    }());
+  </script>
+  <script src="../js/voltguard-auth.js"></script>
+  <script src="../js/voltguard-tools.js"></script>
+</body></html>

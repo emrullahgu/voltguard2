@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Harmonik nedir? Tesislerde nasıl sorun çıkarır? THDi ve THDv nedir, harmonik filtresi ve reaktörlü kompanzasyon ne zaman gerekir?">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Harmonik Nedir? Sorunları, Ölçümü ve Filtreleme Yöntemleri | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/bilgi/harmonik-nedir-sorunlari.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Harmonik Nedir? Sorunları, Ölçümü ve Filtreleme | VoltGuard">
+  <meta property="og:description" content="Tesislerde harmonik sorunları, THDi ve THDv, reaktörlü kompanzasyon ve aktif filtre.">
+  <meta property="og:url" content="https://voltguard.com.tr/bilgi/harmonik-nedir-sorunlari.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/harmonik-nedir-sorunlari.html#article","headline":"Harmonik Nedir? Sorunları, Ölçümü ve Filtreleme Yöntemleri","description":"Harmonik nedir, THDi ve THDv nasıl ölçülür, tesislerde ne tür sorunlara yol açar ve nasıl çözülür?","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Enerji Kalitesi","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/harmonik-nedir-sorunlari.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"Harmonik Nedir?","item":"https://voltguard.com.tr/bilgi/harmonik-nedir-sorunlari.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Harmonik nedir?","acceptedAnswer":{"@type":"Answer","text":"Harmonik, temel şebeke frekansının (50 Hz) tam katları olan (150 Hz, 250 Hz, 350 Hz vb.) sinüzoidal bileşenlerdir. Doğrusal olmayan yükler (VFD, UPS, LED sürücü, kaynak makinesi) temel frekansta değil, ayrıca bu harmonik frekanslarda da akım çeker ve şebeke gerilimini bozar."}},{"@type":"Question","name":"THDi ve THDv nedir?","acceptedAnswer":{"@type":"Answer","text":"THDi akımın toplam harmonik bozulma oranını, THDv ise gerilimin toplam harmonik bozulma oranını ifade eder. IEEE 519'a göre THDv genel olarak %5, THDi ise besleme büyüklüğüne göre %5-15 arasında sınırlıdır."}},{"@type":"Question","name":"Harmonik hangi sorunları çıkarır?","acceptedAnswer":{"@type":"Answer","text":"Harmonikler kondansatör bankasında rezonans ve patlama, kabloda ekstra ısınma, nötrde aşırı akım, trafo aşırı yüklenmesi, PLC ve hassas cihazlarda arıza, kaçak akım rölesinde yanlış açma gibi sorunlara yol açar."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>Harmonik Nedir?</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Enerji Kalitesi</span>
+    <h1>Harmonik Nedir? Sorunları, Ölçümü ve Filtreleme Yöntemleri</h1>
+    <p class="article__summary">Harmonikler, modern sanayi tesislerinde en sık karşılaşılan enerji kalitesi sorunlarındandır. Frekans dönüştürücü (VFD), UPS, LED sürücü, kaynak makinesi ve elektronik yüklerin şebekeye "kirli akım" enjekte etmesiyle oluşur. Bu rehberde harmonik türlerini, ölçüm parametrelerini, tipik sahada gözlenen sorunları ve çözüm yöntemlerini bulacaksınız.</p>
+
+    <div class="kb-quickanswer">
+      <span class="kb-quickanswer__label">Kısa Cevap</span>
+      <strong class="kb-quickanswer__value">Harmonik, temel frekansın (50 Hz) tam katı bileşenlerdir.</strong>
+      <span class="kb-quickanswer__note">Doğrusal olmayan yükler tarafından üretilir; kondansatörde rezonans, kablo ısınması ve trafo aşırı yüklenmesi gibi sorunlara yol açar. Çözüm: reaktörlü kompanzasyon, pasif LC filtre veya aktif filtre.</span>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Harmonikler 50 Hz'in tam katları (150, 250, 350 Hz…) frekansındadır; 3. 5. ve 7. harmonikler en yaygın olanlardır.</li><li>THDi, akımın toplam harmonik bozulma oranı; THDv, gerilimin bozulma oranıdır.</li><li>THDi > %10 olan tesislerde reaktörlü kompanzasyon (detuned) veya aktif filtre gerekir.</li><li>Nötr iletken, üç fazlı sistemlerde 3. harmonik nedeniyle faz iletkeninden daha yüksek akım taşıyabilir.</li><li>Kondansatör bankalarında rezonans, en tehlikeli harmonik etkisidir ve pano yangınına yol açabilir.</li></ul></div>
+
+    <h2>Harmonik Nedir? Nasıl Oluşur?</h2>
+    <p>Elektrik şebekesinde temel dalga, 50 Hz'lik saf bir sinüs eğrisidir. Doğrusal yükler (aydınlatma, motor, ısıtıcı) bu dalgayı bozmaz; onlar da 50 Hz sinüs akım çeker. Ancak elektronik yükler (VFD, UPS, LED sürücü, PC güç kaynağı, kaynak makinesi, endüksiyon fırın) doğrusal olmayan bir karakteristik gösterir: gerilim eğrisi sinüs olduğu halde akım eğrisi darbeli, düzensiz veya trapezoidal olur. Bu bozuk akım, Fourier analizinde 50 Hz + 150 Hz + 250 Hz + 350 Hz gibi harmonik bileşenlerin toplamı olarak ifade edilebilir.</p>
+    <p>Şebekeden harmonik akım çekilmesi, aynı zamanda hattın direnç ve endüktansı üzerinden harmonik gerilim düşümüne yol açar; böylece gerilim eğrisi de bozulur (THDv artar). Trafo empedansı ne kadar büyükse, aynı harmonik akımın oluşturduğu THDv o kadar yüksek olur.</p>
+
+    <h2>THDi ve THDv Nedir?</h2>
+    <ul class="article__list">
+      <li><strong>THDi (Total Harmonic Distortion of current):</strong> Akımın tüm harmonik bileşenlerinin toplam RMS değerinin, temel bileşene oranı. Yüzde ile ifade edilir.</li>
+      <li><strong>THDv (Total Harmonic Distortion of voltage):</strong> Gerilim için aynı hesabın yapılmış hali.</li>
+      <li><strong>Individual harmonik:</strong> Her bir harmoniğin (h3, h5, h7 vb.) temel bileşene oranı; IEC 61000-2-4 sınırları vardır.</li>
+    </ul>
+
+    <h2>IEEE 519 ve TEDAŞ Sınırları</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Parametre</th><th>Sınır</th><th>Uygulama</th></tr></thead>
+      <tbody>
+        <tr><td>THDv (gerilim)</td><td>≤ %5</td><td>Bara noktası genel</td></tr>
+        <tr><td>THDv (hastane, hassas)</td><td>≤ %3</td><td>Kritik yük noktaları</td></tr>
+        <tr><td>THDi (Isc/IL &lt; 20)</td><td>≤ %5</td><td>Küçük bara</td></tr>
+        <tr><td>THDi (Isc/IL 20-50)</td><td>≤ %8</td><td>Orta bara</td></tr>
+        <tr><td>THDi (Isc/IL 50-100)</td><td>≤ %12</td><td>Büyük bara</td></tr>
+        <tr><td>THDi (Isc/IL &gt; 1000)</td><td>≤ %20</td><td>Çok büyük bara</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Harmoniğin Sahada Yol Açtığı 8 Sorun</h2>
+    <ol class="article__list">
+      <li><strong>Kondansatör bankası patlaması:</strong> Kondansatör, harmonikler için düşük empedanslı yol oluşturur ve rezonansa girerse yanabilir.</li>
+      <li><strong>Kabloda ekstra ısınma:</strong> Harmonik akımlar RMS değerini artırır ve skin effect ile kayıp artar.</li>
+      <li><strong>Nötrde aşırı akım:</strong> 3. harmonik ve katları üç fazda toplanır; nötr iletkeni faz iletkeninden daha yüksek akım taşıyabilir. Nötr yanması bu nedenle sık görülür.</li>
+      <li><strong>Trafo aşırı yüklenmesi:</strong> Harmonikler trafo çekirdek kayıplarını artırır; k-faktörlü trafo veya derating gerekir.</li>
+      <li><strong>Kaçak akım rölesinde yanlış açma:</strong> Yüksek frekans içeriği rölenin toroidini etkileyip yanlış açtırabilir.</li>
+      <li><strong>PLC ve hassas cihaz arızası:</strong> Bozuk gerilim, sensör ve kontrol modüllerinde beklenmedik davranışlara yol açar.</li>
+      <li><strong>Motor sıcak çalışma ve sarsıntı:</strong> Harmonikler ters yönlü moment üretir ve rotor kayıplarını artırır.</li>
+      <li><strong>Ölçü aleti hataları:</strong> Analog Rogowski bobinleri ve klasik sayaçlar harmonikli akımı doğru ölçemez.</li>
+    </ol>
+
+    <h2>Çözüm Yöntemleri</h2>
+    <ul class="article__list">
+      <li><strong>Reaktörlü (detuned) kompanzasyon:</strong> Kondansatör önüne seri reaktör konularak rezonans frekansı harmonik dışına kaydırılır. THDi %20'ye kadar tolere eder.</li>
+      <li><strong>Pasif LC filtre:</strong> Belirli bir harmoniği (5. veya 7.) hedefleyip söndürür. THDi yüksek ve sabit karakterli tesislerde kullanılır.</li>
+      <li><strong>Aktif harmonik filtre (AHF):</strong> Yükün çektiği harmonik akımın zıt fazlısını enjekte ederek şebekeden temiz akım çekilmesini sağlar. Yüksek maliyetli ama en etkili çözümdür.</li>
+      <li><strong>12-puls / 18-puls VFD:</strong> Sürücü tarafında yapısal olarak daha az harmonik üretir.</li>
+      <li><strong>Aktif giriş VFD (AFE):</strong> Sürücü giriş katının IGBT tabanlı olması sayesinde THDi %5 altında tutulur.</li>
+      <li><strong>Ayrıştırılmış nötr / transfer trafosu:</strong> IT servis odaları ve UPS besleme grupları için tercih edilir.</li>
+    </ul>
+
+    <h2>Ölçüm ve Analiz</h2>
+    <p>Enerji kalitesi analizörü (Fluke 435, Chauvin C.A. 8336, Circutor QNA vb.) ile bir haftalık kayıt alınır. Ölçüm sırasında en az bir tam vardiya, mesai başı-sonu ve hafta sonu kapanışı yer almalıdır. Rapor; her fazın THDi, THDv, individual harmonik (h3-h50), TDD, K-faktör ve olay kayıtlarını içerir. VoltGuard, tesisinize yerinde ölçüm yaparak reaktörlü kompanzasyon veya aktif filtre önerisini net biçimde sunar.</p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Harmonik nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Temel şebeke frekansı (50 Hz) tam katı olan bileşenlerdir. Doğrusal olmayan yükler tarafından üretilir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">THDi ve THDv nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>THDi akımın, THDv ise gerilimin toplam harmonik bozulma oranıdır. IEEE 519 sınırları uygulanır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Harmonik hangi sorunları çıkarır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Kondansatör rezonansı, kablo ısınması, nötr yanması, trafo aşırı yüklenmesi, hassas cihaz arızası ve motor sıcak çalışma sık görülür.</p></div></details>
+
+    <p class="kb-disclaimer">Bu içerik bilgilendirme amaçlıdır. Kesin çözüm için sahada enerji kalitesi analizörü ölçümü ve mühendislik değerlendirmesi gereklidir.</p>
+    <p>İlgili kaynaklar: <a href="../bilgi/reaktif-guc-kompanzasyonu.html">Reaktif Güç Kompanzasyonu ve Harmonikler</a>, <a href="../teklif-araclari.html">VoltGuard Hesaplama Merkezi</a>, <a href="../sor/kompanzasyon-kontaktor-ariza-nedenleri.html">Kompanzasyon Kontaktör Arıza Nedenleri</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Enerji kalitesi analizi ve harmonik filtre projesi için destek alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../bilgi-bankasi.html" class="kb-card__more">&larr; Tüm rehberler: Bilgi Bankası</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

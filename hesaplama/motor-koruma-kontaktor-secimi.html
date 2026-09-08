@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Motor koruma şalteri (MPCB) ve kontaktör seçim aracı: motor gücü ve yol alma katsayısına göre uygun anma akımı ve AC-3 kontaktör önerir.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Motor Koruma Şalteri ve Kontaktör Seçim Aracı | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/motor-koruma-kontaktor-secimi/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Motor Koruma Şalteri ve Kontaktör Seçim Aracı | VoltGuard">
+  <meta property="og:description" content="Motor gücü ve yol alma katsayısına göre uygun MPCB anma akımı ve AC-3 kontaktör öneren araç.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/motor-koruma-kontaktor-secimi/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/motor-koruma-kontaktor-secimi/#article","headline":"Motor Koruma Şalteri ve Kontaktör Seçim Aracı","description":"Motor gücü ve yol alma katsayısına göre uygun MPCB ve AC-3 kontaktör öneren araç.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/motor-koruma-kontaktor-secimi/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Motor Koruma Şalteri ve Kontaktör Seçimi","item":"https://voltguard.com.tr/hesaplama/motor-koruma-kontaktor-secimi/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Motor koruma şalteri (MPCB) nasıl seçilir?","acceptedAnswer":{"@type":"Answer","text":"MPCB anma akımı, motorun nominal akımını içerecek şekilde seçilir ve genelde motor In değerinin biraz üzerinde ayarlanabilir bir aralığa sahiptir. Örneğin 7,5 kW / ~14,4 A motor için 10-16 A ayar aralıklı MPCB kullanılıp, akım 14,4 A'ye ayarlanır."}},{"@type":"Question","name":"AC-3 kontaktör nasıl seçilir?","acceptedAnswer":{"@type":"Answer","text":"AC-3 kullanım kategorisi, kalkışı yüklü ancak açması boşta olan sincap kafesli motor uygulamalarını kapsar. Kontaktör anma akımı (Ie) motorun nominal akımından büyük seçilir; ayrıca ısınma faktörü olarak %10-15 pay bırakılır."}},{"@type":"Question","name":"Yol verme tipi kontaktör boyutunu etkiler mi?","acceptedAnswer":{"@type":"Answer","text":"Evet. Doğrudan yol vermede (DOL) tek kontaktör, motor In değeri esas alınarak seçilir. Yıldız-üçgen yol vermede üç kontaktör (hat, üçgen, yıldız) kullanılır; hat ve üçgen kontaktörleri motor In × 0,58, yıldız kontaktörü ise motor In × 0,33 değerlerini karşılamalıdır."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../teklif-araclari.html">Hesaplama Merkezi</a> &rsaquo; <span>Motor Koruma Şalteri ve Kontaktör Seçimi</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektrik Hesapları</span>
+    <h1>Motor Koruma Şalteri (MPCB) ve Kontaktör Seçim Aracı</h1>
+    <p class="article__summary">Motor gücünü ve yol verme yöntemini girin; ayar aralıklı MPCB önerisi ve uygun AC-3 kontaktör anma akımını anında görün. Aşağıda mantık, örnek çözüm ve hazır tablo yer alır.</p>
+
+    <div class="mini-calc">
+      <div class="mini-calc__fields">
+        <div class="mini-calc__field"><label for="mk-power">Motor gücü (kW)</label><input id="mk-power" type="number" min="0.1" step="0.1" value="7.5" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="mk-voltage">Gerilim (V)</label><select id="mk-voltage"><option value="400" selected>400 V (üç faz)</option><option value="230">230 V (tek faz)</option></select></div>
+        <div class="mini-calc__field"><label for="mk-cos">Güç faktörü cosφ</label><input id="mk-cos" type="number" min="0.5" max="1" step="0.01" value="0.86" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="mk-start">Yol verme yöntemi</label><select id="mk-start"><option value="DOL" selected>Doğrudan yol verme (DOL)</option><option value="SD">Yıldız-üçgen</option><option value="SS">Yumuşak yolverici / VFD</option></select></div>
+      </div>
+      <div class="mini-calc__result">
+        <span class="mini-calc__result-label">Ön Sonuç</span>
+        <span class="mini-calc__result-value" id="mk-result">-</span>
+        <span class="mini-calc__result-note" id="mk-detail"></span>
+      </div>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>MPCB, motor nominal akımını içeren ayarlanabilir bir aralıktan seçilir ve tam In değerine ayarlanır.</li><li>AC-3 kontaktör anma akımı Ie, motor In değerinden büyük olacak şekilde seçilir; ısınma için %10-15 pay bırakılır.</li><li>Yıldız-üçgen yol vermede üç adet farklı boyutta kontaktör (hat/üçgen/yıldız) kullanılır.</li><li>VFD veya yumuşak yolverici kullanıldığında akım darbesi olmadığı için AC-3 seçimi daha yakın yapılabilir.</li></ul></div>
+
+    <h2>Seçim Adımları</h2>
+    <ol class="article__list">
+      <li><strong>Motor akımı:</strong> Etiketten okunur ya da <a href="../hesaplama/motor-akimi-hesaplama.html">Motor Akımı Hesaplama</a> aracıyla bulunur.</li>
+      <li><strong>MPCB:</strong> Bu In değerini içeren ayarlanabilir aralık seçilir (örn. 10-16 A) ve dial motor In değerine ayarlanır. MPCB, hem termik aşırı yükü hem manyetik kısa devreyi tek cihazda karşılar.</li>
+      <li><strong>Kontaktör:</strong> AC-3 kategorisinde motor In değerinin üzerindeki ilk standart kontaktör (9, 12, 18, 25, 32, 40, 50, 65, 80, 95, 115, 150, 185, 225, 265, 330, 400, 500, 630 A) seçilir. Yıldız-üçgen sisteminde:
+        <ul>
+          <li>Hat ve üçgen kontaktörleri: motor In × 0,58</li>
+          <li>Yıldız kontaktörü: motor In × 0,33</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h2>Örnek Hesap: 7,5 kW Motor DOL</h2>
+    <p>400 V üç faz, cosφ = 0,86, η = 0,88 için In ≈ 14,4 A. MPCB olarak <strong>10-16 A ayarlı</strong> bir motor koruma şalteri, dial 14,4 A'ye kilitlenerek seçilir. AC-3 kontaktör olarak 14,4 A'yi karşılayacak ilk kademe <strong>18 A</strong>'lık kontaktör önerilir; ısınma için 25 A tercih edilebilir. Kısa devre koruması, MPCB'nin manyetik açması ile sağlanır ancak yüksek kısa devre akımlı panolarda ek sigorta / TMŞ ile koordineli tasarım gerekir.</p>
+
+    <h2>AC-3 Kontaktör Boyutlandırma Tablosu</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Motor gücü (kW, 400 V)</th><th>Tipik In (A)</th><th>AC-3 Ie önerilen (A)</th></tr></thead>
+      <tbody>
+        <tr><td>2,2</td><td>4,9</td><td>9</td></tr>
+        <tr><td>4,0</td><td>8,3</td><td>12</td></tr>
+        <tr><td>5,5</td><td>10,8</td><td>12</td></tr>
+        <tr><td>7,5</td><td>14,4</td><td>18</td></tr>
+        <tr><td>11</td><td>21,0</td><td>25</td></tr>
+        <tr><td>15</td><td>28,5</td><td>32</td></tr>
+        <tr><td>18,5</td><td>34,5</td><td>40</td></tr>
+        <tr><td>22</td><td>41,0</td><td>50</td></tr>
+        <tr><td>30</td><td>55,0</td><td>65</td></tr>
+        <tr><td>37</td><td>68,0</td><td>80</td></tr>
+        <tr><td>45</td><td>82,0</td><td>95</td></tr>
+        <tr><td>55</td><td>99,0</td><td>115</td></tr>
+        <tr><td>75</td><td>134,0</td><td>150</td></tr>
+        <tr><td>90</td><td>160,0</td><td>185</td></tr>
+        <tr><td>110</td><td>194,0</td><td>225</td></tr>
+        <tr><td>132</td><td>230,0</td><td>265</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Motor koruma şalteri (MPCB) nasıl seçilir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>MPCB, motor In değerini içeren ayarlanabilir bir aralıktan seçilir ve dial tam In değerine ayarlanır. Örneğin 7,5 kW / 14,4 A motor için 10-16 A ayarlı MPCB.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">AC-3 kontaktör nasıl seçilir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>AC-3 sincap kafesli motorların yüklü kalkış ve boşta açma karakteristiğidir. Kontaktör Ie, motor In'inin üstünde seçilir ve %10-15 pay bırakılır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Yıldız-üçgen yol vermede kaç kontaktör gerekir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Üç kontaktör kullanılır: Hat ve üçgen kontaktörleri In × 0,58, yıldız kontaktörü In × 0,33 değerlerini karşılayacak boyutta seçilir.</p></div></details>
+
+    <p class="kb-disclaimer">Bu araç yalnızca ön değerlendirme amaçlıdır. Üretici katalog değerleri, sıcaklık faktörü ve kısa devre koordinasyonu için yetkili bir elektrik mühendisi görüşü alınmalıdır.</p>
+    <p>Daha fazla ilgili kaynak: <a href="../hesaplama/motor-akimi-hesaplama.html">Motor Akımı Hesaplama</a>, <a href="../hesaplama/sigorta-tms-secimi.html">Sigorta / TMŞ Seçimi</a>, <a href="../teklif-araclari.html">VoltGuard Hesaplama Merkezi</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Motor pano tasarımı için mühendislik desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../teklif-araclari.html" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var MPCB = [[0.1,0.16],[0.16,0.25],[0.25,0.4],[0.4,0.63],[0.63,1],[1,1.6],[1.6,2.5],[2.5,4],[4,6.3],[6,10],[9,14],[13,18],[17,23],[20,25],[24,32],[30,40],[40,50],[45,63],[56,80],[70,100]];
+      var CONTACTOR = [9,12,18,25,32,40,50,65,80,95,115,150,185,225,265,330,400,500,630];
+      function update() {
+        var p = Math.max(0.1, Number(document.getElementById('mk-power').value) || 0.1);
+        var u = Number(document.getElementById('mk-voltage').value);
+        var cos = Math.min(1, Math.max(0.5, Number(document.getElementById('mk-cos').value) || 0.86));
+        var start = document.getElementById('mk-start').value;
+        var isThreePhase = u === 400;
+        var eff = 0.88;
+        var iN = isThreePhase ? (p * 1000) / (Math.sqrt(3) * u * cos * eff) : (p * 1000) / (u * cos * eff);
+        var mpcb = MPCB.find(function(r){ return iN >= r[0] && iN <= r[1]; }) || MPCB[MPCB.length - 1];
+        var mpcbTxt = mpcb[0] + '-' + mpcb[1] + ' A';
+        var contactor;
+        if (start === 'SD') { contactor = CONTACTOR.find(function(n){ return n >= iN * 0.58; }); }
+        else { contactor = CONTACTOR.find(function(n){ return n >= iN; }); }
+        document.getElementById('mk-result').textContent = 'MPCB: ' + mpcbTxt + ' • Kontaktör: ' + (contactor || '?') + ' A';
+        var startTxt = start === 'DOL' ? 'DOL' : (start === 'SD' ? 'Yıldız-üçgen (3 kontaktör)' : 'Yumuşak yolverici / VFD');
+        document.getElementById('mk-detail').textContent = 'Motor In ≈ ' + (Math.round(iN * 10) / 10) + ' A. ' + startTxt + ' önerisi; dial motor In değerine ayarlanır.';
+      }
+      ['mk-power','mk-voltage','mk-cos','mk-start'].forEach(function(id){document.getElementById(id).addEventListener('input',update);document.getElementById(id).addEventListener('change',update);});
+      update();
+    }());
+  </script>
+  <script src="../js/voltguard-auth.js"></script>
+  <script src="../js/voltguard-tools.js"></script>
+</body></html>

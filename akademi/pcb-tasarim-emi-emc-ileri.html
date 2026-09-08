@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="PCB tasarımı ve EMI/EMC uyumluluk ileri seviye ders: layer stack-up, empedans kontrolü, iletken analizi, filtre ve blindaj teknikleri.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>PCB Tasarımı ve EMI/EMC Uyumluluk (İleri) | VoltGuard Akademi</title>
+  <link rel="canonical" href="https://voltguard.com.tr/akademi/pcb-tasarim-emi-emc-ileri.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="PCB Tasarımı ve EMI/EMC Uyumluluk (İleri) | VoltGuard Akademi">
+  <meta property="og:description" content="Layer stack-up, empedans kontrolü, iletken analizi, filtre ve blindaj teknikleri.">
+  <meta property="og:url" content="https://voltguard.com.tr/akademi/pcb-tasarim-emi-emc-ileri.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/pcb-tasarim-emi-emc-ileri.html#course","name":"PCB Tasarımı ve EMI/EMC Uyumluluk","description":"Layer stack-up, empedans kontrolü, iletken analizi, filtre ve blindaj teknikleri.","educationalLevel":"İleri","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","provider":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"PCB Tasarımı ve EMI/EMC (İleri)","item":"https://voltguard.com.tr/akademi/pcb-tasarim-emi-emc-ileri.html"}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../akademi.html">VoltGuard Akademi</a> &rsaquo; <span>PCB Tasarımı ve EMI/EMC (İleri)</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektronik &amp; Mikrodenetleyici</span>
+    <span class="akademi-level akademi-level--ileri">İleri Seviye</span>
+    <h1>PCB Tasarımı ve EMI/EMC Uyumluluk</h1>
+    <p class="article__summary">İleri seviye bu derste; profesyonel PCB tasarımının stack-up mantığını, empedans kontrollü iletken kurallarını, EMI (Electromagnetic Interference) kaynakları ile EMC (Electromagnetic Compatibility) uyumluluk testlerini ele alacağız. Ön koşul: <a href="mikrodenetleyici-i2c-spi-uart-orta.html">Mikrodenetleyici I2C/SPI/UART (Orta)</a>.</p>
+
+    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Multi-layer stack-up, kontrollü empedans (Zo), power integrity (PDN), grounding stratejileri, iletim (conducted) ve radyasyon (radiated) emisyonu, ESD ve EFT/BURST testleri.</div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Modern hızlı sinyal PCB'lerinde 4, 6 veya 8 katmanlı stack-up standarttır.</li><li>50 Ω tek uçlu ve 90/100 Ω diferansiyel empedans; USB, Ethernet, HDMI için şart.</li><li>Return path (dönüş yolu), sinyal kadar önemli; ground plane bütünlüğü emisyonu belirler.</li><li>Common mode filter (choke) + Y kondansatör = LISN devresi için CE conducted emission düşürücü.</li><li>Ferrite bead, DC blok değil; sadece belirli frekansta empedans artışı yapar.</li><li>CE işareti için EN 55011/55032 (emisyon) ve EN 61000-4-x (bağışıklık) test edilir.</li></ul></div>
+
+    <h2>Multi-Layer Stack-Up</h2>
+    <p>PCB tasarımında en kritik karar layer sayısıdır. Genel prensip: her yüksek hızlı sinyal katmanı, kesintisiz bir ground plane komşu katmandan geçmelidir (return current yolu).</p>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Katman</th><th>Tipik stack-up (6 layer)</th></tr></thead>
+      <tbody>
+        <tr><td>L1</td><td>Signal (top) — kontrollü empedans</td></tr>
+        <tr><td>L2</td><td>Ground plane</td></tr>
+        <tr><td>L3</td><td>Signal (internal) — az kritik</td></tr>
+        <tr><td>L4</td><td>Power plane (Vcc)</td></tr>
+        <tr><td>L5</td><td>Ground plane</td></tr>
+        <tr><td>L6</td><td>Signal (bottom)</td></tr>
+      </tbody>
+    </table></div>
+    <p>2 katmanlı basit PCB'ler analog ve düşük hızlı dijital için uygundur. 100 MHz üzeri sinyal, yüksek yoğunluklu BGA veya USB 3.0 için 4-6 katman şarttır.</p>
+
+    <h2>Kontrollü Empedans</h2>
+    <p>Hızlı sinyaller (harmonik içeriği > 50 MHz) transmission line (iletim hattı) gibi davranır. Karakteristik empedansı (Z<sub>0</sub>) yanlış seçilirse sinyal yansıması olur: undershoot, overshoot, ringing, jitter. Standart değerler:</p>
+    <ul class="article__list">
+      <li><strong>USB 2.0:</strong> 90 Ω diferansiyel (D+/D−)</li>
+      <li><strong>USB 3.0:</strong> 90 Ω diferansiyel + kontrollü tek uçlu</li>
+      <li><strong>Ethernet 100Base-TX:</strong> 100 Ω diferansiyel</li>
+      <li><strong>HDMI, DisplayPort:</strong> 100 Ω diferansiyel</li>
+      <li><strong>CAN, RS-485:</strong> 120 Ω diferansiyel</li>
+      <li><strong>Genel dijital (single-ended):</strong> 50 Ω</li>
+    </ul>
+    <p>Empedans; iletken genişliği (W), dielektrik kalınlığı (H) ve dielektrik sabitiyle (Er) belirlenir. PCB üreticisinden empedans hesap tablosu istenir veya Polar Instruments SI9000 gibi yazılım kullanılır.</p>
+
+    <h2>Grounding Stratejileri</h2>
+    <ul class="article__list">
+      <li><strong>Single-point (star) ground:</strong> Analog düşük frekans; hassas devreler için.</li>
+      <li><strong>Multi-point ground:</strong> Yüksek frekans dijital; her katmanda ground plane.</li>
+      <li><strong>Hybrid ground:</strong> Analog + dijital karışık; ayrık plane, tek nokta bağlantı.</li>
+      <li><strong>Ground stitching:</strong> Ground planeler arasında yoğun via (10-30 mil aralıklı).</li>
+      <li><strong>Return current management:</strong> Sinyal referans plane değiştirirse (top-inner geçiş) mutlaka geri dönüş via'sı eklenir.</li>
+    </ul>
+
+    <h2>EMI Kaynakları</h2>
+    <ol class="article__list">
+      <li><strong>Anahtarlama gürültüsü:</strong> SMPS (buck/boost), MCU clock, dijital I/O geçişleri.</li>
+      <li><strong>Common mode akım:</strong> Yanlış grounding, kablo yolları farkı.</li>
+      <li><strong>Diferansiyel mode akım:</strong> Yük değişimleri, motor sürücü, IGBT anahtarlama.</li>
+      <li><strong>Anten etkisi:</strong> Uzun iletkenler, kablo demetleri.</li>
+      <li><strong>Kapasitif eşleşme:</strong> Yakın iletkenler arası koupling.</li>
+      <li><strong>Endüktif eşleşme:</strong> Yakın döngüler arası manyetik akı paylaşımı.</li>
+    </ol>
+
+    <h2>EMC Filtre Bileşenleri</h2>
+    <ul class="article__list">
+      <li><strong>Common mode choke (CMC):</strong> Common mode akımı bastırır; DM'e etki etmez.</li>
+      <li><strong>X-cap:</strong> Faz-nötr arasında; DM gürültüsünü emer.</li>
+      <li><strong>Y-cap:</strong> Faz veya nötr → PE; CM gürültüsünü emer. Kaçak akım sınırı vardır.</li>
+      <li><strong>Ferrite bead:</strong> Yüksek frekansta empedans artışı; DC bloklamaz.</li>
+      <li><strong>LC π filter:</strong> Baraj tipi filtre; yüksek frekans için.</li>
+      <li><strong>Gas discharge tube (GDT):</strong> Sürge koruması; ESD ve yıldırım için.</li>
+      <li><strong>TVS (Transient Voltage Suppressor):</strong> Hızlı sürge kırpma.</li>
+      <li><strong>MOV (Metal Oxide Varistor):</strong> AC şebeke sürge koruması.</li>
+    </ul>
+
+    <h2>EMC Testleri (CE İşareti İçin)</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Test</th><th>Standart</th><th>Amaç</th></tr></thead>
+      <tbody>
+        <tr><td>Conducted emission</td><td>EN 55011/55032</td><td>Şebeke üzerine yayılan gürültü</td></tr>
+        <tr><td>Radiated emission</td><td>EN 55011/55032</td><td>Anten üzerinden yayılan gürültü</td></tr>
+        <tr><td>ESD (elektrostatik deşarj)</td><td>EN 61000-4-2</td><td>±8 kV air, ±4 kV contact bağışıklığı</td></tr>
+        <tr><td>Radiated immunity</td><td>EN 61000-4-3</td><td>3-30 V/m elektromanyetik alan bağışıklığı</td></tr>
+        <tr><td>EFT / Burst</td><td>EN 61000-4-4</td><td>±2 kV puls tren bağışıklığı</td></tr>
+        <tr><td>Surge</td><td>EN 61000-4-5</td><td>±2 kV faz-nötr, ±4 kV faz-PE</td></tr>
+        <tr><td>Conducted immunity</td><td>EN 61000-4-6</td><td>10 V rms RF bağışıklığı</td></tr>
+        <tr><td>Voltage dips</td><td>EN 61000-4-11</td><td>Şebeke gerilim düşmesi bağışıklığı</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>PCB Tasarım Yazılımları</h2>
+    <ul class="article__list">
+      <li><strong>KiCad:</strong> Açık kaynak, ücretsiz; küçük-orta projelerde yaygın</li>
+      <li><strong>Altium Designer:</strong> Endüstri standardı; profesyonel, high-speed destekli</li>
+      <li><strong>Cadence OrCAD / Allegro:</strong> Büyük şirketler; high-speed ve signal integrity</li>
+      <li><strong>Mentor PADS / Xpedition:</strong> Otomotiv ve havacılık odaklı</li>
+      <li><strong>Autodesk Eagle:</strong> Hobi ve küçük tasarımlar (artık Fusion 360 içinde)</li>
+      <li><strong>EasyEDA:</strong> JLCPCB entegre; hızlı prototip</li>
+    </ul>
+
+    <h2>Ar-Ge Örneği: VoltGuard Aktif EMI Filtre</h2>
+    <p>VoltGuard'ın yürüttüğü Ar-Ge çalışmalarından biri Aktif EMI Filtre'dir. Klasik pasif CMC + Y-cap filtreler yüksek frekans (150 kHz - 30 MHz) bandında etkilidir; ancak daha düşük frekans (9-150 kHz, IEC 55011 CISPR 11 grup 1) için hacim ve maliyet tarafı yükselir. Aktif EMI filtre, gürültüyü ölçüp ters fazlı bir sinyal enjekte ederek pasif filtre boyutunu 3-5 kat azaltır. Bu tür Ar-Ge ürünleri, güç elektroniği ve endüstriyel elektronikte önemli inovasyon alanlarıdır.</p>
+
+    <p class="kb-disclaimer">Bu içerik ileri seviye eğitim amaçlıdır. Ürün seviyesinde EMC sertifikasyonu için akredite laboratuvarda ölçüm gereklidir.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>PCB tasarımı ve EMC uyumluluk projeleri için Ar-Ge desteği alın</strong><span>VoltGuard Ar-Ge ekibiyle iletişime geçin.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../akademi.html" class="kb-card__more">&larr; Tüm dersler: VoltGuard Akademi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

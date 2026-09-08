@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Giriş Yap | VoltGuard Tools Hesabı</title>
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="doc-shell">
+  <main class="vg-auth-shell">
+    <section class="vg-auth-card" aria-labelledby="giris-title">
+      <a href="../index.html" style="display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--clr-dark);margin-bottom:1rem;font-family:'Outfit',sans-serif;font-weight:800">
+        <img src="../public/icon-192.png" alt="" width="36" height="36" style="border-radius:8px"> VoltGuard Tools
+      </a>
+      <h1 id="giris-title">Hesabınıza giriş yapın</h1>
+      <p class="vg-auth-card__sub">Hesaplamalarınızı kaydedin, favori araçlarınıza hızlı erişin, projelerinizi düzenleyin.</p>
+
+      <div id="giris-err" class="vg-auth-error" hidden></div>
+
+      <form id="giris-form" class="vg-auth-form" autocomplete="on" novalidate>
+        <div>
+          <label for="email">E-posta</label>
+          <input id="email" type="email" name="email" autocomplete="email" required>
+        </div>
+        <div>
+          <label for="password">Şifre</label>
+          <input id="password" type="password" name="password" autocomplete="current-password" required minlength="8">
+        </div>
+        <button type="submit"><i class="fas fa-arrow-right-to-bracket" aria-hidden="true"></i> Giriş yap</button>
+      </form>
+
+      <p class="vg-auth-alt">Hesabınız yok mu? <a href="kayit.html">Ücretsiz üye olun</a></p>
+      <p class="vg-auth-alt"><a href="../index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Ana sayfaya dön</a></p>
+
+      <div class="vg-auth-notice">
+        <strong>Gizlilik notu:</strong> VoltGuard Tools üyelik bilgileri sadece bu tarayıcıda (localStorage) saklanır. Farklı cihazlardan erişmek isterseniz veriler otomatik senkronlanmaz.
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/voltguard-auth.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var user = window.VG.Auth.currentUser();
+      var params = new URLSearchParams(location.search);
+      var next = params.get('next') || 'panel.html';
+      if (user) { location.replace(next); return; }
+      var form = document.getElementById('giris-form');
+      var err = document.getElementById('giris-err');
+      form.addEventListener('submit', async function (ev) {
+        ev.preventDefault();
+        err.hidden = true;
+        try {
+          await window.VG.Auth.login(form.email.value, form.password.value);
+          location.replace(next);
+        } catch (e) {
+          err.textContent = e.message || 'Giriş başarısız.';
+          err.hidden = false;
+        }
+      });
+    }());
+  </script>
+</body>
+</html>

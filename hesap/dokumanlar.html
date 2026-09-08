@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dokümanlarım | VoltGuard Tools</title>
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../teklif-araclari.html">Tools</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="vg-panel">
+    <aside class="vg-panel__nav" aria-label="Hesap menüsü">
+      <a href="panel.html"><i class="fas fa-gauge-high"></i> Panel</a>
+      <a href="gecmis.html"><i class="fas fa-clock-rotate-left"></i> Geçmiş Hesaplamalar</a>
+      <a href="favoriler.html"><i class="fas fa-star"></i> Favori Araçlar</a>
+      <a href="projeler.html"><i class="fas fa-folder-tree"></i> Projeler</a>
+      <a href="dokumanlar.html" class="is-active"><i class="fas fa-book-open"></i> Dokümanlarım</a>
+      <button type="button" class="vg-panel__logout" id="logout-btn"><i class="fas fa-arrow-right-from-bracket"></i> Çıkış yap</button>
+    </aside>
+
+    <section class="vg-panel__main">
+      <div class="vg-section">
+        <h2><i class="fas fa-bookmark"></i> Kişisel doküman kütüphaneniz</h2>
+        <p style="color:var(--clr-text-muted);margin:.35rem 0 1rem">Standartlar, ürün katalogları, TEDAŞ tebliğleri, veri sayfası PDF'leri gibi sık başvurduğunuz belgelere yer imi ekleyin. Sadece bağlantı ve not saklanır; dosya yüklemesi yapılmaz.</p>
+        <form id="new-doc" class="vg-inline-form" novalidate>
+          <input name="name" type="text" placeholder="Doküman adı (örn. TS HD 60364-4-43)" required>
+          <input name="url" type="url" placeholder="Bağlantı URL (opsiyonel)">
+          <button type="submit"><i class="fas fa-plus"></i> Ekle</button>
+          <textarea name="note" placeholder="Kısa not / neden ekledim?"></textarea>
+        </form>
+      </div>
+
+      <div class="vg-section">
+        <h2><i class="fas fa-book-open"></i> Dokümanlar</h2>
+        <div id="docs-list" class="vg-docs-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/voltguard-auth.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var Auth = window.VG.Auth;
+      var user = Auth.requireAuth('giris.html');
+      if (!user) return;
+
+      document.getElementById('logout-btn').addEventListener('click', function () {
+        if (confirm('Çıkış yapmak istediğinize emin misiniz?')) { Auth.logout(); location.href = '../index.html'; }
+      });
+
+      var list = document.getElementById('docs-list');
+      var form = document.getElementById('new-doc');
+
+      form.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        try {
+          Auth.addDocument(form.name.value, form.url.value, form.note.value);
+          form.reset();
+          render();
+        } catch (e) { alert(e.message); }
+      });
+
+      function render() {
+        var items = Auth.getDocuments();
+        if (!items.length) {
+          list.innerHTML = '<div class="vg-empty">Henüz doküman eklenmedi. Yukarıdaki formdan ilk yer iminizi ekleyin.</div>';
+          return;
+        }
+        list.innerHTML = items.map(function (d) {
+          var when = new Date(d.addedAt).toLocaleDateString('tr-TR');
+          return '<div class="vg-doc-item">'
+            + '<h3><i class="fas fa-bookmark"></i> ' + esc(d.name) + ' <small style="font-weight:400;color:var(--clr-text-muted);font-size:.8rem">' + esc(when) + '</small></h3>'
+            + (d.note ? '<div style="color:var(--clr-text-muted);font-size:.9rem">' + esc(d.note) + '</div>' : '')
+            + '<div class="vg-doc-item__actions">'
+            + (d.url ? '<a class="vg-mini-btn" href="' + escAttr(d.url) + '" target="_blank" rel="noopener"><i class="fas fa-arrow-up-right-from-square"></i> Aç</a>' : '')
+            + '<button type="button" class="vg-mini-btn vg-mini-btn--danger" data-delete="' + escAttr(d.id) + '"><i class="fas fa-trash"></i> Sil</button>'
+            + '</div>'
+            + '</div>';
+        }).join('');
+        list.querySelectorAll('[data-delete]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            if (confirm('Bu dokümanı silmek istediğinize emin misiniz?')) {
+              Auth.deleteDocument(btn.getAttribute('data-delete'));
+              render();
+            }
+          });
+        });
+      }
+
+      function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
+      function escAttr(s) { return esc(s); }
+
+      render();
+    }());
+  </script>
+</body>
+</html>

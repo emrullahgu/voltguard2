@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Modbus RTU haberleşmesi neden kesiliyor? RS-485 topolojisi, sonlandırma direnci, kablo tipi ve slave adresleme sorunlarının teknik gerekçeli çözümü.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Modbus RTU Haberleşmesi Neden Kesiliyor? RS-485 Sorunları ve Çözüm | VoltGuard'a Sor</title>
+  <link rel="canonical" href="https://voltguard.com.tr/sor/modbus-rtu-haberlesme-kesiliyor.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Modbus RTU Haberleşmesi Neden Kesiliyor? | VoltGuard'a Sor">
+  <meta property="og:description" content="RS-485 topolojisi, sonlandırma direnci, kablo tipi ve slave adresleme sorunlarının çözümü.">
+  <meta property="og:url" content="https://voltguard.com.tr/sor/modbus-rtu-haberlesme-kesiliyor.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"QAPage","@id":"https://voltguard.com.tr/sor/modbus-rtu-haberlesme-kesiliyor.html#qa","mainEntity":{"@type":"Question","name":"Modbus RTU haberleşmesi neden kesiliyor?","text":"PLC ile enerji analizörleri arasında Modbus RTU haberleşmesi kuruyoruz. Bazen tüm slave'ler cevap veriyor, bazen bir kısmı timeout hatasına düşüyor. Sorun nerede olabilir?","answerCount":1,"upvoteCount":0,"datePublished":"2026-09-08","author":{"@type":"Organization","name":"VoltGuard"},"acceptedAnswer":{"@type":"Answer","text":"En yaygın altı neden: (1) Sonlandırma direncinin (120 Ω) hattın iki ucuna değil yalnız bir ucuna konulması, (2) Kablo yerine STP/UTP kullanılması (Modbus RS-485 için twisted pair CAT5+ veya özel Modbus kablosu gerekir), (3) Hat üzerinde stub uzunluğu (T bağlantı) 30 cm'yi aşıyor, (4) A/B kutup yönlendirmesi karışık, (5) Slave adresleri çakışıyor, (6) Baud rate ve parity ayarları slave'ler arasında farklı. Osiloskop ile A-B gerilim diferansiyelini görmek en hızlı doğrulamadır."}},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard'a Sor","item":"https://voltguard.com.tr/sor.html"},{"@type":"ListItem","position":3,"name":"Modbus RTU Kesiliyor","item":"https://voltguard.com.tr/sor/modbus-rtu-haberlesme-kesiliyor.html"}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../sor.html">VoltGuard'a Sor</a> &rsaquo; <span>Modbus RTU Kesiliyor</span>
+  </nav>
+
+  <main class="article">
+    <div class="qa-tags"><span class="qa-tag">Otomasyon</span><span class="qa-tag qa-tag--equipment">PLC / Modbus / RS-485</span><span class="qa-tag qa-tag--problem">Haberleşme / Arıza</span></div>
+    <h1>Modbus RTU Haberleşmesi Neden Kesiliyor? RS-485 Sorunları ve Çözümü</h1>
+
+    <div class="kb-keyfacts"><h2>Soru</h2><ul><li>"PLC ile enerji analizörleri arasında Modbus RTU haberleşmesi kuruyoruz. Bazen tüm slave'ler cevap veriyor, bazen bir kısmı timeout hatasına düşüyor. Sorun nerede olabilir?"</li></ul></div>
+
+    <h2>Kısa Cevap</h2>
+    <p>Modbus RTU / RS-485, düzgün topoloji ve doğru sonlandırma yapılmadığında kararsız çalışır. En yaygın altı neden: <strong>(1)</strong> sonlandırma direncinin (120 Ω) sadece bir uca konulması, <strong>(2)</strong> yanlış kablo (STP CAT5 yerine multicore kablo kullanılması), <strong>(3)</strong> 30 cm'yi geçen stub (T bağlantı) uzunlukları, <strong>(4)</strong> A/B kutup yönlendirmesinin karışık olması, <strong>(5)</strong> slave adres çakışması, <strong>(6)</strong> baud rate / parity ayarı farkı. Osiloskop veya USB-RS485 modülüyle A-B diferansiyeli izlenirse sorun net şekilde ortaya çıkar.</p>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Modbus RTU RS-485 fiziksel katmanı 2 tel (A, B) + 1 GND üzerinde çalışır.</li><li>Twisted pair (STP) CAT5e/CAT6 veya Belden 9841/3105A tipi kablo tercih edilir.</li><li>Sonlandırma direnci (120 Ω) hattın <strong>her iki ucuna</strong> konulmalıdır.</li><li>Stub uzunluğu maks 30 cm; daha uzun stub'lar sinyal yansıması yaratır.</li><li>Maks 32 slave (unit load 1). Standart genişletici ile 128'e çıkarılabilir.</li><li>Baud rate en yaygın 9600, 19200, 38400, 115200 bps.</li></ul></div>
+
+    <h2>Teknik Gerekçe: RS-485 Nasıl Çalışır?</h2>
+    <p>RS-485, iki iletken üzerinde diferansiyel (fark) sinyal taşır. Alıcı, A ve B iletkenleri arasındaki gerilim farkına bakar: A &gt; B ise "1", A &lt; B ise "0" olarak değerlendirir. Bu diferansiyel yapı, ortak mod gürültüsünü büyük ölçüde bastırır ve 1200 metreye kadar sağlıklı iletişim mümkündür.</p>
+    <p>Ancak bu diferansiyel yapı, hattın karakteristik empedansına (120 Ω) uygun sonlandırma gerektirir. Aksi hâlde iletken uçlarında sinyal yansıması olur; alıcı hem asıl sinyali hem yansımayı görür ve ayırt edemez. Bu durumda görünen belirti: uzak slave'lerin bazen cevap vermesi, bazen timeout hatası vermesi.</p>
+
+    <h2>6 Yaygın Neden</h2>
+    <ol class="article__list">
+      <li><strong>Sonlandırma direnci yanlış:</strong> 120 Ω'luk sonlandırma direnci hattın her iki ucuna konulmalı. Sadece master ucunda varsa uzak slave'lerde sinyal yansır ve mesajlar bozulur. Modern cihazlarda dip switch ile aktif edilir; PLC ve son slave'in bu switch'i açık olmalı.</li>
+      <li><strong>Yanlış kablo:</strong> RS-485 için twisted pair (bükümlü çift) kullanılmalı. Klasik multicore veya nem izolasyonlu paralel kablo yansıma yaratır. En yaygın seçimler: Belden 9841 (RS-485 özel), Belden 3105A, LiYCY 2×0,5 mm², CAT5e STP.</li>
+      <li><strong>Uzun stub'lar:</strong> Bir tesiste ana hat üzerinden T bağlantılarla slave'lere gidiliyorsa T ile slave arasındaki mesafe (stub) 30 cm'yi geçmemeli. Aksi hâlde her stub bir yansıma noktası olur.</li>
+      <li><strong>A/B kutup karışıklığı:</strong> Bazı üreticilerde A/B, D+/D− veya TX+/TX− farklı isimlendirilir. Yanlış bağlanan bir slave hiç cevap vermez veya bozuk cevap verir. Cihazın kılavuzuna göre A → A, B → B bağlanmalı.</li>
+      <li><strong>Slave adres çakışması:</strong> Aynı hatta iki slave'in adresinin aynı olması durumunda ikisi de aynı anda cevap vermeye çalışır ve çakışma yaşanır. Tarama yazılımıyla adres kontrolü yapılmalı.</li>
+      <li><strong>Baud/parity/stop bit farkı:</strong> Master 9600 8N1'de çalışıyorsa tüm slave'ler aynı ayarda olmalı. Bazı cihazlarda default 9600 8E1 gelir; bu durum sessiz slave'e yol açar.</li>
+    </ol>
+
+    <h2>Ölçümle Nasıl Doğrularsınız?</h2>
+    <ul class="article__list">
+      <li><strong>Osiloskop:</strong> A ve B arasına prob koyup fark sinyalini izleyin. Sağlıklı sinyal ±2-5 V arasında, temiz kare dalga olmalıdır. Yansıma varsa dalga şekli bozuk görünür.</li>
+      <li><strong>USB-RS485 modülü:</strong> Modscan32, Radzio Modbus Master gibi ücretsiz yazılımlarla her slave'i tek tek okuyup cevap durumunu izleyin.</li>
+      <li><strong>Sonlandırma direnci ölçümü:</strong> Master ile son slave arasında A ve B iletkenlerini enerjisiz iken multimetreyle ölçün. 60 Ω civarı okunmalı (iki 120 Ω paralel).</li>
+      <li><strong>GND / shield toprak kontrolü:</strong> STP kablonun shield'ı sadece master tarafında toprağa bağlanmalı; iki uç topraklanırsa ground loop oluşur ve mesaj bozulur.</li>
+      <li><strong>Kablo uzunluğu:</strong> Toplam segment uzunluğunu ölçün; 1200 m'yi geçiyorsa repeater (booster) kullanın.</li>
+    </ul>
+
+    <h2>Çözüm Önerileri</h2>
+    <ol class="article__list">
+      <li>Sonlandırma direncini hattın iki ucuna (master + en uzak slave) yerleştirin veya cihazlardaki DIP switch'i açın.</li>
+      <li>Kabloyu Belden 3105A veya CAT5e STP twisted pair ile yenileyin. Yıldız topoloji yerine <strong>daisy chain (zincirleme)</strong> tercih edin.</li>
+      <li>Stub uzunluğunu 30 cm altında tutun. Uzun mesafeye tek slave için ayrı bir RS-485 branch box kullanın.</li>
+      <li>A/B ve GND bağlantılarını cihaz kılavuzuna göre doğrulayın; üç iletken de bağlanmalı (sadece A ve B yetmez).</li>
+      <li>Slave adresleri benzersiz olmalı. Yazılım tarama (auto-discovery) ile doğrulayın.</li>
+      <li>Tüm cihazlarda baud rate, parity, stop bit'in aynı olmasını garanti edin.</li>
+      <li>Yüksek gürültü ortamında (motor kablosu yakınında) ferrite bead ve galvanic isolator (M-Bus modülü) ekleyin.</li>
+      <li>32 slave üstü tesislerde RS-485 repeater kullanın veya Modbus TCP gateway'e geçin.</li>
+    </ol>
+
+    <h2>Benzer Sorular</h2>
+    <ul class="article__list">
+      <li><a href="../sor/plc-kontaktor-bobini-titremesi.html">PLC çıkışına bağlı kontaktör bobini neden titriyor?</a></li>
+      <li><a href="../bilgi/plc-nedir-nasil-calisir.html">PLC Nedir, Nasıl Çalışır? (Bilgi Bankası)</a></li>
+      <li><a href="../akademi/ladder-programlama-modbus-orta.html">Ladder Programlama ve Modbus / Profinet (Akademi Orta)</a></li>
+    </ul>
+
+    <p class="kb-disclaimer">Bu cevap genel teknik bilgi amaçlıdır. Kritik proses otomasyonu için üretici katalog ve yetkili mühendis desteği alın.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Modbus / Profinet / SCADA entegrasyonu için destek alın</strong><span>VoltGuard mühendisleriyle otomasyon projeleri planlayın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../sor.html" class="kb-card__more">&larr; Tüm sorular: VoltGuard'a Sor</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

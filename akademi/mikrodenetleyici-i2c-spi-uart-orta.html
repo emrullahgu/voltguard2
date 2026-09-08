@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Mikrodenetleyici programlama ve sensör/haberleşme (I2C, SPI, UART) orta seviye ders: register tabanlı GPIO, kesme, DMA ve pratik örnekler.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Mikrodenetleyici Programlama: I2C / SPI / UART (Orta) | VoltGuard Akademi</title>
+  <link rel="canonical" href="https://voltguard.com.tr/akademi/mikrodenetleyici-i2c-spi-uart-orta.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Mikrodenetleyici Programlama: I2C / SPI / UART (Orta) | VoltGuard Akademi">
+  <meta property="og:description" content="Register tabanlı GPIO, kesme, DMA ve pratik örnekler.">
+  <meta property="og:url" content="https://voltguard.com.tr/akademi/mikrodenetleyici-i2c-spi-uart-orta.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/mikrodenetleyici-i2c-spi-uart-orta.html#course","name":"Mikrodenetleyici Programlama: I2C, SPI, UART","description":"Register tabanlı GPIO, kesme, DMA ve pratik örnekler.","educationalLevel":"Orta","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","provider":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Mikrodenetleyici Programlama (Orta)","item":"https://voltguard.com.tr/akademi/mikrodenetleyici-i2c-spi-uart-orta.html"}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../akademi.html">VoltGuard Akademi</a> &rsaquo; <span>Mikrodenetleyici Programlama (Orta)</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektronik &amp; Mikrodenetleyici</span>
+    <span class="akademi-level akademi-level--orta">Orta Seviye</span>
+    <h1>Mikrodenetleyici Programlama: I2C / SPI / UART Haberleşme</h1>
+    <p class="article__summary">Orta seviye bu derste; ARM Cortex-M tabanlı mikrodenetleyicilerde (STM32, NXP, ESP32) GPIO, kesme (interrupt) ve DMA kullanımını, ayrıca en yaygın üç haberleşme protokolü olan UART, SPI ve I2C'yi pratik örneklerle işleyeceğiz. Ön koşul: <a href="elektronik-mikrodenetleyici-temelleri.html">Elektronik ve Mikrodenetleyici Temelleri</a> dersi.</p>
+
+    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Register tabanlı GPIO kontrol, EXTI kesme, DMA transferi, UART/SPI/I2C protokollerinin fiziksel ve mantıksal katmanları ve bir sensör okuma örneği.</div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Modern MCU'lar ARM Cortex-M0/M0+/M3/M4/M7 çekirdeklerini kullanır; 32-bit RISC işlemcidir.</li><li>Kesme (interrupt) kullanmayan gömülü sistem yoktur; polling yerine event-driven programlama tercih edilir.</li><li>DMA (Direct Memory Access), CPU yükünü azaltarak yüksek hızlı veri transferini mümkün kılar.</li><li>UART tek yönlü, SPI çift yönlü senkron, I2C çok cihazlı bus'tır.</li><li>STM32 CubeIDE, ESP-IDF ve Arduino en yaygın geliştirme ortamlarıdır.</li></ul></div>
+
+    <h2>Mikrodenetleyici Mimarisi</h2>
+    <p>Bir mikrodenetleyici; CPU çekirdeği (ARM Cortex-M), Flash, RAM, çevre birimleri (GPIO, timer, ADC, UART, SPI, I2C, CAN, USB) ve saat sistemini tek çip halinde barındırır. Endüstriyel gömülü sistemlerde en yaygın seri STM32'dir (STMicroelectronics). Örnek konfigürasyon: STM32F411, ARM Cortex-M4F, 100 MHz, 512 KB Flash, 128 KB RAM, 3 UART, 5 SPI, 3 I2C, 1 ADC, USB, timer.</p>
+
+    <h2>GPIO Kontrolü: Register Tabanlı</h2>
+    <p>Bir LED'i D pinine bağladığımızı düşünelim (PA5, STM32 için). Yapılan işlemler:</p>
+    <ol class="article__list">
+      <li>Clock aktif: RCC → AHB1ENR → GPIOAEN = 1</li>
+      <li>Pin modu: GPIOA → MODER[10:11] = 01 (output)</li>
+      <li>Çıkış tipi: OTYPER[5] = 0 (push-pull)</li>
+      <li>Hız: OSPEEDR[10:11] = 00 (low speed)</li>
+      <li>Pull-up/down: PUPDR[10:11] = 00 (none)</li>
+      <li>Çıkış: ODR[5] = 1 (LED yak), = 0 (söndür)</li>
+    </ol>
+    <p>HAL kütüphanesiyle: <code>HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);</code></p>
+
+    <h2>Kesme (Interrupt) ile Buton</h2>
+    <p>Bir butonu PA0'e bağlayıp basıldığında LED durumunu değiştirmek için polling yerine EXTI kesmesi tercih edilir:</p>
+    <pre class="tool-formula">
+// CubeMX ile PA0 = GPIO_EXTI0, Rising Edge, Pull-up
+void EXTI0_IRQHandler(void) {
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    if (GPIO_Pin == GPIO_PIN_0) {
+        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+    }
+}
+    </pre>
+    <p>Kesme ile buton okurken debounce (yaklaşık 30 ms yazılım gecikmesi) mutlaka uygulanmalıdır; aksi hâlde bir baskı 5-10 kez algılanabilir.</p>
+
+    <h2>UART: Seri Haberleşme</h2>
+    <p>UART (Universal Asynchronous Receiver-Transmitter), iki cihaz arasında asenkron seri haberleşme sağlar. Tipik parametreler: 9600 bps, 8 data bit, no parity, 1 stop bit (8N1). RS-232 fiziksel katmanla ±15V, RS-485 ile ±5V ve fark tabanlı çalışır. TTL seviye 3,3V / 5V.</p>
+    <pre class="tool-formula">
+HAL_UART_Transmit(&huart1, (uint8_t*)"Hello\r\n", 7, 100);
+
+// DMA ile:
+HAL_UART_Transmit_DMA(&huart1, buf, len);
+    </pre>
+
+    <h2>SPI: Yüksek Hızlı Senkron</h2>
+    <p>SPI (Serial Peripheral Interface), 4 hatlı (MOSI, MISO, SCLK, CS) senkron protokoldür. Aynı bus'ta birden fazla cihaz olabilir; her cihazın kendi CS (Chip Select) hattı vardır. Hız 10-50 MHz'e ulaşır. Örnek uygulama: SPI Flash, OLED ekran, SD kart, ADC (MAX11040 gibi).</p>
+    <pre class="tool-formula">
+uint8_t tx[2] = {0x01, 0x02};
+uint8_t rx[2];
+HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_RESET);
+HAL_SPI_TransmitReceive(&hspi1, tx, rx, 2, 100);
+HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_SET);
+    </pre>
+
+    <h2>I2C: Çoklu Cihaz Bus'ı</h2>
+    <p>I2C (Inter-Integrated Circuit), sadece 2 hat (SDA, SCL) kullanan çok cihazlı bir bus'tır. Standart 100 kHz, Fast 400 kHz, Fast+ 1 MHz. Her cihazın 7-bit adresi vardır (128 cihaz teoride). Örnek uygulama: EEPROM (24LC256), sıcaklık sensörü (LM75, BMP280), IMU (MPU6050), RTC (DS3231).</p>
+    <pre class="tool-formula">
+// LM75 sıcaklık sensörü örneği
+uint8_t reg = 0x00;  // Temp register
+uint8_t data[2];
+HAL_I2C_Master_Transmit(&hi2c1, 0x90, &reg, 1, 100);
+HAL_I2C_Master_Receive(&hi2c1, 0x90, data, 2, 100);
+int16_t temp = (data[0] << 8 | data[1]) >> 5;
+float celsius = temp * 0.125f;
+    </pre>
+
+    <h2>UART / SPI / I2C Karşılaştırma</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Protokol</th><th>Tel</th><th>Hız</th><th>Mesafe</th><th>Cihaz</th><th>Yaygın kullanım</th></tr></thead>
+      <tbody>
+        <tr><td>UART</td><td>2</td><td>9,6-921,6 kbps</td><td>~15 m (TTL)</td><td>2 (nokta-nokta)</td><td>Debug, GPS, RS-485</td></tr>
+        <tr><td>SPI</td><td>4+</td><td>1-50 MHz</td><td>~30 cm</td><td>4-8 CS başına</td><td>SPI Flash, SD, OLED</td></tr>
+        <tr><td>I2C</td><td>2</td><td>100 kHz-1 MHz</td><td>~1 m</td><td>128 (7-bit adres)</td><td>Sensör, EEPROM, RTC</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>DMA (Direct Memory Access)</h2>
+    <p>DMA, çevre biriminden RAM'e (veya tersi) CPU müdahalesi olmadan blok halinde veri taşır. CPU sadece transfer başladığında ve bittiğinde meşgul olur; arada başka işleri yapabilir. ADC gibi yüksek hızlı örneklemede (kHz-MHz), UART receive gibi asenkron olaylarda ve SPI/I2C toplu transferlerde şarttır.</p>
+
+    <h2>Debug Araçları</h2>
+    <ul class="article__list">
+      <li><strong>ST-Link V2/V3:</strong> STM32 için standart debug + programlama</li>
+      <li><strong>J-Link:</strong> Segger'ın çoklu MCU destekli profesyonel debugger</li>
+      <li><strong>Salae Logic Analyzer:</strong> UART/SPI/I2C sinyal analizi</li>
+      <li><strong>Osiloskop:</strong> Fiziksel sinyal kalitesi ve timing</li>
+      <li><strong>RTT (Real-Time Transfer):</strong> printf tabanlı hızlı debug</li>
+    </ul>
+
+    <h2>Sıradaki Konu</h2>
+    <p>Bu orta seviye dersi tamamladıktan sonra:</p>
+    <ul class="article__list">
+      <li><strong>İleri seviye:</strong> <a href="pcb-tasarim-emi-emc-ileri.html">PCB Tasarımı ve EMI/EMC Uyumluluk</a></li>
+      <li>Uygulamalı: <a href="../bilgi/malzeme-ekipman-tedarik-rehberi.html">Elektronik ve Otomasyon Malzeme Rehberi</a></li>
+    </ul>
+
+    <p class="kb-disclaimer">Bu içerik eğitim amaçlıdır. Gerçek ürün tasarımında; MCU seçimi, güvenlik, sertifika ve üretim testleri için yetkili mühendis çalışması gereklidir.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Gömülü sistem ve mikrodenetleyici projeleriniz için destek alın</strong><span>VoltGuard Ar-Ge ekibiyle iletişime geçin.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../akademi.html" class="kb-card__more">&larr; Tüm dersler: VoltGuard Akademi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

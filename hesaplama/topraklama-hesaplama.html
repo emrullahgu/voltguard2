@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Topraklama direnci ve elektrot hesaplama aracı: zemin özdirenci ve elektrot geometrisine göre yaklaşık topraklama direnci ve kaç elektrot gerektiğini hesaplar.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Topraklama Direnci ve Elektrot Hesaplama Aracı | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/topraklama-hesaplama/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Topraklama Direnci ve Elektrot Hesaplama Aracı | VoltGuard">
+  <meta property="og:description" content="Zemin özdirenci ve elektrot geometrisine göre yaklaşık topraklama direnci ve kaç elektrot gerektiğini hesaplar.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/topraklama-hesaplama/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/topraklama-hesaplama/#article","headline":"Topraklama Direnci ve Elektrot Hesaplama Aracı","description":"Zemin özdirenci ve elektrot geometrisine göre yaklaşık topraklama direnci ve elektrot sayısı hesabı.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/topraklama-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Topraklama Hesaplama","item":"https://voltguard.com.tr/hesaplama/topraklama-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Topraklama direnci nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Tek düşey çubuk elektrot için R = ρ / (2π × L) × (ln(8L/d) − 1) formülü kullanılır. Burada ρ zemin özdirenci (Ω·m), L elektrot uzunluğu (m), d elektrot çapıdır (m). Birden fazla elektrot kullanıldığında paralel bağlantı verimliliği ile toplam direnç azalır."}},{"@type":"Question","name":"Topraklama değeri kaç ohm olmalı?","acceptedAnswer":{"@type":"Answer","text":"Türkiye'de yaygın uygulamada; koruma topraklamasında ≤ 5 Ω, işletme topraklamasında ≤ 2 Ω, paratoner topraklamasında ≤ 10 Ω hedeflenir. Kesin sınır tesis tipine ve topraklama tipine göre TS HD 60364 ve ilgili mevzuatta belirtilmiştir."}},{"@type":"Question","name":"Zemin özdirenci nasıl bulunur?","acceptedAnswer":{"@type":"Answer","text":"Wenner veya Schlumberger yöntemiyle dört elektrotlu ölçüm cihazı kullanılarak sahada ölçülür. Kaba tahminler için killi/nemli zemin 25-100 Ω·m, kumlu 300-1000 Ω·m, kayalık zemin 1000-10.000 Ω·m aralığındadır."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../teklif-araclari.html">Hesaplama Merkezi</a> &rsaquo; <span>Topraklama Hesaplama</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Topraklama &amp; Güvenlik</span>
+    <h1>Topraklama Direnci ve Elektrot Hesaplama Aracı</h1>
+    <p class="article__summary">Zemin özdirencini, elektrot uzunluğunu ve hedef direnç değerinizi girin; tek çubuk direnci, ihtiyaç duyulan elektrot sayısını ve önerilen düzeni anında görün.</p>
+
+    <div class="mini-calc">
+      <div class="mini-calc__fields">
+        <div class="mini-calc__field"><label for="tp-rho">Zemin özdirenci ρ (Ω·m)</label><input id="tp-rho" type="number" min="1" value="150" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="tp-length">Elektrot uzunluğu L (m)</label><input id="tp-length" type="number" min="1" step="0.1" value="2.4" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="tp-diam">Elektrot çapı d (mm)</label><input id="tp-diam" type="number" min="10" value="20" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="tp-target">Hedef direnç (Ω)</label><select id="tp-target"><option value="10">10 Ω (paratoner)</option><option value="5" selected>5 Ω (koruma toprağı)</option><option value="2">2 Ω (işletme toprağı)</option><option value="1">1 Ω (özel amaç)</option></select></div>
+      </div>
+      <div class="mini-calc__result">
+        <span class="mini-calc__result-label">Ön Sonuç</span>
+        <span class="mini-calc__result-value" id="tp-result">-</span>
+        <span class="mini-calc__result-note" id="tp-detail"></span>
+      </div>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Düşey çubuk elektrot için R = ρ / (2π × L) × (ln(8L/d) − 1) formülü kullanılır.</li><li>Türkiye'de yaygın kabul: koruma topraklamasında ≤ 5 Ω, işletme topraklamasında ≤ 2 Ω, paratoner topraklamasında ≤ 10 Ω.</li><li>Birden fazla elektrot paralel bağlanınca direnç aritmetik olarak değil, verimlilik faktörüne göre azalır (~%80-90).</li><li>Nemli/killi zeminde direnç hızla, kayalık zeminde yavaş düşer.</li></ul></div>
+
+    <h2>Formül ve Hesaplama Mantığı</h2>
+    <p>Tek düşey çubuk elektrotun topraklama direnci Dwight formülüyle bulunur:</p>
+    <ul class="article__list">
+      <li><strong>R = ρ / (2π × L) × [ln(8L/d) − 1]</strong> — düşey çubuk (Ω)</li>
+      <li><strong>R = ρ / (π × L) × [ln(2L/(a·h)) − 1]</strong> — yatay bant (a: bant eni, h: derinlik)</li>
+      <li><strong>Paralel n elektrot:</strong> R<sub>tot</sub> ≈ R / (n × η); η elektrotlar arası uzaklığa göre verimlilik faktörüdür (2-3 m aralık için ~0,7-0,85).</li>
+    </ul>
+    <p>Bu araç düşey çubuk (kazık) modelini kullanır ve iki elektrot arası aralığın en az 2 × L olduğu varsayımıyla çalışır. Bant elektrot, ızgara topraklama veya derin kuyu için özel formüller uygulanmalıdır.</p>
+
+    <h2>Zemin Özdirenci Değerleri</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Zemin tipi</th><th>ρ (Ω·m) tipik</th></tr></thead>
+      <tbody>
+        <tr><td>Nemli killi zemin</td><td>25 - 100</td></tr>
+        <tr><td>Kuru killi zemin</td><td>50 - 200</td></tr>
+        <tr><td>Nemli kumlu zemin</td><td>100 - 300</td></tr>
+        <tr><td>Kuru kumlu zemin</td><td>300 - 1000</td></tr>
+        <tr><td>Çakıllı zemin</td><td>500 - 3000</td></tr>
+        <tr><td>Kayalık zemin</td><td>1000 - 10.000</td></tr>
+        <tr><td>Beton (nemli)</td><td>50 - 100</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Örnek Hesap</h2>
+    <p>150 Ω·m zeminde 2,4 m uzunluğunda ve 20 mm çapında bir bakır kaplı çelik elektrot için: R = 150 / (2π × 2,4) × [ln(8 × 2,4 / 0,020) − 1] = 9,95 × [ln(960) − 1] = 9,95 × 5,87 ≈ <strong>58,4 Ω</strong>. Hedef ≤ 5 Ω olduğuna göre en az <strong>15 adet</strong> elektrot 3 m aralıklı paralel bağlanmalı ya da elektrot uzunluğu artırılmalı / kimyasal iyileştirme yapılmalıdır.</p>
+
+    <h2>Direnci Düşürme Yöntemleri</h2>
+    <ul class="article__list">
+      <li>Elektrot uzunluğunu artırmak (2,4 m yerine 3-6 m) — en verimli yöntem</li>
+      <li>Derin kuyu elektrot (10-30 m) — kayalık ve kuru zeminlerde etkili</li>
+      <li>Paralel elektrot ağı — 2-3 m aralıklı, halka bant ile bağlanmış</li>
+      <li>Kimyasal iyileştirme — bentonit, GEM (Ground Enhancement Material)</li>
+      <li>Izgara + halka bant kombinasyonu — trafo merkezleri için tipik</li>
+    </ul>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Topraklama direnci nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Düşey çubuk için R = ρ/(2π × L) × [ln(8L/d) − 1] formülü kullanılır. Birden fazla elektrot verimlilik faktörüyle paralel bağlanır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Topraklama değeri kaç ohm olmalı? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Yaygın kabul: koruma ≤ 5 Ω, işletme ≤ 2 Ω, paratoner ≤ 10 Ω. Kesin sınır TS HD 60364 ve mevzuatta belirtilir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Zemin özdirenci nasıl bulunur? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Wenner veya Schlumberger dört elektrot yöntemiyle sahada ölçülür. Ön hesap için zemin tipine göre tipik değerler kullanılabilir.</p></div></details>
+
+    <p class="kb-disclaimer">Bu araç yalnızca ön değerlendirme sağlar. Kesin topraklama tasarımı için sahada özdirenç ölçümü ve mühendislik hesabı gerekir.</p>
+    <p>Daha fazla ilgili kaynak: <a href="../bilgi/topraklama.html">Topraklama Tesisatı ve Periyodik Kontrol</a>, <a href="../bilgi/yildirimdan-korunma.html">Yıldırımdan Korunma Sistemleri</a>, <a href="../teklif-araclari.html">VoltGuard Hesaplama Merkezi</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Topraklama ölçümü ve tasarımı için mühendislik desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../teklif-araclari.html" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      function update() {
+        var rho = Math.max(1, Number(document.getElementById('tp-rho').value) || 1);
+        var l = Math.max(0.5, Number(document.getElementById('tp-length').value) || 2.4);
+        var dmm = Math.max(6, Number(document.getElementById('tp-diam').value) || 20);
+        var d = dmm / 1000;
+        var target = Number(document.getElementById('tp-target').value);
+        var r = rho / (2 * Math.PI * l) * (Math.log(8 * l / d) - 1);
+        var eff = 0.8;
+        var n = Math.ceil(r / (target * eff));
+        var pick = Math.max(1, n);
+        document.getElementById('tp-result').textContent = 'R ≈ ' + (Math.round(r * 10) / 10) + ' Ω / ' + pick + ' elektrot';
+        document.getElementById('tp-detail').textContent = 'Tek çubuk direnci ' + (Math.round(r * 10) / 10) + ' Ω. Hedef ' + target + ' Ω için ' + pick + ' adet elektrot 3 m aralıklı halka bantla paralel bağlanmalıdır.';
+      }
+      ['tp-rho','tp-length','tp-diam','tp-target'].forEach(function(id){document.getElementById(id).addEventListener('input',update);document.getElementById(id).addEventListener('change',update);});
+      update();
+    }());
+  </script>
+  <script src="../js/voltguard-auth.js"></script>
+  <script src="../js/voltguard-tools.js"></script>
+</body></html>

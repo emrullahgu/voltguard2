@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="GES proje hesapları ve şebeke bağlantı süreci orta seviye ders: string tasarımı, MPPT seçimi, çağrı mektubu, TEDAŞ süreçleri.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>GES Proje Hesapları ve Şebeke Bağlantı Süreci (Orta) | VoltGuard Akademi</title>
+  <link rel="canonical" href="https://voltguard.com.tr/akademi/ges-proje-sebeke-baglanti-orta.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="GES Proje Hesapları ve Şebeke Bağlantı Süreci (Orta) | VoltGuard Akademi">
+  <meta property="og:description" content="String tasarımı, MPPT seçimi, çağrı mektubu, TEDAŞ süreçleri.">
+  <meta property="og:url" content="https://voltguard.com.tr/akademi/ges-proje-sebeke-baglanti-orta.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/ges-proje-sebeke-baglanti-orta.html#course","name":"GES Proje Hesapları ve Şebeke Bağlantı Süreci","description":"String tasarımı, MPPT seçimi, çağrı mektubu, TEDAŞ süreçleri.","educationalLevel":"Orta","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","provider":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"GES Proje Hesapları ve Şebeke Bağlantı (Orta)","item":"https://voltguard.com.tr/akademi/ges-proje-sebeke-baglanti-orta.html"}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../akademi.html">VoltGuard Akademi</a> &rsaquo; <span>GES Proje ve Şebeke Bağlantı (Orta)</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">GES &amp; Enerji Verimliliği</span>
+    <span class="akademi-level akademi-level--orta">Orta Seviye</span>
+    <h1>GES Proje Hesapları ve Şebeke Bağlantı Süreci</h1>
+    <p class="article__summary">Orta seviye bu derste; string tasarımını, MPPT seçimini, DC/AC oranını, çatı statiği hesabını ve TEDAŞ ile lisanssız üretim şebeke bağlantı sürecinin adımlarını öğreneceksiniz. Ön koşul: <a href="ges-enerji-verimliligi-giris.html">GES ve Enerji Verimliliği Temelleri</a> ve <a href="../bilgi/lisanssiz-uretim-ges.html">Lisanssız Elektrik Üretimi</a>.</p>
+
+    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Panel-inverter uyumluluğu, string uzunluğu (Voc / Vmpp), MPPT girişi kısıtları, DC/AC oranı, string tarafı ve AC tarafı boyutlandırma, TEDAŞ süreci ve gerekli belgeler.</div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>String sayısı, inverter MPPT girişleri ve panel Voc/Vmpp değerlerine göre belirlenir.</li><li>DC/AC oranı 1,15-1,30 arası tipik; aşırı boyutlandırma (>1,3) clipping ile kayıba yol açar.</li><li>Voc<sub>max</sub> = Voc × (1 + 0,003 × (25 − T<sub>min</sub>)); soğuk günlerde Voc yükselir!</li><li>Türkiye'de lisanssız üretim için EPDK 5000 kW limitli; öz tüketim için sözleşme gücü kadar.</li><li>Süreç adımları: bağlantı başvurusu → çağrı mektubu → proje onayı → tesis → kabul → sözleşme.</li></ul></div>
+
+    <h2>String Tasarımı: Voc ve Vmpp Kontrolü</h2>
+    <p>String, birbirine seri bağlanmış panellerden oluşur. String toplam gerilimi, panel sayısı × panel gerilimidir. İki kritik değer vardır:</p>
+    <ul class="article__list">
+      <li><strong>Voc (open-circuit voltage):</strong> Panel açık devre gerilimi (STC koşullarında). Sıcaklığa göre değişir; her -1°C için ~+%0,3 artar. Türkiye'nin en soğuk günlerinde (Erzurum -30°C) panel Voc STC'nin ~%16 üstüne çıkabilir.</li>
+      <li><strong>Vmpp (maximum power point voltage):</strong> Panelin maksimum güç noktasındaki gerilimi. Sıcaklıkla azalır; sıcak yaz günlerinde Vmpp STC'nin ~%15 altına iner.</li>
+    </ul>
+    <p>String tasarım kuralları:</p>
+    <ol class="article__list">
+      <li>N<sub>max</sub> × Voc × (1 + 0,003 × (25 − T<sub>min</sub>)) ≤ Inverter maks DC gerilim (tipik 1000 V veya 1500 V)</li>
+      <li>N<sub>min</sub> × Vmpp × (1 − 0,003 × (T<sub>max</sub> − 25)) ≥ Inverter MPPT alt sınırı</li>
+      <li>N × I<sub>sc</sub> ≤ Inverter MPPT maks giriş akımı</li>
+    </ol>
+
+    <h2>Örnek String Hesabı</h2>
+    <p>Panel: JinkoSolar 550 Wp; Voc = 49,7 V; Vmpp = 42 V; Isc = 13,93 A; Impp = 13,10 A. İnverter: Huawei SUN2000-100KTL-M1; MPPT sayısı 10; MPPT giriş gerilim aralığı 200-1000 V; MPPT max giriş akımı 26 A; max DC gerilim 1100 V.</p>
+    <ul class="article__list">
+      <li><strong>N<sub>max</sub>:</strong> 1100 / (49,7 × 1,15) = 19,2 → 19 panel/string</li>
+      <li><strong>N<sub>min</sub>:</strong> 200 / (42 × 0,85) = 5,6 → 6 panel/string</li>
+      <li><strong>MPPT başına max string sayısı:</strong> 26 / 13,93 = 1,86 → 1 string / MPPT</li>
+      <li><strong>Optimum:</strong> 18 panel × 10 MPPT = 180 panel = 99 kWp; DC/AC = 99/100 = 0,99</li>
+    </ul>
+
+    <h2>MPPT Girişi ve Paralel String</h2>
+    <p>Bir MPPT girişine paralel bağlanan stringler <strong>aynı Voc, aynı Isc, aynı azimut ve eğime</strong> sahip olmalıdır. Farklı yön veya gölge farkı varsa, ayrı MPPT'lere ayrılmalı. Modern string inverterlerin 4-12 arası MPPT girişi vardır; bu, karmaşık çatılarda büyük esneklik sağlar.</p>
+
+    <h2>DC/AC Oranı ve Clipping</h2>
+    <p>DC/AC oranı, DC panel gücünün (kWp) inverter AC gücüne (kW<sub>AC</sub>) bölümüdür. Türkiye'de mevzuat gereği bu oran <strong>1,3'e kadar</strong> serbest kabul edilir. 1,0-1,3 aralığında ekonomik optimum vardır:</p>
+    <ul class="article__list">
+      <li><strong>DC/AC = 1,0:</strong> İnverter tam kullanılamaz; sabah/akşam düşük ışınımlarda kayıp.</li>
+      <li><strong>DC/AC = 1,2:</strong> Optimum; en fazla enerji kazanımı, minimal clipping.</li>
+      <li><strong>DC/AC = 1,3:</strong> Yaz öğle saatlerinde clipping başlar; toplam kayıp %1-2.</li>
+      <li><strong>DC/AC &gt; 1,3:</strong> Clipping kayıpları hızla artar.</li>
+    </ul>
+
+    <h2>Çatı Statiği ve Yüklemeler</h2>
+    <p>Çatı GES tasarımında yapısal statik analiz zorunludur:</p>
+    <ul class="article__list">
+      <li><strong>Ölü yük:</strong> Panel + rail + clamp; tipik 12-18 kg/m².</li>
+      <li><strong>Kar yükü:</strong> TS 498 ve bölge; İzmir 25 kg/m², Erzurum 200 kg/m² üzeri.</li>
+      <li><strong>Rüzgar yükü:</strong> TS 498 ve TS EN 1991-1-4; İzmir bölge II (~30 m/s).</li>
+      <li><strong>Sismik yük:</strong> TBDY 2018; İzmir yüksek deprem kuşağında.</li>
+      <li><strong>Balast (arazi/düz çatı):</strong> Ballast tipi montaj için ek beton yükü.</li>
+    </ul>
+
+    <h2>Lisanssız Üretim Süreç Akışı (Öz Tüketim)</h2>
+    <ol class="article__list">
+      <li><strong>Ön hazırlık:</strong> Fatura verileri, çatı ölçümü, elektrik proje, çatı statiği, kadastro belgeleri.</li>
+      <li><strong>Dağıtım şirketine başvuru:</strong> EPDK Elektrik Piyasasında Lisanssız Elektrik Üretim Yönetmeliği'ne göre başvuru formu ve ekleri.</li>
+      <li><strong>Bağlantı görüşü / çağrı mektubu:</strong> Dağıtım şirketi (İzmir'de GDZ) uygunluk verirse çağrı mektubu.</li>
+      <li><strong>Elektrik projesi onayı:</strong> Serbest Müşavir Mühendis (SMM) ile hazırlanan proje EMO onayı ve dağıtım şirketi onayı.</li>
+      <li><strong>Yapım/kabul:</strong> İnşaat, elektrik montaj, çift yönlü sayaç, kabul heyeti kontrolü.</li>
+      <li><strong>Bağlantı ve Sistem Kullanım Anlaşması (BSKA):</strong> Sözleşme imzalanır; sisteme enerji verilir.</li>
+      <li><strong>Ölçüm ve mahsuplaşma:</strong> Aylık üretim, tüketim ve fazlanın şebekeye satışı.</li>
+    </ol>
+
+    <h2>Şebekede Ölçüm ve Mahsuplaşma</h2>
+    <p>Çift yönlü sayaç, hem tüketilen (aktif ithal) hem üretilen (aktif ihraç) enerjiyi ayrı ayrı ölçer. Aylık mahsuplaşmada:</p>
+    <ul class="article__list">
+      <li><strong>Öz tüketim:</strong> Anlık üretim + tüketim örtüşürse fatura sıfıra yakın.</li>
+      <li><strong>İhraç fazlası:</strong> Ay içinde tüketimden fazla üretim varsa perakende satış fiyatının %85'i (2026 mevzuatı) üzerinden hesaplanır.</li>
+      <li><strong>Yıllık mahsuplaşma:</strong> Şubat ayında yıllık kesin hesap yapılır; alacak-borç şekillenir.</li>
+    </ul>
+
+    <p class="kb-disclaimer">Bu içerik eğitim amaçlıdır. Güncel mevzuat, EPDK ve TEDAŞ tebliğleri değişebilir. Kesin süreç için resmi kaynaklar ve yetkili SMM görüşü esas alınmalıdır.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Lisanssız GES projesi ve şebeke bağlantısı için mühendislik desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../akademi.html" class="kb-card__more">&larr; Tüm dersler: VoltGuard Akademi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

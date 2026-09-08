@@ -84,9 +84,9 @@
   </style>
 </head>
 <body class="tool-page">
-  <header class="tool-header"><div class="tool-header__inner"><a href="index.html" class="tool-brand"><img class="tool-brand__image" src="public/logo.png" alt="">VoltGuard</a><a class="tool-back" href="sor.html">VoltGuard'a Sor</a><a class="tool-back" href="index.html">Ana Sayfaya Dön</a></div></header>
+  <header class="tool-header"><div class="tool-header__inner"><a href="index.html" class="tool-brand"><img class="tool-brand__image" src="public/logo.png" alt="">VoltGuard <span style="color:#fcd34d;font-weight:700">Tools</span></a><a class="tool-back" href="hesap/panel.html"><i class="fas fa-circle-user" aria-hidden="true"></i> Hesabım</a><a class="tool-back" href="sor.html">VoltGuard'a Sor</a><a class="tool-back" href="index.html">Ana Sayfaya Dön</a></div></header>
   <main>
-    <section class="tool-hero"><div class="tool-hero__inner"><span class="tool-eyebrow">VoltGuard Mühendislik Hesaplama Merkezi</span><h1>Ücretsiz elektrik mühendisliği hesap araçları</h1><p>Kablo kesiti, gerilim düşümü, sigorta/TMŞ, motor koruma şalteri, kontaktör, motor akımı, kompanzasyon, kısa devre, topraklama, GES ve inverter seçimine kadar tüm hesaplarınızı tek merkezden yapın. Her araçta kullanılan formül, varsayımlar ve mühendislik doğrulama uyarısı sonuçla birlikte gösterilir. Hesabı telefon numarası vermeden görün; PDF özet veya mühendislik keşfi için bize ulaşın.</p></div></section>
+    <section class="tool-hero"><div class="tool-hero__inner"><span class="tool-eyebrow">VoltGuard Tools · Mühendislik Hesaplama Merkezi</span><h1>Ücretsiz elektrik mühendisliği hesap araçları</h1><p>Kablo kesiti, gerilim düşümü, sigorta/TMŞ, motor koruma şalteri, kontaktör, motor akımı, kompanzasyon, kısa devre, topraklama, GES ve inverter seçimine kadar tüm hesaplarınızı tek merkezden yapın. Her araçta kullanılan formül, varsayımlar ve mühendislik doğrulama uyarısı sonuçla birlikte gösterilir. Hesabı telefon numarası vermeden görün; ücretsiz üye olarak sonuçları kaydedin, favori araçlarınızı işaretleyin.</p></div></section>
     <section class="tool-main" aria-label="Teklif araçları">
       <div class="tool-categories" aria-label="Hesaplama kategorileri">
         <button class="tool-category tool-category--active" type="button" data-panel="ges"><i class="fas fa-solar-panel"></i>GES</button>
@@ -152,6 +152,53 @@
         </div><div class="tool-formula"><strong>Formül:</strong> <span id="technical-formula-text"></span><br><strong>Varsayımlar:</strong> <span id="technical-assumptions-text"></span></div><p class="tool-note" id="technical-note">Teknik hesaplar ön değerlendirme sağlar. Nihai ekipman seçimi, saha koşulları, standartlar ve yetkili mühendis incelemesiyle yapılır.</p></div>
         <aside class="tool-result"><div><span class="tool-result__label">Teknik ön değerlendirme</span><div class="tool-result__amount" id="technical-amount">-</div><p class="tool-result__detail" id="technical-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i><span id="technical-scope"></span></li><li><i class="fas fa-check"></i>Sonuç varsayımlara dayanır, mühendislik doğrulaması gerekir.</li></ul><button class="tool-download" data-pdf-title="Teknik On Degerlendirme"><i class="fas fa-file-pdf"></i> PDF özeti indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="teknik hesaplama">Bu sonuçla teklif al</button></aside>
       </section>
+
+      <section aria-label="Bağımsız hesaplama araçları" style="margin-top:2.5rem;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:clamp(1.4rem,3vw,2.2rem);">
+        <div style="margin-bottom:1.25rem"><span class="tool-eyebrow">Bağımsız Hesap Sayfaları</span><h2 style="color:#0a1628;font:800 clamp(1.4rem,3vw,2rem) 'Outfit',sans-serif;margin:.35rem 0 .3rem">Hesaplama araçlarını ayrı sayfada aç</h2><p style="color:#475569;max-width:820px">Her araç kendi sayfasında; formül, örnek çözüm ve sık sorulan sorularla birlikte açıklanır. SEO ve kolay paylaşım için tercih edilir.</p></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.9rem">
+          <a class="kb-card" href="hesaplama/kablo-kesiti-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-ruler-horizontal"></i></span><span class="kb-card__title">Kablo Kesiti Hesaplama</span><span class="kb-card__desc">Yük gücü, gerilim ve döşeme bilgileriyle standart bakır kesit önerisi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/gerilim-dusumu-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-chart-line"></i></span><span class="kb-card__title">Gerilim Düşümü (%)</span><span class="kb-card__desc">Akım, kesit ve uzunluğa göre yüzdesel düşüm ve sınır kontrolü.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/trafo-akimi-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-tower-broadcast"></i></span><span class="kb-card__title">Trafo Akımı Hesaplama</span><span class="kb-card__desc">kVA ve gerilim bilgisiyle sekonder nominal akım.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/kisa-devre-akimi-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-bolt"></i></span><span class="kb-card__title">Kısa Devre Akımı (Ik)</span><span class="kb-card__desc">Trafo, uk ve kablo etkisiyle pano barasında beklenen Ik.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/kompanzasyon-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-wave-square"></i></span><span class="kb-card__title">Kompanzasyon (kVAr)</span><span class="kb-card__desc">Aktif güç ve cosφ bilgisiyle gerekli kondansatör gücü.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/motor-akimi-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-gear"></i></span><span class="kb-card__title">Motor Akımı Hesaplama</span><span class="kb-card__desc">Motor gücü, cosφ ve verimden nominal akım + hazır tablo.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/kw-kva-amper-donusturucu.html"><span class="kb-card__icon"><i class="fas fa-arrows-rotate"></i></span><span class="kb-card__title">kW - kVA - Amper Dönüşümü</span><span class="kb-card__desc">Herhangi bir değerden diğer ikisini anında hesapla.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/sigorta-tms-secimi.html"><span class="kb-card__icon"><i class="fas fa-shield-halved"></i></span><span class="kb-card__title">Sigorta / TMŞ Seçimi</span><span class="kb-card__desc">Ib ≤ In ≤ Iz kuralı ile standart anma akımı ve eğri tipi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/motor-koruma-kontaktor-secimi.html"><span class="kb-card__icon"><i class="fas fa-toggle-on"></i></span><span class="kb-card__title">Motor Koruma &amp; Kontaktör</span><span class="kb-card__desc">MPCB ayar aralığı ve AC-3 kontaktör Ie önerisi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/jenerator-gucu-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-oil-can"></i></span><span class="kb-card__title">Jeneratör Gücü Hesaplama</span><span class="kb-card__desc">Motor kalkışı ve yedek payıyla önerilen kVA.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/ups-gucu-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-battery-full"></i></span><span class="kb-card__title">UPS Gücü ve Akü Süresi</span><span class="kb-card__desc">Kritik yük ve süreye göre UPS kVA + akü kapasitesi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/topraklama-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-plug"></i></span><span class="kb-card__title">Topraklama Direnci</span><span class="kb-card__desc">Zemin özdirenci ve elektrota göre R ve elektrot sayısı.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/ges-uretim-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-solar-panel"></i></span><span class="kb-card__title">GES Kapasite &amp; Üretim</span><span class="kb-card__desc">Tüketim, alan ve bölge katsayısıyla kWp ve yıllık kWh.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/inverter-dc-ac-kablo-secimi.html"><span class="kb-card__icon"><i class="fas fa-plug-circle-bolt"></i></span><span class="kb-card__title">İnverter DC/AC Kablo</span><span class="kb-card__desc">İnverter için DC string ve AC hat kablo kesitleri.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/aydinlatma-lux-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-lightbulb"></i></span><span class="kb-card__title">Aydınlatma ve Lux</span><span class="kb-card__desc">Alan, hedef lux ve armatür lümeni ile armatür sayısı.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+        </div>
+      </section>
+
+      <section aria-label="VoltGuard Tools üyelik avantajları" style="margin-top:2.5rem;background:linear-gradient(135deg,#0a1628,#132742);color:#fff;border-radius:8px;padding:clamp(1.6rem,3vw,2.4rem);">
+        <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:2rem;align-items:center">
+          <div>
+            <span class="tool-eyebrow" style="color:#fcd34d">Ücretsiz Üyelik</span>
+            <h2 style="font:800 clamp(1.5rem,3vw,2.2rem) 'Outfit',sans-serif;margin:.4rem 0 .6rem">Hesaplarınızı kaydedin, favorilere ekleyin, projelere bağlayın</h2>
+            <p style="color:rgba(255,255,255,.82);max-width:640px">VoltGuard Tools üyeliği ücretsizdir ve kredi kartı istemez. Hesaplarınız cihazınızda gizli tutulur — üyelik zorunlu değildir; araçları üye olmadan da tam olarak kullanabilirsiniz.</p>
+            <ul style="list-style:none;padding:0;margin:1rem 0 1.25rem;color:rgba(255,255,255,.9);display:grid;gap:.5rem">
+              <li><i class="fas fa-check" style="color:#fcd34d;margin-right:.5rem"></i> Sonuçları giriş değerleriyle birlikte kaydedin</li>
+              <li><i class="fas fa-check" style="color:#fcd34d;margin-right:.5rem"></i> Favori araçlarınıza tek tıkla erişin</li>
+              <li><i class="fas fa-check" style="color:#fcd34d;margin-right:.5rem"></i> Proje oluşturun ve hesapları proje bazında saklayın</li>
+              <li><i class="fas fa-check" style="color:#fcd34d;margin-right:.5rem"></i> Kişisel doküman kütüphanesi (standart, katalog, PDF yer imleri)</li>
+              <li><i class="fas fa-check" style="color:#fcd34d;margin-right:.5rem"></i> Tüm verilerinizi JSON olarak dışa aktarabilirsiniz</li>
+            </ul>
+            <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+              <a href="hesap/kayit.html" style="background:#f59e0b;color:#0a1628;padding:.85rem 1.4rem;border-radius:6px;font:800 .95rem 'Outfit',sans-serif;text-decoration:none"><i class="fas fa-user-plus"></i> Ücretsiz üye ol</a>
+              <a href="hesap/giris.html" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);padding:.85rem 1.4rem;border-radius:6px;font:700 .95rem 'Outfit',sans-serif;text-decoration:none"><i class="fas fa-arrow-right-to-bracket"></i> Giriş yap</a>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:1.5rem">
+            <h3 style="font:700 1rem 'Outfit',sans-serif;color:#fcd34d;margin:0 0 .5rem"><i class="fas fa-shield-halved"></i> Gizlilik önceliğimizdir</h3>
+            <p style="color:rgba(255,255,255,.82);font-size:.9rem;line-height:1.6">Üyelik bilgileriniz yalnızca kullandığınız tarayıcıda (localStorage) saklanır; VoltGuard sunucularına aktarılmaz. Verilerinizi istediğiniz zaman JSON olarak indirebilir veya hesabınızı silebilirsiniz.</p>
+          </div>
+        </div>
+      </section>
+
       <p class="tool-source">Hesaplamalar bağlayıcı teklif değildir. Kesin mühendislik ve uygulama bedelleri, yürürlükteki <a href="https://www.emo.org.tr/" target="_blank" rel="noopener">EMO</a> düzenlemeleri, ilgili <a href="https://www.tedas.gov.tr/" target="_blank" rel="noopener">TEDAŞ</a> teknik şartnameleri, keşif ve piyasa koşullarıyla belirlenir.</p>
     </section>
   </main>
@@ -235,5 +282,6 @@
       updates.forEach(function (update) { update(); });
     }());
   </script>
+  <script src="js/voltguard-auth.js"></script>
 </body>
 </html>

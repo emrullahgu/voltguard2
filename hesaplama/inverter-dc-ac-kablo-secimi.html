@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="GES inverter DC ve AC kablo kesiti seçim aracı: inverter gücü, DC/AC gerilim ve hat mesafesine göre önerilen bakır kesit ve gerilim düşümü.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>İnverter DC / AC Kablo Kesiti Seçim Aracı | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/inverter-dc-ac-kablo-secimi/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="İnverter DC / AC Kablo Kesiti Seçim Aracı | VoltGuard">
+  <meta property="og:description" content="İnverter gücü, DC/AC gerilim ve hat mesafesine göre önerilen bakır kesit ve gerilim düşümü.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/inverter-dc-ac-kablo-secimi/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/inverter-dc-ac-kablo-secimi/#article","headline":"İnverter DC / AC Kablo Kesiti Seçim Aracı","description":"İnverter gücü, DC/AC gerilim ve hat mesafesine göre önerilen bakır kesit ve gerilim düşümü.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"GES","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/inverter-dc-ac-kablo-secimi/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"İnverter DC/AC Kablo Seçimi","item":"https://voltguard.com.tr/hesaplama/inverter-dc-ac-kablo-secimi/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"GES DC kablosu (solar kablo) nasıl seçilir?","acceptedAnswer":{"@type":"Answer","text":"GES DC hatları için TÜV/EN 50618 sertifikalı ve H1Z2Z2-K etiketli solar kablo kullanılır. Kesit; string kısa devre akımının 1,25 katının altında kalmayacak Iz değerine ve %1'in altında gerilim düşümüne göre seçilir."}},{"@type":"Question","name":"AC kablosu inverter için nasıl seçilir?","acceptedAnswer":{"@type":"Answer","text":"İnverter nominal AC akımı 1,25 katıyla karşılanır; ardından hat uzunluğuna göre gerilim düşümü %1'in altında olacak şekilde ayrıca doğrulama yapılır. 400 V üç fazlı sistemlerde bakır iletken tercih edilir."}},{"@type":"Question","name":"MPPT string akımı ne anlama gelir?","acceptedAnswer":{"@type":"Answer","text":"Her string, panellerin seri bağlanmasıyla oluşur ve akım tek panelin akımına eşit (yaklaşık 12-14 A) kalır. MPPT girişi bu string akımını tek başına veya paralel birkaç string ile karşılar; kablo tek stringin kısa devre akımına göre boyutlandırılır."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../teklif-araclari.html">Hesaplama Merkezi</a> &rsaquo; <span>İnverter DC/AC Kablo Seçimi</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">GES &amp; Yenilenebilir Enerji</span>
+    <h1>İnverter DC / AC Kablo Kesiti Seçim Aracı</h1>
+    <p class="article__summary">İnverter AC gücünü, DC sistem gerilimini ve hat uzunluğunu girin; DC string kablosu ve AC hat kablosu için önerilen bakır kesitleri ve gerilim düşümlerini anında görün.</p>
+
+    <div class="mini-calc">
+      <div class="mini-calc__fields">
+        <div class="mini-calc__field"><label for="in-power">İnverter AC gücü (kW)</label><input id="in-power" type="number" min="1" value="50" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="in-acv">AC gerilim (V)</label><select id="in-acv"><option value="400" selected>400 V (üç faz)</option><option value="230">230 V (tek faz)</option></select></div>
+        <div class="mini-calc__field"><label for="in-aclen">AC hat uzunluğu (m)</label><input id="in-aclen" type="number" min="1" value="60" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="in-dcv">DC gerilim (V)</label><input id="in-dcv" type="number" min="100" max="1500" value="600" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="in-strings">Paralel string sayısı</label><input id="in-strings" type="number" min="1" value="4" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="in-dclen">DC hat uzunluğu (m)</label><input id="in-dclen" type="number" min="1" value="40" inputmode="decimal"></div>
+      </div>
+      <div class="mini-calc__result">
+        <span class="mini-calc__result-label">Ön Sonuç</span>
+        <span class="mini-calc__result-value" id="in-result">-</span>
+        <span class="mini-calc__result-note" id="in-detail"></span>
+      </div>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>GES DC hatları için TÜV/EN 50618 sertifikalı H1Z2Z2-K solar kablo kullanılır.</li><li>DC gerilim düşümü hedefi ≤ %1; AC hattında hedef ≤ %1,5-2 (santral toplam kayıp için).</li><li>String kısa devre akımı Isc panel etiketinden okunur; genelde 12-14 A civarındadır.</li><li>AC tarafta bakır iletken (NYY, N2XH, N2XSY vb.) tercih edilir; TN-S topraklama şart olarak uygulanır.</li></ul></div>
+
+    <h2>Hesap Adımları</h2>
+    <ol class="article__list">
+      <li><strong>AC hattı akımı:</strong> I<sub>AC</sub> = P × 1000 / (√3 × U × cosφ) — cosφ ≈ 0,99 alınır (inverter).</li>
+      <li><strong>AC kablo kesiti:</strong> I<sub>AC</sub> × 1,25 emniyet payı ile ilk uygun Iz karşılanır; %1,5-2 gerilim düşümü kontrolü yapılır.</li>
+      <li><strong>DC string akımı:</strong> Her string için I<sub>str</sub> = panel Isc (tipik 12-14 A). Kombine hatta I × string sayısı akılda tutulur.</li>
+      <li><strong>DC kablo kesiti:</strong> %1 gerilim düşümü hedefiyle S = (2 × I × L × ρ) / (ΔU × V<sub>DC</sub>) formülü kullanılır (ρ = 0,0175).</li>
+    </ol>
+
+    <h2>Örnek Hesap: 50 kW İnverter</h2>
+    <p>400 V AC, 60 m mesafe için: I<sub>AC</sub> = 50 × 1000 / (1,732 × 400 × 0,99) ≈ 73 A. 1,25 × 73 = 91 A. 35 mm² bakır uygun. Gerilim düşümü: 1,732 × 73 × 60 × 0,0175 / (35 × 400) × 100 = %0,95 → uygun. DC tarafta 600 V, 4 string, 40 m: I<sub>DC</sub> ≈ 14 × 4 = 56 A ana toplayıcıda; string başına 14 A. %1 hedefi için ana kolonda 25 mm², string bazında 6 mm² solar kablo tipik olarak yeterlidir.</p>
+
+    <h2>DC Kablosu Standardı: EN 50618 (H1Z2Z2-K)</h2>
+    <ul class="article__list">
+      <li>1500 V DC / 1000 V AC dayanımı</li>
+      <li>-40 °C ile +90 °C çalışma sıcaklığı</li>
+      <li>UV, ozon ve nem dayanıklı</li>
+      <li>25 yıllık kullanım ömrü hedefi</li>
+      <li>Halojensiz, alevi yaymayan (LSZH) izolasyon</li>
+      <li>Kalay kaplı bakır iletken (korozyon direnci)</li>
+    </ul>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">GES DC kablosu (solar kablo) nasıl seçilir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>TÜV/EN 50618 sertifikalı H1Z2Z2-K solar kablo kullanılır. Kesit; string Isc × 1,25 akımını taşıyacak Iz ve %1'in altında gerilim düşümü kriterlerine göre seçilir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">AC kablosu inverter için nasıl seçilir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Nominal AC akımı 1,25 katıyla karşılanır ve %1,5-2 gerilim düşümü hedeflenir. 400 V üç faz için bakır iletken tercih edilir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">MPPT string akımı ne anlama gelir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Her string, panellerin seri bağlanmasıyla oluşur; akım tek panelin akımına eşit (~12-14 A) kalır. MPPT girişi bu akımı karşılar, kablo tek stringin Isc değerine göre boyutlandırılır.</p></div></details>
+
+    <p class="kb-disclaimer">Bu araç yalnızca ön değerlendirme sağlar. Sıcaklık düzeltmesi, birden fazla kablonun aynı taşıyıcıda gruplanması ve UV maruziyeti dahil nihai değerler için proje bazlı hesap gereklidir.</p>
+    <p>Daha fazla ilgili kaynak: <a href="../hesaplama/ges-uretim-hesaplama.html">GES Kapasite ve Üretim Hesabı</a>, <a href="../bilgi/lisanssiz-uretim-ges.html">Lisanssız Elektrik Üretimi ve GES</a>, <a href="../teklif-araclari.html">VoltGuard Hesaplama Merkezi</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>GES sahası DC/AC kablo ve pano tasarımı için destek alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../teklif-araclari.html" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var SEC = [1.5,2.5,4,6,10,16,25,35,50,70,95,120,150,185,240];
+      var RHO = 0.0175;
+      var AMP = {'1.5':18,'2.5':24,'4':32,'6':41,'10':57,'16':76,'25':101,'35':125,'50':151,'70':192,'95':232,'120':269,'150':309,'185':353,'240':415};
+      function pick(current, len, u, dropPct, dc) {
+        var factor = dc ? 2 : Math.sqrt(3);
+        var maxIz = AMP;
+        for (var i = 0; i < SEC.length; i++) {
+          var s = SEC[i];
+          var iz = maxIz[String(s)];
+          var drop = factor * current * len * RHO / (s * u) * 100;
+          if (iz >= current * 1.25 && drop <= dropPct) return { sec: s, drop: Math.round(drop * 100) / 100 };
+        }
+        return { sec: 240, drop: 999 };
+      }
+      function update() {
+        var p = Math.max(1, Number(document.getElementById('in-power').value) || 1);
+        var uac = Number(document.getElementById('in-acv').value);
+        var lac = Math.max(1, Number(document.getElementById('in-aclen').value) || 60);
+        var udc = Math.max(100, Number(document.getElementById('in-dcv').value) || 600);
+        var str = Math.max(1, Number(document.getElementById('in-strings').value) || 4);
+        var ldc = Math.max(1, Number(document.getElementById('in-dclen').value) || 40);
+        var isThreePhase = uac === 400;
+        var iAc = isThreePhase ? (p * 1000) / (Math.sqrt(3) * uac * 0.99) : (p * 1000) / (uac * 0.99);
+        var iDcStr = 14;
+        var iDcMain = iDcStr * str;
+        var ac = pick(iAc, lac, uac, 1.5, false);
+        var dcMain = pick(iDcMain, ldc, udc, 1, true);
+        document.getElementById('in-result').textContent = 'AC: ' + ac.sec + ' mm² • DC ana: ' + dcMain.sec + ' mm²';
+        document.getElementById('in-detail').textContent = 'AC akım ' + Math.round(iAc) + ' A / düşüm %' + ac.drop + '. DC ana toplayıcı ' + iDcMain + ' A / düşüm %' + dcMain.drop + '. String başına 6 mm² solar kablo tipik olarak yeterlidir.';
+      }
+      ['in-power','in-acv','in-aclen','in-dcv','in-strings','in-dclen'].forEach(function(id){document.getElementById(id).addEventListener('input',update);document.getElementById(id).addEventListener('change',update);});
+      update();
+    }());
+  </script>
+  <script src="../js/voltguard-auth.js"></script>
+  <script src="../js/voltguard-tools.js"></script>
+</body></html>

@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="UPS gücü ve akü süresi hesaplama aracı: kritik yük, güç faktörü, yedekleme süresi ve akü verimine göre gerekli UPS kVA ve akü kapasitesini önerir.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>UPS Gücü ve Akü Süresi Hesaplama Aracı | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="UPS Gücü ve Akü Süresi Hesaplama Aracı | VoltGuard">
+  <meta property="og:description" content="Kritik yük, güç faktörü, yedekleme süresi ve akü verimine göre gerekli UPS kVA ve akü kapasitesi.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/#article","headline":"UPS Gücü ve Akü Süresi Hesaplama Aracı","description":"Kritik yük, güç faktörü, yedekleme süresi ve akü verimine göre gerekli UPS ve akü kapasitesi.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"UPS Gücü ve Akü Süresi","item":"https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"UPS gücü nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Kritik yük kW cinsinden belirlenir ve UPS'in çıkış güç faktörüne (tipik 0,9 veya 1,0) bölünerek kVA'ya çevrilir. Sonuca %20-30 büyüme payı eklenerek standart bir üstteki UPS kademesi seçilir."}},{"@type":"Question","name":"Akü kapasitesi nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Yaklaşık formül: Toplam akü kapasitesi (Ah) = (Kritik yük kW × Yedekleme dakika × 60) / (Akü DC gerilimi × Verim × Deşarj sonu gerilim katsayısı). Kesin hesap için üretici deşarj eğrileri esas alınmalıdır."}},{"@type":"Question","name":"Online (double-conversion) ve line-interactive UPS farkı nedir?","acceptedAnswer":{"@type":"Answer","text":"Online UPS'te yük her zaman inverterden beslenir; şebeke kesintisinde geçiş süresi sıfırdır ve gerilim/frekans regülasyonu sürekli sağlanır. Line-interactive UPS'te ise yük normalde şebekeden beslenir, sadece arıza durumunda inverter devreye girer; geçiş süresi 2-6 ms arasındadır."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../teklif-araclari.html">Hesaplama Merkezi</a> &rsaquo; <span>UPS Gücü ve Akü Süresi</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Enerji &amp; Yedekleme</span>
+    <h1>UPS Gücü ve Akü Süresi Hesaplama Aracı</h1>
+    <p class="article__summary">Kritik yükünüzü, hedef yedekleme süresini ve akü DC gerilimini girin; önerilen UPS gücünü (kVA) ve toplam akü kapasitesini (Ah) anında görün.</p>
+
+    <div class="mini-calc">
+      <div class="mini-calc__fields">
+        <div class="mini-calc__field"><label for="up-load">Kritik yük (kW)</label><input id="up-load" type="number" min="0" step="0.5" value="20" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="up-pf">UPS çıkış cosφ</label><select id="up-pf"><option value="0.9">0,9 (yaygın)</option><option value="1" selected>1,0 (modern IGBT)</option></select></div>
+        <div class="mini-calc__field"><label for="up-time">Yedekleme süresi (dk)</label><input id="up-time" type="number" min="1" value="15" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="up-dc">Akü DC gerilim (V)</label><select id="up-dc"><option value="192">192 V</option><option value="240" selected>240 V</option><option value="384">384 V</option><option value="480">480 V</option></select></div>
+        <div class="mini-calc__field"><label for="up-eff">İnverter verimi (%)</label><input id="up-eff" type="number" min="80" max="99" value="94" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="up-margin">Büyüme payı (%)</label><input id="up-margin" type="number" min="0" max="100" value="20" inputmode="decimal"></div>
+      </div>
+      <div class="mini-calc__result">
+        <span class="mini-calc__result-label">Ön Sonuç</span>
+        <span class="mini-calc__result-value" id="up-result">-</span>
+        <span class="mini-calc__result-note" id="up-detail"></span>
+      </div>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>UPS boyutlandırmasında kritik yük kW olarak belirlenir; çıkış cosφ'ye bölünerek kVA bulunur.</li><li>Kısa yedekleme (5-15 dk) çoğu ofis kullanımı için yeterlidir; server room 15-30 dk, veri merkezi 15 dk + jeneratör kombinasyonu tipiktir.</li><li>Akü kapasitesi VA cinsinden değil, DC güç × süre olarak hesaplanır.</li><li>Modern IGBT UPS'lerde çıkış cosφ = 1 olduğundan kVA ≈ kW; bu, önemli avantajdır.</li></ul></div>
+
+    <h2>Hesaplama Adımları</h2>
+    <ol class="article__list">
+      <li><strong>UPS gücü:</strong> S<sub>UPS</sub> (kVA) = Kritik yük kW ÷ Çıkış cosφ × (1 + Yedek payı)</li>
+      <li><strong>DC güç:</strong> P<sub>DC</sub> (W) = Kritik yük × 1000 ÷ İnverter verimi</li>
+      <li><strong>Akü akımı:</strong> I<sub>batt</sub> (A) = P<sub>DC</sub> ÷ V<sub>DC</sub></li>
+      <li><strong>Akü kapasitesi:</strong> C (Ah) = I<sub>batt</sub> × (Süre dk / 60) × 1,15 (deşarj eğrisi düzeltmesi)</li>
+      <li><strong>Akü sayısı:</strong> V<sub>DC</sub> ÷ 12 = seri akü sayısı (12 V modüller için). Örn. 240 V için 20 adet 12 V akü.</li>
+    </ol>
+
+    <h2>Örnek Hesap: 20 kW, 15 dk Yedekleme</h2>
+    <p>Çıkış cosφ = 1, 240 V DC, %94 verim ve %20 pay için: UPS = 20 × 1,2 ≈ <strong>25 kVA</strong> (standart kademe 30 kVA). DC güç ≈ 21.277 W. Akü akımı ≈ 88,7 A. Akü kapasitesi ≈ 88,7 × 15/60 × 1,15 ≈ <strong>25 Ah</strong>. Bu, 240 V için 20 adet 12 V / 26 Ah VRLA akü kombinasyonuyla karşılanabilir.</p>
+
+    <h2>Kritik Yük Kategorileri ve Tipik Yedekleme Süresi</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Kategori</th><th>Tipik yedekleme</th><th>Not</th></tr></thead>
+      <tbody>
+        <tr><td>Ofis bilgisayarları</td><td>5-10 dk</td><td>Güvenli kapatma yeter</td></tr>
+        <tr><td>Küçük sunucu odası</td><td>15-30 dk</td><td>Yönetimli kapatma</td></tr>
+        <tr><td>Veri merkezi (Tier II-III)</td><td>10-15 dk + Jeneratör</td><td>Jeneratör devreye girene kadar</td></tr>
+        <tr><td>Hastane / Yaşam desteği</td><td>60 dk + Jeneratör</td><td>N+1 yedekli tasarım</td></tr>
+        <tr><td>Endüstriyel PLC panosu</td><td>5-30 dk</td><td>Kontrol edilen kapanış</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">UPS gücü nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Kritik yük kW ÷ çıkış cosφ formülüyle kVA bulunur; %20-30 büyüme payı eklenip bir üst standart kademe seçilir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Akü kapasitesi nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>DC güç ÷ DC gerilim × süre × düzeltme katsayısı ile toplam Ah bulunur. Kesin hesap için üretici deşarj eğrileri esas alınmalıdır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Online ve line-interactive UPS farkı? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Online UPS her zaman inverterden besler ve geçiş süresi sıfırdır; line-interactive'te geçiş süresi 2-6 ms'dir. Server room ve endüstriyel yükler için online tercih edilir.</p></div></details>
+
+    <p class="kb-disclaimer">Bu araç yalnızca ön değerlendirme sağlar. Akü teknoloji seçimi (VRLA, Lityum), yaşlanma faktörü ve harmonik yükün çıkış filtresine etkisi için üretici katalog ve uzman görüşü gereklidir.</p>
+    <p>Daha fazla ilgili kaynak: <a href="../hesaplama/jenerator-gucu-hesaplama.html">Jeneratör Gücü Hesaplama</a>, <a href="../teklif-araclari.html">VoltGuard Hesaplama Merkezi</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Kritik yük yedekleme (UPS + jeneratör) mimari desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../teklif-araclari.html" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var STD = [1,3,6,10,15,20,30,40,60,80,100,120,160,200,250,300,400,500,600,800];
+      function update() {
+        var load = Math.max(0, Number(document.getElementById('up-load').value) || 0);
+        var pf = Number(document.getElementById('up-pf').value);
+        var time = Math.max(1, Number(document.getElementById('up-time').value) || 15);
+        var dc = Number(document.getElementById('up-dc').value);
+        var eff = Math.min(0.99, Math.max(0.8, Number(document.getElementById('up-eff').value) / 100 || 0.94));
+        var margin = Math.max(0, Number(document.getElementById('up-margin').value) || 20) / 100;
+        var kva = load / pf * (1 + margin);
+        var pick = STD.find(function(n){ return n >= kva; }) || STD[STD.length - 1];
+        var pdc = load * 1000 / eff;
+        var iBatt = pdc / dc;
+        var ah = iBatt * (time / 60) * 1.15;
+        var seri = Math.round(dc / 12);
+        document.getElementById('up-result').textContent = pick + ' kVA / ' + Math.round(ah) + ' Ah';
+        document.getElementById('up-detail').textContent = 'DC güç ≈ ' + Math.round(pdc) + ' W. Akü grubu için ' + seri + ' adet 12 V seri (' + dc + ' V nominal) önerilir.';
+      }
+      ['up-load','up-pf','up-time','up-dc','up-eff','up-margin'].forEach(function(id){document.getElementById(id).addEventListener('input',update);document.getElementById(id).addEventListener('change',update);});
+      update();
+    }());
+  </script>
+  <script src="../js/voltguard-auth.js"></script>
+  <script src="../js/voltguard-tools.js"></script>
+</body></html>

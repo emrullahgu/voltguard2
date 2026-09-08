@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Kısa devre akımı nedir, nasıl hesaplanır, hangi hasarlara yol açar ve pano kesme kapasitesi seçimini nasıl belirler?">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Kısa Devre Akımı Nedir? Ik Hesabı ve Icu Seçimi | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/bilgi/kisa-devre-akimi-nedir.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Kısa Devre Akımı Nedir? Ik Hesabı ve Icu Seçimi | VoltGuard">
+  <meta property="og:description" content="Kısa devre akımı nedir, nasıl hesaplanır, ne tür hasarlara yol açar ve pano kesme kapasitesi seçimini nasıl belirler?">
+  <meta property="og:url" content="https://voltguard.com.tr/bilgi/kisa-devre-akimi-nedir.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/kisa-devre-akimi-nedir.html#article","headline":"Kısa Devre Akımı Nedir? Ik Hesabı ve Icu Seçimi","description":"Kısa devre akımı nedir, nasıl hesaplanır ve pano kesme kapasitesi seçimini nasıl belirler?","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/kisa-devre-akimi-nedir.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Kısa devre akımı nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Trafo çıkışında Ik = In × 100 / uk formülü kullanılır. In trafonun nominal akımı, uk kısa devre gerilim yüzdesidir. Uzak noktalarda kablo empedansı da hesaba katılarak Ik azalır."}},{"@type":"Question","name":"Icu ve Ics arasındaki fark nedir?","acceptedAnswer":{"@type":"Answer","text":"Icu (ultimate breaking capacity), TMŞ'nin bir kere açtıktan sonra tekrar kullanılabilir olmayacağı maksimum kesme kapasitesidir. Ics (service breaking capacity), TMŞ'nin tekrar tekrar açıp kapanabildiği güvenli kesme kapasitesidir ve genellikle Icu'nun 50-100%'ü kadardır."}},{"@type":"Question","name":"1000 kVA trafoda Ik ne kadardır?","acceptedAnswer":{"@type":"Answer","text":"400 V ve uk = %6 için yaklaşık 24 kA'dır. Bu değere göre ana pano şalterlerinde en az 25 kA'lık Icu tercih edilmelidir."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+        <a href="../index.html#hizmetler">Hizmetler</a>
+        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>Kısa Devre Akımı Nedir?</span>
+  </nav>
+
+  <main class="article">
+    <span class="article__cat">Elektrik Hesapları</span>
+    <h1>Kısa Devre Akımı Nedir? Ik Hesabı ve Icu Seçimi</h1>
+    <p class="article__summary">Kısa devre akımı (Ik), bir tesiste iki iletkenin veya bir iletkenle toprağın çok düşük empedansla temas etmesi sonucu ortaya çıkan çok yüksek genlikli akımdır. Doğru hesaplanmadığında pano cihazları parçalanabilir; doğru anlaşıldığında ise koruma cihazları güvenle koordine edilebilir. Bu rehberde Ik nedir, nasıl hesaplanır ve TMŞ / sigorta seçimini nasıl belirler öğreneceksiniz.</p>
+
+    <div class="kb-quickanswer">
+      <span class="kb-quickanswer__label">Kısa Cevap</span>
+      <strong class="kb-quickanswer__value">Ik = In × 100 / uk (trafo çıkışında)</strong>
+      <span class="kb-quickanswer__note">1000 kVA / %6 uk trafoda ana barada Ik ~24 kA'dır. Her koruma cihazının Icu değeri o noktadaki Ik'dan büyük olmalıdır.</span>
+    </div>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Ik, trafo çıkışında en yüksek; uzaklaştıkça kablo direnci ile azalır.</li><li>TMŞ Icu değeri, o noktadaki maksimum Ik'dan büyük olmalıdır.</li><li>Ip (peak) = Ik × 2,55 mertebesinde olup baraların mekanik dayanımını belirler.</li><li>K² × S² ≥ Ik² × t koşuluyla kablonun kısa devre dayanımı kontrol edilir.</li><li>Selektivite için ana ve tali kademelerin Icu × zaman koordinasyonu yapılır.</li></ul></div>
+
+    <h2>Kısa Devre Nedir?</h2>
+    <p>Kısa devre, iki farklı potansiyel arasında (faz-faz, faz-nötr veya faz-toprak) çok düşük empedanslı bir yol oluşmasıdır. Bu, kablonun yalıtım hatası, gevşemiş klemens teması, arıza yapan bir cihaz veya bilinçsizce yapılan bir müdahale sonucu oluşabilir. Kısa devre anında akım, sistemin nominal değerinin binlerce katına çıkabilir; birkaç millisaniye içinde çok büyük ısı ve manyetik kuvvet üretir.</p>
+
+    <h2>Ik'yi Belirleyen Faktörler</h2>
+    <ol class="article__list">
+      <li><strong>Trafo gücü (S):</strong> Büyük trafo, daha büyük Ik demektir.</li>
+      <li><strong>Trafo uk (%):</strong> Kısa devre gerilim yüzdesi. Küçük uk (%4) daha büyük Ik verir; büyük uk (%8) daha küçük.</li>
+      <li><strong>Sistem gerilimi (U):</strong> Aynı güç için düşük gerilim daha büyük akım anlamına gelir.</li>
+      <li><strong>Kablo ve baraların empedansı:</strong> Trafodan uzaklaştıkça artar; Ik azalır.</li>
+      <li><strong>Motor katkısı:</strong> Sistemdeki büyük asenkron motorlar kısa devre anında akım besler; ilk 0,5 saniye Ik'yı %10-20 artırabilir.</li>
+      <li><strong>Paralel jeneratör/inverter:</strong> Adalanmış sistemlerde ekstra Ik kaynağıdır.</li>
+    </ol>
+
+    <h2>Ik Hesap Formülleri</h2>
+    <ul class="article__list">
+      <li><strong>Trafo nominal akımı:</strong> In = S × 1000 / (√3 × U)</li>
+      <li><strong>Trafo çıkışı 3-faz Ik:</strong> Ik = In × 100 / uk</li>
+      <li><strong>Uzak nokta 3-faz Ik:</strong> Ik = c × U / (√3 × Zk); Zk toplam empedanstır</li>
+      <li><strong>Pik akım:</strong> Ip = Ik × κ; κ ≈ 1,8 ila 2,55 arasında değişir</li>
+      <li><strong>Termik eşdeğer:</strong> Ith = Ik × √(m + n); m ve n hesaba göre değişir</li>
+    </ul>
+
+    <h2>Icu ve Ics: Kesme Kapasiteleri</h2>
+    <ul class="article__list">
+      <li><strong>Icu (ultimate breaking capacity):</strong> TMŞ'nin bir kere açtıktan sonra tekrar kullanılabilir olmayacağı maksimum kesme kapasitesi.</li>
+      <li><strong>Ics (service breaking capacity):</strong> TMŞ'nin tekrar tekrar açıp kapanabildiği güvenli kesme kapasitesi. Genellikle Icu'nun 50-100%'ü.</li>
+      <li><strong>Icw (short-time withstand):</strong> Baraların 1 saniye boyunca dayandığı termal akım.</li>
+      <li><strong>Ipk (peak withstand):</strong> Baraların mekanik olarak dayandığı zirve akım.</li>
+    </ul>
+    <p>Sanayi tesislerinde her koruma cihazı, o noktadaki maksimum Ik'yı sorunsuz kesebilmelidir. Ana pano şalterinde Icu ≥ Ik olmalı; TMŞ değerleri 6, 10, 15, 25, 36, 50, 65, 100, 150, 200 kA olarak standardize edilmiştir.</p>
+
+    <h2>Yaygın Trafo Ik Değerleri (400 V, uk = %6)</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Trafo (kVA)</th><th>In (A)</th><th>Ik (kA)</th><th>Önerilen Icu</th></tr></thead>
+      <tbody>
+        <tr><td>250</td><td>361</td><td>6,0</td><td>10 kA</td></tr>
+        <tr><td>400</td><td>577</td><td>9,6</td><td>15 kA</td></tr>
+        <tr><td>630</td><td>909</td><td>15,2</td><td>25 kA</td></tr>
+        <tr><td>1000</td><td>1443</td><td>24,0</td><td>25-36 kA</td></tr>
+        <tr><td>1250</td><td>1804</td><td>30,0</td><td>36 kA</td></tr>
+        <tr><td>1600</td><td>2309</td><td>38,5</td><td>50 kA</td></tr>
+        <tr><td>2000</td><td>2887</td><td>48,1</td><td>50-65 kA</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Ik'nın Yol Açtığı Zararlar</h2>
+    <ul class="article__list">
+      <li><strong>Termal zarar:</strong> Kısa sürede yüksek I²t enerjisi kabloyu eritebilir; koruma cihazının açma süresine göre değişir.</li>
+      <li><strong>Manyetik kuvvet:</strong> Baralar arası kısa süreli mekanik darbe; F ∝ I². Uygun bara sabitleme mesafesi gereklidir.</li>
+      <li><strong>Ark yanma:</strong> Ark enerjisi (kJ) pano içi çelik ve bakırı buharlaştırıp basınç dalgası oluşturur. Ark flash risk analizi (IEEE 1584) yapılır.</li>
+      <li><strong>Pano deformasyonu:</strong> Yetersiz Icu şalter parçalanır; içeriye ark döker.</li>
+    </ul>
+
+    <h2>Ik ve Selektivite</h2>
+    <p>Bir tesiste hem koruma hem selektivite (seçicilik) sağlanmalıdır: alt kademe koruma cihazı açtığında üst kademe hâlâ enerjili kalmalıdır. Bu, akım kademelemesi + zaman kademelemesi ile yapılır. Ana pano şalteri "S" tipi veya elektronik açtırıcı olarak 100-200 ms gecikmeli seçilir; tali panoda ise anlık açan cihazlar kullanılır. Ik değeri, hangi cihazın önce açacağının hesaplandığı Icu-zaman eğrisi analiziyle netleştirilir.</p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Kısa devre akımı nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Trafo çıkışında Ik = In × 100 / uk formülü kullanılır. Uzak noktalarda kablo empedansı da hesaba katılır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Icu ve Ics farkı? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Icu tek seferlik kesme kapasitesi; Ics tekrar tekrar kullanılabilir güvenli kesme kapasitesidir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">1000 kVA trafoda Ik ne kadardır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>400 V ve uk = %6 için yaklaşık 24 kA'dır. Ana pano şalterlerinde en az 25 kA Icu önerilir.</p></div></details>
+
+    <p class="kb-disclaimer">Bu içerik bilgilendirme amaçlıdır. Kesin kısa devre analizi ve pano koordinasyonu için IEC 60909 metodolojisiyle proje bazlı hesap gereklidir.</p>
+    <p>İlgili kaynaklar: <a href="../hesaplama/kisa-devre-akimi-hesaplama.html">Kısa Devre Akımı Hesaplama Aracı</a>, <a href="../hesaplama/sigorta-tms-secimi.html">Sigorta / TMŞ Seçim Aracı</a>, <a href="../bilgi/tms-secimi-rehberi.html">TMŞ Seçim Rehberi</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Kısa devre analizi ve pano koordinasyonu için mühendislik desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
+      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+    </div>
+    <p style="margin-top:1.6rem"><a href="../bilgi-bankasi.html" class="kb-card__more">&larr; Tüm rehberler: Bilgi Bankası</a></p>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__bottom">
+        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../js/voltguard-auth.js"></script>
+</body>
+</html>

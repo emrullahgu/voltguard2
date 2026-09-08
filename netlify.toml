@@ -41,3 +41,135 @@
   from = "/hesaplama/kompanzasyon-hesaplama/"
   to = "/hesaplama/kompanzasyon-hesaplama.html"
   status = 200
+
+[[redirects]]
+  from = "/hesaplama/gerilim-dusumu-hesaplama.html"
+  to = "/hesaplama/gerilim-dusumu-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/gerilim-dusumu-hesaplama/"
+  to = "/hesaplama/gerilim-dusumu-hesaplama.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/motor-akimi-hesaplama.html"
+  to = "/hesaplama/motor-akimi-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/motor-akimi-hesaplama/"
+  to = "/hesaplama/motor-akimi-hesaplama.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/kw-kva-amper-donusturucu.html"
+  to = "/hesaplama/kw-kva-amper-donusturucu/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/kw-kva-amper-donusturucu/"
+  to = "/hesaplama/kw-kva-amper-donusturucu.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/sigorta-tms-secimi.html"
+  to = "/hesaplama/sigorta-tms-secimi/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/sigorta-tms-secimi/"
+  to = "/hesaplama/sigorta-tms-secimi.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/motor-koruma-kontaktor-secimi.html"
+  to = "/hesaplama/motor-koruma-kontaktor-secimi/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/motor-koruma-kontaktor-secimi/"
+  to = "/hesaplama/motor-koruma-kontaktor-secimi.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/kisa-devre-akimi-hesaplama.html"
+  to = "/hesaplama/kisa-devre-akimi-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/kisa-devre-akimi-hesaplama/"
+  to = "/hesaplama/kisa-devre-akimi-hesaplama.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/jenerator-gucu-hesaplama.html"
+  to = "/hesaplama/jenerator-gucu-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/jenerator-gucu-hesaplama/"
+  to = "/hesaplama/jenerator-gucu-hesaplama.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/ups-gucu-hesaplama.html"
+  to = "/hesaplama/ups-gucu-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/ups-gucu-hesaplama/"
+  to = "/hesaplama/ups-gucu-hesaplama.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/topraklama-hesaplama.html"
+  to = "/hesaplama/topraklama-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/topraklama-hesaplama/"
+  to = "/hesaplama/topraklama-hesaplama.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/ges-uretim-hesaplama.html"
+  to = "/hesaplama/ges-uretim-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/ges-uretim-hesaplama/"
+  to = "/hesaplama/ges-uretim-hesaplama.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/inverter-dc-ac-kablo-secimi.html"
+  to = "/hesaplama/inverter-dc-ac-kablo-secimi/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/inverter-dc-ac-kablo-secimi/"
+  to = "/hesaplama/inverter-dc-ac-kablo-secimi.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/aydinlatma-lux-hesaplama.html"
+  to = "/hesaplama/aydinlatma-lux-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/aydinlatma-lux-hesaplama/"
+  to = "/hesaplama/aydinlatma-lux-hesaplama.html"
+  status = 200

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a1628">
+  <meta name="color-scheme" content="light only">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Projeler | VoltGuard Tools</title>
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="">VoltGuard</a>
+      <nav class="doc-header__nav" aria-label="Üst menü">
+        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="../akademi.html">Akademi</a>
+        <a href="../teklif-araclari.html">Tools</a>
+        <a href="../sor.html">VoltGuard'a Sor</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="vg-panel">
+    <aside class="vg-panel__nav" aria-label="Hesap menüsü">
+      <a href="panel.html"><i class="fas fa-gauge-high"></i> Panel</a>
+      <a href="gecmis.html"><i class="fas fa-clock-rotate-left"></i> Geçmiş Hesaplamalar</a>
+      <a href="favoriler.html"><i class="fas fa-star"></i> Favori Araçlar</a>
+      <a href="projeler.html" class="is-active"><i class="fas fa-folder-tree"></i> Projeler</a>
+      <a href="dokumanlar.html"><i class="fas fa-book-open"></i> Dokümanlarım</a>
+      <button type="button" class="vg-panel__logout" id="logout-btn"><i class="fas fa-arrow-right-from-bracket"></i> Çıkış yap</button>
+    </aside>
+
+    <section class="vg-panel__main">
+      <div class="vg-section">
+        <h2><i class="fas fa-folder-plus"></i> Yeni proje oluştur</h2>
+        <p style="color:var(--clr-text-muted);margin:.35rem 0 1rem">Bir tesis, saha veya müşteri için proje oluşturun; kayıtlı hesaplamalarınızı bu projeye bağlayarak organize edin.</p>
+        <form id="new-project" class="vg-inline-form" novalidate>
+          <input name="name" type="text" placeholder="Proje adı (örn. Bornova Tekstil Fabrikası)" required>
+          <input name="description" type="text" placeholder="Kısa not (opsiyonel)">
+          <button type="submit"><i class="fas fa-plus"></i> Ekle</button>
+        </form>
+      </div>
+
+      <div class="vg-section">
+        <h2><i class="fas fa-folder-tree"></i> Projeleriniz</h2>
+        <div id="projects-list" class="vg-projects-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/voltguard-auth.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var Auth = window.VG.Auth;
+      var user = Auth.requireAuth('giris.html');
+      if (!user) return;
+
+      document.getElementById('logout-btn').addEventListener('click', function () {
+        if (confirm('Çıkış yapmak istediğinize emin misiniz?')) { Auth.logout(); location.href = '../index.html'; }
+      });
+
+      var list = document.getElementById('projects-list');
+      var form = document.getElementById('new-project');
+
+      form.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        try {
+          Auth.createProject(form.name.value, form.description.value);
+          form.reset();
+          render();
+        } catch (e) { alert(e.message); }
+      });
+
+      function render() {
+        var items = Auth.getProjects();
+        if (!items.length) {
+          list.innerHTML = '<div class="vg-empty">Henüz projeniz yok. Yukarıdaki formdan ilk projenizi oluşturun.</div>';
+          return;
+        }
+        var history = Auth.getHistory();
+        var histMap = {}; history.forEach(function (h) { histMap[h.id] = h; });
+        list.innerHTML = items.map(function (p) {
+          var when = new Date(p.createdAt).toLocaleDateString('tr-TR');
+          var calcs = (p.calcIds || []).map(function (id) { return histMap[id]; }).filter(Boolean);
+          var calcsHtml = calcs.length
+            ? '<ul style="margin:.4rem 0 0 1.2rem;padding:0;color:var(--clr-text-muted);font-size:.88rem">'
+              + calcs.map(function (c) {
+                return '<li>' + esc(c.toolName) + ' <strong style="color:var(--clr-accent-text)">' + esc(c.result && c.result.value || '-') + '</strong> <span style="opacity:.6">(' + new Date(c.savedAt).toLocaleDateString('tr-TR') + ')</span></li>';
+              }).join('')
+              + '</ul>'
+            : '<p style="color:var(--clr-text-muted);font-size:.85rem;margin:.4rem 0 0">Bu projeye bağlı hesap yok. <a href="gecmis.html">Geçmiş sekmesinden</a> hesap ekleyebilirsiniz.</p>';
+          return '<div class="vg-project-item">'
+            + '<h3><i class="fas fa-folder"></i> ' + esc(p.name) + ' <small style="font-weight:400;color:var(--clr-text-muted);font-size:.8rem">' + esc(when) + '</small></h3>'
+            + (p.description ? '<div style="color:var(--clr-text-muted);font-size:.9rem">' + esc(p.description) + '</div>' : '')
+            + calcsHtml
+            + '<div class="vg-project-item__actions">'
+            + '<button type="button" class="vg-mini-btn vg-mini-btn--danger" data-delete="' + escAttr(p.id) + '"><i class="fas fa-trash"></i> Projeyi sil</button>'
+            + '</div>'
+            + '</div>';
+        }).join('');
+        list.querySelectorAll('[data-delete]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            if (confirm('Bu projeyi silmek istediğinize emin misiniz? Bağlı hesaplamalar geçmişte kalır.')) {
+              Auth.deleteProject(btn.getAttribute('data-delete'));
+              render();
+            }
+          });
+        });
+      }
+
+      function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
+      function escAttr(s) { return esc(s); }
+
+      render();
+    }());
+  </script>
+</body>
+</html>
