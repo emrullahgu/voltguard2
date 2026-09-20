@@ -230,32 +230,129 @@
 
   // ---- Nav decoration ----
   function decorateNav() {
-    var navs = document.querySelectorAll('.doc-header__nav');
-    if (!navs.length) return;
+    setupDocHeaderToggle();
     var user = currentUser();
-    navs.forEach(function (nav) {
+    var prefix = pathPrefix();
+    // Secondary "doc-header__nav" used on subpages (bilgi, akademi, sor, hesaplama, mm, hesap)
+    document.querySelectorAll('.doc-header__nav').forEach(function (nav) {
       if (nav.querySelector('[data-vg-account]')) return;
       var link = document.createElement('a');
       link.setAttribute('data-vg-account', '');
       if (user) {
-        link.href = pathPrefix() + 'hesap/panel.html';
+        link.href = prefix + 'hesap/panel.html';
         link.innerHTML = '<i class="fas fa-circle-user" aria-hidden="true"></i> ' + escapeHtml(user.name.split(' ')[0]);
       } else {
-        link.href = pathPrefix() + 'hesap/giris.html';
+        link.href = prefix + 'hesap/giris.html';
         link.innerHTML = '<i class="fas fa-user" aria-hidden="true"></i> Hesabım';
       }
-      // insert before the CTA button (last child) if any
       var cta = nav.querySelector('.btn--accent');
       if (cta) nav.insertBefore(link, cta); else nav.appendChild(link);
+    });
+    // Main homepage nav uses .nav__menu list of <li> items
+    document.querySelectorAll('.nav__menu').forEach(function (nav) {
+      if (nav.querySelector('[data-vg-account]')) return;
+      var li = document.createElement('li');
+      var link = document.createElement('a');
+      link.className = 'nav__link';
+      link.setAttribute('data-vg-account', '');
+      if (user) {
+        link.href = prefix + 'hesap/panel.html';
+        link.innerHTML = '<i class="fas fa-circle-user" aria-hidden="true"></i> ' + escapeHtml(user.name.split(' ')[0]);
+      } else {
+        link.href = prefix + 'hesap/giris.html';
+        link.innerHTML = '<i class="fas fa-user" aria-hidden="true"></i> Hesabım';
+      }
+      li.appendChild(link);
+      nav.appendChild(li);
+    });
+  }
+
+  // Alt sayfalardaki .doc-header'a mobil hamburger enjekte eder (markup'ı değiştirmeden).
+  function setupDocHeaderToggle() {
+    document.querySelectorAll('.doc-header__inner').forEach(function (inner) {
+      var nav = inner.querySelector('.doc-header__nav');
+      if (!nav || inner.querySelector('.doc-header__toggle')) return;
+      var toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'doc-header__toggle';
+      toggle.setAttribute('aria-label', 'Menüyü aç/kapat');
+      toggle.setAttribute('aria-controls', nav.id || '');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.innerHTML = '<span></span><span></span><span></span>';
+      inner.appendChild(toggle);
+
+      function close() {
+        nav.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+      function open() {
+        nav.classList.add('open');
+        toggle.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+      }
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (nav.classList.contains('open')) close(); else open();
+      });
+      nav.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', close);
+      });
+      document.addEventListener('click', function (e) {
+        if (!nav.classList.contains('open')) return;
+        if (nav.contains(e.target) || toggle.contains(e.target)) return;
+        close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && nav.classList.contains('open')) {
+          close();
+          toggle.focus();
+        }
+      });
+    });
+
+    prefetchOnIntent();
+  }
+
+  // Hover/touch/focus üzerine link hedefini önden indir; tıklamada sayfa anında açılır.
+  function prefetchOnIntent() {
+    if (!document.head) return;
+    var prefetched = {};
+    function prefetch(href) {
+      if (!href || prefetched[href]) return;
+      /* Aynı origin dışı, sadece anchor veya özel şemalar: atla. */
+      if (/^(#|mailto:|tel:|javascript:)/i.test(href)) return;
+      try {
+        var url = new URL(href, location.href);
+        if (url.origin !== location.origin) return;
+        if (url.pathname === location.pathname) return;
+      } catch (e) { return; }
+      prefetched[href] = true;
+      var link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = href;
+      link.as = 'document';
+      document.head.appendChild(link);
+    }
+    var selector = '.doc-header__nav a, .nav__menu a, .kb-card, .mm-card, .kb-libcard';
+    document.querySelectorAll(selector).forEach(function (el) {
+      var href = el.getAttribute('href');
+      if (!href) return;
+      var trigger = function () { prefetch(href); };
+      el.addEventListener('mouseenter', trigger, { passive: true, once: true });
+      el.addEventListener('focus', trigger, { passive: true, once: true });
+      el.addEventListener('touchstart', trigger, { passive: true, once: true });
     });
   }
 
   function pathPrefix() {
-    // Compute relative prefix based on current path depth (assumes /hesaplama/, /bilgi/, /akademi/, /sor/, /hesap/ subfolders).
+    // Detect known site subfolders instead of relying on total segment count (breaks on file:// URLs).
     var p = location.pathname.replace(/\\/g, '/');
     var segs = p.split('/').filter(Boolean);
-    if (segs.length >= 2) return '../';
-    return '';
+    if (segs.length < 2) return '';
+    var parent = segs[segs.length - 2];
+    var subfolders = { hesaplama: 1, bilgi: 1, akademi: 1, sor: 1, hesap: 1, mm: 1, ekle: 1 };
+    return subfolders[parent] ? '../' : '';
   }
 
   function escapeHtml(s) {

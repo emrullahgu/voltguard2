@@ -83,8 +83,21 @@
     @media (max-width: 760px) { .tool-categories, .tool-tabs, .tool-panel, .tool-fields { grid-template-columns: 1fr; } .tool-field--wide { grid-column: auto; } .tool-header__inner { padding: 0 1.1rem; } .tool-hero__inner, .tool-main { padding-left: 1.1rem; padding-right: 1.1rem; } }
   </style>
 </head>
-<body class="tool-page">
-  <header class="tool-header"><div class="tool-header__inner"><a href="index.html" class="tool-brand"><img class="tool-brand__image" src="public/logo.png" alt="">VoltGuard <span style="color:#fcd34d;font-weight:700">Tools</span></a><a class="tool-back" href="hesap/panel.html"><i class="fas fa-circle-user" aria-hidden="true"></i> Hesabım</a><a class="tool-back" href="sor.html">VoltGuard'a Sor</a><a class="tool-back" href="index.html">Ana Sayfaya Dön</a></div></header>
+<body class="tool-page doc-shell">
+  <header class="doc-header">
+    <div class="doc-header__inner">
+      <a class="doc-header__brand" href="index.html"><img src="public/icon-192.png" alt="" width="34" height="34">VoltGuard <span style="color:#fcd34d;font-weight:700;margin-left:.3rem">Tools</span></a>
+      <nav class="doc-header__nav" id="docNav" aria-label="Üst menü">
+        <a href="bilgi-bankasi.html">Bilgi Bankası</a>
+        <a href="akademi.html">Akademi</a>
+        <a href="muhendis-merkezi.html">Mühendis Merkezi</a>
+        <a href="hesaplama-araclari/">Hesap Araçları</a>
+        <a href="sor.html">VoltGuard'a Sor</a>
+        <a href="index.html#hizmetler">Hizmetler</a>
+        <a href="index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </nav>
+    </div>
+  </header>
   <main>
     <section class="tool-hero"><div class="tool-hero__inner"><span class="tool-eyebrow">VoltGuard Tools · Mühendislik Hesaplama Merkezi</span><h1>Ücretsiz elektrik mühendisliği hesap araçları</h1><p>Kablo kesiti, gerilim düşümü, sigorta/TMŞ, motor koruma şalteri, kontaktör, motor akımı, kompanzasyon, kısa devre, topraklama, GES ve inverter seçimine kadar tüm hesaplarınızı tek merkezden yapın. Her araçta kullanılan formül, varsayımlar ve mühendislik doğrulama uyarısı sonuçla birlikte gösterilir. Hesabı telefon numarası vermeden görün; ücretsiz üye olarak sonuçları kaydedin, favori araçlarınızı işaretleyin.</p></div></section>
     <section class="tool-main" aria-label="Teklif araçları">
@@ -282,6 +295,6 @@
       updates.forEach(function (update) { update(); });
     }());
   </script>
-  <script src="js/voltguard-auth.js"></script>
+  <script src="js/voltguard-auth.js" defer></script>
 </body>
 </html>

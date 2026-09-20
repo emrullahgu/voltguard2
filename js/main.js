@@ -32,15 +32,32 @@
 
   /* ------------------------------------------------
      0. PRELOADER
+     Preloader'ı olabildiğince erken gizle: DOMContentLoaded ile hemen kapat,
+     ayrıca güvenlik ağı olarak sabit bir üst sınır zamanlayıcı bırak.
+     (Eskiden window.load + 1300 ms bekleniyordu; ağır medya varken
+     kullanıcılar siyah ekranda takılıyordu.)
   ------------------------------------------------- */
   var preloader = qs('#preloader');
 
-  window.addEventListener('load', function () {
-    if (preloader) {
-      setTimeout(function () {
-        preloader.classList.add('hidden');
-      }, 1300);
+  function hidePreloader() {
+    if (preloader && !preloader.classList.contains('hidden')) {
+      preloader.classList.add('hidden');
     }
+  }
+
+  if (preloader) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', hidePreloader, { once: true });
+    } else {
+      /* Script defer/async ile sonradan yüklendiyse DOM zaten hazır demektir. */
+      hidePreloader();
+    }
+    /* Herhangi bir nedenle olay tetiklenmezse (bfcache, hata vb.) 1.5 sn üst sınır. */
+    setTimeout(hidePreloader, 1500);
+  }
+
+  window.addEventListener('load', function () {
+    hidePreloader();
 
     /* CSP-safe image error handling (replaces inline onerror) */
     qsAll('img[loading="lazy"], .hero__bg-img').forEach(function (img) {
@@ -126,15 +143,33 @@
   }, { passive: true });
 
   if (heroSpotlight && heroSection) {
+    /* rAF throttle: mousemove saniyede yüzlerce kez ateşleniyor; her seferinde
+       layout okuması + stil yazması pahalı. Sadece bir sonraki frame'de uygula. */
+    var spotPending = false;
+    var spotX = 0, spotY = 0;
+    var spotRect = null;
+
+    function applySpotlight() {
+      spotPending = false;
+      heroSpotlight.style.left = spotX + 'px';
+      heroSpotlight.style.top = spotY + 'px';
+      heroSpotlight.style.opacity = '0.95';
+    }
+
     heroSection.addEventListener('mousemove', function (e) {
       if (!desktopMQ.matches || prefersReducedMotion) return;
-      var rect = heroSection.getBoundingClientRect();
-      var x = e.clientX - rect.left;
-      var y = e.clientY - rect.top;
-      heroSpotlight.style.left = x + 'px';
-      heroSpotlight.style.top = y + 'px';
-      heroSpotlight.style.opacity = '0.95';
-    });
+      if (!spotRect) spotRect = heroSection.getBoundingClientRect();
+      spotX = e.clientX - spotRect.left;
+      spotY = e.clientY - spotRect.top;
+      if (!spotPending) {
+        spotPending = true;
+        requestAnimationFrame(applySpotlight);
+      }
+    }, { passive: true });
+
+    /* Layout değişebilir: scroll/resize sonrası rect'i tazele. */
+    window.addEventListener('resize', function () { spotRect = null; }, { passive: true });
+    window.addEventListener('scroll', function () { spotRect = null; }, { passive: true });
 
     heroSection.addEventListener('mouseleave', function () {
       heroSpotlight.style.opacity = '0.7';
@@ -751,19 +786,37 @@
   var projectCards = qsAll('.project-card--overlay');
 
   projectCards.forEach(function (card) {
-    card.addEventListener('mousemove', function (e) {
-      if (!desktopMQ.matches || prefersReducedMotion) return;
-      var rect = card.getBoundingClientRect();
-      var x = e.clientX - rect.left;
-      var y = e.clientY - rect.top;
-      var centerX = rect.width / 2;
-      var centerY = rect.height / 2;
-      var rotateX = ((y - centerY) / centerY) * -6;
-      var rotateY = ((x - centerX) / centerX) * 6;
+    var tiltPending = false;
+    var tiltX = 0, tiltY = 0;
+    var cardRect = null;
+
+    function applyTilt() {
+      tiltPending = false;
+      if (!cardRect) return;
+      var centerX = cardRect.width / 2;
+      var centerY = cardRect.height / 2;
+      var rotateX = ((tiltY - centerY) / centerY) * -6;
+      var rotateY = ((tiltX - centerX) / centerX) * 6;
       card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale(1.02)';
+    }
+
+    card.addEventListener('mouseenter', function () {
+      cardRect = card.getBoundingClientRect();
     });
 
+    card.addEventListener('mousemove', function (e) {
+      if (!desktopMQ.matches || prefersReducedMotion) return;
+      if (!cardRect) cardRect = card.getBoundingClientRect();
+      tiltX = e.clientX - cardRect.left;
+      tiltY = e.clientY - cardRect.top;
+      if (!tiltPending) {
+        tiltPending = true;
+        requestAnimationFrame(applyTilt);
+      }
+    }, { passive: true });
+
     card.addEventListener('mouseleave', function () {
+      cardRect = null;
       card.style.transform = '';
     });
   });
@@ -1094,5 +1147,53 @@
       navigator.serviceWorker.register('/sw.js').catch(function () { /* no-op */ });
     });
   }
+
+  /* ------------------------------------------------
+     18. LAZY VIDEO — büyük autoplay videoları yalnızca görüş alanına
+     girince yükle. Bu sayede ana sayfa açılışında MB'larca video verisi
+     bant genişliğini boğmuyor.
+  ------------------------------------------------- */
+  (function () {
+    var lazyVideos = qsAll('video[data-lazy-video]');
+    if (!lazyVideos.length) return;
+
+    function loadVideo(video) {
+      if (video.dataset.loaded === '1') return;
+      video.dataset.loaded = '1';
+      /* <source data-src> varsa src'ye taşı */
+      var sources = video.querySelectorAll('source[data-src]');
+      sources.forEach(function (s) {
+        s.src = s.getAttribute('data-src');
+        s.removeAttribute('data-src');
+      });
+      /* video[data-src] doğrudan tanımlıysa taşı */
+      if (video.getAttribute('data-src')) {
+        video.src = video.getAttribute('data-src');
+        video.removeAttribute('data-src');
+      }
+      video.preload = 'auto';
+      try { video.load(); } catch (e) { /* no-op */ }
+      /* Autoplay attribütü zaten var; load sonrası tarayıcı oynatır. */
+      var playAttempt = video.play();
+      if (playAttempt && typeof playAttempt.catch === 'function') {
+        playAttempt.catch(function () { /* kullanıcı jesti gerekiyorsa sessizce geç */ });
+      }
+    }
+
+    if ('IntersectionObserver' in window) {
+      var videoObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            loadVideo(entry.target);
+            videoObserver.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '200px 0px' });
+      lazyVideos.forEach(function (v) { videoObserver.observe(v); });
+    } else {
+      /* Fallback: hepsini hemen yükle */
+      lazyVideos.forEach(loadVideo);
+    }
+  })();
 
 })();

@@ -40,11 +40,32 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="preload" href="public/TrafoBakimYuksekGerilim.jpeg" as="image" fetchpriority="high">
+  <!-- Sık ziyaret edilen sayfaları arka planda önden indir; kullanıcı tıkladığında geçiş anlık hissedilir. -->
+  <link rel="prefetch" href="bilgi-bankasi.html">
+  <link rel="prefetch" href="akademi.html">
+  <link rel="prefetch" href="muhendis-merkezi.html">
+  <link rel="prefetch" href="sor.html">
+  <link rel="prefetch" href="teklif-araclari.html">
+  <!-- Chrome speculation rules: link üzerine gelince veya seçilince prerender (destekleyen tarayıcılarda). -->
+  <script type="speculationrules">
+  {
+    "prerender": [{
+      "where": { "href_matches": "/*" },
+      "eagerness": "moderate"
+    }]
+  }
+  </script>
+  <!-- Font Awesome CSS'ini render-blok etmeden (print swap deseni) yükle;
+       ikonlar biraz gecikebilir ama sayfa çok daha hızlı boyanır. -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer">
+        crossorigin="anonymous" referrerpolicy="no-referrer"
+        media="print" onload="this.media='all';this.onload=null">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></noscript>
   <link rel="stylesheet" href="css/style.css">
   <script type="application/ld+json">
   {
@@ -175,7 +196,7 @@
   <!-- ==================== PRELOADER ==================== -->
   <div class="preloader" id="preloader">
     <div class="preloader__inner">
-      <img class="preloader__logo" src="public/logo.png" alt="VoltGuard" width="96" height="96">
+      <img class="preloader__logo" src="public/icon-192.png" alt="VoltGuard" width="96" height="96" fetchpriority="high" decoding="async">
       <div class="preloader__bar"><div class="preloader__bar-fill"></div></div>
       <span class="preloader__text">VoltGuard</span>
     </div>
@@ -206,7 +227,7 @@
         <li><a href="akademi.html" class="nav__link">Akademi</a></li>
         <li><a href="muhendis-merkezi.html" class="nav__link">Mühendis Merkezi</a></li>
         <li><a href="sor.html" class="nav__link">VoltGuard'a Sor</a></li>
-        <li><a href="hesaplama-araclari/" class="nav__link">Hesaplama Araçları</a></li>
+        <li><a href="hesaplama-araclari/" class="nav__link">Hesap Araçları</a></li>
         <li><a href="#iletisim"   class="nav__link">İletişim</a></li>
       </ul>
 
@@ -298,8 +319,8 @@
   <section class="ges-intro" aria-labelledby="gesIntroTitle">
     <div class="container ges-intro__inner">
       <div class="ges-intro__video">
-        <video autoplay muted loop playsinline preload="metadata" poster="public/TrafoBakimYuksekGerilim.jpeg" aria-hidden="true">
-          <source src="public/ges-kurulumu.mp4" type="video/mp4">
+        <video autoplay muted loop playsinline preload="none" poster="public/TrafoBakimYuksekGerilim.jpeg" aria-hidden="true" data-lazy-video>
+          <source data-src="public/ges-kurulumu.mp4" type="video/mp4">
         </video>
         <span class="ges-intro__video-badge"><i class="fas fa-solar-panel" aria-hidden="true"></i> GES Kurulumu</span>
       </div>
@@ -757,7 +778,7 @@
 
         <article class="news-card reveal" data-delay="2">
           <div class="news-card__media">
-            <video src="public/ekip-guclu-durmak-yok-yola-devam.mp4" poster="public/ekip-ruhu-pano-kurulumu.jpg" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+            <video data-src="public/ekip-guclu-durmak-yok-yola-devam.mp4" poster="public/ekip-ruhu-pano-kurulumu.jpg" autoplay muted loop playsinline preload="none" aria-hidden="true" data-lazy-video></video>
             <span class="news-card__cat">Ekip</span>
           </div>
           <div class="news-card__body">
@@ -1687,7 +1708,7 @@
       document.head.appendChild(script);
     }());
   </script>
-  <script src="js/main.js"></script>
+  <script src="js/main.js" defer></script>
   <noscript>
     <style>
       .preloader { display: none !important; }
@@ -1696,6 +1717,6 @@
       .mobile-cta { display: none !important; }
     </style>
   </noscript>
-  <script src="js/voltguard-auth.js"></script>
+  <script src="js/voltguard-auth.js" defer></script>
 </body>
 </html>

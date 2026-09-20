@@ -115,13 +115,13 @@
 FileETag None
 
 # ─────────────────────────────────────
-# CSS/JS — her dağıtımda taze içerik
-# (hash'siz dosya adları + uzun cache "bayat stil/script" riskini doğurur;
-#  no-cache ile tarayıcı her seferinde Last-Modified üzerinden revalide eder/304 alır)
+# CSS/JS — hızlı geri dönüş için stale-while-revalidate
+# (hash'siz dosya adları var; tarayıcı önbelleği anında servis eder,
+#  arka planda taze içeriği yeniden doğrular. no-cache'e göre çok daha hızlı.)
 # ─────────────────────────────────────
 <IfModule mod_headers.c>
   <FilesMatch "\.(css|js)$">
-    Header set Cache-Control "no-cache, must-revalidate"
+    Header set Cache-Control "public, max-age=600, stale-while-revalidate=86400"
   </FilesMatch>
 </IfModule>
 
