@@ -140,7 +140,7 @@
         el.setAttribute('value', src.value);
       }
     });
-    qq('.vg-form-actions, .vg-form-add-row, .doc-header, .footer, script', clone).forEach(function (n) { n.remove(); });
+    qq('.vg-form-actions, .vg-form-add-row, .vg-header, .vg-footer, .skip-to-content, .skip-link, .doc-header, .footer, script', clone).forEach(function (n) { n.remove(); });
     // Keep the relative stylesheet/icon URLs working when the saved file is opened elsewhere.
     var head = clone.querySelector('head');
     if (head) {
