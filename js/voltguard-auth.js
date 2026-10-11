@@ -30,6 +30,8 @@
   }
   function nowIso() { return new Date().toISOString(); }
 
+  var STORAGE_ERR = 'Tarayıcı depolaması kullanılamıyor.';
+
   function bytesToHex(buf) {
     var arr = new Uint8Array(buf);
     var s = '';
@@ -64,7 +66,9 @@
 
   function getSession() { return read(KEYS.session, null); }
   function saveSession(session) { return write(KEYS.session, session); }
-  function clearSession() { localStorage.removeItem(KEYS.session); }
+  function clearSession() {
+    try { localStorage.removeItem(KEYS.session); } catch (e) { /* storage unavailable: nothing persisted */ }
+  }
 
   function findUserByEmail(email) {
     var e = normalizeEmail(email);
@@ -76,17 +80,22 @@
 
   async function register(name, email, password) {
     var e = normalizeEmail(email);
-    if (!name || !e || !password) throw new Error('Ad, e-posta ve şifre gereklidir.');
+    var cleanName = String(name || '').trim();
+    if (!cleanName || !e || !password) throw new Error('Ad, e-posta ve şifre gereklidir.');
+    if (cleanName.length < 2) throw new Error('Ad en az 2 karakter olmalı.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) throw new Error('Geçerli bir e-posta girin.');
     if (password.length < 8) throw new Error('Şifre en az 8 karakter olmalı.');
     if (findUserByEmail(e)) throw new Error('Bu e-posta zaten kayıtlı.');
     var salt = makeSalt();
     var hash = await hashPassword(password, salt);
-    var user = { id: uid(), email: e, name: name.trim(), salt: salt, hash: hash, createdAt: nowIso() };
+    // Hashing is async: re-read and re-check synchronously before writing, so two concurrent
+    // register() calls (double click) cannot create duplicate accounts for the same e-mail.
     var users = getUsers();
+    if (users.some(function (u) { return u.email === e; })) throw new Error('Bu e-posta zaten kayıtlı.');
+    var user = { id: uid(), email: e, name: cleanName, salt: salt, hash: hash, createdAt: nowIso() };
     users.push(user);
-    saveUsers(users);
-    saveSession({ userId: user.id, loginAt: nowIso() });
+    if (!saveUsers(users)) throw new Error(STORAGE_ERR);
+    if (!saveSession({ userId: user.id, loginAt: nowIso() })) throw new Error(STORAGE_ERR);
     return sanitize(user);
   }
 
@@ -95,7 +104,7 @@
     if (!user) throw new Error('Kullanıcı bulunamadı.');
     var hash = await hashPassword(password, user.salt);
     if (hash !== user.hash) throw new Error('Şifre hatalı.');
-    saveSession({ userId: user.id, loginAt: nowIso() });
+    if (!saveSession({ userId: user.id, loginAt: nowIso() })) throw new Error(STORAGE_ERR);
     return sanitize(user);
   }
 
@@ -116,7 +125,7 @@
   function requireAuth(redirectTo) {
     var user = currentUser();
     if (user) return user;
-    var target = redirectTo || 'giris.html';
+    var target = redirectTo || (pathPrefix() + 'hesap/giris.html');
     location.href = target + '?next=' + encodeURIComponent(location.pathname + location.search);
     return null;
   }
@@ -132,14 +141,13 @@
     var list = getAllHistory();
     var item = Object.assign({ id: 'h_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), userId: u.id, savedAt: nowIso() }, entry);
     list.unshift(item);
-    write(KEYS.history, list.slice(0, 500));
+    if (!write(KEYS.history, list.slice(0, 500))) throw new Error(STORAGE_ERR);
     return item;
   }
   function deleteHistory(id) {
     var u = currentUser(); if (!u) return false;
     var list = getAllHistory().filter(function (h) { return !(h.id === id && h.userId === u.id); });
-    write(KEYS.history, list);
-    return true;
+    return write(KEYS.history, list);
   }
 
   // ---- Favorites ----
@@ -156,9 +164,13 @@
     var u = currentUser(); if (!u) throw new Error('Önce giriş yapın.');
     var list = getAllFavorites();
     var exists = list.findIndex(function (f) { return f.userId === u.id && f.toolSlug === toolSlug; });
-    if (exists >= 0) { list.splice(exists, 1); write(KEYS.favorites, list); return false; }
+    if (exists >= 0) {
+      list.splice(exists, 1);
+      if (!write(KEYS.favorites, list)) throw new Error(STORAGE_ERR);
+      return false;
+    }
     list.unshift({ userId: u.id, toolSlug: toolSlug, toolName: toolName, toolUrl: toolUrl, addedAt: nowIso() });
-    write(KEYS.favorites, list);
+    if (!write(KEYS.favorites, list)) throw new Error(STORAGE_ERR);
     return true;
   }
 
@@ -174,7 +186,7 @@
     var list = getAllProjects();
     var p = { id: 'p_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), userId: u.id, name: name.trim(), description: (description || '').trim(), calcIds: [], createdAt: nowIso() };
     list.unshift(p);
-    write(KEYS.projects, list);
+    if (!write(KEYS.projects, list)) throw new Error(STORAGE_ERR);
     return p;
   }
   function attachCalcToProject(projectId, historyId) {
@@ -183,14 +195,12 @@
     var idx = list.findIndex(function (p) { return p.id === projectId && p.userId === u.id; });
     if (idx < 0) return false;
     if (!list[idx].calcIds.includes(historyId)) list[idx].calcIds.push(historyId);
-    write(KEYS.projects, list);
-    return true;
+    return write(KEYS.projects, list);
   }
   function deleteProject(projectId) {
     var u = currentUser(); if (!u) return false;
     var list = getAllProjects().filter(function (p) { return !(p.id === projectId && p.userId === u.id); });
-    write(KEYS.projects, list);
-    return true;
+    return write(KEYS.projects, list);
   }
 
   // ---- Documents (bookmark-style personal library) ----
@@ -202,20 +212,59 @@
   function addDocument(name, url, note) {
     var u = currentUser(); if (!u) throw new Error('Önce giriş yapın.');
     if (!name || !name.trim()) throw new Error('Doküman adı gerekli.');
+    var cleanUrl = String(url || '').trim();
+    // Optional field, but when present it must be an absolute http(s) link (blocks javascript:/data: URLs).
+    if (cleanUrl && !isHttpUrl(cleanUrl)) throw new Error('Geçerli bir http(s) bağlantısı girin (örn. https://...).');
     var list = getAllDocuments();
-    var doc = { id: 'd_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), userId: u.id, name: name.trim(), url: (url || '').trim(), note: (note || '').trim(), addedAt: nowIso() };
+    var doc = { id: 'd_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), userId: u.id, name: name.trim(), url: cleanUrl, note: (note || '').trim(), addedAt: nowIso() };
     list.unshift(doc);
-    write(KEYS.documents, list);
+    if (!write(KEYS.documents, list)) throw new Error(STORAGE_ERR);
     return doc;
   }
   function deleteDocument(id) {
     var u = currentUser(); if (!u) return false;
     var list = getAllDocuments().filter(function (d) { return !(d.id === id && d.userId === u.id); });
-    write(KEYS.documents, list);
-    return true;
+    return write(KEYS.documents, list);
   }
 
-  // ---- Export / Import (device migration) ----
+  // ---- Link / redirect safety helpers ----
+  function isHttpUrl(url) {
+    try {
+      var u = new URL(String(url));
+      return u.protocol === 'http:' || u.protocol === 'https:';
+    } catch (e) { return false; }
+  }
+
+  // Returns the URL unchanged when it is safe to put in an href (http/https, or file: while browsing from
+  // file:// during local preview), otherwise ''. Blocks javascript:, data:, vbscript: and friends.
+  function safeHref(url) {
+    if (!url || typeof url !== 'string') return '';
+    try {
+      var u = new URL(url, document.baseURI);
+      if (u.protocol === 'http:' || u.protocol === 'https:') return url;
+      if (u.protocol === 'file:' && location.protocol === 'file:') return url;
+    } catch (e) { /* unparsable */ }
+    return '';
+  }
+
+  // Validates a post-login redirect target (?next=). Only same-origin pages (clean directory URLs or .html
+  // files) are accepted and the result is returned as path+query+hash. Anything else (other origins,
+  // protocol-relative or backslash tricks, javascript:/data: URLs, the login/register pages themselves)
+  // yields '' so callers can fall back to a default page.
+  function safeNext(raw) {
+    if (typeof raw !== 'string' || !raw) return '';
+    if (/[\u0000-\u001f\u007f\\]/.test(raw)) return '';
+    try {
+      var u = new URL(raw, location.href);
+      if (u.protocol !== location.protocol || u.host !== location.host) return '';
+      if (u.protocol !== 'http:' && u.protocol !== 'https:' && u.protocol !== 'file:') return '';
+      if (/\/hesap\/(giris|kayit)\.html$/.test(u.pathname)) return '';
+      if (!/(\/|\.html)$/.test(u.pathname)) return '';
+      return u.pathname + u.search + u.hash;
+    } catch (e) { return ''; }
+  }
+
+  // ---- Export / Import (backup and device migration) ----
   function exportAll() {
     var u = currentUser(); if (!u) return null;
     return {
@@ -226,6 +275,161 @@
       projects: getProjects(),
       documents: getDocuments()
     };
+  }
+
+  function clip(v, max) {
+    if (typeof v === 'number' && isFinite(v)) v = String(v);
+    return typeof v === 'string' ? v.slice(0, max) : '';
+  }
+  function validIso(v) {
+    var d = typeof v === 'string' ? new Date(v) : null;
+    return d && !isNaN(d.getTime()) ? d.toISOString() : nowIso();
+  }
+  function plainArray(v, max) { return Array.isArray(v) ? v.slice(0, max) : []; }
+  function newId(prefix) { return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+  // Restores a file produced by exportAll() into the signed-in account. Every record is re-keyed to the
+  // current user, validated and clipped field by field (nothing is copied verbatim), de-duplicated against
+  // what the account already holds, and URLs are scheme-checked. The login itself (password hash) is
+  // never part of an export, so on a new device the user registers first and imports afterwards.
+  function importAll(data) {
+    var u = currentUser(); if (!u) throw new Error('Önce giriş yapın.');
+    if (!data || typeof data !== 'object' || Array.isArray(data) ||
+        !(Array.isArray(data.history) || Array.isArray(data.favorites) || Array.isArray(data.projects) || Array.isArray(data.documents))) {
+      throw new Error('Geçersiz yedek dosyası.');
+    }
+    var counts = { history: 0, favorites: 0, projects: 0, documents: 0 };
+
+    // History
+    var allHistory = getAllHistory();
+    var usedHistoryIds = {}, ownHistoryIds = {}, idMap = {}, addedHistory = [];
+    allHistory.forEach(function (h) {
+      usedHistoryIds[h.id] = true;
+      if (h.userId === u.id) ownHistoryIds[h.id] = true;
+    });
+    plainArray(data.history, 500).forEach(function (h) {
+      if (!h || typeof h !== 'object') return;
+      var slug = clip(h.toolSlug, 100);
+      var name = clip(h.toolName, 200).trim();
+      if (!slug && !name) return;
+      var oldId = clip(h.id, 64);
+      if (oldId && ownHistoryIds[oldId]) { idMap[oldId] = oldId; return; }
+      var id = (/^h_[a-z0-9]+$/i.test(oldId) && !usedHistoryIds[oldId]) ? oldId : newId('h');
+      usedHistoryIds[id] = true;
+      if (oldId) idMap[oldId] = id;
+      var res = h.result && typeof h.result === 'object' ? h.result : {};
+      addedHistory.push({
+        id: id,
+        userId: u.id,
+        savedAt: validIso(h.savedAt),
+        toolSlug: slug,
+        toolName: name || slug,
+        toolUrl: safeHref(clip(h.toolUrl, 500)),
+        params: plainArray(h.params, 60).filter(function (p) { return p && typeof p === 'object'; }).map(function (p) {
+          return { label: clip(p.label, 200), value: clip(p.value, 400) };
+        }),
+        result: { value: clip(res.value, 300), note: clip(res.note, 1000) },
+        note: clip(h.note, 1000)
+      });
+    });
+
+    // Favorites (one per tool and user)
+    var allFavorites = getAllFavorites();
+    var ownSlugs = {}, addedFavorites = [];
+    allFavorites.forEach(function (f) { if (f.userId === u.id) ownSlugs[f.toolSlug] = true; });
+    plainArray(data.favorites, 200).forEach(function (f) {
+      if (!f || typeof f !== 'object') return;
+      var slug = clip(f.toolSlug, 100);
+      if (!slug || ownSlugs[slug]) return;
+      ownSlugs[slug] = true;
+      addedFavorites.push({
+        userId: u.id,
+        toolSlug: slug,
+        toolName: clip(f.toolName, 200).trim() || slug,
+        toolUrl: safeHref(clip(f.toolUrl, 500)),
+        addedAt: validIso(f.addedAt)
+      });
+    });
+
+    // Projects (calcIds are remapped to the history ids that now exist in this account)
+    var allProjects = getAllProjects();
+    var usedProjectIds = {}, ownProjectIds = {}, addedProjects = [];
+    allProjects.forEach(function (p) {
+      usedProjectIds[p.id] = true;
+      if (p.userId === u.id) ownProjectIds[p.id] = true;
+    });
+    plainArray(data.projects, 200).forEach(function (p) {
+      if (!p || typeof p !== 'object') return;
+      var name = clip(p.name, 200).trim();
+      if (!name) return;
+      var oldId = clip(p.id, 64);
+      if (oldId && ownProjectIds[oldId]) return;
+      var id = (/^p_[a-z0-9]+$/i.test(oldId) && !usedProjectIds[oldId]) ? oldId : newId('p');
+      usedProjectIds[id] = true;
+      var seen = {};
+      var calcIds = plainArray(p.calcIds, 500).map(function (c) {
+        c = clip(c, 64);
+        return idMap[c] || (ownHistoryIds[c] ? c : '');
+      }).filter(function (c) {
+        if (!c || seen[c]) return false;
+        seen[c] = true;
+        return true;
+      });
+      addedProjects.push({
+        id: id,
+        userId: u.id,
+        name: name,
+        description: clip(p.description, 600).trim(),
+        calcIds: calcIds,
+        createdAt: validIso(p.createdAt)
+      });
+    });
+
+    // Documents (links must be absolute http(s); anything else is dropped but the entry is kept)
+    var allDocuments = getAllDocuments();
+    var usedDocIds = {}, ownDocIds = {}, addedDocuments = [];
+    allDocuments.forEach(function (d) {
+      usedDocIds[d.id] = true;
+      if (d.userId === u.id) ownDocIds[d.id] = true;
+    });
+    plainArray(data.documents, 500).forEach(function (d) {
+      if (!d || typeof d !== 'object') return;
+      var name = clip(d.name, 200).trim();
+      if (!name) return;
+      var oldId = clip(d.id, 64);
+      if (oldId && ownDocIds[oldId]) return;
+      var id = (/^d_[a-z0-9]+$/i.test(oldId) && !usedDocIds[oldId]) ? oldId : newId('d');
+      usedDocIds[id] = true;
+      var link = clip(d.url, 500).trim();
+      addedDocuments.push({
+        id: id,
+        userId: u.id,
+        name: name,
+        url: link && isHttpUrl(link) ? link : '',
+        note: clip(d.note, 1000).trim(),
+        addedAt: validIso(d.addedAt)
+      });
+    });
+
+    function when(x) { return String(x.savedAt || x.addedAt || x.createdAt || ''); }
+    function newestFirst(a, b) { return when(b).localeCompare(when(a)); }
+    if (addedHistory.length) {
+      if (!write(KEYS.history, addedHistory.concat(allHistory).sort(newestFirst).slice(0, 500))) throw new Error(STORAGE_ERR);
+      counts.history = addedHistory.length;
+    }
+    if (addedFavorites.length) {
+      if (!write(KEYS.favorites, addedFavorites.concat(allFavorites))) throw new Error(STORAGE_ERR);
+      counts.favorites = addedFavorites.length;
+    }
+    if (addedProjects.length) {
+      if (!write(KEYS.projects, addedProjects.concat(allProjects).sort(newestFirst))) throw new Error(STORAGE_ERR);
+      counts.projects = addedProjects.length;
+    }
+    if (addedDocuments.length) {
+      if (!write(KEYS.documents, addedDocuments.concat(allDocuments).sort(newestFirst))) throw new Error(STORAGE_ERR);
+      counts.documents = addedDocuments.length;
+    }
+    return counts;
   }
 
   // ---- Nav decoration ----
@@ -265,6 +469,8 @@
       li.appendChild(link);
       nav.appendChild(li);
     });
+    // After the account links exist, so they are prefetched on intent too (runs on every page type).
+    prefetchOnIntent();
   }
 
   // Alt sayfalardaki .doc-header'a mobil hamburger enjekte eder (markup'ı değiştirmeden).
@@ -310,8 +516,6 @@
         }
       });
     });
-
-    prefetchOnIntent();
   }
 
   // Hover/touch/focus üzerine link hedefini önden indir; tıklamada sayfa anında açılır.
@@ -323,7 +527,7 @@
       /* Aynı origin dışı, sadece anchor veya özel şemalar: atla. */
       if (/^(#|mailto:|tel:|javascript:)/i.test(href)) return;
       try {
-        var url = new URL(href, location.href);
+        var url = new URL(href, document.baseURI);
         if (url.origin !== location.origin) return;
         if (url.pathname === location.pathname) return;
       } catch (e) { return; }
@@ -346,13 +550,19 @@
   }
 
   function pathPrefix() {
-    // Detect known site subfolders instead of relying on total segment count (breaks on file:// URLs).
-    var p = location.pathname.replace(/\\/g, '/');
-    var segs = p.split('/').filter(Boolean);
-    if (segs.length < 2) return '';
-    var parent = segs[segs.length - 2];
-    var subfolders = { hesaplama: 1, bilgi: 1, akademi: 1, sor: 1, hesap: 1, mm: 1, ekle: 1 };
-    return subfolders[parent] ? '../' : '';
+    // Prefix that reaches the site root from the current page. Known sub-folders are matched by name
+    // (works on file:// too) and resolved against the document base URL, so pages with <base href="/">
+    // (hub and calculator pages served at clean /dir/slug/ URLs) correctly get ''.
+    var subfolders = { hesaplama: 1, bilgi: 1, akademi: 1, sor: 1, hesap: 1, mm: 1 };
+    var baseDir;
+    try { baseDir = new URL('.', document.baseURI).pathname; }
+    catch (e) { baseDir = location.pathname.replace(/[^/]*$/, ''); }
+    var segs = baseDir.replace(/\\/g, '/').split('/').filter(Boolean);
+    if (subfolders[segs[segs.length - 1]]) return '../';
+    // Clean directory-style URL (/hesaplama/<slug>/) without a <base>: the document directory is the slug.
+    if (!document.querySelector('base[href]') && /\/$/.test(location.pathname) &&
+        segs.length >= 2 && subfolders[segs[segs.length - 2]]) return '../../';
+    return '';
   }
 
   function escapeHtml(s) {
@@ -383,6 +593,9 @@
     getDocuments: getDocuments,
     deleteDocument: deleteDocument,
     exportAll: exportAll,
+    importAll: importAll,
+    safeNext: safeNext,
+    safeHref: safeHref,
     decorateNav: decorateNav,
     pathPrefix: pathPrefix
   };

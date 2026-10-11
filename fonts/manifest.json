@@ -1,0 +1,28 @@
+{
+  "text": {
+    "Outfit": {
+      "latin": "outfit-latin.dbb71e00.woff2",
+      "latin-ext": "outfit-latin-ext.66bfbedb.woff2"
+    },
+    "Inter": {
+      "latin": "inter-latin.d14332d6.woff2",
+      "latin-ext": "inter-latin-ext.f863e429.woff2",
+      "greek": "inter-greek.987eea75.woff2"
+    }
+  },
+  "icons": {
+    "solid": "fa-solid-900.07d13f43.woff2",
+    "regular": "fa-regular-400.46eff9da.woff2",
+    "brands": "fa-brands-400.b1bcf9db.woff2"
+  },
+  "preload": [
+    "/fonts/outfit-latin.dbb71e00.woff2",
+    "/fonts/inter-latin.d14332d6.woff2",
+    "/fonts/fa-solid-900.07d13f43.woff2",
+    "/fonts/fa-brands-400.b1bcf9db.woff2"
+  ],
+  "css": [
+    "/css/fonts.css",
+    "/css/fa-subset.css"
+  ]
+}

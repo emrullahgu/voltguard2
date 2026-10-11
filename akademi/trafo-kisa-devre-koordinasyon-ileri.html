@@ -3,7 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="/css/vg-shell.css">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="description" content="Trafo işletmesi, kısa devre analizi ve koruma koordinasyonu ileri seviye ders: IEC 60909, TT/TN/IT sistemleri, selektivite ve arıza analizi.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
@@ -14,37 +45,66 @@
   <meta property="og:description" content="IEC 60909, TT/TN/IT sistemleri, selektivite ve arıza analizi.">
   <meta property="og:url" content="https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta name="twitter:card" content="summary_large_image">
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../css/style.css">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html#course","name":"Trafo İşletmesi ve Kısa Devre Koordinasyonu (İleri)","description":"IEC 60909, TT/TN/IT sistemleri, selektivite ve arıza analizi.","educationalLevel":"İleri","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","provider":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Trafo İşletmesi ve Kısa Devre Koordinasyonu (İleri)","item":"https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html"}]}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html#course","name":"Trafo İşletmesi ve Kısa Devre Koordinasyonu","description":"IEC 60909, TT/TN/IT sistemleri, selektivite ve arıza analizi.","educationalLevel":"İleri","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-11","provider":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Trafo İşletmesi ve Kısa Devre Koordinasyonu (İleri)","item":"https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html"}]}]}</script>
 </head>
 <body class="doc-shell">
-  <header class="doc-header">
-    <div class="doc-header__inner">
-      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="" width="34" height="34">VoltGuard</a>
-      <nav class="doc-header__nav" id="docNav" aria-label="Üst menü">
-        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
-        <a href="../akademi.html">Akademi</a>
-        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
-        <a href="../hesaplama-araclari/">Hesap Araçları</a>
-        <a href="../sor.html">VoltGuard'a Sor</a>
-        <a href="../index.html#hizmetler">Hizmetler</a>
-        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+  <!--vg:header-->
+  <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <span class="logo-mark" aria-hidden="true">
+          <span class="logo-mark__volt">VOLT</span>
+          <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="logo-mark__guard">GUARD</span>
+        </span>
+        <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+      </a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/#hizmetler">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
       </nav>
+      <div class="vg-actions">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
     </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
   </header>
+  <!--/vg:header-->
 
   <nav class="breadcrumb" aria-label="breadcrumb">
-    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../akademi.html">VoltGuard Akademi</a> &rsaquo; <span>Trafo İşletmesi ve Kısa Devre Koordinasyonu</span>
+    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../akademi.html">VoltGuard Akademi</a> &rsaquo; <span>Trafo İşletmesi ve Kısa Devre Koordinasyonu (İleri)</span>
   </nav>
 
-  <main class="article">
+  <main class="article" id="main" tabindex="-1">
     <span class="article__cat">Elektrik Tesisatı &amp; Güç Sistemleri</span>
     <span class="akademi-level akademi-level--ileri">İleri Seviye</span>
     <h1>Trafo İşletmesi ve Kısa Devre Koordinasyonu</h1>
@@ -74,9 +134,9 @@
     <p>Sürekli aşırı yük veya harmonik yük (K-factor), yağ ve sargı sıcaklığını artırır. Kural: sıcak nokta sıcaklığı 6 K artınca yalıtım ömrü yarıya iner (Arrhenius). Bu nedenle trafo IEC 60567'ye göre yağ analizi (DGA - Dissolved Gas Analysis) ile düzenli izlenir.</p>
 
     <h2>IEC 60909'a Göre Kısa Devre Hesabı</h2>
-    <p>IEC 60909, dört tür kısa devre için sistematik metodoloji tanımlar:</p>
+    <p>IEC 60909, dört temel kısa devre akımı büyüklüğü için sistematik metodoloji tanımlar:</p>
     <ol class="article__list">
-      <li><strong>Ik" (initial symmetric):</strong> İlk yarım devir sonundaki simetrik akım.</li>
+      <li><strong>Ik" (initial symmetric):</strong> Kısa devrenin başlangıcındaki simetrik akımın etkin (rms) değeri.</li>
       <li><strong>ip (peak):</strong> İlk pikin genliği; ip = κ × √2 × Ik".</li>
       <li><strong>Ib (breaking):</strong> Şalterin açma anındaki akım (t=0,02-0,25 s).</li>
       <li><strong>Ik (steady-state):</strong> Uzun süreli kararlı hal akımı.</li>
@@ -108,7 +168,7 @@
       <li><strong>I (Instantaneous):</strong> Anlık kısa devre — I<sub>i</sub>.</li>
       <li><strong>G (Ground fault):</strong> Toprak arıza — I<sub>g</sub> × t.</li>
     </ul>
-    <p>Zone Selective Interlocking (ZSI): Ana ve tali TMŞ elektroniği haberleşir; alt kademe açıyorsa üst kademe daha kısa açma gecikmesi kullanır (ancak alt kademe açtığı için tetiklenmez). Ark flash risk analizi için önemli bir tekniktir.</p>
+    <p>Zone Selective Interlocking (ZSI): Ana ve tali TMŞ elektroniği haberleşir; alt kademe arızayı görürse üst kademeye kısıtlama (restraint) sinyali gönderir ve üst kademe ayarlı gecikmesini korur; sinyal yoksa (arıza kendi bölgesindeyse) üst kademe gecikmesiz açar. Ark flash risk analizi için önemli bir tekniktir.</p>
 
     <h2>Örnek Vaka: 1000 kVA Fabrika Kısa Devre Analizi</h2>
     <p>1000 kVA / 34,5-0,4 kV, uk = %6, Dyn11 trafo düşünelim. Trafo çıkışı Ik" ≈ 24 kA. Ana bara 5 m uzaklıkta, kablo 4 × 240 mm² Cu → Ik" ana barada ~23,5 kA. Tali bara 30 m uzaklıkta, kablo 3 × 95 mm² → Ik" tali barada ~15 kA. Motor besleme 50 m uzaklıkta, kablo 25 mm² → Ik" motor panosunda ~5 kA.</p>
@@ -126,8 +186,8 @@
     <h2>Sıradaki Konu</h2>
     <p>Bu ileri dersi tamamladıktan sonra pratik uygulama için:</p>
     <ul class="article__list">
-      <li>Uygulamalı: <a href="../hesaplama/kisa-devre-akimi-hesaplama.html">Kısa Devre Akımı Hesaplama</a></li>
-      <li>Uygulamalı: <a href="../hesaplama/sigorta-tms-secimi.html">Sigorta / TMŞ Seçim Aracı</a></li>
+      <li>Uygulamalı: <a href="../hesaplama/kisa-devre-akimi-hesaplama/">Kısa Devre Akımı Hesaplama</a></li>
+      <li>Uygulamalı: <a href="../hesaplama/sigorta-tms-secimi/">Sigorta / TMŞ Seçim Aracı</a></li>
       <li>Tema derinleştirme: <a href="../bilgi/trafo-periyodik-bakim.html">Trafo Periyodik Bakımı</a></li>
     </ul>
 
@@ -139,18 +199,133 @@
     <p style="margin-top:1.6rem"><a href="../akademi.html" class="kb-card__more">&larr; Tüm dersler: VoltGuard Akademi</a></p>
   </main>
 
-  <footer class="footer" role="contentinfo">
-    <div class="container">
-      <div class="footer__bottom">
-        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
-        <div class="footer__social">
-          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
         </div>
       </div>
     </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <span class="logo-mark logo-mark--footer" aria-hidden="true">
+              <span class="logo-mark__volt">VOLT</span>
+              <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+              <span class="logo-mark__guard">GUARD</span>
+            </span>
+            <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+          </a>
+          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0 545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/#hizmetler">Elektrik Hizmetleri</a></li>
+              <li><a href="/#hizmetler">Elektronik &amp; Gömülü Sistemler</a></li>
+              <li><a href="/#hizmetler">Otomasyon Sistemleri</a></li>
+              <li><a href="/#hizmetler">Mekanik Sistemler</a></li>
+              <li><a href="/#hizmetler">Enerji Sistemleri &amp; Verimlilik</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Giriş Yap</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#guvenlik">Güvenlik</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          </circle>
+        </svg>
+        <span class="sig-node" aria-hidden="true"></span>
+        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+          <span class="sig-badge__ring" aria-hidden="true"></span>
+          <span class="sig-badge__aurora" aria-hidden="true"></span>
+          <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="sig-badge__body">
+            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+            <span class="sig-badge__brand">
+              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+              <span class="sig-badge__eng">Engineering</span>
+            </span>
+          </span>
+          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+          <span class="sig-badge__shimmer" aria-hidden="true"></span>
+        </a>
+        <span class="sig-node" aria-hidden="true"></span>
+        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+          </circle>
+        </svg>
+      </div>
+    </div>
   </footer>
+  <!--/vg:footer-->
   <script src="../js/voltguard-auth.js" defer></script>
 </body>
 </html>

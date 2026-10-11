@@ -21,7 +21,11 @@ VoltGuard (VoltGuard Engineering Solutions), Ege Üniversitesi kökenli genç bi
 
 ## Bağlantılar
 - [Ana sayfa](https://voltguard.com.tr/)
-- [Hesaplama Araçları: GES, trafo ve periyodik kontrol](https://voltguard.com.tr/hesaplama-araclari/)
+- [Mühendislik Hesaplama Merkezi (15 ücretsiz araç)](https://voltguard.com.tr/hesaplama-araclari/): kablo kesiti, gerilim düşümü, sigorta/TMŞ, motor akımı, motor koruma ve kontaktör, trafo akımı, kompanzasyon, kısa devre, topraklama, GES, inverter kablo, jeneratör, UPS ve aydınlatma hesapları
+- [VoltGuard Akademi](https://voltguard.com.tr/akademi.html): öğrenciler ve mesleğe yeni başlayanlar için elektrik tesisatı, güç sistemleri, PLC/HMI/SCADA, elektronik/mikrodenetleyici ve GES üzerine başlangıç, orta ve ileri seviye içerikler
+- [VoltGuard'a Sor](https://voltguard.com.tr/sor.html): elektrik, elektronik, otomasyon ve mekanik konularında teknik soru-cevap
+- [Mühendis & Tekniker Merkezi](https://voltguard.com.tr/muhendis-merkezi.html): mühendis ve tekniker için ücretsiz indirilebilir form, checklist ve şablon kütüphanesi
+- [VoltGame](https://voltguard.com.tr/voltgame.html): VoltGuard'ın elektrik temalı mini oyunu
 - [Hizmetlerimiz](https://voltguard.com.tr/#hizmetler)
 - [Sık Sorulan Sorular (SSS)](https://voltguard.com.tr/#sss)
 - [Haberler & Güncel](https://voltguard.com.tr/#haberler)
@@ -33,7 +37,7 @@ VoltGuard (VoltGuard Engineering Solutions), Ege Üniversitesi kökenli genç bi
 ## Bilgi Bankası (uzman rehber içerikler)
 VoltGuard mühendislerinin hazırladığı, mevzuata dayalı özgün rehberler:
 - [Bilgi Bankası (tüm konular)](https://voltguard.com.tr/bilgi-bankasi.html)
-- [Mevzuat & Standartlar Kütüphanesi (40+ belge özeti)](https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html)
+- [Mevzuat & Standartlar Kütüphanesi (27 belge özeti)](https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html)
 - [Topraklama Tesisatı ve Periyodik Kontrolü](https://voltguard.com.tr/bilgi/topraklama.html)
 - [Yıldırımdan Korunma (Paratoner) Sistemleri](https://voltguard.com.tr/bilgi/yildirimdan-korunma.html)
 - [Yüksek Gerilim Tesisleri İşletme Sorumluluğu](https://voltguard.com.tr/bilgi/yuksek-gerilim-isletme-sorumlulugu.html)
@@ -48,6 +52,82 @@ VoltGuard mühendislerinin hazırladığı, mevzuata dayalı özgün rehberler:
 - [SCADA Sistemleri ve IEC 61850](https://voltguard.com.tr/bilgi/scada-iec-61850.html)
 - [Elektrik Tesisat Standartları: TS HD 60364](https://voltguard.com.tr/bilgi/ts-hd-60364-tesisat-standartlari.html)
 - [Lisanssız Elektrik Üretimi ve GES](https://voltguard.com.tr/bilgi/lisanssiz-uretim-ges.html)
+- [Gerilim Düşümü Nedir, Nasıl Hesaplanır? İzin Verilen Sınırlar](https://voltguard.com.tr/bilgi/gerilim-dusumu-nedir.html)
+- [GES İçin Kaç Panel Lazım? Hesap ve Örnek Proje](https://voltguard.com.tr/bilgi/ges-kac-panel-lazim.html)
+- [Harmonik Nedir? Sorunları, Ölçümü ve Filtreleme Yöntemleri](https://voltguard.com.tr/bilgi/harmonik-nedir-sorunlari.html)
+- [Kablo Kesiti Akım Taşıma Kapasitesi Tablosu (5x10 Kaç Amper?)](https://voltguard.com.tr/bilgi/kablo-kesiti-akim-tasima-tablosu.html)
+- [Kaçak Akım Rölesi Neden Atar? 10 Neden ve Çözüm Yolları](https://voltguard.com.tr/bilgi/kacak-akim-rolesi-ariza-nedenleri.html)
+- [Kaçak Akım Rölesi Seçimi: 30 mA mı 300 mA mı? A / AC / B Tipi](https://voltguard.com.tr/bilgi/kacak-akim-rolesi-secimi.html)
+- [Kısa Devre Akımı Nedir? Ik Hesabı ve Icu Seçimi](https://voltguard.com.tr/bilgi/kisa-devre-akimi-nedir.html)
+- [kVA Kaç Amper? Trafo ve Jeneratör Akım Hesaplama Tablosu](https://voltguard.com.tr/bilgi/kva-amper-hesaplama.html)
+- [kW - kVA - Amper Arasındaki Fark ve Dönüşüm Formülleri](https://voltguard.com.tr/bilgi/kw-kva-amper-donusum.html)
+- [Malzeme & Ekipman Tedarik Rehberi](https://voltguard.com.tr/bilgi/malzeme-ekipman-tedarik-rehberi.html)
+- [Motor Akımı Nasıl Hesaplanır? Nominal Akım Tablosu](https://voltguard.com.tr/bilgi/motor-akimi-nominal-tablosu.html)
+- [PLC Nedir, Nasıl Çalışır? Tarama Döngüsü ve I/O Rehberi](https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html)
+- [Endüstriyel SCADA ve Arıtma Tesisi Otomasyonu](https://voltguard.com.tr/bilgi/scada-aritma-tesisi-otomasyonu.html)
+- [Sigorta (Otomat) Amper - kW Çevirme Tablosu: C16 Kaç kW?](https://voltguard.com.tr/bilgi/sigorta-amper-kw-tablosu.html)
+- [TMŞ (Termik Manyetik Şalter) Seçimi Nasıl Yapılır?](https://voltguard.com.tr/bilgi/tms-secimi-rehberi.html)
+- [Topraklama Direnci Kaç Olmalı? Sınır Değerler ve Ölçüm](https://voltguard.com.tr/bilgi/topraklama-degeri-kac-olmali.html)
+- [VFD (Frekans İnvertörü) Nedir? Motor Sürücü Rehberi](https://voltguard.com.tr/bilgi/vfd-frekans-invertoru-nedir.html)
+
+## Hesaplama Araçları
+Mühendislik Hesaplama Merkezi'ndeki 15 ücretsiz hesaplama aracı (merkez sayfa: https://voltguard.com.tr/hesaplama-araclari/):
+- [Aydınlatma ve Lux Hesaplama Aracı (Armatür Sayısı)](https://voltguard.com.tr/hesaplama/aydinlatma-lux-hesaplama/)
+- [Gerilim Düşümü Hesaplama Aracı ve Formülü (%)](https://voltguard.com.tr/hesaplama/gerilim-dusumu-hesaplama/)
+- [GES Kapasite ve Yıllık Üretim Hesaplama Aracı](https://voltguard.com.tr/hesaplama/ges-uretim-hesaplama/)
+- [İnverter DC / AC Kablo Kesiti Seçim Aracı](https://voltguard.com.tr/hesaplama/inverter-dc-ac-kablo-secimi/)
+- [Jeneratör Gücü Hesaplama Aracı ve Boyutlandırma Rehberi](https://voltguard.com.tr/hesaplama/jenerator-gucu-hesaplama/)
+- [Kablo Kesiti Hesaplama Aracı ve Formülü](https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/)
+- [Kısa Devre Akımı Hesaplama Aracı (Ik) ve Formülü](https://voltguard.com.tr/hesaplama/kisa-devre-akimi-hesaplama/)
+- [Kompanzasyon Hesaplama Aracı ve Formülü (kVAr)](https://voltguard.com.tr/hesaplama/kompanzasyon-hesaplama/)
+- [kW - kVA - Amper Dönüşüm Aracı ve Formülleri](https://voltguard.com.tr/hesaplama/kw-kva-amper-donusturucu/)
+- [Motor Akımı Hesaplama Aracı ve Formülü](https://voltguard.com.tr/hesaplama/motor-akimi-hesaplama/)
+- [Motor Koruma Şalteri ve Kontaktör Seçim Aracı](https://voltguard.com.tr/hesaplama/motor-koruma-kontaktor-secimi/)
+- [Sigorta / TMŞ Seçim Aracı ve Ib ≤ In ≤ Iz Kuralı](https://voltguard.com.tr/hesaplama/sigorta-tms-secimi/)
+- [Topraklama Direnci ve Elektrot Hesaplama Aracı](https://voltguard.com.tr/hesaplama/topraklama-hesaplama/)
+- [Trafo Akımı Hesaplama Aracı ve Formülü](https://voltguard.com.tr/hesaplama/trafo-akimi-hesaplama/)
+- [UPS Gücü ve Akü Süresi Hesaplama Aracı](https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/)
+
+## VoltGuard Akademi
+Başlangıç, orta ve ileri seviye eğitim içerikleri (merkez sayfa: https://voltguard.com.tr/akademi.html):
+- [Elektrik Tesisatı ve Güç Sistemlerine Giriş (Başlangıç)](https://voltguard.com.tr/akademi/elektrik-tesisati-guc-sistemleri-giris.html)
+- [Elektronik ve Mikrodenetleyici Temelleri (Başlangıç)](https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html)
+- [Enerji Verimliliği Etüdü ve VFD Uygulama Örnekleri (İleri)](https://voltguard.com.tr/akademi/enerji-verimliligi-etudu-vfd-ileri.html)
+- [GES ve Enerji Verimliliği Temelleri (Başlangıç)](https://voltguard.com.tr/akademi/ges-enerji-verimliligi-giris.html)
+- [GES Proje Hesapları ve Şebeke Bağlantı Süreci (Orta)](https://voltguard.com.tr/akademi/ges-proje-sebeke-baglanti-orta.html)
+- [Kompanzasyon ve Harmonik Filtreleme (Orta)](https://voltguard.com.tr/akademi/kompanzasyon-harmonik-orta.html)
+- [Ladder Programlama ve Modbus / Profinet (Orta)](https://voltguard.com.tr/akademi/ladder-programlama-modbus-orta.html)
+- [Mikrodenetleyici Programlama: I2C / SPI / UART (Orta)](https://voltguard.com.tr/akademi/mikrodenetleyici-i2c-spi-uart-orta.html)
+- [PCB Tasarımı ve EMI/EMC Uyumluluk (İleri)](https://voltguard.com.tr/akademi/pcb-tasarim-emi-emc-ileri.html)
+- [PLC, HMI ve SCADA'ya Giriş (Başlangıç)](https://voltguard.com.tr/akademi/plc-endustriyel-otomasyon-giris.html)
+- [SCADA Mimarisi ve IEC 61850 Entegrasyonu (İleri)](https://voltguard.com.tr/akademi/scada-iec-61850-mimari-ileri.html)
+- [Trafo İşletmesi ve Kısa Devre Koordinasyonu (İleri)](https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html)
+
+## VoltGuard'a Sor
+Teknik soru-cevap yazıları (merkez sayfa: https://voltguard.com.tr/sor.html):
+- [Cosφ 0,98 Ama Faturada Reaktif Ceza Var - Neden?](https://voltguard.com.tr/sor/cosfi-098-fatura-reaktif-ceza.html)
+- [Faz-Nötr Arası 220V mı 230V mı Olmalı? Şebeke Gerilim Toleransları](https://voltguard.com.tr/sor/faz-notr-220v-mi-230v-mi.html)
+- [GES İnverterinde Gece Küçük Bir Tüketim Görünüyor, Normal mi?](https://voltguard.com.tr/sor/ges-inverter-gece-tuketimi.html)
+- [Kablo Neden Aşırı Isınıyor? 6 Yaygın Neden ve Çözüm](https://voltguard.com.tr/sor/kablo-neden-isiniyor.html)
+- [Kaçak Akım Rölesi İlk Anda Atıyor Sonra Kalıyor - Sebebi Ne?](https://voltguard.com.tr/sor/kacak-akim-rolesi-ilk-anda-atiyor.html)
+- [Kompanzasyon Panosundaki Kontaktör Neden Sık Arıza Yapıyor?](https://voltguard.com.tr/sor/kompanzasyon-kontaktor-ariza-nedenleri.html)
+- [Modbus RTU Haberleşmesi Neden Kesiliyor? RS-485 Sorunları ve Çözüm](https://voltguard.com.tr/sor/modbus-rtu-haberlesme-kesiliyor.html)
+- [Üç Fazlı Motorun Bir Fazında Düşük Akım Okunuyor, Sebebi Ne?](https://voltguard.com.tr/sor/motor-bir-fazda-dusuk-akim.html)
+- [Motor Termik Rölesi Sık Atıyor Sebepleri ve Çözümü](https://voltguard.com.tr/sor/motor-termik-sik-atiyor.html)
+- [PLC Çıkışına Bağlı Kontaktör Bobini Neden Titriyor?](https://voltguard.com.tr/sor/plc-kontaktor-bobini-titremesi.html)
+- [VFD OverCurrent (OC) Hatası - Sebepleri ve Çözümü](https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html)
+
+## Mühendis & Tekniker Merkezi
+İndirilebilir form, checklist ve şablonlar (merkez sayfa: https://voltguard.com.tr/muhendis-merkezi.html):
+- [Elektrik Keşif Formu](https://voltguard.com.tr/mm/elektrik-kesif-formu.html)
+- [GES Saha Keşif Formu](https://voltguard.com.tr/mm/ges-kesif-formu.html)
+- [Kablo Metraj Şablonu (Excel/CSV)](https://voltguard.com.tr/mm/kablo-metraj-sablonu.html)
+- [Kompanzasyon Kontrol Formu](https://voltguard.com.tr/mm/kompanzasyon-kontrol-formu.html)
+- [Motor Bakım Formu](https://voltguard.com.tr/mm/motor-bakim-formu.html)
+- [Pano Periyodik Kontrol Formu](https://voltguard.com.tr/mm/pano-kontrol-formu.html)
+- [Pano Malzeme Listesi (BOM)](https://voltguard.com.tr/mm/pano-malzeme-listesi.html)
+- [Periyodik Kontrol Checklistleri (Bundle)](https://voltguard.com.tr/mm/periyodik-kontrol-checklistleri.html)
+- [Trafo Periyodik Bakım Checklisti](https://voltguard.com.tr/mm/trafo-bakim-checklisti.html)
 
 ## İletişim
 Teklif ve teknik danışmanlık için: +90 545 434 67 35 · info@voltguard.com.tr · https://voltguard.com.tr/

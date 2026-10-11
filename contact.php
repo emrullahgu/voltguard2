@@ -43,6 +43,50 @@ function vg_ip_in_cidr(string $ip, string $cidr): bool
     return (ord($ipBin[$bytes]) & $mask) === (ord($subBin[$bytes]) & $mask);
 }
 
+/* Dosya tabanlı IP başına hız sınırı (best-effort). Okuma-kontrol-yazma işlemi tek flock altında atomiktir.
+   $record=false: yalnızca limit kontrolü; $record=true: limit aşılmadıysa isteği sayaca ekler.
+   true = istek serbest, false = limit aşıldı. Sayaç dosyası açılamaz/kilitlenemezse istek serbest bırakılır
+   ve (yalnızca kayıt aşamasında) neden loglanır; log kişisel veri içermez. */
+function vg_rate_limit_allows(string $file, int $max, int $window, bool $record): bool
+{
+    $fp = @fopen($file, 'c+');
+    if ($fp === false) {
+        if ($record) {
+            error_log('VoltGuard contact.php: rate limiter inactive for this request (counter file cannot be opened).');
+        }
+        return true;
+    }
+    if (!flock($fp, LOCK_EX)) {
+        fclose($fp);
+        if ($record) {
+            error_log('VoltGuard contact.php: rate limiter inactive for this request (counter file cannot be locked).');
+        }
+        return true;
+    }
+    $now = time();
+    $raw = stream_get_contents($fp);
+    $hits = [];
+    if (is_string($raw) && $raw !== '') {
+        $decoded = json_decode($raw, true);
+        if (is_array($decoded)) {
+            $hits = array_values(array_filter($decoded, static function ($t) use ($now, $window) {
+                return is_int($t) && ($now - $t) < $window;
+            }));
+        }
+    }
+    $allowed = count($hits) < $max;
+    if ($allowed && $record) {
+        $hits[] = $now;
+        rewind($fp);
+        ftruncate($fp, 0);
+        fwrite($fp, json_encode($hits));
+        fflush($fp);
+    }
+    flock($fp, LOCK_UN);
+    fclose($fp);
+    return $allowed;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     respond(405, false, 'Method not allowed.');
 }
@@ -112,40 +156,21 @@ if (!is_dir($rateDir)) {
     @mkdir($rateDir, 0700, true);
 }
 $rateFile = $rateDir . '/' . hash('sha256', $clientIp);
-$nowTs = time();
-// Tek tutamaç üzerinde flock ile atomik oku-değiştir-yaz: eşzamanlı isteklerin
-// aynı eski sayacı okuyup limiti aşmasını (TOCTOU) engeller.
-$rateFp = @fopen($rateFile, 'c+');
-if ($rateFp !== false && flock($rateFp, LOCK_EX)) {
-    $rawHits = stream_get_contents($rateFp);
-    $hits = [];
-    if (is_string($rawHits) && $rawHits !== '') {
-        $decodedHits = json_decode($rawHits, true);
-        if (is_array($decodedHits)) {
-            $hits = array_values(array_filter($decodedHits, static function ($t) use ($nowTs, $rateLimitWindow) {
-                return is_int($t) && ($nowTs - $t) < $rateLimitWindow;
-            }));
-        }
-    }
-    if (count($hits) >= $rateLimitMax) {
-        flock($rateFp, LOCK_UN);
-        fclose($rateFp);
-        respond(429, false, 'Çok fazla deneme yaptınız. Lütfen birkaç dakika sonra tekrar deneyin.');
-    }
-    $hits[] = $nowTs;
-    rewind($rateFp);
-    ftruncate($rateFp, 0);
-    fwrite($rateFp, json_encode($hits));
-    fflush($rateFp);
-    flock($rateFp, LOCK_UN);
-    fclose($rateFp);
+$tooManyMessage = 'Çok fazla deneme yaptınız. Lütfen birkaç dakika sonra tekrar deneyin.';
+// Ön kontrol (salt okunur): limiti zaten dolduran istemci doğrulama/CAPTCHA/mail maliyeti doğurmadan reddedilir.
+// Sayaç, istek form doğrulamasını geçtikten sonra artırılır (aşağıya bakın); böylece geçersiz telefon gibi
+// form hataları nedeniyle yapılan denemeler meşru kullanıcıyı 429 ile kilitlemez.
+if (!vg_rate_limit_allows($rateFile, $rateLimitMax, $rateLimitWindow, false)) {
+    respond(429, false, $tooManyMessage);
 }
 
 $name = trim((string)($_POST['name'] ?? ''));
 $phone = trim((string)($_POST['phone'] ?? ''));
 $email = trim((string)($_POST['email'] ?? ''));
 $subject = trim((string)($_POST['subject'] ?? ''));
-$message = trim((string)($_POST['message'] ?? ''));
+// multipart/form-data gönderiminde tarayıcı LF'yi CRLF'ye çevirir; uzunluk ölçümünden önce LF'ye normalize et
+// (aksi halde her satır sonu 2 karakter sayılır ve istemcideki sayaç/maxlength ile sunucu sınırı uyuşmaz).
+$message = trim(str_replace(["\r\n", "\r"], "\n", (string)($_POST['message'] ?? '')));
 $consent = (string)($_POST['consent'] ?? '');
 $websiteTrap = trim((string)($_POST['website'] ?? ''));
 $formTimestamp = (int)($_POST['formTimestamp'] ?? 0);
@@ -207,6 +232,12 @@ $formAge = $nowMs - $formTimestamp;
    the server-side rate limit above. */
 if ($formTimestamp <= 0 || $formAge < -120000 || $formAge > 86400000) {
     respond(422, false, 'Form doğrulaması başarısız oldu. Lütfen tekrar deneyin.');
+}
+
+// Doğrulamayı geçen istek sayaca eklenir (kontrol + ekleme tek flock altında, yarış durumuna karşı atomik).
+// CAPTCHA servisi çağrısından ve mail() gönderiminden önce yapılır; IP başına üst sınır bu adımlar için korunur.
+if (!vg_rate_limit_allows($rateFile, $rateLimitMax, $rateLimitWindow, true)) {
+    respond(429, false, $tooManyMessage);
 }
 
 if ($captchaConfigured) {
@@ -311,15 +342,14 @@ $mailHeaders = [
 $mailSent = @mail($mailTo, '=?UTF-8?B?' . base64_encode($mailSubject) . '?=', $mailBody, implode("\r\n", $mailHeaders));
 
 if (!$mailSent) {
-    // Persist the lead to the server log so it is recoverable if mail delivery failed.
-    // Mesaj gövdesini de logla ki mail teslimi başarısız olsa bile lead kurtarılabilsin.
+    // KVKK: ad, telefon, e-posta, IP ve mesaj metni sunucu günlüğüne (public_html altındaki error_log dahil)
+    // YAZILMAZ; yalnızca teşhis için gereken, kişiyi tanımlamayan üst veri loglanır. Kullanıcı, yanıttaki
+    // mesajla telefon üzerinden ulaşmaya yönlendirilir.
     error_log(sprintf(
-        'VoltGuard contact.php: mail() failed; lead not delivered. Name=%s Phone=%s Email=%s Subject=%s Message=%.500s',
-        $safeName,
-        $safePhone,
-        ($safeEmail !== '' ? $safeEmail : '-'),
+        'VoltGuard contact.php: mail() failed; lead not delivered. Subject=%s PhoneLast4=%s MessageLength=%d',
         $subjectLabel,
-        $cleanCtrl($message)
+        substr((string)$phoneDigits, -4),
+        mb_strlen($message)
     ));
     respond(500, false, 'Mesaj gönderilemedi. Lütfen telefon ile iletişime geçin.');
 }

@@ -5,13 +5,20 @@ deployment:
     # ONEMLI - cPanel deploy gorev listesi YAML olarak ayristirilir; bir gorev
     # satirinda iki-nokta+bosluk iceren komut (eski Turnstile echo uyarisi gibi)
     # ayristirmayi bozar ve deploy'u sessizce durdururdu. O satir kaldirildi;
-    # zaten deploy'u durdurmuyor yalnizca log yaziyordu. Turnstile anahtari ayrica set edilir.
+    # zaten deploy'u durdurmuyor yalnizca log yaziyordu. Turnstile gizli anahtari (TURNSTILE_SECRET_KEY)
+    # sunucuda ortam degiskeni olarak set edilir; herkese acik site anahtari ise index.html icinde depoda tutulur
+    # (her deploy index.html dosyasinin uzerine yazar, bu yuzden sunucuda elle degistirilmemelidir).
     - export DEPLOYPATH=/home/voltgua2/public_html/
     - /bin/cp -R index.html $DEPLOYPATH
     - /bin/cp -R 404.html $DEPLOYPATH
     - /bin/cp -R gizlilik.html $DEPLOYPATH
     - /bin/cp -R bilgi-bankasi.html $DEPLOYPATH
     - /bin/cp -R teklif-araclari.html $DEPLOYPATH
+    - /bin/cp -R akademi.html $DEPLOYPATH
+    - /bin/cp -R sor.html $DEPLOYPATH
+    - /bin/cp -R muhendis-merkezi.html $DEPLOYPATH
+    # Kok dizindeki tum .html sayfalari (yeni eklenen sayfalar listeye yazilmayi beklemeden yayina cikar).
+    - /bin/cp -R *.html $DEPLOYPATH
     - /bin/cp -R contact.php $DEPLOYPATH
     - /bin/cp -R manifest.json $DEPLOYPATH
     - /bin/cp -R robots.txt $DEPLOYPATH
@@ -32,6 +39,40 @@ deployment:
     - /bin/rm -rf $DEPLOYPATH/bilgi
     - /bin/mkdir -p $DEPLOYPATH/bilgi
     - /bin/cp -R bilgi/* $DEPLOYPATH/bilgi/
+    - /bin/rm -rf $DEPLOYPATH/akademi
+    - /bin/mkdir -p $DEPLOYPATH/akademi
+    - /bin/cp -R akademi/* $DEPLOYPATH/akademi/
+    - /bin/rm -rf $DEPLOYPATH/sor
+    - /bin/mkdir -p $DEPLOYPATH/sor
+    - /bin/cp -R sor/* $DEPLOYPATH/sor/
+    - /bin/rm -rf $DEPLOYPATH/mm
+    - /bin/mkdir -p $DEPLOYPATH/mm
+    - /bin/cp -R mm/* $DEPLOYPATH/mm/
+    - /bin/rm -rf $DEPLOYPATH/hesap
+    - /bin/mkdir -p $DEPLOYPATH/hesap
+    - /bin/cp -R hesap/* $DEPLOYPATH/hesap/
+    - /bin/rm -rf $DEPLOYPATH/hesaplama
+    - /bin/mkdir -p $DEPLOYPATH/hesaplama
+    - /bin/cp -R hesaplama/* $DEPLOYPATH/hesaplama/
     - /bin/rm -rf $DEPLOYPATH/public
     - /bin/mkdir -p $DEPLOYPATH/public
     - /bin/cp -R public/* $DEPLOYPATH/public/
+    # Yeni kok sayfalar (voltgame.html, fabrika-cozumleri.html ...) icin AYRI satir YAZMAYIN: yukaridaki
+    # "*.html" gorevi kokteki tum sayfalari zaten kopyalar. Ayri bir cp satiri, dosya depoda yoksa hata verip
+    # deploy'u o noktada durdurur ve asagidaki gorevleri (fonts/, api/) engellerdi.
+    # ----- Asagidakiler yeni asama ciktilari (opsiyonel kaynaklar) -----
+    # Kaynak dosya veya klasor depoda yoksa cp hata verir ve deploy o noktada durur. Bu yuzden hepsi en sona,
+    # en olasi olandan en az olasi olana dogru dizildi; bir eksiklik yukaridaki gorevleri etkileyemez.
+    # Klasorler once .new olarak kopyalanir, sonra eskisi silinip yeniden adlandirilir: kaynak eksikse canli
+    # klasore dokunulmaz, kopyalama yarida kesilirse site yarim dosyayla kalmaz.
+    # fonts/ kendi barindirdigimiz yazi tipleri (hash li dosya adlari). tools/ bilerek DEPLOY EDILMEZ.
+    - /bin/rm -rf $DEPLOYPATH/fonts.new
+    - /bin/cp -R fonts $DEPLOYPATH/fonts.new
+    - /bin/rm -rf $DEPLOYPATH/fonts
+    - /bin/mv $DEPLOYPATH/fonts.new $DEPLOYPATH/fonts
+    # api/ yalnizca KOD icerir (php). Runtime veri (kullanici, oturum) docroot DISINDA tutulur; api/ icine veri
+    # YAZMAYIN, her deploy bu klasoru siler ve yeniden olusturur. _vgdata/ ve vg-data/ klasorlerine hicbir gorev dokunmaz.
+    - /bin/rm -rf $DEPLOYPATH/api.new
+    - /bin/cp -R api $DEPLOYPATH/api.new
+    - /bin/rm -rf $DEPLOYPATH/api
+    - /bin/mv $DEPLOYPATH/api.new $DEPLOYPATH/api

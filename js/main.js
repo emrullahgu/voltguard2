@@ -27,8 +27,24 @@
   if (reduceMotionMQ.addEventListener) {
     reduceMotionMQ.addEventListener('change', function (e) {
       prefersReducedMotion = e.matches;
+      syncSmilAnimations();
     });
   }
+
+  /* Footer imzasındaki SMIL (animateMotion) animasyonları CSS'teki reduced-motion
+     kuralından etkilenmez; tercih açıksa SVG zaman çizelgesini duraklat. */
+  function syncSmilAnimations() {
+    qsAll('svg.sig-trace').forEach(function (svg) {
+      try {
+        if (prefersReducedMotion) {
+          if (svg.pauseAnimations) svg.pauseAnimations();
+        } else if (svg.unpauseAnimations) {
+          svg.unpauseAnimations();
+        }
+      } catch (err) { /* no-op */ }
+    });
+  }
+  syncSmilAnimations();
 
   /* ------------------------------------------------
      0. PRELOADER
@@ -79,20 +95,6 @@
   }
 
   /* ------------------------------------------------
-     1. HEADER — scroll effect
-  ------------------------------------------------- */
-  var header = qs('#header');
-
-  function updateHeader() {
-    if (!header) return;
-    if (window.scrollY > 60) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
-  }
-
-  /* ------------------------------------------------
      1b. SCROLL PROGRESS BAR
   ------------------------------------------------- */
   var scrollProgress = qs('#scrollProgress');
@@ -131,10 +133,8 @@
   window.addEventListener('scroll', function () {
     if (!scrollTicking) {
       requestAnimationFrame(function () {
-        updateHeader();
         updateScrollProgress();
         updateParallax();
-        updateActiveNav();
         updateFloatingButtons();
         scrollTicking = false;
       });
@@ -178,101 +178,9 @@
     });
   }
 
-  updateHeader();
   updateScrollProgress();
 
-  /* ------------------------------------------------
-     2. MOBILE NAV TOGGLE
-  ------------------------------------------------- */
-  var navToggle = qs('#navToggle');
-  var navMenu   = qs('#navMenu');
-
-  /* Keep the off-screen mobile menu out of the tab order / a11y tree when closed.
-     On desktop the menu is always visible, so it must stay interactive. */
-  function syncMenuInert() {
-    if (!navMenu) return;
-    navMenu.inert = desktopMQ.matches ? false : !navMenu.classList.contains('open');
-  }
-
-  function closeMenu() {
-    navToggle.classList.remove('open');
-    navMenu.classList.remove('open');
-    navToggle.setAttribute('aria-expanded', 'false');
-    syncMenuInert();
-  }
-
-  function openMenu() {
-    navToggle.classList.add('open');
-    navMenu.classList.add('open');
-    navToggle.setAttribute('aria-expanded', 'true');
-    syncMenuInert();
-  }
-
-  if (navToggle && navMenu) {
-    syncMenuInert();
-    if (desktopMQ.addEventListener) {
-      desktopMQ.addEventListener('change', syncMenuInert);
-    }
-
-    navToggle.addEventListener('click', function () {
-      if (navMenu.classList.contains('open')) {
-        closeMenu();
-      } else {
-        openMenu();
-      }
-    });
-
-    /* Close menu when a nav link is clicked */
-    qsAll('.nav__link').forEach(function (link) {
-      link.addEventListener('click', closeMenu);
-    });
-
-    /* Close menu on outside click */
-    document.addEventListener('click', function (e) {
-      if (
-        navMenu.classList.contains('open') &&
-        !navMenu.contains(e.target) &&
-        !navToggle.contains(e.target)
-      ) {
-        closeMenu();
-      }
-    });
-
-    /* Close menu on Escape key */
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && navMenu.classList.contains('open')) {
-        closeMenu();
-        navToggle.focus();
-      }
-    });
-  }
-
-  /* ------------------------------------------------
-     3. ACTIVE NAV LINK — highlight on scroll
-  ------------------------------------------------- */
-  var sections  = qsAll('section[id]');
-  var navLinks  = qsAll('.nav__link');
-
-  function updateActiveNav() {
-    var scrollY = window.scrollY + 100;
-    var currentId = null;
-
-    sections.forEach(function (section) {
-      var top    = section.offsetTop;
-      var height = section.offsetHeight;
-      if (scrollY >= top && scrollY < top + height) {
-        currentId = section.getAttribute('id');
-      }
-    });
-
-    /* Hiçbir bölüm eşleşmezse (sayfa başı/footer) tüm bağlantılar pasifleşir. */
-    navLinks.forEach(function (link) {
-      link.classList.toggle('active', link.getAttribute('href') === '#' + currentId);
-    });
-  }
-
-  /* Note: updateActiveNav is called within the unified rAF scroll handler above */
-  updateActiveNav();
+  /* Site başlığı / menü davranışı: js/vg-shell.js (tüm sayfalarda ortak). */
 
   /* ------------------------------------------------
      4. REVEAL ON SCROLL — Intersection Observer
@@ -336,20 +244,12 @@
 
   if (scrollTopBtn) {
     scrollTopBtn.addEventListener('click', function () {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     });
   }
 
   /* Note: updateFloatingButtons is called within the unified rAF scroll handler above */
   updateFloatingButtons();
-
-  /* ------------------------------------------------
-     6. FOOTER — current year
-  ------------------------------------------------- */
-  var yearEl = qs('#year');
-  if (yearEl) {
-    yearEl.textContent = new Date().getFullYear();
-  }
 
   /* ------------------------------------------------
      7. SMOOTH SCROLL — anchor links
@@ -362,10 +262,12 @@
       var target = qs(href);
       if (target) {
         e.preventDefault();
+        /* Başlık altına hizalama + content-visibility kaymasını düzeltme: js/vg-shell.js */
+        if (window.VGShell && window.VGShell.scrollTo && window.VGShell.scrollTo(target)) return;
         var offset = target.getBoundingClientRect().top + window.scrollY
                      - parseInt(getComputedStyle(document.documentElement)
-                         .getPropertyValue('--header-h') || '72');
-        window.scrollTo({ top: offset, behavior: 'smooth' });
+                         .getPropertyValue('--vg-header-h') || '68') - 12;
+        window.scrollTo({ top: offset, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
       }
     });
   });
@@ -375,6 +277,14 @@
   ------------------------------------------------- */
   var contactForm = qs('#contactForm');
   var submitCooldownMs = 60000;
+
+  /* localStorage erişimi gizli sekme / engellenmiş site verisinde istisna fırlatabilir. */
+  function safeStorageGet(key) {
+    try { return localStorage.getItem(key); } catch (err) { return null; }
+  }
+  function safeStorageSet(key, value) {
+    try { localStorage.setItem(key, value); } catch (err) { /* no-op */ }
+  }
 
   function clearInvalidState(form) {
     qsAll('.is-invalid', form).forEach(function (el) {
@@ -511,7 +421,7 @@
 
       /* Simple rate-limit for automated spam retries */
       var now = Date.now();
-      var lastSubmit = parseInt(localStorage.getItem('vg_last_submit_at') || '0', 10);
+      var lastSubmit = parseInt(safeStorageGet('vg_last_submit_at') || '0', 10);
       if (lastSubmit && now - lastSubmit < submitCooldownMs) {
         var seconds = Math.ceil((submitCooldownMs - (now - lastSubmit)) / 1000);
         showNotification('Yeni gönderim için ' + seconds + ' saniye bekleyin.', 'error');
@@ -524,7 +434,7 @@
 
       var hasError = false;
 
-      if (!name) {
+      if (!name || name.length < 2 || name.length > 100) {
         markInvalid(nameField);
         hasError = true;
       }
@@ -594,7 +504,7 @@
             'Mesajınız alındı! En kısa sürede sizinle iletişime geçeceğiz.',
             'success'
           );
-          localStorage.setItem('vg_last_submit_at', String(Date.now()));
+          safeStorageSet('vg_last_submit_at', String(Date.now()));
           contactForm.reset();
           resetCaptcha();
           if (timestampField) timestampField.value = String(Date.now());
@@ -602,6 +512,7 @@
         })
         .catch(function (error) {
           resetCaptcha();
+          if (timestampField) timestampField.value = String(Date.now());
           var msg = (error && error.name === 'TypeError')
             ? 'Bağlantı hatası. İnternet bağlantınızı kontrol edip tekrar deneyin.'
             : ((error && error.message) || 'Gönderim sırasında bir hata oluştu.');
@@ -655,7 +566,9 @@
       opacity:      '0',
       transition:   'all .3s ease',
       maxWidth:     'calc(100vw - 2rem)',
-      whiteSpace:   'nowrap',
+      width:        'max-content',
+      whiteSpace:   'normal',
+      textAlign:    'center',
     });
 
     document.body.appendChild(el);
@@ -818,24 +731,6 @@
     card.addEventListener('mouseleave', function () {
       cardRect = null;
       card.style.transform = '';
-    });
-  });
-
-  /* ------------------------------------------------
-     13. SMOOTH SCROLL FOR MOBILE CTA
-  ------------------------------------------------- */
-  var mobileCtaLinks = qsAll('.mobile-cta__btn[href^="#"]');
-  mobileCtaLinks.forEach(function (link) {
-    link.addEventListener('click', function (e) {
-      var href = this.getAttribute('href');
-      var target = qs(href);
-      if (target) {
-        e.preventDefault();
-        var offset = target.getBoundingClientRect().top + window.scrollY
-                     - parseInt(getComputedStyle(document.documentElement)
-                         .getPropertyValue('--header-h') || '72');
-        window.scrollTo({ top: offset, behavior: 'smooth' });
-      }
     });
   });
 
@@ -1159,6 +1054,8 @@
 
     function loadVideo(video) {
       if (video.dataset.loaded === '1') return;
+      /* "Hareketi azalt" açıksa videoyu hiç yükleme/oynatma; poster görünür kalır. */
+      if (prefersReducedMotion) { video.removeAttribute('autoplay'); return; }
       video.dataset.loaded = '1';
       /* <source data-src> varsa src'ye taşı */
       var sources = video.querySelectorAll('source[data-src]');

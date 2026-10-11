@@ -4,7 +4,8 @@
    - Save to account
    - Toggle favorite
    - Share (Web Share API or copy link)
-   - Export as PDF (via jsPDF loaded on demand)
+   - Export as PDF (via jsPDF loaded on demand; Turkish letters and
+     engineering symbols are transliterated, see pdfText)
    Also draws a consistent "VoltGuard Tools" brand banner.
    ===================================================== */
 (function (global) {
@@ -51,58 +52,99 @@
     };
   }
 
+  var jsPdfPromise = null;
   function ensureJsPdf() {
     if (global.jspdf && global.jspdf.jsPDF) return Promise.resolve(global.jspdf.jsPDF);
-    return new Promise(function (resolve, reject) {
+    if (jsPdfPromise) return jsPdfPromise;
+    jsPdfPromise = new Promise(function (resolve, reject) {
       var s = document.createElement('script');
       s.src = JSPDF_URL;
       s.crossOrigin = 'anonymous';
-      s.onload = function () { resolve(global.jspdf && global.jspdf.jsPDF); };
-      s.onerror = function () { reject(new Error('PDF kütüphanesi yüklenemedi.')); };
+      s.onload = function () {
+        if (global.jspdf && global.jspdf.jsPDF) { resolve(global.jspdf.jsPDF); return; }
+        jsPdfPromise = null;
+        reject(new Error('PDF kütüphanesi yüklenemedi.'));
+      };
+      s.onerror = function () { jsPdfPromise = null; s.remove(); reject(new Error('PDF kütüphanesi yüklenemedi.')); };
       document.head.appendChild(s);
     });
+    return jsPdfPromise;
+  }
+
+  // jsPDF'in yerleşik yazı tipleri (WinAnsi) ğ ş ı İ Ş Ğ harflerini ve mühendislik simgelerini
+  // (Ω, φ, ≈, ≤ ...) taşımaz; bunlar PDF'e yazılmadan önce güvenli ASCII karşılıklarına çevrilir.
+  var PDF_CHAR_MAP = {
+    '\u0131': 'i', '\u0130': 'I', '\u015f': 's', '\u015e': 'S', '\u011f': 'g', '\u011e': 'G',
+    '\u00e7': 'c', '\u00c7': 'C', '\u00f6': 'o', '\u00d6': 'O', '\u00fc': 'u', '\u00dc': 'U',
+    '\u20ba': 'TL', '\u20ac': 'EUR',
+    '\u03a9': 'ohm', '\u2126': 'ohm', '\u03c6': 'phi', '\u03a6': 'Phi', '\u03b7': 'eta', '\u03c1': 'rho',
+    '\u03c0': 'pi', '\u0394': 'delta', '\u03bc': 'u',
+    '\u2248': '~', '\u2264': '<=', '\u2265': '>=', '\u2260': '!=', '\u221a': 'sqrt', '\u221e': 'inf', '\u2212': '-',
+    '\u2192': '->', '\u2190': '<-', '\u2194': '<->',
+    '\u2022': '-', '\u2013': '-', '\u2014': '-', '\u2018': "'", '\u2019': "'", '\u201c': '"', '\u201d': '"', '\u2026': '...'
+  };
+  function pdfText(text) {
+    var out = String(text == null ? '' : text)
+      .replace(/[\u2080-\u2089]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x2080 + 48); })
+      .replace(/[^\x00-\x7F]/g, function (c) { return Object.prototype.hasOwnProperty.call(PDF_CHAR_MAP, c) ? PDF_CHAR_MAP[c] : c; });
+    if (out.normalize) out = out.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return out.replace(/[^\x00-\xFF]/g, '?');
+  }
+  function pdfSlug(text) {
+    return pdfText(text).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
   }
 
   async function exportPdf(name) {
     var jsPDF = await ensureJsPdf();
     var doc = new jsPDF({ unit: 'mm', format: 'a4' });
     var margin = 15;
+    var width = 210 - 2 * margin;
+    var title = name || toolName();
     var y = margin;
+    function ensureSpace(height) {
+      if (y + height > 280) { doc.addPage(); y = margin; }
+    }
     doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
     doc.text('VoltGuard Tools', margin, y); y += 8;
     doc.setFont('helvetica', 'normal'); doc.setFontSize(11); doc.setTextColor(120);
-    doc.text(name || toolName(), margin, y); y += 6;
-    doc.text('Tarih: ' + new Date().toLocaleString('tr-TR'), margin, y); y += 8;
+    var titleLines = doc.splitTextToSize(pdfText(title), width);
+    doc.text(titleLines, margin, y); y += titleLines.length * 6;
+    doc.text(pdfText('Tarih: ' + new Date().toLocaleString('tr-TR')), margin, y); y += 8;
     doc.setDrawColor(200); doc.line(margin, y, 210 - margin, y); y += 6;
     doc.setTextColor(30); doc.setFontSize(12); doc.setFont('helvetica', 'bold');
-    doc.text('Giriş değerleri', margin, y); y += 6;
+    doc.text(pdfText('Giriş değerleri'), margin, y); y += 6;
     doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
     readInputs().forEach(function (f) {
-      var line = f.label + ': ' + String(f.value);
-      var lines = doc.splitTextToSize(line, 210 - 2 * margin);
+      var lines = doc.splitTextToSize(pdfText(f.label + ': ' + String(f.value)), width);
+      ensureSpace(lines.length * 5);
       doc.text(lines, margin, y);
       y += lines.length * 5;
-      if (y > 270) { doc.addPage(); y = margin; }
     });
     y += 4;
     var r = readResult();
+    ensureSpace(20);
     doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
-    doc.text('Sonuç', margin, y); y += 6;
+    doc.text(pdfText('Sonuç'), margin, y); y += 6;
     doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
-    doc.text(r.value || '-', margin, y); y += 6;
+    var valueLines = doc.splitTextToSize(pdfText(r.value || '-'), width);
+    ensureSpace(valueLines.length * 5.5);
+    doc.text(valueLines, margin, y); y += valueLines.length * 5.5 + 1;
     if (r.note) {
       doc.setFontSize(10); doc.setTextColor(120);
-      var noteLines = doc.splitTextToSize(r.note, 210 - 2 * margin);
+      var noteLines = doc.splitTextToSize(pdfText(r.note), width);
+      ensureSpace(noteLines.length * 5);
       doc.text(noteLines, margin, y); y += noteLines.length * 5;
       doc.setTextColor(30);
     }
     y += 8;
+    ensureSpace(26);
     doc.setDrawColor(200); doc.line(margin, y, 210 - margin, y); y += 5;
     doc.setFontSize(9); doc.setTextColor(120);
-    doc.text('Bu çıktı ön değerlendirmedir; nihai proje için yetkili mühendislik doğrulaması gerekir.', margin, y, { maxWidth: 210 - 2 * margin });
-    y += 5;
-    doc.text('voltguard.com.tr/hesaplama-araclari/', margin, y);
-    var safeName = (name || toolName()).replace(/[^a-z0-9]+/gi, '_').slice(0, 60) || 'voltguard-tools';
+    var disclaimer = doc.splitTextToSize(pdfText('Bu çıktı ön değerlendirmedir; nihai proje için yetkili mühendislik doğrulaması gerekir.'), width);
+    doc.text(disclaimer, margin, y); y += disclaimer.length * 4.5;
+    doc.text(pdfText('Kaynak: ' + toolUrl()), margin, y); y += 4.5;
+    doc.text('voltguard.com.tr | +90 545 434 67 35 | info@voltguard.com.tr', margin, y);
+    var safeName = pdfSlug(title).slice(0, 60).replace(/-+$/, '') || 'tools';
     doc.save('voltguard-' + safeName + '.pdf');
   }
 
@@ -117,12 +159,18 @@
     catch (e) { return { ok: false, mode: 'error' }; }
   }
 
+  // Giriş sayfası adresi: http(s) üzerinde alan adı köküne göre mutlak yol (temiz URL'lerde ../ göreli yolu
+  // /hesaplama/hesap/... gibi var olmayan bir adrese giderdi); file:// önizlemede Auth.pathPrefix() kullanılır.
+  function loginUrl() {
+    var prefix = /^https?:$/.test(location.protocol) ? '/' : (global.VG && global.VG.Auth ? global.VG.Auth.pathPrefix() : '');
+    return prefix + 'hesap/giris.html?next=' + encodeURIComponent(location.pathname + location.search);
+  }
+
   function saveCurrentToAccount(userNote) {
     if (!global.VG || !global.VG.Auth) throw new Error('Auth modülü yüklenmedi.');
     var user = global.VG.Auth.currentUser();
     if (!user) {
-      var prefix = global.VG.Auth.pathPrefix();
-      location.href = prefix + 'hesap/giris.html?next=' + encodeURIComponent(location.pathname + location.search);
+      location.href = loginUrl();
       return null;
     }
     var params = readInputs();
@@ -140,6 +188,7 @@
   function toast(msg, kind) {
     var t = document.createElement('div');
     t.className = 'vg-toast vg-toast--' + (kind || 'info');
+    t.setAttribute('role', kind === 'error' ? 'alert' : 'status');
     t.textContent = msg;
     document.body.appendChild(t);
     requestAnimationFrame(function () { t.classList.add('is-visible'); });
@@ -163,6 +212,8 @@
 
     var bar = document.createElement('div');
     bar.className = 'vg-toolbar';
+    bar.setAttribute('role', 'group');
+    bar.setAttribute('aria-label', 'Hesap işlemleri');
     bar.innerHTML = [
       '<button type="button" class="vg-toolbar__btn" data-vg-action="save"><i class="fas fa-bookmark" aria-hidden="true"></i> Hesabıma kaydet</button>',
       '<button type="button" class="vg-toolbar__btn" data-vg-action="fav" aria-pressed="' + (isFav ? 'true' : 'false') + '"><i class="fas ' + (isFav ? 'fa-star' : 'fa-star') + '" aria-hidden="true"></i> ' + (isFav ? 'Favoriden çıkar' : 'Favorilere ekle') + '</button>',
@@ -190,7 +241,7 @@
       if (action === 'fav') {
         var user = global.VG.Auth.currentUser();
         if (!user) {
-          location.href = global.VG.Auth.pathPrefix() + 'hesap/giris.html?next=' + encodeURIComponent(location.pathname + location.search);
+          location.href = loginUrl();
           return;
         }
         var nowFav = global.VG.Auth.toggleFavorite(toolSlug(), toolName(), toolUrl());
@@ -213,7 +264,15 @@
     }
   }
 
-  function init() { ensureToolbar(); }
+  // Sonuç alanı her girişte güncellenir; ekran okuyucuların değişikliği duyurması için canlı bölge işaretlenir.
+  function markLiveRegions() {
+    qq('.mini-calc__result').forEach(function (el) {
+      if (!el.hasAttribute('role')) el.setAttribute('role', 'status');
+      if (!el.hasAttribute('aria-live')) el.setAttribute('aria-live', 'polite');
+    });
+  }
+
+  function init() { markLiveRegions(); ensureToolbar(); }
 
   global.VG = global.VG || {};
   global.VG.Tools = {
@@ -221,6 +280,8 @@
     readInputs: readInputs,
     readResult: readResult,
     exportPdf: exportPdf,
+    pdfText: pdfText,
+    pdfSlug: pdfSlug,
     saveToAccount: saveCurrentToAccount,
     share: shareCurrent
   };

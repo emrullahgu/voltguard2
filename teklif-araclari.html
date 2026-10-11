@@ -3,17 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light only">
   <meta name="description" content="VoltGuard Mühendislik Hesaplama Merkezi: kablo kesiti, gerilim düşümü, sigorta/TMŞ, motor koruma şalteri, kontaktör, motor akımı, kompanzasyon, kısa devre, topraklama, GES, inverter ve aydınlatma için ücretsiz hesaplama araçları.">
-  <meta name="robots" content="index, follow, max-snippet:-1">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <base href="/">
-  <link rel="canonical" href="https://voltguard.com.tr/hesaplama-araclari/">
-  <title>Mühendislik Hesaplama Merkezi | Ücretsiz Elektrik Hesap Araçları | VoltGuard</title>
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="/css/vg-shell.css">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama-araclari/">
+  <title>Mühendislik Hesaplama Merkezi | Ücretsiz Elektrik Hesap Araçları | VoltGuard</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Mühendislik Hesaplama Merkezi | VoltGuard">
+  <meta property="og:description" content="Kablo kesiti, gerilim düşümü, sigorta/TMŞ, motor koruma, kompanzasyon, kısa devre, topraklama, GES ve inverter için ücretsiz mühendislik hesaplama araçları.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama-araclari/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="public/apple-touch-icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/calculator-config.js"></script>
+  <script src="js/calculator-config.js?v=2026-10-11"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -60,6 +101,7 @@
     .tool-fields { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
     .tool-field { display: grid; gap: .4rem; }
     .tool-field--wide { grid-column: 1 / -1; }
+    .tool-field[hidden] { display: none; }
     .tool-field label { color: #334155; font-size: .9rem; font-weight: 600; }
     .tool-field input, .tool-field select { width: 100%; border: 1px solid #cbd5e1; border-radius: 5px; padding: .75rem .8rem; color: #0f172a; font: inherit; background: #fff; }
     .tool-field input:focus, .tool-field select:focus { outline: 3px solid rgba(59,130,246,.2); border-color: #3b82f6; }
@@ -84,24 +126,53 @@
   </style>
 </head>
 <body class="tool-page doc-shell">
-  <header class="doc-header">
-    <div class="doc-header__inner">
-      <a class="doc-header__brand" href="index.html"><img src="public/icon-192.png" alt="" width="34" height="34">VoltGuard <span style="color:#fcd34d;font-weight:700;margin-left:.3rem">Tools</span></a>
-      <nav class="doc-header__nav" id="docNav" aria-label="Üst menü">
-        <a href="bilgi-bankasi.html">Bilgi Bankası</a>
-        <a href="akademi.html">Akademi</a>
-        <a href="muhendis-merkezi.html">Mühendis Merkezi</a>
-        <a href="hesaplama-araclari/">Hesap Araçları</a>
-        <a href="sor.html">VoltGuard'a Sor</a>
-        <a href="index.html#hizmetler">Hizmetler</a>
-        <a href="index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+  <!--vg:header-->
+  <a class="skip-to-content" href="/hesaplama-araclari/#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <span class="logo-mark" aria-hidden="true">
+          <span class="logo-mark__volt">VOLT</span>
+          <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="logo-mark__guard">GUARD</span>
+        </span>
+        <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+      </a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/#hizmetler">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/" aria-current="page">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
       </nav>
+      <div class="vg-actions">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
     </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
   </header>
-  <main>
+  <!--/vg:header-->
+  <main id="main" tabindex="-1">
     <section class="tool-hero"><div class="tool-hero__inner"><span class="tool-eyebrow">VoltGuard Tools · Mühendislik Hesaplama Merkezi</span><h1>Ücretsiz elektrik mühendisliği hesap araçları</h1><p>Kablo kesiti, gerilim düşümü, sigorta/TMŞ, motor koruma şalteri, kontaktör, motor akımı, kompanzasyon, kısa devre, topraklama, GES ve inverter seçimine kadar tüm hesaplarınızı tek merkezden yapın. Her araçta kullanılan formül, varsayımlar ve mühendislik doğrulama uyarısı sonuçla birlikte gösterilir. Hesabı telefon numarası vermeden görün; ücretsiz üye olarak sonuçları kaydedin, favori araçlarınızı işaretleyin.</p></div></section>
-    <section class="tool-main" aria-label="Teklif araçları">
-      <div class="tool-categories" aria-label="Hesaplama kategorileri">
+    <section class="tool-main" aria-label="Hesaplama araçları">
+      <div class="tool-categories" role="group" aria-label="Hesaplama kategorileri">
         <button class="tool-category tool-category--active" type="button" data-panel="ges"><i class="fas fa-solar-panel"></i>GES</button>
         <button class="tool-category" type="button" data-panel="trafo"><i class="fas fa-tower-broadcast"></i>Trafo ve OG</button>
         <button class="tool-category" type="button" data-panel="kontrol"><i class="fas fa-clipboard-check"></i>Periyodik Kontrol</button>
@@ -121,16 +192,15 @@
 
       <section class="tool-panel active" id="ges-panel" role="tabpanel" aria-labelledby="ges-tab">
         <div class="tool-card"><h2>GES kurulum maliyeti</h2><p class="tool-card__intro">Çatı veya arazi projeniz için yaklaşık yatırım büyüklüğü ve yıllık üretim potansiyeli.</p><div class="tool-fields">
-          <div class="tool-field"><label for="ges-bill">Aylık elektrik faturası (TL)</label><input id="ges-bill" type="number" min="0" placeholder="Örn. 150000" inputmode="numeric"></div>
+          <div class="tool-field"><label for="ges-bill">Aylık elektrik faturası (TL) - girilirse tüketim buradan hesaplanır</label><input id="ges-bill" type="number" min="0" placeholder="Örn. 150000" inputmode="numeric"></div>
           <div class="tool-field"><label for="ges-consumption">Aylık tüketim (kWh)</label><input id="ges-consumption" type="number" min="0" value="35000" inputmode="numeric"></div>
           <div class="tool-field"><label for="ges-unit-price">Birim elektrik bedeli (TL/kWh)</label><input id="ges-unit-price" type="number" min="0.1" step="0.01" value="3.50" inputmode="decimal"></div>
           <div class="tool-field"><label for="ges-area">Kullanılabilir alan (m²)</label><input id="ges-area" type="number" min="1" value="1500" inputmode="numeric"></div>
           <div class="tool-field"><label for="ges-type">Kurulum tipi</label><select id="ges-type"><option value="1">Çatı GES</option><option value="1.12">Arazi GES</option></select></div>
-          <div class="tool-field"><label for="ges-city">Proje ili</label><select id="ges-city"><option value="1600">İzmir</option><option value="1550">Ege Bölgesi</option><option value="1450">Diğer bölgeler</option></select></div>
+          <div class="tool-field"><label for="ges-city">Proje bölgesi</label><select id="ges-city"><option value="1650">Güneydoğu (1650 kWh/kWp)</option><option value="1600" selected>Ege / Akdeniz (1600 kWh/kWp)</option><option value="1500">İç Anadolu (1500 kWh/kWp)</option><option value="1400">Marmara (1400 kWh/kWp)</option><option value="1300">Karadeniz (1300 kWh/kWp)</option></select></div>
           <div class="tool-field"><label for="ges-day-ratio">Gündüz tüketim oranı</label><select id="ges-day-ratio"><option value="0.65">%65</option><option value="0.8" selected>%80</option><option value="0.95">%95</option></select></div>
-          <div class="tool-field"><label for="ges-connection">Bağlantı tercihi</label><select id="ges-connection"><option>Öz tüketim odaklı</option><option>Şebeke bağlantılı</option></select></div>
-        </div><p class="tool-note">Bu sonuç ön değerlendirmedir. Çatı statiği, gölgelenme, bağlantı kapasitesi, çağrı mektubu, proje/onay süreçleri ve KDV kesin teklif sırasında değerlendirilir.</p></div>
-        <aside class="tool-result"><div><span class="tool-result__label">Ön GES fizibilitesi</span><div class="tool-result__amount" id="ges-amount">-</div><p class="tool-result__detail" id="ges-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i><span id="ges-production"></span></li><li><i class="fas fa-check"></i><span id="ges-coverage"></span></li><li><i class="fas fa-check"></i><span id="ges-savings"></span></li><li><i class="fas fa-check"></i><span id="ges-equipment"></span></li></ul><button class="tool-download" data-pdf-title="GES On Fizibilite Raporu"> <i class="fas fa-file-pdf"></i> PDF ön fizibilite indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="GES maliyet hesabı">Mühendislik keşfi talep edin</button></aside>
+        </div><p class="tool-note">Bu sonuç ön değerlendirmedir. Çatı statiği, gölgelenme, bağlantı kapasitesi, çağrı mektubu, proje/onay süreçleri ve KDV kesin teklif sırasında değerlendirilir. <span id="ges-assumptions"></span></p></div>
+        <aside class="tool-result"><div><span class="tool-result__label">Ön GES fizibilitesi</span><div class="tool-result__amount" id="ges-amount" aria-live="polite">-</div><p class="tool-result__detail" id="ges-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i><span id="ges-production"></span></li><li><i class="fas fa-check"></i><span id="ges-coverage"></span></li><li><i class="fas fa-check"></i><span id="ges-savings"></span></li><li><i class="fas fa-check"></i><span id="ges-equipment"></span></li></ul><button class="tool-download" data-pdf-title="GES On Fizibilite Raporu"> <i class="fas fa-file-pdf"></i> PDF ön fizibilite indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="GES maliyet hesabı">Mühendislik keşfi talep edin</button></aside>
       </section>
 
       <section class="tool-panel" id="trafo-panel" role="tabpanel" aria-labelledby="trafo-tab" hidden>
@@ -140,7 +210,7 @@
           <div class="tool-field"><label for="trafo-plan">Ziyaret planı</label><select id="trafo-plan"><option value="1">Aylık kontrol</option><option value="1.35">İki haftada bir kontrol</option></select></div>
           <div class="tool-field"><label for="trafo-need">Ek gereksinim</label><select id="trafo-need"><option value="1">Standart takip</option><option value="1.2">Ölçüm ve raporlama</option></select></div>
         </div><p class="tool-note">İşletme sorumluluğu bedeli; tesisin gerilim seviyesi, güç, saha erişimi, ölçüm kapsamı ve yürürlükteki EMO asgari ücret hükümlerine göre kesinleşir.</p></div>
-        <aside class="tool-result"><div><span class="tool-result__label">Aylık ön değerlendirme</span><div class="tool-result__amount" id="trafo-amount">-</div><p class="tool-result__detail" id="trafo-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i>Yetkili mühendis takibi</li><li><i class="fas fa-check"></i>Planlı saha kontrolü</li></ul><button class="tool-download" data-pdf-title="Trafo Isletme Sorumlulugu"><i class="fas fa-file-pdf"></i> PDF özeti indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="Trafo işletme sorumluluğu">Bu kapsamla fiyat al</button></aside>
+        <aside class="tool-result"><div><span class="tool-result__label">Aylık ön değerlendirme</span><div class="tool-result__amount" id="trafo-amount" aria-live="polite">-</div><p class="tool-result__detail" id="trafo-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i>Yetkili mühendis takibi</li><li><i class="fas fa-check"></i>Planlı saha kontrolü</li></ul><button class="tool-download" data-pdf-title="Trafo Isletme Sorumlulugu"><i class="fas fa-file-pdf"></i> PDF özeti indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="Trafo işletme sorumluluğu">Bu kapsamla fiyat al</button></aside>
       </section>
 
       <section class="tool-panel" id="kontrol-panel" role="tabpanel" aria-labelledby="kontrol-tab" hidden>
@@ -150,7 +220,7 @@
           <div class="tool-field"><label for="control-panels">Pano sayısı</label><input id="control-panels" type="number" min="0" value="8" inputmode="numeric"></div>
           <div class="tool-field"><label for="control-urgency">Talep zamanı</label><select id="control-urgency"><option value="1">Planlı</option><option value="1.25">Acil</option></select></div>
         </div><p class="tool-note">Kapsam; tesis gezisi, cihazlı ölçüm, uygunsuzlukların sınıflandırılması ve raporlamayı esas alır. Nihai fiyat için yerinde keşif ve güncel mevzuat değerlendirmesi gerekir.</p></div>
-        <aside class="tool-result"><div><span class="tool-result__label">Öngörülen çalışma</span><div class="tool-result__amount" id="control-amount">-</div><p class="tool-result__detail" id="control-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i><span id="control-scope"></span></li><li><i class="fas fa-check"></i>Rapor ve uygunsuzluk özeti</li></ul><button class="tool-download" data-pdf-title="Periyodik Elektrik Kontrolu"><i class="fas fa-file-pdf"></i> PDF özeti indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="Periyodik elektrik kontrolü">Bu kapsamla fiyat al</button></aside>
+        <aside class="tool-result"><div><span class="tool-result__label">Öngörülen çalışma</span><div class="tool-result__amount" id="control-amount" aria-live="polite">-</div><p class="tool-result__detail" id="control-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i><span id="control-scope"></span></li><li><i class="fas fa-check"></i>Rapor ve uygunsuzluk özeti</li></ul><button class="tool-download" data-pdf-title="Periyodik Elektrik Kontrolu"><i class="fas fa-file-pdf"></i> PDF özeti indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="Periyodik elektrik kontrolü">Bu kapsamla fiyat al</button></aside>
       </section>
 
       <section class="tool-panel" id="teknik-panel" role="tabpanel" aria-labelledby="teknik-tab" hidden>
@@ -163,27 +233,27 @@
           <div class="tool-field"><label for="technical-c" id="technical-c-label">Eşzamanlılık oranı (%)</label><input id="technical-c" type="number" min="0" value="70" inputmode="decimal"></div>
           <div class="tool-field"><label for="technical-d" id="technical-d-label">Güç faktörü / verim (%)</label><input id="technical-d" type="number" min="0" value="90" inputmode="decimal"></div>
         </div><div class="tool-formula"><strong>Formül:</strong> <span id="technical-formula-text"></span><br><strong>Varsayımlar:</strong> <span id="technical-assumptions-text"></span></div><p class="tool-note" id="technical-note">Teknik hesaplar ön değerlendirme sağlar. Nihai ekipman seçimi, saha koşulları, standartlar ve yetkili mühendis incelemesiyle yapılır.</p></div>
-        <aside class="tool-result"><div><span class="tool-result__label">Teknik ön değerlendirme</span><div class="tool-result__amount" id="technical-amount">-</div><p class="tool-result__detail" id="technical-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i><span id="technical-scope"></span></li><li><i class="fas fa-check"></i>Sonuç varsayımlara dayanır, mühendislik doğrulaması gerekir.</li></ul><button class="tool-download" data-pdf-title="Teknik On Degerlendirme"><i class="fas fa-file-pdf"></i> PDF özeti indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="teknik hesaplama">Bu sonuçla teklif al</button></aside>
+        <aside class="tool-result"><div><span class="tool-result__label">Teknik ön değerlendirme</span><div class="tool-result__amount" id="technical-amount" aria-live="polite">-</div><p class="tool-result__detail" id="technical-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i><span id="technical-scope"></span></li><li><i class="fas fa-check"></i>Sonuç varsayımlara dayanır, mühendislik doğrulaması gerekir.</li></ul><button class="tool-download" data-pdf-title="Teknik On Degerlendirme"><i class="fas fa-file-pdf"></i> PDF özeti indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="teknik hesaplama">Bu sonuçla teklif al</button></aside>
       </section>
 
       <section aria-label="Bağımsız hesaplama araçları" style="margin-top:2.5rem;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:clamp(1.4rem,3vw,2.2rem);">
         <div style="margin-bottom:1.25rem"><span class="tool-eyebrow">Bağımsız Hesap Sayfaları</span><h2 style="color:#0a1628;font:800 clamp(1.4rem,3vw,2rem) 'Outfit',sans-serif;margin:.35rem 0 .3rem">Hesaplama araçlarını ayrı sayfada aç</h2><p style="color:#475569;max-width:820px">Her araç kendi sayfasında; formül, örnek çözüm ve sık sorulan sorularla birlikte açıklanır. SEO ve kolay paylaşım için tercih edilir.</p></div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.9rem">
-          <a class="kb-card" href="hesaplama/kablo-kesiti-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-ruler-horizontal"></i></span><span class="kb-card__title">Kablo Kesiti Hesaplama</span><span class="kb-card__desc">Yük gücü, gerilim ve döşeme bilgileriyle standart bakır kesit önerisi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/gerilim-dusumu-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-chart-line"></i></span><span class="kb-card__title">Gerilim Düşümü (%)</span><span class="kb-card__desc">Akım, kesit ve uzunluğa göre yüzdesel düşüm ve sınır kontrolü.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/trafo-akimi-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-tower-broadcast"></i></span><span class="kb-card__title">Trafo Akımı Hesaplama</span><span class="kb-card__desc">kVA ve gerilim bilgisiyle sekonder nominal akım.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/kisa-devre-akimi-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-bolt"></i></span><span class="kb-card__title">Kısa Devre Akımı (Ik)</span><span class="kb-card__desc">Trafo, uk ve kablo etkisiyle pano barasında beklenen Ik.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/kompanzasyon-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-wave-square"></i></span><span class="kb-card__title">Kompanzasyon (kVAr)</span><span class="kb-card__desc">Aktif güç ve cosφ bilgisiyle gerekli kondansatör gücü.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/motor-akimi-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-gear"></i></span><span class="kb-card__title">Motor Akımı Hesaplama</span><span class="kb-card__desc">Motor gücü, cosφ ve verimden nominal akım + hazır tablo.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/kw-kva-amper-donusturucu.html"><span class="kb-card__icon"><i class="fas fa-arrows-rotate"></i></span><span class="kb-card__title">kW - kVA - Amper Dönüşümü</span><span class="kb-card__desc">Herhangi bir değerden diğer ikisini anında hesapla.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/sigorta-tms-secimi.html"><span class="kb-card__icon"><i class="fas fa-shield-halved"></i></span><span class="kb-card__title">Sigorta / TMŞ Seçimi</span><span class="kb-card__desc">Ib ≤ In ≤ Iz kuralı ile standart anma akımı ve eğri tipi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/motor-koruma-kontaktor-secimi.html"><span class="kb-card__icon"><i class="fas fa-toggle-on"></i></span><span class="kb-card__title">Motor Koruma &amp; Kontaktör</span><span class="kb-card__desc">MPCB ayar aralığı ve AC-3 kontaktör Ie önerisi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/jenerator-gucu-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-oil-can"></i></span><span class="kb-card__title">Jeneratör Gücü Hesaplama</span><span class="kb-card__desc">Motor kalkışı ve yedek payıyla önerilen kVA.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/ups-gucu-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-battery-full"></i></span><span class="kb-card__title">UPS Gücü ve Akü Süresi</span><span class="kb-card__desc">Kritik yük ve süreye göre UPS kVA + akü kapasitesi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/topraklama-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-plug"></i></span><span class="kb-card__title">Topraklama Direnci</span><span class="kb-card__desc">Zemin özdirenci ve elektrota göre R ve elektrot sayısı.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/ges-uretim-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-solar-panel"></i></span><span class="kb-card__title">GES Kapasite &amp; Üretim</span><span class="kb-card__desc">Tüketim, alan ve bölge katsayısıyla kWp ve yıllık kWh.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/inverter-dc-ac-kablo-secimi.html"><span class="kb-card__icon"><i class="fas fa-plug-circle-bolt"></i></span><span class="kb-card__title">İnverter DC/AC Kablo</span><span class="kb-card__desc">İnverter için DC string ve AC hat kablo kesitleri.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
-          <a class="kb-card" href="hesaplama/aydinlatma-lux-hesaplama.html"><span class="kb-card__icon"><i class="fas fa-lightbulb"></i></span><span class="kb-card__title">Aydınlatma ve Lux</span><span class="kb-card__desc">Alan, hedef lux ve armatür lümeni ile armatür sayısı.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/kablo-kesiti-hesaplama/"><span class="kb-card__icon"><i class="fas fa-ruler-horizontal"></i></span><span class="kb-card__title">Kablo Kesiti Hesaplama</span><span class="kb-card__desc">Yük gücü ve gerilim bilgisiyle ön bakır kesit önerisi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/gerilim-dusumu-hesaplama/"><span class="kb-card__icon"><i class="fas fa-chart-line"></i></span><span class="kb-card__title">Gerilim Düşümü (%)</span><span class="kb-card__desc">Akım, kesit ve uzunluğa göre yüzdesel düşüm ve sınır kontrolü.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/trafo-akimi-hesaplama/"><span class="kb-card__icon"><i class="fas fa-tower-broadcast"></i></span><span class="kb-card__title">Trafo Akımı Hesaplama</span><span class="kb-card__desc">kVA ve gerilim bilgisiyle sekonder nominal akım.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/kisa-devre-akimi-hesaplama/"><span class="kb-card__icon"><i class="fas fa-bolt"></i></span><span class="kb-card__title">Kısa Devre Akımı (Ik)</span><span class="kb-card__desc">Trafo, uk ve kablo etkisiyle pano barasında beklenen Ik.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/kompanzasyon-hesaplama/"><span class="kb-card__icon"><i class="fas fa-wave-square"></i></span><span class="kb-card__title">Kompanzasyon (kVAr)</span><span class="kb-card__desc">Aktif güç ve cosφ bilgisiyle gerekli kondansatör gücü.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/motor-akimi-hesaplama/"><span class="kb-card__icon"><i class="fas fa-gear"></i></span><span class="kb-card__title">Motor Akımı Hesaplama</span><span class="kb-card__desc">Motor gücü, cosφ ve verimden nominal akım + hazır tablo.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/kw-kva-amper-donusturucu/"><span class="kb-card__icon"><i class="fas fa-arrows-rotate"></i></span><span class="kb-card__title">kW - kVA - Amper Dönüşümü</span><span class="kb-card__desc">Herhangi bir değerden diğer ikisini anında hesapla.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/sigorta-tms-secimi/"><span class="kb-card__icon"><i class="fas fa-shield-halved"></i></span><span class="kb-card__title">Sigorta / TMŞ Seçimi</span><span class="kb-card__desc">Ib ≤ In ≤ Iz kuralı ile standart anma akımı ve eğri tipi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/motor-koruma-kontaktor-secimi/"><span class="kb-card__icon"><i class="fas fa-toggle-on"></i></span><span class="kb-card__title">Motor Koruma &amp; Kontaktör</span><span class="kb-card__desc">MPCB ayar aralığı ve AC-3 kontaktör Ie önerisi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/jenerator-gucu-hesaplama/"><span class="kb-card__icon"><i class="fas fa-oil-can"></i></span><span class="kb-card__title">Jeneratör Gücü Hesaplama</span><span class="kb-card__desc">Motor kalkışı ve yedek payıyla önerilen kVA.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/ups-gucu-hesaplama/"><span class="kb-card__icon"><i class="fas fa-battery-full"></i></span><span class="kb-card__title">UPS Gücü ve Akü Süresi</span><span class="kb-card__desc">Kritik yük ve süreye göre UPS kVA + akü kapasitesi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/topraklama-hesaplama/"><span class="kb-card__icon"><i class="fas fa-plug"></i></span><span class="kb-card__title">Topraklama Direnci</span><span class="kb-card__desc">Zemin özdirenci ve elektrota göre R ve elektrot sayısı.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/ges-uretim-hesaplama/"><span class="kb-card__icon"><i class="fas fa-solar-panel"></i></span><span class="kb-card__title">GES Kapasite &amp; Üretim</span><span class="kb-card__desc">Tüketim, alan ve bölge katsayısıyla kWp ve yıllık kWh.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/inverter-dc-ac-kablo-secimi/"><span class="kb-card__icon"><i class="fas fa-plug-circle-bolt"></i></span><span class="kb-card__title">İnverter DC/AC Kablo</span><span class="kb-card__desc">İnverter için DC string ve AC hat kablo kesitleri.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
+          <a class="kb-card" href="hesaplama/aydinlatma-lux-hesaplama/"><span class="kb-card__icon"><i class="fas fa-lightbulb"></i></span><span class="kb-card__title">Aydınlatma ve Lux</span><span class="kb-card__desc">Alan, hedef lux ve armatür lümeni ile armatür sayısı.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
         </div>
       </section>
 
@@ -215,18 +285,202 @@
       <p class="tool-source">Hesaplamalar bağlayıcı teklif değildir. Kesin mühendislik ve uygulama bedelleri, yürürlükteki <a href="https://www.emo.org.tr/" target="_blank" rel="noopener">EMO</a> düzenlemeleri, ilgili <a href="https://www.tedas.gov.tr/" target="_blank" rel="noopener">TEDAŞ</a> teknik şartnameleri, keşif ve piyasa koşullarıyla belirlenir.</p>
     </section>
   </main>
+
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <span class="logo-mark logo-mark--footer" aria-hidden="true">
+              <span class="logo-mark__volt">VOLT</span>
+              <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+              <span class="logo-mark__guard">GUARD</span>
+            </span>
+            <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+          </a>
+          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0 545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/#hizmetler">Elektrik Hizmetleri</a></li>
+              <li><a href="/#hizmetler">Elektronik &amp; Gömülü Sistemler</a></li>
+              <li><a href="/#hizmetler">Otomasyon Sistemleri</a></li>
+              <li><a href="/#hizmetler">Mekanik Sistemler</a></li>
+              <li><a href="/#hizmetler">Enerji Sistemleri &amp; Verimlilik</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Giriş Yap</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#guvenlik">Güvenlik</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          </circle>
+        </svg>
+        <span class="sig-node" aria-hidden="true"></span>
+        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+          <span class="sig-badge__ring" aria-hidden="true"></span>
+          <span class="sig-badge__aurora" aria-hidden="true"></span>
+          <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="sig-badge__body">
+            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+            <span class="sig-badge__brand">
+              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+              <span class="sig-badge__eng">Engineering</span>
+            </span>
+          </span>
+          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+          <span class="sig-badge__shimmer" aria-hidden="true"></span>
+        </a>
+        <span class="sig-node" aria-hidden="true"></span>
+        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+          </circle>
+        </svg>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
   <script>
     (function () {
       'use strict';
+      var config = window.VoltGuardCalculatorConfig;
+      var tc = config.technical;
       var formatCurrency = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 });
+      var money = function (value) { return isFinite(value) ? formatCurrency.format(value) : '-'; };
+      var fmt = function (value, maxDigits, minDigits) {
+        if (typeof value !== 'number' || !isFinite(value)) { return '-'; }
+        return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: maxDigits || 0, minimumFractionDigits: minDigits || 0 }).format(value);
+      };
       var getNumber = function (id) { return Math.max(0, Number(document.getElementById(id).value) || 0); };
-      var getValue = function (id) { return Number(document.getElementById(id).value); };
-      var updateGes = function () { var config = window.VoltGuardCalculatorConfig.pricing; var unitPrice = getNumber('ges-unit-price') || config.defaultElectricityUnitPrice; var monthlyConsumption = getNumber('ges-consumption') || Math.round(getNumber('ges-bill') / unitPrice); var annualConsumption = monthlyConsumption * 12; var productionPerKwp = getValue('ges-city'); var targetPower = annualConsumption ? annualConsumption * getValue('ges-day-ratio') / productionPerKwp : 1; var areaPower = getNumber('ges-area') / 5.5; var power = Math.max(1, Math.round(Math.min(targetPower, areaPower))); var multiplier = getValue('ges-type'); var production = Math.round(power * productionPerKwp); var selfConsumption = Math.min(production, annualConsumption); var low = power * multiplier * config.gesInvestmentLowPerKwp; var high = power * multiplier * config.gesInvestmentHighPerKwp; var savings = selfConsumption * unitPrice; var payback = savings ? ((low + high) / 2 / savings).toFixed(1) : '-'; var panels = Math.ceil(power * 1000 / config.panelWatt); var inverter = Math.round(power * config.inverterAcRatio); document.getElementById('ges-amount').textContent = formatCurrency.format(low) + ' - ' + formatCurrency.format(high); document.getElementById('ges-detail').textContent = power + ' kWp ' + (multiplier > 1 ? 'arazi' : 'çatı') + ' GES için tahmini yatırım aralığı. Ortalama geri dönüş: ' + payback + ' yıl.'; document.getElementById('ges-production').textContent = 'Yıllık üretim potansiyeli: ' + new Intl.NumberFormat('tr-TR').format(production) + ' kWh'; document.getElementById('ges-coverage').textContent = annualConsumption ? 'Öz tüketim karşılama oranı: yaklaşık %' + Math.min(100, Math.round(selfConsumption / annualConsumption * 100)) : 'Tüketim girerek karşılama oranını görün'; document.getElementById('ges-savings').textContent = 'Yıllık tasarruf potansiyeli: ' + formatCurrency.format(savings); document.getElementById('ges-equipment').textContent = 'Önerilen ekipman: yaklaşık ' + panels + ' panel, ' + inverter + ' kW inverter'; };
-      var updateTrafo = function () { var power = Math.max(1, getNumber('trafo-power')); var base = 4500 + Math.ceil(power / 500) * 1250; var estimate = base * Math.max(1, getNumber('trafo-count')) * getValue('trafo-plan') * getValue('trafo-need'); document.getElementById('trafo-amount').textContent = 'Yaklaşık ' + formatCurrency.format(estimate) + ' / ay'; document.getElementById('trafo-detail').textContent = getNumber('trafo-count') + ' adet, ' + power + ' kVA trafo için seçilen takip ve ziyaret planı.'; };
-      var updateControl = function () { var panels = getNumber('control-panels'); var area = getNumber('control-area'); var days = Math.max(1, Math.ceil((area / 1800 + panels / 10) * getValue('control-type') * getValue('control-urgency'))); document.getElementById('control-amount').textContent = days + ' iş günü'; document.getElementById('control-detail').textContent = new Intl.NumberFormat('tr-TR').format(area) + ' m² tesis ve ' + panels + ' pano için öngörülen saha ve raporlama süresi.'; document.getElementById('control-scope').textContent = panels + ' pano için görsel kontrol ve ölçüm planı'; };
+      var getValue = function (id, fallback) { var value = Number(document.getElementById(id).value); return value > 0 ? value : fallback; };
+      var updateGes = function () {
+        var pricing = config.pricing;
+        var area = getNumber('ges-area');
+        var unitPrice = getNumber('ges-unit-price') || pricing.defaultElectricityUnitPrice;
+        var bill = getNumber('ges-bill');
+        var monthlyConsumption = bill > 0 ? Math.round(bill / unitPrice) : getNumber('ges-consumption');
+        var annualConsumption = monthlyConsumption * 12;
+        var productionPerKwp = getValue('ges-city', 1600);
+        var multiplier = getValue('ges-type', 1);
+        var areaPerKwp = multiplier > 1 ? pricing.areaPerKwpLand : pricing.areaPerKwpRoof;
+        document.getElementById('ges-assumptions').textContent = 'Üretim hesabında bölgesel verim ve %' + fmt(pricing.performanceRatio * 100) + ' sistem verimi, alan hesabında ' + fmt(areaPerKwp, 1) + ' m²/kWp, ekipman hesabında ' + fmt(pricing.panelWatt) + ' Wp panel varsayılmıştır.';
+        if (area <= 0) {
+          document.getElementById('ges-amount').textContent = '-';
+          document.getElementById('ges-detail').textContent = 'Kullanılabilir alan için geçerli bir değer girin.';
+          ['ges-production', 'ges-coverage', 'ges-savings', 'ges-equipment'].forEach(function (id) { document.getElementById(id).textContent = ''; });
+          return;
+        }
+        var targetPower = annualConsumption ? annualConsumption * getValue('ges-day-ratio', 0.8) / productionPerKwp : 1;
+        var areaPower = area / areaPerKwp;
+        var power = Math.max(1, Math.round(Math.min(targetPower, areaPower)));
+        var production = Math.round(power * productionPerKwp * pricing.performanceRatio);
+        var selfConsumption = Math.min(production, annualConsumption);
+        var low = power * multiplier * pricing.gesInvestmentLowPerKwp;
+        var high = power * multiplier * pricing.gesInvestmentHighPerKwp;
+        var savings = selfConsumption * unitPrice;
+        var payback = savings ? fmt((low + high) / 2 / savings, 1) : '-';
+        var panels = Math.ceil(power * 1000 / pricing.panelWatt);
+        var inverter = Math.round(power * pricing.inverterAcRatio);
+        document.getElementById('ges-amount').textContent = money(low) + ' - ' + money(high);
+        document.getElementById('ges-detail').textContent = fmt(power) + ' kWp ' + (multiplier > 1 ? 'arazi' : 'çatı') + ' GES için tahmini yatırım aralığı.' + (savings ? ' Ortalama geri dönüş: ' + payback + ' yıl.' : '') + (bill > 0 ? ' Aylık tüketim, fatura tutarından yaklaşık ' + fmt(monthlyConsumption) + ' kWh alındı.' : '');
+        document.getElementById('ges-production').textContent = 'Yıllık üretim potansiyeli: ' + fmt(production) + ' kWh';
+        document.getElementById('ges-coverage').textContent = annualConsumption ? 'Öz tüketim karşılama oranı: yaklaşık %' + Math.min(100, Math.round(selfConsumption / annualConsumption * 100)) : 'Tüketim girerek karşılama oranını görün';
+        document.getElementById('ges-savings').textContent = 'Yıllık tasarruf potansiyeli: ' + money(savings);
+        document.getElementById('ges-equipment').textContent = 'Önerilen ekipman: yaklaşık ' + fmt(panels) + ' panel (' + fmt(pricing.panelWatt) + ' Wp), ' + fmt(inverter) + ' kW inverter';
+      };
+      var updateTrafo = function () {
+        var power = Math.max(1, getNumber('trafo-power'));
+        var count = Math.max(1, getNumber('trafo-count'));
+        var base = 4500 + Math.ceil(power / 500) * 1250;
+        var estimate = base * count * getValue('trafo-plan', 1) * getValue('trafo-need', 1);
+        document.getElementById('trafo-amount').textContent = 'Yaklaşık ' + money(estimate) + ' / ay';
+        document.getElementById('trafo-detail').textContent = fmt(count) + ' adet, ' + fmt(power) + ' kVA trafo için seçilen takip ve ziyaret planı.';
+      };
+      var updateControl = function () {
+        var panels = getNumber('control-panels');
+        var area = getNumber('control-area');
+        var days = Math.max(1, Math.ceil((area / 1800 + panels / 10) * getValue('control-type', 1) * getValue('control-urgency', 1)));
+        document.getElementById('control-amount').textContent = fmt(days) + ' iş günü';
+        document.getElementById('control-detail').textContent = fmt(area) + ' m² tesis ve ' + fmt(panels) + ' pano için öngörülen saha ve raporlama süresi.';
+        document.getElementById('control-scope').textContent = fmt(panels) + ' pano için görsel kontrol ve ölçüm planı';
+      };
+      // Araç tanımı: [başlık, A etiketi, B etiketi, C etiketi, D etiketi, varsayılan değerler, sonucu etkilemediği için gizlenen alanlar]
       var technicalTools = {
-        project: ['Elektrik Proje Çizim Ücreti', 'Yapı alanı (m²)', 'Kurulu güç (kW)', 'Kapsam katsayısı (%)', 'Bölge katsayısı (%)', [1000,100,100,100]],
+        project: ['Elektrik Proje Çizim Ücreti', 'Yapı alanı (m²)', 'Kurulu güç (kW)', 'Kapsam katsayısı (%)', 'Bölge katsayısı (%)', [1000,100,100,100], ['b']],
         transformer: ['Trafo Gücü Hesaplama', 'Toplam kurulu güç (kW)', 'Eşzamanlılık (%)', 'Güç faktörü (%)', 'Büyüme rezervi (%)', [600,70,90,20]],
         powerIncrease: ['Güç Artırımı Maliyet Hesabı', 'Ek ihtiyaç (kVA)', 'Hat mesafesi (m)', 'Pano/hücre katsayısı (%)', 'İşçilik katsayısı (%)', [500,100,100,100]],
         compensation: ['Kompanzasyon ve Kondansatör', 'Aktif güç (kW)', 'Mevcut cos phi (%)', 'Hedef cos phi (%)', 'Harmonik yük oranı (%)', [500,80,98,20]],
@@ -237,64 +491,364 @@
         generator: ['Jeneratör Gücü Hesaplama', 'Toplam yük (kW)', 'Motor yol alma katsayısı (%)', 'Eşzamanlılık (%)', 'Güç faktörü (%)', [300,130,75,80]],
         ups: ['UPS Gücü ve Akü Süresi', 'Kritik yük (kW)', 'Güç faktörü (%)', 'Yedekleme süresi (dk)', 'Akü verimi (%)', [50,90,30,85]],
         ev: ['Elektrikli Araç Şarj İstasyonu', 'Şarj noktası adedi', 'Her nokta gücü (kW)', 'Eşzamanlılık (%)', 'Mevcut boş güç (kW)', [10,22,60,50]],
-        grounding: ['Topraklama Risk Ön Değerlendirmesi', 'Ölçülen topraklama direnci (ohm)', 'Tesis türü katsayısı', 'Elektrot sayısı', 'Ölçüm yaşı (ay)', [4,1,6,12]],
-        lightning: ['Paratoner ve Yıldırımdan Korunma', 'Yapı yüksekliği (m)', 'Çatı alanı (m²)', 'Risk katsayısı', 'Yapı çevresi açıklığı (%)', [20,1000,2,80]],
-        fire: ['Yangın Algılama Ön Keşfi', 'Tesis alanı (m²)', 'Kat sayısı', 'Yüksek tavan oranı (%)', 'Adresli sistem katsayısı', [3000,2,30,1]],
+        grounding: ['Topraklama Risk Ön Değerlendirmesi', 'Ölçülen topraklama direnci (ohm)', 'Tesis türü katsayısı', 'Elektrot sayısı', 'Ölçüm yaşı (ay)', [4,1,6,12], ['b']],
+        lightning: ['Paratoner ve Yıldırımdan Korunma', 'Yapı yüksekliği (m)', 'Çatı alanı (m²)', 'Risk katsayısı', 'Yapı çevresi açıklığı (%)', [20,1000,2,80], ['d']],
+        fire: ['Yangın Algılama Ön Keşfi', 'Tesis alanı (m²)', 'Kat sayısı', 'Yüksek tavan oranı (%)', 'Adresli sistem katsayısı', [3000,2,30,1], ['d']],
         lighting: ['Aydınlatma ve Lux Hesabı', 'Alan (m²)', 'Hedef lux', 'Armatür lümeni', 'Bakım faktörü (%)', [1000,300,18000,80]],
-        invoice: ['Enerji Faturası Analizi', 'Aylık tüketim (kWh)', 'Birim bedel (TL/kWh)', 'Reaktif oranı (%)', 'Sözleşme gücü (kW)', [50000,3.5,25,250]],
+        invoice: ['Enerji Faturası Analizi', 'Aylık tüketim (kWh)', 'Birim bedel (TL/kWh)', 'Reaktif oranı (%)', 'Sözleşme gücü (kW)', [50000,3.5,25,250], ['d']],
         efficiency: ['Enerji Verimliliği Potansiyeli', 'Yıllık tüketim (kWh)', 'Birim bedel (TL/kWh)', 'Tasarruf potansiyeli (%)', 'Yatırım bütçesi (TL)', [600000,3.5,12,500000]],
         mechanical: ['Pompa Gücü Hesaplama', 'Debi (m³/h)', 'Basma yüksekliği (m)', 'Pompa verimi (%)', 'Motor verimi (%)', [100,40,70,90]],
         factory: ['Fabrika Elektrik Altyapısı', 'Motor yükleri (kW)', 'Kompresör/HVAC (kW)', 'Diğer yükler (kW)', 'Eşzamanlılık (%)', [300,100,80,70]],
-        motorCurrent: ['Motor Akımı Hesaplama', 'Motor gücü (kW)', 'Gerilim (V)', 'Verim (%)', 'Güç faktörü (%)', [30,400,90,85]],
+        motorCurrent: ['Motor Akımı Hesaplama', 'Motor gücü (kW)', 'Gerilim (V)', 'Verim (%)', 'Güç faktörü (%)', [30,400,87,85]],
         breakerSelection: ['Sigorta / TMŞ Seçimi', 'Yük gücü (kW)', 'Gerilim (V)', 'Güç faktörü (%)', 'Kablo Iz (A)', [45,400,85,100]],
-        contactorMotor: ['Motor Koruma Şalteri ve Kontaktör', 'Motor gücü (kW)', 'Gerilim (V)', 'Verim (%)', 'Yol alma katsayısı (kat)', [22,400,90,7]],
-        inverterCable: ['İnverter / DC-AC Kablo Seçimi', 'İnverter AC gücü (kW)', 'AC gerilimi (V)', 'DC sistem gerilimi (V)', 'Kablo uzunluğu (m)', [50,400,700,50]]
+        contactorMotor: ['Motor Koruma Şalteri ve Kontaktör', 'Motor gücü (kW)', 'Gerilim (V)', 'Verim (%)', 'Yol alma katsayısı (kat)', [22,400,88,7]],
+        inverterCable: ['İnverter / DC-AC Kablo Seçimi', 'İnverter AC gücü (kW)', 'AC gerilimi (V)', 'DC sistem gerilimi (V)', 'Hat uzunluğu (m, AC ve DC)', [50,400,700,50]]
       };
+      // Geçerli değer aralıkları: [en az, en çok]; null = üst sınır yok. Aralık dışı girişte sonuç yerine uyarı gösterilir.
+      var technicalRules = {
+        project: { a: [1, null], c: [1, null], d: [1, null] },
+        transformer: { a: [1, null], b: [1, 100], c: [50, 100], d: [0, null] },
+        powerIncrease: { a: [1, null], b: [0, null], c: [1, null], d: [1, null] },
+        compensation: { a: [1, null], b: [1, 99], c: [1, 100], d: [0, 100] },
+        harmonic: { a: [0, null], b: [1, null], c: [0, null], d: [0, null] },
+        cable: { a: [0.1, null], b: [1, null], c: [100, 1000], d: [0.1, 100] },
+        voltageDrop: { a: [0.1, null], b: [0.5, null], c: [1, null], d: [100, 1000] },
+        shortCircuit: { a: [10, null], b: [3, 15], c: [100, 1000], d: [0, 95] },
+        generator: { a: [1, null], b: [1, null], c: [30, 100], d: [50, 100] },
+        ups: { a: [0.1, null], b: [50, 100], c: [1, null], d: [50, 100] },
+        ev: { a: [1, null], b: [1, null], c: [1, 100], d: [0, null] },
+        grounding: { a: [0.01, null], c: [1, null], d: [0, null] },
+        lightning: { a: [1, null], b: [1, null], c: [0, null] },
+        fire: { a: [1, null], b: [1, null], c: [0, 100] },
+        lighting: { a: [1, null], b: [1, null], c: [100, null], d: [40, 90] },
+        invoice: { a: [0, null], b: [0.01, null], c: [0, 100] },
+        efficiency: { a: [1, null], b: [0.01, null], c: [0.1, 100], d: [0, null] },
+        mechanical: { a: [0.1, null], b: [0.1, null], c: [10, 100], d: [50, 100] },
+        factory: { a: [0, null], b: [0, null], c: [0, null], d: [1, 100] },
+        motorCurrent: { a: [0.1, null], b: [100, 1000], c: [50, 100], d: [50, 100] },
+        breakerSelection: { a: [0.1, null], b: [100, 1000], c: [50, 100], d: [1, null] },
+        contactorMotor: { a: [0.1, null], b: [100, 1000], c: [50, 100], d: [1, 12] },
+        inverterCable: { a: [1, null], b: [100, 1000], c: [100, 2000], d: [1, null] }
+      };
+      var technicalChecks = {
+        harmonic: function (v) { return v.a > v.b ? 'Doğrusal olmayan yük, toplam yükten büyük olamaz.' : ''; },
+        factory: function (v) { return v.a + v.b + v.c > 0 ? '' : 'Motor, kompresör/HVAC veya diğer yüklerden en az biri sıfırdan büyük olmalıdır.'; }
+      };
+      var phaseNote = ' ' + fmt(tc.threePhaseMinVoltage) + ' V altındaki gerilim tek faz kabul edilir.';
       var technicalMeta = {
-        project: { formula: 'Bütçe ≈ Alan (m²) × 55 TL/m² × Kapsam katsayısı × Bölge katsayısı', assumptions: 'Sabit m² birim bedeli kullanılmıştır; gerçek bedel disiplin sayısı, onay süreci ve bölgeye göre değişir.' },
+        project: { formula: 'Bütçe ≈ Alan (m²) × ' + fmt(tc.projectRatePerM2) + ' TL/m² × Kapsam katsayısı × Bölge katsayısı', assumptions: 'Sabit m² birim bedeli kullanılmıştır; gerçek bedel disiplin sayısı, onay süreci ve bölgeye göre değişir.' },
         transformer: { formula: 'Gerekli kVA ≈ (Kurulu güç × Eşzamanlılık) ÷ Güç faktörü × (1 + Büyüme rezervi)', assumptions: 'Sonuç en yakın üst standart trafo kademesine yuvarlanır; gerçek yük profili ölçümle doğrulanmalıdır.' },
-        powerIncrease: { formula: 'Ön bütçe ≈ Ek güç (kVA) × birim maliyet katsayısı × mesafe ve pano katsayıları', assumptions: 'Sabit birim maliyet varsayılmıştır; OG/AG altyapı durumu keşifle netleşir.' },
+        powerIncrease: { formula: 'Ön bütçe ≈ Ek güç (kVA) × birim maliyet katsayısı × mesafe ve pano katsayıları', assumptions: 'Sabit birim maliyet (' + fmt(tc.powerIncreaseUnitCostPerKva) + ' TL/kVA) varsayılmıştır; OG/AG altyapı durumu keşifle netleşir.' },
         compensation: { formula: 'Gerekli kVAr = Aktif güç × (tan(mevcut φ) − tan(hedef φ))', assumptions: 'Yük sabit ve dengeli kabul edilmiştir; harmonik oranı yüksekse reaktörlü kompanzasyon gerekir.' },
         harmonic: { formula: 'Risk skoru = (Doğrusal olmayan yük ÷ Toplam yük × 100) + THDi + THDv', assumptions: 'Basit toplamsal bir gösterge modelidir; ölçüm yerine geçmez.' },
-        cable: { formula: 'Hesap akımı = Güç × 1000 ÷ (√3 × Gerilim × 0,9); akımı 1,25 emniyet payıyla karşılayan ilk standart kesit seçilir', assumptions: 'cosφ ≈ 0,9 ve tam yük kabul edilmiştir; döşeme yöntemi, sıcaklık ve gruplama düzeltmeleri dahil değildir.' },
-        voltageDrop: { formula: 'Düşüm(%) = √3 × Akım × Uzunluk × 0,018 ÷ (Kesit × Gerilim) × 100', assumptions: 'Bakır iletken ve yaklaşık direnç katsayısı (0,018 Ω·mm²/m) kabul edilmiştir; sıcaklık etkisi dahil değildir.' },
-        shortCircuit: { formula: 'Ik ≈ (Trafo gücü × 1000 ÷ (√3 × Gerilim)) ÷ (uk ÷ 100)', assumptions: 'Kablo ve şebeke empedansı ihmal edilen teorik AG bara değeridir; gerçek kısa devre akımı daha düşük olabilir.' },
-        generator: { formula: 'Jeneratör gücü ≈ Toplam yük × Yol alma katsayısı × Eşzamanlılık ÷ Güç faktörü, 25 kVA kademelere yuvarlanır', assumptions: 'En büyük motorun tekil marş akımı ayrıca değerlendirilmelidir.' },
-        ups: { formula: 'UPS gücü (kVA) ≈ Kritik yük ÷ Güç faktörü; Akü enerjisi (kWh) ≈ Yük × Süre(saat) ÷ Akü verimi', assumptions: 'Deşarj eğrisi doğrusal kabul edilmiştir; gerçek akü kapasitesi üretici eğrisiyle doğrulanmalıdır.' },
+        cable: { formula: 'Hesap akımı = Güç × 1000 ÷ (√3 × Gerilim × ' + fmt(tc.cableCosPhi, 1) + '); ' + fmt(tc.cableCurrentMargin, 2) + ' × hesap akımı ≤ Iz ve gerilim düşümü ≤ izin verilen düşüm koşullarını sağlayan ilk standart kesit seçilir', assumptions: 'Iz değerleri bakır iletken, PVC yalıtım, 30 °C, kanal/boru içi döşeme (Yöntem B1) için yaklaşık referanstır ve Bilgi Bankası akım taşıma tablosuyla aynıdır; cosφ ≈ ' + fmt(tc.cableCosPhi, 1) + ' ve tam yük kabul edilmiştir. Ortam sıcaklığı, gruplama ve döşeme yöntemi düzeltmeleri dahil değildir; bakır iletken (ρ = ' + fmt(tc.copperResistivity, 4) + ' Ω·mm²/m) alınmıştır.' + phaseNote },
+        voltageDrop: { formula: 'Düşüm(%) = k × Akım × Uzunluk × ' + fmt(tc.copperResistivity, 4) + ' ÷ (Kesit × Gerilim) × 100 (k: üç fazda √3, tek fazda 2)', assumptions: 'Bakır iletken ve yaklaşık direnç katsayısı (' + fmt(tc.copperResistivity, 4) + ' Ω·mm²/m) kabul edilmiştir; sıcaklık etkisi dahil değildir. Sınırlar: aydınlatma %' + fmt(tc.voltageDropLimitLightingPct) + ', motor/kuvvet %' + fmt(tc.voltageDropLimitPowerPct) + '.' + phaseNote },
+        shortCircuit: { formula: 'Ik ≈ (Trafo gücü × 1000 ÷ (√3 × Gerilim)) ÷ (uk ÷ 100) × (1 − Kablo etkisi ÷ 100)', assumptions: 'Şebeke empedansı ihmal edilir; kablo etkisi yüzde azalma olarak uygulanır (0 = trafo çıkışındaki teorik değer). Gerçek kısa devre akımı saha hesabıyla doğrulanmalıdır.' + phaseNote },
+        generator: { formula: 'Jeneratör gücü ≈ Toplam yük × Yol alma katsayısı × Eşzamanlılık ÷ Güç faktörü; ' + fmt(tc.generatorKva[0]) + '-' + fmt(tc.generatorKva[tc.generatorKva.length - 1]) + ' kVA standart kademelerden en yakın üst değer seçilir', assumptions: 'En büyük motorun tekil marş akımı ayrıca değerlendirilmelidir.' },
+        ups: { formula: 'UPS gücü (kVA) ≈ Kritik yük ÷ Güç faktörü × (1 + %' + fmt(tc.upsMarginRatio * 100) + ' yedek payı), standart kademeye yuvarlanır; Akü enerjisi (kWh) ≈ Yük × Süre(saat) ÷ Akü verimi', assumptions: 'Deşarj eğrisi doğrusal kabul edilmiştir; gerçek akü kapasitesi üretici eğrisiyle doğrulanmalıdır.' },
         ev: { formula: 'Eşzamanlı yük = Nokta sayısı × Nokta gücü × Eşzamanlılık', assumptions: 'Tüm noktaların aynı anda kısmi yüklendiği basit bir eşzamanlılık modeli kullanılmıştır.' },
         grounding: { formula: 'Kategori, ölçülen direnç (ohm) eşiklerine göre belirlenir', assumptions: 'Sabit ohm eşikleri kullanılmıştır; kesin uygunluk şebeke tipine göre hesaplanan sınır değerle belirlenir.' },
         lightning: { formula: 'Öncelik, yapı yüksekliği ve risk katsayısı eşiklerine göre belirlenir', assumptions: 'Basitleştirilmiş bir ön sınıflandırmadır; TS EN 62305 risk analizi yerine geçmez.' },
-        fire: { formula: 'Dedektör sayısı ≈ (Alan ÷ 60 m²) × Kat sayısı × (1 + Yüksek tavan oranı)', assumptions: '60 m²/dedektör kapsama alanı kabul edilmiştir; mimari plana göre değişir.' },
-        lighting: { formula: 'Armatür sayısı = (Alan × Hedef lux) ÷ (Armatür lümeni × Bakım faktörü)', assumptions: 'Aydınlatma kullanım faktörü (oda geometrisi/yansıma) hesaba dahil değildir.' },
+        fire: { formula: 'Dedektör sayısı ≈ (Alan ÷ ' + fmt(tc.fireDetectorAreaM2) + ' m²) × Kat sayısı × (1 + Yüksek tavan oranı)', assumptions: fmt(tc.fireDetectorAreaM2) + ' m²/dedektör kapsama alanı kabul edilmiştir; mimari plana göre değişir.' },
+        lighting: { formula: 'Armatür sayısı = (Alan × Hedef lux) ÷ (Armatür lümeni × Kullanım faktörü × Bakım faktörü)', assumptions: 'Kullanım faktörü ' + fmt(tc.lightingUtilizationFactor, 2) + ' kabul edilmiştir; gerçek değer oda geometrisine ve yansıma oranlarına göre değişir.' },
         invoice: { formula: 'Yıllık maliyet = Aylık tüketim × Birim bedel × 12', assumptions: 'Talep/güç bedeli ve kademeli tarife farkları basitleştirilmiştir.' },
         efficiency: { formula: 'Yıllık tasarruf = Yıllık tüketim × Birim bedel × Tasarruf potansiyeli', assumptions: 'Sabit tasarruf oranı kabul edilmiştir; gerçek oran enerji etüdüyle belirlenir.' },
         mechanical: { formula: 'Pompa gücü (kW) = (Debi(m³/s) × Basma yüksekliği × 9,81) ÷ (Pompa verimi × Motor verimi)', assumptions: 'Boru sürtünme kayıpları ve statik yükseklik dahil edilmemiştir.' },
-        factory: { formula: 'Gerekli kVA ≈ (Motor + Kompresör/HVAC + Diğer yükler) ÷ Eşzamanlılık × 1,2 büyüme payı', assumptions: 'Yük türlerinin güç faktörü ayrı ayrı değerlendirilmemiştir.' },
-        motorCurrent: { formula: 'I = Güç × 1000 ÷ (√3 × Gerilim × Verim × cosφ)', assumptions: 'Üç fazlı, dengeli sistem ve sabit verim/güç faktörü kabul edilmiştir; kalkış akımı bu değerin 6-8 katına çıkabilir.' },
-        breakerSelection: { formula: 'Ib = Güç × 1000 ÷ (√3 × Gerilim × cosφ); seçim kuralı Ib ≤ In ≤ Iz', assumptions: 'Standart anma akımı kademelerinden seçim yapılır; kesme kapasitesi ayrı bir kısa devre hesabıyla doğrulanmalıdır.' },
-        contactorMotor: { formula: 'Motor In hesaplanır; kontaktör ≥ 1,15×In (AC-3); koruma şalteri ayarı ≈ 0,8-1,25×In', assumptions: 'cosφ ≈ 0,85 sabit kabul edilmiştir; yol alma yöntemi (DOL/yıldız-üçgen) seçimi etkiler.' },
-        inverterCable: { formula: 'AC akım = Güç × 1000 ÷ (√3 × AC gerilim × 0,99); DC akım ≈ Güç × 1000 ÷ DC gerilim', assumptions: 'İnverter verimi ~%99 ve tam güçte çalışma kabul edilmiştir; DC kablo seçimi güneş kablosu standartlarına göre ayrıca doğrulanmalıdır.' }
+        factory: { formula: 'Gerekli kVA ≈ (Motor + Kompresör/HVAC + Diğer yükler) ÷ Eşzamanlılık × ' + fmt(tc.factoryGrowthFactor, 1) + ' büyüme payı', assumptions: 'Yük türlerinin güç faktörü ayrı ayrı değerlendirilmemiştir.' },
+        motorCurrent: { formula: 'I = Güç × 1000 ÷ (√3 × Gerilim × Verim × cosφ)', assumptions: 'Dengeli sistem ve sabit verim/güç faktörü kabul edilmiştir; kalkış akımı bu değerin 5-8 katına çıkabilir.' + phaseNote },
+        breakerSelection: { formula: 'Ib = Güç × 1000 ÷ (√3 × Gerilim × cosφ); seçim kuralı Ib ≤ In ≤ Iz', assumptions: 'Standart anma akımı kademelerinden seçim yapılır; kesme kapasitesi ayrı bir kısa devre hesabıyla doğrulanmalıdır.' + phaseNote },
+        contactorMotor: { formula: 'Motor In hesaplanır; kontaktör Ie ≥ In (AC-3); koruma şalteri ayarı ≈ ' + fmt(tc.mpcbMinRatio, 2) + '-' + fmt(tc.mpcbMaxRatio, 2) + '×In', assumptions: 'cosφ ≈ ' + fmt(tc.contactorMotorCosPhi, 2) + ' sabit kabul edilmiştir; yol alma yöntemi (DOL/yıldız-üçgen) seçimi etkiler.' + phaseNote },
+        inverterCable: { formula: 'AC akım = Güç × 1000 ÷ (√3 × AC gerilim × ' + fmt(tc.inverterEfficiency, 2) + '); DC akım ≈ Güç × 1000 ÷ DC gerilim; ' + fmt(tc.cableCurrentMargin, 2) + ' × akım ≤ Iz ve gerilim düşümü (AC ≤ %' + fmt(tc.inverterAcDropLimitPct, 1) + ', DC ≤ %' + fmt(tc.inverterDcDropLimitPct) + ') koşullarını sağlayan ilk standart kesit seçilir', assumptions: 'İnverter verimi ~%' + fmt(tc.inverterEfficiency * 100) + ' ve tam güçte çalışma kabul edilmiştir; Iz değerleri bakır, PVC, 30 °C, kanal/boru içi (Yöntem B1) referanstır (DC hat iki yüklü iletken). DC kablo seçimi güneş kablosu standartlarına ve döşeme koşullarına göre ayrıca doğrulanmalıdır.' + phaseNote }
       };
       var technicalInput = function (id) { return Math.max(0, Number(document.getElementById(id).value) || 0); };
-      var technicalResult = function () { var key = document.getElementById('technical-tool').value; var a = technicalInput('technical-a'), b = technicalInput('technical-b'), c = technicalInput('technical-c'), d = technicalInput('technical-d'), amount, detail, scope; if (key === 'project') { amount = formatCurrency.format(a * 55 * (c / 100) * (d / 100)) + ' başlangıç bütçesi'; detail = 'Elektrik proje kapsamı, onaylar ve disiplinler arası koordinasyonla kesinleşir.'; scope = 'Yaklaşık ' + Math.ceil(a / 1000) + ' pafta/zonluk proje planlaması'; } else if (key === 'transformer' || key === 'factory') { var kw = key === 'factory' ? a + b + c : a * b / 100; var kva = Math.ceil(kw / (key === 'factory' ? d / 100 : c / 100) * (key === 'factory' ? 1.2 : 1 + d / 100)); var standard = [250,400,630,800,1000,1250,1600,2000].find(function (value) { return value >= kva; }) || Math.ceil(kva / 500) * 500; amount = standard + ' kVA önerilen trafo'; detail = 'Hesaplanan ihtiyaç: yaklaşık ' + kva + ' kVA.'; scope = 'Talep gücü, büyüme rezervi ve OG süreçleri mühendislik doğrulamasına tabidir.'; } else if (key === 'powerIncrease') { amount = formatCurrency.format(a * 3200 * (1 + b / 1000) * c / 100 * d / 100) + ' ön bütçe'; detail = a + ' kVA ek güç ve ' + b + ' m hat varsayımıyla hesaplandı.'; scope = 'Trafo, hücre, kablo, pano, test ve proje kalemleri keşifte netleşir.'; } else if (key === 'compensation') { var kvar = Math.round(a * (Math.tan(Math.acos(b / 100)) - Math.tan(Math.acos(c / 100)))); amount = Math.max(0, kvar) + ' kVAr kompanzasyon ihtiyacı'; detail = c + '% hedef güç faktörü için ön hesap.'; scope = d > 15 ? 'Harmonik riski nedeniyle reaktörlü kompanzasyon ve ölçüm önerilir.' : 'Kademe, sigorta ve kontaktör seçimi için pano incelemesi gerekir.'; } else if (key === 'harmonic') { var risk = (a / Math.max(1, b)) * 100 + c + d; amount = risk > 70 ? 'Yüksek harmonik riski' : risk > 35 ? 'Orta harmonik riski' : 'Düşük harmonik riski'; detail = 'Doğrusal olmayan yük ve THD değerlerine göre ön risk sınıfı.'; scope = risk > 35 ? 'Harmonik ölçümü, reaktörlü kompanzasyon veya aktif filtre analizi önerilir.' : 'Periyodik enerji kalitesi ölçümü önerilir.'; } else if (key === 'cable') { var current = a * 1000 / (Math.sqrt(3) * Math.max(1, c) * .9); var section = [16,25,35,50,70,95,120,150,185,240].find(function (value) { return value * 1.25 >= current; }) || 300; amount = section + ' mm² bakır kablo ön seçimi'; detail = Math.round(current) + ' A hesap akımı ve ' + b + ' m hat için ön seçim.'; scope = 'Döşeme şekli, sıcaklık, gruplama ve kısa devre dayanımı ayrıca doğrulanmalıdır.'; } else if (key === 'voltageDrop') { var drop = (Math.sqrt(3) * a * c * 0.018 / (Math.max(1, b) * Math.max(1, d))) * 100; amount = '%' + drop.toFixed(2) + ' gerilim düşümü'; detail = a + ' A, ' + b + ' mm² ve ' + c + ' m hat için yaklaşık değer.'; scope = drop > 3 ? 'İzin verilen düşüm için daha büyük kesit veya kısa hat değerlendirin.' : 'Ön gerilim düşümü hedef aralıkta görünüyor.'; } else if (key === 'shortCircuit') { var ik = Math.round(a * 1000 / (Math.sqrt(3) * c) / (b / 100)); amount = new Intl.NumberFormat('tr-TR').format(ik) + ' A trafo çıkışı kısa devre akımı'; detail = 'Kablo empedansı öncesi teorik AG bara değeri.'; scope = 'Kesici kesme kapasitesi saha kısa devre hesabıyla seçilmelidir.'; } else if (key === 'generator') { var generator = Math.ceil(a * (b / 100) * (c / 100) / (d / 100) / 25) * 25; amount = generator + ' kVA önerilen jeneratör'; detail = 'Yük, yol alma ve eşzamanlılık varsayımlarıyla.'; scope = 'Motor yol alma akımları ve kritik yükler için detaylı senaryo gerekir.'; } else if (key === 'ups') { var ups = Math.ceil(a / (b / 100) / 5) * 5; amount = ups + ' kVA UPS önerisi'; detail = c + ' dakika için yaklaşık ' + Math.round(a * c / 60 / (d / 100)) + ' kWh akü enerjisi gerekir.'; scope = 'Akü seçimi, deşarj eğrisi ve kritik yük profiliyle doğrulanır.'; } else if (key === 'ev') { var charge = Math.round(a * b * c / 100); amount = charge + ' kW eşzamanlı şarj yükü'; detail = 'Mevcut boş güç: ' + d + ' kW.'; scope = charge > d ? 'Güç artırımı veya dinamik yük yönetimi önerilir.' : 'Mevcut güç ön değerlendirmede yeterli görünüyor.'; } else if (key === 'grounding') { amount = a <= 2 ? 'Düşük topraklama direnci' : a <= 5 ? 'İzleme gerekli' : 'İyileştirme riski'; detail = a + ' ohm ölçüm, ' + c + ' elektrot ve ' + d + ' aylık ölçüm yaşıyla.'; scope = 'Nihai uygunluk, tesis türü ve yetkili ölçüm raporuyla belirlenir.'; } else if (key === 'lightning') { amount = a > 20 || c > 2 ? 'Yüksek koruma önceliği' : 'Standart koruma önceliği'; detail = a + ' m yapı ve ' + b + ' m² çatı için ön risk sınıfı.'; scope = 'Risk analizi TS EN 62305 ve yerinde keşifle yapılmalıdır.'; } else if (key === 'fire') { var detectors = Math.ceil(a / 60 * b * (1 + c / 100)); amount = detectors + ' dedektör ön ihtiyacı'; detail = a + ' m² ve ' + b + ' kat için ön keşif.'; scope = 'Panel, loop, siren ve modüller mimari plana göre netleşir.'; } else if (key === 'lighting') { var fixtures = Math.ceil(a * b / (c * (d / 100))); amount = fixtures + ' adet armatür ön ihtiyacı'; detail = b + ' lux hedefiyle hesaplanan aydınlatma seviyesi.'; scope = 'Yerleşim, kamaşma ve homojenlik için aydınlatma projesi gerekir.'; } else if (key === 'invoice') { var annual = a * b * 12, penalty = c > 20 ? 'Reaktif ceza riski tespit edildi.' : 'Reaktif oranı ön değerlendirmede kabul edilebilir.'; amount = formatCurrency.format(annual) + ' yıllık enerji maliyeti'; detail = penalty; scope = 'GES, kompanzasyon ve sözleşme gücü optimizasyonu için fatura analizi önerilir.'; } else if (key === 'efficiency') { var saving = a * b * c / 100; amount = formatCurrency.format(saving) + ' yıllık tasarruf potansiyeli'; detail = formatCurrency.format(d) + ' yatırım için yaklaşık ' + (d / Math.max(1, saving)).toFixed(1) + ' yıl geri dönüş.'; scope = 'VFD, LED, basınçlı hava ve GES senaryoları detaylandırılabilir.'; } else if (key === 'motorCurrent') { var motorI = a * 1000 / (Math.sqrt(3) * Math.max(1, b) * (c / 100) * (d / 100)); amount = Math.round(motorI) + ' A motor nominal akımı'; detail = a + ' kW, ' + b + ' V üç fazlı motor için hesaplanan tam yük akımı (η=' + c + '%, cosφ=' + d + '%).'; scope = 'Etikette yazan gerçek motor akımı esas alınmalıdır; kalkış akımı bu değerin 6-8 katına çıkabilir.'; } else if (key === 'breakerSelection') { var ib = a * 1000 / (Math.sqrt(3) * Math.max(1, b) * (c / 100)); var standardBreakers = [6,10,16,20,25,32,40,50,63,80,100,125,160,200,250,315,400,500,630,800,1000]; var chosen = standardBreakers.find(function (value) { return value >= ib && value <= d; }); if (chosen) { amount = chosen + ' A sigorta/TMŞ önerisi'; detail = 'Yük akımı Ib ≈ ' + Math.round(ib) + ' A; seçim Ib ≤ In ≤ Iz kuralına göre yapıldı (Iz=' + d + ' A).'; scope = 'Kesme kapasitesi, saha kısa devre akımına göre ayrıca doğrulanmalıdır.'; } else { var nextBreaker = standardBreakers.find(function (value) { return value >= ib; }); amount = 'Kablo kapasitesi yetersiz'; detail = 'Ib ≈ ' + Math.round(ib) + ' A için gereken In (' + (nextBreaker || '-') + ' A), girilen Iz (' + d + ' A) değerini aşıyor.'; scope = 'Kablo kesiti artırılmalı veya yük gözden geçirilmelidir.'; } } else if (key === 'contactorMotor') { var motorIn = a * 1000 / (Math.sqrt(3) * Math.max(1, b) * (c / 100) * 0.85); var standardContactors = [9,12,18,25,32,40,50,65,80,95,115,150,170,205,250,300,400,500,630]; var neededContactor = motorIn * 1.15; var chosenContactor = standardContactors.find(function (value) { return value >= neededContactor; }) || standardContactors[standardContactors.length - 1]; var starting = motorIn * Math.max(1, d); amount = chosenContactor + ' A kontaktör (AC-3) önerisi'; detail = 'Motor nominal akımı ≈ ' + Math.round(motorIn) + ' A; motor koruma şalteri ayar aralığı ' + Math.round(motorIn * 0.8) + '-' + Math.round(motorIn * 1.25) + ' A; yol alma akımı ≈ ' + Math.round(starting) + ' A.'; scope = 'Yol alma yöntemi (DOL, yıldız-üçgen, yumuşak yol verici) seçimi kontaktör/koruma boyutunu değiştirebilir.'; } else if (key === 'inverterCable') { var acCurrent = a * 1000 / (Math.sqrt(3) * Math.max(1, b) * .99); var dcCurrent = a * 1000 / Math.max(1, c); var sectionList = [1.5,2.5,4,6,10,16,25,35,50,70,95,120,150,185,240]; var acSection = sectionList.find(function (value) { return value * 1.25 >= acCurrent; }) || 300; var dcSection = sectionList.find(function (value) { return value * 1.25 >= dcCurrent; }) || 300; amount = 'AC ' + acSection + ' mm² / DC ' + dcSection + ' mm² kablo ön seçimi'; detail = 'AC akım ≈ ' + Math.round(acCurrent) + ' A, DC akım ≈ ' + Math.round(dcCurrent) + ' A (' + d + ' m hat için).'; scope = 'DC tarafta UV/sıcaklığa dayanıklı güneş kablosu (H1Z2Z2-K) kullanılmalı; gerilim düşümü ayrıca kontrol edilmelidir.'; } else { var pump = a / 3600 * b * 9.81 / Math.max(.1, c / 100) / Math.max(.1, d / 100); amount = pump.toFixed(1) + ' kW pompa motoru'; detail = a + ' m³/h debi ve ' + b + ' m basma yüksekliğiyle.'; scope = 'Pompa eğrisi, NPSH ve boru kayıpları seçimi etkiler.'; } document.getElementById('technical-amount').textContent = amount; document.getElementById('technical-detail').textContent = detail; document.getElementById('technical-scope').textContent = scope; };
-      var configureTechnical = function () { var tool = technicalTools[document.getElementById('technical-tool').value]; document.getElementById('technical-title').textContent = tool[0]; document.getElementById('technical-intro').textContent = tool[0] + ' için dört temel proje girdisiyle anlık ön değerlendirme alın.'; ['a', 'b', 'c', 'd'].forEach(function (letter, index) { document.getElementById('technical-' + letter + '-label').textContent = tool[index + 1]; document.getElementById('technical-' + letter).value = tool[5][index]; }); var meta = technicalMeta[document.getElementById('technical-tool').value] || { formula: '', assumptions: '' }; document.getElementById('technical-formula-text').textContent = meta.formula; document.getElementById('technical-assumptions-text').textContent = meta.assumptions; document.querySelector('#teknik-panel .tool-download').dataset.pdfTitle = tool[0]; document.querySelector('#teknik-panel .tool-request').dataset.tool = tool[0]; technicalResult(); };
+      var SQRT3 = Math.sqrt(3);
+      var isThreePhase = function (volt) { return volt >= tc.threePhaseMinVoltage; };
+      var currentFactor = function (volt) { return isThreePhase(volt) ? SQRT3 : 1; };
+      var phaseText = function (volt) { return isThreePhase(volt) ? 'üç faz' : 'tek faz'; };
+      var dropPct = function (current, length, section, volt, twoWire) { return (twoWire || !isThreePhase(volt) ? 2 : SQRT3) * current * length * tc.copperResistivity / (section * volt) * 100; };
+      var firstAtLeast = function (list, value) { return list.find(function (item) { return item >= value; }); };
+      var lastOf = function (list) { return list[list.length - 1]; };
+      // İlk uygun standart kesit: Iz >= emniyet payı × akım ve gerilim düşümü <= sınır; bulunamazsa null (tek kablo yetersiz).
+      var pickSection = function (current, length, volt, dropLimit, twoLoaded) {
+        var izList = twoLoaded || !isThreePhase(volt) ? tc.ampacityB1TwoLoaded : tc.ampacityB1ThreeLoaded;
+        for (var i = 0; i < tc.sections.length; i++) {
+          var drop = dropPct(current, length, tc.sections[i], volt, twoLoaded);
+          if (izList[i] >= current * tc.cableCurrentMargin && drop <= dropLimit) { return { section: tc.sections[i], iz: izList[i], drop: drop }; }
+        }
+        return null;
+      };
+      var transformerResult = function (kw, powerFactor, growth) {
+        var kva = Math.ceil(kw / powerFactor * growth);
+        var standard = firstAtLeast(tc.transformerKva, kva) || Math.ceil(kva / 500) * 500;
+        return [fmt(standard) + ' kVA önerilen trafo', 'Hesaplanan ihtiyaç: yaklaşık ' + fmt(kva) + ' kVA.', 'Talep gücü, büyüme rezervi ve OG süreçleri mühendislik doğrulamasına tabidir.'];
+      };
+      var technicalCalc = {
+        project: function (v) {
+          return [money(v.a * tc.projectRatePerM2 * (v.c / 100) * (v.d / 100)) + ' başlangıç bütçesi', 'Elektrik proje kapsamı, onaylar ve disiplinler arası koordinasyonla kesinleşir.', 'Yaklaşık ' + fmt(Math.ceil(v.a / 1000)) + ' pafta/zonluk proje planlaması'];
+        },
+        transformer: function (v) { return transformerResult(v.a * v.b / 100, v.c / 100, 1 + v.d / 100); },
+        factory: function (v) { return transformerResult(v.a + v.b + v.c, v.d / 100, tc.factoryGrowthFactor); },
+        powerIncrease: function (v) {
+          return [money(v.a * tc.powerIncreaseUnitCostPerKva * (1 + v.b / 1000) * v.c / 100 * v.d / 100) + ' ön bütçe', fmt(v.a) + ' kVA ek güç ve ' + fmt(v.b) + ' m hat varsayımıyla hesaplandı.', 'Trafo, hücre, kablo, pano, test ve proje kalemleri keşifte netleşir.'];
+        },
+        compensation: function (v) {
+          var kvar = Math.max(0, Math.round(v.a * (Math.tan(Math.acos(v.b / 100)) - Math.tan(Math.acos(v.c / 100)))));
+          var scope = v.d > 15 ? 'Harmonik riski nedeniyle reaktörlü kompanzasyon ve ölçüm önerilir.' : 'Kademe, sigorta ve kontaktör seçimi için pano incelemesi gerekir.';
+          return [fmt(kvar) + ' kVAr kompanzasyon ihtiyacı', '%' + fmt(v.c) + ' hedef güç faktörü için ön hesap.' + (kvar === 0 ? ' Mevcut güç faktörü hedefe eşit veya hedefin üzerinde.' : ''), scope];
+        },
+        harmonic: function (v) {
+          var risk = (v.a / v.b) * 100 + v.c + v.d;
+          return [risk > 70 ? 'Yüksek harmonik riski' : risk > 35 ? 'Orta harmonik riski' : 'Düşük harmonik riski', 'Doğrusal olmayan yük ve THD değerlerine göre ön risk sınıfı.', risk > 35 ? 'Harmonik ölçümü, reaktörlü kompanzasyon veya aktif filtre analizi önerilir.' : 'Periyodik enerji kalitesi ölçümü önerilir.'];
+        },
+        cable: function (v) {
+          var current = v.a * 1000 / (currentFactor(v.c) * v.c * tc.cableCosPhi);
+          var need = current * tc.cableCurrentMargin;
+          var pick = pickSection(current, v.b, v.c, v.d, false);
+          if (!pick) {
+            return ['Tek kablo yetersiz', 'Hesap akımı ≈ ' + fmt(current) + ' A; ' + fmt(tc.cableCurrentMargin, 2) + ' × I ≈ ' + fmt(need) + ' A veya %' + fmt(v.d, 1) + ' gerilim düşümü sınırı ' + fmt(lastOf(tc.sections)) + ' mm² tek kabloyla sağlanamıyor. Paralel kablo hattı veya özel hesap gerekli.', 'Paralel kablo hatları ve ayrıntılı kablo hesabı için mühendislik değerlendirmesi gerekir.'];
+          }
+          return [fmt(pick.section, 1) + ' mm² bakır kablo ön seçimi', fmt(current) + ' A hesap akımı (' + phaseText(v.c) + '); ' + fmt(tc.cableCurrentMargin, 2) + ' × I ≈ ' + fmt(need) + ' A ≤ Iz = ' + fmt(pick.iz, 1) + ' A (Yöntem B1); ' + fmt(v.b) + ' m hatta gerilim düşümü ≈ %' + fmt(pick.drop, 2, 2) + ' (sınır %' + fmt(v.d, 1) + ').', 'Döşeme şekli, sıcaklık, gruplama ve kısa devre dayanımı ayrıca doğrulanmalıdır.'];
+        },
+        voltageDrop: function (v) {
+          var drop = dropPct(v.a, v.c, v.b, v.d);
+          var scope = drop > tc.voltageDropLimitPowerPct ? 'Motor/kuvvet sınırı olan %' + fmt(tc.voltageDropLimitPowerPct) + ' aşılıyor; daha büyük kesit veya kısa hat değerlendirin.' : drop > tc.voltageDropLimitLightingPct ? 'Aydınlatma sınırı olan %' + fmt(tc.voltageDropLimitLightingPct) + ' aşılıyor; motor/kuvvet devreleri için %' + fmt(tc.voltageDropLimitPowerPct) + ' sınırı içinde.' : 'Ön gerilim düşümü %' + fmt(tc.voltageDropLimitLightingPct) + ' sınırının altında görünüyor.';
+          return ['%' + fmt(drop, 2, 2) + ' gerilim düşümü', fmt(v.a, 1) + ' A, ' + fmt(v.b, 1) + ' mm² ve ' + fmt(v.c) + ' m hat (' + phaseText(v.d) + ') için yaklaşık değer.', scope];
+        },
+        shortCircuit: function (v) {
+          var theoretical = v.a * 1000 / (currentFactor(v.c) * v.c) / (v.b / 100);
+          var ik = Math.round(theoretical * (1 - v.d / 100));
+          return [fmt(ik) + ' A kısa devre akımı (Ik)', 'Trafo çıkışındaki teorik değer ≈ ' + fmt(Math.round(theoretical)) + ' A; %' + fmt(v.d) + ' kablo etkisiyle azaltılmıştır (' + phaseText(v.c) + ').', 'Kesici kesme kapasitesi saha kısa devre hesabıyla seçilmelidir.'];
+        },
+        generator: function (v) {
+          var required = v.a * (v.b / 100) * (v.c / 100) / (v.d / 100);
+          var generator = firstAtLeast(tc.generatorKva, required);
+          if (!generator) {
+            return ['Paralel çalışma / özel hesap gerekli', 'Hesaplanan ihtiyaç ≈ ' + fmt(required) + ' kVA, standart kademelerin üst sınırını (' + fmt(lastOf(tc.generatorKva)) + ' kVA) aşıyor.', 'Motor yol alma akımları ve kritik yükler için detaylı senaryo gerekir.'];
+          }
+          return [fmt(generator) + ' kVA önerilen jeneratör', 'Yük, yol alma ve eşzamanlılık varsayımlarıyla hesaplanan ihtiyaç ≈ ' + fmt(required) + ' kVA.', 'Motor yol alma akımları ve kritik yükler için detaylı senaryo gerekir.'];
+        },
+        ups: function (v) {
+          var required = v.a / (v.b / 100) * (1 + tc.upsMarginRatio);
+          var ups = firstAtLeast(tc.upsKva, required);
+          var battery = fmt(v.a * v.c / 60 / (v.d / 100), 1) + ' kWh akü enerjisi';
+          return [ups ? fmt(ups) + ' kVA UPS önerisi' : 'Paralel UPS / özel hesap gerekli', fmt(v.c) + ' dakika için yaklaşık ' + battery + ' gerekir.' + (ups ? '' : ' Hesaplanan ihtiyaç ≈ ' + fmt(required) + ' kVA, standart kademelerin üst sınırını (' + fmt(lastOf(tc.upsKva)) + ' kVA) aşıyor.'), 'Akü seçimi, deşarj eğrisi ve kritik yük profiliyle doğrulanır.'];
+        },
+        ev: function (v) {
+          var charge = Math.round(v.a * v.b * v.c / 100);
+          return [fmt(charge) + ' kW eşzamanlı şarj yükü', 'Mevcut boş güç: ' + fmt(v.d) + ' kW.', charge > v.d ? 'Güç artırımı veya dinamik yük yönetimi önerilir.' : 'Mevcut güç ön değerlendirmede yeterli görünüyor.'];
+        },
+        grounding: function (v) {
+          return [v.a <= 2 ? 'Düşük topraklama direnci' : v.a <= 5 ? 'İzleme gerekli' : 'İyileştirme riski', fmt(v.a, 2) + ' ohm ölçüm, ' + fmt(v.c) + ' elektrot ve ' + fmt(v.d) + ' aylık ölçüm yaşıyla.', 'Nihai uygunluk, tesis türü ve yetkili ölçüm raporuyla belirlenir.'];
+        },
+        lightning: function (v) {
+          return [v.a > 20 || v.c > 2 ? 'Yüksek koruma önceliği' : 'Standart koruma önceliği', fmt(v.a) + ' m yapı ve ' + fmt(v.b) + ' m² çatı için ön risk sınıfı.', 'Risk analizi TS EN 62305 ve yerinde keşifle yapılmalıdır.'];
+        },
+        fire: function (v) {
+          return [fmt(Math.ceil(v.a / tc.fireDetectorAreaM2 * v.b * (1 + v.c / 100))) + ' dedektör ön ihtiyacı', fmt(v.a) + ' m² ve ' + fmt(v.b) + ' kat için ön keşif.', 'Panel, loop, siren ve modüller mimari plana göre netleşir.'];
+        },
+        lighting: function (v) {
+          return [fmt(Math.ceil(v.a * v.b / (v.c * tc.lightingUtilizationFactor * (v.d / 100)))) + ' adet armatür ön ihtiyacı', fmt(v.b) + ' lux hedefiyle hesaplanan aydınlatma seviyesi (kullanım faktörü ' + fmt(tc.lightingUtilizationFactor, 2) + ').', 'Yerleşim, kamaşma ve homojenlik için aydınlatma projesi gerekir.'];
+        },
+        invoice: function (v) {
+          return [money(v.a * v.b * 12) + ' yıllık enerji maliyeti', v.c > 20 ? 'Reaktif ceza riski tespit edildi.' : 'Reaktif oranı ön değerlendirmede kabul edilebilir.', 'GES, kompanzasyon ve sözleşme gücü optimizasyonu için fatura analizi önerilir.'];
+        },
+        efficiency: function (v) {
+          var saving = v.a * v.b * v.c / 100;
+          return [money(saving) + ' yıllık tasarruf potansiyeli', money(v.d) + ' yatırım için yaklaşık ' + fmt(v.d / saving, 1) + ' yıl geri dönüş.', 'VFD, LED, basınçlı hava ve GES senaryoları detaylandırılabilir.'];
+        },
+        mechanical: function (v) {
+          var pump = v.a / 3600 * v.b * 9.81 / (v.c / 100) / (v.d / 100);
+          return [fmt(pump, 1) + ' kW pompa motoru', fmt(v.a) + ' m³/h debi ve ' + fmt(v.b) + ' m basma yüksekliğiyle.', 'Pompa eğrisi, NPSH ve boru kayıpları seçimi etkiler.'];
+        },
+        motorCurrent: function (v) {
+          var current = v.a * 1000 / (currentFactor(v.b) * v.b * (v.c / 100) * (v.d / 100));
+          return [fmt(current, 1) + ' A motor nominal akımı', fmt(v.a, 1) + ' kW, ' + fmt(v.b) + ' V ' + phaseText(v.b) + ' motor için hesaplanan tam yük akımı (η=%' + fmt(v.c) + ', cosφ=%' + fmt(v.d) + ').', 'Etikette yazan gerçek motor akımı esas alınmalıdır; kalkış akımı bu değerin 5-8 katına çıkabilir.'];
+        },
+        breakerSelection: function (v) {
+          var ib = v.a * 1000 / (currentFactor(v.b) * v.b * (v.c / 100));
+          var chosen = tc.breakerAmps.find(function (value) { return value >= ib && value <= v.d; });
+          if (chosen) {
+            return [fmt(chosen) + ' A sigorta/TMŞ önerisi', 'Yük akımı Ib ≈ ' + fmt(ib, 1) + ' A; seçim Ib ≤ In ≤ Iz kuralına göre yapıldı (Iz=' + fmt(v.d) + ' A).', 'Kesme kapasitesi, saha kısa devre akımına göre ayrıca doğrulanmalıdır.'];
+          }
+          var nextBreaker = firstAtLeast(tc.breakerAmps, ib);
+          if (!nextBreaker) {
+            return ['Standart kademe aşıldı', 'Ib ≈ ' + fmt(ib, 1) + ' A, listedeki en büyük sigorta/TMŞ kademesini (' + fmt(lastOf(tc.breakerAmps)) + ' A) aşıyor.', 'Paralel hat veya özel koruma çözümü için mühendislik değerlendirmesi gerekir.'];
+          }
+          return ['Kablo kapasitesi yetersiz', 'Ib ≈ ' + fmt(ib, 1) + ' A için gereken In (' + fmt(nextBreaker) + ' A), girilen Iz (' + fmt(v.d) + ' A) değerini aşıyor.', 'Kablo kesiti artırılmalı veya yük gözden geçirilmelidir.'];
+        },
+        contactorMotor: function (v) {
+          var motorIn = v.a * 1000 / (currentFactor(v.b) * v.b * (v.c / 100) * tc.contactorMotorCosPhi);
+          var contactor = firstAtLeast(tc.contactorAmps, motorIn);
+          var detail = 'Motor nominal akımı ≈ ' + fmt(motorIn, 1) + ' A; motor koruma şalteri ayar aralığı ' + fmt(motorIn * tc.mpcbMinRatio, 1) + '-' + fmt(motorIn * tc.mpcbMaxRatio, 1) + ' A; yol alma akımı ≈ ' + fmt(motorIn * v.d) + ' A.';
+          if (!contactor) {
+            return ['Kontaktör özel seçim gerekli', detail + ' Motor akımı listedeki en büyük kontaktör kademesini (' + fmt(lastOf(tc.contactorAmps)) + ' A) aşıyor.', 'Yol alma yöntemi ve üretici seçim tablosuyla özel seçim yapılmalıdır.'];
+          }
+          return [fmt(contactor) + ' A kontaktör (AC-3) önerisi', detail, 'Yol alma yöntemi (DOL, yıldız-üçgen, yumuşak yol verici) seçimi kontaktör/koruma boyutunu değiştirebilir.'];
+        },
+        inverterCable: function (v) {
+          var acCurrent = v.a * 1000 / (currentFactor(v.b) * v.b * tc.inverterEfficiency);
+          var dcCurrent = v.a * 1000 / v.c;
+          var ac = pickSection(acCurrent, v.d, v.b, tc.inverterAcDropLimitPct, false);
+          var dc = pickSection(dcCurrent, v.d, v.c, tc.inverterDcDropLimitPct, true);
+          var acText = ac ? fmt(ac.section, 1) + ' mm²' : 'tek kablo yetersiz';
+          var dcText = dc ? fmt(dc.section, 1) + ' mm²' : 'tek kablo yetersiz';
+          var detail = 'AC akım ≈ ' + fmt(acCurrent) + ' A' + (ac ? ' (düşüm %' + fmt(ac.drop, 2, 2) + ')' : '') + ', DC akım ≈ ' + fmt(dcCurrent) + ' A' + (dc ? ' (düşüm %' + fmt(dc.drop, 2, 2) + ')' : '') + '; ' + fmt(v.d) + ' m hat için.' + (ac && dc ? '' : ' Tek kablo akım veya gerilim düşümü şartını sağlayamıyor: paralel hat veya özel hesap gerekli.');
+          return ['AC ' + acText + ' / DC ' + dcText + ' kablo ön seçimi', detail, 'DC tarafta UV/sıcaklığa dayanıklı güneş kablosu (H1Z2Z2-K) kullanılmalı; kesit seçimi ön değerlendirmedir, gerilim düşümü ve akım taşıma kapasitesi döşeme koşullarına göre ayrıca doğrulanmalıdır.'];
+        }
+      };
+      var invalidMessage = function (key, values) {
+        var tool = technicalTools[key];
+        var rules = technicalRules[key] || {};
+        var hidden = tool[6] || [];
+        var letters = ['a', 'b', 'c', 'd'];
+        for (var i = 0; i < letters.length; i++) {
+          var rule = rules[letters[i]];
+          if (!rule || hidden.indexOf(letters[i]) !== -1) { continue; }
+          var upper = rule[1] === null ? 1e9 : rule[1];
+          if (values[letters[i]] < rule[0] || values[letters[i]] > upper) {
+            return tool[i + 1] + ': ' + (rule[1] !== null ? fmt(rule[0], 2) + '-' + fmt(rule[1], 2) + ' arasında' : fmt(rule[0], 2) + ' veya daha büyük') + ' bir değer girin.';
+          }
+        }
+        return technicalChecks[key] ? technicalChecks[key](values) : '';
+      };
+      var technicalResult = function () {
+        var key = document.getElementById('technical-tool').value;
+        if (!technicalTools[key]) { return; }
+        var values = { a: technicalInput('technical-a'), b: technicalInput('technical-b'), c: technicalInput('technical-c'), d: technicalInput('technical-d') };
+        var problem = invalidMessage(key, values);
+        var out = problem ? ['Geçerli değer girin', problem, 'Tüm alanlara geçerli değerler girildiğinde sonuç hesaplanır.'] : technicalCalc[key](values);
+        if (/NaN|Infinity|∞/.test(out.join(' '))) { out = ['Geçerli değer girin', 'Girilen değerlerle sonuç hesaplanamadı; alanları kontrol edin.', 'Tüm alanlara geçerli değerler girildiğinde sonuç hesaplanır.']; }
+        document.getElementById('technical-amount').textContent = out[0];
+        document.getElementById('technical-detail').textContent = out[1];
+        document.getElementById('technical-scope').textContent = out[2];
+      };
+      var configureTechnical = function () {
+        var key = document.getElementById('technical-tool').value;
+        var tool = technicalTools[key];
+        if (!tool) { return; }
+        var hidden = tool[6] || [];
+        document.getElementById('technical-title').textContent = tool[0];
+        document.getElementById('technical-intro').textContent = tool[0] + ' için temel proje girdileriyle anlık ön değerlendirme alın.';
+        ['a', 'b', 'c', 'd'].forEach(function (letter, index) {
+          var input = document.getElementById('technical-' + letter);
+          document.getElementById('technical-' + letter + '-label').textContent = tool[index + 1];
+          input.value = tool[5][index];
+          input.closest('.tool-field').hidden = hidden.indexOf(letter) !== -1;
+        });
+        var meta = technicalMeta[key] || { formula: '', assumptions: '' };
+        document.getElementById('technical-formula-text').textContent = meta.formula;
+        document.getElementById('technical-assumptions-text').textContent = meta.assumptions;
+        document.querySelector('#teknik-panel .tool-download').dataset.pdfTitle = tool[0];
+        document.querySelector('#teknik-panel .tool-request').dataset.tool = tool[0];
+        technicalResult();
+      };
       var updates = [updateGes, updateTrafo, updateControl, technicalResult];
-      document.querySelectorAll('input, select').forEach(function (field) { field.addEventListener('input', function () { updates.forEach(function (update) { update(); }); }); field.addEventListener('change', function () { updates.forEach(function (update) { update(); }); }); });
+      document.querySelectorAll('input, select').forEach(function (field) {
+        if (field.id === 'technical-tool') { return; }
+        field.addEventListener('input', function () { updates.forEach(function (update) { update(); }); });
+        field.addEventListener('change', function () { updates.forEach(function (update) { update(); }); });
+      });
       var activateTab = function (tab) { var panelId = tab.getAttribute('aria-controls'); document.querySelectorAll('[role="tab"]').forEach(function (item) { item.setAttribute('aria-selected', 'false'); item.tabIndex = -1; }); document.querySelectorAll('[role="tabpanel"]').forEach(function (panel) { panel.classList.remove('active'); panel.hidden = true; }); document.querySelectorAll('.tool-category').forEach(function (category) { category.classList.remove('tool-category--active'); }); var matchingCategory = document.querySelector('.tool-category[data-panel="' + panelId.replace('-panel', '') + '"]'); if (matchingCategory) { matchingCategory.classList.add('tool-category--active'); } tab.setAttribute('aria-selected', 'true'); tab.tabIndex = 0; var activePanel = document.getElementById(panelId); activePanel.hidden = false; activePanel.classList.add('active'); };
       document.querySelectorAll('[role="tab"]').forEach(function (tab) { tab.addEventListener('click', function () { activateTab(tab); }); tab.addEventListener('keydown', function (event) { var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]')); var index = tabs.indexOf(tab); var nextIndex = event.key === 'ArrowRight' ? (index + 1) % tabs.length : event.key === 'ArrowLeft' ? (index - 1 + tabs.length) % tabs.length : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : -1; if (nextIndex >= 0) { event.preventDefault(); tabs[nextIndex].focus(); tabs[nextIndex].click(); } }); });
       document.querySelectorAll('.tool-category[data-panel]').forEach(function (category) { category.addEventListener('click', function () { var panel = category.dataset.panel; activateTab(document.getElementById(panel + '-tab')); document.querySelectorAll('.tool-category').forEach(function (item) { item.classList.remove('tool-category--active'); }); category.classList.add('tool-category--active'); if (category.dataset.technicalTool) { var technicalTool = document.getElementById('technical-tool'); technicalTool.value = category.dataset.technicalTool; technicalTool.dispatchEvent(new Event('change')); } document.getElementById(panel + '-panel').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); }); });
       document.getElementById('technical-tool').addEventListener('change', configureTechnical);
       configureTechnical();
       document.querySelectorAll('.tool-request').forEach(function (button) { button.addEventListener('click', function () { var activePanel = document.querySelector('.tool-panel.active'); var summary = activePanel.querySelector('.tool-result__amount').textContent; var text = 'Merhaba, VoltGuard web sitesindeki ' + button.dataset.tool + ' aracını kullandım. Ön değerlendirme sonucum: ' + summary + '. Detaylı teklif ve keşif bilgisi almak istiyorum.'; window.open('https://wa.me/905454346735?text=' + encodeURIComponent(text), '_blank', 'noopener'); }); });
-      var restoreCalculation = function () { var params = new URLSearchParams(window.location.search); var panelId = params.get('arac'); if (panelId && document.getElementById(panelId + '-panel')) { document.getElementById(panelId + '-tab').click(); } document.querySelectorAll('input[id], select[id]').forEach(function (field) { if (params.has(field.id)) { field.value = params.get(field.id); } }); if (params.has('technical-tool')) { configureTechnical(); ['technical-a', 'technical-b', 'technical-c', 'technical-d'].forEach(function (id) { if (params.has(id)) { document.getElementById(id).value = params.get(id); } }); } };
+      var restoreCalculation = function () {
+        var params = new URLSearchParams(window.location.search);
+        var panelId = params.get('arac');
+        if (panelId && document.getElementById(panelId + '-panel')) { document.getElementById(panelId + '-tab').click(); }
+        document.querySelectorAll('input[id], select[id]').forEach(function (field) {
+          if (!params.has(field.id)) { return; }
+          var value = params.get(field.id);
+          if (field.tagName === 'SELECT' && !Array.prototype.some.call(field.options, function (option) { return option.value === value; })) { return; }
+          field.value = value;
+        });
+        if (params.has('technical-tool')) {
+          configureTechnical();
+          ['technical-a', 'technical-b', 'technical-c', 'technical-d'].forEach(function (id) { if (params.has(id)) { document.getElementById(id).value = params.get(id); } });
+        }
+      };
       document.querySelectorAll('.tool-share').forEach(function (button) { button.addEventListener('click', function () { var panel = document.querySelector('.tool-panel.active'); var params = new URLSearchParams(); params.set('arac', panel.id.replace('-panel', '')); panel.querySelectorAll('input[id], select[id]').forEach(function (field) { params.set(field.id, field.value); }); var url = window.location.origin + '/hesaplama-araclari/?' + params.toString(); var status = panel.querySelector('.tool-share-status'); var copied = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(url) : Promise.reject(); copied.then(function () { status.textContent = 'Hesap bağlantısı kopyalandı.'; }).catch(function () { window.prompt('Hesap bağlantınızı kopyalayın:', url); status.textContent = 'Hesap bağlantısı hazır.'; }); }); });
       restoreCalculation();
-      var toPdfText = function (text) { return text.replace(/[ğĞ]/g, 'g').replace(/[ıİ]/g, 'i').replace(/[şŞ]/g, 's').replace(/[çÇ]/g, 'c').replace(/[öÖ]/g, 'o').replace(/[üÜ]/g, 'u').replace(/[₺]/g, 'TL'); };
-      document.querySelectorAll('.tool-download').forEach(function (button) { button.addEventListener('click', function () { if (!window.jspdf) { return; } var panel = document.querySelector('.tool-panel.active'); var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' }); var title = button.dataset.pdfTitle; var result = panel.querySelector('.tool-result__amount').textContent.trim(); var detail = panel.querySelector('.tool-result__detail').textContent.trim(); var lines = []; panel.querySelectorAll('.tool-field').forEach(function (field) { var label = field.querySelector('label').textContent.trim(); var control = field.querySelector('input, select'); var value = control.tagName === 'SELECT' ? control.options[control.selectedIndex].text : control.value; lines.push(toPdfText(label + ': ' + value)); }); doc.setFillColor(10, 22, 40); doc.rect(0, 0, 210, 36, 'F'); doc.setTextColor(255, 255, 255); doc.setFontSize(22); doc.text('VoltGuard', 15, 17); doc.setFontSize(11); doc.text('Muhendislik on degerlendirme ozeti', 15, 26); doc.setTextColor(15, 23, 42); doc.setFontSize(18); doc.text(toPdfText(title), 15, 50); doc.setFontSize(10); doc.setTextColor(71, 85, 105); doc.text('Olusturma tarihi: ' + new Intl.DateTimeFormat('tr-TR').format(new Date()), 15, 58); doc.setTextColor(15, 23, 42); doc.setFontSize(12); doc.text('Sonuc', 15, 73); doc.setFontSize(16); doc.text(toPdfText(result), 15, 83); doc.setFontSize(10); doc.setTextColor(71, 85, 105); doc.text(doc.splitTextToSize(toPdfText(detail), 175), 15, 91); doc.setTextColor(15, 23, 42); doc.setFontSize(12); doc.text('Hesaplama girdileri', 15, 111); doc.setFontSize(10); doc.text(lines, 15, 120, { lineHeightFactor: 1.8 }); doc.setDrawColor(203, 213, 225); doc.line(15, 180, 195, 180); doc.setTextColor(71, 85, 105); doc.setFontSize(8.5); doc.text(doc.splitTextToSize('Bu belge baglayici teklif degildir. Kesin bedel; yerinde kesif, yurutlukteki EMO duzenlemeleri, ilgili TEDAS teknik gereklilikleri ve piyasa kosullariyla belirlenir.', 180), 15, 188); doc.setTextColor(10, 22, 40); doc.setFontSize(10); doc.text('voltguard.com.tr | +90 545 434 67 35 | info@voltguard.com.tr', 15, 280); doc.save('voltguard-' + title.toLowerCase().replace(/\s+/g, '-') + '-on-degerlendirme.pdf'); }); });
-      restoreCalculation();
+      // jsPDF standart yazı tipi Türkçe harfleri ve mühendislik simgelerini taşımaz; ortak dönüştürücü js/voltguard-tools.js içindedir.
+      var toPdfText = function (text) {
+        var tools = window.VG && window.VG.Tools;
+        if (tools && tools.pdfText) { return tools.pdfText(text); }
+        return String(text).replace(/ı/g, 'i').replace(/İ/g, 'I').replace(/₺/g, 'TL').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\x00-\xFF]/g, '?');
+      };
+      var toPdfSlug = function (text) {
+        var tools = window.VG && window.VG.Tools;
+        if (tools && tools.pdfSlug) { return tools.pdfSlug(text); }
+        return toPdfText(text).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      };
+      document.querySelectorAll('.tool-download').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var panel = document.querySelector('.tool-panel.active');
+          if (!window.jspdf) {
+            panel.querySelector('.tool-share-status').textContent = 'PDF kütüphanesi yüklenemedi; bağlantınızı kontrol edip sayfayı yenileyin.';
+            return;
+          }
+          var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+          var title = button.dataset.pdfTitle;
+          var result = panel.querySelector('.tool-result__amount').textContent.trim();
+          var detail = panel.querySelector('.tool-result__detail').textContent.trim();
+          var lines = [];
+          panel.querySelectorAll('.tool-field').forEach(function (field) {
+            if (field.hidden) { return; }
+            var label = field.querySelector('label').textContent.trim();
+            var control = field.querySelector('input, select');
+            var value = control.tagName === 'SELECT' ? control.options[control.selectedIndex].text : control.value;
+            lines = lines.concat(doc.splitTextToSize(toPdfText(label + ': ' + value), 180));
+          });
+          doc.setFillColor(10, 22, 40);
+          doc.rect(0, 0, 210, 36, 'F');
+          doc.setTextColor(255, 255, 255);
+          doc.setFontSize(22);
+          doc.text('VoltGuard', 15, 17);
+          doc.setFontSize(11);
+          doc.text(toPdfText('Mühendislik ön değerlendirme özeti'), 15, 26);
+          doc.setTextColor(15, 23, 42);
+          doc.setFontSize(18);
+          var titleLines = doc.splitTextToSize(toPdfText(title), 180);
+          doc.text(titleLines, 15, 50);
+          var y = 58 + (titleLines.length - 1) * 8;
+          doc.setFontSize(10);
+          doc.setTextColor(71, 85, 105);
+          doc.text(toPdfText('Oluşturma tarihi: ') + new Intl.DateTimeFormat('tr-TR').format(new Date()), 15, y);
+          doc.setTextColor(15, 23, 42);
+          doc.setFontSize(12);
+          doc.text(toPdfText('Sonuç'), 15, y + 15);
+          doc.setFontSize(16);
+          var resultLines = doc.splitTextToSize(toPdfText(result), 180);
+          doc.text(resultLines, 15, y + 25);
+          y = y + 25 + (resultLines.length - 1) * 7;
+          doc.setFontSize(10);
+          doc.setTextColor(71, 85, 105);
+          var detailLines = doc.splitTextToSize(toPdfText(detail), 175);
+          doc.text(detailLines, 15, y + 8);
+          y = y + 8 + detailLines.length * 4.4;
+          doc.setTextColor(15, 23, 42);
+          doc.setFontSize(12);
+          doc.text('Hesaplama girdileri', 15, y + 8);
+          doc.setFontSize(10);
+          doc.text(lines, 15, y + 17, { lineHeightFactor: 1.8 });
+          y = Math.max(180, y + 17 + lines.length * 6.4);
+          doc.setDrawColor(203, 213, 225);
+          doc.line(15, y, 195, y);
+          doc.setTextColor(71, 85, 105);
+          doc.setFontSize(8.5);
+          doc.text(doc.splitTextToSize(toPdfText('Bu belge bağlayıcı teklif değildir. Kesin bedel; yerinde keşif, yürürlükteki EMO düzenlemeleri, ilgili TEDAŞ teknik gereklilikleri ve piyasa koşullarıyla belirlenir.'), 180), 15, y + 8);
+          doc.setTextColor(10, 22, 40);
+          doc.setFontSize(10);
+          doc.text('voltguard.com.tr | +90 545 434 67 35 | info@voltguard.com.tr', 15, 280);
+          doc.save('voltguard-' + toPdfSlug(title) + '-on-degerlendirme.pdf');
+        });
+      });
       updates.forEach(function (update) { update(); });
     }());
   </script>
   <script src="js/voltguard-auth.js" defer></script>
+  <script src="js/voltguard-tools.js?v=2026-10-11" defer></script>
 </body>
 </html>
