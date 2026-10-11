@@ -6,10 +6,13 @@
   <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
   <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="stylesheet" href="/css/vg-shell.css">
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.07d13f43.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261011">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261011">
   <script type="speculationrules">
   {
     "prerender": [
@@ -32,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js" defer></script>
+  <script src="/js/vg-shell.js?v=20261011" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -50,9 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/style.css?v=20261011">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/scada-iec-61850.html#article","headline":"SCADA Sistemleri ve IEC 61850","description":"SCADA sistemleri ve IEC 61850 standardı: trafo merkezi otomasyonu, röle koruma, GOOSE haberleşmesi ve uyumlu çalışma için pratik mühendislik rehberi.","inLanguage":"tr-TR","datePublished":"2026-06-14","dateModified":"2026-10-11","articleSection":"Otomasyon & Standartlar","image":"https://voltguard.com.tr/public/og-image.png","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/scada-iec-61850.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"SCADA Sistemleri ve IEC 61850","item":"https://voltguard.com.tr/bilgi/scada-iec-61850.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"SCADA ile IEC 61850 arasındaki fark nedir?","acceptedAnswer":{"@type":"Answer","text":"SCADA, bir tesisi uzaktan izleme ve kontrol etme amacı taşıyan genel bir sistem mimarisidir. IEC 61850 ise bu mimarideki cihazların, özellikle trafo merkezindeki koruma rölelerinin ve akıllı elektronik cihazların birbiriyle nasıl haberleşeceğini tanımlayan uluslararası bir standarttır. Yani SCADA 'ne yapıldığını', IEC 61850 büyük ölçüde 'cihazların hangi ortak dilde konuştuğunu' belirler."}},{"@type":"Question","name":"IEC 61850 sadece trafo merkezleri için mi kullanılır?","acceptedAnswer":{"@type":"Answer","text":"Hayır. Standart başlangıçta trafo merkezi otomasyonu için tasarlandı, ancak zamanla rüzgar ve hidroelektrik santraller, dağıtık enerji kaynakları ile iletim ve dağıtım sistemlerine de genişletildi. Örneğin hidroelektrik santraller için izleme ve kontrol haberleşmesini ele alan ayrı bir parça (IEC 61850-7-410) bulunur."}},{"@type":"Question","name":"GOOSE mesajı nedir ve neden önemlidir?","acceptedAnswer":{"@type":"Answer","text":"GOOSE (Generic Object Oriented Substation Event), trafo merkezindeki röleler arasında hızlı koruma ve kilitleme sinyallerini iletmek için kullanılan bir mesajlaşma yöntemidir. Bir arıza algılandığında diğer rölelere neredeyse anında bilgi gönderilmesini sağlar; bu da geleneksel bakır kablolu çözümlere göre daha hızlı koruma koordinasyonu ve daha az kablaj demektir."}},{"@type":"Question","name":"Farklı markalardaki röleler aynı IEC 61850 sisteminde çalışır mı?","acceptedAnswer":{"@type":"Answer","text":"Evet, standardın temel amacı budur. IEC 61850; mantıksal düğümler, ACSI servis arayüzü ve XML tabanlı SCL yapılandırma dili gibi ortak modeller sayesinde farklı üreticilere ait cihazların birlikte çalışmasını (interoperability) hedefler. Yine de saha uygulamasında cihazların uygunluk testlerinden geçmiş ve doğru yapılandırılmış olması, sorunsuz entegrasyon için önemlidir."}},{"@type":"Question","name":"Mevcut SCADA sistemimi IEC 61850'ye geçirmek mümkün mü?","acceptedAnswer":{"@type":"Answer","text":"Çoğu durumda mümkündür ancak proje bazında değerlendirme gerektirir. Mevcut röle ve cihazların standardı destekleyip desteklemediği, ağ altyapısı, Merging Unit gibi ek birimlerin gerekliliği ve devreye alma planı incelenmelidir. Bu tür bir geçiş için VoltGuard gibi konuya hakim bir mühendislik firmasından saha analizi ve uyumlandırma desteği alınması önerilir."}}]}]}</script>
 </head>
 <body class="doc-shell">
@@ -267,6 +268,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="../js/voltguard-auth.js" defer></script>
+  <script src="../js/voltguard-auth.js?v=20261011" defer></script>
 </body>
 </html>

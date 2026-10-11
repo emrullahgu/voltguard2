@@ -6,10 +6,13 @@
   <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
   <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="stylesheet" href="/css/vg-shell.css">
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.07d13f43.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261011">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261011">
   <script type="speculationrules">
   {
     "prerender": [
@@ -32,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js" defer></script>
+  <script src="/js/vg-shell.js?v=20261011" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -50,9 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/style.css?v=20261011">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/kacak-akim-rolesi-ariza-nedenleri.html#article","headline":"Kaçak Akım Rölesi Neden Atar? 10 Neden ve Çözüm Yolları","description":"Kaçak akım rölesi (RCD) neden atar? Nem, yalıtım hatası, toplam kaçak akım ve rölenin kendisinden kaynaklı 10 yaygın neden ile arıza tespit adımları.","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-09-05","articleSection":"Elektrik Hesapları","image":"https://voltguard.com.tr/public/og-image.png","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/kacak-akim-rolesi-ariza-nedenleri.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"Kaçak Akım Rölesi Neden Atar?","item":"https://voltguard.com.tr/bilgi/kacak-akim-rolesi-ariza-nedenleri.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Kaçak akım rölesi sürekli atıyorsa ne yapmalı?","acceptedAnswer":{"@type":"Answer","text":"Öncelikle devredeki cihazlar tek tek ayrılarak hangi hat veya cihazın atmaya sebep olduğu belirlenmeye çalışılır. Islak alan, hasarlı kablo veya arızalı cihaz şüphesi varsa o hat enerjisiz bırakılıp izolasyon direnci ölçülmelidir. Sorun bulunamıyorsa veya röle sık sık nedensiz atıyorsa yetkili bir elektrik teknisyeni/mühendisinden arıza tespiti istenmelidir."}},{"@type":"Question","name":"30 mA RCD ne demek?","acceptedAnswer":{"@type":"Answer","text":"30 mA, kaçak akım rölesinin devreyi açacağı kaçak akım eşiğidir. TT ve TN sistemli genel kullanım priz devrelerinde 32 A'e kadar 30 mA'lik RCD kullanımı, can güvenliği için zorunlu tutulan yaygın bir uygulamadır."}},{"@type":"Question","name":"RCD ile sigorta arasındaki fark nedir?","acceptedAnswer":{"@type":"Answer","text":"Sigorta (otomat/TMŞ) aşırı yük ve kısa devreye karşı kabloyu ve ekipmanı korur; kaçak akım rölesi (RCD) ise faz ve nötr iletkenleri arasındaki akım dengesizliğini algılayarak dolaylı dokunma ve yalıtım hatalarına karşı can güvenliği sağlar. İkisi farklı arıza tiplerine karşı koruma sağladığı için birlikte kullanılır."}},{"@type":"Question","name":"Kaçak akım rölesi test butonu ne işe yarar?","acceptedAnswer":{"@type":"Answer","text":"Test butonu, röle içinde yapay bir kaçak akım oluşturarak cihazın mekanik olarak hâlâ çalıştığını doğrular. Düzenli aralıklarla test butonuna basılması, rölenin zamanla yorulup işlevini kaybetmediğinden emin olmak için önerilen basit bir kontrol yöntemidir."}}]}]}</script>
 </head>
 <body class="doc-shell">
@@ -290,6 +291,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="../js/voltguard-auth.js" defer></script>
+  <script src="../js/voltguard-auth.js?v=20261011" defer></script>
 </body>
 </html>

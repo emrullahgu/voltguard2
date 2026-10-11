@@ -6,10 +6,13 @@
   <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
   <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="stylesheet" href="/css/vg-shell.css">
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.07d13f43.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261011">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261011">
   <script type="speculationrules">
   {
     "prerender": [
@@ -32,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js" defer></script>
+  <script src="/js/vg-shell.js?v=20261011" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -50,9 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/style.css?v=20261011">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/plc-endustriyel-otomasyon-giris.html#course","name":"PLC, HMI ve SCADA'ya Giriş","description":"PLC tarama döngüsü, giriş/çıkış (I/O) kavramı, ladder logic temelleri, HMI ve SCADA ilişkisi, sürücü (VFD) çalışma mantığı.","educationalLevel":"Başlangıç","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-10-11","provider":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"PLC, HMI ve SCADA'ya Giriş","item":"https://voltguard.com.tr/akademi/plc-endustriyel-otomasyon-giris.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"PLC nedir ve nasıl çalışır?","acceptedAnswer":{"@type":"Answer","text":"PLC (Programlanabilir Lojik Kontrolör), giriş sinyallerini (sensör, buton) okuyup yazılan programa göre çıkışları (motor, valf, lamba) süren endüstriyel bir kontrol bilgisayarıdır. Sürekli tekrarlanan bir tarama döngüsüyle (girişleri oku, programı çalıştır, çıkışları güncelle) çalışır."}},{"@type":"Question","name":"HMI ile SCADA arasındaki fark nedir?","acceptedAnswer":{"@type":"Answer","text":"HMI (İnsan Makine Arayüzü), genellikle tek bir makine veya panonun yerel operatör ekranıdır. SCADA ise birden fazla PLC/istasyondan gelen verileri merkezi bir sistemde toplayan, izleyen ve genellikle uzaktan kontrol imkânı sunan daha geniş kapsamlı bir izleme-kontrol sistemidir."}},{"@type":"Question","name":"Ladder logic nedir?","acceptedAnswer":{"@type":"Answer","text":"Ladder logic (merdiven diyagramı), elektrik kumanda şemalarına benzeyen, PLC programlama için en yaygın kullanılan grafik programlama dilidir. Kontaklar ve bobinler kullanılarak elektrik kumanda mantığına benzer bir şekilde yazılır, bu da elektrik teknisyenlerinin PLC'ye kolay geçiş yapmasını sağlar."}}]}]}</script>
 </head>
 <body class="doc-shell">
@@ -283,6 +284,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="../js/voltguard-auth.js" defer></script>
+  <script src="../js/voltguard-auth.js?v=20261011" defer></script>
 </body>
 </html>

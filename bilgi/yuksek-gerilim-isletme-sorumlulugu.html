@@ -6,10 +6,13 @@
   <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
   <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="stylesheet" href="/css/vg-shell.css">
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.07d13f43.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261011">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261011">
   <script type="speculationrules">
   {
     "prerender": [
@@ -32,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js" defer></script>
+  <script src="/js/vg-shell.js?v=20261011" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -50,9 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/style.css?v=20261011">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/yuksek-gerilim-isletme-sorumlulugu.html#article","headline":"Yüksek Gerilim Tesisleri İşletme Sorumluluğu","description":"Yüksek gerilim tesisleri işletme sorumluluğu nedir, kim üstlenir, hangi görevler ve sözleşme gerekir? Trafo ve şalt tesisleri için pratik rehber.","inLanguage":"tr-TR","datePublished":"2026-06-14","dateModified":"2026-10-11","articleSection":"Mevzuat & Uyumluluk","image":"https://voltguard.com.tr/public/og-image.png","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/yuksek-gerilim-isletme-sorumlulugu.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"Yüksek Gerilim Tesisleri İşletme Sorumluluğu","item":"https://voltguard.com.tr/bilgi/yuksek-gerilim-isletme-sorumlulugu.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Hangi tesisler için işletme sorumlusu tutmak gerekir?","acceptedAnswer":{"@type":"Answer","text":"Anma gerilimi 1 kV'un üzerindeki yüksek gerilim tesisleri için işletme sorumlusu gerekir. Kendi trafo merkezi, orta gerilim hücreleri veya şalt tesisi bulunan fabrika, hastane, otel, AVM, soğuk hava deposu ve sulama tesisi gibi aboneler bu kapsamdadır. Bağlayıcı kapsam için güncel mevzuat esas alınmalıdır."}},{"@type":"Question","name":"İşletme sorumlusu kim olabilir?","acceptedAnswer":{"@type":"Answer","text":"Yalnızca EMO tarafından yetkilendirilmiş (YGTİS belgeli) elektrik mühendisi ya da elektrik yüksek mühendisi olabilir. Hizmet, ya tesiste tam gün-tam yıl çalışan belgeli mühendisle ya da SMM belgesine sahip bir mühendisle EMO onaylı sözleşme üzerinden yürütülür."}},{"@type":"Question","name":"Bir mühendis kaç tesisin işletme sorumluluğunu üstlenebilir?","acceptedAnswer":{"@type":"Answer","text":"Üstlenilebilecek tesis sayısı ve toplam güç, EMO Yönetim Kurulu'nun belirlediği üst sınıra tabidir; uygulamada bu sınır genellikle 30 adet ve 30 MVA olarak ifade edilmiştir. Sulama trafoları gibi durumlarda farklı sınırlar tanımlanabildiğinden güncel EMO kararları kontrol edilmelidir."}},{"@type":"Question","name":"İşletme sorumlusu tesisi ne sıklıkla denetler ve rapor verir?","acceptedAnswer":{"@type":"Answer","text":"SMM mühendisle yürütülen hizmette tesis genellikle en az ayda bir denetlenir. Sorumlu, tesisin durumuna ilişkin raporunu belirli aralıklarla işverene, enerji sağlayan kuruluşa ve EMO'ya sunar. Topraklama testleri ise ilgili yönetmeliğe göre düzenli aralıklarla yaptırılır. Kesin periyotlar için güncel mevzuat geçerlidir."}},{"@type":"Question","name":"İşletme sorumlusu ayrılırsa ne yapılmalı?","acceptedAnswer":{"@type":"Answer","text":"Sözleşmenin feshi, görev değişikliği veya benzeri nedenlerle sorumluluk sona ererse ve tesis çalışmaya devam ediyorsa, işveren gecikmeden yeni bir işletme sorumlusu belirlemeli ve bu durumu enerji sağlayan kuruluş ile EMO'ya bildirmelidir."}}]}]}</script>
 </head>
 <body class="doc-shell">
@@ -266,6 +267,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="../js/voltguard-auth.js" defer></script>
+  <script src="../js/voltguard-auth.js?v=20261011" defer></script>
 </body>
 </html>

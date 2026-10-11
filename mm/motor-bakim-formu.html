@@ -6,10 +6,13 @@
   <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
   <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="stylesheet" href="/css/vg-shell.css">
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.07d13f43.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261011">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261011">
   <script type="speculationrules">
   {
     "prerender": [
@@ -32,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js" defer></script>
+  <script src="/js/vg-shell.js?v=20261011" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -50,9 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/style.css?v=20261011">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://voltguard.com.tr/mm/motor-bakim-formu.html","name":"Motor Bakım Formu","description":"Elektrik motoru periyodik bakım formu: yalıtım, titreşim, sıcaklık, akım dengesi, kuplaj ve mekanik kontrol tutanağı.","inLanguage":"tr-TR","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Mühendis Merkezi","item":"https://voltguard.com.tr/muhendis-merkezi.html"},{"@type":"ListItem","position":3,"name":"Motor Bakım Formu","item":"https://voltguard.com.tr/mm/motor-bakim-formu.html"}]}]}</script>
 </head>
 <body class="doc-shell">
@@ -351,7 +352,7 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="../js/voltguard-auth.js" defer></script>
-  <script src="../js/voltguard-forms.js"></script>
+  <script src="../js/voltguard-auth.js?v=20261011" defer></script>
+  <script src="../js/voltguard-forms.js?v=20261011"></script>
 </body>
 </html>

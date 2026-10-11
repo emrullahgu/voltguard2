@@ -169,10 +169,7 @@ def set_current(html, rel):
 def build_head_block(head_outside):
     frag = load_fragment('head.html')
     extras = []
-    if 'fonts.googleapis.com/css' not in head_outside:
-        extras.append(FONTS_LINK)
-    if not re.search(r'font-?awesome', head_outside, re.I):
-        extras.append(FA_LINK)
+    # Fonts and icons are self-hosted (css/fonts.css, css/fa-subset.css in head.html); CDN links are no longer added.
     joined = head_outside + '\n'.join(extras)
     pre = []
     if 'fonts.googleapis.com' in joined:
@@ -203,6 +200,9 @@ def apply_head(t, warnings):
     head = strip_line(head, r'<script\s+type=["\']speculationrules["\'][^>]*>.*?</script>')
     head = strip_line(head, r'<link\s+rel=["\']preconnect["\']\s+href=["\']https://(?:fonts\.googleapis\.com|fonts\.gstatic\.com|cdnjs\.cloudflare\.com)/?["\'][^>]*>')
     head = strip_line(head, r'<link\s+[^>]*href=["\'][^"\']*vg-shell\.css[^"\']*["\'][^>]*>')
+    head = re.sub(r'[ \t]*<noscript>\s*<link[^>]*font-awesome[^>]*>\s*</noscript>[ \t]*\r?\n?', '', head, flags=FLAGS)
+    head = strip_line(head, r'<link\b[^>]*fonts\.googleapis\.com/css[^>]*>')
+    head = strip_line(head, r'<link\b[^>]*font-awesome[^>]*>')
     head = strip_line(head, r'<script\s+[^>]*src=["\'][^"\']*vg-shell\.js[^"\']*["\'][^>]*>\s*</script>')
     block = build_head_block(head.replace(ph, ''))
     if ph in head:
