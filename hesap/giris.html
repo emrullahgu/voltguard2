@@ -40,10 +40,12 @@
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="same-origin">
   <title>Giriş Yap | VoltGuard Tools Hesabı</title>
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/style.css?v=20261011">
+  <link rel="stylesheet" href="../css/vg-account.css?v=20261011">
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -91,31 +93,39 @@
   <!--/vg:header-->
   <main class="vg-auth-shell" id="main" tabindex="-1">
     <section class="vg-auth-card" aria-labelledby="giris-title">
-      <a href="../index.html" style="display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;color:var(--clr-dark);margin-bottom:1rem;font-family:'Outfit',sans-serif;font-weight:800">
-        <img src="../public/icon-192.png" alt="" width="36" height="36" style="border-radius:8px"> VoltGuard Tools
-      </a>
+      <a class="vg-auth-card__brand" href="/"><img src="../public/icon-192.png" alt="" width="36" height="36"> VoltGuard Tools</a>
       <h1 id="giris-title">Hesabınıza giriş yapın</h1>
-      <p class="vg-auth-card__sub">Hesaplamalarınızı kaydedin, favori araçlarınıza hızlı erişin, projelerinizi düzenleyin.</p>
+      <p class="vg-auth-card__sub">Kayıtlı hesaplamalarınıza, favori araçlarınıza ve projelerinize her cihazdan ulaşın.</p>
 
-      <div id="giris-err" class="vg-auth-error" hidden></div>
+      <div id="giris-alert" class="vg-acct-alert" hidden></div>
+      <div id="legacy-box" class="vg-acct-alert vg-acct-alert--warning" role="region" aria-label="Eski hesap kayıtları" hidden></div>
 
-      <form id="giris-form" class="vg-auth-form" autocomplete="on" novalidate>
-        <div>
+      <form id="giris-form" class="vg-auth-form" novalidate>
+        <div class="vg-field">
           <label for="email">E-posta</label>
-          <input id="email" type="email" name="email" autocomplete="email" required>
+          <input id="email" type="email" name="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" maxlength="254" required>
         </div>
-        <div>
+        <div class="vg-field">
           <label for="password">Şifre</label>
-          <input id="password" type="password" name="password" autocomplete="current-password" required minlength="8">
+          <div class="vg-pw">
+            <input id="password" type="password" name="password" autocomplete="current-password" maxlength="128" required>
+            <button type="button" class="vg-pw__toggle" data-vg-pw-toggle aria-controls="password" aria-pressed="false" aria-label="Şifreyi göster"><i class="fas fa-eye" aria-hidden="true"></i></button>
+          </div>
         </div>
+        <div class="vg-row-between">
+          <label class="vg-check vg-check--muted"><input type="checkbox" name="remember" id="remember"> <span>Beni hatırla</span></label>
+          <a class="vg-link" href="sifre-sifirla.html" id="forgot-link">Şifremi unuttum</a>
+        </div>
+        <p class="vg-field__hint" id="remember-hint">“Beni hatırla” seçilirse oturumunuz bu cihazda en fazla 30 gün açık kalır. Ortak kullanılan bilgisayarlarda işaretlemeyin.</p>
+        <label class="vg-check" id="legacy-opt" hidden><input type="checkbox" name="legacy" id="legacy" checked> <span id="legacy-opt-text">Bu tarayıcıdaki eski kayıtlarımı hesabıma taşı</span></label>
         <button type="submit"><i class="fas fa-arrow-right-to-bracket" aria-hidden="true"></i> Giriş yap</button>
       </form>
 
       <p class="vg-auth-alt">Hesabınız yok mu? <a href="kayit.html" id="kayit-link">Ücretsiz üye olun</a></p>
-      <p class="vg-auth-alt"><a href="../index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Ana sayfaya dön</a></p>
+      <p class="vg-auth-alt"><a href="/"><i class="fas fa-arrow-left" aria-hidden="true"></i> Ana sayfaya dön</a></p>
 
       <div class="vg-auth-notice">
-        <strong>Gizlilik notu:</strong> VoltGuard Tools üyelik bilgileri sadece bu tarayıcıda (localStorage) saklanır. Farklı cihazlardan erişmek isterseniz veriler otomatik senkronlanmaz.
+        <strong>Gizlilik:</strong> Hesap bilgileriniz VoltGuard sunucusunda saklanır; şifreniz geri döndürülemez biçimde (hash) tutulur. Giriş için yalnızca zorunlu oturum çerezi (VGSESS) kullanılır. Ayrıntılar: <a href="../gizlilik.html#hesap-verileri">Gizlilik ve KVKK</a>.
       </div>
     </section>
   </main>
@@ -248,33 +258,88 @@
   </footer>
   <!--/vg:footer-->
 
-  <script src="../js/voltguard-auth.js?v=20261011"></script>
+  <script src="../js/voltguard-auth.js?v=20261011b"></script>
+  <script src="../js/vg-account.js?v=20261011"></script>
   <script>
     (function () {
       'use strict';
       var Auth = window.VG.Auth;
+      var UI = window.VG.AccountUI;
       var params = new URLSearchParams(location.search);
       /* ?next= yalnızca aynı site içindeki sayfalara izin verir (açık yönlendirme ve javascript: engeli). */
       var next = Auth.safeNext(params.get('next'));
       var dest = next || 'panel.html';
-      if (Auth.currentUser()) { location.replace(dest); return; }
       var form = document.getElementById('giris-form');
-      var err = document.getElementById('giris-err');
+      var alertEl = document.getElementById('giris-alert');
       var submitBtn = form.querySelector('button[type="submit"]');
-      /* Üye ol sayfasına geçerken dönüş adresini koru. */
+      var emailIn = document.getElementById('email');
+      var pwIn = document.getElementById('password');
+
+      document.getElementById('remember').setAttribute('aria-describedby', 'remember-hint');
       if (next) document.getElementById('kayit-link').href = 'kayit.html?next=' + encodeURIComponent(next);
-      form.addEventListener('submit', async function (ev) {
+
+      var flash = Auth.takeFlash();
+      if (flash) UI.alertBox(alertEl, flash.kind === 'error' ? 'error' : flash.kind, flash.text);
+
+      /* E-posta, şifre sıfırlama sayfasına adres çubuğu yerine sekme belleğiyle taşınır (URL'de kişisel veri olmaz). */
+      document.getElementById('forgot-link').addEventListener('click', function () {
+        try { sessionStorage.setItem('vg_reset_email', emailIn.value.trim().slice(0, 254)); } catch (e) { /* depolama kapalı */ }
+      });
+
+      /* Eski sürümde yalnızca bu tarayıcıda tutulan hesap verisi varsa: bilgilendir ve taşıma seçeneği sun. */
+      var legacy = Auth.legacy.detect();
+      if (legacy && legacy.total) {
+        var who = Auth.legacy.pick(legacy);
+        var box = document.getElementById('legacy-box');
+        box.innerHTML = '<i class="fas fa-circle-info" aria-hidden="true"></i><div class="vg-acct-alert__body">' +
+          '<p><strong>Hesap sistemimiz yenilendi.</strong> Bu tarayıcıda eski VoltGuard Tools hesabınıza ait ' + legacy.total + ' kayıt bulundu. ' +
+          'Eski hesaplar yalnızca bu tarayıcıda tutulduğu için artık giriş için kullanılamıyor; kayıtlarınız ise kaybolmadı.</p>' +
+          '<p>Yeni hesabınızla giriş yaptığınızda bu kayıtları hesabınıza taşıyabilirsiniz. Henüz yeni hesabınız yoksa <a href="kayit.html?aktar=1">ücretsiz hesap oluşturun</a>.</p></div>';
+        box.hidden = false;
+        document.getElementById('legacy-opt').hidden = false;
+        document.getElementById('legacy-opt-text').textContent = 'Bu tarayıcıdaki eski kayıtlarımı (' + legacy.total + ') hesabıma taşı';
+        if (who && who.email && !emailIn.value) emailIn.value = who.email;
+      }
+
+      /* Zaten giriş yapılmışsa doğrudan hedefe git. API'ye ulaşılamıyorsa form açık kalır ve uyarı gösterilir. */
+      Auth.session({ force: true }).then(function (user) {
+        if (user) location.replace(dest);
+      }, function (e) {
+        if (e && e.code === 'unreachable') UI.alertBox(alertEl, 'warning', Auth.MESSAGES.down);
+      });
+
+      form.addEventListener('submit', function (ev) {
         ev.preventDefault();
-        err.hidden = true;
-        submitBtn.disabled = true;
-        try {
-          await Auth.login(form.email.value, form.password.value);
-          location.replace(dest);
-        } catch (e) {
-          err.textContent = e.message || 'Giriş başarısız.';
-          err.hidden = false;
-          submitBtn.disabled = false;
+        UI.clearAlert(alertEl);
+        var errors = {};
+        if (!UI.validEmail(emailIn.value)) errors.email = 'Geçerli bir e-posta adresi girin.';
+        if (!pwIn.value) errors.password = 'Şifrenizi girin.';
+        if (Object.keys(errors).length) {
+          UI.showFormError(form, alertEl, { message: 'Lütfen işaretli alanları kontrol edin.' }, errors);
+          return;
         }
+        UI.clearFieldErrors(form);
+        UI.busy(submitBtn, true, 'Giriş yapılıyor…');
+        var migrateLegacy = legacy && legacy.total && document.getElementById('legacy').checked;
+        Auth.login(emailIn.value, pwIn.value, { remember: document.getElementById('remember').checked }).then(function () {
+          if (!migrateLegacy) return null;
+          return Auth.legacy.migrate().then(function (c) {
+            var n = c.history + c.favorites + c.projects + c.documents;
+            Auth.setFlash('success', n ? 'Eski kayıtlarınızdan ' + n + ' tanesi hesabınıza taşındı.' : 'Eski kayıtlarınız hesabınızda zaten vardı.');
+          }, function () {
+            Auth.setFlash('warning', 'Giriş yaptınız ancak eski kayıtlarınız şu anda taşınamadı. Panelden tekrar deneyebilirsiniz.');
+          });
+        }).then(function () {
+          location.replace(dest);
+        }, function (e) {
+          UI.busy(submitBtn, false);
+          if (e && e.code === 'invalid_credentials') {
+            pwIn.value = '';
+            UI.showFormError(form, alertEl, e, { password: 'E-posta adresi veya şifre hatalı.' });
+            return;
+          }
+          UI.showFormError(form, alertEl, e);
+        });
       });
     }());
   </script>

@@ -40,15 +40,12 @@
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="same-origin">
   <title>Projeler | VoltGuard Tools</title>
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/style.css?v=20261011">
-  <style>
-    /* Sayfanın ana başlığı h1 olduğu için .vg-section h2 görünümünü birebir uygula. */
-    .vg-section h1 { font-family: var(--font-heading); font-size: 1.2rem; color: var(--clr-dark); margin: 0 0 1rem; display: flex; align-items: center; gap: .55rem; }
-    .vg-section h1 i { color: var(--clr-accent-text); }
-  </style>
+  <link rel="stylesheet" href="../css/vg-account.css?v=20261011">
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -94,33 +91,44 @@
     <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
   </header>
   <!--/vg:header-->
+  <main class="vg-panel vg-acct" id="main" tabindex="-1">
+    <nav class="vg-panel__nav" aria-label="Hesap menüsü" data-vg-acct-nav>
+      <a href="panel.html" data-vg-nav="panel" data-vg-member><i class="fas fa-gauge-high" aria-hidden="true"></i> Panel</a>
+      <a href="gecmis.html" data-vg-nav="gecmis"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Geçmiş Hesaplamalar</a>
+      <a href="favoriler.html" data-vg-nav="favoriler"><i class="fas fa-star" aria-hidden="true"></i> Favori Araçlar</a>
+      <a href="projeler.html" data-vg-nav="projeler" data-vg-member><i class="fas fa-folder-tree" aria-hidden="true"></i> Projeler</a>
+      <a href="dokumanlar.html" data-vg-nav="dokumanlar" data-vg-member><i class="fas fa-book-open" aria-hidden="true"></i> Dokümanlarım</a>
+      <button type="button" class="vg-panel__logout" data-vg-logout data-vg-member><i class="fas fa-arrow-right-from-bracket" aria-hidden="true"></i> Çıkış yap</button>
+      <p class="vg-sync" data-vg-sync role="status" aria-live="polite"></p>
+    </nav>
 
-  <main class="vg-panel" id="main" tabindex="-1">
-    <aside class="vg-panel__nav" aria-label="Hesap menüsü">
-      <a href="panel.html"><i class="fas fa-gauge-high"></i> Panel</a>
-      <a href="gecmis.html"><i class="fas fa-clock-rotate-left"></i> Geçmiş Hesaplamalar</a>
-      <a href="favoriler.html"><i class="fas fa-star"></i> Favori Araçlar</a>
-      <a href="projeler.html" class="is-active"><i class="fas fa-folder-tree"></i> Projeler</a>
-      <a href="dokumanlar.html"><i class="fas fa-book-open"></i> Dokümanlarım</a>
-      <button type="button" class="vg-panel__logout" id="logout-btn"><i class="fas fa-arrow-right-from-bracket"></i> Çıkış yap</button>
-    </aside>
+    <div class="vg-panel__main">
+      <div data-vg-alert class="vg-acct-alert" hidden></div>
+      <section class="vg-section" aria-labelledby="page-title">
+        <h1 id="page-title"><i class="fas fa-folder-plus" aria-hidden="true"></i> Yeni proje oluştur</h1>
+        <p class="vg-section__lead">Bir tesis, saha veya müşteri için proje oluşturun; kayıtlı hesaplamalarınızı “Geçmiş Hesaplamalar” sayfasından bu projeye bağlayın.</p>
+        <div data-vg-gate></div>
+        <div data-vg-content hidden>
+          <div id="form-alert" class="vg-acct-alert" hidden style="margin-bottom:1rem"></div>
+          <form id="new-project" class="vg-inline-form" novalidate>
+            <div class="vg-field">
+              <label for="project-name">Proje adı</label>
+              <input id="project-name" name="name" type="text" maxlength="200" required placeholder="örn. Bornova tesis yenileme">
+            </div>
+            <div class="vg-field">
+              <label for="project-desc">Kısa not <span class="vg-field__opt">(isteğe bağlı)</span></label>
+              <input id="project-desc" name="description" type="text" maxlength="600">
+            </div>
+            <button type="submit"><i class="fas fa-plus" aria-hidden="true"></i> Ekle</button>
+          </form>
+        </div>
+      </section>
 
-    <section class="vg-panel__main">
-      <div class="vg-section">
-        <h1><i class="fas fa-folder-plus"></i> Yeni proje oluştur</h1>
-        <p style="color:var(--clr-text-muted);margin:.35rem 0 1rem">Bir tesis, saha veya müşteri için proje oluşturun; kayıtlı hesaplamalarınızı bu projeye bağlayarak organize edin.</p>
-        <form id="new-project" class="vg-inline-form" novalidate>
-          <input name="name" type="text" placeholder="Proje adı (örn. Bornova Tekstil Fabrikası)" required>
-          <input name="description" type="text" placeholder="Kısa not (opsiyonel)">
-          <button type="submit"><i class="fas fa-plus"></i> Ekle</button>
-        </form>
-      </div>
-
-      <div class="vg-section">
-        <h2><i class="fas fa-folder-tree"></i> Projeleriniz</h2>
+      <section class="vg-section" aria-labelledby="list-title" id="list-section" hidden>
+        <h2 id="list-title" tabindex="-1"><i class="fas fa-folder-tree" aria-hidden="true"></i> Projeleriniz</h2>
         <div id="projects-list" class="vg-projects-list"></div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
   <!--vg:footer-->
@@ -251,71 +259,110 @@
   </footer>
   <!--/vg:footer-->
 
-  <script src="../js/voltguard-auth.js?v=20261011"></script>
+  <script src="../js/voltguard-auth.js?v=20261011b"></script>
+  <script src="../js/vg-account.js?v=20261011"></script>
   <script>
     (function () {
       'use strict';
       var Auth = window.VG.Auth;
-      var user = Auth.requireAuth('giris.html');
-      if (!user) return;
-
-      document.getElementById('logout-btn').addEventListener('click', function () {
-        if (confirm('Çıkış yapmak istediğinize emin misiniz?')) { Auth.logout(); location.href = '../index.html'; }
-      });
-
+      var UI = window.VG.AccountUI;
+      var esc = UI.esc;
       var list = document.getElementById('projects-list');
       var form = document.getElementById('new-project');
+      var formAlert = document.getElementById('form-alert');
+      var alertEl = document.querySelector('[data-vg-alert]');
+      var lastSig = '';
+
+      UI.initPage({
+        page: 'projeler',
+        protected: true,
+        collections: ['projects', 'history'],
+        onReady: function () {
+          document.getElementById('list-section').hidden = false;
+          render(true);
+        }
+      });
+
+      document.addEventListener('vg:data', function (e) {
+        var c = e.detail && e.detail.collection;
+        if (Auth.isLoggedIn() && (!c || c === 'projects' || c === 'history')) render(false);
+      });
 
       form.addEventListener('submit', function (ev) {
         ev.preventDefault();
+        UI.clearAlert(formAlert);
+        var name = form.elements.name.value.trim();
+        if (!name) { UI.showFormError(form, formAlert, { message: 'Lütfen işaretli alanı kontrol edin.' }, { name: 'Proje adı gerekli.' }); return; }
         try {
-          Auth.createProject(form.name.value, form.description.value);
+          var p = Auth.createProject(name, form.elements.description.value);
+          UI.clearFieldErrors(form);
           form.reset();
-          render();
-        } catch (e) { alert(e.message); }
+          render(true);
+          UI.alertBox(formAlert, 'success', '“' + p.name + '” projesi oluşturuldu.');
+          form.elements.name.focus();
+        } catch (e) { UI.showFormError(form, formAlert, e); }
       });
 
-      function render() {
+      function sig(items) { return JSON.stringify(items, function (k, v) { return k === 'serverAt' ? undefined : v; }); }
+
+      function render(force) {
         var items = Auth.getProjects();
+        var history = Auth.getHistory();
+        var s = sig([items, history]);
+        if (!force && s === lastSig) return;
+        lastSig = s;
         if (!items.length) {
-          list.innerHTML = '<div class="vg-empty">Henüz projeniz yok. Yukarıdaki formdan ilk projenizi oluşturun.</div>';
+          list.innerHTML = '<div class="vg-acct-state"><span class="vg-acct-state__icon" aria-hidden="true"><i class="fas fa-folder"></i></span>' +
+            '<h3>Henüz projeniz yok</h3><p>Yukarıdaki formdan ilk projenizi oluşturun.</p></div>';
           return;
         }
-        var history = Auth.getHistory();
-        var histMap = {}; history.forEach(function (h) { histMap[h.id] = h; });
+        var histMap = {};
+        history.forEach(function (h) { histMap[h.id] = h; });
         list.innerHTML = items.map(function (p) {
-          var when = new Date(p.createdAt).toLocaleDateString('tr-TR');
           var calcs = (p.calcIds || []).map(function (id) { return histMap[id]; }).filter(Boolean);
           var calcsHtml = calcs.length
-            ? '<ul style="margin:.4rem 0 0 1.2rem;padding:0;color:var(--clr-text-muted);font-size:.88rem">'
-              + calcs.map(function (c) {
-                return '<li>' + esc(c.toolName) + ' <strong style="color:var(--clr-accent-text)">' + esc(c.result && c.result.value || '-') + '</strong> <span style="opacity:.6">(' + new Date(c.savedAt).toLocaleDateString('tr-TR') + ')</span></li>';
-              }).join('')
-              + '</ul>'
-            : '<p style="color:var(--clr-text-muted);font-size:.85rem;margin:.4rem 0 0">Bu projeye bağlı hesap yok. <a href="gecmis.html">Geçmiş sekmesinden</a> hesap ekleyebilirsiniz.</p>';
-          return '<div class="vg-project-item">'
-            + '<h3><i class="fas fa-folder"></i> ' + esc(p.name) + ' <small style="font-weight:400;color:var(--clr-text-muted);font-size:.8rem">' + esc(when) + '</small></h3>'
-            + (p.description ? '<div style="color:var(--clr-text-muted);font-size:.9rem">' + esc(p.description) + '</div>' : '')
-            + calcsHtml
-            + '<div class="vg-project-item__actions">'
-            + '<button type="button" class="vg-mini-btn vg-mini-btn--danger" data-delete="' + escAttr(p.id) + '"><i class="fas fa-trash"></i> Projeyi sil</button>'
-            + '</div>'
-            + '</div>';
+            ? '<ul class="vg-project-calcs">' + calcs.map(function (c) {
+                var link = Auth.safeHref(c.toolUrl);
+                return '<li><span>' + (link ? '<a class="vg-link" href="' + esc(link) + '">' + esc(c.toolName) + '</a>' : esc(c.toolName)) + '</span>' +
+                  ' <strong>' + esc(c.result && c.result.value ? c.result.value : '-') + '</strong>' +
+                  ' <span class="vg-item-meta">' + esc(UI.fmtDate(c.savedAt)) + '</span>' +
+                  ' <button type="button" class="vg-mini-btn" data-detach="' + esc(c.id) + '" data-project="' + esc(p.id) + '"><i class="fas fa-xmark" aria-hidden="true"></i> Projeden çıkar<span class="vg-sr-only">: ' + esc(c.toolName) + '</span></button></li>';
+              }).join('') + '</ul>'
+            : '<p class="vg-item-note">Bu projeye bağlı hesaplama yok. <a class="vg-link" href="gecmis.html">Geçmiş Hesaplamalar</a> sayfasından kayıt ekleyebilirsiniz.</p>';
+          return '<article class="vg-project-item">' +
+            '<h3><i class="fas fa-folder" aria-hidden="true" style="color:var(--clr-accent-text)"></i> ' + esc(p.name) + ' <span class="vg-item-meta">' + esc(UI.fmtDate(p.createdAt)) + '</span></h3>' +
+            (p.description ? '<p class="vg-item-note" style="margin:0">' + esc(p.description) + '</p>' : '') +
+            calcsHtml +
+            '<div class="vg-project-item__actions">' +
+            '<button type="button" class="vg-mini-btn vg-mini-btn--danger" data-delete="' + esc(p.id) + '" data-name="' + esc(p.name) + '"><i class="fas fa-trash" aria-hidden="true"></i> Projeyi sil<span class="vg-sr-only">: ' + esc(p.name) + '</span></button>' +
+            '</div></article>';
         }).join('');
-        list.querySelectorAll('[data-delete]').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            if (confirm('Bu projeyi silmek istediğinize emin misiniz? Bağlı hesaplamalar geçmişte kalır.')) {
-              Auth.deleteProject(btn.getAttribute('data-delete'));
-              render();
-            }
-          });
-        });
       }
 
-      function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
-      function escAttr(s) { return esc(s); }
-
-      render();
+      list.addEventListener('click', function (e) {
+        var del = e.target.closest('[data-delete]');
+        var det = e.target.closest('[data-detach]');
+        if (det) {
+          try {
+            Auth.detachCalcFromProject(det.getAttribute('data-project'), det.getAttribute('data-detach'));
+            render(true);
+            UI.alertBox(alertEl, 'success', 'Hesaplama projeden çıkarıldı; geçmiş kayıtlarınızda durmaya devam ediyor.');
+            document.getElementById('list-title').focus();
+          } catch (err) { UI.alertBox(alertEl, 'error', UI.errorMessage(err), { focus: true }); }
+          return;
+        }
+        if (!del) return;
+        var name = del.getAttribute('data-name');
+        UI.confirmDialog({ title: 'Proje silinsin mi?', message: '“' + name + '” projesi silinecek. Bağlı hesaplamalar silinmez, geçmiş kayıtlarınızda kalır.', confirmText: 'Projeyi sil', danger: true }).then(function (ok) {
+          if (!ok) return;
+          try {
+            Auth.deleteProject(del.getAttribute('data-delete'));
+            render(true);
+            UI.alertBox(alertEl, 'success', '“' + name + '” projesi silindi.');
+            document.getElementById('list-title').focus();
+          } catch (err) { UI.alertBox(alertEl, 'error', UI.errorMessage(err), { focus: true }); }
+        });
+      });
     }());
   </script>
 </body>

@@ -40,15 +40,12 @@
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="same-origin">
   <title>Geçmiş Hesaplamalar | VoltGuard Tools</title>
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/style.css?v=20261011">
-  <style>
-    /* Sayfanın ana başlığı h1 olduğu için .vg-section h2 görünümünü birebir uygula. */
-    .vg-section h1 { font-family: var(--font-heading); font-size: 1.2rem; color: var(--clr-dark); margin: 0 0 1rem; display: flex; align-items: center; gap: .55rem; }
-    .vg-section h1 i { color: var(--clr-accent-text); }
-  </style>
+  <link rel="stylesheet" href="../css/vg-account.css?v=20261011">
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -94,24 +91,41 @@
     <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
   </header>
   <!--/vg:header-->
-
-  <main class="vg-panel" id="main" tabindex="-1">
-    <aside class="vg-panel__nav" aria-label="Hesap menüsü">
-      <a href="panel.html"><i class="fas fa-gauge-high"></i> Panel</a>
-      <a href="gecmis.html" class="is-active"><i class="fas fa-clock-rotate-left"></i> Geçmiş Hesaplamalar</a>
-      <a href="favoriler.html"><i class="fas fa-star"></i> Favori Araçlar</a>
-      <a href="projeler.html"><i class="fas fa-folder-tree"></i> Projeler</a>
-      <a href="dokumanlar.html"><i class="fas fa-book-open"></i> Dokümanlarım</a>
-      <button type="button" class="vg-panel__logout" id="logout-btn"><i class="fas fa-arrow-right-from-bracket"></i> Çıkış yap</button>
-    </aside>
-
-    <section class="vg-panel__main">
-      <div class="vg-section">
-        <h1><i class="fas fa-clock-rotate-left"></i> Kayıtlı hesaplamalarınız</h1>
-        <p style="color:var(--clr-text-muted);margin:.35rem 0 1rem">Her hesap için giriş değerleri ve sonuç saklanır. Detayları görmek için satırı açın; projelere bağlayabilirsiniz.</p>
-        <div id="history-list" class="vg-history-list"></div>
+  <main class="vg-panel vg-acct" id="main" tabindex="-1">
+    <nav class="vg-panel__nav" aria-label="Hesap menüsü" data-vg-acct-nav>
+      <a href="panel.html" data-vg-nav="panel" data-vg-member><i class="fas fa-gauge-high" aria-hidden="true"></i> Panel</a>
+      <a href="gecmis.html" data-vg-nav="gecmis"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Geçmiş Hesaplamalar</a>
+      <a href="favoriler.html" data-vg-nav="favoriler"><i class="fas fa-star" aria-hidden="true"></i> Favori Araçlar</a>
+      <a href="projeler.html" data-vg-nav="projeler" data-vg-member><i class="fas fa-folder-tree" aria-hidden="true"></i> Projeler</a>
+      <a href="dokumanlar.html" data-vg-nav="dokumanlar" data-vg-member><i class="fas fa-book-open" aria-hidden="true"></i> Dokümanlarım</a>
+      <button type="button" class="vg-panel__logout" data-vg-logout data-vg-member><i class="fas fa-arrow-right-from-bracket" aria-hidden="true"></i> Çıkış yap</button>
+      <div class="vg-acct-nav__guest" data-vg-guest hidden>
+        <p>Giriş yapmadınız. Kayıtlarınız yalnızca bu tarayıcıda saklanıyor.</p>
+        <a class="vg-btn vg-btn--primary vg-btn--sm" href="giris.html" data-vg-login>Giriş yap</a>
+        <a class="vg-btn vg-btn--ghost vg-btn--sm" href="kayit.html">Ücretsiz üye ol</a>
       </div>
-    </section>
+      <p class="vg-sync" data-vg-sync role="status" aria-live="polite"></p>
+    </nav>
+
+    <div class="vg-panel__main">
+      <section class="vg-section" aria-labelledby="page-title">
+        <h1 id="page-title"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Kayıtlı hesaplamalarınız</h1>
+        <p class="vg-section__lead">Her kayıtta giriş değerleri ve sonuç saklanır. Ayrıntıları görmek için bir kaydı açın; giriş yaptıysanız kayıtları projelere bağlayabilirsiniz.</p>
+        <div data-vg-alert class="vg-acct-alert" hidden></div>
+        <div data-vg-gate></div>
+        <div data-vg-content hidden>
+          <div class="vg-acct-alert vg-acct-alert--info" id="guest-note" role="note" hidden style="margin-bottom:1rem"></div>
+          <div class="vg-list-toolbar">
+            <p class="vg-count" id="count" role="status" style="margin:0"></p>
+            <div class="vg-field" style="flex:0 1 18rem">
+              <label class="vg-sr-only" for="filter">Kayıtlarda ara</label>
+              <input id="filter" type="search" placeholder="Araç adına göre ara" autocomplete="off">
+            </div>
+          </div>
+          <div id="history-list" class="vg-history-list"></div>
+        </div>
+      </section>
+    </div>
   </main>
 
   <!--vg:footer-->
@@ -242,77 +256,134 @@
   </footer>
   <!--/vg:footer-->
 
-  <script src="../js/voltguard-auth.js?v=20261011"></script>
+  <script src="../js/voltguard-auth.js?v=20261011b"></script>
+  <script src="../js/vg-account.js?v=20261011"></script>
   <script>
     (function () {
       'use strict';
       var Auth = window.VG.Auth;
-      var user = Auth.requireAuth('giris.html');
-      if (!user) return;
+      var UI = window.VG.AccountUI;
+      var esc = UI.esc;
+      var list = document.getElementById('history-list');
+      var filter = document.getElementById('filter');
+      var countEl = document.getElementById('count');
+      var alertEl = document.querySelector('[data-vg-alert]');
+      var openIds = {};
+      var lastSig = '';
+      var member = false;
 
-      document.getElementById('logout-btn').addEventListener('click', function () {
-        if (confirm('Çıkış yapmak istediğinize emin misiniz?')) { Auth.logout(); location.href = '../index.html'; }
+      UI.initPage({
+        page: 'gecmis',
+        protected: false,
+        collections: ['history', 'projects'],
+        onReady: function (ctx) {
+          member = !!ctx.user;
+          var note = document.getElementById('guest-note');
+          if (!member) {
+            note.innerHTML = '<i class="fas fa-circle-info" aria-hidden="true"></i><div class="vg-acct-alert__body"><p>Bu liste yalnızca bu tarayıcıda saklanıyor. <a href="' + esc(Auth.loginUrl(location.pathname)) + '">Giriş yapın</a> ya da <a href="kayit.html">ücretsiz üye olun</a>; kayıtlarınız hesabınıza aktarılır ve tüm cihazlarınızdan erişilir.</p></div>';
+            note.hidden = false;
+          } else {
+            note.hidden = true;
+          }
+          render(true);
+        }
       });
 
-      var list = document.getElementById('history-list');
+      document.addEventListener('vg:data', function (e) {
+        var c = e.detail && e.detail.collection;
+        if (!c || c === 'history' || c === 'projects') render(false);
+      });
+      filter.addEventListener('input', function () { render(true); });
 
-      function render() {
-        var items = Auth.getHistory();
-        if (!items.length) {
-          list.innerHTML = '<div class="vg-empty">Henüz kayıtlı hesap yok. <a href="../hesaplama-araclari/">Hesaplama Merkezi</a>\'nden bir araç açıp "Hesabıma kaydet" butonuna basın.</div>';
+      function sig(items) { return JSON.stringify(items, function (k, v) { return k === 'serverAt' ? undefined : v; }); }
+
+      function render(force) {
+        var all = Auth.getHistory();
+        var projects = member ? Auth.getProjects() : [];
+        var s = sig([all, projects, member]);
+        if (!force && s === lastSig) return;
+        lastSig = s;
+        var q = filter.value.trim().toLocaleLowerCase('tr');
+        var items = q ? all.filter(function (h) { return String(h.toolName || '').toLocaleLowerCase('tr').indexOf(q) >= 0; }) : all;
+        countEl.textContent = all.length ? (q ? items.length + ' / ' + all.length + ' kayıt gösteriliyor' : all.length + ' kayıt') : '';
+        filter.parentNode.hidden = all.length < 4;
+        if (!all.length) {
+          list.innerHTML = '<div class="vg-acct-state"><span class="vg-acct-state__icon" aria-hidden="true"><i class="fas fa-calculator"></i></span>' +
+            '<h2>Henüz kayıtlı hesaplama yok</h2><p><a class="vg-link" href="/hesaplama-araclari/">Hesap Araçları</a>\'ndan bir araç açın ve sonucun altındaki “Hesabıma kaydet” düğmesine basın.</p></div>';
           return;
         }
-        var projects = Auth.getProjects();
+        if (!items.length) { list.innerHTML = '<div class="vg-empty">Aramanızla eşleşen kayıt yok.</div>'; return; }
+        var focusKey = document.activeElement && list.contains(document.activeElement) ? document.activeElement.getAttribute('data-key') : null;
+        var projById = {};
+        projects.forEach(function (p) { projById[p.id] = p; });
         list.innerHTML = items.map(function (h) { return renderItem(h, projects); }).join('');
-        bindEvents();
+        if (focusKey) { var f = list.querySelector('[data-key="' + focusKey + '"]'); if (f) f.focus(); }
       }
 
       function renderItem(h, projects) {
-        var when = new Date(h.savedAt).toLocaleString('tr-TR');
-        var paramsHtml = (h.params || []).map(function (p) {
-          return '<div style="font-size:.85rem;color:var(--clr-text-muted)">' + esc(p.label) + ': <strong style="color:var(--clr-dark)">' + esc(p.value) + '</strong></div>';
-        }).join('');
-        var projOptions = '<option value="">Projeye ekle…</option>' + projects.map(function (p) {
-          return '<option value="' + escAttr(p.id) + '">' + esc(p.name) + '</option>';
-        }).join('');
-        return '<details class="vg-history-item"><summary style="cursor:pointer;list-style:none">'
-          + '<h3>' + esc(h.toolName) + '</h3>'
-          + '<div class="vg-history-item__meta">' + esc(when) + '</div>'
-          + '<div class="vg-history-item__value">' + esc(h.result && h.result.value || '-') + '</div>'
-          + '</summary>'
-          + '<div style="margin-top:.75rem;display:grid;gap:.35rem">' + paramsHtml + '</div>'
-          + (h.result && h.result.note ? '<p style="margin-top:.6rem;font-size:.88rem;color:var(--clr-text-muted)">' + esc(h.result.note) + '</p>' : '')
-          + '<div class="vg-history-item__actions">'
-          +   '<a class="vg-mini-btn" href="' + escAttr(Auth.safeHref(h.toolUrl) || '#') + '"><i class="fas fa-arrow-up-right-from-square"></i> Aracı yeniden aç</a>'
-          +   '<select class="vg-mini-btn" data-attach="' + escAttr(h.id) + '" style="cursor:pointer">' + projOptions + '</select>'
-          +   '<button type="button" class="vg-mini-btn vg-mini-btn--danger" data-delete="' + escAttr(h.id) + '"><i class="fas fa-trash"></i> Sil</button>'
-          + '</div>'
-          + '</details>';
+        var link = Auth.safeHref(h.toolUrl);
+        var params = (h.params || []).filter(function (p) { return p && (p.label || p.value); });
+        var paramsHtml = params.length ? '<dl class="vg-history-item__params">' + params.map(function (p) {
+          return '<dt>' + esc(p.label || '-') + '</dt><dd>' + esc(p.value || '-') + '</dd>';
+        }).join('') + '</dl>' : '';
+        var inProjects = projects.filter(function (p) { return (p.calcIds || []).indexOf(h.id) >= 0; });
+        var attach = '';
+        if (member) {
+          var opts = projects.filter(function (p) { return inProjects.indexOf(p) < 0; });
+          attach = projects.length
+            ? (opts.length ? '<label class="vg-sr-only" for="att-' + esc(h.id) + '">Projeye ekle: ' + esc(h.toolName) + '</label>' +
+               '<select id="att-' + esc(h.id) + '" class="vg-item-select" data-attach="' + esc(h.id) + '" data-key="att-' + esc(h.id) + '"><option value="">Projeye ekle…</option>' +
+               opts.map(function (p) { return '<option value="' + esc(p.id) + '">' + esc(p.name) + '</option>'; }).join('') + '</select>' : '')
+            : '<a class="vg-mini-btn" href="projeler.html"><i class="fas fa-folder-plus" aria-hidden="true"></i> Proje oluştur</a>';
+        }
+        return '<details class="vg-history-item" data-id="' + esc(h.id) + '"' + (openIds[h.id] ? ' open' : '') + '>' +
+          '<summary data-key="sum-' + esc(h.id) + '"><div class="vg-history-item__head"><h3>' + esc(h.toolName) + '</h3>' +
+          '<span class="vg-history-item__chev" aria-hidden="true"><i class="fas fa-chevron-down"></i></span></div>' +
+          '<div class="vg-history-item__meta">' + esc(UI.fmtDateTime(h.savedAt)) + (inProjects.length ? ' · Proje: ' + inProjects.map(function (p) { return esc(p.name); }).join(', ') : '') + '</div>' +
+          '<div class="vg-history-item__value">' + esc(h.result && h.result.value ? h.result.value : '-') + '</div></summary>' +
+          paramsHtml +
+          (h.result && h.result.note ? '<p class="vg-item-note">' + esc(h.result.note) + '</p>' : '') +
+          (h.note ? '<p class="vg-item-note"><strong>Not:</strong> ' + esc(h.note) + '</p>' : '') +
+          '<div class="vg-history-item__actions">' +
+          (link ? '<a class="vg-mini-btn" href="' + esc(link) + '"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i> Aracı yeniden aç</a>' : '') +
+          attach +
+          '<button type="button" class="vg-mini-btn vg-mini-btn--danger" data-delete="' + esc(h.id) + '" data-key="del-' + esc(h.id) + '"><i class="fas fa-trash" aria-hidden="true"></i> Sil<span class="vg-sr-only">: ' + esc(h.toolName) + '</span></button>' +
+          '</div></details>';
       }
 
-      function bindEvents() {
-        list.querySelectorAll('[data-delete]').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            if (confirm('Bu hesap kaydını silmek istediğinize emin misiniz?')) {
-              Auth.deleteHistory(btn.getAttribute('data-delete'));
-              render();
-            }
-          });
-        });
-        list.querySelectorAll('[data-attach]').forEach(function (sel) {
-          sel.addEventListener('change', function () {
-            if (!sel.value) return;
-            Auth.attachCalcToProject(sel.value, sel.getAttribute('data-attach'));
-            alert('Projeye eklendi.');
-            sel.value = '';
-          });
-        });
-      }
+      list.addEventListener('toggle', function (e) {
+        var d = e.target;
+        if (d && d.matches && d.matches('details[data-id]')) { if (d.open) openIds[d.getAttribute('data-id')] = 1; else delete openIds[d.getAttribute('data-id')]; }
+      }, true);
 
-      function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
-      function escAttr(s) { return esc(s); }
+      list.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-delete]');
+        if (!btn) return;
+        var id = btn.getAttribute('data-delete');
+        UI.confirmDialog({ title: 'Kayıt silinsin mi?', message: 'Bu hesaplama kaydı kalıcı olarak silinecek; bağlı olduğu projelerden de çıkarılır.', confirmText: 'Kaydı sil', danger: true }).then(function (ok) {
+          if (!ok) return;
+          try {
+            Auth.deleteHistory(id);
+            delete openIds[id];
+            render(true);
+            UI.alertBox(alertEl, 'success', 'Kayıt silindi.');
+            document.getElementById('page-title').setAttribute('tabindex', '-1');
+            document.getElementById('page-title').focus();
+          } catch (err) { UI.alertBox(alertEl, 'error', UI.errorMessage(err), { focus: true }); }
+        });
+      });
 
-      render();
+      list.addEventListener('change', function (e) {
+        var sel = e.target.closest('[data-attach]');
+        if (!sel || !sel.value) return;
+        var pid = sel.value;
+        var p = Auth.getProjects().filter(function (x) { return x.id === pid; })[0];
+        try {
+          Auth.attachCalcToProject(pid, sel.getAttribute('data-attach'));
+          render(true);
+          UI.alertBox(alertEl, 'success', 'Kayıt “' + (p ? p.name : 'proje') + '” projesine eklendi.');
+        } catch (err) { UI.alertBox(alertEl, 'error', UI.errorMessage(err), { focus: true }); }
+      });
     }());
   </script>
 </body>

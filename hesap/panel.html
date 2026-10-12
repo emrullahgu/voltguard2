@@ -40,10 +40,12 @@
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="same-origin">
   <title>Hesabım | VoltGuard Tools</title>
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/style.css?v=20261011">
+  <link rel="stylesheet" href="../css/vg-account.css?v=20261011">
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -89,55 +91,183 @@
     <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
   </header>
   <!--/vg:header-->
+  <main class="vg-panel vg-acct" id="main" tabindex="-1">
+    <nav class="vg-panel__nav" aria-label="Hesap menüsü" data-vg-acct-nav>
+      <a href="panel.html" data-vg-nav="panel"><i class="fas fa-gauge-high" aria-hidden="true"></i> Panel</a>
+      <a href="gecmis.html" data-vg-nav="gecmis"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Geçmiş Hesaplamalar</a>
+      <a href="favoriler.html" data-vg-nav="favoriler"><i class="fas fa-star" aria-hidden="true"></i> Favori Araçlar</a>
+      <a href="projeler.html" data-vg-nav="projeler" data-vg-member><i class="fas fa-folder-tree" aria-hidden="true"></i> Projeler</a>
+      <a href="dokumanlar.html" data-vg-nav="dokumanlar" data-vg-member><i class="fas fa-book-open" aria-hidden="true"></i> Dokümanlarım</a>
+      <button type="button" class="vg-panel__logout" data-vg-logout data-vg-member><i class="fas fa-arrow-right-from-bracket" aria-hidden="true"></i> Çıkış yap</button>
+      <p class="vg-sync" data-vg-sync role="status" aria-live="polite"></p>
+    </nav>
 
-  <main class="vg-panel" id="main" tabindex="-1">
-    <aside class="vg-panel__nav" aria-label="Hesap menüsü">
-      <a href="panel.html" class="is-active"><i class="fas fa-gauge-high"></i> Panel</a>
-      <a href="gecmis.html"><i class="fas fa-clock-rotate-left"></i> Geçmiş Hesaplamalar</a>
-      <a href="favoriler.html"><i class="fas fa-star"></i> Favori Araçlar</a>
-      <a href="projeler.html"><i class="fas fa-folder-tree"></i> Projeler</a>
-      <a href="dokumanlar.html"><i class="fas fa-book-open"></i> Dokümanlarım</a>
-      <button type="button" class="vg-panel__logout" id="logout-btn"><i class="fas fa-arrow-right-from-bracket"></i> Çıkış yap</button>
-    </aside>
-
-    <section class="vg-panel__main">
+    <div class="vg-panel__main">
       <div class="vg-panel__welcome">
-        <h1 id="welcome-title">Merhaba</h1>
-        <p>VoltGuard Tools panelinden hesaplamalarınızı, favorilerinizi ve projelerinizi tek yerden yönetin.</p>
+        <h1 id="welcome-title">Hesabım</h1>
+        <p>VoltGuard Tools panelinden hesaplamalarınızı, favorilerinizi, projelerinizi ve hesap ayarlarınızı yönetin.</p>
+        <p class="vg-welcome-meta" id="welcome-meta"></p>
       </div>
+      <div data-vg-alert class="vg-acct-alert" hidden></div>
+      <div data-vg-gate></div>
 
-      <div class="vg-panel__stats">
-        <div class="vg-stat"><span class="vg-stat__label">Kayıtlı Hesap</span><span class="vg-stat__value" id="stat-history">0</span><span class="vg-stat__hint">Geçmiş hesaplamalar</span></div>
-        <div class="vg-stat"><span class="vg-stat__label">Favori Araç</span><span class="vg-stat__value" id="stat-fav">0</span><span class="vg-stat__hint">Hızlı erişim listesi</span></div>
-        <div class="vg-stat"><span class="vg-stat__label">Proje</span><span class="vg-stat__value" id="stat-proj">0</span><span class="vg-stat__hint">Aktif proje sayısı</span></div>
-        <div class="vg-stat"><span class="vg-stat__label">Doküman</span><span class="vg-stat__value" id="stat-doc">0</span><span class="vg-stat__hint">Kişisel kütüphane</span></div>
-      </div>
+      <div data-vg-content hidden>
+        <div class="vg-panel__main">
+          <div class="vg-tiles">
+            <a class="vg-stat" href="gecmis.html"><span class="vg-stat__label">Kayıtlı hesap</span><span class="vg-stat__value" id="stat-history">0</span><span class="vg-stat__hint">Geçmiş hesaplamalar</span></a>
+            <a class="vg-stat" href="favoriler.html"><span class="vg-stat__label">Favori araç</span><span class="vg-stat__value" id="stat-fav">0</span><span class="vg-stat__hint">Hızlı erişim listesi</span></a>
+            <a class="vg-stat" href="projeler.html"><span class="vg-stat__label">Proje</span><span class="vg-stat__value" id="stat-proj">0</span><span class="vg-stat__hint">Proje klasörleri</span></a>
+            <a class="vg-stat" href="dokumanlar.html"><span class="vg-stat__label">Doküman</span><span class="vg-stat__value" id="stat-doc">0</span><span class="vg-stat__hint">Kişisel kütüphane</span></a>
+          </div>
 
-      <div class="vg-section">
-        <h2><i class="fas fa-clock-rotate-left"></i> Son hesaplamalar</h2>
-        <div id="recent-list" class="vg-history-list"></div>
-      </div>
+          <section class="vg-section vg-legacy-card" id="eski-veriler" aria-labelledby="legacy-title" hidden>
+            <h2 id="legacy-title"><i class="fas fa-database" aria-hidden="true"></i> Bu tarayıcıdaki eski kayıtlarınız</h2>
+            <p id="legacy-text"></p>
+            <div class="vg-field" id="legacy-pick-wrap" hidden style="max-width:24rem;margin-bottom:.9rem">
+              <label for="legacy-pick">Taşınacak eski hesap</label>
+              <select id="legacy-pick"></select>
+            </div>
+            <div class="vg-form-actions-row" style="margin-top:0">
+              <button type="button" class="vg-btn vg-btn--primary" id="legacy-move"><i class="fas fa-file-arrow-up" aria-hidden="true"></i> Hesabıma taşı</button>
+              <button type="button" class="vg-btn vg-btn--ghost" id="legacy-later">Şimdi değil</button>
+              <button type="button" class="vg-btn vg-btn--ghost" id="legacy-drop"><i class="fas fa-trash" aria-hidden="true"></i> Eski kayıtları sil</button>
+            </div>
+            <div id="legacy-status" class="vg-acct-alert" hidden style="margin-top:.9rem"></div>
+          </section>
 
-      <div class="vg-section">
-        <h2><i class="fas fa-star"></i> Favori araçlar</h2>
-        <div id="recent-fav" class="vg-favorites-list"></div>
-      </div>
+          <section class="vg-section" aria-labelledby="recent-title">
+            <h2 id="recent-title"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Son hesaplamalar</h2>
+            <div id="recent-list" class="vg-history-list"></div>
+          </section>
 
-      <div class="vg-section">
-        <h2><i class="fas fa-download"></i> Verilerimi dışa aktar</h2>
-        <p style="color:var(--clr-text-muted);margin:.35rem 0 1rem">Tüm hesaplamalarınızı, favorilerinizi, projelerinizi ve dokümanlarınızı JSON formatında indirin. Cihaz değiştirirken veya yedek almak için kullanabilirsiniz; şifreniz yedeğe dahil edilmez.</p>
-        <button class="vg-mini-btn" id="export-btn"><i class="fas fa-file-arrow-down"></i> JSON olarak indir</button>
-      </div>
+          <section class="vg-section" aria-labelledby="fav-title">
+            <h2 id="fav-title"><i class="fas fa-star" aria-hidden="true"></i> Favori araçlar</h2>
+            <div id="recent-fav" class="vg-favorites-list"></div>
+          </section>
 
-      <div class="vg-section">
-        <h2><i class="fas fa-upload"></i> Yedekten geri yükle</h2>
-        <p style="color:var(--clr-text-muted);margin:.35rem 0 1rem">Daha önce indirdiğiniz JSON yedeğini bu hesaba ekleyin. Hesabınızda zaten bulunan kayıtlar tekrar eklenmez. Yeni bir cihazda önce ücretsiz hesap oluşturup giriş yapın, ardından yedeği buradan içe aktarın.</p>
-        <input type="file" id="import-file" accept="application/json,.json" hidden>
-        <button type="button" class="vg-mini-btn" id="import-btn"><i class="fas fa-file-arrow-up"></i> JSON yedeği seç</button>
-        <div id="import-status" role="status" aria-live="polite" hidden style="margin-top:.75rem"></div>
+          <section class="vg-section" aria-labelledby="profile-title">
+            <h2 id="profile-title"><i class="fas fa-user" aria-hidden="true"></i> Profil bilgileri</h2>
+            <div id="profile-alert" class="vg-acct-alert" hidden></div>
+            <form id="profile-form" novalidate>
+              <div class="vg-form-grid">
+                <div class="vg-field">
+                  <label for="p-name">Ad Soyad</label>
+                  <input id="p-name" name="name" type="text" autocomplete="name" maxlength="80" required>
+                </div>
+                <div class="vg-field">
+                  <label for="p-email">E-posta</label>
+                  <input id="p-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" maxlength="254" required>
+                </div>
+                <div class="vg-field">
+                  <label for="p-company">Firma <span class="vg-field__opt">(isteğe bağlı)</span></label>
+                  <input id="p-company" name="company" type="text" autocomplete="organization" maxlength="120">
+                </div>
+                <div class="vg-field">
+                  <label for="p-phone">Telefon <span class="vg-field__opt">(isteğe bağlı)</span></label>
+                  <input id="p-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="32">
+                </div>
+                <div class="vg-field vg-span-2" id="p-pass-wrap" hidden>
+                  <label for="p-password">Mevcut şifreniz</label>
+                  <div class="vg-pw" style="max-width:24rem">
+                    <input id="p-password" name="password" type="password" autocomplete="current-password" maxlength="128" aria-describedby="p-pass-hint">
+                    <button type="button" class="vg-pw__toggle" data-vg-pw-toggle aria-controls="p-password" aria-pressed="false" aria-label="Şifreyi göster"><i class="fas fa-eye" aria-hidden="true"></i></button>
+                  </div>
+                  <p class="vg-field__hint" id="p-pass-hint">E-posta adresinizi değiştirmek için mevcut şifrenizle onaylayın.</p>
+                </div>
+              </div>
+              <div class="vg-form-actions-row">
+                <button type="submit" class="vg-btn vg-btn--primary"><i class="fas fa-check" aria-hidden="true"></i> Bilgilerimi kaydet</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="vg-section" aria-labelledby="pw-title">
+            <h2 id="pw-title"><i class="fas fa-key" aria-hidden="true"></i> Şifre değiştir</h2>
+            <div id="pw-alert" class="vg-acct-alert" hidden></div>
+            <form id="pw-form" novalidate>
+              <input type="email" name="username" autocomplete="username" id="pw-username" hidden>
+              <div class="vg-form-grid">
+                <div class="vg-field vg-span-2 vg-field--half">
+                  <label for="pw-current">Mevcut şifre</label>
+                  <div class="vg-pw">
+                    <input id="pw-current" name="current" type="password" autocomplete="current-password" maxlength="128" required>
+                    <button type="button" class="vg-pw__toggle" data-vg-pw-toggle aria-controls="pw-current" aria-pressed="false" aria-label="Şifreyi göster"><i class="fas fa-eye" aria-hidden="true"></i></button>
+                  </div>
+                </div>
+                <div class="vg-field">
+                  <label for="pw-new">Yeni şifre</label>
+                  <div class="vg-pw">
+                    <input id="pw-new" name="password" type="password" autocomplete="new-password" maxlength="64" required aria-describedby="pw-new-rules">
+                    <button type="button" class="vg-pw__toggle" data-vg-pw-toggle aria-controls="pw-new" aria-pressed="false" aria-label="Şifreyi göster"><i class="fas fa-eye" aria-hidden="true"></i></button>
+                  </div>
+                  <ul class="vg-pw-rules" id="pw-new-rules">
+                    <li data-rule="len">En az 8 karakter<span class="vg-sr-only"></span></li>
+                    <li data-rule="mix">En az bir harf ve bir rakam<span class="vg-sr-only"></span></li>
+                  </ul>
+                </div>
+                <div class="vg-field">
+                  <label for="pw-new2">Yeni şifre (tekrar)</label>
+                  <div class="vg-pw">
+                    <input id="pw-new2" name="password2" type="password" autocomplete="new-password" maxlength="64" required>
+                    <button type="button" class="vg-pw__toggle" data-vg-pw-toggle aria-controls="pw-new2" aria-pressed="false" aria-label="Şifreyi göster"><i class="fas fa-eye" aria-hidden="true"></i></button>
+                  </div>
+                </div>
+              </div>
+              <p class="vg-field__hint" style="margin-top:.75rem">Şifreniz değişince diğer cihazlardaki oturumlarınız kapatılır ve e-posta adresinize bilgilendirme gönderilir.</p>
+              <div class="vg-form-actions-row">
+                <button type="submit" class="vg-btn vg-btn--primary"><i class="fas fa-lock" aria-hidden="true"></i> Şifremi değiştir</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="vg-section" aria-labelledby="data-title">
+            <h2 id="data-title"><i class="fas fa-download" aria-hidden="true"></i> Verilerim</h2>
+            <div id="data-alert" class="vg-acct-alert" hidden role="status"></div>
+            <div class="vg-data-actions">
+              <div>
+                <h3>Tüm verilerimi indir</h3>
+                <p>Profil bilgileriniz, hesaplamalarınız, favorileriniz, projeleriniz ve dokümanlarınız tek bir JSON dosyası olarak indirilir (KVKK kapsamında veri taşınabilirliği). Şifreniz dosyada yer almaz.</p>
+                <div><button type="button" class="vg-btn vg-btn--ghost" id="export-btn"><i class="fas fa-file-arrow-down" aria-hidden="true"></i> JSON olarak indir</button></div>
+              </div>
+              <div>
+                <h3>Yedekten geri yükle</h3>
+                <p>Daha önce indirdiğiniz JSON yedeğini (eski sürümün yedekleri dahil) bu hesaba ekleyin. Hesabınızda zaten olan kayıtlar tekrar eklenmez.</p>
+                <input type="file" id="import-file" accept="application/json,.json" hidden>
+                <div><button type="button" class="vg-btn vg-btn--ghost" id="import-btn"><i class="fas fa-file-arrow-up" aria-hidden="true"></i> JSON yedeği seç</button></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="vg-section vg-danger-zone" aria-labelledby="del-title">
+            <h2 id="del-title"><i class="fas fa-trash" aria-hidden="true"></i> Hesabımı sil</h2>
+            <p>Hesabınız ve sunucudaki tüm kayıtlarınız (hesaplamalar, favoriler, projeler, dokümanlar) kalıcı olarak silinir; bu işlem geri alınamaz. Silmeden önce verilerinizi indirmek isteyebilirsiniz.</p>
+            <button type="button" class="vg-btn vg-btn--danger" id="delete-open"><i class="fas fa-trash" aria-hidden="true"></i> Hesabımı kalıcı olarak sil</button>
+          </section>
+        </div>
       </div>
-    </section>
+    </div>
   </main>
+
+  <dialog class="vg-dialog" id="delete-dialog" aria-labelledby="delete-dialog-title" aria-describedby="delete-dialog-desc">
+    <form id="delete-form" novalidate>
+      <h2 id="delete-dialog-title">Hesabınızı silmek üzeresiniz</h2>
+      <p id="delete-dialog-desc">Bu işlem geri alınamaz. Devam etmek için şifrenizi girin ve onay kutusunu işaretleyin.</p>
+      <div id="delete-alert" class="vg-acct-alert" hidden></div>
+      <input type="email" name="username" autocomplete="username" id="del-username" hidden>
+      <div class="vg-field">
+        <label for="del-password">Şifreniz</label>
+        <div class="vg-pw">
+          <input id="del-password" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+          <button type="button" class="vg-pw__toggle" data-vg-pw-toggle aria-controls="del-password" aria-pressed="false" aria-label="Şifreyi göster"><i class="fas fa-eye" aria-hidden="true"></i></button>
+        </div>
+      </div>
+      <label class="vg-check"><input type="checkbox" id="del-confirm" name="confirm" required> <span>Hesabımın ve tüm kayıtlarımın kalıcı olarak silineceğini anlıyorum.</span></label>
+      <div class="vg-dialog__actions">
+        <button type="button" class="vg-btn vg-btn--ghost" id="delete-cancel">Vazgeç</button>
+        <button type="submit" class="vg-btn vg-btn--danger" id="delete-submit"><i class="fas fa-trash" aria-hidden="true"></i> Hesabımı sil</button>
+      </div>
+    </form>
+  </dialog>
 
   <!--vg:footer-->
   <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
@@ -267,112 +397,285 @@
   </footer>
   <!--/vg:footer-->
 
-  <script src="../js/voltguard-auth.js?v=20261011"></script>
+  <script src="../js/voltguard-auth.js?v=20261011b"></script>
+  <script src="../js/vg-account.js?v=20261011"></script>
   <script>
     (function () {
       'use strict';
       var Auth = window.VG.Auth;
-      var user = Auth.requireAuth('giris.html');
-      if (!user) return;
+      var UI = window.VG.AccountUI;
+      var esc = UI.esc;
+      var $ = function (id) { return document.getElementById(id); };
+      var user = null;
 
-      document.getElementById('welcome-title').textContent = 'Merhaba, ' + user.name;
+      UI.initPage({
+        page: 'panel',
+        protected: true,
+        collections: ['history', 'favorites', 'projects', 'documents'],
+        onReady: function (ctx) {
+          user = ctx.user;
+          fillUser();
+          render();
+          initLegacy();
+        }
+      });
 
-      var recent = document.getElementById('recent-list');
-      var favWrap = document.getElementById('recent-fav');
+      document.addEventListener('vg:data', function () { if (user && Auth.isLoggedIn()) render(); });
+
+      function firstName(n) { return String(n || '').trim().split(/\s+/)[0] || ''; }
+
+      function fillUser() {
+        user = Auth.currentUser() || user;
+        $('welcome-title').textContent = 'Merhaba, ' + (firstName(user.name) || 'hoş geldiniz');
+        var since = UI.fmtDate(user.createdAt);
+        $('welcome-meta').textContent = user.email + (since ? ' · Üyelik: ' + since : '');
+        $('p-name').value = user.name;
+        $('p-email').value = user.email;
+        $('p-company').value = user.company || '';
+        $('p-phone').value = user.phone || '';
+        $('pw-username').value = user.email;
+        $('del-username').value = user.email;
+        $('p-pass-wrap').hidden = true;
+      }
 
       function render() {
         var history = Auth.getHistory();
         var favs = Auth.getFavorites();
-        var projs = Auth.getProjects();
-        var docs = Auth.getDocuments();
+        $('stat-history').textContent = history.length;
+        $('stat-fav').textContent = favs.length;
+        $('stat-proj').textContent = Auth.getProjects().length;
+        $('stat-doc').textContent = Auth.getDocuments().length;
 
-        document.getElementById('stat-history').textContent = history.length;
-        document.getElementById('stat-fav').textContent = favs.length;
-        document.getElementById('stat-proj').textContent = projs.length;
-        document.getElementById('stat-doc').textContent = docs.length;
-
+        var recent = $('recent-list');
         if (!history.length) {
-          recent.innerHTML = '<div class="vg-empty">Henüz kayıtlı hesabınız yok. <a href="../hesaplama-araclari/">Hesaplama Merkezi</a>\'nden bir araç açıp "Hesabıma kaydet" butonuna basın.</div>';
+          recent.innerHTML = '<div class="vg-empty">Henüz kayıtlı hesabınız yok. <a href="/hesaplama-araclari/">Hesap Araçları</a>\'ndan bir araç açıp “Hesabıma kaydet” düğmesine basın.</div>';
         } else {
-          recent.innerHTML = history.slice(0, 5).map(renderHistory).join('');
+          recent.innerHTML = history.slice(0, 5).map(function (h) {
+            var link = Auth.safeHref(h.toolUrl);
+            return '<article class="vg-history-item">' +
+              '<h3>' + (link ? '<a href="' + esc(link) + '" style="color:inherit">' + esc(h.toolName) + '</a>' : esc(h.toolName)) + '</h3>' +
+              '<div class="vg-history-item__meta">' + esc(UI.fmtDateTime(h.savedAt)) + '</div>' +
+              '<div class="vg-history-item__value">' + esc(h.result && h.result.value ? h.result.value : '-') + '</div>' +
+              '</article>';
+          }).join('') + (history.length > 5 ? '<p style="margin:0"><a class="vg-link" href="gecmis.html">Tüm hesaplamaları gör (' + history.length + ')</a></p>' : '');
         }
 
+        var favWrap = $('recent-fav');
         if (!favs.length) {
-          favWrap.innerHTML = '<div class="vg-empty">Favori aracınız yok. <a href="../hesaplama-araclari/">Araçları keşfedin</a> ve yıldıza tıklayın.</div>';
+          favWrap.innerHTML = '<div class="vg-empty">Favori aracınız yok. <a href="/hesaplama-araclari/">Araçları keşfedin</a> ve “Favorilere ekle” düğmesine basın.</div>';
         } else {
-          favWrap.innerHTML = favs.slice(0, 5).map(function (f) {
-            return '<div class="vg-favorite-item"><h3><i class="fas fa-star" style="color:var(--clr-accent-text)"></i> ' + esc(f.toolName) + '</h3><div class="vg-favorite-item__actions"><a class="vg-mini-btn" href="' + escAttr(Auth.safeHref(f.toolUrl) || '#') + '"><i class="fas fa-arrow-up-right-from-square"></i> Aç</a></div></div>';
+          favWrap.innerHTML = favs.slice(0, 6).map(function (f) {
+            var link = Auth.safeHref(f.toolUrl);
+            return '<article class="vg-favorite-item"><h3><i class="fas fa-star" style="color:var(--clr-accent-text)" aria-hidden="true"></i> ' + esc(f.toolName) + '</h3>' +
+              (link ? '<div class="vg-favorite-item__actions"><a class="vg-mini-btn" href="' + esc(link) + '"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i> Aracı aç<span class="vg-sr-only">: ' + esc(f.toolName) + '</span></a></div>' : '') +
+              '</article>';
+          }).join('') + (favs.length > 6 ? '<p style="margin:0"><a class="vg-link" href="favoriler.html">Tüm favoriler (' + favs.length + ')</a></p>' : '');
+        }
+      }
+
+      /* ---- Eski (yalnızca tarayıcıda tutulan) hesap kayıtları ---- */
+      function initLegacy() {
+        var card = $('eski-veriler');
+        var info = Auth.legacy.detect();
+        if (!info || !info.total) { card.hidden = true; return; }
+        var withData = info.users.filter(function (u) { return u.total > 0; });
+        var picked = Auth.legacy.pick(info, user.email);
+        $('legacy-text').textContent = 'Hesap sistemimiz yenilenmeden önce bu tarayıcıda tutulan ' + info.total +
+          ' kayıt bulundu (hesaplama, favori, proje, doküman). Bunları tek adımda hesabınıza taşıyabilirsiniz; hesabınızda zaten olan kayıtlar tekrar eklenmez. Eski şifreler taşınmaz.';
+        if (withData.length > 1) {
+          var sel = $('legacy-pick');
+          sel.innerHTML = withData.map(function (u) {
+            return '<option value="' + esc(u.id) + '"' + (picked && picked.id === u.id ? ' selected' : '') + '>' + esc(u.email || u.name || 'Eski hesap') + ' (' + u.total + ' kayıt)</option>';
           }).join('');
+          $('legacy-pick-wrap').hidden = false;
         }
+        card.hidden = false;
+        if (location.hash === '#eski-veriler') card.scrollIntoView({ block: 'start' });
       }
-      render();
-
-      document.getElementById('logout-btn').addEventListener('click', function () {
-        if (confirm('Çıkış yapmak istediğinize emin misiniz?')) {
-          Auth.logout();
-          location.href = '../index.html';
-        }
+      $('legacy-move').addEventListener('click', function () {
+        var btn = this;
+        var sel = $('legacy-pick');
+        UI.busy(btn, true, 'Taşınıyor…');
+        Auth.legacy.migrate($('legacy-pick-wrap').hidden ? null : sel.value).then(function (c) {
+          var n = c.history + c.favorites + c.projects + c.documents;
+          $('eski-veriler').hidden = true;
+          UI.alertBox(document.querySelector('[data-vg-alert]'), 'success', n ? n + ' eski kayıt hesabınıza taşındı (' + c.history + ' hesaplama, ' + c.favorites + ' favori, ' + c.projects + ' proje, ' + c.documents + ' doküman). Eski kayıtlar bu tarayıcıdan kaldırıldı.' : 'Eski kayıtlarınız hesabınızda zaten vardı. Tarayıcıdaki eski kopyalar kaldırıldı.', { focus: true });
+          render();
+        }, function (e) {
+          UI.busy(btn, false);
+          UI.alertBox($('legacy-status'), 'error', 'Kayıtlar taşınamadı: ' + UI.errorMessage(e));
+        });
+      });
+      $('legacy-later').addEventListener('click', function () {
+        Auth.legacy.dismiss();
+        $('eski-veriler').hidden = true;
+      });
+      $('legacy-drop').addEventListener('click', function () {
+        UI.confirmDialog({ title: 'Eski kayıtlar silinsin mi?', message: 'Bu tarayıcıda tutulan eski hesap kayıtları kalıcı olarak silinecek. Hesabınızdaki kayıtlar etkilenmez.', confirmText: 'Eski kayıtları sil', danger: true }).then(function (ok) {
+          if (!ok) return;
+          Auth.legacy.discard('discarded');
+          $('eski-veriler').hidden = true;
+          UI.alertBox(document.querySelector('[data-vg-alert]'), 'success', 'Eski kayıtlar bu tarayıcıdan silindi.', { focus: true });
+        });
       });
 
-      document.getElementById('export-btn').addEventListener('click', function () {
-        var data = Auth.exportAll();
-        if (!data) return;
-        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = 'voltguard-tools-yedek-' + new Date().toISOString().slice(0, 10) + '.json';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      /* ---- Profil ---- */
+      var profileForm = $('profile-form');
+      $('p-email').addEventListener('input', function () {
+        var changed = user && this.value.trim().toLowerCase() !== user.email;
+        $('p-pass-wrap').hidden = !changed;
+      });
+      profileForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var al = $('profile-alert');
+        UI.clearAlert(al);
+        var errors = {};
+        var nameErr = UI.nameProblem($('p-name').value);
+        if (nameErr) errors.name = nameErr;
+        var email = $('p-email').value.trim();
+        if (!UI.validEmail(email)) errors.email = 'Geçerli bir e-posta adresi girin.';
+        var phoneErr = UI.phoneProblem($('p-phone').value);
+        if (phoneErr) errors.phone = phoneErr;
+        var emailChanged = email.toLowerCase() !== user.email;
+        if (emailChanged && !$('p-password').value) errors.password = 'E-posta değişikliği için mevcut şifrenizi girin.';
+        if (Object.keys(errors).length) { UI.showFormError(profileForm, al, { message: 'Lütfen işaretli alanları kontrol edin.' }, errors); return; }
+        UI.clearFieldErrors(profileForm);
+        var btn = profileForm.querySelector('button[type="submit"]');
+        UI.busy(btn, true, 'Kaydediliyor…');
+        var body = { name: $('p-name').value, company: $('p-company').value, phone: $('p-phone').value };
+        if (emailChanged) { body.email = email; body.password = $('p-password').value; }
+        Auth.updateProfile(body).then(function (u) {
+          UI.busy(btn, false);
+          user = u;
+          $('p-password').value = '';
+          fillUser();
+          UI.alertBox(al, 'success', emailChanged ? 'Bilgileriniz ve e-posta adresiniz güncellendi.' : 'Bilgileriniz güncellendi.');
+        }, function (e) {
+          UI.busy(btn, false);
+          UI.showFormError(profileForm, al, e);
+        });
       });
 
-      /* ---- İçe aktar: dışa aktarılan JSON yedeğini bu hesaba ekler ---- */
-      var importFile = document.getElementById('import-file');
-      var importStatus = document.getElementById('import-status');
-      function showImport(msg, isError) {
-        importStatus.className = isError ? 'vg-auth-error' : 'vg-auth-notice';
-        importStatus.textContent = msg;
-        importStatus.hidden = false;
-      }
-      document.getElementById('import-btn').addEventListener('click', function () { importFile.click(); });
+      /* ---- Şifre değiştir ---- */
+      var pwForm = $('pw-form');
+      UI.bindPasswordRules($('pw-new'), $('pw-new-rules'));
+      pwForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var al = $('pw-alert');
+        UI.clearAlert(al);
+        var errors = {};
+        if (!$('pw-current').value) errors.current = 'Mevcut şifrenizi girin.';
+        var p = UI.passwordProblem($('pw-new').value);
+        if (p) errors.password = p;
+        else if ($('pw-new').value !== $('pw-new2').value) errors.password2 = 'Şifreler eşleşmiyor.';
+        if (Object.keys(errors).length) { UI.showFormError(pwForm, al, { message: 'Lütfen işaretli alanları kontrol edin.' }, errors); return; }
+        UI.clearFieldErrors(pwForm);
+        var btn = pwForm.querySelector('button[type="submit"]');
+        UI.busy(btn, true, 'Güncelleniyor…');
+        Auth.changePassword($('pw-current').value, $('pw-new').value).then(function (msg) {
+          UI.busy(btn, false);
+          pwForm.reset();
+          $('pw-username').value = user.email;
+          UI.bindPasswordRules($('pw-new'), $('pw-new-rules'));
+          UI.alertBox(al, 'success', msg, { focus: true });
+        }, function (e) {
+          UI.busy(btn, false);
+          UI.showFormError(pwForm, al, e);
+        });
+      });
+
+      /* ---- Dışa aktar (sunucudaki tüm veriler) ---- */
+      $('export-btn').addEventListener('click', function () {
+        var btn = this;
+        var al = $('data-alert');
+        UI.clearAlert(al);
+        UI.busy(btn, true, 'Hazırlanıyor…');
+        Auth.exportAccount().then(function (res) {
+          UI.busy(btn, false);
+          var blob = new Blob([res.text], { type: 'application/json' });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = res.filename;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+          UI.alertBox(al, 'success', 'Verileriniz “' + res.filename + '” adıyla indirildi.');
+        }, function (e) {
+          UI.busy(btn, false);
+          UI.alertBox(al, 'error', 'Veriler indirilemedi: ' + UI.errorMessage(e), { focus: true });
+        });
+      });
+
+      /* ---- İçe aktar ---- */
+      var importFile = $('import-file');
+      $('import-btn').addEventListener('click', function () { importFile.click(); });
       importFile.addEventListener('change', function () {
         var file = importFile.files && importFile.files[0];
+        var al = $('data-alert');
         if (!file) return;
         importFile.value = '';
-        if (file.size > 5 * 1024 * 1024) { showImport('Dosya çok büyük (en fazla 5 MB).', true); return; }
+        if (file.size > 5 * 1024 * 1024) { UI.alertBox(al, 'error', 'Dosya çok büyük (en fazla 5 MB).', { focus: true }); return; }
+        var btn = $('import-btn');
+        UI.busy(btn, true, 'İçe aktarılıyor…');
         var reader = new FileReader();
-        reader.onerror = function () { showImport('Dosya okunamadı.', true); };
+        reader.onerror = function () { UI.busy(btn, false); UI.alertBox(al, 'error', 'Dosya okunamadı.', { focus: true }); };
         reader.onload = function () {
-          try {
-            var counts = Auth.importAll(JSON.parse(String(reader.result)));
-            var total = counts.history + counts.favorites + counts.projects + counts.documents;
-            showImport(total
-              ? 'İçe aktarıldı: ' + counts.history + ' hesaplama, ' + counts.favorites + ' favori, ' + counts.projects + ' proje, ' + counts.documents + ' doküman.'
-              : 'Yedekteki kayıtlar bu hesapta zaten var; yeni kayıt eklenmedi.', false);
+          var data;
+          try { data = JSON.parse(String(reader.result)); }
+          catch (e) { UI.busy(btn, false); UI.alertBox(al, 'error', 'Dosya geçerli bir JSON yedeği değil.', { focus: true }); return; }
+          Auth.importAll(data).then(function (c) {
+            UI.busy(btn, false);
+            var total = c.history + c.favorites + c.projects + c.documents;
+            UI.alertBox(al, 'success', total
+              ? 'İçe aktarıldı: ' + c.history + ' hesaplama, ' + c.favorites + ' favori, ' + c.projects + ' proje, ' + c.documents + ' doküman.'
+              : 'Yedekteki kayıtlar hesabınızda zaten var; yeni kayıt eklenmedi.', { focus: true });
             render();
-          } catch (e) {
-            showImport(e instanceof SyntaxError ? 'Dosya geçerli bir JSON yedeği değil.' : (e.message || 'İçe aktarma başarısız.'), true);
-          }
+          }, function (e) {
+            UI.busy(btn, false);
+            UI.alertBox(al, 'error', 'İçe aktarma tamamlanamadı: ' + UI.errorMessage(e), { focus: true });
+          });
         };
         reader.readAsText(file);
       });
 
-      function renderHistory(h) {
-        var when = new Date(h.savedAt).toLocaleString('tr-TR');
-        return '<div class="vg-history-item">'
-          + '<h3><a href="' + escAttr(Auth.safeHref(h.toolUrl) || '#') + '" style="color:inherit;text-decoration:none">' + esc(h.toolName) + '</a></h3>'
-          + '<div class="vg-history-item__meta">' + esc(when) + '</div>'
-          + '<div class="vg-history-item__value">' + esc(h.result && h.result.value ? h.result.value : '-') + '</div>'
-          + '<div class="vg-history-item__actions">'
-          +   '<a class="vg-mini-btn" href="gecmis.html"><i class="fas fa-list"></i> Detay</a>'
-          + '</div>'
-          + '</div>';
-      }
-
-      function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
-      function escAttr(s) { return esc(s).replace(/`/g, '&#96;'); }
+      /* ---- Hesabı sil ---- */
+      var dlg = $('delete-dialog');
+      var delForm = $('delete-form');
+      var opener = $('delete-open');
+      opener.addEventListener('click', function () {
+        delForm.reset();
+        $('del-username').value = user ? user.email : '';
+        UI.clearFieldErrors(delForm);
+        UI.clearAlert($('delete-alert'));
+        if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
+        $('del-password').focus();
+      });
+      function closeDlg() { if (dlg.open) { if (typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open'); } }
+      dlg.addEventListener('close', function () { opener.focus(); });
+      $('delete-cancel').addEventListener('click', closeDlg);
+      delForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var al = $('delete-alert');
+        UI.clearAlert(al);
+        var errors = {};
+        if (!$('del-password').value) errors.password = 'Şifrenizi girin.';
+        if (!$('del-confirm').checked) errors.confirm = 'Silme işlemini onaylamak için kutuyu işaretleyin.';
+        if (Object.keys(errors).length) { UI.showFormError(delForm, al, { message: 'Lütfen işaretli alanları kontrol edin.' }, errors); return; }
+        var btn = $('delete-submit');
+        UI.busy(btn, true, 'Siliniyor…');
+        UI.setLeaving(true);
+        Auth.deleteAccount($('del-password').value).then(function (msg) {
+          user = null;
+          Auth.setFlash('success', msg);
+          location.replace('giris.html');
+        }, function (e) {
+          UI.setLeaving(false);
+          UI.busy(btn, false);
+          UI.showFormError(delForm, al, e);
+        });
+      });
     }());
   </script>
 </body>

@@ -38,6 +38,9 @@
   <script src="/js/vg-shell.js?v=20261011" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
+  <!-- LCP: hero arka planı (ön-bulanıklaştırılmış, opaklık .18). imagesrcset/imagesizes, <img class="hero__bg-img">
+       üzerindeki srcset/sizes ile BİREBİR aynı olmalı; yoksa görsel iki kez iner. -->
+  <link rel="preload" as="image" type="image/webp" fetchpriority="high" href="public/opt/TrafoBakimYuksekGerilim-hero-864.webp" imagesrcset="public/opt/TrafoBakimYuksekGerilim-hero-480.webp 480w, public/opt/TrafoBakimYuksekGerilim-hero-864.webp 864w" imagesizes="(max-width: 600px) 160px, 100vw">
   <meta name="color-scheme" content="light only">
   <meta name="description" content="İzmir elektrik mühendislik hizmetleri: SMM, trafo işletme sorumluluğu, elektrik tesisatı periyodik kontrolü, enerji kalitesi, kompanzasyon ve pano çözümleri. VoltGuard.">
   <meta name="keywords" content="İzmir elektrik mühendisi, elektrik mühendislik hizmetleri, elektrik tesisatı periyodik kontrolü, trafo işletme sorumluluğu, SMM, enerji kalitesi, kompanzasyon, elektrik pano, İzmir, Bornova, Ege Teknopark, VoltGuard">
@@ -71,16 +74,11 @@
   <link rel="icon" type="image/png" href="public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="public/apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
-  <link rel="preload" href="public/TrafoBakimYuksekGerilim.jpeg" as="image" fetchpriority="high">
-  <!-- Sık ziyaret edilen sayfaları arka planda önden indir; kullanıcı tıkladığında geçiş anlık hissedilir. -->
-  <link rel="prefetch" href="bilgi-bankasi.html">
-  <link rel="prefetch" href="akademi.html">
-  <link rel="prefetch" href="muhendis-merkezi.html">
-  <link rel="prefetch" href="sor.html">
-  <link rel="prefetch" href="hesaplama-araclari/">
-  <!-- Font Awesome CSS'ini render-blok etmeden (print swap deseni) yükle;
-       ikonlar biraz gecikebilir ama sayfa çok daha hızlı boyanır. -->
+  <!-- Sayfalar arası önden yükleme vg:head içindeki speculation rules ile yapılır (eski <link rel=prefetch> etiketleri kaldırıldı). -->
   <link rel="stylesheet" href="css/style.css?v=20261011">
+  <link rel="stylesheet" href="css/home.css?v=20261011">
+  <!-- Ön yükleyici oturum başına yalnızca bir kez gösterilir (css/home.css: .vg-pl-skip). -->
+  <script>try{if(sessionStorage.getItem('vg_pl'))document.documentElement.classList.add('vg-pl-skip');else sessionStorage.setItem('vg_pl','1')}catch(e){}</script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -209,7 +207,7 @@
   <!-- ==================== PRELOADER ==================== -->
   <div class="preloader" id="preloader">
     <div class="preloader__inner">
-      <img class="preloader__logo" src="public/icon-192.png" alt="VoltGuard" width="96" height="96" fetchpriority="high" decoding="async">
+      <img class="preloader__logo" src="public/opt/icon-96.webp" srcset="public/opt/icon-96.webp 1x, public/opt/icon-192.webp 2x" alt="VoltGuard" width="96" height="96" fetchpriority="high" decoding="async">
       <div class="preloader__bar"><div class="preloader__bar-fill"></div></div>
       <span class="preloader__text">VoltGuard</span>
     </div>
@@ -266,34 +264,29 @@
   <!-- ==================== HERO ==================== -->
   <section class="hero" id="anasayfa">
     <div class="hero__bg" aria-hidden="true">
-      <img src="public/TrafoBakimYuksekGerilim.jpeg" alt="" class="hero__bg-img">
+      <!-- Ön-bulanıklaştırılmış, düşük kaliteli arka plan (opaklık .18 + luminosity). Telefonda 480w yeterli olduğu için
+           sizes bilinçli olarak küçük; <head>'deki preload'un imagesrcset/imagesizes değerleriyle aynı tutun. -->
+      <img src="public/opt/TrafoBakimYuksekGerilim-hero-864.webp" srcset="public/opt/TrafoBakimYuksekGerilim-hero-480.webp 480w, public/opt/TrafoBakimYuksekGerilim-hero-864.webp 864w" sizes="(max-width: 600px) 160px, 100vw" width="864" height="1920" alt="" class="hero__bg-img" fetchpriority="high" decoding="async">
       <div class="hero__decoration"><i class="fas fa-bolt"></i></div>
-      <!-- Live energy-circuit canvas (interactive, reduced-motion aware) -->
-      <canvas id="heroCircuit" class="hero__circuit" aria-hidden="true"></canvas>
-      <!-- Floating particles -->
-      <div class="hero__particles" aria-hidden="true">
-        <span class="particle"></span><span class="particle"></span><span class="particle"></span>
-        <span class="particle"></span><span class="particle"></span><span class="particle"></span>
-        <span class="particle"></span><span class="particle"></span><span class="particle"></span>
-        <span class="particle"></span><span class="particle"></span><span class="particle"></span>
-      </div>
+      <!-- "Elektrik akımı" tuvali (js/main.js §15): sayfa yüklendikten sonra başlar, görünmezken / sekme gizliyken durur,
+           "hareketi azalt" tercihinde yalnızca sabit devre izleri çizilir. -->
+      <canvas id="heroCircuit" class="hero__circuit"></canvas>
     </div>
     <div class="hero__spotlight" id="heroSpotlight" aria-hidden="true"></div>
     <div class="hero__overlay" aria-hidden="true"></div>
 
     <div class="container hero__content">
       <span class="hero__badge">
-        <i class="fas fa-bolt"></i> Profesyonel Mühendislik Çözümleri
+        <i class="fas fa-bolt" aria-hidden="true"></i> Profesyonel Mühendislik Çözümleri
       </span>
       <div class="hero__live-pill">
         <span class="hero__live-dot" aria-hidden="true"></span>
         2026 Proje Planlaması Açık • Hızlı Keşif ve Teklif Desteği
       </div>
       <h1 class="hero__title" aria-label="İzmir Elektrik Mühendislik Hizmetleri">
-        İzmir Elektrik<br>
-        <span class="hero__title--accent" id="heroTyping" aria-hidden="true"></span>
-        <span class="hero__cursor" aria-hidden="true">|</span>
-        Hizmetleri
+        <span class="hero__title-line">İzmir Elektrik</span>
+        <span class="hero__title-line hero__title-type" aria-hidden="true"><span class="hero__title--accent" id="heroTyping">Mühendislik</span></span>
+        <span class="hero__title-line">Hizmetleri</span>
       </h1>
       <p class="hero__subtitle">
         Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri ile
@@ -301,12 +294,16 @@
       </p>
       <div class="hero__actions">
         <a href="#iletisim" class="btn btn--accent btn--lg">
-          <i class="fas fa-paper-plane"></i> Teklif Al
+          <i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al
         </a>
-        <a href="#hizmetler" class="btn btn--outline-white btn--lg">
-          <i class="fas fa-cogs"></i> Hizmetlerimiz
+        <a href="#iletisim" class="btn btn--outline-white btn--lg" data-subject="elektrik" data-prefill="Tesisimiz için ücretsiz ön değerlendirme talep ediyoruz. Kısaca ihtiyacımız: ">
+          <i class="fas fa-clipboard-check" aria-hidden="true"></i> Ücretsiz Ön Değerlendirme
         </a>
       </div>
+      <p class="hero__links">
+        <a href="#hizmetler">Hizmetlerimizi inceleyin <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
+        <a href="#fabrikalar">Fabrikalar için ücretsiz araçlar <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
+      </p>
     </div>
 
     <div class="hero__stats" aria-label="Kurumsal istatistikler">
@@ -321,7 +318,7 @@
             <span class="hero__stat-label">Tamamlanan Proje</span>
           </div>
           <div class="hero__stat">
-            <span class="hero__stat-number" data-count="100" data-suffix="%">100%</span>
+            <span class="hero__stat-number" data-count="100" data-prefix="%">%100</span>
             <span class="hero__stat-label">Müşteri Memnuniyeti</span>
           </div>
           <div class="hero__stat">
@@ -329,12 +326,135 @@
             <span class="hero__stat-label">Teknik Destek</span>
           </div>
         </div>
+        <div class="hero__tools">
+          <p>GES, trafo ve periyodik kontrol ihtiyacınızı önceden hesaplayın.</p>
+          <a href="hesaplama-araclari/" class="hero__tools-link">
+            <i class="fas fa-calculator" aria-hidden="true"></i> Hesap Araçlarını Aç <i class="fas fa-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
       </div>
-      <div class="projects__cta reveal">
-        <p>GES, trafo ve periyodik kontrol ihtiyacınızı önceden hesaplayın.</p>
-        <a href="hesaplama-araclari/" class="btn btn--accent btn--md">
-          <i class="fas fa-calculator"></i> Hesap Araçlarını Aç
+    </div>
+  </section>
+
+  <!-- ==================== GÜVEN ŞERİDİ (yalnızca bu sayfadaki bilgilerden) ==================== -->
+  <section class="vgh-trust" aria-label="Kısaca VoltGuard">
+    <div class="container">
+      <ul class="vgh-trust__list">
+        <li class="vgh-trust__item"><i class="fas fa-location-dot" aria-hidden="true"></i><span><strong>Ege Teknopark</strong> Bornova / İzmir</span></li>
+        <li class="vgh-trust__item"><i class="fas fa-certificate" aria-hidden="true"></i><span><strong>SMM lisanslı</strong> mühendis kadrosu</span></li>
+        <li class="vgh-trust__item"><i class="fas fa-handshake" aria-hidden="true"></i><span><strong>Ücretsiz</strong> keşif ve teklif</span></li>
+        <li class="vgh-trust__item"><i class="fas fa-headset" aria-hidden="true"></i><span><strong>7/24</strong> teknik destek hattı</span></li>
+        <li class="vgh-trust__item"><i class="fas fa-diagram-project" aria-hidden="true"></i><span><strong>Anahtar teslim</strong> proje yönetimi</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ==================== FABRİKALAR İÇİN (fabrika-cozumleri.html tanıtımı) ==================== -->
+  <section class="vgh-factory section" id="fabrikalar" aria-labelledby="factoryTitle">
+    <div class="container">
+      <div class="section__header reveal">
+        <span class="section__badge"><i class="fas fa-industry" aria-hidden="true"></i> Fabrikalar İçin</span>
+        <h2 class="section__title" id="factoryTitle">Fabrikanızın Elektrik Riskini ve Maliyetini Rakamlarla Görün</h2>
+        <p class="section__desc">
+          Bakım, üretim ve satın alma ekipleri için hazırladığımız ücretsiz araçlarla tesisinizi ön değerlendirmeden
+          geçirin; sonucu ekibinizle paylaşın, teklif talebinizi tek adımda iletin.
+        </p>
+      </div>
+
+      <div class="vgh-factory__layout">
+        <ul class="vgh-factory__cards">
+          <li class="reveal" data-delay="0">
+            <article class="vgh-card vgh-spot">
+              <span class="vgh-card__num" aria-hidden="true">01</span>
+              <span class="vgh-card__icon" aria-hidden="true"><i class="fas fa-clipboard-check"></i></span>
+              <span class="vgh-card__tag">Ön değerlendirme</span>
+              <h3 class="vgh-card__title"><a class="vgh-card__link" href="/fabrika-cozumleri.html#saglik-testi">Elektrik Sağlık Testi</a></h3>
+              <p class="vgh-card__text">Kısa sorularla tesisinizin elektrik altyapısındaki risk seviyesini görün; önce neye bakılması gerektiğini öğrenin.</p>
+              <span class="vgh-card__more" aria-hidden="true">Testi başlat <i class="fas fa-arrow-right"></i></span>
+            </article>
+          </li>
+          <li class="reveal" data-delay="1">
+            <article class="vgh-card vgh-spot">
+              <span class="vgh-card__num" aria-hidden="true">02</span>
+              <span class="vgh-card__icon" aria-hidden="true"><i class="fas fa-file-invoice"></i></span>
+              <span class="vgh-card__tag">Fatura analizi</span>
+              <h3 class="vgh-card__title"><a class="vgh-card__link" href="/fabrika-cozumleri.html#reaktif-ceza">Reaktif Ceza Hesabı</a></h3>
+              <p class="vgh-card__text">Faturanızdaki aktif ve reaktif tüketimden reaktif enerji bedeli riskinizi ve kompanzasyon ihtiyacınızı tahmin edin.</p>
+              <span class="vgh-card__more" aria-hidden="true">Hesapla <i class="fas fa-arrow-right"></i></span>
+            </article>
+          </li>
+          <li class="reveal" data-delay="2">
+            <article class="vgh-card vgh-spot">
+              <span class="vgh-card__num" aria-hidden="true">03</span>
+              <span class="vgh-card__icon" aria-hidden="true"><i class="fas fa-gauge-high"></i></span>
+              <span class="vgh-card__tag">Maliyet</span>
+              <h3 class="vgh-card__title"><a class="vgh-card__link" href="/fabrika-cozumleri.html#durus-maliyeti">Duruş Maliyeti</a></h3>
+              <p class="vgh-card__text">Plansız bir duruşun saatlik ve yıllık maliyetini hesaplayın; önleyici bakım bütçesini rakamla savunun.</p>
+              <span class="vgh-card__more" aria-hidden="true">Hesapla <i class="fas fa-arrow-right"></i></span>
+            </article>
+          </li>
+          <li class="reveal" data-delay="3">
+            <article class="vgh-card vgh-spot">
+              <span class="vgh-card__num" aria-hidden="true">04</span>
+              <span class="vgh-card__icon" aria-hidden="true"><i class="fas fa-file-signature"></i></span>
+              <span class="vgh-card__tag">Satın alma</span>
+              <h3 class="vgh-card__title"><a class="vgh-card__link" href="/fabrika-cozumleri.html#teklif-sihirbazi">Teklif Sihirbazı</a></h3>
+              <p class="vgh-card__text">İhtiyacınızı adım adım seçin; satın alma sürecinize uygun, eksiksiz bir teklif talebi oluşturun.</p>
+              <span class="vgh-card__more" aria-hidden="true">Sihirbazı aç <i class="fas fa-arrow-right"></i></span>
+            </article>
+          </li>
+        </ul>
+
+        <!-- JS olmadan da çalışır: GET ile /fabrika-cozumleri.html?saat=..&tl=..#durus-maliyeti adresine gider. -->
+        <form class="vgh-calc reveal" id="downtimeCalc" data-delay="2" action="/fabrika-cozumleri.html#durus-maliyeti" method="get" aria-labelledby="downtimeTitle">
+          <span class="vgh-calc__badge"><i class="fas fa-gauge-high" aria-hidden="true"></i> Hızlı tahmin</span>
+          <h3 class="vgh-calc__title" id="downtimeTitle">Plansız duruşlar size yılda kaça mal oluyor?</h3>
+
+          <div class="vgh-calc__field">
+            <div class="vgh-calc__row">
+              <label for="dtHours">Yıllık plansız duruş süresi</label>
+              <span class="vgh-calc__val" id="dtHoursOut" aria-hidden="true">24 saat</span>
+            </div>
+            <input class="vgh-range" type="range" id="dtHours" name="saat" min="1" max="240" step="1" value="24" aria-valuetext="24 saat" style="--p:.0962">
+          </div>
+
+          <div class="vgh-calc__field">
+            <div class="vgh-calc__row">
+              <label for="dtRate">Bir saatlik duruşun maliyeti</label>
+              <span class="vgh-calc__val" id="dtRateOut" aria-hidden="true">50.000 TL</span>
+            </div>
+            <input class="vgh-range" type="range" id="dtRate" name="tl" min="5000" max="500000" step="5000" value="50000" aria-valuetext="50.000 TL" aria-describedby="dtRateHint" style="--p:.0909">
+            <p class="vgh-calc__hint" id="dtRateHint">Kayıp üretim, boşta kalan işçilik, hurda ve yeniden devreye alma giderlerinin toplamı.</p>
+          </div>
+
+          <div class="vgh-calc__result">
+            <span class="vgh-calc__result-label">Tahmini yıllık duruş maliyeti</span>
+            <strong class="vgh-calc__total" id="dtTotal">1.200.000 TL</strong>
+            <span class="vgh-calc__monthly" id="dtMonthly">Aylık ortalama ≈ 100.000 TL</span>
+          </div>
+          <p class="vgh-sr" id="dtLive" aria-live="polite" aria-atomic="true"></p>
+
+          <p class="vgh-calc__note">
+            <i class="fas fa-circle-info" aria-hidden="true"></i>
+            <span>Varsayım: yıllık maliyet = yıllık duruş saati × saatlik maliyet. Değerler sizin tahmininizdir; sonuç bilgilendirme amaçlı bir tahmindir, teklif veya garanti değildir.</span>
+          </p>
+
+          <div class="vgh-calc__actions">
+            <button type="submit" class="btn btn--primary btn--md">
+              Detaylı Hesapla <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+            <a href="#iletisim" class="btn btn--accent btn--md" id="dtQuote" data-subject="elektrik" data-prefill="Fabrikamız için ücretsiz ön değerlendirme talep ediyoruz. Duruş maliyeti hızlı tahmini: yılda yaklaşık 24 saat plansız duruş, saatlik yaklaşık 50.000 TL, yıllık yaklaşık 1.200.000 TL.">
+              <i class="fas fa-clipboard-check" aria-hidden="true"></i> Ücretsiz Ön Değerlendirme
+            </a>
+          </div>
+        </form>
+      </div>
+
+      <div class="vgh-factory__cta reveal">
+        <a href="/fabrika-cozumleri.html" class="btn btn--primary btn--lg">
+          <i class="fas fa-industry" aria-hidden="true"></i> Tüm Fabrika Çözümlerini Gör
         </a>
+        <p>Keşif ve teklif ücretsizdir; ihtiyacınızı sahada birlikte değerlendiririz.</p>
       </div>
     </div>
   </section>
@@ -342,8 +462,10 @@
   <section class="ges-intro" aria-labelledby="gesIntroTitle">
     <div class="container ges-intro__inner">
       <div class="ges-intro__video">
-        <video autoplay muted loop playsinline preload="none" poster="public/TrafoBakimYuksekGerilim.jpeg" aria-hidden="true" data-lazy-video>
-          <source data-src="public/ges-kurulumu.mp4" type="video/mp4">
+        <!-- Poster: videonun ilk karesi. Video görünüme yaklaşınca yüklenir; ≤600px ekranda küçük sürüm (data-src-sm),
+             "veri tasarrufu" açıksa ya da hareketi azalt tercihinde video hiç yüklenmez, poster kalır. -->
+        <video autoplay muted loop playsinline preload="none" poster="public/opt/ges-kurulumu-poster-sm.webp" width="768" height="432" aria-hidden="true" data-lazy-video data-poster-lg="public/opt/ges-kurulumu-poster.webp">
+          <source data-src="public/opt/ges-kurulumu.mp4" data-src-sm="public/opt/ges-kurulumu-sm.mp4" type="video/mp4">
         </video>
         <span class="ges-intro__video-badge"><i class="fas fa-solar-panel" aria-hidden="true"></i> GES Kurulumu</span>
       </div>
@@ -378,8 +500,7 @@
       <div class="projects__grid">
 
         <div class="project-card project-card--overlay reveal" data-delay="0">
-          <img src="public/panokurulumuverevizyonu.jpg"
-               alt="Elektrik Pano Kurulumu ve Revizyonu" loading="lazy">
+          <img src="public/opt/panokurulumuverevizyonu-640.webp" srcset="public/opt/panokurulumuverevizyonu-640.webp 640w, public/opt/panokurulumuverevizyonu-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1200" alt="Elektrik Pano Kurulumu ve Revizyonu" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Elektrik</span>
@@ -395,8 +516,7 @@
         </div>
 
         <div class="project-card project-card--overlay reveal" data-delay="1">
-          <img src="public/acil-cikis-levhasi-montaji.jpeg"
-               alt="VoltGuard ekibinin endüstriyel tesiste acil çıkış levhası montajı" loading="lazy">
+          <img src="public/opt/acil-cikis-levhasi-montaji-640.webp" srcset="public/opt/acil-cikis-levhasi-montaji-640.webp 640w, public/opt/acil-cikis-levhasi-montaji-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="VoltGuard ekibinin endüstriyel tesiste acil çıkış levhası montajı" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Elektrik Güvenliği</span>
@@ -412,8 +532,7 @@
         </div>
 
         <div class="project-card project-card--overlay reveal" data-delay="1">
-          <img src="public/Trafoolcum.jpeg"
-               alt="Trafo Ölçüm ve Enerji Kalitesi Analizi" loading="lazy">
+          <img src="public/opt/Trafoolcum-640.webp" srcset="public/opt/Trafoolcum-640.webp 640w, public/opt/Trafoolcum-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="Trafo Ölçüm ve Enerji Kalitesi Analizi" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Enerji Kalitesi</span>
@@ -429,8 +548,7 @@
         </div>
 
         <div class="project-card project-card--overlay reveal" data-delay="2">
-          <img src="public/HarmonikFiltreliKompanzasyon.jpg"
-               alt="Harmonik Filtreli Kompanzasyon" loading="lazy">
+          <img src="public/opt/HarmonikFiltreliKompanzasyon-640.webp" srcset="public/opt/HarmonikFiltreliKompanzasyon-640.webp 640w, public/opt/HarmonikFiltreliKompanzasyon-800.webp 800w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="800" height="1067" alt="Harmonik Filtreli Kompanzasyon" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Kompanzasyon</span>
@@ -446,8 +564,7 @@
         </div>
 
         <div class="project-card project-card--overlay reveal" data-delay="0">
-          <img src="public/TrafoBakimYuksekGerilim.jpeg"
-               alt="Trafo Bakımı – Yüksek Gerilim" loading="lazy">
+          <img src="public/opt/TrafoBakimYuksekGerilim-640.webp" srcset="public/opt/TrafoBakimYuksekGerilim-640.webp 640w, public/opt/TrafoBakimYuksekGerilim-864.webp 864w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="864" height="1920" alt="Trafo Bakımı – Yüksek Gerilim" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Yüksek Gerilim</span>
@@ -463,8 +580,7 @@
         </div>
 
         <div class="project-card project-card--overlay reveal" data-delay="1">
-          <img src="public/Yenilenebilirenerji.jpg"
-               alt="Yenilenebilir Enerji Projesi" loading="lazy">
+          <img src="public/opt/Yenilenebilirenerji-640.webp" srcset="public/opt/Yenilenebilirenerji-640.webp 640w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="640" height="360" alt="Yenilenebilir Enerji Projesi" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Yenilenebilir Enerji</span>
@@ -480,8 +596,7 @@
         </div>
 
         <div class="project-card project-card--overlay reveal" data-delay="2">
-          <img src="public/EgitimSetleri.jpeg"
-               alt="Eğitim Setleri – Teknik Eğitim" loading="lazy">
+          <img src="public/opt/EgitimSetleri-640.webp" srcset="public/opt/EgitimSetleri-640.webp 640w, public/opt/EgitimSetleri-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="716" alt="Eğitim Setleri – Teknik Eğitim" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Teknik Eğitim</span>
@@ -497,8 +612,7 @@
         </div>
 
         <div class="project-card project-card--overlay reveal" data-delay="0">
-          <img src="public/trafo-kiosk-vinc-montaji.jpg"
-               alt="Trafo Kiosk Vinç ile Montajı" loading="lazy">
+          <img src="public/opt/trafo-kiosk-vinc-montaji-640.webp" srcset="public/opt/trafo-kiosk-vinc-montaji-640.webp 640w, public/opt/trafo-kiosk-vinc-montaji-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="Trafo Kiosk Vinç ile Montajı" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Trafo</span>
@@ -514,8 +628,7 @@
         </div>
 
         <div class="project-card project-card--overlay reveal" data-delay="1">
-          <img src="public/trafo-astor-kurulumu.jpg"
-               alt="Yağlı Tip Güç Trafosu Kurulumu" loading="lazy">
+          <img src="public/opt/trafo-astor-kurulumu-640.webp" srcset="public/opt/trafo-astor-kurulumu-640.webp 640w, public/opt/trafo-astor-kurulumu-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1279" alt="Yağlı Tip Güç Trafosu Kurulumu" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Trafo</span>
@@ -531,8 +644,7 @@
         </div>
 
         <div class="project-card project-card--overlay reveal" data-delay="2">
-          <img src="public/titiz-duzenli-kablo-tavasi.jpg"
-               alt="Renk Kodlu Düzenli Kablo Tavası Uygulaması" loading="lazy">
+          <img src="public/opt/titiz-duzenli-kablo-tavasi-640.webp" srcset="public/opt/titiz-duzenli-kablo-tavasi-640.webp 640w, public/opt/titiz-duzenli-kablo-tavasi-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="Renk Kodlu Düzenli Kablo Tavası Uygulaması" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Elektrik</span>
@@ -550,9 +662,9 @@
       </div>
 
       <div class="projects__cta reveal">
-        <p>Projeniz hakkında görüşmek ister misiniz?</p>
-        <a href="#iletisim" class="btn btn--accent btn--md">
-          Bizimle İletişime Geçin <i class="fas fa-arrow-right"></i>
+        <p>Tesisiniz için benzer bir çalışma mı planlıyorsunuz?</p>
+        <a href="#iletisim" class="btn btn--accent btn--md" data-prefill="Benzer bir proje için teklif almak istiyoruz. Kısaca ihtiyacımız: ">
+          Benzer Bir Proje İçin Teklif Al <i class="fas fa-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
 
@@ -575,7 +687,7 @@
 
         <article class="news-card reveal" data-delay="0">
           <div class="news-card__media">
-            <img src="public/haberler/ege-teknopark-topluluk-bulusmasi.jpg" alt="Ege Teknopark topluluk buluşmasında VoltGuard ekibi" loading="lazy">
+            <img src="public/opt/haberler/ege-teknopark-topluluk-bulusmasi-640.webp" srcset="public/opt/haberler/ege-teknopark-topluluk-bulusmasi-640.webp 640w, public/opt/haberler/ege-teknopark-topluluk-bulusmasi-800.webp 800w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="800" height="533" alt="Ege Teknopark topluluk buluşmasında VoltGuard ekibi" loading="lazy" decoding="async">
             <span class="news-card__cat">Ege Teknopark</span>
           </div>
           <div class="news-card__body">
@@ -589,7 +701,7 @@
 
         <article class="news-card reveal" data-delay="0">
           <div class="news-card__media">
-            <img src="public/haberler/h1.jpg" alt="VoltGuard ekibi Ege Üniversitesi Rektörü Prof. Dr. Musa Alcı ile" loading="lazy">
+            <img src="public/opt/haberler/h1-640.webp" srcset="public/opt/haberler/h1-640.webp 640w, public/opt/haberler/h1-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="887" alt="VoltGuard ekibi Ege Üniversitesi Rektörü Prof. Dr. Musa Alcı ile" loading="lazy" decoding="async">
             <span class="news-card__cat">Ar-Ge &amp; Savunma</span>
           </div>
           <div class="news-card__body">
@@ -605,7 +717,7 @@
 
         <article class="news-card reveal" data-delay="1">
           <div class="news-card__media">
-            <img src="public/haberler/h8.jpg" alt="VoltGuard, Take Off İstanbul'da Roketsan standında" loading="lazy">
+            <img src="public/opt/haberler/h8-640.webp" srcset="public/opt/haberler/h8-640.webp 640w, public/opt/haberler/h8-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="720" alt="VoltGuard, Take Off İstanbul'da Roketsan standında" loading="lazy" decoding="async">
             <span class="news-card__cat">Girişimcilik</span>
           </div>
           <div class="news-card__body">
@@ -621,7 +733,7 @@
 
         <article class="news-card reveal" data-delay="2">
           <div class="news-card__media">
-            <img src="public/haberler/h5.jpg" alt="Ege Üniversitesi Elektrik-Elektronik Mühendisliği bitirme tezi sunumları" loading="lazy">
+            <img src="public/opt/haberler/h5-640.webp" srcset="public/opt/haberler/h5-640.webp 640w, public/opt/haberler/h5-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="720" alt="Ege Üniversitesi Elektrik-Elektronik Mühendisliği bitirme tezi sunumları" loading="lazy" decoding="async">
             <span class="news-card__cat">Etkinlik</span>
           </div>
           <div class="news-card__body">
@@ -636,7 +748,7 @@
 
         <article class="news-card reveal" data-delay="0">
           <div class="news-card__media">
-            <img src="public/haberler/h6.jpg" alt="Genç Beyinler Yeni Fikirler etkinliğinde jüri üyeliği" loading="lazy">
+            <img src="public/opt/haberler/h6-640.webp" srcset="public/opt/haberler/h6-640.webp 640w, public/opt/haberler/h6-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="540" alt="Genç Beyinler Yeni Fikirler etkinliğinde jüri üyeliği" loading="lazy" decoding="async">
             <span class="news-card__cat">Etkinlik</span>
           </div>
           <div class="news-card__body">
@@ -651,7 +763,7 @@
 
         <article class="news-card reveal" data-delay="1">
           <div class="news-card__media">
-            <img src="public/haberler/h7.jpg" alt="MÜSİAD İzmir Geleneksel Bahar ve Aile Şenliği" loading="lazy">
+            <img src="public/opt/haberler/h7-640.webp" srcset="public/opt/haberler/h7-640.webp 640w, public/opt/haberler/h7-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="640" alt="MÜSİAD İzmir Geleneksel Bahar ve Aile Şenliği" loading="lazy" decoding="async">
             <span class="news-card__cat">Etkinlik</span>
           </div>
           <div class="news-card__body">
@@ -666,7 +778,7 @@
 
         <article class="news-card reveal" data-delay="2">
           <div class="news-card__media">
-            <img src="public/haberler/h9.jpg" alt="KESAİD kahvaltı buluşması" loading="lazy">
+            <img src="public/opt/haberler/h9-640.webp" srcset="public/opt/haberler/h9-640.webp 640w, public/opt/haberler/h9-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="830" alt="KESAİD kahvaltı buluşması" loading="lazy" decoding="async">
             <span class="news-card__cat">Etkinlik</span>
           </div>
           <div class="news-card__body">
@@ -682,7 +794,7 @@
 
         <article class="news-card reveal" data-delay="0">
           <div class="news-card__media">
-            <img src="public/haberler/h11.jpg" alt="TUSAŞ Tedarikçi Günü etkinliği" loading="lazy">
+            <img src="public/opt/haberler/h11-640.webp" srcset="public/opt/haberler/h11-640.webp 640w, public/opt/haberler/h11-800.webp 800w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="800" height="1422" alt="TUSAŞ Tedarikçi Günü etkinliği" loading="lazy" decoding="async">
             <span class="news-card__cat">Etkinlik</span>
           </div>
           <div class="news-card__body">
@@ -696,7 +808,7 @@
 
         <article class="news-card reveal" data-delay="1">
           <div class="news-card__media">
-            <img src="public/haberler/h2.jpg" alt="Trafo kontrolü ve arıza tespiti saha çalışması" loading="lazy">
+            <img src="public/opt/haberler/h2-640.webp" srcset="public/opt/haberler/h2-640.webp 640w, public/opt/haberler/h2-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="720" alt="Trafo kontrolü ve arıza tespiti saha çalışması" loading="lazy" decoding="async">
             <span class="news-card__cat">Saha Çalışması</span>
           </div>
           <div class="news-card__body">
@@ -712,7 +824,7 @@
 
         <article class="news-card reveal" data-delay="2">
           <div class="news-card__media">
-            <img src="public/haberler/h3.jpg" alt="VoltGuard elektrik pano kurulumu" loading="lazy">
+            <img src="public/opt/haberler/h3-640.webp" srcset="public/opt/haberler/h3-640.webp 640w, public/opt/haberler/h3-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="643" alt="VoltGuard elektrik pano kurulumu" loading="lazy" decoding="async">
             <span class="news-card__cat">Saha Çalışması</span>
           </div>
           <div class="news-card__body">
@@ -728,7 +840,7 @@
 
         <article class="news-card reveal" data-delay="0">
           <div class="news-card__media">
-            <img src="public/haberler/h4.jpg" alt="Elektrik panosu revizyon çalışması" loading="lazy">
+            <img src="public/opt/haberler/h4-640.webp" srcset="public/opt/haberler/h4-640.webp 640w, public/opt/haberler/h4-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="743" alt="Elektrik panosu revizyon çalışması" loading="lazy" decoding="async">
             <span class="news-card__cat">Saha Çalışması</span>
           </div>
           <div class="news-card__body">
@@ -744,7 +856,7 @@
 
         <article class="news-card reveal" data-delay="1">
           <div class="news-card__media">
-            <img src="public/haberler/h10.jpg" alt="Profesyonel elektriksel ölçüm hizmeti" loading="lazy">
+            <img src="public/opt/haberler/h10-640.webp" srcset="public/opt/haberler/h10-640.webp 640w, public/opt/haberler/h10-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="425" alt="Profesyonel elektriksel ölçüm hizmeti" loading="lazy" decoding="async">
             <span class="news-card__cat">Hizmet</span>
           </div>
           <div class="news-card__body">
@@ -759,7 +871,7 @@
 
         <article class="news-card reveal" data-delay="2">
           <div class="news-card__media">
-            <img src="public/ekip-ruhu-pano-kurulumu.jpg" alt="VoltGuard ekibi pano kurulumu sonrası saha ekibi" loading="lazy">
+            <img src="public/opt/ekip-ruhu-pano-kurulumu-640.webp" srcset="public/opt/ekip-ruhu-pano-kurulumu-640.webp 640w, public/opt/ekip-ruhu-pano-kurulumu-960.webp 960w, public/opt/ekip-ruhu-pano-kurulumu-1200.webp 1200w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="1200" height="1600" alt="VoltGuard ekibi pano kurulumu sonrası saha ekibi" loading="lazy" decoding="async">
             <span class="news-card__cat">Ekip</span>
           </div>
           <div class="news-card__body">
@@ -773,7 +885,7 @@
 
         <article class="news-card reveal" data-delay="0">
           <div class="news-card__media">
-            <img src="public/anahtar-teslim-elektrik-altyapisi.jpg" alt="İnşaat aşamasında elektrik altyapısı - kablo tavası ve tesisat montajı" loading="lazy">
+            <img src="public/opt/anahtar-teslim-elektrik-altyapisi-640.webp" srcset="public/opt/anahtar-teslim-elektrik-altyapisi-640.webp 640w, public/opt/anahtar-teslim-elektrik-altyapisi-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="1280" alt="İnşaat aşamasında elektrik altyapısı - kablo tavası ve tesisat montajı" loading="lazy" decoding="async">
             <span class="news-card__cat">Anahtar Teslim</span>
           </div>
           <div class="news-card__body">
@@ -787,7 +899,7 @@
 
         <article class="news-card reveal" data-delay="1">
           <div class="news-card__media">
-            <img src="public/motivasyon-ekip-kulturu.jpg" alt="VoltGuard ekibinde kurumsal kültür ve motivasyon" loading="lazy">
+            <img src="public/opt/motivasyon-ekip-kulturu-640.webp" srcset="public/opt/motivasyon-ekip-kulturu-640.webp 640w, public/opt/motivasyon-ekip-kulturu-900.webp 900w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="900" height="1600" alt="VoltGuard ekibinde kurumsal kültür ve motivasyon" loading="lazy" decoding="async">
             <span class="news-card__cat">Kurumsal Kültür</span>
           </div>
           <div class="news-card__body">
@@ -801,7 +913,7 @@
 
         <article class="news-card reveal" data-delay="2">
           <div class="news-card__media">
-            <video data-src="public/ekip-guclu-durmak-yok-yola-devam.mp4" poster="public/ekip-ruhu-pano-kurulumu.jpg" autoplay muted loop playsinline preload="none" aria-hidden="true" data-lazy-video></video>
+            <video data-src="public/opt/ekip-guclu-durmak-yok-yola-devam.mp4" data-poster="public/opt/ekip-guclu-durmak-yok-yola-devam-poster.webp" width="478" height="850" autoplay muted loop playsinline preload="none" aria-hidden="true" data-lazy-video></video>
             <span class="news-card__cat">Ekip</span>
           </div>
           <div class="news-card__body">
@@ -892,17 +1004,20 @@
             <li><i class="fas fa-check-circle"></i> Periyodik bakım ve teknik destek</li>
             <li><i class="fas fa-check-circle"></i> Ulusal ve uluslararası standartlara uyum</li>
           </ul>
-          <a href="#iletisim" class="btn btn--primary btn--md">
-            Bizimle İletişime Geçin <i class="fas fa-arrow-right"></i>
-          </a>
+          <div class="about__actions">
+            <a href="#iletisim" class="btn btn--primary btn--md">
+              Teklif Al <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>
+            <a href="#iletisim" class="btn btn--ghost-dark btn--md" data-subject="elektrik" data-prefill="Tesisimiz için ücretsiz ön değerlendirme talep ediyoruz. Kısaca ihtiyacımız: ">
+              Ücretsiz Ön Değerlendirme
+            </a>
+          </div>
         </div>
 
         <div class="about__image reveal-right">
           <div class="about__img-wrapper">
             <!-- Kullanıcı fotoğrafı: public/Trafoisletmesorumlulugu.jpeg -->
-            <img src="public/Trafoisletmesorumlulugu.jpeg"
-                 alt="VoltGuard – Trafo İşletme Sorumluluğu"
-                 loading="lazy">
+            <img src="public/opt/Trafoisletmesorumlulugu-640.webp" srcset="public/opt/Trafoisletmesorumlulugu-640.webp 640w, public/opt/Trafoisletmesorumlulugu-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 94vw, (max-width: 1200px) 452px, 540px" width="960" height="1719" alt="VoltGuard – Trafo İşletme Sorumluluğu" loading="lazy" decoding="async">
             <div class="about__img-badge">
               <i class="fas fa-shield-alt"></i>
               <span>Güvenilir<br>Çözümler</span>
@@ -931,7 +1046,7 @@
 
         <!-- Elektrik -->
         <div class="service-card reveal" data-delay="0">
-          <div class="service-card__cover"><img src="public/panokurulumuverevizyonu.jpg" alt="VoltGuard elektrik pano kurulumu" loading="lazy"></div>
+          <div class="service-card__cover"><img src="public/opt/panokurulumuverevizyonu-640.webp" srcset="public/opt/panokurulumuverevizyonu-640.webp 640w, public/opt/panokurulumuverevizyonu-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 93vw, (max-width: 1200px) 474px, 562px" width="960" height="1200" alt="VoltGuard elektrik pano kurulumu" loading="lazy" decoding="async"></div>
           <div class="service-card__body">
           <div class="service-card__icon service-card__icon--electric">
             <i class="fas fa-bolt"></i>
@@ -951,13 +1066,13 @@
             <li>Topraklama ve Yıldırımdan Korunma Sistemleri</li>
             <li>Enerji Kalitesi Ölçümleri ve Raporlama</li>
           </ul>
-          <a href="#iletisim" class="service-card__link">Bilgi Al <i class="fas fa-arrow-right"></i></a>
+          <a href="#iletisim" class="service-card__link" data-subject="elektrik" data-prefill="Elektrik hizmetleriniz (SMM, trafo, periyodik kontrol, pano vb.) için teklif almak istiyoruz. Kısaca ihtiyacımız: ">Teklif Al<span class="vgh-sr"> – Elektrik Hizmetleri</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
           </div>
         </div>
 
         <!-- Elektronik -->
         <div class="service-card reveal" data-delay="1">
-          <div class="service-card__cover"><img src="public/haberler/Elektronik.png" alt="Elektronik & gömülü sistemler PCB tasarımı" loading="lazy"></div>
+          <div class="service-card__cover"><img src="public/opt/haberler/Elektronik-640.webp" srcset="public/opt/haberler/Elektronik-640.webp 640w, public/opt/haberler/Elektronik-942.webp 942w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 93vw, (max-width: 1200px) 474px, 562px" width="942" height="560" alt="Elektronik & gömülü sistemler PCB tasarımı" loading="lazy" decoding="async"></div>
           <div class="service-card__body">
           <div class="service-card__icon service-card__icon--electronic">
             <i class="fas fa-microchip"></i>
@@ -976,13 +1091,13 @@
             <li>IoT (Nesnelerin İnterneti) Uygulamaları</li>
             <li>Sensör ve Ölçüm Sistemleri Entegrasyonu</li>
           </ul>
-          <a href="#iletisim" class="service-card__link">Bilgi Al <i class="fas fa-arrow-right"></i></a>
+          <a href="#iletisim" class="service-card__link" data-subject="elektronik" data-prefill="Elektronik ve gömülü sistem hizmetleriniz için teklif almak istiyoruz. Kısaca ihtiyacımız: ">Teklif Al<span class="vgh-sr"> – Elektronik ve Gömülü Sistemler</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
           </div>
         </div>
 
         <!-- Otomasyon -->
         <div class="service-card reveal" data-delay="2">
-          <div class="service-card__cover"><img src="public/scada-biyolojik-aritma-proses-ekrani.jpg" alt="SCADA otomasyon ve proses kontrol ekranı" loading="lazy"></div>
+          <div class="service-card__cover"><img src="public/opt/scada-biyolojik-aritma-proses-ekrani-640.webp" srcset="public/opt/scada-biyolojik-aritma-proses-ekrani-640.webp 640w, public/opt/scada-biyolojik-aritma-proses-ekrani-960.webp 960w, public/opt/scada-biyolojik-aritma-proses-ekrani-1280.webp 1280w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 93vw, (max-width: 1200px) 474px, 562px" width="1280" height="770" alt="SCADA otomasyon ve proses kontrol ekranı" loading="lazy" decoding="async"></div>
           <div class="service-card__body">
           <div class="service-card__icon service-card__icon--automation">
             <i class="fas fa-robot"></i>
@@ -1001,13 +1116,13 @@
             <li>Uzaktan İzleme ve Kontrol Sistemleri</li>
             <li>Sistem Entegrasyonu ve Devreye Alma</li>
           </ul>
-          <a href="#iletisim" class="service-card__link">Bilgi Al <i class="fas fa-arrow-right"></i></a>
+          <a href="#iletisim" class="service-card__link" data-subject="otomasyon" data-prefill="Otomasyon (PLC/SCADA) hizmetleriniz için teklif almak istiyoruz. Kısaca ihtiyacımız: ">Teklif Al<span class="vgh-sr"> – Otomasyon Sistemleri</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
           </div>
         </div>
 
         <!-- Mekanik -->
         <div class="service-card reveal" data-delay="3">
-          <div class="service-card__cover"><img src="public/mekanik-sistemler-tesisat.jpg" alt="Mekanik tesisat - yangın pompa istasyonu boru hattı" loading="lazy"></div>
+          <div class="service-card__cover"><img src="public/opt/mekanik-sistemler-tesisat-640.webp" srcset="public/opt/mekanik-sistemler-tesisat-640.webp 640w, public/opt/mekanik-sistemler-tesisat-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 93vw, (max-width: 1200px) 474px, 562px" width="960" height="640" alt="Mekanik tesisat - yangın pompa istasyonu boru hattı" loading="lazy" decoding="async"></div>
           <div class="service-card__body">
           <div class="service-card__icon service-card__icon--mechanical">
             <i class="fas fa-cog"></i>
@@ -1027,13 +1142,13 @@
             <li>Çelik Konstrüksiyon ve Mekanik Montaj</li>
             <li>Makine Modernizasyonu (Retrofit)</li>
           </ul>
-          <a href="#iletisim" class="service-card__link">Bilgi Al <i class="fas fa-arrow-right"></i></a>
+          <a href="#iletisim" class="service-card__link" data-subject="mekanik" data-prefill="Mekanik sistem hizmetleriniz için teklif almak istiyoruz. Kısaca ihtiyacımız: ">Teklif Al<span class="vgh-sr"> – Mekanik Sistemler</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
           </div>
         </div>
 
         <!-- Enerji Sistemleri & Verimlilik -->
         <div class="service-card service-card--wide reveal" data-delay="4">
-          <div class="service-card__cover"><img src="public/Yenilenebilirenerji.jpg" alt="Yenilenebilir enerji ve GES sistemi" loading="lazy"></div>
+          <div class="service-card__cover"><img src="public/opt/Yenilenebilirenerji-640.webp" srcset="public/opt/Yenilenebilirenerji-640.webp 640w" sizes="(max-width: 1200px) calc(100vw - 48px), 1150px" width="640" height="360" alt="Yenilenebilir enerji ve GES sistemi" loading="lazy" decoding="async"></div>
           <div class="service-card__body">
           <div class="service-card__icon service-card__icon--energy">
             <i class="fas fa-solar-panel"></i>
@@ -1049,7 +1164,10 @@
             <li>Geri Kazanım, Arıtma ve Filtre Sistemleri</li>
             <li>Verimlilik ve Sürdürülebilirlik Uygulamaları</li>
           </ul>
-          <a href="hesaplama-araclari/" class="service-card__link">GES Fizibilitesi Hesapla <i class="fas fa-arrow-right"></i></a>
+          <div class="service-card__links">
+            <a href="hesaplama-araclari/" class="service-card__link">GES Fizibilitesi Hesapla <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            <a href="#iletisim" class="service-card__link" data-subject="diger" data-prefill="Enerji sistemleri ve verimlilik (GES vb.) için teklif almak istiyoruz. Kısaca ihtiyacımız: ">Teklif Al<span class="vgh-sr"> – Enerji Sistemleri ve Verimlilik</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          </div>
           </div>
         </div>
 
@@ -1062,7 +1180,7 @@
     <div class="container">
       <div class="catalog__inner reveal">
         <div class="catalog__media">
-          <a class="catalog__doc" href="public/voltguard-katalog.pdf" target="_blank" rel="noopener" aria-label="VoltGuard kurumsal kataloğunu yeni sekmede aç">
+          <a class="catalog__doc" href="public/opt/voltguard-katalog.pdf" target="_blank" rel="noopener" aria-label="VoltGuard kurumsal kataloğunu yeni sekmede aç (PDF, 3,6 MB)">
             <i class="fas fa-file-pdf" aria-hidden="true"></i>
             <span class="catalog__doc-label">VoltGuard<br>Kurumsal Katalog</span>
             <span class="catalog__doc-badge">PDF</span>
@@ -1077,13 +1195,14 @@
             görüntüleyebilir veya indirebilirsiniz.
           </p>
           <div class="catalog__actions">
-            <a href="public/voltguard-katalog.pdf" class="btn btn--accent btn--md" target="_blank" rel="noopener">
-              <i class="fas fa-eye"></i> Kataloğu Görüntüle
+            <a href="public/opt/voltguard-katalog.pdf" class="btn btn--accent btn--md" target="_blank" rel="noopener">
+              <i class="fas fa-eye" aria-hidden="true"></i> Kataloğu Görüntüle
             </a>
-            <a href="public/voltguard-katalog.pdf" class="btn btn--outline-white btn--md" download>
-              <i class="fas fa-download"></i> PDF İndir
+            <a href="public/opt/voltguard-katalog.pdf" class="btn btn--outline-white btn--md" download="VoltGuard-Kurumsal-Katalog.pdf">
+              <i class="fas fa-download" aria-hidden="true"></i> PDF İndir <span class="catalog__size">(3,6 MB)</span>
             </a>
           </div>
+          <p class="catalog__meta">Ekran için hafifletilmiş sürüm. Baskı kalitesinde kopya: <a href="public/voltguard-katalog.pdf" target="_blank" rel="noopener">yüksek çözünürlüklü PDF (7 MB)</a>.</p>
         </div>
       </div>
     </div>
@@ -1145,7 +1264,7 @@
       </div>
 
       <div class="why-us__banner reveal">
-        <img src="public/ekip-ruhu-pano-kurulumu.jpg" alt="VoltGuard saha ekibi" loading="lazy">
+        <img src="public/opt/ekip-ruhu-pano-kurulumu-640.webp" srcset="public/opt/ekip-ruhu-pano-kurulumu-640.webp 640w, public/opt/ekip-ruhu-pano-kurulumu-960.webp 960w, public/opt/ekip-ruhu-pano-kurulumu-1200.webp 1200w" sizes="(max-width: 1200px) calc(100vw - 48px), 1152px" width="1200" height="1600" alt="VoltGuard saha ekibi" loading="lazy" decoding="async">
         <div class="why-us__banner-caption">
           <i class="fas fa-users" aria-hidden="true"></i>
           <span>Sahada birlikte çalışan, deneyimli VoltGuard ekibi</span>
@@ -1236,15 +1355,15 @@
       </div>
       <div class="certs__grid">
         <figure class="certs__item reveal" data-delay="0">
-          <img src="public/sertifika-ege-universitesi-onur-belgesi.jpg" alt="Ege Üniversitesi Mühendislik Fakültesi Onur Belgesi - Emrullah Günay" loading="lazy">
+          <img src="public/opt/sertifika-ege-universitesi-onur-belgesi-640.webp" srcset="public/opt/sertifika-ege-universitesi-onur-belgesi-640.webp 640w, public/opt/sertifika-ege-universitesi-onur-belgesi-894.webp 894w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 93vw, (max-width: 1200px) 305px, 363px" width="894" height="591" alt="Ege Üniversitesi Mühendislik Fakültesi Onur Belgesi - Emrullah Günay" loading="lazy" decoding="async">
           <figcaption>Ege Üniversitesi<br>Onur Belgesi</figcaption>
         </figure>
         <figure class="certs__item reveal" data-delay="1">
-          <img src="public/sertifika-ege-universitesi-endustriyel-tesisler.jpg" alt="Ege Üniversitesi Elektrik-Elektronik Mühendisliği Endüstriyel Tesisler semineri katılım ve başarı sertifikası" loading="lazy">
+          <img src="public/opt/sertifika-ege-universitesi-endustriyel-tesisler-640.webp" srcset="public/opt/sertifika-ege-universitesi-endustriyel-tesisler-640.webp 640w, public/opt/sertifika-ege-universitesi-endustriyel-tesisler-997.webp 997w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 93vw, (max-width: 1200px) 305px, 363px" width="997" height="711" alt="Ege Üniversitesi Elektrik-Elektronik Mühendisliği Endüstriyel Tesisler semineri katılım ve başarı sertifikası" loading="lazy" decoding="async">
           <figcaption>Endüstriyel Tesisler Semineri<br>Katılım ve Başarı Sertifikası</figcaption>
         </figure>
         <figure class="certs__item reveal" data-delay="2">
-          <img src="public/sertifika-tusas-liftup-katilim-belgesi.jpg" alt="Turkish Aerospace TUSAŞ LIFT UP Sanayi Odaklı Lisans Bitirme Projeleri katılım belgesi - VoltGuard Engineers" loading="lazy">
+          <img src="public/opt/sertifika-tusas-liftup-katilim-belgesi-640.webp" srcset="public/opt/sertifika-tusas-liftup-katilim-belgesi-640.webp 640w, public/opt/sertifika-tusas-liftup-katilim-belgesi-1024.webp 1024w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 93vw, (max-width: 1200px) 305px, 363px" width="1024" height="622" alt="Turkish Aerospace TUSAŞ LIFT UP Sanayi Odaklı Lisans Bitirme Projeleri katılım belgesi - VoltGuard Engineers" loading="lazy" decoding="async">
           <figcaption>TUSAŞ LIFT UP Programı<br>Katılım Belgesi</figcaption>
         </figure>
       </div>
@@ -1368,10 +1487,10 @@
       </div>
       <div class="cta-banner__actions">
         <a href="tel:+905454346735" class="btn btn--white btn--md">
-          <i class="fas fa-phone-alt"></i> 0 545 434 67 35
+          <i class="fas fa-phone-alt" aria-hidden="true"></i> 0 545 434 67 35
         </a>
-        <a href="#iletisim" class="btn btn--accent btn--md">
-          Teklif Formu <i class="fas fa-arrow-right"></i>
+        <a href="#iletisim" class="btn btn--accent btn--md" data-subject="elektrik" data-prefill="Tesisimiz için ücretsiz ön değerlendirme talep ediyoruz. Kısaca ihtiyacımız: ">
+          Ücretsiz Ön Değerlendirme <i class="fas fa-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
     </div>
@@ -1449,7 +1568,7 @@
         <!-- İletişim Formu -->
         <div class="contact__form-wrapper reveal-right">
           <form class="contact__form" id="contactForm" action="contact.php" method="post" novalidate>
-            <h3 class="contact__form-title">Mesaj Gönderin</h3>
+            <h3 class="contact__form-title">Teklif veya Ön Değerlendirme Talebi</h3>
             <p class="contact__form-security"><i class="fas fa-shield-alt"></i> Form iletimi güvenlik kontrolleriyle korunmaktadır.</p>
 
             <div class="form__row">
@@ -1515,7 +1634,7 @@
             <input type="hidden" id="formTimestamp" name="formTimestamp" value="">
 
             <button type="submit" class="btn btn--accent btn--full">
-              <i class="fas fa-paper-plane"></i> Mesaj Gönder
+              <i class="fas fa-paper-plane" aria-hidden="true"></i> Talebi Gönder
             </button>
             <p class="form__note">
               * Zorunlu alanlar. Bilgileriniz gizli tutulur ve üçüncü taraflarla paylaşılmaz.
@@ -1527,12 +1646,19 @@
 
       <!-- Google Maps -->
       <div class="contact__map reveal">
+        <!-- Harita iframe'i görünüme ~400px kala yüklenir (js/main.js); JS kapalıysa <noscript> kopyası. -->
         <iframe
-          src="https://www.google.com/maps?output=embed&q=Ege%20%C3%9Cniversitesi%20Kamp%C3%BCs%C3%BC%20Erzene%20Mahallesi%20Ankara%20Caddesi%20No%3A172%2F69%20Ege%20Teknopark%20TGB%20Turkuaz%20B%20Blok%20%C4%B0%C3%A7%20Kap%C4%B1%20No%3A43%20Kat%3A2%20BB43%20Bornova%20%C4%B0zmir&z=16"
+          data-src="https://www.google.com/maps?output=embed&q=Ege%20%C3%9Cniversitesi%20Kamp%C3%BCs%C3%BC%20Erzene%20Mahallesi%20Ankara%20Caddesi%20No%3A172%2F69%20Ege%20Teknopark%20TGB%20Turkuaz%20B%20Blok%20%C4%B0%C3%A7%20Kap%C4%B1%20No%3A43%20Kat%3A2%20BB43%20Bornova%20%C4%B0zmir&z=16"
           width="100%" height="320" style="border:0; border-radius:20px;"
           allowfullscreen="" loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
           title="VoltGuard Konum - Ege Teknopark, Bornova, İzmir"></iframe>
+        <noscript><iframe
+          src="https://www.google.com/maps?output=embed&q=Ege%20%C3%9Cniversitesi%20Kamp%C3%BCs%C3%BC%20Erzene%20Mahallesi%20Ankara%20Caddesi%20No%3A172%2F69%20Ege%20Teknopark%20TGB%20Turkuaz%20B%20Blok%20%C4%B0%C3%A7%20Kap%C4%B1%20No%3A43%20Kat%3A2%20BB43%20Bornova%20%C4%B0zmir&z=16"
+          width="100%" height="320" style="border:0; border-radius:20px;"
+          allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="VoltGuard Konum - Ege Teknopark, Bornova, İzmir"></iframe></noscript>
       </div>
 
     </div>
@@ -1682,17 +1808,17 @@
   </button>
 
   <!-- Mobile Sticky CTA -->
-  <div class="mobile-cta" id="mobileCta">
+  <nav class="mobile-cta" id="mobileCta" aria-label="Hızlı iletişim">
     <a href="tel:+905454346735" class="mobile-cta__btn mobile-cta__btn--call">
-      <i class="fas fa-phone-alt"></i> Ara
+      <i class="fas fa-phone-alt" aria-hidden="true"></i> Ara
     </a>
-    <a href="https://wa.me/905454346735" class="mobile-cta__btn mobile-cta__btn--wp" target="_blank" rel="noopener noreferrer">
-      <i class="fab fa-whatsapp"></i> WhatsApp
+    <a href="https://wa.me/905454346735?text=Merhaba%2C%20VoltGuard%20web%20sitenizden%20ula%C5%9F%C4%B1yorum." class="mobile-cta__btn mobile-cta__btn--wp" target="_blank" rel="noopener noreferrer">
+      <i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp
     </a>
     <a href="#iletisim" class="mobile-cta__btn mobile-cta__btn--form">
-      <i class="fas fa-paper-plane"></i> Teklif Al
+      <i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al
     </a>
-  </div>
+  </nav>
 
   <!-- ==================== ÇEREZ ONAYI (Cookie Consent) ==================== -->
   <div class="cookie-consent" id="cookieConsent" role="dialog" aria-live="polite" aria-label="Çerez tercihi" hidden>
@@ -1721,15 +1847,17 @@
       document.head.appendChild(script);
     }());
   </script>
-  <script src="js/main.js?v=20261011" defer></script>
+  <script src="js/main.js?v=20261011b" defer></script>
   <noscript>
     <style>
       .preloader { display: none !important; }
       .reveal, .reveal-left, .reveal-right, .reveal-scale { opacity: 1 !important; transform: none !important; }
-      .hero__cursor { display: none; }
+      .hero__title--accent::after { display: none; }
+      .section__header .section__title::after { transform: none !important; }
       .mobile-cta { display: none !important; }
+      .contact__map iframe[data-src] { display: none; }
     </style>
   </noscript>
-  <script src="js/voltguard-auth.js?v=20261011" defer></script>
+  <script src="js/voltguard-auth.js?v=20261011b" defer></script>
 </body>
 </html>

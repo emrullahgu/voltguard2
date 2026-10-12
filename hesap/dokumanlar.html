@@ -40,15 +40,12 @@
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="same-origin">
   <title>Dokümanlarım | VoltGuard Tools</title>
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/style.css?v=20261011">
-  <style>
-    /* Sayfanın ana başlığı h1 olduğu için .vg-section h2 görünümünü birebir uygula. */
-    .vg-section h1 { font-family: var(--font-heading); font-size: 1.2rem; color: var(--clr-dark); margin: 0 0 1rem; display: flex; align-items: center; gap: .55rem; }
-    .vg-section h1 i { color: var(--clr-accent-text); }
-  </style>
+  <link rel="stylesheet" href="../css/vg-account.css?v=20261011">
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -94,34 +91,49 @@
     <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
   </header>
   <!--/vg:header-->
+  <main class="vg-panel vg-acct" id="main" tabindex="-1">
+    <nav class="vg-panel__nav" aria-label="Hesap menüsü" data-vg-acct-nav>
+      <a href="panel.html" data-vg-nav="panel" data-vg-member><i class="fas fa-gauge-high" aria-hidden="true"></i> Panel</a>
+      <a href="gecmis.html" data-vg-nav="gecmis"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Geçmiş Hesaplamalar</a>
+      <a href="favoriler.html" data-vg-nav="favoriler"><i class="fas fa-star" aria-hidden="true"></i> Favori Araçlar</a>
+      <a href="projeler.html" data-vg-nav="projeler" data-vg-member><i class="fas fa-folder-tree" aria-hidden="true"></i> Projeler</a>
+      <a href="dokumanlar.html" data-vg-nav="dokumanlar" data-vg-member><i class="fas fa-book-open" aria-hidden="true"></i> Dokümanlarım</a>
+      <button type="button" class="vg-panel__logout" data-vg-logout data-vg-member><i class="fas fa-arrow-right-from-bracket" aria-hidden="true"></i> Çıkış yap</button>
+      <p class="vg-sync" data-vg-sync role="status" aria-live="polite"></p>
+    </nav>
 
-  <main class="vg-panel" id="main" tabindex="-1">
-    <aside class="vg-panel__nav" aria-label="Hesap menüsü">
-      <a href="panel.html"><i class="fas fa-gauge-high"></i> Panel</a>
-      <a href="gecmis.html"><i class="fas fa-clock-rotate-left"></i> Geçmiş Hesaplamalar</a>
-      <a href="favoriler.html"><i class="fas fa-star"></i> Favori Araçlar</a>
-      <a href="projeler.html"><i class="fas fa-folder-tree"></i> Projeler</a>
-      <a href="dokumanlar.html" class="is-active"><i class="fas fa-book-open"></i> Dokümanlarım</a>
-      <button type="button" class="vg-panel__logout" id="logout-btn"><i class="fas fa-arrow-right-from-bracket"></i> Çıkış yap</button>
-    </aside>
+    <div class="vg-panel__main">
+      <div data-vg-alert class="vg-acct-alert" hidden></div>
+      <section class="vg-section" aria-labelledby="page-title">
+        <h1 id="page-title"><i class="fas fa-bookmark" aria-hidden="true"></i> Kişisel doküman kütüphaneniz</h1>
+        <p class="vg-section__lead">Standartlar, ürün katalogları, yönetmelikler ve veri sayfaları gibi sık başvurduğunuz belgeleri yer imi olarak ekleyin. Yalnızca bağlantı ve not saklanır; dosya yüklenmez.</p>
+        <div data-vg-gate></div>
+        <div data-vg-content hidden>
+          <div id="form-alert" class="vg-acct-alert" hidden style="margin-bottom:1rem"></div>
+          <form id="new-doc" class="vg-inline-form" novalidate>
+            <div class="vg-field">
+              <label for="doc-name">Doküman adı</label>
+              <input id="doc-name" name="name" type="text" maxlength="200" required placeholder="örn. TS HD 60364-4-43">
+            </div>
+            <div class="vg-field">
+              <label for="doc-url">Bağlantı <span class="vg-field__opt">(isteğe bağlı)</span></label>
+              <input id="doc-url" name="url" type="url" maxlength="500" inputmode="url" autocapitalize="none" spellcheck="false" placeholder="https://" aria-describedby="doc-url-hint">
+              <p class="vg-field__hint" id="doc-url-hint">http:// veya https:// ile başlayan tam adres.</p>
+            </div>
+            <button type="submit"><i class="fas fa-plus" aria-hidden="true"></i> Ekle</button>
+            <div class="vg-field vg-span-all">
+              <label for="doc-note">Not <span class="vg-field__opt">(isteğe bağlı)</span></label>
+              <textarea id="doc-note" name="note" maxlength="1000" rows="2"></textarea>
+            </div>
+          </form>
+        </div>
+      </section>
 
-    <section class="vg-panel__main">
-      <div class="vg-section">
-        <h1><i class="fas fa-bookmark"></i> Kişisel doküman kütüphaneniz</h1>
-        <p style="color:var(--clr-text-muted);margin:.35rem 0 1rem">Standartlar, ürün katalogları, TEDAŞ tebliğleri, veri sayfası PDF'leri gibi sık başvurduğunuz belgelere yer imi ekleyin. Sadece bağlantı ve not saklanır; dosya yüklemesi yapılmaz.</p>
-        <form id="new-doc" class="vg-inline-form" novalidate>
-          <input name="name" type="text" placeholder="Doküman adı (örn. TS HD 60364-4-43)" required>
-          <input name="url" type="url" placeholder="Bağlantı URL (opsiyonel)">
-          <button type="submit"><i class="fas fa-plus"></i> Ekle</button>
-          <textarea name="note" placeholder="Kısa not / neden ekledim?"></textarea>
-        </form>
-      </div>
-
-      <div class="vg-section">
-        <h2><i class="fas fa-book-open"></i> Dokümanlar</h2>
+      <section class="vg-section" aria-labelledby="list-title" id="list-section" hidden>
+        <h2 id="list-title" tabindex="-1"><i class="fas fa-book-open" aria-hidden="true"></i> Dokümanlar</h2>
         <div id="docs-list" class="vg-docs-list"></div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
   <!--vg:footer-->
@@ -252,62 +264,94 @@
   </footer>
   <!--/vg:footer-->
 
-  <script src="../js/voltguard-auth.js?v=20261011"></script>
+  <script src="../js/voltguard-auth.js?v=20261011b"></script>
+  <script src="../js/vg-account.js?v=20261011"></script>
   <script>
     (function () {
       'use strict';
       var Auth = window.VG.Auth;
-      var user = Auth.requireAuth('giris.html');
-      if (!user) return;
-
-      document.getElementById('logout-btn').addEventListener('click', function () {
-        if (confirm('Çıkış yapmak istediğinize emin misiniz?')) { Auth.logout(); location.href = '../index.html'; }
-      });
-
+      var UI = window.VG.AccountUI;
+      var esc = UI.esc;
       var list = document.getElementById('docs-list');
       var form = document.getElementById('new-doc');
+      var formAlert = document.getElementById('form-alert');
+      var alertEl = document.querySelector('[data-vg-alert]');
+      var lastSig = '';
+
+      UI.initPage({
+        page: 'dokumanlar',
+        protected: true,
+        collections: ['documents'],
+        onReady: function () {
+          document.getElementById('list-section').hidden = false;
+          render(true);
+        }
+      });
+
+      document.addEventListener('vg:data', function (e) {
+        var c = e.detail && e.detail.collection;
+        if (Auth.isLoggedIn() && (!c || c === 'documents')) render(false);
+      });
 
       form.addEventListener('submit', function (ev) {
         ev.preventDefault();
+        UI.clearAlert(formAlert);
+        var errors = {};
+        var name = form.elements.name.value.trim();
+        var url = form.elements.url.value.trim();
+        if (!name) errors.name = 'Doküman adı gerekli.';
+        if (url && !/^https?:\/\/[^\s]+$/i.test(url)) errors.url = 'Geçerli bir http(s) bağlantısı girin (örn. https://...).';
+        if (Object.keys(errors).length) { UI.showFormError(form, formAlert, { message: 'Lütfen işaretli alanları kontrol edin.' }, errors); return; }
         try {
-          Auth.addDocument(form.name.value, form.url.value, form.note.value);
+          var d = Auth.addDocument(name, url, form.elements.note.value);
+          UI.clearFieldErrors(form);
           form.reset();
-          render();
-        } catch (e) { alert(e.message); }
+          render(true);
+          UI.alertBox(formAlert, 'success', '“' + d.name + '” kütüphanenize eklendi.');
+          form.elements.name.focus();
+        } catch (e) {
+          UI.showFormError(form, formAlert, e, /bağlantı/i.test(e.message || '') ? { url: e.message } : null);
+        }
       });
 
-      function render() {
+      function sig(items) { return JSON.stringify(items, function (k, v) { return k === 'serverAt' ? undefined : v; }); }
+
+      function render(force) {
         var items = Auth.getDocuments();
+        var s = sig(items);
+        if (!force && s === lastSig) return;
+        lastSig = s;
         if (!items.length) {
-          list.innerHTML = '<div class="vg-empty">Henüz doküman eklenmedi. Yukarıdaki formdan ilk yer iminizi ekleyin.</div>';
+          list.innerHTML = '<div class="vg-acct-state"><span class="vg-acct-state__icon" aria-hidden="true"><i class="fas fa-bookmark"></i></span>' +
+            '<h3>Henüz doküman eklenmedi</h3><p>Yukarıdaki formdan ilk yer iminizi ekleyin.</p></div>';
           return;
         }
         list.innerHTML = items.map(function (d) {
-          var when = new Date(d.addedAt).toLocaleDateString('tr-TR');
           var link = Auth.safeHref(d.url);
-          return '<div class="vg-doc-item">'
-            + '<h3><i class="fas fa-bookmark"></i> ' + esc(d.name) + ' <small style="font-weight:400;color:var(--clr-text-muted);font-size:.8rem">' + esc(when) + '</small></h3>'
-            + (d.note ? '<div style="color:var(--clr-text-muted);font-size:.9rem">' + esc(d.note) + '</div>' : '')
-            + '<div class="vg-doc-item__actions">'
-            + (link ? '<a class="vg-mini-btn" href="' + escAttr(link) + '" target="_blank" rel="noopener"><i class="fas fa-arrow-up-right-from-square"></i> Aç</a>' : '')
-            + '<button type="button" class="vg-mini-btn vg-mini-btn--danger" data-delete="' + escAttr(d.id) + '"><i class="fas fa-trash"></i> Sil</button>'
-            + '</div>'
-            + '</div>';
+          return '<article class="vg-doc-item">' +
+            '<h3><i class="fas fa-bookmark" aria-hidden="true" style="color:var(--clr-accent-text)"></i> ' + esc(d.name) + ' <span class="vg-item-meta">' + esc(UI.fmtDate(d.addedAt)) + '</span></h3>' +
+            (d.note ? '<p class="vg-item-note" style="margin:0">' + esc(d.note) + '</p>' : '') +
+            '<div class="vg-doc-item__actions">' +
+            (link ? '<a class="vg-mini-btn" href="' + esc(link) + '" target="_blank" rel="noopener noreferrer"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i> Aç<span class="vg-sr-only">: ' + esc(d.name) + ' (yeni sekmede açılır)</span></a>' : '') +
+            '<button type="button" class="vg-mini-btn vg-mini-btn--danger" data-delete="' + esc(d.id) + '" data-name="' + esc(d.name) + '"><i class="fas fa-trash" aria-hidden="true"></i> Sil<span class="vg-sr-only">: ' + esc(d.name) + '</span></button>' +
+            '</div></article>';
         }).join('');
-        list.querySelectorAll('[data-delete]').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            if (confirm('Bu dokümanı silmek istediğinize emin misiniz?')) {
-              Auth.deleteDocument(btn.getAttribute('data-delete'));
-              render();
-            }
-          });
-        });
       }
 
-      function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
-      function escAttr(s) { return esc(s); }
-
-      render();
+      list.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-delete]');
+        if (!btn) return;
+        var name = btn.getAttribute('data-name');
+        UI.confirmDialog({ title: 'Doküman silinsin mi?', message: '“' + name + '” kütüphanenizden kaldırılacak.', confirmText: 'Sil', danger: true }).then(function (ok) {
+          if (!ok) return;
+          try {
+            Auth.deleteDocument(btn.getAttribute('data-delete'));
+            render(true);
+            UI.alertBox(alertEl, 'success', '“' + name + '” silindi.');
+            document.getElementById('list-title').focus();
+          } catch (err) { UI.alertBox(alertEl, 'error', UI.errorMessage(err), { focus: true }); }
+        });
+      });
     }());
   </script>
 </body>

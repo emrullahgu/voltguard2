@@ -40,15 +40,12 @@
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="same-origin">
   <title>Favori Araçlar | VoltGuard Tools</title>
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/style.css?v=20261011">
-  <style>
-    /* Sayfanın ana başlığı h1 olduğu için .vg-section h2 görünümünü birebir uygula. */
-    .vg-section h1 { font-family: var(--font-heading); font-size: 1.2rem; color: var(--clr-dark); margin: 0 0 1rem; display: flex; align-items: center; gap: .55rem; }
-    .vg-section h1 i { color: var(--clr-accent-text); }
-  </style>
+  <link rel="stylesheet" href="../css/vg-account.css?v=20261011">
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -94,24 +91,35 @@
     <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
   </header>
   <!--/vg:header-->
-
-  <main class="vg-panel" id="main" tabindex="-1">
-    <aside class="vg-panel__nav" aria-label="Hesap menüsü">
-      <a href="panel.html"><i class="fas fa-gauge-high"></i> Panel</a>
-      <a href="gecmis.html"><i class="fas fa-clock-rotate-left"></i> Geçmiş Hesaplamalar</a>
-      <a href="favoriler.html" class="is-active"><i class="fas fa-star"></i> Favori Araçlar</a>
-      <a href="projeler.html"><i class="fas fa-folder-tree"></i> Projeler</a>
-      <a href="dokumanlar.html"><i class="fas fa-book-open"></i> Dokümanlarım</a>
-      <button type="button" class="vg-panel__logout" id="logout-btn"><i class="fas fa-arrow-right-from-bracket"></i> Çıkış yap</button>
-    </aside>
-
-    <section class="vg-panel__main">
-      <div class="vg-section">
-        <h1><i class="fas fa-star"></i> Favori araçlarınız</h1>
-        <p style="color:var(--clr-text-muted);margin:.35rem 0 1rem">Herhangi bir hesaplama sayfasında yıldıza tıklayarak listeye ekleyin. Buradan tek tıkla aracı yeniden açabilirsiniz.</p>
-        <div id="fav-list" class="vg-favorites-list"></div>
+  <main class="vg-panel vg-acct" id="main" tabindex="-1">
+    <nav class="vg-panel__nav" aria-label="Hesap menüsü" data-vg-acct-nav>
+      <a href="panel.html" data-vg-nav="panel" data-vg-member><i class="fas fa-gauge-high" aria-hidden="true"></i> Panel</a>
+      <a href="gecmis.html" data-vg-nav="gecmis"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i> Geçmiş Hesaplamalar</a>
+      <a href="favoriler.html" data-vg-nav="favoriler"><i class="fas fa-star" aria-hidden="true"></i> Favori Araçlar</a>
+      <a href="projeler.html" data-vg-nav="projeler" data-vg-member><i class="fas fa-folder-tree" aria-hidden="true"></i> Projeler</a>
+      <a href="dokumanlar.html" data-vg-nav="dokumanlar" data-vg-member><i class="fas fa-book-open" aria-hidden="true"></i> Dokümanlarım</a>
+      <button type="button" class="vg-panel__logout" data-vg-logout data-vg-member><i class="fas fa-arrow-right-from-bracket" aria-hidden="true"></i> Çıkış yap</button>
+      <div class="vg-acct-nav__guest" data-vg-guest hidden>
+        <p>Giriş yapmadınız. Favorileriniz yalnızca bu tarayıcıda saklanıyor.</p>
+        <a class="vg-btn vg-btn--primary vg-btn--sm" href="giris.html" data-vg-login>Giriş yap</a>
+        <a class="vg-btn vg-btn--ghost vg-btn--sm" href="kayit.html">Ücretsiz üye ol</a>
       </div>
-    </section>
+      <p class="vg-sync" data-vg-sync role="status" aria-live="polite"></p>
+    </nav>
+
+    <div class="vg-panel__main">
+      <section class="vg-section" aria-labelledby="page-title">
+        <h1 id="page-title" tabindex="-1"><i class="fas fa-star" aria-hidden="true"></i> Favori araçlarınız</h1>
+        <p class="vg-section__lead">Herhangi bir hesaplama sayfasında “Favorilere ekle” düğmesine basarak aracı bu listeye ekleyin; buradan tek tıkla yeniden açın.</p>
+        <div data-vg-alert class="vg-acct-alert" hidden></div>
+        <div data-vg-gate></div>
+        <div data-vg-content hidden>
+          <div class="vg-acct-alert vg-acct-alert--info" id="guest-note" role="note" hidden style="margin-bottom:1rem"></div>
+          <p class="vg-count" id="count" role="status" style="margin:0 0 .75rem"></p>
+          <div id="fav-list" class="vg-favorites-list"></div>
+        </div>
+      </section>
+    </div>
   </main>
 
   <!--vg:footer-->
@@ -242,49 +250,73 @@
   </footer>
   <!--/vg:footer-->
 
-  <script src="../js/voltguard-auth.js?v=20261011"></script>
+  <script src="../js/voltguard-auth.js?v=20261011b"></script>
+  <script src="../js/vg-account.js?v=20261011"></script>
   <script>
     (function () {
       'use strict';
       var Auth = window.VG.Auth;
-      var user = Auth.requireAuth('giris.html');
-      if (!user) return;
+      var UI = window.VG.AccountUI;
+      var esc = UI.esc;
+      var list = document.getElementById('fav-list');
+      var alertEl = document.querySelector('[data-vg-alert]');
+      var lastSig = '';
 
-      document.getElementById('logout-btn').addEventListener('click', function () {
-        if (confirm('Çıkış yapmak istediğinize emin misiniz?')) { Auth.logout(); location.href = '../index.html'; }
+      UI.initPage({
+        page: 'favoriler',
+        protected: false,
+        collections: ['favorites'],
+        onReady: function (ctx) {
+          var note = document.getElementById('guest-note');
+          if (!ctx.user) {
+            note.innerHTML = '<i class="fas fa-circle-info" aria-hidden="true"></i><div class="vg-acct-alert__body"><p>Bu liste yalnızca bu tarayıcıda saklanıyor. <a href="' + esc(Auth.loginUrl(location.pathname)) + '">Giriş yapın</a> ya da <a href="kayit.html">ücretsiz üye olun</a>; favorileriniz hesabınıza aktarılır ve tüm cihazlarınızda görünür.</p></div>';
+            note.hidden = false;
+          } else {
+            note.hidden = true;
+          }
+          render(true);
+        }
       });
 
-      var list = document.getElementById('fav-list');
+      document.addEventListener('vg:data', function (e) {
+        if (!e.detail || !e.detail.collection || e.detail.collection === 'favorites') render(false);
+      });
 
-      function render() {
+      function sig(items) { return JSON.stringify(items, function (k, v) { return k === 'serverAt' ? undefined : v; }); }
+
+      function render(force) {
         var items = Auth.getFavorites();
+        var s = sig(items);
+        if (!force && s === lastSig) return;
+        lastSig = s;
+        document.getElementById('count').textContent = items.length ? items.length + ' favori araç' : '';
         if (!items.length) {
-          list.innerHTML = '<div class="vg-empty">Henüz favori aracınız yok. <a href="../hesaplama-araclari/">Hesaplama Merkezi</a>\'nden bir araç açıp yıldıza tıklayın.</div>';
+          list.innerHTML = '<div class="vg-acct-state"><span class="vg-acct-state__icon" aria-hidden="true"><i class="fas fa-star"></i></span>' +
+            '<h2>Henüz favori aracınız yok</h2><p><a class="vg-link" href="/hesaplama-araclari/">Hesap Araçları</a>\'ndan bir araç açın ve “Favorilere ekle” düğmesine basın.</p></div>';
           return;
         }
         list.innerHTML = items.map(function (f) {
-          var when = new Date(f.addedAt).toLocaleDateString('tr-TR');
-          return '<div class="vg-favorite-item">'
-            + '<h3><i class="fas fa-star" style="color:var(--clr-accent-text)"></i> ' + esc(f.toolName) + '</h3>'
-            + '<div class="vg-favorite-item__meta">Eklendi: ' + esc(when) + '</div>'
-            + '<div class="vg-favorite-item__actions">'
-            + '<a class="vg-mini-btn" href="' + escAttr(Auth.safeHref(f.toolUrl) || '#') + '"><i class="fas fa-arrow-up-right-from-square"></i> Aracı aç</a>'
-            + '<button type="button" class="vg-mini-btn vg-mini-btn--danger" data-remove="' + escAttr(f.toolSlug) + '"><i class="fas fa-trash"></i> Kaldır</button>'
-            + '</div>'
-            + '</div>';
+          var link = Auth.safeHref(f.toolUrl);
+          return '<article class="vg-favorite-item">' +
+            '<h3><i class="fas fa-star" style="color:var(--clr-accent-text)" aria-hidden="true"></i> ' + esc(f.toolName) + '</h3>' +
+            '<div class="vg-favorite-item__meta">Eklendi: ' + esc(UI.fmtDate(f.addedAt)) + '</div>' +
+            '<div class="vg-favorite-item__actions">' +
+            (link ? '<a class="vg-mini-btn" href="' + esc(link) + '"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i> Aracı aç<span class="vg-sr-only">: ' + esc(f.toolName) + '</span></a>' : '') +
+            '<button type="button" class="vg-mini-btn vg-mini-btn--danger" data-remove="' + esc(f.toolSlug) + '" data-name="' + esc(f.toolName) + '"><i class="fas fa-trash" aria-hidden="true"></i> Kaldır<span class="vg-sr-only">: ' + esc(f.toolName) + '</span></button>' +
+            '</div></article>';
         }).join('');
-        list.querySelectorAll('[data-remove]').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            try { Auth.toggleFavorite(btn.getAttribute('data-remove'), '', ''); } catch (e) { alert(e.message); }
-            render();
-          });
-        });
       }
 
-      function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
-      function escAttr(s) { return esc(s); }
-
-      render();
+      list.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-remove]');
+        if (!btn) return;
+        try {
+          Auth.toggleFavorite(btn.getAttribute('data-remove'), '', '');
+          render(true);
+          UI.alertBox(alertEl, 'success', '“' + btn.getAttribute('data-name') + '” favorilerden kaldırıldı.');
+          document.getElementById('page-title').focus();
+        } catch (err) { UI.alertBox(alertEl, 'error', UI.errorMessage(err), { focus: true }); }
+      });
     }());
   </script>
 </body>

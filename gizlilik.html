@@ -193,24 +193,63 @@
 
     <h2>2. İşlenen Veriler ve Amaçları</h2>
     <p>
-      Web sitemizde üç tür veri söz konusudur: (a) iletişim formu ve &ldquo;VoltGuard&rsquo;a Sor&rdquo; formu aracılığıyla bizzat ilettiğiniz veriler,
-      (b) siteyi ziyaret ettiğinizde teknik olarak oluşan veriler ve (c) yalnızca kendi tarayıcınızın yerel depolama alanında
-      tutulan veriler (üyelik, hesaplama geçmişi, oyun rekoru).
+      Web sitemizde dört tür veri söz konusudur: (a) iletişim formu ve &ldquo;VoltGuard&rsquo;a Sor&rdquo; formu aracılığıyla bizzat ilettiğiniz veriler,
+      (b) siteyi ziyaret ettiğinizde teknik olarak oluşan veriler, (c) VoltGuard Tools hesabı oluşturursanız hesabınızda saklanan veriler ve
+      (d) yalnızca kendi tarayıcınızın yerel depolama alanında tutulan veriler (çerez tercihi, giriş yapmadan kaydettiğiniz favori ve hesaplamalar, oyun rekoru).
     </p>
     <ul>
       <li><strong>İletişim formu verileri:</strong> ad-soyad, telefon, (varsa) e-posta, seçilen hizmet alanı ve mesaj içeriği. Amaç: talebinizi değerlendirmek ve sizinle iletişime geçmek. Hukuki sebep: açık rızanız (form üzerindeki KVKK onayı) ve meşru menfaat.</li>
       <li><strong>&ldquo;VoltGuard&rsquo;a Sor&rdquo; formu verileri:</strong> ad-soyad, telefon, (varsa) e-posta, konu, ekipman/problem türü ve soru metni; iletişim formuyla aynı altyapı üzerinden bize iletilir. Seçilen sorular cevaplarıyla birlikte &ldquo;VoltGuard&rsquo;a Sor&rdquo; sayfasında kalıcı olarak yayınlanabilir; bu nedenle soru metnine kişisel veya gizli bilgi yazmamanızı rica ederiz.</li>
       <li><strong>Teknik/güvenlik verileri:</strong> IP adresi ve istek bilgileri, form gönderiminin güvenliğini (bot/spam koruması ve hız sınırlaması) sağlamak amacıyla işlenir. IP adresiniz ayrıca talebinizin bize iletildiği bildirim e-postasında yer alır. E-posta iletimi teknik olarak başarısız olursa talebinizin kaybolmaması için form bilgileriniz (ad-soyad, telefon, e-posta, konu ve mesajın ilk bölümü) sunucu hata kaydına yazılabilir.</li>
-      <li><strong>Tarayıcıda yerel olarak saklanan veriler:</strong> VoltGuard Tools üyeliği (ad, e-posta, tuzlanmış parola özeti), hesaplama geçmişi, favoriler, projeler ve dokümanlar ile VoltGame rekorunuz yalnızca kendi tarayıcınızın localStorage alanında tutulur; VoltGuard sunucularına gönderilmez ve üçüncü taraflarla paylaşılmaz. Tarayıcı verilerinizi sildiğinizde bu bilgiler de silinir. Kullanılan anahtarlar aşağıdaki tabloda listelenmiştir.</li>
+      <li><strong>VoltGuard Tools hesabı verileri:</strong> üye olursanız ad-soyad, e-posta, (girerseniz) firma ve telefon bilgileriniz ile hesabınıza kaydettiğiniz hesaplamalar, favoriler, projeler ve doküman yer imleri sunucumuzda saklanır. Ayrıntılar, saklama süresi ve haklarınız aşağıdaki <a href="#hesap-verileri">3. bölümde</a> açıklanmıştır.</li>
+      <li><strong>Tarayıcıda yerel olarak saklanan veriler:</strong> giriş yapmadan kaydettiğiniz favori araçlar ve hesaplamalar ile VoltGame rekorunuz yalnızca kendi tarayıcınızın localStorage alanında tutulur; siz bir hesaba giriş yapıp aktarılmadıkça VoltGuard sunucularına gönderilmez ve üçüncü taraflarla paylaşılmaz. Tarayıcı verilerinizi sildiğinizde bu bilgiler de silinir. Kullanılan anahtarlar aşağıdaki tabloda listelenmiştir.</li>
     </ul>
     <p>
       İletişim ve &ldquo;VoltGuard&rsquo;a Sor&rdquo; formlarıyla ilettiğiniz veriler <strong>üçüncü taraflarla pazarlama amacıyla paylaşılmaz</strong>;
       yalnızca talebinizin karşılanması için kullanılır ve amaç ortadan kalktığında silinir.
     </p>
 
-    <h2>3. Çerezler, Yerel Depolama ve Üçüncü Taraf Hizmetler</h2>
+    <h2 id="hesap-verileri">3. VoltGuard Tools Hesabı</h2>
     <p>
-      Sitemiz kendi adına HTTP çerezi yazmaz; tercihler, üyelik ve oyun verileri tarayıcınızın yerel depolama (localStorage)
+      VoltGuard Tools hesabı isteğe bağlıdır; hesaplama araçlarının tamamı üye olmadan da kullanılabilir. Hesap oluşturduğunuzda
+      aşağıdaki veriler, sözleşmenin kurulması ve ifası (KVKK m.5/2-c) ile hizmetin güvenliğine ilişkin meşru menfaatimiz (KVKK m.5/2-f)
+      hukuki sebeplerine dayanarak işlenir.
+    </p>
+    <ul>
+      <li><strong>Hesap bilgileri:</strong> ad-soyad, e-posta adresi, isteğe bağlı olarak firma ve telefon; kayıt tarihi, son giriş tarihi ve kayıt sırasında onayladığınız aydınlatma metninin sürümü ile onay zamanı.</li>
+      <li><strong>Şifre:</strong> şifreniz düz metin olarak hiçbir yerde saklanmaz; yalnızca geri döndürülemeyen bir özeti (hash) tutulur. VoltGuard çalışanları dahil hiç kimse şifrenizi göremez.</li>
+      <li><strong>Hesabınıza kaydettiğiniz içerik:</strong> hesaplama kayıtları (aracın adı, girdiğiniz değerler, sonuç ve notlarınız), favori araçlar, projeler ve doküman yer imleri (ad, bağlantı, not). Bu içerik yalnızca size gösterilir.</li>
+      <li><strong>Güvenlik kayıtları:</strong> hesabınızı kaba kuvvet denemelerine karşı korumak için başarısız giriş ve şifre sıfırlama denemeleri, IP adresi ve e-posta adresi açık yazılmadan, tek yönlü özetlenmiş anahtarlarla sayılır; bu sayaçlar en geç 24 saat içinde kendiliğinden silinir. Şifre sıfırlama bağlantıları 1 saat geçerlidir, tek kullanımlıktır ve yalnızca özetleri saklanır.</li>
+    </ul>
+    <p>
+      <strong>Nerede saklanır?</strong> Hesap verileriniz, sitemizi barındıran sunucuda, web üzerinden erişime kapalı bir klasörde tutulur.
+      Sunucu ile tarayıcınız arasındaki tüm iletişim HTTPS ile şifrelenir. Hesap verileriniz üçüncü taraflarla paylaşılmaz, satılmaz ve
+      pazarlama amacıyla kullanılmaz. E-posta adresinize yalnızca hesabınızla ilgili işlemler için (şifre sıfırlama bağlantısı ve şifreniz
+      değiştiğinde güvenlik bildirimi) sitemizin sunucusu üzerinden e-posta gönderilir.
+    </p>
+    <p>
+      <strong>Ne kadar süre saklanır?</strong> Hesabınızı silene kadar. Hesabınızı sildiğinizde hesap bilgileriniz ve kaydettiğiniz tüm içerik
+      sistemimizden hemen ve kalıcı olarak silinir; barındırma hizmetinin olağan güvenlik yedeklerinde kalabilecek kopyalar, yedekleme döngüsü
+      içinde kendiliğinden silinir.
+    </p>
+    <p>
+      <strong>Haklarınızı nasıl kullanırsınız?</strong> Giriş yaptıktan sonra <a href="/hesap/panel.html">Hesabım</a> sayfasından
+      profil bilgilerinizi düzeltebilir, <em>&ldquo;Tüm verilerimi indir&rdquo;</em> ile hesabınızdaki tüm verileri makinece okunabilir bir JSON
+      dosyası olarak indirebilir ve <em>&ldquo;Hesabımı sil&rdquo;</em> ile hesabınızı ve tüm kayıtlarınızı kalıcı olarak silebilirsiniz.
+      Giriş yapamıyorsanız <a href="/hesap/sifre-sifirla.html">şifre sıfırlama</a> sayfasını kullanabilir veya talebinizi
+      <a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a> adresine iletebilirsiniz.
+    </p>
+    <p>
+      <strong>Çerez ve tarayıcı depolaması:</strong> giriş yaptığınızda yalnızca zorunlu oturum çerezi <code>VGSESS</code> kullanılır
+      (aşağıdaki tabloya bakın). Eski sürümde hesaplar yalnızca tarayıcıda tutuluyordu; bu tarayıcıda eski hesaptan kalan kayıtlar varsa
+      bunları yeni hesabınıza taşımanız veya silmeniz için size seçenek sunulur. Eski şifre özetleri hiçbir zaman sunucuya gönderilmez ve
+      taşıma ya da silme sonrasında tarayıcınızdan kaldırılır.
+    </p>
+
+    <h2>4. Çerezler, Yerel Depolama ve Üçüncü Taraf Hizmetler</h2>
+    <p>
+      Sitemiz kendi adına yalnızca bir HTTP çerezi kullanır: VoltGuard Tools hesabınıza giriş yaptığınızda oturumunuzu açık tutan zorunlu
+      <code>VGSESS</code> çerezi. Tercihler, giriş yapmadan kaydettiğiniz araç verileri ve oyun verileri tarayıcınızın yerel depolama (localStorage)
       alanında tutulur. Site, aşağıdaki teknolojileri kullanır. <strong>Zorunlu</strong> ve <strong>teknik</strong> olanlar sitenin
       çalışması ve güvenliği için gereklidir; <strong>opsiyonel</strong> olanlar yalnızca çerez bildiriminde
       <em>&ldquo;Kabul Et&rdquo;</em> seçeneğini işaretlemeniz (Apollo.io) ya da ilgili özelliği kullanmanız (üyelik, oyun) hâlinde devreye girer.
@@ -236,10 +275,16 @@
           <td><span class="tag tag--req">Zorunlu</span></td>
         </tr>
         <tr>
-          <td>Yerel depolama: VoltGuard Tools üyeliği</td>
-          <td><code>vg_users_v1</code> (ad, e-posta, tuzlanmış parola özeti), <code>vg_session_v1</code> (oturum), <code>vg_history_v1</code>, <code>vg_favorites_v1</code>, <code>vg_projects_v1</code>, <code>vg_documents_v1</code> (hesaplama geçmişi, favoriler, projeler, dokümanlar). Yalnızca tarayıcınızda saklanır, sunucularımıza gönderilmez.</td>
+          <td>Oturum çerezi: <code>VGSESS</code></td>
+          <td>VoltGuard Tools hesabınıza giriş yaptığınızda oturumunuzu tanır. Rastgele bir oturum kimliği içerir; JavaScript ile okunamaz (HttpOnly), yalnızca HTTPS üzerinden gönderilir (Secure) ve başka sitelerden gelen isteklerle paylaşılmaz (SameSite=Lax). Tarayıcıyı kapattığınızda silinir; &ldquo;Beni hatırla&rdquo; seçeneğini işaretlerseniz en fazla 30 gün saklanır. Uzun süre işlem yapılmazsa oturum sunucuda kendiliğinden kapanır; çıkış yaptığınızda silinir.</td>
+          <td>VoltGuard (birinci taraf)</td>
+          <td><span class="tag tag--req">Zorunlu &mdash; giriş yaparsanız</span></td>
+        </tr>
+        <tr>
+          <td>Yerel depolama: VoltGuard Tools</td>
+          <td><code>vg_guest_favorites_v1</code>, <code>vg_guest_history_v1</code> (giriş yapmadan kaydettiğiniz favori araçlar ve hesaplamalar; giriş yaptığınızda hesabınıza aktarılır ve tarayıcıdan silinir), <code>vg_auth_hint_v1</code> (yalnızca bu tarayıcıda oturum açıldığını gösteren işaret; kişisel veri içermez), <code>vg_legacy_state_v1</code> (eski sürüm kayıtları için verdiğiniz karar). Sekme belleğinde (sessionStorage) <code>vg_acct_cache_v1</code>: hesabınızdaki verilerin sayfalar arasında hızlı gösterimi için sekmeye özel geçici kopya; sekmeyi kapattığınızda veya çıkış yaptığınızda silinir. Eski sürümden kalabilecek <code>vg_users_v1</code>, <code>vg_session_v1</code>, <code>vg_history_v1</code>, <code>vg_favorites_v1</code>, <code>vg_projects_v1</code>, <code>vg_documents_v1</code> anahtarları, kayıtlar hesabınıza taşındığında veya silmeyi seçtiğinizde kaldırılır.</td>
           <td>Tarayıcınız</td>
-          <td><span class="tag tag--opt">Opsiyonel &mdash; üyelik oluşturursanız</span></td>
+          <td><span class="tag tag--opt">Opsiyonel &mdash; araçları kullanırsanız</span></td>
         </tr>
         <tr>
           <td>Yerel depolama: VoltGame</td>
@@ -286,14 +331,14 @@
       Apollo.io&rsquo;ya gönderilmez.
     </div>
 
-    <h2>4. Onay Yönetimi</h2>
+    <h2>5. Onay Yönetimi</h2>
     <p>
       Çerez tercihinizi istediğiniz zaman değiştirebilirsiniz. Aşağıdaki düğme, kayıtlı çerez tercihinizi sıfırlar;
       ana sayfaya döndüğünüzde çerez bildirimi yeniden gösterilir ve yeni bir seçim yapabilirsiniz.
     </p>
     <button type="button" class="consent-reset" id="consentReset">Çerez tercihimi sıfırla</button>
 
-    <h2>5. KVKK Kapsamındaki Haklarınız</h2>
+    <h2>6. KVKK Kapsamındaki Haklarınız</h2>
     <p>KVKK&rsquo;nın 11. maddesi uyarınca veri sorumlusuna başvurarak şu haklara sahipsiniz:</p>
     <ul>
       <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme ve buna ilişkin bilgi talep etme,</li>
@@ -302,7 +347,9 @@
       <li>İşlemeye verdiğiniz açık rızayı geri çekme.</li>
     </ul>
     <p>
-      Taleplerinizi <a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a> adresine iletebilirsiniz.
+      Taleplerinizi <a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a> adresine iletebilirsiniz. VoltGuard Tools hesabınızdaki
+      verileri ayrıca <a href="/hesap/panel.html">Hesabım</a> sayfasından kendiniz indirebilir, düzeltebilir veya silebilirsiniz
+      (<a href="#hesap-verileri">3. bölüm</a>).
     </p>
   </main>
 
@@ -448,6 +495,6 @@
       }
     })();
   </script>
-  <script src="js/voltguard-auth.js?v=20261011" defer></script>
+  <script src="js/voltguard-auth.js?v=20261011b" defer></script>
 </body>
 </html>

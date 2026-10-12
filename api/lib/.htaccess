@@ -1,0 +1,9 @@
+# api/lib: yalnizca auth.php tarafindan require edilen kod. Web uzerinden asla calistirilmaz/sunulmaz.
+# (Kok .htaccess bu klasoru zaten 403 ile kapatir; bu dosya mod_rewrite olmayan sunucular icin ek emniyettir.)
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+</IfModule>
