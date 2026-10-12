@@ -45,6 +45,9 @@ interface VgStore
     public function deleteResetTokens(string $uid): void;
 }
 
+/* "Oturumunuz sona erdi. Lutfen yeniden giris yapin." (dosya ASCII kalsin diye kacisli) */
+const VG_MSG_SESSION_GONE = "Oturumunuz sona erdi. L\u{fc}tfen yeniden giri\u{15f} yap\u{131}n.";
+
 const VG_USER_FIELDS = ['id', 'email', 'name', 'company', 'phone', 'pass', 'epoch', 'consent_at', 'consent_ver', 'created_at', 'updated_at', 'last_login_at'];
 const VG_USER_INT_FIELDS = ['epoch', 'consent_at', 'created_at', 'updated_at', 'last_login_at'];
 
@@ -83,6 +86,8 @@ final class VgSqliteStore implements VgStore
         }
         $this->pdo->exec('PRAGMA busy_timeout = 5000');
         $this->pdo->exec('PRAGMA foreign_keys = ON');
+        /* Silinen/guncellenen kayitlarin eski baytlari dosyada (freelist) kalmasin; baglanti basina ayardir. */
+        $this->pdo->exec('PRAGMA secure_delete = ON');
         $this->migrate();
     }
 
@@ -220,6 +225,16 @@ final class VgSqliteStore implements VgStore
             $this->rollback();
             throw $e;
         }
+        /*
+         * Silme islendi; VACUUM dosyayi yeniden yazarak eski silmelerden/guncellemelerden kalan artiklari da temizler.
+         * Basarisizlik (SQLITE_BUSY vb.) silmeyi geri almaz; yok sayilir (secure_delete zaten yeni artik birakmaz).
+         * Not: WAL kipine gecilirse burada PRAGMA wal_checkpoint(TRUNCATE) da calistirilmali.
+         */
+        try {
+            $this->pdo->exec('VACUUM');
+        } catch (Throwable $e) {
+            /* yok say */
+        }
     }
 
     private function readCollection(string $uid, string $coll): array
@@ -263,6 +278,10 @@ final class VgSqliteStore implements VgStore
             return $new;
         } catch (Throwable $e) {
             $this->rollback();
+            if ($e instanceof PDOException && ((string)$e->getCode() === '23000' || stripos($e->getMessage(), 'FOREIGN KEY') !== false)) {
+                /* Hesap bu istekle eszamanli silinmis (FK ihlali): 500 yerine oturum sona erdi. */
+                throw new VgHttpError(401, 'unauthorized', VG_MSG_SESSION_GONE);
+            }
             throw $e;
         }
     }
@@ -558,6 +577,10 @@ final class VgJsonStore implements VgStore
             throw new RuntimeException('json store: invalid user id');
         }
         return $this->locked(true, function () use ($uid, $coll, $fn) {
+            /* Hesap, kimlik dogrulamasiyla bu kilit arasinda silinmis olabilir: veri klasorunu yetim olarak yeniden yaratma. */
+            if (!is_file($this->userFile($uid))) {
+                throw new VgHttpError(401, 'unauthorized', VG_MSG_SESSION_GONE);
+            }
             $state = $this->readCollection($uid, $coll);
             $items = array_values($fn($state));
             $new = ['items' => $items, 'rev' => $state['rev'] + 1, 'updatedAt' => vg_now()];

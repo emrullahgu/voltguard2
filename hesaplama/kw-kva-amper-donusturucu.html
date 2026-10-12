@@ -13,7 +13,7 @@
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
   <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
   <script type="speculationrules">
   {
     "prerender": [
@@ -36,7 +36,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012b" defer></script>
+  <script src="/js/vg-shell.js?v=20261012d" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -54,7 +54,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261012b">
+  <link rel="stylesheet" href="/css/style.css?v=20261012d">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/kw-kva-amper-donusturucu/#article","headline":"kW - kVA - Amper Dönüşüm Aracı ve Formülleri","description":"kW - kVA - Amper dönüşüm aracı: güç, güç faktörü ve gerilime göre üç birim arasında anında dönüşüm yapar. Formül, örnekler ve hazır tablo.","image":"https://voltguard.com.tr/public/og-image.png","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/kw-kva-amper-donusturucu/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"kW - kVA - Amper Dönüşümü","item":"https://voltguard.com.tr/hesaplama/kw-kva-amper-donusturucu/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"kW ve kVA arasındaki fark nedir?","acceptedAnswer":{"@type":"Answer","text":"kW aktif gücü, kVA görünür gücü ifade eder. Aralarındaki oran güç faktörüdür: kW = kVA × cosφ. Trafo, jeneratör ve UPS gibi ekipmanlar kVA cinsinden boyutlandırılır."}},{"@type":"Question","name":"Amperden kVA nasıl bulunur?","acceptedAnswer":{"@type":"Answer","text":"Üç fazlı sistemde S (kVA) = √3 × U × I ÷ 1000; tek fazda S = U × I ÷ 1000 kullanılır."}},{"@type":"Question","name":"Jeneratör kaç kVA seçilmeli?","acceptedAnswer":{"@type":"Answer","text":"Toplam kW yükü ortalama cosφ = 0,8 kabulüyle kVA'ya çevrilir, motor kalkışı ve %20-25 yedek eklenerek seçim yapılır."}}]}]}</script>
 </head>
 <body class="doc-shell">
@@ -75,7 +75,7 @@
         <ul class="vg-nav__list">
           <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
-          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
           <li class="vg-dd" data-vg-dd>
             <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
             <ul class="vg-dd__menu" id="vgDdKaynaklar">
@@ -325,11 +325,37 @@
   <script>
     (function () {
       'use strict';
+      function num(id) {
+        var raw = String(document.getElementById(id).value).trim();
+        if (raw === '') return NaN;
+        var n = Number(raw);
+        return isFinite(n) ? n : NaN;
+      }
+      // Alanı min/max niteliklerine göre doğrular; geçersizse ilk hatayı err.msg'ye yazar (değer sessizce değiştirilmez).
+      function field(id, err, opts) {
+        var el = document.getElementById(id);
+        var v = num(id);
+        var mn = el.min !== '' ? Number(el.min) : null;
+        var mx = el.max !== '' ? Number(el.max) : null;
+        var positive = opts && opts.positive, integer = opts && opts.integer;
+        var bad = isNaN(v) || (mn !== null && v < mn) || (mx !== null && v > mx) || (positive && !(v > 0)) || (integer && !Number.isInteger(v));
+        if (bad && !err.msg) {
+          var f = function (n) { return n.toLocaleString('tr-TR', { maximumFractionDigits: 2 }); };
+          var label = document.querySelector('label[for="' + id + '"]').textContent;
+          if (mn !== null && mx !== null) err.msg = label + ' ' + f(mn) + '–' + f(mx) + ' aralığında olmalı';
+          else if (mn !== null && !(positive && mn <= 0)) err.msg = label + ' en az ' + f(mn) + ' olmalı';
+          else err.msg = label + ' sıfırdan büyük olmalı';
+          err.msg += integer ? ' (tam sayı).' : '.';
+        }
+        return v;
+      }
       function update() {
-        var val = Math.max(0, Number(document.getElementById('kk-input').value) || 0);
+        var err = {};
+        var val = field('kk-input', err, { positive: true });
         var unit = document.getElementById('kk-unit').value;
         var u = Number(document.getElementById('kk-voltage').value);
-        var cos = Math.min(1, Math.max(0.5, Number(document.getElementById('kk-cos').value) || 0.85));
+        var cos = field('kk-cos', err);
+        if (err.msg) { document.getElementById('kk-result').textContent = '-'; document.getElementById('kk-detail').textContent = err.msg; return; }
         var isThreePhase = u === 400;
         var factor = isThreePhase ? Math.sqrt(3) * u : u;
         var kw, kva, amp;
@@ -345,5 +371,5 @@
     }());
   </script>
   <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
-  <script src="/js/voltguard-tools.js?v=20261012c"></script>
+  <script src="/js/voltguard-tools.js?v=20261012d"></script>
 </body></html>

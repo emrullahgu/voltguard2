@@ -12,7 +12,7 @@
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
   <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012b" defer></script>
+  <script src="/js/vg-shell.js?v=20261012d" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <!-- LCP: hero arka planı (ön-bulanıklaştırılmış, opaklık .18). imagesrcset/imagesizes, .hero__bg-img görselinin
@@ -75,7 +75,7 @@
   <link rel="apple-touch-icon" href="public/apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
   <!-- Sayfalar arası önden yükleme vg:head içindeki speculation rules ile yapılır (eski <link rel=prefetch> etiketleri kaldırıldı). -->
-  <link rel="stylesheet" href="css/style.css?v=20261012b">
+  <link rel="stylesheet" href="css/style.css?v=20261012d">
   <link rel="stylesheet" href="css/home.css?v=20261012b">
   <!-- Ön yükleyici oturum başına yalnızca bir kez gösterilir (css/home.css: .vg-pl-skip). -->
   <script>try{if(sessionStorage.getItem('vg_pl'))document.documentElement.classList.add('vg-pl-skip');else sessionStorage.setItem('vg_pl','1')}catch(e){}</script>
@@ -471,7 +471,7 @@
         <ul class="vg-nav__list">
           <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
-          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
           <li class="vg-dd" data-vg-dd>
             <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
             <ul class="vg-dd__menu" id="vgDdKaynaklar">
@@ -1158,7 +1158,9 @@
 
         <article class="news-card reveal" data-delay="2">
           <div class="news-card__media">
-            <video data-src="public/opt/ekip-guclu-durmak-yok-yola-devam.mp4" data-poster="public/opt/ekip-guclu-durmak-yok-yola-devam-poster.webp" width="478" height="850" autoplay muted loop playsinline preload="none" aria-hidden="true" data-lazy-video></video>
+            <video data-poster="public/opt/ekip-guclu-durmak-yok-yola-devam-poster.webp" width="478" height="850" autoplay muted loop playsinline preload="none" aria-hidden="true" data-lazy-video>
+              <source data-src="public/opt/ekip-guclu-durmak-yok-yola-devam.mp4" data-src-sm="public/opt/ekip-guclu-durmak-yok-yola-devam-sm.mp4" type="video/mp4">
+            </video>
             <noscript><img src="public/opt/ekip-guclu-durmak-yok-yola-devam-poster.webp" width="478" height="850" alt="" loading="lazy" decoding="async"></noscript>
             <span class="news-card__cat">Ekip</span>
           </div>
@@ -2148,7 +2150,7 @@
       document.head.appendChild(script);
     }());
   </script>
-  <script src="js/main.js?v=20261012b" defer></script>
+  <script src="js/main.js?v=20261012d" defer></script>
   <noscript>
     <style>
       .preloader { display: none !important; }

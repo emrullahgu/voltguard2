@@ -13,7 +13,7 @@
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
   <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
   <script type="speculationrules">
   {
     "prerender": [
@@ -36,7 +36,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012b" defer></script>
+  <script src="/js/vg-shell.js?v=20261012d" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -54,7 +54,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261012b">
+  <link rel="stylesheet" href="/css/style.css?v=20261012d">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/inverter-dc-ac-kablo-secimi/#article","headline":"İnverter DC / AC Kablo Kesiti Seçim Aracı","description":"GES inverter DC ve AC kablo kesiti seçim aracı: inverter gücü, DC/AC gerilim ve hat mesafesine göre önerilen bakır kesit ve gerilim düşümü.","image":"https://voltguard.com.tr/public/og-image.png","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","articleSection":"GES","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/inverter-dc-ac-kablo-secimi/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"İnverter DC/AC Kablo Seçimi","item":"https://voltguard.com.tr/hesaplama/inverter-dc-ac-kablo-secimi/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"GES DC kablosu (solar kablo) nasıl seçilir?","acceptedAnswer":{"@type":"Answer","text":"TÜV/EN 50618 sertifikalı H1Z2Z2-K solar kablo kullanılır. Kesit; string Isc × 1,25 akımını taşıyacak Iz ve %1'in altında gerilim düşümü kriterlerine göre seçilir."}},{"@type":"Question","name":"AC kablosu inverter için nasıl seçilir?","acceptedAnswer":{"@type":"Answer","text":"Nominal AC akımı 1,25 katıyla karşılanır ve %1,5-2 gerilim düşümü hedeflenir. 400 V üç faz için bakır iletken tercih edilir."}},{"@type":"Question","name":"MPPT string akımı ne anlama gelir?","acceptedAnswer":{"@type":"Answer","text":"Her string, panellerin seri bağlanmasıyla oluşur; akım tek panelin akımına eşit (~12-14 A) kalır. MPPT girişi bu akımı karşılar, kablo tek stringin Isc değerine göre boyutlandırılır."}}]}]}</script>
 </head>
 <body class="doc-shell">
@@ -75,7 +75,7 @@
         <ul class="vg-nav__list">
           <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
-          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
           <li class="vg-dd" data-vg-dd>
             <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
             <ul class="vg-dd__menu" id="vgDdKaynaklar">
@@ -117,7 +117,7 @@
         <div class="mini-calc__field"><label for="in-acv">AC gerilim (V)</label><select id="in-acv"><option value="400" selected>400 V (üç faz)</option><option value="230">230 V (tek faz)</option></select></div>
         <div class="mini-calc__field"><label for="in-aclen">AC hat uzunluğu (m)</label><input id="in-aclen" type="number" min="1" value="60" inputmode="decimal"></div>
         <div class="mini-calc__field"><label for="in-dcv">DC gerilim (V)</label><input id="in-dcv" type="number" min="100" max="1500" value="600" inputmode="decimal"></div>
-        <div class="mini-calc__field"><label for="in-strings">Paralel string sayısı</label><input id="in-strings" type="number" min="1" value="4" inputmode="decimal"></div>
+        <div class="mini-calc__field"><label for="in-strings">Paralel string sayısı</label><input id="in-strings" type="number" min="1" step="1" value="4" inputmode="decimal"></div>
         <div class="mini-calc__field"><label for="in-dclen">DC hat uzunluğu (m)</label><input id="in-dclen" type="number" min="1" value="40" inputmode="decimal"></div>
       </div>
       <div class="mini-calc__result" role="status" aria-live="polite">
@@ -313,7 +313,7 @@
       var RHO = 0.0175;
       // Iz (A): bakır, PVC, 30 °C, kanal/boru içi (Yöntem B1).
       // AMP2: 2 yüklü iletken (DC hat ve tek faz AC). AMP3: 3 yüklü iletken (üç faz AC), bilgi/kablo-kesiti-akim-tasima-tablosu.html ile aynı.
-      var AMP2 = {'1.5':18,'2.5':24,'4':32,'6':41,'10':57,'16':76,'25':101,'35':125,'50':151,'70':192,'95':232,'120':269,'150':309,'185':353,'240':415};
+      var AMP2 = {'1.5':17.5,'2.5':24,'4':32,'6':41,'10':57,'16':76,'25':101,'35':125,'50':151,'70':192,'95':232,'120':269,'150':300,'185':341,'240':400};
       var AMP3 = {'1.5':15.5,'2.5':21,'4':28,'6':36,'10':50,'16':68,'25':89,'35':110,'50':134,'70':171,'95':207,'120':239,'150':262,'185':296,'240':346};
       function fmt(n, d) { return n.toLocaleString('tr-TR', { maximumFractionDigits: d }); }
       // Uygun kesit bulunamazsa sec = null döner (tek kablo yetersiz).
@@ -329,13 +329,39 @@
         }
         return { sec: null, drop: null };
       }
+      function num(id) {
+        var raw = String(document.getElementById(id).value).trim();
+        if (raw === '') return NaN;
+        var n = Number(raw);
+        return isFinite(n) ? n : NaN;
+      }
+      // Alanı min/max niteliklerine göre doğrular; geçersizse ilk hatayı err.msg'ye yazar (değer sessizce değiştirilmez).
+      function field(id, err, opts) {
+        var el = document.getElementById(id);
+        var v = num(id);
+        var mn = el.min !== '' ? Number(el.min) : null;
+        var mx = el.max !== '' ? Number(el.max) : null;
+        var positive = opts && opts.positive, integer = opts && opts.integer;
+        var bad = isNaN(v) || (mn !== null && v < mn) || (mx !== null && v > mx) || (positive && !(v > 0)) || (integer && !Number.isInteger(v));
+        if (bad && !err.msg) {
+          var f = function (n) { return n.toLocaleString('tr-TR', { maximumFractionDigits: 2 }); };
+          var label = document.querySelector('label[for="' + id + '"]').textContent;
+          if (mn !== null && mx !== null) err.msg = label + ' ' + f(mn) + '–' + f(mx) + ' aralığında olmalı';
+          else if (mn !== null && !(positive && mn <= 0)) err.msg = label + ' en az ' + f(mn) + ' olmalı';
+          else err.msg = label + ' sıfırdan büyük olmalı';
+          err.msg += integer ? ' (tam sayı).' : '.';
+        }
+        return v;
+      }
       function update() {
-        var p = Math.max(1, Number(document.getElementById('in-power').value) || 1);
+        var err = {};
+        var p = field('in-power', err);
         var uac = Number(document.getElementById('in-acv').value);
-        var lac = Math.max(1, Number(document.getElementById('in-aclen').value) || 60);
-        var udc = Math.max(100, Number(document.getElementById('in-dcv').value) || 600);
-        var str = Math.max(1, Number(document.getElementById('in-strings').value) || 4);
-        var ldc = Math.max(1, Number(document.getElementById('in-dclen').value) || 40);
+        var lac = field('in-aclen', err);
+        var udc = field('in-dcv', err);
+        var str = field('in-strings', err, { integer: true });
+        var ldc = field('in-dclen', err);
+        if (err.msg) { document.getElementById('in-result').textContent = '-'; document.getElementById('in-detail').textContent = err.msg; return; }
         var isThreePhase = uac === 400;
         var iAc = isThreePhase ? (p * 1000) / (Math.sqrt(3) * uac * 0.99) : (p * 1000) / (uac * 0.99);
         var iDcStr = 14;
@@ -355,5 +381,5 @@
     }());
   </script>
   <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
-  <script src="/js/voltguard-tools.js?v=20261012c"></script>
+  <script src="/js/voltguard-tools.js?v=20261012d"></script>
 </body></html>

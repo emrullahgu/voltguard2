@@ -124,6 +124,7 @@
     if (v.length < 2) return 'Ad soyad en az 2 karakter olmalı.';
     if (v.length > 80) return 'Ad soyad en fazla 80 karakter olabilir.';
     if (!/\p{L}/u.test(v)) return 'Lütfen geçerli bir ad soyad girin.';
+    if (/[:\/@<>\\]/.test(v)) return 'Ad soyad alanında : / @ < > \\ karakterleri kullanılamaz.';
     return '';
   }
 

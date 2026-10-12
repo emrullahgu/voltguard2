@@ -382,8 +382,14 @@
     return false;
   }
 
-  function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
+  /* contact.php FILTER_VALIDATE_EMAIL kullanır: yalnızca ASCII adresler, ardışık nokta yok, en az 2 harfli TLD
+     (js/factory.js isValidEmail ile aynı kural) */
+  function isValidEmail(m) {
+    m = String(m);
+    if (m.length > 120 || m.indexOf('..') > -1) return false;
+    if (!/^[A-Za-z0-9.!#$%&'*+\/=?^_`{|}~-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+$/.test(m)) return false;
+    var local = m.split('@')[0];
+    return local.charAt(0) !== '.' && local.charAt(local.length - 1) !== '.' && /\.[A-Za-z]{2,}$/.test(m);
   }
 
   var syncCounter = function () {};
@@ -531,6 +537,8 @@
       phoneInput.addEventListener('input', function () {
         var hasPlus = /^\s*\+/.test(this.value);
         var digits = this.value.replace(/\D/g, '');
+        /* Henüz rakam yoksa (ya da yalnızca "+9" yazıldıysa) baştaki "+" korunsun */
+        if (!digits || (hasPlus && digits === '9')) { this.value = (hasPlus ? '+' : '') + digits; return; }
         var formatted;
         if (digits.slice(0, 2) === '90') {
           /* Uluslararası 90… biçimi: 12 haneye kadar koru (validator/sunucu kabul ediyor). */
@@ -629,7 +637,16 @@
         })
         .then(function (result) {
           if (!result.ok || !result.data || !result.data.success) {
-            throw new Error(result.data && result.data.message ? result.data.message : 'Gönderim başarısız oldu.');
+            var srvMsg = result.data && result.data.message ? result.data.message : 'Gönderim başarısız oldu.';
+            /* Sunucu e-postayı reddettiyse alanı işaretle ve odakla */
+            if (/e-posta/i.test(srvMsg)) {
+              var emailEl = qs('#email', contactForm);
+              if (emailEl) {
+                setFieldError(emailEl, srvMsg);
+                try { emailEl.focus({ preventScroll: false }); } catch (err) { emailEl.focus(); }
+              }
+            }
+            throw new Error(srvMsg);
           }
 
           showNotification(
@@ -1285,14 +1302,7 @@
     }
   })();
 
-  /* ------------------------------------------------
-     18. SERVICE WORKER — offline destek (ağ-öncelikli, bayat içerik servis etmez)
-  ------------------------------------------------- */
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js').catch(function () { /* no-op */ });
-    });
-  }
+  /* 18. SERVICE WORKER — kayıt artık js/vg-shell.js içinde (tüm sayfalarda) yapılır. */
 
   /* ------------------------------------------------
      19. LAZY VIDEO + POSTER

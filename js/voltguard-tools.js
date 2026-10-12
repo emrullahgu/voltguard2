@@ -175,7 +175,7 @@
     var disclaimer = doc.splitTextToSize(pdfText('Bu çıktı ön değerlendirmedir; nihai proje için yetkili mühendislik doğrulaması gerekir.'), width);
     doc.text(disclaimer, margin, y); y += disclaimer.length * 4.5;
     doc.text(pdfText('Kaynak: ' + toolUrl()), margin, y); y += 4.5;
-    doc.text('voltguard.com.tr | +90545 434 67 35 | info@voltguard.com.tr', margin, y);
+    doc.text('voltguard.com.tr | +90 545 434 67 35 | info@voltguard.com.tr', margin, y);
     var safeName = pdfSlug(title).slice(0, 60).replace(/-+$/, '') || 'tools';
     doc.save('voltguard-' + safeName + '.pdf');
   }

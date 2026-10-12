@@ -54,7 +54,7 @@ Diğer uzmanlık alanları:
 ## Bilgi Bankası (uzman rehber içerikler)
 VoltGuard mühendislerinin hazırladığı, mevzuata dayalı özgün rehberler:
 - [Bilgi Bankası (tüm konular)](https://voltguard.com.tr/bilgi-bankasi.html)
-- [Mevzuat & Standartlar Kütüphanesi (27 belge özeti)](https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html)
+- [Mevzuat & Standartlar Kütüphanesi (29 belge özeti)](https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html)
 - [Topraklama Tesisatı ve Periyodik Kontrolü](https://voltguard.com.tr/bilgi/topraklama.html)
 - [Yıldırımdan Korunma (Paratoner) Sistemleri](https://voltguard.com.tr/bilgi/yildirimdan-korunma.html)
 - [Yüksek Gerilim Tesisleri İşletme Sorumluluğu](https://voltguard.com.tr/bilgi/yuksek-gerilim-isletme-sorumlulugu.html)

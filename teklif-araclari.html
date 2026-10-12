@@ -16,7 +16,7 @@
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
   <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
   <script type="speculationrules">
   {
     "prerender": [
@@ -39,7 +39,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012b" defer></script>
+  <script src="/js/vg-shell.js?v=20261012d" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <link rel="canonical" href="https://voltguard.com.tr/hesaplama-araclari/">
@@ -53,11 +53,12 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Elektrik Hesaplama Araçları (17 Ücretsiz Araç) | VoltGuard">
   <meta name="twitter:description" content="Kablo kesiti, gerilim düşümü, sigorta/TMŞ, kompanzasyon, reaktif ceza, kısa devre, GES ve trafo işletme sorumluluğu ücreti için ücretsiz hesaplama araçları.">
+  <meta name="twitter:image" content="https://voltguard.com.tr/public/og-image.png">
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="public/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/style.css?v=20261012b">
-  <script src="/js/calculator-config.js?v=20261012"></script>
+  <link rel="stylesheet" href="css/style.css?v=20261012d">
+  <script src="/js/calculator-config.js?v=20261012d"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -295,7 +296,7 @@
         <ul class="vg-nav__list">
           <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
-          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
           <li class="vg-dd" data-vg-dd>
             <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
             <ul class="vg-dd__menu" id="vgDdKaynaklar">
@@ -620,7 +621,13 @@
           ['ges-production', 'ges-coverage', 'ges-savings', 'ges-equipment'].forEach(function (id) { document.getElementById(id).textContent = ''; });
           return;
         }
-        var targetPower = annualConsumption ? annualConsumption * getValue('ges-day-ratio', 0.8) / productionPerKwp : 1;
+        if (!(annualConsumption > 0)) {
+          document.getElementById('ges-amount').textContent = '-';
+          document.getElementById('ges-detail').textContent = 'Aylık tüketim veya fatura tutarı ile birim bedel girin.';
+          ['ges-production', 'ges-coverage', 'ges-savings', 'ges-equipment'].forEach(function (id) { document.getElementById(id).textContent = ''; });
+          return;
+        }
+        var targetPower = annualConsumption * getValue('ges-day-ratio', 0.8) / productionPerKwp;
         var areaPower = area / areaPerKwp;
         var power = Math.max(1, Math.round(Math.min(targetPower, areaPower)));
         var production = Math.round(power * productionPerKwp * pricing.performanceRatio);
@@ -1081,13 +1088,13 @@
           doc.text(doc.splitTextToSize(toPdfText('Bu belge bağlayıcı teklif değildir. Kesin bedel; yerinde keşif, yürürlükteki EMO düzenlemeleri, ilgili TEDAŞ teknik gereklilikleri ve piyasa koşullarıyla belirlenir.'), 180), 15, y + 8);
           doc.setTextColor(10, 22, 40);
           doc.setFontSize(10);
-          doc.text('voltguard.com.tr | +90545 434 67 35 | info@voltguard.com.tr', 15, 280);
+          doc.text('voltguard.com.tr | +90 545 434 67 35 | info@voltguard.com.tr', 15, 280);
           doc.save('voltguard-' + toPdfSlug(title) + '-on-degerlendirme.pdf');
       };
       updates.forEach(function (update) { update(); });
     }());
   </script>
   <script src="js/voltguard-auth.js?v=20261012b" defer></script>
-  <script src="js/voltguard-tools.js?v=20261012c" defer></script>
+  <script src="js/voltguard-tools.js?v=20261012d" defer></script>
 </body>
 </html>

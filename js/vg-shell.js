@@ -1,7 +1,8 @@
 /*!
  * VoltGuard – vg-shell.js
  * Ortak site başlığı (#vgHeader) davranışı: mobil menü, "Kaynaklar" açılır menüsü, kaydırma gölgesi,
- * Esc / dışarı tıklama / klavye gezinmesi, aria-current senkronu, çapa hizalama, yıl, prefetch yedeği.
+ * Esc / dışarı tıklama / klavye gezinmesi, aria-current senkronu, çapa hizalama, yıl, prefetch yedeği,
+ * alt bilgi animasyonlarının ekran dışındayken duraklatılması, service worker kaydı (/sw.js).
  * Bağımlılık yok, defer ile yüklenir. İki kez yüklense de ikinci çalıştırma kendini devre dışı bırakır.
  * Başlık/alt bilgi işaretlemesi: tools/shell/header.html + tools/shell/footer.html (tools/shell.py işler).
  *
@@ -344,6 +345,31 @@
       doc.head.appendChild(l);
     };
     ['mouseover', 'touchstart', 'focusin'].forEach(function (t) { doc.addEventListener(t, pf, { passive: true, capture: true }); });
+  }
+
+  /* ---------- Alt bilgi animasyonlarını görünmezken duraklat (ana iş parçacığı yükü) ---------- */
+  (function footerPause() {
+    var footer = doc.getElementById('vgFooter');
+    if (!footer) return;
+    var svgs = [].slice.call(footer.querySelectorAll('svg.sig-trace'));
+    function set(on) {
+      footer.classList.toggle('is-inview', on);
+      svgs.forEach(function (s) {
+        try { if (on) s.unpauseAnimations(); else s.pauseAnimations(); } catch (err) { /* SMIL yok */ }
+      });
+    }
+    if (!('IntersectionObserver' in window)) { set(true); return; }
+    set(false);
+    new IntersectionObserver(function (entries) {
+      set(entries[entries.length - 1].isIntersecting);
+    }, { rootMargin: '200px 0px' }).observe(footer);
+  }());
+
+  /* ---------- Service worker: tüm sayfalarda kayıt (çevrimdışı destek, ağ-öncelikli; bkz. /sw.js) ---------- */
+  if ('serviceWorker' in navigator) {
+    var regSW = function () { navigator.serviceWorker.register('/sw.js').catch(function () { /* no-op */ }); };
+    if (doc.readyState === 'complete') regSW();
+    else window.addEventListener('load', regSW, { once: true });
   }
 
   window.VGShell = { header: header, close: closeAll, refreshCurrent: refreshCurrent, scrollTo: scrollToEl, version: 1 };

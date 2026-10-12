@@ -294,14 +294,12 @@ if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     respond(422, false, 'Geçerli bir e-posta adresi giriniz.');
 }
 
-$nowMs = (int)floor(microtime(true) * 1000);
-$formAge = $nowMs - $formTimestamp;
-/* Allow up to ~2 minutes of client/server clock skew ($formAge may be slightly negative),
-   and reject only clearly invalid timestamps (missing or older than 24h). The "submitted
-   too fast" heuristic is dropped: it is client-controlled (no real bot value) and caused
-   false rejections for users whose device clock is ahead. Real bot defense is Turnstile +
-   the server-side rate limit above. */
-if ($formTimestamp <= 0 || $formAge < -120000 || $formAge > 86400000) {
+/* formTimestamp comes from the visitor's device clock (Date.now()), so it is only checked for
+   presence. Any age/skew window would permanently reject visitors whose clock is wrong (a retry
+   sends a new stamp from the same clock), losing the lead, while giving no real bot protection
+   because the client controls the value. Real bot defense is Turnstile + the server-side rate
+   limit above. */
+if ($formTimestamp <= 0) {
     respond(422, false, 'Form doğrulaması başarısız oldu. Lütfen tekrar deneyin.');
 }
 
@@ -398,7 +396,7 @@ $mailBody = "Yeni iletişim formu mesajı:\n\n"
     . "E-posta: " . ($safeEmail !== '' ? $safeEmail : '-') . "\n"
     . "Hizmet Alanı: {$subjectLabel}\n"
     . "IP: " . $clientIp . "\n"
-    . "Tarih: " . date('Y-m-d H:i:s') . "\n\n"
+    . "Tarih: " . (new DateTime('now', new DateTimeZone('Europe/Istanbul')))->format('Y-m-d H:i:s') . " (TSİ)\n\n"
     . "Mesaj:\n{$message}\n";
 
 $fromAddress = 'noreply@voltguard.com.tr';

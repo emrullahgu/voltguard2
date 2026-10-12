@@ -95,6 +95,9 @@ function vg_validate_name($v, array &$errors): string
         $errors['name'] = 'Ad soyad en fazla 80 karakter olabilir.';
     } elseif (preg_match('/\p{L}/u', $name) !== 1) {
         $errors['name'] = 'Lütfen geçerli bir ad soyad girin.';
+    } elseif (preg_match('~[:/@<>\\\\]~', $name) === 1) {
+        /* Ad e-postalarda selamlamada kullanilir: URL / e-posta / etiket benzeri girisler kabul edilmez. */
+        $errors['name'] = 'Ad soyad alanında : / @ < > \\ karakterleri kullanılamaz.';
     }
     return $name;
 }

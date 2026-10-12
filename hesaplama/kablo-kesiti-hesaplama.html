@@ -13,7 +13,7 @@
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
   <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
   <script type="speculationrules">
   {
     "prerender": [
@@ -36,7 +36,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012b" defer></script>
+  <script src="/js/vg-shell.js?v=20261012d" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -54,7 +54,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261012b">
+  <link rel="stylesheet" href="/css/style.css?v=20261012d">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/#article","headline":"Kablo Kesiti Hesaplama Aracı ve Formülü","description":"Kablo kesiti hesaplama: yük gücü ve gerilime göre standart kesit önerisi veren ücretsiz araç, formül, örnek hesap ve sık sorulan sorular.","image":"https://voltguard.com.tr/public/og-image.png","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-10-12","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Kablo Kesiti Hesaplama","item":"https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Kablo kesiti nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Önce yük akımı I = Güç × 1000 ÷ (√3 × Gerilim × cosφ) formülüyle bulunur. Ardından bu akımı belirli bir emniyet payıyla (genelde 1,25 kat) karşılayan ilk standart kesit seçilir. Son adımda seçilen kesitin gerilim düşümü sınırını da karşıladığı ayrıca kontrol edilmelidir."}},{"@type":"Question","name":"Kablo kesiti seçiminde sadece akım yeterli mi?","acceptedAnswer":{"@type":"Answer","text":"Hayır. Akım taşıma kapasitesi ilk kriterdir ancak döşeme yöntemi, ortam sıcaklığı, gruplama faktörü, izin verilen gerilim düşümü ve kısa devre dayanımı da ayrıca değerlendirilmelidir. Uzun hatlarda gerilim düşümü, akım kriterinden daha belirleyici olabilir."}},{"@type":"Question","name":"Bu araç kesin proje değeri verir mi?","acceptedAnswer":{"@type":"Answer","text":"Hayır, bu araç yalnızca ön değerlendirme amaçlıdır. Kesin kesit seçimi; döşeme yöntemi, sıcaklık düzeltmesi, gerilim düşümü hesabı ve TS HD 60364-5-52 standardına göre yetkili bir elektrik mühendisi tarafından yapılmalıdır."}}]}]}</script>
 </head>
 <body class="doc-shell">
@@ -75,7 +75,7 @@
         <ul class="vg-nav__list">
           <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
-          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
           <li class="vg-dd" data-vg-dd>
             <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
             <ul class="vg-dd__menu" id="vgDdKaynaklar">
@@ -136,7 +136,7 @@
     <div class="table-scroll"><table>
       <thead><tr><th>Kesit (mm²)</th><th>Üç faz, 3 yüklü iletken (A)</th><th>Tek faz, 2 yüklü iletken (A)</th></tr></thead>
       <tbody>
-        <tr><td>1,5</td><td>15,5</td><td>18</td></tr>
+        <tr><td>1,5</td><td>15,5</td><td>17,5</td></tr>
         <tr><td>2,5</td><td>21</td><td>24</td></tr>
         <tr><td>4</td><td>28</td><td>32</td></tr>
         <tr><td>6</td><td>36</td><td>41</td></tr>
@@ -148,9 +148,9 @@
         <tr><td>70</td><td>171</td><td>192</td></tr>
         <tr><td>95</td><td>207</td><td>232</td></tr>
         <tr><td>120</td><td>239</td><td>269</td></tr>
-        <tr><td>150</td><td>262</td><td>309</td></tr>
-        <tr><td>185</td><td>296</td><td>353</td></tr>
-        <tr><td>240</td><td>346</td><td>415</td></tr>
+        <tr><td>150</td><td>262</td><td>300</td></tr>
+        <tr><td>185</td><td>296</td><td>341</td></tr>
+        <tr><td>240</td><td>346</td><td>400</td></tr>
       </tbody>
     </table></div>
 
@@ -317,7 +317,7 @@
       // iz3: 3 yüklü iletken (üç faz), bilgi/kablo-kesiti-akim-tasima-tablosu.html ile aynı. iz2: 2 yüklü iletken (tek faz).
       var sectionList = [1.5,2.5,4,6,10,16,25,35,50,70,95,120,150,185,240];
       var iz3 = [15.5,21,28,36,50,68,89,110,134,171,207,239,262,296,346];
-      var iz2 = [18,24,32,41,57,76,101,125,151,192,232,269,309,353,415];
+      var iz2 = [17.5,24,32,41,57,76,101,125,151,192,232,269,300,341,400];
       function fmt(n, d) { return n.toLocaleString('tr-TR', { maximumFractionDigits: d }); }
       function update() {
         var p = Math.max(0, Number(document.getElementById('cc-power').value) || 0);
@@ -351,5 +351,5 @@
     }());
   </script>
   <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
-  <script src="/js/voltguard-tools.js?v=20261012c"></script>
+  <script src="/js/voltguard-tools.js?v=20261012d"></script>
 </body></html>

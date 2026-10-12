@@ -53,7 +53,14 @@ function vg_greeting(string $name): string
 {
     $parts = preg_split('/\s+/u', trim($name));
     $first = is_array($parts) && isset($parts[0]) ? trim((string)$parts[0]) : '';
-    return $first !== '' ? 'Merhaba ' . $first . ',' : 'Merhaba,';
+    /*
+     * Ad kullanici tarafindan secilir (e-posta dogrulamasi yok): yalnizca harflerden olusan bir ilk sozcuk kullanilir.
+     * URL, e-posta adresi veya isaretler iceren ilk sozcuk resmi postada baglantiya donusmesin diye selamlamaya konmaz.
+     */
+    if ($first !== '' && preg_match('/^[\p{L}\p{M}][\p{L}\p{M}\'’.-]{0,39}$/u', $first)) {
+        return 'Merhaba ' . $first . ',';
+    }
+    return 'Merhaba,';
 }
 
 function vg_local_time(int $ts): string

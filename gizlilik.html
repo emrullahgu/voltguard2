@@ -12,7 +12,7 @@
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
   <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012b" defer></script>
+  <script src="/js/vg-shell.js?v=20261012d" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -146,7 +146,7 @@
         <ul class="vg-nav__list">
           <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
-          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
           <li class="vg-dd" data-vg-dd>
             <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
             <ul class="vg-dd__menu" id="vgDdKaynaklar">
@@ -241,7 +241,7 @@
       <a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a> adresine iletebilirsiniz.
     </p>
     <p>
-      <strong>Çerez ve tarayıcı depolaması:</strong> hesap sayfalarını (giriş, kayıt, şifre sıfırlama, favoriler, geçmiş) açtığınızda form güvenliği (CSRF koruması) için, giriş yaptığınızda da oturumunuzu tanımak için yalnızca zorunlu oturum çerezi <code>VGSESS</code> kullanılır
+      <strong>Çerez ve tarayıcı depolaması:</strong> hesap sayfalarını (giriş, kayıt, şifre sıfırlama, favoriler, geçmiş) açtığınızda form güvenliği (CSRF koruması) için, giriş yaptığınızda da oturumunuzu tanımak için zorunlu oturum çerezi <code>VGSESS</code>, hesabınızı başkalarının hatalı giriş denemeleriyle kilitlenmeye karşı korumak için de zorunlu güvenlik çerezi <code>VGDEV</code> kullanılır
       (aşağıdaki tabloya bakın). Eski sürümde hesaplar yalnızca tarayıcıda tutuluyordu; bu tarayıcıda eski hesaptan kalan kayıtlar varsa
       bunları yeni hesabınıza taşımanız veya silmeniz için size seçenek sunulur. Eski şifre özetleri hiçbir zaman sunucuya gönderilmez ve
       taşıma ya da silme sonrasında tarayıcınızdan kaldırılır.
@@ -249,8 +249,8 @@
 
     <h2>4. Çerezler, Yerel Depolama ve Üçüncü Taraf Hizmetler</h2>
     <p>
-      Sitemiz kendi adına yalnızca bir HTTP çerezi kullanır: hesap sayfalarında form güvenliğini sağlayan ve giriş yaptığınızda oturumunuzu
-      açık tutan zorunlu <code>VGSESS</code> çerezi. Tercihler, giriş yapmadan kaydettiğiniz araç verileri ve oyun verileri tarayıcınızın yerel depolama (localStorage)
+      Sitemiz kendi adına yalnızca iki HTTP çerezi kullanır: hesap sayfalarında form güvenliğini sağlayan ve giriş yaptığınızda oturumunuzu
+      açık tutan zorunlu <code>VGSESS</code> çerezi ile giriş yaptığınız tarayıcıyı tanıyan zorunlu güvenlik çerezi <code>VGDEV</code>. Tercihler, giriş yapmadan kaydettiğiniz araç verileri ve oyun verileri tarayıcınızın yerel depolama (localStorage)
       alanında tutulur. Site, aşağıdaki teknolojileri kullanır. <strong>Zorunlu</strong> ve <strong>teknik</strong> olanlar sitenin
       çalışması ve güvenliği için gereklidir; <strong>opsiyonel</strong> olanlar yalnızca çerez bildiriminde
       <em>&ldquo;Kabul Et&rdquo;</em> seçeneğini işaretlemeniz (Apollo.io) ya da ilgili özelliği kullanmanız (üyelik, oyun) hâlinde devreye girer.
@@ -281,6 +281,12 @@
           <td>Hesap sayfalarında form güvenliğini (CSRF koruması) sağlar; VoltGuard Tools hesabınıza giriş yaptığınızda oturumunuzu tanır. Rastgele bir oturum kimliği içerir; JavaScript ile okunamaz (HttpOnly), yalnızca HTTPS üzerinden gönderilir (Secure) ve başka sitelerden gelen isteklerle paylaşılmaz (SameSite=Lax). Tarayıcıyı kapattığınızda silinir; &ldquo;Beni hatırla&rdquo; seçeneğini işaretlerseniz en fazla 30 gün saklanır. Uzun süre işlem yapılmazsa oturum sunucuda kendiliğinden kapanır; çıkış yaptığınızda silinir.</td>
           <td>VoltGuard (birinci taraf)</td>
           <td><span class="tag tag--req">Zorunlu &mdash; hesap sayfalarında</span></td>
+        </tr>
+        <tr>
+          <td>Güvenlik çerezi: <code>VGDEV</code></td>
+          <td>VoltGuard Tools hesabınıza başarıyla giriş yaptığınızda yazılır ve bu tarayıcıyı &ldquo;bilinen cihaz&rdquo; olarak tanır; böylece başkalarının farklı bağlantılardan yaptığı hatalı giriş denemeleri sizi hesabınızın dışında bırakamaz. Yalnızca anlamsız bir doğrulama özeti içerir (e-posta adresiniz veya adınız yazılmaz); JavaScript ile okunamaz (HttpOnly), yalnızca HTTPS üzerinden gönderilir (Secure), SameSite=Lax&rsquo;tır. En fazla 180 gün saklanır; şifrenizi veya e-posta adresinizi değiştirdiğinizde eski özet geçersiz olur, hesabınızı sildiğinizde bu tarayıcıdan kaldırılır.</td>
+          <td>VoltGuard (birinci taraf)</td>
+          <td><span class="tag tag--req">Zorunlu &mdash; giriş yaptığınızda</span></td>
         </tr>
         <tr>
           <td>Yerel depolama: VoltGuard Tools</td>

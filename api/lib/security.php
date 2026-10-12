@@ -213,6 +213,8 @@ function vg_session_login(array $user, bool $remember): void
     if ($remember) {
         vg_set_persistent_cookie($now + VG_ABS_LONG);
     }
+    /* vg_set_persistent_cookie Set-Cookie basliklarini sildigi icin bilinen cihaz cerezi en son yazilir. */
+    vg_kdev_remember($user);
 }
 
 /** Sifre degisince: oturum surumu guncellenir, kimlik ve CSRF jetonu yenilenir; cerez suresi korunur. */
@@ -249,6 +251,95 @@ function vg_session_destroy(): void
     if (!headers_sent()) {
         header_remove('Set-Cookie');
         setcookie(VG_SESSION_NAME, '', vg_cookie_options(time() - 86400));
+    }
+}
+
+/* ------------------------------------------------------------------ bilinen cihaz */
+
+/*
+ * Basarili giristen sonra tarayiciya HttpOnly "bilinen cihaz" cerezi (VGDEV) yazilir: icinde yalnizca
+ * HMAC(gizli anahtar, kullanici kimligi | oturum surumu) ozetleri bulunur (e-posta / kimlik acik yazilmaz).
+ * Bu cerezi tasiyan istemci, baskalarinin dagitik hatali denemeleriyle tetiklenen e-posta geneli kilitten
+ * (login_email) muaf tutulur; e-posta+istemci ve istemci kilitleri aynen gecerlidir. Sifre veya e-posta
+ * degisince (epoch artar) eski ozetler kendiliginden gecersiz olur.
+ */
+const VG_KDEV_NAME = 'VGDEV';
+const VG_KDEV_TTL = 15552000;      // 180 gun
+const VG_KDEV_MAX = 4;             // ayni tarayicida en fazla 4 hesap
+
+function vg_kdev_mac(array $user): string
+{
+    return substr(hash_hmac('sha256', 'kdev|' . $user['id'] . '|' . (int)$user['epoch'], vg_secret()), 0, 32);
+}
+
+/** Cerezdeki gecerli bicimli ozetler. */
+function vg_kdev_list(): array
+{
+    $raw = $_COOKIE[VG_KDEV_NAME] ?? '';
+    if (!is_string($raw) || $raw === '' || strlen($raw) > 200) {
+        return [];
+    }
+    $out = [];
+    foreach (explode('.', $raw) as $m) {
+        if (preg_match('/^[0-9a-f]{32}$/', $m) === 1 && !in_array($m, $out, true)) {
+            $out[] = $m;
+        }
+    }
+    return array_slice($out, 0, VG_KDEV_MAX);
+}
+
+function vg_kdev_has(array $user): bool
+{
+    $mac = vg_kdev_mac($user);
+    foreach (vg_kdev_list() as $m) {
+        if (hash_equals($mac, $m)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function vg_kdev_write(array $list): void
+{
+    if (headers_sent()) {
+        return;
+    }
+    $list = array_slice(array_values($list), 0, VG_KDEV_MAX);
+    if ($list) {
+        setcookie(VG_KDEV_NAME, implode('.', $list), vg_cookie_options(time() + VG_KDEV_TTL));
+    } else {
+        setcookie(VG_KDEV_NAME, '', vg_cookie_options(time() - 86400));
+    }
+    $_COOKIE[VG_KDEV_NAME] = implode('.', $list);
+}
+
+/** Bu tarayiciyi kullanicinin bilinen cihazi olarak isaretler (guncel epoch ile). */
+function vg_kdev_remember(array $user): void
+{
+    $mac = vg_kdev_mac($user);
+    $prev = array_values(array_filter(vg_kdev_list(), function ($m) use ($mac) {
+        return !hash_equals($mac, $m);
+    }));
+    if (isset($user['_old_epoch'])) {
+        $old = vg_kdev_mac(['id' => $user['id'], 'epoch' => (int)$user['_old_epoch']]);
+        $prev = array_values(array_filter($prev, function ($m) use ($old) {
+            return !hash_equals($old, $m);
+        }));
+    }
+    array_unshift($prev, $mac);
+    vg_kdev_write($prev);
+}
+
+/** Hesap silinince bu tarayicidaki ozeti kaldirir. */
+function vg_kdev_forget(array $user): void
+{
+    $mac = vg_kdev_mac($user);
+    $list = vg_kdev_list();
+    $kept = array_values(array_filter($list, function ($m) use ($mac) {
+        return !hash_equals($mac, $m);
+    }));
+    if (count($kept) !== count($list)) {
+        vg_kdev_write($kept);
     }
 }
 
@@ -319,14 +410,17 @@ function vg_rl_clear(string $bucket, string $id): void
 /**
  * Hiz sinirlarinda kullanilan istemci anahtari. IPv4 adresi aynen; IPv6 adresi /64 onekine indirgenir (bir IPv6
  * istemcisi genellikle tum /64 blogunu kullanir ve her istekte adres degistirerek sinirlari asabilir).
+ * $v6prefix ile daha genis blok (/56, /48) secilebilir: musteriye genellikle /56-/48 verildiginden saldirganin
+ * elindeki ayri sayac sayisi azalir.
  */
-function vg_rl_ip_key(): string
+function vg_rl_ip_key(int $v6prefix = 64): string
 {
     $ip = vg_client_ip();
     $bin = @inet_pton($ip);
     if ($bin !== false && strlen($bin) === 16) {
-        $net = inet_ntop(substr($bin, 0, 8) . str_repeat("\0", 8));
-        return ($net !== false ? $net : $ip) . '/64';
+        $bytes = intdiv(max(16, min(64, $v6prefix)), 8);
+        $net = inet_ntop(substr($bin, 0, $bytes) . str_repeat("\0", 16 - $bytes));
+        return ($net !== false ? $net : $ip) . '/' . ($bytes * 8);
     }
     return $ip;
 }

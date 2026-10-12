@@ -1440,7 +1440,7 @@ img.img-error {
   padding: .72rem 1rem;
   border: 1.5px solid var(--clr-border);
   border-radius: var(--r-sm);
-  font-size: .92rem;
+  font-size: max(16px, .92rem); /* <16px iOS Safari odakta sayfayı yakınlaştırır */
   color: var(--clr-text);
   background-color: var(--clr-white);
   transition: border-color var(--t-base), box-shadow var(--t-base), transform var(--t-fast);
@@ -1596,6 +1596,9 @@ img.img-error {
   visibility: hidden;
   pointer-events: none;
 }
+
+/* gizlendikten sonra sonsuz nabız animasyonu ana iş parçacığını meşgul etmesin */
+.preloader.hidden .preloader__logo { animation: none; }
 
 .preloader__inner {
   display: flex;

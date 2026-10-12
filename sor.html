@@ -12,7 +12,7 @@
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
   <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012b" defer></script>
+  <script src="/js/vg-shell.js?v=20261012d" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -53,7 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="public/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/style.css?v=20261012b">
+  <link rel="stylesheet" href="css/style.css?v=20261012d">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","@id":"https://voltguard.com.tr/sor.html","name":"VoltGuard'a Sor","description":"Elektrik, otomasyon ve elektronik sorularınıza ölçüm ve hesapla desteklenen mühendis yanıtları. Sorunuzu gönderin, cevabı burada yayınlansın.","inLanguage":"tr-TR","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard'a Sor","item":"https://voltguard.com.tr/sor.html"}]},{"@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kompanzasyon panosundaki kontaktör neden sık arıza yapıyor?","url":"https://voltguard.com.tr/sor/kompanzasyon-kontaktor-ariza-nedenleri.html"},{"@type":"ListItem","position":2,"name":"PLC çıkışına bağlı kontaktör bobini neden titriyor (chattering)?","url":"https://voltguard.com.tr/sor/plc-kontaktor-bobini-titremesi.html"},{"@type":"ListItem","position":3,"name":"Üç fazlı motorun bir fazında düşük akım okunuyor, sebebi ne olabilir?","url":"https://voltguard.com.tr/sor/motor-bir-fazda-dusuk-akim.html"},{"@type":"ListItem","position":4,"name":"GES inverterinde gece küçük bir tüketim görünüyor, bu normal mi?","url":"https://voltguard.com.tr/sor/ges-inverter-gece-tuketimi.html"},{"@type":"ListItem","position":5,"name":"Kablo neden aşırı ısınıyor, TMŞ atmadan sıcak hissediliyor?","url":"https://voltguard.com.tr/sor/kablo-neden-isiniyor.html"},{"@type":"ListItem","position":6,"name":"Faz-nötr gerilimi 220 V mi 230 V mi olmalı?","url":"https://voltguard.com.tr/sor/faz-notr-220v-mi-230v-mi.html"},{"@type":"ListItem","position":7,"name":"Motor termiği sık atıyor, ölçümde akım normal görünüyor. Neden?","url":"https://voltguard.com.tr/sor/motor-termik-sik-atiyor.html"},{"@type":"ListItem","position":8,"name":"Kaçak akım rölesi enerji verir vermez atıyor, izole test yaptım. Neden?","url":"https://voltguard.com.tr/sor/kacak-akim-rolesi-ilk-anda-atiyor.html"},{"@type":"ListItem","position":9,"name":"Cosφ 0,98 olmasına rağmen faturada reaktif ceza kesiliyor, neden?","url":"https://voltguard.com.tr/sor/cosfi-098-fatura-reaktif-ceza.html"},{"@type":"ListItem","position":10,"name":"Modbus RTU haberleşmesi bazen kesiliyor, cihazlar zaman aşımı veriyor. Neden?","url":"https://voltguard.com.tr/sor/modbus-rtu-haberlesme-kesiliyor.html"},{"@type":"ListItem","position":11,"name":"VFD OverCurrent (OC) hatası veriyor, motor kalkışta veya rampada. Sebebi?","url":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html"}]}]}</script>
 </head>
 <body class="doc-shell">
@@ -74,7 +74,7 @@
         <ul class="vg-nav__list">
           <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
-          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
           <li class="vg-dd" data-vg-dd>
             <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
             <ul class="vg-dd__menu" id="vgDdKaynaklar">
@@ -416,16 +416,33 @@
         return false;
       }
 
+      /* contact.php FILTER_VALIDATE_EMAIL kullanır (js/factory.js isValidEmail ile aynı kural):
+         yalnızca ASCII adresler, ardışık nokta yok, en az 2 harfli alan uzantısı */
+      function isValidEmail(m) {
+        m = String(m);
+        if (m.length > 120 || m.indexOf('..') > -1) return false;
+        if (!/^[A-Za-z0-9.!#$%&'*+\/=?^_`{|}~-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+$/.test(m)) return false;
+        var local = m.split('@')[0];
+        return local.charAt(0) !== '.' && local.charAt(local.length - 1) !== '.' && /\.[A-Za-z]{2,}$/.test(m);
+      }
+      var emailField = document.getElementById('qa-email');
+      var EMAIL_MSG = 'Geçerli bir e-posta adresi girin (ör. ornek@firma.com; Türkçe karakter kullanmayın).';
+
       function syncCounter() {
         if (counterEl) { counterEl.textContent = messageField.value.length + ' / ' + messageField.maxLength; }
       }
       messageField.addEventListener('input', syncCounter);
       phoneField.addEventListener('input', function () { phoneField.setCustomValidity(''); });
+      emailField.addEventListener('input', function () { emailField.setCustomValidity(''); emailField.removeAttribute('aria-invalid'); });
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         var phoneValue = phoneField.value.trim();
         phoneField.setCustomValidity(phoneValue === '' || isValidTrMobile(phoneValue) ? '' : 'Geçerli bir cep telefonu girin (05XX XXX XX XX).');
+        var emailValue = emailField.value.trim();
+        var emailBad = emailValue !== '' && !isValidEmail(emailValue);
+        emailField.setCustomValidity(emailBad ? EMAIL_MSG : '');
+        if (emailBad) { emailField.setAttribute('aria-invalid', 'true'); } else { emailField.removeAttribute('aria-invalid'); }
         if (!form.checkValidity()) { form.reportValidity(); return; }
         if (captchaEnabled && !getCaptchaToken()) {
           status.textContent = 'Lütfen güvenlik doğrulamasını tamamlayın.';
@@ -442,7 +459,7 @@
         var payload = new FormData();
         payload.set('name', document.getElementById('qa-name').value.trim());
         payload.set('phone', phoneValue);
-        payload.set('email', document.getElementById('qa-email').value.trim());
+        payload.set('email', emailValue);
         payload.set('subject', document.getElementById('qa-subject').value);
         payload.set('message', finalMessage);
         payload.set('consent', document.getElementById('qa-consent').checked ? 'on' : '');
@@ -463,8 +480,13 @@
               form.reset();
               syncCounter();
             } else {
-              status.textContent = (result.data && result.data.message) || 'Gönderim başarısız oldu, lütfen tekrar deneyin.';
+              var errMsg = (result.data && result.data.message) || 'Gönderim başarısız oldu, lütfen tekrar deneyin.';
+              status.textContent = errMsg;
               status.className = 'qa-form__status qa-form__status--err';
+              if (/e-posta/i.test(errMsg)) {
+                emailField.setAttribute('aria-invalid', 'true');
+                emailField.focus();
+              }
             }
           })
           .catch(function () {

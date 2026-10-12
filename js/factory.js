@@ -696,6 +696,9 @@
         var hasPlus = /^\s*\+/.test(this.value);
         var dg = this.value.replace(/\D/g, '');
         var out;
+        /* Henüz rakam yoksa (ya da yalnızca "+9" yazıldıysa) baştaki "+" korunur */
+        if (!dg) { this.value = hasPlus ? '+' : ''; return; }
+        if (hasPlus && dg === '9') { this.value = '+9'; return; }
         if (dg.slice(0, 2) === '90') {
           dg = dg.slice(0, 12);
           out = (hasPlus ? '+' : '') + dg.slice(0, 2);

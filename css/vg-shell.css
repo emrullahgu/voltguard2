@@ -324,21 +324,30 @@ html.vg-lock { overflow: hidden; }
   padding-left: .8rem;
 }
 .vg-header .vg-nav__link--factory { color: var(--vg-accent-light); }
-.vg-header .vg-nav__link--factory::before {
-  content: '';
+.vg-header .vg-nav__link--factory .vg-ping {
+  position: relative;
   order: 3;
+  flex: none;
   width: 7px;
   height: 7px;
   margin-left: auto;
   border-radius: 50%;
   background: var(--vg-accent);
-  box-shadow: 0 0 0 0 rgba(245, 158, 11, .6);
+}
+/* Nabız halkası: yalnızca transform/opacity (birleştiricide çalışır; box-shadow animasyonu her karede boyama yapıyordu) */
+.vg-header .vg-nav__link--factory .vg-ping::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(245, 158, 11, .55);
   animation: vgPing 2.2s ease-out infinite;
+  pointer-events: none;
 }
 @keyframes vgPing {
-  0%   { box-shadow: 0 0 0 0 rgba(245, 158, 11, .55); }
-  70%  { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+  0%   { transform: scale(1); opacity: 1; }
+  70%  { transform: scale(3.3); opacity: 0; }
+  100% { transform: scale(3.3); opacity: 0; }
 }
 
 /* Kaynaklar açılır menüsü: mobilde akordeon */
@@ -550,7 +559,7 @@ html.vg-lock { overflow: hidden; }
   .vg-header .vg-nav__link[aria-current],
   .vg-header .vg-nav__link.is-active,
   .vg-dd:has([aria-current]) > .vg-dd__btn { box-shadow: none; padding-left: .5rem; }
-  .vg-header .vg-nav__link--factory::before { order: 0; margin-left: 0; }
+  .vg-header .vg-nav__link--factory .vg-ping { order: 0; margin-left: 0; }
   .vg-dd__btn::before { margin: 0 0 3px .05rem; }
   .vg-dd[data-open] > .vg-dd__btn::before { margin-bottom: -3px; }
 
@@ -783,8 +792,19 @@ html.vg-lock { overflow: hidden; }
   background: var(--vg-accent);
   flex-shrink: 0;
   position: relative;
-  box-shadow: 0 0 8px rgba(245,158,11,.5), 0 0 16px rgba(245,158,11,.15);
+  box-shadow: 0 0 6px rgba(245,158,11,.4), 0 0 14px rgba(245,158,11,.12);
+}
+
+/* Parlama nabzı: güçlü gölge ayrı katmanda, yalnızca opacity canlandırılır */
+.sig-node::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(245,158,11,.6), 0 0 24px rgba(245,158,11,.2);
+  opacity: 0;
   animation: sigNodePulse 3s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .sig-node::after {
@@ -797,8 +817,8 @@ html.vg-lock { overflow: hidden; }
 }
 
 @keyframes sigNodePulse {
-  0%, 100% { box-shadow: 0 0 6px rgba(245,158,11,.4), 0 0 14px rgba(245,158,11,.12); }
-  50%      { box-shadow: 0 0 12px rgba(245,158,11,.7), 0 0 24px rgba(245,158,11,.25); }
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 1; }
 }
 
 @keyframes sigNodeRing {
@@ -894,16 +914,17 @@ html.vg-lock { overflow: hidden; }
   z-index: -1;
   filter: blur(14px);
   pointer-events: none;
+}
+
+/* Katman yalnızca hover'da görünür; görünmezken (filter: blur altında) canlandırmak boşa CPU harcıyordu */
+.sig-badge:hover .sig-badge__aurora {
+  opacity: 1;
   animation: sigAuroraDrift 6s ease-in-out infinite alternate;
 }
 
-.sig-badge:hover .sig-badge__aurora {
-  opacity: 1;
-}
-
 @keyframes sigAuroraDrift {
-  0%   { background-position: 30% 50%; transform: scale(1) rotate(0deg); }
-  100% { background-position: 70% 50%; transform: scale(1.1) rotate(3deg); }
+  0%   { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.1) rotate(3deg); }
 }
 
 /* Bolt icon */
@@ -921,10 +942,21 @@ html.vg-lock { overflow: hidden; }
   flex-shrink: 0;
   transition: transform .4s cubic-bezier(.4,0,.2,1), box-shadow .4s ease;
   box-shadow:
-    0 0 12px rgba(245,158,11,.5),
-    0 0 28px rgba(245,158,11,.12),
+    0 0 12px rgba(245,158,11,.45),
+    0 0 28px rgba(245,158,11,.1),
     inset 0 1px 3px rgba(255,255,255,.2);
+}
+
+/* Parlama nabzı: ek gölge ayrı katmanda, yalnızca opacity canlandırılır (box-shadow animasyonu yerine) */
+.sig-badge__icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(245,158,11,.4), 0 0 38px rgba(245,158,11,.12);
+  opacity: 0;
   animation: sigIconGlow 3.5s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .sig-badge__icon::after {
@@ -945,8 +977,8 @@ html.vg-lock { overflow: hidden; }
 }
 
 @keyframes sigIconGlow {
-  0%, 100% { box-shadow: 0 0 12px rgba(245,158,11,.45), 0 0 28px rgba(245,158,11,.1), inset 0 1px 3px rgba(255,255,255,.2); }
-  50%      { box-shadow: 0 0 18px rgba(245,158,11,.65), 0 0 38px rgba(245,158,11,.18), inset 0 1px 3px rgba(255,255,255,.25); }
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 1; }
 }
 
 @keyframes sigIconDashSpin {
@@ -1065,10 +1097,12 @@ html.vg-lock { overflow: hidden; }
   pointer-events: none;
 }
 
+/* left yerine transform: translateX yüzdesi öğenin kendi genişliğine (ebeveynin %60'ı) göredir;
+   400% = ebeveynin %240'ı, eski -120% -> 120% yolculuğuyla aynı. */
 @keyframes sigShimmerSweep {
-  0%   { left: -120%; }
-  35%  { left: 120%; }
-  100% { left: 120%; }
+  0%   { transform: skewX(-15deg) translateX(0); }
+  35%  { transform: skewX(-15deg) translateX(400%); }
+  100% { transform: skewX(-15deg) translateX(400%); }
 }
 
 /* Footer imzası — responsive geçersiz kılmalar.
@@ -1165,6 +1199,14 @@ main .hero {
   padding-top: 0;
   min-height: calc(100vh - var(--vg-header-h));
   min-height: calc(100dvh - var(--vg-header-h));
+}
+
+/* Alt bilgi ekran dışındayken animasyonlar duraklatılır (vg-shell.js #vgFooter'a .is-inview ekler/kaldırır).
+   JS yoksa (html.vg-js yok) animasyonlar normal çalışır. */
+html.vg-js .vg-footer:not(.is-inview) *,
+html.vg-js .vg-footer:not(.is-inview) *::before,
+html.vg-js .vg-footer:not(.is-inview) *::after {
+  animation-play-state: paused !important;
 }
 
 /* =====================================================

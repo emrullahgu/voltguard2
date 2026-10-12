@@ -344,11 +344,8 @@
 
 # ---------------------------------------------------------------------------------------
 # Guvenlik basliklari ve CSP. .htaccess (cPanel/Apache) ile ayni degerler; ikisi birlikte guncellenmeli.
-# KALDIRILACAK (ucuncu taraf entegrasyonu asamali): tum sayfalar Google Fonts ve Font Awesome'u CDN'den
-# yuklemeyi biraktiginda CSP'den su kaynaklar silinmeli (.htaccess'teki CSP'den de):
-#   style-src  : https://fonts.googleapis.com  https://cdnjs.cloudflare.com
-#   font-src   : https://fonts.gstatic.com     https://cdnjs.cloudflare.com
-#   script-src : https://cdnjs.cloudflare.com  (yalnizca hicbir sayfa cdnjs'den kutuphane yuklemiyorsa)
+# style-src/font-src yalnizca 'self' (+ data: font): yazi tipleri ve ikonlar kendi sunucumuzda; Google Fonts /
+# Font Awesome CDN artik kullanilmiyor. script-src https://cdnjs.cloudflare.com yalnizca jsPDF icin.
 # ---------------------------------------------------------------------------------------
 [[headers]]
   for = "/*"
@@ -358,7 +355,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
-    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com https://assets.apollo.io https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://*.apollo.io https://aplo-evnt.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com https://assets.apollo.io https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://*.apollo.io https://aplo-evnt.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests"
 
 # ---------------------------------------------------------------------------------------
 # Onbellek politikasi (.htaccess ile ayni). Netlify header kurallari sorgu dizesini (?v=) goremez:
