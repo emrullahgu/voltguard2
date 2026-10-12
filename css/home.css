@@ -23,23 +23,56 @@
 /* =====================================================
    HERO
    ===================================================== */
-/* Başlık her genişlikte 3 satır: "İzmir Elektrik / <dönen kelime> / Hizmetleri".
-   Dönen kelime kendi satırında, sarmadan durur; kelime değişince başlık yüksekliği değişmez (CLS 0). */
+/* H1 sabit metin, her genişlikte 3 satır: "İzmir Elektrik / Mühendislik / Hizmetleri".
+   Dönen kelime H1'in DIŞINDA, aria-hidden bir satırda (.hero__typed); arama motoru ve ekran okuyucu
+   her zaman aynı başlığı görür. */
 .hero__title-line { display: block; }
-.hero__title-type {
+.hero__title { margin-bottom: .9rem; }
+.hero__typed {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  height: 2rem;                              /* sabit yükseklik + tek satır: kelime değişince düzen kaymaz (CLS 0) */
+  margin: 0 0 1.4rem;
+  overflow: hidden;
   white-space: nowrap;
-  min-height: 1.12em;
+  font-family: var(--font-heading);
+  line-height: 1;
+  animation: fadeInUp .9s ease .15s both;
 }
-.hero__title--accent::after {               /* yazma imleci: metin içeriğine "|" karışmasın diye CSS ile */
+.hero__typed-label {
+  flex: none;
+  padding: .34rem .62rem;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: var(--r-full);
+  color: rgba(255,255,255,.78);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.hero__typed-word {
+  color: var(--clr-accent-light);
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 700;
+}
+.hero__typed-word::after {                  /* yazma imleci: metne "|" karışmasın diye CSS ile çizilir */
   content: '';
   display: inline-block;
-  width: .075em;
-  height: .8em;
-  margin-left: .12em;
-  vertical-align: -.03em;
+  width: .09em;
+  height: .9em;
+  margin-left: .14em;
+  vertical-align: -.08em;
   border-radius: 1px;
   background: currentColor;
   animation: cursorBlink .75s step-end infinite;
+}
+/* İstatistikler: değerler HTML'de gerçek; ekrandaysa sayaç sıfırlanmaz, kısa bir vurgu oynar (js/main.js §11) */
+.hero__stat-number.is-pulse { animation: vghStatPulse .9s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes vghStatPulse {
+  0%   { transform: scale(1); text-shadow: none; }
+  45%  { transform: scale(1.12); text-shadow: 0 0 18px rgba(245,158,11,.55); }
+  100% { transform: scale(1); text-shadow: none; }
 }
 
 .hero__circuit {
@@ -180,6 +213,11 @@
   font-family: var(--font-heading);
   font-size: .95rem;
   font-weight: 700;
+}
+/* 6 öğe: orta genişlikte 3 + 3 (tek öğenin alt satıra taşıp tüm satırı kaplamasını önler) */
+@media (min-width: 561px) and (max-width: 1180px) {
+  .vgh-trust__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .vgh-trust__item { min-width: 0; }
 }
 @media (max-width: 560px) {
   .vgh-trust__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: .5rem 0; }
@@ -690,7 +728,8 @@
 
 /* Hareketi azalt: bu dosyadaki sürekli/sıralı animasyonlar (genel kural style.css'te) */
 @media (prefers-reduced-motion: reduce) {
-  .hero__title--accent::after { animation: none; }
+  .hero__typed-word::after { animation: none; }
+  .hero__stat-number.is-pulse { animation: none; }
   .section__header .section__title::after { transform: none; transition: none; }
   .process__timeline::after { transform: none; transition: none; }
   .process__timeline.is-drawn .process__step-icon { animation: none; }
@@ -723,3 +762,127 @@
   transform: translateY(-2px);
 }
 .catalog__size { font-weight: 500; opacity: .8; }
+
+/* =====================================================
+   HİZMET SAYFASI BAĞLANTILARI (/hizmetler/<slug>.html) — renk dışında alt çizgiyle de ayrışır
+   ===================================================== */
+.service-card__list a {
+  display: inline-block;                    /* hedef yüksekliği >= 24px (WCAG 2.5.8) */
+  padding: .1rem 0;
+  color: var(--clr-text);
+  text-decoration: underline;
+  text-decoration-color: rgba(180,83,9,.38);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color var(--t-fast), text-decoration-color var(--t-fast);
+}
+.service-card__list a:hover,
+.service-card__list a:focus-visible {
+  color: var(--clr-accent-text);
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 2px;
+}
+.service-card__list a:focus-visible {
+  outline: 2px solid var(--clr-accent-text);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.services__more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem 1.5rem;
+  margin-top: 2.25rem;
+  text-align: center;
+}
+.services__more p {
+  margin: 0;
+  font-size: .93rem;
+  color: var(--clr-text-muted);
+}
+
+/* Bölüm rozetleri gri zeminde >= 4.5:1; katalog PDF rozeti beyaz metinle >= 4.5:1 */
+.section--gray .section__badge { color: #9a4708; }
+.catalog__doc-badge { background: #c2362b; }
+
+/* Katalog: PDF'teki eski iletişim bilgisine karşı güncel adres notu */
+.catalog__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  margin-top: .6rem;
+  font-size: .82rem;
+  line-height: 1.55;
+  color: rgba(255,255,255,.74);
+}
+.catalog__notice i { flex: none; margin-top: .2rem; color: var(--clr-accent-light); }
+.catalog__notice a { color: var(--clr-accent-light); text-decoration: underline; text-underline-offset: 3px; }
+.catalog__notice a:hover { color: #fff; }
+
+/* Neden biz / SSS içindeki telefon bağlantıları */
+.why-card__desc a,
+.faq-item__a a {
+  color: var(--clr-accent-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* İletişim: çalışma saatleri altındaki acil hat notu */
+.contact__item-note {
+  font-size: .84rem;
+  line-height: 1.5;
+  color: rgba(255,255,255,.78);
+}
+.contact__item-note a { color: var(--clr-accent-light); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.vgh-nowrap,
+.contact__item-note a,
+.why-card__desc a,
+.faq-item__a a,
+.catalog__notice a { white-space: nowrap; }
+
+/* Uzun seçenek metinli <select> grid izini genişletip formu taşırmasın (grid öğelerinin min-content genişliği) */
+.contact__grid > *,
+.form__row > .form__group { min-width: 0; }
+select.form__input { width: 100%; min-width: 0; max-width: 100%; text-overflow: ellipsis; }
+
+/* Form: isteğe bağlı alan etiketi ve satır içi hata mesajları (js/main.js §8) */
+.form__label .form__optional { color: var(--clr-text-muted); font-weight: 500; }
+.form__error {
+  margin: .1rem 0 0;
+  font-size: .8rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #b91c1c;                            /* beyaz zeminde 6.5:1 */
+}
+.form__consent + .form__error { margin: -.35rem 0 .6rem; }
+.form__consent:has(input[aria-invalid="true"]) {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239,68,68,.15);
+}
+
+/* Projeler: telefonda yatay kaydırılan bölge klavyeyle odaklanabilir (tabindex js/main.js) */
+.projects__grid:focus-visible {
+  outline: 3px solid var(--clr-accent-light);
+  outline-offset: 4px;
+  border-radius: 14px;
+}
+
+/* GES videosu: JS kapalıyken <noscript> posteri videonun yerini doldurur */
+.ges-intro__video img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Klavye odağıyla görünüme getirilen öğe ekranın alt kenarına yapışmasın (odak halkası kesilmesin) */
+html { scroll-padding-bottom: 24px; }
+/* Mobil: yapışkan alt çubuk (≈64px) klavye odağını ve sayfa sonunu örtmesin; formda önce form görünsün */
+@media (max-width: 768px) {
+  html { scroll-padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+  body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+  .contact__form-wrapper { order: -1; }
+}

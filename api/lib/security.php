@@ -317,6 +317,21 @@ function vg_rl_clear(string $bucket, string $id): void
 }
 
 /**
+ * Hiz sinirlarinda kullanilan istemci anahtari. IPv4 adresi aynen; IPv6 adresi /64 onekine indirgenir (bir IPv6
+ * istemcisi genellikle tum /64 blogunu kullanir ve her istekte adres degistirerek sinirlari asabilir).
+ */
+function vg_rl_ip_key(): string
+{
+    $ip = vg_client_ip();
+    $bin = @inet_pton($ip);
+    if ($bin !== false && strlen($bin) === 16) {
+        $net = inet_ntop(substr($bin, 0, 8) . str_repeat("\0", 8));
+        return ($net !== false ? $net : $ip) . '/64';
+    }
+    return $ip;
+}
+
+/**
  * Kayan pencere sayaci. Izin verilirse istegi sayar ve 0, asildiysa bekleme suresini (saniye) dondurur.
  */
 function vg_rl_hit(string $bucket, string $id, int $max, int $window): int
@@ -391,21 +406,49 @@ function vg_fail_record(string $bucket, string $id, int $threshold, bool $progre
     return isset($st['lock']) && (int)$st['lock'] > $now ? (int)$st['lock'] - $now : 0;
 }
 
-/** Eski sayac dosyalarini ara sira temizler (1 gunden eski). */
+/*
+ * Temizlik zamanlamasi: her temizlik en fazla saatte bir, o saatteki ilk istekte ve YANIT GONDERILDIKTEN SONRA
+ * (vg_after_response) calisir; klasorun tamami taranir. Isaret dosyasi (gc-*.last) son calisma zamanini tutar.
+ * Iki istek ayni anda baslatirsa temizlik iki kez calisir; zarari yoktur.
+ */
+const VG_GC_EVERY = 3600;
+const VG_GC_BUDGET = 3.0;   // saniye; asilirsa kalan dosyalar bir sonraki calismada ele alinir
+
+function vg_gc_due(string $name): bool
+{
+    $marker = vg_data_dir() . '/' . $name . '.last';
+    $mt = @filemtime($marker);
+    if ($mt !== false && time() - $mt < VG_GC_EVERY) {
+        return false;
+    }
+    @file_put_contents($marker, (string)time());
+    return true;
+}
+
+function vg_schedule_gc(): void
+{
+    if (vg_gc_due('gc-rl')) {
+        vg_after_response('vg_rl_gc');
+    }
+    if (vg_gc_due('gc-sessions')) {
+        vg_after_response('vg_session_gc');
+    }
+}
+
+/** Suresi dolmus sayac dosyalarini siler (en uzun pencere 1 saat, kilit en fazla 15 dk; 1 gunden eski dosyalar). */
 function vg_rl_gc(): void
 {
-    if (random_int(1, 50) !== 1) {
-        return;
-    }
     $dir = vg_data_dir() . '/rl';
     $dh = @opendir($dir);
     if ($dh === false) {
         return;
     }
+    $start = microtime(true);
     $limit = time() - 86400;
-    $n = 0;
-    while (($f = readdir($dh)) !== false && $n < 2000) {
-        $n++;
+    while (($f = readdir($dh)) !== false) {
+        if (microtime(true) - $start > VG_GC_BUDGET) {
+            break;
+        }
         if (substr($f, -5) !== '.json') {
             continue;
         }
@@ -419,27 +462,26 @@ function vg_rl_gc(): void
 }
 
 /*
- * Oturum dosyasi temizligi (ara sira). PHP'nin kendi GC'si en uzun sure (30 gun) ile calisir; burada suresi dolmus
+ * Oturum dosyasi temizligi. PHP'nin kendi GC'si en uzun sure (30 gun) ile calisir; burada suresi dolmus
  * oturumlar daha erken silinir: "Beni hatirla" isaretli oturumlar 14 gun, digerleri (anonim dahil) 2 saat islem
  * yapilmazsa. Dosya degisiklik zamani son erisim zamanidir (lazy_write erisimde zaman damgasini gunceller).
  */
 function vg_session_gc(): void
 {
-    if (random_int(1, 100) !== 1) {
-        return;
-    }
     $dir = vg_data_dir() . '/sessions';
     $dh = @opendir($dir);
     if ($dh === false) {
         return;
     }
+    $start = microtime(true);
     $now = time();
-    $n = 0;
-    while (($f = readdir($dh)) !== false && $n < 1000) {
+    while (($f = readdir($dh)) !== false) {
+        if (microtime(true) - $start > VG_GC_BUDGET) {
+            break;
+        }
         if (strpos($f, 'sess_') !== 0) {
             continue;
         }
-        $n++;
         $path = $dir . '/' . $f;
         $mt = @filemtime($path);
         if ($mt === false || $now - $mt < VG_IDLE_SHORT) {

@@ -40,7 +40,8 @@ function vg_mail_send(string $to, string $subject, string $body, string $kind): 
         return $ok;
     }
 
-    $sent = @mail($to, $encodedSubject, $body, implode("\r\n", $headers));
+    /* -f: zarf gondericisi (Return-Path) From ile ayni alan adinda olsun; SPF/DMARC hizalamasi icin. */
+    $sent = @mail($to, $encodedSubject, $body, implode("\r\n", $headers), '-f' . $fromAddress);
     if (!$sent) {
         /* KVKK: alici adresi loglanmaz. */
         error_log('VoltGuard api: mail() failed (' . $kind . ')');
@@ -88,4 +89,32 @@ function vg_mail_password_changed(array $user, int $when): bool
         . "VoltGuard\n"
         . vg_site_url() . "\n";
     return vg_mail_send($user['email'], 'VoltGuard Tools: şifreniz değiştirildi', $body, 'pwchanged');
+}
+
+/** E-posta adresini bildirimde gostermek icin maskeler: "ah***@g***.com". */
+function vg_mask_email(string $email): string
+{
+    $at = strrpos($email, '@');
+    if ($at === false || $at === 0) {
+        return '***';
+    }
+    $local = substr($email, 0, $at);
+    $domain = substr($email, $at + 1);
+    $dot = strpos($domain, '.');
+    $host = $dot === false ? $domain : substr($domain, 0, $dot);
+    $rest = $dot === false ? '' : substr($domain, $dot);
+    $keep = vg_strlen($local) > 3 ? 2 : 1;
+    return vg_substr($local, $keep) . '***@' . vg_substr($host, 1) . '***' . $rest;
+}
+
+/** E-posta adresi degisince ESKI adrese guvenlik bildirimi. */
+function vg_mail_email_changed(array $user, string $newEmail, int $when): bool
+{
+    $body = vg_greeting($user['name']) . "\n\n"
+        . 'VoltGuard Tools hesabınızın e-posta adresi ' . vg_local_time($when) . ' (Türkiye saati) tarihinde ' . vg_mask_email($newEmail)
+        . " olarak değiştirildi. Hesabınızla ilgili e-postalar bundan sonra yeni adrese gönderilecek. Güvenliğiniz için diğer cihazlardaki oturumlarınız kapatıldı ve daha önce istenmiş şifre sıfırlama bağlantıları geçersiz kılındı.\n\n"
+        . "Bu değişikliği siz yapmadıysanız hemen info@voltguard.com.tr adresine yazın.\n\n"
+        . "VoltGuard\n"
+        . vg_site_url() . "\n";
+    return vg_mail_send($user['email'], 'VoltGuard Tools: e-posta adresiniz değiştirildi', $body, 'emailchanged');
 }

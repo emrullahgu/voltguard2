@@ -8,11 +8,11 @@
   <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
   <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/fa-solid-900.68c892a7.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261011b">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,26 +35,27 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261011" defer></script>
+  <script src="/js/vg-shell.js?v=20261012" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="description" content="VFD üzerinde OverCurrent (OC) hatası nedenleri: motor kilitlenme, yanlış V/f eğrisi, kısa devre koruması, motor kablosu uzunluğu ve rampalar.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
-  <title>VFD OverCurrent (OC) Hatası - Sebepleri ve Çözümü | VoltGuard'a Sor</title>
+  <title>VFD OverCurrent (OC) Hatası ve Çözümü | VoltGuard</title>
   <link rel="canonical" href="https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="VFD OverCurrent (OC) Hatası - Sebepleri ve Çözümü | VoltGuard'a Sor">
-  <meta property="og:description" content="Motor kilitlenme, yanlış V/f eğrisi, kısa devre koruması, motor kablosu uzunluğu ve rampalar.">
+  <meta property="og:title" content="VFD OverCurrent (OC) Hatası ve Çözümü | VoltGuard">
+  <meta property="og:description" content="VFD üzerinde OverCurrent (OC) hatası nedenleri: motor kilitlenme, yanlış V/f eğrisi, kısa devre koruması, motor kablosu uzunluğu ve rampalar.">
   <meta property="og:url" content="https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
   <meta property="og:site_name" content="VoltGuard">
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:locale" content="tr_TR">
-  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link rel="stylesheet" href="../css/style.css?v=20261011">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"QAPage","@id":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html#qa","mainEntity":{"@type":"Question","name":"VFD üzerinde OverCurrent (OC) hatası neden çıkıyor?","text":"Frekans invertörümüz (VFD) motoru çalıştırırken ya da rampalarken OC (OverCurrent) hatası veriyor. Bazen kalkış anında, bazen tam hızda çalışırken. Sebebi ne olabilir?","answerCount":1,"upvoteCount":0,"datePublished":"2026-09-08","author":{"@type":"Organization","name":"VoltGuard"},"acceptedAnswer":{"@type":"Answer","text":"OC hatası VFD çıkış akımının anlık olarak IGBT dayanım limitini geçtiği durumdur. Yaygın nedenler: (1) Çok hızlı rampa (accel/decel time çok kısa), (2) Motor mekanik yükü çok yüksek (rulman sıkışma, iş yolu tıkanıklığı), (3) V/f eğrisi yanlış (boost çok yüksek), (4) Motor gücü VFD'den büyük veya undersized, (5) Motor kablosu 30 m'yi geçmesi ve dv/dt filtre yokluğu, (6) Motor sargı arızası. Rampayı 2-3 kat uzatıp deneyin; hata devam ederse motor mekaniği kontrol edilmelidir.","datePublished":"2026-09-08","author":{"@type":"Organization","name":"VoltGuard"}}},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard'a Sor","item":"https://voltguard.com.tr/sor.html"},{"@type":"ListItem","position":3,"name":"VFD OverCurrent Hatası","item":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html"}]}]}</script>
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=20261011">
+  <style id="kb-local">.kb-cta>div:last-child{min-width:0;max-width:100%}.kb-cta .btn{white-space:normal;line-height:1.25;max-width:100%;text-align:center}.vg-form-actions>.kb-cta{min-width:0}.article p a:not(.btn):not(.kb-card__more),.article li a:not(.btn),.article td a,.faq-item__a a{color:var(--clr-accent-text);text-decoration:underline;text-underline-offset:2px}.article p a:not(.btn):not(.kb-card__more):hover,.article li a:not(.btn):hover,.article td a:hover,.faq-item__a a:hover{text-decoration-thickness:2px}.kb-hero p a{color:#fcd34d;text-decoration:underline;text-underline-offset:2px}.kb-criteria td:first-child{white-space:normal;width:36%}</style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html#article","headline":"VFD OverCurrent (OC) Hatası - Sebepleri ve Çözümü","description":"VFD üzerinde OverCurrent (OC) hatası nedenleri: motor kilitlenme, yanlış V/f eğrisi, kısa devre koruması, motor kablosu uzunluğu ve rampalar.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","articleSection":"VoltGuard'a Sor","image":"https://voltguard.com.tr/public/og-image.png","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard'a Sor","item":"https://voltguard.com.tr/sor.html"},{"@type":"ListItem","position":3,"name":"VFD OverCurrent Hatası","item":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html"}]}]}</script>
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -72,7 +73,7 @@
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
-          <li><a class="vg-nav__link" href="/#hizmetler">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
           <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
           <li class="vg-dd" data-vg-dd>
@@ -102,7 +103,7 @@
   <!--/vg:header-->
 
   <nav class="breadcrumb" aria-label="breadcrumb">
-    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../sor.html">VoltGuard'a Sor</a> &rsaquo; <span>VFD OverCurrent Hatası</span>
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/sor.html">VoltGuard'a Sor</a> &rsaquo; <span>VFD OverCurrent Hatası</span>
   </nav>
 
   <main class="article" id="main" tabindex="-1">
@@ -112,7 +113,7 @@
     <div class="kb-keyfacts"><h2>Soru</h2><ul><li>"Frekans invertörümüz (VFD) motoru çalıştırırken ya da rampalarken OC (OverCurrent) hatası veriyor. Bazen kalkış anında, bazen tam hızda çalışırken. Sebebi ne olabilir?"</li></ul></div>
 
     <h2>Kısa Cevap</h2>
-    <p>OverCurrent (OC), VFD çıkış akımının IGBT'nin izin verdiği anlık pik değerini (tipik 200% × In) aşması durumunda tetiklenen mikrosaniye seviyesinde bir korumadır. En yaygın altı neden: <strong>(1)</strong> rampa süresi (accel/decel time) çok kısa, <strong>(2)</strong> motor mekanik yükü aşırı, <strong>(3)</strong> V/f eğrisi yanlış (boost çok yüksek), <strong>(4)</strong> VFD gücü motor için yetersiz, <strong>(5)</strong> uzun motor kablosu + dv/dt filtresi yokluğu, <strong>(6)</strong> motor sargı arızası. Hata anında oluşan frekans ve akım değeri VFD hata kaydından okunmalıdır.</p>
+    <p>OverCurrent (OC), VFD çıkış akımının IGBT'nin izin verdiği anlık pik değerini (tipik 200% × In) aşması durumunda tetiklenen mikrosaniye seviyesinde bir korumadır. En yaygın altı neden: <strong>(1)</strong> rampa süresi (accel/decel time) çok kısa, <strong>(2)</strong> motor mekanik yükü aşırı, <strong>(3)</strong> V/f eğrisi yanlış (boost çok yüksek), <strong>(4)</strong> VFD gücü motor için yetersiz, <strong>(5)</strong> uzun motor kablosu + dv/dt filtresi yokluğu, <strong>(6)</strong> motor sargı arızası. Hata anında oluşan frekans ve akım değeri VFD hata kaydından okunmalıdır. Bu nedenle sürücü parametreleri ve motor kablosu, <a href="/hizmetler/plc-scada-otomasyon.html">PLC ve otomasyon</a> projelerinde devreye alma sırasında birlikte kontrol edilmelidir.</p>
 
     <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>OC koruması IGBT'yi ani hasardan koruyan donanımsal bir korumadır; yazılım tarafında değişmez.</li><li>Modern VFD'lerde OC eşiği %180-220 × In arası kalibrelenir.</li><li>Yumuşak kalkış / vektör kontrol OC olaylarını azaltır.</li><li>Motor - VFD kablosu 30 m üstü ise dv/dt veya sinüs filtresi şart.</li><li>OC hatası tekrarlıyorsa değişkenler (frekans, akım) mutlaka kayıt altına alınmalıdır.</li></ul></div>
 
@@ -126,7 +127,7 @@
       <li><strong>V/f eğrisi ayarı:</strong> Torque boost (düşük hızda ekstra gerilim) fazla ayarlanırsa düşük frekansta motor akımı fırlar. Fabrika ayarında bırakın veya auto-tune yapın.</li>
       <li><strong>Yanlış VFD boyutlandırma:</strong> VFD'nin nominal akımı (In) motor In × 1,1 üzerinde olmalı. Değişken tork uygulamalarında bu yeterli; sabit tork uygulamalarında bir kademe büyük VFD tercih edin.</li>
       <li><strong>Uzun motor kablosu:</strong> 30 m üzeri kablo IGBT anahtarlama dalgalarını yansıtır; motor sargı uçlarında 2 × DC bara gerilimi (yaklaşık 1200 V pik) oluşur. dv/dt veya sinüs filtresi eklenmezse VFD OC verir ve motor yalıtımı zarar görür.</li>
-      <li><strong>Motor sargı kısa devresi / toprak arızası:</strong> Sargı içi kısa devre veya toprak arıza durumunda VFD çıkışında normal olmayan akım geçer. Megger ile sargı-toprak ve sargı-sargı izolasyon kontrolü yapılmalı.</li>
+      <li><strong>Motor sargı kısa devresi / toprak arızası:</strong> Sargı içi kısa devre veya toprak arıza durumunda VFD çıkışında normal olmayan akım geçer. Megohmmetre ile sargı-toprak ve sargı-sargı izolasyon kontrolü yapılmalı.</li>
     </ol>
 
     <h2>Hata Anında Ne Kontrol Etmeli?</h2>
@@ -134,14 +135,14 @@
       <li>Hata kaydında yazan <strong>frekans</strong>: 0-5 Hz arasında OC ise V/f eğrisi veya mekanik problem, tam hızda OC ise motor / kablo problemi.</li>
       <li><strong>Akım değeri</strong>: OC eşiği kaç ampere ayarlı ve gerçek akım kaç? Fark az ise sınır aşımı, çok ise donanım problemi.</li>
       <li><strong>Hata sıklığı</strong>: Ilk çalıştırmada mı, yoğun kullanımda mı, sıcak havada mı? Zamansal bağıntı ipucu verir.</li>
-      <li><strong>Fault stack</strong>: Modern VFD'lerde son 10 hata ve o anki değerler kayıtlıdır (Yaskawa U3-01, Siemens Faults menu, ABB parameters group 04).</li>
+      <li><strong>Fault stack</strong>: Modern VFD'lerde son 10 hata ve o anki değerler kayıtlıdır; bunlar sürücünün hata geçmişi menüsünden okunur.</li>
     </ul>
 
     <h2>Ölçümle Nasıl Doğrularsınız?</h2>
     <ul class="article__list">
       <li><strong>Pens ampermetre:</strong> Motor kalkış akımını gerçek zamanlı okuyun. Rampa boyunca max akımı not edin.</li>
       <li><strong>Osiloskop:</strong> Motor girişi V ve I dalga şekli. Yüksek dv/dt görülüyorsa filtre gerekli.</li>
-      <li><strong>Megger ile motor sargısı:</strong> Sargı-toprak izolasyonu &gt; 1 MΩ olmalı.</li>
+      <li><strong>Megohmmetre ile motor sargısı:</strong> Sargı-toprak izolasyonu &gt; 1 MΩ olmalı.</li>
       <li><strong>Motor sargı direnç ölçümü:</strong> Üç sargı direnci arasında %5 fark olmamalı.</li>
       <li><strong>Rulman termal kamerası:</strong> Yük yokken bile rulmanda 15 °C üstü sıcaklık artışı mekanik problemi işaret eder.</li>
     </ul>
@@ -161,18 +162,21 @@
 
     <h2>Benzer Sorular</h2>
     <ul class="article__list">
-      <li><a href="../sor/motor-termik-sik-atiyor.html">Motor termik rölesi sık atıyor?</a></li>
-      <li><a href="../sor/motor-bir-fazda-dusuk-akim.html">Üç fazlı motorun bir fazında düşük akım okunuyor?</a></li>
-      <li><a href="../bilgi/vfd-frekans-invertoru-nedir.html">VFD Nedir? (Bilgi Bankası)</a></li>
-      <li><a href="../hesaplama/motor-akimi-hesaplama/">Motor Akımı Hesaplama Aracı</a></li>
+      <li><a href="/sor/motor-termik-sik-atiyor.html">Motor termik rölesi sık atıyor?</a></li>
+      <li><a href="/sor/motor-bir-fazda-dusuk-akim.html">Üç fazlı motorun bir fazında düşük akım okunuyor?</a></li>
+      <li><a href="/bilgi/vfd-frekans-invertoru-nedir.html">VFD Nedir? (Bilgi Bankası)</a></li>
+      <li><a href="/hesaplama/motor-akimi-hesaplama/">Motor Akımı Hesaplama Aracı</a></li>
     </ul>
 
     <p class="kb-disclaimer">Bu cevap genel teknik bilgi amaçlıdır. VFD ayarları üretici kataloğuna göre yapılmalı; kritik proses ekipmanlarında yetkili teknik servisle çalışılmalıdır.</p>
     <div class="kb-cta">
       <div class="kb-cta__text"><strong>VFD ayar, filtre ve motor koordinasyonu için destek alın</strong><span>VoltGuard mühendisleriyle keşif planlayın.</span></div>
-      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      <div style="display:flex;flex-wrap:wrap;gap:.6rem">
+        <a href="/hizmetler/plc-scada-otomasyon.html" class="btn btn--accent btn--md"><i class="fas fa-arrow-right" aria-hidden="true"></i> PLC ve Otomasyon Hizmeti</a>
+        <a href="/#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
     </div>
-    <p style="margin-top:1.6rem"><a href="../sor.html" class="kb-card__more">&larr; Tüm sorular: VoltGuard'a Sor</a></p>
+    <p style="margin-top:1.6rem"><a href="/sor.html" class="kb-card__more">&larr; Tüm sorular: VoltGuard'a Sor</a></p>
   </main>
 
   <!--vg:footer-->
@@ -202,7 +206,7 @@
           </a>
           <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
           <ul class="vg-footer__contact">
-            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0 545 434 67 35</a></li>
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
             <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
           </ul>
@@ -216,13 +220,37 @@
           <div class="vg-footer__col">
             <h3 class="vg-footer__h">Hizmetler</h3>
             <ul>
-              <li><a href="/#hizmetler">Elektrik Hizmetleri</a></li>
-              <li><a href="/#hizmetler">Elektronik &amp; Gömülü Sistemler</a></li>
-              <li><a href="/#hizmetler">Otomasyon Sistemleri</a></li>
-              <li><a href="/#hizmetler">Mekanik Sistemler</a></li>
-              <li><a href="/#hizmetler">Enerji Sistemleri &amp; Verimlilik</a></li>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
               <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
               <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#guvenlik">Güvenlik</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
@@ -239,24 +267,11 @@
             <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
             <ul>
               <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
               <li><a href="/hesap/giris.html">Giriş Yap</a></li>
               <li><a href="/hesap/kayit.html">Üye Ol</a></li>
-            </ul>
-          </div>
-          <div class="vg-footer__col">
-            <h3 class="vg-footer__h">Kurumsal</h3>
-            <ul>
-              <li><a href="/#hakkimizda">Hakkımızda</a></li>
-              <li><a href="/#surec">Sürecimiz</a></li>
-              <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
-              <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
-              <li><a href="/#katalog">Katalog</a></li>
-              <li><a href="/#sss">SSS</a></li>
-              <li><a href="/#iletisim">İletişim</a></li>
-              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
             </ul>
           </div>
         </nav>
@@ -302,6 +317,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="../js/voltguard-auth.js?v=20261011b" defer></script>
+  <script src="/js/voltguard-auth.js?v=20261011b" defer></script>
 </body>
 </html>

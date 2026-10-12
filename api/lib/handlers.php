@@ -121,7 +121,7 @@ function vg_h_register(VgStore $store, array $body): array
     if ($errors) {
         vg_validation_failed($errors);
     }
-    $retry = vg_rl_hit('register_ip', vg_client_ip(), 10, 3600);
+    $retry = vg_rl_hit('register_ip', vg_rl_ip_key(), 10, 3600);
     if ($retry > 0) {
         vg_too_many($retry);
     }
@@ -164,8 +164,18 @@ function vg_h_login(VgStore $store, array $body): array
     if ($errors) {
         vg_validation_failed($errors);
     }
-    $ip = vg_client_ip();
-    $remaining = max(vg_fail_lock_remaining('login_email', $email), vg_fail_lock_remaining('login_ip', $ip));
+    /*
+     * Kilitler: (1) e-posta + istemci (IP, IPv6'da /64) cifti: 5. hatadan itibaren kademeli (30 sn ... 15 dk);
+     * baskasinin adresini bilen biri, sahibini kendi baglantisindan kilitleyemez. (2) e-posta basina dagitik
+     * denemelere karsi yuksek esik: 15 dk icinde 50 hata -> 15 dk. (3) istemci basina: 15 dk icinde 30 hata -> 15 dk.
+     */
+    $ip = vg_rl_ip_key();
+    $pair = $email . '|' . $ip;
+    $remaining = max(
+        vg_fail_lock_remaining('login_email_ip', $pair),
+        vg_fail_lock_remaining('login_email', $email),
+        vg_fail_lock_remaining('login_ip', $ip)
+    );
     if ($remaining > 0) {
         vg_too_many($remaining, 'Çok fazla hatalı giriş denemesi yapıldı. Güvenliğiniz için ' . vg_human_wait($remaining) . ' sonra tekrar deneyin ya da şifrenizi sıfırlayın.');
     }
@@ -173,11 +183,13 @@ function vg_h_login(VgStore $store, array $body): array
     /* Hesap yoksa da ayni maliyette dogrulama yapilir (hesap varligi zamanlamadan anlasilmasin). */
     $valid = password_verify($password, $user !== null ? $user['pass'] : vg_dummy_hash()) && $user !== null;
     if (!$valid) {
-        vg_fail_record('login_email', $email, 5, true);
+        vg_fail_record('login_email_ip', $pair, 5, true);
+        vg_fail_record('login_email', $email, 50, false);
         vg_fail_record('login_ip', $ip, 30, false);
         vg_failure_delay();
         vg_fail(401, 'invalid_credentials', 'E-posta adresi veya şifre hatalı.');
     }
+    vg_rl_clear('login_email_ip', $pair);
     vg_rl_clear('login_email', $email);
     $now = vg_now();
     $fields = ['last_login_at' => $now];
@@ -221,19 +233,40 @@ function vg_h_update_profile(VgStore $store, array $body): array
     if ($errors) {
         vg_validation_failed($errors);
     }
+    $now = vg_now();
     if ($emailChange) {
         /* E-posta degisikligi hesabin kimligini degistirir: mevcut sifre istenir. */
         vg_verify_user_password($store, $user, $body['password'] ?? '', 'password');
+        /* "Bu adres baska hesapta kayitli" yaniti ile adres taramasini sinirla (hesap ve istemci basina). */
+        $retry = max(vg_rl_hit('email_change_user', $user['id'], 5, 3600), vg_rl_hit('email_change_ip', vg_rl_ip_key(), 10, 3600));
+        if ($retry > 0) {
+            vg_too_many($retry);
+        }
+        /* Diger cihazlardaki oturumlar kapatilir (oturum surumu artar; bu oturum yenilenir). */
+        $fields['epoch'] = (int)$user['epoch'] + 1;
     }
     if (!$fields) {
         return ['ok' => true, 'user' => vg_public_user($user)];
     }
-    $fields['updated_at'] = vg_now();
+    $fields['updated_at'] = $now;
     if (!$store->updateUser($user['id'], $fields)) {
         vg_fail(409, 'email_taken', 'Bu e-posta adresi başka bir hesapta kayıtlı.', ['email' => 'Bu e-posta adresi başka bir hesapta kayıtlı.']);
     }
+    $out = ['ok' => true];
+    if ($emailChange) {
+        /* Eski adrese gonderilmis sifre sifirlama baglantilari gecersiz olur; eski adrese bildirim gider. */
+        $store->deleteResetTokens($user['id']);
+        vg_rl_clear('login_email', $user['email']);
+        vg_session_refresh((int)$fields['epoch']);
+        $newEmail = $fields['email'];
+        vg_after_response(function () use ($user, $newEmail, $now) {
+            vg_mail_email_changed($user, $newEmail, $now);
+        });
+        $out['csrf'] = vg_csrf_token();
+    }
     $fresh = $store->findUserById($user['id']);
-    return ['ok' => true, 'user' => vg_public_user($fresh ?: array_merge($user, $fields))];
+    $out['user'] = vg_public_user($fresh ?: array_merge($user, $fields));
+    return $out;
 }
 
 function vg_h_change_password(VgStore $store, array $body): array
@@ -268,6 +301,7 @@ function vg_h_delete_account(VgStore $store, array $body): array
     vg_verify_user_password($store, $user, $body['password'] ?? '', 'password');
     $store->deleteUser($user['id']);
     vg_rl_clear('login_email', $user['email']);
+    vg_rl_clear('login_email_ip', $user['email'] . '|' . vg_rl_ip_key());
     vg_session_destroy();
     return ['ok' => true, 'message' => 'Hesabınız ve tüm kayıtlarınız kalıcı olarak silindi.'];
 }
@@ -281,7 +315,7 @@ function vg_h_forgot_password(VgStore $store, array $body): array
     if ($email === '') {
         vg_validation_failed(['email' => 'Geçerli bir e-posta adresi girin.']);
     }
-    $retry = vg_rl_hit('forgot_ip', vg_client_ip(), 5, 900);
+    $retry = vg_rl_hit('forgot_ip', vg_rl_ip_key(), 5, 900);
     if ($retry > 0) {
         vg_too_many($retry);
     }
@@ -314,7 +348,7 @@ function vg_h_reset_password(VgStore $store, array $body): array
 {
     $token = $body['token'] ?? '';
     $password = $body['password'] ?? '';
-    $retry = vg_rl_hit('reset_ip', vg_client_ip(), 10, 900);
+    $retry = vg_rl_hit('reset_ip', vg_rl_ip_key(), 10, 900);
     if ($retry > 0) {
         vg_too_many($retry);
     }
@@ -340,6 +374,7 @@ function vg_h_reset_password(VgStore $store, array $body): array
     $store->updateUser($user['id'], ['pass' => vg_hash_password((string)$password), 'epoch' => (int)$user['epoch'] + 1, 'updated_at' => $now]);
     $store->deleteResetTokens($user['id']);
     vg_rl_clear('login_email', $user['email']);
+    vg_rl_clear('login_email_ip', $user['email'] . '|' . vg_rl_ip_key());
     vg_rl_clear('pw_user', $user['id']);
     /* Bu tarayicida baska bir hesap acik olsa bile kapatilir; yeni sifreyle giris yapilir. */
     vg_session_drop_user();
@@ -591,8 +626,7 @@ function vg_run(): void
             unset($result['_status']);
             vg_send($status, $result);
         }
-        vg_rl_gc();
-        vg_session_gc();
+        vg_schedule_gc();
     } catch (VgHttpError $e) {
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();

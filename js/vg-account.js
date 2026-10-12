@@ -298,16 +298,21 @@
     gateLoading(gate);
     initNav(opts.page, Auth.currentUser());
     var wasMember = false;
+    var memberId = null;
     // Başka sekmede çıkış yapıldı / oturum süresi doldu: korumalı sayfa giriş ekranına, diğerleri misafir görünümüne geçer.
+    // Bu tarayıcıda başka bir hesaba geçildiyse sayfa o hesabın verisiyle yeniden yüklenir.
     doc.addEventListener('vg:auth', function (e) {
       var u = e.detail && e.detail.user;
-      if (wasMember && !u && !leaving) {
+      if (!wasMember || leaving) return;
+      if (!u) {
         if (opts.protected) {
           Auth.setFlash('info', 'Oturumunuz kapatıldı. Devam etmek için yeniden giriş yapın.');
           location.replace(Auth.loginUrl(location.pathname + location.search));
         } else {
           location.reload();
         }
+      } else if (memberId && u.id !== memberId) {
+        location.reload();
       }
     });
 
@@ -337,6 +342,7 @@
           if (content) content.hidden = false;
           if (down && alertEl) alertBox(alertEl, 'warning', 'Hesap sistemine şu anda ulaşılamıyor; yalnızca bu tarayıcıda kayıtlı veriler gösteriliyor.');
           wasMember = !!user;
+          memberId = user ? user.id : null;
           if (opts.onReady) opts.onReady({ user: user, apiDown: !!down });
         });
       }).catch(function (e) {
@@ -373,6 +379,32 @@
     gateLoading: gateLoading,
     gateError: gateError
   };
+
+  /* ---------------------------------------------------------------- adres çubuğu temizliği */
+  // Formlar JavaScript yüklenmeden gönderilirse (yavaş bağlantı, betik hatası) tarayıcı alanları adres çubuğuna
+  // yazabilir. Bu tür kişisel alanlar geçmişte ve paylaşılan bağlantılarda kalmasın diye hemen silinir.
+  var SENSITIVE_PARAMS = ['password', 'password2', 'current', 'email', 'username', 'name', 'company', 'phone', 'website', 'consent', 'remember', 'legacy', 'guest'];
+  function scrubUrl() {
+    if (!location.search) return false;
+    var params;
+    try { params = new URLSearchParams(location.search); } catch (e) { return false; }
+    var hit = false;
+    SENSITIVE_PARAMS.forEach(function (k) { if (params.has(k)) { params.delete(k); hit = true; } });
+    if (!hit) return false;
+    var q = params.toString();
+    try { history.replaceState(history.state, '', location.pathname + (q ? '?' + q : '') + location.hash); } catch (e) { /* eski tarayıcı */ }
+    return true;
+  }
+  scrubUrl();
+
+  // Gönderim düğmeleri HTML'de "disabled" gelir (betik yüklenmeden gönderim olmasın); sayfa betiği olay dinleyicisini
+  // bağladıktan sonra bu işlevle açılır.
+  function enableSubmit(form) {
+    if (!form) return;
+    $$('button[type="submit"][data-vg-wait]', form).forEach(function (b) { b.disabled = false; b.removeAttribute('data-vg-wait'); });
+  }
+  global.VG.AccountUI.enableSubmit = enableSubmit;
+  global.VG.AccountUI.scrubUrl = scrubUrl;
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', function () { initPasswordToggles(doc); });
   else initPasswordToggles(doc);

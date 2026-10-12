@@ -92,12 +92,19 @@ ayrıca JSON boyutu sınırı (128 KB – 1 MB). Kimlik biçimleri: favori = ara
   harf + rakam, yaygın şifre listesi; var olmayan hesapta da aynı maliyetli doğrulama (zamanlama ile hesap tespiti yok).
 - Oturum çerezi `VGSESS`: HttpOnly, HTTPS'te Secure, SameSite=Lax, strict mode; girişte `session_regenerate_id(true)`.
   Süreler: normal 2 saat boşta / 12 saat en fazla; "Beni hatırla" 14 gün boşta / 30 gün en fazla.
-  Şifre değişince/sıfırlanınca kullanıcının `epoch` değeri artar → diğer tüm oturumlar geçersiz olur.
+  Şifre veya e-posta değişince / şifre sıfırlanınca kullanıcının `epoch` değeri artar → diğer tüm oturumlar geçersiz olur.
+  E-posta değişince bekleyen sıfırlama jetonları silinir ve ESKİ adrese bildirim e-postası gider.
 - CSRF: oturuma bağlı jeton, durum değiştiren her istekte `X-VG-CSRF` başlığı (`hash_equals`). Çerezsiz POST oturum açmadan reddedilir.
 - Origin (yoksa Referer) aynı köken olmalı; `Sec-Fetch-Site: cross-site` reddedilir; yalnızca `application/json` gövde.
-- Hız sınırları: giriş e-posta başına 15 dk'da 5 hatadan sonra 30 sn → 15 dk'ya kadar artan kilit, IP başına 30 hata;
-  kayıt IP başına 10/saat; şifre sıfırlama isteği IP başına 5/15 dk ve e-posta başına 3/saat (sessiz); sıfırlama IP başına 10/15 dk;
+- Hız sınırları ("IP" = IPv4 adresi ya da IPv6 /64 öneki, `vg_rl_ip_key()`): giriş e-posta+IP çifti başına 15 dk'da 5 hatadan
+  sonra 30 sn → 15 dk'ya kadar artan kilit (başkası sahibini kendi bağlantısından kilitleyemez), e-posta başına dağıtık denemelere
+  karşı 15 dk'da 50 hata → 15 dk, IP başına 30 hata → 15 dk; kayıt IP başına 10/saat; şifre sıfırlama isteği IP başına 5/15 dk ve
+  e-posta başına 3/saat (sessiz); sıfırlama IP başına 10/15 dk; e-posta değişikliği hesap başına 5/saat ve IP başına 10/saat;
   mevcut şifre doğrulaması kullanıcı başına 5 hata.
+- Temizlik: süresi dolmuş sayaç (rl/) ve oturum dosyaları saatte en fazla bir kez, yanıt gönderildikten sonra taranıp silinir
+  (`gc-rl.last`, `gc-sessions.last` işaret dosyaları).
+- E-posta `mail()` ile `-f noreply@voltguard.com.tr` zarf göndericisiyle gider: cPanel'de bu adresin (veya alan adının)
+  gönderici olarak izinli olduğunu, SPF/DKIM kayıtlarının tanımlı olduğunu kontrol edin.
 - Sıfırlama bağlantısı URL parçasında (`#t=`) taşınır: sunucu günlüklerine ve Referer'a gitmez; veritabanında yalnızca SHA-256 özeti tutulur.
 - Günlüklere (error_log) kişisel veri yazılmaz; yalnızca hata türü/konumu.
 - Cloudflare arkasında `CF-Connecting-IP` yalnızca istek gerçek bir Cloudflare adresinden geliyorsa kullanılır (contact.php ile aynı).

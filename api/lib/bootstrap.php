@@ -13,7 +13,7 @@ if (!defined('VG_API')) {
 
 const VG_API_VERSION = 'vg-auth/1';
 /* Kayit sirasinda onaylanan uyelik + KVKK aydinlatma metninin surumu (gizlilik.html "Son guncelleme"). */
-const VG_CONSENT_VERSION = '2026-10-11';
+const VG_CONSENT_VERSION = '2026-10-12';
 const VG_SESSION_NAME = 'VGSESS';
 /* Oturum sureleri (saniye). "Beni hatirla" isaretli degilse kisa, isaretliyse uzun sureler uygulanir. */
 const VG_IDLE_SHORT = 7200;        // 2 saat islem yapilmazsa

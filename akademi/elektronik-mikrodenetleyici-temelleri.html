@@ -8,11 +8,11 @@
   <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
   <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/fa-solid-900.68c892a7.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261011b">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,26 +35,27 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261011" defer></script>
+  <script src="/js/vg-shell.js?v=20261012" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
-  <meta name="description" content="Elektronik ve mikrodenetleyici temelleri: direnç/kondansatör/diyot/transistör, mikrodenetleyici nedir, GPIO ve analog-dijital kavramı, PCB tasarım akışı, EMI/EMC'ye giriş.">
+  <meta name="description" content="Direnç, kondansatör, diyot ve transistörden mikrodenetleyiciye; GPIO, analog-dijital kavramı, PCB akışı ve EMI/EMC'ye giriş dersi.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
-  <title>Elektronik ve Mikrodenetleyici Temelleri (Başlangıç) | VoltGuard Akademi</title>
+  <title>Elektronik ve Mikrodenetleyici Temelleri | VoltGuard</title>
   <link rel="canonical" href="https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Elektronik ve Mikrodenetleyici Temelleri (Başlangıç) | VoltGuard Akademi">
-  <meta property="og:description" content="Direnç/kondansatör/diyot/transistör, mikrodenetleyici nedir, GPIO ve analog-dijital kavramı, PCB tasarım akışı, EMI/EMC'ye giriş.">
+  <meta property="og:title" content="Elektronik ve Mikrodenetleyici Temelleri | VoltGuard">
+  <meta property="og:description" content="Direnç, kondansatör, diyot ve transistörden mikrodenetleyiciye; GPIO, analog-dijital kavramı, PCB akışı ve EMI/EMC'ye giriş dersi.">
   <meta property="og:url" content="https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
   <meta property="og:site_name" content="VoltGuard">
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:locale" content="tr_TR">
-  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link rel="stylesheet" href="../css/style.css?v=20261011">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html#course","name":"Elektronik ve Mikrodenetleyici Temelleri","description":"Direnç/kondansatör/diyot/transistör, mikrodenetleyici nedir, GPIO ve analog-dijital kavramı, PCB tasarım akışı, EMI/EMC'ye giriş.","educationalLevel":"Başlangıç","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-10-11","provider":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Elektronik ve Mikrodenetleyici Temelleri","item":"https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Mikrodenetleyici (mikrokontrolör) nedir?","acceptedAnswer":{"@type":"Answer","text":"Mikrodenetleyici, işlemci, bellek ve giriş/çıkış birimlerini tek bir çip üzerinde barındıran, belirli bir görevi yerine getirmek üzere programlanan küçük bir bilgisayardır. Arduino ve STM32 gibi geliştirme kartları, öğrenmeye başlamak için yaygın kullanılan platformlardır."}},{"@type":"Question","name":"GPIO nedir?","acceptedAnswer":{"@type":"Answer","text":"GPIO (General Purpose Input/Output), bir mikrodenetleyicinin yazılım üzerinden giriş veya çıkış olarak yapılandırılabilen genel amaçlı pinleridir. Bir GPIO pini örneğin bir butonun durumunu okumak (giriş) veya bir LED'i yakıp söndürmek (çıkış) için kullanılabilir."}},{"@type":"Question","name":"EMI ve EMC nedir, neden önemlidir?","acceptedAnswer":{"@type":"Answer","text":"EMI (Elektromanyetik Girişim), bir cihazın yaydığı veya başka bir cihazdan aldığı istenmeyen elektromanyetik sinyallerdir. EMC (Elektromanyetik Uyumluluk) ise bir cihazın hem çevresine aşırı girişim yaymadan hem de çevresindeki girişimlerden fazla etkilenmeden çalışabilme yeteneğidir. Özellikle sürücü, anahtarlamalı güç kaynağı ve yüksek frekanslı devrelerde EMC uyumluluğu, cihazın güvenilirliği ve mevzuata uygunluğu için kritik önemdedir."}}]}]}</script>
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=20261011">
+  <style id="kb-local">.kb-cta>div:last-child{min-width:0;max-width:100%}.kb-cta .btn{white-space:normal;line-height:1.25;max-width:100%;text-align:center}.vg-form-actions>.kb-cta{min-width:0}.article p a:not(.btn):not(.kb-card__more),.article li a:not(.btn),.article td a,.faq-item__a a{color:var(--clr-accent-text);text-decoration:underline;text-underline-offset:2px}.article p a:not(.btn):not(.kb-card__more):hover,.article li a:not(.btn):hover,.article td a:hover,.faq-item__a a:hover{text-decoration-thickness:2px}.kb-hero p a{color:#fcd34d;text-decoration:underline;text-underline-offset:2px}.kb-criteria td:first-child{white-space:normal;width:36%}</style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html#course","name":"Elektronik ve Mikrodenetleyici Temelleri","description":"Direnç, kondansatör, diyot ve transistörden mikrodenetleyiciye; GPIO, analog-dijital kavramı, PCB akışı ve EMI/EMC'ye giriş dersi.","educationalLevel":"Başlangıç","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-10-12","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Elektronik ve Mikrodenetleyici Temelleri","item":"https://voltguard.com.tr/akademi/elektronik-mikrodenetleyici-temelleri.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Mikrodenetleyici (mikrokontrolör) nedir?","acceptedAnswer":{"@type":"Answer","text":"Mikrodenetleyici, işlemci, bellek ve giriş/çıkış birimlerini tek bir çip üzerinde barındıran, belirli bir görevi yerine getirmek üzere programlanan küçük bir bilgisayardır. Uygun fiyatlı 8 ve 32 bit geliştirme kartları, öğrenmeye başlamak için yaygın kullanılan platformlardır."}},{"@type":"Question","name":"GPIO nedir?","acceptedAnswer":{"@type":"Answer","text":"GPIO (General Purpose Input/Output), bir mikrodenetleyicinin yazılım üzerinden giriş veya çıkış olarak yapılandırılabilen genel amaçlı pinleridir. Bir GPIO pini örneğin bir butonun durumunu okumak (giriş) veya bir LED'i yakıp söndürmek (çıkış) için kullanılabilir."}},{"@type":"Question","name":"EMI ve EMC nedir, neden önemlidir?","acceptedAnswer":{"@type":"Answer","text":"EMI (Elektromanyetik Girişim), bir cihazın yaydığı veya başka bir cihazdan aldığı istenmeyen elektromanyetik sinyallerdir. EMC (Elektromanyetik Uyumluluk) ise bir cihazın hem çevresine aşırı girişim yaymadan hem de çevresindeki girişimlerden fazla etkilenmeden çalışabilme yeteneğidir. Özellikle sürücü, anahtarlamalı güç kaynağı ve yüksek frekanslı devrelerde EMC uyumluluğu, cihazın güvenilirliği ve mevzuata uygunluğu için kritik önemdedir."}}]}]}</script>
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -72,7 +73,7 @@
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
-          <li><a class="vg-nav__link" href="/#hizmetler">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
           <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
           <li class="vg-dd" data-vg-dd>
@@ -102,7 +103,7 @@
   <!--/vg:header-->
 
   <nav class="breadcrumb" aria-label="breadcrumb">
-    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../akademi.html">VoltGuard Akademi</a> &rsaquo; <span>Elektronik ve Mikrodenetleyici Temelleri</span>
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/akademi.html">VoltGuard Akademi</a> &rsaquo; <span>Elektronik ve Mikrodenetleyici Temelleri</span>
   </nav>
 
   <main class="article" id="main" tabindex="-1">
@@ -113,7 +114,7 @@
 
     <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Direnç/kondansatör/diyot/transistör temel işlevleri, mikrodenetleyici mimarisi, GPIO kavramı, şematikten PCB'ye tasarım akışı ve EMI/EMC'ye giriş.</div>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Direnç, kondansatör, diyot ve transistör; hemen hemen tüm elektronik devrelerin temel yapı taşlarıdır.</li><li>Mikrodenetleyici, işlemci + bellek + I/O birimlerini tek çipte birleştiren küçük bir bilgisayardır; Arduino/STM32 gibi kartlar öğrenmeye başlamak için yaygın kullanılır.</li><li>GPIO pinleri yazılımla giriş veya çıkış olarak yapılandırılabilir; analog sinyaller ADC (analog-dijital çevirici) ile sayısal değere dönüştürülür.</li><li>Bir elektronik ürün, şematik tasarım → PCB yerleşimi (layout) → gerber üretim dosyası → üretim/montaj akışıyla hayata geçer.</li><li>EMI/EMC, özellikle anahtarlamalı güç kaynağı ve sürücü gibi yüksek frekanslı devrelerde ürünün güvenilirliği ve mevzuata uygunluğu için göz ardı edilemez bir tasarım kriteridir.</li></ul></div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Direnç, kondansatör, diyot ve transistör; hemen hemen tüm elektronik devrelerin temel yapı taşlarıdır.</li><li>Mikrodenetleyici, işlemci + bellek + I/O birimlerini tek çipte birleştiren küçük bir bilgisayardır; 8 ve 32 bit geliştirme kartları öğrenmeye başlamak için yaygın kullanılır.</li><li>GPIO pinleri yazılımla giriş veya çıkış olarak yapılandırılabilir; analog sinyaller ADC (analog-dijital çevirici) ile sayısal değere dönüştürülür. Aynı ilke, <a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA otomasyon</a> sistemlerindeki analog giriş kartlarında da kullanılır.</li><li>Bir elektronik ürün, şematik tasarım → PCB yerleşimi (layout) → gerber üretim dosyası → üretim/montaj akışıyla hayata geçer.</li><li>EMI/EMC, özellikle anahtarlamalı güç kaynağı ve sürücü gibi yüksek frekanslı devrelerde ürünün güvenilirliği ve mevzuata uygunluğu için göz ardı edilemez bir tasarım kriteridir.</li></ul></div>
 
     <h2>Temel Elektronik Bileşenler</h2>
     <ul class="article__list">
@@ -125,7 +126,7 @@
     <p>Bu dört bileşenin farklı kombinasyonları; güç kaynakları, sensör arayüzleri, motor sürücü katları ve haberleşme devreleri gibi hemen her elektronik alt sistemin temelini oluşturur.</p>
 
     <h2>Mikrodenetleyici Nedir?</h2>
-    <p>Mikrodenetleyici (mikrokontrolör), bir işlemci çekirdeğini, program/veri belleğini ve giriş-çıkış birimlerini tek bir entegre devre üzerinde birleştiren, belirli bir görevi yerine getirmek üzere programlanan küçük bir bilgisayardır. Genel amaçlı bilgisayarların aksine, genellikle tek bir uygulamaya (bir cihazın kontrolüne) adanmıştır ve düşük güç tüketimiyle çalışacak şekilde tasarlanır. Arduino (kolay giriş için) ve STM32 (endüstriyel/performans odaklı projeler için) gibi geliştirme kartları, mikrodenetleyici programlamayı öğrenmeye başlamak için en yaygın tercih edilen platformlardır.</p>
+    <p>Mikrodenetleyici (mikrokontrolör), bir işlemci çekirdeğini, program/veri belleğini ve giriş-çıkış birimlerini tek bir entegre devre üzerinde birleştiren, belirli bir görevi yerine getirmek üzere programlanan küçük bir bilgisayardır. Genel amaçlı bilgisayarların aksine, genellikle tek bir uygulamaya (bir cihazın kontrolüne) adanmıştır ve düşük güç tüketimiyle çalışacak şekilde tasarlanır. Kolay giriş için 8 bit, endüstriyel ve performans odaklı projeler için 32 bit geliştirme kartları, mikrodenetleyici programlamayı öğrenmeye başlamak için en yaygın tercih edilen platformlardır.</p>
 
     <h2>GPIO ve Analog/Dijital Kavramı</h2>
     <p>GPIO (General Purpose Input/Output), bir mikrodenetleyicinin yazılım üzerinden giriş veya çıkış olarak yapılandırılabilen genel amaçlı bacaklarıdır. Bir GPIO pini giriş olarak ayarlandığında bir butonun veya sensörün durumunu (yüksek/düşük seviye) okuyabilir; çıkış olarak ayarlandığında ise bir LED'i, röleyi veya küçük bir yükü sürebilir. Gerçek dünyadaki büyüklükler (sıcaklık, ışık, gerilim) genellikle sürekli (analog) değişir; mikrodenetleyicinin bu değerleri işleyebilmesi için ADC (analog-dijital çevirici) birimi, analog gerilimi sayısal bir değere dönüştürür. Tersine, bir analog çıkış üretmek gerektiğinde DAC (dijital-analog çevirici) veya PWM (darbe genişlik modülasyonu) teknikleri kullanılır.</p>
@@ -138,22 +139,25 @@
 
     <h2>Sırada Ne Var?</h2>
     <ul class="article__list">
-      <li><strong>Orta seviye:</strong> <a href="../akademi/mikrodenetleyici-i2c-spi-uart-orta.html">Mikrodenetleyici Programlama: I2C / SPI / UART Haberleşme</a> (sensör/haberleşme entegrasyonu).</li>
-      <li><strong>İleri seviye:</strong> <a href="../akademi/pcb-tasarim-emi-emc-ileri.html">PCB Tasarımı ve EMI/EMC Uyumluluk</a> (EMC testleri dahil).</li>
-      <li>Paralel olarak <a href="../akademi/ges-enerji-verimliligi-giris.html">GES ve Enerji Verimliliği Temellerine</a> geçebilirsiniz.</li>
+      <li><strong>Orta seviye:</strong> <a href="/akademi/mikrodenetleyici-i2c-spi-uart-orta.html">Mikrodenetleyici Programlama: I2C / SPI / UART Haberleşme</a> (sensör/haberleşme entegrasyonu).</li>
+      <li><strong>İleri seviye:</strong> <a href="/akademi/pcb-tasarim-emi-emc-ileri.html">PCB Tasarımı ve EMI/EMC Uyumluluk</a> (EMC testleri dahil).</li>
+      <li>Paralel olarak <a href="/akademi/ges-enerji-verimliligi-giris.html">GES ve Enerji Verimliliği Temellerine</a> geçebilirsiniz.</li>
     </ul>
 
     <h2>Sık Sorulan Sorular</h2>
-    <details class="faq-item"><summary class="faq-item__q">Mikrodenetleyici (mikrokontrolör) nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Mikrodenetleyici, işlemci, bellek ve giriş/çıkış birimlerini tek bir çip üzerinde barındıran, belirli bir görevi yerine getirmek üzere programlanan küçük bir bilgisayardır. Arduino ve STM32 gibi geliştirme kartları, öğrenmeye başlamak için yaygın kullanılan platformlardır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Mikrodenetleyici (mikrokontrolör) nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Mikrodenetleyici, işlemci, bellek ve giriş/çıkış birimlerini tek bir çip üzerinde barındıran, belirli bir görevi yerine getirmek üzere programlanan küçük bir bilgisayardır. Uygun fiyatlı 8 ve 32 bit geliştirme kartları, öğrenmeye başlamak için yaygın kullanılan platformlardır.</p></div></details>
     <details class="faq-item"><summary class="faq-item__q">GPIO nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>GPIO (General Purpose Input/Output), bir mikrodenetleyicinin yazılım üzerinden giriş veya çıkış olarak yapılandırılabilen genel amaçlı pinleridir. Bir GPIO pini örneğin bir butonun durumunu okumak (giriş) veya bir LED'i yakıp söndürmek (çıkış) için kullanılabilir.</p></div></details>
     <details class="faq-item"><summary class="faq-item__q">EMI ve EMC nedir, neden önemlidir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>EMI (Elektromanyetik Girişim), bir cihazın yaydığı veya başka bir cihazdan aldığı istenmeyen elektromanyetik sinyallerdir. EMC (Elektromanyetik Uyumluluk) ise bir cihazın hem çevresine aşırı girişim yaymadan hem de çevresindeki girişimlerden fazla etkilenmeden çalışabilme yeteneğidir. Özellikle sürücü, anahtarlamalı güç kaynağı ve yüksek frekanslı devrelerde EMC uyumluluğu, cihazın güvenilirliği ve mevzuata uygunluğu için kritik önemdedir.</p></div></details>
 
     <p class="kb-disclaimer">Bu içerik eğitim amaçlıdır ve sertifikalı elektronik/gömülü sistem eğitimi veya mühendislik projelendirmesi yerine geçmez. Devre üzerinde çalışırken elektriksel güvenlik kurallarına uyulmalıdır.</p>
     <div class="kb-cta">
       <div class="kb-cta__text"><strong>Elektronik, gömülü sistem veya PCB projeleriniz için destek alın</strong><span>VoltGuard mühendislik ekibiyle iletişime geçin.</span></div>
-      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      <div style="display:flex;flex-wrap:wrap;gap:.6rem">
+        <a href="/hizmetler/" class="btn btn--accent btn--md"><i class="fas fa-screwdriver-wrench" aria-hidden="true"></i> Hizmetlerimiz</a>
+        <a href="/#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
     </div>
-    <p style="margin-top:1.6rem"><a href="../akademi.html" class="kb-card__more">&larr; Tüm dersler: VoltGuard Akademi</a></p>
+    <p style="margin-top:1.6rem"><a href="/akademi.html" class="kb-card__more">&larr; Tüm dersler: VoltGuard Akademi</a></p>
   </main>
 
   <!--vg:footer-->
@@ -183,7 +187,7 @@
           </a>
           <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
           <ul class="vg-footer__contact">
-            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0 545 434 67 35</a></li>
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
             <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
           </ul>
@@ -197,13 +201,37 @@
           <div class="vg-footer__col">
             <h3 class="vg-footer__h">Hizmetler</h3>
             <ul>
-              <li><a href="/#hizmetler">Elektrik Hizmetleri</a></li>
-              <li><a href="/#hizmetler">Elektronik &amp; Gömülü Sistemler</a></li>
-              <li><a href="/#hizmetler">Otomasyon Sistemleri</a></li>
-              <li><a href="/#hizmetler">Mekanik Sistemler</a></li>
-              <li><a href="/#hizmetler">Enerji Sistemleri &amp; Verimlilik</a></li>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
               <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
               <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#guvenlik">Güvenlik</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
@@ -220,24 +248,11 @@
             <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
             <ul>
               <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
               <li><a href="/hesap/giris.html">Giriş Yap</a></li>
               <li><a href="/hesap/kayit.html">Üye Ol</a></li>
-            </ul>
-          </div>
-          <div class="vg-footer__col">
-            <h3 class="vg-footer__h">Kurumsal</h3>
-            <ul>
-              <li><a href="/#hakkimizda">Hakkımızda</a></li>
-              <li><a href="/#surec">Sürecimiz</a></li>
-              <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
-              <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
-              <li><a href="/#katalog">Katalog</a></li>
-              <li><a href="/#sss">SSS</a></li>
-              <li><a href="/#iletisim">İletişim</a></li>
-              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
             </ul>
           </div>
         </nav>
@@ -283,6 +298,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="../js/voltguard-auth.js?v=20261011b" defer></script>
+  <script src="/js/voltguard-auth.js?v=20261011b" defer></script>
 </body>
 </html>

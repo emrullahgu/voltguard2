@@ -4,11 +4,13 @@
 # tarayıp önerebilir. (AI answer engines are welcome.)
 # =====================================================
 
-# Hesap alani, API ve runtime veri klasorleri taranmaz (.htaccess ayrica web erisimini engeller).
+# API ve runtime veri klasorleri taranmaz (.htaccess ayrica web erisimini engeller).
+# /hesap/ sayfalari bilerek ENGELLENMEZ: sayfalardaki <meta name="robots" content="noindex"> etiketinin
+# arama motorlarinca okunabilmesi icin taranabilmeleri gerekir (robots.txt engeli, her sayfadaki "Giris Yap"
+# baglantisi yuzunden adresin icerik olmadan dizine girmesine yol acabilirdi).
 User-agent: *
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -17,7 +19,6 @@ Disallow: /vg-data/
 User-agent: Google-Extended
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -25,7 +26,6 @@ Disallow: /vg-data/
 User-agent: Applebot-Extended
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -34,7 +34,6 @@ Disallow: /vg-data/
 User-agent: GPTBot
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -42,7 +41,6 @@ Disallow: /vg-data/
 User-agent: OAI-SearchBot
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -50,7 +48,6 @@ Disallow: /vg-data/
 User-agent: ChatGPT-User
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -58,7 +55,6 @@ Disallow: /vg-data/
 User-agent: ClaudeBot
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -66,7 +62,6 @@ Disallow: /vg-data/
 User-agent: Claude-Web
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -74,7 +69,6 @@ Disallow: /vg-data/
 User-agent: anthropic-ai
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -82,7 +76,6 @@ Disallow: /vg-data/
 User-agent: PerplexityBot
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -90,7 +83,6 @@ Disallow: /vg-data/
 User-agent: Perplexity-User
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -98,7 +90,6 @@ Disallow: /vg-data/
 User-agent: Amazonbot
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -106,7 +97,6 @@ Disallow: /vg-data/
 User-agent: cohere-ai
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -114,7 +104,6 @@ Disallow: /vg-data/
 User-agent: CCBot
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/
@@ -122,7 +111,6 @@ Disallow: /vg-data/
 User-agent: Meta-ExternalAgent
 Allow: /
 Disallow: /contact.php
-Disallow: /hesap/
 Disallow: /api/
 Disallow: /_vgdata/
 Disallow: /vg-data/

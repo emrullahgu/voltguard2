@@ -1,3 +1,22 @@
+# ---------------------------------------------------------------------------------------
+# Tek adres: /index.html -> / ve /hizmetler/index.html -> /hizmetler/ (.htaccess ile ayni). Netlify kurallari
+# yalnizca istemcinin istedigi yola uygulanir; "/" ve "/hizmetler/" icin dizin index.html dosyasinin sunulmasi
+# kurallari yeniden calistirmaz, bu yuzden dongu olusmaz. "/hizmetler" -> "/hizmetler/" icin kural YAZILMAZ:
+# Netlify kural eslemesinde sondaki "/" farkini yok sayar (kural kendine yonlenip dongu yaratirdi); klasor adresini
+# Netlify kendisi index.html ile sunar.
+# ---------------------------------------------------------------------------------------
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hizmetler/index.html"
+  to = "/hizmetler/"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/teklif-araclari.html"
   to = "/hesaplama-araclari/"
@@ -174,6 +193,28 @@
   to = "/hesaplama/aydinlatma-lux-hesaplama.html"
   status = 200
 
+[[redirects]]
+  from = "/hesaplama/reaktif-ceza-hesaplama.html"
+  to = "/hesaplama/reaktif-ceza-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/reaktif-ceza-hesaplama/"
+  to = "/hesaplama/reaktif-ceza-hesaplama.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama.html"
+  to = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama/"
+  to = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama.html"
+  status = 200
+
 # ---------------------------------------------------------------------------------------
 # Klasor/uzantisiz adresler (.htaccess ile ayni). "/sor" gibi adresler ayni adli klasor yuzunden
 # acilmiyordu; kanonik .html adresine 301 verilir. Yeni kok sayfa eklenirse buraya da eklenmeli
@@ -341,6 +382,11 @@
 
 [[headers]]
   for = "/hesaplama-araclari/"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/hizmetler/"
   [headers.values]
     Cache-Control = "no-cache"
 

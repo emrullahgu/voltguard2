@@ -9,11 +9,11 @@
   <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
   <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/fa-solid-900.68c892a7.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261011b">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
   <script type="speculationrules">
   {
     "prerender": [
@@ -36,7 +36,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261011" defer></script>
+  <script src="/js/vg-shell.js?v=20261012" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -46,16 +46,17 @@
   <link rel="canonical" href="https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Kablo Kesiti Hesaplama Aracı ve Formülü | VoltGuard">
-  <meta property="og:description" content="Yük gücü ve gerilime göre standart kesit önerisi veren ücretsiz araç, formül, örnek hesap ve sık sorulan sorular.">
+  <meta property="og:description" content="Kablo kesiti hesaplama: yük gücü ve gerilime göre standart kesit önerisi veren ücretsiz araç, formül, örnek hesap ve sık sorulan sorular.">
   <meta property="og:url" content="https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
   <meta property="og:site_name" content="VoltGuard">
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:locale" content="tr_TR">
-  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link rel="stylesheet" href="../css/style.css?v=20261011">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/#article","headline":"Kablo Kesiti Hesaplama Aracı ve Formülü","description":"Yük gücü ve gerilime göre standart kesit önerisi veren ücretsiz araç, formül, örnek hesap ve sık sorulan sorular.","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-10-11","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Kablo Kesiti Hesaplama","item":"https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Kablo kesiti nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Önce yük akımı I = Güç × 1000 ÷ (√3 × Gerilim × cosφ) formülüyle bulunur. Ardından bu akımı belirli bir emniyet payıyla (genelde 1,25 kat) karşılayan ilk standart kesit seçilir. Son adımda seçilen kesitin gerilim düşümü sınırını da karşıladığı ayrıca kontrol edilmelidir."}},{"@type":"Question","name":"Kablo kesiti seçiminde sadece akım yeterli mi?","acceptedAnswer":{"@type":"Answer","text":"Hayır. Akım taşıma kapasitesi ilk kriterdir ancak döşeme yöntemi, ortam sıcaklığı, gruplama faktörü, izin verilen gerilim düşümü ve kısa devre dayanımı da ayrıca değerlendirilmelidir. Uzun hatlarda gerilim düşümü, akım kriterinden daha belirleyici olabilir."}},{"@type":"Question","name":"Bu araç kesin proje değeri verir mi?","acceptedAnswer":{"@type":"Answer","text":"Hayır, bu araç yalnızca ön değerlendirme amaçlıdır. Kesin kesit seçimi; döşeme yöntemi, sıcaklık düzeltmesi, gerilim düşümü hesabı ve TS HD 60364-5-52 standardına göre yetkili bir elektrik mühendisi tarafından yapılmalıdır."}}]}]}</script>
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=20261011">
+  <style id="kb-local">.kb-cta>div:last-child{min-width:0;max-width:100%}.kb-cta .btn{white-space:normal;line-height:1.25;max-width:100%;text-align:center}.vg-form-actions>.kb-cta{min-width:0}.article p a:not(.btn):not(.kb-card__more),.article li a:not(.btn),.article td a,.faq-item__a a{color:var(--clr-accent-text);text-decoration:underline;text-underline-offset:2px}.article p a:not(.btn):not(.kb-card__more):hover,.article li a:not(.btn):hover,.article td a:hover,.faq-item__a a:hover{text-decoration-thickness:2px}.kb-hero p a{color:#fcd34d;text-decoration:underline;text-underline-offset:2px}.kb-criteria td:first-child{white-space:normal;width:36%}</style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/#article","headline":"Kablo Kesiti Hesaplama Aracı ve Formülü","description":"Kablo kesiti hesaplama: yük gücü ve gerilime göre standart kesit önerisi veren ücretsiz araç, formül, örnek hesap ve sık sorulan sorular.","image":"https://voltguard.com.tr/public/og-image.png","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-10-12","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Kablo Kesiti Hesaplama","item":"https://voltguard.com.tr/hesaplama/kablo-kesiti-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Kablo kesiti nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Önce yük akımı I = Güç × 1000 ÷ (√3 × Gerilim × cosφ) formülüyle bulunur. Ardından bu akımı belirli bir emniyet payıyla (genelde 1,25 kat) karşılayan ilk standart kesit seçilir. Son adımda seçilen kesitin gerilim düşümü sınırını da karşıladığı ayrıca kontrol edilmelidir."}},{"@type":"Question","name":"Kablo kesiti seçiminde sadece akım yeterli mi?","acceptedAnswer":{"@type":"Answer","text":"Hayır. Akım taşıma kapasitesi ilk kriterdir ancak döşeme yöntemi, ortam sıcaklığı, gruplama faktörü, izin verilen gerilim düşümü ve kısa devre dayanımı da ayrıca değerlendirilmelidir. Uzun hatlarda gerilim düşümü, akım kriterinden daha belirleyici olabilir."}},{"@type":"Question","name":"Bu araç kesin proje değeri verir mi?","acceptedAnswer":{"@type":"Answer","text":"Hayır, bu araç yalnızca ön değerlendirme amaçlıdır. Kesin kesit seçimi; döşeme yöntemi, sıcaklık düzeltmesi, gerilim düşümü hesabı ve TS HD 60364-5-52 standardına göre yetkili bir elektrik mühendisi tarafından yapılmalıdır."}}]}]}</script>
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -73,7 +74,7 @@
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
-          <li><a class="vg-nav__link" href="/#hizmetler">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
           <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
           <li class="vg-dd" data-vg-dd>
@@ -103,13 +104,13 @@
   <!--/vg:header-->
 
   <nav class="breadcrumb" aria-label="breadcrumb">
-    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../hesaplama-araclari/">Hesaplama Merkezi</a> &rsaquo; <span>Kablo Kesiti Hesaplama</span>
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/hesaplama-araclari/">Hesaplama Merkezi</a> &rsaquo; <span>Kablo Kesiti Hesaplama</span>
   </nav>
 
   <main class="article" id="main" tabindex="-1">
     <span class="article__cat">Elektrik Hesapları</span>
     <h1>Kablo Kesiti Hesaplama Aracı ve Formülü</h1>
-    <p class="article__summary">Yük gücünüzü ve gerilimi girin; hesap akımını ve bu akımı karşılayan standart bakır kablo kesitini anında görün. Aşağıda hesap formülünü, adım adım bir örneği ve sık sorulan soruları da bulabilirsiniz.</p>
+    <p class="article__summary">Yük gücünüzü ve gerilimi girin; hesap akımını ve bu akımı karşılayan standart bakır kablo kesitini anında görün. Aşağıda hesap formülünü, adım adım bir örneği ve sık sorulan soruları da bulabilirsiniz. Kesin kesit; gerilim düşümü ve kısa devre kontrolleriyle birlikte <a href="/hizmetler/elektrik-projesi.html">elektrik projesi</a> hazırlanırken belirlenir.</p>
 
     <div class="mini-calc">
       <div class="mini-calc__fields">
@@ -126,10 +127,10 @@
     <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Hesap akımı, üç fazda I = Güç × 1000 ÷ (√3 × Gerilim × 0,9), tek fazda I = Güç × 1000 ÷ (Gerilim × 0,9) formülüyle bulunur (cosφ ≈ 0,9 varsayımıyla).</li><li>Bulunan akım 1,25 emniyet payıyla çarpılır; bu değeri karşılayan akım taşıma kapasitesine (Iz) sahip ilk standart bakır kesit seçilir (kanal/boru içi Yöntem B1, PVC, 30 °C).</li><li>Bu araç yalnızca ön değerlendirme sağlar; döşeme yöntemi, sıcaklık ve gerilim düşümü ayrıca kontrol edilmelidir.</li></ul></div>
 
     <h2>Formül ve Hesaplama Mantığı</h2>
-    <p>Kablo kesiti seçiminin ilk adımı, devrenin taşıyacağı akımı bulmaktır. Üç fazlı sistemde <strong>I = P × 1000 ÷ (√3 × V × cosφ)</strong>, tek fazlı sistemde ise <strong>I = P × 1000 ÷ (V × cosφ)</strong> formülü kullanılır (P kW cinsinden güç, V volt cinsinden gerilim). Bu araçta pratik bir ön değerlendirme için cosφ ≈ 0,9 kabul edilmiştir. Bulunan akım %25 emniyet payıyla çarpılır (I × 1,25) ve bu değeri karşılayan akım taşıma kapasitesine (Iz) sahip ilk standart bakır kesit (1,5 - 240 mm² arası) öneri olarak sunulur. Iz değerleri bakır iletkenli, PVC yalıtımlı kablolar için kanal/boru içi döşeme (Yöntem B1) ve 30 °C ortam sıcaklığına aittir; üç fazda 3 yüklü iletken (<a href="../bilgi/kablo-kesiti-akim-tasima-tablosu.html">akım taşıma tablosundaki</a> değerler), tek fazda 2 yüklü iletken değerleri kullanılır. Hesap akımı 240 mm² tek kablonun kapasitesini aşarsa araç paralel kablo hattı veya özel hesap gerektiğini bildirir.</p>
+    <p>Kablo kesiti seçiminin ilk adımı, devrenin taşıyacağı akımı bulmaktır. Üç fazlı sistemde <strong>I = P × 1000 ÷ (√3 × V × cosφ)</strong>, tek fazlı sistemde ise <strong>I = P × 1000 ÷ (V × cosφ)</strong> formülü kullanılır (P kW cinsinden güç, V volt cinsinden gerilim). Bu araçta pratik bir ön değerlendirme için cosφ ≈ 0,9 kabul edilmiştir. Bulunan akım %25 emniyet payıyla çarpılır (I × 1,25) ve bu değeri karşılayan akım taşıma kapasitesine (Iz) sahip ilk standart bakır kesit (1,5 - 240 mm² arası) öneri olarak sunulur. Iz değerleri bakır iletkenli, PVC yalıtımlı kablolar için kanal/boru içi döşeme (Yöntem B1) ve 30 °C ortam sıcaklığına aittir; üç fazda 3 yüklü iletken (<a href="/bilgi/kablo-kesiti-akim-tasima-tablosu.html">akım taşıma tablosundaki</a> değerler), tek fazda 2 yüklü iletken değerleri kullanılır. Hesap akımı 240 mm² tek kablonun kapasitesini aşarsa araç paralel kablo hattı veya özel hesap gerektiğini bildirir.</p>
 
     <h2>Örnek Hesap</h2>
-    <p>45 kW'lık bir yükü 400V üç fazlı bir hattan beslediğinizi varsayalım: I = 45.000 ÷ (1,732 × 400 × 0,9) ≈ <strong>72 A</strong>. Emniyet payıyla 1,25 × 72 ≈ 90 A elde edilir. 25 mm² kablonun Iz değeri 89 A olduğu için yetmez; 35 mm² (Iz = 110 A ≥ 90 A) ön seçim olarak önerilir. Nihai kesit; döşeme yöntemi, ortam sıcaklığı, gruplama ve gerilim düşümü sınırına göre ayrıca doğrulanmalıdır.</p>
+    <p>45 kW'lık bir yükü 400V üç fazlı bir hattan beslediğinizi varsayalım: I = 45.000 ÷ (1,732 × 400 × 0,9) ≈ <strong>72 A</strong>. Emniyet payıyla 1,25 × 72 ≈ 90 A elde edilir. 25 mm² kablonun Iz değeri 89 A olduğu için yetmez; 35 mm² (Iz = 110 A ≥ 90 A) ön seçim olarak önerilir. Nihai kesit; döşeme yöntemi, ortam sıcaklığı, gruplama ve gerilim düşümü sınırına göre ayrıca doğrulanmalıdır. Bu doğrulamalar elektrik projesi hazırlanırken tüm besleme hatları için yapılır.</p>
 
     <h2>Hesapta Kullanılan Akım Taşıma Değerleri</h2>
     <p>Araç, bakır iletkenli ve PVC yalıtımlı kablolar için 30 °C ortam sıcaklığında, kanal/boru içi döşeme (Yöntem B1) varsayımıyla aşağıdaki yaklaşık Iz değerlerini kullanır. Gruplama, yüksek sıcaklık veya farklı döşeme yöntemi için düzeltme faktörleri ayrıca uygulanmalıdır.</p>
@@ -160,12 +161,15 @@
     <details class="faq-item"><summary class="faq-item__q">Bu araç kesin proje değeri verir mi? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Hayır, bu araç yalnızca ön değerlendirme amaçlıdır. Kesin kesit seçimi; döşeme yöntemi, sıcaklık düzeltmesi, gerilim düşümü hesabı ve TS HD 60364-5-52 standardına göre yetkili bir elektrik mühendisi tarafından yapılmalıdır.</p></div></details>
 
     <p class="kb-disclaimer">Bu araç yalnızca ön değerlendirme amaçlıdır ve mühendislik projelendirmesi yerine geçmez. Kesin kesit seçimi için yetkili bir elektrik mühendisinden görüş alınması önerilir.</p>
-    <p>Daha fazla ilgili kaynak: <a href="../bilgi/kablo-kesiti-akim-tasima-tablosu.html">Kablo Kesiti Akım Taşıma Kapasitesi Tablosu</a> (5x10 kaç amper taşır dahil), <a href="../hesaplama-araclari/">VoltGuard Mühendislik Hesaplama Merkezi</a> (gerilim düşümü, kısa devre ve daha fazlası).</p>
+    <p>Daha fazla ilgili kaynak: <a href="/bilgi/kablo-kesiti-akim-tasima-tablosu.html">Kablo Kesiti Akım Taşıma Kapasitesi Tablosu</a> (5x10 kaç amper taşır dahil), <a href="/hesaplama-araclari/">VoltGuard Mühendislik Hesaplama Merkezi</a> (gerilim düşümü, kısa devre ve daha fazlası).</p>
     <div class="kb-cta">
-      <div class="kb-cta__text"><strong>Kablo kesiti ve gerilim düşümü hesabı için mühendislik desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
-      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      <div class="kb-cta__text"><strong>Hesaplanan kesiti sahada doğru uygulayalım</strong><span>Kesit hesabından kablo çekimine kadar tesisatınızı projeye uygun uygulayalım.</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:.6rem">
+        <a href="/hizmetler/elektrik-taahhut.html" class="btn btn--accent btn--md"><i class="fas fa-arrow-right" aria-hidden="true"></i> Elektrik Taahhüt Hizmeti</a>
+        <a href="/#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
     </div>
-    <p style="margin-top:1.6rem"><a href="../hesaplama-araclari/" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
+    <p style="margin-top:1.6rem"><a href="/hesaplama-araclari/" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
   </main>
 
   <!--vg:footer-->
@@ -195,7 +199,7 @@
           </a>
           <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
           <ul class="vg-footer__contact">
-            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0 545 434 67 35</a></li>
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
             <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
           </ul>
@@ -209,13 +213,37 @@
           <div class="vg-footer__col">
             <h3 class="vg-footer__h">Hizmetler</h3>
             <ul>
-              <li><a href="/#hizmetler">Elektrik Hizmetleri</a></li>
-              <li><a href="/#hizmetler">Elektronik &amp; Gömülü Sistemler</a></li>
-              <li><a href="/#hizmetler">Otomasyon Sistemleri</a></li>
-              <li><a href="/#hizmetler">Mekanik Sistemler</a></li>
-              <li><a href="/#hizmetler">Enerji Sistemleri &amp; Verimlilik</a></li>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
               <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
               <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#guvenlik">Güvenlik</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
@@ -232,24 +260,11 @@
             <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
             <ul>
               <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
               <li><a href="/hesap/giris.html">Giriş Yap</a></li>
               <li><a href="/hesap/kayit.html">Üye Ol</a></li>
-            </ul>
-          </div>
-          <div class="vg-footer__col">
-            <h3 class="vg-footer__h">Kurumsal</h3>
-            <ul>
-              <li><a href="/#hakkimizda">Hakkımızda</a></li>
-              <li><a href="/#surec">Sürecimiz</a></li>
-              <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
-              <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
-              <li><a href="/#katalog">Katalog</a></li>
-              <li><a href="/#sss">SSS</a></li>
-              <li><a href="/#iletisim">İletişim</a></li>
-              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
             </ul>
           </div>
         </nav>
@@ -336,6 +351,6 @@
       update();
     }());
   </script>
-  <script src="../js/voltguard-auth.js?v=20261011b" defer></script>
-  <script src="../js/voltguard-tools.js?v=20261011b"></script>
+  <script src="/js/voltguard-auth.js?v=20261011b" defer></script>
+  <script src="/js/voltguard-tools.js?v=20261011b"></script>
 </body></html>

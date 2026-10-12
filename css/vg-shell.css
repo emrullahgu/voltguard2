@@ -29,6 +29,7 @@
   :root { --vg-header-h: 68px; }
 }
 main:focus { outline: 0; }
+[data-vg-anchor-focus]:focus { outline: 0; }
 
 /* ---------- Sayfalar arası geçiş (Chrome 126+ cross-document view transitions) ----------
    @view-transition kuralı BURADA DEĞİL, tools/shell/head.html'deki satır içi <style>'dadır.

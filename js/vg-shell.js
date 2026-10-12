@@ -263,7 +263,16 @@
     settle(el);
     return true;
   }
-  // Aynı sayfadaki /#bölüm bağlantıları (başlık, alt bilgi, içerik): geçmişe ekle, kaydır, hizala
+  // Bağlantıyla gidilen bölüme odağı da taşı (klavye/ekran okuyucu kullanıcısı bölümün başından devam etsin).
+  // Odaklanamayan hedefe tabindex="-1" eklenir; halka gösterilmez (css/vg-shell.css [data-vg-anchor-focus]).
+  function focusTarget(el) {
+    if (!el.hasAttribute('tabindex') && !/^(A|BUTTON|INPUT|SELECT|TEXTAREA|SUMMARY)$/.test(el.tagName)) {
+      el.setAttribute('tabindex', '-1');
+      el.setAttribute('data-vg-anchor-focus', '');
+    }
+    try { el.focus({ preventScroll: true }); } catch (err) { /* eski tarayıcı */ }
+  }
+  // Aynı sayfadaki /#bölüm bağlantıları (başlık, alt bilgi, içerik): geçmişe ekle, kaydır, hizala, odağı taşı
   doc.addEventListener('click', function (e) {
     if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     var a = e.target && e.target.closest ? e.target.closest('a[href*="#"]') : null;
@@ -276,6 +285,7 @@
     e.preventDefault();
     if (location.hash !== u.hash) { try { history.pushState(null, '', u.pathname + u.search + u.hash); } catch (err) { /* no-op */ } }
     scrollToEl(el);
+    focusTarget(el);
   });
   // Sayfa #bölüm ile açıldıysa (başka sayfadan gelen /#hizmetler gibi): yükleme bitince kaymayı düzelt
   window.addEventListener('load', function () { var el = hashTarget(location.hash); if (el) settle(el); }, { once: true });

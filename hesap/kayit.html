@@ -8,11 +8,11 @@
   <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
   <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/fa-solid-900.68c892a7.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261011b">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261011" defer></script>
+  <script src="/js/vg-shell.js?v=20261012" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -45,7 +45,7 @@
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/style.css?v=20261011">
-  <link rel="stylesheet" href="../css/vg-account.css?v=20261011">
+  <link rel="stylesheet" href="../css/vg-account.css?v=20261012">
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -63,7 +63,7 @@
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
-          <li><a class="vg-nav__link" href="/#hizmetler">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
           <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
           <li class="vg-dd" data-vg-dd>
@@ -93,14 +93,15 @@
   <!--/vg:header-->
   <main class="vg-auth-shell" id="main" tabindex="-1">
     <section class="vg-auth-card vg-auth-card--wide" aria-labelledby="kayit-title">
-      <a class="vg-auth-card__brand" href="/"><img src="../public/icon-192.png" alt="" width="36" height="36"> VoltGuard Tools</a>
+      <a class="vg-auth-card__brand" href="/hesaplama-araclari/"><span class="vg-auth-card__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span> VoltGuard Tools</a>
       <h1 id="kayit-title">Ücretsiz üye olun</h1>
       <p class="vg-auth-card__sub">Hesaplamalarınızı kaydedin, favori araçlarınızı işaretleyin, projeler ve doküman listeleri oluşturun. Üyelik ücretsizdir.</p>
 
       <div id="kayit-alert" class="vg-acct-alert" hidden></div>
       <div id="legacy-box" class="vg-acct-alert vg-acct-alert--info" role="region" aria-label="Eski hesap kayıtları" hidden></div>
+      <noscript><p class="vg-acct-alert vg-acct-alert--warning">Hesap işlemleri için tarayıcınızda JavaScript açık olmalıdır.</p></noscript>
 
-      <form id="kayit-form" class="vg-auth-form" novalidate>
+      <form id="kayit-form" class="vg-auth-form" method="post" novalidate>
         <div class="vg-form-grid">
           <div class="vg-field vg-span-2">
             <label for="name">Ad Soyad</label>
@@ -143,8 +144,9 @@
           <input id="website" type="text" name="website" tabindex="-1" autocomplete="off">
         </div>
         <label class="vg-check"><input id="consent" type="checkbox" name="consent" required> <span><a href="../gizlilik.html#hesap-verileri" target="_blank" rel="noopener">Gizlilik Politikası ve KVKK Aydınlatma Metni<span class="vg-sr-only"> (yeni sekmede açılır)</span></a>'ni okudum; üyelik hesabımın oluşturulmasını ve hesap verilerimin bu metinde açıklanan amaçlarla işlenmesini kabul ediyorum.</span></label>
+        <label class="vg-check" id="guest-opt" hidden><input type="checkbox" name="guest" id="guest-merge" checked> <span id="guest-opt-text">Bu tarayıcıda giriş yapmadan kaydedilen kayıtları yeni hesabıma ekle</span></label>
         <label class="vg-check" id="legacy-opt" hidden><input type="checkbox" name="legacy" id="legacy" checked> <span id="legacy-opt-text">Bu tarayıcıdaki eski kayıtlarımı yeni hesabıma taşı</span></label>
-        <button type="submit"><i class="fas fa-user-plus" aria-hidden="true"></i> Hesabımı oluştur</button>
+        <button type="submit" disabled data-vg-wait><i class="fas fa-user-plus" aria-hidden="true"></i> Hesabımı oluştur</button>
       </form>
 
       <p class="vg-auth-alt">Zaten hesabınız var mı? <a href="giris.html" id="giris-link">Giriş yapın</a></p>
@@ -183,7 +185,7 @@
           </a>
           <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
           <ul class="vg-footer__contact">
-            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0 545 434 67 35</a></li>
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
             <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
           </ul>
@@ -197,13 +199,37 @@
           <div class="vg-footer__col">
             <h3 class="vg-footer__h">Hizmetler</h3>
             <ul>
-              <li><a href="/#hizmetler">Elektrik Hizmetleri</a></li>
-              <li><a href="/#hizmetler">Elektronik &amp; Gömülü Sistemler</a></li>
-              <li><a href="/#hizmetler">Otomasyon Sistemleri</a></li>
-              <li><a href="/#hizmetler">Mekanik Sistemler</a></li>
-              <li><a href="/#hizmetler">Enerji Sistemleri &amp; Verimlilik</a></li>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
               <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
               <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#guvenlik">Güvenlik</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
@@ -220,24 +246,11 @@
             <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
             <ul>
               <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
               <li><a href="/hesap/giris.html">Giriş Yap</a></li>
               <li><a href="/hesap/kayit.html">Üye Ol</a></li>
-            </ul>
-          </div>
-          <div class="vg-footer__col">
-            <h3 class="vg-footer__h">Kurumsal</h3>
-            <ul>
-              <li><a href="/#hakkimizda">Hakkımızda</a></li>
-              <li><a href="/#surec">Sürecimiz</a></li>
-              <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
-              <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
-              <li><a href="/#katalog">Katalog</a></li>
-              <li><a href="/#sss">SSS</a></li>
-              <li><a href="/#iletisim">İletişim</a></li>
-              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
             </ul>
           </div>
         </nav>
@@ -285,10 +298,18 @@
   <!--/vg:footer-->
 
   <script src="../js/voltguard-auth.js?v=20261011b"></script>
-  <script src="../js/vg-account.js?v=20261011"></script>
+  <script src="../js/vg-account.js?v=20261012"></script>
   <script>
     (function () {
       'use strict';
+      if (!window.VG || !window.VG.Auth || !window.VG.AccountUI) {
+        var failEl = document.getElementById('kayit-alert');
+        failEl.className = 'vg-acct-alert vg-acct-alert--error';
+        failEl.setAttribute('role', 'alert');
+        failEl.textContent = 'Sayfa tam yüklenemedi. Lütfen bağlantınızı kontrol edip sayfayı yenileyin.';
+        failEl.hidden = false;
+        return;
+      }
       var Auth = window.VG.Auth;
       var UI = window.VG.AccountUI;
       var params = new URLSearchParams(location.search);
@@ -303,20 +324,37 @@
       if (next) $('giris-link').href = 'giris.html?next=' + encodeURIComponent(next);
       UI.bindPasswordRules($('password'), $('pw-rules'));
 
+      /* Eski sürüm kayıtları: taşıma seçeneği ve ad / e-posta ön doldurması yalnızca bu tarayıcıda kaydı olan TEK eski
+         hesap varsa gösterilir. Birden fazla eski hesap varsa seçim, hesap oluşturulduktan sonra panelde yapılır. */
       var legacy = Auth.legacy.detect();
+      var legacyWho = null;
       if (legacy && legacy.total) {
-        var who = Auth.legacy.pick(legacy);
+        legacyWho = Auth.legacy.pick(legacy);
         var box = $('legacy-box');
-        box.innerHTML = '<i class="fas fa-circle-info" aria-hidden="true"></i><div class="vg-acct-alert__body">' +
-          '<p><strong>Eski kayıtlarınız bu tarayıcıda duruyor.</strong> Hesap sistemimiz yenilendi; eski hesabınıza ait ' + legacy.total +
-          ' kayıt (hesaplama, favori, proje, doküman) yeni hesabınıza taşınabilir. Eski şifreniz taşınmaz, yeni bir şifre belirleyin.</p></div>';
-        box.hidden = false;
-        $('legacy-opt').hidden = false;
-        $('legacy-opt-text').textContent = 'Bu tarayıcıdaki eski kayıtlarımı (' + legacy.total + ') yeni hesabıma taşı';
-        if (who) {
-          if (who.name && !$('name').value) $('name').value = who.name;
-          if (who.email && !$('email').value) $('email').value = who.email;
+        if (legacyWho) {
+          box.innerHTML = '<i class="fas fa-circle-info" aria-hidden="true"></i><div class="vg-acct-alert__body">' +
+            '<p><strong>Eski kayıtlarınız bu tarayıcıda duruyor.</strong> Hesap sistemimiz yenilendi; eski hesabınıza ait ' + legacyWho.total +
+            ' kayıt (hesaplama, favori, proje, doküman) yeni hesabınıza taşınabilir. Eski şifreniz taşınmaz, yeni bir şifre belirleyin.</p></div>';
+          $('legacy-opt').hidden = false;
+          $('legacy-opt-text').textContent = 'Bu tarayıcıdaki eski kayıtlarımı (' + legacyWho.total + ') yeni hesabıma taşı';
+          if (legacyWho.name && !$('name').value) $('name').value = legacyWho.name;
+          if (legacyWho.email && !$('email').value) $('email').value = legacyWho.email;
+        } else {
+          box.innerHTML = '<i class="fas fa-circle-info" aria-hidden="true"></i><div class="vg-acct-alert__body">' +
+            '<p><strong>Eski kayıtlar bu tarayıcıda duruyor.</strong> Hesap sistemimiz yenilendi; bu tarayıcıda birden fazla eski hesaba ait kayıt bulundu. ' +
+            'Hesabınızı oluşturduktan sonra Hesabım sayfasındaki “Bu tarayıcıdaki eski kayıtlarınız” bölümünden kendi eski hesabınızı seçip kayıtlarını taşıyabilirsiniz.</p></div>';
         }
+        box.hidden = false;
+      }
+
+      /* Giriş yapmadan bu tarayıcıya kaydedilen favori ve hesaplamalar: yeni hesaba eklenip eklenmeyeceği sorulur. */
+      var guest = Auth.guestCounts();
+      if (guest.favorites + guest.history) {
+        var parts = [];
+        if (guest.favorites) parts.push(guest.favorites + ' favori');
+        if (guest.history) parts.push(guest.history + ' hesaplama');
+        $('guest-opt-text').textContent = 'Bu tarayıcıda giriş yapmadan kaydedilen kayıtları (' + parts.join(', ') + ') yeni hesabıma ekle. İşaretlemezseniz yalnızca bu tarayıcıda kalır.';
+        $('guest-opt').hidden = false;
       }
 
       Auth.session({ force: true }).then(function (user) {
@@ -346,7 +384,8 @@
         }
         UI.clearFieldErrors(form);
         UI.busy(submitBtn, true, 'Hesabınız oluşturuluyor…');
-        var migrateLegacy = legacy && legacy.total && $('legacy').checked;
+        var mergeGuest = !$('guest-opt').hidden && $('guest-merge').checked;
+        var migrateLegacy = !!legacyWho && !$('legacy-opt').hidden && $('legacy').checked;
         Auth.register({
           name: $('name').value,
           email: $('email').value,
@@ -354,17 +393,18 @@
           company: $('company').value,
           phone: $('phone').value,
           consent: true,
-          website: $('website').value
+          website: $('website').value,
+          mergeGuest: mergeGuest
         }).then(function (res) {
           var merged = res && res.merged;
           var mergedN = merged ? merged.favorites + merged.history : 0;
           Auth.setFlash('success', 'Hesabınız oluşturuldu, hoş geldiniz!' + (mergedN ? ' Bu cihazda kaydettiğiniz ' + mergedN + ' kayıt hesabınıza eklendi.' : ''));
           if (!migrateLegacy) return null;
-          return Auth.legacy.migrate().then(function (c) {
+          return Auth.legacy.migrate(legacyWho.id).then(function (c) {
             var n = c.history + c.favorites + c.projects + c.documents;
-            Auth.setFlash('success', 'Hesabınız oluşturuldu, hoş geldiniz! Eski kayıtlarınızdan ' + n + ' tanesi hesabınıza taşındı.');
+            Auth.setFlash('success', 'Eski kayıtlarınızdan ' + n + ' tanesi hesabınıza taşındı.', true);
           }, function () {
-            Auth.setFlash('warning', 'Hesabınız oluşturuldu ancak eski kayıtlarınız şu anda taşınamadı. Panelden tekrar deneyebilirsiniz.');
+            Auth.setFlash('warning', 'Eski kayıtlarınız şu anda taşınamadı. Panelden tekrar deneyebilirsiniz.', true);
           });
         }).then(function () {
           location.replace(dest);
@@ -381,6 +421,7 @@
           UI.showFormError(form, alertEl, e);
         });
       });
+      UI.enableSubmit(form);
     }());
   </script>
 </body>

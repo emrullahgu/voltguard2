@@ -5,7 +5,9 @@
    kimliği görmez. Durum değiştiren her istek X-VG-CSRF başlığıyla gönderilir.
 
    - Giriş yapmamış ziyaretçi: favoriler ve kayıtlı hesaplamalar bu tarayıcıda (localStorage) tutulur;
-     giriş/kayıt sonrasında hesaba otomatik aktarılır (birleştirilir).
+     giriş/kayıt sayfasındaki onay kutusu işaretliyse hesaba aktarılır (birleştirilir).
+   - Oturum sunucuda sona ererse gönderilemeyen değişiklikler kullanıcı kimliğiyle sekme belleğine alınır ve
+     yalnızca AYNI kullanıcı yeniden giriş yaptığında gönderilir (başka hesaba karışmaz).
    - Giriş yapmış kullanıcı: değişiklikler hemen ekrana yansır, sunucuya gecikmeli (debounce) gönderilir.
      Bekleyen değişiklikler sekme oturumunda (sessionStorage) saklanır; sayfa kapanırken keepalive ile yollanır.
    - Eski sürümün yalnızca tarayıcıda tutulan hesap verileri (vg_users_v1 ...) yeni hesaba taşınabilir;
@@ -27,11 +29,13 @@
   var ME_TTL = 5 * 60 * 1000;     // içerik sayfalarında oturum bilgisi en fazla 5 dk önbellekten kullanılır
   var DATA_TTL = 5 * 60 * 1000;
   var SYNC_DELAY = 700;
+  var RESCUE_TTL = 24 * 60 * 60 * 1000;   // kurtarılan değişiklikler en fazla 24 saat saklanır
 
   var KEYS = {
     hint: 'vg_auth_hint_v1',             // localStorage: yalnızca "bu tarayıcıda oturum açıldı" işareti (kişisel veri yok)
     cache: 'vg_acct_cache_v1',           // sessionStorage: sekmeye özel hesap verisi önbelleği + bekleyen değişiklikler
     flash: 'vg_flash_v1',                // sessionStorage: yönlendirme sonrası gösterilecek tek seferlik mesaj
+    rescue: 'vg_rescue_v1',              // sessionStorage: oturum sona erdiğinde kaydedilemeyen değişiklikler (kullanıcı kimliğine bağlı)
     guestFavorites: 'vg_guest_favorites_v1',
     guestHistory: 'vg_guest_history_v1',
     legacyState: 'vg_legacy_state_v1',   // localStorage: 'migrated' | 'discarded' | 'dismissed'
@@ -294,27 +298,42 @@
       }, function () { throw ApiError('unreachable', MSG.down, 0); })
       .catch(function (e) {
         if (!e || e.name !== 'ApiError') e = ApiError('unreachable', MSG.down, 0);
-        if (e.status === 401) handleUnauthorized();
+        if (e.status === 401) handleUnauthorized(e);
         throw e;
       });
   }
 
-  function ensureCsrf() {
-    if (state.csrf) return Promise.resolve(state.csrf);
-    return fetchJson('me', {}).then(function (j) { applyMe(j); return state.csrf; });
+  // CSRF jetonunu sunucudan yeniler. İstek bir kullanıcı adına (uid) hazırlandıysa ve sunucudaki oturum artık o
+  // kullanıcıya ait değilse (süresi doldu, çerez silindi, başka sekmede başka hesapla giriş yapıldı) istek yeni
+  // oturuma GÖNDERİLMEZ: bekleyen değişiklikler önce o kullanıcı adına saklanır, ardından 401 ile reddedilir.
+  function refreshCsrf(uid) {
+    return fetchJson('me', {}).then(function (j) {
+      var now = j && j.user && j.user.id ? String(j.user.id) : null;
+      if (uid && now !== uid) {
+        rescuePending(uid);
+        applyMe(j);
+        throw ApiError('unauthorized', MSG.expired, 401, { switched: !!now });
+      }
+      applyMe(j);
+      return state.csrf;
+    });
+  }
+  function ensureCsrf(uid) {
+    return state.csrf ? Promise.resolve(state.csrf) : refreshCsrf(uid);
   }
 
   // POST: CSRF jetonu yoksa önce alınır; jeton bayatsa (başka sekmede oturum değişti) bir kez yenilenip tekrar denenir.
+  // opts.anon: hesaba bağlı olmayan işlemler (giriş, kayıt, çıkış, şifre sıfırlama) için oturum sahibi denetlenmez.
   function post(action, body, opts) {
     opts = opts || {};
-    return ensureCsrf().then(function () {
+    var uid = !opts.anon && state.user ? state.user.id : null;
+    return ensureCsrf(uid).then(function () {
       return fetchJson(action, { method: 'POST', body: body, keepalive: opts.keepalive, timeout: opts.timeout });
     }).catch(function (e) {
       if (e && e.code === 'csrf' && !opts.retried) {
         state.csrf = '';
-        return fetchJson('me', {}).then(function (j) {
-          applyMe(j);
-          return post(action, body, { keepalive: opts.keepalive, timeout: opts.timeout, retried: true });
+        return refreshCsrf(uid).then(function () {
+          return post(action, body, { keepalive: opts.keepalive, timeout: opts.timeout, anon: opts.anon, retried: true });
         });
       }
       throw e;
@@ -410,7 +429,17 @@
   var decorateNav = refreshHeader;
 
   /* ---------------------------------------------------------------- tek seferlik mesajlar */
-  function setFlash(kind, text) { write(KEYS.flash, { kind: kind, text: String(text || '') , at: Date.now() }, 'session'); }
+  // append: true ise bekleyen mesajın sonuna eklenir; tür, ikisinden daha önemli olanı olur (error > warning > info > success).
+  function setFlash(kind, text, append) {
+    text = String(text || '');
+    var prev = append ? read(KEYS.flash, null, 'session') : null;
+    if (prev && prev.text && (Date.now() - (+prev.at || 0)) < 10 * 60 * 1000) {
+      var rank = { success: 0, info: 1, warning: 2, error: 3 };
+      if ((rank[prev.kind] || 0) > (rank[kind] || 0)) kind = prev.kind;
+      text = prev.text + ' ' + text;
+    }
+    write(KEYS.flash, { kind: kind, text: text, at: Date.now() }, 'session');
+  }
   function takeFlash() {
     var f = read(KEYS.flash, null, 'session');
     remove(KEYS.flash, 'session');
@@ -538,7 +567,7 @@
         need.forEach(function (c) { emit('vg:data', { collection: c, source: 'server' }); });
         return { loaded: need };
       }, function (e) {
-        if (e.status === 401) { handleUnauthorized(); return { guest: true }; }
+        if (e.status === 401) { handleUnauthorized(e); return { guest: true }; }
         throw e;
       });
     });
@@ -575,27 +604,74 @@
   }
   function maybeFlushPending() { if (pendingCount()) scheduleSync(300); }
 
-  function handleUnauthorized() {
-    // Oturum sunucuda sona erdi: bekleyen favori/geçmiş değişiklikleri kaybolmasın diye misafir verisine taşınır.
-    var lostOther = 0;
-    COLLS.forEach(function (c) {
-      if (!pending[c].length) return;
-      if (GUEST_COLLS[c]) {
-        var list = applyOps(guestGet(c), pending[c].filter(function (op) { return op.op === 'upsert'; }), c);
-        write(guestKey(c), list);
-      } else {
-        lostOther += pending[c].length;
-      }
+  /* ---------------------------------------------------------------- oturum sona erince bekleyen değişiklikler */
+  // Bekleyen değişiklikler, sahibi olan kullanıcının kimliğiyle sekme belleğine (vg_rescue_v1) alınır ve bellekten
+  // çıkarılır. Misafir verisine YAZILMAZ: aynı tarayıcıda sonra giriş yapan başka bir hesaba karışmasın.
+  // Aynı kullanıcı yeniden giriş yaptığında gönderilir (replayRescue); başka hesap girerse veya 24 saat geçerse silinir.
+  function rescuePending(uid) {
+    if (!uid) return 0;
+    var ops = [];
+    COLLS.forEach(function (c) { pending[c].forEach(function (op) { if (op) ops.push({ c: c, op: op }); }); });
+    COLLS.forEach(function (c) { pending[c] = []; });
+    viewCache = {};
+    if (!ops.length) return 0;
+    var prev = read(KEYS.rescue, null, 'session');
+    var all = prev && prev.uid === uid && Array.isArray(prev.ops) && (Date.now() - (+prev.at || 0)) < RESCUE_TTL ? prev.ops.concat(ops) : ops;
+    write(KEYS.rescue, { v: 1, uid: uid, at: Date.now(), ops: all.slice(-2000) }, 'session');
+    return ops.length;
+  }
+  function rescuedCount(uid) {
+    var r = read(KEYS.rescue, null, 'session');
+    return r && r.uid === uid && Array.isArray(r.ops) && (Date.now() - (+r.at || 0)) < RESCUE_TTL ? r.ops.length : 0;
+  }
+  function replayRescue(uid) {
+    var r = read(KEYS.rescue, null, 'session');
+    remove(KEYS.rescue, 'session');
+    if (!r || r.uid !== uid || !Array.isArray(r.ops) || (Date.now() - (+r.at || 0)) >= RESCUE_TTL) return 0;
+    var n = 0;
+    r.ops.forEach(function (x) {
+      if (!x || !x.op || COLLS.indexOf(x.c) < 0) return;
+      var op = null;
+      if (x.op.op === 'delete' && typeof x.op.id === 'string' && x.op.id) op = { op: 'delete', id: x.op.id.slice(0, 100) };
+      else if (x.op.op === 'upsert') { var it = cleanItem(x.c, x.op.item); if (it) op = { op: 'upsert', item: it }; }
+      if (op) { pending[x.c].push(op); n++; }
     });
+    if (n) { viewCache = {}; persistCache(); }
+    return n;
+  }
+
+  // Sunucu oturumu tanımadı (401). e.data.switched: bu tarayıcıda artık başka bir hesap açık (durum zaten ona geçti).
+  function handleUnauthorized(e) {
+    var uid = state.user ? state.user.id : null;
+    if (uid) rescuePending(uid);
+    var owner = uid || (read(KEYS.rescue, null, 'session') || {}).uid || null;
+    var saved = owner ? rescuedCount(owner) : 0;
     state.expired = true;
-    setUser(null);
-    setSync('error', lostOther ? 'Oturumunuz sona erdiği için son proje/doküman değişiklikleriniz kaydedilemedi. Lütfen yeniden giriş yapın.' : MSG.expired);
+    if (e && e.data && e.data.switched) {
+      setSync('idle');
+      return;
+    }
+    if (state.user) setUser(null);
+    if (saved) {
+      var msg = 'Oturumunuz sona erdi. Henüz kaydedilmemiş ' + saved + ' değişikliğiniz bu sekmede saklandı; aynı hesapla yeniden giriş yaptığınızda hesabınıza kaydedilecek.';
+      setSync('error', msg);
+      // Korumalı sayfanın "oturum kapandı" mesajının yerine geçer (giriş sayfasında gösterilir).
+      setFlash('warning', msg);
+    } else {
+      setSync('error', MSG.expired);
+    }
   }
 
   // Bekleyen değişiklikleri sunucuya gönderir. Koleksiyon başına en fazla 200 işlem bir istekte gider.
+  var holdSync = 0;   // şifre / e-posta değişikliği sırasında (oturum kimliği yenilenirken) senkron bekletilir
   function flush(opts) {
     opts = opts || {};
     if (!state.user) return Promise.resolve();
+    if (holdSync) {
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(function () { flush().catch(function () {}); }, 500);
+      return Promise.resolve();
+    }
     if (syncing) return syncing.then(function () { return pendingCount() ? flush(opts) : null; });
     clearTimeout(syncTimer);
     var colls = COLLS.filter(function (c) { return pending[c].length; });
@@ -612,7 +688,7 @@
       setSync('saved');
     }, function (e) {
       syncing = null;
-      if (e && e.status === 401) { handleUnauthorized(); throw e; }
+      if (e && e.status === 401) { handleUnauthorized(e); throw e; }
       if (e && e.code === 'unreachable') {
         sync.retry = Math.min(sync.retry + 1, 6);
         setSync('offline', 'Bağlantı yok: değişiklikleriniz bu sekmede saklanıyor, bağlantı gelince kaydedilecek.');
@@ -665,31 +741,42 @@
   }
 
   /* ---------------------------------------------------------------- hesap işlemleri */
-  function afterLogin(j) {
+  // Giriş / kayıt sonrası. opts.mergeGuest: true ise bu tarayıcıda giriş yapmadan kaydedilen favori ve hesaplamalar
+  // hesaba eklenir (giriş / kayıt sayfasındaki onay kutusu). Aynı kullanıcının oturumu sona ererken kaydedilemeyen
+  // değişiklikleri (vg_rescue_v1) her durumda gönderilir; başka bir hesabın kurtarılan verisi silinir.
+  function afterLogin(j, opts) {
+    opts = opts || {};
     resetAccountData();
     state.checked = true;
     state.meAt = Date.now();
     setHint();
     setUser(j.user);
-    return mergeGuestData().then(function (merged) {
-      return { user: state.user, merged: merged };
+    var rescued = state.user ? replayRescue(state.user.id) : 0;
+    var work = opts.mergeGuest ? mergeGuestData() : (rescued ? flush().then(function () { return null; }) : Promise.resolve(null));
+    return work.then(function (merged) {
+      if (rescued) setFlash('success', 'Oturumunuz sona ermeden önce kaydedilemeyen ' + rescued + ' değişikliğiniz hesabınıza kaydedildi.', true);
+      return { user: state.user, merged: merged, rescued: rescued };
     }, function () {
-      return { user: state.user, merged: null };
+      return { user: state.user, merged: null, rescued: rescued };
     });
   }
 
-  // register({ name, email, password, company, phone, consent, website, remember }) veya eski imza (ad, e-posta, şifre).
+  // register({ name, email, password, company, phone, consent, website, remember, mergeGuest }) veya eski imza (ad, e-posta, şifre).
   function register(nameOrFields, email, password) {
     var f = typeof nameOrFields === 'object' && nameOrFields ? nameOrFields : { name: nameOrFields, email: email, password: password, consent: true };
     return post('register', {
       name: String(f.name || ''), email: String(f.email || ''), password: String(f.password || ''),
       company: String(f.company || ''), phone: String(f.phone || ''), consent: !!f.consent,
       website: String(f.website || ''), remember: !!f.remember
-    }).then(afterLogin);
+    }, { anon: true }).then(function (j) { return afterLogin(j, { mergeGuest: !!f.mergeGuest }); });
   }
 
+  // login(email, password, { remember, mergeGuest })
   function login(email, password, opts) {
-    return post('login', { email: String(email || ''), password: String(password || ''), remember: !!(opts && opts.remember) }).then(afterLogin);
+    opts = opts || {};
+    return post('login', { email: String(email || ''), password: String(password || ''), remember: !!opts.remember }, { anon: true }).then(function (j) {
+      return afterLogin(j, { mergeGuest: !!opts.mergeGuest });
+    });
   }
 
   function logout() {
@@ -697,29 +784,48 @@
       ? Promise.race([flush().catch(function () {}), new Promise(function (r) { setTimeout(r, 3000); })])
       : Promise.resolve();
     return pre.then(function () {
-      return post('logout', {}).catch(function (e) { if (e.code !== 'unreachable') return null; throw e; });
+      return post('logout', {}, { anon: true }).catch(function (e) { if (e.code !== 'unreachable') return null; throw e; });
     }).then(function () {
       state.csrf = '';
+      remove(KEYS.rescue, 'session');   // bilinçli çıkış: bu sekmede hesap verisi kalmaz
       setUser(null);
       setSync('idle');
     });
   }
 
+  // Oturum kimliğini yenileyen işlemler (şifre / e-posta değişikliği): önce bekleyen değişiklikler gönderilir, işlem
+  // sürerken yeni senkron başlatılmaz; eski oturum çerezli bir istek yeni çerezin üzerine yazmasın.
+  function withSyncHeld(fn) {
+    var pre = state.user && pendingCount()
+      ? Promise.race([flush().catch(function () {}), new Promise(function (r) { setTimeout(r, 5000); })])
+      : Promise.resolve();
+    return pre.then(function () {
+      holdSync++;
+      var release = function () { holdSync = Math.max(0, holdSync - 1); maybeFlushPending(); };
+      return Promise.resolve().then(fn).then(function (r) { release(); return r; }, function (e) { release(); throw e; });
+    });
+  }
+
   function updateProfile(fields) {
-    return post('update_profile', fields || {}).then(function (j) {
+    fields = fields || {};
+    var run = function () { return post('update_profile', fields); };
+    var emailChange = typeof fields.email === 'string' && state.user && fields.email.trim().toLowerCase() !== state.user.email;
+    return (emailChange ? withSyncHeld(run) : run()).then(function (j) {
       state.user = sanitizeUser(j.user);
       persistCache();
       refreshHeader();
       emit('vg:auth', { user: state.user });
       return state.user;
-    }, function (e) { if (e.status === 401) handleUnauthorized(); throw e; });
+    }, function (e) { if (e.status === 401) handleUnauthorized(e); throw e; });
   }
 
   function changePassword(current, next) {
-    return post('change_password', { current: String(current || ''), password: String(next || '') }).then(function (j) {
+    return withSyncHeld(function () {
+      return post('change_password', { current: String(current || ''), password: String(next || '') });
+    }).then(function (j) {
       persistCache();
       return j.message || 'Şifreniz güncellendi.';
-    }, function (e) { if (e.status === 401) handleUnauthorized(); throw e; });
+    }, function (e) { if (e.status === 401) handleUnauthorized(e); throw e; });
   }
 
   function deleteAccount(password) {
@@ -727,17 +833,18 @@
       state.csrf = '';
       remove(KEYS.guestFavorites);
       remove(KEYS.guestHistory);
+      remove(KEYS.rescue, 'session');
       setUser(null);
       return j.message || 'Hesabınız silindi.';
-    }, function (e) { if (e.status === 401) handleUnauthorized(); throw e; });
+    }, function (e) { if (e.status === 401) handleUnauthorized(e); throw e; });
   }
 
   function forgotPassword(email) {
-    return post('forgot_password', { email: String(email || '') }).then(function (j) { return j.message; });
+    return post('forgot_password', { email: String(email || '') }, { anon: true }).then(function (j) { return j.message; });
   }
 
   function resetPassword(token, password) {
-    return post('reset_password', { token: String(token || ''), password: String(password || '') }).then(function (j) {
+    return post('reset_password', { token: String(token || ''), password: String(password || '') }, { anon: true }).then(function (j) {
       // Sunucu bu tarayıcıdaki oturumu da kapatır.
       if (state.user) setUser(null);
       return j.message || 'Şifreniz güncellendi.';
@@ -958,35 +1065,57 @@
     ['history', 'favorites', 'projects', 'documents'].forEach(function (c) { var v = read(KEYS[c], []); data[c] = Array.isArray(v) ? v : []; });
     var out = users.filter(function (u) { return u && u.id; }).map(function (u) {
       var counts = { history: 0, favorites: 0, projects: 0, documents: 0 };
-      Object.keys(data).forEach(function (c) { counts[c] = data[c].filter(function (x) { return x && x.userId === u.id; }).length; });
+      Object.keys(data).forEach(function (c) { counts[c] = data[c].filter(function (x) { return x && String(x.userId) === String(u.id); }).length; });
       return { id: String(u.id), email: String(u.email || ''), name: String(u.name || ''), counts: counts, total: counts.history + counts.favorites + counts.projects + counts.documents };
     });
     var total = out.reduce(function (n, u) { return n + u.total; }, 0);
     return { users: out, total: total, dismissed: flag === 'dismissed' };
   }
 
+  // Taşınacak eski hesap: yalnızca e-posta adresi eşleşen ya da bu tarayıcıda kaydı olan TEK eski hesap. Birden fazla
+  // eski hesap varsa ve e-posta eşleşmiyorsa null döner (seçim panelde kullanıcıya bırakılır; başkasının verisi taşınmaz).
   function legacyPick(info, email) {
     if (!info || !info.users.length) return null;
-    var e = String(email || (state.user && state.user.email) || '').trim().toLowerCase();
-    var match = info.users.filter(function (u) { return u.email.toLowerCase() === e && u.total > 0; })[0];
-    if (match) return match;
     var withData = info.users.filter(function (u) { return u.total > 0; });
-    return withData.length === 1 ? withData[0] : (withData.sort(function (a, b) { return b.total - a.total; })[0] || null);
+    var e = String(email || (state.user && state.user.email) || '').trim().toLowerCase();
+    if (e) {
+      var match = withData.filter(function (u) { return u.email.toLowerCase() === e; })[0];
+      if (match) return match;
+    }
+    return withData.length === 1 ? withData[0] : null;
   }
 
-  // Eski hesabın verilerini (şifre olmadan) giriş yapılmış hesaba taşır; başarılı olunca eski anahtarlar silinir.
+  // Eski hesabın verilerini (şifre olmadan) giriş yapılmış hesaba taşır; başarılı olunca yalnızca taşınan eski hesabın
+  // kayıtları (ve şifre özeti) silinir. Kaydı olan başka eski hesap kalmadıysa eski anahtarların tümü kaldırılır.
   function legacyMigrate(legacyUserId) {
     if (!state.user) return Promise.reject(new Error(MSG.login));
     var info = legacyDetect();
     if (!info) return Promise.resolve({ history: 0, favorites: 0, projects: 0, documents: 0 });
     var who = legacyUserId ? info.users.filter(function (u) { return u.id === legacyUserId; })[0] : legacyPick(info);
     if (!who) return Promise.resolve({ history: 0, favorites: 0, projects: 0, documents: 0 });
-    var pick = function (c) { var v = read(KEYS[c], []); return (Array.isArray(v) ? v : []).filter(function (x) { return x && x.userId === who.id; }); };
+    var pick = function (c) { var v = read(KEYS[c], []); return (Array.isArray(v) ? v : []).filter(function (x) { return x && String(x.userId) === who.id; }); };
     var data = { history: pick('history'), favorites: pick('favorites'), projects: pick('projects'), documents: pick('documents') };
     return loadData(COLLS).then(function () { return queueImport(data); }).then(function (counts) {
-      legacyDiscard('migrated');
+      legacyRemoveUser(who.id);
       return counts;
     });
+  }
+  function legacyRemoveUser(uid) {
+    ['history', 'favorites', 'projects', 'documents'].forEach(function (c) {
+      var v = read(KEYS[c], null);
+      if (!Array.isArray(v)) return;
+      var rest = v.filter(function (x) { return x && String(x.userId) !== uid; });
+      if (rest.length) write(KEYS[c], rest); else remove(KEYS[c]);
+    });
+    var users = read(KEYS.users, null);
+    if (Array.isArray(users)) {
+      var restUsers = users.filter(function (u) { return u && String(u.id) !== uid; });
+      if (restUsers.length) write(KEYS.users, restUsers); else remove(KEYS.users);
+    }
+    var sess = read(KEYS.session, null);
+    if (sess && String(sess.userId) === uid) remove(KEYS.session);
+    var left = legacyDetect();
+    if (!left || !left.total) legacyDiscard('migrated');
   }
   function legacyDiscard(reason) {
     LEGACY_KEYS.forEach(function (k) { remove(k); });
@@ -1027,8 +1156,9 @@
     box.id = 'vg-legacy-notice';
     box.setAttribute('aria-labelledby', 'vg-legacy-title');
     var target = state.user ? '/hesap/panel.html#eski-veriler' : '/hesap/kayit.html?aktar=1';
+    var owners = info.users.filter(function (u) { return u.total > 0; }).length;
     box.innerHTML = '<strong id="vg-legacy-title">VoltGuard Tools hesabınız yenilendi</strong>' +
-      '<p>Bu tarayıcıda eski hesabınıza ait ' + info.total + ' kayıt (hesaplama, favori, proje, doküman) var. ' +
+      '<p>Bu tarayıcıda ' + (owners > 1 ? owners + ' eski hesaba ait toplam ' : 'eski hesabınıza ait ') + info.total + ' kayıt (hesaplama, favori, proje, doküman) var. ' +
       'Artık hesaplar güvenli sunucuda tutuluyor; kayıtlarınızı tek adımda yeni hesabınıza taşıyabilirsiniz.</p>' +
       '<div class="vgl-actions"><a href="' + target + '">' + (state.user ? 'Kayıtlarımı taşı' : 'Hesap oluştur ve taşı') + '</a>' +
       '<button type="button">Daha sonra</button></div>';
@@ -1069,7 +1199,7 @@
   global.addEventListener('online', function () { if (state.user && pendingCount()) scheduleSync(200); });
   global.addEventListener('storage', function (e) {
     if (e.key === KEYS.hint) {
-      if (!e.newValue) { if (state.user) setUser(null); }
+      if (!e.newValue) { if (state.user) { rescuePending(state.user.id); setUser(null); } }
       else { session({ force: true }).catch(function () { /* ağ yok: mevcut durum korunur */ }); }
     } else if (e.key === KEYS.guestFavorites || e.key === KEYS.guestHistory) {
       if (!state.user) emit('vg:data', { collection: e.key === KEYS.guestFavorites ? 'favorites' : 'history', guest: true });
@@ -1119,6 +1249,7 @@
     exportAll: exportAll,
     importAll: importAll,
     guestCounts: function () { return { favorites: guestGet('favorites').length, history: guestGet('history').length }; },
+    rescuedCount: function () { var r = read(KEYS.rescue, null, 'session'); return r && r.uid ? rescuedCount(r.uid) : 0; },
     // eski hesaplar
     legacy: { detect: legacyDetect, pick: legacyPick, migrate: legacyMigrate, discard: legacyDiscard, dismiss: legacyDismiss },
     // yardımcılar

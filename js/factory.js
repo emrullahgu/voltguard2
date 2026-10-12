@@ -5,6 +5,9 @@
  * Bağımlılık yok; defer ile yüklenir. Animasyonlar transform/opacity ile yapılır,
  * ekran dışındayken durur ve prefers-reduced-motion'da statik kalır.
  *
+ * Çapalar: #reaktif-ceza ve #durus-maliyeti ilgili hesaplayıcı sekmesini açar; ana sayfadaki hızlı
+ * tahmin ?saat=..&tl=..#durus-maliyeti ile duruş hesaplayıcısına aktarılır. #teklif-sihirbazi = #teklif.
+ *
  * Teklif Sihirbazı /contact.php'ye index.html iletişim formuyla AYNI alanları gönderir:
  *   name, phone, email, subject (elektrik|elektronik|otomasyon|mekanik|diger), message (20-1000),
  *   consent=on, website (honeypot), formTimestamp (ms), cf-turnstile-response (site anahtarı varsa).
@@ -14,38 +17,43 @@
 
   /* =====================================================================
      YAPILANDIRMA — tek hat şemasındaki bağlantı hedefleri
-     `service`: "Hizmet detayları" düğmesinin hedefi. SEO aşamasında /hizmetler/<slug>.html
-     sayfaları eklendiğinde yalnızca bu değerleri değiştirin (önerilen slug yorumlarda).
-     `items`: ilgili mevcut rehber / hesaplama / soru sayfaları.
+     `service`: "Hizmet detayları" düğmesinin hedefi (/hizmetler/<slug>.html hizmet sayfası).
+     `items`: "İlgili kaynaklar" listesi; önce ilgili diğer hizmet sayfaları, sonra rehber /
+     hesaplama / soru sayfaları. Hedef değişirse yalnızca burayı düzenleyin ve
+     fabrika-cozumleri.html'deki factory.js ?v= değerini artırın.
      ===================================================================== */
   var FX_LINKS = {
     sebeke: {
-      service: '/#hizmetler', // önerilen: /hizmetler/yuksek-gerilim-isletme-sorumlulugu.html
+      service: '/hizmetler/trafo-isletme-sorumlulugu.html',
       items: [
+        ['Trafo merkezi kurulumu', '/hizmetler/trafo-merkezi-kurulumu.html'],
         ['Yüksek gerilim işletme sorumluluğu', '/bilgi/yuksek-gerilim-isletme-sorumlulugu.html'],
         ['Kuvvetli akım tesisleri', '/bilgi/kuvvetli-akim-tesisleri.html'],
         ['SMM (Serbest Müşavir Mühendislik)', '/bilgi/smm-serbest-musavir-muhendislik.html']
       ]
     },
     trafo: {
-      service: '/#hizmetler', // önerilen: /hizmetler/trafo-isletme-sorumlulugu.html
+      service: '/hizmetler/trafo-bakimi.html',
       items: [
+        ['Trafo işletme sorumluluğu', '/hizmetler/trafo-isletme-sorumlulugu.html'],
         ['Trafo periyodik bakımı', '/bilgi/trafo-periyodik-bakim.html'],
         ['Trafo akımı hesaplama', '/hesaplama/trafo-akimi-hesaplama/'],
         ['kVA – amper hesabı', '/bilgi/kva-amper-hesaplama.html']
       ]
     },
     adp: {
-      service: '/#hizmetler', // önerilen: /hizmetler/elektrik-pano-kurulumu.html
+      service: '/hizmetler/elektrik-pano-imalati.html',
       items: [
-        ['Elektrik tesisatı periyodik kontrolü', '/bilgi/elektrik-tesisati-periyodik-kontrol.html'],
+        ['Elektrik periyodik kontrol', '/hizmetler/elektrik-periyodik-kontrol.html'],
+        ['Elektrik projesi', '/hizmetler/elektrik-projesi.html'],
         ['TMŞ seçimi rehberi', '/bilgi/tms-secimi-rehberi.html'],
         ['Kısa devre akımı hesaplama', '/hesaplama/kisa-devre-akimi-hesaplama/']
       ]
     },
     komp: {
-      service: '/#hizmetler', // önerilen: /hizmetler/kompanzasyon-harmonik-filtre.html
+      service: '/hizmetler/harmonik-filtreli-kompanzasyon.html',
       items: [
+        ['Enerji kalitesi ölçümü', '/hizmetler/enerji-kalitesi-olcumu.html'],
         ['Reaktif güç kompanzasyonu', '/bilgi/reaktif-guc-kompanzasyonu.html'],
         ['Harmonik nedir?', '/bilgi/harmonik-nedir-sorunlari.html'],
         ['Kompanzasyon hesaplama', '/hesaplama/kompanzasyon-hesaplama/'],
@@ -53,8 +61,9 @@
       ]
     },
     tali: {
-      service: '/#hizmetler', // önerilen: /hizmetler/otomasyon-vfd-motor-kontrol.html
+      service: '/hizmetler/elektrik-taahhut.html',
       items: [
+        ['Topraklama ölçümü', '/hizmetler/topraklama-olcumu.html'],
         ['VFD (frekans invertörü) nedir?', '/bilgi/vfd-frekans-invertoru-nedir.html'],
         ['Motor akımı hesaplama', '/hesaplama/motor-akimi-hesaplama/'],
         ['Kablo kesiti hesaplama', '/hesaplama/kablo-kesiti-hesaplama/'],
@@ -62,7 +71,7 @@
       ]
     },
     scada: {
-      service: '/#hizmetler', // önerilen: /hizmetler/plc-scada-otomasyon.html
+      service: '/hizmetler/plc-scada-otomasyon.html',
       items: [
         ['SCADA ve IEC 61850', '/bilgi/scada-iec-61850.html'],
         ['PLC nedir, nasıl çalışır?', '/bilgi/plc-nedir-nasil-calisir.html'],
@@ -71,7 +80,7 @@
       ]
     },
     ges: {
-      service: '/#hizmetler', // önerilen: /hizmetler/ges-gunes-enerjisi.html
+      service: '/hizmetler/fabrika-cati-ges.html',
       items: [
         ['Lisanssız üretim (GES)', '/bilgi/lisanssiz-uretim-ges.html'],
         ['GES için kaç panel gerekir?', '/bilgi/ges-kac-panel-lazim.html'],
@@ -246,6 +255,7 @@
   var KEY_CALC = 'vg_fx_calc_v1';
   var KEY_LAST_SUBMIT = 'vg_last_submit_at';   // js/main.js ile ortak (60 sn bekleme)
   var SUBMIT_COOLDOWN = 60000;
+  var SUBMIT_TIMEOUT = 20000;                  // sunucu yanıt vermezse gönderimi kes
 
   /* =====================================================================
      Yardımcılar
@@ -297,6 +307,28 @@
     setRaw: function (k, v) { try { win.localStorage.setItem(k, v); } catch (e) { /* yok say */ } }
   };
 
+  /* Bir modül hata verirse diğerleri çalışmaya devam etsin; bozuk kayıt varsa silinsin */
+  function guard(name, key, fn, fallback) {
+    try { return fn(); } catch (err) {
+      if (key) store.del(key);
+      if (win.console && console.error) console.error('[factory.js] ' + name + ':', err);
+      return fallback;
+    }
+  }
+
+  /* İl adı: büyük/küçük harf ve Türkçe karakter farkını yok sayarak listedeki resmi adı döndürür */
+  var ILLER_LIST = ILLER.split(',');
+  function foldTr(v) {
+    return String(v == null ? '' : v).trim().toLocaleLowerCase('tr-TR')
+      .replace(/[çğıöşüâîû]/g, function (c) { return { 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u', 'â': 'a', 'î': 'i', 'û': 'u' }[c]; })
+      .replace(/\u0307/g, '').replace(/\s+/g, ' ');
+  }
+  var ILLER_FOLD = ILLER_LIST.map(foldTr);
+  function canonCity(v) {
+    var i = ILLER_FOLD.indexOf(foldTr(v));
+    return i > -1 ? ILLER_LIST[i] : '';
+  }
+
   /* Speculation Rules ile önceden işlenen (prerender) sayfada animasyonları etkinleşmeye ertele */
   function whenActive(fn) {
     if (doc.prerendering) doc.addEventListener('prerenderingchange', fn, { once: true });
@@ -337,7 +369,7 @@
   /* =====================================================================
      Kaydırma ile beliren öğeler
      ===================================================================== */
-  (function initReveal() {
+  guard('reveal', null, function initReveal() {
     var els = qsa('.fx-rv');
     if (!hasIO || !motionOK()) { els.forEach(function (e) { e.classList.add('is-in'); }); return; }
     els.forEach(function (e) {
@@ -351,7 +383,7 @@
       });
     }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
     els.forEach(function (e) { io.observe(e); });
-  }());
+  });
 
   /* =====================================================================
      Sekmeler (hesaplayıcılar + sektörler)
@@ -395,12 +427,14 @@
   /* =====================================================================
      Teklif Sihirbazı (diğer modüller Wizard API'sini kullanır)
      ===================================================================== */
-  var Wizard = (function () {
+  var WIZ_STUB = {
+    setType: function () {}, setSector: function () {}, preselect: function () {}, attach: function () {},
+    go: function () { scrollToId('teklif'); }
+  };
+  var Wizard = guard('wizard', KEY_WIZ, function () {
     var form = byId('fxWizForm');
     var wrap = byId('fxWiz');
-    if (!form || !wrap) {
-      return { setType: function () {}, setSector: function () {}, preselect: function () {}, attach: function () {}, go: function () {} };
-    }
+    if (!form || !wrap) return WIZ_STUB;
     var steps = qsa('.fx-wstep', form);
     var stepLis = qsa('.fx-wiz__steps li', wrap);
     var bar = byId('fxWizBar');
@@ -460,7 +494,7 @@
         services: checks('wzServices'),
         note: val('wzNote'),
         urgency: radioVal('wzUrgency'),
-        city: val('wzCity'),
+        city: canonCity(val('wzCity')) || val('wzCity'),
         osb: val('wzOsb'),
         name: val('wzName'),
         company: val('wzCompany'),
@@ -523,7 +557,14 @@
       if (dg.length === 12 && dg.slice(0, 2) === '90' && dg.charAt(2) === '5') return true;
       return false;
     }
-    function isValidEmail(m) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(m); }
+    /* contact.php FILTER_VALIDATE_EMAIL kullanır: yalnızca ASCII adresler, ardışık nokta yok */
+    function isValidEmail(m) {
+      m = String(m);
+      if (m.length > 120 || m.indexOf('..') > -1) return false;
+      if (!/^[A-Za-z0-9.!#$%&'*+\/=?^_`{|}~-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+$/.test(m)) return false;
+      var local = m.split('@')[0];
+      return local.charAt(0) !== '.' && local.charAt(local.length - 1) !== '.' && /\.[A-Za-z]{2,}$/.test(m);
+    }
 
     function mark(fieldKey, bad) {
       var f = qs('[data-req="' + fieldKey + '"]', form);
@@ -548,7 +589,7 @@
       if (i === 2) { if (!d.services.length) bad.push('wzServices'); }
       if (i === 3) {
         if (!d.urgency) bad.push('wzUrgency');
-        if (d.city.length < 2) bad.push('wzCity');
+        if (!canonCity(d.city)) bad.push('wzCity');
       }
       if (i === 4) {
         if (d.name.length < 2 || d.name.length > 100) bad.push('name');
@@ -629,7 +670,7 @@
         var k = f.getAttribute('data-req');
         var d = collect();
         var ok = (k === 'name' && d.name.length >= 2) || (k === 'phone' && isValidTrMobile(d.phone)) ||
-          (k === 'email' && (!d.email || isValidEmail(d.email))) || (k === 'wzCity' && d.city.length >= 2);
+          (k === 'email' && (!d.email || isValidEmail(d.email))) || (k === 'wzCity' && !!canonCity(d.city));
         if (ok) mark(k, false);
       }
       saveSoon();
@@ -670,6 +711,12 @@
     if (note) note.addEventListener('input', syncNote);
     var tc = byId('wzTrafoCount');
     if (tc) tc.addEventListener('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 3); });
+    /* İl: listeden biriyle eşleşiyorsa resmi yazımına çevir ("izmir" → "İzmir") */
+    var city = byId('wzCity');
+    if (city) city.addEventListener('blur', function () {
+      var c = canonCity(city.value);
+      if (c && c !== city.value) { city.value = c; saveSoon(); }
+    });
 
     function updatePreview() {
       if (!preview) return;
@@ -712,23 +759,39 @@
     function saveDraft() {
       if (form.hidden) return;
       var d = { v: 1, step: idx, t: Date.now(), radios: {}, ids: {}, services: checks('wzServices'), attached: attached };
-      ['wzType', 'wzSector', 'wzGes', 'wzUrgency'].forEach(function (n) { d.radios[n] = radioVal(n); });
+      DRAFT_RADIOS.forEach(function (n) { d.radios[n] = radioVal(n); });
       DRAFT_IDS.forEach(function (id) { var e = byId(id); if (e) d.ids[id] = e.value; });
       if (store.set(KEY_WIZ, d) && draftState) {
         var dt = new Date();
         draftState.textContent = 'Taslak bu cihazda kaydedildi · ' + String(dt.getHours()).padStart(2, '0') + ':' + String(dt.getMinutes()).padStart(2, '0');
       }
     }
+    var DRAFT_RADIOS = ['wzType', 'wzSector', 'wzGes', 'wzUrgency'];
+    var ATTACH_KEYS = ['health', 'reaktif', 'durus'];
     function restoreDraft() {
       var d = store.get(KEY_WIZ);
-      if (!d || d.v !== 1) return;
-      Object.keys(d.radios || {}).forEach(function (n) { if (d.radios[n]) setRadio(n, d.radios[n]); });
-      Object.keys(d.ids || {}).forEach(function (id) { var e = byId(id); if (e && typeof d.ids[id] === 'string') e.value = d.ids[id]; });
-      qsa('input[name="wzServices"]', form).forEach(function (c) { c.checked = (d.services || []).indexOf(c.value) > -1; });
-      attached = (d.attached && typeof d.attached === 'object') ? d.attached : {};
+      if (!d || typeof d !== 'object' || d.v !== 1) return;
+      try {
+        var radios = (d.radios && typeof d.radios === 'object') ? d.radios : {};
+        var ids = (d.ids && typeof d.ids === 'object') ? d.ids : {};
+        DRAFT_RADIOS.forEach(function (n) { if (typeof radios[n] === 'string' && radios[n]) setRadio(n, radios[n]); });
+        DRAFT_IDS.forEach(function (id) { var e = byId(id); if (e && typeof ids[id] === 'string') e.value = ids[id]; });
+        var svcs = Array.isArray(d.services) ? d.services : [];
+        qsa('input[name="wzServices"]', form).forEach(function (c) { c.checked = svcs.indexOf(c.value) > -1; });
+        attached = {};
+        if (d.attached && typeof d.attached === 'object') {
+          ATTACH_KEYS.forEach(function (k) { if (typeof d.attached[k] === 'string' && d.attached[k]) attached[k] = d.attached[k].slice(0, 400); });
+        }
+        idx = clamp(+d.step || 0, 0, steps.length - 1);
+      } catch (err) {
+        store.del(KEY_WIZ);
+        form.reset();
+        attached = {};
+        idx = 0;
+        return;
+      }
       renderAttached();
       syncNote();
-      idx = clamp(+d.step || 0, 0, steps.length - 1);
       if (draftState) draftState.textContent = 'Kaldığınız yerden devam ediyorsunuz; taslak bu cihazda saklanır.';
     }
     function resetAll() {
@@ -817,19 +880,30 @@
       sending = true;
       form.setAttribute('aria-busy', 'true');
       var label = btnSubmit.innerHTML;
-      btnSubmit.disabled = true;
+      /* disabled yerine aria-disabled: odak düğmede kalsın (çift gönderimi `sending` engeller) */
+      btnSubmit.setAttribute('aria-disabled', 'true');
       btnPrev.disabled = true;
       btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Gönderiliyor...';
 
-      fetch('/contact.php', { method: 'POST', body: fd, headers: { Accept: 'application/json' }, credentials: 'same-origin' })
+      var ac = ('AbortController' in win) ? new AbortController() : null;
+      var timedOut = false;
+      var to = setTimeout(function () { timedOut = true; if (ac) ac.abort(); }, SUBMIT_TIMEOUT);
+      var opts = { method: 'POST', body: fd, headers: { Accept: 'application/json' }, credentials: 'same-origin' };
+      if (ac) opts.signal = ac.signal;
+
+      fetch('/contact.php', opts)
         .then(function (res) {
-          return res.json().then(function (data) { return { ok: res.ok, data: data }; }, function () {
-            return { ok: false, data: { message: 'Sunucudan geçersiz yanıt alındı. Lütfen 0 545 434 67 35 numarasından bize ulaşın.' } };
+          if (timedOut) throw abortErr();
+          return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; }, function () {
+            return { ok: false, status: res.status, data: { message: 'Sunucudan geçersiz yanıt alındı. Lütfen 0545 434 67 35 numarasından bize ulaşın.' } };
           });
         })
         .then(function (r) {
+          if (timedOut) throw abortErr();
           if (!r.ok || !r.data || !r.data.success) {
-            throw new Error((r.data && r.data.message) || 'Gönderim başarısız oldu.');
+            var er = new Error((r.data && r.data.message) || 'Gönderim başarısız oldu.');
+            er.status = r.status;
+            throw er;
           }
           store.setRaw(KEY_LAST_SUBMIT, String(Date.now()));
           showDone(r.data.message);
@@ -837,20 +911,42 @@
         .catch(function (err) {
           resetCaptcha();
           stamp();
-          var msg = (err && err.name === 'TypeError')
-            ? 'Bağlantı hatası. İnternet bağlantınızı kontrol edip tekrar deneyin ya da 0 545 434 67 35 numarasını arayın.'
-            : ((err && err.message) || 'Gönderim sırasında bir hata oluştu.');
+          var msg;
+          if (timedOut || (err && err.name === 'AbortError')) {
+            msg = 'Sunucu yanıt vermedi. Lütfen tekrar deneyin ya da 0545 434 67 35 numarasını arayın.';
+          } else if (err && err.name === 'TypeError') {
+            msg = 'Bağlantı hatası. İnternet bağlantınızı kontrol edip tekrar deneyin ya da 0545 434 67 35 numarasını arayın.';
+          } else {
+            msg = (err && err.message) || 'Gönderim sırasında bir hata oluştu.';
+          }
           showErr(msg);
+          /* Sunucu bir alanı reddettiyse (422) o alanı işaretle ve oraya odaklan */
+          var field = null;
+          if (err && err.status === 422) {
+            var low = String(msg).toLocaleLowerCase('tr-TR');
+            if (low.indexOf('e-posta') > -1) field = 'email';
+            else if (low.indexOf('telefon') > -1) field = 'phone';
+            else if (low.indexOf('ad soyad') > -1 || low.indexOf('adınız') > -1) field = 'name';
+            else if (low.indexOf('kvkk') > -1) field = 'consent';
+          }
+          if (field) {
+            if (idx !== steps.length - 1) showStep(steps.length - 1, false);
+            mark(field, true);
+            var fi = firstFocusable(field);
+            if (fi) { fi.focus(); return; }
+          }
           errBox.focus({ preventScroll: false });
         })
         .then(function () {
+          clearTimeout(to);
           sending = false;
           form.removeAttribute('aria-busy');
-          btnSubmit.disabled = false;
+          btnSubmit.removeAttribute('aria-disabled');
           btnPrev.disabled = false;
           btnSubmit.innerHTML = label;
         });
     });
+    function abortErr() { var e = new Error('timeout'); e.name = 'AbortError'; return e; }
 
     function showDone(msg) {
       resetAll();
@@ -908,7 +1004,7 @@
         go();
       }
     };
-  }());
+  }, WIZ_STUB);
 
   /* Sihirbaza giden bağlantılar (hero, yapışkan çubuk): kaydırmayı vg-shell.js yapar */
   qsa('[data-fx-goto="wizard"]').forEach(function (a) {
@@ -919,10 +1015,30 @@
     });
   });
 
+  /* Sayfa içi #çapa bağlantıları: kaydırmayı vg-shell.js yapar; burada odağı hedef bölümün başlığına
+     taşırız ki klavye kullanıcısı Tab ile kaldığı yere geri dönmesin. Hesaplayıcı çapaları sekmeyi de seçer. */
+  main.addEventListener('click', function (e) {
+    if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a || a.hasAttribute('data-fx-goto')) return;
+    var id = a.getAttribute('href').slice(1);
+    var t = id ? byId(id) : null;
+    if (!t) return;
+    if (calcHash) calcHash(id, false);
+    var f = t.matches('a[href], button, input, select, textarea, summary, [tabindex]') && !t.classList.contains('fx-anchor') ? t : null;
+    if (!f) {
+      var sec = t.classList.contains('fx-anchor') ? t.closest('section') : t;
+      f = sec ? qs('h2', sec) : null;
+    }
+    if (!f) return;
+    if (!f.hasAttribute('tabindex')) f.setAttribute('tabindex', '-1');
+    setTimeout(function () { f.focus({ preventScroll: true }); }, 30);
+  });
+
   /* =====================================================================
      Tek hat şeması
      ===================================================================== */
-  (function initSld() {
+  guard('sld', null, function initSld() {
     var sld = byId('fxSld');
     var wrap = sld ? sld.parentNode : null;
     var pop = byId('fxPop');
@@ -934,6 +1050,7 @@
     var popKicker = byId('fxPopKicker');
     var popBody = byId('fxPopBody');
     var active = null, pinned = false, tOpen = 0, tClose = 0, lastBtn = null;
+    var BOTTOM_ROW = ['komp', 'tali', 'scada'];
 
     /* Akış katmanı: her segment kendi kırpma alanında, bir desen periyodu kadar kayar */
     (function buildFlows() {
@@ -1039,14 +1156,19 @@
       var wr = wrap.getBoundingClientRect(), br = btn.getBoundingClientRect();
       var pw = pop.offsetWidth, ph = pop.offsetHeight, gap = 10, m = 8;
       var left, top;
+      var bottomRow = BOTTOM_ROW.indexOf(btn.getAttribute('data-node')) > -1;
       if (wr.right - br.right >= pw + gap + m) left = br.right - wr.left + gap;
       else if (br.left - wr.left >= pw + gap + m) left = br.left - wr.left - pw - gap;
       if (left !== undefined) {
         top = clamp(br.top - wr.top + br.height / 2 - ph / 2, m, Math.max(m, wr.height - ph - m));
       } else {
         left = clamp(br.left - wr.left + br.width / 2 - pw / 2, m, Math.max(m, wr.width - pw - m));
-        top = br.bottom - wr.top + gap;
-        if (top + ph > wr.height - m && br.top - wr.top - ph - gap >= m) top = br.top - wr.top - ph - gap;
+        /* Alt sıradaki bloklarda panel önce bloğun üstüne açılır (açıklama ve güven şeridini örtmesin) */
+        if (bottomRow && br.top - wr.top - ph - gap >= m) top = br.top - wr.top - ph - gap;
+        else {
+          top = br.bottom - wr.top + gap;
+          if (top + ph > wr.height - m && br.top - wr.top - ph - gap >= m) top = br.top - wr.top - ph - gap;
+        }
       }
       pop.style.left = Math.round(left) + 'px';
       pop.style.top = Math.round(top) + 'px';
@@ -1076,9 +1198,10 @@
       }
       pop.classList.add('is-in');
       if (opts.focus) popTitle.focus({ preventScroll: true });
-      if (pop.classList.contains('is-static') && opts.pin) {
+      if (opts.pin) {
+        /* Panelin düğmeleri ekran dışında kalmasın */
         var r = pop.getBoundingClientRect();
-        if (r.bottom > win.innerHeight) pop.scrollIntoView({ block: 'nearest', behavior: motionOK() ? 'smooth' : 'auto' });
+        if (r.bottom > win.innerHeight || r.top < 0) pop.scrollIntoView({ block: 'nearest', behavior: motionOK() ? 'smooth' : 'auto' });
       }
     }
     function close(returnFocus) {
@@ -1118,7 +1241,7 @@
     });
     qs('[data-fx-pop-close]', pop).addEventListener('click', function () { close(true); });
     doc.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && active && (pop.contains(doc.activeElement) || sld.contains(doc.activeElement) || pinned)) close(true);
+      if (e.key === 'Escape' && active) close(pinned || pop.contains(doc.activeElement) || sld.contains(doc.activeElement));
     });
     doc.addEventListener('click', function (e) {
       if (!active || !pinned) return;
@@ -1130,12 +1253,12 @@
       clearTimeout(rz);
       rz = setTimeout(function () { if (active && lastBtn) place(lastBtn); }, 120);
     });
-  }());
+  });
 
   /* =====================================================================
      Fabrika Elektrik Sağlık Testi
      ===================================================================== */
-  (function initHealth() {
+  guard('health', KEY_HEALTH, function initHealth() {
     var form = byId('fxHealthForm');
     var res = byId('fxHealthRes');
     if (!form || !res) return;
@@ -1347,8 +1470,9 @@
 
     /* Kayıtlı yanıtları geri yükle */
     var saved = store.get(KEY_HEALTH);
-    if (saved && saved.v === 1 && saved.a) {
+    if (saved && saved.v === 1 && saved.a && typeof saved.a === 'object') {
       Object.keys(saved.a).forEach(function (n) {
+        if (!/^q\d{1,2}$/.test(n)) return;      // yalnızca q1…q10 (bozuk kayıt seçiciyi kırmasın)
         var r = qs('input[name="' + n + '"][value="' + String(saved.a[n]).replace(/[^0-9]/g, '') + '"]', form);
         if (r) r.checked = true;
       });
@@ -1363,13 +1487,14 @@
       return;
     }
     show(0, false);
-  }());
+  });
 
   /* =====================================================================
      Hesaplayıcılar
      ===================================================================== */
   var calcTabs = null;
-  (function initCalcs() {
+  var calcHash = null;          // hesaplayıcı çapaları (#reaktif-ceza, #durus-maliyeti) için sekme seçici
+  guard('calcs', KEY_CALC, function initCalcs() {
     var tabsEl = qs('#hesaplayicilar [data-fx-tabs]');
     if (tabsEl) calcTabs = initTabs(tabsEl);
     var summaries = {};
@@ -1476,11 +1601,26 @@
     /* ---- (b) Plansız duruş maliyeti ---- */
     var ds = byId('fxDurus');
     var azOut = byId('dsAzalmaOut');
+    var dsSt = byId('dsStatus'), dsStT = byId('dsStatusText');
+    var imported = '';          // ana sayfadan aktarılan değerlerin notu (kullanıcı değiştirene kadar)
+    function setDsStatus(msg) {
+      if (!dsSt) return;
+      dsSt.hidden = !msg;
+      if (dsStT) dsStT.textContent = msg || '';
+    }
     function calcDurus() {
       badNum = false;
       var c = pos(num('dsCiro')), p = pos(num('dsPersonel')), h = pos(num('dsSaat')), n = pos(num('dsAdet')), f = pos(num('dsFire'));
       var r = clamp((+byId('dsAzalma').value || 0) / 100, 0, 0.95), b = num('dsBakim');
       azOut.textContent = '%' + Math.round(r * 100);
+      if (badNum) {
+        setDsStatus('Bir değer sayı olarak okunamadı. Örnek biçim: 25.000 veya 1,5');
+        ['dsTotal', 'dsV1', 'dsV2', 'dsV3', 'dsNowV', 'dsPmV', 'dsSave', 'dsNet'].forEach(function (id) { byId(id).textContent = '–'; });
+        ['dsB1', 'dsB2', 'dsB3', 'dsNow', 'dsPm'].forEach(function (id) { byId(id).style.setProperty('--v', '0'); });
+        summaries.durus = null;
+        return;
+      }
+      setDsStatus(imported);
       var v1 = h * c, v2 = h * p, v3 = n * f, tot = v1 + v2 + v3;
       var pm = tot * (1 - r), save = tot - pm;
       byId('dsTotal').textContent = tl(tot);
@@ -1502,6 +1642,25 @@
         : null;
     }
 
+    /* Ekran okuyucu: her tuşta tüm paneli değil, yazma durunca tek bir özet cümle oku */
+    var liveT = {};
+    function liveSay(k) {
+      clearTimeout(liveT[k]);
+      liveT[k] = setTimeout(function () {
+        var out = byId(k === 'reaktif' ? 'rkLive' : 'dsLive');
+        if (!out) return;
+        var msg;
+        if (k === 'reaktif') {
+          msg = byId('rkStatusText').textContent;
+          if (summaries.reaktif) msg += ' Endüktif oran ' + byId('rkIndPct').textContent + ', kapasitif oran ' + byId('rkKapPct').textContent + '. Tahmini aylık bedel: ' + byId('rkMonthly').textContent + '.';
+        } else {
+          msg = (dsSt && !dsSt.hidden && byId('dsTotal').textContent === '–') ? dsStT.textContent
+            : 'Yıllık plansız duruş maliyeti ' + byId('dsTotal').textContent + '; önleyici bakım ile ' + byId('dsPmV').textContent + '.';
+        }
+        out.textContent = msg;
+      }, 800);
+    }
+
     /* Hesaplayıcı girişlerini cihazda sakla */
     var IDS = ['rkAktif', 'rkInd', 'rkKap', 'rkFiyat', 'rkYatirim', 'dsCiro', 'dsPersonel', 'dsSaat', 'dsAdet', 'dsFire', 'dsAzalma', 'dsBakim'];
     var savedC = store.get(KEY_CALC);
@@ -1517,8 +1676,8 @@
         store.set(KEY_CALC, o);
       }, 400);
     }
-    if (rk) { rk.addEventListener('input', function () { calcReaktif(); saveCalc(); }); rk.addEventListener('submit', function (e) { e.preventDefault(); }); }
-    if (ds) { ds.addEventListener('input', function () { calcDurus(); saveCalc(); }); ds.addEventListener('submit', function (e) { e.preventDefault(); }); }
+    if (rk) { rk.addEventListener('input', function () { calcReaktif(); saveCalc(); liveSay('reaktif'); }); rk.addEventListener('submit', function (e) { e.preventDefault(); }); }
+    if (ds) { ds.addEventListener('input', function () { imported = ''; calcDurus(); saveCalc(); liveSay('durus'); }); ds.addEventListener('submit', function (e) { e.preventDefault(); }); }
 
     /* İlk hesaplama, bölüm görünür olunca (çubuklar dolarak gelsin) */
     var sec = byId('hesaplayicilar');
@@ -1542,12 +1701,50 @@
         setTimeout(function () { b.classList.remove('is-done'); b.innerHTML = orig; }, 2600);
       });
     });
-  }());
+
+    /* Ana sayfadaki hızlı tahmin: /fabrika-cozumleri.html?saat=..&tl=..#durus-maliyeti
+       tl = bir saatlik duruşun toplam maliyeti. Yıllık sonuç ana sayfadaki saat × tl ile aynı çıksın diye
+       personel ve fire 0 yazılır (kullanıcı kalemlere ayırabilir). Sorgu, yenilemede tekrar uygulanmasın diye silinir. */
+    function importParams() {
+      var q;
+      try { q = new URLSearchParams(win.location.search); } catch (e) { return; }
+      if (!q.has('saat') && !q.has('tl')) return;
+      var h = parseInt(q.get('saat'), 10), t = parseNum(q.get('tl'));
+      try { win.history.replaceState(win.history.state, '', win.location.pathname + win.location.hash); } catch (e) { /* yok say */ }
+      if (!(h >= 1 && h <= 8760) || !(t > 0 && t < 1e10)) return;
+      byId('dsSaat').value = NF2.format(h);
+      byId('dsCiro').value = NF2.format(t);
+      byId('dsPersonel').value = '0';
+      byId('dsFire').value = '0';
+      imported = 'Ana sayfadaki hızlı tahmininiz aktarıldı: ' + NF0.format(h) + ' saat × ' + tl(t) + '/saat. Saatlik maliyeti ciro, personel ve fire kalemlerine ayırarak sonucu ayrıntılandırabilirsiniz.';
+      saveCalc();
+    }
+    function applyHash(id, fromLoad) {
+      if (!calcTabs) return false;
+      if (id === 'reaktif-ceza') { calcTabs.select(0, false); start(); return true; }
+      if (id === 'durus-maliyeti') {
+        calcTabs.select(1, false);
+        if (fromLoad) importParams();
+        if (started) calcDurus(); else start();
+        return true;
+      }
+      return false;
+    }
+    calcHash = applyHash;
+    var h0 = '';
+    try { h0 = decodeURIComponent((win.location.hash || '').slice(1)); } catch (e) { h0 = ''; }
+    if (h0) applyHash(h0, true);
+    win.addEventListener('hashchange', function () {
+      var h = '';
+      try { h = decodeURIComponent((win.location.hash || '').slice(1)); } catch (e) { return; }
+      applyHash(h, false);
+    });
+  });
 
   /* =====================================================================
      Sektörler
      ===================================================================== */
-  (function initSectors() {
+  guard('sectors', null, function initSectors() {
     var tabsEl = qs('#sektorler [data-fx-tabs]');
     if (tabsEl) initTabs(tabsEl);
     qsa('[data-fx-sector]').forEach(function (b) {
@@ -1557,12 +1754,12 @@
         Wizard.go();
       });
     });
-  }());
+  });
 
   /* =====================================================================
-     Sayaçlar (yalnızca sitedeki gerçek sayılar: 5 disiplin, 50+ proje, 7/24 destek)
+     Sayaçlar (yalnızca sitedeki gerçek sayılar: 5 disiplin, 50+ proje; 7/24 acil arıza hattı sabit metindir)
      ===================================================================== */
-  (function initCounters() {
+  guard('counters', null, function initCounters() {
     var nums = qsa('[data-fx-count]');
     if (!nums.length || !motionOK() || !hasIO) return;
     var box = nums[0].closest('.fx-stats');
@@ -1580,22 +1777,22 @@
       }
       requestAnimationFrame(step);
     }, { threshold: 0.5 });
-  }());
+  });
 
   /* =====================================================================
      Süreç zaman çizelgesi
      ===================================================================== */
-  (function initSteps() {
+  guard('steps', null, function initSteps() {
     var s = byId('fxSteps');
     if (!s) return;
     if (!hasIO || !motionOK()) { s.classList.add('is-in'); return; }
     onceVisible(s, function () { s.classList.add('is-in'); }, { threshold: 0.25 });
-  }());
+  });
 
   /* =====================================================================
      Mobil yapışkan çağrı çubuğu
      ===================================================================== */
-  (function initSticky() {
+  guard('sticky', null, function initSticky() {
     var bar = byId('fxSticky');
     if (!bar || !hasIO) return;
     var links = qsa('a', bar);
@@ -1603,6 +1800,7 @@
     function update() {
       var on = heroOut && !typing && !Object.keys(blocked).some(function (k) { return blocked[k]; });
       bar.classList.toggle('is-on', on);
+      doc.documentElement.classList.toggle('fx-sticky-on', on);   // CSS: odaklanan öğe çubuğun altında kalmasın
       bar.setAttribute('aria-hidden', on ? 'false' : 'true');
       links.forEach(function (a) { a.tabIndex = on ? 0 : -1; });
     }
@@ -1623,5 +1821,5 @@
         update();
       }, 50);
     });
-  }());
+  });
 }());

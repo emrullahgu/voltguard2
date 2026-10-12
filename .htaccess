@@ -54,6 +54,11 @@
   RewriteRule ^teklif-araclari\.html$ /hesaplama-araclari/ [R=301,L]
   RewriteRule ^hesaplama-araclari/?$ /teklif-araclari.html [L]
 
+  # Ana sayfa tek adres: /index.html -> / (yalnizca istemcinin istedigi /index.html). "/" isteginde mod_dir'in
+  # yaptigi ic index.html istegi THE_REQUEST'i degistirmez, bu yuzden dongu olusmaz. Sorgu dizesi korunur.
+  RewriteCond %{THE_REQUEST} \s/index\.html[\s?]
+  RewriteRule ^index\.html$ / [R=301,L]
+
   RewriteCond %{THE_REQUEST} \s/hesaplama/kablo-kesiti-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/kablo-kesiti-hesaplama\.html$ /hesaplama/kablo-kesiti-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/kablo-kesiti-hesaplama/?$ /hesaplama/kablo-kesiti-hesaplama.html [L]
@@ -100,6 +105,12 @@
   RewriteCond %{THE_REQUEST} \s/hesaplama/aydinlatma-lux-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/aydinlatma-lux-hesaplama\.html$ /hesaplama/aydinlatma-lux-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/aydinlatma-lux-hesaplama/?$ /hesaplama/aydinlatma-lux-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/reaktif-ceza-hesaplama\.html[\s?]
+  RewriteRule ^hesaplama/reaktif-ceza-hesaplama\.html$ /hesaplama/reaktif-ceza-hesaplama/ [R=301,L]
+  RewriteRule ^hesaplama/reaktif-ceza-hesaplama/?$ /hesaplama/reaktif-ceza-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/isletme-sorumlulugu-ucret-hesaplama\.html[\s?]
+  RewriteRule ^hesaplama/isletme-sorumlulugu-ucret-hesaplama\.html$ /hesaplama/isletme-sorumlulugu-ucret-hesaplama/ [R=301,L]
+  RewriteRule ^hesaplama/isletme-sorumlulugu-ucret-hesaplama/?$ /hesaplama/isletme-sorumlulugu-ucret-hesaplama.html [L]
 
   # --- Klasor ve uzantisiz adresler -------------------------------------------------------
   # Ayni adli klasor + .html sayfasi (sor/ + sor.html, akademi/ + akademi.html) olan adreslerde mod_dir,
@@ -111,16 +122,24 @@
   RewriteRule ^bilgi/?$ /bilgi-bankasi.html [R=301,L]
   RewriteRule ^mm/?$ /muhendis-merkezi.html [R=301,L]
   RewriteRule ^hesap/?$ /hesap/giris.html [R=302,L]
+  # Hizmetler merkezi: gercek klasor + index.html. DirectorySlash Off oldugu icin mod_dir /hizmetler -> /hizmetler/
+  # yonlendirmesini yapmaz; asagidaki kurallar yapar. /hizmetler/index.html (yalnizca dis istek) kanonik /hizmetler/
+  # adresine 301 alir; /hizmetler/ ic yeniden yazma ile hizmetler/index.html dosyasini sunar (ayni klasor, goreli yollar bozulmaz).
+  RewriteRule ^hizmetler$ /hizmetler/ [R=301,L]
+  RewriteCond %{THE_REQUEST} \s/hizmetler/index\.html[\s?]
+  RewriteRule ^hizmetler/index\.html$ /hizmetler/ [R=301,L]
+  RewriteRule ^hizmetler/$ /hizmetler/index.html [L]
   # /<sayfa> ve /<sayfa>/  ->  /<sayfa>.html  (yalnizca dosya gercekten varsa; yeni kok sayfalar otomatik).
   RewriteCond %{DOCUMENT_ROOT}/$1.html -f
   RewriteRule ^([a-z0-9-]+)/?$ /$1.html [R=301,L]
   # /<klasor>/<sayfa> ve /<klasor>/<sayfa>/ -> /<klasor>/<sayfa>.html (hesaplama/ yukaridaki ciftlerle yonetilir).
   RewriteCond %{DOCUMENT_ROOT}/$1/$2.html -f
-  RewriteRule ^(bilgi|akademi|sor|mm|hesap)/([a-z0-9-]+)/?$ /$1/$2.html [R=301,L]
+  RewriteRule ^(bilgi|akademi|sor|mm|hesap|hizmetler)/([a-z0-9-]+)/?$ /$1/$2.html [R=301,L]
 </IfModule>
 
 # mod_dir'in "/sor -> /sor/" yonlendirmesini kapatir; boylece yukaridaki .html kurallari her zaman once calisir.
-# Klasorlerin index dosyasi yok ve Options -Indexes acik: kuralla eslesmeyen klasor adresleri 403/404 verir (listeleme yok).
+# Klasorlerin index dosyasi yok (hizmetler/ haric; yukaridaki kurallar yonetir) ve Options -Indexes acik: kuralla
+# eslesmeyen klasor adresleri 403/404 verir (listeleme yok).
 <IfModule mod_dir.c>
   DirectorySlash Off
 </IfModule>
@@ -235,7 +254,8 @@ AddDefaultCharset UTF-8
   </FilesMatch>
 
   # PHP (contact.php, api/*): yanitlar asla onbelleklenmez (hesap/kullanici verisi) ve indekslenmez.
-  # (Hesap sayfalari /hesap/*.html icin indeks engeli robots.txt + sayfadaki <meta name="robots" content="noindex"> ile saglanir.)
+  # (Hesap sayfalari /hesap/*.html icin indeks engeli sayfadaki <meta name="robots" content="noindex"> ile saglanir; robots.txt
+  #  /hesap/'i bilerek engellemez, aksi halde arama motoru noindex etiketini goremezdi.)
   <FilesMatch "\.php$">
     Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
     Header set X-Robots-Tag "noindex, nofollow"

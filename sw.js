@@ -13,6 +13,7 @@
      Sunucu 502/503/504 (ağ geçidi/bakım) dönerse ve iyi bir kopya varsa o gösterilir; 500 ve diğer hatalar
      olduğu gibi iletilir. 404/410 dönen sayfanın eski kopyası önbellekten silinir (kaldırılan sayfa geri gelmez).
    - /hesap/ sayfaları: yalnızca ağ (preload ile); asla önbelleğe yazılmaz ve önbellekten verilmez.
+     (/hesap/ altında statik dosya yoktur; hesap sayfalarının css/js'i /css/ ve /js/ altından ?v= ile gelir.)
    - css/js/yazı tipi/görsel (aynı köken): stale-while-revalidate.
        * ?v= sürümlü URL ve yazı tipleri değişmez kabul edilir: önbellekten anında, 7 günden eskiyse arka planda tazelenir.
        * Sürümsüz css/js/görsel: önbellekten anında + arka planda tazele (HTTP başlıkları geçerlidir).
@@ -27,7 +28,7 @@
    ===================================================== */
 'use strict';
 
-const VERSION = '2026-10-11.3';
+const VERSION = '2026-10-12.1';
 const PREFIX = 'vgsw-';
 const CACHE_STATIC = PREFIX + 'static-' + VERSION;
 const CACHE_PAGES = PREFIX + 'pages-' + VERSION;

@@ -8,11 +8,11 @@
   <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
   <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/fa-solid-900.68c892a7.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261011b">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,26 +35,27 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261011" defer></script>
+  <script src="/js/vg-shell.js?v=20261012" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="description" content="PLC nedir, nasıl çalışır? Tarama döngüsü, giriş-çıkış modülleri, ladder logic ve tesislerde PLC'nin hangi işleri yaptığını anlatan başlangıç rehberi.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
-  <title>PLC Nedir, Nasıl Çalışır? Tarama Döngüsü ve I/O Rehberi | VoltGuard</title>
+  <title>PLC Nedir, Nasıl Çalışır? Başlangıç Rehberi | VoltGuard</title>
   <link rel="canonical" href="https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="PLC Nedir, Nasıl Çalışır? | VoltGuard">
-  <meta property="og:description" content="Tarama döngüsü, giriş-çıkış modülleri, ladder logic ve tesislerde PLC'nin hangi işleri yaptığı.">
+  <meta property="og:title" content="PLC Nedir, Nasıl Çalışır? Başlangıç Rehberi | VoltGuard">
+  <meta property="og:description" content="PLC nedir, nasıl çalışır? Tarama döngüsü, giriş-çıkış modülleri, ladder logic ve tesislerde PLC'nin hangi işleri yaptığını anlatan başlangıç rehberi.">
   <meta property="og:url" content="https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
   <meta property="og:site_name" content="VoltGuard">
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:locale" content="tr_TR">
-  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link rel="stylesheet" href="../css/style.css?v=20261011">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html#article","headline":"PLC Nedir, Nasıl Çalışır? Tarama Döngüsü ve I/O Rehberi","description":"Tarama döngüsü, giriş-çıkış modülleri, ladder logic ve tesislerde PLC'nin hangi işleri yaptığı.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-11","articleSection":"Otomasyon & Standartlar","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"PLC Nedir?","item":"https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"PLC nedir?","acceptedAnswer":{"@type":"Answer","text":"Endüstriyel ortama dayanıklı, programlanabilir bir kontrolcüdür. Girişleri okur, program mantığını uygular ve çıkışları yönetir."}},{"@type":"Question","name":"PLC nasıl çalışır?","acceptedAnswer":{"@type":"Answer","text":"Her tarama döngüsünde giriş oku → program işle → çıkış yaz sıralaması işler. Tipik döngü 1-50 ms sürer."}},{"@type":"Question","name":"PLC nerelerde kullanılır?","acceptedAnswer":{"@type":"Answer","text":"Arıtma tesisleri, konveyör hatları, HVAC, pompa istasyonları, jeneratör senkronizasyonu, trafo merkezleri ve GES gibi çok geniş bir alanda kullanılır."}}]}]}</script>
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=20261011">
+  <style id="kb-local">.kb-cta>div:last-child{min-width:0;max-width:100%}.kb-cta .btn{white-space:normal;line-height:1.25;max-width:100%;text-align:center}.vg-form-actions>.kb-cta{min-width:0}.article p a:not(.btn):not(.kb-card__more),.article li a:not(.btn),.article td a,.faq-item__a a{color:var(--clr-accent-text);text-decoration:underline;text-underline-offset:2px}.article p a:not(.btn):not(.kb-card__more):hover,.article li a:not(.btn):hover,.article td a:hover,.faq-item__a a:hover{text-decoration-thickness:2px}.kb-hero p a{color:#fcd34d;text-decoration:underline;text-underline-offset:2px}.kb-criteria td:first-child{white-space:normal;width:36%}</style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html#article","headline":"PLC Nedir, Nasıl Çalışır? Tarama Döngüsü ve I/O Rehberi","description":"PLC nedir, nasıl çalışır? Tarama döngüsü, giriş-çıkış modülleri, ladder logic ve tesislerde PLC'nin hangi işleri yaptığını anlatan başlangıç rehberi.","image":"https://voltguard.com.tr/public/og-image.png","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","articleSection":"Otomasyon & Standartlar","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"PLC Nedir?","item":"https://voltguard.com.tr/bilgi/plc-nedir-nasil-calisir.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"PLC nedir?","acceptedAnswer":{"@type":"Answer","text":"Endüstriyel ortama dayanıklı, programlanabilir bir kontrolcüdür. Girişleri okur, program mantığını uygular ve çıkışları yönetir."}},{"@type":"Question","name":"PLC nasıl çalışır?","acceptedAnswer":{"@type":"Answer","text":"Her tarama döngüsünde giriş oku → program işle → çıkış yaz sıralaması işler. Tipik döngü 1-50 ms sürer."}},{"@type":"Question","name":"PLC nerelerde kullanılır?","acceptedAnswer":{"@type":"Answer","text":"Arıtma tesisleri, konveyör hatları, HVAC, pompa istasyonları, jeneratör senkronizasyonu, trafo merkezleri ve GES gibi çok geniş bir alanda kullanılır."}}]}]}</script>
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -72,7 +73,7 @@
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
-          <li><a class="vg-nav__link" href="/#hizmetler">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
           <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
           <li class="vg-dd" data-vg-dd>
@@ -102,13 +103,13 @@
   <!--/vg:header-->
 
   <nav class="breadcrumb" aria-label="breadcrumb">
-    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>PLC Nedir?</span>
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>PLC Nedir?</span>
   </nav>
 
   <main class="article" id="main" tabindex="-1">
     <span class="article__cat">Otomasyon &amp; Standartlar</span>
     <h1>PLC Nedir, Nasıl Çalışır? Tarama Döngüsü ve I/O Rehberi</h1>
-    <p class="article__summary">PLC (Programmable Logic Controller), sanayi tesislerinde makineleri ve süreçleri kontrol eden endüstriyel bilgisayarlardır. Röle mantığının yerini alan yazılım tabanlı kontrol yöntemi, arıtma tesislerinden konveyörlere, jeneratör senkronizasyonundan trafo merkezlerine kadar geniş bir alanda kullanılır. Bu rehberde PLC'nin çalışma mantığı, tarama döngüsü, I/O modülleri ve gerçek uygulama örneklerini bulacaksınız.</p>
+    <p class="article__summary">PLC (Programmable Logic Controller), sanayi tesislerinde makineleri ve süreçleri kontrol eden endüstriyel bilgisayarlardır. Röle mantığının yerini alan yazılım tabanlı kontrol yöntemi, arıtma tesislerinden konveyörlere, jeneratör senkronizasyonundan trafo merkezlerine kadar geniş bir alanda kullanılır. Bu rehberde PLC'nin çalışma mantığı, tarama döngüsü, I/O modülleri ve gerçek uygulama örneklerini bulacaksınız. Fabrikanızda yeni bir otomasyon ya da mevcut sistemin modernizasyonu gündemdeyse <a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA otomasyon hizmetimizi</a> inceleyebilirsiniz.</p>
 
     <div class="kb-quickanswer">
       <span class="kb-quickanswer__label">Kısa Cevap</span>
@@ -116,10 +117,10 @@
       <span class="kb-quickanswer__note">Girişleri okur, kullanıcı programını işler, çıkışları yönetir; bu tarama döngüsü tipik olarak 1-50 ms sürer.</span>
     </div>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>PLC, IEC 61131-3 standardına göre programlanır: Ladder Diagram (LD), Function Block (FBD), Structured Text (ST), Instruction List (IL) ve Sequential Function Chart (SFC).</li><li>Her tarama döngüsünde giriş oku → program işle → çıkış yaz sıralaması işler.</li><li>Modern PLC'ler CPU + kaset, güç kaynağı, I/O modülleri ve haberleşme modüllerinden oluşur.</li><li>Endüstri 4.0'la birlikte PLC + IoT gateway + edge computing yaygınlaşmıştır.</li><li>Türkiye'de Siemens S7-1200/1500, Schneider M221/M340, Beckhoff CX serisi ve Delta AS200 sık kullanılır.</li></ul></div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>PLC, IEC 61131-3 standardına göre programlanır: Ladder Diagram (LD), Function Block (FBD), Structured Text (ST), Instruction List (IL) ve Sequential Function Chart (SFC).</li><li>Her tarama döngüsünde giriş oku → program işle → çıkış yaz sıralaması işler.</li><li>Modern PLC'ler CPU + kaset, güç kaynağı, I/O modülleri ve haberleşme modüllerinden oluşur.</li><li>Endüstri 4.0'la birlikte PLC + IoT gateway + edge computing yaygınlaşmıştır.</li><li>Sahada küçük makinelerde kompakt PLC'ler, büyük hatlarda modüler ve PC tabanlı kontrolörler yaygındır.</li></ul></div>
 
     <h2>PLC'nin Tarihçesi ve Temel Fikir</h2>
-    <p>1968 yılında General Motors, otomobil fabrikasında sık değişen kontrol devrelerini röle sistemleriyle yeniden yapmanın maliyetli olduğunu fark etti. Bu ihtiyacı karşılamak için Modicon firması ilk PLC'yi (Modicon 084) geliştirdi: fiziksel röleler yerine yazılım mantığı; herhangi bir değişiklik programlama yoluyla yapılabiliyordu. Bu, endüstriyel otomasyonun devrimi oldu.</p>
+    <p>1968 yılında otomotiv sektörü, fabrikalarda sık değişen kontrol devrelerini röle sistemleriyle yeniden yapmanın maliyetli olduğunu fark etti. Bu ihtiyacı karşılamak için ilk PLC geliştirildi: fiziksel röleler yerine yazılım mantığı; herhangi bir değişiklik programlama yoluyla yapılabiliyordu. Bu, endüstriyel otomasyonun devrimi oldu.</p>
     <p>Bugün bir PLC; CPU, hafıza, dijital ve analog giriş-çıkış modülleri, güç kaynağı ve haberleşme portlarından oluşur. Boyutları avuç içinden dolap boyuna, işlem gücü basit lojikten karmaşık PID kontrol ve motion control'e kadar uzanır.</p>
 
     <h2>PLC Tarama Döngüsü</h2>
@@ -180,13 +181,16 @@
     <details class="faq-item"><summary class="faq-item__q">PLC nasıl çalışır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Her tarama döngüsünde giriş oku → program işle → çıkış yaz sıralaması işler. Tipik döngü 1-50 ms sürer.</p></div></details>
     <details class="faq-item"><summary class="faq-item__q">PLC nerelerde kullanılır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Arıtma tesisleri, konveyör hatları, HVAC, pompa istasyonları, jeneratör senkronizasyonu, trafo merkezleri ve GES gibi çok geniş bir alanda kullanılır.</p></div></details>
 
-    <p class="kb-disclaimer">Bu içerik başlangıç seviyesi bilgilendirmedir. Uygulamalı PLC eğitimi için <a href="../akademi/plc-endustriyel-otomasyon-giris.html">VoltGuard Akademi</a>'yi ziyaret edin.</p>
-    <p>İlgili kaynaklar: <a href="../akademi/plc-endustriyel-otomasyon-giris.html">PLC/HMI/SCADA'ya Giriş (Akademi)</a>, <a href="../bilgi/scada-iec-61850.html">SCADA ve IEC 61850</a>, <a href="../bilgi/scada-aritma-tesisi-otomasyonu.html">Arıtma Tesisi SCADA Uygulaması</a>.</p>
+    <p class="kb-disclaimer">Bu içerik başlangıç seviyesi bilgilendirmedir. Uygulamalı PLC eğitimi için <a href="/akademi/plc-endustriyel-otomasyon-giris.html">VoltGuard Akademi</a>'yi ziyaret edin.</p>
+    <p>İlgili kaynaklar: <a href="/akademi/plc-endustriyel-otomasyon-giris.html">PLC/HMI/SCADA'ya Giriş (Akademi)</a>, <a href="/bilgi/scada-iec-61850.html">SCADA ve IEC 61850</a>, <a href="/bilgi/scada-aritma-tesisi-otomasyonu.html">Arıtma Tesisi SCADA Uygulaması</a>, <a href="/sor/modbus-rtu-haberlesme-kesiliyor.html">Modbus RTU Neden Kesilir?</a>, <a href="/sor/plc-kontaktor-bobini-titremesi.html">PLC Çıkışında Kontaktör Bobini Titriyor</a>.</p>
     <div class="kb-cta">
-      <div class="kb-cta__text"><strong>PLC/SCADA otomasyon projeleri için mühendislik desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
-      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      <div class="kb-cta__text"><strong>Otomasyon projeniz için mühendislik desteği</strong><span>PLC yazılımı, HMI/SCADA ekranları ve pano entegrasyonunu tek ekiple planlayalım.</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:.6rem">
+        <a href="/hizmetler/plc-scada-otomasyon.html" class="btn btn--accent btn--md"><i class="fas fa-arrow-right" aria-hidden="true"></i> PLC ve SCADA Otomasyon</a>
+        <a href="/#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
     </div>
-    <p style="margin-top:1.6rem"><a href="../bilgi-bankasi.html" class="kb-card__more">&larr; Tüm rehberler: Bilgi Bankası</a></p>
+    <p style="margin-top:1.6rem"><a href="/bilgi-bankasi.html" class="kb-card__more">&larr; Tüm rehberler: Bilgi Bankası</a></p>
   </main>
 
   <!--vg:footer-->
@@ -216,7 +220,7 @@
           </a>
           <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
           <ul class="vg-footer__contact">
-            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0 545 434 67 35</a></li>
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
             <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
           </ul>
@@ -230,13 +234,37 @@
           <div class="vg-footer__col">
             <h3 class="vg-footer__h">Hizmetler</h3>
             <ul>
-              <li><a href="/#hizmetler">Elektrik Hizmetleri</a></li>
-              <li><a href="/#hizmetler">Elektronik &amp; Gömülü Sistemler</a></li>
-              <li><a href="/#hizmetler">Otomasyon Sistemleri</a></li>
-              <li><a href="/#hizmetler">Mekanik Sistemler</a></li>
-              <li><a href="/#hizmetler">Enerji Sistemleri &amp; Verimlilik</a></li>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
               <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
               <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#guvenlik">Güvenlik</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
@@ -253,24 +281,11 @@
             <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
             <ul>
               <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
               <li><a href="/hesap/giris.html">Giriş Yap</a></li>
               <li><a href="/hesap/kayit.html">Üye Ol</a></li>
-            </ul>
-          </div>
-          <div class="vg-footer__col">
-            <h3 class="vg-footer__h">Kurumsal</h3>
-            <ul>
-              <li><a href="/#hakkimizda">Hakkımızda</a></li>
-              <li><a href="/#surec">Sürecimiz</a></li>
-              <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
-              <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
-              <li><a href="/#katalog">Katalog</a></li>
-              <li><a href="/#sss">SSS</a></li>
-              <li><a href="/#iletisim">İletişim</a></li>
-              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
             </ul>
           </div>
         </nav>
@@ -316,6 +331,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="../js/voltguard-auth.js?v=20261011b" defer></script>
+  <script src="/js/voltguard-auth.js?v=20261011b" defer></script>
 </body>
 </html>
