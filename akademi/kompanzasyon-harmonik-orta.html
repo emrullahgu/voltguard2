@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012" defer></script>
+  <script src="/js/vg-shell.js?v=20261012b" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -53,7 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261011">
+  <link rel="stylesheet" href="/css/style.css?v=20261012b">
   <style id="kb-local">.kb-cta>div:last-child{min-width:0;max-width:100%}.kb-cta .btn{white-space:normal;line-height:1.25;max-width:100%;text-align:center}.vg-form-actions>.kb-cta{min-width:0}.article p a:not(.btn):not(.kb-card__more),.article li a:not(.btn),.article td a,.faq-item__a a{color:var(--clr-accent-text);text-decoration:underline;text-underline-offset:2px}.article p a:not(.btn):not(.kb-card__more):hover,.article li a:not(.btn):hover,.article td a:hover,.faq-item__a a:hover{text-decoration-thickness:2px}.kb-hero p a{color:#fcd34d;text-decoration:underline;text-underline-offset:2px}.kb-criteria td:first-child{white-space:normal;width:36%}</style>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/kompanzasyon-harmonik-orta.html#course","name":"Kompanzasyon ve Harmonik Filtreleme","description":"Kondansatör kademelendirmesi, reaktörlü sistemler, aktif filtre ve saha uygulama örnekleri.","educationalLevel":"Orta","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Kompanzasyon ve Harmonik Filtreleme (Orta)","item":"https://voltguard.com.tr/akademi/kompanzasyon-harmonik-orta.html"}]}]}</script>
 </head>
@@ -117,7 +117,7 @@
     <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Kondansatör kademesi, en küçük yükün reaktif ihtiyacına yakın olmalı; genelde toplam kompanzasyon 6-12 kademeye ayrılır.</li><li>Klasik (reaktörsüz) kondansatörler yalnızca THDi < %10 tesislerde güvenlidir.</li><li>Reaktörlü (7% - 14%) detuned sistemler harmonik ile rezonans riskini ortadan kaldırır.</li><li>Aktif harmonik filtre (AHF) hem cosφ'yi hem THDi'yi düzeltebilir.</li><li>Kompanzasyon regülatörü doğru cosφ ölçümü için akım trafosu konumuna dikkat edilmelidir (giriş tarafında).</li></ul></div>
 
     <h2>Kondansatör Kademelendirme Mantığı</h2>
-    <p>Bir tesisin reaktif ihtiyacı gün içinde sabit değildir: makine sayısı, motor yükü, aydınlatma zonlama gibi faktörlerle değişir. Reaktif güç kontrol rölesi (regülatör), sürekli olarak cosφ'yi ölçer ve gerekiyorsa bir kondansatör kademesini devreye alır veya çıkarır. Kademeler tipik olarak 1:2:4 veya 1:1:2:4 gibi <em>ikili artan</em> serilerde tasarlanır; böylece az sayıda kademeyle çok sayıda farklı toplam kVAr elde edilir. Bu kademe planı, sahada <a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">harmonik filtreli kompanzasyon</a> panolarının tasarımında da ilk adımdır.</p>
+    <p>Bir tesisin reaktif ihtiyacı gün içinde sabit değildir: makine sayısı, motor yükü, aydınlatma zonlama gibi faktörlerle değişir. Regülatör (RTR-12 gibi), sürekli olarak cosφ'yi ölçer ve gerekiyorsa bir kondansatör kademesini devreye alır veya çıkarır. Kademeler tipik olarak 1:2:4 veya 1:1:2:4 gibi <em>ikili artan</em> serilerde tasarlanır; böylece az sayıda kademeyle çok sayıda farklı toplam kVAr elde edilir. Bu kademe planı, sahada <a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">harmonik filtreli kompanzasyon</a> panolarının tasarımında da ilk adımdır.</p>
     <ul class="article__list">
       <li><strong>Örnek:</strong> 12 kademe, her biri 25 kVAr → toplam 300 kVAr; 25 → 300 arası tüm 25 kVAr adımları elde edilebilir.</li>
       <li><strong>Örnek 2:</strong> 6 kademe (12,5-12,5-25-50-100-100) → toplam 300 kVAr, 12,5 kVAr adım.</li>
@@ -128,7 +128,7 @@
     <ol class="article__list">
       <li>Aylık fatura üzerinden aktif ve reaktif enerji tüketimi çıkarılır.</li>
       <li>Ortalama cosφ = kWh / √(kWh² + kVArh²) formülüyle bulunur.</li>
-      <li>Hedef cosφ (0,95-0,99) belirlenir.</li>
+      <li>Hedef cosφ belirlenir: kurulu gücü 50 kVA ve üzeri tesislerde %20 endüktif sınırı aylık ortalama cosφ ≈ 0,98'e karşılık geldiğinden hedef genellikle 0,98-0,99 seçilir (50 kVA'nın altındaki %33 sınırı ≈ 0,95).</li>
       <li>Toplam kVAr = P × (tan(φ<sub>mevcut</sub>) − tan(φ<sub>hedef</sub>)) ile hesaplanır.</li>
       <li>Kademe sayısı 6-12 arası seçilir; en küçük yük profiline göre en küçük kademe belirlenir.</li>
     </ol>
@@ -329,6 +329,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261011b" defer></script>
+  <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
 </body>
 </html>

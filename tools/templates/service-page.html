@@ -21,8 +21,12 @@
   - Tek <h1>; bölümler <h2>, kartlar/adımlar <h3>. Görünür breadcrumb = BreadcrumbList.
   - Bağlantılar KÖK-MUTLAK: /, /#iletisim, /hizmetler/<slug>.html, /hesaplama/<slug>/, /bilgi/x.html.
     "../" veya index.html#iletisim yok. Hesaplayıcılar yalnızca /hesaplama/<slug>/ temiz adresiyle.
-  - CTA: "Teklif Al" -> /#iletisim (data-vg-teklif özniteliğiyle), "Ücretsiz Ön Değerlendirme" ->
-    /fabrika-cozumleri.html, telefon tel:+905454346735, WhatsApp https://wa.me/905454346735?text=...
+  - CTA: "Teklif Al" -> /?hizmet=<slug>#iletisim (data-vg-teklif özniteliğiyle; ana sayfa formu hizmeti önceden
+    seçer, slug index.html'deki "İlgilendiğiniz hizmet" seçeneklerinde olmalı; hub hizmetler/index.html /#iletisim
+    kullanır), "Ücretsiz Ön Değerlendirme" -> /fabrika-cozumleri.html, telefon tel:+905454346735,
+    WhatsApp https://wa.me/905454346735?text=...
+  - Hesaplayıcı: hizmete uyan /hesaplama/<slug>/ aracına Kaynaklar kartına EK OLARAK metin içinde (kapsam, ücret
+    veya SSS) en az bir bağlam içi bağlantı verin (ör. işletme sorumluluğu -> isletme-sorumlulugu-ucret-hesaplama).
   - Güven çipleri yalnızca DOĞRULANMIŞ olgular (aşağıdaki 5 çip; değiştirmeyin, ekleme yapmayın).
     Müşteri adı, proje sayısı, fiyat, ödül, yorum/puan UYDURMAYIN. Belge numarası yazmayın.
   - Hizmet bölgesi: merkez Ege Teknopark, Bornova/İzmir; metinde "Türkiye geneli saha hizmeti" geçmeli.
@@ -38,8 +42,12 @@
     (LCP). prefers-reduced-motion ve JS yokluğunda içerik zaten görünür.
   - Sayaç: <b data-count="12">12</b> yalnızca GERÇEK sayılar için; metin zaten nihai değeri taşır.
   - Izgaralar (.svc-cards/.svc-docs/.svc-related) öğe sayısına göre yetimsiz dizilir: 3-8 öğe uygundur.
-  - Dosya: UTF-8 (BOM yok), LF satır sonu. Yerel css/js ?v=20261011 (paylaşılan dosyayı değiştirirseniz
-    harf ekleyin: ?v=20261011b ve tüm hizmet sayfalarında güncelleyin).
+  - Dosya: UTF-8 (BOM yok), LF satır sonu. Yerel css/js ?v= değerini sayfalardakiyle aynı tutun
+    (şu an services.css ?v=20261012b, services.js ?v=20261011). Paylaşılan dosyayı değiştirirseniz yeni sürüm verip TÜM hizmet sayfalarında ve
+    bu şablonda güncelleyin.
+  - Satır içi style yalnızca veri taşır (--svc-focus; ekran görüntüsü veya grafikte aspect-ratio ve object-fit). Yerleşim düzeltmesi
+    için services.css'teki sınıfları kullanın: .svc-hero__media--landscape / --screen, .svc-price__full,
+    .svc-table--text, .svc-sr (ekran okuyucu metni).
 =====================================================================================================
 -->
 <html lang="tr">
@@ -72,7 +80,7 @@
   <link rel="manifest" href="/manifest.json">
   <!-- ŞABLON NOTU: hero görselinin aynısı (src/srcset/sizes birebir) -->
   <link rel="preload" as="image" href="/public/opt/{{HERO_IMG_LARGE}}" imagesrcset="/public/opt/{{HERO_IMG_SMALL}} {{HERO_W_SMALL}}w, /public/opt/{{HERO_IMG_LARGE}} {{HERO_W_LARGE}}w" imagesizes="(min-width: 76rem) 472px, (min-width: 64rem) 38vw, 92vw" fetchpriority="high">
-  <link rel="stylesheet" href="/css/services.css?v=20261011">
+  <link rel="stylesheet" href="/css/services.css?v=20261012b">
   <script>document.documentElement.classList.add('svc-js');setTimeout(function(){if(!window.__svcReady)document.documentElement.classList.add('svc-noanim')},3000);</script>
   <script src="/js/services.js?v=20261011" defer></script>
   <!-- ŞABLON NOTU: id="svc-jsonld" ZORUNLU. provider düğümü tüm hizmet sayfalarında aynıdır (değiştirmeyin).
@@ -155,7 +163,7 @@
           <h1 id="svc-h1">{{H1_MAIN}} <span class="svc-h1-sub">{{H1_SUB}}</span></h1>
           <p class="svc-lead">{{LEAD_1_2_CUMLE}}</p>
           <div class="svc-hero__cta">
-            <a class="svc-btn svc-btn--primary" href="/#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
+            <a class="svc-btn svc-btn--primary" href="/?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
             <a class="svc-btn svc-btn--ghost" href="/fabrika-cozumleri.html"><i class="fas fa-clipboard-check" aria-hidden="true"></i> Ücretsiz Ön Değerlendirme</a>
           </div>
           <p class="svc-hero__contact">
@@ -173,7 +181,9 @@
         </div>
         <figure class="svc-hero__media">
           <!-- ŞABLON NOTU: --svc-focus = object-position (dikey fotoğrafta konuyu kadraja alın). Çerçeve oranı:
-               mobil 4/3, tablet 16/10, masaüstü 4/5. fetchpriority="high", loading YOK. -->
+               mobil 4/3, tablet 16/10, masaüstü 4/5. fetchpriority="high", loading YOK.
+               Yatay kaynak fotoğraf: <figure class="svc-hero__media svc-hero__media--landscape"> (masaüstünde de 4/3).
+               Açık zeminli ekran görüntüsü: svc-hero__media--screen (altyazı koyu zeminli, okunaklı). -->
           <div class="svc-hero__frame" style="--svc-focus: 50% 50%">
             <img src="/public/opt/{{HERO_IMG_LARGE}}" srcset="/public/opt/{{HERO_IMG_SMALL}} {{HERO_W_SMALL}}w, /public/opt/{{HERO_IMG_LARGE}} {{HERO_W_LARGE}}w" sizes="(min-width: 76rem) 472px, (min-width: 64rem) 38vw, 92vw" width="{{HERO_W_LARGE}}" height="{{HERO_H_LARGE}}" alt="{{HERO_ALT}}" fetchpriority="high" decoding="async">
           </div>
@@ -285,7 +295,7 @@
               <li>{{ON_BILGI_1}}</li>
               <!-- ... 3-5 madde -->
             </ul>
-            <a class="svc-btn svc-btn--primary svc-btn--block" href="/#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
+            <a class="svc-btn svc-btn--primary svc-btn--block" href="/?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
           </div>
         </div>
         <ol class="svc-steps">
@@ -320,6 +330,8 @@
 
     <!-- ===== 8. SAYFAYA ÖZEL BLOK (isteğe bağlı): fiyat tablosu / test matrisi / karşılaştırma =====
          Tablo: .svc-table-wrap > table.svc-table (caption + thead + tbody; grup satırı th[scope=rowgroup], satır başlığı th[scope=row]).
+         Sayı yerine kısa metin taşıyan hücreler: table.svc-table.svc-table--text. İki sütunu kaplayan öğe: .svc-price > .svc-price__full.
+         .svc-price çocuklarına min-width/grid-column satır içi stili GEREKMEZ (services.css halleder).
          Örnek hesap: p.svc-example · Notlar: .svc-panel > ul.svc-fine · Kaynak: p.svc-source > span.svc-stamp "Kontrol: GG.AA.YYYY"
          Fiyat: yalnızca kaynağı doğrulanmış resmi tablo (EMO vb.), kaynak bağlantısı + tarih damgasıyla. -->
 
@@ -399,7 +411,7 @@
           <p class="svc-cta__meta"><span><i class="fas fa-clock" aria-hidden="true"></i>Ofis: Pazartesi-Cuma 08:00-18:00</span><span><i class="fas fa-headset" aria-hidden="true"></i>Acil arıza hattı: 7/24</span><span><i class="fas fa-location-dot" aria-hidden="true"></i>Ege Teknopark, Bornova/İzmir</span></p>
         </div>
         <div class="svc-cta__btns">
-          <a class="svc-btn svc-btn--primary" href="/#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
+          <a class="svc-btn svc-btn--primary" href="/?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
           <a class="svc-btn svc-btn--ghost" href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a>
           <a class="svc-btn svc-btn--ghost svc-btn--wa" href="https://wa.me/905454346735?text={{WA_TEXT_URLENCODED}}" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
         </div>

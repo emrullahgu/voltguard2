@@ -290,21 +290,32 @@
   /* ------------------------------------------------
      7. SMOOTH SCROLL — anchor links
   ------------------------------------------------- */
+  /* Sayfa içi #bölüm bağlantıları js/vg-shell.js'e bırakılır: belge düzeyindeki dinleyicisi geçmişe ekler, başlığın
+     altına hizalar, content-visibility kaymasını düzeltir ve klavye odağını hedef bölüme taşır (halka çizmeden).
+     Aşağıdaki yalnızca vg-shell.js yüklenemezse çalışan yedektir; o da odağı hedefe taşır. */
+  function focusAnchorTarget(el) {
+    if (!el.hasAttribute('tabindex') && !/^(A|BUTTON|INPUT|SELECT|TEXTAREA|SUMMARY)$/.test(el.tagName)) {
+      el.setAttribute('tabindex', '-1');
+      el.setAttribute('data-vg-anchor-focus', '');
+      el.style.outline = 'none';
+    }
+    try { el.focus({ preventScroll: true }); } catch (err) { /* eski tarayıcı */ }
+  }
   qsAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener('click', function (e) {
+      if (e.defaultPrevented || (window.VGShell && window.VGShell.scrollTo)) return;
+      if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       var href = this.getAttribute('href');
-      if (!href || href === '#') return;
-
-      var target = qs(href);
-      if (target) {
-        e.preventDefault();
-        /* Başlık altına hizalama + content-visibility kaymasını düzeltme: js/vg-shell.js */
-        if (window.VGShell && window.VGShell.scrollTo && window.VGShell.scrollTo(target)) return;
-        var offset = target.getBoundingClientRect().top + window.scrollY
-                     - parseInt(getComputedStyle(document.documentElement)
-                         .getPropertyValue('--vg-header-h') || '68') - 12;
-        window.scrollTo({ top: offset, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
-      }
+      if (!href || href.length < 2) return;
+      var target = null;
+      try { target = document.getElementById(decodeURIComponent(href.slice(1))); } catch (err) { /* geçersiz çapa */ }
+      if (!target) return;
+      e.preventDefault();
+      var offset = target.getBoundingClientRect().top + window.scrollY
+                   - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--vg-header-h'), 10) || 68) - 12;
+      window.scrollTo({ top: offset, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+      try { if (location.hash !== href) history.pushState(null, '', href); } catch (err) { /* no-op */ }
+      focusAnchorTarget(target);
     });
   });
 
@@ -469,14 +480,25 @@
         syncCounter();
         if (messageField && messageField.getAttribute('aria-invalid') === 'true') revalidate({ target: messageField });
       });
-      /* Hizmet sayfalarından /?hizmet=<slug>#iletisim ile gelindiyse hizmeti önceden seç */
+      /* Hizmeti önceden seç (seçim "change" ile Hizmet Alanı'nı da doldurur):
+         1) /?hizmet=<slug>#iletisim — hizmet sayfalarındaki "Teklif Al" bağlantıları;
+         2) yedek: sessionStorage 'vgServiceInterest' — js/services.js teklif tıklamasında yazar (hizmetler merkezi,
+            eski /#iletisim bağlantıları). Anahtar okunur okunmaz silinir; tarayıcının geri yüklediği bir seçimin
+            üzerine yazılmaz. Her iki değer de [a-z0-9-] ile sınırlanır ve yalnızca listede olan bir seçenekse kullanılır. */
+      var cleanSlug = function (v) { return String(v || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 64); };
+      var knownSlug = function (v) { return v && qs('option[value="' + v + '"]', serviceSel) ? v : ''; };
+      var storedSlug = '';
       try {
-        var wanted = (new URLSearchParams(window.location.search).get('hizmet') || '').replace(/[^a-z0-9-]/g, '');
-        if (wanted && qs('option[value="' + wanted + '"]', serviceSel)) {
-          serviceSel.value = wanted;
-          serviceSel.dispatchEvent(new Event('change'));
-        }
-      } catch (err) { /* no-op */ }
+        storedSlug = cleanSlug(window.sessionStorage.getItem('vgServiceInterest'));
+        window.sessionStorage.removeItem('vgServiceInterest');
+      } catch (err) { /* depolama kapalı / gizli sekme */ }
+      var urlSlug = '';
+      try { urlSlug = cleanSlug(new URLSearchParams(window.location.search).get('hizmet')); } catch (err) { /* no-op */ }
+      var wanted = knownSlug(urlSlug) || (serviceSel.value ? '' : knownSlug(storedSlug));
+      if (wanted && serviceSel.value !== wanted) {
+        serviceSel.value = wanted;
+        serviceSel.dispatchEvent(new Event('change', { bubbles: true }));
+      }
     }
 
     var resetFormExtras = function () {

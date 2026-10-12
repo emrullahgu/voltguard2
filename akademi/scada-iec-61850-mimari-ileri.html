@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012" defer></script>
+  <script src="/js/vg-shell.js?v=20261012b" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -53,7 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261011">
+  <link rel="stylesheet" href="/css/style.css?v=20261012b">
   <style id="kb-local">.kb-cta>div:last-child{min-width:0;max-width:100%}.kb-cta .btn{white-space:normal;line-height:1.25;max-width:100%;text-align:center}.vg-form-actions>.kb-cta{min-width:0}.article p a:not(.btn):not(.kb-card__more),.article li a:not(.btn),.article td a,.faq-item__a a{color:var(--clr-accent-text);text-decoration:underline;text-underline-offset:2px}.article p a:not(.btn):not(.kb-card__more):hover,.article li a:not(.btn):hover,.article td a:hover,.faq-item__a a:hover{text-decoration-thickness:2px}.kb-hero p a{color:#fcd34d;text-decoration:underline;text-underline-offset:2px}.kb-criteria td:first-child{white-space:normal;width:36%}</style>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/scada-iec-61850-mimari-ileri.html#course","name":"SCADA Mimarisi ve IEC 61850 Entegrasyonu","description":"Server-client mimarisi, GOOSE mesajlaşma, MMS, SV protokolleri ve trafo merkezi entegrasyonu.","educationalLevel":"İleri","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"SCADA Mimarisi ve IEC 61850 (İleri)","item":"https://voltguard.com.tr/akademi/scada-iec-61850-mimari-ileri.html"}]}]}</script>
 </head>
@@ -140,7 +140,7 @@
         <tr><td>Redundant Server</td><td>Hot-standby yedek; otomatik geçiş</td></tr>
       </tbody>
     </table></div>
-    <p>SCADA yazılımı seçilirken tag (değişken) lisans sayısı, yedekli sunucu desteği, historian kapasitesi, desteklenen protokol sürücüleri (IEC 61850, Modbus, OPC UA) ve web/mobil istemci seçenekleri karşılaştırılır.</p>
+    <p>Türkiye'de yaygın SCADA yazılımları: Siemens WinCC (Comfort/Advanced/Professional), Schneider AVEVA (Wonderware) InTouch/System Platform, ABB 800xA, GE iFIX, Ignition, Rockwell FactoryTalk.</p>
 
     <h2>IEC 61850: Trafo Merkezi Standardı</h2>
     <p>IEC 61850, 2003'te yayınlanan ve trafo merkezi (substation) otomasyonu için özel geliştirilmiş, birden fazla üreticinin cihazlarının birbirleriyle sorunsuz haberleşmesini sağlayan bir standarttır. Üç ana protokol içerir:</p>
@@ -166,7 +166,7 @@
       <li><strong>RREC:</strong> Otomatik reklozer (Auto Reclosing)</li>
       <li><strong>CSWI:</strong> Anahtar kontrol (Switch Controller)</li>
     </ul>
-    <p>Her LN'nin standart veri sınıfları (Data Objects) ve niteliksel özellikleri (Data Attributes) vardır. Bu sayede farklı üreticilerin IED'leri aynı MMS/GOOSE mesajlarını okuyabilir.</p>
+    <p>Her LN'nin standart veri sınıfları (Data Objects) ve niteliksel özellikleri (Data Attributes) vardır. Bu sayede Siemens, ABB, Schneider veya GE'nin IED'leri aynı MMS/GOOSE mesajlarını okur.</p>
 
     <h2>Station Bus ve Process Bus Mimarisi</h2>
     <div class="table-scroll"><table>
@@ -195,7 +195,7 @@
       <li>Ağ ayrımı: DMZ, VLAN, firewall, IDS/IPS (SCADA aware).</li>
       <li>USB portlarının fiziksel kilitlenmesi, whitelist uygulaması.</li>
       <li>Rol tabanlı erişim (RBAC), olay kaydı (log), SIEM entegrasyonu.</li>
-      <li>Değişiklik yönetimi ve endüstriyel protokolleri tanıyan araçlarla zafiyet taraması.</li>
+      <li>Değişiklik yönetimi ve zafiyet tarama (Bandolier, Nessus SCADA aware).</li>
     </ul>
 
     <h2>Örnek Vaka: 154/34,5 kV Trafo Merkezi</h2>
@@ -350,6 +350,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261011b" defer></script>
+  <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
 </body>
 </html>

@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012" defer></script>
+  <script src="/js/vg-shell.js?v=20261012b" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -53,7 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261011">
+  <link rel="stylesheet" href="/css/style.css?v=20261012b">
   <style id="kb-local">.kb-cta>div:last-child{min-width:0;max-width:100%}.kb-cta .btn{white-space:normal;line-height:1.25;max-width:100%;text-align:center}.vg-form-actions>.kb-cta{min-width:0}.article p a:not(.btn):not(.kb-card__more),.article li a:not(.btn),.article td a,.faq-item__a a{color:var(--clr-accent-text);text-decoration:underline;text-underline-offset:2px}.article p a:not(.btn):not(.kb-card__more):hover,.article li a:not(.btn):hover,.article td a:hover,.faq-item__a a:hover{text-decoration-thickness:2px}.kb-hero p a{color:#fcd34d;text-decoration:underline;text-underline-offset:2px}.kb-criteria td:first-child{white-space:normal;width:36%}</style>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html#course","name":"Trafo İşletmesi ve Kısa Devre Koordinasyonu","description":"IEC 60909, TT/TN/IT sistemleri, selektivite ve arıza analizi.","educationalLevel":"İleri","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Trafo İşletmesi ve Kısa Devre Koordinasyonu (İleri)","item":"https://voltguard.com.tr/akademi/trafo-kisa-devre-koordinasyon-ileri.html"}]}]}</script>
 </head>
@@ -174,14 +174,15 @@
 
     <h2>Örnek Vaka: 1000 kVA Fabrika Kısa Devre Analizi</h2>
     <p>1000 kVA / 34,5-0,4 kV, uk = %6, Dyn11 trafo düşünelim. Trafo çıkışı Ik" ≈ 24 kA. Ana bara 5 m uzaklıkta, kablo 4 × 240 mm² Cu → Ik" ana barada ~23,5 kA. Tali bara 30 m uzaklıkta, kablo 3 × 95 mm² → Ik" tali barada ~15 kA. Motor besleme 50 m uzaklıkta, kablo 25 mm² → Ik" motor panosunda ~5 kA.</p>
-    <p>Bu değerlere göre koruma seçimi: Ana TMŞ 1600 A/50 kA Icu, LSIG elektronik; tali TMŞ 400 A/36 kA Icu, LSIG; motor MCCB 63 A/25 kA Icu. Selektivite, koruma cihazı üreticilerinin koordinasyon tabloları veya eğri çizim yazılımlarıyla doğrulanır.</p>
+    <p>Bu değerlere göre koruma seçimi: Ana TMŞ 1600 A/50 kA Icu, LSIG elektronik; tali TMŞ 400 A/36 kA Icu, LSIG; motor MCCB 63 A/25 kA Icu. Selektivite koordinasyon eğrisi üretici yazılımıyla (Curve Direct, Ecodial vb.) doğrulanır.</p>
 
     <h2>Yazılım Araçları</h2>
     <ul class="article__list">
-      <li><strong>Güç sistemi analiz yazılımları:</strong> Kısa devre (IEC 60909), yük akışı, geçici rejim ve ark parlaması analizi</li>
-      <li><strong>Şebeke simülasyon yazılımları:</strong> Enerji sistemi ve dağıtım şebekesi modelleme</li>
-      <li><strong>Tesis boyutlandırma yazılımları:</strong> Kablo, koruma ve gerilim düşümü hesabı</li>
-      <li><strong>Koordinasyon eğrisi araçları:</strong> TMŞ ve röle zaman-akım eğrilerinin üst üste çizilmesi</li>
+      <li><strong>ETAP:</strong> Full transient / short-circuit / arc flash analizi (endüstri standardı)</li>
+      <li><strong>DIgSILENT PowerFactory:</strong> Enerji sistemi ve şebeke simülasyonu</li>
+      <li><strong>Schneider Ecodial:</strong> Tesis boyutlandırma ve koordinasyon</li>
+      <li><strong>ABB DOC:</strong> Pano tasarımı ve TMŞ koordinasyon</li>
+      <li><strong>Neplan:</strong> Elektrik enerji hesap ve koruma analizi</li>
     </ul>
 
     <h2>Sıradaki Konu</h2>
@@ -341,6 +342,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261011b" defer></script>
+  <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
 </body>
 </html>

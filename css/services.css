@@ -209,7 +209,11 @@ html { color-scheme: light; scroll-behavior: smooth; }
 @media (min-width: 64rem) {
   .svc-hero__grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr); gap: 3rem; }
   .svc-hero__frame { aspect-ratio: 4 / 5; }
+  /* Yatay (manzara) kaynak gorsel: masaustunde de 4/3 kalir (mobil 4/3, tablet 16/10 ortak) */
+  .svc-hero__media--landscape .svc-hero__frame { aspect-ratio: 4 / 3; }
 }
+/* Ekran goruntusu hero'su: acik zeminli gorselde altyazi okunakli kalsin (beyaz zemin uzerinde bile >= 10:1) */
+.svc-hero__media--screen figcaption { padding: .4rem .6rem; border-radius: .4rem; background: rgba(10, 20, 40, .82); color: #fff; text-shadow: none; }
 
 /* ---------- Kisa bilgiler (hero alti) ---------- */
 .svc-facts { position: relative; z-index: 1; margin-top: -1.4rem; }
@@ -330,6 +334,7 @@ html { color-scheme: light; scroll-behavior: smooth; }
 .svc-figure { margin: 0; overflow: hidden; border: 1px solid var(--s-line); border-radius: var(--s-radius); background: #fff; box-shadow: var(--s-shadow); }
 .svc-figure img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: var(--svc-focus, 50% 50%); }
 .svc-figure figcaption { padding: .85rem 1rem; color: var(--s-muted); font-size: .86rem; line-height: 1.5; }
+.svc-figure > a { display: block; }   /* gorseli tam boyutuyla acan baglanti: odak cercevesi gorselin tamamini sarar */
 @media (min-width: 64rem) {
   .svc-scope { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 2.5rem; }
   .svc-scope__aside { position: sticky; top: calc(var(--vg-header-h, 68px) + var(--s-toc-h) + 1.5rem); }
@@ -385,7 +390,10 @@ html { color-scheme: light; scroll-behavior: smooth; }
 .svc-doc p { color: var(--s-muted); font-size: .9rem; line-height: 1.55; }
 
 /* ---------- Fiyat / tablo ---------- */
-.svc-price { display: grid; gap: 1.5rem; align-items: start; }
+/* minmax(0,1fr) + min-width:0: genis tablo sutunu sayfa disina itmez, .svc-table-wrap icinde kayar */
+.svc-price { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.svc-price > * { min-width: 0; }
+.svc-price > .svc-price__full { grid-column: 1 / -1; }   /* iki sutunu da kaplayan oge (or. genis grafik) */
 @media (min-width: 64rem) { .svc-price { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 2rem; } }
 .svc-table-wrap { overflow-x: auto; border: 1px solid var(--s-line); border-radius: var(--s-radius); background: #fff; box-shadow: var(--s-shadow); }
 .svc-table { width: 100%; border-collapse: collapse; font-size: .95rem; }
@@ -397,6 +405,7 @@ html { color-scheme: light; scroll-behavior: smooth; }
 .svc-table tbody th[scope=row] { font-weight: 500; color: var(--s-text); }
 .svc-table td { white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--s-ink); text-align: right; }
 .svc-table thead th:last-child { text-align: right; }
+.svc-table--text td { white-space: normal; }   /* sayi yerine kisa metin tasiyan hucreler (or. test matrisi) */
 .svc-table tbody tr:hover td, .svc-table tbody tr:hover th[scope=row] { background: #fffbeb; }
 .svc-example { margin-top: 1rem; padding: 1rem 1.1rem; border: 1px dashed var(--s-accent); border-radius: var(--s-radius-sm); background: #fffbeb; color: #5b3a06; font-size: .93rem; }
 .svc-example strong { color: #451a03; }

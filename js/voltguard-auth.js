@@ -470,12 +470,18 @@
       if (!SLUG_RE.test(hs)) hs = '';
       if (!name && !hs) return null;
       var res = x.result && typeof x.result === 'object' ? x.result : {};
+      var result = { value: clip(res.value, 300), note: clip(res.note, 1000) };
+      // Hesap dökümü satırları (isteğe bağlı): en fazla 20 satır, satır başına 200 karakter; boşsa alan hiç yazılmaz.
+      var breakdown = plainArray(res.breakdown, 20).map(function (l) {
+        return typeof l === 'string' || typeof l === 'number' ? clip(String(l).replace(/\s+/g, ' ').trim(), 200).trim() : '';
+      }).filter(Boolean);
+      if (breakdown.length) result.breakdown = breakdown;
       return {
         id: hid, toolSlug: hs, toolName: name || hs, toolUrl: toolUrlOk(x.toolUrl),
         params: plainArray(x.params, 60).filter(function (p) { return p && typeof p === 'object'; }).map(function (p) {
           return { label: clip(p.label, 200), value: clip(p.value, 400) };
         }),
-        result: { value: clip(res.value, 300), note: clip(res.note, 1000) },
+        result: result,
         note: clip(x.note, 1000),
         savedAt: validIso(x.savedAt)
       };

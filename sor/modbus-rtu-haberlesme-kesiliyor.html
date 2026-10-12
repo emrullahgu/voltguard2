@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012" defer></script>
+  <script src="/js/vg-shell.js?v=20261012b" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -53,7 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261011">
+  <link rel="stylesheet" href="/css/style.css?v=20261012b">
   <style id="kb-local">.kb-cta>div:last-child{min-width:0;max-width:100%}.kb-cta .btn{white-space:normal;line-height:1.25;max-width:100%;text-align:center}.vg-form-actions>.kb-cta{min-width:0}.article p a:not(.btn):not(.kb-card__more),.article li a:not(.btn),.article td a,.faq-item__a a{color:var(--clr-accent-text);text-decoration:underline;text-underline-offset:2px}.article p a:not(.btn):not(.kb-card__more):hover,.article li a:not(.btn):hover,.article td a:hover,.faq-item__a a:hover{text-decoration-thickness:2px}.kb-hero p a{color:#fcd34d;text-decoration:underline;text-underline-offset:2px}.kb-criteria td:first-child{white-space:normal;width:36%}</style>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/sor/modbus-rtu-haberlesme-kesiliyor.html#article","headline":"Modbus RTU Haberleşmesi Neden Kesiliyor? RS-485 Sorunları ve Çözümü","description":"Modbus RTU haberleşmesi neden kesiliyor? RS-485 topolojisi, sonlandırma direnci, kablo tipi ve slave adresleme sorunlarının teknik gerekçeli çözümü.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","articleSection":"VoltGuard'a Sor","image":"https://voltguard.com.tr/public/og-image.png","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/sor/modbus-rtu-haberlesme-kesiliyor.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard'a Sor","item":"https://voltguard.com.tr/sor.html"},{"@type":"ListItem","position":3,"name":"Modbus RTU Kesiliyor","item":"https://voltguard.com.tr/sor/modbus-rtu-haberlesme-kesiliyor.html"}]}]}</script>
 </head>
@@ -115,7 +115,7 @@
     <h2>Kısa Cevap</h2>
     <p>Modbus RTU / RS-485, düzgün topoloji ve doğru sonlandırma yapılmadığında kararsız çalışır. En yaygın altı neden: <strong>(1)</strong> sonlandırma direncinin (120 Ω) sadece bir uca konulması, <strong>(2)</strong> yanlış kablo (STP CAT5 yerine multicore kablo kullanılması), <strong>(3)</strong> 30 cm'yi geçen stub (T bağlantı) uzunlukları, <strong>(4)</strong> A/B kutup yönlendirmesinin karışık olması, <strong>(5)</strong> slave adres çakışması, <strong>(6)</strong> baud rate / parity ayarı farkı. Osiloskop veya USB-RS485 modülüyle A-B diferansiyeli izlenirse sorun net şekilde ortaya çıkar. Yeni kurulan <a href="/hizmetler/plc-scada-otomasyon.html">SCADA ve enerji izleme</a> sistemlerinde hat topolojisi ve sonlandırma bu yüzden devreye alma sırasında test edilmelidir.</p>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Modbus RTU RS-485 fiziksel katmanı 2 tel (A, B) + 1 GND üzerinde çalışır.</li><li>Twisted pair (STP) CAT5e/CAT6 veya 120 Ω empedanslı RS-485 kablosu tercih edilir.</li><li>Sonlandırma direnci (120 Ω) hattın <strong>her iki ucuna</strong> konulmalıdır.</li><li>Stub uzunluğu maks 30 cm; daha uzun stub'lar sinyal yansıması yaratır.</li><li>Maks 32 slave (unit load 1). Standart genişletici ile 128'e çıkarılabilir.</li><li>Baud rate en yaygın 9600, 19200, 38400, 115200 bps.</li></ul></div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Modbus RTU RS-485 fiziksel katmanı 2 tel (A, B) + 1 GND üzerinde çalışır.</li><li>Twisted pair (STP) CAT5e/CAT6 veya Belden 9841/3105A tipi kablo tercih edilir.</li><li>Sonlandırma direnci (120 Ω) hattın <strong>her iki ucuna</strong> konulmalıdır.</li><li>Stub uzunluğu maks 30 cm; daha uzun stub'lar sinyal yansıması yaratır.</li><li>Maks 32 slave (unit load 1). Standart genişletici ile 128'e çıkarılabilir.</li><li>Baud rate en yaygın 9600, 19200, 38400, 115200 bps.</li></ul></div>
 
     <h2>Teknik Gerekçe: RS-485 Nasıl Çalışır?</h2>
     <p>RS-485, iki iletken üzerinde diferansiyel (fark) sinyal taşır. Alıcı, A ve B iletkenleri arasındaki gerilim farkına bakar: A &gt; B ise "1", A &lt; B ise "0" olarak değerlendirir. Bu diferansiyel yapı, ortak mod gürültüsünü büyük ölçüde bastırır ve 1200 metreye kadar sağlıklı iletişim mümkündür.</p>
@@ -124,7 +124,7 @@
     <h2>6 Yaygın Neden</h2>
     <ol class="article__list">
       <li><strong>Sonlandırma direnci yanlış:</strong> 120 Ω'luk sonlandırma direnci hattın her iki ucuna konulmalı. Sadece master ucunda varsa uzak slave'lerde sinyal yansır ve mesajlar bozulur. Modern cihazlarda dip switch ile aktif edilir; PLC ve son slave'in bu switch'i açık olmalı.</li>
-      <li><strong>Yanlış kablo:</strong> RS-485 için twisted pair (bükümlü çift) kullanılmalı. Klasik multicore veya nem izolasyonlu paralel kablo yansıma yaratır. En yaygın seçimler: 120 Ω empedanslı ekranlı RS-485 kablosu, LiYCY 2×0,5 mm², CAT5e STP.</li>
+      <li><strong>Yanlış kablo:</strong> RS-485 için twisted pair (bükümlü çift) kullanılmalı. Klasik multicore veya nem izolasyonlu paralel kablo yansıma yaratır. En yaygın seçimler: Belden 9841 (RS-485 özel), Belden 3105A, LiYCY 2×0,5 mm², CAT5e STP.</li>
       <li><strong>Uzun stub'lar:</strong> Bir tesiste ana hat üzerinden T bağlantılarla slave'lere gidiliyorsa T ile slave arasındaki mesafe (stub) 30 cm'yi geçmemeli. Aksi hâlde her stub bir yansıma noktası olur.</li>
       <li><strong>A/B kutup karışıklığı:</strong> Bazı üreticilerde A/B, D+/D− veya TX+/TX− farklı isimlendirilir. Yanlış bağlanan bir slave hiç cevap vermez veya bozuk cevap verir. Cihazın kılavuzuna göre A → A, B → B bağlanmalı.</li>
       <li><strong>Slave adres çakışması:</strong> Aynı hatta iki slave'in adresinin aynı olması durumunda ikisi de aynı anda cevap vermeye çalışır ve çakışma yaşanır. Tarama yazılımıyla adres kontrolü yapılmalı.</li>
@@ -134,7 +134,7 @@
     <h2>Ölçümle Nasıl Doğrularsınız?</h2>
     <ul class="article__list">
       <li><strong>Osiloskop:</strong> A ve B arasına prob koyup fark sinyalini izleyin. Sağlıklı sinyal ±2-5 V arasında, temiz kare dalga olmalıdır. Yansıma varsa dalga şekli bozuk görünür.</li>
-      <li><strong>USB-RS485 modülü:</strong> ücretsiz Modbus master test yazılımlarıyla her slave'i tek tek okuyup cevap durumunu izleyin.</li>
+      <li><strong>USB-RS485 modülü:</strong> Modscan32, Radzio Modbus Master gibi ücretsiz yazılımlarla her slave'i tek tek okuyup cevap durumunu izleyin.</li>
       <li><strong>Sonlandırma direnci ölçümü:</strong> Master ile son slave arasında A ve B iletkenlerini enerjisiz iken multimetreyle ölçün. 60 Ω civarı okunmalı (iki 120 Ω paralel).</li>
       <li><strong>GND / shield toprak kontrolü:</strong> STP kablonun shield'ı sadece master tarafında toprağa bağlanmalı; iki uç topraklanırsa ground loop oluşur ve mesaj bozulur.</li>
       <li><strong>Kablo uzunluğu:</strong> Toplam segment uzunluğunu ölçün; 1200 m'yi geçiyorsa repeater (booster) kullanın.</li>
@@ -143,7 +143,7 @@
     <h2>Çözüm Önerileri</h2>
     <ol class="article__list">
       <li>Sonlandırma direncini hattın iki ucuna (master + en uzak slave) yerleştirin veya cihazlardaki DIP switch'i açın.</li>
-      <li>Kabloyu 120 Ω empedanslı RS-485 kablosu veya CAT5e STP twisted pair ile yenileyin. Yıldız topoloji yerine <strong>daisy chain (zincirleme)</strong> tercih edin.</li>
+      <li>Kabloyu Belden 3105A veya CAT5e STP twisted pair ile yenileyin. Yıldız topoloji yerine <strong>daisy chain (zincirleme)</strong> tercih edin.</li>
       <li>Stub uzunluğunu 30 cm altında tutun. Uzun mesafeye tek slave için ayrı bir RS-485 branch box kullanın.</li>
       <li>A/B ve GND bağlantılarını cihaz kılavuzuna göre doğrulayın; üç iletken de bağlanmalı (sadece A ve B yetmez).</li>
       <li>Slave adresleri benzersiz olmalı. Yazılım tarama (auto-discovery) ile doğrulayın.</li>
@@ -308,6 +308,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261011b" defer></script>
+  <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
 </body>
 </html>

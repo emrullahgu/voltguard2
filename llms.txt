@@ -28,8 +28,8 @@ Fabrika, OSB ve işletmeler için Türkiye geneli saha hizmeti (merkez sayfa: ht
 - [Fabrikalar İçin Çözümler](https://voltguard.com.tr/fabrika-cozumleri.html): anahtar teslim fabrika elektrik altyapısı, sağlık testi, reaktif ceza ve duruş maliyeti hesaplayıcıları, teklif sihirbazı
 
 Diğer uzmanlık alanları:
-- **Elektronik & Gömülü Sistemler:** gömülü yazılım, mikrodenetleyici tabanlı sistemler, özel PCB tasarımı, IoT, veri toplama ve izleme sistemleri.
-- **Otomasyon:** PLC yazılım geliştirme, SCADA kurulumu, motor ve sürücü (VFD) kontrol, uzaktan izleme, sistem entegrasyonu ve devreye alma.
+- **Elektronik & Gömülü Sistemler:** gömülü yazılım, mikrodenetleyici tabanlı sistemler (STM, PIC, Arduino), özel PCB tasarımı, IoT, veri toplama ve izleme sistemleri.
+- **Otomasyon:** PLC yazılım geliştirme (Siemens, Schneider), SCADA kurulumu, motor ve sürücü (VFD) kontrol, uzaktan izleme, sistem entegrasyonu ve devreye alma.
 - **Mekanik:** endüstriyel makine tasarımı ve imalatı, üretim hattı kurulumu, konveyör sistemleri, hidrolik/pnömatik çözümler, makine modernizasyonu (retrofit).
 
 ## Ar-Ge

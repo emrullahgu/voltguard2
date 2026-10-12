@@ -39,7 +39,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012" defer></script>
+  <script src="/js/vg-shell.js?v=20261012b" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <link rel="canonical" href="https://voltguard.com.tr/hesaplama-araclari/">
@@ -56,7 +56,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="public/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/style.css?v=20261011">
+  <link rel="stylesheet" href="css/style.css?v=20261012b">
   <script src="/js/calculator-config.js?v=20261012"></script>
   <script type="application/ld+json">
   {
@@ -432,7 +432,7 @@
           </div>
           <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:1.5rem">
             <h3 style="font:700 1rem 'Outfit',sans-serif;color:#fcd34d;margin:0 0 .5rem"><i class="fas fa-shield-halved"></i> Gizlilik önceliğimizdir</h3>
-            <p style="color:rgba(255,255,255,.82);font-size:.9rem;line-height:1.6">Giriş yapmadan kaydettiğiniz hesaplar ve favoriler yalnızca bu tarayıcıda kalır. Üye olduğunuzda hesap bilgileriniz ve kayıtlarınız sunucumuzda HTTPS ile korunarak saklanır, üçüncü taraflarla paylaşılmaz. Verilerinizi istediğiniz zaman JSON olarak indirebilir veya hesabınızı silebilirsiniz. Ayrıntılar: <a href="/gizlilik.html" style="color:#fcd34d">Gizlilik &amp; KVKK</a>.</p>
+            <p style="color:rgba(255,255,255,.82);font-size:.9rem;line-height:1.6">Giriş yapmadan kaydettiğiniz hesaplar ve favoriler yalnızca bu tarayıcıda kalır. Üye olduğunuzda hesap bilgileriniz ve kayıtlarınız sunucumuzda HTTPS ile korunarak saklanır, üçüncü taraflarla paylaşılmaz. Verilerinizi istediğiniz zaman JSON olarak indirebilir veya hesabınızı silebilirsiniz. Ayrıntılar: <a href="/gizlilik.html#hesap-verileri" style="color:#fcd34d">Gizlilik &amp; KVKK</a>.</p>
           </div>
         </div>
       </section>
@@ -993,10 +993,13 @@
         return toPdfText(text).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
       };
       // jsPDF yalnızca PDF istendiğinde yüklenir; hesaplar üçüncü taraf betiği beklemez.
+      // Ortak yükleyici (js/voltguard-tools.js, VG.Tools.ensureJsPdf) varsa o kullanılır; yoksa aynı adresten yüklenir.
       var JSPDF_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
       var jsPdfLoading = null;
       var loadJsPdf = function () {
         if (window.jspdf && window.jspdf.jsPDF) { return Promise.resolve(window.jspdf); }
+        var tools = window.VG && window.VG.Tools;
+        if (tools && tools.ensureJsPdf) { return tools.ensureJsPdf().then(function () { return window.jspdf; }); }
         if (jsPdfLoading) { return jsPdfLoading; }
         jsPdfLoading = new Promise(function (resolve, reject) {
           var script = document.createElement('script');
@@ -1084,7 +1087,7 @@
       updates.forEach(function (update) { update(); });
     }());
   </script>
-  <script src="js/voltguard-auth.js?v=20261011b" defer></script>
-  <script src="js/voltguard-tools.js?v=20261011b" defer></script>
+  <script src="js/voltguard-auth.js?v=20261012b" defer></script>
+  <script src="js/voltguard-tools.js?v=20261012b" defer></script>
 </body>
 </html>

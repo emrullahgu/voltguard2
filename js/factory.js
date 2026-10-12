@@ -141,7 +141,7 @@
       kicker: 'Güç faktörü ve enerji kalitesi',
       title: 'Kompanzasyon / Harmonik Filtre',
       risks: [
-        'Aylık endüktif oran %20\'yi, kapasitif oran %15\'i aşarsa faturaya reaktif bedel yansır.',
+        '50 kVA ve üzeri tesislerde aylık endüktif oran %20\'yi veya kapasitif oran %15\'i aşarsa ölçülen reaktif enerjinin tamamı faturalanır.',
         'Harmonikli tesiste reaktörsüz kondansatör bankası rezonansa girip hasar görebilir.',
         'Yaşlanan kondansatörler kapasite kaybeder; röle hedef değere ulaşamaz.'
       ],
@@ -246,9 +246,15 @@
 
   var ILLER = 'Adana,Adıyaman,Afyonkarahisar,Ağrı,Aksaray,Amasya,Ankara,Antalya,Ardahan,Artvin,Aydın,Balıkesir,Bartın,Batman,Bayburt,Bilecik,Bingöl,Bitlis,Bolu,Burdur,Bursa,Çanakkale,Çankırı,Çorum,Denizli,Diyarbakır,Düzce,Edirne,Elazığ,Erzincan,Erzurum,Eskişehir,Gaziantep,Giresun,Gümüşhane,Hakkari,Hatay,Iğdır,Isparta,İstanbul,İzmir,Kahramanmaraş,Karabük,Karaman,Kars,Kastamonu,Kayseri,Kilis,Kırıkkale,Kırklareli,Kırşehir,Kocaeli,Konya,Kütahya,Malatya,Manisa,Mardin,Mersin,Muğla,Muş,Nevşehir,Niğde,Ordu,Osmaniye,Rize,Sakarya,Samsun,Siirt,Sinop,Sivas,Şanlıurfa,Şırnak,Tekirdağ,Tokat,Trabzon,Tunceli,Uşak,Van,Yalova,Yozgat,Zonguldak';
 
-  /* Reaktif sınırlar: sor/cosfi-098-fatura-reaktif-ceza.html (2026 EPDK, 50 kW üzeri abonelikler) */
-  var LIM_IND = 20;
-  var LIM_CAP = 15;
+  /* Reaktif sınırlar (%): EPDK Tarife Uygulamaları Usul ve Esasları md. 13 (RG 30.04.2022/31825).
+     hesaplama/reaktif-ceza-hesaplama.html'deki LIMITS ile aynı tutulmalı. Sınır aşılırsa aşan kısım değil,
+     ölçülen reaktif enerjinin tamamı; iki sınır birden aşılırsa en yüksek sayaç değeri faturalanır (md. 13/4, 13/6).
+     Takvim yılındaki ilk ihlalin bedeli aynı faturada düşülür (md. 13/1): yıllık tahmin 11 ay üzerinden. */
+  var RK_LIMITS = {
+    ge50: { ind: 20, cap: 15, label: '50 kVA ve üzeri' },
+    lt50: { ind: 33, cap: 20, label: '50 kVA altı' }
+  };
+  var RK_BILLED_MONTHS = 11;
 
   var KEY_WIZ = 'vg_fx_wizard_v1';
   var KEY_HEALTH = 'vg_fx_health_v1';
@@ -1049,8 +1055,9 @@
     var popTitle = byId('fxPopTitle');
     var popKicker = byId('fxPopKicker');
     var popBody = byId('fxPopBody');
-    var active = null, pinned = false, tOpen = 0, tClose = 0, lastBtn = null;
+    var active = null, pinned = false, peek = false, tOpen = 0, tClose = 0, lastBtn = null;
     var BOTTOM_ROW = ['komp', 'tali', 'scada'];
+    var hdr = qs('.vg-header');
 
     /* Akış katmanı: her segment kendi kırpma alanında, bir desen periyodu kadar kayar */
     (function buildFlows() {
@@ -1094,30 +1101,38 @@
     doc.addEventListener('visibilitychange', syncPause);
 
     function li(text) { return el('li', '', text); }
+    /* Panel iki kipte açılır:
+       - önizleme (is-peek): fareyle üzerine gelince; yalnızca başlık, ilk risk ve "tıklayın" ipucu. Küçük olduğu için
+         komşu sıcak noktaları örtmeyen bir konuma yerleştirilir (placePeek).
+       - tam panel: tıklama / Enter / dokunma; riskler, çözümler, kaynaklar ve eylem düğmeleri (.fx-pop__more). */
     function render(key) {
       var n = FX_NODES[key], L = FX_LINKS[key] || { items: [] };
       popKicker.textContent = n.kicker;
       popTitle.textContent = n.title;
       popBody.textContent = '';
-      popBody.appendChild(el('h3', '', 'Tipik riskler'));
+      popBody.appendChild(el('p', 'fx-pop__teaser', n.risks[0]));
+      popBody.appendChild(el('p', 'fx-pop__hint', 'Riskler, çözümler ve bağlantılar için tıklayın.'));
+      popBody.appendChild(el('p', 'fx-pop__hint fx-pop__hint--s', 'Ayrıntılar için tıklayın.'));
+      function more(node) { node.classList.add('fx-pop__more'); popBody.appendChild(node); return node; }
+      more(el('h3', '', 'Tipik riskler'));
       var ul1 = el('ul');
       n.risks.forEach(function (t) { ul1.appendChild(li(t)); });
-      popBody.appendChild(ul1);
-      popBody.appendChild(el('h3', '', 'VoltGuard ne yapar?'));
+      more(ul1);
+      more(el('h3', '', 'VoltGuard ne yapar?'));
       var ul2 = el('ul', 'fx-pop__do');
       n.does.forEach(function (t) { ul2.appendChild(li(t)); });
-      popBody.appendChild(ul2);
+      more(ul2);
       if (L.items && L.items.length) {
-        popBody.appendChild(el('h3', '', 'İlgili kaynaklar'));
+        more(el('h3', '', 'İlgili kaynaklar'));
         var lk = el('div', 'fx-pop__links');
         L.items.forEach(function (it) {
           var a = el('a', '', it[0]);
           a.href = it[1];
           lk.appendChild(a);
         });
-        popBody.appendChild(lk);
+        more(lk);
       }
-      var cta = el('div', 'fx-pop__cta');
+      var cta = el('div', 'fx-pop__cta fx-pop__more');
       var b = el('button', 'fx-btn fx-btn--primary fx-btn--sm', 'Ön değerlendirme iste');
       b.type = 'button';
       b.addEventListener('click', function () {
@@ -1144,12 +1159,81 @@
       popBody.appendChild(cta);
     }
 
+    /* Önizleme konumu: düğmeye bitişik (sağ, sol, alt, üst) aday konumlar kenar boyunca kaydırılarak denenir.
+       Maliyet: diğer sıcak noktalarla örtüşme (en ağır), düğmenin kendisiyle örtüşme, görünür alan (üst menü ile
+       pencere altı) dışında kalan kısım ve düğmeye uzaklık. Bitişik olduğu için fare panele giderken başka bir
+       bloğun üzerinden geçmez. Temiz yer yoksa panel küçültülerek yeniden denenir: is-mini (ilk risk cümlesi
+       gizlenir), is-micro (yalnızca başlık ve kısa ipucu), is-narrow (micro, dar ve satır kırarak). Hiçbirinde temiz
+       yer yoksa en düşük maliyetli seçilir. */
+    function overlap(a, b) {
+      var w = Math.min(a.r, b.r) - Math.max(a.l, b.l), h = Math.min(a.b, b.b) - Math.max(a.t, b.t);
+      return w > 0 && h > 0 ? w * h : 0;
+    }
+    function box(r, p) { return { l: r.left - p, t: r.top - p, r: r.right + p, b: r.bottom + p }; }
+    /* Konum, destekleyen tarayıcıda left/top yerine translate ile verilir: panel fareyle bloktan bloğa geçerken
+       yer değiştirdiğinde bu bir düzen kayması (CLS) sayılmaz. x/y: .fx-sld-wrap'e göre px; null = sıfırla. */
+    var useTranslate = 'translate' in pop.style;
+    function setPos(x, y) {
+      var on = x !== null;
+      if (useTranslate) { pop.style.translate = on ? Math.round(x) + 'px ' + Math.round(y) + 'px' : ''; return; }
+      pop.style.left = on ? Math.round(x) + 'px' : '';
+      pop.style.top = on ? Math.round(y) + 'px' : '';
+    }
+    function placePeek(btn) {
+      pop.classList.remove('is-static');
+      var vw = doc.documentElement.clientWidth, vh = win.innerHeight, m = 8, gap = 10;
+      var top0 = m, bot0 = vh - m;
+      if (hdr) { var hb = hdr.getBoundingClientRect().bottom; if (hb > 0) top0 = hb + m; }
+      var br = btn.getBoundingClientRect(), self = box(br, 0);
+      var others = hs.filter(function (h) { return h !== btn; }).map(function (h) {
+        var r = h.getBoundingClientRect();
+        return { hard: box(r, 0), soft: box(r, 6) };
+      });
+      function best() {
+        var pw = pop.offsetWidth, ph = pop.offsetHeight, res = null, s;
+        var bx = br.left + br.width / 2, by = br.top + br.height / 2;
+        function test(x, y) {
+          x = clamp(x, m, Math.max(m, vw - m - pw));
+          var R = { l: x, t: y, r: x + pw, b: y + ph }, hard = 0, soft = 0;
+          others.forEach(function (o) { hard += overlap(R, o.hard); soft += overlap(R, o.soft); });
+          var mine = overlap(R, self);
+          var off = (Math.max(0, top0 - R.t) + Math.max(0, R.b - bot0)) * pw;
+          var dx = x + pw / 2 - bx, dy = y + ph / 2 - by;
+          var cost = hard * 60 + soft * 4 + mine * 60 + off * 6 + Math.sqrt(dx * dx + dy * dy);
+          if (!res || cost < res.cost) res = { x: x, y: y, cost: cost, bad: hard + mine + off };
+        }
+        var minV = Math.min(20, br.height / 2), minH = Math.min(24, br.width / 2);
+        [br.right + gap, br.left - gap - pw].forEach(function (x) {
+          for (s = br.top - ph + minV; s <= br.bottom - minV; s += 6) test(x, s);
+        });
+        [br.bottom + gap, br.top - gap - ph].forEach(function (y) {
+          for (s = br.left - pw + minH; s <= br.right - minH; s += 6) test(s, y);
+        });
+        return res;
+      }
+      function level(i) {
+        pop.classList.toggle('is-mini', i === 1);
+        pop.classList.toggle('is-micro', i >= 2);
+        pop.classList.toggle('is-narrow', i === 3);
+      }
+      var r = null, lv = 0;
+      for (var i = 0; i < 4; i++) {
+        level(i);
+        var c = best();
+        if (!r || c.cost < r.cost) { r = c; lv = i; }
+        if (c.bad <= 0) { r = c; lv = i; break; }
+      }
+      level(lv);
+      var wr = wrap.getBoundingClientRect();
+      setPos(r.x - wr.left, r.y - wr.top);
+    }
+
     function place(btn) {
+      if (peek) { placePeek(btn); return; }
       var sw = sld.getBoundingClientRect().width;
       if (sw < 480) {
         pop.classList.add('is-static');
-        pop.style.left = '';
-        pop.style.top = '';
+        setPos(null);
         return;
       }
       pop.classList.remove('is-static');
@@ -1170,13 +1254,15 @@
           if (top + ph > wr.height - m && br.top - wr.top - ph - gap >= m) top = br.top - wr.top - ph - gap;
         }
       }
-      pop.style.left = Math.round(left) + 'px';
-      pop.style.top = Math.round(top) + 'px';
+      setPos(left, top);
     }
 
     function open(key, btn, opts) {
       clearTimeout(tOpen); clearTimeout(tClose);
       pinned = !!opts.pin;
+      peek = !pinned;
+      pop.classList.toggle('is-peek', peek);
+      pop.classList.remove('is-mini', 'is-micro', 'is-narrow');
       sld.classList.add('is-touched');
       if (active !== key) {
         render(key);
@@ -1214,6 +1300,7 @@
       sld.removeAttribute('data-active');
       active = null;
       pinned = false;
+      peek = false;
       if ((returnFocus || inside) && lastBtn) lastBtn.focus({ preventScroll: true });
     }
 
@@ -1226,7 +1313,22 @@
       btn.addEventListener('mouseenter', function () {
         if (!mqHover.matches || pinned) return;
         clearTimeout(tClose);
-        tOpen = setTimeout(function () { open(key, btn, { pin: false }); }, 110);
+        tOpen = setTimeout(function () {
+          /* Önizleme bloktan bloğa geçiyorsa paneli bir kare gizleyip yeniden aç: içerik ve konum değişimi
+             görünür bir öğenin kayması (CLS) olarak sayılmasın, yeni panel kısa giriş animasyonuyla gelsin. */
+          if (active && active !== key && !pop.hidden) {
+            pop.hidden = true;
+            pop.classList.remove('is-in');
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () {
+                if (!pinned && btn.matches(':hover')) open(key, btn, { pin: false });
+                else if (!pinned) close(false);
+              });
+            });
+            return;
+          }
+          open(key, btn, { pin: false });
+        }, 110);
       });
       btn.addEventListener('mouseleave', function () {
         clearTimeout(tOpen);
@@ -1238,6 +1340,10 @@
     pop.addEventListener('mouseleave', function () {
       if (!mqHover.matches || pinned) return;
       tClose = setTimeout(function () { close(false); }, 260);
+    });
+    /* Önizlemeye tıklamak, bloğa tıklamak gibi tam paneli açar */
+    pop.addEventListener('click', function () {
+      if (active && !pinned && lastBtn) open(active, lastBtn, { pin: true });
     });
     qs('[data-fx-pop-close]', pop).addEventListener('click', function () { close(true); });
     doc.addEventListener('keydown', function (e) {
@@ -1518,14 +1624,30 @@
       });
     });
 
-    function setBar(fill, wrapEl, limEl, v, lim, label) {
+    function setBar(fill, wrapEl, limEl, v, lim, label, vText) {
       var max = Math.max(lim * 2, v * 1.1, 1);
       fill.style.setProperty('--v', String(clamp(v / max, 0, 1)));
       limEl.style.setProperty('--lim', (lim / max * 100) + '%');
+      var lt = limEl.firstElementChild;
+      if (lt) lt.textContent = 'Sınır %' + lim;
       var lv = v > lim ? 'bad' : (v > lim * 0.8 ? 'warn' : 'ok');
       wrapEl.setAttribute('data-level', lv);
-      wrapEl.setAttribute('aria-label', label + ' ' + pct(v) + ', sınır %' + lim);
+      wrapEl.setAttribute('aria-label', label + ' ' + vText + ', sınır %' + lim);
       return lv;
+    }
+    /* Oran sınırın çok az üzerindeyse yuvarlama aşımı gizlemesin (%20,004 → "%20,0" değil "%20,004") */
+    function pctLim(v, lim) {
+      if (!(v > lim)) return pct(v);
+      for (var d = 1; d <= 4; d++) {
+        var f = Math.pow(10, d);
+        if (Math.round(v * f) / f > lim) return '%' + new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: d }).format(v);
+      }
+      return pct(v) + ' (sınırın üzerinde)';
+    }
+    function rkGroup() {
+      var s = byId('rkGrup');
+      if (s && !RK_LIMITS[s.value]) s.value = 'ge50';
+      return s && RK_LIMITS[s.value] ? s.value : 'ge50';
     }
 
     /* ---- (a) Reaktif ceza riski ---- */
@@ -1533,69 +1655,70 @@
     function calcReaktif() {
       badNum = false;
       var kwh = num('rkAktif'), ind = pos(num('rkInd')), kap = pos(num('rkKap')), price = num('rkFiyat'), inv = num('rkYatirim');
+      var L = RK_LIMITS[rkGroup()];
       var st = byId('rkStatus'), stT = byId('rkStatusText'), stI = qs('i', st);
       if (!(kwh > 0) || badNum) {
         st.setAttribute('data-level', 'idle');
         stI.className = 'fas fa-circle-info';
         stT.textContent = badNum ? 'Bir değer sayı olarak okunamadı. Örnek biçim: 120.000 veya 1,5' : 'Hesaplama için aylık aktif enerji tüketimini girin.';
-        ['rkIndPct', 'rkKapPct', 'rkCos', 'rkMonthly', 'rkYearly'].forEach(function (id) { byId(id).textContent = '–'; });
+        ['rkIndPct', 'rkKapPct', 'rkCos', 'rkBilled', 'rkMonthly', 'rkYearly'].forEach(function (id) { byId(id).textContent = '–'; });
         byId('rkPayback').textContent = 'Yatırım tutarı girin';
         summaries.reaktif = null;
         return;
       }
       var ri = ind / kwh * 100, rc = kap / kwh * 100;
-      byId('rkIndPct').textContent = pct(ri);
-      byId('rkKapPct').textContent = pct(rc);
-      var li = setBar(byId('rkIndBar'), byId('rkIndBarWrap'), byId('rkIndLim'), ri, LIM_IND, 'Endüktif oran');
-      var lc = setBar(byId('rkKapBar'), byId('rkKapBarWrap'), byId('rkKapLim'), rc, LIM_CAP, 'Kapasitif oran');
+      var riT = pctLim(ri, L.ind), rcT = pctLim(rc, L.cap);
+      byId('rkIndPct').textContent = riT;
+      byId('rkKapPct').textContent = rcT;
+      var li = setBar(byId('rkIndBar'), byId('rkIndBarWrap'), byId('rkIndLim'), ri, L.ind, 'Endüktif oran', riT);
+      var lc = setBar(byId('rkKapBar'), byId('rkKapBarWrap'), byId('rkKapLim'), rc, L.cap, 'Kapasitif oran', rcT);
       byId('rkCos').textContent = NF3.format(kwh / Math.sqrt(kwh * kwh + ind * ind));
 
-      var over = [];
-      if (li === 'bad') over.push('endüktif');
-      if (lc === 'bad') over.push('kapasitif');
-      if (over.length) {
+      /* md. 13/4 ve 13/6: aşılan sayacın ölçülen değerinin tamamı; ikisi birden aşılırsa en yüksek sayaç değeri */
+      var overI = li === 'bad', overC = lc === 'bad';
+      var billed = overI && overC ? Math.max(ind, kap) : overI ? ind : overC ? kap : 0;
+      byId('rkBilled').textContent = NF0.format(Math.round(billed)) + ' kVArh';
+
+      if (billed > 0) {
         st.setAttribute('data-level', 'bad');
         stI.className = 'fas fa-triangle-exclamation';
-        stT.textContent = 'Ceza bölgesindesiniz: ' + over.join(' ve ') + ' oran sınırı aşıyor. Faturanıza reaktif bedel yansıması beklenir.';
+        stT.textContent = 'Ceza bölgesindesiniz: ' + (overI && overC ? 'endüktif ve kapasitif oran' : overI ? 'endüktif oran' : 'kapasitif oran') +
+          ' sınırı aşıyor. Aşan kısım değil, ' + (overI && overC ? 'en yüksek reaktif sayaç değerinin' : 'ölçülen ' + (overI ? 'endüktif' : 'kapasitif') + ' enerjinin') +
+          ' tamamı (' + NF0.format(Math.round(billed)) + ' kVArh) faturalanır.';
       } else if (li === 'warn' || lc === 'warn') {
         st.setAttribute('data-level', 'warn');
         stI.className = 'fas fa-circle-exclamation';
-        stT.textContent = 'Sınıra yakınsınız. Yükün azaldığı gece ve hafta sonlarında oran sınırı aşabilir.';
+        stT.textContent = 'Sınıra yakınsınız. Yükün azaldığı gece ve hafta sonlarında oran sınırı aşabilir; aşılırsa ölçülen reaktif enerjinin tamamı faturalanır.';
       } else {
         st.setAttribute('data-level', 'ok');
         stI.className = 'fas fa-circle-check';
         stT.textContent = 'Sınırların altındasınız; bu tüketim profiliyle reaktif bedel beklenmez.';
       }
 
-      var low = 0, high = 0;
-      if (ri > LIM_IND) { low += (ind - kwh * LIM_IND / 100); high += ind; }
-      if (rc > LIM_CAP) { low += (kap - kwh * LIM_CAP / 100); high += kap; }
       var priceOk = isFinite(price) && price > 0;
-      var mLow = low * (priceOk ? price : 0), mHigh = high * (priceOk ? price : 0);
+      var m = priceOk ? billed * price : 0, y = m * RK_BILLED_MONTHS;
       if (!priceOk) {
-        byId('rkMonthly').textContent = high > 0 ? 'Birim fiyat girin' : '0 TL';
-        byId('rkYearly').textContent = high > 0 ? '–' : '0 TL';
-      } else if (high <= 0) {
-        byId('rkMonthly').textContent = '0 TL';
-        byId('rkYearly').textContent = '0 TL';
+        byId('rkMonthly').textContent = billed > 0 ? 'Birim fiyat girin' : '0 TL';
+        byId('rkYearly').textContent = billed > 0 ? '–' : '0 TL';
       } else {
-        byId('rkMonthly').textContent = tl(mLow) + ' – ' + tl(mHigh);
-        byId('rkYearly').textContent = tl(mLow * 12) + ' – ' + tl(mHigh * 12);
+        byId('rkMonthly').textContent = tl(m);
+        byId('rkYearly').textContent = tl(y);
       }
       var pb = byId('rkPayback');
       if (isFinite(inv) && inv > 0 && priceOk) {
-        if (mHigh > 0) {
-          var a = inv / mHigh, b = mLow > 0 ? inv / mLow : Infinity;
-          var fmt = function (x) { return x < 1 ? '1 aydan kısa' : NF0.format(Math.ceil(x)) + ' ay'; };
-          pb.textContent = isFinite(b) && Math.ceil(b) !== Math.ceil(a) ? '≈ ' + NF0.format(Math.max(1, Math.ceil(a))) + ' – ' + NF0.format(Math.ceil(b)) + ' ay' : '≈ ' + fmt(a);
+        if (y > 0) {
+          var mo = inv / (y / 12);
+          pb.textContent = mo < 1 ? '1 aydan kısa' : '≈ ' + NF0.format(Math.ceil(mo)) + ' ay' + (mo >= 24 ? ' (≈ ' + NF1.format(mo / 12) + ' yıl)' : '');
         } else {
           pb.textContent = 'Ceza yok; cezaya göre geri ödeme hesaplanamaz';
         }
       } else {
         pb.textContent = 'Yatırım tutarı girin';
       }
-      summaries.reaktif = 'Reaktif hesap: endüktif ' + pct(ri) + ' (sınır %' + LIM_IND + '), kapasitif ' + pct(rc) + ' (sınır %' + LIM_CAP + ')' +
-        (priceOk && high > 0 ? '; tahmini aylık bedel ' + tl(mLow) + ' – ' + tl(mHigh) : (high > 0 ? '; sınır aşılıyor' : '; sınırların altında'));
+      summaries.reaktif = 'Reaktif hesap (' + L.label + '): endüktif ' + riT + ' (sınır %' + L.ind + '), kapasitif ' + rcT + ' (sınır %' + L.cap + ')' +
+        (billed > 0
+          ? '; faturalanacak ' + NF0.format(Math.round(billed)) + ' kVArh' + (priceOk ? ', tahmini aylık bedel ' + tl(m) + ', yıllık ≈ ' + tl(y) + ' (11 ay)' : '')
+          : '; sınırların altında');
     }
 
     /* ---- (b) Plansız duruş maliyeti ---- */
@@ -1662,7 +1785,7 @@
     }
 
     /* Hesaplayıcı girişlerini cihazda sakla */
-    var IDS = ['rkAktif', 'rkInd', 'rkKap', 'rkFiyat', 'rkYatirim', 'dsCiro', 'dsPersonel', 'dsSaat', 'dsAdet', 'dsFire', 'dsAzalma', 'dsBakim'];
+    var IDS = ['rkGrup', 'rkAktif', 'rkInd', 'rkKap', 'rkFiyat', 'rkYatirim', 'dsCiro', 'dsPersonel', 'dsSaat', 'dsAdet', 'dsFire', 'dsAzalma', 'dsBakim'];
     var savedC = store.get(KEY_CALC);
     if (savedC && typeof savedC === 'object') {
       IDS.forEach(function (id) { if (typeof savedC[id] === 'string' && byId(id)) byId(id).value = savedC[id]; });
@@ -1702,21 +1825,26 @@
       });
     });
 
-    /* Ana sayfadaki hızlı tahmin: /fabrika-cozumleri.html?saat=..&tl=..#durus-maliyeti
-       tl = bir saatlik duruşun toplam maliyeti. Yıllık sonuç ana sayfadaki saat × tl ile aynı çıksın diye
-       personel ve fire 0 yazılır (kullanıcı kalemlere ayırabilir). Sorgu, yenilemede tekrar uygulanmasın diye silinir. */
+    /* Ana sayfadaki hızlı tahmin (index.html #downtimeCalc, GET formu; js/main.js gönderime dokunmaz):
+       /fabrika-cozumleri.html?saat=<1-240, yıllık plansız duruş saati>&tl=<5.000-500.000, bir saatlik duruşun
+       toplam maliyeti>#durus-maliyeti. Eşleme: saat → dsSaat (yıllık duruş saati), tl → dsCiro (saatlik kayıp);
+       personel ve fire 0 yazılır ki yıllık sonuç ana sayfadaki saat × tl ile aynı çıksın (kullanıcı kalemlere
+       ayırabilir). Sorgu, yenilemede tekrar uygulanmasın diye silinir; hash yoksa #durus-maliyeti eklenir. */
     function importParams() {
       var q;
       try { q = new URLSearchParams(win.location.search); } catch (e) { return; }
       if (!q.has('saat') && !q.has('tl')) return;
-      var h = parseInt(q.get('saat'), 10), t = parseNum(q.get('tl'));
-      try { win.history.replaceState(win.history.state, '', win.location.pathname + win.location.hash); } catch (e) { /* yok say */ }
-      if (!(h >= 1 && h <= 8760) || !(t > 0 && t < 1e10)) return;
+      var h = parseNum(q.get('saat')), t = parseNum(q.get('tl'));
+      try { win.history.replaceState(win.history.state, '', win.location.pathname + (win.location.hash || '#durus-maliyeti')); } catch (e) { /* yok say */ }
+      if (!(h > 0 && h <= 8760) || !(t > 0 && t < 1e10)) {
+        imported = 'Ana sayfadan gelen değerler okunamadı; hesap formdaki değerlerle yapıldı.';
+        return;
+      }
       byId('dsSaat').value = NF2.format(h);
       byId('dsCiro').value = NF2.format(t);
       byId('dsPersonel').value = '0';
       byId('dsFire').value = '0';
-      imported = 'Ana sayfadaki hızlı tahmininiz aktarıldı: ' + NF0.format(h) + ' saat × ' + tl(t) + '/saat. Saatlik maliyeti ciro, personel ve fire kalemlerine ayırarak sonucu ayrıntılandırabilirsiniz.';
+      imported = 'Ana sayfadaki hızlı tahmininiz aktarıldı: yılda ' + NF2.format(h) + ' saat × ' + tl(t) + '/saat. Saatlik maliyeti ciro, personel ve fire kalemlerine ayırarak sonucu ayrıntılandırabilirsiniz.';
       saveCalc();
     }
     function applyHash(id, fromLoad) {
@@ -1731,9 +1859,16 @@
       return false;
     }
     calcHash = applyHash;
-    var h0 = '';
+    var h0 = '', hasQ = false;
     try { h0 = decodeURIComponent((win.location.hash || '').slice(1)); } catch (e) { h0 = ''; }
+    try { var q0 = new URLSearchParams(win.location.search); hasQ = q0.has('saat') || q0.has('tl'); } catch (e) { hasQ = false; }
     if (h0) applyHash(h0, true);
+    /* ?saat&tl hash'siz (paylaşılan / elle yazılan adres) ya da başka bir hash ile gelirse de aktar; hash yoksa
+       duruş hesaplayıcısına kaydır (vg-shell.js yükleme sonunda hizalamayı düzeltir). */
+    if (hasQ && h0 !== 'durus-maliyeti') {
+      applyHash('durus-maliyeti', true);
+      if (!h0) scrollToId('durus-maliyeti');
+    }
     win.addEventListener('hashchange', function () {
       var h = '';
       try { h = decodeURIComponent((win.location.hash || '').slice(1)); } catch (e) { return; }

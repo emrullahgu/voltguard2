@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012" defer></script>
+  <script src="/js/vg-shell.js?v=20261012b" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -53,7 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261011">
+  <link rel="stylesheet" href="/css/style.css?v=20261012b">
   <style id="kb-local">.kb-cta>div:last-child{min-width:0;max-width:100%}.kb-cta .btn{white-space:normal;line-height:1.25;max-width:100%;text-align:center}.vg-form-actions>.kb-cta{min-width:0}.article p a:not(.btn):not(.kb-card__more),.article li a:not(.btn),.article td a,.faq-item__a a{color:var(--clr-accent-text);text-decoration:underline;text-underline-offset:2px}.article p a:not(.btn):not(.kb-card__more):hover,.article li a:not(.btn):hover,.article td a:hover,.faq-item__a a:hover{text-decoration-thickness:2px}.kb-hero p a{color:#fcd34d;text-decoration:underline;text-underline-offset:2px}.kb-criteria td:first-child{white-space:normal;width:36%}</style>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html#article","headline":"VFD OverCurrent (OC) Hatası - Sebepleri ve Çözümü","description":"VFD üzerinde OverCurrent (OC) hatası nedenleri: motor kilitlenme, yanlış V/f eğrisi, kısa devre koruması, motor kablosu uzunluğu ve rampalar.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","articleSection":"VoltGuard'a Sor","image":"https://voltguard.com.tr/public/og-image.png","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard'a Sor","item":"https://voltguard.com.tr/sor.html"},{"@type":"ListItem","position":3,"name":"VFD OverCurrent Hatası","item":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html"}]}]}</script>
 </head>
@@ -127,7 +127,7 @@
       <li><strong>V/f eğrisi ayarı:</strong> Torque boost (düşük hızda ekstra gerilim) fazla ayarlanırsa düşük frekansta motor akımı fırlar. Fabrika ayarında bırakın veya auto-tune yapın.</li>
       <li><strong>Yanlış VFD boyutlandırma:</strong> VFD'nin nominal akımı (In) motor In × 1,1 üzerinde olmalı. Değişken tork uygulamalarında bu yeterli; sabit tork uygulamalarında bir kademe büyük VFD tercih edin.</li>
       <li><strong>Uzun motor kablosu:</strong> 30 m üzeri kablo IGBT anahtarlama dalgalarını yansıtır; motor sargı uçlarında 2 × DC bara gerilimi (yaklaşık 1200 V pik) oluşur. dv/dt veya sinüs filtresi eklenmezse VFD OC verir ve motor yalıtımı zarar görür.</li>
-      <li><strong>Motor sargı kısa devresi / toprak arızası:</strong> Sargı içi kısa devre veya toprak arıza durumunda VFD çıkışında normal olmayan akım geçer. Megohmmetre ile sargı-toprak ve sargı-sargı izolasyon kontrolü yapılmalı.</li>
+      <li><strong>Motor sargı kısa devresi / toprak arızası:</strong> Sargı içi kısa devre veya toprak arıza durumunda VFD çıkışında normal olmayan akım geçer. Megger ile sargı-toprak ve sargı-sargı izolasyon kontrolü yapılmalı.</li>
     </ol>
 
     <h2>Hata Anında Ne Kontrol Etmeli?</h2>
@@ -135,14 +135,14 @@
       <li>Hata kaydında yazan <strong>frekans</strong>: 0-5 Hz arasında OC ise V/f eğrisi veya mekanik problem, tam hızda OC ise motor / kablo problemi.</li>
       <li><strong>Akım değeri</strong>: OC eşiği kaç ampere ayarlı ve gerçek akım kaç? Fark az ise sınır aşımı, çok ise donanım problemi.</li>
       <li><strong>Hata sıklığı</strong>: Ilk çalıştırmada mı, yoğun kullanımda mı, sıcak havada mı? Zamansal bağıntı ipucu verir.</li>
-      <li><strong>Fault stack</strong>: Modern VFD'lerde son 10 hata ve o anki değerler kayıtlıdır; bunlar sürücünün hata geçmişi menüsünden okunur.</li>
+      <li><strong>Fault stack</strong>: Modern VFD'lerde son 10 hata ve o anki değerler kayıtlıdır (Yaskawa U3-01, Siemens Faults menu, ABB parameters group 04).</li>
     </ul>
 
     <h2>Ölçümle Nasıl Doğrularsınız?</h2>
     <ul class="article__list">
       <li><strong>Pens ampermetre:</strong> Motor kalkış akımını gerçek zamanlı okuyun. Rampa boyunca max akımı not edin.</li>
       <li><strong>Osiloskop:</strong> Motor girişi V ve I dalga şekli. Yüksek dv/dt görülüyorsa filtre gerekli.</li>
-      <li><strong>Megohmmetre ile motor sargısı:</strong> Sargı-toprak izolasyonu &gt; 1 MΩ olmalı.</li>
+      <li><strong>Megger ile motor sargısı:</strong> Sargı-toprak izolasyonu &gt; 1 MΩ olmalı.</li>
       <li><strong>Motor sargı direnç ölçümü:</strong> Üç sargı direnci arasında %5 fark olmamalı.</li>
       <li><strong>Rulman termal kamerası:</strong> Yük yokken bile rulmanda 15 °C üstü sıcaklık artışı mekanik problemi işaret eder.</li>
     </ul>
@@ -317,6 +317,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261011b" defer></script>
+  <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
 </body>
 </html>

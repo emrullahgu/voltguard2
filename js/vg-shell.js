@@ -231,50 +231,80 @@
   /* ---------- Çapa (#bölüm) kaydırma ----------
      Ana sayfadaki bölümler content-visibility:auto kullanır: ekran dışındaki bölümler gerçek yükseklikleri
      yerine tahmini boyutla yer kaplar, bu yüzden uzak bir çapaya kayarken hedef konum kayabilir.
-     scrollTo() hedefe kayar, hareket durunca (veya sayfa #bölüm ile açılınca) kayma varsa yeniden hizalar. */
+     scrollTo() hedefe kayar, hareket durunca (veya sayfa #bölüm ile açılınca) kayma varsa yeniden hizalar.
+     Hedef çizgi, tarayıcının scrollIntoView'da kullandığı değerle aynıdır: kökün scroll-padding-top'ı
+     (hizmet sayfalarında yapışkan sayfa içi menü dahil ~136px) + hedefin scroll-margin-top'ı. */
   var reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
-  function wantTop() { return header.getBoundingClientRect().height + 12; }
+  function cssPx(v, base) {
+    var n = parseFloat(v);
+    if (!isFinite(n)) return NaN;                          // 'auto' vb.
+    return /%$/.test(String(v)) ? n * base / 100 : n;
+  }
+  function wantTop(el) {
+    var pad = NaN, margin = 0;
+    try {
+      pad = cssPx(getComputedStyle(root).scrollPaddingTop, window.innerHeight);
+      if (el) margin = cssPx(getComputedStyle(el).scrollMarginTop, 0) || 0;
+    } catch (err) { /* eski tarayıcı */ }
+    if (!(pad >= 0)) pad = header.getBoundingClientRect().height + 12;
+    return pad + margin;
+  }
   function hashTarget(h) {
     if (!h || h.length < 2) return null;
     try { return doc.getElementById(decodeURIComponent(h.slice(1))); } catch (err) { return null; }
   }
+  /* Tek hizalama döngüsü: her yeni settle() (yeni çapa tıklaması) ve her kullanıcı kaydırma girişimi jetonu
+     artırır; eski döngü bir sonraki adımında jetonun değiştiğini görüp durur. Böylece 1-4 sn içinde ikinci bir
+     bağlantıya tıklandığında eski döngü sayfayı önceki hedefe geri çekmez. */
+  var settleToken = 0;
+  function cancelSettle() { settleToken++; }
+  ['pointerdown', 'wheel', 'touchstart', 'keydown'].forEach(function (t) {
+    window.addEventListener(t, cancelSettle, { passive: true, capture: true });
+  });
   function settle(el) {
-    var last = -1, n = 0, stop = false, evs = ['wheel', 'touchstart', 'keydown'];
-    function cancel() { stop = true; }
-    evs.forEach(function (t) { window.addEventListener(t, cancel, { once: true, passive: true }); });
+    var token = ++settleToken, last = -1, fixes = 0, t0 = Date.now();
     (function tick() {
-      if (stop) return;
+      if (token !== settleToken || !el.isConnected) return;
       var y = window.pageYOffset;
-      if (y === last) {
-        if (Math.abs(el.getBoundingClientRect().top - wantTop()) <= 6) { done(); return; }
+      if (y === last) {                                    // hareket bitti (140 ms boyunca sabit)
+        var off = el.getBoundingClientRect().top - wantTop(el);
+        if (Math.abs(off) <= 6) return;
+        var se = doc.scrollingElement || root;
+        if (off > 0 && y >= se.scrollHeight - window.innerHeight - 1) return;   // sayfa sonu: daha fazla kayamaz
+        if (++fixes > 6) return;
         el.scrollIntoView({ block: 'start', behavior: 'instant' });
+        if (window.pageYOffset === y) return;              // tarayıcı zaten hizalı sayıyor: düzeltilecek bir şey yok
         last = -1;
       } else {
-        last = y;
+        last = y;                                          // yumuşak kaydırma sürüyor: bitmesini bekle
       }
-      if (++n < 30) setTimeout(tick, 140); else done();
+      // Süre sınırı adım sayısı yerine zamana bağlı: yavaş cihazda uzun bir yumuşak kaydırma bitmeden döngü sonlanmasın.
+      if (Date.now() - t0 < 10000) setTimeout(tick, 140);
     }());
-    function done() { evs.forEach(function (t) { window.removeEventListener(t, cancel); }); }
   }
+  var lastJump = null;                                     // { el, at }: en son scrollTo() hedefi
   function scrollToEl(target) {
     var el = typeof target === 'string' ? doc.getElementById(target.replace(/^#/, '')) : target;
     if (!el) return false;
     el.scrollIntoView({ block: 'start', behavior: reduceMQ.matches ? 'instant' : 'smooth' });
     settle(el);
+    lastJump = { el: el, at: Date.now() };
     return true;
   }
   // Bağlantıyla gidilen bölüme odağı da taşı (klavye/ekran okuyucu kullanıcısı bölümün başından devam etsin).
-  // Odaklanamayan hedefe tabindex="-1" eklenir; halka gösterilmez (css/vg-shell.css [data-vg-anchor-focus]).
+  // Odaklanamayan hedefe tabindex="-1" eklenir; halka gösterilmez (css/vg-shell.css [data-vg-anchor-focus];
+  // sayfa CSS'indeki daha özgül :focus-visible kuralları da halkayı çizmesin diye satır içi outline:none).
   function focusTarget(el) {
     if (!el.hasAttribute('tabindex') && !/^(A|BUTTON|INPUT|SELECT|TEXTAREA|SUMMARY)$/.test(el.tagName)) {
       el.setAttribute('tabindex', '-1');
       el.setAttribute('data-vg-anchor-focus', '');
+      el.style.outline = 'none';
     }
     try { el.focus({ preventScroll: true }); } catch (err) { /* eski tarayıcı */ }
   }
   // Aynı sayfadaki /#bölüm bağlantıları (başlık, alt bilgi, içerik): geçmişe ekle, kaydır, hizala, odağı taşı
   doc.addEventListener('click', function (e) {
-    if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     var a = e.target && e.target.closest ? e.target.closest('a[href*="#"]') : null;
     if (!a || (a.target && a.target !== '_self')) return;
     var u;
@@ -282,8 +312,14 @@
     if (u.origin !== location.origin || u.hash.length < 2 || canon(u.pathname) !== canon(location.pathname)) return;
     var el = hashTarget(u.hash);
     if (!el) return;
+    if (e.defaultPrevented) {
+      // Bağlantıyı başka bir betik (ör. js/main.js) VGShell.scrollTo ile kaydırdıysa yalnızca odağı taşı.
+      if (lastJump && lastJump.el === el && Date.now() - lastJump.at < 250) focusTarget(el);
+      return;
+    }
     e.preventDefault();
     if (location.hash !== u.hash) { try { history.pushState(null, '', u.pathname + u.search + u.hash); } catch (err) { /* no-op */ } }
+    if (el.tagName === 'DETAILS' && !el.open) el.open = true;   // pushState hashchange tetiklemez
     scrollToEl(el);
     focusTarget(el);
   });

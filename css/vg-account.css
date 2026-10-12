@@ -204,6 +204,8 @@ details[open] .vg-history-item__chev { transform: rotate(180deg); }
 .vg-history-item__params dt { color: var(--clr-text-muted); }
 .vg-history-item__params dd { margin: 0; color: var(--clr-dark); font-weight: 600; overflow-wrap: anywhere; }
 .vg-item-note { margin: .4rem 0 0; font-size: .88rem; color: var(--clr-text-muted); white-space: pre-line; overflow-wrap: anywhere; }
+.vg-history-item__breakdown { margin: .55rem 0 0; padding: .5rem 0 0 1.1rem; list-style: disc outside; border-top: 1px dashed var(--clr-border, #dbe2ea); display: grid; gap: .2rem; font-size: .86rem; color: var(--clr-dark); overflow-wrap: anywhere; }
+.vg-history-item__breakdown li::marker { color: var(--clr-text-muted); }
 .vg-item-meta { color: var(--clr-text-muted); font-size: .8rem; font-weight: 400; }
 .vg-item-select { min-height: 34px !important; padding: .3rem .6rem !important; font-size: .8rem !important; width: auto !important; max-width: 100%; }
 .vg-project-calcs { margin: .4rem 0 0; padding: 0; list-style: none; display: grid; gap: .3rem; font-size: .88rem; color: var(--clr-text-muted); }

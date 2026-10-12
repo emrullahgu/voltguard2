@@ -3105,7 +3105,7 @@ button:focus-visible {
   font-weight: 700;
   letter-spacing: .05em;
   text-transform: uppercase;
-  color: var(--clr-accent-text);
+  color: #92400e;                            /* amber-800: ~6.5:1 on the pill (--clr-accent-text was 4.4:1) */
   background: rgba(245, 158, 11, .12);
   padding: .3rem .8rem;
   border-radius: var(--r-full);
@@ -3161,6 +3161,22 @@ button:focus-visible {
 .kb-cta { margin-top: 2rem; background: linear-gradient(135deg, var(--clr-dark), var(--clr-dark-mid)); color: #fff; border-radius: var(--r-lg); padding: 1.6rem 1.75rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
 .kb-cta__text strong { display: block; font-family: var(--font-heading); font-size: 1.18rem; margin-bottom: .25rem; }
 .kb-cta__text span { color: rgba(255, 255, 255, .78); font-size: .94rem; }
+/* Bilgi bankası ortak kuralları — sayfalardaki <style id="kb-local"> bloğunun birebir kopyası (aynı seçiciler).
+   Taşma: .kb-cta düğmesi dar ekranda kutudan taşmasın. Bağlantılar: makale/SSS içindeki metin bağlantıları
+   altı çizili ve vurgu renginde (yalnızca renkle ayırt edilmesin). Bloklar sayfalardan kaldırılınca da geçerli kalır. */
+.kb-cta > div:last-child { min-width: 0; max-width: 100%; }
+.kb-cta .btn { white-space: normal; line-height: 1.25; max-width: 100%; text-align: center; }
+.vg-form-actions > .kb-cta { min-width: 0; }
+.article p a:not(.btn):not(.kb-card__more),
+.article li a:not(.btn),
+.article td a,
+.faq-item__a a { color: var(--clr-accent-text); text-decoration: underline; text-underline-offset: 2px; }
+.article p a:not(.btn):not(.kb-card__more):hover,
+.article li a:not(.btn):hover,
+.article td a:hover,
+.faq-item__a a:hover { text-decoration-thickness: 2px; }
+.kb-hero p a { color: #fcd34d; text-decoration: underline; text-underline-offset: 2px; }
+.kb-criteria td:first-child { white-space: normal; width: 36%; }
 
 /* Hub */
 .kb-hero { background: linear-gradient(135deg, #081120, #0d1f3c); color: #fff; padding: 3rem var(--container-pad) 3.25rem; text-align: center; }
@@ -3219,6 +3235,10 @@ button:focus-visible {
 .mini-calc__result-value { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; line-height: 1.25; }
 .mini-calc__result-note { font-size: .85rem; color: rgba(255,255,255,.82); line-height: 1.55; }
 @media (max-width: 700px) { .mini-calc { grid-template-columns: 1fr; } }
+@media print {
+  .mini-calc__result { background: #fff !important; color: #0a1628 !important; border: 1px solid #0a1628; }
+  .mini-calc__result * { color: #0a1628 !important; }
+}
 
 /* VoltGuard'a Sor */
 .qa-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin: .6rem 0 0; }
@@ -3378,7 +3398,7 @@ button:focus-visible {
 .vg-inline-form textarea { grid-column: 1 / -1; min-height: 60px; resize: vertical; }
 .vg-inline-form button { background: var(--clr-accent); color: var(--clr-dark); border: 0; border-radius: 5px; padding: .65rem 1.1rem; font: 700 .9rem var(--font-heading); cursor: pointer; }
 @media (max-width: 860px) {
-  .vg-panel { grid-template-columns: 1fr; }
+  .vg-panel { grid-template-columns: minmax(0, 1fr); }
   .vg-panel__nav { position: static; }
   .vg-inline-form { grid-template-columns: 1fr; }
 }

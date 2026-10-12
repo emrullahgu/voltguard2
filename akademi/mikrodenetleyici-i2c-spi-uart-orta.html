@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012" defer></script>
+  <script src="/js/vg-shell.js?v=20261012b" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -53,7 +53,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261011">
+  <link rel="stylesheet" href="/css/style.css?v=20261012b">
   <style id="kb-local">.kb-cta>div:last-child{min-width:0;max-width:100%}.kb-cta .btn{white-space:normal;line-height:1.25;max-width:100%;text-align:center}.vg-form-actions>.kb-cta{min-width:0}.article p a:not(.btn):not(.kb-card__more),.article li a:not(.btn),.article td a,.faq-item__a a{color:var(--clr-accent-text);text-decoration:underline;text-underline-offset:2px}.article p a:not(.btn):not(.kb-card__more):hover,.article li a:not(.btn):hover,.article td a:hover,.faq-item__a a:hover{text-decoration-thickness:2px}.kb-hero p a{color:#fcd34d;text-decoration:underline;text-underline-offset:2px}.kb-criteria td:first-child{white-space:normal;width:36%}</style>
   <style>
     .article pre.tool-formula{background:#f8fafc;border:1px dashed var(--clr-border);border-radius:5px;padding:.75rem .9rem;overflow-x:auto;font-size:.85rem;line-height:1.5;color:#334155;white-space:pre}
@@ -113,17 +113,17 @@
     <span class="article__cat">Elektronik &amp; Mikrodenetleyici</span>
     <span class="akademi-level akademi-level--orta">Orta Seviye</span>
     <h1>Mikrodenetleyici Programlama: I2C / SPI / UART Haberleşme</h1>
-    <p class="article__summary">Orta seviye bu derste; 32 bit mikrodenetleyicilerde GPIO, kesme (interrupt) ve DMA kullanımını, ayrıca en yaygın üç haberleşme protokolü olan UART, SPI ve I2C'yi pratik örneklerle işleyeceğiz. Ön koşul: <a href="elektronik-mikrodenetleyici-temelleri.html">Elektronik ve Mikrodenetleyici Temelleri</a> dersi.</p>
+    <p class="article__summary">Orta seviye bu derste; ARM Cortex-M tabanlı mikrodenetleyicilerde (STM32, NXP) GPIO, kesme (interrupt) ve DMA kullanımını, ayrıca en yaygın üç haberleşme protokolü olan UART, SPI ve I2C'yi pratik örneklerle işleyeceğiz. Ön koşul: <a href="elektronik-mikrodenetleyici-temelleri.html">Elektronik ve Mikrodenetleyici Temelleri</a> dersi.</p>
 
     <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Register tabanlı GPIO kontrol, EXTI kesme, DMA transferi, UART/SPI/I2C protokollerinin fiziksel ve mantıksal katmanları ve bir sensör okuma örneği.</div>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Birçok modern MCU 32 bit RISC çekirdek kullanır; çekirdek ailesi hız, bellek ve enerji ihtiyacına göre seçilir (RISC-V gibi açık mimariler de yaygınlaşmaktadır).</li><li>Kesme (interrupt) kullanmayan gömülü sistem yoktur; polling yerine event-driven programlama tercih edilir.</li><li>DMA (Direct Memory Access), CPU yükünü azaltarak yüksek hızlı veri transferini mümkün kılar.</li><li>UART asenkron ve tam çift yönlü (nokta-nokta), SPI senkron ve tam çift yönlü, I2C ise çok cihazlı ve yarı çift yönlü bir bus'tır.</li><li>Üretici IDE'leri ve GCC tabanlı açık kaynak araç zincirleri en yaygın geliştirme ortamlarıdır.</li></ul></div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Birçok modern MCU ARM Cortex-M0/M0+/M3/M4/M7 çekirdeklerini kullanır; bunlar 32-bit RISC işlemcilerdir (ESP32 gibi bazıları ise Xtensa veya RISC-V çekirdeği kullanır).</li><li>Kesme (interrupt) kullanmayan gömülü sistem yoktur; polling yerine event-driven programlama tercih edilir.</li><li>DMA (Direct Memory Access), CPU yükünü azaltarak yüksek hızlı veri transferini mümkün kılar.</li><li>UART asenkron ve tam çift yönlü (nokta-nokta), SPI senkron ve tam çift yönlü, I2C ise çok cihazlı ve yarı çift yönlü bir bus'tır.</li><li>STM32 CubeIDE, ESP-IDF ve Arduino en yaygın geliştirme ortamlarıdır.</li></ul></div>
 
     <h2>Mikrodenetleyici Mimarisi</h2>
-    <p>Bir mikrodenetleyici; CPU çekirdeği, Flash, RAM, çevre birimleri (GPIO, timer, ADC, UART, SPI, I2C, CAN, USB) ve saat sistemini tek çip halinde barındırır. Örnek bir 32 bit konfigürasyon: FPU'lu çekirdek, 100 MHz, 512 KB Flash, 128 KB RAM, 3 UART, 5 SPI, 3 I2C, 1 ADC, USB ve zamanlayıcılar. Endüstriyel cihazlarda UART çıkışı çoğunlukla bir RS-485 sürücüsüyle sahaya taşınır ve <a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA otomasyon</a> sistemlerinde Modbus RTU haberleşmesinin fiziksel temelini oluşturur.</p>
+    <p>Bir mikrodenetleyici; CPU çekirdeği (ARM Cortex-M), Flash, RAM, çevre birimleri (GPIO, timer, ADC, UART, SPI, I2C, CAN, USB) ve saat sistemini tek çip halinde barındırır. Endüstriyel gömülü sistemlerde en yaygın seri STM32'dir (STMicroelectronics). Örnek konfigürasyon: STM32F411, ARM Cortex-M4F, 100 MHz, 512 KB Flash, 128 KB RAM, 3 UART, 5 SPI, 3 I2C, 1 ADC, USB, timer. Endüstriyel cihazlarda UART çıkışı çoğunlukla bir RS-485 sürücüsüyle sahaya taşınır ve <a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA otomasyon</a> sistemlerinde Modbus RTU haberleşmesinin fiziksel temelini oluşturur.</p>
 
     <h2>GPIO Kontrolü: Register Tabanlı</h2>
-    <p>Bir LED'i A portunun 5. pinine (PA5) bağladığımızı düşünelim. Örnek MCU'da yapılan işlemler:</p>
+    <p>Bir LED'i D pinine bağladığımızı düşünelim (PA5, STM32 için). Yapılan işlemler:</p>
     <ol class="article__list">
       <li>Clock aktif: RCC → AHB1ENR → GPIOAEN = 1</li>
       <li>Pin modu: GPIOA → MODER[10:11] = 01 (output)</li>
@@ -137,7 +137,7 @@
     <h2>Kesme (Interrupt) ile Buton</h2>
     <p>Bir butonu PA0'e bağlayıp basıldığında LED durumunu değiştirmek için polling yerine EXTI kesmesi tercih edilir:</p>
     <pre class="tool-formula">
-// Yapılandırma aracında PA0 = GPIO_EXTI0, Rising Edge, Pull-up
+// CubeMX ile PA0 = GPIO_EXTI0, Rising Edge, Pull-up
 void EXTI0_IRQHandler(void) {
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
 }
@@ -160,7 +160,7 @@ HAL_UART_Transmit_DMA(&amp;huart1, buf, len);
     </pre>
 
     <h2>SPI: Yüksek Hızlı Senkron</h2>
-    <p>SPI (Serial Peripheral Interface), 4 hatlı (MOSI, MISO, SCLK, CS) senkron protokoldür. Aynı bus'ta birden fazla cihaz olabilir; her cihazın kendi CS (Chip Select) hattı vardır. Hız 10-50 MHz'e ulaşır. Örnek uygulama: SPI Flash, OLED ekran, SD kart, harici ADC.</p>
+    <p>SPI (Serial Peripheral Interface), 4 hatlı (MOSI, MISO, SCLK, CS) senkron protokoldür. Aynı bus'ta birden fazla cihaz olabilir; her cihazın kendi CS (Chip Select) hattı vardır. Hız 10-50 MHz'e ulaşır. Örnek uygulama: SPI Flash, OLED ekran, SD kart, ADC (MAX11040 gibi).</p>
     <pre class="tool-formula">
 uint8_t tx[2] = {0x01, 0x02};
 uint8_t rx[2];
@@ -170,9 +170,9 @@ HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_SET);
     </pre>
 
     <h2>I2C: Çoklu Cihaz Bus'ı</h2>
-    <p>I2C (Inter-Integrated Circuit), sadece 2 hat (SDA, SCL) kullanan çok cihazlı bir bus'tır. Standart 100 kHz, Fast 400 kHz, Fast+ 1 MHz. Her cihazın 7-bit adresi vardır (128 cihaz teoride). Örnek uygulama: EEPROM, sıcaklık/basınç sensörü, IMU (ivme ve jiroskop), RTC (gerçek zaman saati).</p>
+    <p>I2C (Inter-Integrated Circuit), sadece 2 hat (SDA, SCL) kullanan çok cihazlı bir bus'tır. Standart 100 kHz, Fast 400 kHz, Fast+ 1 MHz. Her cihazın 7-bit adresi vardır (128 cihaz teoride). Örnek uygulama: EEPROM (24LC256), sıcaklık sensörü (LM75, BMP280), IMU (MPU6050), RTC (DS3231).</p>
     <pre class="tool-formula">
-// I2C sıcaklık sensörü örneği
+// LM75 sıcaklık sensörü örneği
 uint8_t reg = 0x00;  // Temp register
 uint8_t data[2];
 HAL_I2C_Master_Transmit(&amp;hi2c1, 0x90, &amp;reg, 1, 100);
@@ -196,11 +196,11 @@ float celsius = temp * 0.125f;
 
     <h2>Debug Araçları</h2>
     <ul class="article__list">
-      <li><strong>SWD/JTAG debug probu:</strong> Programlama ve adım adım debug</li>
-      <li><strong>Profesyonel debug probları:</strong> Çoklu MCU desteği, yüksek hızlı programlama ve iz (trace) kaydı</li>
-      <li><strong>Lojik analizör:</strong> UART/SPI/I2C sinyal analizi</li>
+      <li><strong>ST-Link V2/V3:</strong> STM32 için standart debug + programlama</li>
+      <li><strong>J-Link:</strong> Segger'ın çoklu MCU destekli profesyonel debugger</li>
+      <li><strong>Saleae Logic Analyzer:</strong> UART/SPI/I2C sinyal analizi</li>
       <li><strong>Osiloskop:</strong> Fiziksel sinyal kalitesi ve timing</li>
-      <li><strong>Seri port üzerinden log:</strong> printf tabanlı hızlı debug</li>
+      <li><strong>RTT (Real-Time Transfer):</strong> printf tabanlı hızlı debug</li>
     </ul>
 
     <h2>Sıradaki Konu</h2>
@@ -359,6 +359,6 @@ float celsius = temp * 0.125f;
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261011b" defer></script>
+  <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
 </body>
 </html>

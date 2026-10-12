@@ -6,6 +6,8 @@
    - Share (Web Share API or copy link)
    - Export as PDF (via jsPDF loaded on demand; Turkish letters and
      engineering symbols are transliterated, see pdfText)
+   Inputs inside a [hidden] container are not listed; the result's
+   .calc-breakdown lines (if any) go into the PDF and the saved record.
    Also draws a consistent "VoltGuard Tools" brand banner.
    ===================================================== */
 (function (global) {
@@ -30,10 +32,15 @@
     return h1 ? h1.textContent.trim() : document.title;
   }
 
+  // Gizlenen alanlar (ör. bina tipi seçili değilken fider alanları) hesaba katılmadığı için listelenmez.
+  function fieldVisible(el) {
+    return el.type !== 'hidden' && !el.disabled && !el.closest('[hidden]');
+  }
+
   function readInputs(rootSelector) {
     var root = q(rootSelector || '.mini-calc, .tool-fields, .tool-card');
     if (!root) return [];
-    return qq('input, select', root).map(function (el) {
+    return qq('input, select', root).filter(fieldVisible).map(function (el) {
       var lbl = null;
       if (el.id) { var l = q('label[for="' + el.id + '"]'); if (l) lbl = l.textContent.trim(); }
       if (!lbl) { var parent = el.closest('.mini-calc__field, .tool-field'); if (parent) { var pl = q('label', parent); if (pl) lbl = pl.textContent.trim(); } }
@@ -43,12 +50,24 @@
     });
   }
 
+  function cleanLine(text) { return String(text || '').replace(/\s+/g, ' ').trim(); }
+
+  // Sonuç kutusundaki .calc-breakdown satırları "Etiket: Değer" metni olarak okunur (en fazla 20 satır).
+  function readBreakdown(scope) {
+    return qq('.calc-breakdown li', scope).filter(function (li) { return !li.closest('[hidden]'); }).map(function (li) {
+      var parts = qq('span', li).map(function (sp) { return cleanLine(sp.textContent); }).filter(Boolean);
+      return parts.length ? parts.join(': ') : cleanLine(li.textContent);
+    }).filter(Boolean).slice(0, 20);
+  }
+
   function readResult() {
     var v = q('.mini-calc__result-value, .tool-result__amount');
     var n = q('.mini-calc__result-note, .tool-result__detail');
+    var box = v && v.closest('.mini-calc__result, .tool-result');
     return {
       value: v ? v.textContent.trim() : '',
-      note: n ? n.textContent.trim() : ''
+      note: n ? n.textContent.trim() : '',
+      breakdown: readBreakdown(box || q('.mini-calc') || document)
     };
   }
 
@@ -136,6 +155,19 @@
       doc.text(noteLines, margin, y); y += noteLines.length * 5;
       doc.setTextColor(30);
     }
+    if (r.breakdown && r.breakdown.length) {
+      y += 3;
+      ensureSpace(12);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+      doc.text(pdfText('Hesap dökümü'), margin, y); y += 5.5;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+      r.breakdown.forEach(function (line) {
+        var lines = doc.splitTextToSize(pdfText('- ' + line), width);
+        ensureSpace(lines.length * 5);
+        doc.text(lines, margin, y);
+        y += lines.length * 5;
+      });
+    }
     y += 8;
     ensureSpace(26);
     doc.setDrawColor(200); doc.line(margin, y, 210 - margin, y); y += 5;
@@ -170,7 +202,8 @@
   }
 
   // Hesaplamayı kaydeder: giriş yapılmışsa hesaba (sunucuya senkronlanır), değilse bu tarayıcıya.
-  // Misafir kayıtları giriş/kayıt sonrasında hesaba otomatik aktarılır.
+  // Misafir kayıtları giriş/kayıt sonrasında hesaba otomatik aktarılır. Sonuçla birlikte hesap dökümü
+  // satırları (result.breakdown) da saklanır; Kayıtlarım sayfası bunları listeler.
   function saveCurrentToAccount(userNote) {
     var a = auth();
     if (!a) throw new Error('Hesap modülü yüklenemedi.');
@@ -321,7 +354,9 @@
     init: init,
     readInputs: readInputs,
     readResult: readResult,
+    readBreakdown: readBreakdown,
     exportPdf: exportPdf,
+    ensureJsPdf: ensureJsPdf,
     pdfText: pdfText,
     pdfSlug: pdfSlug,
     saveToAccount: saveCurrentToAccount,

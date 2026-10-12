@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012" defer></script>
+  <script src="/js/vg-shell.js?v=20261012b" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <title>Fabrika Elektrik Altyapısı Anahtar Teslim | VoltGuard</title>
@@ -66,9 +66,9 @@
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
-  <link rel="stylesheet" href="/css/factory.css?v=20261012">
+  <link rel="stylesheet" href="/css/factory.css?v=20261012b">
   <script>document.documentElement.classList.add('fx-js');setTimeout(function(){if(!window.__fxReady)document.documentElement.classList.add('fx-noanim')},3500);</script>
-  <script src="/js/factory.js?v=20261012" defer onerror="document.documentElement.classList.remove('fx-js')"></script>
+  <script src="/js/factory.js?v=20261012b" defer onerror="document.documentElement.classList.remove('fx-js')"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -592,6 +592,14 @@
             <form class="fx-calc__form" id="fxReaktif" novalidate>
               <p class="fx-calc__sample"><i class="fas fa-pen" aria-hidden="true"></i> Örnek değerlerle açılır; kendi faturanızdaki aylık değerleri yazın.</p>
               <div class="fx-field">
+                <label for="rkGrup">Abone grubu <span class="fx-unit">kurulu güç</span></label>
+                <select class="fx-input" id="rkGrup" aria-describedby="rkGrupHint">
+                  <option value="ge50" selected>50 kVA ve üzeri</option>
+                  <option value="lt50">15 kW üzeri, 50 kVA altı</option>
+                </select>
+                <small class="fx-hint" id="rkGrupHint">Sınırlar gruba göre değişir. Mesken, aydınlatma, tek fazlı aboneler ve kurulu gücü 15 kW'a kadar olanlara reaktif bedel uygulanmaz.</small>
+              </div>
+              <div class="fx-field">
                 <label for="rkAktif">Aylık aktif enerji tüketimi <span class="fx-unit">kWh</span></label>
                 <input class="fx-input" id="rkAktif" type="text" inputmode="decimal" autocomplete="off" value="120.000" data-num>
               </div>
@@ -633,9 +641,10 @@
               <div class="fx-status" id="rkStatus" data-level="ok"><i class="fas fa-circle-check" aria-hidden="true"></i> <span id="rkStatusText">Değerleri girin</span></div>
               <dl class="fx-kpis">
                 <div><dt>Aylık ortalama cosφ</dt><dd id="rkCos">–</dd></div>
+                <div><dt>Faturalanacak reaktif enerji</dt><dd id="rkBilled">–</dd></div>
                 <div><dt>Tahmini aylık reaktif bedel</dt><dd id="rkMonthly">–</dd></div>
-                <div><dt>Yıllık karşılığı</dt><dd id="rkYearly">–</dd></div>
-                <div><dt>Basit geri ödeme</dt><dd id="rkPayback">Yatırım tutarı girin</dd></div>
+                <div><dt>Yıllık karşılığı (11 ay)</dt><dd id="rkYearly">–</dd></div>
+                <div class="fx-kpis__wide"><dt>Basit geri ödeme</dt><dd id="rkPayback">Yatırım tutarı girin</dd></div>
               </dl>
               <div class="fx-calc__actions">
                 <button type="button" class="fx-btn fx-btn--primary fx-btn--sm" data-fx-calc-add="reaktif"><i class="fas fa-plus" aria-hidden="true"></i> Sonucu teklife ekle</button>
@@ -646,9 +655,9 @@
             <details class="fx-assume" open>
               <summary>Varsayımlar ve sınırlamalar</summary>
               <ul>
-                <li>Sınır değerler: aylık endüktif reaktif / aktif enerji oranı <strong>en fazla %20</strong>, kapasitif oran <strong>en fazla %15</strong> (2026 EPDK düzenlemesi, 50 kW üzeri abonelikler). Kaynak: <a href="/sor/cosfi-098-fatura-reaktif-ceza.html">Cosφ 0,98 ama reaktif ceza var</a> yanıtımız ve <a href="/bilgi/reaktif-guc-kompanzasyonu.html">Reaktif Güç Kompanzasyonu</a> rehberi.</li>
-                <li>Sınır aşıldığında bedelin yalnızca aşan kısım üzerinden mi, reaktif tüketimin tamamı üzerinden mi hesaplandığı tarife uygulamasına göre değişebilir. Bu yüzden iki ucu birden, aralık olarak gösteriyoruz.</li>
-                <li>Girdiğiniz ayın yılın tamamını temsil ettiği kabul edilir (yıllık = aylık × 12). Geri ödeme süresi, yatırımın cezayı tamamen ortadan kaldırdığı varsayımıyla hesaplanır.</li>
+                <li>Sınır değerler: kurulu gücü 50 kVA ve üzeri kullanıcılarda endüktif reaktif / aktif enerji oranı <strong>en fazla %20</strong>, kapasitif oran <strong>en fazla %15</strong>; 50 kVA altında <strong>%33</strong> ve <strong>%20</strong> (EPDK Tarife Uygulamaları Usul ve Esasları md. 13, <a href="https://www.resmigazete.gov.tr/eskiler/2022/04/20220430-5.pdf" target="_blank" rel="noopener noreferrer">RG 30.04.2022/31825</a>).</li>
+                <li>Sınır aşıldığında aşan kısım değil, ölçülen reaktif enerjinin tamamı faturalanır; iki sınır birden aşılırsa en yüksek sayaç değeri esas alınır. Örnekli anlatım ve ilk ihlal seçeneği için <a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a> aracımıza, arka plan için <a href="/bilgi/reaktif-guc-kompanzasyonu.html">Reaktif Güç Kompanzasyonu</a> rehberine ve <a href="/sor/cosfi-098-fatura-reaktif-ceza.html">Cosφ 0,98 ama reaktif ceza var</a> yanıtımıza bakın.</li>
+                <li>Yıllık karşılık, girdiğiniz ayın her ay tekrarlandığı varsayımıyla 11 ay üzerinden hesaplanır: takvim yılındaki ilk ihlalin bedeli faturada gösterilir ve aynı faturada düşülür. Basit geri ödeme = yatırım ÷ (yıllık bedel ÷ 12); yatırımın cezayı tamamen ortadan kaldırdığı varsayılır.</li>
                 <li>Sonuçlar tahminidir. Bağlayıcı olan dağıtım şirketinizin faturası ve yürürlükteki tarifedir; kesin çözüm için enerji kalitesi ölçümü gerekir.</li>
               </ul>
             </details>
@@ -1452,6 +1461,6 @@
   </footer>
   <!--/vg:footer-->
 
-  <script src="/js/voltguard-auth.js?v=20261011b" defer></script>
+  <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
 </body>
 </html>

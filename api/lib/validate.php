@@ -267,13 +267,27 @@ function vg_clean_item(string $coll, $item, int $now, string &$why): ?array
                 }
             }
             $res = isset($item['result']) && is_array($item['result']) ? $item['result'] : [];
+            $result = ['value' => vg_text($res['value'] ?? '', 300), 'note' => vg_text($res['note'] ?? '', 1000, true)];
+            // Hesap dokumu satirlari (istege bagli): en fazla 20 satir, satir basina 200 karakter; bossa alan yazilmaz.
+            if (isset($res['breakdown']) && is_array($res['breakdown'])) {
+                $breakdown = [];
+                foreach (array_slice(array_values($res['breakdown']), 0, 20) as $line) {
+                    $line = trim(vg_text($line, 200));
+                    if ($line !== '') {
+                        $breakdown[] = $line;
+                    }
+                }
+                if ($breakdown) {
+                    $result['breakdown'] = $breakdown;
+                }
+            }
             return [
                 'id' => $id,
                 'toolSlug' => $slug,
                 'toolName' => $name !== '' ? $name : $slug,
                 'toolUrl' => vg_safe_url($item['toolUrl'] ?? '', true),
                 'params' => $params,
-                'result' => ['value' => vg_text($res['value'] ?? '', 300), 'note' => vg_text($res['note'] ?? '', 1000, true)],
+                'result' => $result,
                 'note' => vg_text($item['note'] ?? '', 1000, true),
                 'savedAt' => vg_iso_date($item['savedAt'] ?? null, $now),
                 'serverAt' => $serverAt,

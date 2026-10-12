@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012" defer></script>
+  <script src="/js/vg-shell.js?v=20261012b" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -62,7 +62,7 @@
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
   <link rel="preload" as="image" href="/public/opt/scada-biyolojik-aritma-proses-ekrani-1280.webp" imagesrcset="/public/opt/scada-biyolojik-aritma-proses-ekrani-640.webp 640w, /public/opt/scada-biyolojik-aritma-proses-ekrani-960.webp 960w, /public/opt/scada-biyolojik-aritma-proses-ekrani-1280.webp 1280w" imagesizes="(min-width: 76rem) 981px, (min-width: 64rem) 79vw, (min-width: 48rem) 96vw, 115vw" fetchpriority="high">
-  <link rel="stylesheet" href="/css/services.css?v=20261011">
+  <link rel="stylesheet" href="/css/services.css?v=20261012b">
   <script>document.documentElement.classList.add('svc-js');setTimeout(function(){if(!window.__svcReady)document.documentElement.classList.add('svc-noanim')},3000);</script>
   <script src="/js/services.js?v=20261011" defer></script>
   <script type="application/ld+json" id="svc-jsonld">
@@ -370,12 +370,12 @@
             <li><i class="fas fa-location-dot" aria-hidden="true"></i> Ege Teknopark, Bornova/İzmir</li>
           </ul>
         </div>
-        <figure class="svc-hero__media">
+        <figure class="svc-hero__media svc-hero__media--screen">
           <div class="svc-hero__frame" style="--svc-focus: 30% 50%">
             <img src="/public/opt/scada-biyolojik-aritma-proses-ekrani-1280.webp" srcset="/public/opt/scada-biyolojik-aritma-proses-ekrani-640.webp 640w, /public/opt/scada-biyolojik-aritma-proses-ekrani-960.webp 960w, /public/opt/scada-biyolojik-aritma-proses-ekrani-1280.webp 1280w" sizes="(min-width: 76rem) 981px, (min-width: 64rem) 79vw, (min-width: 48rem) 96vw, 115vw" width="1280" height="770" alt="Biyolojik arıtma tesisi SCADA proses kontrol ekranı" fetchpriority="high" decoding="async">
           </div>
           <p class="svc-hero__badge"><span class="svc-hero__badge-ico" aria-hidden="true"><i class="fas fa-headset"></i></span><span><strong>7/24 acil arıza hattı</strong><a href="tel:+905454346735">0545 434 67 35</a></span></p>
-          <figcaption style="background: rgba(10, 20, 40, .78); padding: .4rem .6rem; border-radius: .4rem; text-shadow: none">Biyolojik arıtma SCADA ekranından bir bölüm: havalandırma tankı, pompalar ve proses kontrol döngüleri.</figcaption>
+          <figcaption>Biyolojik arıtma SCADA ekranından bir bölüm: havalandırma tankı, pompalar ve proses kontrol döngüleri.</figcaption>
         </figure>
       </div>
     </section>
@@ -385,7 +385,7 @@
       <div class="svc-wrap">
         <ul data-reveal="group">
           <li><b>IEC 61131-3</b><span>Ladder, fonksiyon blok ve yapısal metinle okunabilir PLC yazılımı</span></li>
-          <li><b>Modbus · Ethernet</b><span>Analizör, sürücü ve saha cihazlarıyla endüstriyel haberleşme</span></li>
+          <li><b>Modbus · Profinet</b><span>Analizör, sürücü ve saha cihazlarıyla haberleşme</span></li>
           <li><b>Enerji izleme</b><span>Sayaç ve analizör verileriyle fabrika tüketim takibi</span></li>
           <li><b>Alarm + trend</b><span>Olay kaydı, geçmiş veri ve raporlama her projede</span></li>
         </ul>
@@ -470,8 +470,8 @@
               <li><strong>SCADA ve HMI tasarımı</strong>Proses akış ekranları, ekipman detay pencereleri, alarm yönetimi, trendler, reçeteler ve kullanıcı yetkileri; operatörün bir bakışta durumu anlayacağı sade ekranlar.</li>
               <li><strong>Enerji izleme sistemi</strong>Ana ve tali panolardaki analizörlerden enerji, güç, akım, gerilim ve harmonik verilerinin toplanması, raporlanması; kompanzasyon panolarının uzaktan takibi.</li>
               <li><strong>Arıtma tesisi proses otomasyonu</strong>Blower, pompa, karıştırıcı ve dozaj pompalarının kontrolü; seviye, pH, ORP, çözünmüş oksijen ve debi ölçümlerine göre PID döngüleri.</li>
-              <li><strong>Haberleşme altyapısı</strong>Modbus RTU/TCP ve endüstriyel Ethernet ağları; IEC 61850 tabanlı sistemlerle veri entegrasyonu. Topoloji, adresleme ve sonlandırma kurallarına uygun kurulum.</li>
-              <li><strong>Sürücü ve motor kontrolü</strong>Frekans invertörlerinin parametrelenmesi, PLC ile haberleşmesi ve motor koruma düzeninin kurulması.</li>
+              <li><strong>Haberleşme altyapısı</strong>Modbus RTU/TCP, Profinet ve endüstriyel Ethernet; IEC 61850 tabanlı sistemlerle veri entegrasyonu. Topoloji, adresleme ve sonlandırma kurallarına uygun kurulum.</li>
+              <li><strong>Sürücü ve motor kontrolü</strong>Frekans invertörlerinin parametrelenmesi, PLC ile haberleşmesi ve motor koruma düzeninin kurulması. Motor koruma şalteri ve kontaktörün ön seçimini <a href="/hesaplama/motor-koruma-kontaktor-secimi/">motor koruma ve kontaktör seçim aracıyla</a> yapabilirsiniz.</li>
               <li><strong>Revizyon ve modernizasyon</strong>Mevcut yazılım ve sinyal listesi sahadan çıkarılır; geçiş planı hazırlanır ve sistem kesinti en aza indirilerek yeni platforma aktarılır.</li>
               <li><strong>Devreye alma, eğitim ve destek</strong>Sinyal testleri, döngü ayarları ve senaryo testleri; operatör ve bakım ekibine eğitim; sözleşmeye göre uzaktan ve sahada destek.</li>
             </ul>
@@ -600,15 +600,15 @@
         </div>
         <div class="svc-cards" data-reveal="group">
           <figure class="svc-figure">
-            <a href="/public/scada-biyolojik-aritma-proses-ekrani.jpg" target="_blank" rel="noopener noreferrer"><img src="/public/opt/scada-biyolojik-aritma-proses-ekrani-960.webp" srcset="/public/opt/scada-biyolojik-aritma-proses-ekrani-640.webp 640w, /public/opt/scada-biyolojik-aritma-proses-ekrani-960.webp 960w, /public/opt/scada-biyolojik-aritma-proses-ekrani-1280.webp 1280w" sizes="(min-width: 76rem) 380px, (min-width: 64rem) 31vw, (min-width: 40rem) 46vw, 92vw" width="1280" height="770" alt="Biyolojik arıtma tesisi SCADA proses akış ekranı: havalandırma üfleyicileri (blower), geri devir pompaları ve membran filtrasyon hattı" loading="lazy" decoding="async" style="aspect-ratio: 1280 / 770"><span class="sr-only"> (tam boyut, yeni sekmede açılır)</span></a>
+            <a href="/public/scada-biyolojik-aritma-proses-ekrani.jpg" target="_blank" rel="noopener noreferrer"><img src="/public/opt/scada-biyolojik-aritma-proses-ekrani-960.webp" srcset="/public/opt/scada-biyolojik-aritma-proses-ekrani-640.webp 640w, /public/opt/scada-biyolojik-aritma-proses-ekrani-960.webp 960w, /public/opt/scada-biyolojik-aritma-proses-ekrani-1280.webp 1280w" sizes="(min-width: 76rem) 380px, (min-width: 64rem) 31vw, (min-width: 40rem) 46vw, 92vw" width="1280" height="770" alt="Biyolojik arıtma tesisi SCADA proses akış ekranı: havalandırma üfleyicileri (blower), geri devir pompaları ve membran filtrasyon hattı" loading="lazy" decoding="async" style="aspect-ratio: 1280 / 770"><span class="svc-sr"> (tam boyut, yeni sekmede açılır)</span></a>
             <figcaption>Biyolojik arıtma proses akışı: havalandırma üfleyicileri (blower), geri devir pompaları, membran filtrasyon hattı ve proses kontrol döngüleri tek ekranda.</figcaption>
           </figure>
           <figure class="svc-figure">
-            <a href="/public/scada-ekipman-trend-ekrani.jpg" target="_blank" rel="noopener noreferrer"><img src="/public/opt/scada-ekipman-trend-ekrani-960.webp" srcset="/public/opt/scada-ekipman-trend-ekrani-640.webp 640w, /public/opt/scada-ekipman-trend-ekrani-960.webp 960w, /public/opt/scada-ekipman-trend-ekrani-1079.webp 1079w" sizes="(min-width: 76rem) 380px, (min-width: 64rem) 31vw, (min-width: 40rem) 46vw, 92vw" width="1079" height="631" alt="SCADA ekipman detay pencereleri ve trend ekranı: set değeri, proses değeri ve manuel-otomatik seçimi" loading="lazy" decoding="async" style="aspect-ratio: 1079 / 631"><span class="sr-only"> (tam boyut, yeni sekmede açılır)</span></a>
+            <a href="/public/scada-ekipman-detay-trend-ekrani.jpg" target="_blank" rel="noopener noreferrer"><img src="/public/opt/scada-ekipman-detay-trend-ekrani-960.webp" srcset="/public/opt/scada-ekipman-detay-trend-ekrani-640.webp 640w, /public/opt/scada-ekipman-detay-trend-ekrani-960.webp 960w, /public/opt/scada-ekipman-detay-trend-ekrani-1079.webp 1079w" sizes="(min-width: 76rem) 380px, (min-width: 64rem) 31vw, (min-width: 40rem) 46vw, 92vw" width="1079" height="659" alt="SCADA ekipman detay pencereleri ve trend ekranı: set değeri, proses değeri ve manuel-otomatik seçimi" loading="lazy" decoding="async" style="aspect-ratio: 1079 / 659"><span class="svc-sr"> (tam boyut, yeni sekmede açılır)</span></a>
             <figcaption>Ekipman detay pencereleri: set ve proses değeri trendleri, manuel-otomatik seçimi; operatör tek tıkla döngünün geçmişini görür.</figcaption>
           </figure>
           <figure class="svc-figure">
-            <a href="/public/scada-daf-kimyasal-aritma-ekrani.jpg" target="_blank" rel="noopener noreferrer"><img src="/public/opt/scada-daf-kimyasal-aritma-ekrani-960.webp" srcset="/public/opt/scada-daf-kimyasal-aritma-ekrani-640.webp 640w, /public/opt/scada-daf-kimyasal-aritma-ekrani-960.webp 960w, /public/opt/scada-daf-kimyasal-aritma-ekrani-1280.webp 1280w" sizes="(min-width: 76rem) 380px, (min-width: 64rem) 31vw, 92vw" width="1280" height="829" alt="Kimyasal arıtma ve flotasyon SCADA ekranı: koagülant, flokülant ve nötralizant dozajlama, pH ve ORP kontrolü" loading="lazy" decoding="async" style="aspect-ratio: 1280 / 829"><span class="sr-only"> (tam boyut, yeni sekmede açılır)</span></a>
+            <a href="/public/scada-krofta-kimyasal-aritma-ekrani.jpg" target="_blank" rel="noopener noreferrer"><img src="/public/opt/scada-krofta-kimyasal-aritma-ekrani-960.webp" srcset="/public/opt/scada-krofta-kimyasal-aritma-ekrani-640.webp 640w, /public/opt/scada-krofta-kimyasal-aritma-ekrani-960.webp 960w, /public/opt/scada-krofta-kimyasal-aritma-ekrani-1280.webp 1280w" sizes="(min-width: 76rem) 380px, (min-width: 64rem) 31vw, 92vw" width="1280" height="829" alt="Kimyasal arıtma ve flotasyon SCADA ekranı: koagülant, flokülant ve nötralizant dozajlama, pH ve ORP kontrolü" loading="lazy" decoding="async" style="aspect-ratio: 1280 / 829"><span class="svc-sr"> (tam boyut, yeni sekmede açılır)</span></a>
             <figcaption>Kimyasal arıtma ve flotasyon (DAF): koagülant, flokülant ve nötralizant dozajlama; pH, ORP ve seviye kontrol döngüleri.</figcaption>
           </figure>
         </div>
@@ -704,7 +704,7 @@
       <div class="svc-wrap">
         <div class="svc-sec__head" data-reveal>
           <p class="svc-kicker">Kaynaklar</p>
-          <h2 id="h-kaynak">İlgili rehberler ve dersler</h2>
+          <h2 id="h-kaynak">İlgili rehberler, araçlar ve dersler</h2>
           <p class="svc-sec__intro">Proje öncesinde ekibinizle ortak bir dil kurmak veya temel kavramları tazelemek isteyenler için.</p>
         </div>
         <div class="svc-related" data-reveal="group">
@@ -712,10 +712,11 @@
           <a class="svc-link-card" href="/bilgi/plc-nedir-nasil-calisir.html"><span class="svc-tag svc-tag--rehber">Rehber</span><strong>PLC nedir, nasıl çalışır?</strong><span>Tarama döngüsü, giriş-çıkış modülleri ve ladder mantığı.</span></a>
           <a class="svc-link-card" href="/bilgi/scada-iec-61850.html"><span class="svc-tag svc-tag--rehber">Rehber</span><strong>SCADA sistemleri ve IEC 61850</strong><span>Trafo merkezi otomasyonu, röle koruma ve GOOSE.</span></a>
           <a class="svc-link-card" href="/bilgi/vfd-frekans-invertoru-nedir.html"><span class="svc-tag svc-tag--rehber">Rehber</span><strong>Frekans invertörü (VFD) nedir?</strong><span>PWM, V/f ve vektör kontrol, sürücü seçimi.</span></a>
+          <a class="svc-link-card" href="/hesaplama/motor-akimi-hesaplama/"><span class="svc-tag svc-tag--hesap">Hesaplama</span><strong>Motor akımı hesaplama</strong><span>Motor gücü, gerilim, verim ve cosφ ile nominal akım.</span></a>
           <a class="svc-link-card" href="/sor/modbus-rtu-haberlesme-kesiliyor.html"><span class="svc-tag svc-tag--soru">Soru</span><strong>Modbus RTU haberleşmesi neden kesiliyor?</strong><span>RS-485 topolojisi, sonlandırma ve adresleme.</span></a>
           <a class="svc-link-card" href="/sor/vfd-overcurrent-hatasi.html"><span class="svc-tag svc-tag--soru">Soru</span><strong>VFD OverCurrent hatası</strong><span>Kilitlenme, V/f eğrisi, kablo uzunluğu ve rampalar.</span></a>
           <a class="svc-link-card" href="/akademi/plc-endustriyel-otomasyon-giris.html"><span class="svc-tag svc-tag--ders">Ders</span><strong>PLC, HMI ve SCADA'ya giriş</strong><span>Başlangıç: I/O kavramı, ladder temelleri, HMI-SCADA ilişkisi.</span></a>
-          <a class="svc-link-card" href="/akademi/ladder-programlama-modbus-orta.html"><span class="svc-tag svc-tag--ders">Ders</span><strong>Ladder programlama ve endüstriyel haberleşme</strong><span>Orta seviye: örnek programlar ve alan bus mimarisi.</span></a>
+          <a class="svc-link-card" href="/akademi/ladder-programlama-modbus-orta.html"><span class="svc-tag svc-tag--ders">Ders</span><strong>Ladder programlama ve Modbus / Profinet</strong><span>Orta seviye: örnek programlar ve alan bus mimarisi.</span></a>
         </div>
         <div class="svc-pills" data-reveal>
           <a class="svc-pill" href="/hizmetler/elektrik-pano-imalati.html"><i class="fas fa-sliders" aria-hidden="true"></i> Elektrik pano imalatı</a>

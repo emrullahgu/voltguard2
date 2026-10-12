@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012" defer></script>
+  <script src="/js/vg-shell.js?v=20261012b" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -44,8 +44,8 @@
   <title>Geçmiş Hesaplamalar | VoltGuard Tools</title>
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link rel="stylesheet" href="../css/style.css?v=20261011">
-  <link rel="stylesheet" href="../css/vg-account.css?v=20261012">
+  <link rel="stylesheet" href="../css/style.css?v=20261012b">
+  <link rel="stylesheet" href="../css/vg-account.css?v=20261012b">
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -267,7 +267,7 @@
   </footer>
   <!--/vg:footer-->
 
-  <script src="../js/voltguard-auth.js?v=20261011b"></script>
+  <script src="../js/voltguard-auth.js?v=20261012b"></script>
   <script src="../js/vg-account.js?v=20261012"></script>
   <script>
     (function () {
@@ -337,6 +337,11 @@
         var paramsHtml = params.length ? '<dl class="vg-history-item__params">' + params.map(function (p) {
           return '<dt>' + esc(p.label || '-') + '</dt><dd>' + esc(p.value || '-') + '</dd>';
         }).join('') + '</dl>' : '';
+        // Hesap dökümü satırları (ör. işletme sorumluluğu kalemleri) kayıtla birlikte saklanır.
+        var breakdown = h.result && Array.isArray(h.result.breakdown) ? h.result.breakdown.filter(function (l) { return typeof l === 'string' && l; }) : [];
+        var breakdownHtml = breakdown.length ? '<ul class="vg-history-item__breakdown" aria-label="Hesap dökümü">' + breakdown.map(function (l) {
+          return '<li>' + esc(l) + '</li>';
+        }).join('') + '</ul>' : '';
         var inProjects = projects.filter(function (p) { return (p.calcIds || []).indexOf(h.id) >= 0; });
         var attach = '';
         if (member) {
@@ -354,6 +359,7 @@
           '<div class="vg-history-item__value">' + esc(h.result && h.result.value ? h.result.value : '-') + '</div></summary>' +
           paramsHtml +
           (h.result && h.result.note ? '<p class="vg-item-note">' + esc(h.result.note) + '</p>' : '') +
+          breakdownHtml +
           (h.note ? '<p class="vg-item-note"><strong>Not:</strong> ' + esc(h.note) + '</p>' : '') +
           '<div class="vg-history-item__actions">' +
           (link ? '<a class="vg-mini-btn" href="' + esc(link) + '"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i> Aracı yeniden aç</a>' : '') +

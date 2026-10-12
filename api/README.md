@@ -86,6 +86,10 @@ Hata: `{"ok":false,"error":"<kod>","message":"<Türkçe mesaj>","fields":{...}}`
 Koleksiyon sınırları: favoriler 200, geçmiş 500 (dolunca en eskiler düşer), projeler 200, dokümanlar 500;
 ayrıca JSON boyutu sınırı (128 KB – 1 MB). Kimlik biçimleri: favori = araç slug'ı, `h_…`, `p_…`, `d_…`.
 
+Geçmiş kaydı (`history`) alanları: `id, toolSlug, toolName, toolUrl, params:[{label,value}] (en fazla 60), result:{value, note,
+breakdown?}, note, savedAt, serverAt`. `result.breakdown` isteğe bağlıdır: hesap sayfasındaki `.calc-breakdown` satırları
+("Etiket: Değer"), en fazla 20 satır × 200 karakter; boşsa alan yazılmaz. İstemci (`js/voltguard-auth.js` cleanItem) aynı kuralı uygular.
+
 ## Güvenlik özeti
 
 - `password_hash(PASSWORD_DEFAULT, cost 11)` + `password_verify`, girişte gerekirse yeniden özetleme; şifre 8–64 karakter,

@@ -18,7 +18,12 @@ NE DENETLER
   - FAQPage soru/cevap metinleri = gorunur <details class="svc-faq__item"> metinleri (BIREBIR)
   - BreadcrumbList adlari/URL'leri = gorunur nav.svc-crumbs
   - Ic baglantilar dosyaya cozulur (/, /hesaplama-araclari/, /hesaplama/<slug>/, /klasor/, /x.html);
-    henuz yazilmamis /hizmetler/*.html sayfalari UYARI, digerleri HATA. Sayfa ici #capa hedefleri var mi.
+    henuz yazilmamis /hizmetler/*.html sayfalari UYARI, digerleri HATA. Sayfa ici #capa hedefleri var mi;
+    baska sayfaya giden /x.html#capa baglantilarinda hedef dosyada id="capa" var mi.
+  - "Teklif Al" ([data-vg-teklif]): hizmet sayfasinda /?hizmet=<slug>#iletisim (slug, index.html'deki
+    "Ilgilendiginiz hizmet" seceneklerinde olmali); hub'da /#iletisim.
+  - Uyari: Kaynaklar kartlari disinda /hesaplama/ aracina baglam ici baglanti yoksa; main icinde veri disi
+    (--svc-focus / aspect-ratio / object-fit disinda) satir ici style varsa.
   - <img>: width/height/alt; public/Trafoisletmesorumlulugu.jpeg yasak; goreli (../) yol yok
   - Font Awesome siniflari css/fa-subset.css icinde var mi (yoksa "YENI IKON" olarak listeler)
 
@@ -153,6 +158,27 @@ def resolve(href):
 def fa_subset():
     css = (ROOT / 'css' / 'fa-subset.css').read_text(encoding='utf-8')
     return set(re.findall(r'\.(fa-[a-z0-9-]+)(?=[:,{\s])', css))
+
+
+_IDS = {}
+
+
+def file_ids(f):
+    """Bir HTML dosyasindaki id degerleri (capraz sayfa #capa denetimi icin, onbellekli)."""
+    key = f.resolve()
+    if key not in _IDS:
+        try:
+            _IDS[key] = set(re.findall(r'\bid="([^"]+)"', f.read_text(encoding='utf-8-sig')))
+        except (OSError, UnicodeDecodeError):
+            _IDS[key] = set()
+    return _IDS[key]
+
+
+def service_options():
+    """index.html iletisim formundaki "Ilgilendiginiz hizmet" secenek degerleri (?hizmet= on secimi)."""
+    t = (ROOT / 'index.html').read_text(encoding='utf-8-sig')
+    m = re.search(r'<select[^>]*id="service"[^>]*>(.*?)</select>', t, re.S)
+    return set(re.findall(r'<option value="([a-z0-9-]+)"', m.group(1) if m else t))
 
 
 def check(path, fix=False):
@@ -296,6 +322,37 @@ def check(path, fix=False):
                     warns.append('henuz yok (planli hizmet sayfasi): %s' % href)
                 else:
                     errs.append('kirik ic baglanti: %s' % href)
+            elif '#' in href and f.suffix == '.html':
+                frag = href.split('#', 1)[1]
+                ids = pg.ids if f.resolve() == path.resolve() else file_ids(f)
+                if frag and frag not in ids:
+                    errs.append('hedef sayfada capa yok: %s' % href)
+
+    # --- "Teklif Al" hedefi
+    teklif = [h for h, a in pg.anchors if 'data-vg-teklif' in a]
+    if is_hub:
+        want_teklif = '/#iletisim'
+    else:
+        want_teklif = '/?hizmet=%s#iletisim' % slug
+        if slug not in service_options():
+            errs.append('index.html "Ilgilendiginiz hizmet" listesinde %s secenegi yok (?hizmet= on secimi calismaz)' % slug)
+    if not teklif:
+        errs.append('[data-vg-teklif] "Teklif Al" baglantisi yok')
+    for h in teklif:
+        if h != want_teklif:
+            errs.append('Teklif Al href %r, beklenen %r' % (h, want_teklif))
+
+    # --- main: baglam ici hesaplayici baglantisi + veri disi satir ici stil (uyari)
+    main_html = t.split('<main', 1)[-1].split('</main>', 1)[0]
+    if not is_hub:
+        body_only = re.sub(r'<div class="svc-related"[^>]*>.*?</div>', '', main_html, flags=re.S)
+        if 'href="/hesaplama/' not in body_only:
+            warns.append('Kaynaklar kartlari disinda /hesaplama/ aracina baglam ici baglanti yok')
+    for st in sorted(set(re.findall(r'\bstyle="([^"]*)"', main_html))):
+        props = [d.split(':', 1)[0].strip() for d in st.split(';') if d.strip()]
+        extra = [p for p in props if p not in ('--svc-focus', 'aspect-ratio', 'object-fit')]
+        if extra:
+            warns.append('satir ici stil (services.css sinifi kullanin): style="%s"' % st)
     seen = set()
     for w in [x for x in warns if x.startswith('henuz yok')]:
         seen.add(w)
