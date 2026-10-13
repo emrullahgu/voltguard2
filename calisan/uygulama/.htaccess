@@ -1,0 +1,5 @@
+# Apache 2.4 / LiteSpeed: private assets need the parent rewrite to the PHP gate.
+# If that module is unavailable, close the entire application directory.
+<IfModule !mod_rewrite.c>
+  Require all denied
+</IfModule>

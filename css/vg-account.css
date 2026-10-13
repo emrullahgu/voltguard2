@@ -282,3 +282,10 @@ details[open] .vg-history-item__chev { transform: rotate(180deg); }
   .vg-panel__nav, .vg-sync, .vg-danger-zone, .vg-data-actions, .vg-inline-form { display: none !important; }
   .vg-panel { grid-template-columns: minmax(0, 1fr); }
 }
+/* Public membership, community and invite-only employee accounts have distinct entry points. */
+.vg-auth-access { display:grid; gap:10px; margin:20px 0 24px; }
+.vg-auth-access a { display:block; padding:14px 16px; border:1px solid rgba(245,158,11,.26); border-radius:12px; background:rgba(245,158,11,.04); color:#0a1628; text-decoration:none; }
+.vg-auth-access a:hover { border-color:#f59e0b; background:rgba(245,158,11,.09); }
+.vg-auth-access a:focus-visible { outline:2px solid #f59e0b; outline-offset:3px; }
+.vg-auth-access strong { display:block; color:#b45309; font-family:Outfit,sans-serif; font-size:1.03rem; }
+.vg-auth-access span { display:block; margin-top:4px; color:#5b6b7c; font-size:.85rem; line-height:1.5; }

@@ -1,0 +1,2 @@
+import React from 'react';
+export default function ForgotPassword({onBackToLogin}){return <main className="max-w-lg mx-auto p-8"><h1 className="text-2xl font-bold">Şifre ve erişim yardımı</h1><p className="my-4">Şirket yöneticinizden yeni tek kullanımlık etkinleştirme bağlantısı isteyin. Bağlantı 24 saat geçerlidir; şifrenizi kendiniz belirler, e-postayla şifre almazsınız.</p><button className="underline" onClick={onBackToLogin}>Şirket girişine dön</button></main>;}

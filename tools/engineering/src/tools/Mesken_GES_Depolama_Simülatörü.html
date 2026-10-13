@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Mesken GES Depolama Simülatörü</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&display=swap">
+<style>
+/* Yerleşim: solda yük listesi, ayarlar ve fiyatlar; sağda yapışkan sonuç paneli; dar ekranda tek sütun */
+:root{
+  --bg:#eef2f6; --surface:#ffffff; --sunken:#e4e9f0; --ink:#152232; --muted:#566578; --line:#cfd7e2;
+  --sun:#b96a00; --sun-soft:#fdf0d8; --grid:#235f9e; --grid-soft:#e1edf9; --warn:#a3341f; --warn-soft:#fbe6e1; --ok:#1d6b45; --dc:#d92d2d; --ac:#d98200; --inv1:#f4f6f8; --inv2:#c3cad3;
+  --disp:"Barlow Condensed","Arial Narrow",Arial,sans-serif; --body:"Barlow","Segoe UI",Roboto,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f1720; --surface:#17222e; --sunken:#1f2c3a; --ink:#e6edf5; --muted:#9aa9ba; --line:#2e3d4e;
+  --sun:#f0a83a; --sun-soft:#3a2c12; --grid:#6fb0ee; --grid-soft:#182c42; --warn:#f08a75; --warn-soft:#3b1d17; --ok:#62c796; --dc:#ff5c5c; --ac:#ffb224; --inv1:#eef1f4; --inv2:#b9c1cb; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0f1720; --surface:#17222e; --sunken:#1f2c3a; --ink:#e6edf5; --muted:#9aa9ba; --line:#2e3d4e;
+  --sun:#f0a83a; --sun-soft:#3a2c12; --grid:#6fb0ee; --grid-soft:#182c42; --warn:#f08a75; --warn-soft:#3b1d17; --ok:#62c796; --dc:#ff5c5c; --ac:#ffb224; --inv1:#eef1f4; --inv2:#b9c1cb; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45}
+.wrap{max-width:1320px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+h1{font-family:var(--disp);font-weight:600;font-size:30px;line-height:1.1;margin:0;text-wrap:balance}
+header p{margin:4px 0 0;color:var(--muted);max-width:60ch}
+h2{font-family:var(--disp);font-weight:600;font-size:19px;letter-spacing:.02em;margin:0}
+.tip{display:flex;flex-direction:column;gap:4px;align-items:flex-start;min-width:0}
+.tipk{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.tipd{font-size:13px;color:var(--muted)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{font:600 15px var(--body);padding:10px 14px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.cols{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:1020px){.cols{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex;flex-direction:column;gap:18px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+textarea{resize:vertical;font-variant-numeric:tabular-nums}
+input,select,textarea{font:500 15px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 8px;width:100%;min-width:0}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--grid);outline-offset:1px}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;text-align:left;padding:6px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:4px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+#yukler td input[type=number]{width:70px}
+#yukler td input[type=text]{min-width:140px}
+#yukler td select{min-width:100px}
+#yukler input[type=checkbox]{width:18px;height:18px;padding:0}
+tr.off td{opacity:.5}
+td.num,th.num{text-align:right}
+.btn{font:600 14px var(--body);padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:var(--sunken);color:var(--ink);cursor:pointer}
+.btn.ana{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.x{border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer;padding:2px 8px}
+.rowbtns{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.sum{display:flex;flex-wrap:wrap;gap:6px 20px;font-variant-numeric:tabular-nums}
+.sum b{font-family:var(--disp);font-size:20px;font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.cards{grid-template-columns:minmax(0,1fr)}}
+.card{border-radius:8px;padding:12px;background:var(--sunken);display:flex;flex-direction:column;gap:2px;min-width:0}
+.card.pv{background:var(--sun-soft)} .card.inv{background:var(--grid-soft)}
+.card .k{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.card .v{font-family:var(--disp);font-size:32px;font-weight:600;line-height:1.1}
+.card .d{font-size:13px;color:var(--muted)}
+.notes{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.notes li{padding:8px 10px;border-radius:6px;background:var(--warn-soft);color:var(--warn);font-size:14px}
+.notes li.ok{background:var(--sunken);color:var(--ok)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
+.hesbar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;align-items:center;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);font-weight:500}
+.hesbar button{font:600 16px var(--body);padding:10px 28px;border:0;border-radius:8px;background:var(--sun);color:var(--bg);cursor:pointer}
+.sonuc.eski{opacity:.45}
+.th svg{min-width:760px;display:block}
+.th .w{fill:none;stroke-width:1.6;opacity:.45}.th .w.d{stroke:var(--dc)}.th .w.a{stroke:var(--ac);stroke-width:2.4}
+.th .fl{fill:none;stroke-dasharray:6 9;stroke-linecap:round;animation:fl .7s linear infinite}.th .fl.r{animation-direction:reverse}
+.th .fl.d{stroke:var(--dc);stroke-width:2.2}.th .fl.a{stroke:var(--ac);stroke-width:3.2}
+@keyframes fl{to{stroke-dashoffset:-15}}
+@media (prefers-reduced-motion:reduce){.th .fl{animation:none}}
+.th .bx{fill:var(--surface);stroke:var(--muted);stroke-width:1.2}.th .bara{stroke:var(--ac);stroke-width:5;stroke-linecap:round}
+.th .tt{font-size:15px;font-weight:600;fill:var(--ink)}.th .tv{font-size:12px;font-weight:600;fill:var(--ink)}.th .uy{fill:var(--warn);font-weight:600}
+.thk{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}.thk label{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.thk select{width:auto}.thk input[type=range]{width:min(260px,50vw);padding:0}
+.th svg.dar{min-width:0}
+@media (max-width:720px){
+  .wrap{padding-block:14px 110px;gap:14px}
+  h1{font-size:24px}
+  .panel{padding:12px}
+  input,select,textarea{font-size:16px}
+  .tip{width:100%}.seg{display:flex;width:100%}.seg button{flex:1 1 auto;padding:10px 8px;font-size:14px}
+  .fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #yukler thead{display:none}
+  #yukler,#yukler tbody{display:block}
+  #yukler tr{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+  #yukler td{border:0;padding:0;display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--muted);grid-column:span 2;text-align:left;min-width:0}
+  #yukler td[data-l]::before{content:attr(data-l)}
+  #yukler td:nth-child(1){grid-row:1;grid-column:1;justify-content:center}
+  #yukler td:nth-child(2){grid-row:1;grid-column:2/6}
+  #yukler td:nth-child(11){grid-row:1;grid-column:6;align-items:flex-end;justify-content:center}
+  #yukler td:nth-child(6),#yukler td:nth-child(7){grid-column:span 3}
+  #yukler td:nth-child(10){font-size:16px;color:var(--ink);font-weight:600}
+  #yukler td:nth-child(10)::before{font-size:12px;color:var(--muted);font-weight:400}
+  #yukler td input[type=number],#yukler td input[type=text],#yukler td select{width:100%;min-width:0}
+  #yukler input[type=checkbox]{width:24px;height:24px}
+  .x{font-size:24px;padding:4px 10px}
+  .cmp td,.cmp th{white-space:normal;font-size:13px;padding:5px 4px}
+  .card .v{font-size:28px}
+  .thk input[type=range]{width:min(200px,42vw)}
+  .hesbar span{font-size:13px;text-align:center}
+}
+.cmp td:first-child{color:var(--muted)}
+.cmp td{white-space:nowrap}
+.cmp .sel{background:var(--sunken);font-weight:600}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Mesken GES Depolama Simülatörü</h1>
+      <p>Evdeki cihazları seçin, sistem tipini belirleyin; panel, batarya, inverter ve maliyet buna göre hesaplanır.</p>
+    </div>
+    <div class="tip"><span class="tipk">Sistem tipi</span>
+      <div class="seg" role="group" aria-label="Sistem tipi">
+        <button id="m_ong" type="button" data-mode="ong" aria-pressed="false">Şebeke bağlantılı (aküsüz)</button>
+        <button id="m_hib" type="button" data-mode="hib" aria-pressed="false">Şebeke + akü (hibrit)</button>
+        <button id="m_off" type="button" data-mode="off" aria-pressed="false">Off-grid</button>
+      </div><span class="tipd" id="tipd"></span></div>
+  </header>
+
+  <div class="cols">
+    <div class="col">
+      <section class="panel">
+        <div class="rowbtns"><h2>Evdeki cihazlar</h2><button class="btn" id="ekle" type="button">+ Cihaz ekle</button></div>
+        <div class="scroll">
+          <table id="yukler">
+            <thead><tr><th></th><th>Cihaz</th><th>Adet</th><th>Güç (W)</th><th>Saat/gün</th><th>Kullanım</th><th>Mevsim</th><th>Kalkış ×</th><th>Kritik</th><th class="num">kWh/gün</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="hint">Saat/gün, cihazın tam güçte eşdeğer çalışma süresidir (buzdolabı kompresörü günde yaklaşık 8 saat çalışır). Mevsim: Yaz = Mayıs–Eylül, Kış = Kasım–Mart. Kritik işaretli cihazlar hibrit sistemde kesintide aküden beslenir. Isı pompasında güç olarak elektrik giriş gücünü yazın (ısıl güç ÷ COP). Araç şarjında saat/gün = günlük enerji ÷ şarj gücü; hazır değer günde yaklaşık 40 km (7 kWh) içindir.</p>
+        <div class="sum" id="ozet"></div>
+      </section>
+
+      <section class="panel">
+        <h2 id="ayarb">Tasarım ayarları</h2>
+        <div class="fields">
+          <label class="f">İl (ışınım verisi)<select id="il"></select></label>
+          <label class="f">Panel eğimi (°)<input id="egim" type="number" step="1" min="0" max="90" value="25"></label>
+          <label class="f">Panel yönü<select id="yon"><option value="0">Güney</option><option value="-45">Güneydoğu</option><option value="45">Güneybatı</option><option value="-90">Doğu</option><option value="90">Batı</option><option value="db">Doğu-Batı (çift yön)</option><option value="180">Kuzey</option></select></label>
+          <label class="f">Kullanılabilir çatı alanı (m²)<input id="cati" type="number" step="1" min="0" value="60"></label>
+          <label class="f">Panel gücü (Wp)<input id="wp" type="number" step="5" min="100" value="550"></label>
+          <label class="f">Sistem verimi (PR)<input id="pr" type="number" step="0.01" min="0.5" max="0.95" value="0.78"></label>
+          <label class="f">Eşzamanlılık katsayısı<input id="ks" type="number" step="0.05" min="0.2" max="1" value="0.6"></label>
+          <label class="f" data-m="hib off">Akü tipi<select id="kim"><option value="li">LiFePO4</option><option value="jel">Jel / AGM</option></select></label>
+          <label class="f" data-m="hib off">Akü modülü (kWh)<input id="mod" type="number" step="0.01" min="0.5" value="5.12"></label>
+          <label class="f" data-m="off">Batarya kaç gün yetsin<input id="oton" type="number" step="0.5" min="0.5" value="2"></label>
+          <label class="f" data-m="off">Panel tasarım ayı<select id="tay"><option value="min">En kötü ay</option><option value="ort">Yıllık ortalama</option></select></label>
+          <label class="f" data-m="ong hib">Tüketimi karşılama oranı (%)<input id="kar" type="number" step="5" min="10" max="200" value="100"></label>
+          <label class="f" data-m="hib">Kesintide yedek süre (saat)<input id="yed" type="number" step="1" min="0" value="6"></label>
+        </div>
+        <div class="fields" id="ozel" hidden>
+          <label class="f">Enlem (°K)<input id="oz_lat" type="number" step="0.1" min="30" max="45" value="41"></label>
+          <label class="f">Değerlerin birimi<select id="oz_birim"><option value="ay">kWh/m²·ay</option><option value="gun">kWh/m²·gün</option></select></label>
+          <label class="f" style="grid-column:1/-1">Yatay global ışınım, 12 aylık değer (Ocak → Aralık)<textarea id="oz_veri" rows="2" placeholder="Meteonorm ya da PVsyst tablosundan 12 değeri yapıştırın: 45,2  62,1  98,4 ..."></textarea></label>
+        </div>
+        <p class="hint" id="ozd" hidden></p>
+        <p class="hint" id="isinim"></p>
+      </section>
+
+      <section class="panel">
+        <h2>Birim fiyatlar ve tarife</h2>
+        <div class="fields">
+          <label class="f">Panel (₺/Wp)<input id="f_pan" type="number" step="0.5" min="0" value="9"></label>
+          <label class="f" data-m="ong">Şebeke inverteri (₺/kW)<input id="f_invs" type="number" step="100" min="0" value="4000"></label>
+          <label class="f" data-m="hib off">Hibrit / off-grid inverter (₺/kW)<input id="f_invh" type="number" step="100" min="0" value="9000"></label>
+          <label class="f" data-m="hib off">Akü (₺/kWh)<input id="f_aku" type="number" step="100" min="0" value="9000"></label>
+          <label class="f">Montaj + malzeme (₺/kWp)<input id="f_mon" type="number" step="100" min="0" value="8000"></label>
+          <label class="f">Elektrik alış tarifesi (₺/kWh)<input id="f_al" type="number" step="0.1" min="0" value="3.5"></label>
+          <label class="f" data-m="ong hib">Fazla üretim satış bedeli (₺/kWh)<input id="f_sat" type="number" step="0.1" min="0" value="2"></label>
+          <label class="f" data-m="ong hib">Aylık mahsuplaşma<select id="mahsup"><option value="1">Var</option><option value="0">Yok</option></select></label>
+        </div>
+        <p class="hint">Fiyatlar örnek değerlerdir; güncel piyasa fiyatlarını ve abone tarifesini girin. Geri ödeme basit yöntemle hesaplanır (tarife artışı, bakım ve akü yenileme dahil değil).</p>
+      </section>
+      <section class="panel">
+        <h2>Sistem boyutu ve optimizasyon</h2>
+        <div class="fields">
+          <label class="f">Panel adedi<input id="m_pan" type="number" min="0" step="1" placeholder="otomatik"></label>
+          <label class="f" data-m="hib off">Akü modülü adedi<input id="m_aku" type="number" min="0" step="1" placeholder="otomatik"></label>
+          <label class="f" data-m="ong hib">Hedef geri ödeme (yıl)<input id="hedef" type="number" min="0" step="0.5" placeholder="en kısa"></label>
+        </div>
+        <div class="rowbtns" style="justify-content:flex-start"><button class="btn ana" id="optbul" type="button">Optimumu bul</button><button class="btn" id="otodon" type="button">Otomatiğe dön</button></div>
+        <p class="hint" id="optd">Adetler boşken sistem kurala göre otomatik boyutlanır. Optimumu bul, seçili sistem tipi için panel ve akü adedini tarar ve bu kutulara yazar; sonra adetleri değiştirip Hesapla ile yeniden hesaplayabilirsiniz.</p>
+      </section>
+    </div>
+
+    <div class="col sonuc" id="sonuc">
+      <section class="panel">
+        <h2 id="baslik">Önerilen sistem</h2>
+        <div class="cards" id="kartlar"></div>
+        <div class="sum" id="para"></div>
+        <ul class="notes" id="notlar"></ul>
+      </section>
+      <section class="panel">
+        <h2>Aylık üretim ve tüketim</h2>
+        <div class="legend"><span><i style="background:var(--sun)"></i>Üretim (kWh/ay)</span><span><i style="background:var(--grid)"></i>Tüketim (kWh/ay)</span></div>
+        <div class="scroll"><svg id="grafik" viewBox="0 0 600 210" width="100%" role="img" aria-label="Aylık üretim ve tüketim grafiği"></svg></div>
+      </section>
+      <section class="panel">
+        <h2>Üç sistemin karşılaştırması</h2>
+        <div class="scroll"><table class="cmp" id="cmp"></table></div>
+      </section>
+    </div>
+  </div>
+  <section class="panel sonuc th">
+    <h2>Tek hat şeması</h2>
+    <div class="thk">
+      <label>Ay<select id="th_ay"></select></label>
+      <label>Saat<input id="th_saat" type="range" min="0" max="23.5" step="0.5" value="12"><b id="th_saatv" style="color:var(--ink);font-variant-numeric:tabular-nums"></b></label>
+      <button class="btn" id="th_oyna" type="button">▶ Gün simülasyonu</button>
+    </div>
+    <div class="sum" id="th_oz"></div>
+    <div class="scroll"><svg id="th" width="100%" role="img" aria-label="Sistemin tek hat şeması"></svg></div>
+    <p class="hint">İlkesel şemadır. Dize dağılımı, sigorta, TMŞ ve kablo kesitleri ön seçimdir; inverter verileri ve proje hesabıyla doğrulanmalıdır. Saatlik akış, seçilen ayın ortalama günü için basitleştirilmiş üretim ve tüketim eğrisiyle hesaplanır.</p>
+  </section>
+</div>
+
+<div class="hesbar" id="hesbar" hidden><span>Değerler değişti; sonuçlar eski değerlere göre.</span><button id="hesapla" type="button">Hesapla</button></div>
+
+<script>
+const ILLER={ // [enlem, yatay düzlem global ışınım kWh/m²·gün Oca..Ara] (yaklaşık)
+"Trabzon":[41.0,[1.5,2.1,3.1,4.0,5.0,5.6,5.3,4.8,3.9,2.7,1.7,1.3]],
+"Rize":[41.0,[1.4,2.0,2.9,3.8,4.6,5.1,4.6,4.3,3.6,2.6,1.7,1.3]],
+"Artvin":[41.2,[1.6,2.3,3.3,4.2,5.1,5.7,5.4,5.0,4.1,2.9,1.8,1.4]],
+"Giresun":[40.9,[1.5,2.1,3.0,3.9,4.9,5.5,5.2,4.7,3.8,2.7,1.7,1.3]],
+"Gümüşhane":[40.5,[1.8,2.6,3.7,4.6,5.6,6.4,6.5,5.9,4.8,3.3,2.0,1.5]],
+"İstanbul":[41.0,[1.5,2.2,3.4,4.7,5.9,6.6,6.6,5.8,4.5,3.0,1.8,1.3]],
+"Ankara":[39.9,[1.8,2.5,3.9,4.9,6.1,6.9,7.1,6.4,5.2,3.6,2.2,1.6]],
+"İzmir":[38.4,[2.1,2.9,4.3,5.5,6.7,7.4,7.4,6.7,5.4,3.8,2.5,1.9]],
+"Antalya":[36.9,[2.5,3.2,4.6,5.6,6.7,7.4,7.4,6.7,5.6,4.1,2.8,2.2]],
+"Adana":[37.0,[2.4,3.1,4.5,5.5,6.6,7.3,7.3,6.6,5.5,4.0,2.7,2.1]],
+"Konya":[37.9,[2.1,2.9,4.3,5.3,6.4,7.2,7.3,6.6,5.5,3.9,2.5,1.9]],
+"Erzurum":[39.9,[2.0,2.8,4.0,4.8,5.8,6.8,7.0,6.4,5.2,3.6,2.2,1.7]],
+"Şanlıurfa":[37.2,[2.3,3.1,4.6,5.6,6.8,7.6,7.5,6.8,5.7,4.1,2.7,2.1]],
+"Van":[38.5,[2.4,3.3,4.6,5.5,6.6,7.6,7.6,6.9,5.7,4.0,2.6,2.1]]};
+const GUN=[31,28,31,30,31,30,31,31,30,31,30,31], AY=["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
+const ORTAGUN=[17,47,75,105,135,162,198,228,258,288,318,344];
+const GECE={gun:.1,aks:.85,tum:.55};
+const MEVSIM={yil:[1,1,1,1,1,1,1,1,1,1,1,1],yaz:[0,0,0,0,1,1,1,1,1,0,0,0],kis:[1,1,1,0,0,0,0,0,0,0,1,1]};
+const INV=[1,1.5,2,3,3.6,5,6,8,10,12,15,20,25,30];
+const MODLAR=["ong","hib","off"], MODAD={ong:"Şebeke bağlantılı",hib:"Şebeke + akü",off:"Off-grid"};
+// [ad, açık, adet, W, saat, kullanım, kalkış, kritik, mevsim]
+const VARS=[["Buzdolabı",1,1,150,8,"tum",3,1,"yil"],["Derin dondurucu",0,1,200,8,"tum",3,1,"yil"],["Çamaşır makinesi",1,1,2000,0.5,"gun",1.5,0,"yil"],
+["Bulaşık makinesi",1,1,1800,0.6,"aks",1.2,0,"yil"],["Fırın",1,1,2200,0.5,"aks",1,0,"yil"],["Ütü",1,1,2200,0.3,"gun",1,0,"yil"],
+["Klima soğutma (12.000 BTU)",1,1,1100,4,"gun",2,0,"yaz"],["Isı pompası ısıtma",0,1,2500,8,"tum",1.5,0,"kis"],["Isı pompası soğutma",0,1,2000,5,"gun",1.5,0,"yaz"],["Isı pompası sıcak su",0,1,1500,1.5,"gun",1.5,0,"yil"],
+["Televizyon",1,1,100,5,"aks",1,0,"yil"],["LED aydınlatma",1,10,10,5,"aks",1,1,"yil"],
+["Modem",1,1,15,24,"tum",1,1,"yil"],["Kombi (pompa + fan)",1,1,120,6,"tum",2,1,"kis"],["Bilgisayar",1,1,150,4,"gun",1,0,"yil"],
+["Su ısıtıcı (kettle)",1,1,2000,0.15,"gun",1,0,"yil"],["Elektrik süpürgesi",1,1,900,0.2,"gun",2,0,"yil"],["Mikrodalga",0,1,1200,0.15,"aks",1,0,"yil"],
+["Hidrofor",0,1,750,0.5,"tum",3,0,"yil"],["Termosifon",0,1,2000,1.5,"aks",1,0,"yil"],["Elektrikli ısıtıcı",0,1,2000,4,"aks",1,0,"kis"],["Saç kurutma makinesi",0,1,1800,0.1,"gun",1,0,"yil"],
+["Elektrikli araç şarjı AC 11 kW",0,1,11000,0.65,"aks",1,0,"yil"],["Elektrikli araç şarjı AC 22 kW",0,1,22000,0.33,"aks",1,0,"yil"]];
+const EVSATIR=[["Elektrikli araç şarjı AC 11 kW",0,1,11000,0.65,"aks",1,0,"yil"],["Elektrikli araç şarjı AC 22 kW",0,1,22000,0.33,"aks",1,0,"yil"]];
+const $=id=>document.getElementById(id), f=(x,d=1)=>(isFinite(x)?x:0).toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const tl=x=>f(x,0)+" ₺";
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let S={mode:"hib",seq:0,rows:[],set:{}};
+const AYAR=["il","egim","yon","cati","pr","wp","ks","kim","mod","oton","tay","kar","yed","f_pan","f_invs","f_invh","f_aku","f_mon","f_al","f_sat","mahsup","oz_lat","oz_birim","oz_veri","hedef"];
+
+function yeni(a){return{id:++S.seq,ad:a[0],on:!!a[1],n:a[2],w:a[3],h:a[4],z:a[5],k:a[6],kr:!!a[7],s:a[8]||"yil"}}
+function yukle(){
+  let d=null; try{d=JSON.parse(localStorage.getItem("meskenGes2")||"null")}catch(e){}
+  if(d&&Array.isArray(d.rows)){S=d; S.rows.forEach(r=>{if(!MEVSIM[r.s])r.s="yil"}); if(!MODAD[S.mode])S.mode="hib"; if(!(S.v>=2))EVSATIR.forEach(a=>{if(!S.rows.some(r=>r.ad==a[0]))S.rows.push(yeni(a))})} else {S.rows=VARS.map(yeni)}
+  S.v=2;
+  if(!S.man)S.man={}; MODLAR.forEach(k=>S.man[k]=S.man[k]||{n:null,m:null});
+  $("il").innerHTML=Object.keys(ILLER).map(i=>`<option>${i}</option>`).join("")+`<option value="__ozel">Özel konum (elle gir)</option>`;
+  AYAR.forEach(k=>{if(S.set&&S.set[k]!=null)$(k).value=S.set[k]});
+}
+function kaydet(){AYAR.forEach(k=>S.set[k]=$(k).value);try{localStorage.setItem("meskenGes2",JSON.stringify(S))}catch(e){}}
+const opt=(l,v)=>l.map(o=>`<option value="${o[0]}" ${v==o[0]?"selected":""}>${o[1]}</option>`).join("");
+
+function tablo(){
+  $("yukler").tBodies[0].innerHTML=S.rows.map(r=>`<tr data-id="${r.id}" class="${r.on?"":"off"}">
+<td><input type="checkbox" id="r${r.id}_on" data-f="on" ${r.on?"checked":""} aria-label="Kullan"></td>
+<td><input type="text" id="r${r.id}_ad" data-f="ad" value="${esc(r.ad)}"></td>
+<td data-l="Adet"><input type="number" id="r${r.id}_n" data-f="n" min="0" step="1" value="${r.n}"></td>
+<td data-l="Güç (W)"><input type="number" id="r${r.id}_w" data-f="w" min="0" step="10" value="${r.w}"></td>
+<td data-l="Saat/gün"><input type="number" id="r${r.id}_h" data-f="h" min="0" max="24" step="0.1" value="${r.h}"></td>
+<td data-l="Kullanım"><select id="r${r.id}_z" data-f="z">${opt([["gun","Gündüz"],["aks","Akşam/gece"],["tum","Tüm gün"]],r.z)}</select></td>
+<td data-l="Mevsim"><select id="r${r.id}_s" data-f="s">${opt([["yil","Tüm yıl"],["yaz","Yaz"],["kis","Kış"]],r.s)}</select></td>
+<td data-l="Kalkış ×"><input type="number" id="r${r.id}_k" data-f="k" min="1" max="8" step="0.1" value="${r.k}"></td>
+<td data-l="Kritik"><input type="checkbox" id="r${r.id}_kr" data-f="kr" ${r.kr?"checked":""} aria-label="Kritik yük"></td>
+<td class="num" data-l="kWh/gün" id="r${r.id}_e"></td>
+<td><button class="x" type="button" data-sil="1" aria-label="Sil">×</button></td></tr>`).join("");
+}
+
+// Yatay ışınımı eğik panel düzlemine çevirir (Liu-Jordan izotropik model, Erbs aylık difüz oranı)
+function egik(H,lat,beta,yonler){
+  const r=Math.PI/180, p=lat*r, b=beta*r;
+  return H.map((h,i)=>{const n=ORTAGUN[i], d=23.45*r*Math.sin(2*Math.PI*(284+n)/365), ws=Math.acos(-Math.tan(p)*Math.tan(d));
+    const H0=24/Math.PI*1.367*(1+.033*Math.cos(2*Math.PI*n/365))*(Math.cos(p)*Math.cos(d)*Math.sin(ws)+ws*Math.sin(p)*Math.sin(d));
+    const kt=Math.min(.8,h/H0);
+    let fd=ws<1.4208?1.391-3.560*kt+4.189*kt*kt-2.137*kt**3:1.311-3.022*kt+3.427*kt*kt-1.821*kt**3; fd=Math.min(1,Math.max(.1,fd));
+    let rb=0; yonler.forEach(gd=>{const g=gd*r; let num=0,den=0;
+      for(let w=-ws;w<=ws;w+=.02){const cz=Math.sin(p)*Math.sin(d)+Math.cos(p)*Math.cos(d)*Math.cos(w);
+        const ct=Math.sin(d)*Math.sin(p)*Math.cos(b)-Math.sin(d)*Math.cos(p)*Math.sin(b)*Math.cos(g)+Math.cos(d)*Math.cos(p)*Math.cos(b)*Math.cos(w)+Math.cos(d)*Math.sin(p)*Math.sin(b)*Math.cos(g)*Math.cos(w)+Math.cos(d)*Math.sin(b)*Math.sin(g)*Math.sin(w);
+        num+=Math.max(0,ct); den+=Math.max(0,cz)}
+      rb+=num/den/yonler.length});
+    return h*((1-fd)*rb+fd*(1+Math.cos(b))/2+.2*(1-Math.cos(b))/2)});
+}
+
+function hesap(man){ man=man||S.man;
+  const v=k=>{
+    const input=$(k),text=String(input.value).trim().replace(',','.'),value=Number(text);
+    const label=input.closest('label')?.childNodes[0]?.textContent?.trim()||k;
+    if(!text||!Number.isFinite(value)||(input.min!==''&&value<Number(input.min))||(input.max!==''&&value>Number(input.max))) throw new Error(label+': geçerli aralıkta bir sayı girin.');
+    return value;
+  };
+  for(const row of S.rows){
+    if(!row.on)continue;
+    if(!Number.isInteger(row.n)||row.n<0||!Number.isFinite(row.w)||row.w<0||!Number.isFinite(row.h)||row.h<0||row.h>24||!Number.isFinite(row.k)||row.k<1||row.k>8||!MEVSIM[row.s]||GECE[row.z]===undefined) throw new Error('Cihaz adet, güç, saat ve kalkış değerlerini kontrol edin.');
+  }
+  let il=ILLER[$("il").value], ozel=$("il").value=="__ozel", ozd="";
+  if(ozel){const t=$("oz_veri").value.split(/[\s;]+/).filter(Boolean).map(x=>Number(x.replace(",",".")));
+    if(t.length!==12||t.some(x=>!Number.isFinite(x)||x<=0))throw new Error('Özel konum için Ocak–Aralık sırasıyla 12 pozitif aylık ışınım değeri girin.');
+    il=[v("oz_lat"),$("oz_birim").value=="ay"?t.map((x,i)=>x/GUN[i]):t];ozd="12 değer okundu; hesap girilen veriyle yapılıyor.";
+  }
+  if(!il)throw new Error('Geçerli bir konum seçin.');
+  const yat=il[1], yv=$("yon").value;
+  const psh=egik(yat,il[0],Math.min(90,Math.max(0,v("egim"))),yv=="db"?[-90,90]:[+yv]);
+  const pr=v("pr")||.78, wp=v("wp")||550, ks=v("ks")||.6, li=$("kim").value=="li";
+  const dod=li?.9:.5, eb=li?.95:.85, ei=.94, mod=v("mod")||5.12, pa=wp/212, cati=v("cati");
+  const nmax=cati>0?Math.floor(cati/pa):Infinity;
+  const Em=Array(12).fill(0), Enm=Array(12).fill(0), Ecm=Array(12).fill(0), Psm=Array(12).fill(0), Pss=Array(12).fill(0); let sur=0,buyuk=0,ev=0;
+  S.rows.forEach(r=>{const e=r.on?r.n*r.w*r.h/1000:0; const c=$("r"+r.id+"_e"); if(c)c.textContent=f(e,2);
+    if(!r.on||!r.n)return; sur=Math.max(sur,(r.k-1)*r.w); if(r.h>=1)buyuk=Math.max(buyuk,r.w);
+    MEVSIM[r.s].forEach((a,i)=>{if(!a)return; Em[i]+=e; Enm[i]+=e*GECE[r.z]; if(r.kr)Ecm[i]+=e; Psm[i]+=r.n*r.w*(r.w>=7000?1/ks:1); if(r.w<7000)Pss[i]+=r.n*r.w}); if(r.w>=7000)ev=Math.max(ev,r.w)});
+  const top=(a,g=GUN)=>a.reduce((s,x,i)=>s+x*g[i],0);
+  const yil=top(Em), Pp=Math.max(...Psm)*ks/1000, Pk=Pp+sur/1000, Emax=Math.max(...Em);
+  const sec=x=>INV.find(i=>i>=x-1e-9)||Math.ceil(x/5)*5;
+  const fy={pan:v("f_pan"),invs:v("f_invs"),invh:v("f_invh"),aku:v("f_aku"),mon:v("f_mon"),al:v("f_al"),sat:v("f_sat")}, mahsup=$("mahsup").value=="1";
+  function paket(mode,kwpIst,batIst,vs,ov){ ov=ov||{};
+    const nKural=yil>0?Math.max(1,Math.ceil(kwpIst*1000/wp-1e-9)):0, nIst=ov.n!=null?ov.n:nKural, n=Math.min(nIst,nmax), kwp=n*wp/1000;
+    let m=mode=="ong"?0:ov.m!=null?ov.m:(yil>0?Math.max(1,Math.ceil(batIst/mod-1e-9)):0); if(m&&!li&&mod<4){const seri=vs/12; m=Math.ceil(m/seri)*seri}
+    const bat=m*mod, kul=bat*dod;
+    const inv=!yil?0:sec(mode=="ong"?kwp/1.15:mode=="hib"?Math.max(Math.max(...Pss)*ks/1000*1.1,kwp/1.2):Math.max(Pp*1.25,Pk/2));
+    let ur=0,hamAl=0,al=0,ver=0,eksik=[],ay=[];
+    psh.forEach((p,i)=>{const Ln=Enm[i], Ld=Em[i]-Ln, P=kwp*p*pr, dir=Math.min(P,Ld), s=P-dir, st=Math.min(s*eb,kul,Ln/ei);
+      const im=((Ld-dir)+(Ln-st*ei))*GUN[i], ex=(s-st/eb)*GUN[i];
+      ur+=P*GUN[i]; ay.push(P*GUN[i]); hamAl+=im; if(Em[i]>0&&im>Em[i]*GUN[i]*.02)eksik.push(AY[i]);
+      if(mahsup&&mode!="off"){al+=Math.max(0,im-ex); ver+=Math.max(0,ex-im)} else {al+=im; ver+=ex}});
+    const mal=kwp*1000*fy.pan+inv*(mode=="ong"?fy.invs:fy.invh)+bat*fy.aku+kwp*fy.mon;
+    const tas=mode=="off"?(yil-al)*fy.al:(yil-al)*fy.al+ver*fy.sat;
+    return{elle:ov.n!=null||(mode!="ong"&&ov.m!=null),mode,n,nIst,kwp,m,bat,inv,vs,ah:vs?bat*1000/vs:0,ur,al,ver,eksik,ay,oz:yil?1-hamAl/yil:0,mal,tas,geri:tas>0?mal/tas:Infinity}}
+  // Off-grid: panel en kötü aya (ya da yıllık ortalamaya), akü en yüksek günlük tüketime göre
+  const need=Em.map((e,i)=>(e-Enm[i])+Enm[i]/(eb*ei));
+  const oK=$("tay").value=="min"?Math.max(...need.map((x,i)=>x/(psh[i]*pr))):top(need)/(top(psh)*pr);
+  const oI=sec(Math.max(Pp*1.25,Pk/2)), oVs=oI<=1.5?12:oI<=3?24:48;
+  const off=paket("off",oK,Emax*v("oton")/(dod*ei),oVs,man.off); off.mppt=off.vs?off.kwp*1000/off.vs:0;
+  // Şebeke bağlantılı: panel yıllık tüketimin karşılama oranına göre
+  const hk=v("kar")/100*yil/(top(psh)*pr);
+  const hib=paket("hib",hk,Math.max(Math.max(...Enm),Math.max(...Ecm)*v("yed")/24)/(dod*ei),48,man.hib);
+  const ong=paket("ong",hk,0,0,man.ong);
+  return{ev,pr,dod,eb,ei,lat:il[0],ozel,ozd,yil,Em,Enm,Ecm,Pp,Pk,off,hib,ong,buyuk,li,wp,pa,nmax,psh,yat,top,ay:Em.map((e,i)=>e*GUN[i])};
+}
+
+function ciz(R){
+  const md=S.mode, x=R[md], off=md=="off";
+  MODLAR.forEach(k=>$("m_"+k).setAttribute("aria-pressed",k==md));
+  $("baslik").textContent=(x.elle?"Seçilen sistem: ":"Önerilen sistem: ")+({ong:"şebeke bağlantılı (aküsüz)",hib:"şebeke + akü (hibrit)",off:"off-grid"})[md]+(x.elle?" · adetler elle/optimum":"");
+  $("m_pan").value=S.man[md].n??""; $("m_aku").value=S.man[md].m??"";
+  $("tipd").textContent=({ong:"Akü yok; gündüz üretim kullanılır, fazlası şebekeye verilir.",hib:"Fazla üretim aküye, sonra şebekeye; kesintide akü devreye girer.",off:"Şebeke yok; tüm enerji panel ve aküden."})[md];
+  $("ayarb").textContent="Tasarım ayarları ("+MODAD[md].toLocaleLowerCase("tr-TR")+")";
+  document.querySelectorAll("[data-m]").forEach(e=>e.hidden=!e.dataset.m.split(" ").includes(md));
+  const ort=a=>R.top(a)/365;
+  $("isinim").textContent=`Panel düzleminde yıllık ortalama ışınım ${f(ort(R.psh),2)} kWh/m²·gün (yatay ${f(ort(R.yat),2)}; Aralık ${f(R.psh[11],2)}, Haziran ${f(R.psh[5],2)}). ${R.ozel?"":"Hazır il değerleri yaklaşık aylık ortalamalardır; kesin proje için Meteonorm, GEPA ya da PVGIS verisiyle doğrulayın."}`;
+  $("ozel").hidden=!R.ozel; $("ozd").hidden=!R.ozel; $("ozd").textContent=R.ozd;
+  $("ozet").innerHTML=`<span>Günlük tüketim <b>${f(R.yil/365)} kWh</b></span><span>Kış (Oca) <b>${f(R.Em[0])}</b></span><span>Yaz (Tem) <b>${f(R.Em[6])}</b></span><span>Yıllık <b>${f(R.yil,0)} kWh</b></span><span>Eşzamanlı güç <b>${f(R.Pp)} kW</b></span><span>Kalkış anı <b>${f(R.Pk)} kW</b></span>`;
+  $("kartlar").innerHTML=`
+<div class="card pv"><span class="k">GES panel</span><span class="v">${f(x.kwp,2)} kWp</span><span class="d">${x.n} adet × ${R.wp} Wp · yaklaşık ${f(x.n*R.pa,0)} m² çatı</span></div>
+<div class="card"><span class="k">Batarya</span><span class="v">${md=="ong"?"Yok":f(x.bat)+" kWh"}</span><span class="d">${md=="ong"?"Aküsüz sistem":`${x.m} modül · ${x.vs} V'ta ${f(x.ah,0)} Ah · ${R.li?"LiFePO4":"Jel/AGM"}`}</span></div>
+<div class="card inv"><span class="k">${({ong:"Şebeke inverteri",hib:"Hibrit inverter",off:"Off-grid inverter"})[md]}</span><span class="v">${f(x.inv)} kW</span><span class="d">${x.inv>5?"Trifaze":"Monofaze"} · ${off?"MPPT şarj ≥ "+f(Math.ceil(x.mppt*1.25/10)*10,0)+" A":md=="hib"?"yedekleme çıkışlı":"kesintide çalışmaz"}</span></div>`;
+  $("para").innerHTML=`<span>Yatırım <b>${tl(x.mal)}</b></span><span>${off?"Şebeke eşdeğeri tasarruf":"Yıllık tasarruf"} <b>${tl(x.tas)}</b></span><span>Geri ödeme <b>${isFinite(x.geri)?f(x.geri)+" yıl":"–"}</b></span>`;
+  const N=[];
+  if(!R.yil)N.push("Listeden en az bir cihaz seçin.");
+  else{
+    if(x.n<x.nIst)N.push(`Çatıya en fazla ${R.nmax} panel sığıyor; gereken ${x.nIst} panel yerine ${x.n} panel alındı. Sonuçlar sığan panele göredir.`);
+    if(off){
+      if(x.eksik.length)N.push(`${x.eksik.join(", ")} aylarında üretim tüketimi karşılamıyor (yılda ${f(x.al,0)} kWh açık). Jeneratör desteği ya da daha fazla panel gerekir.`);
+      else N.push(["ok","Üretim yılın her ayında tüketimi karşılıyor."]);
+      if(R.buyuk>=1500)N.push("1,5 kW üstü uzun süreli ısıtma yükü var. Off-grid sistemde bu yükleri tüp gaz ya da güneş kollektörüne kaydırmak aküyü belirgin küçültür.");
+      N.push(["ok",`Kullanılamayan fazla üretim yaklaşık ${f(x.ver,0)} kWh/yıl.`]);
+    } else {
+      N.push(["ok",`Tüketimin %${f(x.oz*100,0)} kadarı doğrudan güneş${md=="hib"?" ve aküden":"ten"} karşılanır. ${$("mahsup").value=="1"?"Aylık mahsup sonrası şebekeden":"Şebekeden"} ${f(x.al,0)} kWh/yıl alınır, ${f(x.ver,0)} kWh/yıl satılır.`]);
+      if(md=="hib"){if(Math.max(...R.Ecm))N.push(["ok",`Kesintide kritik yükler (en çok ${f(Math.max(...R.Ecm))} kWh/gün) aküden beslenir.`]); else N.push("Kritik yük işaretlenmedi; kesinti yedeği hesaba katılmadı.")}
+    }
+    if(R.ev)N.push(`${f(R.ev/1000,0)} kW AC araç şarjı trifaze abonelik ve en az ${f(R.ev/1000,0)} kW bağlantı gücü gerektirir; şarj gücü eşzamanlılık katsayısı uygulanmadan tam alınır.${md=="off"?" Off-grid sistemde bu güç inverteri ve aküyü çok büyütür; şarj gücünü düşürmek ya da gündüz şarj etmek daha uygundur.":md=="hib"?" Hibritte şarj cihazı şebeke tarafına bağlanır; inverter gücüne dahil edilmedi, kesintide çalışmaz.":""}`);
+    if(x.inv>5)N.push("İnverter gücü 5 kW üstünde; trifaze abonelik ve trifaze inverter gerekir.");
+  }
+  $("notlar").innerHTML=N.map(n=>Array.isArray(n)?`<li class="ok">${n[1]}</li>`:`<li>${n}</li>`).join("");
+  // grafik
+  const mx=Math.max(1,...x.ay,...R.ay), H=160, y0=180, bw=18, sx=i=>52+i*45.5, sy=v=>y0-v/mx*H;
+  let g=""; for(let t=0;t<=4;t++){const val=mx*t/4, yy=sy(val); g+=`<line x1="46" x2="596" y1="${yy}" y2="${yy}" stroke="var(--line)" stroke-width="1"/><text x="42" y="${yy+4}" text-anchor="end">${f(val,0)}</text>`}
+  AY.forEach((a,i)=>{g+=`<rect x="${sx(i)}" y="${sy(x.ay[i])}" width="${bw}" height="${y0-sy(x.ay[i])}" fill="var(--sun)"><title>${a} üretim: ${f(x.ay[i],0)} kWh</title></rect>
+<rect x="${sx(i)+bw+2}" y="${sy(R.ay[i])}" width="${bw}" height="${y0-sy(R.ay[i])}" fill="var(--grid)"><title>${a} tüketim: ${f(R.ay[i],0)} kWh</title></rect><text x="${sx(i)+bw+1}" y="198" text-anchor="middle">${a}</text>`});
+  $("grafik").innerHTML=g;
+  // karşılaştırma
+  const c=(l,fn)=>`<tr><td>${l}</td>${MODLAR.map(k=>`<td class="${k==md?"sel":""}">${fn(R[k],k)}</td>`).join("")}</tr>`;
+  $("cmp").innerHTML=`<thead><tr><th></th>${MODLAR.map(k=>`<th>${MODAD[k]}</th>`).join("")}</tr></thead><tbody>`+
+   c("Panel",p=>`${p.n} adet · ${f(p.kwp,2)} kWp`)+
+   c("Batarya",(p,k)=>k=="ong"?"Yok":`${f(p.bat)} kWh (${p.m} modül)`)+
+   c("İnverter",p=>`${f(p.inv)} kW`)+
+   c("Yıllık üretim",p=>`${f(p.ur,0)} kWh`)+
+   c("Güneşten karşılanan",p=>`%${f(p.oz*100,0)}`)+
+   c("Şebekeden / açık",(p,k)=>`${f(p.al,0)} kWh${k=="off"?" açık":""}`)+
+   c("Fazla üretim",(p,k)=>`${f(p.ver,0)} kWh${k=="off"?" boşa":" satış"}`)+
+   c("Yatırım",p=>tl(p.mal))+
+   c("Yıllık tasarruf",p=>tl(p.tas))+
+   c("Geri ödeme",p=>isFinite(p.geri)?f(p.geri)+" yıl":"–")+`</tbody>`;
+}
+let SON=null;
+function kirli(b){$("hesbar").hidden=!b;document.querySelectorAll(".sonuc").forEach(e=>e.classList.toggle("eski",b))}
+function guncelle(){kaydet();$("ozel").hidden=$("il").value!="__ozel";kirli(true)}
+function invalidate(message){
+  document.documentElement.dataset.vgInvalid='true';
+  ['kartlar','para','cmp','grafik','ozet'].forEach(id=>{$(id).textContent='';});
+  $('notlar').textContent=message;$('notlar').setAttribute('role','alert');kirli(true);
+}
+function hesapla(){
+  kaydet();try{const result=hesap();SON=result;document.documentElement.dataset.vgInvalid='false';ciz(SON);tekhat();kirli(false);}
+  catch(error){invalidate(error.message);}
+}
+$("hesapla").addEventListener("click",hesapla);
+
+$("yukler").addEventListener("input",e=>{const tr=e.target.closest("tr[data-id]"),k=e.target.dataset.f;if(!tr||!k)return;
+  const r=S.rows.find(r=>r.id==tr.dataset.id); if(!r)return;
+  if(e.target.type=="checkbox"){r[k]=e.target.checked; if(k=="on")tr.className=r.on?"":"off"}
+  else r[k]=(k=="ad"||k=="z"||k=="s")?e.target.value:(parseFloat(e.target.value)||0);
+  guncelle()});
+$("yukler").addEventListener("click",e=>{if(!e.target.dataset.sil)return;const id=e.target.closest("tr").dataset.id;S.rows=S.rows.filter(r=>r.id!=id);tablo();guncelle()});
+$("ekle").addEventListener("click",()=>{const r=yeni(["Yeni cihaz",1,1,100,1,"gun",1,0,"yil"]);S.rows.push(r);tablo();guncelle();$("r"+r.id+"_ad").select()});
+AYAR.forEach(k=>$(k).addEventListener("input",()=>{if(k=="kim")$("mod").value=$("kim").value=="li"?5.12:2.4;guncelle()}));
+document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{S.mode=b.dataset.mode;kaydet();ciz(SON);tekhat()}));
+["m_pan","m_aku"].forEach((id,i)=>$(id).addEventListener("input",e=>{const t=e.target.value.trim();S.man[S.mode][i?"m":"n"]=t===""?null:Math.max(0,Math.round(+t)||0);$("optd").textContent="Adetler elle değiştirildi; sonuç için Hesapla'ya basın.";guncelle()}));
+function optimum(){
+  kaydet(); const md=S.mode, T=parseFloat($("hedef").value)||0, B=hesap({...S.man,[md]:{n:null,m:null}}), k=B[md], O=$("optd");
+  if(!B.yil){O.textContent="Önce en az bir cihaz seçin.";return}
+  const nUst=isFinite(B.nmax)?B.nmax:Math.max(40,k.n*3), mUst=md=="ong"?1:Math.max(8,k.m*2);
+  if(nUst<1){O.textContent="Çatı alanına panel sığmıyor.";return}
+  if(nUst*mUst>10000){O.textContent='Arama aralığı çok büyük. Panel/akü adetlerini elle sınırlandırıp yeniden deneyin.';return;}
+  let en=null, alt=null; const kar=x=>1-x.al/B.yil;
+  for(let n=1;n<=nUst;n++)for(let m=1;m<=mUst;m++){const x=hesap({...S.man,[md]:{n,m}})[md];
+    if(md=="off"){if(x.eksik.length){if(!alt||x.al<alt.al)alt=x} else if(!en||x.mal<en.mal)en=x}
+    else{if(!alt||x.geri<alt.geri)alt=x;
+      if(T>0){if(x.geri<=T&&(!en||kar(x)>kar(en)+1e-4||(Math.abs(kar(x)-kar(en))<=1e-4&&x.geri<en.geri)))en=x}
+      else if(!en||x.geri<en.geri)en=x}}
+  const sn=en||alt; S.man[md]={n:sn.n,m:md=="ong"?null:sn.m}; hesapla();
+  const boy=`${sn.n} panel${md=="ong"?"":", "+sn.m+" akü modülü"}`, son=" Adetleri değiştirip Hesapla ile yeniden hesaplayabilirsiniz.";
+  O.textContent=(md=="off"?(en?`Her ayı karşılayan en düşük maliyetli sistem: ${boy}, ${tl(sn.mal)}.`:`Çatı sınırı içinde her ayı karşılayan sistem yok; açığı en az olan seçildi: ${boy}.`)
+    :T>0?(en?`${f(T)} yıl hedefi içinde şebekeden en az enerji alan sistem: ${boy}; geri ödeme ${f(sn.geri)} yıl, mahsup sonrası karşılama %${f(kar(sn)*100,0)}.`:`Geri ödeme ${f(T)} yıla inmiyor; en kısa geri ödemeli sistem seçildi: ${boy}, ${f(sn.geri)} yıl.`)
+    :`En kısa geri ödemeli sistem: ${boy}; ${f(sn.geri)} yıl, mahsup sonrası karşılama %${f(kar(sn)*100,0)}.`)+son;
+}
+$("optbul").addEventListener("click",()=>{try{optimum();}catch(error){invalidate(error.message);}});
+$("otodon").addEventListener("click",()=>{S.man[S.mode]={n:null,m:null};hesapla();$("optd").textContent="Otomatik boyutlandırmaya dönüldü; adetler kurala göre hesaplanıyor."});
+const TMS=[6,10,16,20,25,32,40,50,63,80,100,125], NH=[32,40,50,63,80,100,125,160,200,250,315,400,500,630];
+const KES=[[16,2.5],[20,4],[25,4],[32,6],[40,10],[50,10],[63,16],[80,25],[100,35],[125,50]];
+const ust=(l,x)=>l.find(a=>a>=x)||l[l.length-1];
+// Seçilen ayın ortalama günü: yarım sinüs üretim, gündüz 08-18 / akşam 18-24 / gece 00-08 tüketim
+function gunSim(R,md,ay){const x=R[md],r=Math.PI/180,d=23.45*r*Math.sin(2*Math.PI*(284+ORTAGUN[ay])/365),ws=Math.acos(-Math.tan(R.lat*r)*Math.tan(d)),D=ws*24/Math.PI,sr=12-D/2;
+  const Pd=x.kwp*R.psh[ay]*R.pr,Ln=R.Enm[ay],Ld=R.Em[ay]-Ln,cap=x.bat*R.dod,off=md=="off",dt=.5;let soc=cap*.5,G=[];
+  for(let g=0;g<3;g++){G=[];for(let i=0;i<48;i++){const h=i*dt+.25,pv=h>sr&&h<sr+D?Pd*Math.PI/(2*D)*Math.sin(Math.PI*(h-sr)/D):0;
+    const l=(h>=8&&h<18?Ld/10:0)+(h>=18?Ln*.7/6:h<8?Ln*.3/8:0),net=pv-l;let bat=0,grid=0,bos=0,acik=0;
+    if(net>=0){bat=Math.min(net,(cap-soc)/(R.eb*dt));soc+=bat*R.eb*dt;const e=net-bat;if(off)bos=e;else grid=-e}
+    else{const dis=Math.min(-net,soc*R.ei/dt);soc-=dis/R.ei*dt;bat=-dis;const rem=-net-dis;if(off)acik=rem;else grid=rem}
+    G.push({pv,l,bat,grid,bos,acik,soc:cap?soc/cap:0})}}
+  return G}
+function tekhat(){const R=SON;if(!R)return;const md=S.mode,x=R[md],ay=+$("th_ay").value,h=+$("th_saat").value;
+  const saat=String(Math.floor(h)).padStart(2,"0")+":"+(h%1?"30":"00");$("th_saatv").textContent=saat;
+  if(!R.yil||!x.n){$("th").innerHTML="";$("th").setAttribute("viewBox","0 0 1000 10");$("th_oz").textContent="Şema için en az bir cihaz ve bir panel gerekli.";return}
+  const v=gunSim(R,md,ay)[Math.min(47,Math.round(h*2))], pinv=Math.max(0,v.pv-v.bat-v.bos), seb=md!="off", tri=x.inv>5;
+  const nStr=Math.ceil(x.n/10), per=Math.ceil(x.n/nStr), SG=Math.min(nStr,6), ROW=34, top=84, yc=Math.max(top+SG*ROW/2,196);
+  const tms=ust(TMS,x.inv*1000/(tri?693:230)*1.25), kab=(KES.find(k=>k[0]>=tms)||KES[KES.length-1])[1], nh=x.vs?ust(NH,x.inv*1000/(x.vs*.94)*1.25):0;
+  const H=Math.max(top+SG*ROW+34,yc+(x.m?196:110));
+  const w=(d,c,on,rev)=>`<path d="${d}" class="w ${c}"/>`+(on?`<path d="${d}" class="fl ${c}${rev?" r":""}"/>`:"");
+  const t=(a,b,s,c,an)=>`<text x="${a}" y="${b}" class="${c||""}" text-anchor="${an||"start"}">${s}</text>`;
+  const bx=(a,b,c,d)=>`<rect x="${a}" y="${b}" width="${c}" height="${d}" rx="5" class="bx"/>`;
+  let o=`<defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a5db0"/><stop offset=".55" stop-color="#143a7c"/><stop offset="1" stop-color="#0a1f4a"/></linearGradient>
+<linearGradient id="ig" x1="0" y1="0" x2="1" y2="0"><stop offset="0" style="stop-color:var(--inv2)"/><stop offset=".12" style="stop-color:var(--inv1)"/><stop offset=".88" style="stop-color:var(--inv1)"/><stop offset="1" style="stop-color:var(--inv2)"/></linearGradient>
+<symbol id="pv" viewBox="0 0 15 24" width="15" height="24"><rect x=".4" y=".4" width="14.2" height="23.2" rx=".9" fill="#cfd6df" stroke="#7d8896" stroke-width=".4"/><rect x="1.3" y="1.3" width="12.4" height="21.4" fill="url(#pg)"/>
+<path d="M5.43 1.3V22.7M9.57 1.3V22.7M1.3 4.87H13.7M1.3 8.43H13.7M1.3 12H13.7M1.3 15.57H13.7M1.3 19.13H13.7" stroke="#9fb8e8" stroke-width=".28" opacity=".75" fill="none"/></symbol></defs>`;
+  const dar=innerWidth<760, ilAd=$("il").value=="__ozel"?"Özel konum":$("il").value;$("th").classList.toggle("dar",dar);let HH=H;
+  if(dar){const top=78,yD=top+SG*ROW+16,yI=yD+108,yT=yI+130,yB=yT+70;
+    o+=t(12,24,"TEK HAT ŞEMASI","tt")+t(12,42,`${MODAD[md]} · ${f(x.kwp,2)} kWp · ${x.n} panel · ${nStr} dize`)+t(12,58,`${ilAd} · ${AY[ay]} · ${saat}`,"tv");
+    let kalan=x.n;for(let k=0;k<SG;k++){const pk=Math.min(per,kalan),y=top+k*ROW;kalan-=pk;o+=t(12,y+16,`D${k+1}`);
+      for(let j=0;j<pk;j++)o+=`<use href="#pv" x="${44+j*17}" y="${y}"/>`;
+      o+=w(`M${44+pk*17+2} ${y+12}H${330+k*6}V${yD+31}H262`,"d",v.pv>.01)}
+    if(nStr>6)o+=t(12,yD+12,`+ ${nStr-6} dize daha`);
+    o+=bx(138,yD,124,62)+t(200,yD+18,"DC PANO","tv","middle")+t(200,yD+33,"gPV 20 A sigorta","","middle")+t(200,yD+48,"Parafudr T2 · ayırıcı","","middle");
+    o+=w(`M200 ${yD+62}V${yI}`,"d",v.pv>.01)+t(210,yD+82,`${f(v.pv)} kW`,"tv")+t(210,yD+96,"6 mm²")+(v.bos>.01?t(190,yD+89,`Kırpılan ${f(v.bos)}`,"uy","end"):"");
+    o+=`<rect x="150" y="${yI}" width="100" height="130" rx="6" fill="url(#ig)" stroke="var(--muted)"/><rect x="163" y="${yI+40}" width="74" height="50" rx="3" fill="#10151c"/>`
+      +`<text x="200" y="${yI+64}" text-anchor="middle" style="fill:#ffb224;font-size:15px;font-weight:600">${f(pinv)} kW</text><text x="200" y="${yI+80}" text-anchor="middle" style="fill:#9aa9ba;font-size:10px">AC çıkış</text>`
+      +t(12,yI+20,({ong:"ŞEBEKE İNVERTERİ",hib:"HİBRİT İNVERTER",off:"OFF-GRID İNVERTER"})[md],"tv")+t(12,yI+35,`${f(x.inv)} kW`,"tv")+t(12,yI+50,tri?"3 faz · 400 V":"1 faz · 230 V");
+    if(x.m){const c=Math.min(x.m,6),yt=yI+20+Math.ceil(c/2)*26+12;
+      o+=w(`M250 ${yI+31}H292`,"d",Math.abs(v.bat)>.05,v.bat<0);
+      for(let i=0;i<c;i++){const bxx=292+(i%2)*48,byy=yI+20+Math.floor(i/2)*26;o+=bx(bxx,byy,42,22)+`<rect x="${bxx+2}" y="${byy+2}" width="${38*v.soc}" height="18" rx="3" fill="var(--ok)" opacity=".75"/>`}
+      o+=t(292,yt,`Akü ${f(x.bat)} kWh`,"tv")+t(292,yt+14,`${x.m} modül · ${x.vs} V`)+t(292,yt+28,`Doluluk %${f(v.soc*100,0)}`)+t(292,yt+42,v.bat>.05?`Şarj ${f(v.bat)} kW`:v.bat<-.05?`Deşarj ${f(-v.bat)} kW`:"Beklemede","tv")+t(292,yt+56,`NH ${nh} A`)}
+    o+=w(`M200 ${yT}V${yB}`,"a",pinv>.01)+bx(175,yT+22,50,24)+t(200,yT+38,`${tms} A`,"tv","middle")+t(166,yT+32,`TMŞ · ${tri?4:2}×${kab} mm²`,"","end")+t(166,yT+46,"KAR 30 mA","","end");
+    o+=`<line x1="20" x2="380" y1="${yB}" y2="${yB}" class="bara"/>`+t(380,yB-9,"AC PANO","tv","end");
+    const yuk=(by,ad,pw,d)=>w(d,"a",pw>.005)+bx(20,by,184,38)+t(112,by+16,ad,"tv","middle")+t(112,by+31,`${f(pw,2)} kW`,"","middle");
+    const kr=R.Em[ay]?R.Ecm[ay]/R.Em[ay]:0;
+    if(seb){o+=w(`M310 ${yB}V${yB+96}`,"a",Math.abs(v.grid)>.01,v.grid>0)+bx(271,yB+34,78,28)+t(310,yB+52,"Sayaç ⇄","tv","middle")
+       +`<circle cx="310" cy="${yB+115}" r="19" class="bx"/>`+t(310,yB+121,"~","tt","middle")+t(310,yB+150,`Şebeke ${tri?400:230} V`,"","middle")
+       +t(310,yB+165,v.grid>.01?`Alış ${f(v.grid)} kW`:v.grid<-.01?`Satış ${f(-v.grid)} kW`:"0,0 kW","tv","middle");
+      if(md=="hib"&&kr>0)o+=yuk(yB+34,"Ev yükleri",v.l*(1-kr),`M70 ${yB}V${yB+34}`)+yuk(yB+96,"Kritik yükler (yedekli)",v.l*kr,`M228 ${yB}V${yB+115}H204`);
+      else o+=yuk(yB+34,"Ev yükleri",v.l,`M70 ${yB}V${yB+34}`)}
+    else o+=yuk(yB+34,"Ev yükleri",v.l,`M112 ${yB}V${yB+34}`)+(v.acik>.01?t(112,yB+92,`Karşılanamayan ${f(v.acik,2)} kW`,"uy","middle"):"");
+    HH=yB+180;
+  }else{
+  o+=t(20,28,"TEK HAT ŞEMASI","tt")+t(20,46,`${MODAD[md]} · ${f(x.kwp,2)} kWp · ${x.n} panel × ${R.wp} Wp · ${nStr} dize`)+t(980,28,`${$("il").value=="__ozel"?"Özel konum":$("il").value} · ${AY[ay]} · ${saat}`,"tv","end");
+  let kalan=x.n; for(let k=0;k<SG;k++){const pk=Math.min(per,kalan),y=top+k*ROW;kalan-=pk;o+=t(20,y+16,`D${k+1} · ${pk} panel`);
+    for(let j=0;j<pk;j++)o+=`<use href="#pv" x="${104+j*17}" y="${y}"/>`;
+    o+=w(`M${104+pk*17+2} ${y+12}H${300+k*5}V${yc}H350`,"d",v.pv>.01)}
+  if(nStr>6)o+=t(20,top+6*ROW+14,`+ ${nStr-6} dize daha (${kalan} panel)`);
+  o+=bx(350,yc-34,124,68)+t(412,yc-14,"DC PANO","tv","middle")+t(412,yc+2,"gPV 20 A sigorta","","middle")+t(412,yc+17,"Parafudr T2 · ayırıcı","","middle");
+  o+=w(`M474 ${yc}H524`,"d",v.pv>.01)+t(499,yc-8,`${f(v.pv)} kW`,"tv","middle")+t(499,yc+16,"6 mm²","","middle")+(v.bos>.01?t(499,yc+30,`Kırpılan ${f(v.bos)}`,"uy","middle"):"");
+  o+=`<rect x="524" y="${yc-72}" width="100" height="144" rx="6" fill="url(#ig)" stroke="var(--muted)"/><rect x="537" y="${yc-34}" width="74" height="50" rx="3" fill="#10151c"/>`
+    +`<text x="574" y="${yc-10}" text-anchor="middle" style="fill:#ffb224;font-size:15px;font-weight:600">${f(pinv)} kW</text><text x="574" y="${yc+6}" text-anchor="middle" style="fill:#9aa9ba;font-size:10px">AC çıkış</text>`
+    +t(574,yc-94,`${({ong:"ŞEBEKE İNVERTERİ",hib:"HİBRİT İNVERTER",off:"OFF-GRID İNVERTER"})[md]} ${f(x.inv)} kW`,"tv","middle")+t(574,yc-80,tri?"3 faz · 400 V":"1 faz · 230 V","","middle");
+  if(x.m){const yb=yc+120,c=Math.min(x.m,6),x0=574-c*23;
+    o+=w(`M574 ${yc+72}V${yb}`,"d",Math.abs(v.bat)>.05,v.bat<0)+t(584,yc+92,`NH ${nh} A`)+t(584,yc+106,v.bat>.05?`Şarj ${f(v.bat)} kW`:v.bat<-.05?`Deşarj ${f(-v.bat)} kW`:"Beklemede","tv");
+    for(let i=0;i<c;i++)o+=bx(x0+i*46+2,yb,42,26)+`<rect x="${x0+i*46+4}" y="${yb+2}" width="${38*v.soc}" height="22" rx="3" fill="var(--ok)" opacity=".75"/>`;
+    o+=t(574,yb+44,`Akü ${f(x.bat)} kWh · ${x.m} modül · ${x.vs} V`,"tv","middle")+t(574,yb+59,`Doluluk %${f(v.soc*100,0)}`,"","middle")}
+  o+=w(`M624 ${yc}H724`,"a",pinv>.01)+bx(649,yc-12,50,24)+t(674,yc+4,`${tms} A`,"tv","middle")+t(674,yc-18,`TMŞ · ${tri?4:2}×${kab} mm²`,"","middle")+t(674,yc+27,"KAR 30 mA","","middle");
+  o+=`<line x1="724" x2="724" y1="${yc-84}" y2="${yc+84}" class="bara"/>`+t(724,yc-92,"AC PANO","tv","middle");
+  const yuk=(y,ad,p)=>w(`M724 ${y}H794`,"a",p>.005)+bx(794,y-19,184,38)+t(886,y-3,ad,"tv","middle")+t(886,y+12,`${f(p,2)} kW`,"","middle");
+  const kr=R.Em[ay]?R.Ecm[ay]/R.Em[ay]:0;
+  if(seb){const yG=yc-56;o+=w(`M724 ${yG}H907`,"a",Math.abs(v.grid)>.01,v.grid>0)+bx(775,yG-14,78,28)+t(814,yG+4,"Sayaç ⇄","tv","middle")
+     +`<circle cx="927" cy="${yG}" r="19" class="bx"/>`+t(927,yG+6,"~","tt","middle")+t(927,yG-26,`Şebeke ${tri?400:230} V`,"","middle")
+     +t(814,yG-21,v.grid>.01?`Alış ${f(v.grid)} kW`:v.grid<-.01?`Satış ${f(-v.grid)} kW`:"0,0 kW","tv","middle");
+    if(md=="hib"&&kr>0)o+=yuk(yc+10,"Ev yükleri",v.l*(1-kr))+yuk(yc+62,"Kritik yükler (yedekli)",v.l*kr); else o+=yuk(yc+20,"Ev yükleri",v.l)}
+  else o+=yuk(yc,"Ev yükleri",v.l)+(v.acik>.01?t(886,yc+36,`Karşılanamayan ${f(v.acik,2)} kW`,"uy","middle"):"");
+  }
+  $("th").setAttribute("viewBox",`0 0 ${dar?400:1000} ${HH}`);$("th").innerHTML=o;
+  $("th_oz").innerHTML=`<span>Üretim <b>${f(v.pv)} kW</b></span><span>Tüketim <b>${f(v.l)} kW</b></span>`+(x.m?`<span>Akü <b>${v.bat>.05?"şarj "+f(v.bat):v.bat<-.05?"deşarj "+f(-v.bat):"0,0"} kW · %${f(v.soc*100,0)}</b></span>`:"")+(seb?`<span>Şebeke <b>${v.grid>.01?"alış "+f(v.grid):v.grid<-.01?"satış "+f(-v.grid):"0,0"} kW</b></span>`:"");
+}
+$("th_ay").innerHTML=AY.map((a,i)=>`<option value="${i}">${a}</option>`).join("");$("th_ay").value=new Date().getMonth();
+$("th_ay").addEventListener("input",tekhat);$("th_saat").addEventListener("input",tekhat);
+let TMR=null;$("th_oyna").addEventListener("click",e=>{if(TMR){clearInterval(TMR);TMR=null;e.target.textContent="▶ Gün simülasyonu"}else{e.target.textContent="■ Durdur";TMR=setInterval(()=>{$("th_saat").value=(+$("th_saat").value+.5)%24;tekhat()},300)}});
+let RZ=null;addEventListener("resize",()=>{clearTimeout(RZ);RZ=setTimeout(tekhat,150)});
+yukle();tablo();hesapla();
+</script>
+
+</html>

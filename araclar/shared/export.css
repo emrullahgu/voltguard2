@@ -1,0 +1,23 @@
+/* VoltGuard report and portable-project controls. */
+#vg-export{position:fixed;z-index:2147483000;right:20px;bottom:18px;max-width:calc(100vw - 32px);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;color:#1e293b}
+#vg-export details{background:#fff;border:1px solid #94a3b8;box-shadow:0 8px 28px #15354a25;border-radius:16px;overflow:hidden}
+#vg-export summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 16px;font-weight:700;user-select:none}
+#vg-export summary::-webkit-details-marker{display:none}
+#vg-export summary::before{content:"↓";display:grid;place-items:center;background:#fffbeb;color:#b45309;width:28px;height:28px;border-radius:8px;font-size:20px}
+#vg-export summary::after{content:"+";margin-left:12px;color:#526277;font-size:20px}
+#vg-export details[open] summary::after{content:"−"}
+#vg-export .vg-export-actions{padding:0 12px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:440px}
+#vg-export button{appearance:none;font:600 12px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;color:#1e293b;background:#f2f7fa;border:1px solid #d3e2ea;min-height:40px;padding:9px 12px;border-radius:8px;cursor:pointer;white-space:normal;text-align:center;box-shadow:none}
+#vg-export button:hover{background:#e4f2f8;border-color:#a6cdda}
+#vg-export button.vg-primary{background:#f59e0b;border-color:#f59e0b;color:#0a1628}
+#vg-export button.vg-primary:hover{background:#fcd34d}
+#vg-export button:disabled{cursor:wait;opacity:.55}
+#vg-export :focus-visible{outline:3px solid #b45309;outline-offset:3px}
+#vg-export .vg-export-note{max-width:380px;color:#526277;font-size:11px;margin:0;padding:0 14px 10px}
+#vg-export-status{padding:0 14px 12px;font-size:12px;max-width:400px;white-space:normal;overflow-wrap:anywhere}
+#vg-export-status:empty{display:none}
+#vg-export-status[data-error="true"]{color:#a32020}
+body{padding-bottom:74px}
+.vg-report-frame{position:fixed;top:0;left:-30000px;border:0;pointer-events:none;opacity:0;z-index:-1}
+@media(max-width:600px){#vg-export{bottom:10px;right:10px;max-width:calc(100vw - 20px)}#vg-export summary{padding:10px 13px;font-size:12px}#vg-export .vg-export-actions{max-width:320px}#vg-export .vg-export-note{max-width:290px}#vg-export-status{max-width:300px}}
+@media print{#vg-export,.vg-report-frame,[data-vg-no-print]{display:none!important}body{padding-bottom:0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}

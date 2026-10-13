@@ -1,0 +1,401 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PCB Tasarım Kontrol Listesi</title><link rel="stylesheet" href="../../shared/engineering.css"><style>.pcb-row{border-bottom:1px solid #dce6ee;padding:17px 0;display:grid;grid-template-columns:2fr 1fr;gap:8px 18px}.pcb-row details,.pcb-row input{grid-column:1/-1}.pcb-row summary{color:#647e91;font-size:12px;cursor:pointer}.pcb-row details p{font-size:12px}.pcb-row label{font-size:14px;font-weight:600}#ws-preview svg{display:block;max-width:100%;margin:16px auto;border:1px solid #d4e3ed}#printReport.pcb-report table{table-layout:fixed;width:100%}#printReport.pcb-report th:nth-child(1){width:60%}#printReport.pcb-report th:nth-child(2){width:16%}#printReport.pcb-report th:nth-child(3){width:24%}#printReport.pcb-report td:nth-child(2){white-space:nowrap;text-align:left}#printReport{display:none}:is(.engineering-app,#printReport) table td{overflow-wrap:anywhere}#workshopForm input,#workshopForm textarea,#workshopForm select{font:inherit}#ws-summary{font-weight:700;color:#00738b}.pcb-row[hidden]{display:none!important}@media(max-width:650px){.pcb-row{grid-template-columns:1fr}}@media print{.engineering-app .eng-inputs,.eng-guide{display:none!important}#printReport{display:block}.pp{break-before:page}table{font-size:11px}.pp svg{max-width:none!important}.pp h3{margin-top:8px}}</style></head><body data-workshop="pcb"><main class="engineering-app"><section class="eng-panel eng-inputs"><h2>PCB tasarım kontrol kaydı</h2><p>Henrik (henrikh) kontrol listesinden çevrilip uyarlanmış 57 madde. Durum ve kanıtı siz kaydedersiniz; otomatik uygunluk kararı verilmez.</p><form id="workshopForm"><div class="eng-fields"><label>Proje adı<input id="ws-title" maxlength="200"></label><label>İnceleyen<input id="ws-reviewer" maxlength="200"></label><label>Görünüm<select id="ws-filter"><option value="all">Tüm maddeler</option><option value="pending">Bekleyen</option><option value="issue">Sorun var</option><option value="verified">Doğrulanan</option><option value="na">Uygulanmaz</option></select></label><label>Madde veya çalışma alanı ara<input id="ws-search" type="search"></label><label>Genel inceleme notu<textarea id="ws-notes" maxlength="2000"></textarea></label></div><p id="ws-summary" aria-live="polite"></p><button type="button" id="ws-csv">Kontrol kaydı CSV</button><p id="ws-error" class="eng-error" role="alert" hidden></p><div id="ws-list"></div></form></section><section class="eng-panel eng-guide"><h2>Kontrol listesi nasıl kullanılır?</h2><p>Önce proje ve revizyonu tanımlayın. Her madde için bekliyor, doğrulandı, sorun var veya uygulanmaz durumunu seçin; ölçüm veya dosya referansını not alanına yazın. Sorun filtresi açık maddeleri görünür yapar. JSON proje yedeği incelemeyi daha sonra sürdürmenizi sağlar; PDF tüm 57 maddeyi ve notları içerir.</p><h3>Atıf ve lisans</h3><p>Kaynak: <a href="https://github.com/henrikh/pcb-checklist" target="_blank" rel="noopener">Henrik (henrikh) · pcb-checklist</a>. 57 seçili maddenin Türkçe çevirisi ve uygulama uyarlaması: VoltGuard. <a href="../../vendor/pcb-checklist/UNLICENSE.txt">Unlicense tam metni</a> ve <a href="../../vendor/pcb-checklist/NOTICE.txt">kaynak/sürüm bildirimi</a> korunmuştur.</p><h3>Bu liste standart uygunluk onayı verir mi?</h3><p>Hayır. Seçili maddeler tasarım incelemesini kayıt altına alır. Ürün, saha ve mevzuat için gereken özgül deneyler veya kabul prosedürleri ilgili proje kapsamında belirlenir.</p><p><a href="../elektrik-sembol-kutuphanesi/">Elektrik sembol ve şema atölyesi</a> · <a href="../pano-etiketleri/">Pano etiketleri</a></p></section><script type="application/json" id="pcb-items">[
+  {
+    "id": "pcb-1",
+    "group": "Süreç ve kayıt",
+    "text": "Tasarım, şema ve PCB revizyonları takip ediliyor mu?",
+    "original": "Is there a method of tracking versions/revisions?",
+    "sourceIndex": 1
+  },
+  {
+    "id": "pcb-2",
+    "group": "Süreç ve kayıt",
+    "text": "Kaynak sürüm kontrolü kullanılıyor mu?",
+    "original": "Is source version control used? (Git, SVN etc.)",
+    "sourceIndex": 2
+  },
+  {
+    "id": "pcb-3",
+    "group": "Süreç ve kayıt",
+    "text": "Tasarım dosyalarının ayrı konumda yedeği var mı?",
+    "original": "Is offsite backup used?",
+    "sourceIndex": 3
+  },
+  {
+    "id": "pcb-5",
+    "group": "Süreç ve kayıt",
+    "text": "Tasarım kararları belgelenmiş mi?",
+    "original": "Are design decisions documented?",
+    "sourceIndex": 5
+  },
+  {
+    "id": "pcb-6",
+    "group": "Sistem tasarımı",
+    "text": "ESD koruması gerektiren girişler belirlenmiş mi?",
+    "original": "What should have ESD protection? #ESD",
+    "sourceIndex": 6
+  },
+  {
+    "id": "pcb-7",
+    "group": "Sistem tasarımı",
+    "text": "Yükselteç devrelerinin kararlılığı doğrulanmış mı?",
+    "original": "Are amplifier circuits stable?",
+    "sourceIndex": 7
+  },
+  {
+    "id": "pcb-9",
+    "group": "Sistem tasarımı",
+    "text": "Sistem ve kritik alt devreler simüle edilmiş mi?",
+    "original": "Has the design or subsystems of it been simulated?",
+    "sourceIndex": 9
+  },
+  {
+    "id": "pcb-17",
+    "group": "Sistem tasarımı",
+    "text": "Bağlantı uçları tanımlanmış ve belgelenmiş mi?",
+    "original": "Have pin-outs been defined and specified?",
+    "sourceIndex": 17
+  },
+  {
+    "id": "pcb-18",
+    "group": "Sistem tasarımı",
+    "text": "En yüksek akım ihtiyacı belirlenmiş mi?",
+    "original": "What is the max current draw?",
+    "sourceIndex": 18
+  },
+  {
+    "id": "pcb-19",
+    "group": "Sistem tasarımı",
+    "text": "Kablo demetleri ve konektörler belirlenmiş mi?",
+    "original": "Have harnesses/wiring/connectors been identified?",
+    "sourceIndex": 19
+  },
+  {
+    "id": "pcb-33",
+    "group": "Sistem tasarımı",
+    "text": "Sistemin güç bütçesi hazırlanmış mı?",
+    "original": "Is there a power budget?",
+    "sourceIndex": 33
+  },
+  {
+    "id": "pcb-36",
+    "group": "Sistem tasarımı",
+    "text": "Beklenen çalışma sıcaklıkları değerlendirilmiş mi?",
+    "original": "Estimated expected operating temperature?",
+    "sourceIndex": 36
+  },
+  {
+    "id": "pcb-39",
+    "group": "Sistem tasarımı",
+    "text": "Güç açılış sırası tanımlanmış mı?",
+    "original": "Is power-up well-defined? Some subsystems might need to be unpowered before other subsystems are powered, e.g. LED drivers unpowered until the software has booted. Certain components such as complex microprocessors, FPGAs and other complex ICs need special power sequencing to operate correctly; consult datasheets for details.",
+    "sourceIndex": 39
+  },
+  {
+    "id": "pcb-40",
+    "group": "Sistem tasarımı",
+    "text": "Güç kapanış davranışı tanımlanmış mı?",
+    "original": "Is power-down well-defined?",
+    "sourceIndex": 40
+  },
+  {
+    "id": "pcb-41",
+    "group": "Sistem tasarımı",
+    "text": "Galvanik ayırma gerektiren alt sistemler belirlenmiş mi?",
+    "original": "Should any subsystems be isolated?",
+    "sourceIndex": 41
+  },
+  {
+    "id": "pcb-48",
+    "group": "Sistem tasarımı",
+    "text": "Düşük ve yüksek gerilim koruma ihtiyacı değerlendirilmiş mi?",
+    "original": "Will under or over voltage protection be needed?",
+    "sourceIndex": 48
+  },
+  {
+    "id": "pcb-53",
+    "group": "Sistem tasarımı",
+    "text": "Kritik devrelere test noktaları eklenmiş mi?",
+    "original": "Test points on PCB for critical circuits?",
+    "sourceIndex": 53
+  },
+  {
+    "id": "pcb-55",
+    "group": "Sistem tasarımı",
+    "text": "Test prosedürü hazırlanmış mı?",
+    "original": "Has a test procedure been written?",
+    "sourceIndex": 55
+  },
+  {
+    "id": "pcb-71",
+    "group": "Sistem tasarımı",
+    "text": "Batarya sağlığının izlenmesi değerlendirilmiş mi?",
+    "original": "Battery health?",
+    "sourceIndex": 71
+  },
+  {
+    "id": "pcb-81",
+    "group": "Sistem tasarımı",
+    "text": "Konektörlerin tehlikeli biçimde eşleşmesi engellenmiş mi?",
+    "original": "Can connections be mated in an unsafe way?",
+    "sourceIndex": 81
+  },
+  {
+    "id": "pcb-84",
+    "group": "Sistem tasarımı",
+    "text": "Devrenin yaydığı gürültü frekansları değerlendirilmiş mi?",
+    "original": "What noise frequencies are emitted? (e.g. clock and SMPS frequencies)",
+    "sourceIndex": 84
+  },
+  {
+    "id": "pcb-85",
+    "group": "Sistem tasarımı",
+    "text": "Devrenin duyarlı olduğu gürültü frekansları belirlenmiş mi?",
+    "original": "What noise frequencies is the circuit sensitive to?",
+    "sourceIndex": 85
+  },
+  {
+    "id": "pcb-93",
+    "group": "Sistem tasarımı",
+    "text": "Ekranlama ve gövde-toprak bağlantısı değerlendirilmiş mi?",
+    "original": "Is a shielded case needed? How will this be bonded to ground?",
+    "sourceIndex": 93
+  },
+  {
+    "id": "pcb-102",
+    "group": "Sistem tasarımı",
+    "text": "Bileşen değer düşürme payları sıcaklık, gerilim ve akıma göre değerlendirilmiş mi?",
+    "original": "Are component ratings derated by expected operating temperature/voltage/current?",
+    "sourceIndex": 102
+  },
+  {
+    "id": "pcb-108",
+    "group": "Bileşenler",
+    "text": "Bileşen gerilim dayanımları kontrol edilmiş mi?",
+    "original": "Are voltage ratings of components sufficient? #schematic #electrical",
+    "sourceIndex": 108
+  },
+  {
+    "id": "pcb-109",
+    "group": "Bileşenler",
+    "text": "Üretimden kalkma riski olan bileşenler belirlenmiş mi?",
+    "original": "Are any components expected for obsoletion?",
+    "sourceIndex": 109
+  },
+  {
+    "id": "pcb-112",
+    "group": "Bileşenler",
+    "text": "Uygun alternatif bileşenler belirlenmiş mi?",
+    "original": "Are suitable alternatives identified?",
+    "sourceIndex": 112
+  },
+  {
+    "id": "pcb-113",
+    "group": "Bileşenler",
+    "text": "Bileşen hata düzeltme belgeleri incelenmiş mi?",
+    "original": "Have errata sheets been checked? #schematic #components",
+    "sourceIndex": 113
+  },
+  {
+    "id": "pcb-123",
+    "group": "Mekanik yerleşim",
+    "text": "Mekanik kısıtlar tanımlanmış mı?",
+    "original": "Are mechanical constraints defined?",
+    "sourceIndex": 123
+  },
+  {
+    "id": "pcb-129",
+    "group": "Mekanik yerleşim",
+    "text": "Sıcaklığa duyarlı bileşenler sıcak parçalardan uzak mı?",
+    "original": "Are temperature sensitive components placed away from hot components?",
+    "sourceIndex": 129
+  },
+  {
+    "id": "pcb-131",
+    "group": "Şema",
+    "text": "Tasarım kuralı denetimleri yapılandırılmış mı?",
+    "original": "Has DRC been set up and configured?",
+    "sourceIndex": 131
+  },
+  {
+    "id": "pcb-139",
+    "group": "Şema",
+    "text": "Sembol pin türleri doğru atanmış mı?",
+    "original": "Pins are assigned the correct type (passive, power, in, out etc.)",
+    "sourceIndex": 139
+  },
+  {
+    "id": "pcb-147",
+    "group": "Şema",
+    "text": "Farklı kartların eşleşen konektör pinleri karşılaştırılmış mı?",
+    "original": "Are mating connectors on different boards matched in pin-out?",
+    "sourceIndex": 147
+  },
+  {
+    "id": "pcb-153",
+    "group": "Şema",
+    "text": "Kutuplu bileşenlerin ters gerilim riski değerlendirilmiş mi?",
+    "original": "Are polarized components protected/ensured against from reverse voltage?",
+    "sourceIndex": 153
+  },
+  {
+    "id": "pcb-259",
+    "group": "PCB",
+    "text": "İzler arası açıklık gerilim seviyesine göre doğrulanmış mı?",
+    "original": "Trace-to-trace clearance based upon voltage rating?",
+    "sourceIndex": 259
+  },
+  {
+    "id": "pcb-262",
+    "group": "PCB",
+    "text": "Montaj delikleri eklenmiş mi?",
+    "original": "Are there mounting holes?",
+    "sourceIndex": 262
+  },
+  {
+    "id": "pcb-266",
+    "group": "PCB",
+    "text": "Kart dış sınırı tanımlanmış mı?",
+    "original": "Is the outline of the board defined?",
+    "sourceIndex": 266
+  },
+  {
+    "id": "pcb-268",
+    "group": "PCB",
+    "text": "Eşleşen konektörler için yeterli mekanik alan var mı?",
+    "original": "Is there enough space for the mating connectors? #clearance #connectors",
+    "sourceIndex": 268
+  },
+  {
+    "id": "pcb-273",
+    "group": "PCB",
+    "text": "Kutuplu bileşenlerin yönleri kontrol edilmiş mi?",
+    "original": "Polarized components are oriented correctly",
+    "sourceIndex": 273
+  },
+  {
+    "id": "pcb-274",
+    "group": "PCB",
+    "text": "Tüm gerekli izler tamamlanmış mı?",
+    "original": "All traces are routed?",
+    "sourceIndex": 274
+  },
+  {
+    "id": "pcb-275",
+    "group": "PCB",
+    "text": "Dekuplaj kondansatörleri güç pinlerine yakın mı?",
+    "original": "Are decoupling capacitors placed close to power pins of ICs?",
+    "sourceIndex": 275
+  },
+  {
+    "id": "pcb-277",
+    "group": "PCB",
+    "text": "Elektriksel kural denetimi sonuçları gözden geçirilmiş mi?",
+    "original": "Does ERC pass?",
+    "sourceIndex": 277
+  },
+  {
+    "id": "pcb-281",
+    "group": "PCB",
+    "text": "Hızlı sinyallerin referans düzlemi kesintileri değerlendirilmiş mi?",
+    "original": "Do high-speed signals avoid gaps in ground planes?",
+    "sourceIndex": 281
+  },
+  {
+    "id": "pcb-283",
+    "group": "PCB",
+    "text": "Diferansiyel çift geometrileri hedef empedansa göre değerlendirilmiş mi?",
+    "original": "Are differential pair spacing based upon impedance matching?",
+    "sourceIndex": 283
+  },
+  {
+    "id": "pcb-284",
+    "group": "PCB",
+    "text": "İletim hatlarının sonlandırılması kontrol edilmiş mi?",
+    "original": "Are transmission lines terminated with an appropriate impedance?",
+    "sourceIndex": 284
+  },
+  {
+    "id": "pcb-300",
+    "group": "PCB",
+    "text": "PCB katmanlarının tamamı gözden geçirilmiş mi?",
+    "original": "Has all layers been checked?",
+    "sourceIndex": 300
+  },
+  {
+    "id": "pcb-304",
+    "group": "PCB",
+    "text": "İz genişlikleri akım ve sıcaklık artışına uygun mu?",
+    "original": "Are the trace widths sufficient for the current draw and max heating?",
+    "sourceIndex": 304
+  },
+  {
+    "id": "pcb-313",
+    "group": "PCB",
+    "text": "Kart revizyon numarası işlenmiş mi?",
+    "original": "Is there a revision number?",
+    "sourceIndex": 313
+  },
+  {
+    "id": "pcb-316",
+    "group": "PCB",
+    "text": "Konektör pin işaretleri yazılmış mı?",
+    "original": "Are connector pin-outs labeled?",
+    "sourceIndex": 316
+  },
+  {
+    "id": "pcb-324",
+    "group": "PCB",
+    "text": "Lehim pedlerinin üzerinde baskı yazısı yok mu?",
+    "original": "No silk screen on pads",
+    "sourceIndex": 324
+  },
+  {
+    "id": "pcb-331",
+    "group": "PCB",
+    "text": "PCB ile şema karşılaştırması yapılmış mı?",
+    "original": "Does LVS pass? Layout Versus Schematic is a check to confirm that the board layout actually implements the schematic. That is: Are the traces actually connecting the proper components? Resources: Wikipedia.",
+    "sourceIndex": 331
+  },
+  {
+    "id": "pcb-339",
+    "group": "Üretim dosyaları",
+    "text": "Üretim dosyaları güncel tasarımla eşleşiyor mu?",
+    "original": "Do production files match design files?",
+    "sourceIndex": 339
+  },
+  {
+    "id": "pcb-340",
+    "group": "Üretim dosyaları",
+    "text": "Üreticiye gönderilecek dosyalar son revizyon mu?",
+    "original": "Has the correct/latest files been uploaded? Yes, this does happen.",
+    "sourceIndex": 340
+  },
+  {
+    "id": "pcb-362",
+    "group": "Yazılım",
+    "text": "Yazılımda kullanıcı ve sensör girdilerinin sınırları kontrol ediliyor mu?",
+    "original": "Is user/sensor input bounds checked?",
+    "sourceIndex": 362
+  },
+  {
+    "id": "pcb-365",
+    "group": "Yazılım",
+    "text": "Yazılımda tampon taşmaları ele alınıyor mu?",
+    "original": "Are buffer overflows handled?",
+    "sourceIndex": 365
+  },
+  {
+    "id": "pcb-377",
+    "group": "Dokümantasyon",
+    "text": "Kullanım talimatları hazırlanmış mı?",
+    "original": "Usage instructions",
+    "sourceIndex": 377
+  },
+  {
+    "id": "pcb-379",
+    "group": "Dokümantasyon",
+    "text": "Sorun giderme talimatları hazırlanmış mı?",
+    "original": "Troubleshooting instructions",
+    "sourceIndex": 379
+  }
+]</script><section id="printReport" class="eng-panel pcb-report"></section></main><script src="../../shared/workshop-ui.js"></script></body></html>

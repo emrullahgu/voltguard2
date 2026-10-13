@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<!-- Özgün hesap modeli: Elektrik Elektronik Mühendisi Baki SONAY -->
+<html lang="tr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OG Gerilim Düşümü | VoltGuard</title><meta name="description" content="Orta gerilim hatlarında gerilim düşümü ve güç kaybını hesaplayın."><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#0a1628"><link rel="canonical" href="https://voltguard.com.tr/araclar/og-gerilim-dusumu/"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="OG Gerilim Düşümü | VoltGuard"><meta property="og:description" content="Orta gerilim hatlarında gerilim düşümü ve güç kaybını hesaplayın."><meta property="og:url" content="https://voltguard.com.tr/araclar/og-gerilim-dusumu/"><meta property="og:image" content="https://voltguard.com.tr/araclar/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/voltguard-icon-64.png" type="image/png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"OG Gerilim Düşümü","url":"https://voltguard.com.tr/araclar/og-gerilim-dusumu/","description":"Orta gerilim hatlarında gerilim düşümü ve güç kaybını hesaplayın.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":0,"priceCurrency":"TRY"},"publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VoltGuard","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"OG Gerilim Düşümü","item":"https://voltguard.com.tr/araclar/og-gerilim-dusumu/"}]}]}</script><link rel="stylesheet" href="../shared/tool-shell.css"><link rel="stylesheet" href="../shared/export.css">
+
+
+
+<style>
+#vg-tool-workspace{--primary:#1a3a5c;--primary2:#2a5a8c;--accent:#d04e0b;--green:#155724;--red:#721c24;--yellow:#856404;--bg:#f0f3f8;--card:#fff;--border:#c8d2e0;--muted:#5a6a7e;}
+:where(#vg-tool-workspace) *{box-sizing:border-box;margin:0;padding:0;}
+#vg-tool-workspace{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:#111;font-size:12px;}
+:where(#vg-tool-workspace) .hdr{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;padding:12px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 6px rgba(0,0,0,.3);}
+:where(#vg-tool-workspace) .hdr :is(h1,.vg-original-title){font-size:14px;font-weight:700;line-height:1.4;}
+:where(#vg-tool-workspace) .hdr :is(h1,.vg-original-title) small{display:block;font-size:10px;font-weight:400;opacity:.8;}
+:where(#vg-tool-workspace) .hdr-btns{margin-left:auto;display:flex;gap:6px;}
+:where(#vg-tool-workspace) .btn{padding:5px 12px;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600;}
+:where(#vg-tool-workspace) .btn-acc{background:var(--accent);color:#fff;} :where(#vg-tool-workspace) .btn-acc:hover{opacity:.85;}
+:where(#vg-tool-workspace) .btn-out{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.35);} :where(#vg-tool-workspace) .btn-out:hover{background:rgba(255,255,255,.25);}
+:where(#vg-tool-workspace) .btn-g{background:#198754;color:#fff;} :where(#vg-tool-workspace) .btn-g:hover{opacity:.85;}
+:where(#vg-tool-workspace) .btn-d{background:#dc3545;color:#fff;} :where(#vg-tool-workspace) .btn-d:hover{opacity:.85;}
+:where(#vg-tool-workspace) .btn-i{background:var(--primary2);color:#fff;} :where(#vg-tool-workspace) .btn-i:hover{opacity:.85;}
+:where(#vg-tool-workspace) .proj-card{background:var(--card);border:1px solid var(--border);border-radius:6px;margin:12px 16px 10px;padding:12px 16px;}
+:where(#vg-tool-workspace) .proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+:where(#vg-tool-workspace) .fg{display:flex;flex-direction:column;gap:3px;}
+:where(#vg-tool-workspace) .fg label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+:where(#vg-tool-workspace) .fg input,:where(#vg-tool-workspace) .fg select{border:1px solid var(--border);border-radius:4px;padding:5px 8px;font-size:12px;background:#fafbfd;}
+:where(#vg-tool-workspace) .fg input:focus,:where(#vg-tool-workspace) .fg select:focus{outline:none;border-color:var(--primary2);}
+:where(#vg-tool-workspace) .note{background:#fff8e1;border:1px solid #ffe082;border-radius:5px;padding:7px 14px;margin:0 16px 10px;font-size:11px;color:#5d3a00;line-height:1.5;}
+:where(#vg-tool-workspace) .note b{color:#bf360c;}
+:where(#vg-tool-workspace) .tbl-wrap{margin:0 16px 12px;overflow-x:auto;}
+:where(#vg-tool-workspace) .action-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+:where(#vg-tool-workspace) .action-row span{font-size:11px;color:var(--muted);margin-left:4px;}
+:where(#vg-tool-workspace) table.mt{border-collapse:collapse;min-width:600px;width:100%;}
+:where(#vg-tool-workspace) table.mt th,:where(#vg-tool-workspace) table.mt td{border:1px solid #bcc8db;padding:0;}
+:where(#vg-tool-workspace) table.mt td.lbl{background:#e8edf5;font-size:10px;font-weight:700;color:var(--primary);padding:4px 8px;white-space:nowrap;text-align:left;min-width:185px;border-right:2px solid var(--primary);}
+:where(#vg-tool-workspace) table.mt td.lbl.sub{background:#f0f4fa;font-weight:400;font-size:10px;color:var(--muted);padding-left:14px;}
+:where(#vg-tool-workspace) table.mt th.seg-hdr{background:var(--primary);color:#fff;font-size:10px;font-weight:700;text-align:center;padding:5px 4px;min-width:100px;max-width:140px;}
+:where(#vg-tool-workspace) table.mt th.lbl-hdr{background:var(--primary);color:#fff;font-size:10px;font-weight:700;padding:5px 8px;text-align:left;}
+:where(#vg-tool-workspace) table.mt td.inp-cell{padding:2px 2px;}
+:where(#vg-tool-workspace) table.mt td.inp-cell input,:where(#vg-tool-workspace) table.mt td.inp-cell select{width:100%;border:none;background:transparent;padding:4px 4px;font-size:11px;text-align:center;color:#111;}
+:where(#vg-tool-workspace) table.mt td.inp-cell input:focus,:where(#vg-tool-workspace) table.mt td.inp-cell select:focus{outline:2px solid var(--primary2);background:#fff;}
+:where(#vg-tool-workspace) table.mt td.calc{background:#f0f7ff;color:var(--primary);font-weight:700;text-align:center;padding:4px 3px;font-size:11px;}
+:where(#vg-tool-workspace) table.mt td.calc.override{background:#fffde7;}
+:where(#vg-tool-workspace) table.mt td.calc input{width:100%;border:none;background:transparent;color:var(--primary);font-weight:700;text-align:center;font-size:11px;padding:0 2px;}
+:where(#vg-tool-workspace) table.mt td.calc input:focus{outline:2px solid orange;background:#fffde7;}
+:where(#vg-tool-workspace) table.mt td.res-ok{background:#d4edda;color:var(--green);font-weight:800;text-align:center;padding:4px;}
+:where(#vg-tool-workspace) table.mt td.res-warn{background:#fff3cd;color:var(--yellow);font-weight:800;text-align:center;padding:4px;}
+:where(#vg-tool-workspace) table.mt td.res-bad{background:#f8d7da;color:var(--red);font-weight:800;text-align:center;padding:4px;}
+:where(#vg-tool-workspace) table.mt td.tot{background:#e3eaf5;font-weight:800;font-size:11px;color:var(--primary);text-align:center;padding:4px 3px;min-width:70px;}
+:where(#vg-tool-workspace) table.mt td.tot.ok{background:#c3e6cb;color:var(--green);}
+:where(#vg-tool-workspace) table.mt td.tot.warn{background:#ffeeba;color:var(--yellow);}
+:where(#vg-tool-workspace) table.mt td.tot.bad{background:#f5c6cb;color:var(--red);}
+:where(#vg-tool-workspace) table.mt td.del-cell{text-align:center;padding:2px;background:#fafafa;}
+:where(#vg-tool-workspace) .summary{display:flex;flex-wrap:wrap;gap:10px;margin:0 16px 16px;}
+:where(#vg-tool-workspace) .sbox{border-radius:6px;padding:10px 14px;min-width:180px;border:2px solid transparent;}
+:where(#vg-tool-workspace) .sbox.neutral{background:#e8f0fe;border-color:#4a90d9;}
+:where(#vg-tool-workspace) .sbox.ok{background:#d4edda;border-color:#28a745;}
+:where(#vg-tool-workspace) .sbox.warn{background:#fff3cd;border-color:#ffc107;}
+:where(#vg-tool-workspace) .sbox.bad{background:#f8d7da;border-color:#dc3545;}
+:where(#vg-tool-workspace) .sbox .sl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;opacity:.7;}
+:where(#vg-tool-workspace) .sbox .sv{font-size:20px;font-weight:800;line-height:1.1;}
+:where(#vg-tool-workspace) .sbox .sd{font-size:10px;opacity:.75;}
+:where(#vg-tool-workspace) .sbox .ss{font-size:10px;font-weight:700;margin-top:2px;}
+:where(#vg-tool-workspace) .fml{background:var(--card);border:1px solid var(--border);border-radius:6px;margin:0 16px 16px;padding:10px 14px;font-size:10.5px;color:var(--muted);}
+:where(#vg-tool-workspace) .fml b{color:var(--primary);}
+:where(#vg-tool-workspace) .fml p{margin-bottom:3px;}
+@media print{:where(#vg-tool-workspace) .hdr-btns,:where(#vg-tool-workspace) .action-row,:where(#vg-tool-workspace) .del-cell,:where(#vg-tool-workspace) .no-print{display:none!important;}#vg-tool-workspace{background:#fff;}:where(#vg-tool-workspace) table.mt td.inp-cell input,:where(#vg-tool-workspace) table.mt td.inp-cell select{border:none;}@page{size:A4 landscape;margin:8mm}}body.pt-print :where(#vg-tool-workspace) .hdr-btns,body.pt-print :where(#vg-tool-workspace) .action-row,body.pt-print :where(#vg-tool-workspace) .del-cell,body.pt-print :where(#vg-tool-workspace) .no-print{display:none!important}body.pt-print :where(#vg-tool-workspace) .tbl-wrap{overflow:visible!important}
+</style>
+<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=736601cefb51"><script src="/js/vg-shell.js?v=f8bab0eb2f0c" defer></script><script src="/js/voltguard-auth.js?v=5ea8a8c73e4b" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=6609af196d62"></head>
+<body data-vg-tool="og-gerilim-dusumu" data-vg-title="OG Gerilim Düşümü" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+<header data-vg-no-print class="vg-header doc-header" id="vgHeader">
+  <div class="vg-header__bar vg-wrap">
+    <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+      <span class="logo-mark" aria-hidden="true">
+        <span class="logo-mark__volt">VOLT</span>
+        <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+        <span class="logo-mark__guard">GUARD</span>
+      </span>
+      <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+    </a>
+    <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+    <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+      <ul class="vg-nav__list">
+        <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+        <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+        <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+        <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+          <ul class="vg-dd__menu" id="vgDdKaynaklar">
+            <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+            <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+            <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+            <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+            <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+          </ul>
+        </li>
+        <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+        <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+      </ul>
+      <div class="vg-nav__foot">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </nav>
+    <div class="vg-actions">
+      <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+      <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+    </div>
+  </div>
+  <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+</header><div id="main" tabindex="-1" role="main"><div id="vg-top"><div class="vg-topline"><nav class="vg-links" aria-label="Araç menüsü"><a class="vg-back" href="../#araclar">← Tüm araçlar</a><a class="vg-back" href="/hesaplama-araclari/">Pratik hesaplar →</a><a class="vg-back" href="/">VoltGuard ana sayfa ↗</a></nav></div><p class="vg-crumb">Dağıtım şebekesi / OG Gerilim Düşümü</p><h1>OG Gerilim Düşümü</h1><p class="vg-description">Orta gerilim hatlarında gerilim düşümü ve güç kaybını hesaplayın.</p><details><summary>Girdiler, sonuçlar ve hesap yöntemi</summary><div class="vg-method"><strong>Girdiler:</strong> Gerilim, hat uzunluğu, iletken ve yükler.<br><strong>Çıktılar:</strong> Gerilim düşümü, güç kaybı ve hesap tablosu.<br><strong>Yöntem:</strong> Hat direnci ve reaktansı üzerinden gerilim düşümü hesabı. <a href="../yontem/">Kaynak ve geçerlilik bilgileri →</a></div></details></div><div id="vg-tool-workspace">
+
+<div class="hdr">
+  <span style="font-size:26px;">⚡</span>
+  <h2 class="vg-original-title">OG GERİLİM DÜŞÜMÜ VE GÜÇ KAYBI HESABI
+    <small>TEDAŞ Yönetmeliği Uyumlu &nbsp;|&nbsp; Tek / Çift Devre Hesabı</small>
+  </h2>
+  <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+    <div class="hdr-btns" style="margin-left:0;">
+      <button class="btn btn-out" onclick="__ptPrint()">🖨 Yazdır</button>
+      <button class="btn btn-acc" onclick="exportExcel()">📊 Excel</button>
+    </div>
+    <span class="no-print" style="font-size:10px;opacity:.75;letter-spacing:.3px;">Özgün hesap modeli: Elektrik Elektronik Mühendisi Baki SONAY</span>
+  </div>
+</div>
+
+<div class="proj-card">
+  <div class="proj-grid">
+    <div class="fg"><label>Merkez / Proje</label><input id="merkez" placeholder="Merkez / proje adı"></div>
+    <div class="fg"><label>İşletme Gerilimi (kV)</label>
+      <select id="gerilim" onchange="hesapla()">
+        <option value="6.3">6.3 kV</option><option value="10.5">10.5 kV</option>
+        <option value="15.8">15.8 kV</option><option value="30">30 kV</option>
+        <option value="31.5" selected>31.5 kV</option><option value="33">33 kV</option>
+        <option value="34.5">34.5 kV</option>
+      </select>
+    </div>
+    <div class="fg"><label>cos φ (sadece %P için)</label><input id="cosPhi" type="number" value="0.80" min="0.6" max="1" step="0.01" onchange="hesapla()"></div>
+    <div class="fg"><label>İşletme Türü</label>
+      <select id="isletme" onchange="hesapla()">
+        <option value="normal">Normal</option><option value="arizali">Arızalı</option>
+      </select>
+    </div>
+    <div class="fg"><label>Kol No</label><input id="kol" placeholder="Örn: 1"></div>
+    <div class="fg"><label>Tarih</label><input id="tarih" type="date"></div>
+    <div class="fg"><label>Hazırlayan</label><input id="haz" placeholder="Ad Soyad"></div>
+  </div>
+</div>
+
+
+<div class="note">
+  <b>K ve C değerleri TEDAŞ tablosundan (cosφ=0,8) okunur.</b>
+  Hat güçleri, K ve C satırlarına değer yazarsanız <b>sarı renk alır ve o değer kullanılır</b>; boş bırakırsanız otomatik hesaplanır.
+  &nbsp;|&nbsp; <b>TEDAŞ Limitleri:</b> Gerilim düşümü ≤ <b>%7</b> (normal) / ≤ <b>%10</b> (arızalı) &nbsp;|&nbsp; Güç kaybı ≤ <b>%5</b>
+</div>
+
+<div class="tbl-wrap">
+  <div class="action-row">
+    <button class="btn btn-g" onclick="segEkle()">+ Segment Ekle</button>
+    <button class="btn btn-d" onclick="segSil()">− Son Segmenti Sil</button>
+    <button class="btn btn-i" onclick="temizle()">🗑 Temizle</button>
+    <span>Kablo tipi seçince K ve C otomatik gelir. Sarı hücre = elle girilmiş değer.</span>
+  </div>
+  <table class="mt" id="mainTable"></table>
+</div>
+
+<div class="summary" id="summary">
+  <div class="sbox neutral"><div class="sl">Toplam Gerilim Düşümü</div><div class="sv" id="s_e">–</div><div class="sd" id="s_elim">Limit: –</div><div class="ss" id="s_est">–</div></div>
+  <div class="sbox neutral"><div class="sl">Toplam Güç Kaybı</div><div class="sv" id="s_p">–</div><div class="sd">Limit: %5</div><div class="ss" id="s_pst">–</div></div>
+  <div class="sbox neutral"><div class="sl">Toplam DP (Kayıp Güç)</div><div class="sv" id="s_dp">–</div><div class="sd" id="s_dp2">–</div><div class="ss" id="s_genel">–</div></div>
+  <div class="sbox neutral"><div class="sl">Hat Başı Akımı</div><div class="sv" id="s_i">–</div><div class="sd" id="s_s">–</div><div class="ss" id="s_ist">–</div></div>
+</div>
+
+<div class="fml">
+  <p><b>Gerilim Düşümü:</b> %e = 10⁻⁴ × K × N<sub>div</sub>(kVA) × L(km) &nbsp;|&nbsp; <b>Güç Kaybı:</b> DP(kW) = 10⁻⁶ × C × N<sub>div</sub>²(kVA²) × L(km) &nbsp;|&nbsp; <b>%P</b> = DP / (N<sub>div</sub> × cosφ) × 100</p>
+  <p><b>Hat Gücü:</b> N<sub>i</sub> = trafoGücü<sub>i</sub> + … + trafoGücü<sub>son</sub> (sağdan sola kümülatif toplam) &nbsp;|&nbsp; <b>Hat Akımı:</b> I = N<sub>baş,div</sub> / (√3 × U<sub>kV</sub>)</p>
+  <p style="color:#aaa;margin-top:4px;">K ve C değerleri: TEDAŞ tablolarından cosφ=0,8 için alınmıştır. Kablo tipi seçimine göre otomatik atanır; gerekirse hücreye elle yazılabilir.</p>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// KABLO K-C TABLOSU  (TEDAŞ, cosφ=0.8)
+// Format: key → { label, sira, kc: { 'U_kV': [K, C], … } }
+// Boş gerilim = o gerilimde tablo değeri yok
+// ═══════════════════════════════════════════════════════════
+const KABLOLAR = {
+// ── Tek devre Cu XLPE yeraltı (1-13) ──────────────────────
+'3(1x25)':   {s:1,  lbl:'3×(1×25) Cu XLPE Tek',         kc:{'6.3':[18.358,18.316],'10.5':[6.609,6.594],'15.8':[2.926,2.912]}},
+'3(1x35)':   {s:2,  lbl:'3×(1×35) Cu XLPE Tek',         kc:{'6.3':[14.124,13.212],'10.5':[5.085,4.752],'15.8':[2.246,2.099],'30':[0.627,0.582],'31.5':[0.569,0.528],'33':[0.518,0.481],'34.5':[0.474,0.044]}},
+'3(1x50)':   {s:3,  lbl:'3×(1×50) Cu XLPE Tek',         kc:{'6.3':[11.220,9.750],'10.5':[4.056,3.510],'15.8':[1.791,1.550],'30':[0.501,0.430],'31.5':[0.454,0.390],'33':[0.414,0.355],'34.5':[0.379,0.325]}},
+'3(1x70)':   {s:4,  lbl:'3×(1×70) Cu XLPE Tek',         kc:{'6.3':[8.679,6.752],'10.5':[3.124,2.430],'15.8':[1.387,1.073],'30':[0.387,0.297],'31.5':[0.351,0.270],'33':[0.320,0.246],'34.5':[0.293,0.225]}},
+'3(1x95)':   {s:5,  lbl:'3×(1×95) Cu XLPE Tek',         kc:{'6.3':[7.025,4.862],'10.5':[2.529,1.750],'15.8':[1.124,0.773],'30':[0.316,0.214],'31.5':[0.287,0.194],'33':[0.261,0.177],'34.5':[0.239,0.162]}},
+'3(1x120)':  {s:6,  lbl:'3×(1×120) Cu XLPE Tek',        kc:{'6.3':[6.123,3.854],'10.5':[2.204,1.387],'15.8':[0.981,0.612],'30':[0.274,0.170],'31.5':[0.249,0.154],'33':[0.227,0.140],'34.5':[0.207,0.128]}},
+'3(1x150)':  {s:7,  lbl:'3×(1×150) Cu XLPE Tek',        kc:{'6.3':[5.444,3.124],'10.5':[1.960,1.124],'15.8':[0.873,0.496],'30':[0.244,0.137],'31.5':[0.222,0.124],'33':[0.202,0.113],'34.5':[0.185,0.104]}},
+'3(1x185)':  {s:8,  lbl:'3×(1×185) Cu XLPE Tek',        kc:{'6.3':[4.847,2.496],'10.5':[1.762,0.898],'15.8':[0.778,0.396],'30':[0.220,0.110],'31.5':[0.200,0.099],'33':[0.182,0.091],'34.5':[0.166,0.083]}},
+'3(1x240)':  {s:9,  lbl:'3×(1×240) Cu XLPE Tek',        kc:{'6.3':[4.274,1.899],'10.5':[1.539,0.683],'15.8':[0.687,0.302],'30':[0.193,0.083],'31.5':[0.175,0.075],'33':[0.159,0.069],'34.5':[0.146,0.063]}},
+'3(1x300)':  {s:10, lbl:'3×(1×300) Cu XLPE Tek',        kc:{'6.3':[3.871,1.514],'10.5':[1.394,0.545],'15.8':[0.623,0.240],'30':[0.177,0.066],'31.5':[0.161,0.060],'33':[0.146,0.055],'34.5':[0.134,0.050]}},
+'3(1x400)':  {s:11, lbl:'3×(1×400) Cu XLPE Tek',        kc:{'6.3':[3.559,1.184],'10.5':[1.281,0.426],'15.8':[0.566,0.188],'30':[0.161,0.052],'31.5':[0.146,0.047],'33':[0.133,0.043],'34.5':[0.122,0.039]}},
+'3(1x500)':  {s:12, lbl:'3×(1×500) Cu XLPE Tek',        kc:{'6.3':[3.255,0.955],'10.5':[1.172,0.331],'15.8':[0.517,0.146],'30':[0.148,0.040],'31.5':[0.134,0.036],'33':[0.122,0.033],'34.5':[0.112,0.030]}},
+'3(1x630)':  {s:13, lbl:'3×(1×630) Cu XLPE Tek',        kc:{'6.3':[2.945,0.713],'10.5':[1.077,0.256],'15.8':[0.476,0.113],'30':[0.134,0.031],'31.5':[0.122,0.028],'33':[0.111,0.025],'34.5':[0.101,0.023]}},
+// ── Tek devre havai hat (14-18) ────────────────────────────
+'3xSw':      {s:14, lbl:'3×Sw Havai Hat Tek',            kc:{'6.3':[28.022,27.065],'10.5':[10.088,9.743],'15.8':[4.455,4.303],'30':[1.236,1.194],'31.5':[1.121,1.083],'33':[1.021,0.986],'34.5':[0.934,0.902]}},
+'3x1/0':     {s:15, lbl:'3×1/0 Havai Hat Tek',           kc:{'6.3':[16.849,13.510],'10.5':[6.065,4.863],'15.8':[2.679,2.148],'30':[0.743,0.596],'31.5':[0.674,0.540],'33':[0.614,0.492],'34.5':[0.562,0.450]}},
+'3x3/0':     {s:16, lbl:'3×3/0 Havai Hat Tek',           kc:{'6.3':[12.605,8.481],'10.5':[4.538,3.053],'15.8':[2.004,1.348],'30':[0.556,0.374],'31.5':[0.504,0.339],'33':[0.459,0.309],'34.5':[0.420,0.283]}},
+'3x266':     {s:17, lbl:'3×266 MCM Havai Hat Tek',       kc:{'6.3':[10.611,5.392],'10.5':[3.820,1.941],'15.8':[1.687,0.857],'30':[0.468,0.238],'31.5':[0.424,0.216],'33':[0.387,0.197],'34.5':[0.354,0.180]}},
+'3x477':     {s:18, lbl:'3×477 MCM Havai Hat Tek',       kc:{'6.3':[8.423,3.008],'10.5':[3.032,1.083],'15.8':[1.339,0.478],'30':[0.371,0.133],'31.5':[0.337,0.120],'33':[0.307,0.110],'34.5':[0.281,0.100]}},
+// ── Çift devre Cu XLPE yeraltı (19-22) ────────────────────
+'2x3(1x70)': {s:19, lbl:'2×3×(1×70) Cu XLPE Çift',      kc:{'6.3':[4.340,3.376],'10.5':[1.562,1.215],'15.8':[0.694,0.537],'30':[0.194,0.149],'31.5':[0.176,0.135],'33':[0.160,0.123],'34.5':[0.147,0.113]}},
+'2x3(1x95)': {s:20, lbl:'2×3×(1×95) Cu XLPE Çift',      kc:{'6.3':[3.513,2.431],'10.5':[1.265,0.875],'15.8':[0.562,0.387],'30':[0.158,0.107],'31.5':[0.144,0.097],'33':[0.131,0.089],'34.5':[0.120,0.081]}},
+'2x3(1x185)':{s:21, lbl:'2×3×(1×185) Cu XLPE Çift',     kc:{'6.3':[2.424,1.927],'10.5':[0.881,0.694],'15.8':[0.389,0.306],'30':[0.110,0.085],'31.5':[0.100,0.077],'33':[0.091,0.070],'34.5':[0.083,0.064]}},
+'2x3(1x240)':{s:22, lbl:'2×3×(1×240) Cu XLPE Çift',     kc:{'6.3':[2.137,1.562],'10.5':[0.770,0.562],'15.8':[0.344,0.248],'30':[0.097,0.069],'31.5':[0.088,0.062],'33':[0.080,0.057],'34.5':[0.073,0.052]}},
+// ── Çift devre havai hat (23-27) ──────────────────────────
+'2X3xSw':    {s:23, lbl:'2×3×Sw Havai Hat Çift',         kc:{'6.3':[14.189,13.533],'10.5':[5.108,4.872],'15.8':[2.256,2.152],'30':[0.626,0.597],'31.5':[0.568,0.542],'33':[0.517,0.493],'34.5':[0.473,0.451]}},
+'2x3x1/0':   {s:24, lbl:'2×3×1/0 Havai Hat Çift',       kc:{'6.3':[8.609,6.755],'10.5':[3.099,2.432],'15.8':[1.369,1.074],'30':[0.380,0.298],'31.5':[0.344,0.270],'33':[0.314,0.246],'34.5':[0.287,0.225]}},
+'2x3x3/0':   {s:25, lbl:'2×3×3/0 Havai Hat Çift',       kc:{'6.3':[6.529,4.241],'10.5':[2.350,1.527],'15.8':[1.038,0.674],'30':[0.288,0.187],'31.5':[0.261,0.170],'33':[0.238,0.155],'34.5':[0.218,0.142]}},
+'2x3x266':   {s:26, lbl:'2×3×266 MCM Havai Hat Çift',   kc:{'6.3':[8.279,2.696],'10.5':[2.980,0.971],'15.8':[1.316,0.429],'30':[0.365,0.119],'31.5':[0.331,0.108],'33':[0.302,0.099],'34.5':[0.276,0.090]}},
+'2x3x477':   {s:27, lbl:'2×3×477 MCM Havai Hat Çift',   kc:{'6.3':[4.128,1.504],'10.5':[1.486,0.542],'15.8':[0.656,0.239],'30':[0.182,0.067],'31.5':[0.165,0.060],'33':[0.150,0.055],'34.5':[0.138,0.050]}},
+// ── Tek devre Al XLPE yeraltı (28-38) ─────────────────────
+'3x(1x50)A': {s:28, lbl:'3×(1×50)A Al XLPE Tek',        kc:{'6.3':[16.048,16.150],'10.5':[5.777,5.814],'15.8':[2.551,2.568],'30':[0.708,0.712],'31.5':[0.642,0.646],'33':[0.585,0.589],'34.5':[0.535,0.539]}},
+'3x(1x70)A': {s:29, lbl:'3×(1×70)A Al XLPE Tek',        kc:{'6.3':[11.910,11.162],'10.5':[4.288,4.018],'15.8':[1.894,1.775],'30':[0.525,0.492],'31.5':[0.476,0.446],'33':[0.434,0.407],'34.5':[0.397,0.372]}},
+'3x(1x95)A': {s:30, lbl:'3×(1×95)A Al XLPE Tek',        kc:{'6.3':[9.317,8.062],'10.5':[3.354,2.902],'15.8':[1.481,1.282],'30':[0.411,0.356],'31.5':[0.373,0.322],'33':[0.340,0.294],'34.5':[0.311,0.269]}},
+'3x(1x120)A':{s:31, lbl:'3×(1×120)A Al XLPE Tek',       kc:{'6.3':[7.876,6.374],'10.5':[2.836,2.295],'15.8':[1.252,1.013],'30':[0.347,0.281],'31.5':[0.315,0.255],'33':[0.287,0.232],'34.5':[0.263,0.213]}},
+'3x(1x150)A':{s:32, lbl:'3×(1×150)A Al XLPE Tek',       kc:{'6.3':[6.844,5.190],'10.5':[2.464,1.868],'15.8':[1.088,0.825],'30':[0.302,0.229],'31.5':[0.274,0.208],'33':[0.249,0.189],'34.5':[0.228,0.173]}},
+'3x(1x185)A':{s:33, lbl:'3×(1×185)A Al XLPE Tek',       kc:{'6.3':[5.921,4.132],'10.5':[2.132,1.488],'15.8':[0.941,0.657],'30':[0.261,0.182],'31.5':[0.237,0.165],'33':[0.216,0.151],'34.5':[0.197,0.138]}},
+'3x(1x240)A':{s:34, lbl:'3×(1×240)A Al XLPE Tek',       kc:{'6.3':[5.040,3.149],'10.5':[1.814,1.134],'15.8':[0.801,0.501],'30':[0.222,0.139],'31.5':[0.202,0.126],'33':[0.184,0.115],'34.5':[0.168,0.105]}},
+'3x(1x300)A':{s:35, lbl:'3×(1×300)A Al XLPE Tek',       kc:{'6.3':[4.455,2.520],'10.5':[1.604,0.907],'15.8':[0.708,0.401],'30':[0.196,0.111],'31.5':[0.178,0.101],'33':[0.162,0.092],'34.5':[0.149,0.084]}},
+'3x(1x400)A':{s:36, lbl:'3×(1×400)A Al XLPE Tek',       kc:{'6.3':[3.928,1.985],'10.5':[1.414,0.715],'15.8':[0.625,0.316],'30':[0.173,0.088],'31.5':[0.157,0.079],'33':[0.143,0.072],'34.5':[0.131,0.066]}},
+'3x(1x500)A':{s:37, lbl:'3×(1×500)A Al XLPE Tek',       kc:{'6.3':[3.484,1.524],'10.5':[1.254,0.549],'15.8':[0.554,0.242],'30':[0.154,0.067],'31.5':[0.139,0.061],'33':[0.127,0.056],'34.5':[0.116,0.051]}},
+'3x(1x630)A':{s:38, lbl:'3×(1×630)A Al XLPE Tek',       kc:{'6.3':[3.129,1.182],'10.5':[1.126,0.425],'15.8':[0.497,0.188],'30':[0.138,0.052],'31.5':[0.125,0.047],'33':[0.114,0.043],'34.5':[0.104,0.039]}},
+// ── Çift devre Al XLPE yeraltı (39-48) ────────────────────
+'2x3x(1x70)A': {s:39,lbl:'2×3×(1×70)A Al XLPE Çift',   kc:{'6.3':[5.955,5.581],'10.5':[2.144,2.009],'15.8':[0.947,0.887],'30':[0.263,0.246],'31.5':[0.238,0.223],'33':[0.217,0.203],'34.5':[0.199,0.186]}},
+'2x3x(1x95)A': {s:40,lbl:'2×3×(1×95)A Al XLPE Çift',   kc:{'6.3':[4.659,4.031],'10.5':[1.677,1.451],'15.8':[0.741,0.641],'30':[0.205,0.178],'31.5':[0.186,0.161],'33':[0.170,0.147],'34.5':[0.155,0.134]}},
+'2x3x(1x120)A':{s:41,lbl:'2×3×(1×120)A Al XLPE Çift',  kc:{'6.3':[3.938,3.187],'10.5':[1.418,1.147],'15.8':[0.626,0.507],'30':[0.174,0.141],'31.5':[0.158,0.127],'33':[0.144,0.116],'34.5':[0.131,0.106]}},
+'2x3x(1x150)A':{s:42,lbl:'2×3×(1×150)A Al XLPE Çift',  kc:{'6.3':[3.422,2.595],'10.5':[1.232,0.934],'15.8':[0.544,0.413],'30':[0.151,0.114],'31.5':[0.137,0.104],'33':[0.125,0.095],'34.5':[0.114,0.087]}},
+'2x3x(1x185)A':{s:43,lbl:'2×3×(1×185)A Al XLPE Çift',  kc:{'6.3':[2.961,2.066],'10.5':[1.066,0.744],'15.8':[0.471,0.328],'30':[0.131,0.091],'31.5':[0.118,0.083],'33':[0.108,0.075],'34.5':[0.099,0.069]}},
+'2x3x(1x240)A':{s:44,lbl:'2×3×(1×240)A Al XLPE Çift',  kc:{'6.3':[2.520,1.575],'10.5':[0.907,0.567],'15.8':[0.401,0.250],'30':[0.111,0.069],'31.5':[0.101,0.063],'33':[0.092,0.057],'34.5':[0.084,0.053]}},
+'2x3x(1x300)A':{s:45,lbl:'2×3×(1×300)A Al XLPE Çift',  kc:{'6.3':[2.228,1.260],'10.5':[0.802,0.454],'15.8':[0.354,0.200],'30':[0.098,0.056],'31.5':[0.089,0.050],'33':[0.081,0.046],'34.5':[0.074,0.042]}},
+'2x3x(1x400)A':{s:46,lbl:'2×3×(1×400)A Al XLPE Çift',  kc:{'6.3':[1.964,0.993],'10.5':[0.707,0.357],'15.8':[0.312,0.158],'30':[0.087,0.044],'31.5':[0.079,0.040],'33':[0.072,0.036],'34.5':[0.065,0.033]}},
+'2x3x(1x500)A':{s:47,lbl:'2×3×(1×500)A Al XLPE Çift',  kc:{'6.3':[1.742,0.762],'10.5':[0.627,0.274],'15.8':[0.277,0.121],'30':[0.077,0.034],'31.5':[0.070,0.030],'33':[0.063,0.028],'34.5':[0.058,0.025]}},
+'2x3x(1x630)A':{s:48,lbl:'2×3×(1×630)A Al XLPE Çift',  kc:{'6.3':[1.564,0.591],'10.5':[0.563,0.213],'15.8':[0.249,0.094],'30':[0.069,0.026],'31.5':[0.063,0.024],'33':[0.057,0.022],'34.5':[0.052,0.020]}},
+};
+
+// K,C tablodan oku
+function tabloKC(key, U) {
+  const d = KABLOLAR[key];
+  if (!d) return [null, null];
+  const kc = d.kc[String(U)];
+  return kc ? [kc[0], kc[1]] : [null, null];
+}
+
+// Dropdown seçenekleri
+function kabloOpts(sel='') {
+  const grups = [
+    ['Cu XLPE Tek Devre (1-13)', Object.keys(KABLOLAR).filter(k=>KABLOLAR[k].s<=13)],
+    ['Havai Hat Tek Devre (14-18)', Object.keys(KABLOLAR).filter(k=>KABLOLAR[k].s>=14&&KABLOLAR[k].s<=18)],
+    ['Cu XLPE Çift Devre (19-22)', Object.keys(KABLOLAR).filter(k=>KABLOLAR[k].s>=19&&KABLOLAR[k].s<=22)],
+    ['Havai Hat Çift Devre (23-27)', Object.keys(KABLOLAR).filter(k=>KABLOLAR[k].s>=23&&KABLOLAR[k].s<=27)],
+    ['Al XLPE Tek Devre (28-38)', Object.keys(KABLOLAR).filter(k=>KABLOLAR[k].s>=28&&KABLOLAR[k].s<=38)],
+    ['Al XLPE Çift Devre (39-48)', Object.keys(KABLOLAR).filter(k=>KABLOLAR[k].s>=39)],
+  ];
+  let html='<option value="">— Kablo tipi seçin —</option>';
+  grups.forEach(([g,ks])=>{
+    ks.sort((a,b)=>KABLOLAR[a].s-KABLOLAR[b].s);
+    html+=`<optgroup label="${g}">`;
+    ks.forEach(k=>html+=`<option value="${k}"${k===sel?' selected':''}>${KABLOLAR[k].lbl}</option>`);
+    html+='</optgroup>';
+  });
+  return html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TABLO YAPISI
+// ═══════════════════════════════════════════════════════════
+let segs=[], nextId=1;
+
+const SATIRLAR=[
+  {key:'del',     lbl:'',                                  type:'del'},
+  {key:'kesit',   lbl:'Kesitler (Kablo Tipi)',             type:'sel'},
+  {key:'ad',      lbl:'Trafo / Hat Adı',                   type:'text'},
+  {key:'l_m',     lbl:'Hat Uzunluğu (m)',                  type:'num'},
+  {key:'trafo',   lbl:'Trafo Güçleri (kVA)',               type:'num'},
+  {key:'diger',   lbl:'Diğer Güçler (kVA)',                type:'num'},
+  {key:'hat_g',   lbl:'Hat Güçleri (kVA)',                 type:'hat_g'},
+  {key:'div',     lbl:'Diversite (%)',                      type:'num'},
+  {key:'div_hat', lbl:'Div. Hat Güçleri (kVA)',            type:'calc'},
+  {key:'k',       lbl:'K  (boş=tablodan, sarı=elle)',      type:'override'},
+  {key:'e_seg',   lbl:'%e = 10⁻⁴ × K × N × L (Segment)', type:'calc'},
+  {key:'e_kum',   lbl:'%e Kümülatif',                      type:'e_kum'},
+  {key:'c',       lbl:'C  (boş=tablodan, sarı=elle)',      type:'override'},
+  {key:'dp',      lbl:'DP = 10⁻⁶ × C × N² × L (kW)',      type:'calc'},
+  {key:'p_seg',   lbl:'%P = (DP / (N·cosφ)) × 100',       type:'calc'},
+];
+
+function renderTable(){
+  const tbl=document.getElementById('mainTable');
+  let html='<thead><tr>';
+  html+=`<th class="lbl-hdr" style="min-width:190px;">Özellik / Segment</th>`;
+  segs.forEach((_,i)=>html+=`<th class="seg-hdr">Seg. ${i+1}</th>`);
+  html+=`<th class="seg-hdr" style="background:#2d6a4f;">TOPLAM</th>`;
+  html+='</tr></thead><tbody>';
+
+  SATIRLAR.forEach(r=>{
+    html+='<tr>';
+    const lblCls=(r.key==='k'||r.key==='c'||r.key==='div_hat')?'lbl sub':'lbl';
+    html+=`<td class="${lblCls}">${r.lbl}</td>`;
+
+    segs.forEach(s=>{
+      const cid=`c_${s.id}_${r.key}`;
+      if(r.type==='del'){
+        html+=`<td class="del-cell"><button class="btn btn-d" style="padding:2px 8px;font-size:10px;" onclick="segSilId(${s.id})">✕</button></td>`;
+      } else if(r.type==='sel'){
+        html+=`<td class="inp-cell"><select id="${cid}" onchange="hesapla()" style="width:100%;font-size:10px;">${kabloOpts(s.kesit)}</select></td>`;
+      } else if(r.type==='text'){
+        html+=`<td class="inp-cell"><input id="${cid}" type="text" value="${s.ad||''}" placeholder="Ad..." onchange="hesapla()" style="width:100%;text-align:left;"/></td>`;
+      } else if(r.type==='num'){
+        html+=`<td class="inp-cell"><input id="${cid}" type="number" value="${s[r.key]||''}" min="0" step="any" onchange="hesapla()" /></td>`;
+      } else if(r.type==='hat_g'){
+        const ov=s.hat_g_override!=null&&s.hat_g_override!=='';
+        html+=`<td class="calc ${ov?'override':''}"><input id="${cid}" type="number" value="${ov?s.hat_g_override:''}" min="0" step="any" placeholder="(oto)" title="Boş=otomatik" onchange="hatGOv(${s.id},this.value)"/></td>`;
+      } else if(r.type==='override'){
+        const field=r.key+'_ov'; const ov=s[field]!=null&&s[field]!=='';
+        // Elle değer yoksa tablo değerini hücrede göster (render anında)
+        const U0=parseFloat(document.getElementById('gerilim')?document.getElementById('gerilim').value:0)||31.5;
+        const kc0=tabloKC(s.kesit,U0);
+        const tblv=(r.key==='k')?kc0[0]:(r.key==='c'?kc0[1]:null);
+        const shownVal = ov ? s[field] : (tblv!=null?fmt(tblv,5):'');
+        const bg = ov ? '#fff9c4' : (tblv!=null?'#f2f6fc':'#fff0f0');
+        const col = ov ? '#000' : '#555';
+        html+=`<td class="calc ${ov?'override':''}" style="background:${bg}"><input id="${cid}" type="number" value="${shownVal}" min="0" step="any" placeholder="${tblv!=null?'(tablo)':'— gerilim yok —'}" title="${ov?'Elle girilen değer':'Tablodan: '+(tblv!=null?fmt(tblv,5):'yok')+' · değiştirmek için yazın'}" style="color:${col}" onchange="kcOv(${s.id},'${r.key}',this.value)"/></td>`;
+      } else {
+        html+=`<td class="calc" id="${cid}">–</td>`;
+      }
+    });
+
+    // Toplam sütunu
+    if(r.key==='e_kum') html+=`<td class="tot" id="tot_ekum">–</td>`;
+    else if(r.key==='p_seg') html+=`<td class="tot" id="tot_p">–</td>`;
+    else if(r.key==='dp') html+=`<td class="tot" id="tot_dp">–</td>`;
+    else html+=`<td class="tot"></td>`;
+    html+='</tr>';
+  });
+  html+='</tbody>';
+  tbl.innerHTML=html;
+  hesapla();
+}
+
+// ═══════════════════════════════════════════════════════════
+// HESAPLAMA
+// ═══════════════════════════════════════════════════════════
+function getV(id){const e=document.getElementById(id);return e?e.value:'';}
+function setCell(id,val,cls='calc'){const e=document.getElementById(id);if(e){e.textContent=val;e.className=cls;}}
+function fmt(v,d){return(v==null||isNaN(v))?'–':v.toFixed(d);}
+
+function ogNumber(value,label,allowEmpty){
+  const text=String(value??'').trim().replace(',','.');if(!text&&allowEmpty)return 0;
+  if(!text||!/^[+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(text)||!Number.isFinite(Number(text)))throw new Error(label+': sıfır veya pozitif bir sayı girin.');return Number(text);
+}
+function hesapla(){
+  try{hesaplaCore();document.documentElement.dataset.vgInvalid='false';}
+  catch(error){
+    document.documentElement.dataset.vgInvalid='true';
+    document.querySelectorAll('#summary .sv,#summary .ss,#summary .sd,#mainTable .calc,#mainTable .tot').forEach(el=>{el.textContent='–';});
+    const status=document.getElementById('s_genel');if(status){status.textContent=error.message;status.setAttribute('role','alert');}
+  }
+}
+function hesaplaCore(){
+  const U=ogNumber(getV('gerilim'),'Gerilim');
+  const cos=ogNumber(getV('cosPhi'),'Güç faktörü');
+  if(U<=0||cos<=0||cos>1)throw new Error('Gerilim ve güç faktörü pozitif; güç faktörü en fazla 1 olmalı.');
+  const isletme=getV('isletme');
+  const eLimit=isletme==='arizali'?10:7;
+  if(!segs.length)throw new Error('Hesap için en az bir hat ekleyin.');
+
+  // DOM'dan güncel değerleri oku
+  segs.forEach(s=>{
+    s.kesit=getV(`c_${s.id}_kesit`);
+    s.ad   =getV(`c_${s.id}_ad`);
+    s.l_m  =ogNumber(getV(`c_${s.id}_l_m`),'l_m',false);
+    s.trafo=ogNumber(getV(`c_${s.id}_trafo`),'trafo',true);
+    s.diger=ogNumber(getV(`c_${s.id}_diger`),'diger',true);
+    s.div  =ogNumber(getV(`c_${s.id}_div`),'div',false);
+    if(s.l_m<=0||s.div<=0||s.div>100)throw new Error('Hat uzunluğu pozitif, diversite %0 ile %100 arasında olmalı.');
+  });
+
+  // Hat güçleri (sağdan sola kümülatif)
+  const hatG=new Array(segs.length).fill(0);
+  for(let i=segs.length-1;i>=0;i--){
+    const s=segs[i];
+    if(s.hat_g_override!=null&&s.hat_g_override!==''){
+      hatG[i]=ogNumber(s.hat_g_override,'Hat gücü');
+    } else {
+      hatG[i]=s.trafo+s.diger+(i<segs.length-1?hatG[i+1]:0);
+    }
+    const hEl=document.getElementById(`c_${s.id}_hat_g`);
+    if(hEl){const ov=s.hat_g_override!=null&&s.hat_g_override!=='';hEl.style.background=ov?'#fff9c4':'';hEl.placeholder=fmt(hatG[i],0);}
+  }
+
+  let cumE=0,totDP=0,totP=0;
+  segs.forEach((s,i)=>{
+    const L_km=s.l_m/1000;
+    const Nd=hatG[i]*(s.div/100);
+
+    // K değeri
+    const [K_tbl,C_tbl]=tabloKC(s.kesit,U);
+    const K_ov=s.k_ov!=null&&s.k_ov!=='';
+    const C_ov=s.c_ov!=null&&s.c_ov!=='';
+    const K=K_ov?ogNumber(s.k_ov,'K katsayısı'):(K_tbl!=null?K_tbl:NaN);
+    const C=C_ov?ogNumber(s.c_ov,'C katsayısı'):(C_tbl!=null?C_tbl:NaN);
+    const K_miss=!K_ov&&K_tbl==null;
+    const C_miss=!C_ov&&C_tbl==null;
+    if(!Number.isFinite(K)||!Number.isFinite(C)||K<=0||C<=0)throw new Error('İletken/gerilim için K ve C katsayılarını seçin veya geçerli katsayıları girin.');
+
+    const e_s=1e-4*K*Nd*L_km;
+    const dp_s=1e-6*C*Nd*Nd*L_km;
+    const p_s=Nd>0?dp_s/(Nd*cos)*100:0;
+    cumE+=e_s; totDP+=dp_s; totP+=p_s;
+
+    setCell(`c_${s.id}_div_hat`,fmt(Nd,0));
+
+    // K hücresini güncelle (input içinde)
+    updOvCell(`c_${s.id}_k`, K_tbl, s.k_ov, K_miss);
+    updOvCell(`c_${s.id}_c`, C_tbl, s.c_ov, C_miss);
+
+    setCell(`c_${s.id}_e_seg`, K_miss?'–':fmt(e_s,4));
+    setCell(`c_${s.id}_dp`,    C_miss?'–':fmt(dp_s,2));
+    setCell(`c_${s.id}_p_seg`, (K_miss||C_miss)?'–':fmt(p_s,4));
+
+    const ekEl=document.getElementById(`c_${s.id}_e_kum`);
+    if(ekEl){ekEl.textContent=fmt(cumE,4);ekEl.className='calc '+colorE(cumE,eLimit);}
+  });
+
+  const N0=segs.length?hatG[0]*(segs[0].div/100):0;
+  const I=N0/(Math.sqrt(3)*U);
+
+  const totEEl=document.getElementById('tot_ekum');
+  if(totEEl){totEEl.textContent=fmt(cumE,4);totEEl.className='tot '+colorCls(cumE,eLimit);}
+  const totPEl=document.getElementById('tot_p');
+  if(totPEl){totPEl.textContent=fmt(totP,4);totPEl.className='tot '+colorCls(totP,5);}
+  const totDPEl=document.getElementById('tot_dp');
+  if(totDPEl){totDPEl.textContent=fmt(totDP,2);}
+
+  updateSummary(cumE,totP,totDP,I,eLimit,N0,cos,isletme);
+}
+
+function updOvCell(cid, tblVal, ovVal, missing){
+  const el=document.getElementById(cid); if(!el) return;
+  const inp=el.querySelector('input'); if(!inp) return;
+  const ov=ovVal!=null&&ovVal!=='';
+  if(!ov){
+    // Elle girilmediyse tablo değerini hücrede GÖSTER (gri = tablodan geldiğini belli et)
+    inp.value = missing ? '' : fmt(tblVal,5);
+    inp.placeholder = missing ? '— gerilim yok —' : '(tablo)';
+    inp.title = missing ? 'Bu gerilim için tablo değeri yok' : 'Tablodan: '+fmt(tblVal,5)+' · Elle yazarsan sarı olur';
+    el.style.background = missing ? '#fff0f0' : '#f2f6fc';
+    inp.style.color = missing ? '' : '#555';
+    inp.style.fontStyle = 'normal';
+  } else {
+    el.style.background='#fff9c4';
+    inp.style.color='#000';
+    inp.title='Elle girilen değer (tablo yerine bu kullanılır)';
+  }
+}
+
+function colorE(v,lim){if(v>lim)return'res-bad';if(v>lim*.85)return'res-warn';return'res-ok';}
+function colorCls(v,lim){if(v>lim)return'bad';if(v>lim*.85)return'warn';return'ok';}
+
+function updateSummary(cumE,totP,totDP,I,eLimit,N0,cos,isletme){
+  const sboxes=document.querySelectorAll('#summary .sbox');
+  const setCls=(el,v,lim)=>{el.className='sbox '+colorCls(v,lim);};
+
+  document.getElementById('s_e').textContent=fmt(cumE,3)+'%';
+  document.getElementById('s_elim').textContent=`Limit: ${eLimit===10?'%10':'%7'}`;
+  setStat('s_est',cumE,eLimit);
+  if(sboxes[0])setCls(sboxes[0],cumE,eLimit);
+
+  document.getElementById('s_p').textContent=fmt(totP,3)+'%';
+  setStat('s_pst',totP,5);
+  if(sboxes[1])setCls(sboxes[1],totP,5);
+
+  document.getElementById('s_dp').textContent=fmt(totDP,1)+' kW';
+  document.getElementById('s_dp2').textContent=fmt(totDP/1000,3)+' MW';
+  const ok=cumE<=eLimit&&totP<=5;
+  document.getElementById('s_genel').textContent=ok?'✅ TEDAŞ UYGUN':'❌ LİMİT AŞILDI';
+  if(sboxes[2])sboxes[2].className='sbox '+(ok?'ok':'bad');
+
+  document.getElementById('s_i').textContent=fmt(I,1)+' A';
+  document.getElementById('s_s').textContent=`Görünür güç: ${fmt((N0||0)/1000,2)} MVA`;
+  document.getElementById('s_ist').textContent=`${isletme==='arizali'?'⚠ Arızalı':'✓ Normal'} | cosφ=${(cos||0.8).toFixed(2)}`;
+  if(sboxes[3])sboxes[3].className='sbox neutral';
+}
+
+function setStat(id,v,lim){
+  const el=document.getElementById(id);if(!el)return;
+  const r=v/lim;
+  if(r>1)el.textContent=`❌ Limit aşıldı (+${((r-1)*100).toFixed(1)}%)`;
+  else if(r>0.85)el.textContent=`⚠ Sınıra yakın (${(r*100).toFixed(0)}%)`;
+  else if(v>0)el.textContent=`✅ Uygun (${(r*100).toFixed(0)}%)`;
+  else el.textContent='–';
+}
+
+// ═══════════════════════════════════════════════════════════
+// SEGMENT YÖNETİMİ
+// ═══════════════════════════════════════════════════════════
+function segEkle(d={}){
+  segs.push({id:nextId++,kesit:d.kesit||'',ad:d.ad||'',l_m:d.l_m||'',trafo:d.trafo||'',diger:d.diger||'',div:d.div!=null?d.div:80,hat_g_override:d.hat_g_override||null,k_ov:d.k_ov||null,c_ov:d.c_ov||null});
+  renderTable();
+}
+function hatGOv(id,val){const s=segs.find(x=>x.id===id);if(s){s.hat_g_override=val===''?null:val;hesapla();}}
+function kcOv(id,field,val){const s=segs.find(x=>x.id===id);if(s){s[field+'_ov']=val===''?null:val;hesapla();}}
+function segSil(){if(segs.length){segs.pop();renderTable();}}
+function segSilId(id){segs=segs.filter(s=>s.id!==id);renderTable();}
+function temizle(){if(confirm('Tüm segmentler silinecek?')){segs=[];renderTable();}}
+
+// ═══════════════════════════════════════════════════════════
+// CSV
+// ═══════════════════════════════════════════════════════════
+function exportCSV(){
+  let csv='Seg.,Ad,Kablo,L(m),Trafo(kVA),Diger(kVA),Hat Gucu(kVA),Div(%),Div.Hat(kVA),K,C,%e(seg),%e(kum),DP(kW),%P\n';
+  segs.forEach((s,i)=>{
+    const g=k=>document.getElementById(`c_${s.id}_${k}`)?.textContent||'';
+    const ginp=k=>document.getElementById(`c_${s.id}_${k}`)?.querySelector('input')?.value||'';
+    csv+=`${i+1},"${s.ad}","${s.kesit}",${s.l_m},${s.trafo},${s.diger},"${ginp('hat_g')||s.hat_g_override||''}",${s.div},${g('div_hat')},${ginp('k')},${ginp('c')},${g('e_seg')},${g('e_kum')},${g('dp')},${g('p_seg')}\n`;
+  });
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent(csv);
+  a.download='gerilim_dusumu.csv';a.click();
+}
+
+// ═══════════════════════════════════════════════════════════
+// BAŞLANGIÇ (GD22 örnek verisi)
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('tarih').value=new Date().toISOString().split('T')[0];
+  segEkle({ad:'ANA DM',  kesit:'2x3x(1x400)A', l_m:4324, trafo:1960,  div:70});
+  segEkle({ad:'DM-2',    kesit:'3x(1x400)A',   l_m:266,  trafo:10240, div:70});
+  segEkle({ad:'DM-4',    kesit:'3x(1x400)A',   l_m:418,  trafo:4850,  div:80});
+  segEkle({ad:'DM-5',    kesit:'3x(1x400)A',   l_m:421,  trafo:7180,  div:80});
+  segEkle({ad:'DM-8',    kesit:'3x(1x400)A',   l_m:453,  trafo:6730,  div:80});
+  segEkle({ad:'DM-7',    kesit:'3x(1x300)A',   l_m:657,  trafo:13360, div:80});
+  segEkle({ad:'DM-6',    kesit:'3x(1x400)A',   l_m:604,  trafo:10940, div:80});
+  segEkle({ad:'DM-3',    kesit:'3x(1x400)A',   l_m:493,  trafo:1260,  div:80});
+  segEkle({ad:'DM-1',    kesit:'3x(1x400)A',   l_m:481,  trafo:16700, div:80});
+});
+</script>
+<script>(function(){var done=false;var MM=8;function fit(){if(done)return;done=true;var b=document.body,t=document.querySelector("#mainTable");if(!t)return;b.style.zoom="";b.classList.add("pt-print");var pageW=(297-2*MM)/25.4*96,pageH=(210-2*MM)/25.4*96;var cs=getComputedStyle(b),mt=parseFloat(cs.marginTop)||0,mb=parseFloat(cs.marginBottom)||0;var r=t.getBoundingClientRect();var cW=t.scrollWidth+2*Math.max(0,r.left+window.scrollX);var cH=b.scrollHeight+mt+mb;var z=Math.min(1,pageW/cW,pageH/cH)*0.96;b.style.zoom=z;}function un(){if(window.__ptKeep)return;done=false;document.body.style.zoom="";document.body.classList.remove("pt-print");}window.__ptFit=fit;window.__ptUn=un;window.__ptPrint=function(){fit();window.print();};window.addEventListener("beforeprint",fit);window.addEventListener("afterprint",un);})();</script>
+<script>
+/* ===== OG Gerilim Düşümü — ekrandaki görünümle aynı biçimde Excel (.xlsx) çıktısı =====
+   Kütüphane gerektirmez (çevrimdışı çalışır): xlsx dosyası burada elle oluşturulur. */
+(function(){
+  /* ---------- küçük zip (store) yazıcı ---------- */
+  var CRC=(function(){var t=[];for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+  function crc32(u){var c=0xFFFFFFFF;for(var i=0;i<u.length;i++)c=CRC[(c^u[i])&0xFF]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+  function zip(files){ // files: [{name, data:Uint8Array}]
+    var enc=new TextEncoder(),parts=[],central=[],off=0;
+    function u16(v){return [v&255,(v>>>8)&255];} function u32(v){return [v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255];}
+    files.forEach(function(f){
+      var nm=enc.encode(f.name),d=f.data,c=crc32(d);
+      var h=[].concat(u32(0x04034b50),u16(20),u16(0x0800),u16(0),u16(0),u16(0),u32(c),u32(d.length),u32(d.length),u16(nm.length),u16(0));
+      parts.push(new Uint8Array(h),nm,d);
+      central.push({nm:nm,c:c,len:d.length,off:off});
+      off+=h.length+nm.length+d.length;
+    });
+    var cstart=off,clen=0;
+    central.forEach(function(e){
+      var h=[].concat(u32(0x02014b50),u16(20),u16(20),u16(0x0800),u16(0),u16(0),u16(0),u32(e.c),u32(e.len),u32(e.len),u16(e.nm.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(e.off));
+      parts.push(new Uint8Array(h),e.nm); clen+=h.length+e.nm.length;
+    });
+    parts.push(new Uint8Array([].concat(u32(0x06054b50),u16(0),u16(0),u16(central.length),u16(central.length),u32(clen),u32(cstart),u16(0))));
+    return new Blob(parts,{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+  }
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,"");}
+  function colName(c){var s="";c++;while(c>0){var m=(c-1)%26;s=String.fromCharCode(65+m)+s;c=Math.floor((c-1)/26);}return s;}
+  function hex(css){var m=String(css||"").match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)(?:[,\s\/]+([\d.]+))?/);if(!m)return null;if(m[4]!==undefined&&parseFloat(m[4])<0.05)return null;
+    return [m[1],m[2],m[3]].map(function(v){return ("0"+(+v).toString(16)).slice(-2).toUpperCase();}).join("");}
+
+  /* ---------- stil havuzu ---------- */
+  function Styles(){
+    this.fonts=['<font><sz val="10"/><name val="Segoe UI"/></font>'];this.fontIx={};
+    this.fills=['<fill><patternFill patternType="none"/></fill>','<fill><patternFill patternType="gray125"/></fill>'];this.fillIx={};
+    this.borders=['<border><left/><right/><top/><bottom/><diagonal/></border>'];this.borderIx={};
+    this.numFmts=[];this.numIx={};
+    this.xfs=['<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'];this.xfIx={};
+  }
+  Styles.prototype.get=function(o){
+    var self=this;
+    function pool(arr,ix,key,xml){if(ix[key]===undefined){ix[key]=arr.length;arr.push(xml);}return ix[key];}
+    var f=o.font||{};var fk=[f.b?1:0,f.i?1:0,f.sz||10,f.color||"000000",f.name||"Segoe UI"].join("|");
+    var fid=pool(this.fonts,this.fontIx,fk,'<font>'+(f.b?'<b/>':'')+(f.i?'<i/>':'')+'<sz val="'+(f.sz||10)+'"/><color rgb="FF'+(f.color||"000000")+'"/><name val="'+esc(f.name||"Segoe UI")+'"/></font>');
+    var fillId=0;if(o.fill)fillId=pool(this.fills,this.fillIx,o.fill,'<fill><patternFill patternType="solid"><fgColor rgb="FF'+o.fill+'"/><bgColor indexed="64"/></patternFill></fill>');
+    var bd=o.border||{};var bk=["l","r","t","b"].map(function(s){return bd[s]?bd[s].s+":"+bd[s].c:"";}).join("|");
+    var bid=0;if(bk!=="|||"){bid=pool(this.borders,this.borderIx,bk,'<border>'+["left","right","top","bottom"].map(function(n,i){var e=bd[["l","r","t","b"][i]];return e?'<'+n+' style="'+e.s+'"><color rgb="FF'+e.c+'"/></'+n+'>':'<'+n+'/>';}).join("")+'<diagonal/></border>');}
+    var nid=0;if(o.fmt){if(self.numIx[o.fmt]===undefined){self.numIx[o.fmt]=164+self.numFmts.length;self.numFmts.push('<numFmt numFmtId="'+self.numIx[o.fmt]+'" formatCode="'+esc(o.fmt)+'"/>');}nid=self.numIx[o.fmt];}
+    var al=o.align||{};var ak=[fid,fillId,bid,nid,al.h||"",al.v||"center",al.wrap?1:0,al.ind||0].join("|");
+    return pool(this.xfs,this.xfIx,ak,'<xf numFmtId="'+nid+'" fontId="'+fid+'" fillId="'+fillId+'" borderId="'+bid+'" xfId="0" applyFont="1" applyFill="1" applyBorder="1"'+(nid?' applyNumberFormat="1"':'')+' applyAlignment="1"><alignment'+(al.h?' horizontal="'+al.h+'"':'')+' vertical="'+(al.v||"center")+'"'+(al.wrap?' wrapText="1"':'')+(al.ind?' indent="'+al.ind+'"':'')+'/></xf>');
+  };
+  Styles.prototype.xml=function(){
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+      (this.numFmts.length?'<numFmts count="'+this.numFmts.length+'">'+this.numFmts.join("")+'</numFmts>':'')+
+      '<fonts count="'+this.fonts.length+'">'+this.fonts.join("")+'</fonts><fills count="'+this.fills.length+'">'+this.fills.join("")+'</fills>'+
+      '<borders count="'+this.borders.length+'">'+this.borders.join("")+'</borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'+
+      '<cellXfs count="'+this.xfs.length+'">'+this.xfs.join("")+'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+  };
+
+  /* ---------- sayı çözümleme: ekrandaki biçimi koru ---------- */
+  function sayi(txt){
+    var s=String(txt).trim(); if(!/^-?\d+([.,]\d+)?$/.test(s)) return null;
+    var dec=0,v; if(s.indexOf(",")>=0){v=parseFloat(s.replace(",","."));dec=s.split(",")[1].length;}
+    else {v=parseFloat(s);dec=s.indexOf(".")>=0?s.split(".")[1].length:0;}
+    return {v:v,fmt:dec?"0."+"0".repeat(dec):"0"};
+  }
+  function hucreMetni(c){
+    var sel=c.querySelector("select"); if(sel){var o=sel.selectedOptions[0];return o?o.text:"";}
+    var inp=c.querySelector("input"); if(inp) return inp.value||inp.placeholder||"";
+    return (c.innerText||c.textContent||"").replace(/\s+/g," ").trim();
+  }
+  function stilOku(el, extra){
+    var cs=getComputedStyle(el), bg=hex(cs.backgroundColor);
+    var inp=el.querySelector("input,select");
+    if(inp){var ib=hex(getComputedStyle(inp).backgroundColor); if(ib && ib!=="FFFFFF") bg=ib;}
+    var fw=parseInt(cs.fontWeight,10)||400, src=inp||el, fcs=getComputedStyle(src);
+    var ta=(inp?getComputedStyle(inp).textAlign:cs.textAlign); if(inp&&inp.tagName==="SELECT")ta="center"; var h= ta==="center"?"center":(ta==="right"||ta==="end")?"right":"left";
+    var o={font:{b:(parseInt(fcs.fontWeight,10)||fw)>=600,sz:Math.max(9,Math.round((parseFloat(fcs.fontSize)||13)*0.75*2)/2),color:hex(fcs.color)||"000000",name:"Segoe UI"},
+      fill:bg&&bg!=="FFFFFF"?bg:null, align:{h:h,v:"center",wrap:true}};
+    if(extra) for(var k in extra) o[k]=extra[k];
+    return o;
+  }
+
+  window.exportExcel=function(){
+    if(typeof hesapla==="function"){try{hesapla();}catch(e){}}
+    var ST=new Styles(), rows={}, merges=[], rowH={}, R=0;
+    var GR="C8D0DC", thin=function(c){return {s:"thin",c:c||GR};};
+    var box=function(c){return {l:thin(c),r:thin(c),t:thin(c),b:thin(c)};};
+    function put(r,c,val,st){ rows[r]=rows[r]||{}; rows[r][c]={v:val,s:ST.get(st)}; }
+    function fillRange(r1,c1,r2,c2,st){for(var r=r1;r<=r2;r++)for(var c=c1;c<=c2;c++){rows[r]=rows[r]||{};if(!rows[r][c])rows[r][c]={v:"",s:ST.get(st)};}}
+    function merge(r1,c1,r2,c2){ if(r1!==r2||c1!==c2) merges.push(colName(c1)+(r1+1)+":"+colName(c2)+(r2+1)); }
+
+    var tbl=document.getElementById("mainTable");
+    var trs=[].slice.call(tbl.rows).filter(function(tr){return !tr.querySelector(".del-cell");});
+    var NC=trs[0].cells.length; // etiket + segmentler + TOPLAM
+    var NAVY=hex(getComputedStyle(trs[0].cells[1]).backgroundColor)||"1F3A5F";
+
+    /* ---- başlık ---- */
+    var st1={font:{b:true,sz:14,color:"FFFFFF"},fill:NAVY,align:{h:"left",v:"center"}};
+    put(R,0,"OG GERİLİM DÜŞÜMÜ VE GÜÇ KAYBI HESABI",st1); fillRange(R,1,R,NC-1,st1); merge(R,0,R,NC-1); rowH[R]=26; R++;
+    var hz=(document.querySelector(".hdr")||{}).innerText||""; var hzm=hz.match(/Hazırlayan:[^\n]*/);
+    var st2={font:{sz:9,color:"DCE6F2"},fill:NAVY,align:{h:"left",v:"center"}};
+    put(R,0,"TEDAŞ Yönetmeliği Uyumlu  |  Tek / Çift Devre Hesabı"+(hzm?"      "+hzm[0]:""),st2); fillRange(R,1,R,NC-1,st2); merge(R,0,R,NC-1); rowH[R]=18; R++;
+    R++;
+
+    /* ---- proje bilgileri (etiket satırı + değer satırı) ---- */
+    var fgs=[].slice.call(document.querySelectorAll(".proj-card .fg"));
+    if(fgs.length){
+      var per=Math.max(1,Math.floor(NC/fgs.length)), c=0;
+      fgs.forEach(function(fg,i){
+        var lab=(fg.querySelector("label")||{}).textContent||"", ctl=fg.querySelector("input,select"), val="";
+        if(ctl){ if(ctl.tagName==="SELECT"){var o=ctl.selectedOptions[0];val=o?o.text:"";}
+          else if(ctl.type==="date"&&ctl.value){var p=ctl.value.split("-");val=p[2]+"."+p[1]+"."+p[0];}
+          else val=ctl.value||""; }
+        var c2=(i===fgs.length-1)?NC-1:c+per-1;
+        var sl={font:{b:true,sz:8,color:"5B6B7D"},align:{h:"left",v:"bottom",wrap:true}};
+        var sv={font:{sz:10},border:box("B8C2CF"),align:{h:"left",v:"center",ind:1}};
+        put(R,c,lab.trim().toLocaleUpperCase("tr"),sl); fillRange(R,c+1,R,c2,sl); merge(R,c,R,c2);
+        put(R+1,c,val,sv); fillRange(R+1,c+1,R+1,c2,sv); merge(R+1,c,R+1,c2);
+        c=c2+1;
+      });
+      rowH[R]=24; rowH[R+1]=22; R+=3;
+    }
+
+    /* ---- ana tablo: ekrandan birebir ---- */
+    var widths=[].slice.call(trs[0].cells).map(function(c){return c.getBoundingClientRect().width;});
+    trs.forEach(function(tr,ri){
+      var maxH=0;
+      [].slice.call(tr.cells).forEach(function(td,ci){
+        var txt=hucreMetni(td), o=stilOku(td,{border:box()});
+        if(ci===0) o.align={h:"left",v:"center",wrap:true};
+        var n=(ci>0)?sayi(txt):null;
+        if(n){o.fmt=n.fmt; put(R,ci,n.v,o);} else put(R,ci,txt,o);
+        maxH=Math.max(maxH,td.getBoundingClientRect().height);
+      });
+      rowH[R]=(ri===0)?20:(tr.querySelector('select')?30:18); R++;
+    });
+    R++;
+
+    /* ---- özet kutuları ---- */
+    var sbs=[].slice.call(document.querySelectorAll(".summary .sbox"));
+    if(sbs.length){
+      var w=Math.max(1,Math.floor(NC/sbs.length)), c0=0;
+      sbs.forEach(function(sb,i){
+        var bcs=getComputedStyle(sb), bg=hex(bcs.backgroundColor)||"F3F6FA", bc=hex(bcs.borderTopColor)||"9FB0C4";
+        var c2=(i===sbs.length-1)?Math.min(NC-1,c0+w-1):c0+w-1;
+        var parts=[["sl",{b:true,sz:8}],["sv",{b:true,sz:16}],["sd",{sz:8}],["ss",{b:true,sz:9}]];
+        parts.forEach(function(p,k){
+          var el=sb.querySelector("."+p[0]); var t=el?el.textContent.trim():"";
+          var fc=el?hex(getComputedStyle(el).color):"000000";
+          var bdr={l:{s:"medium",c:bc},r:{s:"medium",c:bc},t:k===0?{s:"medium",c:bc}:null,b:k===3?{s:"medium",c:bc}:null};
+          var st={font:{b:p[1].b,sz:p[1].sz,color:fc||"000000"},fill:bg,border:bdr,align:{h:"left",v:"center",ind:1}};
+          put(R+k,c0,(p[0]==="sl"?t.toLocaleUpperCase("tr"):t),st); fillRange(R+k,c0+1,R+k,c2,st);
+          // kenarlıkları birleşik aralığın tüm hücrelerine uygula
+          for(var cc=c0;cc<=c2;cc++){var b2={l:cc===c0?bdr.l:null,r:cc===c2?bdr.r:null,t:bdr.t,b:bdr.b};rows[R+k][cc].s=ST.get({font:st.font,fill:bg,border:b2,align:st.align});}
+          merge(R+k,c0,R+k,c2);
+        });
+        c0=c2+1;
+      });
+      rowH[R]=16;rowH[R+1]=28;rowH[R+2]=15;rowH[R+3]=17; R+=5;
+    }
+
+    /* ---- formül notu ---- */
+    var fml=document.querySelector(".fml");
+    if(fml){
+      var lines=fml.innerText.split(/\n+/).map(function(s){return s.trim();}).filter(Boolean);
+      lines.forEach(function(ln,i){
+        var st={font:{sz:8,color:i===lines.length-1?"7A8796":"33414F",b:false},fill:"F8FAFC",
+          border:{l:thin(),r:thin(),t:i===0?thin():null,b:i===lines.length-1?thin():null},align:{h:"left",v:"center",wrap:true}};
+        put(R,0,ln,st); for(var cc=1;cc<NC;cc++){rows[R][cc]={v:"",s:ST.get({font:st.font,fill:st.fill,border:{l:null,r:cc===NC-1?thin():null,t:st.border.t,b:st.border.b},align:st.align})};}
+        rows[R][0].s=ST.get({font:st.font,fill:st.fill,border:{l:thin(),r:null,t:st.border.t,b:st.border.b},align:st.align});
+        merge(R,0,R,NC-1); rowH[R]=18; R++;
+      });
+    }
+
+    /* ---- sheet xml ---- */
+    var cols='<cols>'+widths.map(function(px,i){var wch=(i===0)?30:(i===widths.length-1?12:15);return '<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+wch+'" customWidth="1"/>';}).join("")+'</cols>';
+    var sd='<sheetData>';
+    Object.keys(rows).map(Number).sort(function(a,b){return a-b;}).forEach(function(r){
+      sd+='<row r="'+(r+1)+'"'+(rowH[r]?' ht="'+rowH[r]+'" customHeight="1"':'')+'>';
+      Object.keys(rows[r]).map(Number).sort(function(a,b){return a-b;}).forEach(function(c){
+        var cell=rows[r][c], ref=colName(c)+(r+1);
+        if(typeof cell.v==="number") sd+='<c r="'+ref+'" s="'+cell.s+'"><v>'+cell.v+'</v></c>';
+        else if(cell.v==="") sd+='<c r="'+ref+'" s="'+cell.s+'"/>';
+        else sd+='<c r="'+ref+'" s="'+cell.s+'" t="inlineStr"><is><t xml:space="preserve">'+esc(cell.v)+'</t></is></c>';
+      });
+      sd+='</row>';
+    });
+    // boş satırlar için yükseklik
+    Object.keys(rowH).forEach(function(r){ if(!rows[r]) sd=sd; });
+    sd+='</sheetData>';
+    var sheet='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'+
+      '<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0" zoomScale="90"/></sheetViews>'+
+      '<sheetFormatPr defaultRowHeight="15"/>'+cols+sd+
+      (merges.length?'<mergeCells count="'+merges.length+'">'+merges.map(function(m){return '<mergeCell ref="'+m+'"/>';}).join("")+'</mergeCells>':'')+
+      '<printOptions horizontalCentered="1"/><pageMargins left="0.3" right="0.3" top="0.35" bottom="0.35" header="0" footer="0"/>'+
+      '<pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="1"/></worksheet>';
+
+    var enc=new TextEncoder();
+    var files=[
+      {name:"[Content_Types].xml",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>')},
+      {name:"_rels/.rels",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>')},
+      {name:"xl/workbook.xml",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="OG Gerilim Düşümü" sheetId="1" r:id="rId1"/></sheets><definedNames><definedName name="_xlnm.Print_Area" localSheetId="0">\'OG Gerilim Düşümü\'!$A$1:$'+colName(NC-1)+'$'+R+'</definedName></definedNames></workbook>')},
+      {name:"xl/_rels/workbook.xml.rels",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>')},
+      {name:"xl/styles.xml",data:enc.encode(ST.xml())},
+      {name:"xl/worksheets/sheet1.xml",data:enc.encode(sheet)}
+    ];
+    var blob=zip(files);
+    var ad=((document.querySelector(".proj-card input")||{}).value||"").trim().replace(/[\\\/:*?"<>|]+/g,"-").replace(/[çÇ]/g,function(c){return c==="ç"?"c":"C";}).replace(/[ğĞ]/g,function(c){return c==="ğ"?"g":"G";}).replace(/ı/g,"i").replace(/İ/g,"I").replace(/[öÖ]/g,function(c){return c==="ö"?"o":"O";}).replace(/[şŞ]/g,function(c){return c==="ş"?"s":"S";}).replace(/[üÜ]/g,function(c){return c==="ü"?"u":"U";});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+    a.download=(ad?ad+" - ":"")+"OG Gerilim Dusumu.xlsx"; (document.getElementById('vg-tool-workspace') || document.body).appendChild(a); a.click(); a.remove();
+    setTimeout(function(){URL.revokeObjectURL(a.href);},4000);
+    return blob;
+  };
+})();
+
+</script>
+</div><div id="vg-origin">VoltGuard uyarlaması · Özgün hesap araçları: Baki SONAY · <a href="../yontem/">Yöntem ve kaynaklar</a></div><script src="../shared/export.js" defer></script><script>try{localStorage.setItem('voltguard:recent',JSON.stringify({slug:"og-gerilim-dusumu",name:"OG Gerilim Düşümü"}))}catch(e){}if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script></div><footer data-vg-no-print class="footer vg-footer" id="vgFooter" role="contentinfo">
+  <div class="vg-footer__cta">
+    <div class="vg-wrap vg-footer__cta-in">
+      <div class="vg-footer__cta-text">
+        <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+        <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+      </div>
+      <div class="vg-footer__cta-btns">
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="vg-wrap">
+    <div class="vg-footer__grid">
+      <div class="vg-footer__brand">
+        <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+          <span class="logo-mark logo-mark--footer" aria-hidden="true">
+            <span class="logo-mark__volt">VOLT</span>
+            <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+            <span class="logo-mark__guard">GUARD</span>
+          </span>
+          <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+        </a>
+        <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+        <ul class="vg-footer__contact">
+          <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+          <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+          <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+        </ul>
+        <address class="vg-footer__addr">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+        </address>
+        <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+      </div>
+      <nav class="vg-footer__nav" aria-label="Alt menü">
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Hizmetler</h3>
+          <ul>
+            <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+            <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+            <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+            <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+            <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+            <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+            <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+            <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+            <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+            <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+            <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+            <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kurumsal</h3>
+          <ul>
+            <li><a href="/#hakkimizda">Hakkımızda</a></li>
+            <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+            <li><a href="/#projeler">Projeler</a></li>
+            <li><a href="/#surec">Sürecimiz</a></li>
+            <li><a href="/#neden-biz">Neden Biz?</a></li>
+            <li><a href="/#guvenlik">Güvenlik</a></li>
+            <li><a href="/#haberler">Haberler</a></li>
+            <li><a href="/#emi-demo">Canlı Demo</a></li>
+            <li><a href="/#katalog">Katalog</a></li>
+            <li><a href="/#sss">SSS</a></li>
+            <li><a href="/#iletisim">İletişim</a></li>
+            <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kaynaklar</h3>
+          <ul>
+            <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+            <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+            <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+            <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+            <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+          <ul>
+            <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+            <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+            <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+            <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+            <li><a href="/voltgame.html">VoltGame</a></li>
+            <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+            <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+            <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="vg-footer__bottom">
+      <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+      <div class="vg-footer__social">
+        <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+      <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        </circle>
+      </svg>
+      <span class="sig-node" aria-hidden="true"></span>
+      <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+        <span class="sig-badge__ring" aria-hidden="true"></span>
+        <span class="sig-badge__aurora" aria-hidden="true"></span>
+        <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+        <span class="sig-badge__body">
+          <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+          <span class="sig-badge__brand">
+            <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+            <span class="sig-badge__eng">Engineering</span>
+          </span>
+        </span>
+        <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+        <span class="sig-badge__shimmer" aria-hidden="true"></span>
+      </a>
+      <span class="sig-node" aria-hidden="true"></span>
+      <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+        </circle>
+      </svg>
+    </div>
+  </div>
+</footer></body>
+</html>

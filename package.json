@@ -1,0 +1,16 @@
+{
+  "name": "voltguard-website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node tools/build-staff.cjs && node tools/build-engineering.cjs && node tools/build-company.cjs",
+    "setup:staff": "npm ci --prefix tools/staff-app --ignore-scripts --no-fund",
+    "test": "node tools/test.cjs",
+    "test:browser": "node tools/tests/engineering-browser.cjs",
+    "test:staff-browser": "node tools/tests/staff-browser.cjs && node tools/tests/company-ui-browser.cjs && node tools/tests/company-real-browser.cjs",
+    "preview": "node tools/preview.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

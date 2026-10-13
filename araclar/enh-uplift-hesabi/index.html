@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ENH Uplift Hesabı | VoltGuard</title><meta name="description" content="Taşıyıcı direkte kaldırma etkisini ve düşey mesnet kuvvetini kontrol edin."><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#0a1628"><link rel="canonical" href="https://voltguard.com.tr/araclar/enh-uplift-hesabi/"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="ENH Uplift Hesabı | VoltGuard"><meta property="og:description" content="Taşıyıcı direkte kaldırma etkisini ve düşey mesnet kuvvetini kontrol edin."><meta property="og:url" content="https://voltguard.com.tr/araclar/enh-uplift-hesabi/"><meta property="og:image" content="https://voltguard.com.tr/araclar/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/voltguard-icon-64.png" type="image/png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"ENH Uplift Hesabı","url":"https://voltguard.com.tr/araclar/enh-uplift-hesabi/","description":"Taşıyıcı direkte kaldırma etkisini ve düşey mesnet kuvvetini kontrol edin.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":0,"priceCurrency":"TRY"},"publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VoltGuard","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"ENH Uplift Hesabı","item":"https://voltguard.com.tr/araclar/enh-uplift-hesabi/"}]}]}</script><link rel="stylesheet" href="../shared/tool-shell.css"><link rel="stylesheet" href="../shared/export.css">
+
+
+
+<style>
+#vg-tool-workspace{
+  --ink:#0f1b24; --ink2:#33465a; --muted:#6b7f92;
+  --paper:#eef2f6; --card:#ffffff; --line:#d3dde6;
+  --blue:#1d4ed8; --blue-bg:#e5eefc;
+  --teal:#0e7c86; --ok:#15803d; --ok-bg:#e6f4ea;
+  --warn:#b45309; --danger:#b91c1c; --danger-bg:#fdecec;
+  --mono: ui-monospace,"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  --sans: "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+:where(#vg-tool-workspace) *{box-sizing:border-box}
+#vg-tool-workspace,#vg-tool-workspace{margin:0;padding:0}
+#vg-tool-workspace{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45}
+:where(#vg-tool-workspace) .wrap{max-width:1180px;margin:0 auto;padding:14px}
+
+:where(#vg-tool-workspace) header.top{background:linear-gradient(180deg,#0f1b24,#16293a);color:#fff;border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+:where(#vg-tool-workspace) header.top :is(h1,.vg-original-title){margin:0;font-size:19px;letter-spacing:.3px;font-weight:600}
+:where(#vg-tool-workspace) header.top .sub{font-size:12px;color:#9fb6c9;margin-top:2px}
+:where(#vg-tool-workspace) header.top .badge{margin-left:auto;font-size:11.5px;background:#20364a;border:1px solid #2f4a63;color:#cfe0ee;
+  padding:7px 12px;border-radius:7px;text-align:right;line-height:1.45}
+:where(#vg-tool-workspace) header.top .badge b{display:block;font-size:13px;color:#fff;letter-spacing:.2px}
+:where(#vg-tool-workspace) header.top .badge span{display:block;color:#9fb6c9}
+
+:where(#vg-tool-workspace) .grid{display:grid;grid-template-columns:380px 1fr;gap:14px;margin-top:14px;align-items:start}
+@media(max-width:900px){:where(#vg-tool-workspace) .grid{grid-template-columns:1fr}}
+
+:where(#vg-tool-workspace) .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+:where(#vg-tool-workspace) .card h2{margin:0 0 10px;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--teal);font-weight:700;
+  border-bottom:1px solid var(--line);padding-bottom:7px;display:flex;align-items:center;gap:8px}
+:where(#vg-tool-workspace) .card h2 .n{font-family:var(--mono);background:var(--teal);color:#fff;border-radius:4px;padding:1px 6px;font-size:11px}
+
+:where(#vg-tool-workspace) label{display:block;font-size:12px;color:var(--ink2);margin:9px 0 3px;font-weight:600}
+:where(#vg-tool-workspace) .hint{font-size:11px;color:var(--muted);font-weight:400}
+:where(#vg-tool-workspace) input,:where(#vg-tool-workspace) select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;font-size:14px;font-family:var(--mono);background:#fff;color:var(--ink)}
+:where(#vg-tool-workspace) input:focus,:where(#vg-tool-workspace) select:focus{outline:2px solid #93b4f0;outline-offset:0;border-color:var(--blue)}
+:where(#vg-tool-workspace) input.in{background:var(--blue-bg);border-color:#9dbdf5;color:#0b2f7a;font-weight:600}
+:where(#vg-tool-workspace) input[readonly]{background:#f3f6f9;color:var(--ink2);font-weight:600}
+:where(#vg-tool-workspace) .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+:where(#vg-tool-workspace) .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+:where(#vg-tool-workspace) .seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-top:3px}
+:where(#vg-tool-workspace) .seg button{flex:1;border:0;background:#f4f7fa;padding:7px 4px;font-size:12px;cursor:pointer;color:var(--ink2);font-family:var(--sans)}
+:where(#vg-tool-workspace) .seg button.on{background:var(--teal);color:#fff;font-weight:600}
+
+:where(#vg-tool-workspace) .note{font-size:11px;color:var(--muted);margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
+:where(#vg-tool-workspace) .formula{font-family:var(--mono);font-size:12px;background:#f5f8fa;border:1px solid var(--line);border-left:3px solid var(--teal);
+  border-radius:5px;padding:8px 10px;margin:8px 0;color:var(--ink2);white-space:nowrap;overflow-x:auto}
+
+:where(#vg-tool-workspace) .verdict{border-radius:8px;padding:12px 14px;margin-bottom:12px;border:1px solid}
+:where(#vg-tool-workspace) .verdict.ok{background:var(--ok-bg);border-color:#a9d5ba;color:#14532d}
+:where(#vg-tool-workspace) .verdict.bad{background:var(--danger-bg);border-color:#efb9b9;color:#7f1d1d}
+:where(#vg-tool-workspace) .verdict .t{font-size:17px;font-weight:700;letter-spacing:.2px}
+:where(#vg-tool-workspace) .verdict .d{font-size:12.5px;margin-top:4px;opacity:.9}
+
+:where(#vg-tool-workspace) .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+@media(max-width:640px){:where(#vg-tool-workspace) .kpis{grid-template-columns:1fr 1fr}}
+:where(#vg-tool-workspace) .kpi{background:#f7fafc;border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+:where(#vg-tool-workspace) .kpi .k{font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);font-weight:700}
+:where(#vg-tool-workspace) .kpi .v{font-family:var(--mono);font-size:19px;font-weight:700;margin-top:3px}
+:where(#vg-tool-workspace) .kpi .u{font-size:11px;color:var(--muted);font-weight:400;margin-left:2px}
+:where(#vg-tool-workspace) .kpi.hi .v{color:var(--teal)}
+:where(#vg-tool-workspace) .kpi.neg .v{color:var(--danger)}
+:where(#vg-tool-workspace) .kpi.pos .v{color:var(--ok)}
+
+:where(#vg-tool-workspace) svg.plot{width:100%;height:auto;display:block;background:#fbfdfe;border:1px solid var(--line);border-radius:8px}
+:where(#vg-tool-workspace) .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink2);margin-top:8px}
+:where(#vg-tool-workspace) .legend i{display:inline-block;width:16px;height:0;border-top:2px solid;vertical-align:middle;margin-right:5px}
+
+:where(#vg-tool-workspace) table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+:where(#vg-tool-workspace) th,:where(#vg-tool-workspace) td{border:1px solid var(--line);padding:5px 7px;text-align:right}
+:where(#vg-tool-workspace) th{background:#f2f6f9;font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--ink2);text-align:center}
+:where(#vg-tool-workspace) td:first-child,:where(#vg-tool-workspace) th:first-child{text-align:left}
+:where(#vg-tool-workspace) td.num{font-family:var(--mono)}
+:where(#vg-tool-workspace) tr.bad td{background:#fdf1f1}
+:where(#vg-tool-workspace) tr.ok td{background:#f2faf5}
+:where(#vg-tool-workspace) .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+:where(#vg-tool-workspace) td input{padding:4px 6px;font-size:12.5px;border-radius:4px}
+
+:where(#vg-tool-workspace) button.act{background:linear-gradient(180deg,#12909c,#0b6a73);color:#fff;border:0;border-radius:7px;
+  padding:9px 16px;font-size:13px;cursor:pointer;font-weight:600;letter-spacing:.2px;font-family:var(--sans);
+  box-shadow:0 1px 2px rgba(15,27,36,.18),inset 0 1px 0 rgba(255,255,255,.18);transition:transform .08s,filter .15s}
+:where(#vg-tool-workspace) button.act:hover{filter:brightness(1.08)}
+:where(#vg-tool-workspace) button.act:active{transform:translateY(1px)}
+:where(#vg-tool-workspace) button.act:focus-visible{outline:2px solid #93b4f0;outline-offset:2px}
+:where(#vg-tool-workspace) button.act.blue{background:linear-gradient(180deg,#3b7bea,#1d4ed8)}
+:where(#vg-tool-workspace) button.act.dark{background:linear-gradient(180deg,#33465a,#1b2c3d)}
+:where(#vg-tool-workspace) button.act.warn{background:linear-gradient(180deg,#e08a2e,#b45309)}
+:where(#vg-tool-workspace) button.act.ghost{background:#fff;color:var(--ink2);border:1px solid var(--line);box-shadow:0 1px 2px rgba(15,27,36,.06)}
+:where(#vg-tool-workspace) button.act.ghost:hover{background:#f4f8fa;border-color:#b6c6d3}
+:where(#vg-tool-workspace) button.act.red{background:#fff;color:var(--danger);border:1px solid #e9b4b4;box-shadow:0 1px 2px rgba(15,27,36,.06)}
+:where(#vg-tool-workspace) button.act.red:hover{background:#fdf2f2}
+:where(#vg-tool-workspace) .tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+:where(#vg-tool-workspace) .projbar{display:grid;grid-template-columns:1.3fr 1fr auto;gap:12px;align-items:end;margin-top:14px}
+@media(max-width:760px){:where(#vg-tool-workspace) .projbar{grid-template-columns:1fr}}
+:where(#vg-tool-workspace) .tabbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;align-items:flex-end;
+  border-bottom:2px solid var(--teal)}
+:where(#vg-tool-workspace) .tab{display:flex;align-items:center;gap:7px;background:#e4ebf1;border:1px solid var(--line);border-bottom:0;
+  border-radius:8px 8px 0 0;padding:8px 12px;font-size:13px;color:var(--ink2);cursor:pointer;position:relative;top:2px;
+  transition:background .12s}
+:where(#vg-tool-workspace) .tab:hover{background:#d7e2ea}
+:where(#vg-tool-workspace) .tab.on{background:linear-gradient(180deg,#12909c,#0b6a73);color:#fff;border-color:var(--teal);font-weight:700}
+:where(#vg-tool-workspace) .tab .x{font-size:16px;line-height:1;opacity:.5;padding:0 3px;border-radius:4px}
+:where(#vg-tool-workspace) .tab .x:hover{opacity:1;background:rgba(0,0,0,.16)}
+:where(#vg-tool-workspace) .tab.on .x{opacity:.85}
+:where(#vg-tool-workspace) .tabadd{background:#fff;border:1px dashed var(--teal);color:var(--teal);border-radius:8px;padding:7px 13px;
+  font-size:13px;font-weight:700;cursor:pointer;position:relative;top:2px;font-family:var(--sans)}
+:where(#vg-tool-workspace) .tabadd:hover{background:#e9f5f6}
+
+:where(#vg-tool-workspace) footer.sig{margin:18px 0 8px;text-align:center;font-size:12px;color:var(--muted)}
+:where(#vg-tool-workspace) footer.sig b{color:var(--ink2)}
+
+:where(#vg-tool-workspace) #printArea{display:none}
+:where(#vg-tool-workspace) .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0f1b24;color:#fff;
+  padding:10px 18px;border-radius:8px;font-size:13.5px;box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:99;opacity:0;
+  transition:opacity .25s;pointer-events:none}
+:where(#vg-tool-workspace) .toast.on{opacity:1}
+
+/* ---- Baskı: her direk tek A4 sayfası ---- */
+@media print{
+  @page{size:A4 portrait;margin:12mm 12mm 10mm}
+  #vg-tool-workspace{background:#fff}
+  :where(#vg-tool-workspace) .wrap{display:none!important}
+  :where(#vg-tool-workspace) #printArea{display:block}
+  :where(#vg-tool-workspace) .rp{page-break-after:always;break-after:page;font-family:"Segoe UI",Arial,sans-serif;color:#000}
+  :where(#vg-tool-workspace) .rp:last-child{page-break-after:auto;break-after:auto}
+  :where(#vg-tool-workspace) .rp :is(h1,.vg-original-title){font-size:15pt;margin:0;letter-spacing:.3px}
+  :where(#vg-tool-workspace) .rp .rhead{border-bottom:2px solid #000;padding-bottom:5px;margin-bottom:9px;display:flex;align-items:flex-end;gap:10px}
+  :where(#vg-tool-workspace) .rp .rhead .sub{font-size:8.5pt;color:#333;margin-top:2px}
+  :where(#vg-tool-workspace) .rp .rhead .dt{margin-left:auto;font-size:8.5pt;text-align:right;line-height:1.35;white-space:nowrap}
+  :where(#vg-tool-workspace) .rp .rhead .dt b{font-size:10pt}
+  :where(#vg-tool-workspace) .rp .meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:9.5pt;margin-bottom:10px}
+  :where(#vg-tool-workspace) .rp .meta div{border:1px solid #999;padding:5px 8px}
+  :where(#vg-tool-workspace) .rp .meta b{display:block;font-size:7.5pt;text-transform:uppercase;letter-spacing:.5px;color:#555;font-weight:600}
+  :where(#vg-tool-workspace) .rp table{width:100%;border-collapse:collapse;font-size:9.5pt;margin-bottom:9px}
+  :where(#vg-tool-workspace) .rp th,:where(#vg-tool-workspace) .rp td{border:1px solid #777;padding:3.5px 6px}
+  :where(#vg-tool-workspace) .rp th{background:#eee;font-size:8pt;text-transform:uppercase;letter-spacing:.4px;text-align:center}
+  :where(#vg-tool-workspace) .rp td.n{text-align:right;font-family:Consolas,monospace}
+  :where(#vg-tool-workspace) .rp .fx{font-family:Consolas,monospace;font-size:8.5pt;border:1px solid #999;border-left:3px solid #000;
+    padding:5px 8px;margin-bottom:9px}
+  :where(#vg-tool-workspace) .rp svg{width:100%;height:auto;border:1px solid #999}
+  :where(#vg-tool-workspace) .rp .vd{margin-top:9px;border:2px solid #000;padding:7px;text-align:center;font-size:12pt;font-weight:700;font-style:italic}
+  :where(#vg-tool-workspace) .rp .fo{margin-top:auto;padding-top:10px;font-size:8pt;color:#444;display:flex;justify-content:space-between}
+}
+
+/* dar ekranda taşmayı önle: grid/flex öğeleri içeriklerinin min-content'ine takılmasın */
+:where(#vg-tool-workspace) .grid>*,:where(#vg-tool-workspace) .split>*,:where(#vg-tool-workspace) .card,:where(#vg-tool-workspace) .tscroll{min-width:0}
+:where(#vg-tool-workspace) svg{max-width:100%}
+</style>
+<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=736601cefb51"><script src="/js/vg-shell.js?v=f8bab0eb2f0c" defer></script><script src="/js/voltguard-auth.js?v=5ea8a8c73e4b" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=6609af196d62"></head>
+<body data-vg-tool="enh-uplift-hesabi" data-vg-title="ENH Uplift Hesabı" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[&quot;voltguard:enh-uplift-hesabi:uplift_v2&quot;]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+<header data-vg-no-print class="vg-header doc-header" id="vgHeader">
+  <div class="vg-header__bar vg-wrap">
+    <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+      <span class="logo-mark" aria-hidden="true">
+        <span class="logo-mark__volt">VOLT</span>
+        <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+        <span class="logo-mark__guard">GUARD</span>
+      </span>
+      <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+    </a>
+    <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+    <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+      <ul class="vg-nav__list">
+        <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+        <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+        <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+        <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+          <ul class="vg-dd__menu" id="vgDdKaynaklar">
+            <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+            <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+            <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+            <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+            <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+          </ul>
+        </li>
+        <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+        <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+      </ul>
+      <div class="vg-nav__foot">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </nav>
+    <div class="vg-actions">
+      <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+      <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+    </div>
+  </div>
+  <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+</header><div id="main" tabindex="-1" role="main"><div id="vg-top"><div class="vg-topline"><nav class="vg-links" aria-label="Araç menüsü"><a class="vg-back" href="../#araclar">← Tüm araçlar</a><a class="vg-back" href="/hesaplama-araclari/">Pratik hesaplar →</a><a class="vg-back" href="/">VoltGuard ana sayfa ↗</a></nav></div><p class="vg-crumb">Enerji nakil hattı / ENH Uplift Hesabı</p><h1>ENH Uplift Hesabı</h1><p class="vg-description">Taşıyıcı direkte kaldırma etkisini ve düşey mesnet kuvvetini kontrol edin.</p><details><summary>Girdiler, sonuçlar ve hesap yöntemi</summary><div class="vg-method"><strong>Girdiler:</strong> İletken birim ağırlığı, çekme kuvveti, iki açıklık ve kot farkları.<br><strong>Çıktılar:</strong> Kaldırma değerlendirmesi, düşey kuvvet ve boy kesit.<br><strong>Yöntem:</strong> Komşu açıklıklar ve mesnet kotlarından uplift değerlendirmesi. <a href="../yontem/">Kaynak ve geçerlilik bilgileri →</a></div></details></div><div id="vg-tool-workspace">
+<div class="wrap">
+
+<header class="top">
+  <div>
+    <h2 class="vg-original-title">ENH Uplift (Kaldırma) Kontrol Simülatörü</h2>
+    <div class="sub">Taşıyıcı direkte düşey mesnet kuvveti ve durdurucu direk gereksinimi kontrolü</div>
+  </div>
+  <div class="badge" id="stamp"><b>Baki SONAY</b><span>Elektrik-Elektronik Mühendisi</span><span>VoltGuard</span></div>
+</header>
+
+<div class="projbar">
+  <div>
+    <label>Proje adı</label>
+    <input id="projAd" class="in" type="text" placeholder="ör. Trabzon OSB Enerji Nakil Hattı">
+  </div>
+  <div>
+    <label>Hat / iş no</label>
+    <input id="projHat" class="in" type="text" placeholder="ör. 3 no'lu fider, 2026-014">
+  </div>
+  <div class="noprint tools" style="margin-top:0;padding-bottom:2px">
+    <button class="act" id="btnSave">Kaydet</button>
+    <button class="act blue" id="btnSaveAs">Farklı kaydet…</button>
+    <button class="act dark" id="btnPrint">Bu direği yazdır</button>
+    <button class="act dark" id="btnPrintAll">Tümünü yazdır</button>
+  </div>
+</div>
+
+<div class="tabbar" id="tabbar"></div>
+
+<div class="grid">
+
+  <!-- SOL SÜTUN: GİRDİLER -->
+  <div>
+    <div class="card">
+      <h2><span class="n">1</span> İletken ve gerilme</h2>
+
+      <label>Veri kaynağı</label>
+      <div class="seg" id="segSrc">
+        <button data-v="katalog" class="on">Katalog</button>
+        <button data-v="manuel">Manuel</button>
+      </div>
+
+      <div id="catBox">
+        <label>İletken cinsi</label>
+        <select id="selCond"></select>
+        <div class="row">
+          <div>
+            <label>Bölge</label>
+            <select id="selZone"></select>
+          </div>
+          <div>
+            <label>Ruling span A<sub>r</sub></label>
+            <select id="selAr"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>T<sub>min</sub> <span class="hint">(kg)</span></label>
+          <input id="tmin" class="in" type="number" step="0.01" value="42.55">
+        </div>
+        <div>
+          <label>p<sub>0</sub> <span class="hint">(kg/m)</span></label>
+          <input id="p0" class="in" type="number" step="0.0001" value="0.108">
+        </div>
+      </div>
+      <div class="note">T<sub>min</sub>: en düşük sıcaklıkta (buzsuz, rüzgârsız) iletken çekme kuvveti.
+      p<sub>0</sub>: iletkenin öz ağırlığı. Katalog değerleri TEDAŞ bölge/ruling span esaslıdır.</div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h2><span class="n">2</span> Direk geometrisi</h2>
+
+      <label>Direk no / adı</label>
+      <input id="direkAd" class="in" type="text" value="1 No'lu Direk">
+
+      <label style="margin-top:10px">Açıklıklar <span class="hint">(kontrol edilen taşıyıcı direğin sağı ve solu)</span></label>
+      <div class="row">
+        <div>
+          <label>a<sub>1</sub> — sol açıklık <span class="hint">(m)</span></label>
+          <input id="a1" class="in" type="number" step="0.01" value="138.53">
+        </div>
+        <div>
+          <label>a<sub>2</sub> — sağ açıklık <span class="hint">(m)</span></label>
+          <input id="a2" class="in" type="number" step="0.01" value="123.03">
+        </div>
+      </div>
+
+      <label style="margin-top:12px">Mesnet yükseklik farkları <span class="hint">(proje profilinden okunur)</span></label>
+      <div class="row">
+        <div>
+          <label>h<sub>1</sub> — sol komşu <span class="hint">(m)</span></label>
+          <input id="h1" class="in" type="number" step="0.01" value="6">
+        </div>
+        <div>
+          <label>h<sub>2</sub> — sağ komşu <span class="hint">(m)</span></label>
+          <input id="h2" class="in" type="number" step="0.01" value="4">
+        </div>
+      </div>
+      <div class="hint" style="margin-top:5px">Komşu direk mesnetlerinin, kontrol edilen direğin mesnedine göre yüksekliği. Komşu daha alçaksa değer negatif girilir.</div>
+
+      <div class="tools noprint">
+        <button class="act red" id="btnReset">Tümünü sıfırla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAĞ SÜTUN: SONUÇ -->
+  <div>
+    <div class="card">
+      <h2><span class="n">3</span> Kontrol sonucu</h2>
+      <div id="verdict" class="verdict ok"><div class="t">—</div><div class="d">—</div></div>
+
+      <div class="kpis">
+        <div class="kpi hi"><div class="k">f<sub>min</sub> (sanal sehim)</div><div class="v"><span id="kFmin">—</span><span class="u">m</span></div></div>
+        <div class="kpi hi"><div class="k">x<sub>proje</sub></div><div class="v"><span id="kXp">—</span><span class="u">m</span></div></div>
+        <div class="kpi" id="kpiMar"><div class="k">Emniyet payı f<sub>min</sub>−x<sub>proje</sub></div><div class="v"><span id="kMar">—</span><span class="u">m</span></div></div>
+        <div class="kpi" id="kpiR"><div class="k">Düşey mesnet kuvveti R</div><div class="v"><span id="kR">—</span><span class="u">kg</span></div></div>
+      </div>
+
+      <div class="formula">f<sub>min</sub> = p<sub>0</sub> · 4 · a<sub>1</sub> · a<sub>2</sub> / (8 · T<sub>min</sub>)</div>
+      <div class="formula">x<sub>proje</sub> = (a<sub>2</sub>·h<sub>1</sub> + a<sub>1</sub>·h<sub>2</sub>) / (a<sub>1</sub> + a<sub>2</sub>)</div>
+      <div class="formula">Kriter: f<sub>min</sub> &gt; x<sub>proje</sub> → uplift yok &nbsp;|&nbsp; R = p<sub>0</sub>(a<sub>1</sub>+a<sub>2</sub>)/2 − T<sub>min</sub>(h<sub>1</sub>/a<sub>1</sub> + h<sub>2</sub>/a<sub>2</sub>)</div>
+
+      <table>
+        <thead><tr><th>Ara değer</th><th>Değer</th><th>Birim</th><th>Açıklama</th></tr></thead>
+        <tbody id="tbDetail"></tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h2><span class="n">4</span> Boy kesit — iletken profili</h2>
+      <svg class="plot" id="plot" viewBox="0 0 1130 490" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="legend">
+        <span><i style="border-color:#111;border-top-width:3px"></i>İletken</span> <span><i style="border-color:#a8d17a;border-top-width:4px"></i>Arazi profili</span>
+        <span><i style="border-color:#1d4ed8;border-top-style:dashed"></i>Komşu mesnetleri birleştiren kiriş</span>
+        <span><i style="border-color:#b91c1c"></i>x<sub>proje</sub> ölçüsü</span>
+        <span class="hint">Düşey ölçek abartılmıştır; arazi profili temsilîdir, hesaba girmez.</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h2><span class="n">5</span> Proje özeti — tüm direkler</h2>
+      <div class="hint">Açık olan her sekme bir satırdır. Sekmeye tıklayarak o direğin hesabına geçebilirsiniz.</div>
+      <div class="tscroll">
+      <table style="min-width:820px">
+        <thead>
+          <tr><th>Direk</th><th>İletken</th><th>a₁ (m)</th><th>a₂ (m)</th><th>h₁ (m)</th><th>h₂ (m)</th>
+              <th>f<sub>min</sub></th><th>x<sub>proje</sub></th><th>R (kg)</th><th>Sonuç</th></tr>
+        </thead>
+        <tbody id="tbOzet"></tbody>
+      </table>
+      </div>
+      <div class="tools noprint">
+        <button class="act blue" id="btnAddTab">+ Yeni direk sekmesi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="sig">
+  Katalog T<sub>min</sub> değerleri Ü.M. ATLI çalışmasındaki uplift kontrol tablosundan alınmıştır.
+</footer>
+
+</div>
+
+<div id="printArea"></div>
+<div class="toast" id="toast"></div>
+
+<script id="savedState" type="application/json">null</script>
+<script>
+"use strict";
+
+/* ---------- Katalog: iletken / bölge / ruling span -> Tmin (kg), p0 (kg/m) ---------- */
+var CAT = [
+ ["swallow",1,150,84.61,0.108],["swallow",1,200,74.43,0.108],["swallow",1,250,70.59,0.108],
+ ["swallow",2,150,73.46,0.108],["swallow",2,200,65.32,0.108],["swallow",2,250,62.24,0.108],
+ ["swallow",3,150,46.58,0.108],["swallow",3,200,43.72,0.108],["swallow",3,250,42.55,0.108],
+ ["swallow",4,100,29.28,0.108],["swallow",4,150,27.09,0.108],["swallow",5,100,11.37,0.108],
+ ["raven",1,180,245.24,0.2159],["raven",1,250,208.25,0.2159],["raven",1,300,198.23,0.2159],
+ ["raven",2,180,249.60,0.2159],["raven",2,250,206.30,0.2159],["raven",2,300,195.10,0.2159],
+ ["raven",3,180,159.35,0.2159],["raven",3,250,141.30,0.2159],["raven",3,300,136.42,0.2159],
+ ["raven",4,180,90.64,0.2159],["raven",4,250,86.25,0.2159],["raven",4,300,84.93,0.2159],
+ ["raven",5,150,39.25,0.2159],
+ ["pigeon",1,150,989.72,0.3429],["pigeon",1,300,604.03,0.3429],["pigeon",1,350,559.88,0.3429],
+ ["pigeon",2,150,715.88,0.3429],["pigeon",2,250,458.83,0.3429],["pigeon",2,350,401.30,0.3429],
+ ["pigeon",3,150,198.22,0.3429],["pigeon",3,200,361.91,0.3429],["pigeon",3,220,339.64,0.3429],
+ ["pigeon",4,150,234.36,0.3429],["pigeon",4,170,217.27,0.3429],
+ ["pigeon",5,100,92.28,0.3429],["pigeon",5,150,85.42,0.3429],
+ ["partridge",1,250,1424.40,0.5454],["partridge",2,230,1037.45,0.5454],["partridge",3,210,826.96,0.5454],
+ ["partridge",4,190,492.09,0.5454],["partridge",5,150,194.05,0.5454],
+ ["hawk",1,350,1735.78,0.9749],["hawk",2,325,1305.00,0.9749],["hawk",3,300,1043.84,0.9749],
+ ["hawk",4,250,741.86,0.9749],["hawk",5,200,349.84,0.9749]
+];
+var CONDS = ["swallow","raven","pigeon","partridge","hawk"];
+
+var $ = function(id){ return document.getElementById(id); };
+var nf = function(v,d){ if(!isFinite(v)) return "—"; return v.toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d}); };
+function parseUpliftNumber(value){
+  var s=String(value==null?'':value).trim().replace(',','.');
+  return /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(s)&&isFinite(Number(s))?Number(s):NaN;
+}
+var num = function(el){ return parseUpliftNumber(el.value); };
+
+var state = { src:"katalog" };
+
+/* ---------- Katalog seçim zinciri ---------- */
+function fillConds(){
+  var s = $("selCond"); s.innerHTML = "";
+  CONDS.forEach(function(c){
+    var o = document.createElement("option"); o.value=c; o.textContent=c.charAt(0).toUpperCase()+c.slice(1); s.appendChild(o);
+  });
+  s.value = "swallow";
+}
+function fillZones(){
+  var c = $("selCond").value, s = $("selZone"), prev = s.value;
+  var zs = []; CAT.forEach(function(r){ if(r[0]===c && zs.indexOf(r[1])<0) zs.push(r[1]); });
+  zs.sort(function(a,b){return a-b;});
+  s.innerHTML = "";
+  zs.forEach(function(z){ var o=document.createElement("option"); o.value=z; o.textContent=z+". bölge"; s.appendChild(o); });
+  if(zs.indexOf(parseInt(prev,10))>=0) s.value = prev;
+}
+function fillArs(){
+  var c=$("selCond").value, z=parseInt($("selZone").value,10), s=$("selAr"), prev=s.value;
+  var as=[]; CAT.forEach(function(r){ if(r[0]===c && r[1]===z) as.push(r[2]); });
+  as.sort(function(a,b){return a-b;});
+  s.innerHTML="";
+  as.forEach(function(a){ var o=document.createElement("option"); o.value=a; o.textContent="Ar = "+a+" m"; s.appendChild(o); });
+  if(as.indexOf(parseInt(prev,10))>=0) s.value=prev;
+}
+function applyCat(){
+  var c=$("selCond").value, z=parseInt($("selZone").value,10), a=parseInt($("selAr").value,10);
+  for(var i=0;i<CAT.length;i++){
+    if(CAT[i][0]===c && CAT[i][1]===z && CAT[i][2]===a){
+      $("tmin").value = CAT[i][3]; $("p0").value = CAT[i][4]; break;
+    }
+  }
+}
+
+/* ---------- Hesap çekirdeği ---------- */
+function solve(p0,T,a1,a2,h1,h2){
+  if(![p0,T,a1,a2,h1,h2].every(Number.isFinite)||!(p0>0&&T>0&&a1>0&&a2>0))
+    return {valid:false,error:'Açıklıklar, birim ağırlık ve çekme kuvveti sıfırdan büyük; yükseklikler geçerli sayı olmalıdır.',fmin:NaN,xp:NaN,margin:NaN,R:NaN,ok:null};
+  var fmin = (a1>0&&a2>0&&T>0) ? p0*4*a1*a2/(8*T) : NaN;
+  var xp   = (a1+a2>0) ? (a2*h1 + a1*h2)/(a1+a2) : NaN;
+  var R    = p0*(a1+a2)/2 - T*(h1/a1 + h2/a2);
+  if(![fmin,xp,R].every(Number.isFinite)) return {valid:false,error:'Girdiler hesap aralığını aşıyor.',fmin:NaN,xp:NaN,margin:NaN,R:NaN,ok:null};
+  return { valid:true, fmin:fmin, xp:xp, margin:fmin-xp, R:R, ok:(fmin>xp) };
+}
+
+function heights(){
+  return { h1:num($("h1")), h2:num($("h2")), zM:0 };
+}
+
+function compute(){
+  var p0=num($("p0")), T=num($("tmin")), a1=num($("a1")), a2=num($("a2"));
+  var H=heights();
+  var r=solve(p0,T,a1,a2,H.h1,H.h2);
+
+  var v=$("verdict");
+  ['p0','tmin','a1','a2','h1','h2'].forEach(function(id){var value=num($(id)); $(id).setAttribute('aria-invalid',(!isFinite(value)||(['h1','h2'].indexOf(id)<0&&value<=0))?'true':'false');});
+  if(!r.valid){
+    document.documentElement.dataset.vgInvalid='true';
+    v.className='verdict bad'; v.querySelector('.t').textContent='Hesaplanamadı — girdileri düzeltin'; v.querySelector('.d').textContent=r.error;
+    ['kFmin','kXp','kMar','kR'].forEach(function(id){$(id).textContent='—';});
+    $("kpiMar").className='kpi'; $("kpiR").className='kpi';
+    $("tbDetail").innerHTML=''; $("plot").innerHTML=''; $("printArea").innerHTML='';
+    save(); return r;
+  }
+  delete document.documentElement.dataset.vgInvalid;
+  v.className = "verdict " + (r.ok?"ok":"bad");
+  v.querySelector(".t").textContent = r.ok ? "Direkte uplift yok" : "Uplift var — durdurucu direk seçilmelidir";
+  v.querySelector(".d").textContent = r.ok
+    ? "f_min ("+nf(r.fmin,2)+" m) > x_proje ("+nf(r.xp,2)+" m). Mesnete gelen düşey kuvvet "+nf(r.R,2)+" kg basma yönündedir; taşıyıcı direk kullanılabilir."
+    : "f_min ("+nf(r.fmin,2)+" m) ≤ x_proje ("+nf(r.xp,2)+" m). İletken mesnedi yukarı doğru "+nf(Math.abs(r.R),2)+" kg ile kaldırmaktadır; taşıyıcı yerine durdurucu (gergili) direk seçilmelidir.";
+
+  $("kFmin").textContent=nf(r.fmin,3); $("kXp").textContent=nf(r.xp,3);
+  $("kMar").textContent=nf(r.margin,3); $("kR").textContent=nf(r.R,2);
+  $("kpiMar").className = "kpi " + (r.margin>=0?"pos":"neg");
+  $("kpiR").className   = "kpi " + (r.R>=0?"pos":"neg");
+
+  var aeq = 2*Math.sqrt(a1*a2);
+  var f1 = p0*a1*a1/(8*T), f2 = p0*a2*a2/(8*T);
+  var xlow1 = a1/2 + T*H.h1/(p0*a1);   // sol açıklıkta en düşük nokta (orta direkten sola mesafe ölçüsü için)
+  var xlow2 = a2/2 - T*H.h2/(p0*a2);
+  var rows = [
+    ["h₁ — sol mesnet göreli yüksekliği", nf(H.h1,2), "m", "Sol komşu mesnedin, kontrol edilen mesnede göre kotu"],
+    ["h₂ — sağ mesnet göreli yüksekliği", nf(H.h2,2), "m", "Sağ komşu mesnedin, kontrol edilen mesnede göre kotu"],
+    ["Eşdeğer açıklık 2·√(a₁·a₂)", nf(aeq,2), "m", "f_min bu eşdeğer açıklığın sehimine karşılık gelir"],
+    ["Sol açıklık sehimi f₁", nf(f1,2), "m", "p₀·a₁²/(8·T_min)"],
+    ["Sağ açıklık sehimi f₂", nf(f2,2), "m", "p₀·a₂²/(8·T_min)"],
+    ["Sol açıklıkta en alçak nokta", nf(xlow1,1), "m", "Sol direkten itibaren; a₁'i aşarsa kaldırma eğilimi vardır"],
+    ["Sağ açıklıkta en alçak nokta", nf(xlow2,1), "m", "Sağ direkten itibaren; a₂'yi aşarsa kaldırma eğilimi vardır"],
+    ["Düşey kuvvet R", nf(r.R,2), "kg", "R < 0 ise mesnet yukarı çekilir (uplift)"]
+  ];
+  var tb=$("tbDetail"); tb.innerHTML="";
+  rows.forEach(function(x){
+    var tr=document.createElement("tr");
+    tr.innerHTML = "<td>"+x[0]+"</td><td class='num'>"+x[1]+"</td><td style='text-align:center'>"+x[2]+"</td><td style='text-align:left;color:#6b7f92'>"+x[3]+"</td>";
+    tb.appendChild(tr);
+  });
+
+  draw(p0,T,a1,a2,H,r,$("plot"),condLabel());
+  save();
+  return r;
+}
+
+/* ---------- Boy kesit çizimi ---------- */
+function curve(zA,zB,a,p0,T,n){
+  var pts=[], i;
+  for(i=0;i<=n;i++){
+    var x=a*i/n;
+    var y=zA + (zB-zA)*x/a - (p0/(2*T))*x*(a-x);
+    pts.push([x,y]);
+  }
+  return pts;
+}
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+
+function draw(p0,T,a1,a2,H,r,svgEl,lbl){
+  var W=1130,Hh=490,PW=940,L=112,Rp=112,Tp=36,B=124;
+  var svg=svgEl||$("plot"); svg.setAttribute("viewBox","0 0 "+W+" "+Hh);
+  if(!(a1>0&&a2>0&&T>0)){ svg.innerHTML=""; return; }
+
+  var zM = 0;
+  var zL = zM + H.h1, zR = zM + H.h2;
+  var tot = a1+a2;
+
+  // İLETKEN: iki açıklığın gerçek parabolleri (direk tepelerini birleştirir)
+  var c1 = curve(zL, zM, a1, p0, T, 90);
+  var c2 = curve(zM, zR, a2, p0, T, 90);
+
+  // ARAZİ: direk diplerinden geçen zemin profili; iletkenin altında en az emniyet
+  // mesafesi kalacak şekilde vadi tabanı iletkeni takip eder (çizim amaçlıdır).
+  var f1d = p0*a1*a1/(8*T), f2d = p0*a2*a2/(8*T);
+  var vext = Math.max(f1d, f2d, Math.abs(H.h1), Math.abs(H.h2), 1);
+  var CL = Math.max(4, vext*0.32);             // iletken–zemin asgari açıklık (yalnızca çizim)
+  var PH = CL*1.55;                            // çizimde direk boyu
+  var bL = zL-PH, bM = zM-PH, bR = zR-PH;
+  var ext = tot*0.13;
+  function interp(x){
+    var x0=0,x1=a1,x2=tot;
+    return bL*((x-x1)*(x-x2))/((x0-x1)*(x0-x2))
+         + bM*((x-x0)*(x-x2))/((x1-x0)*(x1-x2))
+         + bR*((x-x0)*(x-x1))/((x2-x0)*(x2-x1));
+  }
+  function cond(x){
+    if(x<=0)   return zL;
+    if(x>=tot) return zR;
+    if(x<=a1)  return zL + (zM-zL)*x/a1 - (p0/(2*T))*x*(a1-x);
+    var u=x-a1;
+    return zM + (zR-zM)*u/a2 - (p0/(2*T))*u*(a2-u);
+  }
+  function rawGround(x){
+    if(x<0 || x>tot) return interp(x);
+    return Math.min(interp(x), cond(x)-CL);
+  }
+  var N=200, gx=[], gy=[], i;
+  for(i=0;i<=N;i++){ var xx0=-ext + (tot+2*ext)*i/N; gx.push(xx0); gy.push(rawGround(xx0)); }
+  // hafif yumuşatma, ardından emniyet mesafesini tekrar uygula
+  var gs=gy.slice();
+  for(var pass=0;pass<3;pass++){
+    var tmp=gs.slice();
+    for(i=1;i<N;i++) gs[i]=(tmp[i-1]+2*tmp[i]+tmp[i+1])/4;
+    for(i=0;i<=N;i++){ var lim=(gx[i]>=0&&gx[i]<=tot)? cond(gx[i])-CL : Infinity; if(gs[i]>lim) gs[i]=lim; }
+  }
+  var gr=[];
+  for(i=0;i<=N;i++) gr.push([gx[i], gs[i]]);
+  bL=rawGround(0); bM=rawGround(a1); bR=rawGround(tot);
+
+  var ys=[zL,zM,zR];
+  c1.forEach(function(p){ys.push(p[1]);}); c2.forEach(function(p){ys.push(p[1]);});
+  gr.forEach(function(p){ys.push(p[1]);});
+  var ymin=Math.min.apply(null,ys), ymax=Math.max.apply(null,ys);
+  var sp=Math.max(ymax-ymin,1e-6); ymin-=sp*0.06; ymax+=sp*0.10;
+
+  var X=function(x){ return L + (PW-L-Rp)*(x+ext)/(tot+2*ext); };
+  var Y=function(y){ return Tp + (Hh-Tp-B)*(ymax-y)/(ymax-ymin); };
+  var path=function(pts,off){ return pts.map(function(p,q){ return (q?"L":"M")+X(p[0]+off).toFixed(2)+" "+Y(p[1]).toFixed(2); }).join(" "); };
+
+  var g=[];
+  g.push('<defs>'
+    +'<marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#d33"/></marker>'
+    +'<marker id="ah2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#d33"/></marker>'
+    +'<marker id="at" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#0e7c86"/></marker>'
+    +'<marker id="at2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#0e7c86"/></marker>'
+    +'</defs>');
+  g.push('<rect x="0" y="0" width="'+W+'" height="'+Hh+'" fill="#ffffff"/>');
+
+  var yBase = Y(zM), yDim = Hh-B+50;
+
+  // ARAZİ dolgusu + kalın zemin çizgisi (Excel görünümü)
+  var gpath = path(gr,0);
+  g.push('<path d="'+gpath+' L '+X(tot+ext)+' '+(Hh-B+8)+' L '+X(-ext)+' '+(Hh-B+8)+' Z" fill="#f0f4e8"/>');
+  g.push('<path d="'+gpath+'" fill="none" stroke="#a8d17a" stroke-width="8" stroke-opacity="0.75" stroke-linecap="round"/>');
+  g.push('<path d="'+gpath+'" fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round"/>');
+
+  // datum ve akslar
+  g.push('<line x1="'+(L-74)+'" y1="'+yBase+'" x2="'+(PW-Rp+74)+'" y2="'+yBase+'" stroke="#333" stroke-width="1" stroke-dasharray="10 3 2 3"/>');
+  [0,a1,tot].forEach(function(x){
+    g.push('<line x1="'+X(x)+'" y1="'+Y(Math.max(zL,zR,zM))+'" x2="'+X(x)+'" y2="'+(yDim+6)+'" stroke="#666" stroke-width="0.8" stroke-dasharray="9 3 2 3"/>');
+  });
+
+  // direkler (mesnetten zemine)
+  var poles=[[0,zL,bL],[a1,zM,bM],[tot,zR,bR]];
+  poles.forEach(function(p,q){
+    var px=X(p[0]);
+    g.push('<line x1="'+px+'" y1="'+(Y(p[1])-9)+'" x2="'+px+'" y2="'+Y(p[2])+'" stroke="#000" stroke-width="'+(q===1?5.5:4.5)+'"/>');
+  });
+
+  // İLETKEN (kalın, ana eleman)
+  g.push('<path d="'+path(c1,0)+'" fill="none" stroke="#111" stroke-width="2.6" stroke-linejoin="round"/>');
+  g.push('<path d="'+path(c2,a1)+'" fill="none" stroke="#111" stroke-width="2.6" stroke-linejoin="round"/>');
+  poles.forEach(function(p,q){
+    g.push('<circle cx="'+X(p[0])+'" cy="'+Y(p[1])+'" r="3.6" fill="'+(q===1?(r.ok?"#15803d":"#b91c1c"):"#111")+'"/>');
+  });
+  g.push('<text x="'+X(a1)+'" y="'+(Y(zM)-16)+'" font-size="12.5" fill="#111" text-anchor="middle" font-family="Segoe UI,Arial">direk</text>');
+
+  // komşu mesnetleri birleştiren kiriş
+  g.push('<line x1="'+X(0)+'" y1="'+Y(zL)+'" x2="'+X(tot)+'" y2="'+Y(zR)+'" stroke="#1d4ed8" stroke-width="1.3" stroke-dasharray="8 5"/>');
+
+  // orta aksta x_proje ölçüsü (kirişten direk mesnedine)
+  var px=X(a1), zChord = zM + r.xp;
+  var xx = px+56;
+  g.push('<line x1="'+(px+6)+'" y1="'+Y(zChord)+'" x2="'+(xx+10)+'" y2="'+Y(zChord)+'" stroke="#1d4ed8" stroke-width="0.8" stroke-dasharray="4 3"/>');
+  g.push('<line x1="'+xx+'" y1="'+Y(zChord)+'" x2="'+xx+'" y2="'+yBase+'" stroke="#b91c1c" stroke-width="1.6" marker-start="url(#ah2)" marker-end="url(#ah)"/>');
+  g.push('<text x="'+(xx+12)+'" y="'+((Y(zChord)+yBase)/2+4)+'" font-size="12" font-weight="700" fill="#b91c1c" font-family="Consolas,monospace">x_proje = '+nf(r.xp,2)+' m</text>');
+
+  // h1 / h2 düşey ölçüleri
+  function vdim(xpix, ztop, val, lbl){
+    var y1=Y(ztop), y2=yBase;
+    g.push('<line x1="'+xpix+'" y1="'+y1+'" x2="'+xpix+'" y2="'+y2+'" stroke="#d33" stroke-width="1.2" marker-start="url(#ah2)" marker-end="url(#ah)"/>');
+    g.push('<line x1="'+xpix+'" y1="'+y1+'" x2="'+X(ztop===zL?0:tot)+'" y2="'+y1+'" stroke="#666" stroke-width="0.7" stroke-dasharray="5 3"/>');
+    var by=(y1+y2)/2;
+    g.push('<rect x="'+(xpix-42)+'" y="'+(by-11)+'" width="84" height="22" rx="2" fill="#dbe7fa" stroke="#7fa3dd"/>');
+    g.push('<text x="'+xpix+'" y="'+(by+5)+'" font-size="12.5" font-weight="600" fill="#12327a" text-anchor="middle" font-family="Consolas,monospace">'+nf(val,2)+'</text>');
+    g.push('<text x="'+xpix+'" y="'+(by-16)+'" font-size="11.5" fill="#33465a" text-anchor="middle" font-family="Segoe UI,Arial">'+lbl+' (m)</text>');
+  }
+  vdim(L-58, zL, H.h1, "h₁");
+  vdim(PW-Rp+58, zR, H.h2, "h₂");
+
+  // açıklık ölçüleri
+  function hdim(xa,xb,val,lbl){
+    var x1=X(xa),x2=X(xb), cx=(x1+x2)/2;
+    g.push('<line x1="'+x1+'" y1="'+yDim+'" x2="'+x2+'" y2="'+yDim+'" stroke="#d33" stroke-width="1.2" marker-start="url(#ah2)" marker-end="url(#ah)"/>');
+    g.push('<rect x="'+(cx-52)+'" y="'+(yDim-12)+'" width="104" height="24" rx="2" fill="#dbe7fa" stroke="#7fa3dd"/>');
+    g.push('<text x="'+cx+'" y="'+(yDim+5)+'" font-size="12.5" font-weight="600" fill="#12327a" text-anchor="middle" font-family="Consolas,monospace">'+nf(val,2)+'</text>');
+    g.push('<text x="'+(cx-60)+'" y="'+(yDim+5)+'" font-size="12" fill="#33465a" text-anchor="end" font-family="Segoe UI,Arial">'+lbl+'</text>');
+    g.push('<text x="'+(cx+60)+'" y="'+(yDim+5)+'" font-size="11.5" fill="#6b7f92" font-family="Segoe UI,Arial">m</text>');
+  }
+  hdim(0,a1,a1,"a₁"); hdim(a1,tot,a2,"a₂");
+
+  // --- sağ panel: kriter göstergesi ---
+  var okc0 = r.ok ? "#15803d" : "#b91c1c";
+  var PX=PW+16, PWid=W-PW-32;
+  g.push('<rect x="'+PX+'" y="'+Tp+'" width="'+PWid+'" height="352" rx="6" fill="#f8fafc" stroke="'+okc0+'" stroke-width="1.4"/>');
+  g.push('<text x="'+(PX+PWid/2)+'" y="'+(Tp+20)+'" font-size="11.5" font-weight="700" fill="#33465a" text-anchor="middle" font-family="Segoe UI,Arial">UPLİFT KRİTERİ</text>');
+  var bTop=Tp+44, bBot=Tp+248, bH=bBot-bTop;
+  var mx=Math.max(Math.abs(r.fmin), Math.abs(r.xp), 1e-6);
+  var zeroY = (r.xp<0) ? bTop+bH*mx/(mx+Math.abs(Math.min(r.xp,0))) : bBot;
+  zeroY = bBot;
+  var negRoom = 46;
+  if(r.xp<0){ zeroY = bBot-negRoom; }
+  var sc=(zeroY-bTop)/mx;
+  g.push('<line x1="'+(PX+10)+'" y1="'+zeroY+'" x2="'+(PX+PWid-10)+'" y2="'+zeroY+'" stroke="#9aabbb" stroke-width="1"/>');
+  var bw=40, x1b=PX+PWid*0.26-bw/2, x2b=PX+PWid*0.72-bw/2;
+  var hf=r.fmin*sc, hx=r.xp*sc;
+  g.push('<rect x="'+x1b+'" y="'+(zeroY-hf)+'" width="'+bw+'" height="'+Math.abs(hf)+'" fill="#0e7c86" opacity="0.85"/>');
+  g.push('<rect x="'+x2b+'" y="'+(hx>=0?zeroY-hx:zeroY)+'" width="'+bw+'" height="'+Math.abs(hx)+'" fill="#b91c1c" opacity="0.85"/>');
+  g.push('<text x="'+(x1b+bw/2)+'" y="'+(zeroY-hf-7)+'" font-size="11.5" font-weight="700" fill="#0e7c86" text-anchor="middle" font-family="Consolas,monospace">'+nf(r.fmin,2)+'</text>');
+  g.push('<text x="'+(x2b+bw/2)+'" y="'+((hx>=0?zeroY-hx-7:zeroY+Math.abs(hx)+15))+'" font-size="11.5" font-weight="700" fill="#b91c1c" text-anchor="middle" font-family="Consolas,monospace">'+nf(r.xp,2)+'</text>');
+  g.push('<text x="'+(x1b+bw/2)+'" y="'+(bBot+18)+'" font-size="11.5" fill="#33465a" text-anchor="middle" font-family="Segoe UI,Arial">f_min</text>');
+  g.push('<text x="'+(x2b+bw/2)+'" y="'+(bBot+18)+'" font-size="11.5" fill="#33465a" text-anchor="middle" font-family="Segoe UI,Arial">x_proje</text>');
+  g.push('<text x="'+(PX+PWid/2)+'" y="'+(bBot+42)+'" font-size="11.5" font-weight="700" fill="'+okc0+'" text-anchor="middle" font-family="Consolas,monospace">'+(r.ok?"f_min > x_proje":"f_min ≤ x_proje")+'</text>');
+  g.push('<text x="'+(PX+PWid/2)+'" y="'+(bBot+62)+'" font-size="11" fill="#6b7f92" text-anchor="middle" font-family="Segoe UI,Arial">emniyet payı '+nf(r.margin,2)+' m</text>');
+  g.push('<text x="'+(PX+PWid/2)+'" y="'+(bBot+86)+'" font-size="12.5" font-weight="700" fill="'+okc0+'" text-anchor="middle" font-family="Consolas,monospace">R = '+nf(r.R,2)+' kg</text>');
+
+  // sonuç ve başlık
+  var okc = r.ok ? "#15803d" : "#b91c1c", bg = r.ok ? "#eaf6ee" : "#fdecec";
+  var txt = r.ok ? "direkte uplift yok" : "direk upliftte, durdurucu seçilmelidir";
+  g.push('<rect x="'+(PW/2-190)+'" y="'+(Hh-34)+'" width="380" height="26" rx="3" fill="'+bg+'" stroke="'+okc+'" stroke-width="1.4"/>');
+  g.push('<text x="'+(PW/2)+'" y="'+(Hh-16)+'" font-size="13" font-weight="700" font-style="italic" fill="'+okc+'" text-anchor="middle" font-family="Segoe UI,Arial">'+txt+'</text>');
+  g.push('<rect x="'+(PW/2-215)+'" y="6" width="130" height="22" fill="#fff" stroke="#9aabbb"/>');
+  g.push('<text x="'+(PW/2-150)+'" y="21" font-size="12" fill="#333" text-anchor="middle" font-family="Segoe UI,Arial">iletken</text>');
+  g.push('<rect x="'+(PW/2-85)+'" y="6" width="300" height="22" fill="#dbe7fa" stroke="#7fa3dd"/>');
+  g.push('<text x="'+(PW/2+65)+'" y="21" font-size="12" font-weight="600" fill="#12327a" text-anchor="middle" font-family="Segoe UI,Arial">'+esc(lbl||condLabel())+'</text>');
+
+  svg.innerHTML=g.join("");
+}
+
+function condLabel(){
+  if(state.src!=="katalog") return "manuel: T_min="+$("tmin").value+" kg / p₀="+$("p0").value+" kg/m";
+  return $("selZone").value+".bölge "+$("selCond").value+" (Ar="+$("selAr").value+"m)";
+}
+
+/* ---------- Sekmeler (her sekme bir direk) ---------- */
+var TABS=[], ACT=0, QUIET=false;
+
+function blankTab(n, base){
+  base = base || {};
+  return { ad:n, src:base.src||"katalog", cond:base.cond||"swallow", zone:base.zone||"3", ar:base.ar||"250",
+           tmin:base.tmin||"42.55", p0:base.p0||"0.108", a1:"", a2:"", h1:"", h2:"" };
+}
+function readForm(){
+  return { ad:$("direkAd").value, src:state.src, cond:$("selCond").value, zone:$("selZone").value, ar:$("selAr").value,
+           tmin:$("tmin").value, p0:$("p0").value,
+           a1:$("a1").value, a2:$("a2").value, h1:$("h1").value, h2:$("h2").value };
+}
+function setSel(el,v){ var ok=false; for(var i=0;i<el.options.length;i++) if(el.options[i].value===String(v)) ok=true; if(ok) el.value=String(v); }
+function writeForm(t){
+  QUIET=true;
+  $("direkAd").value = t.ad||"";
+  setSel($("selCond"), t.cond); fillZones(); setSel($("selZone"), t.zone); fillArs(); setSel($("selAr"), t.ar);
+  setSrc(t.src);                       // katalog ise Tmin/p0'ı katalogdan yazar
+  if(t.src!=="katalog"){ $("tmin").value=t.tmin; $("p0").value=t.p0; }
+  ["a1","a2","h1","h2"].forEach(function(k){ $(k).value = (t[k]===undefined?"":t[k]); });
+  QUIET=false;
+}
+function syncActive(){ if(!QUIET && TABS[ACT]) TABS[ACT]=readForm(); }
+
+function renderTabs(){
+  var bar=$("tabbar"); bar.innerHTML="";
+  TABS.forEach(function(t,i){
+    var d=document.createElement("div");
+    d.className="tab"+(i===ACT?" on":"");
+    d.innerHTML="<span>"+esc(t.ad||("Direk "+(i+1)))+"</span><span class='x noprint' data-x='"+i+"'>×</span>";
+    d.addEventListener("click",function(ev){
+      if(ev.target.dataset.x!==undefined){ delTab(+ev.target.dataset.x); return; }
+      switchTab(i);
+    });
+    bar.appendChild(d);
+  });
+  var add=document.createElement("button");
+  add.className="tabadd noprint"; add.textContent="+ Direk ekle";
+  add.addEventListener("click",addTab);
+  bar.appendChild(add);
+}
+function switchTab(i){ syncActive(); ACT=i; writeForm(TABS[ACT]); refresh(); }
+function addTab(){
+  syncActive();
+  var base=TABS[ACT]||{};
+  TABS.push(blankTab((TABS.length+1)+" No'lu Direk", base));
+  ACT=TABS.length-1; writeForm(TABS[ACT]); refresh();
+}
+function delTab(i){
+  if(TABS.length<=1){ alert("En az bir direk sekmesi kalmalıdır."); return; }
+  if(!confirm("\""+(TABS[i].ad||("Direk "+(i+1)))+"\" sekmesi silinsin mi?")) return;
+  syncActive();
+  TABS.splice(i,1);
+  if(ACT>=TABS.length) ACT=TABS.length-1; else if(i<ACT) ACT--;
+  writeForm(TABS[ACT]); refresh();
+}
+
+function tabLabel(t){
+  if(t.src!=="katalog") return "manuel";
+  return t.zone+".bölge "+t.cond+" (Ar="+t.ar+"m)";
+}
+function renderOzet(){
+  var tb=$("tbOzet"); tb.innerHTML="";
+  TABS.forEach(function(t,i){
+    var a1=parseUpliftNumber(t.a1), a2=parseUpliftNumber(t.a2);
+    var h1=parseUpliftNumber(t.h1), h2=parseUpliftNumber(t.h2);
+    var p0=parseUpliftNumber(t.p0), T=parseUpliftNumber(t.tmin);
+    var r=solve(p0,T,a1,a2,h1,h2), dolu=r.valid;
+    var tr=document.createElement("tr");
+    tr.className = dolu ? (r.ok?"ok":"bad") : "";
+    tr.style.cursor="pointer";
+    tr.innerHTML = "<td"+(i===ACT?" style='font-weight:700'":"")+">"+esc(t.ad||("Direk "+(i+1)))+"</td>"
+      + "<td style='text-align:left'>"+esc(tabLabel(t))+"</td>"
+      + "<td class='num'>"+(a1?nf(a1,2):"—")+"</td><td class='num'>"+(a2?nf(a2,2):"—")+"</td>"
+      + "<td class='num'>"+nf(h1,2)+"</td><td class='num'>"+nf(h2,2)+"</td>"
+      + "<td class='num'>"+(dolu?nf(r.fmin,2):"—")+"</td><td class='num'>"+(dolu?nf(r.xp,2):"—")+"</td>"
+      + "<td class='num'>"+(dolu?nf(r.R,1):"—")+"</td>"
+      + "<td style='text-align:center;font-weight:700;color:"+(dolu?(r.ok?"#15803d":"#b91c1c"):"#6b7f92")+"'>"
+      + (dolu?(r.ok?"UYGUN":"DURDURUCU"):"eksik")+"</td>";
+    tr.addEventListener("click",function(){ switchTab(i); });
+    tb.appendChild(tr);
+  });
+}
+
+
+/* ---------- Rapor (baskı) ---------- */
+function toast(msg){
+  var t=$("toast"); t.textContent=msg; t.classList.add("on");
+  clearTimeout(t._h); t._h=setTimeout(function(){ t.classList.remove("on"); },2200);
+}
+function buildReport(hepsi){
+  syncActive();
+  var host=$("printArea"); host.innerHTML="";
+  var proje=$("projAd").value||"—", hat=$("projHat").value||"—";
+  var liste = hepsi ? TABS : [TABS[ACT]];
+  var invalid=liste.some(function(t){return !solve(parseUpliftNumber(t.p0),parseUpliftNumber(t.tmin),parseUpliftNumber(t.a1),parseUpliftNumber(t.a2),parseUpliftNumber(t.h1),parseUpliftNumber(t.h2)).valid;});
+  if(invalid){ toast("Rapor için tüm seçili direklerin girdilerini düzeltin."); return 0; }
+  liste.forEach(function(t,k){
+    var i = hepsi ? k : ACT;
+    var a1=parseUpliftNumber(t.a1), a2=parseUpliftNumber(t.a2);
+    var h1=parseUpliftNumber(t.h1), h2=parseUpliftNumber(t.h2);
+    var p0=parseUpliftNumber(t.p0), T=parseUpliftNumber(t.tmin);
+    var r=solve(p0,T,a1,a2,h1,h2);
+    if(!r.valid) return;
+    var d=document.createElement("div"); d.className="rp";
+    d.innerHTML =
+      '<div class="rhead"><div><h1>ENH UPLİFT (KALDIRMA) KONTROLÜ</h1>'
+      +'<div class="sub">Taşıyıcı direkte düşey mesnet kuvveti kontrolü — TEDAŞ esaslı</div></div>'
+      +'<div class="dt"><b>VoltGuard</b><br>Hesap raporu</div></div>'
+      +'<div class="meta">'
+      +'<div><b>Proje</b>'+esc(proje)+'</div>'
+      +'<div><b>Hat / iş no</b>'+esc(hat)+'</div>'
+      +'<div><b>Direk</b>'+esc(t.ad||("Direk "+(i+1)))+'</div>'
+      +'</div>'
+      +'<table><thead><tr><th colspan="4">Girdiler</th></tr></thead><tbody>'
+      +'<tr><td>İletken / bölge</td><td class="n">'+esc(tabLabel(t))+'</td><td>a₁ — sol açıklık</td><td class="n">'+nf(a1,2)+' m</td></tr>'
+      +'<tr><td>T<sub>min</sub></td><td class="n">'+nf(T,2)+' kg</td><td>a₂ — sağ açıklık</td><td class="n">'+nf(a2,2)+' m</td></tr>'
+      +'<tr><td>p₀</td><td class="n">'+nf(p0,4)+' kg/m</td><td>h₁ / h₂</td><td class="n">'+nf(h1,2)+' / '+nf(h2,2)+' m</td></tr>'
+      +'</tbody></table>'
+      +'<div class="fx">f_min = p₀·4·a₁·a₂ / (8·T_min) &nbsp;&nbsp;|&nbsp;&nbsp; x_proje = (a₂·h₁ + a₁·h₂) / (a₁+a₂) &nbsp;&nbsp;|&nbsp;&nbsp; kriter: f_min &gt; x_proje</div>'
+      +'<table><thead><tr><th>f<sub>min</sub> (m)</th><th>x<sub>proje</sub> (m)</th><th>Emniyet payı (m)</th><th>Düşey mesnet kuvveti R (kg)</th></tr></thead>'
+      +'<tbody><tr><td class="n">'+nf(r.fmin,3)+'</td><td class="n">'+nf(r.xp,3)+'</td><td class="n">'+nf(r.margin,3)+'</td><td class="n">'+nf(r.R,2)+'</td></tr></tbody></table>'
+      +'<svg class="rpsvg"></svg>'
+      +'<div class="vd">'+(r.ok?"DİREKTE UPLİFT YOK — taşıyıcı direk uygundur":"DİREK UPLİFTTE — durdurucu (gergili) direk seçilmelidir")+'</div>'
+      ;
+    host.appendChild(d);
+    draw(p0,T,a1,a2,{h1:h1,h2:h2,zM:0},r,d.querySelector(".rpsvg"),tabLabel(t));
+  });
+  return host.children.length;
+}
+var PRINT_ALL=false;
+function printReport(hepsi){
+  PRINT_ALL=!!hepsi;
+  if(!buildReport(PRINT_ALL)){
+    alert(hepsi ? "Yazdırılacak dolu bir direk sekmesi yok."
+                : "Bu sekmede a₁, a₂ ve iletken bilgisi eksik.");
+    return;
+  }
+  window.print();
+}
+
+/* ---------- Dosyaya kaydetme ---------- */
+function stateObj(){
+  syncActive();
+  return { proj:$("projAd").value, hat:$("projHat").value, tabs:TABS, act:ACT, ts:Date.now() };
+}
+function fileName(){
+  var n=($("projAd").value||"ENH_uplift").trim();
+  if($("projHat").value) n+=" - "+$("projHat").value.trim();
+  return n.replace(/[\\/:*?"<>|]+/g,"-").replace(/\s+/g," ")+".html";
+}
+function buildFile(){
+  var st=stateObj();
+  var doc=document.documentElement.cloneNode(true);
+  var el=doc.querySelector("#savedState"); if(el) el.textContent=JSON.stringify(st).replace(/</g,'\\u003c');
+  var pa=doc.querySelector("#printArea"); if(pa) pa.innerHTML="";
+  var pl=doc.querySelector("#plot"); if(pl) pl.innerHTML="";
+  var tb=doc.querySelector("#tabbar"); if(tb) tb.innerHTML="";
+  var oz=doc.querySelector("#tbOzet"); if(oz) oz.innerHTML="";
+  var td=doc.querySelector("#tbDetail"); if(td) td.innerHTML="";
+  return new Blob(["<!DOCTYPE html>\n"+doc.outerHTML],{type:"text/html;charset=utf-8"});
+}
+function saveAs(){
+  var blob=buildFile(), name=fileName();
+  if(window.showSaveFilePicker){
+    window.showSaveFilePicker({ suggestedName:name,
+      types:[{description:"HTML dosyası", accept:{"text/html":[".html"]}}] })
+    .then(function(h){ return h.createWritable().then(function(w){ return w.write(blob).then(function(){ return w.close(); }); }); })
+    .then(function(){ save(); toast("Dosya kaydedildi."); })
+    .catch(function(e){ if(e && e.name!=="AbortError") dl(blob,name); });
+    return;
+  }
+  dl(blob,name);
+}
+function dl(blob,name){
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name;
+  (document.getElementById('vg-tool-workspace') || document.body).appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },800);
+  save(); toast("Dosya indirildi: "+name);
+}
+
+/* ---------- Kalıcılık ---------- */
+function save(){
+  try{
+    syncActive();
+    localStorage.setItem("voltguard:enh-uplift-hesabi:uplift_v2", JSON.stringify(stateObj()));
+  }catch(e){}
+}
+function embedded(){
+  try{
+    var el=document.getElementById("savedState");
+    var d=el?JSON.parse(el.textContent||"null"):null;
+    return (d && Array.isArray(d.tabs) && d.tabs.length) ? d : null;
+  }catch(e){ return null; }
+}
+function load(){
+  try{
+    var ls=null;
+    try{ ls=JSON.parse(localStorage.getItem("voltguard:enh-uplift-hesabi:uplift_v2")||"null"); }catch(e){}
+    if(!(ls && Array.isArray(ls.tabs) && ls.tabs.length)) ls=null;
+    var em=embedded();
+    var d = (em && ls) ? ((em.ts||0) >= (ls.ts||0) ? em : ls) : (em || ls);
+    if(!d) return false;
+    $("projAd").value=d.proj||""; $("projHat").value=d.hat||"";
+    TABS=d.tabs; ACT=Math.min(d.act||0, TABS.length-1);
+    writeForm(TABS[ACT]);
+    return true;
+  }catch(e){ return false; }
+}
+
+/* ---------- Kurulum ---------- */
+function setSrc(v){
+  state.src=v;
+  $("segSrc").querySelectorAll("button").forEach(function(b){ b.classList.toggle("on", b.dataset.v===v); });
+  $("catBox").style.display = (v==="katalog")?"":"none";
+  var ro = (v==="katalog");
+  $("tmin").readOnly=ro; $("p0").readOnly=ro;
+  $("tmin").classList.toggle("in",!ro); $("p0").classList.toggle("in",!ro);
+  if(ro) applyCat();
+}
+function refresh(){ syncActive(); compute(); renderTabs(); renderOzet(); }
+
+fillConds(); fillZones(); fillArs();
+if(!load()){
+  TABS=[ blankTab("1 No'lu Direk") ];
+  TABS[0].a1="138.53"; TABS[0].a2="123.03"; TABS[0].h1="6"; TABS[0].h2="4";
+  ACT=0; writeForm(TABS[0]);
+}
+
+$("segSrc").addEventListener("click",function(e){ if(e.target.dataset.v){ setSrc(e.target.dataset.v); refresh(); }});
+$("selCond").addEventListener("change",function(){ fillZones(); fillArs(); applyCat(); refresh(); });
+$("selZone").addEventListener("change",function(){ fillArs(); applyCat(); refresh(); });
+$("selAr").addEventListener("change",function(){ applyCat(); refresh(); });
+["tmin","p0","a1","a2","h1","h2"].forEach(function(k){
+  $(k).addEventListener("input",refresh);
+});
+$("btnAddTab").addEventListener("click",addTab);
+$("direkAd").addEventListener("input",function(){ syncActive(); renderTabs(); renderOzet(); save(); });
+["projAd","projHat"].forEach(function(k){ $(k).addEventListener("input",save); });
+$("btnPrint").addEventListener("click",function(){ printReport(false); });
+$("btnPrintAll").addEventListener("click",function(){ printReport(true); });
+$("btnSave").addEventListener("click",function(){ save(); toast("Kaydedildi — bu tarayıcıda saklanıyor."); });
+$("btnSaveAs").addEventListener("click",saveAs);
+window.addEventListener("beforeprint",function(){ buildReport(PRINT_ALL); });
+$("btnReset").addEventListener("click",function(){
+  if(!confirm("Tüm sekmeler ve girdiler silinip varsayılana dönülsün mü?")) return;
+  try{ localStorage.removeItem("voltguard:enh-uplift-hesabi:uplift_v2"); }catch(e){}
+  location.reload();
+});
+
+refresh();
+</script>
+</div><div id="vg-origin">VoltGuard uyarlaması · Özgün hesap araçları: Baki SONAY · <a href="../yontem/">Yöntem ve kaynaklar</a></div><script src="../shared/export.js" defer></script><script>try{localStorage.setItem('voltguard:recent',JSON.stringify({slug:"enh-uplift-hesabi",name:"ENH Uplift Hesabı"}))}catch(e){}if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script></div><footer data-vg-no-print class="footer vg-footer" id="vgFooter" role="contentinfo">
+  <div class="vg-footer__cta">
+    <div class="vg-wrap vg-footer__cta-in">
+      <div class="vg-footer__cta-text">
+        <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+        <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+      </div>
+      <div class="vg-footer__cta-btns">
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="vg-wrap">
+    <div class="vg-footer__grid">
+      <div class="vg-footer__brand">
+        <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+          <span class="logo-mark logo-mark--footer" aria-hidden="true">
+            <span class="logo-mark__volt">VOLT</span>
+            <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+            <span class="logo-mark__guard">GUARD</span>
+          </span>
+          <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+        </a>
+        <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+        <ul class="vg-footer__contact">
+          <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+          <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+          <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+        </ul>
+        <address class="vg-footer__addr">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+        </address>
+        <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+      </div>
+      <nav class="vg-footer__nav" aria-label="Alt menü">
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Hizmetler</h3>
+          <ul>
+            <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+            <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+            <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+            <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+            <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+            <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+            <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+            <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+            <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+            <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+            <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+            <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kurumsal</h3>
+          <ul>
+            <li><a href="/#hakkimizda">Hakkımızda</a></li>
+            <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+            <li><a href="/#projeler">Projeler</a></li>
+            <li><a href="/#surec">Sürecimiz</a></li>
+            <li><a href="/#neden-biz">Neden Biz?</a></li>
+            <li><a href="/#guvenlik">Güvenlik</a></li>
+            <li><a href="/#haberler">Haberler</a></li>
+            <li><a href="/#emi-demo">Canlı Demo</a></li>
+            <li><a href="/#katalog">Katalog</a></li>
+            <li><a href="/#sss">SSS</a></li>
+            <li><a href="/#iletisim">İletişim</a></li>
+            <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kaynaklar</h3>
+          <ul>
+            <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+            <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+            <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+            <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+            <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+          <ul>
+            <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+            <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+            <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+            <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+            <li><a href="/voltgame.html">VoltGame</a></li>
+            <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+            <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+            <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="vg-footer__bottom">
+      <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+      <div class="vg-footer__social">
+        <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+      <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        </circle>
+      </svg>
+      <span class="sig-node" aria-hidden="true"></span>
+      <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+        <span class="sig-badge__ring" aria-hidden="true"></span>
+        <span class="sig-badge__aurora" aria-hidden="true"></span>
+        <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+        <span class="sig-badge__body">
+          <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+          <span class="sig-badge__brand">
+            <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+            <span class="sig-badge__eng">Engineering</span>
+          </span>
+        </span>
+        <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+        <span class="sig-badge__shimmer" aria-hidden="true"></span>
+      </a>
+      <span class="sig-node" aria-hidden="true"></span>
+      <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+        </circle>
+      </svg>
+    </div>
+  </div>
+</footer></body>
+</html>

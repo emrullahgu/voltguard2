@@ -416,7 +416,7 @@
     for (var i = 0; i < links.length; i++) {
       var a = links[i];
       var href = logged ? '/hesap/panel.html' : '/hesap/giris.html';
-      var text = logged ? 'Hesabım' : 'Giriş Yap';
+      var text = logged ? 'Hesabım' : 'Üye Girişi';
       if (a.getAttribute('href') !== href) a.setAttribute('href', href);
       if (a.textContent !== text) a.textContent = text;
       a.setAttribute('data-vg-state', logged ? 'in' : 'out');

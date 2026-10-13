@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sabit Kondansatör Hesabı</title>
+<style>
+/* Yerleşim: solda girişler, sağda sonuç + adım adım hesap; dar ekranda tek sütun */
+:root{
+  --bg:#f3f5f8; --panel:#ffffff; --fg:#17212e; --muted:#5d6b7c; --line:#d5dbe3;
+  --accent:#0b5cad; --accent-bg:#e6f0fa; --warn:#a45a00; --warn-bg:#fff3de; --err:#b3261e; --ok:#1c7a43;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,Menlo,monospace;
+  --sans:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10161d; --panel:#18212b; --fg:#e4eaf1; --muted:#97a5b5; --line:#2c3947;
+  --accent:#6db3f5; --accent-bg:#14304a; --warn:#f0b35a; --warn-bg:#3a2a10; --err:#ff8a80; --ok:#6fd198; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10161d; --panel:#18212b; --fg:#e4eaf1; --muted:#97a5b5; --line:#2c3947;
+  --accent:#6db3f5; --accent-bg:#14304a; --warn:#f0b35a; --warn-bg:#3a2a10; --err:#ff8a80; --ok:#6fd198; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 var(--sans)}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:18px 32px;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:10px}
+h1{margin:0;font-size:22px;letter-spacing:.2px}
+header p{margin:2px 0 0;color:var(--muted);font-size:12.5px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;padding:7px 12px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:4px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:14px;align-items:start}
+@media (max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
+section{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;min-width:0}
+h2{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.9px;color:var(--accent)}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.f{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:6px 10px;align-items:center}
+.f label{color:var(--fg)}
+.f small{color:var(--muted);display:block;font-size:11.5px}
+input,select{font:inherit;font-family:var(--mono);width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--fg);text-align:right}
+select{text-align:left;font-family:var(--sans)}
+.seg{display:grid;gap:6px}
+.seg label{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border:1px solid var(--line);border-radius:4px;cursor:pointer}
+.seg input{width:auto;margin-top:3px}
+.seg label:has(input:checked){border-color:var(--accent);background:var(--accent-bg)}
+.res{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:480px){.res{grid-template-columns:minmax(0,1fr)}}
+.res div{border:1px solid var(--line);border-radius:4px;padding:8px 10px}
+.res span{display:block;color:var(--muted);font-size:11.5px}
+.res b{font:600 19px var(--mono);font-variant-numeric:tabular-nums}
+.big{background:var(--accent-bg);border:1px solid var(--accent);border-radius:6px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;justify-content:space-between}
+.big b{font:700 30px var(--mono);color:var(--accent)}
+.big span{color:var(--muted)}
+.note{background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:8px 10px;font-size:12.5px}
+.err{color:var(--err);font-weight:600}
+pre{margin:0;font:12.5px/1.6 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:12.5px}
+th,td{border:1px solid var(--line);padding:3px 8px;text-align:right;white-space:nowrap}
+th{background:var(--bg);font-weight:600}
+tr.sel td{background:var(--accent-bg);font-weight:600}
+tbody tr{cursor:pointer}
+.proj{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.proj input{text-align:left;font-family:var(--sans)}
+footer{color:var(--muted);font-size:11.5px}
+@media print{
+  @page{size:A4;margin:12mm}
+  :root{--bg:#fff;--panel:#fff;--fg:#000;--muted:#333;--line:#888;--accent:#000;--accent-bg:#eee;--warn:#000;--warn-bg:#fff}
+  .btns,.noprint{display:none!important}
+  .wrap{padding:0;gap:8px} section{break-inside:avoid;padding:8px} body{font-size:11px}
+  .grid{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}
+  input,select{border:none;background:none;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>Trafolarda Sabit Kondansatör Hesabı</h1>
+    <p>Boşta (primer) + yüklenme oranına göre sekonder reaktif tüketim yöntemi — B. Uzunkuyu, EMO İzmir Bülteni Şubat 2017 / Ocak 2020</p>
+  </div>
+  <div class="btns">
+    <button id="bOrnek" type="button">Makale örneğini yükle</button>
+    <button id="bYazdir" type="button">Yazdır (A4)</button>
+  </div>
+</header>
+
+<div class="proj">
+  <input id="proje" placeholder="Proje / tesis adı" aria-label="Proje adı">
+  <input id="hazirlayan" placeholder="Hazırlayan" aria-label="Hazırlayan">
+</div>
+
+<div class="grid">
+<div class="col">
+  <section>
+    <h2>Trafo verileri</h2>
+    <div class="f">
+      <label for="sn">Trafo gücü S<sub>n</sub> <small>Tablodan seçilince değerler dolar</small></label>
+      <select id="sn"></select>
+      <label for="snv">S<sub>n</sub> (kVA)</label><input id="snv" inputmode="decimal">
+      <label for="beta">Boşta akım oranı β (%)</label><input id="beta" inputmode="decimal">
+      <label for="p0">Boşta kayıp P<sub>0</sub> (W)</label><input id="p0" inputmode="decimal">
+      <label for="pcu">Yükte kayıp P<sub>cu</sub> (W, 75 °C)</label><input id="pcu" inputmode="decimal">
+      <label for="uk">Kısa devre gerilimi u<sub>k</sub> (%)</label><input id="uk" inputmode="decimal">
+    </div>
+  </section>
+
+  <section>
+    <h2>Çalışma şekli</h2>
+    <div class="seg" id="mod">
+      <label><input type="radio" name="mod" value="bos"> <span><b>Günde 8–10 saat</b><small style="display:block;color:var(--muted)">Tesis mesai saatlerinde çalışıp gece ve hafta sonu boşta bekliyorsa seçin. Yalnız trafonun boşta tüketimi (Q<sub>L1</sub>) hesaplanır; fatura veya k gerekmez. Sabit kondansatör 24 saat devrede kaldığı için, daha büyük seçilirse tesis kapalıyken kapasitif ceza riski doğar.</small></span></label>
+      <label><input type="radio" name="mod" value="fatura"> <span><b>7/24 — k faturadan</b><small style="display:block;color:var(--muted)">Tesis sürekli yükte çalışıyorsa ve bu trafoya ait fatura elinizdeyse seçin. Program aylık aktif ve endüktif reaktif tüketimden ortalama yükü bulur, trafo gücüne oranlayıp k'yı kendisi hesaplar. Sonuç: Q<sub>L1</sub> + k²·Q<sub>L2</sub>. Fatura başka trafoya aitse sonuç yanlış çıkar.</small></span></label>
+      <label><input type="radio" name="mod" value="elle"> <span><b>7/24 — k elle</b><small style="display:block;color:var(--muted)">Fatura yoksa (yeni tesis, proje aşaması) veya yüklenme oranını ölçümden biliyorsanız seçin. k = ortalama yük akımı / trafo anma akımı; yarı yük için 0,5, tam yük için 1 yazılır. Emin değilseniz k'yı düşük tutun: fazla kondansatör düşük yükte kapasitif tarafa geçirir.</small></span></label>
+    </div>
+    <div class="f" id="gFatura" style="margin-top:10px">
+      <label for="wa">Aktif tüketim (kWh)</label><input id="wa" inputmode="decimal">
+      <label for="wr">Endüktif reaktif tüketim (kVArh)</label><input id="wr" inputmode="decimal">
+      <label for="gun">Fatura dönemi (gün)</label><input id="gun" inputmode="decimal">
+      <label for="saat">Günlük çalışma (saat)</label><input id="saat" inputmode="decimal">
+    </div>
+    <div class="f" id="gElle" style="margin-top:10px">
+      <label for="k">Yüklenme oranı k = I<sub>y</sub>/I<sub>n</sub></label><input id="k" inputmode="decimal">
+    </div>
+  </section>
+</div>
+
+<div class="col">
+  <section>
+    <h2>Sonuç</h2>
+    <div class="col" style="gap:10px">
+      <div id="hata" class="err" hidden></div>
+      <div class="res">
+        <div><span>Q<sub>L1</sub> boşta (primer)</span><b id="rQ1">–</b> kVAr</div>
+        <div><span>Yüklenme oranı k</span><b id="rK">–</b></div>
+        <div><span>Q<sub>L2</sub> yükte (sekonder)</span><b id="rQ2">–</b> kVAr</div>
+      </div>
+      <div class="big"><span>Gerekli sabit kondansatör Q<sub>c</sub></span><div><b id="rQc">–</b> kVAr</div></div>
+      <div class="res">
+        <div><span>Alt standart kademe</span><b id="rAlt">–</b> kVAr</div>
+        <div><span>Üst standart kademe</span><b id="rUst">–</b> kVAr</div>
+        <div><span>%5 kuralı (S<sub>n</sub>·0,05)</span><b id="r5">–</b> kVAr</div>
+      </div>
+      <div class="note" id="rNot"></div>
+    </div>
+  </section>
+  <section>
+    <h2>Hesap adımları</h2>
+    <pre id="adim"></pre>
+  </section>
+</div>
+</div>
+
+<section>
+  <h2>Tablo-1 · Dağıtım transformatörlerinin teknik özellikleri (EMO 2017 Ajandası, s. 27)</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Güç (kVA)</th><th>Boşta kayıp (W)</th><th>Yükte kayıp 75 °C (W)</th><th>Boşta akım (%)</th><th>u<sub>k</sub> (%)</th><th>Q<sub>L1</sub> (kVAr)</th><th>Q<sub>L2</sub> tam yük (kVAr)</th></tr></thead>
+    <tbody id="tb"></tbody>
+  </table></div>
+</section>
+
+<footer>
+  Formüller: Q<sub>L1</sub> = √((β·S<sub>n</sub>)² − P<sub>0</sub>²) · Q<sub>L2</sub> = k²·√((u<sub>k</sub>·S<sub>n</sub>)² − P<sub>cu</sub>²) · Q<sub>c</sub> = Q<sub>L1</sub> + Q<sub>L2</sub> · k = S/S<sub>n</sub>, S = √(P<sub>t</sub>² + Q<sub>t</sub>²).
+  Tablo değerleri tipik katalog değerleridir; trafo etiket/deney raporu değerleri varsa onları girin. Girişler bu cihazda otomatik saklanır.
+</footer>
+</div>
+
+<script>
+// kVA, P0 (W), Pcu (W), boşta akım %, uk %
+var T=[[50,230,1050,2.76,4.5],[100,380,2100,2.27,4.5],[125,420,2400,2.14,4.5],[160,480,2800,2.00,4.5],
+[250,700,3500,1.80,4.5],[400,900,5850,1.70,4.5],[500,1250,6750,1.60,4.5],[630,1350,8000,1.60,4.5],
+[800,1520,9700,1.50,6],[1000,1600,12200,1.40,6],[1250,1950,14000,1.40,6],[1600,2350,16500,1.30,6],
+[2000,3000,21000,1.10,6],[2500,3800,24000,1.00,6]];
+var KAD=[2.5,5,7.5,10,12.5,15,20,25,30,40,50,60,75,100,125,150,200,250,300];
+var IDS=['proje','hazirlayan','snv','beta','p0','pcu','uk','wa','wr','gun','saat','k'];
+var KEY='sabitKondansator_v1';
+function $(i){return document.getElementById(i)}
+function num(i){var text=String($(i).value).trim().replace(',','.');return text!==''&&/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(text)&&Number.isFinite(Number(text))?Number(text):NaN}
+function f(x,d){return isFinite(x)?x.toLocaleString('tr-TR',{minimumFractionDigits:d,maximumFractionDigits:d}):'–'}
+function q1(S,b,p0){var s=b/100*S,r=s*s-(p0/1000)*(p0/1000);return r>=0?Math.sqrt(r):NaN}
+function q2(S,uk,pcu){var s=uk/100*S,r=s*s-(pcu/1000)*(pcu/1000);return r>=0?Math.sqrt(r):NaN}
+function mod(){var m=document.querySelector('input[name=mod]:checked');return m?m.value:'fatura'}
+
+function tabloDoldur(r){$('snv').value=r[0];$('p0').value=r[1];$('pcu').value=r[2];$('beta').value=String(r[3]).replace('.',',');$('uk').value=String(r[4]).replace('.',',')}
+function kur(){
+  var s=$('sn'),h='<option value="">Özel değer</option>',tb='';
+  T.forEach(function(r,i){h+='<option value="'+i+'">'+r[0]+' kVA</option>';
+    tb+='<tr data-i="'+i+'"><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+f(r[3],2)+'</td><td>'+f(r[4],1)+'</td><td>'+f(q1(r[0],r[3],r[1]),2)+'</td><td>'+f(q2(r[0],r[4],r[2]),2)+'</td></tr>'});
+  s.innerHTML=h;$('tb').innerHTML=tb;
+  s.onchange=function(){if(s.value!==''){tabloDoldur(T[+s.value])}hesap()};
+  $('tb').onclick=function(e){var tr=e.target.closest('tr');if(tr){s.value=tr.dataset.i;tabloDoldur(T[+tr.dataset.i]);hesap()}};
+  IDS.forEach(function(i){$(i).addEventListener('input',function(){if(['snv','beta','p0','pcu','uk'].indexOf(i)>=0)esle();hesap()})});
+  document.querySelectorAll('input[name=mod]').forEach(function(r){r.onchange=hesap});
+  $('bOrnek').onclick=ornek;$('bYazdir').onclick=function(){window.print()};
+}
+function esle(){ // girişler tablo satırıyla birebir aynıysa satırı seçili göster
+  var S=num('snv'),i=-1;T.forEach(function(r,j){if(r[0]===S&&r[1]===num('p0')&&r[2]===num('pcu')&&r[3]===num('beta')&&r[4]===num('uk'))i=j});
+  $('sn').value=i<0?'':i;
+}
+function ornek(){
+  tabloDoldur(T[10]);$('sn').value=10;$('wa').value='550800';$('wr').value='28600';$('gun').value='30';$('saat').value='24';$('k').value='0,6128';
+  document.querySelector('input[name=mod][value=fatura]').checked=true;
+  if(!$('proje').value)$('proje').value='Örnek: 1250 kVA, 7/24 çalışan işletme';hesap();
+}
+function hesap(){
+  var m=mod();$('gFatura').hidden=m!=='fatura';$('gElle').hidden=m!=='elle';
+  var S=num('snv'),b=num('beta'),p0=num('p0'),pcu=num('pcu'),uk=num('uk'),err='',L=[];
+  document.querySelectorAll('#tb tr').forEach(function(tr){tr.className=(tr.dataset.i===$('sn').value)?'sel':''});
+  if(!(S>0&&b>0&&p0>=0))err='Trafo gücü, boşta akım oranı ve boşta kaybı girin.';
+  var Q1=q1(S,b,p0);
+  if(!err&&isNaN(Q1))err='β·Sn değeri boşta kayıptan küçük: boşta akım oranı veya P0 hatalı.';
+  var k=0,QF=0,Q2=0;
+  if(!err){
+    L.push('1) Boşta (primer) reaktif tüketim');
+    L.push('   S1  = β·Sn = '+f(b/100,4)+' × '+f(S,0)+' = '+f(b/100*S,2)+' kVA');
+    L.push('   QL1 = √(S1² − P0²) = √('+f(b/100*S,2)+'² − '+f(p0/1000,2)+'²) = '+f(Q1,2)+' kVAr');
+  }
+  if(!err&&m!=='bos'){
+    if(!(uk>0&&pcu>=0))err='Kısa devre gerilimi ve yükte kaybı girin.';
+    QF=q2(S,uk,pcu);
+    if(!err&&isNaN(QF))err='uk·Sn değeri yükte kayıptan küçük: uk veya Pcu hatalı.';
+    if(!err){
+      L.push('');L.push('2) Tam yükte sekonder reaktif tüketim');
+      L.push('   S2  = uk·Sn = '+f(uk/100,3)+' × '+f(S,0)+' = '+f(uk/100*S,2)+' kVA');
+      L.push('   QL2 = √(S2² − Pcu²) = √('+f(uk/100*S,2)+'² − '+f(pcu/1000,2)+'²) = '+f(QF,2)+' kVAr');
+      L.push('');L.push('3) Yüklenme oranı');
+      if(m==='fatura'){
+        var wa=num('wa'),wr=num('wr'),g=num('gun'),h=num('saat');
+        if(!(wa>0&&g>0&&h>0&&h<=24))err='Aktif tüketim, gün sayısı ve günlük saat (1–24) girin.';
+        else if(!(wr>=0)){err='Reaktif tüketim sıfır veya pozitif bir sayı olmalı.';}
+        else{ var t=g*h,P=wa/t,Q=wr/t,St=Math.sqrt(P*P+Q*Q);k=St/S;
+          L.push('   Süre = '+f(g,0)+' gün × '+f(h,0)+' h = '+f(t,0)+' h');
+          L.push('   Pt  = '+f(wa,0)+' / '+f(t,0)+' = '+f(P,1)+' kW');
+          L.push('   Qt  = '+f(wr,0)+' / '+f(t,0)+' = '+f(Q,1)+' kVAr');
+          L.push('   S   = √(Pt² + Qt²) = '+f(St,1)+' kVA');
+          L.push('   k   = S / Sn = '+f(St,1)+' / '+f(S,0)+' = '+f(k,4));
+          if(k>1)err='Fatura tüketimi bu trafoya ait olamaz: ortalama yük '+f(St,0)+' kVA, trafo gücü '+f(S,0)+' kVA (k = '+f(k,2)+'). Bu trafonun kendi fatura değerlerini girin.'; }
+      }else{ k=num('k'); if(!(k>=0&&k<=1))err='Yüklenme oranı k 0 ile 1 arasında olmalı.'; else L.push('   k   = '+f(k,4)+' (elle girildi)'); }
+      if(!err){Q2=k*k*QF;
+        L.push('');L.push('4) Yüklenme oranına göre sekonder tüketim');
+        L.push('   QL2\' = k²·QL2 = '+f(k,4)+'² × '+f(QF,2)+' = '+f(Q2,2)+' kVAr');}
+    }
+  }
+  $('hata').hidden=!err;$('hata').textContent=err;document.documentElement.dataset.vgInvalid=err?'true':'false';
+  if(err){['rQ1','rK','rQ2','rQc','rAlt','rUst','r5'].forEach(function(i){$(i).textContent='–'});$('adim').textContent='';$('rNot').hidden=true;kaydet();return}
+  var Qc=Q1+Q2,alt=NaN,ust=NaN;
+  KAD.forEach(function(v){if(v<=Qc+1e-9)alt=v;if(isNaN(ust)&&v>=Qc-1e-9)ust=v});
+  L.push('');L.push((m==='bos'?'2':'5')+') Gerekli sabit kondansatör');
+  L.push('   Qc  = QL1'+(m==='bos'?'':' + QL2\'')+' = '+(m==='bos'?'':f(Q1,2)+' + '+f(Q2,2)+' = ')+f(Qc,2)+' kVAr');
+  $('rQ1').textContent=f(Q1,2);$('rK').textContent=m==='bos'?'–':f(k,3);$('rQ2').textContent=m==='bos'?'–':f(Q2,2);
+  $('rQc').textContent=f(Qc,2);$('rAlt').textContent=isNaN(alt)?'–':f(alt,1);$('rUst').textContent=isNaN(ust)?'–':f(ust,1);
+  var y5=S*0.05;$('r5').textContent=f(y5,1);
+  var n='%5 kuralı hesaplanan değerin '+f(y5/Qc,1)+' katı. ';
+  n+=(m==='bos')?'Tesis sürekli çalışmadığı için alt kademe seçmek kapasitif ceza riskini azaltır; 7/24 çalışmada üst kademe uygundur.'
+               :'Üst kademe seçilirse düşük yüklü saatlerde kapasitif tarafa geçme riski sayaç verileriyle kontrol edilmelidir.';
+  $('rNot').hidden=false;$('rNot').textContent=n;$('adim').textContent=L.join('\n');kaydet();
+}
+function kaydet(){try{var o={mod:mod(),sn:$('sn').value};IDS.forEach(function(i){o[i]=$(i).value});localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
+function yukle(){try{var o=JSON.parse(localStorage.getItem(KEY));if(!o)return false;IDS.forEach(function(i){if(o[i]!=null)$(i).value=o[i]});$('sn').value=o.sn||'';
+  var r=document.querySelector('input[name=mod][value="'+o.mod+'"]');if(r)r.checked=true;return true}catch(e){return false}}
+kur();if(yukle())hesap();else ornek();
+</script>
+</body>
+</html>

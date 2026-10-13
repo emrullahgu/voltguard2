@@ -42,13 +42,17 @@ YENI SAYFA EKLEMEK
   Stil: css/vg-shell.css, davranis: js/vg-shell.js. tools/ klasoru (parcalar) taranmaz.
 """
 import argparse
+import os
 import re
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SHELL_DIR = ROOT / 'tools' / 'shell'
-SKIP_DIRS = {'.git', '.github', 'node_modules', 'tools', '__pycache__', '.vscode', '.idea', '.netlify'}
+# The engineering builder applies these shared fragments itself; never rewrite its source or output here.
+SKIP_DIRS = {'.git', '.github', 'node_modules', 'tools', '__pycache__', '.vscode', '.idea', '.netlify',
+             'voltguardekleyelim', 'araclar', '.qa'}
 
 FONTS_LINK = ('<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800'
               '&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">')
@@ -353,11 +357,11 @@ def discover(args_files):
     if args_files:
         return [(Path(f) if Path(f).is_absolute() else Path.cwd() / f).resolve() for f in args_files]
     out = []
-    for p in sorted(ROOT.rglob('*.html')):
-        if set(p.relative_to(ROOT).parts[:-1]) & SKIP_DIRS:
-            continue
-        out.append(p)
-    return out
+    for directory, names, files in os.walk(ROOT):
+        names[:] = [name for name in names if name not in SKIP_DIRS]
+        out.extend(Path(directory) / name for name in files
+                   if name.endswith('.html') and not (Path(directory).name == 'calisan' and name.startswith('shared-')))
+    return sorted(out)
 
 
 def main():
@@ -382,7 +386,15 @@ def main():
         if data != raw:
             changed += 1
             if not a.check:
-                p.write_bytes(data)
+                # OneDrive can briefly reject writes while hydrating a synchronized file.
+                for attempt in range(5):
+                    try:
+                        p.write_bytes(data)
+                        break
+                    except OSError as error:
+                        if error.errno != 22 or attempt == 4:
+                            raise
+                        time.sleep(0.15 * (attempt + 1))
             if not a.quiet:
                 print(('DEGISECEK ' if a.check else 'guncellendi ') + rel)
         else:

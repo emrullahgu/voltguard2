@@ -1,0 +1,199 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RLC Frekans Analizi | VoltGuard</title><meta name="description" content="Seri RLC devresinde rezonansı, empedansı ve frekans yanıtını hesaplayın; Bode diyagramı ve CSV alın."><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#0a1628"><link rel="canonical" href="https://voltguard.com.tr/araclar/rlc-frekans-analizi/"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="RLC Frekans Analizi | VoltGuard"><meta property="og:description" content="Seri RLC devresinde rezonansı, empedansı ve frekans yanıtını hesaplayın; Bode diyagramı ve CSV alın."><meta property="og:url" content="https://voltguard.com.tr/araclar/rlc-frekans-analizi/"><meta property="og:image" content="https://voltguard.com.tr/araclar/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/voltguard-icon-64.png" type="image/png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"RLC Frekans Analizi","url":"https://voltguard.com.tr/araclar/rlc-frekans-analizi/","description":"Seri RLC devresinde rezonansı, empedansı ve frekans yanıtını hesaplayın; Bode diyagramı ve CSV alın.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":0,"priceCurrency":"TRY"},"publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VoltGuard","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"RLC Frekans Analizi","item":"https://voltguard.com.tr/araclar/rlc-frekans-analizi/"}]}]}</script><link rel="stylesheet" href="../shared/tool-shell.css"><link rel="stylesheet" href="../shared/export.css"><style>
+:where(#vg-tool-workspace) *{box-sizing:border-box}#vg-tool-workspace{margin:0;background:#f4f7fb;color:#19334b;font:15px/1.6 'Segoe UI',Arial,sans-serif}:where(#vg-tool-workspace) main{max-width:1120px;margin:24px auto;padding:0 18px}:where(#vg-tool-workspace) .panel{background:white;border:1px solid #dbe5ee;border-radius:14px;padding:24px;margin:18px 0}:where(#vg-tool-workspace) h2{margin:0 0 12px;font-size:24px}:where(#vg-tool-workspace) h3{margin:20px 0 10px;font-size:18px}:where(#vg-tool-workspace) .muted{color:#5e7386}:where(#vg-tool-workspace) .fields,:where(#vg-tool-workspace) .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}:where(#vg-tool-workspace) label{font-weight:600}:where(#vg-tool-workspace) input,:where(#vg-tool-workspace) select{display:block;width:100%;padding:10px;border:1px solid #b8cbda;border-radius:8px;font:inherit;margin:6px 0}:where(#vg-tool-workspace) button{border:0;border-radius:8px;padding:11px 17px;background:#007d9c;color:white;font:600 15px 'Segoe UI',sans-serif;cursor:pointer}:where(#vg-tool-workspace) button.secondary{background:#eaf4f8;color:#14556a}:where(#vg-tool-workspace) .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}:where(#vg-tool-workspace) .stats div{border-radius:10px;background:#eff8fb;padding:16px}:where(#vg-tool-workspace) .stats strong{display:block;font-size:24px;color:#006f88}:where(#vg-tool-workspace) .charts{display:grid;grid-template-columns:1fr 1fr;gap:20px}:where(#vg-tool-workspace) svg{width:100%;height:auto;background:#f8fbfd;border:1px solid #dde7ef;border-radius:8px}:where(#vg-tool-workspace) svg text{font:12px 'Segoe UI',Arial,sans-serif;fill:#31506a}:where(#vg-tool-workspace) .table-wrap{overflow:auto}:where(#vg-tool-workspace) table{width:100%;border-collapse:collapse}:where(#vg-tool-workspace) th,:where(#vg-tool-workspace) td{text-align:right;border-bottom:1px solid #dce5ee;padding:10px}:where(#vg-tool-workspace) th:first-child,:where(#vg-tool-workspace) td:first-child{text-align:left}:where(#vg-tool-workspace) .error{padding:12px;color:#a5233f;background:#fff0f3;white-space:pre-wrap}:where(#vg-tool-workspace) .formula{padding:14px;border-radius:8px;background:#edf5f9;overflow-wrap:anywhere}:where(#vg-tool-workspace) a{color:#007d9c}@media(max-width:700px){:where(#vg-tool-workspace) .fields,:where(#vg-tool-workspace) .stats,:where(#vg-tool-workspace) .charts{grid-template-columns:1fr}:where(#vg-tool-workspace) .panel{padding:16px}}@media print{:where(#vg-tool-workspace) .input-panel{display:none!important}#vg-tool-workspace{background:#fff}:where(#vg-tool-workspace) main{margin:0;padding:0}:where(#vg-tool-workspace) .panel{border:0;padding:6px}:where(#vg-tool-workspace) .charts{grid-template-columns:1fr 1fr}:where(#vg-tool-workspace) .charts>div,:where(#vg-tool-workspace) .stats div,:where(#vg-tool-workspace) tr{break-inside:avoid}}
+</style><link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=736601cefb51"><script src="/js/vg-shell.js?v=f8bab0eb2f0c" defer></script><script src="/js/voltguard-auth.js?v=5ea8a8c73e4b" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=6609af196d62"></head><body data-vg-tool="rlc-frekans-analizi" data-vg-title="RLC Frekans Analizi" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+<header data-vg-no-print class="vg-header doc-header" id="vgHeader">
+  <div class="vg-header__bar vg-wrap">
+    <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+      <span class="logo-mark" aria-hidden="true">
+        <span class="logo-mark__volt">VOLT</span>
+        <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+        <span class="logo-mark__guard">GUARD</span>
+      </span>
+      <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+    </a>
+    <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+    <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+      <ul class="vg-nav__list">
+        <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+        <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+        <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+        <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+          <ul class="vg-dd__menu" id="vgDdKaynaklar">
+            <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+            <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+            <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+            <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+            <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+          </ul>
+        </li>
+        <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+        <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+      </ul>
+      <div class="vg-nav__foot">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </nav>
+    <div class="vg-actions">
+      <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+      <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+    </div>
+  </div>
+  <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+</header><div id="main" tabindex="-1"><div id="vg-top"><div class="vg-topline"><nav class="vg-links" aria-label="Araç menüsü"><a class="vg-back" href="../#araclar">← Tüm araçlar</a><a class="vg-back" href="/hesaplama-araclari/">Pratik hesaplar →</a><a class="vg-back" href="/">VoltGuard ana sayfa ↗</a></nav></div><p class="vg-crumb">Devre ve elektronik / RLC Frekans Analizi</p><h1>RLC Frekans Analizi</h1><p class="vg-description">Seri RLC devresinde rezonansı, empedansı ve frekans yanıtını hesaplayın; Bode diyagramı ve CSV alın.</p><details><summary>Girdiler, sonuçlar ve hesap yöntemi</summary><div class="vg-method"><strong>Girdiler:</strong> R (Ω), L (mH), C (µF), RMS kaynak gerilimi, frekans aralığı ve çıkış elemanı.<br><strong>Çıktılar:</strong> Rezonans, kalite faktörü, yarı güç frekansları, Bode grafikleri, akım/güç ve CSV.<br><strong>Yöntem:</strong> İdeal seri RLC empedansı ve R/C/L gerilim aktarımı; Logaritmik tarama ve ek rezonans örnekleriyle analitik frekans yanıtı. <a href="../yontem/">Kaynak ve geçerlilik bilgileri →</a></div></details></div><div id="vg-tool-workspace"><main><section class="panel input-panel"><h2>Seri RLC devresinin frekans yanıtı</h2><p class="muted">İdeal sinüzoidal kaynak ve seri bağlı R, L, C için empedans, rezonans ve Bode diyagramı. Çıkış gerilimini direnç, kondansatör veya bobin üzerinde seçin.</p><form id="rlcForm"><div class="fields"><label>Direnç R (Ω)<input id="r" value="100" inputmode="decimal" required></label><label>Endüktans L (mH)<input id="l" value="10" inputmode="decimal" required></label><label>Kapasitans C (µF)<input id="c" value="1" inputmode="decimal" required></label><label>Kaynak gerilimi (V RMS)<input id="u" value="230" inputmode="decimal" required></label><label>İncelenen frekans (Hz)<input id="f" value="1591,549431" inputmode="decimal" required></label><label>Çıkış gerilimi<select id="output"><option value="R">Direnç · bant geçiren</option><option value="C">Kondansatör · alçak geçiren</option><option value="L">Bobin · yüksek geçiren</option></select></label><label>Grafik başlangıcı (Hz)<input id="fmin" value="10" inputmode="decimal" required></label><label>Grafik bitişi (Hz)<input id="fmax" value="100000" inputmode="decimal" required></label></div><div class="actions"><button type="submit">Hesapla</button><button id="resonance" type="button" class="secondary">Rezonans frekansına git</button><button id="csv" type="button" class="secondary">Frekans tablosu · CSV</button></div></form><p id="error" class="error" role="alert" hidden></p></section>
+<section class="panel" id="printReport" aria-live="polite"><h2>RLC analiz raporu</h2><p class="muted" id="snapshot"></p><div class="stats"><div>Doğal rezonans f₀<strong id="f0">—</strong></div><div>Kalite faktörü Q<strong id="quality">—</strong></div><div>Direnç çıkışı bant genişliği<strong id="bandwidth">—</strong></div></div><div class="charts"><div><h3>Genlik · 20 log₁₀ |H|</h3><svg id="gain" viewBox="0 0 520 320" role="img" aria-label="Seri RLC gerilim aktarım genliğinin logaritmik frekans diyagramı"></svg></div><div><h3>Faz · derece</h3><svg id="phase" viewBox="0 0 520 320" role="img" aria-label="Seri RLC gerilim aktarım fazının logaritmik frekans diyagramı"></svg></div></div><h3>Seçilen frekansta sonuçlar</h3><div class="table-wrap"><table><thead><tr><th>Büyüklük</th><th>Değer</th></tr></thead><tbody id="rows"></tbody></table></div><h3>Model ve denklemler</h3><div class="formula">ω = 2πf · Z = R + j(ωL − 1/ωC)<br>Hᵣ = R/Z · H𝒸 = (−j/ωC)/Z · Hₗ = jωL/Z<br>f₀ = 1/(2π√LC) · Q = ω₀L/R · Δf = R/(2πL) · I = U/|Z|</div><p class="muted">Grafik 401 temel logaritmik noktaya eklenen rezonans, yarı güç ve seçilen frekans örneklerinden üretilir. Dar rezonans çevresi ek noktalarla örneklenir. R, L, C pozitif olmalıdır; kaynağın RMS gerilimi sıfır olabilir. Bant genişliği direnç üzerindeki bant geçiren aktarımın yarı güç noktalarına aittir. Bobin sargı direnci, kondansatör ESR/ESL, doygunluk ve frekansa bağlı kayıplar modele dahil değildir. Gerilim oranı rezonans çevresinde 1'i aşabilir; bu enerji üretimi anlamına gelmez.</p><small>İncelenen açık kaynak örnekler: <a href="https://github.com/jp2masa/BodePlotter" target="_blank" rel="noopener">BodePlotter</a> ve <a href="https://github.com/stegsoph/Resonance-Circuits" target="_blank" rel="noopener">Resonance-Circuits</a>. Bu araç VoltGuard için bağımsız denklemlerle yazılmıştır; bu projelerden kod veya görsel kopyalanmamıştır.</small></section></main>
+<script data-vg-core="rlc">
+(function(root){'use strict';
+function numeric(v,label){const s=String(v).trim();if(!/^[+-]?(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:e[+-]?\d+)?$/i.test(s))throw Error(label+': geçerli bir sayı yazın.');const n=Number(s.replace(',','.'));if(!Number.isFinite(n))throw Error(label+': sonlu sayı gerekir.');return n;}
+function response(p,f){const w=2*Math.PI*f,xL=w*p.L,xC=-1/(w*p.C),x=xL+xC,z=Math.hypot(p.R,x);let re,im;if(p.output==='R'){re=p.R;im=0}else{re=0;im=p.output==='C'?xC:xL}const hRe=(re*p.R+im*x)/(z*z),hIm=(im*p.R-re*x)/(z*z),h=Math.hypot(hRe,hIm),I=p.U/z;return {f,xL,xC,x,z,h,hRe,hIm,db:20*Math.log10(h),phase:Math.atan2(hIm,hRe)*180/Math.PI,I,P:I*I*p.R,Qnet:I*I*x,pf:p.R/z,V:p.U*h};}
+function analyze(p){for(const k of ['R','L','C','U','f','fmin','fmax'])if(!Number.isFinite(p[k]))throw Error(k+': sonlu bir sayı gerekir.');if(p.R<=0||p.L<=0||p.C<=0||p.f<=0||p.fmin<=0||p.fmax<=p.fmin||p.U<0)throw Error('R, L, C ve frekanslar pozitif olmalıdır. Grafik bitişi başlangıcından büyük, RMS gerilim sıfır veya pozitif olmalıdır.');if(!['R','L','C'].includes(p.output))throw Error('Çıkış seçimi geçersiz.');if(p.fmax/p.fmin>1e12)throw Error('Grafik aralığı en fazla 12 dekad olabilir.');const f0=1/(2*Math.PI*Math.sqrt(p.L*p.C)),w0=2*Math.PI*f0,bw=p.R/(2*Math.PI*p.L),Q=w0*p.L/p.R;const discriminant=Math.hypot(p.R,2*Math.sqrt(p.L/p.C)),lower=(2/p.C)/(discriminant+p.R)/(2*Math.PI),upper=(discriminant+p.R)/(2*p.L)/(2*Math.PI),current=response(p,p.f);if(!(upper>lower)||bw/f0<1e-10||Math.abs(response({...p,output:'R'},lower).h-Math.SQRT1_2)>1e-5||Math.abs(response({...p,output:'R'},upper).h-Math.SQRT1_2)>1e-5)throw Error('Rezonans bant genişliği sayısal çözünürlük için fazla dar. Direnci artırın veya L/C değerlerini gözden geçirin.');const frequencies=Array.from({length:401},(_,i)=>p.fmin*Math.pow(p.fmax/p.fmin,i/400));for(const f of[f0,lower,upper,p.f])if(f>=p.fmin&&f<=p.fmax)frequencies.push(f);if(Q>10)for(let i=-80;i<=80;i++){const f=f0+bw*i/8;if(f>=p.fmin&&f<=p.fmax)frequencies.push(f)}const samples=[...new Set(frequencies)].sort((a,b)=>a-b).map(f=>response(p,f));const values=[f0,Q,bw,lower,upper,...Object.values(current),...samples.flatMap(s=>[s.db,s.phase])];if(values.some(v=>!Number.isFinite(v)))throw Error('Bu büyüklüklerde sayısal taşma oluştu. Parametreleri fiziksel devre aralığına getirin.');return {f0,Q,bw,lower,upper,samples,current};}
+root.VGRLCCore={numeric,response,analyze};if(typeof document==='undefined')return;
+const $=id=>document.getElementById(id),fmt=(n,max=5)=>n.toLocaleString('tr-TR',{maximumSignificantDigits:max,notation:n!==0&&(Math.abs(n)<1e-4||Math.abs(n)>=1e9)?'scientific':'standard'}),ids=['r','l','c','u','f','output','fmin','fmax'];let result=null,params=null;
+function state(){return Object.fromEntries(ids.map(id=>[id,$(id).value]));}function setState(s){if(!s||typeof s!=='object')throw Error('Proje verisi geçersiz.');for(const id of ids)if(typeof s[id]==='string'||typeof s[id]==='number')$(id).value=String(s[id]);calculate();}
+function chart(el,data,key,min,max,label){const ns='http://www.w3.org/2000/svg';el.replaceChildren();const add=(tag,attrs,text)=>{const n=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;el.append(n);return n;},x=f=>60+Math.log10(f/params.fmin)/Math.log10(params.fmax/params.fmin)*435,y=v=>265-(v-min)/(max-min)*225;for(let i=0;i<=5;i++){const val=min+(max-min)*i/5;add('line',{x1:60,x2:495,y1:y(val),y2:y(val),stroke:'#d5e2eb'});add('text',{x:52,y:y(val)+4,'text-anchor':'end'},fmt(val,4));}for(let i=0;i<=4;i++){const f=params.fmin*Math.pow(params.fmax/params.fmin,i/4);add('line',{x1:x(f),x2:x(f),y1:40,y2:265,stroke:'#e1eaf1'});add('text',{x:x(f),y:286,'text-anchor':'middle'},fmt(f,3));}add('text',{x:60,y:22},label);add('text',{x:490,y:310,'text-anchor':'end'},'Frekans · Hz (log)');add('path',{d:data.map((s,i)=>(i?'L':'M')+x(s.f).toFixed(2)+','+y(s[key]).toFixed(2)).join(' '),fill:'none',stroke:key==='db'?'#0088ac':'#e64857','stroke-width':2.5});if(params.f>=params.fmin&&params.f<=params.fmax)add('circle',{cx:x(params.f),cy:y(result.current[key]),r:4,fill:'#102f49'});}
+function calculate(){try{params={R:numeric($('r').value,'R'),L:numeric($('l').value,'L')/1000,C:numeric($('c').value,'C')/1e6,U:numeric($('u').value,'Gerilim'),f:numeric($('f').value,'Frekans'),fmin:numeric($('fmin').value,'Başlangıç'),fmax:numeric($('fmax').value,'Bitiş'),output:$('output').value};result=analyze(params);document.documentElement.dataset.vgInvalid='false';$('error').hidden=true;$('printReport').hidden=false;$('csv').disabled=false;$('snapshot').textContent='R = '+fmt(params.R)+' Ω · L = '+fmt(params.L*1000)+' mH · C = '+fmt(params.C*1e6)+' µF · U = '+fmt(params.U)+' V RMS · f = '+fmt(params.f)+' Hz · Çıkış: '+params.output;$('f0').textContent=fmt(result.f0)+' Hz';$('quality').textContent=fmt(result.Q);$('bandwidth').textContent=fmt(result.bw)+' Hz';const s=result.current;const rows=[['Empedans |Z|',fmt(s.z)+' Ω'],['Net reaktans X',fmt(s.x)+' Ω'],['Aktarım |H|',fmt(s.h)],['Aktarım genliği',fmt(s.db)+' dB'],['Aktarım fazı',fmt(s.phase)+'°'],['Çıkış gerilimi',fmt(s.V)+' V RMS'],['Seri devre akımı',fmt(s.I)+' A RMS'],['Aktif güç',fmt(s.P)+' W'],['Net reaktif güç',fmt(s.Qnet)+' var'],['Güç faktörü',fmt(s.pf)+' · '+(Math.abs(s.x)<s.z*1e-9?'rezonans':s.x>0?'endüktif':'kapasitif')],['Direnç çıkışı −3 dB frekansları',fmt(result.lower)+' / '+fmt(result.upper)+' Hz']];$('rows').replaceChildren(...rows.map(([a,b])=>{const tr=document.createElement('tr');for(const text of[a,b]){const td=document.createElement('td');td.textContent=text;tr.append(td)}return tr}));const db=result.samples.map(s=>s.db),min=Math.floor(Math.min(...db)/10)*10,max=Math.max(10,Math.ceil(Math.max(...db)/10)*10);chart($('gain'),result.samples,'db',min,max,'Genlik · dB');chart($('phase'),result.samples,'phase',-180,180,'Faz · °');return result;}catch(e){result=null;document.documentElement.dataset.vgInvalid='true';$('error').textContent=e.message;$('error').hidden=false;$('printReport').hidden=true;$('csv').disabled=true;return null;}}
+$('rlcForm').addEventListener('submit',e=>{e.preventDefault();calculate()});$('rlcForm').addEventListener('input',calculate);$('rlcForm').addEventListener('change',calculate);$('resonance').addEventListener('click',()=>{if(calculate()){$('f').value=String(result.f0);calculate()}});$('csv').addEventListener('click',()=>{if(!calculate())return;const csv='\ufeffFrekans_Hz;Genlik_orani;Genlik_dB;Faz_derece\r\n'+result.samples.map(s=>[s.f,s.h,s.db,s.phase].map(v=>String(v).replace('.',',')).join(';')).join('\r\n');const a=document.createElement('a'),url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.href=url;a.download='voltguard-rlc-frekans.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),60000)});root.buildReport=calculate;root.VoltGuardExportAdapter={getState:state,setState,flush:calculate,buildReport:calculate};calculate();
+})(typeof window!=='undefined'?window:globalThis);
+</script></div><div id="vg-origin">VoltGuard · Açık kaynak uyarlamaları ve yeni araçlar · <a href="../yontem/">Yöntem ve kaynaklar</a></div><script src="../shared/export.js" defer></script><script>try{localStorage.setItem('voltguard:recent',JSON.stringify({slug:"rlc-frekans-analizi",name:"RLC Frekans Analizi"}))}catch(e){}if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script></div><footer data-vg-no-print class="footer vg-footer" id="vgFooter" role="contentinfo">
+  <div class="vg-footer__cta">
+    <div class="vg-wrap vg-footer__cta-in">
+      <div class="vg-footer__cta-text">
+        <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+        <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+      </div>
+      <div class="vg-footer__cta-btns">
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="vg-wrap">
+    <div class="vg-footer__grid">
+      <div class="vg-footer__brand">
+        <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+          <span class="logo-mark logo-mark--footer" aria-hidden="true">
+            <span class="logo-mark__volt">VOLT</span>
+            <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+            <span class="logo-mark__guard">GUARD</span>
+          </span>
+          <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+        </a>
+        <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+        <ul class="vg-footer__contact">
+          <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+          <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+          <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+        </ul>
+        <address class="vg-footer__addr">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+        </address>
+        <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+      </div>
+      <nav class="vg-footer__nav" aria-label="Alt menü">
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Hizmetler</h3>
+          <ul>
+            <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+            <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+            <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+            <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+            <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+            <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+            <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+            <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+            <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+            <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+            <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+            <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kurumsal</h3>
+          <ul>
+            <li><a href="/#hakkimizda">Hakkımızda</a></li>
+            <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+            <li><a href="/#projeler">Projeler</a></li>
+            <li><a href="/#surec">Sürecimiz</a></li>
+            <li><a href="/#neden-biz">Neden Biz?</a></li>
+            <li><a href="/#guvenlik">Güvenlik</a></li>
+            <li><a href="/#haberler">Haberler</a></li>
+            <li><a href="/#emi-demo">Canlı Demo</a></li>
+            <li><a href="/#katalog">Katalog</a></li>
+            <li><a href="/#sss">SSS</a></li>
+            <li><a href="/#iletisim">İletişim</a></li>
+            <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kaynaklar</h3>
+          <ul>
+            <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+            <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+            <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+            <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+            <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+          <ul>
+            <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+            <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+            <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+            <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+            <li><a href="/voltgame.html">VoltGame</a></li>
+            <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+            <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+            <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="vg-footer__bottom">
+      <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+      <div class="vg-footer__social">
+        <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+      <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        </circle>
+      </svg>
+      <span class="sig-node" aria-hidden="true"></span>
+      <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+        <span class="sig-badge__ring" aria-hidden="true"></span>
+        <span class="sig-badge__aurora" aria-hidden="true"></span>
+        <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+        <span class="sig-badge__body">
+          <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+          <span class="sig-badge__brand">
+            <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+            <span class="sig-badge__eng">Engineering</span>
+          </span>
+        </span>
+        <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+        <span class="sig-badge__shimmer" aria-hidden="true"></span>
+      </a>
+      <span class="sig-node" aria-hidden="true"></span>
+      <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+        </circle>
+      </svg>
+    </div>
+  </div>
+</footer></body></html>

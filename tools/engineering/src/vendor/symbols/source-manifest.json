@@ -1,0 +1,381 @@
+{
+  "date": "2026-10-12",
+  "license": "CC0-1.0",
+  "sources": [
+    {
+      "path": "sources/basverdoes/analog-ansi/core/ammeter.svg",
+      "sha256": "73782f797528afca861561008d9996021b36faf4207092f2de8cd1c23e382414",
+      "bytes": 6508
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/annotation-current.svg",
+      "sha256": "c1ca312eb56405428fbf7def02ef78f3255921d8340a730ee90651cfb8f35904",
+      "bytes": 5283
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/annotation-voltage-contact.svg",
+      "sha256": "7fbbf221a2e110bfa3960b9970a448bfaf531283cb1519bb4caf7fedbcb307aa",
+      "bytes": 6258
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/annotation-voltage.svg",
+      "sha256": "34c6a1f3bc115fa99c60774ac8c6ced8c4b29b6c9535ab7be146291b39f7a236",
+      "bytes": 5360
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/capacitor-adjustable.svg",
+      "sha256": "93135173b13b012928962d7d47b59e0cb3e993b195d50ee0796edc3f003be882",
+      "bytes": 6901
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/capacitor-polarized.svg",
+      "sha256": "374900a72d62653ba3499f575259f6f5987029a32944301f870f2ce5ae4963e5",
+      "bytes": 6251
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/capacitor.svg",
+      "sha256": "869ebfde540692efa3fcf960d43875fe58e8e354b579b389581813827ad7002f",
+      "bytes": 6311
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/ground-earth.svg",
+      "sha256": "21463f69b5e74a625a12804350b8414226b39b7aee27e2d3715615f8cde5abf0",
+      "bytes": 6718
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/ground-signal.svg",
+      "sha256": "f5da03a3d967ca3316bb98d0b453eb0d1d9b557a3ca204e1320f525e5ae21ddb",
+      "bytes": 4967
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/impedance-adjustable.svg",
+      "sha256": "cb2e1445162275056669d7d2489a8dc261a38c0cb3c6f577ebbc6bdd80d91b4a",
+      "bytes": 5735
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/impedance.svg",
+      "sha256": "9202df87b202c9cb740b90175e4094866a6c0cf8c76cf622e445e50d4d1fb7dc",
+      "bytes": 5130
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/inductor-coupled.svg",
+      "sha256": "c9c1b8a802b4a3c396cda8b71070170a6e09b1a5f4a35659b5458197b0b8bc0a",
+      "bytes": 6250
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/inductor-with-core.svg",
+      "sha256": "30247244b1f260756367c1cc3c424807f8a45d5e4a9163477e7758fc5119bf41",
+      "bytes": 6123
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/inductor.svg",
+      "sha256": "bec2ea9fbf7a64933a00db83ca67bfa091fee8f27a4d5483fa97cb5bbd06e234",
+      "bytes": 5928
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/resistor-adjustable.svg",
+      "sha256": "0065675c011b2f52486238f22cb75e56920f1777460a53c8a2fd01240293f186",
+      "bytes": 6650
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/resistor-ldr.svg",
+      "sha256": "047e1c036bec18f8efa0b3b463518129196051f6e8ec9c3812ca16517e7cf033",
+      "bytes": 7330
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/resistor-potentiometer.svg",
+      "sha256": "e6e449f3a388ab42de4a5f973c8ed4e28807b5c1b406f4f3ab400c99c9e3b064",
+      "bytes": 6733
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/resistor.svg",
+      "sha256": "fff0dde371325b7192cbd551a17e8cd4e869567cfb78df537fcc570a085d80a4",
+      "bytes": 6055
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/source-current-controlled.svg",
+      "sha256": "eb9a0efd04269f98e2e4c641da166a3f1823cc854220f02c6050ce34a268144b",
+      "bytes": 6033
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/source-current.svg",
+      "sha256": "1e798e770abe11742c88fa0f04d4c499dafc86a8eee71e90ad56c9c17a8120ad",
+      "bytes": 5881
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/source-voltage-controlled.svg",
+      "sha256": "56f76ac1181cd237737377be47432942369efb7b2bf44a8a51487a659edc39b5",
+      "bytes": 5835
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/source-voltage.svg",
+      "sha256": "dec9aabfbcb0da0d41eabb6d3b20630fdb914869df9d23747b6c7f19b76b0f65",
+      "bytes": 5931
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/transformer.svg",
+      "sha256": "436d5d315751e45840cd46d8741bac8f07bc7af4759b490b43100d9bd903ff4a",
+      "bytes": 9322
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/voltmeter.svg",
+      "sha256": "bb53c77687c3c87c47dbaec1994fa9db6d35af71c061da71005c39f147640288",
+      "bytes": 6468
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/wire-connection.svg",
+      "sha256": "1592fc5ee40c2ffec614f5c8ac99a2541f361ae995e196fcbacc28c51bee76c8",
+      "bytes": 4631
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/wire-crossing.svg",
+      "sha256": "ffc7f3f93d713fb1397a945df82b01429a11659fb9cfebd4f0bbcb07a0c0d41f",
+      "bytes": 4845
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/wire-terminal.svg",
+      "sha256": "7169b17aecd9ecf5cf860533c4b2808edc9eede7205d02fb633f6beb408804b8",
+      "bytes": 4638
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/core/wire.svg",
+      "sha256": "6881086e587c7543bd60211cb213c86597ffd58f21c48a52898ee2a7c5b7c2ed",
+      "bytes": 4476
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/semiconductors/diode-led.svg",
+      "sha256": "b6e4155de516278ea27c6da5e022656e1f5cecf6857bff9806813d26f9467add",
+      "bytes": 6655
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/semiconductors/diode-photodiode.svg",
+      "sha256": "c742bd63e3be0feef4f776cb97f2b3a4a63414fd994a992f64bf3faa2008be67",
+      "bytes": 7325
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/semiconductors/diode-zener.svg",
+      "sha256": "f1b05328fc0946f351853da499496f0d92e83d05bfe773808cd2873dd3c49f01",
+      "bytes": 5445
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/semiconductors/diode.svg",
+      "sha256": "2008f0f21fc2ae30b9f7d0830486612eba2566f263861f2fea11b369334db7c0",
+      "bytes": 5364
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/semiconductors/opamp-diff-output.svg",
+      "sha256": "56b1eedea87a7a721be32057d436f6beb84fb4e5e8c944b7f9e9c8afade151b5",
+      "bytes": 7062
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/semiconductors/opamp-single-output.svg",
+      "sha256": "af602f4d033e48394bdc25cdfa280919438b1030f6bed5bfdf0e3fa536756268",
+      "bytes": 6721
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/transducers/loudspeaker.svg",
+      "sha256": "dd639cfa3d70be477611192ff46c5c435ddb2930e61a643908050f580c210bee",
+      "bytes": 5463
+    },
+    {
+      "path": "sources/basverdoes/analog-ansi/transducers/piezo.svg",
+      "sha256": "d46beb83d023abcd97d838538196102dc7d76ac972eca3e7323de4dc01583254",
+      "bytes": 5499
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/ammeter.svg",
+      "sha256": "73782f797528afca861561008d9996021b36faf4207092f2de8cd1c23e382414",
+      "bytes": 6508
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/annotation-current.svg",
+      "sha256": "c1ca312eb56405428fbf7def02ef78f3255921d8340a730ee90651cfb8f35904",
+      "bytes": 5283
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/annotation-voltage-contact.svg",
+      "sha256": "7fbbf221a2e110bfa3960b9970a448bfaf531283cb1519bb4caf7fedbcb307aa",
+      "bytes": 6258
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/annotation-voltage.svg",
+      "sha256": "34c6a1f3bc115fa99c60774ac8c6ced8c4b29b6c9535ab7be146291b39f7a236",
+      "bytes": 5360
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/capacitor-adjustable.svg",
+      "sha256": "0416771bc62dd0443119c4b54c4eac9ea932bc26d7b25c1261c6305edc07f4eb",
+      "bytes": 6893
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/capacitor-polarized.svg",
+      "sha256": "3feb7f0e1085cddaf217c5d19c20ec9128f25fb740cfadc009b6279f26ce3ee6",
+      "bytes": 6789
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/capacitor.svg",
+      "sha256": "b4efdabfed2008538ebca92052ee15a7274b862035c59dd41862ac21f0051f8f",
+      "bytes": 6314
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/ground-earth.svg",
+      "sha256": "21463f69b5e74a625a12804350b8414226b39b7aee27e2d3715615f8cde5abf0",
+      "bytes": 6718
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/ground-signal.svg",
+      "sha256": "f5da03a3d967ca3316bb98d0b453eb0d1d9b557a3ca204e1320f525e5ae21ddb",
+      "bytes": 4967
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/gyrator.svg",
+      "sha256": "10031409b774c0a7b6874d5b724804e505bb47a50a09ebb3b72ab3d87acc21da",
+      "bytes": 6897
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/inductor-coupled.svg",
+      "sha256": "b00e7f6535e15cb07171ca29d235f2692b3ee7a4a677799ef76f866310540bc0",
+      "bytes": 5899
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/inductor-with-core.svg",
+      "sha256": "405b6ce038064dbfe0b53feefdc33359e244539dd524627f684b31cd6704635b",
+      "bytes": 5811
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/inductor.svg",
+      "sha256": "ff0bb9cae31a9a25f64401ab57e11ee00d96e2d7687b8ab8513aef7e020f8546",
+      "bytes": 5578
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/resistor-adjustable.svg",
+      "sha256": "e1fb872681ba3089436f93e6da8ab3159938380daa0d0d79ae257eb0267d0f8b",
+      "bytes": 5745
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/resistor-ldr.svg",
+      "sha256": "8d10afba1162ac3c8f1cb0364669a46de3c3a2c0568e4d1a1c46b0bb6efa7ccd",
+      "bytes": 6383
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/resistor-potentiometer.svg",
+      "sha256": "c7e33918b91c1ee0eb8af972ed2dbf391ab9972c2cdf065da91b67916511a64a",
+      "bytes": 5827
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/resistor.svg",
+      "sha256": "349af37556f50ce10c7503a7283c719479479c79c5a81ee8c0b92e6b63254ba8",
+      "bytes": 5141
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/source-current-controlled.svg",
+      "sha256": "f6d9f1c32a37e55a2be72dae4d7e4315eee61259503bca77d71d6352ea75e112",
+      "bytes": 5985
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/source-current.svg",
+      "sha256": "02e2c864ac40974af3db3405b189b1704f939646fa873b8dbcad71e55fb6a0f2",
+      "bytes": 6083
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/source-voltage-controlled.svg",
+      "sha256": "1a2234de81e3afc7137b5ad3ebd5a9e1991190f17b1af088042058fd299b6576",
+      "bytes": 5557
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/source-voltage.svg",
+      "sha256": "48671ef6a70cf3ee4d0927c59d257e4764134cee0b5073dad6029e7ec5e6ff96",
+      "bytes": 5646
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/transformer.svg",
+      "sha256": "52df80fb9f4d2b36dd05183590ffa55d91f3985b86dcc898cfb241e9a7af8c37",
+      "bytes": 8653
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/voltmeter.svg",
+      "sha256": "bb53c77687c3c87c47dbaec1994fa9db6d35af71c061da71005c39f147640288",
+      "bytes": 6468
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/wire-connection.svg",
+      "sha256": "1592fc5ee40c2ffec614f5c8ac99a2541f361ae995e196fcbacc28c51bee76c8",
+      "bytes": 4631
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/wire-crossing.svg",
+      "sha256": "ffc7f3f93d713fb1397a945df82b01429a11659fb9cfebd4f0bbcb07a0c0d41f",
+      "bytes": 4845
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/wire-terminal.svg",
+      "sha256": "7169b17aecd9ecf5cf860533c4b2808edc9eede7205d02fb633f6beb408804b8",
+      "bytes": 4638
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/core/wire.svg",
+      "sha256": "6881086e587c7543bd60211cb213c86597ffd58f21c48a52898ee2a7c5b7c2ed",
+      "bytes": 4476
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/semiconductors/diode-led.svg",
+      "sha256": "d1abf98ea91764fd922f3b6e1926c6a891bdcff5cbc511b386f98500b6cf2701",
+      "bytes": 6353
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/semiconductors/diode-photodiode.svg",
+      "sha256": "8a1c7997167a2f3f948dbf31982c77e0ad73d1c2c2a42c75e0b990f2caf479a4",
+      "bytes": 6474
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/semiconductors/diode-zener.svg",
+      "sha256": "4342bc2b9b83ab510417faf50d24a02b4b2266cf0f3d726a5028142b960b8361",
+      "bytes": 5109
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/semiconductors/diode.svg",
+      "sha256": "a38773a54c91a2594974420c366ff6320d7184a35d5f29fcebe692a1248cefd4",
+      "bytes": 5065
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/semiconductors/opamp-diff-output.svg",
+      "sha256": "56b1eedea87a7a721be32057d436f6beb84fb4e5e8c944b7f9e9c8afade151b5",
+      "bytes": 7062
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/semiconductors/opamp-single-output.svg",
+      "sha256": "af602f4d033e48394bdc25cdfa280919438b1030f6bed5bfdf0e3fa536756268",
+      "bytes": 6721
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/transducers/loudspeaker.svg",
+      "sha256": "dd639cfa3d70be477611192ff46c5c435ddb2930e61a643908050f580c210bee",
+      "bytes": 5463
+    },
+    {
+      "path": "sources/basverdoes/analog-iec/transducers/piezo.svg",
+      "sha256": "d46beb83d023abcd97d838538196102dc7d76ac972eca3e7323de4dc01583254",
+      "bytes": 5499
+    },
+    {
+      "path": "sources/basverdoes/other/norator.svg",
+      "sha256": "49e58c5d4b39cec823f3c79003151b3b6b87694fcf99a84dc246f3ba7a60dc68",
+      "bytes": 5363
+    },
+    {
+      "path": "sources/basverdoes/other/nullator.svg",
+      "sha256": "33539fb3e45bd5fed22b2de278c050a38a6aee9fa8e1ed9597f82bc1138f27a8",
+      "bytes": 5072
+    },
+    {
+      "path": "sources/basverdoes/other/nullor.svg",
+      "sha256": "3cfad62f516c746e257fb40ad4521e12c443c04426d824a65980aae11b28ad29",
+      "bytes": 6273
+    },
+    {
+      "path": "sources/upb/Inkscape_Symbols_All.svg",
+      "sha256": "c7a1c15ac022c6124adde4567176fc1c9836c51f9d68720416b792f5e19de133",
+      "bytes": 2363013
+    }
+  ]
+}

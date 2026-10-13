@@ -1,0 +1,59 @@
+VoltGuard electrical symbol collection
+=====================================
+
+The SVG artwork in library.json and the embedded library in
+Elektrik_Sembol_Kutuphanesi.html is derived from these sources:
+
+1. upb-lea / Inkscape_electric_Symbols
+   https://github.com/upb-lea/Inkscape_electric_Symbols
+   Commit: 9be09cd0e8fcff72816517f240eeff76cef807e2
+   Source: Inkscape_Symbols_All.svg
+   License: CC0 1.0 Universal
+   187 named symbol definitions are included.
+   Credits: upb-lea and the upstream contributors. Complete original source
+   artwork, including its metadata, is retained under sources/upb/.
+
+2. basverdoes / ElectricalSymbolLibrary
+   https://github.com/basverdoes/ElectricalSymbolLibrary
+   Commit: ed1c2a3a910969b6de2483249515cce10cfd0a07
+   Source scope: individual SVG files under src/symbols/ only.
+   License of those individual symbols: CC0 1.0 Universal
+   74 individual symbols are included.
+   Credits: basverdoes and the original contributors identified in the SVG
+   metadata, which is retained in the original files under sources/basverdoes/.
+
+IMPORTANT SCOPE: basverdoes' combined library page, tutorial, README and other
+repository files are CC BY-NC-SA 4.0. They are not copied or redistributed here.
+The upstream README was read to verify its explicit individual-symbol CC0 scope:
+https://github.com/basverdoes/ElectricalSymbolLibrary/blob/ed1c2a3a910969b6de2483249515cce10cfd0a07/README.md
+
+Local modifications to the CC0 artwork:
+- Extract individual renderable symbols from the UPB source sheet.
+- Strip editor-only metadata from renderable derivatives (originals retained).
+- Allowlist SVG drawing tags and attributes; remove external resources.
+- Resolve local symbol/marker references and prefix identifiers per symbol.
+- Resolve UPB bounding boxes with the browser SVG geometry API and add padding.
+- Add Turkish names, search metadata and family labels in library.json.
+- Prefix identifiers again for each canvas instance to prevent collisions.
+
+The complete CC0 legal text is included in CC0-1.0.txt. Original source files
+and a SHA-256 manifest are supplied in this directory. No upstream project's
+endorsement or standard certification is claimed.
+
+The VoltGuard search interface, JSON schema, drawing editor, validation,
+orthogonal line routing, export functions and tests were authored for VoltGuard.
+No application code or artwork was copied from ng-diagram-single-line-diagram,
+fuse-box-labels, kicad-utils, OrCAD/Allegro parsers, ECAD View or step.parts.
+Those projects were reviewed as integration candidates separately.
+
+Reproducing the library:
+1. python prepare-sources.py
+2. node finalize-library.cjs
+   Set VOLTGUARD_PLAYWRIGHT and VOLTGUARD_CHROME to local installed paths when
+   the bundled development runtime is unavailable. No runtime dependency is
+   required to use the tool: all 261 symbol geometries are embedded in HTML.
+
+The compiled library is library.json. The tool embeds that same JSON as the
+sg-library-data application/json script, with less-than signs encoded as
+Unicode escapes. Future changes to the source library should regenerate it
+and update the HTML data block before running tests/symbols.test.cjs.

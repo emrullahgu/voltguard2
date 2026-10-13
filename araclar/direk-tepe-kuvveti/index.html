@@ -1,0 +1,3097 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Direk Tepe Kuvveti | VoltGuard</title><meta name="description" content="AG ve OG direkleri için yük durumlarını ve bileşke kuvvetleri hesaplayın."><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#0a1628"><link rel="canonical" href="https://voltguard.com.tr/araclar/direk-tepe-kuvveti/"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="Direk Tepe Kuvveti | VoltGuard"><meta property="og:description" content="AG ve OG direkleri için yük durumlarını ve bileşke kuvvetleri hesaplayın."><meta property="og:url" content="https://voltguard.com.tr/araclar/direk-tepe-kuvveti/"><meta property="og:image" content="https://voltguard.com.tr/araclar/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/voltguard-icon-64.png" type="image/png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Direk Tepe Kuvveti","url":"https://voltguard.com.tr/araclar/direk-tepe-kuvveti/","description":"AG ve OG direkleri için yük durumlarını ve bileşke kuvvetleri hesaplayın.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":0,"priceCurrency":"TRY"},"publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VoltGuard","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Direk Tepe Kuvveti","item":"https://voltguard.com.tr/araclar/direk-tepe-kuvveti/"}]}]}</script><link rel="stylesheet" href="../shared/tool-shell.css"><link rel="stylesheet" href="../shared/export.css">
+
+
+
+<style>
+#vg-tool-workspace{
+  --ink:#0B3A3C;
+  --ink-2:#12575A;
+  --line:#C9D4D2;
+  --bg:#EEF1EE;
+  --panel:#FFFFFF;
+  --amber:#E8A33D;
+  --amber-d:#B87B18;
+  --red:#B3261E;
+  --green:#1E6B4F;
+  --txt:#16211F;
+  --mut:#5C6B68;
+  --mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --disp:"Archivo Narrow","Roboto Condensed","Segoe UI Semibold","Segoe UI",system-ui,sans-serif;
+  --body:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+:where(#vg-tool-workspace) *{box-sizing:border-box}
+#vg-tool-workspace,#vg-tool-workspace{margin:0;padding:0}
+#vg-tool-workspace{background:var(--bg);color:var(--txt);font-family:var(--body);font-size:14px;line-height:1.5}
+
+/* ---------- Başlık ---------- */
+:where(#vg-tool-workspace) .topbar{background:var(--ink);color:#EAF2F0;padding:14px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  border-bottom:4px solid var(--amber)}
+:where(#vg-tool-workspace) .topbar :is(h1,.vg-original-title){font-family:var(--disp);font-size:20px;letter-spacing:.06em;text-transform:uppercase;margin:0;font-weight:700}
+:where(#vg-tool-workspace) .topbar .sub{font-family:var(--mono);font-size:11px;color:#9FBDB9;letter-spacing:.04em}
+:where(#vg-tool-workspace) .mark{margin-left:auto;text-align:right;font-family:var(--mono);font-size:11px;color:#9FBDB9;line-height:1.35}
+:where(#vg-tool-workspace) .mark b{color:var(--amber);font-weight:600;letter-spacing:.05em}
+
+/* ---------- Sekmeler ---------- */
+:where(#vg-tool-workspace) nav.tabs{display:flex;gap:0;background:var(--ink-2);overflow-x:auto;-webkit-overflow-scrolling:touch}
+:where(#vg-tool-workspace) nav.tabs button{appearance:none;border:0;background:transparent;color:#BFD6D3;font-family:var(--disp);
+  font-size:13px;letter-spacing:.07em;text-transform:uppercase;padding:11px 16px;cursor:pointer;white-space:nowrap;
+  border-bottom:3px solid transparent}
+:where(#vg-tool-workspace) nav.tabs button:hover{color:#fff;background:rgba(255,255,255,.06)}
+:where(#vg-tool-workspace) nav.tabs button.on{color:#0B3A3C;background:var(--amber);border-bottom-color:var(--amber-d);font-weight:700}
+:where(#vg-tool-workspace) nav.tabs button:focus-visible{outline:2px solid #fff;outline-offset:-3px}
+
+:where(#vg-tool-workspace) main{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
+:where(#vg-tool-workspace) #tesis{margin-bottom:16px}
+:where(#vg-tool-workspace) .tesisgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+:where(#vg-tool-workspace) .tesisgrid label{display:block;font-size:11px;color:var(--mut);font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;margin-bottom:4px}
+:where(#vg-tool-workspace) .kayitbilgi{font-family:var(--mono);font-size:11px;color:var(--green)}
+:where(#vg-tool-workspace) .tesisyaz{display:none}
+:where(#vg-tool-workspace) section.tab{display:none}
+:where(#vg-tool-workspace) section.tab.on{display:block}
+
+:where(#vg-tool-workspace) .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+:where(#vg-tool-workspace) .grid>*{min-width:0;max-width:100%}
+@media(max-width:860px){:where(#vg-tool-workspace) .grid{grid-template-columns:1fr}}
+
+:where(#vg-tool-workspace) .card{background:var(--panel);border:1px solid var(--line);border-radius:3px;min-width:0;overflow-wrap:anywhere}
+:where(#vg-tool-workspace) .card>h2{font-family:var(--disp);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin:0;
+  padding:9px 14px;background:#F6F8F6;border-bottom:1px solid var(--line);color:var(--ink)}
+:where(#vg-tool-workspace) .card .body{padding:14px}
+
+:where(#vg-tool-workspace) .hint{font-size:12px;color:var(--mut);margin:0 0 12px;border-left:3px solid var(--amber);padding-left:9px}
+
+:where(#vg-tool-workspace) .f{display:grid;grid-template-columns:150px 1fr;gap:8px 10px;align-items:center;margin-bottom:9px}
+@media(max-width:520px){:where(#vg-tool-workspace) .f{grid-template-columns:1fr}}
+:where(#vg-tool-workspace) .f label{font-size:12px;color:var(--mut);font-weight:600}
+:where(#vg-tool-workspace) select,:where(#vg-tool-workspace) input[type=number],:where(#vg-tool-workspace) input[type=text]{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:2px;
+  background:#fff;font-family:var(--mono);font-size:13px;color:var(--txt)}
+:where(#vg-tool-workspace) select:focus,:where(#vg-tool-workspace) input:focus{outline:2px solid var(--ink-2);outline-offset:-1px}
+:where(#vg-tool-workspace) .radio{display:flex;gap:6px;flex-wrap:wrap}
+:where(#vg-tool-workspace) .radio label{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:12px;
+  border:1px solid var(--line);padding:5px 9px;border-radius:2px;cursor:pointer;background:#fff;color:var(--txt)}
+:where(#vg-tool-workspace) .radio input{accent-color:var(--ink)}
+:where(#vg-tool-workspace) .chk{display:inline-flex;align-items:center;gap:7px;font-size:13px;margin:2px 0 10px;cursor:pointer}
+
+:where(#vg-tool-workspace) .btn{appearance:none;border:0;background:var(--ink);color:#fff;font-family:var(--disp);letter-spacing:.08em;
+  text-transform:uppercase;font-size:13px;padding:10px 18px;border-radius:2px;cursor:pointer}
+:where(#vg-tool-workspace) .btn:hover{background:var(--ink-2)}
+:where(#vg-tool-workspace) .btn.sec{background:#fff;color:var(--ink);border:1px solid var(--ink)}
+:where(#vg-tool-workspace) .btn.sm{padding:6px 11px;font-size:11px}
+:where(#vg-tool-workspace) .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+
+/* ---------- Sonuç ---------- */
+:where(#vg-tool-workspace) .rout{font-family:var(--mono);font-size:13px;min-width:0}
+:where(#vg-tool-workspace) .rline{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dotted var(--line)}
+:where(#vg-tool-workspace) .rline span:first-child{color:var(--mut)}
+:where(#vg-tool-workspace) .rline b{font-weight:600}
+:where(#vg-tool-workspace) .rbig{background:var(--ink);color:#fff;padding:12px 14px;border-radius:2px;margin:12px 0}
+:where(#vg-tool-workspace) .rbig .lbl{font-family:var(--disp);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9FBDB9}
+:where(#vg-tool-workspace) .rbig .val{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--amber);line-height:1.15}
+:where(#vg-tool-workspace) .pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:520px){:where(#vg-tool-workspace) .pick{grid-template-columns:1fr}}
+:where(#vg-tool-workspace) .pk{border:1px solid var(--line);border-radius:2px;padding:10px 12px;background:#F9FBF9}
+:where(#vg-tool-workspace) .pk .t{font-family:var(--disp);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+:where(#vg-tool-workspace) .pk .v{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--ink);margin-top:2px}
+:where(#vg-tool-workspace) .pk .n{font-size:11px;color:var(--mut);margin-top:3px;line-height:1.35;font-family:var(--body)}
+:where(#vg-tool-workspace) .warn{background:#FDF3E7;border-left:3px solid var(--amber-d);padding:8px 10px;font-size:12px;margin-top:10px;color:#6B4A0F}
+:where(#vg-tool-workspace) .err{background:#FBEAE8;border-left:3px solid var(--red);padding:8px 10px;font-size:12px;margin-top:10px;color:#7A1B15}
+:where(#vg-tool-workspace) .ok{background:#EAF3EE;border-left:3px solid var(--green);padding:8px 10px;font-size:12px;margin-top:10px;color:#12442F}
+:where(#vg-tool-workspace) .steps{font-family:var(--mono);font-size:12px;background:#F6F8F6;border:1px solid var(--line);padding:10px 12px;
+  border-radius:2px;margin-top:10px;white-space:pre-wrap;overflow-x:auto;color:#26332F}
+
+/* ---------- Tablolar ---------- */
+:where(#vg-tool-workspace) table.d{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;margin-bottom:16px}
+:where(#vg-tool-workspace) table.d th,:where(#vg-tool-workspace) table.d td{border:1px solid var(--line);padding:5px 7px;text-align:center}
+:where(#vg-tool-workspace) table.d th{background:#F0F4F2;font-weight:600;color:var(--ink)}
+:where(#vg-tool-workspace) table.d td:first-child,:where(#vg-tool-workspace) table.d th:first-child{text-align:left}
+:where(#vg-tool-workspace) table.d tbody tr:nth-child(even){background:#FAFCFA}
+:where(#vg-tool-workspace) .tblwrap{overflow-x:auto}
+:where(#vg-tool-workspace) h3.sec{font-family:var(--disp);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);
+  margin:18px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--amber)}
+
+/* ---------- Kol satırları ---------- */
+/* Direk şeridi — Excel'deki alt sekmeler gibi; her sekme bir direğin tam durumudur */
+:where(#vg-tool-workspace) .direkler{display:flex;flex-wrap:wrap;gap:4px;align-items:center;max-width:1180px;margin:0 auto;padding:10px 16px 0}
+:where(#vg-tool-workspace) .direkler .dsek{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-bottom:none;
+  background:#F1F4F3;color:var(--ink-2);border-radius:3px 3px 0 0;padding:6px 9px;
+  font-family:var(--mono);font-size:12px;cursor:pointer;line-height:1}
+:where(#vg-tool-workspace) .direkler .dsek.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+:where(#vg-tool-workspace) .direkler .dsek .ad{outline:none;min-width:1ch;padding:1px 2px;border-radius:2px}
+:where(#vg-tool-workspace) .direkler .dsek.on .ad{cursor:text}
+:where(#vg-tool-workspace) .direkler .dsek.on .ad:hover{background:rgba(255,255,255,.14)}
+:where(#vg-tool-workspace) .direkler .dsek.on .ad:focus{background:#fff;color:var(--ink);box-shadow:0 0 0 2px var(--amber)}
+:where(#vg-tool-workspace) .direkler .dsek .gorev{opacity:.75;white-space:pre}
+:where(#vg-tool-workspace) .direkler .dsek .sil{border:0;background:none;color:inherit;opacity:.55;cursor:pointer;font-size:13px;line-height:1;padding:0 1px}
+:where(#vg-tool-workspace) .direkler .dsek .sil:hover{opacity:1;color:var(--red)}
+:where(#vg-tool-workspace) .direkler .ekle{border:1px dashed var(--line);background:#fff;color:var(--ink-2);border-radius:3px;
+  padding:6px 10px;font-family:var(--mono);font-size:12px;cursor:pointer}
+@media print{ :where(#vg-tool-workspace) .direkler{display:none} }
+:where(#vg-tool-workspace) .arm{display:grid;grid-template-columns:26px 1.4fr 78px 1fr 30px;gap:7px;align-items:center;margin-bottom:7px}
+:where(#vg-tool-workspace) .arm .cz{font-family:var(--mono);font-size:10.5px;color:var(--mut);text-align:center;white-space:nowrap;display:none}
+:where(#vg-tool-workspace) #g_arms.ara .arm .cz{display:block}
+:where(#vg-tool-workspace) #g_arms.ara .arm{grid-template-columns:26px 1.4fr 72px 52px 1fr 30px}
+
+/* --- "Arasındaki açı": kutu iki kolun tam sınırına oturur (Excel'deki birleşik
+   hücre gibi). 1. kolun yönü ayrı alandan girildiğinden ilk satırda kutu yoktur. */
+:where(#vg-tool-workspace) #g_arms.ara .arm .a_a{transform:translateY(-50%);position:relative;z-index:1;
+  background:#FDF6E9;border-color:#E3C489;text-align:center}
+:where(#vg-tool-workspace) #g_arms.ara .arm:first-child .a_a{visibility:hidden;pointer-events:none}
+:where(#vg-tool-workspace) #g_arms.ara .arm .a_a::after{content:""}
+/* sınır çizgisi — açı kutusunun hangi iki satıra ait olduğunu gösterir */
+:where(#vg-tool-workspace) #g_arms.ara .arm+.arm{position:relative}
+:where(#vg-tool-workspace) #g_arms.ara .arm+.arm::before{content:"";position:absolute;left:33px;right:37px;top:-4px;
+  border-top:1px dashed #D9B87A;pointer-events:none;z-index:0}
+:where(#vg-tool-workspace) .armhead.ara>div:nth-child(3){color:#8A6A22}
+:where(#vg-tool-workspace) .arm .idx{font-family:var(--mono);font-size:12px;color:#fff;background:var(--ink-2);text-align:center;
+  border-radius:2px;padding:6px 0}
+:where(#vg-tool-workspace) .arm .del{border:1px solid var(--line);background:#fff;color:var(--red);border-radius:2px;cursor:pointer;
+  font-size:15px;line-height:1;padding:6px 0}
+:where(#vg-tool-workspace) #g_arms.oto .a_m,:where(#vg-tool-workspace) .armhead.oto>div:nth-child(4){display:none}
+:where(#vg-tool-workspace) #g_arms.oto .arm,:where(#vg-tool-workspace) .armhead.oto{grid-template-columns:26px 1fr 88px 30px !important}
+:where(#vg-tool-workspace) #g_arms.oto.ara .arm{grid-template-columns:26px 1fr 78px 50px 30px !important}
+:where(#vg-tool-workspace) .armhead{display:grid;grid-template-columns:26px 1.4fr 78px 1fr 30px;gap:7px;font-size:10px;color:var(--mut);
+  text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;font-weight:600}
+@media(max-width:640px){
+  :where(#vg-tool-workspace) .arm,:where(#vg-tool-workspace) .armhead{grid-template-columns:22px 1fr 62px 1fr 26px;gap:5px;font-size:11px}
+}
+:where(#vg-tool-workspace) svg.diag{width:100%;height:auto;display:block;background:#FBFCFB;border:1px solid var(--line);border-radius:2px}
+
+:where(#vg-tool-workspace) footer.sig{max-width:1180px;margin:0 auto;padding:0 16px 30px;font-size:11px;color:var(--mut);font-family:var(--mono)}
+
+:where(#vg-tool-workspace) .diagwrap{margin:12px 0}
+
+/* ================= MOBİL ================= */
+@media (max-width:640px){
+  #vg-tool-workspace{font-size:14px;-webkit-text-size-adjust:100%}
+  :where(#vg-tool-workspace) .topbar{padding:11px 14px;gap:10px}
+  :where(#vg-tool-workspace) .topbar :is(h1,.vg-original-title){font-size:16px;letter-spacing:.04em}
+  :where(#vg-tool-workspace) .topbar .sub{font-size:10px}
+  :where(#vg-tool-workspace) .mark{margin-left:0;text-align:left;font-size:10px;width:100%;border-top:1px solid rgba(255,255,255,.15);padding-top:8px}
+  :where(#vg-tool-workspace) nav.tabs button{font-size:12px;padding:12px 13px}
+  :where(#vg-tool-workspace) main{padding:12px 10px 48px}
+  :where(#vg-tool-workspace) .grid{gap:12px}
+  :where(#vg-tool-workspace) .card .body{padding:12px}
+  :where(#vg-tool-workspace) .f{grid-template-columns:1fr;gap:5px;margin-bottom:12px}
+  :where(#vg-tool-workspace) .f label{font-size:12px}
+  :where(#vg-tool-workspace) select,:where(#vg-tool-workspace) input[type=number],:where(#vg-tool-workspace) input[type=text]{padding:11px 10px;font-size:16px}  /* iOS zoom engeli */
+  :where(#vg-tool-workspace) .radio{flex-direction:column;gap:7px}
+  :where(#vg-tool-workspace) .radio label{padding:10px 12px;font-size:13px}
+  :where(#vg-tool-workspace) .btn{width:100%;padding:13px 16px;text-align:center}
+  :where(#vg-tool-workspace) section.tab .btnrow{flex-direction:row;flex-wrap:wrap;gap:8px}
+  :where(#vg-tool-workspace) section.tab .btnrow .btn{width:auto;flex:1 1 46%;padding:12px 6px;font-size:12px}
+  :where(#vg-tool-workspace) section.tab .btnrow .btn:first-child{flex-basis:100%}
+  :where(#vg-tool-workspace) .btn.sec{width:100%}
+  :where(#vg-tool-workspace) .btn.sm{width:auto}
+  :where(#vg-tool-workspace) .btnrow{flex-direction:column}
+  :where(#vg-tool-workspace) .rbig .val{font-size:22px}
+  :where(#vg-tool-workspace) .pick{grid-template-columns:1fr;gap:8px}
+  :where(#vg-tool-workspace) .rline{font-size:12px;gap:8px}
+  :where(#vg-tool-workspace) .steps{font-size:11px}
+  :where(#vg-tool-workspace) table.d{font-size:11px}
+  :where(#vg-tool-workspace) table.d th,:where(#vg-tool-workspace) table.d td{padding:4px 5px}
+  :where(#vg-tool-workspace) .tblwrap{-webkit-overflow-scrolling:touch}
+  :where(#vg-tool-workspace) .tesisgrid{grid-template-columns:1fr 1fr;gap:9px}
+  :where(#vg-tool-workspace) #tesis .btnrow{flex-direction:row;flex-wrap:wrap;gap:7px}
+  :where(#vg-tool-workspace) #tesis .btn{width:auto;flex:1 1 30%;padding:11px 8px;font-size:12px}
+  :where(#vg-tool-workspace) .kayitbilgi{flex-basis:100%;text-align:center}
+  :where(#vg-tool-workspace) .arm .idx,:where(#vg-tool-workspace) .arm .del{padding:9px 0}
+  :where(#vg-tool-workspace) .diagwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  :where(#vg-tool-workspace) .diagwrap svg.diag{min-width:0}          /* kaydırma yerine ekrana sığdır */
+  :where(#vg-tool-workspace) .arm select,:where(#vg-tool-workspace) .arm input{font-size:14px;padding:7px 6px}
+}
+@media (max-width:380px){
+  :where(#vg-tool-workspace) .topbar :is(h1,.vg-original-title){font-size:14px}
+  :where(#vg-tool-workspace) .rbig .val{font-size:19px}
+}
+
+:where(#vg-tool-workspace) #basimAlani{display:none}
+:where(#vg-tool-workspace) .bsayfa{break-after:page;page-break-after:always}
+:where(#vg-tool-workspace) .bsayfa:last-child{break-after:auto;page-break-after:auto}
+:where(#vg-tool-workspace) .bbas{font-family:var(--mono);font-size:8.5pt;color:#0B3A3C;border-bottom:0.8pt solid #0B3A3C;
+  padding-bottom:2pt;margin:0 0 5pt;font-weight:700}
+/* ================= YAZDIRMA — A4 ================= */
+@page{ size:A4 landscape; margin:10mm 10mm; }
+@media print{
+  #vg-tool-workspace,#vg-tool-workspace{background:#fff;font-size:7.9pt;line-height:1.3;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  :where(#vg-tool-workspace) nav.tabs,:where(#vg-tool-workspace) .btnrow,:where(#vg-tool-workspace) footer.sig,:where(#vg-tool-workspace) .mark{display:none !important}
+  /* Tüm direkler basılırken sayfa akışı #basimAlani'ndan gelir */
+  body.tumBasim :where(#vg-tool-workspace) main{display:none !important}
+  body.tumBasim :where(#vg-tool-workspace) #basimAlani{display:block !important}
+  body.tumBasim :where(#vg-tool-workspace) #basimAlani section.tab{display:block !important}
+  body:not(.tumBasim) :where(#vg-tool-workspace) #basimAlani{display:none !important}
+  :where(#vg-tool-workspace) .topbar{background:#fff;color:#000;border-bottom:1.2pt solid #0B3A3C;padding:0 0 3pt;margin-bottom:5pt;display:block}
+  :where(#vg-tool-workspace) .topbar :is(h1,.vg-original-title){color:#0B3A3C;font-size:11.5pt;margin:0}
+  :where(#vg-tool-workspace) .topbar .sub{color:#444;font-size:7.5pt}
+  :where(#vg-tool-workspace) #tesis{display:none !important}
+  :where(#vg-tool-workspace) .tesisyaz{display:block !important;font-family:var(--mono);font-size:8pt;color:#111;margin-top:2pt}
+  :where(#vg-tool-workspace) .printinfo{display:block !important;font-family:var(--mono);font-size:7.5pt;color:#444;margin-top:3pt}
+  :where(#vg-tool-workspace) main{max-width:none;padding:0;margin:0;width:100%;overflow:visible}
+  #vg-tool-workspace{width:100%}
+  :where(#vg-tool-workspace) section.tab{display:none}
+  :where(#vg-tool-workspace) section.tab.on{display:block}
+
+  :where(#vg-tool-workspace) .grid{display:grid;grid-template-columns:26% 1fr;gap:5mm;align-items:start;width:100%}
+  :where(#vg-tool-workspace) .grid>*{min-width:0}
+  :where(#vg-tool-workspace) .card{border:0.6pt solid #7A8A87;border-radius:0}
+  :where(#vg-tool-workspace) .rout>*{break-inside:avoid;page-break-inside:avoid}
+  :where(#vg-tool-workspace) .card>h2{background:#EEF2F0;padding:3pt 6pt;font-size:8pt;border-bottom:0.6pt solid #7A8A87}
+  :where(#vg-tool-workspace) .card .body{padding:5pt}
+  :where(#vg-tool-workspace) .f{grid-template-columns:42% 1fr;gap:3pt 5pt;margin-bottom:3pt}
+  :where(#vg-tool-workspace) .f label{font-size:8pt}
+  :where(#vg-tool-workspace) select,:where(#vg-tool-workspace) input[type=number],:where(#vg-tool-workspace) input[type=text]{padding:1.5pt 3pt;font-size:8.5pt;border:0.5pt solid #9AA8A5;
+    appearance:none;-webkit-appearance:none;background:#fff}
+  :where(#vg-tool-workspace) .radio label{padding:2pt 4pt;font-size:8pt}
+  /* Yönerge metinleri baskıya girmez — sayfayı taşıran başlıca yer burası */
+  :where(#vg-tool-workspace) .hint,:where(#vg-tool-workspace) .genelbilgi{display:none !important}
+
+  :where(#vg-tool-workspace) .rout{font-size:8.5pt}
+  :where(#vg-tool-workspace) .rline{padding:0.9pt 0}
+  :where(#vg-tool-workspace) .rbig{background:#fff;color:#0B3A3C;border:1pt solid #0B3A3C;padding:2.5pt 5pt;margin:3pt 0}
+  :where(#vg-tool-workspace) .rbig .lbl{color:#444;font-size:7pt}
+  :where(#vg-tool-workspace) .rbig .val{color:#0B3A3C;font-size:12pt;line-height:1.05}
+  :where(#vg-tool-workspace) .pick{grid-template-columns:1fr 1fr;gap:4pt;margin-top:4pt}
+  /* elle direk seçildiyse baskıda yalnızca o görünür */
+  body.elleSecim :where(#vg-tool-workspace) .pick:not(.manuelkart){display:none !important}
+  :where(#vg-tool-workspace) .manuelkart .pk{border-width:1pt !important}
+  :where(#vg-tool-workspace) .manuelkart .pk .v{font-size:13pt}
+  :where(#vg-tool-workspace) .pk{padding:4pt 5pt;background:#fff;border:0.6pt solid #9AA8A5}
+  :where(#vg-tool-workspace) .pk .t{font-size:7pt}
+  :where(#vg-tool-workspace) .pk .v{font-size:11pt}
+  :where(#vg-tool-workspace) .pk .n{font-size:7pt}
+  :where(#vg-tool-workspace) .warn,:where(#vg-tool-workspace) .err,:where(#vg-tool-workspace) .ok{padding:2pt 3.5pt;font-size:6.6pt;margin-top:2.5pt;background:#fff;border-left:2pt solid #0B3A3C;color:#222}
+  /* Hesap dökümü uzun olduğundan sayfayı taşırır; varsayılan olarak basılmaz.
+     "Baskıya hesap dökümünü de ekle" seçilirse body.dokumVar ile görünür.   */
+  :where(#vg-tool-workspace) .steps{display:none}
+  body.dokumVar :where(#vg-tool-workspace) .steps{display:block;font-size:6.4pt;padding:2pt 3.5pt;margin-top:3pt;
+    background:#fff;border:0.5pt solid #9AA8A5}
+  /* Çizim boyutu içerik yoğunluğuna göre: sayfada yer varsa büyük basılır.
+     Yoğun sayfalarda hesap kartı "orta"/"dar" sınıfını kendisi ekler.        */
+  :where(#vg-tool-workspace) svg.diag{width:100%;max-width:118mm;margin:0 auto;background:#fff;border:0.5pt solid #9AA8A5}
+  :where(#vg-tool-workspace) .diagwrap.orta svg.diag{max-width:100mm}
+  :where(#vg-tool-workspace) .diagwrap.dar  svg.diag{max-width:70mm}
+  /* Küçülen çizimde yazılar okunaklı kalsın diye SVG metinleri oransal büyütülür */
+  :where(#vg-tool-workspace) svg.diag text{font-size:12.5px !important}
+  /* Sayfa taşarsa bloklar bölünmeden bir sonraki sayfaya bütün geçsin */
+  :where(#vg-tool-workspace) .rout>*,:where(#vg-tool-workspace) .pick,:where(#vg-tool-workspace) table.d,:where(#vg-tool-workspace) .diagwrap,:where(#vg-tool-workspace) .warn,:where(#vg-tool-workspace) .err,:where(#vg-tool-workspace) .ok{break-inside:avoid;page-break-inside:avoid}
+  :where(#vg-tool-workspace) .diagwrap{margin:2pt 0}
+  :where(#vg-tool-workspace) table.d{font-size:6.6pt;margin-bottom:3pt}
+  :where(#vg-tool-workspace) table.d th,:where(#vg-tool-workspace) table.d td{padding:1.4pt 2.4pt;border:0.5pt solid #9AA8A5}
+  :where(#vg-tool-workspace) table.d th{background:#EEF2F0}
+  :where(#vg-tool-workspace) .tblwrap{overflow:visible}
+  /* Branşman/tevzi çıktısında kol tablosu ve diyagram daha derli toplu dursun */
+  :where(#vg-tool-workspace) #tab-g .grid,:where(#vg-tool-workspace) section.tab .grid{align-items:start}
+  :where(#vg-tool-workspace) .armhead,:where(#vg-tool-workspace) #g_arms .arm{font-size:6.8pt;margin-bottom:2.5pt}
+  :where(#vg-tool-workspace) #g_arms .arm .idx,:where(#vg-tool-workspace) #g_arms .arm .del{padding:2pt 0}
+  :where(#vg-tool-workspace) #g_arms .arm select,:where(#vg-tool-workspace) #g_arms .arm input{padding:1pt 2pt;font-size:7.2pt}
+  :where(#vg-tool-workspace) .direkler{display:none !important}
+  :where(#vg-tool-workspace) h3.sec{font-size:8.5pt;margin:7pt 0 3pt}
+  :where(#vg-tool-workspace) #tab-tb table.d{break-inside:auto}
+}
+:where(#vg-tool-workspace) .printinfo{display:none}
+</style>
+<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=736601cefb51"><script src="/js/vg-shell.js?v=f8bab0eb2f0c" defer></script><script src="/js/voltguard-auth.js?v=5ea8a8c73e4b" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=6609af196d62"></head>
+<body data-vg-tool="direk-tepe-kuvveti" data-vg-title="Direk Tepe Kuvveti" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[&quot;voltguard:direk-tepe-kuvveti:sonayEnerji_agDirekTepeKuvveti_direkler_v1&quot;,&quot;voltguard:direk-tepe-kuvveti:sonayEnerji_agDirekTepeKuvveti_v1&quot;]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+<header data-vg-no-print class="vg-header doc-header" id="vgHeader">
+  <div class="vg-header__bar vg-wrap">
+    <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+      <span class="logo-mark" aria-hidden="true">
+        <span class="logo-mark__volt">VOLT</span>
+        <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+        <span class="logo-mark__guard">GUARD</span>
+      </span>
+      <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+    </a>
+    <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+    <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+      <ul class="vg-nav__list">
+        <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+        <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+        <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+        <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+          <ul class="vg-dd__menu" id="vgDdKaynaklar">
+            <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+            <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+            <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+            <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+            <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+          </ul>
+        </li>
+        <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+        <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+      </ul>
+      <div class="vg-nav__foot">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </nav>
+    <div class="vg-actions">
+      <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+      <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+    </div>
+  </div>
+  <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+</header><div id="main" tabindex="-1"><div id="vg-top"><div class="vg-topline"><nav class="vg-links" aria-label="Araç menüsü"><a class="vg-back" href="../#araclar">← Tüm araçlar</a><a class="vg-back" href="/hesaplama-araclari/">Pratik hesaplar →</a><a class="vg-back" href="/">VoltGuard ana sayfa ↗</a></nav></div><p class="vg-crumb">Dağıtım şebekesi / Direk Tepe Kuvveti</p><h1>Direk Tepe Kuvveti</h1><p class="vg-description">AG ve OG direkleri için yük durumlarını ve bileşke kuvvetleri hesaplayın.</p><details><summary>Girdiler, sonuçlar ve hesap yöntemi</summary><div class="vg-method"><strong>Girdiler:</strong> Direk, iletken, hat açıları ve yük durumu.<br><strong>Çıktılar:</strong> Tepe kuvveti, yük bileşenleri ve çizim.<br><strong>Yöntem:</strong> İletken çekmesi, rüzgâr ve hat açılarının direğe etkisi. <a href="../yontem/">Kaynak ve geçerlilik bilgileri →</a></div></details></div><div id="vg-tool-workspace">
+
+<header class="topbar">
+  <div>
+    <h2 class="vg-original-title">AG-OG Direk Tepe Kuvveti Simülatörü</h2>
+    <div class="sub">İletken tertiplerine göre direk tipi seçimi · TEDAŞ / EKAT metodu</div>
+    <div class="printinfo" id="printinfo"></div>
+    <div class="tesisyaz" id="tesisyaz"></div>
+  </div>
+  <div class="mark">
+    <b>Baki SONAY</b><br>Elektrik-Elektronik Mühendisi<br>VoltGuard · Hesap Araçları 2026
+  </div>
+</header>
+
+<nav class="direkler" id="direkler"></nav>
+<nav class="tabs" id="tabs">
+  <button data-t="t"  class="on">Taşıyıcı (T)</button>
+  <button data-t="kt">Köşede Taşıyıcı (KT)</button>
+  <button data-t="d">Durdurucu (D)</button>
+  <button data-t="kd">Köşede Durdurucu (KD)</button>
+  <button data-t="n">Nihayet (N)</button>
+  <button data-t="g">Branşman / Tevzi — Vektörel</button>
+  <button data-t="tb">Tablolar</button>
+</nav>
+
+<div id="basimAlani" aria-hidden="true"></div>
+<main>
+
+<div class="card" id="tesis">
+  <h2>Tesis bilgileri</h2>
+  <div class="body">
+    <div class="tesisgrid">
+      <div><label for="ts_trafo">Trafo adı</label><input type="text" id="ts_trafo" placeholder="örn. Güzelyalı TR-3"></div>
+      <div><label for="ts_kol">Trafo kolu</label><input type="text" id="ts_kol" placeholder="örn. A"></div>
+      <div><label for="ts_no">Direk numarası</label><input type="text" id="ts_no" placeholder="örn. 15" oninput="direkTazele()"></div>
+      <div><label for="ts_direk">Seçilen direk</label><select id="ts_direk"></select></div>
+      <div><label for="sebeke">Şebeke tipi</label>
+        <select id="sebeke" onchange="sebekeDegisti()">
+          <option value="ag" selected>AG şebekesi</option>
+          <option value="mus">Müşterek — AG + YG</option>
+        </select></div>
+
+    </div>
+    <div class="btnrow" style="margin-top:10px;align-items:center">
+      <button class="btn" onclick="yazdir()" title="Bütün direkleri arka arkaya bas">Yazdır — tüm direkler</button>
+      <button class="btn sec" onclick="kaydet()" title="Bütün direkleri bu tarayıcıya kaydet">Kaydet</button>
+      <button class="btn sec" onclick="farkliKaydet()" title="Bütün direkleri tek HTML dosyası olarak indir">Farklı kaydet</button>
+      <button class="btn sec sm" onclick="tumunuSifirla()"
+        title="Kaydedilen bütün direkleri siler ve boş tek bir direkle yeniden başlar">Tümünü sıfırla</button>
+      <label class="chk" style="margin-left:6px"><input type="checkbox" id="pr_dokum"> Baskıya hesap dökümünü de ekle</label>
+      <span id="kayit_bilgi" class="kayitbilgi"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAŞIYICI ============ -->
+<section class="tab on" id="tab-t">
+ <div class="grid">
+  <div class="card">
+    <h2>Giriş — Taşıyıcı direk</h2>
+    <div class="body">
+      <p class="hint">Taşıyıcı direkte belirleyici yük, hatta dik rüzgâr yüküdür. Sağ veya sol açıklıklardan <b>biri bile 40 m'yi geçiyorsa</b> 50 m, aksi hâlde 40 m sütunundaki P<sub>w</sub> alınır. Müşterek hatta ΣP<sub>w</sub> = P<sub>w</sub>(YG) + 0,81 × P<sub>w</sub>(AG) olur.</p>
+      <div class="f"><label>Buz yükü bölgesi</label>
+        <select id="t_bolge"><option value="0">1. Bölge</option><option value="1" selected>2. Bölge</option><option value="2">3. Bölge</option><option value="3">4. Bölge</option></select></div>
+      <div class="f"><label>İletken grubu</label><select id="t_set"></select></div>
+      <div class="f"><label>İletken tertibi</label><select id="t_tertip"></select></div>
+      <div class="f"><label>Sol açıklık a₁ (m)</label><input type="number" id="t_a1" value="34" min="1" step="1"></div>
+      <div class="f"><label>Sağ açıklık a₂ (m)</label><input type="number" id="t_a2" value="40" min="1" step="1"></div>
+      <div class="btnrow">
+        <button class="btn" onclick="hesapT()">Hesapla</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Sonuç</h2>
+    <div class="body rout" id="t_out"><p class="hint" style="border-color:var(--line)">Değerleri girip <b>Hesapla</b>'ya basın.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ KÖŞEDE TAŞIYICI ============ -->
+<section class="tab" id="tab-kt">
+ <div class="grid">
+  <div class="card">
+    <h2>Giriş — Köşede taşıyıcı direk</h2>
+    <div class="body">
+      <p class="hint">İletkenlerin en büyük çekme kuvvetlerinin bileşkesine göre seçilir:
+      <b>R = 2·T<sub>max</sub>·cos(α/2) = n·T<sub>max</sub></b>. Direk, kuvvetli ekseni açıortay üzerinde olacak şekilde tesis edilir.</p>
+      <div class="f"><label>Buz yükü bölgesi</label>
+        <select id="kt_bolge"><option value="0">1. Bölge</option><option value="1">2. Bölge</option><option value="2" selected>3. Bölge</option><option value="3">4. Bölge</option></select></div>
+      <div class="f"><label>İletken grubu</label><select id="kt_set"></select></div>
+      <div class="f"><label>İletken tertibi</label><select id="kt_tertip"></select></div>
+      <div class="f"><label>Köşe açısı α (°)</label><input type="number" id="kt_alfa" value="153" min="60" max="180" step="1"></div>
+      <div class="f"><label>Ortalama açıklık a<sub>w</sub> (m)</label><input type="number" id="kt_aw" value="40" min="1" step="1"></div>
+      <div class="btnrow">
+        <button class="btn" onclick="hesapKT()">Hesapla</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Sonuç</h2>
+    <div class="body rout" id="kt_out"><p class="hint" style="border-color:var(--line)">Değerleri girip <b>Hesapla</b>'ya basın.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ DURDURUCU ============ -->
+<section class="tab" id="tab-d">
+ <div class="grid">
+  <div class="card">
+    <h2>Giriş — Hatta durdurucu direk</h2>
+    <div class="body">
+      <div class="f"><label>Durum</label>
+        <div class="radio">
+          <label><input type="radio" name="d_mod" value="ayni" checked onchange="dMod()"> İletken tipi değişmiyor</label>
+          <label><input type="radio" name="d_mod" value="fark" onchange="dMod()"> İletken tipi değişiyor</label>
+        </div>
+      </div>
+      <div class="f"><label>Buz yükü bölgesi</label>
+        <select id="d_bolge"><option value="0">1. Bölge</option><option value="1" selected>2. Bölge</option><option value="2">3. Bölge</option><option value="3">4. Bölge</option></select></div>
+      <div class="f" id="d_halrow" style="display:none"><label>Durdurulan iletkenler</label>
+        <select id="d_hal" onchange="hesapD()">
+          <option value="tum">AG + YG birlikte</option>
+          <option value="yg">Yalnız YG</option>
+        </select></div>
+      <div class="f"><label>İletken grubu</label><select id="d_set"></select></div>
+
+      <div id="d_ayni">
+        <p class="hint">İletken tipi aynı, yalnızca <b>sayı</b> değişiyorsa dengelenmeyen iletkenler nihayet gibi çalışır:
+        <b>R = fark adedi × T<sub>max</sub>(tek iletken)</b>. Fark otomatik bulunur; sağ taraf listesi sol tarafla aynı iletken tipini içeren tertiplerle sınırlanır.</p>
+        <div class="f"><label>Sol taraf tertibi</label><select id="d_t1"></select></div>
+        <div class="f"><label>Sağ taraf tertibi</label><select id="d_t2"></select></div>
+      </div>
+
+      <div id="d_fark" style="display:none">
+        <p class="hint">İletken tipi değişiyorsa, küçük taraf Çizelge:12'ye göre zayıflatılır:
+        <b>R = T<sub>max,büyük</sub> − k · T<sub>max,küçük</sub></b>.</p>
+        <div class="f"><label>Sol taraf tertibi</label><select id="d_f1"></select></div>
+        <div class="f"><label>Sağ taraf tertibi</label><select id="d_f2"></select></div>
+      </div>
+
+      <div class="f"><label>a₁ / a₂ (m)</label>
+        <div style="display:flex;gap:8px"><input type="number" id="d_a1" value="50" step="1"><input type="number" id="d_a2" value="50" step="1"></div></div>
+      <div class="btnrow">
+        <button class="btn" onclick="hesapD()">Hesapla</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Sonuç</h2>
+    <div class="body rout" id="d_out"><p class="hint" style="border-color:var(--line)">Değerleri girip <b>Hesapla</b>'ya basın.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ KÖŞEDE DURDURUCU ============ -->
+<section class="tab" id="tab-kd">
+ <div class="grid">
+  <div class="card">
+    <h2>Giriş — Köşede durdurucu direk</h2>
+    <div class="body">
+      <p class="hint">EKAT'a göre 1., 4. ve 5. Varsayım ayrı ayrı hesaplanır; <b>en büyük bileşkeye</b> göre direk tipi seçilir.
+      Açıortay bileşeni R<sub>b</sub>=(T₁+T₂)·cos(α/2), dik bileşen R<sub>d</sub>=(T₁−T₂)·sin(α/2).
+      Müşterek şebekede α &gt; 120° ise direk açıortayda dikilir, beton direk 11 m'dir (MDK).
+      α ≤ 120° ise hat durdurulmak zorundadır: beton direk <b>12 m</b> alınır ve cerler travers yüksekliklerine göre tepeye indirgenir.</p>
+      <div class="f"><label>Buz yükü bölgesi</label>
+        <select id="kd_bolge"><option value="0" selected>1. Bölge</option><option value="1">2. Bölge</option><option value="2">3. Bölge</option><option value="3">4. Bölge</option></select></div>
+      <div class="f"><label>İletken grubu</label><select id="kd_set"></select></div>
+      <div class="f" id="kd_halrow" style="display:none"><label>Köşe hali</label>
+        <select id="kd_hal" onchange="doldurManuelDirek();hesapKD()">
+          <option value="mdk">Durdurucu köşe — AG + YG birlikte durduruluyor</option>
+          <option value="mdkyg">Durdurucu köşe — yalnız YG durduruluyor (AG taşıyıcı)</option>
+          <option value="mn">Taşıyıcı köşe — hat sürekli (zayıflatma yok)</option>
+        </select></div>
+      <div class="f"><label>Geliş tertibi (T₁)</label><select id="kd_t1"></select></div>
+      <div class="f"><label>Gidiş tertibi (T₂)</label><select id="kd_t2"></select></div>
+      <div class="f"><label>Köşe açısı α (°)</label><input type="number" id="kd_alfa" value="140" min="20" max="180" step="1"></div>
+      <div class="f"><label>Ortalama açıklık (m)</label><input type="number" id="kd_aw" value="50" step="1"></div>
+      <div class="btnrow">
+        <button class="btn" onclick="hesapKD()">Hesapla</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Sonuç — üç varsayım</h2>
+    <div class="body rout" id="kd_out"><p class="hint" style="border-color:var(--line)">Değerleri girip <b>Hesapla</b>'ya basın.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ NİHAYET ============ -->
+<section class="tab" id="tab-n">
+ <div class="grid">
+  <div class="card">
+    <h2>Giriş — Nihayet direği</h2>
+    <div class="body">
+      <p class="hint">İletkenlerin en büyük çekme kuvvetine eşit <b>tek yanlı</b> kuvvete göre seçilir: R = T<sub>max</sub>.
+      Ayrıca 4. Varsayıma göre zayıf eksende P<sub>w</sub>/2 tahkiki yapılır.</p>
+      <div class="f"><label>Buz yükü bölgesi</label>
+        <select id="n_bolge"><option value="0">1. Bölge</option><option value="1">2. Bölge</option><option value="2">3. Bölge</option><option value="3" selected>4. Bölge</option></select></div>
+      <div class="f"><label>İletken grubu</label><select id="n_set"></select></div>
+      <div class="f"><label>İletken tertibi</label><select id="n_tertip"></select></div>
+      <div class="f" id="n_halrow" style="display:none"><label>Müşterek hal</label>
+        <select id="n_hal">
+          <option value="mn">YG taşıyıcı — AG nihayet (MN)</option>
+          <option value="tam">AG + YG birlikte nihayet</option>
+        </select></div>
+      <div class="f"><label>Son açıklık a (m)</label><input type="number" id="n_a" value="40" step="1"></div>
+      <div class="btnrow">
+        <button class="btn" onclick="hesapN()">Hesapla</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Sonuç</h2>
+    <div class="body rout" id="n_out"><p class="hint" style="border-color:var(--line)">Değerleri girip <b>Hesapla</b>'ya basın.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ GENEL VEKTÖREL ============ -->
+<section class="tab" id="tab-g">
+ <div class="grid">
+  <div class="card">
+    <h2>Giriş — Kollar</h2>
+    <div class="body">
+      <p class="hint">Branşman, tevzi ve çok kollu direkler için genel çözüm. Her kol için <b>açı</b> (0° = sağ/doğu, saat yönünün tersi)
+      ve tertip girilir. Kuvvet, kolun kendi istikametinde direği çeker. Sonuçta ΣP<sub>x</sub>, ΣP<sub>y</sub> ve bileşke bulunur.</p>
+      <div class="f"><label>Buz yükü bölgesi</label>
+        <select id="g_bolge"><option value="0">1. Bölge</option><option value="1">2. Bölge</option><option value="2" selected>3. Bölge</option><option value="3">4. Bölge</option></select></div>
+      <div class="f"><label>İletken grubu</label><select id="g_set"></select></div>
+      <div class="f"><label>Hesap yöntemi</label>
+        <select id="g_yontem" onchange="gYontemTog()">
+          <option value="oto" selected>Otomatik — branşman / tevzi ayrımı EKAT'a göre</option>
+          <option value="el">Elle — her kolun kuvvet durumunu ben seçeyim</option>
+        </select></div>
+
+      <div class="f"><label>Açı girişi</label>
+        <select id="g_acikip" onchange="gAciKipTog()">
+          <option value="ara" selected>Kollar arası açı — bir önceki kola göre</option>
+          <option value="mut">Mutlak açı — 0° = sağ, saat yönünün tersi</option>
+        </select></div>
+      <div class="f" id="g_tabanrow"><label>1. kolun yönü (°)</label>
+        <input type="number" id="g_taban" value="180" step="5" oninput="gAciCoz()"></div>
+      <p class="hint" id="g_acinot">Açı kutusu <b>iki kolun arasına</b> oturur ve o iki hat arasındaki açıyı gösterir —
+        kitaptaki krokide okunduğu gibi. Saat yönünün tersi pozitif; ters yönde dönmek için eksi girin.
+        Her satırın sağındaki küçük değer, o kolun çözülen mutlak yönüdür.</p>
+      <div class="armhead oto" id="g_armhead"><div>#</div><div>Tertip</div><div id="g_achead">Ara açı °</div><div>Kuvvet durumu</div><div></div></div>
+      <div id="g_arms" class="oto"></div>
+      <div class="btnrow"><button class="btn sec sm" onclick="armEkle()">+ Kol ekle</button></div>
+
+      <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
+      <label class="chk"><input type="checkbox" id="g_wind" onchange="gWindTog()"> 4. Varsayım — rüzgâr yükünü dahil et</label>
+      <div class="f" id="g_windrow" style="display:none"><label>Rüzgâr yönü (°)</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="number" id="g_wdir" value="90" step="5">
+          <select id="g_wa"><option value="40">a = 40 m</option><option value="50" selected>a = 50 m</option></select>
+        </div></div>
+      <div class="f" id="g_brarow"><label>Branşman kolunda ilk direk açıklığı (m)</label>
+        <input type="number" id="g_bra_a" value="40" step="1" min="0"></div>
+      <div class="f"><label>Demir direk kuvvetli ekseni</label>
+        <select id="g_eks" onchange="gEksTog()">
+          <option value="auto">Otomatik — branşmanda ana hat açıortayı</option>
+          <optgroup label="Branşman direğinde A-tipi yerleşimi">
+            <option value="dik">Ana hatta dik</option>
+            <option value="bra">Branşman istikametinde</option>
+            <option value="ana">Ana hat üzerinde</option>
+            <option value="acio">Ana hat açıortayı</option>
+          </optgroup>
+          <option value="man">Elle gir</option>
+        </select></div>
+      <div class="f" id="g_eksrow" style="display:none"><label>Eksen açısı (°)</label><input type="number" id="g_eksa" value="0" step="5"></div>
+      <div class="btnrow">
+        <button class="btn" onclick="hesapG()">Hesapla</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Sonuç — kuvvet diyagramı</h2>
+    <div class="body rout" id="g_out"><p class="hint" style="border-color:var(--line)">Kolları girip <b>Hesapla</b>'ya basın.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- ============ TABLOLAR ============ -->
+<section class="tab" id="tab-tb">
+  <div class="card"><h2>Referans tabloları</h2><div class="body" id="tb_body"></div></div>
+</section>
+
+</main>
+
+<footer class="sig">
+  Hesap esası: TEDAŞ / EKAT Yönetmeliği ve İller Bankası tip proje değerleri. Direk tepe kuvvetleri ASTAŞ ve ESTON katalog değerleridir.
+  Sonuçlar proje müellifinin kontrolündedir. · Baki SONAY — Elektrik-Elektronik Mühendisi
+</footer>
+
+<script>
+"use strict";
+
+/* ==================================================================
+   VERİ TABANI
+   ================================================================== */
+
+/* İletken tertipleri.  n: toplam iletken sayısı,  pw:[40m,50m],
+   d:[1..4.bölge Tmax demir direk],  b:[1..4.bölge Tmax beton direk] */
+const SETS = {
+  al: { ad:"Alüminyum — klasik tertipler", tip:"al", tertipler:{
+    "2R"        :{n:2, pw:[25,31],   d:[140,200,294,296],   b:[140,216,296,296]},
+    "3R"        :{n:3, pw:[37,47],   d:[210,300,441,444],   b:[210,324,444,444]},
+    "4R"        :{n:4, pw:[50,62],   d:[280,400,588,592],   b:[280,432,592,592]},
+    "5R"        :{n:5, pw:[62,78],   d:[350,500,735,740],   b:[350,540,740,740]},
+    /* 6R · 3P+2R/P · 3A+2R/P · 3O+2R/A — demir cerleri TEDAŞ El Kitabı-5'ten.
+       Beton cerleri ve rüzgâr yükleri, bir Rose iletkeni eklenerek türetildi:
+       Rose başına  d[70,100,147,148] · b[70,108,148,148] · pw[12,16].
+       Türetim, demir sütununda 6R · 3A+2R/P · 3O+2R/A için El Kitabı-5 ile birebir
+       doğrulandı (3P+2R/P'de yalnız 1B ve 4B'de 1 kg fark var; bu, 3P+R/P satırındaki
+       mevcut 490/908 ↔ 489/907 sapmasının aynısıdır). 3O+R/A'nın beton tablosu
+       olmadığından 3O+2R/A için de beton yoktur. */
+    "6R"        :{n:6, pw:[74,94],   d:[420,600,882,888],   b:[420,648,888,888]},
+    "3P+R/P"    :{n:5, pw:[83,104],  d:[490,654,899,908],   b:[490,692,944,908]},
+    "3P+2R/P"   :{n:6, pw:[95,120],  d:[559,754,1046,1055], b:[560,800,1092,1056]},
+    "3Po+R/P"   :{n:5, pw:[89,112],  d:[535,695,968,956],   b:[535,740,1007,956]},
+    "3A+R/P"    :{n:5, pw:[97,121],  d:[586,748,1025,1010], b:[586,794,1067,1010]},
+    "3A+2R/P"   :{n:6, pw:[109,137], d:[656,848,1172,1158], b:[656,902,1215,1158]},
+    "3Ph+R/Po"  :{n:5, pw:[107,134], d:[661,834,1135,1086], b:[661,873,1178,1086]},
+    "3O+R/A"    :{n:5, pw:[112,140], d:[713,923,1223,1167], b:null},
+    "3O+2R/A"   :{n:6, pw:[124,156], d:[783,1023,1370,1315], b:null},
+
+    /* AER — ALPEK askı telli havai kablo. Rüzgâr yükü açıklıktan bağımsız tek değer,
+       maksimum çekme kuvvetleri demir ve beton direkler için aynıdır. */
+    /* AER · ALPEK askı telli kablolar — cer ve rüzgâr değerleri ALPEK veri tabanından.
+       pw sütunu ham AG rüzgâr yüküdür; müşterekte 0,81 indirgemesi pwAl() içinde uygulanır.
+       n = faz + aydınlatma damarı + nötr (Çizelge:12 zayıflatması bundan okunur).
+       Addaki '+25', '+70' gibi son kesit NÖTR damarıdır; ALPEK'te taşıyıcı nötr aynı
+       zamanda askı görevini görür, çekmeyi o taşır. Aydınlatma damarı ('/16') cere
+       etki etmez — 1x16+25 ile 1x16/16+25 aynı cer değerlerine sahiptir.
+       Örnek: 1x16/16+25 → 1 faz + 1 aydınlatma + 1 nötr = 3 iletken. */
+    "1x10+16 ALP"         :{aer:1, n:2, pw:[20,20], d:[80,100,120,120],               b:[80,100,120,120]},
+    "1x16+25 ALP"         :{aer:1, n:2, pw:[25,25], d:[100.9,118.42,153,151.1],       b:[100.9,118.42,153,151.1]},
+    "1x25+35 ALP"         :{aer:1, n:2, pw:[30,30], d:[125,136.45,172.9,167.85],      b:[125,136.45,172.9,167.85]},
+    "1x35+50 ALP"         :{aer:1, n:2, pw:[35,35], d:[150.65,163.55,205.3,194.45],   b:[150.65,163.55,205.3,194.45]},
+    "1x50+70 ALP"         :{aer:1, n:2, pw:[40,40], d:[185.62,191.95,238.93,220.35],  b:[185.62,191.95,238.93,220.35]},
+    "1x70+95 ALP"         :{aer:1, n:2, pw:[50,50], d:[230.4,234.7,286.95,256.2],     b:[230.4,234.7,286.95,256.2]},
+    "1x10/16+16 ALP"      :{aer:1, n:3, pw:[20,20], d:[80,100,120,120],               b:[80,100,120,120]},
+    "1x16/16+25 ALP"      :{aer:1, n:3, pw:[25,25], d:[100.9,118.42,153,151.1],       b:[100.9,118.42,153,151.1]},
+    "1x25/16+35 ALP"      :{aer:1, n:3, pw:[30,30], d:[125,136.45,172.9,167.85],      b:[125,136.45,172.9,167.85]},
+    "1x35/16+50 ALP"      :{aer:1, n:3, pw:[35,35], d:[150.65,163.55,205.3,194.45],   b:[150.65,163.55,205.3,194.45]},
+    "1x50/16+70 ALP"      :{aer:1, n:3, pw:[40,40], d:[185.62,191.95,238.93,220.35],  b:[185.62,191.95,238.93,220.35]},
+    "1x70/16+95 ALP"      :{aer:1, n:3, pw:[50,50], d:[230.4,234.7,286.95,256.2],     b:[230.4,234.7,286.95,256.2]},
+    "2x10 ALP"            :{aer:1, n:2, pw:[35,35], d:[110,137,181,173],              b:[110,137,181,173]},
+    "2x16 ALP"            :{aer:1, n:2, pw:[40,40], d:[134.5,157.9,204,201.5],        b:[134.5,157.9,204,201.5]},
+    "3x10 ALP"            :{aer:1, n:3, pw:[40,40], d:[165.4,205.55,270.8,268],       b:[165.4,205.55,270.8,268]},
+    "3x16+25 ALP"         :{aer:1, n:4, pw:[44,44], d:[201.8,236.84,306,302.2],       b:[201.8,236.84,306,302.2]},
+    "3x25+35 ALP"         :{aer:1, n:4, pw:[53.45,53.45], d:[250,272.9,345.8,335.7],        b:[250,272.9,345.8,335.7]},
+    "3x35+50 ALP"         :{aer:1, n:4, pw:[63.6,63.6], d:[301.3,327.1,410.6,388.9],      b:[301.3,327.1,410.6,388.9]},
+    "3x50+70 ALP"         :{aer:1, n:4, pw:[72.4,72.4], d:[371.24,383.9,477.86,440.7],    b:[371.24,383.9,477.86,440.7]},
+    "3x70+95 ALP"         :{aer:1, n:4, pw:[84.25,84.25], d:[460.8,469.4,573.9,512.4],      b:[460.8,469.4,573.9,512.4]},
+    "3x95+95 ALP"         :{aer:1, n:4, pw:[84.25,84.25], d:[460.8,469.4,573.9,512.4],      b:[460.8,469.4,573.9,512.4]},
+    "3x120+95 ALP"        :{aer:1, n:4, pw:[84.25,84.25], d:[460.8,469.4,573.9,512.4],      b:[460.8,469.4,573.9,512.4]},
+    "3x16/16+25 ALP"      :{aer:1, n:5, pw:[45.3,45.3], d:[201.8,236.84,306,302.2],       b:[201.8,236.84,306,302.2]},
+    "3x25/16+35 ALP"      :{aer:1, n:5, pw:[53.45,53.45], d:[250,272.9,345.8,335.7],        b:[250,272.9,345.8,335.7]},
+    "3x35/16+50 ALP"      :{aer:1, n:5, pw:[63.6,63.6], d:[301.3,327.1,410.6,388.9],      b:[301.3,327.1,410.6,388.9]},
+    "3x50/16+70 ALP"      :{aer:1, n:5, pw:[72.4,72.4], d:[371.24,383.9,477.86,440.7],    b:[371.24,383.9,477.86,440.7]},
+    "3x70/16+95 ALP"      :{aer:1, n:5, pw:[84.25,84.25], d:[460.8,469.4,573.9,512.4],      b:[460.8,469.4,573.9,512.4]},
+    "3x95/16+95 ALP"      :{aer:1, n:5, pw:[84.25,84.25], d:[460.8,469.4,573.9,512.4],      b:[460.8,469.4,573.9,512.4]},
+    "3x120/16+95 ALP"     :{aer:1, n:5, pw:[84.25,84.25], d:[460.8,469.4,573.9,512.4],      b:[460.8,469.4,573.9,512.4]},
+    /* ÇİFT DEVRE — aynı direkte iki ALPEK demeti. Rüzgâr yükü, maksimum cer (demir/beton)
+       ve iletken sayısı tek devrenin iki katıdır; Çizelge:12 zayıflatması ikilenen
+       toplam iletken sayısından okunur. */
+    "2x(1x10+16) ALP"   :{aer:1, n:4, pw:[40,40], d:[160,200,240,240], b:[160,200,240,240]},
+    "2x(1x16+25) ALP"   :{aer:1, n:4, pw:[50,50], d:[201.8,236.84,306,302.2], b:[201.8,236.84,306,302.2]},
+    "2x(1x25+35) ALP"   :{aer:1, n:4, pw:[60,60], d:[250,272.9,345.8,335.7], b:[250,272.9,345.8,335.7]},
+    "2x(1x35+50) ALP"   :{aer:1, n:4, pw:[70,70], d:[301.3,327.1,410.6,388.9], b:[301.3,327.1,410.6,388.9]},
+    "2x(1x50+70) ALP"   :{aer:1, n:4, pw:[80,80], d:[371.24,383.9,477.86,440.7], b:[371.24,383.9,477.86,440.7]},
+    "2x(1x70+95) ALP"   :{aer:1, n:4, pw:[100,100], d:[460.8,469.4,573.9,512.4], b:[460.8,469.4,573.9,512.4]},
+    "2x(1x10/16+16) ALP" :{aer:1, n:6, pw:[40,40], d:[160,200,240,240], b:[160,200,240,240]},
+    "2x(1x16/16+25) ALP" :{aer:1, n:6, pw:[50,50], d:[201.8,236.84,306,302.2], b:[201.8,236.84,306,302.2]},
+    "2x(1x25/16+35) ALP" :{aer:1, n:6, pw:[60,60], d:[250,272.9,345.8,335.7], b:[250,272.9,345.8,335.7]},
+    "2x(1x35/16+50) ALP" :{aer:1, n:6, pw:[70,70], d:[301.3,327.1,410.6,388.9], b:[301.3,327.1,410.6,388.9]},
+    "2x(1x50/16+70) ALP" :{aer:1, n:6, pw:[80,80], d:[371.24,383.9,477.86,440.7], b:[371.24,383.9,477.86,440.7]},
+    "2x(1x70/16+95) ALP" :{aer:1, n:6, pw:[100,100], d:[460.8,469.4,573.9,512.4], b:[460.8,469.4,573.9,512.4]},
+    "2x(2x10) ALP"      :{aer:1, n:4, pw:[70,70], d:[220,274,362,346], b:[220,274,362,346]},
+    "2x(2x16) ALP"      :{aer:1, n:4, pw:[80,80], d:[269,315.8,408,403], b:[269,315.8,408,403]},
+    "2x(3x10) ALP"      :{aer:1, n:6, pw:[80,80], d:[330.8,411.1,541.6,536], b:[330.8,411.1,541.6,536]},
+    "2x(3x16+25) ALP"   :{aer:1, n:8, pw:[88,88], d:[403.6,473.68,612,604.4], b:[403.6,473.68,612,604.4]},
+    "2x(3x25+35) ALP"   :{aer:1, n:8, pw:[106.9,106.9], d:[500,545.8,691.6,671.4], b:[500,545.8,691.6,671.4]},
+    "2x(3x35+50) ALP"   :{aer:1, n:8, pw:[127.2,127.2], d:[602.6,654.2,821.2,777.8], b:[602.6,654.2,821.2,777.8]},
+    "2x(3x50+70) ALP"   :{aer:1, n:8, pw:[144.8,144.8], d:[742.48,767.8,955.72,881.4], b:[742.48,767.8,955.72,881.4]},
+    "2x(3x70+95) ALP"   :{aer:1, n:8, pw:[168.5,168.5], d:[921.6,938.8,1147.8,1024.8], b:[921.6,938.8,1147.8,1024.8]},
+    "2x(3x95+95) ALP"   :{aer:1, n:8, pw:[168.5,168.5], d:[921.6,938.8,1147.8,1024.8], b:[921.6,938.8,1147.8,1024.8]},
+    "2x(3x120+95) ALP"  :{aer:1, n:8, pw:[168.5,168.5], d:[921.6,938.8,1147.8,1024.8], b:[921.6,938.8,1147.8,1024.8]},
+    "2x(3x16/16+25) ALP" :{aer:1, n:10, pw:[90.6,90.6], d:[403.6,473.68,612,604.4], b:[403.6,473.68,612,604.4]},
+    "2x(3x25/16+35) ALP" :{aer:1, n:10, pw:[106.9,106.9], d:[500,545.8,691.6,671.4], b:[500,545.8,691.6,671.4]},
+    "2x(3x35/16+50) ALP" :{aer:1, n:10, pw:[127.2,127.2], d:[602.6,654.2,821.2,777.8], b:[602.6,654.2,821.2,777.8]},
+    "2x(3x50/16+70) ALP" :{aer:1, n:10, pw:[144.8,144.8], d:[742.48,767.8,955.72,881.4], b:[742.48,767.8,955.72,881.4]},
+    "2x(3x70/16+95) ALP" :{aer:1, n:10, pw:[168.5,168.5], d:[921.6,938.8,1147.8,1024.8], b:[921.6,938.8,1147.8,1024.8]},
+    "2x(3x95/16+95) ALP" :{aer:1, n:10, pw:[168.5,168.5], d:[921.6,938.8,1147.8,1024.8], b:[921.6,938.8,1147.8,1024.8]},
+    "2x(3x120/16+95) ALP" :{aer:1, n:10, pw:[168.5,168.5], d:[921.6,938.8,1147.8,1024.8], b:[921.6,938.8,1147.8,1024.8]}
+  }}
+};
+
+/* Tek iletkenler — maksimum çekme kuvvetleri ve rüzgâr yükleri */
+const ILETKEN = {
+  "Rose"   :{pw:[12.418,15.523], d:[70,100,147,148],  b:[70,108,148,148]},
+  "Pansy"  :{pw:[17.614,22.018], d:[105,139,188,190], b:[105,146,199,190]},
+  "Poppy"  :{pw:[19.768,24.710], d:[120,150,211,206], b:[120,162,220,206]},
+  "Aster"  :{pw:[22.176,27.720], d:[137,170,230,224], b:[137,180,240,224]},
+  "Phlox"  :{pw:[24.900,31.126], d:[157,194,259,244], b:[157,201,270,244]},
+  "Oxlip"  :{pw:[25.761,32.089], d:[169,218,282,265], b:null}
+};
+
+/* Tertiplerin iletken bileşimi — sayı farkını otomatik bulmak için */
+const KOMP = {
+  "2R"      :{Rose:2},
+  "3R"      :{Rose:3},
+  "4R"      :{Rose:4},
+  "5R"      :{Rose:5},
+  "6R"      :{Rose:6},
+  "3P+R/P"  :{Pansy:4, Rose:1},
+  "3P+2R/P" :{Pansy:4, Rose:2},
+  "3Po+R/P" :{Poppy:3, Rose:1, Pansy:1},
+  "3A+R/P"  :{Aster:3, Rose:1, Pansy:1},
+  "3A+2R/P" :{Aster:3, Rose:2, Pansy:1},
+  "3Ph+R/Po":{Phlox:3, Rose:1, Poppy:1},
+  "3O+R/A"  :{Oxlip:3, Rose:1, Aster:1},
+  "3O+2R/A" :{Oxlip:3, Rose:2, Aster:1}
+};
+
+/* A-tipi demir direkler — [rüzgârsız Pk, rüzgârsız Pz, rüzgârlı Pk, rüzgârlı Pz] */
+const ATIP = {
+  "8I" :{rsK:300, rsZ:90,  rlK:231, rlZ:44},
+  "10I":{rsK:500, rsZ:160, rlK:443, rlZ:91},
+  "12I":{rsK:900, rsZ:230, rlK:786, rlZ:144},
+  "10U":{rsK:700, rsZ:170, rlK:597, rlZ:95},
+  "12U":{rsK:1200,rsZ:250, rlK:1086,rlZ:170}
+};
+const ATIP_SIRA = ["8I","10I","10U","12I","12U"];
+
+/* Kafes demir direkler */
+const KAFES = {"K1":{rs:1000,rl:871},"K2":{rs:2000,rl:1848},"K3":{rs:3000,rl:2828},
+               "K4":{rs:4000,rl:3817},"K5":{rs:5000,rl:4806}};
+const KAFES_SIRA = ["K1","K2","K3","K4","K5"];
+
+/* SBA beton direk tipleri (tepe kuvveti = tip × 100 kg) */
+const BETON_TIP = [2,3,4,5,6,8,10,12,14,16,18,20,25,30];
+const BETON_BOY = "9,30";
+
+/* Çizelge:12 — iletken toplam sayısına göre tek yanlı zayıflama yüzdeleri */
+function zayiflamaYuzde(n){
+  if(n<=2) return 100;
+  if(n===3) return 75;
+  if(n===4) return 60;
+  if(n===5) return 50;
+  return 40;
+}
+
+const BOLGE_AD = ["1. Bölge","2. Bölge","3. Bölge","4. Bölge"];
+
+
+/* ==================================================================
+   MÜŞTEREK (AG + YG) VERİLERİ  —  Yunusoğlu, Bölüm 4
+   ================================================================== */
+const YG_SIRA = ["3x3AWG","3x1/0AWG","3x3/0AWG","3x266MCM","3x477MCM"];
+
+/* YG tertipleri: rüzgâr yükü (Tablo 4-2) ve yalnız YG maksimum cerleri (Tablo 4-4 / 4-6) */
+const YG = {
+  /* d[2.Bölge] = 321: TEDAŞ El Kitabı-5 esas alındı. Yunusoğlu Tablo 4-4 burada 381
+     der (ve 3.7.6 Örnek 3'ü de 381 ile çözer); iki yayın bu tek hücrede ayrışıyor.
+     Beton (Tablo 4-6) değiştirilmedi. */
+  "3x3AWG"   :{pw:[45,57],  d:[273,321,525,525],   b:[273,405,552,525]},
+  "3x1/0AWG" :{pw:[64,80],  d:[411,525,705,678],   b:[411,555,747,678]},
+  "3x3/0AWG" :{pw:[74,93],  d:[513,662,870,810],   b:[513,702,924,810]},
+  "3x266MCM" :{pw:[86,107], d:[660,854,1092,984],  b:[660,906,1170,984]},
+  "3x477MCM" :{pw:[115,144],d:[1014,1218,1500,1281],b:[1014,1299,1608,1281]}
+};
+
+/* Müşterek hat maksimum cerleri — sıra: 3R, 5R, 3P+R/P, 3Po+R/P, 3A+R/P, 3Ph+R/Po, 3O+R/A */
+const MUS_AG_SIRA = ["3R","5R","3P+R/P","3Po+R/P","3A+R/P","3Ph+R/Po","3O+R/A"];
+const MUS_D = {   /* Tablo 4-7 — demir direklerde */
+ /* 3x3AWG 2. Bölge sütunu OG=321 ile yenilendi (El Kitabı-5). Tablo 4-7 sırasıyla
+    624 · 786 · 911 · 944 · 987 · 1057 · 1128 der. Diğer 4 kesit Tablo 4-7 ile birebir. */
+ "3x3AWG"  :[[443,564,882,885],[557,726,1120,1125],[669,851,1253,1260],[706,884,1309,1300],[748,927,1355,1343],[808,997,1444,1405],[851,1068,1515,1470]],
+ "3x1/0AWG":[[581,768,1062,1038],[695,930,1300,1278],[807,1055,1433,1413],[844,1088,1489,1453],[886,1131,1535,1496],[949,1201,1624,1558],[989,1272,1696,1623]],
+ "3x3/0AWG":[[683,905,1227,1170],[797,1067,1465,1410],[909,1192,1598,1545],[946,1225,1654,1585],[988,1268,1700,1628],[1048,1338,1789,1690],[1091,1409,1861,1755]],
+ "3x266MCM":[[830,1097,1449,1344],[944,1259,1587,1584],[1056,1384,1820,1719],[1093,1417,1875,1759],[1135,1460,1922,1802],[1195,1530,2011,1864],[1238,1601,2083,1929]],
+ "3x477MCM":[[1184,1461,1897,1641],[1298,1623,2095,1881],[1410,1748,2226,2016],[1447,1781,2284,2056],[1489,1824,2330,2099],[1549,1894,2419,2161],[1592,1965,2491,2226]]
+};
+const MUS_B = {   /* Tablo 4-8 — beton direklerde (3O+R/A tertibi tabloda yok) */
+ "3x3AWG"  :[[443,667,911,885],[557,842,1151,1125],[669,965,1316,1260],[706,1004,1367,1300],[748,1048,1416,1343],[808,1112,1506,1405],null],
+ "3x1/0AWG":[[581,817,1106,1038],[695,992,1346,1278],[807,1115,1511,1413],[844,1154,1562,1453],[886,1198,1611,1496],[949,1262,1701,1558],null],
+ "3x3/0AWG":[[683,964,1283,1170],[797,1139,1523,1410],[909,1262,1688,1545],[946,1301,1739,1585],[988,1345,1788,1628],[1048,1409,1878,1690],null],
+ "3x266MCM":[[830,1168,1529,1344],[944,1343,1769,1584],[1056,1466,1934,1719],[1093,1505,1985,1759],[1135,1549,2034,1802],[1195,1613,2124,1864],null],
+ "3x477MCM":[[1184,1561,1967,1641],[1298,1736,2207,1881],[1410,1859,2372,2016],[1447,1898,2423,2056],[1489,1942,2472,2099],[1549,2006,2562,2161],null]
+};
+
+/* A-tipi müşterek demir direkler (Tablo 4-13) */
+const MATIP = {
+  '8U"' :{rsK:350, rsZ:94,  rlK:258, rlZ:17},
+  '10I"':{rsK:350, rsZ:121, rlK:243, rlZ:42},
+  '10U"':{rsK:550, rsZ:132, rlK:436, rlZ:45},
+  '12I"':{rsK:750, rsZ:175, rlK:619, rlZ:81},
+  '12U"':{rsK:1000,rsZ:194, rlK:868, rlZ:99}
+};
+/* Sıra kapasiteye göredir. 8U" kitabın tablosunda yer almaz (Excel kaynaklı);
+   10I" ile aynı kuvvetli eksen değerine sahip olduğundan otomatik seçimde 10I" öne alınmıştır,
+   8U" listeden elle seçilebilir. */
+const MATIP_SIRA = ['10I"','8U"','10U"','12I"','12U"'];
+
+/* Kafes müşterek demir direkler (Tablo 4-14) — rüzgârlı değerleri verilmemiştir */
+const MKAFES = {'K1"':{rs:831,rl:831},'K2"':{rs:1330,rl:1330},'K3"':{rs:2004,rl:2004},
+                'K4"':{rs:2783,rl:2783},'K5"':{rs:4432,rl:4432}};
+const MKAFES_SIRA = ['K1"','K2"','K3"','K4"','K5"'];
+const MBETON_BOY = "11";
+const AG_YG_IND = 0.81;   /* AG cerlerinin YG seviyesine indirgeme faktörü (11 m direk) */
+
+/* --- Köşede durdurucu beton direk (müşterek) ---------------------------
+   α ≤ 120° olan köşede hat durdurulmak zorundadır. YG hem A-kolu hem B-kolu
+   istikametine nihayet bağlandığından iki ayrı YG traversi gerekir; alttaki
+   travers üsttekinin 1 m altına monte edilir. Bu düzen 11 m direğe sığmadığından
+   beton direk 12 m seçilmek zorundadır.  Serbest boy = 12 − 1,5 = 10,5 m.
+       üst YG traversi (A-kolu) : tepede        → k = 1,000
+       alt YG traversi (B-kolu) : 9,5 m         → k = 9,5/10,5 = 0,904
+       AG traversi              : 7,5 m         → k = 7,5/10,5 = 0,714
+   Bu nedenle cerler MUS_B tablosundan ham alınmaz; YG ve AG ayrıştırılıp
+   kendi travers yüksekliklerinin katsayısı ile indirgenir.                */
+/* Some açısı eşiği. α > 120°  → MDK: direk açıortayda, beton 11 m (Böl. 3.7.5.1).
+   α ≤ 120°  → hat durdurulmak zorunda; YG iki yöne nihayet, beton 12 m.        */
+const KD_ACI_ESIK = 120;
+const MBETON_BOY_KD = "12";
+const KD_H_SERBEST  = 10.5;
+const KD_K_YG_ALT   = 9.5/KD_H_SERBEST;   /* 0,904 */
+const KD_K_AG       = 7.5/KD_H_SERBEST;   /* 0,714 */
+
+/* ------- mod yardımcıları ------- */
+function musMod(){ const e=$("sebeke"); return !!e && e.value==="mus"; }
+/* Müşterek tertip anahtarı: "YG#AG"  (AG boşsa yalnız YG hattı) */
+function musAyir(tp){
+  const i=(tp||"").indexOf("#");
+  return (i<0)? {yg:null, ag:tp||""} : {yg:tp.slice(0,i), ag:tp.slice(i+1)};
+}
+function tAd(tp){ if(!musMod()) return tp; const a=musAyir(tp);
+  if(a.yg) return musAd(a.yg,a.ag);
+  return a.ag? (a.ag+" (yalnız AG)") : tp; }
+function musAd(yg,ag){ return ag? (yg+"+"+(ag.indexOf("+")>=0? "("+ag+")" : ag)) : (yg+"  (yalnız YG)"); }
+/* Yalnız AG kolu: müşterek direkten yalnız AG iletkenleri ayrılıyor (branşman).
+   Cer AG traversi seviyesinde etkidiğinden 0,81 ile direk tepesine indirgenir. */
+function yalnizAG(tp){ const a=musAyir(tp); return (!a.yg && !!a.ag); }
+function musIndeks(ag){ return MUS_AG_SIRA.indexOf(ag); }
+/* Tablolarda gösterilecek YG tertibi: açık sekmenin tertibinden okunur */
+function ygT(){
+  const akt=document.querySelector("#tabs button.on");
+  const id={t:"t_tertip",kt:"kt_tertip",d:"d_t1",kd:"kd_t1",n:"n_tertip"}[akt? akt.dataset.t : "t"];
+  const e=id? $(id) : null;
+  const a=e? musAyir(e.value) : null;
+  return (a && a.yg)? a.yg : "3x3AWG";
+}
+function ATIPAKT(){ return musMod()? MATIP : ATIP; }
+function ATIPSIRAAKT(){ return musMod()? MATIP_SIRA : ATIP_SIRA; }
+function KAFESAKT(){ return musMod()? MKAFES : KAFES; }
+function KAFESSIRAAKT(){ return musMod()? MKAFES_SIRA : KAFES_SIRA; }
+function BETONBOY(kd){ return musMod()? (kd? MBETON_BOY_KD : MBETON_BOY) : BETON_BOY; }
+/* Köşede durdurucu 12 m kuralı yalnız müşterek şebekede ve YG'nin durdurulduğu
+   hallerde (mdk / mdkyg) geçerlidir; taşıyıcı köşede (mn) hat sürekli olduğundan
+   tek travers seviyesi yeterli, direk 11 m kalır. */
+function kdDurdurucuMu(){
+  if(!musMod()) return false;
+  const h=$("kd_hal"), a=$("kd_alfa");
+  if(a && +a.value > KD_ACI_ESIK) return false;   /* α > 120° → MDK, direk 11 m */
+  return !!h && (h.value==="mdk" || h.value==="mdkyg");
+}
+function kdBoyAktif(){
+  const akt=document.querySelector("#tabs button.on");
+  if(!akt) return false;
+  if(akt.dataset.t==="kd") return kdDurdurucuMu();
+  if(akt.dataset.t==="g")  return gMbYG();
+  return false;
+}
+/* Branşman sekmesinde 12 m beton gerekip gerekmediği (kuvvet hesabı yapmadan) */
+function gMbYG(){
+  if(!musMod()) return false;
+  const mut=gMutlakAcilar();
+  const kl=[...document.querySelectorAll("#g_arms .arm")].map(function(r,i){
+    return {tp:r.querySelector(".a_t").value, ac:mut[i]};
+  });
+  if(kl.length<3) return false;
+  const si=gSinifla(kl), anaIx=si.anaIx||[];
+  return kl.some((k,i)=>anaIx.indexOf(i)<0 && !!musAyir(k.tp).yg);
+}
+/* Beton direkte görev bazlı en küçük tip */
+function betonTaban(gorev){
+  if(musMod()) return (gorev==="tasiyici")? 3 : 6;
+  if(gorev==="tasiyici") return 3;
+  if(gorev==="durdurucu") return 5;
+  if(gorev==="bransman") return 8;
+  return 0;
+}
+
+/* ==================================================================
+   YARDIMCILAR
+   ================================================================== */
+const $ = id => document.getElementById(id);
+const rad = d => d*Math.PI/180;
+function fmt(x,dec){
+  if(x===null||x===undefined||isNaN(x)) return "—";
+  dec = (dec===undefined)?0:dec;
+  return Number(x).toFixed(dec).replace(".",",");
+}
+function fmtT(x){ return (x===null||x===undefined)?"—":(Math.abs(x-Math.round(x))<0.005? fmt(x,0):fmt(x,2)); }
+function pwSutun(a){ return (a<=40)?0:1; }   /* aw ≤ 40 → 40 m sütunu */
+
+function tmax(setKey,tertip,bolge,cins){
+  if(musMod()){
+    const a=musAyir(tertip);
+    if(!a.yg){          /* yalnız AG kolu → 0,81 x Tmax(AG) */
+      const g=a.ag? SETS[setKey].tertipler[a.ag] : null; if(!g) return null;
+      const gr=(cins==="beton")? (g.b||null) : g.d; if(!gr) return null;
+      return AG_YG_IND*gr[bolge];
+    }
+    if(!YG[a.yg]) return null;
+    if(!a.ag){ const y=YG[a.yg]; return (cins==="beton"? y.b : y.d)[bolge]; }
+    const i=musIndeks(a.ag);
+    if(i>=0){   /* kitap tablosunda yer alan tertipler (Tablo 4-7 / 4-8) */
+      const tab=(cins==="beton")? MUS_B[a.yg] : MUS_D[a.yg];
+      const arr=tab? tab[i] : null;
+      return arr? arr[bolge] : null;
+    }
+    /* AER (ALPEK) gibi tabloda olmayan tertipler:  P = Tmax(YG) + 0,81 x Tmax(AG)  */
+    const agT=SETS[setKey].tertipler[a.ag]; if(!agT) return null;
+    const agArr=(cins==="beton")? (agT.b||null) : agT.d; if(!agArr) return null;
+    const ygArr=(cins==="beton")? YG[a.yg].b : YG[a.yg].d;
+    return ygArr[bolge] + AG_YG_IND*agArr[bolge];
+  }
+  const t = SETS[setKey].tertipler[tertip];
+  if(!t) return null;
+  const arr = (cins==="beton") ? (t.b || t.d) : t.d;
+  return arr[bolge];
+}
+function betonVarMi(setKey,tertip){
+  if(musMod()){
+    const a=musAyir(tertip);
+    if(!a.yg){ const g=a.ag? SETS[setKey].tertipler[a.ag] : null; return !!(g && g.b); }
+    if(!a.ag) return true;
+    const i=musIndeks(a.ag);
+    if(i>=0) return !!(MUS_B[a.yg] && MUS_B[a.yg][i]);
+    const agT=SETS[setKey].tertipler[a.ag];
+    return !!(agT && agT.b);
+  }
+  const tt=SETS[setKey].tertipler[tertip];
+  return !!(tt && tt.b);
+}
+/* Toplam rüzgâr yükü: müşterekte  Pw(YG) + 0,81 x Pw(AG) */
+function pwAl(setKey,tertip,col){
+  if(musMod()){
+    const a=musAyir(tertip);
+    const agT=a.ag? SETS[setKey].tertipler[a.ag] : null;
+    if(!a.yg) return agT? AG_YG_IND*agT.pw[col] : 0;
+    if(!YG[a.yg]) return 0;
+    return YG[a.yg].pw[col] + (agT? AG_YG_IND*agT.pw[col] : 0);
+  }
+  const t=SETS[setKey].tertipler[tertip];
+  return t? t.pw[col] : 0;
+}
+/* Müşterek tertibin AG kısmı (yoksa null) */
+function agKismi(setKey,tertip){
+  const a=musAyir(tertip);
+  return (a.ag && SETS[setKey].tertipler[a.ag])? SETS[setKey].tertipler[a.ag] : null;
+}
+/* Köşede durdurucu — 12 m beton direkte bir kolun tepeye indirgenmiş cerı.
+   kYG: o kolun YG traversinin katsayısı (üst kol 1,000 · alt kol 0,904).
+   ygOnly: AG taşıyıcı olarak devam ediyorsa (mdkyg) AG cerleri bileşkeye girmez.
+   P = kYG · Tmax(YG) + 0,714 · Tmax(AG)        */
+function kdBetonP(setKey,tertip,bolge,kYG,ygOnly){
+  const a=musAyir(tertip);
+  if(!a.yg || !YG[a.yg] || !YG[a.yg].b) return null;
+  let P = kYG * YG[a.yg].b[bolge];
+  if(!ygOnly && a.ag){
+    const agT=SETS[setKey].tertipler[a.ag];
+    if(!agT || !agT.b) return null;
+    P += KD_K_AG * agT.b[bolge];
+  }
+  return P;
+}
+/* Çizelge:12 — zayıflatılan tarafta KALAN oran (kalan = 1 - zayıflama yüzdesi) */
+function kalanOran(n){ return 1 - zayiflamaYuzde(n)/100; }
+/* Direkteki toplam iletken sayısı (müşterekte YG'nin 3 iletkeni de sayılır) */
+function iletkenSay(setKey,tertip){
+  if(musMod()){ const t=agKismi(setKey,tertip); return (yalnizAG(tertip)?0:3) + (t? t.n : 0); }
+  const t=SETS[setKey].tertipler[tertip];
+  return t? t.n : 0;
+}
+
+/* Direk seçimleri ------------------------------------------------- */
+function secBeton(R,gorev,kd){
+  const taban=betonTaban(gorev||"");
+  for(const t of BETON_TIP){
+    if(t<taban) continue;
+    if(t*100 >= R) return {ad:BETONBOY(kd)+"/"+t, kap:t*100, taban:(t===taban && t*100>R)};
+  }
+  return null;
+}
+/* Rk: kuvvetli eksen bileşeni, Rz: zayıf eksen bileşeni, ruz: rüzgârlı mı */
+function secATip(Rk,Rz,ruz){
+  const T=ATIPAKT();
+  for(const k of ATIPSIRAAKT()){
+    const a=T[k];
+    const K = ruz? a.rlK : a.rsK, Z = ruz? a.rlZ : a.rsZ;
+    if(K>=Rk && Z>=Rz) return {ad:k, K:K, Z:Z};
+  }
+  return null;
+}
+function secKafes(R,ruz){
+  const T=KAFESAKT();
+  for(const k of KAFESSIRAAKT()){
+    const v = ruz? T[k].rl : T[k].rs;
+    if(v>=R) return {ad:k, kap:v};
+  }
+  return null;
+}
+
+/* Sonuç bileşenleri ---------------------------------------------- */
+function line(l,v){ return '<div class="rline"><span>'+l+'</span><b>'+v+'</b></div>'; }
+function big(l,v){ return '<div class="rbig"><div class="lbl">'+l+'</div><div class="val">'+v+'</div></div>'; }
+function pk(t,v,n){ return '<div class="pk"><div class="t">'+t+'</div><div class="v">'+v+'</div><div class="n">'+(n||"")+'</div></div>'; }
+
+/* ==================================================================
+   FORM DOLDURMA
+   ================================================================== */
+function doldurSet(sel,def){
+  const s=$(sel); s.innerHTML="";
+  for(const k in SETS){
+    const o=document.createElement("option"); o.value=k; o.textContent=SETS[k].ad; s.appendChild(o);
+  }
+  s.value = def || "al";
+}
+function tertipOpsiyon(setKey){
+  if(musMod()){
+    let h="";
+    YG_SIRA.forEach(function(yg){
+      h+='<optgroup label="'+yg+'">';
+      h+='<option value="'+yg+'#">'+musAd(yg,"")+'</option>';
+      MUS_AG_SIRA.forEach(function(ag){
+        if(!SETS[setKey].tertipler[ag]) return;
+        h+='<option value="'+yg+'#'+ag+'">'+musAd(yg,ag)+'</option>';
+      });
+      for(const ag in SETS[setKey].tertipler){
+        if(MUS_AG_SIRA.indexOf(ag)>=0) continue;   /* tablodakiler yukarıda listelendi */
+        h+='<option value="'+yg+'#'+ag+'">'+musAd(yg,ag)+'</option>';
+      }
+      h+='</optgroup>';
+    });
+    /* Yalnız AG kolu: MUS_D/MUS_B tablolarına bağlı olmadığından AG setindeki
+       TÜM tertipler (ALPEK/AER askı telli kablolar dahil) seçilebilir. */
+    let ci="", ae="";
+    for(const ag in SETS[setKey].tertipler){
+      const o='<option value="#'+ag+'">\u21B3 yalnız AG \u00B7 '+ag+'</option>';
+      if(SETS[setKey].tertipler[ag].aer) ae+=o; else ci+=o;
+    }
+    h+='<optgroup label="\u2500\u2500 YALNIZ AG · YG YOK \u2500\u2500 çıplak alüminyum">'+ci+'</optgroup>';
+    if(ae) h+='<optgroup label="\u2500\u2500 YALNIZ AG · YG YOK \u2500\u2500 AER · ALPEK askı telli">'+ae+'</optgroup>';
+    return h;
+  }
+  let a="",b="";
+  for(const k in SETS[setKey].tertipler){
+    const o='<option value="'+k+'">'+k+'</option>';
+    if(SETS[setKey].tertipler[k].aer) b+=o; else a+=o;
+  }
+  let h='<optgroup label="Çıplak alüminyum iletken">'+a+'</optgroup>';
+  if(b) h+='<optgroup label="AER — ALPEK askı telli kablo">'+b+'</optgroup>';
+  return h;
+}
+/* İki tertip yalnızca sayı farkıyla ayrılıyorsa uyumludur (iletken tipi değişmez) */
+function uyumluMu(a,bb){
+  if(a===bb) return true;
+  const k1=KOMP[a], k2=KOMP[bb];
+  if(!k1 || !k2) return false;
+  const t={}; Object.keys(k1).forEach(x=>t[x]=1); Object.keys(k2).forEach(x=>t[x]=1);
+  let arti=false, eksi=false;
+  Object.keys(t).forEach(function(c){
+    const f=(k1[c]||0)-(k2[c]||0);
+    if(f>0) arti=true; if(f<0) eksi=true;
+  });
+  return !(arti && eksi);
+}
+/* Aynı tip modunda sağ taraf listesi sol tarafa göre daraltılır */
+/* Tek uygulama: sağ taraf listesi dSagDoldur() tarafından kurulur. */
+function doldurT2Uyumlu(){ return dSagDoldur(); }
+
+/* İki tertip yalnızca iletken SAYISI bakımından mı farklı? */
+function uyumluTertip(t1,t2){
+  if(t1===t2) return true;
+  const k1=KOMP[t1], k2=KOMP[t2];
+  if(!k1 || !k2) return false;
+  const hepsi={}; Object.keys(k1).forEach(x=>hepsi[x]=1); Object.keys(k2).forEach(x=>hepsi[x]=1);
+  let arti=0, eksi=0;
+  Object.keys(hepsi).forEach(function(c){
+    const f=(k1[c]||0)-(k2[c]||0);
+    if(f>0) arti++; if(f<0) eksi++;
+  });
+  return !(arti>0 && eksi>0);
+}
+/* Sol tarafa göre sağ taraf listesini daralt */
+let musOncekiSol="";
+function dSagDoldur(){
+  const setKey=$("d_set").value, t1=$("d_t1").value, sel=$("d_t2"), eski=sel.value;
+  if(musMod()){   /* müşterekte her iki taraf da tüm hat tertiplerinden seçilebilir */
+    sel.innerHTML=tertipOpsiyon(setKey);
+    /* Sağ taraf, elle farklı seçilmediyse sol tarafı izler (iki yanda aynı hat olağan durumdur) */
+    const izle = (!eski || eski===musOncekiSol);
+    if(eski) sel.value=eski;
+    if(izle || sel.selectedIndex<0) sel.value=t1;
+    if(sel.selectedIndex<0) sel.selectedIndex=0;
+    musOncekiSol=t1;
+    return;
+  }
+  let o="";
+  for(const k in SETS[setKey].tertipler){
+    if(uyumluTertip(t1,k)) o+='<option value="'+k+'">'+k+'</option>';
+  }
+  sel.innerHTML=o;
+  if(eski && uyumluTertip(t1,eski)) sel.value=eski;
+  else if(t1==="5R") sel.value="3R";
+  else sel.value=t1;
+}
+function doldurTertip(setSel,tertipSel,def){
+  const setKey=$(setSel).value, s=$(tertipSel), eski=s.value;
+  s.innerHTML=tertipOpsiyon(setKey);
+  if(def) s.value=def;
+  else if(eski) s.value=eski;
+  if(s.selectedIndex<0) s.selectedIndex=0;
+}
+
+/* ==================================================================
+   1) TAŞIYICI
+   ================================================================== */
+function hesapT(){
+  const b=+$("t_bolge").value, sk=$("t_set").value, tp=$("t_tertip").value;
+  const a1=+$("t_a1").value, a2=+$("t_a2").value;
+  if(!(a1>0)||!(a2>0)){ $("t_out").innerHTML='<div class="err">Açıklıklar 0\'dan büyük olmalı.</div>'; return; }
+  const aw=(a1+a2)/2, enBuyuk=Math.max(a1,a2);
+  const col=pwSutun(enBuyuk), t=SETS[sk].tertipler[tp];
+  const Pw=pwAl(sk,tp,col);
+
+  const at=secATip(Pw,0,true);
+  const betonTip = BETONBOY()+"/3";
+  let h="";
+  h+=line("Bölge / tertip", BOLGE_AD[b]+" · "+tAd(tp));
+  h+=line("a<sub>w</sub> = (a₁+a₂)/2", fmt(aw,2)+" m");
+  h+=line("Belirleyici açıklık", "en büyük açıklık "+fmt(enBuyuk,2)+" m → "+(col?"50":"40")+" m sütunu");
+  h+=line("Toplam rüzgâr yükü P<sub>w</sub>", fmt(Pw)+" kg");
+  h+=big("Direk tepesine etkiyen kuvvet", fmt(Pw)+" kg");
+  h+=cizimSVG({
+    hatlar:[0,180],
+    hatEtiket:[{ac:180,txt:"a₁ = "+fmt(a1,1)+" m"},{ac:0,txt:"a₂ = "+fmt(a2,1)+" m"}],
+    kuvvetler:[],
+    R:{ac:90, F:Pw, lbl:"R = Pw = "+fmt(Pw)+" kg"},
+    eksen:{ac:90, lbl:"kuvvetli eksen (hatta dik)"},
+    direk: at? "A" : "kafes",
+    alt:"cerler iki yanda dengeli · belirleyici yük hatta dik rüzgâr"
+  });
+  h+='<div class="pick">';
+  h+=pk("Demir direk", at?at.ad:"—", at? ("Rüzgârlı kuvvetli eksen "+at.K+" kg ≥ "+fmt(Pw)+" kg")
+        : "Hiçbir A-tipi direk yetmiyor, kafes direk seçin.");
+  h+=pk("Beton direk", betonTip, musMod()? "Müşterek taşıyıcıda beton direk tipi tüm bölgelerde ve tertiplerde 11/3'tür."
+        : "AG taşıyıcıda beton direk tipi tüm tertipler için değişmez.");
+  h+='</div>';
+  h+=manuelBlok(Pw,0,Pw,true);
+  if(!musMod() && at && at.ad!=="8I") h+='<div class="warn">8I direği bu rüzgâr yükünü karşılamıyor; bir üst tip seçildi.</div>';
+  h+='<div class="steps">a_w = ('+fmt(a1,2)+' + '+fmt(a2,2)+') / 2 = '+fmt(aw,2)+' m\n'
+    +'Açıklıklardan biri 40 m\'yi geçtiğinde 50 m sütunu esas alınır → en büyük açıklık '+fmt(enBuyuk,2)+' m\n'
+    +'P_w ('+tAd(tp)+', '+(col?"50":"40")+' m) = '+fmtT(Pw)+' kg\n'
+    +'Taşıyıcıda A-tipi direğin RÜZGÂRLI kuvvetli eksen değeri esas alınır.\n'
+    +'Direk kuvvetli ekseni hatta DİK olacak şekilde tesis edilir.</div>';
+  $("t_out").innerHTML=h;
+}
+
+/* ==================================================================
+   2) KÖŞEDE TAŞIYICI
+   ================================================================== */
+function hesapKT(){
+  const b=+$("kt_bolge").value, sk=$("kt_set").value, tp=$("kt_tertip").value;
+  const al=+$("kt_alfa").value, aw=+$("kt_aw").value;
+  if(!(al>0&&al<=180)){ $("kt_out").innerHTML='<div class="err">α açısı 0–180° arasında olmalı.</div>'; return; }
+  const n=Math.round(2*Math.cos(rad(al/2))*100)/100;   /* kitaptaki zaviye faktörü tablosu 2 hanelidir */
+  const Td=tmax(sk,tp,b,"demir"), Tb=betonVarMi(sk,tp)?tmax(sk,tp,b,"beton"):null;
+  const Rd=n*Td, Rb=(Tb!==null)?n*Tb:null;
+  const col=pwSutun(aw), Pw=pwAl(sk,tp,col);
+  const PwA=Pw*Math.sin(rad(al/2));           /* açıortay yönündeki rüzgâr bileşeni */
+
+  const ruzKT = !musMod();   /* MKT'de rüzgârsız tepe kuvveti esas alınır (4.7.2) */
+  const at=secATip(Rd,0,ruzKT), kf=secKafes(Rd,ruzKT), bt=(Rb!==null)?secBeton(Rb,"tasiyici"):null;
+  let h="";
+  h+=line("Bölge / tertip", BOLGE_AD[b]+" · "+tAd(tp));
+  h+=line("Köşe açısı α", fmt(al)+"°");
+  h+=line("Zaviye faktörü n = 2·cos(α/2)", fmt(n,2));
+  h+=line("T<sub>max</sub> (demir / beton)", fmtT(Td)+" / "+(Tb!==null?fmtT(Tb):"—")+" kg");
+  h+=big("R = n · T<sub>max</sub>  (demir)", fmt(Rd,2)+" kg");
+  const kA=90+al/2, kB=90-al/2;
+  h+=cizimSVG({
+    hatlar:[kA,kB],
+    hatEtiket:[{ac:kA,txt:tAd(tp)+" · "+fmtT(Td)+" kg"},{ac:kB,txt:tAd(tp)+" · "+fmtT(Td)+" kg"}],
+    aciArc:{a:kB, b:kA, lbl:"α = "+fmt(al)+"°"},
+    aciortay:90,
+    kuvvetler:[{ac:kA,F:Td},{ac:kB,F:Td}],
+    R:{ac:90, F:Rd, lbl:"R = "+fmt(Rd)+" kg"},
+    eksen:{ac:90, lbl:"kuvvetli eksen = açıortay"},
+    direk: at? "A" : "kafes",
+    alt:"R = 2·Tmax·cos(α/2) = n·Tmax"
+  });
+  h+='<div class="pick">';
+  h+=pk("Demir direk", at?at.ad:(kf?kf.ad:"—"),
+        at? ((ruzKT?"Rüzgârlı":"Rüzgârsız")+" kuvvetli eksen "+at.K+" kg ≥ "+fmt(Rd,2)+" kg")
+          : (kf? ("A-tipi yetersiz → kafes "+kf.ad+" ("+kf.kap+" kg)") : "Yeterli direk bulunamadı."));
+  h+=pk(musMod()?"Beton direk (müşterek)":"Beton direk (SBA)", bt?bt.ad:"—",
+        bt? ("R = "+fmt(Rb,2)+" kg ≤ "+bt.kap+" kg") : "Bu tertip için beton direk cer tablosu yok.");
+  h+='</div>';
+  h+=manuelBlok(Rd,0,(Rb!==null?Rb:Rd),ruzKT);
+  h+='<div class="warn">Direk, kuvvetli ekseni <b>açıortay üzerinde</b> olacak şekilde tesis edilir. '
+    +'Açıortay yönündeki rüzgâr bileşeni P<sub>w</sub>·sin(α/2) = '+fmt(PwA)+' kg olup bileşke ile aynı yönde değilse ayrıca tahkik edilir.</div>';
+  h+='<div class="steps">n = 2·cos('+fmt(al/2,1)+'°) = '+fmt(n,2)+'\n'
+    +'R(demir) = '+fmt(n,2)+' × '+fmt(Td)+' = '+fmt(Rd,2)+' kg\n'
+    +(Rb!==null? ('R(beton) = '+fmt(n,2)+' × '+fmt(Tb)+' = '+fmt(Rb,2)+' kg\n'):'')
+    +'P_w ('+(col?"50":"40")+' m) = '+fmt(Pw)+' kg → açıortay bileşeni '+fmt(PwA)+' kg</div>';
+  $("kt_out").innerHTML=h;
+}
+
+/* ==================================================================
+   3) DURDURUCU
+   ================================================================== */
+function dMod(){
+  const m=document.querySelector('input[name=d_mod]:checked').value;
+  $("d_ayni").style.display = (m==="ayni")?"":"none";
+  $("d_fark").style.display = (m==="fark")?"":"none";
+}
+function hesapD(){
+  const b=+$("d_bolge").value, sk=$("d_set").value;
+  const m=document.querySelector('input[name=d_mod]:checked').value;
+  const a1=+$("d_a1").value, a2=+$("d_a2").value;
+  let Rd,Rb,adim,t1,t2,dengeli=false;
+
+  if(musMod()){
+    /* Müşterek durdurucuda EKAT Çizelge:12 zayıflatması daima uygulanır */
+    const hal=$("d_hal").value;
+    t1=$("d_t1").value; t2=$("d_t2").value;
+    if(!t1 || !t2 || tmax(sk,t1,b,"demir")===null || tmax(sk,t2,b,"demir")===null){
+      $("d_out").innerHTML='<div class="err">Sol ve sağ taraf tertipleri seçilmeden hesap yapılamaz.</div>'; return;
+    }
+    const yg1=musAyir(t1).yg, yg2=musAyir(t2).yg;
+    /* "Yalnız YG durduruluyor" hali iki tarafta da YG bulunmasını gerektirir */
+    const yalnizYG = (hal==="yg") && !!(yg1 && yg2);
+    const ygIptal  = (hal==="yg") && !yalnizYG;
+    const T1d = yalnizYG? YG[yg1].d[b] : tmax(sk,t1,b,"demir");
+    const T2d = yalnizYG? YG[yg2].d[b] : tmax(sk,t2,b,"demir");
+    const T1b = yalnizYG? YG[yg1].b[b] : (betonVarMi(sk,t1)? tmax(sk,t1,b,"beton"):null);
+    const T2b = yalnizYG? YG[yg2].b[b] : (betonVarMi(sk,t2)? tmax(sk,t2,b,"beton"):null);
+    const nIlet = yalnizYG? 3 : iletkenSay(sk, (T1d<=T2d)? t1 : t2);
+    const kk = kalanOran(nIlet);
+    Rd = Math.max(T1d,T2d) - kk*Math.min(T1d,T2d);
+    Rb = (T1b!==null && T2b!==null)? (Math.max(T1b,T2b) - kk*Math.min(T1b,T2b)) : null;
+    adim = (ygIptal? "UYARI: taraflardan birinde YG iletkeni yok (yalnız AG); \"yalnız YG durduruluyor\" "
+                   + "hali uygulanamadı, AG + YG birlikte durduruluyor kabul edildi.\n" : "")
+         + (yalnizYG? "Yalnız YG iletkenleri durduruluyor ("+yg1+", 3 iletken)\n"
+                    + "AG iletkenleri taşıyıcı olarak devam eder; rüzgâr yükleri hesaba dahildir.\n"
+                    : "AG + YG birlikte durduruluyor ("+nIlet+" iletken)\n")
+         + "Çizelge:12 → zayıflatılan tarafta kalan oran = "+fmt(kk,2)+"\n"
+         + "R(demir) = "+fmtT(Math.max(T1d,T2d))+" − "+fmt(kk,2)+"×"+fmtT(Math.min(T1d,T2d))+" = "+fmt(Rd,2)+" kg\n"
+         + (Rb!==null? "R(beton) = "+fmt(Rb,2)+" kg\n" : "");
+  }else if(m==="ayni"){
+    t1=$("d_t1").value; t2=$("d_t2").value;
+    if(t1===t2){
+      dengeli=true; Rd=0; Rb=betonVarMi(sk,t1)?0:null;
+      adim = 'Her iki tarafta '+tAd(t1)+' → iletken sayısı ve tipi aynı.\n'
+           + 'Hat doğrusal olduğundan cerler dengelenir, bileşke cer R = 0 kg.\n';
+    }else{
+      const k1=KOMP[t1], k2=KOMP[t2];
+      if(!k1 || !k2){
+        $("d_out").innerHTML='<div class="err">Bu tertiplerin iletken bileşimi tanımlı değil (AER kablolar tek parçadır). '
+          +'Farklı iki tertip için <b>İletken tipi değişiyor</b> seçeneğini kullanın.</div>'; return;
+      }
+      const tipler={}; Object.keys(k1).forEach(x=>tipler[x]=1); Object.keys(k2).forEach(x=>tipler[x]=1);
+      let arti=0, eksi=0, fark=[];
+      Object.keys(tipler).forEach(function(c){
+        const f=(k1[c]||0)-(k2[c]||0);
+        if(f>0) arti++; if(f<0) eksi++;
+        if(f!==0) fark.push({c:c, n:Math.abs(f), yon:(f>0?"sol":"sağ")});
+      });
+      if(arti>0 && eksi>0){
+        $("d_out").innerHTML='<div class="err">Seçilen iki tertipte <b>iletken tipi değişiyor</b> ('+t1+' ↔ '+t2+'). '
+          +'Bu durum için yukarıdan <b>İletken tipi değişiyor</b> seçeneğini işaretleyin.</div>'; return;
+      }
+      Rd=0; Rb=0; let betonTam=true;
+      fark.forEach(function(f){
+        const I=ILETKEN[f.c];
+        Rd += f.n*I.d[b];
+        if(I.b) Rb += f.n*I.b[b]; else betonTam=false;
+      });
+      if(!betonTam) Rb=null;
+      adim = 'Dengelenmeyen iletkenler ('+fark[0].yon+' tarafta fazla):\n'
+           + fark.map(f=>'  '+f.n+' × '+f.c+' → '+f.n+' × '+fmtT(ILETKEN[f.c].d[b])+' = '+fmtT(f.n*ILETKEN[f.c].d[b])+' kg').join('\n')+'\n'
+           + 'R(demir) = '+fmtT(Rd)+' kg\n'
+           + (Rb!==null? 'R(beton) = '+fmtT(Rb)+' kg\n':'');
+    }
+  }else{
+    t1=$("d_f1").value; t2=$("d_f2").value;
+    const T1d=tmax(sk,t1,b,"demir"), T2d=tmax(sk,t2,b,"demir");
+    if(t1===t2){
+      /* İki yanda aynı tertip → iletken tipi değişmiyor. Durdurucu bağda cerler
+         eşit ve zıt yönlü olduğundan dengelenir; Çizelge:12 zayıflatması uygulanmaz. */
+      dengeli=true; Rd=0;
+      Rb = betonVarMi(sk,t1)? 0 : null;
+      adim = 'Her iki tarafta '+tAd(t1)+' → cerler eşit ve zıt yönde.\n'
+           + 'Hat doğrusal (α = 180°) olduğundan bileşke cer R = 0 kg.\n'
+           + 'Direk tipi yalnızca hatta dik rüzgâr yüküne göre belirlenir.\n';
+    }else{
+      const buyukD = Math.max(T1d,T2d), kucukD = Math.min(T1d,T2d);
+      const kucukTertip = (T1d<T2d)? t1 : t2;
+      const k = kalanOran(iletkenSay(sk,kucukTertip));
+      Rd = buyukD - k*kucukD;
+      if(betonVarMi(sk,t1)&&betonVarMi(sk,t2)){
+        const T1b=tmax(sk,t1,b,"beton"), T2b=tmax(sk,t2,b,"beton");
+        Rb = Math.max(T1b,T2b) - k*Math.min(T1b,T2b);
+      } else Rb=null;
+      adim = 'Zayıflatılan taraf: '+tAd(kucukTertip)+' ('+iletkenSay(sk,kucukTertip)+' iletken) → kalan oran '+fmt(k,2)+'\n'
+           + 'R(demir) = '+fmt(buyukD)+' − '+fmt(k,2)+'×'+fmt(kucukD)+' = '+fmt(Rd,2)+' kg\n'
+           + (Rb!==null? 'R(beton) = '+fmt(Rb,2)+' kg\n':'');
+    }
+  }
+
+  /* Rüzgâr tahkiki — zayıf eksen (hatta dik) */
+  const p1=pwAl(sk,t1,pwSutun(a1)), p2=pwAl(sk,t2,pwSutun(a2));
+  const Pwz = p1/2 + p2/2;
+
+  /* Direk seçimi: kuvvetli eksen hat doğrultusunda, rüzgârsız değerler */
+  let at=null;
+  for(const k of ATIPSIRAAKT()){
+    const a=ATIPAKT()[k];
+    if(a.rsK>=Rd && a.rlZ>=Pwz){ at={ad:k,K:a.rsK,Z:a.rlZ}; break; }
+  }
+  const kf=secKafes(Rd,false);
+  const bt=(Rb!==null)?secBeton(Rb,"durdurucu"):null;
+
+  let h="";
+  h+=line("Bölge", BOLGE_AD[b]);
+  h+=line("Sol / sağ tertip", tAd(t1)+" &nbsp;|&nbsp; "+tAd(t2));
+  h+=big("Bileşke kuvvet R (demir)", fmt(Rd,2)+" kg");
+  h+=line("Hatta dik rüzgâr yükü P<sub>w</sub>/2 + P<sub>w</sub>/2", fmt(Pwz,2)+" kg");
+  const dT1=tmax(sk,t1,b,"demir"), dT2=tmax(sk,t2,b,"demir");
+  h+=cizimSVG({
+    hatlar:[0,180],
+    hatEtiket:[{ac:180,txt:tAd(t1)+" · "+fmtT(dT1)+" kg · a="+fmt(a1)+" m"},
+               {ac:0,  txt:tAd(t2)+" · "+fmtT(dT2)+" kg · a="+fmt(a2)+" m"}],
+    kuvvetler:[],
+    zincir:[
+      {ac:(dT1>=dT2?180:0), F:Rd, ad:fmt(Rd)+" kg", yon:1},
+      {ac:270, F:Pwz, ad:"Pw "+fmt(Pwz,1), yon:-1}
+    ],
+    R:{lbl:fmt(Math.sqrt(Rd*Rd+Pwz*Pwz))+" kg"},
+    eksen:{ac:0, lbl:"kuvvetli eksen = hat doğrultusu"},
+    direkAci:(t1===t2)?90:0,   /* iki taraf farklı tertipte ise direk çevrilmez */
+    direk: at? "A" : "kafes",
+    alt:"kuvvetli eksende R = "+fmt(Rd)+" kg · zayıf eksende ΣPw = "+fmt(Pwz,1)+" kg"
+  });
+  h+='<div class="pick">';
+  h+=pk("Demir direk", at?at.ad:(kf?kf.ad:"—"),
+        at? ("Rüzgârsız kuvvetli eksen "+at.K+" kg ≥ "+fmt(Rd,2)+" kg · rüzgârlı zayıf eksen "+at.Z+" kg ≥ "+fmt(Pwz,2)+" kg")
+          : (kf? ("A-tipi yetersiz → kafes "+kf.ad):"Yeterli direk bulunamadı."));
+  h+=pk(musMod()?"Beton direk (müşterek)":"Beton direk (SBA)", bt?bt.ad:"—",
+        bt?("R = "+fmt(Rb,2)+" kg"+(bt.taban?" · "+(musMod()?"müşterek durdurucu beton direkte 11/6'dan küçük seçilmez.":"durdurucu beton direkte 500 kg'ın altına inilmez."):" ≤ "+bt.kap+" kg")):"Bu tertip için beton cer tablosu yok.");
+  h+='</div>';
+  h+=manuelBlok(Rd,Pwz,(Rb!==null?Rb:Rd),false);
+  if(dengeli && !musMod()) h+='<div class="ok">Hat doğrusal ve iki yanda aynı tertip var. Durdurucu bağda cerler birbirini dengelediğinden '
+    +'<b>bileşke cer sıfırdır</b>; Çizelge:12 zayıflatması yalnızca iletken tipi değiştiğinde uygulanır. '
+    +'Direk tipi burada yalnızca hatta dik rüzgâr yüküne göre belirlenmiştir.</div>';
+  h+='<div class="warn">Kuvvetli eksen, bileşke kuvveti karşılayacak şekilde <b>hat doğrultusunda</b> tesis edilmelidir. '
+    +'Zayıf eksende rüzgârlı tepe kuvveti tahkiki yukarıda yapılmıştır.</div>';
+  h+='<div class="steps">'+adim+'Rüzgâr: '+fmt(p1)+'/2 + '+fmt(p2)+'/2 = '+fmt(Pwz,2)+' kg (zayıf eksen)</div>';
+  $("d_out").innerHTML=h;
+}
+
+/* ==================================================================
+   4) KÖŞEDE DURDURUCU — 1., 4., 5. Varsayım
+   ================================================================== */
+function hesapKD(){
+  const b=+$("kd_bolge").value, sk=$("kd_set").value;
+  const t1=$("kd_t1").value, t2=$("kd_t2").value;
+  const al=+$("kd_alfa").value, aw=+$("kd_aw").value;
+  if(!(al>0&&al<=180)){ $("kd_out").innerHTML='<div class="err">α açısı 0–180° arasında olmalı.</div>'; return; }
+  const yari=al/2, c=Math.cos(rad(yari)), s=Math.sin(rad(yari));
+  const col=pwSutun(aw);
+
+  const mnKoseOn = musMod() && $("kd_hal") && $("kd_hal").value==="mn";
+  /* "Yalnız YG durduruluyor" hali, iki kolda da YG bulunmasını gerektirir.
+     Kollardan biri yalnız AG ise bu hal uygulanamaz, mdk gibi çözülür. */
+  const ygVar = !!(musAyir(t1).yg && musAyir(t2).yg);
+  const ygDur = musMod() && $("kd_hal") && $("kd_hal").value==="mdkyg" && ygVar;
+  const ygDurIptal = musMod() && $("kd_hal") && $("kd_hal").value==="mdkyg" && !ygVar;
+  const yg1=musAyir(t1).yg, yg2=musAyir(t2).yg;
+  const T1d = ygDur? YG[yg1].d[b] : tmax(sk,t1,b,"demir");
+  const T2d = ygDur? YG[yg2].d[b] : tmax(sk,t2,b,"demir");
+  const betonOK = ygDur? true : (betonVarMi(sk,t1)&&betonVarMi(sk,t2));
+
+  /* Köşede durdurucuda (mdk / mdkyg) beton direk 12 m olmak zorundadır ve cerler
+     kendi travers yükseklikleri ile tepeye indirgenir. Taşıyıcı köşede (mn) ve
+     müşterek olmayan şebekede eski davranış korunur. */
+  const darKose = (al <= KD_ACI_ESIK);
+  const kdBoy = musMod() && !mnKoseOn && darKose;
+  let T1b, T2b, kdP=null;
+  if(kdBoy && betonOK){
+    T1b = kdBetonP(sk,t1,b,1,ygDur);            /* A-kolu — üst YG traversi */
+    T2b = kdBetonP(sk,t2,b,KD_K_YG_ALT,ygDur);  /* B-kolu — alt YG traversi */
+    if(T1b===null||T2b===null){ T1b=null; T2b=null; }
+    else kdP={P1:T1b,P2:T2b};
+  }else{
+    T1b = ygDur? YG[yg1].b[b] : (betonOK?tmax(sk,t1,b,"beton"):null);
+    T2b = ygDur? YG[yg2].b[b] : (betonOK?tmax(sk,t2,b,"beton"):null);
+  }
+  const betonVar = betonOK && T1b!==null && T2b!==null;
+
+  /* --- Kafes demir direğin dikiliş istikameti ---------------------------
+     AG bu direkte durduruluyorsa (hem AG+YG birlikte, hem de YG durdurulup AG
+     nihayet halinde) AG traversleri A-kolu istikametinde toplandığından direk
+     A-koluna dikilir; bileşenler açıortaya değil bu eksene ayrıştırılır.
+     A-kolu: AG yalnız bir yandaysa o yan, iki yanda da varsa büyük cerli yan.  */
+  const agDur = musMod() && $("kd_hal") && $("kd_hal").value==="mdk" && darKose;
+  const ag1=!!musAyir(t1).ag, ag2=!!musAyir(t2).ag;
+  const aKoluT1 = (ag1!==ag2)? ag1 : (T1d>=T2d);
+  const ca=Math.cos(rad(al)), sa=Math.sin(rad(al));
+  /* Demir bileşenleri: agDur ise A-kolu ekseninde, değilse açıortayda */
+  function vD(Ta,Tb){
+    if(!agDur) return varsayim(Ta,Tb,c,s);
+    return aKoluT1? varsayimA(Ta,Tb,ca,sa) : varsayimA(Tb,Ta,ca,sa);
+  }
+
+  /* 1. Varsayım — küçük taraf Çizelge:12 ile zayıflatılır */
+  const kucuk = (T1d<=T2d)? t2Sec(t1,t2,T1d,T2d,"kucuk") : t2Sec(t1,t2,T1d,T2d,"kucuk");
+  function t2Sec(a,bb,va,vb,mode){ return (va<=vb)? {ad:a,v:va,dig:vb,digAd:bb} : {ad:bb,v:vb,dig:va,digAd:a}; }
+  const k = kalanOran(ygDur? 3 : iletkenSay(sk,kucuk.ad));
+
+  const kucukIs1 = (T1d<=T2d);
+  const v1d = vD(kucukIs1? T1d*k : T1d, kucukIs1? T2d : T2d*k);
+  const v1b = betonVar? (function(){
+      const bb = (T1b<=T2b)? {v:T1b,dig:T2b} : {v:T2b,dig:T1b};
+      return varsayim(bb.dig, bb.v*k, c, s);
+  })() : null;
+
+  /* Müşterek hatta Tablo 4-7 / 4-8 değerleri zaten MAKSİMUM cerlerdir (buz+rüzgâr
+     hali içlerinde vardır). Yunusoğlu bu halde yalnız iki durumu karşılaştırır:
+     zayıflama ve maksimum cerlerin bileşkesi. Ayrıca bir rüzgâr varsayımı (EKAT
+     4. Varsayım) eklemek çift saymak olur; bu yüzden müşterekte ΣPw eklenmez.
+     Müşterek olmayan AG şebekede EKAT'ın 1./4./5. Varsayım yapısı korunur. */
+  const ekatVars = !musMod();
+  const pw1=pwAl(sk,t1,col), pw2=pwAl(sk,t2,col);
+  const sumPw = ekatVars? ((pw1*s)/2 + (pw2*s)/2) : 0;
+  const v4d = vD(T1d, T2d);
+  const v4b = betonVar? varsayim(Math.max(T1b,T2b), Math.min(T1b,T2b), c, s) : null;
+
+  /* 5. Varsayım — her iki yanda %100 cer */
+  const v5d = v4d, v5b = v4b;
+
+  const R1d=v1d.Rd, R4d=v4d.Rd+sumPw, R5d=v5d.Rd;
+  const R1b=v1b?v1b.Rb:null, R4b=v4b?(v4b.Rb+sumPw):null, R5b=v5b?v5b.Rb:null;
+
+  /* YG köşede taşıyıcı – AG nihayet halinde hat sürekli olduğundan zayıflatma varsayımı uygulanmaz;
+     yalnızca maksimum cerlerin bileşkesi (5. Varsayım) esas alınır. */
+  const mnKose = musMod() && $("kd_hal") && $("kd_hal").value==="mn";
+  /* Satır adları: müşterekte kitabın dili (zayıflama / bileşke), AG'de EKAT varsayımları */
+  const AD_ZAY = ekatVars? "1. Varsayım" : "zayıflamaya göre";
+  const AD_RUZ = "4. Varsayım";
+  const AD_MAX = ekatVars? "5. Varsayım" : "bileşkeye göre (maksimum cerler)";
+  const enD = mnKose? R5d : (ekatVars? Math.max(R1d,R4d,R5d) : Math.max(R1d,R5d));
+  const hangiD = mnKose? AD_MAX
+                 : ((enD===R1d)? AD_ZAY : ((ekatVars && enD===R4d)? AD_RUZ : AD_MAX));
+  let enB=null,hangiB="—";
+  if(betonVar){
+    enB = mnKose? R5b : (ekatVars? Math.max(R1b,R4b,R5b) : Math.max(R1b,R5b));
+    hangiB = mnKose? AD_MAX : ((enB===R1b)? AD_ZAY : ((ekatVars && enB===R4b)? AD_RUZ : AD_MAX));
+  }
+
+  /* Belirleyici varsayımın bileşenleri: açıortay → kuvvetli eksen, dik → zayıf eksen.
+     A-tipi direk açıortay üzerinde dikildiğinden dik bileşen zayıf eksene biner. */
+  const vSec = (hangiD===AD_ZAY)? v1d : v4d;
+  const RkAc = vSec.Rb1 + ((hangiD===AD_RUZ)? sumPw : 0);
+  const RzDik = vSec.Rd1;
+  /* α < 120° olan köşede hat durdurulmak zorundadır ve A-tipi direk yeterli
+     olmadığından doğrudan kafes demir direk seçilir. A-kolu ekseninde dikilen
+     direklerde de A-tipi kesit uygun olmadığından kafes esas alınır. */
+  const kafesZorunlu = musMod() && darKose;
+  const at=kafesZorunlu? null : secATip(RkAc,RzDik,false), kf=secKafes(enD,false);
+  const bt=(enB!==null)?secBeton(enB,"durdurucu",kdBoy):null;
+
+  let h="";
+  h+=line("Bölge / açı", BOLGE_AD[b]+" · α = "+fmt(al)+"°");
+  h+=line("T₁ / T₂ (demir)", fmtT(T1d)+" / "+fmtT(T2d)+" kg");
+  if(betonVar) h+=line(kdP? "P₁ / P₂ (beton · 12 m'ye indirgenmiş)" : "T₁ / T₂ (beton)",
+                       fmtT(T1b)+" / "+fmtT(T2b)+" kg");
+  if(kdP) h+='<div class="ok" style="margin:8px 0">Köşede durdurucuda YG hem A-kolu hem B-kolu '
+    +'istikametine nihayet bağlanır; alttaki travers üsttekinin 1 m altına monte edileceğinden '
+    +'<b>beton direk 12 m</b> seçilmek zorundadır (α = '+fmt(al)+'° ≤ '+KD_ACI_ESIK+'°). Cerler tepeye indirgenir: '
+    +'üst YG traversi k = 1,000 · alt YG traversi k = '+fmt(KD_K_YG_ALT,3)
+    +(ygDur? "" : " · AG traversi k = "+fmt(KD_K_AG,3))+'. '
+    +'(11 m direğin 0,81 standart indirgemesi bu halde geçerli değildir.)</div>';
+  if(mnKose) h+='<div class="ok" style="margin:8px 0">Taşıyıcı köşe: hat sürekli olduğundan (YG taşıyıcı; AG ister taşıyıcı ister nihayet) '
+    +'Çizelge:12 zayıflatması uygulanmaz, iki yanın <b>maksimum cerlerinin bileşkesi</b> alınır.</div>';
+  else {
+    if(ygDurIptal) h+='<div class="warn" style="margin:8px 0">Kollardan birinde YG iletkeni yok (yalnız AG). '
+      +'"Yalnız YG durduruluyor" hali uygulanamadığından hesap, AG + YG birlikte durduruluyor kabulüyle yapıldı.</div>';
+    if(ygDur) h+='<div class="ok" style="margin:8px 0">Yalnız YG iletkenleri durduruluyor; AG iletkenleri taşıyıcı olarak devam ediyor. '
+      +'Bileşkeye <b>yalnız YG cerleri</b> girer, rüzgâr yükünde AG payı da vardır.</div>';
+    h+=line("Çizelge:12 · zayıflatılan taraf",
+      (ygDur? (yg1===yg2? yg1 : yg1+" / "+yg2)+" (3 iletken)" : tAd(kucuk.ad)+" ("+iletkenSay(sk,kucuk.ad)+" iletken)")
+      +" → kalan %"+fmt(k*100));
+  }
+
+  h+='<div class="tblwrap"><table class="d" style="margin-top:12px"><thead><tr>'
+    +'<th>Varsayım</th><th>'+(agDur?'R<sub>x</sub> (A-kolu)':'R<sub>b</sub> (açıortay)')+'</th>'
+    +'<th>'+(agDur?'R<sub>y</sub> (dik)':'R<sub>d</sub> (dik)')+'</th>'
+    +(ekatVars? '<th>ΣP<sub>w</sub></th>' : '')
+    +'<th>R demir</th><th>R beton</th></tr></thead><tbody>'
+    +(mnKose? "" : row(AD_ZAY, v1d, 0, R1d, R1b))
+    +((mnKose||!ekatVars)? "" : row(AD_RUZ, v4d, sumPw, R4d, R4b))
+    +row(mnKose? "Maksimum cerler" : AD_MAX, v5d, 0, R5d, R5b)
+    +'</tbody></table></div>';
+  function row(ad,v,pw,rd,rb){
+    return '<tr><td>'+ad+'</td><td>'+fmt(v.Rb1,2)+'</td><td>'+fmt(v.Rd1,2)+'</td>'
+      +(ekatVars? '<td>'+fmt(pw,2)+'</td>' : '')
+      +'<td><b>'+fmt(rd,2)+'</b></td><td>'+(rb!==null?fmt(rb,2):"—")+'</td></tr>';
+  }
+
+  h+=big("Belirleyici bileşke — demir ("+hangiD+")", fmt(enD,2)+" kg");
+  const dA=90+al/2, dB=90-al/2;
+  const eksAc = agDur? (aKoluT1? dA : dB) : 90;
+  const zaySec = (hangiD===AD_ZAY);
+  const f1 = zaySec? (kucukIs1? T1d*k : T1d) : T1d;
+  const f2 = zaySec? (kucukIs1? T2d : T2d*k) : T2d;
+  h+=cizimSVG({
+    hatlar:[dA,dB],
+    hatEtiket:[{ac:dA,txt:tAd(t1)+" · "+fmtT(f1)+" kg"},
+               {ac:dB,txt:tAd(t2)+" · "+fmtT(f2)+" kg"+(zaySec?" (kalan %"+fmt(k*100)+")":"")}],
+    aciArc:{a:dB, b:dA, lbl:"α = "+fmt(al)+"°"},
+    aciortay: eksAc,
+    eksenLbl: agDur? "A-kolu · direk ekseni" : "açıortay · direk ekseni",
+    kuvvetler:[
+      {ac:dA, F:f1},
+      {ac:dB, F:f2}
+    ].concat(hangiD===AD_RUZ? [{ac:90,F:sumPw,ad:"ΣPw = "+fmt(sumPw,2)+" kg",tip:"ruzgar"}] : []),
+    zincir:[
+      {ac:eksAc, F:vSec.Rb1, ad:(agDur?"Rx = ":"Rb = ")+fmt(vSec.Rb1)},
+      {ac:(agDur? (aKoluT1? eksAc-90 : eksAc+90) : (f1>=f2?180:0)), F:vSec.Rd1,
+       ad:(agDur?"Ry = ":"Rd = ")+fmt(vSec.Rd1)}
+    ],
+    R:{lbl:"R = "+(agDur?"Rx+Ry":"Rb+Rd")+" = "+fmt(enD)+" kg"},
+    eksen:{ac:eksAc},
+    direk: at? "A" : "kafes",
+    alt:hangiD+" · demir: R = "+(agDur?"Rx+Ry":"Rb+Rd")+" = "+fmt(enD)+" kg"
+  }).replace('class="diagwrap"','class="diagwrap orta"');
+  h+='<div class="pick">';
+  h+=pk("Demir direk", at? at.ad : (kf?kf.ad:"—"),
+        at? ("Rüzgârsız: kuvvetli eksen (açıortay) "+at.K+" kg ≥ "+fmt(RkAc,2)+" kg · zayıf eksen (dik) "+at.Z+" kg ≥ "+fmt(RzDik,2)+" kg."
+             +(al<=140? " Geniş açılı somelerde kafes direk ("+(kf?kf.ad:"—")+") tercih edilmesi uygun olur." : ""))
+          : (kf? ((kafesZorunlu
+                   ? ("α = "+fmt(al)+"° ≤ "+KD_ACI_ESIK+"° olduğundan hat durdurulmak zorundadır" 
+                       +"; A-tipi direk uygun değildir, doğrudan kafes seçilir. ")
+                   : "Açıortaya dik bileşen "+fmt(RzDik,2)+" kg hiçbir A-tipi direğin zayıf eksenine sığmıyor → ")
+                  +"Kafes "+kf.ad+" · "+kf.kap+" kg ≥ "+fmt(enD,2)+" kg")
+               : "Yeterli direk bulunamadı."));
+  h+=pk(musMod()?"Beton direk (müşterek)":"Beton direk (SBA)", bt?bt.ad:"—",
+        bt? (hangiB+" · R = "+fmt(enB,2)+" kg"+(bt.taban
+              ? (" · "+(musMod()? "müşterek durdurucu köşede "+BETONBOY(kdBoy)+"/6'dan küçük seçilmez."
+                               : "durdurucu beton direkte 500 kg'ın altına inilmez."))
+              : " ≤ "+bt.kap+" kg")) : "Bu tertip için beton cer tablosu yok.");
+  h+='</div>';
+  h+=line(agDur? "A-kolu ekseni R\u2093 / dik bileşen R\u1d67"
+               : "Kuvvetli eksen (açıortay) / zayıf eksen (dik)",
+          fmt(RkAc,2)+" kg / "+fmt(RzDik,2)+" kg");
+  h+=manuelBlok(RkAc,RzDik,(enB!==null?enB:enD),false,kdBoy);
+  if(al>=178) h+='<div class="warn">α = 180° köşe değil, <b>doğrusal hat</b> demektir. Bu durumda EKAT\'ın 1. Varsayım zayıflatması '
+    +'yerine <b>Durdurucu (D)</b> sekmesi kullanılmalıdır; iki yanda aynı tertip varsa cerler dengelenir ve bileşke sıfır olur.</div>';
+  h+='<div class="warn">'
+    +(agDur
+      ? 'AG bu direkte durdurulduğundan kafes demir direk <b>A-kolu ('+(aKoluT1?'geliş — T₁':'gidiş — T₂')+') istikametine</b> dikilir; '
+        +'bileşenler açıortaya değil bu eksene ayrıştırılmıştır: R = R<sub>x</sub>+R<sub>y</sub>. '
+        +'<b>Beton direk açıortayda kalır</b>, onun bileşkesi vektöreldir (R = √(R<sub>b</sub>²+R<sub>d</sub>²)).'
+      : 'Direk <b>açıortay yönünde</b> dikilir. Demir direkte bileşke skaler toplamla (R = R<sub>b</sub>+R<sub>d</sub>), '
+        +'beton direkte vektörel olarak (R = √(R<sub>b</sub>²+R<sub>d</sub>²)) alınmıştır.')
+    +' α ≤ 120° ise hattın mutlaka durdurulması gerekir.</div>';
+  h+='<div class="steps">'
+    +'α/2 = '+fmt(yari,1)+'°   cos = '+fmt(c,3)+'   sin = '+fmt(s,3)+'\n'
+    +AD_ZAY+': T₂\' = '+fmt(k,2)+' × '+fmt(kucuk.v)+' = '+fmt(kucuk.v*k)+' kg\n'
+    +(agDur
+      ? ('  R_x = |T_A + T_B·cosα| = '+fmt(v1d.Rb1)+' kg\n'
+        +'  R_y = |T_B·sinα|       = '+fmt(v1d.Rd1)+' kg\n')
+      : ('  R_b = ('+fmt(kucuk.dig)+' + '+fmt(kucuk.v*k)+')·cos = '+fmt(v1d.Rb1)+' kg\n'
+        +'  R_d = ('+fmt(kucuk.dig)+' − '+fmt(kucuk.v*k)+')·sin = '+fmt(v1d.Rd1)+' kg\n'))
+    +(ekatVars? ('4. Varsayım: ΣP_w = '+fmt(pw1)+'·sin/2 + '+fmt(pw2)+'·sin/2 = '+fmt(sumPw,2)+' kg\n') : '')
+    +AD_MAX+': her iki yanda %100 cer → '+(agDur?'R_x':'R_b')+' = '+fmt(v5d.Rb1)+' , '+(agDur?'R_y':'R_d')+' = '+fmt(v5d.Rd1)+' kg'
+    +(agDur? ('\n\nDemir direk — A-kolu ekseni ('+(aKoluT1?'T₁ tarafı':'T₂ tarafı')+'), α = '+fmt(al)+'°\n'
+            +'  R_x = |T_A + T_B·cosα| = '+fmt(v5d.Rb1)+' kg\n'
+            +'  R_y = |T_B·sinα|       = '+fmt(v5d.Rd1)+' kg\n'
+            +'  R   = R_x + R_y        = '+fmt(v5d.Rd)+' kg') : '')
+    +(kdP? (function(){
+            const ag=(tp)=>(!ygDur && musAyir(tp).ag)? (' + '+fmt(KD_K_AG,3)+'·AG') : '';
+            return '\n\nBeton direk — 12 m, serbest boy '+fmt(KD_H_SERBEST,1)+' m\n'
+            +'  P₁ (A-kolu) = 1,000·YG'+ag(t1)+' = '+fmt(kdP.P1)+' kg\n'
+            +'  P₂ (B-kolu) = '+fmt(KD_K_YG_ALT,3)+'·YG'+ag(t2)+' = '+fmt(kdP.P2)+' kg\n'
+            +'  R_x = (P₁−P₂)·sin(α/2) = '+fmt(Math.abs(kdP.P1-kdP.P2)*s)+' kg\n'
+            +'  R_y = (P₁+P₂)·cos(α/2) = '+fmt((kdP.P1+kdP.P2)*c)+' kg\n'
+            +'  R   = √(R_x²+R_y²) = '+fmt(Math.sqrt(Math.pow(Math.abs(kdP.P1-kdP.P2)*s,2)+Math.pow((kdP.P1+kdP.P2)*c,2)))+' kg';})() : '')
+    +'</div>';
+  $("kd_out").innerHTML=h;
+}
+/* A-kolu ekseninde bileşenler — Ta eksen üzerindeki kol, Tb diğer kol (α açısıyla).
+   Rx = |Ta + Tb·cosα| ,  Ry = |Tb·sinα| ,  R = Rx + Ry  (kafes direkte skaler)  */
+function varsayimA(Ta,Tb,ca,sa){
+  const Rx=Math.abs(Ta+Tb*ca), Ry=Math.abs(Tb*sa);
+  return {Rb1:Rx, Rd1:Ry, Rd:Rx+Ry, Rb:Math.sqrt(Rx*Rx+Ry*Ry)};
+}
+/* Ta,Tb: iki yandaki kuvvetler (Ta ≥ Tb alınması gerekmez) */
+function varsayim(Ta,Tb,c,s){
+  const Rb1=(Ta+Tb)*c, Rd1=Math.abs(Ta-Tb)*s;
+  return {Rb1:Rb1, Rd1:Rd1, Rd:Rb1+Rd1, Rb:Math.sqrt(Rb1*Rb1+Rd1*Rd1)};
+}
+
+/* ==================================================================
+   5) NİHAYET
+   ================================================================== */
+function hesapN(){
+  const b=+$("n_bolge").value, sk=$("n_set").value, tp=$("n_tertip").value, a=+$("n_a").value;
+  const mus=musMod(), hal = mus? $("n_hal").value : "ag";
+  let Td=tmax(sk,tp,b,"demir"), Tb=betonVarMi(sk,tp)?tmax(sk,tp,b,"beton"):null;
+  const col=pwSutun(a);
+  let Pwz, notMN="";
+  const agT = mus? agKismi(sk,tp) : null;
+  if(mus && hal==="mn" && agT && musAyir(tp).yg){
+    /* YG taşıyıcı devam eder, yalnız AG biter: AG cerleri YG seviyesine indirgenir */
+    const yg=musAyir(tp).yg;
+    Td = AG_YG_IND*agT.d[b];
+    Tb = agT.b? AG_YG_IND*agT.b[b] : Td;
+    Pwz = YG[yg].pw[col] + AG_YG_IND*agT.pw[col]/2;
+    notMN = "MN — YG taşıyıcı, AG nihayet: R = 0,81 × T<sub>max</sub>(AG). Rüzgâr YG'de tam açıklıktan, AG'de yarım açıklıktan gelir.";
+  }else if(mus && hal==="mn" && !musAyir(tp).yg){
+    Pwz = pwAl(sk,tp,col)/2;
+    notMN = "Seçilen kolda YG iletkeni yok (yalnız AG); MN hali uygulanamaz. "
+          + "Cer zaten "+fmt(AG_YG_IND,2)+" ile direk tepesine indirgenmiş AG cerıdır.";
+  }else if(mus && hal==="mn" && !agT){
+    Pwz = pwAl(sk,tp,col)/2;
+    notMN = "Seçilen hatta AG iletkeni yok; MN hali uygulanamaz, tek yanlı YG cerine göre hesaplandı.";
+  }else{
+    Pwz = pwAl(sk,tp,col)/2;
+  }
+  const RN=Td;
+
+  let at=null;
+  for(const k of ATIPSIRAAKT()){
+    const x=ATIPAKT()[k];
+    if(x.rsK>=RN && x.rlZ>=Pwz){ at={ad:k,K:x.rsK,Z:x.rlZ}; break; }
+  }
+  const kf=secKafes(RN,false), bt=(Tb!==null)?secBeton(Tb,mus?"durdurucu":""):null;
+
+  let h="";
+  h+=line("Bölge / tertip", BOLGE_AD[b]+" · "+tAd(tp));
+  h+=line("Son açıklık", fmt(a)+" m → "+(col?"50":"40")+" m sütunu");
+  h+=big("R = T<sub>max</sub> (tek yanlı)", fmt(Td)+" kg");
+  h+=line("4. Varsayım — zayıf eksende rüzgâr", fmt(Pwz,2)+" kg");
+  h+=cizimSVG({
+    hatlar:[180],
+    hatEtiket:[{ac:180,txt:tAd(tp)+" · a = "+fmt(a)+" m"}],
+    kuvvetler:[
+      {ac:180, F:RN},
+      {ac:270, F:Pwz, ad:"Pw/2 = "+fmt(Pwz,1), tip:"ruzgar"}
+    ],
+    R:{ac:180, F:RN, lbl:"R = "+fmtT(RN)+" kg"},
+    eksen:{ac:0, lbl:"kuvvetli eksen = hat istikameti"},
+    direk: at? "A" : "kafes",
+    alt:"tek yanlı çekme kuvveti · zayıf eksende Pw/2 = "+fmt(Pwz,1)+" kg"
+  });
+  h+='<div class="pick">';
+  h+=pk("Demir direk", at?at.ad:(kf?kf.ad:"—"),
+        at? ("Rüzgârsız kuvvetli eksen "+at.K+" kg ≥ "+fmt(Td)+" kg · zayıf eksen "+at.Z+" kg ≥ "+fmt(Pwz,2)+" kg")
+          : (kf?("A-tipi yetersiz → kafes "+kf.ad):"Yeterli direk bulunamadı."));
+  h+=pk(musMod()?"Beton direk (müşterek)":"Beton direk (SBA)", bt?bt.ad:"—", bt?("R = "+fmt(Tb)+" kg ≤ "+bt.kap+" kg"):"Bu tertip için beton cer tablosu yok.");
+  h+='</div>';
+  h+=manuelBlok(Td,Pwz,(Tb!==null?Tb:Td),false);
+  h+='<div class="warn">Nihayet direği, kuvvetli ekseni <b>hat istikametinde</b> olacak şekilde tesis edilir.</div>';
+  $("n_out").innerHTML=h;
+}
+
+/* ==================================================================
+   6) GENEL VEKTÖREL — branşman / tevzi / çok kollu
+   ================================================================== */
+let armSay=0;
+function armEkle(tertip,aci,mod){
+  armSay++;
+  const setKey=$("g_set").value;
+  const d=document.createElement("div"); d.className="arm"; d.dataset.i=armSay;
+  const opts=tertipOpsiyon(setKey);
+  d.innerHTML =
+    '<div class="idx">'+armSay+'</div>'
+    +'<select class="a_t" onchange="gAciCoz()">'+opts+'</select>'
+    +'<input type="number" class="a_a" value="'+(aci!==undefined?aci:0)+'" step="5" oninput="gAciCoz()">'
+    +'<div class="cz">—</div>'
+    +'<select class="a_m">'
+      +'<option value="tam">Tam cer (%100)</option>'
+      +'<option value="zay">Zayıflatılmış (Çiz.12)</option>'
+      +'<option value="tas">Taşıyıcı — kuvvet yok</option>'
+    +'</select>'
+    +'<button class="del" title="Kolu sil" onclick="gArmSil(this)">×</button>';
+  $("g_arms").appendChild(d);
+  if(tertip) d.querySelector(".a_t").value=tertip;
+  if(mod) d.querySelector(".a_m").value=mod;
+  gArmNumarala(); gAciCoz();
+}
+
+/* ---- Açı girişi: kollar arası ↔ mutlak ----
+   "ara" kipinde 1. kol g_taban yönüne konur; sonraki her kolun değeri bir önceki
+   kolla arasındaki açıdır (saat yönünün tersi pozitif). Mutlak yönler kümülatif
+   toplamla bulunur ve her satırın yanında gösterilir.                          */
+function gAraKip(){ const e=$("g_acikip"); return !e || e.value==="ara"; }
+function gMutlakAcilar(){
+  const ara=gAraKip(), tb=$("g_taban");
+  let ac=0;
+  return [...document.querySelectorAll("#g_arms .arm")].map(function(r,i){
+    const v=+r.querySelector(".a_a").value||0;
+    if(!ara) return v;
+    ac = (i===0)? (tb? +tb.value||0 : 0) : ac+v;
+    return ac;
+  });
+}
+function gAciCoz(){
+  const ara=gAraKip(), mut=gMutlakAcilar();
+  /* kol/açı değişimi direk boyunu (11 m ↔ 12 m) etkileyebilir → manuel liste yenilensin */
+  if(typeof doldurManuelDirek==="function") doldurManuelDirek();
+  if(typeof gBraTog==="function") gBraTog();
+  [...document.querySelectorAll("#g_arms .arm")].forEach(function(r,i){
+    const c=r.querySelector(".cz"); if(!c) return;
+    c.textContent = ara? ("= "+fmt(((mut[i]%360)+360)%360,0)+"°") : "";
+    c.title="Çözülen mutlak yön";
+  });
+}
+function gAciKipTog(){
+  const ara=gAraKip();
+  $("g_arms").classList.toggle("ara",ara);
+  $("g_tabanrow").style.display = ara? "" : "none";
+  $("g_acinot").style.display   = ara? "" : "none";
+  $("g_achead").textContent     = ara? "Arasındaki açı °" : "Açı °";
+  $("g_armhead").classList.toggle("ara",ara);
+  gAciCoz();
+}
+/* Kol silindiğinde ara açı zinciri kayacağından yeniden çözülür ve sıra düzeltilir */
+function gArmSil(btn){
+  const r=btn.closest(".arm"); if(r) r.remove();
+  gArmNumarala(); gAciCoz();
+}
+function gArmNumarala(){
+  [...document.querySelectorAll("#g_arms .arm")].forEach(function(r,i){
+    const x=r.querySelector(".idx"); if(x) x.textContent=(i+1);
+  });
+}
+function gArmsYenile(){
+  const setKey=$("g_set").value;
+  document.querySelectorAll("#g_arms .a_t").forEach(function(s){
+    const eski=s.value;
+    s.innerHTML=tertipOpsiyon(setKey);
+    if(SETS[setKey].tertipler[eski]) s.value=eski;
+  });
+}
+function gWindTog(){ $("g_windrow").style.display = $("g_wind").checked ? "" : "none"; }
+/* Branşman açıklığı alanı yalnız 3 kollu branşman düzeninde anlamlıdır */
+function gBraTog(){
+  const e=$("g_brarow"); if(!e) return;
+  let g=false;
+  try{ const mut=gMutlakAcilar();
+       const kl=[...document.querySelectorAll("#g_arms .arm")].map(function(r,i){
+         return {tp:r.querySelector(".a_t").value, ac:mut[i]};});
+       g = kl.length===3 && gSinifla(kl).tip==="bransman";
+  }catch(x){}
+  e.style.display = g? "" : "none";
+}
+function gEksTog(){ $("g_eksrow").style.display = ($("g_eks").value==="man")?"":"none"; }
+function gYontemTog(){
+  const oto=$("g_yontem").value==="oto";
+  $("g_arms").classList.toggle("oto",oto);
+  document.getElementById("g_armhead").classList.toggle("oto",oto);
+}
+
+/* ---- Branşman / Tevzi ayrımı ----
+   Branşman : ana hat (aynı cins-kesitte iki kol) + ondan ayrılan kol → en fazla 3 kol
+   Tevzi    : 4 ve daha fazla kol (cins-kesit ne olursa olsun) veya
+              3 kolun tamamının cins-kesiti farklı                               */
+/* Ana hat = doğrultusu birbirine en yakın karşıt olan kol çifti. Tevzi direğinde
+   de ana hat sürekliliği geometrik olarak bellidir; direk bu doğrultuda dikilir. */
+function gAnaHatCift(kollar){
+  let en=null;
+  for(let i=0;i<kollar.length;i++) for(let j=i+1;j<kollar.length;j++){
+    let d=Math.abs(((kollar[i].ac-kollar[j].ac)%360+360)%360-180);
+    if(!en || d<en.d) en={i:i,j:j,d:d};
+  }
+  return en;
+}
+function gSinifla(kollar){
+  const n=kollar.length;
+  if(n<3) return {tip:"hat", ad:"DÜZ HAT", not:"İki kol doğrusal hattır; Durdurucu (D) veya Köşede durdurucu (KD) sekmesini kullanın."};
+  if(n>=4){ const c4=gAnaHatCift(kollar);
+    return {tip:"tevzi", ad:"TEVZİ DİREĞİ", anaAci:(c4?kollar[c4.i].ac:undefined),
+      anaIx:(c4?[c4.i,c4.j]:[]),
+      not:n+" kol ayrılıyor. Dört ve daha fazla kolda, cins ve kesitler ne olursa olsun direk tevzi direğidir."}; }
+  const t=kollar.map(k=>k.tp);
+  const ayniCift = (t[0]===t[1])||(t[0]===t[2])||(t[1]===t[2]);
+  /* Aynı tertipte iki kol bulunması branşman için yetmez: o iki kol aynı zamanda
+     hattın DEVAMI olmalı, yani doğrultuları birbirine karşıt olmalıdır (≥120°).
+     Aksi halde aynı tertipli kol da direkte durdurularak ayrılıyor demektir ve
+     direk tevzi direğidir — ana hat, geometrik olarak en karşıt kol çiftidir.   */
+  let ayniAci=0;
+  if(ayniCift){
+    let a1,a2;
+    if(t[0]===t[1]){a1=0;a2=1;} else if(t[0]===t[2]){a1=0;a2=2;} else {a1=1;a2=2;}
+    ayniAci = 180-Math.abs(((kollar[a1].ac-kollar[a2].ac)%360+360)%360-180);
+  }
+  if(ayniCift && ayniAci>=KD_ACI_ESIK){
+    let i1,i2,ib;
+    if(t[0]===t[1]){i1=0;i2=1;ib=2;} else if(t[0]===t[2]){i1=0;i2=2;ib=1;} else {i1=1;i2=2;ib=0;}
+    return {tip:"bransman", ad:"BRANŞMAN DİREĞİ",
+            not:"Ana hattın iki kolu aynı cins-kesitte ("+tAd(t[i1])+"), üçüncü kol branşman olarak ayrılıyor.",
+            anaAci:kollar[i1].ac, anaAci2:kollar[i2].ac, braAci:kollar[ib].ac,
+            braIx:ib, anaIx:[i1,i2]};
+  }
+  const c3=gAnaHatCift(kollar);
+  const ayn = ayniCift
+    ? "Aynı cins-kesitteki iki kol arasındaki açı "+fmt(ayniAci)+"° olduğundan bunlar hattın devamı sayılmaz; "
+      +"o kol da direkte durdurularak ayrılıyor. "
+    : "Üç kolun da cins-kesiti farklı; tertip bakımından ana hat sürekliliği yok. ";
+  return {tip:"tevzi", ad:"TEVZİ DİREĞİ", anaAci:(c3?kollar[c3.i].ac:undefined),
+    anaIx:(c3?[c3.i,c3.j]:[]),
+    not:ayn+"Direk tevzi direğidir; kollardan biri tevzi direğinde durdurularak ayrıldığından "
+       +"direk geometrik ana hat doğrultusunda ("+(c3?fmt(((kollar[c3.i].ac%360)+360)%360)+"°":"—")+") dikilir."};
+}
+
+/* Ana hattın iki kolunun açıortayı — branşmanın bulunduğu yarı düzleme bakan yön.
+   Doğrusal ana hatta (180°) kollara dik olan, branşman tarafındaki eksendir. */
+function gAciortay(sinif){
+  const a=rad(sinif.anaAci), b2=rad(sinif.anaAci2);
+  let x=Math.cos(a)+Math.cos(b2), y=Math.sin(a)+Math.sin(b2);
+  if(Math.hypot(x,y)<1e-9){            /* doğrusal ana hat → kollara dik */
+    x=-Math.sin(a); y=Math.cos(a);
+  }
+  let ac=(Math.atan2(y,x)*180/Math.PI+360)%360;
+  /* branşman hangi yarı düzlemdeyse açıortay o yöne bakmalı */
+  const d=Math.cos(rad(ac-sinif.braAci));
+  if(d<0) ac=(ac+180)%360;
+  return ac;
+}
+
+/* Bileşenleri direk eksenine ayırır. Demir direkte bileşke skaler toplanır
+   (R = R_k + R_z); vektörel büyüklük yalnız beton direkte kullanılır.        */
+function eksenAyir(Px,Py,eksA){
+  const c=Math.cos(rad(eksA)), sn=Math.sin(rad(eksA));
+  const Rk=Math.abs(Px*c+Py*sn), Rz=Math.abs(-Px*sn+Py*c);
+  return {Rk:Rk, Rz:Rz, R:Rk+Rz};
+}
+
+function hesapG(){
+  const b=+$("g_bolge").value, sk=$("g_set").value;
+  const rows=[...document.querySelectorAll("#g_arms .arm")];
+  if(rows.length<2){ $("g_out").innerHTML='<div class="err">En az iki kol girilmeli.</div>'; return; }
+
+  const mutAc=gMutlakAcilar();
+  const kollar=rows.map(function(r,i){
+    const tp=r.querySelector(".a_t").value;
+    return {tp:tp, ac:mutAc[i], ara:+r.querySelector(".a_a").value, md:r.querySelector(".a_m").value,
+            n:iletkenSay(sk,tp), Td:tmax(sk,tp,b,"demir"),
+            Tb:betonVarMi(sk,tp)? tmax(sk,tp,b,"beton") : null,
+            pw:[pwAl(sk,tp,0), pwAl(sk,tp,1)]};
+  });
+
+  const oto = $("g_yontem").value==="oto";
+  const sinif = gSinifla(kollar);
+
+  /* Ana hat dışında kalan (direkte durdurularak ayrılan) kollar */
+  const anaIx = sinif.anaIx || [];
+  const ayrilan = kollar.map((k,i)=>i).filter(i=>anaIx.indexOf(i)<0);
+
+  /* Ayrılan kollardan biri de YG taşıyorsa, ana hat YG traversinin 1 m altına
+     ikinci bir YG traversi monte edilir → beton direk 12 m olmak zorundadır.
+     Bu durumda seviye katsayıları değişir (serbest boy 10,5 m):
+        ana hat YG traversi (tepe)      k = 1,000  → değişmez
+        ayrılan kolun YG traversi       k = 0,904
+        AG traversi                     k = 0,714  (11 m direğin 0,81'i yerine)
+     Demir direkte istikametler aynı traverste (jet/TM) toplandığından indirgeme yok. */
+  const mbYG = musMod() && ayrilan.some(i=>!!musAyir(kollar[i].tp).yg);
+  if(mbYG){
+    kollar.forEach(function(k,i){
+      if(k.Tb===null) return;
+      const a=musAyir(k.tp);
+      if(!a.yg){ k.Tb = k.Tb*(KD_K_AG/AG_YG_IND); return; }   /* yalnız AG kolu */
+      if(ayrilan.indexOf(i)>=0) k.Tb = k.Tb*KD_K_YG_ALT;      /* ayrılan YG kolu */
+    });
+  }
+  if(oto && sinif.tip==="hat"){ $("g_out").innerHTML='<div class="err">'+sinif.not+'</div>'; return; }
+
+  /* rüzgâr (4. Varsayım) */
+  const wind=$("g_wind").checked, wdir=+$("g_wdir").value, wa=+$("g_wa").value, col=pwSutun(wa);
+  let SPw=0;
+  if(wind) kollar.forEach(k=>{ SPw += Math.abs(Math.sin(rad(k.ac-wdir)))*k.pw[col]/2; });
+
+  /* incelenecek yükleme durumları */
+  let durumlar=[];
+  if(!oto){
+    durumlar.push({ad:"Elle girilen kuvvet durumu", z:-2});
+  }else{
+    durumlar.push({ad:"Tüm kollarda %100 cer", z:-1});
+    if(sinif.tip==="tevzi")
+      kollar.forEach((k,i)=>durumlar.push({ad:"Kol "+(i+1)+" ("+tAd(k.tp)+") zayıflatılmış → kalan %"+fmt(kalanOran(k.n)*100), z:i}));
+  }
+
+  function carpan(i,z){
+    if(z===-2){ const m=kollar[i].md; return (m==="tas")?0:((m==="zay")? kalanOran(kollar[i].n) : 1); }
+    return (i===z)? kalanOran(kollar[i].n) : 1;
+  }
+  function coz(z){
+    let Px=0,Py=0,Pxb=0,Pyb=0,betonOK=true, kuv=[];
+    kollar.forEach(function(k,i){
+      const c=carpan(i,z), fd=k.Td*c;
+      Px+=fd*Math.cos(rad(k.ac)); Py+=fd*Math.sin(rad(k.ac));
+      if(k.Tb===null) betonOK=false; else { const fb=k.Tb*c; Pxb+=fb*Math.cos(rad(k.ac)); Pyb+=fb*Math.sin(rad(k.ac)); }
+      kuv.push({tp:k.tp, ac:k.ac, fd:fd});
+    });
+    if(wind){ Px+=SPw*Math.cos(rad(wdir)); Py+=SPw*Math.sin(rad(wdir));
+              Pxb+=SPw*Math.cos(rad(wdir)); Pyb+=SPw*Math.sin(rad(wdir)); }
+    return {Px:Px,Py:Py,R:Math.hypot(Px,Py), Rb:betonOK?Math.hypot(Pxb,Pyb):null, kuv:kuv};
+  }
+  const coz2 = durumlar.map(d=>({d:d, s:coz(d.z)}));
+  /* Ön seçim vektörel büyüklüğe göre — eksen bileşke yönüne bağlı olduğunda gerekli */
+  let en = coz2[0];
+  coz2.forEach(x=>{ if(x.s.R>en.s.R) en=x; });
+  let S=en.s;
+  let yon=(Math.atan2(S.Py,S.Px)*180/Math.PI+360)%360;
+  const eksMod=$("g_eks").value;
+  let eksA=yon, eksNot="bileşke yönünde";
+  /* Branşman direğinde direk, ana hat açıortayı istikametine dikilir. Bileşke yönü
+     eksen alınırsa dik bileşen sıfırlanıp R = |bileşke| olur; bu vektörel değer
+     kafes direk için emniyetsizdir. Kitap ekseni açıortaya sabitler ve iki bileşeni
+     skaler toplar (R = R_k + R_z). Bu yüzden otomatikte açıortay esastır. */
+  if(eksMod==="auto"){
+    if(sinif.tip==="bransman"){ eksA=gAciortay(sinif); eksNot="ana hat açıortayı — otomatik"; }
+    else if(sinif.tip==="tevzi" && sinif.anaAci!==undefined){
+      /* Tevzide de eksen bileşke yönüne kilitlenemez: o yönde R_z zorunlu olarak
+         sıfırlanır ve skaler toplam vektörel büyüklüğe düşer. Direk ana hat
+         doğrultusunda dikilir; kollar bu eksene ayrıştırılır (R = R_x + R_y). */
+      eksA=sinif.anaAci; eksNot="ana hat doğrultusu — otomatik";
+    }
+  }
+  if(eksMod==="man"){ eksA=+$("g_eksa").value; eksNot="elle girildi"; }
+  else if(eksMod!=="auto"){
+    if(sinif.tip==="bransman"){
+      if(eksMod==="dik"){ eksA=sinif.anaAci+90; eksNot="ana hatta dik"; }
+      else if(eksMod==="bra"){ eksA=sinif.braAci; eksNot="branşman istikametinde"; }
+      else if(eksMod==="acio"){ eksA=gAciortay(sinif); eksNot="ana hat açıortayı"; }
+      else { eksA=sinif.anaAci; eksNot="ana hat üzerinde"; }
+    }else if(sinif.tip==="tevzi" && sinif.anaAci!==undefined && (eksMod==="ana"||eksMod==="dik")){
+      eksA = (eksMod==="dik")? sinif.anaAci+90 : sinif.anaAci;
+      eksNot = (eksMod==="dik")? "ana hatta dik" : "ana hat doğrultusu";
+    }else{
+      eksNot="bu yerleşim bu direk düzeninde geçerli değil — bileşke yönü alındı";
+    }
+  }
+  eksA=((eksA%360)+360)%360;
+  /* Direk tipi demirde R_k+R_z ile seçildiğinden belirleyici yükleme durumu da bu
+     skaler ölçütle bulunur; vektörel büyüklük yalnız beton direğe aittir. Eksen
+     bileşke yönüne kilitliyse R_z = 0 olacağından iki ölçüt zaten çakışır.       */
+  coz2.forEach(function(x){ x.sk=eksenAyir(x.s.Px,x.s.Py,eksA).R; });
+  en=coz2[0]; coz2.forEach(x=>{ if(x.sk>en.sk) en=x; });
+  S=en.s;
+  yon=(Math.atan2(S.Py,S.Px)*180/Math.PI+360)%360;
+  const E=eksenAyir(S.Px,S.Py,eksA);
+  const Rk=E.Rk, Rz=E.Rz, Rdemir=E.R;
+
+  const at=secATip(Rk,Rz,false), kf=secKafes(Rdemir,false);
+  const bt=(S.Rb!==null)?secBeton(S.Rb,"bransman",mbYG):null;
+
+  /* tevzide demir direk kafes olmalıdır (en küçüğü K1) */
+  const tevzi = (sinif.tip==="tevzi");
+  const demirAd = tevzi? (kf?kf.ad:"—") : (at? at.ad : (kf?kf.ad:"—"));
+  const demirNot = tevzi
+    ? (kf? ("Rüzgârsız "+kf.kap+" kg ≥ "+fmt(Rdemir,2)+" kg. <b>Tevzi direğinde bileşke ne çıkarsa çıksın demir direk "
+            +"kafes olmak zorundadır</b>; en küçüğü K1'dir."
+            +(at? " (Bileşkenin A-tipi karşılığı "+at.ad+" olurdu, seçilmez.)" : "")) : "Yeterli kafes direk bulunamadı.")
+    : (at? ("Rüzgârsız kuvvetli eksen "+at.K+" kg ≥ "+fmt(Rk,2)+" kg, zayıf eksen "+at.Z+" kg ≥ "+fmt(Rz,2)+" kg. "
+            +"Branşman direklerinin ilerdeki kesit artışlarına cevap verebilmesi için kafes direk ("+(kf?kf.ad:"—")+") seçilmesi tavsiye edilir.")
+         : (kf? ("A-tipi yetersiz → kafes "+kf.ad+" ("+kf.kap+" kg)") : "Yeterli direk bulunamadı."));
+
+  let h="";
+  h+='<div class="'+(tevzi?"warn":"ok")+'" style="margin:0 0 10px"><b>'+sinif.ad+'</b> — '+sinif.not+'</div>';
+  if(mbYG) h+='<div class="ok" style="margin:0 0 10px">Ana hattan ayrılan kol da <b>YG</b> taşıyor: ana hat YG '
+    +'traversinin 1 m altına ikinci bir YG traversi gerekeceğinden <b>beton direk 12 m</b> seçilmek zorundadır. '
+    +'Cerler tepeye indirgenir — ayrılan YG kolu k = '+fmt(KD_K_YG_ALT,3)
+    +' · AG kolları k = '+fmt(KD_K_AG,3)+' (11 m direğin 0,81 indirgemesi yerine) · '
+    +'ana hat YG traversi tepede olduğundan değişmez. '
+    +'Demir direkte istikametler aynı traverste toplandığından indirgeme uygulanmaz.</div>';
+  if(musMod() && !mbYG && ayrilan.some(i=>yalnizAG(kollar[i].tp)))
+    h+='<div class="ok" style="margin:0 0 10px">Ayrılan kolda <b>yalnız AG</b> var; cer AG traversi '
+    +'seviyesinde etkidiğinden '+fmt(AG_YG_IND,2)+' ile direk tepesine indirgenmiştir.</div>';
+  h+=line("Bölge / kol sayısı", BOLGE_AD[b]+" · "+kollar.length+" kol");
+  if(oto) h+=line("Uygulanan varsayım", tevzi? "2. Varsayım — Çizelge:12 zayıflatması (en büyük bileşke)" : "1. Varsayım — kolların en büyük çekme kuvvetleri");
+  if(wind) h+=line("ΣP<sub>w</sub> (4. Varsayım)", fmt(SPw,2)+" kg @ "+fmt(wdir)+"°");
+
+  if(coz2.length>1){
+    h+='<div class="tblwrap"><table class="d" style="margin-top:10px"><thead><tr><th>Yükleme durumu</th>'
+      +'<th>ΣP<sub>x</sub></th><th>ΣP<sub>y</sub></th><th>R demir (skaler)</th><th>R beton (vektörel)</th></tr></thead><tbody>';
+    coz2.forEach(function(x){
+      const se=(x===en);
+      h+='<tr'+(se?' style="background:#FDF3E7"':'')+'><td>'+(se?'<b>':'')+x.d.ad+(se?'</b>':'')+'</td>'
+        +'<td>'+fmt(x.s.Px,2)+'</td><td>'+fmt(x.s.Py,2)+'</td><td><b>'+fmt(x.sk,2)+'</b></td>'
+        +'<td>'+(x.s.Rb!==null?fmt(x.s.Rb,2):"—")+'</td></tr>';
+    });
+    h+='</tbody></table></div>';
+  }
+
+  h+=big("Belirleyici bileşke — demir · "+en.d.ad+" (R = R"+"\u2096 + R"+"\u1d69, skaler)", fmt(Rdemir,2)+" kg");
+  /* Kol sayısı arttıkça giriş ve tablo uzar; çizim ona göre küçültülür */
+  const dsnf=(kollar.length>=4)? " dar" : ((kollar.length===3)? " orta" : "");
+  h+=diagram(S.kuv,S.Px,S.Py,eksA,wind?SPw:0,wdir,(tevzi||!at)?"kafes":"A",
+             "R = R\u2096+R\u1d69 = "+fmt(Rdemir,2)+" kg").replace('class="diagwrap"','class="diagwrap'+dsnf+'"');
+  h+=line("Bileşke yönü", fmt(yon,1)+"°");
+  h+=line("Kuvvetli eksen bileşeni R<sub>k</sub>", fmt(Rk,2)+" kg @ "+fmt(eksA,1)+"° ("+eksNot+")");
+  h+=line("Zayıf eksen bileşeni R<sub>z</sub>", fmt(Rz,2)+" kg");
+  h+=line("<b>Demir direk için R = R<sub>k</sub> + R<sub>z</sub></b>", "<b>"+fmt(Rdemir,2)+" kg</b>");
+  if(S.Rb!==null) h+=line("<b>Beton direk için R = √(ΣP<sub>x</sub>²+ΣP<sub>y</sub>²)</b>", "<b>"+fmt(S.Rb,2)+" kg</b>");
+  h+='<div class="pick">';
+  h+=pk("Demir direk", demirAd, demirNot);
+  h+=pk(musMod()?"Beton direk (müşterek)":"Beton direk (SBA)", bt?bt.ad:"—",
+        bt? ("R = "+(S.Rb!==null?fmt(S.Rb,2):"—")+" kg"
+             +(bt.taban? " · "+(musMod()?("müşterek branşman/tevzi beton direkte "+BETONBOY(mbYG)+"/6'dan küçük seçilmez."):"branşman/tevzi beton direkte 800 kg'ın altına inilmez.") : " ≤ "+bt.kap+" kg"))
+          : "Bu tertiplerin beton cer tablosu yok.");
+  h+='</div>';
+  h+=manuelBlok(Rk,Rz,(S.Rb!==null?S.Rb:Rdemir),false,mbYG);
+  /* Branşman istikametindeki ilk direğin açıklık denetimi (EKAT · h = 5,5 m emniyet).
+     ≤40 m normal · 40–50 m arası özel önlem · >50 m izin verilmez.  */
+  if(sinif.tip==="bransman"){
+    const ba=+($("g_bra_a")||{value:0}).value||0;
+    if(ba>0){
+      const bet=musMod()? "beton direk <b>10 m</b>'lik seçilmelidir" : "beton direkte bir üst boy seçilmelidir";
+      if(ba<=40)
+        h+='<div class="ok" style="margin:10px 0">Branşman kolunda ilk direk <b>'+fmt(ba)+' m</b> ötede — '
+          +'40 m sınırı içinde, h = 5,5 m emniyet mesafesi normal direk boyuyla kurtarılır.</div>';
+      else if(ba<=50)
+        h+='<div class="warn" style="margin:10px 0">Branşman kolunda ilk direk <b>'+fmt(ba)+' m</b> ötede '
+          +'(40 m sınırı aşıldı). h = 5,5 m emniyet mesafesini kurtarmak için bu ilk direk, '
+          +'<b>AG iletkenleri direk tepesinde olan müşterek direk</b> olmalıdır; '+bet+'.</div>';
+      else
+        h+='<div class="err" style="margin:10px 0">Branşman kolunda ilk direk <b>'+fmt(ba)+' m</b> ötede. '
+          +'EKAT bu istikamette 50 m\'yi aşan açıklığa izin vermez — ara direk konulmalı ya da '
+          +'branşman noktası kaydırılmalıdır.</div>';
+    }
+  }
+  /* Bu kural DEMİR DİREK kartındaki notta da yer aldığından baskıda tekrarlanmaz */
+  if(tevzi) h+='<div class="warn genelbilgi" style="margin:10px 0">Tevzi direğinde ana hat iletkenleri ayırım noktasında '
+    +'<b>durdurucu bağla</b> bağlıdır; bileşke ne çıkarsa çıksın <b>demir direk kafes seçilir</b>, A-tipi kullanılmaz.</div>';
+  h+='<div class="warn genelbilgi">Demir direkte kuvvetli eksen, en büyük bileşeni karşılayacak istikamette dikilmelidir.</div>';
+  let ad='';
+  kollar.forEach(function(k,i){
+    const c=carpan(i,en.d.z);
+    ad+='Kol '+(i+1)+': '+tAd(k.tp)+' @ '+fmt(((k.ac%360)+360)%360)+'°'
+      +((gAraKip()&&i>0)? ' (bir öncekiyle '+fmt(k.ara)+'°)' : '')+' · '+(c===1?'%100':'%'+fmt(c*100))+' → '+fmtT(k.Td*c)+' kg\n';
+  });
+  h+='<div class="steps">'+ad
+    +'ΣPx = '+fmt(S.Px,2)+' kg   ΣPy = '+fmt(S.Py,2)+' kg\n'
+    +'Demir: Rk = '+fmt(Rk,2)+' , Rz = '+fmt(Rz,2)+' → R = Rk+Rz = '+fmt(Rdemir,2)+' kg  (skaler — direk tipi bundan seçilir)\n'
+    +(S.Rb!==null? ('Beton: R = √(ΣPx²+ΣPy²) = '+fmt(S.Rb,2)+' kg  (vektörel)\n') : '')
+    +'Demir cerleriyle vektörel büyüklük '+fmt(S.R,2)+' kg olurdu; kafes/A-tipi seçiminde kullanılmaz.</div>';
+  $("g_out").innerHTML=h;
+}
+
+function diagram(kollar,Px,Py,eksA,SPw,wdir,direkTip,rLbl){
+  const W=700,H=400,cx=W/2,cy=H/2;
+  let mx=Math.sqrt(Px*Px+Py*Py);
+  kollar.forEach(k=>{ if(k.fd>mx) mx=k.fd; });
+  if(SPw>mx) mx=SPw;
+  if(mx<=0) mx=1;
+  const sc=172/mx;   /* çizim ölçeği — etiket puntosu sabit, şekil büyür */
+  let s='<svg class="diag" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Kuvvet diyagramı">';
+  s+='<defs>'
+    +'<marker markerUnits="userSpaceOnUse" id="ah" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">'
+    +'<path d="M0,0 L9,4.5 L0,9 z" fill="#0B3A3C"/></marker>'
+    +'<marker markerUnits="userSpaceOnUse" id="ar" markerWidth="11" markerHeight="11" refX="10" refY="5.5" orient="auto">'
+    +'<path d="M0,0 L11,5.5 L0,11 z" fill="#E8A33D"/></marker>'
+    +'<marker markerUnits="userSpaceOnUse" id="aw2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">'
+    +'<path d="M0,0 L9,4.5 L0,9 z" fill="#5C6B68"/></marker>'
+    +'</defs>';
+  s+='<line x1="14" y1="'+cy+'" x2="'+(W-14)+'" y2="'+cy+'" stroke="#C9D4D2"/>';
+  s+='<line x1="'+cx+'" y1="14" x2="'+cx+'" y2="'+(H-14)+'" stroke="#C9D4D2"/>';
+  /* eksen çizgisi */
+  const ex=Math.cos(rad(eksA))*135, ey=-Math.sin(rad(eksA))*135;
+  s+='<line x1="'+(cx-ex)+'" y1="'+(cy-ey)+'" x2="'+(cx+ex)+'" y2="'+(cy+ey)+'" stroke="#12575A" stroke-dasharray="6 4" stroke-width="1.2"/>';
+  /* Kol etiketleri ok ucunun dışına, yönüne göre sağa/sola yaslanarak yazılır.
+     Birbirine yakın düşen etiketler dikeyde itilerek üst üste binmesi önlenir. */
+  const etk=[]; let etkYaz=function(){return "";};
+  kollar.forEach(function(k){
+    if(k.fd<=0) return;
+    const a=((k.ac%360)+360)%360, ca=Math.cos(rad(a)), sa=Math.sin(rad(a));
+    const x=cx+ca*k.fd*sc, y=cy-sa*k.fd*sc;
+    s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x+'" y2="'+y+'" stroke="#0B3A3C" stroke-width="1.6" marker-end="url(#ah)"/>';
+    const sag=(ca>=0);
+    etk.push({x:x+(sag?9:-9), y:y-sa*8+3.5, an:(sag?"start":"end"),
+              t:tAd(k.tp)+" "+fmt(k.fd)});
+  });
+  /* Etiketler (kol + bileşke) tek listede toplanıp birlikte çakışma denetiminden
+     geçirilir; sonra hepsi birden yazılır. */
+  const rxT=cx+Px*sc, ryT=cy-Py*sc, rSag=(rxT>=cx);
+  etk.push({x:rxT+(rSag?9:-9), y:ryT+(ryT>=cy?18:-10), an:(rSag?"start":"end"),
+            t:(rLbl||("R = "+fmt(Math.sqrt(Px*Px+Py*Py),2)+" kg")), R:1});
+  etk.sort(function(u,v){ return u.y-v.y; });
+  for(let i=1;i<etk.length;i++){
+    if(Math.abs(etk[i].y-etk[i-1].y)<15 && Math.abs(etk[i].x-etk[i-1].x)<230)
+      etk[i].y = etk[i-1].y + 15;
+  }
+  etkYaz=function(){
+    let g="";
+    etk.forEach(function(e){
+      g+='<text x="'+e.x.toFixed(1)+'" y="'+e.y.toFixed(1)+'" font-size="'+(e.R?12:9.5)+'" '
+        +(e.R?'font-weight="700" ':'')+'font-family="monospace" fill="'+(e.R?"#B87B18":"#0B3A3C")+'" '
+        +'stroke="#FBFCFB" stroke-width="3.3" paint-order="stroke" text-anchor="'+e.an+'">'+e.t+'</text>';
+    });
+    return g;
+  };
+  if(SPw>0){
+    const x=cx+Math.cos(rad(wdir))*SPw*sc, y=cy-Math.sin(rad(wdir))*SPw*sc;
+    s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x+'" y2="'+y+'" stroke="#5C6B68" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#aw2)"/>';
+    s+='<text x="'+(x+4)+'" y="'+(y-4)+'" font-size="10" font-family="monospace" fill="#5C6B68">Pw '+fmt(SPw,2)+'</text>';
+  }
+  const rx=cx+Px*sc, ry=cy-Py*sc;
+  s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+rx+'" y2="'+ry+'" stroke="#E8A33D" stroke-width="3.4" marker-end="url(#ar)"/>';
+  s+=etkYaz();
+  s+='<g transform="translate('+cx+','+cy+') rotate('+(-eksA)+')">';
+  if(direkTip==="kafes"){
+    s+='<rect x="-10" y="-10" width="20" height="20" fill="#fff" stroke="#0B3A3C" stroke-width="2.6"/>'
+      +'<line x1="-10" y1="-10" x2="10" y2="10" stroke="#0B3A3C" stroke-width="1"/>'
+      +'<line x1="-10" y1="10" x2="10" y2="-10" stroke="#0B3A3C" stroke-width="1"/>';
+  }else{
+    s+='<rect x="-9" y="-3" width="18" height="6" fill="#0B3A3C"/>'
+      +'<rect x="-11" y="-11" width="4" height="22" fill="#0B3A3C"/>'
+      +'<rect x="7" y="-11" width="4" height="22" fill="#0B3A3C"/>';
+  }
+  s+='</g>';
+  /* kol açıları ve komşu kollar arası açı yayları */
+  const sirali=kollar.filter(k=>true).map(k=>((k.ac%360)+360)%360).sort((a,b)=>a-b);
+  kollar.forEach(function(k){
+    const a=((k.ac%360)+360)%360, p=pol(cx,cy,236,a);
+    s+='<text x="'+p[0].toFixed(1)+'" y="'+(p[1]+(Math.sin(rad(a))>=0?-5:13)).toFixed(1)+'" font-size="10" '
+      +'font-family="monospace" fill="#B87B18" stroke="#FBFCFB" stroke-width="3" paint-order="stroke" '
+      +'text-anchor="middle">'+fmt(a)+'°</text>';
+  });
+  for(let i=0;i<sirali.length;i++){
+    const a1=sirali[i], a2=(i===sirali.length-1)? sirali[0]+360 : sirali[i+1];
+    const fark=a2-a1; if(fark<8||fark>352) continue;
+    const r=88+(i%2)*16;
+    s+='<path d="'+yay(cx,cy,r,a1,a2)+'" fill="none" stroke="#9AA8A5" stroke-width="1"/>';
+    const pm=pol(cx,cy,r+12,(a1+a2)/2);
+    s+='<text x="'+pm[0].toFixed(1)+'" y="'+(pm[1]+3.5).toFixed(1)+'" font-size="9.5" font-family="monospace" '
+      +'fill="#5C6B68" stroke="#FBFCFB" stroke-width="2.6" paint-order="stroke" text-anchor="middle">'+fmt(fark)+'°</text>';
+  }
+  s+='<text x="12" y="18" font-size="10" font-family="monospace" fill="#5C6B68">0° = sağ · açılar saat yönünün tersine</text>';
+  s+='</svg>';
+  return '<div class="diagwrap">'+s+'</div>';
+}
+
+/* ==================================================================
+   GENEL KUVVET DİYAGRAMI (üstten görünüş)
+   o = { kuvvetler:[{ac,F,ad,tip}], hatlar:[ac], hatEtiket:[{ac,txt}],
+         aciArc:{a,b,lbl}, aciortay:ac, R:{ac,F,lbl},
+         bilesen:[{ac,F,ad}], eksen:{ac,lbl}, direk:"beton"|"A"|"kafes", alt:"..." }
+   ================================================================== */
+function pol(cx,cy,r,d){ return [cx+r*Math.cos(rad(d)), cy-r*Math.sin(rad(d))]; }
+function yay(cx,cy,r,a1,a2){
+  let s=a1,e=a2; if(e<s){const t=s;s=e;e=t;}
+  const p1=pol(cx,cy,r,s), p2=pol(cx,cy,r,e);
+  const la=((e-s)>180)?1:0;
+  return 'M'+p1[0].toFixed(1)+','+p1[1].toFixed(1)+' A'+r+','+r+' 0 '+la+' 0 '+p2[0].toFixed(1)+','+p2[1].toFixed(1);
+}
+function cizimSVG(o){
+  const pad=30, HR=186;   /* gri kol çizgilerinin yarıçapı */
+  const kuv=(o.kuvvetler||[]).slice();
+
+  /* zincir (bileşen) toplamı → gerçek bileşke vektörü */
+  let zx=0, zy=0, zinc=[];
+  (o.zincir||[]).forEach(function(z){
+    zinc.push({x0:zx, y0:zy, ac:z.ac, F:z.F, ad:z.ad, yon:z.yon});
+    zx+=z.F*Math.cos(rad(z.ac)); zy+=z.F*Math.sin(rad(z.ac));
+  });
+  let R=o.R;
+  if(o.zincir && o.zincir.length){
+    R={ac:(Math.atan2(zy,zx)*180/Math.PI+360)%360, F:Math.sqrt(zx*zx+zy*zy), lbl:(o.R?o.R.lbl:"")};
+  }
+
+  /* ölçek ve dikey sığdırma */
+  let mx=0;
+  kuv.forEach(k=>{ if(k.F>mx) mx=k.F; });
+  zinc.forEach(k=>{ if(Math.abs(k.y0)+k.F>mx) mx=Math.abs(k.y0)+k.F; });
+  if(R && R.F>mx) mx=R.F;
+  if(mx<=0) mx=1;
+  const sc=168/mx;   /* çizim ölçeği — etiket puntosu sabit, şekil büyür */
+
+  let up=84, dn=56;      /* üst şeritte açıklama satırı için yer bırakılır */
+  function kayit(x,y){ if(y>up) up=y; if(-y>dn) dn=-y; }
+  kuv.forEach(k=>kayit(0,k.F*Math.sin(rad(k.ac))*sc));
+  zinc.forEach(k=>kayit(0,(k.y0+k.F*Math.sin(rad(k.ac)))*sc));
+  if(R) kayit(0,R.F*Math.sin(rad(R.ac))*sc);
+  (o.hatlar||[]).forEach(a=>kayit(0,Math.sin(rad(a))*HR));
+  if(o.aciortay!==undefined && o.aciortay!==null) dn=Math.max(dn,92);
+
+  /* YATAY SIĞDIRMA — kutu genişliği içeriğe göre belirlenir. Eskiden sabit 620
+     idi ve çizim ortada küçük kalıyordu. Etiket genişliği karakter başına
+     ~0,58×punto ile tahmin edilir; kenarlarda kırpılma olmaz.               */
+  let sag=150, sol=150;
+  const enB=(t,fs)=>((t||"").length)*(fs||10.5)*0.58;
+  function yatay(x,gsag,gsol){
+    if(x+(gsag||0)>sag) sag=x+(gsag||0);
+    if(-(x-(gsol||0))>sol) sol=-(x-(gsol||0));
+  }
+  kuv.forEach(k=>{ const x=k.F*Math.cos(rad(k.ac))*sc, w=enB(k.ad,10.5)/2; yatay(x,w,w); });
+  zinc.forEach(k=>{ const x=(k.x0+k.F*Math.cos(rad(k.ac)))*sc, w=enB(k.ad,10)/2; yatay(x,w,w); });
+  if(R){ const x=R.F*Math.cos(rad(R.ac))*sc, w=enB(R.lbl,12); yatay(x*0.34,w+30,w+30); yatay(x,20,20); }
+  (o.hatEtiket||[]).forEach(e=>{ const ca=Math.cos(rad(e.ac)), x=ca*(HR+2), w=enB(e.txt,10.5);
+    if(ca>=-0.05) yatay(x+6+w,0,0); else yatay(x-6-w,0,0); });
+  (o.hatlar||[]).forEach(a=>yatay(Math.cos(rad(a))*HR,0,0));
+  if(o.eksen && o.eksen.lbl) yatay(0, enB("Direk: "+o.eksen.lbl,9.5), 0);
+  if(o.alt) yatay(0, 0, enB("Üstten görünüş · "+o.alt,9.5));
+
+  const cx=Math.round(sol+pad), cy=Math.round(up+56);
+  const W=Math.round(sol+sag+2*pad), H=Math.round(cy+dn+54);
+
+  let s='<svg class="diag" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Kuvvet diyagramı">';
+  s+='<defs>'
+   +'<marker markerUnits="userSpaceOnUse" id="mCer" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0B3A3C"/></marker>'
+   +'<marker markerUnits="userSpaceOnUse" id="mRuz" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#5C6B68"/></marker>'
+   +'<marker markerUnits="userSpaceOnUse" id="mRes" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#E8A33D"/></marker>'
+   +'<marker markerUnits="userSpaceOnUse" id="mBil" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#12575A"/></marker>'
+   +'</defs>';
+
+  /* hat kolları */
+  (o.hatlar||[]).forEach(function(a){
+    const p=pol(cx,cy,HR,a);
+    s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="#C3D0CD" stroke-width="8" stroke-linecap="round"/>';
+  });
+  /* Hat etiketleri kolun ucuna, yönüne göre sağa/sola yaslanır; birbirine yakın
+     düşenler dikeyde itilerek üst üste binme önlenir. */
+  (function(){
+    const et=(o.hatEtiket||[]).map(function(e){
+      const ca=Math.cos(rad(e.ac)), sn=Math.sin(rad(e.ac));
+      const p=pol(cx,cy,HR+2,e.ac), sag=(ca>=-0.05);
+      return {x:p[0]+(sag?6:-6), y:p[1]+(sn>0?-7:14), an:(sag?"start":"end"), t:e.txt};
+    });
+    et.sort(function(u,v){ return u.y-v.y; });
+    for(let i=1;i<et.length;i++)
+      if(Math.abs(et[i].y-et[i-1].y)<12 && Math.abs(et[i].x-et[i-1].x)<200) et[i].y=et[i-1].y+12;
+    et.forEach(function(e){
+      s+='<text x="'+e.x.toFixed(1)+'" y="'+e.y.toFixed(1)+'" font-size="10.5" font-family="monospace" '
+        +'fill="#5C6B68" stroke="#FBFCFB" stroke-width="3" paint-order="stroke" text-anchor="'+e.an+'">'+e.t+'</text>';
+    });
+  })();
+
+  /* açıortay */
+  if(o.aciortay!==undefined && o.aciortay!==null){
+    const p1=pol(cx,cy,98,o.aciortay), p2=pol(cx,cy,86,o.aciortay+180);
+    s+='<line x1="'+p1[0].toFixed(1)+'" y1="'+p1[1].toFixed(1)+'" x2="'+p2[0].toFixed(1)+'" y2="'+p2[1].toFixed(1)+'" stroke="#12575A" stroke-dasharray="7 5" stroke-width="1.1"/>';
+    const pl=pol(cx,cy,100,o.aciortay+180);
+    s+='<text x="'+pl[0].toFixed(1)+'" y="'+(pl[1]+4).toFixed(1)+'" font-size="9.5" font-family="monospace" fill="#12575A" text-anchor="middle">'+(o.eksenLbl||"açıortay · direk ekseni")+'</text>';
+  }
+
+  /* açı yayı */
+  if(o.aciArc){
+    s+='<path d="'+yay(cx,cy,46,o.aciArc.a,o.aciArc.b)+'" fill="none" stroke="#B87B18" stroke-width="1.4"/>';
+    const md=(o.aciArc.a+o.aciArc.b)/2, pm=pol(cx,cy,64,md);
+    s+='<text x="'+pm[0].toFixed(1)+'" y="'+(pm[1]+4).toFixed(1)+'" font-size="11.5" font-family="monospace" fill="#B87B18" stroke="#FBFCFB" stroke-width="3.2" paint-order="stroke" text-anchor="middle">'+o.aciArc.lbl+'</text>';
+  }
+
+  /* ok çizici — x0,y0 kuvvet biriminde başlangıç */
+  function ok(x0,y0,a,F,ad,renk,mk,kal,dash,fs,mod){
+    if(!(F>0) || F*sc<13) return '';   /* ölçekte görünmeyecek kadar küçük bileşenleri çizme */
+    const bx=cx+x0*sc, by=cy-y0*sc;
+    const ex=bx+F*Math.cos(rad(a))*sc, ey=by-F*Math.sin(rad(a))*sc;
+    let t='<line x1="'+bx.toFixed(1)+'" y1="'+by.toFixed(1)+'" x2="'+ex.toFixed(1)+'" y2="'+ey.toFixed(1)+'" stroke="'+renk+'" stroke-width="'+kal+'"'
+      +(dash?' stroke-dasharray="5 4"':'')+' marker-end="url(#'+mk+')"/>';
+    if(ad){
+      const c=Math.cos(rad(a)), sn=Math.sin(rad(a));
+      let lx,ly,anc;
+      if(mod==="uc"){
+        if(sn>0.45){
+          /* Yukarı bakan bileşke: ok ucu üstteki açıklama şeridine ve kol
+             etiketlerine girer. Etiket okun alt üçte birine, yatay yönünün
+             tersine kaydırılarak yazılır — orası kolların arası ve boştur. */
+          const yan=(c<0)? 1 : -1;
+          lx=bx+(ex-bx)*0.60 + yan*30; ly=by+(ey-by)*0.60 + 5;
+          anc=(yan>0)?'start':'end';
+        }else{
+          const ux=c*18 - sn*13, uy=-sn*18 - c*13;
+          lx=ex+ux; ly=ey+uy+4;
+          anc=(ux>4)?'start':((ux<-4)?'end':'middle');
+        }
+      }else{
+        const yon=(mod==="orta2")?-1:1;
+        lx=(bx+ex)/2 - yon*sn*26; ly=(by+ey)/2 - yon*c*26 + 3;
+        anc='middle';
+      }
+      t+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" font-size="'+(fs||10.5)+'" font-family="monospace" fill="'+renk+'" '
+        +'stroke="#FBFCFB" stroke-width="3.2" paint-order="stroke" text-anchor="'+anc+'">'+ad+'</text>';
+    }
+    return t;
+  }
+
+  kuv.forEach(function(k){
+    if(k.tip==="ruzgar") s+=ok(0,0,k.ac,k.F,k.ad,"#5C6B68","mRuz",1.4,true,10,"orta");
+    else s+=ok(0,0,k.ac,k.F,k.ad,"#0B3A3C","mCer",2,false,10.5,"orta");
+  });
+  zinc.forEach(function(z){ s+=ok(z.x0,z.y0,z.ac,z.F,z.ad,"#12575A","mBil",1.3,true,10,(z.yon===1)?"orta":"orta2"); });
+  if(R) s+=ok(0,0,R.ac,R.F,R.lbl,"#B87B18","mRes",3.6,false,12,"uc");
+
+  /* direk sembolü */
+  const eks=(o.direkAci!==undefined && o.direkAci!==null)? o.direkAci : (o.eksen? o.eksen.ac : 0);
+  s+='<g transform="translate('+cx+','+cy+') rotate('+(-eks)+')">';
+  if(o.direk==="beton"){
+    s+='<circle cx="0" cy="0" r="9" fill="#fff" stroke="#0B3A3C" stroke-width="2.6"/><circle cx="0" cy="0" r="2.2" fill="#0B3A3C"/>';
+  }else if(o.direk==="kafes"){
+    s+='<rect x="-10" y="-10" width="20" height="20" fill="#fff" stroke="#0B3A3C" stroke-width="2.6"/>'
+      +'<line x1="-10" y1="-10" x2="10" y2="10" stroke="#0B3A3C" stroke-width="1"/><line x1="-10" y1="10" x2="10" y2="-10" stroke="#0B3A3C" stroke-width="1"/>';
+  }else{
+    /* I profili: gövde kuvvetli eksen boyunca, başlıklar (ayaklar) eksene dik */
+    s+='<rect x="-9" y="-3" width="18" height="6" fill="#0B3A3C"/>'
+      +'<rect x="-11" y="-11" width="4" height="22" fill="#0B3A3C"/>'
+      +'<rect x="7" y="-11" width="4" height="22" fill="#0B3A3C"/>';
+  }
+  s+='</g>';
+
+  s+='<text x="12" y="17" font-size="9.5" font-family="monospace" fill="#5C6B68">Üstten görünüş'+(o.alt?' · '+o.alt:'')+'</text>';
+  if(o.eksen && o.eksen.lbl)
+    s+='<text x="'+(W-12)+'" y="'+(H-12)+'" font-size="9.5" font-family="monospace" fill="#0B3A3C" text-anchor="end">Direk: '+o.eksen.lbl+'</text>';
+  s+='</svg>';
+  return '<div class="diagwrap">'+s+'</div>';
+}
+
+/* ==================================================================
+   TABLOLAR SEKMESİ
+   ================================================================== */
+function tabloYaz(){
+  let h="";
+  if(musMod()){
+    h+='<h3 class="sec">YG iletken tertipleri — rüzgâr yükü ve yalnız YG maksimum cerleri (kg)</h3><div class="tblwrap"><table class="d"><thead><tr>'
+      +'<th>YG tertibi</th><th>P<sub>w</sub> 40 m</th><th>P<sub>w</sub> 50 m</th><th>Direk</th>'
+      +'<th>1. Bölge</th><th>2. Bölge</th><th>3. Bölge</th><th>4. Bölge</th></tr></thead><tbody>';
+    YG_SIRA.forEach(function(k){ const y=YG[k];
+      h+='<tr><td rowspan="2">'+k+'</td><td rowspan="2">'+fmtT(y.pw[0])+'</td><td rowspan="2">'+fmtT(y.pw[1])+'</td>'
+        +'<td>Demir</td><td>'+y.d.map(fmtT).join('</td><td>')+'</td></tr>'
+        +'<tr><td>Beton</td><td>'+y.b.map(fmtT).join('</td><td>')+'</td></tr>';
+    });
+    h+='</tbody></table></div>';
+
+    h+='<h3 class="sec">Müşterek hat maksimum cerleri (kg) — YG + 0,81 × AG, travers direk tepesinde</h3>'
+      +'<p class="hint">Rüzgâr yükü ΣP<sub>w</sub> = P<sub>w</sub>(YG) + 0,81 × P<sub>w</sub>(AG) olarak hesaplanır.</p>'
+      +'<div class="tblwrap"><table class="d"><thead><tr><th>Hat tertibi</th><th>Direk</th>'
+      +'<th>1. Bölge</th><th>2. Bölge</th><th>3. Bölge</th><th>4. Bölge</th><th>ΣP<sub>w</sub> 40 m</th><th>ΣP<sub>w</sub> 50 m</th></tr></thead><tbody>';
+    YG_SIRA.forEach(function(yg){
+      MUS_AG_SIRA.forEach(function(ag,i){
+        const dd=MUS_D[yg][i], bb=MUS_B[yg][i], anahtar=yg+"#"+ag;
+        h+='<tr><td rowspan="2">'+musAd(yg,ag)+'</td><td>Demir</td><td>'+dd.map(fmtT).join('</td><td>')+'</td>'
+          +'<td rowspan="2">'+fmt(pwAl("al",anahtar,0),2)+'</td><td rowspan="2">'+fmt(pwAl("al",anahtar,1),2)+'</td></tr>'
+          +'<tr><td>Beton</td>'+(bb? '<td>'+bb.map(fmtT).join('</td><td>')+'</td>' : '<td colspan="4">—</td>')+'</tr>';
+      });
+    });
+    h+='</tbody></table></div>';
+
+    h+='<h3 class="sec">Kitap tablosunda yer almayan müşterek hatlar — hesaplanan maksimum cerler (kg)</h3>'
+      +'<p class="hint">2R, 4R ve AER (ALPEK) tertipleri kitabın tablolarında yer almadığından, kitabın kendi bağıntısıyla hesaplanmıştır: '
+      +'<b>P = T<sub>max</sub>(YG) + 0,81 × T<sub>max</sub>(AG)</b>. Aynı bağıntı, tablodaki 35 tertibi birebir vermektedir.</p>'
+      +'<div class="tblwrap"><table class="d"><thead><tr><th>Hat tertibi</th><th>Direk</th>'
+      +'<th>1. Bölge</th><th>2. Bölge</th><th>3. Bölge</th><th>4. Bölge</th><th>ΣP<sub>w</sub> 40 m</th><th>ΣP<sub>w</sub> 50 m</th></tr></thead><tbody>';
+    YG_SIRA.forEach(function(yg){
+      for(const ag in SETS.al.tertipler){
+        if(MUS_AG_SIRA.indexOf(ag)>=0) continue;
+        const anahtar=yg+"#"+ag, dd=[0,1,2,3].map(b=>tmax("al",anahtar,b,"demir")),
+              bb=[0,1,2,3].map(b=>tmax("al",anahtar,b,"beton"));
+        h+='<tr><td rowspan="2">'+musAd(yg,ag)+'</td><td>Demir</td><td>'+dd.map(x=>fmt(x,2)).join('</td><td>')+'</td>'
+          +'<td rowspan="2">'+fmt(pwAl("al",anahtar,0),2)+'</td><td rowspan="2">'+fmt(pwAl("al",anahtar,1),2)+'</td></tr>'
+          +'<tr><td>Beton</td><td>'+bb.map(x=>fmt(x,2)).join('</td><td>')+'</td></tr>';
+      }
+    });
+    h+='</tbody></table></div>';
+
+    h+='<h3 class="sec">A-tipi müşterek demir direklerin tepe kuvvetleri (kg)</h3><div class="tblwrap"><table class="d"><thead><tr>'
+      +'<th>Direk tipi</th><th>Rüzgârsız P<sub>k</sub></th><th>Rüzgârsız P<sub>z</sub></th><th>Rüzgârlı P<sub>k</sub></th><th>Rüzgârlı P<sub>z</sub></th></tr></thead><tbody>';
+    MATIP_SIRA.forEach(k=>{const a=MATIP[k];
+      h+='<tr><td>'+k+'</td><td>'+a.rsK+'</td><td>'+a.rsZ+'</td><td>'+a.rlK+'</td><td>'+a.rlZ+'</td></tr>';});
+    h+='</tbody></table></div>';
+    h+='<h3 class="sec">Kafes müşterek demir direklerin tepe kuvvetleri (kg)</h3><div class="tblwrap"><table class="d"><thead><tr>'
+      +'<th>Direk tipi</th><th>Rüzgârsız</th></tr></thead><tbody>';
+    MKAFES_SIRA.forEach(k=>h+='<tr><td>'+k+'</td><td>'+MKAFES[k].rs+'</td></tr>');
+    h+='</tbody></table></div>';
+    h+='<p class="hint">Müşterek beton direkler 11 m boyundadır (11/3, 11/6, 11/8 …). İki YG traversi gereken hallerde direk boyu 12 m seçilir. '
+      +'Müşterek taşıyıcıda beton direk tüm bölgelerde 11/3; durdurucu, nihayet, branşman ve tevzide 11/6\'dan küçük seçilmez. '
+      +'Demir müşterek direklerde 8I, 10I gibi kısa direkler kullanılmaz; 10I", 12I", 10U", 12U" ve K1"…K5" tipleri kullanılır.</p>';
+    h+='<h3 class="sec">Çizelge:12 — tek yanlı zayıflama</h3><div class="tblwrap"><table class="d"><thead><tr>'
+      +'<th>Direkteki toplam iletken sayısı</th><th>Zayıflama (%)</th><th>Zayıflatılan tarafta kalan oran</th></tr></thead><tbody>';
+    [2,3,4,5,6].forEach(n=>h+='<tr><td>'+(n===6?"6 ve daha çok":n)+'</td><td>'+zayiflamaYuzde(n)+'</td><td>'+fmt(kalanOran(n),2)+'</td></tr>');
+    h+='</tbody></table></div>';
+    $("tb_body").innerHTML=h;
+    return;
+  }
+  h+='<h3 class="sec">İletken tertiplerine gelen toplam rüzgâr kuvvetleri P<sub>w</sub> (kg)</h3><div class="tblwrap"><table class="d"><thead><tr><th>Tertip</th><th>a = 40 m</th><th>a = 50 m</th><th>İletken sayısı</th><th>Zayıflatma (Çiz.12)</th></tr></thead><tbody>';
+  for(const sk in SETS) for(const tp in SETS[sk].tertipler){
+    const t=SETS[sk].tertipler[tp];
+    h+='<tr><td>'+tp+'</td><td>'+fmtT(t.pw[0])+'</td><td>'+fmtT(t.pw[1])+'</td><td>'+t.n+'</td><td>%'+zayiflamaYuzde(t.n)+'</td></tr>';
+  }
+  h+='</tbody></table></div>';
+
+  h+='<h3 class="sec">İletken tertiplerinin maksimum çekme kuvvetleri T<sub>max</sub> (kg)</h3><div class="tblwrap"><table class="d"><thead><tr><th>Tertip</th><th>Direk</th><th>1. Bölge</th><th>2. Bölge</th><th>3. Bölge</th><th>4. Bölge</th></tr></thead><tbody>';
+  for(const sk in SETS) for(const tp in SETS[sk].tertipler){
+    const t=SETS[sk].tertipler[tp];
+    h+='<tr><td>'+tp+'</td><td>Demir</td><td>'+t.d.map(fmtT).join('</td><td>')+'</td></tr>';
+    if(t.b) h+='<tr><td>'+tp+'</td><td>Beton</td><td>'+t.b.map(fmtT).join('</td><td>')+'</td></tr>';
+  }
+  h+='</tbody></table></div>';
+
+  h+='<h3 class="sec">Tek iletkenlerin maksimum çekme kuvvetleri (kg)</h3><div class="tblwrap"><table class="d"><thead><tr><th>İletken</th><th>p<sub>w</sub> 40 m</th><th>p<sub>w</sub> 50 m</th><th>1. B. (D)</th><th>2. B. (D)</th><th>3. B. (D)</th><th>4. B. (D)</th><th>2. B. (Beton)</th><th>3. B. (Beton)</th></tr></thead><tbody>';
+  for(const k in ILETKEN){ const i=ILETKEN[k];
+    h+='<tr><td>'+k+'</td><td>'+fmt(i.pw[0],3)+'</td><td>'+fmt(i.pw[1],3)+'</td><td>'+i.d.map(x=>fmt(x,2)).join('</td><td>')+'</td>'
+      +'<td>'+(i.b?fmt(i.b[1]):"—")+'</td><td>'+(i.b?fmt(i.b[2]):"—")+'</td></tr>';
+  }
+  h+='</tbody></table></div>';
+
+  h+='<h3 class="sec">A-tipi demir direklerin tepe kuvvetleri (kg) — kuvvetli / zayıf eksen</h3><div class="tblwrap"><table class="d"><thead><tr><th>Direk tipi</th><th>Rüzgârsız P<sub>k</sub></th><th>Rüzgârsız P<sub>z</sub></th><th>Rüzgârlı P<sub>k</sub></th><th>Rüzgârlı P<sub>z</sub></th></tr></thead><tbody>';
+  for(const k of ATIP_SIRA){ const a=ATIP[k];
+    h+='<tr><td>'+k+'</td><td>'+a.rsK+'</td><td>'+a.rsZ+'</td><td>'+a.rlK+'</td><td>'+a.rlZ+'</td></tr>'; }
+  h+='</tbody></table></div>';
+
+  h+='<h3 class="sec">Kafes demir direklerin tepe kuvvetleri (kg)</h3><div class="tblwrap"><table class="d"><thead><tr><th>Direk tipi</th><th>Rüzgârsız</th><th>Rüzgârlı</th></tr></thead><tbody>';
+  for(const k of KAFES_SIRA){ h+='<tr><td>'+k+'</td><td>'+KAFES[k].rs+'</td><td>'+KAFES[k].rl+'</td></tr>'; }
+  h+='</tbody></table></div>';
+
+  h+='<h3 class="sec">SBA beton direk tipleri</h3><div class="tblwrap"><table class="d"><thead><tr><th>Gösterim (H/P)</th><th>Tepe kuvveti (kg)</th></tr></thead><tbody>';
+  for(const t of BETON_TIP){ h+='<tr><td>'+BETON_BOY+'/'+t+'</td><td>'+(t*100)+'</td></tr>'; }
+  h+='</tbody></table></div>';
+  h+='<p class="hint">AG beton direkleri 2 emniyetlidir: tip deneyinde tepe kuvvetinin 2 katından daha az bir yükte kırılmamalıdır. '
+    +'Dairesel kesitli olduklarından sonsuz yatay eksenlidir; bu nedenle bileşke doğrudan vektörel olarak alınır.</p>';
+
+  h+='<h3 class="sec">Köşede taşıyıcı — zaviye faktörü n = 2·cos(α/2)</h3><div class="tblwrap"><table class="d"><thead><tr><th>α</th><th>n</th><th>α</th><th>n</th><th>α</th><th>n</th><th>α</th><th>n</th></tr></thead><tbody>';
+  const acilar=[]; for(let a=80;a<=180;a++) acilar.push(a);
+  for(let i=0;i<26;i++){
+    h+='<tr>';
+    for(let j=0;j<4;j++){
+      const a=acilar[i+j*26];
+      if(a===undefined){ h+='<td></td><td></td>'; continue; }
+      h+='<td>'+a+'°</td><td>'+fmt(2*Math.cos(rad(a/2)),2)+'</td>';
+    }
+    h+='</tr>';
+  }
+  h+='</tbody></table></div>';
+
+  h+='<h3 class="sec">Çizelge:12 — tek yanlı zayıflama yüzdeleri</h3><div class="tblwrap"><table class="d"><thead><tr><th>İletkenlerin toplam sayısı</th><th>Tek yanlı zayıflama (%)</th></tr></thead><tbody>'
+    +'<tr><td>2</td><td>100</td></tr><tr><td>3</td><td>75</td></tr><tr><td>4</td><td>60</td></tr>'
+    +'<tr><td>5</td><td>50</td></tr><tr><td>6 ve daha çok</td><td>40</td></tr></tbody></table></div>';
+  $("tb_body").innerHTML=h;
+}
+
+
+/* ==================================================================
+   TESİS BİLGİLERİ · MANUEL DİREK · KAYIT
+   ================================================================== */
+function oz(x){ return String(x).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
+function doldurManuelDirek(){
+  const sel=$("ts_direk");
+  const eski=sel? sel.value : "";
+  const kd=kdBoyAktif();
+  let h='<option value="">Otomatik — hesaba göre seçilsin</option>';
+  h+='<optgroup label="A-tipi demir direk">';
+  ATIPSIRAAKT().forEach(k=>h+='<option value="A:'+oz(k)+'">'+oz(k)+'</option>');
+  h+='</optgroup><optgroup label="Kafes demir direk">';
+  KAFESSIRAAKT().forEach(k=>h+='<option value="K:'+oz(k)+'">'+oz(k)+'</option>');
+  h+='</optgroup><optgroup label="Beton direk">';
+  BETON_TIP.forEach(t=>h+='<option value="B:'+t+'">'+BETONBOY(kd)+'/'+t+'</option>');
+  h+='</optgroup>';
+  sel.innerHTML=h;
+  if(eski){ sel.value=eski; if(sel.selectedIndex<0) sel.selectedIndex=0; }
+}
+
+/* Elle seçilen direğin tahkiki. ruz: rüzgârlı tepe kuvvetleri esas alınacaksa true */
+function manuelBlok(Rk,Rz,Rvek,ruz,kd){
+  const v=$("ts_direk").value;
+  if(!v) return "";
+  const tur=v.slice(0,1), ad=v.slice(2);
+  let kap,det,ok;
+  if(tur==="A"){
+    const a=ATIPAKT()[ad]; if(!a) return "";
+    const K=ruz?a.rlK:a.rsK, Z=ruz?a.rlZ:a.rsZ;
+    ok=(K>=Rk && Z>=Rz);
+    det=(ruz?"Rüzgârlı":"Rüzgârsız")+" kuvvetli eksen "+K+" kg / R<sub>k</sub> = "+fmt(Rk,2)+" kg · "
+       +"zayıf eksen "+Z+" kg / R<sub>z</sub> = "+fmt(Rz,2)+" kg";
+  }else if(tur==="K"){
+    const kk=KAFESAKT()[ad]; if(!kk) return "";
+    kap=ruz?kk.rl:kk.rs; ok=(kap>=Rk+Rz);
+    det=(ruz?"Rüzgârlı":"Rüzgârsız")+" tepe kuvveti "+kap+" kg / R = R<sub>k</sub>+R<sub>z</sub> = "+fmt(Rk+Rz)+" kg";
+  }else{
+    kap=parseInt(ad,10)*100; const Rb=(Rvek===null||Rvek===undefined)?Rk:Rvek;
+    ok=(kap>=Rb);
+    det="Tepe kuvveti "+kap+" kg / R = "+fmt(Rb,2)+" kg (beton direkte bileşke vektöreldir)";
+  }
+  const adGoster = (tur==="B")? (BETONBOY(kd)+"/"+ad) : ad;
+  return '<div class="pick manuelkart" style="grid-template-columns:1fr">'
+    +'<div class="pk" style="border-color:'+(ok?"var(--green)":"var(--red)")+';border-width:1.5px">'
+    +'<div class="t">Seçilen direk — elle girildi</div>'
+    +'<div class="v" style="color:'+(ok?"var(--ink)":"var(--red)")+'">'+adGoster+'</div>'
+    +'<div class="n">'+det+'<br><b style="color:'+(ok?"var(--green)":"var(--red)")+'">'
+    +(ok? "Seçilen direk yeterlidir." : "Seçilen direk YETERSİZDİR — daha büyük tepe kuvvetli bir direk seçilmelidir.")
+    +'</b></div></div></div>';
+}
+
+
+/* ---------------- Şebeke tipi (AG / Müşterek) ---------------- */
+function sebekeDegisti(){
+  const m=musMod();
+  $("d_halrow").style.display = m? "" : "none";
+  $("n_halrow").style.display = m? "" : "none";
+  $("kd_halrow").style.display = m? "" : "none";
+  /* müşterekte AER kabloları ve bakır yok; tertip listeleri yeniden kurulur */
+  doldurTertip("t_set","t_tertip"); doldurTertip("kt_set","kt_tertip");
+  doldurTertip("d_set","d_t1"); dSagDoldur();
+  doldurTertip("d_set","d_f1"); doldurTertip("d_set","d_f2");
+  doldurTertip("kd_set","kd_t1"); doldurTertip("kd_set","kd_t2");
+  doldurTertip("n_set","n_tertip"); gArmsYenile();
+  doldurManuelDirek(); tabloYaz(); secimDuzelt(); hesapYenile();
+}
+/* Listesi değişen açılır menülerde geçersiz kalan seçimi ilk geçerli seçeneğe çeker */
+function secimDuzelt(){
+  document.querySelectorAll("main select").forEach(function(e){
+    if(e.options.length && e.selectedIndex<0) e.selectedIndex=0;
+  });
+}
+function hesapYenile(){
+  const akt=document.querySelector("#tabs button.on");
+  const fn={t:hesapT,kt:hesapKT,d:hesapD,kd:hesapKD,n:hesapN,g:hesapG}[akt? akt.dataset.t : "t"];
+  if(fn) try{ fn(); }catch(e){}
+}
+
+/* ---------------- Kayıt / geri yükleme ---------------- */
+const DIREK_ANAHTAR="voltguard:direk-tepe-kuvveti:sonayEnerji_agDirekTepeKuvveti_direkler_v1";
+
+/* ================== DİREK ŞERİDİ ==================
+   Her direk, formun tam anlık görüntüsüdür (durumAl / durumUygula). Sekme
+   değiştirilince önce aktif direğin durumu saklanır, sonra hedef direk yüklenir.
+   Böylece altı görev sekmesi ve hesap fonksiyonları hiç değişmeden çalışır.   */
+let direkler=[], aktifDirek=0, direkKilit=false;
+
+/* Sekme adı: kullanıcı elle bir ad yazdıysa (v.ad) o kullanılır; yazmadıysa
+   "Direk <no>" biçiminde direk numarasından türetilir. Ad silinirse otomatiğe döner. */
+function direkAd(v){
+  if(v && typeof v.ad==="string" && v.ad.trim()) return v.ad.trim();
+  const no=(v && v.alanlar && v.alanlar["ts_no"]!==undefined)? String(v.alanlar["ts_no"]).trim() : "";
+  return "Direk "+(no? no : "\u2014");
+}
+/* durumAl() yeni bir nesne döndürdüğünden, elle verilen ad ayrıca taşınmalıdır */
+function direkAnlik(i){
+  const eski=(direkler[i] && typeof direkler[i].ad==="string")? direkler[i].ad : "";
+  const y=durumAl(); y.ad=eski; return y;
+}
+function kacir(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function direkGorev(v){
+  const k={t:"T",kt:"KT",d:"D",kd:"KD",n:"N",g:"BR"}[v&&v.sekme]||"";
+  return k? " \u00B7 "+k : "";
+}
+function direkSeritYaz(){
+  const e=$("direkler"); if(!e) return;
+  let h="";
+  direkler.forEach(function(dk,i){
+    const akt=(i===aktifDirek);
+    h+='<span class="dsek'+(akt?" on":"")+'" onclick="direkSec('+i+')">'
+      +'<span class="ad"'+(akt? ' contenteditable="true" spellcheck="false"'
+          +' title="Adı değiştirmek için tıklayın" onclick="event.stopPropagation()"'
+          +' onkeydown="direkAdTus(event,'+i+')" onblur="direkAdBitir(this,'+i+')"' : '')
+      +'>'+kacir(direkAd(dk))+'</span>'
+      +'<span class="gorev">'+direkGorev(dk)+'</span>'
+      +(direkler.length>1? '<button class="sil" title="Bu direği sil" onclick="direkSil(event,'+i+')">\u00D7</button>':'')
+      +'</span>';
+  });
+  h+='<button class="ekle" onclick="direkEkle()">+ Direk ekle</button>';
+  e.innerHTML=h;
+}
+function direkSec(i){
+  if(i===aktifDirek || direkKilit) return;
+  direkler[aktifDirek]=direkAnlik(aktifDirek);
+  aktifDirek=i;
+  direkKilit=true; try{ durumUygula(direkler[i]); } finally { direkKilit=false; }
+  direkSeritYaz(); direkKaydet();
+}
+function direkEkle(){
+  direkler[aktifDirek]=direkAnlik(aktifDirek);
+  const y=JSON.parse(JSON.stringify(direkler[aktifDirek]));   /* bir öncekinden kopyalanır */
+  const say=direkler.map(function(d){
+    return parseInt(String((d.alanlar&&d.alanlar["ts_no"])||"").replace(/[^0-9].*$/,""),10);
+  }).filter(function(n){return !isNaN(n);});
+  y.alanlar["ts_no"]=String(say.length? Math.max.apply(null,say)+1 : direkler.length+1);
+  y.ad="";                                   /* elle verilen ad kopyalanmaz */
+  direkler.push(y); aktifDirek=direkler.length-1;
+  direkKilit=true; try{ durumUygula(y); } finally { direkKilit=false; }
+  direkSeritYaz(); direkKaydet();
+}
+function direkSil(ev,i){
+  if(ev && ev.stopPropagation) ev.stopPropagation();
+  if(direkler.length<2) return;
+  if(!confirm("Direk "+direkAd(direkler[i])+" silinecek. Emin misiniz?")) return;
+  direkler.splice(i,1);
+  if(aktifDirek>=direkler.length) aktifDirek=direkler.length-1;
+  else if(i<aktifDirek) aktifDirek--;
+  direkKilit=true; try{ durumUygula(direkler[aktifDirek]); } finally { direkKilit=false; }
+  direkSeritYaz(); direkKaydet();
+}
+function direkAdTus(ev,i){
+  ev.stopPropagation();
+  if(ev.key==="Enter"){ ev.preventDefault(); ev.target.blur(); }
+  else if(ev.key==="Escape"){ ev.target.textContent=direkAd(direkler[i]); ev.target.blur(); }
+}
+function direkAdBitir(el,i){
+  const y=(el.textContent||"").replace(/\s+/g," ").trim().slice(0,40);
+  const oto=(function(){ const t={alanlar:direkler[i].alanlar}; return direkAd(t); })();
+  direkler[i].ad = (!y || y===oto)? "" : y;   /* boş ya da otomatik adla aynıysa otomatiğe dön */
+  direkSeritYaz(); direkKaydet();
+}
+function direkKaydet(){
+  try{
+    const d=direkler.slice(); if(!direkKilit && d.length) d[aktifDirek]=direkAnlik(aktifDirek);
+    localStorage.setItem(DIREK_ANAHTAR, JSON.stringify({aktif:aktifDirek, direkler:d}));
+  }catch(e){}
+}
+function direkTazele(){
+  if(direkKilit || !direkler.length) return;
+  direkler[aktifDirek]=direkAnlik(aktifDirek); direkSeritYaz(); direkKaydet();
+}
+let gomuluCoklu=false;
+function direkBaslat(){
+  let v=null;
+  try{ const x=localStorage.getItem(DIREK_ANAHTAR); if(x) v=JSON.parse(x); }catch(e){}
+  if(v && v.direkler && v.direkler.length){
+    direkler=v.direkler; aktifDirek=Math.min(v.aktif||0, direkler.length-1);
+    direkKilit=true; try{ durumUygula(direkler[aktifDirek]); } finally { direkKilit=false; }
+  }else{
+    kayitYukle();                       /* eski tek-kayıt ve gömülü dosya biçimiyle uyum */
+    if(!gomuluCoklu){ direkler=[durumAl()]; aktifDirek=0; }
+  }
+  direkSeritYaz();
+}
+const KAYIT_ANAHTAR="voltguard:direk-tepe-kuvveti:sonayEnerji_agDirekTepeKuvveti_v1";
+function formAlanlari(){
+  return [...document.querySelectorAll("main input[id], main select[id]")].filter(e=>e.id);
+}
+function bilgiYaz(t,hata){
+  const e=$("kayit_bilgi"); e.textContent=t; e.style.color = hata? "var(--red)" : "var(--green)";
+}
+function durumAl(){
+  const veri={alanlar:{}, kollar:[], sekme:(document.querySelector("#tabs button.on")||{dataset:{}}).dataset.t||"t"};
+  formAlanlari().forEach(e=>{ veri.alanlar[e.id] = (e.type==="checkbox")? e.checked : e.value; });
+  const rd=document.querySelector('input[name=d_mod]:checked'); if(rd) veri.dMod=rd.value;
+  document.querySelectorAll("#g_arms .arm").forEach(r=>veri.kollar.push({
+    tp:r.querySelector(".a_t").value, ac:r.querySelector(".a_a").value, md:r.querySelector(".a_m").value}));
+  veri.zaman=new Date().toISOString();
+  return veri;
+}
+function durumUygula(veri){
+  if(!veri) return;
+  try{
+    ["g_set","d_set","t_set","kt_set","kd_set","n_set"].forEach(id=>{
+      if(veri.alanlar[id]!==undefined && $(id)) $(id).value=veri.alanlar[id];
+    });
+    /* şebeke tipi önce uygulanmalı; tertip listeleri buna göre kurulur */
+    if(veri.alanlar["sebeke"]!==undefined && $("sebeke")){
+      $("sebeke").value=veri.alanlar["sebeke"];
+      const m=musMod();
+      $("d_halrow").style.display = m? "" : "none";
+      $("n_halrow").style.display = m? "" : "none";
+      $("kd_halrow").style.display = m? "" : "none";
+          doldurTertip("t_set","t_tertip"); doldurTertip("kt_set","kt_tertip");
+      doldurTertip("d_set","d_t1"); dSagDoldur();
+      doldurTertip("d_set","d_f1"); doldurTertip("d_set","d_f2");
+      doldurTertip("kd_set","kd_t1"); doldurTertip("kd_set","kd_t2");
+      doldurTertip("n_set","n_tertip");
+      doldurManuelDirek(); tabloYaz();
+    }
+    if(veri.dMod){ const r=document.querySelector('input[name=d_mod][value="'+veri.dMod+'"]'); if(r) r.checked=true; }
+    if(veri.alanlar["d_t1"]!==undefined && $("d_t1")){ $("d_t1").value=veri.alanlar["d_t1"]; dSagDoldur(); }
+    if(veri.kollar && veri.kollar.length){
+      $("g_arms").innerHTML=""; armSay=0;
+      veri.kollar.forEach(k=>armEkle(k.tp, k.ac, k.md));
+    }
+    formAlanlari().forEach(e=>{
+      const d=veri.alanlar[e.id];
+      if(d===undefined) return;
+      if(e.type==="checkbox") e.checked=d; else e.value=d;
+    });
+    secimDuzelt();
+    dMod(); gWindTog(); gEksTog(); gYontemTog();
+    if(veri.sekme){
+      const b=document.querySelector('#tabs button[data-t="'+veri.sekme+'"]');
+      if(b) b.click();
+      const fn={t:hesapT,kt:hesapKT,d:hesapD,kd:hesapKD,n:hesapN,g:hesapG}[veri.sekme];
+      if(fn) try{ fn(); }catch(e){}
+    }
+  }catch(e){}
+}
+function kaydet(){
+  try{
+    direkKaydet();                                   /* bütün direk sekmeleri */
+    localStorage.setItem(KAYIT_ANAHTAR, JSON.stringify(durumAl()));
+    const t=new Date(), iki=n=>String(n).padStart(2,"0");
+    bilgiYaz(direkler.length+" direk bu tarayıcıya kaydedildi · "+iki(t.getHours())+":"+iki(t.getMinutes()));
+  }catch(e){ bilgiYaz("Kayıt yapılamadı (tarayıcı izin vermiyor).",true); }
+}
+function kayitYukle(){
+  const g=document.getElementById("gomuluDurum");
+  if(g){
+    try{
+      const v=JSON.parse(g.textContent);
+      if(v && v.tumu && v.tumu.direkler && v.tumu.direkler.length){
+        direkler=v.tumu.direkler; aktifDirek=Math.min(v.tumu.aktif||0, direkler.length-1);
+        direkKilit=true; try{ durumUygula(direkler[aktifDirek]); } finally { direkKilit=false; }
+        bilgiYaz("Dosyaya gömülü "+direkler.length+" direk yüklendi."); gomuluCoklu=true; return;
+      }
+      durumUygula(v); bilgiYaz("Dosyaya gömülü hesap yüklendi."); return;
+    }catch(e){}
+  }
+  let veri=null;
+  try{ const x=localStorage.getItem(KAYIT_ANAHTAR); if(x) veri=JSON.parse(x); }catch(e){ return; }
+  if(!veri) return;
+  durumUygula(veri);
+  const t=new Date(veri.zaman);
+  if(!isNaN(t)) bilgiYaz("Son kayıt yüklendi · "+t.toLocaleDateString("tr-TR"));
+}
+/* Bütün direkleri siler ve tek boş direkle yeniden başlar. Kaydetme otomatik
+   olduğundan, "baştan başlamak" için tek yol budur.                          */
+function tumunuSifirla(){
+  if(!confirm("Kaydedilen "+direkler.length+" direğin tamamı silinecek ve boş bir direkle "
+             +"yeniden başlanacak. Emin misiniz?")) return;
+  try{ localStorage.removeItem(KAYIT_ANAHTAR); localStorage.removeItem(DIREK_ANAHTAR); }catch(e){}
+  location.reload();
+}
+function kayitSil(){
+  try{ localStorage.removeItem(KAYIT_ANAHTAR); localStorage.removeItem(DIREK_ANAHTAR); }catch(e){}
+  bilgiYaz("Kayıt silindi.");
+}
+
+/* ---------------- Farklı kaydet: hesabı gömülü tek dosya olarak yaz ---------------- */
+function dosyaAdi(){
+  const akt=document.querySelector("#tabs button.on");
+  const p=["AG-OG direk tepe kuvveti"];
+  if($("ts_trafo").value) p.push($("ts_trafo").value);
+  if($("ts_kol").value)   p.push($("ts_kol").value+" kolu");
+  if(direkler.length>1) p.push(direkler.length+" direk");
+  else if($("ts_no").value) p.push("direk "+$("ts_no").value);
+  else if(akt) p.push(akt.textContent.trim());
+  return p.join(" - ").replace(/[\\/:*?"<>|]/g,"-").replace(/\s+/g," ").slice(0,120)+".html";
+}
+function dosyaIcerik(){
+  /* NOT: aşağıdaki etiketler parçalı yazılmıştır; aksi halde bu kodun kendisi
+     kaydetme sırasındaki arama-değiştirme işlemine takılır. */
+  const AC = "<"+"script", KAPA = "<"+"/"+"script>";
+  document.body.classList.remove("tumBasim");
+  const ba=$("basimAlani"); if(ba) ba.innerHTML="";       /* basım artığı dosyaya girmesin */
+  const d=direkler.slice(); if(d.length) d[aktifDirek]=direkAnlik(aktifDirek);
+  const veri = {tumu:{aktif:aktifDirek, direkler:d}, alanlar:durumAl().alanlar,
+                kollar:durumAl().kollar, dMod:durumAl().dMod, sekme:durumAl().sekme,
+                zaman:new Date().toISOString()};
+  let html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const re = new RegExp(AC+' id="gomuluDurum"[\\s\\S]*?'+KAPA, "g");
+  html = html.replace(re, "");
+  const gomulu = AC+' id="gomuluDurum" type="application/json">'
+    + JSON.stringify(veri).replace(/</g,"\\u003c") + KAPA;
+  const BODYKAPA = "<"+"/body>";
+  const i = html.lastIndexOf(BODYKAPA);
+  return (i<0)? html+gomulu : html.slice(0,i)+gomulu+"\n"+html.slice(i);
+}
+async function farkliKaydet(){
+  const ad=dosyaAdi(), blob=new Blob([dosyaIcerik()],{type:"text/html;charset=utf-8"});
+  if(window.showSaveFilePicker){
+    try{
+      const tut=await window.showSaveFilePicker({suggestedName:ad,
+        types:[{description:"HTML dosyası", accept:{"text/html":[".html"]}}]});
+      const yaz=await tut.createWritable(); await yaz.write(blob); await yaz.close();
+      bilgiYaz("Kaydedildi: "+tut.name); return;
+    }catch(e){ if(e && e.name==="AbortError"){ bilgiYaz("Kaydetme iptal edildi."); return; } }
+  }
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=ad;
+  (document.getElementById('vg-tool-workspace') || document.body).appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  bilgiYaz("Dosya indirildi: "+ad);
+}
+
+/* ==================================================================
+   BAŞLATMA
+   ================================================================== */
+function basTesisSatiri(){
+  const bil=[];
+  if($("ts_trafo").value) bil.push("Trafo: "+$("ts_trafo").value);
+  if($("ts_kol").value)   bil.push("Kol: "+$("ts_kol").value);
+  const md=$("ts_direk"); if(md && md.value) bil.push("Seçilen direk: "+md.options[md.selectedIndex].textContent);
+  return bil.join("   ·   ");
+}
+/* Tüm direkleri arka arkaya bas: her direk sırayla yüklenir, aktif görev
+   sekmesinin çıktısı kopyalanıp #basimAlani'na ayrı bir sayfa olarak eklenir.
+   İşlem sonunda başlangıçtaki direk ve alanlar aynen geri yüklenir.          */
+function yazdir(){
+  const t=new Date(), iki=n=>String(n).padStart(2,"0");
+  const tarih=iki(t.getDate())+"."+iki(t.getMonth()+1)+"."+t.getFullYear();
+  const baslangic=aktifDirek;
+  direkler[aktifDirek]=direkAnlik(aktifDirek);
+  const alan=$("basimAlani"); alan.innerHTML="";
+  const gorevAd={t:"Taşıyıcı (T)",kt:"Köşede Taşıyıcı (KT)",d:"Durdurucu (D)",
+                 kd:"Köşede Durdurucu (KD)",n:"Nihayet (N)",g:"Branşman / Tevzi",tb:"Tablolar"};
+  direkKilit=true;
+  try{
+    direkler.forEach(function(dk,i){
+      durumUygula(dk);
+      const sek=dk.sekme||"t";
+      const bl=document.getElementById("tab-"+sek);
+      if(!bl) return;
+      const sayfa=document.createElement("div");
+      sayfa.className="bsayfa";
+      const bas=document.createElement("div");
+      bas.className="bbas";
+      bas.textContent=direkAd(dk)+"  ·  "+(gorevAd[sek]||"")
+        + (basTesisSatiri()? "  ·  "+basTesisSatiri() : "")
+        + "  ·  "+tarih+"   ("+(i+1)+"/"+direkler.length+")";
+      sayfa.appendChild(bas);
+      const kop=bl.cloneNode(true);
+      /* Klonun görünürlüğü CSS ile sağlanır; .on sınıfı kullanılmaz, çünkü sekme
+         değiştiren kod "section.tab" seçicisiyle .on'u tüm belgeden siler. */
+      kop.classList.remove("on");
+      /* ÖNEMLİ: cloneNode yalnız öznitelikleri kopyalar; <select>'in seçili
+         seçeneği ve <input>'un yazılan değeri CANLI ÖZELLİKTİR ve klona geçmez.
+         Bu yüzden değerler aslıyla sıra sıra eşleştirilip klona aktarılır —
+         aksi halde açılır listeler baskıda ilk seçeneğe düşer. */
+      const asil=bl.querySelectorAll("input,select,textarea");
+      const klon=kop.querySelectorAll("input,select,textarea");
+      asil.forEach(function(e,ix){
+        const c=klon[ix]; if(!c) return;
+        if(e.tagName==="SELECT"){
+          [...c.options].forEach(function(o){ o.removeAttribute("selected"); });
+          if(c.options[e.selectedIndex]) c.options[e.selectedIndex].setAttribute("selected","selected");
+          c.selectedIndex=e.selectedIndex;
+        }else if(e.type==="checkbox"||e.type==="radio"){
+          c.checked=e.checked;
+          if(e.checked) c.setAttribute("checked","checked"); else c.removeAttribute("checked");
+        }else{ c.value=e.value; c.setAttribute("value", e.value); }
+      });
+      /* İç id'ler temizlenmeli: aksi halde klonlar belgede öne geçip
+         getElementById() çağrılarını yanlış elemana yönlendirir. */
+      kop.querySelectorAll("[id]").forEach(function(e){ e.removeAttribute("id"); });
+      kop.removeAttribute("id");
+      /* giriş kartındaki düğmeler baskıda görünmez, kopyada da kalmasın */
+      kop.querySelectorAll(".btnrow").forEach(function(x){ x.remove(); });
+      sayfa.appendChild(kop);
+      alan.appendChild(sayfa);
+    });
+  } finally {
+    aktifDirek=baslangic;
+    durumUygula(direkler[aktifDirek]);
+    direkKilit=false;
+    direkSeritYaz();
+  }
+  $("printinfo").textContent = direkler.length+" direk   ·   Tarih: "+tarih;
+  $("tesisyaz").textContent = basTesisSatiri();
+  document.body.classList.add("tumBasim");
+  document.body.classList.toggle("dokumVar", !!($("pr_dokum") && $("pr_dokum").checked));
+  document.body.classList.toggle("elleSecim", false);
+  const temizle=function(){ document.body.classList.remove("tumBasim");
+                            document.body.classList.remove("dokumVar"); alan.innerHTML=""; };
+  if(window.onafterprint!==undefined) window.addEventListener("afterprint", temizle, {once:true});
+  else setTimeout(temizle, 1500);
+  window.print();
+}
+document.getElementById("tabs").addEventListener("click",function(e){
+  const b=e.target.closest("button"); if(!b) return;
+  document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll("section.tab").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");
+  document.getElementById("tab-"+b.dataset.t).classList.add("on");
+  doldurManuelDirek();
+  direkTazele();
+});
+
+(function init(){
+  ["t_set","kt_set","d_set","kd_set","n_set","g_set"].forEach(function(id){
+    doldurSet(id,"al");
+    if(Object.keys(SETS).length<2){ const r=$(id).closest(".f"); if(r) r.style.display="none"; }
+  });
+  doldurTertip("t_set","t_tertip","3A+R/P");
+  doldurTertip("kt_set","kt_tertip","3P+R/P");
+  doldurTertip("d_set","d_t1","5R"); doldurTertip("d_set","d_t2"); doldurT2Uyumlu(); $("d_t2").value="3R";
+  doldurTertip("d_set","d_f1","3P+R/P"); doldurTertip("d_set","d_f2","5R");
+  doldurTertip("kd_set","kd_t1","3A+R/P"); doldurTertip("kd_set","kd_t2","5R");
+  doldurTertip("n_set","n_tertip","5R");
+
+  $("t_set").onchange = ()=>doldurTertip("t_set","t_tertip");
+  $("kt_set").onchange= ()=>doldurTertip("kt_set","kt_tertip");
+  $("d_set").onchange = ()=>{doldurTertip("d_set","d_t1");doldurT2Uyumlu();
+                             doldurTertip("d_set","d_f1");doldurTertip("d_set","d_f2");};
+  $("d_t1").onchange = doldurT2Uyumlu;
+  $("kd_set").onchange= ()=>{doldurTertip("kd_set","kd_t1");doldurTertip("kd_set","kd_t2");};
+  $("n_set").onchange = ()=>doldurTertip("n_set","n_tertip");
+  $("g_set").onchange = gArmsYenile;
+  gEksTog();
+
+  /* örnek: ana hat 3P+R/P (sağ-sol) + 65° branşman 5R */
+  gYontemTog();
+  armEkle("3P+R/P",180,"tam");   /* 1. kol: mutlak yön */
+  armEkle("3P+R/P",180,"tam");   /* ara açı 180° → doğrusal ana hat */
+  armEkle("5R",-65,"tam");       /* ara açı −65° → branşman */
+
+  gAciKipTog();
+  doldurManuelDirek();
+  tabloYaz();
+  /* gömülü durum <body> sonunda olduğundan yükleme DOM hazır olunca yapılır */
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", direkBaslat);
+  else direkBaslat();
+})();
+</script>
+</div><div id="vg-origin">VoltGuard uyarlaması · Özgün hesap araçları: Baki SONAY · <a href="../yontem/">Yöntem ve kaynaklar</a></div><script src="../shared/export.js" defer></script><script>try{localStorage.setItem('voltguard:recent',JSON.stringify({slug:"direk-tepe-kuvveti",name:"Direk Tepe Kuvveti"}))}catch(e){}if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script></div><footer data-vg-no-print class="footer vg-footer" id="vgFooter" role="contentinfo">
+  <div class="vg-footer__cta">
+    <div class="vg-wrap vg-footer__cta-in">
+      <div class="vg-footer__cta-text">
+        <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+        <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+      </div>
+      <div class="vg-footer__cta-btns">
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="vg-wrap">
+    <div class="vg-footer__grid">
+      <div class="vg-footer__brand">
+        <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+          <span class="logo-mark logo-mark--footer" aria-hidden="true">
+            <span class="logo-mark__volt">VOLT</span>
+            <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+            <span class="logo-mark__guard">GUARD</span>
+          </span>
+          <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+        </a>
+        <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+        <ul class="vg-footer__contact">
+          <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+          <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+          <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+        </ul>
+        <address class="vg-footer__addr">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+        </address>
+        <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+      </div>
+      <nav class="vg-footer__nav" aria-label="Alt menü">
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Hizmetler</h3>
+          <ul>
+            <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+            <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+            <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+            <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+            <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+            <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+            <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+            <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+            <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+            <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+            <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+            <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kurumsal</h3>
+          <ul>
+            <li><a href="/#hakkimizda">Hakkımızda</a></li>
+            <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+            <li><a href="/#projeler">Projeler</a></li>
+            <li><a href="/#surec">Sürecimiz</a></li>
+            <li><a href="/#neden-biz">Neden Biz?</a></li>
+            <li><a href="/#guvenlik">Güvenlik</a></li>
+            <li><a href="/#haberler">Haberler</a></li>
+            <li><a href="/#emi-demo">Canlı Demo</a></li>
+            <li><a href="/#katalog">Katalog</a></li>
+            <li><a href="/#sss">SSS</a></li>
+            <li><a href="/#iletisim">İletişim</a></li>
+            <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kaynaklar</h3>
+          <ul>
+            <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+            <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+            <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+            <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+            <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+          <ul>
+            <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+            <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+            <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+            <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+            <li><a href="/voltgame.html">VoltGame</a></li>
+            <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+            <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+            <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="vg-footer__bottom">
+      <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+      <div class="vg-footer__social">
+        <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+      <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        </circle>
+      </svg>
+      <span class="sig-node" aria-hidden="true"></span>
+      <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+        <span class="sig-badge__ring" aria-hidden="true"></span>
+        <span class="sig-badge__aurora" aria-hidden="true"></span>
+        <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+        <span class="sig-badge__body">
+          <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+          <span class="sig-badge__brand">
+            <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+            <span class="sig-badge__eng">Engineering</span>
+          </span>
+        </span>
+        <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+        <span class="sig-badge__shimmer" aria-hidden="true"></span>
+      </a>
+      <span class="sig-node" aria-hidden="true"></span>
+      <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+        </circle>
+      </svg>
+    </div>
+  </div>
+</footer></body>
+</html>

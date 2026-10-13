@@ -1,1 +1,16 @@
 /Ges Kurulumu.MP4
+
+# Original import includes its own Git checkout and operational company files.
+# Rebuildable public sources are curated under tools/engineering/ instead.
+/voltguardekleyelim/
+/tools/engineering/dist/
+/tools/engineering/storage-map.json
+/.qa/
+__pycache__/
+node_modules/
+/tools/staff-app/dist/
+# Existing invoice and price catalogues are imported into private runtime storage.
+/tools/staff-app/fatura/
+/tools/staff-app/src/hazir-paketler.json
+/tools/staff-app/src/serer-kablo-fiyat.json
+/tools/engineering/.publish-stage/

@@ -36,6 +36,9 @@ Diğer uzmanlık alanları:
 - **Aktif EMI Filtre:** Savunma sanayiine yönelik elektromanyetik uyumluluk (EMC) çözümü. Ege Üniversitesi'nde tez projesi olarak başladı; bugün Ege Üniversitesi ve TUSAŞ ile Roketsan ve Havelsan iş birliklerinde yürütülüyor.
 
 ## Bağlantılar
+- [Mühendislik Uygulamaları (51 ücretsiz araç)](https://voltguard.com.tr/araclar/): ENH, AG/OG, GES, devre, motor, sinyal/RF hesapları; sembol ve şema atölyesi; PDF, JSON proje yedeği ve çevrimdışı indirme
+- [Hesap yöntemleri ve kaynaklar](https://voltguard.com.tr/araclar/yontem/): araç girdileri, yöntemler ve geçerlilik sınırları
+- [Açık kaynak mühendislik rehberi](https://voltguard.com.tr/araclar/acik-kaynak/): 211 depo için kaynak ve lisans inceleme kayıtları
 - [Ana sayfa](https://voltguard.com.tr/)
 - [Hizmetlerimiz](https://voltguard.com.tr/hizmetler/): trafo işletme sorumluluğu, trafo bakımı ve kurulumu, periyodik kontrol, topraklama, kompanzasyon, enerji kalitesi, pano, taahhüt, GES, PLC/SCADA ve elektrik projesi
 - [Fabrikalar İçin Çözümler](https://voltguard.com.tr/fabrika-cozumleri.html): anahtar teslim fabrika elektrik altyapısı ve fabrika hesaplayıcıları

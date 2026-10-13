@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Sonay Enerji · Kanal Planı</title>
+<style>
+:root{
+  --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --line:#2b3648;
+  --txt:#dbe4f0; --dim:#8494ab; --cyan:#39c5e8; --amber:#f0b429; --green:#3fd07a; --red:#ff5c5c;
+  --mono:'Consolas','Menlo',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{background:linear-gradient(90deg,#101722,#182338);border-bottom:2px solid var(--cyan);padding:8px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:15px;letter-spacing:.5px;color:var(--cyan);font-weight:700}
+header h1 small{color:var(--dim);font-weight:400;font-size:11px;margin-left:6px}
+.hbtns{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+button{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:5px;padding:6px 10px;cursor:pointer;font-size:12px;font-family:inherit}
+button:hover{border-color:var(--cyan);color:var(--cyan)}
+button.primary{background:var(--cyan);color:#04121a;border-color:var(--cyan);font-weight:700}
+button.primary:hover{filter:brightness(1.1);color:#04121a}
+button.danger:hover{border-color:var(--red);color:var(--red)}
+main{flex:1;display:flex;min-height:0}
+#side{width:392px;min-width:392px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow-y:auto}
+#side::-webkit-scrollbar,#cwrap::-webkit-scrollbar{width:9px;height:9px}
+#side::-webkit-scrollbar-thumb,#cwrap::-webkit-scrollbar-thumb{background:var(--line);border-radius:5px}
+.sec{padding:10px 12px;border-bottom:1px solid var(--line)}
+.sec h2{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--amber);margin-bottom:8px}
+.cmdrow{display:flex;gap:6px}
+#cmd{flex:1;background:#0a0e14;border:1px solid var(--line);color:var(--green);font-family:var(--mono);font-size:13px;padding:8px;border-radius:5px}
+#cmd:focus{outline:none;border-color:var(--green)}
+.hint{color:var(--dim);font-size:11px;margin-top:6px;line-height:1.55}
+.hint code{color:var(--green);font-family:var(--mono);background:#0a0e14;padding:1px 4px;border-radius:3px;cursor:pointer}
+.hint code:hover{color:var(--cyan)}
+#tiplist{display:flex;flex-direction:column;gap:6px}
+.tipcard{background:var(--panel2);border:1px solid var(--line);border-left-width:5px;border-radius:6px;padding:7px 9px;cursor:pointer}
+.tipcard.active{border-color:var(--cyan);background:#1a2a3d}
+.tipcard{cursor:grab;touch-action:none;user-select:none}
+
+.tipcard.ust{box-shadow:0 -3px 0 var(--cyan)}
+.tipcard.alt{box-shadow:0 3px 0 var(--cyan)}
+.tipcard .trow{display:flex;align-items:center;gap:8px}
+.tipcard .trow>b{white-space:nowrap;flex:0 0 auto}
+.tipcard .tinfo{color:var(--dim);font-size:11px;margin-top:3px}
+.tipcard b{font-size:13px}
+.tipcard .tinfo{color:var(--dim);font-size:11px;margin-top:3px}
+.tipcard .tbtns{margin-left:auto;display:flex;gap:4px}
+.tipcard .tbtns button{padding:2px 7px;font-size:11px}
+label{display:block;color:var(--dim);font-size:11px;margin:8px 0 3px}
+input,select,textarea{width:100%;background:#0a0e14;border:1px solid var(--line);color:var(--txt);padding:6px 8px;border-radius:5px;font-size:12.5px;font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cyan)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.katbox{border:1px solid var(--line);border-radius:6px;padding:8px;margin-top:8px;background:#141a24}
+.katbox h3{font-size:12px;color:var(--cyan);display:flex;align-items:center}
+.katbox h3 button{margin-left:auto;padding:1px 7px;font-size:11px}
+.kabrow{display:grid;grid-template-columns:64px 44px 1fr 30px 26px;gap:5px;margin-top:6px;align-items:center}
+.kabrow .del{color:var(--red);text-align:center;cursor:pointer;font-weight:700}
+.small{font-size:11px;color:var(--dim)}
+#cwrap{flex:1;overflow:hidden;background:#05070b;position:relative;cursor:grab;touch-action:none}
+#cv{display:block;position:absolute;left:0;top:0}
+#zoombar{position:absolute;right:14px;top:10px;display:flex;gap:5px;z-index:5}
+#zoombar button{width:34px;font-weight:700}
+#status{background:var(--panel);border-top:1px solid var(--line);padding:5px 14px;color:var(--dim);font-size:11.5px;display:flex;gap:18px}
+#status b{color:var(--green)}
+.warn{color:var(--amber)}
+.renkler{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.rsw{width:22px;height:22px;border-radius:4px;cursor:pointer;border:2px solid transparent}
+.rsw.sel{border-color:#fff}
+/* ================= MOBİL ================= */
+#tabbar{display:none}
+@media (max-width:820px){
+  body{font-size:14px}
+  header{padding:7px 10px;gap:6px}
+  header h1{font-size:13px;flex:1 1 100%}
+  header h1 small{display:none}
+  .hbtns{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  .hbtns button{flex:0 0 auto;padding:8px 11px}
+  main{flex-direction:column}
+  #tabbar{display:flex;background:var(--panel);border-bottom:1px solid var(--line)}
+  #tabbar button{flex:1;border:none;border-radius:0;border-bottom:2px solid transparent;padding:10px;font-size:13px}
+  #tabbar button.on{color:var(--cyan);border-bottom-color:var(--cyan);font-weight:700}
+  #side{width:100%;min-width:0;border-right:none;flex:1;-webkit-overflow-scrolling:touch}
+  #cwrap{flex:1;min-height:0}
+  body.tab-ciz #side{display:none}
+  body.tab-ayar #cwrap{display:none}
+  body.tab-ayar #zoombar{display:none}
+  /* dokunmatik hedefler */
+  button{padding:9px 11px;font-size:13px}
+  input,select,textarea{font-size:16px;padding:9px 8px}  /* 16px: iOS otomatik yakınlaştırmayı engeller */
+  .kabrow{gap:6px}
+  .tipcard{padding:10px}
+  .tipcard .tbtns button{padding:6px 10px;font-size:13px}
+  #zoombar{right:10px;top:8px}
+  #zoombar button{width:42px;height:42px;font-size:18px}
+  #status{flex-wrap:wrap;gap:10px;font-size:11px;padding:6px 10px}
+  #kapmodal>div{width:92vw;max-width:360px}
+  .rsw{width:30px;height:30px}
+}
+@media (max-width:820px) and (display-mode:standalone){ header{padding-top:max(7px,env(safe-area-inset-top))} }
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  header,#side,#zoombar,#status,#tabbar,#admodal,#kapmodal{display:none!important}
+  html,body{overflow:visible!important;height:auto!important;background:#fff!important;color:#000}
+  main{display:block!important;height:auto!important}
+  #cwrap{overflow:visible!important;background:#fff!important;display:block!important;
+         height:auto!important;min-height:0!important;flex:none!important;cursor:default}
+  #cv{position:static!important;display:block!important;max-width:100%;height:auto!important;background:#fff}
+  body.tab-ayar #cwrap{display:block!important}
+  body.tab-ayar #side{display:none!important}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚡ KANAL PLANI <small>Sonay Enerji Hesap Araçları · TEDAŞ Yeraltı Kablo Kanalı Kesit Detayları · v1.0</small></h1>
+  <div class="hbtns">
+    <button onclick="exportDXF()" class="primary">⬇ DXF İndir</button>
+    <button onclick="kaydet2()">💾 Kaydet</button>
+    <button onclick="farkliKaydet()">🗂 Farklı Kaydet</button>
+    <button onclick="yazdir()">🖨 Yazdır</button>
+    <button onclick="document.getElementById('jsonfile').click()">📂 Aç</button>
+    <input type="file" id="jsonfile" accept=".json" style="display:none" onchange="importJSON(event)">
+    <button id="btnYuvarla" onclick="yuvarlaDegis()" title="Kanal genişliği: 10 cm dilime yuvarla / tam ölçü (2 ondalık)">📏 10'a yuvarla: AÇIK</button>
+    <button class="danger" onclick="hepsiniSil()">🗑 Temizle</button>
+  </div>
+</header>
+<div id="tabbar">
+  <button id="tabCiz" class="on" onclick="sekme('ciz')">📐 Çizim</button>
+  <button id="tabAyar" onclick="sekme('ayar')">⚙ Ayarlar</button>
+</div>
+<main>
+<div id="side">
+  <div class="sec">
+    <h2>📋 Kanal Tipleri <span class="small" id="tipsay"></span></h2>
+    <div id="tiplist"></div>
+    <button class="primary" style="width:100%;padding:11px;margin-top:8px" onclick="tipEkle('kesit')">＋ Kanal Ekle</button>
+    <div class="small" style="margin-top:5px">Kartları fareyle sürükleyerek sırayı değiştirebilirsin. Yeni tip listenin sonuna eklenir. Tipi <b>Sac Tava</b> veya <b>Dönüş Detayı</b>na çevirmek için aşağıdaki <b>Detay türü</b> seçicisini kullan.</div>
+  </div>
+  <div class="sec" id="editsec" style="display:none">
+    <h2>✏ Seçili Tip Düzenle</h2>
+    <div id="editform"></div>
+  </div>
+</div>
+<div id="cwrap">
+  <div id="zoombar">
+    <button onclick="zoomDeg(1.2)">＋</button>
+    <button onclick="zoomDeg(1/1.2)">－</button>
+  </div>
+  <canvas id="cv"></canvas>
+</div>
+</main>
+<div id="status">
+  <span>Tip sayısı: <b id="stTip">0</b></span>
+  <span>Toplam metraj: <b id="stMetraj">0 m</b></span>
+  <span>Toplam kazı: <b id="stKazi">0 m³</b></span>
+  <span id="stMsg" class="warn"></span>
+  <span style="margin-left:auto;color:var(--dim)">Özgün hesap modeli: Elektrik-Elektronik Müh. - Baki SONAY</span>
+</div>
+<script>
+/* ================= VERİ MODELİ =================
+tip = { no, ad, renk(ACI), genislik, genislikManuel, kaplama, kaplamaKal, dolgu, metraj,
+        katlar:[ {kablolar:[{sinif:'AG'|'OG', adet, kesit, boru}]} ]  // katlar[0] = EN ALT kat
+      } */
+// AutoCAD ACI renk paleti — DXF'te de aynı numaralarla katmanlara yazılır
+const ACI_HEX = {
+  1:'#ff3838',   2:'#ffff38',   3:'#38ff38',   4:'#38ffff',   5:'#4d6bff',   6:'#ff38ff',
+  7:'#ffffff',   8:'#808080',   9:'#c0c0c0',
+  11:'#ff8888',  12:'#c73f3f',  20:'#ff5c1f',  22:'#c74a17',  30:'#ff9d38',  32:'#c7761f',
+  40:'#ffbf38',  42:'#c7961f',  50:'#ffff5c',  52:'#c7c71f',  60:'#bfff38',  62:'#96c71f',
+  70:'#5cff38',  82:'#1fc74a',  90:'#38ff9d',  92:'#38c996',  100:'#38ffbf', 110:'#38ffff',
+  112:'#1f96c7', 130:'#389dff', 131:'#7cc4ff', 140:'#385cff', 150:'#5c38ff', 160:'#9d38ff',
+  170:'#bf38ff', 180:'#ff38ff', 190:'#ff389d', 200:'#ff385c', 210:'#c07cff', 211:'#ff7ca8',
+  220:'#ff1f6b', 230:'#d63b8c', 240:'#a8529c', 250:'#4d4d4d', 252:'#8c8c8c'
+};
+// yeni tiplerde otomatik sıra (birbirinden kolay ayırt edilen renkler)
+const RENK_SIRA = [3,2,1,30,4,6,5,92,210,40,131,11,140,190,60,20,100,170,220,50];
+// paletteki tüm renkler, tonlarına göre gruplu (seçim kutusunda gösterilir)
+const PALET = [
+  [1,12,11,20,22,30,32,40,42],
+  [2,50,52,60,62,70,3,82,90],
+  [92,100,110,4,112,130,131,140,5],
+  [150,160,170,180,6,190,200,210,211],
+  [220,230,240,7,9,8,252,250]
+];
+const KAPLAMALAR = ['Yok','Parke','Asfalt','Beton'];
+const KAPLAMA_KAL = {'Yok':0,'Parke':8,'Asfalt':10,'Beton':12};
+const DOLGULAR = ['Tüvenen','Toprak'];
+// Kanal türleri — Md.2-b (standart), Md.2-h (abone), Md.2-ı (topraklama)
+const TURLER = {
+  'Standart':   {minG:40, derinlik:null, aciklama:'Md.2-b: dip 40 · ağız 60 · derinlik 80'},
+  'Abone':      {minG:20, derinlik:50,   aciklama:'Md.2-h: standart kanal gibi, en az 20x20x50 cm · yalnız AG'},
+  'Yol Geçişi': {minG:40, derinlik:100,  aciklama:'Md.2-f: taşıt geçen yollarda derinlik en az 100 cm · tüm kablolar boru içinden geçer (Md.5.1-a)'}
+};
+function tur(t){ return TURLER[t.tur] ? t.tur : 'Standart'; }
+// Her TİP bir detay türüdür: kanal kesiti · dönüş · köprü geçişi · sac tava
+const DETAYLAR = {
+  kesit: {ad:'Kanal Kesiti', kisa:'KESİT'},
+  donus: {ad:'Dönüş Detayı', kisa:'DÖNÜŞ'},
+  tava:  {ad:'Sac Tava',     kisa:'TAVA'}
+};
+function detayTuru(t){ return DETAYLAR[t.detay] ? t.detay : 'kesit'; }
+// Tek birleşik seçici: kanal türü + detay türü
+const TIP_MENU = [
+  {k:'standart', ad:'Standart'},
+  {k:'tava',     ad:'Sac Tava'},
+  {k:'abone',    ad:'Abone'},
+  {k:'yol',      ad:'Yol Geçişi'},
+  {k:'donus',    ad:'Dönüş Detayı'}
+];
+function anaTipMi(t){ return detayTuru(t)!=='donus'; }          // kesit ve sac tava bağımsız TİP
+function kesitTipleri(){ return state.tipler.filter(anaTipMi); }  // dönüş detayının kaynağı olabilecekler
+function kaynakTip(t){
+  if(anaTipMi(t)) return null;
+  const k = state.tipler.find(x=>x.uid===t.kaynak && anaTipMi(x));
+  return k || null;
+}
+function veriTipi(t){ return kaynakTip(t) || t; }      // detayın kabloları/genişliği bu tipten
+function kaynakAta(t){                                  // en yakın önceki ana tip
+  const i=state.tipler.indexOf(t);
+  for(let j=i-1;j>=0;j--) if(anaTipMi(state.tipler[j])){ t.kaynak=state.tipler[j].uid; return; }
+  const k=kesitTipleri()[0]; t.kaynak = k? k.uid : null;
+}
+function tipMenuSecili(t){
+  const d=detayTuru(t);
+  if(d==='tava') return 'tava';
+  if(d==='donus') return 'donus';
+  if(tur(t)==='Abone') return 'abone';
+  if(tur(t)==='Yol Geçişi') return 'yol';
+  return 'standart';
+}
+function tipMenuSec(k){
+  const t=state.tipler[state.secili]; if(!t) return;
+  const dt=detayTuru(t);
+  if(k==='donus' && dt!=='donus'){
+    // Dönüş: seçili tipin detayı olarak eklenir
+    const d=yeniTip({detay:'donus'});
+    d.kaynak=t.uid; d.renk=t.renk;
+    state.tipler.splice(state.tipler.indexOf(d),1);
+    state.tipler.splice(state.tipler.indexOf(t)+1,0,d);
+    renkAcik=false; guncelle(); fitView();
+    state.secili=state.tipler.indexOf(d); guncelle();
+    return;
+  }
+  if(k==='tava'){ t.detay='tava'; t.tur='Standart'; t.kaynak=null; }
+  else if(k==='donus'){ t.detay='donus'; t.tur='Standart'; if(!kaynakTip(t)) kaynakAta(t); }
+  else {
+    t.detay='kesit'; t.kaynak=null;
+    t.tur = k==='abone' ? 'Abone' : k==='yol' ? 'Yol Geçişi' : 'Standart';
+    aboneKontrol(t); yolKontrol(t);
+  }
+  renkAcik=false; guncelle();
+}
+function dolguAdi(t){ return (t.dolgu||'Tüvenen').toUpperCase()+' DOLGU'; }
+function kaplamaKal(t){ if(t.kaplama==='Yok') return 0; return t.kaplamaKal!=null ? t.kaplamaKal : (KAPLAMA_KAL[t.kaplama]||0); }
+const AG_KESITLER = ['3X240/120-Al','3X150/70-Al','3X95/50-Al','4X10 NYY','4X16 NYY','4X6 NYY'];
+const OG_KESITLER = ['3(1X150)-Al','3(1X240)-Al','3(1X95)-Al','3(1X50)-Al'];
+
+let state = { tipler: [], sayac: 0, secili: -1, yuvarla: true };
+let view = { scale: 3.2, ox: 40, oy: 40 };
+let etiketKutulari = [];   // çizimdeki tip adı etiketlerinin ekran kutuları
+let renkAcik = false;      // renk tonu paneli açık mı
+let suruklenen = -1;       // sürüklenen tip kartının sırası
+
+/* ============ GEOMETRİ SABİTLERİ (cm) — TEDAŞ Kablo Montaj Usul ve Esasları ============ */
+const G = {
+  KUM: 10,      // yataklama kumu (Md.4.1-b)
+  BIMS: 6,      // koruyucu eleman kalınlığı 20x50x6 (Md.4.3-b/c)
+  DOLGU: 20,    // koruyucu üstü dolgu; ikaz bandı 20 cm üzerine (Md.4.2-f)
+  NET: 7,       // kablo-kablo / kablo-duvar NET açıklık, d>7 ise d (Md.2-b, Şekil 2a)
+  SIS: 14,      // sistemler arası net: min 14, en az 2d (Md.2-e)
+  SEV: 10,      // şev payı: ağız = dip + 2x10 (Şekil-1: 40 dip / 60 ağız)
+  TUGLA: 9,     // AG-OG arası koruyucu eleman genişliği 19x9x5 (Md.4.2-c)
+  KAT_EK: 30,   // her ilave kat kanalı 30 cm derinleştirir (1 kat 80 / 2 kat 110 / 3 kat 140)
+  TEMEL: 80     // standart kanal derinliği (Şekil-1)
+};
+// ============ KABLO KATALOĞU — dış çaplar (mm), üretici tablosu ============
+const KATALOG = {
+NYY: { // 0,6/1 kV bakır
+'1x4':7.00,'1x6':7.50,'1x10':8.70,'1x16':9.40,'1x25':11.20,'1x35':12.20,'1x50':13.50,'1x70':15.60,'1x95':18.00,'1x120':19.40,'1x150':21.40,'1x185':23.80,'1x240':26.70,'1x300':29.40,'1x400':33.30,'1x500':36.60,'1x630':41.20,
+'2x1,5':10.40,'2x2,5':11.20,'2x4':12.80,'2x6':13.80,'2x10':16.20,'2x16':17.60,'2x25':21.20,'2x35':23.20,'2x50':25.80,'2x70':30.80,'2x95':35.40,'2x120':38.40,'2x150':43.20,'2x185':47.80,'2x240':54.60,'2x300':60.40,'2x400':67.80,
+'3x1,5':10.90,'3x2,5':11.80,'3x4':13.50,'3x6':14.60,'3x10':17.20,'3x16':18.70,'3x25':22.60,'3x35':24.80,'3x50':27.80,'3x70':33.10,'3x95':38.00,'3x120':42.20,'3x150':46.30,'3x185':51.50,'3x240':58.50,'3x300':64.70,'3x400':73.30,
+'3x10+6':18.30,'3x16+10':20.00,'3x25+16':23.70,'3x35+16':25.50,'3x50+25':29.20,'3x70+35':34.40,'3x95+50':39.60,'3x120+70':44.30,'3x150+70':47.70,'3x185+95':54.50,'3x240+120':60.60,'3x300+150':67.00,
+'4x1,5':11.70,'4x2,5':12.70,'4x4':14.60,'4x6':15.80,'4x10':18.70,'4x16':20.40,'4x25':24.80,'4x35':27.40,'4x50':31.50,'4x70':36.50,'4x95':43.10,'4x120':46.70,'4x150':51.40,'4x185':57.90,'4x240':64.90,'4x300':72.20,'4x400':81.30,
+'4x10+6':20.00,'4x16+10':21.90,'4x25+16':26.20,'4x35+16':28.50,'4x50+25':33.50,'4x70+35':38.30,'4x95+50':45.20,'4x120+70':49.40,'4x150+70':54.50,'4x185+95':60.90,'4x240+120':67.90,'4x300+150':75.70
+},
+NAYY: { // 0,6/1 kV alüminyum
+'1x25':11.10,'1x35':12.10,'1x50':13.70,'1x70':15.50,'1x95':17.80,'1x120':19.20,'1x150':21.30,'1x185':23.30,'1x240':26.20,'1x300':28.80,'1x400':32.20,'1x500':36.00,'1x630':40.40,
+'2x25':21.00,'2x35':23.00,'2x50':26.20,'2x70':30.60,'2x95':35.00,'2x120':38.00,'2x150':42.60,'2x185':46.80,'2x240':52.60,'2x300':57.80,'2x400':64.60,
+'3x25':22.40,'3x35':24.50,'3x50':28.20,'3x70':32.80,'3x95':37.60,'3x120':40.80,'3x150':45.70,'3x185':50.20,'3x240':56.50,'3x300':62.00,'3x400':69.60,
+'3x25+16':23.70,'3x35+16':25.50,'3x50+25':29.50,'3x70+35':34.20,'3x95+50':39.30,'3x120+70':43.50,'3x150+70':47.10,'3x185+95':52.40,'3x240+120':58.50,'3x300+150':64.50,
+'4x25':24.50,'4x35':27.20,'4x50':32.00,'4x70':36.30,'4x95':42.20,'4x120':45.80,'4x150':50.60,'4x185':55.80,'4x240':62.70,'4x300':68.90,'4x400':77.30,
+'4x25+16':26.10,'4x35+16':28.50,'4x50+25':33.90,'4x70+35':38.10,'4x95+50':44.30,'4x120+70':48.60,'4x150+70':52.90,'4x185+95':58.70,'4x240+120':65.70,'4x300+150':72.30
+},
+'OG-Al': { // 20,3/35 kV XLPE tek damar, alüminyum
+'1x35/16':33.00,'1x50/16':34.00,'1x70/16':36.00,'1x95/16':37.50,'1x120/16':39.00,
+'1x150/25':40.50,'1x185/25':42.50,'1x240/25':45.00,'1x300/25':47.50,
+'1x400/35':50.50,'1x500/35':54.00,'1x630/35':58.50
+},
+'OG-Cu': { // 20,3/35 kV XLPE tek damar, bakır
+'1x35/16':33.00,'1x50/16':35.00,'1x70/16':36.00,'1x95/16':38.00,'1x120/16':40.00,
+'1x150/25':41.00,'1x185/25':43.00,'1x240/25':45.00,'1x300/25':48.00,
+'1x400/35':52.00,'1x500/35':55.00,'1x630/35':60.00
+}
+};
+function capBul(tip,kesit){ const t=KATALOG[tip]; return t&&t[kesit]? t[kesit]/10 : null; } // mm -> cm
+function varsCap(kesit){ // eski kayıtlar için geriye dönük arama
+  for(const t in KATALOG) if(KATALOG[t][kesit]) return KATALOG[t][kesit]/10;
+  return 4.4;
+}
+function yeniKablo(sinif,adet){
+  if(sinif==='AG') return {sinif,adet,tip:'NAYY',kesit:'3x240+120',cap:capBul('NAYY','3x240+120'),muhafaza:'yok'};
+  return {sinif,adet,tip:'OG-Al',kesit:'1x150/25',cap:capBul('OG-Al','1x150/25'),muhafaza:'yok'};
+}
+function tipAdi(t){
+  if(t.ad && t.ad.trim()) return t.ad.trim();
+  if(t && t.detay==='donus'){
+    const k = (typeof kaynakTip==='function') ? kaynakTip(t) : null;
+    if(k) return tipAdi(k);
+  }
+  return 'TİP-'+(t.no||1);
+}
+function kesitEtiket(k){ // çizimde görünen kablo tanımı
+  if(k.sinif==='OG'){
+    const c = k.tip==='OG-Cu'?'Cu':'Al';
+    return 'OG KAB.'+k.adet+'(3('+k.kesit.toUpperCase()+')-'+c+' XLPE)';
+  }
+  return 'AG KAB.'+k.adet+'('+k.kesit.toUpperCase().replace('+','/')+' '+(k.tip||'NAYY')+')';
+}
+function tekDamar(k){   // tek damarlı sistem mi? (OG XLPE tek damar veya '1x...' AG)
+  return k.sinif==='OG' || /^1\s*x/i.test(k.kesit||'');
+}
+function muhKat(k){ return k.muhafaza==='boru'?1.5 : k.muhafaza==='buz'?2 : 1; }   // Md.2-b, Md.5.1-a
+function disCap(k){ return (k.cap||4.4)*muhKat(k); }  // boru iç çapı 1.5d, büz 2d
+
+function yeniTip(opts){
+  state.sayac++;
+  const renk = RENK_SIRA[(state.sayac-1)%RENK_SIRA.length];
+  const t = Object.assign({
+    no: state.sayac, uid: 'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,7), ad: '', kaynak: null, renk, genislik: 40, genislikManuel: null,
+    kaplama: 'Yok', kaplamaKal: null, dolgu: 'Tüvenen', metraj: '', sevli: false, tur:'Standart', detay:'kesit', donusAci: 90,
+    katlar: [{kablolar:[yeniKablo('AG',3)]}]
+  }, opts||{});
+  state.tipler.push(t);
+  state.secili = state.tipler.length-1;
+  return t;
+}
+
+function kabloH(kat){ // kablo ÖRTÜ kumu: sabit 10 cm, kablo bu bandın içinde (çap 10'u aşarsa çap esas)
+  return Math.max(G.KUM, Math.max(...kat.kablolar.map(disCap)));
+}
+function katH(kat){ return G.KUM + kabloH(kat) + G.BIMS; } // 10 yataklama + 10 örtü(kablo içinde) + 6 bims
+function istifH(t){ return t.katlar.reduce((a,k)=>a+katH(k),0); }   // katlar bitişik
+function derinlik(t){
+  const nk=t.katlar.length;
+  const ozel = TURLER[tur(t)].derinlik;
+  const std = ozel!=null ? ozel + (nk-1)*G.KAT_EK   // abone 50 · topraklama 70
+                         : G.TEMEL + (nk-1)*G.KAT_EK;  // standart: 80/110/140
+  const min = istifH(t) + G.DOLGU + kaplamaKal(t) + 4;   // istif + 20 tüvenen + ikaz şeridi + kaplama
+  return Math.round(Math.max(std, min));
+}
+
+/* ---- Kablo yerleşim kuralları (TEDAŞ Md.2-b, 2-e, 4.2-c/e) ----
+   I (kablo-kablo net) = 7, d>7 ise d · a (duvar net) = 7, d>7 ise d
+   boru: x1,5 · büz: x2 · sistemler arası net: min 14, en az 2d
+   AG-OG yan yana: araya 19x9x5 koruyucu eleman · fazlar L1L2L3-L3L2L1 */
+function kabloYerlesim(kat){
+  const el=[], gaps=[], ayirici=[], ogAyirici=[];
+  let pos=0, oncekiDg=0, oncekiD=0, oncekiSinif=null, oncekiMk=1, oncekiTek=false;
+  const FAZ=['L1','L2','L3'], FAZT=['L3','L2','L1'];
+  kat.kablolar.forEach((g,gi)=>{
+    const d=g.cap||4.4, mk=muhKat(g), dg=disCap(g);
+    const I = (tekDamar(g) ? Math.max(G.NET, d) : G.NET)*mk;   // AG kablo arası sabit 7 · tek damarlıda d>7 ise d
+    const devre = (g.sinif==='OG');
+    const adetKablo = devre? g.adet*3 : g.adet;
+    for(let i=0;i<adetKablo;i++){
+      const dIdx = devre? Math.floor(i/3):0, fIdx = devre? i%3 : -1;
+      const yeniDevre = devre && fIdx===0 && i>0;
+      const yeniGrup = (i===0 && gi>0);
+      if(yeniGrup || yeniDevre){
+        const dmax=Math.max(d,oncekiD);
+        const sinifDegisti = yeniGrup && oncekiSinif && oncekiSinif!==g.sinif;
+        // Md.2-e (Şekil-5/6): 14 cm ve en az 2d kuralı YALNIZ tek damarlı sistemler arası.
+        // Çok damarlı kablolar (AG 3x240/120 vb.) birbirine göre normal kablo: Şekil-2 -> max(7,d).
+        const tekli = tekDamar(g) || oncekiTek;
+        // 2d kuralı yalnız TEK DAMARLI sistemin çapına göre (Şekil-5/6 notu)
+        const dTek = Math.max(tekDamar(g)?d:0, oncekiTek?oncekiD:0);
+        let net = tekli
+          ? Math.max(G.SIS, 2*dTek)                                  // sistemler arası: 14 · en az 2d
+          : G.NET*Math.max(mk,oncekiMk);                             // AG kablo-kablo: sabit 7 (boru/büz x1,5/x2)
+        // AG-OG sınırı: 14 cm; araya 19x9x5 koruyucu eleman dizilir (Md.4.2-c)
+        if(sinifDegisti) net=Math.max(net, G.SIS);
+        const merkez = pos + oncekiDg/2 + net + dg/2;
+        // OG devreleri (sistemleri) arası: 14 cm BİMS dizilir (AG-OG ayırıcısıyla aynı gösterim)
+        const ogArasi = !sinifDegisti && (yeniDevre || (yeniGrup && oncekiSinif==='OG' && g.sinif==='OG'));
+        if(ogArasi) ogAyirici.push({at:(pos+merkez)/2, w:net});
+        gaps.push({at:(pos+merkez)/2, label:fmt(net)});
+        if(sinifDegisti) ayirici.push((pos+merkez)/2);
+        pos = merkez;
+      } else if(i>0){
+        gaps.push({at:pos + oncekiDg/2 + I/2, label:fmt(I)});
+        pos += oncekiDg/2 + I + dg/2;
+      }
+      el.push({x:pos, d, dg, muhafaza:g.muhafaza, sinif:g.sinif, kesit:g.kesit, tip:g.tip,
+               faz: devre? (dIdx%2===0?FAZ[fIdx]:FAZT[fIdx]) : null});
+      oncekiDg=dg; oncekiD=d; oncekiSinif=g.sinif; oncekiMk=mk; oncekiTek=tekDamar(g);
+    }
+  });
+  const ilk=el[0], son=el[el.length-1];
+  const aSol = ilk? Math.max(G.NET, ilk.d)*muhKatObj(ilk) : G.NET;
+  const aSag = son? Math.max(G.NET, son.d)*muhKatObj(son) : G.NET;
+  const dipHam = ilk? aSol + ilk.dg/2 + pos + son.dg/2 + aSag : 40;
+  return {el, gaps, ayirici, ogAyirici, span:pos, aSol, aSag, dip:Math.ceil(dipHam), dipHam};
+}
+function muhKatObj(e){ return e.muhafaza==='boru'?1.5:e.muhafaza==='buz'?2:1; }
+function fmt(v){ return (Math.round(v*10)/10).toString().replace('.',','); }
+/* kanal genişliği etiketi: yuvarlı modda tam sayı, yuvarlamasız modda 2 ondalık (virgüllü) */
+function fmtG(v){
+  if(state.yuvarla===false) return (Math.round(v*100)/100).toFixed(2).replace('.',',');
+  return String(Math.round(v));
+}
+function metinGen(str,h){ return String(str).length*h*0.62; }   // yaklaşık metin genişliği
+// Sırayla gelen yazıları, çakışacaklarını alt satıra kaydırarak yerleştirir
+function satirBul(kayit, x, str, h){
+  const yari=metinGen(str,h)/2 + 0.7;
+  for(let r=0;r<kayit.length;r++){
+    if(kayit[r]==null || x-yari > kayit[r]){ kayit[r]=x+yari; return r; }
+  }
+  kayit.push(x+yari); return kayit.length-1;
+}
+function trSayi(v,ond){ // 73,50 · 1.234,75 biçimi
+  const d = ond==null?2:ond;
+  const s = Math.abs(v).toFixed(d);
+  let [tam,kus] = s.split('.');
+  tam = tam.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  return (v<0?'-':'')+tam+(kus?','+kus:'');
+}
+function gerekliGenislik(kat){ return kabloYerlesim(kat).dip; }
+function tipGerekliGenislik(t){ return Math.max(...t.katlar.map(gerekliGenislik)); }
+function stdGenislik(g,minG){
+  const taban = Math.max(minG||40, g);
+  if(state.yuvarla===false) return Math.round(taban*100)/100;   // yuvarlamasız: 2 ondalık
+  return Math.max(minG||40, Math.ceil(g/10)*10);                // Md.2-c: 10'ar cm dilim
+}
+
+/* ============ KOMUT AYRIŞTIRICI ============ */
+function komutCalistir(cmdTxt){
+  const raw = (cmdTxt || document.getElementById('cmd').value).toLocaleLowerCase('tr').trim();
+  if(!raw) return;
+  let kat = 1;
+  const km = raw.match(/(\d)\s*kat/); if(km) kat = Math.min(3,Math.max(1,+km[1]));
+  if(/üç katlı|uc katlı/.test(raw)) kat=3;
+  if(/iki katlı|çift katlı/.test(raw)) kat=2;
+  const yanyana = /yan\s*yana/.test(raw);
+  const hasAG = /\bag\b/.test(raw), hasOG = /\bog\b/.test(raw);
+  let kaplama = null;   // komutta yoksa kullanıcıya sorulur
+  for(const k of KAPLAMALAR) if(k!=='Yok' && raw.includes(k.toLocaleLowerCase('tr'))) kaplama = k;
+  if(/kaplamasiz|kaplamasız/.test(raw)) kaplama='Yok';
+  const gm = raw.match(/\b(40|50|60|80|100|124|150)\b/);
+  // adetler: "4 ag" "6 og"
+  const agAdet = (raw.match(/(\d+)\s*ag\b/)||[])[1];
+  const ogAdet = (raw.match(/(\d+)\s*og\b/)||[])[1];
+
+  const muh = /borulu|boru\b/.test(raw)?'boru' : /büzlü|buzlu|büz\b/.test(raw)?'buz':'yok';
+  const sevli = !/şevsiz|sevsiz|dikdörtgen|dikdortgen/.test(raw);
+  const dolgu = /toprak/.test(raw) ? 'Toprak' : 'Tüvenen';
+  const kb=(sinif,adet)=>{ const k=yeniKablo(sinif,+adet); k.muhafaza=muh; return k; };
+  const katlar = [];
+  const agKat = ()=>({kablolar:[kb('AG',agAdet||3)]});
+  const ogKat = ()=>({kablolar:[kb('OG',ogAdet||3)]});
+
+  if(yanyana && hasAG && hasOG){
+    // tek katta yan yana: sol OG, sağ AG (araya koruyucu eleman girer, Md.4.2-c)
+    for(let i=0;i<kat;i++) katlar.push({kablolar:[kb('OG',ogAdet||3), kb('AG',agAdet||3)]});
+  } else if(hasAG && hasOG){
+    // katlı: en yüksek gerilim en alta (Md.4.2-c)
+    katlar.push(ogKat());
+    for(let i=1;i<kat;i++) katlar.push(agKat());
+    if(kat===1){ katlar[0].kablolar.push(kb('AG',agAdet||3)); }
+  } else if(hasOG){
+    for(let i=0;i<kat;i++) katlar.push(ogKat());
+  } else {
+    for(let i=0;i<kat;i++) katlar.push(agKat());
+  }
+
+  const t = yeniTip({kaplama: kaplama||'Yok', katlar, sevli, dolgu});
+  t.genislikManuel = gm ? +gm[1] : null;
+  if(/abone/.test(raw)){ t.tur='Abone'; aboneKontrol(t); }
+  if(/sac tava|saç tava|\btava\b|raf/.test(raw)) t.detay='tava';
+  else if(/dönüş|donus|kıvrıl|kivril/.test(raw)) t.detay='donus';
+  genislikHesapla(t);
+  guncelle(); fitView();
+  if(mobil()) sekme('ciz');
+}
+
+</script>
+<script>
+/* ---- Kıvrılma yarıçapı — Çizelge-2 (Md.6-d) ----
+   Üç/çok damarlı XLPE-PVC AG: 12xD · YG(OG): 15xD · tek damarlı: 15xD · zırhlı: 15xD */
+function kivrimKat(k){ return (tekDamar(k) || k.sinif==='OG') ? 15 : 12; }
+function kivrimR(k){ return kivrimKat(k)*(k.cap||4.4); }
+
+/* ---- Kablo dönüş (kıvrılma) detayı — plan görünüş ---- */
+function donusPrimleri(t0, x0){
+  const t = veriTipi(t0), etiketTip = kaynakTip(t0) || t0;
+  const P=[];
+  const L=(x1,y1,x2,y2,c)=>P.push({t:'line',x1:x0+x1,y1,x2:x0+x2,y2,c:c||7});
+  const A=(x,y,r,a1,a2,c)=>P.push({t:'arc',x:x0+x,y,r,a1,a2,c:c||7});
+  const T=(x,y,s,h,o)=>P.push(Object.assign({t:'text',x:x0+x,y,s,h,c:7,align:'center'},o||{}));
+  const S=(pts,c)=>P.push({t:'solid',pts:pts.map(p=>[x0+p[0],p[1]]),c:c||7});
+
+  // plan görünüşte en çok kablo taşıyan kat gösterilir
+  let ki=0; t.katlar.forEach((k,i)=>{ if(kabloYerlesim(k).el.length > kabloYerlesim(t.katlar[ki]).el.length) ki=i; });
+  const kat=t.katlar[ki], yer=kabloYerlesim(kat), W=t.genislik;
+  const bas = yer.aSol + (yer.el[0]?yer.el[0].dg/2:0) + Math.max(0,(W - yer.dipHam)/2);
+  const elR = el => kivrimR({sinif:el.sinif, kesit:el.kesit, cap:el.d});
+
+  // iç kenar yarıçapı: her kablo kendi asgari kıvrılma yarıçapını sağlamalı
+  let Rin = 15;
+  yer.el.forEach(el=>{ Rin = Math.max(Rin, elR(el) - (bas+el.x)); });
+  Rin = Math.ceil(Rin/5)*5;
+  const Rout = Rin + W;
+
+  // ---- ÖLÇEK: detay sayfaya sığacak şekilde küçültülür, ölçüler gerçek değerdir ----
+  const OLCEKLER=[1,2,5,10,20];
+  let ob=1; for(const o of OLCEKLER){ ob=o; if(Rout/o <= 65) break; }
+  const k=1/ob;                                   // çizim çarpanı
+  const rIn=Rin*k, rOut=Rout*k, bacak=Math.max(10, 14*k+6);
+  const ACI = Math.min(90, Math.max(15, t0.donusAci||90));       // dönüş açısı: en çok 90° (Md.6-d yay biçimi)
+  const ar = ACI*Math.PI/180;
+  // teğet bacak uçları: başlangıçta (r,0) aşağı, bitişte (r·cosA, r·sinA) teğet yönünde
+  const bacakBas=(r)=>[[r,0],[r,-bacak]];
+  const bacakSon=(r)=>{ const px=r*Math.cos(ar), py=r*Math.sin(ar);
+    return [[px,py],[px-bacak*Math.sin(ar), py+bacak*Math.cos(ar)]]; };
+  const cizBacak=(r,c)=>{ const a=bacakBas(r), b=bacakSon(r);
+    L(a[0][0],a[0][1],a[1][0],a[1][1],c); L(b[0][0],b[0][1],b[1][0],b[1][1],c); };
+
+  // ---- kanal kenarları ----
+  A(0,0,rIn, 0, ACI);  A(0,0,rOut, 0, ACI);
+  cizBacak(rIn); cizBacak(rOut);
+
+  // ---- kablolar: gruplara göre numaralanır ----
+  const grupNo=new Map(); let no=0;
+  kat.kablolar.forEach(kb=>{ const an=(kb.tip||'')+kb.kesit; if(!grupNo.has(an)) grupNo.set(an, ++no); });
+  yer.el.forEach(el=>{
+    const r=(Rin + bas + el.x)*k;
+    A(0,0,r, 0, ACI, 8);
+    cizBacak(r,8);
+    const n=grupNo.get((el.tip||'')+el.kesit)||'';
+    T(r, -bacak-3.0, '('+n+')', 2.2, {c:8});      // başlangıç bacağının ucunda numara
+  });
+
+  // ---- en içteki kablonun R ölçüsü (gerçek değer yazılır) ----
+  const ic=yer.el[0], Rk=Rin+bas+ic.x, rk=Rk*k;
+  const a=ar/2, px=Math.cos(a)*rk, py=Math.sin(a)*rk;
+  L(0,0,px,py);
+  S([[px,py],[px-1.8*Math.cos(a)-0.6*Math.sin(a), py-1.8*Math.sin(a)+0.6*Math.cos(a)],
+     [px-1.8*Math.cos(a)+0.6*Math.sin(a), py-1.8*Math.sin(a)-0.6*Math.cos(a)]]);
+  T(px*0.52-4*Math.sin(a), py*0.52+4*Math.cos(a), 'R = '+trSayi(Rk,0)+' cm', 3.0);
+  L(-2,0,2,0,8); L(0,-2,0,2,8);
+
+  // ---- kanal genişliği ----
+  const yb=-bacak-8;
+  L(rIn,yb,rOut,yb); S([[rIn,yb],[rIn+1.2,yb+0.45],[rIn+1.2,yb-0.45]]); S([[rOut,yb],[rOut-1.2,yb+0.45],[rOut-1.2,yb-0.45]]);
+  T((rIn+rOut)/2, yb+1.6, String(W), 2.8);
+
+  // ---- başlık + açıklama: blok yüksekliği hesaplanıp çizimin ÜSTÜNE yerleştirilir ----
+  const bx=-bacak, SAT=3.6;
+  const gruplar=[...grupNo.entries()];
+  const enDar = yer.el.reduce((p,q)=> (Rin+bas+p.x-elR(p)) <= (Rin+bas+q.x-elR(q)) ? p : q);
+  const satir=[];
+  satir.push({s:'KABLO DÖNÜŞ (KIVRILMA) DETAYI - PLAN', h:3.4, o:{bold:true}});
+  satir.push({s:'Dönüş açısı '+trSayi(ACI,0)+'°  ·  ÖLÇEK 1/'+ob+'  ·  ölçüler gerçek değerdir  ·  '+(ki+1)+'. kat', h:2.6, o:{italic:true}});
+  satir.push({s:'En küçük kıvrılma yarıçapları — TEDAŞ Çizelge-2 (Md.6-d)', h:2.5, o:{italic:true}});
+  gruplar.forEach(([an,n])=>{
+    const kb=kat.kablolar.find(x=>((x.tip||'')+x.kesit)===an); if(!kb) return;
+    const ad = kb.sinif==='OG'
+      ? '3('+(kb.kesit||'').toUpperCase()+')-'+(kb.tip==='OG-Cu'?'Cu':'Al')     // tek damarlı: 3 kablo/devre
+      : (kb.kesit||'').toUpperCase().replace('+','/')+' '+(kb.tip||'');          // çok damarlı: tek kablo
+    const say = kb.sinif==='OG' ? kb.adet+' devre = '+(kb.adet*3)+' kablo' : kb.adet+' kablo';
+    satir.push({s:'('+n+')  '+ad+'  ·  '+say+
+      '  ·  R = '+kivrimKat(kb)+' x D = '+kivrimKat(kb)+' x '+fmt(kb.cap)+' = '+trSayi(kivrimR(kb),0)+' cm', h:2.5, o:{}});
+  });
+  const enDarAd = enDar.sinif==='OG'
+    ? '3('+(enDar.kesit||'').toUpperCase()+')' : (enDar.kesit||'').toUpperCase().replace('+','/');
+  satir.push({s:'İç kenar yarıçapı '+trSayi(Rin,0)+' cm · belirleyici kablo '+enDarAd+
+    ': gerekli '+trSayi(elR(enDar),0)+' ≤ mevcut '+trSayi(Rin+bas+enDar.x,0)+' cm', h:2.6, o:{bold:true}});
+  satir.push({s:'Kablolar bir seferde, yay biçiminde bükülecek (Md.6-d); ara mesafeler dönüşte de korunur.', h:2.3, o:{italic:true}});
+  const ustY = rOut + 8 + (satir.length-1)*SAT;
+  satir.forEach((r,i)=>T(bx, ustY - i*SAT, r.s, r.h, Object.assign({align:'left'}, r.o)));
+
+  T((rIn+rOut)/2, yb-6, tipAdi(etiketTip)+' DÖNÜŞ DETAYI ('+trSayi(ACI,0)+'°)', 3.2, {c:t0.renk, bold:true});
+
+  // sınır kutusu: primlerden hesaplanır (geniş açılarda çizim sola taşar)
+  let mnx=1e9, mxx=-1e9, mxy=-1e9;
+  P.forEach(p=>{
+    const nokta=[];
+    if(p.t==='line'){nokta.push([p.x1-x0,p.y1],[p.x2-x0,p.y2]);}
+    else if(p.t==='arc'){nokta.push([p.x-x0-p.r,p.y-p.r],[p.x-x0+p.r,p.y+p.r]);}
+    else if(p.t==='circle'){nokta.push([p.x-x0-p.r,p.y-p.r],[p.x-x0+p.r,p.y+p.r]);}
+    else if(p.t==='solid'){p.pts.forEach(q=>nokta.push([q[0]-x0,q[1]]));}
+    else if(p.t==='text'){const g=metinGen(p.s,p.h); nokta.push([p.x-x0-(p.align==='left'?0:g/2), p.y],[p.x-x0+(p.align==='left'?g:g/2), p.y+p.h]);}
+    nokta.forEach(q=>{ if(q[0]<mnx)mnx=q[0]; if(q[0]>mxx)mxx=q[0]; if(q[1]>mxy)mxy=q[1]; });
+  });
+  return {P, W:mxx-mnx+6, H:mxy+6, sol:-mnx+3};
+
+}
+
+
+/* ---- Sac tava / raf detayı — Bölüm II-B Md.2-c/d, Md.3, Md.4 ---- */
+function tavaPrimleri(t0, x0){
+  const t = veriTipi(t0), etiketTip = kaynakTip(t0) || t0;
+  const P=[];
+  const L=(x1,y1,x2,y2,c)=>P.push({t:'line',x1:x0+x1,y1,x2:x0+x2,y2,c:c||7});
+  const C=(x,y,r,c)=>P.push({t:'circle',x:x0+x,y,r,c:c||7});
+  const T=(x,y,s,h,o)=>P.push(Object.assign({t:'text',x:x0+x,y,s,h,c:7,align:'center'},o||{}));
+  const S=(pts,c)=>P.push({t:'solid',pts:pts.map(p=>[x0+p[0],p[1]]),c:c||7});
+
+  const RAF=20;                              // raflar arası düşey uzaklık en az 20 cm (Md.2-d)
+  const DUVAR=2;                             // kablo - duvar en az 2 cm (Md.2-d)
+  // Her KAT bir raftır. Kesitteki sıralama (en yüksek gerilim en altta) plana çevrilir:
+  // Md.4-d gereği OG üstte olduğundan katlar ters sırayla dizilir.
+  // Bir katta hem AG hem OG varsa iki ayrı rafa ayrılır (OG üstteki raf).
+  const raflar=[];                       // üstten alta
+  [...t.katlar].reverse().forEach(kat=>{
+    const og=kat.kablolar.filter(k=>k.sinif==='OG');
+    const ag=kat.kablolar.filter(k=>k.sinif!=='OG');
+    if(og.length && ag.length){ raflar.push({sinif:'OG',kablolar:og}); raflar.push({sinif:'AG',kablolar:ag}); }
+    else if(kat.kablolar.length) raflar.push({sinif: og.length?'OG':'AG', kablolar: kat.kablolar});
+  });
+  if(!raflar.length) raflar.push({sinif:'AG', kablolar:t.katlar[0].kablolar});
+  const katlar = raflar.slice().reverse();   // çizim alttan üste
+  const n=katlar.length;
+  const tavaB = Math.max(...katlar.map(k=>{
+    const el=kabloYerlesim(k).el; if(!el.length) return 30;
+    const dmax=Math.max(...el.map(z=>z.dg));
+    return DUVAR*2 + el.reduce((a,e)=>a+e.dg,0) + (el.length-1)*dmax; }));
+
+  // duvar
+  L(0,-8,0,n*RAF+10); for(let hy=-8; hy<n*RAF+10; hy+=3){ L(0,hy,-3,hy+3,8); }
+
+  const notlar=[];
+  katlar.forEach((kat,i)=>{
+    const y=i*RAF, el=kabloYerlesim(kat).el;
+    const dmax=Math.max(...el.map(e=>e.dg));
+    // konsol mesnet + tava
+    L(0,y,tavaB,y); L(0,y-2.2,tavaB,y-2.2); L(tavaB,y-2.2,tavaB,y+3);   // tava profili
+    L(0,y-2.2,4,y-8,8); L(4,y-8,0,y-8,8);                               // konsol
+    // kablolar: duvardan 2 cm, aralar kablo çapı kadar
+    let cx=DUVAR; const merkez=[];
+    el.forEach(e=>{ const mx=cx+e.dg/2; C(mx, y+e.dg/2+0.3, e.d/2); merkez.push({x:mx, e}); cx += e.dg + dmax; });
+    // kablo - duvar ve kablolar arası net mesafeler (Md.2-d)
+    const kotY2 = y + dmax + 3.6, kayit=[];
+    const yaz=(x1,x2,etk)=>{
+      const orta=(x1+x2)/2, r=satirBul(kayit, orta, etk, 2.1);
+      T(orta, kotY2 - r*2.6, etk, 2.1);
+      L(x1, kotY2-1.4, x1, kotY2+1.4, 8); L(x2, kotY2-1.4, x2, kotY2+1.4, 8);
+    };
+    const kotlar2=[];
+    if(merkez.length){
+      kotlar2.push([0, merkez[0].x-merkez[0].e.dg/2, String(DUVAR)]);
+      for(let i=1;i<merkez.length;i++){
+        const a=merkez[i-1], b=merkez[i];
+        kotlar2.push([a.x+a.e.dg/2, b.x-b.e.dg/2, fmt(b.x-b.e.dg/2-(a.x+a.e.dg/2))]);
+      }
+    }
+    kotlar2.sort((p,q)=>p[0]-q[0]).forEach(k=>yaz(k[0],k[1],k[2]));
+    const gor2=new Set();
+    const ad=kat.kablolar.filter(k=>{const a=(k.tip||'')+k.kesit; if(gor2.has(a))return false; gor2.add(a); return true;})
+      .map(k=>k.sinif==='OG' ? '3('+(k.kesit||'').toUpperCase()+')'
+                             : (k.kesit||'').toUpperCase().replace('+','/')).join(' + ');
+    T(tavaB+4, y+2, (n-i)+'. RAF · '+kat.sinif+' — '+ad, 2.5, {align:'left'});
+    if(i<n-1){ // raf arası ölçü
+      L(-8,y,-8,y+RAF); S([[-8,y],[-7.3,y+2],[-8.7,y+2]]); S([[-8,y+RAF],[-7.3,y+RAF-2],[-8.7,y+RAF-2]]);
+      T(-10.5,(y+y+RAF)/2,String(RAF),2.6,{rot:90});
+    }
+  });
+  // duvar mesafesi ölçüsü
+  T(DUVAR/2, -5.5, '2', 2.2);
+  L(0,-3.5,0,-6.5,8); L(DUVAR,-3.5,DUVAR,-6.5,8);
+
+  const SAT=3.6, satir=[];
+  satir.push({s:'SAC TAVA / RAF DETAYI (KESİT)', h:3.4, o:{bold:true}});
+  satir.push({s:'TEDAŞ Bölüm II-B Md.2-c/d · Md.3 · Md.4', h:2.6, o:{italic:true}});
+  satir.push({s:'· Yatay mesnet aralığı: kablo dış çapının 20-25 katı, en fazla 80 cm (Md.2-c)', h:2.4, o:{}});
+  satir.push({s:'· Düşey döşemede mesnet aralığı 150 cm (Md.3-a)', h:2.4, o:{}});
+  satir.push({s:'· Kablo - duvar/tava kenarı en az 2 cm · kablolar arası kablo çapı kadar (Md.2-d)', h:2.4, o:{}});
+  satir.push({s:'· Sıralar halinde döşemede raflar arası düşey uzaklık en az 20 cm (Md.2-d)', h:2.4, o:{}});
+  satir.push({s:'· Üçgen demette sistemler arası 2 x kablo çapı (Md.2-d)', h:2.4, o:{}});
+  satir.push({s:'· Galeri/tünelde OG üstte, AG altta döşenir (Md.4-d)', h:2.4, o:{}});
+  satir.push({s:'· Tek damarlı OG kablolarında manyetik malzemeden klemens kullanılmaz (Md.2-c)', h:2.4, o:{}});
+  satir.push({s:'· Kablo tavaları ve rafları şartnamesine göre topraklanır (Md.4-c)', h:2.4, o:{}});
+  const ustY = n*RAF + 14 + (satir.length-1)*SAT;
+  satir.forEach((r,i)=>T(-8, ustY-i*SAT, r.s, r.h, Object.assign({align:'left'}, r.o)));
+
+  T(tavaB/2, -14, tipAdi(etiketTip)+' TAVA DETAYI', 3.2, {c:t0.renk, bold:true});
+
+  let mnx=1e9,mxx=-1e9,mxy=-1e9;
+  P.forEach(p=>{ const q=[];
+    if(p.t==='line'){q.push([p.x1-x0,p.y1],[p.x2-x0,p.y2]);}
+    else if(p.t==='circle'){q.push([p.x-x0-p.r,p.y-p.r],[p.x-x0+p.r,p.y+p.r]);}
+    else if(p.t==='solid'){p.pts.forEach(z=>q.push([z[0]-x0,z[1]]));}
+    else if(p.t==='text'){const g=metinGen(p.s,p.h); q.push([p.x-x0-(p.align==='left'?0:g/2),p.y],[p.x-x0+(p.align==='left'?g:g/2),p.y+p.h]);}
+    q.forEach(z=>{ if(z[0]<mnx)mnx=z[0]; if(z[0]>mxx)mxx=z[0]; if(z[1]>mxy)mxy=z[1]; }); });
+  return {P, W:mxx-mnx+6, H:mxy+6, sol:-mnx+3};
+}
+
+/* ============ ÇİZİM MOTORU (ortak primitifler) ============
+   Hem canvas hem DXF aynı primitif listesinden beslenir.
+   prim: {t:'line',x1,y1,x2,y2,c}  {t:'circle',x,y,r,c}  {t:'text',x,y,s,h,c,align,italic,bold,rot}
+         {t:'dash',x1,y1,x2,y2,c}  {t:'solid',pts:[[x,y]..],c}   koordinatlar cm, y yukarı pozitif */
+function tipPrimleri(t, x0){
+  const P=[]; const W=t.genislik, H=derinlik(t);           // W = DİP genişliği
+  const SEV = t.sevli!==false ? G.SEV : 0;                 // şev payı (Şekil-1: 40/60/80)
+  const AGIZ = W + 2*SEV;
+  const nk=t.katlar.length;
+  const L=(x1,y1,x2,y2,c)=>P.push({t:'line',x1:x0+x1,y1,x2:x0+x2,y2,c:c||7});
+  const C=(x,y,r,c)=>P.push({t:'circle',x:x0+x,y,r,c:c||7});
+  const T=(x,y,s,h,o)=>P.push(Object.assign({t:'text',x:x0+x,y,s,h,c:7,align:'center'},o||{}));
+  const S=(pts,c)=>P.push({t:'solid',pts:pts.map(p=>[x0+p[0],p[1]]),c:c||7});
+  const xL=y=>-SEV*y/H, xR=y=>W+SEV*y/H;                   // şevli yan duvar sınırları
+  const YAT=(y,c)=>L(xL(y),y,xR(y),y,c);                   // duvardan duvara yatay çizgi
+
+  // ---- taban + şevli duvarlar ----
+  L(0,0,W,0); L(0,0,xL(H),H); L(W,0,xR(H),H);
+
+  // ---- katlar (alttan üste; en yüksek gerilim en altta) ----
+  const sagEtiket=[];
+  let y0=0;
+  for(let ki=0;ki<nk;ki++){
+    const kat = t.katlar[ki];
+    const kh = kabloH(kat);
+    // 10 cm yataklama kumu + 10 cm örtü kumu (kablo örtü kumunun içinde) — Md.4.1-b / 4.2-f
+    YAT(y0+G.KUM);
+    YAT(y0+G.KUM+kh);
+    sagEtiket.push({y:y0+G.KUM/2, satirlar:['10 cm KUM (yataklama)']});
+    // kablolar
+    const yer = kabloYerlesim(kat);
+    const bas = yer.aSol + (yer.el[0]?yer.el[0].dg/2:0) + Math.max(0,(W - yer.dipHam)/2);
+    const kabloSatir = kat.kablolar.map(k=>
+      kesitEtiket(k)+(k.muhafaza==='boru'?' [BORULU]':k.muhafaza==='buz'?' [BÜZLÜ]':''));
+    const tabanY = y0+G.KUM;                 // kabloların oturduğu yataklama üst kotu
+    const kotY   = y0+G.KUM+kh/2-1.1;        // aralık kotaları: kablo ekseni hizasında (ortalanmış)
+    const tikUst = y0+G.KUM+kh-0.6;          // düşey çizgilerin üst ucu
+    const tikAlt = y0+G.KUM-5.2;             // düşey çizgilerin alt ucu (çap yazısının altı)
+    const capY   = y0+G.KUM-3.4;             // çap yazısı satırı
+
+    const capSatir=[], kotSatir=[];          // çakışma önleyici satır kayıtları
+    let capEnAlt=capY;
+    yer.el.forEach(el=>{
+      const ex=bas+el.x, cy=tabanY+el.dg/2;  // kablo yataklama kumunun üstüne oturur
+      if(el.muhafaza!=='yok'){
+        C(ex,cy,el.dg/2,8);                  // boru/büz dış çapı (iç çap 1,5d / 2d, Md.5.1-a)
+        C(ex,cy,el.d/2);                     // kablo
+      } else {
+        C(ex,cy,el.d/2);
+      }
+      // çap yazısı: sığmıyorsa bir alt satıra
+      const cs=fmt(el.d), r=satirBul(capSatir, ex, cs, 2.0), cyY=capY - r*2.6;
+      T(ex, cyY, cs, 2.0);
+      if(cyY<capEnAlt) capEnAlt=cyY;
+      // kablonun iki yanına düşey çizgi (yazının altına kadar iner)
+      L(ex-el.dg/2, tikUst, ex-el.dg/2, cyY-1.8, 8);
+      L(ex+el.dg/2, tikUst, ex+el.dg/2, cyY-1.8, 8);
+      if(el.faz) T(ex, cy+el.dg/2+1.2, el.faz, 1.7, {c:8});   // L1L2L3-L3L2L1 (Md.4.2-e)
+    });
+
+    // kot yazıları: duvar payları + kablo araları, soldan sağa sıralı yerleştirilir
+    const kotlar = yer.gaps.map(gp=>({x:bas+gp.at, s:gp.label}));
+    if(yer.el.length){
+      const ilkEl=yer.el[0], sonEl=yer.el[yer.el.length-1];
+      const solKenar = bas - ilkEl.dg/2;
+      const sagKenar = bas + yer.span + sonEl.dg/2;
+      kotlar.push({x:solKenar/2, s:fmt(solKenar)});
+      kotlar.push({x:(sagKenar+W)/2, s:fmt(W-sagKenar)});
+    }
+    kotlar.sort((a,b)=>a.x-b.x).forEach(k=>{
+      const r=satirBul(kotSatir, k.x, k.s, 2.2);
+      T(k.x, kotY - r*2.8, k.s, 2.2);
+    });
+
+    if(yer.el.length){
+      L(0, tikUst, 0, kotY-1.6, 8);            // duvar hizası
+      L(W, tikUst, W, kotY-1.6, 8);
+    }
+    // AG-OG arası: 14 cm BİMS — OG devreleri arası ayırıcı ile birebir aynı gösterim
+    yer.ayirici.forEach(ax=>{
+      const bw=G.SIS, tx=bas+ax-bw/2, ty=y0+G.KUM, th=kh;
+      L(tx,ty,tx+bw,ty,8); L(tx,ty+th,tx+bw,ty+th,8);
+      L(tx,ty,tx,ty+th,8); L(tx+bw,ty,tx+bw,ty+th,8);
+      for(let o=-th;o<bw;o+=2.2){
+        const xa=Math.max(tx,tx+o), xb=Math.min(tx+bw,tx+o+th);
+        if(xb>xa) L(xa,ty+(xa-(tx+o)),xb,ty+(xb-(tx+o)),8);
+      }
+    });
+    // OG devreleri arası koruyucu: 14 cm BİMS — AG-OG ayırıcısıyla aynı taralı gösterim (Md.2-e)
+    yer.ogAyirici.forEach(a=>{
+      const bw=Math.min(G.SIS, a.w), tx=bas+a.at-bw/2, ty=y0+G.KUM, th=kh;
+      L(tx,ty,tx+bw,ty,8); L(tx,ty+th,tx+bw,ty+th,8);
+      L(tx,ty,tx,ty+th,8); L(tx+bw,ty,tx+bw,ty+th,8);
+      for(let o=-th;o<bw;o+=2.2){
+        const xa=Math.max(tx,tx+o), xb=Math.min(tx+bw,tx+o+th);
+        if(xb>xa) L(xa,ty+(xa-(tx+o)),xb,ty+(xb-(tx+o)),8);
+      }
+    });
+    const maxdg = Math.max(...yer.el.map(e=>e.dg));
+    sagEtiket.push({y: tabanY + maxdg/2, satirlar: kabloSatir});            // kablo ekseni hizası
+    sagEtiket.push({y: tabanY + (maxdg+kh)/2, satirlar:[fmt(kh)+' cm KUM (örtü)']});  // örtü kumu ortası
+
+    // koruyucu eleman sırası: BLOCK BİMS 20x50x6 (Md.4.3-c)
+    const by=y0+G.KUM+kh;
+    YAT(by); YAT(by+G.BIMS);
+    const blokW=20;
+    for(let bx=xL(by)+1.2; bx<xR(by)-1; bx+=blokW+1.2){
+      const bw=Math.min(blokW,xR(by)-1.2-bx);
+      if(bw<5) break;
+      L(bx,by+0.8,bx+bw,by+0.8,8); L(bx,by+G.BIMS-0.8,bx+bw,by+G.BIMS-0.8,8);
+      L(bx,by+0.8,bx,by+G.BIMS-0.8,8); L(bx+bw,by+0.8,bx+bw,by+G.BIMS-0.8,8);
+      for(let hx=bx-4;hx<bx+bw;hx+=2.6){
+        const ya=by+0.8, yb=by+G.BIMS-0.8;
+        let a=Math.max(bx,hx), c=Math.min(bx+bw,hx+(yb-ya));
+        if(c>a) L(a,ya+(a-hx),c,ya+(c-hx),8);
+      }
+    }
+    sagEtiket.push({y:by+G.BIMS/2, satirlar:['BLOCK BİMS (20x50x6)']});
+    y0 += katH(kat);   // katlar bitişik istiflenir (referans detay)
+  }
+
+  // ---- son BLOCK BİMS üstü: 20 cm TÜVENEN -> İKAZ ŞERİDİ -> kalan TÜVENEN (kaplama dahil) ----
+  YAT(H);                              // üst kot (zemin yüzeyi) çizgisi
+  const kk = kaplamaKal(t);
+  const kalt = H - kk;                 // kaplama alt kotu
+  // İkaz şeridi normalde koruyucu elemanın 20 cm üstüne serilir (Md.4.2-f).
+  // Sığ kanallarda (abone vb.) üstte yeterli örtü kalmıyorsa 20 cm ölçüsü aranmaz (Md.4.2-f istisnası).
+  const dolguBoy = kalt - y0;                 // bims üstünden kaplama altına toplam dolgu
+  let bandAlt = G.DOLGU;
+  const kisitli = (dolguBoy - G.DOLGU) < 10;
+  if(kisitli) bandAlt = Math.max(6, Math.round(dolguBoy*0.55));
+  const iy = y0 + bandAlt;
+  YAT(iy,8);
+  sagEtiket.push({y:y0+bandAlt/2, satirlar:[trSayi(bandAlt,0)+' cm '+dolguAdi(t)]});
+  T(W/2, y0+bandAlt/2-1, dolguAdi(t), 2.6, {italic:true});
+  for(let sx=xL(iy)+AGIZ*0.08; sx<xR(iy)-AGIZ*0.1; sx+=AGIZ*0.31){
+    const sw=Math.min(AGIZ*0.2, xR(iy)-AGIZ*0.08-sx);
+    L(sx,iy-0.9,sx+sw,iy-0.9,1); L(sx,iy+0.9,sx+sw,iy+0.9,1);
+    L(sx,iy-0.9,sx,iy+0.9,1); L(sx+sw,iy-0.9,sx+sw,iy+0.9,1);
+  }
+  sagEtiket.push({y:iy+2.4, satirlar: kisitli
+    ? ['İKAZ ŞERİDİ (kırmızı 120mm)','sığ kanal: 20 cm ölçüsü aranmaz (Md.4.2-f)']
+    : ['İKAZ ŞERİDİ (kırmızı 120mm)']});
+  // şerit üstü kalan tüvenen (kaplama bunun içinde)
+  const kalan = kalt - iy;
+  T(W/2,(iy+kalt)/2-1.5,dolguAdi(t),2.6,{italic:true});
+  sagEtiket.push({y:(iy+kalt)/2, satirlar:[fmt(kalan)+' cm '+dolguAdi(t)]});
+
+  // ---- en üstte KAPLAMA ----
+  if(kk>0){
+    YAT(kalt);
+    for(let hx=xL(kalt)-kk; hx<xR(H); hx+=3.2){
+      const xa=Math.max(xL(kalt),hx), xb=Math.min(xR(H),hx+kk);
+      if(xb>xa) L(xa, kalt+(xa-hx), xb, kalt+(xb-hx), 8);
+    }
+    sagEtiket.push({y:kalt+kk/2, satirlar:[t.kaplama.toUpperCase()+' KAPLAMA ('+kk+' cm)']});
+  }
+
+  // ---- sağ etiketler: satırlara aç, üstten alta sırala, eşit aralıkla çakışmayı önle ----
+  const ySatir=[];
+  sagEtiket.forEach(et=>{
+    const n=et.satirlar.length;
+    et.satirlar.forEach((tx,i)=>ySatir.push({y: et.y-1 - i*3.4 + (n-1)*1.7, s:tx}));
+  });
+  ySatir.sort((a,b)=>b.y-a.y);                     // üstten alta
+  const ARALIK_Y = 3.6;                            // asgari satır aralığı
+  for(let i=1;i<ySatir.length;i++){
+    if(ySatir[i-1].y - ySatir[i].y < ARALIK_Y) ySatir[i].y = ySatir[i-1].y - ARALIK_Y;
+  }
+  ySatir.forEach(r=>T(W+SEV+5, r.y, r.s, 2.4, {align:'left'}));
+
+  // ---- alt DİP genişlik ölçüsü ----
+  const dy=-7;
+  L(0,-1,0,dy-2); L(W,-1,W,dy-2); L(2,dy,W-2,dy);
+  S([[0,dy],[3,dy+0.8],[3,dy-0.8]]); S([[W,dy],[W-3,dy+0.8],[W-3,dy-0.8]]);
+  T(W/2,dy+1.6,fmtG(t.genislik),3.6);
+
+  // ---- üst AĞIZ genişlik ölçüsü (şevli ise) ----
+  if(SEV>0){
+    const ay=H+3.5;
+    L(xL(H),H+0.5,xL(H),ay+2); L(xR(H),H+0.5,xR(H),ay+2); L(xL(H)+2,ay,xR(H)-2,ay);
+    S([[xL(H),ay],[xL(H)+3,ay+0.8],[xL(H)+3,ay-0.8]]); S([[xR(H),ay],[xR(H)-3,ay+0.8],[xR(H)-3,ay-0.8]]);
+    T(W/2,ay+1.6,fmtG(state.yuvarla===false?AGIZ:Math.round(AGIZ)),3.2);
+  }
+
+  // ---- sol derinlik ölçüsü ----
+  const dx=-SEV-8;
+  L(xL(0)-1,0,dx-2,0); L(xL(H)-1,H,dx-2,H); L(dx,2,dx,H-2);
+  S([[dx,0],[dx+0.8,3],[dx-0.8,3]]); S([[dx,H],[dx+0.8,H-3],[dx-0.8,H-3]]);
+  T(dx-2.2,H/2,String(Math.round(H)),3.6,{rot:90});
+
+  // ---- üst başlıklar: kaplama / metraj / kesit alanı / ağız ----
+  // kesit alanı (m²) = metre başına kazı hacmi (m³/m)
+  const alan=((W+AGIZ)/2/100)*(H/100);
+  const uz=metrajToplam(t.metraj);
+  const hacimYazi = uz>0
+    ? trSayi(alan*uz,2)+' m\u00B3'             // metraj girilmişse toplam kazı hacmi
+    : trSayi(alan,3)+' m\u00B3/m';             // metraj yoksa metre başına hacim
+  const ustY=H+(SEV>0?8:0);
+  T(W/2,ustY+15.5, t.kaplama==='Yok'?'KAPLAMASIZ':t.kaplama, 4.2);
+  if(t.metraj) T(W/2,ustY+10.5,t.metraj+' = '+uz+' m',3.0);
+  T(W/2,ustY+6.2,hacimYazi,3.0);
+
+  // ---- TİP etiketi (renkli) ----
+  T(W/2,dy-6.5,tipAdi(t),4.0,{c:t.renk,bold:true,tipEtiket:true});
+
+  return {P, W:AGIZ, H, sol:SEV};
+}
+function el0(kat){ return kabloH(kat)/2; }
+
+/* ============ CANVAS ÇİZİM ============ */
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+const ARA = 42; // tipler arası boşluk cm
+function yaySinir(p){                    // yayın gerçek y aralığı (tam daire değil)
+  const R=Math.PI/180;
+  let a1=p.a1, a2=p.a2; if(a2<a1) a2+=360;
+  let lo=Math.min(Math.sin(a1*R),Math.sin(a2*R)), hi=Math.max(Math.sin(a1*R),Math.sin(a2*R));
+  for(let a=Math.ceil(a1/90)*90; a<=a2; a+=90){            // 90/270 noktaları aralıkta mı
+    const v=Math.sin(a*R); lo=Math.min(lo,v); hi=Math.max(hi,v);
+  }
+  return [p.y+lo*p.r, p.y+hi*p.r];
+}
+function ySinir(P){                      // primlerin [en alt, en üst] y kotu
+  let mn=1e9, mx=-1e9;
+  const gor=(a,b)=>{ mn=Math.min(mn,a); mx=Math.max(mx,b); };
+  P.forEach(p=>{
+    if(p.t==='line'){ gor(Math.min(p.y1,p.y2), Math.max(p.y1,p.y2)); }
+    else if(p.t==='arc'){ const s=yaySinir(p); gor(s[0],s[1]); }
+    else if(p.t==='circle'){ gor(p.y-p.r,p.y+p.r); }
+    else if(p.t==='solid'){ p.pts.forEach(q=>gor(q[1],q[1])); }
+    else if(p.t==='text'){ gor(p.y, p.y+p.h); }
+  });
+  return mn===1e9 ? [0,0] : [mn,mx];
+}
+function minKot(P){ return ySinir(P)[0]; }
+function tumSahne(){
+  numarala();
+  state.tipler.forEach(genislikHesapla);  // güvence: çizimden önce genişliği çöz
+  const SATIR_ADET = 10;                  // bir satıra en çok 10 tip
+  const sahne=[]; let maxH=0;
+  state.tipler.forEach(t=>{ if(detayTuru(t)==='kesit') maxH=Math.max(maxH,derinlik(t)); });
+  const kaydir=(P,dx,dy)=>P.forEach(p=>{
+    if(p.t==='line'||p.t==='dash'){p.x1+=dx;p.x2+=dx;p.y1+=dy;p.y2+=dy;}
+    else if(p.t==='circle'||p.t==='arc'){p.x+=dx;p.y+=dy;}
+    else if(p.t==='text'){p.x+=dx;p.y+=dy;}
+    else if(p.t==='solid'){p.pts=p.pts.map(q=>[q[0]+dx,q[1]+dy]);}
+  });
+
+  // önce her tipin primlerini ve ölçülerini üret
+  const ogeler = state.tipler.map(t=>{
+    const d=detayTuru(t);
+    if(d==='kesit'){ const r=tipPrimleri(t,0), sn=ySinir(r.P);
+      return {t, P:r.P, W:r.W+44, H:r.H, sol:0, ust:maxH-r.H, minY:sn[0], maxY:sn[1], detay:'kesit'}; }
+    const fn = d==='donus'?donusPrimleri : tavaPrimleri;
+    const r=fn(t,0), sn=ySinir(r.P);
+    return {t, P:r.P, W:r.W, H:r.H, sol:r.sol||0, ust:0, minY:sn[0], maxY:sn[1], detay:d};
+  });
+
+  // satırlara böl: her satır 10 tip, satır yüksekliği o satırın en yükseğine göre
+  const satirlar=[];
+  for(let i=0;i<ogeler.length;i+=SATIR_ADET) satirlar.push(ogeler.slice(i,i+SATIR_ADET));
+  const SATIR_ARA = 60;                   // satırlar arası düşey boşluk
+  let topW=0, ustKot=0;
+  const satirYuk = satirlar.map(sr=>Math.max(0,...sr.map(o=>o.H+o.ust)));
+  const toplamH = satirYuk.reduce((a,b)=>a+b,0) + (satirlar.length-1)*SATIR_ARA;
+
+  let yTaban = toplamH;                   // en üst satırın taban kotu
+  satirlar.forEach((sr,si)=>{
+    yTaban -= satirYuk[si];               // bu satırın taban kotu
+    let x=0, sonKesit=null;
+    sr.forEach((o,oi)=>{
+      if(o.detay==='kesit') sonKesit=o;
+      // kesitlerde üst kotlar hizalı; detay, KAYNAĞININ alt kotuna hizalanır
+      let dy;
+      if(o.detay==='kesit'){ dy = yTaban + o.ust; }
+      else {
+        const kay = sr.find(z=>z.detay==='kesit' && z.t.uid===o.t.kaynak) || sonKesit;
+        // kaynağın dikey ortasıyla detayın dikey ortası çakışsın
+        const kayOrta = kay ? (kay.ust + (kay.minY+kay.maxY)/2) : 0;
+        dy = yTaban + (kayOrta - (o.minY+o.maxY)/2);
+      }
+      kaydir(o.P, x + o.sol, dy);
+      sahne.push({tip:o.t, P:o.P, x, W:o.W, H:o.H, shift:dy, detay:o.detay});
+      const sonraki = sr[oi+1];
+      // detay, kaynağının hemen yanına yanaşır
+      x += o.W + (sonraki && sonraki.detay!=='kesit' ? ARA*0.30 : ARA);
+    });
+    topW=Math.max(topW, x);
+    yTaban -= SATIR_ARA;
+  });
+
+  let topH = toplamH + 22;
+  sahne.forEach(s=>{ topH=Math.max(topH, s.H+s.shift+10); });
+  return {sahne, topW, topH, alt:6};
+}
+function ciz(){
+  const {sahne,topW,topH}=tumSahne();
+  const dpr = yazdirModu ? 1 : (window.devicePixelRatio||1);
+  const cw=document.getElementById('cwrap');
+  let pw, ph;
+  if(yazdirModu){                       // tüm çizim, beyaz zemin, siyah çizgi
+    pw = Math.round(topW*view.scale + 2*view.ox);
+    ph = Math.round((topH+26)*view.scale + 2*view.oy);
+  } else {
+    pw = cw.clientWidth; ph = cw.clientHeight;
+  }
+  cv.width=pw*dpr; cv.height=ph*dpr; cv.style.width=pw+'px'; cv.style.height=ph+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle = yazdirModu ? '#ffffff' : '#05070b';
+  ctx.fillRect(0,0,pw,ph);
+  const X=x=>view.ox+x*view.scale, Y=y=>view.oy+(topH-y)*view.scale;
+  const col=c=>{
+    if(!yazdirModu) return ACI_HEX[c]||'#ffffff';
+    return c===8 ? '#555555' : '#000000';   // baskıda: taramalar koyu gri, kalanı siyah
+  };
+  etiketKutulari=[];
+  sahne.forEach((s,si)=>{
+    s.P.forEach(p=>{
+      ctx.strokeStyle=ctx.fillStyle=col(p.c);
+      if(p.t==='line'){ctx.lineWidth=p.c===8?0.6:1.1;ctx.beginPath();ctx.moveTo(X(p.x1),Y(p.y1));ctx.lineTo(X(p.x2),Y(p.y2));ctx.stroke();}
+      else if(p.t==='circle'){ctx.lineWidth=1.1;ctx.beginPath();ctx.arc(X(p.x),Y(p.y),p.r*view.scale,0,7);ctx.stroke();}
+      else if(p.t==='arc'){const R=Math.PI/180;ctx.lineWidth=p.c===8?0.7:1.1;ctx.beginPath();
+        ctx.arc(X(p.x),Y(p.y),p.r*view.scale,-p.a1*R,-p.a2*R,true);ctx.stroke();}
+      else if(p.t==='solid'){ctx.beginPath();ctx.moveTo(X(p.pts[0][0]),Y(p.pts[0][1]));p.pts.slice(1).forEach(q=>ctx.lineTo(X(q[0]),Y(q[1])));ctx.closePath();ctx.fill();}
+      else if(p.t==='text'){
+        ctx.save();ctx.translate(X(p.x),Y(p.y));
+        if(p.rot)ctx.rotate(-p.rot*Math.PI/180);
+        ctx.font=(p.italic?'italic ':'')+(p.bold?'700 ':'')+(p.h*view.scale)+'px Segoe UI';
+        ctx.textAlign=p.align||'center';ctx.textBaseline='alphabetic';
+        if(p.tipEtiket){
+          const m=ctx.measureText&&ctx.measureText(p.s);
+          const gen=(m&&m.width)||p.s.length*p.h*view.scale*0.6, yuk=p.h*view.scale;
+          etiketKutulari.push({i:si, x:X(p.x)-gen/2-6, y:Y(p.y)-yuk-4, w:gen+12, h:yuk+10});
+        }
+        ctx.fillText(p.s,0,0);ctx.restore();
+      }
+    });
+  });
+  // durum
+  document.getElementById('stTip').textContent=state.tipler.length;
+  let m=0,kz=0;
+  state.tipler.forEach(t=>{
+    const uz=metrajToplam(t.metraj); m+=uz;
+    kz+=uz*(t.genislik/100)*(derinlik(t)/100);
+  });
+  document.getElementById('stMetraj').textContent=trSayi(m,0)+' m';
+  document.getElementById('stKazi').textContent=trSayi(kz,2)+' m³';
+}
+function metrajToplam(s){ if(!s)return 0; return s.split(/[+ ,]+/).map(parseFloat).filter(v=>!isNaN(v)).reduce((a,b)=>a+b,0); }
+function zoomDeg(f){
+  const wrap=document.getElementById('cwrap');
+  const cx=wrap.clientWidth/2, cy=wrap.clientHeight/2;
+  const wx=(cx-view.ox)/view.scale, wy=(cy-view.oy)/view.scale;
+  view.scale=Math.min(20,Math.max(0.3,view.scale*f));
+  view.ox=cx-wx*view.scale; view.oy=cy-wy*view.scale; ciz();
+}
+function fitView(){
+  const {topW,topH,alt}=tumSahne();
+  const toplamH = topH + (alt||0);
+  const wrap=document.getElementById('cwrap');
+  const w=wrap.clientWidth-60, h=wrap.clientHeight-60;
+  if(topW>0) view.scale=Math.min(w/topW,h/toplamH,8);
+  view.ox=(wrap.clientWidth-topW*view.scale)/2;
+  view.oy=(wrap.clientHeight-toplamH*view.scale)/2;
+  ciz();
+}
+</script>
+<script>
+/* ============ SOL PANEL / DÜZENLEME ============ */
+function yolKontrol(t){     // Md.2-f / 5.1-a: yol geçişinde tüm kablolar muhafaza borusu içinde
+  if(tur(t)!=='Yol Geçişi') return;
+  t.katlar.forEach(k=>k.kablolar.forEach(kb=>{ if(kb.muhafaza==='yok') kb.muhafaza='boru'; }));
+}
+function aboneKontrol(t){   // Md.2-h: abone bağlantı hattı yalnız AG'dir
+  if(tur(t)!=='Abone') return;
+  t.katlar.forEach(k=>k.kablolar.forEach(kb=>{
+    if(kb.sinif==='OG'){ const y=yeniKablo('AG',kb.adet); kb.sinif='AG'; kb.tip=y.tip; kb.kesit=y.kesit; kb.cap=y.cap; }
+  }));
+}
+function genislikHesapla(t){
+  aboneKontrol(t); yolKontrol(t);
+  const g=tipGerekliGenislik(t), minG=TURLER[tur(t)].minG;
+  if(t.genislikManuel){
+    t.genislik = state.yuvarla===false ? Math.max(t.genislikManuel, Math.round(g*100)/100)
+                                       : Math.max(t.genislikManuel, Math.ceil(g));
+  } else {
+    t.genislik = stdGenislik(g,minG);
+  }
+}
+function yuvarlaDegis(){
+  state.yuvarla = state.yuvarla===false ? true : false;
+  guncelle();
+}
+function yuvarlaBtnGuncelle(){
+  const b=document.getElementById('btnYuvarla'); if(!b) return;
+  const acik = state.yuvarla!==false;
+  b.textContent = acik ? "📏 10'a yuvarla: AÇIK" : "📏 10'a yuvarla: KAPALI";
+  b.style.borderColor = acik ? '' : 'var(--cyan)';
+  b.style.color       = acik ? '' : 'var(--cyan)';
+  b.style.fontWeight  = acik ? '' : '700';
+}
+function guncelle(){
+  numarala();                              // TİP numaraları her zaman sıralı
+  state.tipler.forEach(genislikHesapla);   // iki yönlü oto: küçült/büyüt
+  yuvarlaBtnGuncelle();
+  tipListesi(); editFormu(); ciz(); kaydet();
+}
+function tipListesi(){
+  const el=document.getElementById('tiplist');
+  document.getElementById('tipsay').textContent='('+state.tipler.length+')';
+  el.innerHTML='';
+  state.tipler.forEach((t,i)=>{
+    const d=document.createElement('div');
+    d.className='tipcard'+(i===state.secili?' active':'');
+    d.style.borderLeftColor=ACI_HEX[t.renk]||'#fff';
+    const icerik=t.katlar.map((k,ki)=>k.kablolar.map(x=>x.adet+' '+(x.sinif==='OG'&&!x.boru?'OG devre':x.sinif)).join('+')).join(' / ');
+    const dtr=detayTuru(t), ana=anaTipMi(t);
+    if(!ana) d.style.marginLeft='14px';
+    d.innerHTML='<div class="trow"><b style="color:'+(ACI_HEX[t.renk]||'#fff')+'">'+
+      (ana? tipAdi(t) : '↳ '+tipAdi(t))+'</b>'+
+      '<span class="small">'+(detayTuru(t)==='kesit'
+        ? (tur(t)==='Standart'?'':tur(t)+' · ')+t.katlar.length+' katlı · dip '+t.genislik+(t.sevli!==false?'/ağız '+(t.genislik+20):'')+' × '+Math.round(derinlik(t))+' · '+(t.dolgu||'Tüvenen')+' dolgu · '+(t.kaplama==='Yok'?'kaplamasız':t.kaplama+' '+kaplamaKal(t)+'cm')
+        : DETAYLAR[detayTuru(t)].ad+(detayTuru(t)==='donus'
+            ? ' · '+(t.donusAci||90)+'°'+(kaynakTip(t)?'':' · kaynak seçilmedi')
+            : ' · '+t.katlar.length+' raf'))+'</span>'+
+      '<span class="tbtns">'+
+      '<button title="Yukarı taşı" onclick="event.stopPropagation();tasi('+i+',-1)"'+(i===0?' disabled style="opacity:.35"':'')+'>▲</button>'+
+      '<button title="Aşağı taşı" onclick="event.stopPropagation();tasi('+i+',1)"'+(i===state.tipler.length-1?' disabled style="opacity:.35"':'')+'>▼</button>'+
+      '<button title="Kaplama" onclick="event.stopPropagation();kaplamaSor('+i+')">▤</button>'+
+      '<button title="Kopyala" onclick="event.stopPropagation();kopyala('+i+')">⧉</button>'+
+      '<button class="danger" onclick="event.stopPropagation();sil('+i+')">✕</button></span></div>'+
+      '<div class="tinfo">'+icerik+(t.metraj?' · '+t.metraj+' = '+metrajToplam(t.metraj)+' m':'')+'</div>';
+    kartSurukle(d, i);
+    el.appendChild(d);
+  });
+}
+function kartSurukle(d, i){
+  d.onpointerdown = e=>{
+    if(e.target && e.target.closest && e.target.closest('button')) return;   // buton tıklaması
+    if(e.button!==undefined && e.button!==0) return;
+    const liste=document.getElementById('tiplist');
+    let aktif=false, hedef=i, y0=e.clientY;
+    try{ d.setPointerCapture && d.setPointerCapture(e.pointerId); }catch(x){}
+    const temizle=()=>{ const k=liste.querySelectorAll?liste.querySelectorAll('.tipcard'):[];
+      k.forEach&&k.forEach(c=>c.classList.remove('ust','alt')); };
+    d.onpointermove = ev=>{
+      if(!aktif && Math.abs(ev.clientY-y0) < 6) return;
+      aktif=true; d.style.opacity='0.45'; d.style.cursor='grabbing';
+      const kartlar = liste.querySelectorAll ? [...liste.querySelectorAll('.tipcard')] : [];
+      hedef = kartlar.length;
+      for(let k=0;k<kartlar.length;k++){
+        const r=kartlar[k].getBoundingClientRect();
+        if(ev.clientY < r.top + r.height/2){ hedef=k; break; }
+      }
+      temizle();
+      if(kartlar[hedef]) kartlar[hedef].classList.add('ust');
+      else if(kartlar.length) kartlar[kartlar.length-1].classList.add('alt');
+    };
+    const bitir = ()=>{
+      d.onpointermove=null; d.onpointerup=null; d.onpointercancel=null;
+      d.style.opacity=''; d.style.cursor='';
+      temizle();
+      if(!aktif){ state.secili=i; renkAcik=false; guncelle(); return; }
+      let h=hedef;
+      const tasinan = state.tipler.splice(i,1)[0];
+      if(i < h) h--;
+      h = Math.max(0, Math.min(state.tipler.length, h));
+      state.tipler.splice(h,0,tasinan);
+      kaynakYenile(tasinan, h);            // detay bırakıldığı kanala bağlanır
+      state.secili = state.tipler.indexOf(tasinan); renkAcik=false;
+      guncelle(); fitView();
+    };
+    d.onpointerup = bitir;
+    d.onpointercancel = bitir;
+  };
+}
+function tasi(i, yon){                     // ok tuşlarıyla sıra değiştir
+  const a=state.tipler[i]; if(!a) return;
+  if(detayTuru(a)==='kesit'){
+    // kanal, detaylarıyla birlikte komşu kanalın önüne/arkasına geçer
+    const kesit = state.tipler.filter(x=>detayTuru(x)==='kesit');
+    const ki = kesit.indexOf(a), kj = ki+yon;
+    if(kj<0 || kj>=kesit.length) return;
+    const b=kesit[kj];
+    const ia=state.tipler.indexOf(a), ib=state.tipler.indexOf(b);
+    state.tipler[ia]=b; state.tipler[ib]=a;
+  } else {
+    const j=i+yon;
+    if(j<0 || j>=state.tipler.length) return;
+    const b=state.tipler[j];
+    state.tipler[i]=b; state.tipler[j]=a;
+    kaynakYenile(a, j);                    // detay taşındığı kanala bağlanır
+  }
+  state.secili=state.tipler.indexOf(a);
+  guncelle(); fitView();
+}
+function sil(i){ state.tipler.splice(i,1); if(state.secili>=state.tipler.length)state.secili=state.tipler.length-1; guncelle(); }
+function kopyala(i){
+  const k=JSON.parse(JSON.stringify(state.tipler[i]));
+  k.ad=''; state.tipler.splice(i+1,0,k); numarala(); k.renk=RENK_SIRA[(k.no-1)%RENK_SIRA.length];
+  state.secili=i+1; guncelle();
+}
+function hepsiniSil(){ if(confirm('Tüm tipler silinsin mi?')){state={tipler:[],sayac:0,secili:-1};guncelle();} }
+
+function katKutulari(t){
+  let h='';
+  t.katlar.forEach((kat,ki)=>{
+    h+='<div class="katbox"><h3>'+(ki+1)+'. KAT '+(ki===0?'(en alt)':'')+
+      (t.katlar.length>1?'<button class="danger" onclick="katSil('+ki+')">✕ kat</button>':'')+'</h3>';
+    kat.kablolar.forEach((k,kj)=>{
+      const katTip = k.sinif==='OG' ? (k.tip&&k.tip.startsWith('OG')?k.tip:'OG-Al') : (k.tip||'NAYY');
+      const kesitler = Object.keys(KATALOG[katTip]||{});
+      h+='<div class="kabrow" style="grid-template-columns:50px 38px 62px 1fr 22px">'+
+        (tur(t)==='Abone'
+          ? '<select disabled title="Abone bağlantı hattı yalnız AG olur (Md.2-h)" style="opacity:.6"><option>AG</option></select>'
+          : '<select onchange="kabAyar('+ki+','+kj+',\'sinif\',this.value)"><option'+(k.sinif==='AG'?' selected':'')+'>AG</option><option'+(k.sinif==='OG'?' selected':'')+'>OG</option></select>')+
+        '<input type="number" min="1" value="'+k.adet+'" title="'+(k.sinif==='OG'?'devre adedi (3 faz/devre)':'kablo adedi')+'" onchange="kabAyar('+ki+','+kj+',\'adet\',+this.value)">'+
+        (k.sinif==='AG'
+          ? '<select title="iletken cinsi" onchange="kabAyar('+ki+','+kj+',\'tip\',this.value)"><option'+(katTip==='NYY'?' selected':'')+'>NYY</option><option'+(katTip==='NAYY'?' selected':'')+'>NAYY</option></select>'
+          : '<select title="XLPE iletken cinsi" onchange="kabAyar('+ki+','+kj+',\'tip\',this.value)"><option value="OG-Al"'+(katTip==='OG-Al'?' selected':'')+'>Al</option><option value="OG-Cu"'+(katTip==='OG-Cu'?' selected':'')+'>Cu</option></select>')+
+        '<select onchange="kabAyar('+ki+','+kj+',\'kesit\',this.value)">'+kesitler.map(x=>'<option value="'+x+'"'+(x===k.kesit?' selected':'')+'>'+x.toUpperCase()+'</option>').join('')+
+          (kesitler.includes(k.kesit)?'':'<option selected>'+k.kesit+'</option>')+'</select>'+
+        '<span class="del" onclick="kabSil('+ki+','+kj+')">✕</span></div>'+
+      '<div class="kabrow" style="grid-template-columns:50px 1fr 1fr 22px;margin-top:3px">'+
+        '<span class="small" style="align-self:center">⌀ '+((k.cap||0)*10).toFixed(1)+'mm</span>'+
+        '<input type="number" step="0.01" min="0.5" value="'+(k.cap||4.4)+'" title="kablo dış çapı (cm) — katalogtan otomatik, elle değiştirilebilir" onchange="kabAyar('+ki+','+kj+',\'cap\',+this.value)">'+
+        '<select '+(tur(t)==='Yol Geçişi'?'title="Yol geçişinde tüm kablolar boru içindedir (Md.2-f/5.1-a)"':'title="Muhafaza: boru içi çap 1,5d / büz 2d (Md.5.1-a); açıklıklar x1,5 / x2 (Md.2-b)"')+' onchange="kabAyar('+ki+','+kj+',\'muhafaza\',this.value)">'+
+          ['yok','boru','buz'].map(m=>'<option value="'+m+'"'+(m===(k.muhafaza||'yok')?' selected':'')+'>'+(m==='yok'?'Muhafazasız':m==='boru'?'Borulu (x1,5)':'Büzlü (x2)')+'</option>').join('')+'</select>'+
+        '<span></span></div>';
+    });
+    h+='<button style="margin-top:6px;font-size:11px" onclick="kabEkle('+ki+')">＋ kablo grubu</button></div>';
+  });
+  if(t.katlar.length<3) h+='<button style="margin-top:8px" onclick="katEkle()">＋ KAT EKLE (üste)</button>';
+  return h;
+}
+function editFormu(){
+  const sec=document.getElementById('editsec'), f=document.getElementById('editform');
+  if(state.secili<0||!state.tipler[state.secili]){sec.style.display='none';return;}
+  sec.style.display='block';
+  const t=state.tipler[state.secili];
+  const dt=detayTuru(t);
+  const secMenu=tipMenuSecili(t);
+  const kesitSecili = (dt==='kesit');
+  let h='<label>Kanal türü</label><div class="grid2">'+
+    TIP_MENU.map(m=>{
+      const ekleBtn = (m.k==='donus' && dt!=='donus');
+      const ad = ekleBtn ? '＋ '+m.ad : m.ad;
+      const vurgu = !ekleBtn && secMenu===m.k;
+      return '<button title="'+(ekleBtn ? tipAdi(t)+' için dönüş detayı ekler' : '')+'" style="'+
+        (vurgu?'border-color:var(--cyan);color:var(--cyan);font-weight:700':'')+
+        '" onclick="tipMenuSec(\''+m.k+'\')">'+ad+'</button>';
+    }).join('')+'</div>'+
+    '<div class="small" style="margin-top:3px">'+
+      (secMenu==='abone' ? TURLER.Abone.aciklama
+       : secMenu==='yol' ? TURLER['Yol Geçişi'].aciklama
+       : secMenu==='tava' ? 'Bölüm II-B Md.2: raf/tava üzerine döşeme'
+       : secMenu==='donus' ? 'Çizelge-2 (Md.6-d): kıvrılma yarıçapı detayı'
+       : TURLER.Standart.aciklama)+'</div>';
+
+  if(dt==='kesit'){
+    h+='<div class="grid3" style="margin-top:8px">'+
+    '<div><label>Genişlik (cm)</label><input type="number" placeholder="oto '+t.genislik+'" value="'+(t.genislikManuel||'')+'" title="boş = otomatik · Md.2-c: 10\'ar cm dilim" onchange="stAyar(\'genislikManuel\',this.value?+this.value:null)"></div>'+
+    '<div><label>Derinlik (cm)</label><input type="text" value="'+derinlik(t)+'" disabled title="1 kat 80 · her ilave kat +30 (otomatik)" style="opacity:.65"></div>'+
+    '<div><label>Kaplama</label><select onchange="stAyar(\'kaplama\',this.value)">'+KAPLAMALAR.map(k=>'<option'+(k===t.kaplama?' selected':'')+'>'+k+'</option>').join('')+'</select></div></div>'+
+    (t.kaplama!=='Yok'
+      ? '<label>Kaplama kalınlığı (cm) — toplam derinliğe dahildir</label><input type="number" min="1" placeholder="oto '+kaplamaKal(t)+'" value="'+(t.kaplamaKal!=null?t.kaplamaKal:'')+'" onchange="stAyar(\'kaplamaKal\',this.value!==\'\'?+this.value:null)">'
+      : '<div class="small" style="margin-top:4px">Kaplama yok — üst kot tamamen dolgu.</div>')+
+    '<label>Dolgu malzemesi</label><div class="grid2">'+
+    DOLGULAR.map(d=>'<button style="'+((t.dolgu||'Tüvenen')===d?'border-color:var(--cyan);color:var(--cyan);font-weight:700':'')+'" onclick="stAyar(\'dolgu\',\''+d+'\')">'+d+'</button>').join('')+'</div>'+
+    '<label>Kanal kesiti</label><div class="grid2">'+
+    '<button style="'+(t.sevli!==false?'border-color:var(--cyan);color:var(--cyan);font-weight:700':'')+'" onclick="stAyar(\'sevli\',true)">◣ Şevli (trapez)</button>'+
+    '<button style="'+(t.sevli===false?'border-color:var(--cyan);color:var(--cyan);font-weight:700':'')+'" onclick="stAyar(\'sevli\',false)">▯ Düz (şevsiz)</button></div>'+
+    '<div class="small" style="margin-top:3px">'+(t.sevli!==false?'Ağız = dip + 20 cm (Şekil-1)':'Ağız genişliği = dip genişliği')+'</div>'+
+    '<label>Metraj (örn: 54+145+24)</label><input value="'+(t.metraj||'')+'" onchange="stAyar(\'metraj\',this.value)" placeholder="uzunlukları + ile yaz">';
+  }
+  if(dt==='donus'){
+    const kes=kesitTipleri(), kay=kaynakTip(t);
+    h+='<label>Hangi kanalın detayı?</label>'+
+      '<select onchange="stAyar(\'kaynak\',this.value||null)">'+
+        '<option value=""'+(kay?'':' selected')+'>— kendi kabloları —</option>'+
+        kes.map(x=>'<option value="'+x.uid+'"'+(kay&&kay.uid===x.uid?' selected':'')+'>'+tipAdi(x)+'</option>').join('')+
+      '</select>'+
+      '<div class="small" style="margin-top:3px">'+(kay
+        ? 'Kablolar ve kanal genişliği <b>'+tipAdi(kay)+'</b>\'den alınır; çizim başlığı da o tipin adıyla yazılır.'
+        : 'Kaynak seçilmedi — aşağıdaki kabloları kendin girersin.')+'</div>';
+  }
+  if(dt==='donus'){
+    h+='<label>Dönüş açısı (°) — en çok 90°</label>'+
+      '<input type="number" min="15" max="90" step="5" value="'+(t.donusAci||90)+'" onchange="stAyar(\'donusAci\',Math.min(90,Math.max(15,+this.value||90)))">'+
+      '<div class="grid2" style="margin-top:6px;grid-template-columns:repeat(4,1fr)">'+[30,45,60,90].map(v=>
+        '<button style="'+((t.donusAci||90)===v?'border-color:var(--cyan);color:var(--cyan);font-weight:700':'')+'" onclick="stAyar(\'donusAci\','+v+')">'+v+'°</button>').join('')+'</div>'+
+      '<div class="small" style="margin-top:4px">Çizelge-2 (Md.6-d): çok damarlı AG 12×D · OG ve tek damarlı 15×D. Kanal genişliği: <b>'+t.genislik+' cm</b></div>';
+  } else {
+    h+='<div class="small" style="margin-top:6px">Bölüm II-B Md.2-c/d: mesnet aralığı 20–25×d (en fazla 80 cm) · kablo-duvar ≥2 cm · kablolar arası kablo çapı kadar · raflar arası ≥20 cm · OG üstte, AG altta (Md.4-d)</div>';
+  }
+  h+= (dt==='donus' && kaynakTip(t))
+    ? '<label>Renk</label><div class="small">Kaynağı <b style="color:'+ACI_HEX[t.renk]+'">'+tipAdi(t)+'</b> ile aynı renkte (ACI '+t.renk+').</div>'
+    : '<label>Renk</label>'+
+    '<button id="renkBtn" style="width:100%;display:flex;align-items:center;gap:8px;justify-content:flex-start" onclick="renkAc()">'+
+      '<span style="width:20px;height:20px;border-radius:4px;border:1px solid var(--line);background:'+ACI_HEX[t.renk]+'"></span>'+
+      '<span>🎨 Renk Tonu</span>'+
+      '<span class="small" style="margin-left:auto">ACI '+t.renk+' ▾</span></button>'+
+    '<div id="renkPanel" style="display:'+(renkAcik?'block':'none')+';margin-top:6px;border:1px solid var(--line);border-radius:6px;padding:8px;background:#0f1620">'+
+      PALET.map(satir=>'<div class="renkler" style="margin-top:0">'+
+        satir.map(r=>'<div class="rsw'+(r===t.renk?' sel':'')+'" title="ACI '+r+'" style="background:'+ACI_HEX[r]+'" onclick="renkSec('+r+')"></div>').join('')+
+        '</div>').join('')+
+      '<div class="small" style="margin-top:6px">Seçilen ACI numarası DXF katman rengi olur.</div>'+
+    '</div>';
+  if(dt==='donus' && kaynakTip(t)){
+    h+='<div class="katbox" style="background:#0f1620"><h3>🔗 Bağlı kanal</h3><div class="small">Kablolar '+tipAdi(kaynakTip(t))+' tipinden okunur. Değişiklik için o tipi düzenle.</div></div>';
+  } else {
+    h+=katKutulari(t);
+  }
+  if(dt==='kesit'){
+  // katman dökümü
+  let dok='<div class="katbox" style="background:#0f1620"><h3>📐 Katman Dökümü</h3><div class="small" style="line-height:1.75">';
+  let ist=0;
+  t.katlar.forEach((k,i)=>{
+    const kh=kabloH(k);
+    dok+= (i+1)+'. kat: 10 yataklama + '+fmt(kh)+' örtü kumu (kablo içinde) + '+G.BIMS+' bims = <b>'+fmt(G.KUM+kh+G.BIMS)+'</b><br>';
+    ist+=G.KUM+kh+G.BIMS;
+  });
+  const kk=kaplamaKal(t), H2=derinlik(t), kalan2=H2-ist-G.DOLGU;
+  dok+='<span style="color:var(--dim)">━━━━━━━━━━</span><br>istif toplamı: <b>'+fmt(ist)+'</b><br>'+
+       '+ 20 tüvenen (şerit altı): <b>'+fmt(ist+G.DOLGU)+'</b> → İKAZ ŞERİDİ<br>'+
+       '+ şerit üstü tüvenen: <b>'+fmt(kalan2-kk)+'</b>'+(kk?' + kaplama '+kk:'')+'<br>'+
+       '<b style="color:var(--green)">TOPLAM DERİNLİK = '+H2+' cm</b></div></div>';
+  h+=dok;
+  const gerek=tipGerekliGenislik(t);
+  h+='<div class="small" style="margin-top:6px">ℹ Şartname (Md.2-b/e) gereken dip: <b style="color:var(--green)">'+gerek+' cm</b> → uygulanan: <b style="color:var(--cyan)">'+t.genislik+' cm</b> (Md.2-c: 10\'ar cm dilim, kablo değişince otomatik daralır/genişler). Net açıklıklar: kablo-kablo/duvar max(7,d) · sistemler arası max(14,2d) · borulu x1,5 · büzlü x2.</div>';
+  if(derinlik(t)<60) h+='<div class="warn" style="margin-top:4px">⚠ Md.2-b: kanal derinliği zorunlu hallerde dahi en az 60 cm olmalı.</div>';
+  }
+  f.innerHTML=h;
+}
+let yazdirModu=false;
+function yazdir(){
+  const yedek={scale:view.scale, ox:view.ox, oy:view.oy};
+  const {topW,topH}=tumSahne();
+  yazdirModu=true;
+  view.scale = Math.min(6, Math.max(1.6, 1500/Math.max(topW,1)));  // A4'e sığacak ölçek
+  view.ox=24; view.oy=24;
+  ciz();
+  const geri=()=>{ yazdirModu=false; view.scale=yedek.scale; view.ox=yedek.ox; view.oy=yedek.oy; ciz(); };
+  const bitti=()=>{ window.removeEventListener('afterprint',bitti); geri(); };
+  window.addEventListener('afterprint',bitti);
+  setTimeout(()=>{ window.print(); setTimeout(()=>{ if(yazdirModu) geri(); },1200); },120);
+}
+function duzenleSira(){                    // her dönüş detayı, kaynağının hemen altında
+  const kesit = state.tipler.filter(anaTipMi);
+  const detaylar = state.tipler.filter(t=>!anaTipMi(t));
+  const yeni=[];
+  kesit.forEach(k=>{
+    yeni.push(k);
+    detaylar.filter(d=>d.kaynak===k.uid).forEach(d=>yeni.push(d));
+  });
+  detaylar.filter(d=>!kesit.some(k=>k.uid===d.kaynak)).forEach(d=>yeni.push(d));  // kaynaksızlar sona
+  state.tipler = yeni;
+}
+function numarala(){                       // numara yalnız ana tiplere verilir
+  duzenleSira();
+  // dönüş detayı, kaynağının rengini taşır
+  state.tipler.forEach(t=>{
+    if(detayTuru(t)==='donus'){ const k=kaynakTip(t); if(k) t.renk=k.renk; }
+  });
+  let n=0;
+  state.tipler.forEach(t=>{
+    if(anaTipMi(t)){ t.no = ++n; }                 // kanal kesiti ve sac tava numara alır
+    else { const k=kaynakTip(t); t.no = k? k.no : 0; }
+  });
+  state.sayac = n;
+}
+function kaynakYenile(t, konum){           // taşındığı yerdeki en yakın önceki ana tipe bağla
+  if(anaTipMi(t)) return;
+  for(let j=konum-1;j>=0;j--) if(anaTipMi(state.tipler[j])){ t.kaynak=state.tipler[j].uid; return; }
+  const k=kesitTipleri()[0]; t.kaynak = k? k.uid : null;
+}
+function tipEkle(detay){
+  const t = yeniTip({detay: detay||'kesit'});
+  numarala();
+  t.renk = RENK_SIRA[(t.no-1)%RENK_SIRA.length];
+  genislikHesapla(t);
+  state.secili = state.tipler.length-1;
+  renkAcik=false;
+  guncelle(); fitView();
+  setTimeout(()=>{ const el=document.querySelector&&document.querySelector('.tipcard.active'); if(el&&el.scrollIntoView) el.scrollIntoView({block:'nearest'}); },30);
+  if(mobil()) sekme('ayar');
+}
+function renkAc(){ renkAcik=!renkAcik; editFormu(); }
+function renkSec(r){ renkAcik=false; stAyar('renk',r); }
+function stAyar(k,v){
+  const t=state.tipler[state.secili];
+  t[k]=v;
+  if(k==='kaplama') t.kaplamaKal=null;   // yeni kaplamanın standart kalınlığı uygulansın
+  guncelle();
+}
+function kabAyar(ki,kj,k,v){
+  const kab=state.tipler[state.secili].katlar[ki].kablolar[kj];
+  kab[k]=v;
+  if(k==='sinif'){
+    const y=yeniKablo(v,kab.adet); kab.tip=y.tip; kab.kesit=y.kesit; kab.cap=y.cap;
+  }
+  if(k==='tip'){
+    const ks=Object.keys(KATALOG[v]||{});
+    if(!KATALOG[v] || !KATALOG[v][kab.kesit]) kab.kesit = ks.includes('3x240+120')?'3x240+120':ks[0];
+    kab.cap = capBul(v,kab.kesit) || kab.cap;
+  }
+  if(k==='kesit'){
+    const t = kab.sinif==='OG'?'OG':(kab.tip||'NAYY');
+    kab.cap = capBul(t,v) || kab.cap;
+  }
+  guncelle();
+}
+function kabEkle(ki){ state.tipler[state.secili].katlar[ki].kablolar.push(yeniKablo('AG',3)); guncelle(); }
+function kabSil(ki,kj){ const kk=state.tipler[state.secili].katlar[ki].kablolar; if(kk.length>1)kk.splice(kj,1); guncelle(); }
+function katEkle(){ state.tipler[state.secili].katlar.push({kablolar:[yeniKablo('AG',3)]}); guncelle(); }
+function katSil(ki){ const t=state.tipler[state.secili]; if(t.katlar.length>1)t.katlar.splice(ki,1); guncelle(); }
+
+/* ============ DXF DIŞA AKTAR (R12 ASCII) ============ */
+function dxfMetin(s){ return String(s); }   // ham metin; dosya ANSI_1254 (Türkçe) kodlanır
+
+// Windows-1254 (Türkçe) bayt kodlaması — AutoCAD $DWGCODEPAGE ile birebir uyumlu
+const CP1254 = {0x011E:0xD0, 0x011F:0xF0, 0x0130:0xDD, 0x0131:0xFD, 0x015E:0xDE, 0x015F:0xFE,
+                0x20AC:0x80, 0x2018:0x91, 0x2019:0x92, 0x201C:0x93, 0x201D:0x94,
+                0x2013:0x96, 0x2014:0x97, 0x0152:0x8C, 0x0153:0x9C, 0x0178:0x9F};
+function cp1254Bayt(metin){
+  const b=new Uint8Array(metin.length*2); let n=0;
+  for(const ch of metin){
+    const c=ch.codePointAt(0);
+    if(c<0x100) b[n++]=c;                    // Latin-1 (Ç ç Ö ö Ü ü ³ ° dahil)
+    else if(CP1254[c]!=null) b[n++]=CP1254[c];
+    else b[n++]=0x3F;                        // bilinmeyen -> ?
+  }
+  return b.slice(0,n);
+}
+function exportDXF(){
+  if(!state.tipler.length){alert('Önce en az bir tip oluştur.');return;}
+  const {sahne}=tumSahne();
+  let e='';
+  const LN=(x1,y1,x2,y2,lay,c)=>{e+='0\nLINE\n8\n'+lay+'\n62\n'+c+'\n10\n'+x1.toFixed(3)+'\n20\n'+y1.toFixed(3)+'\n30\n0\n11\n'+x2.toFixed(3)+'\n21\n'+y2.toFixed(3)+'\n31\n0\n';};
+  const CR=(x,y,r,lay,c)=>{e+='0\nCIRCLE\n8\n'+lay+'\n62\n'+c+'\n10\n'+x.toFixed(3)+'\n20\n'+y.toFixed(3)+'\n30\n0\n40\n'+r.toFixed(3)+'\n';};
+  const AR=(x,y,r,a1,a2,lay,c)=>{e+='0\nARC\n8\n'+lay+'\n62\n'+c+'\n10\n'+x.toFixed(3)+'\n20\n'+y.toFixed(3)+'\n30\n0\n40\n'+r.toFixed(3)+'\n50\n'+a1.toFixed(2)+'\n51\n'+a2.toFixed(2)+'\n';};
+  const SO=(p,lay,c)=>{const q=[p[0],p[1],p[2],p[2]];
+    e+='0\nSOLID\n8\n'+lay+'\n62\n'+c+'\n';
+    ['10','20','30','11','21','31','12','22','32','13','23','33'].forEach((g,i)=>{
+      const pt=q[Math.floor(i/3)], ax=i%3;
+      e+=g+'\n'+(ax===2?'0':(ax===0?pt[0]:pt[1]).toFixed(3))+'\n';});};
+  const TX=(x,y,s,h,lay,c,align,rot,style)=>{
+    const halign=align==='left'?0:1;
+    e+='0\nTEXT\n8\n'+lay+'\n62\n'+c+'\n10\n'+x.toFixed(3)+'\n20\n'+y.toFixed(3)+'\n30\n0\n40\n'+h.toFixed(2)+'\n1\n'+dxfMetin(s)+'\n50\n'+(rot||0)+'\n41\n1\n7\n'+(style||'KANAL')+'\n';
+    if(halign){e+='72\n1\n11\n'+x.toFixed(3)+'\n21\n'+y.toFixed(3)+'\n31\n0\n';}};
+  sahne.forEach(s=>{
+    const guv = tipAdi(s.tip).replace(/[<>\/\\":;?*|,=`]/g,'-').replace(/\s+/g,'_').toUpperCase();
+    const lay='KANAL-'+guv, cAna=s.tip.renk;
+    s.P.forEach(p=>{
+      // çizim beyaz (ACI 7) · taramalar gri (8) · ikaz şeridi vb. kendi rengi · TİP etiketi tip renginde
+      const c = p.tipEtiket ? cAna : (p.c===7 ? 7 : p.c);
+      if(p.t==='line') LN(p.x1,p.y1,p.x2,p.y2,lay,c);
+      else if(p.t==='circle') CR(p.x,p.y,p.r,lay,c);
+      else if(p.t==='arc') AR(p.x,p.y,p.r,p.a1,p.a2,lay,c);
+      else if(p.t==='solid') SO(p.pts,lay,c);
+      else if(p.t==='text') TX(p.x,p.y,p.s,p.h,lay,c,p.align,p.rot,p.italic?'KANAL_I':'KANAL');
+    });
+  });
+  let d='0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n9\n$DWGCODEPAGE\n3\nANSI_1254\n9\n$INSUNITS\n70\n5\n9\n$TEXTSTYLE\n7\nKANAL\n0\nENDSEC\n';
+  d+='0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nSTYLE\n70\n2\n';
+  // TrueType Arial: ekrandaki görünümün aynısı + Türkçe karakter desteği
+  d+='0\nSTYLE\n2\nKANAL\n70\n0\n40\n0\n41\n1\n50\n0\n71\n0\n42\n2.5\n3\narial.ttf\n4\n\n';
+  d+='0\nSTYLE\n2\nKANAL_I\n70\n0\n40\n0\n41\n1\n50\n15\n71\n0\n42\n2.5\n3\narial.ttf\n4\n\n';
+  d+='0\nENDTAB\n0\nTABLE\n2\nLAYER\n70\n'+state.tipler.length+'\n';
+  state.tipler.forEach(t=>{
+    const guv = tipAdi(t).replace(/[<>\/\\":;?*|,=`]/g,'-').replace(/\s+/g,'_').toUpperCase();
+    d+='0\nLAYER\n2\n'+dxfMetin('KANAL-'+guv)+'\n70\n0\n62\n'+t.renk+'\n6\nCONTINUOUS\n';
+  });
+  d+='0\nENDTAB\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n'+e+'0\nENDSEC\n0\nEOF\n';
+  indir(new Blob([cp1254Bayt(d)],{type:'application/octet-stream'}),'Kanal_Detaylari.dxf');
+}
+
+/* ============ PNG / JSON / KALICILIK ============ */
+let dosyaKulp=null, dosyaAd='Kanal_Tipleri.json';
+function projeJSON(){ return JSON.stringify(state,null,1); }
+function kayitBildir(ad){
+  const el=document.getElementById('stMsg');
+  if(el){ el.textContent='✔ Kaydedildi: '+ad; setTimeout(()=>{ if(el.textContent.startsWith('✔')) el.textContent=''; },3500); }
+}
+async function dosyayaYaz(kulp, metin){
+  const w = await kulp.createWritable();
+  await w.write(new Blob([metin],{type:'application/json'}));
+  await w.close();
+}
+async function farkliKaydet(){       // göz at penceresi: konumu sen seç
+  const metin=projeJSON();
+  if(window.showSaveFilePicker){
+    try{
+      const kulp = await window.showSaveFilePicker({
+        suggestedName: dosyaAd,
+        types:[{description:'Kanal projesi (JSON)', accept:{'application/json':['.json']}}]
+      });
+      dosyaKulp=kulp; dosyaAd=kulp.name||dosyaAd;
+      await dosyayaYaz(kulp, metin);
+      kayitBildir(dosyaAd);
+      return;
+    }catch(x){ if(x && x.name==='AbortError') return; }
+  }
+  indir(new Blob([metin],{type:'application/json'}), dosyaAd);   // desteklemeyen tarayıcı: indirme
+  kayitBildir(dosyaAd);
+}
+async function kaydet2(){            // son duruma göre aynı dosyanın üzerine
+  const metin=projeJSON();
+  kaydet();                          // localStorage otokayıt
+  if(dosyaKulp){
+    try{ await dosyayaYaz(dosyaKulp, metin); kayitBildir(dosyaAd); return; }
+    catch(x){ dosyaKulp=null; }
+  }
+  return farkliKaydet();
+}
+
+function validatedChannelState(input){
+  const record=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
+  if(!record(input)||!Array.isArray(input.tipler)||input.tipler.length>10000)throw new Error('Kanal proje biçimi geçersiz.');
+  const next=JSON.parse(JSON.stringify(input));
+  next.tipler.forEach(t=>{
+    if(!record(t)||!Array.isArray(t.katlar)||!t.katlar.length)throw new Error('Kanal kat listesi geçersiz.');
+    if(t.ad!=null&&typeof t.ad!=='string')throw new Error('Kanal adı metin olmalı.');
+    t.katlar.forEach(k=>{
+      if(!record(k)||!Array.isArray(k.kablolar)||!k.kablolar.length)throw new Error('Kablo listesi geçersiz.');
+      k.kablolar.forEach(c=>{
+        if(!record(c)||!['AG','OG'].includes(c.sinif)||typeof c.kesit!=='string'||!Number.isInteger(Number(c.adet))||Number(c.adet)<1)throw new Error('Kablo türü ve adedi geçersiz.');
+        c.adet=Number(c.adet);
+        if(c.cap!=null&&(!Number.isFinite(Number(c.cap))||Number(c.cap)<=0))throw new Error('Kablo çapı pozitif olmalı.');
+      });
+    });
+    for(const key of ['genislik','genislikManuel','kaplamaKal'])if(t[key]!=null&&(!Number.isFinite(Number(t[key]))||Number(t[key])<0))throw new Error('Kanal ölçüsü geçersiz.');
+  });
+  next.sayac=Number.isInteger(next.sayac)&&next.sayac>=0?next.sayac:next.tipler.length;
+  next.secili=Number.isInteger(next.secili)&&next.secili>=0&&next.secili<next.tipler.length?next.secili:next.tipler.length-1;
+  return next;
+}
+function applyChannelState(input){
+  const next=validatedChannelState(input),previous=state;
+  try{state=next;goc();}catch(error){state=previous;throw error;}
+}
+function importJSON(ev){ const f=ev.target.files[0]; if(!f)return; dosyaAd=f.name||dosyaAd; dosyaKulp=null;
+  const r=new FileReader(); r.onload=()=>{ try{applyChannelState(JSON.parse(r.result));guncelle();fitView();}catch(x){alert('JSON okunamadı');} }; r.readAsText(f); ev.target.value=''; }
+function indir(blob,ad){
+  const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+              (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  // yalnız iOS'ta paylaşım menüsü (Safari 'download' özniteliğini yok sayar)
+  if(iOS && navigator.canShare && window.File){
+    try{
+      const f=new File([blob],ad,{type:blob.type||'application/octet-stream'});
+      if(navigator.canShare({files:[f]})){ navigator.share({files:[f],title:ad}).catch(()=>{}); return; }
+    }catch(x){}
+  }
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=ad;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+}
+function kaydet(){ try{localStorage.setItem('kanalDetayV1',JSON.stringify(state));}catch(x){} }
+function goc(){ // eski kayıt şemasını şartname sürümüne çevir
+  state.tipler.forEach(t=>{
+    if(t.sevli===undefined) t.sevli=false;
+    if(t.genislikManuel===undefined) t.genislikManuel=null;
+    if(state.yuvarla===undefined) state.yuvarla=true;
+    if(t.ad===undefined) t.ad='';
+    if(!t.uid) t.uid='k'+Math.random().toString(36).slice(2,10);
+    if(t.kaynak===undefined) t.kaynak=null;
+    if(!TURLER[t.tur]) t.tur='Standart';
+    aboneKontrol(t);
+    if(!DETAYLAR[t.detay]) t.detay = t.donus?'donus' : t.tava?'tava' : 'kesit';
+    delete t.donus; delete t.kopru; delete t.tava; delete t.kopruMuh;
+    t.donusAci = Math.min(90, Math.max(15, t.donusAci||90));
+    if(t.kaplamaKal===undefined) t.kaplamaKal=null;
+    if(!DOLGULAR.includes(t.dolgu)) t.dolgu='Tüvenen';
+    if(!KAPLAMALAR.includes(t.kaplama)) t.kaplama = /kaplamasız|kaplamasiz/i.test(t.kaplama||'') ? 'Yok'
+      : (/asfalt/i.test(t.kaplama||'')?'Asfalt':/beton/i.test(t.kaplama||'')?'Beton':/parke|tretuvar/i.test(t.kaplama||'')?'Parke':'Yok');
+    delete t.katEk; delete t.katAra; delete t.derinlikManuel;   // derinlik otomatik: 80/110/140
+    t.katlar.forEach(k=>k.kablolar.forEach(kb=>{
+      if(kb.muhafaza===undefined) kb.muhafaza = kb.boru?'boru':'yok';
+      delete kb.boru;
+      if(kb.sinif==='AG' && !kb.tip){
+        // '3X240/120-Al' -> NAYY '3x240+120' vb.
+        kb.tip = /-al/i.test(kb.kesit)?'NAYY':/nyy/i.test(kb.kesit)?'NYY':'NAYY';
+        const n = kb.kesit.toLowerCase().replace(/-al|nyy|\s/g,'').replace(/\//g,'+').replace(/x/g,'x');
+        if(KATALOG[kb.tip][n]) kb.kesit=n;
+      }
+      if(kb.sinif==='OG' && (!kb.tip || kb.tip==='OG')){
+        kb.tip='OG-Al';
+        const m=kb.kesit.match(/1x(\d+)/i);   // '3(1X150)-Al' -> 150
+        if(m){ const aday=Object.keys(KATALOG['OG-Al']).find(x=>x.startsWith('1x'+m[1]+'/'));
+               if(aday) kb.kesit=aday; }
+      }
+      if(kb.cap===undefined) kb.cap = capBul(kb.tip||'NAYY',kb.kesit) || varsCap(kb.kesit);
+    }));
+  });
+}
+window.VoltGuardExportAdapter={
+  flush:()=>{if(document.activeElement?.blur)document.activeElement.blur();guncelle();},
+  getState:()=>JSON.parse(JSON.stringify(state)),
+  setState:input=>{applyChannelState(input);guncelle();fitView();}
+};
+(function(){ try{ const s=localStorage.getItem('kanalDetayV1'); if(s){applyChannelState(JSON.parse(s));} }catch(x){}
+  if(!state.tipler.length){ // örnek başlangıç
+    const t1=yeniTip({detay:'kesit', sevli:false});   // kaplamasız · tüvenen dolgu
+    t1.metraj='54+145+24';
+    numarala();
+  }
+  guncelle(); setTimeout(fitView,60);
+  if(document.body) document.body.className='tab-ciz';
+})();
+// ---- kaplama sorma penceresi ----
+let kapHedef=-1, kapSecim='Yok';
+function kaplamaSor(i){
+  kapHedef=i; const t=state.tipler[i]; if(!t) return;
+  kapSecim = t.kaplama||'Yok';
+  kapCiz();
+  document.getElementById('kapcm').value = t.kaplamaKal!=null?t.kaplamaKal:(KAPLAMA_KAL[kapSecim]||'');
+  document.getElementById('kapmodal').style.display='flex';
+}
+function kapCiz(){
+  document.getElementById('kapsec').innerHTML = KAPLAMALAR.map(k=>
+    '<button style="'+(k===kapSecim?'border-color:var(--cyan);color:var(--cyan);font-weight:700':'')+'" onclick="kapSec(\''+k+'\')">'+(k==='Yok'?'✕ Yok':k)+'</button>').join('');
+  const kal=document.getElementById('kapkal');
+  kal.style.display = kapSecim==='Yok' ? 'none' : 'block';
+  if(kapSecim!=='Yok'){
+    const cm=document.getElementById('kapcm');
+    if(!cm.value) cm.value=KAPLAMA_KAL[kapSecim]||8;
+  }
+}
+function kapSec(k){
+  kapSecim=k;
+  if(k!=='Yok') document.getElementById('kapcm').value = KAPLAMA_KAL[k]||8;
+  kapCiz();
+}
+function kaplamaUygula(){
+  const t=state.tipler[kapHedef];
+  if(t){
+    t.kaplama=kapSecim;
+    t.kaplamaKal = kapSecim==='Yok' ? null : (+document.getElementById('kapcm').value || KAPLAMA_KAL[kapSecim]);
+  }
+  document.getElementById('kapmodal').style.display='none';
+  guncelle();
+}
+function kaplamaIptal(){ document.getElementById('kapmodal').style.display='none'; }
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('admodal').style.display==='flex'){
+    if(e.key==='Escape') adIptal();
+    if(e.key==='Enter') adUygula();
+    return;
+  }
+  if(document.getElementById('kapmodal').style.display==='flex'){
+    if(e.key==='Escape') kaplamaIptal();
+    if(e.key==='Enter') kaplamaUygula();
+  }
+});
+// ---- çizimdeki tip adına tıklayarak yeniden adlandırma ----
+let adHedef=-1;
+function adSor(i){
+  const t=state.tipler[i]; if(!t) return;
+  adHedef=i;
+  const inp=document.getElementById('adinput');
+  inp.value = t.ad||''; inp.placeholder='TİP-'+t.no;
+  document.getElementById('admodal').style.display='flex';
+  setTimeout(()=>{ inp.focus(); inp.select&&inp.select(); },50);
+}
+function adUygula(){
+  const t=state.tipler[adHedef];
+  if(t) t.ad = document.getElementById('adinput').value.trim();
+  document.getElementById('admodal').style.display='none';
+  guncelle();
+}
+function adIptal(){ document.getElementById('admodal').style.display='none'; }
+function etiketBul(px,py){
+  for(const k of etiketKutulari)
+    if(px>=k.x && px<=k.x+k.w && py>=k.y && py<=k.y+k.h) return k.i;
+  return -1;
+}
+
+// ---- sekme yönetimi (mobil) ----
+function mobil(){ return !!(window.matchMedia && window.matchMedia('(max-width:820px)').matches); }
+function sekme(k){
+  if(document.body) document.body.className = 'tab-'+k;
+  const a=document.getElementById('tabCiz'), b=document.getElementById('tabAyar');
+  if(a) a.className = k==='ciz'?'on':'';
+  if(b) b.className = k==='ayar'?'on':'';
+  if(k==='ciz') setTimeout(()=>ciz(),30);
+}
+
+// ---- dokunmatik: tek parmak kaydır · iki parmak yakınlaştır · çift dokunuş sığdır ----
+(function(){
+  const w=document.getElementById('cwrap');
+  if(!w || !w.addEventListener) return;
+  let mod=null, kaydiT=false, sx=0, sy=0, ox=0, oy=0, d0=0, s0=1, mx0=0, my0=0, sonDokunus=0;
+  const uzak=(a,b)=>Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY);
+  w.addEventListener('touchstart',e=>{
+    const r=cv.getBoundingClientRect();
+    if(e.touches.length===1){
+      mod='pan'; kaydiT=false; sx=e.touches[0].clientX; sy=e.touches[0].clientY; ox=view.ox; oy=view.oy;
+    } else if(e.touches.length===2){
+      mod='zoom'; d0=uzak(e.touches[0],e.touches[1]); s0=view.scale;
+      mx0=(e.touches[0].clientX+e.touches[1].clientX)/2-r.left;
+      my0=(e.touches[0].clientY+e.touches[1].clientY)/2-r.top;
+      ox=view.ox; oy=view.oy;
+    }
+  },{passive:false});
+  w.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    if(mod==='pan' && e.touches.length===1){
+      if(Math.abs(e.touches[0].clientX-sx)>5 || Math.abs(e.touches[0].clientY-sy)>5) kaydiT=true;
+      view.ox=ox+(e.touches[0].clientX-sx); view.oy=oy+(e.touches[0].clientY-sy); ciz();
+    } else if(mod==='zoom' && e.touches.length===2 && d0>0){
+      const yeni=Math.min(20,Math.max(0.3,s0*(uzak(e.touches[0],e.touches[1])/d0)));
+      const wx=(mx0-ox)/s0, wy=(my0-oy)/s0;
+      view.scale=yeni; view.ox=mx0-wx*yeni; view.oy=my0-wy*yeni; ciz();
+    }
+  },{passive:false});
+  w.addEventListener('touchend',e=>{
+    if(e.touches.length===0){
+      // kaydırılmadıysa: etikete dokunma
+      if(mod==='pan' && !kaydiT && e.changedTouches.length){
+        const r=cv.getBoundingClientRect(), c=e.changedTouches[0];
+        const i=etiketBul(c.clientX-r.left, c.clientY-r.top);
+        if(i>=0){ state.secili=i; adSor(i); mod=null; sonDokunus=0; return; }
+      }
+      mod=null;
+      const t=Date.now();
+      if(t-sonDokunus<300) fitView();
+      sonDokunus=t;
+    }
+  });
+})();
+window.addEventListener('resize',()=>{ if(!yazdirModu) ciz(); });
+window.addEventListener('orientationchange',()=>setTimeout(fitView,250));
+// orta tuş (tekerlek tıklama) ile ekranı kaydır — AutoCAD pan
+(function(){
+  const w=document.getElementById('cwrap');
+  let pan=false, kaydi=false, sx=0, sy=0, ox=0, oy=0;
+  w.addEventListener('mousedown',e=>{
+    if(e.button!==1 && e.button!==0) return;   // orta tuş (AutoCAD) veya sol sürükleme
+    e.preventDefault();
+    pan=true; kaydi=false; sx=e.clientX; sy=e.clientY; ox=view.ox; oy=view.oy;
+    w.style.cursor='grabbing';
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!pan){
+      // etiket üstünde imleci değiştir
+      const r=cv.getBoundingClientRect();
+      if(e.target===cv || w.contains(e.target)){
+        w.style.cursor = etiketBul(e.clientX-r.left, e.clientY-r.top)>=0 ? 'pointer' : 'grab';
+      }
+      return;
+    }
+    if(Math.abs(e.clientX-sx)>3 || Math.abs(e.clientY-sy)>3) kaydi=true;
+    view.ox=ox+(e.clientX-sx); view.oy=oy+(e.clientY-sy);
+    ciz();
+  });
+  window.addEventListener('mouseup',e=>{
+    if(pan && !kaydi && e.button===0){            // sürüklenmediyse: tıklama
+      const r=cv.getBoundingClientRect();
+      const i=etiketBul(e.clientX-r.left, e.clientY-r.top);
+      if(i>=0){ state.secili=i; adSor(i); }
+    }
+    if(e.button===1||pan){ pan=false; w.style.cursor=''; }
+  });
+  w.addEventListener('auxclick',e=>{ if(e.button===1) e.preventDefault(); });
+  w.addEventListener('contextmenu',e=>{ if(pan) e.preventDefault(); });
+})();
+// mouse tekerleği: imleç odaklı yakınlaştır/uzaklaştır
+document.getElementById('cwrap').addEventListener('wheel',function(e){
+  e.preventDefault();
+  const f = e.deltaY<0 ? 1.13 : 1/1.13;
+  const rect=cv.getBoundingClientRect();
+  const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  const wx=(mx-view.ox)/view.scale, wy=(my-view.oy)/view.scale;
+  view.scale=Math.min(20,Math.max(0.3,view.scale*f));
+  view.ox=mx-wx*view.scale; view.oy=my-wy*view.scale;
+  ciz();
+},{passive:false});
+</script>
+<div id="admodal" style="display:none;position:fixed;inset:0;background:#000a;z-index:99;align-items:center;justify-content:center">
+  <div style="background:var(--panel);border:1px solid var(--cyan);border-radius:10px;padding:18px 20px;width:330px">
+    <h2 style="font-size:14px;color:var(--cyan);margin-bottom:8px">Tip adını değiştir</h2>
+    <input id="adinput" placeholder="TİP-1">
+    <div class="small" style="margin-top:6px">Boş bırakırsan otomatik numaraya döner.</div>
+    <div class="grid2" style="margin-top:14px">
+      <button onclick="adIptal()">Vazgeç</button>
+      <button class="primary" onclick="adUygula()">Tamam</button>
+    </div>
+  </div>
+</div>
+<div id="kapmodal" style="display:none;position:fixed;inset:0;background:#000a;z-index:99;align-items:center;justify-content:center">
+  <div style="background:var(--panel);border:1px solid var(--cyan);border-radius:10px;padding:18px 20px;width:330px">
+    <h2 style="font-size:14px;color:var(--cyan);margin-bottom:4px">Kaplama var mı?</h2>
+    <div class="small" style="margin-bottom:10px">Kaplama kalınlığı toplam kanal derinliğine dahil edilir.</div>
+    <div class="grid2" id="kapsec" style="gap:6px"></div>
+    <div id="kapkal" style="display:none">
+      <label>Kaplama kalınlığı (cm)</label>
+      <input type="number" id="kapcm" min="1" step="1">
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <button onclick="kaplamaIptal()">Vazgeç</button>
+      <button class="primary" onclick="kaplamaUygula()">Tamam</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

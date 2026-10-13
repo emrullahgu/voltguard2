@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>İletken Salınım & Yapılara Yatay Uzaklık | Baki SONAY</title>
+<style>
+:root{
+  --ink:#182430;--ink-2:#44586c;--ink-3:#7a8fa3;--paper:#eef2f5;--card:#ffffff;
+  --line:#d4dde4;--brand:#0e5a8a;--brand-2:#0b3e60;--amber:#c47a10;--amber-bg:#fdf4e3;
+  --green:#1a7a4a;--danger:#b3382c;--mono:"SF Mono",ui-monospace,Consolas,"Roboto Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--paper);color:var(--ink);line-height:1.45;padding-bottom:60px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 14px}
+header{background:linear-gradient(135deg,var(--brand-2),var(--brand));color:#fff;padding:20px 0 18px;margin-bottom:18px}
+header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo-badge{width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-badge svg{width:32px;height:32px}
+header h1{font-size:18.5px;font-weight:700;letter-spacing:.2px}
+header .sub{font-size:12.5px;opacity:.85;margin-top:2px}
+.firm{margin-left:auto;text-align:right;font-size:12px;opacity:.9;line-height:1.5}
+.firm b{font-size:13.5px;letter-spacing:.5px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(24,36,48,.06)}
+.panel-h{padding:11px 16px;border-bottom:1px solid var(--line);font-size:13px;font-weight:700;color:var(--brand-2);letter-spacing:.4px;display:flex;align-items:center;gap:8px;background:#f7fafc}
+.panel-h .step{width:22px;height:22px;border-radius:6px;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.panel-b{padding:16px}
+.grid-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.field label{display:block;font-size:11.5px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.field select,.field input{width:100%;padding:10px 11px;border:1.5px solid var(--line);border-radius:8px;font-size:14.5px;font-family:inherit;color:var(--ink);background:#fff;-webkit-appearance:none;appearance:none}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2344586c' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:32px}
+.field select:focus,.field input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(14,90,138,.13)}
+.field .hint{font-size:11px;color:var(--ink-3);margin-top:4px}
+.field.amber input{border-color:#e3c48a;background:var(--amber-bg)}
+.field.amber label{color:var(--amber)}
+/* iki durum kartları */
+.cases{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:680px){.cases{grid-template-columns:1fr}}
+.case{border:1.5px solid var(--line);border-radius:10px;padding:13px 14px;background:#fbfcfd;position:relative}
+.case.win{border-color:var(--green);background:#f0f8f3}
+.case .ttl{font-size:12.5px;font-weight:700;color:var(--brand-2);display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.case.win .ttl{color:var(--green)}
+.case .badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--green);color:#fff;letter-spacing:.3px}
+.case .row{display:flex;justify-content:space-between;font-size:12px;padding:2.5px 0;border-bottom:1px dotted #e2e9ee}
+.case .row:last-child{border-bottom:none}
+.case .row .k{color:var(--ink-3)}
+.case .row .v{font-family:var(--mono);font-weight:700;color:var(--ink)}
+.case .swing{margin-top:8px;padding-top:8px;border-top:1.5px solid var(--line);display:flex;justify-content:space-between;align-items:baseline}
+.case .swing .lbl{font-size:11px;font-weight:700;color:var(--ink-2)}
+.case .swing .val{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--green)}
+.results{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:640px){.results{grid-template-columns:1fr}}
+.rescard{border-radius:11px;padding:16px 18px;color:#fff;position:relative;overflow:hidden}
+.rescard.dist{background:linear-gradient(135deg,var(--brand),var(--brand-2))}
+.rescard.ds{background:linear-gradient(135deg,#6a4a9c,#4a2f70)}
+.rescard .lab{font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;opacity:.85}
+.rescard .num{font-family:var(--mono);font-size:30px;font-weight:700;margin-top:4px;line-height:1.1}
+.rescard .num small{font-size:15px;font-weight:400;opacity:.8}
+.rescard .expl{font-size:11px;opacity:.82;margin-top:5px;font-family:var(--mono)}
+.rescard .chk{font-size:11.5px;margin-top:6px;font-weight:700}
+.rescard .chk.ok{color:#9cf0c4}.rescard .chk.no{color:#ffc9c2}
+.chart-note{font-size:11.5px;color:var(--ink-3);margin-bottom:8px}
+#chartBox{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;background:linear-gradient(to right,#fff 30%,rgba(255,255,255,0)),linear-gradient(to right,rgba(255,255,255,0),#fff 70%) 100% 0,radial-gradient(farthest-side at 0 50%,rgba(24,36,48,.14),transparent),radial-gradient(farthest-side at 100% 50%,rgba(24,36,48,.14),transparent) 100% 0;background-repeat:no-repeat;background-size:40px 100%,40px 100%,14px 100%,14px 100%;background-attachment:local,local,scroll,scroll}
+#chart{display:block;min-width:640px;width:100%;height:auto;touch-action:pan-x pan-y}
+.readout{margin-top:8px;display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+.readout b{color:var(--brand-2)}
+#planWrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;background:linear-gradient(to right,#fff 30%,rgba(255,255,255,0)),linear-gradient(to right,rgba(255,255,255,0),#fff 70%) 100% 0,radial-gradient(farthest-side at 0 50%,rgba(24,36,48,.14),transparent),radial-gradient(farthest-side at 100% 50%,rgba(24,36,48,.14),transparent) 100% 0;background-repeat:no-repeat;background-size:40px 100%,40px 100%,14px 100%,14px 100%;background-attachment:local,local,scroll,scroll}
+#planView{display:block;min-width:640px;width:100%;height:auto;touch-action:pan-x pan-y}
+.btnrow{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
+button.act{padding:9px 18px;border:none;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;background:var(--brand);color:#fff}
+button.act.ghost{background:#fff;color:var(--brand-2);border:1.5px solid var(--line)}
+.note{font-size:11.5px;color:var(--ink-3);line-height:1.7;margin-top:10px}
+.foot{text-align:center;font-size:11px;color:var(--ink-3);margin-top:22px;line-height:1.7}
+.pr-date{display:none}
+/* ============ A4 YAZDIRMA DÜZENİ ============ */
+@page{size:A4 portrait;margin:10mm 11mm}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;padding:0;font-size:11px}
+  .wrap{max-width:none;padding:0}
+  header{padding:8px 0;margin-bottom:8px;border-radius:8px}
+  header .wrap{padding:0 12px}
+  header h1{font-size:14px} header .sub{font-size:9.5px}
+  .logo-badge{width:34px;height:34px;border-radius:8px}.logo-badge svg{width:22px;height:22px}
+  .firm{font-size:9.5px}.firm b{font-size:11px}
+  .pr-date{display:block;font-size:9.5px;opacity:.9;text-align:right;order:3;width:100%;color:#fff}
+  .panel{margin-bottom:8px;break-inside:avoid;box-shadow:none;border-radius:8px}
+  .panel-h{padding:6px 10px;font-size:10.5px}
+  .panel-h .step{width:16px;height:16px;font-size:9.5px;border-radius:4px}
+  .panel-b{padding:9px 10px}
+  .grid-in{grid-template-columns:repeat(4,1fr);gap:6px 8px}
+  .field label{font-size:7.8px;margin-bottom:2px;letter-spacing:.3px}
+  .field select,.field input{padding:3px 6px;font-size:10px;border-radius:5px;background-image:none;border-width:1px}
+  .hint,.note,.chart-note,.readout,.btnrow{display:none!important}
+  .cases{gap:8px}
+  .case{padding:8px 10px;border-radius:8px}
+  .case .ttl{font-size:10.5px;margin-bottom:4px}
+  .case .row{font-size:9.3px;padding:1.5px 0}
+  .case .swing{margin-top:5px;padding-top:5px}
+  .case .swing .lbl{font-size:9px}.case .swing .val{font-size:14px}
+  .results{gap:8px;margin-top:8px}
+  .rescard{padding:9px 12px;border-radius:8px}
+  .rescard .lab{font-size:9px}.rescard .num{font-size:19px}
+  .rescard .expl{font-size:8.6px}.rescard .chk{font-size:9px;margin-top:3px}
+  #rnBox{margin-top:8px;padding:7px 10px}
+  #rnBox>div:first-child{font-size:9px!important}
+  #rnTxt{font-size:10.5px!important}
+  #chartBox,#planWrap{overflow:visible;background:none}
+  #chart,#planView{min-width:0;width:100%}
+  /* grafikler yeni sayfada, tam sayfa genişliğinde */
+  #pnlChart{break-before:page}
+  #pnlChart .panel-b,#pnlPlan .panel-b{padding:6px 8px}
+  .foot{margin-top:8px;font-size:8.6px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="logo-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4.5 13.2h5.2L9.6 22l8.9-11.6h-5.3L13 2z" fill="#fff"/></svg></div>
+    <div>
+      <h1>İletken Salınım &amp; Yapılara Olan Yatay Uzaklık</h1>
+      <div class="sub">İki yük durumu (+5°C %70R · t<sub>max</sub> %42R) · genel haller denklemi · en büyük salınım seçilir</div>
+    </div>
+    <div class="pr-date" id="prDate"></div>
+  <div class="firm">Özgün hesap modeli<br><b>Baki SONAY</b><br>Elektrik-Elektronik Mühendisi</div>
+  </div>
+</header>
+<div class="wrap">
+
+  <!-- 1 · GİRİŞ -->
+  <div class="panel">
+    <div class="panel-h"><span class="step">1</span> HAT VERİLERİ</div>
+    <div class="panel-b">
+      <div class="grid-in">
+        <div class="field"><label>Buz Yükü Bölgesi</label><select id="selBolge"></select></div>
+        <div class="field"><label>Hat Tertibi</label><select id="selHat"></select><div class="hint" id="hintHat"></div></div>
+        <div class="field"><label>İzolatör Tertip Grubu</label>
+          <select id="selTertip">
+            <option value="0" data-liz="0">GERGİ – GERGİ</option>
+            <option value="1" data-liz="0">MESNET – MESNET</option>
+            <option value="2" data-liz="0.5">GERGİ – ASKI</option>
+            <option value="3" data-liz="1" selected>ASKI – ASKI (tek zincir)</option>
+            <option value="5" data-liz="0.853">ASKI – ASKI (çift zincir)</option>
+            <option value="4" data-liz="0">GERGİ – MESNET</option>
+          </select>
+          <div class="hint" id="hintLiz"></div>
+        </div>
+        <div class="field"><label>Amax Açıklığı (m)</label><input type="number" id="inAmax" value="150" min="10" max="2000" step="10" inputmode="decimal"></div>
+        <div class="field"><label>Anma Gerilimi U (kV)</label><input type="number" id="inU" value="34.5" readonly style="background:#f1efe8;color:#7a8fa3;cursor:not-allowed"><div class="hint">Şimdilik 34,5 kV'a kilitli · D_s ve U/150 tahkiki için</div></div>
+        <div class="field amber"><label>Uzaklık Hedefi</label>
+          <select id="selHedef">
+            <option value="yapi" data-emn="2" selected>Yapılara olan mesafe</option>
+            <option value="agac" data-emn="2.5">Ağaçlara olan mesafe</option>
+            <option value="ozel" data-emn="">Özel emniyet mesafesi…</option>
+          </select>
+          <div class="hint" id="hintEmn">Emniyet mesafesi = 2,0 m (otomatik)</div>
+        </div>
+        <div class="field amber" id="fldEmnOzel" style="display:none"><label>Özel Emniyet (m)</label><input type="number" id="inEmniyet" value="2.0" min="0" max="20" step="0.5" inputmode="decimal"></div>
+        <div class="field"><label>A Direği Adı</label><input type="text" id="inNameA" value="A Direği" maxlength="24" placeholder="ör. D-12"></div>
+        <div class="field"><label>B Direği Adı</label><input type="text" id="inNameB" value="B Direği" maxlength="24" placeholder="ör. D-13"></div>
+        <div class="field"><label>Travers Boyu t — A (m)</label><input type="number" id="inTA" value="1.2" min="0" max="15" step="0.1" inputmode="decimal"></div>
+        <div class="field"><label>Travers Boyu t — B (m)</label><input type="number" id="inTB" value="1.2" min="0" max="15" step="0.1" inputmode="decimal"></div>
+        <div class="field amber"><label>Rapor Noktası x (m)</label><input type="number" id="inRx" value="" min="0" step="any" inputmode="decimal" placeholder="ör. 44"><div class="hint">Boş bırakılırsa işaret konmaz. Girilen metredeki salınım grafiklere kalıcı işaretlenir ve yazdırılan rapora girer.</div></div>
+      </div>
+      <div class="note">Çekme kuvveti T her yük durumu için <b>genel haller (hal değişim) denklemiyle</b> hattın a<sub>ort</sub>'unda hesaplanır; sehim f kullanıcının girdiği Amax'ta bulunur. Salınım açısı ϫ = atan(rüzgar·P<sub>w</sub>/p₀). İki durumdan <b>salınımı büyük olan</b> esas alınır.</div>
+    </div>
+  </div>
+
+  <!-- 2 · İKİ DURUM -->
+  <div class="panel">
+    <div class="panel-h"><span class="step">2</span> YÜK DURUMLARI — SALINIM KARŞILAŞTIRMASI</div>
+    <div class="panel-b">
+      <div class="cases">
+        <div class="case" id="caseA">
+          <div class="ttl"><span id="cAt">+5°C %70 Rüzgar</span><span class="badge" id="cAb" style="display:none">EN BÜYÜK</span></div>
+          <div class="row"><span class="k">pₙ (düşey+rüzgar)</span><span class="v" id="cA_pn">–</span></div>
+          <div class="row"><span class="k">T (genel haller)</span><span class="v" id="cA_T">–</span></div>
+          <div class="row"><span class="k">f (Amax sehim)</span><span class="v" id="cA_f">–</span></div>
+          <div class="row"><span class="k">ϫ salınım açısı</span><span class="v" id="cA_a">–</span></div>
+          <div class="row"><span class="k">Yönetmelik kayma</span><span class="v" id="cA_band">–</span></div>
+          <div class="swing"><span class="lbl">Yatay salınım (f+L𝗂𝗓)·sinϫ</span><span class="val" id="cA_sw">–</span></div>
+        </div>
+        <div class="case" id="caseB">
+          <div class="ttl"><span id="cBt">t max %42 Rüzgar</span><span class="badge" id="cBb" style="display:none">EN BÜYÜK</span></div>
+          <div class="row"><span class="k">pₙ (düşey+rüzgar)</span><span class="v" id="cB_pn">–</span></div>
+          <div class="row"><span class="k">T (genel haller)</span><span class="v" id="cB_T">–</span></div>
+          <div class="row"><span class="k">f (Amax sehim)</span><span class="v" id="cB_f">–</span></div>
+          <div class="row"><span class="k">ϫ salınım açısı</span><span class="v" id="cB_a">–</span></div>
+          <div class="row"><span class="k">Yönetmelik kayma</span><span class="v" id="cB_band">–</span></div>
+          <div class="swing"><span class="lbl">Yatay salınım (f+L𝗂𝗓)·sinϫ</span><span class="val" id="cB_sw">–</span></div>
+        </div>
+      </div>
+      <div class="results">
+        <div class="rescard dist">
+          <div class="lab" id="rDistLab">Yapılara Olan Yatay Uzaklık</div>
+          <div class="num"><span id="rDist">–</span> <small>m</small></div>
+          <div class="expl" id="rDistF">salınım + emniyet</div>
+        </div>
+        <div class="rescard ds">
+          <div class="lab">Aynı Seviye Kontrolü D_s</div>
+          <div class="num"><span id="rDs">–</span> <small>m</small></div>
+          <div class="expl" id="rDsF">2·(f+Liz)·sin(ϫ/8) + U/150</div>
+          <div class="chk ok" id="rDsChk">–</div>
+        </div>
+      </div>
+      <div id="rnBox" style="display:none;margin-top:12px;padding:10px 14px;border:1.5px solid #0e5a8a;border-radius:8px;background:#eef5fa">
+        <div style="font-size:11px;font-weight:800;letter-spacing:.5px;color:#0b3e60;margin-bottom:4px">RAPOR NOKTASI</div>
+        <div id="rnTxt" style="font-size:13px;color:#182430;line-height:1.6"></div>
+      </div>
+      <div class="btnrow"><button class="act ghost" onclick="window.print()">Yazdır / PDF</button></div>
+    </div>
+  </div>
+
+  <!-- 3 · PROFİL -->
+  <div class="panel" id="pnlChart">
+    <div class="panel-h"><span class="step">3</span> AÇIKLIK BOYUNCA SALINIM PROFİLİ (en büyük durum)</div>
+    <div class="panel-b">
+      <div class="chart-note">Yeşil: salınmış iletken zarfı · turuncu kesikli: salınım + emniyet. Tek dokunuşla ara değer okuyun; grafiği yana kaydırarak tamamını görebilirsiniz.</div>
+      <div id="chartBox"><svg id="chart" xmlns="http://www.w3.org/2000/svg"></svg></div>
+      <div class="readout"><span>x = <b id="roX">–</b> m</span><span>salınım = <b id="roS">–</b> m</span><span>uzaklık = <b id="roD">–</b> m</span></div>
+    </div>
+  </div>
+
+  <!-- 4 · ÜSTTEN -->
+  <div class="panel" id="pnlPlan">
+    <div class="panel-h"><span class="step">4</span> ÜSTTEN GÖRÜNÜM (PLAN)</div>
+    <div class="panel-b">
+      <div class="chart-note">Kuş bakışı: traversler, rüzgarsız iletken (siyah), salınmış konum (yeşil), emniyet sınırı (turuncu). Enine/boyuna ölçekler farklıdır.</div>
+      <div id="planWrap"><svg id="planView" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    Elektrik-Elektronik Mühendisi Baki SONAY · İletken Salınım Simülatörü v2.0<br>
+    Genel haller denklemi + iki yük durumu (Yunusoğlu metodolojisi) · +5°C %70R ve t<sub>max</sub> %42R · Partridge standart ACSR değerleridir
+  </div>
+</div>
+<script>
+const COND={"Swallow (3 AWG)":{"d":7.14,"S":31.14,"p0":0.108,"Es":8000,"beta":1.92e-05,"Tm":342.54,"Pw":0.377,"std":false,"bolge":{"1":{"tmax":50,"gh":"R","p1":0.108},"2":{"tmax":45,"gh":"B","p1":0.6424},"3":{"tmax":40,"gh":"B","p1":0.9096},"4":{"tmax":40,"gh":"B","p1":1.444},"5":{"tmax":40,"gh":"B","p1":3.3145}}},"Raven (1/0)":{"d":10.11,"S":62.38,"p0":0.2159,"Es":8000,"beta":1.91e-05,"Tm":686.18,"Pw":0.643,"std":false,"bolge":{"1":{"tmax":50,"gh":"R","p1":0.2159},"2":{"tmax":45,"gh":"B","p1":0.8518},"3":{"tmax":40,"gh":"B","p1":1.1698},"4":{"tmax":40,"gh":"B","p1":1.8057},"5":{"tmax":40,"gh":"B","p1":4.0314}}},"Pigeon (3/0)":{"d":12.75,"S":99.23,"p0":0.3429,"Es":8000,"beta":1.91e-05,"Tm":1091.53,"Pw":0.7433,"std":false,"bolge":{"1":{"tmax":50,"gh":"R","p1":0.3429},"2":{"tmax":45,"gh":"B","p1":1.0571},"3":{"tmax":40,"gh":"B","p1":1.4141},"4":{"tmax":40,"gh":"B","p1":2.1283},"5":{"tmax":40,"gh":"B","p1":4.6278}}},"Partridge (266,8)":{"d":16.28,"S":157.2,"p0":0.5464,"Es":8000,"beta":1.91e-05,"Tm":1729.2,"Pw":0.8628,"std":true,"bolge":{"1":{"tmax":50,"gh":"R","p1":0.5464},"2":{"tmax":45,"gh":"B","p1":1.3534},"3":{"tmax":40,"gh":"B","p1":1.7569},"4":{"tmax":40,"gh":"B","p1":2.5638},"5":{"tmax":40,"gh":"B","p1":5.3882}}},"477 (Hawk)":{"d":21.8,"S":281.1,"p0":0.9749,"Es":8000,"beta":1.89e-05,"Tm":2248.8,"Pw":1.1554,"std":false,"bolge":{"1":{"tmax":50,"gh":"R","p1":0.9749},"2":{"tmax":45,"gh":"B","p1":1.9087},"3":{"tmax":40,"gh":"B","p1":2.3756},"4":{"tmax":40,"gh":"B","p1":3.3094},"5":{"tmax":40,"gh":"B","p1":6.5778}}}};const HAT=[{"n":"1.bölge 1xsw (demir mesnet) aort = 150 m","c":"Swallow (3 AWG)","b":1,"z":false,"aort":150},{"n":"1.bölge 1xsw (beton mesnet) aort = 150 m","c":"Swallow (3 AWG)","b":1,"z":false,"aort":150},{"n":"1.bölge 1xsw (beton zincir) aort = 150 m","c":"Swallow (3 AWG)","b":1,"z":true,"aort":150},{"n":"1.bölge 1xsw (demir zincir) aort = 150 m","c":"Swallow (3 AWG)","b":1,"z":true,"aort":150},{"n":"1.bölge 2xsw (beton zincir) aort = 150 m","c":"Swallow (3 AWG)","b":1,"z":true,"aort":150},{"n":"1.bölge 1x1/0 (beton/demir mesnet) aort = 200 m","c":"Raven (1/0)","b":1,"z":false,"aort":200},{"n":"1.bölge 1x1/0 (beton zincir) aort = 300 m","c":"Raven (1/0)","b":1,"z":true,"aort":300},{"n":"1.bölge 2x1/0 (beton zincir) aort = 300 m","c":"Raven (1/0)","b":1,"z":true,"aort":300},{"n":"1.bölge 1x1/0 (demir zincir) aort = 180 m","c":"Raven (1/0)","b":1,"z":true,"aort":180},{"n":"1.bölge 1x1/0 (demir zincir) aort = 250 m","c":"Raven (1/0)","b":1,"z":true,"aort":250},{"n":"1.bölge 1x1/0 (demir zincir) aort = 300 m","c":"Raven (1/0)","b":1,"z":true,"aort":300},{"n":"1.bölge 2x1/0 (demir zincir) aort = 180 m","c":"Raven (1/0)","b":1,"z":true,"aort":180},{"n":"1.bölge 2x1/0 (demir zincir) aort = 250 m","c":"Raven (1/0)","b":1,"z":true,"aort":250},{"n":"1.bölge 2x1/0 (demir zincir) aort = 300 m","c":"Raven (1/0)","b":1,"z":true,"aort":300},{"n":"1.bölge 1x3/0 (beton zincir) aort = 350 m","c":"Pigeon (3/0)","b":1,"z":true,"aort":350},{"n":"1.bölge 2x3/0 (beton zincir) aort = 300 m","c":"Pigeon (3/0)","b":1,"z":true,"aort":300},{"n":"1.bölge 4x3/0 (beton zincir) aort = 150 m","c":"Pigeon (3/0)","b":1,"z":true,"aort":150},{"n":"1.bölge 1x3/0 (demir) aort = 400 m","c":"Pigeon (3/0)","b":1,"z":false,"aort":400},{"n":"1.bölge 1x3/0 (demir) aort = 350 m","c":"Pigeon (3/0)","b":1,"z":false,"aort":350},{"n":"1.bölge 2x3/0 (demir) aort = 400 m","c":"Pigeon (3/0)","b":1,"z":false,"aort":400},{"n":"1.bölge 2x3/0 (demir) aort = 350 m","c":"Pigeon (3/0)","b":1,"z":false,"aort":350},{"n":"1.bölge 2x3/0 (demir) aort = 300 m","c":"Pigeon (3/0)","b":1,"z":false,"aort":300},{"n":"1.bölge 2x3/0 (demir) aort = 250 m","c":"Pigeon (3/0)","b":1,"z":false,"aort":250},{"n":"1.bölge 4x3/0 (demir) aort = 300 m","c":"Pigeon (3/0)","b":1,"z":false,"aort":300},{"n":"1.bölge 4x3/0 (demir) aort = 250 m","c":"Pigeon (3/0)","b":1,"z":false,"aort":250},{"n":"1.bölge 6x3/0 (demir) aort = 300 m","c":"Pigeon (3/0)","b":1,"z":false,"aort":300},{"n":"1.bölge 6x3/0 (demir) aort = 250 m","c":"Pigeon (3/0)","b":1,"z":false,"aort":250},{"n":"1.bölge 2x266  (demir) aort = 250 m","c":"Partridge (266,8)","b":1,"z":false,"aort":250},{"n":"1.bölge 1x477 (beton) aort = 250 m","c":"477 (Hawk)","b":1,"z":false,"aort":250},{"n":"1.bölge 2x477  (beton) aort = 250 m","c":"477 (Hawk)","b":1,"z":false,"aort":250},{"n":"1.bölge 2x477  (demir) aort = 350 m","c":"477 (Hawk)","b":1,"z":false,"aort":350},{"n":"1.bölge 4x477  (demir) aort = 200 m","c":"477 (Hawk)","b":1,"z":false,"aort":200},{"n":"2.bölge 1xsw (demir mesnet) aort = 150 m","c":"Swallow (3 AWG)","b":2,"z":false,"aort":150},{"n":"2.bölge 1xsw (beton mesnet) aort = 150 m","c":"Swallow (3 AWG)","b":2,"z":false,"aort":150},{"n":"2.bölge 1xsw (beton zincir) aort = 150 m","c":"Swallow (3 AWG)","b":2,"z":true,"aort":150},{"n":"2.bölge 1xsw (demir zincir) aort = 150 m","c":"Swallow (3 AWG)","b":2,"z":true,"aort":150},{"n":"2.bölge 2xsw (beton zincir) aort = 150 m","c":"Swallow (3 AWG)","b":2,"z":true,"aort":150},{"n":"2.bölge 1x1/0 (beton/demir mesnet) aort = 200 m","c":"Raven (1/0)","b":2,"z":false,"aort":200},{"n":"2.bölge 1x1/0 (beton zincir) aort = 250 m","c":"Raven (1/0)","b":2,"z":true,"aort":250},{"n":"2.bölge 2x1/0 (beton zincir) aort = 250 m","c":"Raven (1/0)","b":2,"z":true,"aort":250},{"n":"2.bölge 1x1/0 (demir zincir) aort = 180 m","c":"Raven (1/0)","b":2,"z":true,"aort":180},{"n":"2.bölge 1x1/0 (demir zincir) aort = 250 m","c":"Raven (1/0)","b":2,"z":true,"aort":250},{"n":"2.bölge 1x1/0 (demir zincir) aort = 300 m","c":"Raven (1/0)","b":2,"z":true,"aort":300},{"n":"2.bölge 2x1/0 (demir zincir) aort = 180 m","c":"Raven (1/0)","b":2,"z":true,"aort":180},{"n":"2.bölge 2x1/0 (demir zincir) aort = 250 m","c":"Raven (1/0)","b":2,"z":true,"aort":250},{"n":"2.bölge 2x1/0 (demir zincir) aort = 300 m","c":"Raven (1/0)","b":2,"z":true,"aort":300},{"n":"2.bölge 1x3/0 (beton zincir) aort = 350 m","c":"Pigeon (3/0)","b":2,"z":true,"aort":350},{"n":"2.bölge 2x3/0 (beton zincir) aort = 250 m","c":"Pigeon (3/0)","b":2,"z":true,"aort":250},{"n":"2.bölge 4x3/0 (beton zincir) aort = 150 m","c":"Pigeon (3/0)","b":2,"z":true,"aort":150},{"n":"2.bölge 1x3/0 (demir) aort = 400 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":400},{"n":"2.bölge 1x3/0 (demir) aort = 350 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":350},{"n":"2.bölge 1x3/0 (demir) aort = 300 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":300},{"n":"2.bölge 1x3/0 (demir) aort = 260 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":260},{"n":"2.bölge 2x3/0 (demir) aort = 400 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":400},{"n":"2.bölge 2x3/0 (demir) aort = 350 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":350},{"n":"2.bölge 2x3/0 (demir) aort = 300 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":300},{"n":"2.bölge 2x3/0 (demir) aort = 260 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":260},{"n":"2.bölge 4x3/0 (demir) aort = 300 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":300},{"n":"2.bölge 4x3/0 (demir) aort = 250 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":250},{"n":"2.bölge 6x3/0 (demir) aort = 300 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":300},{"n":"2.bölge 6x3/0 (demir) aort = 250 m","c":"Pigeon (3/0)","b":2,"z":false,"aort":250},{"n":"2.bölge 2x266  (demir) aort = 230 m","c":"Partridge (266,8)","b":2,"z":false,"aort":230},{"n":"2.bölge 1x477 (beton) aort = 230 m","c":"477 (Hawk)","b":2,"z":false,"aort":230},{"n":"2.bölge 2x477  (beton) aort = 230 m","c":"477 (Hawk)","b":2,"z":false,"aort":230},{"n":"2.bölge 2x477  (demir) aort = 325 m","c":"477 (Hawk)","b":2,"z":false,"aort":325},{"n":"2.bölge 4x477  (demir) aort = 200 m","c":"477 (Hawk)","b":2,"z":false,"aort":200},{"n":"3.bölge 1xsw (demir mesnet) aort = 150 m","c":"Swallow (3 AWG)","b":3,"z":false,"aort":150},{"n":"3.bölge 1xsw (beton mesnet) aort = 150 m","c":"Swallow (3 AWG)","b":3,"z":false,"aort":150},{"n":"3.bölge 1xsw (beton zincir) aort = 150 m","c":"Swallow (3 AWG)","b":3,"z":true,"aort":150},{"n":"3.bölge 1xsw (demir zincir) aort = 150 m","c":"Swallow (3 AWG)","b":3,"z":true,"aort":150},{"n":"3.bölge 2xsw (beton zincir) aort = 150 m","c":"Swallow (3 AWG)","b":3,"z":true,"aort":150},{"n":"3.bölge 1x1/0 (beton/demir mesnet) aort = 200 m","c":"Raven (1/0)","b":3,"z":false,"aort":200},{"n":"3.bölge 1x1/0 (beton zincir) aort = 250 m","c":"Raven (1/0)","b":3,"z":true,"aort":250},{"n":"3.bölge 2x1/0 (beton zincir) aort = 250 m","c":"Raven (1/0)","b":3,"z":true,"aort":250},{"n":"3.bölge 1x1/0 (demir zincir) aort = 180 m","c":"Raven (1/0)","b":3,"z":true,"aort":180},{"n":"3.bölge 1x1/0 (demir zincir) aort = 250 m","c":"Raven (1/0)","b":3,"z":true,"aort":250},{"n":"3.bölge 1x1/0 (demir zincir) aort = 300 m","c":"Raven (1/0)","b":3,"z":true,"aort":300},{"n":"3.bölge 2x1/0 (demir zincir) aort = 180 m","c":"Raven (1/0)","b":3,"z":true,"aort":180},{"n":"3.bölge 2x1/0 (demir zincir) aort = 250 m","c":"Raven (1/0)","b":3,"z":true,"aort":250},{"n":"3.bölge 2x1/0 (demir zincir) aort = 300 m","c":"Raven (1/0)","b":3,"z":true,"aort":300},{"n":"3.bölge 1x3/0 (beton zincir) aort = 200 m","c":"Pigeon (3/0)","b":3,"z":true,"aort":200},{"n":"3.bölge 2x3/0 (beton zincir) aort = 220 m","c":"Pigeon (3/0)","b":3,"z":true,"aort":220},{"n":"3.bölge 4x3/0 (beton zincir) aort = 150 m","c":"Pigeon (3/0)","b":3,"z":true,"aort":150},{"n":"3.bölge 1x3/0 (demir) aort = 400 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":400},{"n":"3.bölge 1x3/0 (demir) aort = 350 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":350},{"n":"3.bölge 1x3/0 (demir) aort = 300 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":300},{"n":"3.bölge 1x3/0 (demir) aort = 260 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":260},{"n":"3.bölge 2x3/0 (demir) aort = 350 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":350},{"n":"3.bölge 2x3/0 (demir) aort = 300 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":300},{"n":"3.bölge 2x3/0 (demir) aort = 260 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":260},{"n":"3.bölge 2x3/0 (demir) aort = 220 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":220},{"n":"3.bölge 4x3/0 (demir) aort = 250 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":250},{"n":"3.bölge 4x3/0 (demir) aort = 220 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":220},{"n":"3.bölge 6x3/0 (demir) aort = 250 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":250},{"n":"3.bölge 6x3/0 (demir) aort = 220 m","c":"Pigeon (3/0)","b":3,"z":false,"aort":220},{"n":"3.bölge 2x266  (demir) aort = 210 m","c":"Partridge (266,8)","b":3,"z":false,"aort":210},{"n":"3.bölge 1x477 (beton) aort = 210 m","c":"477 (Hawk)","b":3,"z":false,"aort":210},{"n":"3.bölge 2x477  (beton) aort = 210 m","c":"477 (Hawk)","b":3,"z":false,"aort":210},{"n":"3.bölge 2x477  (demir) aort = 300 m","c":"477 (Hawk)","b":3,"z":false,"aort":300},{"n":"3.bölge 4x477  (demir) aort = 200 m","c":"477 (Hawk)","b":3,"z":false,"aort":200},{"n":"4.bölge 1xsw (demir mesnet) aort = 150 m","c":"Swallow (3 AWG)","b":4,"z":false,"aort":150},{"n":"4.bölge 1xsw (beton mesnet) aort = 150 m","c":"Swallow (3 AWG)","b":4,"z":false,"aort":150},{"n":"4.bölge 1xsw (beton zincir) aort = 150 m","c":"Swallow (3 AWG)","b":4,"z":true,"aort":150},{"n":"4.bölge 1xsw (demir zincir) aort = 150 m","c":"Swallow (3 AWG)","b":4,"z":true,"aort":150},{"n":"4.bölge 2xsw (beton zincir) aort = 150 m","c":"Swallow (3 AWG)","b":4,"z":true,"aort":150},{"n":"4.bölge 1x1/0 (beton/demir mesnet) aort = 200 m","c":"Raven (1/0)","b":4,"z":false,"aort":200},{"n":"4.bölge 1x1/0 (beton zincir) aort = 200 m","c":"Raven (1/0)","b":4,"z":true,"aort":200},{"n":"4.bölge 2x1/0 (beton zincir) aort = 200 m","c":"Raven (1/0)","b":4,"z":true,"aort":200},{"n":"4.bölge 1x1/0 (demir zincir) aort = 180 m","c":"Raven (1/0)","b":4,"z":true,"aort":180},{"n":"4.bölge 1x1/0 (demir zincir) aort = 250 m","c":"Raven (1/0)","b":4,"z":true,"aort":250},{"n":"4.bölge 1x1/0 (demir zincir) aort = 300 m","c":"Raven (1/0)","b":4,"z":true,"aort":300},{"n":"4.bölge 2x1/0 (demir zincir) aort = 180 m","c":"Raven (1/0)","b":4,"z":true,"aort":180},{"n":"4.bölge 2x1/0 (demir zincir) aort = 250 m","c":"Raven (1/0)","b":4,"z":true,"aort":250},{"n":"4.bölge 2x1/0 (demir zincir) aort = 300 m","c":"Raven (1/0)","b":4,"z":true,"aort":300},{"n":"4.bölge 1x3/0 (beton zincir) aort = 150 m","c":"Pigeon (3/0)","b":4,"z":true,"aort":150},{"n":"4.bölge 2x3/0 (beton zincir) aort = 170 m","c":"Pigeon (3/0)","b":4,"z":true,"aort":170},{"n":"4.bölge 4x3/0 (beton zincir) aort = 150 m","c":"Pigeon (3/0)","b":4,"z":true,"aort":150},{"n":"4.bölge 1x3/0 (demir) aort = 350 m","c":"Pigeon (3/0)","b":4,"z":false,"aort":350},{"n":"4.bölge 1x3/0 (demir) aort = 300 m","c":"Pigeon (3/0)","b":4,"z":false,"aort":300},{"n":"4.bölge 1x3/0 (demir) aort = 260 m","c":"Pigeon (3/0)","b":4,"z":false,"aort":260},{"n":"4.bölge 1x3/0 (demir) aort = 220 m","c":"Pigeon (3/0)","b":4,"z":false,"aort":220},{"n":"4.bölge 2x3/0 (demir) aort = 260 m","c":"Pigeon (3/0)","b":4,"z":false,"aort":260},{"n":"4.bölge 2x3/0 (demir) aort = 220 m","c":"Pigeon (3/0)","b":4,"z":false,"aort":220},{"n":"4.bölge 4x3/0 (demir) aort = 200 m","c":"Pigeon (3/0)","b":4,"z":false,"aort":200},{"n":"4.bölge 6x3/0 (demir) aort = 200 m","c":"Pigeon (3/0)","b":4,"z":false,"aort":200},{"n":"4.bölge 2x266  (demir) aort = 190 m","c":"Partridge (266,8)","b":4,"z":false,"aort":190},{"n":"4.bölge 1x477 (beton) aort = 190 m","c":"477 (Hawk)","b":4,"z":false,"aort":190},{"n":"4.bölge 2x477  (beton) aort = 190 m","c":"477 (Hawk)","b":4,"z":false,"aort":190},{"n":"4.bölge 2x477  (demir) aort = 250 m","c":"477 (Hawk)","b":4,"z":false,"aort":250},{"n":"4.bölge 4x477  (demir) aort = 175 m","c":"477 (Hawk)","b":4,"z":false,"aort":175},{"n":"5.bölge 1xsw (demir mesnet) aort = 100 m","c":"Swallow (3 AWG)","b":5,"z":false,"aort":100},{"n":"5.bölge 1xsw (beton mesnet) aort = 100 m","c":"Swallow (3 AWG)","b":5,"z":false,"aort":100},{"n":"5.bölge 1xsw (beton zincir) aort = 100 m","c":"Swallow (3 AWG)","b":5,"z":true,"aort":100},{"n":"5.bölge 1xsw (demir zincir) aort = 100 m","c":"Swallow (3 AWG)","b":5,"z":true,"aort":100},{"n":"5.bölge 2xsw (beton zincir) aort = 100 m","c":"Swallow (3 AWG)","b":5,"z":true,"aort":100},{"n":"5.bölge 1x1/0 (beton/demir mesnet) aort = 100 m","c":"Raven (1/0)","b":5,"z":false,"aort":100},{"n":"5.bölge 1x1/0 (beton zincir) aort = 100 m","c":"Raven (1/0)","b":5,"z":true,"aort":100},{"n":"5.bölge 2x1/0 (beton zincir) aort = 100 m","c":"Raven (1/0)","b":5,"z":true,"aort":100},{"n":"5.bölge 1x3/0 (beton zincir) aort = 150 m","c":"Pigeon (3/0)","b":5,"z":true,"aort":150},{"n":"5.bölge 2x3/0 (beton zincir) aort = 100 m","c":"Pigeon (3/0)","b":5,"z":true,"aort":100},{"n":"5.bölge 1x3/0 (demir) aort = 220 m","c":"Pigeon (3/0)","b":5,"z":false,"aort":220},{"n":"5.bölge 2x3/0 (demir) aort = 220 m","c":"Pigeon (3/0)","b":5,"z":false,"aort":220},{"n":"5.bölge 4x3/0 (demir) aort = 200 m","c":"Pigeon (3/0)","b":5,"z":false,"aort":200},{"n":"5.bölge 6x3/0 (demir) aort = 200 m","c":"Pigeon (3/0)","b":5,"z":false,"aort":200},{"n":"5.bölge 2x266  (demir) aort = 150 m","c":"Partridge (266,8)","b":5,"z":false,"aort":150},{"n":"5.bölge 1x477 (beton) aort = 150 m","c":"477 (Hawk)","b":5,"z":false,"aort":150},{"n":"5.bölge 2x477  (beton) aort = 150 m","c":"477 (Hawk)","b":5,"z":false,"aort":150},{"n":"5.bölge 2x477  (demir) aort = 200 m","c":"477 (Hawk)","b":5,"z":false,"aort":200},{"n":"5.bölge 4x477  (demir) aort = 150 m","c":"477 (Hawk)","b":5,"z":false,"aort":150}];/* ================= YARDIMCI ================= */
+const $=id=>document.getElementById(id);
+const fmt=(x,d)=>(isFinite(x)?x:0).toLocaleString('tr-TR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const TERTIP_LIZ={0:0,1:0,2:0.5,3:1,4:0,5:0.853};
+const TERTIP_AD={0:"GERGİ-GERGİ",1:"MESNET-MESNET",2:"GERGİ-ASKI",3:"ASKI-ASKI",4:"GERGİ-MESNET",5:"ASKI-ASKI çift"};
+
+/* ================= STATE-CHANGE (genel haller, gerilme formu g=p/S) ================= */
+function stateChangeT(condName, bolgeNo, tn, pn, aort){
+  const K=COND[condName], S=K.S, E=K.Es, beta=K.beta, Tm=K.Tm;
+  const b=K.bolge[bolgeNo];
+  let t1, p1v;
+  if(b.gh==="R"){ t1=5.0; p1v=Math.sqrt(K.Pw*K.Pw+K.p0*K.p0); }   // 1.bölge +5°C %100R
+  else { t1=-5.0; p1v=b.p1; }                                     // -5°C+%100 buz
+  const sigma1=Tm/S, g1=p1v/S, gn=pn/S;
+  const RHS=sigma1-(aort*aort*g1*g1*E)/(24*sigma1*sigma1)-beta*E*(tn-t1);
+  const C=(aort*aort*gn*gn*E)/24.0;
+  let s=sigma1;
+  for(let i=0;i<300;i++){
+    const f=s*s*s-RHS*s*s-C, df=3*s*s-2*RHS*s, sn=s-f/df;
+    if(Math.abs(sn-s)<1e-12){s=sn;break;}
+    s=sn;
+  }
+  return s*S;
+}
+
+function yonetmelikBand(aDeg){
+  if(aDeg<=50) return [aDeg/4,"α/4"];
+  if(aDeg<=62.5) return [12.5,"12°30′ sabit"];
+  return [aDeg/5,"α/5"];
+}
+
+/* ================= ANA HESAP ================= */
+let cur=null;
+function hesapla(){
+  const hat=HAT[+$('selHat').value]; if(!hat) return;
+  const K=COND[hat.c], b=hat.b, p0=K.p0, Pw=K.Pw;
+  const aort=hat.aort;                                  // satırın kendi aort'u
+  const Amax=Math.max(1,parseFloat($('inAmax').value)||0);
+  const U=34.5;                                        // şimdilik 34,5 kV'a kilitli
+  const ti=+$('selTertip').value, liz=TERTIP_LIZ[ti];
+  const tA=Math.max(0,parseFloat($('inTA').value)||0);
+  const tB=Math.max(0,parseFloat($('inTB').value)||0);
+  const nameA=($('inNameA').value||'A Direği').trim()||'A Direği';
+  const nameB=($('inNameB').value||'B Direği').trim()||'B Direği';
+  const hedef=$('selHedef').value;
+  const emn=hedef==='ozel'?Math.max(0,parseFloat($('inEmniyet').value)||0)
+            :parseFloat($('selHedef').selectedOptions[0].dataset.emn);
+  const tmax=K.bolge[b].tmax;
+
+  const cases=[];
+  [[5.0,0.70,"+5°C %70 Rüzgar"],[tmax,0.42,"+"+tmax+"°C %42 Rüzgar"]].forEach(([tn,wf,lbl])=>{
+    const pn=Math.sqrt((wf*Pw)*(wf*Pw)+p0*p0);
+    const T=stateChangeT(hat.c,b,tn,pn,aort);
+    const f=pn*Amax*Amax/(8*T);
+    const alpha=Math.atan(wf*Pw/p0);
+    const aDeg=alpha*180/Math.PI;
+    const swing=(f+liz)*Math.sin(alpha);
+    const [bandAng,bandLbl]=yonetmelikBand(aDeg);
+    cases.push({lbl,tn,wf,pn,T,f,alpha,aDeg,swing,bandAng,bandLbl});
+  });
+  const worst=cases[0].swing>=cases[1].swing?0:1;
+  const W=cases[worst];
+  const dist=W.swing+emn;
+  const Ds=2*(W.f+liz)*Math.sin((W.alpha/8))+U/150;
+  const Umin=U/150;
+
+  let rx=parseFloat(String($('inRx').value).replace(',','.'));
+  if(!isFinite(rx)||$('inRx').value===''){ rx=null; } else { rx=Math.max(0,Math.min(Amax,rx)); }
+  cur={hat,K,b,p0,Pw,aort,Amax,U,ti,liz,tA,tB,nameA,nameB,hedef,emn,tmax,cases,worst,W,dist,Ds,Umin,rx};
+  render();
+}
+
+function render(){
+  const c=cur, A=c.cases[0], B=c.cases[1];
+  /* kartlar */
+  const fill=(pre,d)=>{
+    $(pre+'_pn').textContent=fmt(d.pn,4)+' kg/m';
+    $(pre+'_T').textContent=fmt(d.T,2)+' kg';
+    $(pre+'_f').textContent=fmt(d.f,3)+' m';
+    $(pre+'_a').textContent=fmt(d.aDeg,2)+'°';
+    $(pre+'_band').textContent=d.bandLbl+' ('+fmt(d.bandAng,2)+'°)';
+    $(pre+'_sw').textContent=fmt(d.swing,3)+' m';
+  };
+  fill('cA',A); fill('cB',B);
+  $('cAt').textContent=A.lbl; $('cBt').textContent=B.lbl;
+  $('caseA').classList.toggle('win',c.worst===0);
+  $('caseB').classList.toggle('win',c.worst===1);
+  $('cAb').style.display=c.worst===0?'':'none';
+  $('cBb').style.display=c.worst===1?'':'none';
+
+  /* sonuç */
+  $('rDist').textContent=fmt(c.dist,2);
+  $('rDistLab').textContent=c.hedef==='agac'?'Ağaçlara Olan Yatay Uzaklık':c.hedef==='yapi'?'Yapılara Olan Yatay Uzaklık':'Yatay Uzaklık (özel)';
+  $('rDistF').textContent=fmt(c.W.swing,2)+' salınım + '+fmt(c.emn,1)+' emniyet ('+c.W.lbl+')';
+  $('rDs').textContent=fmt(c.Ds,2);
+  $('rDsF').textContent='2·('+fmt(c.W.f,1)+'+'+fmt(c.liz,2)+')·sin('+fmt(c.W.aDeg/8,2)+'°) + '+fmt(c.U,1)+'/150';
+  const dOK=c.dist>0;
+  $('rDsChk').textContent='U/150 = '+fmt(c.Umin,3)+' m (minimum d) '+(c.Ds>=c.Umin?'✓ sağlanıyor':'✗ kontrol et');
+  $('rDsChk').className='chk '+(c.Ds>=c.Umin?'ok':'no');
+
+  /* hat ipucu */
+  $('hintHat').textContent=c.hat.c+' · '+c.hat.b+'.bölge · aort='+c.aort+' m · t_max=+'+c.tmax+'°C';
+  $('hintLiz').textContent=TERTIP_AD[c.ti]+' · Liz='+fmt(c.liz,3)+' m';
+  const he=$('selHedef').value;
+  $('fldEmnOzel').style.display=he==='ozel'?'':'none';
+  $('hintEmn').textContent=he==='ozel'?'Emniyet mesafesini elle girin':'Emniyet mesafesi = '+fmt(c.emn,1)+' m (otomatik)';
+
+  /* rapor noktası özet kutusu */
+  const rb=$('rnBox');
+  if(rb){
+    if(c.rx==null){ rb.style.display='none'; }
+    else{
+      const rxv=c.rx, ts=tOf ? tOf(rxv) : 0, ss=sehimProfil(rxv);
+      rb.style.display='';
+      $('rnTxt').innerHTML='x = <b>'+fmt(rxv,1)+' m</b> ('+c.nameA+' direğinden) &nbsp;·&nbsp; travers t = <b>'+fmt(ts,2)+' m</b> &nbsp;·&nbsp; salınım = <b>'+fmt(ss,2)+' m</b> &nbsp;·&nbsp; salınım + emniyet = <b>'+fmt(ss+c.emn,2)+' m</b> &nbsp;·&nbsp; hat ekseninden toplam = <b>'+fmt(ts+ss+c.emn,2)+' m</b>';
+    }
+  }
+  cizChart(); cizPlan();
+}
+
+/* ================= PROFİL GRAFİĞİ (en büyük durum) ================= */
+function sOf(x){ const A=cur.Amax, J=Math.min(x,A-x); return ((2*J)*(2*J)*(cur.W.f/(A*A/4))/8*0+0), sehimProfil(x); }
+function sehimProfil(x){
+  // parabol: tepe salınımı = W.swing (Amax ortasında). Kenarda 0.
+  const A=cur.Amax, J=Math.min(x,A-x);
+  const frac=(2*J)*(2*J)/(A*A);   // orta=1, kenar=0
+  return cur.W.swing*frac;
+}
+function tOf(x){ return cur.tA+(cur.tB-cur.tA)*x/cur.Amax; }
+function dOf(x){ return tOf(x)+sehimProfil(x)+cur.emn; }
+/* iletkenin durgun konumundan ölçülen yatay uzaklık (t hariç) = salınım + emniyet */
+function uzaklikOf(x){ return sehimProfil(x)+cur.emn; }
+
+const CW=920,CH=380,PL=64,PR=20,PT=24,PB=46;
+function cizChart(){
+  const svg=$('chart'); svg.setAttribute('viewBox','0 0 '+CW+' '+CH);
+  const A=cur.Amax, N=Math.max(40,Math.min(200,Math.round(A/5)));
+  let ymax=0,pts=[];
+  for(let i=0;i<=N;i++){const x=A*i/N,s=sehimProfil(x),d=uzaklikOf(x);pts.push([x,s,d]);if(d>ymax)ymax=d;const ts=tOf(x)+sehimProfil(x);if(ts>ymax)ymax=ts;}
+  ymax=ymax*1.12||1;
+  const X=x=>PL+(CW-PL-PR)*x/A, Y=s=>CH-PB-(CH-PT-PB)*s/ymax;
+  let g='';
+  for(let i=0;i<=5;i++){const v=ymax*i/5,y=Y(v);g+='<line x1="'+PL+'" y1="'+y+'" x2="'+(CW-PR)+'" y2="'+y+'" stroke="#e2e9ee"/>';g+='<text x="'+(PL-8)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="#7a8fa3">'+fmt(v,0)+'</text>';}
+  const xt=Math.min(10,Math.round(A/50)||1);
+  for(let i=0;i<=xt;i++){const v=A*i/xt,x=X(v);g+='<line x1="'+x+'" y1="'+(CH-PB)+'" x2="'+x+'" y2="'+(CH-PB+5)+'" stroke="#b9c6d0"/>';g+='<text x="'+x+'" y="'+(CH-PB+19)+'" text-anchor="middle" font-size="11" fill="#7a8fa3">'+fmt(v,0)+'</text>';}
+  g+='<text x="'+((PL+CW-PR)/2)+'" y="'+(CH-8)+'" text-anchor="middle" font-size="11.5" fill="#44586c" font-weight="700">Direkler arası mesafe (m)</text>';
+  g+='<text transform="rotate(-90 14 '+(CH/2)+')" x="14" y="'+(CH/2)+'" text-anchor="middle" font-size="11.5" fill="#44586c" font-weight="700">Yatay salınım (m)</text>';
+  let dU='M'+X(0)+' '+Y(pts[0][2]); pts.forEach(p=>dU+=' L'+X(p[0]).toFixed(1)+' '+Y(p[2]).toFixed(1));
+  g+='<path d="'+dU+'" fill="none" stroke="#c47a10" stroke-width="2" stroke-dasharray="6 4"/>';
+  let d='M'+X(0)+' '+Y(pts[0][1]); pts.forEach(p=>d+=' L'+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1));
+  g+='<path d="'+d+' L'+X(A)+' '+Y(0)+' L'+X(0)+' '+Y(0)+' Z" fill="rgba(26,122,74,.10)"/>';
+  g+='<path d="'+d+'" fill="none" stroke="#1a7a4a" stroke-width="2.5"/>';
+  /* travers+salınım (asimetrik referans) — sadece tA≠tB ise anlamlı */
+  if(Math.abs(cur.tA-cur.tB)>0.001){
+    let d2='M'+X(0)+' '+Y(tOf(0)+sehimProfil(0));
+    pts.forEach(p=>d2+=' L'+X(p[0]).toFixed(1)+' '+Y(tOf(p[0])+sehimProfil(p[0])).toFixed(1));
+    g+='<path d="'+d2+'" fill="none" stroke="#6a4a9c" stroke-width="1.8" stroke-dasharray="2 3"/>';
+    /* asimetrik tepe */
+    let xmax2=0,smax2=-1; for(let i=0;i<=200;i++){const xx=A*i/200,vv=tOf(xx)+sehimProfil(xx);if(vv>smax2){smax2=vv;xmax2=xx;}}
+    g+='<circle cx="'+X(xmax2)+'" cy="'+Y(smax2)+'" r="4" fill="#6a4a9c"/>';
+    g+='<text x="'+X(xmax2)+'" y="'+(Y(smax2)-8)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#4a2f70">tepe x='+fmt(xmax2,0)+'m</text>';
+  }
+  [[0,cur.nameA],[A,cur.nameB]].forEach(pr=>{const x=X(pr[0]);g+='<line x1="'+x+'" y1="'+PT+'" x2="'+x+'" y2="'+(CH-PB)+'" stroke="#44586c" stroke-width="2.5"/>';g+='<text x="'+x+'" y="'+(PT-7)+'" text-anchor="'+(pr[0]===0?'start':'end')+'" font-size="11" fill="#44586c" font-weight="700">'+pr[1]+'</text>';});
+  const xm=A/2,sm=sehimProfil(xm);
+  g+='<circle cx="'+X(xm)+'" cy="'+Y(sm)+'" r="5" fill="#1a7a4a"/>';
+  g+='<text x="'+X(xm)+'" y="'+(Y(sm)-10)+'" text-anchor="middle" font-size="12" font-weight="700" fill="#0f5c36">maks salınım '+fmt(sm,2)+' m</text>';
+  g+='<g font-size="11"><line x1="'+(CW-250)+'" y1="'+(PT+6)+'" x2="'+(CW-222)+'" y2="'+(PT+6)+'" stroke="#1a7a4a" stroke-width="2.5"/><text x="'+(CW-216)+'" y="'+(PT+10)+'" fill="#44586c">salınım ('+cur.W.lbl+')</text><line x1="'+(CW-250)+'" y1="'+(PT+24)+'" x2="'+(CW-222)+'" y2="'+(PT+24)+'" stroke="#c47a10" stroke-width="2" stroke-dasharray="6 4"/><text x="'+(CW-216)+'" y="'+(PT+28)+'" fill="#44586c">salınım + emniyet</text>'+(Math.abs(cur.tA-cur.tB)>0.001?'<line x1="'+(CW-250)+'" y1="'+(PT+42)+'" x2="'+(CW-222)+'" y2="'+(PT+42)+'" stroke="#6a4a9c" stroke-width="1.8" stroke-dasharray="2 3"/><text x="'+(CW-216)+'" y="'+(PT+46)+'" fill="#44586c">travers + salınım (asimetrik)</text>':'')+'</g>';
+  /* RAPOR NOKTASI — kalıcı işaret (yazdırmada görünür) */
+  if(cur.rx!=null){
+    const rxv=cur.rx, rs=sehimProfil(rxv), xp=X(rxv), yp=Y(rs);
+    g+='<line x1="'+xp+'" y1="'+PT+'" x2="'+xp+'" y2="'+(CH-PB)+'" stroke="#b3382c" stroke-width="1.4" stroke-dasharray="5 3"/>';
+    g+='<circle cx="'+xp+'" cy="'+yp+'" r="5" fill="#b3382c"/>';
+    const lab='x='+fmt(rxv,0)+'m  s='+fmt(rs,2)+'m', tw=lab.length*6.6+12, th2=20;
+    let bx=xp+10; if(bx+tw>CW-PR) bx=xp-tw-10;
+    let by=yp-th2-8; if(by<PT) by=yp+10;
+    g+='<rect x="'+bx+'" y="'+by+'" width="'+tw+'" height="'+th2+'" rx="4" fill="#7c1f16"/>';
+    g+='<text x="'+(bx+6)+'" y="'+(by+14)+'" fill="#fff" font-size="11" font-weight="700" font-family="monospace">'+lab+'</text>';
+    g+='<text x="'+xp+'" y="'+(CH-PB+33)+'" text-anchor="middle" font-size="10.5" font-weight="800" fill="#b3382c">RAPOR NOKTASI</text>';
+  }
+  g+='<g id="cursorG" style="display:none"><line id="curLine" y1="'+PT+'" y2="'+(CH-PB)+'" stroke="#0e5a8a" stroke-width="1.2" stroke-dasharray="3 3"/><circle id="curDot" r="4.5" fill="#0e5a8a"/><g id="curTip"><rect id="curTipBg" rx="4" fill="#0b3e60"/><text id="curTipT" fill="#fff" font-size="11" font-weight="700" font-family="monospace"></text></g></g>';
+  g+='<rect id="hitR" x="'+PL+'" y="'+PT+'" width="'+(CW-PL-PR)+'" height="'+(CH-PT-PB)+'" fill="transparent"/>';
+  svg.innerHTML=g;
+  const hit=$('hitR');
+  const move=ev=>{
+    const r=svg.getBoundingClientRect();
+    const cx=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
+    const px=cx*CW/r.width;
+    let x=(px-PL)/(CW-PL-PR)*A; x=Math.max(0,Math.min(A,x));
+    const s=sehimProfil(x), dv=uzaklikOf(x);
+    $('cursorG').style.display='';
+    $('curLine').setAttribute('x1',X(x)); $('curLine').setAttribute('x2',X(x));
+    $('curDot').setAttribute('cx',X(x)); $('curDot').setAttribute('cy',Y(s));
+    /* imleç yanı tooltip */
+    const tx=X(x), ty=Y(s);
+    const label='x='+fmt(x,0)+'m  s='+fmt(s,2)+'m';
+    const tw=label.length*6.6+12, th=20;
+    let bx=tx+10; if(bx+tw>CW-PR) bx=tx-tw-10;
+    let by=ty-th-8; if(by<PT) by=ty+10;
+    $('curTipBg').setAttribute('x',bx); $('curTipBg').setAttribute('y',by);
+    $('curTipBg').setAttribute('width',tw); $('curTipBg').setAttribute('height',th);
+    $('curTipT').setAttribute('x',bx+6); $('curTipT').setAttribute('y',by+14);
+    $('curTipT').textContent=label;
+    $('roX').textContent=fmt(x,1); $('roS').textContent=fmt(s,2); $('roD').textContent=fmt(dv,2);
+  };
+  hit.addEventListener('mousemove',move);
+  hit.addEventListener('touchstart',move,{passive:true});   /* tek dokunuşta oku; sürükleme kaydırmaya bırakıldı */
+  hit.addEventListener('mouseleave',()=>{$('cursorG').style.display='none';});
+}
+
+/* ================= ÜSTTEN PLAN ================= */
+function cizPlan(){
+  const svg=$('planView'),W=920,H=470,PLx=100,PRx=64,axisY=78,PBot=70,A=cur.Amax;
+  const N=160,rest=[],env=[],saf=[];
+  for(let i=0;i<=N;i++){const x=A*i/N;rest.push([x,tOf(x)]);env.push([x,tOf(x)+sehimProfil(x)]);saf.push([x,tOf(x)+sehimProfil(x)+cur.emn]);}
+  const dMax=Math.max(...saf.map(p=>p[1]))*1.08, X=x=>PLx+(W-PLx-PRx)*x/A, SY=(H-axisY-PBot)/(dMax||1), Yp=v=>axisY+v*SY;
+  const path=arr=>arr.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Yp(p[1]).toFixed(1)).join(' ');
+  let g='';
+  const safMaxVal=Math.max(...saf.map(p=>p[1]));
+  const ySafMax=Yp(safMaxVal);
+  g+='<rect x="'+PLx+'" y="'+ySafMax+'" width="'+(W-PLx-PRx)+'" height="'+(H-PBot-ySafMax)+'" fill="rgba(179,56,44,.06)"/>';
+  g+='<text x="'+(PLx+8)+'" y="'+(ySafMax+16)+'" font-size="10.5" fill="#b3382c" opacity=".8">yapı / ağaç bu çizginin ötesinde olmalı</text>';
+  g+='<line x1="'+(PLx-30)+'" y1="'+axisY+'" x2="'+(W-PRx+30)+'" y2="'+axisY+'" stroke="#7a8fa3" stroke-width="1.2" stroke-dasharray="14 4 3 4"/>';
+  g+='<text x="'+(W-PRx+8)+'" y="'+(axisY+14)+'" text-anchor="end" font-size="10" fill="#7a8fa3">hat ekseni</text>';
+  const restU=rest.map(p=>[p[0],-p[1]]);
+  g+='<path d="'+restU.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Yp(p[1]).toFixed(1)).join(' ')+'" fill="none" stroke="#a9bac6" stroke-width="1.6" stroke-dasharray="5 4"/>';
+  let fill=path(rest); for(let i=env.length-1;i>=0;i--)fill+=' L'+X(env[i][0]).toFixed(1)+' '+Yp(env[i][1]).toFixed(1);
+  g+='<path d="'+fill+' Z" fill="rgba(26,122,74,.12)"/>';
+  g+='<path d="'+path(saf)+'" fill="none" stroke="#c47a10" stroke-width="2" stroke-dasharray="6 4"/>';
+  g+='<path d="'+path(env)+'" fill="none" stroke="#1a7a4a" stroke-width="2.5"/>';
+  g+='<path d="'+path(rest)+'" fill="none" stroke="#182430" stroke-width="2"/>';
+  [[0,cur.tA,cur.nameA],[A,cur.tB,cur.nameB]].forEach(pr=>{
+    const x=X(pr[0]),yTip=Yp(pr[1]);
+    const yTipU=Math.max(Yp(-pr[1]), axisY-46);      // karşı kol: viewBox dışına taşmasın diye sınırlı
+    g+='<line x1="'+x+'" y1="'+yTipU+'" x2="'+x+'" y2="'+yTip+'" stroke="#44586c" stroke-width="5" stroke-linecap="round"/>';
+    g+='<rect x="'+(x-9)+'" y="'+(axisY-9)+'" width="18" height="18" fill="#c9d4dc" stroke="#44586c" stroke-width="1.5"/>';
+    g+='<line x1="'+(x-9)+'" y1="'+(axisY-9)+'" x2="'+(x+9)+'" y2="'+(axisY+9)+'" stroke="#44586c"/>';
+    g+='<line x1="'+(x-9)+'" y1="'+(axisY+9)+'" x2="'+(x+9)+'" y2="'+(axisY-9)+'" stroke="#44586c"/>';
+    g+='<circle cx="'+x+'" cy="'+yTip+'" r="4.5" fill="#182430"/>';
+    g+='<circle cx="'+x+'" cy="'+yTipU+'" r="4" fill="#a9bac6" stroke="#44586c"/>';
+    /* direk adı: Amax ölçüsünün altında, sabit güvenli bantta; kola binmesin diye yana kaydırılmış + beyaz zemin */
+    const isA=pr[0]===0;
+    const nameY=axisY-30;                            // sabit bant (viewBox içinde, Amax ölçüsünün altı)
+    const nameX=isA?(x+13):(x-13), nameAnch=isA?'start':'end';
+    const nm=pr[2], nmW=nm.length*6.6+10;
+    g+='<rect x="'+(isA?nameX-4:nameX-nmW+4)+'" y="'+(nameY-11)+'" width="'+nmW+'" height="15" fill="#ffffff" opacity="0.9" rx="3"/>';
+    g+='<text x="'+nameX+'" y="'+nameY+'" text-anchor="'+nameAnch+'" font-size="11.5" font-weight="700" fill="#0b3e60">'+nm+'</text>';
+    /* t ölçüsü: her iki direkte de İÇE (A sağına, B soluna) — kenar taşmasını önler; arkada beyaz zemin */
+    const dx=isA?34:-34, anch=isA?'start':'end';
+    g+='<line x1="'+(x+dx)+'" y1="'+axisY+'" x2="'+(x+dx)+'" y2="'+yTip+'" stroke="#44586c"/>';
+    g+='<line x1="'+(x+dx-4)+'" y1="'+axisY+'" x2="'+(x+dx+4)+'" y2="'+axisY+'" stroke="#44586c"/>';
+    g+='<line x1="'+(x+dx-4)+'" y1="'+yTip+'" x2="'+(x+dx+4)+'" y2="'+yTip+'" stroke="#44586c"/>';
+    const tLbl='t='+fmt(pr[1],2)+' m', tW=tLbl.length*6.1+8, tX=x+dx+(isA?6:-6), tY=(axisY+yTip)/2+4;
+    g+='<rect x="'+(isA?tX-3:tX-tW+3)+'" y="'+(tY-11)+'" width="'+tW+'" height="15" fill="#ffffff" opacity="0.88" rx="3"/>';
+    g+='<text x="'+tX+'" y="'+tY+'" text-anchor="'+anch+'" font-size="10.5" font-weight="700" fill="#44586c">'+tLbl+'</text>';
+  });
+  const dimY=26;
+  g+='<line x1="'+X(0)+'" y1="'+dimY+'" x2="'+X(A)+'" y2="'+dimY+'" stroke="#182430"/>';
+  [[X(0),1],[X(A),-1]].forEach(a=>{g+='<path d="M'+a[0]+' '+dimY+' l'+(8*a[1])+' -3.5 v7 Z" fill="#182430"/>';g+='<line x1="'+a[0]+'" y1="'+(dimY-6)+'" x2="'+a[0]+'" y2="'+(axisY-9)+'" stroke="#b9c6d0"/>';});
+  g+='<text x="'+X(A/2)+'" y="'+(dimY-7)+'" text-anchor="middle" font-size="11.5" font-weight="700" fill="#182430">Amax = '+fmt(A,0)+' m</text>';
+  const xk=A/2, yRestK=Yp(tOf(xk)), yEnvK=Yp(tOf(xk)+sehimProfil(xk)), ySafK=Yp(tOf(xk)+sehimProfil(xk)+cur.emn), xkP=X(xk);
+  /* durgun iletken → salınmış: SALINIM (sağda, iç ölçü) */
+  g+='<line x1="'+(xkP-46)+'" y1="'+yRestK+'" x2="'+(xkP-46)+'" y2="'+yEnvK+'" stroke="#0b3e60" stroke-width="1.2"/>';
+  [[yRestK,1],[yEnvK,-1]].forEach(a=>g+='<path d="M'+(xkP-46)+' '+a[0]+' l-3.5 '+(8*a[1])+' h7 Z" fill="#0b3e60"/>');
+  g+='<line x1="'+(xkP-46)+'" y1="'+yRestK+'" x2="'+xkP+'" y2="'+yRestK+'" stroke="#d4dde4" stroke-dasharray="3 3"/>';
+  g+='<line x1="'+(xkP-46)+'" y1="'+yEnvK+'" x2="'+xkP+'" y2="'+yEnvK+'" stroke="#d4dde4" stroke-dasharray="3 3"/>';
+  g+='<text transform="rotate(-90 '+(xkP-52)+' '+((yRestK+yEnvK)/2)+')" x="'+(xkP-52)+'" y="'+((yRestK+yEnvK)/2)+'" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0b3e60">salınım = '+fmt(sehimProfil(xk),2)+' m</text>';
+  /* salınmış → emniyet sınırı: EMNİYET (sağda) */
+  g+='<line x1="'+xkP+'" y1="'+yEnvK+'" x2="'+xkP+'" y2="'+ySafK+'" stroke="#c47a10" stroke-width="1.4"/>';
+  [[yEnvK,1],[ySafK,-1]].forEach(a=>g+='<path d="M'+xkP+' '+a[0]+' l-3.5 '+(8*a[1])+' h7 Z" fill="#c47a10"/>');
+  g+='<line x1="'+xkP+'" y1="'+ySafK+'" x2="'+(xkP+50)+'" y2="'+ySafK+'" stroke="#d4dde4" stroke-dasharray="3 3"/>';
+  g+='<text x="'+(xkP+9)+'" y="'+((yEnvK+ySafK)/2+4)+'" font-size="10.5" font-weight="700" fill="#9a5f0a">emniyet '+fmt(cur.emn,1)+' m</text>';
+  /* durgun iletken → emniyet sınırı: TOPLAM YATAY UZAKLIK (solda, t hariç) */
+  const dimX=PLx-52;
+  g+='<line x1="'+dimX+'" y1="'+yRestK+'" x2="'+dimX+'" y2="'+ySafK+'" stroke="#0e5a8a"/>';
+  [[yRestK,1],[ySafK,-1]].forEach(a=>g+='<path d="M'+dimX+' '+a[0]+' l-3.5 '+(8*a[1])+' h7 Z" fill="#0e5a8a"/>');
+  g+='<line x1="'+dimX+'" y1="'+yRestK+'" x2="'+xkP+'" y2="'+yRestK+'" stroke="#d4dde4" stroke-dasharray="3 3"/>';
+  g+='<line x1="'+dimX+'" y1="'+ySafK+'" x2="'+xkP+'" y2="'+ySafK+'" stroke="#d4dde4" stroke-dasharray="3 3"/>';
+  g+='<text transform="rotate(-90 '+(dimX-9)+' '+((yRestK+ySafK)/2)+')" x="'+(dimX-9)+'" y="'+((yRestK+ySafK)/2)+'" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0b3e60">yatay uzaklık = '+fmt(cur.dist,2)+' m</text>';
+  const wy=axisY+34;
+  g+='<g stroke="#0e5a8a" stroke-width="2" fill="none" opacity=".55"><line x1="'+(W-120)+'" y1="'+wy+'" x2="'+(W-120)+'" y2="'+(wy+40)+'"/><path d="M'+(W-125)+' '+(wy+33)+' L'+(W-120)+' '+(wy+40)+' L'+(W-115)+' '+(wy+33)+'"/></g>';
+  g+='<text x="'+(W-108)+'" y="'+(wy+24)+'" font-size="10.5" fill="#0e5a8a" opacity=".85">rüzgar</text>';
+  g+='<g font-size="11"><line x1="'+PLx+'" y1="'+(H-30)+'" x2="'+(PLx+28)+'" y2="'+(H-30)+'" stroke="#182430" stroke-width="2"/><text x="'+(PLx+34)+'" y="'+(H-26)+'" fill="#44586c">rüzgarsız</text><line x1="'+(PLx+130)+'" y1="'+(H-30)+'" x2="'+(PLx+158)+'" y2="'+(H-30)+'" stroke="#1a7a4a" stroke-width="2.5"/><text x="'+(PLx+164)+'" y="'+(H-26)+'" fill="#44586c">salınmış</text><line x1="'+(PLx+250)+'" y1="'+(H-30)+'" x2="'+(PLx+278)+'" y2="'+(H-30)+'" stroke="#c47a10" stroke-width="2" stroke-dasharray="6 4"/><text x="'+(PLx+284)+'" y="'+(H-26)+'" fill="#44586c">emniyet sınırı</text></g>';
+  /* RAPOR NOKTASI — kalıcı işaret (yazdırmada görünür) */
+  if(cur.rx!=null){
+    const rxv=cur.rx, tv=tOf(rxv), sv=sehimProfil(rxv), ev2=tv+sv, safv=ev2+cur.emn, xp=X(rxv);
+    g+='<line x1="'+xp+'" y1="'+(axisY-40)+'" x2="'+xp+'" y2="'+(H-PBot)+'" stroke="#b3382c" stroke-width="1.3" stroke-dasharray="5 3"/>';
+    g+='<circle cx="'+xp+'" cy="'+Yp(tv)+'" r="3.5" fill="#182430" stroke="#b3382c" stroke-width="1.4"/>';
+    g+='<circle cx="'+xp+'" cy="'+Yp(ev2)+'" r="4.5" fill="#1a7a4a" stroke="#b3382c" stroke-width="1.4"/>';
+    g+='<circle cx="'+xp+'" cy="'+Yp(safv)+'" r="3.5" fill="#c47a10" stroke="#b3382c" stroke-width="1.4"/>';
+    const sat=['x = '+fmt(rxv,0)+' m','travers t = '+fmt(tv,2)+' m','salınım = '+fmt(sv,2)+' m','uzaklık = '+fmt(sv+cur.emn,2)+' m'];
+    const tw=Math.max(...sat.map(t=>t.length))*6.4+16, th2=sat.length*15+10;
+    let bx=xp+12; if(bx+tw>W-PRx) bx=xp-tw-12;
+    let by=Yp(ev2)-th2/2; if(by<axisY-38) by=axisY-38; if(by+th2>H-PBot) by=H-PBot-th2;
+    g+='<rect x="'+bx+'" y="'+by+'" width="'+tw+'" height="'+th2+'" rx="4" fill="#7c1f16"/>';
+    sat.forEach((t,i)=>{ g+='<text x="'+(bx+8)+'" y="'+(by+18+i*15)+'" fill="#fff" font-size="10.5" font-weight="700" font-family="monospace">'+t+'</text>'; });
+    g+='<text x="'+xp+'" y="'+(H-PBot+16)+'" text-anchor="middle" font-size="10.5" font-weight="800" fill="#b3382c">RAPOR NOKTASI ('+fmt(rxv,0)+' m)</text>';
+  }
+  /* imleç grubu */
+  g+='<g id="pCur" style="display:none"><line id="pLine" y1="'+(axisY-40)+'" y2="'+(H-PBot)+'" stroke="#0e5a8a" stroke-width="1" stroke-dasharray="3 3"/><circle id="pDotR" r="3.5" fill="#182430"/><circle id="pDotE" r="4" fill="#1a7a4a"/><circle id="pDotS" r="3.5" fill="#c47a10"/><g id="pTip"><rect id="pTipBg" rx="4" fill="#0b3e60"/><text id="pTipT" fill="#fff" font-size="10.5" font-weight="700" font-family="monospace"></text></g></g>';
+  g+='<rect id="pHit" x="'+PLx+'" y="'+(axisY-40)+'" width="'+(W-PLx-PRx)+'" height="'+(H-PBot-(axisY-40))+'" fill="transparent"/>';
+  svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.innerHTML=g;
+  /* hover mantığı */
+  const pHit=$('pHit');
+  const pmove=ev=>{
+    const r=svg.getBoundingClientRect();
+    const cx=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
+    const px=cx*W/r.width;
+    let x=(px-PLx)/(W-PLx-PRx)*A; x=Math.max(0,Math.min(A,x));
+    const tv=tOf(x), sv=sehimProfil(x), ev2=tv+sv, safv=ev2+cur.emn;
+    const xp=X(x);
+    $('pCur').style.display='';
+    $('pLine').setAttribute('x1',xp); $('pLine').setAttribute('x2',xp);
+    $('pDotR').setAttribute('cx',xp); $('pDotR').setAttribute('cy',Yp(tv));
+    $('pDotE').setAttribute('cx',xp); $('pDotE').setAttribute('cy',Yp(ev2));
+    $('pDotS').setAttribute('cx',xp); $('pDotS').setAttribute('cy',Yp(safv));
+    const L1='x = '+fmt(x,0)+' m';
+    const L2='travers t = '+fmt(tv,2)+' m';
+    const L3='salınım = '+fmt(sv,2)+' m';
+    const L4='uzaklık = '+fmt(sv+cur.emn,2)+' m';
+    const lines=[L1,L2,L3,L4];
+    const tw=Math.max(...lines.map(l=>l.length))*6.4+14, th=lines.length*15+8;
+    let bx=xp+12; if(bx+tw>W-PRx) bx=xp-tw-12;
+    let by=Yp(ev2)-th/2; if(by<axisY-30) by=axisY-30; if(by+th>H-PBot) by=H-PBot-th;
+    $('pTipBg').setAttribute('x',bx); $('pTipBg').setAttribute('y',by);
+    $('pTipBg').setAttribute('width',tw); $('pTipBg').setAttribute('height',th);
+    let tt='';
+    lines.forEach((l,i)=>{tt+='<tspan x="'+(bx+7)+'" y="'+(by+15+i*15)+'">'+l+'</tspan>';});
+    $('pTipT').innerHTML=tt;
+  };
+  pHit.addEventListener('mousemove',pmove);
+  pHit.addEventListener('touchstart',pmove,{passive:true});  /* tek dokunuşta oku; sürükleme kaydırmaya bırakıldı */
+  pHit.addEventListener('mouseleave',()=>{$('pCur').style.display='none';});
+}
+
+/* ================= DROPDOWN + BAŞLAT ================= */
+const selBolge=$('selBolge'), selHat=$('selHat');
+const bolgeler=[...new Set(HAT.map(r=>r.b))].sort();
+bolgeler.forEach(b=>{const o=document.createElement('option');o.value=b;o.textContent=b+'. Bölge';selBolge.appendChild(o);});
+function displayName(n){return n.replace(/^\d\.bölge\s*/,'');}
+function fillHat(){
+  const b=+selBolge.value, prev=selHat.value, prevName=HAT[+prev]?displayName(HAT[+prev].n):null;
+  selHat.innerHTML='';
+  HAT.forEach((r,i)=>{if(r.b!==b)return;const o=document.createElement('option');o.value=i;o.textContent=displayName(r.n);selHat.appendChild(o);});
+  if(prevName)for(const o of selHat.options){if(displayName(HAT[+o.value].n)===prevName){selHat.value=o.value;break;}}
+}
+function prTarih(){ const d=new Date(); $('prDate').textContent='Rapor tarihi: '+d.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+prTarih(); window.addEventListener('beforeprint',prTarih);
+['inAmax','inEmniyet','inTA','inTB','inNameA','inNameB','selHedef','selTertip','inRx'].forEach(id=>{$(id).addEventListener('input',hesapla);$(id).addEventListener('change',hesapla);});
+selHat.addEventListener('change',hesapla);
+selBolge.addEventListener('change',()=>{fillHat();hesapla();});
+
+selBolge.value=bolgeler.includes(4)?4:bolgeler[0];
+fillHat();
+for(const o of selHat.options){if(HAT[+o.value].n.includes('1x3/0 (beton zincir)')){selHat.value=o.value;break;}}
+hesapla();
+</script>
+</body>
+</html>
