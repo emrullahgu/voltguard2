@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İki Misli Buz Yükü — İletken Kopma Hesabı Simülatörü</title>
+<style>
+  :root{
+    --ink:#10221c; --frost:#eef4f3; --paper:#fbfdfc;
+    --ice:#3a7ca5; --ice-dk:#2c5f7e; --ice-lt:#d6e8f1;
+    --warn:#b5432b; --ok:#1f7a52; --line:#cbdad6;
+    --num:#1d4ed8; --shadow:0 1px 2px rgba(16,34,28,.06),0 8px 24px rgba(16,34,28,.06);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:
+      radial-gradient(1200px 600px at 80% -10%, #e7f1f5 0%, transparent 60%),
+      var(--frost);
+    color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.45;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 64px}
+  header.top{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;border-bottom:2px solid var(--ice-dk);padding-bottom:18px;margin-bottom:24px}
+  .title h1{margin:0;font-size:1.5rem;letter-spacing:-.01em}
+  .title .sub{font-size:.82rem;color:#557; letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.74rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ice-dk)}
+  .eyebrow .dot{width:9px;height:9px;border-radius:50%;background:var(--ice);box-shadow:0 0 0 4px var(--ice-lt)}
+  .brand{text-align:right;font-size:.78rem;color:#5a6b67}
+  .brand b{display:block;color:var(--ink);font-size:.92rem}
+
+  .grid{display:grid;grid-template-columns:1.05fr 1fr;gap:22px;align-items:start}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .card h2{margin:0;padding:14px 18px;font-size:.95rem;background:linear-gradient(180deg,#f4f9f8,#eaf2f1);border-bottom:1px solid var(--line);letter-spacing:.02em}
+  .card .body{padding:18px}
+
+  .field{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed #e2ecea}
+  .field:last-child{border-bottom:0}
+  .field label{font-size:.9rem}
+  .field label small{display:block;color:#7a8784;font-size:.74rem;letter-spacing:.02em}
+  .field input,.field select{font:inherit;font-size:.92rem;padding:7px 10px;border:1px solid var(--line);border-radius:8px;width:130px;text-align:right;background:#fff;color:var(--num);font-weight:600}
+  .field select{text-align:left;color:var(--ink);width:160px}
+  .field.ro{opacity:.92}
+  .field .auto{font-size:.92rem;font-weight:600;color:#54635f;padding:7px 10px;border:1px dashed var(--line);border-radius:8px;background:#f3f7f6;min-width:130px;text-align:right;font-variant-numeric:tabular-nums}
+  .field input:focus,.field select:focus{outline:2px solid var(--ice);outline-offset:1px;border-color:var(--ice)}
+
+  .seg{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ice-dk);margin:14px 0 4px;padding-top:6px}
+  .seg:first-child{margin-top:0;padding-top:0}
+
+  .resultbar{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:12px;margin-bottom:18px;font-weight:600}
+  .resultbar.ok{background:#e7f6ee;border:1px solid #b6e2cb;color:var(--ok)}
+  .resultbar.no{background:#fbeae6;border:1px solid #f0c4b8;color:var(--warn)}
+  .resultbar .big{font-size:1.35rem;letter-spacing:-.01em}
+  .resultbar .ic{font-size:1.5rem;line-height:1}
+
+  table.out{width:100%;border-collapse:collapse;font-size:.9rem}
+  table.out td{padding:8px 6px;border-bottom:1px solid #eef4f2}
+  table.out td:first-child{color:#54635f}
+  table.out td:last-child{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+  table.out tr.key td:last-child{color:var(--ice-dk);font-size:1.02rem}
+  table.out tr.cmp td:last-child{font-size:1.05rem}
+
+  .viz{margin-top:8px}
+  svg{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,#f7fbfc,#eef5f7)}
+
+  .stepbox{margin-top:18px;font-size:.84rem;color:#445}
+  .stepbox summary{cursor:pointer;font-weight:700;color:var(--ice-dk);letter-spacing:.02em}
+  .stepbox table{width:100%;border-collapse:collapse;margin-top:10px;font-variant-numeric:tabular-nums}
+  .stepbox table td{padding:5px 6px;border-bottom:1px solid #eef4f2}
+  .stepbox table td:last-child{text-align:right}
+  .casechip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.74rem;font-weight:700;background:var(--ice-lt);color:var(--ice-dk);margin-left:8px}
+
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  button{font:inherit;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid var(--ice-dk);background:var(--ice-dk);color:#fff;cursor:pointer}
+  button.ghost{background:#fff;color:var(--ice-dk)}
+  button:hover{filter:brightness(1.06)}
+  .note{font-size:.78rem;color:#6a7773;margin-top:14px;line-height:1.5}
+  .foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:.76rem;color:#6a7773;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media print{
+    @page{size:A4 portrait;margin:8mm}
+    html,body{background:#fff}
+    .wrap{max-width:none;padding:0;margin:0}
+    .brand{display:none !important}
+    .toolbar{display:none !important}
+    .note{display:none}
+    .stepbox{display:none}
+    button{display:none}
+
+    header.top{padding-bottom:6px;margin-bottom:8px;border-bottom:2px solid #333;break-after:avoid}
+    .title h1{font-size:1.05rem}
+    .title .sub{font-size:.62rem}
+    .eyebrow{font-size:.6rem}
+    .eyebrow .dot{box-shadow:none}
+
+    .grid{grid-template-columns:1fr 1fr;gap:8px;align-items:start}
+    .card{box-shadow:none;border:1px solid #aaa;border-radius:6px;break-inside:avoid}
+    .card h2{background:#eee;padding:5px 9px;font-size:.74rem}
+    .card .body{padding:7px 9px}
+
+    .seg{font-size:.58rem;margin:5px 0 2px;padding-top:2px}
+    .field{padding:2px 0}
+    .field label{font-size:.66rem;line-height:1.1}
+    .field label small{font-size:.56rem;line-height:1}
+    .field input,.field select,.field .auto{font-size:.66rem;padding:2px 6px}
+
+    table.out{font-size:.66rem}
+    table.out td{padding:3px 4px}
+    .resultbar{padding:8px 10px;margin-bottom:8px}
+    .resultbar .big{font-size:.95rem}
+    .resultbar .ic{font-size:1rem}
+
+    .viz{margin-top:4px}
+    svg{border:1px solid #aaa;max-height:185px}
+
+    .foot{margin-top:8px;padding-top:6px;font-size:.6rem}
+
+    .wrap{zoom:0.92}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="title">
+      <div class="eyebrow"><span class="dot"></span> ENH · TEDAŞ İletken Kopma Kontrolü</div>
+      <h1>İki Misli Buz Yükü Hesabı Simülatörü</h1>
+      <div class="sub">Broken-conductor / double ice-load tension check</div>
+    </div>
+    <div class="brand">
+      <b>Baki SONAY</b>
+      Elektrik-Elektronik Mühendisi<br>Trabzon
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- ===== INPUTS ===== -->
+    <section class="card">
+      <h2>Giriş Değerleri</h2>
+      <div class="body">
+        <div class="seg">İletken &amp; Bölge</div>
+        <div class="field">
+          <label>İletken Tertibi<small>3X kesitli iletken tipi</small></label>
+          <select id="cond"></select>
+        </div>
+        <div class="field">
+          <label>Buz Yükü Bölgesi<small>k katsayısını belirler</small></label>
+          <select id="zone"></select>
+        </div>
+
+        <div class="seg">Açıklık &amp; Direk</div>
+        <div class="field"><label>a₁ (m)<small>1. ölçü açıklığı</small></label><input id="a1" type="number" step="0.01" value="385.72"></div>
+        <div class="field"><label>a₂ (m)<small>2. ölçü açıklığı</small></label><input id="a2" type="number" step="0.01" value="98.92"></div>
+        <div class="field"><label>h<sub>proje</sub> (m)<small>direk proje yüksekliği</small></label><input id="hproje" type="number" step="0.1" value="63.6"></div>
+        <div class="field"><label>Direk No<small>etiket — hesabı etkilemez</small></label><input id="pole" type="number" step="1" value="125" style="color:#10221c"></div>
+
+        <div class="seg">İletken &amp; Bölge Verileri (otomatik)</div>
+        <div class="field ro"><label>d (mm)<small>iletken dış çapı</small></label><span class="auto" id="d_d">—</span></div>
+        <div class="field ro"><label>p₀ (kg/m)<small>iletken birim ağırlık</small></label><span class="auto" id="d_p0">—</span></div>
+        <div class="field ro"><label>T₁ (kg)<small>başlangıç çekmesi</small></label><span class="auto" id="d_T1">—</span></div>
+        <div class="field ro"><label>T<sub>kop</sub> (kg)<small>kopma kuvveti</small></label><span class="auto" id="d_Tkop">—</span></div>
+        <div class="field ro"><label>p<sub>b</sub> = k√d (kg/m)<small>buz yükü</small></label><span class="auto" id="d_pb">—</span></div>
+        <div class="field ro"><label>p₁ = p₀+p<sub>b</sub> (kg/m)<small></small></label><span class="auto" id="d_p1">—</span></div>
+        <div class="field ro"><label>2p<sub>b</sub> (kg/m)<small>iki misli buz</small></label><span class="auto" id="d_2pb">—</span></div>
+        <div class="field ro"><label>p<sub>n</sub> = 2p<sub>b</sub>+p₀ (kg/m)<small></small></label><span class="auto" id="d_pn">—</span></div>
+        <div class="field ro"><label>a<sub>ort</sub> = (a₁+a₂)/2 (m)<small>ortalama açıklık</small></label><span class="auto" id="d_aort">—</span></div>
+
+        <div class="seg">Sabitler (otomatik)</div>
+        <div class="field ro"><label>tₙ (°C)<small>buz yükü sıcaklığı — sabit</small></label><span class="auto" id="tn">−5</span></div>
+        <div class="field ro"><label>t₁ (°C)<small>başlangıç sıcaklığı — sabit</small></label><span class="auto" id="t1">−5</span></div>
+        <div class="field ro"><label>E (kg/mm²)<small>elastisite modülü — sabit</small></label><span class="auto" id="E">8000</span></div>
+        <div class="field ro"><label>β (1/°C)<small>iletkenden otomatik</small></label><span class="auto" id="beta">—</span></div>
+
+        <div class="toolbar">
+          <button onclick="calc()">Hesapla</button>
+          <button class="ghost" onclick="resetAll()">Sıfırla</button>
+          <button class="ghost" onclick="saveHTML()">Kaydet</button>
+          <button class="ghost" onclick="loadState()">Yükle</button>
+          <button class="ghost" onclick="window.print()">Yazdır</button>
+        </div>
+        <p class="note">Yöntem, TEDAŞ ENH "İki Misli Buz Yükü Hesabı" Excel modelini birebir takip eder: değişik haller denkleminden çıkan 3. derece denklemin (Cardano) çözümü ile T<sub>n2b</sub> bulunur, ardından h<sub>b</sub> = |(0,7·T<sub>kop</sub> − T<sub>n2b</sub>)/p<sub>n</sub>| hesaplanır. Bu hesaplanan değer, direk tepe noktası ile çeltik arasındaki gerçek mesafe olan h<sub>proje</sub> ile karşılaştırılır (h<sub>b</sub> ≥ h<sub>proje</sub> ise kurtarır).</p>
+      </div>
+    </section>
+
+    <!-- ===== RESULTS ===== -->
+    <section class="card">
+      <h2>Sonuç</h2>
+      <div class="body">
+        <div id="verdict" class="resultbar ok"><span class="ic">✓</span><div><div class="big" id="verdictTxt">—</div><div id="verdictSub" style="font-weight:400;font-size:.85rem"></div></div></div>
+
+        <table class="out">
+          <tr><td>Buz yükü p<sub>b</sub> = k·√d</td><td><span id="r_pb">—</span> kg/m</td></tr>
+          <tr><td>Ortalama açıklık a<sub>ort</sub></td><td><span id="r_aort">—</span> m</td></tr>
+          <tr><td>p₁ = p₀ + p<sub>b</sub></td><td><span id="r_p1">—</span> kg/m</td></tr>
+          <tr><td>2p<sub>b</sub> (yalnız iki misli buz)</td><td><span id="r_2pb">—</span> kg/m</td></tr>
+          <tr><td>p<sub>n</sub> = 2p<sub>b</sub> + p₀</td><td><span id="r_pn">—</span> kg/m</td></tr>
+          <tr class="key"><td>İki misli buz çekmesi T<sub>n2b</sub></td><td><span id="r_tn">—</span> kg</td></tr>
+          <tr><td>0,7·T<sub>kop</sub> (emniyet sınırı)</td><td><span id="r_07">—</span> kg</td></tr>
+          <tr class="cmp"><td>Hesaplanan değer h<sub>b</sub></td><td><span id="r_hb">—</span> m</td></tr>
+          <tr class="cmp"><td>h<sub>proje</sub></td><td><span id="r_hp">—</span> m</td></tr>
+        </table>
+
+        <div class="viz"><svg id="viz" viewBox="0 0 560 420" preserveAspectRatio="xMidYMid meet"></svg></div>
+
+        <details class="stepbox">
+          <summary>Ara hesaplar — 3. derece denklem çözümü <span class="casechip" id="caseChip">—</span></summary>
+          <table id="steps"></table>
+        </details>
+      </div>
+    </section>
+  </div>
+
+  <div class="foot">
+    <span>İki Misli Buz Yükü — İletken Kopma Hesabı · ENH</span>
+    <span>Orijinal Excel yöntemi: H. Murat Azıklı · HTML simülatör: Sonay Enerji</span>
+  </div>
+</div>
+
+<script>
+// ---- Conductor reference table (Excel V17:AB22) ----
+const COND = {
+  "SW":  {p0:0.108,  Tkop:1023, beta:1.92e-5, T1:342.54,  S:31.14,  d:7.14},
+  "1/0": {p0:0.2159, Tkop:1940, beta:1.91e-5, T1:686.18,  S:62.38,  d:10.11},
+  "3/0": {p0:0.3429, Tkop:3030, beta:1.91e-5, T1:1091.53, S:99.23,  d:12.75},
+  "266": {p0:0.5454, Tkop:5100, beta:1.89e-5, T1:1729.2,  S:157.2,  d:16.28},
+  "477": {p0:0.9749, Tkop:8820, beta:1.89e-5, T1:2248.8,  S:281.1,  d:21.8 }
+};
+// ---- Ice zone -> k (Excel Y7:Z12) ----
+const ZONE = {1:0.0, 2:0.2, 3:0.3, 4:0.5, 5:1.2};
+
+function initUI(){
+  const cs = document.getElementById('cond');
+  const csSaved = cs.querySelector('option[selected]')?.value || cs.value || "3/0";
+  if(!cs.options.length){
+    Object.keys(COND).sort((a,b)=>COND[a].S-COND[b].S).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k+"  ("+COND[k].S+" mm²)";cs.appendChild(o);});
+  }
+  cs.value = csSaved;
+  const zs = document.getElementById('zone');
+  const zsSaved = zs.querySelector('option[selected]')?.value || zs.value || "3";
+  if(!zs.options.length){
+    Object.keys(ZONE).forEach(z=>{const o=document.createElement('option');o.value=z;o.textContent="Bölge "+z+"  (k="+ZONE[z]+")";zs.appendChild(o);});
+  }
+  zs.value = zsSaved;
+}
+
+// ---- Fixed constants (Excel: E=8000, tn=-5, t1=-5) ----
+const E_CONST = 8000, TN_CONST = -5, T1_CONST = -5;
+
+const num = id => {const value=String(document.getElementById(id).value).trim().replace(',','.');return value!==''&&/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(value)?Number(value):NaN;};
+const fmt = (x,d=3)=> (isFinite(x)? x.toLocaleString('tr-TR',{minimumFractionDigits:d,maximumFractionDigits:d}) : "—");
+
+// signed cube root
+const cbrt = x => Math.cbrt(x);
+
+function solveCubic(A,B,C,D){
+  // returns the real root used by Excel methodology + intermediate values
+  const F = ((3*C/A) - (B*B/(A*A)))/3;
+  const G = ((2*B**3/A**3) - (9*B*C/(A*A)) + (27*D/A))/27;
+  const H = (G*G/4) + (F**3/27);
+  let root, kase, detail={F,G,H};
+  if (Math.abs(F)<1e-12 && Math.abs(G)<1e-12 && Math.abs(H)<1e-12){
+    kase = "Durum No.3";
+    root = -1*Math.cbrt(D/A);
+  } else if (H>0){
+    kase = "Durum No.1";
+    const R = -(G/2)+Math.sqrt(H); const S = cbrt(R);
+    const T = -(G/2)-Math.sqrt(H); const U = cbrt(T);
+    root = S + U - (B/(3*A));
+    detail.R=R; detail.S=S; detail.T=T; detail.U=U;
+  } else {
+    kase = "Durum No.2";
+    const I = Math.sqrt((G*G/4) - H);
+    const J = cbrt(I);
+    const K = Math.acos(-(G/(2*I)));
+    const M = Math.cos(K/3);
+    const N = Math.sqrt(3)*Math.sin(K/3);
+    const P = -(B/(3*A));
+    root = 2*J*M + P;
+    detail.I=I; detail.J=J; detail.K=K; detail.M=M; detail.N=N; detail.P=P;
+  }
+  return {root,kase,detail};
+}
+
+let last = null;
+
+function calc(){
+  const c = COND[document.getElementById('cond').value];
+  const k = ZONE[document.getElementById('zone').value];
+  const a1=num('a1'), a2=num('a2'), hproje=num('hproje');
+  if(!c||!Number.isFinite(k)||![a1,a2,hproje].every(Number.isFinite)||a1<=0||a2<=0||hproje<0){
+    last=null;document.documentElement.dataset.vgInvalid='true';
+    document.getElementById('verdict').className='resultbar no';
+    document.getElementById('verdictTxt').textContent='GİRDİLERİ KONTROL EDİN';
+    document.getElementById('verdictSub').textContent='Açıklıklar pozitif; proje yüksekliği sıfır veya daha büyük olmalı.';
+    document.querySelectorAll('.out span').forEach(el=>{el.textContent='—';});
+    document.getElementById('steps').textContent='';document.getElementById('viz').textContent='';return;
+  }
+  document.documentElement.dataset.vgInvalid='false';
+  const tn=TN_CONST, t1=T1_CONST, E=E_CONST;
+  const {p0,Tkop,beta,T1,S,d} = c;
+
+  document.getElementById('beta').textContent = beta.toFixed(7).replace('.', ',');
+
+  const pb   = k*Math.sqrt(d);
+  const aort = (a1+a2)/2;
+  const p1   = p0 + pb;
+  const p2b  = 2*pb;
+  const pn   = p2b + p0;
+
+  // İletken & bölge verileri (otomatik gelen değerler)
+  const setT = (id,v)=>{const el=document.getElementById(id); if(el) el.textContent=v;};
+  setT('d_d',   fmt(d,2));
+  setT('d_p0',  fmt(p0,4));
+  setT('d_T1',  fmt(T1,1));
+  setT('d_Tkop',fmt(Tkop,0));
+  setT('d_pb',  fmt(pb,4));
+  setT('d_p1',  fmt(p1,4));
+  setT('d_2pb', fmt(p2b,4));
+  setT('d_pn',  fmt(pn,4));
+  setT('d_aort',fmt(aort,2));
+
+  // cubic coefficients (Excel A28,E28,I28 -> B = E28-I28)
+  const A28 = (aort*aort*E*S*pn*pn)/24;
+  const E28 = (aort*aort*E*S*p1*p1)/(24*T1*T1);
+  const I28 = T1 + (beta*E*S*(tn-t1));
+  const Bco = E28 - I28;
+  const Dco = -A28;
+
+  const sol = solveCubic(1, Bco, 0, Dco);
+  const Tn2b = sol.root;
+
+  const lim07 = 0.7*Tkop;
+  const hb = Math.abs((lim07 - Tn2b)/pn);
+  const pass = Number.isFinite(Tn2b) && Tn2b<=lim07 && hb>=hproje;
+
+  // fill outputs
+  document.getElementById('r_pb').textContent   = fmt(pb,4);
+  document.getElementById('r_aort').textContent = fmt(aort,2);
+  document.getElementById('r_p1').textContent   = fmt(p1,4);
+  document.getElementById('r_2pb').textContent  = fmt(p2b,4);
+  document.getElementById('r_pn').textContent   = fmt(pn,4);
+  document.getElementById('r_tn').textContent   = fmt(Tn2b,2);
+  document.getElementById('r_07').textContent   = fmt(lim07,0);
+  document.getElementById('r_hb').textContent   = fmt(hb,2);
+  document.getElementById('r_hp').textContent   = fmt(hproje,1);
+
+  const vb = document.getElementById('verdict');
+  vb.className = 'resultbar '+(pass?'ok':'no');
+  vb.querySelector('.ic').textContent = pass?'✓':'✕';
+  document.getElementById('verdictTxt').textContent =
+    pass ? 'İKİ MİSLİ BUZ YÜKÜ HESABINI KURTARIYOR'
+         : 'İKİ MİSLİ BUZ YÜKÜ HESABINI KURTARMIYOR';
+  document.getElementById('verdictSub').textContent =
+    Tn2b>lim07 ? 'İki misli buz çekmesi 0,7·Tkop emniyet sınırını aşıyor; yükseklik kıyası uygunluk sağlamaz.' : 'h_b = '+fmt(hb,2)+' m  '+(pass?'≥':'<')+'  h_proje = '+fmt(hproje,1)+' m';
+
+  document.getElementById('caseChip').textContent = sol.kase;
+  renderSteps(sol, {A28,E28,I28,Bco,Dco,Tn2b});
+  drawViz(hb, hproje, pass, aort);
+
+  last = {pb,aort,p1,p2b,pn,Tn2b,lim07,hb,hproje,pass};
+}
+
+function renderSteps(sol,v){
+  const d = sol.detail;
+  const rows = [
+    ['A','1'],
+    ['B = E28 − I28', fmt(v.Bco,6)],
+    ['C','0'],
+    ['D = −A28', fmt(v.Dco,2)],
+    ['F = (3C/A − B²/A²)/3', fmt(d.F,4)],
+    ['G = (2B³/A³ − 9BC/A² + 27D/A)/27', fmt(d.G,2)],
+    ['H = G²/4 + F³/27', d.H.toExponential(4)],
+  ];
+  if(sol.kase==='Durum No.1'){
+    rows.push(['R = −G/2 + √H', fmt(d.R,2)],['S = ∛R', fmt(d.S,4)],
+              ['T = −G/2 − √H', fmt(d.T,2)],['U = ∛T', fmt(d.U,4)],
+              ['T_n2b = S + U − B/(3A)', fmt(v.Tn2b,4)]);
+  } else if(sol.kase==='Durum No.2'){
+    rows.push(['I = √(G²/4 − H)', fmt(d.I,2)],['J = ∛I', fmt(d.J,4)],
+              ['K = acos(−G/2I)', fmt(d.K,4)],['M = cos(K/3)', fmt(d.M,4)],
+              ['T_n2b = 2·J·M − B/(3A)', fmt(v.Tn2b,4)]);
+  } else {
+    rows.push(['T_n2b = −∛(D/A)', fmt(v.Tn2b,4)]);
+  }
+  document.getElementById('steps').innerHTML =
+    rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('');
+}
+
+function drawViz(hb, hproje, pass, aort){
+  const a1 = num('a1'), a2 = num('a2');
+  const W=560,H=420,padT=20;
+  const green='#2bbb2b', grayLine='#b9b9b9', whiteLine='#ffffff', sag = pass?'#1f7a52':'#b5432b';
+  const blue='#1f3fd6';
+
+  const tot=(a1+a2)||1;
+  const xP3 = W-70;
+  const xspan = 300;
+  const xP1 = xP3 - xspan;
+  const xP2 = xP1 + xspan*(a1/tot);
+
+  const xv = xP1 - 110;
+  const yv = padT + 300;
+  const yTop = padT + 90;
+
+  const A = (yTop - yv)/Math.pow(xP3 - xv, 2);
+  const yMain = x => A*Math.pow(x-xv,2) + yv;
+
+  const ayP2=yMain(xP2), ayP3=yMain(xP3);
+  const ayP1 = yMain(xP1) + 55;
+  const xvSec = xv, yvSec = yv;
+
+  function path(fn,xa,xb){const N=72;let d=`M ${xa.toFixed(1)} ${fn(xa).toFixed(1)}`;
+    for(let i=1;i<=N;i++){const x=xa+(xb-xa)*(i/N);d+=` L ${x.toFixed(1)} ${fn(x).toFixed(1)}`;}return d;}
+
+  const greenPath = path(yMain, xv-26, xP3);
+  const whiteFn = x => yMain(x) + 150 + 0.10*(x-xv);
+  const whitePath = path(whiteFn, xv-26, W-20);
+
+  const baseY = H-16;
+  const basePath = `M ${(xP1-30).toFixed(1)} ${baseY} L ${(W-20).toFixed(1)} ${baseY}`;
+  const blueBot = ay => ay+30;
+
+  const dx12=xP2-xP1, depth12=46;
+  const y12 = x => { const t=(x-xP1)/dx12; return ayP1+(ayP2-ayP1)*t + 4*depth12*t*(1-t); };
+  const path12 = (()=>{const N=48;let d=`M ${xP1.toFixed(1)} ${ayP1.toFixed(1)}`;
+    for(let i=1;i<=N;i++){const x=xP1+dx12*(i/N);d+=` L ${x.toFixed(1)} ${y12(x).toFixed(1)}`;}return d;})();
+  let xv12=xP1, lo12=ayP1; for(let i=1;i<=60;i++){const x=xP1+dx12*(i/60),y=y12(x); if(y>lo12){lo12=y;xv12=x;}}
+
+  const b2=blueBot(ayP2), b3=blueBot(ayP3);
+  const kinkX = xP1 + (xP2-xP1)*0.62;
+  const kinkY = baseY - (baseY-b2)*0.42;
+  const blackPath = `M ${xP1.toFixed(1)} ${baseY} `
+                  + `L ${kinkX.toFixed(1)} ${kinkY.toFixed(1)} `
+                  + `L ${xP2.toFixed(1)} ${b2.toFixed(1)} `
+                  + `L ${xP3.toFixed(1)} ${b3.toFixed(1)}`;
+
+  const svg = document.getElementById('viz');
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+
+  const pole = (x, ay, lab, bottom) => `
+    <rect x="${x-2.5}" y="${ay-2}" width="5" height="${(bottom||(H-24))-(ay-2)}" fill="#fafafa" stroke="#9aa7a3" stroke-width="0.7"/>
+    <line x1="${x}" y1="${ay-6}" x2="${x}" y2="${ay+30}" stroke="${blue}" stroke-width="4"/>
+    <text x="${x-9}" y="${ay-8}" font-size="10" font-weight="700" fill="#54635f">${lab}</text>`;
+
+  svg.innerHTML = `
+    <path d="${basePath}" fill="none" stroke="${grayLine}" stroke-width="2" stroke-linejoin="round"/>
+    <path d="${blackPath}" fill="none" stroke="#1a1a1a" stroke-width="1.6" stroke-linejoin="round"/>
+
+    ${pole(xP1, ayP1, '1', baseY)}
+    ${pole(xP2, ayP2, '2', baseY)}
+    ${pole(xP3, ayP3, '3', baseY)}
+
+    <path d="${greenPath}" fill="none" stroke="${green}"    stroke-width="3.5" stroke-linecap="round"/>
+    <path d="${path12}" fill="none" stroke="#0f8a4f" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="0"/>
+    <circle cx="${xP1}" cy="${ayP1}" r="3" fill="#0f8a4f"/>
+    <circle cx="${xP2}" cy="${ayP2}" r="3" fill="${green}"/>
+    <circle cx="${xP3}" cy="${ayP3}" r="3" fill="${green}"/>
+    <circle cx="${xv12}" cy="${lo12}" r="3.5" fill="#0f8a4f"/>
+    <circle cx="${xvSec}" cy="${yvSec}" r="4" fill="${green}"/>
+    <text x="${xvSec}" y="${yvSec+18}" font-size="10" fill="#1c7a1c" font-weight="700" text-anchor="middle">çeltik</text>
+
+    <line x1="${xvSec}" y1="${yTop}" x2="${xvSec}" y2="${yvSec}" stroke="#b5852b" stroke-width="1.8"/>
+    <polygon points="${xvSec-4},${yTop+9} ${xvSec+4},${yTop+9} ${xvSec},${yTop}" fill="#b5852b"/>
+    <polygon points="${xvSec-4},${yvSec-9} ${xvSec+4},${yvSec-9} ${xvSec},${yvSec}" fill="#b5852b"/>
+    <line x1="${xvSec}" y1="${yTop}" x2="${xP3}" y2="${yTop}" stroke="#b5852b" stroke-width="0.7" stroke-dasharray="3 4" opacity=".45"/>
+    <text x="${xvSec-12}" y="${(yTop+yvSec)/2}" font-size="12" fill="#8a6310" font-weight="700"
+          text-anchor="middle" transform="rotate(-90 ${xvSec-12} ${(yTop+yvSec)/2})">h_proje = ${fmt(hproje,1)} m</text>
+
+    <line x1="${xP1}" y1="${H-12}" x2="${xP2}" y2="${H-12}" stroke="#54635f" stroke-width="1.2"/>
+    <line x1="${xP2}" y1="${H-12}" x2="${xP3}" y2="${H-12}" stroke="#54635f" stroke-width="1.2"/>
+    <line x1="${xP1}" y1="${H-17}" x2="${xP1}" y2="${H-7}" stroke="#54635f"/>
+    <line x1="${xP2}" y1="${H-17}" x2="${xP2}" y2="${H-7}" stroke="#54635f"/>
+    <line x1="${xP3}" y1="${H-17}" x2="${xP3}" y2="${H-7}" stroke="#54635f"/>
+    <text x="${(xP1+xP2)/2}" y="${H-2}" font-size="11" fill="#54635f" text-anchor="middle">a₁=${fmt(a1,0)}</text>
+    <text x="${(xP2+xP3)/2}" y="${H-2}" font-size="11" fill="#54635f" text-anchor="middle">a₂=${fmt(a2,0)}</text>
+
+    <text x="${xvSec-12}" y="${yvSec+34}" font-size="11" fill="${sag}" font-weight="700"
+          text-anchor="middle">hb = ${fmt(hb,1)} m (hesap)</text>
+    <text x="${xvSec-12}" y="${yvSec+48}" font-size="9" fill="#6a7773" text-anchor="middle">hb ≥ h_proje ⇒ ${pass?'kurtarıyor':'kurtarmıyor'}</text>
+
+    <rect x="${W-220}" y="${padT-6}" width="200" height="20" rx="10" fill="${pass?'#e7f6ee':'#fbeae6'}" stroke="${sag}"/>
+    <text x="${W-120}" y="${padT+8}" font-size="11.5" font-weight="700" fill="${sag}" text-anchor="middle">${pass?'h ≥ h_proje · KURTARIYOR ✓':'h < h_proje · KURTARMIYOR ✕'}</text>
+  `;
+}
+
+document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',calc));
+
+function resetAll(){
+  document.getElementById('cond').value="3/0";
+  document.getElementById('zone').value="3";
+  ['a1','a2','hproje','pole'].forEach((id,i)=>{
+    document.getElementById(id).value=[385.72,98.92,63.6,125][i];
+  });
+  calc();
+}
+
+const FIELDS=['cond','zone','a1','a2','hproje','pole'];
+
+function saveHTML(){
+  FIELDS.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el.tagName==='SELECT'){
+      Array.from(el.options).forEach(o=>{
+        if(o.value===el.value) o.setAttribute('selected','selected');
+        else o.removeAttribute('selected');
+      });
+    } else {
+      el.setAttribute('value', el.value);
+    }
+  });
+  const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  const pole=document.getElementById('pole').value||'';
+  a.download='iki_misli_buz_yuku_'+(pole?('direk_'+pole):'kayit')+'.html';
+  a.click();
+}
+
+function loadState(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.html,.htm,.json';
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+    r.onload=()=>{
+      try{
+        const txt=r.result;
+        if(f.name.toLowerCase().endsWith('.json')){
+          const s=JSON.parse(txt);
+          Object.keys(s).forEach(id=>{if(document.getElementById(id))document.getElementById(id).value=s[id];});
+        } else {
+          const doc=new DOMParser().parseFromString(txt,'text/html');
+          FIELDS.forEach(id=>{
+            const src=doc.getElementById(id); const dst=document.getElementById(id);
+            if(!src||!dst) return;
+            if(src.tagName==='SELECT'){
+              const sel=src.querySelector('option[selected]')||src.querySelector('option');
+              if(sel) dst.value=sel.value;
+            } else {
+              const v=src.getAttribute('value'); if(v!==null) dst.value=v;
+            }
+          });
+        }
+        calc();
+      }catch(err){alert('Dosya okunamadı.');}
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+initUI();
+calc();
+</script>
+</body>
+</html>

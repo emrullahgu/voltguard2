@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Adım Gerilimi Simülatörü | VoltGuard</title><meta name="description" content="Toprak arızası çevresindeki potansiyel ve adım gerilimini keşfedin."><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#0a1628"><link rel="canonical" href="https://voltguard.com.tr/araclar/adim-gerilimi/"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="Adım Gerilimi Simülatörü | VoltGuard"><meta property="og:description" content="Toprak arızası çevresindeki potansiyel ve adım gerilimini keşfedin."><meta property="og:url" content="https://voltguard.com.tr/araclar/adim-gerilimi/"><meta property="og:image" content="https://voltguard.com.tr/araclar/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/voltguard-icon-64.png" type="image/png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Adım Gerilimi Simülatörü","url":"https://voltguard.com.tr/araclar/adim-gerilimi/","description":"Toprak arızası çevresindeki potansiyel ve adım gerilimini keşfedin.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":0,"priceCurrency":"TRY"},"publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VoltGuard","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Adım Gerilimi Simülatörü","item":"https://voltguard.com.tr/araclar/adim-gerilimi/"}]}]}</script><link rel="stylesheet" href="../shared/tool-shell.css"><link rel="stylesheet" href="../shared/export.css">
+
+
+    
+    <style>
+        #vg-tool-workspace {
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #111116;
+            color: #fff;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        :where(#vg-tool-workspace) h3 {
+            margin: 5px 0;
+            color: #e74c3c;
+            text-align: center;
+            font-size: 18px;
+        }
+        :where(#vg-tool-workspace) .subtitle {
+            color: #aaa;
+            font-size: 12px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        :where(#vg-tool-workspace) .container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #1e1e24;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 450px;
+            box-sizing: border-box;
+        }
+        :where(#vg-tool-workspace) .canvas-container {
+            width: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+        :where(#vg-tool-workspace) canvas {
+            background-color: #25252d;
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.7);
+            width: 100%;
+            max-width: 380px;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            touch-action: none;
+        }
+        :where(#vg-tool-workspace) .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+        :where(#vg-tool-workspace) .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        :where(#vg-tool-workspace) label {
+            font-size: 13px;
+            color: #bdc3c7;
+            font-weight: bold;
+        }
+        :where(#vg-tool-workspace) input[type="range"] {
+            width: 100%;
+            accent-color: #e74c3c;
+            height: 25px;
+        }
+        :where(#vg-tool-workspace) .value-display {
+            font-size: 13px;
+            color: #f1c40f;
+            font-weight: bold;
+            text-align: right;
+        }
+        :where(#vg-tool-workspace) .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: #111116;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+        :where(#vg-tool-workspace) .metric-box {
+            display: flex;
+            flex-direction: column;
+        }
+        :where(#vg-tool-workspace) .metric-label {
+            font-size: 10px;
+            color: #888;
+            text-transform: uppercase;
+        }
+        :where(#vg-tool-workspace) .metric-value {
+            font-size: 15px;
+            font-weight: bold;
+            color: #2ecc71;
+        }
+        :where(#vg-tool-workspace) .danger { color: #ff3333 !important; }
+        :where(#vg-tool-workspace) .highlight { color: #f1c40f !important; }
+        
+        :where(#vg-tool-workspace) .info-panel {
+            background: #15151a;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #ccc;
+        }
+        :where(#vg-tool-workspace) .download-btn {
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            -webkit-tap-highlight-color: transparent;
+        }
+        :where(#vg-tool-workspace) .download-btn:active {
+            background-color: #a32e22;
+        }
+    </style>
+<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=bd7e46c3cd10"><script src="/js/vg-shell.js?v=a3ccf745026f" defer></script><script src="/js/voltguard-auth.js?v=5ea8a8c73e4b" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=6609af196d62"></head>
+<body data-vg-tool="adim-gerilimi" data-vg-title="Adım Gerilimi Simülatörü" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+<header data-vg-no-print class="vg-header doc-header" id="vgHeader">
+  <div class="vg-header__bar vg-wrap">
+    <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+      <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+      <span class="vg-brand__copy" aria-hidden="true">
+        <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+        <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+      </span>
+    </a>
+    <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+    <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+      <ul class="vg-nav__list">
+        <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+        <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+        <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+        <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+        <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+        <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+          <ul class="vg-dd__menu" id="vgDdKaynaklar">
+            <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+            <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+            <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+            <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+            <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+          </ul>
+        </li>
+        <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+        <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+      </ul>
+      <div class="vg-nav__foot">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </nav>
+    <div class="vg-actions">
+      <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+      <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+    </div>
+  </div>
+  <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+</header><div id="main" tabindex="-1" role="main"><div id="vg-top"><div class="vg-topline"><nav class="vg-links" aria-label="Araç menüsü"><a class="vg-back" href="../#araclar">← Tüm araçlar</a><a class="vg-back" href="/hesaplama-araclari/">Pratik hesaplar →</a><a class="vg-back" href="/">VoltGuard ana sayfa ↗</a></nav></div><p class="vg-crumb">Dağıtım şebekesi / Adım Gerilimi Simülatörü</p><h1>Adım Gerilimi Simülatörü</h1><p class="vg-description">Toprak arızası çevresindeki potansiyel ve adım gerilimini keşfedin.</p><details><summary>Girdiler, sonuçlar ve hesap yöntemi</summary><div class="vg-method"><strong>Girdiler:</strong> Arıza, toprak ve mesafe parametreleri.<br><strong>Çıktılar:</strong> Potansiyel dağılımı ve adım gerilimi görselleştirmesi.<br><strong>Yöntem:</strong> Toprak potansiyelinin mesafeyle değişimini gösteren simülasyon. <a href="../yontem/">Kaynak ve geçerlilik bilgileri →</a></div></details></div><div id="vg-tool-workspace">
+
+    <h3>220V - 380kV Adım Gerilimi Simülasyonu</h3>
+    <p class="subtitle">Halkaların üzerine dokunarak sürükleyin. Adım boyunu sıfıra indirerek etkiyi görün.</p>
+
+    <div class="container">
+        <div class="canvas-container">
+            <canvas id="simCanvas" width="400" height="400"></canvas>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="voltageInput">Kaçak Potansiyeli (V_toprak):</label>
+                <input type="range" id="voltageInput" min="220" max="380000" step="10" value="380000">
+                <div class="value-display"><span id="kVOut">380 kV</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="stepInput">Adım Boyu (Mesafe):</label>
+                <input type="range" id="stepInput" min="0.0" max="1.5" step="0.1" value="1.0">
+                <div class="value-display"><span id="sOut">1.0</span> metre</div>
+            </div>
+
+            <div class="metrics">
+                <div class="metric-box">
+                    <span class="metric-label">1. Ayak (V1)</span>
+                    <span id="mFoot1" class="metric-value">-</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">2. Ayak (V2)</span>
+                    <span id="mFoot2" class="metric-value">-</span>
+                </div>
+                <div class="metric-box" style="grid-column: span 2; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 5px;">
+                    <span class="metric-label">Kaynağa (Merkeze) Uzaklık</span>
+                    <span id="mDistance" class="metric-value highlight">-</span>
+                </div>
+                <div class="metric-box" style="grid-column: span 2;">
+                    <span class="metric-label">Maruz Kalınan Gerilim (ΔV)</span>
+                    <span id="mStepV" class="metric-value danger">-</span>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <strong>Simülasyon İpucu:</strong> Adım boyunu 0.0 metre yaptığınızda ayaklar üst üste biner. Bu durumda iki ayak arasındaki voltaj farkı (ΔV) sıfırlanır ve akım akamaz. Gerçek hayattaki "ayakları sürüyerek kaçma" mantığı tam olarak budur!
+            </div>
+
+            <button class="download-btn" id="downloadBtn">📸 Görseli Telefona İndir</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const voltageInput = document.getElementById('voltageInput');
+        const kVOut = document.getElementById('kVOut');
+        const stepInput = document.getElementById('stepInput');
+        const sOut = document.getElementById('sOut');
+        
+        const mFoot1 = document.getElementById('mFoot1');
+        const mFoot2 = document.getElementById('mFoot2');
+        const mDistance = document.getElementById('mDistance');
+        const mStepV = document.getElementById('mStepV');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const scale = 18;
+
+        let currentX = centerX + 45;
+        let currentY = centerY + 45;
+
+        let currentDistanceGlobal = 0;
+
+        function formatVoltage(volt) {
+            if (volt >= 1000) {
+                return `${(volt / 1000).toFixed(1)} kV`;
+            }
+            return `${Math.round(volt)} V`;
+        }
+
+        function getPotentialAtRadius(rMetre, V0) {
+            const r0 = 1.0; 
+            if (rMetre <= r0) return V0;
+            return V0 * (r0 / rMetre);
+        }
+
+        function draw() {
+            ctx.fillStyle = "#25252d";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const V0 = parseFloat(voltageInput.value);
+            const stepLengthMetre = parseFloat(stepInput.value);
+            const stepLengthPx = stepLengthMetre * scale;
+
+            for (let rMetre = 1.0; rMetre <= 10; rMetre += 1.5) {
+                const rPx = rMetre * scale;
+                const volt = getPotentialAtRadius(rMetre, V0);
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, rPx, 0, 2 * Math.PI);
+                ctx.strokeStyle = `rgba(231, 76, 60, ${0.12 + (volt/380000)*0.75})`;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                if (rMetre < 9) {
+                    ctx.fillStyle = '#bbb';
+                    ctx.font = '9px monospace';
+                    ctx.fillText(formatVoltage(volt), centerX + rPx + 3, centerY - 4);
+                }
+            }
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
+            ctx.fillStyle = '#e74c3c';
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            const dx = currentX - centerX;
+            const dy = currentY - centerY;
+            const distToFoot1Px = Math.sqrt(dx * dx + dy * dy);
+            const distToFoot1Metre = distToFoot1Px / scale;
+            currentDistanceGlobal = distToFoot1Metre;
+
+            const angle = Math.atan2(dy, dx);
+            const distToFoot2Px = distToFoot1Px + stepLengthPx;
+            const distToFoot2Metre = distToFoot2Px / scale;
+
+            const foot2X = centerX + Math.cos(angle) * distToFoot2Px;
+            const foot2Y = centerY + Math.sin(angle) * distToFoot2Px;
+
+            const V_foot1 = getPotentialAtRadius(distToFoot1Metre, V0);
+            const V_foot2 = getPotentialAtRadius(distToFoot2Metre, V0);
+            const stepVoltage = Math.abs(V_foot1 - V_foot2);
+
+            // Ayak 1 (Yeşil)
+            ctx.beginPath();
+            ctx.arc(currentX, currentY, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#2ecc71';
+            ctx.fill();
+            ctx.stroke();
+
+            // Ayak 2 (Mavi)
+            ctx.beginPath();
+            ctx.arc(foot2X, foot2Y, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#3498db';
+            ctx.fill();
+            ctx.stroke();
+
+            // Adım Çizgisi
+            ctx.beginPath();
+            ctx.moveTo(currentX, currentY);
+            ctx.lineTo(foot2X, foot2Y);
+            // Eğer adım boyu 0 ise veya voltaj güvenliyse yeşil, yoksa kırmızı yapıyoruz
+            ctx.strokeStyle = (stepVoltage > 50 && stepLengthMetre > 0) ? '#ff3333' : '#2ecc71';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 11px monospace';
+            const stepVoltText = formatVoltage(stepVoltage);
+            ctx.fillText(`Mesafe: ${distToFoot1Metre.toFixed(2)}m | Adım Gerilimi: ${stepVoltText}`, 15, canvas.height - 15);
+
+            mFoot1.innerText = formatVoltage(V_foot1);
+            mFoot2.innerText = formatVoltage(V_foot2);
+            mDistance.innerText = `${distToFoot1Metre.toFixed(2)} metre`;
+            mStepV.innerText = formatVoltage(stepVoltage);
+            
+            // 50V sınırı ve 0 metre kontrolü ile renklendirme dinamikleştirildi
+            mStepV.style.color = "";
+            if(stepVoltage > 50 && stepLengthMetre > 0) {
+                mStepV.className = "metric-value danger";
+            } else {
+                mStepV.className = "metric-value";
+                mStepV.style.color = "#2ecc71";
+            }
+        }
+
+        function handleMove(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            const canvasScaleX = canvas.width / rect.width;
+            const canvasScaleY = canvas.height / rect.height;
+
+            currentX = (clientX - rect.left) * canvasScaleX;
+            currentY = (clientY - rect.top) * canvasScaleY;
+            draw();
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            handleMove(e.clientX, e.clientY);
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                handleMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                handleMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        voltageInput.addEventListener('input', () => {
+            kVOut.innerText = formatVoltage(parseInt(voltageInput.value));
+            draw();
+        });
+
+        stepInput.addEventListener('input', () => {
+            sOut.innerText = stepInput.value;
+            draw();
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const imageURI = canvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            link.download = `Adim_Gerilimi_Mesafe_${currentDistanceGlobal.toFixed(1)}m.png`;
+            link.href = imageURI;
+            (document.getElementById('vg-tool-workspace') || document.body).appendChild(link);
+            link.click();
+            (document.getElementById('vg-tool-workspace') || document.body).removeChild(link);
+        });
+
+        kVOut.innerText = formatVoltage(parseInt(voltageInput.value));
+        draw();
+    </script>
+</div><div id="vg-origin">VoltGuard uyarlaması · Özgün hesap araçları: Baki SONAY · <a href="../yontem/">Yöntem ve kaynaklar</a></div><script src="../shared/export.js" defer></script><script>try{localStorage.setItem('voltguard:recent',JSON.stringify({slug:"adim-gerilimi",name:"Adım Gerilimi Simülatörü"}))}catch(e){}if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script></div><footer data-vg-no-print class="footer vg-footer" id="vgFooter" role="contentinfo">
+  <div class="vg-footer__cta">
+    <div class="vg-wrap vg-footer__cta-in">
+      <div class="vg-footer__cta-text">
+        <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+        <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+      </div>
+      <div class="vg-footer__cta-btns">
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="vg-wrap">
+    <div class="vg-footer__grid">
+      <div class="vg-footer__brand">
+        <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+          <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+          <span class="vg-brand__copy" aria-hidden="true">
+            <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+            <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+          </span>
+        </a>
+        <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+        <ul class="vg-footer__contact">
+          <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+          <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+          <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+        </ul>
+        <address class="vg-footer__addr">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+        </address>
+        <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+      </div>
+      <nav class="vg-footer__nav" aria-label="Alt menü">
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Hizmetler</h3>
+          <ul>
+            <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+            <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+            <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+            <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+            <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+            <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+            <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+            <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+            <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+            <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+            <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+            <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kurumsal</h3>
+          <ul>
+            <li><a href="/#hakkimizda">Hakkımızda</a></li>
+            <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+            <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+            <li><a href="/#projeler">Projeler</a></li>
+            <li><a href="/#referanslar">Referanslarımız</a></li>
+            <li><a href="/#surec">Sürecimiz</a></li>
+            <li><a href="/#neden-biz">Neden Biz?</a></li>
+            <li><a href="/#guvenlik">Güvenlik</a></li>
+            <li><a href="/#haberler">Haberler</a></li>
+            <li><a href="/#emi-demo">Canlı Demo</a></li>
+            <li><a href="/#katalog">Katalog</a></li>
+            <li><a href="/#sss">SSS</a></li>
+            <li><a href="/#iletisim">İletişim</a></li>
+            <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kaynaklar</h3>
+          <ul>
+            <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+            <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+            <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+            <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+            <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+          <ul>
+            <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+            <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+            <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+            <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+            <li><a href="/voltgame.html">VoltGame</a></li>
+            <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+            <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+            <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="vg-footer__bottom">
+      <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+      <div class="vg-footer__social">
+        <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+      <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        </circle>
+      </svg>
+      <span class="sig-node" aria-hidden="true"></span>
+      <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+        <span class="sig-badge__ring" aria-hidden="true"></span>
+        <span class="sig-badge__aurora" aria-hidden="true"></span>
+        <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
+        <span class="sig-badge__body">
+          <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+          <span class="sig-badge__brand">
+            <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+            <span class="sig-badge__eng">Engineering</span>
+          </span>
+        </span>
+        <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+        <span class="sig-badge__shimmer" aria-hidden="true"></span>
+      </a>
+      <span class="sig-node" aria-hidden="true"></span>
+      <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+        </circle>
+      </svg>
+    </div>
+  </div>
+</footer></body>
+</html>

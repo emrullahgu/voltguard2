@@ -1,3 +1,10 @@
+[build]
+  command = "node tools/build-netlify.cjs"
+  publish = ".netlify-publish"
+
+[build.environment]
+  NODE_VERSION = "24"
+
 # ---------------------------------------------------------------------------------------
 # Tek adres: /index.html -> / ve /hizmetler/index.html -> /hizmetler/ (.htaccess ile ayni). Netlify kurallari
 # yalnizca istemcinin istedigi yola uygulanir; "/" ve "/hizmetler/" icin dizin index.html dosyasinin sunulmasi
@@ -14,6 +21,19 @@
 [[redirects]]
   from = "/hizmetler/index.html"
   to = "/hizmetler/"
+  status = 301
+  force = true
+
+# Directory indexes in the engineering library have one canonical URL.
+[[redirects]]
+  from = "/araclar/index.html"
+  to = "/araclar/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/araclar/:slug/index.html"
+  to = "/araclar/:slug/"
   status = 301
   force = true
 
@@ -257,6 +277,12 @@
   force = true
 
 [[redirects]]
+  from = "/voltgame/"
+  to = "/voltgame.html"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/fabrika-cozumleri"
   to = "/fabrika-cozumleri.html"
   status = 301
@@ -289,6 +315,48 @@
 # Runtime veri klasorleri, sunucu kodu ve gelistirme dosyalari yayinlanmaz (.htaccess'teki engellerin esi).
 # Netlify'da PHP calismaz; api/ ve contact.php kaynak kodunun metin olarak sunulmasi engellenir.
 [[redirects]]
+  from = "/calisan/uygulama"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/calisan/uygulama/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/calisan"
+  to = "/calisan/giris.html"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/calisan/"
+  to = "/calisan/giris.html"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/calisan/index.php"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/calisan/shared-header.html"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/calisan/shared-footer.html"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
   from = "/_vgdata/*"
   to = "/404.html"
   status = 404
@@ -320,6 +388,30 @@
 
 [[redirects]]
   from = "/tools/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/voltguardekleyelim/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/vesikalar/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/VoltGame/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/voltgame/*"
   to = "/404.html"
   status = 404
   force = true
@@ -384,6 +476,11 @@
 
 [[headers]]
   for = "/hizmetler/"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/araclar/*"
   [headers.values]
     Cache-Control = "no-cache"
 

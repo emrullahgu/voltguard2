@@ -1,0 +1,153 @@
+{
+  "name": "PARALAKS: Tek Hat",
+  "release": "R1",
+  "note": "Sıra = tek <script> içindeki birleştirme sırası. '@' ile başlayanlar build tarafından üretilir. Glob (render/kit/*.js) ada göre sıralı genişler. Her JS modülü build'de (function(PX){'use strict'; ... })(window.PX) ile sarılır. Bu dosyayı yalnız Foundation/Integrate düzenler.",
+  "head": "shell/head.html",
+  "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js",
+  "threeLocal": "tools/vendor/three-r128.min.js",
+  "threeSHA256": "9274bbcec8d96168626c732b5d31c775aa8cfb7eaa0599bec0c175908a2c1ce2",
+  "worker": {
+    "src": "core/worker_src.js",
+    "lib": [],
+    "note": "lib boş: sim2 Worker kaynağına ikinci kez gömülmez, solverClient onu sayfanın //#SIM2-BEGIN…END bölgesinden geri kurar; solve2 Worker içinde kullanılmaz (rules R-1/R-2)."
+  },
+  "levels": {
+    "chapters": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "files": [
+      "levels2.js",
+      "levels/*.js"
+    ],
+    "daily": [
+      "daily2.json",
+      "daily2.js",
+      "daily/*.js",
+      "daily/*.json"
+    ]
+  },
+  "budget": {
+    "jsKB": 500,
+    "levelKB": 200
+  },
+  "modules": [
+    {
+      "path": "@sim2",
+      "team": "rules",
+      "what": "tools/reference2/sim2.js -> PX.SIM (module.exports satırı PX.SIM = ile değiştirilir)"
+    },
+    {
+      "path": "@levels",
+      "team": "rules",
+      "what": "levels2.js + levels/*.js (R1 bölümleri) -> PX.LEVELS; günlük havuz -> PX.DAILY"
+    },
+    {
+      "path": "@worker",
+      "team": "rules",
+      "what": "worker.lib + core/worker_src.js -> PX.WORKER_SRC (JSON dizgi)"
+    },
+    {
+      "path": "app/bus.js",
+      "team": "core"
+    },
+    {
+      "path": "app/strings.js",
+      "team": "ui"
+    },
+    {
+      "path": "app/store.js",
+      "team": "core"
+    },
+    {
+      "path": "render/fx.js",
+      "team": "render"
+    },
+    {
+      "path": "render/scene.js",
+      "team": "render"
+    },
+    {
+      "path": "render/camera.js",
+      "team": "render"
+    },
+    {
+      "path": "render/diorama.js",
+      "team": "render"
+    },
+    {
+      "path": "render/kit/*.js",
+      "team": "kits"
+    },
+    {
+      "path": "render/flow.js",
+      "team": "render"
+    },
+    {
+      "path": "render/volti.js",
+      "team": "volti"
+    },
+    {
+      "path": "core/solverClient.js",
+      "team": "rules"
+    },
+    {
+      "path": "game/controller.js",
+      "team": "controller"
+    },
+    {
+      "path": "game/hint.js",
+      "team": "rules"
+    },
+    {
+      "path": "input/gesture.js",
+      "team": "controller"
+    },
+    {
+      "path": "input/keyboard.js",
+      "team": "controller"
+    },
+    {
+      "path": "ui/hud.js",
+      "team": "ui"
+    },
+    {
+      "path": "ui/sld.js",
+      "team": "ui"
+    },
+    {
+      "path": "ui/cards.js",
+      "team": "ui"
+    },
+    {
+      "path": "ui/screens.js",
+      "team": "ui"
+    },
+    {
+      "path": "audio/audio.js",
+      "team": "volti"
+    },
+    {
+      "path": "meta/world.js",
+      "team": "ui"
+    },
+    {
+      "path": "meta/daily.js",
+      "team": "rules"
+    },
+    {
+      "path": "meta/ghost.js",
+      "team": "rules"
+    },
+    {
+      "path": "debug/game_api.js",
+      "team": "core"
+    },
+    {
+      "path": "main.js",
+      "team": "core"
+    }
+  ]
+}

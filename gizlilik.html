@@ -12,7 +12,7 @@
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
   <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261013b">
   <script type="speculationrules">
   {
     "prerender": [
@@ -26,7 +26,7 @@
         "where": {
           "and": [
             { "href_matches": "/*" },
-            { "not": { "href_matches": ["/hesap/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
             { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
           ]
         },
@@ -35,8 +35,8 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261012d" defer></script>
-  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="description" content="VoltGuard Gizlilik ve Çerez Politikası, KVKK aydınlatma metni ve kullanılan üçüncü taraf hizmetler hakkında bilgilendirme.">
@@ -134,18 +134,20 @@
   <header class="vg-header doc-header" id="vgHeader">
     <div class="vg-header__bar vg-wrap">
       <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
-        <span class="logo-mark" aria-hidden="true">
-          <span class="logo-mark__volt">VOLT</span>
-          <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
-          <span class="logo-mark__guard">GUARD</span>
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
         </span>
-        <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
       </a>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
           <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
           <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
           <li class="vg-dd" data-vg-dd>
             <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
@@ -153,19 +155,22 @@
               <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
               <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
               <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
               <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+              <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
             </ul>
           </li>
           <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
           <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
         </ul>
         <div class="vg-nav__foot">
-          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
           <a class="vg-cta" href="/#iletisim">Teklif Al</a>
         </div>
       </nav>
       <div class="vg-actions">
-        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
     </div>
@@ -175,7 +180,7 @@
 
   <main id="main" tabindex="-1">
     <h1>Gizlilik ve Çerez Politikası</h1>
-    <p class="updated">Son güncelleme: 12 Ekim 2026</p>
+    <p class="updated">Son güncelleme: 13 Ekim 2026</p>
 
     <p>
       Bu metin, <strong>VoltGuard</strong> tarafından işletilen <a href="https://voltguard.com.tr">voltguard.com.tr</a>
@@ -247,10 +252,19 @@
       taşıma ya da silme sonrasında tarayıcınızdan kaldırılır.
     </p>
 
+    <h3 id="topluluk-verileri">Herkese açık topluluk</h3>
+    <p><a href="/topluluk.html">Topluluk</a> sayfasındaki yorumlar, yanıtlar, görünen ad ve paylaşım zamanı herkese açıktır. Üyelik olmadan yorum yazabilirsiniz; bu durumda verdiğiniz ad veya takma ad kullanılır. Üye oturumu açıkken hesabınızdaki ad gösterilir, e-posta adresiniz gösterilmez. Yorumunuza özel şirket belgeleri veya kişisel bordro bilgileri eklemeyin.</p>
+    <p>Misafir yorumunun sahibi, sunucudaki rastgele oturum anahtarıyla tanınır; <code>VGSESS</code> çerezi aynı tarayıcıdaki kendi yorumunuzu silebilmenizi sağlar. Çerezi silmeniz veya oturumun sona ermesi durumunda bu yetki kaybolabilir. Silinen yorumun metni ve görünen adı yayından kaldırılır; yanıt bağlantıları için boş bir kayıt kalabilir. Oturuma erişemediğiniz yorumlar için <a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a> üzerinden başvurabilirsiniz. Kötüye kullanım sınırları, özetlenmiş IP ve oturum anahtarlarıyla uygulanır. Yetkilendirilmiş topluluk moderatörleri yorumları kaldırabilir.</p>
+    <h3 id="calisan-verileri">Çalışan portalı</h3>
+    <p><a href="/calisan/giris.html">Çalışan Portalı</a> yalnızca yönetici davetiyle açılır ve genel site üyeliğinden ayrıdır. Çalışan adı, e-posta adresi, yetkisi, şifre özeti, doğrulayıcı uygulama anahtarı ve çalışan paneline yüklenen kişisel PDF belgeleri sitemizin web kökü dışındaki özel depoda tutulur. Şifre ve doğrulayıcı koduyla tamamlanmış çalışan oturumu gerekir; çalışanlar kendi bordrolarını, yetkilendirilmiş yönetici ve bordro sorumluları görevleri kapsamındaki kayıtları görebilir. Önceki şirket uygulamasındaki bir hesap, bu yeni portalda kendiliğinden erişim sağlamaz.</p>
+    <p>Özel şirket uygulamalarında teklif ve keşif satırları, müşteri/tesis iletişim bilgileri, görev ve iş kayıtları, çalışan eşlemeleri, ürün ve araç kayıtları, akaryakıt giderleri, içe aktarılan sayaç ölçümleri, raporlar, puantaj, avans ve bordro bilgileri işin yürütülmesi amacıyla şirketin özel Ubuntu sunucusundaki merkezi veritabanında kaydedilir. Site sunucusu bu verilere özel, şifreli bağlantı üzerinden erişir; bağlantı anahtarları tarayıcınıza gönderilmez. Operasyon kayıtları yalnızca şirket çalışanları arasında paylaşılır; bordro kayıtları ayrıca kişinin kendi hesabıyla açıkça eşlenmesi ve bordro yönetim yetkisiyle sınırlandırılır. Eski kayıttaki ad veya e-posta benzerliği kişinin bordro erişimini açmaz.</p>
+    <p>Taslaklar, yedekler ve tercihler çalışana bağlı özel sunucu deposunda tutulur; özel uygulamanın dosyaları ve verileri çevrimdışı tarayıcı önbelleğine alınmaz. Merkezi veri bağlantısı kesildiğinde kayıtlar otomatik olarak ayrı bir yerel kopyaya yazılmaz. Dosya içe aktarma ve çıktılar kullanıcının işlemiyle yapılır; bu kurulumda harici OSOS/KOSBİ, WorkTracker veya yapay zekâ servisine otomatik veri gönderilmez.</p>
+    <p>Çalışan girişinde bağımsız <code>VGSTAFF</code> oturum çerezi kullanılır. Şifre, davet anahtarı, doğrulayıcı anahtarı ve bordro tutarları işlem günlüğüne yazılmaz; erişim ve yönetim işlemlerinin son 500 olayı kaydedilir. Bordro kayıtlarının saklanması ve özel yedeklerin yönetimi şirket tarafından yürütülür. Kayıt silindiğinde erişim kapanır; eski PDF ve yedek kopyaları şirketin saklama ve temizlik sürecine göre kaldırılır. Çalışan bilgilerinizle ilgili taleplerinizi şirket yöneticinize veya <a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a> adresine iletebilirsiniz.</p>
+
     <h2>4. Çerezler, Yerel Depolama ve Üçüncü Taraf Hizmetler</h2>
     <p>
-      Sitemiz kendi adına yalnızca iki HTTP çerezi kullanır: hesap sayfalarında form güvenliğini sağlayan ve giriş yaptığınızda oturumunuzu
-      açık tutan zorunlu <code>VGSESS</code> çerezi ile giriş yaptığınız tarayıcıyı tanıyan zorunlu güvenlik çerezi <code>VGDEV</code>. Tercihler, giriş yapmadan kaydettiğiniz araç verileri ve oyun verileri tarayıcınızın yerel depolama (localStorage)
+      Sitemiz özelliklerine göre zorunlu oturum ve güvenlik çerezleri kullanır: hesap sayfalarında form güvenliğini sağlayan ve giriş yaptığınızda oturumunuzu
+      açık tutan zorunlu <code>VGSESS</code> çerezi ile giriş yaptığınız tarayıcıyı tanıyan zorunlu güvenlik çerezi <code>VGDEV</code> ile çalışan alanında kullanılan bağımsız <code>VGSTAFF</code> çerezi. Tercihler, giriş yapmadan kaydettiğiniz araç verileri ve oyun verileri tarayıcınızın yerel depolama (localStorage)
       alanında tutulur. Site, aşağıdaki teknolojileri kullanır. <strong>Zorunlu</strong> ve <strong>teknik</strong> olanlar sitenin
       çalışması ve güvenliği için gereklidir; <strong>opsiyonel</strong> olanlar yalnızca çerez bildiriminde
       <em>&ldquo;Kabul Et&rdquo;</em> seçeneğini işaretlemeniz (Apollo.io) ya da ilgili özelliği kullanmanız (üyelik, oyun) hâlinde devreye girer.
@@ -281,6 +295,12 @@
           <td>Hesap sayfalarında form güvenliğini (CSRF koruması) sağlar; VoltGuard Tools hesabınıza giriş yaptığınızda oturumunuzu tanır. Rastgele bir oturum kimliği içerir; JavaScript ile okunamaz (HttpOnly), yalnızca HTTPS üzerinden gönderilir (Secure) ve başka sitelerden gelen isteklerle paylaşılmaz (SameSite=Lax). Tarayıcıyı kapattığınızda silinir; &ldquo;Beni hatırla&rdquo; seçeneğini işaretlerseniz en fazla 30 gün saklanır. Uzun süre işlem yapılmazsa oturum sunucuda kendiliğinden kapanır; çıkış yaptığınızda silinir.</td>
           <td>VoltGuard (birinci taraf)</td>
           <td><span class="tag tag--req">Zorunlu &mdash; hesap sayfalarında</span></td>
+        </tr>
+        <tr>
+          <td>Çalışan oturumu: <code>VGSTAFF</code></td>
+          <td>Çalışan girişi ve form güvenliği için bağımsız, rastgele oturum kimliği. HttpOnly, canlı HTTPS bağlantısında Secure, SameSite=Strict. Hareketsizlikte 30 dakika, toplamda en fazla 8 saat; yalnızca çalışan alanında kullanılır.</td>
+          <td>VoltGuard (birinci taraf)</td>
+          <td><span class="tag tag--req">Zorunlu — çalışan alanında</span></td>
         </tr>
         <tr>
           <td>Güvenlik çerezi: <code>VGDEV</code></td>
@@ -391,12 +411,11 @@
       <div class="vg-footer__grid">
         <div class="vg-footer__brand">
           <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
-            <span class="logo-mark logo-mark--footer" aria-hidden="true">
-              <span class="logo-mark__volt">VOLT</span>
-              <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
-              <span class="logo-mark__guard">GUARD</span>
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
-            <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
           </a>
           <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
           <ul class="vg-footer__contact">
@@ -434,8 +453,10 @@
             <h3 class="vg-footer__h">Kurumsal</h3>
             <ul>
               <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
               <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
               <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
               <li><a href="/#surec">Sürecimiz</a></li>
               <li><a href="/#neden-biz">Neden Biz?</a></li>
               <li><a href="/#guvenlik">Güvenlik</a></li>
@@ -454,6 +475,7 @@
               <li><a href="/akademi.html">VoltGuard Akademi</a></li>
               <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
               <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
               <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
             </ul>
           </div>
@@ -461,10 +483,12 @@
             <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
             <ul>
               <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
               <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
               <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
-              <li><a href="/hesap/giris.html">Giriş Yap</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
               <li><a href="/hesap/kayit.html">Üye Ol</a></li>
             </ul>
           </div>
@@ -489,7 +513,7 @@
         <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
           <span class="sig-badge__ring" aria-hidden="true"></span>
           <span class="sig-badge__aurora" aria-hidden="true"></span>
-          <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
           <span class="sig-badge__body">
             <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
             <span class="sig-badge__brand">
@@ -526,6 +550,6 @@
       }
     })();
   </script>
-  <script src="js/voltguard-auth.js?v=20261012b" defer></script>
+  <script src="js/voltguard-auth.js?v=20261013a" defer></script>
 </body>
 </html>

@@ -1,0 +1,241 @@
+/* Site-facing tool controls only. Technical drawings, plot colours and native
+   report/print layouts keep the originating tool's rules. The common site
+   header and footer live outside #vg-tool-workspace. */
+@media screen {
+  .vg-engineering[data-vg-tool="adim-gerilimi"] #vg-tool-workspace .container {
+    background: #fff; border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  }
+  .vg-engineering[data-vg-tool="adim-gerilimi"] #vg-tool-workspace :is(.subtitle, label) { color: #5b6b7c; }
+  .vg-engineering[data-vg-tool="adim-gerilimi"] #vg-tool-workspace .value-display { color: #b45309 !important; }
+  .vg-engineering[data-vg-tool="ges-tasarim"] #vg-tool-workspace #preparedBy {
+    max-width: 100%; white-space: normal !important; overflow-wrap: anywhere;
+  }
+  body.vg-engineering #vg-tool-workspace {
+    --bg: #f8fafc;
+    --bg2: #f1f5f9;
+    --panel: #fff;
+    --panel2: #f1f5f9;
+    --panel-2: #f1f5f9;
+    --panel-line: #e2e8f0;
+    --card: #fff;
+    --surface: #fff;
+    --surface2: #f1f5f9;
+    --paper: #fff;
+    --sheet: #fff;
+    --bar: #fff;
+    --field: #fff;
+    --field-line: #cbd5e1;
+    --line: #e2e8f0;
+    --line2: #e2e8f0;
+    --border: #e2e8f0;
+    --ink: #1e293b;
+    --ink2: #475569;
+    --ink-2: #475569;
+    --ink-3: #5b6b7c;
+    --ink-soft: #5b6b7c;
+    --txt: #1e293b;
+    --txt2: #5b6b7c;
+    --text: #1e293b;
+    --tx: #1e293b;
+    --fg: #1e293b;
+    --pink: #1e293b;
+    --pink-soft: #5b6b7c;
+    --muted: #5b6b7c;
+    --mut: #5b6b7c;
+    --dim: #5b6b7c;
+    --teal: #b45309;
+    --teal2: #b45309;
+    --cyan: #b45309;
+    --blue: #1e3a5f;
+    --blue-bg: #f1f5f9;
+    --brand: #0a1628;
+    --brand-2: #0d1f3c;
+    --hdr: #0a1628;
+    --hdr2: #0d1f3c;
+    --kolhdr: #1e3a5f;
+    --primary: #f59e0b;
+    --primary2: #d97706;
+    --accent: #f59e0b;
+    --accent-bg: #fffbeb;
+    --accent-ink: #92400e;
+    --amber: #b45309;
+    --amber-bg: #fffbeb;
+    --cu: #b45309;
+    --cu-ink: #92400e;
+    --cu-soft: #fef3c7;
+    --sunken: #f1f5f9;
+    --inp: #fffbeb;
+    --auto: #f1f5f9;
+    --auto-txt: #1e3a5f;
+    --ok: #166534;
+    --ok-soft: #dcfce7;
+    --green: #166534;
+    --warn: #b45309;
+    --warn-soft: #fef3c7;
+    --warn-bg: #fffbeb;
+    --bad: #b91c1c;
+    --bad-soft: #fee2e2;
+    --red: #b91c1c;
+    --danger: #b91c1c;
+    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --f-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --f-disp: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --disp: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: #1e293b;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    color-scheme: light;
+  }
+  .vg-engineering #vg-tool-workspace :is(h1, h2, h3, h4, .vg-original-title, .title, .baslik, .baslik-satir, .panel-h) {
+    font-family: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif !important;
+    color: #0a1628;
+  }
+  .vg-engineering #vg-tool-workspace :is(h1, .vg-original-title) {
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -.02em;
+  }
+  .vg-engineering #vg-tool-workspace :is(.engineering-app, .circuit-app, .sg-wrap) {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  .vg-engineering #vg-tool-workspace :is(.muted, .hint, .note, .sub, .lead, .intro, .glabel, .lb, .small, .firm, .filerow .lbl, .field > span, .f > label, .f > .lab) {
+    color: #5b6b7c;
+  }
+  .vg-engineering #vg-tool-workspace :is(.card, .panel:not([role=tabpanel]), .eng-panel, .sg-panel, .ctrls, .sheetwrap, .eqbar, .totcard, .infobar, .reg article, .q) {
+    background: #fff;
+    color: #1e293b;
+    border-color: #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .04);
+  }
+  .vg-engineering #vg-tool-workspace :is(.panel-h, .card-h, .ctools, .toolbar, .sec > h2) {
+    background: #f1f5f9;
+    color: #0a1628;
+    border-color: #e2e8f0;
+    font-family: 'Outfit', system-ui, sans-serif;
+  }
+  .vg-engineering #vg-tool-workspace > header,
+  .vg-engineering #vg-tool-workspace > .wrap > header,
+  .vg-engineering #vg-tool-workspace header.top {
+    background: #fff !important;
+    color: #0a1628 !important;
+    border-color: #e2e8f0 !important;
+    border-radius: 12px;
+  }
+  .vg-engineering #vg-tool-workspace > header :is(h1, .vg-original-title, .sub, small),
+  .vg-engineering #vg-tool-workspace header.top :is(h1, .vg-original-title, .sub, small) {
+    color: #0a1628 !important;
+  }
+  .vg-engineering #vg-tool-workspace :is(header .badge, .auto-badge, .logo-badge) {
+    background: #fffbeb;
+    color: #92400e;
+    border-color: #fde68a;
+  }
+  .vg-engineering #vg-tool-workspace header .badge :is(b, span) { color: inherit; }
+  .vg-engineering #vg-tool-workspace header .firm b { color: #0a1628 !important; }
+  .vg-engineering #vg-tool-workspace :is(.filerow, .drop, .katbox, .hitem, .chk, .out-row, .sg-properties) {
+    background: #fff;
+    color: #1e293b;
+    border-color: #e2e8f0;
+  }
+  .vg-engineering #vg-tool-workspace :is(.drop:hover, .drop.over, .tipcard.active) { background: #fffbeb; border-color: #f59e0b; }
+  .vg-engineering #vg-tool-workspace :is(.hitem .ops span, .hint code) { background: #f1f5f9; color: #1e3a5f; }
+  .vg-engineering #vg-tool-workspace .chk.bad { background: #fee2e2; border-color: #fecaca; }
+  .vg-engineering #vg-tool-workspace .chk.warn { background: #fffbeb; border-color: #fde68a; }
+  .vg-engineering #vg-tool-workspace #brand { background: #0a1628; }
+  .vg-engineering #vg-tool-workspace #brand :is(h1, .vg-original-title) { color: #fff; }
+  .vg-engineering #vg-tool-workspace #brand small { color: rgba(255, 255, 255, .78); }
+  .vg-engineering #vg-tool-workspace .scroll { background: #f1f5f9; }
+  .vg-engineering #vg-tool-workspace input:not([type=checkbox]):not([type=radio]):not([type=color]):not([type=range]):not([type=file]),
+  .vg-engineering #vg-tool-workspace select,
+  .vg-engineering #vg-tool-workspace textarea {
+    background: #fff !important;
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
+    border-radius: 6px !important;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif !important;
+  }
+  .vg-engineering #vg-tool-workspace textarea { font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace !important; }
+  .vg-engineering #vg-tool-workspace input[readonly] { background: #f1f5f9 !important; color: #475569 !important; }
+  .vg-engineering #vg-tool-workspace :is(input[type=checkbox], input[type=radio], input[type=range]) { accent-color: #b45309; }
+  .vg-engineering #vg-tool-workspace :is(input, select, textarea):focus-visible {
+    outline: 3px solid rgba(180, 83, 9, .2) !important;
+    outline-offset: 2px;
+    border-color: #b45309 !important;
+    box-shadow: none;
+  }
+  .vg-engineering #vg-tool-workspace button,
+  .vg-engineering #vg-tool-workspace .sg-file {
+    background: #f59e0b;
+    color: #0a1628;
+    border-color: #f59e0b;
+    border-radius: 6px;
+    font-family: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif !important;
+    font-weight: 600;
+    box-shadow: none;
+    transition: background-color .2s ease, border-color .2s ease;
+  }
+  .vg-engineering #vg-tool-workspace button:hover:not(:disabled),
+  .vg-engineering #vg-tool-workspace .sg-file:hover {
+    background: #fcd34d;
+    color: #0a1628;
+    border-color: #fcd34d;
+    filter: none;
+  }
+  .vg-engineering #vg-tool-workspace :is(button.secondary, button.ghost, button.sec2, button.dark, button.blue, .btn-sec, .mini-btn, .zoombtn, .exp, .opt, .sg-card, .sg-file) {
+    background: #fff;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+  }
+  .vg-engineering #vg-tool-workspace :is(button.secondary, button.ghost, button.sec2, button.dark, button.blue, .btn-sec, .mini-btn, .zoombtn, .exp, .opt, .sg-card, .sg-file):hover:not(:disabled) {
+    background: #fffbeb;
+    border-color: #f59e0b;
+  }
+  .vg-engineering #vg-tool-workspace :is(button.danger, button.red, .kdel) { background: #fff; color: #b91c1c; border-color: #fecaca; }
+  .vg-engineering #vg-tool-workspace :is(button.danger, button.red, .kdel):hover:not(:disabled) { background: #fee2e2; color: #b91c1c; border-color: #b91c1c; }
+  .vg-engineering #vg-tool-workspace :is(.kadd, .opt.right) { background: #dcfce7; color: #166534; border-color: #86efac; }
+  .vg-engineering #vg-tool-workspace .opt.wrong { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+  .vg-engineering #vg-tool-workspace :is(button, .sg-file):focus-visible { outline: 3px solid #b45309 !important; outline-offset: 3px; }
+  .vg-engineering #vg-tool-workspace :is(.tabs, nav.tabs) { top: var(--vg-header-h, 60px); background: #f8fafc; border-color: #e2e8f0; }
+  .vg-engineering #vg-tool-workspace :is(.tabs, nav.tabs) button {
+    background: transparent;
+    color: #5b6b7c;
+    border-radius: 0;
+    border-color: transparent;
+    border-bottom: 3px solid transparent;
+  }
+  .vg-engineering #vg-tool-workspace :is(.tabs, nav.tabs) button[aria-selected=true] { color: #0a1628; border-bottom-color: #f59e0b; }
+  .vg-engineering #vg-tool-workspace :is(.tabs, nav.tabs) button:hover { background: #fef3c7; }
+  .vg-engineering #vg-tool-workspace :is(.kbtn.on, .seg button[aria-pressed=true], .sg-card[aria-pressed=true]) { background: #f59e0b; color: #0a1628; border-color: #f59e0b; }
+  .vg-engineering #vg-tool-workspace :is(.formula, .eng-formula, .notice:not(.error), .node-chip, .mlist > div, .step, pre) {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border-color: #e2e8f0 !important;
+  }
+  .vg-engineering #vg-tool-workspace :is(.result, .result-kpis > div, .eng-stats > div, .kpi, .stats > .stat, .stats > div) {
+    background: #fffbeb;
+    color: #0a1628;
+    border-color: #fde68a;
+  }
+  .vg-engineering #vg-tool-workspace :is(.result .val, .stats strong, .eng-stats strong, .kpi .v, .node .kv b) { color: #b45309; }
+  .vg-engineering #vg-tool-workspace .node { background: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+  .vg-engineering #vg-tool-workspace .badge.ok { background: #dcfce7 !important; color: #166534 !important; border-color: #86efac !important; }
+  .vg-engineering #vg-tool-workspace .badge.no { background: #fee2e2 !important; color: #b91c1c !important; border-color: #fecaca !important; }
+  .vg-engineering #vg-tool-workspace a { color: #b45309; text-underline-offset: 3px; }
+  .vg-engineering #vg-tool-workspace label.f:not(.chk label) { display: block !important; line-height: 1.5 !important; }
+  .vg-engineering #vg-tool-workspace label.f > :is(input, select) { display: block; margin-top: 5px; }
+  .vg-engineering #vg-tool-workspace label :is(sub, sup) { display: inline !important; }
+}
+@media screen and (max-width: 820px) {
+  .vg-engineering[data-vg-tool="beton-kosk-yerlesim"] #vg-tool-workspace #side {
+    top: var(--vg-header-h, 60px); max-height: calc(100dvh - var(--vg-header-h, 60px));
+  }
+  .vg-engineering[data-vg-tool="beton-kosk-yerlesim"] #vg-tool-workspace #side:not(.open) { visibility: hidden; }
+  .vg-engineering[data-vg-tool="beton-kosk-yerlesim"] #vg-tool-workspace #side.open { visibility: visible; }
+}
+@media screen and (max-width: 600px) {
+  .vg-engineering #vg-tool-workspace .baslik-satir { flex-wrap: wrap !important; }
+  .vg-engineering #vg-tool-workspace .imza { white-space: normal !important; max-width: 100%; overflow-wrap: anywhere; text-align: left !important; margin-left: 0 !important; }
+}

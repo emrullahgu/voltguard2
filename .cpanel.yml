@@ -14,13 +14,18 @@ deployment:
     #     ESKI dosyayi alip bir yil onbellekte tutabilirdi.
     #  2) api/ (sunucu kodu) - onu cagiran hesap sayfalarindan once.
     #  3) Icerik klasorleri (bilgi, hizmetler, akademi, sor, mm, hesap, hesaplama).
-    #  4) Kok sayfalar ve dosyalar; .htaccess (yeni yonlendirmeler hedef dosyalar yerindeyken devreye girer) ve
+    #  4) Kok sayfalar ve dosyalar; erisim kurallari ilk adimda kurulup sonda tekrar kopyalanir ve
     #     en son sw.js (yeni service worker kurulurken her sey yerinde olsun).
+    #  Ozel API/calisan staging docroot disindadir; erisim kurallari ozel dosyalardan ONCE etkinlesir.
     # Klasorler once .new olarak kopyalanir, sonra eskisi silinip yeniden adlandirilir. Kaynak eksikse ya da kopyalama
     # yarida kesilirse canli klasore dokunulmaz; silme ile yeniden adlandirma arasindaki bosluk milisaniyelerdir.
     # Yeniden adlandirilan/silinen dosyalar sunucuda kalmaz. tools/, txt/ ve .git bilerek DEPLOY EDILMEZ.
     # Runtime veri (kullanici, oturum) docroot DISINDA tutulur; _vgdata/ ve vg-data/ klasorlerine hicbir gorev dokunmaz.
     - export DEPLOYPATH=/home/voltgua2/public_html/
+    - export VG_STAGEPATH=/home/voltgua2/vg-deploy-stage/
+    - /bin/mkdir -p $VG_STAGEPATH
+    # Install private URL protection before any private file is copied into the web root.
+    - /bin/cp .htaccess $DEPLOYPATH
     # ----- 1) Statik varliklar -----
     # fonts/ kendi barindirdigimiz yazi tipleri ve ikon fontu (hash li dosya adlari; css/fa-subset.css bunlara bagli).
     - /bin/rm -rf $DEPLOYPATH/fonts.new
@@ -45,10 +50,10 @@ deployment:
     - /bin/mv $DEPLOYPATH/public.new $DEPLOYPATH/public
     # ----- 2) api/ -----
     # api/ yalnizca KOD icerir (php). api/ icine veri YAZMAYIN; her deploy bu klasoru yeniden olusturur.
-    - /bin/rm -rf $DEPLOYPATH/api.new
-    - /bin/cp -R api $DEPLOYPATH/api.new
+    - /bin/rm -rf $VG_STAGEPATH/api.new
+    - /bin/cp -R api $VG_STAGEPATH/api.new
     - /bin/rm -rf $DEPLOYPATH/api
-    - /bin/mv $DEPLOYPATH/api.new $DEPLOYPATH/api
+    - /bin/mv $VG_STAGEPATH/api.new $DEPLOYPATH/api
     # ----- 3) Icerik klasorleri -----
     - /bin/rm -rf $DEPLOYPATH/bilgi.new
     - /bin/cp -R bilgi $DEPLOYPATH/bilgi.new
@@ -75,10 +80,20 @@ deployment:
     - /bin/cp -R hesap $DEPLOYPATH/hesap.new
     - /bin/rm -rf $DEPLOYPATH/hesap
     - /bin/mv $DEPLOYPATH/hesap.new $DEPLOYPATH/hesap
+    # Employee pages include a PHP authorization gate; runtime staff data is never copied.
+    - /bin/rm -rf $VG_STAGEPATH/calisan.new
+    - /bin/cp -R calisan $VG_STAGEPATH/calisan.new
+    - /bin/rm -rf $DEPLOYPATH/calisan
+    - /bin/mv $VG_STAGEPATH/calisan.new $DEPLOYPATH/calisan
     - /bin/rm -rf $DEPLOYPATH/hesaplama.new
     - /bin/cp -R hesaplama $DEPLOYPATH/hesaplama.new
     - /bin/rm -rf $DEPLOYPATH/hesaplama
     - /bin/mv $DEPLOYPATH/hesaplama.new $DEPLOYPATH/hesaplama
+    # Public engineering build only; tools/engineering and the original import are not deployed.
+    - /bin/rm -rf $DEPLOYPATH/araclar.new
+    - /bin/cp -R araclar $DEPLOYPATH/araclar.new
+    - /bin/rm -rf $DEPLOYPATH/araclar
+    - /bin/mv $DEPLOYPATH/araclar.new $DEPLOYPATH/araclar
     # ----- 4) Kok dosyalar -----
     # Kokteki tum .html sayfalari tek gorevle (index.html, 404.html, fabrika-cozumleri.html ... yeni kok sayfalar dahil).
     # Yeni kok sayfa icin AYRI cp satiri YAZMAYIN; dosya depoda yoksa cp hata verip deploy'u o noktada durdurur.

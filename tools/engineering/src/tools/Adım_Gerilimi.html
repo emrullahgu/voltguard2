@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>220V - 380kV Adım Gerilimi Simülasyonu</title>
+    <style>
+        body {
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #111116;
+            color: #fff;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        h3 {
+            margin: 5px 0;
+            color: #e74c3c;
+            text-align: center;
+            font-size: 18px;
+        }
+        .subtitle {
+            color: #aaa;
+            font-size: 12px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #1e1e24;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 450px;
+            box-sizing: border-box;
+        }
+        .canvas-container {
+            width: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+        canvas {
+            background-color: #25252d;
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.7);
+            width: 100%;
+            max-width: 380px;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            touch-action: none;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        label {
+            font-size: 13px;
+            color: #bdc3c7;
+            font-weight: bold;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #e74c3c;
+            height: 25px;
+        }
+        .value-display {
+            font-size: 13px;
+            color: #f1c40f;
+            font-weight: bold;
+            text-align: right;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: #111116;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+        .metric-box {
+            display: flex;
+            flex-direction: column;
+        }
+        .metric-label {
+            font-size: 10px;
+            color: #888;
+            text-transform: uppercase;
+        }
+        .metric-value {
+            font-size: 15px;
+            font-weight: bold;
+            color: #2ecc71;
+        }
+        .danger { color: #ff3333 !important; }
+        .highlight { color: #f1c40f !important; }
+        
+        .info-panel {
+            background: #15151a;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #ccc;
+        }
+        .download-btn {
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .download-btn:active {
+            background-color: #a32e22;
+        }
+    </style>
+</head>
+<body>
+
+    <h3>220V - 380kV Adım Gerilimi Simülasyonu</h3>
+    <p class="subtitle">Halkaların üzerine dokunarak sürükleyin. Adım boyunu sıfıra indirerek etkiyi görün.</p>
+
+    <div class="container">
+        <div class="canvas-container">
+            <canvas id="simCanvas" width="400" height="400"></canvas>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="voltageInput">Kaçak Potansiyeli (V_toprak):</label>
+                <input type="range" id="voltageInput" min="220" max="380000" step="10" value="380000">
+                <div class="value-display"><span id="kVOut">380 kV</span></div>
+            </div>
+
+            <div class="control-group">
+                <label for="stepInput">Adım Boyu (Mesafe):</label>
+                <input type="range" id="stepInput" min="0.0" max="1.5" step="0.1" value="1.0">
+                <div class="value-display"><span id="sOut">1.0</span> metre</div>
+            </div>
+
+            <div class="metrics">
+                <div class="metric-box">
+                    <span class="metric-label">1. Ayak (V1)</span>
+                    <span id="mFoot1" class="metric-value">-</span>
+                </div>
+                <div class="metric-box">
+                    <span class="metric-label">2. Ayak (V2)</span>
+                    <span id="mFoot2" class="metric-value">-</span>
+                </div>
+                <div class="metric-box" style="grid-column: span 2; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 5px;">
+                    <span class="metric-label">Kaynağa (Merkeze) Uzaklık</span>
+                    <span id="mDistance" class="metric-value highlight">-</span>
+                </div>
+                <div class="metric-box" style="grid-column: span 2;">
+                    <span class="metric-label">Maruz Kalınan Gerilim (ΔV)</span>
+                    <span id="mStepV" class="metric-value danger">-</span>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <strong>Simülasyon İpucu:</strong> Adım boyunu 0.0 metre yaptığınızda ayaklar üst üste biner. Bu durumda iki ayak arasındaki voltaj farkı (ΔV) sıfırlanır ve akım akamaz. Gerçek hayattaki "ayakları sürüyerek kaçma" mantığı tam olarak budur!
+            </div>
+
+            <button class="download-btn" id="downloadBtn">📸 Görseli Telefona İndir</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const voltageInput = document.getElementById('voltageInput');
+        const kVOut = document.getElementById('kVOut');
+        const stepInput = document.getElementById('stepInput');
+        const sOut = document.getElementById('sOut');
+        
+        const mFoot1 = document.getElementById('mFoot1');
+        const mFoot2 = document.getElementById('mFoot2');
+        const mDistance = document.getElementById('mDistance');
+        const mStepV = document.getElementById('mStepV');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const scale = 18;
+
+        let currentX = centerX + 45;
+        let currentY = centerY + 45;
+
+        let currentDistanceGlobal = 0;
+
+        function formatVoltage(volt) {
+            if (volt >= 1000) {
+                return `${(volt / 1000).toFixed(1)} kV`;
+            }
+            return `${Math.round(volt)} V`;
+        }
+
+        function getPotentialAtRadius(rMetre, V0) {
+            const r0 = 1.0; 
+            if (rMetre <= r0) return V0;
+            return V0 * (r0 / rMetre);
+        }
+
+        function draw() {
+            ctx.fillStyle = "#25252d";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const V0 = parseFloat(voltageInput.value);
+            const stepLengthMetre = parseFloat(stepInput.value);
+            const stepLengthPx = stepLengthMetre * scale;
+
+            for (let rMetre = 1.0; rMetre <= 10; rMetre += 1.5) {
+                const rPx = rMetre * scale;
+                const volt = getPotentialAtRadius(rMetre, V0);
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, rPx, 0, 2 * Math.PI);
+                ctx.strokeStyle = `rgba(231, 76, 60, ${0.12 + (volt/380000)*0.75})`;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                if (rMetre < 9) {
+                    ctx.fillStyle = '#bbb';
+                    ctx.font = '9px monospace';
+                    ctx.fillText(formatVoltage(volt), centerX + rPx + 3, centerY - 4);
+                }
+            }
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 10, 0, 2 * Math.PI);
+            ctx.fillStyle = '#e74c3c';
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            const dx = currentX - centerX;
+            const dy = currentY - centerY;
+            const distToFoot1Px = Math.sqrt(dx * dx + dy * dy);
+            const distToFoot1Metre = distToFoot1Px / scale;
+            currentDistanceGlobal = distToFoot1Metre;
+
+            const angle = Math.atan2(dy, dx);
+            const distToFoot2Px = distToFoot1Px + stepLengthPx;
+            const distToFoot2Metre = distToFoot2Px / scale;
+
+            const foot2X = centerX + Math.cos(angle) * distToFoot2Px;
+            const foot2Y = centerY + Math.sin(angle) * distToFoot2Px;
+
+            const V_foot1 = getPotentialAtRadius(distToFoot1Metre, V0);
+            const V_foot2 = getPotentialAtRadius(distToFoot2Metre, V0);
+            const stepVoltage = Math.abs(V_foot1 - V_foot2);
+
+            // Ayak 1 (Yeşil)
+            ctx.beginPath();
+            ctx.arc(currentX, currentY, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#2ecc71';
+            ctx.fill();
+            ctx.stroke();
+
+            // Ayak 2 (Mavi)
+            ctx.beginPath();
+            ctx.arc(foot2X, foot2Y, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#3498db';
+            ctx.fill();
+            ctx.stroke();
+
+            // Adım Çizgisi
+            ctx.beginPath();
+            ctx.moveTo(currentX, currentY);
+            ctx.lineTo(foot2X, foot2Y);
+            // Eğer adım boyu 0 ise veya voltaj güvenliyse yeşil, yoksa kırmızı yapıyoruz
+            ctx.strokeStyle = (stepVoltage > 50 && stepLengthMetre > 0) ? '#ff3333' : '#2ecc71';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 11px monospace';
+            const stepVoltText = formatVoltage(stepVoltage);
+            ctx.fillText(`Mesafe: ${distToFoot1Metre.toFixed(2)}m | Adım Gerilimi: ${stepVoltText}`, 15, canvas.height - 15);
+
+            mFoot1.innerText = formatVoltage(V_foot1);
+            mFoot2.innerText = formatVoltage(V_foot2);
+            mDistance.innerText = `${distToFoot1Metre.toFixed(2)} metre`;
+            mStepV.innerText = formatVoltage(stepVoltage);
+            
+            // 50V sınırı ve 0 metre kontrolü ile renklendirme dinamikleştirildi
+            mStepV.style.color = "";
+            if(stepVoltage > 50 && stepLengthMetre > 0) {
+                mStepV.className = "metric-value danger";
+            } else {
+                mStepV.className = "metric-value";
+                mStepV.style.color = "#2ecc71";
+            }
+        }
+
+        function handleMove(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            const canvasScaleX = canvas.width / rect.width;
+            const canvasScaleY = canvas.height / rect.height;
+
+            currentX = (clientX - rect.left) * canvasScaleX;
+            currentY = (clientY - rect.top) * canvasScaleY;
+            draw();
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            handleMove(e.clientX, e.clientY);
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                handleMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                handleMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        voltageInput.addEventListener('input', () => {
+            kVOut.innerText = formatVoltage(parseInt(voltageInput.value));
+            draw();
+        });
+
+        stepInput.addEventListener('input', () => {
+            sOut.innerText = stepInput.value;
+            draw();
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const imageURI = canvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            link.download = `Adim_Gerilimi_Mesafe_${currentDistanceGlobal.toFixed(1)}m.png`;
+            link.href = imageURI;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        kVOut.innerText = formatVoltage(parseInt(voltageInput.value));
+        draw();
+    </script>
+</body>
+</html>

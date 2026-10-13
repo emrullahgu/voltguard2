@@ -1,0 +1,6 @@
+PCB review checklist adapted and translated by VoltGuard from Henrik (henrikh) / henrikh/pcb-checklist.
+Source: https://github.com/henrikh/pcb-checklist
+Commit: 59388a22743c9c5d383af861692eb076e87677e9
+License: Unlicense (complete text in UNLICENSE.txt).
+Upstream HTML is preserved as evidence; it is not executed by the VoltGuard app.
+VoltGuard adds project notes, status tracking, import/export and reports.

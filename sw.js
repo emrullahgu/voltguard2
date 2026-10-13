@@ -28,7 +28,7 @@
    ===================================================== */
 'use strict';
 
-const VERSION = '2026-10-12.1';
+const VERSION = '2026-10-13.7';
 const PREFIX = 'vgsw-';
 const CACHE_STATIC = PREFIX + 'static-' + VERSION;
 const CACHE_PAGES = PREFIX + 'pages-' + VERSION;
@@ -50,16 +50,17 @@ const SHELL_FIXED = [
   '/js/vg-shell.js',
   '/js/main.js',
   '/js/voltguard-auth.js',
-  '/public/icon-192.png'
+  '/public/icon-192.png',
+  '/public/voltguard-logo.webp'
 ];
 const SHELL_PAGES = ['/404.html'];  // '/' ayrıca kurulumda indirilir
 
 const STATIC_RE = /\.(?:css|m?js|woff2?|ttf|otf|png|jpe?g|gif|webp|avif|svg|ico)$/i;
 const IMAGE_RE = /\.(?:png|jpe?g|gif|webp|avif|svg|ico)$/i;
 const FONT_RE = /\.(?:woff2?|ttf|otf)$/i;
-const NEVER_PREFIXES = ['/api/', '/_vgdata/', '/vg-data/', '/vgdata/'];
+const NEVER_PREFIXES = ['/api/', '/calisan/uygulama/', '/_vgdata/', '/vg-data/', '/vgdata/', '/vesikalar/', '/VoltGame/', '/voltgame/', '/tools/'];
 // Bu yollardaki HTML sayfaları ağdan gelir ama ASLA saklanmaz / önbellekten verilmez (hesap alanı).
-const PRIVATE_PAGE_PREFIXES = ['/hesap/'];
+const PRIVATE_PAGE_PREFIXES = ['/hesap/', '/calisan/'];
 
 function noop() { /* yoksay */ }
 

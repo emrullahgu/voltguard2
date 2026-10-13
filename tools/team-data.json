@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "title": "VoltGuard Ekibimiz",
+  "source": "vesikalar/detay.png",
+  "photoSource": "vesikalar",
+  "hierarchy": "unit-and-role-groups",
+  "units": [
+    {
+      "id": "ofis",
+      "name": "Kemalpaşa Merkez Ofis",
+      "people": [
+        { "id": "emrullah-gunay", "name": "Emrullah Günay", "role": "Kurucu / Yönetici – Yüksek Elektrik Mühendisi", "photo": "Emrullah Günay.jpg" },
+        { "id": "sedat-sasmaz", "name": "Sedat Şaşmaz", "role": "Müdür", "photo": "Sedat Şaşmaz.jpeg" },
+        { "id": "ali-ipek", "name": "Ali İpek", "role": "Enerji Sistemleri Mühendisi", "photo": "Ali İpek.jpeg" },
+        { "id": "mert-ugurlu", "name": "Mert Uğurlu", "role": "Elektrik Elektronik Mühendisi", "photo": "Mert Uğurlu.jpeg" },
+        { "id": "omer-faruk-sarikaya", "name": "Ömer Faruk Sarıkaya", "role": "Ofis Elemanı / Elektrik Teknikeri", "photo": "Ömer Faruk Sarıkaya.jpeg" },
+        { "id": "ahmet-yagiz", "name": "Ahmet Yağız", "role": "Elektrik Elektronik Mühendisi", "photo": "Ahmet Yağız .jpeg" }
+      ]
+    },
+    {
+      "id": "depo",
+      "name": "Depo",
+      "people": [
+        { "id": "emirhan-aktas", "name": "Emirhan Aktaş", "role": "Muhasebe", "photo": "Emirhan Aktaş.jpeg" }
+      ]
+    },
+    {
+      "id": "ar-ge",
+      "name": "VoltGuard Ar-Ge – Ege Teknopark",
+      "people": [
+        { "id": "gorkem-tanir", "name": "Görkem Tanır", "role": "Yüksek Elektronik Ar-Ge Mühendisi", "photo": "Görkem Tanır.jpeg" },
+        { "id": "ibrahim-cagdas", "name": "İbrahim Çağdaş", "role": "Makine Mühendisi", "photo": "İbrahim Çağdaş.jpeg" },
+        { "id": "turan-demir", "name": "Turan Demir", "role": "Elektrik Elektronik Mühendisi", "photo": "Turan Demir.png" }
+      ]
+    },
+    {
+      "id": "saha",
+      "name": "Saha Ekibi",
+      "groups": [
+        { "id": "ustabasilar", "name": "Ustabaşı" },
+        { "id": "ustalar", "name": "Ustalar" },
+        { "id": "kalfalar", "name": "Kalfa" },
+        { "id": "ciraklar", "name": "Çıraklar" }
+      ],
+      "people": [
+        { "id": "ibrahim-ince", "name": "İbrahim İnce", "role": "Ustabaşı", "group": "ustabasilar", "groupLabel": "Ustabaşı", "photo": "İbrahim İnce.jpeg" },
+        { "id": "mesut-arslan", "name": "Mesut Arslan", "role": "Ustabaşı", "group": "ustabasilar", "groupLabel": "Ustabaşı", "photo": "Mesut Arslan.jpeg" },
+        { "id": "sencay-muhammed-ozkan", "name": "Sencay Muhammed Özkan", "role": "Usta", "group": "ustalar", "groupLabel": "Ustalar", "photo": "Sencay Muhammed Özkan.jpeg" },
+        { "id": "bugra-demirel", "name": "Buğra Demirel", "role": "Usta", "group": "ustalar", "groupLabel": "Ustalar", "photo": "Buğra Demirel.jpeg" },
+        { "id": "recep-nurlu", "name": "Recep Nurlu", "role": "Usta", "group": "ustalar", "groupLabel": "Ustalar", "photo": "Recep Nurlu.jpeg" },
+        { "id": "bekir-ariak", "name": "Bekir Arıak", "role": "Usta", "group": "ustalar", "groupLabel": "Ustalar", "photo": "Bekir Arıak.jpeg" },
+        { "id": "ufuk-gunes", "name": "Ufuk Güneş", "role": "Usta", "group": "ustalar", "groupLabel": "Ustalar", "photo": "Ufuk Güneş.jpeg" },
+        { "id": "veli-cengiz", "name": "Veli Cengiz", "role": "Usta", "group": "ustalar", "groupLabel": "Ustalar", "photo": "Veli Cengiz.jpeg" },
+        { "id": "fahri-akin-ertas", "name": "Fahri Akın Ertaş", "role": "Usta", "group": "ustalar", "groupLabel": "Ustalar", "photo": "Fahri akın.jpeg" },
+        { "id": "arif-acikgoz", "name": "Arif Açıkgöz", "role": "Usta", "group": "ustalar", "groupLabel": "Ustalar", "photo": "Arif Açıkgöz.jpeg" },
+        { "id": "mehmet-ali-ince", "name": "Mehmet Ali İnce", "role": "Kalfa", "group": "kalfalar", "groupLabel": "Kalfa", "photo": "Mehmet Ali İnce.jpeg" },
+        { "id": "emrah-kan-gurdag", "name": "Emrah Kan Gürdağ", "role": "Çırak", "group": "ciraklar", "groupLabel": "Çıraklar", "photo": "Emrah Kan Gürdağ.jpeg" },
+        { "id": "emir-kayaoglu", "name": "Emir Kayaoğlu", "role": "Çırak", "group": "ciraklar", "groupLabel": "Çıraklar", "photo": "Emir Kayaoğlu.jpeg" },
+        { "id": "yagiz-ugur", "name": "Yağız Uğur", "role": "Çırak", "group": "ciraklar", "groupLabel": "Çıraklar", "photo": "Yağız Uğur.jpeg" },
+        { "id": "mehmet-ciftci", "name": "Mehmet Çiftçi", "role": "Çırak", "group": "ciraklar", "groupLabel": "Çıraklar", "photo": "Mehmet Çiftçi.jpeg" },
+        { "id": "omer-faruk-sevinc", "name": "Ömer Faruk Sevinç", "role": "Çırak", "group": "ciraklar", "groupLabel": "Çıraklar", "photo": "Ömer Faruk Sevinç.jpeg" }
+      ]
+    }
+  ]
+}

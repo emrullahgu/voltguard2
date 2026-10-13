@@ -1,0 +1,956 @@
+{
+  "baseline": "Teklif-Voltguard-main",
+  "reviewedFixes": "company/app-overrides",
+  "files": [
+    {
+      "path": "src/activityLogger.js",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/activityLogger.js",
+      "sha256": "40237f9aa56a2d1dbf1a9b3e04b97159252af94a244c240a7ccd273ff91c9c22"
+    },
+    {
+      "path": "src/admin.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/admin.jsx",
+      "sha256": "92ee9cb079dc22f2872831b6d1fe73613cfb8e03ea392604c0dbf77767b17768"
+    },
+    {
+      "path": "src/AdminPanel.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/AdminPanel.jsx",
+      "sha256": "409688d2aab28e9b7fb98223b6ba69f3887ea49da3b6b53f9737d330f15d5cef"
+    },
+    {
+      "path": "src/AkaryakitTakip.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/AkaryakitTakip.jsx",
+      "sha256": "3c3fde593c8c9fc36aaf8275891c0fbfb9c08bc936350f5cb7f55706152d61fa"
+    },
+    {
+      "path": "src/akaryakıt-main.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/akaryakıt-main.jsx",
+      "sha256": "4dfc0eefdd5b9ae2afc8afff1fff344793e183b88efe5586fa495c908b6c0420"
+    },
+    {
+      "path": "src/App.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/App.jsx",
+      "sha256": "2e44953552b22d1be8d820e9f0bd53bb7780916f4f761e21bf2a9dfb6a158d8d"
+    },
+    {
+      "path": "src/AppWithAuth.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/AppWithAuth.jsx",
+      "sha256": "ab159dff6e269c70ac5720c795f642097c4c0e7eb0fb61c51a0ccee5c52ba23b"
+    },
+    {
+      "path": "src/AuthContext.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/AuthContext.jsx",
+      "sha256": "ad47c079dad3238fa0b299d053788f59e8d4e4d978f10522eeac8454adcb3729"
+    },
+    {
+      "path": "src/AuthGate.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/AuthGate.jsx",
+      "sha256": "287866359fb05d325540cd2f1f7458d5006aa44041ca8d24d7be07ebfaddf1d8"
+    },
+    {
+      "path": "src/beyaz-yaka-main.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/beyaz-yaka-main.jsx",
+      "sha256": "a9dca3637c0a41572ed96fd9b68db999645bb593a881b75597516e92e96d6afb"
+    },
+    {
+      "path": "src/BeyazYakaBordro.tsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/BeyazYakaBordro.tsx",
+      "sha256": "d88c0ca8e381d94152bcc32fcfc75ec0836663350169f6ffd88450e868460ec8"
+    },
+    {
+      "path": "src/bordro-main.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/bordro-main.jsx",
+      "sha256": "b976b86d9e05acdc74a85c75c9631faa52d880cec393d6172ef73cf868a440d7"
+    },
+    {
+      "path": "src/BordroTakip.tsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/BordroTakip.tsx",
+      "sha256": "e8c4ccfea7a9d0585a25b1deda2401a334461c8ceb0d7a394b98251d0e4bd1da"
+    },
+    {
+      "path": "src/BordroWithPassword.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/BordroWithPassword.jsx",
+      "sha256": "9426f9062dd91f11749ff3a1fbd92878cba44d704c7f1b74c7bb4652de462acf"
+    },
+    {
+      "path": "src/companyInfo.js",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/companyInfo.js",
+      "sha256": "8aee687b660dca5e02d5f4f37216ff2dbbff52d7fe2de2ec03c50297ba6fdcaf"
+    },
+    {
+      "path": "src/firebase.js",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/firebase.js",
+      "sha256": "e4322ffa51c1fcd103eb97f482e8e37e13b97399a2075b98f9e6ad697e43928f"
+    },
+    {
+      "path": "src/ForgotPassword.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/ForgotPassword.jsx",
+      "sha256": "4a6befb31d2a7a577f2a1a0c744a048402357d04d5d53d86c41ea86707733cfe"
+    },
+    {
+      "path": "src/GorevTakip.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/GorevTakip.jsx",
+      "sha256": "f6950bce9c1a088f21160fd946b9af97d0bbd6bbdf72a938aba28c9c1b59d689"
+    },
+    {
+      "path": "src/HaftalikRaporlama.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/HaftalikRaporlama.jsx",
+      "sha256": "92c64396f85e52d01f1546a85f941d44ed2f5a288f4e26f247bbd00b780ce42f"
+    },
+    {
+      "path": "src/hazir-paketler.json",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/hazir-paketler.json",
+      "sha256": "6e58e0e061b62e1e6c940a453d8062105d3a6fe92e3fd4e119242dfe02abd23d"
+    },
+    {
+      "path": "src/index.css",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/index.css",
+      "sha256": "f821eced4565da223681b89568572feedb8b1734ec8771cf4b3a2d124aa80219"
+    },
+    {
+      "path": "src/IsTakip.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/IsTakip.jsx",
+      "sha256": "b57cf7a127ecd3e55706c6a6142a996e2d237b26440255022383d3b8e35e5953"
+    },
+    {
+      "path": "src/KesifMetraj.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/KesifMetraj.jsx",
+      "sha256": "f7b84e38d14de6cd49d2b15ecc574c98e5046eff1ee25a72add0175b18d70f48"
+    },
+    {
+      "path": "src/kontrol-main.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/kontrol-main.jsx",
+      "sha256": "bf37cc6643a7277d704544062349fe5c333c4db5b886f3e8e67e71d3f32e5953"
+    },
+    {
+      "path": "src/Login.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/Login.jsx",
+      "sha256": "048d5054b01291af713941764f5e6274fa9bdf6ee82c87696daab6447b9e5de7"
+    },
+    {
+      "path": "src/main.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/main.jsx",
+      "sha256": "35ec02849643afe39a9cf696453c3cd758d1007ec4d3cb731b679a4df58e485a"
+    },
+    {
+      "path": "src/osos-main.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/osos-main.jsx",
+      "sha256": "e57d29b08b9f6ce6344d6db8a4fe015cbc369e84d48e10d2f03169c7432d9e49"
+    },
+    {
+      "path": "src/Osos.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/Osos.jsx",
+      "sha256": "e839087c304b47eb6fd706702f327040c5a0d0a3ed65b6283967521c44b7ef4b"
+    },
+    {
+      "path": "src/OsosCanliIzleme.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/OsosCanliIzleme.jsx",
+      "sha256": "ca564948f7775544b37555179ba059af10f486e22e0b8edbb4e3dd7bf74fefec"
+    },
+    {
+      "path": "src/PeriyodikKontrol.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/PeriyodikKontrol.jsx",
+      "sha256": "c2f0797e06cd70ef7c9a4e3a36dbc8809c24c64d700e0cb744fcd773a9a99cba"
+    },
+    {
+      "path": "src/Register.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/Register.jsx",
+      "sha256": "8d9499fe7729a787f631ceb8b6b9607dbe6da6d5e17e2439fdf5ba36fddc04f8"
+    },
+    {
+      "path": "src/serer-kablo-fiyat.json",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/serer-kablo-fiyat.json",
+      "sha256": "2b47dc6ee76f8b1d7bd591e9a348ec7c0b0ab11f9e409a65dd24b05672209ee8"
+    },
+    {
+      "path": "src/SimpleAdminPanel.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/SimpleAdminPanel.jsx",
+      "sha256": "b57f59d3ecb925d6559271dd3b1354cac9ed55dd480fe86955a33e8d6e4504de"
+    },
+    {
+      "path": "src/SimpleAppWithAuth.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/SimpleAppWithAuth.jsx",
+      "sha256": "bd7f7ff7589fbf163cb171b86010cf2ae3bd9663290ca2d6a25a1d9745057bed"
+    },
+    {
+      "path": "src/SimpleAuth.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/SimpleAuth.jsx",
+      "sha256": "4643b5e22fb36c9dce03a836e67d2a0d35b76e25b01334648598ddc20dd94525"
+    },
+    {
+      "path": "src/SimpleLogin.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/SimpleLogin.jsx",
+      "sha256": "96322d4bf426cee82ea55476d3992d3788a947c5ea6736c03fd31e3a7c8dead4"
+    },
+    {
+      "path": "src/SimpleRegister.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/SimpleRegister.jsx",
+      "sha256": "c2518eb4d8f6fb813dfaa2d809d7fb73930666a5298c8f10ef81980f2324722a"
+    },
+    {
+      "path": "src/SunucuDurumu.jsx",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/SunucuDurumu.jsx",
+      "sha256": "63b1a02f73b24cb8f40e51e3d89d8231d07b63a069f82a2f932b016d11bb15ec"
+    },
+    {
+      "path": "src/supabaseClient.js",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/src/supabaseClient.js",
+      "sha256": "cbfb3889be843a426c162b822e953791feb68a73c98ef6be63b6e51f8d92b60e"
+    },
+    {
+      "path": "src/UrunTakip.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/UrunTakip.jsx",
+      "sha256": "80527fb445ca8a0baa7b1cc07ca2b3809e62bad53c13e414e0f3b2ca4a588710"
+    },
+    {
+      "path": "src/UserProfile.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/UserProfile.jsx",
+      "sha256": "e31e8746468c359f79e8467777bc3d914fde5b135b662f7477f83d754642027e"
+    },
+    {
+      "path": "src/companyDocuments.js",
+      "source": "voltguardekleyelim/company/app-overrides/src/companyDocuments.js",
+      "sha256": "5d6855ffd290db538f57b313c23872730c83c151d0bc3fa0567117a66309d126"
+    },
+    {
+      "path": "src/energyReport.mjs",
+      "source": "voltguardekleyelim/company/app-overrides/src/energyReport.mjs",
+      "sha256": "9b1bc92d79ab58b2c94c3402f91012745e680e1fe45c3460332fa4b83584cb42"
+    },
+    {
+      "path": "src/historicalCatalog.mjs",
+      "source": "voltguardekleyelim/company/app-overrides/src/historicalCatalog.mjs",
+      "sha256": "c0cae0144293f948779afdcdb094e68e50c72bc3421c3e79fa1c3f9df7bde3d3"
+    },
+    {
+      "path": "src/MfaSettings.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/MfaSettings.jsx",
+      "sha256": "3a7465cca0df51ac39c14468fa9c98fe0af47650ee39b17b21dd7e94fd9bf940"
+    },
+    {
+      "path": "src/operations.mjs",
+      "source": "voltguardekleyelim/company/app-overrides/src/operations.mjs",
+      "sha256": "d384bdad17466f38ccaaf2cc0cf0288c30e78bb51bb4e1666782b4ffec3b3f05"
+    },
+    {
+      "path": "src/payrollPersistence.mjs",
+      "source": "voltguardekleyelim/company/app-overrides/src/payrollPersistence.mjs",
+      "sha256": "428d8ae3596a024c9a4d7536c80d5138db726e7892d099979cab1e10033f8efc"
+    },
+    {
+      "path": "src/pdfReport.js",
+      "source": "voltguardekleyelim/company/app-overrides/src/pdfReport.js",
+      "sha256": "af4f3a5c7b9c580c5bd6d8b79bd0e7a02272c4e94fc4baaacdbb45c93901318c"
+    },
+    {
+      "path": "src/PortalNavigation.jsx",
+      "source": "voltguardekleyelim/company/app-overrides/src/PortalNavigation.jsx",
+      "sha256": "e648e7d9d3f38e29b2319b207ed9eeaef19f2bf53d5d4ee201f02b3117602710"
+    },
+    {
+      "path": "src/proposalSnapshots.mjs",
+      "source": "voltguardekleyelim/company/app-overrides/src/proposalSnapshots.mjs",
+      "sha256": "07fb9f6a7d8bea058f537b0503029b956a1b4ebe9317167961a8f4f4d4585127"
+    },
+    {
+      "path": "src/safeReportHTML.mjs",
+      "source": "voltguardekleyelim/company/app-overrides/src/safeReportHTML.mjs",
+      "sha256": "21e26918bf41fcccb597a7b3d04c00f07b4141732f1c2411df333956df05997c"
+    },
+    {
+      "path": "fatura/Fatura.json",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/fatura/Fatura.json",
+      "sha256": "61a49248badca1a7f1824a86e13ed363192d451275adb5913bf031a33f16f065"
+    },
+    {
+      "path": "fatura/Fatura2.json",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/fatura/Fatura2.json",
+      "sha256": "dd4a2c1a08a9b044ee41ee56a5ae9ff5a7d8fede6182c81dd544ca4b75dffb3b"
+    },
+    {
+      "path": "public/fatura_logo.png",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/public/fatura_logo.png",
+      "sha256": "6c85d7bd29f58e208e3c62c3ec642adc5274b0c440905b72534126d8f54bf904"
+    },
+    {
+      "path": "public/fonts/NotoSans-Bold.ttf",
+      "source": "voltguardekleyelim/company/app-overrides/public/fonts/NotoSans-Bold.ttf",
+      "sha256": "c976e4b1b99edc88775377fcc21692ca4bfa46b6d6ca6522bfda505b28ff9d6a"
+    },
+    {
+      "path": "public/fonts/NotoSans-Regular.ttf",
+      "source": "voltguardekleyelim/company/app-overrides/public/fonts/NotoSans-Regular.ttf",
+      "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5"
+    },
+    {
+      "path": "public/fonts/OFL.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/fonts/OFL.txt",
+      "sha256": "0dab92d0544f7b233403f14b84a663bdbfa746982eda629e7f4f9ffe1b036feb"
+    },
+    {
+      "path": "public/fonts/README.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/fonts/README.txt",
+      "sha256": "0d80b945140f61b53000e6814a26d848041668a3ab876b115ed627a5616a1feb"
+    },
+    {
+      "path": "public/licenses/base64-arraybuffer-1.0.2/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/base64-arraybuffer-1.0.2/LICENSE",
+      "sha256": "f3eca6ff762533fa5a77caf954a143e48afa204668cf97dce758c45a9e006be3"
+    },
+    {
+      "path": "public/licenses/canvg-3.0.11/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/canvg-3.0.11/LICENSE",
+      "sha256": "86622ffc909487e6029235d31503263b796895679b0926f4a4d6f02d2623fde0"
+    },
+    {
+      "path": "public/licenses/clsx-2.1.1/license",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/clsx-2.1.1/license",
+      "sha256": "9a9edad7baae52622bddf3c15b2ef8a33d2c89f2d25408ad13e8a7481c6b0c97"
+    },
+    {
+      "path": "public/licenses/core-js-3.47.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/core-js-3.47.0/LICENSE",
+      "sha256": "1f9573d2dd24dbeed40bd90f76e08f7b2ce178259d33c3636d20d71f03eea067"
+    },
+    {
+      "path": "public/licenses/core-util-is-1.0.3/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/core-util-is-1.0.3/LICENSE",
+      "sha256": "33b734d60042d0fe0c92dd1fc1e874193a1c899ec3e276a2eb935d2d0bf5b710"
+    },
+    {
+      "path": "public/licenses/css-line-break-2.1.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/css-line-break-2.1.0/LICENSE",
+      "sha256": "ce1ee0539f7fe1f7b75b76d121e674cb897c709c3e24ddba7f9a10fe2d0d88a5"
+    },
+    {
+      "path": "public/licenses/csstype-3.2.3/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/csstype-3.2.3/LICENSE",
+      "sha256": "11d55bd4541c75ee7879547ac49089c489163dae49551389713c3d026cab383e"
+    },
+    {
+      "path": "public/licenses/d3-array-3.2.4/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/d3-array-3.2.4/LICENSE",
+      "sha256": "3e6849627f74ff73c257a3ae1efb574015d94fc1035c05ec3c15805165efcbc4"
+    },
+    {
+      "path": "public/licenses/d3-color-3.1.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/d3-color-3.1.0/LICENSE",
+      "sha256": "faa682e3e430941f958d26180458f5934a62f58dac4d70ccdd15608c15d0f884"
+    },
+    {
+      "path": "public/licenses/d3-ease-3.0.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/d3-ease-3.0.1/LICENSE",
+      "sha256": "b989d9085148d21ff64a75e14462aefa06b2589a55553b07b1460c70081c7d08"
+    },
+    {
+      "path": "public/licenses/d3-format-3.1.2/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/d3-format-3.1.2/LICENSE",
+      "sha256": "2a6d2d5f32ba0b755ddbc1c833f766e30cdbe6ebe9a6d4e3e24427721f0b63d3"
+    },
+    {
+      "path": "public/licenses/d3-interpolate-3.0.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/d3-interpolate-3.0.1/LICENSE",
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    {
+      "path": "public/licenses/d3-path-3.1.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/d3-path-3.1.0/LICENSE",
+      "sha256": "a09b0d6d76e768fca2085fad05743ee81ddd11946bcda160a3cf5e1081a479aa"
+    },
+    {
+      "path": "public/licenses/d3-scale-4.0.2/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/d3-scale-4.0.2/LICENSE",
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    {
+      "path": "public/licenses/d3-shape-3.2.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/d3-shape-3.2.0/LICENSE",
+      "sha256": "faa682e3e430941f958d26180458f5934a62f58dac4d70ccdd15608c15d0f884"
+    },
+    {
+      "path": "public/licenses/d3-time-3.1.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/d3-time-3.1.0/LICENSE",
+      "sha256": "faa682e3e430941f958d26180458f5934a62f58dac4d70ccdd15608c15d0f884"
+    },
+    {
+      "path": "public/licenses/d3-time-format-4.1.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/d3-time-format-4.1.0/LICENSE",
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    {
+      "path": "public/licenses/d3-timer-3.0.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/d3-timer-3.0.1/LICENSE",
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    {
+      "path": "public/licenses/decimal.js-light-2.5.1/LICENCE.md",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/decimal.js-light-2.5.1/LICENCE.md",
+      "sha256": "fc0397fbd5c128bec7edef4e8d3f45e15db5fd043cdd0a2edfc4f14d47fbc3e4"
+    },
+    {
+      "path": "public/licenses/docx-9.5.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/docx-9.5.1/LICENSE",
+      "sha256": "b5b2364c0c95a26b2a2399d7e706a61acac680be1d5b180b00592ee85830bffb"
+    },
+    {
+      "path": "public/licenses/dom-helpers-5.2.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/dom-helpers-5.2.1/LICENSE",
+      "sha256": "1b0a9ba95a67bc484e028b13c61b83fc5aa1ca7957d1e2d43c2b0f70d9e9dd45"
+    },
+    {
+      "path": "public/licenses/dompurify-3.4.17/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/dompurify-3.4.17/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "public/licenses/dompurify-3.4.17/LICENSE-MPL",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/dompurify-3.4.17/LICENSE-MPL",
+      "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+    },
+    {
+      "path": "public/licenses/dompurify-3.4.17/src/license_header",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/dompurify-3.4.17/src/license_header",
+      "sha256": "5803fa925ae1703b9c752921c95a321570e6cabf06fcf2de895ddaf1687cebef"
+    },
+    {
+      "path": "public/licenses/eventemitter3-4.0.7/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/eventemitter3-4.0.7/LICENSE",
+      "sha256": "3aecc12b1cb28832b5f65ab64291de96568c3f236a74d646281b4491f7bcadbf"
+    },
+    {
+      "path": "public/licenses/fast-equals-5.4.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/fast-equals-5.4.0/LICENSE",
+      "sha256": "c0af1c3e74a891b408dc4365897482cc8c284365808e3837c56ea3c337ed7a2c"
+    },
+    {
+      "path": "public/licenses/fast-png-6.4.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/fast-png-6.4.0/LICENSE",
+      "sha256": "47ec9747cf2c470a505fcb20f3ec2ff2e60ea4febaf2e1e7041a24fc369fac3c"
+    },
+    {
+      "path": "public/licenses/fflate-0.8.3/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/fflate-0.8.3/LICENSE",
+      "sha256": "0a1df3a083d0c010560aa342e87959c8c1070e6fd54545741f083f22d0c8b551"
+    },
+    {
+      "path": "public/licenses/file-saver-2.0.5/LICENSE.md",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/file-saver-2.0.5/LICENSE.md",
+      "sha256": "2d1d7a93b46e4274355ac2904428707c4ee47ee8c6029fa394ebf405648d3f63"
+    },
+    {
+      "path": "public/licenses/hash.js-1.1.7/LICENSE-from-README.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/hash.js-1.1.7/LICENSE-from-README.txt",
+      "sha256": "0c0811be74a7a008c8f1daeee42838db5b83e960d6424fb9e1ba4401606d048d"
+    },
+    {
+      "path": "public/licenses/html2canvas-1.4.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/html2canvas-1.4.1/LICENSE",
+      "sha256": "86200ce4e92d9a22c41c8647a55f7a5fddff304ff89b4d36ecc699ed8c123d2c"
+    },
+    {
+      "path": "public/licenses/iceberg-js-0.8.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/iceberg-js-0.8.1/LICENSE",
+      "sha256": "e6e972dba808fb9d80863fe90ca222a47710cb850f6e6e2af95cdc0d022f79bd"
+    },
+    {
+      "path": "public/licenses/immediate-3.0.6/LICENSE.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/immediate-3.0.6/LICENSE.txt",
+      "sha256": "809e66de579fb7d92503848bbe6d1f348f4f6521a71e5d294fe7cc0c87a3b4ff"
+    },
+    {
+      "path": "public/licenses/index.html",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/index.html",
+      "sha256": "106a78716c5a411a058be08b01ffc77806bfaef9594d4b672334b719928c372e"
+    },
+    {
+      "path": "public/licenses/inherits-2.0.4/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/inherits-2.0.4/LICENSE",
+      "sha256": "5ffe28e7ade7d8f10d85d5337a73fd793dac5c462fb9a28fbf8c5046c7fbca3b"
+    },
+    {
+      "path": "public/licenses/internmap-2.0.3/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/internmap-2.0.3/LICENSE",
+      "sha256": "9ea8903938dab5f12c4572d60725069bec2d1b0dc3bcc210b09bae946a5ebb1f"
+    },
+    {
+      "path": "public/licenses/iobuffer-5.4.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/iobuffer-5.4.0/LICENSE",
+      "sha256": "1c22118fd112e8c394a5ec0598d2e2dfcdc19b3e1055ac3eaccdb2522b777335"
+    },
+    {
+      "path": "public/licenses/isarray-1.0.0/LICENSE-from-README.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/isarray-1.0.0/LICENSE-from-README.txt",
+      "sha256": "5a7e5e454c81d982ef21ca20f11cc1551ed0216e8447e7ab55a096a0a853d0bb"
+    },
+    {
+      "path": "public/licenses/js-tokens-4.0.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/js-tokens-4.0.0/LICENSE",
+      "sha256": "2213d91c606205c71eb051a199478cdc2adde945893404d7f1421436dd6d5cc1"
+    },
+    {
+      "path": "public/licenses/jspdf-4.2.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/jspdf-4.2.1/LICENSE",
+      "sha256": "dc388ec35ff463288cdde3588a36fd4ed12a45deff053243b37309acc9ef583b"
+    },
+    {
+      "path": "public/licenses/jspdf-autotable-5.0.8/LICENSE.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/jspdf-autotable-5.0.8/LICENSE.txt",
+      "sha256": "99a374e0385cf714d2faae5f6e02ec79217c6bcecec39bdb9e102091471b960a"
+    },
+    {
+      "path": "public/licenses/jszip-3.10.1/lib/license_header.js",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/jszip-3.10.1/lib/license_header.js",
+      "sha256": "27873abeec2df3693480a8d1b8fe17dd61bee843d1b39c1c9cfab57ffe93099e"
+    },
+    {
+      "path": "public/licenses/jszip-3.10.1/LICENSE.markdown",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/jszip-3.10.1/LICENSE.markdown",
+      "sha256": "566c953c6090b1218ca6217dd7359d45dde46581968586dc607d59a78af6a9c4"
+    },
+    {
+      "path": "public/licenses/lie-3.3.0/license.md",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/lie-3.3.0/license.md",
+      "sha256": "5c81b0caa98593408b03125efa25efe622341ed87ae55561968828cd887d64a4"
+    },
+    {
+      "path": "public/licenses/lodash-4.18.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/lodash-4.18.1/LICENSE",
+      "sha256": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc"
+    },
+    {
+      "path": "public/licenses/loose-envify-1.4.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/loose-envify-1.4.0/LICENSE",
+      "sha256": "4eb7543b08d955a6d23fcc224601d43ff566e775be918805e26210d7f6eb4893"
+    },
+    {
+      "path": "public/licenses/lucide-react-0.469.0/dist/esm/icons/copyright.js",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/lucide-react-0.469.0/dist/esm/icons/copyright.js",
+      "sha256": "56edc39ff69e6b2bf3437d1467250895a49359b72dec6716004c89df4bab6cc3"
+    },
+    {
+      "path": "public/licenses/lucide-react-0.469.0/dist/esm/icons/copyright.js.map",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/lucide-react-0.469.0/dist/esm/icons/copyright.js.map",
+      "sha256": "baf59c76fb66485ae227f380cdbc1ea079923c2e082bd382f04962baeb52db79"
+    },
+    {
+      "path": "public/licenses/lucide-react-0.469.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/lucide-react-0.469.0/LICENSE",
+      "sha256": "1e7290b35280a048667bbf0ebabac1c7fd52a75300e8b2946ac165715997f2bc"
+    },
+    {
+      "path": "public/licenses/minimalistic-assert-1.0.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/minimalistic-assert-1.0.1/LICENSE",
+      "sha256": "136fee1129ea96ce18b41c26a72f5d4ba196ee41bfd73b55d0b8509cdda148e9"
+    },
+    {
+      "path": "public/licenses/nanoid-5.1.16/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/nanoid-5.1.16/LICENSE",
+      "sha256": "4383cb2c3608397ce7a4159502614ed66890f8999c2a9c056dd3b1024d6721f0"
+    },
+    {
+      "path": "public/licenses/object-assign-4.1.1/license",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/object-assign-4.1.1/license",
+      "sha256": "6fb9754611c20f6649f68805e8c990e83261f29316e29de9e6cedae607b8634c"
+    },
+    {
+      "path": "public/licenses/packages.json",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/packages.json",
+      "sha256": "00442b656f9846f882b58f3baf14e290e11558ffcda3b3da4b16e8dff9460b6c"
+    },
+    {
+      "path": "public/licenses/pako-1.0.11/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/pako-1.0.11/LICENSE",
+      "sha256": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539"
+    },
+    {
+      "path": "public/licenses/pako-2.1.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/pako-2.1.0/LICENSE",
+      "sha256": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539"
+    },
+    {
+      "path": "public/licenses/performance-now-2.1.0/license.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/performance-now-2.1.0/license.txt",
+      "sha256": "c3af1272f30870168177e888b184c1f802e5081e75a126c794670c0b562d3783"
+    },
+    {
+      "path": "public/licenses/process-nextick-args-2.0.1/license.md",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/process-nextick-args-2.0.1/license.md",
+      "sha256": "ecdccbcf39024f624ded480c01c0b25458e1eca8f26ecf040933865ce56d9a4f"
+    },
+    {
+      "path": "public/licenses/prop-types-15.8.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/prop-types-15.8.1/LICENSE",
+      "sha256": "f657f99d3fb9647db92628e96007aabb46e5f04f33e49999075aab8e250ca7ce"
+    },
+    {
+      "path": "public/licenses/raf-3.4.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/raf-3.4.1/LICENSE",
+      "sha256": "6b2194e178545b3dcde4a40a09b5f6c00bd9b5b695db0c826c14995c6c9b4ec5"
+    },
+    {
+      "path": "public/licenses/react-18.3.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/react-18.3.1/LICENSE",
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+    },
+    {
+      "path": "public/licenses/react-dom-18.3.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/react-dom-18.3.1/LICENSE",
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+    },
+    {
+      "path": "public/licenses/react-is-16.13.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/react-is-16.13.1/LICENSE",
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+    },
+    {
+      "path": "public/licenses/react-is-18.3.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/react-is-18.3.1/LICENSE",
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+    },
+    {
+      "path": "public/licenses/react-smooth-4.0.4/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/react-smooth-4.0.4/LICENSE",
+      "sha256": "258fe95d585e52a42eb5bec05b103a78400532103c4d01f94bc4cfca59486540"
+    },
+    {
+      "path": "public/licenses/react-transition-group-4.4.5/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/react-transition-group-4.4.5/LICENSE",
+      "sha256": "b9adc17ad75a847d8743be2843935f0842a0ea4f45e7b0c7e17ed0be98614b9b"
+    },
+    {
+      "path": "public/licenses/readable-stream-2.3.8/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/readable-stream-2.3.8/LICENSE",
+      "sha256": "ec62dc96da0099b87f4511736c87309335527fb7031639493e06c95728dc8c54"
+    },
+    {
+      "path": "public/licenses/recharts-2.15.4/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/recharts-2.15.4/LICENSE",
+      "sha256": "2d3aa48a8d1d3b93093680e8e68d3a64cfb590c3ade377ffcaefc69dac7c2ce5"
+    },
+    {
+      "path": "public/licenses/recharts-scale-0.4.5/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/recharts-scale-0.4.5/LICENSE",
+      "sha256": "9b0d4666d301c53eb4be4e2fec89e5589a7e5da450026153c27e34c2b3115921"
+    },
+    {
+      "path": "public/licenses/regenerator-runtime-0.13.11/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/regenerator-runtime-0.13.11/LICENSE",
+      "sha256": "51887a3d47051ac2fce1210562e5b9fe0830a8a8fabeb272c2d586eeb18a05fd"
+    },
+    {
+      "path": "public/licenses/rgbcolor-1.0.1/LICENSE.md",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/rgbcolor-1.0.1/LICENSE.md",
+      "sha256": "86045408b01f66f9319a2fe7bc7f7e115f272956ac44d2d840fc00127124a78c"
+    },
+    {
+      "path": "public/licenses/safe-buffer-5.1.2/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/safe-buffer-5.1.2/LICENSE",
+      "sha256": "c7cc929b57080f4b9d0c6cf57669f0463fc5b39906344dfc8d3bc43426b30eac"
+    },
+    {
+      "path": "public/licenses/sax-1.4.3/LICENSE.md",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/sax-1.4.3/LICENSE.md",
+      "sha256": "8a1af140fdfbf5afd3df27f7e662f989c5b963a300020dfafce42033cae9e004"
+    },
+    {
+      "path": "public/licenses/scheduler-0.23.2/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/scheduler-0.23.2/LICENSE",
+      "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+    },
+    {
+      "path": "public/licenses/setimmediate-1.0.5/LICENSE.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/setimmediate-1.0.5/LICENSE.txt",
+      "sha256": "c4b4ad3a5746f1f5249a6dd90396ec519264e1bb02e01e48a6522c48a3a97cb4"
+    },
+    {
+      "path": "public/licenses/stackblur-canvas-2.7.0/LICENSE-MIT.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/stackblur-canvas-2.7.0/LICENSE-MIT.txt",
+      "sha256": "609e3755e6e7a048b8ca85de25233cfc4f62ec7cb9afeea603269a03b73db197"
+    },
+    {
+      "path": "public/licenses/string_decoder-1.1.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/string_decoder-1.1.1/LICENSE",
+      "sha256": "11f2aafb37d06b3ee5bdaf06e9811141d0da05263c316f3d627f45c20d43261b"
+    },
+    {
+      "path": "public/licenses/svg-pathdata-6.0.3/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/svg-pathdata-6.0.3/LICENSE",
+      "sha256": "cd05e8e2516f46a2cd79494bbabdea76f874e8d049dbc19a76b367534a4e013e"
+    },
+    {
+      "path": "public/licenses/text-segmentation-1.0.3/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/text-segmentation-1.0.3/LICENSE",
+      "sha256": "8b00952cd8d0f5cbbefb13576778e1185dc963943151353d90c4e14a5a4caf40"
+    },
+    {
+      "path": "public/licenses/tiny-invariant-1.3.3/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/tiny-invariant-1.3.3/LICENSE",
+      "sha256": "b1c501095de70182748cb8e8d97ac5577701a4ef3b755ba30d59fd87b24bdb0f"
+    },
+    {
+      "path": "public/licenses/tslib-2.8.1/LICENSE.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/tslib-2.8.1/LICENSE.txt",
+      "sha256": "210b19e543130388c68654b7497e967119ce17145f66ab7d85688fbd70f08751"
+    },
+    {
+      "path": "public/licenses/undici-types-7.16.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/undici-types-7.16.0/LICENSE",
+      "sha256": "a6db8096b2707bc0102d256917d4d33f298ba36d8c3f25de067a2b5bb379db27"
+    },
+    {
+      "path": "public/licenses/util-deprecate-1.0.2/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/util-deprecate-1.0.2/LICENSE",
+      "sha256": "0154425673db15cdfa80ecba2c9b1f1a867f7197a006764712849bfc3a93cbb7"
+    },
+    {
+      "path": "public/licenses/utrie-1.0.2/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/utrie-1.0.2/LICENSE",
+      "sha256": "8b00952cd8d0f5cbbefb13576778e1185dc963943151353d90c4e14a5a4caf40"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-array/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-array/LICENSE",
+      "sha256": "faa682e3e430941f958d26180458f5934a62f58dac4d70ccdd15608c15d0f884"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-color/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-color/LICENSE",
+      "sha256": "faa682e3e430941f958d26180458f5934a62f58dac4d70ccdd15608c15d0f884"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-ease/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-ease/LICENSE",
+      "sha256": "b989d9085148d21ff64a75e14462aefa06b2589a55553b07b1460c70081c7d08"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-format/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-format/LICENSE",
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-interpolate/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-interpolate/LICENSE",
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-path/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-path/LICENSE",
+      "sha256": "0ab21426fad1e8b819ea8ab4c7faf5a24d4fca9c01572fe722490d600bba0d22"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-scale/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-scale/LICENSE",
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-shape/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-shape/LICENSE",
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-time/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-time/LICENSE",
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-time-format/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-time-format/LICENSE",
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-timer/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-timer/LICENSE",
+      "sha256": "e008c5e25a6be382593089c29bfabbc553c6378eee02895aec46ce396cc404ee"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/d3-voronoi/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/d3-voronoi/LICENSE",
+      "sha256": "ad6cf57648385d6c40a29f73c55e42922dd793823df5ea265ccd834873bf09b9"
+    },
+    {
+      "path": "public/licenses/victory-vendor-36.9.2/lib-vendor/internmap/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/victory-vendor-36.9.2/lib-vendor/internmap/LICENSE",
+      "sha256": "9ea8903938dab5f12c4572d60725069bec2d1b0dc3bcc210b09bae946a5ebb1f"
+    },
+    {
+      "path": "public/licenses/ws-8.22.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/ws-8.22.0/LICENSE",
+      "sha256": "2b29dcfe0d6471f7e8c92c5fb38c9f93edee10330937055440192f1832b1ecef"
+    },
+    {
+      "path": "public/licenses/xlsx-0.20.3/dist/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/xlsx-0.20.3/dist/LICENSE",
+      "sha256": "4d2a38ac35cda06a555c84074a819d413339cd3691b822cae50f8f322fe01f64"
+    },
+    {
+      "path": "public/licenses/xlsx-0.20.3/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/xlsx-0.20.3/LICENSE",
+      "sha256": "4d2a38ac35cda06a555c84074a819d413339cd3691b822cae50f8f322fe01f64"
+    },
+    {
+      "path": "public/licenses/xml-1.0.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/xml-1.0.1/LICENSE",
+      "sha256": "d2b3e2f62078f282f21a8c5119a44cc7313fe6aa4a22094c8ad93f4b577b7901"
+    },
+    {
+      "path": "public/licenses/xml-js-1.6.11/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/xml-js-1.6.11/LICENSE",
+      "sha256": "8ada61091ef0ef154a69321483e5ffadf5c50693ca945047ffb90a6b4b12b088"
+    },
+    {
+      "path": "public/licenses/_babel_runtime-7.29.10/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_babel_runtime-7.29.10/LICENSE",
+      "sha256": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76"
+    },
+    {
+      "path": "public/licenses/_supabase_auth-js-2.89.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_supabase_auth-js-2.89.0/LICENSE",
+      "sha256": "334dd6820e2eaeab2064e7c59001b810566728a28a41a7c1dbf69bbee17d0936"
+    },
+    {
+      "path": "public/licenses/_supabase_functions-js-2.89.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_supabase_functions-js-2.89.0/LICENSE",
+      "sha256": "334dd6820e2eaeab2064e7c59001b810566728a28a41a7c1dbf69bbee17d0936"
+    },
+    {
+      "path": "public/licenses/_supabase_functions-js-2.89.0/UPSTREAM.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_supabase_functions-js-2.89.0/UPSTREAM.txt",
+      "sha256": "b148c4890cf09bdbcb807d7e1ea5ef57e89dfd2438060bef6d09388de1c627d1"
+    },
+    {
+      "path": "public/licenses/_supabase_postgrest-js-2.89.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_supabase_postgrest-js-2.89.0/LICENSE",
+      "sha256": "334dd6820e2eaeab2064e7c59001b810566728a28a41a7c1dbf69bbee17d0936"
+    },
+    {
+      "path": "public/licenses/_supabase_postgrest-js-2.89.0/UPSTREAM.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_supabase_postgrest-js-2.89.0/UPSTREAM.txt",
+      "sha256": "b148c4890cf09bdbcb807d7e1ea5ef57e89dfd2438060bef6d09388de1c627d1"
+    },
+    {
+      "path": "public/licenses/_supabase_realtime-js-2.89.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_supabase_realtime-js-2.89.0/LICENSE",
+      "sha256": "334dd6820e2eaeab2064e7c59001b810566728a28a41a7c1dbf69bbee17d0936"
+    },
+    {
+      "path": "public/licenses/_supabase_realtime-js-2.89.0/UPSTREAM.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_supabase_realtime-js-2.89.0/UPSTREAM.txt",
+      "sha256": "b148c4890cf09bdbcb807d7e1ea5ef57e89dfd2438060bef6d09388de1c627d1"
+    },
+    {
+      "path": "public/licenses/_supabase_storage-js-2.89.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_supabase_storage-js-2.89.0/LICENSE",
+      "sha256": "334dd6820e2eaeab2064e7c59001b810566728a28a41a7c1dbf69bbee17d0936"
+    },
+    {
+      "path": "public/licenses/_supabase_storage-js-2.89.0/UPSTREAM.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_supabase_storage-js-2.89.0/UPSTREAM.txt",
+      "sha256": "b148c4890cf09bdbcb807d7e1ea5ef57e89dfd2438060bef6d09388de1c627d1"
+    },
+    {
+      "path": "public/licenses/_supabase_supabase-js-2.89.0/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_supabase_supabase-js-2.89.0/LICENSE",
+      "sha256": "334dd6820e2eaeab2064e7c59001b810566728a28a41a7c1dbf69bbee17d0936"
+    },
+    {
+      "path": "public/licenses/_supabase_supabase-js-2.89.0/UPSTREAM.txt",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_supabase_supabase-js-2.89.0/UPSTREAM.txt",
+      "sha256": "b148c4890cf09bdbcb807d7e1ea5ef57e89dfd2438060bef6d09388de1c627d1"
+    },
+    {
+      "path": "public/licenses/_types_d3-array-3.2.2/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_d3-array-3.2.2/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_d3-color-3.1.3/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_d3-color-3.1.3/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_d3-ease-3.0.2/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_d3-ease-3.0.2/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_d3-interpolate-3.0.4/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_d3-interpolate-3.0.4/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_d3-path-3.1.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_d3-path-3.1.1/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_d3-scale-4.0.9/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_d3-scale-4.0.9/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_d3-shape-3.1.8/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_d3-shape-3.1.8/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_d3-time-3.0.4/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_d3-time-3.0.4/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_d3-timer-3.0.2/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_d3-timer-3.0.2/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_node-24.10.3/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_node-24.10.3/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_pako-2.0.4/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_pako-2.0.4/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_phoenix-1.6.7/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_phoenix-1.6.7/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_raf-3.4.3/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_raf-3.4.3/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_trusted-types-2.0.7/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_trusted-types-2.0.7/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "public/licenses/_types_ws-8.18.1/LICENSE",
+      "source": "voltguardekleyelim/company/app-overrides/public/licenses/_types_ws-8.18.1/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "package.json",
+      "source": "voltguardekleyelim/company/app-overrides/package.json",
+      "sha256": "321e1ee06bf384b1b7f4b3568fde98d13b8d68eaf80ed430adde51f1744a2242"
+    },
+    {
+      "path": "package-lock.json",
+      "source": "voltguardekleyelim/company/app-overrides/package-lock.json",
+      "sha256": "2bfc347d154668edb55399d97582f6363789e2673fa4ed245fb10cc001b41403"
+    },
+    {
+      "path": "tailwind.config.js",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/tailwind.config.js",
+      "sha256": "2248bf828c19499e4a34a9d6696bc862cd53989239b7b4a61a76eef20bfacb79"
+    },
+    {
+      "path": "postcss.config.js",
+      "source": "voltguardekleyelim/Teklif-Voltguard-main/postcss.config.js",
+      "sha256": "190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27"
+    }
+  ]
+}

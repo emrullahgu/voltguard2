@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AG Tek Hat Şeması | VoltGuard</title><meta name="description" content="Alçak gerilim dağıtım panosunun tek hat şemasını hazırlayın."><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#0a1628"><link rel="canonical" href="https://voltguard.com.tr/araclar/ag-tek-hat-semasi/"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="AG Tek Hat Şeması | VoltGuard"><meta property="og:description" content="Alçak gerilim dağıtım panosunun tek hat şemasını hazırlayın."><meta property="og:url" content="https://voltguard.com.tr/araclar/ag-tek-hat-semasi/"><meta property="og:image" content="https://voltguard.com.tr/araclar/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/voltguard-icon-64.png" type="image/png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"AG Tek Hat Şeması","url":"https://voltguard.com.tr/araclar/ag-tek-hat-semasi/","description":"Alçak gerilim dağıtım panosunun tek hat şemasını hazırlayın.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":0,"priceCurrency":"TRY"},"publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VoltGuard","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"AG Tek Hat Şeması","item":"https://voltguard.com.tr/araclar/ag-tek-hat-semasi/"}]}]}</script><link rel="stylesheet" href="../shared/tool-shell.css"><link rel="stylesheet" href="../shared/export.css">
+
+
+
+<style>
+  #vg-tool-workspace{
+    --paper:#ffffff; --ink:#0d1117; --grid:#eef0f2;
+    --panel:#1c222b; --panel-2:#242b35; --panel-line:#39424f;
+    --pink:#e8ebef; --pink-soft:#98a2b0;
+    --accent:#d8a01f; --danger:#c0392b; --field:#141a21; --field-line:#38414d;
+  }
+  :where(#vg-tool-workspace) *{box-sizing:border-box}
+  #vg-tool-workspace,#vg-tool-workspace{margin:0;height:100%}
+  #vg-tool-workspace{font-family:"Segoe UI",system-ui,sans-serif;background:var(--panel);
+    color:var(--pink);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+  :where(#vg-tool-workspace) header{display:flex;align-items:baseline;gap:14px;padding:9px 18px;
+    background:var(--panel-2);border-bottom:1px solid var(--panel-line);flex:0 0 auto}
+  :where(#vg-tool-workspace) header :is(h1,.vg-original-title){font-size:15px;font-weight:650;margin:0}
+  :where(#vg-tool-workspace) header .sub{font-size:12px;color:var(--pink-soft)}
+  :where(#vg-tool-workspace) header .spec{margin-left:auto;font-size:11px;color:var(--pink-soft);font-variant-numeric:tabular-nums}
+  :where(#vg-tool-workspace) .body{display:flex;flex:1 1 auto;min-height:0}
+  :where(#vg-tool-workspace) aside{width:355px;flex:0 0 355px;background:var(--panel);
+    border-right:1px solid var(--panel-line);overflow-y:auto;padding:14px 16px 50px}
+  :where(#vg-tool-workspace) aside::-webkit-scrollbar{width:10px}
+  :where(#vg-tool-workspace) aside::-webkit-scrollbar-thumb{background:var(--panel-line);border-radius:6px}
+  :where(#vg-tool-workspace) .group{margin-bottom:17px}
+  :where(#vg-tool-workspace) .glabel{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--pink-soft);
+    margin:0 0 8px;font-weight:650;display:flex;align-items:center;gap:8px}
+  :where(#vg-tool-workspace) .glabel::after{content:"";flex:1;height:1px;background:var(--panel-line)}
+  :where(#vg-tool-workspace) label.field{display:block;margin-bottom:10px}
+  :where(#vg-tool-workspace) label.field>span{display:block;font-size:12px;color:var(--pink-soft);margin-bottom:4px}
+  :where(#vg-tool-workspace) select,:where(#vg-tool-workspace) input[type=text],:where(#vg-tool-workspace) input[type=number]{width:100%;background:var(--field);color:var(--pink);
+    border:1px solid var(--field-line);border-radius:6px;padding:7px 9px;font-size:13px;font-family:inherit}
+  :where(#vg-tool-workspace) select:focus,:where(#vg-tool-workspace) input:focus{outline:2px solid var(--accent);outline-offset:-1px}
+  :where(#vg-tool-workspace) .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  :where(#vg-tool-workspace) .row3{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+  :where(#vg-tool-workspace) .check{display:flex;align-items:center;gap:9px;font-size:13px;padding:5px 0;cursor:pointer}
+  :where(#vg-tool-workspace) .check input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+  :where(#vg-tool-workspace) .hint{font-size:11px;color:var(--pink-soft);line-height:1.45;margin:2px 0 0}
+  :where(#vg-tool-workspace) .auto-badge{font-size:9px;letter-spacing:.06em;background:#2c333d;color:var(--accent);
+    padding:1px 6px;border-radius:4px;text-transform:uppercase;font-weight:650}
+  :where(#vg-tool-workspace) .out-list{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+  :where(#vg-tool-workspace) .out-row{display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:7px;
+    background:var(--panel-2);border:1px solid var(--panel-line);border-radius:7px;padding:5px 7px}
+  :where(#vg-tool-workspace) .out-row.reserve{opacity:.7}
+  :where(#vg-tool-workspace) .out-row .idx{font-size:10.5px;color:var(--pink-soft);text-align:center;font-variant-numeric:tabular-nums}
+  :where(#vg-tool-workspace) .out-row select,:where(#vg-tool-workspace) .out-row input{padding:4px 6px;font-size:11.5px}
+  :where(#vg-tool-workspace) .mini-btn{background:var(--field);border:1px solid var(--field-line);color:var(--pink);
+    border-radius:6px;padding:4px 8px;font-size:11.5px;cursor:pointer;font-family:inherit}
+  :where(#vg-tool-workspace) .mini-btn:hover{border-color:var(--accent)}
+  :where(#vg-tool-workspace) .mini-btn.danger:hover{border-color:var(--danger);color:#f0a79f}
+  :where(#vg-tool-workspace) .btn{background:var(--accent);color:#20262f;border:none;border-radius:7px;
+    padding:9px 13px;font-size:13px;font-weight:650;cursor:pointer;font-family:inherit}
+  :where(#vg-tool-workspace) .btn:hover{filter:brightness(1.08)}
+  :where(#vg-tool-workspace) .btn.ghost{background:transparent;color:var(--pink);border:1px solid var(--panel-line)}
+  :where(#vg-tool-workspace) .btn.ghost:hover{border-color:var(--accent)}
+  :where(#vg-tool-workspace) .actions{display:flex;gap:8px;flex-wrap:wrap}
+  :where(#vg-tool-workspace) main{flex:1 1 auto;min-width:0;min-height:0;display:flex;flex-direction:column;background:#12161c}
+  :where(#vg-tool-workspace) .ctools{display:flex;align-items:center;gap:10px;padding:7px 14px;background:var(--panel-2);
+    border-bottom:1px solid var(--panel-line);flex:0 0 auto}
+  :where(#vg-tool-workspace) .ctools .title{font-size:12.5px;font-weight:600}
+  :where(#vg-tool-workspace) .ctools .meta{font-size:11px;color:var(--pink-soft);font-variant-numeric:tabular-nums}
+  :where(#vg-tool-workspace) .ctools .sp{flex:1}
+  :where(#vg-tool-workspace) .zoombtn{height:28px;min-width:30px;border-radius:6px;background:var(--field);
+    border:1px solid var(--field-line);color:var(--pink);cursor:pointer;font-size:14px;padding:0 8px}
+  :where(#vg-tool-workspace) .zoombtn:hover{border-color:var(--accent)}
+  :where(#vg-tool-workspace) .scroll{flex:1 1 auto;overflow:auto;padding:30px;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(216,160,31,.10), transparent 60%),
+      radial-gradient(900px 500px at 20% 110%, rgba(47,111,208,.10), transparent 60%),
+      linear-gradient(180deg,#151a21 0%,#0f131a 100%);}
+  :where(#vg-tool-workspace) .scroll::-webkit-scrollbar{width:12px;height:12px}
+  :where(#vg-tool-workspace) .scroll::-webkit-scrollbar-thumb{background:var(--panel-line);border-radius:6px}
+  :where(#vg-tool-workspace) .sheet{background:var(--paper);transform-origin:top left;margin:auto;
+    border-radius:2px;
+    box-shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.45), 0 30px 70px rgba(0,0,0,.35);}
+  :where(#vg-tool-workspace) svg text{font-family:"Segoe UI",Arial,sans-serif}
+  /* ---- A4 yazdırma: sadece şema, sayfaya sığdırılmış ---- */
+  :where(#vg-tool-workspace) #printArea{display:none}
+  @media print{
+    @page{size:A4 portrait;margin:8mm}
+    #vg-tool-workspace,#vg-tool-workspace{height:auto!important;overflow:visible!important;background:#fff!important}
+    #vg-tool-workspace>*:not(#printArea){display:none!important}
+    :where(#vg-tool-workspace) #printArea{display:flex!important;align-items:center;justify-content:center;width:194mm;height:281mm}
+    :where(#vg-tool-workspace) #printArea svg{display:block}
+  }
+  /* ---- Mobil ---- */
+  :where(#vg-tool-workspace) .panelToggle{display:none}
+  @media(max-width:880px){
+    :where(#vg-tool-workspace) .body{flex-direction:column}
+    :where(#vg-tool-workspace) aside{width:100%;flex:0 0 auto;max-height:52vh;border-right:none;border-bottom:1px solid var(--panel-line);padding-bottom:24px}
+    :where(#vg-tool-workspace) aside.collapsed{display:none}
+    :where(#vg-tool-workspace) .panelToggle{display:inline-block}
+    :where(#vg-tool-workspace) header{padding:8px 12px;flex-wrap:wrap;gap:6px 10px}
+    :where(#vg-tool-workspace) header .spec{display:none}
+    :where(#vg-tool-workspace) header :is(h1,.vg-original-title){font-size:14px}
+    :where(#vg-tool-workspace) .ctools{padding:6px 10px;gap:6px;flex-wrap:wrap}
+    :where(#vg-tool-workspace) .ctools .meta:not(#zoomLabel){display:none}
+    :where(#vg-tool-workspace) .zoombtn{height:34px;min-width:36px;font-size:16px}
+    :where(#vg-tool-workspace) select,:where(#vg-tool-workspace) input[type=text],:where(#vg-tool-workspace) input[type=number]{font-size:16px;padding:9px 10px}  /* iOS zoom'u engeller */
+    :where(#vg-tool-workspace) .btn{padding:11px 14px;font-size:14px}
+    :where(#vg-tool-workspace) .mini-btn{padding:7px 10px;font-size:13px}
+    :where(#vg-tool-workspace) .scroll{padding:12px;touch-action:pan-x pan-y}
+  }
+</style>
+<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=bd7e46c3cd10"><script src="/js/vg-shell.js?v=a3ccf745026f" defer></script><script src="/js/voltguard-auth.js?v=5ea8a8c73e4b" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=6609af196d62"></head>
+<body data-vg-tool="ag-tek-hat-semasi" data-vg-title="AG Tek Hat Şeması" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+<header data-vg-no-print class="vg-header doc-header" id="vgHeader">
+  <div class="vg-header__bar vg-wrap">
+    <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+      <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+      <span class="vg-brand__copy" aria-hidden="true">
+        <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+        <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+      </span>
+    </a>
+    <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+    <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+      <ul class="vg-nav__list">
+        <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+        <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+        <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+        <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+        <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+        <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+          <ul class="vg-dd__menu" id="vgDdKaynaklar">
+            <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+            <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+            <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+            <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+            <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+          </ul>
+        </li>
+        <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+        <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+      </ul>
+      <div class="vg-nav__foot">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </nav>
+    <div class="vg-actions">
+      <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+      <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+    </div>
+  </div>
+  <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+</header><div id="main" tabindex="-1"><div id="vg-top"><div class="vg-topline"><nav class="vg-links" aria-label="Araç menüsü"><a class="vg-back" href="../#araclar">← Tüm araçlar</a><a class="vg-back" href="/hesaplama-araclari/">Pratik hesaplar →</a><a class="vg-back" href="/">VoltGuard ana sayfa ↗</a></nav></div><p class="vg-crumb">Dağıtım şebekesi / AG Tek Hat Şeması</p><h1>AG Tek Hat Şeması</h1><p class="vg-description">Alçak gerilim dağıtım panosunun tek hat şemasını hazırlayın.</p><details><summary>Girdiler, sonuçlar ve hesap yöntemi</summary><div class="vg-method"><strong>Girdiler:</strong> Pano, koruma ve çıkış bilgileri.<br><strong>Çıktılar:</strong> Düzenlenebilir tek hat şeması.<br><strong>Yöntem:</strong> Pano ve çıkış düzenine göre tek hat şeması oluşturma. <a href="../yontem/">Kaynak ve geçerlilik bilgileri →</a></div></details></div><div id="vg-tool-workspace">
+<header>
+  <h2 class="vg-original-title">AG Dağıtım Panosu — Tek Hat Şeması Şablonu</h2>
+  <span class="sub">TEDAŞ-MLZ/2003-006.C</span>
+  <span class="spec" id="specLine"></span>
+</header>
+<div id="printArea"></div>
+<div class="body">
+  <aside>
+    <div class="group">
+      <p class="glabel">Pano Tanımı</p>
+      <label class="field"><span>Pano Tipi</span>
+        <select id="panelType">
+          <option value="tedas" selected>TEDAŞ Tipi (dağıtım panosu)</option>
+          <option value="ucuncu">3. Şahıs Panosu (özel tesis)</option>
+        </select></label>
+      <label class="field"><span>Trafo / Pano Gücü</span><select id="power"></select></label>
+      <div class="row2">
+        <label class="field"><span>Trafo Bağlantısı</span>
+          <select id="trafoConn">
+            <option value="beton" selected>Beton Köşk</option>
+            <option value="direk">Direk Tipi Trafo</option>
+          </select></label>
+        <label class="field"><span>AG Besleme Kablosu <span class="auto-badge" id="cableAuto">oto</span></span>
+          <input type="text" id="cableManual" placeholder="oto"></label>
+      </div>
+      <div class="row2">
+        <label class="field"><span>Kullanım Yeri</span>
+          <select id="place"><option value="dahili">Dahili</option><option value="harici" selected>Harici</option></select></label>
+        <label class="field"><span>Montaj</span>
+          <select id="mount"><option value="kaide" selected>Kaide</option><option value="direk">Direk</option></select></label>
+      </div>
+      <div class="row2">
+        <label class="field"><span>Mahfaza</span>
+          <select id="enclosure"><option value="metal" selected>Sac</option><option value="crp">CTP</option></select></label>
+        <label class="field"><span>Trafo Kod</span>
+          <select id="vector"><option>DYN 11</option><option>YZN 11</option></select></label>
+      </div>
+    </div>
+
+    <div class="group">
+      <p class="glabel">Ana Giriş</p>
+      <label class="field"><span>Giriş Elemanı <span class="auto-badge" id="mainAuto">oto</span></span>
+        <select id="mainDevice">
+          <option value="tmk">TMK (Termik Manyetik Kesici)</option>
+          <option value="direct">Kayar Bara (direkt bağlantı)</option>
+        </select></label>
+      <label class="check"><input type="checkbox" id="hasAAB"> AAB (Acil Açtırma Butonu)</label>
+      <label class="check"><input type="checkbox" id="hasSurge" checked> Parafudr</label>
+      <label class="check"><input type="checkbox" id="hasComp" checked> Sabit kompanzasyon grubu</label>
+      <div class="row2" id="compRow" style="margin:2px 0 6px">
+        <label class="field" style="margin:0"><span>Kompanzasyon (kVAr)</span>
+          <input type="text" id="compKvar" placeholder="örn. 16"></label>
+        <label class="field" style="margin:0"><span>&nbsp;</span>
+          <div class="hint" id="compHint" style="padding-top:8px"></div></label>
+      </div>
+      <label class="check"><input type="checkbox" id="compOut"> Kompanzasyona giden çıkış (3. şahıs)</label>
+      <label class="check"><input type="checkbox" id="onayFrame" checked> İç tesisat onay çerçevesi/yazısı (3. şahıs)</label>
+      <label class="check"><input type="checkbox" id="hasAnalyzer" checked> Enerji ölçer + Modem</label>
+      <label class="check"><input type="checkbox" id="hasInternal" checked> İç ihtiyaç çıkışı</label>
+    </div>
+
+    <div class="group">
+      <p class="glabel">Aydınlatma Çıkışı</p>
+      <label class="field"><span>Aydınlatma Kolu</span>
+        <select id="lighting">
+          <option value="none">Yok</option>
+          <option value="sokak" selected>Sokak aydınlatma çıkışı</option>
+          <option value="pano">Aydınlatma panosu çıkışı</option>
+        </select></label>
+      <label class="check"><input type="checkbox" id="hasAstro" checked> Astronomik röle + kontaktör</label>
+    </div>
+
+    <div class="group">
+      <p class="glabel">Besleme Çıkışları</p>
+      <label class="field"><span>Çıkış tipi (tüm çıkışlar aynı olur)</span>
+        <select id="allKind">
+          <option value="dsya" selected>DSYA (dikey sigortalı yük ayırıcı)</option>
+          <option value="sya">SYA (sigortalı yük ayırıcı)</option>
+          <option value="aos">TMŞ (termik manyetik şalter)</option>
+        </select></label>
+      <div class="row3" style="margin-bottom:8px">
+        <label class="field" style="margin:0"><span>Aktif</span><input type="number" id="nActive" min="0" max="16" value="4"></label>
+        <label class="field" style="margin:0"><span>Yedek</span><input type="number" id="nReserve" min="0" max="6" value="0"></label>
+        <label class="field" style="margin:0"><span>&nbsp;</span><button class="mini-btn" id="applyCounts" style="width:100%;padding:7px 8px">Uygula</button></label>
+      </div>
+      <div class="out-list" id="outList"></div>
+      <p class="hint" id="outHint" style="margin-top:8px"></p>
+    </div>
+  </aside>
+
+  <main>
+    <div class="ctools">
+      <button class="zoombtn panelToggle" id="panelToggle" title="Ayarları göster/gizle">☰ Ayarlar</button>
+      <span class="title" id="sheetTitle">Tek Hat Şeması</span>
+      <span class="meta" id="sheetMeta"></span>
+      <span class="sp"></span>
+      <button class="zoombtn" id="zOut">−</button>
+      <span class="meta" id="zoomLabel">100%</span>
+      <button class="zoombtn" id="zIn">+</button>
+      <button class="zoombtn" id="zFit">Sığdır</button>
+      <span style="display:inline-block;width:12px"></span>
+      <button class="zoombtn" id="dlSvg" style="border-color:var(--accent);color:var(--accent)" title="SVG indir">SVG</button>
+      <button class="zoombtn" id="dlPng" title="PNG indir">PNG</button>
+      <button class="zoombtn" id="dlDxf" title="AutoCAD/NetCAD uyumlu · mm · A4 dik (5 mm kenar payı)">DXF</button>
+      <button class="zoombtn" id="printBtn" title="Yazdırma penceresinde 'PDF olarak kaydet' seçin">A4 / PDF</button>
+    </div>
+    <div class="scroll" id="scroll"><div class="sheet" id="sheet"></div></div>
+  </main>
+</div>
+<script>
+/* ============================================================
+   ŞARTNAME + REFERANS ÇİZİM VERİ MODELİ
+   TEDAŞ-MLZ/2003-006.C  (EK-I Tablo 3–6, EK-II boyutlar)
+   ============================================================ */
+const SPEC={
+  V:"231/400V", vHV:"/0.4-0.231 kV", freq:"50 Hz", uimp:"8 kV",
+  powers:{
+    "50":  {bar:"20x3 mm²",  ct:"100/5",  main:"tmk", mainI:80,  ics:"≥2 kA",  prosp:"2 / 3 kA",   groups:[{n:4,boy:0}], res:0},
+    "100": {bar:"20x3 mm²",  ct:"200/5",  main:"tmk", mainI:160, ics:"≥4 kA",  prosp:"4 / 6 kA",   groups:[{n:4,boy:0}], res:0},
+    "160": {bar:"20x5 mm²",  ct:"300/5",  main:"tmk", mainI:250, ics:"≥6 kA",  prosp:"6 / 10 kA",  groups:[{n:4,boy:0}], res:0},
+    "250": {bar:"30x5 mm²",  ct:"400/5",  main:"tmk", mainI:400, ics:"≥9 kA",  prosp:"9 / 15 kA",  groups:[{n:2,boy:0},{n:2,boy:1}], res:2},
+    "400": {bar:"40x10 mm²", ct:"600/5",  main:"tmk", mainI:630, ics:"≥15 kA", prosp:"15 / 30 kA", groups:[{n:2,boy:0},{n:3,boy:1}], res:1, note:"400 kVA TMK'sız seçilirse giriş direkt baradır"},
+    "630": {bar:"60x10 mm²", ct:"1000/5", main:"direct", mainI:910, ics:"≥23 kA", prosp:"23 / 48 kA", groups:[{n:4,boy:0},{n:4,boy:1}], res:2},
+    "800": {bar:"80x10 mm²", ct:"1200/5", main:"direct", mainI:1155, ics:"≥19 kA", prosp:"19 / 38 kA", groups:[{n:4,boy:0},{n:4,boy:1}], res:2},
+    "1000":{bar:"100x10 mm²",ct:"1600/5", main:"direct", mainI:1445, ics:"≥24 kA", prosp:"24 / 50 kA", groups:[{n:4,boy:1},{n:4,boy:2}], res:2},
+    "1250":{bar:"120x10 mm²",ct:"2000/5", main:"direct", mainI:1800, ics:"≥30 kA", prosp:"30 / 63 kA", groups:[{n:5,boy:1},{n:5,boy:2}], res:2},
+    "1600":{bar:"2X(100x10) mm²",ct:"2500/5", main:"direct", mainI:2312, ics:"≥38 kA", prosp:"38 / 80 kA", groups:[{n:5,boy:1},{n:5,boy:2}], res:2}
+  },
+  dims:{"50":"950×1800×450","100":"950×1800×450","160":"1150×1800×450","250":"1150×1800×450",
+    "400":"1150×1800×450","630":"1500×1800×450","800":"1500×1800×450","1000":"1500×1800×450",
+    "1250":"1650×1800×450","1600":"1850×1800×450"}
+};
+const DSYA_BOY=[["00","160A"],["1","250A"],["2","400A"],["3","630A"]];
+const CABLE_TYPES=["4(1x70) NYY","4(1x95) NYY","4(1x120) NYY","4(1x150) NYY","4(1x185) NYY","4(1x240) NYY","2x2.5 NYY","2x4 NYY","2x6 NYY","2x10 NYY","2x16 NYY","3x10 NYY","3x16 NYY","3x25 NYY","3x35 NYY","3x50 NYY","3x70 NYY","3x95 NYY","3x120 NYY","3x150 NYY","3x185 NYY","3x240 NYY","3x16+10 NYY","3x25+16 NYY","3x35+16 NYY","3x50+25 NYY","3x70+35 NYY","3x95+50 NYY","3x120+70 NYY","3x150+70 NYY","3x185+95 NYY","3x240+120 NYY","4x4 NYY","4x6 NYY","4x10 NYY","4x16 NYY","4x25 NYY","4x35 NYY","4x50 NYY","4x70 NYY","4x95 NYY","4x120 NYY","4x150 NYY","4x185 NYY","4x240 NYY","4(1x70) N2XH","4(1x95) N2XH","4(1x120) N2XH","4(1x150) N2XH","4(1x185) N2XH","4(1x240) N2XH","2x2.5 N2XH","2x4 N2XH","2x6 N2XH","2x10 N2XH","2x16 N2XH","3x10 N2XH","3x16 N2XH","3x25 N2XH","3x35 N2XH","3x50 N2XH","3x70 N2XH","3x95 N2XH","3x120 N2XH","3x150 N2XH","3x185 N2XH","3x240 N2XH","3x16+10 N2XH","3x25+16 N2XH","3x35+16 N2XH","3x50+25 N2XH","3x70+35 N2XH","3x95+50 N2XH","3x120+70 N2XH","3x150+70 N2XH","3x185+95 N2XH","3x240+120 N2XH","4x4 N2XH","4x6 N2XH","4x10 N2XH","4x16 N2XH","4x25 N2XH","4x35 N2XH","4x50 N2XH","4x70 N2XH","4x95 N2XH","4x120 N2XH","4x150 N2XH","4x185 N2XH","4x240 N2XH","4(1x70) NAYY","4(1x95) NAYY","4(1x120) NAYY","4(1x150) NAYY","4(1x185) NAYY","4(1x240) NAYY","3x16+10 NAYY","3x25/16 NAYY","3x35/16 NAYY","3x50/25 NAYY","3x70/35 NAYY","3x95/50 NAYY","3x120/70 NAYY","3x150/70 NAYY","3x185/95 NAYY","3x240/120 NAYY","4x16 NAYY","4x25 NAYY","4x35 NAYY","4x50 NAYY","4x70 NAYY","4x95 NAYY","4x120 NAYY","4x150 NAYY","4x185 NAYY","4x240 NAYY","4(1x70) NA2XH","4(1x95) NA2XH","4(1x120) NA2XH","4(1x150) NA2XH","4(1x185) NA2XH","4(1x240) NA2XH","3x25 NA2XH","3x35 NA2XH","3x50 NA2XH","3x70 NA2XH","3x95 NA2XH","3x120 NA2XH","3x150 NA2XH","3x185 NA2XH","3x240 NA2XH","3x25+16 NA2XH","3x35+16 NA2XH","3x50+25 NA2XH","3x70+35 NA2XH","3x95+50 NA2XH","3x120+70 NA2XH","3x150+70 NA2XH","3x185+95 NA2XH","3x240+120 NA2XH","4x25 NA2XH","4x35 NA2XH","4x50 NA2XH","4x70 NA2XH","4x95 NA2XH","4x120 NA2XH","4x150 NA2XH","4x185 NA2XH","4x240 NA2XH"];  // kablo türleri (Excel: kablo_cinsleri)
+
+const state={
+  panelType:"tedas", compKvar:null, outKind:"dsya",
+  power:"400",place:"harici",mount:"kaide",enclosure:"metal",vector:"DYN 11",
+  trafoConn:"beton", cableManual:null, compCur:"", compBoy:1, compOut:false, onayFrame:true,
+  mainDevice:"tmk",hasAAB:false,hasSurge:true,hasComp:true,hasAnalyzer:true,hasInternal:true,
+  lighting:"sokak",hasAstro:true,
+  outputs:[]
+};
+/* Sabit kompanzasyon: trafo gücünün %3–%5'i (TEDAŞ uygulaması) */
+function compRange(){
+  const kva=+state.power;
+  return {min:Math.round(kva*0.03*10)/10, max:Math.round(kva*0.05*10)/10};
+}
+function defaultKvar(){
+  const r=compRange();
+  // aralığın ortasına en yakın 0.5'lik adım
+  const mid=(r.min+r.max)/2;
+  return Math.round(mid*2)/2;
+}
+/* ---- Trafo–pano irtibat kablosu ---- */
+// Direk tipi trafo → AG pano (NYY, ≤400 kVA)
+const DIREK_CABLE={"50":"4×25 NYY","100":"4×50 NYY","160":"2(4×50) NYY","250":"2(4×70) NYY","400":"2(4×150) NYY"};
+// Beton köşk → Tablo:6 tek damarlı bakır N2XH 0,6/1 kV (250–1600 kVA); {kesit, adet/faz}
+const BETON_CABLE={"250":{k:185,n:1},"400":{k:185,n:2},"630":{k:185,n:3},"800":{k:185,n:3},"1000":{k:185,n:4},"1250":{k:240,n:4},"1600":{k:240,n:6}};
+function autoCable(){
+  const kva=+state.power;
+  if(state.trafoConn==="direk") return DIREK_CABLE[state.power]||"";
+  // beton köşk: 50–160 kVA'da direk tipiyle aynı (NYY), 250+ tek damarlı bakır N2XH
+  if(kva<=160) return DIREK_CABLE[state.power]||"";
+  const b=BETON_CABLE[state.power];
+  return b ? `${b.n}×(4(1×${b.k} mm²))` : "";
+}
+function cableLabel(){ return (state.cableManual!=null && state.cableManual!=="") ? state.cableManual : autoCable(); }
+
+function seedOutputs(){
+  const p=SPEC.powers[state.power];const a=[];
+  // Şartname EK-I tablolarındaki grup düzeni (karışık buşon boyları)
+  (p.groups||[{n:4,boy:0}]).forEach(g=>{
+    for(let i=0;i<g.n;i++) a.push({kind:state.outKind,boy:g.boy,reserve:false,name:'',kw:'',cur:'',cable:''});
+  });
+  // yedek çıkışlar — en büyük kullanılan boy ile
+  const maxBoy=Math.max(...(p.groups||[{boy:0}]).map(g=>g.boy));
+  for(let i=0;i<(p.res||0);i++) a.push({kind:state.outKind,boy:maxBoy,reserve:true,name:'YEDEK',kw:'',cur:'',cable:''});
+  state.outputs=a;
+}
+
+/* ============================================================
+   SVG ÇİZİM ALTYAPISI  (TEDAŞ tek hat çizim dili — tek renk siyah)
+   ============================================================ */
+const NS="http://www.w3.org/2000/svg";
+const INK="#0d1117", LW=0.32, LWB=0.85;   // ince çizgi / kalın bara (teknik çizim oranı)
+// Renk rolleri (önizleme/PNG için; DXF geometriyi okur, rengi yok sayar)
+const ROLE={live:"live",neutral:"neutral",earth:"earth",sig:"sig",dev:"dev",ink:"ink"};
+function E(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function cls(e,role){if(role)e.setAttribute("class",role);return e;}
+function L(x1,y1,x2,y2,w=LW,dash=null,role=null){const e=E("line",{x1,y1,x2,y2,stroke:INK,"stroke-width":w,"stroke-linecap":"round"});if(dash)e.setAttribute("stroke-dasharray",dash);return cls(e,role);}
+function C(cx,cy,r,w=LW,fill="none",role=null){return cls(E("circle",{cx,cy,r,fill,stroke:INK,"stroke-width":w}),role);}
+function R(x,y,w,h,sw=LW,fill="none",role=null){return cls(E("rect",{x,y,width:w,height:h,fill,stroke:INK,"stroke-width":sw}),role);}
+function P(pts,close=false,w=LW,fill="none",role=null){const d="M"+pts.map(p=>p.join(" ")).join(" L")+(close?" Z":"");return cls(E("path",{d,fill,stroke:INK,"stroke-width":w,"stroke-linejoin":"round"}),role);}
+function T(x,y,s,size=3.4,anchor="middle",rot=null,role=null){const e=E("text",{x,y,"font-size":size,fill:INK,"text-anchor":anchor});if(rot!=null)e.setAttribute("transform",`rotate(${rot} ${x} ${y})`);e.textContent=s;return cls(e,role||"tx");}
+function G(){return E("g",{})}
+function A(p,...k){k.forEach(x=>p.appendChild(x));return p}
+
+/* ---- Semboller (birim ölçüler DXF referansından, 1 birim ≈ 1) ---- */
+/* Hepsi: giriş üstte (0,0), akış aşağı (-y). SVG'de y aşağı pozitif olduğu için işaret çevrilir. */
+
+// Trafo (iki daire, delta-yıldız)
+function symTrafo(g,x,y){
+  // iki kesişen daire: üstte üçgen (delta, tepesi yukarı), altta yıldız — yıldız merkezi topraklı
+  A(g, C(x,y,5.5), C(x,y+7,5.5));
+  A(g, P([[x,y-3.6],[x+2.4,y+0.6],[x-2.4,y+0.6]],true));          // delta (tepe yukarı, üst boşluğa doğru)
+  const cy=y+8.4;                                                  // yıldız merkezi
+  A(g, L(x,cy,x,cy-2.8), L(x,cy,x-2.2,cy+1.3), L(x,cy,x+2.2,cy+1.3)); // Y kolları (kısa)
+  // İki topraklama: işletme (yıldız/nötr, yeşil) + koruma (iki daire arasından → sağ → aşağı, siyah iletken; ilk resimdeki gibi)
+  A(g, L(x,cy,x+7,cy,LW,null,ROLE.earth), L(x+7,cy,x+7,cy+4,LW,null,ROLE.earth));          // işletme (yıldızdan)
+  symGround(g,x+7,cy+4);
+  const jx=x+4.24, jy=y+3.5;                                                                // iki dairenin sağ kesişimi
+  A(g, L(jx,jy,x+14,jy,LW,null,ROLE.earth), L(x+14,jy,x+14,y+14,LW,null,ROLE.earth));        // koruma iletkeni: arası → sağ → aşağı
+  symGround(g,x+14,y+14);                                                                    // sonuna toprak işareti
+  return y+12.5;
+}
+// gG sigorta (yatay hat üstünde dikdörtgen + 3 çizgi)
+function symFuseH(g,x,y){
+  A(g, R(x-3,y-2,6,4), L(x-1.2,y-2,x-1.2,y+2), L(x,y-2,x,y+2), L(x+1.2,y-2,x+1.2,y+2));
+  return x+3;
+}
+// gG sigorta dikey
+function symFuseV(g,x,y){
+  A(g, R(x-2,y,4,6), L(x-2,y+2,x+2,y+2), L(x-2,y+4,x+2,y+4));
+  return y+6;
+}
+// Ampermetre daire "A"
+function symMeter(g,x,y,label){A(g,C(x,y,2.6));A(g,T(x,y+1,label,3));return x;}
+// Voltmetre komütatör (daire + eğik ok)
+function symVk(g,x,y){A(g,C(x,y,2.6));A(g,L(x-2,y+1.5,x+2.5,y-2.5,LW));A(g,P([[x+1,y-2.6],[x+2.8,y-2.8],[x+2,y-1]],false));return x;}
+
+// DSYA çıkış kolu — daire bağlantı + eğik taralı sigorta gövdesi
+function symDSYA(g,x,yTop,stem=4){
+  const d=stem-4;                            // sapı uzatınca gövde aşağı kayar
+  A(g, C(x,yTop+1,0.7));                     // bara bağlantı dairesi
+  A(g, L(x,yTop+1.7,x,yTop+4+d));            // sap
+  A(g, P([[x+1.2,yTop+4.3+d],[x+3.5,yTop+5.3+d],[x+1.8,yTop+9.2+d],[x-0.6,yTop+8.2+d]],true,LW,"none",ROLE.dev));
+  A(g, L(x-0.4,yTop+6.5+d,x+2.9,yTop+8.0+d),L(x+0.1,yTop+5.9+d,x+3.5,yTop+7.4+d),L(x-0.1,yTop+6.2+d,x+3.2,yTop+7.7+d));
+  A(g, L(x+0.6,yTop+8.7+d,x,yTop+10+d));
+  return yTop+10+d;
+}
+// SYA çıkış kolu — açık bıçak + yatay sigorta
+function symSYA(g,x,yTop,stem=4){
+  const d=stem-4;
+  A(g, C(x,yTop+1,0.7));
+  A(g, L(x,yTop+1.7,x,yTop+4+d));
+  A(g, L(x+2.6,yTop+5+d,x,yTop+9.5+d,LW,null,ROLE.dev));
+  A(g, L(x,yTop+9.5+d,x,yTop+11.5+d));
+  A(g, R(x-1.3,yTop+11.5+d,2.6,4.3,LW,"none",ROLE.dev));
+  A(g, L(x-1.8,yTop+13+d,x+1.8,yTop+13+d),L(x-1.8,yTop+14+d,x+1.8,yTop+14+d),L(x-1.8,yTop+15+d,x+1.8,yTop+15+d));
+  return yTop+15.8+d;
+}
+// TMŞ çıkış kolu — daire + eğik bıçak + termik-manyetik kare dişli + içi boş ok başı
+function symTMS(g,x,yTop,stem=4){
+  const d=stem-4;
+  A(g, C(x,yTop+1,0.7));
+  A(g, L(x,yTop+1.7,x,yTop+3.4+d));
+  A(g, L(x,yTop+9.2+d,x+1.8,yTop+7.7+d,LW,null,ROLE.dev));
+  A(g, P([[x+1.8,yTop+7.7+d],[x+2.5,yTop+8.4+d],[x+3.4,yTop+7.6+d],[x+2.7,yTop+6.9+d],[x+3.6,yTop+6.1+d]],false,LW,"none",ROLE.dev));
+  A(g, L(x+3.6,yTop+6.1+d,x+6.4,yTop+4.0+d,LW,null,ROLE.dev));
+  A(g, P([[x+5.0,yTop+4.1+d],[x+6.6,yTop+3.9+d],[x+5.6,yTop+5.3+d]],true,LW,"none",ROLE.dev));
+  A(g, L(x,yTop+9.2+d,x,yTop+11.5+d));          // hat bıçağın alt ucundan devam eder (arada boşluk)
+  return yTop+11.5+d;
+}
+// TMK giriş — daire + eğik kol + zigzag
+function symTMK(g,x,y){
+  // Referans DXF: daire bağlantı, kısa hat, eğik bıçak + kare çentik + içi boş ok (TMŞ ile aynı şekil, büyük)
+  A(g, C(x,y+1,0.8));
+  A(g, L(x,y+1.8,x,y+4.2));
+  const k=1.35;                                   // ölçek
+  A(g, L(x,y+4.2+ (9.2-4.2)*k, x+1.8*k, y+4.2+(7.7-4.2)*k, LW,null,ROLE.dev));     // 1. düz segment
+  A(g, P([[x+1.8*k,y+4.2+(7.7-4.2)*k],[x+2.5*k,y+4.2+(8.4-4.2)*k],[x+3.4*k,y+4.2+(7.6-4.2)*k],
+          [x+2.7*k,y+4.2+(6.9-4.2)*k],[x+3.6*k,y+4.2+(6.1-4.2)*k]],false,LW,"none",ROLE.dev));   // kare çentik
+  A(g, L(x+3.6*k,y+4.2+(6.1-4.2)*k, x+6.4*k, y+4.2+(4.0-4.2)*k, LW,null,ROLE.dev));   // 2. segment (uç)
+  A(g, P([[x+5.0*k,y+4.2+(4.1-4.2)*k],[x+6.6*k,y+4.2+(3.9-4.2)*k],[x+5.6*k,y+4.2+(5.3-4.2)*k]],true,LW,"none",ROLE.dev)); // boş ok
+  const yEnd=y+4.2+(9.2-4.2)*k;
+  A(g, L(x,yEnd,x,yEnd+3));
+  return yEnd+3;
+}
+// AOS giriş ayırıcı (yatay barada, çift) — açık bıçak + dolu ok
+function symAOSbreak(g,x,y,dir){ // dir=-1 sol, +1 sağ
+  A(g, L(x,y,x+dir*3,y-2.6));
+  A(g, P([[x+dir*3.4,y-3.4],[x+dir*4.6,y-2.6],[x+dir*3.2,y-1.6]],true,LW,INK));
+}
+// Kayar bara (referans DXF): omurgada iki küçük daire arası boşluk, sağında kalın dikey çubuk
+function symKayarBara(g,x,yTop){
+  A(g, C(x,yTop+0.75,0.75));
+  A(g, C(x,yTop+5.85,0.75));
+  A(g, L(x+1.9,yTop+0.75,x+1.9,yTop+5.85,1.1,null,ROLE.dev));   // kalın çubuk
+  return yTop+6.6;
+}
+// Yatay kol üzerinde AOS (anahtarlı otomatik sigorta): x0..x0+dir*5 arası hat kesik, açık bıçak + dolu ok
+function symAOSh(g,x0,y,dir){
+  const x1=x0+dir*5;
+  A(g, C(x0,y,0.5));
+  A(g, L(x0+dir*0.5,y,x1-dir*0.6,y-2.6,LW,null,ROLE.dev));       // açık bıçak (yukarı eğik)
+  A(g, P([[x1-dir*0.2,y-3.3],[x1+dir*0.9,y-2.4],[x1-dir*0.4,y-1.8]],true,LW,INK,ROLE.dev)); // dolu ok
+  A(g, T(x1,y+4.2,"AOS",2.3));   // etiket bıçağın dış ucunda
+  return x1;
+}
+// Kondansatör (kompanzasyon) — üçgen + kondansatör
+function symCap(g,x,y){
+  A(g, P([[x-5,y-3.5],[x-5,y+3.5],[x,y]],true));
+  A(g, L(x-1.5,y-2.6,x-1.5,y+2.6,0.55), L(x,y-2.6,x,y+2.6,0.55));
+  A(g, L(x-3.5,y-2.8,x-2,y-2.8), L(x-3.5,y+2.8,x-2,y+2.8));
+}
+// Ok ucu (çıkış, aşağı)
+function arrowDown(g,x,y){A(g,P([[x-1.4,y-2.6],[x+1.4,y-2.6],[x,y]],true));}
+// Ok ucu (yatay, sağa)
+function arrowRight(g,x,y){A(g,P([[x-2.8,y-1.4],[x-2.8,y+1.4],[x,y]],true));}
+// Toprak
+function symGround(g,x,y){A(g,L(x,y,x,y+3,LW,null,ROLE.earth),L(x-2.4,y+3,x+2.4,y+3,0.55,null,ROLE.earth),L(x-1.5,y+4,x+1.5,y+4,LW,null,ROLE.earth),L(x-0.7,y+5,x+0.7,y+5,LW,null,ROLE.earth));}
+// Kutu (analizör/sayaç) — metne göre otomatik boyutlanır, yazılar ortalı
+function symBox(g,x,y,wMin,hMin,lines,header){
+  const fs=2.4, charW=fs*0.56, lineH=3.3, padX=2.2, padY=2.4;
+  // en uzun satıra göre genişlik
+  const maxChars=Math.max(...lines.map(l=>l.length));
+  const w=Math.max(wMin, maxChars*charW+padX*2);
+  const h=Math.max(hMin, lines.length*lineH+padY*2);
+  A(g,R(x-w/2,y,w,h,LW,"none",ROLE.dev));
+  if(header){A(g,L(x-w/2,y+1.4,x+w/2,y+1.4,0.28,null,ROLE.dev),L(x-w/2,y+2.6,x+w/2,y+2.6,0.28,null,ROLE.dev));}
+  // metin bloğunu dikeyde ortala
+  const totalTextH=lines.length*lineH;
+  const startY=y+(h-totalTextH)/2+fs*0.8;
+  lines.forEach((ln,i)=>A(g,T(x,startY+i*lineH,ln,fs,"middle",null,"tx")));
+  return {w,h};
+}
+// Aydınlatma lambası
+function symLamp(g,x,y){A(g,C(x,y,2.4));A(g,L(x-1.7,y-1.7,x+1.7,y+1.7),L(x+1.7,y-1.7,x-1.7,y+1.7));}
+// Priz
+function symSocket(g,x,y){A(g,E("path",{d:`M${x-2.6} ${y} A 2.6 2.6 0 0 0 ${x+2.6} ${y}`,fill:"none",stroke:INK,"stroke-width":LW}));A(g,L(x-2.6,y,x+2.6,y));}
+// Parafudr (AG darbe koruma / SPD) — yatay dikdörtgen gövde + içinde diyagonal ok (arester işareti)
+// x,y = gövde merkezi. Döner: {left,right} terminal x'leri.
+function symParafudr(g,x,y){
+  const w=6, h=6.6;
+  A(g, R(x-w/2,y-h/2,w,h,LW,"none",ROLE.dev));
+  A(g, L(x-w/2+1,y+h/2-1,x+w/2-1,y-h/2+1,LW,null,ROLE.dev));          // diyagonal ok gövdesi
+  A(g, P([[x+w/2-1,y-h/2+1],[x+w/2-2.6,y-h/2+1.1],[x+w/2-1.1,y-h/2+2.7]],true,LW,INK,ROLE.dev)); // ok ucu
+  return {left:x-w/2, right:x+w/2};
+}
+// Akım trafosu (AT) — daire + sekonder sargı (yatay çizgiler) + sağ kenarda sekonder terminali
+// Döner: sekonder çıkış x'i.
+function symCT(g,x,y){
+  const r=3.4;
+  A(g, C(x,y,r));                                                   // daire (DXF'te temiz CIRCLE)
+  [-1.5,-0.5,0.5,1.5].forEach(dy=> A(g, L(x-0.8,y+dy,x+2.2,y+dy,LW)) );   // sekonder sargı
+  A(g, R(x+2.2,y-1.3,1.5,2.6,LW,"none",ROLE.dev));                  // sekonder terminal
+  return x+3.7;
+}
+
+/* ============================================================
+   ANA ŞEMA ÇİZİMİ  (birim koordinat sistemi, sonra viewBox ölçekler)
+   ============================================================ */
+function buildSchematic(colorMode){
+  const p=SPEC.powers[state.power];
+  const outs=state.outputs, nOut=outs.length;
+  const COL=14;                  // kollar arası
+  const MARGIN=8;                // pafta kenar boşluğu
+  const ucuncu = state.panelType==="ucuncu";
+  const busY=ucuncu?142:(state.mainDevice==="tmk"?156:157);   // ana bara y
+  const outX0=42;                // ilk çıkış x
+  const outXn=outX0+Math.max(nOut-1,0)*COL;
+  const hasCompFeed = ucuncu && state.compOut && nOut>0;   // 3. şahıs + kompanzasyona giden çıkış (sabit komp.'tan bağımsız)
+  const compX = hasCompFeed ? outXn+COL : null;
+  const rightX=hasCompFeed ? compX+40 : outXn+26;              // aydınlatma sütunu — kompanzasyon çıkışı varsa bara sağa uzar
+  const busLeft=outX0-COL/2-2, busRight=rightX;
+  // giriş omurgası: baranın ortasında, ama bir çıkış koluna denk gelmesin
+  let spineX=(busLeft+busRight)/2;
+  if(nOut){
+    const hits=o=>outs.some((_,i)=>Math.abs((outX0+i*COL)-o)<6) || Math.abs(rightX-o)<8 || (compX!=null && Math.abs(compX-o)<8);
+    if(hits(spineX)){
+      const k=Math.round((spineX-outX0)/COL);
+      const a=outX0+k*COL+COL/2, b=outX0+k*COL-COL/2;
+      spineX = !hits(a) ? a : (!hits(b) ? b : spineX);
+    }
+  }
+  const outBottom=busY+62;                  // çıkış oklarının bittiği yer
+  const tableY=outBottom+(state.panelType==="ucuncu"?24:14);   // kollar tablosu (3. şahısta not için pay)
+  const KW=100;                             // kartuş genişliği
+  const tableRight=nOut? outXn+COL/2 : outX0;
+  // genişlik: hem çizim hem de (kollar tablosu + kartuş) yan yana sığsın
+  const W=Math.max(rightX+30, tableRight+8+KW+MARGIN, 190);
+  const H=tableY+90;                        // kartuş + özet kutusu için yer
+
+  const svg=E("svg",{viewBox:`0 0 ${W} ${H}`,xmlns:NS,width:W,height:H});
+  svg.setAttribute("text-rendering","geometricPrecision");
+  svg.setAttribute("shape-rendering","geometricPrecision");
+  const st=E("style",{});
+  const colored = (typeof colorMode==="undefined")? true : colorMode;
+  st.textContent = colored ?
+    ("text{font-family:'Arial','Segoe UI',sans-serif;font-weight:400;letter-spacing:0.02px}"+
+     ".live{stroke:#d64518}"+           // enerjili faz/bara — turuncu-kırmızı
+     ".neutral{stroke:#2f6fd0}"+        // nötr — mavi
+     ".earth{stroke:#b5895a}"+          // toprak — açık kahverengi
+     ".sig{stroke:#5cb85c}"+            // ölçü/sinyal (sayaca giden) — açık yeşil
+     ".dev rect,rect.dev{stroke:#33507a}"+  // cihaz kutuları — lacivert
+     ".dev{stroke:#33507a}"+
+     ".tx{fill:#1a2332}"+               // yazılar — koyu lacivert
+     ".ink{stroke:#1a2332}") :
+    ("text{font-family:'Arial','Segoe UI',sans-serif;font-weight:400}"+
+     ".live,.neutral,.earth,.sig,.dev,.ink{stroke:#0d1117}.tx{fill:#0d1117}");
+  svg.appendChild(st);
+  if(colored){
+    // zemin: çok hafif ızgaralı kağıt
+    const defs=E("defs",{});
+    const pat=E("pattern",{id:"gr",width:6,height:6,patternUnits:"userSpaceOnUse"});
+    A(pat, E("path",{d:"M6 0 L0 0 0 6",fill:"none",stroke:"#e8ecf2","stroke-width":0.18}));
+    const pat2=E("pattern",{id:"gr2",width:30,height:30,patternUnits:"userSpaceOnUse"});
+    A(pat2, E("rect",{width:30,height:30,fill:"url(#gr)"}),
+            E("path",{d:"M30 0 L0 0 0 30",fill:"none",stroke:"#dbe2ec","stroke-width":0.3}));
+    A(defs,pat,pat2); svg.appendChild(defs);
+    A(svg, E("rect",{x:0,y:0,width:W,height:H,fill:"#fcfdff",class:"deco"}));
+    A(svg, E("rect",{x:MARGIN,y:MARGIN,width:W-MARGIN*2,height:H-MARGIN*2,fill:"url(#gr2)",class:"deco"}));
+    // üst aksan şeridi
+    A(svg, E("rect",{x:MARGIN,y:MARGIN,width:W-MARGIN*2,height:1.6,fill:"#d64518",class:"deco"}));
+  }
+  // pafta: dış çerçeve + iç çizim çerçevesi
+  const outer=R(2,2,W-4,H-4,0.3,"none",null); if(colored)outer.setAttribute("stroke","#c3cad6");
+  A(svg,outer);
+  const inner=R(MARGIN,MARGIN,W-MARGIN*2,H-MARGIN*2,0.45,"none",null); if(colored)inner.setAttribute("stroke","#41506b");
+  A(svg,inner);
+  const root=G(); svg.appendChild(root);
+
+  /* ---------- BAŞLIK ---------- */
+  A(root, T(W/2,13, `${state.power}  kVA TRANSFORMATÖR İÇİN`,4.4));
+  A(root, T(W/2,19, "AG DAĞITIM PANOSU TEK HAT ŞEMASI",4.4));
+
+  /* ---------- TRAFO + GİRİŞ KOLU ---------- */
+  let y=31;
+  const tEnd=symTrafo(root,spineX,y);
+  A(root, T(spineX+19,y+3,SPEC.vHV,3.2,"start"));
+  A(root, T(spineX+19,y+8,state.vector,3.2,"start"));
+  A(root, T(spineX+19,y+13,`${SPEC.V}  ${SPEC.uimp}`,2.8,"start"));
+  y=tEnd;
+  // kablo etiketi (dikey) — kablo cinsi/kesiti, kalın
+  A(root, L(spineX,y,spineX,y+26,LW));
+  const cbl=cableLabel();
+  if(cbl){ const t=T(spineX+3.5,y+13,cbl,2.6,"middle",-90); t.setAttribute("font-weight","700"); A(root,t); }
+  y+=26;
+
+  // Giriş elemanı
+  let mainBottom;
+  if(state.mainDevice==="tmk"){
+    // TMK dalı ana omurgada
+    mainBottom=symTMK(root,spineX,y);
+    if(state.panelType!=="ucuncu"){          // 3. şahısta etiketler ayrıca yazılıyor
+      A(root, T(spineX+7,y+9,"TMK",2.6,"start"));
+      if(p.mainI)A(root,T(spineX+7,y+12.6,p.mainI+"A",2.4,"start"));
+    }
+  } else {
+    // Direkt bara + iki yanda AOS ayırıcı
+    // kayar bara sembolü: omurga → daire · boşluk+çubuk · daire → omurga
+    A(root, L(spineX,y,spineX,y+4,LW));
+    const kbEnd=symKayarBara(root,spineX,y+4);
+    A(root, L(spineX,kbEnd,spineX,y+16,LW));
+    // dikine etiket, sembolün solunda (TEDAŞ'ta yardımcı kol y+8'de → yazı kolun altında)
+    A(root, T(spineX-3.3,(state.panelType==="ucuncu")?y+7.3:y+9.5,"KAYAR BARA",1.9,"middle",-90));
+    mainBottom=y+16;
+  }
+  y=mainBottom;
+
+  // İç ihtiyaç + aydınlatma (TEDAŞ düzeni — ölçüden önce, solda)
+  const drawInternal=(yBranch)=>{
+    const ix=spineX-32;
+    if(state.mainDevice==="direct"){ A(root, L(spineX,yBranch,spineX-4,yBranch,LW)); const xe=symAOSh(root,spineX-4,yBranch,-1); A(root, L(xe,yBranch,ix,yBranch,LW)); }
+    else A(root, L(spineX,yBranch,ix,yBranch,LW));
+    A(root, T(ix-2,yBranch-5,"İÇ İHTİYAÇ",2.5,"end"),T(ix-2,yBranch-2,"ÇIKIŞI",2.5,"end"));
+    A(root, L(ix,yBranch,ix,yBranch-7,LW)); symLamp(root,ix,yBranch-9.5);
+    A(root, T(ix+4,yBranch-9,"AYDINLATMA",2.4,"start"),T(ix+4,yBranch-6,"40W",2.4,"start"));
+    A(root, L(ix,yBranch,ix,yBranch+4,LW)); symFuseV(root,ix,yBranch+4);
+    A(root,T(ix-3,yBranch+9,"10 A gG",2.4,"end"));
+    A(root, L(ix,yBranch+10,ix,yBranch+12.5,LW)); symSocket(root,ix,yBranch+12.5);
+  };
+
+  if(!ucuncu){
+    /* ===== TEDAŞ DÜZENİ ===== */
+    // Şartname TEDAŞ tipinde voltmetre YOK; ölçüm enerji analizörü üzerinden.
+    const isDirect=state.mainDevice==="direct";
+    // iç ihtiyaç kolu: girişten ÖNCE (TMK'nın/kayar baranın üstünde)
+    const yBrI = isDirect ? y-14 : y-17.5;
+    // parafudr (sol) ve kondansatör (sağ) aynı hizada: girişin altında
+    const yC = isDirect ? y+10 : y+11;
+    // --- parafudr kolu (SOL) — şartname 2.1.2.2: ana bara → Kartuş sig./Yatay SYA → Pr → toprak ---
+    if(state.hasSurge){
+      const px=spineX-25;                        // parafudr gövde merkezi
+      A(root, L(spineX,yC,spineX-10,yC,LW));
+      symFuseH(root,spineX-13,yC);               // girişteki koruma: kartuş sigorta / yatay SYA
+      A(root, T(spineX-13,yC+3.8,"Kartuş",2.0));
+      A(root, L(spineX-16,yC,px+3,yC,LW));
+      symParafudr(root,px,yC);
+      A(root, T(px,yC-5,"PARAFUDR",2.2));
+      A(root, L(px-3,yC,px-8,yC,LW,null,ROLE.earth));
+      symGround(root,px-8,yC);
+    }
+    if(state.hasInternal) drawInternal(yBrI);
+    if(state.hasAAB){A(root,C(spineX-14,y+2,1,LW,INK));A(root,T(spineX-14,y+6,"AAB",2.6));}
+    // Sabit kondansatör kolu (3. şahıs gibi): gG → A → kondansatör, kVAR etiketi
+    if(state.hasComp){
+      A(root, L(spineX,yC,spineX+10,yC,LW));
+      symFuseH(root,spineX+13,yC);
+      A(root, L(spineX+16,yC,spineX+30,yC,LW));
+      A(root, L(spineX+30,yC-3.4,spineX+30,yC+3.4,0.55), L(spineX+32.5,yC-3.4,spineX+32.5,yC+3.4,0.55));
+      const kv=(state.compKvar==null||state.compKvar==="")?defaultKvar():state.compKvar;
+      A(root, T(spineX+35,yC-1.8,kv+" kVAR",2.2,"start"));   // çubukların sağ üstünde
+    }
+    // Ana akım trafosu + ölçü (kollar araya girdiği için segment uzun)
+    const seg=isDirect?25:26;
+    A(root, L(spineX,y,spineX,y+seg,LW)); y+=seg;
+    const secX=symCT(root,spineX,y+2);                                                             // AT sargı sembolü; secX = sekonder çıkış
+    A(root, T(spineX-6,y-1,p.ct+" A",2.5,"end"),T(spineX-6,y+2,"10VA Sn:0.5",2.4,"end"),T(spineX-6,y+5,"AT",3.2,"end"));   // oran/güç/AT — trafo hizasında ortalı
+    if(state.hasAnalyzer){
+      const showTR = state.mainDevice==="direct";   // TR (aşırı akım rölesi) yalnız direkt bara — EK-I/5-6
+      const boxX = showTR ? spineX+50 : spineX+45;   // enerji analizörü/elektronik sayaç kutusu merkezi (sağa çekildi)
+      const boxTop = y-4;
+      if(showTR){
+        A(root, L(secX,y+2,spineX+8,y+2,LW,null,ROLE.sig));                 // CT sekonderi → TR
+        symBox(root,spineX+13,y-3,8,10,["TR"]);                             // aşırı akım rölesi
+      }
+      const eo=symBox(root,boxX,boxTop,20,21,["ENERJİ","ANALİZÖRÜ","ELEKTRONİK","SAYAÇ"],true);
+      const boxL=boxX-eo.w/2, boxR=boxX+eo.w/2, boxB=boxTop+eo.h;
+      const inX = showTR ? spineX+17 : secX;
+      A(root, L(inX,y+2,boxL,y+2,LW,null,ROLE.sig));                         // akım girişi CT/TR → kutu
+      // 3 kesik ampermetre kutucuğu (sağda, kutu ile hizalı)
+      const aX=boxR+8;
+      for(let i=0;i<3;i++){
+        const r=R(aX-3,boxTop+3+i*6,6,4,0.28,"none",colored?"dev":null);
+        r.setAttribute("stroke-dasharray","1 0.8"); A(root,r);
+        A(root, T(aX,boxTop+6+i*6,"A",2.2));
+      }
+      // gerilim besleme: kutu sol-altından 2A gG → spine (3. şahıstaki gibi)
+      const vx=boxL+3, fTop=boxB+5, yV=boxB+17;
+      A(root, L(vx,boxB,vx,fTop,LW,null,ROLE.sig));
+      symFuseV(root,vx,fTop);
+      A(root, L(vx,fTop+6,vx,yV,LW,null,ROLE.sig));
+      A(root, L(spineX,yV,vx,yV,LW,null,ROLE.sig));
+      A(root, T(vx-3,fTop+3,"2A",2.1,"end"),T(vx-3,fTop+6.5,"gG",2.1,"end"));
+      // MODEM: kutunun sağ-altında, veri hattı
+      const md=symBox(root,boxR-3,boxB+11,13,9,["MODEM"]);
+      A(root, L(boxR-3,boxB,boxR-3,boxB+11,LW,"1.5 1.2",ROLE.sig));          // analizör → modem (veri)
+    }
+    y+=6;
+  } else {
+    /* ===== 3. ŞAHIS DÜZENİ (düzeltilmiş şablona göre) ===== */
+    // TMK etiketleri (sağda, alt alta) — yalnız giriş TMK ise
+    if(state.mainDevice==="tmk"){
+      A(root, T(spineX+11.5,y-8.5,"TMK",2.7,"start"));
+      A(root, T(spineX+11.5,y-4.8,"3x"+(p.mainI||"")+"A",2.5,"start"));
+    }
+    // AAB — acil açtırma butonu (TMK'nın solunda, dolu nokta)
+    if(state.hasAAB){
+      A(root, C(spineX-14,y-6,1.1,LW,INK,ROLE.dev));
+      A(root, T(spineX-14,y-1.5,"AAB",2.4));
+    }
+
+    // --- Kompanzasyon kolu (TMK'dan hemen sonra, sağa) ---
+    const yA=y+3;
+    if(state.mainDevice==="direct"){ A(root, L(spineX,yA,spineX+2,yA,LW)); const xe=symAOSh(root,spineX+2,yA,1); A(root, L(xe,yA,spineX+10,yA,LW)); }
+    else A(root, L(spineX,yA,spineX+10,yA,LW));
+    symFuseH(root,spineX+13,yA);
+    A(root, L(spineX+16,yA,spineX+30,yA,LW));
+    // sabit kondansatör (kolun ucunda)
+    A(root, L(spineX+30,yA-3.4,spineX+30,yA+3.4,0.55), L(spineX+32.5,yA-3.4,spineX+32.5,yA+3.4,0.55));
+    if(state.hasComp){
+      const kv=(state.compKvar==null||state.compKvar==="")?defaultKvar():state.compKvar;
+      A(root, T(spineX+31.3,yA-5.6,kv+" kVAR",2.2));
+    }
+
+    // --- Akım trafosu ---
+    const yCT=y+16;
+    A(root, L(spineX,y,spineX,yCT-3.2,LW));
+    A(root, C(spineX,yCT,3.2));
+    A(root, T(spineX-6,yCT-3,p.ct+"A",2.5,"end"),T(spineX-6,yCT,"10VA",2.5,"end"),
+            T(spineX-6,yCT+3,"Sn:0.5",2.5,"end"));
+
+    // --- Enerji analizörü / elektronik sayaç (sağ üst) ---
+    const mX=spineX+56;
+    let mBottom=yA, mHalf=10;
+    if(state.hasAnalyzer){
+      // kutu, alt kenarı AT hattının ÜSTÜNDE kalacak şekilde yukarıda (referans gibi)
+      const mTop=yA-13;
+      const eo=symBox(root,mX,mTop,20,21,["ENERJİ","ANALİZÖRÜ","ELEKTRONİK","SAYAÇ"],true);
+      mBottom=mTop+eo.h; mHalf=eo.w/2;
+      // akım trafosundan sayaca: yatay (kutunun altında) → kutunun altına YUKARI dikey
+      const cIn=mX-mHalf+3.5;
+      A(root, L(spineX+3.2,yCT,cIn,yCT,LW,null,ROLE.sig));
+      A(root, L(cIn,yCT,cIn,mBottom,LW,null,ROLE.sig));
+      // ampermetre kutucukları (sağda, kutu ile hizalı)
+      const ax=mX+mHalf+8;
+      for(let i=0;i<3;i++){
+        const r=R(ax-3,mTop+1+i*6.2,6,4,0.28,"none",colored?"dev":null);
+        r.setAttribute("stroke-dasharray","1 0.8"); A(root,r);
+        A(root, T(ax,mTop+4+i*6.2,"A",2.2));
+      }
+    }
+
+    // --- Gerilim besleme hattı (2A gG üzerinden sayaca) ---
+    const yV=yCT+11;
+    if(state.hasAnalyzer){
+      const vx=mX+mHalf-5;                 // kutunun sağ ucunun altı
+      // referans: kutu altından kısa hat → sigorta → hat → 2A yatay hattı
+      const fTop=mBottom+4;
+      A(root, L(vx,mBottom,vx,fTop,LW,null,ROLE.sig));
+      symFuseV(root,vx,fTop);
+      A(root, L(vx,fTop+6,vx,yV,LW,null,ROLE.sig));
+      A(root, L(spineX,yV,vx,yV,LW,null,ROLE.sig));
+      A(root, T(vx+4,fTop+2.5,"2A",2.3,"start"),T(vx+4,fTop+6,"gG",2.3,"start"));
+      A(root, T(spineX+14,yV-1.6,"2A",2.3,"start"));
+    }
+
+    // --- Alt ortak hat: solda iç ihtiyaç, sağda voltmetre ---
+    const yB=yV+13;
+    // sağ: gG + Vk + V
+    A(root, L(spineX,yB,spineX+10,yB,LW));
+    symFuseH(root,spineX+13,yB); A(root,T(spineX+13,yB-4,"2A",2.3),T(spineX+13,yB+5,"gG",2.3));
+    A(root, L(spineX+16,yB,spineX+21,yB,LW));
+    symVk(root,spineX+24,yB); A(root,T(spineX+24,yB+5.2,"Vk",2.3));
+    A(root, L(spineX+26.6,yB,spineX+31,yB,LW));
+    symMeter(root,spineX+34,yB,"V");
+    A(root, T(spineX+34,yB-5.5,"0-500 V",2.3));
+    // sol: iç ihtiyaç (10A gG → anahtarlı lamba → priz)
+    if(state.hasInternal){
+      const ix=spineX-46;
+      A(root, L(spineX,yB,ix,yB,LW));
+      symFuseH(root,spineX-12,yB);
+      A(root, T(spineX-12,yB-4,"10A",2.3),T(spineX-12,yB+5,"gG",2.3));
+      A(root, T(spineX-20,yB-12.5,"İÇ İHTİYAÇ",2.4),T(spineX-20,yB-9.3,"ÇIKIŞI",2.4));
+      // aydınlatma kolu (anahtarlı lamba)
+      const lx3=spineX-32;
+      A(root, C(lx3,yB,0.6));
+      A(root, L(lx3,yB-1,lx3,yB-4,LW));
+      A(root, C(lx3,yB-5,0.6)); A(root, L(lx3-2.6,yB-6.4,lx3+1,yB-8.4,LW));  // anahtar
+      A(root, C(lx3,yB-9.6,0.6));
+      A(root, L(lx3,yB-10.2,lx3,yB-14,LW)); symLamp(root,lx3,yB-16.4);
+      A(root, T(lx3,yB-23,"AYDINLATMA",2.4),T(lx3,yB-20,"40W",2.4));
+      // priz + toprak (referans DXF): çanak aşağı bakar, orta çubukla ana hatta iner,
+      // toprak çanağın sol ucundan (üst kiriş seviyesi) aşağı sarkar
+      const ySk=yB-4;                                  // çanağın üst kirişi
+      A(root, E("path",{d:`M${ix-2.6} ${ySk} A 2.6 2.6 0 0 0 ${ix+2.6} ${ySk}`,fill:"none",stroke:INK,"stroke-width":LW}));
+      A(root, L(ix-2.6,ySk,ix+2.6,ySk,LW));            // üst kiriş
+      A(root, L(ix,ySk,ix,yB,LW));                     // orta çubuk → ana hat
+      A(root, T(ix+1,ySk-3,"10 A",2.4,"start"));
+      // toprak: kirişin sol ucundan sola, sonra aşağı, çubuklar
+      const gx=ix-7;
+      A(root, L(ix-2.6,ySk,gx,ySk,LW,null,ROLE.earth));
+      A(root, L(gx,ySk,gx,ySk+3,LW,null,ROLE.earth));
+      A(root, L(gx-2.4,ySk+3,gx+2.4,ySk+3,0.55,null,ROLE.earth),
+              L(gx-1.5,ySk+4,gx+1.5,ySk+4,LW,null,ROLE.earth),
+              L(gx-0.7,ySk+5,gx+0.7,ySk+5,LW,null,ROLE.earth));
+    }
+    A(root, L(spineX,yCT+3.2,spineX,yB,LW));   // omurga: AT altından alt hatta kadar sürekli
+    y=yB;
+  }
+  A(root, L(spineX,y,spineX,busY,LW));  // baraya iniş: ince siyah (her iki tip)
+
+
+  /* ---------- ANA BARA ---------- */
+  A(root, L(busLeft,busY,busRight,busY,LWB,null,ROLE.live));
+  A(root, T(outX0-6,busY-3,SPEC.V,2.8,"start"));
+  A(root, T(outXn+8,busY-3,p.bar+" Cu",2.8,"start"));
+  // sol etiket: ortak çıkış tipine göre (TMŞ → "TMŞ", DSYA → "Dikey Sigortalı Yük Ayırıcısı")
+  const lbl2 = state.outKind==="aos" ? ["TMŞ",""] : state.outKind==="sya" ? ["Sigortalı","Yük Ayırıcısı"] : ["Dikey Sigortalı","Yük Ayırıcısı"];
+  if(ucuncu){
+    A(root, T(busLeft-9,busY+10,lbl2[0],2.2,"start"));
+    if(lbl2[1]) A(root, T(busLeft-9,busY+13.5,lbl2[1],2.2,"start"));
+  } else {
+    A(root, T(outX0-COL/2-2,busY+6,lbl2[0],2.2,"end"));
+    if(lbl2[1]) A(root, T(outX0-COL/2-2,busY+9.5,lbl2[1],2.2,"end"));
+  }
+
+  /* ---------- BESLEME ÇIKIŞLARI ---------- */
+  const STEM = ucuncu ? 8 : 4;          // 3. şahısta sap uzun: sigortalar onay çerçevesinin altında kalsın
+  const dS = STEM-4;
+  outs.forEach((o,i)=>{
+    const x=outX0+i*COL;
+    if(o.reserve){
+      // yedek: soluk kapak + (girilmişse) sigorta akımı
+      A(root, C(x,busY+1,0.7));
+      A(root, L(x,busY+1.7,x,busY+3+dS,LW));
+      const cover=R(x-1.6,busY+3+dS,3.2,7,LW); cover.setAttribute("stroke-dasharray","1 0.8"); A(root,cover);
+      const rcur=(o.cur||"").trim();
+      if(rcur) A(root, T(x+4.5,busY+9+dS,rcur,2.4,"start"));
+      A(root, L(x,busY+10+dS,x,outBottom,LW,"1.5 1.5"));
+      arrowDown(root,x,outBottom);
+      return;
+    }
+    let sym;
+    if(o.kind==="dsya") sym=symDSYA; else if(o.kind==="sya") sym=symSYA; else sym=symTMS;
+    const yb=sym(root,x,busY,STEM);
+    // sigorta akımı — elle girilmişse o, yoksa boy anma akımı
+    const cur=(o.cur||"").trim()||DSYA_BOY[o.boy][1];
+    A(root, T(x+4.5,busY+9+dS,cur,2.4,"start"));
+    // dikey kablo
+    A(root, L(x,yb,x,outBottom,LW,null,ROLE.live));
+    A(root, T(x-2.2,(yb+outBottom)/2,(o.cable||"").trim()||"mm² NAYY",2.2,"middle",-90));
+    arrowDown(root,x,outBottom);
+  });
+  // besleme grup çerçeve etiketi alt tablo ile
+
+  /* ---------- KOMPANZASYON ÇIKIŞI (3. şahıs, kompanzasyon varsa) ---------- */
+  if(hasCompFeed){
+    const x=compX;
+    const sym = state.outKind==="dsya"?symDSYA : state.outKind==="sya"?symSYA : symTMS;
+    const yb=sym(root,x,busY,STEM);
+    const ccur=(state.compCur||"").trim()||DSYA_BOY[state.compBoy][1];
+    A(root, T(x+4.5,busY+9+dS,ccur,2.4,"start"));                       // sigorta akımı
+    A(root, L(x,yb,x,outBottom,LW,null,ROLE.live));                     // dikey kablo
+    A(root, T(x-2.2,(yb+outBottom)/2,"mm² NYY",2.2,"middle",-90));
+    // alt uçta sağa dön + yatay ok (aşağı yerine sağa çıkış)
+    const ax=x+13;
+    A(root, L(x,outBottom,ax,outBottom,LW,null,ROLE.live));
+    arrowRight(root,ax,outBottom);
+    A(root, T(x-1,outBottom+5,"Kompanzasyona gider",2.2,"start"));
+  }
+
+  /* ---------- AYDINLATMA KOLU ---------- */
+  if(state.lighting!=="none"){
+    const lx=rightX;
+    A(root, L(spineX,busY,lx,busY,LWB,null,ROLE.live));  // baradan sağa
+    A(root, L(lx,busY,lx,busY+3,LW));
+    const yb=symDSYA(root,lx,busY);
+    A(root, T(lx+4.5,busY+5,"DSYA",2.4,"start"),T(lx+4.5,busY+9,"160A",2.4,"start"));
+    let ly=yb+2;
+    A(root, L(lx,yb,lx,ly,LW));
+    // sayaç kutusu — 3. şahısta enerji analizörü/elektronik sayaç + modem
+    const sc = state.lighting==="sokak"?["ELEKTRONİK","SOKAK","SAYACI","(AKTİF)"]:["AYD. PANOSU","SAYACI","(AKTİF)"];
+    const scBox=symBox(root,lx,ly,17,ucuncu?22:15,sc,ucuncu);
+    if(ucuncu && state.hasAnalyzer){
+      // sayaçtan sağa (kutunun üst kısmından): 2A gG → altında MODEM (referans gibi ayrık)
+      const fx=lx+scBox.w/2+8;
+      A(root, L(lx+scBox.w/2,ly+4,fx,ly+4,LW,null,ROLE.sig));
+      A(root, L(fx,ly+4,fx,ly+6,LW,null,ROLE.sig));
+      symFuseV(root,fx,ly+6);
+      A(root, T(fx-4,ly+11,"2A",2.1,"end"),T(fx+4,ly+11,"gG",2.1,"start"));
+      A(root, L(fx,ly+12,fx,ly+14.5,LW,null,ROLE.sig));
+      symBox(root,fx,ly+14.5,8,7,["MODEM"]);
+    }
+    ly+=scBox.h;
+    if(state.lighting==="sokak"&&state.hasAstro){
+      // sayaçtan sonra boşluk, kontaktör (K) solda, astro. röle sağda ayrı seviyede
+      A(root, L(lx,ly,lx,ly+7,LW)); ly+=7;
+      A(root, C(lx-4,ly,0.6)); A(root,L(lx-4,ly+0.6,lx-1,ly+3));
+      A(root, T(lx-6,ly+2,"K",2.4,"end"));
+      symBox(root,lx+17,ly-0.5,12,7,["ASTRO.","RÖLE"]);
+      A(root, L(lx-1,ly+2.5,lx+11,ly+2.5,LW));
+      ly+=6;
+    }
+    // kartuş sigorta + çıkışlar
+    A(root, L(lx,ly,lx,ly+2,LW)); ly+=2;
+    symFuseV(root,lx,ly); A(root,T(lx-4,ly+4,"Kartuş",2.4,"end")); ly+=6;
+    A(root, L(lx,ly,lx,ly+3,LW)); ly+=3;
+    // A-F çıkışları
+    const labels=["A","B","C","D","E","F"];
+    const fx0=lx-7.5, fdx=3;
+    A(root, L(fx0,ly,fx0+fdx*5,ly,LW));
+    labels.forEach((lb,i)=>{const fx=fx0+i*fdx;
+      A(root, L(fx,ly,fx,ly+2,LW), L(fx,ly+2,fx+1.4,ly+3.5,LW)); // küçük sigorta anahtar
+      A(root, L(fx,ly+3.5,fx,ly+7,LW)); arrowDown(root,fx,ly+7);
+      A(root, T(fx,ly+11,lb,2.6));});
+    A(root, T(lx,ly+15,state.lighting==="sokak"?"SOKAK AYDINLATMA ÇIKIŞI":"AYD. PANOSU ÇIKIŞI",2.4));
+  }
+
+  /* ---------- 3. ŞAHIS: İÇ TESİSAT ONAY ÇERÇEVESİ ---------- */
+  if(ucuncu && nOut && state.onayFrame){
+    const fx0=busLeft-14, fx1=(hasCompFeed?compX+22:outXn+COL/2+4);   // kompanzasyon çıkışı varsa çerçeveye dahil
+    const fy0=busY+3.5, fy1=outBottom+8;
+    const fr=R(fx0,fy0,fx1-fx0,fy1-fy0,0.35,"none",null);
+    fr.setAttribute("stroke-dasharray","4 1.5 0.8 1.5");   // nokta-kesik çizgi
+    if(colored)fr.setAttribute("stroke","#5a6478");
+    A(root,fr);
+    A(root, T((fx0+fx1)/2,fy1+5.5,"İÇ TESİSAT PROJESİNDE ONAYLATILMIŞTIR.",3.1));
+  }
+
+  /* ---------- ALT BÖLÜM: kollar tablosu + kartuş ---------- */
+  drawBottom(root,{outX0,outXn,COL,nOut,outs,outBottom,tableY,W,H,MARGIN,p,colored});
+
+  return {svg,W,H};
+}
+
+/* Kollar tablosu (sol alt, çıkışlarla hizalı) + teknik kartuş (sağ alt) */
+function drawBottom(root,cfg){
+  const {outX0,outXn,COL,nOut,outs,tableY,W,H,MARGIN,p,colored}=cfg;
+  const rowH=6.2;
+
+  /* --- KOLLAR TABLOSU --- */
+  if(nOut){
+    const tx0=outX0-COL/2, tx1=outXn+COL/2;
+    const labX=tx0-3;
+    const rows=[["KOL"],["KABLO"],["GÜÇ (kW)"]];
+    A(root, R(tx0,tableY,tx1-tx0,rowH*3,0.3,"none",colored?"dev":null));
+    rows.forEach((r,ri)=>{
+      const ry=tableY+ri*rowH;
+      if(ri)A(root, L(tx0,ry,tx1,ry,0.22,null,colored?"dev":null));
+      A(root, T(labX,ry+rowH*0.68,r[0],2.3,"end"));
+      outs.forEach((out,i)=>{
+        const cx=outX0+i*COL;
+        if(i)A(root, L(cx-COL/2,tableY,cx-COL/2,tableY+rowH*3,0.2,null,colored?"dev":null));
+        let v = ri===0 ? ((out.name||"").trim()||(out.reserve?"YEDEK":("Ç"+(i+1))))
+              : ri===1 ? (out.reserve?"—":((out.cable||"").trim()||"NAYY"))
+              : ((out.kw||"").trim()||"—");
+        let fs=2.2;
+        if((ri===0||ri===1) && v.length>6) fs=Math.max(1.4,Math.min(2.2,(COL-1.5)/(v.length*0.56)));  // uzun ad/kablo hücreye sığsın
+        A(root, T(cx,ry+rowH*0.68,v,fs));
+      });
+    });
+  }
+
+  /* --- TEKNİK KARTUŞ (sağ alt) --- */
+  const kw=100, kh=53, kx=W-MARGIN-kw, ky=H-MARGIN-kh;
+  if(colored){A(root, E("rect",{x:kx,y:ky,width:kw,height:kh,fill:"#ffffff",class:"deco"}));
+              A(root, E("rect",{x:kx,y:ky,width:kw,height:9,fill:"#eef2f8",class:"deco"}));}
+  A(root, R(kx,ky,kw,kh,0.45,"none",colored?"dev":null));
+  A(root, L(kx,ky+9,kx+kw,ky+9,0.32,null,colored?"dev":null));
+  A(root, T(kx+3,ky+4.3,(state.panelType==="ucuncu"?"3. ŞAHIS PANOSU":"AG DAĞITIM PANOSU")+" — TEK HAT ŞEMASI",2.9,"start"));
+  A(root, T(kx+3,ky+7.8,"TEDAŞ-MLZ/2003-006.C",2.1,"start"));
+  const colX=kx+kw/2;
+  A(root, L(colX,ky+9,colX,ky+kh,0.22,null,colored?"dev":null));
+  // kullanılan buşon boylarının özeti (karışık olabilir)
+  const useCnt={};
+  state.outputs.filter(x=>!x.reserve).forEach(x=>{useCnt[x.boy]=(useCnt[x.boy]||0)+1;});
+  const boyKeys=Object.keys(useCnt).map(Number).sort((a,b)=>a-b);
+  const boySummary = boyKeys.length
+    ? boyKeys.map(b=>useCnt[b]+"×"+DSYA_BOY[b][1]+" ("+DSYA_BOY[b][0]+" Boy)").join("  +  ")
+    : "—";
+  const boyShort = boyKeys.length ? boyKeys.map(b=>DSYA_BOY[b][0]+" Boy").join(" + ") : "—";
+  const left=[
+    ["Pano Gücü", state.power+" kVA"],
+    ["Anma Gerilimi", SPEC.V],
+    ["Ana Bara", p.bar],
+    ["Giriş", state.mainDevice==="tmk"?("TMK "+(p.mainI?p.mainI+"A":"")):"Direkt bara"],
+    ["Akım Trafosu", p.ct+" A"],
+    ["Kompanzasyon", state.hasComp?(((state.compKvar==null||state.compKvar==="")?defaultKvar():state.compKvar)+" kVAr"):"—"],
+  ];
+  const right=[
+    ["Tip", (state.panelType==="ucuncu"?"3. Şahıs":"TEDAŞ")+" · "+(state.place==="dahili"?"Dahili":"Harici")],
+    ["Mahfaza", state.enclosure==="crp"?"CTP":"Sac"],
+    ["Isc", p.prosp],
+    ["Buşon", boyShort],
+    ["Çıkış", nOut+" ad. / "+outs.filter(x=>x.reserve).length+" yedek"],
+  ];
+  const lineH=6.3, top=ky+14.5;
+  left.forEach((r,i)=>{A(root,T(kx+3,top+i*lineH,r[0],2.1,"start"));
+    A(root,T(colX-3,top+i*lineH,r[1],2.3,"end"));});
+  right.forEach((r,i)=>{A(root,T(colX+3,top+i*lineH,r[0],2.1,"start"));
+    A(root,T(kx+kw-3,top+i*lineH,r[1],2.3,"end"));});
+
+  /* --- BUŞON / KONTAKTÖR ÖZET (kartuşun ÜSTÜNDE) --- */
+  const sw=kw, sh=13, sx=kx, sy=ky-sh-4;
+  A(root, R(sx,sy,sw,sh,0.3,"none",colored?"dev":null));
+  A(root, L(sx,sy+5,sx+sw,sy+5,0.22,null,colored?"dev":null));
+  A(root, L(sx+sw/2,sy,sx+sw/2,sy+sh,0.22,null,colored?"dev":null));
+  A(root, T(sx+sw/4,sy+3.5,"BESLEME ÇIKIŞLARI (DSYA)",2.1));
+  A(root, T(sx+3*sw/4,sy+3.5,"SOKAK AYD. ÇIKIŞI (SYA)",2.1));
+  A(root, T(sx+sw/4,sy+10,boySummary,2.1));
+  A(root, T(sx+3*sw/4,sy+10,"Kontaktör AC-5 · 00 Boy 16A",2.3));
+}
+
+/* ============================================================
+   RENDER + ZOOM
+   ============================================================ */
+let zoom=1,lastW=210,lastH=252;
+function render(){
+  const {svg,W,H}=buildSchematic(true);
+  lastW=W;lastH=H;
+  const sh=document.getElementById("sheet");sh.innerHTML="";sh.appendChild(svg);
+  applyZoom();
+  const p=SPEC.powers[state.power];
+  document.getElementById("specLine").textContent=`${state.power} kVA · ${SPEC.V} · ${p.bar} · Isc ${p.prosp}`;
+  document.getElementById("sheetMeta").textContent=`${SPEC.dims[state.power]} mm · ${state.outputs.length} çıkış`;
+  document.getElementById("sheetTitle").textContent=`Tek Hat Şeması — ${state.power} kVA ${state.place==="dahili"?"Dahili":"Harici"}`;
+}
+function applyZoom(){
+  const sh=document.getElementById("sheet");
+  sh.style.width=(lastW*zoom)+"px";sh.style.height=(lastH*zoom)+"px";
+  const svg=sh.querySelector("svg");if(svg){svg.setAttribute("width",lastW*zoom);svg.setAttribute("height",lastH*zoom);}
+  document.getElementById("zoomLabel").textContent=Math.round(zoom*100)+"%";
+}
+const ZMIN=0.2, ZMAX=12;
+/* Belirli bir ekran noktasını sabit tutarak yakınlaştır (imleç merkezli) */
+function zoomAt(newZoom,clientX,clientY){
+  const sc=document.getElementById("scroll");
+  const sh=document.getElementById("sheet");
+  newZoom=Math.max(ZMIN,Math.min(ZMAX,newZoom));
+  if(newZoom===zoom)return;
+  // imleç altındaki noktanın pafta üzerindeki oransal konumu
+  const shR=sh.getBoundingClientRect();
+  const px=(clientX-shR.left)/shR.width;
+  const py=(clientY-shR.top)/shR.height;
+  zoom=newZoom; applyZoom();
+  // yeni yerleşimden sonra GERÇEK konumu ölç, aynı noktayı imlecin altında tut
+  const shR2=sh.getBoundingClientRect();
+  sc.scrollLeft += (shR2.left + px*shR2.width)  - clientX;
+  sc.scrollTop  += (shR2.top  + py*shR2.height) - clientY;
+}
+function fit(){const b=document.getElementById("scroll").getBoundingClientRect();
+  zoom=Math.min((b.width-50)/lastW,(b.height-50)/lastH,6);applyZoom();
+  // ortala
+  const sc=document.getElementById("scroll");
+  sc.scrollLeft=(sc.scrollWidth-sc.clientWidth)/2;
+  sc.scrollTop=0;}
+
+/* ============================================================
+   UI
+   ============================================================ */
+function buildPowerSelect(){const s=document.getElementById("power");
+  Object.keys(SPEC.powers).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k+" kVA";if(k===state.power)o.selected=true;s.appendChild(o);});}
+function autoMain(){const p=SPEC.powers[state.power];state.mainDevice=p.main;document.getElementById("mainDevice").value=p.main;document.getElementById("mainAuto").style.opacity=1;}
+
+function renderOutList(){
+  const list=document.getElementById("outList");list.innerHTML="";
+  state.outputs.forEach((o,i)=>{
+    const row=document.createElement("div");row.className="out-row"+(o.reserve?" reserve":"");
+    const idx=document.createElement("div");idx.className="idx";idx.textContent=(o.reserve?"Y":"Ç")+(i+1);row.appendChild(idx);
+    const mid=document.createElement("div");mid.style.display="grid";
+    mid.style.gridTemplateColumns="1fr";mid.style.gap="5px";
+    const nk=document.createElement("div");nk.style.display="grid";nk.style.gridTemplateColumns="1fr 1fr";nk.style.gap="5px";
+    const nm=document.createElement("input");nm.type="text";nm.value=o.name||"";
+    nm.placeholder=o.reserve?"YEDEK":("Ç"+(i+1))+" (kol adı)";
+    nm.oninput=()=>{o.name=nm.value.trim();render();};
+    const kw=document.createElement("input");kw.type="text";kw.value=o.kw||"";kw.placeholder="güç kW";
+    kw.oninput=()=>{o.kw=kw.value.trim();render();};
+    nk.appendChild(nm);nk.appendChild(kw);mid.appendChild(nk);
+    const boy=document.createElement("select");
+    DSYA_BOY.forEach(([b,a],bi)=>{const op=document.createElement("option");op.value=bi;op.textContent=b+" Boy "+a;if(o.boy===bi)op.selected=true;boy.appendChild(op);});
+    boy.onchange=()=>{o.boy=+boy.value;render();renderOutList();};
+    mid.appendChild(boy);
+    const cur=document.createElement("input");cur.type="text";cur.value=o.cur||"";
+    cur.placeholder=o.reserve?"sig. akımı":("sig. akımı ("+DSYA_BOY[o.boy][1]+")");
+    cur.oninput=()=>{o.cur=cur.value.trim();render();};
+    mid.appendChild(cur);
+    const cbl=document.createElement("select");
+    const cop0=document.createElement("option");cop0.value="";cop0.textContent="kablo türü…";cbl.appendChild(cop0);
+    CABLE_TYPES.forEach(ct=>{const op=document.createElement("option");op.value=ct;op.textContent=ct;if(o.cable===ct)op.selected=true;cbl.appendChild(op);});
+    cbl.onchange=()=>{o.cable=cbl.value;render();};
+    mid.appendChild(cbl);row.appendChild(mid);
+    const ctrl=document.createElement("div");ctrl.style.display="flex";ctrl.style.gap="3px";
+    const res=document.createElement("button");res.className="mini-btn";res.textContent=o.reserve?"Ydk":"Akt";
+    res.title="Aktif/Yedek";res.onclick=()=>{o.reserve=!o.reserve;if(o.reserve&&!o.name)o.name="YEDEK";if(!o.reserve&&o.name==="YEDEK")o.name="";render();renderOutList();syncCounts();};
+    const del=document.createElement("button");del.className="mini-btn danger";del.textContent="✕";
+    del.onclick=()=>{state.outputs.splice(i,1);render();renderOutList();syncCounts();};
+    ctrl.appendChild(res);ctrl.appendChild(del);row.appendChild(ctrl);
+    list.appendChild(row);
+  });
+  // Kompanzasyon çıkışı satırı (3. şahıs + kompanzasyon)
+  if(state.panelType==="ucuncu" && state.compOut && state.outputs.length){
+    const row=document.createElement("div");row.className="out-row";row.style.borderColor="var(--accent)";
+    const idx=document.createElement("div");idx.className="idx";idx.textContent="K";idx.style.color="var(--accent)";row.appendChild(idx);
+    const mid=document.createElement("div");mid.style.display="grid";mid.style.gridTemplateColumns="1fr";mid.style.gap="5px";
+    const boy=document.createElement("select");
+    DSYA_BOY.forEach(([b,a],bi)=>{const op=document.createElement("option");op.value=bi;op.textContent=b+" Boy "+a;if(state.compBoy===bi)op.selected=true;boy.appendChild(op);});
+    boy.onchange=()=>{state.compBoy=+boy.value;render();renderOutList();};
+    mid.appendChild(boy);
+    const cur=document.createElement("input");cur.type="text";cur.value=state.compCur||"";
+    cur.placeholder="sig. akımı ("+DSYA_BOY[state.compBoy][1]+")";
+    cur.oninput=()=>{state.compCur=cur.value.trim();render();};
+    mid.appendChild(cur);row.appendChild(mid);
+    const ctrl=document.createElement("div");ctrl.style.display="flex";ctrl.style.alignItems="center";
+    const lbl=document.createElement("span");lbl.textContent="Komp.";lbl.style.fontSize="11px";lbl.style.color="var(--pink-soft)";lbl.title="Kompanzasyona giden çıkış";
+    ctrl.appendChild(lbl);row.appendChild(ctrl);
+    list.appendChild(row);
+  }
+  const p=SPEC.powers[state.power];
+  document.getElementById("outHint").textContent=
+    `Şartname (EK-I): ${(p.groups||[]).map(g=>g.n+"×"+DSYA_BOY[g.boy][1]+" "+DSYA_BOY[g.boy][0]+" Boy").join(" + ")}`+(p.res?` + ${p.res} yedek`:"")+". Terminal aralığı 185 mm."+(p.note?"  ⚠ "+p.note:"");
+}
+/* Kompanzasyon alanını güce göre güncelle ve aralık kontrolü yap */
+function syncComp(keepValue){
+  const r=compRange();
+  const inp=document.getElementById("compKvar");
+  const hint=document.getElementById("compHint");
+  const row=document.getElementById("compRow");
+  row.style.display=state.hasComp?"grid":"none";
+  if(!keepValue){
+    if(state.compKvar==null) state.compKvar=String(defaultKvar());
+    inp.value=state.compKvar;
+  }
+  const str=String(state.compKvar??"").replace(",",".").trim();
+  const isNum=/^\d+(\.\d+)?$/.test(str);
+  const num=parseFloat(str);
+  const ok=!isNum||(num>=r.min&&num<=r.max);   // yalnız saf sayıda aralık kontrolü; "3x5" gibi girişte uyarma
+  hint.textContent=`Öneri (%3–%5): ${r.min}–${r.max} kVAr · manuel girilebilir`+(ok?"":"  ⚠ aralık dışı");
+  hint.style.color=ok?"":"#e0a03a";
+}
+/* Kullanım yeri / montaj (şartname Tablo 2.1.3): 630+ yalnız dahili; direk tipi yalnız 50/100/160 kVA */
+function syncPlaceOptions(){
+  const kva=+state.power;
+  const pSel=document.getElementById("place"), mSel=document.getElementById("mount");
+  const har=[...pSel.options].find(o=>o.value==="harici");
+  const big=kva>=630;
+  if(har){har.disabled=big;har.hidden=big;}
+  if(big && state.place==="harici"){state.place="dahili";pSel.value="dahili";}
+  const dir=[...mSel.options].find(o=>o.value==="direk");
+  const noDirek=kva>160 || state.place==="dahili";
+  if(dir){dir.disabled=noDirek;dir.hidden=noDirek;}
+  if(noDirek && state.mount==="direk"){state.mount="kaide";mSel.value="kaide";}
+}
+/* Giriş elemanı seçenekleri: 400 kVA ve altı zorunlu TMK; 630+ TMK veya kayar bara serbest */
+function syncMainOptions(){
+  const sel=document.getElementById("mainDevice");
+  const dirOpt=[...sel.options].find(o=>o.value==="direct");
+  const small=+state.power<=400;
+  if(dirOpt){dirOpt.disabled=small;dirOpt.hidden=small;}
+  if(small && state.mainDevice==="direct"){state.mainDevice="tmk";sel.value="tmk";}
+}
+/* Trafo bağlantı seçenekleri: Direk tipi trafo ≤400 kVA, Beton köşk 250–1600 kVA */
+function syncTrafoConn(){
+  const sel=document.getElementById("trafoConn");
+  const kva=+state.power;
+  const dOpt=[...sel.options].find(o=>o.value==="direk");
+  const bOpt=[...sel.options].find(o=>o.value==="beton");
+  const dOK=kva<=400, bOK=true;   // beton köşk her güçte (50–160 NYY, 250+ N2XH); direk ≤400
+  if(dOpt){dOpt.disabled=!dOK;dOpt.hidden=false;}
+  if(bOpt){bOpt.disabled=!bOK;bOpt.hidden=false;}
+  if(state.trafoConn==="direk"&&!dOK)state.trafoConn="beton";
+  sel.value=state.trafoConn;
+}
+/* Kompanzasyona giden çıkış yalnızca 3. şahıs düzeninde geçerli — diğer modda kutuyu pasifle */
+function syncCompOut(){
+  const on=state.panelType==="ucuncu";
+  ["compOut","onayFrame"].forEach(id=>{
+    const cb=document.getElementById(id); if(!cb) return;
+    cb.disabled=!on;
+    const lbl=cb.closest("label"); if(lbl) lbl.style.opacity=on?1:.45;
+  });
+}
+/* AG besleme kablosu alanı: oto değeri güncelle, manuel girişte oto rozetini soldur */
+function syncCable(keepValue){
+  const inp=document.getElementById("cableManual");
+  const badge=document.getElementById("cableAuto");
+  inp.placeholder=autoCable()||"—";
+  if(!keepValue){ state.cableManual=null; inp.value=""; }
+  if(badge) badge.style.opacity=(state.cableManual==null||state.cableManual==="")?1:.3;
+}
+/* Çıkış tipi seçenekleri: TEDAŞ tipinde TMŞ'ye izin yok (şartname DSYA/SYA) */
+function syncKindOptions(){
+  const sel=document.getElementById("allKind");
+  const tmsOpt=[...sel.options].find(o=>o.value==="aos");
+  const tedas=state.panelType==="tedas";
+  if(tmsOpt){tmsOpt.disabled=tedas;tmsOpt.hidden=tedas;}
+  if(tedas && state.outKind==="aos"){
+    state.outKind="dsya"; sel.value="dsya";
+    state.outputs.forEach(o=>{o.kind="dsya";});
+  }
+}
+function syncCounts(){
+  document.getElementById("nActive").value=state.outputs.filter(o=>!o.reserve).length;
+  document.getElementById("nReserve").value=state.outputs.filter(o=>o.reserve).length;
+}
+function onPower(){state.power=document.getElementById("power").value;autoMain();syncMainOptions();syncPlaceOptions();syncTrafoConn();seedOutputs();state.compKvar=null;state.cableManual=null;syncComp();syncCable();render();renderOutList();syncCounts();}
+
+function bind(){
+  buildPowerSelect();
+  document.getElementById("power").onchange=onPower;
+  document.getElementById("panelType").onchange=e=>{state.panelType=e.target.value;syncKindOptions();syncCompOut();render();renderOutList();syncComp();};
+  document.getElementById("compKvar").oninput=e=>{const v=e.target.value.trim();
+    state.compKvar=v===""?null:v;render();syncComp(true);};
+  document.getElementById("trafoConn").onchange=e=>{state.trafoConn=e.target.value;state.cableManual=null;syncCable();render();};
+  document.getElementById("cableManual").oninput=e=>{const v=e.target.value;state.cableManual=(v==="")?null:v;syncCable(true);render();};
+  [["place","place"],["mount","mount"],["enclosure","enclosure"],["vector","vector"],["mainDevice","mainDevice"],["lighting","lighting"]].forEach(([id,k])=>{
+    document.getElementById(id).onchange=e=>{state[k]=e.target.value;if(id==="mainDevice")document.getElementById("mainAuto").style.opacity=.3;if(id==="place")syncPlaceOptions();render();};
+  });
+  ["hasAAB","hasSurge","hasComp","hasAnalyzer","hasInternal","hasAstro","compOut","onayFrame"].forEach(id=>{
+    document.getElementById(id).onchange=e=>{state[id]=e.target.checked;if(id==="hasComp")syncComp();if(id==="compOut")renderOutList();render();};
+  });
+  document.getElementById("allKind").onchange=e=>{state.outKind=e.target.value;
+    state.outputs.forEach(o=>{o.kind=state.outKind;});render();renderOutList();};
+  document.getElementById("applyCounts").onclick=()=>{
+    const a=Math.max(0,Math.min(16,+document.getElementById("nActive").value||0));
+    const r=Math.max(0,Math.min(6,+document.getElementById("nReserve").value||0));
+    const P=SPEC.powers[state.power];const boy=Math.max(...(P.groups||[{boy:0}]).map(g=>g.boy));const arr=[];
+    const act=state.outputs.filter(o=>!o.reserve);
+    for(let i=0;i<a;i++)arr.push(act[i]||{kind:state.outKind,boy,reserve:false,name:'',kw:'',cur:'',cable:''});
+    for(let i=0;i<r;i++)arr.push({kind:state.outKind,boy,reserve:true,name:'YEDEK',kw:'',cur:'',cable:''});
+    state.outputs=arr;render();renderOutList();
+  };
+  document.getElementById("zIn").onclick=()=>{const b=document.getElementById("scroll").getBoundingClientRect();
+    zoomAt(zoom*1.25,b.left+b.width/2,b.top+b.height/2);};
+  document.getElementById("zOut").onclick=()=>{const b=document.getElementById("scroll").getBoundingClientRect();
+    zoomAt(zoom/1.25,b.left+b.width/2,b.top+b.height/2);};
+
+  /* --- Fare tekerleği ile yakınlaştırma (imleç merkezli) --- */
+  const sc=document.getElementById("scroll");
+  sc.addEventListener("wheel",e=>{
+    // Ctrl basılıyken tarayıcı zoom'unu da engelle; düz tekerlek de yakınlaştırsın
+    e.preventDefault();
+    const factor = e.deltaY<0 ? 1.12 : 1/1.12;
+    zoomAt(zoom*factor, e.clientX, e.clientY);
+  },{passive:false});
+
+  /* --- Sürükleyerek gezinme --- */
+  let panning=false,sx0=0,sy0=0,sl0=0,st0=0;
+  sc.addEventListener("mousedown",e=>{
+    if(e.button!==0&&e.button!==1)return;
+    panning=true;sx0=e.clientX;sy0=e.clientY;sl0=sc.scrollLeft;st0=sc.scrollTop;
+    sc.style.cursor="grabbing";e.preventDefault();
+  });
+  window.addEventListener("mousemove",e=>{
+    if(!panning)return;
+    sc.scrollLeft=sl0-(e.clientX-sx0);
+    sc.scrollTop=st0-(e.clientY-sy0);
+  });
+  window.addEventListener("mouseup",()=>{if(panning){panning=false;sc.style.cursor="";}});
+  sc.style.cursor="grab";
+
+  /* --- Dokunmatik: tek parmak = doğal kaydırma (her yön), iki parmak = pinch yakınlaştırma --- */
+  let tPinch=null;
+  const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+  sc.addEventListener("touchstart",e=>{
+    if(e.touches.length===2){const [a,b]=e.touches;tPinch={d:dist(a,b),z:zoom};}
+    else tPinch=null;
+  },{passive:true});
+  sc.addEventListener("touchmove",e=>{
+    if(e.touches.length===2&&tPinch){
+      e.preventDefault();   // iki parmakta yakınlaştırmayı biz yönetiriz
+      const [a,b]=e.touches;const d=dist(a,b);
+      const mx=(a.clientX+b.clientX)/2,my=(a.clientY+b.clientY)/2;
+      zoomAt(tPinch.z*(d/tPinch.d),mx,my);
+    }
+    // tek parmak: bırak, tarayıcı doğal kaydırma yapsın (yukarı/aşağı/yana)
+  },{passive:false});
+  sc.addEventListener("touchend",e=>{if(e.touches.length<2)tPinch=null;});
+  // ekran döndüğünde sığdır
+  window.addEventListener("resize",()=>{clearTimeout(window._fitT);window._fitT=setTimeout(fit,150);});
+  document.getElementById("zFit").onclick=fit;
+  document.getElementById("dlSvg").onclick=dlSVG;
+  document.getElementById("dlPng").onclick=dlPNG;
+  document.getElementById("dlDxf").onclick=dlDXF;
+  document.getElementById("printBtn").onclick=printA4;
+  document.getElementById("panelToggle").onclick=()=>{document.querySelector("aside").classList.toggle("collapsed");setTimeout(fit,60);};
+}
+
+/* ============================================================
+   DIŞA AKTAR
+   ============================================================ */
+function svgStr(){const s=document.querySelector("#sheet svg").cloneNode(true);s.setAttribute("xmlns",NS);
+  return '<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(s);}
+function fn(ext){return `AG_tek_hat_${state.power}kVA_${state.place}.${ext}`;}
+function save(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;(document.getElementById('vg-tool-workspace') || document.body).appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
+function dlSVG(){save(new Blob([svgStr()],{type:"image/svg+xml"}),fn("svg"));}
+function dlPNG(){
+  // SVG'yi viewBox oranında, sabit yüksek çözünürlükte çiz
+  const src=document.querySelector("#sheet svg");
+  const clone=src.cloneNode(true);
+  const scale=8;                          // 1 birim = 8 px (net ama orantılı)
+  clone.setAttribute("width",lastW*scale);
+  clone.setAttribute("height",lastH*scale);
+  clone.setAttribute("xmlns",NS);
+  const str='<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(clone);
+  const img=new Image();
+  img.onload=()=>{
+    const cv=document.createElement("canvas");cv.width=lastW*scale;cv.height=lastH*scale;
+    const ct=cv.getContext("2d");ct.fillStyle="#fff";ct.fillRect(0,0,cv.width,cv.height);
+    ct.drawImage(img,0,0,cv.width,cv.height);
+    cv.toBlob(b=>save(b,fn("png")));
+  };
+  img.src="data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(str)));
+}
+
+/* --- A4 yazdır / PDF: şemayı A4 dik sayfaya (8 mm kenar) sığdır --- */
+function printA4(){
+  const area=document.getElementById("printArea");
+  const src=document.querySelector("#sheet svg");if(!src)return;
+  const c=src.cloneNode(true);c.setAttribute("xmlns",NS);
+  const availW=194, availH=281;                       // mm (A4 - 2×8 mm)
+  const ratio=lastH/lastW;
+  if(ratio>availH/availW){c.setAttribute("height",availH+"mm");c.removeAttribute("width");}
+  else{c.setAttribute("width",availW+"mm");c.removeAttribute("height");}
+  area.innerHTML="";area.appendChild(c);
+  window.print();
+}
+
+/* --- DXF (AC1009, Türkçe ANSI_1254, düzgün hizalı TEXT) --- */
+const CP1254={"ğ":240,"Ğ":208,"ı":253,"İ":221,"ş":254,"Ş":222,"ç":231,"Ç":199,"ö":246,"Ö":214,"ü":252,"Ü":220,"â":226,"î":238,"û":251,"Â":194,"Î":206,"Û":219,"°":176,"²":178,"³":179,"·":183,"×":215,"—":151,"–":150,"…":133,"“":147,"”":148,"‘":145,"’":146,"€":128};
+function toCp1254Bytes(str){
+  const out=[];
+  for(const ch of str){
+    const cc=ch.codePointAt(0);
+    if(cc<128) out.push(cc);
+    else if(CP1254[ch]!=null) out.push(CP1254[ch]);
+    else out.push(63); // '?'
+  }
+  return new Uint8Array(out);
+}
+/* DXF A4 ölçekleme: çizim birimleri → mm, A4 dik (210×297) içine 5 mm kenar payıyla ortalanır */
+let DXF_T={k:1,ox:0,oy:0};
+function tx(x){return x*DXF_T.k+DXF_T.ox;}
+function ty(y){return y*DXF_T.k+DXF_T.oy;}
+function dlDXF(){
+  const svg=document.querySelector("#sheet svg");const ents=[];const flipY=lastH;
+  const k=Math.min(200/lastW, 287/lastH);
+  DXF_T={k, ox:(210-lastW*k)/2, oy:(297-lastH*k)/2};
+  svg.querySelectorAll("line").forEach(e=>ents.push(dxfLine(+e.getAttribute("x1"),flipY-+e.getAttribute("y1"),+e.getAttribute("x2"),flipY-+e.getAttribute("y2"),ltOf(e))));
+  svg.querySelectorAll("circle").forEach(e=>ents.push(dxfCircle(+e.getAttribute("cx"),flipY-+e.getAttribute("cy"),+e.getAttribute("r"))));
+  svg.querySelectorAll("rect").forEach(e=>{if(e.closest("defs")||(e.getAttribute("class")||"").includes("deco"))return;const x=+e.getAttribute("x"),y=flipY-+e.getAttribute("y"),w=+e.getAttribute("width"),h=+e.getAttribute("height");
+    const lt=ltOf(e);
+    ents.push(dxfLine(x,y,x+w,y,lt),dxfLine(x+w,y,x+w,y-h,lt),dxfLine(x+w,y-h,x,y-h,lt),dxfLine(x,y-h,x,y,lt));});
+  svg.querySelectorAll("path").forEach(e=>{if(e.closest("defs"))return;const d=e.getAttribute("d");if(!d)return;
+    // A (yay) içeren path'i özel işle: M x0 y0 A rx ry rot large sweep x1 y1
+    const arc=d.match(/M\s*(-?[\d.]+)\s+(-?[\d.]+)\s*A\s*(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+([01])\s+([01])\s+(-?[\d.]+)\s+(-?[\d.]+)/);
+    if(arc){
+      const x0=+arc[1],y0=+arc[2],rx=+arc[3],x1=+arc[8],y1=+arc[9];
+      // yayı 8 segmente böl (yarım daire varsayımı)
+      const cx=(x0+x1)/2, cy=(y0+y1)/2, r=Math.abs(x1-x0)/2||rx;
+      const a0=Math.atan2(y0-cy,x0-cx), a1=Math.atan2(y1-cy,x1-cx);
+      let d0=a0, d1=a1; if(+arc[7]===0){if(d1>d0)d1-=2*Math.PI;} else {if(d1<d0)d1+=2*Math.PI;}
+      const N=8;let px=x0,py=y0;
+      for(let i=1;i<=N;i++){const t=d0+(d1-d0)*i/N;const nx=cx+r*Math.cos(t),ny=cy+r*Math.sin(t);
+        ents.push(dxfLine(px,flipY-py,nx,flipY-ny));px=nx;py=ny;}
+      return;
+    }
+    const subs=d.match(/[Mm][^Mm]*/g);if(!subs)return;
+    subs.forEach(sub=>{
+      const closed=/[Zz]/.test(sub);
+      const nums=(sub.match(/-?\d+\.?\d*/g)||[]).map(Number);
+      const pts=[];for(let i=0;i<nums.length-1;i+=2)pts.push([nums[i],flipY-nums[i+1]]);
+      const lt=ltOf(e);
+      for(let i=0;i<pts.length-1;i++)ents.push(dxfLine(pts[i][0],pts[i][1],pts[i+1][0],pts[i+1][1],lt));
+      if(closed&&pts.length>2)ents.push(dxfLine(pts[pts.length-1][0],pts[pts.length-1][1],pts[0][0],pts[0][1],lt));
+    });});
+  svg.querySelectorAll("text").forEach(e=>{const s=e.textContent;if(!s||!s.trim())return;
+    const x=+e.getAttribute("x"),y=flipY-+e.getAttribute("y"),h=(+e.getAttribute("font-size")||3)*0.85;
+    const anc=e.getAttribute("text-anchor");
+    const rot=parseRot(e.getAttribute("transform"));
+    ents.push(dxfText(x,y,h,s,anc==="middle"?1:anc==="end"?2:0,rot));});
+  const dxf=dxfWrap(ents.join(""));
+  save(new Blob([toCp1254Bytes(dxf)],{type:"application/dxf"}),fn("dxf"));
+}
+function ltOf(e){const d=e.getAttribute("stroke-dasharray");if(!d)return null;
+  const n=d.trim().split(/[\s,]+/).filter(Boolean).length;return n>=4?"DASHDOT":"DASHED";}
+function parseRot(tf){if(!tf)return 0;const m=tf.match(/rotate\(([-\d.]+)/);if(!m)return 0;return -(+m[1]);} // SVG saat yönü -> DXF ccw
+function dxfLine(x1,y1,x2,y2,lt){return `0\nLINE\n8\n0\n62\n7\n6\n${lt||"CONTINUOUS"}\n10\n${tx(x1).toFixed(3)}\n20\n${ty(y1).toFixed(3)}\n30\n0\n11\n${tx(x2).toFixed(3)}\n21\n${ty(y2).toFixed(3)}\n31\n0\n`;}
+function dxfCircle(x,y,r){return `0\nCIRCLE\n8\n0\n62\n7\n10\n${tx(x).toFixed(3)}\n20\n${ty(y).toFixed(3)}\n30\n0\n40\n${(r*DXF_T.k).toFixed(3)}\n`;}
+function dxfText(x,y,h,s,just,rot){
+  // just: 0 sol, 1 orta, 2 sağ. valign=2 (orta) örnek dosyayla uyumlu.
+  const X=tx(x).toFixed(3), Y=ty(y).toFixed(3), H=(h*DXF_T.k).toFixed(3);
+  let e=`0\nTEXT\n8\nTEXT\n7\nSTANDARD\n10\n${X}\n20\n${Y}\n30\n0\n40\n${H}\n1\n${s}\n`;
+  if(rot)e+=`50\n${rot.toFixed(2)}\n`;
+  e+=`72\n${just}\n73\n2\n11\n${X}\n21\n${Y}\n31\n0\n`;
+  return e;
+}
+function dxfWrap(b){return `0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n9\n$DWGCODEPAGE\n3\nANSI_1254\n9\n$INSUNITS\n70\n4\n9\n$LIMMIN\n10\n0\n20\n0\n9\n$LIMMAX\n10\n210\n20\n297\n9\n$EXTMIN\n10\n0\n20\n0\n30\n0\n9\n$EXTMAX\n10\n210\n20\n297\n30\n0\n9\n$TEXTSTYLE\n7\nSTANDARD\n0\nENDSEC\n0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nLTYPE\n70\n3\n0\nLTYPE\n2\nCONTINUOUS\n70\n0\n3\nSolid line\n72\n65\n73\n0\n40\n0\n0\nLTYPE\n2\nDASHED\n70\n0\n3\n__ __ __ __\n72\n65\n73\n2\n40\n1.5\n49\n1.0\n49\n-0.5\n0\nLTYPE\n2\nDASHDOT\n70\n0\n3\n__ . __ . __\n72\n65\n73\n4\n40\n2.0\n49\n1.2\n49\n-0.4\n49\n0\n49\n-0.4\n0\nENDTAB\n0\nTABLE\n2\nLAYER\n70\n2\n0\nLAYER\n2\n0\n70\n0\n62\n7\n6\nCONTINUOUS\n0\nLAYER\n2\nTEXT\n70\n0\n62\n7\n6\nCONTINUOUS\n0\nENDTAB\n0\nTABLE\n2\nSTYLE\n70\n1\n0\nSTYLE\n2\nSTANDARD\n70\n0\n40\n0\n41\n1\n50\n0\n71\n0\n42\n2.5\n3\nArial.ttf\n4\n\n0\nENDTAB\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n${b}0\nENDSEC\n0\nEOF\n`;}
+
+/* ============================================================
+   BAŞLAT
+   ============================================================ */
+seedOutputs();bind();autoMain();syncMainOptions();syncPlaceOptions();syncTrafoConn();syncKindOptions();syncComp();syncCable();syncCompOut();render();renderOutList();syncCounts();setTimeout(fit,60);
+
+
+
+</script>
+</div><div id="vg-origin">VoltGuard uyarlaması · Özgün hesap araçları: Baki SONAY · <a href="../yontem/">Yöntem ve kaynaklar</a></div><script src="../shared/export.js" defer></script><script>try{localStorage.setItem('voltguard:recent',JSON.stringify({slug:"ag-tek-hat-semasi",name:"AG Tek Hat Şeması"}))}catch(e){}if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script></div><footer data-vg-no-print class="footer vg-footer" id="vgFooter" role="contentinfo">
+  <div class="vg-footer__cta">
+    <div class="vg-wrap vg-footer__cta-in">
+      <div class="vg-footer__cta-text">
+        <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+        <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+      </div>
+      <div class="vg-footer__cta-btns">
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="vg-wrap">
+    <div class="vg-footer__grid">
+      <div class="vg-footer__brand">
+        <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+          <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+          <span class="vg-brand__copy" aria-hidden="true">
+            <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+            <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+          </span>
+        </a>
+        <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+        <ul class="vg-footer__contact">
+          <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+          <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+          <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+        </ul>
+        <address class="vg-footer__addr">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+        </address>
+        <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+      </div>
+      <nav class="vg-footer__nav" aria-label="Alt menü">
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Hizmetler</h3>
+          <ul>
+            <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+            <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+            <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+            <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+            <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+            <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+            <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+            <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+            <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+            <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+            <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+            <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kurumsal</h3>
+          <ul>
+            <li><a href="/#hakkimizda">Hakkımızda</a></li>
+            <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+            <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+            <li><a href="/#projeler">Projeler</a></li>
+            <li><a href="/#referanslar">Referanslarımız</a></li>
+            <li><a href="/#surec">Sürecimiz</a></li>
+            <li><a href="/#neden-biz">Neden Biz?</a></li>
+            <li><a href="/#guvenlik">Güvenlik</a></li>
+            <li><a href="/#haberler">Haberler</a></li>
+            <li><a href="/#emi-demo">Canlı Demo</a></li>
+            <li><a href="/#katalog">Katalog</a></li>
+            <li><a href="/#sss">SSS</a></li>
+            <li><a href="/#iletisim">İletişim</a></li>
+            <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kaynaklar</h3>
+          <ul>
+            <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+            <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+            <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+            <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+            <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+          <ul>
+            <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+            <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+            <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+            <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+            <li><a href="/voltgame.html">VoltGame</a></li>
+            <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+            <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+            <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="vg-footer__bottom">
+      <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+      <div class="vg-footer__social">
+        <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+      <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        </circle>
+      </svg>
+      <span class="sig-node" aria-hidden="true"></span>
+      <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+        <span class="sig-badge__ring" aria-hidden="true"></span>
+        <span class="sig-badge__aurora" aria-hidden="true"></span>
+        <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
+        <span class="sig-badge__body">
+          <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+          <span class="sig-badge__brand">
+            <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+            <span class="sig-badge__eng">Engineering</span>
+          </span>
+        </span>
+        <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+        <span class="sig-badge__shimmer" aria-hidden="true"></span>
+      </a>
+      <span class="sig-node" aria-hidden="true"></span>
+      <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+        </circle>
+      </svg>
+    </div>
+  </div>
+</footer></body>
+</html>

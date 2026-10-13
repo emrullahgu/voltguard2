@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>İletken Kopma Hesabı | VoltGuard</title><meta name="description" content="Tek taraflı kopma durumunda iletken kuvvetlerini değerlendirin."><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#0a1628"><link rel="canonical" href="https://voltguard.com.tr/araclar/iletken-kopma-hesabi/"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="İletken Kopma Hesabı | VoltGuard"><meta property="og:description" content="Tek taraflı kopma durumunda iletken kuvvetlerini değerlendirin."><meta property="og:url" content="https://voltguard.com.tr/araclar/iletken-kopma-hesabi/"><meta property="og:image" content="https://voltguard.com.tr/araclar/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/voltguard-icon-64.png" type="image/png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"İletken Kopma Hesabı","url":"https://voltguard.com.tr/araclar/iletken-kopma-hesabi/","description":"Tek taraflı kopma durumunda iletken kuvvetlerini değerlendirin.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":0,"priceCurrency":"TRY"},"publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VoltGuard","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"İletken Kopma Hesabı","item":"https://voltguard.com.tr/araclar/iletken-kopma-hesabi/"}]}]}</script><link rel="stylesheet" href="../shared/tool-shell.css"><link rel="stylesheet" href="../shared/export.css">
+
+
+
+<style>
+  #vg-tool-workspace{
+    --ink:#10221c; --frost:#eef4f3; --paper:#fbfdfc;
+    --ice:#3a7ca5; --ice-dk:#2c5f7e; --ice-lt:#d6e8f1;
+    --warn:#b5432b; --ok:#1f7a52; --line:#cbdad6;
+    --num:#1d4ed8; --shadow:0 1px 2px rgba(16,34,28,.06),0 8px 24px rgba(16,34,28,.06);
+  }
+  :where(#vg-tool-workspace) *{box-sizing:border-box}
+  #vg-tool-workspace{-webkit-text-size-adjust:100%}
+  #vg-tool-workspace{
+    margin:0; background:
+      radial-gradient(1200px 600px at 80% -10%, #e7f1f5 0%, transparent 60%),
+      var(--frost);
+    color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.45;
+  }
+  :where(#vg-tool-workspace) .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 64px}
+  :where(#vg-tool-workspace) header.top{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;border-bottom:2px solid var(--ice-dk);padding-bottom:18px;margin-bottom:24px}
+  :where(#vg-tool-workspace) .title :is(h1,.vg-original-title){margin:0;font-size:1.5rem;letter-spacing:-.01em}
+  :where(#vg-tool-workspace) .title .sub{font-size:.82rem;color:#557; letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+  :where(#vg-tool-workspace) .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.74rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ice-dk)}
+  :where(#vg-tool-workspace) .eyebrow .dot{width:9px;height:9px;border-radius:50%;background:var(--ice);box-shadow:0 0 0 4px var(--ice-lt)}
+  :where(#vg-tool-workspace) .brand{text-align:right;font-size:.78rem;color:#5a6b67}
+  :where(#vg-tool-workspace) .brand b{display:block;color:var(--ink);font-size:.92rem}
+
+  :where(#vg-tool-workspace) .grid{display:grid;grid-template-columns:1.05fr 1fr;gap:22px;align-items:start}
+  @media(max-width:880px){:where(#vg-tool-workspace) .grid{grid-template-columns:1fr}}
+
+  :where(#vg-tool-workspace) .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  :where(#vg-tool-workspace) .card h2{margin:0;padding:14px 18px;font-size:.95rem;background:linear-gradient(180deg,#f4f9f8,#eaf2f1);border-bottom:1px solid var(--line);letter-spacing:.02em}
+  :where(#vg-tool-workspace) .card .body{padding:18px}
+
+  :where(#vg-tool-workspace) .field{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed #e2ecea}
+  :where(#vg-tool-workspace) .field:last-child{border-bottom:0}
+  :where(#vg-tool-workspace) .field label{font-size:.9rem}
+  :where(#vg-tool-workspace) .field label small{display:block;color:#7a8784;font-size:.74rem;letter-spacing:.02em}
+  :where(#vg-tool-workspace) .field input,:where(#vg-tool-workspace) .field select{font:inherit;font-size:.92rem;padding:7px 10px;border:1px solid var(--line);border-radius:8px;width:130px;text-align:right;background:#fff;color:var(--num);font-weight:600}
+  :where(#vg-tool-workspace) .field select{text-align:left;color:var(--ink);width:160px}
+  :where(#vg-tool-workspace) .field.ro{opacity:.92}
+  :where(#vg-tool-workspace) .field .auto{font-size:.92rem;font-weight:600;color:#54635f;padding:7px 10px;border:1px dashed var(--line);border-radius:8px;background:#f3f7f6;min-width:130px;text-align:right;font-variant-numeric:tabular-nums}
+  :where(#vg-tool-workspace) .field input:focus,:where(#vg-tool-workspace) .field select:focus{outline:2px solid var(--ice);outline-offset:1px;border-color:var(--ice)}
+
+  :where(#vg-tool-workspace) .seg{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ice-dk);margin:14px 0 4px;padding-top:6px}
+  :where(#vg-tool-workspace) .seg:first-child{margin-top:0;padding-top:0}
+
+  :where(#vg-tool-workspace) .resultbar{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:12px;margin-bottom:18px;font-weight:600}
+  :where(#vg-tool-workspace) .resultbar.ok{background:#e7f6ee;border:1px solid #b6e2cb;color:var(--ok)}
+  :where(#vg-tool-workspace) .resultbar.no{background:#fbeae6;border:1px solid #f0c4b8;color:var(--warn)}
+  :where(#vg-tool-workspace) .resultbar .big{font-size:1.35rem;letter-spacing:-.01em}
+  :where(#vg-tool-workspace) .resultbar .ic{font-size:1.5rem;line-height:1}
+
+  :where(#vg-tool-workspace) table.out{width:100%;border-collapse:collapse;font-size:.9rem}
+  :where(#vg-tool-workspace) table.out td{padding:8px 6px;border-bottom:1px solid #eef4f2}
+  :where(#vg-tool-workspace) table.out td:first-child{color:#54635f}
+  :where(#vg-tool-workspace) table.out td:last-child{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+  :where(#vg-tool-workspace) table.out tr.key td:last-child{color:var(--ice-dk);font-size:1.02rem}
+  :where(#vg-tool-workspace) table.out tr.cmp td:last-child{font-size:1.05rem}
+
+  :where(#vg-tool-workspace) .viz{margin-top:8px}
+  :where(#vg-tool-workspace) svg{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,#f7fbfc,#eef5f7)}
+
+  :where(#vg-tool-workspace) .stepbox{margin-top:18px;font-size:.84rem;color:#445}
+  :where(#vg-tool-workspace) .stepbox summary{cursor:pointer;font-weight:700;color:var(--ice-dk);letter-spacing:.02em}
+  :where(#vg-tool-workspace) .stepbox table{width:100%;border-collapse:collapse;margin-top:10px;font-variant-numeric:tabular-nums}
+  :where(#vg-tool-workspace) .stepbox table td{padding:5px 6px;border-bottom:1px solid #eef4f2}
+  :where(#vg-tool-workspace) .stepbox table td:last-child{text-align:right}
+  :where(#vg-tool-workspace) .casechip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.74rem;font-weight:700;background:var(--ice-lt);color:var(--ice-dk);margin-left:8px}
+
+  :where(#vg-tool-workspace) .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  :where(#vg-tool-workspace) button{font:inherit;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid var(--ice-dk);background:var(--ice-dk);color:#fff;cursor:pointer}
+  :where(#vg-tool-workspace) button.ghost{background:#fff;color:var(--ice-dk)}
+  :where(#vg-tool-workspace) button:hover{filter:brightness(1.06)}
+  :where(#vg-tool-workspace) .note{font-size:.78rem;color:#6a7773;margin-top:14px;line-height:1.5}
+  :where(#vg-tool-workspace) .foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:.76rem;color:#6a7773;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media print{
+    @page{size:A4 portrait;margin:8mm}
+    #vg-tool-workspace,#vg-tool-workspace{background:#fff}
+    :where(#vg-tool-workspace) .wrap{max-width:none;padding:0;margin:0}
+    :where(#vg-tool-workspace) .brand{display:none !important}
+    :where(#vg-tool-workspace) .toolbar{display:none !important}
+    :where(#vg-tool-workspace) .note{display:none}
+    :where(#vg-tool-workspace) .stepbox{display:none}
+    :where(#vg-tool-workspace) button{display:none}
+
+    :where(#vg-tool-workspace) header.top{padding-bottom:6px;margin-bottom:8px;border-bottom:2px solid #333;break-after:avoid}
+    :where(#vg-tool-workspace) .title :is(h1,.vg-original-title){font-size:1.05rem}
+    :where(#vg-tool-workspace) .title .sub{font-size:.62rem}
+    :where(#vg-tool-workspace) .eyebrow{font-size:.6rem}
+    :where(#vg-tool-workspace) .eyebrow .dot{box-shadow:none}
+
+    :where(#vg-tool-workspace) .grid{grid-template-columns:1fr 1fr;gap:8px;align-items:start}
+    :where(#vg-tool-workspace) .card{box-shadow:none;border:1px solid #aaa;border-radius:6px;break-inside:avoid}
+    :where(#vg-tool-workspace) .card h2{background:#eee;padding:5px 9px;font-size:.74rem}
+    :where(#vg-tool-workspace) .card .body{padding:7px 9px}
+
+    :where(#vg-tool-workspace) .seg{font-size:.58rem;margin:5px 0 2px;padding-top:2px}
+    :where(#vg-tool-workspace) .field{padding:2px 0}
+    :where(#vg-tool-workspace) .field label{font-size:.66rem;line-height:1.1}
+    :where(#vg-tool-workspace) .field label small{font-size:.56rem;line-height:1}
+    :where(#vg-tool-workspace) .field input,:where(#vg-tool-workspace) .field select,:where(#vg-tool-workspace) .field .auto{font-size:.66rem;padding:2px 6px}
+
+    :where(#vg-tool-workspace) table.out{font-size:.66rem}
+    :where(#vg-tool-workspace) table.out td{padding:3px 4px}
+    :where(#vg-tool-workspace) .resultbar{padding:8px 10px;margin-bottom:8px}
+    :where(#vg-tool-workspace) .resultbar .big{font-size:.95rem}
+    :where(#vg-tool-workspace) .resultbar .ic{font-size:1rem}
+
+    :where(#vg-tool-workspace) .viz{margin-top:4px}
+    :where(#vg-tool-workspace) svg{border:1px solid #aaa;max-height:185px}
+
+    :where(#vg-tool-workspace) .foot{margin-top:8px;padding-top:6px;font-size:.6rem}
+
+    :where(#vg-tool-workspace) .wrap{zoom:0.92}
+  }
+</style>
+<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=bd7e46c3cd10"><script src="/js/vg-shell.js?v=a3ccf745026f" defer></script><script src="/js/voltguard-auth.js?v=5ea8a8c73e4b" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=6609af196d62"></head>
+<body data-vg-tool="iletken-kopma-hesabi" data-vg-title="İletken Kopma Hesabı" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+<header data-vg-no-print class="vg-header doc-header" id="vgHeader">
+  <div class="vg-header__bar vg-wrap">
+    <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+      <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+      <span class="vg-brand__copy" aria-hidden="true">
+        <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+        <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+      </span>
+    </a>
+    <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+    <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+      <ul class="vg-nav__list">
+        <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+        <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+        <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+        <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+        <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+        <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+          <ul class="vg-dd__menu" id="vgDdKaynaklar">
+            <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+            <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+            <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+            <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+            <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+          </ul>
+        </li>
+        <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+        <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+      </ul>
+      <div class="vg-nav__foot">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </nav>
+    <div class="vg-actions">
+      <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+      <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+    </div>
+  </div>
+  <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+</header><div id="main" tabindex="-1" role="main"><div id="vg-top"><div class="vg-topline"><nav class="vg-links" aria-label="Araç menüsü"><a class="vg-back" href="../#araclar">← Tüm araçlar</a><a class="vg-back" href="/hesaplama-araclari/">Pratik hesaplar →</a><a class="vg-back" href="/">VoltGuard ana sayfa ↗</a></nav></div><p class="vg-crumb">Enerji nakil hattı / İletken Kopma Hesabı</p><h1>İletken Kopma Hesabı</h1><p class="vg-description">Tek taraflı kopma durumunda iletken kuvvetlerini değerlendirin.</p><details><summary>Girdiler, sonuçlar ve hesap yöntemi</summary><div class="vg-method"><strong>Girdiler:</strong> İletken, açıklık, sıcaklık ve buz yükü.<br><strong>Çıktılar:</strong> Kopma halinde kuvvetler ve açıklamalı hesap.<br><strong>Yöntem:</strong> Buz yükü ve hal değişimi ile kopma durumunun analizi. <a href="../yontem/">Kaynak ve geçerlilik bilgileri →</a></div></details></div><div id="vg-tool-workspace">
+<div class="wrap">
+  <header class="top">
+    <div class="title">
+      <div class="eyebrow"><span class="dot"></span> ENH · TEDAŞ İletken Kopma Kontrolü</div>
+      <h2 class="vg-original-title">İki Misli Buz Yükü Hesabı Simülatörü</h2>
+      <div class="sub">Broken-conductor / double ice-load tension check</div>
+    </div>
+    <div class="brand">
+      <b>Baki SONAY</b>
+      Elektrik-Elektronik Mühendisi<br>Trabzon
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- ===== INPUTS ===== -->
+    <section class="card">
+      <h2>Giriş Değerleri</h2>
+      <div class="body">
+        <div class="seg">İletken &amp; Bölge</div>
+        <div class="field">
+          <label>İletken Tertibi<small>3X kesitli iletken tipi</small></label>
+          <select id="cond"></select>
+        </div>
+        <div class="field">
+          <label>Buz Yükü Bölgesi<small>k katsayısını belirler</small></label>
+          <select id="zone"></select>
+        </div>
+
+        <div class="seg">Açıklık &amp; Direk</div>
+        <div class="field"><label>a₁ (m)<small>1. ölçü açıklığı</small></label><input id="a1" type="number" step="0.01" value="385.72"></div>
+        <div class="field"><label>a₂ (m)<small>2. ölçü açıklığı</small></label><input id="a2" type="number" step="0.01" value="98.92"></div>
+        <div class="field"><label>h<sub>proje</sub> (m)<small>direk proje yüksekliği</small></label><input id="hproje" type="number" step="0.1" value="63.6"></div>
+        <div class="field"><label>Direk No<small>etiket — hesabı etkilemez</small></label><input id="pole" type="number" step="1" value="125" style="color:#10221c"></div>
+
+        <div class="seg">İletken &amp; Bölge Verileri (otomatik)</div>
+        <div class="field ro"><label>d (mm)<small>iletken dış çapı</small></label><span class="auto" id="d_d">—</span></div>
+        <div class="field ro"><label>p₀ (kg/m)<small>iletken birim ağırlık</small></label><span class="auto" id="d_p0">—</span></div>
+        <div class="field ro"><label>T₁ (kg)<small>başlangıç çekmesi</small></label><span class="auto" id="d_T1">—</span></div>
+        <div class="field ro"><label>T<sub>kop</sub> (kg)<small>kopma kuvveti</small></label><span class="auto" id="d_Tkop">—</span></div>
+        <div class="field ro"><label>p<sub>b</sub> = k√d (kg/m)<small>buz yükü</small></label><span class="auto" id="d_pb">—</span></div>
+        <div class="field ro"><label>p₁ = p₀+p<sub>b</sub> (kg/m)<small></small></label><span class="auto" id="d_p1">—</span></div>
+        <div class="field ro"><label>2p<sub>b</sub> (kg/m)<small>iki misli buz</small></label><span class="auto" id="d_2pb">—</span></div>
+        <div class="field ro"><label>p<sub>n</sub> = 2p<sub>b</sub>+p₀ (kg/m)<small></small></label><span class="auto" id="d_pn">—</span></div>
+        <div class="field ro"><label>a<sub>ort</sub> = (a₁+a₂)/2 (m)<small>ortalama açıklık</small></label><span class="auto" id="d_aort">—</span></div>
+
+        <div class="seg">Sabitler (otomatik)</div>
+        <div class="field ro"><label>tₙ (°C)<small>buz yükü sıcaklığı — sabit</small></label><span class="auto" id="tn">−5</span></div>
+        <div class="field ro"><label>t₁ (°C)<small>başlangıç sıcaklığı — sabit</small></label><span class="auto" id="t1">−5</span></div>
+        <div class="field ro"><label>E (kg/mm²)<small>elastisite modülü — sabit</small></label><span class="auto" id="E">8000</span></div>
+        <div class="field ro"><label>β (1/°C)<small>iletkenden otomatik</small></label><span class="auto" id="beta">—</span></div>
+
+        <div class="toolbar">
+          <button onclick="calc()">Hesapla</button>
+          <button class="ghost" onclick="resetAll()">Sıfırla</button>
+          <button class="ghost" onclick="saveHTML()">Kaydet</button>
+          <button class="ghost" onclick="loadState()">Yükle</button>
+          <button class="ghost" onclick="window.print()">Yazdır</button>
+        </div>
+        <p class="note">Yöntem, TEDAŞ ENH "İki Misli Buz Yükü Hesabı" Excel modelini birebir takip eder: değişik haller denkleminden çıkan 3. derece denklemin (Cardano) çözümü ile T<sub>n2b</sub> bulunur, ardından h<sub>b</sub> = |(0,7·T<sub>kop</sub> − T<sub>n2b</sub>)/p<sub>n</sub>| hesaplanır. Bu hesaplanan değer, direk tepe noktası ile çeltik arasındaki gerçek mesafe olan h<sub>proje</sub> ile karşılaştırılır (h<sub>b</sub> ≥ h<sub>proje</sub> ise kurtarır).</p>
+      </div>
+    </section>
+
+    <!-- ===== RESULTS ===== -->
+    <section class="card">
+      <h2>Sonuç</h2>
+      <div class="body">
+        <div id="verdict" class="resultbar ok"><span class="ic">✓</span><div><div class="big" id="verdictTxt">—</div><div id="verdictSub" style="font-weight:400;font-size:.85rem"></div></div></div>
+
+        <table class="out">
+          <tr><td>Buz yükü p<sub>b</sub> = k·√d</td><td><span id="r_pb">—</span> kg/m</td></tr>
+          <tr><td>Ortalama açıklık a<sub>ort</sub></td><td><span id="r_aort">—</span> m</td></tr>
+          <tr><td>p₁ = p₀ + p<sub>b</sub></td><td><span id="r_p1">—</span> kg/m</td></tr>
+          <tr><td>2p<sub>b</sub> (yalnız iki misli buz)</td><td><span id="r_2pb">—</span> kg/m</td></tr>
+          <tr><td>p<sub>n</sub> = 2p<sub>b</sub> + p₀</td><td><span id="r_pn">—</span> kg/m</td></tr>
+          <tr class="key"><td>İki misli buz çekmesi T<sub>n2b</sub></td><td><span id="r_tn">—</span> kg</td></tr>
+          <tr><td>0,7·T<sub>kop</sub> (emniyet sınırı)</td><td><span id="r_07">—</span> kg</td></tr>
+          <tr class="cmp"><td>Hesaplanan değer h<sub>b</sub></td><td><span id="r_hb">—</span> m</td></tr>
+          <tr class="cmp"><td>h<sub>proje</sub></td><td><span id="r_hp">—</span> m</td></tr>
+        </table>
+
+        <div class="viz"><svg id="viz" viewBox="0 0 560 420" preserveAspectRatio="xMidYMid meet"></svg></div>
+
+        <details class="stepbox">
+          <summary>Ara hesaplar — 3. derece denklem çözümü <span class="casechip" id="caseChip">—</span></summary>
+          <table id="steps"></table>
+        </details>
+      </div>
+    </section>
+  </div>
+
+  <div class="foot">
+    <span>İki Misli Buz Yükü — İletken Kopma Hesabı · ENH</span>
+    <span>Orijinal Excel yöntemi: H. Murat Azıklı · HTML simülatör: VoltGuard</span>
+  </div>
+</div>
+
+<script>
+// ---- Conductor reference table (Excel V17:AB22) ----
+const COND = {
+  "SW":  {p0:0.108,  Tkop:1023, beta:1.92e-5, T1:342.54,  S:31.14,  d:7.14},
+  "1/0": {p0:0.2159, Tkop:1940, beta:1.91e-5, T1:686.18,  S:62.38,  d:10.11},
+  "3/0": {p0:0.3429, Tkop:3030, beta:1.91e-5, T1:1091.53, S:99.23,  d:12.75},
+  "266": {p0:0.5454, Tkop:5100, beta:1.89e-5, T1:1729.2,  S:157.2,  d:16.28},
+  "477": {p0:0.9749, Tkop:8820, beta:1.89e-5, T1:2248.8,  S:281.1,  d:21.8 }
+};
+// ---- Ice zone -> k (Excel Y7:Z12) ----
+const ZONE = {1:0.0, 2:0.2, 3:0.3, 4:0.5, 5:1.2};
+
+function initUI(){
+  const cs = document.getElementById('cond');
+  const csSaved = cs.querySelector('option[selected]')?.value || cs.value || "3/0";
+  if(!cs.options.length){
+    Object.keys(COND).sort((a,b)=>COND[a].S-COND[b].S).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k+"  ("+COND[k].S+" mm²)";cs.appendChild(o);});
+  }
+  cs.value = csSaved;
+  const zs = document.getElementById('zone');
+  const zsSaved = zs.querySelector('option[selected]')?.value || zs.value || "3";
+  if(!zs.options.length){
+    Object.keys(ZONE).forEach(z=>{const o=document.createElement('option');o.value=z;o.textContent="Bölge "+z+"  (k="+ZONE[z]+")";zs.appendChild(o);});
+  }
+  zs.value = zsSaved;
+}
+
+// ---- Fixed constants (Excel: E=8000, tn=-5, t1=-5) ----
+const E_CONST = 8000, TN_CONST = -5, T1_CONST = -5;
+
+const num = id => {const value=String(document.getElementById(id).value).trim().replace(',','.');return value!==''&&/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(value)?Number(value):NaN;};
+const fmt = (x,d=3)=> (isFinite(x)? x.toLocaleString('tr-TR',{minimumFractionDigits:d,maximumFractionDigits:d}) : "—");
+
+// signed cube root
+const cbrt = x => Math.cbrt(x);
+
+function solveCubic(A,B,C,D){
+  // returns the real root used by Excel methodology + intermediate values
+  const F = ((3*C/A) - (B*B/(A*A)))/3;
+  const G = ((2*B**3/A**3) - (9*B*C/(A*A)) + (27*D/A))/27;
+  const H = (G*G/4) + (F**3/27);
+  let root, kase, detail={F,G,H};
+  if (Math.abs(F)<1e-12 && Math.abs(G)<1e-12 && Math.abs(H)<1e-12){
+    kase = "Durum No.3";
+    root = -1*Math.cbrt(D/A);
+  } else if (H>0){
+    kase = "Durum No.1";
+    const R = -(G/2)+Math.sqrt(H); const S = cbrt(R);
+    const T = -(G/2)-Math.sqrt(H); const U = cbrt(T);
+    root = S + U - (B/(3*A));
+    detail.R=R; detail.S=S; detail.T=T; detail.U=U;
+  } else {
+    kase = "Durum No.2";
+    const I = Math.sqrt((G*G/4) - H);
+    const J = cbrt(I);
+    const K = Math.acos(-(G/(2*I)));
+    const M = Math.cos(K/3);
+    const N = Math.sqrt(3)*Math.sin(K/3);
+    const P = -(B/(3*A));
+    root = 2*J*M + P;
+    detail.I=I; detail.J=J; detail.K=K; detail.M=M; detail.N=N; detail.P=P;
+  }
+  return {root,kase,detail};
+}
+
+let last = null;
+
+function calc(){
+  const c = COND[document.getElementById('cond').value];
+  const k = ZONE[document.getElementById('zone').value];
+  const a1=num('a1'), a2=num('a2'), hproje=num('hproje');
+  if(!c||!Number.isFinite(k)||![a1,a2,hproje].every(Number.isFinite)||a1<=0||a2<=0||hproje<0){
+    last=null;document.documentElement.dataset.vgInvalid='true';
+    document.getElementById('verdict').className='resultbar no';
+    document.getElementById('verdictTxt').textContent='GİRDİLERİ KONTROL EDİN';
+    document.getElementById('verdictSub').textContent='Açıklıklar pozitif; proje yüksekliği sıfır veya daha büyük olmalı.';
+    document.querySelectorAll('.out span').forEach(el=>{el.textContent='—';});
+    document.getElementById('steps').textContent='';document.getElementById('viz').textContent='';return;
+  }
+  document.documentElement.dataset.vgInvalid='false';
+  const tn=TN_CONST, t1=T1_CONST, E=E_CONST;
+  const {p0,Tkop,beta,T1,S,d} = c;
+
+  document.getElementById('beta').textContent = beta.toFixed(7).replace('.', ',');
+
+  const pb   = k*Math.sqrt(d);
+  const aort = (a1+a2)/2;
+  const p1   = p0 + pb;
+  const p2b  = 2*pb;
+  const pn   = p2b + p0;
+
+  // İletken & bölge verileri (otomatik gelen değerler)
+  const setT = (id,v)=>{const el=document.getElementById(id); if(el) el.textContent=v;};
+  setT('d_d',   fmt(d,2));
+  setT('d_p0',  fmt(p0,4));
+  setT('d_T1',  fmt(T1,1));
+  setT('d_Tkop',fmt(Tkop,0));
+  setT('d_pb',  fmt(pb,4));
+  setT('d_p1',  fmt(p1,4));
+  setT('d_2pb', fmt(p2b,4));
+  setT('d_pn',  fmt(pn,4));
+  setT('d_aort',fmt(aort,2));
+
+  // cubic coefficients (Excel A28,E28,I28 -> B = E28-I28)
+  const A28 = (aort*aort*E*S*pn*pn)/24;
+  const E28 = (aort*aort*E*S*p1*p1)/(24*T1*T1);
+  const I28 = T1 + (beta*E*S*(tn-t1));
+  const Bco = E28 - I28;
+  const Dco = -A28;
+
+  const sol = solveCubic(1, Bco, 0, Dco);
+  const Tn2b = sol.root;
+
+  const lim07 = 0.7*Tkop;
+  const hb = Math.abs((lim07 - Tn2b)/pn);
+  const pass = Number.isFinite(Tn2b) && Tn2b<=lim07 && hb>=hproje;
+
+  // fill outputs
+  document.getElementById('r_pb').textContent   = fmt(pb,4);
+  document.getElementById('r_aort').textContent = fmt(aort,2);
+  document.getElementById('r_p1').textContent   = fmt(p1,4);
+  document.getElementById('r_2pb').textContent  = fmt(p2b,4);
+  document.getElementById('r_pn').textContent   = fmt(pn,4);
+  document.getElementById('r_tn').textContent   = fmt(Tn2b,2);
+  document.getElementById('r_07').textContent   = fmt(lim07,0);
+  document.getElementById('r_hb').textContent   = fmt(hb,2);
+  document.getElementById('r_hp').textContent   = fmt(hproje,1);
+
+  const vb = document.getElementById('verdict');
+  vb.className = 'resultbar '+(pass?'ok':'no');
+  vb.querySelector('.ic').textContent = pass?'✓':'✕';
+  document.getElementById('verdictTxt').textContent =
+    pass ? 'İKİ MİSLİ BUZ YÜKÜ HESABINI KURTARIYOR'
+         : 'İKİ MİSLİ BUZ YÜKÜ HESABINI KURTARMIYOR';
+  document.getElementById('verdictSub').textContent =
+    Tn2b>lim07 ? 'İki misli buz çekmesi 0,7·Tkop emniyet sınırını aşıyor; yükseklik kıyası uygunluk sağlamaz.' : 'h_b = '+fmt(hb,2)+' m  '+(pass?'≥':'<')+'  h_proje = '+fmt(hproje,1)+' m';
+
+  document.getElementById('caseChip').textContent = sol.kase;
+  renderSteps(sol, {A28,E28,I28,Bco,Dco,Tn2b});
+  drawViz(hb, hproje, pass, aort);
+
+  last = {pb,aort,p1,p2b,pn,Tn2b,lim07,hb,hproje,pass};
+}
+
+function renderSteps(sol,v){
+  const d = sol.detail;
+  const rows = [
+    ['A','1'],
+    ['B = E28 − I28', fmt(v.Bco,6)],
+    ['C','0'],
+    ['D = −A28', fmt(v.Dco,2)],
+    ['F = (3C/A − B²/A²)/3', fmt(d.F,4)],
+    ['G = (2B³/A³ − 9BC/A² + 27D/A)/27', fmt(d.G,2)],
+    ['H = G²/4 + F³/27', d.H.toExponential(4)],
+  ];
+  if(sol.kase==='Durum No.1'){
+    rows.push(['R = −G/2 + √H', fmt(d.R,2)],['S = ∛R', fmt(d.S,4)],
+              ['T = −G/2 − √H', fmt(d.T,2)],['U = ∛T', fmt(d.U,4)],
+              ['T_n2b = S + U − B/(3A)', fmt(v.Tn2b,4)]);
+  } else if(sol.kase==='Durum No.2'){
+    rows.push(['I = √(G²/4 − H)', fmt(d.I,2)],['J = ∛I', fmt(d.J,4)],
+              ['K = acos(−G/2I)', fmt(d.K,4)],['M = cos(K/3)', fmt(d.M,4)],
+              ['T_n2b = 2·J·M − B/(3A)', fmt(v.Tn2b,4)]);
+  } else {
+    rows.push(['T_n2b = −∛(D/A)', fmt(v.Tn2b,4)]);
+  }
+  document.getElementById('steps').innerHTML =
+    rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('');
+}
+
+function drawViz(hb, hproje, pass, aort){
+  const a1 = num('a1'), a2 = num('a2');
+  const W=560,H=420,padT=20;
+  const green='#2bbb2b', grayLine='#b9b9b9', whiteLine='#ffffff', sag = pass?'#1f7a52':'#b5432b';
+  const blue='#1f3fd6';
+
+  const tot=(a1+a2)||1;
+  const xP3 = W-70;
+  const xspan = 300;
+  const xP1 = xP3 - xspan;
+  const xP2 = xP1 + xspan*(a1/tot);
+
+  const xv = xP1 - 110;
+  const yv = padT + 300;
+  const yTop = padT + 90;
+
+  const A = (yTop - yv)/Math.pow(xP3 - xv, 2);
+  const yMain = x => A*Math.pow(x-xv,2) + yv;
+
+  const ayP2=yMain(xP2), ayP3=yMain(xP3);
+  const ayP1 = yMain(xP1) + 55;
+  const xvSec = xv, yvSec = yv;
+
+  function path(fn,xa,xb){const N=72;let d=`M ${xa.toFixed(1)} ${fn(xa).toFixed(1)}`;
+    for(let i=1;i<=N;i++){const x=xa+(xb-xa)*(i/N);d+=` L ${x.toFixed(1)} ${fn(x).toFixed(1)}`;}return d;}
+
+  const greenPath = path(yMain, xv-26, xP3);
+  const whiteFn = x => yMain(x) + 150 + 0.10*(x-xv);
+  const whitePath = path(whiteFn, xv-26, W-20);
+
+  const baseY = H-16;
+  const basePath = `M ${(xP1-30).toFixed(1)} ${baseY} L ${(W-20).toFixed(1)} ${baseY}`;
+  const blueBot = ay => ay+30;
+
+  const dx12=xP2-xP1, depth12=46;
+  const y12 = x => { const t=(x-xP1)/dx12; return ayP1+(ayP2-ayP1)*t + 4*depth12*t*(1-t); };
+  const path12 = (()=>{const N=48;let d=`M ${xP1.toFixed(1)} ${ayP1.toFixed(1)}`;
+    for(let i=1;i<=N;i++){const x=xP1+dx12*(i/N);d+=` L ${x.toFixed(1)} ${y12(x).toFixed(1)}`;}return d;})();
+  let xv12=xP1, lo12=ayP1; for(let i=1;i<=60;i++){const x=xP1+dx12*(i/60),y=y12(x); if(y>lo12){lo12=y;xv12=x;}}
+
+  const b2=blueBot(ayP2), b3=blueBot(ayP3);
+  const kinkX = xP1 + (xP2-xP1)*0.62;
+  const kinkY = baseY - (baseY-b2)*0.42;
+  const blackPath = `M ${xP1.toFixed(1)} ${baseY} `
+                  + `L ${kinkX.toFixed(1)} ${kinkY.toFixed(1)} `
+                  + `L ${xP2.toFixed(1)} ${b2.toFixed(1)} `
+                  + `L ${xP3.toFixed(1)} ${b3.toFixed(1)}`;
+
+  const svg = document.getElementById('viz');
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+
+  const pole = (x, ay, lab, bottom) => `
+    <rect x="${x-2.5}" y="${ay-2}" width="5" height="${(bottom||(H-24))-(ay-2)}" fill="#fafafa" stroke="#9aa7a3" stroke-width="0.7"/>
+    <line x1="${x}" y1="${ay-6}" x2="${x}" y2="${ay+30}" stroke="${blue}" stroke-width="4"/>
+    <text x="${x-9}" y="${ay-8}" font-size="10" font-weight="700" fill="#54635f">${lab}</text>`;
+
+  svg.innerHTML = `
+    <path d="${basePath}" fill="none" stroke="${grayLine}" stroke-width="2" stroke-linejoin="round"/>
+    <path d="${blackPath}" fill="none" stroke="#1a1a1a" stroke-width="1.6" stroke-linejoin="round"/>
+
+    ${pole(xP1, ayP1, '1', baseY)}
+    ${pole(xP2, ayP2, '2', baseY)}
+    ${pole(xP3, ayP3, '3', baseY)}
+
+    <path d="${greenPath}" fill="none" stroke="${green}"    stroke-width="3.5" stroke-linecap="round"/>
+    <path d="${path12}" fill="none" stroke="#0f8a4f" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="0"/>
+    <circle cx="${xP1}" cy="${ayP1}" r="3" fill="#0f8a4f"/>
+    <circle cx="${xP2}" cy="${ayP2}" r="3" fill="${green}"/>
+    <circle cx="${xP3}" cy="${ayP3}" r="3" fill="${green}"/>
+    <circle cx="${xv12}" cy="${lo12}" r="3.5" fill="#0f8a4f"/>
+    <circle cx="${xvSec}" cy="${yvSec}" r="4" fill="${green}"/>
+    <text x="${xvSec}" y="${yvSec+18}" font-size="10" fill="#1c7a1c" font-weight="700" text-anchor="middle">çeltik</text>
+
+    <line x1="${xvSec}" y1="${yTop}" x2="${xvSec}" y2="${yvSec}" stroke="#b5852b" stroke-width="1.8"/>
+    <polygon points="${xvSec-4},${yTop+9} ${xvSec+4},${yTop+9} ${xvSec},${yTop}" fill="#b5852b"/>
+    <polygon points="${xvSec-4},${yvSec-9} ${xvSec+4},${yvSec-9} ${xvSec},${yvSec}" fill="#b5852b"/>
+    <line x1="${xvSec}" y1="${yTop}" x2="${xP3}" y2="${yTop}" stroke="#b5852b" stroke-width="0.7" stroke-dasharray="3 4" opacity=".45"/>
+    <text x="${xvSec-12}" y="${(yTop+yvSec)/2}" font-size="12" fill="#8a6310" font-weight="700"
+          text-anchor="middle" transform="rotate(-90 ${xvSec-12} ${(yTop+yvSec)/2})">h_proje = ${fmt(hproje,1)} m</text>
+
+    <line x1="${xP1}" y1="${H-12}" x2="${xP2}" y2="${H-12}" stroke="#54635f" stroke-width="1.2"/>
+    <line x1="${xP2}" y1="${H-12}" x2="${xP3}" y2="${H-12}" stroke="#54635f" stroke-width="1.2"/>
+    <line x1="${xP1}" y1="${H-17}" x2="${xP1}" y2="${H-7}" stroke="#54635f"/>
+    <line x1="${xP2}" y1="${H-17}" x2="${xP2}" y2="${H-7}" stroke="#54635f"/>
+    <line x1="${xP3}" y1="${H-17}" x2="${xP3}" y2="${H-7}" stroke="#54635f"/>
+    <text x="${(xP1+xP2)/2}" y="${H-2}" font-size="11" fill="#54635f" text-anchor="middle">a₁=${fmt(a1,0)}</text>
+    <text x="${(xP2+xP3)/2}" y="${H-2}" font-size="11" fill="#54635f" text-anchor="middle">a₂=${fmt(a2,0)}</text>
+
+    <text x="${xvSec-12}" y="${yvSec+34}" font-size="11" fill="${sag}" font-weight="700"
+          text-anchor="middle">hb = ${fmt(hb,1)} m (hesap)</text>
+    <text x="${xvSec-12}" y="${yvSec+48}" font-size="9" fill="#6a7773" text-anchor="middle">hb ≥ h_proje ⇒ ${pass?'kurtarıyor':'kurtarmıyor'}</text>
+
+    <rect x="${W-220}" y="${padT-6}" width="200" height="20" rx="10" fill="${pass?'#e7f6ee':'#fbeae6'}" stroke="${sag}"/>
+    <text x="${W-120}" y="${padT+8}" font-size="11.5" font-weight="700" fill="${sag}" text-anchor="middle">${pass?'h ≥ h_proje · KURTARIYOR ✓':'h < h_proje · KURTARMIYOR ✕'}</text>
+  `;
+}
+
+document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',calc));
+
+function resetAll(){
+  document.getElementById('cond').value="3/0";
+  document.getElementById('zone').value="3";
+  ['a1','a2','hproje','pole'].forEach((id,i)=>{
+    document.getElementById(id).value=[385.72,98.92,63.6,125][i];
+  });
+  calc();
+}
+
+const FIELDS=['cond','zone','a1','a2','hproje','pole'];
+
+function saveHTML(){
+  FIELDS.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el.tagName==='SELECT'){
+      Array.from(el.options).forEach(o=>{
+        if(o.value===el.value) o.setAttribute('selected','selected');
+        else o.removeAttribute('selected');
+      });
+    } else {
+      el.setAttribute('value', el.value);
+    }
+  });
+  const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  const pole=document.getElementById('pole').value||'';
+  a.download='iki_misli_buz_yuku_'+(pole?('direk_'+pole):'kayit')+'.html';
+  a.click();
+}
+
+function loadState(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.html,.htm,.json';
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+    r.onload=()=>{
+      try{
+        const txt=r.result;
+        if(f.name.toLowerCase().endsWith('.json')){
+          const s=JSON.parse(txt);
+          Object.keys(s).forEach(id=>{if(document.getElementById(id))document.getElementById(id).value=s[id];});
+        } else {
+          const doc=new DOMParser().parseFromString(txt,'text/html');
+          FIELDS.forEach(id=>{
+            const src=doc.getElementById(id); const dst=document.getElementById(id);
+            if(!src||!dst) return;
+            if(src.tagName==='SELECT'){
+              const sel=src.querySelector('option[selected]')||src.querySelector('option');
+              if(sel) dst.value=sel.value;
+            } else {
+              const v=src.getAttribute('value'); if(v!==null) dst.value=v;
+            }
+          });
+        }
+        calc();
+      }catch(err){alert('Dosya okunamadı.');}
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+initUI();
+calc();
+</script>
+</div><div id="vg-origin">VoltGuard uyarlaması · Özgün hesap araçları: Baki SONAY · <a href="../yontem/">Yöntem ve kaynaklar</a></div><script src="../shared/export.js" defer></script><script>try{localStorage.setItem('voltguard:recent',JSON.stringify({slug:"iletken-kopma-hesabi",name:"İletken Kopma Hesabı"}))}catch(e){}if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script></div><footer data-vg-no-print class="footer vg-footer" id="vgFooter" role="contentinfo">
+  <div class="vg-footer__cta">
+    <div class="vg-wrap vg-footer__cta-in">
+      <div class="vg-footer__cta-text">
+        <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+        <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+      </div>
+      <div class="vg-footer__cta-btns">
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="vg-wrap">
+    <div class="vg-footer__grid">
+      <div class="vg-footer__brand">
+        <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+          <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+          <span class="vg-brand__copy" aria-hidden="true">
+            <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+            <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+          </span>
+        </a>
+        <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+        <ul class="vg-footer__contact">
+          <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+          <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+          <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+        </ul>
+        <address class="vg-footer__addr">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+        </address>
+        <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+      </div>
+      <nav class="vg-footer__nav" aria-label="Alt menü">
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Hizmetler</h3>
+          <ul>
+            <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+            <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+            <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+            <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+            <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+            <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+            <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+            <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+            <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+            <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+            <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+            <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kurumsal</h3>
+          <ul>
+            <li><a href="/#hakkimizda">Hakkımızda</a></li>
+            <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+            <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+            <li><a href="/#projeler">Projeler</a></li>
+            <li><a href="/#referanslar">Referanslarımız</a></li>
+            <li><a href="/#surec">Sürecimiz</a></li>
+            <li><a href="/#neden-biz">Neden Biz?</a></li>
+            <li><a href="/#guvenlik">Güvenlik</a></li>
+            <li><a href="/#haberler">Haberler</a></li>
+            <li><a href="/#emi-demo">Canlı Demo</a></li>
+            <li><a href="/#katalog">Katalog</a></li>
+            <li><a href="/#sss">SSS</a></li>
+            <li><a href="/#iletisim">İletişim</a></li>
+            <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kaynaklar</h3>
+          <ul>
+            <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+            <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+            <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+            <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+            <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+          <ul>
+            <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+            <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+            <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+            <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+            <li><a href="/voltgame.html">VoltGame</a></li>
+            <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+            <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+            <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="vg-footer__bottom">
+      <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+      <div class="vg-footer__social">
+        <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+      <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        </circle>
+      </svg>
+      <span class="sig-node" aria-hidden="true"></span>
+      <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+        <span class="sig-badge__ring" aria-hidden="true"></span>
+        <span class="sig-badge__aurora" aria-hidden="true"></span>
+        <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
+        <span class="sig-badge__body">
+          <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+          <span class="sig-badge__brand">
+            <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+            <span class="sig-badge__eng">Engineering</span>
+          </span>
+        </span>
+        <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+        <span class="sig-badge__shimmer" aria-hidden="true"></span>
+      </a>
+      <span class="sig-node" aria-hidden="true"></span>
+      <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+        </circle>
+      </svg>
+    </div>
+  </div>
+</footer></body>
+</html>

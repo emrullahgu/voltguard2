@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Azami Açıklık · Amax | VoltGuard</title><meta name="description" content="Travers düzenine göre azami hat açıklığını hesaplayın."><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#0a1628"><link rel="canonical" href="https://voltguard.com.tr/araclar/azami-aciklik-hesabi/"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="Azami Açıklık · Amax | VoltGuard"><meta property="og:description" content="Travers düzenine göre azami hat açıklığını hesaplayın."><meta property="og:url" content="https://voltguard.com.tr/araclar/azami-aciklik-hesabi/"><meta property="og:image" content="https://voltguard.com.tr/araclar/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/voltguard-icon-64.png" type="image/png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Azami Açıklık · Amax","url":"https://voltguard.com.tr/araclar/azami-aciklik-hesabi/","description":"Travers düzenine göre azami hat açıklığını hesaplayın.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":0,"priceCurrency":"TRY"},"publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VoltGuard","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Azami Açıklık · Amax","item":"https://voltguard.com.tr/araclar/azami-aciklik-hesabi/"}]}]}</script><link rel="stylesheet" href="../shared/tool-shell.css"><link rel="stylesheet" href="../shared/export.css">
+
+
+<style>
+  #vg-tool-workspace{--bg:#0f1419;--panel:#1a2129;--panel2:#222b35;--line:#2e3a45;--txt:#e6edf3;--txt2:#9aa7b4;--txt3:#6b7884;--accent:#4fb3ff;--accent-bg:#13344d;--danger:#ff5c5c;--radius:10px;}
+  :where(#vg-tool-workspace) *{box-sizing:border-box;} #vg-tool-workspace{margin:0;background:var(--bg);color:var(--txt);font-family:"Segoe UI",-apple-system,Roboto,sans-serif;font-size:14px;line-height:1.5;padding:24px;}
+  :where(#vg-tool-workspace) .wrap{max-width:960px;margin:0 auto;} :where(#vg-tool-workspace) :is(h1,.vg-original-title){font-size:20px;font-weight:600;margin:0 0 4px;} :where(#vg-tool-workspace) .sub{color:var(--txt3);font-size:12px;margin:0 0 20px;}
+  :where(#vg-tool-workspace) .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--panel2);padding:12px 14px;border-radius:var(--radius);margin-bottom:18px;}
+  :where(#vg-tool-workspace) select,:where(#vg-tool-workspace) input{background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:13px;font-family:inherit;} :where(#vg-tool-workspace) select{cursor:pointer;} :where(#vg-tool-workspace) input{width:100%;}
+  :where(#vg-tool-workspace) .bar .title{font-size:15px;font-weight:600;color:var(--danger);margin:0 4px;}
+  :where(#vg-tool-workspace) .svgwrap{position:relative;background:transparent;border:1px solid var(--line);border-radius:var(--radius);padding:0;margin-bottom:18px;overflow:hidden;}
+  :where(#vg-tool-workspace) .ovgroup{position:absolute;display:flex;flex-direction:column;align-items:center;gap:1px;transform:translate(-50%,-50%);}
+  :where(#vg-tool-workspace) .ovgroup .lbl{font-size:9px;color:#cdd6e0;background:rgba(10,20,35,.85);padding:0 4px;border-radius:3px;white-space:nowrap;letter-spacing:.3px;}
+  :where(#vg-tool-workspace) .dragging .ovbox{pointer-events:none;}
+  :where(#vg-tool-workspace) .ovbox{width:50px;padding:2px 3px;font-size:12px;text-align:center;background:#fff8e1;color:#0a3d62;border:1.5px solid #ffd479;border-radius:5px;font-weight:700;box-shadow:0 2px 5px rgba(0,0,0,.4);}
+  :where(#vg-tool-workspace) .ovbox:focus{outline:2px solid #4fb3ff;background:#fff;}
+  :where(#vg-tool-workspace) .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;}
+  :where(#vg-tool-workspace) .grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px 16px;}
+  :where(#vg-tool-workspace) label.f{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--txt2);}
+  :where(#vg-tool-workspace) .sec{font-size:12px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin:0 0 10px;}
+  :where(#vg-tool-workspace) table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:16px;} :where(#vg-tool-workspace) td{padding:8px 6px;border-bottom:1px solid var(--line);} :where(#vg-tool-workspace) td:first-child{color:var(--txt2);} :where(#vg-tool-workspace) td:last-child{text-align:right;}
+  :where(#vg-tool-workspace) .result{background:var(--accent-bg);border:1px solid var(--accent);border-radius:var(--radius);padding:16px 20px;display:flex;justify-content:space-between;align-items:baseline;}
+  :where(#vg-tool-workspace) .result .lab{font-size:13px;color:var(--accent);margin:0;} :where(#vg-tool-workspace) .result .gov{font-size:12px;color:var(--accent);margin:5px 0 0;opacity:.85;} :where(#vg-tool-workspace) .result .val{font-size:30px;font-weight:600;color:#fff;margin:0;}
+  :where(#vg-tool-workspace) .tools{display:flex;gap:10px;margin-bottom:18px;} :where(#vg-tool-workspace) .btn{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent);border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;} :where(#vg-tool-workspace) .btn:hover{background:var(--accent);color:#001;} :where(#vg-tool-workspace) .btn.ghost{background:transparent;color:var(--txt2);border-color:var(--line);}
+  :where(#vg-tool-workspace) .foot{font-size:11px;color:var(--txt3);margin-top:22px;line-height:1.6;}
+  :where(#vg-tool-workspace) .baslik-satir{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+  :where(#vg-tool-workspace) .imza{text-align:right;font-size:12px;color:var(--txt2);line-height:1.5;margin:0 0 0 auto;white-space:nowrap;align-self:flex-start;}
+  :where(#vg-tool-workspace) .imza b{color:var(--accent);font-size:13px;}
+  @media print{ :where(#vg-tool-workspace) .tools,:where(#vg-tool-workspace) .bar select,:where(#vg-tool-workspace) .foot{display:none!important;} #vg-tool-workspace{background:#fff;color:#000;padding:0;} :where(#vg-tool-workspace) .imza{color:#000;} :where(#vg-tool-workspace) .imza b{color:#000;} }
+  :where(#vg-tool-workspace) details summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;padding:6px 0;}
+  :where(#vg-tool-workspace) #steps{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-top:8px;font-size:13px;line-height:1.9;font-family:'Consolas',monospace;color:var(--txt2);}
+  /* ----- MOBİL RESPONSIVE ----- */
+  @media(max-width:768px){
+    #vg-tool-workspace{padding:12px;font-size:14px;}
+    :where(#vg-tool-workspace) :is(h1,.vg-original-title){font-size:17px;} :where(#vg-tool-workspace) .sub{font-size:11px;margin-bottom:14px;}
+    :where(#vg-tool-workspace) .bar{gap:8px;padding:10px;}
+    :where(#vg-tool-workspace) .bar label.f{flex:1 1 45%;}            /* üst bar menüleri 2'li sarsın */
+    :where(#vg-tool-workspace) .bar .title{flex:1 1 100%;text-align:center;order:-1;}
+    :where(#vg-tool-workspace) select,:where(#vg-tool-workspace) input{font-size:14px;padding:8px 9px;}   /* dokunmatik için büyük */
+    :where(#vg-tool-workspace) .grid4{grid-template-columns:1fr 1fr;gap:10px 12px;}
+    :where(#vg-tool-workspace) .panel{padding:12px;}
+    :where(#vg-tool-workspace) .result{flex-direction:column;align-items:flex-start;gap:4px;padding:14px;}
+    :where(#vg-tool-workspace) .result .val{font-size:26px;}
+    :where(#vg-tool-workspace) .tools{flex-wrap:wrap;} :where(#vg-tool-workspace) .btn{flex:1 1 auto;padding:10px 14px;font-size:14px;}
+    :where(#vg-tool-workspace) #steps{font-size:12px;padding:12px;}
+    /* mobilde konsol üstü kutuları GİZLE — alttaki girdi paneli kullanılır */
+    :where(#vg-tool-workspace) .ovgroup{display:none;}
+    :where(#vg-tool-workspace) .ovline{display:none;}
+    :where(#vg-tool-workspace) .mobil-not{display:block;}
+  }
+  @media(max-width:420px){
+    :where(#vg-tool-workspace) .grid4{grid-template-columns:1fr;}      /* çok dar ekranda tek sütun */
+    :where(#vg-tool-workspace) :is(h1,.vg-original-title){font-size:15px;}
+  }
+  :where(#vg-tool-workspace) .geomgrup{margin-bottom:14px;}
+  :where(#vg-tool-workspace) .geombaslik{font-size:12px;font-weight:700;color:var(--accent);margin:0 0 8px;padding-bottom:4px;border-bottom:1px solid var(--line);}
+  :where(#vg-tool-workspace) .geomgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px;}
+  @media(max-width:768px){:where(#vg-tool-workspace) .geomgrid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:420px){:where(#vg-tool-workspace) .geomgrid{grid-template-columns:1fr;}}
+  :where(#vg-tool-workspace) .mobil-not{display:none;background:var(--accent-bg);border:1px solid var(--accent);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:var(--accent);}
+</style>
+<script>window.__AMAX_KAYIT={"fields":{"ilet":"2","bolge":"2","baglanti":"ga","trav":"t5","U":"34.5","ar":"150"},"geom":{"yan1":2.2,"dik1":2.01,"yan2":3.75,"dik2":5.11,"d":2,"l":1.4,"a0L":1.45,"a1L":1.8,"a2L":1.5,"a3L":2.9,"a4L":2.9,"a0R":1.45,"a1R":1.8,"a2R":1.5,"a3R":2.9,"a4R":2.9,"k":1.1,"i":2.2,"o1":1.86,"n":2.25,"o3":1.86,"j":2,"j2":3,"o2":2.25,"m1":1.86,"h":2.09,"w1":1.25,"dl":2.9,"dl2":2.9,"m2":2.25,"s":1.52,"w2":2.4,"dr":2.9,"dr2":2.9,"e":2.5,"p":1}};</script><link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=bd7e46c3cd10"><script src="/js/vg-shell.js?v=a3ccf745026f" defer></script><script src="/js/voltguard-auth.js?v=5ea8a8c73e4b" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=6609af196d62"></head>
+<body data-vg-tool="azami-aciklik-hesabi" data-vg-title="Azami Açıklık · Amax" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[&quot;voltguard:azami-aciklik-hesabi:amax_kayit&quot;]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+<header data-vg-no-print class="vg-header doc-header" id="vgHeader">
+  <div class="vg-header__bar vg-wrap">
+    <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+      <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+      <span class="vg-brand__copy" aria-hidden="true">
+        <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+        <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+      </span>
+    </a>
+    <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+    <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+      <ul class="vg-nav__list">
+        <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+        <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+        <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+        <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+        <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+        <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+          <ul class="vg-dd__menu" id="vgDdKaynaklar">
+            <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+            <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+            <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+            <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+            <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+          </ul>
+        </li>
+        <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+        <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+      </ul>
+      <div class="vg-nav__foot">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </nav>
+    <div class="vg-actions">
+      <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+      <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+    </div>
+  </div>
+  <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+</header><div id="main" tabindex="-1" role="main"><div id="vg-top"><div class="vg-topline"><nav class="vg-links" aria-label="Araç menüsü"><a class="vg-back" href="../#araclar">← Tüm araçlar</a><a class="vg-back" href="/hesaplama-araclari/">Pratik hesaplar →</a><a class="vg-back" href="/">VoltGuard ana sayfa ↗</a></nav></div><p class="vg-crumb">Enerji nakil hattı / Azami Açıklık · Amax</p><h1>Azami Açıklık · Amax</h1><p class="vg-description">Travers düzenine göre azami hat açıklığını hesaplayın.</p><details><summary>Girdiler, sonuçlar ve hesap yöntemi</summary><div class="vg-method"><strong>Girdiler:</strong> Travers düzeni, iletken ve saha koşulları.<br><strong>Çıktılar:</strong> Azami açıklık ve hesap adımları.<br><strong>Yöntem:</strong> Travers geometrisi, iletken ve çevresel yükler ile açıklık hesabı. <a href="../yontem/">Kaynak ve geçerlilik bilgileri →</a></div></details></div><div id="vg-tool-workspace">
+<div class="wrap">
+  <div class="baslik-satir">
+    <div><h2 class="vg-original-title">Amax Hesabı</h2>
+    <p class="sub">Travers düzeni (DfDs0–9) + iletken + bölge + bağlantı tipi — Amax_sadece.xls motoruyla birebir</p></div>
+    <p class="imza">Özgün hesap modeli: Elektrik-Elektronik Mühendisi <b>Baki SONAY</b></p>
+  </div>
+
+  <div class="bar">
+    <select id="ilet" style="min-width:150px;"><option value="0">3AWG SWALLOW</option><option value="1">1/0 RAVEN</option><option value="2">3/0 PIGEON</option><option value="3">266.8 PARTRIDGE</option><option value="4">477 HAWK</option></select>
+    <select id="bolge" style="min-width:95px;"><option value="1">1. Bölge</option><option value="2" selected="">2. Bölge</option><option value="3">3. Bölge</option><option value="4">4. Bölge</option><option value="5">5. Bölge</option></select>
+    <select id="baglanti" style="min-width:140px;">
+      <option value="mm">Mesnet-Mesnet</option><option value="aa">Askı-Askı</option>
+      <option value="ga" selected="">Gergi-Askı</option><option value="ag">Askı-Gergi</option><option value="gm">Gergi-Mesnet</option><option value="gg">Gergi-Gergi</option>
+    </select>
+    <span class="title">Amax</span>
+  </div>
+
+  <p class="sec">Travers düzeni</p>
+  <div style="margin-bottom:18px;"><select id="trav" style="width:100%;"></select></div>
+
+  <div class="tools"><button class="btn" id="saveBtn">Kaydet</button><button class="btn ghost" id="loadBtn">Yükle</button><button class="btn ghost" id="printBtn">Yazdır</button><input type="file" id="fileIn" accept=".json" style="display:none;"></div>
+
+  <div class="svgwrap" id="svgbox"><div id="svglayer"><svg width="100%" viewBox="0 0 640 380" style="display:block;font-family:Georgia,serif;">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#16243a"></stop><stop offset="55%" stop-color="#0f1b2d"></stop><stop offset="100%" stop-color="#0a1320"></stop></linearGradient>
+      <linearGradient id="grnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1c2a1e"></stop><stop offset="100%" stop-color="#0d130d"></stop></linearGradient>
+      <filter id="gl"><feGaussianBlur stdDeviation="1.2" result="b"></feGaussianBlur><feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
+    </defs>
+    <rect x="0" y="0" width="640" height="380" fill="url(#sky)"></rect>
+    <rect x="0" y="334" width="640" height="46" fill="url(#grnd)"></rect>
+    <ellipse cx="175" cy="336" rx="60" ry="7" fill="#000" opacity="0.35"></ellipse>
+    <ellipse cx="465" cy="336" rx="70" ry="8" fill="#000" opacity="0.35"></ellipse>
+    <text x="320" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#ff6b6b" letter-spacing="1">DF-DS HESABI</text><g filter="url(#gl)"><line x1="166" y1="122" x2="149" y2="334" stroke="#7da9d8" stroke-width="2.2"></line><line x1="184" y1="122" x2="201" y2="334" stroke="#7da9d8" stroke-width="2.2"></line><line x1="166" y1="122" x2="184" y2="122" stroke="#7da9d8" stroke-width="2"></line><line x1="166" y1="122" x2="186.125" y2="148.5" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="184" y1="122" x2="163.875" y2="148.5" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="163.875" y1="148.5" x2="186.125" y2="148.5" stroke="#7da9d8" stroke-width="0.7" opacity="0.45"></line><line x1="163.875" y1="148.5" x2="188.25" y2="175" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="186.125" y1="148.5" x2="161.75" y2="175" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="161.75" y1="175" x2="188.25" y2="175" stroke="#7da9d8" stroke-width="0.7" opacity="0.45"></line><line x1="161.75" y1="175" x2="190.375" y2="201.5" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="188.25" y1="175" x2="159.625" y2="201.5" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="159.625" y1="201.5" x2="190.375" y2="201.5" stroke="#7da9d8" stroke-width="0.7" opacity="0.45"></line><line x1="159.625" y1="201.5" x2="192.5" y2="228" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="190.375" y1="201.5" x2="157.5" y2="228" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="157.5" y1="228" x2="192.5" y2="228" stroke="#7da9d8" stroke-width="0.7" opacity="0.45"></line><line x1="157.5" y1="228" x2="194.625" y2="254.5" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="192.5" y1="228" x2="155.375" y2="254.5" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="155.375" y1="254.5" x2="194.625" y2="254.5" stroke="#7da9d8" stroke-width="0.7" opacity="0.45"></line><line x1="155.375" y1="254.5" x2="196.75" y2="281" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="194.625" y1="254.5" x2="153.25" y2="281" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="153.25" y1="281" x2="196.75" y2="281" stroke="#7da9d8" stroke-width="0.7" opacity="0.45"></line><line x1="153.25" y1="281" x2="198.875" y2="307.5" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="196.75" y1="281" x2="151.125" y2="307.5" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="151.125" y1="307.5" x2="198.875" y2="307.5" stroke="#7da9d8" stroke-width="0.7" opacity="0.45"></line><line x1="151.125" y1="307.5" x2="201" y2="334" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="198.875" y1="307.5" x2="149" y2="334" stroke="#7da9d8" stroke-width="0.9" opacity="0.65"></line><line x1="149" y1="334" x2="201" y2="334" stroke="#7da9d8" stroke-width="0.7" opacity="0.45"></line></g><g filter="url(#gl)"><line x1="455" y1="82" x2="435" y2="334" stroke="#e89a6c" stroke-width="2.2"></line><line x1="475" y1="82" x2="495" y2="334" stroke="#e89a6c" stroke-width="2.2"></line><line x1="455" y1="82" x2="475" y2="82" stroke="#e89a6c" stroke-width="2"></line><line x1="455" y1="82" x2="477.5" y2="113.5" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="475" y1="82" x2="452.5" y2="113.5" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="452.5" y1="113.5" x2="477.5" y2="113.5" stroke="#e89a6c" stroke-width="0.7" opacity="0.45"></line><line x1="452.5" y1="113.5" x2="480" y2="145" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="477.5" y1="113.5" x2="450" y2="145" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="450" y1="145" x2="480" y2="145" stroke="#e89a6c" stroke-width="0.7" opacity="0.45"></line><line x1="450" y1="145" x2="482.5" y2="176.5" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="480" y1="145" x2="447.5" y2="176.5" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="447.5" y1="176.5" x2="482.5" y2="176.5" stroke="#e89a6c" stroke-width="0.7" opacity="0.45"></line><line x1="447.5" y1="176.5" x2="485" y2="208" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="482.5" y1="176.5" x2="445" y2="208" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="445" y1="208" x2="485" y2="208" stroke="#e89a6c" stroke-width="0.7" opacity="0.45"></line><line x1="445" y1="208" x2="487.5" y2="239.5" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="485" y1="208" x2="442.5" y2="239.5" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="442.5" y1="239.5" x2="487.5" y2="239.5" stroke="#e89a6c" stroke-width="0.7" opacity="0.45"></line><line x1="442.5" y1="239.5" x2="490" y2="271" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="487.5" y1="239.5" x2="440" y2="271" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="440" y1="271" x2="490" y2="271" stroke="#e89a6c" stroke-width="0.7" opacity="0.45"></line><line x1="440" y1="271" x2="492.5" y2="302.5" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="490" y1="271" x2="437.5" y2="302.5" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="437.5" y1="302.5" x2="492.5" y2="302.5" stroke="#e89a6c" stroke-width="0.7" opacity="0.45"></line><line x1="437.5" y1="302.5" x2="495" y2="334" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="492.5" y1="302.5" x2="435" y2="334" stroke="#e89a6c" stroke-width="0.9" opacity="0.65"></line><line x1="435" y1="334" x2="495" y2="334" stroke="#e89a6c" stroke-width="0.7" opacity="0.45"></line></g><text x="175" y="352" text-anchor="middle" font-size="13" font-weight="700" fill="#7da9d8">DİREK-1</text><text x="465" y="352" text-anchor="middle" font-size="13" font-weight="700" fill="#e89a6c">DİREK-2</text><line x1="175" y1="170" x2="90" y2="170" stroke="#ff9f43" stroke-width="3.5"></line><line x1="175" y1="170" x2="260" y2="170" stroke="#b8c4d4" stroke-width="3.5"></line><line x1="90" y1="166" x2="90" y2="174" stroke="#7da9d8" stroke-width="2"></line><line x1="260" y1="166" x2="260" y2="174" stroke="#7da9d8" stroke-width="2"></line><line x1="175" y1="118" x2="175" y2="170" stroke="#b8c4d4" stroke-width="3"></line><line x1="465" y1="135" x2="365" y2="135" stroke="#feca57" stroke-width="3.5"></line><line x1="465" y1="135" x2="565" y2="135" stroke="#b8c4d4" stroke-width="3.5"></line><line x1="365" y1="131" x2="365" y2="139" stroke="#e89a6c" stroke-width="2"></line><line x1="565" y1="131" x2="565" y2="139" stroke="#e89a6c" stroke-width="2"></line><line x1="465" y1="78" x2="465" y2="135" stroke="#1dd1a1" stroke-width="3"></line><line x1="175" y1="122" x2="133" y2="122" stroke="#4fb3ff" stroke-width="3.2"></line><line x1="124" y1="122" x2="133" y2="122" stroke="#cfd8e3" stroke-width="1.4"></line><ellipse cx="131" cy="122" rx="2" ry="3.5" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.5"></ellipse><ellipse cx="128" cy="122" rx="2" ry="3.5" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.5"></ellipse><ellipse cx="125" cy="122" rx="2" ry="3.5" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.5"></ellipse><circle cx="133" cy="122" r="2.5" fill="#ffd479" stroke="#b8860b"></circle><text x="95" y="116" font-size="9" fill="#9fc4e8">gergi</text><line x1="465" y1="82" x2="465" y2="68" stroke="#cfd8e3" stroke-width="1.6"></line><ellipse cx="465" cy="77" rx="4.5" ry="2.6" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.6"></ellipse><ellipse cx="465" cy="71" rx="4.5" ry="2.6" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.6"></ellipse><circle cx="465" cy="68" r="2.5" fill="#ffd479" stroke="#b8860b"></circle><line x1="81" y1="170" x2="90" y2="170" stroke="#cfd8e3" stroke-width="1.4"></line><ellipse cx="88" cy="170" rx="2" ry="3.5" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.5"></ellipse><ellipse cx="85" cy="170" rx="2" ry="3.5" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.5"></ellipse><ellipse cx="82" cy="170" rx="2" ry="3.5" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.5"></ellipse><circle cx="90" cy="170" r="2.5" fill="#ffd479" stroke="#b8860b"></circle><text x="52" y="164" font-size="9" fill="#9fc4e8">gergi</text><line x1="251" y1="170" x2="260" y2="170" stroke="#cfd8e3" stroke-width="1.4"></line><ellipse cx="258" cy="170" rx="2" ry="3.5" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.5"></ellipse><ellipse cx="255" cy="170" rx="2" ry="3.5" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.5"></ellipse><ellipse cx="252" cy="170" rx="2" ry="3.5" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.5"></ellipse><circle cx="260" cy="170" r="2.5" fill="#ffd479" stroke="#b8860b"></circle><text x="265" y="164" font-size="9" fill="#9fc4e8">gergi</text><line x1="365" y1="135" x2="365" y2="159" stroke="#cfd8e3" stroke-width="1.4"></line><ellipse cx="365" cy="142" rx="4" ry="2.4" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.6"></ellipse><ellipse cx="365" cy="149" rx="4" ry="2.4" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.6"></ellipse><ellipse cx="365" cy="156" rx="4" ry="2.4" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.6"></ellipse><circle cx="365" cy="159" r="2.5" fill="#ffd479" stroke="#b8860b"></circle><text x="373" y="155" font-size="9" fill="#e8b89f">askı 0.5m</text><line x1="565" y1="135" x2="565" y2="159" stroke="#cfd8e3" stroke-width="1.4"></line><ellipse cx="565" cy="142" rx="4" ry="2.4" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.6"></ellipse><ellipse cx="565" cy="149" rx="4" ry="2.4" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.6"></ellipse><ellipse cx="565" cy="156" rx="4" ry="2.4" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.6"></ellipse><circle cx="565" cy="159" r="2.5" fill="#ffd479" stroke="#b8860b"></circle><text x="573" y="155" font-size="9" fill="#e8b89f">askı 0.5m</text><path d="M133 122 Q320 192 465 68" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"></path><path d="M90 170 Q320 252 365 159" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"></path><path d="M260 170 Q320 262 565 159" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"></path><text x="320" y="265" text-anchor="middle" font-size="10" fill="#7fd1a0">amax açıklığı</text><rect x="245" y="310" width="150" height="58" rx="8" fill="#0c2438" stroke="#1f3b57" opacity="0.95"></rect><text x="257" y="328" font-size="11" fill="#9fc4e8">Df = <tspan font-weight="700" fill="#fff">1.74 m</tspan></text><text x="257" y="344" font-size="11" fill="#e8b89f">Ds = <tspan font-weight="700" fill="#fff">3.60 m</tspan></text><text x="257" y="360" font-size="12" fill="#ff8a8a">amax = <tspan font-weight="700" fill="#fff">265.29 m</tspan></text></svg></div></div>
+
+  <p class="sec">Geometri girdileri (m)</p>
+  <div class="panel"><div class="sec">Konsol / ölçü girdileri</div><div id="geomInputs"><div class="geomgrup"><div class="geombaslik">DİREK-1</div><div class="geomgrid"><label class="f">Üst kaçık konsol (m)<input id="gi_j" type="number" step="0.05" value="3" style="color: rgb(79, 179, 255); font-weight: 700; border-color: rgb(79, 179, 255);"></label><label class="f">Tepe-konsol arası (m)<input id="gi_h" type="number" step="0.05" value="2.09" style="color: rgb(184, 196, 212); font-weight: 700; border-color: rgb(184, 196, 212);"></label><label class="f">Yan konsol (m)<input id="gi_e" type="number" step="0.05" value="2.5" style="color: rgb(255, 159, 67); font-weight: 700; border-color: rgb(255, 159, 67);"></label></div></div><div class="geomgrup"><div class="geombaslik">DİREK-2</div><div class="geomgrid"><label class="f">Tepe konsol (m)<input id="gi_p" type="number" step="0.05" value="1" style="color: rgb(29, 209, 161); font-weight: 700; border-color: rgb(29, 209, 161);"></label><label class="f">Yan konsol (m)<input id="gi_k" type="number" step="0.05" value="1.1" style="color: rgb(254, 202, 87); font-weight: 700; border-color: rgb(254, 202, 87);"></label></div></div></div></div>
+
+  <p class="sec">Salınım sabitleri</p>
+  <div class="panel"><div class="grid4">
+    <label class="f">U (kV)<input id="U" type="number" value="34.5" step="0.5"></label>
+    <label class="f">ar / aort (m)<input id="ar" type="number" value="150" step="5"></label>
+    <label class="f">İzolatör boyu Liz (m)<select id="LizSel"><option value="0">0 m (gergi)</option><option value="0.5" selected="">0.5 m</option><option value="1">1 m (askı/mesnet)</option></select></label>
+    <label class="f">sinα (otomatik)<input id="sina" type="number" step="0.0001" disabled=""></label>
+  </div></div>
+
+  <table>
+    <tbody><tr><td>Tₙ (max sehim) / Tₙ₊₅</td><td><b><span id="o_Tn">349.95</span></b> / <b><span id="o_Tn5">540.94</span></b> kg</td></tr>
+    <tr><td>Df / Ds (m)</td><td><b><span id="o_Df">1.74</span> / <span id="o_Ds">3.60</span></b></td></tr>
+    <tr><td>fmax / f₊₅ (m)</td><td><span id="o_fmax">8.620</span> / <span id="o_f5">14.979</span></td></tr>
+    <tr><td>adf / ads (m)</td><td><span id="o_adf">265.29</span> / <span id="o_ads">434.78</span></td></tr>
+  </tbody></table>
+
+  <div class="result"><div><p class="lab">amax = min(adf, ads)</p><p class="gov" id="o_gov">adf belirleyici · Gergi-Askı · Liz=0.5m</p></div><p class="val"><span id="o_amax">265.29</span> m</p></div>
+
+  <details open=""><summary>Ara hesap dökümü (Excel formülleriyle)</summary><div id="steps">
+<b style="color:var(--txt);">İletken:</b> 3/0 PIGEON | <b style="color:var(--txt);">Bölge:</b> 2 | <b style="color:var(--txt);">ar:</b> 150 m | Liz=0.5 m<br><b style="color:var(--txt);">Max Sehim Hali:</b> +45°C, çıplak (Buz=0 Rüz=0) <span style="color:#888;">(otomatik)</span> | DfDs5 — Geniş travers (E)<br><br>
+<span style="color:var(--accent);">Pn</span> (%100 buz/rüz) = <b style="color:var(--txt);">0.3429</b> kg &nbsp; <span style="color:var(--accent);">p0</span> (çıplak) = <b style="color:var(--txt);">0.3429</b> kg &nbsp; sinα=0.10886<br>
+<span style="color:var(--accent);">Tn</span> (max sehim) = <b style="color:var(--txt);">349.95</b> kg &nbsp; <span style="color:var(--accent);">Tn₊₅</span> = <b style="color:var(--txt);">540.94</b> kg<br><br>
+<b style="color:var(--txt);">Df = 1.74 m &nbsp;&nbsp; Ds = 3.60 m</b><br><br>
+<span style="color:#888;">— Yatay kol (adf) —</span><br>
+fmax = 4·(Df − U/150)² − Liz = 4·(1.74 − 0.230)² − 0.5 = <b style="color:var(--txt);">8.6204 m</b><br>
+adf = √(8·Tn·fmax / Pn) = √(8·349.95·8.6204 / 0.3429) = <b style="color:var(--txt);">265.29 m</b><br><br>
+<span style="color:#888;">— Düşey kol (ads) —</span><br>
+f₊₅ = ((Ds − U/150)/(2·sinα)) − Liz = ((3.60 − 0.230)/(2·0.10886)) − 0.5 = <b style="color:var(--txt);">14.9786 m</b><br>
+ads = √(8·Tn₊₅·f₊₅ / p0) = √(8·540.94·14.9786 / 0.3429) = <b style="color:var(--txt);">434.78 m</b><br><br>
+<span style="color:var(--danger);font-weight:600;">amax = min(265.29 , 434.78) = 265.29 m</span></div></details>
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const g=id=>parseFloat($(id).value)||0;
+
+// ===== VBA veri tabloları (birebir) =====
+const ILET=["3AWG SWALLOW","1/0 RAVEN","3/0 PIGEON","266.8 PARTRIDGE","477 HAWK"];
+const Kesit=[31.14,62.38,99.23,157.2,281.1];
+const Kbeta=[0.0000192,0.0000191,0.0000191,0.0000189,0.0000189];
+const TnMaxA=[342.54,686.18,1091.53,1729.2,2248.8];
+const p0A=[0.108,0.2159,0.3429,0.5454,0.9749];
+const sinaA=[0.11795,0.10886,0.10886,0.10435,0.08646];
+const PnR100=[0.392,0.6783,0.8186,1.021,1.5117];
+const PnBuz=[
+ [-1,0.6424,0.9096,1.444,3.3145],
+ [-1,0.8518,1.1698,1.8057,4.0314],
+ [-1,1.0571,1.4141,2.1283,4.6278],
+ [-1,1.3524,1.7559,2.5628,5.3872],
+ [-1,1.9087,2.3756,3.3094,6.5778]
+];
+function E(il,mod){ return (il<=2)?(mod===1?6500:8000):(mod===1?6200:8000); }
+function tmaxB(b){ return b===1?50:(b===2?45:40); }
+function TnT1(b){ return b===1?5:-5; }
+function TnP1(il,b){ return b===1?PnR100[il]:PnBuz[il][b-1]; }
+function tnSolve(tmax,t_1,p_1,t_n,P_n,Aort,Ee,S,beta){
+  const A=S*Ee*Aort*Aort*p_1*p_1/24/tmax/tmax - tmax + S*beta*Ee*(t_n-t_1);
+  const B=-S*Ee*P_n*P_n*Aort*Aort/24;
+  const Q=A*A*A/13.5+B, P=-A*A/3;
+  const D1=Q*Q/4+P*P*P/27;
+  if(D1>0){
+    let O1=-Q/2+Math.sqrt(D1), L1=-Q/2-Math.sqrt(D1);
+    O1=O1>0?Math.cbrt(O1):-Math.cbrt(-O1); L1=L1>0?Math.cbrt(L1):-Math.cbrt(-L1);
+    return O1+L1-A/3;
+  } else {
+    const Zx=-(13.5*B/(A*A*A)+1);
+    const U=(-Math.atan(Zx/Math.sqrt(-Zx*Zx+1))+3.141559/2)/3;
+    return 2*Math.sqrt(-(P/3))*Math.cos(U)-A/3;
+  }
+}
+// === Max sehim hali iletken+bölgeye göre OTOMATİK (VBA MaxSehimT1 / MaxSehimPn) ===
+function maxSehimT1(il,b){
+  if(il<=1) return b===1?5:-5;                       // 3AWG, RAVEN
+  if(il<=3) return b===1?50:(b===2?45:-5);           // PIGEON, PARTRIDGE
+  return b===1?50:(b===2?45:40);                     // HAWK
+}
+function maxSehimPn(il,b){
+  if(il<=1) return b===1?PnR100[il]:PnBuz[il][b-1];  // 3AWG, RAVEN
+  if(il<=3) return (b===1||b===2)?p0A[il]:PnBuz[il][b-1]; // PIGEON, PARTRIDGE
+  return p0A[il];                                    // HAWK hep çıplak
+}
+function getTn(il,b,ar){
+  return tnSolve(TnMaxA[il],TnT1(b),TnP1(il,b),maxSehimT1(il,b),maxSehimPn(il,b),ar,E(il,2),Kesit[il],Kbeta[il]);
+}
+function getTn5(il,b,ar){ return tnSolve(TnMaxA[il],TnT1(b),TnP1(il,b),5,p0A[il],ar,E(il,2),Kesit[il],Kbeta[il]); }
+function getPnMax(il,b){ return maxSehimPn(il,b); }
+function sehimHaliMetni(il,b){
+  const t=maxSehimT1(il,b);
+  let tip;
+  if(il<=1) tip = b===1?'%100 Rüzgar':'%100 Buz';
+  else if(il<=3) tip = (b===1||b===2)?'çıplak (Buz=0 Rüz=0)':'%100 Buz';
+  else tip='çıplak (Buz=0 Rüz=0)';
+  return (t>0?'+':'')+t+'°C, '+tip;
+}
+const LIZ={mm:0, aa:1, ga:0.5, ag:0.5, gm:0, gg:0};
+
+// ===== 10 TRAVERS DÜZENİ (DfDs0-9) — doğrulanmış formüller =====
+const TRAVERS={
+ t0:{ad:"DfDs0 — Basit (T1-T2)", inp:[["d","Konsol",1.2,1],["l","Konsol",1.0,2]],
+   f:v=>{const Ds=(v.d+v.l)/2; return {Df:Ds,Ds:Ds,BC:0,AC:0};}},
+ t1:{ad:"DfDs1 — Üçgen (üst açıklık+konsol)", inp:[["d","Konsol",1.2,1],["i","Tepe",2.5,2],["l","Yan konsol",1.0,2]],
+   f:v=>{const X28=v.d+v.l; const BC=v.i/2, AC=(v.d+v.l)/2; const X33=Math.sqrt(BC*BC+AC*AC); return {Df:Math.min(X28,X33),Ds:X28,BC,AC};}},
+ t2:{ad:"DfDs2 — İki travers karşılıklı", inp:[["yan1","Yan konsol",2.2,1],["dik1","Tepe-Konsol Arası",2.01,1],["yan2","Yan konsol",3.75,2],["dik2","Tepe-Konsol Arası",5.11,2]],
+   f:v=>{const Ds=v.yan1+v.yan2; const BC=(v.dik1+v.dik2)/2; const AC=(v.yan1+v.yan2)/2; return {Df:Math.sqrt(BC*BC+AC*AC),Ds,BC,AC};}},
+ t3:{ad:"DfDs3 — Kaçık travers (E-F)", inp:[["k","Üst kaçık konsol",1.1,1],["i","Tepe-konsol arası",2.0,1],["d","Yan konsol",1.4,1],["l","Konsol",1.96,2]],
+   f:v=>{const X31=v.d+v.l; const BC=v.i/2; const AC=(v.d+v.l)/2-v.k/2; const X36=Math.sqrt(BC*BC+AC*AC); return {Df:Math.min(X31,X36),Ds:X31,BC,AC};}},
+ t4:{ad:"DfDs4 — Çift konsol (D-F)", inp:[["k","Üst kaçık konsol",1.1,1],["i","Tepe-konsol arası",2.2,1],["d","Yan konsol",1.7,1],["o","Üst kaçık konsol",1.1,2],["m","Tepe-konsol arası",2.2,2],["h","Yan konsol",1.7,2]],
+   f:v=>{const Y29=v.h+v.d; const BC=(v.i+v.m)/2; const Z37=(v.k+v.o)/2; const Z42=(v.d+v.h)/2; const AC=Z42-Z37; const Y34=Math.sqrt(BC*BC+AC*AC); return {Df:Math.min(Y29,Y34),Ds:Y29,BC,AC};}},
+ t5:{ad:"DfDs5 — Geniş travers (E)", inp:[["j","Üst kaçık konsol",1.25,1],["h","Tepe-konsol arası",2.0,1],["e","Yan konsol",2.5,1],["p","Tepe konsol",1.0,2],["k","Yan konsol",1.2,2]],
+   f:v=>{const Y28=v.e+v.k; const BC=(v.h+v.p)/2; const AC=(v.e+v.k)/2-v.j/2; const Y33=Math.sqrt(BC*BC+AC*AC); return {Df:Math.min(Y28,Y33),Ds:Y28,BC,AC};}},
+ t6:{ad:"DfDs6 — Tek devre geniş", inp:[["k","Üst kaçık konsol",1.1,1],["i","Tepe-Konsol Arası",2.2,1],["l","Yan konsol",1.4,1],["o1","Üst konsol",1.86,2],["n","Orta konsol",2.25,2],["o3","Alt konsol",1.86,2],["j","Üst-Orta Konsol Arası",3.0,2],["j2","Orta-Alt Konsol Arası",3.0,2]],
+   f:v=>{const AB32=(v.l+v.o1)/2; const BC=(v.j+v.o2*2)/2; const AB37=(v.n+v.o3)/2; const AC=AB37-AB32; const Df=Math.sqrt(BC*BC+AC*AC); return {Df,Ds:(v.j+v.o2)/2,BC,AC};}},
+ t7:{ad:"DfDs7 — Çift konsollu geniş", inp:[["m1","Üst konsol",1.86,1],["h","Orta konsol",2.09,1],["w1","Alt konsol",1.25,1],["dl","Üst-Orta Konsol Arası",2.9,1],["dl2","Orta-Alt Konsol Arası",2.9,1],["m2","Üst konsol",2.25,2],["s","Orta konsol",1.52,2],["w2","Alt konsol",2.4,2],["dr","Üst-Orta Konsol Arası",2.9,2],["dr2","Orta-Alt Konsol Arası",2.9,2]],
+   f:v=>{const N39=(v.m1+v.w1)/2; const N40=(v.h+v.s)/2; const BC=N40+N39; const AC=(v.m2+v.w2)/2; const Df=Math.sqrt(BC*BC+AC*AC); return {Df,Ds:(v.m2+v.w2)/2,BC,AC};}},
+ t8:{ad:"DfDs8 — Çift Devre T3 ↔ T3", inp:[["a0L","Üst konsol",1.45,1],["a1L","Orta konsol",1.8,1],["a2L","Alt konsol",1.5,1],["a3L","Üst-orta konsol arası",2.9,1],["a4L","Orta-alt konsol arası",2.9,1],["a0R","Üst konsol",1.45,2],["a1R","Orta konsol",1.8,2],["a2R","Alt konsol",1.5,2],["a3R","Üst-orta konsol arası",2.9,2],["a4R","Orta-alt konsol arası",2.9,2]],
+   f:v=>{const a0=(v.a0L+v.a0R)/2, a1=(v.a1L+v.a1R)/2, a2=(v.a2L+v.a2R)/2, a3=(v.a3L+v.a3R)/2, a4=(v.a4L+v.a4R)/2; const Df1=Math.sqrt(Math.pow(a1+a0,2)+a3*a3); const Df2=Math.sqrt(Math.pow(a2+a1,2)+a4*a4); const Df=Math.min(Df1,Df2); return {Df,Ds:(a3+a4)/2,BC:a3,AC:a1+a0};}}
+};
+
+ILET.forEach((k,i)=>{const o=document.createElement('option');o.value=i;o.textContent=k;if(i===2)o.selected=true;$('ilet').appendChild(o);});
+const selT=$('trav');
+Object.keys(TRAVERS).forEach((k,i)=>{const o=document.createElement('option');o.value=k;o.textContent=TRAVERS[k].ad;if(i===2)o.selected=true;selT.appendChild(o);});
+
+const gv={};
+function drawTravers(){
+  const t=TRAVERS[selT.value], r=t.f(gv);
+  const GRI='#b8c4d4';
+  const kRenk=(id)=>{ const c=(window.renkForDeger?renkForDeger(gv[id]):null); return c||GRI; };
+  // Yatay konsol kolu: merkez(cx)->uç TAMAMEN renkli (girilen değer = bu kol)
+  const konsolYatay=(cx, cy, uc, id, sw)=>{
+    sw=sw||3.2;
+    return `<line x1="${cx}" y1="${cy}" x2="${uc}" y2="${cy}" stroke="${kRenk(id)}" stroke-width="${sw}"/>`;
+  };
+  // Gri kol (renksiz, sadece çizim)
+  const konsolGri=(cx, cy, uc, sw)=>{
+    sw=sw||3.2;
+    return `<line x1="${cx}" y1="${cy}" x2="${uc}" y2="${cy}" stroke="${GRI}" stroke-width="${sw}"/>`;
+  };
+  // Direk bazlı tepe: t0=ikisi tepesiz, t1=sol tepesiz/sağ tepeli, t2=ikisi tepeli
+  const tv=selT.value;
+  // Düzen bazlı sol/sağ YAN konsol ve TEPE id'leri (ana travers renklendirme)
+  const YANID={t0:['d','l'],t1:['d','l'],t2:['yan1','yan2'],t3:['d','l'],t4:['d','h'],t5:['e','k'],t6:['l',null]};
+  const TEPEID={t1:[null,'i'],t2:['dik1','dik2'],t5:[null,'p']};
+  const yanL=(YANID[tv]||[])[0], yanR=(YANID[tv]||[])[1];
+  const tepeL=(TEPEID[tv]||[])[0], tepeR=(TEPEID[tv]||[])[1];
+  const hasTop1 = (tv!=='t0' && tv!=='t1');  // sol direk tepeli (yan travers aşağıda)           // sol direk tepeli mi
+  const hasTop2 = (tv!=='t0' && tv!=='t3');           // sağ direk tepeli mi (t3'te sağ DfDs0)
+  const ekKonsol1 = (tv==='t3' || tv==='t4' || tv==='t5' || tv==='t6'); // sol direkte kaçık konsol
+  const ekKonsol2 = (tv==='t4');                      // sağ direkte kaçık konsol (DfDs4)
+  const cokKademe2 = (tv==='t6' || tv==='t7' || tv==='t8'); // sağ direk 3 seviyeli
+  const cokKademe1 = (tv==='t7' || tv==='t8');        // sol direk 3 seviyeli (t7, t8)
+  const cokKademe = cokKademe2;                       // (geriye dönük: sağ)
+  const ekKonsol = ekKonsol1;                          // (geriye dönük: sol)
+  const hasTop = hasTop1 && hasTop2;
+  const W=640,H=380;
+  let svg=`<svg width="100%" viewBox="0 0 ${W} ${H}" style="display:block;font-family:Georgia,serif;">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#16243a"/><stop offset="55%" stop-color="#0f1b2d"/><stop offset="100%" stop-color="#0a1320"/></linearGradient>
+      <linearGradient id="grnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1c2a1e"/><stop offset="100%" stop-color="#0d130d"/></linearGradient>
+      <filter id="gl"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <rect x="0" y="0" width="${W}" height="${H}" fill="url(#sky)"/>
+    <rect x="0" y="${H-46}" width="${W}" height="46" fill="url(#grnd)"/>
+    <ellipse cx="175" cy="${H-44}" rx="60" ry="7" fill="#000" opacity="0.35"/>
+    <ellipse cx="465" cy="${H-44}" rx="70" ry="8" fill="#000" opacity="0.35"/>
+    <text x="${W/2}" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#ff6b6b" letter-spacing="1">DF-DS HESABI</text>`;
+
+  function kafes(bx, topY, botY, topW, botW, renk){
+    let s=`<g filter="url(#gl)">`;
+    // DÜZ tepe (sivri değil): gövde bacakları + düz tepe kapatma çizgisi
+    s+=`<line x1="${bx-topW}" y1="${topY}" x2="${bx-botW}" y2="${botY}" stroke="${renk}" stroke-width="2.2"/>`;
+    s+=`<line x1="${bx+topW}" y1="${topY}" x2="${bx+botW}" y2="${botY}" stroke="${renk}" stroke-width="2.2"/>`;
+    // düz tepe platformu
+    s+=`<line x1="${bx-topW}" y1="${topY}" x2="${bx+topW}" y2="${topY}" stroke="${renk}" stroke-width="2"/>`;
+    const n=8;
+    for(let i=0;i<n;i++){
+      const f1=i/n, f2=(i+1)/n;
+      const y1=topY+(botY-topY)*f1, y2=topY+(botY-topY)*f2;
+      const wl1=topW+(botW-topW)*f1, wl2=topW+(botW-topW)*f2;
+      s+=`<line x1="${bx-wl1}" y1="${y1}" x2="${bx+wl2}" y2="${y2}" stroke="${renk}" stroke-width="0.9" opacity="0.65"/>`;
+      s+=`<line x1="${bx+wl1}" y1="${y1}" x2="${bx-wl2}" y2="${y2}" stroke="${renk}" stroke-width="0.9" opacity="0.65"/>`;
+      s+=`<line x1="${bx-wl2}" y1="${y2}" x2="${bx+wl2}" y2="${y2}" stroke="${renk}" stroke-width="0.7" opacity="0.45"/>`;
+    }
+    s+=`</g>`;
+    return s;
+  }
+  const solX=175, sagX=465, botY=H-46;
+  // Sabit görsel konsol boyları (şekil sabit, değer sadece hesaba girer)
+  const yan1=85, yan2=100;
+  // DfDs0'da travers direğin TEPESİNDE; diğerlerinde normal yükseklikte
+  const trY1 = hasTop1?170:122, trY2 = hasTop2?135:82;
+  const topMY1=118, topMY2=78;
+  svg+=kafes(solX, topMY1+4, botY, 9, 26, '#7da9d8');
+  svg+=kafes(sagX, topMY2+4, botY, 10, 30, '#e89a6c');
+  // Direk numara etiketleri (zemin altında)
+  svg+=`<text x="${solX}" y="${botY+18}" text-anchor="middle" font-size="13" font-weight="700" fill="#7da9d8">DİREK-1</text>`;
+  svg+=`<text x="${sagX}" y="${botY+18}" text-anchor="middle" font-size="13" font-weight="700" fill="#e89a6c">DİREK-2</text>`;
+
+  // Direk-1 travers + dikey tepe kolu (cokKademe1 değilse)
+  if(!cokKademe1){
+    if(yanL){ svg+=konsolYatay(solX,trY1,solX-yan1,yanL,3.5); svg+=konsolGri(solX,trY1,solX+yan1,3.5); }
+    else svg+=`<line x1="${solX-yan1}" y1="${trY1}" x2="${solX+yan1}" y2="${trY1}" stroke="${GRI}" stroke-width="3.5"/>`;
+    svg+=`<line x1="${solX-yan1}" y1="${trY1-4}" x2="${solX-yan1}" y2="${trY1+4}" stroke="#7da9d8" stroke-width="2"/>`;
+    svg+=`<line x1="${solX+yan1}" y1="${trY1-4}" x2="${solX+yan1}" y2="${trY1+4}" stroke="#7da9d8" stroke-width="2"/>`;
+    if(hasTop1) svg+=`<line x1="${solX}" y1="${topMY1}" x2="${solX}" y2="${trY1}" stroke="${tepeL?kRenk(tepeL):GRI}" stroke-width="3"/>`;
+  }
+  // Direk-2 (cokKademe değilse normal tek travers)
+  if(!cokKademe){
+    if(yanR){ svg+=konsolYatay(sagX,trY2,sagX-yan2,yanR,3.5); svg+=konsolGri(sagX,trY2,sagX+yan2,3.5); }
+    else svg+=`<line x1="${sagX-yan2}" y1="${trY2}" x2="${sagX+yan2}" y2="${trY2}" stroke="${GRI}" stroke-width="3.5"/>`;
+    svg+=`<line x1="${sagX-yan2}" y1="${trY2-4}" x2="${sagX-yan2}" y2="${trY2+4}" stroke="#e89a6c" stroke-width="2"/>`;
+    svg+=`<line x1="${sagX+yan2}" y1="${trY2-4}" x2="${sagX+yan2}" y2="${trY2+4}" stroke="#e89a6c" stroke-width="2"/>`;
+    if(hasTop2) svg+=`<line x1="${sagX}" y1="${topMY2}" x2="${sagX}" y2="${trY2}" stroke="${tepeR?kRenk(tepeR):GRI}" stroke-width="3"/>`;
+  }
+
+  // === İzolatörler + 3 fazlı iletkenler (bağlantı tipine göre) ===
+  // bağlantı tipi: sol uç = 1.kelime, sağ uç = 2.kelime
+  const baglMap={mm:['mesnet','mesnet'],aa:['aski','aski'],ga:['gergi','aski'],ag:['aski','gergi'],gm:['gergi','mesnet'],gg:['gergi','gergi']};
+  const ends = baglMap[$('baglanti').value]||['aski','aski'];
+  const LizG = parseFloat($('LizSel').value);
+  // izolatör çizimi: tip + konum + sarkma yönü(aşağı)
+  function izol(x,y,tip,boy,renkLbl,labelLeft){
+    let s='';
+    if(tip==='aski'){
+      // askı izolatör: konsoldan AŞAĞI sarkar
+      const h=24; // piksel boy (boy>0 ise)
+      if(boy>0){
+        s+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+h}" stroke="#cfd8e3" stroke-width="1.4"/>`;
+        for(let i=0;i<3;i++) s+=`<ellipse cx="${x}" cy="${y+7+i*7}" rx="4" ry="2.4" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.6"/>`;
+        s+=`<circle cx="${x}" cy="${y+h}" r="2.5" fill="#ffd479" stroke="#b8860b"/>`;
+        s+=`<text x="${labelLeft?x-48:x+8}" y="${y+h-4}" font-size="9" fill="${renkLbl}">askı ${boy}m</text>`;
+        return {s, cy:y+h};
+      }
+    }
+    if(tip==='gergi'){
+      // gergi izolatör: YATAY, boy 0 (iletken hattına paralel kısa)
+      s+=`<line x1="${x-9}" y1="${y}" x2="${x}" y2="${y}" stroke="#cfd8e3" stroke-width="1.4"/>`;
+      for(let i=0;i<3;i++) s+=`<ellipse cx="${x-2-i*3}" cy="${y}" rx="2" ry="3.5" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.5"/>`;
+      s+=`<circle cx="${x}" cy="${y}" r="2.5" fill="#ffd479" stroke="#b8860b"/>`;
+      s+=`<text x="${labelLeft?x-38:x+5}" y="${y-6}" font-size="9" fill="${renkLbl}">gergi</text>`;
+      return {s, cy:y};
+    }
+    // mesnet izolatör: DİK durur (konsol üstünde yukarı)
+    s+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y-14}" stroke="#cfd8e3" stroke-width="1.6"/>`;
+    for(let i=0;i<2;i++) s+=`<ellipse cx="${x}" cy="${y-5-i*6}" rx="4.5" ry="2.6" fill="#dfe7f0" stroke="#8a96a8" stroke-width="0.6"/>`;
+    s+=`<circle cx="${x}" cy="${y-14}" r="2.5" fill="#ffd479" stroke="#b8860b"/>`;
+    return {s, cy:y-14};
+  }
+  // ORTA/TEPE izolatör — direk bazlı:
+  //  tepeli direk (hasTop): tepe mesnetinde; tepesiz direk (DfDs0): konsol ortasında
+  //  her durumda mesnet durur; direk gergi ise ek gergi + iletken gergiye bağlanır
+  function ortaIzol(x, tepeY, traversY, hasTopX, end, renk){
+    const y = hasTopX ? tepeY : traversY;
+    if(end==='gergi'){ const gg=izol(x,y,'gergi',1,renk); svg+=gg.s; return gg.cy; }
+    const m=izol(x,y,'mesnet',1,renk); svg+=m.s; return m.cy;
+  }
+  // Kaçık konsollar (DfDs3 sol; DfDs4 sol+sağ)
+  const kw=42;
+  let midC1, midC2;
+  if(cokKademe1){
+    // DfDs7: sol direk 3 seviyeli — üst(sol), orta(sağ), alt(sol)
+    const lw=46;
+    const dvL = (tv==='t8') ? (gv.a3||2.9)*13 : (tv==='t7') ? (gv.dl||2.9)*13 : 38;
+    const yU=topMY1+6, yO=topMY1+6+dvL, yA=topMY1+6+dvL*2;
+    const idLU = tv==='t7'?'m1':'a0L';
+    const idLO = tv==='t7'?'h' :'a1L';
+    const idLA = tv==='t7'?'w1':'a2L';
+    // üst-alt konsol arası dikey gövde çizgisi
+    svg+=`<line x1="${solX}" y1="${yU}" x2="${solX}" y2="${yA}" stroke="${GRI}" stroke-width="2.5"/>`;
+    svg+=konsolYatay(solX,yU,solX-lw,idLU,3.2);
+    const u=izol(solX-lw,yU,ends[0],LizG,'#9fc4e8',true); svg+=u.s;
+    svg+=konsolYatay(solX,yO,solX+lw,idLO,3.2);
+    const o=izol(solX+lw,yO,ends[0],LizG,'#9fc4e8'); svg+=o.s;
+    svg+=konsolYatay(solX,yA,solX-lw,idLA,3.2);
+    const a=izol(solX-lw,yA,ends[0],LizG,'#9fc4e8',true); svg+=a.s;
+    window._k6L={ux:solX-lw,uy:u.cy, ox:solX+lw,oy:o.cy, ax:solX-lw,ay:a.cy};
+    midC1=u.cy;
+  } else if(ekKonsol1){
+    const idKL = (tv==='t5')?'j':'k';
+    svg+=konsolYatay(solX, topMY1+4, solX-kw, idKL, 3.2);
+    const ke1=izol(solX-kw, topMY1+4, ends[0], LizG, '#9fc4e8', true); svg+=ke1.s;
+    window._kCy=ke1.cy; window._kX=solX-kw;
+    midC1=ke1.cy;
+  } else {
+    midC1 = ortaIzol(solX, topMY1+4, trY1, hasTop1, ends[0], '#9fc4e8');
+  }
+  if(ekKonsol2){
+    svg+=konsolYatay(sagX, topMY2+4, sagX-kw, 'o', 3.2);
+    const ke2=izol(sagX-kw, topMY2+4, ends[1], LizG, '#e8b89f', true); svg+=ke2.s;
+    window._kCy2=ke2.cy; window._kX2=sagX-kw;
+    midC2=ke2.cy;
+  } else if(cokKademe){
+    // DfDs6: sağ direk 3 seviyeli — üst(sol), orta(sağ), alt(sol)
+    const lw=60;
+    const dvR = (tv==='t6') ? (gv.j||3.0)*13 : (tv==='t8') ? (gv.a4||2.9)*13 : (tv==='t7') ? (gv.dr||2.9)*13 : 38;
+    const yUst=topMY2+6, yOrta=topMY2+6+dvR, yAlt=topMY2+6+dvR*2;
+    // konsol id'leri (direğe göre)
+    const idU = tv==='t6'?'o1': tv==='t7'?'m2': 'a0R';
+    const idO = tv==='t6'?'n' : tv==='t7'?'s' : 'a1R';
+    const idA = tv==='t6'?'o3': tv==='t7'?'w2': 'a2R';
+    // üst-alt konsol arası dikey gövde çizgisi
+    svg+=`<line x1="${sagX}" y1="${yUst}" x2="${sagX}" y2="${yAlt}" stroke="${GRI}" stroke-width="2.5"/>`;
+    // üst konsol (sola)
+    svg+=konsolYatay(sagX,yUst,sagX-lw,idU,3.2);
+    const u=izol(sagX-lw,yUst,ends[1],LizG,'#e8b89f',true); svg+=u.s;
+    // orta konsol (sağa)
+    svg+=konsolYatay(sagX,yOrta,sagX+lw,idO,3.2);
+    const o=izol(sagX+lw,yOrta,ends[1],LizG,'#e8b89f'); svg+=o.s;
+    // alt konsol (sola)
+    svg+=konsolYatay(sagX,yAlt,sagX-lw,idA,3.2);
+    const a=izol(sagX-lw,yAlt,ends[1],LizG,'#e8b89f',true); svg+=a.s;
+    // 3 fazın bağlantı noktaları (sağ direk tarafı)
+    window._k6={ux:sagX-lw,uy:u.cy, ox:sagX+lw,oy:o.cy, ax:sagX-lw,ay:a.cy};
+    midC2=u.cy; // üst faz orta kabul
+  } else {
+    midC2 = ortaIzol(sagX, topMY2+4, trY2, hasTop2, ends[1], '#e8b89f');
+  }
+  // YAN konsol uçları — sol/sağ izolatör tipine göre
+  // sol direğin iki yan ucu (Direk-1, ends[0])
+  let L1={cy:trY1}, L2={cy:trY1};
+  if(!cokKademe1){
+    L1=izol(solX-yan1,trY1,ends[0],LizG,'#9fc4e8',ekKonsol); svg+=L1.s;
+    L2=izol(solX+yan1,trY1,ends[0],LizG,'#9fc4e8'); svg+=L2.s;
+  }
+  // sağ direğin iki yan ucu (Direk-2, ends[1])
+  let R1={cy:trY2}, R2={cy:trY2};
+  if(!cokKademe){
+    R1=izol(sagX-yan2,trY2,ends[1],LizG,'#e8b89f'); svg+=R1.s;
+    R2=izol(sagX+yan2,trY2,ends[1],LizG,'#e8b89f'); svg+=R2.s;
+  }
+
+  // === 3 FAZLI İLETKENLER (paralel: sol-sol, sağ-sağ, orta-orta) ===
+  const mid=(solX+sagX)/2;
+  const mc1x = ekKonsol1 ? window._kX : solX;
+  if(cokKademe1 && cokKademe2){
+    // DfDs7: iki direk de 3 seviyeli — üst-üst, orta-orta, alt-alt
+    const kL=window._k6L, kR=window._k6;
+    svg+=`<path d="M${kL.ux} ${kL.uy} Q${mid} ${Math.max(kL.uy,kR.uy)+60} ${kR.ux} ${kR.uy}" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"/>`;
+    svg+=`<path d="M${kL.ox} ${kL.oy} Q${mid} ${Math.max(kL.oy,kR.oy)+72} ${kR.ox} ${kR.oy}" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"/>`;
+    svg+=`<path d="M${kL.ax} ${kL.ay} Q${mid} ${Math.max(kL.ay,kR.ay)+85} ${kR.ax} ${kR.ay}" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"/>`;
+  } else if(cokKademe){
+    // DfDs6: sol direğin 3 fazı -> sağ direğin 3 seviye konsoluna
+    const k6=window._k6;
+    svg+=`<path d="M${mc1x} ${midC1} Q${mid} ${Math.max(midC1,k6.uy)+60} ${k6.ux} ${k6.uy}" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"/>`;
+    svg+=`<path d="M${solX-yan1} ${L1.cy} Q${mid} ${Math.max(L1.cy,k6.ay)+85} ${k6.ax} ${k6.ay}" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"/>`;
+    svg+=`<path d="M${solX+yan1} ${L2.cy} Q${mid} ${Math.max(L2.cy,k6.oy)+75} ${k6.ox} ${k6.oy}" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"/>`;
+  } else {
+    // ORTA/TEPE fazı
+    const mc2x = ekKonsol2 ? window._kX2 : sagX;
+    svg+=`<path d="M${mc1x} ${midC1} Q${mid} ${Math.max(midC1,midC2)+70} ${mc2x} ${midC2}" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"/>`;
+    svg+=`<path d="M${solX-yan1} ${L1.cy} Q${mid} ${Math.max(L1.cy,R1.cy)+82} ${sagX-yan2} ${R1.cy}" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"/>`;
+    svg+=`<path d="M${solX+yan1} ${L2.cy} Q${mid} ${Math.max(L2.cy,R2.cy)+92} ${sagX+yan2} ${R2.cy}" fill="none" stroke="#7fd1a0" stroke-width="1.7" opacity="0.9"/>`;
+  }
+  svg+=`<text x="${mid}" y="265" text-anchor="middle" font-size="10" fill="#7fd1a0">amax açıklığı</text>`;
+
+  // Df/Ds/amax sonuç kutusu — iki direk ortasında, aşağıda
+  const amaxV = (window._amaxVal!==undefined)?window._amaxVal:0;
+  const bw=150, bh=58, bx=mid-bw/2, by=H-70;
+  svg+=`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="8" fill="#0c2438" stroke="#1f3b57" opacity="0.95"/>`;
+  svg+=`<text x="${bx+12}" y="${by+18}" font-size="11" fill="#9fc4e8">Df = <tspan font-weight="700" fill="#fff">${r.Df.toFixed(2)} m</tspan></text>`;
+  svg+=`<text x="${bx+12}" y="${by+34}" font-size="11" fill="#e8b89f">Ds = <tspan font-weight="700" fill="#fff">${r.Ds.toFixed(2)} m</tspan></text>`;
+  svg+=`<text x="${bx+12}" y="${by+50}" font-size="12" fill="#ff8a8a">amax = <tspan font-weight="700" fill="#fff">${amaxV.toFixed(2)} m</tspan></text>`;
+  svg+=`</svg>`;
+  return svg;
+}
+function buildGeom(){
+  const t=TRAVERS[selT.value];
+  // Girdileri direk/grup bazında ayır: etiketteki ipuçlarına göre
+  const grupla=(dno)=>{
+    if(dno===1) return 'DİREK-1';
+    if(dno===2) return 'DİREK-2';
+    return 'Ortak / ölçüler';
+  };
+  const gruplar={};
+  t.inp.forEach(p=>{ if(gv[p[0]]===undefined) gv[p[0]]=p[2]; const g=grupla(p[3]); (gruplar[g]=gruplar[g]||[]).push(p); });
+  // sıralı göster: Direk-1, Direk-2, Ortak
+  const sira=['DİREK-1','DİREK-2','Ortak / ölçüler'];
+  let html='';
+  sira.forEach(g=>{ if(!gruplar[g]) return;
+    html+=`<div class="geomgrup"><div class="geombaslik">${g}</div><div class="geomgrid">`;
+    gruplar[g].forEach(p=>{ const oto=['dl2','dr2','j2'].includes(p[0]); html+=`<label class="f">${p[1]} (m)<input id="gi_${p[0]}" type="number" step="0.05" value="${gv[p[0]]}"${oto?' readonly style="opacity:.65;"':''}></label>`; });
+    html+='</div></div>';
+  });
+  $('geomInputs').innerHTML=html;
+  t.inp.forEach(p=>{ const inp=$('gi_'+p[0]); if(!inp)return; inp.addEventListener('input',e=>{
+    gv[p[0]]=parseFloat(e.target.value)||0;
+    // DfDs7: üst-orta değişince orta-alt kutusunu da güncelle
+    if(p[0]==='dl'&&$('gi_dl2')) $('gi_dl2').value=e.target.value;
+    if(p[0]==='dr'&&$('gi_dr2')) $('gi_dr2').value=e.target.value;
+    if(p[0]==='j'&&$('gi_j2')) $('gi_j2').value=e.target.value;
+    syncOverlay();calc();renklendirGirdiler();
+  }); });
+  calc();
+  renklendirGirdiler();
+}
+// Aynı uzunluk değerine sahip girdileri aynı renge boya
+const ESIT_RENKLER=['#4fb3ff','#ff9f43','#1dd1a1','#feca57','#ee5253','#c8a2ff','#ff6b9d','#54e0c7','#f9a826','#7bed9f'];
+window._degerRenk={};
+function renkForDeger(v){ if(v==null||isNaN(v)) return null; return window._degerRenk[Number(v).toFixed(2)]||null; }
+const GRI_GIRDI='#b8c4d4';
+// dikey mesafe girdisi mi? (konsol değil, gri kalmalı)
+function isDikey(id,lbl){
+  const L=(lbl||'').toLowerCase();
+  return L.indexOf('arası')>=0 || L.indexOf('dikey')>=0 || L.indexOf('mesafe')>=0 || L.indexOf('açıklık')>=0;
+}
+function renklendirGirdiler(){
+  const t=TRAVERS[selT.value]; if(!t) return;
+  const degerRenk={}; let ix=0;
+  // sadece KONSOL girdilerinin değerlerine renk ata (dikey hariç)
+  t.inp.forEach(p=>{
+    if(isDikey(p[0],p[1])) return;
+    const v=parseFloat($('gi_'+p[0])?.value);
+    if(isNaN(v)) return;
+    const key=v.toFixed(2);
+    if(!(key in degerRenk)){ degerRenk[key]=ESIT_RENKLER[ix % ESIT_RENKLER.length]; ix++; }
+  });
+  window._degerRenk=degerRenk;
+  // her girdinin yazı rengi
+  t.inp.forEach(p=>{
+    const inp=$('gi_'+p[0]); if(!inp) return;
+    const v=parseFloat(inp.value);
+    if(isDikey(p[0],p[1])){ inp.style.color=GRI_GIRDI; inp.style.fontWeight='700'; inp.style.borderColor=GRI_GIRDI; return; }
+    if(isNaN(v)){ inp.style.color=''; inp.style.borderColor=''; return; }
+    const c=degerRenk[v.toFixed(2)]||GRI_GIRDI;
+    inp.style.color=c; inp.style.fontWeight='700'; inp.style.borderColor=c;
+  });
+  if($('svglayer')) $('svglayer').innerHTML=drawTravers();
+}
+// DfDs2 için şekil üzerindeki konsol değer kutuları (yüzde konumlu, responsive)
+const OVERLAY_T2=[
+  {id:'dik1', label:'Direk-1 tepe', xp:20,   yp:26,   tx:27.3, ty:31},
+  {id:'yan1', label:'Direk-1 yan',  xp:37,   yp:39,   tx:37,   ty:44.7},
+  {id:'dik2', label:'Direk-2 tepe', xp:80,   yp:16,   tx:72.7, ty:20.5},
+  {id:'yan2', label:'Direk-2 yan',  xp:82,   yp:30,   tx:82,   ty:35.5}
+];
+const OVERLAY_T0=[
+  {id:'d', label:'Direk-1 konsol', xp:37, yp:28, tx:37, ty:32.1},
+  {id:'l', label:'Direk-2 konsol', xp:82, yp:17, tx:82, ty:21.6}
+];
+const OVERLAY_T1=[
+  {id:'d', label:'Direk-1 konsol', xp:37, yp:28, tx:37,   ty:32.1},  // sol direk (DfDs0) konsol
+  {id:'i', label:'Direk-2 tepe',   xp:80, yp:16, tx:72.7, ty:20.5},  // sağ direk tepe (dikey)
+  {id:'l', label:'Direk-2 yan',    xp:82, yp:30, tx:82,   ty:35.5}   // sağ direk yan konsol
+];
+const OVERLAY_T3=[
+  {id:'i', label:'Tepe-konsol arası', xp:15, yp:38, tx:24,   ty:38},   // üst kaçık ile alt yan konsol arası dikey
+  {id:'k', label:'Üst kaçık konsol',  xp:22, yp:25, tx:24,   ty:30},
+  {id:'d', label:'Direk-1 yan',       xp:37, yp:40, tx:37,   ty:44.7},
+  {id:'l', label:'Direk-2 konsol',    xp:82, yp:17, tx:82,   ty:21.6}
+];
+const OVERLAY_T4=[
+  {id:'k', label:'Sol üst konsol',  xp:21, yp:27, tx:20.8, ty:32.1},
+  {id:'i', label:'Sol tepe-konsol', xp:8,  yp:38, tx:14.1, ty:40},
+  {id:'d', label:'Sol yan konsol',  xp:41, yp:40, tx:40.6, ty:44.7},
+  {id:'o', label:'Sağ üst konsol',  xp:66, yp:16, tx:66.1, ty:21.6},
+  {id:'m', label:'Sağ tepe-konsol', xp:50, yp:30, tx:57,   ty:35.5},
+  {id:'h', label:'Sağ yan konsol',  xp:88, yp:30, tx:88.3, ty:35.5}
+];
+const OVERLAY_T5=[
+  {id:'j', label:'Üst kaçık konsol', xp:21,   yp:27, tx:20.8, ty:32.1},
+  {id:'h', label:'Tepe-konsol arası',xp:8,    yp:38, tx:14.1, ty:40},
+  {id:'e', label:'Direk-1 yan',      xp:14,   yp:48, tx:14.1, ty:44.7},
+  {id:'p', label:'Direk-2 tepe',     xp:72.7, yp:15, tx:72.7, ty:20.5},
+  {id:'k', label:'Direk-2 yan',      xp:88,   yp:30, tx:88.3, ty:35.5}
+];
+const OVERLAY_T6=[
+  {id:'l',  label:'Sol yan konsol', xp:14,   yp:48, tx:14.1, ty:44.7},
+  {id:'o1', label:'Üst/alt konsol', xp:58,   yp:16, tx:65.5, ty:22.1},
+  {id:'n',  label:'Orta konsol',    xp:88,   yp:32, tx:79.8, ty:32.1},
+  {id:'j',  label:'Dikey mesafe',   xp:60,   yp:32, tx:72.7, ty:27}
+];
+const OVERLAY_T7=[
+  {id:'m1', label:'Sol üst konsol',  xp:18, yp:16, tx:20.8, ty:22.1},
+  {id:'h',  label:'Sol orta konsol', xp:36, yp:30, tx:34,   ty:32.1},
+  {id:'w1', label:'Sol alt konsol',  xp:18, yp:46, tx:20.8, ty:42.1},
+  {id:'m2', label:'Sağ üst konsol',  xp:60, yp:16, tx:65.5, ty:22.1},
+  {id:'s',  label:'Sağ orta konsol', xp:86, yp:30, tx:79.8, ty:32.1},
+  {id:'w2', label:'Sağ alt konsol',  xp:60, yp:46, tx:65.5, ty:42.1}
+];
+const OVERLAY_T8=[
+  {id:'a0L', label:'Üst konsol',  xp:20, yp:16, tx:20.8, ty:22.1},
+  {id:'a1L', label:'Orta konsol', xp:36, yp:30, tx:34,   ty:32.1},
+  {id:'a2L', label:'Alt konsol',  xp:20, yp:46, tx:20.8, ty:42.1},
+  {id:'a3L', label:'Üst dikey',   xp:10, yp:27, tx:14,   ty:27},
+  {id:'a4L', label:'Alt dikey',   xp:10, yp:38, tx:14,   ty:38},
+  {id:'a0R', label:'Üst konsol',  xp:80, yp:16, tx:65.5, ty:22.1},
+  {id:'a1R', label:'Orta konsol', xp:64, yp:30, tx:79.8, ty:32.1},
+  {id:'a2R', label:'Alt konsol',  xp:80, yp:46, tx:65.5, ty:42.1},
+  {id:'a3R', label:'Üst dikey',   xp:90, yp:27, tx:86,   ty:27},
+  {id:'a4R', label:'Alt dikey',   xp:90, yp:38, tx:86,   ty:38}
+];
+function curOverlay(){ const v=selT.value; return v==='t2'?OVERLAY_T2:(v==='t0'?OVERLAY_T0:(v==='t1'?OVERLAY_T1:(v==='t3'?OVERLAY_T3:(v==='t4'?OVERLAY_T4:(v==='t5'?OVERLAY_T5:(v==='t6'?OVERLAY_T6:(v==='t7'?OVERLAY_T7:(v==='t8'?OVERLAY_T8:null)))))))); }
+// Şekil üstü kutular kaldırıldı — değerler alttaki gruplu panelden girilir.
+function placeOverlay(){ const box=$('svgbox'); if(box) box.querySelectorAll('.ovgroup,.ovline').forEach(e=>e.remove()); }
+function syncOverlayValues(){ }
+function syncOverlay(){ }
+function calc(){
+  const il=parseInt($('ilet').value), b=parseInt($('bolge').value), ar=g('ar');
+  const bgt=$('baglanti').value, Liz=parseFloat($('LizSel').value);
+  $('sina').value=sinaA[il];
+  // Otomatik eşitlemeler (üst=alt konsol; üst-orta = orta-alt dikey)
+  if(selT.value==='t6'){ if(gv.n===undefined)gv.n=2.25; gv.o2=gv.n; gv.j2=gv.j; }
+  if(selT.value==='t7'){ gv.dl2=gv.dl; gv.dr2=gv.dr; }     // DfDs7: orta-alt = üst-orta
+  const r=TRAVERS[selT.value].f(gv);
+  // Excel Df ve Ds'i ekranda 2 ondalığa yuvarlar ve sonraki adımda bu yuvarlanmış değeri kullanır
+  const Df=Math.round(r.Df*100)/100, Ds=Math.round(r.Ds*100)/100, U=g('U'), sina=sinaA[il];
+  const Pn=getPnMax(il,b), p0=p0A[il];
+  const Tn=getTn(il,b,ar), Tn5=getTn5(il,b,ar);
+  const fmax=4*Math.pow(Df-U/150,2)-Liz;
+  const f5=((Ds-U/150)/(2*sina))-Liz;
+  const adf=Math.sqrt(8*Tn*fmax/Pn);
+  const ads=Math.sqrt(8*Tn5*f5/p0);
+  // DfDs6, DfDs7, DfDs8: Excel'de sadece adf var (ads kolu yok) -> amax = adf
+  const sadeceAdf = ['t6','t7','t8'].includes(selT.value);
+  const amax = sadeceAdf ? adf : Math.min(adf,ads);
+  const invalidGeometry=TRAVERS[selT.value].inp.some(p=>!Number.isFinite(gv[p[0]])||gv[p[0]]<0);
+  if(!Number.isFinite(amax)||ar<=0||U<=0||!Number.isFinite(Liz)||Liz<0||invalidGeometry||Df<=U/150||fmax<=0||(!sadeceAdf&&(Ds<=U/150||f5<=0))){
+    window._amaxVal=0;document.documentElement.dataset.vgInvalid='true';
+    ['o_Tn','o_Tn5','o_Df','o_Ds','o_fmax','o_f5','o_adf','o_ads','o_amax'].forEach(id=>{$(id).textContent='–';});
+    $('o_gov').textContent='Geometri ve hesap girdilerini kontrol edin.';
+    $('steps').textContent='Gerilim, açıklık ve geometri geçerli olmalı; Df/Ds açıklıkları gerilim için gerekli mesafeyi sağlamalı.';
+    $('svglayer').innerHTML=drawTravers();return;
+  }
+  document.documentElement.dataset.vgInvalid='false';window._amaxVal=amax;
+  $('svglayer').innerHTML=drawTravers(); syncOverlayValues();
+  $('o_Tn').textContent=Tn.toFixed(2); $('o_Tn5').textContent=Tn5.toFixed(2);
+  $('o_Df').textContent=Df.toFixed(2); $('o_Ds').textContent=Ds.toFixed(2);
+  $('o_fmax').textContent=fmax.toFixed(3); $('o_f5').textContent=f5.toFixed(3);
+  $('o_adf').textContent=adf.toFixed(2); $('o_ads').textContent=ads.toFixed(2);
+  $('o_amax').textContent=amax.toFixed(2);
+  const bgtAd={mm:'Mesnet-Mesnet',aa:'Askı-Askı',ga:'Gergi-Askı',ag:'Askı-Gergi',gm:'Gergi-Mesnet',gg:'Gergi-Gergi'}[bgt];
+  $('o_gov').textContent=(adf<=ads?'adf belirleyici':'ads belirleyici')+' · '+bgtAd+' · Liz='+Liz+'m';
+  const u150=U/150;
+  $('steps').innerHTML=`
+<b style="color:var(--txt);">İletken:</b> ${ILET[il]} | <b style="color:var(--txt);">Bölge:</b> ${b} | <b style="color:var(--txt);">ar:</b> ${ar} m | Liz=${Liz} m<br><b style="color:var(--txt);">Max Sehim Hali:</b> ${sehimHaliMetni(il,b)} <span style="color:#888;">(otomatik)</span> | ${TRAVERS[selT.value].ad}<br><br>
+<span style="color:var(--accent);">Pn</span> (%100 buz/rüz) = <b style="color:var(--txt);">${Pn.toFixed(4)}</b> kg &nbsp; <span style="color:var(--accent);">p0</span> (çıplak) = <b style="color:var(--txt);">${p0.toFixed(4)}</b> kg &nbsp; sinα=${sina}<br>
+<span style="color:var(--accent);">Tn</span> (max sehim) = <b style="color:var(--txt);">${Tn.toFixed(2)}</b> kg &nbsp; <span style="color:var(--accent);">Tn₊₅</span> = <b style="color:var(--txt);">${Tn5.toFixed(2)}</b> kg<br><br>
+<b style="color:var(--txt);">Df = ${Df.toFixed(2)} m &nbsp;&nbsp; Ds = ${Ds.toFixed(2)} m</b><br><br>
+<span style="color:#888;">— Yatay kol (adf) —</span><br>
+fmax = 4·(Df − U/150)² − Liz = 4·(${Df.toFixed(2)} − ${u150.toFixed(3)})² − ${Liz} = <b style="color:var(--txt);">${fmax.toFixed(4)} m</b><br>
+adf = √(8·Tn·fmax / Pn) = √(8·${Tn.toFixed(2)}·${fmax.toFixed(4)} / ${Pn.toFixed(4)}) = <b style="color:var(--txt);">${adf.toFixed(2)} m</b><br><br>
+<span style="color:#888;">— Düşey kol (ads) —</span><br>
+f₊₅ = ((Ds − U/150)/(2·sinα)) − Liz = ((${Ds.toFixed(2)} − ${u150.toFixed(3)})/(2·${sina})) − ${Liz} = <b style="color:var(--txt);">${f5.toFixed(4)} m</b><br>
+ads = √(8·Tn₊₅·f₊₅ / p0) = √(8·${Tn5.toFixed(2)}·${f5.toFixed(4)} / ${p0.toFixed(4)}) = <b style="color:var(--txt);">${ads.toFixed(2)} m</b><br><br>
+<span style="color:var(--danger);font-weight:600;">amax = min(${adf.toFixed(2)} , ${ads.toFixed(2)}) = ${amax.toFixed(2)} m</span>`;
+}
+const FIELDS=['ilet','bolge','baglanti','trav','U','ar','LizSel'];
+window.VoltGuardExportAdapter={
+  getState:()=>({fields:Object.fromEntries(FIELDS.map(id=>[id,$(id).value])),geom:JSON.parse(JSON.stringify(gv))}),
+  setState:data=>{
+    if(!data||typeof data!=='object'||Array.isArray(data)||!data.fields||!data.geom||Array.isArray(data.fields)||Array.isArray(data.geom)) throw new Error('Amax proje veri biçimi geçersiz.');
+    for(const id of FIELDS){
+      if(!Object.hasOwn(data.fields,id))continue;
+      const value=data.fields[id],el=$(id);
+      if(!['string','number'].includes(typeof value))throw new Error('Amax alan değeri geçersiz.');
+      if(el.tagName==='SELECT'&&![...el.options].some(option=>option.value===String(value)))throw new Error('Amax seçeneği bulunamadı: '+id);
+    }
+    for(const [key,value] of Object.entries(data.geom)){
+      if(typeof value!=='number'||!Number.isFinite(value)||value<0)throw new Error('Amax geometrisi pozitif sayılardan oluşmalı.');
+    }
+    FIELDS.forEach(id=>{if(Object.hasOwn(data.fields,id))$(id).value=String(data.fields[id]);});
+    Object.keys(gv).forEach(key=>{delete gv[key];});Object.assign(gv,data.geom);buildGeom();calc();
+  }
+};
+
+$('saveBtn').onclick=function(){
+  if(window.VoltGuardExports)return window.VoltGuardExports.exportHTML();
+  var d={fields:{},geom:gv};
+  FIELDS.forEach(function(f){ d.fields[f]=$(f).value; });
+  try{ localStorage.setItem('voltguard:azami-aciklik-hesabi:amax_kayit', JSON.stringify(d)); }catch(e){}
+  try{
+    var STAG='<'+'script>', ETAG='<'+'/'+'script>';
+    var doc='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+    var inject=STAG+'window.__AMAX_KAYIT='+JSON.stringify(d).replace(/</g,'\\u003c')+';'+ETAG;
+    var re=new RegExp(STAG+'window\\.__AMAX_KAYIT=[\\s\\S]*?'+ETAG);
+    doc=doc.replace(re,'');
+    doc=doc.replace('</head>', ()=>inject+'</head>');
+    var bl=new Blob([doc],{type:'text/html'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(bl);
+    a.download='AmaxHesabi_kayitli.html';
+    (document.getElementById('vg-tool-workspace') || document.body).appendChild(a); a.click(); a.remove();
+  }catch(e){ alert('Kaydetme hatasi: '+e.message); return; }
+  alert('HTML olarak kaydedildi (son degerlerle).');
+};
+
+$('loadBtn').onclick=function(){ $('fileIn').click(); };
+$('printBtn').onclick=function(){ try{ window.print(); }catch(e){ alert('Yazdirma icin Ctrl+P kullanin.'); } };
+
+$('fileIn').onchange=function(e){
+  var f=e.target.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var d=JSON.parse(r.result);
+      if(d.fields)FIELDS.forEach(function(k){ if(d.fields[k]!==undefined)$(k).value=d.fields[k]; });
+      buildGeom();
+      if(d.geom)Object.keys(d.geom).forEach(function(k){ gv[k]=d.geom[k]; if($('gi_'+k))$('gi_'+k).value=d.geom[k]; });
+      calc();
+    }catch(x){ alert('Gecersiz'); }
+  };
+  r.readAsText(f);
+};
+
+$('baglanti').addEventListener('change',function(){ var sug=LIZ[$('baglanti').value]; $('LizSel').value=String(sug); calc(); });
+['ilet','bolge','LizSel'].forEach(function(id){ $(id).addEventListener('change',calc); });
+selT.addEventListener('change',buildGeom);
+['U','ar'].forEach(function(id){ $(id).addEventListener('input',calc); });
+
+buildGeom();
+
+// Acilista son kaydi otomatik yukle
+(function(){
+  try{
+    var d=null;
+    if(window.__AMAX_KAYIT){ d=window.__AMAX_KAYIT; }
+    else { var s=localStorage.getItem('voltguard:azami-aciklik-hesabi:amax_kayit'); if(s) d=JSON.parse(s); }
+    if(d){
+      if(d.fields)FIELDS.forEach(function(k){ if(d.fields[k]!==undefined&&$(k))$(k).value=d.fields[k]; });
+      buildGeom();
+      if(d.geom)Object.keys(d.geom).forEach(function(k){ gv[k]=d.geom[k]; if($('gi_'+k))$('gi_'+k).value=d.geom[k]; });
+      calc();
+    }
+  }catch(e){}
+})();
+</script>
+
+
+</div><div id="vg-origin">VoltGuard uyarlaması · Özgün hesap araçları: Baki SONAY · <a href="../yontem/">Yöntem ve kaynaklar</a></div><script src="../shared/export.js" defer></script><script>try{localStorage.setItem('voltguard:recent',JSON.stringify({slug:"azami-aciklik-hesabi",name:"Azami Açıklık · Amax"}))}catch(e){}if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script></div><footer data-vg-no-print class="footer vg-footer" id="vgFooter" role="contentinfo">
+  <div class="vg-footer__cta">
+    <div class="vg-wrap vg-footer__cta-in">
+      <div class="vg-footer__cta-text">
+        <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+        <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+      </div>
+      <div class="vg-footer__cta-btns">
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="vg-wrap">
+    <div class="vg-footer__grid">
+      <div class="vg-footer__brand">
+        <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+          <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+          <span class="vg-brand__copy" aria-hidden="true">
+            <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+            <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+          </span>
+        </a>
+        <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+        <ul class="vg-footer__contact">
+          <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+          <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+          <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+        </ul>
+        <address class="vg-footer__addr">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+        </address>
+        <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+      </div>
+      <nav class="vg-footer__nav" aria-label="Alt menü">
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Hizmetler</h3>
+          <ul>
+            <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+            <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+            <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+            <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+            <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+            <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+            <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+            <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+            <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+            <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+            <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+            <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kurumsal</h3>
+          <ul>
+            <li><a href="/#hakkimizda">Hakkımızda</a></li>
+            <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+            <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+            <li><a href="/#projeler">Projeler</a></li>
+            <li><a href="/#referanslar">Referanslarımız</a></li>
+            <li><a href="/#surec">Sürecimiz</a></li>
+            <li><a href="/#neden-biz">Neden Biz?</a></li>
+            <li><a href="/#guvenlik">Güvenlik</a></li>
+            <li><a href="/#haberler">Haberler</a></li>
+            <li><a href="/#emi-demo">Canlı Demo</a></li>
+            <li><a href="/#katalog">Katalog</a></li>
+            <li><a href="/#sss">SSS</a></li>
+            <li><a href="/#iletisim">İletişim</a></li>
+            <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kaynaklar</h3>
+          <ul>
+            <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+            <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+            <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+            <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+            <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+          <ul>
+            <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+            <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+            <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+            <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+            <li><a href="/voltgame.html">VoltGame</a></li>
+            <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+            <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+            <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="vg-footer__bottom">
+      <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+      <div class="vg-footer__social">
+        <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+      <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        </circle>
+      </svg>
+      <span class="sig-node" aria-hidden="true"></span>
+      <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+        <span class="sig-badge__ring" aria-hidden="true"></span>
+        <span class="sig-badge__aurora" aria-hidden="true"></span>
+        <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
+        <span class="sig-badge__body">
+          <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+          <span class="sig-badge__brand">
+            <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+            <span class="sig-badge__eng">Engineering</span>
+          </span>
+        </span>
+        <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+        <span class="sig-badge__shimmer" aria-hidden="true"></span>
+      </a>
+      <span class="sig-node" aria-hidden="true"></span>
+      <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+        </circle>
+      </svg>
+    </div>
+  </div>
+</footer></body></html>

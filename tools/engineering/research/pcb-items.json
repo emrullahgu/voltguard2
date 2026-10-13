@@ -1,0 +1,1582 @@
+[
+  {
+    "group": "Process",
+    "text": "For schematics"
+  },
+  {
+    "group": "Process",
+    "text": "Is there a method of tracking versions/revisions?"
+  },
+  {
+    "group": "Process",
+    "text": "Is source version control used? (Git, SVN etc.)"
+  },
+  {
+    "group": "Process",
+    "text": "Is offsite backup used?"
+  },
+  {
+    "group": "Process",
+    "text": "Within or separate from the schematics/drawings/code?"
+  },
+  {
+    "group": "Process",
+    "text": "Are design decisions documented?"
+  },
+  {
+    "group": "System",
+    "text": "What should have ESD protection? #ESD"
+  },
+  {
+    "group": "System",
+    "text": "Are amplifier circuits stable?"
+  },
+  {
+    "group": "System",
+    "text": "Is there a simulation/simulator of the system or subsystems?"
+  },
+  {
+    "group": "System",
+    "text": "Has the design or subsystems of it been simulated?"
+  },
+  {
+    "group": "System",
+    "text": "For computers / control software?"
+  },
+  {
+    "group": "System",
+    "text": "For other subsystems?"
+  },
+  {
+    "group": "System",
+    "text": "What kind of interfaces and connections are necessary?"
+  },
+  {
+    "group": "System",
+    "text": "Are there status LEDs"
+  },
+  {
+    "group": "System",
+    "text": "Are multiple boards needed?"
+  },
+  {
+    "group": "System",
+    "text": "How are subsystems connected?"
+  },
+  {
+    "group": "System",
+    "text": "Is there a breakout board for subsystem connectors?"
+  },
+  {
+    "group": "System",
+    "text": "Have pin-outs been defined and specified?"
+  },
+  {
+    "group": "System",
+    "text": "What is the max current draw?"
+  },
+  {
+    "group": "System",
+    "text": "Have harnesses/wiring/connectors been identified?"
+  },
+  {
+    "group": "System",
+    "text": "Should any subsystems be default off? #power"
+  },
+  {
+    "group": "System",
+    "text": "Between subsystems?"
+  },
+  {
+    "group": "System",
+    "text": "Between chips/modules?"
+  },
+  {
+    "group": "System",
+    "text": "Which busses/protocols will be used?"
+  },
+  {
+    "group": "System",
+    "text": "Has addresses been allocated?"
+  },
+  {
+    "group": "System",
+    "text": "Communication"
+  },
+  {
+    "group": "System",
+    "text": "Can the watchdog be bypassed? #testing"
+  },
+  {
+    "group": "System",
+    "text": "Can it be overruled? #testing"
+  },
+  {
+    "group": "System",
+    "text": "Can it be emulated? #testing"
+  },
+  {
+    "group": "System",
+    "text": "What interval is necessary? #safety"
+  },
+  {
+    "group": "System",
+    "text": "Is the worst case behavior documented?"
+  },
+  {
+    "group": "System",
+    "text": "Should reset be pulled to default on or off?"
+  },
+  {
+    "group": "System",
+    "text": "Watchdog and reset"
+  },
+  {
+    "group": "System",
+    "text": "Is there a power budget?"
+  },
+  {
+    "group": "System",
+    "text": "Estimated power dissipation of each subsystem?"
+  },
+  {
+    "group": "System",
+    "text": "Estimated current draw of each subsystem?"
+  },
+  {
+    "group": "System",
+    "text": "Estimated expected operating temperature?"
+  },
+  {
+    "group": "System",
+    "text": "System characteristics"
+  },
+  {
+    "group": "System",
+    "text": "How is power provided?"
+  },
+  {
+    "group": "System",
+    "text": "Is power-up well-defined? Some subsystems might need to be unpowered before other subsystems are powered, e.g. LED drivers unpowered until the software has booted. Certain components such as complex microprocessors, FPGAs and other complex ICs need special power sequencing to operate correctly; consult datasheets for details."
+  },
+  {
+    "group": "System",
+    "text": "Is power-down well-defined?"
+  },
+  {
+    "group": "System",
+    "text": "Should any subsystems be isolated?"
+  },
+  {
+    "group": "System",
+    "text": "Which voltage levels are needed?"
+  },
+  {
+    "group": "System",
+    "text": "Which current draws are needed?"
+  },
+  {
+    "group": "System",
+    "text": "Can it deliver sufficient power for all connected subsystems?"
+  },
+  {
+    "group": "System",
+    "text": "Is there a shared power supply?"
+  },
+  {
+    "group": "System",
+    "text": "Is the ground connection made first in hot-plugging connectors?"
+  },
+  {
+    "group": "System",
+    "text": "Is a separate earth necessary?"
+  },
+  {
+    "group": "System",
+    "text": "Will under or over voltage protection be needed?"
+  },
+  {
+    "group": "System",
+    "text": "Frequency linewidth/jitter are within tolerances across all environments? Clocks and oscillators are not perfect. Their frequency jitter can vary with temperature and other environmental factors."
+  },
+  {
+    "group": "System",
+    "text": "Driving ICs support crystals if crystals are used?"
+  },
+  {
+    "group": "System",
+    "text": "Input rules for clocks are followed? FPGAs' have multi clock capable input pins, but the features available differ from pin to pin. Source: Choosing a Clock Input Pin for an FPGA"
+  },
+  {
+    "group": "System",
+    "text": "Clocks and oscillators"
+  },
+  {
+    "group": "System",
+    "text": "Test points on PCB for critical circuits?"
+  },
+  {
+    "group": "System",
+    "text": "Test pads for flying probe/bed-of-nails/pogos setups?"
+  },
+  {
+    "group": "System",
+    "text": "Has a test procedure been written?"
+  },
+  {
+    "group": "System",
+    "text": "Are special connectors needed for testing?"
+  },
+  {
+    "group": "System",
+    "text": "Breakout boards for connectors?"
+  },
+  {
+    "group": "System",
+    "text": "Are special peripheral circuitry needed for testing?"
+  },
+  {
+    "group": "System",
+    "text": "Is special equipment needed for testing?"
+  },
+  {
+    "group": "System",
+    "text": "Voltage monitoring?"
+  },
+  {
+    "group": "System",
+    "text": "Current monitoring?"
+  },
+  {
+    "group": "System",
+    "text": "Temperature monitoring?"
+  },
+  {
+    "group": "System",
+    "text": "Peripheral device behavior"
+  },
+  {
+    "group": "System",
+    "text": "Board revision or version The board revision or version can be made software readable using either GPIO or shift register pins tied to ground or supply. An ADC can also be used to read a voltage divider. This can also be used for board specific functionality. 5 Tips for Versioning Embedded Systems - Design News"
+  },
+  {
+    "group": "System",
+    "text": "Should there be in-circuit testing?"
+  },
+  {
+    "group": "System",
+    "text": "Voltage monitoring?"
+  },
+  {
+    "group": "System",
+    "text": "Current monitoring?"
+  },
+  {
+    "group": "System",
+    "text": "Temperature monitoring?"
+  },
+  {
+    "group": "System",
+    "text": "Connections/disconnects?"
+  },
+  {
+    "group": "System",
+    "text": "Peripheral device states?"
+  },
+  {
+    "group": "System",
+    "text": "Battery health?"
+  },
+  {
+    "group": "System",
+    "text": "Is there event/data logging?"
+  },
+  {
+    "group": "System",
+    "text": "Is disassembly easy?"
+  },
+  {
+    "group": "System",
+    "text": "Is reassembly easy?"
+  },
+  {
+    "group": "System",
+    "text": "Maintainability"
+  },
+  {
+    "group": "System",
+    "text": "Appropriately sized?"
+  },
+  {
+    "group": "System",
+    "text": "Fast enough for the load?"
+  },
+  {
+    "group": "System",
+    "text": "Replaceable when board is assembled"
+  },
+  {
+    "group": "System",
+    "text": "Replaceable when devices is assembled"
+  },
+  {
+    "group": "System",
+    "text": "Storage for spare fuse?"
+  },
+  {
+    "group": "System",
+    "text": "Can connections be mated in an unsafe way?"
+  },
+  {
+    "group": "System",
+    "text": "Do connectors for different purposes share the same type of plug/socket?"
+  },
+  {
+    "group": "System",
+    "text": "Is signal and power avoided in same connector? Wide Band Laboratory Fire, Fermi National Accelerator Laboratory, 1987.A misjoined connector resulted in several amps being drawn through cables rated for only 1 A. A fire started from this. Source: Wide Band Laboratory Fire"
+  },
+  {
+    "group": "System",
+    "text": "What noise frequencies are emitted? (e.g. clock and SMPS frequencies)"
+  },
+  {
+    "group": "System",
+    "text": "What noise frequencies is the circuit sensitive to?"
+  },
+  {
+    "group": "System",
+    "text": "What noise will be generated by connected devices? (e.g. mains adaptors)"
+  },
+  {
+    "group": "System",
+    "text": "What countries will the product be sold in? What standards cover these countries?"
+  },
+  {
+    "group": "System",
+    "text": "What is the end use for the product? Does this have any specific EMC requirements ? Industrial or automotive use has different test requirements and permissable emission levels than consumer goods. For industrial, the levels are usually higher. See Conformance UK's guide"
+  },
+  {
+    "group": "System",
+    "text": "Do switching supplies have (or have an option for) RC snubbers? While not always needed for stability, an RC snubber can dampen ringing oscillations, which result in high frequency noise that may exceed EMC limits."
+  },
+  {
+    "group": "System",
+    "text": "Is differential signalling used for digital signals where possible? Differential signals are not only more immune to noise, but emit less as well. For high speed, long signal lines (e.g. remote displays in automotive), the difference can be considerable."
+  },
+  {
+    "group": "System",
+    "text": "Is differential signalling used for analog signals?"
+  },
+  {
+    "group": "System",
+    "text": "Are shielded connectors needed?"
+  },
+  {
+    "group": "System",
+    "text": "Is a shielded case needed? How will this be bonded to ground?"
+  },
+  {
+    "group": "System",
+    "text": "Are switched-mode power supplies synchronized? If switch mode power supplies are powered from the same source and are not syncronized, they can produce \"beat\" frequencies from being out of phase, and input and output ripple is also increased. See TI Power Tip 73: Synchronizing Makes for Well-Behaved Power Supplies"
+  },
+  {
+    "group": "System",
+    "text": "Loss of ground pins on connector"
+  },
+  {
+    "group": "System",
+    "text": "Between subsystems"
+  },
+  {
+    "group": "System",
+    "text": "Effect of lost connection"
+  },
+  {
+    "group": "System",
+    "text": "System behavior when battery is fully discharged?"
+  },
+  {
+    "group": "System",
+    "text": "Effects of voltage transients and high voltages on FETs"
+  },
+  {
+    "group": "System",
+    "text": "Expected effects of failed semiconductors"
+  },
+  {
+    "group": "System",
+    "text": "Expected failure modes of failed semiconductors"
+  },
+  {
+    "group": "System",
+    "text": "Are component ratings derated by expected operating temperature/voltage/current?"
+  },
+  {
+    "group": "System",
+    "text": "Environmental tolerance"
+  },
+  {
+    "group": "System",
+    "text": "Failure mode analysis"
+  },
+  {
+    "group": "Components",
+    "text": "With a margin for defects/failures/loss?"
+  },
+  {
+    "group": "Components",
+    "text": "With a margin for spill from Pick-and-Place machine?"
+  },
+  {
+    "group": "Components",
+    "text": "Are the necessary components in stock?"
+  },
+  {
+    "group": "Components",
+    "text": "Are voltage ratings of components sufficient? #schematic #electrical"
+  },
+  {
+    "group": "Components",
+    "text": "Are any components expected for obsoletion?"
+  },
+  {
+    "group": "Components",
+    "text": "Are there multiple sources?"
+  },
+  {
+    "group": "Components",
+    "text": "Are there alternate manufacturers?"
+  },
+  {
+    "group": "Components",
+    "text": "Are suitable alternatives identified?"
+  },
+  {
+    "group": "Components",
+    "text": "Have errata sheets been checked? #schematic #components"
+  },
+  {
+    "group": "Components",
+    "text": "Is reset active-high or active-low?"
+  },
+  {
+    "group": "Components",
+    "text": "During initialization?"
+  },
+  {
+    "group": "Components",
+    "text": "For addresses?"
+  },
+  {
+    "group": "Components",
+    "text": "Do any pins need biasing / pull-up / pull-down / strap?"
+  },
+  {
+    "group": "Components",
+    "text": "Are some functions only available in certain modes?"
+  },
+  {
+    "group": "Components",
+    "text": "Are the inputs and outputs organized in banks?"
+  },
+  {
+    "group": "Floorplan",
+    "text": "Board size/shape"
+  },
+  {
+    "group": "Floorplan",
+    "text": "Connector placement"
+  },
+  {
+    "group": "Floorplan",
+    "text": "Human interface placement"
+  },
+  {
+    "group": "Floorplan",
+    "text": "Are mechanical constraints defined?"
+  },
+  {
+    "group": "Floorplan",
+    "text": "Can components be oriented in roughly the same way / consistency in layout?"
+  },
+  {
+    "group": "Floorplan",
+    "text": "For inspection?"
+  },
+  {
+    "group": "Floorplan",
+    "text": "For replacement?"
+  },
+  {
+    "group": "Floorplan",
+    "text": "Are components easily accessible? Large components or high density boards might make it difficult to inspect components during testing or after failure. Apart from visual blocking it can also manifest as physically blocking from accessing with probes."
+  },
+  {
+    "group": "Floorplan",
+    "text": "Are interactive components placed in a logical manner? (Consistent orientation of buttons? Consistent rotation of potentiometers?)"
+  },
+  {
+    "group": "Floorplan",
+    "text": "Are temperature sensitive components placed away from hot components?"
+  },
+  {
+    "group": "Floorplan",
+    "text": "Should there be a ground ring? Ground rings serve both a signal integrity and a practical purpose. For EMC it is necessary to avoid traces along edges of the PCB. Adding a ground ring is an easy way of ensuring this constraint is held. It also provides somewhat better EMI prevention. Source: Why are vias placed this way on a PCB? - Stack Exchange"
+  },
+  {
+    "group": "Schematic",
+    "text": "Has DRC been set up and configured?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Has a grid size been picked"
+  },
+  {
+    "group": "Schematic",
+    "text": "Has paper sizes been selected for sheets?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are explicit and informative"
+  },
+  {
+    "group": "Schematic",
+    "text": "Do they resemble electrical circuit symbols?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Mark internal pull-up/-down"
+  },
+  {
+    "group": "Schematic",
+    "text": "Mark internal termination"
+  },
+  {
+    "group": "Schematic",
+    "text": "Reflect the functionality or logical structure of the component In contrast to placing pins as the physically appear on the device. Schematics should reflect functionality; board layout should reflect physical reality. Physical pin layout has its merit in making debugging easier -- however, so does having a clearer schematic."
+  },
+  {
+    "group": "Schematic",
+    "text": "Pins are assigned the correct type (passive, power, in, out etc.)"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are active-high and active-low marked consistently?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are power (and ground) pins consistently placed and marked?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Do pin positions adhere to the selected grid size If the the pins are off grid, connections might not be made. Reference: EEVblog #1129 - Creating a Nice Readable Schematic (15:06)"
+  },
+  {
+    "group": "Schematic",
+    "text": "Unused OPAMPs: output to negative input and positive input to ground."
+  },
+  {
+    "group": "Schematic",
+    "text": "Unused comparators: All pins to common."
+  },
+  {
+    "group": "Schematic",
+    "text": "Beak-out of extra pins from ICs or subsystems?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are all pins on all ICs handled?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are mating connectors on different boards matched in pin-out?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Have necessary inputs been ESD protected? #ESD A typical solution would be current limiting resistors, clamping diodes."
+  },
+  {
+    "group": "Schematic",
+    "text": "Multipart components are identified and utilized"
+  },
+  {
+    "group": "Schematic",
+    "text": "Functionality"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are reset pins pulled to high/low?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Is reset filtered?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are polarized components protected/ensured against from reverse voltage?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Pull-up on all open-collector?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are resistors operating within their specified voltage range?"
+  },
+  {
+    "group": "Schematic",
+    "text": "A Study of Field Crystallization in Tantalum Capacitors and its effect on DCL and Reliability - AVX"
+  },
+  {
+    "group": "Schematic",
+    "text": "Voltage Derating Rules for Solid Tantalum and Niobium Capacitors - AVX"
+  },
+  {
+    "group": "Schematic",
+    "text": "What a cap-astrophe! - Jim Keith, EDN"
+  },
+  {
+    "group": "Schematic",
+    "text": "DC LEAKAGE FAILURE MODE - Vishay"
+  },
+  {
+    "group": "Schematic",
+    "text": "Is a low-impedance source driving tantalum capacitors? It can result in premature failure. Switch-on current should also be limited. References:"
+  },
+  {
+    "group": "Schematic",
+    "text": "Is there sufficient bulk capacitance?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are there ground connection points? (for probes etc.)"
+  },
+  {
+    "group": "Schematic",
+    "text": "Have necessary test points been added?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Have configurable strap-in pins been biased?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Have configurable strap-in pins been connected with jumpers or similar?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Pull-up on SDA an SCL I2C is open-drain and thus needs pull-up. References: Texas Instruments, Application Report, I2C Bus Pullup Resistor Calculation"
+  },
+  {
+    "group": "Schematic",
+    "text": "Have datasheets been consulted for necessary pull-up/-down? Typically TMS and TDI are pull-up and TCK is pull-down, but it changes between manufacturers and devices. Some devices have internal pull-up/-down, yet external resistors are recommended to keep start-up well-defined."
+  },
+  {
+    "group": "Schematic",
+    "text": "Have datasheets been consulted for necessary pull-up/-down? Typically TMS and TDI are pull-up and TCK is pull-down, but it changes between manufacturers and devices. Some devices have internal pull-up/-down, yet external resistors are recommended to keep start-up well-defined."
+  },
+  {
+    "group": "Schematic",
+    "text": "Is there sufficient decoupling?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Is there filtering between analog and digital commons?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are optocouplers filtered?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Impedance on inputs from outside of board?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are ferrite beads on input/output power lines?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are ferrite beads on sensitive signal lines? This includes signal lines that are not sensitive themselves, but connect to sensitive components. E.g. U-Blox recommend ferrite beads on GPS module UART connections to avoid RF noise travelling \"along\" and into the module, see U-Blox M8 Hardware Integration Manual"
+  },
+  {
+    "group": "Schematic",
+    "text": "Do all ferrite beads have sufficient margin in DC current rating? When the DC current (DC bias current) approaches the maximum, the effective impedance of ferrite beads decreases significantly. See Analog Devices AN-1368, Choosing and Using Ferrite Beads"
+  },
+  {
+    "group": "Schematic",
+    "text": "Is there an estimate of what frequencies the ferrite beads are required to filter?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Do high-speed single-ended digital signals have series resistors?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Is there a footprint for a common mode filter on high-speed differential signals going offboard? For high-speed differential buses like USB 3.0, DisplayPort, and HDMI, a common-mode filter will stop common-mode noise generated in the transceiver from traveling into the signal line where it may radiate from the cable. Notice that the filter might degrade the differential signal slightly. Using a footprint allows one to be quickly fitted in case EMC testing fails."
+  },
+  {
+    "group": "Schematic",
+    "text": "Do op-amps have input filters for EMI? High frequency EMI signals can be rectified by the op-amp if not filtered out beforehand, resulting in DC errors at the output. See Analog Devices MT-096, RFI Rectification Concepts and Analogue circuit design for RF immunity, Clough Consoltants"
+  },
+  {
+    "group": "Schematic",
+    "text": "Signal integrity"
+  },
+  {
+    "group": "Schematic",
+    "text": "Unpopulated parts are clearly marked"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are destinations noted if they go to other sheets"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are connections marked with expected current draw?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Ground planes?"
+  },
+  {
+    "group": "Schematic",
+    "text": "References to datasheet's recommendations"
+  },
+  {
+    "group": "Schematic",
+    "text": "Has special PCB or layout requirements been noted? #schematic #pcb"
+  },
+  {
+    "group": "Schematic",
+    "text": "Notes explaining purpose, functionality, origin, references and caculations for circuits"
+  },
+  {
+    "group": "Schematic",
+    "text": "Documentation and notes"
+  },
+  {
+    "group": "Schematic",
+    "text": "No overlap between text, notes references, wires, symbols etc. Reference: EEVblog #1129 - Creating a Nice Readable Schematic (7:55)"
+  },
+  {
+    "group": "Schematic",
+    "text": "Is all text horizontal? Within reason and if there is space for it."
+  },
+  {
+    "group": "Schematic",
+    "text": "Are values in a uniform format"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are references using standard designators?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are references placed unambiguously?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Decimal points avoided? Decimal points might get lost during photocopying. Reference: EEVblog #1129 - Creating a Nice Readable Schematic (44:00)"
+  },
+  {
+    "group": "Schematic",
+    "text": "Do all components have reference and value?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are all junctions dotted?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are no-connects marked?"
+  },
+  {
+    "group": "Schematic",
+    "text": "No 4-way connections 4-way junctions might get lost during photocopying. They can also be ambiguous. Reference: EEVblog #1129 - Creating a Nice Readable Schematic (1:9:40)"
+  },
+  {
+    "group": "Schematic",
+    "text": "No upwards pointing ground symbols?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are component references ordered by schematic layout?"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are the appropriate power nets connected? (Vcc, Vss, Vdd)"
+  },
+  {
+    "group": "Schematic",
+    "text": "Net names on top of lines"
+  },
+  {
+    "group": "Schematic",
+    "text": "Are unused nets left unlabeled? If a net is labeled, it is expected to be used. It is usually clearer to leave it unlabeled. Reference: EEVblog #1129 - Creating a Nice Readable Schematic (21:20)"
+  },
+  {
+    "group": "Schematic",
+    "text": "All connections/markings have a purpose Connections going from and to nowhere lead to confusion."
+  },
+  {
+    "group": "Schematic",
+    "text": "Sheets are consistently sized"
+  },
+  {
+    "group": "Schematic",
+    "text": "Readable when printed"
+  },
+  {
+    "group": "Schematic",
+    "text": "Logical layout should go left-right, top-bottom. It is a convention for input signals to \"enter\" on the left and progress towards right. Reference: EEVblog #1129 - Creating a Nice Readable Schematic (6:00)"
+  },
+  {
+    "group": "Schematic",
+    "text": "Name of author"
+  },
+  {
+    "group": "Schematic",
+    "text": "Name of reviewer"
+  },
+  {
+    "group": "Schematic",
+    "text": "List of revisions and changes"
+  },
+  {
+    "group": "Schematic",
+    "text": "Company / organization"
+  },
+  {
+    "group": "Schematic",
+    "text": "Sheet/drawing number"
+  },
+  {
+    "group": "Schematic",
+    "text": "Has DRC passed?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are gold fingers needed?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Do layers align on panelized files?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "How is the PCB panelized?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "What stack-up is needed?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Which finish is necessary?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "What thickness of finish?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there a bill of materials?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Ability for blind or buried vias?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are solder paste openings the proper size?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are manufacturing tolerances honored?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Finish, holes, thickness, solder mask"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are all manufacturing requirements noted on the layout file?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Panelized PCB fits test rig"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there enough space for the minimum bending radius of the wire harnessing?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are fiducials needed for assembly?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there a recommended/necessary order for mounting components on the board?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Will mounting certain components make it impossible to mount others?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there an assembly order for subsystems?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there a testing order for subsystems?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Manufacturing"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is pin 1 marked in a consistent manner?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "For electrically polarized components like capacitors?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "For keyed components like connectors?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is component polarity marked in a consistent manner?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are high-density chips marked with pin numbers?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are there tick-marks for every 5/10 pin on high pin count?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are there square pins on components? Are the holes big enough?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Have the footprint dimensions been cross-checked with recommended footprint for the specific component?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are the footprints from the datasheet defined as top view or bottom view?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "TE connectivity: 390112-1 datasheet"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Wikipedia: Zig-zag in-line package"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are edge-connectors/fingers interleaved/zig-zag? Edge pins on SODIMM are interleaved in placement when comparing the two sides of the inserted board. References:"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are they exposed?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are they connected to the right net? The net is not necessarily ground."
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are there the necessary thermal pads?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are certain pins only accessible on the thermal pad/unexposed pads and is the assembly procedure for this noted? Sometimes the only ground connection is the thermal pad. This requires soldering the thermal pad and it is thus a assembly requirement to ensure it is soldered."
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are jumpers accessible?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are debug connectors accessible?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Filter resistors closer to the source?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Termination resistors closer to the target?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are all keep-out areas honored?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Around mounting holes?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "For IC extraction tools?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "For programming tools?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "For assembly tools (wrenches, screwdrivers etc.)"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Trace-to-trace clearance based upon voltage rating?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there spacing for an assembly run marking?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there clearance for connectors?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are there mounting holes?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Should mounting holes be electrically isolated?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Should grounded mounting holes have via stitching? Vias around mounting holes improve ground connection and provides some redundancy. Source: Why are vias placed this way on a PCB? - Stack Exchange"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are hole diameters compensating for plating?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is the outline of the board defined?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is the mechanical enclosure defined?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there enough space for the mating connectors? #clearance #connectors"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there enough vertical space for components?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there a drill legend?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are internal corners rounded? Can they be milled?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "What stack-up is needed?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Polarized components are oriented correctly"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "All traces are routed?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are decoupling capacitors placed close to power pins of ICs?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are analog and digital commons joined at only one point?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Does ERC pass?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are isolation barriers large enough? #mechanical #power #safety"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are the appropriate power nets connected? (Vcc, Vss, Vdd)"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are digital signals routed over separate (digital) ground planes?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Do high-speed signals avoid gaps in ground planes?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are stubs minimized for high-speed signals?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are differential pair spacing based upon impedance matching?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are transmission lines terminated with an appropriate impedance?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are crystal connections short?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there a guard ring around the crystal?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are there filters on A/D pins?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Drivers / receivers placed close to connectors?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "EMI / RFI close to entry / exit of shielded areas?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are traces avoided under sensitive components?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are traces avoided under noisy components?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are vias avoided under metal-film resistors?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is via fencing of sensitive RF transission lines done with the proper via spacing? (< 1/20 lambda)"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there an option for a shielding can over sensitive circuitry e.g. RF?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are bypass capacitors close to power pins?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is low inductance mounting used for decoupling?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Signal integrity"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Ground / power pins are connected and checked?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "No pour between adjacent pins on ICs? These can be mistaken for shorts during inspection. A keep-out zone between pins can fix this without adjusting the pour clearances."
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Has all layers been checked?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are there thermal reliefs at appropriate places?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Do they introduce ground loops?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are trace-pad connections sufficiently obtuse (angle 90 deg or more)?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are the trace widths sufficient for the current draw and max heating?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "No connections between adjacent pins on ICs? These can be mistaken for shorts during inspection."
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are vias for internal power traces big enough?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there enough space for heatsinks? #mechanical #thermal"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Has mitered bends or soft curves (r > 3 trace width) been implemented for impedance sensitive traces?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are temperature sensitive components placed away from hot components?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are there thermal vias in thermal pads?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are there ground connection points close to analog test points?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are there test points for nets which are difficult to probe due to layout? Some nets might be inaccessible because of other components, casing and so on. In this case they should be made more accessible."
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there a revision number?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there a date?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there blank space for a serial/assembly number? Remember to consider how large it should be. Reference: Writable area on a PCB - Stack Exchange"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are connector pin-outs labeled?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Fuse size and type marked on PCB"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are functional groups marked?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are high-density chips marked with pin numbers?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Connectors/terminals"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Mounting holes"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is functionality labeled?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Notes and documentation"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "No silk screen on pads"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "All text is readable from at most two directions"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Will the silk screen be legible?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are component references order by PCB layout?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Is there a coordinate system?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Does ERC pass?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Are there any superfluous vias?"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Does LVS pass? Layout Versus Schematic is a check to confirm that the board layout actually implements the schematic. That is: Are the traces actually connecting the proper components? Resources: Wikipedia."
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Name of author"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Name of reviewer"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "List of revisions and changes"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Company / organization"
+  },
+  {
+    "group": "Printed circuit board",
+    "text": "Sheet/drawing number"
+  },
+  {
+    "group": "Ordering",
+    "text": "Missing or wrong geometry? Complex geometry can sometimes cause errors during export. Pads and artwork can also be assigned to the wrong layers."
+  },
+  {
+    "group": "Ordering",
+    "text": "Right number of layers?"
+  },
+  {
+    "group": "Ordering",
+    "text": "Do production files match design files?"
+  },
+  {
+    "group": "Ordering",
+    "text": "Has the correct/latest files been uploaded? Yes, this does happen."
+  },
+  {
+    "group": "Board inspection",
+    "text": "Solder mask alignment"
+  },
+  {
+    "group": "Board inspection",
+    "text": "Solder mask curing"
+  },
+  {
+    "group": "Wired harnessing",
+    "text": "Wire gauge compatible with termination"
+  },
+  {
+    "group": "Wired harnessing",
+    "text": "Cable ties and lacing cord is noted"
+  },
+  {
+    "group": "Wired harnessing",
+    "text": "Length and color is noted"
+  },
+  {
+    "group": "Wired harnessing",
+    "text": "Avoid signal and power in same connector"
+  },
+  {
+    "group": "Wired harnessing",
+    "text": "Avoid current flow to remote sources through earth"
+  },
+  {
+    "group": "Wired harnessing",
+    "text": "Is there a breakout board for the connector?"
+  },
+  {
+    "group": "Wired harnessing",
+    "text": "Heat shrink tubing"
+  },
+  {
+    "group": "Wired harnessing",
+    "text": "Wire termination is noted"
+  },
+  {
+    "group": "Software",
+    "text": "Is automated software testing used? #software #procedure"
+  },
+  {
+    "group": "Software",
+    "text": "Is there a style guide?"
+  },
+  {
+    "group": "Software",
+    "text": "Are loops checked for termination conditions?"
+  },
+  {
+    "group": "Software",
+    "text": "Is power up and power down handled correctly?"
+  },
+  {
+    "group": "Software",
+    "text": "Are unused interrupts handled? (Either restart or damage control)"
+  },
+  {
+    "group": "Software",
+    "text": "How does the devices behave if only the software is reset?"
+  },
+  {
+    "group": "Software",
+    "text": "Is there a difference between warm and cold reset?"
+  },
+  {
+    "group": "Software",
+    "text": "Are setup, hold and access times correct for external memories?"
+  },
+  {
+    "group": "Software",
+    "text": "Is memory integrity checked?"
+  },
+  {
+    "group": "Software",
+    "text": "Is memory integrity guaranteed?"
+  },
+  {
+    "group": "Software",
+    "text": "Is unused program memory/ROM spaces filled with traps or restart instructions?"
+  },
+  {
+    "group": "Software",
+    "text": "Is user/sensor input bounds checked?"
+  },
+  {
+    "group": "Software",
+    "text": "Are outputs bounds checked?"
+  },
+  {
+    "group": "Software",
+    "text": "Are calculations bounds checked?"
+  },
+  {
+    "group": "Software",
+    "text": "Are buffer overflows handled?"
+  },
+  {
+    "group": "Software",
+    "text": "Bounds checks"
+  },
+  {
+    "group": "Software",
+    "text": "Do they include a version number or identifier?"
+  },
+  {
+    "group": "Software",
+    "text": "Are the bounds of variable size formats well-defined?"
+  },
+  {
+    "group": "Software",
+    "text": "Data structures and formats"
+  },
+  {
+    "group": "Software",
+    "text": "CPU utilization"
+  },
+  {
+    "group": "Software",
+    "text": "Memory utilization"
+  },
+  {
+    "group": "Software",
+    "text": "Interrupt response time"
+  },
+  {
+    "group": "Software",
+    "text": "Interrupt execution time"
+  },
+  {
+    "group": "Software",
+    "text": "Software characteristics"
+  },
+  {
+    "group": "Software",
+    "text": "How is software versioned? Semantic versioning is an excellent choice. References: Semantic Versioning"
+  },
+  {
+    "group": "Software",
+    "text": "Is version defined in a header? By defining the version in a header it is easy to update and consistently written."
+  },
+  {
+    "group": "Documentation",
+    "text": "Usage instructions"
+  },
+  {
+    "group": "Documentation",
+    "text": "Assembly instructions"
+  },
+  {
+    "group": "Documentation",
+    "text": "Troubleshooting instructions"
+  },
+  {
+    "group": "Documentation",
+    "text": "Component list"
+  },
+  {
+    "group": "Documentation",
+    "text": "Schematic diagrams"
+  },
+  {
+    "group": "Documentation",
+    "text": "PCB explanation"
+  },
+  {
+    "group": "Documentation",
+    "text": "Design decisions"
+  },
+  {
+    "group": "Neat resources",
+    "text": "PCB Layout & RoutingExcellent design flow for approaching a board layout."
+  },
+  {
+    "group": "Neat resources",
+    "text": "EEVblog #1129 - Creating a Nice Readable Schematic"
+  },
+  {
+    "group": "Neat resources",
+    "text": "How were schematics drawn before CAD? - Stack Exchange"
+  },
+  {
+    "group": "Neat resources",
+    "text": "Akin's laws of spacecraft design"
+  },
+  {
+    "group": "Other checklists",
+    "text": "jnoss' PCB checklist"
+  },
+  {
+    "group": "Other checklists",
+    "text": "Stack Exchange: Good checklist for PCB design to be used by the EE (not by the PCB designer)"
+  },
+  {
+    "group": "Other checklists",
+    "text": "IBEX: Good PCB Design Checklist"
+  },
+  {
+    "group": "Other checklists",
+    "text": "Voler systems: PCB Layout Checklist"
+  },
+  {
+    "group": "Other checklists",
+    "text": "JLD sytstems' Electronics Design Checklist"
+  },
+  {
+    "group": "Other checklists",
+    "text": "azonenberg's layout and schematic checklist"
+  },
+  {
+    "group": "Other checklists",
+    "text": "The KiCad Library Convention"
+  }
+]

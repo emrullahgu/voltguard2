@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="tr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AG Gerilim Düşümü ve Güç Kaybı Hesabı</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+:root{
+  --bg:#eef1f4; --sheet:#fff; --hdr:#1f3a5f; --hdr2:#2c4d7a;
+  --line:#c3ccd6; --line2:#dde3ea; --txt:#1a2530; --txt2:#5a6b7d;
+  --inp:#fffbe6; --auto:#eef6ff; --auto-txt:#0b4f9e;
+  --green:#1a7f37; --red:#c1121f; --amber:#b7791f;
+  --kolhdr:#34557f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:'Barlow Semi Condensed',sans-serif;color:var(--txt);
+  padding:18px;font-size:14px}
+.topbar{max-width:1500px;margin:0 auto 14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.title{font-weight:700;font-size:20px;color:var(--hdr);letter-spacing:.3px}
+.prepby{font-size:12px;color:var(--txt2);margin-top:3px;font-weight:500}
+.prepby b{color:var(--hdr);font-weight:700}
+.actionbar{max-width:1500px;margin:0 auto 12px;display:flex;gap:9px}
+.act{background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 15px;font-size:13px;
+  font-weight:600;color:var(--hdr);cursor:pointer;font-family:'Barlow Semi Condensed',sans-serif;
+  transition:.15s;box-shadow:0 1px 4px rgba(31,58,95,.06)}
+.act:hover{background:var(--hdr);color:#fff;border-color:var(--hdr);transform:translateY(-1px)}
+.nokta-cell{position:relative;overflow:visible}
+.nokta-in{position:absolute;top:50%;left:100%;transform:translate(-50%,-50%);width:70%!important;z-index:5;background:#fef3e2!important;
+  border:1px solid var(--amber)!important;border-radius:6px;text-align:center;font-size:11px!important;box-sizing:border-box;padding:3px 0}
+
+.globals{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto}
+.gf{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);
+  border-radius:7px;padding:4px 9px}
+.gf label{font-size:11px;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.gf input{width:58px;border:none;background:transparent;font-family:'JetBrains Mono';font-size:13px;
+  font-weight:700;color:var(--hdr);text-align:right}
+.gf input:focus{outline:none}
+.sheetwrap{max-width:1500px;margin:0 auto;background:var(--sheet);border:1px solid var(--line);
+  border-radius:10px;overflow:auto;box-shadow:0 4px 24px rgba(31,58,95,.12)}
+table{border-collapse:collapse;width:100%;min-width:1100px}
+th,td{border:1px solid var(--line2);padding:0;text-align:center;font-size:13px;height:30px;white-space:nowrap}
+.banner td{background:linear-gradient(90deg,var(--hdr),var(--hdr2));color:#fff;font-weight:700;
+  font-size:15px;letter-spacing:1px;height:38px;border-color:var(--hdr)}
+.rowlabel{background:#f4f6f9;text-align:left;padding:0 12px;font-weight:600;color:var(--txt);
+  position:sticky;left:0;z-index:3;min-width:170px;border-right:2px solid var(--line)}
+.kolhdr th{background:var(--kolhdr);color:#fff;font-weight:700;font-size:13px;height:30px;letter-spacing:.5px;position:relative}
+.kdel{position:absolute;top:2px;right:3px;background:rgba(255,255,255,.15);border:none;color:#fff;
+  width:16px;height:16px;border-radius:4px;cursor:pointer;font-size:10px;line-height:1;padding:0;opacity:.6;transition:.15s}
+.kdel:hover{opacity:1;background:var(--red)}
+.addcol{background:#f4f6f9;width:38px;min-width:38px;border-color:var(--line2)}
+.kadd{background:var(--green);border:none;color:#fff;width:26px;height:26px;border-radius:6px;
+  cursor:pointer;font-size:18px;line-height:1;font-weight:700;transition:.15s}
+.kadd:hover{background:#15803d;transform:scale(1.1)}
+.kolhdr .rowlabel{background:var(--hdr);color:#fff;border-right:2px solid var(--hdr2)}
+td select,td input{width:100%;height:100%;border:none;background:transparent;text-align:center;
+  font-family:'JetBrains Mono';font-size:12.5px;color:var(--txt);padding:2px 4px}
+td select:focus,td input:focus{outline:2px solid var(--amber);outline-offset:-2px;background:#fff}
+.cell-input input,.cell-input select{background:var(--inp)}
+.cell-tip select{font-family:'Barlow Semi Condensed';font-weight:600;font-size:12.5px}
+.cell-cable select{font-size:11.5px}
+.cell-auto{background:var(--auto);color:var(--auto-txt);font-family:'JetBrains Mono';font-weight:700;font-size:12.5px}
+.cell-calc{background:#fafbfc;font-family:'JetBrains Mono';font-size:12px;color:#33414f}
+.sec td{background:#e8edf3;height:8px;border-color:var(--line)}
+.result{font-weight:700}
+.ok{color:var(--green)}.bad{color:var(--red)}
+.eqbar{max-width:1500px;margin:14px auto 0;background:#fff;border:1px solid var(--line);
+  border-radius:10px;padding:14px 22px;box-shadow:0 2px 10px rgba(31,58,95,.07);overflow-x:auto}
+.eqrow{display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;
+  font-size:15px;white-space:nowrap;justify-content:center;flex-wrap:wrap}
+.eqlabel{font-weight:700;color:var(--hdr);font-family:'Barlow Semi Condensed',sans-serif;font-size:16px}
+.eqval{color:#33414f;min-width:64px;text-align:right}
+.eqval.eqbig{font-weight:700;font-size:16px;color:var(--hdr)}
+.eqop{color:var(--txt2);font-weight:700}
+.eqcmp{font-weight:700;color:var(--green);font-size:14px}
+.eqcmp.over{color:var(--red)}
+.eqsep{width:2px;height:22px;background:var(--line);margin:0 10px}
+.eqstatus{color:var(--green) !important;min-width:auto;font-weight:800}
+.eqstatus.bad{color:var(--red) !important}
+.eqbig.over{color:var(--red)}
+.totcard.over{background:#fff0f0;border-color:var(--red);box-shadow:0 0 0 2px rgba(193,18,31,.2)}
+.totcard.over .v{color:var(--red)}
+.totcard.over .l{color:var(--red)}
+.warn-cell{background:#ffe3e3 !important;color:var(--red) !important;font-weight:700;
+  box-shadow:inset 0 0 0 2px var(--red);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{background:#ffe3e3}50%{background:#ffc9c9}}
+.verdict-row td{font-weight:700;font-size:13px;font-family:'JetBrains Mono'}
+.tot{max-width:1500px;margin:14px auto 0;display:flex;gap:14px;flex-wrap:wrap}
+.totcard{flex:1;min-width:150px;background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:13px 16px;text-align:center;box-shadow:0 2px 10px rgba(31,58,95,.07)}
+.totcard .v{font-family:'JetBrains Mono';font-size:24px;font-weight:700;color:var(--hdr)}
+.totcard .l{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--txt2);margin-top:4px;font-weight:600}
+.legend{max-width:1500px;margin:12px auto 0;font-size:11.5px;color:var(--txt2);display:flex;gap:18px;flex-wrap:wrap}
+.infobar{max-width:1500px;margin:0 auto 14px;display:flex;flex-wrap:wrap;gap:8px 18px;
+  background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 16px;
+  box-shadow:0 1px 6px rgba(31,58,95,.05);align-items:center}
+.if{display:flex;align-items:center;gap:7px}
+.if label{font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--txt2);white-space:nowrap}
+.if input{border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:12.5px;width:130px;
+  font-family:'Barlow Semi Condensed',sans-serif;font-weight:600;color:var(--hdr);background:var(--inp)}
+.if input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 2px rgba(183,121,31,.13)}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:13px;height:13px;border-radius:3px;border:1px solid var(--line)}
+@media(max-width:700px){.rowlabel{min-width:130px}}
+@media print{
+  body{background:#fff!important}
+  .topbar,.legend{box-shadow:none!important}
+  @page{size:A4 landscape;margin:8mm}
+}
+body.pt-print .actionbar,body.pt-print .prepby{display:none!important}
+body.pt-print .sheetwrap{overflow:visible!important;max-width:none!important}
+body.pt-print .rowlabel{position:static!important}
+</style>
+</head>
+<body><script id="__embedded_state__" type="application/json">{"meta":{"yer":"","kol":"","guc":""},"globals":{"U":"400","cos":"0.9","div":"1","lim":"5"},"kols":[{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]}]}</script>
+<div class="topbar">
+  <div>
+    <div class="title">⚡ AG Gerilim Düşümü ve Güç Kaybı Hesabı</div>
+    <div class="prepby">Özgün hesap modeli: Elektrik-Elektronik Mühendisi <b>Baki SONAY</b></div>
+  </div>
+  <div class="globals">
+    <div class="gf"><label>U(V)</label><input id="gU" type="number" value="400"></div>
+    <div class="gf"><label>cosφ</label><input id="gCos" type="number" step="0.01" min="0.1" max="1" value="0.9"></div>
+    <div class="gf"><label>Diversite</label><input id="gDiv" type="number" step="0.01" value="1"></div>
+    <input id="gLim" type="hidden" value="5">
+  </div>
+</div>
+
+<div class="actionbar">
+  <button class="act" onclick="saveProject()">💾 Kaydet</button>
+  <button class="act" onclick="openProject()">📂 Klasör Aç</button>
+  <button class="act" onclick="printDoc()">🖨️ Yazdır</button>
+  <button class="act" onclick="exportExcel()">📊 Excel</button>
+  <input type="file" id="fileInput" accept=".html,.json" style="display:none" onchange="loadFile(event)" value="">
+</div>
+
+<div class="infobar">
+  <div class="if"><label>TRAFO YERİ / ADI</label><input id="iYer" placeholder="—" value=""></div>
+  <div class="if"><label>KOL ADI</label><input id="iKol" placeholder="—" value=""></div>
+  <div class="if"><label>TRAFO GÜCÜ</label><input id="iGuc" placeholder="örn. 1000 kVA" value=""></div>
+</div>
+
+<div class="sheetwrap">
+<table id="sheet"><tbody><tr class="banner"><td colspan="10">AG GERİLİM DÜŞÜMÜ VE GÜÇ KAYBI HESABI</td></tr><tr class="kolhdr"><th class="rowlabel">HAT / KOL</th><th>HAT 1<button class="kdel" onclick="delKol(0)" title="Bu hattı sil">✕</button></th><th>HAT 2<button class="kdel" onclick="delKol(1)" title="Bu hattı sil">✕</button></th><th>HAT 3<button class="kdel" onclick="delKol(2)" title="Bu hattı sil">✕</button></th><th>HAT 4<button class="kdel" onclick="delKol(3)" title="Bu hattı sil">✕</button></th><th>HAT 5<button class="kdel" onclick="delKol(4)" title="Bu hattı sil">✕</button></th><th>HAT 6<button class="kdel" onclick="delKol(5)" title="Bu hattı sil">✕</button></th><th>HAT 7<button class="kdel" onclick="delKol(6)" title="Bu hattı sil">✕</button></th><th>HAT 8<button class="kdel" onclick="delKol(7)" title="Bu hattı sil">✕</button></th><th class="addcol"><button class="kadd" onclick="addKol()" title="Sağa hat ekle">+</button></th></tr><tr><td class="rowlabel">Branşman Noktası</td><td class="cell-input nokta-cell"><input class="nokta-in" value="" onchange="set(0,'nokta',this.value)" placeholder="A01" title="HAT 1 ile HAT 2 arasındaki branşman noktası (A01)"></td><td class="cell-input nokta-cell"><input class="nokta-in" value="" onchange="set(1,'nokta',this.value)" placeholder="A02" title="HAT 2 ile HAT 3 arasındaki branşman noktası (A02)"></td><td class="cell-input nokta-cell"><input class="nokta-in" value="" onchange="set(2,'nokta',this.value)" placeholder="A03" title="HAT 3 ile HAT 4 arasındaki branşman noktası (A03)"></td><td class="cell-input nokta-cell"><input class="nokta-in" value="" onchange="set(3,'nokta',this.value)" placeholder="A04" title="HAT 4 ile HAT 5 arasındaki branşman noktası (A04)"></td><td class="cell-input nokta-cell"><input class="nokta-in" value="" onchange="set(4,'nokta',this.value)" placeholder="A05" title="HAT 5 ile HAT 6 arasındaki branşman noktası (A05)"></td><td class="cell-input nokta-cell"><input class="nokta-in" value="" onchange="set(5,'nokta',this.value)" placeholder="A06" title="HAT 6 ile HAT 7 arasındaki branşman noktası (A06)"></td><td class="cell-input nokta-cell"><input class="nokta-in" value="" onchange="set(6,'nokta',this.value)" placeholder="A07" title="HAT 7 ile HAT 8 arasındaki branşman noktası (A07)"></td><td class="cell-input nokta-cell"></td><td class="addcol"></td></tr><tr><td class="rowlabel">Havai / Yeraltı</td><td class="cell-input cell-tip"><select onchange="set(0,'tip',this.value)">
+       <option>Havai</option>
+       <option selected="selected">Yeralti</option></select></td><td class="cell-input cell-tip"><select onchange="set(1,'tip',this.value)">
+       <option>Havai</option>
+       <option selected="selected">Yeralti</option></select></td><td class="cell-input cell-tip"><select onchange="set(2,'tip',this.value)">
+       <option>Havai</option>
+       <option selected="selected">Yeralti</option></select></td><td class="cell-input cell-tip"><select onchange="set(3,'tip',this.value)">
+       <option>Havai</option>
+       <option selected="selected">Yeralti</option></select></td><td class="cell-input cell-tip"><select onchange="set(4,'tip',this.value)">
+       <option>Havai</option>
+       <option selected="selected">Yeralti</option></select></td><td class="cell-input cell-tip"><select onchange="set(5,'tip',this.value)">
+       <option>Havai</option>
+       <option selected="selected">Yeralti</option></select></td><td class="cell-input cell-tip"><select onchange="set(6,'tip',this.value)">
+       <option>Havai</option>
+       <option selected="selected">Yeralti</option></select></td><td class="cell-input cell-tip"><select onchange="set(7,'tip',this.value)">
+       <option>Havai</option>
+       <option selected="selected">Yeralti</option></select></td><td class="addcol"></td></tr><tr><td class="rowlabel">Kablo / İletken Cinsi</td><td class="cell-input cell-cable"><select onchange="set(0,'cable',this.value)"><option value="" selected="selected">—</option><option>4(1x70) NYY</option><option>4(1x95) NYY</option><option>4(1x120) NYY</option><option>4(1x150) NYY</option><option>4(1x185) NYY</option><option>4(1x240) NYY</option><option>2x2.5 NYY</option><option>2x4 NYY</option><option>2x6 NYY</option><option>2x10 NYY</option><option>2x16 NYY</option><option>3x10 NYY</option><option>3x16 NYY</option><option>3x25 NYY</option><option>3x35 NYY</option><option>3x50 NYY</option><option>3x70 NYY</option><option>3x95 NYY</option><option>3x120 NYY</option><option>3x150 NYY</option><option>3x185 NYY</option><option>3x240 NYY</option><option>3x16+10 NYY</option><option>3x25+16 NYY</option><option>3x35+16 NYY</option><option>3x50+25 NYY</option><option>3x70+35 NYY</option><option>3x95+50 NYY</option><option>3x120+70 NYY</option><option>3x150+70 NYY</option><option>3x185+95 NYY</option><option>3x240+120 NYY</option><option>4x4 NYY</option><option>4x6 NYY</option><option>4x10 NYY</option><option>4x16 NYY</option><option>4x25 NYY</option><option>4x35 NYY</option><option>4x50 NYY</option><option>4x70 NYY</option><option>4x95 NYY</option><option>4x120 NYY</option><option>4x150 NYY</option><option>4x185 NYY</option><option>4x240 NYY</option><option>4(1x70) N2XH</option><option>4(1x95) N2XH</option><option>4(1x120) N2XH</option><option>4(1x150) N2XH</option><option>4(1x185) N2XH</option><option>4(1x240) N2XH</option><option>2x2.5 N2XH</option><option>2x4 N2XH</option><option>2x6 N2XH</option><option>2x10 N2XH</option><option>2x16 N2XH</option><option>3x10 N2XH</option><option>3x16 N2XH</option><option>3x25 N2XH</option><option>3x35 N2XH</option><option>3x50 N2XH</option><option>3x70 N2XH</option><option>3x95 N2XH</option><option>3x120 N2XH</option><option>3x150 N2XH</option><option>3x185 N2XH</option><option>3x240 N2XH</option><option>3x16+10 N2XH</option><option>3x25+16 N2XH</option><option>3x35+16 N2XH</option><option>3x50+25 N2XH</option><option>3x70+35 N2XH</option><option>3x95+50 N2XH</option><option>3x120+70 N2XH</option><option>3x150+70 N2XH</option><option>3x185+95 N2XH</option><option>3x240+120 N2XH</option><option>4x4 N2XH</option><option>4x6 N2XH</option><option>4x10 N2XH</option><option>4x16 N2XH</option><option>4x25 N2XH</option><option>4x35 N2XH</option><option>4x50 N2XH</option><option>4x70 N2XH</option><option>4x95 N2XH</option><option>4x120 N2XH</option><option>4x150 N2XH</option><option>4x185 N2XH</option><option>4x240 N2XH</option><option>4(1x70) NAYY</option><option>4(1x95) NAYY</option><option>4(1x120) NAYY</option><option>4(1x150) NAYY</option><option>4(1x185) NAYY</option><option>4(1x240) NAYY</option><option>3x16+10 NAYY</option><option>3x25/16 NAYY</option><option>3x35/16 NAYY</option><option>3x50/25 NAYY</option><option>3x70/35 NAYY</option><option>3x95/50 NAYY</option><option>3x120/70 NAYY</option><option>3x150/70 NAYY</option><option>3x185/95 NAYY</option><option>3x240/120 NAYY</option><option>4x16 NAYY</option><option>4x25 NAYY</option><option>4x35 NAYY</option><option>4x50 NAYY</option><option>4x70 NAYY</option><option>4x95 NAYY</option><option>4x120 NAYY</option><option>4x150 NAYY</option><option>4x185 NAYY</option><option>4x240 NAYY</option><option>4(1x70) NA2XH</option><option>4(1x95) NA2XH</option><option>4(1x120) NA2XH</option><option>4(1x150) NA2XH</option><option>4(1x185) NA2XH</option><option>4(1x240) NA2XH</option><option>3x25 NA2XH</option><option>3x35 NA2XH</option><option>3x50 NA2XH</option><option>3x70 NA2XH</option><option>3x95 NA2XH</option><option>3x120 NA2XH</option><option>3x150 NA2XH</option><option>3x185 NA2XH</option><option>3x240 NA2XH</option><option>3x25+16 NA2XH</option><option>3x35+16 NA2XH</option><option>3x50+25 NA2XH</option><option>3x70+35 NA2XH</option><option>3x95+50 NA2XH</option><option>3x120+70 NA2XH</option><option>3x150+70 NA2XH</option><option>3x185+95 NA2XH</option><option>3x240+120 NA2XH</option><option>4x25 NA2XH</option><option>4x35 NA2XH</option><option>4x50 NA2XH</option><option>4x70 NA2XH</option><option>4x95 NA2XH</option><option>4x120 NA2XH</option><option>4x150 NA2XH</option><option>4x185 NA2XH</option><option>4x240 NA2XH</option></select></td><td class="cell-input cell-cable"><select onchange="set(1,'cable',this.value)"><option value="" selected="selected">—</option><option>4(1x70) NYY</option><option>4(1x95) NYY</option><option>4(1x120) NYY</option><option>4(1x150) NYY</option><option>4(1x185) NYY</option><option>4(1x240) NYY</option><option>2x2.5 NYY</option><option>2x4 NYY</option><option>2x6 NYY</option><option>2x10 NYY</option><option>2x16 NYY</option><option>3x10 NYY</option><option>3x16 NYY</option><option>3x25 NYY</option><option>3x35 NYY</option><option>3x50 NYY</option><option>3x70 NYY</option><option>3x95 NYY</option><option>3x120 NYY</option><option>3x150 NYY</option><option>3x185 NYY</option><option>3x240 NYY</option><option>3x16+10 NYY</option><option>3x25+16 NYY</option><option>3x35+16 NYY</option><option>3x50+25 NYY</option><option>3x70+35 NYY</option><option>3x95+50 NYY</option><option>3x120+70 NYY</option><option>3x150+70 NYY</option><option>3x185+95 NYY</option><option>3x240+120 NYY</option><option>4x4 NYY</option><option>4x6 NYY</option><option>4x10 NYY</option><option>4x16 NYY</option><option>4x25 NYY</option><option>4x35 NYY</option><option>4x50 NYY</option><option>4x70 NYY</option><option>4x95 NYY</option><option>4x120 NYY</option><option>4x150 NYY</option><option>4x185 NYY</option><option>4x240 NYY</option><option>4(1x70) N2XH</option><option>4(1x95) N2XH</option><option>4(1x120) N2XH</option><option>4(1x150) N2XH</option><option>4(1x185) N2XH</option><option>4(1x240) N2XH</option><option>2x2.5 N2XH</option><option>2x4 N2XH</option><option>2x6 N2XH</option><option>2x10 N2XH</option><option>2x16 N2XH</option><option>3x10 N2XH</option><option>3x16 N2XH</option><option>3x25 N2XH</option><option>3x35 N2XH</option><option>3x50 N2XH</option><option>3x70 N2XH</option><option>3x95 N2XH</option><option>3x120 N2XH</option><option>3x150 N2XH</option><option>3x185 N2XH</option><option>3x240 N2XH</option><option>3x16+10 N2XH</option><option>3x25+16 N2XH</option><option>3x35+16 N2XH</option><option>3x50+25 N2XH</option><option>3x70+35 N2XH</option><option>3x95+50 N2XH</option><option>3x120+70 N2XH</option><option>3x150+70 N2XH</option><option>3x185+95 N2XH</option><option>3x240+120 N2XH</option><option>4x4 N2XH</option><option>4x6 N2XH</option><option>4x10 N2XH</option><option>4x16 N2XH</option><option>4x25 N2XH</option><option>4x35 N2XH</option><option>4x50 N2XH</option><option>4x70 N2XH</option><option>4x95 N2XH</option><option>4x120 N2XH</option><option>4x150 N2XH</option><option>4x185 N2XH</option><option>4x240 N2XH</option><option>4(1x70) NAYY</option><option>4(1x95) NAYY</option><option>4(1x120) NAYY</option><option>4(1x150) NAYY</option><option>4(1x185) NAYY</option><option>4(1x240) NAYY</option><option>3x16+10 NAYY</option><option>3x25/16 NAYY</option><option>3x35/16 NAYY</option><option>3x50/25 NAYY</option><option>3x70/35 NAYY</option><option>3x95/50 NAYY</option><option>3x120/70 NAYY</option><option>3x150/70 NAYY</option><option>3x185/95 NAYY</option><option>3x240/120 NAYY</option><option>4x16 NAYY</option><option>4x25 NAYY</option><option>4x35 NAYY</option><option>4x50 NAYY</option><option>4x70 NAYY</option><option>4x95 NAYY</option><option>4x120 NAYY</option><option>4x150 NAYY</option><option>4x185 NAYY</option><option>4x240 NAYY</option><option>4(1x70) NA2XH</option><option>4(1x95) NA2XH</option><option>4(1x120) NA2XH</option><option>4(1x150) NA2XH</option><option>4(1x185) NA2XH</option><option>4(1x240) NA2XH</option><option>3x25 NA2XH</option><option>3x35 NA2XH</option><option>3x50 NA2XH</option><option>3x70 NA2XH</option><option>3x95 NA2XH</option><option>3x120 NA2XH</option><option>3x150 NA2XH</option><option>3x185 NA2XH</option><option>3x240 NA2XH</option><option>3x25+16 NA2XH</option><option>3x35+16 NA2XH</option><option>3x50+25 NA2XH</option><option>3x70+35 NA2XH</option><option>3x95+50 NA2XH</option><option>3x120+70 NA2XH</option><option>3x150+70 NA2XH</option><option>3x185+95 NA2XH</option><option>3x240+120 NA2XH</option><option>4x25 NA2XH</option><option>4x35 NA2XH</option><option>4x50 NA2XH</option><option>4x70 NA2XH</option><option>4x95 NA2XH</option><option>4x120 NA2XH</option><option>4x150 NA2XH</option><option>4x185 NA2XH</option><option>4x240 NA2XH</option></select></td><td class="cell-input cell-cable"><select onchange="set(2,'cable',this.value)"><option value="" selected="selected">—</option><option>4(1x70) NYY</option><option>4(1x95) NYY</option><option>4(1x120) NYY</option><option>4(1x150) NYY</option><option>4(1x185) NYY</option><option>4(1x240) NYY</option><option>2x2.5 NYY</option><option>2x4 NYY</option><option>2x6 NYY</option><option>2x10 NYY</option><option>2x16 NYY</option><option>3x10 NYY</option><option>3x16 NYY</option><option>3x25 NYY</option><option>3x35 NYY</option><option>3x50 NYY</option><option>3x70 NYY</option><option>3x95 NYY</option><option>3x120 NYY</option><option>3x150 NYY</option><option>3x185 NYY</option><option>3x240 NYY</option><option>3x16+10 NYY</option><option>3x25+16 NYY</option><option>3x35+16 NYY</option><option>3x50+25 NYY</option><option>3x70+35 NYY</option><option>3x95+50 NYY</option><option>3x120+70 NYY</option><option>3x150+70 NYY</option><option>3x185+95 NYY</option><option>3x240+120 NYY</option><option>4x4 NYY</option><option>4x6 NYY</option><option>4x10 NYY</option><option>4x16 NYY</option><option>4x25 NYY</option><option>4x35 NYY</option><option>4x50 NYY</option><option>4x70 NYY</option><option>4x95 NYY</option><option>4x120 NYY</option><option>4x150 NYY</option><option>4x185 NYY</option><option>4x240 NYY</option><option>4(1x70) N2XH</option><option>4(1x95) N2XH</option><option>4(1x120) N2XH</option><option>4(1x150) N2XH</option><option>4(1x185) N2XH</option><option>4(1x240) N2XH</option><option>2x2.5 N2XH</option><option>2x4 N2XH</option><option>2x6 N2XH</option><option>2x10 N2XH</option><option>2x16 N2XH</option><option>3x10 N2XH</option><option>3x16 N2XH</option><option>3x25 N2XH</option><option>3x35 N2XH</option><option>3x50 N2XH</option><option>3x70 N2XH</option><option>3x95 N2XH</option><option>3x120 N2XH</option><option>3x150 N2XH</option><option>3x185 N2XH</option><option>3x240 N2XH</option><option>3x16+10 N2XH</option><option>3x25+16 N2XH</option><option>3x35+16 N2XH</option><option>3x50+25 N2XH</option><option>3x70+35 N2XH</option><option>3x95+50 N2XH</option><option>3x120+70 N2XH</option><option>3x150+70 N2XH</option><option>3x185+95 N2XH</option><option>3x240+120 N2XH</option><option>4x4 N2XH</option><option>4x6 N2XH</option><option>4x10 N2XH</option><option>4x16 N2XH</option><option>4x25 N2XH</option><option>4x35 N2XH</option><option>4x50 N2XH</option><option>4x70 N2XH</option><option>4x95 N2XH</option><option>4x120 N2XH</option><option>4x150 N2XH</option><option>4x185 N2XH</option><option>4x240 N2XH</option><option>4(1x70) NAYY</option><option>4(1x95) NAYY</option><option>4(1x120) NAYY</option><option>4(1x150) NAYY</option><option>4(1x185) NAYY</option><option>4(1x240) NAYY</option><option>3x16+10 NAYY</option><option>3x25/16 NAYY</option><option>3x35/16 NAYY</option><option>3x50/25 NAYY</option><option>3x70/35 NAYY</option><option>3x95/50 NAYY</option><option>3x120/70 NAYY</option><option>3x150/70 NAYY</option><option>3x185/95 NAYY</option><option>3x240/120 NAYY</option><option>4x16 NAYY</option><option>4x25 NAYY</option><option>4x35 NAYY</option><option>4x50 NAYY</option><option>4x70 NAYY</option><option>4x95 NAYY</option><option>4x120 NAYY</option><option>4x150 NAYY</option><option>4x185 NAYY</option><option>4x240 NAYY</option><option>4(1x70) NA2XH</option><option>4(1x95) NA2XH</option><option>4(1x120) NA2XH</option><option>4(1x150) NA2XH</option><option>4(1x185) NA2XH</option><option>4(1x240) NA2XH</option><option>3x25 NA2XH</option><option>3x35 NA2XH</option><option>3x50 NA2XH</option><option>3x70 NA2XH</option><option>3x95 NA2XH</option><option>3x120 NA2XH</option><option>3x150 NA2XH</option><option>3x185 NA2XH</option><option>3x240 NA2XH</option><option>3x25+16 NA2XH</option><option>3x35+16 NA2XH</option><option>3x50+25 NA2XH</option><option>3x70+35 NA2XH</option><option>3x95+50 NA2XH</option><option>3x120+70 NA2XH</option><option>3x150+70 NA2XH</option><option>3x185+95 NA2XH</option><option>3x240+120 NA2XH</option><option>4x25 NA2XH</option><option>4x35 NA2XH</option><option>4x50 NA2XH</option><option>4x70 NA2XH</option><option>4x95 NA2XH</option><option>4x120 NA2XH</option><option>4x150 NA2XH</option><option>4x185 NA2XH</option><option>4x240 NA2XH</option></select></td><td class="cell-input cell-cable"><select onchange="set(3,'cable',this.value)"><option value="" selected="selected">—</option><option>4(1x70) NYY</option><option>4(1x95) NYY</option><option>4(1x120) NYY</option><option>4(1x150) NYY</option><option>4(1x185) NYY</option><option>4(1x240) NYY</option><option>2x2.5 NYY</option><option>2x4 NYY</option><option>2x6 NYY</option><option>2x10 NYY</option><option>2x16 NYY</option><option>3x10 NYY</option><option>3x16 NYY</option><option>3x25 NYY</option><option>3x35 NYY</option><option>3x50 NYY</option><option>3x70 NYY</option><option>3x95 NYY</option><option>3x120 NYY</option><option>3x150 NYY</option><option>3x185 NYY</option><option>3x240 NYY</option><option>3x16+10 NYY</option><option>3x25+16 NYY</option><option>3x35+16 NYY</option><option>3x50+25 NYY</option><option>3x70+35 NYY</option><option>3x95+50 NYY</option><option>3x120+70 NYY</option><option>3x150+70 NYY</option><option>3x185+95 NYY</option><option>3x240+120 NYY</option><option>4x4 NYY</option><option>4x6 NYY</option><option>4x10 NYY</option><option>4x16 NYY</option><option>4x25 NYY</option><option>4x35 NYY</option><option>4x50 NYY</option><option>4x70 NYY</option><option>4x95 NYY</option><option>4x120 NYY</option><option>4x150 NYY</option><option>4x185 NYY</option><option>4x240 NYY</option><option>4(1x70) N2XH</option><option>4(1x95) N2XH</option><option>4(1x120) N2XH</option><option>4(1x150) N2XH</option><option>4(1x185) N2XH</option><option>4(1x240) N2XH</option><option>2x2.5 N2XH</option><option>2x4 N2XH</option><option>2x6 N2XH</option><option>2x10 N2XH</option><option>2x16 N2XH</option><option>3x10 N2XH</option><option>3x16 N2XH</option><option>3x25 N2XH</option><option>3x35 N2XH</option><option>3x50 N2XH</option><option>3x70 N2XH</option><option>3x95 N2XH</option><option>3x120 N2XH</option><option>3x150 N2XH</option><option>3x185 N2XH</option><option>3x240 N2XH</option><option>3x16+10 N2XH</option><option>3x25+16 N2XH</option><option>3x35+16 N2XH</option><option>3x50+25 N2XH</option><option>3x70+35 N2XH</option><option>3x95+50 N2XH</option><option>3x120+70 N2XH</option><option>3x150+70 N2XH</option><option>3x185+95 N2XH</option><option>3x240+120 N2XH</option><option>4x4 N2XH</option><option>4x6 N2XH</option><option>4x10 N2XH</option><option>4x16 N2XH</option><option>4x25 N2XH</option><option>4x35 N2XH</option><option>4x50 N2XH</option><option>4x70 N2XH</option><option>4x95 N2XH</option><option>4x120 N2XH</option><option>4x150 N2XH</option><option>4x185 N2XH</option><option>4x240 N2XH</option><option>4(1x70) NAYY</option><option>4(1x95) NAYY</option><option>4(1x120) NAYY</option><option>4(1x150) NAYY</option><option>4(1x185) NAYY</option><option>4(1x240) NAYY</option><option>3x16+10 NAYY</option><option>3x25/16 NAYY</option><option>3x35/16 NAYY</option><option>3x50/25 NAYY</option><option>3x70/35 NAYY</option><option>3x95/50 NAYY</option><option>3x120/70 NAYY</option><option>3x150/70 NAYY</option><option>3x185/95 NAYY</option><option>3x240/120 NAYY</option><option>4x16 NAYY</option><option>4x25 NAYY</option><option>4x35 NAYY</option><option>4x50 NAYY</option><option>4x70 NAYY</option><option>4x95 NAYY</option><option>4x120 NAYY</option><option>4x150 NAYY</option><option>4x185 NAYY</option><option>4x240 NAYY</option><option>4(1x70) NA2XH</option><option>4(1x95) NA2XH</option><option>4(1x120) NA2XH</option><option>4(1x150) NA2XH</option><option>4(1x185) NA2XH</option><option>4(1x240) NA2XH</option><option>3x25 NA2XH</option><option>3x35 NA2XH</option><option>3x50 NA2XH</option><option>3x70 NA2XH</option><option>3x95 NA2XH</option><option>3x120 NA2XH</option><option>3x150 NA2XH</option><option>3x185 NA2XH</option><option>3x240 NA2XH</option><option>3x25+16 NA2XH</option><option>3x35+16 NA2XH</option><option>3x50+25 NA2XH</option><option>3x70+35 NA2XH</option><option>3x95+50 NA2XH</option><option>3x120+70 NA2XH</option><option>3x150+70 NA2XH</option><option>3x185+95 NA2XH</option><option>3x240+120 NA2XH</option><option>4x25 NA2XH</option><option>4x35 NA2XH</option><option>4x50 NA2XH</option><option>4x70 NA2XH</option><option>4x95 NA2XH</option><option>4x120 NA2XH</option><option>4x150 NA2XH</option><option>4x185 NA2XH</option><option>4x240 NA2XH</option></select></td><td class="cell-input cell-cable"><select onchange="set(4,'cable',this.value)"><option value="" selected="selected">—</option><option>4(1x70) NYY</option><option>4(1x95) NYY</option><option>4(1x120) NYY</option><option>4(1x150) NYY</option><option>4(1x185) NYY</option><option>4(1x240) NYY</option><option>2x2.5 NYY</option><option>2x4 NYY</option><option>2x6 NYY</option><option>2x10 NYY</option><option>2x16 NYY</option><option>3x10 NYY</option><option>3x16 NYY</option><option>3x25 NYY</option><option>3x35 NYY</option><option>3x50 NYY</option><option>3x70 NYY</option><option>3x95 NYY</option><option>3x120 NYY</option><option>3x150 NYY</option><option>3x185 NYY</option><option>3x240 NYY</option><option>3x16+10 NYY</option><option>3x25+16 NYY</option><option>3x35+16 NYY</option><option>3x50+25 NYY</option><option>3x70+35 NYY</option><option>3x95+50 NYY</option><option>3x120+70 NYY</option><option>3x150+70 NYY</option><option>3x185+95 NYY</option><option>3x240+120 NYY</option><option>4x4 NYY</option><option>4x6 NYY</option><option>4x10 NYY</option><option>4x16 NYY</option><option>4x25 NYY</option><option>4x35 NYY</option><option>4x50 NYY</option><option>4x70 NYY</option><option>4x95 NYY</option><option>4x120 NYY</option><option>4x150 NYY</option><option>4x185 NYY</option><option>4x240 NYY</option><option>4(1x70) N2XH</option><option>4(1x95) N2XH</option><option>4(1x120) N2XH</option><option>4(1x150) N2XH</option><option>4(1x185) N2XH</option><option>4(1x240) N2XH</option><option>2x2.5 N2XH</option><option>2x4 N2XH</option><option>2x6 N2XH</option><option>2x10 N2XH</option><option>2x16 N2XH</option><option>3x10 N2XH</option><option>3x16 N2XH</option><option>3x25 N2XH</option><option>3x35 N2XH</option><option>3x50 N2XH</option><option>3x70 N2XH</option><option>3x95 N2XH</option><option>3x120 N2XH</option><option>3x150 N2XH</option><option>3x185 N2XH</option><option>3x240 N2XH</option><option>3x16+10 N2XH</option><option>3x25+16 N2XH</option><option>3x35+16 N2XH</option><option>3x50+25 N2XH</option><option>3x70+35 N2XH</option><option>3x95+50 N2XH</option><option>3x120+70 N2XH</option><option>3x150+70 N2XH</option><option>3x185+95 N2XH</option><option>3x240+120 N2XH</option><option>4x4 N2XH</option><option>4x6 N2XH</option><option>4x10 N2XH</option><option>4x16 N2XH</option><option>4x25 N2XH</option><option>4x35 N2XH</option><option>4x50 N2XH</option><option>4x70 N2XH</option><option>4x95 N2XH</option><option>4x120 N2XH</option><option>4x150 N2XH</option><option>4x185 N2XH</option><option>4x240 N2XH</option><option>4(1x70) NAYY</option><option>4(1x95) NAYY</option><option>4(1x120) NAYY</option><option>4(1x150) NAYY</option><option>4(1x185) NAYY</option><option>4(1x240) NAYY</option><option>3x16+10 NAYY</option><option>3x25/16 NAYY</option><option>3x35/16 NAYY</option><option>3x50/25 NAYY</option><option>3x70/35 NAYY</option><option>3x95/50 NAYY</option><option>3x120/70 NAYY</option><option>3x150/70 NAYY</option><option>3x185/95 NAYY</option><option>3x240/120 NAYY</option><option>4x16 NAYY</option><option>4x25 NAYY</option><option>4x35 NAYY</option><option>4x50 NAYY</option><option>4x70 NAYY</option><option>4x95 NAYY</option><option>4x120 NAYY</option><option>4x150 NAYY</option><option>4x185 NAYY</option><option>4x240 NAYY</option><option>4(1x70) NA2XH</option><option>4(1x95) NA2XH</option><option>4(1x120) NA2XH</option><option>4(1x150) NA2XH</option><option>4(1x185) NA2XH</option><option>4(1x240) NA2XH</option><option>3x25 NA2XH</option><option>3x35 NA2XH</option><option>3x50 NA2XH</option><option>3x70 NA2XH</option><option>3x95 NA2XH</option><option>3x120 NA2XH</option><option>3x150 NA2XH</option><option>3x185 NA2XH</option><option>3x240 NA2XH</option><option>3x25+16 NA2XH</option><option>3x35+16 NA2XH</option><option>3x50+25 NA2XH</option><option>3x70+35 NA2XH</option><option>3x95+50 NA2XH</option><option>3x120+70 NA2XH</option><option>3x150+70 NA2XH</option><option>3x185+95 NA2XH</option><option>3x240+120 NA2XH</option><option>4x25 NA2XH</option><option>4x35 NA2XH</option><option>4x50 NA2XH</option><option>4x70 NA2XH</option><option>4x95 NA2XH</option><option>4x120 NA2XH</option><option>4x150 NA2XH</option><option>4x185 NA2XH</option><option>4x240 NA2XH</option></select></td><td class="cell-input cell-cable"><select onchange="set(5,'cable',this.value)"><option value="" selected="selected">—</option><option>4(1x70) NYY</option><option>4(1x95) NYY</option><option>4(1x120) NYY</option><option>4(1x150) NYY</option><option>4(1x185) NYY</option><option>4(1x240) NYY</option><option>2x2.5 NYY</option><option>2x4 NYY</option><option>2x6 NYY</option><option>2x10 NYY</option><option>2x16 NYY</option><option>3x10 NYY</option><option>3x16 NYY</option><option>3x25 NYY</option><option>3x35 NYY</option><option>3x50 NYY</option><option>3x70 NYY</option><option>3x95 NYY</option><option>3x120 NYY</option><option>3x150 NYY</option><option>3x185 NYY</option><option>3x240 NYY</option><option>3x16+10 NYY</option><option>3x25+16 NYY</option><option>3x35+16 NYY</option><option>3x50+25 NYY</option><option>3x70+35 NYY</option><option>3x95+50 NYY</option><option>3x120+70 NYY</option><option>3x150+70 NYY</option><option>3x185+95 NYY</option><option>3x240+120 NYY</option><option>4x4 NYY</option><option>4x6 NYY</option><option>4x10 NYY</option><option>4x16 NYY</option><option>4x25 NYY</option><option>4x35 NYY</option><option>4x50 NYY</option><option>4x70 NYY</option><option>4x95 NYY</option><option>4x120 NYY</option><option>4x150 NYY</option><option>4x185 NYY</option><option>4x240 NYY</option><option>4(1x70) N2XH</option><option>4(1x95) N2XH</option><option>4(1x120) N2XH</option><option>4(1x150) N2XH</option><option>4(1x185) N2XH</option><option>4(1x240) N2XH</option><option>2x2.5 N2XH</option><option>2x4 N2XH</option><option>2x6 N2XH</option><option>2x10 N2XH</option><option>2x16 N2XH</option><option>3x10 N2XH</option><option>3x16 N2XH</option><option>3x25 N2XH</option><option>3x35 N2XH</option><option>3x50 N2XH</option><option>3x70 N2XH</option><option>3x95 N2XH</option><option>3x120 N2XH</option><option>3x150 N2XH</option><option>3x185 N2XH</option><option>3x240 N2XH</option><option>3x16+10 N2XH</option><option>3x25+16 N2XH</option><option>3x35+16 N2XH</option><option>3x50+25 N2XH</option><option>3x70+35 N2XH</option><option>3x95+50 N2XH</option><option>3x120+70 N2XH</option><option>3x150+70 N2XH</option><option>3x185+95 N2XH</option><option>3x240+120 N2XH</option><option>4x4 N2XH</option><option>4x6 N2XH</option><option>4x10 N2XH</option><option>4x16 N2XH</option><option>4x25 N2XH</option><option>4x35 N2XH</option><option>4x50 N2XH</option><option>4x70 N2XH</option><option>4x95 N2XH</option><option>4x120 N2XH</option><option>4x150 N2XH</option><option>4x185 N2XH</option><option>4x240 N2XH</option><option>4(1x70) NAYY</option><option>4(1x95) NAYY</option><option>4(1x120) NAYY</option><option>4(1x150) NAYY</option><option>4(1x185) NAYY</option><option>4(1x240) NAYY</option><option>3x16+10 NAYY</option><option>3x25/16 NAYY</option><option>3x35/16 NAYY</option><option>3x50/25 NAYY</option><option>3x70/35 NAYY</option><option>3x95/50 NAYY</option><option>3x120/70 NAYY</option><option>3x150/70 NAYY</option><option>3x185/95 NAYY</option><option>3x240/120 NAYY</option><option>4x16 NAYY</option><option>4x25 NAYY</option><option>4x35 NAYY</option><option>4x50 NAYY</option><option>4x70 NAYY</option><option>4x95 NAYY</option><option>4x120 NAYY</option><option>4x150 NAYY</option><option>4x185 NAYY</option><option>4x240 NAYY</option><option>4(1x70) NA2XH</option><option>4(1x95) NA2XH</option><option>4(1x120) NA2XH</option><option>4(1x150) NA2XH</option><option>4(1x185) NA2XH</option><option>4(1x240) NA2XH</option><option>3x25 NA2XH</option><option>3x35 NA2XH</option><option>3x50 NA2XH</option><option>3x70 NA2XH</option><option>3x95 NA2XH</option><option>3x120 NA2XH</option><option>3x150 NA2XH</option><option>3x185 NA2XH</option><option>3x240 NA2XH</option><option>3x25+16 NA2XH</option><option>3x35+16 NA2XH</option><option>3x50+25 NA2XH</option><option>3x70+35 NA2XH</option><option>3x95+50 NA2XH</option><option>3x120+70 NA2XH</option><option>3x150+70 NA2XH</option><option>3x185+95 NA2XH</option><option>3x240+120 NA2XH</option><option>4x25 NA2XH</option><option>4x35 NA2XH</option><option>4x50 NA2XH</option><option>4x70 NA2XH</option><option>4x95 NA2XH</option><option>4x120 NA2XH</option><option>4x150 NA2XH</option><option>4x185 NA2XH</option><option>4x240 NA2XH</option></select></td><td class="cell-input cell-cable"><select onchange="set(6,'cable',this.value)"><option value="" selected="selected">—</option><option>4(1x70) NYY</option><option>4(1x95) NYY</option><option>4(1x120) NYY</option><option>4(1x150) NYY</option><option>4(1x185) NYY</option><option>4(1x240) NYY</option><option>2x2.5 NYY</option><option>2x4 NYY</option><option>2x6 NYY</option><option>2x10 NYY</option><option>2x16 NYY</option><option>3x10 NYY</option><option>3x16 NYY</option><option>3x25 NYY</option><option>3x35 NYY</option><option>3x50 NYY</option><option>3x70 NYY</option><option>3x95 NYY</option><option>3x120 NYY</option><option>3x150 NYY</option><option>3x185 NYY</option><option>3x240 NYY</option><option>3x16+10 NYY</option><option>3x25+16 NYY</option><option>3x35+16 NYY</option><option>3x50+25 NYY</option><option>3x70+35 NYY</option><option>3x95+50 NYY</option><option>3x120+70 NYY</option><option>3x150+70 NYY</option><option>3x185+95 NYY</option><option>3x240+120 NYY</option><option>4x4 NYY</option><option>4x6 NYY</option><option>4x10 NYY</option><option>4x16 NYY</option><option>4x25 NYY</option><option>4x35 NYY</option><option>4x50 NYY</option><option>4x70 NYY</option><option>4x95 NYY</option><option>4x120 NYY</option><option>4x150 NYY</option><option>4x185 NYY</option><option>4x240 NYY</option><option>4(1x70) N2XH</option><option>4(1x95) N2XH</option><option>4(1x120) N2XH</option><option>4(1x150) N2XH</option><option>4(1x185) N2XH</option><option>4(1x240) N2XH</option><option>2x2.5 N2XH</option><option>2x4 N2XH</option><option>2x6 N2XH</option><option>2x10 N2XH</option><option>2x16 N2XH</option><option>3x10 N2XH</option><option>3x16 N2XH</option><option>3x25 N2XH</option><option>3x35 N2XH</option><option>3x50 N2XH</option><option>3x70 N2XH</option><option>3x95 N2XH</option><option>3x120 N2XH</option><option>3x150 N2XH</option><option>3x185 N2XH</option><option>3x240 N2XH</option><option>3x16+10 N2XH</option><option>3x25+16 N2XH</option><option>3x35+16 N2XH</option><option>3x50+25 N2XH</option><option>3x70+35 N2XH</option><option>3x95+50 N2XH</option><option>3x120+70 N2XH</option><option>3x150+70 N2XH</option><option>3x185+95 N2XH</option><option>3x240+120 N2XH</option><option>4x4 N2XH</option><option>4x6 N2XH</option><option>4x10 N2XH</option><option>4x16 N2XH</option><option>4x25 N2XH</option><option>4x35 N2XH</option><option>4x50 N2XH</option><option>4x70 N2XH</option><option>4x95 N2XH</option><option>4x120 N2XH</option><option>4x150 N2XH</option><option>4x185 N2XH</option><option>4x240 N2XH</option><option>4(1x70) NAYY</option><option>4(1x95) NAYY</option><option>4(1x120) NAYY</option><option>4(1x150) NAYY</option><option>4(1x185) NAYY</option><option>4(1x240) NAYY</option><option>3x16+10 NAYY</option><option>3x25/16 NAYY</option><option>3x35/16 NAYY</option><option>3x50/25 NAYY</option><option>3x70/35 NAYY</option><option>3x95/50 NAYY</option><option>3x120/70 NAYY</option><option>3x150/70 NAYY</option><option>3x185/95 NAYY</option><option>3x240/120 NAYY</option><option>4x16 NAYY</option><option>4x25 NAYY</option><option>4x35 NAYY</option><option>4x50 NAYY</option><option>4x70 NAYY</option><option>4x95 NAYY</option><option>4x120 NAYY</option><option>4x150 NAYY</option><option>4x185 NAYY</option><option>4x240 NAYY</option><option>4(1x70) NA2XH</option><option>4(1x95) NA2XH</option><option>4(1x120) NA2XH</option><option>4(1x150) NA2XH</option><option>4(1x185) NA2XH</option><option>4(1x240) NA2XH</option><option>3x25 NA2XH</option><option>3x35 NA2XH</option><option>3x50 NA2XH</option><option>3x70 NA2XH</option><option>3x95 NA2XH</option><option>3x120 NA2XH</option><option>3x150 NA2XH</option><option>3x185 NA2XH</option><option>3x240 NA2XH</option><option>3x25+16 NA2XH</option><option>3x35+16 NA2XH</option><option>3x50+25 NA2XH</option><option>3x70+35 NA2XH</option><option>3x95+50 NA2XH</option><option>3x120+70 NA2XH</option><option>3x150+70 NA2XH</option><option>3x185+95 NA2XH</option><option>3x240+120 NA2XH</option><option>4x25 NA2XH</option><option>4x35 NA2XH</option><option>4x50 NA2XH</option><option>4x70 NA2XH</option><option>4x95 NA2XH</option><option>4x120 NA2XH</option><option>4x150 NA2XH</option><option>4x185 NA2XH</option><option>4x240 NA2XH</option></select></td><td class="cell-input cell-cable"><select onchange="set(7,'cable',this.value)"><option value="" selected="selected">—</option><option>4(1x70) NYY</option><option>4(1x95) NYY</option><option>4(1x120) NYY</option><option>4(1x150) NYY</option><option>4(1x185) NYY</option><option>4(1x240) NYY</option><option>2x2.5 NYY</option><option>2x4 NYY</option><option>2x6 NYY</option><option>2x10 NYY</option><option>2x16 NYY</option><option>3x10 NYY</option><option>3x16 NYY</option><option>3x25 NYY</option><option>3x35 NYY</option><option>3x50 NYY</option><option>3x70 NYY</option><option>3x95 NYY</option><option>3x120 NYY</option><option>3x150 NYY</option><option>3x185 NYY</option><option>3x240 NYY</option><option>3x16+10 NYY</option><option>3x25+16 NYY</option><option>3x35+16 NYY</option><option>3x50+25 NYY</option><option>3x70+35 NYY</option><option>3x95+50 NYY</option><option>3x120+70 NYY</option><option>3x150+70 NYY</option><option>3x185+95 NYY</option><option>3x240+120 NYY</option><option>4x4 NYY</option><option>4x6 NYY</option><option>4x10 NYY</option><option>4x16 NYY</option><option>4x25 NYY</option><option>4x35 NYY</option><option>4x50 NYY</option><option>4x70 NYY</option><option>4x95 NYY</option><option>4x120 NYY</option><option>4x150 NYY</option><option>4x185 NYY</option><option>4x240 NYY</option><option>4(1x70) N2XH</option><option>4(1x95) N2XH</option><option>4(1x120) N2XH</option><option>4(1x150) N2XH</option><option>4(1x185) N2XH</option><option>4(1x240) N2XH</option><option>2x2.5 N2XH</option><option>2x4 N2XH</option><option>2x6 N2XH</option><option>2x10 N2XH</option><option>2x16 N2XH</option><option>3x10 N2XH</option><option>3x16 N2XH</option><option>3x25 N2XH</option><option>3x35 N2XH</option><option>3x50 N2XH</option><option>3x70 N2XH</option><option>3x95 N2XH</option><option>3x120 N2XH</option><option>3x150 N2XH</option><option>3x185 N2XH</option><option>3x240 N2XH</option><option>3x16+10 N2XH</option><option>3x25+16 N2XH</option><option>3x35+16 N2XH</option><option>3x50+25 N2XH</option><option>3x70+35 N2XH</option><option>3x95+50 N2XH</option><option>3x120+70 N2XH</option><option>3x150+70 N2XH</option><option>3x185+95 N2XH</option><option>3x240+120 N2XH</option><option>4x4 N2XH</option><option>4x6 N2XH</option><option>4x10 N2XH</option><option>4x16 N2XH</option><option>4x25 N2XH</option><option>4x35 N2XH</option><option>4x50 N2XH</option><option>4x70 N2XH</option><option>4x95 N2XH</option><option>4x120 N2XH</option><option>4x150 N2XH</option><option>4x185 N2XH</option><option>4x240 N2XH</option><option>4(1x70) NAYY</option><option>4(1x95) NAYY</option><option>4(1x120) NAYY</option><option>4(1x150) NAYY</option><option>4(1x185) NAYY</option><option>4(1x240) NAYY</option><option>3x16+10 NAYY</option><option>3x25/16 NAYY</option><option>3x35/16 NAYY</option><option>3x50/25 NAYY</option><option>3x70/35 NAYY</option><option>3x95/50 NAYY</option><option>3x120/70 NAYY</option><option>3x150/70 NAYY</option><option>3x185/95 NAYY</option><option>3x240/120 NAYY</option><option>4x16 NAYY</option><option>4x25 NAYY</option><option>4x35 NAYY</option><option>4x50 NAYY</option><option>4x70 NAYY</option><option>4x95 NAYY</option><option>4x120 NAYY</option><option>4x150 NAYY</option><option>4x185 NAYY</option><option>4x240 NAYY</option><option>4(1x70) NA2XH</option><option>4(1x95) NA2XH</option><option>4(1x120) NA2XH</option><option>4(1x150) NA2XH</option><option>4(1x185) NA2XH</option><option>4(1x240) NA2XH</option><option>3x25 NA2XH</option><option>3x35 NA2XH</option><option>3x50 NA2XH</option><option>3x70 NA2XH</option><option>3x95 NA2XH</option><option>3x120 NA2XH</option><option>3x150 NA2XH</option><option>3x185 NA2XH</option><option>3x240 NA2XH</option><option>3x25+16 NA2XH</option><option>3x35+16 NA2XH</option><option>3x50+25 NA2XH</option><option>3x70+35 NA2XH</option><option>3x95+50 NA2XH</option><option>3x120+70 NA2XH</option><option>3x150+70 NA2XH</option><option>3x185+95 NA2XH</option><option>3x240+120 NA2XH</option><option>4x25 NA2XH</option><option>4x35 NA2XH</option><option>4x50 NA2XH</option><option>4x70 NA2XH</option><option>4x95 NA2XH</option><option>4x120 NA2XH</option><option>4x150 NA2XH</option><option>4x185 NA2XH</option><option>4x240 NA2XH</option></select></td><td class="addcol"></td></tr><tr><td class="rowlabel">Devre Sayısı</td><td class="cell-input"><select onchange="set(0,'devre',this.value)">
+       <option selected="selected">1</option><option>2</option><option>3</option><option>4</option></select></td><td class="cell-input"><select onchange="set(1,'devre',this.value)">
+       <option selected="selected">1</option><option>2</option><option>3</option><option>4</option></select></td><td class="cell-input"><select onchange="set(2,'devre',this.value)">
+       <option selected="selected">1</option><option>2</option><option>3</option><option>4</option></select></td><td class="cell-input"><select onchange="set(3,'devre',this.value)">
+       <option selected="selected">1</option><option>2</option><option>3</option><option>4</option></select></td><td class="cell-input"><select onchange="set(4,'devre',this.value)">
+       <option selected="selected">1</option><option>2</option><option>3</option><option>4</option></select></td><td class="cell-input"><select onchange="set(5,'devre',this.value)">
+       <option selected="selected">1</option><option>2</option><option>3</option><option>4</option></select></td><td class="cell-input"><select onchange="set(6,'devre',this.value)">
+       <option selected="selected">1</option><option>2</option><option>3</option><option>4</option></select></td><td class="cell-input"><select onchange="set(7,'devre',this.value)">
+       <option selected="selected">1</option><option>2</option><option>3</option><option>4</option></select></td><td class="addcol"></td></tr><tr><td class="rowlabel">Hat Uzunluğu (m)</td><td class="cell-input"><input type="number" value="" onchange="set(0,'length',this.value)" placeholder="0"></td><td class="cell-input"><input type="number" value="" onchange="set(1,'length',this.value)" placeholder="0"></td><td class="cell-input"><input type="number" value="" onchange="set(2,'length',this.value)" placeholder="0"></td><td class="cell-input"><input type="number" value="" onchange="set(3,'length',this.value)" placeholder="0"></td><td class="cell-input"><input type="number" value="" onchange="set(4,'length',this.value)" placeholder="0"></td><td class="cell-input"><input type="number" value="" onchange="set(5,'length',this.value)" placeholder="0"></td><td class="cell-input"><input type="number" value="" onchange="set(6,'length',this.value)" placeholder="0"></td><td class="cell-input"><input type="number" value="" onchange="set(7,'length',this.value)" placeholder="0"></td><td class="addcol"></td></tr><tr class="sec"><td colspan="10"></td></tr><tr><td class="rowlabel">Toplu Yük (W)</td><td class="cell-input"><input type="number" value="" onchange="setYuk(0,0,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(1,0,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(2,0,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(3,0,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(4,0,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(5,0,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(6,0,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(7,0,this.value)" placeholder=""></td><td class="addcol"></td></tr><tr><td class="rowlabel">Yük 1)</td><td class="cell-input"><input type="number" value="" onchange="setYuk(0,1,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(1,1,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(2,1,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(3,1,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(4,1,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(5,1,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(6,1,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(7,1,this.value)" placeholder=""></td><td class="addcol"></td></tr><tr><td class="rowlabel">Yük 2)</td><td class="cell-input"><input type="number" value="" onchange="setYuk(0,2,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(1,2,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(2,2,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(3,2,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(4,2,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(5,2,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(6,2,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(7,2,this.value)" placeholder=""></td><td class="addcol"></td></tr><tr><td class="rowlabel">Yük 3)</td><td class="cell-input"><input type="number" value="" onchange="setYuk(0,3,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(1,3,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(2,3,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(3,3,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(4,3,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(5,3,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(6,3,this.value)" placeholder=""></td><td class="cell-input"><input type="number" value="" onchange="setYuk(7,3,this.value)" placeholder=""></td><td class="addcol"></td></tr><tr><td class="rowlabel">Toplam Hat Yükü (W)</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="addcol"></td></tr><tr class="sec"><td colspan="10"></td></tr><tr><td class="rowlabel">Yük Akımı (A)</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="addcol"></td></tr><tr><td class="rowlabel">İletken Max. Akımı (A)</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="addcol"></td></tr><tr class="sec"><td colspan="10"></td></tr><tr><td class="rowlabel">W×L ×10⁻⁷</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="addcol"></td></tr><tr><td class="rowlabel">k</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="addcol"></td></tr><tr><td class="rowlabel">%er</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="addcol"></td></tr><tr class="sec"><td colspan="10"></td></tr><tr><td class="rowlabel">Reaktif Yük Q (VAR)</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="addcol"></td></tr><tr><td class="rowlabel">Q×L ×10⁻⁷</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="addcol"></td></tr><tr><td class="rowlabel">m</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="cell-auto">—</td><td class="addcol"></td></tr><tr><td class="rowlabel">%ex</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="addcol"></td></tr><tr class="sec"><td colspan="10"></td></tr><tr><td class="rowlabel">%e = %er + %ex</td><td class="cell-calc result ">—</td><td class="cell-calc result ">—</td><td class="cell-calc result ">—</td><td class="cell-calc result ">—</td><td class="cell-calc result ">—</td><td class="cell-calc result ">—</td><td class="cell-calc result ">—</td><td class="cell-calc result ">—</td><td class="addcol"></td></tr><tr><td class="rowlabel">ΔP (W)</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="addcol"></td></tr><tr><td class="rowlabel">%P</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="cell-calc result">—</td><td class="addcol"></td></tr><tr class="sec"><td colspan="10"></td></tr><tr><td class="rowlabel">Isı Kontrolü I (A)</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="addcol"></td></tr><tr class="verdict-row"><td class="rowlabel">SONUÇ</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="cell-calc">—</td><td class="addcol"></td></tr></tbody></table>
+</div>
+
+<div class="eqbar" id="eqbar">
+  <div class="eqrow">
+    <span class="eqlabel">%e = %er + %ex =</span>
+    <span class="eqval" id="eq_er">—</span>
+    <span class="eqop">+</span>
+    <span class="eqval" id="eq_ex">—</span>
+    <span class="eqop">=</span>
+    <span class="eqval eqbig" id="eq_e">—</span>
+    <span class="eqcmp" id="eq_e_cmp">&lt; 5</span>
+    <span class="eqsep"></span>
+    <span class="eqlabel">%P =</span>
+    <span class="eqval eqbig" id="eq_p">—</span>
+    <span class="eqcmp" id="eq_p_cmp">&lt; 5</span>
+    <span class="eqsep"></span>
+    <span class="eqlabel">ΔP =</span>
+    <span class="eqval eqbig" id="eq_dp">—</span>
+    <span class="eqsep"></span>
+    <span class="eqlabel">DURUM:</span>
+    <span class="eqval eqbig eqstatus" id="eq_ok" style="">—</span>
+  </div>
+</div>
+
+<div class="legend">
+  <span><span class="sw" style="background:var(--inp)"></span> Elle girilen / seçilen</span>
+  <span><span class="sw" style="background:var(--auto)"></span> Tablodan otomatik</span>
+  <span><span class="sw" style="background:#fafbfc"></span> Hesaplanan</span>
+</div>
+
+<script>
+const CABLES = [{"no": 1, "ad": "2R", "tip": "Havai", "faz": "Mono", "hava": 110, "toprak": 110, "k": 55.85, "m": 14.46}, {"no": 2, "ad": "3R", "tip": "Havai", "faz": "Mono", "hava": 110, "toprak": 110, "k": 55.85, "m": 14.46}, {"no": 3, "ad": "5R", "tip": "Havai", "faz": "Tri", "hava": 110, "toprak": 110, "k": 9.36, "m": 2.42}, {"no": 4, "ad": "2P", "tip": "Havai", "faz": "Mono", "hava": 165, "toprak": 165, "k": 27.86, "m": 13.56}, {"no": 5, "ad": "2P", "tip": "Havai", "faz": "Mono", "hava": 165, "toprak": 165, "k": 27.86, "m": 13.56}, {"no": 6, "ad": "4P/R", "tip": "Havai", "faz": "Tri", "hava": 165, "toprak": 165, "k": 4.67, "m": 2.27}, {"no": 7, "ad": "Po/R", "tip": "Havai", "faz": "Mono", "hava": 193, "toprak": 193, "k": 22.07, "m": 13.25}, {"no": 8, "ad": "4Po/R", "tip": "Havai", "faz": "Tri", "hava": 193, "toprak": 193, "k": 3.7, "m": 2.22}, {"no": 9, "ad": "3A+R/P", "tip": "Havai", "faz": "Tri", "hava": 225, "toprak": 225, "k": 2.93, "m": 2.17}, {"no": 10, "ad": "1x10+16 ALP.", "tip": "Havai", "faz": "Mono", "hava": 55, "toprak": 55, "k": 43.824, "m": 1.74}, {"no": 11, "ad": "1x16+25 ALP.", "tip": "Havai", "faz": "Mono", "hava": 70, "toprak": 70, "k": 27.39, "m": 1.7}, {"no": 12, "ad": "1x25+35 ALP.", "tip": "Havai", "faz": "Mono", "hava": 100, "toprak": 100, "k": 17.536, "m": 1.66}, {"no": 13, "ad": "1x35+50 ALP.", "tip": "Havai", "faz": "Mono", "hava": 125, "toprak": 125, "k": 12.519, "m": 1.613}, {"no": 14, "ad": "1x50+70 ALP.", "tip": "Havai", "faz": "Mono", "hava": 140, "toprak": 140, "k": 8.757, "m": 1.568}, {"no": 15, "ad": "1x70+95 ALP.", "tip": "Havai", "faz": "Mono", "hava": 180, "toprak": 180, "k": 6.248, "m": 1.568}, {"no": 16, "ad": "1x10/16+16 ALP.", "tip": "Havai", "faz": "Mono", "hava": 50, "toprak": 50, "k": 43.824, "m": 1.74}, {"no": 17, "ad": "1x16/16+25 ALP.", "tip": "Havai", "faz": "Mono", "hava": 70, "toprak": 70, "k": 27.39, "m": 1.702}, {"no": 18, "ad": "1x25/16+35 ALP.", "tip": "Havai", "faz": "Mono", "hava": 100, "toprak": 100, "k": 17.536, "m": 1.66}, {"no": 19, "ad": "1x35/16+50 ALP.", "tip": "Havai", "faz": "Mono", "hava": 125, "toprak": 125, "k": 12.519, "m": 1.613}, {"no": 20, "ad": "1x50/16+70 ALP.", "tip": "Havai", "faz": "Mono", "hava": 120, "toprak": 120, "k": 8.757, "m": 1.568}, {"no": 21, "ad": "1x70/16+95 ALP.", "tip": "Havai", "faz": "Mono", "hava": 150, "toprak": 150, "k": 6.248, "m": 1.568}, {"no": 22, "ad": "3x10+16 ALP.", "tip": "Havai", "faz": "Tri", "hava": 50, "toprak": 50, "k": 19.57, "m": 0.78}, {"no": 23, "ad": "3x16+25 ALP.", "tip": "Havai", "faz": "Tri", "hava": 50, "toprak": 50, "k": 12.23, "m": 0.76}, {"no": 24, "ad": "3x25+35 ALP.", "tip": "Havai", "faz": "Tri", "hava": 90, "toprak": 90, "k": 7.83, "m": 0.74}, {"no": 25, "ad": "3x35+50 ALP.", "tip": "Havai", "faz": "Tri", "hava": 115, "toprak": 115, "k": 5.59, "m": 0.72}, {"no": 26, "ad": "3x50+70 ALP.", "tip": "Havai", "faz": "Tri", "hava": 140, "toprak": 140, "k": 3.91, "m": 0.7}, {"no": 27, "ad": "3x70+95 ALP.", "tip": "Havai", "faz": "Tri", "hava": 180, "toprak": 180, "k": 2.79, "m": 0.7}, {"no": 28, "ad": "3x95+95 ALP.", "tip": "Havai", "faz": "Tri", "hava": 210, "toprak": 210, "k": 2.13, "m": 0.63}, {"no": 29, "ad": "3x120+95 ALP.", "tip": "Havai", "faz": "Tri", "hava": 250, "toprak": 250, "k": 1.63, "m": 0.68}, {"no": 30, "ad": "3x16/16+25 ALP.", "tip": "Havai", "faz": "Tri", "hava": 60, "toprak": 60, "k": 12.23, "m": 0.76}, {"no": 31, "ad": "3x25/16+35 ALP.", "tip": "Havai", "faz": "Tri", "hava": 80, "toprak": 80, "k": 7.83, "m": 0.74}, {"no": 32, "ad": "3x35/16+50 ALP.", "tip": "Havai", "faz": "Tri", "hava": 95, "toprak": 95, "k": 5.59, "m": 0.72}, {"no": 33, "ad": "3x50/16+70 ALP.", "tip": "Havai", "faz": "Tri", "hava": 120, "toprak": 120, "k": 3.91, "m": 0.7}, {"no": 34, "ad": "3x70/16+95 ALP.", "tip": "Havai", "faz": "Tri", "hava": 150, "toprak": 150, "k": 2.79, "m": 0.7}, {"no": 35, "ad": "3x95/16+95 ALP.", "tip": "Havai", "faz": "Tri", "hava": 210, "toprak": 210, "k": 2.13, "m": 0.63}, {"no": 36, "ad": "3x120/16+95 ALP.", "tip": "Havai", "faz": "Tri", "hava": 250, "toprak": 250, "k": 1.63, "m": 0.68}, {"no": 37, "ad": "4(1x70) NYY", "tip": "Yeralti", "faz": "Tri", "hava": 213, "toprak": 238, "k": 1.88, "m": 0.512}, {"no": 38, "ad": "4(1x95) NYY", "tip": "Yeralti", "faz": "Tri", "hava": 264, "toprak": 286, "k": 1.33, "m": 0.512}, {"no": 39, "ad": "4(1x120) NYY", "tip": "Yeralti", "faz": "Tri", "hava": 307, "toprak": 325, "k": 1.06, "m": 0.506}, {"no": 40, "ad": "4(1x150) NYY", "tip": "Yeralti", "faz": "Tri", "hava": 352, "toprak": 365, "k": 0.84, "m": 0.506}, {"no": 41, "ad": "4(1x185) NYY", "tip": "Yeralti", "faz": "Tri", "hava": 406, "toprak": 413, "k": 0.68, "m": 0.506}, {"no": 42, "ad": "4(1x240) NYY", "tip": "Yeralti", "faz": "Tri", "hava": 483, "toprak": 479, "k": 0.52, "m": 0.499}, {"no": 43, "ad": "2x2.5 NYY", "tip": "Yeralti", "faz": "Mono", "hava": 27, "toprak": 38, "k": 295.2, "m": 1.51}, {"no": 44, "ad": "2x4 NYY", "tip": "Yeralti", "faz": "Mono", "hava": 36, "toprak": 49, "k": 184.5, "m": 1.45}, {"no": 45, "ad": "2x6 NYY", "tip": "Yeralti", "faz": "Mono", "hava": 45, "toprak": 61, "k": 123, "m": 1.41}, {"no": 46, "ad": "2x10 NYY", "tip": "Yeralti", "faz": "Mono", "hava": 62, "toprak": 81, "k": 73.79, "m": 1.35}, {"no": 47, "ad": "2x16 NYY", "tip": "Yeralti", "faz": "Mono", "hava": 82, "toprak": 105, "k": 53.2, "m": 1.28}, {"no": 48, "ad": "3x10 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 59, "toprak": 79, "k": 12.37, "m": 0.58}, {"no": 49, "ad": "3x16 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 79, "toprak": 102, "k": 7.78, "m": 0.56}, {"no": 50, "ad": "3x25 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 106, "toprak": 133, "k": 5.11, "m": 0.547}, {"no": 51, "ad": "3x35 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 129, "toprak": 159, "k": 3.59, "m": 0.526}, {"no": 52, "ad": "3x50 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 157, "toprak": 188, "k": 2.5, "m": 0.533}, {"no": 53, "ad": "3x70 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 199, "toprak": 232, "k": 1.88, "m": 0.512}, {"no": 54, "ad": "3x95 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 246, "toprak": 280, "k": 1.33, "m": 0.512}, {"no": 55, "ad": "3x120 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 285, "toprak": 318, "k": 1.06, "m": 0.506}, {"no": 56, "ad": "3x150 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 326, "toprak": 359, "k": 0.84, "m": 0.506}, {"no": 57, "ad": "3x185 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 374, "toprak": 406, "k": 0.68, "m": 0.506}, {"no": 58, "ad": "3x240 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 445, "toprak": 473, "k": 0.52, "m": 0.499}, {"no": 59, "ad": "3x16+10 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 79, "toprak": 102, "k": 7.78, "m": 0.602}, {"no": 60, "ad": "3x25+16 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 106, "toprak": 133, "k": 5.11, "m": 0.547}, {"no": 61, "ad": "3x35+16 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 129, "toprak": 159, "k": 3.59, "m": 0.526}, {"no": 62, "ad": "3x50+25 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 157, "toprak": 188, "k": 2.5, "m": 0.533}, {"no": 63, "ad": "3x70+35 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 199, "toprak": 232, "k": 1.88, "m": 0.512}, {"no": 64, "ad": "3x95+50 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 246, "toprak": 280, "k": 1.33, "m": 0.512}, {"no": 65, "ad": "3x120+70 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 285, "toprak": 318, "k": 1.06, "m": 0.506}, {"no": 66, "ad": "3x150+70 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 326, "toprak": 359, "k": 0.84, "m": 0.506}, {"no": 67, "ad": "3x185+95 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 374, "toprak": 406, "k": 0.68, "m": 0.506}, {"no": 68, "ad": "3x240+120 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 445, "toprak": 473, "k": 0.52, "m": 0.499}, {"no": 69, "ad": "4x4 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 34, "toprak": 47, "k": 30.92, "m": 0.62}, {"no": 70, "ad": "4x6 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 43, "toprak": 59, "k": 20.61, "m": 0.6}, {"no": 71, "ad": "4x10 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 59, "toprak": 79, "k": 12.37, "m": 0.58}, {"no": 72, "ad": "4x16 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 79, "toprak": 102, "k": 7.78, "m": 0.56}, {"no": 73, "ad": "4x25 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 106, "toprak": 133, "k": 5.11, "m": 0.547}, {"no": 74, "ad": "4x35 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 129, "toprak": 159, "k": 3.59, "m": 0.526}, {"no": 75, "ad": "4x50 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 157, "toprak": 188, "k": 2.5, "m": 0.533}, {"no": 76, "ad": "4x70 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 199, "toprak": 232, "k": 1.88, "m": 0.512}, {"no": 77, "ad": "4x95 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 246, "toprak": 280, "k": 1.33, "m": 0.512}, {"no": 78, "ad": "4x120 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 285, "toprak": 318, "k": 1.06, "m": 0.506}, {"no": 79, "ad": "4x150 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 326, "toprak": 359, "k": 0.84, "m": 0.506}, {"no": 80, "ad": "4x185 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 374, "toprak": 406, "k": 0.68, "m": 0.506}, {"no": 81, "ad": "4x240 NYY", "tip": "Yeralti", "faz": "Tri", "hava": 445, "toprak": 473, "k": 0.52, "m": 0.499}, {"no": 82, "ad": "4(1x70) N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 263, "toprak": 263, "k": 1.88, "m": 0.512}, {"no": 83, "ad": "4(1x95) N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 325, "toprak": 325, "k": 1.33, "m": 0.512}, {"no": 84, "ad": "4(1x120) N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 380, "toprak": 380, "k": 1.06, "m": 0.506}, {"no": 85, "ad": "4(1x150) N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 437, "toprak": 437, "k": 0.84, "m": 0.506}, {"no": 86, "ad": "4(1x185) N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 507, "toprak": 507, "k": 0.68, "m": 0.506}, {"no": 87, "ad": "4(1x240) N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 604, "toprak": 604, "k": 0.52, "m": 0.499}, {"no": 88, "ad": "2x2.5 N2XH", "tip": "Yeralti", "faz": "Mono", "hava": 27, "toprak": 38, "k": 295.2, "m": 1.51}, {"no": 89, "ad": "2x4 N2XH", "tip": "Yeralti", "faz": "Mono", "hava": 36, "toprak": 49, "k": 184.5, "m": 1.45}, {"no": 90, "ad": "2x6 N2XH", "tip": "Yeralti", "faz": "Mono", "hava": 45, "toprak": 61, "k": 123, "m": 1.41}, {"no": 91, "ad": "2x10 N2XH", "tip": "Yeralti", "faz": "Mono", "hava": 62, "toprak": 81, "k": 73.79, "m": 1.35}, {"no": 92, "ad": "2x16 N2XH", "tip": "Yeralti", "faz": "Mono", "hava": 82, "toprak": 105, "k": 53.2, "m": 1.28}, {"no": 93, "ad": "3x10 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 59, "toprak": 79, "k": 12.37, "m": 0.58}, {"no": 94, "ad": "3x16 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 79, "toprak": 102, "k": 7.78, "m": 0.56}, {"no": 95, "ad": "3x25 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 106, "toprak": 133, "k": 5.11, "m": 0.547}, {"no": 96, "ad": "3x35 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 129, "toprak": 159, "k": 3.59, "m": 0.526}, {"no": 97, "ad": "3x50 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 157, "toprak": 188, "k": 2.5, "m": 0.533}, {"no": 98, "ad": "3x70 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 199, "toprak": 232, "k": 1.88, "m": 0.512}, {"no": 99, "ad": "3x95 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 246, "toprak": 280, "k": 1.33, "m": 0.512}, {"no": 100, "ad": "3x120 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 285, "toprak": 318, "k": 1.06, "m": 0.506}, {"no": 101, "ad": "3x150 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 326, "toprak": 359, "k": 0.84, "m": 0.506}, {"no": 102, "ad": "3x185 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 374, "toprak": 406, "k": 0.68, "m": 0.506}, {"no": 103, "ad": "3x240 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 445, "toprak": 473, "k": 0.52, "m": 0.499}, {"no": 104, "ad": "3x16+10 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 79, "toprak": 102, "k": 7.78, "m": 0.602}, {"no": 105, "ad": "3x25+16 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 106, "toprak": 133, "k": 5.11, "m": 0.547}, {"no": 106, "ad": "3x35+16 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 129, "toprak": 159, "k": 3.59, "m": 0.526}, {"no": 107, "ad": "3x50+25 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 157, "toprak": 188, "k": 2.5, "m": 0.533}, {"no": 108, "ad": "3x70+35 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 199, "toprak": 232, "k": 1.88, "m": 0.512}, {"no": 109, "ad": "3x95+50 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 246, "toprak": 280, "k": 1.33, "m": 0.512}, {"no": 110, "ad": "3x120+70 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 285, "toprak": 318, "k": 1.06, "m": 0.506}, {"no": 111, "ad": "3x150+70 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 326, "toprak": 359, "k": 0.84, "m": 0.506}, {"no": 112, "ad": "3x185+95 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 374, "toprak": 406, "k": 0.68, "m": 0.506}, {"no": 113, "ad": "3x240+120 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 445, "toprak": 473, "k": 0.52, "m": 0.499}, {"no": 114, "ad": "4x4 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 34, "toprak": 47, "k": 30.92, "m": 0.62}, {"no": 115, "ad": "4x6 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 43, "toprak": 59, "k": 20.61, "m": 0.6}, {"no": 116, "ad": "4x10 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 59, "toprak": 79, "k": 12.37, "m": 0.58}, {"no": 117, "ad": "4x16 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 79, "toprak": 102, "k": 7.78, "m": 0.56}, {"no": 118, "ad": "4x25 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 106, "toprak": 133, "k": 5.11, "m": 0.547}, {"no": 119, "ad": "4x35 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 129, "toprak": 159, "k": 3.59, "m": 0.526}, {"no": 120, "ad": "4x50 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 157, "toprak": 188, "k": 2.5, "m": 0.533}, {"no": 121, "ad": "4x70 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 199, "toprak": 232, "k": 1.88, "m": 0.512}, {"no": 122, "ad": "4x95 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 246, "toprak": 280, "k": 1.33, "m": 0.512}, {"no": 123, "ad": "4x120 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 285, "toprak": 318, "k": 1.06, "m": 0.506}, {"no": 124, "ad": "4x150 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 326, "toprak": 359, "k": 0.84, "m": 0.506}, {"no": 125, "ad": "4x185 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 374, "toprak": 406, "k": 0.68, "m": 0.506}, {"no": 126, "ad": "4x240 N2XH", "tip": "Yeralti", "faz": "Tri", "hava": 445, "toprak": 473, "k": 0.52, "m": 0.499}, {"no": 127, "ad": "4(1x70) NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 152, "toprak": 175, "k": 3.07, "m": 0.512}, {"no": 128, "ad": "4(1x95) NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 186, "toprak": 215, "k": 2.22, "m": 0.512}, {"no": 129, "ad": "4(1x120) NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 216, "toprak": 245, "k": 1.75, "m": 0.506}, {"no": 130, "ad": "4(1x150) NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 246, "toprak": 275, "k": 1.42, "m": 0.506}, {"no": 131, "ad": "4(1x185) NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 285, "toprak": 310, "k": 1.136, "m": 0.506}, {"no": 132, "ad": "4(1x240) NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 338, "toprak": 360, "k": 0.866, "m": 0.499}, {"no": 133, "ad": "3x16+10 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 64, "toprak": 78, "k": 13.2, "m": 0.56}, {"no": 134, "ad": "3x25/16 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 82, "toprak": 100, "k": 8.3, "m": 0.547}, {"no": 135, "ad": "3x35/16 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 100, "toprak": 120, "k": 6, "m": 0.526}, {"no": 136, "ad": "3x50/25 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 119, "toprak": 145, "k": 4.44, "m": 0.533}, {"no": 137, "ad": "3x70/35 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 152, "toprak": 175, "k": 3.07, "m": 0.512}, {"no": 138, "ad": "3x95/50 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 186, "toprak": 215, "k": 2.22, "m": 0.512}, {"no": 139, "ad": "3x120/70 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 216, "toprak": 245, "k": 1.75, "m": 0.506}, {"no": 140, "ad": "3x150/70 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 246, "toprak": 275, "k": 1.42, "m": 0.506}, {"no": 141, "ad": "3x185/95 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 285, "toprak": 310, "k": 1.136, "m": 0.506}, {"no": 142, "ad": "3x240/120 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 338, "toprak": 360, "k": 0.866, "m": 0.499}, {"no": 143, "ad": "4x16 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 64, "toprak": 78, "k": 13.2, "m": 0.56}, {"no": 144, "ad": "4x25 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 82, "toprak": 100, "k": 8.3, "m": 0.547}, {"no": 145, "ad": "4x35 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 100, "toprak": 120, "k": 6, "m": 0.526}, {"no": 146, "ad": "4x50 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 119, "toprak": 145, "k": 4.44, "m": 0.533}, {"no": 147, "ad": "4x70 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 152, "toprak": 175, "k": 3.07, "m": 0.512}, {"no": 148, "ad": "4x95 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 186, "toprak": 215, "k": 2.22, "m": 0.512}, {"no": 149, "ad": "4x120 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 216, "toprak": 245, "k": 1.75, "m": 0.506}, {"no": 150, "ad": "4x150 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 246, "toprak": 275, "k": 1.42, "m": 0.506}, {"no": 151, "ad": "4x185 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 285, "toprak": 310, "k": 1.136, "m": 0.506}, {"no": 152, "ad": "4x240 NAYY", "tip": "Yeralti", "faz": "Tri", "hava": 338, "toprak": 360, "k": 0.866, "m": 0.499}, {"no": 153, "ad": "2x4_ANTIGRON", "tip": "Havai", "faz": "Mono", "hava": 34, "toprak": 34, "k": 184.5, "m": 1.45}, {"no": 154, "ad": "2x6_ANTIGRON", "tip": "Havai", "faz": "Mono", "hava": 44, "toprak": 44, "k": 123, "m": 1.41}, {"no": 155, "ad": "2x10_ANTIGRON", "tip": "Havai", "faz": "Mono", "hava": 60, "toprak": 60, "k": 73.79, "m": 1.35}, {"no": 156, "ad": "2x16_ANTIGRON", "tip": "Havai", "faz": "Mono", "hava": 60, "toprak": 60, "k": 53.2, "m": 1.28}, {"no": 157, "ad": "3x6_ANTIGRON", "tip": "Havai", "faz": "Mono", "hava": 44, "toprak": 44, "k": 123, "m": 0.6}, {"no": 158, "ad": "3x10_ANTIGRON", "tip": "Havai", "faz": "Mono", "hava": 60, "toprak": 60, "k": 73.79, "m": 0.58}, {"no": 159, "ad": "4(1x70) NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 254, "toprak": 238, "k": 3.07, "m": 0.512}, {"no": 160, "ad": "4(1x95) NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 313, "toprak": 284, "k": 2.22, "m": 0.512}, {"no": 161, "ad": "4(1x120) NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 366, "toprak": 323, "k": 1.75, "m": 0.506}, {"no": 162, "ad": "4(1x150) NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 420, "toprak": 361, "k": 1.42, "m": 0.506}, {"no": 163, "ad": "4(1x185) NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 486, "toprak": 408, "k": 1.136, "m": 0.506}, {"no": 164, "ad": "4(1x240) NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 585, "toprak": 476, "k": 0.866, "m": 0.499}, {"no": 165, "ad": "3x25 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 100, "toprak": 111, "k": 8.3, "m": 0.547}, {"no": 166, "ad": "3x35 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 122, "toprak": 132, "k": 6, "m": 0.526}, {"no": 167, "ad": "3x50 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 147, "toprak": 157, "k": 4.44, "m": 0.533}, {"no": 168, "ad": "3x70 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 189, "toprak": 195, "k": 3.07, "m": 0.512}, {"no": 169, "ad": "3x95 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 232, "toprak": 233, "k": 2.22, "m": 0.512}, {"no": 170, "ad": "3x120 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 270, "toprak": 266, "k": 1.75, "m": 0.506}, {"no": 171, "ad": "3x150 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 308, "toprak": 299, "k": 1.42, "m": 0.506}, {"no": 172, "ad": "3x185 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 357, "toprak": 340, "k": 1.136, "m": 0.506}, {"no": 173, "ad": "3x240 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 435, "toprak": 401, "k": 0.866, "m": 0.499}, {"no": 174, "ad": "3x25+16 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 100, "toprak": 111, "k": 8.3, "m": 0.547}, {"no": 175, "ad": "3x35+16 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 122, "toprak": 132, "k": 6, "m": 0.526}, {"no": 176, "ad": "3x50+25 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 147, "toprak": 157, "k": 4.44, "m": 0.533}, {"no": 177, "ad": "3x70+35 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 189, "toprak": 195, "k": 3.07, "m": 0.512}, {"no": 178, "ad": "3x95+50 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 232, "toprak": 233, "k": 2.22, "m": 0.512}, {"no": 179, "ad": "3x120+70 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 270, "toprak": 266, "k": 1.75, "m": 0.506}, {"no": 180, "ad": "3x150+70 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 308, "toprak": 299, "k": 1.42, "m": 0.506}, {"no": 181, "ad": "3x185+95 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 357, "toprak": 340, "k": 1.136, "m": 0.506}, {"no": 182, "ad": "3x240+120 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 435, "toprak": 401, "k": 0.866, "m": 0.499}, {"no": 183, "ad": "4x25 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 100, "toprak": 111, "k": 8.3, "m": 0.547}, {"no": 184, "ad": "4x35 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 122, "toprak": 132, "k": 6, "m": 0.526}, {"no": 185, "ad": "4x50 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 147, "toprak": 157, "k": 4.44, "m": 0.533}, {"no": 186, "ad": "4x70 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 189, "toprak": 195, "k": 3.07, "m": 0.512}, {"no": 187, "ad": "4x95 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 232, "toprak": 233, "k": 2.22, "m": 0.512}, {"no": 188, "ad": "4x120 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 270, "toprak": 266, "k": 1.75, "m": 0.506}, {"no": 189, "ad": "4x150 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 308, "toprak": 299, "k": 1.42, "m": 0.506}, {"no": 190, "ad": "4x185 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 357, "toprak": 340, "k": 1.136, "m": 0.506}, {"no": 191, "ad": "4x240 NA2XH", "tip": "Yeralti", "faz": "Tri", "hava": 435, "toprak": 401, "k": 0.866, "m": 0.499}];
+function newKol(){return {tip:'Yeralti',cable:'',devre:'',nokta:'',length:'',yuk:['','','','']};}
+let kols = Array.from({length:8}, newKol);
+
+function cableOpts(tip,sel){
+  return '<option value="">—</option>'+CABLES.filter(c=>c.tip===tip)
+    .map(c=>`<option ${c.ad===sel?'selected':''}>${c.ad}</option>`).join('');
+}
+
+function numeric(value,label,allowEmpty){
+  const text=String(value??'').trim().replace(',','.');
+  if(!text&&allowEmpty) return 0;
+  if(!text||!/^[+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(text)||!Number.isFinite(Number(text))) throw new Error(label+': sıfır veya pozitif bir sayı girin.');
+  return Number(text);
+}
+function htmlEsc(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+function ownLoad(k){if(!Array.isArray(k.yuk))throw new Error('Yük listesi geçersiz.');return k.yuk.reduce((a,v)=>a+numeric(v,'Yük',true),0); }   // kolun kendi yükü
+function calc(k,idx){
+  const Utri=numeric(gU.value,'Gerilim'),div=numeric(gDiv.value,'Diversite katsayısı');
+  const cos=numeric(gCos.value,'Güç faktörü');
+  if(Utri<=0||div<=0||cos<=0||cos>1)throw new Error('Gerilim ve katsayılar pozitif olmalı; güç faktörü en fazla 1 olabilir.');   // güç faktörü
+  const tan=Math.sqrt(Math.max(0,1-cos*cos))/cos;          // tanφ
+  const Umono=220;                       // monofaze faz-nötr gerilimi
+  const c=CABLES.find(x=>x.ad===k.cable&&x.tip===k.tip);
+  const dev=k.devre===''?1:numeric(k.devre,'Devre sayısı');
+  if(!Number.isInteger(dev)||dev<1)throw new Error('Devre sayısı pozitif tam sayı olmalı.');
+  const L=numeric(k.length,'Hat uzunluğu',true);
+  const own=ownLoad(k);
+  // Kümülatif: kendi yükü + sağındaki tüm kolların yükleri (Excel mantığı)
+  let P=own;
+  if(typeof idx==='number'){
+    for(let j=idx+1;j<kols.length;j++) P+=ownLoad(kols[j]);
+  }
+  // Faz tipi seçilen kablodan gelir (k1/m1 dolu = Mono, k3/m3 dolu = Tri)
+  const faz = c? c.faz : 'Tri';
+  let amp=null,kk=null,mm=null,wxl=0,er=0,Q=0,qxl=0,ex=0,pe=0,dP=0,pp=0,heat=0,ok=null,I=0;
+  // Akım: P aktif güç (W) → mono: P/(U·cosφ), tri: P/(√3·U·cosφ), diversite ile
+  if(faz==='Mono'){
+    I = P>0 ? (P/(Umono*cos))/div : 0;
+  } else {
+    I = P>0 ? (P/(Math.sqrt(3)*Utri*cos))/div : 0;
+  }
+  wxl=(P*L)/1e7;
+  Q=P*tan;                               // reaktif yük = P × tanφ
+  qxl=(Q*L)/1e7;
+  if(c){
+    amp=(k.tip==='Havai'?c.hava:c.toprak)*dev;
+    kk=c.k/dev; mm=c.m/dev;          // k1/m1 (mono) veya k3/m3 (tri) — tablodan otomatik
+    er=kk*wxl; ex=mm*qxl; pe=er+ex;
+    dP=P>0?(er/100)*P:0; pp=P>0?(dP/P)*100:0;
+    heat=I;                          // ısı kontrol akımı = yük akımı (faz tipine göre)
+    ok=(heat<amp);
+  }
+  return {c,faz,own,P,I,amp,kk,mm,wxl,er,Q,qxl,ex,pe,dP,pp,heat,ok};
+}
+
+function fmt(x,d){return (x||x===0)?(+x).toFixed(d):'—';}
+
+function render(){
+  const lim=+gLim.value||5;
+  let R;try{R=kols.map(calc);document.documentElement.dataset.vgInvalid='false';}
+  catch(error){document.documentElement.dataset.vgInvalid='true';document.getElementById('sheet').innerHTML='<tr><td role="alert">'+htmlEsc(error.message)+'</td></tr>';document.querySelectorAll('#eqbar .eqval').forEach(el=>{el.textContent='—';});return;}
+  // build rows
+  let h='';
+  h+=`<tr class="banner"><td colspan="${kols.length+2}">AG GERİLİM DÜŞÜMÜ VE GÜÇ KAYBI HESABI</td></tr>`;
+  h+=`<tr class="kolhdr"><th class="rowlabel">HAT / KOL</th>`+
+     kols.map((k,i)=>`<th>HAT ${i+1}<button class="kdel" onclick="delKol(${i})" title="Bu hattı sil">✕</button></th>`).join('')+
+     `<th class="addcol"><button class="kadd" onclick="addKol()" title="Sağa hat ekle">+</button></th></tr>`;
+
+  // Nokta adı (Branşman Noktası — en üst satır)
+  h+=row('Branşman Noktası',(k,i)=>{
+    if(i===kols.length-1) return `<td class="cell-input nokta-cell"></td>`;
+    const kod='A'+String(i+1).padStart(2,'0');
+    return `<td class="cell-input nokta-cell"><input class="nokta-in" value="${htmlEsc(k.nokta)}" onchange="set(${i},'nokta',this.value)" placeholder="${kod}" title="HAT ${i+1} ile HAT ${i+2} arasındaki branşman noktası (${kod})"></td>`;
+  });
+  // Havai/Yeralti
+  h+=row('Havai / Yeraltı',(k,i)=>`<td class="cell-input cell-tip"><select onchange="set(${i},'tip',this.value)">
+       <option ${k.tip==='Havai'?'selected':''}>Havai</option>
+       <option ${k.tip==='Yeralti'?'selected':''}>Yeralti</option></select></td>`);
+  // Kablo cinsi
+  h+=row('Kablo / İletken Cinsi',(k,i)=>`<td class="cell-input cell-cable"><select onchange="set(${i},'cable',this.value)">${cableOpts(k.tip,k.cable)}</select></td>`);
+  // Devre
+  h+=row('Devre Sayısı',(k,i)=>`<td class="cell-input"><select onchange="set(${i},'devre',this.value)">
+       ${[1,2,3,4].map(n=>`<option ${(k.devre==n||(k.devre===''&&n===1))?'selected':''}>${n}</option>`).join('')}</select></td>`);
+  // Hat uzunluğu
+  h+=row('Hat Uzunluğu (m)',(k,i)=>`<td class="cell-input"><input type="number" value="${htmlEsc(k.length)}" onchange="set(${i},'length',this.value)" placeholder="0"></td>`);
+  h+=sec();
+  // Yükler
+  h+=row('Toplu Yük (W)',(k,i)=>yukCell(i,0,k.yuk[0]));
+  h+=row('Yük 1)',(k,i)=>yukCell(i,1,k.yuk[1]));
+  h+=row('Yük 2)',(k,i)=>yukCell(i,2,k.yuk[2]));
+  h+=row('Yük 3)',(k,i)=>yukCell(i,3,k.yuk[3]));
+  h+=row('Toplam Hat Yükü (W)',(k,i,r)=>`<td class="cell-calc result">${r.P?fmt(r.P,0):'—'}</td>`);
+  h+=sec();
+  // Yük akımı
+  h+=row('Yük Akımı (A)',(k,i,r)=>`<td class="cell-calc result">${r.P?fmt(r.I,1):'—'}</td>`);
+  // Max akım — çekilen akım taşıma kapasitesini aşarsa kırmızı uyarı
+  h+=row('İletken Max. Akımı (A)',(k,i,r)=>{
+    const over=r.c && r.amp!=null && r.I>r.amp;
+    return `<td class="${over?'warn-cell':'cell-auto'}" ${over?'title="Çekilen akım taşıma kapasitesini aşıyor!"':''}>${r.amp!=null?r.amp+(over?' ⚠':''):'—'}</td>`;});
+  h+=sec();
+  // WxL
+  h+=row('W×L ×10⁻⁷',(k,i,r)=>`<td class="cell-calc">${r.c?fmt(r.wxl,5):'—'}</td>`);
+  h+=row('k',(k,i,r)=>`<td class="cell-auto">${r.kk!=null?fmt(r.kk,3):'—'}</td>`);
+  h+=row('%er',(k,i,r)=>`<td class="cell-calc">${r.c?fmt(r.er,4):'—'}</td>`);
+  h+=sec();
+  // Reaktif
+  h+=row('Reaktif Yük Q (VAR)',(k,i,r)=>`<td class="cell-calc">${r.c?fmt(r.Q,0):'—'}</td>`);
+  h+=row('Q×L ×10⁻⁷',(k,i,r)=>`<td class="cell-calc">${r.c?fmt(r.qxl,5):'—'}</td>`);
+  h+=row('m',(k,i,r)=>`<td class="cell-auto">${r.mm!=null?fmt(r.mm,3):'—'}</td>`);
+  h+=row('%ex',(k,i,r)=>`<td class="cell-calc">${r.c?fmt(r.ex,4):'—'}</td>`);
+  h+=sec();
+  // %e toplam — sınır aşımında kırmızı uyarı
+  h+=row('%e = %er + %ex',(k,i,r)=>{
+    const over=r.c && r.pe>=lim;
+    return `<td class="${over?'warn-cell':'cell-calc result '+(r.c?'ok':'')}" ${over?'title="Gerilim düşümü %'+lim+' sınırını aştı!"':''}>${r.c?fmt(r.pe,3)+'%'+(over?' ⚠':''):'—'}</td>`;});
+  // Güç kaybı
+  h+=row('ΔP (W)',(k,i,r)=>`<td class="cell-calc">${r.c?fmt(r.dP,1):'—'}</td>`);
+  h+=row('%P',(k,i,r)=>{
+    const over=r.c && r.pp>=lim;
+    return `<td class="${over?'warn-cell':'cell-calc result'}" ${over?'title="Güç kaybı %'+lim+' sınırını aştı!"':''}>${r.c?fmt(r.pp,3)+'%'+(over?' ⚠':''):'—'}</td>`;});
+  h+=sec();
+  // Isı kontrolü
+  h+=row('Isı Kontrolü I (A)',(k,i,r)=>`<td class="cell-calc">${r.c?fmt(r.heat,1):'—'}</td>`);
+  // Sonuç
+  h+=`<tr class="verdict-row"><td class="rowlabel">SONUÇ</td>`+
+     R.map(r=>{
+       if(!r.c)return `<td class="cell-calc">—</td>`;
+       const ampOver = r.amp!=null && r.I>r.amp;
+       const eOver = r.pe>=lim;
+       const pOver = r.pp>=lim;
+       const good = !ampOver && !eOver && !pOver;
+       let txt='✓ UYGUN';
+       if(ampOver) txt='⚠ KESİT AZ';
+       else if(eOver) txt='⚠ %e AŞIM';
+       else if(pOver) txt='⚠ %P AŞIM';
+       return `<td class="cell-calc ${good?'ok':'bad'}">${txt}</td>`;
+     }).join('')+`<td class="addcol"></td></tr>`;
+
+  document.getElementById('sheet').innerHTML=h;
+  updateTot(R,lim);
+
+  function row(label,fn){
+    return `<tr><td class="rowlabel">${label}</td>`+
+      kols.map((k,i)=>fn(k,i,R[i])).join('')+`<td class="addcol"></td></tr>`;}
+  function sec(){return `<tr class="sec"><td colspan="${kols.length+2}"></td></tr>`;}
+  function yukCell(i,idx,val){
+    return `<td class="cell-input"><input type="number" value="${htmlEsc(val)}" onchange="setYuk(${i},${idx},this.value)" placeholder=""></td>`;}
+}
+
+function set(i,f,v){ kols[i][f]=v; if(f==='tip')kols[i].cable=''; render(); }
+function setYuk(i,idx,v){ kols[i].yuk[idx]=v; render(); }
+function addKol(){ kols.push(newKol()); render(); }
+function delKol(i){ if(kols.length>1){ kols.splice(i,1); render(); } }
+
+function updateTot(R,lim){
+  const valid=R.filter(r=>r.c);
+  const totEr=valid.reduce((a,r)=>a+r.er,0);
+  const totEx=valid.reduce((a,r)=>a+r.ex,0);
+  const totE=valid.reduce((a,r)=>a+r.pe,0);
+  const totDP=valid.reduce((a,r)=>a+r.dP,0);
+  // Gerçek toplam yük = kolların KENDİ yüklerinin toplamı (kümülatif değil)
+  const totP=kols.reduce((a,k)=>a+ownLoad(k),0);
+  const ppTot=totP>0?(totDP/totP)*100:0;
+
+  // Excel tarzı detaylı denklem satırı
+  const has=valid.length>0;
+  const totEOver = has && totE>=lim;
+  const totPOver = has && ppTot>=lim;
+  document.getElementById('eq_er').textContent = has? totEr.toFixed(4):'—';
+  document.getElementById('eq_ex').textContent = has? totEx.toFixed(4):'—';
+  document.getElementById('eq_e').textContent  = has? totE.toFixed(4):'—';
+  document.getElementById('eq_p').textContent  = has? ppTot.toFixed(4):'—';
+  document.getElementById('eq_dp').textContent = has? totDP.toFixed(0)+' W':'—';
+  document.getElementById('eq_e').classList.toggle('over', totEOver);
+  document.getElementById('eq_p').classList.toggle('over', totPOver);
+  const eCmp=document.getElementById('eq_e_cmp'), pCmp=document.getElementById('eq_p_cmp');
+  eCmp.textContent = totEOver? ('≥ '+lim+'  ⚠'):('< '+lim);
+  eCmp.classList.toggle('over', totEOver);
+  pCmp.textContent = totPOver? ('≥ '+lim+'  ⚠'):('< '+lim);
+  pCmp.classList.toggle('over', totPOver);
+
+  const ok=has&&valid.every(r=>r.ok&&r.pe<lim);
+  const allOk = ok && !totEOver && !totPOver;
+  const el=document.getElementById('eq_ok');
+  el.textContent=has?(allOk?'✓ UYGUN':'✕ UYGUN DEĞİLDİR'):'—';
+  el.classList.toggle('bad', has && !allOk);
+  el.style.color = !has? '' : (allOk? '#1a7f37' : '#c1121f');
+}
+
+['gU','gCos','gDiv','gLim'].forEach(id=>document.getElementById(id).addEventListener('change',render));
+const gU=document.getElementById('gU'),gCos=document.getElementById('gCos'),gDiv=document.getElementById('gDiv'),
+      gLim=document.getElementById('gLim');
+
+// --- Kaydet (HTML olarak) ---
+let currentName = 'AG_Gerilim_Dusumu';
+// Kaydetmeden önce bekleyen girişleri kols'a yaz (odaktaki input commit edilir)
+function commitPending(){
+  const ae=document.activeElement;
+  if(ae && (ae.tagName==='INPUT'||ae.tagName==='SELECT'||ae.tagName==='TEXTAREA')){
+    // onchange'i tetikle
+    ae.dispatchEvent(new Event('change',{bubbles:true}));
+    ae.blur();
+  }
+  // Branşman inputlarını doğrudan oku (render'ı tetiklemeden kols'a yaz)
+  document.querySelectorAll('.nokta-in').forEach((inp)=>{
+    const oc=inp.getAttribute('onchange')||'';
+    const mm=oc.match(/set\((\d+),/);
+    if(mm){ const i=+mm[1]; if(kols[i]) kols[i].nokta=inp.value; }
+  });
+}
+function gatherState(){
+  return {
+    meta:{yer:iYer.value, kol:iKol.value, guc:iGuc.value},
+    globals:{U:gU.value, cos:gCos.value, div:gDiv.value, lim:gLim.value},
+    kols:kols
+  };
+}
+// Sayfanın güncel halini (canlı değerlerle) tek bir HTML metni olarak üret
+function buildHTML(){
+  const clone=document.documentElement.cloneNode(true);
+  // form/select/input değerlerini DOM'a sabitle (snapshot)
+  const liveInputs=document.querySelectorAll('input,select,textarea');
+  const cloneInputs=clone.querySelectorAll('input,select,textarea');
+  liveInputs.forEach((el,idx)=>{
+    const c=cloneInputs[idx]; if(!c)return;
+    if(el.tagName==='SELECT'){
+      Array.from(c.options).forEach((o,oi)=>{
+        if(el.options[oi]&&el.options[oi].selected){o.setAttribute('selected','selected');}
+        else{o.removeAttribute('selected');}
+      });
+    } else if(el.type==='checkbox'||el.type==='radio'){
+      if(el.checked)c.setAttribute('checked','checked'); else c.removeAttribute('checked');
+    } else {
+      c.setAttribute('value',el.value);
+    }
+  });
+  // Mevcut proje durumunu gerçek bir DOM düğümü olarak göm (kaynak kod metniyle karışmaz)
+  const stateJSON=JSON.stringify(gatherState());
+  let stateEl=clone.querySelector('#__embedded_state__');
+  if(!stateEl){
+    stateEl=clone.ownerDocument.createElement('script');
+    stateEl.id='__embedded_state__';
+    stateEl.type='application/json';
+    const body=clone.querySelector('body');
+    body.insertBefore(stateEl, body.firstChild);
+  }
+  stateEl.textContent=stateJSON.replace(/</g,'\\u003c');
+  return '<!DOCTYPE html>\n'+clone.outerHTML;
+}
+function downloadHTML(name){
+  const blob=new Blob([buildHTML()],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url;
+  a.download=name.endsWith('.html')?name:name+'.html';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000);
+}
+// Kaydet: son isimle, gözat olmadan HTML indir
+function saveProject(){ commitPending(); downloadHTML(currentName); }
+function openProject(){ document.getElementById('fileInput').click(); }
+function loadFile(ev){
+  const f=ev.target.files[0]; if(!f)return;
+  currentName=f.name.replace(/\.(json|html)$/,'');
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      let s;
+      const txt=e.target.result;
+      if(/\.html$/i.test(f.name)){
+        const m=txt.match(/<scr"?ipt id="__embedded_state__" type="application\/json">([\s\S]*?)<\/scr"?ipt>/i)
+              || txt.match(/id="__embedded_state__"[^>]*>([\s\S]*?)<\/script>/i);
+        if(!m){ alert('Bu HTML dosyasında kayıtlı proje verisi bulunamadı.'); return; }
+        s=JSON.parse(m[1]);
+      } else {
+        s=JSON.parse(txt);
+      }
+      if(s.meta){ iYer.value=s.meta.yer||''; iKol.value=s.meta.kol||''; iGuc.value=s.meta.guc||''; }
+      if(s.globals){ gU.value=s.globals.U||400; gCos.value=s.globals.cos||0.80; gDiv.value=s.globals.div||0.98; gLim.value=s.globals.lim||5; }
+      if(Array.isArray(s.kols)){ kols=s.kols.map(k=>({tip:k.tip||'Yeralti',cable:k.cable||'',devre:k.devre||'',nokta:k.nokta||'',length:k.length||'',yuk:k.yuk||['','','','']})); }
+      render();
+    }catch(err){ alert('Dosya okunamadı: '+err.message); }
+  };
+  r.readAsText(f);
+  ev.target.value='';
+}
+const iYer=document.getElementById('iYer'),iKol=document.getElementById('iKol'),iGuc=document.getElementById('iGuc');
+
+// --- Yazdır / PDF / Excel ---
+function printDoc(){ window.__ptPrint(); }
+// PDF: tarayıcının yazdır penceresi açılır, hedef olarak "PDF olarak kaydet" seçilir
+function exportPDF(){
+  alert('Açılan pencerede "Hedef / Yazıcı" kısmından "PDF olarak kaydet" seçeneğini seçin.');
+  window.print();
+}
+// Excel: tablo içeriğini gerçek .xls (Excel'de açılır) olarak dışa aktar
+function exportExcelEski(){
+  const tbl=document.getElementById('sheet');
+  // hücrelerdeki input/select değerlerini metne çevir
+  const rows=[];
+  tbl.querySelectorAll('tr').forEach(tr=>{
+    const cells=[];
+    tr.querySelectorAll('th,td').forEach(td=>{
+      let v='';
+      const inp=td.querySelector('input,select');
+      if(inp){
+        v = inp.tagName==='SELECT' ? (inp.options[inp.selectedIndex]?inp.options[inp.selectedIndex].text:'') : (inp.value||inp.getAttribute('placeholder')||'');
+      } else {
+        v = td.textContent.trim();
+      }
+      const span=td.getAttribute('colspan');
+      cells.push({v:v, c:span?parseInt(span):1});
+    });
+    rows.push(cells);
+  });
+  let html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">';
+  html+='<head><meta charset="UTF-8"><style>td,th{border:1px solid #999;padding:4px;font-family:Calibri;font-size:11px}th{background:#2b3a67;color:#fff;font-weight:bold}</style></head><body><table>';
+  rows.forEach(r=>{
+    html+='<tr>';
+    r.forEach(c=>{ html+=`<td colspan="${c.c}">${(c.v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</td>`; });
+    html+='</tr>';
+  });
+  html+='</table></body></html>';
+  const blob=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url;
+  a.download=(currentName||'AG_Gerilim_Dusumu')+'.xls';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000);
+}
+
+// Kaydedilmiş HTML açıldığında gömülü veriyi otomatik yükle
+(function loadEmbedded(){
+  try{
+    const tag=document.getElementById('__embedded_state__');
+    if(tag && tag.textContent.trim()){
+      const s=JSON.parse(tag.textContent);
+      if(s.meta){ iYer.value=s.meta.yer||''; iKol.value=s.meta.kol||''; iGuc.value=s.meta.guc||''; }
+      if(s.globals){ gU.value=s.globals.U||400; gCos.value=s.globals.cos||0.80; gDiv.value=s.globals.div||0.98; gLim.value=s.globals.lim||5; }
+      if(Array.isArray(s.kols)&&s.kols.length){ kols=s.kols.map(k=>({tip:k.tip||'Yeralti',cable:k.cable||'',devre:k.devre||'',nokta:k.nokta||'',length:k.length||'',yuk:k.yuk||['','','','']})); }
+    }
+  }catch(e){ /* gömülü veri yoksa sorun değil */ }
+})();
+
+render();
+</script>
+
+<script>(function(){var done=false;var MM=8;function fit(){if(done)return;done=true;var b=document.body,t=document.querySelector("#sheet");if(!t)return;b.style.zoom="";b.classList.add("pt-print");var pageW=(297-2*MM)/25.4*96,pageH=(210-2*MM)/25.4*96;var cs=getComputedStyle(b),mt=parseFloat(cs.marginTop)||0,mb=parseFloat(cs.marginBottom)||0;var r=t.getBoundingClientRect();var cW=t.scrollWidth+2*Math.max(0,r.left+window.scrollX);var cH=b.scrollHeight+mt+mb;var z=Math.min(1,pageW/cW,pageH/cH)*0.96;b.style.zoom=z;}function un(){if(window.__ptKeep)return;done=false;document.body.style.zoom="";document.body.classList.remove("pt-print");}window.__ptFit=fit;window.__ptUn=un;window.__ptPrint=function(){fit();window.print();};window.addEventListener("beforeprint",fit);window.addEventListener("afterprint",un);})();</script>
+<script>
+/* ===== OG Gerilim Düşümü — ekrandaki görünümle aynı biçimde Excel (.xlsx) çıktısı =====
+   Kütüphane gerektirmez (çevrimdışı çalışır): xlsx dosyası burada elle oluşturulur. */
+(function(){
+  /* ---------- küçük zip (store) yazıcı ---------- */
+  var CRC=(function(){var t=[];for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+  function crc32(u){var c=0xFFFFFFFF;for(var i=0;i<u.length;i++)c=CRC[(c^u[i])&0xFF]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+  function zip(files){ // files: [{name, data:Uint8Array}]
+    var enc=new TextEncoder(),parts=[],central=[],off=0;
+    function u16(v){return [v&255,(v>>>8)&255];} function u32(v){return [v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255];}
+    files.forEach(function(f){
+      var nm=enc.encode(f.name),d=f.data,c=crc32(d);
+      var h=[].concat(u32(0x04034b50),u16(20),u16(0x0800),u16(0),u16(0),u16(0),u32(c),u32(d.length),u32(d.length),u16(nm.length),u16(0));
+      parts.push(new Uint8Array(h),nm,d);
+      central.push({nm:nm,c:c,len:d.length,off:off});
+      off+=h.length+nm.length+d.length;
+    });
+    var cstart=off,clen=0;
+    central.forEach(function(e){
+      var h=[].concat(u32(0x02014b50),u16(20),u16(20),u16(0x0800),u16(0),u16(0),u16(0),u32(e.c),u32(e.len),u32(e.len),u16(e.nm.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(e.off));
+      parts.push(new Uint8Array(h),e.nm); clen+=h.length+e.nm.length;
+    });
+    parts.push(new Uint8Array([].concat(u32(0x06054b50),u16(0),u16(0),u16(central.length),u16(central.length),u32(clen),u32(cstart),u16(0))));
+    return new Blob(parts,{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+  }
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,"");}
+  function colName(c){var s="";c++;while(c>0){var m=(c-1)%26;s=String.fromCharCode(65+m)+s;c=Math.floor((c-1)/26);}return s;}
+  function hex(css){var m=String(css||"").match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)(?:[,\s\/]+([\d.]+))?/);if(!m)return null;if(m[4]!==undefined&&parseFloat(m[4])<0.05)return null;
+    return [m[1],m[2],m[3]].map(function(v){return ("0"+(+v).toString(16)).slice(-2).toUpperCase();}).join("");}
+
+  /* ---------- stil havuzu ---------- */
+  function Styles(){
+    this.fonts=['<font><sz val="11"/><name val="Calibri"/></font>'];this.fontIx={};
+    this.fills=['<fill><patternFill patternType="none"/></fill>','<fill><patternFill patternType="gray125"/></fill>'];this.fillIx={};
+    this.borders=['<border><left/><right/><top/><bottom/><diagonal/></border>'];this.borderIx={};
+    this.numFmts=[];this.numIx={};
+    this.xfs=['<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'];this.xfIx={};
+  }
+  Styles.prototype.get=function(o){
+    var self=this;
+    function pool(arr,ix,key,xml){if(ix[key]===undefined){ix[key]=arr.length;arr.push(xml);}return ix[key];}
+    var f=o.font||{};var fk=[f.b?1:0,f.i?1:0,f.sz||10,f.color||"000000",f.name||"Segoe UI"].join("|");
+    var fid=pool(this.fonts,this.fontIx,fk,'<font>'+(f.b?'<b/>':'')+(f.i?'<i/>':'')+'<sz val="'+(f.sz||10)+'"/><color rgb="FF'+(f.color||"000000")+'"/><name val="'+esc(f.name||"Segoe UI")+'"/></font>');
+    var fillId=0;if(o.fill)fillId=pool(this.fills,this.fillIx,o.fill,'<fill><patternFill patternType="solid"><fgColor rgb="FF'+o.fill+'"/><bgColor indexed="64"/></patternFill></fill>');
+    var bd=o.border||{};var bk=["l","r","t","b"].map(function(s){return bd[s]?bd[s].s+":"+bd[s].c:"";}).join("|");
+    var bid=0;if(bk!=="|||"){bid=pool(this.borders,this.borderIx,bk,'<border>'+["left","right","top","bottom"].map(function(n,i){var e=bd[["l","r","t","b"][i]];return e?'<'+n+' style="'+e.s+'"><color rgb="FF'+e.c+'"/></'+n+'>':'<'+n+'/>';}).join("")+'<diagonal/></border>');}
+    var nid=0;if(o.fmt){if(self.numIx[o.fmt]===undefined){self.numIx[o.fmt]=164+self.numFmts.length;self.numFmts.push('<numFmt numFmtId="'+self.numIx[o.fmt]+'" formatCode="'+esc(o.fmt)+'"/>');}nid=self.numIx[o.fmt];}
+    var al=o.align||{};var ak=[fid,fillId,bid,nid,al.h||"",al.v||"center",al.wrap?1:0,al.ind||0].join("|");
+    return pool(this.xfs,this.xfIx,ak,'<xf numFmtId="'+nid+'" fontId="'+fid+'" fillId="'+fillId+'" borderId="'+bid+'" xfId="0" applyFont="1" applyFill="1" applyBorder="1"'+(nid?' applyNumberFormat="1"':'')+' applyAlignment="1"><alignment'+(al.h?' horizontal="'+al.h+'"':'')+' vertical="'+(al.v||"center")+'"'+(al.wrap?' wrapText="1"':'')+(al.ind?' indent="'+al.ind+'"':'')+'/></xf>');
+  };
+  Styles.prototype.xml=function(){
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+      (this.numFmts.length?'<numFmts count="'+this.numFmts.length+'">'+this.numFmts.join("")+'</numFmts>':'')+
+      '<fonts count="'+this.fonts.length+'">'+this.fonts.join("")+'</fonts><fills count="'+this.fills.length+'">'+this.fills.join("")+'</fills>'+
+      '<borders count="'+this.borders.length+'">'+this.borders.join("")+'</borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'+
+      '<cellXfs count="'+this.xfs.length+'">'+this.xfs.join("")+'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+  };
+
+  /* ---------- sayı çözümleme: ekrandaki biçimi koru ---------- */
+  function sayi(txt){
+    var s=String(txt).trim(); if(!/^-?\d+([.,]\d+)?$/.test(s)) return null;
+    var dec=0,v; if(s.indexOf(",")>=0){v=parseFloat(s.replace(",","."));dec=s.split(",")[1].length;}
+    else {v=parseFloat(s);dec=s.indexOf(".")>=0?s.split(".")[1].length:0;}
+    return {v:v,fmt:dec?"0."+"0".repeat(dec):"0"};
+  }
+  function hucreMetni(c){
+    var sel=c.querySelector("select"); if(sel){var o=sel.selectedOptions[0];return o?o.text:"";}
+    var inp=c.querySelector("input"); if(inp) return inp.value||inp.placeholder||"";
+    return (c.innerText||c.textContent||"").replace(/\s+/g," ").trim();
+  }
+  function stilOku(el, extra){
+    var cs=getComputedStyle(el), bg=hex(cs.backgroundColor);
+    var inp=el.querySelector("input,select");
+    if(inp){var ib=hex(getComputedStyle(inp).backgroundColor); if(ib && ib!=="FFFFFF") bg=ib;}
+    var fw=parseInt(cs.fontWeight,10)||400, src=inp||el, fcs=getComputedStyle(src);
+    var ta=(inp?getComputedStyle(inp).textAlign:cs.textAlign); if(inp&&inp.tagName==="SELECT")ta="center"; var h= ta==="center"?"center":(ta==="right"||ta==="end")?"right":"left";
+    var o={font:{b:(parseInt(fcs.fontWeight,10)||fw)>=600,sz:Math.max(9,Math.round((parseFloat(fcs.fontSize)||13)*0.75*2)/2),color:hex(fcs.color)||"000000",name:"Segoe UI"},
+      fill:bg&&bg!=="FFFFFF"?bg:null, align:{h:h,v:"center",wrap:true}};
+    if(extra) for(var k in extra) o[k]=extra[k];
+    return o;
+  }
+
+
+  window.exportExcel=function(){
+    try{ if(typeof render==="function") render(); }catch(e){}
+    var ST=new Styles(), rows={}, merges=[], rowH={}, R=0;
+    var GR="D3DAE3", thin=function(c){return {s:"thin",c:c||GR};};
+    var box=function(c){return {l:thin(c),r:thin(c),t:thin(c),b:thin(c)};};
+    function put(r,c,val,st){ rows[r]=rows[r]||{}; rows[r][c]={v:val,s:ST.get(st)}; }
+    function fillRange(r1,c1,r2,c2,st){for(var r=r1;r<=r2;r++)for(var c=c1;c<=c2;c++){rows[r]=rows[r]||{};if(!rows[r][c])rows[r][c]={v:"",s:ST.get(st)};}}
+    function merge(r1,c1,r2,c2){ if(r1!==r2||c1!==c2) merges.push(colName(c1)+(r1+1)+":"+colName(c2)+(r2+1)); }
+    function boxRange(r1,c1,r2,c2,st,bc,bs){ // aralığı birleştir, dış çerçeve çiz
+      for(var r=r1;r<=r2;r++)for(var c=c1;c<=c2;c++){
+        var e={s:bs||"thin",c:bc||GR};
+        var b={l:c===c1?e:null,r:c===c2?e:null,t:r===r1?e:null,b:r===r2?e:null};
+        rows[r]=rows[r]||{}; var v=(rows[r][c]&&r===r1&&c===c1)?rows[r][c].v:(r===r1&&c===c1?"":"" );
+        var keep=rows[r][c]?rows[r][c].v:"";
+        rows[r][c]={v:(r===r1&&c===c1)?keep:"",s:ST.get({font:st.font,fill:st.fill,border:b,align:st.align,fmt:st.fmt})};
+      }
+      merge(r1,c1,r2,c2);
+    }
+
+    var tbl=document.getElementById("sheet");
+    var trs=[].slice.call(tbl.rows);
+    var hdr=trs.filter(function(tr){return tr.classList.contains("kolhdr");})[0]||trs[1];
+    var hcells=[].slice.call(hdr.cells).filter(function(c){return !c.classList.contains("addcol");});
+    var NC=hcells.length; // etiket + HAT'lar
+    var NAVY=hex(getComputedStyle(hdr.cells[1]).backgroundColor)||"1F3A5F";
+    var bannerTd=(trs[0].classList.contains("banner")?trs[0].cells[0]:null);
+    var BAN=bannerTd?(hex(getComputedStyle(bannerTd).backgroundColor)||NAVY):NAVY;
+
+    /* ---- üst başlık + U / cosφ / diversite ---- */
+    var title=((document.querySelector(".topbar .title")||{}).textContent||"AG Gerilim Düşümü ve Güç Kaybı Hesabı").replace(/^[^A-Za-zÇĞİÖŞÜçğıöşü]+/,"").trim();
+    var gfs=[].slice.call(document.querySelectorAll(".topbar .globals .gf")).filter(function(g){var i=g.querySelector("input");return i&&i.type!=="hidden";});
+    var tcol=Math.max(1,NC-gfs.length*1-1);
+    var sT={font:{b:true,sz:15,color:"1F3A5F"},align:{h:"left",v:"center"}};
+    put(R,0,title,sT); fillRange(R,1,R,tcol-1,sT); merge(R,0,R,tcol-1);
+    var gc=tcol;
+    gfs.forEach(function(g,i){
+      var lab=(g.querySelector("label")||{}).textContent||"", val=(g.querySelector("input")||{}).value||"";
+      var n=sayi(val);
+      var st={font:{b:true,sz:10,color:"1F3A5F"},border:box("B8C2CF"),align:{h:"center",v:"center"}};
+      var cEnd=(i===gfs.length-1)?NC-1:gc;
+      put(R,gc,lab.trim().toLocaleUpperCase("tr")+":  "+val,st); fillRange(R,gc+1,R,cEnd,st);
+      for(var cc=gc;cc<=cEnd;cc++){rows[R][cc].s=ST.get({font:st.font,border:{l:cc===gc?thin("B8C2CF"):null,r:cc===cEnd?thin("B8C2CF"):null,t:thin("B8C2CF"),b:thin("B8C2CF")},align:st.align});}
+      merge(R,gc,R,cEnd); gc=cEnd+1;
+    });
+    rowH[R]=28; R++;
+    var hz=((document.querySelector(".prepby")||{}).textContent||"").trim();
+    if(hz){ var sH={font:{sz:9,color:"5B6B7D"},align:{h:"left",v:"center"}}; put(R,0,hz,sH); fillRange(R,1,R,NC-1,sH); merge(R,0,R,NC-1); rowH[R]=16; R++; }
+    R++;
+
+    /* ---- trafo / kol bilgileri ---- */
+    var ifs=[].slice.call(document.querySelectorAll(".infobar .if"));
+    if(ifs.length){
+      var per=Math.max(1,Math.floor(NC/ifs.length)), c=0;
+      ifs.forEach(function(f,i){
+        var lab=(f.querySelector("label")||{}).textContent||"", val=((f.querySelector("input")||{}).value||"").trim();
+        var c2=(i===ifs.length-1)?NC-1:c+per-1;
+        var sl={font:{b:true,sz:8,color:"5B6B7D"},align:{h:"left",v:"bottom",wrap:true}};
+        var sv={font:{sz:10},border:box("B8C2CF"),align:{h:"left",v:"center",ind:1},fill:"FFFBEB"};
+        put(R,c,lab.trim().toLocaleUpperCase("tr"),sl); fillRange(R,c+1,R,c2,sl); merge(R,c,R,c2);
+        put(R+1,c,val||"—",sv); fillRange(R+1,c+1,R+1,c2,sv); merge(R+1,c,R+1,c2);
+        c=c2+1;
+      });
+      rowH[R]=16; rowH[R+1]=22; R+=3;
+    }
+
+    /* ---- ana tablo ---- */
+    trs.forEach(function(tr){
+      if(tr.classList.contains("banner")){
+        var st={font:{b:true,sz:12,color:"FFFFFF"},fill:BAN,align:{h:"center",v:"center"}};
+        put(R,0,(tr.cells[0].textContent||"").trim(),st); fillRange(R,1,R,NC-1,st); merge(R,0,R,NC-1); rowH[R]=24; R++; return;
+      }
+      if(tr.classList.contains("sec")){
+        var bg=hex(getComputedStyle(tr.cells[0]).backgroundColor)||"E5EAF0";
+        var st2={fill:bg,border:{l:thin(),r:thin()}}; fillRange(R,0,R,NC-1,st2);
+        for(var cc=0;cc<NC;cc++) rows[R][cc].s=ST.get({fill:bg,border:{l:cc===0?thin():null,r:cc===NC-1?thin():null}});
+        rowH[R]=5; R++; return;
+      }
+      var cells=[].slice.call(tr.cells).filter(function(c){return !c.classList.contains("addcol");});
+      var hasSel=false;
+      cells.forEach(function(td,ci){
+        var txt=hucreMetni(td);
+        if(tr===hdr) txt=txt.replace(/[✕×]/g,"").trim();
+        var o=stilOku(td,{border:box()});
+        if(td.querySelector("select")) hasSel=true;
+        if(ci===0) o.align={h:"left",v:"center",wrap:true,ind:1};
+        else o.align={h:"center",v:"center",wrap:true};
+        var n=(ci>0)?sayi(txt):null;
+        if(n){o.fmt=n.fmt; put(R,ci,n.v,o);} else put(R,ci,txt,o);
+      });
+      rowH[R]=(tr===hdr)?22:(hasSel&&/Kablo/i.test(cells[0].textContent)?26:18); R++;
+    });
+    R++;
+
+    /* ---- %e özet şeridi ---- */
+    var eq=document.querySelector(".eqbar");
+    if(eq){
+      var parts=[].slice.call(eq.querySelectorAll(".eqrow > *")).map(function(e){return e.textContent.trim();}).filter(Boolean);
+      var line=(parts.length?parts:eq.innerText.split(/\n+/)).join(" ").replace(/\s+/g," ").replace(/ \| /g,"   |   ");
+      var bad=/DEĞİL|≥/.test(line), good=/UYGUN/.test(line)&&!bad;
+      var st={font:{b:true,sz:11,color:bad?"C0392B":(good?"15803D":"1F3A5F")},fill:bad?"FFF1F1":(good?"EFFAF3":"FFFFFF"),align:{h:"center",v:"center"}};
+      put(R,0,line,st); boxRange(R,0,R,NC-1,st,"9FB0C4","medium"); rowH[R]=26; R+=2;
+    }
+
+    /* ---- renk açıklaması ---- */
+    var lg=[].slice.call(document.querySelectorAll(".legend > *"));
+    if(lg.length){
+      var c0=0;
+      lg.forEach(function(item){
+        var t=item.textContent.trim(); if(!t) return;
+        var sw=item.querySelector("span,i,b,div"); var col=sw?hex(getComputedStyle(sw).backgroundColor):null;
+        if(!col){ col=hex(getComputedStyle(item).backgroundColor); }
+        put(R,c0,t,{font:{sz:8,color:"33414F"},fill:col&&col!=="FFFFFF"?col:null,border:box("9FB0C4"),align:{h:"center",v:"center"}});
+        c0+=(c0===0?1:1);
+      });
+      rowH[R]=16; R++;
+    }
+    /* ---- sütun genişlikleri ---- */
+    /* yatay A4 oranına göre sütun genişliği: yazdırılabilir alan 11.09in x 7.57in (oran ~1.465) */
+    var totPt=0; for(var rr=0; rr<R; rr++) totPt+=(rowH[rr]||15);
+    var hPx=totPt*96/72, targetPx=hPx*1.43;
+    var labCh=26, labPx=labCh*7+5, nData=Math.max(1,hcells.length-1);
+    var dataPx=Math.max(13*7+5,(targetPx-labPx)/nData), dataCh=Math.round(((dataPx-5)/7)*10)/10;
+    var widths=hcells.map(function(c,i){return i===0?labCh:dataCh;});
+    var cols='<cols>'+widths.map(function(w,i){return '<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>';}).join("")+'</cols>';
+    var sd='<sheetData>';
+    Object.keys(rows).map(Number).sort(function(a,b){return a-b;}).forEach(function(r){
+      sd+='<row r="'+(r+1)+'"'+(rowH[r]?' ht="'+rowH[r]+'" customHeight="1"':'')+'>';
+      Object.keys(rows[r]).map(Number).sort(function(a,b){return a-b;}).forEach(function(c){
+        var cell=rows[r][c], ref=colName(c)+(r+1);
+        if(typeof cell.v==="number") sd+='<c r="'+ref+'" s="'+cell.s+'"><v>'+cell.v+'</v></c>';
+        else if(cell.v==="") sd+='<c r="'+ref+'" s="'+cell.s+'"/>';
+        else sd+='<c r="'+ref+'" s="'+cell.s+'" t="inlineStr"><is><t xml:space="preserve">'+esc(cell.v)+'</t></is></c>';
+      });
+      sd+='</row>';
+    });
+    sd+='</sheetData>';
+    var SN="AG Gerilim Düşümü";
+    var sheet='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'+
+      '<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0" zoomScale="90"/></sheetViews>'+
+      '<sheetFormatPr defaultRowHeight="15"/>'+cols+sd+
+      (merges.length?'<mergeCells count="'+merges.length+'">'+merges.map(function(m){return '<mergeCell ref="'+m+'"/>';}).join("")+'</mergeCells>':'')+
+      '<printOptions horizontalCentered="1"/><pageMargins left="0.3" right="0.3" top="0.35" bottom="0.35" header="0" footer="0"/>'+
+      '<pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="1"/></worksheet>';
+    var enc=new TextEncoder();
+    var files=[
+      {name:"[Content_Types].xml",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>')},
+      {name:"_rels/.rels",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>')},
+      {name:"xl/workbook.xml",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="'+SN+'" sheetId="1" r:id="rId1"/></sheets><definedNames><definedName name="_xlnm.Print_Area" localSheetId="0">\''+SN+'\'!$A$1:$'+colName(NC-1)+'$'+R+'</definedName></definedNames></workbook>')},
+      {name:"xl/_rels/workbook.xml.rels",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>')},
+      {name:"xl/styles.xml",data:enc.encode(ST.xml())},
+      {name:"xl/worksheets/sheet1.xml",data:enc.encode(sheet)}
+    ];
+    var blob=zip(files);
+    var ad=((document.getElementById("iYer")||document.querySelector(".infobar input")||{}).value||"").trim().replace(/[\\\/:*?"<>|]+/g,"-").replace(/[çÇ]/g,function(c){return c==="ç"?"c":"C";}).replace(/[ğĞ]/g,function(c){return c==="ğ"?"g":"G";}).replace(/ı/g,"i").replace(/İ/g,"I").replace(/[öÖ]/g,function(c){return c==="ö"?"o":"O";}).replace(/[şŞ]/g,function(c){return c==="ş"?"s":"S";}).replace(/[üÜ]/g,function(c){return c==="ü"?"u":"U";});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+    a.download=(ad&&ad!=="—"?ad+" - ":"")+"AG Gerilim Dusumu.xlsx"; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){URL.revokeObjectURL(a.href);},4000);
+    return blob;
+  };
+})();
+
+</script>
+</body></html>

@@ -1,0 +1,11 @@
+export const COMPANY_NAME = 'VoltGuard';
+export const COMPANY_LEGAL_NAME = 'VoltGuard MÜHENDİSLİK';
+export const COMPANY_PHONE = '+90 545 434 67 35';
+export const COMPANY_WEBSITE = 'voltguard.com.tr';
+export const COMPANY_EMAIL = 'info@voltguard.com.tr';
+export const COMPANY_ADDRESS_LINE_1 = 'Adalet Mahallesi Manas Bulvarı Folkart Towers B kule No:39';
+export const COMPANY_ADDRESS_LINE_2 = 'Kat:25 Kapı No:2511 BAYRAKLI/İZMİR';
+export const COMPANY_ADDRESS_SINGLE_LINE = `${COMPANY_ADDRESS_LINE_1}, ${COMPANY_ADDRESS_LINE_2}`;
+export const COMPANY_EMAIL_WEBSITE_LINE = `${COMPANY_WEBSITE} | ${COMPANY_EMAIL}`;
+export const COMPANY_CONTACT_LINE = `Tel: ${COMPANY_PHONE} | ${COMPANY_WEBSITE}`;
+export const COMPANY_PHONE_ADDRESS_LINE = `Tel: ${COMPANY_PHONE} | ${COMPANY_ADDRESS_SINGLE_LINE}`;

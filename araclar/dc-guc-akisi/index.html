@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DC Güç Akışı | VoltGuard</title><meta name="description" content="Küçük şebekelerde bara açılarını, aktif hat güçlerini ve yüklenmeleri doğrusal DC yaklaşımıyla hesaplayın."><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#0a1628"><link rel="canonical" href="https://voltguard.com.tr/araclar/dc-guc-akisi/"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="DC Güç Akışı | VoltGuard"><meta property="og:description" content="Küçük şebekelerde bara açılarını, aktif hat güçlerini ve yüklenmeleri doğrusal DC yaklaşımıyla hesaplayın."><meta property="og:url" content="https://voltguard.com.tr/araclar/dc-guc-akisi/"><meta property="og:image" content="https://voltguard.com.tr/araclar/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/voltguard-icon-64.png" type="image/png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"DC Güç Akışı","url":"https://voltguard.com.tr/araclar/dc-guc-akisi/","description":"Küçük şebekelerde bara açılarını, aktif hat güçlerini ve yüklenmeleri doğrusal DC yaklaşımıyla hesaplayın.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":0,"priceCurrency":"TRY"},"publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VoltGuard","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"DC Güç Akışı","item":"https://voltguard.com.tr/araclar/dc-guc-akisi/"}]}]}</script><link rel="stylesheet" href="../shared/tool-shell.css"><link rel="stylesheet" href="../shared/export.css"><style>
+:where(#vg-tool-workspace) *{box-sizing:border-box}#vg-tool-workspace{margin:0;background:#f4f7fb;color:#18344b;font:15px/1.55 'Segoe UI',Arial,sans-serif}:where(#vg-tool-workspace) main{max-width:1100px;margin:24px auto;padding:0 18px}:where(#vg-tool-workspace) h2{font-size:23px;margin:0 0 14px}:where(#vg-tool-workspace) h3{font-size:18px;margin:20px 0 10px}:where(#vg-tool-workspace) .card{background:#fff;border:1px solid #dce5ed;border-radius:14px;padding:22px;margin:16px 0}:where(#vg-tool-workspace) .muted{color:#607b90}:where(#vg-tool-workspace) .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}:where(#vg-tool-workspace) label{display:block;font-weight:600}:where(#vg-tool-workspace) input,:where(#vg-tool-workspace) textarea{display:block;width:100%;margin:6px 0 12px;padding:11px;border:1px solid #cbd9e5;border-radius:8px;font:inherit}:where(#vg-tool-workspace) textarea{min-height:185px;font:14px/1.65 Consolas,monospace;resize:vertical}:where(#vg-tool-workspace) button{background:#007e9f;color:#fff;border:0;padding:11px 17px;border-radius:8px;font:600 14px 'Segoe UI',sans-serif;cursor:pointer}:where(#vg-tool-workspace) button.secondary{background:#edf5f8;color:#18566c}:where(#vg-tool-workspace) button:disabled{opacity:.5;cursor:default}:where(#vg-tool-workspace) .actions{display:flex;flex-wrap:wrap;gap:10px}:where(#vg-tool-workspace) .error{color:#aa233d;background:#fff0f3;padding:12px;border-radius:8px;white-space:pre-wrap}:where(#vg-tool-workspace) .notice{background:#fff5df;color:#815711;padding:13px;border-radius:8px}:where(#vg-tool-workspace) .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}:where(#vg-tool-workspace) .stat{background:#edf8fb;border-radius:10px;padding:14px}:where(#vg-tool-workspace) .stat strong{display:block;font-size:24px;color:#006e87}:where(#vg-tool-workspace) .table-wrap{overflow-x:auto}:where(#vg-tool-workspace) table{width:100%;border-collapse:collapse;font-size:14px}:where(#vg-tool-workspace) th,:where(#vg-tool-workspace) td{padding:10px;border-bottom:1px solid #dce5ed;text-align:right;white-space:nowrap}:where(#vg-tool-workspace) th:first-child,:where(#vg-tool-workspace) td:first-child{text-align:left}:where(#vg-tool-workspace) thead{background:#eff5f9}:where(#vg-tool-workspace) tr.overload{background:#fff0f3;color:#ad2840}:where(#vg-tool-workspace) .formula{padding:14px;background:#edf5f8;border-radius:8px;overflow-wrap:anywhere}:where(#vg-tool-workspace) a{color:#007e9f}:where(#vg-tool-workspace) .plot{width:100%;background:#f7fafc;border:1px solid #dce5ed;border-radius:10px}:where(#vg-tool-workspace) small{display:block}:where(#vg-tool-workspace) svg text{font:13px 'Segoe UI',Arial,sans-serif}@media(max-width:650px){:where(#vg-tool-workspace) .grid,:where(#vg-tool-workspace) .stats{grid-template-columns:1fr}:where(#vg-tool-workspace) .card{padding:16px}}@media print{#vg-tool-workspace{background:#fff}:where(#vg-tool-workspace) main{max-width:none;margin:0;padding:0}:where(#vg-tool-workspace) .input-card,:where(#vg-tool-workspace) [data-vg-no-print]{display:none!important}:where(#vg-tool-workspace) .card{border:0;border-radius:0;margin:0;padding:8px}:where(#vg-tool-workspace) tr,:where(#vg-tool-workspace) .stat{break-inside:avoid}:where(#vg-tool-workspace) thead{display:table-header-group}}
+</style><link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=bd7e46c3cd10"><script src="/js/vg-shell.js?v=a3ccf745026f" defer></script><script src="/js/voltguard-auth.js?v=5ea8a8c73e4b" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=6609af196d62"></head><body data-vg-tool="dc-guc-akisi" data-vg-title="DC Güç Akışı" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+<header data-vg-no-print class="vg-header doc-header" id="vgHeader">
+  <div class="vg-header__bar vg-wrap">
+    <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+      <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+      <span class="vg-brand__copy" aria-hidden="true">
+        <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+        <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+      </span>
+    </a>
+    <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+    <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+      <ul class="vg-nav__list">
+        <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+        <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+        <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+        <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+        <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+        <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+          <ul class="vg-dd__menu" id="vgDdKaynaklar">
+            <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+            <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+            <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+            <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+            <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+          </ul>
+        </li>
+        <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+        <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+      </ul>
+      <div class="vg-nav__foot">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </nav>
+    <div class="vg-actions">
+      <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+      <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+    </div>
+  </div>
+  <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+</header><div id="main" tabindex="-1"><div id="vg-top"><div class="vg-topline"><nav class="vg-links" aria-label="Araç menüsü"><a class="vg-back" href="../#araclar">← Tüm araçlar</a><a class="vg-back" href="/hesaplama-araclari/">Pratik hesaplar →</a><a class="vg-back" href="/">VoltGuard ana sayfa ↗</a></nav></div><p class="vg-crumb">Dağıtım şebekesi / DC Güç Akışı</p><h1>DC Güç Akışı</h1><p class="vg-description">Küçük şebekelerde bara açılarını, aktif hat güçlerini ve yüklenmeleri doğrusal DC yaklaşımıyla hesaplayın.</p><details><summary>Girdiler, sonuçlar ve hesap yöntemi</summary><div class="vg-method"><strong>Girdiler:</strong> 2–30 bara, net MW enjeksiyonu, referans bara, MVA güç bazı ve p.u. hat reaktansları.<br><strong>Çıktılar:</strong> Bara açıları, yönlü hat MW değerleri, referans bara enjeksiyonu, yüklenme, denge hatası, SVG ve CSV.<br><strong>Yöntem:</strong> PyPSA doğrusal AC-şebeke yaklaşımındaki Bθ = P denklemlerine dayalı bağımsız çözücü. AC gerilim ve reaktif güç çözümü yapmaz. <a href="../yontem/">Kaynak ve geçerlilik bilgileri →</a></div></details></div><div id="vg-tool-workspace"><main><section class="card input-card"><h2>Bir ağdaki aktif güç dağılımını görün.</h2><p class="muted">DC yaklaşımı, AC şebekenin doğrusal aktif güç modelidir. Gerilim büyüklükleri 1 p.u. kabul edilir; direnç, kayıplar ve reaktif güç bu hesapta yer almaz. En fazla 30 bara ve 100 hat.</p>
+<form id="dcForm"><div class="grid"><label>Güç bazı · MVA<input id="dcBase" value="100" inputmode="decimal" required></label><label>Referans bara · θ = 0<input id="dcSlack" value="B1" required></label></div><div class="grid"><div><label>Baralar · ad; net enjeksiyon (MW)<textarea id="dcBuses" spellcheck="false" required>B1;0
+B2;-50
+B3;-50</textarea></label><small class="muted">Pozitif: üretim. Negatif: tüketim. Referans baranın enjeksiyonu çözümde dengeyi sağlar; burada yazılan değer kullanılmaz.</small></div><div><label>Hatlar · başlangıç; bitiş; x (p.u.); sınır (MW)<textarea id="dcLines" spellcheck="false" required>B1;B2;0,1;100
+B2;B3;0,1;100
+B1;B3;0,2;100</textarea></label><small class="muted">Reaktanslar seçtiğiniz ortak güç ve gerilim bazına ait olmalıdır. x &gt; 0; sınır boş bırakılabilir. Sütunları noktalı virgülle ayırın; ondalık virgül kullanılabilir.</small></div></div><div class="actions"><button type="submit">Güç akışını hesapla</button><button type="button" class="secondary" id="dcExample">3 bara örneği</button><button type="button" class="secondary" id="dcCsv">CSV indir</button></div></form><p id="dcError" class="error" role="alert" hidden></p></section>
+<section id="printReport" class="card" aria-live="polite"><h2>Doğrusal aktif güç akışı</h2><p id="dcSnapshot" class="muted"></p><div class="stats"><div class="stat">Referans bara enjeksiyonu<strong id="dcSlackResult">—</strong></div><div class="stat">En büyük hat açı farkı<strong id="dcAngleResult">—</strong></div><div class="stat">Düğüm denge hatası<strong id="dcBalanceResult">—</strong></div></div><p id="dcWarning" class="notice" hidden></p><h3>Hat yüklenmeleri</h3><svg id="dcPlot" class="plot" viewBox="0 0 900 180" role="img" aria-label="Hatların aktif güçleri ve yüklenme oranları"></svg>
+<h3>Bara sonuçları</h3><div class="table-wrap"><table><thead><tr><th>Bara</th><th>Enjeksiyon · MW</th><th>Açı · °</th><th>Denge hatası · MW</th></tr></thead><tbody id="dcBusRows"></tbody></table></div><h3>Hat sonuçları ve girdiler</h3><div class="table-wrap"><table><thead><tr><th>Yön</th><th>x · p.u.</th><th>Güç · MW</th><th>Δθ · °</th><th>Sınır · MW</th><th>Yüklenme · %</th></tr></thead><tbody id="dcLineRows"></tbody></table></div>
+<h3>Model ve varsayımlar</h3><div class="formula">P / S<sub>baz</sub> = Bθ · B<sub>ii</sub> = ∑ 1/x<sub>ij</sub> · B<sub>ij</sub> = −1/x<sub>ij</sub> · F<sub>ij</sub> = S<sub>baz</sub>(θ<sub>i</sub> − θ<sub>j</sub>)/x<sub>ij</sub></div><p class="muted">Referans baranın satırı ve sütunu çıkarılarak denklem çözülür. Her bağlı ağda tek referans kullanılır; kopuk ağlar reddedilir. Pozitif hat gücü başlangıç barasından bitiş barasına, negatif değer ters yöne akar. Hat sınırları kullanıcı girdisidir. Bu model gerilim düşümü, kısa devre, termik kablo seçimi veya AC güç akışı sonucunun yerine geçmez. Küçük açı ve x ≫ r yaklaşımının uygulanabilirliğini ağınız için değerlendirin.</p><small><a href="https://github.com/PyPSA/PyPSA/blob/6c45594596cbc5612511ee9202a9e269e5001d88/pypsa/network/power_flow.py" target="_blank" rel="noopener">PyPSA · doğrusal güç akışı</a> denklemine dayalı bağımsız JavaScript çözücü. PyPSA Contributors, MIT; <a href="../vendor/power-pypsa-LICENSE.txt">lisans</a>. <a href="https://docs.pypsa.org/latest/user-guide/linear-power-flow/" target="_blank" rel="noopener">Model açıklaması</a>.</small></section></main>
+<script data-vg-core="dc">
+/* Independent small-network JavaScript solver for the linear AC-network DC approximation.
+   Model/reference: PyPSA, MIT, (c) 2015-2026 PyPSA contributors.
+   https://github.com/PyPSA/PyPSA/tree/6c45594596cbc5612511ee9202a9e269e5001d88
+   Complete notice: ../vendor/power-pypsa-LICENSE.txt */
+(function(root){'use strict';
+function numeric(v,label='Değer'){const s=String(v).trim();if(!/^[+-]?(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:[eE][+-]?\d+)?$/.test(s))throw new Error(label+': geçerli bir sonlu sayı gerekir.');const n=Number(s.replace(',','.'));if(!Number.isFinite(n))throw new Error(label+': geçerli bir sonlu sayı gerekir.');return n;}
+function records(text){return String(text).split(/\r?\n/).map((s,i)=>({text:s.trim(),line:i+1})).filter(r=>r.text&&!r.text.startsWith('#'));}
+function parse(bustext,linetext,base,slack){const buses=records(bustext).map(r=>{const f=r.text.split(';').map(s=>s.trim());if(f.length!==2||!f[0]||f[0].length>32||/[\s;<>]/.test(f[0]))throw new Error('Bara satırı '+r.line+': ad; MW biçimini kullanın.');return {id:f[0],p:numeric(f[1],'Bara satırı '+r.line)};});const lines=records(linetext).map(r=>{const f=r.text.split(';').map(s=>s.trim());if(f.length!==4||!f[0]||!f[1])throw new Error('Hat satırı '+r.line+': başlangıç; bitiş; x; sınır biçimini kullanın.');return {from:f[0],to:f[1],x:numeric(f[2],'Hat satırı '+r.line+' x'),limit:f[3]===''?null:numeric(f[3],'Hat satırı '+r.line+' sınır')};});return {buses,lines,base:numeric(base,'Güç bazı'),slack:String(slack).trim()};}
+function linearSolve(A,b){const n=b.length,M=A.map((row,i)=>[...row,b[i]]),scale=Math.max(...A.flat().map(Math.abs));if(!Number.isFinite(scale)||scale===0)throw new Error('Şebeke matrisi tekil veya sayısal olarak geçersiz.');for(let col=0;col<n;col++){let pivot=col;for(let i=col+1;i<n;i++)if(Math.abs(M[i][col])>Math.abs(M[pivot][col]))pivot=i;if(Math.abs(M[pivot][col])<=scale*1e-13)throw new Error('Şebeke matrisi tekil veya çok kötü koşullu; hat reaktanslarını kontrol edin.');[M[col],M[pivot]]=[M[pivot],M[col]];const d=M[col][col];for(let j=col;j<=n;j++)M[col][j]/=d;for(let i=0;i<n;i++)if(i!==col){const f=M[i][col];for(let j=col;j<=n;j++)M[i][j]-=f*M[col][j];}}const answer=M.map(r=>r[n]);if(answer.some(v=>!Number.isFinite(v)))throw new Error('Sayısal çözüm sonlu değil; baz ve reaktansları kontrol edin.');return answer;}
+function solve(model){const {buses,lines,base,slack}=model;if(!Array.isArray(buses)||buses.length<2||buses.length>30)throw new Error('2 ile 30 arasında bara gerekir.');if(!Array.isArray(lines)||lines.length<1||lines.length>100)throw new Error('1 ile 100 arasında hat gerekir.');if(!Number.isFinite(base)||base<=0)throw new Error('Güç bazı sıfırdan büyük ve sonlu olmalıdır.');const index=new Map();buses.forEach((b,i)=>{if(!b||typeof b.id!=='string'||!b.id||index.has(b.id))throw new Error('Bara adları dolu ve benzersiz olmalıdır.');if(!Number.isFinite(b.p))throw new Error('Bara enjeksiyonları sonlu olmalıdır.');index.set(b.id,i);});if(!index.has(slack))throw new Error('Referans bara, bara listesinde bulunamadı.');const n=buses.length,s=index.get(slack),B=Array.from({length:n},()=>Array(n).fill(0)),graph=Array.from({length:n},()=>[]);lines.forEach(l=>{if(!index.has(l.from)||!index.has(l.to))throw new Error('Bir hat tanımlanmamış baraya bağlı.');if(l.from===l.to)throw new Error('Hat başlangıç ve bitiş baraları farklı olmalıdır.');if(!Number.isFinite(l.x)||l.x<=0)throw new Error('Hat reaktansı x sıfırdan büyük ve sonlu olmalıdır.');if(l.limit!==null&&(!Number.isFinite(l.limit)||l.limit<=0))throw new Error('Hat sınırı boş veya sıfırdan büyük sonlu bir sayı olmalıdır.');const i=index.get(l.from),j=index.get(l.to),g=1/l.x;B[i][i]+=g;B[j][j]+=g;B[i][j]-=g;B[j][i]-=g;graph[i].push(j);graph[j].push(i);});const reached=new Set([s]),queue=[s];for(let q=0;q<queue.length;q++)for(const j of graph[queue[q]])if(!reached.has(j)){reached.add(j);queue.push(j);}if(reached.size!==n)throw new Error('Şebeke kopuk: bütün baralar referans baraya bağlı olmalıdır.');const unknown=buses.map((_,i)=>i).filter(i=>i!==s),theta=Array(n).fill(0),a=unknown.map(i=>unknown.map(j=>B[i][j])),p=unknown.map(i=>buses[i].p/base),solution=linearSolve(a,p);unknown.forEach((i,k)=>theta[i]=solution[k]);const flow=lines.map(l=>{const i=index.get(l.from),j=index.get(l.to),delta=theta[i]-theta[j],mw=base*delta/l.x;return {...l,mw,delta,loading:l.limit===null?null:Math.abs(mw)/l.limit*100};});const actual=B.map(row=>row.reduce((sum,v,j)=>sum+v*theta[j],0)*base),slackP=actual[s],busResult=buses.map((b,i)=>({id:b.id,p:i===s?slackP:b.p,theta:theta[i],residual:actual[i]-(i===s?slackP:b.p)})),maxResidual=Math.max(...busResult.map(b=>Math.abs(b.residual))),maxAngle=Math.max(...flow.map(l=>Math.abs(l.delta)));if(!Number.isFinite(slackP)||!Number.isFinite(maxResidual)||!Number.isFinite(maxAngle)||flow.some(l=>!Number.isFinite(l.mw)||(l.loading!==null&&!Number.isFinite(l.loading))))throw new Error('Sonuç sayısal olarak geçersiz; girdi ölçeğini kontrol edin.');if(maxResidual>1e-7*Math.max(1,...buses.map(b=>Math.abs(b.p))))throw new Error('Çözümde düğüm dengesi sağlanamadı; baz ve reaktansları kontrol edin.');return {buses:busResult,lines:flow,slackP,maxResidual,maxAngle,base,slack};}
+const stateIds=['dcBase','dcSlack','dcBuses','dcLines'];
+function validateState(state){if(!state||typeof state!=='object'||Array.isArray(state)||state.version!==1||!state.fields||typeof state.fields!=='object'||Array.isArray(state.fields)||Object.keys(state).length!==2||Object.keys(state.fields).length!==stateIds.length)throw new Error('DC proje sürümü veya veri yapısı geçersiz.');const fields={};for(const id of stateIds){const max=id==='dcBuses'||id==='dcLines'?65536:128;if(typeof state.fields[id]!=='string'||state.fields[id].length>max)throw new Error('DC proje alanları geçerli uzunlukta metin olmalıdır.');fields[id]=state.fields[id];}solve(parse(fields.dcBuses,fields.dcLines,fields.dcBase,fields.dcSlack));return fields;}
+root.VGDCCore={numeric,parse,linearSolve,solve,stateIds,validateState};})(typeof window!=='undefined'?window:globalThis);
+</script>
+<script>
+(function(){'use strict';const $=id=>document.getElementById(id),C=window.VGDCCore,fmt=n=>Number(n).toLocaleString('tr-TR',{maximumFractionDigits:5}),degree=x=>x*180/Math.PI;let current=null;
+function row(target,values,overload=false){const tr=document.createElement('tr');if(overload)tr.className='overload';values.forEach(t=>{const td=document.createElement('td');td.textContent=t;tr.appendChild(td);});$(target).appendChild(tr);}
+function plot(result){const svg=$('dcPlot'),ns='http://www.w3.org/2000/svg';svg.replaceChildren();const shown=result.lines.slice(0,12),height=shown.length*32+50;svg.setAttribute('viewBox','0 0 900 '+height);function el(tag,attrs,text){const n=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));if(text!==undefined)n.textContent=text;svg.appendChild(n);}el('title',{},'Hat güçleri ve varsa girilen sınıra göre yüklenmeleri');const max=Math.max(...shown.map(l=>Math.abs(l.mw)),1);shown.forEach((l,i)=>{const y=20+i*32;el('text',{x:12,y:y+15,fill:'#18344b'},l.from+' → '+l.to);el('rect',{x:200,y,width:450,height:21,rx:4,fill:'#e2edf3'});el('rect',{x:200,y,width:450*Math.abs(l.mw)/max,height:21,rx:4,fill:l.loading>100?'#bd3441':'#087fb1'});el('text',{x:664,y:y+15,fill:'#18344b'},fmt(l.mw)+' MW'+(l.loading===null?'':' · '+fmt(l.loading)+' %'));});el('text',{x:12,y:height-10,fill:'#607b90'},result.lines.length>12?'İlk 12 hat gösteriliyor; tam sonuç aşağıdaki tabloda.':'Çubuk uzunluğu |MW| değerine göredir.');}
+function recalc(){try{current=C.solve(C.parse($('dcBuses').value,$('dcLines').value,$('dcBase').value,$('dcSlack').value));$('dcError').hidden=true;$('printReport').hidden=false;document.documentElement.dataset.vgInvalid='false';$('dcCsv').disabled=false;$('dcSnapshot').textContent='Güç bazı: '+fmt(current.base)+' MVA · Referans: '+current.slack+' · '+current.buses.length+' bara · '+current.lines.length+' hat · Gerilim büyüklüğü: 1 p.u. · Direnç ve kayıplar: 0';$('dcSlackResult').textContent=fmt(current.slackP)+' MW';$('dcAngleResult').textContent=fmt(degree(current.maxAngle))+'°';$('dcBalanceResult').textContent=current.maxResidual.toExponential(2)+' MW';const overloaded=current.lines.filter(l=>l.loading>100).length,warnings=[];if(current.maxAngle>.2)warnings.push('Hat açı farkı 0,2 radyanı aşıyor. Küçük açı varsayımı zayıflayabilir; AC güç akışıyla karşılaştırın.');if(overloaded)warnings.push(overloaded+' hatta girilen MW sınırı aşılıyor.');$('dcWarning').hidden=!warnings.length;$('dcWarning').textContent=warnings.join(' ');$('dcBusRows').replaceChildren();$('dcLineRows').replaceChildren();current.buses.forEach(b=>row('dcBusRows',[b.id+(b.id===current.slack?' · Referans':''),fmt(b.p),fmt(degree(b.theta)),b.residual.toExponential(2)]));current.lines.forEach(l=>row('dcLineRows',[l.from+' → '+l.to,fmt(l.x),fmt(l.mw),fmt(degree(l.delta)),l.limit===null?'—':fmt(l.limit),l.loading===null?'—':fmt(l.loading)],l.loading>100));plot(current);}catch(e){current=null;$('dcError').hidden=false;$('dcError').textContent=e.message;$('printReport').hidden=true;document.documentElement.dataset.vgInvalid='true';$('dcCsv').disabled=true;}}
+$('dcForm').addEventListener('submit',e=>{e.preventDefault();recalc();});$('dcForm').addEventListener('input',recalc);$('dcForm').addEventListener('change',recalc);$('dcExample').addEventListener('click',()=>{$('dcBase').value='100';$('dcSlack').value='B1';$('dcBuses').value='B1;0\nB2;-50\nB3;-50';$('dcLines').value='B1;B2;0,1;100\nB2;B3;0,1;100\nB1;B3;0,2;100';recalc();});$('dcCsv').addEventListener('click',()=>{recalc();if(!current)return;const safe=v=>{let s=String(v);if(/^[=+\-@]/.test(s)&&typeof v==='string')s="'"+s;return '"'+s.replace(/"/g,'""')+'"';};const rows=[['Bara','Enjeksiyon (MW)','Açı (derece)','Denge hatası (MW)'],...current.buses.map(b=>[b.id,b.p,degree(b.theta),b.residual]),[],['Başlangıç','Bitiş','x (pu)','Akış (MW)','Açı farkı (derece)','Sınır (MW)','Yüklenme (%)'],...current.lines.map(l=>[l.from,l.to,l.x,l.mw,degree(l.delta),l.limit===null?'':l.limit,l.loading===null?'':l.loading])];const url=URL.createObjectURL(new Blob(['\ufeff'+rows.map(r=>r.map(safe).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'})),link=document.createElement('a');link.href=url;link.download='voltguard-dc-guc-akisi.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);});window.VoltGuardExportAdapter={getState:()=>({version:1,fields:Object.fromEntries(C.stateIds.map(id=>[id,$(id).value]))}),setState:state=>{const fields=C.validateState(state);C.stateIds.forEach(id=>$(id).value=fields[id]);recalc();},flush:recalc,buildReport:recalc};window.addEventListener('beforeprint',recalc);recalc();})();
+</script></div><div id="vg-origin">VoltGuard · Açık kaynak uyarlamaları ve yeni araçlar · <a href="../yontem/">Yöntem ve kaynaklar</a></div><script src="../shared/export.js" defer></script><script>try{localStorage.setItem('voltguard:recent',JSON.stringify({slug:"dc-guc-akisi",name:"DC Güç Akışı"}))}catch(e){}if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script></div><footer data-vg-no-print class="footer vg-footer" id="vgFooter" role="contentinfo">
+  <div class="vg-footer__cta">
+    <div class="vg-wrap vg-footer__cta-in">
+      <div class="vg-footer__cta-text">
+        <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+        <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+      </div>
+      <div class="vg-footer__cta-btns">
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="vg-wrap">
+    <div class="vg-footer__grid">
+      <div class="vg-footer__brand">
+        <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+          <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+          <span class="vg-brand__copy" aria-hidden="true">
+            <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+            <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+          </span>
+        </a>
+        <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+        <ul class="vg-footer__contact">
+          <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+          <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+          <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+        </ul>
+        <address class="vg-footer__addr">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+        </address>
+        <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+      </div>
+      <nav class="vg-footer__nav" aria-label="Alt menü">
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Hizmetler</h3>
+          <ul>
+            <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+            <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+            <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+            <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+            <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+            <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+            <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+            <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+            <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+            <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+            <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+            <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+            <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kurumsal</h3>
+          <ul>
+            <li><a href="/#hakkimizda">Hakkımızda</a></li>
+            <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+            <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+            <li><a href="/#projeler">Projeler</a></li>
+            <li><a href="/#referanslar">Referanslarımız</a></li>
+            <li><a href="/#surec">Sürecimiz</a></li>
+            <li><a href="/#neden-biz">Neden Biz?</a></li>
+            <li><a href="/#guvenlik">Güvenlik</a></li>
+            <li><a href="/#haberler">Haberler</a></li>
+            <li><a href="/#emi-demo">Canlı Demo</a></li>
+            <li><a href="/#katalog">Katalog</a></li>
+            <li><a href="/#sss">SSS</a></li>
+            <li><a href="/#iletisim">İletişim</a></li>
+            <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kaynaklar</h3>
+          <ul>
+            <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+            <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+            <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+            <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+            <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+          <ul>
+            <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+            <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+            <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+            <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+            <li><a href="/voltgame.html">VoltGame</a></li>
+            <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+            <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+            <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="vg-footer__bottom">
+      <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+      <div class="vg-footer__social">
+        <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+      <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+        </circle>
+      </svg>
+      <span class="sig-node" aria-hidden="true"></span>
+      <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+        <span class="sig-badge__ring" aria-hidden="true"></span>
+        <span class="sig-badge__aurora" aria-hidden="true"></span>
+        <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
+        <span class="sig-badge__body">
+          <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+          <span class="sig-badge__brand">
+            <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+            <span class="sig-badge__eng">Engineering</span>
+          </span>
+        </span>
+        <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+        <span class="sig-badge__shimmer" aria-hidden="true"></span>
+      </a>
+      <span class="sig-node" aria-hidden="true"></span>
+      <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+        <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+          <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+        </circle>
+      </svg>
+    </div>
+  </div>
+</footer></body></html>

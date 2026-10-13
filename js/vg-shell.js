@@ -27,7 +27,7 @@
   var burger = header.querySelector('.vg-burger');
   var nav = header.querySelector('.vg-nav');
   var dds = [].slice.call(header.querySelectorAll('[data-vg-dd]'));
-  var desktopMQ = window.matchMedia('(min-width: 68.75rem)');
+  var desktopMQ = window.matchMedia('(min-width: 80rem)');
   var hoverMQ = window.matchMedia('(hover: hover) and (pointer: fine)');
 
   function isOpenMenu() { return header.classList.contains('is-open'); }
@@ -337,7 +337,7 @@
       var u;
       try { u = new URL(a.href, location.href); } catch (err) { return; }
       if (u.origin !== location.origin || u.pathname === location.pathname || done[u.pathname]) return;
-      if (/^\/(hesap\/|contact\.php)/.test(u.pathname) || /\.(pdf|php|zip|mp4)$/i.test(u.pathname)) return;
+      if (/^\/(hesap\/|calisan(?:\/|$)|api\/|contact\.php)/.test(u.pathname) || /\.(pdf|php|zip|mp4)$/i.test(u.pathname)) return;
       done[u.pathname] = 1;
       var l = doc.createElement('link');
       l.rel = 'prefetch';
