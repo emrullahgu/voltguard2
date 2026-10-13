@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
   <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
@@ -12,7 +12,7 @@
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
   <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261013b">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,53 +35,37 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261013a" defer></script>
-  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
-  <meta name="color-scheme" content="light only">
-  <meta name="description" content="VoltGame: VoltGuard'ın elektrik temalı mini oyunu. Düşen volt yıldırımlarını topla, kısa devre kıvılcımlarından kaç ve rekorunu kır.">
+  <title>VoltGame | PARALAKS: Tek Hat — VoltGuard</title>
+  <meta name="description" content="Volti ile 27 kampanya seviyesini ve 37 günlük elektrik manevra bulmacasını çözün. PARALAKS: Tek Hat; ipuçları, meydan okumalar ve çevrimdışı oynama ile VoltGame'de.">
   <meta name="robots" content="noindex, follow">
-  <title>VoltGame | VoltGuard — Elektrik Temalı Mini Oyun</title>
   <link rel="canonical" href="https://voltguard.com.tr/voltgame.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="VoltGame | VoltGuard — Elektrik Temalı Mini Oyun">
-  <meta property="og:description" content="VoltGame: VoltGuard'ın elektrik temalı mini oyunu. Düşen volt yıldırımlarını topla, kısa devre kıvılcımlarından kaç ve rekorunu kır.">
+  <meta property="og:title" content="VoltGame | PARALAKS: Tek Hat">
+  <meta property="og:description" content="VoltGuard saha robotu Volti ile elektrik manevra bulmacalarını çözün. 27 kampanya seviyesi ve 37 günlük bulmaca.">
   <meta property="og:url" content="https://voltguard.com.tr/voltgame.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
   <meta property="og:locale" content="tr_TR">
   <meta property="og:site_name" content="VoltGuard">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" type="image/png" href="public/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="public/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/style.css?v=20261012d">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://voltguard.com.tr/voltgame.html","name":"VoltGame","description":"VoltGuard elektrik temalı mini oyun.","inLanguage":"tr-TR","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGame","item":"https://voltguard.com.tr/voltgame.html"}]}]}</script>
-  <style>
-    .vgame-wrap { max-width: 760px; margin: 0 auto; padding: 0 var(--container-pad) 3rem; }
-    .vg-hud { display: flex; justify-content: space-between; gap: 1rem; margin: 0 0 .75rem; font-family: var(--font-heading); font-weight: 700; color: var(--clr-dark); flex-wrap: wrap; }
-    .vg-hud span b { color: var(--clr-accent-text); }
-    .vg-stage { position: relative; background: var(--clr-dark); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(10,22,40,.25); touch-action: none; }
-    #vgCanvas { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; max-height: 70vh; margin: 0 auto; }
-    .vg-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .9rem; padding: 1.5rem; text-align: center; color: #fff; background: rgba(10,22,40,.82); }
-    .vg-overlay[hidden] { display: none; }
-    .vg-overlay h2 { font-family: var(--font-heading); font-size: 1.8rem; margin: 0; color: var(--clr-accent-light); }
-    .vg-overlay p { margin: 0; max-width: 46ch; color: rgba(255,255,255,.85); font-size: .95rem; line-height: 1.5; }
-    .vg-tip { font-size: .85rem !important; color: var(--clr-accent-light) !important; }
-    .vg-help { margin-top: 1.25rem; color: var(--clr-text-muted); font-size: .92rem; line-height: 1.6; }
-    .vg-help li { margin-left: 1.1rem; }
-  </style>
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/voltgame.css?v=20261013a">
+  <script src="/js/voltgame.js?v=20261013a" defer></script>
 </head>
-<body class="doc-shell">
+<body class="game-page doc-shell">
   <!--vg:header-->
   <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
   <header class="vg-header doc-header" id="vgHeader">
     <div class="vg-header__bar vg-wrap">
       <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
-        <span class="logo-mark" aria-hidden="true">
-          <span class="logo-mark__volt">VOLT</span>
-          <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
-          <span class="logo-mark__guard">GUARD</span>
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
         </span>
-        <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
       </a>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
@@ -89,6 +73,8 @@
           <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
           <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
           <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
           <li class="vg-dd" data-vg-dd>
             <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
@@ -118,45 +104,23 @@
     <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
   </header>
   <!--/vg:header-->
-
-  <nav class="breadcrumb" aria-label="breadcrumb">
-    <a href="/">Ana Sayfa</a> &rsaquo; <span aria-current="page">VoltGame</span>
-  </nav>
-
-  <section class="kb-hero">
-    <h1>VoltGame</h1>
-    <p>Pano ile düşen volt yıldırımlarını topla, kısa devre kıvılcımlarından kaç. Hız arttıkça işler zorlaşır. Rekorun tarayıcında saklanır.</p>
-  </section>
-
-  <main class="vgame-wrap" id="main" tabindex="-1">
-    <div class="vg-hud" aria-live="polite">
-      <span>Puan: <b id="vgScore">0</b></span>
-      <span>Can: <b id="vgLives">3</b></span>
-      <span>Rekor: <b id="vgBest">0</b></span>
+  <main class="game-main" id="main" tabindex="-1">
+    <nav class="game-breadcrumb" aria-label="Sayfa yolu"><a href="/">Ana Sayfa</a><span aria-hidden="true">/</span><span aria-current="page">VoltGame</span></nav>
+    <div class="game-intro">
+      <div><h1>VoltGame</h1><p>Volti ile elektrik manevralarını çözün. Her devrede yeni bir görev.</p></div>
+      <ul class="game-meta" aria-label="Oyun içeriği"><li><strong>27</strong> kampanya seviyesi</li><li><strong>37</strong> günlük bulmaca</li><li>İlerlemeniz kaydedilir</li></ul>
     </div>
-
-    <div class="vg-stage" id="vgStage">
-      <canvas id="vgCanvas" width="480" height="640" role="img" aria-label="VoltGame oyun alanı"></canvas>
-      <div class="vg-overlay" id="vgStart">
-        <h2>VoltGame</h2>
-        <p>Sarı yıldırımları topla (+10). Kırmızı kıvılcım kısa devredir, çarparsan can kaybedersin. Yeşil kalkan geçici koruma verir.</p>
-        <button type="button" class="btn btn--accent" id="vgPlay"><i class="fas fa-play" aria-hidden="true"></i> Oyuna Başla</button>
-      </div>
-      <div class="vg-overlay" id="vgOver" hidden>
-        <h2>Devre Atık!</h2>
-        <p id="vgFinal"></p>
-        <p class="vg-tip" id="vgFact"></p>
-        <button type="button" class="btn btn--accent" id="vgAgain"><i class="fas fa-rotate-right" aria-hidden="true"></i> Tekrar Oyna</button>
-      </div>
+    <section class="game-stage" id="gameStage" aria-label="PARALAKS: Tek Hat oyun alanı">
+      <div class="game-toolbar"><span class="game-toolbar__title"><span>PARALAKS</span> · TEK HAT</span><button class="game-fullscreen" id="gameFullscreen" type="button" aria-label="Tam ekran oyna" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg><span data-game-fullscreen-label>Tam ekran</span></button></div>
+      <p class="game-status" id="gameStatus" role="status" aria-live="polite">Oyun hazırlanıyor…</p>
+      <iframe class="game-frame" id="voltgameFrame" src="/public/voltgame/oyun.html" title="VoltGame — PARALAKS: Tek Hat; elektrik manevra bulmacası" allow="fullscreen; autoplay; clipboard-write" allowfullscreen></iframe>
+      <noscript><p class="game-js-note">Oynamak için JavaScript’i etkinleştirin.</p></noscript>
+    </section>
+    <div class="game-after">
+      <details class="game-help"><summary>Nasıl oynanır?</summary><p><strong>Göreviniz:</strong> Volti’yi karolarda yürütün, cihazları doğru sırayla kullanın ve iş emrini tamamlayın. Kamera yalnızca bakış açısını değiştirir; katlar arasında merdiven ve iskeleyi kullanın.</p><p><strong>Bilgisayarda:</strong> Karoya tıklayın veya ok tuşlarıyla yürüyün. <kbd>Q</kbd> / <kbd>E</kbd> kamerayı döndürür; <kbd>Boşluk</kbd> ilk cihaz eylemini, <kbd>1</kbd>–<kbd>9</kbd> ilgili eylemi seçer. <kbd>Z</kbd> geri alır, <kbd>Y</kbd> yineler, <kbd>H</kbd> ipucu açar.</p><p><strong>Telefonda:</strong> Karoya veya cihaza dokunun; kamerayı kaydırarak döndürün, iki parmakla yakınlaştırın. Cihaz bilgisi için basılı tutun. İki parmakla kısa dokunuş geri alır.</p><p>Seviye haritası, Günün Manevrası, hareket defteri, Tek Hat şeması, meydan okuma kodları, ses ve erişilebilirlik ayarları oyun menüsündedir. İlerleme bu tarayıcıda saklanır. Oyun eğitim amacıyla sadeleştirilmiş bir elektrik modeli kullanır.</p></details>
+      <div><a class="game-download" href="/public/voltgame/downloads/voltgame-cevrimdisi.html" download="VoltGame-PARALAKS-Tek-Hat.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v5h14v-5"/></svg>Çevrimdışı oynamak için indir</a><p class="game-download-note">Tek dosya · İlk açılışta da internet gerektirmez.</p></div>
     </div>
-
-    <ul class="vg-help">
-      <li><strong>Bilgisayar:</strong> ← → ok tuşları veya A / D ile hareket et, P ile duraklat.</li>
-      <li><strong>Telefon:</strong> Parmağını oyun alanında sürükle.</li>
-      <li>Her 100 puanda hız artar.</li>
-    </ul>
   </main>
-
   <!--vg:footer-->
   <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
     <div class="vg-footer__cta">
@@ -175,12 +139,11 @@
       <div class="vg-footer__grid">
         <div class="vg-footer__brand">
           <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
-            <span class="logo-mark logo-mark--footer" aria-hidden="true">
-              <span class="logo-mark__volt">VOLT</span>
-              <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
-              <span class="logo-mark__guard">GUARD</span>
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
-            <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
           </a>
           <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
           <ul class="vg-footer__contact">
@@ -218,8 +181,10 @@
             <h3 class="vg-footer__h">Kurumsal</h3>
             <ul>
               <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
               <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
               <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
               <li><a href="/#surec">Sürecimiz</a></li>
               <li><a href="/#neden-biz">Neden Biz?</a></li>
               <li><a href="/#guvenlik">Güvenlik</a></li>
@@ -276,7 +241,7 @@
         <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
           <span class="sig-badge__ring" aria-hidden="true"></span>
           <span class="sig-badge__aurora" aria-hidden="true"></span>
-          <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
           <span class="sig-badge__body">
             <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
             <span class="sig-badge__brand">
@@ -298,223 +263,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-
-  <script>
-    (function () {
-      'use strict';
-      var canvas = document.getElementById('vgCanvas');
-      var ctx = canvas.getContext('2d');
-      var W = canvas.width, H = canvas.height;
-      var elScore = document.getElementById('vgScore');
-      var elLives = document.getElementById('vgLives');
-      var elBest = document.getElementById('vgBest');
-      var ovStart = document.getElementById('vgStart');
-      var ovOver = document.getElementById('vgOver');
-      var elFinal = document.getElementById('vgFinal');
-      var elFact = document.getElementById('vgFact');
-
-      var FACTS = [
-        'Bilgi: Kaçak akım rölesi 30 mA ile can güvenliğini korur.',
-        'Bilgi: Kompanzasyon, reaktif enerji cezasını önler.',
-        'Bilgi: Topraklama direnci düşük tutulmalıdır; ölçüm periyodik yapılmalıdır.',
-        'Bilgi: Kablo kesiti akıma ve gerilim düşümüne göre seçilir.',
-        'Bilgi: Pano bakımında önce enerji kesilir, sonra gerilimsizlik doğrulanır.'
-      ];
-
-      // Sitenin vg_* anahtar adlandırmasına uyumlu; eski 'voltgameBest' anahtarı varsa taşınır.
-      var BEST_KEY = 'vg_voltgame_best';
-      var LEGACY_BEST_KEY = 'voltgameBest';
-      var best = 0;
-      try {
-        var curBest = parseInt(localStorage.getItem(BEST_KEY), 10) || 0;
-        var legacyBest = parseInt(localStorage.getItem(LEGACY_BEST_KEY), 10) || 0;
-        best = Math.max(curBest, legacyBest);
-        if (legacyBest) {
-          if (best > curBest) { localStorage.setItem(BEST_KEY, String(best)); }
-          localStorage.removeItem(LEGACY_BEST_KEY);
-        }
-      } catch (e) { best = 0; }
-      elBest.textContent = best;
-
-      var state, player, items, keys = {}, last = 0, spawnT = 0, raf = 0, paused = false;
-
-      function reset() {
-        state = { score: 0, lives: 3, running: true, shield: 0, speed: 1 };
-        player = { x: W / 2, y: H - 46, w: 84, h: 22 };
-        items = [];
-        spawnT = 0;
-        paused = false;
-        updateHud();
-      }
-
-      function updateHud() {
-        elScore.textContent = state.score;
-        elLives.textContent = state.lives;
-      }
-
-      function spawn() {
-        var r = Math.random();
-        var type = r < 0.62 ? 'bolt' : (r < 0.93 ? 'spark' : 'shield');
-        items.push({
-          type: type,
-          x: 24 + Math.random() * (W - 48),
-          y: -20,
-          v: (110 + Math.random() * 70) * state.speed
-        });
-      }
-
-      function hit(it) {
-        return it.y > player.y - 14 && it.y < player.y + player.h &&
-               it.x > player.x - player.w / 2 - 10 && it.x < player.x + player.w / 2 + 10;
-      }
-
-      function update(dt) {
-        var dir = (keys.ArrowLeft || keys.a ? -1 : 0) + (keys.ArrowRight || keys.d ? 1 : 0);
-        player.x += dir * 380 * dt;
-        player.x = Math.max(player.w / 2, Math.min(W - player.w / 2, player.x));
-        if (state.shield > 0) { state.shield = Math.max(0, state.shield - dt); }
-
-        spawnT -= dt;
-        if (spawnT <= 0) { spawn(); spawnT = Math.max(0.28, 0.85 / state.speed); }
-
-        for (var i = items.length - 1; i >= 0; i--) {
-          var it = items[i];
-          it.y += it.v * dt;
-          if (hit(it)) {
-            if (it.type === 'bolt') {
-              state.score += 10;
-              state.speed = 1 + Math.floor(state.score / 100) * 0.12;
-            } else if (it.type === 'shield') {
-              state.shield = 5;
-            } else if (state.shield <= 0) {
-              state.lives--;
-            }
-            items.splice(i, 1);
-            updateHud();
-            if (state.lives <= 0) { gameOver(); return; }
-          } else if (it.y > H + 20) {
-            items.splice(i, 1);
-          }
-        }
-      }
-
-      function drawBolt(x, y, color, s) {
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(x + 2 * s, y - 12 * s);
-        ctx.lineTo(x - 8 * s, y + 3 * s);
-        ctx.lineTo(x - 1 * s, y + 3 * s);
-        ctx.lineTo(x - 4 * s, y + 13 * s);
-        ctx.lineTo(x + 8 * s, y - 3 * s);
-        ctx.lineTo(x + 1 * s, y - 3 * s);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      function draw() {
-        ctx.fillStyle = '#0a1628';
-        ctx.fillRect(0, 0, W, H);
-        ctx.strokeStyle = 'rgba(59,130,246,.12)';
-        ctx.lineWidth = 1;
-        for (var gx = 0; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
-        for (var gy = 0; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
-
-        items.forEach(function (it) {
-          if (it.type === 'bolt') {
-            drawBolt(it.x, it.y, '#f59e0b', 1.3);
-          } else if (it.type === 'spark') {
-            ctx.fillStyle = '#ef4444';
-            ctx.beginPath(); ctx.arc(it.x, it.y, 10, 0, Math.PI * 2); ctx.fill();
-            ctx.strokeStyle = '#fecaca'; ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(it.x - 14, it.y); ctx.lineTo(it.x + 14, it.y);
-            ctx.moveTo(it.x, it.y - 14); ctx.lineTo(it.x, it.y + 14); ctx.stroke();
-          } else {
-            ctx.fillStyle = '#22c55e';
-            ctx.beginPath();
-            ctx.moveTo(it.x, it.y - 12); ctx.lineTo(it.x + 11, it.y - 6);
-            ctx.lineTo(it.x + 8, it.y + 8); ctx.lineTo(it.x, it.y + 13);
-            ctx.lineTo(it.x - 8, it.y + 8); ctx.lineTo(it.x - 11, it.y - 6);
-            ctx.closePath(); ctx.fill();
-          }
-        });
-
-        ctx.fillStyle = '#1e3a5f';
-        ctx.fillRect(player.x - player.w / 2, player.y, player.w, player.h);
-        ctx.fillStyle = '#f59e0b';
-        ctx.fillRect(player.x - player.w / 2, player.y, player.w, 4);
-        ctx.fillStyle = '#fff';
-        ctx.font = '700 11px Outfit, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('PANO', player.x, player.y + 16);
-        if (state.shield > 0) {
-          ctx.strokeStyle = 'rgba(34,197,94,.85)'; ctx.lineWidth = 3;
-          ctx.beginPath(); ctx.arc(player.x, player.y + 11, 52, Math.PI, 0); ctx.stroke();
-        }
-        if (paused) {
-          ctx.fillStyle = 'rgba(10,22,40,.6)'; ctx.fillRect(0, 0, W, H);
-          ctx.fillStyle = '#fff'; ctx.font = '700 28px Outfit, sans-serif';
-          ctx.fillText('DURAKLATILDI', W / 2, H / 2);
-        }
-      }
-
-      function loop(ts) {
-        if (!state.running) { return; }
-        var dt = Math.min(0.05, (ts - last) / 1000);
-        last = ts;
-        if (!paused) { update(dt); }
-        if (state.running) { draw(); raf = requestAnimationFrame(loop); }
-      }
-
-      function start() {
-        reset();
-        ovStart.hidden = true;
-        ovOver.hidden = true;
-        last = performance.now();
-        cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(loop);
-      }
-
-      function gameOver() {
-        state.running = false;
-        draw();
-        if (state.score > best) {
-          best = state.score;
-          elBest.textContent = best;
-          try { localStorage.setItem(BEST_KEY, String(best)); } catch (e) { /* storage kapalı olabilir */ }
-        }
-        elFinal.textContent = 'Puanın: ' + state.score + ' · Rekor: ' + best;
-        elFact.textContent = FACTS[Math.floor(Math.random() * FACTS.length)];
-        ovOver.hidden = false;
-      }
-
-      function pointerX(e) {
-        var rect = canvas.getBoundingClientRect();
-        var cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-        player.x = Math.max(player.w / 2, Math.min(W - player.w / 2, cx * (W / rect.width)));
-      }
-
-      document.getElementById('vgPlay').addEventListener('click', start);
-      document.getElementById('vgAgain').addEventListener('click', start);
-
-      window.addEventListener('keydown', function (e) {
-        var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-        if (k === 'ArrowLeft' || k === 'ArrowRight') { e.preventDefault(); }
-        keys[k] = true;
-        if (k === 'p' && state && state.running) { paused = !paused; }
-      });
-      window.addEventListener('keyup', function (e) {
-        keys[e.key.length === 1 ? e.key.toLowerCase() : e.key] = false;
-      });
-      canvas.addEventListener('mousemove', function (e) { if (state && state.running && !paused) { pointerX(e); } });
-      canvas.addEventListener('touchstart', function (e) { if (state && state.running) { pointerX(e); } }, { passive: true });
-      canvas.addEventListener('touchmove', function (e) { if (state && state.running && !paused) { e.preventDefault(); pointerX(e); } }, { passive: false });
-      document.addEventListener('visibilitychange', function () { if (document.hidden && state && state.running) { paused = true; } });
-
-      reset();
-      state.running = false;
-      draw();
-    }());
-  </script>
-  <script src="js/voltguard-auth.js?v=20261013a" defer></script>
+  <script src="/js/voltguard-auth.js?v=20261013a" defer></script>
 </body>
 </html>

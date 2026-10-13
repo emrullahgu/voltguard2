@@ -4,10 +4,11 @@ VoltGuard kurumsal sitesi; hizmet sayfaları, bilgi bankası, akademi, 17 mevcut
 
 ## Çalıştırma ve kontrol
 
-Node.js 20 veya üstü ile, proje kökünde:
+Node.js 24 veya üstü ile, proje kökünde:
 
 ```text
 npm run setup:staff
+npm run setup:game
 npm run build
 npm test
 npm run preview
@@ -20,6 +21,9 @@ Windows önizlemesinin üyelik, topluluk, çalışan hesabı ve özel PDF kayıt
 ## Dosya düzeni
 
 - `index.html`, `hizmetler/`, `bilgi/`, `akademi/`, `hesaplama/`, `mm/`: mevcut kurumsal sayfalar.
+- `ekibimiz.html`: ana menü, kurumsal alt menü ve ana sayfadan ulaşılan fotoğraflı ekip ve çalışma ağacı. Yayın için seçilen portreler `public/ekibimiz/` altında bulunur; `vesikalar/` içindeki ham kaynaklar yayımlanmaz.
+- `voltgame.html`, `public/voltgame/`: VoltGame içindeki tam PARALAKS: Tek Hat oyunu, siteye uyarlanmış yayın dosyaları ve tek dosyalık çevrimdışı indirme.
+- `tools/voltgame/`, `tools/build-voltgame.cjs`: oyunun seçilmiş kaynakları ve doğrulamalı derlemesi. Özgün `VoltGame/` klasörü korunur; web erişimine kapalıdır ve yayımlanmaz.
 - `tools/shell/`: ortak başlık, menü ve altbilgi kaynakları; `python tools/shell.py` ile mevcut sayfalara uygulanır.
 - `api/`: PHP üyelik ve hesap verisi API'si; kurulum ve depolama ayrıntıları `api/README.md` içindedir.
 - `topluluk.html`, `api/community.php`: herkesin okuyup üyelik olmadan yorum ve yanıt yazabildiği bölüm. Moderatör kurulumu `api/COMMUNITY.md` içinde.
@@ -29,6 +33,24 @@ Windows önizlemesinin üyelik, topluluk, çalışan hesabı ve özel PDF kayıt
 - `tools/build-engineering.cjs`: kaynakları derler, ana alan adına ve düz araç yollarına uyarlar; yayın dosyalarını ve çevrimdışı ZIP paketini üretir.
 - `araclar/`: doğrudan yayınlanabilir çıktı. Bu klasördeki değişiklikleri kaynak tarafında yapıp yeniden derleyin.
 - `voltguardekleyelim/`: orijinal aktarım; bağımsız Git geçmişi ve şirket operasyon dosyaları içerdiği için ana depoda ve yayında kullanılmaz.
+
+## Referanslarımız ve kurumsal logo
+
+Ana sayfadaki `/#referanslar` bölümünde DİMES, ROKETSAN, TUSAŞ, TÜBİTAK, Ege Üniversitesi, ERDEMİR, VESTEL, HABAŞ ve EKTAM gösterilir. Referans listesi kullanıcının sağladığı kurum adlarına dayanır; kurumların resmî siteleri yalnızca özgün logoların kaynağıdır. DİMES için yalnızca kurum adı ve logo yayımlanır; hizmet anlatımı veya şirket içi rapor verileri eklenmez. Logolar `public/referanslar/` altında, kaynak adresleri ve dosya doğrulama bilgileri `tools/reference-logos.json` içinde tutulur.
+
+Ortak menü ve altbilgi, `public/logo.png` içindeki özgün VoltGuard ambleminin web için hazırlanan `public/voltguard-logo.webp` sürümünü kullanır. Referans logoları özgün renk ve oranlarıyla sunulur.
+
+## VoltGame
+
+`/voltgame.html` adresindeki eski mini oyun, PARALAKS: Tek Hat R1 ve fiziksel kural sürümü 4 ile değiştirilmiştir. 27 kampanya seviyesi, 37 günlük bulmaca, iş emirleri, Tek Hat şeması, ipuçları, geri al/yinele, hareket defteri, meydan okuma ve hayalet kodları, ses, kalite ve erişilebilirlik ayarları birlikte korunur. İlerleme yalnızca tarayıcıdaki `paralaks2.kayit` kaydında tutulur; üyelik gerektirmez.
+
+Oyun site menüsünün altında kendi alanında çalışır; tam ekran düğmesi desteklenmeyen cihazlarda sayfayı büyütür. `?lvl`, `?daily`, `?kalite` ve `#PX2-…` bağlantıları oyuna aktarılır, paylaşım adresleri `/voltgame.html` üzerinden açılır. Site renkleri, gerçek logo ve yerel yazı tipleri kullanılır. Çözücü aynı kökenden `/public/voltgame/solver-worker.js` dosyasını yükler; sitenin güvenlik politikası genişletilmez. İndirilen tek HTML dosyası grafik bileşenini, seviyeleri ve çözücüyü içerdiği için ilk açılışta internet gerektirmez.
+
+`npm run build:game` tüm seviyeleri doğrulayıp yayın ve indirme dosyalarını yeniden üretir. `npm test` yayın bütünlüğünü ve gerçek çözücüyü, `npm run test:game-browser` ise ayrı geçici tarayıcıda güvenlik politikası, oyun akışları, kayıt, paylaşım, mobil düzen ve çevrimdışı dosyayı kontrol eder. Kaynak kayıtları `tools/voltgame/provenance.json`, yayın bilgileri `public/voltgame/release.json` içindedir. İlk kaynak performans ölçümlerinin sınırları `tools/voltgame/UPSTREAM-README.md` dosyasında korunur.
+
+## Netlify yayını
+
+`netlify.toml`, Node 24 ile `tools/build-netlify.cjs` dosyasını çalıştırır ve `.netlify-publish/` klasörünü yayımlar. Derlenip kontrol edilmiş, Git'teki statik çıktılar kullanılır; oyunun dosya boyutları ve çözücü özeti yayın öncesinde doğrulanır. PHP, çalışan uygulamasının özel dosyaları, geliştirme kaynakları, ham aktarımlar ve yerel test verileri bu klasöre kopyalanmaz. Bu deponun bağlı projesi `voltguard2.netlify.app`, üretim dalı `main`'dir. Çalışan hesabı, topluluk yazımı ve iletişim formu PHP sunucusu gerektirir; Netlify bu işlevleri çalıştırmaz.
 
 ## Entegrasyonda alınan kararlar
 
@@ -64,7 +86,7 @@ Ubuntu verilerini kullanan cPanel veya başka bir yayın sunucusunda PHP’nin S
 
 Yeni araçlar mevcut kök `sw.js` önbelleğini kullanır; ikinci bir service worker kurulmaz. PDF ve Excel bağımlılıkları yereldir, uzak Google Fonts çağrıları kaldırılmıştır. Araçların mühendislik yöntemleri ve geçerlilik sınırları `/araclar/yontem/` sayfasında açıklanır.
 
-Yeni bölümün tüm 55 sayfası sitenin gerçek ortak menüsünü, VOLT⚡GUARD logosunu ve altbilgisini kullanır. Lacivert/kehribar renkleri, Outfit başlık ve Inter metin yazı tipleri, kartlar, düğmeler ve form alanları mevcut siteyle eşleştirilmiştir. Araçların özgün stilleri `#vg-tool-workspace` içinde sınırlandırılır; ortak menüye sızmaz. `assets/host-theme.css` ortak görsel düzeni uygular. Çevrimdışı ZIP aynı yerel yazı tiplerini ve menü varlıklarını içerir; PDF raporlarına site menüsü eklenmez.
+Yeni bölümün tüm 55 sayfası sitenin gerçek ortak menüsünü, özgün VoltGuard amblemini (`public/voltguard-logo.webp`) ve altbilgisini kullanır. Lacivert/kehribar renkleri, Outfit başlık ve Inter metin yazı tipleri, kartlar, düğmeler ve form alanları mevcut siteyle eşleştirilmiştir. Araçların özgün stilleri `#vg-tool-workspace` içinde sınırlandırılır; ortak menüye sızmaz. `assets/host-theme.css` ortak görsel düzeni uygular. Çevrimdışı ZIP aynı yerel yazı tiplerini ve menü varlıklarını içerir; PDF raporlarına site menüsü eklenmez.
 
 ## Entegrasyon doğrulaması
 

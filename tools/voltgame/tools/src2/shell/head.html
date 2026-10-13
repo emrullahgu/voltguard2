@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a1020">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="PARALAKS: Tek Hat — VoltGuard saha robotu Volti ile gerçek manevra bulmacası.">
+<title>PARALAKS: Tek Hat — VoltGuard</title>
+<!-- shell/head.html — sahip: UI. CSS + DOM iskeleti; build bu dosyanın ardına <script>leri ve </body></html> ekler.
+     Test kimlikleri (README, KORUNUR): hud-top, hud-controls, canvas#game-canvas, btn-undo/redo/rot-left/rot-right/hint/
+     menu/play/next/map, [data-testid=chip][data-tok], lamp, sld-strip, toast, title-screen, level-select, lvl-<id>,
+     win-panel. Ek: btn-defter, sld-panel, sheet, task (iş listesi), reason (neden kartı), dl / dl-work (etiketler).
+     Kural sürümü 4: "İzdüşümü uygula" düğmesi yoktur (kamera yalnız görsel).
+     Yerleşim: dikey telefonda üst çubuk / sahne / Tek Hat alt sayfası (kapalı 64 px şerit, açık %42) / kontroller;
+     yatayda (≥ 560 px) Tek Hat sağ sütun. Güvenli alanlar env(safe-area-inset-*). Bütün hedefler ≥ 44 CSS px.
+     Geçişler 150–220 ms opaklık+öteleme, kesilebilir; hareketAzalt / prefers-reduced-motion ile 0. -->
+<style>
+:root{
+  --bg0:#0a1020; --bg1:#0f1830; --bg2:#14204a; --panel:#0d1730; --line:#24365f; --line2:#33508a;
+  --ink:#e8f4ff; --muted:#9fb2d4; --dim:#6f82a8; --cyan:#5cf0ff; --cyan2:#2bb8d0; --gold:#f5c542;
+  --live:#ffc94a; --red:#ff5d6c; --green:#44e08a; --earth:#c8d93a; --gray:#7a86a6; --warn:#ff9f43;
+  --sat:env(safe-area-inset-top,0px); --sar:env(safe-area-inset-right,0px); --sab:env(safe-area-inset-bottom,0px); --sal:env(safe-area-inset-left,0px);
+  --sldH:64px; --sldW:clamp(230px,34vw,440px); --tr:.18s;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;background:var(--bg0);touch-action:none;-webkit-user-select:none;user-select:none;
+  -webkit-tap-highlight-color:transparent;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",Arial,sans-serif;font-size:15px;line-height:1.35}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+[hidden]{display:none !important}
+svg{display:block}
+.vh{position:absolute !important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------------------------------------------------------------- iskelet */
+#app{position:fixed;inset:0;display:grid;grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto minmax(0,1fr) var(--sldH) auto;grid-template-areas:"top" "stage" "sld" "ctrl";
+  background:radial-gradient(120% 80% at 50% 30%,#13224a 0,#0a1020 70%)}
+#app.sld-open{--sldH:42%}
+#app:not(.ingame){grid-template-rows:0 minmax(0,1fr) 0 0}
+#app:not(.ingame) #hud-top,#app:not(.ingame) #hud-controls,#app:not(.ingame) #sld{display:none}
+
+/* ---------------------------------------------------------------- üst çubuk */
+#hud-top{grid-area:top;min-width:0;padding:calc(2px + var(--sat)) calc(6px + var(--sar)) 4px calc(6px + var(--sal));
+  background:linear-gradient(180deg,rgba(6,10,22,.97),rgba(9,15,32,.94));border-bottom:1px solid #1b2a50;display:flex;flex-direction:column;gap:2px;z-index:3}
+.tb1{display:flex;align-items:center;gap:6px;min-width:0;height:44px}
+.lvl-title{flex:1 1 auto;min-width:0;height:44px;display:flex;align-items:center;gap:8px;padding:0 6px;border:0;border-radius:10px;background:none;text-align:left}
+.lvl-title:active{background:#13204a}
+.io{flex:0 0 auto;font-size:11px;font-weight:700;letter-spacing:.04em;color:#0a1020;background:var(--gold);border-radius:6px;padding:2px 6px}
+/* uzun ad (yatay telefon, "Geri Al?" düğmesi açıkken) kesilmez: en çok iki satır */
+#lvl-name{min-width:0;overflow:hidden;font-weight:650;font-size:15px;line-height:1.15;white-space:normal;overflow-wrap:break-word;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.belt{flex:0 0 auto;display:flex;align-items:center;gap:3px;color:var(--muted);font-size:12px}
+.belt .bi{display:flex;align-items:center;gap:2px;padding:2px 4px;border-radius:7px;background:#111c3c;border:1px solid #22345e}
+.belt .used{opacity:.3}
+.belt svg{width:14px;height:14px}
+.lamp{flex:0 0 auto;display:flex;align-items:center;gap:5px;height:30px;padding:0 8px 0 5px;border-radius:15px;font-size:12px;font-weight:600;
+  color:var(--muted);background:#121c38;border:1px solid #2a3a64;white-space:nowrap}
+.lamp .li{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:#56607a;color:#0a1020}
+.lamp .li svg{width:12px;height:12px}
+.lamp.ok{color:#bff5d6;border-color:#1f6e48;background:#0f2a22}.lamp.ok .li{background:var(--green)}
+.lamp.dead{color:#ffd0d5;border-color:#8a2a38;background:#2a1018}.lamp.dead .li{background:var(--red)}
+.lamp.busy .li svg{animation:spin 1.1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lamp-undo{flex:0 0 auto;height:44px;min-width:44px;padding:0 10px;border-radius:12px;border:1px solid #a04050;background:#3a1420;color:#ffd0d5;font-size:13px;font-weight:650}
+@media (max-width:420px){#lamp-txt{display:none}.lamp{padding:0 5px}}
+.tb2{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;height:30px}
+.cnt{display:flex;align-items:baseline;justify-content:center;gap:4px;min-width:0;border-radius:8px;background:#0f1a38;border:1px solid #1e2f58;padding:0 4px;overflow:hidden;white-space:nowrap}
+.cnt .cl{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.cnt b{font-size:16px;line-height:28px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.cnt .co{font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums}
+.cnt .co.hit{color:var(--green)}
+.cnt.tick b{animation:tick .22s ease-out}
+@keyframes tick{0%{transform:scale(1.35);color:var(--cyan)}100%{transform:scale(1)}}
+
+/* ---------------------------------------------------------------- sahne */
+#stage{grid-area:stage;position:relative;overflow:hidden;min-width:0;min-height:0}
+#game-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none}
+#labels{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.dl{position:absolute;left:0;top:0;transform:translate(-999px,-999px);font:600 10px/1 system-ui,sans-serif;letter-spacing:.03em;color:#dff6ff;
+  background:rgba(8,14,30,.72);border:1px solid rgba(92,240,255,.35);border-radius:5px;padding:2px 4px;white-space:nowrap;margin:0;
+  display:flex;align-items:center;gap:4px;max-width:calc(100% - 8px)}
+.dl .dn{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.dl .ds{font-size:8.5px;font-weight:700;letter-spacing:.04em;padding:1px 3px;border-radius:3px;background:#1a2647;color:#cfe0ff}
+.dl .ds.live{background:var(--live);color:#1a1200}.dl .ds.dead{background:repeating-linear-gradient(45deg,#4a4870 0 2px,#2a2944 2px 4px);color:#efeaff}
+.dl .ds.earth{background:repeating-linear-gradient(45deg,#c8d93a 0 3px,#2fbf6a 3px 6px);color:#0b1206}.dl .ds.lock{background:#5a1828;color:#ffd9de}
+.dl .ds.warn{background:#5a3410;color:#ffe1b8}.dl .ds.ggoal{background:#ff9f43;color:#1d0d00}.dl .ds.gok{background:#1f6e48;color:#d8ffe8}
+.dl.hot{border-color:var(--cyan);color:#fff;background:rgba(10,60,80,.92);z-index:2;font-size:11px;max-width:min(70%,300px)}
+/* rehber etiketi: durağan altın çerçeve (CSS animasyonu her karede stil/boya yeniden hesabı = kare başına ayırma) */
+.dl.guide{max-width:min(70%,300px);z-index:2;border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,197,66,.45)}
+#chips{position:absolute;left:calc(8px + var(--sal));right:calc(8px + var(--sar));bottom:8px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;pointer-events:none;z-index:4}
+#app.lefty #chips{justify-content:flex-start}
+.chip-btn{pointer-events:auto;min-height:48px;min-width:48px;max-width:min(360px,100%);padding:4px 12px 4px 8px;border-radius:14px;border:1px solid #3a5aa0;
+  background:linear-gradient(180deg,#1a2d63,#14234d);display:flex;align-items:center;gap:8px;text-align:left;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.chip-btn .ck{flex:0 0 auto;width:20px;height:20px;border-radius:6px;background:#0c1634;border:1px solid #2e4680;font-size:11px;display:grid;place-items:center;color:var(--muted)}
+.chip-btn .ct{display:flex;flex-direction:column;min-width:0}
+.chip-btn .c1{font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* önizleme ("düşer: …" listesi güvenlik bilgisidir) kesilmez: satır kayar, en çok 4 satır */
+.chip-btn .c2{font-size:11px;line-height:1.25;color:var(--muted);white-space:normal;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4}
+.chip-btn.bad{border-color:#8a4050;background:linear-gradient(180deg,#2a1a33,#20142a)}
+.chip-btn.bad .c2{color:#ffb3bd}
+.chip-btn.irrev{border-color:#b08030}
+.chip-head{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:4px;align-items:center;justify-content:center;font-size:12px;color:var(--ink);pointer-events:none;
+  text-shadow:0 1px 3px #000}
+.chip-head b{font-weight:700;margin-right:2px}
+.bdg{font-size:10px;font-weight:700;padding:1px 5px;border-radius:6px;background:#1a2647;color:#cfe0ff;letter-spacing:.03em}
+.bdg.live{background:var(--live);color:#1a1200}.bdg.dead{background:repeating-linear-gradient(45deg,#4a4870 0 2px,#2a2944 2px 4px);color:#efeaff}
+.bdg.earth{background:repeating-linear-gradient(45deg,#c8d93a 0 3px,#2fbf6a 3px 6px);color:#0b1206}.bdg.lock{background:#5a1828;color:#ffd9de}.bdg.warn{background:#5a3410;color:#ffe1b8}
+/* ---- iş listesi (sim2.checklist) */
+#task{position:absolute;left:calc(8px + var(--sal));top:8px;z-index:4;max-width:min(380px,calc(100% - 16px - var(--sal) - var(--sar)));
+  border-radius:14px;border:1px solid #2b5a8a;background:rgba(10,20,44,.94);box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#app.lefty #task{left:auto;right:calc(8px + var(--sar))}
+#task-btn{display:flex;align-items:center;gap:6px;min-height:44px;width:100%;padding:4px 10px 4px 8px;border:0;background:none;text-align:left;border-radius:14px}
+#task .tk-i{flex:0 0 auto;width:22px;height:22px;border-radius:7px;display:grid;place-items:center;background:#16305a;color:var(--cyan);font-size:12px;font-weight:800}
+#task .tk-n{flex:0 0 auto;font-weight:750;font-size:13px;font-variant-numeric:tabular-nums}
+#task .tk-x{flex:1 1 auto;min-width:0;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#task.all{border-color:#2a7a52}#task.all .tk-i{background:#0f3a26;color:var(--green)}
+#task-list{list-style:none;margin:0;padding:0 10px 8px 10px;max-height:min(46vh,340px);overflow:auto;touch-action:pan-y}
+#task-list .tg{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;margin:6px 0 2px}
+#task-list .ti{display:flex;gap:6px;align-items:flex-start;font-size:12.5px;line-height:1.3;padding:3px 0;color:var(--ink)}
+#task-list .ti .tm{flex:0 0 auto;width:16px;height:16px;margin-top:1px;border-radius:5px;border:1.5px solid #4a6aa8;display:grid;place-items:center;color:#06121f}
+#task-list .ti .tm svg{width:11px;height:11px}
+#task-list .ti.done{color:var(--muted)}#task-list .ti.done .tm{background:var(--green);border-color:var(--green)}
+#task-list .ti.next{color:#fff;font-weight:650}#task-list .ti.next .tm{border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,197,66,.3)}
+/* ---- neden kartı (erişilemeyen hedef) */
+#reason{position:absolute;left:calc(8px + var(--sal));right:calc(8px + var(--sar));bottom:8px;z-index:8;max-width:460px;margin:0 auto;padding:8px 10px 10px;border-radius:16px;
+  background:rgba(30,12,22,.97);border:1px solid #c06070;box-shadow:0 10px 28px rgba(0,0,0,.55);transition:opacity var(--tr),transform var(--tr)}
+#reason.off{opacity:0;transform:translateY(8px)}
+#reason .rs-h{display:flex;align-items:center;gap:8px}
+#reason .rs-i{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#c06070;color:#fff;font-weight:900;display:grid;place-items:center;font-size:14px}
+#reason .rs-t{flex:1 1 auto;min-width:0;font-size:14px}
+#reason .rs-x{flex:0 0 auto;width:44px;height:44px;margin:-6px -6px -6px 0;border:0;background:none;border-radius:12px;display:grid;place-items:center;color:#ffd0d5}
+#reason .rs-m{font-size:13px;line-height:1.4;color:#ffe6ea;margin:2px 0 4px}
+#reason .rs-l{margin:2px 0 4px;padding-left:18px;font-size:12px;color:#f3c9d0}
+#reason .rs-b{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+#reason .rs-b .sm{min-height:44px}
+#chips.shake .chip-btn{animation:shake .28s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.chips-in .chip-btn{animation:chipIn .16s ease-out}
+@keyframes chipIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.toast{position:absolute;left:calc(50% + (var(--sal) - var(--sar)) / 2);top:10px;transform:translateX(-50%);z-index:6;width:max-content;
+  max-width:min(calc(100% - 16px - var(--sal) - var(--sar)),520px);padding:8px 10px 8px 12px;border-radius:12px;
+  background:rgba(13,21,44,.96);border:1px solid #2b3d6b;font-size:13px;pointer-events:none;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.45);
+  transition:opacity var(--tr),transform var(--tr)}
+.toast.err{border-color:#a04050}.toast.hint{border-color:#2b8aa0}.toast.ok{border-color:#2a7a52}
+.toast .tm{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.toast .tb{pointer-events:auto;flex:0 0 auto;min-height:44px;min-width:64px;border-radius:10px;border:1px solid #5a6fa8;background:#1a2a58;font-weight:650;font-size:13px}
+.toast.off{opacity:0;transform:translate(-50%,-6px)}
+/* iş listesi görünürken bildirim onun ALTINA iner (listeye dokunuş "Neden?"e gitmesin) */
+#task:not([hidden]) ~ .toast{top:60px}
+#task.open:not([hidden]) ~ .toast{top:auto;bottom:72px}
+#peek{position:absolute;left:calc(8px + var(--sal));right:calc(8px + var(--sar));top:8px;z-index:5;pointer-events:none;padding:8px 12px;border-radius:12px;background:rgba(10,18,38,.9);border:1px solid #2a3c70;
+  font-size:13px;color:var(--muted);transition:opacity .3s,transform .3s}
+#peek b{color:var(--ink)}
+#peek.off{opacity:0;transform:translateY(-8px)}
+#hint-pop{position:absolute;left:calc(8px + var(--sal));right:calc(8px + var(--sar));bottom:8px;z-index:7;max-width:440px;margin:0 auto;padding:10px;border-radius:16px;background:rgba(12,20,42,.98);
+  border:1px solid #2b8aa0;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+#hint-pop h3{margin:0 0 6px;font-size:14px}
+#hint-pop .hp-row{display:flex;gap:6px;margin:6px 0}
+#hint-pop .hp-row>button{flex:1 1 0;min-height:44px;border-radius:12px;border:1px solid #2e4680;background:#16264f;font-weight:600;font-size:13px}
+#hint-pop .seg button[aria-pressed=true]{background:#0f3446;border-color:var(--cyan)}
+#hint-out{min-height:20px;font-size:13px;color:var(--ink);padding:4px 2px}
+#hint-pop .note{font-size:11px;color:var(--dim)}
+
+/* ---------------------------------------------------------------- Tek Hat paneli */
+#sld{grid-area:sld;min-width:0;min-height:0;display:flex;flex-direction:column;background:#0b1428;border-top:1px solid #1d2a4d;position:relative;z-index:2}
+#sld-strip{flex:0 0 64px;display:flex;align-items:stretch;gap:6px;padding:0 calc(6px + var(--sar)) 0 calc(4px + var(--sal));min-width:0;touch-action:none}
+.sld-tg{flex:0 0 auto;min-width:56px;min-height:44px;margin:10px 0;padding:0 8px;border-radius:12px;border:1px solid #2a3c70;background:#111d40;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1px;font-size:10px;color:var(--muted)}
+.sld-tg svg{width:22px;height:18px;transition:transform var(--tr)}
+#app.sld-open .sld-tg svg{transform:rotate(180deg)}
+.sld-sum{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px;font-size:12px;color:var(--muted);overflow:hidden}
+.sld-sum .ln{display:flex;gap:6px;align-items:center;white-space:nowrap;overflow:hidden;min-width:0}
+/* şerit etiketleri esnek öğe: daralınca KENDİ içinde "…" ile kısalır (text-overflow flex kapsayıcıda işlemez) */
+.ld{display:block;flex:0 1 auto;min-width:30px;padding:1px 6px;border-radius:8px;border:1px solid #2a3a64;background:#101b3a;color:var(--ink);font-size:12px;
+  max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sld-sum .tag{display:block;flex:0 2 auto;min-width:26px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sld-sum .tag.rk,.sld-sum .tag.zs{flex-shrink:0}
+.sld-sum .ln>.lb{flex:0 3 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.ld.on{border-color:#8a6a1e;background:#2a220c}.ld.on .lk{color:var(--live)}
+.ld.off{color:var(--muted)}.ld.off .lk{color:var(--red)}
+.tag{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:650;letter-spacing:.02em;border:1px solid #2a3a64;background:#111c3c}
+.tag.live{color:#1a1200;background:var(--live);border-color:var(--live)}
+.tag.dead{color:#e6e2ff;background:repeating-linear-gradient(45deg,#3a3858 0 3px,#24233a 3px 6px);border-color:#5a5880}
+.tag.earth{color:#10160a;background:repeating-linear-gradient(45deg,#c8d93a 0 4px,#2fbf6a 4px 8px);border-color:#9aa83a}
+.tag.lock{color:#ffd9de;background:#4a1420;border-color:#a04050}
+.tag.ok{color:#bff5d6;background:#0f2a22;border-color:#1f6e48}
+.tag.warn{color:#ffe1b8;background:#3a2410;border-color:#9a6420}
+#sld-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;border-top:1px solid #16234a;position:relative}
+.sld-zoom{position:absolute;left:calc(6px + var(--sal));top:6px;z-index:1;width:44px;height:44px;border-radius:12px;border:1px solid #2e4680;
+  background:rgba(17,29,64,.92);display:grid;place-items:center;color:var(--ink);padding:0}
+.sld-zoom svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sld-zoom[aria-pressed=true]{border-color:var(--cyan);background:#0f3446}
+#sld-scroll{flex:1 1 auto;min-height:0;overflow:auto;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;
+  background-color:#0a1326;background-image:radial-gradient(#1a2850 1px,transparent 1px);background-size:16px 16px}
+#sld-svg{margin:0 auto}
+#sld-legend{flex:0 0 auto;display:flex;flex-wrap:nowrap;overflow-x:auto;touch-action:pan-x;gap:4px 8px;white-space:nowrap;padding:4px calc(8px + var(--sar)) 4px calc(8px + var(--sal));font-size:10px;color:var(--muted);border-top:1px solid #16234a}
+#sld-legend .tag{font-size:10px}
+#app:not(.sld-open) #sld-body{display:none}
+
+/* SLD SVG */
+.s-sym{fill:none;stroke:#cfe0ff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.s-fill{fill:#cfe0ff;stroke:none}
+.s-txt{fill:#cfe0ff;font:600 11px system-ui,sans-serif}
+.s-sub{fill:#8aa0c8;font:500 9.5px system-ui,sans-serif}
+.s-flag{font:700 9.2px system-ui,sans-serif;fill:#fff}  /* ≥ 8 CSS px at the 0,88 touch scale */
+.w{fill:none;stroke-linecap:round}
+.w.n-live{stroke:var(--live);stroke-width:2.5}
+.w.n-dead{stroke:url(#pHatch);stroke-width:5}
+.w.n-earth{stroke:url(#pEarth);stroke-width:5}
+.w.n-off{stroke:#46557a;stroke-width:2}
+.wf{fill:none;stroke:#fff6cf;stroke-width:1.4;stroke-dasharray:3 9;opacity:0;stroke-linecap:round}
+.wf.n-live{opacity:.85;animation:flow 1.2s steps(12) infinite}  /* adım adım: SVG çizgi animasyonu ana iş parçacığında; 10 güncelleme/s yeter */
+@keyframes flow{to{stroke-dashoffset:-24}}
+.busbar.n-live{fill:var(--live)}.busbar.n-dead{fill:url(#pHatch);stroke:#6a6890;stroke-width:1}.busbar.n-earth{fill:url(#pEarth)}.busbar{fill:#46557a}
+.pair{fill:none;stroke-linecap:round}
+.pair.sel{stroke:var(--cyan);stroke-width:7;opacity:.35}
+.pair-in{fill:none;stroke-linecap:round;stroke-width:2.5}
+.pair.unobs{stroke:url(#pGray);stroke-width:5;opacity:.9}
+.pair.cand{stroke:var(--cyan);stroke-width:2;stroke-dasharray:4 4;opacity:.9}
+.el .hit{fill:transparent;stroke:none}
+.el.hot .hl{stroke:var(--cyan);stroke-width:2;fill:rgba(92,240,255,.08);opacity:1}
+.el .hl{fill:none;stroke:none;opacity:0}
+.el.hot .hl{animation:hot 1.4s steps(7) infinite}
+@keyframes hot{50%{stroke-opacity:.35}}
+.el{cursor:pointer}
+.el.cl-live .cond{stroke:var(--live)}
+.fedfill{fill:rgba(255,201,74,.85);stroke:var(--live)}
+.s-sym.bad{stroke:var(--red)}.s-sym.dash{stroke-dasharray:2 2}.s-sym.thin{stroke-width:1}.s-sym.wht{stroke:#fff}
+.s-sym.arcm{stroke:#ffd34a;stroke-width:1.5}.s-sym.eye{fill:rgba(92,240,255,.12);stroke:#9fefff}
+.el .blade{transition:transform .16s ease-out}
+.lbl-live{fill:var(--live)}
+.cur{fill:#9fe8ff;font:600 9.2px system-ui,sans-serif}
+
+/* ---------------------------------------------------------------- kontroller */
+#hud-controls{grid-area:ctrl;display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;
+  padding:4px calc(8px + var(--sar)) calc(4px + var(--sab)) calc(8px + var(--sal));background:rgba(8,13,28,.96);border-top:1px solid #1d2a4d;z-index:3}
+/* solak: kümeler yer değiştirir (Menü/Defter/İpucu sola, Geri Al/Yinele sağa) ama yönlü çiftlerin iç sırası korunur:
+   Sola döndür Sağa'nın, Geri Al Yinele'nin solunda kalır (row-reverse çiftleri ters çeviriyordu) */
+#app.lefty #btn-menu{order:1}#app.lefty #btn-defter{order:2}#app.lefty #btn-hint{order:3}
+#app.lefty #btn-rot-left{order:4}#app.lefty #btn-rot-right{order:5}#app.lefty #btn-undo{order:6}#app.lefty #btn-redo{order:7}
+.btn{flex:1 1 0;max-width:58px;height:52px;min-width:44px;min-height:44px;border-radius:13px;border:1px solid #2e4680;
+  background:linear-gradient(180deg,#1c2e60,#16244c);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;color:var(--ink)}
+.btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn .bl{font-size:9.5px;color:var(--muted);line-height:1;max-width:100%;overflow:hidden;white-space:nowrap}
+.btn:active{transform:scale(.95)}
+.btn[aria-disabled=true]{opacity:.45}
+.btn.on{border-color:var(--cyan);background:#0f3446}
+
+/* ---------------------------------------------------------------- ekranlar ve kaplamalar */
+.ov{visibility:hidden;opacity:0;pointer-events:none;transition:opacity var(--tr) ease,transform var(--tr) ease,visibility 0s linear var(--tr)}
+.ov.on{visibility:visible;opacity:1;pointer-events:auto;transition-delay:0s}
+.screen{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;overflow:auto;touch-action:pan-y;
+  padding:calc(16px + var(--sat)) calc(16px + var(--sar)) calc(16px + var(--sab)) calc(16px + var(--sal));background:radial-gradient(130% 90% at 50% 0,#14244e 0,#0a1020 65%)}
+.screen.ov{transform:translateY(10px)}.screen.ov.on{transform:none}
+.big{min-height:52px;min-width:180px;padding:0 22px;border-radius:15px;border:1px solid var(--cyan);background:linear-gradient(180deg,#14405a,#0f2c44);font-size:17px;font-weight:650}
+.big.alt{border-color:#3a5aa0;background:linear-gradient(180deg,#1a2a58,#13204a)}
+.sm{min-height:44px;min-width:44px;padding:0 14px;border-radius:12px;border:1px solid #33508a;background:#16244c;font-size:14px;font-weight:600}
+.sm.pri{border-color:var(--cyan);background:#0f3446}
+.sm.warn{border-color:#a04050;background:#3a1420}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+/* açılış */
+/* ortalama "margin:auto" ile: justify-content:center taşınca üst kısmı kaydırılamaz biçimde keser (yatay 667×375) */
+#scr-title{justify-content:flex-start;gap:18px;text-align:center}
+#scr-title>:first-child{margin-top:auto}#scr-title>:last-child{margin-bottom:auto}
+.logo{display:flex;flex-direction:column;align-items:center;gap:6px}
+.logo h1{margin:0;font-size:clamp(26px,7vw,40px);letter-spacing:.06em;font-weight:800;background:linear-gradient(90deg,#fff,#9fefff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo h2{margin:0;font-size:15px;color:var(--gold);font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.logo .brand{font-size:11px;color:var(--dim);letter-spacing:.2em}
+.oztest{font:12px/1.6 ui-monospace,Consolas,monospace;color:var(--muted);text-align:left;min-height:96px;width:min(320px,100%)}
+.oztest div{opacity:0;animation:oz .2s ease-out forwards}
+.oztest .bad{color:var(--warn)}
+@keyframes oz{to{opacity:1}}
+.safety{max-width:440px;font-size:12.5px;color:var(--muted);border:1px solid #2a3c70;border-radius:12px;padding:10px 12px;background:rgba(10,18,38,.7);text-align:left}
+.safety b{color:var(--gold)}
+.title-actions{display:flex;flex-direction:column;gap:10px;align-items:center}
+
+/* seviye seçme (düz harita) */
+#scr-levels{gap:12px;padding-top:calc(10px + var(--sat))}
+.lv-head{position:sticky;top:calc(-10px - var(--sat));z-index:2;width:min(560px,100%);display:flex;align-items:center;gap:10px;padding:6px 0;background:#101d40;
+  box-shadow:0 8px 10px -6px rgba(4,8,20,.85)}
+.lv-head h1{margin:0;font-size:18px;flex:1}
+#level-list{width:min(560px,100%);display:flex;flex-direction:column;gap:14px;padding-bottom:20px}
+.kalp{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;border:1px solid #3a3a20;background:linear-gradient(90deg,#1e1a0c,#121a34)}
+.kalp svg{flex:0 0 auto}
+.kalp .kt{font-size:13px;color:var(--muted)}.kalp .kt b{color:var(--gold);display:block;font-size:14px}
+.district{border-radius:18px;border:1px solid #22345e;background:linear-gradient(180deg,#111c3c,#0c1530);overflow:hidden}
+.district.locked{opacity:.6}
+.district .dh{display:flex;align-items:center;gap:10px;padding:10px 12px 4px}
+.district .dh h3{margin:0;font-size:15px;flex:1}
+.district .dh .dn{font-size:12px;color:var(--muted)}
+.district .sky{height:54px;width:100%}
+.district .dnote{font-size:12px;color:var(--muted);padding:0 12px 8px}
+.lv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:6px 10px 12px;position:relative}
+.lvl-btn{position:relative;min-height:64px;text-align:left;padding:8px 10px;border-radius:14px;border:1px solid #2b3d6b;background:#13204a;display:flex;flex-direction:column;gap:2px}
+.lvl-btn .ln1{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.lvl-btn .ln2{font-weight:650;font-size:14px;line-height:1.2}
+.lvl-btn .ln3{font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums}
+.lvl-btn.done{border-color:#7a6a24;background:linear-gradient(180deg,#26240f,#16203e)}
+.lvl-btn.done .win{fill:var(--live)}
+.lvl-btn.next{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(92,240,255,.15)}
+.lvl-btn.lock{opacity:.55}
+.lvl-btn .bld{position:absolute;right:8px;top:8px;width:22px;height:22px}
+.cls{font-size:10px;padding:0 5px;border-radius:5px;border:1px solid #33508a}
+.cls.zor{border-color:#a06030;color:#ffcf9a}.cls.sinav{border-color:#a04050;color:#ffb3bd}.cls.ogretici{color:#a8e9f5}
+.daily-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;border:1px solid #2b6a80;background:#0f2434}
+.daily-card .dt{flex:1;font-size:13px;color:var(--muted)}.daily-card .dt b{display:block;color:var(--ink);font-size:14px}
+
+/* kazanma paneli (alt sayfa) */
+#win-panel{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:820px;z-index:25;max-height:86%;display:flex;flex-direction:column;border-radius:20px 20px 0 0;
+  background:linear-gradient(180deg,rgba(14,24,52,.98),rgba(9,15,34,.99));border-top:1px solid #3a5a9a;box-shadow:0 -12px 40px rgba(0,0,0,.55);
+  padding:12px calc(14px + var(--sar)) calc(12px + var(--sab)) calc(14px + var(--sal));transform:translateY(24px)}
+#win-panel.on{transform:none}
+#win-panel .wp-scroll{overflow:auto;touch-action:pan-y;min-height:0;flex:1 1 auto;display:flex;flex-direction:column;gap:10px}
+#win-title{margin:0;font-size:18px;color:var(--live);display:flex;align-items:center;gap:8px}
+.wp-sub{font-size:12px;color:var(--muted)}
+.mt{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.mt th{font-weight:500;color:var(--muted);text-align:right;padding:3px 6px;font-size:11px}
+.mt th:first-child,.mt td:first-child{text-align:left}
+.mt td{padding:4px 6px;text-align:right;border-top:1px solid #1d2a4d}
+.mt td.hit{color:var(--green);font-weight:700}
+.mt td.you{font-weight:700}
+.seals{display:flex;flex-wrap:wrap;gap:6px}
+.seal{display:flex;align-items:center;gap:6px;padding:4px 8px 4px 4px;border-radius:12px;border:1px solid #6a5a20;background:#221e0c;font-size:12px}
+.seal svg{width:22px;height:22px}
+.seal.no{opacity:.35;border-color:#2a3a64;background:#111c3c}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:520px){.charts{grid-template-columns:1fr}}
+.chart{border:1px solid #1e2f58;border-radius:12px;padding:6px 8px;background:#0b1530}
+.chart h4{margin:0 0 2px;font-size:12px;display:flex;justify-content:space-between;gap:6px}
+.chart .cn{font-size:10.5px;color:var(--dim);margin-top:2px}
+.chart svg text{font:9px system-ui,sans-serif;fill:#8aa0c8}
+.chart svg{max-height:210px}
+.wp-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:10px;justify-content:center}
+.wp-actions .big{min-width:140px}
+
+/* genel sayfa (iş emri, menü, ayarlar, defter, kitap, neden, kod) */
+#sheet-host{position:absolute;inset:0;z-index:30;pointer-events:none}
+.sheet-bg{position:absolute;inset:0;background:rgba(3,6,14,.55)}
+.sheet{position:absolute;left:50%;bottom:0;width:min(560px,100%);max-height:min(92%,760px);transform:translate(-50%,24px);display:flex;flex-direction:column;
+  border-radius:20px 20px 0 0;background:linear-gradient(180deg,#111c3c,#0b1430);border:1px solid #2e4680;border-bottom:0;box-shadow:0 -12px 40px rgba(0,0,0,.55)}
+.sheet.on{transform:translate(-50%,0)}
+@media (orientation:landscape) and (min-height:420px){.sheet{bottom:auto;top:50%;transform:translate(-50%,-46%);border-radius:20px;border-bottom:1px solid #2e4680}.sheet.on{transform:translate(-50%,-50%)}}
+.sh-head{display:flex;align-items:center;gap:8px;padding:10px 10px 6px 16px}
+.sh-head h2{margin:0;font-size:17px;flex:1;min-width:0}
+.sh-head .x{width:44px;height:44px;border-radius:12px;border:1px solid #2e4680;background:#16244c;display:grid;place-items:center}
+.sh-body{overflow:auto;min-height:0;flex:1 1 auto;touch-action:pan-y;padding:4px 16px 12px;font-size:14px;color:#d4e2fa;-webkit-user-select:text;user-select:text}
+.sh-body:last-child{padding-bottom:calc(18px + var(--sab))}
+.sh-foot{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;padding:8px 16px calc(12px + var(--sab));border-top:1px solid #1d2a4d}
+.sh-body h3{font-size:13px;color:var(--gold);margin:14px 0 6px;letter-spacing:.03em;text-transform:uppercase}
+.sh-body p{margin:6px 0}
+.sh-body ul,.sh-body ol{margin:6px 0;padding-left:20px}
+.sh-body li{margin:3px 0}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px}
+.kv .k{color:var(--muted)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl td,.tbl th{padding:4px 6px;border-top:1px solid #1d2a4d;text-align:left;vertical-align:top}
+.tbl th{color:var(--muted);font-weight:500;font-size:11px}
+.tbl .n{text-align:right;font-variant-numeric:tabular-nums}
+.goal{border-left:3px solid var(--gold);padding:6px 10px;background:#141b30;border-radius:0 10px 10px 0;margin:8px 0}
+.mini{border:1px solid #1e2f58;border-radius:12px;background:#0a1326;overflow:auto;margin:8px 0}
+.rule{display:grid;grid-template-columns:minmax(110px,34%) 1fr;gap:10px;align-items:center;padding:8px;border:1px solid #22345e;border-radius:12px;background:#0f1a38;margin:6px 0}
+.rule b{display:block;margin-bottom:2px}
+.rule .rd{font-size:12.5px;color:var(--muted)}
+.rule.seen{opacity:.85}
+.rule .mini svg,.illu svg{max-width:100%;height:auto}
+.menu-list{display:flex;flex-direction:column;gap:8px}
+.menu-list button{min-height:48px;border-radius:12px;border:1px solid #2b3d6b;background:#13204a;text-align:left;padding:0 14px;font-size:15px;display:flex;align-items:center;gap:10px}
+.menu-list button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.set-row{display:flex;align-items:center;gap:10px;min-height:48px;border-top:1px solid #1d2a4d;padding:4px 0}
+.set-row label,.set-row .sl{flex:1;font-size:14px}
+.set-row input[type=range]{width:44%;min-height:44px;accent-color:var(--cyan)}
+.tgl{width:60px;height:44px;border-radius:22px;border:1px solid #33508a;background:#14204a;position:relative;flex:0 0 auto}
+.tgl::after{content:"";position:absolute;left:6px;top:7px;width:28px;height:28px;border-radius:50%;background:#56607a;transition:transform var(--tr),background var(--tr)}
+.tgl[aria-checked=true]{background:#0f3446;border-color:var(--cyan)}.tgl[aria-checked=true]::after{transform:translateX(16px);background:var(--cyan)}
+.seg{display:flex;gap:4px;flex-wrap:wrap}.seg button{min-height:44px;min-width:44px;padding:0 10px;border-radius:10px;border:1px solid #2e4680;background:#14204a;font-size:13px}
+.seg button[aria-pressed=true]{border-color:var(--cyan);background:#0f3446}
+.log{counter-reset:ln;list-style:none;padding:0;margin:6px 0;font:13px/1.45 ui-monospace,Consolas,monospace}
+.log li{counter-increment:ln;padding:3px 0 3px 34px;position:relative;border-top:1px solid #16234a}
+.log li::before{content:counter(ln) ".";position:absolute;left:0;width:28px;text-align:right;color:var(--dim)}
+textarea.code{width:100%;min-height:96px;border-radius:12px;border:1px solid #33508a;background:#0a1326;color:var(--ink);font:12px ui-monospace,Consolas,monospace;padding:8px;-webkit-user-select:text;user-select:text;touch-action:auto}
+.mono{font:12px ui-monospace,Consolas,monospace;word-break:break-all;color:#bcd0f0}
+.illu{display:flex;justify-content:center;margin:6px 0}
+.story{color:var(--muted);font-style:italic;font-size:13px}
+.memo{border:1px solid #2a3c70;border-radius:12px;background:#0f1a38;padding:8px 10px;margin:6px 0}
+.memo p{margin:8px 0 2px}
+.radio{font-size:12.5px;color:#cfe8ff;background:#0e2230;border-left:3px solid var(--cyan2);border-radius:0 10px 10px 0;padding:6px 10px;margin:6px 0}
+.talep{border:1px solid #22345e;border-radius:12px;padding:6px 10px;margin:6px 0;background:#0f1a38}
+.talep .tl1{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.talep .rd{font-size:12.5px;color:var(--muted)}
+.talep .tl3{font-size:11.5px;color:var(--dim);margin-top:2px}
+.reward{font-size:13px;color:#ffe7a0;border-left:3px solid var(--live);padding:6px 10px;background:#1e1a0c;border-radius:0 10px 10px 0}
+details.talepler>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:13px;color:var(--gold);list-style:none}
+details.talepler>summary::before{content:"▸";margin-right:6px}details.talepler[open]>summary::before{content:"▾"}
+.ghostseg{align-items:center}.ghostseg .gl{font-size:13px;color:var(--muted);padding:0 4px}
+#hint-pop .radio{margin:4px 0 6px}
+
+/* ---------------------------------------------------------------- yatay yerleşim (Tek Hat sağ sütun) */
+@media (orientation:landscape) and (min-width:560px){
+  #app{grid-template-columns:minmax(0,1fr) var(--sldW);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"top top" "stage sld" "ctrl sld"}
+  #app.sld-open{--sldH:auto}
+  #app:not(.ingame){grid-template-columns:minmax(0,1fr) 0;grid-template-rows:0 minmax(0,1fr) 0}
+  #hud-top{flex-direction:row;align-items:center;gap:8px}
+  .tb1{flex:1 1 auto}
+  .tb2{flex:0 1 380px;height:32px}
+  #sld{border-top:0;border-left:1px solid #1d2a4d}
+  #sld-strip{flex:0 0 auto;padding:6px calc(8px + var(--sar)) 6px 8px;min-height:56px}
+  .sld-sum .ln{flex-wrap:wrap;row-gap:3px}
+  #sld-legend{padding-bottom:calc(4px + var(--sab))}
+  .sld-tg{display:none}
+  #app:not(.sld-open) #sld-body,#sld-body{display:flex}
+  #hud-controls{padding-bottom:calc(4px + var(--sab))}
+}
+@media (orientation:landscape) and (max-height:500px){
+  #win-panel{flex-direction:row;max-height:94%;gap:10px}
+  #win-panel .wp-actions{flex-direction:column;justify-content:center;padding:0;flex:0 0 auto}
+  #win-panel .wp-actions .big{min-width:132px}
+  .menu-list{display:grid;grid-template-columns:1fr 1fr}
+}
+@media (orientation:landscape) and (max-height:430px){
+  .tb1{height:44px}.lvl-title{height:44px}.btn{height:46px}#lamp-txt{display:none}.lamp{padding:0 5px}
+  #sld-legend{display:none}
+}
+
+/* ---------------------------------------------------------------- hareket azaltma */
+@media (prefers-reduced-motion:reduce){:root{--tr:0s}*,*::before,*::after{animation-duration:0s !important;animation-iteration-count:1 !important}}
+#app.rm{--tr:0s}
+#app.rm *,#app.rm *::before,#app.rm *::after{animation-duration:0s !important;animation-iteration-count:1 !important}
+#app.rm .wf.n-live{opacity:.6}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="hud-top" data-testid="hud-top">
+    <div class="tb1">
+      <button id="lvl-title" class="lvl-title" type="button" aria-label="İş emrini göster"><span id="lvl-no" class="io">İE</span><span id="lvl-name"></span></button>
+      <div id="belt" class="belt" aria-label="Kemer"></div>
+      <div id="lamp" class="lamp busy" data-testid="lamp" role="status" aria-live="polite"><span class="li" id="lamp-ic"></span><span id="lamp-txt"></span></div>
+      <button id="lamp-undo" class="lamp-undo" type="button" hidden>Geri Al?</button>
+    </div>
+    <div class="tb2" id="counters">
+      <div class="cnt" id="c-h" title="Hamle"><span class="cl" id="cl-h">Hamle</span><b id="cnt-h">0</b><span class="co" id="opt-h"></span></div>
+      <div class="cnt" id="c-m" title="Manevra"><span class="cl" id="cl-m">Manevra</span><b id="cnt-m">0</b><span class="co" id="opt-m"></span></div>
+      <div class="cnt" id="c-k" title="Kesinti (yük-komut)"><span class="cl" id="cl-k">Kesinti</span><b id="cnt-k">0</b><span class="co" id="opt-k"></span></div>
+      <div class="cnt" id="c-o" title="Olay"><span class="cl" id="cl-o">Olay</span><b id="cnt-o">0</b><span class="co" id="opt-o"></span></div>
+    </div>
+  </header>
+  <main id="stage">
+    <canvas id="game-canvas" tabindex="0" aria-label="Diorama"></canvas>
+    <div id="labels" aria-hidden="true"></div>
+    <div id="peek" class="off" aria-hidden="true"></div>
+    <div id="chips" hidden></div>
+    <div id="task" data-testid="task" hidden><button id="task-btn" type="button" aria-expanded="false" aria-controls="task-list"><span class="tk-i" aria-hidden="true">✓</span><span id="task-n" class="tk-n"></span><span id="task-x" class="tk-x"><span id="task-next"></span></span></button><ol id="task-list" hidden></ol></div>
+    <div id="toast" class="toast off" data-testid="toast" role="status" aria-live="polite" hidden><span class="tm" id="toast-msg"></span><button class="tb" id="toast-why" type="button" hidden>Neden?</button></div>
+    <div id="hint-pop" class="ov" role="dialog" aria-label="İpucu"></div>
+    <div id="reason" class="off" data-testid="reason" role="alert" hidden></div>
+  </main>
+  <section id="sld" data-testid="sld-panel" aria-label="Tek Hat">
+    <div id="sld-strip" data-testid="sld-strip">
+      <button id="sld-toggle" class="sld-tg" type="button" aria-expanded="false" aria-controls="sld-body" aria-label="Tek Hat panelini aç">
+        <svg viewBox="0 0 22 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 11l6-5 6 5"/></svg><span>Tek Hat</span></button>
+      <div id="sld-sum" class="sld-sum"></div>
+    </div>
+    <div id="sld-body"><div id="sld-scroll"><svg id="sld-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tek hat şeması"></svg></div><div id="sld-legend"></div>
+      <button id="sld-zoom" class="sld-zoom" data-testid="sld-zoom" type="button" aria-pressed="false" aria-label="Tek Hat: tamamını sığdır"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div>
+  </section>
+  <nav id="hud-controls" data-testid="hud-controls">
+    <button class="btn" id="btn-undo" data-testid="btn-undo" type="button" aria-label="Geri Al"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg><span class="bl">Geri Al</span></button>
+    <button class="btn" id="btn-redo" data-testid="btn-redo" type="button" aria-label="Yinele"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 000 12h3"/></svg><span class="bl">Yinele</span></button>
+    <button class="btn" id="btn-rot-left" data-testid="btn-rot-left" type="button" aria-label="Sola döndür"><svg viewBox="0 0 24 24"><path d="M3 4v6h6"/><path d="M3.5 13a8.5 8.5 0 102.4-6.4L3 10"/></svg><span class="bl">Sola</span></button>
+    <button class="btn" id="btn-rot-right" data-testid="btn-rot-right" type="button" aria-label="Sağa döndür"><svg viewBox="0 0 24 24"><path d="M21 4v6h-6"/><path d="M20.5 13a8.5 8.5 0 11-2.4-6.4L21 10"/></svg><span class="bl">Sağa</span></button>
+    <button class="btn" id="btn-hint" data-testid="btn-hint" type="button" aria-label="İpucu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0012 3z"/></svg><span class="bl">İpucu</span></button>
+    <button class="btn" id="btn-defter" data-testid="btn-defter" type="button" aria-label="Manevra Defteri"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M9 9h7M9 13h7M9 17h4"/></svg><span class="bl">Defter</span></button>
+    <button class="btn" id="btn-menu" data-testid="btn-menu" type="button" aria-label="Menü"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="bl">Menü</span></button>
+  </nav>
+
+  <section id="scr-title" class="screen ov on" data-testid="title-screen" aria-label="Açılış">
+    <div class="logo"><span class="brand">VOLTGUARD</span><h1>PARALAKS: Tek Hat</h1><h2>Görünür Ayırma</h2></div>
+    <div class="oztest" id="oztest" aria-label="Volti öz-testi"></div>
+    <div class="title-actions">
+      <button class="big" id="btn-play" data-testid="btn-play" type="button">Başla</button>
+      <div class="row" id="title-more"></div>
+    </div>
+    <div class="safety" id="title-safety"></div>
+  </section>
+  <section id="scr-levels" class="screen ov" data-testid="level-select" aria-label="Seviye Seç">
+    <div class="lv-head"><button class="sm" id="btn-levels-back" data-testid="btn-levels-back" type="button" aria-label="Geri">←</button><h1>VoltCity</h1>
+      <button class="sm" id="btn-levels-code" type="button">Kod yapıştır</button></div>
+    <div id="level-list"></div>
+  </section>
+  <section id="win-panel" class="ov" data-testid="win-panel" role="dialog" aria-labelledby="win-title">
+    <div class="wp-scroll" id="win-body"><h2 id="win-title"></h2></div>
+    <div class="wp-actions">
+      <button class="big" id="btn-next" data-testid="btn-next" type="button">Sonraki</button>
+      <button class="big alt" id="btn-map" data-testid="btn-map" type="button">Harita</button>
+    </div>
+  </section>
+  <div id="sheet-host"></div>
+</div>

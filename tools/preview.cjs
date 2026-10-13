@@ -116,7 +116,7 @@ function fail(res, code, message, json = false) {
 
 function blockedPath(pathname) {
   return pathname.includes('\\') || pathname.includes('\0') || /(^|\/)\./.test(pathname)
-    || /^\/(tools|voltguardekleyelim|api|_vgdata|vg-data|vgdata)(\/|$)/i.test(pathname)
+    || /^\/(tools|voltguardekleyelim|vesikalar|VoltGame|api|_vgdata|vg-data|vgdata)(\/|$)/i.test(pathname)
     || /^\/(?:api|calisan)\.new(?:\/|$)/i.test(pathname)
     || /^\/calisan\/shared-(?:header|footer)\.html$/i.test(pathname)
     || /^\/calisan\/uygulama(?:\/|$)/i.test(pathname)
@@ -170,6 +170,7 @@ const server = http.createServer((req, res) => {
     query.set('file', file);
     return proxyPhp(req, res, '/api/company-asset.php', '/api/company-asset.php?' + query.toString());
   }
+  if (/^\/voltgame\/?$/i.test(pathname)) return redirect('/voltgame.html');
   if (blockedPath(pathname)) return fail(res, 404, 'Sayfa bulunamadı.');
   if (!['GET', 'HEAD'].includes(req.method)) return fail(res, 405, 'Bu sayfa istek yöntemini desteklemiyor.');
   if (pathname === '/index.html') return redirect('/');

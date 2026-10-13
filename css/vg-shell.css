@@ -25,7 +25,7 @@
   /* Çapa (#bölüm) kaydırmalarında içerik yapışkan başlığın altında kalmasın */
   scroll-padding-top: calc(var(--vg-header-h) + 12px);
 }
-@media (min-width: 68.75rem) {
+@media (min-width: 80rem) {
   :root { --vg-header-h: 68px; }
 }
 main:focus { outline: 0; }
@@ -82,84 +82,40 @@ main:focus { outline: 0; }
   padding: 0 1.25rem;
 }
 
-/* ---------- Logo işareti (header + footer) ---------- */
+/* ---------- Asıl VoltGuard logosu (header + footer) ---------- */
+.vg-brand__image {
+  display: block;
+  width: 50px;
+  height: 50px;
+  flex: none;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #fff;
+}
+.vg-brand__copy { display: flex; flex-direction: column; min-width: 0; }
 .logo-mark {
   display: flex;
   align-items: center;
   font-family: var(--vg-font-h);
   font-size: 1.4rem;
   font-weight: 800;
-  letter-spacing: .08em;
+  letter-spacing: -.035em;
   line-height: 1;
-  text-transform: uppercase;
   position: relative;
+  white-space: nowrap;
 }
-.logo-mark--footer { font-size: 1.3rem; }
-.logo-mark__volt {
-  color: #fff;
-  background: linear-gradient(135deg, #fff 40%, var(--vg-accent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.logo-mark__guard {
-  color: #fff;
-  background: linear-gradient(135deg, var(--vg-accent), var(--vg-electric));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.logo-mark__bolt {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  margin: 0 .18rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--vg-accent), #ef4444);
-  color: var(--vg-navy);
-  box-shadow: 0 0 12px rgba(245, 158, 11, .4);
-  flex: none;
-}
-.logo-mark__bolt svg { width: 14px; height: 14px; fill: currentColor; display: block; }
-.logo-mark--footer .logo-mark__bolt { width: 27px; height: 27px; }
-.logo-mark--footer .logo-mark__bolt svg { width: 12px; height: 12px; }
-/* nabız: yalnızca opacity/transform (compositor) */
-.logo-mark__bolt::after {
-  content: '';
-  position: absolute;
-  inset: -7px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(245, 158, 11, .5), transparent 68%);
-  z-index: -1;
-  animation: vgBoltGlow 2.8s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes vgBoltGlow {
-  0%, 100% { opacity: .35; transform: scale(.9); }
-  50%      { opacity: .95; transform: scale(1.18); }
-}
-@keyframes vgBoltFlash {
-  0%   { transform: scale(1); }
-  30%  { transform: scale(1.2) rotate(-8deg); }
-  60%  { transform: scale(1.1) rotate(4deg); }
-  100% { transform: scale(1); }
-}
-.vg-brand:hover .logo-mark__bolt,
-.vg-footer__logo:hover .logo-mark__bolt { animation: vgBoltFlash .4s ease; }
+.logo-mark--footer { font-size: 1.5rem; }
+.logo-mark__volt { color: #fff; }
+.logo-mark__guard { color: #54c9e2; }
 .logo-mark__tagline {
   display: block;
-  margin-top: 3px;
-  padding-left: 2px;
-  font: 500 .6rem/1 var(--vg-font-h);
-  letter-spacing: .32em;
+  margin-top: 5px;
+  font: 500 .51rem/1.1 var(--vg-font-h);
+  letter-spacing: .15em;
   text-transform: none;
   color: rgba(255, 255, 255, .62);
   white-space: nowrap;
 }
-.logo-mark--footer + .logo-mark__tagline { font-size: .55rem; }
 
 /* =====================================================
    HEADER
@@ -218,8 +174,8 @@ main:focus { outline: 0; }
 }
 .vg-brand {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: .65rem;
   flex: none;
   color: #fff;
   border-radius: 8px;
@@ -503,11 +459,10 @@ html.vg-lock { overflow: hidden; }
 .vg-cta--ghost:hover { color: var(--vg-navy); background: #fff; border-color: #fff; box-shadow: 0 8px 22px rgba(255, 255, 255, .18); }
 
 /* =====================================================
-   HEADER — masaüstü çubuğu (>= 1100px)
+   HEADER — masaüstü çubuğu (>= 1280px)
    ===================================================== */
-@media (min-width: 68.75rem) {
+@media (min-width: 80rem) {
   .vg-header__bar { gap: .75rem; }
-  .logo-mark { font-size: 1.28rem; }
   .vg-burger { display: none; }
   .vg-scrim { display: none; }
   .vg-nav {
@@ -602,19 +557,6 @@ html.vg-lock { overflow: hidden; }
   }
   .vg-dd__item { padding: .55rem .6rem; }
 }
-@media (min-width: 80rem) {
-  .vg-header__bar { gap: 1.25rem; }
-  .logo-mark { font-size: 1.4rem; }
-  .vg-nav__list { gap: .2rem; }
-  .vg-header .vg-nav__link { padding: .55rem .7rem; font-size: .9rem; }
-  .vg-header .vg-nav__link::after { left: .7rem; right: .7rem; }
-  .vg-header .vg-nav__link[aria-current],
-  .vg-header .vg-nav__link.is-active,
-  .vg-dd:has([aria-current]) > .vg-dd__btn { padding-left: .7rem; }
-  .vg-actions { gap: .6rem; }
-  .vg-account { font-size: .88rem; padding: .72rem 1rem; }
-  .vg-cta { padding: .72rem 1.3rem; font-size: .9rem; }
-}
 
 /* =====================================================
    FOOTER
@@ -664,7 +606,7 @@ html.vg-lock { overflow: hidden; }
   padding: 3rem 0 2.25rem;
   border-bottom: 1px solid var(--vg-line);
 }
-.vg-footer__logo { display: inline-flex; flex-direction: column; align-items: flex-start; margin-bottom: 1rem; color: #fff; border-radius: 8px; }
+.vg-footer__logo { display: inline-flex; align-items: center; gap: .75rem; margin-bottom: 1rem; color: #fff; border-radius: 8px; }
 .vg-footer__desc { max-width: 28rem; margin-bottom: 1.25rem; font-size: .9rem; line-height: 1.75; color: rgba(255, 255, 255, .62); }
 .vg-footer__contact { display: grid; gap: .45rem; margin-bottom: 1rem; }
 .vg-footer__contact a,
@@ -927,7 +869,7 @@ html.vg-lock { overflow: hidden; }
   100% { transform: scale(1.1) rotate(3deg); }
 }
 
-/* Bolt icon */
+/* Asıl marka görseli */
 .sig-badge__icon {
   position: relative;
   display: flex;
@@ -935,45 +877,18 @@ html.vg-lock { overflow: hidden; }
   justify-content: center;
   width: 38px;
   height: 38px;
-  border-radius: 50%;
-  background: linear-gradient(150deg, var(--vg-accent) 0%, #ef4444 100%);
-  color: var(--vg-navy);
+  border-radius: 8px;
+  background: #fff;
   font-size: .78rem;
   flex-shrink: 0;
   transition: transform .4s cubic-bezier(.4,0,.2,1), box-shadow .4s ease;
-  box-shadow:
-    0 0 12px rgba(245,158,11,.45),
-    0 0 28px rgba(245,158,11,.1),
-    inset 0 1px 3px rgba(255,255,255,.2);
+  overflow: hidden;
 }
+.sig-badge__icon img { display: block; width: 100%; height: 100%; object-fit: contain; }
 
 /* Parlama nabzı: ek gölge ayrı katmanda, yalnızca opacity canlandırılır (box-shadow animasyonu yerine) */
-.sig-badge__icon::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  box-shadow: 0 0 18px rgba(245,158,11,.4), 0 0 38px rgba(245,158,11,.12);
-  opacity: 0;
-  animation: sigIconGlow 3.5s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.sig-badge__icon::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  border: 1.5px dashed rgba(245,158,11,.2);
-  animation: sigIconDashSpin 12s linear infinite;
-}
-
 .sig-badge:hover .sig-badge__icon {
-  transform: rotate(15deg) scale(1.18);
-  box-shadow:
-    0 0 22px rgba(245,158,11,.7),
-    0 0 50px rgba(245,158,11,.25),
-    inset 0 1px 3px rgba(255,255,255,.3);
+  transform: scale(1.08);
 }
 
 @keyframes sigIconGlow {

@@ -12,7 +12,7 @@
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=20261011">
   <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261013b">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,8 +35,8 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261013a" defer></script>
-  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <!-- LCP: hero arka planı (ön-bulanıklaştırılmış, opaklık .18). imagesrcset/imagesizes, .hero__bg-img görselinin
        srcset/sizes değerleriyle BİREBİR aynı olmalı; yoksa görsel iki kez iner. -->
@@ -76,7 +76,7 @@
   <link rel="manifest" href="manifest.json">
   <!-- Sayfalar arası önden yükleme vg:head içindeki speculation rules ile yapılır (eski <link rel=prefetch> etiketleri kaldırıldı). -->
   <link rel="stylesheet" href="css/style.css?v=20261012d">
-  <link rel="stylesheet" href="css/home.css?v=20261012b">
+  <link rel="stylesheet" href="css/home.css?v=20261013c">
   <!-- Ön yükleyici oturum başına yalnızca bir kez gösterilir (css/home.css: .vg-pl-skip). -->
   <script>try{if(sessionStorage.getItem('vg_pl'))document.documentElement.classList.add('vg-pl-skip');else sessionStorage.setItem('vg_pl','1')}catch(e){}</script>
   <script type="application/ld+json">
@@ -459,12 +459,11 @@
   <header class="vg-header doc-header" id="vgHeader">
     <div class="vg-header__bar vg-wrap">
       <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa" aria-current="page">
-        <span class="logo-mark" aria-hidden="true">
-          <span class="logo-mark__volt">VOLT</span>
-          <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
-          <span class="logo-mark__guard">GUARD</span>
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
         </span>
-        <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
       </a>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
@@ -472,6 +471,8 @@
           <li><a class="vg-nav__link" href="/" aria-current="page">Ana Sayfa</a></li>
           <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
           <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
           <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
           <li class="vg-dd" data-vg-dd>
             <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
@@ -590,6 +591,27 @@
         <li class="vgh-trust__item"><i class="fas fa-handshake" aria-hidden="true"></i><span><strong>Ücretsiz</strong> keşif ve teklif</span></li>
         <li class="vgh-trust__item"><i class="fas fa-headset" aria-hidden="true"></i><span><strong>7/24</strong> acil arıza hattı</span></li>
         <li class="vgh-trust__item"><i class="fas fa-diagram-project" aria-hidden="true"></i><span><strong>Anahtar teslim</strong> proje yönetimi</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ==================== REFERANSLAR ==================== -->
+  <section class="vgh-references section" id="referanslar" aria-labelledby="referencesTitle">
+    <div class="container">
+      <div class="vgh-references__heading">
+        <div><span class="section__badge">Referanslarımız</span><h2 class="section__title" id="referencesTitle">Sanayiden teknolojiye,<br>referanslarımız.</h2></div>
+        <p>VoltGuard’ın sanayi, teknoloji ve akademi<br>alanlarındaki referansları.</p>
+      </div>
+      <ul class="vgh-references__grid" aria-label="VoltGuard referansları">
+        <li><a class="vgh-reference vgh-reference--round" href="https://www.dimes.com.tr/" target="_blank" rel="noopener noreferrer" aria-label="DİMES — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/dimes.png" alt="" width="2000" height="1958" loading="lazy" decoding="async"></span><span class="vgh-reference__name">DİMES</span></a></li>
+        <li><a class="vgh-reference" href="https://www.roketsan.com.tr/tr" target="_blank" rel="noopener noreferrer" aria-label="ROKETSAN — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/roketsan.svg" alt="" width="880" height="200" loading="lazy" decoding="async"></span><span class="vgh-reference__name">ROKETSAN</span></a></li>
+        <li><a class="vgh-reference" href="https://www.tusas.com/" target="_blank" rel="noopener noreferrer" aria-label="TUSAŞ — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/tusas.svg" alt="" width="174" height="67" loading="lazy" decoding="async"></span><span class="vgh-reference__name">TUSAŞ · Türk Havacılık Uzay Sanayii</span></a></li>
+        <li><a class="vgh-reference vgh-reference--vertical" href="https://tubitak.gov.tr/tr" target="_blank" rel="noopener noreferrer" aria-label="TÜBİTAK — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/tubitak.svg" alt="" width="111" height="136" loading="lazy" decoding="async"></span><span class="vgh-reference__name">TÜBİTAK</span></a></li>
+        <li><a class="vgh-reference vgh-reference--round" href="https://ege.edu.tr/tr-0/anasayfa.html" target="_blank" rel="noopener noreferrer" aria-label="Ege Üniversitesi — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/ege.png" alt="" width="600" height="600" loading="lazy" decoding="async"></span><span class="vgh-reference__name">Ege Üniversitesi</span></a></li>
+        <li><a class="vgh-reference vgh-reference--erdemir" href="https://www.erdemir.com.tr/" target="_blank" rel="noopener noreferrer" aria-label="ERDEMİR — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/erdemir.png" alt="" width="900" height="680" loading="lazy" decoding="async"></span><span class="vgh-reference__name">ERDEMİR</span></a></li>
+        <li><a class="vgh-reference" href="https://www.vestel.com.tr/" target="_blank" rel="noopener noreferrer" aria-label="VESTEL — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/vestel.png" alt="" width="1920" height="496" loading="lazy" decoding="async"></span><span class="vgh-reference__name">VESTEL</span></a></li>
+        <li><a class="vgh-reference" href="https://www.habas.com.tr/" target="_blank" rel="noopener noreferrer" aria-label="HABAŞ — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/habas.jpg" alt="" width="1024" height="255" loading="lazy" decoding="async"></span><span class="vgh-reference__name">HABAŞ</span></a></li>
+        <li><a class="vgh-reference" href="https://www.ektam.com/" target="_blank" rel="noopener noreferrer" aria-label="EKTAM — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/ektam.png" alt="" width="140" height="89" loading="lazy" decoding="async"></span><span class="vgh-reference__name">EKTAM</span></a></li>
       </ul>
     </div>
   </section>
@@ -738,7 +760,7 @@
     <div class="container">
 
       <div class="section__header reveal">
-        <span class="section__badge">Projeler &amp; Referanslar</span>
+        <span class="section__badge">Saha Çalışmalarımız</span>
         <h2 class="section__title">Gerçekleştirdiğimiz Çalışmalar</h2>
         <p class="section__desc">
           Endüstriyel tesislerden ticari yapılara kadar farklı sektörlerde başarıyla tamamladığımız
@@ -1564,6 +1586,11 @@
         </div>
       </div>
 
+      <div class="services__more reveal">
+        <a href="/ekibimiz.html" class="btn btn--primary btn--md">Ekibimizi Tanıyın <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        <p>Projelerimizin arkasındaki insanları ve çalışma yapımızı keşfedin.</p>
+      </div>
+
     </div>
   </section>
 
@@ -1979,12 +2006,11 @@
       <div class="vg-footer__grid">
         <div class="vg-footer__brand">
           <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
-            <span class="logo-mark logo-mark--footer" aria-hidden="true">
-              <span class="logo-mark__volt">VOLT</span>
-              <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
-              <span class="logo-mark__guard">GUARD</span>
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
-            <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
           </a>
           <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
           <ul class="vg-footer__contact">
@@ -2022,8 +2048,10 @@
             <h3 class="vg-footer__h">Kurumsal</h3>
             <ul>
               <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
               <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
               <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
               <li><a href="/#surec">Sürecimiz</a></li>
               <li><a href="/#neden-biz">Neden Biz?</a></li>
               <li><a href="/#guvenlik">Güvenlik</a></li>
@@ -2080,7 +2108,7 @@
         <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
           <span class="sig-badge__ring" aria-hidden="true"></span>
           <span class="sig-badge__aurora" aria-hidden="true"></span>
-          <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
           <span class="sig-badge__body">
             <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
             <span class="sig-badge__brand">

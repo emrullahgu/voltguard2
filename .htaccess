@@ -41,8 +41,9 @@
   # api/ icindeki ic kod klasorleri ve "_" ile baslayan yardimci dosyalar dogrudan cagrilamaz.
   RewriteRule ^api/(lib|inc|includes|private|vendor|storage|data|cache|logs|tmp)(/|$) - [F,L,NC]
   RewriteRule ^api/(.+/)?_[^/]*$ - [F,L]
-  # Engineering source, build scripts and the original company import are never public.
-  RewriteRule ^(tools|voltguardekleyelim)(/|$) - [F,L,NC]
+  RewriteRule ^voltgame/?$ /voltgame.html [R=301,L,NC]
+  # Original imports and game development sources are never public.
+  RewriteRule ^(tools|voltguardekleyelim|vesikalar|VoltGame)(/|$) - [F,L,NC]
   RewriteRule ^calisan/shared-(header|footer)\.html$ - [F,L,NC]
   RewriteRule ^calisan/uygulama/(entry-tags\.html|index\.html|\.vite)(/|$) - [F,L,NC]
   RewriteRule ^calisan/uygulama$ /calisan/uygulama/ [R=301,L]

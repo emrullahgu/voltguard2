@@ -6,6 +6,26 @@
    Yeni sınıflar "vgh-" önekiyle adlandırıldı (başka sayfaların sınıflarıyla çakışmasın).
    ===================================================== */
 
+/* ---------- Özgün kurum logoları: aynı kökende, özgün renk ve oranlarla ---------- */
+.vgh-references{background:var(--clr-bg);border-block:1px solid var(--clr-border);scroll-margin-top:calc(var(--vg-header-h) + 16px)}
+.vgh-references__heading{display:flex;justify-content:space-between;align-items:end;gap:32px;margin-bottom:34px}
+.vgh-references__heading .section__badge{margin-bottom:13px}
+.vgh-references__heading .section__title{margin:0;line-height:1.2}
+.vgh-references__heading>p{margin:0;color:var(--clr-text-muted);font-size:.87rem;line-height:1.8;text-align:right}
+.vgh-references__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none}
+.vgh-references__grid>li{min-width:0}
+.vgh-reference{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;height:100%;min-height:185px;padding:23px 24px 18px;background:#fff;border:1px solid var(--clr-border);border-radius:13px;text-decoration:none;color:var(--clr-text);transition:border-color .2s,box-shadow .2s,transform .2s}
+.vgh-reference:hover{transform:translateY(-3px);border-color:#e0a743;box-shadow:0 8px 28px #0a16280b}
+.vgh-reference:focus-visible{outline:3px solid var(--clr-accent-text);outline-offset:4px}
+.vgh-reference__logo{display:grid;place-items:center;width:100%;height:106px}
+.vgh-reference__logo img{display:block;width:100%;max-width:235px;height:auto;max-height:88px;object-fit:contain}
+.vgh-reference--round .vgh-reference__logo img{width:90px;max-height:94px}
+.vgh-reference--vertical .vgh-reference__logo img{width:83px;height:102px;max-height:102px}
+.vgh-reference--erdemir .vgh-reference__logo img{width:128px;max-height:98px}
+.vgh-reference__name{font:500 .7rem/1.5 var(--font-body);color:var(--clr-text-muted);text-align:center;letter-spacing:.03em;overflow-wrap:anywhere}
+@media(max-width:767px){.vgh-references__heading{display:block}.vgh-references__heading>p{text-align:left;margin-top:18px;font-size:.84rem}.vgh-references__heading>p br{display:none}.vgh-references__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.vgh-reference{padding:17px 13px 15px;min-height:167px;gap:12px}.vgh-reference__logo{height:92px}.vgh-reference__logo img{max-height:72px}.vgh-reference--round .vgh-reference__logo img{width:74px;max-height:78px}.vgh-reference--vertical .vgh-reference__logo img{height:88px;width:68px;max-height:88px}.vgh-reference--erdemir .vgh-reference__logo img{width:105px;max-height:80px}.vgh-references__grid>li:last-child{grid-column:1/-1}.vgh-references__grid>li:last-child .vgh-reference{min-height:155px}.vgh-references__grid>li:last-child img{max-width:150px}}
+@media(prefers-reduced-motion:reduce){.vgh-reference{transition:none}.vgh-reference:hover{transform:none}}
+
 /* ---------- Ön yükleyici: oturumda bir kez; JS gecikse bile en geç ~1 sn sonra kalkar ---------- */
 .vg-pl-skip .preloader { display: none; }
 .preloader { animation: vghPreloaderOut .35s ease 1s forwards; }

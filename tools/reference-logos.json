@@ -1,0 +1,112 @@
+{
+  "verifiedAt": "2026-10-13",
+  "relationshipSource": "User-provided reference list; logo sources verify branding only.",
+  "assets": [
+    {
+      "slug": "dimes",
+      "name": "DİMES",
+      "file": "dimes.png",
+      "sourcePage": "https://www.dimes.com.tr/",
+      "sourceAsset": "https://dimes.com.tr/assets/img/logo-yeni.png",
+      "discoveredVia": "https://dimes.com.tr/assets/css/combine_new.css?v=1.318",
+      "localPath": "public/referanslar/dimes.png",
+      "bytes": 122044,
+      "sha256": "f81bd434650a97781da6e7d80491a27b668b095efc29ef57010950265a3ab8a6",
+      "width": 2000,
+      "height": 1958
+    },
+    {
+      "slug": "roketsan",
+      "name": "ROKETSAN",
+      "file": "roketsan.svg",
+      "sourcePage": "https://www.roketsan.com.tr/tr",
+      "sourceAsset": "https://www.roketsan.com.tr/tr#logo",
+      "note": "Exact inline SVG from official homepage anchor id=logo; not recreated.",
+      "localPath": "public/referanslar/roketsan.svg",
+      "bytes": 7112,
+      "sha256": "4b8cdd182947e9a9b3bee981d7b3ea6582dc1ab6d1203d9ecdd23207bad692eb",
+      "svgSafetyChecked": true
+    },
+    {
+      "slug": "tusas",
+      "name": "TUSAŞ",
+      "file": "tusas.svg",
+      "sourcePage": "https://www.tusas.com/",
+      "sourceAsset": "https://www.tusas.com/content/images/uploads/originals/logoS,6162.svg",
+      "localPath": "public/referanslar/tusas.svg",
+      "bytes": 11733,
+      "sha256": "3550e9f72b987fe9747c8c81611954404fb54b57b2ff86e9bb8d1225ce5db02b",
+      "svgSafetyChecked": true
+    },
+    {
+      "slug": "tubitak",
+      "name": "TÜBİTAK",
+      "file": "tubitak.svg",
+      "sourcePage": "https://tubitak.gov.tr/tr",
+      "sourceAsset": "https://tubitak.gov.tr/sites/default/files/2025-02/TUBITAK-Logo_0.svg",
+      "localPath": "public/referanslar/tubitak.svg",
+      "bytes": 3980,
+      "sha256": "1e82b4b871f73787a277349d196f0e8f5875ef3a77756367fd60bc9b9dd7d665",
+      "svgSafetyChecked": true
+    },
+    {
+      "slug": "ege",
+      "name": "Ege Üniversitesi",
+      "file": "ege.png",
+      "sourcePage": "https://ege.edu.tr/tr-0/anasayfa.html",
+      "sourceAsset": "https://ege.edu.tr/images/logo1.png",
+      "localPath": "public/referanslar/ege.png",
+      "bytes": 145388,
+      "sha256": "5bbee90dc76508cd7b84a17a141066b951ee034748e9a31a1ffc96946ba40ab6",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "slug": "erdemir",
+      "name": "ERDEMİR",
+      "file": "erdemir.png",
+      "sourcePage": "https://www.erdemir.com.tr/kurumsal/medya",
+      "sourceAsset": "https://www.erdemir.com.tr/storage/uploads/2023/09/c12712117881b31d2e5ef43959211046.zip",
+      "archiveEntry": "Erdemir_logo.png",
+      "localPath": "public/referanslar/erdemir.png",
+      "bytes": 19190,
+      "sha256": "558b4b15129e2ed05d2b106ea540f3ad63f894041dd42b956ae4bbdc520bf8b4",
+      "width": 900,
+      "height": 680
+    },
+    {
+      "slug": "vestel",
+      "name": "VESTEL",
+      "file": "vestel.png",
+      "sourcePage": "https://www.vestel.com.tr/",
+      "sourceAsset": "https://statics.vestel.com.tr/template/be278fba-0a3a-4799-974b-aa2fefb60f21.png",
+      "localPath": "public/referanslar/vestel.png",
+      "bytes": 27452,
+      "sha256": "b6e9dd7f2c28c092fd1e3cbe9aec23371cb2aa2d673ee6984aee85b2745eb608",
+      "width": 1920,
+      "height": 496
+    },
+    {
+      "slug": "habas",
+      "name": "HABAŞ",
+      "file": "habas.jpg",
+      "sourcePage": "https://www.habas.com.tr/",
+      "sourceAsset": "https://www.habas.com.tr/Content/images/uploads/F300/59b1c9b3-dc5e-4e26-9fad-3e0857d9501d_c2eb4c1d-a2eb-4f48-8bfe-2f9da909a73e_habas-logo1.jpg",
+      "localPath": "public/referanslar/habas.jpg",
+      "bytes": 43547,
+      "sha256": "e4456988d582814c3aece0dd185587ad82dbb3d0b891ab0f35a3053215309f32"
+    },
+    {
+      "slug": "ektam",
+      "name": "EKTAM",
+      "file": "ektam.png",
+      "sourcePage": "https://www.ektam.com/",
+      "sourceAsset": "https://www.ektam.com/images/logo-n.png",
+      "localPath": "public/referanslar/ektam.png",
+      "bytes": 18260,
+      "sha256": "8935a3019bee00e5a359367d530f66425cb4a304076b97922ba4df386c3ee607",
+      "width": 140,
+      "height": 89
+    }
+  ]
+}

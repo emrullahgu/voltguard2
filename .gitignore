@@ -3,9 +3,15 @@
 # Original import includes its own Git checkout and operational company files.
 # Rebuildable public sources are curated under tools/engineering/ instead.
 /voltguardekleyelim/
+/vesikalar/
+# Supplied game checkout stays local; maintained source is in tools/voltgame/.
+/VoltGame/
+/tools/voltgame/.build/
+/tools/voltgame/tools/test/out/
 /tools/engineering/dist/
 /tools/engineering/storage-map.json
 /.qa/
+/.netlify-publish/
 __pycache__/
 node_modules/
 /tools/staff-app/dist/

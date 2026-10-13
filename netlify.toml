@@ -1,3 +1,10 @@
+[build]
+  command = "node tools/build-netlify.cjs"
+  publish = ".netlify-publish"
+
+[build.environment]
+  NODE_VERSION = "24"
+
 # ---------------------------------------------------------------------------------------
 # Tek adres: /index.html -> / ve /hizmetler/index.html -> /hizmetler/ (.htaccess ile ayni). Netlify kurallari
 # yalnizca istemcinin istedigi yola uygulanir; "/" ve "/hizmetler/" icin dizin index.html dosyasinin sunulmasi
@@ -270,6 +277,12 @@
   force = true
 
 [[redirects]]
+  from = "/voltgame/"
+  to = "/voltgame.html"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/fabrika-cozumleri"
   to = "/fabrika-cozumleri.html"
   status = 301
@@ -381,6 +394,24 @@
 
 [[redirects]]
   from = "/voltguardekleyelim/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/vesikalar/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/VoltGame/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/voltgame/*"
   to = "/404.html"
   status = 404
   force = true

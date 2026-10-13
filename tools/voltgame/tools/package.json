@@ -1,0 +1,13 @@
+{
+  "name": "paralaks-build-tools",
+  "private": true,
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "build": "node build.js",
+    "verify": "node reference2/verify2.js",
+    "test": "node test/run.js all"
+  },
+  "devDependencies": {
+    "terser": "5.51.2"
+  }
+}

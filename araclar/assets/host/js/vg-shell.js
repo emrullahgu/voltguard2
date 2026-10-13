@@ -27,7 +27,7 @@
   var burger = header.querySelector('.vg-burger');
   var nav = header.querySelector('.vg-nav');
   var dds = [].slice.call(header.querySelectorAll('[data-vg-dd]'));
-  var desktopMQ = window.matchMedia('(min-width: 68.75rem)');
+  var desktopMQ = window.matchMedia('(min-width: 80rem)');
   var hoverMQ = window.matchMedia('(hover: hover) and (pointer: fine)');
 
   function isOpenMenu() { return header.classList.contains('is-open'); }
