@@ -1,3 +1,22 @@
+# ---------------------------------------------------------------------------------------
+# Tek adres: /index.html -> / ve /hizmetler/index.html -> /hizmetler/ (.htaccess ile ayni). Netlify kurallari
+# yalnizca istemcinin istedigi yola uygulanir; "/" ve "/hizmetler/" icin dizin index.html dosyasinin sunulmasi
+# kurallari yeniden calistirmaz, bu yuzden dongu olusmaz. "/hizmetler" -> "/hizmetler/" icin kural YAZILMAZ:
+# Netlify kural eslemesinde sondaki "/" farkini yok sayar (kural kendine yonlenip dongu yaratirdi); klasor adresini
+# Netlify kendisi index.html ile sunar.
+# ---------------------------------------------------------------------------------------
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hizmetler/index.html"
+  to = "/hizmetler/"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/teklif-araclari.html"
   to = "/hesaplama-araclari/"
@@ -173,3 +192,308 @@
   from = "/hesaplama/aydinlatma-lux-hesaplama/"
   to = "/hesaplama/aydinlatma-lux-hesaplama.html"
   status = 200
+
+[[redirects]]
+  from = "/hesaplama/reaktif-ceza-hesaplama.html"
+  to = "/hesaplama/reaktif-ceza-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/reaktif-ceza-hesaplama/"
+  to = "/hesaplama/reaktif-ceza-hesaplama.html"
+  status = 200
+
+[[redirects]]
+  from = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama.html"
+  to = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama/"
+  to = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama.html"
+  status = 200
+
+# ---------------------------------------------------------------------------------------
+# Klasor/uzantisiz adresler (.htaccess ile ayni). "/sor" gibi adresler ayni adli klasor yuzunden
+# acilmiyordu; kanonik .html adresine 301 verilir. Yeni kok sayfa eklenirse buraya da eklenmeli
+# (.htaccess bunu dosya varligina bakarak otomatik yapar; Netlify'da kurallar acik yazilmak zorunda).
+# ---------------------------------------------------------------------------------------
+[[redirects]]
+  from = "/sor"
+  to = "/sor.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/akademi"
+  to = "/akademi.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/bilgi-bankasi"
+  to = "/bilgi-bankasi.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/muhendis-merkezi"
+  to = "/muhendis-merkezi.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/gizlilik"
+  to = "/gizlilik.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/voltgame"
+  to = "/voltgame.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/fabrika-cozumleri"
+  to = "/fabrika-cozumleri.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama"
+  to = "/hesaplama-araclari/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/bilgi"
+  to = "/bilgi-bankasi.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/mm"
+  to = "/muhendis-merkezi.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesap"
+  to = "/hesap/giris.html"
+  status = 302
+  force = true
+
+# Runtime veri klasorleri, sunucu kodu ve gelistirme dosyalari yayinlanmaz (.htaccess'teki engellerin esi).
+# Netlify'da PHP calismaz; api/ ve contact.php kaynak kodunun metin olarak sunulmasi engellenir.
+[[redirects]]
+  from = "/_vgdata/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/vg-data/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/vgdata/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/api/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/contact.php"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/tools/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.cpanel.yml"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.htaccess"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify.toml"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# ---------------------------------------------------------------------------------------
+# Guvenlik basliklari ve CSP. .htaccess (cPanel/Apache) ile ayni degerler; ikisi birlikte guncellenmeli.
+# style-src/font-src yalnizca 'self' (+ data: font): yazi tipleri ve ikonlar kendi sunucumuzda; Google Fonts /
+# Font Awesome CDN artik kullanilmiyor. script-src https://cdnjs.cloudflare.com yalnizca jsPDF icin.
+# ---------------------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com https://assets.apollo.io https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://*.apollo.io https://aplo-evnt.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests"
+
+# ---------------------------------------------------------------------------------------
+# Onbellek politikasi (.htaccess ile ayni). Netlify header kurallari sorgu dizesini (?v=) goremez:
+# bu yuzden css/js burada her zaman 10 dk + must-revalidate'tir (.htaccess ?v= varsa 1 yil immutable verir).
+# Netlify gzip/brotli'yi kendisi uygular. Kurallar birbiriyle cakismayacak sekilde ayri yollara yazildi.
+# ---------------------------------------------------------------------------------------
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/hesaplama/*"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/hesaplama-araclari/"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/hizmetler/"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=600, must-revalidate"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=600, must-revalidate"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.woff"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.ttf"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.otf"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.jpeg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.gif"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.avif"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.mp4"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.webm"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.pdf"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"

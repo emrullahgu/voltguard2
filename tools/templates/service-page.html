@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<!--
+=====================================================================================================
+ VoltGuard HİZMET SAYFASI ŞABLONU  (tools/templates/service-page.html)
+ Referans uygulama: hizmetler/trafo-isletme-sorumlulugu.html  ·  Hub: hizmetler/index.html
+ Stil: /css/services.css  ·  Davranış: /js/services.js  ·  Denetim: tools/templates/check-service-page.py
+=====================================================================================================
+
+ NASIL KULLANILIR
+  1. Bu dosyayı hizmetler/<slug>.html olarak kopyalayın (slug = plan.json service_pages[].slug).
+  2. {{...}} yer tutucularını plan.json'daki title / meta_description / h1 / outline / faq / links_to /
+     image alanlarıyla doldurun. Bu yorum bloğunu ve "ŞABLON NOTU" yorumlarını silin.
+  3. Ortak kabuk:  python tools/shell.py hizmetler/<slug>.html   (yalnızca kendi dosyanızı verin)
+     vg:head / vg:header / vg:footer işaretçilerinin ARASINI ELLE YAZMAYIN; tools/shell/* düzenlenmez.
+  4. JSON-LD eşitleme + denetim:
+       python tools/templates/check-service-page.py --fix hizmetler/<slug>.html
+     --fix, FAQPage.mainEntity ve BreadcrumbList'i GÖRÜNÜR metinden yazar (birebir eşleşme garantisi).
+     "henuz yok (planli hizmet sayfasi)" uyarıları normaldir; HATA kalmamalı.
+
+ KURALLAR (özet; ayrıntı rapordaki "contracts" listesinde)
+  - Tek <h1>; bölümler <h2>, kartlar/adımlar <h3>. Görünür breadcrumb = BreadcrumbList.
+  - Bağlantılar KÖK-MUTLAK: /, /#iletisim, /hizmetler/<slug>.html, /hesaplama/<slug>/, /bilgi/x.html.
+    "../" veya index.html#iletisim yok. Hesaplayıcılar yalnızca /hesaplama/<slug>/ temiz adresiyle.
+  - CTA: "Teklif Al" -> /?hizmet=<slug>#iletisim (data-vg-teklif özniteliğiyle; ana sayfa formu hizmeti önceden
+    seçer, slug index.html'deki "İlgilendiğiniz hizmet" seçeneklerinde olmalı; hub hizmetler/index.html /#iletisim
+    kullanır), "Ücretsiz Ön Değerlendirme" -> /fabrika-cozumleri.html, telefon tel:+905454346735,
+    WhatsApp https://wa.me/905454346735?text=...
+  - Hesaplayıcı: hizmete uyan /hesaplama/<slug>/ aracına Kaynaklar kartına EK OLARAK metin içinde (kapsam, ücret
+    veya SSS) en az bir bağlam içi bağlantı verin (ör. işletme sorumluluğu -> isletme-sorumlulugu-ucret-hesaplama).
+  - Güven çipleri yalnızca DOĞRULANMIŞ olgular (aşağıdaki 5 çip; değiştirmeyin, ekleme yapmayın).
+    Müşteri adı, proje sayısı, fiyat, ödül, yorum/puan UYDURMAYIN. Belge numarası yazmayın.
+  - Hizmet bölgesi: merkez Ege Teknopark, Bornova/İzmir; metinde "Türkiye geneli saha hizmeti" geçmeli.
+    İzmir odaklı title/H1 serbest. 7/24 = acil arıza hattı (0545 434 67 35); ofis Pzt-Cum 08:00-18:00.
+  - Aktif EMI Filtre ortakları anılırsa birlikte: "Ege Üniversitesi ve TUSAŞ ile Roketsan ve Havelsan".
+  - Yasal dayanak: yalnızca metnini kontrol ettiğiniz düzenleme adları + RG tarih/sayı + "Kontrol" tarihi.
+    Doğrulanmamış eşik/sınır (ör. reaktif yüzdeleri) yayınlamayın.
+  - Görseller: public/opt/*.webp varyantları (scratchpad media-map.json), width/height/alt zorunlu,
+    hero dışında loading="lazy". public/Trafoisletmesorumlulugu.jpeg YASAK.
+  - İkonlar: css/fa-subset.css içindeki sınıflar (denetim aracı yenilerini "YENI IKON" diye listeler;
+    yeni ikon kullanırsanız raporunuzda bildirin).
+  - Animasyon: [data-reveal] (tek öğe) / [data-reveal="group"] (çocuklar sırayla). Hero'ya KOYMAYIN
+    (LCP). prefers-reduced-motion ve JS yokluğunda içerik zaten görünür.
+  - Sayaç: <b data-count="12">12</b> yalnızca GERÇEK sayılar için; metin zaten nihai değeri taşır.
+  - Izgaralar (.svc-cards/.svc-docs/.svc-related) öğe sayısına göre yetimsiz dizilir: 3-8 öğe uygundur.
+  - Dosya: UTF-8 (BOM yok), LF satır sonu. Yerel css/js ?v= değerini sayfalardakiyle aynı tutun
+    (şu an services.css ?v=20261012b, services.js ?v=20261011). Paylaşılan dosyayı değiştirirseniz yeni sürüm verip TÜM hizmet sayfalarında ve
+    bu şablonda güncelleyin.
+  - Satır içi style yalnızca veri taşır (--svc-focus; ekran görüntüsü veya grafikte aspect-ratio ve object-fit). Yerleşim düzeltmesi
+    için services.css'teki sınıfları kullanın: .svc-hero__media--landscape / --screen, .svc-price__full,
+    .svc-table--text, .svc-sr (ekran okuyucu metni).
+=====================================================================================================
+-->
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!--vg:head--><!--/vg:head-->
+  <meta name="color-scheme" content="light only">
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{META_DESCRIPTION}}">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <link rel="canonical" href="https://voltguard.com.tr/hizmetler/{{SLUG}}.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="tr_TR">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta property="og:title" content="{{TITLE}}">
+  <meta property="og:description" content="{{OG_DESCRIPTION}}">
+  <meta property="og:url" content="https://voltguard.com.tr/hizmetler/{{SLUG}}.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/{{OG_IMAGE_FILE}}">
+  <meta property="og:image:width" content="{{OG_IMAGE_W}}">
+  <meta property="og:image:height" content="{{OG_IMAGE_H}}">
+  <meta property="og:image:alt" content="{{OG_IMAGE_ALT}}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{TITLE}}">
+  <meta name="twitter:description" content="{{OG_DESCRIPTION}}">
+  <meta name="twitter:image" content="https://voltguard.com.tr/public/{{OG_IMAGE_FILE}}">
+  <meta name="twitter:image:alt" content="{{OG_IMAGE_ALT}}">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <!-- ŞABLON NOTU: hero görselinin aynısı (src/srcset/sizes birebir) -->
+  <link rel="preload" as="image" href="/public/opt/{{HERO_IMG_LARGE}}" imagesrcset="/public/opt/{{HERO_IMG_SMALL}} {{HERO_W_SMALL}}w, /public/opt/{{HERO_IMG_LARGE}} {{HERO_W_LARGE}}w" imagesizes="(min-width: 76rem) 472px, (min-width: 64rem) 38vw, 92vw" fetchpriority="high">
+  <link rel="stylesheet" href="/css/services.css?v=20261012b">
+  <script>document.documentElement.classList.add('svc-js');setTimeout(function(){if(!window.__svcReady)document.documentElement.classList.add('svc-noanim')},3000);</script>
+  <script src="/js/services.js?v=20261011" defer></script>
+  <!-- ŞABLON NOTU: id="svc-jsonld" ZORUNLU. provider düğümü tüm hizmet sayfalarında aynıdır (değiştirmeyin).
+       FAQPage.mainEntity ve BreadcrumbList.itemListElement boş bırakılır; check-service-page.py --fix doldurur.
+       description = meta description. image = hero görselinin public/ altındaki orijinali. -->
+  <script type="application/ld+json" id="svc-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Service",
+        "@id": "https://voltguard.com.tr/hizmetler/{{SLUG}}.html#service",
+        "name": "{{SERVICE_NAME}}",
+        "serviceType": "{{SERVICE_TYPE}}",
+        "description": "{{META_DESCRIPTION}}",
+        "url": "https://voltguard.com.tr/hizmetler/{{SLUG}}.html",
+        "image": "https://voltguard.com.tr/public/{{HERO_ORIGINAL_FILE}}",
+        "provider": {
+          "@type": ["ProfessionalService", "ElectricalContractor"],
+          "@id": "https://voltguard.com.tr/#organization",
+          "name": "VoltGuard",
+          "url": "https://voltguard.com.tr/",
+          "telephone": "+905454346735",
+          "email": "info@voltguard.com.tr",
+          "image": "https://voltguard.com.tr/public/og-image.png",
+          "address": { "@type": "PostalAddress", "streetAddress": "Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69 Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43", "addressLocality": "Bornova", "addressRegion": "İzmir", "addressCountry": "TR" },
+          "openingHoursSpecification": [ { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "08:00", "closes": "18:00" } ],
+          "contactPoint": [
+            { "@type": "ContactPoint", "telephone": "+905454346735", "email": "info@voltguard.com.tr", "contactType": "customer service", "areaServed": "TR", "availableLanguage": ["Turkish"], "hoursAvailable": { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "08:00", "closes": "18:00" } },
+            { "@type": "ContactPoint", "telephone": "+905454346735", "contactType": "emergency", "areaServed": "TR", "availableLanguage": ["Turkish"], "hoursAvailable": { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], "opens": "00:00", "closes": "23:59" } }
+          ]
+        },
+        "areaServed": [ { "@type": "City", "name": "İzmir" }, { "@type": "Country", "name": "Türkiye" } ],
+        "audience": { "@type": "BusinessAudience", "audienceType": "{{AUDIENCE}}" },
+        "category": "Elektrik mühendisliği hizmetleri",
+        "mainEntityOfPage": { "@id": "https://voltguard.com.tr/hizmetler/{{SLUG}}.html#webpage" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://voltguard.com.tr/hizmetler/{{SLUG}}.html#webpage",
+        "url": "https://voltguard.com.tr/hizmetler/{{SLUG}}.html",
+        "name": "{{TITLE}}",
+        "description": "{{META_DESCRIPTION}}",
+        "inLanguage": "tr-TR",
+        "isPartOf": { "@id": "https://voltguard.com.tr/#website" },
+        "about": { "@id": "https://voltguard.com.tr/hizmetler/{{SLUG}}.html#service" },
+        "primaryImageOfPage": { "@type": "ImageObject", "url": "https://voltguard.com.tr/public/{{HERO_ORIGINAL_FILE}}", "width": {{HERO_ORIGINAL_W}}, "height": {{HERO_ORIGINAL_H}} },
+        "breadcrumb": { "@id": "https://voltguard.com.tr/hizmetler/{{SLUG}}.html#breadcrumb" },
+        "datePublished": "2026-10-11",
+        "dateModified": "2026-10-11",
+        "publisher": { "@id": "https://voltguard.com.tr/#organization" }
+      },
+      { "@type": "BreadcrumbList", "@id": "https://voltguard.com.tr/hizmetler/{{SLUG}}.html#breadcrumb", "itemListElement": [] },
+      { "@type": "FAQPage", "@id": "https://voltguard.com.tr/hizmetler/{{SLUG}}.html#faq", "isPartOf": { "@id": "https://voltguard.com.tr/hizmetler/{{SLUG}}.html#webpage" }, "mainEntity": [] }
+    ]
+  }
+  </script>
+</head>
+<!-- ŞABLON NOTU: data-service = slug (services.js teklif tıklamasında sessionStorage 'vgServiceInterest' ve
+     window.dataLayer olaylarına yazar). -->
+<body class="svc-page" data-service="{{SLUG}}">
+  <!--vg:header--><!--/vg:header-->
+
+  <main class="svc">
+    <!-- ===== 1. HERO: breadcrumb + eyebrow + H1 + değer önerisi + 2 CTA + telefon/WhatsApp + güven çipleri + görsel ===== -->
+    <section class="svc-hero" aria-labelledby="svc-h1">
+      <div class="svc-wrap svc-hero__grid">
+        <div class="svc-hero__body">
+          <nav class="svc-crumbs" aria-label="Breadcrumb">
+            <ol>
+              <li><a href="/">Ana Sayfa</a></li>
+              <li><a href="/hizmetler/">Hizmetler</a></li>
+              <li><span aria-current="page">{{SERVICE_NAME}}</span></li>
+            </ol>
+          </nav>
+          <!-- ŞABLON NOTU: eyebrow = hub grubunun adı + "hizmetleri" (Trafo ve YG / Ölçüm ve uygunluk / Enerji kalitesi /
+               Pano ve tesisat / Enerji ve otomasyon / Proje) -->
+          <p class="svc-eyebrow"><i class="fas fa-bolt" aria-hidden="true"></i> {{EYEBROW}}</p>
+          <!-- ŞABLON NOTU: plan.json h1. Parantezli ek varsa <span class="svc-h1-sub"> içine alın. -->
+          <h1 id="svc-h1">{{H1_MAIN}} <span class="svc-h1-sub">{{H1_SUB}}</span></h1>
+          <p class="svc-lead">{{LEAD_1_2_CUMLE}}</p>
+          <div class="svc-hero__cta">
+            <a class="svc-btn svc-btn--primary" href="/?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
+            <a class="svc-btn svc-btn--ghost" href="/fabrika-cozumleri.html"><i class="fas fa-clipboard-check" aria-hidden="true"></i> Ücretsiz Ön Değerlendirme</a>
+          </div>
+          <p class="svc-hero__contact">
+            <a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a>
+            <a href="https://wa.me/905454346735?text={{WA_TEXT_URLENCODED}}" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a>
+          </p>
+          <!-- ŞABLON NOTU: bu 5 çip sabittir (sahibince doğrulandı). -->
+          <ul class="svc-chips" aria-label="Yetki ve hizmet bilgileri">
+            <li><i class="fas fa-certificate" aria-hidden="true"></i> EMO SMM tescilli büro</li>
+            <li><i class="fas fa-user-shield" aria-hidden="true"></i> YG işletme sorumluluğu yetkili</li>
+            <li><i class="fas fa-headset" aria-hidden="true"></i> 7/24 acil arıza hattı</li>
+            <li><i class="fas fa-truck-fast" aria-hidden="true"></i> Türkiye geneli saha hizmeti</li>
+            <li><i class="fas fa-location-dot" aria-hidden="true"></i> Ege Teknopark, Bornova/İzmir</li>
+          </ul>
+        </div>
+        <figure class="svc-hero__media">
+          <!-- ŞABLON NOTU: --svc-focus = object-position (dikey fotoğrafta konuyu kadraja alın). Çerçeve oranı:
+               mobil 4/3, tablet 16/10, masaüstü 4/5. fetchpriority="high", loading YOK.
+               Yatay kaynak fotoğraf: <figure class="svc-hero__media svc-hero__media--landscape"> (masaüstünde de 4/3).
+               Açık zeminli ekran görüntüsü: svc-hero__media--screen (altyazı koyu zeminli, okunaklı). -->
+          <div class="svc-hero__frame" style="--svc-focus: 50% 50%">
+            <img src="/public/opt/{{HERO_IMG_LARGE}}" srcset="/public/opt/{{HERO_IMG_SMALL}} {{HERO_W_SMALL}}w, /public/opt/{{HERO_IMG_LARGE}} {{HERO_W_LARGE}}w" sizes="(min-width: 76rem) 472px, (min-width: 64rem) 38vw, 92vw" width="{{HERO_W_LARGE}}" height="{{HERO_H_LARGE}}" alt="{{HERO_ALT}}" fetchpriority="high" decoding="async">
+          </div>
+          <p class="svc-hero__badge"><span class="svc-hero__badge-ico" aria-hidden="true"><i class="fas fa-headset"></i></span><span><strong>7/24 acil arıza hattı</strong><a href="tel:+905454346735">0545 434 67 35</a></span></p>
+          <figcaption>{{HERO_CAPTION_DURUST}}</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ===== 2. KISA BİLGİLER (isteğe bağlı, 4 öğe): yalnızca mevzuattan/kaynaktan DOĞRULANMIŞ sayılar ===== -->
+    <div class="svc-facts">
+      <div class="svc-wrap">
+        <ul data-reveal="group">
+          <li><b>{{FACT_1}}</b><span>{{FACT_1_ACIKLAMA}}</span></li>
+          <li><b>{{FACT_2}}</b><span>{{FACT_2_ACIKLAMA}}</span></li>
+          <li><b>{{FACT_3}}</b><span>{{FACT_3_ACIKLAMA}}</span></li>
+          <li><b>{{FACT_4}}</b><span>{{FACT_4_ACIKLAMA}}</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ===== 3. SAYFA İÇİ MENÜ (yapışkan; services.js geçerli bölümü işaretler). href'ler sayfadaki id'lerle eşleşmeli ===== -->
+    <nav class="svc-toc" aria-label="Bu sayfada">
+      <div class="svc-wrap">
+        <ul>
+          <li><a href="#kimler-icin">Kimler için</a></li>
+          <li><a href="#kapsam">Kapsam</a></li>
+          <li><a href="#surec">Süreç</a></li>
+          <li><a href="#teslimler">Teslimler</a></li>
+          <!-- ŞABLON NOTU: sayfaya özel blok varsa (ör. #ucretler, #test-matrisi) buraya ekleyin -->
+          <li><a href="#mevzuat">Mevzuat</a></li>
+          <li><a href="#sss">SSS</a></li>
+          <li><a href="#kaynaklar">Kaynaklar</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ===== 4. KİMLER İÇİN: 3-6 .svc-card (ikon + h3 + 1-2 cümle) + hizmet bölgesi notu ===== -->
+    <section class="svc-sec svc-sec--tight" id="kimler-icin" aria-labelledby="h-kimler">
+      <div class="svc-wrap">
+        <div class="svc-sec__head" data-reveal>
+          <p class="svc-kicker">Kimler için?</p>
+          <h2 id="h-kimler">{{KIMLER_H2}}</h2>
+          <p class="svc-sec__intro">{{KIMLER_GIRIS}}</p>
+        </div>
+        <div class="svc-cards" data-reveal="group">
+          <article class="svc-card">
+            <span class="svc-ico" aria-hidden="true"><i class="fas fa-industry"></i></span>
+            <h3>{{KITLE_1}}</h3>
+            <p>{{KITLE_1_ACIKLAMA}}</p>
+          </article>
+          <!-- ... 3-6 kart -->
+        </div>
+        <div class="svc-note" data-reveal>
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <p><strong>Hizmet bölgesi.</strong> Merkezimiz Ege Teknopark, Bornova/İzmir'dedir; saha ekibimiz Türkiye genelinde çalışır. {{HIZMETE_OZEL_BOLGE_NOTU}}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 5. NE YAPIYORUZ: .svc-checks (strong başlık + açıklama) + kapsam dışı notu + yanda gerçek saha fotoğrafı ===== -->
+    <section class="svc-sec svc-sec--alt" id="kapsam" aria-labelledby="h-kapsam">
+      <div class="svc-wrap">
+        <div class="svc-sec__head" data-reveal>
+          <p class="svc-kicker">Ne yapıyoruz?</p>
+          <h2 id="h-kapsam">{{KAPSAM_H2}}</h2>
+          <p class="svc-sec__intro">{{KAPSAM_GIRIS}}</p>
+        </div>
+        <div class="svc-scope">
+          <div>
+            <ul class="svc-checks" data-reveal="group">
+              <li><strong>{{IS_1_BASLIK}}</strong>{{IS_1_ACIKLAMA}}</li>
+              <!-- ... 5-9 madde -->
+            </ul>
+            <div class="svc-note svc-note--amber" data-reveal>
+              <i class="fas fa-circle-info" aria-hidden="true"></i>
+              <p><strong>{{NOT_BASLIK}}</strong> {{NOT_METNI_VE_KARDES_HIZMET_BAGLANTISI}}</p>
+            </div>
+          </div>
+          <aside class="svc-scope__aside" aria-label="Saha fotoğrafı ve neden VoltGuard" data-reveal>
+            <figure class="svc-figure">
+              <img src="/public/opt/{{FOTO2_960}}" srcset="/public/opt/{{FOTO2_640}} 640w, /public/opt/{{FOTO2_960}} 960w" sizes="(min-width: 76rem) 470px, (min-width: 64rem) 38vw, 92vw" width="{{FOTO2_W}}" height="{{FOTO2_H}}" alt="{{FOTO2_ALT}}" loading="lazy" decoding="async">
+              <figcaption>{{FOTO2_ALTYAZI_DURUST}}</figcaption>
+            </figure>
+            <div class="svc-panel">
+              <h3>Neden VoltGuard?</h3>
+              <ul class="svc-fine">
+                <li>EMO'ya tescilli SMM bürosu ve YG işletme sorumluluğu yetkisi</li>
+                <li>{{HIZMETE_OZEL_TEK_EKIP_AVANTAJI}}</li>
+                <li>Ofis dışı saatlerde de ulaşılabilen 7/24 acil arıza hattı</li>
+                <li>Ege Teknopark merkezli, Türkiye geneline saha ekibi</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 6. SÜREÇ: animasyonlu zaman çizelgesi (.svc-steps > li.svc-step; numara CSS sayaçla gelir) ===== -->
+    <section class="svc-sec" id="surec" aria-labelledby="h-surec">
+      <div class="svc-wrap svc-split">
+        <div class="svc-sec__head" data-reveal>
+          <p class="svc-kicker">Süreç</p>
+          <h2 id="h-surec">{{SUREC_H2}}</h2>
+          <p class="svc-sec__intro">{{SUREC_GIRIS}}</p>
+          <div class="svc-panel svc-split__aside">
+            <h3>Teklif için gereken bilgiler</h3>
+            <ul class="svc-fine">
+              <li>{{ON_BILGI_1}}</li>
+              <!-- ... 3-5 madde -->
+            </ul>
+            <a class="svc-btn svc-btn--primary svc-btn--block" href="/?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
+          </div>
+        </div>
+        <ol class="svc-steps">
+          <li class="svc-step" data-reveal>
+            <span class="svc-step__num" aria-hidden="true"></span>
+            <div class="svc-step__body">
+              <h3>{{ADIM_1}}</h3>
+              <p>{{ADIM_1_ACIKLAMA}}</p>
+              <!-- ŞABLON NOTU: süre YAZMAYIN (operasyon onaylamadı); kısa nitelik etiketi kullanın -->
+              <span class="svc-step__meta"><i class="fas fa-phone-alt" aria-hidden="true"></i> {{ADIM_1_ETIKET}}</span>
+            </div>
+          </li>
+          <!-- ... 4-7 adım -->
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===== 7. TESLİM EDİLENLER: .svc-doc (ikon + h3 + p); 3, 4, 6 veya 8 öğe ideal ===== -->
+    <section class="svc-sec svc-sec--alt" id="teslimler" aria-labelledby="h-teslim">
+      <div class="svc-wrap">
+        <div class="svc-sec__head" data-reveal>
+          <p class="svc-kicker">Teslim edilenler</p>
+          <h2 id="h-teslim">{{TESLIM_H2}}</h2>
+          <p class="svc-sec__intro">{{TESLIM_GIRIS}}</p>
+        </div>
+        <div class="svc-docs" data-reveal="group">
+          <div class="svc-doc"><span class="svc-ico" aria-hidden="true"><i class="fas fa-file-lines"></i></span><div><h3>{{BELGE_1}}</h3><p>{{BELGE_1_ACIKLAMA}}</p></div></div>
+          <!-- ... -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 8. SAYFAYA ÖZEL BLOK (isteğe bağlı): fiyat tablosu / test matrisi / karşılaştırma =====
+         Tablo: .svc-table-wrap > table.svc-table (caption + thead + tbody; grup satırı th[scope=rowgroup], satır başlığı th[scope=row]).
+         Sayı yerine kısa metin taşıyan hücreler: table.svc-table.svc-table--text. İki sütunu kaplayan öğe: .svc-price > .svc-price__full.
+         .svc-price çocuklarına min-width/grid-column satır içi stili GEREKMEZ (services.css halleder).
+         Örnek hesap: p.svc-example · Notlar: .svc-panel > ul.svc-fine · Kaynak: p.svc-source > span.svc-stamp "Kontrol: GG.AA.YYYY"
+         Fiyat: yalnızca kaynağı doğrulanmış resmi tablo (EMO vb.), kaynak bağlantısı + tarih damgasıyla. -->
+
+    <!-- ===== 9. YASAL DAYANAK: yalnızca doğrulanmış adlar + RG tarih/sayı + kontrol damgası ===== -->
+    <section class="svc-sec svc-sec--alt" id="mevzuat" aria-labelledby="h-mevzuat">
+      <div class="svc-wrap">
+        <div class="svc-sec__head" data-reveal>
+          <p class="svc-kicker">Yasal dayanak</p>
+          <h2 id="h-mevzuat">Hizmetin dayandığı mevzuat</h2>
+          <p class="svc-sec__intro">Yalnızca metnini kontrol ettiğimiz düzenlemeleri, Resmî Gazete tarih ve sayısıyla listeliyoruz.</p>
+        </div>
+        <div class="svc-legal" data-reveal>
+          <ul class="svc-legal__list">
+            <li>
+              <span class="svc-legal__name"><i class="fas fa-book-open" aria-hidden="true"></i> {{DUZENLEME_ADI}}</span>
+              <span class="svc-legal__ref">Resmî Gazete {{GG.AA.YYYY}}, sayı {{SAYI}}</span>
+              <p>{{NEYI_DUZENLER_MADDE_NO}}</p>
+            </li>
+          </ul>
+          <p class="svc-legal__foot"><span class="svc-stamp"><i class="fas fa-circle-check" aria-hidden="true"></i> Kontrol: {{GG.AA.YYYY}}</span><span>Bağlayıcı metin için <a href="https://www.mevzuat.gov.tr/" target="_blank" rel="noopener noreferrer">mevzuat.gov.tr</a> esas alınır. Özetler: <a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat ve standartlar kütüphanesi</a>.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 10. SSS: 5-8 details.svc-faq__item; id="sss-<kisa>"; ilki open. Cevaplar düz metin (<p>), kısa ve doğru.
+         JSON-LD'yi check-service-page.py --fix üretir; soru metni plan.json faq ile aynı olmalı. ===== -->
+    <section class="svc-sec" id="sss" aria-labelledby="h-sss">
+      <div class="svc-wrap svc-split">
+        <div class="svc-sec__head" data-reveal>
+          <p class="svc-kicker">Sık sorulan sorular</p>
+          <h2 id="h-sss">{{SSS_H2}}</h2>
+          <div class="svc-note svc-split__aside">
+            <i class="fas fa-circle-info" aria-hidden="true"></i>
+            <p><strong>Sorunuz burada yok mu?</strong> Tesisinize özel durumu <a href="https://wa.me/905454346735?text={{WA_SORU_TEXT_URLENCODED}}" target="_blank" rel="noopener noreferrer">WhatsApp'tan</a> yazın ya da teknik sorunuzu <a href="/sor.html">VoltGuard'a Sor</a> sayfasından iletin.</p>
+          </div>
+        </div>
+        <div class="svc-faq" data-reveal="group">
+          <details class="svc-faq__item" id="sss-{{KISA_1}}" open>
+            <summary>{{SORU_1}}</summary>
+            <div class="svc-faq__a"><p>{{CEVAP_1}}</p></div>
+          </details>
+          <!-- ... 5-8 soru -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 11. İLGİLİ REHBER VE ARAÇLAR: plan.json links_to (4-8 kart) + 2-3 kardeş hizmet (pill) =====
+         Etiketler: svc-tag--rehber (bilgi/), --hesap (hesaplama/), --form (mm/), --ders (akademi/), --soru (sor/).
+         Rehbere giden bağlantıda hizmet ifadesi değil rehberin konusu kullanılır. Olmayan sayfaya bağlantı vermeyin
+         (yalnızca planlı /hizmetler/*.html serbest). -->
+    <section class="svc-sec svc-sec--alt" id="kaynaklar" aria-labelledby="h-kaynak">
+      <div class="svc-wrap">
+        <div class="svc-sec__head" data-reveal>
+          <p class="svc-kicker">Kaynaklar</p>
+          <h2 id="h-kaynak">İlgili rehberler ve araçlar</h2>
+          <p class="svc-sec__intro">Karar vermeden önce okumak, hesaplamak veya kendi kontrol listenizi hazırlamak isteyenler için.</p>
+        </div>
+        <div class="svc-related" data-reveal="group">
+          <a class="svc-link-card" href="/bilgi/{{REHBER}}.html"><span class="svc-tag svc-tag--rehber">Rehber</span><strong>{{REHBER_BASLIK}}</strong><span>{{REHBER_OZET}}</span></a>
+          <a class="svc-link-card" href="/hesaplama/{{ARAC_SLUG}}/"><span class="svc-tag svc-tag--hesap">Hesaplama</span><strong>{{ARAC_BASLIK}}</strong><span>{{ARAC_OZET}}</span></a>
+          <!-- ... -->
+        </div>
+        <div class="svc-pills" data-reveal>
+          <a class="svc-pill" href="/hizmetler/{{KARDES_1}}.html"><i class="fas fa-screwdriver-wrench" aria-hidden="true"></i> {{KARDES_1_AD}}</a>
+          <!-- ... 2-3 kardeş hizmet (alıcı yolculuğu: plan.json internal_linking_rules) -->
+        </div>
+        <p class="svc-meta"><span><i class="fas fa-pen" aria-hidden="true"></i>İçerik: VoltGuard mühendislik ekibi</span><span><i class="fas fa-clock-rotate-left" aria-hidden="true"></i>Son güncelleme: {{GG Ay YYYY}}</span></p>
+      </div>
+    </section>
+
+    <!-- ===== 12. KAPANIŞ CTA BANDI: teklif + telefon + WhatsApp + çalışma saatleri ===== -->
+    <section class="svc-cta" aria-labelledby="h-cta">
+      <div class="svc-wrap svc-cta__in">
+        <div>
+          <h2 id="h-cta">{{CTA_H2}}</h2>
+          <p>{{CTA_METNI}}</p>
+          <p class="svc-cta__meta"><span><i class="fas fa-clock" aria-hidden="true"></i>Ofis: Pazartesi-Cuma 08:00-18:00</span><span><i class="fas fa-headset" aria-hidden="true"></i>Acil arıza hattı: 7/24</span><span><i class="fas fa-location-dot" aria-hidden="true"></i>Ege Teknopark, Bornova/İzmir</span></p>
+        </div>
+        <div class="svc-cta__btns">
+          <a class="svc-btn svc-btn--primary" href="/?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
+          <a class="svc-btn svc-btn--ghost" href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a>
+          <a class="svc-btn svc-btn--ghost svc-btn--wa" href="https://wa.me/905454346735?text={{WA_TEXT_URLENCODED}}" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 13. DİĞER HİZMETLER: 12 sayfanın tamamı, her sayfada AYNI sıra/ikon/ad; yalnızca kendi
+         satırınıza aria-current="page" ekleyin. ===== -->
+    <section class="svc-sec svc-sec--tight" id="diger-hizmetler" aria-labelledby="h-diger">
+      <div class="svc-wrap">
+        <div class="svc-sec__head svc-sec__head--row">
+          <div>
+            <p class="svc-kicker">Hizmetlerimiz</p>
+            <h2 id="h-diger">Diğer hizmetlerimiz</h2>
+          </div>
+          <a class="svc-btn svc-btn--light" href="/hizmetler/">Tüm hizmetler <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+        <ul class="svc-others">
+          <li><a class="svc-other" href="/hizmetler/trafo-isletme-sorumlulugu.html"><i class="fas fa-user-shield" aria-hidden="true"></i><span>Trafo İşletme Sorumluluğu</span></a></li>
+          <li><a class="svc-other" href="/hizmetler/trafo-bakimi.html"><i class="fas fa-screwdriver-wrench" aria-hidden="true"></i><span>Trafo Bakımı</span></a></li>
+          <li><a class="svc-other" href="/hizmetler/trafo-merkezi-kurulumu.html"><i class="fas fa-building" aria-hidden="true"></i><span>Trafo Merkezi Kurulumu</span></a></li>
+          <li><a class="svc-other" href="/hizmetler/elektrik-periyodik-kontrol.html"><i class="fas fa-clipboard-check" aria-hidden="true"></i><span>Elektrik Periyodik Kontrol</span></a></li>
+          <li><a class="svc-other" href="/hizmetler/topraklama-olcumu.html"><i class="fas fa-cloud-bolt" aria-hidden="true"></i><span>Topraklama ve Paratoner Ölçümü</span></a></li>
+          <li><a class="svc-other" href="/hizmetler/harmonik-filtreli-kompanzasyon.html"><i class="fas fa-wave-square" aria-hidden="true"></i><span>Kompanzasyon Panosu</span></a></li>
+          <li><a class="svc-other" href="/hizmetler/enerji-kalitesi-olcumu.html"><i class="fas fa-chart-line" aria-hidden="true"></i><span>Enerji Kalitesi Ölçümü</span></a></li>
+          <li><a class="svc-other" href="/hizmetler/elektrik-pano-imalati.html"><i class="fas fa-sliders" aria-hidden="true"></i><span>Elektrik Pano İmalatı</span></a></li>
+          <li><a class="svc-other" href="/hizmetler/elektrik-taahhut.html"><i class="fas fa-helmet-safety" aria-hidden="true"></i><span>Elektrik Taahhüt</span></a></li>
+          <li><a class="svc-other" href="/hizmetler/fabrika-cati-ges.html"><i class="fas fa-solar-panel" aria-hidden="true"></i><span>Fabrika Çatı GES</span></a></li>
+          <li><a class="svc-other" href="/hizmetler/plc-scada-otomasyon.html"><i class="fas fa-diagram-project" aria-hidden="true"></i><span>PLC ve SCADA Otomasyon</span></a></li>
+          <li><a class="svc-other" href="/hizmetler/elektrik-projesi.html"><i class="fas fa-compass-drafting" aria-hidden="true"></i><span>Elektrik Projesi</span></a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!--vg:footer--><!--/vg:footer-->
+</body>
+</html>

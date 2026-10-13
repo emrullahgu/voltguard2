@@ -4,14 +4,85 @@ deployment:
     # Deploy hedefi - birincil alan adi kok dizini (cPanel kullanici voltgua2).
     # ONEMLI - cPanel deploy gorev listesi YAML olarak ayristirilir; bir gorev
     # satirinda iki-nokta+bosluk iceren komut (eski Turnstile echo uyarisi gibi)
-    # ayristirmayi bozar ve deploy'u sessizce durdururdu. O satir kaldirildi;
-    # zaten deploy'u durdurmuyor yalnizca log yaziyordu. Turnstile anahtari ayrica set edilir.
+    # ayristirmayi bozar ve deploy'u sessizce durdururdu. Gorev satirlarina iki-nokta+bosluk YAZMAYIN.
+    # Turnstile gizli anahtari (TURNSTILE_SECRET_KEY) sunucuda ortam degiskeni olarak set edilir; herkese acik
+    # site anahtari index.html icinde depoda tutulur (her deploy index.html dosyasinin uzerine yazar).
+    #
+    # SIRALAMA (guvenli deploy)
+    #  1) Statik varliklar (fonts, css, js, assets, public) - HTML'den ONCE. Sayfalar css/js'i ?v=<surum> ile ister
+    #     ve sunucu bunlari 1 yil "immutable" verir. HTML once yayinlanirsa bir ziyaretci yeni ?v= adresinden
+    #     ESKI dosyayi alip bir yil onbellekte tutabilirdi.
+    #  2) api/ (sunucu kodu) - onu cagiran hesap sayfalarindan once.
+    #  3) Icerik klasorleri (bilgi, hizmetler, akademi, sor, mm, hesap, hesaplama).
+    #  4) Kok sayfalar ve dosyalar; .htaccess (yeni yonlendirmeler hedef dosyalar yerindeyken devreye girer) ve
+    #     en son sw.js (yeni service worker kurulurken her sey yerinde olsun).
+    # Klasorler once .new olarak kopyalanir, sonra eskisi silinip yeniden adlandirilir. Kaynak eksikse ya da kopyalama
+    # yarida kesilirse canli klasore dokunulmaz; silme ile yeniden adlandirma arasindaki bosluk milisaniyelerdir.
+    # Yeniden adlandirilan/silinen dosyalar sunucuda kalmaz. tools/, txt/ ve .git bilerek DEPLOY EDILMEZ.
+    # Runtime veri (kullanici, oturum) docroot DISINDA tutulur; _vgdata/ ve vg-data/ klasorlerine hicbir gorev dokunmaz.
     - export DEPLOYPATH=/home/voltgua2/public_html/
-    - /bin/cp -R index.html $DEPLOYPATH
-    - /bin/cp -R 404.html $DEPLOYPATH
-    - /bin/cp -R gizlilik.html $DEPLOYPATH
-    - /bin/cp -R bilgi-bankasi.html $DEPLOYPATH
-    - /bin/cp -R teklif-araclari.html $DEPLOYPATH
+    # ----- 1) Statik varliklar -----
+    # fonts/ kendi barindirdigimiz yazi tipleri ve ikon fontu (hash li dosya adlari; css/fa-subset.css bunlara bagli).
+    - /bin/rm -rf $DEPLOYPATH/fonts.new
+    - /bin/cp -R fonts $DEPLOYPATH/fonts.new
+    - /bin/rm -rf $DEPLOYPATH/fonts
+    - /bin/mv $DEPLOYPATH/fonts.new $DEPLOYPATH/fonts
+    - /bin/rm -rf $DEPLOYPATH/css.new
+    - /bin/cp -R css $DEPLOYPATH/css.new
+    - /bin/rm -rf $DEPLOYPATH/css
+    - /bin/mv $DEPLOYPATH/css.new $DEPLOYPATH/css
+    - /bin/rm -rf $DEPLOYPATH/js.new
+    - /bin/cp -R js $DEPLOYPATH/js.new
+    - /bin/rm -rf $DEPLOYPATH/js
+    - /bin/mv $DEPLOYPATH/js.new $DEPLOYPATH/js
+    - /bin/rm -rf $DEPLOYPATH/assets.new
+    - /bin/cp -R assets $DEPLOYPATH/assets.new
+    - /bin/rm -rf $DEPLOYPATH/assets
+    - /bin/mv $DEPLOYPATH/assets.new $DEPLOYPATH/assets
+    - /bin/rm -rf $DEPLOYPATH/public.new
+    - /bin/cp -R public $DEPLOYPATH/public.new
+    - /bin/rm -rf $DEPLOYPATH/public
+    - /bin/mv $DEPLOYPATH/public.new $DEPLOYPATH/public
+    # ----- 2) api/ -----
+    # api/ yalnizca KOD icerir (php). api/ icine veri YAZMAYIN; her deploy bu klasoru yeniden olusturur.
+    - /bin/rm -rf $DEPLOYPATH/api.new
+    - /bin/cp -R api $DEPLOYPATH/api.new
+    - /bin/rm -rf $DEPLOYPATH/api
+    - /bin/mv $DEPLOYPATH/api.new $DEPLOYPATH/api
+    # ----- 3) Icerik klasorleri -----
+    - /bin/rm -rf $DEPLOYPATH/bilgi.new
+    - /bin/cp -R bilgi $DEPLOYPATH/bilgi.new
+    - /bin/rm -rf $DEPLOYPATH/bilgi
+    - /bin/mv $DEPLOYPATH/bilgi.new $DEPLOYPATH/bilgi
+    # hizmetler/ hizmet sayfalari; /hizmetler/ adresi hizmetler/index.html dosyasini sunar (.htaccess).
+    - /bin/rm -rf $DEPLOYPATH/hizmetler.new
+    - /bin/cp -R hizmetler $DEPLOYPATH/hizmetler.new
+    - /bin/rm -rf $DEPLOYPATH/hizmetler
+    - /bin/mv $DEPLOYPATH/hizmetler.new $DEPLOYPATH/hizmetler
+    - /bin/rm -rf $DEPLOYPATH/akademi.new
+    - /bin/cp -R akademi $DEPLOYPATH/akademi.new
+    - /bin/rm -rf $DEPLOYPATH/akademi
+    - /bin/mv $DEPLOYPATH/akademi.new $DEPLOYPATH/akademi
+    - /bin/rm -rf $DEPLOYPATH/sor.new
+    - /bin/cp -R sor $DEPLOYPATH/sor.new
+    - /bin/rm -rf $DEPLOYPATH/sor
+    - /bin/mv $DEPLOYPATH/sor.new $DEPLOYPATH/sor
+    - /bin/rm -rf $DEPLOYPATH/mm.new
+    - /bin/cp -R mm $DEPLOYPATH/mm.new
+    - /bin/rm -rf $DEPLOYPATH/mm
+    - /bin/mv $DEPLOYPATH/mm.new $DEPLOYPATH/mm
+    - /bin/rm -rf $DEPLOYPATH/hesap.new
+    - /bin/cp -R hesap $DEPLOYPATH/hesap.new
+    - /bin/rm -rf $DEPLOYPATH/hesap
+    - /bin/mv $DEPLOYPATH/hesap.new $DEPLOYPATH/hesap
+    - /bin/rm -rf $DEPLOYPATH/hesaplama.new
+    - /bin/cp -R hesaplama $DEPLOYPATH/hesaplama.new
+    - /bin/rm -rf $DEPLOYPATH/hesaplama
+    - /bin/mv $DEPLOYPATH/hesaplama.new $DEPLOYPATH/hesaplama
+    # ----- 4) Kok dosyalar -----
+    # Kokteki tum .html sayfalari tek gorevle (index.html, 404.html, fabrika-cozumleri.html ... yeni kok sayfalar dahil).
+    # Yeni kok sayfa icin AYRI cp satiri YAZMAYIN; dosya depoda yoksa cp hata verip deploy'u o noktada durdurur.
+    - /bin/cp -R *.html $DEPLOYPATH
     - /bin/cp -R contact.php $DEPLOYPATH
     - /bin/cp -R manifest.json $DEPLOYPATH
     - /bin/cp -R robots.txt $DEPLOYPATH
@@ -19,19 +90,3 @@ deployment:
     - /bin/cp -R sitemap.xml $DEPLOYPATH
     - /bin/cp -R .htaccess $DEPLOYPATH
     - /bin/cp -R sw.js $DEPLOYPATH
-    # Fully replace asset/output directories so renamed/removed files don't linger on the server.
-    - /bin/rm -rf $DEPLOYPATH/assets
-    - /bin/mkdir -p $DEPLOYPATH/assets
-    - /bin/cp -R assets/* $DEPLOYPATH/assets/
-    - /bin/rm -rf $DEPLOYPATH/css
-    - /bin/mkdir -p $DEPLOYPATH/css
-    - /bin/cp -R css/* $DEPLOYPATH/css/
-    - /bin/rm -rf $DEPLOYPATH/js
-    - /bin/mkdir -p $DEPLOYPATH/js
-    - /bin/cp -R js/* $DEPLOYPATH/js/
-    - /bin/rm -rf $DEPLOYPATH/bilgi
-    - /bin/mkdir -p $DEPLOYPATH/bilgi
-    - /bin/cp -R bilgi/* $DEPLOYPATH/bilgi/
-    - /bin/rm -rf $DEPLOYPATH/public
-    - /bin/mkdir -p $DEPLOYPATH/public
-    - /bin/cp -R public/* $DEPLOYPATH/public/

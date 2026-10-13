@@ -3,7 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/">
+  <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=20261012d" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="description" content="UPS gücü ve akü süresi hesaplama aracı: kritik yük, güç faktörü, yedekleme süresi ve akü verimine göre gerekli UPS kVA ve akü kapasitesini önerir.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
@@ -11,43 +46,70 @@
   <link rel="canonical" href="https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/">
   <meta property="og:type" content="article">
   <meta property="og:title" content="UPS Gücü ve Akü Süresi Hesaplama Aracı | VoltGuard">
-  <meta property="og:description" content="Kritik yük, güç faktörü, yedekleme süresi ve akü verimine göre gerekli UPS kVA ve akü kapasitesi.">
+  <meta property="og:description" content="UPS gücü ve akü süresi hesaplama aracı: kritik yük, güç faktörü, yedekleme süresi ve akü verimine göre gerekli UPS kVA ve akü kapasitesini önerir.">
   <meta property="og:url" content="https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta name="twitter:card" content="summary_large_image">
   <meta property="og:locale" content="tr_TR">
-  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/style.css">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/#article","headline":"UPS Gücü ve Akü Süresi Hesaplama Aracı","description":"Kritik yük, güç faktörü, yedekleme süresi ve akü verimine göre gerekli UPS ve akü kapasitesi.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"UPS Gücü ve Akü Süresi","item":"https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"UPS gücü nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Kritik yük kW cinsinden belirlenir ve UPS'in çıkış güç faktörüne (tipik 0,9 veya 1,0) bölünerek kVA'ya çevrilir. Sonuca %20-30 büyüme payı eklenerek standart bir üstteki UPS kademesi seçilir."}},{"@type":"Question","name":"Akü kapasitesi nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Yaklaşık formül: Toplam akü kapasitesi (Ah) = (Kritik yük kW × Yedekleme dakika × 60) / (Akü DC gerilimi × Verim × Deşarj sonu gerilim katsayısı). Kesin hesap için üretici deşarj eğrileri esas alınmalıdır."}},{"@type":"Question","name":"Online (double-conversion) ve line-interactive UPS farkı nedir?","acceptedAnswer":{"@type":"Answer","text":"Online UPS'te yük her zaman inverterden beslenir; şebeke kesintisinde geçiş süresi sıfırdır ve gerilim/frekans regülasyonu sürekli sağlanır. Line-interactive UPS'te ise yük normalde şebekeden beslenir, sadece arıza durumunda inverter devreye girer; geçiş süresi 2-6 ms arasındadır."}}]}]}</script>
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=20261012d">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/#article","headline":"UPS Gücü ve Akü Süresi Hesaplama Aracı","description":"UPS gücü ve akü süresi hesaplama aracı: kritik yük, güç faktörü, yedekleme süresi ve akü verimine göre gerekli UPS kVA ve akü kapasitesini önerir.","image":"https://voltguard.com.tr/public/og-image.png","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"UPS Gücü ve Akü Süresi","item":"https://voltguard.com.tr/hesaplama/ups-gucu-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"UPS gücü nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Kritik yük kW ÷ çıkış cosφ formülüyle kVA bulunur; %20-30 büyüme payı eklenip bir üst standart kademe seçilir."}},{"@type":"Question","name":"Akü kapasitesi nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Akü akımı = DC güç ÷ DC gerilim; toplam Ah = akü akımı × süre (saat) × düzeltme katsayısı (~1,15). Kesin hesap için üretici deşarj eğrileri esas alınmalıdır."}},{"@type":"Question","name":"Online ve line-interactive UPS farkı?","acceptedAnswer":{"@type":"Answer","text":"Online UPS her zaman inverterden besler ve geçiş süresi sıfırdır; line-interactive'te geçiş süresi 2-6 ms'dir. Server room ve endüstriyel yükler için online tercih edilir."}}]}]}</script>
 </head>
 <body class="doc-shell">
-  <header class="doc-header">
-    <div class="doc-header__inner">
-      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="" width="34" height="34">VoltGuard</a>
-      <nav class="doc-header__nav" id="docNav" aria-label="Üst menü">
-        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
-        <a href="../akademi.html">Akademi</a>
-        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
-        <a href="../hesaplama-araclari/">Hesap Araçları</a>
-        <a href="../sor.html">VoltGuard'a Sor</a>
-        <a href="../index.html#hizmetler">Hizmetler</a>
-        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+  <!--vg:header-->
+  <a class="skip-to-content" href="/hesaplama/ups-gucu-hesaplama/#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <span class="logo-mark" aria-hidden="true">
+          <span class="logo-mark__volt">VOLT</span>
+          <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="logo-mark__guard">GUARD</span>
+        </span>
+        <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+      </a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/" aria-current="true">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
       </nav>
+      <div class="vg-actions">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
     </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
   </header>
+  <!--/vg:header-->
 
   <nav class="breadcrumb" aria-label="breadcrumb">
-    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../teklif-araclari.html">Hesaplama Merkezi</a> &rsaquo; <span>UPS Gücü ve Akü Süresi</span>
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/hesaplama-araclari/">Hesaplama Merkezi</a> &rsaquo; <span>UPS Gücü ve Akü Süresi</span>
   </nav>
 
-  <main class="article">
+  <main class="article" id="main" tabindex="-1">
     <span class="article__cat">Enerji &amp; Yedekleme</span>
     <h1>UPS Gücü ve Akü Süresi Hesaplama Aracı</h1>
-    <p class="article__summary">Kritik yükünüzü, hedef yedekleme süresini ve akü DC gerilimini girin; önerilen UPS gücünü (kVA) ve toplam akü kapasitesini (Ah) anında görün.</p>
+    <p class="article__summary">Kritik yükünüzü, hedef yedekleme süresini ve akü DC gerilimini girin; önerilen UPS gücünü (kVA) ve toplam akü kapasitesini (Ah) anında görün. Kritik yük besleme şeması ve UPS çıkış dağıtımı <a href="/hizmetler/elektrik-projesi.html">elektrik projesi</a> içinde ayrıca planlanır.</p>
 
     <div class="mini-calc">
       <div class="mini-calc__fields">
@@ -58,7 +120,7 @@
         <div class="mini-calc__field"><label for="up-eff">İnverter verimi (%)</label><input id="up-eff" type="number" min="80" max="99" value="94" inputmode="decimal"></div>
         <div class="mini-calc__field"><label for="up-margin">Büyüme payı (%)</label><input id="up-margin" type="number" min="0" max="100" value="20" inputmode="decimal"></div>
       </div>
-      <div class="mini-calc__result">
+      <div class="mini-calc__result" role="status" aria-live="polite">
         <span class="mini-calc__result-label">Ön Sonuç</span>
         <span class="mini-calc__result-value" id="up-result">-</span>
         <span class="mini-calc__result-note" id="up-detail"></span>
@@ -77,7 +139,7 @@
     </ol>
 
     <h2>Örnek Hesap: 20 kW, 15 dk Yedekleme</h2>
-    <p>Çıkış cosφ = 1, 240 V DC, %94 verim ve %20 pay için: UPS = 20 × 1,2 ≈ <strong>25 kVA</strong> (standart kademe 30 kVA). DC güç ≈ 21.277 W. Akü akımı ≈ 88,7 A. Akü kapasitesi ≈ 88,7 × 15/60 × 1,15 ≈ <strong>25 Ah</strong>. Bu, 240 V için 20 adet 12 V / 26 Ah VRLA akü kombinasyonuyla karşılanabilir.</p>
+    <p>Çıkış cosφ = 1, 240 V DC, %94 verim ve %20 pay için: UPS = 20 × 1,2 ≈ <strong>24 kVA</strong> (standart kademe 30 kVA). DC güç ≈ 21.277 W. Akü akımı ≈ 88,7 A. Akü kapasitesi ≈ 88,7 × 15/60 × 1,15 ≈ <strong>25 Ah</strong>. Bu, 240 V için 20 adet 12 V / 26 Ah VRLA akü kombinasyonuyla karşılanabilir.</p>
 
     <h2>Kritik Yük Kategorileri ve Tipik Yedekleme Süresi</h2>
     <div class="table-scroll"><table>
@@ -93,55 +155,202 @@
 
     <h2>Sık Sorulan Sorular</h2>
     <details class="faq-item"><summary class="faq-item__q">UPS gücü nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Kritik yük kW ÷ çıkış cosφ formülüyle kVA bulunur; %20-30 büyüme payı eklenip bir üst standart kademe seçilir.</p></div></details>
-    <details class="faq-item"><summary class="faq-item__q">Akü kapasitesi nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>DC güç ÷ DC gerilim × süre × düzeltme katsayısı ile toplam Ah bulunur. Kesin hesap için üretici deşarj eğrileri esas alınmalıdır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Akü kapasitesi nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Akü akımı = DC güç ÷ DC gerilim; toplam Ah = akü akımı × süre (saat) × düzeltme katsayısı (~1,15). Kesin hesap için üretici deşarj eğrileri esas alınmalıdır.</p></div></details>
     <details class="faq-item"><summary class="faq-item__q">Online ve line-interactive UPS farkı? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Online UPS her zaman inverterden besler ve geçiş süresi sıfırdır; line-interactive'te geçiş süresi 2-6 ms'dir. Server room ve endüstriyel yükler için online tercih edilir.</p></div></details>
 
     <p class="kb-disclaimer">Bu araç yalnızca ön değerlendirme sağlar. Akü teknoloji seçimi (VRLA, Lityum), yaşlanma faktörü ve harmonik yükün çıkış filtresine etkisi için üretici katalog ve uzman görüşü gereklidir.</p>
-    <p>Daha fazla ilgili kaynak: <a href="../hesaplama/jenerator-gucu-hesaplama.html">Jeneratör Gücü Hesaplama</a>, <a href="../teklif-araclari.html">VoltGuard Hesaplama Merkezi</a>.</p>
+    <p>Daha fazla ilgili kaynak: <a href="/hesaplama/jenerator-gucu-hesaplama/">Jeneratör Gücü Hesaplama</a>, <a href="/hesaplama-araclari/">VoltGuard Hesaplama Merkezi</a>.</p>
     <div class="kb-cta">
       <div class="kb-cta__text"><strong>Kritik yük yedekleme (UPS + jeneratör) mimari desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
-      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      <div style="display:flex;flex-wrap:wrap;gap:.6rem">
+        <a href="/hizmetler/" class="btn btn--accent btn--md"><i class="fas fa-screwdriver-wrench" aria-hidden="true"></i> Hizmetlerimiz</a>
+        <a href="/#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
     </div>
-    <p style="margin-top:1.6rem"><a href="../teklif-araclari.html" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
+    <p style="margin-top:1.6rem"><a href="/hesaplama-araclari/" class="kb-card__more">&larr; Tüm hesaplama araçları: Hesaplama Merkezi</a></p>
   </main>
 
-  <footer class="footer" role="contentinfo">
-    <div class="container">
-      <div class="footer__bottom">
-        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
-        <div class="footer__social">
-          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
         </div>
       </div>
     </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <span class="logo-mark logo-mark--footer" aria-hidden="true">
+              <span class="logo-mark__volt">VOLT</span>
+              <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+              <span class="logo-mark__guard">GUARD</span>
+            </span>
+            <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+          </a>
+          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#guvenlik">Güvenlik</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Giriş Yap</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          </circle>
+        </svg>
+        <span class="sig-node" aria-hidden="true"></span>
+        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+          <span class="sig-badge__ring" aria-hidden="true"></span>
+          <span class="sig-badge__aurora" aria-hidden="true"></span>
+          <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="sig-badge__body">
+            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+            <span class="sig-badge__brand">
+              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+              <span class="sig-badge__eng">Engineering</span>
+            </span>
+          </span>
+          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+          <span class="sig-badge__shimmer" aria-hidden="true"></span>
+        </a>
+        <span class="sig-node" aria-hidden="true"></span>
+        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+          </circle>
+        </svg>
+      </div>
+    </div>
   </footer>
+  <!--/vg:footer-->
 
   <script>
     (function () {
       'use strict';
       var STD = [1,3,6,10,15,20,30,40,60,80,100,120,160,200,250,300,400,500,600,800];
+      var fmt = function(n, d){ return n.toLocaleString('tr-TR', {maximumFractionDigits: d}); };
+      function num(id) {
+        var raw = String(document.getElementById(id).value).trim();
+        if (raw === '') return NaN;
+        var n = Number(raw);
+        return isFinite(n) ? n : NaN;
+      }
       function update() {
-        var load = Math.max(0, Number(document.getElementById('up-load').value) || 0);
+        var result = document.getElementById('up-result');
+        var detail = document.getElementById('up-detail');
+        var load = num('up-load');
         var pf = Number(document.getElementById('up-pf').value);
-        var time = Math.max(1, Number(document.getElementById('up-time').value) || 15);
+        var time = num('up-time');
         var dc = Number(document.getElementById('up-dc').value);
-        var eff = Math.min(0.99, Math.max(0.8, Number(document.getElementById('up-eff').value) / 100 || 0.94));
-        var margin = Math.max(0, Number(document.getElementById('up-margin').value) || 20) / 100;
+        var effPct = num('up-eff');
+        var marginPct = num('up-margin');
+        var err = '';
+        if (!(load > 0)) { err = 'Geçerli bir kritik yük girin (kW).'; }
+        else if (!(time >= 1)) { err = 'Yedekleme süresi en az 1 dakika olmalıdır.'; }
+        else if (!(effPct >= 80 && effPct <= 99)) { err = 'İnverter verimi %80 ile %99 arasında olmalıdır.'; }
+        else if (!(marginPct >= 0 && marginPct <= 100)) { err = 'Büyüme payı %0 ile %100 arasında olmalıdır.'; }
+        if (err) { result.textContent = '-'; detail.textContent = err; return; }
+        var eff = effPct / 100;
+        var margin = marginPct / 100;
         var kva = load / pf * (1 + margin);
-        var pick = STD.find(function(n){ return n >= kva; }) || STD[STD.length - 1];
+        var maxStd = STD[STD.length - 1];
+        var pick = STD.find(function(n){ return n >= kva; });
         var pdc = load * 1000 / eff;
         var iBatt = pdc / dc;
         var ah = iBatt * (time / 60) * 1.15;
         var seri = Math.round(dc / 12);
-        document.getElementById('up-result').textContent = pick + ' kVA / ' + Math.round(ah) + ' Ah';
-        document.getElementById('up-detail').textContent = 'DC güç ≈ ' + Math.round(pdc) + ' W. Akü grubu için ' + seri + ' adet 12 V seri (' + dc + ' V nominal) önerilir.';
+        result.textContent = (pick ? pick + ' kVA' : '> ' + maxStd + ' kVA') + ' / ' + fmt(ah, 0) + ' Ah';
+        detail.textContent = 'DC güç ≈ ' + fmt(pdc, 0) + ' W. Akü grubu için ' + seri + ' adet 12 V seri (' + dc + ' V nominal) önerilir.' + (pick ? '' : ' Gerekli güç ≈ ' + fmt(kva, 0) + ' kVA, standart listenin (' + maxStd + ' kVA) üzerinde; paralel UPS veya üretici kataloğu gerekir.');
       }
       ['up-load','up-pf','up-time','up-dc','up-eff','up-margin'].forEach(function(id){document.getElementById(id).addEventListener('input',update);document.getElementById(id).addEventListener('change',update);});
       update();
     }());
   </script>
-  <script src="../js/voltguard-auth.js" defer></script>
-  <script src="../js/voltguard-tools.js"></script>
+  <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
+  <script src="/js/voltguard-tools.js?v=20261012d"></script>
 </body></html>

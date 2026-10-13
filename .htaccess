@@ -1,49 +1,147 @@
 # =====================================================
-# VoltGuard – Apache Configuration
+# VoltGuard – Apache / LiteSpeed Configuration
 # =====================================================
+# Genel kurallar
+#  - Her blok <IfModule> icinde: eksik bir modul asla 500 hatasi uretmez (Apache 2.4 ve LiteSpeed).
+#  - SURUMLEME SOZLESMESI (cache-busting): sayfalar /css/style.css?v=<tarih>, /js/main.js?v=<tarih>
+#    seklinde referans verir. URL'de ?v= varsa css/js 1 yil "immutable" servis edilir (tekrar ziyarette
+#    ag istegi yok); ?v= yoksa 10 dk sonra yeniden dogrulanir. Bir css/js dosyasi degistiginde HTML'deki
+#    <tarih> mutlaka guncellenmelidir, yoksa ziyaretciler eski dosyayi bir yil boyunca kullanir.
+#  - netlify.toml ayni basliklari yansitir; CSP ve onbellek degerleri ikisinde birlikte guncellenmeli.
+#  - Runtime veri klasorleri (_vgdata/, vg-data/) ve gizli json dosyalari web'den erisilemez (asagida).
+#    .cpanel.yml bu klasorlere dokunmaz; sunucudaki canli veri deploy ile silinmez.
+#  - cPanel MultiPHP Yoneticisi bu dosyaya "php -- BEGIN cPanel-generated handler" blogu eklediyse,
+#    deploy .htaccess'in uzerine yazar; blok kaybolursa cPanel'den PHP surumunu yeniden kaydedin.
 
 # ─────────────────────────────────────
-# Force HTTPS
+# Force HTTPS / canonical host / temiz URL'ler
 # ─────────────────────────────────────
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # www -> www'siz (kanonik alan adi) ve HTTP -> HTTPS, tek adimda (http://www.voltguard.com.tr dahil).
+  # AutoSSL / ACME dogrulamasi duz HTTP uzerinden calisabilmeli: bu yollar yonlendirilmez.
+  RewriteCond %{HTTP_HOST} ^www\.voltguard\.com\.tr(:\d+)?$ [NC]
+  RewriteCond %{REQUEST_URI} !^/\.well-known/(acme-challenge|pki-validation|cpanel-dcv)/ [NC]
+  RewriteRule ^ https://voltguard.com.tr%{REQUEST_URI} [L,R=301]
+
+  # Force HTTPS. X-Forwarded-Proto: bir CDN/proxy arkasinda HTTPS zaten sonlandirilmissa sonsuz dongu olmaz.
+  RewriteCond %{REQUEST_URI} !^/\.well-known/(acme-challenge|pki-validation|cpanel-dcv)/ [NC]
   RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+  # --- Web'den asla erisilemeyecek yollar -------------------------------------------------
+  # Nokta ile baslayan dosya/klasorler (.git, .env, .cpanel.yml ...) - .well-known haric.
+  RewriteRule (^|/)\.(?!well-known(/|$)) - [F,L]
+  # Runtime veri klasorleri (kullanici/oturum verisi). Veri tercihen docroot DISINDA tutulmali; bu kural ek emniyet.
+  RewriteRule ^(_vgdata|vg-data|vgdata)(/|$) - [F,L,NC]
+  # api/ icindeki ic kod klasorleri ve "_" ile baslayan yardimci dosyalar dogrudan cagrilamaz.
+  RewriteRule ^api/(lib|inc|includes|private|vendor|storage|data|cache|logs|tmp)(/|$) - [F,L,NC]
+  RewriteRule ^api/(.+/)?_[^/]*$ - [F,L]
+
+  # --- Onbellek isareti (asagidaki Cache-Control kurallari bu ortam degiskenini okur) ---
+  # ?v=<surum> iceren css/js istekleri "immutable" onbelleklenir.
+  RewriteCond %{QUERY_STRING} (^|&)v=[^&]+
+  RewriteRule \.(css|js|mjs)$ - [E=VG_VERSIONED:1]
+
+  # Temiz URL ciftleri (.html -> /slug/ yonlendirme, /slug/ -> .html ic yeniden yazma).
+  # .htaccess (per-directory) baglaminda ic yeniden yazma sonrasi istek kurallara yeniden girer;
+  # [L] bunu durdurmaz. Korumasiz 301 kurali bu yuzden /slug/ <-> .html dongusu yaratirdi.
+  # THE_REQUEST yalnizca istemcinin gonderdigi ilk istek satirini icerir (ic yeniden yazmada degismez),
+  # bu nedenle 301 sadece disaridan gelen .html isteginde calisir; ic yeniden yazmada atlanir.
+  RewriteCond %{THE_REQUEST} \s/teklif-araclari\.html[\s?]
   RewriteRule ^teklif-araclari\.html$ /hesaplama-araclari/ [R=301,L]
   RewriteRule ^hesaplama-araclari/?$ /teklif-araclari.html [L]
 
+  # Ana sayfa tek adres: /index.html -> / (yalnizca istemcinin istedigi /index.html). "/" isteginde mod_dir'in
+  # yaptigi ic index.html istegi THE_REQUEST'i degistirmez, bu yuzden dongu olusmaz. Sorgu dizesi korunur.
+  RewriteCond %{THE_REQUEST} \s/index\.html[\s?]
+  RewriteRule ^index\.html$ / [R=301,L]
+
+  RewriteCond %{THE_REQUEST} \s/hesaplama/kablo-kesiti-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/kablo-kesiti-hesaplama\.html$ /hesaplama/kablo-kesiti-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/kablo-kesiti-hesaplama/?$ /hesaplama/kablo-kesiti-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/trafo-akimi-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/trafo-akimi-hesaplama\.html$ /hesaplama/trafo-akimi-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/trafo-akimi-hesaplama/?$ /hesaplama/trafo-akimi-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/kompanzasyon-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/kompanzasyon-hesaplama\.html$ /hesaplama/kompanzasyon-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/kompanzasyon-hesaplama/?$ /hesaplama/kompanzasyon-hesaplama.html [L]
 
+  RewriteCond %{THE_REQUEST} \s/hesaplama/gerilim-dusumu-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/gerilim-dusumu-hesaplama\.html$ /hesaplama/gerilim-dusumu-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/gerilim-dusumu-hesaplama/?$ /hesaplama/gerilim-dusumu-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/motor-akimi-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/motor-akimi-hesaplama\.html$ /hesaplama/motor-akimi-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/motor-akimi-hesaplama/?$ /hesaplama/motor-akimi-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/kw-kva-amper-donusturucu\.html[\s?]
   RewriteRule ^hesaplama/kw-kva-amper-donusturucu\.html$ /hesaplama/kw-kva-amper-donusturucu/ [R=301,L]
   RewriteRule ^hesaplama/kw-kva-amper-donusturucu/?$ /hesaplama/kw-kva-amper-donusturucu.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/sigorta-tms-secimi\.html[\s?]
   RewriteRule ^hesaplama/sigorta-tms-secimi\.html$ /hesaplama/sigorta-tms-secimi/ [R=301,L]
   RewriteRule ^hesaplama/sigorta-tms-secimi/?$ /hesaplama/sigorta-tms-secimi.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/motor-koruma-kontaktor-secimi\.html[\s?]
   RewriteRule ^hesaplama/motor-koruma-kontaktor-secimi\.html$ /hesaplama/motor-koruma-kontaktor-secimi/ [R=301,L]
   RewriteRule ^hesaplama/motor-koruma-kontaktor-secimi/?$ /hesaplama/motor-koruma-kontaktor-secimi.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/kisa-devre-akimi-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/kisa-devre-akimi-hesaplama\.html$ /hesaplama/kisa-devre-akimi-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/kisa-devre-akimi-hesaplama/?$ /hesaplama/kisa-devre-akimi-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/jenerator-gucu-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/jenerator-gucu-hesaplama\.html$ /hesaplama/jenerator-gucu-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/jenerator-gucu-hesaplama/?$ /hesaplama/jenerator-gucu-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/ups-gucu-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/ups-gucu-hesaplama\.html$ /hesaplama/ups-gucu-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/ups-gucu-hesaplama/?$ /hesaplama/ups-gucu-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/topraklama-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/topraklama-hesaplama\.html$ /hesaplama/topraklama-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/topraklama-hesaplama/?$ /hesaplama/topraklama-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/ges-uretim-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/ges-uretim-hesaplama\.html$ /hesaplama/ges-uretim-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/ges-uretim-hesaplama/?$ /hesaplama/ges-uretim-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/inverter-dc-ac-kablo-secimi\.html[\s?]
   RewriteRule ^hesaplama/inverter-dc-ac-kablo-secimi\.html$ /hesaplama/inverter-dc-ac-kablo-secimi/ [R=301,L]
   RewriteRule ^hesaplama/inverter-dc-ac-kablo-secimi/?$ /hesaplama/inverter-dc-ac-kablo-secimi.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/aydinlatma-lux-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/aydinlatma-lux-hesaplama\.html$ /hesaplama/aydinlatma-lux-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/aydinlatma-lux-hesaplama/?$ /hesaplama/aydinlatma-lux-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/reaktif-ceza-hesaplama\.html[\s?]
+  RewriteRule ^hesaplama/reaktif-ceza-hesaplama\.html$ /hesaplama/reaktif-ceza-hesaplama/ [R=301,L]
+  RewriteRule ^hesaplama/reaktif-ceza-hesaplama/?$ /hesaplama/reaktif-ceza-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/isletme-sorumlulugu-ucret-hesaplama\.html[\s?]
+  RewriteRule ^hesaplama/isletme-sorumlulugu-ucret-hesaplama\.html$ /hesaplama/isletme-sorumlulugu-ucret-hesaplama/ [R=301,L]
+  RewriteRule ^hesaplama/isletme-sorumlulugu-ucret-hesaplama/?$ /hesaplama/isletme-sorumlulugu-ucret-hesaplama.html [L]
+
+  # --- Klasor ve uzantisiz adresler -------------------------------------------------------
+  # Ayni adli klasor + .html sayfasi (sor/ + sor.html, akademi/ + akademi.html) olan adreslerde mod_dir,
+  # /sor -> /sor/ yonlendirir ve klasorde index olmadigi icin 403/404 verirdi ("VoltGuard'a Sor acilmiyor").
+  # Asagidaki kurallar bu adresleri dogrudan kanonik .html adresine 301 ile yonlendirir; DirectorySlash Off
+  # (alttaki blok) kurallarin mod_dir'den once islemesini her sunucuda garanti eder.
+  # (Sayfa /sor/ altinda ic yeniden yazma ile SERVIS EDILMEZ: goreli css/js yollari kirilirdi.)
+  RewriteRule ^hesaplama/?$ /hesaplama-araclari/ [R=301,L]
+  RewriteRule ^bilgi/?$ /bilgi-bankasi.html [R=301,L]
+  RewriteRule ^mm/?$ /muhendis-merkezi.html [R=301,L]
+  RewriteRule ^hesap/?$ /hesap/giris.html [R=302,L]
+  # Hizmetler merkezi: gercek klasor + index.html. DirectorySlash Off oldugu icin mod_dir /hizmetler -> /hizmetler/
+  # yonlendirmesini yapmaz; asagidaki kurallar yapar. /hizmetler/index.html (yalnizca dis istek) kanonik /hizmetler/
+  # adresine 301 alir; /hizmetler/ ic yeniden yazma ile hizmetler/index.html dosyasini sunar (ayni klasor, goreli yollar bozulmaz).
+  RewriteRule ^hizmetler$ /hizmetler/ [R=301,L]
+  RewriteCond %{THE_REQUEST} \s/hizmetler/index\.html[\s?]
+  RewriteRule ^hizmetler/index\.html$ /hizmetler/ [R=301,L]
+  RewriteRule ^hizmetler/$ /hizmetler/index.html [L]
+  # /<sayfa> ve /<sayfa>/  ->  /<sayfa>.html  (yalnizca dosya gercekten varsa; yeni kok sayfalar otomatik).
+  RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+  RewriteRule ^([a-z0-9-]+)/?$ /$1.html [R=301,L]
+  # /<klasor>/<sayfa> ve /<klasor>/<sayfa>/ -> /<klasor>/<sayfa>.html (hesaplama/ yukaridaki ciftlerle yonetilir).
+  RewriteCond %{DOCUMENT_ROOT}/$1/$2.html -f
+  RewriteRule ^(bilgi|akademi|sor|mm|hesap|hizmetler)/([a-z0-9-]+)/?$ /$1/$2.html [R=301,L]
+</IfModule>
+
+# mod_dir'in "/sor -> /sor/" yonlendirmesini kapatir; boylece yukaridaki .html kurallari her zaman once calisir.
+# Klasorlerin index dosyasi yok (hizmetler/ haric; yukaridaki kurallar yonetir) ve Options -Indexes acik: kuralla
+# eslesmeyen klasor adresleri 403/404 verir (listeleme yok).
+<IfModule mod_dir.c>
+  DirectorySlash Off
 </IfModule>
 
 # ─────────────────────────────────────
@@ -57,78 +155,163 @@
   # 'preload' dropped: only re-add after every subdomain is verified HTTPS-only and the
   # domain has been deliberately submitted to hstspreload.org.
   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on'"
+  Header always unset X-Powered-By
 
   # Content-Security-Policy as a real response header so frame-ancestors is enforced
   # and the policy applies to every response (kept in sync with the app's needs).
-  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://assets.apollo.io https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https:; connect-src 'self' https://challenges.cloudflare.com https://*.apollo.io; frame-src https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests"
+  #  - 'inline-speculation-rules': sayfalardaki satir-ici <script type="speculationrules"> (hizli sayfa gecisi).
+  #  - font-src 'self': kendi barindirdigimiz /fonts/ dosyalari; connect-src 'self': ayni kok /api/ cagrilari.
+  #  - worker-src/manifest-src 'self': sw.js ve manifest.json. blob: img/media: tarayicida uretilen onizlemeler.
+  #  - style-src/font-src yalnizca 'self' (+ data: font): yazi tipleri ve ikonlar kendi sunucumuzda (css/fonts.css,
+  #    css/fa-subset.css); Google Fonts / Font Awesome CDN artik kullanilmiyor. Ayni degerler netlify.toml'da.
+  #  - script-src https://cdnjs.cloudflare.com: yalnizca jsPDF (PDF disa aktarma) icin.
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com https://assets.apollo.io https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://*.apollo.io https://aplo-evnt.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests"
 </IfModule>
 
 # ─────────────────────────────────────
-# GZIP Compression
+# MIME turleri ve karakter seti
 # ─────────────────────────────────────
+<IfModule mod_mime.c>
+  AddType text/javascript .js .mjs
+  AddType application/manifest+json .webmanifest
+  AddType font/woff2 .woff2
+  AddType font/woff .woff
+  AddType image/webp .webp
+  AddType image/avif .avif
+  AddType image/svg+xml .svg
+  AddType video/mp4 .mp4 .m4v
+  AddType video/webm .webm
+</IfModule>
+AddDefaultCharset UTF-8
+
+# ─────────────────────────────────────
+# Sikistirma: Brotli (varsa) + gzip/deflate
+# Brotli destekleyen tarayici br alir, digerleri gzip. woff2/jpg/png/mp4 zaten sikisik: listede yok.
+# ─────────────────────────────────────
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/javascript application/javascript application/x-javascript application/json application/ld+json application/manifest+json application/xml text/xml application/xhtml+xml application/rss+xml application/atom+xml image/svg+xml image/x-icon font/ttf font/otf application/vnd.ms-fontobject
+</IfModule>
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html
-  AddOutputFilterByType DEFLATE text/css
-  AddOutputFilterByType DEFLATE text/javascript
-  AddOutputFilterByType DEFLATE application/javascript
-  AddOutputFilterByType DEFLATE application/json
-  AddOutputFilterByType DEFLATE application/xml
-  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/x-javascript application/json application/ld+json application/manifest+json application/xml text/xml application/xhtml+xml application/rss+xml application/atom+xml image/svg+xml image/x-icon font/ttf font/otf application/vnd.ms-fontobject
 </IfModule>
 
 # ─────────────────────────────────────
-# Browser Caching
-# ─────────────────────────────────────
-<IfModule mod_expires.c>
-  ExpiresActive On
-
-  # Images
-  ExpiresByType image/jpeg "access plus 1 year"
-  ExpiresByType image/png "access plus 1 year"
-  ExpiresByType image/webp "access plus 1 year"
-  ExpiresByType image/svg+xml "access plus 1 year"
-  ExpiresByType image/x-icon "access plus 1 year"
-
-  # CSS & JS
-  ExpiresByType text/css "access plus 1 month"
-  ExpiresByType application/javascript "access plus 1 month"
-  ExpiresByType text/javascript "access plus 1 month"
-
-  # Fonts
-  ExpiresByType font/woff2 "access plus 1 year"
-  ExpiresByType font/woff "access plus 1 year"
-  ExpiresByType application/font-woff2 "access plus 1 year"
-
-  # HTML
-  ExpiresByType text/html "access plus 1 hour"
-
-  # Default
-  ExpiresDefault "access plus 1 month"
-</IfModule>
-
-# ─────────────────────────────────────
-# ETag — disable to rely on Expires
+# Browser Caching (Cache-Control)
+#  html            : no-cache  -> her seferinde ETag ile dogrulanir (304), icerik hep taze
+#  css/js ?v=...   : 1 yil immutable (surumlu URL degisince yeni dosya)
+#  css/js ?v= yok  : 10 dk, sonra must-revalidate
+#  font/gorsel/video: 1 yil immutable (dosya degisirse ADI degismeli ya da ?v= eklenmeli)
+#  sw.js           : her zaman taze (service worker guncellemesi gecikmesin)
+#  php / api       : onbellege alinmaz
 # ─────────────────────────────────────
 <IfModule mod_headers.c>
-  Header unset ETag
-</IfModule>
-FileETag None
+  # HTML (uzantisiz/temiz URL'ler ic yeniden yazmayla .html dosyasina doner; burada son dosya adi eslesir).
+  # "always": ErrorDocument ile donen /404.html (404/403 durumlu) yanitina da uygulanir; hata sayfasi asla onbelleklenmez.
+  <FilesMatch "\.html?$">
+    Header always set Cache-Control "no-cache"
+  </FilesMatch>
 
-# ─────────────────────────────────────
-# CSS/JS — hızlı geri dönüş için stale-while-revalidate
-# (hash'siz dosya adları var; tarayıcı önbelleği anında servis eder,
-#  arka planda taze içeriği yeniden doğrular. no-cache'e göre çok daha hızlı.)
-# ─────────────────────────────────────
-<IfModule mod_headers.c>
-  <FilesMatch "\.(css|js)$">
-    Header set Cache-Control "public, max-age=600, stale-while-revalidate=86400"
+  # CSS / JS (sw.js haric). Aralarindan biri env= desteklemeyen bir sunucuda ikinci kural kazanir = guvenli (10 dk).
+  <FilesMatch "^(?!sw\.js$).+\.(css|js|mjs)$">
+    Header set Cache-Control "public, max-age=31536000, immutable" env=VG_VERSIONED
+    Header set Cache-Control "public, max-age=600, must-revalidate" env=!VG_VERSIONED
+  </FilesMatch>
+
+  # Service worker: asla bayat kalmasin.
+  <Files "sw.js">
+    Header set Cache-Control "no-cache, max-age=0, must-revalidate"
+    Header set Service-Worker-Allowed "/"
+  </Files>
+
+  # Fontlar
+  <FilesMatch "\.(woff2?|ttf|otf|eot)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Gorseller
+  <FilesMatch "\.(jpe?g|png|gif|webp|avif|svg|ico|bmp)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Video / ses (Range istekleri sunucu tarafindan desteklenir)
+  <FilesMatch "\.(mp4|m4v|webm|ogv|mov|mp3|ogg|m4a)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # PDF (katalog guncellenebilir): 1 gun, sonra dogrula
+  <FilesMatch "\.pdf$">
+    Header set Cache-Control "public, max-age=86400, must-revalidate"
+  </FilesMatch>
+
+  # manifest / sitemap / robots / llms: 1 saat, sonra dogrula
+  <FilesMatch "\.(json|webmanifest|xml|txt)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+
+  # PHP (contact.php, api/*): yanitlar asla onbelleklenmez (hesap/kullanici verisi) ve indekslenmez.
+  # (Hesap sayfalari /hesap/*.html icin indeks engeli sayfadaki <meta name="robots" content="noindex"> ile saglanir; robots.txt
+  #  /hesap/'i bilerek engellemez, aksi halde arama motoru noindex etiketini goremezdi.)
+  <FilesMatch "\.php$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set X-Robots-Tag "noindex, nofollow"
+  </FilesMatch>
+
+  # Sikistirilabilir turlerde Vary: Accept-Encoding (br/gzip ve sikistirilmamis kopyalar karismasin).
+  <FilesMatch "\.(html?|css|js|mjs|json|webmanifest|xml|txt|svg|ico|php)$">
+    Header merge Vary "Accept-Encoding"
   </FilesMatch>
 </IfModule>
+
+# mod_headers yoksa yedek: mod_expires ile temel sureler (Cache-Control yerine Expires).
+<IfModule !mod_headers.c>
+  <IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 10 minutes"
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType text/css "access plus 10 minutes"
+    ExpiresByType text/javascript "access plus 10 minutes"
+    ExpiresByType application/javascript "access plus 10 minutes"
+    ExpiresByType application/json "access plus 1 hour"
+    ExpiresByType application/xml "access plus 1 hour"
+    ExpiresByType text/plain "access plus 1 hour"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/avif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType video/mp4 "access plus 1 year"
+    ExpiresByType application/pdf "access plus 1 day"
+  </IfModule>
+</IfModule>
+
+# ─────────────────────────────────────
+# ETag: dosya zamani + boyut (inode haric: coklu sunucuda tutarli). Dogrulamalar 304 ile ucuz biter.
+# ─────────────────────────────────────
+FileETag MTime Size
 
 # ─────────────────────────────────────
 # Protect sensitive files
 # ─────────────────────────────────────
-<FilesMatch "\.(env|log|ini|bak|sql|sh)$">
+<FilesMatch "(?i)(^error_log$|~$|\.(env|log|ini|bak|sql|sh|yml|yaml|lock|inc|conf|dist|swp|sqlite3?|db|toml|ps1|py|md|pem|key)$)">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+
+# Gelistirme/paket dosyalari ve nokta ile baslayan dosyalar (.htaccess, .cpanel.yml, .gitignore ...)
+<FilesMatch "^(\.|(composer|package)(-lock)?\.json$|composer\.lock$)">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+
+# Kullanici / oturum / token verisi tutabilecek dosya adlari (users.json, sessions-2026.json, tokens.db ...).
+# Runtime veri docroot disinda olmali; bu kural yanlislikla docroot'a konan dosyalara karsi ek emniyet.
+<FilesMatch "(?i)^(users?|sessions?|accounts?|tokens?|resets?|otp|rate-?limits?|kullanicilar?|oturumlar?|uyeler)([-_.][^/]*)?\.(json|jsonl|ndjson|csv|dat|db|sqlite3?|log|txt)$">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>
@@ -139,6 +322,11 @@ FileETag None
     Require all denied
   </IfModule>
 </Files>
+
+# Runtime veri klasorleri (mod_rewrite yoksa da kapali kalsin).
+<IfModule mod_alias.c>
+  RedirectMatch 403 ^/(_vgdata|vg-data|vgdata)(/|$)
+</IfModule>
 
 # ─────────────────────────────────────
 # Prevent directory listing

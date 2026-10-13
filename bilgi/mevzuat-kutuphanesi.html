@@ -3,53 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=20261012d" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="description" content="Elektrik mühendisliği, periyodik kontrol, İSG ve enerji alanındaki yönetmelik ve standartların özet rehberi — VoltGuard Mevzuat & Standartlar Kütüphanesi.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
-  <title>Mevzuat & Standartlar Kütüphanesi | VoltGuard Bilgi Bankası</title>
+  <title>Elektrik Mevzuatı ve Standartlar Kütüphanesi | VoltGuard</title>
   <link rel="canonical" href="https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Mevzuat & Standartlar Kütüphanesi | VoltGuard">
-  <meta property="og:description" content="Elektrik mühendisliği, periyodik kontrol ve enerji mevzuatının özet rehberi.">
+  <meta property="og:title" content="Elektrik Mevzuatı ve Standartlar Kütüphanesi | VoltGuard">
+  <meta property="og:description" content="Elektrik mühendisliği, periyodik kontrol, İSG ve enerji alanındaki yönetmelik ve standartların özet rehberi — VoltGuard Mevzuat & Standartlar Kütüphanesi.">
   <meta property="og:url" content="https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta name="twitter:card" content="summary_large_image">
   <meta property="og:locale" content="tr_TR">
-  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=20261012d">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","@id":"https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html","name":"VoltGuard Mevzuat & Standartlar Kütüphanesi","description":"Elektrik mühendisliği, periyodik kontrol, İSG ve enerji alanındaki yönetmelik ve standartların özet rehberi.","inLanguage":"tr-TR","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"Mevzuat & Standartlar Kütüphanesi","item":"https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html"}]}]}</script>
 </head>
 <body class="doc-shell">
-  <header class="doc-header">
-    <div class="doc-header__inner">
-      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="" width="34" height="34">VoltGuard</a>
-      <nav class="doc-header__nav" id="docNav" aria-label="Üst menü">
-        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
-        <a href="../akademi.html">Akademi</a>
-        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
-        <a href="../hesaplama-araclari/">Hesap Araçları</a>
-        <a href="../sor.html">VoltGuard'a Sor</a>
-        <a href="../index.html#hizmetler">Hizmetler</a>
-        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+  <!--vg:header-->
+  <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <span class="logo-mark" aria-hidden="true">
+          <span class="logo-mark__volt">VOLT</span>
+          <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="logo-mark__guard">GUARD</span>
+        </span>
+        <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+      </a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
       </nav>
+      <div class="vg-actions">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
     </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
   </header>
+  <!--/vg:header-->
 
   <nav class="breadcrumb" aria-label="breadcrumb">
-    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>Mevzuat &amp; Standartlar Kütüphanesi</span>
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>Mevzuat &amp; Standartlar Kütüphanesi</span>
   </nav>
 
   <section class="kb-hero">
     <h1>Mevzuat &amp; Standartlar Kütüphanesi</h1>
-    <p>Elektrik mühendisliği, periyodik kontrol, iş sağlığı ve güvenliği ile enerji alanındaki başlıca yönetmelik ve standartların özet rehberi. Her başlık için ilgili resmî kurumun sitesine yönlendirme; ilgili konularda VoltGuard'ın detaylı rehberlerine bağlantı.</p>
+    <p>Elektrik mühendisliği, periyodik kontrol, iş sağlığı ve güvenliği ile enerji alanındaki başlıca yönetmelik ve standartların özet rehberi. Her başlık için ilgili resmî kurumun sitesine yönlendirme; ilgili konularda VoltGuard'ın detaylı rehberlerine bağlantı. Bu kriterlere göre raporlu kontrol için <a href="/hizmetler/elektrik-periyodik-kontrol.html">elektrik tesisatı periyodik kontrol</a> hizmetimizi inceleyebilirsiniz.</p>
   </section>
 
-  <main class="kb-hub">
+  <main class="kb-hub" id="main" tabindex="-1">
       <section class="lib-group">
         <h2 class="lib-group__title">Periyodik Kontrol Kriterleri</h2>
         <div class="lib-list">
@@ -60,12 +121,12 @@
         </article>
         <article class="lib-item">
           <h3 class="lib-item__title">Elektrik İç Tesisatı Gözle Kontrol ve Fonksiyon Testleri Periyodik Kontrol Kriterleri</h3>
-          <p class="lib-item__summary">Elektrik panoları ve iç tesisatın gözle muayenesi ile fonksiyon testleri için kriterleri belirler; kısa devre kesme kapasitesi, kablo-şalter koordinasyonu (Ib&lt;In&lt;Iz), iletken kesitleri, süreklilik ve yalıtım direnci ile RCD ve aşırı gerilim koruma testlerini içerir. Tesis sahibi ve teknik kullanıcıya, panodaki ekipmanların projeye ve standartlara uygun çalıştığını doğrulayıp eksiklikleri raporlamak için yol gösterir.</p>
+          <p class="lib-item__summary">Elektrik panoları ve iç tesisatın gözle muayenesi ile fonksiyon testleri için kriterleri belirler; kısa devre kesme kapasitesi, kablo-şalter koordinasyonu (Ib ≤ In ≤ Iz), iletken kesitleri, süreklilik ve yalıtım direnci ile RCD ve aşırı gerilim koruma testlerini içerir. Tesis sahibi ve teknik kullanıcıya, panodaki ekipmanların projeye ve standartlara uygun çalıştığını doğrulayıp eksiklikleri raporlamak için yol gösterir.</p>
           <div class="lib-item__meta"><a class="lib-item__guide" href="elektrik-tesisati-periyodik-kontrol.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.tse.org.tr" target="_blank" rel="noopener">Resmî kaynak: Elektrik İç Tesisatı Gözle Kontrol ve Fonksiyon Testleri Periyodik Kontrol Kriterleri (ZPKK02)</a></div>
         </article>
         <article class="lib-item">
           <h3 class="lib-item__title">Yıldırımdan Korunma Tesisatı Periyodik Kontrol Kriterleri</h3>
-          <p class="lib-item__summary">Bina yıldırımdan korunma sistemlerinin (ESE/aktif paratoner, Franklin çubuğu, Faraday kafesi) periyodik kontrol kriterlerini tanımlar; kapsama alanı/koruma seviyesi uygunluğu, yakalama-indirme iletkenleri, koruma borusu ve muayene klemensi durumu ile topraklama geçiş direncinin (genel olarak 10 ohm sınırı) ölçümünü kapsar. Tesis sahibine sistemin yıldırıma karşı etkin koruma sağladığını doğrulamak ve yasaklı radyoaktif paratoner gibi uygunsuzlukları tespit etmek için referans sunar.</p>
+          <p class="lib-item__summary">Bina yıldırımdan korunma sistemlerinin (ESE/aktif paratoner, Franklin çubuğu, Faraday kafesi) periyodik kontrol kriterlerini tanımlar; kapsama alanı/koruma seviyesi uygunluğu, yakalama-indirme iletkenleri, koruma borusu ve muayene klemensi durumu ile topraklama geçiş direncinin (genel olarak 10 Ω sınırı) ölçümünü kapsar. Tesis sahibine sistemin yıldırıma karşı etkin koruma sağladığını doğrulamak ve yasaklı radyoaktif paratoner gibi uygunsuzlukları tespit etmek için referans sunar.</p>
           <div class="lib-item__meta"><a class="lib-item__guide" href="yildirimdan-korunma.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.tse.org.tr" target="_blank" rel="noopener">Resmî kaynak: Yıldırımdan Korunma Tesisatı Periyodik Kontrol Kriterleri (ZPKK03)</a></div>
         </article>
         <article class="lib-item">
@@ -111,22 +172,27 @@
         <article class="lib-item">
           <h3 class="lib-item__title">Elektrik Tesislerinde Topraklamalar Yönetmeliği</h3>
           <p class="lib-item__summary">Alçak ve yüksek gerilimli elektrik tesisleri ile bilgi-iletişim donanımlarındaki topraklama tesislerinin can ve mal güvenliği gözetilerek nasıl kurulacağını, işletileceğini ve denetleneceğini belirleyen temel yönetmeliktir. Tesis sahipleri ve teknik kullanıcılar için koruma topraklaması, dokunma/adım gerilimi sınırları ve ölçüm-kontrol esaslarının dayanağıdır.</p>
-          <div class="lib-item__meta"><a class="lib-item__guide" href="topraklama.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî kaynak: Elektrik Tesislerinde Topraklamalar Yönetmeliği (Resmi Gazete)</a></div>
+          <div class="lib-item__meta"><a class="lib-item__guide" href="topraklama.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî kaynak: Elektrik Tesislerinde Topraklamalar Yönetmeliği (Resmî Gazete)</a></div>
         </article>
         <article class="lib-item">
           <h3 class="lib-item__title">Elektrik Kuvvetli Akım Tesisleri Yönetmeliği</h3>
           <p class="lib-item__summary">Üretim, iletim ve dağıtım dahil kuvvetli akım elektrik tesislerinin can ve mal güvenliği bakımından nasıl kurulup işletileceğini ve bakımının nasıl yapılacağını düzenleyen yönetmeliktir. Aşırı gerilim ve aşırı akıma karşı koruma, emniyet mesafeleri, aygıt ve şalt tesislerine ilişkin asgari teknik kuralları tesis sahibine ve mühendise sağlar.</p>
-          <div class="lib-item__meta"><a class="lib-item__guide" href="kuvvetli-akim-tesisleri.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.resmigazete.gov.tr" target="_blank" rel="noopener">Resmî kaynak: Elektrik Kuvvetli Akım Tesisleri Yönetmeliği (Resmi Gazete, 30.11.2000/24246)</a></div>
+          <div class="lib-item__meta"><a class="lib-item__guide" href="kuvvetli-akim-tesisleri.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.resmigazete.gov.tr" target="_blank" rel="noopener">Resmî kaynak: Elektrik Kuvvetli Akım Tesisleri Yönetmeliği (Resmî Gazete, 30.11.2000/24246)</a></div>
         </article>
         <article class="lib-item">
           <h3 class="lib-item__title">Elektrik İç Tesisleri Yönetmeliği</h3>
           <p class="lib-item__summary">Bina ve yapılardaki alçak gerilimli iç elektrik tesislerinin (aydınlatma, kuvvet, kompanzasyon, yıldırımlık, zayıf akım vb.) kurulması ve işletilmesi kurallarını belirler; sürekli, bağımsız ve geçici tesisleri kapsar. TN/TT/IT şebeke tipleri, iletken ve koruma aygıtı seçimi gibi konularda tesis sahibi ve uygulayıcı için temel başvuru kaynağıdır.</p>
-          <div class="lib-item__meta"><a class="lib-item__guide" href="elektrik-ic-tesis-projelendirme.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî kaynak: Elektrik İç Tesisleri Yönetmeliği (Resmi Gazete)</a></div>
+          <div class="lib-item__meta"><a class="lib-item__guide" href="elektrik-ic-tesis-projelendirme.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî kaynak: Elektrik İç Tesisleri Yönetmeliği (Resmî Gazete)</a></div>
+        </article>
+        <article class="lib-item">
+          <h3 class="lib-item__title">Elektrik Tesisleri Proje Yönetmeliği</h3>
+          <p class="lib-item__summary">Kurulacak veya değiştirilecek elektrik tesislerine (iç tesisler, dağıtım ve trafo merkezleri, üretim tesisleri, GES dahil) ait projelerin hazırlanması, onaylanması ve onay işlemlerini yürütecek kuruluşların yetkilendirilmesi için çatı düzenlemedir. Proje müellifinin yetkisi, proje onay başvurusu, onay mercileri ve proje kapsamı konusunda bugün dağıtım şirketlerinin ve onay kuruluşlarının esas aldığı temel metindir; iç tesis projelerinin teknik ayrıntılarında Elektrik İç Tesisleri Proje Hazırlama Yönetmeliği ile birlikte uygulanır.</p>
+          <div class="lib-item__meta"><a class="lib-item__guide" href="elektrik-ic-tesis-projelendirme.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî kaynak: Elektrik Tesisleri Proje Yönetmeliği (Resmî Gazete, 30.12.2014/29221 mük.)</a></div>
         </article>
         <article class="lib-item">
           <h3 class="lib-item__title">Elektrik İç Tesisleri Proje Hazırlama Yönetmeliği</h3>
           <p class="lib-item__summary">Elektrik İç Tesisleri Yönetmeliği kapsamındaki kuvvet, aydınlatma, kompanzasyon, koruma, haberleşme, yangın ve güvenlik tesislerine ait projelerin hangi aşamalarla (etüt, ön proje, kesin proje, uygulama ve son durum projesi) ve hangi hesaplarla hazırlanacağını düzenler. Proje müellifinin sorumlulukları, onay süreci ve proje geçerlilik süreleri konusunda tesis sahibine ve mühendise yol gösterir.</p>
-          <div class="lib-item__meta"><a class="lib-item__guide" href="elektrik-ic-tesis-projelendirme.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî kaynak: Elektrik İç Tesisleri Proje Hazırlama Yönetmeliği (Resmi Gazete, 3.12.2003/25305)</a></div>
+          <div class="lib-item__meta"><a class="lib-item__guide" href="elektrik-ic-tesis-projelendirme.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.mevzuat.gov.tr" target="_blank" rel="noopener">Resmî kaynak: Elektrik İç Tesisleri Proje Hazırlama Yönetmeliği (Resmî Gazete, 3.12.2003/25305)</a></div>
         </article>
         <article class="lib-item">
           <h3 class="lib-item__title">Elektrik Yüksek Gerilim Tesisleri İşletme Sorumluluğu Yönetmeliği</h3>
@@ -157,6 +223,11 @@
           <h3 class="lib-item__title">Elektrik Piyasası Tüketici Hizmetleri Yönetmeliği</h3>
           <p class="lib-item__summary">Tüketiciler, tedarikçiler ve dağıtım şirketleri arasındaki elektrik enerjisi satışı ile ilgili hizmetlerde uyulacak asgari standart ve usulleri düzenleyen güncel yönetmeliktir. İkili anlaşma ve perakende satış sözleşmelerini, sayaç ve okuma işlemlerini, kaçak/usulsüz kullanımın tespitini, elektrik kesme-bağlamayı, güvence bedellerini ve tüketici hak ve şikâyet süreçlerini kapsar.</p>
           <div class="lib-item__meta"><a class="lib-item__src" href="https://www.epdk.gov.tr" target="_blank" rel="noopener">Resmî kaynak: Elektrik Piyasası Tüketici Hizmetleri Yönetmeliği</a></div>
+        </article>
+        <article class="lib-item">
+          <h3 class="lib-item__title">Tarife Uygulamalarına İlişkin Usul ve Esaslar (Reaktif Enerji, Madde 13)</h3>
+          <p class="lib-item__summary">EPDK'nın dağıtım sistemi kullanıcılarına tarifelerin nasıl uygulanacağını belirleyen usul ve esaslarıdır; 30.04.2022 tarihli ve 31825 sayılı Resmî Gazete'de yayımlanan değişiklikle yeniden düzenlenen 13. madde reaktif enerji tarifesini düzenler. Kurulu gücü 50 kVA ve üzeri kullanıcılarda endüktif %20, kapasitif %15; 50 kVA'nın altında %33 ve %20 sınırı aşılırsa ölçülen reaktif enerjinin tamamı faturalanır, iki sınır birden aşılırsa en yüksek reaktif sayaç değeri esas alınır. Mesken, aydınlatma ve tek fazla beslenen tüketiciler ile kurulu gücü 15 kW'a (dâhil) kadar olan kullanıcılara reaktif enerji tarifesi uygulanmaz; bir takvim yılındaki ilk ihlalin bedeli aynı faturada düşülür.</p>
+          <div class="lib-item__meta"><a class="lib-item__guide" href="reaktif-guc-kompanzasyonu.html">Detaylı rehber &rarr;</a><a class="lib-item__src" href="https://www.resmigazete.gov.tr/eskiler/2022/04/20220430-5.pdf" target="_blank" rel="noopener">Resmî kaynak: Resmî Gazete 30.04.2022, sayı 31825 (EPDK Kurul Kararı 10961, PDF)</a></div>
         </article>
         <article class="lib-item">
           <h3 class="lib-item__title">Elektrik Piyasası Müşteri Hizmetleri Yönetmeliği (Mülga)</h3>
@@ -207,24 +278,153 @@
       </section>
 
     <div class="kb-cta" style="margin-top:2.5rem">
-      <div class="kb-cta__text"><strong>Tesisinizin mevzuata uygunluğunu mu merak ediyorsunuz?</strong><span>VoltGuard mühendisleriyle periyodik kontrol, SMM ve uygunluk için ücretsiz değerlendirme alın.</span></div>
-      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      <div class="kb-cta__text"><strong>Tesisinizin mevzuata uygunluğunu mu merak ediyorsunuz?</strong><span>Periyodik kontrol, SMM proje ve uygunluk raporları için VoltGuard mühendisleriyle görüşün.</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:.6rem">
+        <a href="/hizmetler/elektrik-periyodik-kontrol.html" class="btn btn--accent btn--md"><i class="fas fa-arrow-right" aria-hidden="true"></i> Periyodik Kontrol Hizmeti</a>
+        <a href="/#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
     </div>
     <p class="kb-disclaimer" style="margin-top:1.25rem">Bu sayfadaki özetler bilgilendirme amaçlıdır ve bağlayıcı değildir. Bağlayıcı olan, yürürlükteki güncel resmî mevzuat ve ilgili standartların tam metinleridir. VoltGuard bu belgelerin tam metinlerini barındırmaz; resmî kaynaklara yönlendirir.</p>
   </main>
 
-  <footer class="footer" role="contentinfo">
-    <div class="container">
-      <div class="footer__bottom">
-        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
-        <div class="footer__social">
-          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
         </div>
       </div>
     </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <span class="logo-mark logo-mark--footer" aria-hidden="true">
+              <span class="logo-mark__volt">VOLT</span>
+              <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+              <span class="logo-mark__guard">GUARD</span>
+            </span>
+            <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+          </a>
+          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#guvenlik">Güvenlik</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Giriş Yap</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          </circle>
+        </svg>
+        <span class="sig-node" aria-hidden="true"></span>
+        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+          <span class="sig-badge__ring" aria-hidden="true"></span>
+          <span class="sig-badge__aurora" aria-hidden="true"></span>
+          <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="sig-badge__body">
+            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+            <span class="sig-badge__brand">
+              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+              <span class="sig-badge__eng">Engineering</span>
+            </span>
+          </span>
+          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+          <span class="sig-badge__shimmer" aria-hidden="true"></span>
+        </a>
+        <span class="sig-node" aria-hidden="true"></span>
+        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+          </circle>
+        </svg>
+      </div>
+    </div>
   </footer>
-  <script src="../js/voltguard-auth.js" defer></script>
+  <!--/vg:footer-->
+  <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
 </body>
 </html>

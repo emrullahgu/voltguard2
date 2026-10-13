@@ -3,62 +3,123 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261012d">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=20261012d" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:68.7rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header__bar{flex-wrap:wrap;height:auto!important}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="description" content="Topraklama direnci kaç olmalı? Koruma, işletme ve paratoner topraklama sınır değerleri, ölçüm yöntemi ve saha önerileri.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
-  <title>Topraklama Direnci Kaç Olmalı? Sınır Değerler ve Ölçüm | VoltGuard</title>
+  <title>Topraklama Direnci Kaç Ohm Olmalı? | VoltGuard</title>
   <link rel="canonical" href="https://voltguard.com.tr/bilgi/topraklama-degeri-kac-olmali.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Topraklama Direnci Kaç Olmalı? Sınır Değerler ve Ölçüm | VoltGuard">
-  <meta property="og:description" content="Koruma, işletme ve paratoner topraklama sınır değerleri, ölçüm yöntemi ve saha önerileri.">
+  <meta property="og:title" content="Topraklama Direnci Kaç Ohm Olmalı? | VoltGuard">
+  <meta property="og:description" content="Topraklama direnci kaç olmalı? Koruma, işletme ve paratoner topraklama sınır değerleri, ölçüm yöntemi ve saha önerileri.">
   <meta property="og:url" content="https://voltguard.com.tr/bilgi/topraklama-degeri-kac-olmali.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta name="twitter:card" content="summary_large_image">
   <meta property="og:locale" content="tr_TR">
-  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../css/style.css">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/topraklama-degeri-kac-olmali.html#article","headline":"Topraklama Direnci Kaç Olmalı? Sınır Değerler ve Ölçüm","description":"Koruma, işletme ve paratoner topraklama sınır değerleri, ölçüm yöntemi ve saha önerileri.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-09-08","articleSection":"Topraklama","author":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","name":"VoltGuard","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/topraklama-degeri-kac-olmali.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"Topraklama Direnci Kaç Olmalı?","item":"https://voltguard.com.tr/bilgi/topraklama-degeri-kac-olmali.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Topraklama direnci kaç olmalı?","acceptedAnswer":{"@type":"Answer","text":"Türkiye'de yaygın kabul: koruma topraklamasında ≤ 5 Ω, işletme topraklamasında ≤ 2 Ω, paratoner topraklamasında ≤ 10 Ω. TT şebekede kaçak akım rölesi eşiğine göre daha yüksek değerler de kabul edilebilir ancak 50 V ≤ RA × IΔn koşulu sağlanmalıdır."}},{"@type":"Question","name":"Topraklama direnci nasıl ölçülür?","acceptedAnswer":{"@type":"Answer","text":"Üç veya dört elektrotlu topraklama megeriyle 62% yöntemine (fall-of-potential) göre ölçülür. Test elektrotları ana elektrotun 20-40 m uzağına yerleştirilir. Klemp (loop) tester çok elektrotlu sistemlerde pratik alternatiftir."}},{"@type":"Question","name":"Topraklama neden yüksek çıkar?","acceptedAnswer":{"@type":"Answer","text":"Kuru zemin, kayalık jeoloji, elektrotun yüzeye yakın (kısa) çakılması, bağlantı klemenslerinin oksitlenmesi veya kimyasal iyileştirmenin yıkanıp gitmesi başlıca nedenlerdir. Kuru mevsimde ölçüm hep yüksek çıkar; nemli mevsimde tekrar ölçüm yapılmalıdır."}}]}]}</script>
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=20261012d">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/bilgi/topraklama-degeri-kac-olmali.html#article","headline":"Topraklama Direnci Kaç Olmalı? Sınır Değerler ve Ölçüm","description":"Topraklama direnci kaç olmalı? Koruma, işletme ve paratoner topraklama sınır değerleri, ölçüm yöntemi ve saha önerileri.","image":"https://voltguard.com.tr/public/og-image.png","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","articleSection":"Topraklama & Elektrik Güvenliği","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/bilgi/topraklama-degeri-kac-olmali.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"Topraklama Direnci Kaç Olmalı?","item":"https://voltguard.com.tr/bilgi/topraklama-degeri-kac-olmali.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Topraklama direnci kaç olmalı?","acceptedAnswer":{"@type":"Answer","text":"Koruma ≤ 5 Ω, işletme ≤ 2 Ω, paratoner ≤ 10 Ω yaygın kabul edilen sınırlardır."}},{"@type":"Question","name":"Topraklama direnci nasıl ölçülür?","acceptedAnswer":{"@type":"Answer","text":"%62 yöntemi ile üç veya dört elektrotlu topraklama megeriyle ölçülür. Klemp (loop) tester çok elektrotlu sistemlerde pratik alternatiftir."}},{"@type":"Question","name":"Topraklama neden yüksek çıkar?","acceptedAnswer":{"@type":"Answer","text":"Kuru zemin, kayalık jeoloji, kısa çakılmış elektrot, oksitlenmiş klemensler ve yıkanmış kimyasal iyileştirme başlıca nedenlerdir."}}]}]}</script>
 </head>
 <body class="doc-shell">
-  <header class="doc-header">
-    <div class="doc-header__inner">
-      <a class="doc-header__brand" href="../index.html"><img src="../public/icon-192.png" alt="" width="34" height="34">VoltGuard</a>
-      <nav class="doc-header__nav" id="docNav" aria-label="Üst menü">
-        <a href="../bilgi-bankasi.html">Bilgi Bankası</a>
-        <a href="../akademi.html">Akademi</a>
-        <a href="../muhendis-merkezi.html">Mühendis Merkezi</a>
-        <a href="../hesaplama-araclari/">Hesap Araçları</a>
-        <a href="../sor.html">VoltGuard'a Sor</a>
-        <a href="../index.html#hizmetler">Hizmetler</a>
-        <a href="../index.html#iletisim" class="btn btn--accent"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+  <!--vg:header-->
+  <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <span class="logo-mark" aria-hidden="true">
+          <span class="logo-mark__volt">VOLT</span>
+          <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="logo-mark__guard">GUARD</span>
+        </span>
+        <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+      </a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
       </nav>
+      <div class="vg-actions">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Giriş Yap</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
     </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
   </header>
+  <!--/vg:header-->
 
   <nav class="breadcrumb" aria-label="breadcrumb">
-    <a href="../index.html">Ana Sayfa</a> &rsaquo; <a href="../bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>Topraklama Direnci Kaç Olmalı?</span>
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>Topraklama Direnci Kaç Olmalı?</span>
   </nav>
 
-  <main class="article">
-    <span class="article__cat">Topraklama &amp; Güvenlik</span>
+  <main class="article" id="main" tabindex="-1">
+    <span class="article__cat">Topraklama &amp; Elektrik Güvenliği</span>
     <h1>Topraklama Direnci Kaç Olmalı? Sınır Değerler ve Ölçüm</h1>
     <p class="article__summary">Topraklama direncinin hedef sınırı; koruma, işletme ve paratoner topraklaması olmak üzere tipe göre değişir. Bu rehberde, sahada en sık sorulan "topraklama değeri kaç olmalı" sorusunun tam cevabını, ölçüm yöntemini ve direnç yüksek çıkarsa yapılacakları bulacaksınız.</p>
 
     <div class="kb-quickanswer">
       <span class="kb-quickanswer__label">Kısa Cevap</span>
       <strong class="kb-quickanswer__value">Koruma ≤ 5 Ω, işletme ≤ 2 Ω, paratoner ≤ 10 Ω</strong>
-      <span class="kb-quickanswer__note">Kaçak akım rölesi bulunan TT şebekelerde 50 V ≤ RA × IΔn koşulu ile daha yüksek RA da kabul edilebilir; ancak sahada 5 Ω hedeflenmesi güvenli yaklaşımdır.</span>
+      <span class="kb-quickanswer__note">Kaçak akım rölesi bulunan TT şebekelerde RA × IΔn ≤ 50 V koşulu ile daha yüksek RA da kabul edilebilir; ancak sahada 5 Ω hedeflenmesi güvenli yaklaşımdır.</span>
     </div>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Türkiye'de yaygın hedef değerler: koruma ≤ 5 Ω, işletme ≤ 2 Ω, paratoner ≤ 10 Ω.</li><li>30 mA kaçak akım rölesiyle korunan TT devrede matematiksel sınır RA ≤ 1666 Ω olsa da güvenlik için 5 Ω hedeflenir.</li><li>Ölçüm 62% yöntemiyle üç veya dört elektrotlu topraklama megeriyle yapılır.</li><li>Kuru mevsimde direnç en yüksek olur; ölçüm yılın en kurak zamanında yapılırsa gerçek sınır değer garantilenir.</li></ul></div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Türkiye'de yaygın hedef değerler: koruma ≤ 5 Ω, işletme ≤ 2 Ω, paratoner ≤ 10 Ω.</li><li>30 mA kaçak akım rölesiyle korunan TT devrede matematiksel sınır RA ≤ 1666 Ω olsa da güvenlik için 5 Ω hedeflenir.</li><li>Ölçüm %62 yöntemiyle üç veya dört elektrotlu topraklama megeriyle yapılır.</li><li>Kuru mevsimde direnç en yüksek olur; ölçüm yılın en kurak zamanında yapılırsa gerçek sınır değer garantilenir.</li></ul></div>
 
     <h2>Sınır Değerleri Kim Belirler?</h2>
-    <p>Elektrik tesislerinde topraklama direnci sınırları; TS HD 60364 (İç Tesisat Standartları), Elektrik Kuvvetli Akım Tesisleri Yönetmeliği, Elektrik Tesislerinde Topraklamalar Yönetmeliği ve İSG mevzuatı ile şekillenir. Sınır değerin belirlenmesinde temel prensip, arıza anında insan vücudundan geçebilecek gerilimin dokunma gerilimi eşiğinin (kuru ortamda 50 V AC) altında kalmasıdır.</p>
+    <p>Elektrik tesislerinde topraklama direnci sınırları; TS HD 60364 (İç Tesisat Standartları), Elektrik Kuvvetli Akım Tesisleri Yönetmeliği, Elektrik Tesislerinde Topraklamalar Yönetmeliği ve İSG mevzuatı ile şekillenir. Sınır değerin belirlenmesinde temel prensip, arıza anında insan vücudundan geçebilecek gerilimin dokunma gerilimi eşiğinin (kuru ortamda 50 V AC) altında kalmasıdır. Tesisinizdeki değerin bu sınırları sağlayıp sağlamadığı, kalibreli cihazlarla yapılan <a href="/hizmetler/topraklama-olcumu.html">topraklama ölçümü</a> ve imzalı raporla belgelenir.</p>
 
     <h2>Topraklama Tipine Göre Sınır Değerler</h2>
     <div class="table-scroll"><table>
@@ -78,7 +139,7 @@
 
     <h2>Topraklama Direnci Nasıl Ölçülür?</h2>
     <ol class="article__list">
-      <li><strong>62% (Fall-of-Potential) yöntemi:</strong> Ana elektrot ile referans elektrot arasına akım gönderilir; potansiyel elektrotu ana elektrotun 62%'sine yerleştirilerek gerilim düşümü ölçülür. Sonuç direnç Ω olarak okunur.</li>
+      <li><strong>%62 (Fall-of-Potential) yöntemi:</strong> Ana elektrot ile referans elektrot arasına akım gönderilir; potansiyel elektrotu ana elektrotun %62'sine yerleştirilerek gerilim düşümü ölçülür. Sonuç direnç Ω olarak okunur.</li>
       <li><strong>Klemp (Loop) tester:</strong> Halkalı topraklamalarda ana bantın etrafına klemp geçirilir; ekipman devreyi kesmeden ölçüm alır. Trafo merkezleri ve baz istasyonlarında pratiktir.</li>
       <li><strong>Slope yöntemi:</strong> Yer darlığı olan sahalarda kısa mesafeli üç ölçüm ile direnç hesaplanır; yaygın yer sıkışıklığı problemini çözer.</li>
     </ol>
@@ -95,34 +156,163 @@
     </ul>
 
     <h2>Ölçümü Ne Sıklıkta Tekrarlamalı?</h2>
-    <p>Elektrik Tesislerinde Topraklamalar Yönetmeliğine göre sanayi tesislerinde yılda bir, konut ve iş yerlerinde iki yılda bir topraklama ölçümü yapılır. Paratoner topraklaması TS EN 62305'e göre en az yılda bir kontrol edilir. Ölçüm sonuçları bir topraklama karnesinde saklanır ve İSG denetimlerinde ibraz edilir.</p>
+    <p>İlgili mevzuata göre sanayi ve ticaret tesislerinde topraklama direnci ölçümleri genellikle yılda bir yapılır; ıslak ve patlayıcı ortamlarda periyot bir yılı aşmamalıdır. Paratoner topraklaması uygulamada genellikle yılda bir kontrol edilir. Kesin süre için işyerinizin türüne uygun güncel resmî mevzuat esas alınmalıdır. Ölçüm sonuçları bir topraklama karnesinde saklanır ve İSG denetimlerinde ibraz edilir.</p>
 
     <h2>Sık Sorulan Sorular</h2>
     <details class="faq-item"><summary class="faq-item__q">Topraklama direnci kaç olmalı? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Koruma ≤ 5 Ω, işletme ≤ 2 Ω, paratoner ≤ 10 Ω yaygın kabul edilen sınırlardır.</p></div></details>
-    <details class="faq-item"><summary class="faq-item__q">Topraklama direnci nasıl ölçülür? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>62% yöntemi ile üç veya dört elektrotlu topraklama megeriyle ölçülür. Klemp (loop) tester çok elektrotlu sistemlerde pratik alternatiftir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Topraklama direnci nasıl ölçülür? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>%62 yöntemi ile üç veya dört elektrotlu topraklama megeriyle ölçülür. Klemp (loop) tester çok elektrotlu sistemlerde pratik alternatiftir.</p></div></details>
     <details class="faq-item"><summary class="faq-item__q">Topraklama neden yüksek çıkar? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Kuru zemin, kayalık jeoloji, kısa çakılmış elektrot, oksitlenmiş klemensler ve yıkanmış kimyasal iyileştirme başlıca nedenlerdir.</p></div></details>
 
     <p class="kb-disclaimer">Bu içerik bilgilendirme amaçlıdır. Kesin sınır ve ölçüm için TS HD 60364, Elektrik Tesislerinde Topraklamalar Yönetmeliği ve yetkili mühendis görüşü esas alınmalıdır.</p>
-    <p>İlgili kaynaklar: <a href="../bilgi/topraklama.html">Topraklama Tesisatı ve Periyodik Kontrolü</a>, <a href="../hesaplama/topraklama-hesaplama.html">Topraklama Hesaplama Aracı</a>, <a href="../bilgi/yildirimdan-korunma.html">Yıldırımdan Korunma Sistemleri</a>.</p>
+    <p>İlgili kaynaklar: <a href="/bilgi/topraklama.html">Topraklama Nedir?</a>, <a href="/hesaplama/topraklama-hesaplama/">Topraklama Hesaplama Aracı</a>, <a href="/bilgi/yildirimdan-korunma.html">Yıldırımdan Korunma Sistemleri</a>.</p>
     <div class="kb-cta">
-      <div class="kb-cta__text"><strong>Topraklama ölçümü ve iyileştirme için mühendislik desteği alın</strong><span>VoltGuard mühendisleriyle ücretsiz keşif ve teklif alın.</span></div>
-      <a href="../index.html#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      <div class="kb-cta__text"><strong>Topraklama direncinizi raporlu ölçtürün</strong><span>Topraklama ve paratoner ölçümlerini yapıp sonuçları sınır değerlerle karşılaştıran bir raporla teslim edelim.</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:.6rem">
+        <a href="/hizmetler/topraklama-olcumu.html" class="btn btn--accent btn--md"><i class="fas fa-arrow-right" aria-hidden="true"></i> Topraklama Ölçümü Hizmeti</a>
+        <a href="/#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
     </div>
-    <p style="margin-top:1.6rem"><a href="../bilgi-bankasi.html" class="kb-card__more">&larr; Tüm rehberler: Bilgi Bankası</a></p>
+    <p style="margin-top:1.6rem"><a href="/bilgi-bankasi.html" class="kb-card__more">&larr; Tüm rehberler: Bilgi Bankası</a></p>
   </main>
 
-  <footer class="footer" role="contentinfo">
-    <div class="container">
-      <div class="footer__bottom">
-        <p>&copy; 2026 VoltGuard. Tüm hakları saklıdır. &middot; <a href="../gizlilik.html" class="footer__legal-link">Gizlilik &amp; Çerez Politikası</a></p>
-        <div class="footer__social">
-          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
         </div>
       </div>
     </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <span class="logo-mark logo-mark--footer" aria-hidden="true">
+              <span class="logo-mark__volt">VOLT</span>
+              <span class="logo-mark__bolt"><svg viewBox="0 0 24 24" width="12" height="12" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+              <span class="logo-mark__guard">GUARD</span>
+            </span>
+            <span class="logo-mark__tagline" lang="en" aria-hidden="true">ENGINEERING SOLUTIONS</span>
+          </a>
+          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#guvenlik">Güvenlik</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Giriş Yap</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          </circle>
+        </svg>
+        <span class="sig-node" aria-hidden="true"></span>
+        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+          <span class="sig-badge__ring" aria-hidden="true"></span>
+          <span class="sig-badge__aurora" aria-hidden="true"></span>
+          <span class="sig-badge__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span>
+          <span class="sig-badge__body">
+            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+            <span class="sig-badge__brand">
+              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+              <span class="sig-badge__eng">Engineering</span>
+            </span>
+          </span>
+          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+          <span class="sig-badge__shimmer" aria-hidden="true"></span>
+        </a>
+        <span class="sig-node" aria-hidden="true"></span>
+        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+          </circle>
+        </svg>
+      </div>
+    </div>
   </footer>
-  <script src="../js/voltguard-auth.js" defer></script>
+  <!--/vg:footer-->
+  <script src="/js/voltguard-auth.js?v=20261012b" defer></script>
 </body>
 </html>
