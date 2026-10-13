@@ -1,0 +1,3 @@
+# Game release hashes and vendor checks must survive Windows/Linux checkouts.
+/public/voltgame/** text=auto eol=lf
+/tools/voltgame/** text=auto eol=lf

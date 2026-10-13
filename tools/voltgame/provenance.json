@@ -9,577 +9,674 @@
       "path": "tools/build.js",
       "sourceSHA256": "7f516e170e7652aecce883eabc83709a9f0f580d20c27a9331cc52c4657f1daa",
       "integratedSHA256": "7f516e170e7652aecce883eabc83709a9f0f580d20c27a9331cc52c4657f1daa",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/mangle.js",
       "sourceSHA256": "ce9b10751386defaa898401cd2240e594a1d85dcbc19e054121f7a10af6ef37f",
       "integratedSHA256": "ce9b10751386defaa898401cd2240e594a1d85dcbc19e054121f7a10af6ef37f",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/minjs.js",
       "sourceSHA256": "645e43d2476565c53e6389bb16129fe209d22bc8404fe1c4d57d2767f43c2dfa",
-      "integratedSHA256": "645e43d2476565c53e6389bb16129fe209d22bc8404fe1c4d57d2767f43c2dfa",
-      "modified": false
+      "integratedSHA256": "e4f370ca63b749a31c4f6fa4d1495dcb4b43d4e7cd31c9cdcf9f9b33c7ae766c",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/package-lock.json",
       "sourceSHA256": "413c1f0c22ae4dc1616bdefd294e046b8dde0d9169614d8440ccf02fe3dc92db",
       "integratedSHA256": "413c1f0c22ae4dc1616bdefd294e046b8dde0d9169614d8440ccf02fe3dc92db",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/package.json",
       "sourceSHA256": "16781bacd97fcec79a549d086f5416d74776760edfd8a61a8a6b40e25f9254b4",
       "integratedSHA256": "16781bacd97fcec79a549d086f5416d74776760edfd8a61a8a6b40e25f9254b4",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/bands2.js",
       "sourceSHA256": "19df0945e5847f1ed28699efe9cdb3f5d5fb901b8c054b9d699832cddb23eb53",
       "integratedSHA256": "19df0945e5847f1ed28699efe9cdb3f5d5fb901b8c054b9d699832cddb23eb53",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/daily2.js",
       "sourceSHA256": "3b2183898bf9b84df24bd6868bf249b0d20d211f551ad67398bd9a95ceb8bed7",
       "integratedSHA256": "3b2183898bf9b84df24bd6868bf249b0d20d211f551ad67398bd9a95ceb8bed7",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/gen2.js",
       "sourceSHA256": "d4b1806913e72320fb258c7985ef606cf61be2349cb752b4f6ca946a2671b5b4",
       "integratedSHA256": "d4b1806913e72320fb258c7985ef606cf61be2349cb752b4f6ca946a2671b5b4",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/levels2.js",
       "sourceSHA256": "7791b08150dbbacf6372a2dc90d2252c0137387f4a29d3ba963c813bb1587bd8",
       "integratedSHA256": "7791b08150dbbacf6372a2dc90d2252c0137387f4a29d3ba963c813bb1587bd8",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/lint2.js",
       "sourceSHA256": "f9a27277dfcade3bac1caa466a998750985c37f894772ff9559b7831f0917e0d",
       "integratedSHA256": "f9a27277dfcade3bac1caa466a998750985c37f894772ff9559b7831f0917e0d",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/metrics2.js",
       "sourceSHA256": "74b9e5a4e6817d4e75a4b121d1d1effbeb48b887cd272f42145816dcfee15c72",
       "integratedSHA256": "74b9e5a4e6817d4e75a4b121d1d1effbeb48b887cd272f42145816dcfee15c72",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/migrate_daily4.js",
       "sourceSHA256": "f760bd461377092b127ee9599ffb755011a6b1ea6f19ea58294ae2899e3e50d9",
       "integratedSHA256": "f760bd461377092b127ee9599ffb755011a6b1ea6f19ea58294ae2899e3e50d9",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/PHYSICAL_GUIDE.md",
       "sourceSHA256": "264ddcc238e59a51e997b9fcf3fc3b2d138f048765e5d668dacecc2f542b1dc0",
       "integratedSHA256": "264ddcc238e59a51e997b9fcf3fc3b2d138f048765e5d668dacecc2f542b1dc0",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/sim2.js",
       "sourceSHA256": "3ba0654229eac67dd7224acb392effe68dbf90e3df97ecfe9561a8089788901d",
       "integratedSHA256": "3ba0654229eac67dd7224acb392effe68dbf90e3df97ecfe9561a8089788901d",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/site2.js",
       "sourceSHA256": "27821fadaf3d0f5f94923fcc9b3fd7f1501485690fee767bcc8d54980650e875",
       "integratedSHA256": "27821fadaf3d0f5f94923fcc9b3fd7f1501485690fee767bcc8d54980650e875",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/solve2.js",
       "sourceSHA256": "48a35384f6adbb23884fc44cef03f720f0538b3c0d1e6288cdaff80bec2e9c41",
       "integratedSHA256": "48a35384f6adbb23884fc44cef03f720f0538b3c0d1e6288cdaff80bec2e9c41",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/talep2.js",
       "sourceSHA256": "fa52ca6b63bec87a3f92629dd7c149461c6745c3dfad3383030aa84267af2162",
       "integratedSHA256": "fa52ca6b63bec87a3f92629dd7c149461c6745c3dfad3383030aa84267af2162",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/templates2.js",
       "sourceSHA256": "7a59c083c713233e0be92ff327ea97aeda9018df969d4b13cf9d49f3d7e41bd7",
       "integratedSHA256": "7a59c083c713233e0be92ff327ea97aeda9018df969d4b13cf9d49f3d7e41bd7",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/verify2.js",
       "sourceSHA256": "98bb30b4b9a0021c4958a305aee4a5d8ea4bec4bbc561a8401c62435cf42d01f",
       "integratedSHA256": "98bb30b4b9a0021c4958a305aee4a5d8ea4bec4bbc561a8401c62435cf42d01f",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/levels/ch0.js",
       "sourceSHA256": "f4fffb63f42df2f1db0b8d2d03edd1849080b3912a8f81cad4b40f0eaa3d4c3e",
       "integratedSHA256": "f4fffb63f42df2f1db0b8d2d03edd1849080b3912a8f81cad4b40f0eaa3d4c3e",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/levels/ch1.js",
       "sourceSHA256": "b69cd9b36b3cf28b406e074af68b77b1cdf046af6d123f029c74f9356ca16431",
       "integratedSHA256": "b69cd9b36b3cf28b406e074af68b77b1cdf046af6d123f029c74f9356ca16431",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/levels/ch2.js",
       "sourceSHA256": "204c3464039546888815525dffcd8bb63cdf14f4e9d25884e45757450fea381b",
       "integratedSHA256": "204c3464039546888815525dffcd8bb63cdf14f4e9d25884e45757450fea381b",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/levels/ch3.js",
       "sourceSHA256": "ae1b716224645adddcb6d826dfe5eb6a5e886e53a1fb6ea5349499420cccf68d",
       "integratedSHA256": "ae1b716224645adddcb6d826dfe5eb6a5e886e53a1fb6ea5349499420cccf68d",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/levels/README.md",
       "sourceSHA256": "f0f7782fcdd283992359f9c9e620006faad3b9a5ecc578a70112cc8f76679a45",
       "integratedSHA256": "f0f7782fcdd283992359f9c9e620006faad3b9a5ecc578a70112cc8f76679a45",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/templates/ch0.js",
       "sourceSHA256": "434cb7da858fb3f56abff9c7bfb97798026e5972b9b067a22aa69881775b4cec",
       "integratedSHA256": "434cb7da858fb3f56abff9c7bfb97798026e5972b9b067a22aa69881775b4cec",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/templates/ch1.js",
       "sourceSHA256": "7f43d8b8ff3ba7e2e45b95b371ceacd351fff0eea27932e33e8d01521630bf36",
       "integratedSHA256": "7f43d8b8ff3ba7e2e45b95b371ceacd351fff0eea27932e33e8d01521630bf36",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/templates/ch2.js",
       "sourceSHA256": "10bb6136d9ff793348703cab43389ea58418854b45b258e2bb9dcbc40bcce6b7",
       "integratedSHA256": "10bb6136d9ff793348703cab43389ea58418854b45b258e2bb9dcbc40bcce6b7",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/templates/ch3.js",
       "sourceSHA256": "3ee15d8442bafb5ee8b821f4eb9ce6a41017c7849682b3658c4c0ba75ca00948",
       "integratedSHA256": "3ee15d8442bafb5ee8b821f4eb9ce6a41017c7849682b3658c4c0ba75ca00948",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/reference2/templates/README.md",
       "sourceSHA256": "d0a4070b38fc52f364098db421527afc6ba7b82008d464ebd11123f561230ebe",
       "integratedSHA256": "d0a4070b38fc52f364098db421527afc6ba7b82008d464ebd11123f561230ebe",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/main.js",
       "sourceSHA256": "1b5ed220416c991c0337d7a30f06d0e7500f36bd971d38c640220ca5c250b4fd",
       "integratedSHA256": "1b5ed220416c991c0337d7a30f06d0e7500f36bd971d38c640220ca5c250b4fd",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/manifest.json",
       "sourceSHA256": "952f72b69cf4cb791c057fe371867ed00d8a76feb638f48670d958060748f0a6",
       "integratedSHA256": "952f72b69cf4cb791c057fe371867ed00d8a76feb638f48670d958060748f0a6",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/README.md",
       "sourceSHA256": "b50d8eeabd435b54aabaecb52c1fd3af7513ebef347723b59052c2ef609b2701",
       "integratedSHA256": "b50d8eeabd435b54aabaecb52c1fd3af7513ebef347723b59052c2ef609b2701",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/app/bus.js",
       "sourceSHA256": "0f137c040e1d04043b2c94351f5499bdd1957bc1cf84c63f5e60ea329b4a6c81",
       "integratedSHA256": "0f137c040e1d04043b2c94351f5499bdd1957bc1cf84c63f5e60ea329b4a6c81",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/app/store.js",
       "sourceSHA256": "a97bbbc0e04c011ec39cb61ecb8f5f726915dfe18ca65cd47d345a773d8d8284",
       "integratedSHA256": "a97bbbc0e04c011ec39cb61ecb8f5f726915dfe18ca65cd47d345a773d8d8284",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/app/strings.js",
       "sourceSHA256": "cf690b22dcbc672c773331649a1c7e5bef125fb1b07ab7cdb0eb3f58177a53f9",
       "integratedSHA256": "cf690b22dcbc672c773331649a1c7e5bef125fb1b07ab7cdb0eb3f58177a53f9",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/audio/audio.js",
       "sourceSHA256": "d9526b2e653d7bb6e9535554081ba1b0d7ebc2885b772a1f4981f53cbd0c2f67",
       "integratedSHA256": "d9526b2e653d7bb6e9535554081ba1b0d7ebc2885b772a1f4981f53cbd0c2f67",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/core/solverClient.js",
       "sourceSHA256": "cadc4c41e567a6589932aa20a07c29b76d4f24251c07d20196d03abff146b795",
       "integratedSHA256": "52aa00c7307060ff0f5218bf523e4ed47ec8958db891f40b6fe35b182fdd4246",
-      "modified": true
+      "modified": true,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/core/worker_src.js",
       "sourceSHA256": "bde380e2a0e0f7f9a1b8d600582c94856fed44e62fd4359c9932b556fe5116f4",
       "integratedSHA256": "bde380e2a0e0f7f9a1b8d600582c94856fed44e62fd4359c9932b556fe5116f4",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/debug/game_api.js",
       "sourceSHA256": "70e6e68259086fe309726f5c42f610e0c2fe59126b11704ac8ee9accd7c9e52c",
       "integratedSHA256": "70e6e68259086fe309726f5c42f610e0c2fe59126b11704ac8ee9accd7c9e52c",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/game/controller.js",
       "sourceSHA256": "380319b86c1b4f8ccd23e2d7a0c5e22814f242db533d8b58598b9ee530f2d37d",
       "integratedSHA256": "380319b86c1b4f8ccd23e2d7a0c5e22814f242db533d8b58598b9ee530f2d37d",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/game/hint.js",
       "sourceSHA256": "3e31a3937eddfe10c9b94149299deaff44f781b271f3ef6ee7167732fe4c304f",
       "integratedSHA256": "3e31a3937eddfe10c9b94149299deaff44f781b271f3ef6ee7167732fe4c304f",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/input/gesture.js",
       "sourceSHA256": "3a61e270983e8522647bc0cd5c688e1ab6f152d14d6ed401a4098a0207cdee92",
       "integratedSHA256": "3a61e270983e8522647bc0cd5c688e1ab6f152d14d6ed401a4098a0207cdee92",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/input/keyboard.js",
       "sourceSHA256": "85979d8370b25ee92b351d4c5c2bd47cb46b7ee306386d8643c094e136ffaa10",
       "integratedSHA256": "85979d8370b25ee92b351d4c5c2bd47cb46b7ee306386d8643c094e136ffaa10",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/meta/daily.js",
       "sourceSHA256": "ddf40da43020e74bed0805487d47d87af4e3e0ce5c68a4f8d3578cf9479b04af",
       "integratedSHA256": "ddf40da43020e74bed0805487d47d87af4e3e0ce5c68a4f8d3578cf9479b04af",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/meta/ghost.js",
       "sourceSHA256": "617c3b6d049ad70bbb875c42fd263ec791db1134d5e6b6301f71e2fc632ec9da",
       "integratedSHA256": "e2ce5c21e18278686a9486c4adaf6bb62723803b97fda13dea0973be0a1dfba4",
-      "modified": true
+      "modified": true,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/meta/world.js",
       "sourceSHA256": "c43a27c090bc6473367ad323d2fefdfcaadd1fdf428330434b34ca512bdcc022",
       "integratedSHA256": "c43a27c090bc6473367ad323d2fefdfcaadd1fdf428330434b34ca512bdcc022",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/render/camera.js",
       "sourceSHA256": "5bfbe1741e5e7cd2046d3bd72e1befed19d00332a6cf489eb5cb3f2fcf4b2af4",
-      "integratedSHA256": "5bfbe1741e5e7cd2046d3bd72e1befed19d00332a6cf489eb5cb3f2fcf4b2af4",
-      "modified": false
+      "integratedSHA256": "64f6e1eb9bb2f4c63aa0477775e558115d8ac72d2d28a556a1c7d361db4691a1",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/src2/render/diorama.js",
       "sourceSHA256": "34cb079cb46ee784d51007745146c7857a9d8c1c78dcb1839f30c037491940f5",
-      "integratedSHA256": "34cb079cb46ee784d51007745146c7857a9d8c1c78dcb1839f30c037491940f5",
-      "modified": false
+      "integratedSHA256": "2d7adeb32be961b45c8a648a42c9354d4dba14ce34161c3194212875ff8f2cf1",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/src2/render/flow.js",
       "sourceSHA256": "f3330150c63ef582e36b905f04ceddb600c46bc29be2ca28757812bdeadce57e",
-      "integratedSHA256": "f3330150c63ef582e36b905f04ceddb600c46bc29be2ca28757812bdeadce57e",
-      "modified": false
+      "integratedSHA256": "31bda31f2bfd25456459a69465c4bad4f64787e94ebda3ca0f809035611303f6",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/src2/render/fx.js",
       "sourceSHA256": "d56313841d741ccfde2258dfac42887b1a2b26a6528d843a79cffa759c897a8d",
       "integratedSHA256": "d56313841d741ccfde2258dfac42887b1a2b26a6528d843a79cffa759c897a8d",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/render/scene.js",
       "sourceSHA256": "a1bc5223a754d4fefae064b78ba37575a60c7254129bce247de6e7569b5240b5",
-      "integratedSHA256": "a1bc5223a754d4fefae064b78ba37575a60c7254129bce247de6e7569b5240b5",
-      "modified": false
+      "integratedSHA256": "b72f64470450bdcf467cb0e646a04344e6a9c053fe650b8bf75f67210d8ef6cd",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/src2/render/volti.js",
       "sourceSHA256": "7eab2d140db8a48ab0cc9bddb6105fff5ef89271eb29a64dde9fc0349961defc",
-      "integratedSHA256": "7eab2d140db8a48ab0cc9bddb6105fff5ef89271eb29a64dde9fc0349961defc",
-      "modified": false
+      "integratedSHA256": "f1c74508fa283f9895946cf97bfe4a24e68abfc579962c5f77002a234e486e6d",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/src2/render/kit/common.js",
       "sourceSHA256": "de7ee617655125519ff57754e6ed1f3ebf8838174f524eef3b11ad4b94bbd2e9",
-      "integratedSHA256": "de7ee617655125519ff57754e6ed1f3ebf8838174f524eef3b11ad4b94bbd2e9",
-      "modified": false
+      "integratedSHA256": "bcff0c08ae8d2113aad380bafd269c79c8a2da714088e0d46d5f7aec8f58ab2b",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/src2/render/kit/eq_loads.js",
       "sourceSHA256": "2f14148773c8913b2aa8981d2283b3c10299d34960b8d390117a55c11cc82153",
-      "integratedSHA256": "2f14148773c8913b2aa8981d2283b3c10299d34960b8d390117a55c11cc82153",
-      "modified": false
+      "integratedSHA256": "c395d8075e9821af683661ecd1e9d96d34c36f917769895a2bc1e7510506ae89",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/src2/render/kit/eq_power.js",
       "sourceSHA256": "d02d24091498f9903f69b1a7ebdd20c42f425baf70f58b2525e14f14286754fb",
-      "integratedSHA256": "d02d24091498f9903f69b1a7ebdd20c42f425baf70f58b2525e14f14286754fb",
-      "modified": false
+      "integratedSHA256": "7fdbf6cdc133925e07834b439758d7b0ab47a9440a65f0918ac91ef6b074fcc6",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/src2/render/kit/eq_switch.js",
       "sourceSHA256": "62e018efca340d666af0ae1ac7dc9c9bc5e270ee206512dbb482577ed6299c03",
-      "integratedSHA256": "62e018efca340d666af0ae1ac7dc9c9bc5e270ee206512dbb482577ed6299c03",
-      "modified": false
+      "integratedSHA256": "01db1ee236da9e40882423397f80adb4796e24566dd924da1c324fe67702f8d8",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/src2/render/kit/props.js",
       "sourceSHA256": "d67312e1b953ccc54d38d0cafba8d4fe96e832c861ddb59966f3698c5656dca7",
       "integratedSHA256": "d67312e1b953ccc54d38d0cafba8d4fe96e832c861ddb59966f3698c5656dca7",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/render/kit/structure.js",
       "sourceSHA256": "f05edaed3986ec6e7d13fddca15d2c3b04c7ee4c266987a9d843cc9f75d65f6d",
-      "integratedSHA256": "f05edaed3986ec6e7d13fddca15d2c3b04c7ee4c266987a9d843cc9f75d65f6d",
-      "modified": false
+      "integratedSHA256": "292094f22e66d4e94c1df5a7e8fc2beee04907aaa452a808826fb9b60b322904",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/src2/shell/head.html",
       "sourceSHA256": "0438c6d12f0cdc2e6ac848a76f820caa624e6b9e64020dc659a82fbc759020fd",
       "integratedSHA256": "0438c6d12f0cdc2e6ac848a76f820caa624e6b9e64020dc659a82fbc759020fd",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/ui/cards.js",
       "sourceSHA256": "f68850dfae7a8d24b54fd5e43c57ae06427738e445aa3c3baf53c158e56afd5e",
       "integratedSHA256": "f68850dfae7a8d24b54fd5e43c57ae06427738e445aa3c3baf53c158e56afd5e",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/ui/hud.js",
       "sourceSHA256": "71c00e0bb4bc0fe4af9a151508990dee46386924a7153eed86ae1ef06b137582",
       "integratedSHA256": "71c00e0bb4bc0fe4af9a151508990dee46386924a7153eed86ae1ef06b137582",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/ui/screens.js",
       "sourceSHA256": "c66843dcced36dbe2d83e3f14ee3b54d2c9692cf3b944bd3392421403ca0d6a2",
       "integratedSHA256": "9636c95656bf412a3984e3fd9317be097beed2e9b5b69cd780bd3bd0dd719e71",
-      "modified": true
+      "modified": true,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/src2/ui/sld.js",
       "sourceSHA256": "a955145821a8d2015877b9e01c02262b0f6e488fd245a82e31a60d4ba20381b3",
       "integratedSHA256": "a955145821a8d2015877b9e01c02262b0f6e488fd245a82e31a60d4ba20381b3",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/cdp.js",
       "sourceSHA256": "b072a054eb2a1995f2930b4f67d9bfd5cf21529e7becec153d38aa32f260a972",
       "integratedSHA256": "b072a054eb2a1995f2930b4f67d9bfd5cf21529e7becec153d38aa32f260a972",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/README.md",
       "sourceSHA256": "5dbf4a75fa89af8d92e1a0fd4e748ba13aab6d2af04b2535313abbe2fbd123b2",
       "integratedSHA256": "5dbf4a75fa89af8d92e1a0fd4e748ba13aab6d2af04b2535313abbe2fbd123b2",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/regress_controller-input.js",
       "sourceSHA256": "decb115e9789e05eb35d0093444fbf91a250c1e86774fbc0151f5944b65118c1",
       "integratedSHA256": "decb115e9789e05eb35d0093444fbf91a250c1e86774fbc0151f5944b65118c1",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/regress_render.js",
       "sourceSHA256": "592db8273900522492b55bc3663ec396d9cefa02f411ca1187f623a75c38fd46",
-      "integratedSHA256": "592db8273900522492b55bc3663ec396d9cefa02f411ca1187f623a75c38fd46",
-      "modified": false
+      "integratedSHA256": "c6f6638dd118e9f78709974065b8dff1dc4bc1464bfef4172491b31d84a2d88c",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/test/regress_ui.js",
       "sourceSHA256": "f03c5a230dbaaa3f2245c2bf76e964fd9746f40dbdf4fe5aaa382e90fb6fc9f4",
       "integratedSHA256": "f03c5a230dbaaa3f2245c2bf76e964fd9746f40dbdf4fe5aaa382e90fb6fc9f4",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/run.js",
       "sourceSHA256": "7e0fa6a9693b7514f8f8cdabe9e3c76386b6a9885952523a3ccda130ca9f127a",
       "integratedSHA256": "7e0fa6a9693b7514f8f8cdabe9e3c76386b6a9885952523a3ccda130ca9f127a",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/suites2.js",
       "sourceSHA256": "d28cce8df5ac8b6ec6d117cdc3c8daa772ef9a527dd9131aaef3d486ba517ed8",
       "integratedSHA256": "d28cce8df5ac8b6ec6d117cdc3c8daa772ef9a527dd9131aaef3d486ba517ed8",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/audio_lifecycle.js",
       "sourceSHA256": "9505105a04ceff67f68a0e213fcbe0a4c59026ecae778b17043c08e8553c94af",
       "integratedSHA256": "9505105a04ceff67f68a0e213fcbe0a4c59026ecae778b17043c08e8553c94af",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/build_regressions.js",
       "sourceSHA256": "a4c6c4632b5507588c8207815861a81f71073985e416f3f96c1a880ef25c6f5c",
       "integratedSHA256": "a4c6c4632b5507588c8207815861a81f71073985e416f3f96c1a880ef25c6f5c",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/controller_e2e.js",
       "sourceSHA256": "e1e2240de037ca11df76d9de9e2eb5adcbfeb497d7e24416e198d36aeddac5b8",
       "integratedSHA256": "e1e2240de037ca11df76d9de9e2eb5adcbfeb497d7e24416e198d36aeddac5b8",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/controller_game.js",
       "sourceSHA256": "0bb244634364af77b55e2b35416711153c046eea89106b65d9cac0c01cb86f3c",
       "integratedSHA256": "0bb244634364af77b55e2b35416711153c046eea89106b65d9cac0c01cb86f3c",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/controller_harness.js",
       "sourceSHA256": "661a558d6e796b6ff9fb76708f6edd9c14f57b5e1cd126bf37ea718222e1a42f",
       "integratedSHA256": "661a558d6e796b6ff9fb76708f6edd9c14f57b5e1cd126bf37ea718222e1a42f",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/controller_hint.js",
       "sourceSHA256": "3d45cc0ba4109be46c511f0b6f708342daeb8b2914231084163e030803558c20",
       "integratedSHA256": "3d45cc0ba4109be46c511f0b6f708342daeb8b2914231084163e030803558c20",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/controller_input.js",
       "sourceSHA256": "003d94b368c25c94281d6fce2258ef64107dc140d0b42debb499d88fa045fa37",
       "integratedSHA256": "003d94b368c25c94281d6fce2258ef64107dc140d0b42debb499d88fa045fa37",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/controller_run.js",
       "sourceSHA256": "ca0a9f4f83ec9bb6eba58e349690ef337278c54ffad0fe99b1aa3f1ca21d8b59",
       "integratedSHA256": "ca0a9f4f83ec9bb6eba58e349690ef337278c54ffad0fe99b1aa3f1ca21d8b59",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/offline_browser.js",
       "sourceSHA256": "36111a4662df46697b47a32abaf6aac9494fe3bef6994e8a087995f2b0cc12d5",
       "integratedSHA256": "36111a4662df46697b47a32abaf6aac9494fe3bef6994e8a087995f2b0cc12d5",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/render_unit.js",
       "sourceSHA256": "aa39402c065b7f43c094c6c7ae8af6701fd7296ea00190aed7930a20d220eda6",
-      "integratedSHA256": "aa39402c065b7f43c094c6c7ae8af6701fd7296ea00190aed7930a20d220eda6",
-      "modified": false
+      "integratedSHA256": "310637758c7c8b7a6442643d6210f6c8048e6e639c970ebb2c36618c9ce87328",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/test/unit/rules_browser.js",
       "sourceSHA256": "c0a80737cf7ebb3c6b4457547d0c6ad8c633d609e9fcf3982cb6f78f169cd4f9",
       "integratedSHA256": "c0a80737cf7ebb3c6b4457547d0c6ad8c633d609e9fcf3982cb6f78f169cd4f9",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/rules_client.js",
       "sourceSHA256": "5e16e6b1fafa30749735aeb8145d1260c36207d079644cd411ac33c035d47998",
       "integratedSHA256": "5e16e6b1fafa30749735aeb8145d1260c36207d079644cd411ac33c035d47998",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/rules_lib.js",
       "sourceSHA256": "dc8cda9dfbaa04b4847709fc7df470b6138d5b663670a5b5b7f2417f07976d04",
       "integratedSHA256": "dc8cda9dfbaa04b4847709fc7df470b6138d5b663670a5b5b7f2417f07976d04",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/rules_meta.js",
       "sourceSHA256": "28c2e89c1805d36c1199a92809df4bead81768d754968fb547e22786ac9a2972",
       "integratedSHA256": "28c2e89c1805d36c1199a92809df4bead81768d754968fb547e22786ac9a2972",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/rules_physical.js",
       "sourceSHA256": "6842161943050180e7844156df51d655a89b5e607f80405d179fb758170eea58",
       "integratedSHA256": "6842161943050180e7844156df51d655a89b5e607f80405d179fb758170eea58",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/rules_regressions.js",
       "sourceSHA256": "e11e802381289126d752c59042bd8a504eeaa6b515bc2f8dd2d2a69594348aae",
       "integratedSHA256": "e11e802381289126d752c59042bd8a504eeaa6b515bc2f8dd2d2a69594348aae",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/rules_worker.js",
       "sourceSHA256": "fd58e9e267cd7f996301f8fef571039ce29e8ae95f422aa43a1dfccdf3767fcd",
       "integratedSHA256": "fd58e9e267cd7f996301f8fef571039ce29e8ae95f422aa43a1dfccdf3767fcd",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/rules_worksrc.js",
       "sourceSHA256": "3efb916037b5efa6fe1aeb550fa8d1c7e37f8957ece324779dea248bd4858040",
       "integratedSHA256": "3efb916037b5efa6fe1aeb550fa8d1c7e37f8957ece324779dea248bd4858040",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/runtime_regressions.js",
       "sourceSHA256": "7008d965877a2ccb0bcb5547a955fba37a9192344f6c9f3780b737295afa8701",
       "integratedSHA256": "7008d965877a2ccb0bcb5547a955fba37a9192344f6c9f3780b737295afa8701",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/shader_variants.js",
       "sourceSHA256": "38579288c15d5cfbff210e5dd070e3a1bbcc852455653c679c01f90db0fa2bd4",
       "integratedSHA256": "38579288c15d5cfbff210e5dd070e3a1bbcc852455653c679c01f90db0fa2bd4",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/store_migration_browser.js",
       "sourceSHA256": "1b8050ebad0986c0ebc61b2098648fea9a2e622d539fedf164df3a9931a5b11b",
       "integratedSHA256": "1b8050ebad0986c0ebc61b2098648fea9a2e622d539fedf164df3a9931a5b11b",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/test/unit/volti_audio.test.js",
       "sourceSHA256": "ad04485daceaa1fe187a8b6997c2f73ea32528ce4024fbb13ceaa5ee89be10e0",
-      "integratedSHA256": "ad04485daceaa1fe187a8b6997c2f73ea32528ce4024fbb13ceaa5ee89be10e0",
-      "modified": false
+      "integratedSHA256": "7d64b73390b42e262d1bd56d181509494a348a3a0bfe7b90780dce40c3a06474",
+      "modified": false,
+      "lineEndingNormalized": true
     },
     {
       "path": "tools/vendor/acorn.js",
       "sourceSHA256": "2261c5f0e4abe860e889dfc67081683a4ba4d27deb7f4cbc8ad06a1b7fdd510c",
       "integratedSHA256": "2261c5f0e4abe860e889dfc67081683a4ba4d27deb7f4cbc8ad06a1b7fdd510c",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/vendor/acorn.LICENSE",
       "sourceSHA256": "76a876cf886ff9be2a8b5e2e86514fed06223c8c9f0c1e9ee9606e93841e00b7",
       "integratedSHA256": "76a876cf886ff9be2a8b5e2e86514fed06223c8c9f0c1e9ee9606e93841e00b7",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/vendor/three-r128.min.js",
       "sourceSHA256": "9274bbcec8d96168626c732b5d31c775aa8cfb7eaa0599bec0c175908a2c1ce2",
       "integratedSHA256": "9274bbcec8d96168626c732b5d31c775aa8cfb7eaa0599bec0c175908a2c1ce2",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     },
     {
       "path": "tools/vendor/three.LICENSE",
       "sourceSHA256": "7dddf7c5b8fd10ee654db8857d75d104b5557889aa5a91fc4ca545ea7c07062f",
       "integratedSHA256": "7dddf7c5b8fd10ee654db8857d75d104b5557889aa5a91fc4ca545ea7c07062f",
-      "modified": false
+      "modified": false,
+      "lineEndingNormalized": false
     }
-  ]
+  ],
+  "lineEndings": "Integrated text uses LF on Windows and Linux; original SHA-256 records supplied bytes."
 }

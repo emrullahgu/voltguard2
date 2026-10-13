@@ -9,6 +9,10 @@ ghost playback, challenge codes, move journals, rule books and local save data.
 
 `UPSTREAM-README.md` and `docs/PARALAKS2_SPEC.md` document the supplied game.
 `provenance.json` records each curated source's original and integrated SHA-256.
+Original hashes retain the supplied bytes; integrated sources use LF line endings
+on both Windows and Linux. Per-file normalization is recorded separately from
+the three optional host adapters. Git attributes also preserve release and
+vendor hashes after checkout.
 Prompt directories, legacy games, development output, test output and installed
 dependencies are excluded. Existing game data remains in `paralaks2.kayit`;
 the integration does not inspect or modify employee or business data.
