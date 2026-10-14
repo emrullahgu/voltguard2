@@ -201,6 +201,7 @@
   AddType image/avif .avif
   AddType image/svg+xml .svg
   AddType video/mp4 .mp4 .m4v
+  AddType text/vtt .vtt
   AddType video/webm .webm
 </IfModule>
 AddDefaultCharset UTF-8

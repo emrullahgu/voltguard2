@@ -58,7 +58,7 @@
   <link rel="icon" type="image/png" href="public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="public/apple-touch-icon.png">
   <link rel="stylesheet" href="css/style.css?v=20261012d">
-  <script src="/js/calculator-config.js?v=20261012d"></script>
+  <script src="/js/calculator-config.js?v=20261014a"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -231,35 +231,31 @@
     .tool-brand__image { width: 38px; height: 38px; border-radius: 8px; object-fit: contain; vertical-align: middle; margin-right: .55rem; }
     .tool-back { color: #dbeafe; font-weight: 600; font-size: .92rem; }
     .tool-hero { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 3.5rem 0 2.75rem; }
-    .tool-hero__inner, .tool-main { max-width: 1200px; padding: 0 1.5rem; margin: auto; }
+    .tool-hero__inner, .tool-main { width: 100%; max-width: 1200px; min-width: 0; box-sizing: border-box; padding: 0 1.5rem; margin: auto; }
     .tool-eyebrow { color: #b45309; font: 700 .78rem "Outfit", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
     .tool-hero h1 { color: #0a1628; font: 800 clamp(2rem, 4vw, 3.3rem)/1.1 "Outfit", sans-serif; margin: .5rem 0 .85rem; }
     .tool-hero p { color: #475569; max-width: 720px; font-size: 1.04rem; }
     .tool-main { padding-top: 2rem; padding-bottom: 4rem; }
-    .tool-categories { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; margin-bottom: 2rem; }
-    .tool-category { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; color: #334155; cursor: pointer; min-height: 92px; padding: .85rem; font: 700 .88rem "Outfit", sans-serif; text-align: left; }
+    .tool-categories { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin-bottom: 2rem; }
+    .tool-category { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; color: #334155; cursor: pointer; min-width: 0; min-height: 92px; padding: .85rem; font: 700 .88rem/1.4 "Outfit", sans-serif; text-align: left; overflow-wrap: anywhere; }
     .tool-category i { color: #b45309; display: block; font-size: 1.15rem; margin-bottom: .5rem; }
-    .tool-category--active { background: #fffbeb; border-color: #f59e0b; color: #0a1628; }
+    .tool-category--active, .tool-category[aria-selected="true"] { background: #fffbeb; border-color: #f59e0b; color: #0a1628; }
     .tool-category:hover, .tool-category:focus-visible { border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245,158,11,.18); }
-    .tool-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; margin-bottom: 1.25rem; }
-    .tool-tab { min-height: 72px; background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; color: #334155; font: 700 .95rem "Outfit", sans-serif; text-align: left; padding: .8rem 1rem; }
-    .tool-tab i { color: #b45309; font-size: 1.15rem; margin-right: .5rem; }
-    .tool-tab[aria-selected="true"] { border-color: #f59e0b; background: #fffbeb; color: #0a1628; box-shadow: 0 0 0 2px rgba(245,158,11,.18); }
-    .tool-panel { display: none; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr); gap: 1.25rem; }
+    .tool-panel { display: none; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 1.25rem; min-width: 0; }
     .tool-panel.active { display: grid; }
-    .tool-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: clamp(1.2rem, 3vw, 2rem); }
+    .tool-card { min-width: 0; max-width: 100%; box-sizing: border-box; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: clamp(1.2rem, 3vw, 2rem); }
     .tool-card h2 { font: 800 1.55rem "Outfit", sans-serif; color: #0a1628; margin-bottom: .4rem; }
     .tool-card__intro { color: #64748b; margin-bottom: 1.4rem; }
-    .tool-fields { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-    .tool-field { display: grid; gap: .4rem; }
+    .tool-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .tool-field { display: grid; min-width: 0; gap: .4rem; }
     .tool-field--wide { grid-column: 1 / -1; }
     .tool-field[hidden] { display: none; }
     .tool-field label { color: #334155; font-size: .9rem; font-weight: 600; }
-    .tool-field input, .tool-field select { width: 100%; border: 1px solid #cbd5e1; border-radius: 5px; padding: .75rem .8rem; color: #0f172a; font: inherit; background: #fff; }
+    .tool-field input, .tool-field select { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 5px; padding: .75rem .8rem; color: #0f172a; font: inherit; background: #fff; }
     .tool-field input:focus, .tool-field select:focus { outline: 3px solid rgba(59,130,246,.2); border-color: #3b82f6; }
-    .tool-result { background: #0a1628; color: #fff; border-radius: 8px; padding: clamp(1.2rem, 3vw, 2rem); display: flex; flex-direction: column; justify-content: space-between; gap: 1.1rem; }
+    .tool-result { min-width: 0; max-width: 100%; box-sizing: border-box; overflow-wrap: anywhere; background: #0a1628; color: #fff; border-radius: 8px; padding: clamp(1.2rem, 3vw, 2rem); display: flex; flex-direction: column; justify-content: space-between; gap: 1.1rem; }
     .tool-result__label { color: #fcd34d; font: 700 .78rem "Outfit", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
-    .tool-result__amount { font: 800 clamp(1.75rem, 4vw, 2.65rem)/1.1 "Outfit", sans-serif; margin: .4rem 0; }
+    .tool-result__amount { max-width: 100%; overflow-wrap: anywhere; font: 800 clamp(1.5rem, 3.5vw, 2.4rem)/1.18 "Outfit", sans-serif; font-variant-numeric: tabular-nums; margin: .4rem 0; }
     .tool-result__detail { color: #cbd5e1; line-height: 1.6; font-size: .93rem; }
     .tool-result__list { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; color: #e2e8f0; font-size: .9rem; }
     .tool-result__list i { color: #f59e0b; width: 1.2rem; }
@@ -275,7 +271,7 @@
     .tool-formula strong { color: #0a1628; }
     .tool-source { color: #64748b; font-size: .82rem; margin: 1.5rem 0 0; }
     .tool-source a { color: #b45309; text-decoration: underline; }
-    @media (max-width: 760px) { .tool-categories, .tool-tabs, .tool-panel, .tool-fields { grid-template-columns: 1fr; } .tool-field--wide { grid-column: auto; } .tool-header__inner { padding: 0 1.1rem; } .tool-hero__inner, .tool-main { padding-left: 1.1rem; padding-right: 1.1rem; } }
+    @media (max-width: 760px) { .tool-categories { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; } .tool-panel, .tool-fields { grid-template-columns: minmax(0, 1fr); } .tool-field--wide { grid-column: auto; } .tool-header__inner { padding: 0 1.1rem; } .tool-hero__inner, .tool-main { padding-left: 1.1rem; padding-right: 1.1rem; } }
   </style>
 </head>
 <body class="tool-page doc-shell">
@@ -342,22 +338,16 @@
         <p style="margin:1.25rem 0 0"><a href="/araclar/" class="btn btn--accent btn--md">51 Aracın Tamamını Keşfet &rarr;</a></p>
       </section>
 
-      <div class="tool-categories" role="group" aria-label="Hesaplama kategorileri">
-        <button class="tool-category tool-category--active" type="button" data-panel="ges"><i class="fas fa-solar-panel"></i>GES</button>
-        <button class="tool-category" type="button" data-panel="trafo"><i class="fas fa-tower-broadcast"></i>Trafo ve OG</button>
-        <button class="tool-category" type="button" data-panel="kontrol"><i class="fas fa-clipboard-check"></i>Periyodik Kontrol</button>
-        <button class="tool-category" type="button" data-panel="teknik" data-technical-tool="cable"><i class="fas fa-bolt"></i>Elektrik Hesapları</button>
-        <button class="tool-category" type="button" data-panel="teknik" data-technical-tool="motorCurrent"><i class="fas fa-gear"></i>Motor ve Koruma</button>
-        <button class="tool-category" type="button" data-panel="teknik" data-technical-tool="inverterCable"><i class="fas fa-plug-circle-bolt"></i>İnverter / GES Elektrik</button>
-        <button class="tool-category" type="button" data-panel="teknik" data-technical-tool="project"><i class="fas fa-compass-drafting"></i>Elektrik Proje</button>
-        <button class="tool-category" type="button" data-panel="teknik" data-technical-tool="efficiency"><i class="fas fa-chart-line"></i>Enerji Verimliliği</button>
-        <button class="tool-category" type="button" data-panel="teknik" data-technical-tool="mechanical"><i class="fas fa-gears"></i>Mekanik</button>
-      </div>
-      <div class="tool-tabs" role="tablist" aria-label="Hizmet seçimi">
-        <button class="tool-tab" type="button" role="tab" aria-selected="true" aria-controls="ges-panel" id="ges-tab" tabindex="0"><i class="fas fa-solar-panel"></i>GES Maliyet Hesabı</button>
-        <button class="tool-tab" type="button" role="tab" aria-selected="false" aria-controls="trafo-panel" id="trafo-tab" tabindex="-1"><i class="fas fa-tower-broadcast"></i>Trafo İşletme Sorumluluğu</button>
-        <button class="tool-tab" type="button" role="tab" aria-selected="false" aria-controls="kontrol-panel" id="kontrol-tab" tabindex="-1"><i class="fas fa-clipboard-check"></i>Periyodik Kontrol</button>
-        <button class="tool-tab" type="button" role="tab" aria-selected="false" aria-controls="teknik-panel" id="teknik-tab" tabindex="-1"><i class="fas fa-calculator"></i>Teknik Hesaplar</button>
+      <div class="tool-categories" role="tablist" aria-label="Hesaplama kategorileri">
+        <button class="tool-category tool-category--active" type="button" role="tab" id="ges-tab" aria-selected="true" aria-controls="ges-panel" tabindex="0" data-panel="ges"><i class="fas fa-solar-panel" aria-hidden="true"></i>GES</button>
+        <button class="tool-category" type="button" role="tab" id="trafo-tab" aria-selected="false" aria-controls="trafo-panel" tabindex="-1" data-panel="trafo"><i class="fas fa-tower-broadcast" aria-hidden="true"></i>Trafo ve OG</button>
+        <button class="tool-category" type="button" role="tab" id="kontrol-tab" aria-selected="false" aria-controls="kontrol-panel" tabindex="-1" data-panel="kontrol"><i class="fas fa-clipboard-check" aria-hidden="true"></i>Periyodik Kontrol</button>
+        <button class="tool-category" type="button" role="tab" id="teknik-tab" aria-selected="false" aria-controls="teknik-panel" tabindex="-1" data-panel="teknik" data-technical-tool="cable"><i class="fas fa-bolt" aria-hidden="true"></i>Elektrik Hesapları</button>
+        <button class="tool-category" type="button" role="tab" id="motor-tab" aria-selected="false" aria-controls="teknik-panel" tabindex="-1" data-panel="teknik" data-technical-tool="motorCurrent"><i class="fas fa-gear" aria-hidden="true"></i>Motor ve Koruma</button>
+        <button class="tool-category" type="button" role="tab" id="inverter-tab" aria-selected="false" aria-controls="teknik-panel" tabindex="-1" data-panel="teknik" data-technical-tool="inverterCable"><i class="fas fa-plug-circle-bolt" aria-hidden="true"></i>İnverter / GES Elektrik</button>
+        <button class="tool-category" type="button" role="tab" id="project-tab" aria-selected="false" aria-controls="teknik-panel" tabindex="-1" data-panel="teknik" data-technical-tool="project"><i class="fas fa-compass-drafting" aria-hidden="true"></i>Elektrik Proje</button>
+        <button class="tool-category" type="button" role="tab" id="efficiency-tab" aria-selected="false" aria-controls="teknik-panel" tabindex="-1" data-panel="teknik" data-technical-tool="efficiency"><i class="fas fa-chart-line" aria-hidden="true"></i>Enerji Verimliliği</button>
+        <button class="tool-category" type="button" role="tab" id="mechanical-tab" aria-selected="false" aria-controls="teknik-panel" tabindex="-1" data-panel="teknik" data-technical-tool="mechanical"><i class="fas fa-gears" aria-hidden="true"></i>Mekanik</button>
       </div>
 
       <section class="tool-panel active" id="ges-panel" role="tabpanel" aria-labelledby="ges-tab">
@@ -607,50 +597,89 @@
       var config = window.VoltGuardCalculatorConfig;
       var tc = config.technical;
       var formatCurrency = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 });
-      var money = function (value) { return isFinite(value) ? formatCurrency.format(value) : '-'; };
+      var calculating = false, invalidNumericResult = false;
+      var validNumber = function (value, limit) { return typeof value === 'number' && Number.isFinite(value) && Math.abs(value) <= (limit || Number.MAX_SAFE_INTEGER); };
+      var money = function (value) { if (!validNumber(value, Number.MAX_SAFE_INTEGER / 100)) { if (calculating) { invalidNumericResult = true; } return '-'; } return formatCurrency.format(value); };
       var fmt = function (value, maxDigits, minDigits) {
-        if (typeof value !== 'number' || !isFinite(value)) { return '-'; }
+        if (!validNumber(value)) { if (calculating) { invalidNumericResult = true; } return '-'; }
         return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: maxDigits || 0, minimumFractionDigits: minDigits || 0 }).format(value);
       };
       // Türkçe sayı girişi: "1.000" ve "1.234,5" binlik ayraçlı, "3,5" ondalık virgüllü okunur.
       var trNum = function (raw) {
-        raw = String(raw == null ? '' : raw).trim().replace(/\s/g, '');
+        raw = String(raw == null ? '' : raw).trim();
         if (raw === '') { return NaN; }
-        if (raw.indexOf(',') !== -1) { raw = raw.replace(/\./g, '').replace(',', '.'); }
-        else if (/^[1-9]\d{0,2}(\.\d{3})+$/.test(raw)) { raw = raw.replace(/\./g, ''); }
-        return /^-?\d*\.?\d+$/.test(raw) ? Number(raw) : NaN;
+        if (/\s/.test(raw)) { return NaN; }
+        if (raw.indexOf(',') !== -1) {
+          if (!/^[+-]?(?:\d*|[1-9]\d{0,2}(?:\.\d{3})+),\d+$/.test(raw)) { return NaN; }
+          raw = raw.replace(/\./g, '').replace(',', '.');
+        } else if (/^[+-]?[1-9]\d{0,2}(\.\d{3})+$/.test(raw)) { raw = raw.replace(/\./g, ''); }
+        if (!/^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$/.test(raw)) { return NaN; }
+        var value = Number(raw);
+        return Number.isFinite(value) ? value : NaN;
       };
       var fieldNum = function (id) { return trNum(document.getElementById(id).value); };
-      var getNumber = function (id) { return Math.max(0, fieldNum(id) || 0); };
-      var getValue = function (id, fallback) { var value = Number(document.getElementById(id).value); return value > 0 ? value : fallback; };
+      var setPanelValidity = function (id, valid) {
+        var panel = document.getElementById(id);
+        panel.dataset.calculationValid = String(valid);
+        panel.querySelectorAll('.tool-download,.tool-share,.tool-request').forEach(function (button) { button.disabled = !valid; });
+        var resultList = panel.querySelector('.tool-result__list');
+        if (resultList) { resultList.hidden = !valid; }
+        var status = panel.querySelector('.tool-share-status');
+        if (status) { status.textContent = ''; }
+      };
+      var resetFields = function (id) { document.getElementById(id).querySelectorAll('input,select').forEach(function (field) { field.removeAttribute('aria-invalid'); }); };
+      var fieldError = function (id, message) {
+        var field = document.getElementById(id), label = document.querySelector('label[for="' + id + '"]');
+        field.setAttribute('aria-invalid', 'true');
+        return (label ? label.textContent.trim() : id) + ': ' + message;
+      };
+      var inputProblem = function (id, min, max, optional, integer) {
+        var raw = document.getElementById(id).value.trim();
+        if (!raw && optional) { return ''; }
+        var value = fieldNum(id);
+        if (!validNumber(value)) { return fieldError(id, 'geçerli bir sayı girin (ondalık için virgül veya nokta kullanın).'); }
+        if (integer && !Number.isInteger(value)) { return fieldError(id, 'tam sayı girin.'); }
+        if (value < min || value > max) { return fieldError(id, fmt(min, min > 0 && min < 0.01 ? 4 : 2) + '–' + fmt(max, 2) + ' arasında bir değer girin.'); }
+        return '';
+      };
+      var selectedNumber = function (id) {
+        var field = document.getElementById(id);
+        return Array.prototype.some.call(field.options, function (option) { return option.value === field.value; }) ? Number(field.value) : NaN;
+      };
+      var clearResult = function (panelId, prefix, problem, details) {
+        document.getElementById(prefix + '-amount').textContent = '-';
+        document.getElementById(prefix + '-detail').textContent = problem;
+        (details || []).forEach(function (id) { document.getElementById(id).textContent = ''; });
+        setPanelValidity(panelId, false);
+      };
       var updateGes = function () {
-        var pricing = config.pricing;
-        var area = getNumber('ges-area');
-        var unitPrice = getNumber('ges-unit-price');
-        var unitCost = getNumber('ges-cost');
-        var bill = getNumber('ges-bill');
+        resetFields('ges-panel');
+        var pricing = config.pricing || {}, clear = function (message) { clearResult('ges-panel', 'ges', message, ['ges-production','ges-coverage','ges-savings','ges-equipment']); };
+        var modelKeys = ['panelWatt','inverterAcRatio','performanceRatio','areaPerKwpRoof','areaPerKwpLand'];
+        if (modelKeys.some(function (key) { return !validNumber(pricing[key]) || pricing[key] <= 0; }) || pricing.performanceRatio > 1 || pricing.inverterAcRatio > 1) {
+          document.getElementById('ges-assumptions').textContent = '';
+          clear('GES model bilgileri yüklenemedi veya geçersiz. Sayfayı yenileyip tekrar deneyin.'); return;
+        }
+        var problem = inputProblem('ges-area', 0.1, 1e9) || inputProblem('ges-bill', 0, 1e9, true) || inputProblem('ges-unit-price', 0.0001, 1e9, true) || inputProblem('ges-cost', 0.0001, 1e9, true);
+        if (problem) { clear(problem); return; }
+        var area = fieldNum('ges-area');
+        var unitPrice = document.getElementById('ges-unit-price').value.trim() ? fieldNum('ges-unit-price') : 0;
+        var unitCost = document.getElementById('ges-cost').value.trim() ? fieldNum('ges-cost') : 0;
+        var bill = document.getElementById('ges-bill').value.trim() ? fieldNum('ges-bill') : 0;
+        if (bill > 0 && !unitPrice) { clear(fieldError('ges-unit-price', 'fatura tutarından tüketim hesaplamak için elektrik birim bedelini girin.')); return; }
         var useBill = bill > 0 && unitPrice > 0;
-        var monthlyConsumption = useBill ? Math.round(bill / unitPrice) : getNumber('ges-consumption');
+        if (!useBill && (problem = inputProblem('ges-consumption', 0.0001, 1e9))) { clear(problem); return; }
+        var monthlyConsumption = useBill ? bill / unitPrice : fieldNum('ges-consumption');
         var annualConsumption = monthlyConsumption * 12;
-        var productionPerKwp = getValue('ges-city', 1600);
+        var productionPerKwp = selectedNumber('ges-city'), dayRatio = selectedNumber('ges-day-ratio');
+        if (!validNumber(productionPerKwp) || productionPerKwp <= 0 || !validNumber(dayRatio) || dayRatio <= 0 || dayRatio > 1 || ['cati','arazi'].indexOf(document.getElementById('ges-type').value) === -1) { clear('Geçerli bir bölge, kurulum tipi ve gündüz tüketim oranı seçin.'); return; }
         var land = document.getElementById('ges-type').value === 'arazi';
         var areaPerKwp = land ? pricing.areaPerKwpLand : pricing.areaPerKwpRoof;
         document.getElementById('ges-assumptions').textContent = 'Üretim hesabında bölgesel verim ve %' + fmt(pricing.performanceRatio * 100) + ' sistem verimi, alan hesabında ' + fmt(areaPerKwp, 1) + ' m²/kWp, ekipman hesabında ' + fmt(pricing.panelWatt) + ' Wp panel varsayılmıştır. Araç hazır birim fiyat kullanmaz; yatırım ve geri ödeme, girdiğiniz birim yatırım maliyeti ve elektrik birim bedeliyle hesaplanır. Ayrıntılı hesap için GES Üretim ve Maliyet Hesaplama sayfasını kullanın.';
-        if (area <= 0) {
-          document.getElementById('ges-amount').textContent = '-';
-          document.getElementById('ges-detail').textContent = 'Kullanılabilir alan için geçerli bir değer girin.';
-          ['ges-production', 'ges-coverage', 'ges-savings', 'ges-equipment'].forEach(function (id) { document.getElementById(id).textContent = ''; });
-          return;
-        }
-        if (!(annualConsumption > 0)) {
-          document.getElementById('ges-amount').textContent = '-';
-          document.getElementById('ges-detail').textContent = 'Aylık tüketim veya fatura tutarı ile birim bedel girin.';
-          ['ges-production', 'ges-coverage', 'ges-savings', 'ges-equipment'].forEach(function (id) { document.getElementById(id).textContent = ''; });
-          return;
-        }
-        var targetPower = annualConsumption * getValue('ges-day-ratio', 0.8) / productionPerKwp;
+        var targetPower = annualConsumption * dayRatio / productionPerKwp;
         var areaPower = area / areaPerKwp;
-        var power = Math.max(1, Math.round(Math.min(targetPower, areaPower)));
+        var power = Math.min(Math.round(targetPower), Math.floor(areaPower));
+        if (power < 1) { clear('Alan ve tüketim girdileri bu ön değerlendirme modelinde en az 1 kWp kurulumu karşılamıyor. Girdileri kontrol edin.'); return; }
         var production = Math.round(power * productionPerKwp * pricing.performanceRatio);
         var selfConsumption = Math.min(production, annualConsumption);
         var invest = unitCost > 0 ? power * unitCost : 0;
@@ -658,6 +687,7 @@
         var savingsHint = unitPrice > 0 ? 'aylık tüketimi' : 'elektrik birim bedelini';
         var panels = Math.ceil(power * 1000 / pricing.panelWatt);
         var inverter = Math.round(power * pricing.inverterAcRatio);
+        if (![monthlyConsumption,annualConsumption,power,production,selfConsumption,panels,inverter].every(function (value) { return validNumber(value); }) || !validNumber(invest, Number.MAX_SAFE_INTEGER / 100) || !validNumber(savings, Number.MAX_SAFE_INTEGER / 100) || savings > 0 && !validNumber(invest / savings)) { clear('Girilen değerlerle güvenilir bir sayısal sonuç üretilemiyor. Tüketim, birim bedel ve alan değerlerini kontrol edin.'); return; }
         var detail;
         if (invest) {
           document.getElementById('ges-amount').textContent = money(invest);
@@ -673,26 +703,35 @@
         document.getElementById('ges-coverage').textContent = annualConsumption ? 'Öz tüketim karşılama oranı: yaklaşık %' + Math.min(100, Math.round(selfConsumption / annualConsumption * 100)) : 'Tüketim girerek karşılama oranını görün';
         document.getElementById('ges-savings').textContent = savings ? 'Yıllık tasarruf potansiyeli: ' + money(savings) : 'Yıllık tasarruf için ' + savingsHint + ' girin';
         document.getElementById('ges-equipment').textContent = 'Önerilen ekipman: yaklaşık ' + fmt(panels) + ' panel (' + fmt(pricing.panelWatt) + ' Wp), ' + fmt(inverter) + ' kW inverter';
+        setPanelValidity('ges-panel', true);
       };
       var updateTrafo = function () {
+        resetFields('trafo-panel');
+        var problem = inputProblem('trafo-power', 0.0001, 1e9);
+        if (problem) { clearResult('trafo-panel', 'trafo', problem); return; }
         var calc = config.calcIsletmeUcreti;
         var r = calc ? calc({ type: document.getElementById('trafo-type').value, kva: fieldNum('trafo-power'), bakim: document.getElementById('trafo-scope').value === '1', bk: Number(document.getElementById('trafo-bk').value) }) : { ok: false, error: 'Ücret tablosu yüklenemedi.' };
         if (!r.ok) {
-          document.getElementById('trafo-amount').textContent = '-';
-          document.getElementById('trafo-detail').textContent = r.error;
+          clearResult('trafo-panel', 'trafo', r.error);
           return;
         }
+        if (!validNumber(r.total, Number.MAX_SAFE_INTEGER / 100) || r.items.some(function (item) { return !validNumber(item.amount, Number.MAX_SAFE_INTEGER / 100); })) { clearResult('trafo-panel', 'trafo', 'Girilen güç için güvenilir ücret sonucu üretilemiyor.'); return; }
         var tl = function (x) { return fmt(x, 2, x % 1 ? 2 : 0); };
         document.getElementById('trafo-amount').textContent = tl(r.total) + ' TL / ay';
         document.getElementById('trafo-detail').textContent = r.items.map(function (item) { return item.label + ': ' + tl(item.amount) + ' TL'; }).join('; ') + (r.discount ? '; %10 indirim: −' + tl(r.discount) + ' TL' : '') + (r.bk !== 1 ? '; bölgesel katsayı × ' + fmt(r.bk, 2, 2) : '') + '.';
+        setPanelValidity('trafo-panel', true);
       };
       var updateControl = function () {
-        var panels = getNumber('control-panels');
-        var area = getNumber('control-area');
-        var days = Math.max(1, Math.ceil((area / 1800 + panels / 10) * getValue('control-type', 1) * getValue('control-urgency', 1)));
+        resetFields('kontrol-panel');
+        var problem = inputProblem('control-panels', 0, 1e6, false, true) || inputProblem('control-area', 0.1, 1e9);
+        if (problem) { clearResult('kontrol-panel', 'control', problem, ['control-scope']); return; }
+        var panels = fieldNum('control-panels'), area = fieldNum('control-area'), type = selectedNumber('control-type'), urgency = selectedNumber('control-urgency');
+        if (!validNumber(type) || !validNumber(urgency)) { clearResult('kontrol-panel', 'control', 'Geçerli bir kontrol türü ve talep zamanı seçin.', ['control-scope']); return; }
+        var days = Math.max(1, Math.ceil((area / 1800 + panels / 10) * type * urgency));
         document.getElementById('control-amount').textContent = fmt(days) + ' iş günü';
         document.getElementById('control-detail').textContent = fmt(area) + ' m² tesis ve ' + fmt(panels) + ' pano için öngörülen saha ve raporlama süresi.';
         document.getElementById('control-scope').textContent = fmt(panels) + ' pano için görsel kontrol ve ölçüm planı';
+        setPanelValidity('kontrol-panel', true);
       };
       // Araç tanımı: [başlık, A etiketi, B etiketi, C etiketi, D etiketi, varsayılan değerler (null = boş), sonucu etkilemediği için gizlenen alanlar, boş alan ipuçları]
       // Fiyat alanlarına hazır değer konmaz: kullanıcı kendi teklif/fatura değerini girer.
@@ -755,6 +794,7 @@
       var technicalNeeds = {
         project: function (v) { return v.b > 0 ? '' : 'Bütçe için teklifinizdeki veya kendi belirlediğiniz birim proje bedelini (TL/m²) girin.'; },
         powerIncrease: function (v) { return v.c > 0 ? '' : 'Ön bütçe için teklifinizdeki veya kendi belirlediğiniz birim maliyeti (TL/kVA) girin.'; },
+        invoice: function (v) { return v.b > 0 ? '' : 'Yıllık maliyet için faturanızdaki elektrik birim bedelini (TL/kWh) girin.'; },
         efficiency: function (v) { return v.b > 0 ? '' : 'Tasarruf hesabı için faturanızdaki elektrik birim bedelini (TL/kWh) girin.'; }
       };
       var phaseNote = ' ' + fmt(tc.threePhaseMinVoltage) + ' V altındaki gerilim tek faz kabul edilir.';
@@ -783,7 +823,7 @@
         contactorMotor: { formula: 'Motor In hesaplanır; kontaktör Ie ≥ In (AC-3); koruma şalteri ayarı ≈ ' + fmt(tc.mpcbMinRatio, 2) + '-' + fmt(tc.mpcbMaxRatio, 2) + '×In', assumptions: 'cosφ ≈ ' + fmt(tc.contactorMotorCosPhi, 2) + ' sabit kabul edilmiştir; yol alma yöntemi (DOL/yıldız-üçgen) seçimi etkiler.' + phaseNote },
         inverterCable: { formula: 'AC akım = Güç × 1000 ÷ (√3 × AC gerilim × ' + fmt(tc.inverterEfficiency, 2) + '); DC akım ≈ Güç × 1000 ÷ DC gerilim; ' + fmt(tc.cableCurrentMargin, 2) + ' × akım ≤ Iz ve gerilim düşümü (AC ≤ %' + fmt(tc.inverterAcDropLimitPct, 1) + ', DC ≤ %' + fmt(tc.inverterDcDropLimitPct) + ') koşullarını sağlayan ilk standart kesit seçilir', assumptions: 'İnverter verimi ~%' + fmt(tc.inverterEfficiency * 100) + ' ve tam güçte çalışma kabul edilmiştir; Iz değerleri bakır, PVC, 30 °C, kanal/boru içi (Yöntem B1) referanstır (DC hat iki yüklü iletken). DC kablo seçimi güneş kablosu standartlarına ve döşeme koşullarına göre ayrıca doğrulanmalıdır.' + phaseNote }
       };
-      var technicalInput = function (id) { return Math.max(0, fieldNum(id) || 0); };
+      var technicalInput = fieldNum;
       var SQRT3 = Math.sqrt(3);
       var isThreePhase = function (volt) { return volt >= tc.threePhaseMinVoltage; };
       var currentFactor = function (volt) { return isThreePhase(volt) ? SQRT3 : 1; };
@@ -931,23 +971,34 @@
           var rule = rules[letters[i]];
           if (!rule || hidden.indexOf(letters[i]) !== -1) { continue; }
           var upper = rule[1] === null ? 1e9 : rule[1];
-          if (values[letters[i]] < rule[0] || values[letters[i]] > upper) {
-            return tool[i + 1] + ': ' + (rule[1] !== null ? fmt(rule[0], 2) + '-' + fmt(rule[1], 2) + ' arasında' : fmt(rule[0], 2) + ' veya daha büyük') + ' bir değer girin.';
-          }
+          var integer = key === 'ev' && letters[i] === 'a' || key === 'fire' && letters[i] === 'b' || key === 'grounding' && letters[i] === 'c';
+          var optional = tool[5][i] === null;
+          var problem = inputProblem('technical-' + letters[i], rule[0], upper, optional, integer);
+          if (problem) { return problem; }
+          // An omitted price is distinct from an invalid number. Only omitted
+          // optional inputs become zero; the pricing guidance below then applies.
+          if (optional && !document.getElementById('technical-' + letters[i]).value.trim()) { values[letters[i]] = 0; }
         }
         return technicalChecks[key] ? technicalChecks[key](values) : '';
       };
       var technicalResult = function () {
+        resetFields('teknik-panel');
         var key = document.getElementById('technical-tool').value;
-        if (!technicalTools[key]) { return; }
+        if (!technicalTools[key]) { clearResult('teknik-panel', 'technical', 'Geçerli bir hesaplama aracı seçin.', ['technical-scope']); return; }
         var values = { a: technicalInput('technical-a'), b: technicalInput('technical-b'), c: technicalInput('technical-c'), d: technicalInput('technical-d') };
         var problem = invalidMessage(key, values);
         var need = !problem && technicalNeeds[key] ? technicalNeeds[key](values) : '';
-        var out = problem ? ['Geçerli değer girin', problem, 'Tüm alanlara geçerli değerler girildiğinde sonuç hesaplanır.'] : need ? ['Birim bedel girin', need, 'Araç hazır fiyat kullanmaz; sonuç girdiğiniz birim bedelle hesaplanır.'] : technicalCalc[key](values);
-        if (/NaN|Infinity|∞/.test(out.join(' '))) { out = ['Geçerli değer girin', 'Girilen değerlerle sonuç hesaplanamadı; alanları kontrol edin.', 'Tüm alanlara geçerli değerler girildiğinde sonuç hesaplanır.']; }
+        if (problem || need) { clearResult('teknik-panel', 'technical', problem || need, ['technical-scope']); return; }
+        var out;
+        invalidNumericResult = false; calculating = true;
+        try { out = technicalCalc[key](values); }
+        catch (_) { invalidNumericResult = true; }
+        finally { calculating = false; }
+        if (invalidNumericResult || !out || /NaN|Infinity|∞/.test(out.join(' '))) { clearResult('teknik-panel', 'technical', 'Girilen değerlerle güvenilir bir sayısal sonuç üretilemiyor. Girdileri kontrol edin.', ['technical-scope']); return; }
         document.getElementById('technical-amount').textContent = out[0];
         document.getElementById('technical-detail').textContent = out[1];
         document.getElementById('technical-scope').textContent = out[2];
+        setPanelValidity('teknik-panel', true);
       };
       var configureTechnical = function () {
         var key = document.getElementById('technical-tool').value;
@@ -986,12 +1037,12 @@
         field.addEventListener('input', function () { updates.forEach(function (update) { update(); }); });
         field.addEventListener('change', function () { updates.forEach(function (update) { update(); }); });
       });
-      var activateTab = function (tab) { var panelId = tab.getAttribute('aria-controls'); document.querySelectorAll('[role="tab"]').forEach(function (item) { item.setAttribute('aria-selected', 'false'); item.tabIndex = -1; }); document.querySelectorAll('[role="tabpanel"]').forEach(function (panel) { panel.classList.remove('active'); panel.hidden = true; }); document.querySelectorAll('.tool-category').forEach(function (category) { category.classList.remove('tool-category--active'); }); var matchingCategory = document.querySelector('.tool-category[data-panel="' + panelId.replace('-panel', '') + '"]'); if (matchingCategory) { matchingCategory.classList.add('tool-category--active'); } tab.setAttribute('aria-selected', 'true'); tab.tabIndex = 0; var activePanel = document.getElementById(panelId); activePanel.hidden = false; activePanel.classList.add('active'); };
-      document.querySelectorAll('[role="tab"]').forEach(function (tab) { tab.addEventListener('click', function () { activateTab(tab); }); tab.addEventListener('keydown', function (event) { var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]')); var index = tabs.indexOf(tab); var nextIndex = event.key === 'ArrowRight' ? (index + 1) % tabs.length : event.key === 'ArrowLeft' ? (index - 1 + tabs.length) % tabs.length : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : -1; if (nextIndex >= 0) { event.preventDefault(); tabs[nextIndex].focus(); tabs[nextIndex].click(); } }); });
-      document.querySelectorAll('.tool-category[data-panel]').forEach(function (category) { category.addEventListener('click', function () { var panel = category.dataset.panel; activateTab(document.getElementById(panel + '-tab')); document.querySelectorAll('.tool-category').forEach(function (item) { item.classList.remove('tool-category--active'); }); category.classList.add('tool-category--active'); if (category.dataset.technicalTool) { var technicalTool = document.getElementById('technical-tool'); technicalTool.value = category.dataset.technicalTool; technicalTool.dispatchEvent(new Event('change')); } document.getElementById(panel + '-panel').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); }); });
+      var activateTab = function (tab) { var panelId = tab.getAttribute('aria-controls'); document.querySelectorAll('[role="tab"]').forEach(function (item) { item.setAttribute('aria-selected', 'false'); item.tabIndex = -1; }); document.querySelectorAll('[role="tabpanel"]').forEach(function (panel) { panel.classList.remove('active'); panel.hidden = true; }); document.querySelectorAll('.tool-category').forEach(function (category) { category.classList.remove('tool-category--active'); }); tab.setAttribute('aria-selected', 'true'); tab.tabIndex = 0; if (tab.classList.contains('tool-category')) { tab.classList.add('tool-category--active'); } var activePanel = document.getElementById(panelId); activePanel.hidden = false; activePanel.classList.add('active'); activePanel.setAttribute('aria-labelledby', tab.id); };
+      document.querySelectorAll('[role="tab"]').forEach(function (tab) { if (!tab.classList.contains('tool-category')) { tab.addEventListener('click', function () { activateTab(tab); }); } tab.addEventListener('keydown', function (event) { var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]')); var index = tabs.indexOf(tab); var nextIndex = event.key === 'ArrowRight' ? (index + 1) % tabs.length : event.key === 'ArrowLeft' ? (index - 1 + tabs.length) % tabs.length : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : -1; if (nextIndex >= 0) { event.preventDefault(); tabs[nextIndex].focus(); tabs[nextIndex].click(); } }); });
+      document.querySelectorAll('.tool-category[data-panel]').forEach(function (category) { category.addEventListener('click', function () { var panel = category.dataset.panel; activateTab(category); if (category.dataset.technicalTool) { var technicalTool = document.getElementById('technical-tool'); technicalTool.value = category.dataset.technicalTool; technicalTool.dispatchEvent(new Event('change')); } document.getElementById(panel + '-panel').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); }); });
       document.getElementById('technical-tool').addEventListener('change', configureTechnical);
       configureTechnical();
-      document.querySelectorAll('.tool-request').forEach(function (button) { button.addEventListener('click', function () { var activePanel = document.querySelector('.tool-panel.active'); var summary = activePanel.querySelector('.tool-result__amount').textContent; var text = 'Merhaba, VoltGuard web sitesindeki ' + button.dataset.tool + ' aracını kullandım. Ön değerlendirme sonucum: ' + summary + '. Detaylı teklif ve keşif bilgisi almak istiyorum.'; window.open('https://wa.me/905454346735?text=' + encodeURIComponent(text), '_blank', 'noopener'); }); });
+      document.querySelectorAll('.tool-request').forEach(function (button) { button.addEventListener('click', function () { var activePanel = button.closest('.tool-panel'); updates.forEach(function (update) { update(); }); if (activePanel.dataset.calculationValid !== 'true') { return; } var summary = activePanel.querySelector('.tool-result__amount').textContent; var text = 'Merhaba, VoltGuard web sitesindeki ' + button.dataset.tool + ' aracını kullandım. Ön değerlendirme sonucum: ' + summary + '. Detaylı teklif ve keşif bilgisi almak istiyorum.'; window.open('https://wa.me/905454346735?text=' + encodeURIComponent(text), '_blank', 'noopener'); }); });
       var restoreCalculation = function () {
         var params = new URLSearchParams(window.location.search);
         var panelId = params.get('arac');
@@ -1005,9 +1056,10 @@
         if (params.has('technical-tool')) {
           configureTechnical();
           ['technical-a', 'technical-b', 'technical-c', 'technical-d'].forEach(function (id) { if (params.has(id)) { document.getElementById(id).value = params.get(id); } });
+          if (panelId === 'teknik') { var category = document.querySelector('.tool-category[data-technical-tool="' + document.getElementById('technical-tool').value + '"]'); if (category) { activateTab(category); } }
         }
       };
-      document.querySelectorAll('.tool-share').forEach(function (button) { button.addEventListener('click', function () { var panel = document.querySelector('.tool-panel.active'); var params = new URLSearchParams(); params.set('arac', panel.id.replace('-panel', '')); panel.querySelectorAll('input[id], select[id]').forEach(function (field) { params.set(field.id, field.value); }); var url = window.location.origin + '/hesaplama-araclari/?' + params.toString(); var status = panel.querySelector('.tool-share-status'); var copied = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(url) : Promise.reject(); copied.then(function () { status.textContent = 'Hesap bağlantısı kopyalandı.'; }).catch(function () { window.prompt('Hesap bağlantınızı kopyalayın:', url); status.textContent = 'Hesap bağlantısı hazır.'; }); }); });
+      document.querySelectorAll('.tool-share').forEach(function (button) { button.addEventListener('click', function () { var panel = button.closest('.tool-panel'); updates.forEach(function (update) { update(); }); if (panel.dataset.calculationValid !== 'true') { return; } var params = new URLSearchParams(); params.set('arac', panel.id.replace('-panel', '')); panel.querySelectorAll('input[id], select[id]').forEach(function (field) { params.set(field.id, field.value); }); var url = window.location.origin + '/hesaplama-araclari/?' + params.toString(); var status = panel.querySelector('.tool-share-status'); var copied = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(url) : Promise.reject(); copied.then(function () { status.textContent = 'Hesap bağlantısı kopyalandı.'; }).catch(function () { window.prompt('Hesap bağlantınızı kopyalayın:', url); status.textContent = 'Hesap bağlantısı hazır.'; }); }); });
       restoreCalculation();
       // jsPDF standart yazı tipi Türkçe harfleri ve mühendislik simgelerini taşımaz; ortak dönüştürücü js/voltguard-tools.js içindedir.
       var toPdfText = function (text) {
@@ -1045,10 +1097,14 @@
       };
       document.querySelectorAll('.tool-download').forEach(function (button) {
         button.addEventListener('click', function () {
-          var panel = document.querySelector('.tool-panel.active');
+          var panel = button.closest('.tool-panel');
+          updates.forEach(function (update) { update(); });
+          if (panel.dataset.calculationValid !== 'true') { return; }
           var status = panel.querySelector('.tool-share-status');
           if (!(window.jspdf && window.jspdf.jsPDF)) { status.textContent = 'PDF hazırlanıyor...'; }
           loadJsPdf().then(function (lib) {
+            updates.forEach(function (update) { update(); });
+            if (panel.dataset.calculationValid !== 'true') { return; }
             if (status.textContent === 'PDF hazırlanıyor...') { status.textContent = ''; }
             buildPdf(lib, button, panel);
           }, function () {
@@ -1057,6 +1113,7 @@
         });
       });
       var buildPdf = function (lib, button, panel) {
+          if (panel.dataset.calculationValid !== 'true') { return; }
           var doc = new lib.jsPDF({ unit: 'mm', format: 'a4' });
           var title = button.dataset.pdfTitle;
           var result = panel.querySelector('.tool-result__amount').textContent.trim();

@@ -29,7 +29,7 @@ const types = {
   '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif', '.ico': 'image/x-icon',
   '.woff2': 'font/woff2', '.woff': 'font/woff', '.pdf': 'application/pdf',
-  '.zip': 'application/zip', '.mp4': 'video/mp4'
+  '.zip': 'application/zip', '.mp4': 'video/mp4', '.vtt': 'text/vtt; charset=utf-8'
 };
 let phpChild = null;
 let phpPort = null;
@@ -193,7 +193,28 @@ const server = http.createServer((req, res) => {
     if (blockedPath(actualPath) || !types[path.extname(actual).toLowerCase()]) return fail(res, 404, 'Sayfa bulunamadı.');
     const stat = fs.statSync(actual);
     if (!stat.isFile()) return fail(res, 404, 'Sayfa bulunamadı.');
-    res.writeHead(200, { 'Content-Type': types[path.extname(actual).toLowerCase()] || 'application/octet-stream', 'Content-Length': stat.size });
+    const headers = { 'Content-Type': types[path.extname(actual).toLowerCase()] || 'application/octet-stream', 'Content-Length': stat.size, 'Accept-Ranges': 'bytes' };
+    // Native video seeking asks for individual byte ranges. Stream only that
+    // range instead of repeatedly sending the complete corporate video.
+    if (req.method === 'GET' && req.headers.range) {
+      const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range);
+      let start, end;
+      if (range && (range[1] || range[2])) {
+        if (!range[1]) {
+          const suffix = Number(range[2]);
+          if (Number.isSafeInteger(suffix) && suffix > 0) { start = Math.max(0, stat.size - suffix); end = stat.size - 1; }
+        } else {
+          start = Number(range[1]); end = range[2] ? Number(range[2]) : stat.size - 1;
+          if (Number.isSafeInteger(end)) end = Math.min(end, stat.size - 1);
+        }
+      }
+      if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 0 || start >= stat.size || end < start) {
+        res.writeHead(416, { ...headers, 'Content-Length': 0, 'Content-Range': `bytes */${stat.size}` }); return res.end();
+      }
+      res.writeHead(206, { ...headers, 'Content-Length': end - start + 1, 'Content-Range': `bytes ${start}-${end}/${stat.size}` });
+      return fs.createReadStream(actual, { start, end }).on('error', () => res.destroy()).pipe(res);
+    }
+    res.writeHead(200, headers);
     if (req.method === 'HEAD') res.end();
     else fs.createReadStream(actual).on('error', () => res.destroy()).pipe(res);
   } catch (_) { fail(res, 404, 'Sayfa bulunamadı.'); }

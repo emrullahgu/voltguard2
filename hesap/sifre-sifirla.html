@@ -41,7 +41,7 @@
   <meta name="color-scheme" content="light only">
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="no-referrer">
-  <title>Şifre Sıfırlama | VoltGuard Tools</title>
+  <title>Şifre Sıfırlama | VoltGuard</title>
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/style.css?v=20261012d">
@@ -98,12 +98,12 @@
   <!--/vg:header-->
   <main class="vg-auth-shell" id="main" tabindex="-1">
     <section class="vg-auth-card" aria-labelledby="reset-title">
-      <a class="vg-auth-card__brand" href="/hesaplama-araclari/"><span class="vg-auth-card__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" focusable="false"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></span> VoltGuard Tools</a>
+      <a class="vg-auth-card__brand" href="/"><img class="vg-auth-card__mark" src="/public/voltguard-logo.webp" alt="" width="36" height="36" aria-hidden="true"> VoltGuard</a>
 
       <!-- 1) Sıfırlama bağlantısı isteği -->
       <div id="request-view">
         <h1 id="reset-title">Şifrenizi mi unuttunuz?</h1>
-        <p class="vg-auth-card__sub">Hesabınıza kayıtlı e-posta adresini yazın; yeni şifre belirlemeniz için bir bağlantı gönderelim.</p>
+        <p class="vg-auth-card__sub">Hesabınıza kayıtlı e-posta adresiyle şifre sıfırlama talebi oluşturun.</p>
         <div id="request-alert" class="vg-acct-alert" hidden></div>
         <noscript><p class="vg-acct-alert vg-acct-alert--warning">Hesap işlemleri için tarayıcınızda JavaScript açık olmalıdır.</p></noscript>
         <form id="request-form" class="vg-auth-form" method="post" novalidate>
@@ -111,10 +111,10 @@
             <label for="email">E-posta</label>
             <input id="email" type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" maxlength="254" required>
           </div>
-          <button type="submit" disabled data-vg-wait><i class="fas fa-paper-plane" aria-hidden="true"></i> Sıfırlama bağlantısı gönder</button>
+          <button type="submit" disabled data-vg-wait><i class="fas fa-paper-plane" aria-hidden="true"></i> Sıfırlama bağlantısı iste</button>
         </form>
         <div id="request-done" hidden>
-          <p class="vg-field__hint" style="margin-top:1rem">E-posta birkaç dakika içinde gelmezse istenmeyen (spam) klasörünü kontrol edin veya birkaç dakika sonra yeniden isteyin. Sorun sürerse <a class="vg-link" href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a> adresine yazın.</p>
+          <p class="vg-field__hint" style="margin-top:1rem">Canlı siteden istediğiniz bağlantı gelmezse istenmeyen (spam) klasörünü kontrol edin. Sorun sürerse <a class="vg-link" href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a> adresinden destek alın.</p>
           <p style="margin-top:1rem"><button type="button" class="vg-btn vg-btn--ghost" id="request-again"><i class="fas fa-rotate" aria-hidden="true"></i> Başka bir e-posta dene</button></p>
         </div>
       </div>
@@ -383,12 +383,12 @@
         }
         UI.clearFieldErrors(form);
         var btn = form.querySelector('button[type="submit"]');
-        UI.busy(btn, true, 'Gönderiliyor…');
+        UI.busy(btn, true, 'Talep alınıyor…');
         Auth.forgotPassword(emailIn.value).then(function (msg) {
           UI.busy(btn, false);
           form.hidden = true;
           $('request-done').hidden = false;
-          UI.alertBox(alertEl, 'success', msg, { focus: true });
+          UI.alertBox(alertEl, 'info', msg, { focus: true });
         }, function (e) {
           UI.busy(btn, false);
           UI.showFormError(form, alertEl, e);

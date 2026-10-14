@@ -320,7 +320,8 @@ function vg_h_delete_account(VgStore $store, array $body): array
     return ['ok' => true, 'message' => 'Hesabınız ve tüm kayıtlarınız kalıcı olarak silindi.'];
 }
 
-const VG_FORGOT_MESSAGE = 'Bu e-posta adresiyle kayıtlı bir hesap varsa, şifre sıfırlama bağlantısı birkaç dakika içinde gönderilecek. Gelen kutunuzu ve istenmeyen (spam) klasörünü kontrol edin. Bağlantı 1 saat geçerlidir.';
+const VG_FORGOT_MESSAGE = 'Talebiniz alındı. Güvenliğiniz için hesap bilgisi ve e-posta teslim durumu bu ekranda gösterilmez. Sıfırlama bağlantısı geldiğinde 1 saat içinde kullanın. E-posta gelmezse spam klasörünü kontrol edin veya info@voltguard.com.tr adresinden destek alın.';
+const VG_FORGOT_PREVIEW_MESSAGE = 'Talebiniz alındı. Bu önizlemede e-postalar gerçek adreslere gönderilmez. Şifrenizi e-postayla sıfırlamak için voltguard.com.tr üzerindeki canlı hesap sayfasını kullanın.';
 
 function vg_h_forgot_password(VgStore $store, array $body): array
 {
@@ -328,6 +329,10 @@ function vg_h_forgot_password(VgStore $store, array $body): array
     $email = vg_normalize_email($body['email'] ?? '');
     if ($email === '') {
         vg_validation_failed(['email' => 'Geçerli bir e-posta adresi girin.']);
+    }
+    /* Global capability is checked before lookup; never disclose per-account send failures. */
+    if (!vg_mail_can_send()) {
+        vg_fail(503, 'mail_unavailable', 'Şifre sıfırlama e-postası şu anda gönderilemiyor. Lütfen daha sonra tekrar deneyin veya info@voltguard.com.tr adresinden destek alın.');
     }
     $retry = vg_rl_hit('forgot_ip', vg_rl_ip_key(), 5, 900);
     if ($retry > 0) {
@@ -355,7 +360,7 @@ function vg_h_forgot_password(VgStore $store, array $body): array
     if ($elapsed < $target) {
         usleep((int)(($target - $elapsed) * 1000000));
     }
-    return ['ok' => true, 'message' => VG_FORGOT_MESSAGE];
+    return ['ok' => true, 'message' => getenv('VG_MAIL_OUTBOX') === '1' ? VG_FORGOT_PREVIEW_MESSAGE : VG_FORGOT_MESSAGE];
 }
 
 function vg_h_reset_password(VgStore $store, array $body): array

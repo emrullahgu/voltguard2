@@ -75,13 +75,15 @@ window.VoltGuardCalculatorConfig.calcIsletmeUcreti = function (o) {
   var tl = function (x) { return x.toLocaleString('tr-TR', { maximumFractionDigits: 2 }); };
   var tl2 = function (x) { return x.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
   var kva = Number(o.kva);
-  var fYa = Number(o.feederYa) || 0;
-  var fSk = Number(o.feederSk) || 0;
-  var enhM = Number(o.enhM) || 0;
-  var bk = Number(o.bk) || 1;
-  if (!isFinite(kva) || kva <= 0) { return { ok: false, error: "Kurulu güç için 0'dan büyük bir kVA değeri girin." }; }
-  if (fYa < 0 || fSk < 0 || fYa % 1 || fSk % 1) { return { ok: false, error: 'Ek fider sayıları 0 veya pozitif tam sayı olmalıdır.' }; }
-  if (!isFinite(enhM) || enhM < 0) { return { ok: false, error: 'ENH uzunluğu 0 veya pozitif bir değer olmalıdır.' }; }
+  var optionalNumber = function (value, fallback) { return value === undefined || value === null ? fallback : Number(value); };
+  var fYa = optionalNumber(o.feederYa, 0);
+  var fSk = optionalNumber(o.feederSk, 0);
+  var enhM = optionalNumber(o.enhM, 0);
+  var bk = optionalNumber(o.bk, 1);
+  if (['bina','direk'].indexOf(o.type) === -1) { return { ok: false, error: 'Geçerli bir trafo tipi seçin.' }; }
+  if (!Number.isFinite(kva) || kva <= 0 || kva > 1e9) { return { ok: false, error: "Kurulu güç için 0'dan büyük, en çok 1.000.000.000 kVA değeri girin." }; }
+  if (!Number.isInteger(fYa) || !Number.isInteger(fSk) || fYa < 0 || fSk < 0 || fYa > 1e6 || fSk > 1e6) { return { ok: false, error: 'Ek fider sayıları 0–1.000.000 arasında tam sayı olmalıdır.' }; }
+  if (!Number.isFinite(enhM) || enhM < 0 || enhM > 1e9) { return { ok: false, error: 'ENH uzunluğu 0–1.000.000.000 m arasında olmalıdır.' }; }
   if (t.regionFactors.indexOf(bk) === -1) { return { ok: false, error: 'Geçerli bir bölgesel azaltma katsayısı seçin.' }; }
   if (o.type === 'direk' && kva > t.direk.bands[t.direk.bands.length - 1][0]) {
     return { ok: false, error: "Direk tipi trafolar EMO tablosunda 400 kVA'ya kadar tanımlıdır; daha büyük güçler için bina tipi trafo merkezini seçin." };

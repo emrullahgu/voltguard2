@@ -571,6 +571,12 @@
     Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
+  for = "/public/video/*.vtt"
+  [headers.values]
+    Content-Type = "text/vtt; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
   for = "/*.pdf"
   [headers.values]
     Cache-Control = "public, max-age=86400, must-revalidate"
