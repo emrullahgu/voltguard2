@@ -43,6 +43,8 @@ function fixtureWorkspace() {
   write('calisan/uygulama/entry-tags.html', '<script src="assets/protected-test.js"></script>');
   write('calisan/uygulama/index.html', '<p>PRIVATE_GATE_ENTRY_FIXTURE</p>');
   write('calisan/uygulama/source.json', '{"private":"PRIVATE_GATE_SOURCE_FIXTURE"}');
+  write('public/video/range-fixture.mp4', '0123456789');
+  write('public/video/captions-fixture.vtt', 'WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nTürkçe altyazı\n');
   return fixture;
 }
 
@@ -91,6 +93,27 @@ async function run() {
       check(response.status, 200, `${url} remains available`);
       check(response.headers.get('content-security-policy').length > 40, true, 'Site CSP preserved');
     }
+    // Browser playback and seeking must not fetch the entire movie each time.
+    for (const [range, body, contentRange] of [['bytes=0-3', '0123', 'bytes 0-3/10'], ['bytes=7-', '789', 'bytes 7-9/10'], ['bytes=-2', '89', 'bytes 8-9/10'], ['bytes=8-999', '89', 'bytes 8-9/10']]) {
+      const response = await request('/public/video/range-fixture.mp4', { headers: { Range: range } });
+      check(response.status, 206, 'Video byte range accepted');
+      check(response.headers.get('content-range'), contentRange, 'Exact video range header');
+      check(response.headers.get('content-length'), String(body.length), 'Only requested byte count sent');
+      check(await response.text(), body, 'Only requested video bytes sent');
+    }
+    for (const range of ['bytes=10-', 'bytes=4-2', 'bytes=-0', 'bytes=0-1,4-5', 'items=0-1']) {
+      const response = await request('/public/video/range-fixture.mp4', { headers: { Range: range } });
+      check(response.status, 416, 'Unsatisfiable range rejected');
+      check(response.headers.get('content-range'), 'bytes */10', 'Total size returned for unsatisfiable range');
+      check(await response.text(), '', 'No video data sent for rejected range');
+    }
+    const headVideo = await request('/public/video/range-fixture.mp4', { method: 'HEAD', headers: { Range: 'bytes=0-3' } });
+    check(headVideo.status, 200, 'HEAD reports complete file metadata');
+    check(headVideo.headers.get('content-length'), '10', 'HEAD returns full video length');
+    check(await headVideo.text(), '', 'HEAD has no video body');
+    const captions = await request('/public/video/captions-fixture.vtt');
+    check(captions.headers.get('content-type'), 'text/vtt; charset=utf-8', 'Native Turkish captions have supported UTF-8 type');
+    check((await captions.text()).includes('Türkçe altyazı'), true, 'Turkish caption bytes preserved');
     for (const url of ['/api/lib/staff.php', '/api/lib/community.php', '/api/COMMUNITY.md', '/tools/staff-admin.php', '/tools/preview-router.php', '/voltguardekleyelim/', '/.qa/php/runtime/php.exe', '/_vgdata/users.json', '/calisan/shared-header.html', '/calisan/shared-footer.html', '/contact.php', '/api/auth.php/extra',
       '/calisan/uygulama/entry-tags.html', '/calisan/uygulama/index.html', '/calisan/uygulama/index.php', '/calisan/uygulama/source.json', '/calisan/uygulama/src/main.jsx']) {
       const response = await request(url);

@@ -76,7 +76,7 @@
   <link rel="manifest" href="manifest.json">
   <!-- Sayfalar arası önden yükleme vg:head içindeki speculation rules ile yapılır (eski <link rel=prefetch> etiketleri kaldırıldı). -->
   <link rel="stylesheet" href="css/style.css?v=20261012d">
-  <link rel="stylesheet" href="css/home.css?v=20261013c">
+  <link rel="stylesheet" href="css/home.css?v=20261014a">
   <!-- Ön yükleyici oturum başına yalnızca bir kez gösterilir (css/home.css: .vg-pl-skip). -->
   <script>try{if(sessionStorage.getItem('vg_pl'))document.documentElement.classList.add('vg-pl-skip');else sessionStorage.setItem('vg_pl','1')}catch(e){}</script>
   <script type="application/ld+json">
@@ -541,8 +541,8 @@
         <a href="#iletisim" class="btn btn--accent btn--lg">
           <i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al
         </a>
-        <a href="#iletisim" class="btn btn--outline-white btn--lg" data-subject="elektrik" data-prefill="Tesisimiz için ücretsiz ön değerlendirme talep ediyoruz. Kısaca ihtiyacımız: ">
-          <i class="fas fa-clipboard-check" aria-hidden="true"></i> Ücretsiz Ön Değerlendirme
+        <a href="#tanitim-videosu" class="btn btn--outline-white btn--lg">
+          <i class="fas fa-play" aria-hidden="true"></i> Tanıtım Videosunu İzle
         </a>
       </div>
       <p class="hero__links">
@@ -1279,11 +1279,11 @@
             <li><i class="fas fa-check-circle" aria-hidden="true"></i> Ulusal ve uluslararası standartlara uyum</li>
           </ul>
           <div class="about__actions">
-            <a href="#iletisim" class="btn btn--primary btn--md">
-              Teklif Al <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            <a href="/ekibimiz.html" class="btn btn--primary btn--md">
+              Ekibimizi Tanıyın <i class="fas fa-arrow-right" aria-hidden="true"></i>
             </a>
-            <a href="#iletisim" class="btn btn--ghost-dark btn--md" data-subject="elektrik" data-prefill="Tesisimiz için ücretsiz ön değerlendirme talep ediyoruz. Kısaca ihtiyacımız: ">
-              Ücretsiz Ön Değerlendirme
+            <a href="#tanitim-videosu" class="btn btn--ghost-dark btn--md">
+              Tanıtım Videosunu İzle
             </a>
           </div>
         </div>
@@ -1299,6 +1299,26 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <section class="vgh-film section" id="tanitim-videosu" aria-labelledby="filmTitle">
+    <div class="container vgh-film__grid">
+      <div class="vgh-film__copy">
+        <span class="section__badge">VoltGuard'ı Tanıyın</span>
+        <h2 class="section__title" id="filmTitle">Ekibimiz, sahadaki işimiz<br>ve mühendislik yaklaşımımız.</h2>
+        <p>Elektrik, otomasyon, enerji ve bakım çalışmalarımızı; ekibimizi, referanslarımızı ve dijital araçlarımızı bu tanıtımda keşfedin.</p>
+        <p class="vgh-film__meta">9 dakika 46 saniye · Türkçe seslendirme ve altyazı</p>
+        <a href="/ekibimiz.html" class="vgh-film__link">Ekibimizi yakından tanıyın <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+      </div>
+      <div class="vgh-film__player">
+        <video controls playsinline preload="none" width="1280" height="720" poster="/public/video/voltguard-tanitim-kapak-20261014.webp" aria-label="VoltGuard kurumsal tanıtım videosu" aria-describedby="filmCaption">
+          <source src="/public/video/voltguard-kurumsal-tanitim-20261014.mp4" type="video/mp4">
+          <track kind="captions" src="/public/video/voltguard-turkce-20261014.vtt" srclang="tr" label="Türkçe" default>
+          Tarayıcınız video oynatmayı desteklemiyorsa <a href="/public/video/voltguard-kurumsal-tanitim-20261014.mp4">tanıtım videosunu açın</a>.
+        </video>
+        <p id="filmCaption">Videoyu oynatın; ses, altyazı ve tam ekran seçeneklerini oynatıcıdan ayarlayabilirsiniz.</p>
       </div>
     </div>
   </section>
