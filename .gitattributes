@@ -1,3 +1,19 @@
 # Game release hashes and vendor checks must survive Windows/Linux checkouts.
 /public/voltgame/** text=auto eol=lf
 /tools/voltgame/** text=auto eol=lf
+
+# Canonical distributed license bytes must match on Windows and Linux.
+/tools/engineering/src/vendor/power-electricpy-LICENSE.txt text eol=lf
+/tools/engineering/src/vendor/power-pypsa-LICENSE.txt text eol=lf
+/tools/engineering/src/vendor/html2canvas-LICENSE.txt text eol=lf
+/tools/engineering/src/vendor/jspdf-LICENSE.txt text eol=lf
+/tools/engineering/src/vendor/xlsx-js-style.LICENSE text eol=lf
+/tools/engineering/src/vendor/symbols/NOTICE.txt text eol=lf
+/tools/engineering/src/vendor/pcb-checklist/UNLICENSE.txt text eol=lf
+/araclar/vendor/power-electricpy-LICENSE.txt text eol=lf
+/araclar/vendor/power-pypsa-LICENSE.txt text eol=lf
+/araclar/vendor/html2canvas-LICENSE.txt text eol=lf
+/araclar/vendor/jspdf-LICENSE.txt text eol=lf
+/araclar/vendor/xlsx-js-style.LICENSE text eol=lf
+/araclar/vendor/symbols/NOTICE.txt text eol=lf
+/araclar/vendor/pcb-checklist/UNLICENSE.txt text eol=lf

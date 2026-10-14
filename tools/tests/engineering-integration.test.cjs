@@ -15,6 +15,40 @@ const origin = 'https://voltguard.com.tr';
 const read = file => fs.readFileSync(path.join(library, file), 'utf8');
 const liveMarkup = html => html.replace(/<script\b([^>]*)>[\s\S]*?<\/script>/gi, '<script$1></script>');
 const references = html => [...liveMarkup(html).matchAll(/\b(?:href|src)\s*=\s*(["'])([^"']*)\1/gi)].map(match => match[2]);
+function calculationScripts(html) {
+  return [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+    .filter(match => {
+      const type = match[1].match(/type\s*=\s*["']([^"']+)/)?.[1];
+      return !/\bsrc\s*=/.test(match[1]) && (!type || /^(?:text|application)\/(?:javascript|ecmascript)$/.test(type));
+    }).map(match => match[2]);
+}
+function nativeStorageKeys(html) {
+  return new Set([
+    ...[...html.matchAll(/localStorage\.(?:getItem|setItem|removeItem)\(\s*['"]([^'"]+)['"]/g)].map(match => match[1]),
+    ...[...html.matchAll(/(?:var|let|const)\s+(?:LS|LS_KEY|KEY|DEPO_ANAHTAR|DIREK_ANAHTAR|KAYIT_ANAHTAR|STORAGE_KEY|STORE_KEY)\s*=\s*['"]([^'"]+)['"]/g)].map(match => match[1]),
+  ]);
+}
+function storageNamespace(slug, key) {
+  if (key.startsWith('voltguard:')) return key;
+  // These historical key suffixes identify already saved projects. Company
+  // signatures elsewhere in the source must never be changed by this mapping.
+  const legacyKey = key.replace(/Sonay Enerji/gi, 'VoltGuard').replace(/SONAY ENERJİ/g, 'VOLTGUARD').replace(/SonayEnerji/g, 'VoltGuard');
+  return `voltguard:${slug}:${legacyKey}`;
+}
+function integratedCalculation(script, slug, keys) {
+  for (const key of keys) {
+    const namespaced = storageNamespace(slug, key);
+    script = script.split(JSON.stringify(key)).join(JSON.stringify(namespaced)).split("'" + key + "'").join("'" + namespaced + "'");
+  }
+  // Only presentation roots, relative paths and the native CBS heading change
+  // during hosting. The remaining calculation and native report code must match.
+  return script.replaceAll('../../', '../')
+    .replace('<div class="sec-head"><h1>${sec.title}</h1>', '<div class="sec-head"><h2 class="vg-original-title">${sec.title}</h2>')
+    .replace(/document\.body\.className\s*=\s*('tab-ciz'|'tab-'\s*\+\s*k)/g, "document.body.className = 'vg-engineering vg-engineering--tool ' + $1")
+    .replaceAll("document.querySelectorAll('nav button')", "document.querySelectorAll('#vg-tool-workspace nav button')")
+    .replaceAll('getComputedStyle(document.documentElement)', "getComputedStyle(document.getElementById('vg-tool-workspace') || document.documentElement)")
+    .replace(/document\.body\.(appendChild|removeChild|insertBefore|insertAdjacentHTML)\(/g, "(document.getElementById('vg-tool-workspace') || document.body).$1(");
+}
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? walk(path.join(dir, entry.name)) : [path.join(dir, entry.name)]);
 }
@@ -109,24 +143,48 @@ test('Public output contains no company application, build scripts, external fon
 });
 
 test('Integration preserves calculation scripts, export state and third-party license bytes', () => {
+  const storage = JSON.parse(fs.readFileSync(path.join(source, 'storage-map.json'), 'utf8'));
   for (const tool of catalog) {
     const html = read(tool.slug + '/index.html');
+    const native = fs.readFileSync(path.join(source, 'src/tools', tool.file), 'utf8');
+    const keys = nativeStorageKeys(native), publishedScripts = calculationScripts(html);
     assert.ok(html.includes('data-vg-tool="' + tool.slug + '"'));
     assert.match(html, /shared\/export\.js/);
-    for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
-      const type = match[1].match(/type\s*=\s*["']([^"']+)/)?.[1];
-      if (/\bsrc\s*=/.test(match[1]) || type && !/^(?:text|application)\/(?:javascript|ecmascript)$/.test(type)) continue;
-      assert.doesNotThrow(() => new vm.Script(match[2]), tool.slug + ' script syntax');
+    for (const script of publishedScripts) assert.doesNotThrow(() => new vm.Script(script), tool.slug + ' script syntax');
+    for (const script of calculationScripts(native)) {
+      assert.ok(publishedScripts.includes(integratedCalculation(script, tool.slug, keys)), tool.slug + ': native calculation and report script preserved');
+    }
+    for (const key of keys) assert.ok(storage[tool.slug].includes(storageNamespace(tool.slug, key)), tool.slug + ': original saved-project namespace preserved');
+    const encodedKeys = html.match(/data-vg-storage-keys="([^"]*)"/)?.[1];
+    assert.ok(encodedKeys !== undefined, tool.slug + ' export storage allowlist');
+    assert.deepEqual(JSON.parse(encodedKeys.replace(/&quot;/g, '"').replace(/&amp;/g, '&')), storage[tool.slug], tool.slug + ' export and calculation storage agree');
+    if (tool.original) {
+      assert.match(html, /data-vg-original-author="Baki SONAY"/);
+      assert.match(html, /data-vg-original-source="Sonay Enerji"/);
+      assert.match(html, /Paylaştığı özgün hesap araçları ve açık kaynak katkıları için teşekkür ederiz\./);
+      const application = [...html.matchAll(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)]
+        .flatMap(match => JSON.parse(match[1])['@graph']).find(entry => entry['@type'] === 'WebApplication');
+      assert.equal(application.creator.name, 'Baki SONAY');
+      assert.equal(application.publisher.name, 'VoltGuard');
+    } else {
+      assert.doesNotMatch(html, /data-vg-original-author|Özgün hesap araçları: Baki SONAY/);
     }
   }
   const notices = JSON.parse(read('shared/third-party-notices.json'));
   assert.equal(notices.length, 7);
   for (const notice of notices) {
     const bytes = fs.readFileSync(path.join(library, 'vendor', notice.file));
-    assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), notice.sourceFileSha256);
+    assert.match(notice.sourceFileSha256, /^[a-f0-9]{64}$/);
+    assert.match(notice.distributedFileSha256, /^[a-f0-9]{64}$/);
+    assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), notice.distributedFileSha256, notice.file + ' distributed license hash');
+    assert.doesNotMatch(bytes.toString('utf8'), /\r\n/, notice.file + ' canonical LF license bytes');
+    assert.deepEqual(bytes, fs.readFileSync(path.join(source, 'src/vendor', notice.file)), notice.file + ' complete source license preserved');
+    assert.equal(crypto.createHash('sha256').update(notice.notice).digest('hex'), notice.noticeSha256, notice.file + ' complete attribution notice hash');
   }
-  const storage = JSON.parse(fs.readFileSync(path.join(source, 'storage-map.json'), 'utf8'));
   for (const keys of Object.values(storage)) for (const key of keys) assert.ok(key.startsWith('voltguard:'));
+  assert.ok(storage['direk-tepe-kuvveti'].includes('voltguard:direk-tepe-kuvveti:sonayEnerji_agDirekTepeKuvveti_v1'));
+  assert.ok(storage['topraklama-simulatoru'].includes('voltguard:topraklama-simulatoru:sonay-topraklama-sim-v1'));
+  assert.ok(storage['cbs-veri-girisi'].includes('voltguard:cbs-veri-girisi:sonay_3sahis_v1'));
 });
 
 test('Offline ZIP opens every local tool and information link as an explicit file', () => {

@@ -12,3 +12,8 @@
 
 /* Official VoltGuard navy/amber; amber controls use dark text for normal-size contrast. */
 .header-action,.primary{background:#f59e0b;color:#0a1628;border-color:#f59e0b}.header-action:hover,.primary:hover{background:#fcd34d;border-color:#fcd34d}.document-page .primary{color:#0a1628}.hero h1{color:#0a1628}.brand-name{color:#0a1628}.site-footer .brand-name{color:#fff}.site-footer .brand-name em{color:#fcd34d}.instrument{background:#0d1f3c;border-color:#1e3a5f}.instrument-head b{color:#b7f3d7}.instrument-legend span:before{background:#3b82f6}.card-icon{background:#fffbeb;color:#b45309}.filter.active{background:#0d1f3c;border-color:#0d1f3c;color:#fff}.step-number{color:#b45309;border-color:#fcd34d}.site-footer{background:#0a1628;color:#c1cddd}.footer-links a:hover{text-decoration:underline;text-underline-offset:4px}
+
+/* Acknowledgement of the external author of the original calculator set. */
+.vg-source-credit{max-width:1120px;margin:2rem auto;padding:1.2rem 1.4rem;border:1px solid #d8e9ef;border-left:4px solid #f59e0b;border-radius:12px;background:#fffbeb;color:#18394a;font:400 14px/1.7 var(--vg-host-body,Arial,sans-serif)}
+.vg-source-credit strong{font-weight:700;color:#0a1628}.vg-source-credit a{color:#b45309;text-decoration:underline;text-underline-offset:3px}.vg-source-credit p{margin:.35rem 0!important}.vg-source-credit small{display:block;font-size:12px;color:#526877}.vg-source-credit--compact{margin:0;padding:.8rem 1rem;text-align:left;font-size:13px}.vg-source-credit--compact small{font-size:11px}
+@media(max-width:600px){.vg-source-credit{margin:1.4rem 1rem;padding:1rem}.vg-source-credit--compact{margin:0}}
