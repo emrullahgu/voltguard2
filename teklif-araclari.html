@@ -261,9 +261,11 @@
     .tool-result__list i { color: #f59e0b; width: 1.2rem; }
     .tool-request { background: #f59e0b; color: #0a1628; border: 0; border-radius: 5px; cursor: pointer; padding: .85rem 1rem; font: 800 .95rem "Outfit", sans-serif; }
     .tool-download { background: transparent; color: #fff; border: 1px solid #94a3b8; border-radius: 5px; cursor: pointer; padding: .8rem 1rem; font: 700 .9rem "Outfit", sans-serif; }
-    .tool-download:hover, .tool-download:focus-visible { border-color: #f59e0b; color: #fcd34d; }
+    .tool-download:not(:disabled):hover, .tool-download:not(:disabled):focus-visible { border-color: #f59e0b; color: #fcd34d; }
     .tool-share { background: transparent; color: #dbeafe; border: 0; cursor: pointer; font: 600 .85rem "Outfit", sans-serif; padding: .2rem 0; text-align: left; }
-    .tool-share:hover, .tool-share:focus-visible { color: #fcd34d; text-decoration: underline; }
+    .tool-share:not(:disabled):hover, .tool-share:not(:disabled):focus-visible { color: #fcd34d; text-decoration: underline; }
+    .tool-request:disabled, .tool-download:disabled, .tool-share:disabled { opacity: .45; cursor: not-allowed; }
+    .tool-result__list[hidden] { display: none; }
     .tool-share-status { color: #bbf7d0; font-size: .8rem; min-height: 1.2em; }
     .tool-note { margin-top: 1.25rem; background: #eff6ff; border-left: 3px solid #3b82f6; color: #334155; padding: .85rem 1rem; font-size: .86rem; line-height: 1.6; }
     .tool-note a { color: #1d4ed8; font-weight: 600; text-decoration: underline; }
