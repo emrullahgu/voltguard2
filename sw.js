@@ -28,7 +28,7 @@
    ===================================================== */
 'use strict';
 
-const VERSION = '2026-10-13.7';
+const VERSION = '2026-10-14.1';
 const PREFIX = 'vgsw-';
 const CACHE_STATIC = PREFIX + 'static-' + VERSION;
 const CACHE_PAGES = PREFIX + 'pages-' + VERSION;

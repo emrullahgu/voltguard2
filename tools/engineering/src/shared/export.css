@@ -19,5 +19,6 @@
 #vg-export-status[data-error="true"]{color:#a32020}
 body{padding-bottom:74px}
 .vg-report-frame{position:fixed;top:0;left:-30000px;border:0;pointer-events:none;opacity:0;z-index:-1}
+.vg-print-origin{display:none}
 @media(max-width:600px){#vg-export{bottom:10px;right:10px;max-width:calc(100vw - 20px)}#vg-export summary{padding:10px 13px;font-size:12px}#vg-export .vg-export-actions{max-width:320px}#vg-export .vg-export-note{max-width:290px}#vg-export-status{max-width:300px}}
-@media print{#vg-export,.vg-report-frame,[data-vg-no-print]{display:none!important}body{padding-bottom:0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media print{#vg-export,.vg-report-frame,[data-vg-no-print]{display:none!important}body{padding-bottom:0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}html body>#vg-print-origin{display:block!important;visibility:visible!important;position:fixed!important;left:8mm!important;right:8mm!important;bottom:1mm!important;z-index:2147483000!important;margin:0!important;padding:0!important;border:0!important;background:#fff!important;color:#526277!important;font:8px/1.25 Arial,"Segoe UI",sans-serif!important;white-space:normal!important;overflow-wrap:anywhere!important;text-align:left!important;transform:none!important}html body>#vg-print-origin>span{display:block!important}}

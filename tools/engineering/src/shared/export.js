@@ -9,6 +9,32 @@
   let busy = false;
   const tool = () => document.body.dataset.vgTool || decodeURIComponent(location.pathname.split('/').filter(Boolean).pop() || 'voltguard');
   const title = () => document.body.dataset.vgTitle || document.title.replace(/\s*[|·]\s*VoltGuard.*$/i, '') || 'VoltGuard raporu';
+  function originalAttribution() {
+    const author = document.body.dataset.vgOriginalAuthor;
+    if (!author) return null;
+    const source = document.body.dataset.vgOriginalSource;
+    return {
+      author,
+      lines: [`Özgün hesap araçları: ${author}${source ? ` (${source})` : ''}.`, 'Açık kaynak katkıları için teşekkür ederiz. Site uyarlaması: VoltGuard.']
+    };
+  }
+  function originNotice(doc, className) {
+    const origin = originalAttribution();
+    if (!origin) return null;
+    const notice = doc.createElement('div'); notice.className = className;
+    origin.lines.forEach(line => { const span = doc.createElement('span'); span.textContent = line; notice.appendChild(span); });
+    return notice;
+  }
+  function ensurePrintAttribution() {
+    const existing = document.getElementById('vg-print-origin');
+    if (existing) existing.remove();
+    const notice = originNotice(document, 'vg-print-origin');
+    if (notice) { notice.id = 'vg-print-origin'; document.body.appendChild(notice); }
+  }
+  function pdfProperties() {
+    const origin = originalAttribution();
+    return { title: title(), subject: 'VoltGuard hesap raporu', author: origin ? `${origin.author}; VoltGuard uyarlaması` : 'VoltGuard', creator: 'VoltGuard rapor katmanı', keywords: 'elektrik, mühendislik, hesap, rapor' };
+  }
   const jsonText = value => JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
   const cleanName = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ı/g, 'i').replace(/İ/g, 'I').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 100) || 'voltguard';
   const filename = ext => `voltguard-${cleanName(title())}-${new Date().toLocaleDateString('sv-SE')}.${ext}`;
@@ -75,7 +101,10 @@
     storageKeys().forEach(key => { try { const value = localStorage.getItem(key); if (value !== null) storage[key] = value; } catch (_) {} });
     const adapter = nativeAdapter();
     const state = adapter && adapter.getState ? adapter.getState() : null;
-    return { format: 'voltguard-project', version: VERSION, tool: tool(), title: title(), exportedAt: new Date().toISOString(), fields: snapshotFields(), storage, nativeState: state };
+    const project = { format: 'voltguard-project', version: VERSION, tool: tool(), title: title(), exportedAt: new Date().toISOString(), fields: snapshotFields(), storage, nativeState: state };
+    const origin = originalAttribution();
+    if (origin) project.attribution = { originalAuthor: origin.author, originalSource: document.body.dataset.vgOriginalSource || '', acknowledgment: origin.lines.join(' '), adaptation: 'VoltGuard' };
+    return project;
   }
   function validateProject(project) {
     if (!project || project.format !== 'voltguard-project' || project.version !== VERSION || project.tool !== tool()) throw new Error('Bu proje dosyası bu araca ait değil veya desteklenmeyen bir sürüm kullanıyor.');
@@ -171,11 +200,13 @@
     if (document.documentElement.dataset.vgInvalid === 'true') throw new Error('Hesap doğrulanamadı. Rapordan önce girdileri düzeltip yeniden hesaplayın.');
     const host = ['printReport', 'printArea', 'printPage', 'a4Sar'].map(id => document.getElementById(id)).find(el => el && (el.textContent.trim() || el.querySelector('svg,img,canvas,table')));
     if (!host && ['printReport', 'printArea', 'printPage'].some(id => document.getElementById(id))) throw new Error('Rapor için yeterli veri yok. Hesabı tamamlayıp tekrar deneyin.');
+    ensurePrintAttribution();
     return host;
   }
   const reportCSS = `html,body{margin:0!important;padding:0!important;background:#fff!important;color:#173247!important;min-width:0!important;min-height:0!important;overflow:visible!important;zoom:1!important}body{font-family:Arial,"Segoe UI",sans-serif!important}#vg-export,.vg-tool-bar,.vg-module-header,[data-vg-no-print],button,input[type=file],input[type=button],input[type=submit],.toast,.modal{display:none!important}.vg-report-host{display:block!important;visibility:visible!important;position:static!important;max-width:100%!important;min-width:0!important;width:100%!important;height:auto!important;overflow:visible!important;margin:0!important;padding:0!important}.vg-report-host>div{max-width:100%}img,svg,canvas{max-width:100%}table{border-collapse:collapse}thead{display:table-header-group}.vg-report-banner{display:flex!important;justify-content:space-between;gap:14px;border-bottom:2px solid #1383b1;padding:0 0 9px!important;margin:0 0 15px!important;color:#18394a!important;font:11px/1.4 Arial,sans-serif!important}.vg-report-banner strong{font-size:18px;color:#087fae;flex-shrink:0}.vg-report-banner>span{min-width:0;text-align:right;overflow-wrap:anywhere;white-space:normal!important}.vg-field-value{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;color:inherit;display:inline-block;padding:2px 3px;margin:0 3px;min-height:1em}a{color:inherit;text-decoration:none}.vg-report-host .pbrk,.vg-report-host .pp,.vg-report-host .rp{page-break-before:auto!important;break-before:auto!important}.vg-report-host .pp+.pp,.vg-report-host .rp+.rp{margin-top:24px!important}`;
   const brandedReportCSS = reportCSS.replace('border-bottom:2px solid #1383b1', 'border-bottom:2px solid #f59e0b')
-    .replace('font-size:18px;color:#087fae', 'font-size:18px;color:#0a1628');
+    .replace('font-size:18px;color:#087fae', 'font-size:18px;color:#0a1628')
+    + '\n.vg-report-credit{display:block!important;position:static!important;visibility:visible!important;max-width:100%!important;margin:0 0 12px!important;padding:6px 8px!important;border:1px solid #d8e0e7!important;border-radius:4px;background:#fff!important;color:#526277!important;font:10px/1.45 Arial,"Segoe UI",sans-serif!important;white-space:normal!important;overflow-wrap:anywhere!important;break-inside:avoid!important}.vg-report-credit>span{display:block!important}';
   async function reportFrame(host) {
     const frame = document.createElement('iframe'); frame.className = 'vg-report-frame'; frame.setAttribute('aria-hidden', 'true'); frame.title = 'PDF rapor hazırlama'; frame.width = '718'; frame.height = '900';
     // Scripts never run in the report copy.
@@ -198,10 +229,12 @@
     if (document.getElementById('vg-tool-workspace') && section.id !== 'vg-tool-workspace' && !section.querySelector('#vg-tool-workspace')) {
       const workspace = doc.createElement('div'); workspace.id = 'vg-tool-workspace'; workspace.appendChild(section); doc.body.appendChild(workspace);
     } else doc.body.appendChild(section);
-    section.querySelectorAll('#vg-export,#vg-top,#vg-origin,.vg-report-frame,.vg-tool-bar,.vg-module-header,[data-vg-no-print]').forEach(el => el.remove());
+    section.querySelectorAll('#vg-export,#vg-top,#vg-origin,#vg-print-origin,.vg-report-credit,.vg-report-frame,.vg-tool-bar,.vg-module-header,[data-vg-no-print]').forEach(el => el.remove());
     const banner = doc.createElement('div'); banner.className = 'vg-report-banner';
     const brand = doc.createElement('strong'); brand.textContent = 'VoltGuard';
     const info = doc.createElement('span'); info.textContent = `${title()} · ${new Date().toLocaleString('tr-TR')}`; banner.append(brand, info); section.prepend(banner);
+    const origin = originNotice(doc, 'vg-report-credit');
+    if (origin) banner.after(origin);
     // Print copies display the current values, never browser-dependent form widgets.
     fields(section).forEach(el => {
       if (el.type === 'range') { el.remove(); return; }
@@ -306,15 +339,32 @@
         if (!schematic || !schematic.naturalWidth || !schematic.naturalHeight) throw new Error('Tek hat şeması oluşturulamadı.');
         // Draw the native browser-decoded schematic directly. Its print-only
         // container rules are unsuitable for html2canvas's nested iframe clone.
-        const scale = 3, width = schematic.naturalWidth, headerHeight = 52;
+        const scale = 3, width = schematic.naturalWidth, origin = originalAttribution();
+        const creditLines = [];
+        // Measure Turkish text on the same canvas font used for drawing. This
+        // keeps long credits inside the schematic's image on narrow pages.
+        if (origin) {
+          const measure = document.createElement('canvas').getContext('2d'); measure.font = '11px Arial';
+          origin.lines.forEach(line => {
+            let row = '';
+            line.split(/\s+/).forEach(word => {
+              const candidate = row ? `${row} ${word}` : word;
+              if (row && measure.measureText(candidate).width > width - 16) { creditLines.push(row); row = word; }
+              else row = candidate;
+            });
+            if (row) creditLines.push(row);
+          });
+        }
+        const headerHeight = 52 + (creditLines.length ? creditLines.length * 15 + 8 : 0);
         const canvas = document.createElement('canvas'); canvas.width = Math.ceil(width * scale); canvas.height = Math.ceil((schematic.naturalHeight + headerHeight) * scale);
         const ctx = canvas.getContext('2d'); ctx.scale(scale, scale); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, width, canvas.height / scale);
         ctx.fillStyle = '#087fae'; ctx.font = 'bold 18px Arial'; ctx.fillText('VoltGuard', 0, 22);
         ctx.fillStyle = '#18394a'; ctx.font = '11px Arial'; ctx.textAlign = 'right'; ctx.fillText(`${title()} · ${new Date().toLocaleString('tr-TR')}`, width, 22); ctx.textAlign = 'left';
         ctx.strokeStyle = '#1383b1'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, 36); ctx.lineTo(width, 36); ctx.stroke();
+        ctx.fillStyle = '#526277'; ctx.font = '11px Arial'; creditLines.forEach((line, index) => ctx.fillText(line, 0, 53 + index * 15));
         ctx.drawImage(schematic, 0, headerHeight, width, schematic.naturalHeight);
         const pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
-        pdf.setProperties({ title: title(), subject: 'VoltGuard hesap raporu', author: 'VoltGuard', creator: 'VoltGuard' });
+        pdf.setProperties(pdfProperties());
         const imageW = Math.min(190, 270 * canvas.width / canvas.height), imageH = canvas.height * imageW / canvas.width;
         pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10 + (190 - imageW) / 2, 10, imageW, imageH, undefined, 'FAST');
         pdf.setFontSize(8); pdf.setTextColor(82, 104, 118); pdf.text('VoltGuard', 10, 290); pdf.text('1 / 1', 200, 290, { align: 'right' });
@@ -371,7 +421,7 @@
         }
       }
       const pdf = new window.jspdf.jsPDF({ orientation: landscape ? 'landscape' : 'portrait', unit: 'mm', format: 'a4', compress: true });
-      pdf.setProperties({ title: title(), subject: 'VoltGuard hesap raporu', author: 'VoltGuard', creator: 'VoltGuard', keywords: 'elektrik, mühendislik, hesap, rapor' });
+      pdf.setProperties(pdfProperties());
       for (let i = 0; i < slices.length; i++) {
         status(`PDF hazırlanıyor · ${i + 1}/${slices.length} sayfa`);
         const slice = slices[i];
@@ -444,7 +494,7 @@
     const header = clone.querySelector('#vgHeader');
     if (header) { header.classList.remove('is-open', 'is-scrolled'); header.querySelectorAll('.is-open').forEach(el => el.classList.remove('is-open')); }
     clone.querySelectorAll('#vgHeader [aria-expanded]').forEach(el => el.setAttribute('aria-expanded', 'false'));
-    clone.querySelectorAll('#vg-export,.vg-report-frame,base,link[rel=manifest],link[rel=canonical],link[rel=preload],link[rel=prefetch],script[type=speculationrules],script[data-vg-online-only],script[data-vg-vendor],#vg-project-data,#vg-project-boot').forEach(el => el.remove());
+    clone.querySelectorAll('#vg-export,#vg-print-origin,.vg-report-frame,base,link[rel=manifest],link[rel=canonical],link[rel=preload],link[rel=prefetch],script[type=speculationrules],script[data-vg-online-only],script[data-vg-vendor],#vg-project-data,#vg-project-boot').forEach(el => el.remove());
     // No open menu, download-progress message, stale loading state or live canvas is saved.
     clone.querySelectorAll('a[href]').forEach(a => { const href = a.getAttribute('href'); if (href && !/^(#|data:|blob:|mailto:|tel:|javascript:)/i.test(href)) a.setAttribute('href', new URL(href, location.href).href); });
     for (const link of Array.from(clone.querySelectorAll('link[rel=stylesheet]'))) {
@@ -501,6 +551,9 @@
   }
   function mount() {
     if (document.getElementById('vg-export')) return;
+    // Native report buttons and Ctrl+P retain the same source acknowledgment.
+    window.addEventListener('beforeprint', ensurePrintAttribution);
+    window.addEventListener('afterprint', () => { const notice = document.getElementById('vg-print-origin'); if (notice) notice.remove(); });
     const bar = document.createElement('aside'); bar.id = 'vg-export'; bar.setAttribute('aria-label', 'Rapor ve proje dosyaları'); bar.dataset.html2canvasIgnore = 'true';
     bar.innerHTML = '<details><summary>Rapor & dosya</summary><div class="vg-export-actions"><button class="vg-primary" type="button" data-action="pdf">PDF indir</button><button type="button" data-action="print">A4 yazdır</button><button type="button" data-action="json">Proje JSON indir</button><button type="button" data-action="import">Proje aç</button><button type="button" data-action="html">Çevrimdışı HTML indir</button><button type="button" data-action="clear">Yerel kayıtları temizle</button></div><p class="vg-export-note">Dosyalar bu cihazda hazırlanır. HTML kopyası araç ve proje girdilerini birlikte içerir.</p><p id="vg-export-status" role="status" aria-live="polite"></p><input type="file" accept=".json,application/json" hidden aria-label="VoltGuard proje dosyası"></details>';
     const input = bar.querySelector('input');
