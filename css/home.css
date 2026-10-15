@@ -902,7 +902,8 @@ select.form__input { width: 100%; min-width: 0; max-width: 100%; text-overflow: 
 html { scroll-padding-bottom: 24px; }
 /* Tanıtım videosu yalnızca ziyaretçi oynattığında yüklenir. */
 .vgh-film { background: #0a1628; color: #e2e8f0; }
-.vgh-film__grid { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
+.vgh-film__grid { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; scroll-margin-top: 100px; }
+.vgh-film__grid + .vgh-film__grid { margin-top: clamp(3rem, 6vw, 5rem); padding-top: clamp(3rem, 6vw, 5rem); border-top: 1px solid #26364b; }
 .vgh-film__grid > * { min-width: 0; }
 .vgh-film .section__badge { color: #fbbf24; }
 .vgh-film .section__title { color: #fff; font-size: clamp(1.7rem, 3vw, 2.5rem); }

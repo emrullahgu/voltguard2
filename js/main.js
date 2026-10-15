@@ -1389,6 +1389,18 @@
     onMotionChange(syncPlayback);
   })();
 
+  /* Tanıtım filmlerinin sesleri aynı anda çalmasın. */
+  (function () {
+    var films = qsAll('.vgh-film__player video');
+    films.forEach(function (film) {
+      film.addEventListener('play', function () {
+        films.forEach(function (other) {
+          if (other !== film && !other.paused) other.pause();
+        });
+      });
+    });
+  })();
+
   /* ------------------------------------------------
      19b. PROJELER — telefonda yatay kaydırılan bölge: klavye odağı + anlaşılır ad (≤768px, css/style.css)
   ------------------------------------------------- */

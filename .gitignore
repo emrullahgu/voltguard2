@@ -13,6 +13,7 @@
 /.qa/
 # User supplied footage and full quality local exports; curated web film is public/video.
 /Tanıtım Videosu/
+/VoltGuardKimdir.mp4
 /.netlify-publish/
 __pycache__/
 node_modules/

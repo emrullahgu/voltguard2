@@ -76,7 +76,7 @@
   <link rel="manifest" href="manifest.json">
   <!-- Sayfalar arası önden yükleme vg:head içindeki speculation rules ile yapılır (eski <link rel=prefetch> etiketleri kaldırıldı). -->
   <link rel="stylesheet" href="css/style.css?v=20261012d">
-  <link rel="stylesheet" href="css/home.css?v=20261015a">
+  <link rel="stylesheet" href="css/home.css?v=20261015b">
   <!-- Ön yükleyici oturum başına yalnızca bir kez gösterilir (css/home.css: .vg-pl-skip). -->
   <script>try{if(sessionStorage.getItem('vg_pl'))document.documentElement.classList.add('vg-pl-skip');else sessionStorage.setItem('vg_pl','1')}catch(e){}</script>
   <script type="application/ld+json">
@@ -1303,15 +1303,34 @@
     </div>
   </section>
 
-  <section class="vgh-film section" id="tanitim-videosu" aria-labelledby="filmTitle">
-    <div class="container vgh-film__grid">
+  <section class="vgh-film section" id="tanitim-videosu" aria-label="VoltGuard tanıtım videoları">
+    <article class="container vgh-film__grid" id="voltguard-kimdir" aria-labelledby="companyFilmTitle">
+      <div class="vgh-film__copy">
+        <span class="section__badge">Bizi Tanıyın</span>
+        <h2 class="section__title" id="companyFilmTitle">VoltGuard Kimdir?</h2>
+        <p>Elektrik, otomasyon, elektronik, mekanik ve enerji sistemlerinde çalışıyoruz. İzmir Ege Teknopark'taki mühendislik birikimimizi saha deneyimiyle birleştiriyor; keşif ve projelendirmeden uygulama, ölçüm ve teknik takibe kadar yanınızda oluyoruz.</p>
+        <p class="vgh-film__meta">9 dakika 46 saniye · Türkçe şirket tanıtımı</p>
+        <div class="vgh-film__actions">
+          <a href="/public/video/voltguard-kimdir-20261015.mp4" class="btn btn--accent btn--md" download="VoltGuard-Kimdir.mp4"><i class="fas fa-download" aria-hidden="true"></i> Şirket tanıtımını indir</a>
+          <a href="#calisanlarimizin-duygulari" class="vgh-film__link">Ekibimizin sesinden dinleyin <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="vgh-film__player">
+        <video controls playsinline preload="none" width="1280" height="720" poster="/public/video/voltguard-kimdir-kapak-20261015.webp" aria-label="VoltGuard Kimdir? — Şirket tanıtımı" aria-describedby="companyFilmCaption">
+          <source src="/public/video/voltguard-kimdir-20261015.mp4" type="video/mp4">
+          Tarayıcınız video oynatmayı desteklemiyorsa <a href="/public/video/voltguard-kimdir-20261015.mp4">VoltGuard Kimdir? videosunu açın</a>.
+        </video>
+        <p id="companyFilmCaption">Hizmetlerimizi, mühendislik yaklaşımımızı ve sahadaki çalışmalarımızı tanıyın. Ses ve tam ekran seçeneklerini oynatıcıdan ayarlayabilirsiniz.</p>
+      </div>
+    </article>
+    <article class="container vgh-film__grid" id="calisanlarimizin-duygulari" aria-labelledby="filmTitle">
       <div class="vgh-film__copy">
         <span class="section__badge">Ekibimizin Sesinden</span>
         <h2 class="section__title" id="filmTitle">Çalışanlarımızın<br>Duyguları.</h2>
         <p>Ekibimizin sahadaki anlarını ve kendi anlatımlarını bir araya getirdik. VoltGuard'da birlikte çalışmayı, bu işi her gün yapan arkadaşlarımızdan dinleyin.</p>
         <p class="vgh-film__meta">34 saniye · Çalışanlarımızın kendi sesleri</p>
         <div class="vgh-film__actions">
-          <a href="/public/video/voltguard-calisanlarimizin-duygulari-20261015.mp4" class="btn btn--accent btn--md" download="VoltGuard-Calisanlarimizin-Duygulari.mp4"><i class="fas fa-download" aria-hidden="true"></i> Tanıtım videosunu indir</a>
+          <a href="/public/video/voltguard-calisanlarimizin-duygulari-20261015.mp4" class="btn btn--accent btn--md" download="VoltGuard-Calisanlarimizin-Duygulari.mp4"><i class="fas fa-download" aria-hidden="true"></i> Ekip filmini indir</a>
           <a href="/ekibimiz.html" class="vgh-film__link">Ekibimizi yakından tanıyın <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </div>
       </div>
@@ -1322,7 +1341,7 @@
         </video>
         <p id="filmCaption">Videoyu oynatın; ses ve tam ekran seçeneklerini oynatıcıdan ayarlayabilirsiniz.</p>
       </div>
-    </div>
+    </article>
   </section>
 
   <!-- ==================== HİZMETLERİMİZ ==================== -->
@@ -2207,7 +2226,7 @@
       document.head.appendChild(script);
     }());
   </script>
-  <script src="js/main.js?v=20261012d" defer></script>
+  <script src="js/main.js?v=20261015a" defer></script>
   <noscript>
     <style>
       .preloader { display: none !important; }
