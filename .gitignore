@@ -11,6 +11,8 @@
 /tools/engineering/dist/
 /tools/engineering/storage-map.json
 /.qa/
+# User supplied footage and full quality local exports; curated web film is public/video.
+/Tanıtım Videosu/
 /.netlify-publish/
 __pycache__/
 node_modules/

@@ -68,7 +68,7 @@ const html=`<!DOCTYPE html>
   <meta property="og:locale" content="tr_TR">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/public/favicon-32.png" type="image/png">
-  <link rel="stylesheet" href="/css/team.css?v=20261015a">
+  <link rel="stylesheet" href="/css/team.css?v=20261015b">
   <script src="/js/voltguard-auth.js?v=20261013a" defer></script>
   <script src="/js/team.js?v=20261013b" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"VoltGuard Ekibimiz","url":"https://voltguard.com.tr/ekibimiz.html","inLanguage":"tr-TR","isPartOf":{"@type":"WebSite","name":"VoltGuard","url":"https://voltguard.com.tr/"}}</script>
@@ -89,7 +89,7 @@ const html=`<!DOCTYPE html>
         <div class="team-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
         <div class="team-hero__spark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.1h-6.3z"/></svg></div>
         <button class="team-hero-person team-hero-person--lead" type="button" data-profile="${leader.id}" aria-label="${escape(leader.name)} kişi kartını aç">${photo(leader,'',true)}<span><strong>${escape(leader.name)}</strong><small>Kurucu / Yönetici</small></span></button>
-        <button class="team-hero-person team-hero-person--foreman" type="button" data-profile="mesut-arslan" aria-label="Mesut Arslan kişi kartını aç"><span class="team-hero-person__portrait">${photo(byId['mesut-arslan'])}</span><span class="team-hero-person__name"><strong>${escape(byId['mesut-arslan'].name)}</strong><small>${escape(byId['mesut-arslan'].role)}</small></span></button>
+        <button class="team-hero-person team-hero-person--foreman" type="button" data-profile="mesut-arslan" aria-label="Mesut Arslan — Ustabaşı; kişi kartını aç"><span class="team-hero-person__portrait">${photo(byId['mesut-arslan'])}</span></button>
         <button class="team-hero-person team-hero-person--one" type="button" data-profile="gorkem-tanir" aria-label="Görkem Tanır kişi kartını aç">${photo(byId['gorkem-tanir'])}</button>
         <button class="team-hero-person team-hero-person--two" type="button" data-profile="ibrahim-ince" aria-label="İbrahim İnce kişi kartını aç">${photo(byId['ibrahim-ince'])}</button>
         <button class="team-hero-person team-hero-person--three" type="button" data-profile="sedat-sasmaz" aria-label="Sedat Şaşmaz kişi kartını aç">${photo(byId['sedat-sasmaz'])}</button>

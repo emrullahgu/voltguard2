@@ -900,7 +900,7 @@ select.form__input { width: 100%; min-width: 0; max-width: 100%; text-overflow: 
 
 /* Klavye odağıyla görünüme getirilen öğe ekranın alt kenarına yapışmasın (odak halkası kesilmesin) */
 html { scroll-padding-bottom: 24px; }
-/* Kurumsal video yalnızca ziyaretçi oynattığında yüklenir. */
+/* Tanıtım videosu yalnızca ziyaretçi oynattığında yüklenir. */
 .vgh-film { background: #0a1628; color: #e2e8f0; }
 .vgh-film__grid { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
 .vgh-film__grid > * { min-width: 0; }
@@ -908,6 +908,9 @@ html { scroll-padding-bottom: 24px; }
 .vgh-film .section__title { color: #fff; font-size: clamp(1.7rem, 3vw, 2.5rem); }
 .vgh-film__copy p { color: #cbd5e1; line-height: 1.7; margin: 1rem 0; }
 .vgh-film__copy .vgh-film__meta { font-size: .87rem; color: #94a3b8; }
+.vgh-film__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.1rem 1.5rem; }
+.vgh-film__actions > * { max-width: 100%; }
+.vgh-film__actions .btn { white-space: normal; text-align: center; }
 .vgh-film__link { display: inline-flex; align-items: center; gap: .7rem; color: #fbbf24; text-decoration: underline; text-underline-offset: 4px; }
 .vgh-film__link:focus-visible { outline: 2px solid #fbbf24; outline-offset: 5px; }
 .vgh-film__player video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #050d18; border: 1px solid #334155; border-radius: 16px; }

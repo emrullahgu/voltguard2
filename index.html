@@ -76,7 +76,7 @@
   <link rel="manifest" href="manifest.json">
   <!-- Sayfalar arası önden yükleme vg:head içindeki speculation rules ile yapılır (eski <link rel=prefetch> etiketleri kaldırıldı). -->
   <link rel="stylesheet" href="css/style.css?v=20261012d">
-  <link rel="stylesheet" href="css/home.css?v=20261014a">
+  <link rel="stylesheet" href="css/home.css?v=20261015a">
   <!-- Ön yükleyici oturum başına yalnızca bir kez gösterilir (css/home.css: .vg-pl-skip). -->
   <script>try{if(sessionStorage.getItem('vg_pl'))document.documentElement.classList.add('vg-pl-skip');else sessionStorage.setItem('vg_pl','1')}catch(e){}</script>
   <script type="application/ld+json">
@@ -1306,19 +1306,21 @@
   <section class="vgh-film section" id="tanitim-videosu" aria-labelledby="filmTitle">
     <div class="container vgh-film__grid">
       <div class="vgh-film__copy">
-        <span class="section__badge">VoltGuard'ı Tanıyın</span>
-        <h2 class="section__title" id="filmTitle">Ekibimiz, sahadaki işimiz<br>ve mühendislik yaklaşımımız.</h2>
-        <p>Elektrik, otomasyon, enerji ve bakım çalışmalarımızı; ekibimizi, referanslarımızı ve dijital araçlarımızı bu tanıtımda keşfedin.</p>
-        <p class="vgh-film__meta">9 dakika 46 saniye · Türkçe seslendirme ve altyazı</p>
-        <a href="/ekibimiz.html" class="vgh-film__link">Ekibimizi yakından tanıyın <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        <span class="section__badge">Ekibimizin Sesinden</span>
+        <h2 class="section__title" id="filmTitle">Çalışanlarımızın<br>Duyguları.</h2>
+        <p>Ekibimizin sahadaki anlarını ve kendi anlatımlarını bir araya getirdik. VoltGuard'da birlikte çalışmayı, bu işi her gün yapan arkadaşlarımızdan dinleyin.</p>
+        <p class="vgh-film__meta">34 saniye · Çalışanlarımızın kendi sesleri</p>
+        <div class="vgh-film__actions">
+          <a href="/public/video/voltguard-calisanlarimizin-duygulari-20261015.mp4" class="btn btn--accent btn--md" download="VoltGuard-Calisanlarimizin-Duygulari.mp4"><i class="fas fa-download" aria-hidden="true"></i> Tanıtım videosunu indir</a>
+          <a href="/ekibimiz.html" class="vgh-film__link">Ekibimizi yakından tanıyın <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
       </div>
       <div class="vgh-film__player">
-        <video controls playsinline preload="none" width="1280" height="720" poster="/public/video/voltguard-tanitim-kapak-20261014.webp" aria-label="VoltGuard kurumsal tanıtım videosu" aria-describedby="filmCaption">
-          <source src="/public/video/voltguard-kurumsal-tanitim-20261014.mp4" type="video/mp4">
-          <track kind="captions" src="/public/video/voltguard-turkce-20261014.vtt" srclang="tr" label="Türkçe" default>
-          Tarayıcınız video oynatmayı desteklemiyorsa <a href="/public/video/voltguard-kurumsal-tanitim-20261014.mp4">tanıtım videosunu açın</a>.
+        <video controls playsinline preload="none" width="1280" height="720" poster="/public/video/voltguard-calisanlarimizin-duygulari-kapak-20261015.webp" aria-label="VoltGuard — Çalışanlarımızın Duyguları" aria-describedby="filmCaption">
+          <source src="/public/video/voltguard-calisanlarimizin-duygulari-20261015.mp4" type="video/mp4">
+          Tarayıcınız video oynatmayı desteklemiyorsa <a href="/public/video/voltguard-calisanlarimizin-duygulari-20261015.mp4">Çalışanlarımızın Duyguları videosunu açın</a>.
         </video>
-        <p id="filmCaption">Videoyu oynatın; ses, altyazı ve tam ekran seçeneklerini oynatıcıdan ayarlayabilirsiniz.</p>
+        <p id="filmCaption">Videoyu oynatın; ses ve tam ekran seçeneklerini oynatıcıdan ayarlayabilirsiniz.</p>
       </div>
     </div>
   </section>
