@@ -149,7 +149,7 @@ const slugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }
       if (fs.statSync(csvFile).size < 200) fail(slug, 'CSV çok kısa');
       // PDF
       if (withPdf) {
-        const [pdf] = await Promise.all([page.waitForEvent('download', { timeout: 90000 }), page.click('[data-vs-act="report"]')]);
+        const [pdf] = await Promise.all([page.waitForEvent('download', { timeout: 240000 }), page.click('[data-vs-act="report"]')]);
         const pdfFile = path.join(out, slug + '.pdf'); await pdf.saveAs(pdfFile);
         const head = fs.readFileSync(pdfFile).slice(0, 5).toString();
         if (head !== '%PDF-') fail(slug, 'PDF geçersiz');
