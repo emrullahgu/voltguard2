@@ -8,9 +8,9 @@
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261023b">
+  <link rel="stylesheet" href="/css/fonts.css?v=2912feacba52">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=875de322c835">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=eff46729ea12">
   <script type="speculationrules">
   {
     "prerender": [
@@ -33,13 +33,13 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <script src="/js/vg-shell.js?v=f4956253830f" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <title>Çalışan Girişi | VoltGuard</title><meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="description" content="VoltGuard çalışanları için davetle açılan özel çalışma alanı.">
-  <link rel="icon" href="/public/favicon-32.png"><link rel="stylesheet" href="/css/staff.css?v=20261013d">
-  <script src="/js/staff.js?v=20261013c" defer></script>
+  <link rel="icon" href="/public/favicon-32.png"><link rel="stylesheet" href="/css/staff.css?v=47c2766c2697">
+  <script src="/js/staff.js?v=79edd2dd7201" defer></script>
 </head><body class="staff-page" data-staff-page="login">
   <!--vg:header-->
   <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
@@ -96,7 +96,7 @@
     <section class="staff-card" aria-labelledby="staff-login-title"><p class="staff-eyebrow">Çalışan Girişi</p><h2 id="staff-login-title">Hesabınızla devam edin</h2>
       <p class="staff-muted">Bu giriş, ücretsiz site üyeliğinden ayrıdır.</p>
       <p id="staff-status" class="staff-status" role="status" aria-live="polite"></p>
-      <form id="staff-login-form"><label>E-posta<input name="email" type="email" autocomplete="username" maxlength="254" required></label><label>Şifre<input name="password" type="password" autocomplete="current-password" maxlength="64" required></label><button class="staff-primary" type="submit">Çalışan hesabıyla giriş yap</button></form>
+      <form id="staff-login-form" method="post" action="#" novalidate><label>E-posta<input name="email" type="email" autocomplete="username" maxlength="254" required></label><label>Şifre<input name="password" type="password" autocomplete="current-password" maxlength="64" required></label><button class="staff-primary" type="submit" disabled data-vg-wait>Çalışan hesabıyla giriş yap</button></form>
       <section id="staff-factor" hidden aria-labelledby="staff-factor-title"><h2 id="staff-factor-title">İkinci doğrulama</h2><p id="staff-code-help" class="staff-code-help">Bu kod e-posta veya SMS ile gönderilmez. Telefonunuzdaki doğrulayıcı uygulamada görünür.</p>
       <div id="staff-enroll" hidden>
         <ol class="staff-setup-steps">
@@ -107,7 +107,7 @@
         <label>Uygulamaya eklenecek kurulum anahtarı<input id="staff-secret" readonly autocomplete="off" spellcheck="false"></label>
         <button type="button" class="staff-secondary" id="staff-copy-secret">Kurulum anahtarını kopyala</button>
         <p class="staff-muted">Anahtarı ekledikten sonra uygulama her 30 saniyede yeni bir kod üretir. Kodun süresi dolduysa yeni kodu kullanın.</p>
-      </div><form id="staff-factor-form"><label>Uygulamadaki 6 haneli kod<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" aria-describedby="staff-code-help" required></label><button class="staff-primary" type="submit">Doğrula ve devam et</button></form><button id="staff-cancel-factor" class="staff-link" type="button">Girişe dön</button></section>
+      </div><form id="staff-factor-form" method="post" action="#" novalidate><label>Uygulamadaki 6 haneli kod<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" aria-describedby="staff-code-help" required></label><button class="staff-primary" type="submit" disabled data-vg-wait>Doğrula ve devam et</button></form><button id="staff-cancel-factor" class="staff-link" type="button">Girişe dön</button></section>
       <p class="staff-muted staff-bottom">Hesabınız veya doğrulayıcı cihazınızla ilgili destek için şirket yöneticinizle görüşün.</p>
     </section>
   </main>
@@ -135,7 +135,7 @@
               <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
           </a>
-          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
           <ul class="vg-footer__contact">
             <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
@@ -179,7 +179,7 @@
               <li><a href="/#neden-biz">Neden Biz?</a></li>
               <li><a href="/#guvenlik">Güvenlik</a></li>
               <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
               <li><a href="/#katalog">Katalog</a></li>
               <li><a href="/#sss">SSS</a></li>
               <li><a href="/#iletisim">İletişim</a></li>

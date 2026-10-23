@@ -1,426 +1,154 @@
 <?php
-
+/** Public enquiry endpoint. PHP 7.4+, no optional extensions required. */
 declare(strict_types=1);
+define('VG_API', 1);
+require __DIR__ . '/api/lib/bootstrap.php';
+require __DIR__ . '/api/lib/security.php';
+require __DIR__ . '/api/lib/validate.php';
+require __DIR__ . '/api/lib/mailer.php';
 
-// PHP uyarıları/hataları yanıt gövdesine (JSON'u bozacak ve yol/sürüm sızdıracak şekilde) asla yazılmaz;
-// sunucunun log_errors ayarı geçerli kalır.
-ini_set('display_errors', '0');
-
-header('Content-Type: application/json; charset=UTF-8');
-header('Cache-Control: no-store');
-header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: SAMEORIGIN');
-header('Referrer-Policy: strict-origin-when-cross-origin');
-header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()');
-
-function respond(int $statusCode, bool $success, string $message): void
+function vg_contact_string(string $key): string
 {
-    http_response_code($statusCode);
-    echo json_encode([
-        'success' => $success,
-        'message' => $message,
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    exit;
+    $value = $_POST[$key] ?? '';
+    if (!is_string($value) || preg_match('//u', $value) !== 1) {
+        vg_fail(400, 'invalid_request', 'Gönderilen form okunamadı. Lütfen alanları kontrol edin.');
+    }
+    return trim($value);
 }
 
-/* IPv4/IPv6 CIDR eşleşmesi (inet_pton + bit maskesi). */
-function vg_ip_in_cidr(string $ip, string $cidr): bool
+/** Allow only the published site; additional staging origins require explicit configuration. */
+function vg_contact_origin_allowed(string $url, bool $originOnly): bool
 {
-    if (strpos($cidr, '/') === false) {
-        return false;
-    }
-    [$subnet, $bits] = explode('/', $cidr, 2);
-    $bits = (int)$bits;
-    $ipBin = @inet_pton($ip);
-    $subBin = @inet_pton($subnet);
-    if ($ipBin === false || $subBin === false || strlen($ipBin) !== strlen($subBin)) {
-        return false;
-    }
-    $bytes = intdiv($bits, 8);
-    $rem = $bits % 8;
-    if ($bytes > 0 && strncmp($ipBin, $subBin, $bytes) !== 0) {
-        return false;
-    }
-    if ($rem === 0) {
-        return true;
-    }
-    $mask = 0xff << (8 - $rem) & 0xff;
-    return (ord($ipBin[$bytes]) & $mask) === (ord($subBin[$bytes]) & $mask);
+    $parts = parse_url($url);
+    if (!is_array($parts) || !isset($parts['scheme'], $parts['host'])
+        || isset($parts['user']) || isset($parts['pass']) || isset($parts['fragment'])
+        || ($originOnly && (isset($parts['query']) || !in_array($parts['path'] ?? '', ['', '/'], true)))) return false;
+    $scheme = strtolower($parts['scheme']);
+    if (!in_array($scheme, ['http', 'https'], true)) return false;
+    $origin = $scheme . '://' . strtolower($parts['host']);
+    $port = $parts['port'] ?? ($scheme === 'https' ? 443 : 80);
+    if ($port !== ($scheme === 'https' ? 443 : 80)) $origin .= ':' . $port;
+    $allowed = ['https://voltguard.com.tr', 'https://www.voltguard.com.tr'];
+    $extra = getenv('VG_CONTACT_ALLOWED_ORIGINS');
+    if (is_string($extra)) foreach (explode(',', $extra) as $value) $allowed[] = rtrim(trim($value), '/');
+    return in_array($origin, $allowed, true);
 }
 
-/* Dosya tabanlı IP başına hız sınırı (best-effort). Okuma-kontrol-yazma işlemi tek flock altında atomiktir.
-   $record=false: yalnızca limit kontrolü; $record=true: limit aşılmadıysa isteği sayaca ekler.
-   true = istek serbest, false = limit aşıldı. Sayaç dosyası açılamaz/kilitlenemezse istek serbest bırakılır
-   ve (yalnızca kayıt aşamasında) neden loglanır; log kişisel veri içermez. */
-function vg_rate_limit_allows(string $file, int $max, int $window, bool $record): bool
+/** Server verification is mandatory whenever Turnstile is configured. */
+function vg_contact_verify_captcha(string $secret, string $token): void
 {
-    $fp = @fopen($file, 'c+');
-    if ($fp === false) {
-        if ($record) {
-            error_log('VoltGuard contact.php: rate limiter inactive for this request (counter file cannot be opened).');
+    if ($token === '' || strlen($token) > 2048) {
+        vg_fail(422, 'captcha_required', 'Lütfen güvenlik doğrulamasını tamamlayın.');
+    }
+    $payload = http_build_query(['secret' => $secret, 'response' => $token, 'remoteip' => vg_client_ip()]);
+    $raw = false;
+    $status = 0;
+    if (function_exists('curl_init')) {
+        $curl = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
+        if ($curl !== false) {
+            curl_setopt_array($curl, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $payload,
+                CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 3, CURLOPT_TIMEOUT => 10,
+                CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded']]);
+            $raw = curl_exec($curl);
+            $status = (int)curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
         }
-        return true;
+    } else {
+        $context = stream_context_create(['http' => ['method' => 'POST',
+            'header' => "Content-Type: application/x-www-form-urlencoded\r\n", 'content' => $payload,
+            'timeout' => 10, 'follow_location' => 0, 'ignore_errors' => true]]);
+        $raw = @file_get_contents('https://challenges.cloudflare.com/turnstile/v0/siteverify', false, $context, 0, 16385);
+        if (isset($http_response_header[0]) && preg_match('/\s([0-9]{3})\s/', $http_response_header[0], $match)) $status = (int)$match[1];
     }
-    if (!flock($fp, LOCK_EX)) {
-        fclose($fp);
-        if ($record) {
-            error_log('VoltGuard contact.php: rate limiter inactive for this request (counter file cannot be locked).');
-        }
-        return true;
+    if (!is_string($raw) || strlen($raw) > 16384 || $status !== 200) {
+        vg_fail(502, 'captcha_unavailable', 'Güvenlik doğrulama servisine erişilemedi. Lütfen yeniden deneyin.');
     }
-    $now = time();
-    $raw = stream_get_contents($fp);
-    $hits = [];
-    if (is_string($raw) && $raw !== '') {
-        $decoded = json_decode($raw, true);
-        if (is_array($decoded)) {
-            $hits = array_values(array_filter($decoded, static function ($t) use ($now, $window) {
-                return is_int($t) && ($now - $t) < $window;
-            }));
-        }
+    $result = json_decode($raw, true);
+    $expected = strtolower(getenv('TURNSTILE_EXPECTED_HOSTNAME') ?: 'voltguard.com.tr');
+    $host = is_array($result) && is_string($result['hostname'] ?? null) ? strtolower($result['hostname']) : '';
+    if (!is_array($result) || ($result['success'] ?? null) !== true
+        || !in_array($host, [$expected, 'www.' . $expected], true)) {
+        vg_fail(422, 'captcha_invalid', 'Güvenlik doğrulaması geçersiz. Lütfen yeniden deneyin.');
     }
-    $allowed = count($hits) < $max;
-    if ($allowed && $record) {
-        $hits[] = $now;
-        rewind($fp);
-        ftruncate($fp, 0);
-        fwrite($fp, json_encode($hits));
-        fflush($fp);
-    }
-    flock($fp, LOCK_UN);
-    fclose($fp);
-    return $allowed;
 }
 
-/* php.ini boyut değeri ("8M", "512K", "1G") -> bayt. */
-function vg_ini_bytes(string $v): int
+function vg_contact_submit(): string
 {
-    $v = trim($v);
-    if ($v === '') {
-        return 0;
+    if (vg_method() !== 'POST') vg_fail(405, 'method_not_allowed', 'Bu adres yalnızca form gönderimi kabul eder.', [], ['Allow: POST']);
+    vg_check_fetch_site();
+    $origin = (string)($_SERVER['HTTP_ORIGIN'] ?? '');
+    $referer = (string)($_SERVER['HTTP_REFERER'] ?? '');
+    if (($origin !== '' && !vg_contact_origin_allowed($origin, true))
+        || ($origin === '' && ($referer === '' || !vg_contact_origin_allowed($referer, false)))) {
+        vg_fail(403, 'forbidden_origin', 'Formun gönderildiği adres doğrulanamadı. Lütfen site üzerindeki iletişim formunu kullanın.');
     }
-    $n = (int)$v;
-    switch (strtolower(substr($v, -1))) {
-        case 'g': $n *= 1024;
-        // no break
-        case 'm': $n *= 1024;
-        // no break
-        case 'k': $n *= 1024;
+    $type = strtolower(trim(explode(';', (string)($_SERVER['CONTENT_TYPE'] ?? ''), 2)[0]));
+    if (!in_array($type, ['application/x-www-form-urlencoded', 'multipart/form-data'], true)) {
+        vg_fail(415, 'unsupported_media_type', 'İstek biçimi desteklenmiyor.');
     }
-    return $n;
-}
-
-/* POST alanını yalnızca düz metin (string) olarak okur. Alan yoksa ''. name[]=... / name[x]=... gibi dizi
-   gönderimleri meşru formdan gelmez: (string) dönüşümünde "Array" + uyarı üretmek yerine 400 ile reddedilir. */
-function vg_post_string(string $key): string
-{
-    if (!array_key_exists($key, $_POST)) {
-        return '';
+    if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 32768) vg_fail(413, 'too_large', 'Gönderilen form çok büyük.');
+    if (!$_POST || $_FILES) vg_fail(400, 'invalid_request', 'Gönderilen form okunamadı.');
+    $name = vg_contact_string('name');
+    $phone = vg_contact_string('phone');
+    $email = vg_contact_string('email');
+    $subject = vg_contact_string('subject');
+    $message = str_replace(["\r\n", "\r"], "\n", vg_contact_string('message'));
+    $website = vg_contact_string('website');
+    $timestamp = vg_contact_string('formTimestamp');
+    $captcha = vg_contact_string('cf-turnstile-response');
+    $subjects = ['elektrik' => 'Elektrik Hizmetleri', 'elektronik' => 'Elektronik ve Gömülü Sistemler',
+        'otomasyon' => 'Otomasyon Sistemleri', 'mekanik' => 'Mekanik Sistemler', 'diger' => 'Diğer / Genel Danışmanlık'];
+    if ($website !== '') vg_fail(422, 'rejected', 'Form gönderilemedi. Lütfen alanları kontrol edin.');
+    if (vg_strlen($name) < 2 || vg_strlen($name) > 100 || preg_match('/[\x00-\x1F\x7F<>]/', $name)) {
+        vg_fail(422, 'invalid_name', 'Lütfen geçerli bir ad soyad girin.');
     }
-    $value = $_POST[$key];
-    if (!is_string($value)) {
-        respond(400, false, 'Geçersiz istek.');
+    $digits = (string)preg_replace('/\D+/', '', $phone);
+    if (strlen($phone) > 32 || preg_match('/^\+?[0-9 ()\-.]+$/D', $phone) !== 1
+        || preg_match('/^(?:5[0-9]{9}|05[0-9]{9}|905[0-9]{9})$/D', $digits) !== 1) {
+        vg_fail(422, 'invalid_phone', 'Geçerli bir cep telefonu numarası girin.');
     }
-    return $value;
-}
-
-function vg_is_utf8(string $value): bool
-{
-    return function_exists('mb_check_encoding')
-        ? mb_check_encoding($value, 'UTF-8')
-        : preg_match('//u', $value) === 1;
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    respond(405, false, 'Method not allowed.');
-}
-
-/* Cross-origin POST koruması (defense-in-depth).
-   - Origin başlığı VARSA (tarayıcılar her POST'ta gönderir) izinli bir http(s) host'u taşımalı. 'null'
-     (sandbox iframe, file:// veya data: sayfası, bazı yönlendirmeler), 'file://', boş ya da host'suz/biçimsiz
-     değerler ve izin listesi dışındaki host'lar 403 alır.
-   - Origin YOKSA (eski tarayıcı, gizlilik eklentisi, sunucudan sunucuya istemci) Referer'a bakılır: Referer
-     host'u varsa eşleşmeli; ikisi de yoksa istek reddedilmez (diğer korumalar: bal küpü, zaman damgası,
-     hız sınırı, Turnstile). */
-$allowedHosts = ['voltguard.com.tr', 'www.voltguard.com.tr'];
-if (isset($_SERVER['HTTP_ORIGIN'])) {
-    $originParts = parse_url(trim((string)$_SERVER['HTTP_ORIGIN']));
-    $originOk = is_array($originParts)
-        && in_array(strtolower((string)($originParts['scheme'] ?? '')), ['http', 'https'], true)
-        && in_array(strtolower((string)($originParts['host'] ?? '')), $allowedHosts, true)
-        && !isset($originParts['user'])
-        && !isset($originParts['pass'])
-        && !isset($originParts['query'])
-        && !isset($originParts['fragment'])
-        && in_array((string)($originParts['path'] ?? ''), ['', '/'], true);
-    if (!$originOk) {
-        respond(403, false, 'Geçersiz istek kaynağı.');
+    if ($email !== '' && (strlen($email) > 254 || filter_var($email, FILTER_VALIDATE_EMAIL) === false || preg_match('/[\r\n]/', $email))) {
+        vg_fail(422, 'invalid_email', 'Geçerli bir e-posta adresi girin.');
     }
-} else {
-    $refHost = parse_url((string)($_SERVER['HTTP_REFERER'] ?? ''), PHP_URL_HOST);
-    if (is_string($refHost) && $refHost !== '' && !in_array(strtolower($refHost), $allowedHosts, true)) {
-        respond(403, false, 'Geçersiz istek kaynağı.');
+    if (!isset($subjects[$subject])) vg_fail(422, 'invalid_subject', 'Lütfen hizmet alanını seçin.');
+    if (vg_strlen($message) < 20 || vg_strlen($message) > 1000 || preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $message)) {
+        vg_fail(422, 'invalid_message', 'Mesaj 20–1000 karakter olmalı ve kontrol karakteri içermemeli.');
     }
-}
-
-/* İstek gövdesi boyutu üst sınırı. post_max_size aşıldığında $_POST boş gelir;
-   bunu ayrıca yakalayıp yanıltıcı "zorunlu alan" hatası yerine net mesaj döneriz.
-   Gövde küçük olduğu halde $_POST boşsa gövde form verisi değildir (JSON, düz metin vb.): 400. */
-$contentLength = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
-$postMaxBytes = vg_ini_bytes((string)ini_get('post_max_size'));
-if ($contentLength > 32768 || (empty($_POST) && $contentLength > 0 && $postMaxBytes > 0 && $contentLength > $postMaxBytes)) {
-    respond(413, false, 'İstek çok büyük.');
-}
-if (empty($_POST) && $contentLength > 0) {
-    respond(400, false, 'Geçersiz istek.');
-}
-
-$turnstileSecret = getenv('TURNSTILE_SECRET_KEY') ?: 'REPLACE_WITH_TURNSTILE_SECRET_KEY';
-
-// Turnstile is OPTIONAL until keys are configured. When the secret is not set, the
-// form still works but falls back to honeypot + server-side rate limiting + validation.
-// As soon as TURNSTILE_SECRET_KEY is provided, CAPTCHA verification is enforced again.
-$captchaConfigured = ($turnstileSecret !== 'REPLACE_WITH_TURNSTILE_SECRET_KEY' && $turnstileSecret !== '');
-if (!$captchaConfigured) {
-    error_log('VoltGuard contact.php: Turnstile not configured; proceeding without CAPTCHA (honeypot + rate limit active).');
-}
-
-/* --- Basic per-IP rate limiting (file-based, best-effort) --- */
-$rateLimitMax = 5;          // allowed submissions
-$rateLimitWindow = 600;     // per 10 minutes (seconds)
-// CF-Connecting-IP başlığına YALNIZCA istek gerçek bir Cloudflare IP aralığından
-// geliyorsa güven; aksi halde başlık istemci tarafından sahte gönderilip rate-limit
-// kovası ve Turnstile remoteip atlatılabilir. Liste: https://www.cloudflare.com/ips/
-$cfRanges = [
-    '173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22',
-    '141.101.64.0/18', '108.162.192.0/18', '190.93.240.0/20', '188.114.96.0/20',
-    '197.234.240.0/22', '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/13',
-    '104.24.0.0/14', '172.64.0.0/13', '131.0.72.0/22',
-    '2400:cb00::/32', '2606:4700::/32', '2803:f800::/32', '2405:b500::/32',
-    '2405:8100::/32', '2a06:98c0::/29', '2c0f:f248::/32',
-];
-$remoteAddr = $_SERVER['REMOTE_ADDR'] ?? '';
-$cfHeaderIp = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? '';
-$isFromCloudflare = false;
-if ($remoteAddr !== '') {
-    foreach ($cfRanges as $range) {
-        if (vg_ip_in_cidr($remoteAddr, $range)) {
-            $isFromCloudflare = true;
-            break;
-        }
+    // The visitor's clock is untrusted; this is a form marker, never proof of human interaction.
+    if (preg_match('/^[1-9][0-9]{0,15}$/D', $timestamp) !== 1) vg_fail(422, 'invalid_form', 'Form bilgisi eksik. Lütfen sayfayı yenileyip yeniden deneyin.');
+    // A contact request does not require a general-purpose personal-data consent checkbox.
+    // The privacy notice remains visible in the form; legacy consent=on is accepted but not required.
+    vg_private_data_directory(vg_data_dir());
+    vg_schedule_gc();
+    $retry = vg_rl_hit('contact_ip', vg_rl_ip_key(), 5, 600);
+    if ($retry > 0) vg_too_many($retry, 'Çok fazla mesaj gönderdiniz. Lütfen birkaç dakika sonra yeniden deneyin.');
+    $secret = getenv('TURNSTILE_SECRET_KEY');
+    if (is_string($secret) && $secret !== '' && $secret !== 'REPLACE_WITH_TURNSTILE_SECRET_KEY') vg_contact_verify_captcha($secret, $captcha);
+    if (!vg_mail_can_send()) vg_fail(503, 'mail_unavailable', 'Mesaj gönderimi şu anda kullanılamıyor. Lütfen telefonla iletişime geçin.');
+    $body = "Yeni iletişim talebi:\n\nAd Soyad: {$name}\nTelefon: {$phone}\nE-posta: " . ($email ?: '-')
+        . "\nHizmet Alanı: {$subjects[$subject]}\nTarih: " . vg_local_time(time()) . " (TSİ)\n\nMesaj:\n{$message}\n";
+    if (!vg_mail_send('info@voltguard.com.tr', 'VoltGuard İletişim Formu - ' . $subjects[$subject], $body, 'contact', $email ?: null)) {
+        vg_fail(503, 'mail_unavailable', 'Mesaj gönderilemedi. Lütfen telefonla iletişime geçin.');
     }
-}
-if ($isFromCloudflare && $cfHeaderIp !== '' && filter_var($cfHeaderIp, FILTER_VALIDATE_IP)) {
-    $clientIp = $cfHeaderIp;
-} elseif ($remoteAddr !== '') {
-    $clientIp = $remoteAddr;
-} else {
-    $clientIp = 'unknown';
-}
-$rateDir = sys_get_temp_dir() . '/vg_rate';
-if (!is_dir($rateDir)) {
-    @mkdir($rateDir, 0700, true);
-}
-$rateFile = $rateDir . '/' . hash('sha256', $clientIp);
-$tooManyMessage = 'Çok fazla deneme yaptınız. Lütfen birkaç dakika sonra tekrar deneyin.';
-// Ön kontrol (salt okunur): limiti zaten dolduran istemci doğrulama/CAPTCHA/mail maliyeti doğurmadan reddedilir.
-// Sayaç, istek form doğrulamasını geçtikten sonra artırılır (aşağıya bakın); böylece geçersiz telefon gibi
-// form hataları nedeniyle yapılan denemeler meşru kullanıcıyı 429 ile kilitlemez.
-if (!vg_rate_limit_allows($rateFile, $rateLimitMax, $rateLimitWindow, false)) {
-    respond(429, false, $tooManyMessage);
+    return getenv('VG_MAIL_OUTBOX') === '1'
+        ? 'Form doğrulandı. Bu önizlemede e-posta gönderilmez; iletişim için canlı sitedeki formu kullanın.'
+        : 'Mesajınız gönderim sistemine alındı. En kısa sürede sizinle iletişime geçeceğiz.';
 }
 
-$name = trim(vg_post_string('name'));
-$phone = trim(vg_post_string('phone'));
-$email = trim(vg_post_string('email'));
-$subject = trim(vg_post_string('subject'));
-// multipart/form-data gönderiminde tarayıcı LF'yi CRLF'ye çevirir; uzunluk ölçümünden önce LF'ye normalize et
-// (aksi halde her satır sonu 2 karakter sayılır ve istemcideki sayaç/maxlength ile sunucu sınırı uyuşmaz).
-$message = trim(str_replace(["\r\n", "\r"], "\n", vg_post_string('message')));
-$consent = vg_post_string('consent');
-$websiteTrap = trim(vg_post_string('website'));
-$formTimestamp = (int)vg_post_string('formTimestamp');
-$captchaToken = trim(vg_post_string('cf-turnstile-response'));
-
-if ($websiteTrap !== '') {
-    respond(200, true, 'Mesajınız alındı.');
+ob_start();
+try {
+    $message = vg_contact_submit();
+    vg_discard_output();
+    vg_common_headers(200, []);
+    echo vg_json_encode(['success' => true, 'message' => $message]);
+} catch (VgHttpError $error) {
+    vg_discard_output();
+    vg_common_headers($error->status, $error->headers);
+    echo vg_json_encode(['success' => false, 'message' => $error->getMessage()]);
+} catch (Throwable $error) {
+    error_log('VoltGuard contact: request failed (' . get_class($error) . ')');
+    vg_discard_output();
+    vg_common_headers(503, []);
+    echo vg_json_encode(['success' => false, 'message' => 'Mesaj gönderimi şu anda kullanılamıyor. Lütfen telefonla iletişime geçin.']);
 }
-
-// Geçersiz UTF-8 bayt dizileri (ör. \xC3\x28) mb_* uzunluk ölçümünü, mail gövdesini ve JSON'u bozar.
-if (!vg_is_utf8($name) || !vg_is_utf8($message) || !vg_is_utf8($phone) || !vg_is_utf8($email)) {
-    respond(422, false, 'Gönderilen metinde geçersiz karakter kodlaması var. Lütfen metni yeniden yazıp tekrar deneyin.');
-}
-
-if ($name === '' || $phone === '' || $subject === '' || $message === '') {
-    respond(422, false, 'Lütfen zorunlu alanları doldurun.');
-}
-
-if (mb_strlen($name) < 2 || mb_strlen($name) > 100) {
-    respond(422, false, 'Lütfen geçerli bir ad soyad giriniz.');
-}
-
-if (mb_strlen($phone) > 32) {
-    respond(422, false, 'Geçerli bir telefon numarası giriniz.');
-}
-
-$allowedSubjects = ['elektrik', 'elektronik', 'otomasyon', 'mekanik', 'diger'];
-if (!in_array($subject, $allowedSubjects, true)) {
-    respond(422, false, 'Geçersiz hizmet alanı seçimi.');
-}
-
-if ($consent !== 'on') {
-    respond(422, false, 'KVKK onayı gereklidir.');
-}
-
-if (mb_strlen($message) < 20 || mb_strlen($message) > 1000) {
-    respond(422, false, 'Mesaj uzunluğu 20-1000 karakter arasında olmalıdır.');
-}
-
-$phoneDigits = preg_replace('/\D+/', '', $phone);
-$validPhone = false;
-if ($phoneDigits !== null) {
-    $validPhone = (
-        (strlen($phoneDigits) === 10 && str_starts_with($phoneDigits, '5')) ||
-        (strlen($phoneDigits) === 11 && str_starts_with($phoneDigits, '05')) ||
-        (strlen($phoneDigits) === 12 && str_starts_with($phoneDigits, '905'))
-    );
-}
-
-if (!$validPhone) {
-    respond(422, false, 'Geçerli bir telefon numarası giriniz.');
-}
-
-if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    respond(422, false, 'Geçerli bir e-posta adresi giriniz.');
-}
-
-/* formTimestamp comes from the visitor's device clock (Date.now()), so it is only checked for
-   presence. Any age/skew window would permanently reject visitors whose clock is wrong (a retry
-   sends a new stamp from the same clock), losing the lead, while giving no real bot protection
-   because the client controls the value. Real bot defense is Turnstile + the server-side rate
-   limit above. */
-if ($formTimestamp <= 0) {
-    respond(422, false, 'Form doğrulaması başarısız oldu. Lütfen tekrar deneyin.');
-}
-
-// Doğrulamayı geçen istek sayaca eklenir (kontrol + ekleme tek flock altında, yarış durumuna karşı atomik).
-// CAPTCHA servisi çağrısından ve mail() gönderiminden önce yapılır; IP başına üst sınır bu adımlar için korunur.
-if (!vg_rate_limit_allows($rateFile, $rateLimitMax, $rateLimitWindow, true)) {
-    respond(429, false, $tooManyMessage);
-}
-
-if ($captchaConfigured) {
-
-if ($captchaToken === '') {
-    respond(422, false, 'Lütfen güvenlik doğrulamasını tamamlayın.');
-}
-
-$verifyPayload = http_build_query([
-    'secret' => $turnstileSecret,
-    'response' => $captchaToken,
-    'remoteip' => ($clientIp !== 'unknown' ? $clientIp : ''),
-]);
-
-$verifyRaw = false;
-
-if (function_exists('curl_init')) {
-    $ch = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $verifyPayload);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-    $verifyRaw = curl_exec($ch);
-    curl_close($ch);
-} else {
-    $opts = [
-        'http' => [
-            'method' => 'POST',
-            'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
-            'content' => $verifyPayload,
-            'timeout' => 10,
-        ],
-    ];
-    $context = stream_context_create($opts);
-    $verifyRaw = @file_get_contents('https://challenges.cloudflare.com/turnstile/v0/siteverify', false, $context);
-}
-
-if ($verifyRaw === false) {
-    respond(502, false, 'Güvenlik doğrulama servisine erişilemedi.');
-}
-
-$verifyResult = json_decode($verifyRaw, true);
-if (!is_array($verifyResult) || empty($verifyResult['success'])) {
-    if (is_array($verifyResult) && !empty($verifyResult['error-codes'])) {
-        error_log('VoltGuard contact.php: Turnstile errors: ' . implode(',', (array)$verifyResult['error-codes']));
-    }
-    respond(422, false, 'Güvenlik doğrulaması geçersiz. Lütfen tekrar deneyin.');
-}
-
-/* Bind the token to our hostname (defense against token reuse from another origin).
-   Only enforced when Cloudflare returns a hostname; configurable via env. */
-$expectedHost = getenv('TURNSTILE_EXPECTED_HOSTNAME') ?: 'voltguard.com.tr';
-$verifiedHost = isset($verifyResult['hostname']) ? (string)$verifyResult['hostname'] : '';
-if ($verifiedHost !== '' && $expectedHost !== ''
-    && strcasecmp($verifiedHost, $expectedHost) !== 0
-    && strcasecmp($verifiedHost, 'www.' . $expectedHost) !== 0) {
-    error_log('VoltGuard contact.php: Turnstile hostname mismatch: ' . $verifiedHost);
-    respond(422, false, 'Güvenlik doğrulaması geçersiz. Lütfen tekrar deneyin.');
-}
-
-} // end if ($captchaConfigured)
-
-$subjectMap = [
-    'elektrik' => 'Elektrik Hizmetleri',
-    'elektronik' => 'Elektronik ve Gömülü Sistemler',
-    'otomasyon' => 'Otomasyon Sistemleri',
-    'mekanik' => 'Mekanik Sistemler',
-    'diger' => 'Diğer / Genel Danışmanlık',
-];
-$subjectLabel = $subjectMap[$subject] ?? $subject;
-
-// CRLF + diğer kontrol karakterlerini temizle (mail gövdesi/başlık ve log hijyeni).
-$cleanCtrl = static function (string $v): string {
-    // Bayt düzeyinde (u bayrağı yok): kontrol baytları ASCII tek bayttır, çok baytlı
-    // UTF-8 dizilerini (>=0x80) etkilemez; geçersiz UTF-8'de veri kaybı riski olmaz.
-    return (string)preg_replace('/[\x00-\x1F\x7F]/', ' ', $v);
-};
-$safeName = $cleanCtrl($name);
-$safeEmail = str_replace(["\r", "\n", "\t"], '', $email);
-$safePhone = $cleanCtrl($phone);
-
-$mailTo = 'info@voltguard.com.tr';
-$mailSubject = 'VoltGuard İletişim Formu - ' . $subjectLabel;
-$mailBody = "Yeni iletişim formu mesajı:\n\n"
-    . "Ad Soyad: {$safeName}\n"
-    . "Telefon: {$safePhone}\n"
-    . "E-posta: " . ($safeEmail !== '' ? $safeEmail : '-') . "\n"
-    . "Hizmet Alanı: {$subjectLabel}\n"
-    . "IP: " . $clientIp . "\n"
-    . "Tarih: " . (new DateTime('now', new DateTimeZone('Europe/Istanbul')))->format('Y-m-d H:i:s') . " (TSİ)\n\n"
-    . "Mesaj:\n{$message}\n";
-
-$fromAddress = 'noreply@voltguard.com.tr';
-$mailHeaders = [
-    'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'From: VoltGuard <' . $fromAddress . '>',
-    'Reply-To: ' . ($safeEmail !== '' ? $safeEmail : $fromAddress),
-    'X-Mailer: PHP/' . phpversion(),
-];
-
-$mailSent = @mail($mailTo, '=?UTF-8?B?' . base64_encode($mailSubject) . '?=', $mailBody, implode("\r\n", $mailHeaders));
-
-if (!$mailSent) {
-    // KVKK: ad, telefon, e-posta, IP ve mesaj metni sunucu günlüğüne (public_html altındaki error_log dahil)
-    // YAZILMAZ; yalnızca teşhis için gereken, kişiyi tanımlamayan üst veri loglanır. Kullanıcı, yanıttaki
-    // mesajla telefon üzerinden ulaşmaya yönlendirilir.
-    error_log(sprintf(
-        'VoltGuard contact.php: mail() failed; lead not delivered. Subject=%s PhoneLast4=%s MessageLength=%d',
-        $subjectLabel,
-        substr((string)$phoneDigits, -4),
-        mb_strlen($message)
-    ));
-    respond(500, false, 'Mesaj gönderilemedi. Lütfen telefon ile iletişime geçin.');
-}
-
-respond(200, true, 'Mesajınız alındı. En kısa sürede sizinle iletişime geçeceğiz.');
+vg_finish_and_run_jobs();

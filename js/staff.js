@@ -9,6 +9,8 @@
   var statuses = {active: 'Aktif', invited: 'Davet gönderilmeye hazır', enrollment: 'Doğrulama kurulumu bekleniyor', disabled: 'Erişimi kapalı'};
   var money = new Intl.NumberFormat('tr-TR', {style: 'currency', currency: 'TRY'});
   function $(id) { return document.getElementById(id); }
+  // Formlar betik bağlanana kadar gönderilemez (aksi halde tarayıcı varsayılan gönderimi yapardı); bağlanınca etkinleşir.
+  Array.prototype.forEach.call(document.querySelectorAll('button[type="submit"][data-vg-wait]'), function (b) { b.disabled = false; b.removeAttribute('data-vg-wait'); });
   function node(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function status(message, error) { $('staff-status').textContent = message || ''; $('staff-status').classList.toggle('is-error', !!error); }
   async function api(action, body) {

@@ -169,7 +169,7 @@ export default function Osos() {
   const handleLogoUrlChange = () => {
     if (logoInputUrl && logoInputUrl.trim() !== '') {
       setLogo(logoInputUrl);
-      alert('✅ Logo güncellendi!');
+      alert('Logo güncellendi.');
     } else {
       alert('⚠️ Geçerli bir URL giriniz!');
     }
@@ -349,7 +349,7 @@ export default function Osos() {
 
     setMeasurements([...measurements, ...newMeasurements]);
     setShowKosbiModal(false);
-    alert(`✅ ${newMeasurements.length} sayaç verisi ölçüm tablosuna eklendi!`);
+    alert(`${newMeasurements.length} sayaç verisi ölçüm tablosuna eklendi.`);
   };
 
   // Excel/JSON Import - Geliştirilmiş
@@ -530,7 +530,7 @@ export default function Osos() {
     setKapasitifEnerji(fabrika.kapasitifEnerji);
     setFormData(prev => ({ ...prev, firmaAdi: fabrika.fabrikaAdi }));
     setShowFabrikaModal(false);
-    alert(`✅ ${fabrika.fabrikaAdi} verileri yüklendi!`);
+    alert(`${fabrika.fabrikaAdi} verileri yüklendi.`);
   };
 
   const fabrikaSil = async id => {
@@ -966,11 +966,10 @@ export default function Osos() {
 
               {/* Bilgilendirme */}
               <div className="bg-yellow-50 border border-yellow-200 rounded p-3 text-sm">
-                <p className="font-semibold text-yellow-800 mb-1">⚠️ CORS Uyarısı</p>
+                <p className="font-semibold text-yellow-800 mb-1">Veri kaynağı</p>
                 <p className="text-yellow-700 text-xs">
-                  Tarayıcı güvenlik politikaları nedeniyle direkt veri çekmek mümkün olmayabilir. 
-                  Gerçek entegrasyon için backend proxy servisi veya browser extension kullanın.
-                  Şu an demo veriler gösterilmektedir.
+                  Bu portalda harici sayaç bağlantısı yapılandırılmamış. Dağıtım şirketinden
+                  indirdiğiniz ölçüm dosyasını Rapor sekmesinden içe aktarabilirsiniz.
                 </p>
               </div>
             </div>

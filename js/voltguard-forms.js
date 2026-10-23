@@ -153,16 +153,29 @@
     downloadBlob(html, name + '.html', 'text/html;charset=utf-8');
   }
 
+  var jsPdfPromise = null;
   function ensureJsPdf() {
     if (global.jspdf && global.jspdf.jsPDF) return Promise.resolve(global.jspdf.jsPDF);
-    return new Promise(function (resolve, reject) {
+    if (jsPdfPromise) return jsPdfPromise;
+    jsPdfPromise = new Promise(function (resolve, reject) {
       var s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-      s.crossOrigin = 'anonymous';
-      s.onload = function () { resolve(global.jspdf.jsPDF); };
-      s.onerror = function () { reject(new Error('PDF kütüphanesi yüklenemedi.')); };
+      s.src = '/js/vendor/jspdf.umd.min.js?v=4.2.1';
+      var done = false;
+      var timer = setTimeout(fail, 15000);
+      function fail() {
+        if (done) return;
+        done = true; clearTimeout(timer); jsPdfPromise = null; s.remove();
+        reject(new Error('PDF kütüphanesi yüklenemedi. Bağlantınızı kontrol edip yeniden deneyin.'));
+      }
+      s.onload = function () {
+        if (done) return;
+        if (global.jspdf && global.jspdf.jsPDF) { done = true; clearTimeout(timer); resolve(global.jspdf.jsPDF); }
+        else fail();
+      };
+      s.onerror = fail;
       document.head.appendChild(s);
     });
+    return jsPdfPromise;
   }
 
   // The built-in jsPDF fonts only cover Latin-1; a single character outside it garbles the whole string.

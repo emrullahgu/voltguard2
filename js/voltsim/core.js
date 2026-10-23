@@ -5,7 +5,8 @@
   'use strict';
   const E = window.VoltSimEngine;
   const modules = {};
-  const reduceMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const motionQuery = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+  let reduceMotion = !!(motionQuery && motionQuery.matches);
   const coarse = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
 
   /* ------------------------------------------------------------------ biçimlendirme */
@@ -140,13 +141,32 @@
   }
 
   /* ------------------------------------------------------------------ 3D görüntüleyici */
+  // A scene rebuild owns its complete kit. Dispose each resource once, including
+  // textures and cloned transparent materials that are no longer in the tree.
+  function disposeTree(root, extra) {
+    const resources = new Set();
+    const materials = new Set();
+    const material = m => {
+      if (!m || materials.has(m)) return;
+      materials.add(m); resources.add(m);
+      Object.keys(m).forEach(k => { if (m[k] && m[k].isTexture) resources.add(m[k]); });
+    };
+    root.traverse(o => {
+      if (o.geometry) resources.add(o.geometry);
+      (Array.isArray(o.material) ? o.material : [o.material]).forEach(material);
+      if (o.userData) { material(o.userData.origMat); material(o.userData.ghostMat); }
+      if (o.isInstancedMesh && o.dispose) o.dispose();
+    });
+    if (extra) extra.forEach(r => { if (r.isMaterial) material(r); else resources.add(r); });
+    resources.forEach(r => { if (r.dispose) r.dispose(); });
+  }
   function Viewer(stage, canvas, opts) {
     const T = window.THREE;
     this.T = T; this.stage = stage; this.canvas = canvas; this.opts = opts || {};
+    opts = this.opts; this._cleanups = []; this._size = { w: 0, h: 0, pr: 0 };
     const quality = coarse || (navigator.hardwareConcurrency || 4) <= 4 ? 'low' : 'high';
     this.quality = quality;
-    const r = new T.WebGLRenderer({ canvas: canvas, antialias: quality === 'high', alpha: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
-    r.setPixelRatio(Math.min(window.devicePixelRatio || 1, quality === 'high' ? 2 : 1.25));
+    const r = new T.WebGLRenderer({ canvas: canvas, antialias: quality === 'high', alpha: false, powerPreference: 'high-performance' });
     r.outputEncoding = T.sRGBEncoding; r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = opts.exposure || 0.92;
     r.physicallyCorrectLights = true;
     r.shadowMap.enabled = true; r.shadowMap.type = T.PCFSoftShadowMap;
@@ -170,11 +190,21 @@
     this.labelLayer = stage.querySelector('.vs-labels');
     this._bindControls();
     this.resize();
-    this.visible = true; this.running = true;
-    if ('IntersectionObserver' in window) new IntersectionObserver(es => { this.visible = es[0].isIntersecting; }).observe(stage);
-    window.addEventListener('resize', () => this.resize());
-    if ('ResizeObserver' in window) new ResizeObserver(() => this.resize()).observe(stage);
+    this.visible = true; this.contextLost = false;
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(es => { this.visible = es[0].isIntersecting; }); io.observe(stage);
+      this._cleanups.push(() => io.disconnect());
+    }
+    this._listen(window, 'resize', () => this.resize());
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(() => this.resize()); ro.observe(stage); this._cleanups.push(() => ro.disconnect());
+    }
+    this._listen(canvas, 'webglcontextlost', e => { e.preventDefault(); this.contextLost = true; if (this.onContextLost) this.onContextLost(); });
+    this._listen(canvas, 'webglcontextrestored', () => { this.contextLost = false; this.resize(); if (this.onContextRestored) this.onContextRestored(); });
   }
+  Viewer.prototype._listen = function (target, type, fn, options) {
+    target.addEventListener(type, fn, options); this._cleanups.push(() => target.removeEventListener(type, fn, options));
+  };
   Viewer.prototype._environment = function () {
     const T = this.T;
     const env = new T.Scene();
@@ -189,6 +219,7 @@
     const pm = new T.PMREMGenerator(this.renderer);
     const rt = pm.fromScene(env, 0.02);
     pm.dispose();
+    disposeTree(env); this._envTarget = rt;
     return rt.texture;
   };
   Viewer.prototype._lights = function () {
@@ -218,21 +249,25 @@
   Viewer.prototype.resize = function () {
     const w = this.stage.clientWidth, h = this.stage.clientHeight;
     if (!w || !h) return;
-    this.renderer.setSize(w, h, false);
+    // Bound the framebuffer on high-DPI phones and large/fullscreen displays.
+    const pr = Math.min(window.devicePixelRatio || 1, this.quality === 'high' ? 2 : 1.25, Math.sqrt((this.quality === 'high' ? 2400000 : 1200000) / (w * h)));
+    if (this._size.w === w && this._size.h === h && this._size.pr === pr) return;
+    this._size = { w: w, h: h, pr: pr };
+    this.renderer.setPixelRatio(pr); this.renderer.setSize(w, h, false);
     this.camera.aspect = w / h; this.camera.updateProjectionMatrix();
   };
   Viewer.prototype._bindControls = function () {
     const c = this.canvas, self = this;
     const pts = new Map();
     let last = null, moved = 0, pinch = 0, panMode = false;
-    c.addEventListener('pointerdown', e => {
+    this._listen(c, 'pointerdown', e => {
       c.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
       last = { x: e.clientX, y: e.clientY }; moved = 0; panMode = e.button === 2 || e.shiftKey || pts.size === 2;
       if (pts.size === 2) { const a = Array.from(pts.values()); pinch = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); }
       c.classList.add('is-drag'); self.autoSpinPaused = true; self._hideHint();
     });
     let hoverT = 0;
-    c.addEventListener('pointermove', e => {
+    this._listen(c, 'pointermove', e => {
       if (!pts.has(e.pointerId)) {
         if (e.pointerType === 'mouse' && performance.now() - hoverT > 90) { hoverT = performance.now(); c.style.cursor = self._hit(e) ? 'pointer' : ''; }
         return;
@@ -255,12 +290,13 @@
       pts.delete(e.pointerId); c.classList.remove('is-drag');
       if (moved < 6 && e.type === 'pointerup' && pts.size === 0) self._pick(e);
       if (pts.size === 0) { pinch = 0; last = null; }
+      else { const p = pts.values().next().value; last = { x: p.x, y: p.y }; pinch = 0; }
     };
-    c.addEventListener('pointerup', up); c.addEventListener('pointercancel', up);
-    c.addEventListener('contextmenu', e => e.preventDefault());
-    c.addEventListener('wheel', e => { e.preventDefault(); self.zoom(Math.exp(e.deltaY * 0.0012)); self._hideHint(); }, { passive: false });
+    this._listen(c, 'pointerup', up); this._listen(c, 'pointercancel', up); this._listen(c, 'lostpointercapture', up);
+    this._listen(c, 'contextmenu', e => e.preventDefault());
+    this._listen(c, 'wheel', e => { e.preventDefault(); self.zoom(Math.exp(e.deltaY * 0.0012)); self._hideHint(); }, { passive: false });
     c.tabIndex = 0;
-    c.addEventListener('keydown', e => {
+    this._listen(c, 'keydown', e => {
       const k = e.key; let used = true;
       if (k === 'ArrowLeft') self.sph.theta -= 0.12; else if (k === 'ArrowRight') self.sph.theta += 0.12;
       else if (k === 'ArrowUp') self.sph.phi -= 0.08; else if (k === 'ArrowDown') self.sph.phi += 0.08;
@@ -291,7 +327,9 @@
   };
   Viewer.prototype._pick = function (e) { this.select(this._hit(e)); };
   Viewer.prototype.select = function (p) {
-    if (this.selected && this.selected.box) { this.root.remove(this.selected.box); }
+    if (this.selected && this.selected.box) {
+      const old = this.selected.box; this.root.remove(old); disposeTree(old); this.selected.box = null;
+    }
     this.selected = p;
     if (p) {
       const T = this.T;
@@ -310,7 +348,15 @@
   Viewer.prototype.clear = function () {
     this.labels.forEach(l => l.el.remove()); this.labels = []; this.pickables = []; this.shells = []; this.explodables = []; this.animated = [];
     this.select(null);
+    disposeTree(this.root, this._kitResources); this._kitResources = null;
     while (this.root.children.length) this.root.remove(this.root.children[0]);
+  };
+  Viewer.prototype.dispose = function () {
+    if (this.disposed) return; this.disposed = true;
+    this._cleanups.splice(0).forEach(fn => fn()); this.clear();
+    if (this._envTarget) this._envTarget.dispose();
+    this.scene.traverse(o => { if (o.shadow && o.shadow.map) o.shadow.map.dispose(); });
+    this.renderer.dispose();
   };
   Viewer.prototype.applyClip = function () {
     const planes = this.clipOn ? [this.clipPlane] : [];
@@ -330,11 +376,16 @@
     this.applyClip();
   };
   Viewer.prototype.frame = function (dt) {
+    if (this.disposed || this.contextLost) return;
     const T = this.T;
+    if (reduceMotion) this.damp.theta = this.damp.phi = 0;
     if (this.autoSpin && !reduceMotion) this.sph.theta += dt * 0.12;
     else if (Math.abs(this.damp.theta) > 1e-4 || Math.abs(this.damp.phi) > 1e-4) {
       // eylemsizlik: bırakınca yavaşça durur
-      if (!this.canvas.classList.contains('is-drag')) { this.sph.theta += this.damp.theta; this.sph.phi += this.damp.phi; this.damp.theta *= 0.86; this.damp.phi *= 0.86; }
+      if (!this.canvas.classList.contains('is-drag')) {
+        const frames = dt * 60, decay = Math.pow(0.86, frames), distance = (1 - decay) / (1 - 0.86);
+        this.sph.theta += this.damp.theta * distance; this.sph.phi += this.damp.phi * distance; this.damp.theta *= decay; this.damp.phi *= decay;
+      }
     }
     this.sph.phi = E.clamp(this.sph.phi, this.limits.phiMin, this.limits.phiMax);
     const s = this.sph;
@@ -347,7 +398,7 @@
     if (this.selected && this.selected.box) this.selected.box.update();
     this.renderer.render(this.scene, this.camera);
     // etiketler
-    const w = this.stage.clientWidth, h = this.stage.clientHeight, v = new T.Vector3();
+    const w = this._size.w, h = this._size.h, v = this._labelVector || (this._labelVector = new T.Vector3());
     this.labels.forEach(l => {
       if (!this.showLabels || (l.obj && !l.obj.visible)) { l.el.style.display = 'none'; return; }
       if (l.obj) { l.obj.updateWorldMatrix(true, false); v.copy(l.off).applyMatrix4(l.obj.matrixWorld); } else v.copy(l.off);
@@ -379,11 +430,12 @@
   }
   function makeKit(viewer) {
     const T = viewer.T;
+    const resources = viewer._kitResources = new Set();
     const matCache = {};
     function std(key, o) {
       if (matCache[key]) return matCache[key];
       const m = o.physical ? new T.MeshPhysicalMaterial(o.p) : new T.MeshStandardMaterial(o.p);
-      m.envMapIntensity = o.env === undefined ? 1 : o.env; linearize(m); matCache[key] = m; return m;
+      m.envMapIntensity = o.env === undefined ? 1 : o.env; linearize(m); matCache[key] = m; resources.add(m); return m;
     }
     const mats = {
       panelRAL7035: std('ral7035', { p: { color: 0xd7d9d6, metalness: 0.25, roughness: 0.48 } }),
@@ -431,7 +483,7 @@
       ledBlue: std('lb', { p: { color: 0x38bdf8, emissive: 0x38bdf8, emissiveIntensity: 2.2, roughness: 0.4 } })
     };
     const geoCache = {};
-    function boxGeo(w, h, d) { const k = 'b' + w + ',' + h + ',' + d; return geoCache[k] || (geoCache[k] = new T.BoxGeometry(w, h, d)); }
+    function boxGeo(w, h, d) { const k = 'b' + w + ',' + h + ',' + d; if (!geoCache[k]) { geoCache[k] = new T.BoxGeometry(w, h, d); resources.add(geoCache[k]); } return geoCache[k]; }
     function mesh(geo, mat, x, y, z, parent, opt) {
       const m = new T.Mesh(geo, mat);
       m.position.set(x || 0, y || 0, z || 0);
@@ -455,7 +507,7 @@
           s.lineTo(-w / 2 + rr, h / 2); s.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - rr); s.lineTo(-w / 2, -h / 2 + rr); s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + rr, -h / 2);
           const b = Math.min(rr * 0.5, d * 0.2);
           g = new T.ExtrudeGeometry(s, { depth: Math.max(d - 2 * b, 1e-3), bevelEnabled: true, bevelThickness: b, bevelSize: b * 0.9, bevelSegments: 3, curveSegments: 6 });
-          g.translate(0, 0, -(d - 2 * b) / 2); geoCache[k] = g;
+          g.translate(0, 0, -(d - 2 * b) / 2); geoCache[k] = g; resources.add(g);
         }
         return mesh(g, mat, x, y, z, parent);
       },
@@ -490,7 +542,7 @@
           update(dt) {
             im.visible = f.visible && f.speed > 0.0001;
             if (!im.visible) return;
-            phase = (phase + dt * f.speed * f.dir + 1000) % 1;
+            if (!reduceMotion) phase = (phase + dt * f.speed * f.dir + 1000) % 1;
             for (let i = 0; i < count; i++) { const t = (i / count + phase) % 1; dummy.position.copy(curve.getPointAt(t)); dummy.updateMatrix(); im.setMatrixAt(i, dummy.matrix); }
             im.instanceMatrix.needsUpdate = true;
           } };
@@ -505,10 +557,10 @@
       /** Isı rengi: 0 → mavi, 0.5 → yeşil/sarı, 1 → kırmızı. */
       heat: (t, target) => { t = E.clamp(t, 0, 1); const c = target || new T.Color(); return c.setHSL((1 - t) * 0.62, 0.85, 0.5); },
       /** Modülün kendi oluşturduğu malzeme: sRGB hex → doğrusal (sahne kurulumundan sonra eklenenler için). */
-      mat: (hex, o) => { const m = new T.MeshStandardMaterial(Object.assign({ color: hex, roughness: 0.6, metalness: 0 }, o || {})); linearize(m); return m; },
+      mat: (hex, o) => { const m = new T.MeshStandardMaterial(Object.assign({ color: hex, roughness: 0.6, metalness: 0 }, o || {})); linearize(m); resources.add(m); return m; },
       linearize: linearize,
       viewer: viewer,
-      reducedMotion: reduceMotion,
+      get reducedMotion() { return reduceMotion; },
       quality: viewer.quality
     };
     return kit;
@@ -531,11 +583,12 @@
   };
   App.prototype.get = function (key) { return getPath(this.state, key); };
   App.prototype.invalidate = function () {
-    if (this._pending) return;
+    if (this._pending || this._disposed) return;
     this._pending = true;
-    requestAnimationFrame(() => { this._pending = false; this.recompute(); });
+    this._computeRaf = requestAnimationFrame(() => { this._pending = false; this.recompute(); });
   };
   App.prototype.recompute = function () {
+    if (this._disposed) return;
     let res;
     try { res = this.def.compute(this.state, this); } catch (err) { res = { ok: false, errors: ['Hesap hatası: ' + err.message], checks: [], values: {} }; console.error(err); }
     this.result = res;
@@ -788,13 +841,12 @@
     const canvas = stage.querySelector('canvas.vs-canvas');
     if (!window.THREE || !this.def.scene) return false;
     try {
-      const test = document.createElement('canvas');
-      if (!(test.getContext('webgl2') || test.getContext('webgl'))) return false;
       this.viewer = new Viewer(stage, canvas, { background: this.def.scene.background });
     } catch (e) { console.warn('WebGL başlatılamadı', e); return false; }
     this.kit = makeKit(this.viewer);
     this._sceneSig = this.def.scene.rebuildOn ? this.def.scene.rebuildOn(this.state) : null;
-    this.def.scene.build(this.kit, this.state, this);
+    try { this.def.scene.build(this.kit, this.state, this); }
+    catch (e) { console.warn('3D sahne kurulamadı', e); this.viewer.dispose(); this.viewer = null; this.kit = null; return false; }
     linearizeTree(this.viewer.scene);
     this.viewer.applyClip();
     const info = stage.querySelector('[data-vs-info]');
@@ -815,33 +867,77 @@
       info.querySelector('.vs-info__x').onclick = () => this.viewer.select(null);
     };
     this.viewer.onSelect = showInfo;
+    this.viewer.onContextLost = () => {
+      const fb = this.root.querySelector('[data-vs-fallback]'); if (fb) { fb.hidden = false; fb.textContent = '3D görüntü bağlantısı kesildi. Hesaplar ve 2D şema kullanılabilir; bağlantı geri geldiğinde 3D görünüme geçebilirsiniz.'; }
+      this.setMode('2d');
+      this.root.querySelectorAll('[data-vs-3donly], [data-vs-act="mode"]').forEach(b => { b.disabled = true; });
+    };
+    this.viewer.onContextRestored = () => {
+      const fb = this.root.querySelector('[data-vs-fallback]'); if (fb) fb.hidden = true;
+      this.setMode(this.mode);
+      this.root.querySelectorAll('[data-vs-3donly], [data-vs-act="mode"]').forEach(b => { b.disabled = false; });
+      toast('3D görüntü bağlantısı geri geldi. Görünüm düğmesiyle 3D sahneye geçebilirsiniz.');
+    };
     return true;
   };
   App.prototype.loop = function () {
-    let last = performance.now(), acc = 0;
+    let last = 0, next = 0, acc = 0;
+    this._visible = true; this._pageHidden = false; this._raf = 0;
+    const awake = () => !this._disposed && !this._pageHidden && !document.hidden && this._visible;
+    const schedule = () => { if (awake() && !this._raf) this._raf = requestAnimationFrame(step); };
+    const sync = () => {
+      if (!awake()) { cancelAnimationFrame(this._raf); this._raf = 0; last = next = 0; }
+      else schedule();
+    };
     const step = now => {
-      const dt = Math.min(0.1, (now - last) / 1000); last = now;
-      const active = !document.hidden;
-      if (active && this.running && !this.paused && this.def.tick) {
+      this._raf = 0; if (!awake()) { last = next = 0; return; }
+      // High-refresh displays should not double the GPU load of an engineering
+      // workspace. Keep elapsed time, and resume without a background time jump.
+      if (next && now < next - 0.5) { schedule(); return; }
+      next = now + 1000 / 60 - (next ? (now - next) % (1000 / 60) : 0);
+      const dt = last ? Math.min(0.1, (now - last) / 1000) : 0; last = now;
+      if (this.running && !this.paused && this.def.tick) {
         this.simTime += dt;
         const changed = this.def.tick(this, dt);
         acc += dt;
         if (changed && acc > 0.2) { acc = 0; this.renderAnalysis(); this.updateBadge(); this.checkTasks(); if (this.mode === '2d') this.draw2d(); }
       }
-      if (this.viewer && active && this.viewer.visible && this.mode === '3d') {
+      if (this.viewer && !this.viewer.contextLost && this.viewer.visible && this.mode === '3d') {
         const animDt = this.paused ? 0 : dt;
         if (this.def.scene.animate && this.validResult) this.def.scene.animate(this.kit, animDt, this.validResult, this.state, this.live, this);
         this.viewer.animated.forEach(a => a.update(animDt));
         this.viewer.frame(dt);
       }
-      requestAnimationFrame(step);
+      schedule();
     };
-    requestAnimationFrame(step);
+    this._loopSync = sync;
+    document.addEventListener('visibilitychange', sync);
+    const hide = e => { this._pageHidden = true; sync(); if (!e.persisted) this.dispose(); };
+    const show = () => { this._pageHidden = false; sync(); };
+    window.addEventListener('pagehide', hide); window.addEventListener('pageshow', show);
+    this._loopCleanup = () => { document.removeEventListener('visibilitychange', sync); window.removeEventListener('pagehide', hide); window.removeEventListener('pageshow', show); };
+    if ('IntersectionObserver' in window) {
+      this._appObserver = new IntersectionObserver(es => { this._visible = es[0].isIntersecting; sync(); }); this._appObserver.observe(this.root);
+    }
+    schedule();
+  };
+  App.prototype.dispose = function () {
+    if (this._disposed) return; this._disposed = true;
+    cancelAnimationFrame(this._raf); cancelAnimationFrame(this._explodeRaf); cancelAnimationFrame(this._computeRaf);
+    clearTimeout(this._save); clearTimeout(this._rs);
+    storageSet(this.storageKey, JSON.stringify({ savedAt: Date.now(), state: this.state }));
+    if (this._loopCleanup) this._loopCleanup();
+    if (this._appObserver) this._appObserver.disconnect();
+    if (this._onResize) window.removeEventListener('resize', this._onResize);
+    if (this.viewer) this.viewer.dispose();
   };
   App.prototype.setMode = function (mode) {
     this.mode = mode;
     const stage = this.root.querySelector('[data-vs-stage]');
     stage.dataset.mode = mode;
+    const fallback = stage.querySelector('[data-vs-fallback]');
+    stage.classList.toggle('has-fallback', !!(fallback && !fallback.hidden));
+    const tab = this.root.querySelector('[data-vs-pane="stage"]'); if (tab) tab.textContent = mode === '2d' ? '2D Şema' : '3D Simülasyon';
     const b = this.root.querySelector('[data-vs-act="mode"]'); if (b) { b.setAttribute('aria-pressed', mode === '2d' ? 'true' : 'false'); b.querySelector('span').textContent = mode === '2d' ? '3D görünüm' : '2D şema'; }
     if (mode === '2d') this.draw2d(); else if (this.viewer) this.viewer.resize();
   };
@@ -868,6 +964,7 @@
     // sahne güncel durumun sonucuyla kurulsun (senaryo/proje yüklemede eski sonuç kullanılmasın)
     try { const r = this.def.compute(this.state, this); this.result = r; if (r.ok) this.validResult = r; } catch (_) { /* hata recompute'ta gösterilir */ }
     this.viewer.clear();
+    this.kit = makeKit(this.viewer);
     this.def.scene.build(this.kit, this.state, this);
     linearizeTree(this.viewer.scene);
     this.viewer.applyTransparent();
@@ -1025,10 +1122,11 @@
         this.setClip(Number(sl.querySelector('input').value)); this.viewer.applyClip();
       } else if (act === 'explode') {
         if (!this.viewer) return;
-        const on = this.viewer.explode === 0; btn.setAttribute('aria-pressed', String(on));
+        cancelAnimationFrame(this._explodeRaf);
+        const on = btn.getAttribute('aria-pressed') !== 'true'; btn.setAttribute('aria-pressed', String(on));
         const from = this.viewer.explode, to = on ? 1 : 0, t0 = performance.now();
-        const anim = now => { const k = Math.min(1, (now - t0) / (reduceMotion ? 1 : 500)); this.viewer.explode = from + (to - from) * (1 - Math.pow(1 - k, 3)); if (k < 1) requestAnimationFrame(anim); };
-        requestAnimationFrame(anim);
+        const anim = now => { if (this._disposed) return; const k = Math.min(1, (now - t0) / (reduceMotion ? 1 : 500)); this.viewer.explode = from + (to - from) * (1 - Math.pow(1 - k, 3)); this._explodeRaf = k < 1 ? requestAnimationFrame(anim) : 0; };
+        this._explodeRaf = requestAnimationFrame(anim);
       }
       this.syncToolbar();
     } catch (e) { console.error(e); toast(e.message || 'İşlem tamamlanamadı.', 'bad'); }
@@ -1102,7 +1200,8 @@
     if (this._restored) toast('Son çalışmanız geri yüklendi. Sıfırla ile varsayılana dönebilirsiniz.');
     if (this.running && d.start) d.start(this);
     this.syncToolbar();
-    window.addEventListener('resize', () => { clearTimeout(self._rs); self._rs = setTimeout(() => { self.renderAnalysis(); if (self.mode === '2d') self.draw2d(); }, 150); });
+    this._onResize = () => { clearTimeout(self._rs); self._rs = setTimeout(() => { self.renderAnalysis(); if (self.mode === '2d') self.draw2d(); }, 150); };
+    window.addEventListener('resize', this._onResize);
     this.loop();
     root.dataset.ready = 'true';
   };
@@ -1110,11 +1209,12 @@
   /* ------------------------------------------------------------------ dışa açık API */
   window.VoltSim = {
     E: E, toast: toast, fmt: fmt, fmtPower: fmtPower, fmtEnergy: fmtEnergy, fmtDuration: fmtDuration, esc: esc, el: el, PALETTE: PALETTE, drawChart: drawChart,
-    reduceMotion: reduceMotion,
+    get reduceMotion() { return reduceMotion; },
     register: function (def) { modules[def.id] = def; },
     modules: modules,
     get app() { return window.__vsApp; }
   };
+  if (motionQuery && motionQuery.addEventListener) motionQuery.addEventListener('change', e => { reduceMotion = e.matches; });
   function boot() {
     const root = document.querySelector('[data-vs-module]');
     if (!root) return;

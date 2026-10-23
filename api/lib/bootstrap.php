@@ -12,8 +12,8 @@ if (!defined('VG_API')) {
 }
 
 const VG_API_VERSION = 'vg-auth/1';
-/* Kayit sirasinda onaylanan uyelik + KVKK aydinlatma metninin surumu (gizlilik.html "Son guncelleme"). */
-const VG_CONSENT_VERSION = '2026-10-13';
+/* Registration notice version; legacy consent_* fields preserve stored-account compatibility. */
+const VG_CONSENT_VERSION = '2026-10-23';
 const VG_SESSION_NAME = 'VGSESS';
 /* Oturum sureleri (saniye). "Beni hatirla" isaretli degilse kisa, isaretliyse uzun sureler uygulanir. */
 const VG_IDLE_SHORT = 7200;        // 2 saat islem yapilmazsa
@@ -195,14 +195,25 @@ function vg_is_https(): bool
     if ((string)($_SERVER['SERVER_PORT'] ?? '') === '443') {
         return true;
     }
-    return strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https';
+    // A client-controlled forwarding header must never disable the HTTPS requirement.
+    return vg_trusted_proxy((string)($_SERVER['REMOTE_ADDR'] ?? ''))
+        && strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https';
+}
+
+/** Local development is the only HTTP exception for credential-bearing account endpoints. */
+function vg_local_http_request(): bool
+{
+    $host = strtolower((string)($_SERVER['HTTP_HOST'] ?? ''));
+    $remote = (string)($_SERVER['REMOTE_ADDR'] ?? '');
+    return in_array($remote, ['127.0.0.1', '::1'], true)
+        && preg_match('/^(localhost|127\.0\.0\.1|\[::1\])(:[0-9]+)?$/D', $host) === 1;
 }
 
 /** Yalnizca application/json govde kabul edilir; boyut ve bicim denetlenir. */
 function vg_json_body(int $max): array
 {
     $ct = strtolower(trim((string)($_SERVER['CONTENT_TYPE'] ?? ($_SERVER['HTTP_CONTENT_TYPE'] ?? ''))));
-    if (strpos($ct, 'application/json') !== 0) {
+    if (trim(explode(';', $ct, 2)[0]) !== 'application/json') {
         vg_fail(415, 'unsupported_media_type', 'İstek biçimi desteklenmiyor.');
     }
     $len = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
@@ -220,7 +231,8 @@ function vg_json_body(int $max): array
         return [];
     }
     $data = json_decode($raw, true, 32);
-    if (!is_array($data) || ($data !== [] && array_keys($data) === range(0, count($data) - 1))) {
+    if (substr(ltrim($raw), 0, 1) !== '{' || !is_array($data)
+        || ($data !== [] && array_keys($data) === range(0, count($data) - 1))) {
         vg_fail(400, 'invalid_json', 'İstek okunamadı. Sayfayı yenileyip tekrar deneyin.');
     }
     return $data;
@@ -235,10 +247,12 @@ function vg_ip_in_cidr(string $ip, string $cidr): bool
         return false;
     }
     list($subnet, $bits) = explode('/', $cidr, 2);
+    if (preg_match('/^[0-9]{1,3}$/D', $bits) !== 1) return false;
     $bits = (int)$bits;
     $ipBin = @inet_pton($ip);
     $subBin = @inet_pton($subnet);
-    if ($ipBin === false || $subBin === false || strlen($ipBin) !== strlen($subBin)) {
+    if ($ipBin === false || $subBin === false || strlen($ipBin) !== strlen($subBin)
+        || $bits < 0 || $bits > strlen($ipBin) * 8) {
         return false;
     }
     $bytes = intdiv($bits, 8);
@@ -254,13 +268,9 @@ function vg_ip_in_cidr(string $ip, string $cidr): bool
 }
 
 /** Istemci IP'si. CF-Connecting-IP yalnizca istek gercek bir Cloudflare adresinden geliyorsa dikkate alinir. */
-function vg_client_ip(): string
+function vg_cloudflare_ranges(): array
 {
-    static $ip = null;
-    if ($ip !== null) {
-        return $ip;
-    }
-    $cfRanges = [
+    return [
         '173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22',
         '141.101.64.0/18', '108.162.192.0/18', '190.93.240.0/20', '188.114.96.0/20',
         '197.234.240.0/22', '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/13',
@@ -268,10 +278,39 @@ function vg_client_ip(): string
         '2400:cb00::/32', '2606:4700::/32', '2803:f800::/32', '2405:b500::/32',
         '2405:8100::/32', '2a06:98c0::/29', '2c0f:f248::/32',
     ];
+}
+
+/** Additional reverse proxies must be explicitly provisioned as IPs/CIDRs. */
+function vg_trusted_proxy(string $remote): bool
+{
+    $ranges = vg_cloudflare_ranges();
+    $extra = getenv('VG_TRUSTED_PROXIES');
+    if (is_string($extra)) {
+        foreach (explode(',', $extra) as $range) {
+            $range = trim($range);
+            if (filter_var($range, FILTER_VALIDATE_IP)) {
+                if ($remote === $range) return true;
+            } elseif ($range !== '') {
+                $ranges[] = $range;
+            }
+        }
+    }
+    foreach ($ranges as $range) {
+        if (vg_ip_in_cidr($remote, $range)) return true;
+    }
+    return false;
+}
+
+function vg_client_ip(): string
+{
+    static $ip = null;
+    if ($ip !== null) {
+        return $ip;
+    }
     $remote = (string)($_SERVER['REMOTE_ADDR'] ?? '');
     $cf = (string)($_SERVER['HTTP_CF_CONNECTING_IP'] ?? '');
     if ($remote !== '' && $cf !== '' && filter_var($cf, FILTER_VALIDATE_IP)) {
-        foreach ($cfRanges as $range) {
+        foreach (vg_cloudflare_ranges() as $range) {
             if (vg_ip_in_cidr($remote, $range)) {
                 return $ip = $cf;
             }
@@ -314,6 +353,31 @@ function vg_ensure_dir(string $dir): bool
         @mkdir($dir, 0700, true);
     }
     return @is_dir($dir) && @is_writable($dir);
+}
+
+/** Resolve links/junctions before accepting a directory for account data or sessions. */
+function vg_private_data_directory(string $candidate, ?string $anchor = null): string
+{
+    if (!vg_ensure_dir($candidate)) vg_unavailable('private directory is not writable');
+    $actual = realpath($candidate);
+    $root = realpath(vg_doc_root());
+    $normalize = static function (string $path): string {
+        return strtolower(rtrim(str_replace('\\', '/', $path), '/'));
+    };
+    if ($actual === false || $root === false) vg_unavailable('private directory cannot be resolved');
+    $resolved = $normalize($actual);
+    $public = $normalize($root);
+    if ($resolved === $public || strpos($resolved, $public . '/') === 0) {
+        vg_unavailable('private directory must be outside document root');
+    }
+    if ($anchor !== null) {
+        $base = realpath($anchor);
+        if ($base === false || strpos($resolved, $normalize($base) . '/') !== 0) {
+            vg_unavailable('private directory escapes storage root');
+        }
+    }
+    @chmod($actual, 0700);
+    return str_replace('\\', '/', $actual);
 }
 
 /**

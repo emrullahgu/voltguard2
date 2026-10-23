@@ -18,19 +18,19 @@ function vg_mail_can_send(): bool
     return getenv('VG_MAIL_OUTBOX') === '1' || function_exists('mail');
 }
 
-function vg_mail_send(string $to, string $subject, string $body, string $kind): bool
+function vg_mail_send(string $to, string $subject, string $body, string $kind, ?string $replyTo = null): bool
 {
     if (filter_var($to, FILTER_VALIDATE_EMAIL) === false || preg_match('/[\r\n]/', $to) === 1) {
         return false;
     }
+    if ($replyTo !== null && (filter_var($replyTo, FILTER_VALIDATE_EMAIL) === false || preg_match('/[\r\n]/', $replyTo) === 1)) return false;
     $fromAddress = 'noreply@voltguard.com.tr';
     $headers = [
         'MIME-Version: 1.0',
         'Content-Type: text/plain; charset=UTF-8',
         'Content-Transfer-Encoding: 8bit',
         'From: VoltGuard <' . $fromAddress . '>',
-        'Reply-To: info@voltguard.com.tr',
-        'X-Mailer: PHP/' . phpversion(),
+        'Reply-To: ' . ($replyTo ?? 'info@voltguard.com.tr'),
     ];
     $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 

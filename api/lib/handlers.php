@@ -115,9 +115,8 @@ function vg_h_register(VgStore $store, array $body): array
     }
     $company = vg_validate_company($body['company'] ?? '', $errors);
     $phone = vg_validate_phone($body['phone'] ?? '', $errors);
-    if (!vg_bool($body['consent'] ?? false)) {
-        $errors['consent'] = 'Devam etmek için üyelik ve KVKK aydınlatma metnini onaylamanız gerekir.';
-    }
+    // Account creation is an explicit service request. The visible privacy notice is
+    // information, not a general-purpose consent requirement. Legacy consent:true is accepted.
     if ($errors) {
         vg_validation_failed($errors);
     }
@@ -312,7 +311,8 @@ function vg_h_delete_account(VgStore $store, array $body): array
         vg_validation_failed(['confirm' => 'Silme işlemini onaylamak için kutuyu işaretleyin.']);
     }
     vg_verify_user_password($store, $user, $body['password'] ?? '', 'password');
-    $store->deleteUser($user['id']);
+    require_once __DIR__ . '/community.php';
+    vg_community_delete_account($store, $user['id']);
     vg_rl_clear('login_email', $user['email']);
     vg_rl_clear('login_email_ip', $user['email'] . '|' . vg_rl_ip_key());
     vg_session_destroy();
@@ -606,6 +606,9 @@ function vg_run(): void
 {
     ob_start();
     try {
+        if (PHP_SAPI !== 'cli' && !vg_is_https() && !vg_local_http_request()) {
+            vg_fail(503, 'https_required', 'Hesap işlemleri güvenli HTTPS bağlantısı gerektirir.');
+        }
         $routes = vg_routes();
         $action = vg_action();
         if ($action === '' || !isset($routes[$action])) {

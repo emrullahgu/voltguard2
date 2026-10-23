@@ -2,7 +2,7 @@
   "name": "VoltGame — PARALAKS: Tek Hat",
   "release": "R1",
   "rules": 4,
-  "version": "r1-20261013T1809",
+  "version": "r1-20261023T0951",
   "levels": [
     "P1",
     "P2",
@@ -72,7 +72,7 @@
   "files": {
     "runtime": {
       "path": "/public/voltgame/oyun.html",
-      "bytes": 1315302
+      "bytes": 1316331
     },
     "worker": {
       "path": "/public/voltgame/solver-worker.js",
@@ -80,7 +80,7 @@
     },
     "offline": {
       "path": "/public/voltgame/downloads/voltgame-cevrimdisi.html",
-      "bytes": 1337699
+      "bytes": 1338728
     }
   }
 }

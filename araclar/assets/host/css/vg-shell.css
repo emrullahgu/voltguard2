@@ -632,7 +632,7 @@ html.vg-lock { overflow: hidden; }
   color: rgba(255, 255, 255, .78);
   font-style: normal;
 }
-.vg-footer__contact a { align-items: center; width: fit-content; transition: color .2s ease; }
+.vg-footer__contact a { align-items: center; width: fit-content; min-height: 32px; transition: color .2s ease; } /* dokunma hedefi ≥ 24 px (WCAG 2.5.8) */
 .vg-footer__contact a:hover { color: var(--vg-accent); }
 .vg-footer__contact i,
 .vg-footer__addr i,
@@ -1174,3 +1174,9 @@ html.vg-js .vg-footer:not(.is-inview) *::after {
   .vg-header .logo-mark__tagline { display: none; }
   .vg-header .vg-nav__link { font-size: .75rem; padding: .5rem .3rem; }
 }
+
+/* Navigation and signature remain quiet while the page is being read. */
+.vg-nav__link::before, .sig-badge__shimmer, .sig-node, .sig-node::after { animation: none; }
+.sig-trace__dot { display: none; }
+.vg-header a:focus-visible, .vg-header button:focus-visible,
+.vg-footer a:focus-visible { outline: 3px solid #fbbf24; outline-offset: 4px; }

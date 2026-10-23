@@ -395,9 +395,12 @@ function init() {
   const amb = () => { try { const a = PX.store && PX.store.data && PX.store.data.ayar; if (a && typeof a.muzik === 'number') PX.audio.setLevels({ ortam: a.muzik }); } catch (e) { /* kayıt yok */ } };
   amb(); bus.on('settings', amb);
   bus.on('level:loaded', p => { const lv = p && p.level; A.biome = lv && lv.biyom ? lv.biyom : ''; applyBeds(); play('spawn'); });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) hold(); else release(); });
-  window.addEventListener('pagehide', hold); window.addEventListener('pageshow', release);
-  window.addEventListener('blur', hold); window.addEventListener('focus', release);
+  let runtimeVisible = true;
+  const syncVisibility = () => { if (document.hidden || !runtimeVisible) hold(); else release(); };
+  bus.on('runtime:visibility', p => { runtimeVisible = !!(p && p.visible); syncVisibility(); });
+  document.addEventListener('visibilitychange', syncVisibility);
+  window.addEventListener('pagehide', hold); window.addEventListener('pageshow', syncVisibility);
+  window.addEventListener('blur', hold); window.addEventListener('focus', syncVisibility);
 }
 PX.audio = {
   init, resume, play, hum,

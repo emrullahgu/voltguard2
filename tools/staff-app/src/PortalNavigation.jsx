@@ -15,7 +15,7 @@ export const PORTAL_MODULES = [
   { id: 'urun-takip', label: 'Ürün takibi', group: 'İş ve kayıtlar' },
   { id: 'akaryakit', label: 'Akaryakıt takibi', group: 'İş ve kayıtlar' },
   { id: 'kontrol', label: 'Periyodik kontrol raporları', group: 'Enerji ve kontrol' },
-  { id: 'osos', label: 'OSOS ve canlı izleme', group: 'Enerji ve kontrol' },
+  { id: 'osos', label: 'OSOS ve ölçüm kayıtları', group: 'Enerji ve kontrol' },
   { id: 'haftalik-raporlama', label: 'Haftalık enerji raporları', group: 'Enerji ve kontrol' },
   { id: 'bordro', label: 'Personel bordrosu', group: 'Bordro' },
   { id: 'beyaz-yaka', label: 'Beyaz yaka bordrosu', group: 'Bordro' },
@@ -32,7 +32,7 @@ export default function PortalNavigation({ onProfile }) {
   const source = getStaffCapabilities().dataSource;
   const role = { admin: 'Yönetici', payroll: 'Bordro yöneticisi', employee: 'Çalışan' }[currentUser?.role] || 'Çalışan';
   return <div className="portal-navigation no-print">
-    <div className="portal-navigation__identity"><a href={PORTAL_HOME} className="portal-navigation__title">Şirket uygulaması</a><p><span>{currentUser?.name || currentUser?.email}</span><span className="portal-navigation__role">{role}</span></p>{source === 'ubuntu' && <p className="portal-navigation__source">Kayıtlar: Ubuntu sunucusu</p>}</div>
+    <div className="portal-navigation__identity"><a href={PORTAL_HOME} className="portal-navigation__title">Şirket uygulaması</a><p><span>{currentUser?.name || currentUser?.email}</span><span className="portal-navigation__role">{role}</span></p>{source === 'ubuntu' && <p className="portal-navigation__source">Kayıtlar: şirket sunucusu</p>}</div>
     <nav aria-label="Şirket uygulaması bağlantıları"><a href="/calisan/">Çalışan paneli</a><a href="/araclar/">Hesap araçları</a>{currentUser?.role === 'admin' && <a href={portalModuleURL('admin')}>Çalışan yönetimi</a>}{onProfile ? <button type="button" onClick={onProfile}>Profil ve güvenlik</button> : <a href={PORTAL_HOME+'?profil=1'}>Profil ve güvenlik</a>}<button type="button" onClick={signOut}>Çıkış yap</button></nav>
   </div>;
 }

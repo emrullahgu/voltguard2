@@ -134,6 +134,7 @@ async function run() {
     result = await expect(member, 'register', { endpoint: 'auth', body: { name: 'Kayıtlı Üye', email: `community-${unique}@example.test`, password: 'Deneme12345', consent: true } }, 201);
     const memberId = result.body.user.id;
     result = await expect(member, 'publish', { body: { authorName: 'Sahte Yönetici', message: 'Kayıtlı üyeden yorum.' } }, 201);
+    const memberPostId = result.body.item.id;
     check(result.body.item.authorName, 'Kayıtlı Üye', 'Member cannot spoof an author name');
     check(result.body.item.authorType, 'member', 'Normal account is member, never employee');
     await expect(member, 'delete', { body: { id: replyId } }, 403, 'forbidden');
@@ -146,10 +147,16 @@ async function run() {
     check(revoke.status, 0, 'Moderator can be revoked through private CLI');
     await expect(member, 'delete', { body: { id: replyId } }, 403, 'forbidden');
     await expect(b, 'delete', { body: { id: replyId } }, 200);
+    await expect(member, 'delete_account', { endpoint: 'auth', body: { password: 'Deneme12345', confirm: true } }, 200);
+    result = await expect(a, 'list', {}, 200);
+    const removedMemberPost = result.body.items.find(item => item.id === memberPostId);
+    check(removedMemberPost.deleted, true, 'Account deletion removes public comments as well as account collections');
+    check(removedMemberPost.message, '', 'Deleted account comment content is erased');
     result = await fetch(`${base}/tools/community-admin.php`);
     check(result.status, 404, 'CLI administration refuses HTTP even without .htaccess');
     const stored = JSON.parse(fs.readFileSync(path.join(sandbox, 'community/comments.json'), 'utf8'));
     check(Object.keys(stored.posts[firstId]).sort(), ['createdAt', 'deleted', 'deletedAt', 'id', 'parentId'].sort(), 'Private tombstone contains no author identity or original content');
+    check(Object.keys(stored.posts[memberPostId]).sort(), ['createdAt', 'deleted', 'deletedAt', 'id', 'parentId'].sort(), 'Account deletion erases private author identity and comment content');
     check(JSON.stringify(stored).includes('@example.test'), false, 'Community does not store email addresses');
     check(Object.keys(stored.rates).every(key => /^[a-f0-9]{64}$/.test(key)), true, 'Spam counters use HMAC keys');
     const corruptFile = path.join(sandbox, 'community/comments.json');

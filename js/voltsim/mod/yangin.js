@@ -1000,11 +1000,12 @@
       k.viewer.root.add(m);
       return { data: data, tex: tex, c0: p[0], amax: p[1] };
     });
-    sc.smokeSum = -1;
+    sc.smokeGrid = null;
   }
   function paintSmoke(sc, grid) {
-    let sum = 0; for (let i = 0; i < grid.length; i += 7) sum += grid[i];
-    if (Math.abs(sum - sc.smokeSum) < 1e-5) return; sc.smokeSum = sum;
+    // smokeStep returns a new grid. Identity avoids per-frame scans and still
+    // redraws redistribution with the same total smoke concentration.
+    if (sc.smokeGrid === grid) return; sc.smokeGrid = grid;
     sc.smoke.forEach(l => {
       const d = l.data;
       for (let gy = 0; gy < GH; gy++) for (let gx = 0; gx < GW; gx++) {
@@ -1086,7 +1087,7 @@
     }
     sc.plume.instanceMatrix.needsUpdate = true;
     // dedektör LED'leri: normal → 4 s'de bir yeşil yanıp söner, alarm → kırmızı, arıza → sarı, devre dışı → sönük
-    const st = detStates(s, L), blink = (sc.clock % 4) < 0.18;
+    const st = detStates(s, L), blink = rm || (sc.clock % 4) < 0.18;
     const LC = sc.ledCol, flash = (sc.clock * 3 | 0) % 2 || rm;
     st.forEach((x, i) => {
       const d = sc.dets[i]; if (!d) return;

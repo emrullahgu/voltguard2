@@ -5,14 +5,19 @@
 // Mevzuat paneli js/voltsim/regulations.js verisinden statik HTML olarak üretilir (JS kapalıyken ve arama motorlarında görünür).
 const fs = require('node:fs');
 const path = require('node:path');
+const { createHash } = require('node:crypto');
 const root = path.resolve(__dirname, '..');
-const V = '20261024a';
+const assets = ['css/voltsim.css', 'js/voltsim/core.js', 'js/voltsim/engine.js', 'js/voltsim/regulations.js',
+  ...['calc', 'mod'].flatMap(dir => fs.readdirSync(path.join(root, 'js/voltsim', dir)).filter(f => f.endsWith('.js')).sort().map(f => 'js/voltsim/' + dir + '/' + f))];
+const V = createHash('sha256').update(assets.map(file => fs.readFileSync(path.join(root, file), 'utf8')).join('\n')).digest('hex').slice(0, 12);
+// her dosyanın sürümü kendi içeriğinin SHA-256 özetinden (tools/sync-versions.py ve araclar/ üreticisiyle aynı kural)
+const rev = file => { const f = path.join(root, file.replace(/^\//, '')); return fs.existsSync(f) ? createHash('sha256').update(fs.readFileSync(f)).digest('hex').slice(0, 12) : V; };
 const regs = require(path.join(root, 'js/voltsim/regulations.js'));
 const SITE = 'https://voltguard.com.tr';
 
 const MODULES = [
   { id: 'pano', slug: 'pano', name: 'Elektrik Pano', short: 'AG dağıtım, MCC, kompanzasyon, otomasyon ve transfer panoları',
-    title: '3D Elektrik Pano Simülasyonu — Faz Akımı, Kısa Devre, Koruma | VoltSim',
+    title: '3D Elektrik Pano Simülasyonu: Kısa Devre ve Koruma | VoltSim',
     description: 'ADP, MCC ve transfer panolarını 3D inceleyin; yük ekleyin, motor çalıştırın, faz akımı, gerilim düşümü, kısa devre ve koruma koordinasyonunu anlık hesaplayın.',
     h1: '3D Elektrik Pano Simülasyonu', eyebrow: 'Ana dağıtım · MCC · Transfer',
     lead: 'Ana şalterden baralara, MCB’lerden kontaktörlere kadar endüstriyel bir panoyu açın. Yükleri devreye alın, motorları çalıştırın; faz akımları fazör toplamıyla, kablo ve koruma uygunluğu TS HD 60364 kurallarıyla anında hesaplanır.',
@@ -20,7 +25,7 @@ const MODULES = [
     service: ['/hizmetler/elektrik-pano-imalati.html', 'Elektrik pano imalatı'],
     related: [['/hesaplama/kablo-kesiti-hesaplama/', 'Kablo kesiti hesabı'], ['/hesaplama/kisa-devre-akimi-hesaplama/', 'Kısa devre akımı'], ['/araclar/ag-kisa-devre/', 'AG kısa devre aracı']] },
   { id: 'ges', slug: 'ges', name: 'GES', short: 'Fabrika çatısı güneş santrali, güneş hareketi ve gölge',
-    title: '3D GES Simülasyonu — Çatı Güneş Santrali Üretim ve String Tasarımı | VoltSim',
+    title: '3D GES Simülasyonu: Çatı Güneş Santrali Tasarımı | VoltSim',
     description: 'Fabrika çatısında GES kurun: güneşin konumu, eğim, gölge, string Voc kontrolü, inverter kırpması, öz tüketim ve geri dönüş senaryosunu 3D olarak inceleyin.',
     h1: '3D GES Simülasyonu', eyebrow: 'Çatı GES · String · Öz tüketim',
     lead: 'Bir fabrika çatısına panelleri yerleştirin, il veya koordinat seçin, gün içinde güneşi hareket ettirin. Soğuk sabahta string açık devre gerilimini, sıcak öğlede MPPT aralığını ve inverter kırpmasını kontrol edin.',
@@ -28,15 +33,15 @@ const MODULES = [
     service: ['/hizmetler/fabrika-cati-ges.html', 'Fabrika çatı GES'],
     related: [['/araclar/ges-tasarim/', 'GES tasarım aracı'], ['/hesaplama/ges-uretim-hesaplama/', 'GES üretim hesabı'], ['/hesaplama/inverter-dc-ac-kablo-secimi/', 'İnverter DC/AC kablo']] },
   { id: 'trafo', slug: 'trafo', name: 'Trafo', short: 'Beton köşk trafo merkezi, OG hücreler ve güç trafosu',
-    title: '3D Trafo Simülasyonu — Trafo Merkezi, Kayıp, Verim, Kısa Devre | VoltSim',
-    description: 'Prefabrik beton köşk trafo merkezini 3D inceleyin; trafo gücü, uk, P0, Pk girerek OG/AG akımı, kayıplar, verim, gerilim değişimi ve yaklaşık kısa devre akımını hesaplayın.',
+    title: '3D Trafo Merkezi Simülasyonu: Kayıp, Verim, Isınma | VoltSim',
+    description: 'Beton köşk trafo merkezini 3D inceleyin; trafo gücü, uk, P0 ve Pk ile OG/AG akımı, kayıplar, verim, gerilim değişimi ve yaklaşık kısa devre akımını hesaplayın.',
     h1: '3D Trafo ve Trafo Merkezi Simülasyonu', eyebrow: 'Beton köşk · OG hücre · Güç trafosu',
     lead: 'OG hücrelerinden güç trafosuna ve AG panoya kadar bir trafo merkezini gezin. Yük arttıkça trafonun yüklenmesini, kayıplarını, verimini ve sargı sıcaklığını izleyin.',
     tags: ['I = S/(√3·U)', 'Yüklenme %', 'P0 + Pk·K²', 'Verim', 'Gerilim değişimi', 'Ik ≈ In/uk'],
     service: ['/hizmetler/trafo-merkezi-kurulumu.html', 'Trafo merkezi kurulumu'],
     related: [['/araclar/beton-kosk-yerlesim/', 'Beton köşk yerleşim aracı'], ['/hesaplama/trafo-akimi-hesaplama/', 'Trafo akımı hesabı'], ['/hizmetler/trafo-isletme-sorumlulugu.html', 'Trafo işletme sorumluluğu']] },
   { id: 'sarj', slug: 'sarj-istasyonu', name: 'Şarj İstasyonu', short: 'AC wallbox ve DC hızlı şarj, yük paylaşımı',
-    title: '3D Elektrikli Araç Şarj İstasyonu Simülasyonu — AC/DC Şarj Süresi | VoltSim',
+    title: 'Elektrikli Araç Şarj İstasyonu Simülasyonu | VoltSim',
     description: 'AC 7,4–22 kW ve DC 60–180 kW şarjı simüle edin: batarya SOC, araç kabul gücü, şarj eğrisi, verim, eşzamanlı araçlar ve dinamik yük paylaşımı.',
     h1: '3D Elektrikli Araç Şarj İstasyonu Simülasyonu', eyebrow: 'AC wallbox · DC hızlı şarj · Yük yönetimi',
     lead: 'Aracı şarj noktasına bağlayın, AC veya DC seçin ve şarjı başlatın. Gücü her an cihaz, araç ve tesis sınırlarının en küçüğü belirler; SOC ve güç grafikleri canlı çizilir.',
@@ -44,7 +49,7 @@ const MODULES = [
     service: ['/hizmetler/elektrik-taahhut.html', 'Elektrik taahhüt ve şarj altyapısı'],
     related: [['/araclar/ev-sarj-suresi/', 'EV şarj süresi aracı'], ['/hesaplama/kw-kva-amper-donusturucu/', 'kW–kVA–A dönüştürücü']] },
   { id: 'res', slug: 'res', name: 'RES', short: 'Rüzgâr türbini, güç eğrisi ve rüzgâr parkı',
-    title: '3D RES Simülasyonu — Rüzgâr Türbini Güç Eğrisi ve Yıllık Üretim | VoltSim',
+    title: '3D Rüzgâr Türbini (RES) Simülasyonu ve Güç Eğrisi | VoltSim',
     description: 'Dönen rotorlu 3D rüzgâr türbini: rüzgâr hızı, hava yoğunluğu, Cp, Betz sınırı, nominal güç, cut-in/cut-out ve Weibull dağılımıyla yıllık üretim senaryosu.',
     h1: '3D RES / Rüzgâr Enerjisi Simülasyonu', eyebrow: 'Rüzgâr türbini · Güç eğrisi · Park',
     lead: 'Rüzgârı artırın: rotor hızlanır, nominalde kanat açısı devreye girer, fırtınada türbin güvenli duruşa geçer. Güç ½·ρ·A·Cp·v³ ile, verimler ayrı ayrı uygulanarak hesaplanır.',
@@ -52,7 +57,7 @@ const MODULES = [
     service: ['/hizmetler/elektrik-projesi.html', 'Elektrik projesi'],
     related: [['/araclar/', 'Mühendislik uygulamaları']] },
   { id: 'komp', slug: 'kompanzasyon', name: 'Kompanzasyon', short: 'Kondansatör kademeleri, harmonik ve rezonans',
-    title: '3D Kompanzasyon ve Harmonik Simülasyonu — cosφ, THDi, THDv, Rezonans | VoltSim',
+    title: '3D Kompanzasyon ve Harmonik Simülasyonu | VoltSim',
     description: 'Kompanzasyon panosunda kademeleri açıp kapatın; Qc = P·(tanφ1 − tanφ2), harmonik spektrum, THDi/THDv ve paralel rezonans riskini empedans modeliyle görün.',
     h1: '3D Kompanzasyon ve Harmonik Simülasyonu', eyebrow: 'Kondansatör · Reaktör · Harmonik filtre',
     lead: 'Reaktif güç rölesi kademeleri devreye alır; ayarlı (detuned) reaktörlerle ya da reaktörsüz grupla harmoniklerin nasıl büyüdüğünü veya söndüğünü trafo ve kondansatör empedanslarıyla hesaplayın.',
@@ -60,7 +65,7 @@ const MODULES = [
     service: ['/hizmetler/harmonik-filtreli-kompanzasyon.html', 'Harmonik filtreli kompanzasyon'],
     related: [['/hesaplama/kompanzasyon-hesaplama/', 'Kompanzasyon hesabı'], ['/hesaplama/reaktif-ceza-hesaplama/', 'Reaktif ceza hesabı'], ['/araclar/harmonik-thd/', 'Harmonik THD aracı']] },
   { id: 'topraklama', slug: 'topraklama', name: 'Topraklama', short: 'Elektrotlar, dokunma/adım gerilimi, TT/TN/IT',
-    title: '3D Topraklama ve Elektrik Güvenliği Simülasyonu — Dokunma ve Adım Gerilimi | VoltSim',
+    title: '3D Topraklama Simülasyonu: Dokunma ve Adım Gerilimi | VoltSim',
     description: 'Çubuk, şerit ve ağ topraklama elektrotlarını toprak özdirenciyle modelleyin; topraklama direnci, GPR, dokunma ve adım gerilimi, TT/TN/IT kesme koşulları.',
     h1: '3D Topraklama ve Elektrik Güvenliği Simülasyonu', eyebrow: 'Elektrot · Potansiyel · Sistem tipi',
     lead: 'Toprak altını açın: elektrotlar, potansiyel dağılımı ve eşpotansiyel bağlantılar. Kabul koşulu sistem tipine ve koruma düzenine göre değerlendirilir; tek bir sabit ohm sınırı yoktur.',
@@ -68,7 +73,7 @@ const MODULES = [
     service: ['/hizmetler/topraklama-olcumu.html', 'Topraklama ölçümü'],
     related: [['/araclar/topraklama-simulatoru/', 'Topraklama simülatörü'], ['/hesaplama/topraklama-hesaplama/', 'Topraklama hesabı'], ['/araclar/adim-gerilimi/', 'Adım gerilimi aracı']] },
   { id: 'motor', slug: 'motor-otomasyon', name: 'Motor & PLC', short: 'MCC, yıldız-üçgen, sürücü ve PLC mantığı',
-    title: '3D Motor, MCC ve PLC Otomasyon Simülasyonu — Yıldız-Üçgen, VFD | VoltSim',
+    title: '3D Motor, MCC ve PLC Otomasyon Simülasyonu | VoltSim',
     description: 'Asenkron motoru doğrudan, yıldız-üçgen, yumuşak yol verici veya frekans konvertörüyle çalıştırın; akım, devir, moment, termik röle ve kilitlemeli PLC mantığı.',
     h1: '3D Motor, MCC ve PLC Otomasyon Simülasyonu', eyebrow: 'Asenkron motor · Kontaktör · PLC',
     lead: 'Başlat butonuna basın: PLC mühürler, yıldız kontaktörü kapanır, zaman rölesi sonunda kilitli geçişle üçgene geçilir. Motorun yol alması moment dengesiyle hesaplanır.',
@@ -76,7 +81,7 @@ const MODULES = [
     service: ['/hizmetler/plc-scada-otomasyon.html', 'PLC & SCADA otomasyon'],
     related: [['/hesaplama/motor-akimi-hesaplama/', 'Motor akımı hesabı'], ['/hesaplama/motor-koruma-kontaktor-secimi/', 'Motor koruma ve kontaktör'], ['/araclar/motor-hiz-tork/', 'Motor hız–tork aracı']] },
   { id: 'ups', slug: 'ups-jenerator', name: 'UPS & Jeneratör', short: 'Şebeke kesintisi, UPS, ATS ve jeneratör',
-    title: '3D UPS ve Jeneratör Simülasyonu — ATS, Yedekleme Süresi | VoltSim',
+    title: '3D UPS, Jeneratör ve ATS Simülasyonu | VoltSim',
     description: 'Şebeke kesintisini simüle edin: UPS akü süresi, jeneratör devreye girişi, kilitlemeli otomatik transfer şalteri, kritik yükler ve yakıt süresi.',
     h1: '3D UPS ve Jeneratör Simülasyonu', eyebrow: 'UPS · ATS · Jeneratör',
     lead: 'Şebekeyi kesin: kritik yükler UPS aküsünden beslenir, ATS onay süresinden sonra jeneratörü çalıştırır ve kilitli açık geçişle yükü aktarır. Şebeke dönünce geri aktarma ve soğutma çalışır.',
@@ -84,7 +89,7 @@ const MODULES = [
     service: ['/hizmetler/elektrik-taahhut.html', 'Elektrik taahhüt'],
     related: [['/hesaplama/ups-gucu-hesaplama/', 'UPS gücü hesabı'], ['/hesaplama/jenerator-gucu-hesaplama/', 'Jeneratör gücü hesabı'], ['/araclar/batarya-enerji-sure/', 'Batarya enerji süresi']] },
   { id: 'yangin', slug: 'yangin-algilama', name: 'Yangın Algılama', short: 'Dedektörler, panel durumları ve tahliye',
-    title: '3D Yangın Algılama Sistemi Simülasyonu — Dedektör, Panel, Tahliye | VoltSim',
+    title: '3D Yangın Algılama Sistemi Simülasyonu | VoltSim',
     description: 'Fabrika ve depo ortamında duman yayılımını, dedektör algılamasını, yangın alarm kontrol paneli durumlarını ve tahliye senaryosunu eğitim amaçlı simüle edin.',
     h1: '3D Yangın Algılama Sistemi Simülasyonu', eyebrow: 'Dedektör · Kontrol paneli · Tahliye',
     lead: 'Bir bölgede yangın başlatın: duman tavana yayılır, dedektörler sırayla algılar, panel ön alarm ve yangın alarmına geçer, sirenler çalar ve tahliye süresi hesaplanır. Eğitim senaryosudur; yangın projesi yerine geçmez.',
@@ -116,7 +121,7 @@ function head(o) {
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/voltsim.css?v=${V}">
+  <link rel="stylesheet" href="/css/voltsim.css?v=${rev('/css/voltsim.css')}">
 ${o.scripts || ''}  <script type="application/ld+json">${JSON.stringify(o.ld)}</script>
 </head>`;
 }
@@ -159,7 +164,7 @@ function modulePage(m) {
   const ld = { '@context': 'https://schema.org', '@graph': [crumbLd([['/', 'Ana Sayfa'], ['/voltsim/', 'VoltSim'], [url, m.h1]]),
     { '@type': 'WebApplication', name: m.h1, url: SITE + url, applicationCategory: 'EngineeringApplication', operatingSystem: 'Web', inLanguage: 'tr', isAccessibleForFree: true, description: m.description, publisher: { '@type': 'Organization', name: 'VoltGuard', url: SITE + '/' } }] };
   const scripts = ['/js/vendor/three-r128.min.js', '/js/voltsim/engine.js', `/js/voltsim/calc/${m.id}.js`, '/js/voltsim/regulations.js', '/js/voltsim/core.js', `/js/voltsim/mod/${m.id}.js`]
-    .map(s => `  <script src="${s}?v=${V}" defer></script>\n`).join('');
+    .map(s => `  <script src="${s}?v=${rev(s)}" defer></script>\n`).join('');
   const ico = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
   return `${head({ title: m.title, description: m.description, url, ld, scripts, image: `/public/voltsim/${m.id}.webp` })}
 <body class="vs-page doc-shell">
@@ -223,7 +228,7 @@ function modulePage(m) {
             <div class="vs-clip" data-vs-clip hidden><label>Kesit konumu <input type="range" min="0" max="100" value="55"></label></div>
             <div class="vs-info" data-vs-info hidden role="dialog" aria-label="Ekipman ayrıntısı"></div>
             <p class="vs-hint">Sürükle: döndür · Sağ tık/iki parmak: kaydır · Tekerlek: yakınlaştır · Ekipmana tıkla: ayrıntı</p>
-            <div class="vs-fallback" data-vs-fallback hidden><strong>3D görünüm açılamadı.</strong> Tarayıcınız WebGL desteklemiyor ya da kapalı; 2D şema gösteriliyor. Hesaplar, grafikler ve rapor çalışmaya devam eder.</div>
+            <div class="vs-fallback" data-vs-fallback hidden role="status" aria-live="polite"><strong>3D görünüm açılamadı.</strong> Tarayıcınız WebGL desteklemiyor ya da kapalı; 2D şema gösteriliyor. Hesaplar, grafikler ve rapor çalışmaya devam eder.</div>
           </div>
         </section>
         <section class="vs-right" aria-labelledby="vs-right-h">
@@ -279,7 +284,7 @@ function landing() {
   const cards = MODULES.map((m, i) => `
         <li class="vsl-card" style="--d:${i * 40}ms">
           <a href="/voltsim/${m.slug}/" class="vsl-card__a">
-            <div class="vsl-card__img"><img src="/public/voltsim/${m.id}.webp?v=${V}" alt="${esc(m.h1)} 3D sahne önizlemesi" width="640" height="400" loading="${i < 3 ? 'eager' : 'lazy'}" decoding="async"></div>
+            <div class="vsl-card__img"><img src="/public/voltsim/${m.id}.webp?v=${rev('/public/voltsim/' + m.id + '.webp')}" alt="${esc(m.h1)} 3D sahne önizlemesi" width="640" height="400" loading="${i < 3 ? 'eager' : 'lazy'}" decoding="async"></div>
             <div class="vsl-card__body">
               <h3>${esc(m.h1.replace(/^3D /, ''))}</h3>
               <p>${esc(m.short)}</p>
@@ -302,7 +307,7 @@ function landing() {
         <p class="vsl-hero__lead">VoltGuard mühendisliğiyle geliştirilen interaktif 3D simülasyon laboratuvarı. Elektrik panolarını keşfedin, enerji sistemlerini modelleyin, mühendislik hesaplarını anlık inceleyin.</p>
         <div class="vsl-hero__btns"><a class="vs-cbtn vs-cbtn--primary" href="/voltsim/pano/">Pano simülasyonuyla başla</a><a class="vs-cbtn vs-cbtn--ghost" href="#simulasyonlar">Tüm simülasyonlar</a></div>
       </div>
-      <div class="vsl-hero__img"><img src="/public/voltsim/hero.webp?v=${V}" alt="VoltSim 3D pano ve enerji sistemleri sahnesi" width="960" height="600" fetchpriority="high"></div>
+      <div class="vsl-hero__img"><img src="/public/voltsim/hero.webp?v=${rev('/public/voltsim/hero.webp')}" alt="VoltSim 3D pano ve enerji sistemleri sahnesi" width="960" height="600" fetchpriority="high"></div>
       <ul class="vsl-facts">
         <li><strong>10</strong><span>simülasyon modülü</span></li>
         <li><strong>Ayrı motor</strong><span>test edilen hesap fonksiyonları</span></li>

@@ -11,9 +11,9 @@
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261023b">
+  <link rel="stylesheet" href="/css/fonts.css?v=2912feacba52">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=875de322c835">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=eff46729ea12">
   <script type="speculationrules">
   {
     "prerender": [
@@ -36,7 +36,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <script src="/js/vg-shell.js?v=f4956253830f" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -54,7 +54,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261012d">
+  <link rel="stylesheet" href="/css/style.css?v=3d7056f5965c">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/kompanzasyon-hesaplama/#article","headline":"Kompanzasyon Hesaplama Aracı ve Formülü (kVAr)","description":"Aktif güç ve güç faktörüne göre gerekli kondansatör gücünü (kVAr) hesaplayan ücretsiz araç; formül, örnek hesap ve sık sorulan sorular.","image":"https://voltguard.com.tr/public/og-image.png","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-10-12","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/kompanzasyon-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesaplama Merkezi","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Kompanzasyon Hesaplama","item":"https://voltguard.com.tr/hesaplama/kompanzasyon-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Kompanzasyon (kVAr) nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Gerekli kondansatör gücü kVAr = Aktif güç (kW) × (tan(mevcut φ) − tan(hedef φ)) formülüyle bulunur. Mevcut ve hedef güç faktörleri (cosφ) açıya çevrilip tanjantları alınır ve farkları aktif güçle çarpılır."}},{"@type":"Question","name":"Hedef güç faktörü kaç olmalı?","acceptedAnswer":{"@type":"Answer","text":"Genel hedef, güç faktörünü 1'e yaklaştırmaktır. Kurulu gücü 50 kVA ve üzeri tesislerde aylık reaktif enerji aktif enerjinin %20'sini (endüktif) veya %15'ini (kapasitif) aşarsa ölçülen reaktif enerjinin tamamı faturalanır; %20 sınırı ortalama cosφ ≈ 0,98'e karşılık geldiği için hedef genellikle 0,98-0,99 seçilir. 50 kVA'nın altında sınırlar %33 (≈ 0,95) ve %20'dir (EPDK Tarife Uygulamalarına İlişkin Usul ve Esaslar md. 13). Yürürlükteki güncel metin esas alınmalıdır."}},{"@type":"Question","name":"Harmonik varsa bu hesap değişir mi?","acceptedAnswer":{"@type":"Answer","text":"Hesabın kendisi değişmez ancak uygulanacak sistemin tipi değişir. Yüksek harmonikli tesislerde reaktörsüz (klasik) kondansatör bankaları rezonans riski taşır; bu durumda reaktör destekli (detuned) veya aktif filtreli kompanzasyon sistemleri tercih edilmelidir."}}]}]}</script>
 </head>
 <body class="doc-shell">
@@ -180,7 +180,7 @@
               <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
           </a>
-          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
           <ul class="vg-footer__contact">
             <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
@@ -224,7 +224,7 @@
               <li><a href="/#neden-biz">Neden Biz?</a></li>
               <li><a href="/#guvenlik">Güvenlik</a></li>
               <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
               <li><a href="/#katalog">Katalog</a></li>
               <li><a href="/#sss">SSS</a></li>
               <li><a href="/#iletisim">İletişim</a></li>
@@ -326,6 +326,6 @@
       update();
     }());
   </script>
-  <script src="/js/voltguard-auth.js?v=20261013a" defer></script>
-  <script src="/js/voltguard-tools.js?v=20261012d"></script>
+  <script src="/js/voltguard-auth.js?v=872e5c8ca665" defer></script>
+  <script src="/js/voltguard-tools.js?v=3dfd947316db"></script>
 </body></html>

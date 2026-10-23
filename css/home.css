@@ -946,3 +946,25 @@ html { scroll-padding-bottom: 24px; }
 @media (max-width: 960px) { .vgh-voltsim__inner { grid-template-columns: 1fr; } }
 @media (max-width: 560px) { .vgh-voltsim__grid { grid-template-columns: 1fr 1fr; } }
 @media (prefers-reduced-motion: reduce) { .vgh-voltsim__grid a { transition: none; } }
+
+/* Keep technical content readable and controls easy to use on small screens. */
+.hero__typed::after, .hero__typed-word::after { display: none; }
+.hero__typed { color: #e2e8f0; font-size: 1rem; font-weight: 500; }
+.hero__live-pill { animation: none; box-shadow: none; }
+.hero__stat-number { text-shadow: none; font-size: clamp(1.5rem, 3vw, 2.1rem); }
+.scope__inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem 1rem; }
+.scope__inputs label { display: grid; grid-template-columns: 1fr auto; gap: .4rem; font-size: .85rem; color: #dbe6f3; }
+.scope__inputs output { font-variant-numeric: tabular-nums; color: #fcd34d; }
+.scope__inputs input { grid-column: 1 / -1; width: 100%; min-height: 32px; accent-color: #f59e0b; cursor: pointer; }
+.scope__inputs input:focus-visible { outline: 2px solid #fcd34d; outline-offset: 3px; border-radius: 4px; }
+.scope__summary { min-height: 1.6em; color: #e2e8f0; font-size: .85rem; font-variant-numeric: tabular-nums; }
+.contact__map-notice { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem; padding: 2rem; border: 1px solid #cbd5e1; border-radius: 12px; background: #f8fafc; text-align: center; }
+.contact__map-notice h3, .contact__map-notice p { flex-basis: 100%; margin: 0; }
+.contact__map-notice a { text-decoration: underline; text-underline-offset: 3px; }
+.contact__map iframe:not([hidden]) { display: block; margin-top: 1rem; }
+.contact__map [hidden], #loadMap[hidden] { display: none !important; }
+.form__consent { display: block; line-height: 1.65; }
+@media (max-width: 390px) {
+  .scope__inputs { grid-template-columns: minmax(0, 1fr); }
+  .contact__map-notice { padding: 1.2rem; }
+}

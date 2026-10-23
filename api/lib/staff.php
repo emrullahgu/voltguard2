@@ -99,8 +99,7 @@ function vg_staff_rate(string $bucket, string $key, int $max, int $window = 900)
 }
 
 function vg_staff_session_start(): void {
-    $host = strtolower((string)($_SERVER['HTTP_HOST'] ?? ''));
-    if (PHP_SAPI !== 'cli' && !vg_is_https() && preg_match('/^(localhost|127\.0\.0\.1|\[::1\])(:[0-9]+)?$/D', $host) !== 1) vg_staff_error(503, 'staff_https_required', 'Çalışan sistemi güvenli HTTPS bağlantısı gerektirir.');
+    if (PHP_SAPI !== 'cli' && !vg_is_https() && !vg_local_http_request()) vg_staff_error(503, 'staff_https_required', 'Çalışan sistemi güvenli HTTPS bağlantısı gerektirir.');
     if (session_status() === PHP_SESSION_ACTIVE) {
         if (session_name() !== VG_STAFF_COOKIE) vg_staff_error(503, 'staff_session_conflict', 'Çalışan sistemi şu anda kullanılamıyor.');
         return;
@@ -133,7 +132,9 @@ function vg_staff_write_guard(): void {
     $host = strtolower((string)($_SERVER['HTTP_HOST'] ?? ''));
     $sent = is_array($parts) && isset($parts['host']) ? strtolower($parts['host']) . (isset($parts['port']) ? ':' . $parts['port'] : '') : '';
     $normalize = function ($h) use ($scheme) { return (string)preg_replace($scheme === 'https' ? '/:443$/' : '/:80$/', '', $h); };
-    if (($parts['scheme'] ?? '') !== $scheme || $normalize($sent) !== $normalize($host) || $sent === '') vg_staff_error(403, 'staff_origin', 'Bu istek kabul edilmedi.');
+    if (($parts['scheme'] ?? '') !== $scheme || $normalize($sent) !== $normalize($host) || $sent === ''
+        || isset($parts['user']) || isset($parts['pass']) || isset($parts['query']) || isset($parts['fragment'])
+        || !in_array($parts['path'] ?? '', ['', '/'], true)) vg_staff_error(403, 'staff_origin', 'Bu istek kabul edilmedi.');
     $token = (string)($_SERVER['HTTP_X_VG_STAFF_CSRF'] ?? '');
     if ($token === '' || !hash_equals(vg_staff_csrf(), $token)) vg_staff_error(403, 'staff_csrf', 'Güvenlik doğrulaması başarısız oldu. Sayfayı yenileyin.');
 }
@@ -297,6 +298,17 @@ function vg_staff_payroll_public(array $row, array $state): array {
     return $out;
 }
 
+/** Delete detached payroll files only after the referencing state was committed. */
+function vg_staff_remove_unused_pdf(?string $filename): void {
+    if ($filename === null || preg_match('/^[a-f0-9]{48}\.pdf$/D', $filename) !== 1) return;
+    vg_staff_store(function (array &$state) use ($filename) {
+        foreach ($state['payroll'] as $row) if (($row['pdfFile'] ?? null) === $filename) return;
+        $directory = vg_staff_private_directory(vg_staff_dir() . '/documents', vg_staff_dir());
+        $path = $directory . '/' . $filename;
+        if ((is_file($path) || is_link($path)) && !@unlink($path)) throw new RuntimeException('staff detached document removal failed');
+    });
+}
+
 function vg_staff_dispatch(string $action, array $body): array {
     if ($action === 'me') return vg_staff_store(function (array &$s) {
         $u = vg_staff_user_in($s);
@@ -398,13 +410,17 @@ function vg_staff_dispatch(string $action, array $body): array {
         $s['payroll'][$row['id']] = $row; vg_staff_audit($s, 'payroll_created', $row['id']);
         return ['item' => vg_staff_payroll_public($row, $s)];
     });
-    if ($action === 'payroll_delete') return vg_staff_store(function (array &$s) use ($body) {
+    if ($action === 'payroll_delete') {
+      $detached = null;
+      $result = vg_staff_store(function (array &$s) use ($body, &$detached) {
         vg_staff_require_in($s, ['admin', 'payroll']); $id = $body['statementId'] ?? '';
         if (!is_string($id) || !isset($s['payroll'][$id])) vg_staff_error(404, 'staff_not_found', 'Kayıt bulunamadı.');
-        $file = $s['payroll'][$id]['pdfFile']; unset($s['payroll'][$id]);
-        // Files removed after state commit would need a journal; orphaned private PDFs are harmless.
+        $detached = $s['payroll'][$id]['pdfFile']; unset($s['payroll'][$id]);
         vg_staff_audit($s, 'payroll_deleted', $id); return [];
-    });
+      });
+      vg_staff_remove_unused_pdf($detached);
+      return $result;
+    }
     vg_staff_error(404, 'staff_action_not_found', 'İşlem bulunamadı.'); return [];
 }
 
@@ -423,14 +439,18 @@ function vg_staff_pdf_upload(array $input): array {
     $directory = vg_staff_private_directory(vg_staff_dir() . '/documents', vg_staff_dir());
     $filename = bin2hex(random_bytes(24)) . '.pdf'; $path = $directory . '/' . $filename;
     if (!move_uploaded_file($file['tmp_name'], $path)) throw new RuntimeException('staff upload failed'); @chmod($path, 0600);
+    $detached = null;
     try {
-        return vg_staff_store(function (array &$s) use ($input, $filename) {
+        $result = vg_staff_store(function (array &$s) use ($input, $filename, &$detached) {
             vg_staff_require_in($s, ['admin', 'payroll']); $id = $input['statementId'] ?? '';
             if (!is_string($id) || !isset($s['payroll'][$id])) vg_staff_error(404, 'staff_not_found', 'Kayıt bulunamadı.');
+            $detached = $s['payroll'][$id]['pdfFile'];
             $s['payroll'][$id]['pdfFile'] = $filename; vg_staff_audit($s, 'payroll_pdf_uploaded', $id);
             return ['item' => vg_staff_payroll_public($s['payroll'][$id], $s)];
         });
     } catch (Throwable $e) { @unlink($path); throw $e; }
+    vg_staff_remove_unused_pdf($detached);
+    return $result;
 }
 
 function vg_staff_pdf_download(string $id): void {

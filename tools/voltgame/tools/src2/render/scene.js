@@ -55,7 +55,7 @@ function initialTier() {
 function init(canvas) {
   S.canvas = canvas;
   S.tier = initialTier();
-  const r = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', alpha: false, stencil: false });
+  const r = new THREE.WebGLRenderer({ canvas, antialias: S.tier !== 'dusuk', powerPreference: 'high-performance', alpha: false, stencil: false });
   r.outputEncoding = THREE.sRGBEncoding;
   r.shadowMap.autoUpdate = false;
   r.info.autoReset = true;
@@ -100,7 +100,7 @@ function resize(force) {
   const el = S.canvas.parentElement || S.canvas;
   const b = el.getBoundingClientRect();
   const w = Math.max(1, Math.round(b.width)), h = Math.max(1, Math.round(b.height));
-  const pr = Math.min(window.devicePixelRatio || 1, TIERS[S.tier].pr);
+  const pr = Math.min(window.devicePixelRatio || 1, TIERS[S.tier].pr, Math.sqrt((isPhone() ? 1200000 : 2400000) / (w * h)));
   const cb = S.canvas.getBoundingClientRect();
   S.rect.left = cb.left; S.rect.top = cb.top; S.rect.width = cb.width || w; S.rect.height = cb.height || h;
   if (!force && w === S.w && h === S.h && pr === S.pr) return;

@@ -23,19 +23,21 @@ favoriler / hesaplama geçmişi / projeler / dokümanlar senkronu ve tüm verile
 
 ## Kurulum
 
-Ek kurulum gerekmez: cPanel deploy (`.cpanel.yml`) `api/` klasörünü kopyalar, ilk istekte veri klasörü ve tablolar oluşur.
+cPanel deploy (`.cpanel.yml`) `api/` klasörünü kopyalar. Web kökü dışındaki özel veri dizini yazılabilir olmalıdır; ilk istekte tablolar oluşur. Canlı hesap işlemleri HTTPS gerektirir. Düz HTTP yalnızca loopback istemci ve localhost adresi birlikte doğrulanınca geliştirme için kabul edilir.
 
 **`api/` her deploy'da silinip yeniden kopyalanır; içine asla veri yazılmaz.** Çalışma verisi şu sırayla seçilen klasördedir:
 
 1. `VG_DATA_DIR` ortam değişkeni (verilmişse ve yazılamıyorsa API 503 döner; sessizce başka klasöre geçmez),
 2. `dirname(DOCUMENT_ROOT)/vg-data` → cPanel'de `/home/voltgua2/vg-data` (public_html **dışı**, önerilen),
-3. `DOCUMENT_ROOT/_vgdata` (web'den `.htaccess` ile kapalı; içine ayrıca `Require all denied` içeren `.htaccess` ve boş `index.html` bırakılır).
+
+`DOCUMENT_ROOT/_vgdata` eski kurulumların koruması için kapalı tutulur; hesap, iletişim, oturum ve hız sınırı verisi için artık kullanılmaz. Özel dizin yoksa sistem 503 verir. Dizinlerin fiziksel hedefi de denetlenir; web köküne çıkan sembolik bağlantı/junction kabul edilmez. Eski verisi `_vgdata` altında olan kurulumda dizini yedekleyip web kökü dışına taşıyın ve `VG_DATA_DIR` değerini ayarlayın.
 
 Klasör içeriği (hepsi 0600/0700):
 
 ```
 vg-data/
   store.kind            "sqlite" veya "json" (ilk istekte yazılır; sonradan değişmez → kullanıcılar iki depoya bölünmez)
+  store-kind.lock       ilk depo seçimini eşzamanlı isteklerde kilitler
   vg-accounts.sqlite    SQLite modu: users, user_data, reset_tokens tabloları
   json/                 JSON modu: emails.json, tokens.json, users/<id>.json, data/<id>/<koleksiyon>.json, store.lock
   sessions/             PHP oturum dosyaları (VGSESS)
@@ -55,6 +57,8 @@ Yedekleme: `vg-data/` klasörünü (özellikle `vg-accounts.sqlite` veya `json/`
 | `VG_SITE_URL` | `https://voltguard.com.tr` | Sıfırlama e-postasındaki bağlantının kökü (Host başlığına güvenilmez) |
 | `VG_STORE` | otomatik | `sqlite` / `json` — yalnızca ilk kurulumda etkilidir |
 | `VG_ALLOWED_HOSTS` | — | Origin denetiminde Host'a ek olarak kabul edilecek host'lar (virgüllü) |
+| `VG_TRUSTED_PROXIES` | — | Cloudflare dışındaki HTTPS sonlandırıcı vekillerin IP/CIDR listesi; rastgele istemcinin X-Forwarded-Proto başlığına güvenilmez |
+| `VG_CONTACT_ALLOWED_ORIGINS` | — | İletişim formu staging kökenleri (örn. `https://staging.example`); canlı izinler kanonik HTTPS ve www adresidir |
 | `VG_RATE_SCALE` | `1` | Hız sınırı eşiklerini çarpar (staging/test) |
 | `VG_MAIL_OUTBOX` | — | `1`: e-posta gönderilmez, `outbox/` klasörüne `.eml` yazılır. **Canlıda tanımlamayın.** |
 
@@ -69,12 +73,12 @@ Hata: `{"ok":false,"error":"<kod>","message":"<Türkçe mesaj>","fields":{...}}`
 | İşlem | Yöntem | Gövde (JSON) | Not |
 | --- | --- | --- | --- |
 | `me` | GET | — | `{user|null, csrf, expired?}`; anonim oturumu ve CSRF jetonunu başlatır |
-| `register` | POST | `name, email, password, company?, phone?, consent:true, website:"" (bal tuzağı), remember?` | 201; otomatik giriş |
+| `register` | POST | `name, email, password, company?, phone?, website:"" (bal tuzağı), remember?` | 201; otomatik giriş; eski `consent:true` alanı kabul edilir fakat zorunlu değildir |
 | `login` | POST | `email, password, remember?` | e-posta ve IP başına kademeli kilit |
 | `logout` | POST | `{}` | oturum dosyası silinir, çerez temizlenir |
 | `update_profile` | POST | `name?, company?, phone?, email?, password?` | e-posta değişikliği mevcut şifre ister |
 | `change_password` | POST | `current, password` | diğer oturumlar kapanır, yeni CSRF döner, bildirim e-postası |
-| `delete_account` | POST | `password, confirm:true` | hesap + tüm veriler kalıcı silinir |
+| `delete_account` | POST | `password, confirm:true` | hesap, koleksiyonlar, üye yorumları ve moderatör yetkisi silinir; yanıtlar için kimliksiz boş yorum kaydı kalabilir |
 | `forgot_password` | POST | `email` | her durumda aynı yanıt; jeton 1 saat, tek kullanım |
 | `reset_password` | POST | `token, password` | tüm oturumlar kapanır |
 | `data_get` | GET | `?collection=all|favorites,history,...` | `{collections:{<ad>:{items,rev,updatedAt}}}` |
@@ -112,6 +116,17 @@ breakdown?}, note, savedAt, serverAt`. `result.breakdown` isteğe bağlıdır: h
 - Sıfırlama bağlantısı URL parçasında (`#t=`) taşınır: sunucu günlüklerine ve Referer'a gitmez; veritabanında yalnızca SHA-256 özeti tutulur.
 - Günlüklere (error_log) kişisel veri yazılmaz; yalnızca hata türü/konumu.
 - Cloudflare arkasında `CF-Connecting-IP` yalnızca istek gerçek bir Cloudflare adresinden geliyorsa kullanılır (contact.php ile aynı).
+- Hız sınırı dizini veya sayaç yazımı başarısızsa koruma sessizce devre dışı kalmaz; istek 503 ile kapanır.
+- `store.kind` bozuksa veya var olan veri için kayıpsa depo otomatik değişmez; yedekten kontrollü kurtarma gerekir.
+- `consent_at` ve `consent_ver` eski veri şemasındaki alan adlarıdır. Yeni kayıtlarda bunlar kayıt talebinin zamanı ve sunulan aydınlatma metninin sürümünü belirtir; genel veri işleme rızası sayılmaz.
+
+## İletişim formu (`/contact.php`)
+
+Yalnızca `POST` form verisi, doğrulanan aynı site kökeni ve en fazla 32 KB gövde kabul edilir. Dosya eki alınmaz. Ad, Türkiye cep telefonu, isteğe bağlı e-posta, hizmet alanı, 20–1000 karakter mesaj ve form zaman işareti doğrulanır. Aydınlatma metni formda sunulur; aydınlatma için onay veya genel amaçlı açık rıza gönderimin ön koşulu değildir.
+
+IP adresi e-postaya/günlüğe yazılmaz; spam sayacı özel dizinde HMAC adıyla, IPv6 için /64 gruplamasıyla tutulur. Geçerli form başına 10 dakikada 5 istek sınırı vardır. Sayaç arızası gönderimi durdurur. `TURNSTILE_SECRET_KEY` tanımlıysa Siteverify sunucu doğrulaması ve hostname eşleşmesi zorunludur; `TURNSTILE_EXPECTED_HOSTNAME` varsayılanı `voltguard.com.tr` olur. Anahtar yoksa alan doğrulama, bal tuzağı ve hız sınırı çalışır.
+
+Mesaj `info@voltguard.com.tr` adresine, sabit alan adı göndericisiyle ve doğrulanmış Reply-To ile gönderilir. `mail()` yoksa veya kabul etmezse 503 döner; başarı yalnızca taşıyıcının iletiyi kabul ettiğini belirtir, gelen kutusu teslim garantisi değildir. `VG_MAIL_OUTBOX=1` yalnızca yerel test içindir; yanıt gerçek e-posta gönderilmediğini açıkça bildirir.
 
 ## curl ile test
 

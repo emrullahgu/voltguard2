@@ -661,7 +661,7 @@
     const tau = v.rpm > live.rpmVis ? 4 : 5;
     live.rpmVis += (v.rpm - live.rpmVis) * Math.min(1, dt / tau);
     if (live.rpmVis < 0.02 && v.rpm === 0) live.rpmVis = 0;
-    live.rotAng -= live.rpmVis * Math.PI * 2 / 60 * dt;
+    live.rotAng -= live.rpmVis * Math.PI * 2 / 60 * (k.reducedMotion ? 0 : dt);
     sc.rotor.rotation.x = live.rotAng;
     const pt = visPitch(t0, Object.assign({}, f.turbines[0], { region: v.region === 'hyst' || v.region === 'climate' ? 'stop' : v.region })), dp = pt - live.pitch;
     live.pitch += Math.sign(dp) * Math.min(Math.abs(dp), 8 * dt);
@@ -698,7 +698,7 @@
         const tur = f.turbines[o.i]; if (!tur) return;
         const want = visRpm(ty, s, tur);
         sc.rpm[o.i] += (want - sc.rpm[o.i]) * Math.min(1, dt / 4);
-        sc.ang[o.i] -= sc.rpm[o.i] * Math.PI * 2 / 60 * dt;
+        sc.ang[o.i] -= sc.rpm[o.i] * Math.PI * 2 / 60 * (k.reducedMotion ? 0 : dt);
         const pw = visPitch(ty, tur), dpp = pw - sc.pitch[o.i];
         sc.pitch[o.i] += Math.sign(dpp) * Math.min(Math.abs(dpp), 8 * dt);
         c[0].position.set(o.w[0], o.w[1] + tg.d.hub + 0.9, o.w[2]); c[0].rotation.set(0, yawAll, 0);

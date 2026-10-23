@@ -10,9 +10,9 @@
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261023b">
+  <link rel="stylesheet" href="/css/fonts.css?v=2912feacba52">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=875de322c835">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=eff46729ea12">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,13 +35,14 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <script src="/js/vg-shell.js?v=f4956253830f" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="same-origin">
   <title>Ücretsiz Üye Ol | VoltGuard</title>
+  <meta name="description" content="Hesaplamalarınızı ve favorilerinizi kaydetmek için isteğe bağlı bir VoltGuard hesabı oluşturun.">
   <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/style.css?v=20261012d">
@@ -150,7 +151,7 @@
           <label for="website">Web siteniz (boş bırakın)</label>
           <input id="website" type="text" name="website" tabindex="-1" autocomplete="off">
         </div>
-        <label class="vg-check"><input id="consent" type="checkbox" name="consent" required> <span><a href="../gizlilik.html#hesap-verileri" target="_blank" rel="noopener">Gizlilik Politikası ve KVKK Aydınlatma Metni<span class="vg-sr-only"> (yeni sekmede açılır)</span></a>'ni okudum; üyelik hesabımın oluşturulmasını ve hesap verilerimin bu metinde açıklanan amaçlarla işlenmesini kabul ediyorum.</span></label>
+        <p class="vg-auth-card__sub">Hesap oluşturduğunuzda adınız, e-posta adresiniz ve kaydettiğiniz araç verileri üyelik hizmetini sunmak için işlenir. <a href="/gizlilik.html#hesap-verileri">Hesap verilerine ilişkin aydınlatma</a>.</p>
         <label class="vg-check" id="guest-opt" hidden><input type="checkbox" name="guest" id="guest-merge" checked> <span id="guest-opt-text">Bu tarayıcıda giriş yapmadan kaydedilen kayıtları yeni hesabıma ekle</span></label>
         <label class="vg-check" id="legacy-opt" hidden><input type="checkbox" name="legacy" id="legacy" checked> <span id="legacy-opt-text">Bu tarayıcıdaki eski kayıtlarımı yeni hesabıma taşı</span></label>
         <button type="submit" disabled data-vg-wait><i class="fas fa-user-plus" aria-hidden="true"></i> Hesabımı oluştur</button>
@@ -189,7 +190,7 @@
               <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
           </a>
-          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
           <ul class="vg-footer__contact">
             <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
@@ -233,7 +234,7 @@
               <li><a href="/#neden-biz">Neden Biz?</a></li>
               <li><a href="/#guvenlik">Güvenlik</a></li>
               <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
               <li><a href="/#katalog">Katalog</a></li>
               <li><a href="/#sss">SSS</a></li>
               <li><a href="/#iletisim">İletişim</a></li>
@@ -389,7 +390,6 @@
         var phoneErr = UI.phoneProblem($('phone').value);
         if (phoneErr) errors.phone = phoneErr;
         if ($('company').value.trim().length > 120) errors.company = 'Firma adı en fazla 120 karakter olabilir.';
-        if (!$('consent').checked) errors.consent = 'Devam etmek için aydınlatma metnini okuyup onaylamanız gerekir.';
         if (Object.keys(errors).length) {
           UI.showFormError(form, alertEl, { message: 'Lütfen işaretli alanları kontrol edin.' }, errors);
           return;

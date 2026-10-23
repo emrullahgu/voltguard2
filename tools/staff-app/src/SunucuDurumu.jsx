@@ -4,6 +4,7 @@
 // kaybolmasin diye ekrani kaplayan bir uyari gosterilir. Uyari sayfayi kapatmaz ve
 // formlardaki yazilanlari silmez; sunucu geri gelince kendiliginden kalkar.
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { checkCompanyHealth } from './serverHealth.mjs';
 
 
 const NORMAL_ARALIK = 20000; // sunucu aciktayken kontrol sikligi
@@ -11,17 +12,10 @@ const HIZLI_ARALIK = 5000;   // supheli / kapaliyken kontrol sikligi
 const ZAMAN_ASIMI = 8000;
 const UYARI_ESIGI = 2;       // arka arkaya bu kadar basarisiz kontrolde uyari cikar
 
-async function sunucuAcikMi() {
-  const ctrl = new AbortController();
+async function sunucuAcikMi(ctrl) {
   const zamanlayici = setTimeout(() => ctrl.abort(), ZAMAN_ASIMI);
   try {
-    const cevap = await fetch('/api/company.php?action=health', {
-      credentials: 'same-origin',
-      cache: 'no-store',
-      signal: ctrl.signal,
-    });
-    // A closed session still confirms that the server is reachable.
-    return cevap.ok || cevap.status === 401 || cevap.status === 403;
+    return await checkCompanyHealth({ signal: ctrl.signal });
   } catch {
     return false;
   } finally {
@@ -37,6 +31,10 @@ export default function SunucuDurumu() {
   const hataSayisi = useRef(0);
   const durumRef = useRef('acik');
   const zamanlayici = useRef(null);
+  const bildirimZamanlayici = useRef(null);
+  const surenKontrol = useRef(null);
+  const etkin = useRef(false);
+  const kontrolSurumu = useRef(0);
 
   const durumAyarla = useCallback((yeni) => {
     const eski = durumRef.current;
@@ -45,12 +43,17 @@ export default function SunucuDurumu() {
     setDurum(yeni);
     if (yeni === 'acik' && eski !== 'acik') {
       setGeriGeldi(true);
-      setTimeout(() => setGeriGeldi(false), 6000);
+      clearTimeout(bildirimZamanlayici.current);
+      bildirimZamanlayici.current = setTimeout(() => setGeriGeldi(false), 6000);
     }
   }, []);
 
   const kontrol = useCallback(async () => {
     clearTimeout(zamanlayici.current);
+    if (!etkin.current || surenKontrol.current || document.visibilityState === 'hidden') return;
+    const surum = ++kontrolSurumu.current;
+    const controller = new AbortController();
+    surenKontrol.current = controller;
     setKontrolEdiliyor(true);
     let acik;
     if (typeof navigator !== 'undefined' && navigator.onLine === false) {
@@ -58,7 +61,8 @@ export default function SunucuDurumu() {
       durumAyarla('internet-yok');
       acik = false;
     } else {
-      acik = await sunucuAcikMi();
+      acik = await sunucuAcikMi(controller);
+      if (!etkin.current || surum !== kontrolSurumu.current) return;
       if (acik) {
         hataSayisi.current = 0;
         durumAyarla('acik');
@@ -69,19 +73,26 @@ export default function SunucuDurumu() {
     }
     setSonKontrol(new Date());
     setKontrolEdiliyor(false);
-    zamanlayici.current = setTimeout(kontrol, acik ? NORMAL_ARALIK : HIZLI_ARALIK);
+    surenKontrol.current = null;
+    if (document.visibilityState !== 'hidden') zamanlayici.current = setTimeout(kontrol, acik ? NORMAL_ARALIK : HIZLI_ARALIK);
   }, [durumAyarla]);
 
   useEffect(() => {
+    etkin.current = true;
     kontrol();
     const hemen = () => kontrol();
-    const gorunurluk = () => { if (document.visibilityState === 'visible') kontrol(); };
+    const gorunurluk = () => { clearTimeout(zamanlayici.current); if (document.visibilityState === 'visible') kontrol(); };
     window.addEventListener('online', hemen);
     window.addEventListener('offline', hemen);
     window.addEventListener('focus', hemen);
     document.addEventListener('visibilitychange', gorunurluk);
     return () => {
+      etkin.current = false;
+      kontrolSurumu.current++;
+      surenKontrol.current?.abort();
+      surenKontrol.current = null;
       clearTimeout(zamanlayici.current);
+      clearTimeout(bildirimZamanlayici.current);
       window.removeEventListener('online', hemen);
       window.removeEventListener('offline', hemen);
       window.removeEventListener('focus', hemen);
@@ -93,7 +104,7 @@ export default function SunucuDurumu() {
     if (!geriGeldi) return null;
     return (
       <div role="status" style={stil.tamamBildirimi}>
-        ✅ Sunucu bağlantısı geri geldi. Kayıt yapabilirsiniz.
+        Sunucu bağlantısı yeniden kuruldu. Kayıt işlemini tekrar deneyebilirsiniz.
       </div>
     );
   }

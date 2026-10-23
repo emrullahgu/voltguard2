@@ -199,6 +199,8 @@ async function run() {
     await expect(payroll, 'payroll_upload', { form: upload(own.id, '%PDF-1.4\nwithout EOF') }, 422, 'staff_pdf_invalid');
     await expect(payroll, 'payroll_upload', { form: upload(own.id, pdf) }, 200);
     await expect(admin, 'payroll_upload', { form: upload(other.id, pdf) }, 200);
+    await expect(payroll, 'payroll_upload', { form: upload(own.id, pdf) }, 200);
+    check(fs.readdirSync(path.join(sandbox, 'staff/documents')).length, 2, 'Replacing a PDF removes the detached personal document after state commit');
     result = await expect(employee, 'payroll_download', { query: { id: own.id }, raw: true }, 200);
     check(result.data, pdf, 'Owner downloads only real stored PDF bytes');
     check(result.headers.get('content-disposition').startsWith('attachment;'), true, 'PDF always downloads as attachment');
@@ -231,6 +233,7 @@ async function run() {
     mutate(state => { state.invites[crypto.createHash('sha256').update(token(renewedAgain)).digest('hex')].expires = Math.floor(Date.now() / 1000) - 1; });
     await expect(second, 'activate', { body: { token: token(renewedAgain), password } }, 400, 'staff_invite_invalid');
     await expect(payroll, 'payroll_delete', { body: { statementId: other.id } }, 200);
+    check(fs.readdirSync(path.join(sandbox, 'staff/documents')).length, 1, 'Deleting a statement also removes its personal PDF');
     await expect(admin, 'payroll_download', { query: { id: other.id } }, 404, 'staff_not_found');
 
     // Successful session expires even when an attacker retains the legitimate cookie.

@@ -13,7 +13,7 @@
 (function (global) {
   'use strict';
 
-  var JSPDF_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  var JSPDF_URL = '/js/vendor/jspdf.umd.min.js?v=4.2.1';
 
   function q(sel, ctx) { return (ctx || document).querySelector(sel); }
   function qq(sel, ctx) { return Array.from((ctx || document).querySelectorAll(sel)); }
@@ -78,13 +78,19 @@
     jsPdfPromise = new Promise(function (resolve, reject) {
       var s = document.createElement('script');
       s.src = JSPDF_URL;
-      s.crossOrigin = 'anonymous';
+      var done = false;
+      var timer = setTimeout(fail, 15000);
+      function fail() {
+        if (done) return;
+        done = true; clearTimeout(timer); jsPdfPromise = null; s.remove();
+        reject(new Error('PDF kütüphanesi yüklenemedi. Bağlantınızı kontrol edip yeniden deneyin.'));
+      }
       s.onload = function () {
-        if (global.jspdf && global.jspdf.jsPDF) { resolve(global.jspdf.jsPDF); return; }
-        jsPdfPromise = null;
-        reject(new Error('PDF kütüphanesi yüklenemedi.'));
+        if (done) return;
+        if (global.jspdf && global.jspdf.jsPDF) { done = true; clearTimeout(timer); resolve(global.jspdf.jsPDF); return; }
+        fail();
       };
-      s.onerror = function () { jsPdfPromise = null; s.remove(); reject(new Error('PDF kütüphanesi yüklenemedi.')); };
+      s.onerror = fail;
       document.head.appendChild(s);
     });
     return jsPdfPromise;

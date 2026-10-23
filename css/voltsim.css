@@ -47,7 +47,7 @@
 .vs-2d{display:none}
 .vs-stage[data-mode="2d"] .vs-2d{display:block}
 .vs-stage[data-mode="2d"] .vs-canvas,.vs-stage[data-mode="2d"] .vs-labels,.vs-stage[data-mode="2d"] .vs-hint,.vs-stage[data-mode="2d"] .vs-clip,.vs-stage[data-mode="2d"] .vs-info{display:none}
-.vs-stage[data-mode="2d"] .vs-vt[data-vs-3donly]{opacity:.35;pointer-events:none}
+.vs-stage[data-mode="2d"] .vs-vt[data-vs-3donly]{display:none}
 .vs-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .vs-label{position:absolute;left:0;top:0;padding:3px 7px;border:1px solid #ffffff26;border-radius:6px;background:#0a1628d9;color:#e6eef8;font:600 .66rem/1.25 var(--vg-font-h);white-space:nowrap;box-shadow:0 4px 14px #0006;will-change:transform}
 .vs-label::after{content:'';position:absolute;left:50%;bottom:-5px;width:1px;height:5px;background:#ffffff55}
@@ -77,6 +77,9 @@
 .vs-hint.is-hidden{opacity:0}
 .vs-fallback{position:absolute;left:16px;right:16px;top:56px;padding:12px 14px;border-radius:10px;background:#3a2410ee;color:#fde68a;font-size:.78rem;z-index:2}
 .vs-fallback strong{color:#fff}
+.vs-stage.has-fallback{display:flex;flex-direction:column}
+.vs-stage.has-fallback .vs-fallback{position:relative;inset:auto;order:-1;flex:0 0 auto;margin:56px 16px 0}
+.vs-stage.has-fallback .vs-2dwrap{position:relative;inset:auto;flex:1 1 auto;min-height:0}
 .vs-noscript{margin:0;padding:18px;color:#fcd34d;text-align:center}
 
 /* kontroller */
@@ -324,7 +327,7 @@ textarea.vs-input{resize:vertical;font-family:ui-monospace,Consolas,monospace;fo
   .vs-head{display:block}
   .vs-tags{justify-content:flex-start;margin-top:12px;max-width:none}
   .vs-mtabs{display:flex;gap:4px;padding:6px;border-bottom:1px solid #1f3352;background:#0c1d38}
-  .vs-mtabs button{flex:1;min-height:40px;border:0;border-radius:8px;background:none;color:#a9bcd4;font:650 .78rem/1.1 var(--vg-font-h);cursor:pointer}
+  .vs-mtabs button{flex:1;min-height:44px;border:0;border-radius:8px;background:none;color:#a9bcd4;font:650 .78rem/1.1 var(--vg-font-h);cursor:pointer}
   .vs-mtabs button[aria-selected="true"]{background:#f59e0b;color:#0a1628}
   .vs-mtabs button:focus-visible{outline:2px solid #d97706}
   .vs-work{display:block;height:auto}
@@ -349,7 +352,7 @@ textarea.vs-input{resize:vertical;font-family:ui-monospace,Consolas,monospace;fo
   .vs-tb{padding:7px 10px}
   .vs-tb--select select{max-width:180px}
   .vs-vtools{flex-direction:row;flex-wrap:wrap;justify-content:flex-end;left:auto;max-width:150px}
-  .vs-vt{width:36px;height:36px}
+  .vs-vt{width:44px;height:44px}
   .vs-hud{top:auto;bottom:12px;left:12px}
   .vs-hint{display:none}
   .vs-info{bottom:52px}

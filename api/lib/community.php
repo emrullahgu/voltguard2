@@ -192,6 +192,30 @@ function vg_community_moderators(string $dir): array
     return array_values(array_unique($state['moderators']));
 }
 
+/** Account deletion also erases its public comments; replies retain only parent markers. */
+function vg_community_delete_account(VgStore $store, string $uid): void
+{
+    vg_community_locked(true, function (string $dir) use ($store, $uid) {
+        $state = vg_community_read_state($dir);
+        $changed = false;
+        foreach ($state['posts'] as $id => $post) {
+            if (!$post['deleted'] && $post['authorId'] === $uid) {
+                $state['posts'][$id] = ['id' => $id, 'parentId' => $post['parentId'],
+                    'createdAt' => $post['createdAt'], 'deleted' => true, 'deletedAt' => vg_now()];
+                $changed = true;
+            }
+        }
+        if ($changed) vg_community_write_json($dir . '/comments.json', $state, VG_COMMUNITY_MAX_BYTES);
+        $moderators = vg_community_moderators($dir);
+        if (in_array($uid, $moderators, true)) {
+            $moderators = array_values(array_filter($moderators, static function (string $id) use ($uid): bool { return $id !== $uid; }));
+            vg_community_write_json($dir . '/moderators.json', ['version' => 1, 'moderators' => $moderators], 65536);
+        }
+        // Publishers take the same lock and recheck account existence before writing.
+        $store->deleteUser($uid);
+    });
+}
+
 function vg_community_fields(array $body, array $allowed): void
 {
     foreach (array_keys($body) as $field) {
@@ -349,6 +373,9 @@ function vg_community_publish(VgStore $store, array $identity, array $body): arr
         $state = vg_community_read_state($dir);
         $user = $identity['member'];
         $actor = $identity['actor'];
+        if ($user !== null && $store->findUserById($user['id']) === null) {
+            vg_fail(401, 'unauthorized', 'Hesabınız artık kullanılamıyor. Lütfen yeniden giriş yapın.');
+        }
         if (count($state['posts']) >= VG_COMMUNITY_MAX_POSTS) {
             vg_fail(422, 'community_full', 'Topluluk depolama sınırına ulaştı. Lütfen site yönetimiyle iletişime geçin.');
         }

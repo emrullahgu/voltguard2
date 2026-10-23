@@ -29,7 +29,7 @@
   RewriteCond %{REQUEST_URI} !^/\.well-known/(acme-challenge|pki-validation|cpanel-dcv)/ [NC]
   RewriteCond %{HTTPS} !=on
   RewriteCond %{HTTP:X-Forwarded-Proto} !=https
-  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  RewriteRule ^ https://voltguard.com.tr%{REQUEST_URI} [L,R=301]
 
   # --- Web'den asla erisilemeyecek yollar -------------------------------------------------
   # Nokta ile baslayan dosya/klasorler (.git, .env, .cpanel.yml ...) - .well-known haric.
@@ -185,8 +185,8 @@
   #  - worker-src/manifest-src 'self': sw.js ve manifest.json. blob: img/media: tarayicida uretilen onizlemeler.
   #  - style-src/font-src yalnizca 'self' (+ data: font): yazi tipleri ve ikonlar kendi sunucumuzda (css/fonts.css,
   #    css/fa-subset.css); Google Fonts / Font Awesome CDN artik kullanilmiyor. Ayni degerler netlify.toml'da.
-  #  - script-src https://cdnjs.cloudflare.com: yalnizca jsPDF (PDF disa aktarma) icin.
-  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com https://assets.apollo.io https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://*.apollo.io https://aplo-evnt.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests"
+  #  - PDF kodu yerel /js/vendor/ altindan sunulur; izleyici/CDN kaynaklarina izin verilmez.
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests"
 </IfModule>
 
 # ─────────────────────────────────────

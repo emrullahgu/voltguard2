@@ -639,7 +639,7 @@
   function update(k, res, s, live, app) { const sc = app.scene3; if (!sc) return; sc.lastScr = -1; sc.lastMods = []; animate(k, 0, res, s, live, app); }
   function animate(k, dt, res, s, live, app) {
     const sc = app.scene3; if (!sc || !res.values.hub) return;
-    const h = res.values.hub, j = at(h, live.t), T = k.T, M = k.mats, col = new T.Color();
+    const h = res.values.hub, j = at(h, live.t), T = k.T, M = k.mats, col = sc._color || (sc._color = new T.Color());
     s.points.forEach((p, i) => {
       const car = sc.cars[i], u = sc.units[i]; if (!car || !u || !h.P[i]) return;
       const P = h.P[i][j] || 0, soc = h.soc[i][j] || 0, done = h.points[i].finishMin !== null && h.points[i].finishMin <= live.t + 1e-6, paused = !!h.paused[i][j];
