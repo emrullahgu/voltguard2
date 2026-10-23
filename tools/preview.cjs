@@ -176,7 +176,7 @@ const server = http.createServer((req, res) => {
   if (pathname === '/index.html') return redirect('/');
   if (pathname === '/teklif-araclari.html') return redirect('/hesaplama-araclari/');
   if (/^\/hesaplama\/[a-z0-9-]+\.html$/.test(pathname)) return redirect(pathname.slice(0, -5) + '/');
-  if (/^\/(?:araclar(?:\/[a-z0-9-]+)?|hizmetler)\/index\.html$/.test(pathname)) return redirect(pathname.slice(0, -10));
+  if (/^\/(?:(?:araclar|voltsim)(?:\/[a-z0-9-]+)?|hizmetler)\/index\.html$/.test(pathname)) return redirect(pathname.slice(0, -10));
   if (/^\/hesaplama-araclari\/?$/.test(pathname)) pathname = '/teklif-araclari.html';
   else if (/^\/hesaplama\/[a-z0-9-]+\/?$/.test(pathname)) pathname = pathname.replace(/\/$/, '') + '.html';
   let file = path.resolve(root, '.' + pathname);

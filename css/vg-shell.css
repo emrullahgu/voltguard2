@@ -280,6 +280,17 @@ html.vg-lock { overflow: hidden; }
   padding-left: .8rem;
 }
 .vg-header .vg-nav__link--factory { color: var(--vg-accent-light); }
+/* VoltSim: küçük "3D" etiketi (mobilde satırın sağında, masaüstünde metnin yanında) */
+.vg-header .vg-nav__link--sim .vg-new {
+  order: 3;
+  margin-left: auto;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font: 700 .58rem/1 var(--vg-font-h);
+  letter-spacing: .04em;
+  color: var(--vg-navy);
+  background: linear-gradient(135deg, #54c9e2, var(--vg-accent-light));
+}
 .vg-header .vg-nav__link--factory .vg-ping {
   position: relative;
   order: 3;
@@ -515,6 +526,7 @@ html.vg-lock { overflow: hidden; }
   .vg-header .vg-nav__link.is-active,
   .vg-dd:has([aria-current]) > .vg-dd__btn { box-shadow: none; padding-left: .5rem; }
   .vg-header .vg-nav__link--factory .vg-ping { order: 0; margin-left: 0; }
+  .vg-header .vg-nav__link--sim .vg-new { order: 0; margin-left: .1rem; }
   .vg-dd__btn::before { margin: 0 0 3px .05rem; }
   .vg-dd[data-open] > .vg-dd__btn::before { margin-bottom: -3px; }
 
@@ -1147,4 +1159,18 @@ html.vg-js .vg-footer:not(.is-inview) *::after {
   .skip-to-content,
   .vg-header,
   .vg-footer { display: none !important; }
+}
+
+/* Masaüstü çubuğu 1280–1599 px: VoltSim eklenince menü sığsın diye aralıklar ve yazı boyu sıkılaştırılır. */
+@media (min-width: 80rem) and (max-width: 99.99rem) {
+  .vg-header__bar { gap: .5rem; }
+  .vg-nav__list { gap: 0; }
+  .vg-header .vg-nav__link { padding: .5rem .36rem; font-size: .78rem; }
+  .vg-header .vg-nav__link::after { left: .36rem; right: .36rem; }
+  .vg-header .vg-nav__link[aria-current], .vg-header .vg-nav__link.is-active, .vg-dd:has([aria-current]) > .vg-dd__btn { padding-left: .36rem; }
+  .vg-actions .vg-account { padding-left: .6rem; padding-right: .6rem; }
+}
+@media (min-width: 80rem) and (max-width: 87.49rem) {
+  .vg-header .logo-mark__tagline { display: none; }
+  .vg-header .vg-nav__link { font-size: .75rem; padding: .5rem .3rem; }
 }
