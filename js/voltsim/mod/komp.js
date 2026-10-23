@@ -762,7 +762,7 @@
       }
     }
     // özet (kademe satırlarının altında)
-    const yy = by + rows * rowH + 18; g.textAlign = 'left'; g.font = '12px Inter, sans-serif';
+    const yy = Math.max(by + rows * rowH + 18, by + 146); g.textAlign = 'left'; g.font = '12px Inter, sans-serif'; // VFD/yük etiketlerinin altında
     const lines = [
       ['Ql ' + fmt(v.Ql, 1) + ' · gerekli ' + fmt(v.Qneed, 1) + ' · devrede ' + fmt(v.QcNom, 1) + (x.shuntQ ? ' · şönt ' + fmt(x.shuntQ, 1) : '') + ' kVAr · Q net ' + fmt(v.Qnet, 1) + ' (' + v.state + ')', v.Qnet < 0 ? col.warn : col.text],
       [v.QcNom > 0 ? 'Paralel rezonans h ≈ ' + fmt(v.hPar, 2) + (s.detune > 0 ? ' · kol ayarı ' + fmt(v.hRes * 50, 0) + ' Hz' : ' · reaktörsüz') + ' · Ic ' + fmt(v.capOver, 2) + '×In · ΔU %' + fmt(x.dU, 2) : 'Devrede kondansatör yok', v.capOver > 1.3 ? col.bad : col.text],
