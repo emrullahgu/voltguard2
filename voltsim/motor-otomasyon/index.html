@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=20261023b">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <title>3D Motor, MCC ve PLC Otomasyon Simülasyonu — Yıldız-Üçgen, VFD | VoltSim</title>
+  <meta name="description" content="Asenkron motoru doğrudan, yıldız-üçgen, yumuşak yol verici veya frekans konvertörüyle çalıştırın; akım, devir, moment, termik röle ve kilitlemeli PLC mantığı.">
+  <link rel="canonical" href="https://voltguard.com.tr/voltsim/motor-otomasyon/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="3D Motor, MCC ve PLC Otomasyon Simülasyonu — Yıldız-Üçgen, VFD | VoltSim">
+  <meta property="og:description" content="Asenkron motoru doğrudan, yıldız-üçgen, yumuşak yol verici veya frekans konvertörüyle çalıştırın; akım, devir, moment, termik röle ve kilitlemeli PLC mantığı.">
+  <meta property="og:url" content="https://voltguard.com.tr/voltsim/motor-otomasyon/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/voltsim/motor.webp">
+  <meta property="og:locale" content="tr_TR">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/voltsim.css?v=20261024a">
+  <script src="/js/vendor/three-r128.min.js?v=20261024a" defer></script>
+  <script src="/js/voltsim/engine.js?v=20261024a" defer></script>
+  <script src="/js/voltsim/calc/motor.js?v=20261024a" defer></script>
+  <script src="/js/voltsim/regulations.js?v=20261024a" defer></script>
+  <script src="/js/voltsim/core.js?v=20261024a" defer></script>
+  <script src="/js/voltsim/mod/motor.js?v=20261024a" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltSim","item":"https://voltguard.com.tr/voltsim/"},{"@type":"ListItem","position":3,"name":"3D Motor, MCC ve PLC Otomasyon Simülasyonu","item":"https://voltguard.com.tr/voltsim/motor-otomasyon/"}]},{"@type":"WebApplication","name":"3D Motor, MCC ve PLC Otomasyon Simülasyonu","url":"https://voltguard.com.tr/voltsim/motor-otomasyon/","applicationCategory":"EngineeringApplication","operatingSystem":"Web","inLanguage":"tr","isAccessibleForFree":true,"description":"Asenkron motoru doğrudan, yıldız-üçgen, yumuşak yol verici veya frekans konvertörüyle çalıştırın; akım, devir, moment, termik röle ve kilitlemeli PLC mantığı.","publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"}}]}</script>
+</head>
+<body class="vs-page doc-shell">
+  <!--vg:header-->
+  <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+        </span>
+      </a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+              <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/" aria-current="true">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
+      </nav>
+      <div class="vg-actions">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+  </header>
+  <!--/vg:header-->
+  <main class="vs-main" id="main" tabindex="-1">
+    <nav class="vs-crumb" aria-label="Sayfa yolu"><a href="/">Ana Sayfa</a><span aria-hidden="true">/</span><a href="/voltsim/">VoltSim</a><span aria-hidden="true">/</span><span aria-current="page">Motor &amp; PLC</span></nav>
+    <header class="vs-head">
+      <div>
+        <p class="vs-eyebrow">VoltSim · Asenkron motor · Kontaktör · PLC</p>
+        <h1>3D Motor, MCC ve PLC Otomasyon Simülasyonu</h1>
+        <p class="vs-lead">Başlat butonuna basın: PLC mühürler, yıldız kontaktörü kapanır, zaman rölesi sonunda kilitli geçişle üçgene geçilir. Motorun yol alması moment dengesiyle hesaplanır.</p>
+      </div>
+      <ul class="vs-tags" aria-label="Hesaplama ve analizler"><li>In · Tn</li><li>Yol alma eğrisi</li><li>Y-Δ / soft / VFD</li><li>Termik sınıfı</li><li>Kilitlemeler</li><li>Acil durdurma</li></ul>
+    </header>
+
+    <div class="vs-app" data-vs-module="motor">
+      <div class="vs-toolbar" role="toolbar" aria-label="Simülasyon araçları">
+        <div class="vs-toolbar__g">
+          <button class="vs-tb vs-tb--primary" type="button" data-vs-act="start"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg><span>Simülasyonu başlat</span></button>
+          <button class="vs-tb" type="button" data-vs-act="pause" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><span>Durdur</span></button>
+          <button class="vs-tb" type="button" data-vs-act="reset"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg><span>Sıfırla</span></button>
+          <label class="vs-tb vs-tb--select"><span class="sr-only">Örnek senaryo yükle</span><select data-vs-scenario><option value="">Örnek senaryo yükle…</option></select></label>
+        </div>
+        <div class="vs-toolbar__g">
+          <button class="vs-tb" type="button" data-vs-act="mode" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4zM3 12l9 4 9-4M3 17l9 4 9-4"/></svg><span>2D şema</span></button>
+          <button class="vs-tb" type="button" data-vs-act="report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5"/></svg><span>Teknik rapor (PDF)</span></button>
+          <button class="vs-tb" type="button" data-vs-act="csv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 10h16M4 15h16M10 4v16"/></svg><span>CSV</span></button>
+          <button class="vs-tb" type="button" data-vs-act="save"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"/></svg><span>Projeyi kaydet</span></button>
+          <button class="vs-tb" type="button" data-vs-act="load"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M5 15v6h14v-6"/></svg><span>Projeyi yükle</span></button>
+          <input type="file" accept=".json,application/json" data-vs-file hidden>
+        </div>
+        <p class="vs-scn" data-vs-scenario-desc aria-live="polite"></p>
+      </div>
+
+      <div class="vs-mtabs" role="tablist" aria-label="Çalışma alanı">
+        <button type="button" role="tab" data-vs-pane="params" aria-selected="false">Parametreler</button>
+        <button type="button" role="tab" data-vs-pane="stage" aria-selected="true">3D Simülasyon</button>
+        <button type="button" role="tab" data-vs-pane="analysis" aria-selected="false">Analiz</button>
+      </div>
+
+      <div class="vs-work" data-pane="stage">
+        <section class="vs-left" aria-labelledby="vs-left-h">
+          <h2 class="vs-panel-h" id="vs-left-h">Parametreler</h2>
+          <div class="vs-scroll" data-vs-controls></div>
+        </section>
+        <section class="vs-center" aria-label="3D simülasyon alanı">
+          <div class="vs-stage" data-vs-stage data-mode="3d">
+            <canvas class="vs-canvas" role="img" aria-label="3D Motor, MCC ve PLC Otomasyon Simülasyonu — döndürmek için sürükleyin, ok tuşları ve +/− ile kamera"></canvas>
+            <canvas class="vs-2d" data-vs-2d role="img" aria-label="2D şema görünümü"></canvas>
+            <div class="vs-labels" aria-hidden="true"></div>
+            <div class="vs-hud"><span class="vs-badge" data-vs-badge data-level="info" role="status" aria-live="polite">Hazırlanıyor…</span></div>
+            <div class="vs-vtools" role="group" aria-label="Görünüm araçları">
+              <button class="vs-vt" type="button" data-vs-act="labels" aria-pressed="true" title="Etiketler" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span class="sr-only">Etiketler</span></button>
+              <button class="vs-vt" type="button" data-vs-act="ghost" aria-pressed="false" title="Şeffaf kapak" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" stroke-dasharray="3 3"/><path d="M9 9h6v6H9z"/></svg><span class="sr-only">Şeffaf kapak</span></button>
+              <button class="vs-vt" type="button" data-vs-act="section" aria-pressed="false" title="Kesit görünümü" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M12 2v20"/></svg><span class="sr-only">Kesit görünümü</span></button>
+              <button class="vs-vt" type="button" data-vs-act="explode" aria-pressed="false" title="Patlatılmış görünüm" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v5m0 8v5M3 12h5m8 0h5"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg><span class="sr-only">Patlatılmış görünüm</span></button>
+              <button class="vs-vt" type="button" data-vs-act="spin" aria-pressed="false" title="Otomatik döndür" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg><span class="sr-only">Otomatik döndür</span></button>
+              <button class="vs-vt" type="button" data-vs-act="camera" title="Kamerayı sıfırla" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4m10 0h4M12 3v4m0 10v4"/><circle cx="12" cy="12" r="4"/></svg><span class="sr-only">Kamera görünümünü sıfırla</span></button>
+              <button class="vs-vt" type="button" data-vs-act="full" title="Tam ekran"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg><span class="sr-only">Tam ekran</span></button>
+            </div>
+            <div class="vs-clip" data-vs-clip hidden><label>Kesit konumu <input type="range" min="0" max="100" value="55"></label></div>
+            <div class="vs-info" data-vs-info hidden role="dialog" aria-label="Ekipman ayrıntısı"></div>
+            <p class="vs-hint">Sürükle: döndür · Sağ tık/iki parmak: kaydır · Tekerlek: yakınlaştır · Ekipmana tıkla: ayrıntı</p>
+            <div class="vs-fallback" data-vs-fallback hidden><strong>3D görünüm açılamadı.</strong> Tarayıcınız WebGL desteklemiyor ya da kapalı; 2D şema gösteriliyor. Hesaplar, grafikler ve rapor çalışmaya devam eder.</div>
+          </div>
+        </section>
+        <section class="vs-right" aria-labelledby="vs-right-h">
+          <h2 class="vs-panel-h" id="vs-right-h">Analiz</h2>
+          <div class="vs-scroll" data-vs-analysis>
+            <div data-vs-ro></div>
+            <div class="vs-charts" data-vs-charts></div>
+            <h3 class="vs-sub">Uygunluk ön kontrolü</h3>
+            <p class="vs-small">Model sınırları içindeki ön kontroldür; tasarım doğrulaması veya resmî onay değildir.</p>
+            <ul class="vs-checks" data-vs-checks></ul>
+            <details class="vs-asm"><summary>Varsayımlar ve bağıntılar</summary><div data-vs-assumptions></div></details>
+            <a class="vs-jump" href="#mevzuat">Mevzuat ve standartlar ↓</a>
+          </div>
+        </section>
+      </div>
+      <noscript><p class="vs-noscript">Simülasyon için JavaScript gereklidir. Aşağıdaki mevzuat ve standart bilgileri JavaScript olmadan da okunabilir.</p></noscript>
+    </div>
+
+    <p class="vs-disclaimer"><strong>Önemli:</strong> VoltSim mühendislik eğitimi ve ön değerlendirme amacıyla hazırlanmıştır. Nihai proje, ekipman seçimi, uygulama ve mevzuat uygunluğu yetkili mühendis tarafından değerlendirilmelidir. Girdileriniz yalnızca tarayıcınızda işlenir; VoltGuard’a gönderilmez.</p>
+
+    <section class="vs-regs" id="mevzuat" aria-labelledby="mevzuat-h">
+      <div class="vs-sec-head">
+        <h2 id="mevzuat-h">Mevzuat ve teknik standartlar</h2>
+        <p>Bağlayıcı düzenlemeler (kanun, yönetmelik) ile gönüllü standartlar ayrı listelenmiştir. Standartlar bir yönetmelik atıf yaptığında veya sözleşmede istendiğinde bağlayıcı hale gelir. Son kontrol: <time datetime="2026-10-23">23 Ekim 2026</time>.</p>
+      </div>
+      <div class="vs-regs__cols">
+        <div><h3>Bağlayıcı düzenlemeler</h3><ul class="vs-reg-list"><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ETKB</span></div>
+          <strong>Elektrik İç Tesisleri Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 04.11.1984 / 18565</span>
+          <p>Bina içi alçak gerilim tesisatının temel yönetmeliğidir. Gerilim düşümü sınırları sayaçtan değil yapı bağlantı kutusundan itibaren tanımlanır; yönetmelikte sayısal bir 30 mA şartı bulunmaz.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 57 a.3-i</b> Yapı bağlantı kutusu ile tüketim araçları arasındaki gerilim düşümü, sürekli en büyük işletme akımında aydınlatma ve priz devrelerinde %1,5'i, motor devrelerinde %3'ü geçmemelidir (değişik: RG 30.11.1995/22479).</li><li><b>Madde 57 a.3-ii</b> Yapı veya yapı kümesi kendi transformatöründen besleniyorsa, transformatör çıkış uçları ile yapı bağlantı kutusu arasındaki gerilim düşümü %5'i geçmemelidir.</li><li><b>Madde 18</b> Yapı bağlantı kutusuna yangın koruma amaçlı, sayaç kolon devrelerine hayat koruma eşikli kaçak akım düzeni ile termik-manyetik şalter/otomatik sigorta konulması ve koruma düzenleri arasında seçicilik sağlanması istenir; mA değeri yazılmaz (değişik: RG 16.06.2004/25494).</li><li><b>Madde 39</b> Hata akımı koruma düzeni arızalı devreyi 0,2 s içinde açmalı, korunan aygıtların topraklama direnci R ≤ 50 V / IΔn olmalı; özellikle banyo gibi tehlikeli yerlerdeki priz devrelerinde hata akımı korumanın kullanılması 'tavsiye edilir'.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Başlıca değişiklikler: 30.11.1995/22479 (Madde 57 gerilim düşümü dahil), 25.10.1996/22798, 12.07.1998/23400, 08.12.2000/24254, 16.06.2004/25494 (Madde 18 sayaç/koruma). Lexpera konsolide listesine göre son değişiklik 12.01.2020/31006 (Madde 7, 19, 24). mevzuat.gov.tr metni yalnızca .doc ek olarak sunuyor; madde metinleri bir kamu (MEB) kopyasından okundu.</p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=10391&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ÇSGB</span></div>
+          <strong>İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 25.04.2013 / 28628</span>
+          <p>İşyerlerinde elektrik ve topraklama tesisatının yıllık periyodik kontrolünün yasal dayanağıdır. 23.12.2025 değişikliği Madde 7 ve EK-III'ü yeniden düzenlemiştir.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 7</b> EK-III tablolarındaki ekipmanlar yetkili kişilerce periyodik kontrole tabidir; usul ve esaslar EK-III'tedir (değişik: 23.12.2025/33116).</li><li><b>EK-III 2.3.1–2.3.2</b> İlgili standartta aksi yoksa tesisatlar yılda bir kontrol edilir; elektrik, topraklama, yıldırımdan korunma, akü, trafo, jeneratör tesisatlarını yetkili elektrik mühendisi/tekniker vb. kontrol eder.</li><li><b>EK-III 2.3.7</b> Elektrik, topraklama ve yıldırımdan korunma tesisatlarında kontrolde proje aranır; projesi olmayan tesisat işverence projelendirilmelidir.</li><li><b>EK-III Tablo-3</b> Elektrik ve topraklama tesisatı, yıldırımdan korunma, jeneratör (TS ISO 8528), yangın algılama (TSE CEN/TS 54-14) için standartta süre yoksa en fazla 1 yıl; akümülatör ve transformatör için 1 yıl.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Değişiklikler: 02.05.2014/28988, 23.07.2016/29779, 24.04.2017/30047, 18.02.2022/31754, 04.02.2024/32450, 23.12.2025/33116 (Madde 7 ve EK-III'te değişiklikler; değişiklik gerçektir).</p>
+          
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=18318&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li></ul></div>
+        <div><h3>Standartlar ve rehberler</h3><ul class="vs-reg-list"><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">CENELEC / IEC / TSE (TS HD 60364-5-52)</span></div>
+          <strong>HD 60364-5-52 / IEC 60364-5-52 Elektrik donanımının seçimi ve tesisi – Kablo sistemleri</strong>
+          <span class="vs-reg__rg">IEC 60364-5-52:2009+AMD1:2024; HD 60364-5-52:2011 (+A11)</span>
+          <p>Kablo akım taşıma kapasitesi tabloları, düzeltme katsayıları ve döşeme yöntemleri bu standarttadır. Gerilim düşümü için bilgilendirici değerler verir; bağlayıcı sınırlar Türkiye'de EİTY Madde 57'dedir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: IEC tarafında AMD1:2024 yayımlandı (2024-11-22); CENELEC HD karşılığı kontrol edilmeli.</p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/103734" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 60947-2 Alçak gerilim anahtarlama düzenleri – Devre kesiciler</strong>
+          <span class="vs-reg__rg">IEC 60947-2:2024 (Ed.6)</span>
+          <p>Endüstriyel kompakt ve açık tip kesicilerin (MCCB/ACB) standardıdır; 1000 V AC / 1500 V DC'ye kadar.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: Ed.6 (2024), 2016 baskısı ve AMD1:2019'un yerini aldı.</p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/66277" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">CENELEC / TSE (TS EN 50160)</span></div>
+          <strong>EN 50160 Kamu elektrik şebekelerinden sağlanan elektriğin gerilim karakteristikleri</strong>
+          <span class="vs-reg__rg">EN 50160:2022+A1:2025</span>
+          <p>Şebeke gerilim kalitesinin (gerilim değişimi, flicker, harmonik, dengesizlik) haftalık istatistiksel sınırlarını verir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: EN 50160:2022/A1:2025; A1 ile YG/çok YG harmonik değerleri (Tablo 8) zorunlu hale geldi.</p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEEE</span></div>
+          <strong>IEEE 519 Elektrik güç sistemlerinde harmonik kontrolü</strong>
+          <span class="vs-reg__rg">IEEE 519-2022</span>
+          <p>Ortak bağlantı noktasında (PCC) gerilim ve akım harmonik sınırlarını (TDD) verir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: Revizyon projesi (P519) 2024'ten beri aktif.</p>
+          
+          <a href="https://standards.ieee.org/ieee/519/10677/" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 60947-4-1 Kontaktörler ve motor yol vericiler – Elektromekanik</strong>
+          <span class="vs-reg__rg">IEC 60947-4-1:2023 (Ed.5)</span>
+          <p>Kontaktör kullanım kategorileri (AC-3 vb.) ve termik röle açma sınıflarını (10A, 10, 20, 30...) tanımlar.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: COR1:2026 (2026-03-16).</p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/74487" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 60034-1 Döner elektrik makineleri – Anma değerleri ve performans</strong>
+          <span class="vs-reg__rg">IEC 60034-1:2026 (Ed.15)</span>
+          <p>Motor görev tipleri (S1–S10), sıcaklık sınıfları ve gerilim/frekans toleranslarını tanımlar.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: Ed.15 2026-03-13'te 2022 baskısının yerini aldı.</p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/89961" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 61131-3 Programlanabilir kontrolörler – Programlama dilleri</strong>
+          <span class="vs-reg__rg">IEC 61131-3:2025 (Ed.4)</span>
+          <p>PLC programlama dillerini (ST, LD, FBD, SFC) tanımlar.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: Ed.4 2025-05; Instruction List (IL) çıkarıldı, UTF-8 dize desteği eklendi.</p>
+          
+          <a href="https://webstore.iec.ch/en/publication/68533" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">ISO / IEC / TSE</span></div>
+          <strong>ISO 13849-1 / IEC 62061 Makine emniyeti – Kumanda sistemlerinin güvenlikle ilgili kısımları / Fonksiyonel güvenlik</strong>
+          <span class="vs-reg__rg">ISO 13849-1:2023 (Ed.4); IEC 62061:2021+AMD1:2024</span>
+          <p>Acil stop, emniyet rölesi gibi güvenlik fonksiyonlarının PL (ISO 13849-1) veya SIL (IEC 62061) seviyesine göre tasarımını tanımlar.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: IEC 62061:2021/AMD1:2024 (2024-03-28).</p>
+          
+          <a href="https://www.iso.org/standard/73481.html" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li></ul></div>
+      </div>
+    </section>
+
+    <section class="vs-cta" aria-labelledby="cta-h">
+      <div>
+        <h2 id="cta-h">Bu sistemi tesisiniz için projelendirelim.</h2>
+        <p>VoltGuard mühendislik ekibiyle projenizi gerçek tesis koşullarına göre değerlendirin. Raporunuzu paylaşmak isterseniz indirip teklif talebinize ekleyebilirsiniz; simülasyon girdileri bizimle siz istemedikçe paylaşılmaz.</p>
+      </div>
+      <div class="vs-cta__btns">
+        <a class="vs-cbtn vs-cbtn--primary" href="/#iletisim">VoltGuard’dan Teklif Al</a>
+        <a class="vs-cbtn" href="/sor.html">Mühendislik Desteği Al</a>
+        <a class="vs-cbtn" href="/hizmetler/plc-scada-otomasyon.html">İlgili Hizmeti İncele: PLC &amp; SCADA otomasyon</a>
+      </div>
+    </section>
+
+    <section class="vs-more" aria-labelledby="more-h">
+      <h2 id="more-h">İlgili araçlar</h2>
+      <ul class="vs-links"><li><a href="/hesaplama/motor-akimi-hesaplama/">Motor akımı hesabı</a></li><li><a href="/hesaplama/motor-koruma-kontaktor-secimi/">Motor koruma ve kontaktör</a></li><li><a href="/araclar/motor-hiz-tork/">Motor hız–tork aracı</a></li></ul>
+      <h2>Diğer simülasyonlar</h2>
+      <ul class="vs-links"><li><a href="/voltsim/pano/">Elektrik Pano</a></li><li><a href="/voltsim/ges/">GES</a></li><li><a href="/voltsim/trafo/">Trafo</a></li><li><a href="/voltsim/sarj-istasyonu/">Şarj İstasyonu</a></li><li><a href="/voltsim/res/">RES</a></li><li><a href="/voltsim/kompanzasyon/">Kompanzasyon</a></li><li><a href="/voltsim/topraklama/">Topraklama</a></li><li><a href="/voltsim/ups-jenerator/">UPS &amp; Jeneratör</a></li><li><a href="/voltsim/yangin-algilama/">Yangın Algılama</a></li></ul>
+    </section>
+  </main>
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+            </span>
+          </a>
+          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#guvenlik">Güvenlik</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
+        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
+          </circle>
+        </svg>
+        <span class="sig-node" aria-hidden="true"></span>
+        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
+          <span class="sig-badge__ring" aria-hidden="true"></span>
+          <span class="sig-badge__aurora" aria-hidden="true"></span>
+          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
+          <span class="sig-badge__body">
+            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
+            <span class="sig-badge__brand">
+              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
+              <span class="sig-badge__eng">Engineering</span>
+            </span>
+          </span>
+          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
+          <span class="sig-badge__shimmer" aria-hidden="true"></span>
+        </a>
+        <span class="sig-node" aria-hidden="true"></span>
+        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
+          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
+            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
+          </circle>
+        </svg>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
+</body>
+</html>

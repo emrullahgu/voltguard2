@@ -38,6 +38,18 @@
   force = true
 
 [[redirects]]
+  from = "/voltsim/index.html"
+  to = "/voltsim/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/voltsim/:slug/index.html"
+  to = "/voltsim/:slug/"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/teklif-araclari.html"
   to = "/hesaplama-araclari/"
   status = 301

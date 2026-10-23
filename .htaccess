@@ -143,13 +143,13 @@
   RewriteCond %{THE_REQUEST} \s/hizmetler/index\.html[\s?]
   RewriteRule ^hizmetler/index\.html$ /hizmetler/ [R=301,L]
   RewriteRule ^hizmetler/$ /hizmetler/index.html [L]
-  # Public engineering library. DirectorySlash is off, so normalize only real index pages.
-  RewriteCond %{THE_REQUEST} \s/araclar(?:/[a-z0-9-]+)?/index\.html[\s?]
-  RewriteRule ^(araclar(?:/[a-z0-9-]+)?)/index\.html$ /$1/ [R=301,L]
+  # Public engineering library and VoltSim simulations. DirectorySlash is off, so normalize only real index pages.
+  RewriteCond %{THE_REQUEST} \s/(?:araclar|voltsim)(?:/[a-z0-9-]+)?/index\.html[\s?]
+  RewriteRule ^((?:araclar|voltsim)(?:/[a-z0-9-]+)?)/index\.html$ /$1/ [R=301,L]
   RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
-  RewriteRule ^(araclar(?:/[a-z0-9-]+)?)$ /$1/ [R=301,L]
+  RewriteRule ^((?:araclar|voltsim)(?:/[a-z0-9-]+)?)$ /$1/ [R=301,L]
   RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
-  RewriteRule ^(araclar(?:/[a-z0-9-]+)?)/$ /$1/index.html [L]
+  RewriteRule ^((?:araclar|voltsim)(?:/[a-z0-9-]+)?)/$ /$1/index.html [L]
   # /<sayfa> ve /<sayfa>/  ->  /<sayfa>.html  (yalnizca dosya gercekten varsa; yeni kok sayfalar otomatik).
   RewriteCond %{DOCUMENT_ROOT}/$1.html -f
   RewriteRule ^([a-z0-9-]+)/?$ /$1.html [R=301,L]

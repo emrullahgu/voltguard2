@@ -94,6 +94,11 @@ deployment:
     - /bin/cp -R araclar $DEPLOYPATH/araclar.new
     - /bin/rm -rf $DEPLOYPATH/araclar
     - /bin/mv $DEPLOYPATH/araclar.new $DEPLOYPATH/araclar
+    # VoltSim 3D simulasyon sayfalari; /voltsim/ ve /voltsim/<modul>/ adresleri index.html sunar (.htaccess).
+    - /bin/rm -rf $DEPLOYPATH/voltsim.new
+    - /bin/cp -R voltsim $DEPLOYPATH/voltsim.new
+    - /bin/rm -rf $DEPLOYPATH/voltsim
+    - /bin/mv $DEPLOYPATH/voltsim.new $DEPLOYPATH/voltsim
     # ----- 4) Kok dosyalar -----
     # Kokteki tum .html sayfalari tek gorevle (index.html, 404.html, fabrika-cozumleri.html ... yeni kok sayfalar dahil).
     # Yeni kok sayfa icin AYRI cp satiri YAZMAYIN; dosya depoda yoksa cp hata verip deploy'u o noktada durdurur.

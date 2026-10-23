@@ -9,7 +9,7 @@ const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..');
 const publish = path.join(root, '.netlify-publish');
 const publicDirectories = ['akademi', 'araclar', 'assets', 'bilgi', 'css', 'fonts',
-  'hesap', 'hesaplama', 'hizmetler', 'js', 'mm', 'public', 'sor'];
+  'hesap', 'hesaplama', 'hizmetler', 'js', 'mm', 'public', 'sor', 'voltsim'];
 const rootFiles = fs.readdirSync(root).filter(name => name.endsWith('.html'))
   .concat(['sw.js', 'manifest.json', 'robots.txt', 'sitemap.xml', 'llms.txt']);
 const employeePages = ['calisan/giris.html', 'calisan/etkinlestir.html'];
@@ -45,4 +45,4 @@ for (const file of rootFiles.concat(employeePages)) {
 }
 for (const forbidden of ['api', 'tools', 'VoltGame', 'vesikalar', 'voltguardekleyelim', '.qa',
   'calisan/uygulama', 'contact.php']) assert.ok(!fs.existsSync(path.join(publish, forbidden)), 'Excluded from static publication: ' + forbidden);
-console.log('Netlify static release ready: site, 51 engineering tools, team and complete VoltGame. PHP and development sources excluded.');
+console.log('Netlify static release ready: site, 51 engineering tools, VoltSim, team and complete VoltGame. PHP and development sources excluded.');

@@ -5,11 +5,13 @@
   "scripts": {
     "build": "node tools/build-team.cjs && node tools/build-voltgame.cjs && node tools/build-staff.cjs && node tools/build-engineering.cjs && node tools/build-company.cjs",
     "build:game": "node tools/build-voltgame.cjs",
+    "build:voltsim": "node tools/build-voltsim.cjs && python tools/shell.py --quiet",
     "setup:game": "npm ci --prefix tools/voltgame/tools --ignore-scripts --no-fund",
     "setup:staff": "npm ci --prefix tools/staff-app --ignore-scripts --no-fund",
     "test": "node tools/test.cjs",
     "test:browser": "node tools/tests/engineering-browser.cjs",
     "test:game-browser": "node tools/tests/voltgame-browser.cjs",
+    "test:voltsim-browser": "node tools/tests/voltsim-browser.cjs",
     "test:staff-browser": "node tools/tests/staff-browser.cjs && node tools/tests/company-ui-browser.cjs && node tools/tests/company-real-browser.cjs",
     "preview": "node tools/preview.cjs"
   },
