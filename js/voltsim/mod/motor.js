@@ -6,13 +6,15 @@
   'use strict';
   const VS = window.VoltSim, E = VS.E, fmt = VS.fmt;
   const MO = E.motor;
+  const CX = E.ext.motor; // js/voltsim/calc/motor.js: arıza, enerji, temsili süreler (test edilmiş saf fonksiyonlar)
 
   /* ---------------------------------------------------------------- girdiler */
   function defaults() {
     return {
       Pn: 15, Un: 400, eff: 0.92, cos: 0.86, nn: 1460, poles: 4, IstIn: 7, TkTn: 2.8, TstTn: 2.2,
       method: 'YD', loadKind: 'pump', loadType: 'quad', loadPct: 90, J: 0.6,
-      Ir: 27.5, olClass: '10', tYD: 4, ramp: 5, softLimit: 4, doorOpen: true
+      Ir: 27.5, olClass: '10', tYD: 4, ramp: 5, softLimit: 4, doorOpen: true,
+      uPct: 100, vfdSpeed: 100, flowPct: 70, hours: 6000, price: 3.5, plcInterlock: true
     };
   }
   const METHOD_LABEL = { DOL: 'Doğrudan (DOL)', YD: 'Yıldız–üçgen (Y-Δ)', SOFT: 'Yumuşak yol verici', VFD: 'Frekans konvertörü (VFD)' };
@@ -28,9 +30,30 @@
     for (let i = 0; i <= 80; i++) { const sl = Math.max(1 - i / 80, nom.sn * 0.02); pts.push([nom.ns * (1 - sl), T(sl)]); }
     return pts;
   }
+  /** Şebeke gerilimi Un’dan farklıysa moment ∝ U², kalkış akımı ∝ U (CX.voltageEffect) ile motor girdileri ölçeklenir;
+   * yol alma benzetimi yine engine motor.compute/startup ile yapılır. Pompa/fan için kısma–VFD enerji karşılaştırması eklenir. */
+  function effInput(s) {
+    const u = (s.uPct || 100) / 100;
+    if (Math.abs(u - 1) < 1e-6) return s;
+    const ve = CX.voltageEffect(u, { TkTn: s.TkTn, TstTn: s.TstTn === undefined ? 2.2 : s.TstTn, IstIn: s.IstIn });
+    return Object.assign({}, s, { TkTn: ve.TkTn, TstTn: ve.TstTn, IstIn: ve.IstIn });
+  }
   function compute(s) {
-    const r = MO.compute(s);
-    if (r.ok) r.values.natural = naturalCurve(s);
+    const si = effInput(s);
+    const r = MO.compute(si);
+    if (!r.ok) return r;
+    const u = (s.uPct || 100) / 100;
+    r.values.natural = naturalCurve(si);
+    r.values.u = u;
+    r.values.IrunU = r.values.Irun * CX.voltageEffect(u, si).runCurrentFactor;
+    if (Math.abs(u - 1) > 1e-6) r.checks.push({ id: 'u', label: 'Şebeke gerilimi', status: Math.abs(u - 1) > 0.1 ? 'fail' : Math.abs(u - 1) > 0.05 ? 'warn' : 'ok', detail: '%' + Math.round(u * 100) + ' Un: moment ×' + fmt(u * u, 2) + ' (∝ U²), kalkış akımı ×' + fmt(u, 2) + ', aynı yükte çalışma akımı ≈ ×' + fmt(1 / u, 2) + '. TS EN 60034-1 A bölgesi ±%5.', ref: 'TS EN 60034-1' });
+    if (s.loadType === 'quad') {
+      const P100 = s.Pn * s.loadPct / 100;
+      const eo = { P100: P100, etaMotor: s.eff, etaVfd: 0.97, hours: s.hours, price: s.price };
+      r.values.energy = Object.assign(CX.energyCompare(Object.assign({ q: s.flowPct / 100 }, eo)), { curves: CX.energyCurves(eo, 14), P100: P100 });
+      r.assumptions = (r.assumptions || []).concat(['Enerji karşılaştırması: kısmada P/P100 ≈ 0,45 + 0,55·q (tipik santrifüj eğri yaklaşımı), VFD’de P/P100 = q³ (afinite yasaları, statik basma yüksekliği yok), sürücü verimi %97. Gerçek değer pompa/sistem eğrisinden bulunur.']);
+    }
+    r.assumptions = (r.assumptions || []).concat(['Arıza enjeksiyonu (faz kaybı √3·I, kilitli rotor I = Ist, gerilim etkisi) ve serbest duruş eğitim amaçlı yaklaşık modellerdir; termik açma gecikmesi temsilidir.']);
     return r;
   }
   /** Yük momenti: motorun yol alma benzetiminde kullandığı bağıntı (MO.loadTorque). */
@@ -43,7 +66,9 @@
       inp: { start: false, stop: true, estop: true, ol: true, reset: false },
       pb: { start: 0, stop: 0, reset: 0 }, estopPressed: false,
       olTripped: false, olHot: false, olTimer: 0, olText: '',
-      tRun: -1, rpm: 0, I: 0, T: 0, hist: [], histT: 0, events: []
+      tRun: -1, rpm: 0, I: 0, T: 0, hist: [], histT: 0, events: [],
+      inj: { phase: false, locked: false }, tripCause: '', violation: null, violations: 0,
+      seq: { latched: false, reset: false, restart: false }, recovered: false, steady: 0
     };
   }
   const log = (L, t) => { L.events.push(t); if (L.events.length > 30) L.events.shift(); };
@@ -57,6 +82,7 @@
       if (L.olTripped) { L.olTripped = false; L.olTimer = 0; L.olText = ''; log(L, 'Termik röle elle kuruldu (reset).'); }
       L.estopPressed = false; L.pb.reset = 0.3;
     }
+    if (what === 'start' && L.seq.reset && !L.plc.estopLatched && !L.estopPressed) L.seq.restart = true;
     // butonlar duraklatılmış simülasyonda da etkili olsun
     if (!app.running || app.paused) { app.running = true; app.paused = false; app.syncToolbar(); }
     app.invalidate();
@@ -71,14 +97,20 @@
     const a = pts[lo], b = pts[hi], k = (t - a.t) / (b.t - a.t);
     return { t: t, rpm: a.rpm + (b.rpm - a.rpm) * k, I: a.I + (b.I - a.I) * k, T: a.T + (b.T - a.T) * k };
   }
-  /** Termik röle için temsili gecikme: 7,2·Ir’de sınıf üst sınırı, altında I²t ölçekli; gösterim için en çok 30 s. */
-  function olDelay(cls, r) {
-    const c = MO.TRIP_CLASS[cls] || MO.TRIP_CLASS['10'];
-    return r >= 7.2 ? c[1] : Math.min(30, c[1] * Math.pow(7.2 / r, 2));
+  /** Arıza enjeksiyonu (canlı durum; CX.singlePhasing / CX.lockedRotor). */
+  function inject(app, what) {
+    const L = app.live;
+    if (what === 'phase') { L.inj.phase = true; log(L, 'Arıza: L3 fazı koptu (tek faz kalma).'); }
+    else if (what === 'locked') { L.inj.locked = true; log(L, 'Arıza: yük sıkıştı, rotor kilitlendi.'); }
+    else { L.inj.phase = false; L.inj.locked = false; log(L, 'Arızalar giderildi (faz bağlandı, yük serbest).'); }
+    if (!app.running || app.paused) { app.running = true; app.paused = false; app.syncToolbar(); }
+    app.invalidate();
   }
 
   function tick(app, dt) {
     const res = app.validResult; if (!res) return false;
+    // core döngüsünün ilk karesinde dt negatif gelebilir (rAF zaman damgası mount’tan önce); buton darbeleri bozulmasın
+    if (!(dt > 0)) return false;
     const L = app.live, s = app.state, v = res.values;
     const inp = { start: L.pb.start > 0, stop: !(L.pb.stop > 0), estop: !L.estopPressed, ol: !L.olTripped, reset: L.pb.reset > 0, method: s.method };
     L.pb.start = Math.max(0, L.pb.start - dt); L.pb.stop = Math.max(0, L.pb.stop - dt); L.pb.reset = Math.max(0, L.pb.reset - dt);
@@ -87,6 +119,20 @@
     try { L.plc = MO.plcScan(prev, inp, dt, s.tYD); }
     catch (e) { L.plc = Object.assign({}, prev, { run: false, K1: false, K2: false, K3: false, fault: e.message }); log(L, e.message); }
     const p = L.plc;
+    if (p.K1 && !prev.K1) L.runId = (L.runId || 0) + 1;
+    // acil durdurma kurtarma sırası: kilit → Reset → Başlat
+    if (p.estopLatched) { L.seq.latched = true; L.seq.reset = false; L.seq.restart = false; }
+    if (L.seq.latched && !p.estopLatched && prev.estopLatched) L.seq.reset = true;
+    if (L.seq.reset && L.seq.restart && p.K1 && !prev.K1) { L.recovered = true; log(L, 'Acil durdurma sonrası doğru sırayla (mantar bırak → Reset → Başlat) yeniden yol verildi.'); L.seq = { latched: false, reset: false, restart: false }; }
+    // kullanıcı PLC programı (eğitim): kilitleme kapalıysa çıkış isteği denetlenir, çakışma engellenir
+    if (s.method === 'YD' && p.run) {
+      // tarama adımı geçiş penceresini (≈60 ms) atlayabilir: önceki ve şimdiki zamanlayıcı arasındaki geçiş anı denetlenir
+      const tChk = prev.run && prev.timer < s.tYD + 0.06 && p.timer >= s.tYD ? Math.max(prev.timer, s.tYD) : p.timer;
+      try { CX.guardOutputs(CX.ydRequest(tChk, s.tYD, s.plcInterlock !== false)); }
+      catch (e) {
+        if (!L.violation || L.violation.run !== L.runId) { L.violation = { run: L.runId, t: tChk, msg: e.message }; L.violations++; log(L, 'ENGELLENDİ: ' + e.message + ' (t = ' + fmt(tChk, 2) + ' s). Kilitlemesiz program faz–faz kısa devreye yol açardı; çıkışlar uygulanmadı.'); }
+      }
+    }
     // olay günlüğü (durum geçişleri)
     if (p.K1 && !prev.K1) log(L, 'K1 (ana) kontaktörü çekti' + (s.method === 'YD' ? ', K2 yıldız kapalı.' : s.method === 'VFD' ? ', sürücü rampası başladı.' : s.method === 'SOFT' ? ', yumuşak yol verici akım sınırında.' : '.'));
     if (p.K3 && !prev.K3) log(L, 'Zaman rölesi doldu: K2 bıraktı, 50 ms ölü zamandan sonra K3 (üçgen) çekti.');
@@ -96,25 +142,43 @@
     // motor: K1 çektiği andan itibaren yol alma eğrisi oynatılır
     if (p.K1 && L.tRun < 0) { L.tRun = 0; L.hist = []; L.histT = 0; }
     if (!p.K1 && L.tRun >= 0) L.tRun = -1;
+    const started = !!(v.sim.tStart && L.tRun > v.sim.tStart);
     if (L.tRun >= 0) {
       L.tRun += dt;
       const q = sample(v.sim.pts, L.tRun); L.rpm = q.rpm; L.I = q.I; L.T = q.T;
-    } else {
-      // serbest duruş (temsili): J·dω/dt = −(TL + %2·Tn sürtünme)
-      L.I = 0; L.T = 0;
-      if (L.rpm > 0) {
-        const w = L.rpm * 2 * Math.PI / 60, TL = loadTorque(s, v.nom, L.rpm) + 0.02 * v.nom.Tn;
-        L.rpm = Math.max(0, (w - TL / s.J * dt) * 60 / (2 * Math.PI));
+      // kalıcı çalışmada gerilim etkisi (aynı yükte I ≈ ∝ 1/u) ve VFD hız ayar noktası (afinite yasaları, temsili)
+      if (started) L.I = q.I * v.IrunU / v.Irun;
+      if (s.method === 'VFD' && started) {
+        const o = CX.vfdOperating(s.vfdSpeed / 100, s.loadType === 'quad', L.I, v.nom.In);
+        L.rpm = q.rpm * o.speedFactor; L.I = o.I; L.T = q.T * o.torqueFactor;
       }
+      // arıza enjeksiyonu
+      const Ist = s.IstIn * (v.u || 1) * v.nom.In * (s.method === 'YD' && L.plc.K2 ? 1 / 3 : 1);
+      if (L.inj.locked) {
+        const lr = CX.lockedRotor(s.method === 'VFD' ? 1.5 * v.nom.In : s.method === 'SOFT' ? Math.min(Ist, s.softLimit * v.nom.In) : Ist);
+        L.rpm = lr.rpm; L.I = lr.I; L.T = v.natural.length ? v.natural[0][1] : 0;
+      } else if (L.inj.phase) {
+        const run = (L.prevRpm || 0) > 0.5 * v.nom.ns && !L.phaseStall;
+        const sp = CX.singlePhasing({ running: run, I: L.I, Ist: Ist });
+        if (!run) { L.phaseStall = true; L.rpm = CX.coastStep(L.prevRpm || 0, dt, s.J, loadTorque(s, v.nom, L.prevRpm || 0), 0.02 * v.nom.Tn); L.T = 0; }
+        L.I = sp.I;
+      } else L.phaseStall = false;
+      L.prevRpm = L.rpm;
+    } else {
+      // serbest duruş (temsili; CX.coastStep): J·dω/dt = −(TL + %2·Tn sürtünme)
+      L.I = 0; L.T = 0; L.phaseStall = false;
+      if (L.rpm > 0) L.rpm = CX.coastStep(L.rpm, dt, s.J, loadTorque(s, v.nom, L.rpm), 0.02 * v.nom.Tn);
+      L.prevRpm = L.rpm;
     }
+    L.steady = L.tRun >= 0 && started && !L.inj.locked && !L.inj.phase ? L.steady + dt : 0;
     // termik aşırı yük rölesi (sınıf sınırları engine’den; süre temsili)
     if (L.tRun >= 0 && !L.olTripped) {
       const a = MO.overloadAssessment(s.olClass, s.Ir, L.I);
       L.olHot = a.trips === true;
       if (a.trips === true) {
         L.olTimer += dt;
-        const lim = olDelay(s.olClass, L.I / s.Ir);
-        if (L.olTimer >= lim) { L.olTripped = true; L.olText = a.text; log(L, 'Termik röle açtı (I = ' + fmt(L.I, 0) + ' A = ' + fmt(L.I / s.Ir, 1) + '·Ir). ' + a.text); }
+        const lim = CX.olDelay(s.olClass, L.I / s.Ir);
+        if (L.olTimer >= lim) { L.olTripped = true; L.olText = a.text; L.tripCause = L.inj.phase ? 'phase' : L.inj.locked ? 'locked' : 'overload'; log(L, 'Termik röle açtı (I = ' + fmt(L.I, 0) + ' A = ' + fmt(L.I / s.Ir, 1) + '·Ir). ' + a.text); }
       } else L.olTimer = Math.max(0, L.olTimer - dt * 0.5);
     } else if (!L.olTripped) { L.olHot = false; L.olTimer = Math.max(0, L.olTimer - dt * 0.5); }
     // geçmiş (grafik ve 2D için)
@@ -160,7 +224,27 @@
         { type: 'range', key: 'J', label: 'Toplam atalet J (motor + yük)', min: 0.05, max: 10, step: 0.05, unit: 'kg·m²', digits: 2 },
         s.method === 'YD' ? { type: 'range', key: 'tYD', label: 'Y→Δ zaman rölesi', min: 1, max: 15, step: 0.5, unit: 's', digits: 1, help: 'K2 bıraktıktan sonra K3, 50 ms ölü zamanla çeker (PLC içindeki karşılıklı kilitleme).' } : null,
         s.method === 'SOFT' ? { type: 'range', key: 'softLimit', label: 'Akım sınırı', min: 2, max: 5, step: 0.5, unit: '× In', digits: 1 } : null,
-        s.method === 'VFD' ? { type: 'range', key: 'ramp', label: 'Hızlanma rampası', min: 1, max: 30, step: 1, unit: 's' } : null
+        s.method === 'VFD' ? { type: 'range', key: 'ramp', label: 'Hızlanma rampası', min: 1, max: 30, step: 1, unit: 's' } : null,
+        s.method === 'VFD' ? { type: 'range', key: 'vfdSpeed', label: 'Sürücü hız ayar noktası', min: 30, max: 100, step: 5, unit: '%', help: 'Çalışırken değiştirilebilir. Devir, moment ve akım afinite yasalarıyla ölçeklenir (karesel yükte P ∝ n³; temsili).' } : null
+      ] },
+      { title: 'Arıza enjeksiyonu', items: [
+        { type: 'buttons', items: [
+          { label: L && L.inj.phase ? 'Faz kaybı (aktif)' : 'Faz kaybı (L3 kopuk)', variant: 'warn', pressed: !!(L && L.inj.phase), onClick: a => { inject(a, 'phase'); a.renderControls(); } },
+          { label: L && L.inj.locked ? 'Kilitli rotor (aktif)' : 'Rotoru kilitle', variant: 'warn', pressed: !!(L && L.inj.locked), onClick: a => { inject(a, 'locked'); a.renderControls(); } },
+          { label: 'Arızaları gider', onClick: a => { inject(a, 'clear'); a.renderControls(); } }
+        ] },
+        { type: 'range', key: 'uPct', label: 'Şebeke gerilimi (Un’a oran)', min: 85, max: 110, step: 1, unit: '%', help: 'Moment ∝ U², kalkış akımı ∝ U; aynı yükte çalışma akımı ≈ ∝ 1/U. %90’da moment %81’e düşer.' },
+        { type: 'note', text: 'Faz kaybında çalışan motorun kalan iki hattında akım ≈ √3·I olur ve termik röle açar; duran motor tek fazda kalkamaz. Kilitli rotorda akım kalkış akımında kalır. Modeller eğitim amaçlı yaklaşık değerlerdir.' }
+      ] },
+      s.loadType === 'quad' ? { title: 'Enerji verimliliği · debi kontrolü', items: [
+        { type: 'range', key: 'flowPct', label: 'İstenen debi (anma debisine oran)', min: 30, max: 100, step: 5, unit: '%' },
+        { type: 'range', key: 'hours', label: 'Yıllık çalışma süresi', min: 500, max: 8760, step: 100, unit: 'h' },
+        { type: 'number', key: 'price', label: 'Elektrik birim fiyatı', min: 0, max: 50, step: 0.1, unit: 'TL/kWh', digits: 2 },
+        { type: 'note', text: 'Sabit hızda vana/damper kısma ile frekans konvertörlü hız kontrolü karşılaştırılır (afinite yasaları). Seçili yol verme yöntemi VFD ise sürücü, değilse kısma uygulanır.' }
+      ] } : null,
+      { title: 'PLC programı', items: [
+        { type: 'toggle', key: 'plcInterlock', label: 'K2/K3 karşılıklı kilitleme (programda)', help: 'Kapatırsanız program K3’ü, K2’nin kontakları açılmadan (≈60 ms mekanik bırakma) kapatmak ister. Simülatör çıkışları uygulamadan denetler ve ihlali engeller; gerçek tesiste bu faz–faz kısa devre olurdu. Yardımcı NC kontaklarla donanımsal kilit ayrıca şarttır.' },
+        L && L.violations ? { type: 'note', level: 'warn', html: '<b>' + L.violations + ' kilitleme ihlali engellendi.</b> ' + VS.esc(L.violation ? L.violation.msg + ' (t = ' + fmt(L.violation.t, 2) + ' s)' : '') } : null
       ] },
       { title: 'Motor etiket değerleri', items: [
         { type: 'select', key: 'Pn', label: 'Anma gücü Pn (önayar: IE3, 4 kutup)', options: Object.keys(RATINGS).map(Number).sort((a, b) => a - b).map(p => [p, fmt(p, p % 1 ? 1 : 0) + ' kW']), rebuild: true,
@@ -206,6 +290,15 @@
       { label: 'Termik röle', value: L.olTripped ? 'AÇTI' : L.olHot ? 'Aşırı akım bölgesinde' : 'Normal', level: L.olTripped ? 'bad' : L.olHot ? 'warn' : 'ok', sub: L.olTripped ? L.olText + ' Reset ile kurulur.' : 'Ir = ' + fmt(s.Ir, 1, 'A') + ' · sınıf ' + s.olClass + ' (' + MO.TRIP_CLASS[s.olClass][0] + '–' + MO.TRIP_CLASS[s.olClass][1] + ' s, 7,2·Ir)' },
       { label: 'Acil durdurma', value: L.estopPressed ? 'BASILI' : p.estopLatched ? 'Kilitli — Reset' : 'Hazır', level: L.estopPressed || p.estopLatched ? 'bad' : 'ok' }
     ];
+    if (L.inj.phase || L.inj.locked) out.push({ label: 'Enjekte arıza', value: L.inj.locked ? 'Kilitli rotor' : 'Faz kaybı (tek faz)', level: 'bad', wide: true, sub: L.inj.locked ? 'I = Ist sabit; termik röle sınıf aralığında açmalı.' : 'Kalan iki fazda akım ≈ √3·I (çalışırken) ya da kilitli rotor (dururken).' });
+    if (Math.abs(v.u - 1) > 1e-6) out.push({ label: 'Şebeke gerilimi', value: '%' + Math.round(v.u * 100) + ' Un', level: Math.abs(v.u - 1) > 0.1 ? 'bad' : Math.abs(v.u - 1) > 0.05 ? 'warn' : 'ok', sub: 'Moment ×' + fmt(v.u * v.u, 2) + ' · çalışma akımı ≈ ' + fmt(v.IrunU, 1, 'A') });
+    if (s.method === 'VFD') out.push({ label: 'Sürücü çıkışı', value: fmt(50 * s.vfdSpeed / 100, 1, 'Hz'), sub: 'Hız ayar noktası %' + s.vfdSpeed + ' (afinite, temsili)' });
+    if (v.energy) {
+      const e = v.energy, vfd = s.method === 'VFD';
+      out.push({ label: 'Güç @ %' + s.flowPct + ' debi', value: fmt(vfd ? e.Pvfd : e.Pthrottle, 1, 'kW'), sub: 'Kısma ' + fmt(e.Pthrottle, 1) + ' kW · VFD ' + fmt(e.Pvfd, 1) + ' kW', level: vfd ? 'ok' : 'warn' });
+      out.push({ label: 'VFD ile yıllık tasarruf', value: '%' + fmt(e.savingPct, 0), level: vfd ? 'ok' : '', sub: VS.fmtEnergy(e.saving) + ' · ≈ ' + fmt(e.cost, 0) + ' TL/yıl' + (vfd ? ' (uygulanıyor)' : ' (VFD seçilirse)') });
+    }
+    if (L.violations) out.push({ label: 'PLC kilitleme ihlali', value: L.violations + ' kez engellendi', level: 'bad', wide: true, sub: L.violation ? L.violation.msg : '' });
     if (L.events.length) out.push({ label: 'Son olay', value: L.events[L.events.length - 1], wide: true });
     return out;
   }
@@ -231,7 +324,11 @@
         alt: 'Tepe akım yaklaşık ' + fmt(v.sim.Imax, 0) + ' A (' + fmt(v.sim.Imax / nom.In, 1) + '·In); termik ayarı ' + fmt(s.Ir, 1) + ' A.' },
       { id: 'torque', title: 'Moment – devir (motor ve yük)', height: 170, series: tsSeries, markers: tsMk, x: { label: 'd/dk', min: 0, max: nMax }, y: { label: 'N·m', min: 0 },
         alt: 'Motor moment eğrisi ile ' + (s.loadType === 'quad' ? 'karesel' : 'sabit') + ' yük momenti. Kalkış momenti ≈ ' + fmt(v.natural.length ? v.natural[0][1] : 0, 0) + ' N·m, yük momenti anma devrinde ' + fmt(s.loadPct / 100 * nom.Tn, 0) + ' N·m.' }
-    ];
+    ].concat(v.energy ? [{ id: 'energy', title: 'Debi kontrolü · şebekeden çekilen güç', series: [
+        { name: 'Vana/damper kısma', color: 'red', data: v.energy.curves.throttle },
+        { name: 'Frekans konvertörü', color: 'green', data: v.energy.curves.vfd }],
+      markers: [{ x: s.flowPct, label: '%' + s.flowPct + ' debi', color: '#fcd34d' }], x: { label: 'debi %', min: 30, max: 100 }, y: { label: 'kW', min: 0 },
+      alt: '%' + s.flowPct + ' debide kısma ile ' + fmt(v.energy.Pthrottle, 1) + ' kW, VFD ile ' + fmt(v.energy.Pvfd, 1) + ' kW; yıllık tasarruf %' + fmt(v.energy.savingPct, 0) + ' (' + fmt(v.energy.cost, 0) + ' TL).' }] : []);
   }
 
   /* ---------------------------------------------------------------- 3D sahne */
@@ -332,7 +429,13 @@
     k.box(0.03, 0.012, 0.01, M.plasticGrey, -0.008, 0.012, 0.042, ol);
     k.cyl(0.006, 0.006, 0.01, M.plasticBlue, 0.02, 0.012, 0.044, ol, 12).rotation.x = Math.PI / 2;
     sc.olFlag = k.box(0.012, 0.01, 0.006, M.plasticGreen, 0.018, -0.014, 0.042, ol);
-    k.pickable(ol, 'F2 · Termik aşırı yük rölesi', () => { const L = app.live, st = app.state; return ['Ir = ' + fmt(st.Ir, 1, 'A') + ' · sınıf ' + st.olClass, 'IEC 60947-4-1: 7,2·Ir’de ' + MO.TRIP_CLASS[st.olClass][0] + '–' + MO.TRIP_CLASS[st.olClass][1] + ' s içinde açar.', L.olTripped ? 'DURUM: AÇTI — 95-96 NC kontağı PLC girişini kesti.' : 'DURUM: normal (95-96 kapalı).']; });
+    k.pickable(ol, 'F2 · Termik aşırı yük rölesi', () => { const L = app.live, st = app.state; return ['Ir = ' + fmt(st.Ir, 1, 'A') + ' · sınıf ' + st.olClass, 'IEC 60947-4-1: 7,2·Ir’de ' + MO.TRIP_CLASS[st.olClass][0] + '–' + MO.TRIP_CLASS[st.olClass][1] + ' s içinde açar.', L.olTripped ? 'DURUM: AÇTI — 95-96 NC kontağı PLC girişini kesti.' : 'DURUM: normal (95-96 kapalı).']; },
+      a => {
+        const st = a.state, In = a.validResult && a.validResult.values.nom.In;
+        return [a.live.olTripped ? { label: 'Röleyi kur (Reset)', variant: 'warn', onClick: x => press(x, 'reset') } : null,
+          In ? { label: 'Ir = In (' + fmt(In, 1) + ' A)', onClick: x => { x.state.Ir = Math.round(In * 10) / 10; } } : null,
+          { label: 'Ir −%10', onClick: x => { x.state.Ir = Math.round(st.Ir * 0.9 * 10) / 10; } }, { label: 'Ir +%10', onClick: x => { x.state.Ir = Math.round(st.Ir * 1.1 * 10) / 10; } }];
+      });
     k.explodable(ol, [0, 0, 0.25]);
     // klemens dizisi (InstancedMesh)
     const nT = 24, tg = new T.BoxGeometry(0.0055, 0.045, 0.04), tm = new T.InstancedMesh(tg, M.plasticGrey, nT), dm = new T.Object3D();
@@ -351,7 +454,10 @@
     k.rbox(0.1, 0.11, 0.1, 0.006, M.plasticDark, 0, 0, 0, cpu);
     k.box(0.06, 0.02, 0.004, M.plasticGrey, 0, 0.03, 0.051, cpu);
     sc.cpuRun = k.box(0.008, 0.006, 0.004, M.ledGreen, -0.03, -0.03, 0.051, cpu);
-    k.pickable(cpu, 'PLC CPU (IEC 61131-3)', () => { const p = app.live.plc; return ['Tarama döngüsü: girişleri oku → merdiven mantığı → çıkışları yaz.', 'RUN: ' + (p.run ? 'mühürlü' : 'beklemede') + ' · Y-Δ zamanlayıcı T1 = ' + fmt(p.timer, 2) + ' s', 'Eğitim amaçlı mantık. Emniyet fonksiyonu değildir (ISO 13849-1 / IEC 62061).']; });
+    k.pickable(cpu, 'PLC CPU (IEC 61131-3)', () => { const p = app.live.plc; return ['Tarama döngüsü: girişleri oku → merdiven mantığı → çıkışları yaz.', 'RUN: ' + (p.run ? 'mühürlü' : 'beklemede') + ' · Y-Δ zamanlayıcı T1 = ' + fmt(p.timer, 2) + ' s', 'K2/K3 kilitlemesi programda: ' + (app.state.plcInterlock !== false ? 'AÇIK' : 'KAPALI — ihlaller denetlenip engelleniyor'), 'Eğitim amaçlı mantık. Emniyet fonksiyonu değildir (ISO 13849-1 / IEC 62061).']; },
+      a => [{ label: a.state.plcInterlock !== false ? 'Kilitlemeyi programdan kaldır' : 'Kilitlemeyi geri ekle', variant: a.state.plcInterlock !== false ? 'warn' : 'primary', onClick: x => { x.state.plcInterlock = x.state.plcInterlock === false; log(x.live, 'PLC programı: K2/K3 kilitlemesi ' + (x.state.plcInterlock ? 'eklendi.' : 'kaldırıldı.')); } },
+        a.state.method === 'YD' ? { label: 'T1 −1 s', onClick: x => { x.state.tYD = Math.max(1, x.state.tYD - 1); } } : null,
+        a.state.method === 'YD' ? { label: 'T1 +1 s', onClick: x => { x.state.tYD = Math.min(15, x.state.tYD + 1); } } : null]);
     k.label('PLC · G/Ç', cpu, [0.06, 0.085, 0.05], 'vs-label--sm');
     k.explodable(cpu, [0, 0, 0.25]);
     // G/Ç modülleri ve LED’ler (InstancedMesh, MeshBasic + instanceColor: ışık bağımsız parlak görünüm)
@@ -377,7 +483,8 @@
       sc.vfd = k.screen(0.1, 0.06, 256, (g, w, h) => drawVFD(g, w, h, app), d, { emissive: 0.9 });
       sc.vfd.position.set(0, 0.12, 0.101);
       for (let b = 0; b < 4; b++) k.box(0.018, 0.012, 0.008, M.plasticGrey, -0.04 + b * 0.027, 0.06, 0.102, d);
-      k.pickable(d, 'U1 · Frekans konvertörü (VFD)', () => { const r = app.validResult && app.validResult.values, st = app.state; return r ? ['V/f kontrol, rampa ' + st.ramp + ' s, akım sınırı %150 In', 'Yol alma ≈ ' + fmt(r.sim.tStart, 1, 's') + ' · tepe akım ≈ ' + fmt(r.sim.Imax, 0, 'A'), 'K1 burada şebeke kontaktörüdür; durdurma sürücü üzerinden yapılmalıdır. STO emniyet fonksiyonu ayrıca doğrulanmalıdır.'] : []; });
+      k.pickable(d, 'U1 · Frekans konvertörü (VFD)', () => { const r = app.validResult && app.validResult.values, st = app.state; return r ? ['V/f kontrol, rampa ' + st.ramp + ' s, akım sınırı %150 In', 'Yol alma ≈ ' + fmt(r.sim.tStart, 1, 's') + ' · tepe akım ≈ ' + fmt(r.sim.Imax, 0, 'A'), 'Hız ayar noktası %' + st.vfdSpeed + ' (' + fmt(st.vfdSpeed / 2, 1) + ' Hz)', 'K1 burada şebeke kontaktörüdür; durdurma sürücü üzerinden yapılmalıdır. STO emniyet fonksiyonu ayrıca doğrulanmalıdır.'] : []; },
+        a => [{ label: 'Hız −10 %', onClick: x => { x.state.vfdSpeed = Math.max(30, x.state.vfdSpeed - 10); } }, { label: 'Hız +10 %', onClick: x => { x.state.vfdSpeed = Math.min(100, x.state.vfdSpeed + 10); } }]);
       k.label('U1 · VFD', d, [0, 0.29, 0.1], 'vs-label--sm');
       k.explodable(d, [0, 0, 0.3]);
     } else if (s.method === 'SOFT') {
@@ -446,7 +553,7 @@
     const cfan = k.group(mg, -Lb / 2 - 0.07 * ks, 0, 0);
     for (let b = 0; b < 8; b++) { const bl = k.box(0.04 * ks, rB * 0.9, 0.006, M.plasticDark, 0, 0, 0, cfan); bl.geometry = bl.geometry.clone(); bl.geometry.translate(0, rB * 0.45, 0); bl.rotation.x = b / 8 * Math.PI * 2; }
     sc.rot.push(cfan);
-    k.pickable(body, 'M1 · Asenkron motor', () => motorInfo(app));
+    k.pickable(body, 'M1 · Asenkron motor', () => motorInfo(app), faultActions);
     sc.motorLabel = k.label('M1', mg, [0, rB + 0.2 * ks, 0]);
     // mil ve kaplin (dönen grup)
     const shaftG = k.group(R, mx + Lb / 2 + 0.03 * ks, cy, mz);
@@ -557,12 +664,12 @@
       const g = k.group(box, 0, y, 0.056);
       k.cyl(0.026, 0.026, 0.012, M.darkSteel, 0, 0, 0.004, g, 20).rotation.x = Math.PI / 2;
       const cap = k.cyl(0.02, 0.02, 0.014, mat, 0, 0, 0.014, g, 20); cap.rotation.x = Math.PI / 2;
-      k.pickable(g, title, a => { press(a, what); return info; });
+      k.pickable(g, title, () => info, () => [{ label: 'Bas', variant: what === 'start' ? 'primary' : what === 'reset' ? 'warn' : '', onClick: a => press(a, what) }]);
       return g;
     };
-    sc.btnStart = btn(0.15, M.plasticGreen, 'start', 'S1 · Başlat (I0.0, NO)', ['Başlat darbesi gönderildi.', 'PLC K1’i çeker ve mühürleme kontağıyla tutar.']);
+    sc.btnStart = btn(0.15, M.plasticGreen, 'start', 'S1 · Başlat (I0.0, NO)', ['Kalıcı olmayan (NO) buton; PLC K1’i çeker ve mühürleme kontağıyla tutar.']);
     lbl('BAŞLAT', 0.115);
-    sc.btnStop = btn(0.05, M.plasticRed, 'stop', 'S2 · Durdur (I0.1, NC)', ['Durdur darbesi gönderildi.', 'NC kablolama: kablo kopması da durdurur (kırık tel emniyeti).']);
+    sc.btnStop = btn(0.05, M.plasticRed, 'stop', 'S2 · Durdur (I0.1, NC)', ['NC kablolama: kablo kopması da durdurur (kırık tel emniyeti).']);
     lbl('DURDUR', 0.015);
     // acil durdurma mantarı: sarı zemin üstünde kırmızı mantar
     const es = k.group(box, 0, -0.07, 0.056);
@@ -571,12 +678,19 @@
     const mush = k.group(es, 0, 0, 0);
     const mc = k.cyl(0.036, 0.04, 0.02, M.plasticRed, 0, 0, 0.042, mush, 28); mc.rotation.x = Math.PI / 2;
     sc.mushroom = mush;
-    k.pickable(es, 'S0 · ACİL DURDUR (I0.2, NC, kilitlemeli)', a => { press(a, 'estop'); a.renderControls(); return ['Mantar basıldı ve mekanik olarak kilitlendi.', 'PLC tüm kontaktörleri bırakır; yeniden yol almak için Reset gerekir.', 'Gerçek tesiste: kategori 0/1 durdurma, doğrulanmış emniyet rölesi (ISO 13849-1).']; });
-    sc.btnReset = btn(-0.16, M.plasticBlue, 'reset', 'S3 · Reset (I0.4)', ['Acil durdurma mantarı bırakıldı, PLC kilidi ve termik röle kuruldu.', 'Reset motoru kendiliğinden çalıştırmaz.']);
+    k.pickable(es, 'S0 · ACİL DURDUR (I0.2, NC, kilitlemeli)', () => [app.live.estopPressed ? 'Mantar basılı ve mekanik olarak kilitli.' : 'Basıldığında mekanik olarak kilitlenir.', 'PLC tüm kontaktörleri bırakır; yeniden yol almak için mantar bırakılıp Reset, ardından Başlat gerekir.', 'Gerçek tesiste: kategori 0/1 durdurma, doğrulanmış emniyet rölesi (ISO 13849-1).'],
+      a => [a.live.estopPressed ? { label: 'Mantarı çevir + Reset', variant: 'warn', onClick: x => press(x, 'reset') } : { label: 'ACİL DURDUR', variant: 'danger', onClick: x => press(x, 'estop') }]);
+    sc.btnReset = btn(-0.16, M.plasticBlue, 'reset', 'S3 · Reset (I0.4)', ['Acil durdurma mantarını bırakır, PLC kilidini çözer ve termik röleyi kurar.', 'Reset motoru kendiliğinden çalıştırmaz.']);
     lbl('RESET', -0.195);
     k.label('Buton istasyonu', box, [0, 0.27, 0], 'vs-label--sm');
   }
 
+  function faultActions(a) {
+    const L = a.live;
+    return [{ label: 'Faz kaybı', variant: 'warn', onClick: x => inject(x, 'phase') }, { label: 'Rotoru kilitle', variant: 'warn', onClick: x => inject(x, 'locked') },
+      L.inj.phase || L.inj.locked ? { label: 'Arızaları gider', onClick: x => inject(x, 'clear') } : null,
+      L.plc.K1 ? { label: 'Durdur', onClick: x => press(x, 'stop') } : { label: 'Başlat', variant: 'primary', onClick: x => press(x, 'start') }];
+  }
   function motorInfo(app) {
     const r = app.validResult && app.validResult.values, s = app.state, L = app.live; if (!r) return [];
     return [fmt(s.Pn, 1) + ' kW · ' + s.Un + ' V · ' + s.poles + ' kutup · η ' + fmt(s.eff, 3) + ' · cosφ ' + fmt(s.cos, 2),
@@ -667,11 +781,11 @@
       { id: 'R3', note: 'Kilit çözme (reset)', el: [{ t: 'NO', l: 'I0.4 Reset', c: inp.reset }, { t: 'NO', l: 'I0.2 Acil sağlam', c: inp.estop }], coil: { l: 'M0', k: 'R', on: inp.reset && inp.estop } }
     ];
     if (yd) {
-      const tDone = p.timer >= s.tYD, tDead = p.timer >= s.tYD + 0.05;
+      const tDone = p.timer >= s.tYD, tDead = p.timer >= s.tYD + 0.05, il = s.plcInterlock !== false;
       rungs.push(
         { id: 'R4', note: 'Y→Δ zaman rölesi', el: [{ t: 'NO', l: 'Q0.0 K1', c: p.K1 }], timer: { l: 'TON T1', pt: s.tYD, et: p.run ? Math.min(p.timer, s.tYD) : 0, on: p.K1 } },
-        { id: 'R5', note: 'Yıldız (K3 ile kilitli)', el: [{ t: 'NO', l: 'Q0.0 K1', c: p.K1 }, { t: 'NC', l: 'T1.Q', c: !tDone }, { t: 'NC', l: 'Q0.2 K3 kilit', c: !p.K3 }], coil: { l: 'Q0.1 K2', on: p.K2 } },
-        { id: 'R6', note: 'Üçgen (50 ms ölü zaman, K2 ile kilitli)', el: [{ t: 'NO', l: 'Q0.0 K1', c: p.K1 }, { t: 'NO', l: 'T1.Q + 50 ms', c: tDead }, { t: 'NC', l: 'Q0.1 K2 kilit', c: !p.K2 }], coil: { l: 'Q0.2 K3', on: p.K3 } });
+        { id: 'R5', note: il ? 'Yıldız (K3 ile kilitli)' : 'Yıldız — KİLİT KALDIRILDI', el: [{ t: 'NO', l: 'Q0.0 K1', c: p.K1 }, { t: 'NC', l: 'T1.Q', c: !tDone }, il ? { t: 'NC', l: 'Q0.2 K3 kilit', c: !p.K3 } : { t: 'NC', l: 'K3 kilit yok', c: true, bypass: true }], coil: { l: 'Q0.1 K2', on: p.K2 } },
+        { id: 'R6', note: il ? 'Üçgen (50 ms ölü zaman, K2 ile kilitli)' : 'Üçgen — ölü zaman ve kilit yok', el: [{ t: 'NO', l: 'Q0.0 K1', c: p.K1 }, { t: 'NO', l: il ? 'T1.Q + 50 ms' : 'T1.Q', c: il ? tDead : tDone }, il ? { t: 'NC', l: 'Q0.1 K2 kilit', c: !p.K2 } : { t: 'NC', l: 'K2 kilit yok', c: true, bypass: true }], coil: { l: 'Q0.2 K3', on: p.K3 } });
     }
     const avail = H - top - (yd ? 56 : 120);
     const step = Math.min(78, avail / rungs.length);
@@ -724,6 +838,11 @@
     g.fillStyle = ph.lv === 'bad' ? col.bad : ph.lv === 'warn' ? col.amber : ph.lv === 'ok' ? col.on : col.text;
     g.fillText('Motor: ' + ph.t + ' · ' + fmt(L.rpm, 0) + ' d/dk · ' + fmt(L.I, 1) + ' A · ' + fmt(L.T, 0) + ' N·m', x0, ys);
     g.fillStyle = col.dim; g.fillText((p.fault ? 'PLC arıza: ' + p.fault + ' · ' : '') + 'Termik: ' + (L.olTripped ? 'AÇTI' : 'normal') + ' · Acil: ' + (L.estopPressed ? 'basılı' : p.estopLatched ? 'kilitli' : 'hazır'), x0, ys + 16);
+    if (L.violations) {
+      g.fillStyle = col.bad; g.font = 'bold 11px Inter, sans-serif';
+      g.fillText('⚠ ' + L.violations + ' kilitleme ihlali ENGELLENDİ: ' + (L.violation ? L.violation.msg : '') + (W > 900 ? ' (K2 bırakmadan K3 istendi)' : ''), x0, ys - 18);
+      g.font = '11px Inter, sans-serif';
+    }
     if (!yd) {
       g.fillStyle = col.dim;
       g.fillText(s.method === 'DOL' ? 'Doğrudan yol vermede yalnız K1 kullanılır; Y-Δ basamakları (zaman rölesi, K2/K3 kilitleme) devre dışı.' : 'K1 şebeke kontaktörüdür; yol verme ' + (s.method === 'VFD' ? 'sürücü rampası' : 'yumuşak yol verici akım sınırı') + ' ile yapılır.', x0, ys + 34);
@@ -734,9 +853,10 @@
     const cond = it.c, live = pw && cond;
     g.lineWidth = 2; g.strokeStyle = cond ? col.on : col.off;
     g.beginPath(); g.moveTo(x - 6, y - 11); g.lineTo(x - 6, y + 11); g.moveTo(x + 6, y - 11); g.lineTo(x + 6, y + 11); g.stroke();
-    if (it.t === 'NC') { g.beginPath(); g.moveTo(x - 9, y + 10); g.lineTo(x + 9, y - 10); g.stroke(); }
+    if (it.bypass) { g.save(); g.strokeStyle = col.bad; g.setLineDash([3, 3]); g.strokeRect(x - 12, y - 12, 24, 24); g.restore(); }
+    else if (it.t === 'NC') { g.beginPath(); g.moveTo(x - 9, y + 10); g.lineTo(x + 9, y - 10); g.stroke(); }
     seg(g, x - 14, y, x - 6, y, pw, col); seg(g, x + 6, y, x + 14, y, live, col);
-    g.fillStyle = cond ? '#a7f3d0' : col.dim; g.font = (small ? '9px' : '10px') + ' Inter, sans-serif'; g.textAlign = 'center';
+    g.fillStyle = it.bypass ? col.bad : cond ? '#a7f3d0' : col.dim; g.font = (small ? '9px' : '10px') + ' Inter, sans-serif'; g.textAlign = 'center';
     g.fillText(it.l, x, y - 15);
   }
 
@@ -747,6 +867,29 @@
     autoRun: true,
     startText: 'Başlat butonuna basıldı: PLC K1’i çekiyor.',
     start: app => { app._startedOnce = true; if (app.root.dataset.ready === 'true') press(app, 'start'); },
+    tasks: [
+      { id: 'yd-delta', title: 'Pompayı yıldız–üçgen ile üçgene geçir', goal: 'Başlat’a basın; PLC yıldızda yol versin, zaman rölesi sonunda kilitli geçişle K3 (üçgen) çeksin ve motor anma devrinde çalışsın.', hint: 'Kumanda → Başlat ya da 3D’de yeşil butona tıklayıp “Bas”. Y→Δ süresi dolunca K2 bırakır, 50 ms sonra K3 çeker.',
+        state: defaults(),
+        check: (r, s, L) => s.method === 'YD' && L.plc.K3 && !L.plc.K2 && L.steady > 1 },
+      { id: 'estop', title: 'Acil durdurmadan doğru sırayla kurtul', goal: 'Çalışan motoru ACİL DURDUR ile durdurun, sonra doğru sırayla yeniden çalıştırın: mantarı bırak + Reset, ardından Başlat.', hint: 'Mantar basılıyken Başlat etkisizdir. Reset mantarı bırakır ve PLC kilidini çözer; motor kendiliğinden kalkmaz, Başlat gerekir.',
+        state: defaults(), start: true,
+        check: (r, s, L) => !!L.recovered },
+      { id: 'heavy', title: 'Ağır konveyörü düşük akımla yol al', goal: '%110 sabit momentli konveyör Y-Δ ile yıldızda kilitli kalıyor ve üçgende ≈7·In çekiyor. Yükü azaltmadan, tepe akım ≤ 3·In ile yol almasını sağlayın.', hint: 'Yıldızdaki moment Tst/3’tür. Akımı sınırlarken tam moment verebilen yöntemi (frekans konvertörü) deneyin; Moment–devir grafiğini izleyin.',
+        state: Object.assign(defaults(), { method: 'YD', loadKind: 'conveyor', loadType: 'const', loadPct: 110, J: 0.8 }),
+        check: (r, s) => s.loadType === 'const' && s.loadPct >= 110 && !!r.values.sim.tStart && !r.values.sim.stalled && r.values.sim.Imax <= 3 * r.values.nom.In },
+      { id: 'ir', title: 'Termik ayarını düzelt (gereksiz açma)', goal: 'Termik röle Ir = 22 A’e ayarlanmış; %100 yüklü pompa çalışırken gereksiz açıyor. Ir’yi doğru ayarlayıp motoru en az 8 s açmadan çalıştırın.', hint: 'Ir ≈ In (motor etiket akımı) olmalı. Açtıysa Reset ve Başlat. 3D’de termik röleye tıklayıp “Ir = In” de kullanılabilir.',
+        state: Object.assign(defaults(), { loadPct: 100, Ir: 22 }), start: true,
+        check: (r, s, L) => { const c = r.checks.find(x => x.id === 'ir'); return !!c && c.status === 'ok' && !L.olTripped && L.steady >= 8; } },
+      { id: 'energy', title: 'VFD ile %70 debide enerji tasarrufu', goal: 'Pompa %70 debide vana kısma ile çalışıyor. Frekans konvertörüne geçerek yıllık enerjiyi en az %40 azaltın ve pompayı çalıştırın.', hint: 'Yol verme yöntemini VFD yapın, sürücü hız ayar noktasını debiyle aynı (%70) yapın ve Başlat’a basın. Enerji grafiğinde iki eğrinin farkına bakın (P ∝ n³).',
+        state: Object.assign(defaults(), { method: 'DOL', flowPct: 70 }),
+        check: (r, s, L) => s.method === 'VFD' && s.flowPct <= 70 && s.vfdSpeed <= s.flowPct + 5 && !!r.values.energy && r.values.energy.savingPct >= 40 && L.plc.K1 && L.steady > 1 },
+      { id: 'phase', title: 'Faz kaybını termik röleye yakalat', goal: 'Çalışan pompada bir faz kopsun; kalan fazlardaki ≈√3·I akımla termik rölenin açtığını görün.', hint: 'Arıza enjeksiyonu → Faz kaybı (ya da 3D’de motora tıklayın). Açma süresi temsilidir ve sınıf aralığına göre ölçeklenir.',
+        state: Object.assign(defaults(), { loadPct: 100 }), start: true,
+        check: (r, s, L) => L.olTripped && L.tripCause === 'phase' },
+      { id: 'interlock', title: 'Kilitlemenin önemini gör', goal: 'PLC programından K2/K3 kilitlemesini kaldırıp Y-Δ yol verin ve ihlalin engellendiğini görün; sonra kilitlemeyi geri ekleyip motoru üçgende çalıştırın.', hint: 'PLC programı → kilitleme anahtarını kapatın, Başlat. İhlal olay günlüğünde ve 2D şemada görünür. Durdur, kilidi açın, yeniden Başlat.',
+        state: defaults(),
+        check: (r, s, L) => L.violations > 0 && s.plcInterlock !== false && L.plc.K3 && L.steady > 1 }
+    ],
     scenarios: [
       { id: 'yd-pump', name: 'Pompa · yıldız–üçgen yol verme', desc: '15 kW pompa, Y-Δ 4 s. Yıldızda moment 1/3’e düşer; zaman rölesi sonunda kilitli geçişle üçgene geçilir.', state: defaults(), start: true },
       { id: 'dol-fan', name: 'Fan · doğrudan yol verme (DOL)', desc: '7,5 kW fan doğrudan yol alır; kalkış akımı ≈ 7·In, kısa sürede anma devrine ulaşır.', state: Object.assign(defaults(), { Pn: 7.5, eff: 0.9, cos: 0.84, nn: 1455, IstIn: 7.4, Ir: 14.3, J: 0.4, method: 'DOL', loadKind: 'fan', loadType: 'quad', loadPct: 85 }), start: true },

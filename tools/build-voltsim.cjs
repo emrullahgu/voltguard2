@@ -6,7 +6,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
-const V = '20261023a';
+const V = '20261024a';
 const regs = require(path.join(root, 'js/voltsim/regulations.js'));
 const SITE = 'https://voltguard.com.tr';
 
@@ -158,7 +158,7 @@ function modulePage(m) {
   const others = MODULES.filter(x => x !== m);
   const ld = { '@context': 'https://schema.org', '@graph': [crumbLd([['/', 'Ana Sayfa'], ['/voltsim/', 'VoltSim'], [url, m.h1]]),
     { '@type': 'WebApplication', name: m.h1, url: SITE + url, applicationCategory: 'EngineeringApplication', operatingSystem: 'Web', inLanguage: 'tr', isAccessibleForFree: true, description: m.description, publisher: { '@type': 'Organization', name: 'VoltGuard', url: SITE + '/' } }] };
-  const scripts = ['/js/vendor/three-r128.min.js', '/js/voltsim/engine.js', '/js/voltsim/regulations.js', '/js/voltsim/core.js', `/js/voltsim/mod/${m.id}.js`]
+  const scripts = ['/js/vendor/three-r128.min.js', '/js/voltsim/engine.js', `/js/voltsim/calc/${m.id}.js`, '/js/voltsim/regulations.js', '/js/voltsim/core.js', `/js/voltsim/mod/${m.id}.js`]
     .map(s => `  <script src="${s}?v=${V}" defer></script>\n`).join('');
   const ico = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
   return `${head({ title: m.title, description: m.description, url, ld, scripts, image: `/public/voltsim/${m.id}.webp` })}

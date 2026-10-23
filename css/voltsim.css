@@ -357,3 +357,27 @@ textarea.vs-input{resize:vertical;font-family:ui-monospace,Consolas,monospace;fo
   .vsl-hero h1{font-size:2.6rem}
 }
 @media(prefers-reduced-motion:reduce){.vs-page *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* görevler ve 3D eylem düğmeleri */
+.vs-tasks{margin:0 0 14px;border:1px solid #f59e0b55;border-radius:12px;background:#1b1a12}
+.vs-tasks summary{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;color:#fde68a;font:700 .76rem/1.2 var(--vg-font-h);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.vs-tasks summary b{padding:2px 8px;border-radius:20px;background:#f59e0b;color:#0a1628;font-size:.68rem}
+.vs-tasks .vs-small{padding:0 12px}
+.vs-tasklist{margin:0;padding:0 12px 10px;list-style:none;counter-reset:t}
+.vs-tasklist li{position:relative;display:grid;gap:3px;padding:9px 0 9px 28px;border-top:1px solid #f59e0b22;counter-increment:t;font-size:.72rem}
+.vs-tasklist li::before{content:counter(t);position:absolute;left:0;top:10px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#2a2311;color:#fcd34d;font:700 .66rem/1 var(--vg-font-h)}
+.vs-tasklist li[data-state="done"]::before{content:'✓';background:#10b981;color:#062a20}
+.vs-tasklist li[data-state="active"]::before{background:#f59e0b;color:#0a1628}
+.vs-tasklist strong{color:#e6eef8;font-weight:650}
+.vs-tasklist span{color:#9fb2cb}
+.vs-tasklist em{color:#fde68a;font-style:normal}
+.vs-tasklist .vs-btn{justify-self:start;flex:none;min-height:32px;margin-top:3px}
+.vs-linkbtn{margin:0 12px 10px;border:0;background:none;color:#8ea3bf;font-size:.66rem;text-decoration:underline;cursor:pointer}
+.vs-info__acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.vs-info__acts .vs-btn{flex:0 1 auto;min-height:34px}
+
+/* 2D şema: uzun şemalarda dikey kaydırma */
+.vs-2dwrap{position:absolute;inset:0;display:none;overflow-x:hidden;overflow-y:auto;touch-action:pan-y;scrollbar-width:thin;scrollbar-color:#2c4466 transparent}
+.vs-stage[data-mode="2d"] .vs-2dwrap{display:block}
+.vs-2dwrap .vs-2d{position:relative;inset:auto;display:block;width:100%}
+.vs-ro[data-level="info"] b{color:#93c5fd}

@@ -99,13 +99,13 @@
     const Y = y => H - pad.b - (y - ymin) / (ymax - ymin) * (H - pad.t - pad.b);
     g.font = '10px Inter, system-ui, sans-serif'; g.textBaseline = 'middle';
     g.strokeStyle = 'rgba(148,163,184,.16)'; g.fillStyle = '#8ea3bf'; g.lineWidth = 1;
-    const yt = niceTicks(ymin, ymax, 4), xt = spec.x && spec.x.ticks ? spec.x.ticks : niceTicks(xmin, xmax, Math.max(3, Math.floor(W / 70)));
+    const yt = spec.y && spec.y.ticks ? spec.y.ticks : niceTicks(ymin, ymax, 4), xt = spec.x && spec.x.ticks ? spec.x.ticks : niceTicks(xmin, xmax, Math.max(3, Math.floor(W / 70)));
     g.textAlign = 'right';
     yt.forEach(v => { const y = Y(v); g.beginPath(); g.moveTo(pad.l, y); g.lineTo(W - pad.r, y); g.stroke(); g.fillText((spec.y && spec.y.fmt ? spec.y.fmt(v) : fmt(v, Math.abs(v) < 10 && v % 1 ? 1 : 0)), pad.l - 6, y); });
     g.textAlign = 'center'; g.textBaseline = 'top';
     xt.forEach(v => { const x = X(v); if (x < pad.l - 1 || x > W - pad.r + 1) return; g.fillText(spec.x && spec.x.fmt ? spec.x.fmt(v) : fmt(v, v % 1 ? 1 : 0), x, H - pad.b + 6); });
     if (spec.x && spec.x.label) { g.textAlign = 'right'; g.fillStyle = '#6f84a1'; g.fillText(spec.x.label, W - pad.r, H - 12); }
-    if (spec.y && spec.y.label) { g.save(); g.translate(10, pad.t); g.textAlign = 'left'; g.textBaseline = 'top'; g.fillStyle = '#6f84a1'; g.fillText(spec.y.label, 0, 0); g.restore(); }
+    if (spec.y && spec.y.label) { g.save(); g.textAlign = 'left'; g.textBaseline = 'top'; g.fillStyle = '#6f84a1'; g.fillText(spec.y.label, pad.l + 4, pad.t); g.restore(); }
     (spec.hLines || []).forEach(h => {
       g.save(); g.setLineDash([4, 4]); g.strokeStyle = h.color || PALETTE.red; g.beginPath(); g.moveTo(pad.l, Y(h.y)); g.lineTo(W - pad.r, Y(h.y)); g.stroke(); g.restore();
       if (h.label) { g.fillStyle = h.color || PALETTE.red; g.textAlign = 'right'; g.textBaseline = 'bottom'; g.fillText(h.label, W - pad.r - 2, Y(h.y) - 2); }
@@ -130,11 +130,12 @@
       }
       void si;
     });
-    (spec.markers || []).forEach(m => {
+    (spec.markers || []).forEach((m, mi) => {
       if (m.x === undefined || !isFinite(m.x)) return;
       const x = X(m.x); g.strokeStyle = m.color || '#fcd34d'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(x, pad.t); g.lineTo(x, H - pad.b); g.stroke();
       if (m.y !== undefined) { g.fillStyle = m.color || '#fcd34d'; g.beginPath(); g.arc(x, Y(m.y), 4, 0, Math.PI * 2); g.fill(); }
-      if (m.label) { g.fillStyle = m.color || '#fcd34d'; g.textAlign = x > W * 0.7 ? 'right' : 'left'; g.textBaseline = 'top'; g.fillText(m.label, x + (x > W * 0.7 ? -4 : 4), pad.t + 2); }
+      // etiketler üst üste binmesin diye her işaret bir satır aşağı kaydırılır
+      if (m.label) { g.fillStyle = m.color || '#fcd34d'; g.textAlign = x > W * 0.7 ? 'right' : 'left'; g.textBaseline = 'top'; g.fillText(m.label, x + (x > W * 0.7 ? -4 : 4), pad.t + 14 + mi * 12); }
     });
   }
 
@@ -230,8 +231,12 @@
       if (pts.size === 2) { const a = Array.from(pts.values()); pinch = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); }
       c.classList.add('is-drag'); self.autoSpinPaused = true; self._hideHint();
     });
+    let hoverT = 0;
     c.addEventListener('pointermove', e => {
-      if (!pts.has(e.pointerId)) return;
+      if (!pts.has(e.pointerId)) {
+        if (e.pointerType === 'mouse' && performance.now() - hoverT > 90) { hoverT = performance.now(); c.style.cursor = self._hit(e) ? 'pointer' : ''; }
+        return;
+      }
       pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
       if (pts.size === 2) {
         const a = Array.from(pts.values()); const d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y);
@@ -271,17 +276,20 @@
     const right = new T.Vector3().setFromMatrixColumn(this.camera.matrix, 0), up = new T.Vector3().setFromMatrixColumn(this.camera.matrix, 1);
     this.target.addScaledVector(right, -dx * s).addScaledVector(up, dy * s);
   };
-  Viewer.prototype._pick = function (e) {
+  /** İmleç altındaki seçilebilir ekipman (yoksa null). */
+  Viewer.prototype._hit = function (e) {
+    if (!this.pickables.length) return null;
     const T = this.T, rect = this.canvas.getBoundingClientRect();
     const m = new T.Vector2((e.clientX - rect.left) / rect.width * 2 - 1, -(e.clientY - rect.top) / rect.height * 2 + 1);
-    const rc = new T.Raycaster(); rc.setFromCamera(m, this.camera);
-    const objs = this.pickables.map(p => p.obj);
+    const rc = this._rc || (this._rc = new T.Raycaster()); rc.setFromCamera(m, this.camera);
+    const objs = this.pickables.filter(p => p.obj.visible).map(p => p.obj);
     const hit = rc.intersectObjects(objs, true).find(h => !this.clipOn || this.clipPlane.distanceToPoint(h.point) >= 0);
-    if (!hit) { this.select(null); return; }
+    if (!hit) return null;
     let o = hit.object; let p = null;
     while (o && !p) { p = this.pickables.find(x => x.obj === o); o = o.parent; }
-    this.select(p);
+    return p;
   };
+  Viewer.prototype._pick = function (e) { this.select(this._hit(e)); };
   Viewer.prototype.select = function (p) {
     if (this.selected && this.selected.box) { this.root.remove(this.selected.box); }
     this.selected = p;
@@ -489,7 +497,9 @@
         viewer.animated.push(f); return f;
       },
       label: (text, obj, offset, cls) => viewer.addLabel(text, obj, offset, cls),
-      pickable: (obj, title, info) => { viewer.pickables.push({ obj: obj, title: title, info: info }); return obj; },
+      /** Tıklanınca bilgi kartı açılan ekipman. actions(app) → [{ label, onClick(app), variant }] kartta düğme olarak çıkar
+       * (ör. şalteri aç/kapat, butona bas); eylem sonrası kart güncel bilgiyle yenilenir. */
+      pickable: (obj, title, info, actions) => { viewer.pickables.push({ obj: obj, title: title, info: info, actions: actions }); return obj; },
       shell: obj => { obj.traverse(o => { if (o.isMesh) viewer.shells.push(o); }); return obj; },
       explodable: (obj, dir) => { viewer.explodables.push({ obj: obj, base: obj.position.clone(), dir: new T.Vector3().fromArray(dir) }); return obj; },
       /** Isı rengi: 0 → mavi, 0.5 → yeşil/sarı, 1 → kırmızı. */
@@ -535,6 +545,7 @@
     if (this.kit && this.validResult && this.def.scene && this.def.scene.update) this.def.scene.update(this.kit, this.validResult, this.state, this.live, this);
     if (this.mode === '2d') this.draw2d();
     this.updateBadge();
+    this.checkTasks();
     clearTimeout(this._save); this._save = setTimeout(() => storageSet(this.storageKey, JSON.stringify({ savedAt: Date.now(), state: this.state })), 600);
   };
   App.prototype.updateBadge = function () {
@@ -692,12 +703,79 @@
     }
   };
 
+  /* --- görevler (rehberli alıştırmalar) */
+  App.prototype.taskKey = function () { return 'voltsim:' + this.def.id + ':tasks'; };
+  App.prototype.loadTasks = function () { try { return JSON.parse(storageGet(this.taskKey()) || '{}') || {}; } catch (_) { return {}; } };
+  App.prototype.checkTasks = function () {
+    const tasks = this.def.tasks; if (!tasks || !tasks.length || !this.validResult) return;
+    const done = this.doneTasks || (this.doneTasks = this.loadTasks());
+    let changed = false;
+    tasks.forEach(tk => {
+      if (done[tk.id] || this.activeTask !== tk.id) return;
+      let ok = false;
+      try { ok = !!tk.check(this.validResult, this.state, this.live, this); } catch (_) { ok = false; }
+      if (ok) { done[tk.id] = Date.now(); changed = true; this.activeTask = null; toast('Görev tamamlandı: ' + tk.title, 'ok'); }
+    });
+    if (changed) { storageSet(this.taskKey(), JSON.stringify(done)); }
+    this.renderTasks();
+  };
+  App.prototype.startTask = function (tk) {
+    if (tk.state) {
+      this.state = Object.assign(clone(this.def.defaults()), clone(tk.state));
+      this.live = this.def.initLive ? this.def.initLive(this.state) : {}; this.simTime = 0;
+      this.rebuildScene(); this.renderControls();
+    }
+    if (tk.start) { this.running = true; this.paused = false; if (this.def.start) this.def.start(this); this.syncToolbar(); }
+    this.activeTask = tk.id;
+    this.recompute();
+    toast('Görev: ' + tk.goal);
+  };
+  App.prototype.renderTasks = function () {
+    const tasks = this.def.tasks; if (!tasks || !tasks.length) return;
+    let box = this.root.querySelector('[data-vs-tasks]');
+    if (!box) {
+      const host = this.root.querySelector('[data-vs-analysis]');
+      box = el('details', { class: 'vs-tasks', 'data-vs-tasks': '' });
+      host.insertBefore(box, host.firstChild);
+    }
+    const done = this.doneTasks || (this.doneTasks = this.loadTasks());
+    const n = tasks.filter(t => done[t.id]).length;
+    const sig = n + '|' + this.activeTask;
+    if (box.dataset.sig === sig) return;
+    box.dataset.sig = sig;
+    const open = box.open || !!this.activeTask;
+    box.innerHTML = '';
+    box.appendChild(el('summary', {}, [el('span', { text: 'Görevler' }), el('b', { text: n + ' / ' + tasks.length })]));
+    box.appendChild(el('p', { class: 'vs-small', text: 'Hedefi okuyun, “Başla” ile görevi açın ve parametrelerle ya da 3D sahnede ekipmana tıklayarak sonuca ulaşın. Kontrol hesap motorunun sonucuyla yapılır.' }));
+    const ol = el('ol', { class: 'vs-tasklist' });
+    tasks.forEach(tk => {
+      const isDone = !!done[tk.id], isActive = this.activeTask === tk.id;
+      const li = el('li', { 'data-state': isDone ? 'done' : isActive ? 'active' : '' });
+      li.appendChild(el('strong', { text: tk.title }));
+      li.appendChild(el('span', { text: tk.goal }));
+      if (isActive && tk.hint) li.appendChild(el('em', { text: 'İpucu: ' + tk.hint }));
+      const b = el('button', { type: 'button', class: 'vs-btn' + (isActive ? '' : ' vs-btn--primary'), text: isDone ? 'Tekrarla' : isActive ? 'Devam ediyor…' : 'Başla', disabled: isActive ? true : undefined });
+      b.onclick = () => this.startTask(tk);
+      li.appendChild(b);
+      ol.appendChild(li);
+    });
+    box.appendChild(ol);
+    if (n) box.appendChild(el('button', { type: 'button', class: 'vs-linkbtn', text: 'İlerlemeyi sıfırla', onclick: () => { this.doneTasks = {}; storageDel(this.taskKey()); box.dataset.sig = ''; this.renderTasks(); } }));
+    box.open = open;
+  };
+
   /* --- 2D şema modu */
   App.prototype.draw2d = function () {
     const cv = this.root.querySelector('[data-vs-2d]');
     if (!cv || !this.def.view2d || !this.validResult) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2), W = cv.clientWidth, H = cv.clientHeight;
-    if (!W || !H) return;
+    // uzun şemalar için kaydırılabilir sarmalayıcı (rozet ve araç düğmeleri sabit kalır)
+    let wrap = cv.parentElement;
+    if (!wrap.classList.contains('vs-2dwrap')) { wrap = el('div', { class: 'vs-2dwrap' }); cv.parentElement.insertBefore(wrap, cv); wrap.appendChild(cv); }
+    const W = wrap.clientWidth, Hs = wrap.clientHeight;
+    if (!W || !Hs) return;
+    const H = this.def.view2dHeight ? Math.max(Hs, Math.ceil(this.def.view2dHeight(W, this.validResult, this.state))) : Hs;
+    cv.style.height = H + 'px';
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.fillStyle = '#0b1a30'; g.fillRect(0, 0, W, H);
@@ -720,13 +798,23 @@
     linearizeTree(this.viewer.scene);
     this.viewer.applyClip();
     const info = stage.querySelector('[data-vs-info]');
-    this.viewer.onSelect = p => {
+    const showInfo = p => {
       if (!p) { info.hidden = true; return; }
       const lines = typeof p.info === 'function' ? p.info(this) : p.info || [];
-      info.innerHTML = '<button type="button" class="vs-info__x" aria-label="Kapat">×</button><strong>' + esc(p.title) + '</strong>' + (lines.length ? '<ul>' + lines.map(l => '<li>' + esc(l) + '</li>').join('') + '</ul>' : '');
+      const acts = (typeof p.actions === 'function' ? p.actions(this) : p.actions || []).filter(Boolean);
+      info.innerHTML = '<button type="button" class="vs-info__x" aria-label="Kapat">×</button><strong>' + esc(typeof p.title === 'function' ? p.title(this) : p.title) + '</strong>' + (lines.length ? '<ul>' + lines.map(l => '<li>' + esc(l) + '</li>').join('') + '</ul>' : '');
+      if (acts.length) {
+        const row = el('div', { class: 'vs-info__acts' });
+        acts.forEach(a => row.appendChild(el('button', { type: 'button', class: 'vs-btn' + (a.variant ? ' vs-btn--' + a.variant : ''), text: a.label, onclick: () => {
+          a.onClick(this); this.renderControls(); this.invalidate();
+          requestAnimationFrame(() => requestAnimationFrame(() => { if (this.viewer.selected === p) showInfo(p); }));
+        } })));
+        info.appendChild(row);
+      }
       info.hidden = false;
-      info.querySelector('button').onclick = () => this.viewer.select(null);
+      info.querySelector('.vs-info__x').onclick = () => this.viewer.select(null);
     };
+    this.viewer.onSelect = showInfo;
     return true;
   };
   App.prototype.loop = function () {
@@ -738,7 +826,7 @@
         this.simTime += dt;
         const changed = this.def.tick(this, dt);
         acc += dt;
-        if (changed && acc > 0.2) { acc = 0; this.renderAnalysis(); this.updateBadge(); if (this.mode === '2d') this.draw2d(); }
+        if (changed && acc > 0.2) { acc = 0; this.renderAnalysis(); this.updateBadge(); this.checkTasks(); if (this.mode === '2d') this.draw2d(); }
       }
       if (this.viewer && active && this.viewer.visible && this.mode === '3d') {
         const animDt = this.paused ? 0 : dt;

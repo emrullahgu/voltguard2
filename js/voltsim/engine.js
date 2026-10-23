@@ -73,9 +73,9 @@
     A1: { 1.5: [14.5, 13.5], 2.5: [19.5, 18], 4: [26, 24], 6: [34, 31], 10: [46, 42], 16: [61, 56], 25: [80, 73], 35: [99, 89], 50: [119, 108], 70: [151, 136], 95: [182, 164], 120: [210, 188] },
     B1: { 1.5: [17.5, 15.5], 2.5: [24, 21], 4: [32, 28], 6: [41, 36], 10: [57, 50], 16: [76, 68], 25: [101, 89], 35: [125, 110], 50: [151, 134], 70: [192, 171], 95: [232, 207], 120: [269, 239] },
     C: { 1.5: [19.5, 17.5], 2.5: [27, 24], 4: [36, 32], 6: [46, 41], 10: [63, 57], 16: [85, 76], 25: [112, 96], 35: [138, 119], 50: [168, 144], 70: [213, 184], 95: [258, 223], 120: [299, 259] },
-    E: { 1.5: [22, 18.5], 2.5: [30, 25], 4: [40, 34], 6: [51, 43], 10: [70, 60], 16: [94, 80], 25: [119, 101], 35: [148, 126], 50: [180, 153], 70: [232, 196], 95: [282, 238], 120: [328, 276] }
+    E: { 1.5: [22, 18.5], 2.5: [30, 25], 4: [40, 34], 6: [51, 43], 10: [70, 60], 16: [94, 80], 25: [119, 101], 35: [148, 126], 50: [180, 153], 70: [232, 196], 95: [282, 238], 120: [328, 276], 150: [379, 319], 185: [434, 364], 240: [514, 430] }
   };
-  const CABLE_SIZES = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120];
+  const CABLE_SIZES = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240];
   const INSTALL_METHODS = { A1: 'A1 · yalıtımlı duvarda boru içinde', B1: 'B1 · duvar üstü/içi boru veya kanal', C: 'C · duvara kroşeli', E: 'E · havada delikli kablo tavası' };
   function cableIz(S, method, loadedConductors, parallel) {
     const row = (IZ_TABLE[method] || IZ_TABLE.B1)[S];
@@ -88,6 +88,7 @@
   /** TS EN 60898-1 / TS EN 60947-2 sınırlarına göre açma değerlendirmesi. Üretici eğrisi olmadan süre uydurmaz. */
   function breakerAssessment(device, I) {
     const In = device.In;
+    if (device.kind === 'FUSE') return fuseAssessment(In, I);
     const r = I / In;
     if (device.kind === 'MCB') {
       const m = MCB_MAG[device.curve] || MCB_MAG.C;
@@ -104,6 +105,29 @@
     if (I > 1.05 * Ir) return { state: 'thermal-band', trips: null, text: '1,05–1,30·Ir belirsiz bölge: açma garanti edilmez.' };
     return { state: 'normal', trips: false, text: 'Ayar akımı sınırında; açma beklenmez.' };
   }
+  /** gG sigorta bağlantı (NH) kapı değerleri, IEC 60269-2: In → [Imin(10 s), Imax(5 s), Imin(0,1 s), Imax(0,1 s)] (A).
+   * Imax(t): bu akımda sigorta en geç t sürede erir; Imin(t): bu akımın altında t süreden önce erimez. */
+  const FUSE_GATES = {
+    16: [33, 65, 85, 150], 20: [42, 85, 110, 200], 25: [52, 110, 150, 260], 32: [75, 150, 200, 350], 40: [95, 190, 260, 450],
+    50: [125, 250, 350, 610], 63: [160, 320, 450, 820], 80: [215, 425, 610, 1100], 100: [290, 580, 820, 1450], 125: [355, 715, 1100, 1910],
+    160: [460, 950, 1450, 2590], 200: [610, 1250, 1910, 3420], 250: [750, 1650, 2590, 4500], 315: [1050, 2200, 3420, 6000],
+    400: [1420, 2840, 4500, 8060], 500: [1780, 3800, 6000, 10600], 630: [2200, 5100, 8060, 14140]
+  };
+  const FUSE_SIZES = Object.keys(FUSE_GATES).map(Number);
+  /** gG konvansiyonel süre (IEC 60269-1): In ≤ 63 A: 1 sa, ≤ 160 A: 2 sa, ≤ 400 A: 3 sa, üstü 4 sa. */
+  function fuseConvTime(In) { return In <= 63 ? 3600 : In <= 160 ? 7200 : In <= 400 ? 10800 : 14400; }
+  /** gG konvansiyonel erime akımı If (I2): In ≥ 16 A için 1,6·In. */
+  function fuseI2(In) { return (In >= 16 ? 1.6 : 1.9) * In; }
+  function fuseAssessment(In, I) {
+    const g = FUSE_GATES[In];
+    if (!g) return { state: 'unknown', trips: null, text: 'Bu anma akımı için gG kapı değeri tabloda yok.' };
+    if (I >= g[3]) return { state: 'magnetic', trips: true, text: 'Imax(0,1 s) = ' + g[3] + ' A aşıldı: sigorta 0,1 s içinde erir (IEC 60269-2 gG kapısı).' };
+    if (I >= g[1]) return { state: 'thermal', trips: true, text: 'Imax(5 s) = ' + g[1] + ' A aşıldı: sigorta en geç 5 s içinde erir.' };
+    if (I >= fuseI2(In)) return { state: 'thermal', trips: true, text: 'Konvansiyonel erime akımı (1,6·In) aşıldı: ' + fuseConvTime(In) / 3600 + ' saat içinde erir; kesin süre üretici eğrisine bağlı.' };
+    if (I > 1.25 * In) return { state: 'thermal-band', trips: null, text: '1,25–1,6·In belirsiz bölge: erime garanti edilmez.' };
+    return { state: 'normal', trips: false, text: 'Anma akımı sınırında; erime beklenmez.' };
+  }
+
   /** TS EN 61008/61009, sinüzoidal AC kaçak akım: IΔ ≥ IΔn açar; ½IΔn–IΔn açabilir; < ½IΔn açmaz.
    * Darbeli/düz DC kaçak akımlarda (Tip A/B) bantlar farklıdır; burada modellenmez. */
   function rcdAssessment(IdeltaN_mA, leak_mA) {
@@ -163,10 +187,17 @@
     /** Bir devrenin akımını, fazörünü ve güçlerini hesaplar. Kapalı (on=false) veya duran motor katkı vermez.
      * Kondansatör kademesi (cap): P_kW alanı kVAr anlamındadır; akım gerilimden 90° ileridedir. */
     function circuitFlow(c, U_LL) {
+      if (c.shunt) {
+        // şönt reaktör: P_kW alanı kVAr; endüktif, kayıp ≈ %1 (tipik, demir + bakır)
+        const on = c.on && !c.tripped, Qr = c.P_kW * 1e3;
+        const Q = on ? Qr : 0, P = on ? 0.01 * Qr : 0, S = Math.hypot(P, Q);
+        return { active: on, P: P, Q: Q, S: S, I: on ? S / (SQRT3 * U_LL) : 0, phi: Math.atan2(Q, P || 1e-9), Pel_kW: 0, Qc: Qr };
+      }
       if (c.cap) {
         const on = c.on && !c.tripped;
         const Qc = c.P_kW * 1e3;
-        const Q = on ? -Qc : 0, P = on ? 0.003 * Qc : 0; // kondansatör + kontaktör kayıpları ~3 W/kVAr
+        // kondansatör + kontaktör kayıpları ~3 W/kVAr; ayarlı (filtreli) kademede reaktör kaybıyla ~6 W/kVAr (tipik)
+        const Q = on ? -Qc : 0, P = on ? (c.detune > 0 ? 0.006 : 0.003) * Qc : 0;
         const S = Math.hypot(P, Q);
         return { active: on, P: P, Q: Q, S: S, I: on ? S / (SQRT3 * U_LL) : 0, phi: Math.atan2(Q, P || 1e-9), Pel_kW: 0, Qc: Qc };
       }
@@ -203,10 +234,16 @@
       const v = new Validator();
       const U_LL = v.num(input.U_LL, 'Besleme gerilimi', { min: 200, max: 1000, unit: 'V' });
       const mainIn = v.num(input.mainIn, 'Ana şalter anma akımı', { min: 16, max: 6300, unit: 'A' });
+      // ayarlanabilir uzun gecikmeli koruma Ir (A) ve ani açma Ii (×Ir); girilmezse Ir = In, Ii = 10·Ir
+      const mainIr = input.mainIrF === undefined ? mainIn : mainIn * v.num(input.mainIrF, 'Ana şalter Ir ayarı', { min: 0.4, max: 1, unit: '×In' });
+      const mainIi = mainIr * (input.mainIiF === undefined ? 10 : v.num(input.mainIiF, 'Ana şalter Ii ayarı', { min: 1.5, max: 15, unit: '×Ir' }));
       const busbar = v.num(input.busbarIn, 'Bara anma akımı', { min: 63, max: 6300, unit: 'A' });
       const Icu = v.num(input.mainIcu_kA, 'Ana şalter kesme kapasitesi', { min: 3, max: 150, unit: 'kA' });
       const useGen = input.source === 'gen';
       const genKVA = useGen ? v.num(input.gen_kVA, 'Jeneratör gücü', { min: 10, max: 5000, unit: 'kVA' }) : 0;
+      // jeneratörün kalıcı kısa devre akımı (uyarma sistemine bağlı; AREP/PMG'de tipik ~3·In, kendinden uyartımlıda çok daha düşük)
+      const genSust = useGen ? v.num(input.gen_sust === undefined ? 3 : input.gen_sust, 'Jeneratör kalıcı kısa devre akımı', { min: 0.5, max: 6, unit: '×In' }) : 0;
+      const Igen = useGen ? currentFromS(genKVA * 1e3, v.num(input.U_LL, 'Gerilim', { min: 200, max: 1000 })) : 0;
       const src = useGen ? generatorImpedance(U_LL, genKVA, v.num(input.gen_xd, "Jeneratör X''d", { min: 5, max: 30, unit: '%' })) : sourceImpedance({
         U_LL: U_LL,
         SkQ_MVA: v.num(input.SkQ_MVA, 'OG şebeke kısa devre gücü', { min: 0, max: 5000, unit: 'MVA' }),
@@ -240,7 +277,7 @@
       const Imax = Math.max(phases.L1, phases.L2, phases.L3);
       const Iavg = (phases.L1 + phases.L2 + phases.L3) / 3;
       const unbalance = Iavg > 0.5 ? (Imax - Iavg) / Iavg * 100 : 0;
-      const loading = Imax / mainIn * 100;
+      const loading = Imax / mainIr * 100;
 
       const checks = [];
       // besleme kablosundaki düşüm (en yüklü faz akımıyla, 3F)
@@ -250,18 +287,23 @@
         const f = flows[i];
         // tasarım akımı (devre açıkken de kontrol edilir): devre çalışırsa çekeceği akım
         // kondansatörde koruma/kablo 1,43·Ic ile boyutlandırılır (harmonik ve tolerans payı)
-        const Ib = c.cap ? 1.43 * f.Qc / (SQRT3 * U_LL) : c.phase === '3F' ? threePhaseCurrent(f.Pel_kW * 1e3, U_LL, c.cos) : singlePhaseCurrent(f.Pel_kW * 1e3, U_LL / SQRT3, c.cos);
+        const Ib = c.cap || c.shunt ? (c.cap ? 1.43 : 1.1) * f.Qc / (SQRT3 * U_LL) : c.phase === '3F' ? threePhaseCurrent(f.Pel_kW * 1e3, U_LL, c.cos) : singlePhaseCurrent(f.Pel_kW * 1e3, U_LL / SQRT3, c.cos);
         const Iz = cableIz(c.S, c.method || 'B1', c.phase === '3F' ? 3 : 2, c.parallel || 1);
-        const I2 = (c.kind === 'MCB' ? 1.45 : 1.3) * c.In;
-        const vd = voltageDrop(c, c.cap ? Ib / 1.43 : Ib, U_LL);
+        const I2 = c.kind === 'FUSE' ? fuseI2(c.In) : (c.kind === 'MCB' ? 1.45 : 1.3) * c.In;
+        const vd = voltageDrop(c, c.cap ? Ib / 1.43 : c.shunt ? Ib / 1.1 : Ib, U_LL);
         const vdLimit = c.motor ? 3 : 1.5;
         const cab = cableImpedance(c.L, c.S, c.parallel || 1, c.material);
-        const Ik1 = shortCircuit1Min(U_LL, src, { R: feed.R + cab.R, X: feed.X + cab.X });
-        const Ia = c.kind === 'MCB' ? (MCB_MAG[c.curve] || MCB_MAG.C)[1] * c.In : (c.Ii || 10 * c.In);
+        // jeneratörde 0,4 s kesme süresi boyunca alt-geçici akım sönümlenir: kalıcı akımla sınırla
+        const Ik1sub = shortCircuit1Min(U_LL, src, { R: feed.R + cab.R, X: feed.X + cab.X });
+        const Ik1 = useGen ? Math.min(Ik1sub, genSust * Igen) : Ik1sub;
+        // gerekli kesme süresi (TS HD 60364-4-41, TN 230 V): son devre ≤ 32 A → 0,4 s; dağıtım ve > 32 A → 5 s
+        const tReq = c.In <= 32 ? 0.4 : 5;
+        const g = FUSE_GATES[c.In];
+        const Ia = c.kind === 'FUSE' ? (g ? (tReq === 0.4 ? g[3] : g[1]) : Infinity) : c.kind === 'MCB' ? (MCB_MAG[c.curve] || MCB_MAG.C)[1] * c.In : (c.Ii || 10 * c.In);
         const startI = c.motor ? Ib * (c.start === 'YD' ? (c.IstIn || 6.5) / 3 : c.start === 'VFD' ? 1.0 : c.start === 'SOFT' ? 3 : (c.IstIn || 6.5)) : 0;
         const coord = Ib <= c.In && c.In <= Iz && I2 <= 1.45 * Iz;
         const ass = breakerAssessment({ kind: c.kind || 'MCB', curve: c.curve, In: c.In, Ir: c.In, Ii: c.Ii }, f.I);
-        return { Ib: Ib, I: f.I, active: f.active, P: f.P, Q: f.Q, Iz: Iz, I2: I2, coord: coord, vd: vd.pct, vdLimit: vdLimit, Ik1: Ik1, Ia: Ia, disconnectOK: Ik1 >= Ia, startI: startI, assessment: ass, loadPct: c.In > 0 ? f.I / c.In * 100 : 0 };
+        return { Ib: Ib, I: f.I, active: f.active, P: f.P, Q: f.Q, Iz: Iz, I2: I2, coord: coord, vd: vd.pct, vdLimit: vdLimit, Ik1: Ik1, Ia: Ia, tReq: tReq, disconnectOK: Ik1 >= Ia, startI: startI, assessment: ass, loadPct: c.In > 0 ? f.I / c.In * 100 : 0 };
       });
 
       perCircuit.forEach((r, i) => {
@@ -272,9 +314,9 @@
         checks.push(check('vd' + i, nm + ': gerilim düşümü', r.vd + feedVd <= r.vdLimit ? 'ok' : 'warn',
           'Devre %' + round(r.vd, 2) + ' + besleme %' + round(feedVd, 2) + ' = %' + round(r.vd + feedVd, 2) + ' (sınır %' + r.vdLimit + '; pano yapı bağlantı kutusu kabul edildi)', 'EİTY Madde 57'));
         checks.push(check('ad' + i, nm + ': hat sonu arızada otomatik kesme', r.disconnectOK ? 'ok' : 'fail',
-          'Ik1,min ≈ ' + round(r.Ik1, 0) + ' A, gereken ani açma akımı Ia = ' + round(r.Ia, 0) + ' A', 'TS HD 60364-4-41'));
+          'Ik1,min ≈ ' + round(r.Ik1, 0) + ' A, ' + r.tReq + ' s içinde kesme için gereken Ia = ' + round(r.Ia, 0) + ' A' + (c.kind === 'FUSE' ? ' (gG kapısı ' + (r.tReq === 0.4 ? 'Imax 0,1 s, güvenli tarafta' : 'Imax 5 s') + ')' : ''), 'TS HD 60364-4-41'));
       });
-      checks.push(check('main', 'Ana şalter yüklenmesi', loading <= 80 ? 'ok' : loading <= 100 ? 'warn' : 'fail', 'En yüklü faz ' + round(Imax, 1) + ' A / ' + mainIn + ' A (%' + round(loading, 0) + ')'));
+      checks.push(check('main', 'Ana şalter yüklenmesi (Ir ayarına göre)', loading <= 80 ? 'ok' : loading <= 100 ? 'warn' : 'fail', 'En yüklü faz ' + round(Imax, 1) + ' A / Ir ' + round(mainIr, 0) + ' A (%' + round(loading, 0) + ')'));
       checks.push(check('bus', 'Bara ≥ ana şalter', busbar >= mainIn ? 'ok' : 'fail', 'Bara ' + busbar + ' A, ana şalter ' + mainIn + ' A', 'TS EN IEC 61439-1'));
       checks.push(check('icu', 'Kesme kapasitesi ≥ Ik3', Icu * 1e3 >= sc.Ik ? 'ok' : 'fail', 'Icu ' + Icu + ' kA, Ik3 ≈ ' + round(sc.Ik / 1e3, 2) + ' kA (yaklaşık)', 'IEC 60909-0 yaklaşımı'));
       if (useGen) checks.push(check('gen', 'Jeneratör yüklenmesi', S / 1e3 <= 0.8 * genKVA ? 'ok' : S / 1e3 <= genKVA ? 'warn' : 'fail', round(S / 1e3, 1) + ' kVA / ' + genKVA + ' kVA. Jeneratörde kısa devre akımı şebekeye göre çok düşüktür; otomatik kesme koşulunu ayrıca kontrol edin.', 'ISO 8528'));
@@ -283,7 +325,7 @@
 
       return result(v, {
         U_LL: U_LL, P: P, Q: Q, S: S, pf: pf, phases: phases, Imax: Imax, unbalance: unbalance, loading: loading,
-        Ik3: sc.Ik, ip: sc.ip, kappa: sc.kappa, Zk: sc.Z, circuits: perCircuit, mainIn: mainIn,
+        Ik3: sc.Ik, ip: sc.ip, kappa: sc.kappa, Zk: sc.Z, circuits: perCircuit, mainIn: mainIn, mainIr: mainIr, mainIi: mainIi,
         balancedI: S > 0 ? currentFromS(S, U_LL) : 0, source: useGen ? 'gen' : 'grid', genKVA: genKVA, Isrc: src
       }, checks, {
         assumptions: [
@@ -292,7 +334,9 @@
           'Iz: bakır PVC, 30 °C, gruplama düzeltmesi yok (TS HD 60364-5-52).',
           'Gerilim düşümü sınırı EİTY Madde 57: yapı bağlantı kutusundan tüketiciye aydınlatma/priz %1,5, motor %3 (pano yapı bağlantı kutusu kabul edilir). Kendi trafosu olan tesiste trafo ile bağlantı kutusu arası ayrıca %5.',
           'Kısa devre: IEC 60909 yöntemi basitleştirilmiş; c = 1,05; KT düzeltmesi, motor katkısı ve ark direnci ihmal. Sonuç yaklaşıktır.',
+          'Jeneratör beslemesinde otomatik kesme kontrolü, alt-geçici akım ile jeneratörün kalıcı kısa devre akımının (girdi, ×In) küçüğüyle yapılır; değer üretici verisinden alınmalıdır.',
           'Gerilim düşümü κ = 56 m/Ω·mm² (20 °C) ve X = 0,08 mΩ/m ile; besleme kablosunda en yüklü faz akımı kullanılır.',
+          'gG sigortalarda IEC 60269-2 kapı değerleri kullanılır; 0,4 s kesme için Imax(0,1 s) kapısı alınır (güvenli tarafta). Üretici eğrisi esastır.',
           'Bu kontroller pano tasarım doğrulaması (TS EN IEC 61439-1 Madde 10) yerine geçmez.'
         ],
         formulas: ['I = P / (√3·U_LL·cosφ) (dengeli 3F)', 'I = P / (U_0·cosφ) (1F)', 'Q = P·tanφ, S = √(P² + Q²)', 'ΔU = √3·I·L·(R·cosφ + X·sinφ)', 'Ik3 = c·Un / (√3·|Zk|)', 'ip = κ·√2·Ik3, κ = 1,02 + 0,98·e^(−3R/X)']
@@ -1339,6 +1383,7 @@
     version: '2026.10.23',
     SQRT3: SQRT3, C: C, clamp: clamp, round: round, Validator: Validator,
     threePhaseCurrent: threePhaseCurrent, currentFromS: currentFromS, singlePhaseCurrent: singlePhaseCurrent, powerTriangle: powerTriangle,
+    FUSE_GATES: FUSE_GATES, FUSE_SIZES: FUSE_SIZES, fuseAssessment: fuseAssessment, fuseI2: fuseI2, fuseConvTime: fuseConvTime,
     cableIz: cableIz, CABLE_SIZES: CABLE_SIZES, INSTALL_METHODS: INSTALL_METHODS, breakerAssessment: breakerAssessment, rcdAssessment: rcdAssessment,
     sourceImpedance: sourceImpedance, generatorImpedance: generatorImpedance, cableImpedance: cableImpedance, shortCircuit3: shortCircuit3, shortCircuit1Min: shortCircuit1Min,
     pano: pano, ges: ges, trafo: trafo, sarj: sarj, res: res, komp: komp, topraklama: topraklama, motor: motor, ups: ups, yangin: yangin

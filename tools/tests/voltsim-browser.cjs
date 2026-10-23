@@ -108,6 +108,14 @@ const slugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }
       await page.waitForTimeout(500);
       const after = await page.evaluate(() => JSON.stringify(window.__vsApp.validResult.values, (k, v) => (typeof v === 'number' ? Math.round(v * 1000) / 1000 : v)).slice(0, 4000));
       if (before === after) fail(slug, 'parametre (' + changed + ') sonucu değiştirmedi');
+      // görevler: ilk görevi başlat, etkin görev ve başlangıçta çözülmemiş olmalı
+      const task = await page.evaluate(() => { const box = document.querySelector('[data-vs-tasks]'); if (!box) return 'yok'; box.open = true; const b = box.querySelector('.vs-tasklist .vs-btn'); if (!b) return 'düğme yok'; b.click(); return 'ok'; });
+      await page.waitForTimeout(500);
+      if (task !== 'ok') fail(slug, 'görevler: ' + task);
+      else if (!(await page.evaluate(() => !!window.__vsApp.activeTask))) fail(slug, 'ilk görev etkinleşmedi (başlangıçta çözülmüş olabilir)');
+      // 3D eylem: eylemi olan ilk ekipmanı seç ve kart düğmesini doğrula
+      const act = await page.evaluate(() => { const v = window.__vsApp.viewer; if (!v) return 'no3d'; const p = v.pickables.find(x => x.actions); if (!p) return 'eylem yok'; v.select(p); const n = document.querySelectorAll('.vs-info__acts .vs-btn').length; v.select(null); return n ? 'ok' : 'kart düğmesi yok'; });
+      if (act !== 'ok' && act !== 'no3d') fail(slug, '3D eylem: ' + act);
       // simülasyonu başlat / durdur / devam
       await page.click('[data-vs-act="start"]'); await page.waitForTimeout(1500);
       await page.click('[data-vs-act="pause"]'); const paused = await page.evaluate(() => window.__vsApp.paused);
