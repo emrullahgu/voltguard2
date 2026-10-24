@@ -57,6 +57,19 @@
 
 # Temiz hesap adresleri (/hesaplama/x/) force ile yeniden yazılır: aksi hâlde Netlify x.html varken /x/ adresini
 # /x adresine 301 ile yönlendirir ve kanonik adres (sondaki / ile) yönlendirmeye düşer.
+# Eski tek sayfa adresleri klasor adreslerine
+[[redirects]]
+  from = "/voltsim.html"
+  to = "/voltsim/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/volthaber.html"
+  to = "/volthaber/"
+  status = 301
+  force = true
+
 # VoltHaber PHP ile uretilir; statik vitrinde yalnizca index.html (yedek), yayin-ilkeleri ve abonelik sayfalari vardir.
 [[redirects]]
   from = "/volthaber/*"

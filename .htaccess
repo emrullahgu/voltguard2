@@ -162,6 +162,9 @@
   RewriteCond %{THE_REQUEST} \s/hizmetler/index\.html[\s?]
   RewriteRule ^hizmetler/index\.html$ /hizmetler/ [R=301,L]
   RewriteRule ^hizmetler/$ /hizmetler/index.html [L]
+  # Eski/tahmin edilen tek sayfa adresleri klasör adreslerine (dışarıda paylaşılmış bağlantılar 404 olmasın)
+  RewriteRule ^voltsim\.html$ /voltsim/ [R=301,L]
+  RewriteRule ^volthaber\.html$ /volthaber/ [R=301,L]
   # Public engineering library and VoltSim simulations. DirectorySlash is off, so normalize only real index pages.
   RewriteCond %{THE_REQUEST} \s/(?:araclar|voltsim)(?:/[a-z0-9-]+)?/index\.html[\s?]
   RewriteRule ^((?:araclar|voltsim)(?:/[a-z0-9-]+)?)/index\.html$ /$1/ [R=301,L]
