@@ -19,6 +19,11 @@ if ($path === '/volthaber/index.html') {
     // Canlida /volthaber/ adresine 301; yerelde statik yedek gorunumu incelemek icin sunulur.
     return false;
 }
+// .htaccess: api/lib ve benzeri klasorler web'e kapali (403).
+if (preg_match('#^/api/(lib|inc|includes|private|vendor|storage|data|cache|logs|tmp)(/|$)#i', $path) === 1) {
+    http_response_code(403);
+    return true;
+}
 if (preg_match('#^/(tools|\.qa|\.git)(/|$)#', $path) === 1) {
     http_response_code(404);
     return true;

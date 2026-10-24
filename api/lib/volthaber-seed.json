@@ -588,6 +588,90 @@
    "flags": [],
    "createdAt": 1792821180,
    "updatedAt": 1792821180
+  },
+  {
+   "slug": "epdk-kullanici-mobil-uygulamasina-veri-saglayan-dagitim-sirketlerine",
+   "title": "EPDK, Kullanıcı Mobil Uygulamasına veri sağlayan dağıtım şirketlerine performans ölçütleri getirdi",
+   "summary": "EPDK, 22.10.2026 tarihli ve 14982 sayılı kararıyla dağıtım şirketlerinin Kullanıcı Mobil Uygulaması ve internet sitesine sağladığı veri servisleri için aylık performans ölçütleri belirledi: ortalama ve p95 yanıt süresi en fazla 3000 ms, hata oranı üst sınırı %4'ten başlayıp 1 Mayıs 2027'den itibaren %1. Karar 24.10.2026 tarihli Resmî Gazete'de yayımlandı.",
+   "body": "## Künye\n- **Karar:** Enerji Piyasası Düzenleme Kurulu, 22.10.2026 tarihli ve 14982 sayılı karar\n- **Yayım:** Resmî Gazete, 24.10.2026, sayı 33410\n- **Dayanak:** Elektrik Piyasası Ölçüm Sistemleri Yönetmeliği, 7. madde, üçüncü fıkra\n- **Yükümlü taraf:** elektrik dağıtım şirketleri\n\n## Kararda ne var?\nKarar, kullanıcı mobil uygulaması ve internet sitesi üzerinden kullanıcılara sunulan veri girişi, görüntüleme ve raporlama servisleri için aylık performans ölçütleri belirliyor:\n- **Ortalama yanıt süresi:** en fazla 3000 ms\n- **p95 yanıt süresi:** en fazla 3000 ms (isteklerin yüzde 95'i bu sürenin içinde yanıtlanmalı)\n- **Azami hata oranı** (dağıtım şirketinin sorumluluğundaki toplam işlem veya istek içinde hatayla sonuçlananlar): 31.01.2027'ye kadar %4; 01.02.2027–30.04.2027 arasında %2; 01.05.2027'den itibaren %1\n\nKararın ikinci maddesine göre 2026 yılı Aralık ayından itibaren, aylık performans raporlarında bu ölçütleri sağlamayan şirketler için 6446 sayılı Elektrik Piyasası Kanunu'nun 16. maddesi kapsamında işlem tesis edilecek.\n\n## Uygulama neyi gösteriyor?\nYönetmeliğin 7. maddesi Kullanıcı Mobil Uygulaması ve internet sitesini EPİAŞ'ın kurup işlettiği bir kanal olarak tanımlıyor; dağıtım şirketleri üçüncü fıkra uyarınca verileri EPİAŞ'a sağlıyor ve verilerin doğruluğundan sorumlu. Yönetmeliğin 28.12.2023'te yayımlanan metnine göre uygulama, kullanıcı sayacının kabiliyeti ölçüsünde asgari olarak şunları sunuyor:\n- saatlik, günlük, aylık ve yıllık tüketim ve/veya üretim bilgisi\n- tarife zaman dilimi bazında aylık tüketim\n- beklenmedik aşırı tüketim, kullanıma kapalı dönemde tüketim ve kullanıcının belirlediği tüketim eşiğinin aşılması hâlinde uyarı\n- kesinti listesi ile tedarik sürekliliği tazminatına esas toplam kesinti süresi ve sayısı\n- kullanıcının etkilendiği teknik kalite olaylarına ilişkin sayaç verileri",
+   "impact": "- Karar işletmelere doğrudan bir yükümlülük getirmiyor; ölçütler dağıtım şirketleri için konuldu.\n- Uygulamadaki tüketim, kesinti ve teknik kalite olayı verilerine erişimin hızı ve hatasızlığı için sayısal hedef belirlendi: yanıt süresi en fazla 3000 ms, hata oranı 1 Mayıs 2027'den itibaren en fazla %1.\n- Geçiş döneminde izin verilen hata oranı daha yüksek: 31.01.2027'ye kadar %4, Şubat–Nisan 2027 arasında %2.\n- Tüketimini saatlik ve tarife dilimi bazında izleyen, kesintileri ve teknik kalite olaylarını kayıt altına almak isteyen işletmeler bu verileri bir kayıt kaynağı olarak kullanabilir; verinin kapsamı sayacın kabiliyetiyle sınırlıdır.",
+   "commentary": "Uygulamadaki sayaç verisi işletmeler için yararlı ikinci bir kayıt, ancak tesis içi ölçümün yerine geçmez. Fatura sayacı tesisin bağlantı noktasını gösterir; hangi makinenin, hangi hattın veya hangi kompanzasyon kademesinin soruna yol açtığını göstermez. Reaktif oranlar, harmonikler ve gerilim çökmeleri gibi enerji kalitesi sorunlarının nedenini bulmak için pano seviyesinde enerji analizörüyle süreli ölçüm gerekir.\n\nÖnerimiz:\n- Uygulamadaki aylık tüketimi ve kesinti listesini kendi enerji izleme veya SCADA kayıtlarınızla düzenli karşılaştırın; açıklanamayan farklar sayaç, ölçü trafosu veya tesis tarafında incelenmesi gereken bir duruma işaret edebilir.\n- Üretim duruşlarını kesinti kayıtlarıyla eşleştirin; tarih ve süre bilgisi kesintiye bağlı başvurularda işinize yarar.\n- Uygulamada teknik kalite olayı görüyorsanız kaynağını tesis içinde ölçerek doğrulayın.",
+   "eventDate": "2026-10-22",
+   "category": "mevzuat",
+   "tags": [
+    "epdk",
+    "olcum-sistemleri",
+    "akilli-sayac",
+    "dagitim-sirketi",
+    "tuketim-verisi"
+   ],
+   "type": "resmi",
+   "source": {
+    "name": "Resmî Gazete (24.10.2026, sayı 33410) – EPDK Kurul Kararı 14982",
+    "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261024-11.pdf",
+    "publishedAt": "2026-10-24",
+    "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+   },
+   "extraSources": [
+    {
+     "name": "Elektrik Piyasası Ölçüm Sistemleri Yönetmeliği (Resmî Gazete 28.12.2023, sayı 32413)",
+     "url": "https://www.resmigazete.gov.tr/eskiler/2023/12/20231228-2.htm",
+     "publishedAt": "2023-12-28",
+     "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+    }
+   ],
+   "image": null,
+   "status": "draft",
+   "publishAt": null,
+   "publishedAt": null,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": null,
+   "review": {
+    "stage": "draft",
+    "checks": {},
+    "hold": null,
+    "history": [
+     {
+      "at": 1792850400,
+      "by": "Hazırlık: Claude (yapay zekâ asistanı)",
+      "action": "prepared",
+      "stage": "draft",
+      "note": "Kaynaklar 24.10.2026'da açıldı: RG 24.10.2026/33410 fihristi ve karar PDF'i (20261024-11.pdf); RG 28.12.2023/32413 yönetmelik metni (20231228-2.htm). Rakamlar, tarihler ve kanun maddesi karar metniyle karşılaştırıldı. Açık nokta: yönetmeliğin 7. maddesinin 2023 sonrası değişip değişmediği doğrulanamadı; teknik kontrolde güncel metin kontrol edilmeli. Görsel kullanılmadı. Yayın için editör kontrolleri ve onayı gerekir."
+     }
+    ]
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/hizmetler/enerji-kalitesi-olcumu.html",
+     "label": "Enerji kalitesi ölçümü hizmeti"
+    },
+    {
+     "url": "/voltsim/enerji-kalitesi/",
+     "label": "VoltSim enerji kalitesi simülasyonu"
+    },
+    {
+     "url": "/hizmetler/plc-scada-otomasyon.html",
+     "label": "PLC ve SCADA otomasyon hizmeti"
+    },
+    {
+     "url": "/hesaplama/reaktif-ceza-hesaplama/",
+     "label": "Reaktif ceza hesaplama"
+    }
+   ],
+   "featured": false,
+   "pick": false,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792850400,
+   "updatedAt": 1792850400
   }
  ]
 }

@@ -28,16 +28,21 @@ const VH_MAX_SUBSCRIBERS = 20000;
 const VH_DIGEST_BATCH = 20;              // bir grupta en fazla 20 e-posta
 const VH_DIGEST_GAP = 60;                // gruplar arasi en az 60 saniye
 
-/** Kategori kimligi => [ad, kisa aciklama] */
+/**
+ * Kategori kimligi => [ad, kisa aciklama]. Kimlikler adreste kullanilir (/volthaber/kategori/<id>/); yayindaki
+ * adresler kirilmasin diye eski kimlikler korunur, yalnizca adlar VoltHaber'in yayin alanlarina gore guncellenir.
+ */
 function vh_categories(): array
 {
     return [
-        'mevzuat' => ['Mevzuat ve Resmî Duyurular', 'Resmî Gazete değişiklikleri, kurul kararları ve kamu duyurularının özetleri.'],
-        'enerji-piyasasi' => ['Enerji Piyasası', 'Elektrik piyasası, tarifeler ve piyasa işletmecisi duyuruları.'],
-        'yenilenebilir' => ['Yenilenebilir Enerji', 'GES, RES, depolama ve lisanssız üretim.'],
+        'mevzuat' => ['Elektrik Mevzuatı', 'Resmî Gazete değişiklikleri, EPDK kurul kararları ve kamu duyurularının özetleri.'],
+        'kompanzasyon' => ['Enerji Kalitesi ve Kompanzasyon', 'Reaktif enerji, harmonikler, gerilim olayları ve verimlilik.'],
+        'yenilenebilir' => ['GES ve Depolama', 'Güneş, rüzgâr, enerji depolama ve lisanssız üretim.'],
+        'e-mobilite' => ['Şarj Altyapısı', 'Elektrikli araç şarj altyapısı ve şarj hizmeti mevzuatı.'],
+        'otomasyon' => ['Endüstriyel Otomasyon', 'PLC, SCADA, sürücüler, ölçüm sistemleri ve tesis verisi.'],
+        'saha-notlari' => ['VoltGuard Saha Notları', 'VoltGuard ekibinin sahada gördüğü sorunlar ve çözümler.'],
         'tesisat-guvenlik' => ['Elektrik Tesisatı ve İş Güvenliği', 'Periyodik kontrol, topraklama, koruma ve işletme güvenliği.'],
-        'e-mobilite' => ['Şarj ve E-Mobilite', 'Elektrikli araç şarj altyapısı ve şarj hizmeti mevzuatı.'],
-        'kompanzasyon' => ['Kompanzasyon ve Enerji Verimliliği', 'Reaktif enerji, güç kalitesi ve verimlilik.'],
+        'enerji-piyasasi' => ['Enerji Piyasası', 'Elektrik piyasası, tarifeler ve piyasa işletmecisi duyuruları.'],
     ];
 }
 
@@ -50,19 +55,30 @@ function vh_types(): array
     ];
 }
 
-/* VoltSim ve hesap araclari: ilgili bag onerileri (yalnizca site ici). */
+/* VoltGuard hizmetleri, VoltSim ve hesap araclari: ilgili bag onerileri (yalnizca site ici). */
 function vh_tool_links(): array
 {
     return [
-        ['/voltsim/ges/', 'VoltSim GES simülasyonu', 'yenilenebilir'],
-        ['/voltsim/res/', 'VoltSim RES simülasyonu', 'yenilenebilir'],
+        ['/hizmetler/enerji-kalitesi-olcumu.html', 'Enerji kalitesi ölçümü hizmeti', 'kompanzasyon'],
+        ['/hizmetler/harmonik-filtreli-kompanzasyon.html', 'Harmonik filtreli kompanzasyon hizmeti', 'kompanzasyon'],
+        ['/voltsim/enerji-kalitesi/', 'VoltSim enerji kalitesi simülasyonu', 'kompanzasyon'],
         ['/voltsim/kompanzasyon/', 'VoltSim kompanzasyon simülasyonu', 'kompanzasyon'],
-        ['/voltsim/sarj-istasyonu/', 'VoltSim şarj istasyonu simülasyonu', 'e-mobilite'],
-        ['/voltsim/topraklama/', 'VoltSim topraklama simülasyonu', 'tesisat-guvenlik'],
-        ['/hesaplama/periyodik-kontrol-planlayici/', 'Periyodik kontrol planlayıcı', 'tesisat-guvenlik'],
         ['/hesaplama/reaktif-ceza-hesaplama/', 'Reaktif ceza hesaplama', 'kompanzasyon'],
         ['/hesaplama/kompanzasyon-hesaplama/', 'Kompanzasyon hesaplama', 'kompanzasyon'],
+        ['/hizmetler/fabrika-cati-ges.html', 'Fabrika çatı GES hizmeti', 'yenilenebilir'],
+        ['/voltsim/ges/', 'VoltSim GES simülasyonu', 'yenilenebilir'],
+        ['/voltsim/depolama-hibrit/', 'VoltSim depolama ve hibrit sistem simülasyonu', 'yenilenebilir'],
+        ['/voltsim/res/', 'VoltSim RES simülasyonu', 'yenilenebilir'],
         ['/hesaplama/ges-uretim-hesaplama/', 'GES üretim hesaplama', 'yenilenebilir'],
+        ['/voltsim/sarj-istasyonu/', 'VoltSim şarj istasyonu simülasyonu', 'e-mobilite'],
+        ['/hizmetler/plc-scada-otomasyon.html', 'PLC ve SCADA otomasyon hizmeti', 'otomasyon'],
+        ['/voltsim/konveyor-scada/', 'VoltSim konveyör ve SCADA simülasyonu', 'otomasyon'],
+        ['/voltsim/motor-otomasyon/', 'VoltSim motor otomasyonu simülasyonu', 'otomasyon'],
+        ['/voltsim/pompa-vfd/', 'VoltSim pompa ve sürücü (VFD) simülasyonu', 'otomasyon'],
+        ['/voltsim/ariza-tespit/', 'VoltSim arıza tespit laboratuvarı', 'saha-notlari'],
+        ['/hizmetler/elektrik-periyodik-kontrol.html', 'Elektrik periyodik kontrol hizmeti', 'tesisat-guvenlik'],
+        ['/voltsim/topraklama/', 'VoltSim topraklama simülasyonu', 'tesisat-guvenlik'],
+        ['/hesaplama/periyodik-kontrol-planlayici/', 'Periyodik kontrol planlayıcı', 'tesisat-guvenlik'],
         ['/bilgi/mevzuat-guncellemeleri.html', 'Elektrik mevzuatı değişiklikleri 2025–2026', 'mevzuat'],
     ];
 }
@@ -470,6 +486,8 @@ function vh_seed_state(): array
         $id = 'a' . substr(sha1('seed|' . $a['slug']), 0, 16);
         $a['id'] = $id;
         $a['bodyHtml'] = vh_markdown((string)($a['body'] ?? ''));
+        $a['impactHtml'] = vh_markdown((string)($a['impact'] ?? ''));
+        $a['commentaryHtml'] = vh_markdown((string)($a['commentary'] ?? ''));
         $state['articles'][$id] = vh_normalize_article($a);
     }
     return $state;
@@ -481,6 +499,15 @@ function vh_normalize_article(array $a): array
     $int = function ($v) {
         return is_int($v) ? $v : null;
     };
+    $srcRow = function (array $s): array {
+        return [
+            'name' => (string)($s['name'] ?? ''),
+            'url' => (string)($s['url'] ?? ''),
+            'publishedAt' => (string)($s['publishedAt'] ?? ''),
+            'licenseNote' => (string)($s['licenseNote'] ?? ''),
+        ];
+    };
+    $status = in_array($a['status'] ?? '', ['draft', 'scheduled', 'published', 'archived'], true) ? $a['status'] : 'draft';
     return [
         'id' => (string)$a['id'],
         'slug' => (string)($a['slug'] ?? ''),
@@ -489,23 +516,30 @@ function vh_normalize_article(array $a): array
         'summaryBy' => is_string($a['summaryBy'] ?? null) ? $a['summaryBy'] : null,
         'body' => (string)($a['body'] ?? ''),
         'bodyHtml' => (string)($a['bodyHtml'] ?? ''),
+        'impact' => (string)($a['impact'] ?? ''),
+        'impactHtml' => (string)($a['impactHtml'] ?? ''),
+        'commentary' => (string)($a['commentary'] ?? ''),
+        'commentaryHtml' => (string)($a['commentaryHtml'] ?? ''),
         'category' => (string)($a['category'] ?? 'mevzuat'),
         'tags' => array_values(array_filter(is_array($a['tags'] ?? null) ? $a['tags'] : [], 'is_string')),
         'type' => (string)($a['type'] ?? 'kaynak'),
-        'source' => is_array($a['source'] ?? null) ? [
-            'name' => (string)($a['source']['name'] ?? ''),
-            'url' => (string)($a['source']['url'] ?? ''),
-            'publishedAt' => (string)($a['source']['publishedAt'] ?? ''),
-            'licenseNote' => (string)($a['source']['licenseNote'] ?? ''),
-        ] : null,
+        'source' => is_array($a['source'] ?? null) ? $srcRow($a['source']) : null,
+        'extraSources' => array_values(array_map($srcRow, array_filter(is_array($a['extraSources'] ?? null) ? $a['extraSources'] : [], 'is_array'))),
+        'eventDate' => is_string($a['eventDate'] ?? null) ? $a['eventDate'] : '',
         'image' => is_array($a['image'] ?? null) ? [
             'url' => (string)($a['image']['url'] ?? ''),
             'credit' => (string)($a['image']['credit'] ?? ''),
             'rightsNote' => (string)($a['image']['rightsNote'] ?? ''),
+            'licenseUrl' => (string)($a['image']['licenseUrl'] ?? ''),
         ] : null,
-        'status' => in_array($a['status'] ?? '', ['draft', 'scheduled', 'published', 'archived'], true) ? $a['status'] : 'draft',
+        'status' => $status,
         'publishAt' => $int($a['publishAt'] ?? null),
         'publishedAt' => $int($a['publishedAt'] ?? null),
+        // Icerik guncelleme zamani yalnizca onayli bir duzeltmeyle degisir (tarama, sayac, durum degisikligi degistirmez).
+        'revisedAt' => $int($a['revisedAt'] ?? null),
+        'revisionNote' => (string)($a['revisionNote'] ?? ''),
+        'review' => vh_normalize_review(is_array($a['review'] ?? null) ? $a['review'] : [], $status),
+        'liveCopy' => is_array($a['liveCopy'] ?? null) ? $a['liveCopy'] : null,
         'author' => is_array($a['author'] ?? null) ? ['id' => $a['author']['id'] ?? null, 'name' => (string)($a['author']['name'] ?? '')] : ['id' => null, 'name' => 'VoltGuard Mühendislik Ekibi'],
         'editor' => is_array($a['editor'] ?? null) ? ['id' => $a['editor']['id'] ?? null, 'name' => (string)($a['editor']['name'] ?? '')] : null,
         'seo' => ['title' => (string)($a['seo']['title'] ?? ''), 'description' => (string)($a['seo']['description'] ?? '')],
@@ -535,6 +569,15 @@ function vh_articles(string $dir): array
     foreach ($state['articles'] as $id => $a) {
         if (!is_string($id) || preg_match('/^a[a-f0-9]{16}$/', $id) !== 1 || !is_array($a) || ($a['id'] ?? '') !== $id) {
             vg_unavailable('volthaber stored article is invalid');
+        }
+        // Akistan once kaydedilmis kayitlar yeni alanlarla (yayin akisi, etki/yorum bolumleri) tamamlanir.
+        $state['articles'][$id] = vh_normalize_article($a);
+    }
+    // Tohuma sonradan eklenen kayitlar (yayin akisini bekleyen hazir taslak gibi) mevcut kuruluma da eklenir.
+    // Tohum kimlikleri sabittir: arsivlenen veya duzenlenen kayit yeniden yazilmaz.
+    foreach (vh_seed_state()['articles'] as $id => $a) {
+        if (!isset($state['articles'][$id]) && vh_find_slug($state, $a['slug']) === null) {
+            $state['articles'][$id] = $a;
         }
     }
     return $state;
@@ -611,26 +654,33 @@ function vh_public_article(array $a, array $views, bool $full): array
         'typeName' => vh_types()[$a['type']] ?? $a['type'],
         'source' => $a['source'] && $a['source']['url'] !== '' ? $a['source'] : null,
         'image' => $a['image'],
+        'eventDate' => $a['eventDate'] !== '' ? $a['eventDate'] : null,
         'publishedAt' => vg_iso(vh_live_at($a)),
-        'updatedAt' => vg_iso($a['updatedAt']),
+        // Yalnizca onayli bir icerik duzeltmesinde degisir; tarama, sayac veya durum degisikligi tarih degistirmez.
+        'revisedAt' => $a['revisedAt'] ? vg_iso($a['revisedAt']) : null,
         'author' => $a['author']['name'],
         'editor' => $a['editor'] ? $a['editor']['name'] : '',
+        'review' => vh_public_review($a),
         'views' => (int)($views[$a['id']] ?? 0),
     ];
     if ($full) {
         $out['bodyHtml'] = $a['bodyHtml'];
+        $out['impactHtml'] = $a['impactHtml'];
+        $out['commentaryHtml'] = $a['commentaryHtml'];
+        $out['sources'] = vh_all_sources($a);
+        $out['revisionNote'] = $a['revisionNote'];
         $out['seo'] = $a['seo'];
         $out['related'] = $a['related'];
     }
     return $out;
 }
 
-/** Yayindaki yazilar, yeniden eskiye. */
+/** Yayindaki yazilar (bekleyen duzeltmesi olanlar son onayli surumleriyle), yeniden eskiye. */
 function vh_live_list(array $state, int $now): array
 {
-    $list = array_values(array_filter($state['articles'], function ($a) use ($now) {
+    $list = array_map('vh_live_view', array_values(array_filter($state['articles'], function ($a) use ($now) {
         return vh_is_live($a, $now);
-    }));
+    })));
     usort($list, function ($x, $y) {
         return vh_live_at($y) <=> vh_live_at($x) ?: strcmp($x['id'], $y['id']);
     });
@@ -805,7 +855,8 @@ const VH_RESERVED_SLUGS = ['kategori', 'etiket', 'sitemap', 'rss', 'ara', 'arama
  */
 function vh_build_article(array $body, ?array $existing, array $state, array $user): array
 {
-    $allowed = ['id', 'title', 'slug', 'summary', 'body', 'category', 'tags', 'type', 'source', 'image', 'seo', 'related', 'featured', 'pick', 'confirmSimilar', 'updatedAt'];
+    $allowed = ['id', 'title', 'slug', 'summary', 'body', 'impact', 'commentary', 'eventDate', 'extraSources', 'revisionNote', 'category', 'tags', 'type',
+        'source', 'image', 'seo', 'related', 'featured', 'pick', 'confirmSimilar', 'updatedAt'];
     foreach (array_keys($body) as $k) {
         if (!in_array($k, $allowed, true)) {
             vg_fail(400, 'invalid_request', 'Gönderilen alanlardan biri desteklenmiyor: ' . vh_esc((string)$k));
@@ -836,6 +887,18 @@ function vh_build_article(array $body, ?array $existing, array $state, array $us
         $a['body'] = $existing['body'] ?? '';
     }
     $a['bodyHtml'] = vh_markdown($a['body']);
+    // "Fabrikalar ve isletmeler icin anlami" ve "VoltGuard yorumu": kaynak bilgisinden ayri tutulan bolumler.
+    foreach (['impact' => 'İşletmeler için anlamı', 'commentary' => 'VoltGuard yorumu'] as $k => $label) {
+        $a[$k] = array_key_exists($k, $body) ? vh_multiline($body[$k], $k, $label, 6000) : ($existing[$k] ?? '');
+        $a[$k . 'Html'] = vh_markdown($a[$k]);
+    }
+    $ev = array_key_exists('eventDate', $body) ? $body['eventDate'] : ($existing['eventDate'] ?? '');
+    if ($ev !== '' && $ev !== null && (!is_string($ev) || preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $ev, $em) !== 1 || !checkdate((int)$em[2], (int)$em[3], (int)$em[1]))) {
+        vg_fail(422, 'invalid_field', 'Olay tarihi YYYY-AA-GG biçiminde geçerli bir tarih olmalı.', ['eventDate' => 'YYYY-AA-GG']);
+    }
+    $a['eventDate'] = (string)$ev;
+    $a['revisionNote'] = array_key_exists('revisionNote', $body)
+        ? vh_line($body['revisionNote'], 'revisionNote', 'Güncelleme notu', 0, 300, false) : ($existing['revisionNote'] ?? '');
     $cat = $body['category'] ?? ($existing['category'] ?? '');
     if (!is_string($cat) || !isset(vh_categories()[$cat])) {
         vg_fail(422, 'invalid_field', 'Kategori seçin.', ['category' => 'Geçerli bir kategori seçin.']);
@@ -864,34 +927,21 @@ function vh_build_article(array $body, ?array $existing, array $state, array $us
     $a['tags'] = $clean;
     // Kaynak
     $src = array_key_exists('source', $body) ? $body['source'] : ($existing['source'] ?? null);
-    if ($src !== null) {
-        if (!is_array($src)) {
-            vg_fail(422, 'invalid_field', 'Kaynak bilgisi geçersiz.', ['source' => 'Geçersiz.']);
-        }
-        foreach (array_keys($src) as $k) {
-            if (!in_array($k, ['name', 'url', 'publishedAt', 'licenseNote'], true)) {
-                vg_fail(400, 'invalid_request', 'Kaynak alanlarından biri desteklenmiyor.');
+    $a['source'] = $src !== null ? vh_clean_source_row($src, 'source') : null;
+    $extra = array_key_exists('extraSources', $body) ? $body['extraSources'] : ($existing['extraSources'] ?? []);
+    if (!is_array($extra) || count($extra) > 6) {
+        vg_fail(422, 'invalid_field', 'En fazla 6 ek kaynak eklenebilir.', ['extraSources' => 'En fazla 6.']);
+    }
+    $a['extraSources'] = [];
+    foreach (array_values($extra) as $i => $row) {
+        $row = vh_clean_source_row($row, 'extraSources.' . $i);
+        if ($row !== null) {
+            if ($row['url'] === '') {
+                vg_fail(422, 'invalid_field', 'Ek kaynaklarda https bağlantısı zorunludur.', ['extraSources' => 'Bağlantı eksik.']);
             }
-        }
-        $url = (string)($src['url'] ?? '');
-        if ($url !== '' && vh_https_url($url) === '') {
-            vg_fail(422, 'invalid_field', 'Kaynak adresi https:// ile başlayan geçerli bir adres olmalı.', ['source.url' => 'Yalnızca https adresleri kabul edilir.']);
-        }
-        $date = (string)($src['publishedAt'] ?? '');
-        if ($date !== '' && preg_match('/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2})?Z?)?$/', $date) !== 1) {
-            vg_fail(422, 'invalid_field', 'Kaynak tarihi YYYY-AA-GG biçiminde olmalı.', ['source.publishedAt' => 'YYYY-AA-GG']);
-        }
-        $src = [
-            'name' => vh_line($src['name'] ?? '', 'source.name', 'Kaynak adı', 2, 120, $url !== ''),
-            'url' => $url,
-            'publishedAt' => $date,
-            'licenseNote' => vh_line($src['licenseNote'] ?? '', 'source.licenseNote', 'Kullanım notu', 0, 300, false),
-        ];
-        if ($src['name'] === '' && $src['url'] === '') {
-            $src = null;
+            $a['extraSources'][] = $row;
         }
     }
-    $a['source'] = $src;
     // Gorsel: yalnizca kendi/lisansli; hak notu zorunlu.
     $img = array_key_exists('image', $body) ? $body['image'] : ($existing['image'] ?? null);
     if ($img !== null && $img !== [] && !(is_array($img) && ($img['url'] ?? '') === '')) {
@@ -899,7 +949,7 @@ function vh_build_article(array $body, ?array $existing, array $state, array $us
             vg_fail(422, 'invalid_field', 'Görsel bilgisi geçersiz.', ['image' => 'Geçersiz.']);
         }
         foreach (array_keys($img) as $k) {
-            if (!in_array($k, ['url', 'credit', 'rightsNote'], true)) {
+            if (!in_array($k, ['url', 'credit', 'rightsNote', 'licenseUrl'], true)) {
                 vg_fail(400, 'invalid_request', 'Görsel alanlarından biri desteklenmiyor.');
             }
         }
@@ -908,10 +958,15 @@ function vh_build_article(array $body, ?array $existing, array $state, array $us
         if (!$own && vh_https_url($iu) === '') {
             vg_fail(422, 'invalid_field', 'Görsel adresi /public/ altında kendi dosyamız veya https adresi olmalı.', ['image.url' => 'Geçersiz görsel adresi.']);
         }
+        $lic = (string)($img['licenseUrl'] ?? '');
+        if ($lic !== '' && vh_https_url($lic) === '') {
+            vg_fail(422, 'invalid_field', 'Lisans kaydı adresi https olmalı.', ['image.licenseUrl' => 'Yalnızca https.']);
+        }
         $img = [
             'url' => $iu,
             'credit' => vh_line($img['credit'] ?? '', 'image.credit', 'Görsel künyesi', 2, 160),
             'rightsNote' => vh_line($img['rightsNote'] ?? '', 'image.rightsNote', 'Görsel kullanım hakkı kaydı', 10, 400),
+            'licenseUrl' => $lic,
         ];
     } else {
         $img = null;
@@ -1003,39 +1058,41 @@ function vh_build_article(array $body, ?array $existing, array $state, array $us
     }
     $a['flags'] = array_values(array_unique($flags));
     $a['updatedAt'] = vg_now();
-    return vh_normalize_article($a);
+    $a = vh_normalize_article($a);
+    vh_after_content_save($a, $existing, $user);
+    return $a;
 }
 
 /** Yayin kurallari. Hata varsa 422 ve alan listesi. */
-function vh_assert_publishable(array $a): void
+/** Tek kaynak satiri (birincil veya ek kaynak). Bos satir null doner. */
+function vh_clean_source_row($src, string $field): ?array
 {
-    $errors = [];
-    if (vg_strlen($a['summary']) < VH_SUMMARY_MIN) {
-        $errors['summary'] = 'Yayın için en az ' . VH_SUMMARY_MIN . ' karakterlik editör özeti gerekir.';
+    if (!is_array($src)) {
+        vg_fail(422, 'invalid_field', 'Kaynak bilgisi geçersiz.', [$field => 'Geçersiz.']);
     }
-    if (in_array($a['type'], ['kaynak', 'resmi'], true) && (!$a['source'] || $a['source']['url'] === '' || $a['source']['name'] === '')) {
-        $errors['source.url'] = 'Bu tür için kaynak adı ve https bağlantısı zorunludur.';
-    }
-    if ($a['type'] === 'analiz' && vg_strlen($a['body']) < VH_ANALYSIS_BODY_MIN) {
-        $errors['body'] = 'VoltGuard analizi en az ' . VH_ANALYSIS_BODY_MIN . ' karakter özgün metin içermelidir.';
-    }
-    if ($a['type'] === 'kaynak') {
-        // Otomatik alinan baslik tek basina yayimlanamaz: ozeti bir editor yazmis olmali ve baslik tekrari olmamali.
-        $orig = (string)($a['ingest']['originalTitle'] ?? '');
-        $sum = vh_fold_words($a['summary']);
-        if ($a['summaryBy'] === null || !vh_user_id_valid($a['summaryBy']) && $a['origin'] !== 'seed') {
-            $errors['summary'] = 'Kaynak kartı yayımlanmadan önce özet bir editör tarafından yazılmalıdır.';
-        } elseif ($sum === vh_fold_words($a['title']) || ($orig !== '' && ($sum === vh_fold_words($orig) || vh_titles_similar($a['summary'], $orig)))) {
-            $errors['summary'] = 'Özet, kaynak başlığının tekrarı olamaz; kendi cümlelerinizle yazın.';
+    foreach (array_keys($src) as $k) {
+        if (!in_array($k, ['name', 'url', 'publishedAt', 'licenseNote'], true)) {
+            vg_fail(400, 'invalid_request', 'Kaynak alanlarından biri desteklenmiyor.');
         }
     }
-    if ($a['image'] !== null && ($a['image']['rightsNote'] === '' || $a['image']['credit'] === '')) {
-        $errors['image.rightsNote'] = 'Görsel için kullanım hakkı kaydı ve künye zorunludur.';
+    $url = (string)($src['url'] ?? '');
+    if ($url !== '' && vh_https_url($url) === '') {
+        vg_fail(422, 'invalid_field', 'Kaynak adresi https:// ile başlayan geçerli bir adres olmalı.', [$field . '.url' => 'Yalnızca https adresleri kabul edilir.']);
     }
-    if ($errors) {
-        vg_fail(422, 'not_publishable', 'Yazı yayımlanamaz: ' . implode(' ', array_values($errors)), $errors);
+    $date = (string)($src['publishedAt'] ?? '');
+    if ($date !== '' && preg_match('/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2})?Z?)?$/', $date) !== 1) {
+        vg_fail(422, 'invalid_field', 'Kaynak tarihi YYYY-AA-GG biçiminde olmalı.', [$field . '.publishedAt' => 'YYYY-AA-GG']);
     }
+    $row = [
+        'name' => vh_line($src['name'] ?? '', $field . '.name', 'Kaynak adı', 2, 120, $url !== ''),
+        'url' => $url,
+        'publishedAt' => $date,
+        'licenseNote' => vh_line($src['licenseNote'] ?? '', $field . '.licenseNote', 'Kullanım notu', 0, 300, false),
+    ];
+    return $row['name'] === '' && $row['url'] === '' ? null : $row;
 }
+
+require_once __DIR__ . '/volthaber-review.php';
 
 /* ------------------------------------------------------------------ abonelik */
 

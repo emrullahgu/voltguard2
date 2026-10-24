@@ -13,6 +13,8 @@ require $vhRoot . '/api/lib/store.php';
 require $vhRoot . '/api/lib/security.php';
 require $vhRoot . '/api/lib/validate.php';
 require $vhRoot . '/api/lib/volthaber.php';
+require $vhRoot . '/api/lib/volthaber-registry.php';
+require $vhRoot . '/api/lib/volthaber-fetch.php';
 require $vhRoot . '/api/lib/volthaber-render.php';
 
 function vh_out(int $status, string $type, string $body, array $headers = []): void

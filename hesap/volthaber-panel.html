@@ -48,7 +48,7 @@
   <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/style.css?v=33bf2e764156">
   <link rel="stylesheet" href="../css/vg-account.css?v=b3e40f497ad4">
-  <link rel="stylesheet" href="../css/volthaber.css?v=d67e2658a3c8">
+  <link rel="stylesheet" href="../css/volthaber.css?v=8dff06383baa">
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -111,7 +111,7 @@
     </nav>
     <p class="vh-mast__kicker vhp-muted"><a href="panel.html">Hesabım</a> &rsaquo; VoltHaber</p>
     <h1>VoltHaber editör paneli</h1>
-    <p class="vhp-lead">Gelen kutusu, taslaklar, yayın planı, kaynaklar, bülten ve sosyal medya taslakları. Hiçbir içerik otomatik yayımlanmaz veya paylaşılmaz.</p>
+    <p class="vhp-lead">Gelen kutusu, taslaklar, yayın akışı, kaynaklar, bülten ve sosyal medya taslakları. Hiçbir içerik otomatik yayımlanmaz veya paylaşılmaz: her yazı Taslak → Kaynak kontrolü → Teknik kontrol → Yayın onayı → Yayın sırasından geçer.</p>
     <div class="vhp-alert" data-vhp-alert role="alert" hidden></div>
     <div data-vhp-gate class="vhp-gate"><p class="vhp-muted" role="status">Yetki denetleniyor…</p><noscript><p>Panel için JavaScript gereklidir.</p></noscript></div>
 
@@ -143,7 +143,7 @@
           <button type="button" class="vhp-btn" data-act="posts-reload">Listele</button>
           <button type="button" class="vhp-btn vhp-btn--accent" data-act="new">Yeni yazı</button>
         </div>
-        <div class="vhp-table-wrap"><table class="vhp-table"><thead><tr><th>Başlık</th><th>Tür</th><th>Durum</th><th>Okunma</th><th>Güncelleme</th><th>İşlem</th></tr></thead><tbody data-list="posts"></tbody></table></div>
+        <div class="vhp-table-wrap"><table class="vhp-table"><thead><tr><th>Başlık</th><th>Tür</th><th>Durum / akış</th><th>Okunma</th><th>Güncelleme</th><th>İşlem</th></tr></thead><tbody data-list="posts"></tbody></table></div>
       </section>
 
       <section class="vhp-panel" id="p-edit" role="tabpanel" aria-labelledby="t-edit" hidden>
@@ -155,8 +155,11 @@
               <div class="vhp-field"><label for="e-type">Tür</label><select id="e-type" name="type"><option value="analiz">VoltGuard Analizi</option><option value="resmi">Resmî Duyuru Özeti</option><option value="kaynak">Kaynak Bağlantısı</option></select></div>
               <div class="vhp-field"><label for="e-category">Kategori</label><select id="e-category" name="category"></select></div>
             </div>
-            <div class="vhp-field"><label for="e-summary">Editör özeti <small data-count="summary"></small></label><textarea id="e-summary" name="summary" rows="3" maxlength="400"></textarea><small>40–400 karakter, kendi cümlelerinizle. Kaynak başlığını tekrar etmeyin.</small></div>
-            <div class="vhp-field"><label for="e-body">Metin (sınırlı Markdown)</label><textarea id="e-body" name="body" rows="14" maxlength="40000"></textarea><small>## başlık, ### alt başlık, - madde, 1. sıralı, &gt; alıntı, **kalın**, *italik*, `kod`, [metin](https://…). HTML desteklenmez.</small></div>
+            <div class="vhp-field"><label for="e-event">Olay tarihi</label><input id="e-event" name="eventDate" type="date"><small>Kararın, duyurunun veya saha olayının tarihi (yayın tarihi değil).</small></div>
+            <div class="vhp-field"><label for="e-summary">Kaynaklara dayalı kısa özet <small data-count="summary"></small></label><textarea id="e-summary" name="summary" rows="3" maxlength="400"></textarea><small>40–400 karakter, kendi cümlelerinizle; yalnızca kaynaklarda yazanlar. Kaynak başlığını tekrar etmeyin.</small></div>
+            <div class="vhp-field"><label for="e-body">Kaynak bilgisi – metin (sınırlı Markdown)</label><textarea id="e-body" name="body" rows="12" maxlength="40000"></textarea><small>## başlık, ### alt başlık, - madde, 1. sıralı, &gt; alıntı, **kalın**, *italik*, `kod`, [metin](https://…). HTML desteklenmez. Yorum bu alana yazılmaz.</small></div>
+            <div class="vhp-field"><label for="e-impact">Fabrikalar ve işletmeler için anlamı</label><textarea id="e-impact" name="impact" rows="5" maxlength="6000"></textarea><small>En az 80 karakter. Abartısız, kaynakla tutarlı pratik sonuçlar.</small></div>
+            <div class="vhp-field"><label for="e-commentary">VoltGuard yorumu</label><textarea id="e-commentary" name="commentary" rows="5" maxlength="6000"></textarea><small>En az 80 karakter. Sayfada kaynak bilgisinden ayrı, "kaynak bilgisi değildir" notuyla gösterilir.</small></div>
             <div class="vhp-row">
               <div class="vhp-field"><label for="e-tags">Etiketler</label><input id="e-tags" name="tags" placeholder="virgülle ayırın (en fazla 8)"></div>
               <div class="vhp-field"><label for="e-slug">Adres (slug)</label><input id="e-slug" name="slug" maxlength="90" placeholder="boş bırakılırsa başlıktan"></div>
@@ -168,24 +171,27 @@
                 <div class="vhp-field"><label for="e-src-date">Kaynak tarihi</label><input id="e-src-date" name="src_date" type="date"></div>
                 <div class="vhp-field"><label for="e-src-lic">Kullanım / lisans notu</label><input id="e-src-lic" name="src_lic" maxlength="300"></div>
               </div>
+              <div class="vhp-field"><label for="e-extra">Ek kaynaklar</label><textarea id="e-extra" name="extra" rows="3" placeholder="Ad | https://… | YYYY-AA-GG | kullanım notu"></textarea><small>Her satıra bir kaynak (en fazla 6). Kayıtta olmayan kaynakta kullanım notu zorunludur.</small></div>
             </fieldset>
             <fieldset><legend>Görsel (isteğe bağlı)</legend>
               <div class="vhp-field"><label for="e-img-url">Görsel adresi</label><input id="e-img-url" name="img_url" maxlength="600" placeholder="/public/... veya lisanslı https adresi"></div>
               <div class="vhp-row">
                 <div class="vhp-field"><label for="e-img-credit">Künye</label><input id="e-img-credit" name="img_credit" maxlength="160"></div>
                 <div class="vhp-field"><label for="e-img-rights">Kullanım hakkı kaydı</label><input id="e-img-rights" name="img_rights" maxlength="400" placeholder="Kendi çekimimiz / lisans no, tarih"></div>
+                <div class="vhp-field"><label for="e-img-lic">Lisans / izin kaydı adresi</label><input id="e-img-lic" name="img_lic" maxlength="600" placeholder="Dış görselde zorunlu (https)"></div>
               </div>
             </fieldset>
             <fieldset><legend>SEO ve bağlantılar</legend>
               <div class="vhp-field"><label for="e-seo-title">SEO başlığı <small data-count="seo_title"></small></label><input id="e-seo-title" name="seo_title" maxlength="70"></div>
               <div class="vhp-field"><label for="e-seo-desc">SEO açıklaması <small data-count="seo_desc"></small></label><textarea id="e-seo-desc" name="seo_desc" rows="2" maxlength="170"></textarea></div>
-              <div class="vhp-field"><label for="e-related">İlgili araç ve simülasyonlar</label><textarea id="e-related" name="related" rows="3" placeholder="/voltsim/ges/ | VoltSim GES simülasyonu"></textarea><small>Her satıra "site içi yol | etiket". Öneriler: <span data-tool-hints></span></small></div>
+              <div class="vhp-field"><label for="e-revnote">Güncelleme notu (yayındaki yazıyı düzeltirken)</label><input id="e-revnote" name="revisionNote" maxlength="300" placeholder="Ne değişti? Okura gösterilir."></div>
+              <div class="vhp-field"><label for="e-related">İlgili hizmet ve simülasyonlar</label><textarea id="e-related" name="related" rows="3" placeholder="/voltsim/ges/ | VoltSim GES simülasyonu"></textarea><small>Her satıra "site içi yol | etiket". Öneriler: <span data-tool-hints></span></small></div>
               <label class="vhp-check"><input type="checkbox" name="featured"> Ana sayfada manşet</label>
               <label class="vhp-check"><input type="checkbox" name="pick"> Editörün seçtikleri</label>
             </fieldset>
             <div class="vhp-bar">
               <button type="submit" class="vhp-btn vhp-btn--primary">Kaydet</button>
-              <button type="button" class="vhp-btn vhp-btn--accent" data-act="publish">Kaydet ve yayımla</button>
+              <button type="button" class="vhp-btn vhp-btn--accent" data-act="publish">Yayımla (onaylıysa)</button>
               <label class="vh-sr" for="e-when">Yayın zamanı</label>
               <input id="e-when" type="datetime-local">
               <button type="button" class="vhp-btn" data-act="schedule">Planla</button>
@@ -193,12 +199,20 @@
               <a class="vhp-btn" data-ed-view hidden target="_blank" rel="noopener">Sayfayı aç</a>
             </div>
           </form>
+          <section class="vhp-flow" data-flow aria-labelledby="vhp-flow-t" hidden>
+            <h2 id="vhp-flow-t" class="vh-mini-h">Yayın akışı</h2>
+            <ol class="vhp-flow__steps" data-flow-steps></ol>
+            <p class="vhp-flag" data-flow-hold hidden></p>
+            <div data-flow-act></div>
+            <details><summary>Akış geçmişi</summary><ol class="vhp-flow__hist" data-flow-hist></ol></details>
+          </section>
           <div class="vhp-preview" aria-live="off"><div class="vhp-preview__label">Canlı önizleme (sunucuda işlenmiş)</div><div class="article vh-article" data-preview></div></div>
         </div>
       </section>
 
       <section class="vhp-panel" id="p-sources" role="tabpanel" aria-labelledby="t-sources" hidden>
-        <p class="vhp-muted">"İzin gerekli" durumundaki kaynaklar yazılı izin kaydedilmeden açılamaz. Her kaynağın doğrulama kanıtı notlarda.</p>
+        <p class="vhp-alert" data-sched role="status"></p>
+        <p class="vhp-muted">"İzin gerekli" durumundaki kaynaklar yazılı izin kaydedilmeden açılamaz; koşulları bir yıldan uzun süredir kontrol edilmemiş kaynak taranmaz. RSS erişimi veya kaynak göstermek tek başına kullanım izni sayılmaz. Her kaynağın doğrulama kanıtı notlarda.</p>
         <div class="vhp-table-wrap"><table class="vhp-table"><thead><tr><th>Kaynak</th><th>İzin</th><th>Durum</th><th>Son tarama</th><th>Notlar</th><th>İşlem</th></tr></thead><tbody data-list="sources"></tbody></table></div>
         <form class="vhp-form" data-form="source" method="post" novalidate style="margin-top:1rem">
           <fieldset><legend data-src-legend>Kaynak ekle / düzenle</legend>
@@ -208,8 +222,11 @@
               <div class="vhp-field"><label for="s-feed">Akış adresi (https)</label><input id="s-feed" name="feedUrl" maxlength="600"></div>
               <div class="vhp-field"><label for="s-home">Ana sayfa</label><input id="s-home" name="homepage" maxlength="600"></div>
               <div class="vhp-field"><label for="s-terms">Kullanım koşulları</label><input id="s-terms" name="termsUrl" maxlength="600"></div>
-              <div class="vhp-field"><label for="s-format">Biçim</label><select id="s-format" name="format"><option value="rss">RSS</option><option value="atom">Atom</option><option value="etkb">enerji.gov.tr RSS</option></select></div>
+              <div class="vhp-field"><label for="s-format">Biçim</label><select id="s-format" name="format"><option value="rss">RSS</option><option value="atom">Atom</option><option value="etkb">enerji.gov.tr RSS</option><option value="none">Taranmaz (başvuru kaynağı)</option></select></div>
               <div class="vhp-field"><label for="s-cat">Kategori</label><select id="s-cat" name="category"></select></div>
+              <div class="vhp-field"><label for="s-ct">Metin kullanım koşulu</label><select id="s-ct" name="contentTerms"><option value="baslik-baglanti">Yalnızca başlık ve bağlantı</option><option value="resmi-metin">Resmî metin</option><option value="acik-lisans">Açık lisans</option><option value="yazili-izin">Yazılı izinle</option><option value="kullanilamaz">Kullanılamaz</option></select></div>
+              <div class="vhp-field"><label for="s-it">Görsel kullanım koşulu</label><select id="s-it" name="imageTerms"><option value="yok">Görsel kullanılmaz</option><option value="tek-tek">Her görsel ayrıca doğrulanır</option><option value="izinli">Yazılı izinle</option></select></div>
+              <div class="vhp-field"><label for="s-tc">Koşulların kontrol tarihi</label><input id="s-tc" name="termsCheckedAt" type="date"></div>
               <div class="vhp-field"><label for="s-perm">İzin durumu</label><select id="s-perm" name="permission"><option value="kamu">Kamu kurumu</option><option value="lisansli">Açık lisans</option><option value="izinli">Yazılı izin var</option><option value="izin-gerekli">İzin gerekli</option><option value="reddedildi">Reddedildi</option></select></div>
             </div>
             <div class="vhp-field"><label for="s-lic">Kullanım notu (yazılarda gösterilir)</label><input id="s-lic" name="licenseNote" maxlength="300"></div>
@@ -370,6 +387,6 @@
   <!--/vg:footer-->
   <script src="../js/voltguard-auth.js?v=b453c7bd4e89"></script>
   <script src="../js/vg-account.js?v=b21f9249a0ae"></script>
-  <script src="../js/hesap-volthaber-panel.js?v=4118e4b6347f"></script>
+  <script src="../js/hesap-volthaber-panel.js?v=eaa39ebaead5"></script>
 </body>
 </html>

@@ -54,7 +54,7 @@
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/style.css?v=d152330fb2b0">
-  <link rel="stylesheet" href="/css/volthaber.css?v=75967e81cd43">
+  <link rel="stylesheet" href="/css/volthaber.css?v=8dff06383baa">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltHaber","item":"https://voltguard.com.tr/volthaber/"},{"@type":"ListItem","position":3,"name":"Yayın ve Telif İlkeleri","item":"https://voltguard.com.tr/volthaber/yayin-ilkeleri.html"}]}</script>
 </head>
 <body class="doc-shell vh-page">
@@ -126,12 +126,21 @@
       <li><strong>Kaynak Bağlantısı:</strong> Başka bir yayın kuruluşunun haberine yönlendiren kısa karttır. Kartta yalnızca haberin başlığı, bağlantısı, tarihi, kaynağın adı ve <em>editörümüzün kendi cümleleriyle yazdığı</em> kısa özet bulunur. Haberin metnini, özetini veya görsellerini kopyalamayız; okuru haberin tamamı için kaynağına yönlendiririz.</li>
     </ul>
 
+    <h2 id="akis">Yayın akışı</h2>
+    <p>Her içerik yayına çıkmadan önce aynı sırayla ilerler: <strong>Taslak → Kaynak kontrolü → Teknik kontrol → Yayın onayı → Yayın</strong>. Her kontrolü bir VoltHaber editörü kendi adıyla, tarihle ve kısa bir kanıt notuyla kaydeder; yazının sonundaki "Editör ve onay durumu" kutusu bu kaydı gösterir.</p>
+    <ul class="article__list">
+      <li><strong>Kaynak kontrolü:</strong> Tüm kaynak bağlantıları açılır, özet ve tarihler kaynakla karşılaştırılır; her kaynağın metin ve görsel kullanım koşulları kontrol edilir.</li>
+      <li><strong>Teknik kontrol:</strong> Teknik ifadeler ve rakamlar kaynakla tutarlı mı, "Fabrikalar ve işletmeler için anlamı" bölümü abartısız mı, VoltGuard yorumu kaynak bilgisinden ayrılmış mı diye bakılır.</li>
+      <li><strong>Yayın onayı:</strong> İçerik son hâliyle okunur ve yayına onay verilir.</li>
+    </ul>
+    <p>Kontrollerden sonra içerikte bir değişiklik yapılırsa onaylar geçersiz olur ve akış baştan işletilir. Eksik veya çelişkili bilgi bulunan içerik taslakta tutulur. Otomatik bulunan haberler doğrudan yayımlanmaz. Her yazıda olay tarihi, yayın tarihi ve varsa güncelleme tarihi ayrı gösterilir; kaynaklara ulaşılamadığı dönemlerde son doğrulanmış içerik, bu durum belirtilerek yayında kalır ve tarihi yeni veri gelmiş gibi değiştirilmez.</p>
+
     <h2 id="kaynaklar">Kaynaklar ve otomatik tarama</h2>
-    <p>Editörlerimizin işini kolaylaştırmak için bazı kaynakların herkese açık RSS/Atom akışlarını tarıyoruz. Tarayıcımız kendini <code>VoltGuardHaberBot</code> adıyla tanıtır, kaynak başına en fazla 30 dakikada bir istek gönderir ve yalnızca <strong>başlık, bağlantı ve yayın tarihini</strong> kaydeder. Akıştaki açıklama, metin ve görseller kaydedilmez. Taranan öğeler kendiliğinden yayımlanmaz; bir editör inceleyip özetini yazmadan hiçbir kaynak kartı yayına giremez.</p>
-    <p>Varsayılan olarak yalnızca kamu kurumlarının duyuru akışlarını ve yeniden kullanımı açık lisansla izin verilen kaynakları tararız. Özel yayın kuruluşlarının akışlarını, yazılı izinleri alınmadan otomatik olarak taramayız. Her kaynağın izin durumunu ve kontrol tarihini kayıt altında tutarız.</p>
+    <p>Editörlerimizin işini kolaylaştırmak için bazı kaynakların herkese açık RSS/Atom akışlarını tarıyoruz. Tarayıcımız kendini <code>VoltGuardHaberBot</code> adıyla tanıtır, kaynak başına en fazla 30 dakikada bir istek gönderir ve yalnızca <strong>başlık, bağlantı ve yayın tarihini</strong> kaydeder. Akıştaki açıklama, metin ve görseller kaydedilmez. Taranan öğeler kendiliğinden yayımlanmaz; yukarıdaki yayın akışını tamamlamadan hiçbir içerik yayına giremez. Tarayıcı yalnızca kaynak kaydındaki adreslere ve o kaynağın kendi alan adlarına bağlanır; zaman aşımı ve boyut sınırı uygular.</p>
+    <p>Varsayılan olarak yalnızca kamu kurumlarının duyuru akışlarını ve yeniden kullanımı açık lisansla izin verilen kaynakları tararız. Özel yayın kuruluşlarının akışlarını, yazılı izinleri alınmadan otomatik olarak taramayız. Her kaynağın izin durumunu, metin ve görsel kullanım koşullarını ve bu koşulların kontrol tarihini kayıt altında tutarız; koşulları bir yıldan uzun süredir kontrol edilmemiş kaynağı taramayız. Bir akışa erişebilmek, kaynak göstermek veya metni kendi cümlelerimizle yeniden yazmak tek başına kullanım izni sayılmaz.</p>
 
     <h2>Görseller</h2>
-    <p>Yalnızca kendi ürettiğimiz veya kullanım hakkını belgelediğimiz görselleri kullanırız. Her görselin künyesi yazının altında yer alır; hak kaydı olmayan görsel yayımlanamaz.</p>
+    <p>Yalnızca kendi ürettiğimiz veya kullanım hakkını belgelediğimiz görselleri kullanırız. Her görselin künyesi yazının altında yer alır; hak kaydı olmayan görsel yayımlanamaz. Başka bir kaynaktan alınan görselde lisans veya izin kaydının adresi de saklanır; lisansı doğrulanamayan görsel kullanılmaz. Bu önlemler telif riskini azaltmak içindir; her durumda riski ortadan kaldırdığını iddia etmiyoruz, bu nedenle kaldırma taleplerini öncelikle değerlendiririz.</p>
 
     <h2 id="yapay-zeka">Yapay zekâ destekli içerik</h2>
     <p>Taslak hazırlarken yazım yardımcı araçlarından yararlanabiliriz. Bu durumda metindeki her bilgi, yayından önce bir editör tarafından kaynağıyla karşılaştırılarak doğrulanır; doğrulanamayan bilgi yayımlanmaz. VoltHaber'de otomatik olarak yazılıp editör denetimi olmadan yayımlanan içerik yoktur. Sosyal medya için hazırlanan metin taslakları da şablondan üretilir ve hiçbir platformda otomatik paylaşılmaz.</p>

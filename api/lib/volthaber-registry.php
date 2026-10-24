@@ -4,6 +4,9 @@
  * Her kaynagin akisi 24.10.2026'da tek tek cekilerek dogrulandi; kanit "notes" alanindadir.
  * Varsayilan olarak YALNIZCA erisimin acikca uygun oldugu kaynaklar aciktir. Ozel yayin kuruluslari izin alinana kadar kapalidir.
  * Ingest yalnizca baslik + baglanti + tarih + kaynak adi saklar; govde, ozet ve gorsel ALINMAZ.
+ * contentTerms: metin kullanim kosulu; imageTerms: gorsel kullanim kosulu; termsCheckedAt: kosullarin son kontrol tarihi.
+ * RSS'e erisebilmek, kaynak gostermek veya metni yeniden ifade etmek kullanim izni sayilmaz: izin bu alanlarda kayitlidir.
+ * format "none": taranmayan, yalnizca kaynak kontrolunde kosulu eslestirilen basvuru kaynagi (ör. Resmî Gazete).
  */
 declare(strict_types=1);
 
@@ -28,6 +31,9 @@ function vh_registry(): array
             'licenseNote' => 'Kamu kurumu duyurusu; yalnızca başlık ve bağlantı kullanılır.',
             'notes' => '24.10.2026 kontrol: https://enerji.gov.tr/rss sayfasında listelenen RSS/17 akışı text/xml, <rss version="2.0"> döndürdü; en yeni öğe 23.10.2026 tarihli. Akış standart dışı: öğelerde <link> ve <pubDate> yok, tarih PublishStartDate (AA/GG/YYYY) alanında. Bu nedenle bağlantı boş gelir; editör yayından önce haberin tam adresini (enerji.gov.tr/haber-detay?id=…) girmelidir. robots.txt: Allow / (yalnızca /duyurular yasak; /RSS serbest). Kullanım koşulu sayfası bulunamadı, alt bilgide "Tüm Hakları Saklıdır". Kamu kurumu duyurusu; başlık + bağlantı dışında içerik alınmaz.',
             'enabled' => true,
+            'contentTerms' => 'baslik-baglanti',
+            'imageTerms' => 'yok',
+            'termsCheckedAt' => '2026-10-24',
         ],
         [
             'id' => 'etkb-duyuru',
@@ -42,6 +48,9 @@ function vh_registry(): array
             'licenseNote' => 'Kamu kurumu duyurusu; yalnızca başlık ve bağlantı kullanılır.',
             'notes' => '24.10.2026 kontrol: RSS/15 akışı çalışıyor (en yeni öğe 23.10.2026, il/ilçe bazlı proje ve izin duyuruları). Biçim RSS/17 ile aynı (bağlantı ve pubDate yok). Çoğunlukla yerel proje duyurusu olduğu için gürültülü; varsayılan kapalı.',
             'enabled' => false,
+            'contentTerms' => 'baslik-baglanti',
+            'imageTerms' => 'yok',
+            'termsCheckedAt' => '2026-10-24',
         ],
         [
             'id' => 'epias',
@@ -56,6 +65,9 @@ function vh_registry(): array
             'licenseNote' => 'Piyasa işletmecisinin kamuya açık duyurusu; yalnızca başlık ve bağlantı kullanılır.',
             'notes' => '24.10.2026 kontrol: https://www.epias.com.tr/feed/ geçerli RSS 2.0 (WordPress, 10 öğe); en yeni öğe "Kasım 2026 Dönemi Serbest Tüketici Listelerinin Yayımlanması…", 23.10.2026. robots.txt yalnızca /wp-admin/ yolunu yasaklıyor. Ayrı bir kullanım koşulları sayfası bulunamadı. Piyasa işletmecisinin kendi yayınladığı duyuru akışı; başlık + bağlantı dışında içerik alınmaz. Şeffaflık Platformu API\'si kimlik doğrulama istiyor (401) ve kullanılmıyor.',
             'enabled' => true,
+            'contentTerms' => 'baslik-baglanti',
+            'imageTerms' => 'yok',
+            'termsCheckedAt' => '2026-10-24',
         ],
         [
             'id' => 'ec-energy',
@@ -70,6 +82,9 @@ function vh_registry(): array
             'licenseNote' => '© European Union – CC BY 4.0; kaynak gösterilerek kullanılır.',
             'notes' => '24.10.2026 kontrol: /news_en sayfasındaki bağlantıdan alınan node/2/rss_en geçerli RSS 2.0 ("Energy | News", 30 öğe), en yeni öğe 23.10.2026. Öğeler tarih sırasında değil, sıralama içeri alırken yapılır. robots.txt yalnızca yönetim yollarını yasaklıyor. Yasal uyarı: AB içeriği CC BY 4.0, kaynak gösterilerek yeniden kullanılabilir.',
             'enabled' => true,
+            'contentTerms' => 'acik-lisans',
+            'imageTerms' => 'tek-tek',
+            'termsCheckedAt' => '2026-10-24',
         ],
         [
             'id' => 'epdk',
@@ -84,6 +99,9 @@ function vh_registry(): array
             'licenseNote' => 'Kamu kurumu duyurusu; yalnızca başlık ve bağlantı kullanılır.',
             'notes' => '24.10.2026 kontrol: ana sayfa /Detay/Rss bağlantısı veriyor ancak adres 3 denemede 25–60 sn içinde 0 bayt ile zaman aşımına uğradı (aynı sunucudaki başka sayfa 0,3 sn). Çalışan akış doğrulanamadı; kapalı. Akış düzelirse editör "Şimdi tara" ile deneyip açabilir.',
             'enabled' => false,
+            'contentTerms' => 'baslik-baglanti',
+            'imageTerms' => 'yok',
+            'termsCheckedAt' => '2026-10-24',
         ],
         [
             'id' => 'irena',
@@ -98,6 +116,9 @@ function vh_registry(): array
             'licenseNote' => '',
             'notes' => '24.10.2026 kontrol: akış çalışıyor (RSS 2.0, 21 öğe, en yeni 16.10.2026). Ancak kullanım koşulları siteye robot veya otomatik yöntemle erişimi yasaklıyor ve kopyalamaya yalnızca ticari olmayan amaçla izin veriyor. Yazılı izin alınana kadar kapalı.',
             'enabled' => false,
+            'contentTerms' => 'kullanilamaz',
+            'imageTerms' => 'yok',
+            'termsCheckedAt' => '2026-10-24',
         ],
         [
             'id' => 'gunder',
@@ -112,6 +133,9 @@ function vh_registry(): array
             'licenseNote' => '',
             'notes' => '24.10.2026 kontrol: akış geçerli RSS 2.0 ama güncel değil (en yeni öğe 21.02.2025). Kullanım şartları yazılı izin olmadan içeriğin çoğaltılmasını yasaklıyor; robots.txt "use=reference" sinyali veriyor. İzin alınana kadar kapalı.',
             'enabled' => false,
+            'contentTerms' => 'kullanilamaz',
+            'imageTerms' => 'yok',
+            'termsCheckedAt' => '2026-10-24',
         ],
         [
             'id' => 'yesilhaber',
@@ -126,6 +150,9 @@ function vh_registry(): array
             'licenseNote' => '',
             'notes' => '24.10.2026 kontrol: akış çalışıyor (RSS 2.0, 40 öğe, en yeni 24.10.2026). Kullanım koşulları izinsiz kopyalama, ticari kullanım ve izinsiz veri toplamayı yasaklıyor. Özel yayın kuruluşu; yazılı izin alınana kadar kapalı.',
             'enabled' => false,
+            'contentTerms' => 'kullanilamaz',
+            'imageTerms' => 'yok',
+            'termsCheckedAt' => '2026-10-24',
         ],
         [
             'id' => 'enerjigunlugu',
@@ -140,6 +167,43 @@ function vh_registry(): array
             'licenseNote' => '',
             'notes' => '24.10.2026 kontrol: sayfada <link rel=alternate> ile duyurulan akış çalışıyor (RSS 2.0, 27 öğe, en yeni 24.10.2026). Kullanım koşulu bulunamadı. Özel yayın kuruluşu; koşullar belirsiz olduğu için yazılı izin alınana kadar kapalı.',
             'enabled' => false,
+            'contentTerms' => 'kullanilamaz',
+            'imageTerms' => 'yok',
+            'termsCheckedAt' => '2026-10-24',
+        ],
+        [
+            'id' => 'resmi-gazete',
+            'name' => 'T.C. Resmî Gazete',
+            'homepage' => 'https://www.resmigazete.gov.tr/',
+            'feedUrl' => 'https://www.resmigazete.gov.tr/',
+            'format' => 'none',
+            'category' => 'mevzuat',
+            'permission' => 'kamu',
+            'termsUrl' => 'https://www.resmigazete.gov.tr/',
+            'fallbackLink' => '',
+            'licenseNote' => 'Resmî metin; 5846 sayılı FSEK md. 31 uyarınca resmen yayımlanan mevzuat ve kurul kararları telif koruması dışındadır. Bağlayıcı olan Resmî Gazete metnidir.',
+            'notes' => '24.10.2026 kontrol: taranmaz (format none); yalnızca yazılardaki Resmî Gazete bağlantılarının kullanım koşulu eşleştirmesi için. Günlük fihrist (eskiler/YYYY/AA/YYYYAAGG.htm) ve karar PDF\'leri açıldı. Metinler özetlenir, uzun alıntı yapılmaz; sayfa ve PDF görselleri kullanılmaz.',
+            'enabled' => false,
+            'contentTerms' => 'resmi-metin',
+            'imageTerms' => 'yok',
+            'termsCheckedAt' => '2026-10-24',
+        ],
+        [
+            'id' => 'mevzuat-gov',
+            'name' => 'Mevzuat Bilgi Sistemi',
+            'homepage' => 'https://www.mevzuat.gov.tr/',
+            'feedUrl' => 'https://www.mevzuat.gov.tr/',
+            'format' => 'none',
+            'category' => 'mevzuat',
+            'permission' => 'kamu',
+            'termsUrl' => 'https://www.mevzuat.gov.tr/',
+            'fallbackLink' => '',
+            'licenseNote' => 'Resmî metin (FSEK md. 31); güncel metin bilgilendirme amaçlıdır, bağlayıcı olan Resmî Gazete metnidir.',
+            'notes' => '24.10.2026 kontrol: taranmaz (format none); konsolide mevzuat metinlerine verilen bağlantıların koşul eşleştirmesi için. Görsel kullanılmaz.',
+            'enabled' => false,
+            'contentTerms' => 'resmi-metin',
+            'imageTerms' => 'yok',
+            'termsCheckedAt' => '2026-10-24',
         ],
     ];
 }

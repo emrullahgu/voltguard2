@@ -179,10 +179,39 @@ function vh_tools_block(string $cat = ''): string
         }));
         $links = $own ?: array_slice($links, 0, 4);
     }
-    return '<section class="vh-tools" aria-labelledby="vh-tools-t"><h2 id="vh-tools-t">VoltSim simülasyonları ve hesap araçları</h2><ul>'
+    return '<section class="vh-tools" aria-labelledby="vh-tools-t"><h2 id="vh-tools-t">VoltGuard hizmetleri, VoltSim ve hesap araçları</h2><ul>'
         . implode('', array_map(function ($l) {
             return '<li><a href="' . vh_esc($l[0]) . '">' . vh_esc($l[1]) . '</a></li>';
         }, $links)) . '</ul></section>';
+}
+
+/**
+ * Guncellik kutusu: icerikler yerel kayittan sunulur, kaynak kesintisi yayindaki icerigi etkilemez. Kesinti varsa
+ * okura acikca soylenir ve son dogrulama tarihi gosterilir; hicbir tarih yeni veri gelmis gibi degistirilmez.
+ */
+function vh_freshness_block(array $live): string
+{
+    if (!function_exists('vh_freshness')) {
+        return '';
+    }
+    try {
+        $f = vh_freshness($live);
+    } catch (Throwable $e) {
+        return '';
+    }
+    $out = '<section class="vh-fresh" aria-labelledby="vh-fresh-t"><h2 id="vh-fresh-t">Güncellik</h2>';
+    $out .= $f['lastVerifiedAt'] !== null
+        ? '<p>Son yayın onayı: <time datetime="' . vh_esc($f['lastVerifiedAt']) . '">' . vh_tr_date((int)strtotime($f['lastVerifiedAt']), true) . '</time>.</p>'
+        : '<p>Yayındaki içerikler henüz yeni yayın akışından geçmedi; her yazıda onay durumu ayrıca gösterilir.</p>';
+    if ($f['degraded']) {
+        $down = array_values(array_filter($f['sources'], function ($s) {
+            return $s['reachable'] === false;
+        }));
+        $out .= '<p class="vh-fresh__warn">Bazı kaynaklara şu anda ulaşılamıyor: ' . implode(', ', array_map(function ($s) {
+            return vh_esc($s['name']) . ($s['lastOkAt'] ? ' (son başarılı kontrol ' . vh_tr_date((int)strtotime($s['lastOkAt'])) . ')' : '');
+        }, $down)) . '. Gösterilen içerikler son doğrulandıkları hâliyle yayındadır; yeni gelişmeler gecikebilir.</p>';
+    }
+    return $out . '</section>';
 }
 
 function vh_most_read_block(array $items, array $views): string
@@ -335,6 +364,7 @@ function vh_render_home(array $state, array $views, int $page, string $q): array
         . vh_section('Editörün seçtikleri', 'vh-picks', $picks)
         . $all
         . '</div><aside class="vh-col-side">'
+        . vh_freshness_block($live)
         . vh_most_read_block(vh_most_read($live, $views, 5), $views)
         . vh_newsletter() . vh_tools_block()
         . '<p class="vh-policy"><a href="/volthaber/yayin-ilkeleri.html">Yayın ve telif ilkelerimiz</a> · <a href="/volthaber/rss.xml">RSS</a></p>'
@@ -388,14 +418,79 @@ function vh_render_listing(array $state, array $views, string $kind, string $key
     return ['meta' => $meta, 'main' => vh_shell_main($body, '<div class="vh-wrap">' . vh_breadcrumb_html($crumb) . '</div>')];
 }
 
+/** Kaynak tarihi (YYYY-AA-GG veya ISO) okunur bicimde; gecersizse ''. */
+function vh_src_date(string $d): string
+{
+    $ts = $d !== '' ? strtotime($d . (strlen($d) === 10 ? 'T12:00:00Z' : '')) : false;
+    return $ts !== false ? vh_tr_date((int)$ts) : '';
+}
+
+/** Olay / yayin / guncelleme tarihleri. Guncelleme yalnizca onayli bir duzeltme varsa gosterilir. */
+function vh_dates_html(array $a): string
+{
+    $ts = vh_live_at($a);
+    $out = '<dl class="vh-dates">';
+    if ($a['eventDate'] !== '') {
+        $out .= '<div><dt>Olay tarihi</dt><dd><time datetime="' . vh_esc($a['eventDate']) . '">' . vh_src_date($a['eventDate']) . '</time></dd></div>';
+    }
+    $out .= '<div><dt>Yayın</dt><dd><time datetime="' . vg_iso($ts) . '">' . vh_tr_date($ts, true) . '</time></dd></div>';
+    if ($a['revisedAt']) {
+        $out .= '<div><dt>Güncelleme</dt><dd><time datetime="' . vg_iso($a['revisedAt']) . '">' . vh_tr_date($a['revisedAt'], true) . '</time>'
+            . ($a['revisionNote'] !== '' ? ' – ' . vh_esc($a['revisionNote']) : '') . '</dd></div>';
+    }
+    return $out . '</dl>';
+}
+
+/** Editor/onay durumu kutusu. Akistan once yayimlanan kayit bunu acikca soyler. */
+function vh_review_html(array $a): string
+{
+    $out = '<section class="vh-review" aria-labelledby="vh-review-t"><h2 id="vh-review-t">Editör ve onay durumu</h2>';
+    if ($a['review']['stage'] === 'legacy') {
+        return $out . '<p>Bu içerik, VoltHaber yayın akışı (kaynak kontrolü, teknik kontrol, yayın onayı) uygulanmaya başlamadan önce yayımlandı. '
+            . 'Kaynakları VoltGuard mevzuat kaydından alınmıştır; akış kontrolleri henüz yapılmamıştır.</p></section>';
+    }
+    $out .= '<ol class="vh-review__steps">';
+    foreach (vh_review_steps() as $step => $def) {
+        $c = $a['review']['checks'][$step];
+        $out .= '<li class="' . ($c ? 'is-done' : 'is-open') . '"><strong>' . vh_esc($def[2]) . '</strong>'
+            . ($c ? ': ' . vh_esc($c['by']) . ', <time datetime="' . vg_iso($c['at']) . '">' . vh_tr_date($c['at']) . '</time>' : ': yapılmadı') . '</li>';
+    }
+    return $out . '</ol><p class="vh-review__note">Kontroller içeriğin bu sürümü için yapılmıştır; içerik değişirse akış yeniden işletilir. '
+        . '<a href="/volthaber/yayin-ilkeleri.html#akis">Yayın akışımız</a></p></section>';
+}
+
+function vh_sources_html(array $a): string
+{
+    $list = array_values(array_filter(vh_all_sources($a), function ($s) {
+        return $s['url'] !== '';
+    }));
+    if (!$list) {
+        return '';
+    }
+    $out = '<section class="vh-source" aria-labelledby="vh-src-t"><h2 id="vh-src-t">Kaynaklar</h2><ol class="vh-source__list">';
+    foreach ($list as $i => $s) {
+        $d = vh_src_date($s['publishedAt']);
+        $out .= '<li><a href="' . vh_esc($s['url']) . '" target="_blank" rel="noopener noreferrer">' . vh_esc($s['name']) . ' <span aria-hidden="true">&#8599;</span></a>'
+            . ($d !== '' ? ' <span class="vh-source__date">· ' . $d . '</span>' : '')
+            . ($s['licenseNote'] !== '' ? '<span class="vh-source__note">' . vh_esc($s['licenseNote']) . '</span>' : '') . '</li>';
+    }
+    $out .= '</ol>';
+    if ($a['type'] === 'kaynak') {
+        $out .= '<p><a class="btn btn--primary btn--md" href="' . vh_esc($list[0]['url']) . '" target="_blank" rel="noopener noreferrer">Haberin tamamını kaynağında okuyun <span aria-hidden="true">&#8599;</span></a></p>';
+    }
+    return $out . '</section>';
+}
+
 function vh_render_article(array $state, array $views, array $a): array
 {
     $now = vg_now();
     $live = vh_live_list($state, $now);
+    $a = vh_live_view($a);
     $cats = vh_categories();
     $catName = $cats[$a['category']][0] ?? '';
     $url = VH_SITE . '/volthaber/' . $a['slug'] . '/';
     $ts = vh_live_at($a);
+    $modified = max($ts, (int)$a['revisedAt']);
     $crumb = [['Ana Sayfa', '/'], ['VoltHaber', '/volthaber/'], [$catName, '/volthaber/kategori/' . $a['category'] . '/'], [$a['title'], '/volthaber/' . $a['slug'] . '/']];
     $desc = $a['seo']['description'] !== '' ? $a['seo']['description'] : vh_plain($a['summary'], 165);
     $img = $a['image'] ? (strpos($a['image']['url'], '/') === 0 ? VH_SITE . $a['image']['url'] : $a['image']['url']) : VH_SITE . '/public/og-image.png';
@@ -403,50 +498,45 @@ function vh_render_article(array $state, array $views, array $a): array
     $articleLd = [
         '@context' => 'https://schema.org', '@type' => 'Article', '@id' => $url . '#article',
         'headline' => vg_substr($a['title'], 110), 'description' => $desc, 'inLanguage' => 'tr-TR', 'image' => $img,
-        'datePublished' => vg_iso($ts), 'dateModified' => vg_iso(max($ts, $a['updatedAt'])), 'articleSection' => $catName,
+        'datePublished' => vg_iso($ts), 'dateModified' => vg_iso($modified), 'articleSection' => $catName,
         'keywords' => implode(', ', $a['tags']), 'mainEntityOfPage' => $url,
         'author' => $a['author']['id'] === null ? ['@type' => 'Organization', 'name' => $authorName, 'url' => VH_SITE . '/'] : ['@type' => 'Person', 'name' => $authorName],
         'publisher' => ['@type' => 'Organization', '@id' => VH_SITE . '/#organization', 'name' => 'VoltGuard', 'logo' => ['@type' => 'ImageObject', 'url' => VH_SITE . '/public/voltguard-logo.webp']],
         'isPartOf' => ['@type' => 'WebSite', '@id' => VH_SITE . '/#website'],
     ];
-    if ($a['source'] && $a['source']['url'] !== '') {
-        $articleLd['isBasedOn'] = $a['source']['url'];
+    $srcUrls = array_values(array_filter(array_column(vh_all_sources($a), 'url')));
+    if ($srcUrls) {
+        $articleLd['isBasedOn'] = count($srcUrls) === 1 ? $srcUrls[0] : $srcUrls;
     }
     $meta = vh_meta(['title' => ($a['seo']['title'] !== '' ? $a['seo']['title'] : $a['title']) . ' | VoltHaber', 'ogTitle' => $a['title'], 'desc' => $desc, 'url' => $url, 'type' => 'article', 'image' => $img,
-        'published' => vg_iso($ts), 'modified' => vg_iso(max($ts, $a['updatedAt'])), 'section' => $catName, 'ld' => [$articleLd, vh_breadcrumb_ld($crumb)]]);
+        'published' => vg_iso($ts), 'modified' => vg_iso($modified), 'section' => $catName, 'ld' => [$articleLd, vh_breadcrumb_ld($crumb)]]);
 
-    $byline = '<p class="vh-byline"><time datetime="' . vg_iso($ts) . '">' . vh_tr_date($ts, true) . '</time>'
-        . ' · Hazırlayan: ' . vh_esc($authorName)
-        . ($a['editor'] && $a['editor']['name'] !== '' && $a['editor']['name'] !== $authorName ? ' · Editör: ' . vh_esc($a['editor']['name']) : '')
-        . ($a['updatedAt'] > $ts + 3600 ? ' · Güncelleme: <time datetime="' . vg_iso($a['updatedAt']) . '">' . vh_tr_date($a['updatedAt']) . '</time>' : '') . '</p>';
+    $byline = '<p class="vh-byline">Hazırlayan: ' . vh_esc($authorName)
+        . ($a['editor'] && $a['editor']['name'] !== '' && $a['editor']['name'] !== $authorName ? ' · Yayına alan editör: ' . vh_esc($a['editor']['name']) : '') . '</p>';
     $figure = '';
     if ($a['image']) {
         $figure = '<figure class="vh-figure"><img src="' . vh_esc($a['image']['url']) . '" alt="" loading="lazy" decoding="async"><figcaption>' . vh_esc($a['image']['credit']) . '</figcaption></figure>';
     }
-    $source = '';
-    if ($a['source'] && $a['source']['url'] !== '') {
-        $s = $a['source'];
-        $sd = $s['publishedAt'] !== '' && strtotime($s['publishedAt']) !== false ? vh_tr_date((int)strtotime($s['publishedAt'] . (strlen($s['publishedAt']) === 10 ? 'T12:00:00Z' : ''))) : '';
-        $source = '<aside class="vh-source" aria-label="Kaynak"><h2>Kaynak</h2><p><strong>' . vh_esc($s['name']) . '</strong>' . ($sd !== '' ? ' · ' . $sd : '') . '</p>'
-            . '<p><a class="btn btn--primary btn--md" href="' . vh_esc($s['url']) . '" target="_blank" rel="noopener noreferrer">' . ($a['type'] === 'kaynak' ? 'Haberin tamamını kaynağında okuyun' : 'Kaynağı açın') . ' <span aria-hidden="true">&#8599;</span></a></p>'
-            . ($s['licenseNote'] !== '' ? '<p class="vh-source__note">' . vh_esc($s['licenseNote']) . '</p>' : '')
-            . '</aside>';
-    }
-    $kaynakNote = $a['type'] === 'kaynak' ? '<p class="vh-note">Bu kart, ' . vh_esc($a['source']['name'] ?? 'kaynak') . ' tarafından yayımlanan habere yönlendirir. Yukarıdaki özet VoltHaber editörü tarafından yazılmıştır; haberin metni ve görselleri kaynağına aittir.</p>' : '';
+    $kaynakNote = $a['type'] === 'kaynak' ? '<p class="vh-note">Bu kart, ' . vh_esc($a['source']['name'] ?? 'kaynak') . ' tarafından yayımlanan habere yönlendirir. Özet VoltHaber editörü tarafından yazılmıştır; haberin metni ve görselleri kaynağına aittir.</p>' : '';
     $resmiNote = $a['type'] === 'resmi' ? '<p class="kb-disclaimer">Bu özet bilgilendirme amaçlıdır. Bağlayıcı olan Resmî Gazete\'de yayımlanan metin ve yürürlükteki güncel mevzuattır.</p>' : '';
+    $summary = '<section class="vh-lead" aria-labelledby="vh-lead-t"><h2 id="vh-lead-t" class="vh-lead__t">Kısa özet</h2><p class="article__summary">' . vh_esc($a['summary']) . '</p>'
+        . ($srcUrls ? '<p class="vh-lead__src">Bu özet, aşağıda bağlantısı verilen kaynaklara dayanır.</p>' : '') . '</section>';
+    $impact = trim($a['impactHtml']) !== '' ? '<section class="vh-impact" aria-labelledby="vh-impact-t"><h2 id="vh-impact-t">Fabrikalar ve işletmeler için anlamı</h2>' . $a['impactHtml'] . '</section>' : '';
+    $opinion = trim($a['commentaryHtml']) !== '' ? '<aside class="vh-opinion" aria-labelledby="vh-opinion-t"><h2 id="vh-opinion-t">VoltGuard yorumu</h2>'
+        . '<p class="vh-opinion__note">Bu bölüm kaynak bilgisi değildir; VoltGuard mühendislerinin değerlendirmesidir.</p>' . $a['commentaryHtml'] . '</aside>' : '';
     $tags = $a['tags'] ? '<p class="vh-tags">' . implode('', array_map(function ($t) {
         return '<a href="/volthaber/etiket/' . vh_esc($t) . '/">#' . vh_esc($t) . '</a>';
     }, $a['tags'])) . '</p>' : '';
-    $rel = $a['related'] ? '<section class="vh-tools" aria-labelledby="vh-rel-tools"><h2 id="vh-rel-tools">İlgili araç ve simülasyonlar</h2><ul>' . implode('', array_map(function ($r) {
+    $rel = $a['related'] ? '<section class="vh-tools" aria-labelledby="vh-rel-tools"><h2 id="vh-rel-tools">İlgili hizmet ve simülasyonlar</h2><ul>' . implode('', array_map(function ($r) {
         return '<li><a href="' . vh_esc($r['url']) . '">' . vh_esc($r['label']) . '</a></li>';
     }, $a['related'])) . '</ul></section>' : '';
     $relatedArticles = vh_related($live, $a, 4);
     $article = '<article class="article vh-article">'
         . '<p class="vh-article__kick">' . vh_type_badge($a) . '<a class="article__cat" href="/volthaber/kategori/' . vh_esc($a['category']) . '/">' . vh_esc($catName) . '</a></p>'
-        . '<h1>' . vh_esc($a['title']) . '</h1>' . $byline
-        . '<p class="article__summary">' . vh_esc($a['summary']) . '</p>' . $figure . $kaynakNote
+        . '<h1>' . vh_esc($a['title']) . '</h1>' . vh_dates_html($a) . $byline
+        . $summary . $figure . $kaynakNote
         . '<div class="vh-body">' . $a['bodyHtml'] . '</div>'
-        . $source . $resmiNote . $tags . vh_share($url, $a['title']) . $rel
+        . $impact . $opinion . vh_sources_html($a) . $resmiNote . $rel . vh_review_html($a) . $tags . vh_share($url, $a['title'])
         . '<p class="vh-policy">Bir hata mı fark ettiniz? <a href="/volthaber/yayin-ilkeleri.html#duzeltme">Düzeltme ve kaldırma talebi</a></p>'
         . '</article>';
     $after = '<div class="vh-wrap vh-after">'
@@ -475,7 +565,7 @@ function vh_sitemap(array $state): string
     $live = vh_live_list($state, vg_now());
     $out = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
     $latest = $live ? max(array_map(function ($a) {
-        return max(vh_live_at($a), $a['updatedAt']);
+        return max(vh_live_at($a), (int)$a['revisedAt']);
     }, $live)) : vg_now();
     $out .= '  <url><loc>' . VH_SITE . '/volthaber/</loc><lastmod>' . gmdate('Y-m-d', $latest) . "</lastmod></url>\n";
     $out .= '  <url><loc>' . VH_SITE . "/volthaber/yayin-ilkeleri.html</loc></url>\n";
@@ -488,7 +578,7 @@ function vh_sitemap(array $state): string
         }
     }
     foreach ($live as $a) {
-        $out .= '  <url><loc>' . vh_xml(VH_SITE . '/volthaber/' . $a['slug'] . '/') . '</loc><lastmod>' . gmdate('Y-m-d', max(vh_live_at($a), $a['updatedAt'])) . "</lastmod></url>\n";
+        $out .= '  <url><loc>' . vh_xml(VH_SITE . '/volthaber/' . $a['slug'] . '/') . '</loc><lastmod>' . gmdate('Y-m-d', max(vh_live_at($a), (int)$a['revisedAt'])) . "</lastmod></url>\n";
     }
     return $out . "</urlset>\n";
 }

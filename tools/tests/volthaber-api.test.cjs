@@ -1,5 +1,7 @@
-/* VoltHaber: real PHP/HTTP checks (roles, CSRF, validation, duplicates, publish rules, fetcher, newsletter, escaping, SSR).
-   Everything runs against a temporary private data directory; feeds come from local fixtures (no network). */
+/* VoltHaber: real PHP/HTTP checks (roles, CSRF, validation, duplicates, publication workflow, source terms, fetcher and
+   failure scenarios, newsletter, escaping, SSR). Everything runs against a temporary private data directory; feeds come
+   from local fixtures (no network). The publication workflow is exercised end to end on the real, source-verified
+   seed draft (EPDK decision 14982, Resmî Gazete 24.10.2026). */
 const assert = require('node:assert/strict');
 const { spawn, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
@@ -91,6 +93,25 @@ async function run() {
     if (code) check(r.body.error, code, `${action} error code`);
     return r;
   }
+  // Workflow helpers: Taslak -> Kaynak kontrolü -> Teknik kontrol -> Yayın onayı (then publish/schedule separately).
+  const CHECKLIST = {
+    source: { sourcesOpened: true, termsChecked: true, noCopiedText: true, imagesLicensed: true },
+    technical: { claimsVerified: true, impactReviewed: true, commentarySeparated: true, linksChecked: true },
+    approval: { readyToPublish: true }
+  };
+  const review = (actor, id, step, status = 200, code) =>
+    expect(actor, 'review', { body: { id, step, checklist: CHECKLIST[step], note: `${step} kontrolü: kaynak metinle karşılaştırıldı.` } }, status, code);
+  async function approve(actor, id) {
+    await expect(actor, 'submit', { body: { id } }, 200);
+    await review(actor, id, 'source');
+    await review(actor, id, 'technical');
+    return review(actor, id, 'approval');
+  }
+  const IMPACT = 'Bu değişiklik, fabrikalarda bakım planı ve kayıt düzenini doğrudan etkiler; işletmeler sorumlularını ve takvimlerini gözden geçirmelidir.';
+  const COMMENTARY = 'VoltGuard olarak sahada en sık gördüğümüz eksik, kayıtların dağınık tutulması; ölçüm ve rapor arşivinin tek yerde toplanmasını öneriyoruz.';
+  let srcN = 0;
+  const complete = () => ({ impact: IMPACT, commentary: COMMENTARY, eventDate: '2026-10-20',
+    source: { name: 'Örnek Kurum Duyurusu', url: `https://www.ornek.gov.tr/duyuru/test-${++srcN}`, publishedAt: '2026-10-20', licenseNote: 'Kamu kurumu duyurusu; koşullar 24.10.2026 test kaydında kontrol edildi.' } });
   const page = async (p, opts = {}) => {
     const r = await fetch(base + p, { redirect: 'manual', headers: { 'User-Agent': opts.ua || 'Mozilla/5.0 test' } });
     return { status: r.status, text: await r.text(), headers: r.headers };
@@ -107,7 +128,11 @@ async function run() {
     // ---------------------------------------------------------------- public reads + seed content
     let r = await expect(anon, 'list', {}, 200);
     const seed = JSON.parse(fs.readFileSync(path.join(root, 'api/lib/volthaber-seed.json'), 'utf8')).articles;
-    check(r.body.total, seed.length, 'Seeded launch content is published');
+    const seedLive = seed.filter(a => a.status === 'published');
+    const realDraft = seed.find(a => a.status === 'draft');
+    check(r.body.total, seedLive.length, 'Seeded launch content is published; the pending real draft is not');
+    ok(realDraft && realDraft.review.history[0].note.includes('20261024-11.pdf'), 'Real draft records which sources were opened');
+    ok(r.body.items.every(i => i.review.stage === 'legacy'), 'Pre-workflow items are honestly marked as legacy');
     ok(r.body.items.every(i => i.source && /^https:\/\//.test(i.source.url)), 'Every seeded item cites an https source');
     ok(!r.headers.getSetCookie().length, 'Public list starts no session');
     r = await expect(anon, 'list', { query: { type: 'resmi' } }, 200);
@@ -118,6 +143,7 @@ async function run() {
     r = await expect(anon, 'list', { query: { q: 'reaktif' } }, 200);
     ok(r.body.items.some(i => i.slug.startsWith('reaktif-enerji')), 'Search finds analysis');
     const analysis = seed.find(a => a.type === 'analiz');
+    await expect(anon, 'article', { query: { slug: realDraft.slug } }, 404, 'not_found');
     r = await expect(anon, 'article', { query: { slug: analysis.slug } }, 200);
     ok(r.body.item.bodyHtml.includes('<h2>'), 'Limited Markdown rendered server side');
     await expect(anon, 'article', { query: { slug: 'yok-boyle-bir-yazi' } }, 404, 'not_found');
@@ -166,7 +192,7 @@ async function run() {
     await expect(editor, 'save', { body: { ...draft, title: 'Başlık‮ters çevrilmiş metin denemesi' } }, 422, 'invalid_field');
 
     // ---------------------------------------------------------------- escaping + publish rules
-    const hostile = { ...draft, title: 'Ölçüm <b>kalın</b> & "tırnak" içeren başlık örneği',
+    const hostile = { ...draft, ...complete(), title: 'Ölçüm <b>kalın</b> & "tırnak" içeren başlık örneği',
       body: '## Bölüm\n\n<script>alert(1)</script> metin **kalın** [kötü](javascript:alert(1)) [iyi](https://www.epdk.gov.tr/) [iç](/voltsim/ges/)\n\n- madde <img src=x onerror=alert(1)>',
       image: { url: '/public/og-image.png', credit: 'VoltGuard arşivi', rightsNote: 'VoltGuard tarafından üretildi, kendi görselimiz.' } };
     r = await expect(editor, 'save', { body: hostile }, 201);
@@ -178,11 +204,14 @@ async function run() {
     ok(html.includes('<strong>kalın</strong>') && html.includes('<h2>Bölüm</h2>'), 'Markdown subset works');
     r = await expect(editor, 'preview', { body: { body: '<iframe src=x>' } }, 200);
     ok(r.body.html.includes('&lt;iframe'), 'Preview escapes HTML');
-    await expect(editor, 'publish', { body: { id: hostileId } }, 422, 'not_publishable'); // analysis body too short
+    await expect(editor, 'publish', { body: { id: hostileId } }, 422, 'not_approved');
+    r = await expect(editor, 'submit', { body: { id: hostileId } }, 422, 'not_complete');
+    ok('body' in r.body.fields, 'Analysis body too short to enter the workflow');
     r = await expect(editor, 'editor_get', { query: { id: hostileId } }, 200);
     await expect(editor, 'save', { body: { id: hostileId, updatedAt: '2000-01-01T00:00:00Z', body: hostile.body } }, 409, 'conflict');
     const longBody = hostile.body + '\n\n' + 'Bu paragraf analiz için gereken özgün metni oluşturur ve sahadaki ölçüm yöntemlerini anlatır. '.repeat(5);
     r = await expect(editor, 'save', { body: { id: hostileId, updatedAt: r.body.item.updatedAt, body: longBody } }, 200);
+    await approve(editor, hostileId);
     r = await expect(editor, 'publish', { body: { id: hostileId } }, 200);
     const hostileSlug = r.body.item.slug;
     check(r.body.item.status, 'published', 'Analysis published');
@@ -198,7 +227,7 @@ async function run() {
 
     // ---------------------------------------------------------------- duplicates
     const srcA = { name: 'Örnek Kurum', url: 'https://www.ornek.gov.tr/duyuru/123', publishedAt: '2026-10-20' };
-    r = await expect(editor, 'save', { body: { title: 'Örnek kurumdan şebeke bağlantı başvurularına ilişkin duyuru', type: 'kaynak', category: 'mevzuat', source: srcA } }, 201);
+    r = await expect(editor, 'save', { body: { title: 'Örnek kurumdan şebeke bağlantı başvurularına ilişkin duyuru', type: 'kaynak', category: 'mevzuat', ...complete(), source: { ...srcA, licenseNote: 'Kamu kurumu duyurusu; test kaydı.' } } }, 201);
     const kaynakId = r.body.item.id;
     r = await expect(editor, 'save', { body: { title: 'Bambaşka bir başlık ama aynı kaynak bağlantısı', type: 'kaynak', category: 'mevzuat', source: { ...srcA, url: 'https://ornek.gov.tr/duyuru/123/?utm_source=x' } } }, 409, 'duplicate_source');
     check(r.body.duplicateOf, kaynakId, 'Duplicate points at original');
@@ -208,17 +237,22 @@ async function run() {
     const similarId = r.body.item.id;
 
     // kaynak publish rules
-    await expect(editor, 'publish', { body: { id: kaynakId } }, 422, 'not_publishable');
+    await expect(editor, 'publish', { body: { id: kaynakId } }, 422, 'not_approved');
+    await expect(editor, 'submit', { body: { id: kaynakId } }, 422, 'not_complete');
     r = await expect(editor, 'editor_get', { query: { id: kaynakId } }, 200);
     await expect(editor, 'save', { body: { id: kaynakId, summary: 'Örnek kurumdan şebeke bağlantı başvurularına ilişkin duyuru' } }, 200);
-    r = await expect(editor, 'publish', { body: { id: kaynakId } }, 422, 'not_publishable');
+    r = await expect(editor, 'submit', { body: { id: kaynakId } }, 422, 'not_complete');
     ok(r.body.fields.summary.includes('tekrar'), 'Summary may not repeat the headline');
     await expect(editor, 'save', { body: { id: kaynakId, summary: 'Kurum, bağlantı başvurularında yeni belge listesini yayımladı; tesis sahiplerinin dosyalarını buna göre güncellemesi gerekiyor.' } }, 200);
+    await approve(editor, kaynakId);
     await expect(editor, 'publish', { body: { id: kaynakId } }, 200);
 
     // schedule / archive / discard
     await expect(editor, 'schedule', { body: { id: similarId, publishAt: '2001-01-01T00:00:00Z' } }, 422, 'invalid_field');
-    await expect(editor, 'save', { body: { id: similarId, summary: 'Benzer başlıklı ikinci kayıt; zamanlanmış yayın denetimi için kullanılan editör özeti metni.', body: longBody } }, 200);
+    await expect(editor, 'save', { body: { id: similarId, summary: 'Benzer başlıklı ikinci kayıt; zamanlanmış yayın denetimi için kullanılan editör özeti metni.', body: longBody, ...complete() } }, 200);
+    const futureEarly = new Date(Date.now() + 3 * 86400e3).toISOString().replace(/\.\d{3}Z$/, 'Z');
+    await expect(editor, 'schedule', { body: { id: similarId, publishAt: futureEarly } }, 422, 'not_approved');
+    await approve(editor, similarId);
     const future = new Date(Date.now() + 3 * 86400e3).toISOString().replace(/\.\d{3}Z$/, 'Z');
     r = await expect(editor, 'schedule', { body: { id: similarId, publishAt: future } }, 200);
     check(r.body.item.status, 'scheduled', 'Scheduled');
@@ -258,13 +292,18 @@ async function run() {
     ok(etkbItem.flags.includes('link_missing') && etkbItem.source.publishedAt !== '', 'Linkless official feed item flagged, date parsed');
     check(r.body.items.find(a => a.ingest.sourceId === 'ec-energy').category, 'enerji-piyasasi', 'Atom item stored');
     ok(Object.keys(inbox).length === 4, 'inbox map');
-    // ingested title alone may not be published
-    await expect(editor, 'publish', { body: { id: epiasItem.id } }, 422, 'not_publishable');
-    await expect(editor, 'save', { body: { id: etkbItem.id, summary: 'Bakanlık yenilenebilir kurulu güçteki gelişmeleri açıkladı; ayrıntılar bakanlığın haber sayfasında yer alıyor.' } }, 200);
-    r = await expect(editor, 'publish', { body: { id: etkbItem.id } }, 422, 'not_publishable');
-    ok('source.url' in r.body.fields, 'Linkless item needs exact source URL before publishing');
-    r = await expect(editor, 'save', { body: { id: epiasItem.id, summary: 'Piyasa işletmecisi kasım dönemi için serbest tüketici listelerini yayımladı; tedarikçi değiştirmek isteyen işletmeler listeyi kontrol etmeli.' } }, 200);
+    // Automatically found items are never published by the fetcher and cannot skip the workflow.
+    check([epiasItem.review.stage, epiasItem.status], ['draft', 'draft'], 'Ingested item enters as workflow draft');
+    r = await expect(anon, 'list', { query: { q: 'serbest tuketici listelerinin' } }, 200);
+    check(r.body.total, 0, 'Ingested items are not public');
+    await expect(editor, 'publish', { body: { id: epiasItem.id } }, 422, 'not_approved');
+    await expect(editor, 'submit', { body: { id: epiasItem.id } }, 422, 'not_complete');
+    await expect(editor, 'save', { body: { id: etkbItem.id, summary: 'Bakanlık yenilenebilir kurulu güçteki gelişmeleri açıkladı; ayrıntılar bakanlığın haber sayfasında yer alıyor.', impact: IMPACT, commentary: COMMENTARY, eventDate: '2026-10-20' } }, 200);
+    r = await expect(editor, 'submit', { body: { id: etkbItem.id } }, 422, 'not_complete');
+    ok('source.url' in r.body.fields, 'Linkless item needs exact source URL before entering the workflow');
+    r = await expect(editor, 'save', { body: { id: epiasItem.id, summary: 'Piyasa işletmecisi kasım dönemi için serbest tüketici listelerini yayımladı; tedarikçi değiştirmek isteyen işletmeler listeyi kontrol etmeli.', impact: IMPACT, commentary: COMMENTARY, eventDate: epiasItem.source.publishedAt } }, 200);
     ok(r.body.item.summaryBy === editorId, 'Summary attributed to human editor');
+    await approve(editor, epiasItem.id);
     r = await expect(editor, 'publish', { body: { id: epiasItem.id } }, 200);
     p = await page(`/volthaber/${r.body.item.slug}/`);
     ok(p.text.includes('Haberin tamamını kaynağında okuyun') && p.text.includes('href="https://www.epias.com.tr/duyuru/serbest-tuketici-kasim/?utm_source=rss"'), 'Source card links to original');
@@ -279,9 +318,11 @@ async function run() {
     // sources
     r = await expect(editor, 'sources', {}, 200);
     ok(r.body.items.length >= 8 && r.body.items.every(s => /2026/.test(s.notes)), 'Registry with dated evidence');
+    ok(r.body.items.every(s => s.contentTerms && s.imageTerms && /^\d{4}-\d{2}-\d{2}$/.test(s.termsCheckedAt)), 'Every source records content terms, image terms and check date');
+    ok(r.body.items.filter(s => s.permission === 'izin-gerekli').every(s => s.contentTerms === 'kullanilamaz' && !s.enabled), 'Sources without permission are unusable and disabled');
     const irena = r.body.items.find(s => s.id === 'irena');
     await expect(editor, 'source_save', { body: { ...irena, enabled: true } }, 400, 'invalid_request');
-    const { lastFetchAt, lastOkAt, lastStatus, ...irenaClean } = irena;
+    const { lastFetchAt, lastOkAt, lastStatus, termsFresh, ...irenaClean } = irena;
     await expect(editor, 'source_save', { body: { ...irenaClean, enabled: true } }, 422, 'permission_required');
     await expect(editor, 'source_save', { body: { ...irenaClean, feedUrl: 'http://www.irena.org/rss' } }, 422, 'invalid_field');
 
@@ -358,7 +399,7 @@ async function run() {
     p = await page('/volthaber/kategori/mevzuat');
     check([p.status, p.headers.get('location')], [301, '/volthaber/kategori/mevzuat/'], 'Missing slash redirects');
     p = await page('/volthaber/kategori/yenilenebilir/');
-    ok(p.status === 200 && p.text.includes('aria-current="page">Yenilenebilir Enerji'), 'Category page');
+    ok(p.status === 200 && p.text.includes('aria-current="page">GES ve Depolama'), 'Category page');
     p = await page('/volthaber/etiket/lisanssiz-uretim/');
     ok(p.status === 200 && p.text.includes('noindex'), 'Tag page (noindex)');
     check((await page('/volthaber/etiket/olmayan-etiket/')).status, 404, 'Empty tag 404');
@@ -381,6 +422,169 @@ async function run() {
     ok(!JSON.stringify(views()).includes('127.0.0.1'), 'Views are aggregate only');
     p = await page('/volthaber/yayin-ilkeleri.html');
     ok(p.status === 200 && p.text.includes('FSEK') === false && p.text.includes('Fikir ve Sanat Eserleri Kanunu') && p.text.includes('id="kaldirma"'), 'Policy page');
+
+
+    // ---------------------------------------------------------------- publication workflow on the real seed draft
+    // EPDK decision 14982 (RG 24.10.2026/33410): prepared from the Resmî Gazete PDF, waiting as a draft.
+    const editor2 = client();
+    await expect(editor2, 'me', { endpoint: 'auth' }, 200);
+    r = await expect(editor2, 'register', { endpoint: 'auth', body: { name: 'Teknik Editör Mert', email: `vh-editor2-${unique}@example.test`, password: 'Deneme12345', consent: true } }, 201);
+    check(cli(path.join(root, 'tools/volthaber-admin.php'), 'grant', r.body.user.id).status, 0, 'Second editor granted');
+    await expect(editor2, 'editor_me', {}, 200);
+    r = await expect(editor, 'editor_list', { query: { status: 'draft', q: 'Kullanıcı Mobil' } }, 200);
+    const real = r.body.items.find(a => a.slug === realDraft.slug);
+    ok(real && real.review.stage === 'draft' && real.eventDate === '2026-10-22', 'Real draft present with event date');
+    ok(r.body.steps && r.body.steps.source.checklist.termsChecked, 'Editor list exposes workflow checklists');
+    const realId = real.id;
+    check((await page(`/volthaber/${real.slug}/`)).status, 404, 'Real draft not public before approval');
+    await expect(editor, 'publish', { body: { id: realId } }, 422, 'not_approved');
+    await review(editor, realId, 'source', 409, 'wrong_stage');
+    r = await expect(editor, 'submit', { body: { id: realId } }, 200);
+    check(r.body.item.review.stage, 'source_check', 'Taslak -> Kaynak kontrolü');
+    await review(editor, realId, 'technical', 409, 'wrong_stage');
+    r = await expect(editor, 'review', { body: { id: realId, step: 'source', checklist: { ...CHECKLIST.source, termsChecked: false }, note: 'Koşullara bakılmadı.' } }, 422, 'checklist_incomplete');
+    await expect(editor, 'review', { body: { id: realId, step: 'source', checklist: CHECKLIST.source, note: 'kısa' } }, 422, 'invalid_field');
+    r = await review(editor, realId, 'source');
+    check([r.body.item.review.stage, r.body.item.review.checks.source.by], ['tech_check', 'Editör Ayşe'], 'Kaynak kontrolü -> Teknik kontrol, recorded with editor');
+    // Conflicting information keeps the item in draft.
+    r = await expect(editor2, 'hold', { body: { id: realId, kind: 'celiskili', reason: 'Yönetmelik md. 7 güncel metniyle karşılaştırılmalı; değişiklik olup olmadığı belirsiz.' } }, 200);
+    check([r.body.item.review.stage, r.body.item.review.checks.source, r.body.item.flags.includes('hold_celiskili')], ['draft', null, true], 'Hold: back to draft, checks cleared, flagged');
+    await expect(editor, 'publish', { body: { id: realId } }, 422, 'not_approved');
+    await expect(editor, 'submit', { body: { id: realId } }, 422, 'invalid_field');
+    r = await expect(editor, 'submit', { body: { id: realId, resolution: 'Güncel metin karşılaştırıldı; özet 28.12.2023 metnine atıfla sınırlandı.' } }, 200);
+    ok(!r.body.item.flags.includes('hold_celiskili') && r.body.item.review.hold === null, 'Resolution clears the hold');
+    await review(editor, realId, 'source');
+    await review(editor2, realId, 'technical');
+    // Any content change after a check invalidates the checks.
+    r = await expect(editor, 'editor_get', { query: { id: realId } }, 200);
+    r = await expect(editor, 'save', { body: { id: realId, updatedAt: r.body.item.updatedAt, tags: [...real.tags, 'epias'] } }, 200);
+    check([r.body.item.review.stage, r.body.item.review.checks.technical], ['draft', null], 'Edit after checks resets workflow');
+    ok(r.body.item.review.history.some(h => h.action === 'content_changed'), 'Reset recorded in history');
+    await expect(editor, 'submit', { body: { id: realId } }, 200);
+    await review(editor, realId, 'source');
+    await review(editor2, realId, 'technical');
+    r = await review(editor, realId, 'approval');
+    check(r.body.item.review.stage, 'approved', 'Yayın onayı -> Onaylandı');
+    r = await expect(editor, 'publish', { body: { id: realId } }, 200);
+    const realPublishedAt = r.body.item.publishedAt;
+    p = await page(`/volthaber/${real.slug}/`);
+    check(p.status, 200, 'Approved real article is public');
+    for (const needle of ['Kısa özet', 'Fabrikalar ve işletmeler için anlamı', 'VoltGuard yorumu', 'Bu bölüm kaynak bilgisi değildir',
+      'href="https://www.resmigazete.gov.tr/eskiler/2026/10/20261024-11.pdf"', 'href="https://www.resmigazete.gov.tr/eskiler/2023/12/20231228-2.htm"',
+      'Olay tarihi', '22 Ekim 2026', 'Editör ve onay durumu', 'Teknik Editör Mert', 'href="/hizmetler/enerji-kalitesi-olcumu.html"', 'href="/voltsim/enerji-kalitesi/"']) {
+      ok(p.text.includes(needle), 'Article page shows: ' + needle);
+    }
+    ok(!p.text.includes('<dt>Güncelleme</dt>'), 'No update date before any correction');
+    ok(p.text.indexOf('Kısa özet') < p.text.indexOf('Fabrikalar ve işletmeler için anlamı') && p.text.indexOf('Fabrikalar ve işletmeler') < p.text.indexOf('VoltGuard yorumu</h2>'), 'Sections in order: summary, impact, commentary');
+    r = await expect(anon, 'article', { query: { slug: real.slug } }, 200);
+    check(r.body.item.review.steps.map(s => !!s.by), [true, true, true], 'API exposes approval status');
+    check(r.body.item.sources.length, 2, 'API exposes all sources');
+    // Correction of a published article: the approved version stays live until the correction is approved.
+    r = await expect(editor, 'editor_get', { query: { id: realId } }, 200);
+    const corrected = r.body.item.commentary + '\n\nEk not: enerji izleme kayıtlarınızı en az bir yıl saklayın.';
+    r = await expect(editor, 'save', { body: { id: realId, updatedAt: r.body.item.updatedAt, commentary: corrected, revisionNote: 'VoltGuard yorumuna kayıt saklama önerisi eklendi.' } }, 200);
+    check([r.body.item.status, r.body.item.review.stage, r.body.item.live], ['published', 'draft', true], 'Correction pending; article stays live');
+    p = await page(`/volthaber/${real.slug}/`);
+    ok(!p.text.includes('en az bir yıl saklayın') && p.text.includes('Teknik Editör Mert'), 'Public page still shows last approved version');
+    await expect(editor, 'publish', { body: { id: realId } }, 422, 'not_approved');
+    await approve(editor, realId);
+    r = await expect(editor, 'publish', { body: { id: realId } }, 200);
+    check(r.body.item.publishedAt, realPublishedAt, 'Original publication date kept on correction');
+    ok(r.body.item.revisedAt, 'Update date set only by approved correction');
+    p = await page(`/volthaber/${real.slug}/`);
+    ok(p.text.includes('en az bir yıl saklayın') && p.text.includes('<dt>Güncelleme</dt>') && p.text.includes('kayıt saklama önerisi eklendi'), 'Corrected version and update note public');
+    r = await expect(editor, 'pub_log', {}, 200);
+    ok(['submit', 'review_source', 'review_technical', 'review_approval', 'hold'].every(a => r.body.items.some(e => e.action === a && e.id === realId)), 'Every workflow step logged');
+
+    // ---------------------------------------------------------------- source terms and image licences
+    r = await expect(editor, 'save', { body: { ...draft, ...complete(), title: 'İzinsiz kaynağa dayanan deneme kaydı başlığı', body: longBody,
+      source: { name: 'Yeşil Haber', url: 'https://yesilhaber.net/bir-haber/', publishedAt: '2026-10-20', licenseNote: '' } } }, 201);
+    const noPermId = r.body.item.id;
+    await expect(editor, 'submit', { body: { id: noPermId } }, 200);
+    r = await review(editor, noPermId, 'source', 422, 'terms_unverified');
+    ok(r.body.message.includes('kullanım izni yok'), 'Source without usage permission cannot pass source check');
+    r = await expect(editor, 'save', { body: { ...draft, ...complete(), title: 'Kayıtsız kaynak ve dış görsel deneme kaydı', body: longBody,
+      image: { url: 'https://images.example.org/foto.jpg', credit: 'Örnek Ajans', rightsNote: 'Ajans görseli; lisans bilgisi alınmadı.' } } }, 201);
+    const imgId = r.body.item.id;
+    r = await expect(editor, 'submit', { body: { id: imgId } }, 422, 'not_complete');
+    ok('image.licenseUrl' in r.body.fields, 'External image without verifiable licence blocks the workflow');
+    r = await expect(editor, 'editor_get', { query: { id: imgId } }, 200);
+    await expect(editor, 'save', { body: { id: imgId, updatedAt: r.body.item.updatedAt, image: null, source: { ...r.body.item.source, licenseNote: '' } } }, 200);
+    await expect(editor, 'submit', { body: { id: imgId } }, 200);
+    r = await review(editor, imgId, 'source', 422, 'terms_unverified');
+    ok(r.body.message.includes('kayıtta yok'), 'Unregistered source needs a recorded terms note');
+
+    // ---------------------------------------------------------------- failure scenarios: source outage keeps last verified content
+    const dataFile = n => path.join(env.VG_DATA_DIR, 'volthaber', n);
+    const resetRuntime = (ids) => {
+      const st = JSON.parse(fs.readFileSync(dataFile('sources.json'), 'utf8'));
+      for (const id of ids) if (st.runtime[id]) st.runtime[id].lastFetchAt = 0;
+      fs.writeFileSync(dataFile('sources.json'), JSON.stringify(st));
+      return st;
+    };
+    const datesOf = () => Object.values(JSON.parse(fs.readFileSync(dataFile('articles.json'), 'utf8')).articles)
+      .map(a => [a.id, a.updatedAt, a.publishedAt, a.revisedAt || null, a.status]).sort().join('|');
+    r = await expect(anon, 'status', {}, 200);
+    check(r.body.degraded, false, 'Status: all sources reachable after successful fetch');
+    ok(r.body.lastVerifiedAt, 'Status: last verified date from approvals');
+    const okBefore = resetRuntime(['epias', 'ec-energy', 'etkb-haber']).runtime.epias.lastOkAt;
+    const datesBefore = datesOf();
+    const sitemapBefore = (await page('/volthaber/sitemap.xml')).text;
+    fs.writeFileSync(path.join(feeds, 'epias.error'), 'network_error_28');      // timeout
+    fs.writeFileSync(path.join(feeds, 'ec-energy.xml'), '<rss>' + 'x'.repeat(2 * 1024 * 1024 + 10)); // over size limit
+    fs.writeFileSync(path.join(feeds, 'etkb-haber.xml'), '<rss version="2.0"><channel><item><title>Kırık');      // malformed XML
+    r = await expect(editor, 'fetch_run', { body: {} }, 200);
+    const fail = Object.fromEntries(r.body.results.map(x => [x.sourceId, x]));
+    check([fail.epias.ok, fail.epias.error], [false, 'network_error_28'], 'Timeout reported');
+    check(fail['ec-energy'].error, 'too_large', 'Size limit enforced');
+    check(fail['etkb-haber'].error, 'xml_invalid', 'Malformed feed rejected');
+    check(datesOf(), datesBefore, 'Failed fetch changes no article dates or statuses');
+    check((await page('/volthaber/sitemap.xml')).text, sitemapBefore, 'Sitemap lastmod unchanged by outage');
+    const after = JSON.parse(fs.readFileSync(dataFile('sources.json'), 'utf8'));
+    check(after.runtime.epias.lastOkAt, okBefore, 'Last successful fetch time preserved');
+    r = await expect(anon, 'status', {}, 200);
+    const epiasStatus = r.body.sources.find(s => s.name.startsWith('EPİAŞ'));
+    check([r.body.degraded, epiasStatus.reachable, epiasStatus.lastOkAt !== null], [true, false, true], 'Status reports outage with last success time');
+    p = await page('/volthaber/');
+    ok(p.status === 200 && p.text.includes('Bazı kaynaklara şu anda ulaşılamıyor') && p.text.includes('son doğrulandıkları hâliyle'), 'Home keeps serving content with an outage notice');
+    p = await page(`/volthaber/${real.slug}/`);
+    ok(p.status === 200 && p.text.includes('Fabrikalar ve işletmeler için anlamı'), 'Verified article still served during outage');
+    // Terms not rechecked within a year: source is not fetched and cannot be enabled.
+    fs.unlinkSync(path.join(feeds, 'epias.error'));
+    const st2 = resetRuntime(['epias']);
+    st2.sources = st2.sources.length ? st2.sources : [];
+    let epiasSrc = (await expect(editor, 'sources', {}, 200)).body.items.find(s => s.id === 'epias');
+    const { lastFetchAt: _a, lastOkAt: _b, lastStatus: _c, termsFresh: _d, ...epiasClean } = epiasSrc;
+    await expect(editor, 'source_save', { body: { ...epiasClean, termsCheckedAt: '2024-01-01' } }, 422, 'terms_check_required');
+    await expect(editor, 'source_save', { body: { ...epiasClean, enabled: false, termsCheckedAt: '2024-01-01' } }, 200);
+    r = await expect(editor, 'fetch_run', { body: { sourceId: 'epias' } }, 200);
+    check(r.body.results[0].error, 'terms_check_required', 'Stale terms block fetching');
+    await expect(editor, 'source_save', { body: { ...epiasClean, enabled: true } }, 200);
+    // Allow-list: a feed may only be fetched (and redirected) within its own hosts; checked before DNS.
+    let res2 = cli(path.join(root, 'tools/volthaber-fetch.php'), '--check-url', 'https://evil.example/feed', '--allow', 'epias.com.tr');
+    ok(res2.status === 3 && res2.stdout.includes('host_not_allowed'), 'Host outside allow-list blocked');
+    res2 = cli(path.join(root, 'tools/volthaber-fetch.php'), '--check-url', 'https://www.epias.com.tr/feed/', '--allow', 'epias.com.tr');
+    ok(!res2.stdout.includes('host_not_allowed'), 'Own host (www. variant) allowed');
+    // Scheduler: reported only from recorded runs.
+    r = await expect(editor, 'sources', {}, 200);
+    check([r.body.scheduler.healthy, r.body.scheduler.lastCronAt], [false, null], 'No cron run recorded: scheduler not reported as running');
+    ok(r.body.scheduler.message.includes('hiç çalışmamış'), 'Scheduler message says it never ran');
+    res2 = cli(path.join(root, 'api/lib/volthaber-cron.php'));
+    check(res2.status, 0, 'Deployed cron entry point runs from CLI');
+    r = await expect(editor, 'sources', {}, 200);
+    ok(r.body.scheduler.healthy && r.body.scheduler.lastCronAt, 'Recorded cron run reported');
+    check((await page('/api/lib/volthaber-cron.php')).status, 403, 'Cron entry point not reachable over HTTP');
+    res2 = cli(path.join(root, 'api/lib/volthaber-cron.php'), '--status');
+    ok(res2.status === 0 && res2.stdout.includes('"healthy": true'), 'Cron --status reports last run');
+
+    // Related links on seed content point at pages that exist.
+    const exists = u => {
+      const clean = u.split('#')[0];
+      const cands = clean.endsWith('/') ? [clean + 'index.html', clean.replace(/\/$/, '.html')] : [clean];
+      return cands.some(c => fs.existsSync(path.join(root, c)));
+    };
+    const links = [...seed.flatMap(a => a.related.map(x => x.url))];
+    ok(links.every(exists), 'All seed related links resolve: ' + links.filter(u => !exists(u)).join(', '));
 
     // ---------------------------------------------------------------- storage safety
     ok(!fs.existsSync(path.join(root, 'volthaber', 'articles.json')) && fs.existsSync(path.join(env.VG_DATA_DIR, 'volthaber', 'articles.json')), 'Data lives outside docroot');
