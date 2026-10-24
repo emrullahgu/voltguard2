@@ -350,7 +350,7 @@ function landing() {
           </a>
         </li>`).join('');
   return `${head({ title: 'VoltSim — 3D Mühendislik Simülasyon Merkezi | VoltGuard', ogTitle: 'VoltSim — Enerjiyi Gör. Sistemi Kur. Sonucu Ölç.',
-    description: 'Elektrik panosu, GES, trafo, şarj istasyonu, RES, kompanzasyon, topraklama, motor otomasyon, UPS/jeneratör, yangın algılama, selektivite, enerji kalitesi, yıldırımdan korunma ve pompa/VFD için gerçek hesaplı 3D simülasyonlar.', url, ld, image: '/public/voltsim/pano.webp' })}
+    description: `${MODULES.length} gerçek hesaplı 3D mühendislik simülasyonu: pano, trafo, GES, kompanzasyon, selektivite, enerji kalitesi, batarya depolama, arıza tespit ve PLC/SCADA. Ücretsiz.`, url, ld, image: '/public/voltsim/pano.webp' })}
 <body class="vs-page vsl-page doc-shell">
   <!--vg:header--><!--/vg:header-->
   <main class="vs-main" id="main" tabindex="-1">

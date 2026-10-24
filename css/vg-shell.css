@@ -77,7 +77,7 @@ main:focus { outline: 0; }
 }
 .vg-wrap {
   width: 100%;
-  max-width: 82.5rem;
+  max-width: clamp(82.5rem, calc(88vw + 7.5rem), 102.5rem); /* style.css --container-max ile aynı oranda büyür (+120 px) */
   margin: 0 auto;
   padding: 0 1.25rem;
 }

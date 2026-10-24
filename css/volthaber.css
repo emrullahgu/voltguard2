@@ -1,6 +1,6 @@
 /* VoltHaber – herkese açık sayfalar ve editör paneli. css/style.css değişkenlerini kullanır; mobil öncelikli. */
 .vh { overflow-x: clip; }
-.vh-wrap { max-width: 1180px; margin: 0 auto; padding: 0 var(--container-pad, 1rem); }
+.vh-wrap { max-width: var(--container-max, 1180px); margin: 0 auto; padding: 0 var(--container-pad, 1rem); }
 .vh-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Manşet bandı */

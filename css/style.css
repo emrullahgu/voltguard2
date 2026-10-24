@@ -48,7 +48,7 @@
   --t-slow:   0.5s ease;
 
   /* Layout */
-  --container-max:  1200px;
+  --container-max:  clamp(1200px, 88vw, 1520px); /* geniş ekranlarda yan boşluklar büyümesin */
   --container-pad:  1.5rem;
   --header-h:       var(--vg-header-h, 72px);   /* yapışkan başlığın yüksekliği: css/vg-shell.css */
 }
