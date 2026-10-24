@@ -123,7 +123,7 @@
       <div class="fld"><label>Voc kats. (%/°C)</label><input type="number" id="k" value="0.237" step="0.001"></div>
       <div class="fld"><label>Vmpp kats. (%/°C)</label><input type="number" id="kmpp" value="0.311" step="0.001"></div>
       <div class="fld"><label>Tmin (°C)</label><input type="number" id="tmin" value="-7" step="1"></div>
-      <div class="fld"><label>Tmax (°C)</label><input type="number" id="tmax" value="38" step="1"></div>
+      <div class="fld"><label title="En yüksek ortam sıcaklığı; hücre sıcaklığı +30 K alınır">Tmax ortam (°C)</label><input type="number" id="tmax" value="38" step="1"></div>
       <div class="fld"><label>Tnom (°C)</label><input type="number" id="tnom" value="25" step="1"></div>
     </div>
   </div>
@@ -438,12 +438,16 @@ function recalc(){
 
   inverters.forEach(function(inv){
     var a=inv.maxPanelsPerString;
-    var maxVoc=a*voc*(1+(k*Math.abs(tmin-tnom))/100);
-    var minVoc=a*voc*(1-(k*Math.abs(tmax-tnom))/100);
-    var maxVmpp=a*vmpp*(1+(kmpp*Math.abs(tmin-tnom))/100);
-    var minVmpp=a*vmpp*(1-(kmpp*Math.abs(tmax-tnom))/100);
+    // Katalogda Voc/Vmpp katsayıları negatif yazılır; işaret ne girilirse girilsin büyüklük kullanılır.
+    var kA=Math.abs(k), kmA=Math.abs(kmpp);
+    // En düşük gerilim kontrolleri hücre sıcaklığıyla yapılır: Thücre ≈ Tortam,max + 30 K (NOCT ≈ 45 °C, 1000 W/m²).
+    var tcellMax=tmax+30;
+    var maxVoc=a*voc*(1+kA*Math.max(0,tnom-tmin)/100);
+    var minVoc=a*voc*(1-kA*Math.max(0,tcellMax-tnom)/100);
+    var maxVmpp=a*vmpp*(1+kmA*Math.max(0,tnom-tmin)/100);
+    var minVmpp=a*vmpp*(1-kmA*Math.max(0,tcellMax-tnom)/100);
     var iMpptImpp=inv.stringsPerMppt*impp;
-    var iMpptIsc=inv.stringsPerMppt*isc;
+    var iMpptIsc=1.25*inv.stringsPerMppt*isc;   // IEC 62548-1: Isc tasarım akımı = 1,25·Isc,STC
     var totalPanels=inv.totalPanels;
     var dcKw=totalPanels*pmax/1000;
     var dcacLimit=(inv.acLimit>0 && inv.pLimit>0)? inv.pLimit/inv.acLimit : 1.50;
@@ -452,11 +456,11 @@ function recalc(){
 
     var checks=[
       {nm:'Max acik devre gerilim (Voc, Tmin)',v:maxVoc,lim:inv.vMax,dir:'<',u:'V',d:0},
-      {nm:'Min dizi gerilim (Voc, Tmax)',v:minVoc,lim:inv.mppMin,dir:'>',u:'V',d:0},
+      {nm:'Min dizi gerilim (Voc, Thücre = Tmax + 30 K)',v:minVoc,lim:inv.mppMin,dir:'>',u:'V',d:0},
       {nm:'Max MPPT gerilim (Vmpp, Tmin)',v:maxVmpp,lim:inv.mppMax,dir:'<',u:'V',d:0},
-      {nm:'Min MPPT gerilim (Vmpp, Tmax)',v:minVmpp,lim:inv.mppMin,dir:'>',u:'V',d:0},
+      {nm:'Min MPPT gerilim (Vmpp, Thücre = Tmax + 30 K)',v:minVmpp,lim:inv.mppMin,dir:'>',u:'V',d:0},
       {nm:'MPPT akimi (dizi x Impp)',v:iMpptImpp,lim:inv.iMpptOp,dir:'<',u:'A',d:1},
-      {nm:'MPPT kisa devre akimi (dizi x Isc)',v:iMpptIsc,lim:inv.iMaxMppt,dir:'<',u:'A',d:1},
+      {nm:'MPPT kisa devre akimi (1,25 x dizi x Isc)',v:iMpptIsc,lim:inv.iMaxMppt,dir:'<',u:'A',d:1},
       {nm:'DC giris gucu (kW)',v:dcKw,lim:inv.pLimit,dir:'<',u:'kW',d:1},
       {nm:'DC/AC orani (katalog limiti '+fmt(dcacLimit,2)+')',v:(inv.acLimit>0?dcKw/inv.acLimit:0),lim:dcacLimit,dir:'<',u:'',d:2}
     ];
@@ -494,7 +498,7 @@ function recalc(){
   document.getElementById('gAC').textContent=fmt(grandAC,0)+' kW';
   var gv=document.getElementById('grandverdict');
   if(inverters.length===0){ gv.textContent='Henuz evirici eklenmedi'; gv.style.background='var(--surface2)'; gv.style.color='var(--muted)'; }
-  else if(allOk){ gv.textContent='\u2713 Tum eviriciler IEC kontrollerini geciyor  \u00b7  DC/AC: '+fmt(grandAC>0?grandDC/grandAC:0,2); gv.style.background='var(--ok-bg)'; gv.style.color='var(--ok-tx)'; }
+  else if(allOk){ gv.textContent='\u2713 Tum eviricilerde gerilim/akim on kontrolleri saglaniyor (IEC 62548-1, en uzun dizi)  \u00b7  DC/AC: '+fmt(grandAC>0?grandDC/grandAC:0,2); gv.style.background='var(--ok-bg)'; gv.style.color='var(--ok-tx)'; }
   else { gv.textContent='\u2717 En az bir eviricide limit asimi var'; gv.style.background='var(--no-bg)'; gv.style.color='var(--no-tx)'; }
   if(typeof renderInvMath==='function') renderInvMath();
   recordChange();
@@ -600,6 +604,7 @@ function dcFactorsNow(){
     Ct: nearest(B1PVC, parseFloat(document.getElementById('dcTamb').value)||35),
     crit: parseFloat(document.getElementById('dcCrit').value)||2,
     impp: parseFloat(document.getElementById('dcImpp').value)||13,
+    isc: parseFloat(document.getElementById('isc').value)||0,
     vmpp: parseFloat(document.getElementById('vmpp').value)||42.62
   };
 }
@@ -610,7 +615,7 @@ function bestKesit(d,f){
     var S=KESITLER[i];
     var Iz=SOLAR_AIR[String(S)]*Cd;
     var pUk=(2*d.L*f.impp)/(S*f.K)/Vdz*100;
-    if(f.impp<Iz && pUk<f.crit) return S;
+    if(Math.max(f.impp,1.25*(f.isc||0))<=Iz && pUk<f.crit) return S;
   }
   return KESITLER[KESITLER.length-1];
 }
@@ -682,7 +687,7 @@ function dcRowVals(d,i,f){
   var Iz=(SOLAR_AIR[String(S)]||0)*Cd;
   var Uk=(2*d.L*f.impp)/(S*f.K);
   var pUk=Uk/Vdz*100;
-  var iOk=f.impp<Iz, vOk=pUk<f.crit;
+  var iOk=Math.max(f.impp,1.25*(f.isc||0))<=Iz, vOk=pUk<f.crit;   // IEC 62548-1: Iz ≥ 1,25·Isc,STC
   var Ploss=Uk*f.impp;            // W, gidis-donus ΔU × I
   var Pdize=Vdz*f.impp;          // W, dizinin DC calisma gucu
   return {S:S,Iz:Iz,Uk:Uk,pUk:pUk,iOk:iOk,vOk:vOk,Cg:Cg,Cd:Cd,Ct:f.Ct,Ploss:Ploss,Pdize:Pdize};
@@ -55115,7 +55120,10 @@ function tpVals(){
   }
   var n=Math.max(0,Math.round(gv('tpN'))), Lc=gv('tpLc'), dc=gv('tpDc')/1000;
   var R1=(Lc>0&&dc>0&&rho>0)?rho/(2*Math.PI*Lc)*Math.log(4*Lc/dc):0, Rc=(n>0&&R1>0)?R1/n:0;
-  var Res=(Rc>0&&Rg>0)?(Rg*Rc/(Rg+Rc)):(Rg||Rc);
+  // Halka/ağ ile çubuklar düz paralel bağlanamaz; karşılıklı direnç Rm ≈ Rg kabulüyle (IEEE 80, Schwarz) Res = (Rg·Rc − Rm²)/(Rg + Rc − 2Rm).
+  // Rm = min(Rg, Rc)·0,9 alınır: çubukların ızgara içinde kalan katkısı küçüktür (güvenli taraf).
+  var Rm=(Rc>0&&Rg>0)?0.9*Math.min(Rg,Rc):0;
+  var Res=(Rc>0&&Rg>0)?((Rg*Rc-Rm*Rm)/(Rg+Rc-2*Rm)):(Rg||Rc);
   var Idn=gv('tpIdn'), Ud=Idn*Res, Ie=gv('tpIe'), t=document.getElementById('tpT').value, UTp=TP_UTP[t]||0, UE=Ie*Res;
   return {a:a,b:b,rho:rho,tip:tip,A:A,cevre:cevre,L:L,Loto:!(Lin>0),D:D,d:d,Rg:Rg,n:n,Lc:Lc,dc:dc,R1:R1,Rc:Rc,Res:Res,Idn:Idn,Ud:Ud,Ie:Ie,t:t,UTp:UTp,UE:UE};
 }

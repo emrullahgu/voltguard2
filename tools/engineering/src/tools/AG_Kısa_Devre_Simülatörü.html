@@ -198,8 +198,9 @@ table.ref th{background:var(--bg2);color:var(--teal)}
       <b>Vektörel (IEC 909):</b> Z<sub>k</sub>=√((ΣR)²+(ΣX)²) — dirençler ve reaktanslar ayrı ayrı toplanır (EMO/İzmir yöntemi).&nbsp;
       <b>Skaler ΣZ (Pratik):</b> Z<sub>k</sub>=ΣZ<sub>i</sub> — segment empedans genlikleri doğrudan toplanır (TEDAŞ pratik hesap şablonu; güvenli tarafta, biraz büyük akım verir).<br>
       Darbe akımı: i<sub>p</sub> = κ·√2·I″k3, κ = 1,02 + 0,98·e<sup>−3R/X</sup>.&nbsp;
-      Tek fazlı en küçük akım (yaklaşık): I″k1 = 0,95·U<sub>n</sub> / (√3·Z<sub>döngü</sub>), Z<sub>döngü</sub>=√((2R<sub>T</sub>+Σ(R<sub>faz</sub>+R<sub>PEN</sub>))²+(2X<sub>T</sub>+Σ(X<sub>faz</sub>+X<sub>PEN</sub>))²) — burada iletken dirençleri en yüksek işletme sıcaklığında (1,24·R<sub>20</sub>) alınır, I″k3'te ise 20°C direnci kullanılır (EMO md.14). PEN kesiti boş bırakılırsa faz kesitine eşit varsayılır.&nbsp;
-      Minyatür kesici can güvenliği: I<sub>a</sub>=k·I<sub>n</sub> (B:5×, C:10×, D:20×) &lt; I″k1 olmalıdır.
+      Tek fazlı en küçük akım (yaklaşık): I″k1 = 0,95·U<sub>n</sub> / (√3·Z<sub>döngü</sub>), Z<sub>döngü</sub>=√((R<sub>T</sub>+Σ(R<sub>faz</sub>+R<sub>PEN</sub>))²+(X<sub>T</sub>+Σ(X<sub>faz</sub>+X<sub>PEN</sub>))²) (Dyn trafoda Z<sub>0T</sub> ≈ Z<sub>T</sub> → kaynak payı (2Z<sub>T</sub>+Z<sub>0T</sub>)/3 = Z<sub>T</sub>) — burada iletken dirençleri en yüksek işletme sıcaklığında (1,24·R<sub>20</sub>) alınır, I″k3'te ise 20°C direnci kullanılır (EMO md.14). PEN kesiti boş bırakılırsa faz kesitine eşit varsayılır.&nbsp;
+      Minyatür kesici can güvenliği: I<sub>a</sub>=k·I<sub>n</sub> (B:5×, C:10×, D:20×) &lt; I″k1 olmalıdır; I″k1, cihazın koruduğu devrenin en uzak noktasında (son segment ucu) sağlanmalıdır.<br>
+      Kabul: OG şebeke empedansı ihmal edilir (sonsuz güçlü şebeke) — en büyük I″k3 için güvenli taraftadır, en küçük I″k1 ise biraz büyük çıkar; motor katkısı ve K<sub>T</sub> düzeltmesi dahil değildir. Kesme kontrolü I″k ≤ I<sub>cu</sub>.
       Özgül iletkenlik: κ<sub>Cu</sub>=56, κ<sub>Al</sub>=35 m/Ω·mm².
     </div>
   </div>
@@ -457,8 +458,10 @@ function calc(){
 
   // zincir
   let sumR = t.RT, sumX = t.XT, sumZ = t.ZT;
-  let loopR = 2*t.RT, loopX = 2*t.XT;       // sıcak (I"k1 min)
-  let loop20R = 2*t.RT, loop20X = 2*t.XT;   // 20°C (monofaz kolda I"k1 max)
+  // Faz-PE çevrimi (IEC 60909-0): I"k1 = √3·c·Un / |2Z1 + Z0|; Dyn trafoda Z0T ≈ ZT olduğundan kaynak payı (2ZT + ZT)/3 = ZT.
+  // Trafo yalnız bir kez sayılır (önceki 2·ZT yaklaşımı I"k1 değerini yarıya düşürüp kesme kontrolünü güvensiz yapıyordu).
+  let loopR = t.RT, loopX = t.XT;           // sıcak (I"k1 min)
+  let loop20R = t.RT, loop20X = t.XT;       // 20°C (monofaz kolda I"k1 max)
   let monoChain = false;
   const nodes = [];
   segments.forEach((s,i)=>{
@@ -627,15 +630,15 @@ function renderSegments(nodes, t){
     let chkHtml = "", uygun=null, chkTxt="";
     if(s.cihaz==="tms"||s.cihaz==="sya"){
       const icu = parseFloat(s.icu)||0;
-      uygun = n.IkMax < icu;
-      chkTxt = `${n.IkMax.toFixed(2)} kA ${uygun?'<':'≥'} ${icu} kA`;
+      uygun = n.IkMax <= icu;
+      chkTxt = `${n.IkMax.toFixed(2)} kA ${uygun?'≤':'>'} ${icu} kA`;
       chkHtml = `<label class="f">Kesme Kap. I<sub>cu</sub> (kA)<input type="number" step="0.5" value="${s.icu}" onchange="upd(${n.seg.id},'icu',this.value)"></label>
         <span class="kv">${chkTxt}</span>
         <span class="badge ${uygun?'ok':'no'}">${uygun?'UYGUNDUR':'UYGUN DEĞİL'}</span>`;
     } else if(s.cihaz==="mcb"){
       const icu = parseFloat(s.icu)||0;
       const Ia = MCB_K[s.mcbChar]*(parseFloat(s.mcbIn)||16); // A
-      const okKesme = n.IkMax < icu;
+      const okKesme = n.IkMax <= icu;
       const okAcma = Ia < n.Ik1*1000;
       uygun = okKesme && okAcma;
       chkHtml = `
@@ -643,7 +646,7 @@ function renderSegments(nodes, t){
           ${Object.keys(MCB_K).map(c=>`<option ${c===s.mcbChar?'selected':''}>${c}</option>`).join('')}</select></label>
         <label class="f">I<sub>n</sub> (A)<input type="number" value="${s.mcbIn}" style="width:70px" onchange="upd(${s.id},'mcbIn',this.value)"></label>
         <label class="f">I<sub>cu</sub> (kA)<input type="number" step="0.5" value="${s.icu}" style="width:70px" onchange="upd(${s.id},'icu',this.value)"></label>
-        <span class="kv">Kesme: ${n.IkMax.toFixed(2)}${okKesme?'&lt;':'≥'}${icu} kA · Açma: I<sub>a</sub>=${Ia} A ${okAcma?'&lt;':'≥'} I″k1=${(n.Ik1*1000).toFixed(0)} A</span>
+        <span class="kv">Kesme: ${n.IkMax.toFixed(2)}${okKesme?'≤':'&gt;'}${icu} kA · Açma: I<sub>a</sub>=${Ia} A ${okAcma?'&lt;':'≥'} I″k1=${(n.Ik1*1000).toFixed(0)} A</span>
         <span class="badge ${uygun?'ok':'no'}">${uygun?'UYGUNDUR':'UYGUN DEĞİL'}</span>`;
     } else {
       chkHtml = `<span class="muted">Kontrol yok</span>`;

@@ -396,6 +396,9 @@ function ciz(R){
     }
     if(R.ev)N.push(`${f(R.ev/1000,0)} kW AC araç şarjı trifaze abonelik ve en az ${f(R.ev/1000,0)} kW bağlantı gücü gerektirir; şarj gücü eşzamanlılık katsayısı uygulanmadan tam alınır.${md=="off"?" Off-grid sistemde bu güç inverteri ve aküyü çok büyütür; şarj gücünü düşürmek ya da gündüz şarj etmek daha uygundur.":md=="hib"?" Hibritte şarj cihazı şebeke tarafına bağlanır; inverter gücüne dahil edilmedi, kesintide çalışmaz.":""}`);
     if(x.inv>5)N.push("İnverter gücü 5 kW üstünde; trifaze abonelik ve trifaze inverter gerekir.");
+    if(!off)N.push(`Kurulu güç (${f(x.kwp,2)} kWp) ve inverter gücü, bağlantı anlaşmasındaki sözleşme gücünü aşamaz (Lisanssız Elektrik Üretim Yönetmeliği Madde 5-1-h); başvurudan önce sözleşme gücünüzü kontrol edin.`);
+    if(!off&&x.ur>R.yil*1.0001)N.push(`Yıllık üretim (${f(x.ur,0)} kWh) tüketimi (${f(R.yil,0)} kWh) aşıyor. Fazla enerjinin bedeli görevli tedarik şirketinin mahsup/alım uygulamasına bağlıdır (Madde 26); araç satış bedelini sizin girdiğiniz birim fiyatla hesaplar.`);
+    N.push("Geri ödeme basittir: panel degradasyonu (%0,4–0,5/yıl), tarife artışı, finansman, bakım ve akü/inverter yenileme dahil değildir.");
   }
   $("notlar").innerHTML=N.map(n=>Array.isArray(n)?`<li class="ok">${n[1]}</li>`:`<li>${n}</li>`).join("");
   // grafik

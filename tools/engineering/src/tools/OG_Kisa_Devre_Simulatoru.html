@@ -195,12 +195,12 @@ svg.sema .sv-tv{fill:#f5fbfa;font:600 11px Consolas,monospace}
       </div>
       <div class="fld" style="margin-top:8px"><label>Gerilim Faktörü c (IEC 60909 Tablo 1)</label>
         <select id="sCmod">
+          <option selected>IEC cmax — teçhizat seçimi (OG 1,10 / AG 1,05)</option>
           <option>TEDAŞ şablonu (c = 1,00)</option>
-          <option>IEC cmax — teçhizat seçimi (OG 1,10 / AG 1,05)</option>
           <option>IEC cmin — röle duyarlılığı (OG 1,00 / AG 0,95)</option>
         </select>
       </div>
-      <div class="hint">Nk: TEİAŞ bağlantı görüşü / sistem etüdü değeri. Doğrudan topraklı şebekede xo/x1 ≈ 2, R1/x1 ≈ 0,1 alınır. IEC 60909'a göre teçhizat boyutlandırmasında cmax, koruma duyarlılık kontrolünde cmin kullanılır; TEDAŞ şablonu c=1 varsayar.</div>
+      <div class="hint">Nk: TEİAŞ bağlantı görüşü / sistem etüdü değeri. Doğrudan topraklı şebekede xo/x1 ≈ 2, R1/x1 ≈ 0,1 alınır. IEC 60909'a göre teçhizat boyutlandırmasında cmax, koruma duyarlılık kontrolünde cmin kullanılır (varsayılan); TEDAŞ şablonu c=1 varsayar ve en büyük akımı düşük gösterir. Şebeke empedansı Z<sub>Q</sub> = c·U<sub>n</sub>²/S″<sub>kQ</sub> ile alınır. Hat tablolarındaki dirençler işletme sıcaklığı değerleridir; en büyük I″k için IEC 60909 iletken direncini 20 °C'de ister (R20 ≈ R ÷ 1,2–1,3) — kritik teçhizat seçiminde R değerini R20 olarak girin. Tek damarlı XLPE kablolarda sıfır bileşen değerlerini üretici verisinden girin.</div>
     </div>
   </div>
 
@@ -260,7 +260,7 @@ svg.sema .sv-tv{fill:#f5fbfa;font:600 11px Consolas,monospace}
         <div class="fld"><label>Arıza Temizleme t (sn)</label><input id="gT" value="0.5"></div>
       </div>
       <div class="grid2" style="margin-top:8px">
-        <div class="fld"><label>m katsayısı (DA bileşeni)</label><input id="gM" value="0"></div>
+        <div class="fld"><label>m katsayısı (DA bileşeni; 0 = κ ve süreden otomatik)</label><input id="gM" value="0"></div>
         <div class="fld"><label>n katsayısı (AA bileşeni)</label><input id="gN" value="1"></div>
       </div>
     </div>
@@ -310,7 +310,7 @@ const ILETKENLER = [
   {grp:'Havai Hat — ACSR', ad:'3xSwallow (26,69 mm²)',   tip:'havai',  R:1.26708, X_yuk:0.4644, X_dus:0.4549},
   {grp:'Havai Hat — ACSR', ad:'3xRaven (53,52 mm²)',     tip:'havai',  R:0.67081, X_yuk:0.4619, X_dus:0.4524},
   {grp:'Havai Hat — ACSR', ad:'3xPigeon (85,12 mm²)',    tip:'havai',  R:0.43291, X_yuk:0.4433, X_dus:0.4388},
-  {grp:'Havai Hat — ACSR', ad:'3xPatridge (134,87 mm²)', tip:'havai',  R:0.23913, X_yuk:0.3626, X_dus:0.3531},
+  {grp:'Havai Hat — ACSR', ad:'3xPartridge (134,87 mm²)', tip:'havai',  R:0.23913, X_yuk:0.3626, X_dus:0.3531},
   {grp:'Havai Hat — ACSR', ad:'3xHawk (241,65 mm²)',     tip:'havai',  R:0.13416, X_yuk:0.3427, X_dus:0.3332},
   {grp:'Havai Hat — ACSR', ad:'3xDrake (402,56 mm²)',    tip:'havai',  R:0.08217, X_yuk:0.3277, X_dus:0.3182},
   {grp:'Havai Hat — ACSR', ad:'3/0 AWG (85,12 mm²) — TM kademe', tip:'havai', R:0.3366, X_yuk:0.3406, X_dus:0.3406},
@@ -356,10 +356,14 @@ function fmt(x, d){ if(!isFinite(x)) return '—'; d = (d===undefined)?4:d; retu
 function fA(x){ return fmt(x,1)+' A'; }
 function fkA(x){ return fmt(x/1000,3)+' kA'; }
 function cKat(rx){
-  // TEDAŞ şablonu ile aynı: R/x oranının düştüğü basamağın (alt sınır) c değeri okunur
-  let c = C_TABLO[0][1];
-  for(const [x,cv] of C_TABLO){ if(rx >= x) c = cv; else break; }
-  return c;
+  // Darbe katsayısı κ (IEC 60909-0): κ = 1,02 + 0,98·e^(−3R/X). Eski TEDAŞ basamak tablosu (C_TABLO) yalnız bilgi amaçlı tutulur.
+  return 1.02 + 0.98*Math.exp(-3*Math.max(0, rx));
+}
+function mKat(kappa, t){
+  // DC bileşenin termik etkisi (IEC 60909-0 Ek A): m = [e^(4·f·t·ln(κ−1)) − 1] / [2·f·t·ln(κ−1)], f = 50 Hz
+  const l = Math.log(Math.max(kappa, 1.0201) - 1), a = 4*50*t*l;
+  const v = (Math.exp(a) - 1) / (2*50*t*l);
+  return Number.isFinite(v) && v > 0 ? v : 0;
 }
 function svgMetinSar(t, maxKarakter){
   const kel=String(t).split(/\s+/), sat=[]; let cur='';
@@ -749,7 +753,7 @@ function hesapla(){
   /* --- pu değerleri --- */
   const eleman = [];
   // Şebeke (topraklama trafosu modunda üçgen sargı sıfır bileşeni keser)
-  const x1s = BAZ/Nk, x0s = ttVar?0:(x01s*x1s), R1s = rxs*x1s;
+  const x1s = cOG*BAZ/Nk, x0s = ttVar?0:(x01s*x1s), R1s = rxs*x1s; // IEC 60909: ZQ = c·Un²/S″kQ
   eleman.push({ad:'Şebeke'+(ttVar?' (sıfır bileşen: üçgen sargı ile izole)':''), un:UnS+' kV', R1:R1s,R2:R1s,R0:ttVar?0:R1s, X1:x1s,X2:x1s,X0:x0s, n1:true,n0:true});
   // İndirici trafo (paralel: x/n)
   const xt1 = (UkT/100)*(BAZ/NnT)/nTrf, xt0 = ttVar?0:(x01t*xt1);
@@ -823,8 +827,9 @@ function hesapla(){
   const rx1=R1_1/X1_1, c1=cKat(rx1), Is1=c1*Math.SQRT2*Ik3_1;
   const rx2=R1_2/X1_2, c2=cKat(rx2), Is2=c2*Math.SQRT2*Ik04;
   /* --- Termik --- */
-  const mt=Math.sqrt((m+n)*t);
-  const It1=Ik3_1*mt, It2=Ik04*mt;
+  const m1 = m>0 ? m : mKat(c1, t), m2 = m>0 ? m : mKat(c2, t);
+  const mt=Math.sqrt((m1+n)*t);
+  const It1=Ik3_1*mt, It2=Ik04*Math.sqrt((m2+n)*t);
 
   /* --- MVA metodu --- */
   const mvaEl=[];
@@ -913,15 +918,15 @@ function hesapla(){
     h+=`<div class="formula">N2 (0,4 kV): I″k1 = I″k04 · 3/(2+k) = ${fkA(Ik04)} · 3/${fmt(2+k2,4)} = <b class="big">${fkA(Ik1_04)}</b></div>`;
     if(dPrimerUcgen) h+=`<div class="note">Dağıtım trafosu giriş sargısı üçgen olduğundan 0,4 kV faz-toprak arızası OG tarafına toprak akımı olarak yansımaz.</div>`;
   }
-  h+=`<h3 style="color:var(--amber);font-size:13px;margin:10px 0 6px">3.5 — Asimetrik Darbe Kısa Devre Akımları (Is = c·√2·I″k3)</h3>`;
-  h+=`<table><tr><th class="l">Nokta</th><th>R/X</th><th>c</th><th>Is</th></tr>`;
+  h+=`<h3 style="color:var(--amber);font-size:13px;margin:10px 0 6px">3.5 — Asimetrik Darbe Kısa Devre Akımları (ip = κ·√2·I″k3, κ = 1,02 + 0,98·e<sup>−3R/X</sup>)</h3>`;
+  h+=`<table><tr><th class="l">Nokta</th><th>R/X</th><th>κ</th><th>ip</th></tr>`;
   h+=`<tr><td class="l">Nokta 1 — ${fmt(Uog,1)} kV</td><td>${fmt(rx1,4)}</td><td>${fmt(c1,2)}</td><td class="res">${fkA(Is1)}</td></tr>`;
   if(dtVar) h+=`<tr><td class="l">Nokta 2 — 0,4 kV</td><td>${fmt(rx2,4)}</td><td>${fmt(c2,2)}</td><td class="res">${fkA(Is2)}</td></tr>`;
   h+=`</table>`;
   h+=`<h3 style="color:var(--amber);font-size:13px;margin:10px 0 6px">3.6 — Termik Akımlar (It = I″k·√((m+n)·t), t = ${fmt(t,2)} sn)</h3>`;
   h+=`<table><tr><th class="l">Nokta</th><th>m</th><th>n</th><th>It (1 sn eşdeğeri)</th></tr>`;
-  h+=`<tr><td class="l">Nokta 1 — ${fmt(Uog,1)} kV</td><td>${fmt(m,2)}</td><td>${fmt(n,2)}</td><td class="res">${fA(It1)}</td></tr>`;
-  if(dtVar) h+=`<tr><td class="l">Nokta 2 — 0,4 kV</td><td>${fmt(m,2)}</td><td>${fmt(n,2)}</td><td class="res">${fkA(It2)}</td></tr>`;
+  h+=`<tr><td class="l">Nokta 1 — ${fmt(Uog,1)} kV</td><td>${fmt(m1,3)}</td><td>${fmt(n,2)}</td><td class="res">${fA(It1)}</td></tr>`;
+  if(dtVar) h+=`<tr><td class="l">Nokta 2 — 0,4 kV</td><td>${fmt(m2,3)}</td><td>${fmt(n,2)}</td><td class="res">${fkA(It2)}</td></tr>`;
   h+=`</table>`;
   $('out_ariza').innerHTML=h;
 

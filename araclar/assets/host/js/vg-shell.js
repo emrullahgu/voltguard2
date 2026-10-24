@@ -355,7 +355,7 @@
     function set(on) {
       footer.classList.toggle('is-inview', on);
       svgs.forEach(function (s) {
-        try { if (on) s.unpauseAnimations(); else s.pauseAnimations(); } catch (err) { /* SMIL yok */ }
+        try { if (on && !reduceMQ.matches) s.unpauseAnimations(); else s.pauseAnimations(); } catch (err) { /* SMIL yok */ }
       });
     }
     if (!('IntersectionObserver' in window)) { set(true); return; }

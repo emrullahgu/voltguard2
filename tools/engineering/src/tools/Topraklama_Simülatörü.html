@@ -541,7 +541,9 @@ function render1(){
   const m=model1();const p0=m.phi(xs,0);const p1=m.phi(xs+1,0);
   const Usrc=mode==="T"?m.UE-p0:p0-p1;
   const tF=V("p_tF"),ut=UTp(tF),rhoS=V("p_surf")==="gravel"?3000:V("p_rho"),Ra=(+V("p_shoe"))+1.5*rhoS,ust=USTp(tF,Ra);
-  const bc=bodyCurrent(Usrc,Ra);const ibp=IBp(tF);
+  // Vücut akımı: dokunmada ayaklar paralel (1,5·ρs), adımda seri (6·ρs); karşılaştırma sınırı dokunma sınırıdır (güvenli taraf).
+  const RaBody=mode==="S"?(+V("p_shoe"))*2+6*rhoS:Ra;
+  const bc=bodyCurrent(Usrc,RaBody);const ibp=IBp(tF);
   // en büyük adım gerilimi
   let smax=0,sx=0;for(let x=0.05;x<20;x+=0.05){const u=m.phi(x,0)-m.phi(x+1,0);if(u>smax){smax=u;sx=x}}
   const ut1=m.UE-m.phi(1,0);
@@ -847,7 +849,7 @@ experiments("x4","c4",[
 ],()=>{syncR();render4()});
 
 /* ================= 05 AG KORUMA ================= */
-const GL={2:[9.5,17],4:[19,32],6:[28,50],10:[48,80],16:[70,120],20:[86,150],25:[115,210],32:[150,250],35:[173,367],40:[200,300],50:[250,460],63:[330,610],80:[430,800],100:[580,1050],125:[715,1300],160:[950,1800]};
+const GL={2:[9.5,17],4:[19,32],6:[28,50],10:[48,80],16:[70,120],20:[86,150],25:[115,210],32:[150,250],35:[173,300],40:[200,367],50:[250,460],63:[330,610],80:[430,800],100:[580,1050],125:[715,1300],160:[950,1800]};
 const TAB2={120:0.8,230:0.4,277:0.4,400:0.2,690:0.1};
 const C5=[
   {id:"a_sys",t:"sel",l:"Sistem",val:"TN",o:[["TN","TN-C-S"],["TT","TT"],["IT","IT"]]},

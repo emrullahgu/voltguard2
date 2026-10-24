@@ -64,10 +64,13 @@
     var v = q('.mini-calc__result-value, .tool-result__amount');
     var n = q('.mini-calc__result-note, .tool-result__detail');
     var box = v && v.closest('.mini-calc__result, .tool-result');
+    var as = q('.calc-assumptions');
     return {
       value: v ? v.textContent.trim() : '',
       note: n ? n.textContent.trim() : '',
-      breakdown: readBreakdown(box || q('.mini-calc') || document)
+      breakdown: readBreakdown(box || q('.mini-calc') || document),
+      // Formül, kabuller ve mevzuat/standart dayanağı (hesaplama/*.html sayfalarında sonuçla birlikte yazılır).
+      assumptions: as && !as.closest('[hidden]') ? cleanLine(as.textContent.replace(/^Formül, kabuller ve dayanak/, '')) : ''
     };
   }
 
@@ -104,6 +107,7 @@
     '\u20ba': 'TL', '\u20ac': 'EUR',
     '\u03a9': 'ohm', '\u2126': 'ohm', '\u03c6': 'phi', '\u03a6': 'Phi', '\u03b7': 'eta', '\u03c1': 'rho',
     '\u03c0': 'pi', '\u0394': 'delta', '\u03bc': 'u',
+    '\u03b8': 'theta', '\u03b1': 'alpha', '\u03ba': 'kappa', '\u03b2': 'beta', '\u03a3': 'Sum', '\u2032': "'", '\u2033': '"',
     '\u2248': '~', '\u2264': '<=', '\u2265': '>=', '\u2260': '!=', '\u221a': 'sqrt', '\u221e': 'inf', '\u2212': '-',
     '\u2192': '->', '\u2190': '<-', '\u2194': '<->',
     '\u2022': '-', '\u2013': '-', '\u2014': '-', '\u2018': "'", '\u2019': "'", '\u201c': '"', '\u201d': '"', '\u2026': '...'
@@ -173,6 +177,15 @@
         doc.text(lines, margin, y);
         y += lines.length * 5;
       });
+    }
+    if (r.assumptions) {
+      y += 3;
+      ensureSpace(12);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+      doc.text(pdfText('Formül, kabuller ve dayanak'), margin, y); y += 5.5;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+      var asLines = doc.splitTextToSize(pdfText(r.assumptions), width);
+      asLines.forEach(function (line) { ensureSpace(4.6); doc.text(line, margin, y); y += 4.6; });
     }
     y += 8;
     ensureSpace(26);
