@@ -52,7 +52,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SHELL_DIR = ROOT / 'tools' / 'shell'
 # The engineering builder applies these shared fragments itself; never rewrite its source or output here.
 SKIP_DIRS = {'.git', '.github', 'node_modules', 'tools', '__pycache__', '.vscode', '.idea', '.netlify',
-             'voltguardekleyelim', 'araclar', 'vesikalar', 'VoltGame', 'voltgame', '.netlify-publish', '.qa'}
+             'voltguardekleyelim', 'araclar', 'vesikalar', 'VoltGame', 'voltgame', '.netlify-publish', '.qa', '.claude'}
 
 FONTS_LINK = ('<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800'
               '&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">')
