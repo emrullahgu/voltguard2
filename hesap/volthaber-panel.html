@@ -146,7 +146,7 @@
 
       <section class="vhp-panel" id="p-edit" role="tabpanel" aria-labelledby="t-edit" hidden>
         <div class="vhp-editor">
-          <form class="vhp-form" data-form="article" novalidate>
+          <form class="vhp-form" data-form="article" method="post" novalidate>
             <p class="vhp-muted" data-ed-status>Yeni yazı</p>
             <div class="vhp-field"><label for="e-title">Başlık</label><input id="e-title" name="title" maxlength="160" required></div>
             <div class="vhp-row">
@@ -198,7 +198,7 @@
       <section class="vhp-panel" id="p-sources" role="tabpanel" aria-labelledby="t-sources" hidden>
         <p class="vhp-muted">"İzin gerekli" durumundaki kaynaklar yazılı izin kaydedilmeden açılamaz. Her kaynağın doğrulama kanıtı notlarda.</p>
         <div class="vhp-table-wrap"><table class="vhp-table"><thead><tr><th>Kaynak</th><th>İzin</th><th>Durum</th><th>Son tarama</th><th>Notlar</th><th>İşlem</th></tr></thead><tbody data-list="sources"></tbody></table></div>
-        <form class="vhp-form" data-form="source" novalidate style="margin-top:1rem">
+        <form class="vhp-form" data-form="source" method="post" novalidate style="margin-top:1rem">
           <fieldset><legend data-src-legend>Kaynak ekle / düzenle</legend>
             <div class="vhp-row">
               <div class="vhp-field"><label for="s-id">Kimlik</label><input id="s-id" name="id" maxlength="40" placeholder="ornek-kurum"></div>
@@ -231,7 +231,7 @@
         <h2 class="vh-mini-h" style="margin-top:1.2rem">En çok okunanlar</h2>
         <div class="vhp-table-wrap"><table class="vhp-table"><thead><tr><th>Yazı</th><th>Okunma</th></tr></thead><tbody data-list="mostread"></tbody></table></div>
         <h2 class="vh-mini-h" style="margin-top:1.4rem">Bülten gönder</h2>
-        <form class="vhp-form" data-form="digest" novalidate>
+        <form class="vhp-form" data-form="digest" method="post" novalidate>
           <div class="vhp-field"><label for="d-subject">Konu</label><input id="d-subject" name="subject" maxlength="120" placeholder="VoltHaber – Ekim 2026"></div>
           <div class="vhp-field"><label for="d-intro">Giriş metni</label><textarea id="d-intro" name="intro" rows="3" maxlength="1500"></textarea></div>
           <fieldset><legend>Yazılar (1–10, yalnız yayındakiler)</legend><div data-digest-articles class="vhp-form"></div></fieldset>
@@ -367,6 +367,6 @@
   <!--/vg:footer-->
   <script src="../js/voltguard-auth.js?v=0"></script>
   <script src="../js/vg-account.js?v=0"></script>
-  <script src="../js/hesap-volthaber.js?v=0"></script>
+  <script src="../js/hesap-volthaber-panel.js?v=0"></script>
 </body>
 </html>

@@ -976,16 +976,25 @@ function vh_build_article(array $body, ?array $existing, array $state, array $us
     }
     $a['slug'] = $slug;
     // Yineleme denetimi
-    $flags = array_values(array_diff($a['flags'] ?? [], ['similar_title']));
+    // Yalnizca yeni kayitta veya baslik/kaynak degistiginde denetlenir (onaylanmis benzerlik sonraki duzenlemeleri engellemez).
+    $titleChanged = $existing === null || vh_fold_words($existing['title']) !== vh_fold_words($a['title']);
+    $oldUrl = $existing !== null && $existing['source'] ? (string)$existing['source']['url'] : '';
+    $flags = $titleChanged ? array_values(array_diff($a['flags'] ?? [], ['similar_title'])) : ($a['flags'] ?? []);
     $urlKey = $a['source'] && $a['source']['url'] !== '' ? vh_url_key($a['source']['url']) : '';
+    if ($existing !== null && $urlKey !== '' && $oldUrl !== '' && vh_url_key($oldUrl) === $urlKey) {
+        $urlKey = '';
+    }
     foreach ($state['articles'] as $other) {
         if ($other['id'] === $a['id'] || $other['status'] === 'archived') {
             continue;
         }
+        if (!$titleChanged && $urlKey === '') {
+            break;
+        }
         if ($urlKey !== '' && $other['source'] && $other['source']['url'] !== '' && vh_url_key($other['source']['url']) === $urlKey) {
             vg_fail(409, 'duplicate_source', 'Bu kaynak adresi zaten başka bir kayıtta var: "' . $other['title'] . '".', ['source.url' => 'Yinelenen kaynak.'], [], ['duplicateOf' => $other['id']]);
         }
-        if (vh_titles_similar($other['title'], $a['title'])) {
+        if ($titleChanged && vh_titles_similar($other['title'], $a['title'])) {
             if (($body['confirmSimilar'] ?? false) !== true) {
                 vg_fail(409, 'duplicate_title', 'Neredeyse aynı başlıklı bir kayıt var: "' . $other['title'] . '". Yine de kaydetmek için onaylayın.', ['title' => 'Benzer başlık.'], [], ['duplicateOf' => $other['id']]);
             }

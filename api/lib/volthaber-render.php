@@ -159,7 +159,7 @@ function vh_newsletter(): string
 {
     return '<section class="vh-news" aria-labelledby="vh-news-t"><h2 id="vh-news-t">VoltHaber bülteni</h2>'
         . '<p>Mevzuat değişiklikleri ve VoltGuard analizleri, ayda birkaç e-posta. İstediğiniz an tek tıkla ayrılabilirsiniz.</p>'
-        . '<form class="vh-news__form" data-vh-subscribe novalidate>'
+        . '<form class="vh-news__form" data-vh-subscribe method="post" novalidate>'
         . '<label for="vh-news-email">E-posta adresiniz</label>'
         . '<input id="vh-news-email" name="email" type="email" required maxlength="254" autocomplete="email" inputmode="email">'
         . '<div class="vh-hp" aria-hidden="true"><label for="vh-news-web">Web sitesi</label><input id="vh-news-web" name="website" type="text" tabindex="-1" autocomplete="off"></div>'
