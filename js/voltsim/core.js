@@ -798,6 +798,13 @@
     return typeof src === typeof tpl ? src : tpl;
   }
 
+  /* Ölçüm (js/vg-metrics.js; olay sözlüğü api/METRICS.md). Yalnızca modül kimliği ve sabit tür adları gider; girdiler,
+     sonuç değerleri ve proje dosyası içeriği asla. Ölçüm hatası simülasyonu etkilemez. */
+  function metric(name, props) {
+    if (window.vgTrack) { try { window.vgTrack(name, props); } catch (_) { /* ölçüm kritik değil */ } }
+  }
+  const FAULT_KIND = { build: 'sahne', compute: 'hesap', report: 'rapor', load: 'dosya' };
+
   function App(def, rootEl) {
     this.def = def; this.root = rootEl;
     this.state = clone(def.defaults());
@@ -836,15 +843,23 @@
   App.prototype.fault = function (where, err) {
     if (this._faults[where]) return; this._faults[where] = true;
     console.error('VoltSim ' + where + ':', err);
+    metric('simulation_error', { sim: this.def.id, kind: FAULT_KIND[where] || 'calisma' });
     toast(where === 'build' ? '3D sahne kurulamadı; hesaplar, grafikler ve 2D şema çalışmaya devam ediyor.' : 'Sahnenin bir bölümü güncellenemedi (' + where + '); hesaplar etkilenmedi.', 'bad');
   };
   App.prototype.saveState = function () { storageSet(this.storageKey, JSON.stringify({ schema: this.schema, engine: E.version, savedAt: Date.now(), state: this.state })); };
   App.prototype.recompute = function () {
     if (this._disposed) return;
     let res;
-    try { res = this.def.compute(this.state, this); } catch (err) { res = { ok: false, errors: ['Hesap hatası: ' + err.message], checks: [], values: {} }; console.error(err); }
+    try { res = this.def.compute(this.state, this); } catch (err) {
+      res = { ok: false, errors: ['Hesap hatası: ' + err.message], checks: [], values: {} }; console.error(err);
+      metric('simulation_error', { sim: this.def.id, kind: 'hesap' });
+    }
     this.result = res;
     if (res.ok) this.validResult = res;
+    // simulation_result: kullanıcı açılıştaki durumu değiştirdikten sonra geçerli (hatasız) bir hesap sonucu (bir kez)
+    if (res.ok && !this._resultSeen && this._state0 !== undefined && JSON.stringify(this.state) !== this._state0) {
+      this._resultSeen = true; metric('simulation_result', { sim: this.def.id });
+    }
     this.renderAnalysis();
     if (this.viewer) {
       let sig = null;
@@ -1082,7 +1097,7 @@
       if (this._taskState0 !== undefined) { if (JSON.stringify(this.state) === this._taskState0) return; this._taskState0 = undefined; }
       let ok = false;
       try { ok = !!tk.check(this.validResult, this.state, this.live, this); } catch (_) { ok = false; }
-      if (ok) { done[tk.id] = Date.now(); changed = true; this.activeTask = null; toast('Görev tamamlandı: ' + tk.title, 'ok'); if (window.vgTrack) window.vgTrack('sim_complete', { sim: this.def.id }); }
+      if (ok) { done[tk.id] = Date.now(); changed = true; this.activeTask = null; toast('Görev tamamlandı: ' + tk.title, 'ok'); metric('task_complete', { sim: this.def.id }); }
     });
     if (changed) { storageSet(this.taskKey(), JSON.stringify(done)); }
     this.renderTasks();
@@ -1097,7 +1112,7 @@
     }
     if (tk.start) { this.running = true; this.paused = false; if (this.def.start) this.def.start(this); this.syncToolbar(); }
     this.activeTask = tk.id;
-    if (window.vgTrack) window.vgTrack('sim_start', { sim: this.def.id });
+    metric('simulation_run', { sim: this.def.id });
     this._taskState0 = JSON.stringify(this.state);
     this.recompute();
     toast('Görev: ' + tk.goal);
@@ -1161,12 +1176,12 @@
     if (!window.THREE || !this.def.scene) return false;
     try {
       this.viewer = new Viewer(stage, canvas, { background: this.def.scene.background });
-    } catch (e) { console.warn('WebGL başlatılamadı', e); return false; }
+    } catch (e) { console.warn('WebGL başlatılamadı', e); metric('simulation_error', { sim: this.def.id, kind: 'webgl' }); return false; }
     this.viewer.wake = () => { if (this._wake) this._wake(); };
     this.kit = makeKit(this.viewer);
     try { this._sceneSig = this.def.scene.rebuildOn ? this.def.scene.rebuildOn(this.state) : null; } catch (_) { this._sceneSig = null; }
     try { this.def.scene.build(this.kit, this.state, this); this.finishScene(); }
-    catch (e) { console.warn('3D sahne kurulamadı', e); this.viewer.dispose(); this.viewer = null; this.kit = null; return false; }
+    catch (e) { console.warn('3D sahne kurulamadı', e); metric('simulation_error', { sim: this.def.id, kind: 'sahne' }); this.viewer.dispose(); this.viewer = null; this.kit = null; return false; }
     const info = stage.querySelector('[data-vs-info]');
     info.tabIndex = -1;
     const close = () => { this.viewer.select(null); canvas.focus({ preventScroll: true }); };
@@ -1551,11 +1566,12 @@
   };
   App.prototype.action = async function (act, btn) {
     try {
-      if (window.vgTrack && act === 'start') window.vgTrack('sim_start', { sim: this.def.id });
-      if (window.vgTrack && act === 'report') window.vgTrack('sim_complete', { sim: this.def.id });
       if (act === 'start') {
         this.running = true; this.paused = false; this.simTime = 0;
         if (this.def.start) this.def.start(this); toast(this.def.startText || 'Simülasyon başlatıldı.');
+        metric('simulation_run', { sim: this.def.id });
+        // Geçerli sonuçla çalıştırılan benzetimin çıktısı ekranda: sonuç incelemesi sayılır (sayfa başına bir kez)
+        if (this.validResult && !this._resultSeen) { this._resultSeen = true; metric('simulation_result', { sim: this.def.id }); }
       } else if (act === 'pause') {
         if (!this.running) { this.running = true; this.paused = false; if (this.def.start && !this._startedOnce) this.def.start(this); }
         else this.paused = !this.paused;
@@ -1577,10 +1593,14 @@
         else this.toggleExpanded(true);
         setTimeout(() => { if (this.viewer) this.viewer.resize(); this.renderAnalysis(); }, 120);
       } else if (act === 'mode') this.setMode(this.mode === '3d' ? '2d' : '3d');
-      else if (act === 'report') { btn && (btn.disabled = true); toast('Rapor hazırlanıyor…'); await this.pdf(); toast('PDF rapor indirildi.', 'ok'); }
-      else if (act === 'csv') { download(fileStem(this.def.id) + '.csv', 'text/csv;charset=utf-8', this.csv()); toast('CSV indirildi.', 'ok'); }
+      else if (act === 'report') {
+        btn && (btn.disabled = true); toast('Rapor hazırlanıyor…');
+        try { await this.pdf(); } catch (e) { metric('simulation_error', { sim: this.def.id, kind: 'rapor' }); throw e; }
+        toast('PDF rapor indirildi.', 'ok'); metric('report_download', { sim: this.def.id, fmt: 'pdf' });
+      }
+      else if (act === 'csv') { download(fileStem(this.def.id) + '.csv', 'text/csv;charset=utf-8', this.csv()); toast('CSV indirildi.', 'ok'); metric('report_download', { sim: this.def.id, fmt: 'csv' }); }
       else if (act === 'quote') this.openQuote(btn);
-      else if (act === 'save') { download(fileStem(this.def.id) + '.voltsim.json', 'application/json', JSON.stringify(this.project(), null, 2)); toast('Proje dosyası indirildi.', 'ok'); }
+      else if (act === 'save') { download(fileStem(this.def.id) + '.voltsim.json', 'application/json', JSON.stringify(this.project(), null, 2)); toast('Proje dosyası indirildi.', 'ok'); metric('scenario_save', { sim: this.def.id, kind: 'dosya' }); }
       else if (act === 'load') { this.root.querySelector('[data-vs-file]').click(); }
       else if (act === 'spin') { if (this.viewer) { this.viewer.autoSpin = !this.viewer.autoSpin; btn.setAttribute('aria-pressed', String(this.viewer.autoSpin)); this.viewer.invalidate(); } }
       else if (act === 'labels') { if (this.viewer) { this.viewer.showLabels = !this.viewer.showLabels; btn.setAttribute('aria-pressed', String(this.viewer.showLabels)); this.viewer.invalidate(); } }
@@ -1665,7 +1685,7 @@
       const rd = new FileReader();
       rd.onload = () => {
         try { const t = self.loadProject(JSON.parse(rd.result)); toast(t && t.ok === false ? 'Proje yüklendi; girdilerde hata var (Analiz panelinde).' : 'Proje yüklendi.', t && t.ok === false ? 'bad' : 'ok'); }
-        catch (e) { toast(e.message || 'Proje okunamadı.', 'bad'); }
+        catch (e) { toast(e.message || 'Proje okunamadı.', 'bad'); metric('simulation_error', { sim: self.def.id, kind: 'dosya' }); }
         file.value = '';
       };
       rd.readAsText(f);
@@ -1734,9 +1754,16 @@
     const root = document.querySelector('[data-vs-module]');
     if (!root) return;
     const def = modules[root.dataset.vsModule];
-    if (!def) { root.querySelector('[data-vs-analysis]').textContent = 'Simülasyon modülü yüklenemedi.'; return; }
+    if (!def) {
+      root.querySelector('[data-vs-analysis]').textContent = 'Simülasyon modülü yüklenemedi.';
+      metric('simulation_error', { sim: String(root.dataset.vsModule || ''), kind: 'calisma' });
+      return;
+    }
     const app = new App(def, root); window.__vsApp = app;
     app.mount();
+    // simulation_open: modül sayfası açıldı ve uygulama kuruldu (sayfa görüntülemesi başına bir kez)
+    app._state0 = JSON.stringify(app.state);
+    metric('simulation_open', { sim: def.id });
     // Favori yıldızı (js/vg-favorite.js): bu tarayıcıya, giriş yapılmışsa hesaba kaydeder.
     if (!document.querySelector('script[src^="/js/vg-favorite.js"]')) { const fav = document.createElement('script'); fav.src = '/js/vg-favorite.js'; fav.defer = true; document.head.appendChild(fav); }
   }

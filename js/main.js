@@ -426,6 +426,10 @@
       }
     };
 
+    /* Ölçüm (js/vg-metrics.js): başlangıç, alan hataları, terk ve ağ hatası. Kabul edilen talep contact.php'de sayılır. */
+    var quoteMetrics = window.vgTrack && window.vgTrack.form ? window.vgTrack.form(contactForm, 'iletisim', { fields: {
+      name: 'ad', phone: 'telefon', email: 'eposta', subject: 'konu', service: 'hizmet', message: 'mesaj', captcha: 'guvenlik' } }) : null;
+
     var MSG_MAX = 1000;
     var serviceSel = qs('#service', contactForm);
     var subjectSel = qs('#subject', contactForm);
@@ -518,6 +522,7 @@
         messageField.dataset.auto = '1';
         messageField.dataset.prefillComplete = '1';
         messageField.dataset.vgSource = 'arac';
+        if (quoteMetrics) quoteMetrics.draft(true);
         syncCounter();
       }
     }
@@ -608,21 +613,25 @@
 
       var firstInvalid = null;
       var errorCount = 0;
+      var invalidIds = [];
       ['name', 'phone', 'email', 'subject', 'message'].forEach(function (id) {
         var el = qs('#' + id, contactForm);
         var msg = fieldError(el);
         if (!msg) return;
         setFieldError(el, msg);
         errorCount++;
+        invalidIds.push(id);
         if (!firstInvalid) firstInvalid = el;
       });
       /* Güvenlik doğrulaması yalnızca Turnstile gerçekten etkinse istenir (yer tutucu anahtarda gizli) */
       if (captchaEnabled && !getCaptchaToken()) {
         setFieldError(qs('.form__captcha', contactForm), 'Lütfen güvenlik doğrulamasını tamamlayın.');
         errorCount++;
+        invalidIds.push('captcha');
       }
 
       if (errorCount) {
+        if (quoteMetrics) quoteMetrics.errors(invalidIds);
         showNotification(errorCount === 1 ? 'Lütfen işaretli alanı düzeltin.' : 'Lütfen işaretli ' + errorCount + ' alanı düzeltin.', 'error');
         if (firstInvalid) { try { firstInvalid.focus({ preventScroll: false }); } catch (err) { firstInvalid.focus(); } }
         return;
@@ -654,6 +663,8 @@
       fields.message = servicePrefix() + message;
       fields.kind = 'contact';
       fields.requestId = contactRequestId;
+      /* Ölçüm bağlamı: yalnızca önceki site içi sayfa yolu, cihaz sınıfı, test bayrağı (DNT/GPC açıksa hiçbiri) */
+      if (quoteMetrics) Object.assign(fields, quoteMetrics.fields());
 
       /* Bildirim balonu birkaç saniyede kaybolur; talep numarası ve hata metni formun altında kalıcı durur */
       var receipt = qs('#contactReceipt', contactForm);
@@ -674,7 +685,8 @@
           receipt.hidden = false;
           contactRequestId = '';
           safeStorageSet('vg_last_submit_at', String(Date.now()));
-          if (window.vgTrack) window.vgTrack('quote_submit', { svc: serviceSel && serviceSel.value ? serviceSel.value : '', via: messageField && messageField.dataset.vgSource === 'arac' ? 'arac' : 'form' });
+          /* Başarı istemciden gönderilmez: contact.php kabul ettiği talebi kendisi sayar (quote_submit_success). */
+          if (quoteMetrics) { quoteMetrics.done(); quoteMetrics.reset(); quoteMetrics.draft(false); }
           if (messageField) delete messageField.dataset.vgSource;
           contactForm.reset();
           resetCaptcha();
@@ -685,6 +697,9 @@
           if (timestampField) timestampField.value = String(Date.now());
           /* Bu kimlikle daha önce farklı içerik alınmış: sonraki gönderim ayrı talep olsun */
           if (error && error.kind === 'conflict') contactRequestId = '';
+          /* Sunucuya ulaşmayan / okunamayan gönderim; sunucunun reddettiği talepleri contact.php sayar */
+          var failKind = error ? { network: 'ag', timeout: 'zaman-asimi', unsupported: 'gecersiz-yanit' }[error.kind] : '';
+          if (quoteMetrics && failKind) quoteMetrics.fail(failKind);
           var code = error && error.data ? error.data.code : '';
           var field = { invalid_email: 'email', invalid_phone: 'phone', invalid_name: 'name', invalid_message: 'message' }[code];
           var fieldEl = field ? qs('#' + field, contactForm) : null;

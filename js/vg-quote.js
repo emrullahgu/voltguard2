@@ -114,6 +114,12 @@
     return e;
   }
   function send(fields) {
+    /* Ölçüm bağlamı (js/vg-metrics.js): form izleyicisi eklemediyse anonim vg_ctx_* alanları (sayfa yolu, cihaz sınıfı,
+       test bayrağı). DNT/GPC açıksa boş. Sunucudaki tekrar algılama parmak izine katılmaz. */
+    if (fields && !fields.vg_ctx_src && window.vgTrack && window.vgTrack.quoteFields) {
+      var ctx = window.vgTrack.quoteFields();
+      Object.keys(ctx).forEach(function (k) { if (fields[k] == null) fields[k] = ctx[k]; });
+    }
     var body = new FormData();
     Object.keys(fields).forEach(function (k) { if (fields[k] != null) body.append(k, String(fields[k])); });
     var ac = typeof AbortController === 'function' ? new AbortController() : null;

@@ -278,12 +278,31 @@ async function run() {
     check((await collect([{ e: 'contact_click', p: '/', ch: 'tel' }], { 'Sec-Fetch-Site': 'cross-site' })).status, 403, 'Cross-site fetch metadata refused');
     check((await fetch(`${base}/api/metrics.php?action=collect`)).status, 405, 'Collect is POST only');
 
+    // Server-side acceptance: quote_submit_success only when contact.php accepts (preview → test bucket)
+    const requestId = 'metricsTestRequest0001';
+    r = await contact({ phone: '123', kind: 'contact', requestId: 'metricsTestRejected01', vg_ctx_src: '/hizmetler/trafo-bakimi.html', vg_ctx_dev: 'mobil' });
+    check([r.status, r.body.code], [422, 'invalid_phone'], 'Invalid request rejected by contact.php');
+    await waitFor(() => (dayFile('test-days') || {}).q_rej?.['iletisim|invalid_phone'], 'server reject recorded');
+    r = await contact({ kind: 'contact', requestId, vg_ctx_src: '/hizmetler/trafo-bakimi.html', vg_ctx_dev: 'mobil', vg_ctx_tas: 'sonuc' });
+    check([r.status, r.body.success, r.body.preview], [200, true, true], 'Valid request accepted by contact.php (preview outbox)');
+    let test = await waitFor(() => { const d = dayFile('test-days'); return d && d.ev.quote_submit_success ? d : null; }, 'acceptance recorded');
+    check([test.ev.quote_submit_success, test.q_ok['iletisim|mobil|sonuc|elektrik'], test.q_ok_src['iletisim|/hizmetler/trafo-bakimi.html']], [1, 1, 1],
+      'Accepted request counted server-side with form, device, draft flag, subject category and source page');
+    r = await contact({ kind: 'contact', requestId, vg_ctx_src: '/hizmetler/trafo-bakimi.html', vg_ctx_dev: 'mobil', vg_ctx_tas: 'sonuc' });
+    check([r.status, r.body.duplicate], [200, true], 'Same request retried (same requestId and content) is a duplicate');
+    await new Promise(res => setTimeout(res, 400));
+    check(dayFile('test-days').ev.quote_submit_success, 1, 'A duplicate retry is not counted as a second accepted request');
+    check(dayFile().ev.quote_submit_success, undefined, 'Preview submissions never reach the live bucket');
+    r = await contact({ kind: 'contact', requestId: 'metricsTestRequest0002', vg_ctx_src: 'https://evil.example/x', vg_ctx_dev: 'phone-x' });
+    await waitFor(() => dayFile('test-days').ev.quote_server_reject >= 2 || dayFile('test-days').ev.quote_submit_success >= 2, 'third submission recorded');
+
     // Anonymity: nothing stored contains the IP, the User-Agent, raw referrers or form contents
     const stored = walk(path.join(sandbox, 'metrics')).map(f => fs.readFileSync(f, 'utf8')).join('\n');
     ok(!stored.includes('127.0.0.1') && !stored.includes('::1'), 'No IP address stored');
     ok(!/Mozilla|VgMetricsProbe|Googlebot|HeadlessChrome|curl/.test(stored), 'No User-Agent stored');
     ok(!stored.includes('secret-agent') && !stored.includes('10.1.2.3') && !stored.includes('evil.example'), 'Unexpected client fields are never stored');
     for (const [k, v] of Object.entries(PII)) ok(!stored.includes(v) && !stored.includes(v.replace(/ /g, '')), `No ${k} in any metrics file`);
+    ok(!stored.includes('gizli-proje-7781') && !stored.includes(requestId), 'No message text or request id in metrics');
     const rlFiles = walk(path.join(sandbox, 'metrics/rl'));
     check(rlFiles.length, 1, 'Exactly one (today\'s) rate counter file');
     ok(Object.keys(JSON.parse(fs.readFileSync(rlFiles[0], 'utf8'))).every(k => /^[a-f0-9]{24}$/.test(k)), 'Rate keys are salted hashes');
@@ -326,6 +345,15 @@ async function run() {
     check(dash.contacts, { tel: 1, whatsapp: 1, eposta: 0 }, 'Contact intent clicks reported separately');
     check([dash.outcomes, dash.searchConsole, dash.plan.baseline], [null, null, null], 'No verified outcomes, Search Console data or baseline is invented');
     check(dash.experiments.map(e => [e.id, e.change, e.before]), [['H1', null, null], ['H2', null, null], ['H3', null, null]], 'Experiments wait for a logged change');
+
+    r = await auth(member, 'dashboard', { endpoint: 'metrics', query: { days: '7', mode: 'test' } });
+    dash = r.body;
+    check([dash.mode, dash.totals.pv, dash.totals.quoteAccepted], ['test', 2, dayFile('test-days').ev.quote_submit_success],
+      'Test dashboard shows only test data');
+    check(dash.forms.iletisim.rejects.invalid_phone, 1, 'Server rejections by code');
+    check(dash.forms.iletisim.devices.mobil, { start: 0, accepted: 1 }, 'Accepted requests by device');
+    ok(dash.entryPages.some(p => p.page === '/hizmetler/trafo-bakimi.html' && p.accepted === 1), 'Accepted requests by source page');
+    ok(dash.entryPages.some(p => p.page === '(bilinmiyor)'), 'An invalid source path is stored as unknown, not as the given URL');
 
     // Verified outcomes ledger and change log (CLI only)
     check(cli('outcome', 'set', '2026-10', '--source', 'tahmin', '--by', 'x', '--won', '1').status, 2, 'Unknown outcome source refused');

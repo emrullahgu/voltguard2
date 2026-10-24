@@ -635,6 +635,12 @@
       return bad.length ? bad[0] : null;
     }
 
+    /* Ölçüm (js/vg-metrics.js): başlangıç, ulaşılan adım, alan hataları, terk ve ağ hatası. Yalnızca alan kimlikleri
+       gider, değerler asla. Kabul edilen talep contact.php'de sayılır. */
+    var qm = win.vgTrack && win.vgTrack.form ? win.vgTrack.form(form, 'teklif', { fields: {
+      name: 'ad', phone: 'telefon', email: 'eposta', wzSector: 'sektor', wzTrafo: 'trafo', wzServices: 'hizmetler',
+      wzUrgency: 'aciliyet', wzCity: 'il', wzNote: 'not', captcha: 'guvenlik' } }) : null;
+
     /* ---- Adım gösterimi ---- */
     function showStep(i, focus, noSave) {
       idx = clamp(i, 0, steps.length - 1);
@@ -672,11 +678,13 @@
     btnNext.addEventListener('click', function () {
       var bad = validateStep(idx, true);
       if (bad) {
+        if (qm) qm.errors([bad]);
         var f = firstFocusable(bad);
         if (f) f.focus();
         announce('Lütfen işaretli alanı tamamlayın.');
         return;
       }
+      if (qm) qm.step(idx + 2);
       showStep(idx + 1, true);
     });
     btnPrev.addEventListener('click', function () { showStep(idx - 1, true); });
@@ -927,6 +935,7 @@
       for (var i = 0; i < steps.length; i++) {
         var bad = validateStep(i, true);
         if (bad) {
+          if (qm) qm.errors([bad]);
           if (i !== idx) showStep(i, false);
           var f = bad === 'captcha' ? null : firstFocusable(bad);
           if (f) f.focus();
@@ -968,6 +977,7 @@
       };
       if (capOn) fields['cf-turnstile-response'] = capToken();
       if (simIncluded()) { fields.simulation = JSON.stringify(sim); fields.simulationConsent = '1'; }
+      if (qm) { qm.draft(simIncluded()); Object.assign(fields, qm.fields()); }
 
       sending = true;
       form.setAttribute('aria-busy', 'true');
@@ -977,11 +987,11 @@
       btnPrev.disabled = true;
       btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Gönderiliyor...';
 
-      var withSim = !!fields.simulation;
       Q.send(fields)
         .then(function (r) {
           store.setRaw(KEY_LAST_SUBMIT, String(Date.now()));
-          if (win.vgTrack) win.vgTrack('quote_submit', { via: withSim ? 'voltsim' : 'sihirbaz' });
+          /* Başarı istemciden sayılmaz: contact.php kabul ettiği talebi (simülasyon özeti eklendi mi dahil) kendisi sayar */
+          if (qm) { qm.done(); qm.reset(); }
           showDone(r);
         })
         .catch(function (err) {
@@ -989,6 +999,8 @@
           stamp();
           /* Talep daha önce bu kimlikle alınmış ama içerik değişmiş: yeni gönderim ayrı talep olsun */
           if (err && err.kind === 'conflict') { requestId = ''; saveDraft(); }
+          var failKind = err ? { network: 'ag', timeout: 'zaman-asimi', unsupported: 'gecersiz-yanit' }[err.kind] : '';
+          if (qm && failKind) qm.fail(failKind);
           var msg = (err && err.message) || 'Gönderim sırasında bir hata oluştu. Yazdıklarınız korundu.';
           showErr(msg);
           /* Sunucu bir alanı reddettiyse (422) o alanı işaretle ve oraya odaklan */
@@ -1042,6 +1054,7 @@
     restoreDraft();
     /* VoltSim'den gelen özet (kullanıcı orada "taslağa ekle" dedi) ve hizmet sayfasından gelen ?hizmet= önerisi */
     var fromSim = Q ? Q.staged() : null;
+    if (qm && fromSim) qm.draft(true);
     if (fromSim) {
       /* Yeni aktarım: kullanıcı VoltSim'de "taslağa ekle" dedi, kutu işaretli gelir. Aynı özet için taslaktaki karar korunur. */
       if (draftSimSig !== JSON.stringify(fromSim) && simConsent) simConsent.checked = true;

@@ -7,6 +7,7 @@ require __DIR__ . '/api/lib/security.php';
 require __DIR__ . '/api/lib/validate.php';
 require __DIR__ . '/api/lib/mailer.php';
 require __DIR__ . '/api/lib/enquiry.php';
+require __DIR__ . '/api/lib/metrics.php';
 
 function vg_contact_string(string $key): string
 {
@@ -172,7 +173,11 @@ try {
     vg_discard_output();
     vg_common_headers(200, []);
     echo vg_json_encode(['success' => true] + $result);
+    // quote_submit_success yalnızca burada sayılır: talep kabul edildi ve teslim edildi (aynı requestId tekrarı sayılmaz).
+    if (empty($result['duplicate'])) vg_after_response(function () { vg_metrics_contact_outcome(null); });
 } catch (VgHttpError $error) {
+    $code = $error->errCode;
+    vg_after_response(function () use ($code) { vg_metrics_contact_outcome($code); });
     vg_discard_output();
     vg_common_headers($error->status, $error->headers);
     echo vg_json_encode(['success' => false, 'code' => $error->errCode, 'message' => $error->getMessage()]
