@@ -52,12 +52,13 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/voltsim.css?v=a654d82ff805">
+  <link rel="stylesheet" href="/css/voltsim.css?v=fb5ab91f1fd1">
   <script src="/js/vendor/three-r128.min.js?v=9274bbcec8d9" defer></script>
   <script src="/js/voltsim/engine.js?v=349aa22bb691" defer></script>
   <script src="/js/voltsim/calc/ges.js?v=338739cbd779" defer></script>
   <script src="/js/voltsim/regulations.js?v=cdb7ce815792" defer></script>
-  <script src="/js/voltsim/core.js?v=9f4692385ab9" defer></script>
+  <script src="/js/vg-quote.js?v=828953263ab2" defer></script>
+  <script src="/js/voltsim/core.js?v=b49f90676f09" defer></script>
   <script src="/js/voltsim/mod/ges.js?v=96e72b3205ec" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltSim","item":"https://voltguard.com.tr/voltsim/"},{"@type":"ListItem","position":3,"name":"3D GES Simülasyonu","item":"https://voltguard.com.tr/voltsim/ges/"}]},{"@type":"WebApplication","name":"3D GES Simülasyonu","url":"https://voltguard.com.tr/voltsim/ges/","applicationCategory":"EngineeringApplication","operatingSystem":"Web","inLanguage":"tr","isAccessibleForFree":true,"description":"Fabrika çatısında GES kurun: güneşin konumu, eğim, gölge, string Voc kontrolü, inverter kırpması, öz tüketim ve geri dönüş senaryosunu 3D olarak inceleyin.","publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"}}]}</script>
 </head>
@@ -186,6 +187,10 @@
             <p class="vs-small">Model sınırları içindeki ön kontroldür; tasarım doğrulaması veya resmî onay değildir.</p>
             <ul class="vs-checks" data-vs-checks></ul>
             <details class="vs-asm"><summary>Varsayımlar ve bağıntılar</summary><div data-vs-assumptions></div></details>
+            <div class="vs-quote">
+              <button class="vs-cbtn vs-cbtn--primary" type="button" data-vs-act="quote">Çatım için ön fizibilite isteyin</button>
+              <p class="vs-small">Aktarılacak girdileri ve sonuçları önce size gösteririz; siz onaylayıp teklif formunu göndermedikçe hiçbir değer VoltGuard’a iletilmez.</p>
+            </div>
             <a class="vs-jump" href="#mevzuat">Mevzuat ve standartlar ↓</a>
           </div>
         </section>
@@ -193,7 +198,7 @@
       <noscript><p class="vs-noscript">Simülasyon için JavaScript gereklidir. Aşağıdaki mevzuat ve standart bilgileri JavaScript olmadan da okunabilir.</p></noscript>
     </div>
 
-    <p class="vs-disclaimer"><strong>Önemli:</strong> VoltSim mühendislik eğitimi ve ön değerlendirme amacıyla hazırlanmıştır. Nihai proje, ekipman seçimi, uygulama ve mevzuat uygunluğu yetkili mühendis tarafından değerlendirilmelidir. Girdileriniz yalnızca tarayıcınızda işlenir; VoltGuard’a gönderilmez.</p>
+    <p class="vs-disclaimer"><strong>Önemli:</strong> VoltSim mühendislik eğitimi ve ön değerlendirme amacıyla hazırlanmıştır. Nihai proje, ekipman seçimi, uygulama ve mevzuat uygunluğu yetkili mühendis tarafından değerlendirilmelidir. Girdileriniz yalnızca tarayıcınızda işlenir; siz teklif taslağına ekleyip formu göndermedikçe VoltGuard’a gönderilmez.</p>
 
     <section class="vs-regs" id="mevzuat" aria-labelledby="mevzuat-h">
       <div class="vs-sec-head">
@@ -464,7 +469,7 @@
         <p>VoltGuard mühendislik ekibiyle projenizi gerçek tesis koşullarına göre değerlendirin. Raporunuzu paylaşmak isterseniz indirip teklif talebinize ekleyebilirsiniz; simülasyon girdileri bizimle siz istemedikçe paylaşılmaz.</p>
       </div>
       <div class="vs-cta__btns">
-        <a class="vs-cbtn vs-cbtn--primary" href="/#iletisim">VoltGuard’dan Teklif Al</a>
+        <a class="vs-cbtn vs-cbtn--primary" href="/fabrika-cozumleri.html#teklif" data-vs-quote-open>Çatım için ön fizibilite isteyin</a>
         <a class="vs-cbtn" href="/sor.html">Mühendislik Desteği Al</a>
         <a class="vs-cbtn" href="/hizmetler/fabrika-cati-ges.html">İlgili Hizmeti İncele: Fabrika çatı GES</a>
       </div>

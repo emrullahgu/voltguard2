@@ -6,6 +6,7 @@ require __DIR__ . '/api/lib/bootstrap.php';
 require __DIR__ . '/api/lib/security.php';
 require __DIR__ . '/api/lib/validate.php';
 require __DIR__ . '/api/lib/mailer.php';
+require __DIR__ . '/api/lib/enquiry.php';
 
 function vg_contact_string(string $key): string
 {
@@ -78,7 +79,12 @@ function vg_contact_verify_captcha(string $secret, string $token): void
     }
 }
 
-function vg_contact_submit(): string
+/**
+ * Iletisim formu (kind=contact) ve teklif sihirbazi (kind=quote) ayni dogrulama, hiz siniri ve teslim yolunu kullanir.
+ * Basari yaniti yalnizca e-posta gonderim sistemine (onizlemede outbox/) teslim edildikten sonra verilir ve talep
+ * numarasi icerir; ayni requestId ile yeniden deneme ikinci e-posta uretmez (api/lib/enquiry.php).
+ */
+function vg_contact_submit(): array
 {
     if (vg_method() !== 'POST') vg_fail(405, 'method_not_allowed', 'Bu adres yalnızca form gönderimi kabul eder.', [], ['Allow: POST']);
     vg_check_fetch_site();
@@ -94,6 +100,7 @@ function vg_contact_submit(): string
     }
     if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 32768) vg_fail(413, 'too_large', 'Gönderilen form çok büyük.');
     if (!$_POST || $_FILES) vg_fail(400, 'invalid_request', 'Gönderilen form okunamadı.');
+    $kind = vg_contact_string('kind') === 'quote' ? 'quote' : 'contact';
     $name = vg_contact_string('name');
     $phone = vg_contact_string('phone');
     $email = vg_contact_string('email');
@@ -102,64 +109,78 @@ function vg_contact_submit(): string
     $website = vg_contact_string('website');
     $timestamp = vg_contact_string('formTimestamp');
     $captcha = vg_contact_string('cf-turnstile-response');
+    $requestId = vg_enquiry_request_id(vg_contact_string('requestId'));
     $subjects = ['elektrik' => 'Elektrik Hizmetleri', 'elektronik' => 'Elektronik ve Gömülü Sistemler',
         'otomasyon' => 'Otomasyon Sistemleri', 'mekanik' => 'Mekanik Sistemler', 'diger' => 'Diğer / Genel Danışmanlık'];
     if ($website !== '') vg_fail(422, 'rejected', 'Form gönderilemedi. Lütfen alanları kontrol edin.');
     if (vg_strlen($name) < 2 || vg_strlen($name) > 100 || preg_match('/[\x00-\x1F\x7F<>]/', $name)) {
         vg_fail(422, 'invalid_name', 'Lütfen geçerli bir ad soyad girin.');
     }
-    $digits = (string)preg_replace('/\D+/', '', $phone);
-    if (strlen($phone) > 32 || preg_match('/^\+?[0-9 ()\-.]+$/D', $phone) !== 1
-        || preg_match('/^(?:5[0-9]{9}|05[0-9]{9}|905[0-9]{9})$/D', $digits) !== 1) {
-        vg_fail(422, 'invalid_phone', 'Geçerli bir cep telefonu numarası girin.');
+    /* Teklif talebinde telefon ya da e-postadan biri yeterli; iletişim formunda geri arama için telefon gerekir. */
+    if (($phone !== '' || $kind === 'contact') && !vg_enquiry_phone_ok($phone)) {
+        vg_fail(422, 'invalid_phone', 'Geçerli bir telefon numarası girin (cep veya sabit hat).');
     }
     if ($email !== '' && (strlen($email) > 254 || filter_var($email, FILTER_VALIDATE_EMAIL) === false || preg_match('/[\r\n]/', $email))) {
         vg_fail(422, 'invalid_email', 'Geçerli bir e-posta adresi girin.');
     }
+    if ($phone === '' && $email === '') vg_fail(422, 'contact_required', 'Size ulaşabilmemiz için telefon veya e-posta adresinden birini yazın.');
     if (!isset($subjects[$subject])) vg_fail(422, 'invalid_subject', 'Lütfen hizmet alanını seçin.');
     if (vg_strlen($message) < 20 || vg_strlen($message) > 1000 || preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $message)) {
         vg_fail(422, 'invalid_message', 'Mesaj 20–1000 karakter olmalı ve kontrol karakteri içermemeli.');
     }
+    $simulation = $kind === 'quote' ? vg_enquiry_simulation(vg_contact_string('simulation'), vg_contact_string('simulationConsent')) : null;
     // The visitor's clock is untrusted; this is a form marker, never proof of human interaction.
     if (preg_match('/^[1-9][0-9]{0,15}$/D', $timestamp) !== 1) vg_fail(422, 'invalid_form', 'Form bilgisi eksik. Lütfen sayfayı yenileyip yeniden deneyin.');
     // A contact request does not require a general-purpose personal-data consent checkbox.
     // The privacy notice remains visible in the form; legacy consent=on is accepted but not required.
     vg_private_data_directory(vg_data_dir());
     vg_schedule_gc();
-    $retry = vg_rl_hit('contact_ip', vg_rl_ip_key(), 5, 600);
-    if ($retry > 0) vg_too_many($retry, 'Çok fazla mesaj gönderdiniz. Lütfen birkaç dakika sonra yeniden deneyin.');
-    $secret = getenv('TURNSTILE_SECRET_KEY');
-    $captchaOn = is_string($secret) && $secret !== '' && $secret !== 'REPLACE_WITH_TURNSTILE_SECRET_KEY';
-    /* Site-wide ceiling protects the mailbox from distributed floods; stricter while bot verification is off. */
-    $global = vg_rl_hit('contact_global', 'all', $captchaOn ? 120 : 40, 3600);
-    if ($global > 0) vg_too_many($global, 'Şu anda çok sayıda mesaj alınıyor. Lütfen biraz sonra tekrar deneyin veya bizi telefonla arayın.');
-    if ($captchaOn) vg_contact_verify_captcha($secret, $captcha);
-    elseif (getenv('VG_MAIL_OUTBOX') !== '1') error_log('VoltGuard contact: TURNSTILE_SECRET_KEY is not configured; bot verification is off (see api/README.md)');
-    if (!vg_mail_can_send()) vg_fail(503, 'mail_unavailable', 'Mesaj gönderimi şu anda kullanılamıyor. Lütfen telefonla iletişime geçin.');
-    $body = "Yeni iletişim talebi:\n\nAd Soyad: {$name}\nTelefon: {$phone}\nE-posta: " . ($email ?: '-')
-        . "\nHizmet Alanı: {$subjects[$subject]}\nTarih: " . vg_local_time(time()) . " (TSİ)\n\nMesaj:\n{$message}\n";
-    if (!vg_mail_send('info@voltguard.com.tr', 'VoltGuard İletişim Formu - ' . $subjects[$subject], $body, 'contact', $email ?: null)) {
-        vg_fail(503, 'mail_unavailable', 'Mesaj gönderilemedi. Lütfen telefonla iletişime geçin.');
-    }
-    return getenv('VG_MAIL_OUTBOX') === '1'
-        ? 'Form doğrulandı. Bu önizlemede e-posta gönderilmez; iletişim için canlı sitedeki formu kullanın.'
-        : 'Mesajınız gönderim sistemine alındı. En kısa sürede sizinle iletişime geçeceğiz.';
+    vg_enquiry_schedule_gc();
+    $preview = getenv('VG_MAIL_OUTBOX') === '1';
+    $fingerprint = hash('sha256', vg_json_encode([$kind, $name, $phone, $email, $subject, $message, $simulation]));
+    $label = $kind === 'quote' ? 'Teklif talebi' : 'İletişim talebi';
+    $outcome = vg_enquiry_once($requestId, $fingerprint, function (string $reference) use ($name, $phone, $email, $subject, $subjects, $message, $captcha, $simulation, $label, $preview): void {
+        $retry = vg_rl_hit('contact_ip', vg_rl_ip_key(), 5, 600);
+        if ($retry > 0) vg_too_many($retry, 'Çok fazla mesaj gönderdiniz. Lütfen birkaç dakika sonra yeniden deneyin.');
+        $secret = getenv('TURNSTILE_SECRET_KEY');
+        $captchaOn = is_string($secret) && $secret !== '' && $secret !== 'REPLACE_WITH_TURNSTILE_SECRET_KEY';
+        /* Site-wide ceiling protects the mailbox from distributed floods; stricter while bot verification is off. */
+        $global = vg_rl_hit('contact_global', 'all', $captchaOn ? 120 : 40, 3600);
+        if ($global > 0) vg_too_many($global, 'Şu anda çok sayıda mesaj alınıyor. Lütfen biraz sonra tekrar deneyin veya bizi telefonla arayın.');
+        if ($captchaOn) vg_contact_verify_captcha($secret, $captcha);
+        elseif (!$preview) error_log('VoltGuard contact: TURNSTILE_SECRET_KEY is not configured; bot verification is off (see api/README.md)');
+        if (!vg_mail_can_send()) vg_fail(503, 'mail_unavailable', 'Talebiniz şu anda iletilemedi. Lütfen telefonla iletişime geçin.');
+        $body = "Yeni {$label} ({$reference}):\n\nAd Soyad: {$name}\nTelefon: " . ($phone ?: '-') . "\nE-posta: " . ($email ?: '-')
+            . "\nHizmet Alanı: {$subjects[$subject]}\nTarih: " . vg_local_time(time()) . " (TSİ)\n\nMesaj:\n{$message}\n"
+            . ($simulation ? "\n" . vg_enquiry_simulation_text($simulation) . "\n" : '');
+        if (!vg_mail_send('info@voltguard.com.tr', 'VoltGuard ' . $label . ' ' . $reference . ' - ' . $subjects[$subject], $body, 'contact', $email ?: null)) {
+            vg_fail(503, 'mail_unavailable', 'Talebiniz iletilemedi. Lütfen telefonla iletişime geçin.');
+        }
+    });
+    $ref = $outcome['reference'];
+    $text = $preview
+        ? "Önizleme sunucusu talebi kabul etti (talep no {$ref}). Bu önizlemede e-posta gönderilmez; gerçek talep için canlı sitedeki formu kullanın."
+        : ($outcome['duplicate']
+            ? "Bu talep daha önce {$ref} numarasıyla alınmıştı; tekrar kaydedilmedi. En kısa sürede sizinle iletişime geçeceğiz."
+            : "Talebiniz {$ref} numarasıyla alındı. En kısa sürede sizinle iletişime geçeceğiz.");
+    return ['message' => $text, 'reference' => $ref, 'duplicate' => $outcome['duplicate'], 'preview' => $preview];
 }
 
 ob_start();
 try {
-    $message = vg_contact_submit();
+    $result = vg_contact_submit();
     vg_discard_output();
     vg_common_headers(200, []);
-    echo vg_json_encode(['success' => true, 'message' => $message]);
+    echo vg_json_encode(['success' => true] + $result);
 } catch (VgHttpError $error) {
     vg_discard_output();
     vg_common_headers($error->status, $error->headers);
-    echo vg_json_encode(['success' => false, 'message' => $error->getMessage()]);
+    echo vg_json_encode(['success' => false, 'code' => $error->errCode, 'message' => $error->getMessage()]
+        + array_intersect_key($error->extra, ['reference' => 1, 'retryAfter' => 1]));
 } catch (Throwable $error) {
     error_log('VoltGuard contact: request failed (' . get_class($error) . ')');
     vg_discard_output();
     vg_common_headers(503, []);
-    echo vg_json_encode(['success' => false, 'message' => 'Mesaj gönderimi şu anda kullanılamıyor. Lütfen telefonla iletişime geçin.']);
+    echo vg_json_encode(['success' => false, 'code' => 'unavailable', 'message' => 'Talep gönderimi şu anda kullanılamıyor. Lütfen telefonla iletişime geçin.']);
 }
 vg_finish_and_run_jobs();

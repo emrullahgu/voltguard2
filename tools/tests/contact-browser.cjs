@@ -7,7 +7,7 @@ const http = require('node:http');
 const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '../..');
 const output = path.join(root, '.qa/contact');
-const report = {checks: [], browserErrors: [], unstubbedPosts: 0};
+const report = {checks: [], browserErrors: [], unstubbedPosts: 0, otherPosts: {}};
 fs.mkdirSync(output, {recursive: true});
 
 function packagePath(name) {
@@ -30,7 +30,11 @@ const mime = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; char
   '.png': 'image/png', '.woff2': 'font/woff2', '.ico': 'image/x-icon'};
 const server = http.createServer((request, response) => {
   const url = new URL(request.url, 'http://fixture');
-  if (request.method !== 'GET') {report.unstubbedPosts++; response.writeHead(405).end(); return;}
+  if (request.method !== 'GET') {
+    // Yalnızca form uç noktası sayılır; anonim ölçüm (sendBeacon → /api/metrics.php) fetch taklidinden geçmez.
+    if (url.pathname === '/contact.php') report.unstubbedPosts++; else report.otherPosts[url.pathname] = (report.otherPosts[url.pathname] || 0) + 1;
+    response.writeHead(405).end(); return;
+  }
   if (url.pathname === '/api/auth.php') {
     response.writeHead(200, {'Content-Type': mime['.json']});
     response.end(JSON.stringify({api: 'vg-auth/1', ok: true, user: null, csrf: 'fixture'})); return;
@@ -82,7 +86,7 @@ let browser;
       await context.addInitScript(({noAbort}) => {
         if (noAbort) window.AbortController = undefined;
         const nativeFetch = window.fetch.bind(window), nativeTimeout = window.setTimeout.bind(window);
-        const fixture = window.__contactFixture = {mode: 'hold', count: 0, pending: [], deadlines: []};
+        const fixture = window.__contactFixture = {mode: 'hold', count: 0, pending: [], deadlines: [], ids: []};
         window.setTimeout = function (callback, delay, ...args) {
           if (delay === 25000) {fixture.deadlines.push(delay); delay = 250;}
           return nativeTimeout(callback, delay, ...args);
@@ -91,12 +95,19 @@ let browser;
           if (new URL(typeof input === 'string' ? input : input.url, location.href).pathname !== '/contact.php') return nativeFetch(input, options);
           if (options.method !== 'POST') throw Error('Contact fixture expects POST');
           fixture.count++;
-          const response = (success, message, status) => new Response(JSON.stringify({success, message}), {status, headers: {'Content-Type': 'application/json'}});
-          if (fixture.mode === 'hold') return new Promise(resolve => fixture.pending.push(() => resolve(response(true, 'LATE RESPONSE MUST NOT CLEAR INPUT', 200))));
+          fixture.ids.push(options.body.get('requestId'));
+          const response = (success, message, status, extra = {}) => new Response(JSON.stringify({success, message, ...extra}), {status, headers: {'Content-Type': 'application/json'}});
+          const accepted = message => response(true, message, 200, {reference: 'VG-261024-ABC23', preview: true, duplicate: false});
+          if (fixture.mode === 'hold') return new Promise(resolve => fixture.pending.push(() => resolve(accepted('LATE RESPONSE MUST NOT CLEAR INPUT'))));
           if (fixture.mode === 'bodyhold') return Promise.resolve({ok: true, status: 200, json: () => new Promise(() => {})});
           if (fixture.mode === 'failure') return Promise.resolve(response(false, 'Sentetik taşıyıcı hatası. Yazdıklarınız korundu.', 503));
           if (fixture.mode === 'invalid') return Promise.resolve(new Response('not JSON', {status: 200}));
-          return Promise.resolve(response(true, 'ÖNİZLEME: Bu testte gerçek e-posta gönderilmez.', 200));
+          // PHP çalışmayan statik önizleme: 405 HTML sayfası
+          if (fixture.mode === 'static') return Promise.resolve(new Response('<!doctype html><title>405</title>', {status: 405, headers: {'Content-Type': 'text/html'}}));
+          // success:true ama talep numarası yok: kabul doğrulanamaz, başarı gösterilmemeli
+          if (fixture.mode === 'noref') return Promise.resolve(response(true, 'NO REFERENCE MUST NOT LOOK LIKE SUCCESS', 200));
+          if (fixture.mode === 'offline') return Promise.reject(new TypeError('Failed to fetch'));
+          return Promise.resolve(accepted('ÖNİZLEME: Bu testte gerçek e-posta gönderilmez.'));
         };
       }, {noAbort});
       const page = await context.newPage();
@@ -117,12 +128,12 @@ let browser;
       assert.equal(await page.evaluate(() => __contactFixture.count), 1, `${item.name}: duplicate blocked`);
       assert.equal(await page.locator(item.text).inputValue(), text, `${item.name}: timeout preserves input`);
       assert.equal(await page.locator(item.button).isDisabled(), false);
-      assert.match(await page.locator(item.status).textContent(), /yanıtı alınamadı/);
+      assert.match(await page.locator(item.status).textContent(), /yanıt alınamadı/);
       await page.evaluate(() => __contactFixture.pending.forEach(resolve => resolve()));
       await page.waitForTimeout(50);
       assert.equal(await page.locator(item.text).inputValue(), text, `${item.name}: late success ignored`);
 
-      for (const mode of ['bodyhold', 'failure', 'invalid']) {
+      for (const mode of ['bodyhold', 'failure', 'invalid', 'static', 'noref', 'offline']) {
         await page.evaluate(mode => {__contactFixture.mode = mode;}, mode);
         const before = await page.evaluate(() => __contactFixture.count);
         await submit(page, item);
@@ -130,6 +141,12 @@ let browser;
         await page.waitForFunction(form => !document.querySelector(form).hasAttribute('aria-busy'), item.form);
         assert.equal(await page.locator(item.text).inputValue(), text, `${item.name}: ${mode} preserves input`);
         assert.equal(await page.locator(item.button).isDisabled(), false, `${item.name}: ${mode} UI resets`);
+        if (item.name !== 'question') {
+          const shown = await page.evaluate(() => document.body.innerText);
+          assert.doesNotMatch(shown, /NO REFERENCE MUST NOT LOOK LIKE SUCCESS|Talebiniz alındı|Talep numaranız/, `${item.name}: ${mode} never looks like success`);
+          if (mode === 'static' || mode === 'noref') assert.match(await page.locator(item.status).textContent(), /iletilmedi|doğrulayamıyoruz/);
+          if (mode === 'offline') assert.match(await page.locator(item.status).textContent(), /Bağlantı kurulamadı/);
+        }
       }
       if (item.name === 'factory') assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('vg_fx_wizard_v1')).ids.wzNote), text, 'Failed requests preserve saved factory draft');
       await page.evaluate(() => {__contactFixture.mode = 'success';});
@@ -139,10 +156,17 @@ let browser;
       await page.waitForFunction(form => !document.querySelector(form).hasAttribute('aria-busy'), item.form);
       const success = item.name === 'factory' ? '#fxWizDoneMsg' : item.status;
       assert.match(await page.locator(success).textContent(), /ÖNİZLEME: Bu testte gerçek e-posta gönderilmez/);
+      if (item.name !== 'question') {
+        // Talep numarası kalıcı gösterilir; tüm yeniden denemeler aynı kimliği taşır (sunucu tekrar kaydı açmaz)
+        assert.match(await page.locator(item.name === 'factory' ? '#fxWizRefNo' : '#contactReceipt').textContent(), /VG-261024-ABC23/);
+        const ids = await page.evaluate(() => __contactFixture.ids);
+        assert.ok(ids.every(id => id && id === ids[0]), `${item.name}: one request id across retries`);
+      }
       assert.equal(await page.locator(item.text).inputValue(), '', 'Only successful submission resets form');
       assert.equal(await page.locator(item.button).isDisabled(), false);
-      assert.deepEqual(await page.evaluate(() => __contactFixture.deadlines), [25000, 25000, 25000, 25000, 25000]);
-      report.checks.push({page: item.name, abortController: !noAbort, pass: true, cases: ['honeypot', 'duplicate', 'timeout', 'late-response', 'body-timeout', '503', 'invalid-json', 'backend-message', 'retry']});
+      // Her gönderim (ağ hatası anında dönen hariç) 25 sn yanıt sınırı kurar
+      assert.ok((await page.evaluate(() => __contactFixture.deadlines)).every(delay => delay === 25000));
+      report.checks.push({page: item.name, abortController: !noAbort, pass: true, cases: ['honeypot', 'duplicate', 'timeout', 'late-response', 'body-timeout', '503', 'invalid-json', 'static-405', 'no-reference', 'offline', 'backend-message', 'reference', 'same-request-id', 'retry']});
     } finally {await context.close();}
   }
   assert.equal(report.unstubbedPosts, 0, 'No contact POST reached any server');

@@ -8,9 +8,11 @@
  * Çapalar: #reaktif-ceza ve #durus-maliyeti ilgili hesaplayıcı sekmesini açar; ana sayfadaki hızlı
  * tahmin ?saat=..&tl=..#durus-maliyeti ile duruş hesaplayıcısına aktarılır. #teklif-sihirbazi = #teklif.
  *
- * Teklif Sihirbazı /contact.php'ye index.html iletişim formuyla AYNI alanları gönderir:
- *   name, phone, email, subject (elektrik|elektronik|otomasyon|mekanik|diger), message (20-1000),
- *   website (honeypot), formTimestamp (ms), cf-turnstile-response (site anahtarı varsa).
+ * Teklif Sihirbazı js/vg-quote.js ile /contact.php'ye index.html iletişim formuyla AYNI alanları gönderir:
+ *   kind=quote, requestId (yeniden denemede aynı kalır), name, phone, email (telefon ya da e-postadan biri yeterli),
+ *   subject (elektrik|elektronik|otomasyon|mekanik|diger), message (20-1000), website (honeypot), formTimestamp (ms),
+ *   cf-turnstile-response (site anahtarı varsa); kullanıcı onay kutusunu işaretlediyse simulation + simulationConsent=1.
+ * VoltSim'den gelen özet (VGQuote.staged) yalnızca bu cihazda durur; sihirbazda tamamı gösterilir.
  */
 (function () {
   'use strict';
@@ -212,6 +214,8 @@
   ];
 
   var SVC_LABELS = {
+    bilmiyorum: 'Emin değil, öneri bekliyor',
+    'trafo-guc': 'Trafo / güç ihtiyacı değerlendirmesi',
     trafo: 'Trafo işletme sorumluluğu',
     smm: 'SMM hizmetleri',
     periyodik: 'Periyodik kontrol ve ölçüm',
@@ -261,7 +265,15 @@
   var KEY_CALC = 'vg_fx_calc_v1';
   var KEY_LAST_SUBMIT = 'vg_last_submit_at';   // js/main.js ile ortak (60 sn bekleme)
   var SUBMIT_COOLDOWN = 60000;
-  var SUBMIT_TIMEOUT = 25000;                  // sunucu yanıt vermezse gönderimi kes
+  /* VoltSim modülü → önerilen hizmetler; hizmet sayfası adresi (?hizmet=<slug>) → önerilen hizmetler */
+  var SIM_SERVICES = { trafo: ['trafo-guc'], pano: ['pano'], komp: ['kompanzasyon', 'enerji-kalitesi'], ges: ['ges'] };
+  var SLUG_SERVICES = {
+    'trafo-merkezi-kurulumu': ['trafo-guc'], 'trafo-isletme-sorumlulugu': ['trafo'], 'trafo-bakimi': ['trafo', 'periyodik'],
+    'elektrik-pano-imalati': ['pano'], 'harmonik-filtreli-kompanzasyon': ['kompanzasyon'], 'kompanzasyon': ['kompanzasyon'],
+    'enerji-kalitesi-olcumu': ['enerji-kalitesi'], 'fabrika-cati-ges': ['ges'], 'ges': ['ges'],
+    'elektrik-periyodik-kontrol': ['periyodik'], 'topraklama-olcumu': ['topraklama'], 'plc-scada-otomasyon': ['otomasyon'],
+    'elektrik-taahhut': ['tesis'], 'elektrik-projesi': ['smm']
+  };
 
   /* =====================================================================
      Yardımcılar
@@ -465,8 +477,14 @@
     var capKey = cap ? (cap.getAttribute('data-sitekey') || '') : '';
     var capOn = !!cap && capKey !== '' && capKey.indexOf('REPLACE_WITH') !== 0;
     var capWidget = null, capLoading = false;
+    var simBox = byId('fxWizSim');
+    var simConsent = byId('wzSimConsent');
+    var powerUnknown = byId('wzPowerUnknown');
+    var Q = win.VGQuote || null;
     var idx = 0;
     var attached = {};          // anahtar -> metin (sağlık testi / hesaplayıcı özetleri)
+    var sim = null;             // VoltSim özeti (VGQuote.staged); yalnızca simConsent işaretliyse gönderilir
+    var requestId = '';         // aynı talebin yeniden denemelerinde aynı kalır; başarı veya çakışmada yenilenir
     var sending = false;
     var saveTimer = 0;
 
@@ -494,8 +512,9 @@
         sector: radioVal('wzSector'),
         facility: val('wzFacility'),
         trafo: val('wzTrafo'),
-        trafoCount: val('wzTrafoCount'),
-        power: val('wzPower'),
+        trafoCount: powerUnknown && powerUnknown.checked ? '' : val('wzTrafoCount'),
+        power: powerUnknown && powerUnknown.checked ? '' : val('wzPower'),
+        powerUnknown: !!(powerUnknown && powerUnknown.checked),
         ges: radioVal('wzGes'),
         services: checks('wzServices'),
         note: val('wzNote'),
@@ -510,7 +529,7 @@
     }
 
     function subjectFor(svcs) {
-      var elek = ['trafo', 'smm', 'periyodik', 'topraklama', 'kompanzasyon', 'enerji-kalitesi', 'pano', 'tesis', 'ges'];
+      var elek = ['trafo-guc', 'trafo', 'smm', 'periyodik', 'topraklama', 'kompanzasyon', 'enerji-kalitesi', 'pano', 'tesis', 'ges'];
       var has = function (list) { return svcs.some(function (s) { return list.indexOf(s) > -1; }); };
       if (has(elek)) return 'elektrik';
       if (has(['otomasyon', 'vfd'])) return 'otomasyon';
@@ -530,11 +549,13 @@
       var g = 'Trafo: ' + (d.trafo || '-');
       if (d.trafoCount) g += ' (' + d.trafoCount + ' adet)';
       if (d.power) g += ' · Kurulu güç: ' + d.power + ' kW';
+      if (d.powerUnknown) g += ' · Trafo sayısı / güç: bilmiyor';
       if (d.ges) g += ' · GES: ' + d.ges;
       head.push(g);
-      head.push('Hizmetler: ' + (d.services.length ? d.services.map(function (s) { return SVC_LABELS[s] || s; }).join(', ') : '-'));
+      head.push('Hizmetler: ' + (d.services.length ? d.services.map(function (s) { return SVC_LABELS[s] || s; }).join(', ') : 'Belirtilmedi'));
       head.push('Aciliyet: ' + (d.urgency || '-'));
       head.push('Konum: ' + (d.city || '-') + (d.osb ? ' / ' + d.osb : ''));
+      if (simIncluded()) head.push('Ek: VoltSim özeti (' + Q.kinds[sim.kind] + ', ziyaretçi onayıyla)');
       var tail = 'Kaynak: voltguard.com.tr/fabrika-cozumleri.html';
       var att = Object.keys(attached).map(function (k) { return attached[k]; });
 
@@ -556,12 +577,11 @@
     }
 
     /* ---- Doğrulama ---- */
-    function isValidTrMobile(p) {
-      var dg = String(p).replace(/\D/g, '');
-      if (dg.length === 10 && dg.charAt(0) === '5') return true;
-      if (dg.length === 11 && dg.charAt(0) === '0' && dg.charAt(1) === '5') return true;
-      if (dg.length === 12 && dg.slice(0, 2) === '90' && dg.charAt(2) === '5') return true;
-      return false;
+    /* contact.php vg_enquiry_phone_ok ile aynı: cep (5xx), sabit hat (2xx–4xx) veya 850; 0 / 90 önekli ya da öneksiz */
+    function isValidTrPhone(p) {
+      p = String(p);
+      if (p.length > 32 || !/^\+?[0-9 ()\-.]+$/.test(p)) return false;
+      return /^(?:90|0)?(?:[2-5]\d{9}|850\d{7})$/.test(p.replace(/\D/g, ''));
     }
     /* contact.php FILTER_VALIDATE_EMAIL kullanır: yalnızca ASCII adresler, ardışık nokta yok */
     function isValidEmail(m) {
@@ -587,24 +607,24 @@
     }
 
     /* Geçersizse ilk hatalı alanın anahtarını döndürür, geçerliyse null */
+    /* Tesis, güç, hizmet, zaman ve konum alanları isteğe bağlıdır. Zorunlu olan yalnızca ad ile
+       telefon ya da e-postadan biri (son adım). */
+    var phoneErr = byId('wzPhoneE');
+    var PHONE_MSG = phoneErr ? phoneErr.textContent : '';
+    var CONTACT_MSG = 'Size ulaşabilmemiz için telefon veya e-posta adresinden birini yazın.';
     function validateStep(i, show) {
       var bad = [];
       var d = collect();
-      if (i === 0) { if (!d.sector) bad.push('wzSector'); }
-      if (i === 1) { if (!d.trafo) bad.push('wzTrafo'); }
-      if (i === 2) { if (!d.services.length) bad.push('wzServices'); }
-      if (i === 3) {
-        if (!d.urgency) bad.push('wzUrgency');
-        if (!canonCity(d.city)) bad.push('wzCity');
-      }
+      var noContact = false;
       if (i === 4) {
         if (d.name.length < 2 || d.name.length > 100) bad.push('name');
-        if (!isValidTrMobile(d.phone)) bad.push('phone');
+        noContact = !d.phone && !d.email;
+        if (noContact || (d.phone && !isValidTrPhone(d.phone))) bad.push('phone');
         if (d.email && !isValidEmail(d.email)) bad.push('email');
       }
-      if (show) {
-        var keys = { 0: ['wzSector'], 1: ['wzTrafo'], 2: ['wzServices'], 3: ['wzUrgency', 'wzCity'], 4: ['name', 'phone', 'email'] }[i] || [];
-        keys.forEach(function (k) { mark(k, bad.indexOf(k) > -1); });
+      if (show && i === 4) {
+        if (phoneErr) phoneErr.textContent = noContact ? CONTACT_MSG : PHONE_MSG;
+        ['name', 'phone', 'email'].forEach(function (k) { mark(k, bad.indexOf(k) > -1); });
       }
       if (i === 4 && capOn) {
         var capBad = !capToken();
@@ -674,10 +694,14 @@
       if (f && f.classList.contains('is-invalid')) {
         var k = f.getAttribute('data-req');
         var d = collect();
-        var ok = (k === 'name' && d.name.length >= 2) || (k === 'phone' && isValidTrMobile(d.phone)) ||
-          (k === 'email' && (!d.email || isValidEmail(d.email))) || (k === 'wzCity' && !!canonCity(d.city));
+        var ok = (k === 'name' && d.name.length >= 2) ||
+          (k === 'phone' && (d.phone ? isValidTrPhone(d.phone) : !!d.email)) ||
+          (k === 'email' && (!d.email || isValidEmail(d.email)));
         if (ok) mark(k, false);
       }
+      /* "Telefon veya e-posta" uyarısı: geçerli bir e-posta yazılınca boş telefon alanındaki hata kalkar */
+      var pf = qs('[data-req="phone"]', form);
+      if (e.target.id === 'wzEmail' && pf && pf.classList.contains('is-invalid') && !val('wzPhone') && isValidEmail(val('wzEmail'))) mark('phone', false);
       saveSoon();
       if (idx === steps.length - 1) updatePreview();
     });
@@ -719,6 +743,12 @@
     if (note) note.addEventListener('input', syncNote);
     var tc = byId('wzTrafoCount');
     if (tc) tc.addEventListener('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 3); });
+    /* "Bilmiyorum": trafo sayısı ve güç alanları devre dışı kalır, değerleri gönderilmez */
+    function syncPowerUnknown() {
+      var off = !!(powerUnknown && powerUnknown.checked);
+      ['wzTrafoCount', 'wzPower'].forEach(function (id) { var e = byId(id); if (e) e.disabled = off; });
+    }
+    if (powerUnknown) powerUnknown.addEventListener('change', syncPowerUnknown);
     /* İl: listeden biriyle eşleşiyorsa resmi yazımına çevir ("izmir" → "İzmir") */
     var city = byId('wzCity');
     if (city) city.addEventListener('blur', function () {
@@ -730,7 +760,9 @@
       if (!preview) return;
       var m = buildMessage(collect());
       var subj = SUBJECT_LABELS[subjectFor(checks('wzServices'))];
-      preview.textContent = 'Konu: ' + subj + '\n\n' + m;
+      var extra = simIncluded() ? '\n\n— Ek: simülasyon özeti —\n' + Q.lines(sim).join('\n')
+        : (sim ? '\n\n(Simülasyon özeti eklenmeyecek: onay kutusu işaretli değil.)' : '');
+      preview.textContent = 'Konu: ' + subj + '\n\n' + m + extra;
       if (previewCount) previewCount.textContent = m.length + ' / 1000 karakter';
     }
 
@@ -758,6 +790,31 @@
       });
     }
 
+    /* ---- VoltSim özeti: tamamı gösterilir; yalnızca onay kutusu işaretliyse gönderilir ---- */
+    function simIncluded() { return !!(sim && Q && simConsent && simConsent.checked); }
+    function renderSim() {
+      if (!simBox) return;
+      simBox.hidden = !sim;
+      if (!sim) { if (simConsent) simConsent.checked = false; return; }
+      byId('fxWizSimTitle').textContent = 'VoltSim’den aktarılan: ' + Q.kinds[sim.kind] + ' simülasyonu';
+      byId('fxWizSimBody').textContent = Q.lines(sim).join('\n');
+    }
+    if (simConsent) simConsent.addEventListener('change', function () {
+      saveSoon();
+      if (idx === steps.length - 1) updatePreview();
+      announce(simConsent.checked ? 'Simülasyon özeti talebe eklenecek.' : 'Simülasyon özeti talebe eklenmeyecek.');
+    });
+    var simRemove = byId('fxWizSimRemove');
+    if (simRemove) simRemove.addEventListener('click', function () {
+      sim = null;
+      if (Q) Q.unstage();
+      renderSim();
+      saveSoon();
+      if (idx === steps.length - 1) updatePreview();
+      announce('Simülasyon bilgileri bu cihazdan silindi.');
+      if (heading) heading.focus({ preventScroll: true });
+    });
+
     /* ---- Taslak ---- */
     var DRAFT_IDS = ['wzFacility', 'wzTrafo', 'wzTrafoCount', 'wzPower', 'wzNote', 'wzCity', 'wzOsb', 'wzName', 'wzCompany', 'wzPhone', 'wzEmail'];
     function saveSoon() {
@@ -766,7 +823,8 @@
     }
     function saveDraft() {
       if (form.hidden) return;
-      var d = { v: 1, step: idx, t: Date.now(), radios: {}, ids: {}, services: checks('wzServices'), attached: attached };
+      var d = { v: 1, step: idx, t: Date.now(), radios: {}, ids: {}, services: checks('wzServices'), attached: attached,
+        powerUnknown: !!(powerUnknown && powerUnknown.checked), simOn: simIncluded(), simSig: sim ? JSON.stringify(sim) : '', rid: requestId };
       DRAFT_RADIOS.forEach(function (n) { d.radios[n] = radioVal(n); });
       DRAFT_IDS.forEach(function (id) { var e = byId(id); if (e) d.ids[id] = e.value; });
       if (store.set(KEY_WIZ, d) && draftState) {
@@ -775,6 +833,7 @@
       }
     }
     var DRAFT_RADIOS = ['wzType', 'wzSector', 'wzGes', 'wzUrgency'];
+    var draftSimSig = '';       // taslaktaki onay kararı hangi simülasyon özetine aitti
     var ATTACH_KEYS = ['health', 'reaktif', 'durus'];
     function restoreDraft() {
       var d = store.get(KEY_WIZ);
@@ -791,6 +850,10 @@
           ATTACH_KEYS.forEach(function (k) { if (typeof d.attached[k] === 'string' && d.attached[k]) attached[k] = d.attached[k].slice(0, 400); });
         }
         idx = clamp(+d.step || 0, 0, steps.length - 1);
+        if (powerUnknown) powerUnknown.checked = d.powerUnknown === true;
+        if (simConsent) simConsent.checked = d.simOn === true;
+        draftSimSig = typeof d.simSig === 'string' ? d.simSig : '';
+        requestId = typeof d.rid === 'string' && /^[A-Za-z0-9_-]{16,64}$/.test(d.rid) ? d.rid : '';
       } catch (err) {
         store.del(KEY_WIZ);
         form.reset();
@@ -800,6 +863,7 @@
       }
       renderAttached();
       syncNote();
+      syncPowerUnknown();
       if (draftState) draftState.textContent = 'Kaldığınız yerden devam ediyorsunuz; taslak bu cihazda saklanır.';
     }
     function resetAll() {
@@ -810,6 +874,11 @@
       qsa('[aria-invalid]', form).forEach(function (e) { e.removeAttribute('aria-invalid'); });
       attached = {};
       renderAttached();
+      sim = null;
+      requestId = '';
+      if (Q) Q.unstage();
+      renderSim();
+      syncPowerUnknown();
       store.del(KEY_WIZ);
       syncNote();
       stamp();
@@ -877,16 +946,28 @@
         return;
       }
 
+      if (!Q) {
+        showErr('Gönderim bileşeni yüklenemedi; talebiniz iletilmedi. Yazdıklarınız korundu. Sayfayı yenileyip yeniden deneyin.');
+        errBox.focus({ preventScroll: false });
+        return;
+      }
+
       var d = collect();
-      var fd = new FormData();
-      fd.append('name', d.name);
-      fd.append('phone', d.phone);
-      fd.append('email', d.email);
-      fd.append('subject', subjectFor(d.services));
-      fd.append('message', buildMessage(d));
-      fd.append('website', hp ? hp.value : '');
-      fd.append('formTimestamp', (ts && ts.value) || String(now));
-      if (capOn) fd.append('cf-turnstile-response', capToken());
+      /* Aynı talebin yeniden denemesi aynı kimliği kullanır (sunucu ikinci kaydı açmaz); kimlik taslakla saklanır */
+      if (!requestId) { requestId = Q.requestId(); saveDraft(); }
+      var fields = {
+        kind: 'quote',
+        requestId: requestId,
+        name: d.name,
+        phone: d.phone,
+        email: d.email,
+        subject: subjectFor(d.services),
+        message: buildMessage(d),
+        website: hp ? hp.value : '',
+        formTimestamp: (ts && ts.value) || String(now)
+      };
+      if (capOn) fields['cf-turnstile-response'] = capToken();
+      if (simIncluded()) { fields.simulation = JSON.stringify(sim); fields.simulationConsent = '1'; }
 
       sending = true;
       form.setAttribute('aria-busy', 'true');
@@ -896,52 +977,23 @@
       btnPrev.disabled = true;
       btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Gönderiliyor...';
 
-      var ac = ('AbortController' in win) ? new AbortController() : null;
-      var timedOut = false;
-      var to;
-      var opts = { method: 'POST', body: fd, headers: { Accept: 'application/json' }, credentials: 'same-origin' };
-      if (ac) opts.signal = ac.signal;
-
-      var request = Promise.resolve().then(function () { return fetch('/contact.php', opts); })
-        .then(function (res) {
-          return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; }, function () {
-            return { ok: false, status: res.status, data: { message: 'Sunucudan geçersiz yanıt alındı. Lütfen 0545 434 67 35 numarasından bize ulaşın.' } };
-          });
-        });
-      var deadline = new Promise(function (resolve, reject) {
-        to = setTimeout(function () { timedOut = true; if (ac) ac.abort(); reject(abortErr()); }, SUBMIT_TIMEOUT);
-      });
-      Promise.race([request, deadline])
+      var withSim = !!fields.simulation;
+      Q.send(fields)
         .then(function (r) {
-          if (!r.ok || !r.data || !r.data.success) {
-            var er = new Error((r.data && r.data.message) || 'Gönderim başarısız oldu.');
-            er.status = r.status;
-            throw er;
-          }
           store.setRaw(KEY_LAST_SUBMIT, String(Date.now()));
-          showDone(r.data.message);
+          if (win.vgTrack) win.vgTrack('quote_submit', { via: withSim ? 'voltsim' : 'sihirbaz' });
+          showDone(r);
         })
         .catch(function (err) {
           resetCaptcha();
           stamp();
-          var msg;
-          if (timedOut || (err && err.name === 'AbortError')) {
-            msg = 'Gönderim yanıtı alınamadı. Taslağınız korundu. Yeniden göndermeden önce 0545 434 67 35 üzerinden durumu kontrol edebilirsiniz.';
-          } else if (err && err.name === 'TypeError') {
-            msg = 'Bağlantı hatası. İnternet bağlantınızı kontrol edip tekrar deneyin ya da 0545 434 67 35 numarasını arayın.';
-          } else {
-            msg = (err && err.message) || 'Gönderim sırasında bir hata oluştu.';
-          }
+          /* Talep daha önce bu kimlikle alınmış ama içerik değişmiş: yeni gönderim ayrı talep olsun */
+          if (err && err.kind === 'conflict') { requestId = ''; saveDraft(); }
+          var msg = (err && err.message) || 'Gönderim sırasında bir hata oluştu. Yazdıklarınız korundu.';
           showErr(msg);
           /* Sunucu bir alanı reddettiyse (422) o alanı işaretle ve oraya odaklan */
-          var field = null;
-          if (err && err.status === 422) {
-            var low = String(msg).toLocaleLowerCase('tr-TR');
-            if (low.indexOf('e-posta') > -1) field = 'email';
-            else if (low.indexOf('telefon') > -1) field = 'phone';
-            else if (low.indexOf('ad soyad') > -1 || low.indexOf('adınız') > -1) field = 'name';
-            else if (low.indexOf('kvkk') > -1) field = 'consent';
-          }
+          var code = err && err.data ? err.data.code : '';
+          var field = { invalid_email: 'email', invalid_phone: 'phone', contact_required: 'phone', invalid_name: 'name' }[code] || null;
           if (field) {
             if (idx !== steps.length - 1) showStep(steps.length - 1, false);
             mark(field, true);
@@ -951,7 +1003,6 @@
           errBox.focus({ preventScroll: false });
         })
         .finally(function () {
-          clearTimeout(to);
           sending = false;
           form.removeAttribute('aria-busy');
           btnSubmit.removeAttribute('aria-disabled');
@@ -959,31 +1010,51 @@
           btnSubmit.innerHTML = label;
         });
     });
-    function abortErr() { var e = new Error('timeout'); e.name = 'AbortError'; return e; }
 
-    function showDone(msg) {
+    /* Başarı ekranı yalnızca sunucunun talep numarasıyla doğruladığı kabulden sonra gösterilir (VGQuote.send) */
+    function showDone(r) {
       resetAll();
       form.hidden = true;
       attachedBox.hidden = true;
       stepLis.forEach(function (li) { li.classList.remove('is-current'); li.classList.add('is-done'); });
       if (bar) bar.style.setProperty('--p', '1');
-      byId('fxWizDoneMsg').textContent = msg || 'En kısa sürede sizinle iletişime geçeceğiz.';
+      byId('fxWizDoneTitle').textContent = r.preview ? 'Önizleme sunucusu talebi kabul etti' : 'Talebiniz alındı';
+      byId('fxWizRefNo').textContent = r.reference;
+      byId('fxWizRef').hidden = false;
+      byId('fxWizDoneMsg').textContent = r.message || 'En kısa sürede sizinle iletişime geçeceğiz.';
+      var tel = Q.contact().tel;
+      var telLink = qs('[data-vg-contact="tel"]', done);
+      if (tel && telLink) { telLink.href = tel.href; telLink.textContent = tel.text; }
       done.hidden = false;
       done.focus({ preventScroll: true });
-      var r = done.getBoundingClientRect();
-      if (r.top < 0 || r.top > win.innerHeight) scrollToId('teklif');
-      announce('Talebiniz alındı.');
+      var rect = done.getBoundingClientRect();
+      if (rect.top < 0 || rect.top > win.innerHeight) scrollToId('teklif');
+      announce('Talebiniz alındı. Talep numaranız ' + r.reference + '.');
     }
     byId('fxWizNew').addEventListener('click', function () {
       done.hidden = true;
       form.hidden = false;
+      byId('fxWizRef').hidden = true;
       showStep(0, true);
     });
 
     /* ---- Başlangıç ---- */
     restoreDraft();
+    /* VoltSim'den gelen özet (kullanıcı orada "taslağa ekle" dedi) ve hizmet sayfasından gelen ?hizmet= önerisi */
+    var fromSim = Q ? Q.staged() : null;
+    if (fromSim) {
+      /* Yeni aktarım: kullanıcı VoltSim'de "taslağa ekle" dedi, kutu işaretli gelir. Aynı özet için taslaktaki karar korunur. */
+      if (draftSimSig !== JSON.stringify(fromSim) && simConsent) simConsent.checked = true;
+      sim = fromSim;
+      (SIM_SERVICES[sim.kind] || []).forEach(function (k) { var c = qs('input[name="wzServices"][value="' + k + '"]', form); if (c) c.checked = true; });
+    }
+    renderSim();
+    var slug = '';
+    try { slug = String(new URLSearchParams(win.location.search).get('hizmet') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 64); } catch (e) { /* yok say */ }
+    (SLUG_SERVICES[slug] || []).forEach(function (k) { var c = qs('input[name="wzServices"][value="' + k + '"]', form); if (c) c.checked = true; });
     showStep(idx, false, true);
     syncNote();
+    if (fromSim || SLUG_SERVICES[slug]) saveSoon();
 
     /* ---- Dış API ---- */
     function go() {

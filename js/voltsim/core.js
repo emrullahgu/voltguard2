@@ -1410,6 +1410,59 @@
     return out;
   }
 
+  /* --- Teklif taslağına aktarım (js/vg-quote.js; tek teklif sistemi /fabrika-cozumleri.html#teklif)
+     Yalnızca kullanıcı bu pencerede gördüğü içeriği onaylarsa özet BU CİHAZDA saklanır; teklif sihirbazı içeriği
+     yeniden gösterir ve form gönderilmedikçe hiçbir simülasyon değeri sunucuya gitmez. */
+  const QUOTE_URL = '/fabrika-cozumleri.html?kaynak=voltsim#teklif';
+  App.prototype.quotePayload = function () {
+    const r = this.result;
+    if (!r || !r.ok || !this.validResult) return null;
+    let ro = []; try { ro = this.def.readouts(this.validResult, this.state, this.live, this) || []; } catch (_) { ro = []; }
+    return {
+      v: 1, kind: this.def.id, title: this.def.title, page: location.pathname, version: E.version,
+      inputs: flatInputs(this).map(x => [x.label, x.value]),
+      results: ro.map(x => [x.label, x.value + (x.sub ? ' (' + x.sub + ')' : '')]),
+      assumptions: (this.validResult.assumptions || []).slice()
+    };
+  };
+  App.prototype.openQuote = function (opener) {
+    const Q = window.VGQuote;
+    if (!Q || !Q.kinds[this.def.id]) { location.href = QUOTE_URL; return; }
+    const payload = Q.normalize(this.quotePayload());
+    let dlg = document.getElementById('vsQuoteDlg');
+    if (!dlg) {
+      dlg = el('dialog', { id: 'vsQuoteDlg', class: 'vs-qdlg', 'aria-labelledby': 'vsQuoteDlgH' });
+      dlg.innerHTML = '<h2 id="vsQuoteDlgH">Teklif taslağına aktarılacak bilgiler</h2>'
+        + '<p data-q-intro></p><pre class="vs-qdlg__pre" data-q-body tabindex="0"></pre>'
+        + '<p class="vs-small">Simülasyon sonucu ön değerlendirmedir. Kesin fiyat, tasarruf ve uygulamanın tesisinize uygunluğu ancak keşif ve ölçümden sonra belirlenir.</p>'
+        + '<div class="vs-qdlg__btns"><button type="button" class="vs-cbtn vs-cbtn--primary" data-q="add">Bilgileri taslağa ekle ve devam et</button>'
+        + '<button type="button" class="vs-cbtn" data-q="skip">Bilgi eklemeden teklif formuna git</button>'
+        + '<button type="button" class="vs-cbtn" data-q="close">Vazgeç</button></div>';
+      document.body.appendChild(dlg);
+      dlg.addEventListener('click', e => {
+        const b = e.target.closest ? e.target.closest('[data-q]') : null;
+        if (e.target === dlg) { dlg.close(); return; }
+        if (!b) return;
+        if (b.dataset.q === 'close') { dlg.close(); return; }
+        if (b.dataset.q === 'add') {
+          if (!Q.stage(dlg._payload)) { toast('Bilgiler bu tarayıcıda saklanamadı (depolama kapalı). Teklif formunu bilgi eklemeden açabilirsiniz.', 'bad'); return; }
+        } else Q.unstage();
+        location.href = QUOTE_URL;
+      });
+      dlg.addEventListener('close', () => { if (dlg._opener && dlg._opener.focus) dlg._opener.focus(); });
+    }
+    dlg._payload = payload; dlg._opener = opener || null;
+    const add = dlg.querySelector('[data-q="add"]');
+    add.hidden = !payload;
+    dlg.querySelector('[data-q-intro]').textContent = payload
+      ? 'Onaylarsanız aşağıdaki bilgiler yalnızca bu cihazda teklif taslağına eklenir. Teklif formunda yeniden görür, isterseniz çıkarırsınız; formu siz göndermedikçe hiçbir değer VoltGuard’a iletilmez.'
+      : 'Girdilerde hata olduğu için şu anki sonuç aktarılamıyor. Hataları düzeltip yeniden deneyebilir ya da teklif formuna bilgi eklemeden geçebilirsiniz.';
+    dlg.querySelector('[data-q-body]').textContent = payload ? Q.lines(payload).join('\n') : '';
+    dlg.querySelector('[data-q-body]').hidden = !payload;
+    if (typeof dlg.showModal === 'function') { dlg.showModal(); (payload ? add : dlg.querySelector('[data-q="skip"]')).focus(); }
+    else location.href = QUOTE_URL;
+  };
+
   /* --- PDF rapor (html2canvas + jsPDF; sitedeki /araclar/vendor kopyaları, ihtiyaç anında yüklenir) */
   function loadScript(src) {
     return new Promise((res, rej) => {
@@ -1526,6 +1579,7 @@
       } else if (act === 'mode') this.setMode(this.mode === '3d' ? '2d' : '3d');
       else if (act === 'report') { btn && (btn.disabled = true); toast('Rapor hazırlanıyor…'); await this.pdf(); toast('PDF rapor indirildi.', 'ok'); }
       else if (act === 'csv') { download(fileStem(this.def.id) + '.csv', 'text/csv;charset=utf-8', this.csv()); toast('CSV indirildi.', 'ok'); }
+      else if (act === 'quote') this.openQuote(btn);
       else if (act === 'save') { download(fileStem(this.def.id) + '.voltsim.json', 'application/json', JSON.stringify(this.project(), null, 2)); toast('Proje dosyası indirildi.', 'ok'); }
       else if (act === 'load') { this.root.querySelector('[data-vs-file]').click(); }
       else if (act === 'spin') { if (this.viewer) { this.viewer.autoSpin = !this.viewer.autoSpin; btn.setAttribute('aria-pressed', String(this.viewer.autoSpin)); this.viewer.invalidate(); } }
@@ -1597,6 +1651,11 @@
       });
     }
     root.querySelectorAll('[data-vs-act]').forEach(b => b.addEventListener('click', () => self.action(b.dataset.vsAct, b)));
+    // sayfa altındaki teklif bağlantısı uygulama kökü dışında; JavaScript yoksa doğrudan teklif formuna gider
+    document.querySelectorAll('[data-vs-quote-open]').forEach(a => a.addEventListener('click', e => {
+      if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault(); self.action('quote', a);
+    }));
     const clip = root.querySelector('[data-vs-clip] input');
     if (clip) clip.addEventListener('input', () => self.setClip(Number(clip.value)));
     const file = root.querySelector('[data-vs-file]');

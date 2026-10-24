@@ -386,3 +386,16 @@ textarea.vs-input{resize:vertical;font-family:ui-monospace,Consolas,monospace;fo
 .vs-stage[data-mode="2d"] .vs-2dwrap{display:block}
 .vs-2dwrap .vs-2d{position:relative;inset:auto;display:block;width:100%}
 .vs-ro[data-level="info"] b{color:#93c5fd}
+/* Teklif taslağına aktarım: sonuç panelindeki eylem ve onay penceresi (js/voltsim/core.js openQuote) */
+.vs-quote{margin:0 0 12px;padding:12px;border:1px solid #f59e0b55;border-radius:10px;background:#f59e0b12}
+.vs-quote .vs-cbtn{width:100%;margin-bottom:8px;text-align:center}
+.vs-quote .vs-small{margin:0}
+.vs-qdlg{width:min(94vw,620px);max-height:min(88vh,760px);padding:20px;border:1px solid #2c4466;border-radius:14px;background:#0d1b30;color:#e6eef8;box-shadow:0 24px 60px #000a}
+.vs-qdlg::backdrop{background:#020812cc}
+.vs-qdlg h2{margin:0 0 8px;font:700 1.05rem/1.3 var(--vg-font-h);color:#fff}
+.vs-qdlg p{margin:0 0 10px;font-size:.82rem;line-height:1.5;color:#c4d2e4}
+.vs-qdlg .vs-small{font-size:.74rem;color:#9fb2cb}
+.vs-qdlg__pre{max-height:40vh;overflow:auto;margin:0 0 10px;padding:10px 12px;border:1px solid #1f3352;border-radius:10px;background:#081324;white-space:pre-wrap;overflow-wrap:anywhere;font:400 .74rem/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#dbe6f3}
+.vs-qdlg__pre:focus-visible{outline:2px solid #d97706;outline-offset:2px}
+.vs-qdlg__btns{display:flex;flex-wrap:wrap;gap:8px}
+.vs-qdlg__btns .vs-cbtn{flex:1 1 auto}

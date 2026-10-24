@@ -65,9 +65,10 @@
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
-  <link rel="stylesheet" href="/css/factory.css?v=a6b4bdc7a7d5">
+  <link rel="stylesheet" href="/css/factory.css?v=46d8e0381a5a">
   <script>document.documentElement.classList.add('fx-js');setTimeout(function(){if(!window.__fxReady)document.documentElement.classList.add('fx-noanim')},3500);</script>
-  <script src="/js/factory.js?v=d745613e8544" defer onerror="document.documentElement.classList.remove('fx-js')"></script>
+  <script src="/js/vg-quote.js?v=828953263ab2" defer></script>
+  <script src="/js/factory.js?v=676c09a2dacb" defer onerror="document.documentElement.classList.remove('fx-js')"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -1071,10 +1072,24 @@
               <ul id="fxWizAttachedList"></ul>
             </div>
 
+            <!-- VoltSim'den aktarılan özet (js/vg-quote.js): yalnızca bu cihazda durur; kutu işaretliyse talebe eklenir. -->
+            <div class="fx-wiz__sim" id="fxWizSim" hidden>
+              <p class="fx-wiz__attached-h"><i class="fas fa-cube" aria-hidden="true"></i> <span id="fxWizSimTitle">Simülasyon özeti</span></p>
+              <p class="fx-hint">Bu bilgiler şu an yalnızca bu cihazda duruyor. Kutuyu işaretli bırakırsanız talebinizle birlikte gönderilir; gönderilecek içeriğin tamamı aşağıdadır.</p>
+              <details class="fx-preview" open>
+                <summary>Aktarılacak bilgiler</summary>
+                <pre id="fxWizSimBody"></pre>
+              </details>
+              <label class="fx-check"><input type="checkbox" id="wzSimConsent"><span>Bu simülasyon bilgilerini talebime ekle</span></label>
+              <p class="fx-hint">Simülasyon bir ön değerlendirmedir. Fiyat, tasarruf ve uygulamanın tesisinize uygunluğu ancak keşif ve ölçümden sonra netleşir.</p>
+              <button type="button" class="fx-link" id="fxWizSimRemove">Simülasyon bilgilerini bu cihazdan sil</button>
+            </div>
+
             <form class="fx-wiz__form" id="fxWizForm" action="/contact.php" method="post" novalidate>
               <!-- Adım 1 -->
               <fieldset class="fx-wstep" data-step="1">
                 <legend class="fx-wstep__t" tabindex="-1">Tesisiniz</legend>
+                <p class="fx-hint fx-wiz__optional">Yalnızca adınız ve telefon ya da e-postanız zorunludur. Bilmediğiniz alanları boş bırakabilir veya “Bilmiyorum” seçebilirsiniz; gerisini keşifte birlikte netleştiririz.</p>
                 <div class="fx-field">
                   <span class="fx-label" id="wzTypeL">Talep türü</span>
                   <div class="fx-seg" role="radiogroup" aria-labelledby="wzTypeL">
@@ -1082,9 +1097,9 @@
                     <label class="fx-seg__o"><input type="radio" name="wzType" value="teklif"><span>Fiyat teklifi</span></label>
                   </div>
                 </div>
-                <div class="fx-field" data-req="wzSector">
-                  <span class="fx-label" id="wzSectorL">Sektör <span class="fx-req" aria-hidden="true">*</span></span>
-                  <div class="fx-tiles" role="radiogroup" aria-labelledby="wzSectorL" aria-required="true" aria-describedby="wzSectorE">
+                <div class="fx-field">
+                  <span class="fx-label" id="wzSectorL">Sektör</span>
+                  <div class="fx-tiles" role="radiogroup" aria-labelledby="wzSectorL">
                     <label class="fx-tile"><input type="radio" name="wzSector" value="gida"><span>Gıda</span></label>
                     <label class="fx-tile"><input type="radio" name="wzSector" value="tekstil"><span>Tekstil</span></label>
                     <label class="fx-tile"><input type="radio" name="wzSector" value="otomotiv"><span>Otomotiv yan sanayi</span></label>
@@ -1093,7 +1108,6 @@
                     <label class="fx-tile"><input type="radio" name="wzSector" value="lojistik"><span>Lojistik / Soğuk depo</span></label>
                     <label class="fx-tile"><input type="radio" name="wzSector" value="diger"><span>Diğer</span></label>
                   </div>
-                  <p class="fx-err" id="wzSectorE" hidden>Lütfen sektörünüzü seçin.</p>
                 </div>
                 <div class="fx-field">
                   <label for="wzFacility">Tesis tipi</label>
@@ -1111,9 +1125,9 @@
               <!-- Adım 2 -->
               <fieldset class="fx-wstep" data-step="2" hidden>
                 <legend class="fx-wstep__t" tabindex="-1">Enerji altyapısı</legend>
-                <div class="fx-field" data-req="wzTrafo">
-                  <label for="wzTrafo">Trafo gücü <span class="fx-req" aria-hidden="true">*</span></label>
-                  <select class="fx-input" id="wzTrafo" name="wzTrafo" required aria-describedby="wzTrafoE">
+                <div class="fx-field">
+                  <label for="wzTrafo">Trafo gücü</label>
+                  <select class="fx-input" id="wzTrafo" name="wzTrafo">
                     <option value="">Seçiniz</option>
                     <option>Trafo yok (AG abonesi)</option>
                     <option>400 kVA'ya kadar</option>
@@ -1122,7 +1136,6 @@
                     <option>2.500 kVA üzeri</option>
                     <option>Bilmiyorum</option>
                   </select>
-                  <p class="fx-err" id="wzTrafoE" hidden>Lütfen bir seçenek belirleyin (emin değilseniz “Bilmiyorum”).</p>
                 </div>
                 <div class="fx-field fx-field--half">
                   <label for="wzTrafoCount">Trafo sayısı</label>
@@ -1133,11 +1146,15 @@
                   <input class="fx-input" id="wzPower" name="wzPower" type="text" inputmode="decimal" maxlength="12" autocomplete="off" placeholder="ör. 1.200">
                 </div>
                 <div class="fx-field">
+                  <label class="fx-check"><input type="checkbox" id="wzPowerUnknown" name="wzPowerUnknown"><span>Trafo sayısını ve gücü bilmiyorum (faturadan veya keşifte birlikte bakarız)</span></label>
+                </div>
+                <div class="fx-field">
                   <span class="fx-label" id="wzGesL">Çatı GES durumu</span>
                   <div class="fx-seg" role="radiogroup" aria-labelledby="wzGesL">
                     <label class="fx-seg__o"><input type="radio" name="wzGes" value="Var"><span>Var</span></label>
                     <label class="fx-seg__o"><input type="radio" name="wzGes" value="Yok"><span>Yok</span></label>
                     <label class="fx-seg__o"><input type="radio" name="wzGes" value="Planlıyoruz"><span>Planlıyoruz</span></label>
+                    <label class="fx-seg__o"><input type="radio" name="wzGes" value="Bilmiyorum"><span>Bilmiyorum</span></label>
                   </div>
                 </div>
               </fieldset>
@@ -1145,9 +1162,11 @@
               <!-- Adım 3 -->
               <fieldset class="fx-wstep" data-step="3" hidden>
                 <legend class="fx-wstep__t" tabindex="-1">İhtiyaç duyduğunuz hizmetler</legend>
-                <div class="fx-field" data-req="wzServices">
-                  <span class="fx-label" id="wzSvcL">Birden fazla seçebilirsiniz <span class="fx-req" aria-hidden="true">*</span></span>
-                  <div class="fx-tiles fx-tiles--check" role="group" aria-labelledby="wzSvcL" aria-describedby="wzSvcE">
+                <div class="fx-field">
+                  <span class="fx-label" id="wzSvcL">Birden fazla seçebilirsiniz; emin değilseniz son seçeneği işaretleyin</span>
+                  <div class="fx-tiles fx-tiles--check" role="group" aria-labelledby="wzSvcL">
+                    <label class="fx-tile"><input type="checkbox" name="wzServices" value="bilmiyorum"><span>Emin değilim, önerinizi bekliyorum</span></label>
+                    <label class="fx-tile"><input type="checkbox" name="wzServices" value="trafo-guc"><span>Trafo / güç ihtiyacı değerlendirmesi</span></label>
                     <label class="fx-tile"><input type="checkbox" name="wzServices" value="trafo"><span>Trafo işletme sorumluluğu</span></label>
                     <label class="fx-tile"><input type="checkbox" name="wzServices" value="smm"><span>SMM hizmetleri</span></label>
                     <label class="fx-tile"><input type="checkbox" name="wzServices" value="periyodik"><span>Periyodik kontrol ve ölçüm</span></label>
@@ -1162,7 +1181,6 @@
                     <label class="fx-tile"><input type="checkbox" name="wzServices" value="mekanik"><span>Mekanik sistemler / üretim hattı</span></label>
                     <label class="fx-tile"><input type="checkbox" name="wzServices" value="diger"><span>Diğer</span></label>
                   </div>
-                  <p class="fx-err" id="wzSvcE" hidden>Lütfen en az bir hizmet seçin.</p>
                 </div>
                 <div class="fx-field">
                   <label for="wzNote">Kısaca durumunuz</label>
@@ -1174,22 +1192,20 @@
               <!-- Adım 4 -->
               <fieldset class="fx-wstep" data-step="4" hidden>
                 <legend class="fx-wstep__t" tabindex="-1">Zamanlama ve konum</legend>
-                <div class="fx-field" data-req="wzUrgency">
-                  <span class="fx-label" id="wzUrgL">Aciliyet <span class="fx-req" aria-hidden="true">*</span></span>
-                  <div class="fx-tiles" role="radiogroup" aria-labelledby="wzUrgL" aria-required="true" aria-describedby="wzUrgH wzUrgE">
+                <div class="fx-field">
+                  <span class="fx-label" id="wzUrgL">Aciliyet</span>
+                  <div class="fx-tiles" role="radiogroup" aria-labelledby="wzUrgL" aria-describedby="wzUrgH">
                     <label class="fx-tile fx-tile--urgent"><input type="radio" name="wzUrgency" value="Acil (arıza veya ceza var)"><span>Acil: arıza veya ceza var</span></label>
                     <label class="fx-tile"><input type="radio" name="wzUrgency" value="1 ay içinde"><span>1 ay içinde</span></label>
                     <label class="fx-tile"><input type="radio" name="wzUrgency" value="1-3 ay içinde"><span>1–3 ay içinde</span></label>
                     <label class="fx-tile"><input type="radio" name="wzUrgency" value="Planlama / bütçe aşamasında"><span>Planlama / bütçe aşamasında</span></label>
                   </div>
                   <small class="fx-hint fx-hint--urgent" id="wzUrgH"><i class="fas fa-headset" aria-hidden="true"></i> Arıza sürüyorsa formu beklemeden 7/24 acil arıza hattını arayın: <a href="tel:+905454346735">0545 434 67 35</a></small>
-                  <p class="fx-err" id="wzUrgE" hidden>Lütfen aciliyet durumunu seçin.</p>
                 </div>
-                <div class="fx-field fx-field--half" data-req="wzCity">
-                  <label for="wzCity">İl <span class="fx-req" aria-hidden="true">*</span></label>
-                  <input class="fx-input" id="wzCity" name="wzCity" type="text" list="fxIller" maxlength="40" autocomplete="address-level1" placeholder="ör. İzmir" required aria-describedby="wzCityE">
+                <div class="fx-field fx-field--half">
+                  <label for="wzCity">İl</label>
+                  <input class="fx-input" id="wzCity" name="wzCity" type="text" list="fxIller" maxlength="40" autocomplete="address-level1" placeholder="ör. İzmir">
                   <datalist id="fxIller"></datalist>
-                  <p class="fx-err" id="wzCityE" hidden>Lütfen listeden bir il seçin.</p>
                 </div>
                 <div class="fx-field fx-field--half">
                   <label for="wzOsb">İlçe / OSB</label>
@@ -1210,13 +1226,13 @@
                   <input class="fx-input" id="wzCompany" name="wzCompany" type="text" maxlength="80" autocomplete="organization">
                 </div>
                 <div class="fx-field fx-field--half" data-req="phone">
-                  <label for="wzPhone">Cep telefonu <span class="fx-req" aria-hidden="true">*</span></label>
-                  <input class="fx-input" id="wzPhone" name="phone" type="tel" inputmode="tel" maxlength="32" autocomplete="tel" placeholder="05XX XXX XX XX" required aria-describedby="wzPhoneH wzPhoneE">
-                  <small class="fx-hint" id="wzPhoneH">Form cep telefonu kabul eder; sabit hattınızı notlara ekleyebilirsiniz.</small>
-                  <p class="fx-err" id="wzPhoneE" hidden>Lütfen geçerli bir cep telefonu yazın (05XX XXX XX XX).</p>
+                  <label for="wzPhone">Telefon <span class="fx-req" aria-hidden="true">*</span></label>
+                  <input class="fx-input" id="wzPhone" name="phone" type="tel" inputmode="tel" maxlength="32" autocomplete="tel" placeholder="05XX XXX XX XX" aria-describedby="wzPhoneH wzPhoneE">
+                  <small class="fx-hint" id="wzPhoneH">Cep veya sabit hat. Telefon ya da e-postadan biri yeterli (<span aria-hidden="true">*</span> en az biri).</small>
+                  <p class="fx-err" id="wzPhoneE" hidden>Lütfen geçerli bir telefon numarası yazın (ör. 05XX XXX XX XX veya 0232 XXX XX XX).</p>
                 </div>
                 <div class="fx-field fx-field--half" data-req="email">
-                  <label for="wzEmail">E-posta</label>
+                  <label for="wzEmail">E-posta <span class="fx-req" aria-hidden="true">*</span></label>
                   <input class="fx-input" id="wzEmail" name="email" type="email" maxlength="120" autocomplete="email" placeholder="ornek@firma.com.tr" aria-describedby="wzEmailE">
                   <p class="fx-err" id="wzEmailE" hidden>Lütfen geçerli bir e-posta adresi yazın.</p>
                 </div>
@@ -1247,9 +1263,10 @@
 
             <div class="fx-wiz__done" id="fxWizDone" hidden tabindex="-1">
               <div class="fx-wiz__done-ic" aria-hidden="true"><i class="fas fa-circle-check"></i></div>
-              <h3>Talebiniz alındı</h3>
+              <h3 id="fxWizDoneTitle">Talebiniz alındı</h3>
+              <p class="fx-wiz__ref" id="fxWizRef" hidden>Talep numaranız: <strong id="fxWizRefNo"></strong></p>
               <p id="fxWizDoneMsg">En kısa sürede sizinle iletişime geçeceğiz.</p>
-              <p class="fx-wiz__done-sub">Acil bir arıza varsa 7/24 acil arıza hattımızı arayın: <a href="tel:+905454346735">0545 434 67 35</a></p>
+              <p class="fx-wiz__done-sub" id="fxWizDoneSub">Acil bir arıza varsa 7/24 acil arıza hattımızı arayın: <a href="tel:+905454346735" data-vg-contact="tel">0545 434 67 35</a></p>
               <button type="button" class="fx-btn fx-btn--ghost" id="fxWizNew"><i class="fas fa-plus" aria-hidden="true"></i> Yeni talep oluştur</button>
             </div>
             <p class="fx-note fx-nojs"><i class="fas fa-circle-info" aria-hidden="true"></i> <span>Teklif sihirbazı için JavaScript gerekir. Dilerseniz <a href="/#iletisim">iletişim formunu</a> kullanabilir ya da <a href="tel:+905454346735">0545 434 67 35</a> numarasından bize ulaşabilirsiniz.</span></p>

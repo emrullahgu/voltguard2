@@ -327,6 +327,7 @@
   ------------------------------------------------- */
   var contactForm = qs('#contactForm');
   var contactSending = false;
+  var contactRequestId = '';   // aynı mesajın yeniden denemelerinde aynı kalır (sunucu ikinci kaydı açmaz)
   var submitCooldownMs = 60000;
 
   /* localStorage erişimi gizli sekme / engellenmiş site verisinde istisna fırlatabilir. */
@@ -377,12 +378,10 @@
     qsAll('[aria-invalid="true"], .is-invalid', form).forEach(clearFieldError);
   }
 
-  function isValidTrMobile(phone) {
-    var digits = phone.replace(/\D/g, '');
-    if (digits.length === 10 && digits.charAt(0) === '5') return true;
-    if (digits.length === 11 && digits.charAt(0) === '0' && digits.charAt(1) === '5') return true;
-    if (digits.length === 12 && digits.slice(0, 2) === '90' && digits.charAt(2) === '5') return true;
-    return false;
+  /* contact.php vg_enquiry_phone_ok ile aynı: cep (5xx), sabit hat (2xx–4xx) veya 850; 0 / 90 önekli ya da öneksiz */
+  function isValidTrPhone(phone) {
+    if (phone.length > 32 || !/^\+?[0-9 ()\-.]+$/.test(phone)) return false;
+    return /^(?:90|0)?(?:[2-5]\d{9}|850\d{7})$/.test(phone.replace(/\D/g, ''));
   }
 
   /* contact.php FILTER_VALIDATE_EMAIL kullanır: yalnızca ASCII adresler, ardışık nokta yok, en az 2 harfli TLD
@@ -441,7 +440,7 @@
 
     var CHECKS = {
       name: function (v) { return v.length >= 2 && v.length <= 100 ? '' : 'Ad soyad en az 2 karakter olmalı.'; },
-      phone: function (v) { return isValidTrMobile(v) ? '' : 'Geçerli bir cep telefonu girin (05XX XXX XX XX).'; },
+      phone: function (v) { return isValidTrPhone(v) ? '' : 'Geçerli bir telefon numarası girin (ör. 05XX XXX XX XX veya 0232 XXX XX XX).'; },
       email: function (v) { return !v || isValidEmail(v) ? '' : 'Geçerli bir e-posta adresi girin (örnek: ad@firma.com).'; },
       subject: function (v) { return v ? '' : 'Lütfen bir hizmet alanı seçin.'; },
       message: function (v, el) {
@@ -637,55 +636,43 @@
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Gönderiliyor...';
 
-      var payload = new FormData(contactForm);
-      payload.set('message', servicePrefix() + message);
-
-      var controller = typeof AbortController === 'function' ? new AbortController() : null;
-      var timedOut = false;
-      var timeoutId;
-      var options = {
-        method: 'POST',
-        body: payload,
-        headers: {
-          'Accept': 'application/json'
-        }
+      var finish = function () {
+        contactSending = false;
+        contactForm.removeAttribute('aria-busy');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = submitLabel;
       };
-      if (controller) options.signal = controller.signal;
-      var request = Promise.resolve().then(function () { return fetch('/contact.php', options); })
-        .then(function (response) {
-          return response.json().then(function (data) {
-            return { ok: response.ok, data: data };
-          }).catch(function () {
-            /* JSON dışı yanıt: form sunucusu ulaşılamıyor (404/502 sayfası); kullanıcıya diğer kanalı göster */
-            return { ok: false, data: { message: 'Mesajınız şu an iletilemedi; yazdıklarınız korundu. 0545 434 67 35 numarasını arayabilir veya WhatsApp\'tan yazabilirsiniz.' } };
-          });
-        });
-      var deadline = new Promise(function (resolve, reject) {
-        timeoutId = setTimeout(function () {
-          timedOut = true;
-          if (controller) controller.abort();
-          reject(new Error('Gönderim yanıtı alınamadı. Yazdıklarınız korundu. Yeniden göndermeden önce 0545 434 67 35 üzerinden durumu kontrol edebilirsiniz.'));
-        }, 25000);
-      });
-      Promise.race([request, deadline])
-        .then(function (result) {
-          if (!result.ok || !result.data || !result.data.success) {
-            var srvMsg = result.data && result.data.message ? result.data.message : 'Gönderim başarısız oldu.';
-            /* Sunucu e-postayı reddettiyse alanı işaretle ve odakla */
-            if (/e-posta/i.test(srvMsg)) {
-              var emailEl = qs('#email', contactForm);
-              if (emailEl) {
-                setFieldError(emailEl, srvMsg);
-                try { emailEl.focus({ preventScroll: false }); } catch (err) { emailEl.focus(); }
-              }
-            }
-            throw new Error(srvMsg);
-          }
+      /* js/vg-quote.js: başarı yalnızca sunucu talep numarası döndürürse; aynı talebin yeniden denemesi aynı kimlikle */
+      if (!window.VGQuote) {
+        showNotification('Gönderim bileşeni yüklenemedi; mesajınız iletilmedi. Yazdıklarınız korundu. Sayfayı yenileyip yeniden deneyin.', 'error');
+        finish();
+        return;
+      }
+      if (!contactRequestId) contactRequestId = window.VGQuote.requestId();
+      var fields = {};
+      new FormData(contactForm).forEach(function (value, key) { if (typeof value === 'string') fields[key] = value; });
+      fields.message = servicePrefix() + message;
+      fields.kind = 'contact';
+      fields.requestId = contactRequestId;
 
-          showNotification(
-            result.data.message || 'Mesajınız gönderim sistemine alındı.',
-            'success'
-          );
+      /* Bildirim balonu birkaç saniyede kaybolur; talep numarası ve hata metni formun altında kalıcı durur */
+      var receipt = qs('#contactReceipt', contactForm);
+      if (!receipt) {
+        receipt = document.createElement('p');
+        receipt.id = 'contactReceipt';
+        receipt.className = 'form__receipt';
+        receipt.setAttribute('tabindex', '-1');
+        submitBtn.parentNode.insertBefore(receipt, submitBtn.nextSibling);
+      }
+      receipt.hidden = true;
+
+      window.VGQuote.send(fields)
+        .then(function (result) {
+          showNotification(result.message || ('Talebiniz ' + result.reference + ' numarasıyla alındı.'), 'success');
+          receipt.className = 'form__receipt form__receipt--ok';
+          receipt.textContent = (result.preview ? 'Önizleme kaydı – ' : '') + 'Talep numaranız: ' + result.reference + '. ' + (result.message || '');
+          receipt.hidden = false;
+          contactRequestId = '';
           safeStorageSet('vg_last_submit_at', String(Date.now()));
           if (window.vgTrack) window.vgTrack('quote_submit', { svc: serviceSel && serviceSel.value ? serviceSel.value : '', via: messageField && messageField.dataset.vgSource === 'arac' ? 'arac' : 'form' });
           if (messageField) delete messageField.dataset.vgSource;
@@ -696,23 +683,24 @@
         .catch(function (error) {
           resetCaptcha();
           if (timestampField) timestampField.value = String(Date.now());
-          var msg = timedOut
-            ? 'Gönderim yanıtı alınamadı. Yazdıklarınız korundu. Yeniden göndermeden önce 0545 434 67 35 üzerinden durumu kontrol edebilirsiniz.'
-            : (error && error.name === 'TypeError')
-            ? 'Bağlantı hatası. İnternet bağlantınızı kontrol edip tekrar deneyin.'
-            : ((error && error.message) || 'Gönderim sırasında bir hata oluştu.');
-          showNotification(msg, 'error');
+          /* Bu kimlikle daha önce farklı içerik alınmış: sonraki gönderim ayrı talep olsun */
+          if (error && error.kind === 'conflict') contactRequestId = '';
+          var code = error && error.data ? error.data.code : '';
+          var field = { invalid_email: 'email', invalid_phone: 'phone', invalid_name: 'name', invalid_message: 'message' }[code];
+          var fieldEl = field ? qs('#' + field, contactForm) : null;
+          if (fieldEl) {
+            setFieldError(fieldEl, error.message);
+            try { fieldEl.focus({ preventScroll: false }); } catch (err) { fieldEl.focus(); }
+          }
+          var errText = (error && error.message) || 'Gönderim sırasında bir hata oluştu. Yazdıklarınız korundu.';
+          receipt.className = 'form__receipt form__receipt--err';
+          receipt.textContent = errText;
+          receipt.hidden = false;
+          showNotification(errText, 'error');
         })
-        .finally(function () {
-          clearTimeout(timeoutId);
-          contactSending = false;
-          contactForm.removeAttribute('aria-busy');
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = submitLabel;
-        });
+        .then(finish, finish);
     });
   }
-
   /* ------------------------------------------------
      8b. TEKLİF / ÖN DEĞERLENDİRME BAĞLANTILARI — formu önceden doldur
      <a href="#iletisim" data-subject="elektrik" data-prefill="..."> : hizmet alanı ve mesaj alanı boşsa

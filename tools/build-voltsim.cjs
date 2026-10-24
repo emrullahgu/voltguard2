@@ -14,6 +14,14 @@ const V = createHash('sha256').update(assets.map(file => fs.readFileSync(path.jo
 const rev = file => { const f = path.join(root, file.replace(/^\//, '')); return fs.existsSync(f) ? createHash('sha256').update(fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n')).digest('hex').slice(0, 12) : V; }; // CRLF/LF farkı yok sayılır
 const regs = require(path.join(root, 'js/voltsim/regulations.js'));
 const SITE = 'https://voltguard.com.tr';
+/* Sonuç ekranındaki bağlama özel teklif eylemi (js/voltsim/core.js openQuote → js/vg-quote.js → teklif sihirbazı).
+   Anahtarlar api/lib/enquiry.php VG_ENQ_SIM_KINDS ile aynı olmalıdır. */
+const QUOTE = {
+  trafo: 'Bu güç ihtiyacını tesisim için değerlendirin',
+  pano: 'Bu dağıtım yapısı için teklif alın',
+  komp: 'Ölçüm ve çözüm değerlendirmesi isteyin',
+  ges: 'Çatım için ön fizibilite isteyin'
+};
 
 const MODULES = [
   { id: 'pano', slug: 'pano', name: 'Elektrik Pano', short: 'AG dağıtım, MCC, kompanzasyon, otomasyon ve transfer panoları',
@@ -219,7 +227,8 @@ function modulePage(m) {
   const others = MODULES.filter(x => x !== m);
   const ld = { '@context': 'https://schema.org', '@graph': [crumbLd([['/', 'Ana Sayfa'], ['/voltsim/', 'VoltSim'], [url, m.h1]]),
     { '@type': 'WebApplication', name: m.h1, url: SITE + url, applicationCategory: 'EngineeringApplication', operatingSystem: 'Web', inLanguage: 'tr', isAccessibleForFree: true, description: m.description, publisher: { '@type': 'Organization', name: 'VoltGuard', url: SITE + '/' } }] };
-  const scripts = ['/js/vendor/three-r128.min.js', '/js/voltsim/engine.js', ...(m.calcs || []).map(c => `/js/voltsim/calc/${c}.js`), `/js/voltsim/calc/${m.id}.js`, '/js/voltsim/regulations.js', '/js/voltsim/core.js', `/js/voltsim/mod/${m.id}.js`]
+  const quote = QUOTE[m.id];
+  const scripts = ['/js/vendor/three-r128.min.js', '/js/voltsim/engine.js', ...(m.calcs || []).map(c => `/js/voltsim/calc/${c}.js`), `/js/voltsim/calc/${m.id}.js`, '/js/voltsim/regulations.js', ...(quote ? ['/js/vg-quote.js'] : []), '/js/voltsim/core.js', `/js/voltsim/mod/${m.id}.js`]
     .map(s => `  <script src="${s}?v=${rev(s)}" defer></script>\n`).join('');
   const ico = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
   return `${head({ title: m.title, description: m.description, url, ld, scripts, image: `/public/voltsim/${m.id}.webp` })}
@@ -295,7 +304,11 @@ function modulePage(m) {
             <h3 class="vs-sub">Uygunluk ön kontrolü</h3>
             <p class="vs-small">Model sınırları içindeki ön kontroldür; tasarım doğrulaması veya resmî onay değildir.</p>
             <ul class="vs-checks" data-vs-checks></ul>
-            <details class="vs-asm"><summary>Varsayımlar ve bağıntılar</summary><div data-vs-assumptions></div></details>
+            <details class="vs-asm"><summary>Varsayımlar ve bağıntılar</summary><div data-vs-assumptions></div></details>${quote ? `
+            <div class="vs-quote">
+              <button class="vs-cbtn vs-cbtn--primary" type="button" data-vs-act="quote">${esc(quote)}</button>
+              <p class="vs-small">Aktarılacak girdileri ve sonuçları önce size gösteririz; siz onaylayıp teklif formunu göndermedikçe hiçbir değer VoltGuard’a iletilmez.</p>
+            </div>` : ''}
             <a class="vs-jump" href="#mevzuat">Mevzuat ve standartlar ↓</a>
           </div>
         </section>
@@ -303,7 +316,7 @@ function modulePage(m) {
       <noscript><p class="vs-noscript">Simülasyon için JavaScript gereklidir. Aşağıdaki mevzuat ve standart bilgileri JavaScript olmadan da okunabilir.</p></noscript>
     </div>
 
-    <p class="vs-disclaimer"><strong>Önemli:</strong> ${DISCLAIMER} Girdileriniz yalnızca tarayıcınızda işlenir; VoltGuard’a gönderilmez.</p>
+    <p class="vs-disclaimer"><strong>Önemli:</strong> ${DISCLAIMER} Girdileriniz yalnızca tarayıcınızda işlenir; ${quote ? 'siz teklif taslağına ekleyip formu göndermedikçe ' : ''}VoltGuard’a gönderilmez.</p>
 
     ${regsSection(m.id)}
 
@@ -313,7 +326,7 @@ function modulePage(m) {
         <p>VoltGuard mühendislik ekibiyle projenizi gerçek tesis koşullarına göre değerlendirin. Raporunuzu paylaşmak isterseniz indirip teklif talebinize ekleyebilirsiniz; simülasyon girdileri bizimle siz istemedikçe paylaşılmaz.</p>
       </div>
       <div class="vs-cta__btns">
-        <a class="vs-cbtn vs-cbtn--primary" href="/#iletisim">VoltGuard’dan Teklif Al</a>
+        ${quote ? `<a class="vs-cbtn vs-cbtn--primary" href="/fabrika-cozumleri.html#teklif" data-vs-quote-open>${esc(quote)}</a>` : '<a class="vs-cbtn vs-cbtn--primary" href="/#iletisim">VoltGuard’dan Teklif Al</a>'}
         <a class="vs-cbtn" href="/sor.html">Mühendislik Desteği Al</a>
         <a class="vs-cbtn" href="${m.service[0]}">İlgili Hizmeti İncele: ${esc(m.service[1])}</a>
       </div>

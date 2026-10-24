@@ -74,7 +74,7 @@
   <link rel="manifest" href="manifest.json">
   <!-- Sayfalar arası önden yükleme vg:head içindeki speculation rules ile yapılır (eski <link rel=prefetch> etiketleri kaldırıldı). -->
   <link rel="stylesheet" href="css/style.css?v=d152330fb2b0">
-  <link rel="stylesheet" href="css/home.css?v=c2a8e8188e61">
+  <link rel="stylesheet" href="css/home.css?v=d359ff78e971">
   <!-- Ön yükleyici oturum başına yalnızca bir kez gösterilir (css/home.css: .vg-pl-skip). -->
   <script>try{if(sessionStorage.getItem('vg_pl'))document.documentElement.classList.add('vg-pl-skip');else sessionStorage.setItem('vg_pl','1')}catch(e){}</script>
   <script type="application/ld+json">
@@ -1834,7 +1834,7 @@
                        placeholder="Adınız Soyadınız" required minlength="2" maxlength="100" autocomplete="name">
               </div>
               <div class="form__group">
-                <label for="phone" class="form__label">Cep telefonu <span aria-hidden="true">*</span></label>
+                <label for="phone" class="form__label">Telefon (cep veya sabit) <span aria-hidden="true">*</span></label>
                 <input type="tel" id="phone" name="phone" class="form__input"
                        placeholder="05XX XXX XX XX" required autocomplete="tel"
                        inputmode="tel" pattern="[0-9\s\+\-\(\)]{10,17}">
@@ -2096,7 +2096,8 @@
     }());
   </script>
   <script src="js/power-quality.js?v=b24a1dceb526" defer></script>
-  <script src="js/main.js?v=e7eebb0d78c6" defer></script>
+  <script src="/js/vg-quote.js?v=828953263ab2" defer></script>
+  <script src="js/main.js?v=d498da9ae082" defer></script>
   <noscript>
     <style>
       .preloader { display: none !important; }

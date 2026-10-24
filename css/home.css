@@ -877,6 +877,10 @@ select.form__input { width: 100%; min-width: 0; max-width: 100%; text-overflow: 
   color: #b91c1c;                            /* beyaz zeminde 6.5:1 */
 }
 .form__consent + .form__error { margin: -.35rem 0 .6rem; }
+/* Gönderim sonucu: talep numarası ve hata metni bildirim balonu kaybolduktan sonra da görünür kalır */
+.form__receipt { margin: .75rem 0 0; padding: .7rem .9rem; border-radius: 8px; font-size: .88rem; font-weight: 600; line-height: 1.5; }
+.form__receipt--ok { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.form__receipt--err { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 .form__consent:has(input[aria-invalid="true"]) {
   border-color: #ef4444;
   box-shadow: 0 0 0 3px rgba(239,68,68,.15);

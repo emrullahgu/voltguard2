@@ -1005,6 +1005,15 @@ select.fx-input option { background: #0d1f3c; color: #fff; }
   border: 0; background: transparent; color: var(--fx-ink-3); display: grid; place-items: center;
 }
 .fx-wiz__attached button:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+/* VoltSim'den aktarılan özet: tamamı görünür, gönderim onay kutusuna bağlı */
+.fx-wiz__sim { display: grid; gap: .65rem; margin-bottom: 1.25rem; padding: .85rem .95rem; border-radius: 12px; background: rgba(251, 191, 36, .08); border: 1px solid rgba(251, 191, 36, .32); }
+.fx-wiz__sim .fx-wiz__attached-h { color: #fde68a; }
+.fx-wiz__sim .fx-preview pre { max-height: 13rem; }
+.fx-wiz__sim .fx-link { justify-self: start; }
+.fx-wiz__optional { grid-column: 1 / -1; }
+.fx-input:disabled { opacity: .5; cursor: not-allowed; }
+.fx-wiz__ref { font-size: 1rem; }
+.fx-wiz__ref strong { font: 800 1.15rem/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #fde68a; letter-spacing: .04em; user-select: all; }
 
 .fx-wstep { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem 1rem; }
 .fx-wstep__t { grid-column: 1 / -1; float: left; width: 100%; font: 800 1.3rem/1.3 var(--fx-h); color: #fff; margin-bottom: .2rem; }

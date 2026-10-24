@@ -153,7 +153,15 @@ breakdown?}, note, savedAt, serverAt`. `result.breakdown` isteğe bağlıdır: h
 
 ## İletişim formu (`/contact.php`)
 
-Yalnızca `POST` form verisi, doğrulanan aynı site kökeni ve en fazla 32 KB gövde kabul edilir. Dosya eki alınmaz. Ad, Türkiye cep telefonu, isteğe bağlı e-posta, hizmet alanı, 20–1000 karakter mesaj ve form zaman işareti doğrulanır. Aydınlatma metni formda sunulur; aydınlatma için onay veya genel amaçlı açık rıza gönderimin ön koşulu değildir.
+Yalnızca `POST` form verisi, doğrulanan aynı site kökeni ve en fazla 32 KB gövde kabul edilir. Dosya eki alınmaz. Ad, Türkiye telefonu (cep, sabit hat veya 850), isteğe bağlı e-posta, hizmet alanı, 20–1000 karakter mesaj ve form zaman işareti doğrulanır. Aydınlatma metni formda sunulur; aydınlatma için onay veya genel amaçlı açık rıza gönderimin ön koşulu değildir.
+
+Ana sayfa formu, VoltGuard'a Sor ve teklif sihirbazı aynı uç noktayı `js/vg-quote.js` ile kullanır (ayrı bir teklif sistemi yoktur):
+
+- `kind=quote` (teklif sihirbazı): telefon **veya** e-postadan biri yeterlidir; `kind=contact`: telefon zorunludur.
+- `requestId` (16–64 karakter `[A-Za-z0-9_-]`): aynı talebin yeniden denemesinde aynı kalır. Kabul edilen talep `requests/` altında HMAC adlı, kişisel veri içermeyen bir kayıtla (talep numarası, içerik özeti, zaman; 7 gün) işaretlenir. Aynı kimlik + aynı içerik ikinci e-posta üretmez ve ilk talep numarasını `duplicate: true` ile döndürür; aynı kimlik + farklı içerik `409 already_received` döner. Kayıt `flock` ile kilitlenir, eşzamanlı çift gönderim tek kayda iner.
+- Başarı yanıtı yalnızca e-posta gönderim sistemine (önizlemede `outbox/`) teslimden sonra verilir: `{success, message, reference: "VG-yymmdd-XXXXX", duplicate, preview}`. İstemci talep numarası olmayan bir yanıtı başarı saymaz (PHP çalışmayan statik önizlemede sahte başarı gösterilmez).
+- `simulation` + `simulationConsent=1` (yalnızca `kind=quote`): ziyaretçinin VoltSim'de görüp onayladığı özet (`trafo`, `pano`, `komp`, `ges`; girdiler, sonuçlar, varsayımlar, hesaplama sürümü). Onay olmadan veya sınır dışı içerikle 422 döner; özet e-postaya eklenir, ayrıca saklanmaz.
+- Hata yanıtları `code` alanı taşır (`invalid_phone`, `contact_required`, `simulation_consent`, `mail_unavailable` …).
 
 IP adresi e-postaya/günlüğe yazılmaz; spam sayacı özel dizinde HMAC adıyla, IPv6 için /64 gruplamasıyla tutulur. IP başına 10 dakikada 5 istek ve site geneli saatlik sınır (Turnstile kapalıyken 40, açıkken 120) vardır. Sayaç arızası gönderimi durdurur. `TURNSTILE_SECRET_KEY` tanımlıysa Siteverify sunucu doğrulaması ve hostname eşleşmesi zorunludur (jeton yoksa 422 + yapılandırma uyarısı); `TURNSTILE_EXPECTED_HOSTNAME` varsayılanı `voltguard.com.tr` olur. Anahtar yoksa alan doğrulama, bal tuzağı ve hız sınırları çalışır.
 

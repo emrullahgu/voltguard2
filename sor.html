@@ -130,7 +130,7 @@
         <form id="qaForm" novalidate>
           <div class="qa-form__row">
             <div><label for="qa-name">Ad Soyad <span aria-hidden="true">*</span></label><input type="text" id="qa-name" name="name" required minlength="2" maxlength="100" autocomplete="name" placeholder="Adınız Soyadınız"></div>
-            <div><label for="qa-phone">Cep telefonu <span aria-hidden="true">*</span></label><input type="tel" id="qa-phone" name="phone" required maxlength="32" autocomplete="tel" placeholder="05XX XXX XX XX" inputmode="tel"></div>
+            <div><label for="qa-phone">Telefon <span aria-hidden="true">*</span></label><input type="tel" id="qa-phone" name="phone" required maxlength="32" autocomplete="tel" placeholder="05XX XXX XX XX" inputmode="tel"></div>
           </div>
           <div class="qa-form__row">
             <div><label for="qa-email">E-posta</label><input type="email" id="qa-email" name="email" autocomplete="email" placeholder="ornek@email.com"></div>
@@ -398,14 +398,12 @@
         }
       }
 
-      /* js/main.js ve contact.php ile aynı cep telefonu kuralı */
-      function isValidTrMobile(phone) {
-        var digits = phone.replace(/\D/g, '');
-        if (digits.length === 10 && digits.charAt(0) === '5') return true;
-        if (digits.length === 11 && digits.charAt(0) === '0' && digits.charAt(1) === '5') return true;
-        if (digits.length === 12 && digits.slice(0, 2) === '90' && digits.charAt(2) === '5') return true;
-        return false;
+      /* js/main.js ve contact.php (vg_enquiry_phone_ok) ile aynı kural: cep, sabit hat veya 850 */
+      function isValidTrPhone(phone) {
+        if (phone.length > 32 || !/^\+?[0-9 ()\-.]+$/.test(phone)) return false;
+        return /^(?:90|0)?(?:[2-5]\d{9}|850\d{7})$/.test(phone.replace(/\D/g, ''));
       }
+      var requestId = '';
 
       /* contact.php FILTER_VALIDATE_EMAIL kullanır (js/factory.js isValidEmail ile aynı kural):
          yalnızca ASCII adresler, ardışık nokta yok, en az 2 harfli alan uzantısı */
@@ -430,7 +428,7 @@
         e.preventDefault();
         if (sending) return;
         var phoneValue = phoneField.value.trim();
-        phoneField.setCustomValidity(phoneValue === '' || isValidTrMobile(phoneValue) ? '' : 'Geçerli bir cep telefonu girin (05XX XXX XX XX).');
+        phoneField.setCustomValidity(phoneValue === '' || isValidTrPhone(phoneValue) ? '' : 'Geçerli bir telefon numarası girin (ör. 05XX XXX XX XX veya 0232 XXX XX XX).');
         var emailValue = emailField.value.trim();
         var emailBad = emailValue !== '' && !isValidEmail(emailValue);
         emailField.setCustomValidity(emailBad ? EMAIL_MSG : '');
@@ -469,54 +467,47 @@
         submitBtn.disabled = true;
         status.textContent = 'Gönderiliyor...';
         status.className = 'qa-form__status';
-        var controller = typeof AbortController === 'function' ? new AbortController() : null;
-        var timeoutId;
-        var timedOut = false;
-        var options = { method: 'POST', body: payload };
-        if (controller) options.signal = controller.signal;
-        var request = Promise.resolve().then(function () { return fetch('/contact.php', options); })
-          .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); });
-        var deadline = new Promise(function (resolve, reject) {
-          timeoutId = setTimeout(function () {
-            timedOut = true;
-            if (controller) controller.abort();
-            reject(new Error('timeout'));
-          }, 25000);
-        });
-        Promise.race([request, deadline])
+        var done = function () {
+          sending = false;
+          form.removeAttribute('aria-busy');
+          submitBtn.disabled = false;
+        };
+        /* js/vg-quote.js: başarı yalnızca sunucu talep numarası döndürürse; yeniden deneme aynı kimlikle (tekrar kayıt yok) */
+        if (!window.VGQuote) {
+          status.textContent = 'Gönderim bileşeni yüklenemedi; sorunuz iletilmedi. Yazdıklarınız korundu. Sayfayı yenileyip yeniden deneyin.';
+          status.className = 'qa-form__status qa-form__status--err';
+          done();
+          return;
+        }
+        if (!requestId) requestId = window.VGQuote.requestId();
+        var fields = {};
+        payload.forEach(function (value, key) { fields[key] = value; });
+        fields.kind = 'contact';
+        fields.requestId = requestId;
+        window.VGQuote.send(fields)
           .then(function (result) {
             resetCaptcha();
-            if (result.ok && result.data && result.data.success) {
-              status.textContent = result.data.message || 'Sorunuz gönderim sistemine alındı.';
-              status.className = 'qa-form__status qa-form__status--ok';
-              form.reset();
-              syncCounter();
-            } else {
-              var errMsg = (result.data && result.data.message) || 'Gönderim başarısız oldu, lütfen tekrar deneyin.';
-              status.textContent = errMsg;
-              status.className = 'qa-form__status qa-form__status--err';
-              if (/e-posta/i.test(errMsg)) {
-                emailField.setAttribute('aria-invalid', 'true');
-                emailField.focus();
-              }
+            requestId = '';
+            status.textContent = 'Talep numaranız: ' + result.reference + '. ' + (result.message || 'Sorunuz alındı.');
+            status.className = 'qa-form__status qa-form__status--ok';
+            form.reset();
+            syncCounter();
+          }, function (error) {
+            resetCaptcha();
+            if (error && error.kind === 'conflict') requestId = '';
+            var errMsg = (error && error.message) || 'Gönderim başarısız oldu. Yazdıklarınız korundu; lütfen tekrar deneyin.';
+            status.textContent = errMsg;
+            status.className = 'qa-form__status qa-form__status--err';
+            if (error && error.data && error.data.code === 'invalid_email') {
+              emailField.setAttribute('aria-invalid', 'true');
+              emailField.focus();
             }
           })
-          .catch(function () {
-            resetCaptcha();
-            status.textContent = timedOut
-              ? 'Gönderim yanıtı alınamadı. Yazdıklarınız korundu. Yeniden göndermeden önce 0545 434 67 35 üzerinden durumu kontrol edebilirsiniz.'
-              : 'Bağlantı hatası. Yazdıklarınız korundu; lütfen yeniden deneyin.';
-            status.className = 'qa-form__status qa-form__status--err';
-          })
-          .finally(function () {
-            clearTimeout(timeoutId);
-            sending = false;
-            form.removeAttribute('aria-busy');
-            submitBtn.disabled = false;
-          });
+          .then(done, done);
       });
     }());
   </script>
+  <script src="/js/vg-quote.js?v=828953263ab2" defer></script>
   <script src="js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
 </body>
 </html>
