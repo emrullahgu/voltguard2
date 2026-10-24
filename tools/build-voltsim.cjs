@@ -111,7 +111,15 @@ const MODULES = [
     lead: 'Küçük bir AG tesiste gizli bir arıza var: açık nötr, gevşek bağlantı, faz kaybı, yalıtım hatası, TT toprak hatası… 3D sahnede noktalara prob bağlayın; her ölçüm devre modelinden hesaplanır. Önce ayırın, kilitleyin, gerilim yokluğunu doğrulayın.',
     tags: ['Fazör devre çözücü', 'Açık nötr · hayalet gerilim', 'Yalıtım 500 V DC', 'Döngü empedansı', 'Faz sırası', 'EN 50110 beş kural'],
     service: ['/hizmetler/elektrik-periyodik-kontrol.html', 'Elektrik periyodik kontrol'],
-    related: [['/bilgi/enerjisiz-calisma-is-guvenligi.html', 'Enerjisiz çalışma ve iş güvenliği'], ['/bilgi/kacak-akim-rolesi-ariza-nedenleri.html', 'Kaçak akım rölesi neden atar?'], ['/bilgi/elektrik-tesisati-periyodik-kontrol.html', 'Tesisat periyodik kontrolü'], ['/hesaplama/topraklama-hesaplama/', 'Topraklama hesabı']] }
+    related: [['/bilgi/enerjisiz-calisma-is-guvenligi.html', 'Enerjisiz çalışma ve iş güvenliği'], ['/bilgi/kacak-akim-rolesi-ariza-nedenleri.html', 'Kaçak akım rölesi neden atar?'], ['/bilgi/elektrik-tesisati-periyodik-kontrol.html', 'Tesisat periyodik kontrolü'], ['/hesaplama/topraklama-hesaplama/', 'Topraklama hesabı']] },
+  { id: 'konveyor', slug: 'konveyor-scada', name: 'Konveyör & SCADA', short: 'Konveyör hattı, merdiven programı, alarm ve trend ekranı',
+    title: '3D Konveyör Hattı ve SCADA Simülasyonu: PLC Merdiven, Alarm, Trend | VoltSim',
+    description: 'Üç bantlı konveyör hattını PLC ile sırayla kaldırın ve durdurun: fotosel sıkışma algılama, acil durdurma zinciri, kilitlemeler, canlı merdiven diyagramı, alarm listesi ve motor akımı trendi.',
+    h1: '3D Konveyör Hattı ve SCADA Simülasyonu', eyebrow: 'PLC · Fotosel · Acil durdurma · HMI',
+    lead: 'START’a basın: PLC programı çıkış bandını önce, besleme bandını en son kaldırır. Koliler fotosellerden geçer, sayaç artar; sıkışma, termik ve acil durdurma alarmları SCADA ekranına düşer. Çalışan programı canlı vurgulanan merdiven diyagramında izleyin.',
+    tags: ['Sıralı kalkış / duruş', 'TON · TOF · CTU', 'Kilitlemeler', 'Sıkışma algılama', 'Acil durdurma zinciri', 'Alarm onayı · trend'],
+    service: ['/hizmetler/plc-scada-otomasyon.html', 'PLC & SCADA otomasyon'],
+    related: [['/bilgi/plc-nedir-nasil-calisir.html', 'PLC nedir, nasıl çalışır?'], ['/bilgi/scada-aritma-tesisi-otomasyonu.html', 'SCADA ile tesis otomasyonu'], ['/bilgi/vfd-frekans-invertoru-nedir.html', 'Frekans invertörü nedir?'], ['/hesaplama/motor-koruma-kontaktor-secimi/', 'Motor koruma ve kontaktör']] }
 ];
 
 const esc = s => String(s === undefined || s === null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -325,7 +333,7 @@ function landing() {
       </div>
       <div class="vsl-hero__img"><img src="/public/voltsim/hero.webp?v=${rev('/public/voltsim/hero.webp')}" alt="VoltSim 3D pano ve enerji sistemleri sahnesi" width="960" height="600" fetchpriority="high"></div>
       <ul class="vsl-facts">
-        <li><strong>10</strong><span>simülasyon modülü</span></li>
+        <li><strong>${MODULES.length}</strong><span>simülasyon modülü</span></li>
         <li><strong>Ayrı motor</strong><span>test edilen hesap fonksiyonları</span></li>
         <li><strong>PDF · JSON · CSV</strong><span>rapor ve proje dosyası</span></li>
         <li><strong>Kaynaklı</strong><span>mevzuat ve standart paneli</span></li>
