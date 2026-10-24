@@ -18,6 +18,7 @@ TIMEOUT="${VG_CI_TIMEOUT:-1200}"
 mkdir -p "$HOME_DIR/state" "$HOME_DIR/logs"
 exec 9>"$HOME_DIR/.lock"
 flock -n 9 || exit 0                       # önceki çalıştırma sürüyorsa çık
+if [ ! -s "$HOME_DIR/token" ]; then echo "token yok: $HOME_DIR/token (KURULUM.md)"; exit 0; fi
 TOKEN="$(tr -d '[:space:]' < "$HOME_DIR/token")"
 
 api() {
@@ -53,7 +54,7 @@ while read -r sha ref; do
   started=$(date +%s); rc=0
   timeout "$TIMEOUT" docker run --rm --network none --cpus 2 --memory 2g --pids-limit 512 \
       --security-opt no-new-privileges --user "$(id -u):$(id -g)" \
-      -v "$work/src:/src" "$tag" > "$log" 2>&1 || rc=$?
+      -v "$work/src:/src" "$tag"       sh -c 'if [ -f tools/ci/container-test.sh ]; then exec sh tools/ci/container-test.sh; else node tools/build-engineering.cjs >/dev/null && exec node tools/test.cjs; fi'       > "$log" 2>&1 || rc=$?
   secs=$(( $(date +%s) - started ))
   pass=$(grep -aoP '(ℹ|#) pass \K\d+' "$log" | tail -1 || true)
   fail=$(grep -aoP '(ℹ|#) fail \K\d+' "$log" | tail -1 || true)
