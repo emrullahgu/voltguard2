@@ -71,7 +71,7 @@
     let box = document.getElementById('vsToast');
     if (!box) { box = el('div', { id: 'vsToast', class: 'vs-toast', role: 'status', 'aria-live': 'polite' }); document.body.appendChild(box); }
     box.textContent = msg; box.dataset.level = level || 'info'; box.classList.add('is-on');
-    clearTimeout(toast.t); toast.t = setTimeout(() => box.classList.remove('is-on'), 3800);
+    clearTimeout(toast.t); toast.t = setTimeout(() => box.classList.remove('is-on'), Math.min(12000, Math.max(3800, String(msg).length * 55))); // uzun uyarılar okunabilsin
   }
 
   /* ------------------------------------------------------------------ grafik (canvas 2D) */
@@ -798,6 +798,18 @@
     return typeof src === typeof tpl ? src : tpl;
   }
 
+  /** Şablonda olup kaynakta bulunmayan alan yolları (nesne dizilerinin öğeleri hariç): eski/eksik dosyalar için kullanıcı notu. */
+  function missingPaths(tpl, src, pre) {
+    const out = [];
+    if (!tpl || typeof tpl !== 'object' || Array.isArray(tpl)) return out;
+    Object.keys(tpl).forEach(k => {
+      const p = pre ? pre + '.' + k : k;
+      if (!src || typeof src !== 'object' || !(k in src)) out.push(p);
+      else if (tpl[k] && typeof tpl[k] === 'object' && !Array.isArray(tpl[k])) missingPaths(tpl[k], src[k], p).forEach(x => out.push(x));
+    });
+    return out;
+  }
+
   function App(def, rootEl) {
     this.def = def; this.root = rootEl;
     this.state = clone(def.defaults());
@@ -845,6 +857,8 @@
     try { res = this.def.compute(this.state, this); } catch (err) { res = { ok: false, errors: ['Hesap hatası: ' + err.message], checks: [], values: {} }; console.error(err); }
     this.result = res;
     if (res.ok) this.validResult = res;
+    // modül kancası: ortak durum değişikliklerini izlemek için (ör. olay geçmişi); hesap sonucunu değiştirmez
+    if (this.def.afterCompute) { try { this.def.afterCompute(this, res); } catch (e) { this.fault('afterCompute', e); } }
     this.renderAnalysis();
     if (this.viewer) {
       let sig = null;
@@ -1023,6 +1037,13 @@
     // yalnız içerik değişince yazılır (seçim, ipucu ve ekran okuyucu konumu korunur)
     const roHtml = parts.join(''), roBox = host.querySelector('[data-vs-ro]');
     if (roBox._html !== roHtml) { roBox.innerHTML = roHtml; roBox._html = roHtml; }
+    // modüle özel bölümler: okumaların hemen altı (top) ve analiz panelinin sonu (bottom); içerik modülde imzayla güncellenir
+    if (this.def.renderExtra) {
+      let top = host.querySelector('[data-vs-extra-top]'), bottom = host.querySelector('[data-vs-extra-bottom]');
+      if (!top) { top = el('div', { 'data-vs-extra-top': '' }); roBox.after(top); }
+      if (!bottom) { bottom = el('div', { 'data-vs-extra-bottom': '' }); host.appendChild(bottom); }
+      try { this.def.renderExtra(this, top, bottom); } catch (e) { this.fault('extra', e); }
+    }
     // grafikler: kanvaslar yeniden kullanılır
     const ch = host.querySelector('[data-vs-charts]');
     let charts = []; try { charts = vr && this.def.charts ? this.def.charts(vr, s, this.live, this) || [] : []; } catch (e) { this.fault('charts', e); }
@@ -1198,7 +1219,10 @@
         if (focusCard) (info.querySelector('.vs-info__acts .vs-btn') || info).focus({ preventScroll: true });
       }
     };
-    this.viewer.onSelect = showInfo;
+    this.viewer.onSelect = (p, viaKeyboard, focusCard) => {
+      showInfo(p, viaKeyboard, focusCard);
+      if (this.def.onSelect) { try { this.def.onSelect(p, this); } catch (e) { this.fault('select', e); } }
+    };
     this.viewer.onContextLost = () => {
       const fb = this.root.querySelector('[data-vs-fallback]'); if (fb) { fb.hidden = false; fb.textContent = '3D görüntü bağlantısı kesildi. Hesaplar ve 2D şema kullanılabilir; bağlantı geri geldiğinde 3D görünüme geçebilirsiniz.'; }
       this.setMode('2d');
@@ -1316,7 +1340,9 @@
 
   /* --- proje kaydet / yükle */
   App.prototype.project = function () {
-    return { format: 'voltsim-project', version: 1, schema: this.schema, module: this.def.id, title: this.def.title, savedAt: new Date().toISOString(), engine: E.version, state: this.state };
+    const p = { format: 'voltsim-project', version: 1, schema: this.schema, module: this.def.id, title: this.def.title, savedAt: new Date().toISOString(), engine: E.version, state: this.state };
+    if (this.def.projectExtras) p.extras = this.def.projectExtras(this); // ör. olay geçmişi, A/B senaryoları
+    return p;
   };
   /** Sahneyi baştan kurmak ve analizleri yenilemek için ortak yol (senaryo, görev, sıfırlama, proje yükleme). */
   App.prototype.applyState = function (state) {
@@ -1328,16 +1354,31 @@
   };
   App.prototype.loadProject = function (obj) {
     if (!obj || obj.format !== 'voltsim-project') throw new Error('Bu dosya bir VoltSim projesi değil.');
-    if (obj.module !== this.def.id) throw new Error('Bu proje “' + (obj.title || obj.module) + '” simülasyonuna ait. İlgili simülasyon sayfasından yükleyin.');
-    if (!obj.state || typeof obj.state !== 'object' || Array.isArray(obj.state)) throw new Error('Proje dosyasında girdi bulunamadı.');
-    if (obj.schema && obj.schema > this.schema) throw new Error('Proje bu sayfadan daha yeni bir VoltSim sürümüyle kaydedilmiş.');
-    const merged = sanitize(this.def.defaults(), obj.state);
+    const notes = this.lastLoadNotes = [];
+    let st = obj.state;
+    if (obj.module !== this.def.id) {
+      // başka bir modülün projesi: modül destekliyorsa ortak alanlar aktarılır (ör. Fabrika Senaryosu ← trafo/kompanzasyon/pano)
+      const conv = this.def.importForeign ? this.def.importForeign(obj, this) : null;
+      if (!conv) throw new Error('Bu proje “' + (obj.title || obj.module) + '” simülasyonuna ait. İlgili simülasyon sayfasından yükleyin.');
+      st = conv.state; conv.notes.forEach(n => notes.push(n));
+    } else {
+      if (!st || typeof st !== 'object' || Array.isArray(st)) throw new Error('Proje dosyasında girdi bulunamadı.');
+      if (obj.schema && obj.schema > this.schema) throw new Error('Proje bu sayfadan daha yeni bir VoltSim sürümüyle (şema ' + obj.schema + ') kaydedilmiş; sayfayı yenileyip tekrar deneyin.');
+      if ((obj.schema || 1) < this.schema) {
+        if (this.def.migrate) { const m = this.def.migrate(st, obj.schema || 1); st = m.state; m.notes.forEach(n => notes.push(n)); }
+        notes.push('Dosya önceki bir sürümle (şema ' + (obj.schema || 1) + ') kaydedilmiş.');
+      }
+      const miss = missingPaths(this.def.defaults(), st);
+      if (miss.length) notes.push('Dosyada olmayan ' + miss.length + ' alan varsayılan değerle tamamlandı (' + miss.slice(0, 5).join(', ') + (miss.length > 5 ? ', …' : '') + '); sonuçları kontrol edin.');
+    }
+    const merged = sanitize(this.def.defaults(), st);
     let test;
     try { test = this.def.compute(merged, this); } catch (e) { throw new Error('Proje bu sürümle hesaplanamadı: ' + e.message); }
     const prev = this.state;
     this.running = !!this.def.autoRun; this.paused = false;
     this.applyState(merged);
     if (this._sceneError) { this.applyState(prev); throw new Error('Proje 3D sahnede kurulamadı; önceki çalışmanız korundu.'); }
+    if (this.def.loadExtras && obj.module === this.def.id) { try { this.def.loadExtras(obj.extras || null, this); } catch (e) { notes.push('Ek veriler (olay geçmişi vb.) okunamadı: ' + e.message); } }
     if (this.running && this.def.start) { try { this.def.start(this); } catch (e) { this.fault('start', e); } }
     this.syncToolbar(); this.wake();
     return test;
@@ -1569,8 +1610,19 @@
     try {
       const o = JSON.parse(saved);
       if (!o || !o.state || typeof o.state !== 'object') return false;
-      if ((o.schema || 1) !== this.schema) { storageDel(this.storageKey); return false; }
-      const st = sanitize(this.def.defaults(), o.state);
+      let state = o.state;
+      if ((o.schema || 1) !== this.schema) {
+        // eski kayıt: modül dönüşüm tanımlıyorsa taşınır; yoksa (veya daha yeni sürümse) atılır ve kullanıcıya açıkça söylenir
+        if ((o.schema || 1) < this.schema && this.def.migrate) {
+          const m = this.def.migrate(state, o.schema || 1); state = m.state;
+          this._restoreNote = 'Kayıtlı çalışmanız önceki bir sürümden (şema ' + (o.schema || 1) + ') bu sürüme taşındı. ' + m.notes.join(' ');
+        } else {
+          storageDel(this.storageKey);
+          this._restoreNote = 'Kayıtlı çalışmanız farklı bir VoltSim sürümüne (şema ' + (o.schema || 1) + ', bu sayfa ' + this.schema + ') ait ve otomatik taşınamadı; varsayılan değerler yüklendi.';
+          return false;
+        }
+      }
+      const st = sanitize(this.def.defaults(), state);
       this.def.compute(st, this); // hesap istisna atıyorsa kayıt bu sürümle uyumsuzdur
       this.state = st; return true;
     } catch (_) { storageDel(this.storageKey); return false; }
@@ -1605,7 +1657,11 @@
       if (f.size > 2 * 1024 * 1024) { toast('Dosya çok büyük (en çok 2 MB).', 'bad'); return; }
       const rd = new FileReader();
       rd.onload = () => {
-        try { const t = self.loadProject(JSON.parse(rd.result)); toast(t && t.ok === false ? 'Proje yüklendi; girdilerde hata var (Analiz panelinde).' : 'Proje yüklendi.', t && t.ok === false ? 'bad' : 'ok'); }
+        try {
+          const t = self.loadProject(JSON.parse(rd.result)), n = self.lastLoadNotes || [];
+          toast((t && t.ok === false ? 'Proje yüklendi; girdilerde hata var (Analiz panelinde).' : 'Proje yüklendi.') + (n.length ? ' ' + n.join(' ') : ''), t && t.ok === false ? 'bad' : n.length ? 'warn' : 'ok');
+          if (self.def.onProjectLoaded) self.def.onProjectLoaded(self, n);
+        }
         catch (e) { toast(e.message || 'Proje okunamadı.', 'bad'); }
         file.value = '';
       };
@@ -1652,7 +1708,9 @@
     }
     if (d.initLive) this.live = d.initLive(this.state);
     this.renderControls(true); this.recompute();
-    if (this._restored) toast('Son çalışmanız geri yüklendi. Sıfırla ile varsayılana dönebilirsiniz.');
+    if (this._restoreNote) toast(this._restoreNote, 'warn');
+    else if (this._restored) toast('Son çalışmanız geri yüklendi. Sıfırla ile varsayılana dönebilirsiniz.');
+    if (d.mount) { try { d.mount(this); } catch (e) { this.fault('mount', e); } }
     if (this.running && d.start) { try { d.start(this); } catch (e) { this.fault('start', e); } }
     this.syncToolbar();
     this._onResize = () => { clearTimeout(self._rs); self._rs = setTimeout(() => { self.renderAnalysis(); if (self.mode === '2d') self.draw2d(); }, 150); };

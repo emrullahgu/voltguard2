@@ -1537,6 +1537,8 @@
       version: "IEC 62682 (ANSI/ISA-18.2 temelli; güncel baskı doğrulanmalı)", applies: ["konveyor"], needsCheck: true,
       note: "Alarm yaşam döngüsünü, alarm durumlarını (etkin/onaylanmamış, onaylanmış, normale dönmüş) ve operatör onayını tanımlar." }
   );
+  /* Fabrika Senaryosu trafo, pano ve kompanzasyon hesaplarını birlikte kullanır: bu modüllere atfedilen kayıtlar ona da uygulanır. */
+  list.forEach(r => { if (["trafo", "pano", "komp"].some(m => r.applies.indexOf(m) >= 0) && r.applies.indexOf("fabrika") < 0) r.applies.push("fabrika"); });
   list.checked = "2026-10-23";
   list.checkedText = "23 Ekim 2026";
   return list;
