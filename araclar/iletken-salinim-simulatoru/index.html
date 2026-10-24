@@ -6,7 +6,7 @@
 
 <style>
 #vg-tool-workspace{
-  --ink:#182430;--ink-2:#44586c;--ink-3:#7a8fa3;--paper:#eef2f5;--card:#ffffff;
+  --ink:#182430;--ink-2:#44586c;--ink-3:#5a6e82;--paper:#eef2f5;--card:#ffffff;
   --line:#d4dde4;--brand:#0e5a8a;--brand-2:#0b3e60;--amber:#c47a10;--amber-bg:#fdf4e3;
   --green:#1a7a4a;--danger:#b3382c;--mono:"SF Mono",ui-monospace,Consolas,"Roboto Mono",monospace;
 }
@@ -114,7 +114,7 @@
   :where(#vg-tool-workspace) .foot{margin-top:8px;font-size:8.6px}
 }
 </style>
-<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=ff9c53bbf0d3"><script src="/js/vg-shell.js?v=878d9a5227ee" defer></script><script src="/js/vg-metrics.js?v=88c57247d032" defer data-vg-online-only></script><script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer data-vg-online-only></script><meta name="color-scheme" content="light dark"><script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script><style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}</style><link rel="stylesheet" href="../assets/host-theme.css?v=91900d9408e4"></head>
+<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=d800ac271429"><script src="/js/vg-shell.js?v=878d9a5227ee" defer></script><script src="/js/vg-metrics.js?v=88c57247d032" defer data-vg-online-only></script><script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer data-vg-online-only></script><meta name="color-scheme" content="light dark"><script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script><style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}</style><link rel="stylesheet" href="../assets/host-theme.css?v=91900d9408e4"></head>
 <body data-vg-tool="iletken-salinim-simulatoru" data-vg-original-author="Baki SONAY" data-vg-original-source="Sonay Enerji" data-vg-title="İletken Salınım Simülatörü" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
 <header data-vg-no-print class="vg-header doc-header" id="vgHeader">
   <div class="vg-header__bar vg-wrap">
@@ -200,7 +200,7 @@
           <div class="hint" id="hintLiz"></div>
         </div>
         <div class="field"><label>Amax Açıklığı (m)</label><input type="number" id="inAmax" value="150" min="10" max="2000" step="10" inputmode="decimal"></div>
-        <div class="field"><label>Anma Gerilimi U (kV)</label><input type="number" id="inU" value="34.5" readonly style="background:#f1efe8;color:#7a8fa3;cursor:not-allowed"><div class="hint">Şimdilik 34,5 kV'a kilitli · D_s ve U/150 tahkiki için</div></div>
+        <div class="field"><label>Anma Gerilimi U (kV)</label><input type="number" id="inU" value="34.5" readonly style="background:#f1efe8;color:#5a6e82;cursor:not-allowed"><div class="hint">Şimdilik 34,5 kV'a kilitli · D_s ve U/150 tahkiki için</div></div>
         <div class="field amber"><label>Uzaklık Hedefi</label>
           <select id="selHedef">
             <option value="yapi" data-emn="2" selected>Yapılara olan mesafe</option>
@@ -432,9 +432,9 @@ function cizChart(){
   ymax=ymax*1.12||1;
   const X=x=>PL+(CW-PL-PR)*x/A, Y=s=>CH-PB-(CH-PT-PB)*s/ymax;
   let g='';
-  for(let i=0;i<=5;i++){const v=ymax*i/5,y=Y(v);g+='<line x1="'+PL+'" y1="'+y+'" x2="'+(CW-PR)+'" y2="'+y+'" stroke="#e2e9ee"/>';g+='<text x="'+(PL-8)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="#7a8fa3">'+fmt(v,0)+'</text>';}
+  for(let i=0;i<=5;i++){const v=ymax*i/5,y=Y(v);g+='<line x1="'+PL+'" y1="'+y+'" x2="'+(CW-PR)+'" y2="'+y+'" stroke="#e2e9ee"/>';g+='<text x="'+(PL-8)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="#5a6e82">'+fmt(v,0)+'</text>';}
   const xt=Math.min(10,Math.round(A/50)||1);
-  for(let i=0;i<=xt;i++){const v=A*i/xt,x=X(v);g+='<line x1="'+x+'" y1="'+(CH-PB)+'" x2="'+x+'" y2="'+(CH-PB+5)+'" stroke="#b9c6d0"/>';g+='<text x="'+x+'" y="'+(CH-PB+19)+'" text-anchor="middle" font-size="11" fill="#7a8fa3">'+fmt(v,0)+'</text>';}
+  for(let i=0;i<=xt;i++){const v=A*i/xt,x=X(v);g+='<line x1="'+x+'" y1="'+(CH-PB)+'" x2="'+x+'" y2="'+(CH-PB+5)+'" stroke="#b9c6d0"/>';g+='<text x="'+x+'" y="'+(CH-PB+19)+'" text-anchor="middle" font-size="11" fill="#5a6e82">'+fmt(v,0)+'</text>';}
   g+='<text x="'+((PL+CW-PR)/2)+'" y="'+(CH-8)+'" text-anchor="middle" font-size="11.5" fill="#44586c" font-weight="700">Direkler arası mesafe (m)</text>';
   g+='<text transform="rotate(-90 14 '+(CH/2)+')" x="14" y="'+(CH/2)+'" text-anchor="middle" font-size="11.5" fill="#44586c" font-weight="700">Yatay salınım (m)</text>';
   let dU='M'+X(0)+' '+Y(pts[0][2]); pts.forEach(p=>dU+=' L'+X(p[0]).toFixed(1)+' '+Y(p[2]).toFixed(1));
@@ -511,8 +511,8 @@ function cizPlan(){
   const ySafMax=Yp(safMaxVal);
   g+='<rect x="'+PLx+'" y="'+ySafMax+'" width="'+(W-PLx-PRx)+'" height="'+(H-PBot-ySafMax)+'" fill="rgba(179,56,44,.06)"/>';
   g+='<text x="'+(PLx+8)+'" y="'+(ySafMax+16)+'" font-size="10.5" fill="#b3382c" opacity=".8">yapı / ağaç bu çizginin ötesinde olmalı</text>';
-  g+='<line x1="'+(PLx-30)+'" y1="'+axisY+'" x2="'+(W-PRx+30)+'" y2="'+axisY+'" stroke="#7a8fa3" stroke-width="1.2" stroke-dasharray="14 4 3 4"/>';
-  g+='<text x="'+(W-PRx+8)+'" y="'+(axisY+14)+'" text-anchor="end" font-size="10" fill="#7a8fa3">hat ekseni</text>';
+  g+='<line x1="'+(PLx-30)+'" y1="'+axisY+'" x2="'+(W-PRx+30)+'" y2="'+axisY+'" stroke="#5a6e82" stroke-width="1.2" stroke-dasharray="14 4 3 4"/>';
+  g+='<text x="'+(W-PRx+8)+'" y="'+(axisY+14)+'" text-anchor="end" font-size="10" fill="#5a6e82">hat ekseni</text>';
   const restU=rest.map(p=>[p[0],-p[1]]);
   g+='<path d="'+restU.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Yp(p[1]).toFixed(1)).join(' ')+'" fill="none" stroke="#a9bac6" stroke-width="1.6" stroke-dasharray="5 4"/>';
   let fill=path(rest); for(let i=env.length-1;i>=0;i--)fill+=' L'+X(env[i][0]).toFixed(1)+' '+Yp(env[i][1]).toFixed(1);

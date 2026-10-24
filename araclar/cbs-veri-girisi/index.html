@@ -29,10 +29,10 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   --paper:#f6f4ee; --card:#ffffff; --field:#fbfaf6;
   --cu:#b45c2e;           /* copper – primary action */
   --cu-deep:#8f4620;
-  --volt:#1f7a6d;         /* voltage teal – accents/valid */
+  --volt:#18665b;         /* voltage teal – accents/valid */
   --volt-soft:#e2f0ec;
   --warn:#b23b3b; --warn-soft:#f6e4e2;
-  --focus:#1f7a6d;
+  --focus:#18665b;
   --shadow:0 1px 0 rgba(18,34,43,.04), 0 8px 24px -18px rgba(18,34,43,.5);
 }
 :where(#vg-tool-workspace) *{box-sizing:border-box}
@@ -261,7 +261,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   :where(#vg-tool-workspace) .navitem:hover{background:transparent}
 }
 </style>
-<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=ff9c53bbf0d3"><script src="/js/vg-shell.js?v=878d9a5227ee" defer></script><script src="/js/vg-metrics.js?v=88c57247d032" defer data-vg-online-only></script><script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer data-vg-online-only></script><meta name="color-scheme" content="light dark"><script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script><style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}</style><link rel="stylesheet" href="../assets/host-theme.css?v=91900d9408e4"></head>
+<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=d800ac271429"><script src="/js/vg-shell.js?v=878d9a5227ee" defer></script><script src="/js/vg-metrics.js?v=88c57247d032" defer data-vg-online-only></script><script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer data-vg-online-only></script><meta name="color-scheme" content="light dark"><script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script><style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}</style><link rel="stylesheet" href="../assets/host-theme.css?v=91900d9408e4"></head>
 <body data-vg-tool="cbs-veri-girisi" data-vg-original-author="Baki SONAY" data-vg-original-source="Sonay Enerji" data-vg-title="CBS Veri Giriş Sistemi" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[&quot;voltguard:cbs-veri-girisi:sonay_3sahis_v1&quot;]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
 <header data-vg-no-print class="vg-header doc-header" id="vgHeader">
   <div class="vg-header__bar vg-wrap">
@@ -821,7 +821,7 @@ function fieldCell(sec,f,rec,ri){
     const opts=['<option value="">— seçiniz —</option>']
       .concat(list.map(o=>`<option ${o===val?'selected':''}>${esc(o)}</option>`))
       .concat(val && !list.includes(val)?[`<option selected>${esc(val)}</option>`]:[])
-      .concat([`<option value="__add__" style="font-weight:600;color:#1f7a6d">＋ Listede yok, ekle…</option>`]);
+      .concat([`<option value="__add__" style="font-weight:600;color:#18665b">＋ Listede yok, ekle…</option>`]);
     ctrl=`<select id="${id}" data-key="${f.key}" data-fk="${esc(f.key)}">${opts.join('')}</select>`;
   }else if(f.type==='date'){
     ctrl=`<input id="${id}" data-key="${f.key}" type="date" value="${esc(val)}">`;

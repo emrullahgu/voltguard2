@@ -6,7 +6,7 @@
 <title>ENH Sehim Hesabı Simülatörü</title>
 <style>
 :root{
-  --ink:#0f1b24; --ink2:#33465a; --muted:#6b7f92;
+  --ink:#0f1b24; --ink2:#33465a; --muted:#55697c;
   --paper:#eef2f6; --card:#fff; --line:#d3dde6;
   --blue:#1d4ed8; --blue-bg:#e5eefc; --teal:#0e7c86;
   --ok:#15803d; --danger:#b91c1c; --warn:#b45309;
@@ -44,7 +44,7 @@ input[readonly]{background:#f3f6f9;color:var(--ink2);font-weight:600}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:960px){.g5,.g4,.g3{grid-template-columns:1fr 1fr}}
 
-button.act{background:linear-gradient(180deg,#12909c,#0b6a73);color:#fff;border:0;border-radius:7px;padding:8px 15px;
+button.act{background:linear-gradient(180deg,#0e7480,#0b6a73);color:#fff;border:0;border-radius:7px;padding:8px 15px;
   font-size:13px;cursor:pointer;font-weight:600;font-family:var(--sans);
   box-shadow:0 1px 2px rgba(15,27,36,.18),inset 0 1px 0 rgba(255,255,255,.18);transition:filter .15s,transform .08s}
 button.act:hover{filter:brightness(1.08)}
@@ -433,7 +433,7 @@ function renderDirek(rebuild){
     if(son) d.a=0;                                   // son direkten sonra açıklık yoktur
     tr.innerHTML = "<td class='l'><input data-i='"+i+"' data-k='dn' value='"+esc(d.dn)+"' style='text-align:left'></td>"
       + "<td><select data-i='"+i+"' data-k='tip'>"+opt+"</select></td>"
-      + (son ? "<td class='num' style='color:#6b7f92;background:#f5f8fa'>— hat sonu —</td>"
+      + (son ? "<td class='num' style='color:#55697c;background:#f5f8fa'>— hat sonu —</td>"
              : "<td><input data-i='"+i+"' data-k='a' value='"+esc(d.a||"")+"'></td>")
       + "<td class='num'>"+(m?(m.bi+1):"—")+"</td>"
       + "<td class='num'>"+(m&&m.first?"<b>"+nf(m.ar,2)+"</b>":(m?nf(m.ar,2):"—"))+"</td>"
@@ -503,7 +503,7 @@ function renderRes(){
       + H.map(function(){ return "<td class='tn'></td><td></td>"; }).join("");
     tb.appendChild(tr);
   }
-  if(!tb.children.length) tb.innerHTML="<tr><td colspan='4' class='l' style='color:#6b7f92'>Direk ve açıklık girin.</td></tr>";
+  if(!tb.children.length) tb.innerHTML="<tr><td colspan='4' class='l' style='color:#55697c'>Direk ve açıklık girin.</td></tr>";
   var S=fn($("cS").value);
   $("kL").textContent = L?nf(L,2):"—";
   $("kA").textContent = maxA?nf(maxA,2):"—";
@@ -536,7 +536,7 @@ function sahaTablo(){
       tb.appendChild(tr);
     });
   });
-  if(!tb.children.length) tb.innerHTML="<tr><td colspan='8' class='l' style='color:#6b7f92'>Direk ve açıklık girin.</td></tr>";
+  if(!tb.children.length) tb.innerHTML="<tr><td colspan='8' class='l' style='color:#55697c'>Direk ve açıklık girin.</td></tr>";
 }
 
 /* ---------- Grafik ---------- */
@@ -579,8 +579,8 @@ function grafik(B){
   });
   g.push('<line x1="'+L+'" y1="'+(H-Bm)+'" x2="'+(W-R)+'" y2="'+(H-Bm)+'" stroke="#33465a"/>');
   g.push('<line x1="'+L+'" y1="'+T+'" x2="'+L+'" y2="'+(H-Bm)+'" stroke="#33465a"/>');
-  g.push('<text x="'+(L-7)+'" y="'+(T-5)+'" font-size="'+FS+'" fill="#6b7f92" text-anchor="end" font-family="Segoe UI,Arial">f (m)</text>');
-  g.push('<text x="'+((L+W-R)/2)+'" y="'+(H-Bm+34)+'" font-size="'+FS+'" fill="#6b7f92" text-anchor="middle" font-family="Segoe UI,Arial">sıcaklık (°C)</text>');
+  g.push('<text x="'+(L-7)+'" y="'+(T-5)+'" font-size="'+FS+'" fill="#55697c" text-anchor="end" font-family="Segoe UI,Arial">f (m)</text>');
+  g.push('<text x="'+((L+W-R)/2)+'" y="'+(H-Bm+34)+'" font-size="'+FS+'" fill="#55697c" text-anchor="middle" font-family="Segoe UI,Arial">sıcaklık (°C)</text>');
   series.forEach(function(s,si){
     var c=COL[si%COL.length];
     g.push('<path d="'+s.pts.map(function(p,i){ return (i?"L":"M")+X(p.t).toFixed(1)+" "+Y(p.f).toFixed(1); }).join(" ")+'" fill="none" stroke="'+c+'" stroke-width="2.2"/>');

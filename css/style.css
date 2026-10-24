@@ -3135,6 +3135,7 @@ button:focus-visible {
 .kb-keyfacts h2 { font-family: var(--font-heading); font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; color: var(--clr-accent-light); margin: 0 0 .8rem; }
 .kb-keyfacts ul { list-style: none; display: grid; gap: .6rem; }
 .kb-keyfacts li { position: relative; padding-left: 1.7rem; line-height: 1.55; color: rgba(255, 255, 255, .9); }
+.kb-keyfacts a { color: var(--clr-accent-light); }
 .kb-keyfacts li::before { content: "\f0e7"; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; left: 0; top: .1rem; color: var(--clr-accent); font-size: .9rem; }
 
 .kb-sources { background: var(--clr-bg-gray); border: 1px solid var(--clr-border); border-radius: var(--r-md); padding: 1.1rem 1.3rem; margin-top: 1.75rem; font-size: .92rem; }
@@ -3187,6 +3188,7 @@ button:focus-visible {
 .kb-hero { background: linear-gradient(135deg, #081120, #0d1f3c); color: #fff; padding: 3rem var(--container-pad) 3.25rem; text-align: center; }
 .kb-hero h1 { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -.02em; margin-bottom: .7rem; }
 .kb-hero p { max-width: 680px; margin: 0 auto; color: rgba(255, 255, 255, .78); line-height: 1.7; }
+.kb-hero .article__byline, .kb-hero .article__byline time { color: rgba(255, 255, 255, .78) !important; }
 .kb-hub { max-width: var(--container-max); margin: 0 auto; padding: 2.5rem var(--container-pad) 4rem; }
 .kb-cat-group { margin-bottom: 2.5rem; }
 .kb-cat-group__title { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--th-heading); margin-bottom: 1rem; padding-bottom: .45rem; border-bottom: 2px solid var(--clr-accent); display: inline-block; }

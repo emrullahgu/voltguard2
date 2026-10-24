@@ -6,7 +6,7 @@
 <title>ENH Uplift Kontrol Simülatörü</title>
 <style>
 :root{
-  --ink:#0f1b24; --ink2:#33465a; --muted:#6b7f92;
+  --ink:#0f1b24; --ink2:#33465a; --muted:#55697c;
   --paper:#eef2f6; --card:#ffffff; --line:#d3dde6;
   --blue:#1d4ed8; --blue-bg:#e5eefc;
   --teal:#0e7c86; --ok:#15803d; --ok-bg:#e6f4ea;
@@ -83,7 +83,7 @@ tr.ok td{background:#f2faf5}
 
 td input{padding:4px 6px;font-size:12.5px;border-radius:4px}
 
-button.act{background:linear-gradient(180deg,#12909c,#0b6a73);color:#fff;border:0;border-radius:7px;
+button.act{background:linear-gradient(180deg,#0e7480,#0b6a73);color:#fff;border:0;border-radius:7px;
   padding:9px 16px;font-size:13px;cursor:pointer;font-weight:600;letter-spacing:.2px;font-family:var(--sans);
   box-shadow:0 1px 2px rgba(15,27,36,.18),inset 0 1px 0 rgba(255,255,255,.18);transition:transform .08s,filter .15s}
 button.act:hover{filter:brightness(1.08)}
@@ -106,7 +106,7 @@ button.act.red:hover{background:#fdf2f2}
   border-radius:8px 8px 0 0;padding:8px 12px;font-size:13px;color:var(--ink2);cursor:pointer;position:relative;top:2px;
   transition:background .12s}
 .tab:hover{background:#d7e2ea}
-.tab.on{background:linear-gradient(180deg,#12909c,#0b6a73);color:#fff;border-color:var(--teal);font-weight:700}
+.tab.on{background:linear-gradient(180deg,#0e7480,#0b6a73);color:#fff;border-color:var(--teal);font-weight:700}
 .tab .x{font-size:16px;line-height:1;opacity:.5;padding:0 3px;border-radius:4px}
 .tab .x:hover{opacity:1;background:rgba(0,0,0,.16)}
 .tab.on .x{opacity:.85}
@@ -455,7 +455,7 @@ function compute(){
   var tb=$("tbDetail"); tb.innerHTML="";
   rows.forEach(function(x){
     var tr=document.createElement("tr");
-    tr.innerHTML = "<td>"+x[0]+"</td><td class='num'>"+x[1]+"</td><td style='text-align:center'>"+x[2]+"</td><td style='text-align:left;color:#6b7f92'>"+x[3]+"</td>";
+    tr.innerHTML = "<td>"+x[0]+"</td><td class='num'>"+x[1]+"</td><td style='text-align:center'>"+x[2]+"</td><td style='text-align:left;color:#55697c'>"+x[3]+"</td>";
     tb.appendChild(tr);
   });
 
@@ -605,7 +605,7 @@ function draw(p0,T,a1,a2,H,r,svgEl,lbl){
     g.push('<rect x="'+(cx-52)+'" y="'+(yDim-12)+'" width="104" height="24" rx="2" fill="#dbe7fa" stroke="#7fa3dd"/>');
     g.push('<text x="'+cx+'" y="'+(yDim+5)+'" font-size="12.5" font-weight="600" fill="#12327a" text-anchor="middle" font-family="Consolas,monospace">'+nf(val,2)+'</text>');
     g.push('<text x="'+(cx-60)+'" y="'+(yDim+5)+'" font-size="12" fill="#33465a" text-anchor="end" font-family="Segoe UI,Arial">'+lbl+'</text>');
-    g.push('<text x="'+(cx+60)+'" y="'+(yDim+5)+'" font-size="11.5" fill="#6b7f92" font-family="Segoe UI,Arial">m</text>');
+    g.push('<text x="'+(cx+60)+'" y="'+(yDim+5)+'" font-size="11.5" fill="#55697c" font-family="Segoe UI,Arial">m</text>');
   }
   hdim(0,a1,a1,"a₁"); hdim(a1,tot,a2,"a₂");
 
@@ -631,7 +631,7 @@ function draw(p0,T,a1,a2,H,r,svgEl,lbl){
   g.push('<text x="'+(x1b+bw/2)+'" y="'+(bBot+18)+'" font-size="11.5" fill="#33465a" text-anchor="middle" font-family="Segoe UI,Arial">f_min</text>');
   g.push('<text x="'+(x2b+bw/2)+'" y="'+(bBot+18)+'" font-size="11.5" fill="#33465a" text-anchor="middle" font-family="Segoe UI,Arial">x_proje</text>');
   g.push('<text x="'+(PX+PWid/2)+'" y="'+(bBot+42)+'" font-size="11.5" font-weight="700" fill="'+okc0+'" text-anchor="middle" font-family="Consolas,monospace">'+(r.ok?"f_min > x_proje":"f_min ≤ x_proje")+'</text>');
-  g.push('<text x="'+(PX+PWid/2)+'" y="'+(bBot+62)+'" font-size="11" fill="#6b7f92" text-anchor="middle" font-family="Segoe UI,Arial">emniyet payı '+nf(r.margin,2)+' m</text>');
+  g.push('<text x="'+(PX+PWid/2)+'" y="'+(bBot+62)+'" font-size="11" fill="#55697c" text-anchor="middle" font-family="Segoe UI,Arial">emniyet payı '+nf(r.margin,2)+' m</text>');
   g.push('<text x="'+(PX+PWid/2)+'" y="'+(bBot+86)+'" font-size="12.5" font-weight="700" fill="'+okc0+'" text-anchor="middle" font-family="Consolas,monospace">R = '+nf(r.R,2)+' kg</text>');
 
   // sonuç ve başlık
@@ -730,7 +730,7 @@ function renderOzet(){
       + "<td class='num'>"+nf(h1,2)+"</td><td class='num'>"+nf(h2,2)+"</td>"
       + "<td class='num'>"+(dolu?nf(r.fmin,2):"—")+"</td><td class='num'>"+(dolu?nf(r.xp,2):"—")+"</td>"
       + "<td class='num'>"+(dolu?nf(r.R,1):"—")+"</td>"
-      + "<td style='text-align:center;font-weight:700;color:"+(dolu?(r.ok?"#15803d":"#b91c1c"):"#6b7f92")+"'>"
+      + "<td style='text-align:center;font-weight:700;color:"+(dolu?(r.ok?"#15803d":"#b91c1c"):"#55697c")+"'>"
       + (dolu?(r.ok?"UYGUN":"DURDURUCU"):"eksik")+"</td>";
     tr.addEventListener("click",function(){ switchTab(i); });
     tb.appendChild(tr);

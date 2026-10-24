@@ -390,3 +390,4 @@ textarea.vs-input{resize:vertical;font-family:ui-monospace,Consolas,monospace;fo
 /* Koyu tema: sayfa çevresi tokenlarla (css/vg-shell.css --th-*); uygulama, 3D sahne ve 2D görünümler zaten koyu; PDF raporu (.rp-*) sabit açık */
 :root[data-theme="dark"] .vs-eyebrow{color:#67e8f9}
 :root[data-theme="dark"] .vsl-card__a:hover{box-shadow:0 18px 40px #0008}
+.vs-app ::placeholder{color:#8ea3bf;opacity:1}.vsl-hero .vs-eyebrow{color:#67e8f9}

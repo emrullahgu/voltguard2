@@ -147,6 +147,7 @@
     status('Proje açıldı. Girdiler ve kayıtlı proje verileri geri yüklendi.');
   }
   function syncClone(clone, replaceCanvases = true) {
+    if (clone.setAttribute) clone.setAttribute('data-theme', 'light'); // dışa aktarılan rapor/arşiv her zaman açık tema
     const original = fields(document), copies = fields(clone);
     original.forEach((el, i) => {
       const copy = copies[i]; if (!copy) return;

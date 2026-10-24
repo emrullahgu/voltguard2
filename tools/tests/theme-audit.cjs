@@ -90,11 +90,15 @@ function measure() {
   function background(el, rect) {
     const layers = [];
     let over = null, grad = null;
+    const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
     for (let e = el; e && e.nodeType === 1; e = e.parentElement) {
       const cs = getComputedStyle(e);
+      // metnin arkasında olmayan ata (ör. 2 px'lik çizgi içine konumlanmış etiket) zemin sayılmaz
+      if (e !== el) { const r = e.getBoundingClientRect(); if (r.width && r.height && (cx < r.left - 1 || cx > r.right + 1 || cy < r.top - 1 || cy > r.bottom + 1)) continue; }
       const bi = cs.backgroundImage;
       if (bi && bi !== 'none') {
-        if (/url\(/.test(bi)) { over = 'görsel zemin'; break; }
+        // form denetimlerinde url() yalnız ok/ikon çizimidir: zemin rengi geçerli
+        if (/url\(/.test(bi) && !e.matches('select, input, textarea, button')) { over = 'görsel zemin'; break; }
         const gc = gradColors(bi).filter(c => c[3] > .35);
         if (gc.length) { grad = gc; layers.push(parse(cs.backgroundColor)); break; }
       }
@@ -240,39 +244,44 @@ async function measureImages() {
   return out;
 }
 
-// Takılan sayfa (sonsuz yükleme, ağır betik) tüm denetimi durdurmasın
+// Takılan sayfa (sonsuz yükleme, ağır betik) tüm denetimi durdurmasın; zaman aşımında sekme kapatılır
 async function auditPage(ctx, url) {
-  const t0 = Date.now();
+  const t0 = Date.now(), holder = {};
   let timer;
-  const r = await Promise.race([auditPageInner(ctx, url), new Promise(res => { timer = setTimeout(() => res({ url, errors: ['zaman aşımı (90 sn)'], info: null, imgs: [] }), 90000); })]);
+  const r = await Promise.race([auditPageInner(ctx, url, holder), new Promise(res => { timer = setTimeout(() => res({ url, errors: ['zaman aşımı (120 sn)'], info: null, imgs: [] }), 120000); })]);
   clearTimeout(timer);
-  if (Date.now() - t0 > 20000) process.stderr.write('\n yavaş: ' + url + ' ' + Math.round((Date.now() - t0) / 1000) + ' sn\n');
+  if (holder.page) await holder.page.close().catch(() => {});
+  if (Date.now() - t0 > 30000) process.stderr.write('\n yavaş: ' + url + ' ' + Math.round((Date.now() - t0) / 1000) + ' sn\n');
   return r;
 }
-async function auditPageInner(ctx, url) {
-  const page = await ctx.newPage();
-  ctx.__pages = (ctx.__pages || 0) + 1;
+async function auditPageInner(ctx, url, holder) {
+  const page = holder.page = await ctx.newPage();
   page.setDefaultTimeout(45000);
   const errors = [];
-  page.on('console', m => { if (m.type() === 'error' && !/app\.netlify\.com|challenges\.cloudflare\.com|Failed to load resource: net::ERR_(NAME|INTERNET|CONNECTION)/.test(m.text())) errors.push(m.text().slice(0, 200)); });
+  page.on('console', m => { if (m.type() === 'error' && !/app.netlify.com|challenges.cloudflare.com|Failed to load resource: net::ERR_(NAME|INTERNET|CONNECTION)/.test(m.text())) errors.push(m.text().slice(0, 200)); });
   page.on('pageerror', e => errors.push(String(e).slice(0, 200)));
   let info = null, imgs = [];
-  try {
-    await page.goto(BASE + url, { waitUntil: 'domcontentloaded' });
-    await page.waitForLoadState('load', { timeout: 20000 }).catch(() => {});
-    // ekrana girince açılan öğeler (reveal) için sayfayı baştan sona kaydır
-    await page.evaluate(async () => {
-      const step = Math.max(400, innerHeight * .8);
-      for (let y = 0, i = 0; y < document.documentElement.scrollHeight && i < 40; y += step, i++) { scrollTo(0, y); await new Promise(r => setTimeout(r, 50)); }
-      scrollTo(0, 0);
-      document.documentElement.classList.add('qa-no-anim');
-      const st = document.createElement('style'); st.textContent = '*,*::before,*::after{transition:none!important;animation-duration:0s!important;animation-delay:0s!important}'; document.head.appendChild(st);
-    });
-    await page.waitForTimeout(450);
-    info = await page.evaluate(measure);
-    imgs = await page.evaluate(measureImages);
-  } catch (e) { errors.push('yükleme: ' + e.message.slice(0, 160)); }
-  await page.close();
+  // Oturum gerektiren sayfalar giriş sayfasına yönlenebilir: bağlam yok olursa yeni sayfada bir kez daha dene
+  for (let attempt = 0; attempt < 2 && !info; attempt++) {
+    try {
+      if (!attempt) await page.goto(BASE + url, { waitUntil: 'domcontentloaded' });
+      await page.waitForLoadState('load', { timeout: 20000 }).catch(() => {});
+      if (attempt) await page.waitForTimeout(800);
+      // ekrana girince açılan öğeler (reveal) için sayfayı baştan sona kaydır
+      await page.evaluate(async () => {
+        const step = Math.max(400, innerHeight * .8);
+        for (let y = 0, i = 0; y < document.documentElement.scrollHeight && i < 40; y += step, i++) { scrollTo(0, y); await new Promise(r => setTimeout(r, 50)); }
+        scrollTo(0, 0);
+        document.documentElement.classList.add('qa-no-anim');
+        const st = document.createElement('style'); st.textContent = '*,*::before,*::after{transition:none!important;animation-duration:0s!important;animation-delay:0s!important}'; document.head.appendChild(st);
+      });
+      await page.waitForTimeout(450);
+      info = await page.evaluate(measure);
+      imgs = await page.evaluate(measureImages);
+    } catch (e) {
+      if (attempt || !/Execution context was destroyed|navigation/i.test(e.message)) { errors.push('yükleme: ' + e.message.slice(0, 160)); break; }
+    }
+  }
   return { url, errors, info, imgs };
 }
 

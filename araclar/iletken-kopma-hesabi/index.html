@@ -40,7 +40,7 @@
   :where(#vg-tool-workspace) .field{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed #e2ecea}
   :where(#vg-tool-workspace) .field:last-child{border-bottom:0}
   :where(#vg-tool-workspace) .field label{font-size:.9rem}
-  :where(#vg-tool-workspace) .field label small{display:block;color:#7a8784;font-size:.74rem;letter-spacing:.02em}
+  :where(#vg-tool-workspace) .field label small{display:block;color:#5f6b68;font-size:.74rem;letter-spacing:.02em}
   :where(#vg-tool-workspace) .field input,:where(#vg-tool-workspace) .field select{font:inherit;font-size:.92rem;padding:7px 10px;border:1px solid var(--line);border-radius:8px;width:130px;text-align:right;background:#fff;color:var(--num);font-weight:600}
   :where(#vg-tool-workspace) .field select{text-align:left;color:var(--ink);width:160px}
   :where(#vg-tool-workspace) .field.ro{opacity:.92}
@@ -77,8 +77,8 @@
   :where(#vg-tool-workspace) button{font:inherit;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid var(--ice-dk);background:var(--ice-dk);color:#fff;cursor:pointer}
   :where(#vg-tool-workspace) button.ghost{background:#fff;color:var(--ice-dk)}
   :where(#vg-tool-workspace) button:hover{filter:brightness(1.06)}
-  :where(#vg-tool-workspace) .note{font-size:.78rem;color:#6a7773;margin-top:14px;line-height:1.5}
-  :where(#vg-tool-workspace) .foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:.76rem;color:#6a7773;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  :where(#vg-tool-workspace) .note{font-size:.78rem;color:#56625f;margin-top:14px;line-height:1.5}
+  :where(#vg-tool-workspace) .foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:.76rem;color:#56625f;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
   @media print{
     @page{size:A4 portrait;margin:8mm}
@@ -121,7 +121,7 @@
     :where(#vg-tool-workspace) .wrap{zoom:0.92}
   }
 </style>
-<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=ff9c53bbf0d3"><script src="/js/vg-shell.js?v=878d9a5227ee" defer></script><script src="/js/vg-metrics.js?v=88c57247d032" defer data-vg-online-only></script><script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer data-vg-online-only></script><meta name="color-scheme" content="light dark"><script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script><style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}</style><link rel="stylesheet" href="../assets/host-theme.css?v=91900d9408e4"></head>
+<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=d800ac271429"><script src="/js/vg-shell.js?v=878d9a5227ee" defer></script><script src="/js/vg-metrics.js?v=88c57247d032" defer data-vg-online-only></script><script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer data-vg-online-only></script><meta name="color-scheme" content="light dark"><script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script><style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}</style><link rel="stylesheet" href="../assets/host-theme.css?v=91900d9408e4"></head>
 <body data-vg-tool="iletken-kopma-hesabi" data-vg-original-author="Baki SONAY" data-vg-original-source="Sonay Enerji" data-vg-title="İletken Kopma Hesabı" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
 <header data-vg-no-print class="vg-header doc-header" id="vgHeader">
   <div class="vg-header__bar vg-wrap">
@@ -531,7 +531,7 @@ function drawViz(hb, hproje, pass, aort){
 
     <text x="${xvSec-12}" y="${yvSec+34}" font-size="11" fill="${sag}" font-weight="700"
           text-anchor="middle">hb = ${fmt(hb,1)} m (hesap)</text>
-    <text x="${xvSec-12}" y="${yvSec+48}" font-size="9" fill="#6a7773" text-anchor="middle">hb ≥ h_proje ⇒ ${pass?'kurtarıyor':'kurtarmıyor'}</text>
+    <text x="${xvSec-12}" y="${yvSec+48}" font-size="9" fill="#56625f" text-anchor="middle">hb ≥ h_proje ⇒ ${pass?'kurtarıyor':'kurtarmıyor'}</text>
 
     <rect x="${W-220}" y="${padT-6}" width="200" height="20" rx="10" fill="${pass?'#e7f6ee':'#fbeae6'}" stroke="${sag}"/>
     <text x="${W-120}" y="${padT+8}" font-size="11.5" font-weight="700" fill="${sag}" text-anchor="middle">${pass?'h ≥ h_proje · KURTARIYOR ✓':'h < h_proje · KURTARMIYOR ✕'}</text>

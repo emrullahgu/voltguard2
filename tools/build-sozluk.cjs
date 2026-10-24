@@ -32,7 +32,7 @@ const head = metaHead({ title, desc, url: URL, type: 'website', extra: `  <style
     .gl-index{display:flex;flex-wrap:wrap;gap:.35rem;margin:1rem 0 1.4rem;padding:0;list-style:none}
     .gl-index a{display:inline-flex;align-items:center;justify-content:center;min-width:2.5rem;min-height:2.5rem;border:1px solid var(--th-border-strong);border-radius:8px;font-weight:700;text-decoration:none;color:var(--th-heading);background:var(--th-surface)}
     .gl-index a:hover,.gl-index a:focus-visible{border-color:#f59e0b;background:var(--th-tint-amber)}
-    .gl-filter{width:100%;max-width:420px;min-height:44px;padding:.55rem .8rem;border:1px solid var(--th-border-strong);border-radius:8px;font:inherit}
+    .gl-filter{width:100%;max-width:420px;min-height:44px;padding:.55rem .8rem;border:1px solid var(--th-border-strong);border-radius:8px;font:inherit;background:var(--th-input-bg);color:var(--clr-text)}
     .gl-letter{margin:1.8rem 0 .4rem;font-size:1.4rem;color:var(--clr-accent-text)}
     .gl-list{margin:0}
     .gl-term{scroll-margin-top:calc(var(--vg-header-h,60px) + 16px);padding:.9rem 0;border-top:1px solid var(--th-border)}

@@ -50,7 +50,7 @@
   --th-blue-line: #bfdbfe;
   --th-input-bg: #fff;
   --th-input-border: #cbd5e1;
-  --th-placeholder: #6b7a8e;
+  --th-placeholder: #64748b;
   --th-code-bg: #f1f5f9;
   --th-paper: #fff;                /* saydam görsel/çizim zemini: iki temada da açık */
   --th-paper-ink: #1e293b;
@@ -135,7 +135,7 @@
     --th-tint-green: #f0fdf4; --th-tint-green-2: #dcfce7; --th-tint-blue: #eff6ff; --th-tint-blue-2: #dbeafe;
     --th-tint-violet: #ede9fe; --th-tint-pink: #fce7f3;
     --th-amber-line: #fde68a; --th-red-line: #fecaca; --th-green-line: #bbf7d0; --th-blue-line: #bfdbfe;
-    --th-input-bg: #fff; --th-input-border: #cbd5e1; --th-placeholder: #6b7a8e; --th-code-bg: #f1f5f9;
+    --th-input-bg: #fff; --th-input-border: #cbd5e1; --th-placeholder: #64748b; --th-code-bg: #f1f5f9;
     --th-shadow-rgb: 15, 23, 42; --th-shadow-a: .08;
   --clr-text: #1e293b; --clr-text-muted: #5b6b7c; --clr-bg: #f8fafc; --clr-bg-gray: #f1f5f9; --clr-border: #e2e8f0; --clr-accent-text: #b45309;
 }
@@ -143,7 +143,9 @@
 :root[data-theme="dark"] .th-paper { background-color: var(--th-paper); color: var(--th-paper-ink); border-radius: 8px; }
 :root[data-theme="dark"] img.th-paper { padding: 4px; }
 /* Form alanları: yer tutucu ve tarayıcı varsayılan zemini (alanı kendisi boyamayan sayfalar için) */
-:root[data-theme="dark"] ::placeholder { color: var(--th-placeholder); opacity: 1; }
+::placeholder { color: var(--th-placeholder); opacity: 1; }
+/* Koyu zeminde alan sınırları görünür kalsın (odak / hata durumları kendi renklerini korur) */
+:root[data-theme="dark"] :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=submit]):not([type=button]):not([type=reset]):not([type=hidden]), select, textarea):not(:focus):not([aria-invalid="true"]):not(:is(.th-light, .vg-engineering--tool, .company-page, .vs-app, .vg-header) *) { border-color: var(--th-input-border); }
 :root[data-theme="dark"] :is(input, textarea, select):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]) { accent-color: #f59e0b; }
 /* Yazdırma ve PDF her zaman açık temadır */
 @media print {
@@ -158,7 +160,7 @@
     --th-tint-green: #f0fdf4; --th-tint-green-2: #dcfce7; --th-tint-blue: #eff6ff; --th-tint-blue-2: #dbeafe;
     --th-tint-violet: #ede9fe; --th-tint-pink: #fce7f3;
     --th-amber-line: #fde68a; --th-red-line: #fecaca; --th-green-line: #bbf7d0; --th-blue-line: #bfdbfe;
-    --th-input-bg: #fff; --th-input-border: #cbd5e1; --th-placeholder: #6b7a8e; --th-code-bg: #f1f5f9;
+    --th-input-bg: #fff; --th-input-border: #cbd5e1; --th-placeholder: #64748b; --th-code-bg: #f1f5f9;
     --th-shadow-rgb: 15, 23, 42; --th-shadow-a: .08;
     background: #fff;
   }

@@ -9,7 +9,7 @@
 /* ---------- Özgün kurum logoları: aynı kökende, özgün renk ve oranlarla ---------- */
 .vgh-references{background:var(--clr-bg);border-block:1px solid var(--clr-border);scroll-margin-top:calc(var(--vg-header-h) + 16px)}
 .vgh-references__heading{display:flex;justify-content:space-between;align-items:end;gap:32px;margin-bottom:34px}
-.vgh-references__heading .section__badge{margin-bottom:13px}
+.vgh-references__heading .section__badge{margin-bottom:13px;color:var(--th-amber-ink)}
 .vgh-references__heading .section__title{margin:0;line-height:1.2}
 .vgh-references__heading>p{margin:0;color:var(--clr-text-muted);font-size:.87rem;line-height:1.8;text-align:right}
 .vgh-references__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none}
