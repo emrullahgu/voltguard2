@@ -7,7 +7,7 @@ const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<'
 const photoRoot = path.join(root, 'public', 'ekibimiz');
 fs.mkdirSync(photoRoot, {recursive:true});
 const descriptions = {
-  ofis: {short:'Merkez Ofis', tag:'PLANLAMA & MÜHENDİSLİK', copy:'Yönetim, mühendislik ve ofis ekibimiz.', icon:'building'},
+  ofis: {short:'Ofis', tag:'PLANLAMA & MÜHENDİSLİK', copy:'Yönetim, mühendislik ve ofis ekibimiz.', icon:'building'},
   depo: {short:'Depo', tag:'MUHASEBE', copy:'Depo birimindeki muhasebe ekibimiz.', icon:'box'},
   'ar-ge': {short:'Ar-Ge', tag:'EGE TEKNOPARK', copy:'Elektronik, makine ve elektrik mühendisliği bir arada.', icon:'atom'},
   saha: {short:'Saha Ekibi', tag:'UYGULAMA', copy:'Ustabaşından çırağa, sahada aynı hedef için çalışan ekip.', icon:'helmet'}
@@ -64,7 +64,7 @@ const html=`<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!--vg:head--><!--/vg:head-->
   <title>Ekibimiz | VoltGuard</title>
-  <meta name="description" content="VoltGuard ekibini tanıyın. Kemalpaşa merkez ofis, depo, Ege Teknopark Ar-Ge ve saha birimlerinde çalışan 26 ekip arkadaşımızın fotoğraflı çalışma ağacı.">
+  <meta name="description" content="VoltGuard ekibini tanıyın. ofis, depo, Ege Teknopark Ar-Ge ve saha birimlerinde çalışan 26 ekip arkadaşımızın fotoğraflı çalışma ağacı.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://voltguard.com.tr/ekibimiz.html">
   <meta property="og:type" content="website">

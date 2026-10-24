@@ -7,7 +7,7 @@
   "units": [
     {
       "id": "ofis",
-      "name": "Kemalpaşa Merkez Ofis",
+      "name": "Ofis",
       "people": [
         { "id": "emrullah-gunay", "name": "Emrullah Günay", "role": "Kurucu / Yönetici – Yüksek Elektrik Mühendisi", "photo": "Emrullah Günay.jpg" },
         { "id": "sedat-sasmaz", "name": "Sedat Şaşmaz", "role": "Müdür", "photo": "Sedat Şaşmaz.jpeg" },
