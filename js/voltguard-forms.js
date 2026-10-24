@@ -123,6 +123,8 @@
 
   function exportHtml(name) {
     var clone = document.documentElement.cloneNode(true);
+    // Kaydedilen belge (yazdırma/arşiv) her zaman açık temadır; koyu tema yalnız ekranda
+    clone.setAttribute('data-theme', 'light');
     // Controls have no id/name, so live and cloned controls are paired by their position.
     // Pair them before any node is removed from the clone.
     var live = qq(CONTROLS);

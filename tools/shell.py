@@ -42,6 +42,7 @@ YENI SAYFA EKLEMEK
   Stil: css/vg-shell.css, davranis: js/vg-shell.js. tools/ klasoru (parcalar) taranmaz.
 """
 import argparse
+import hashlib
 import os
 import re
 import sys
@@ -170,8 +171,16 @@ def set_current(html, rel):
 
 
 # --------------------------------------------------------------------------- <head>
-def build_head_block(head_outside):
+THEME_INIT_RE = re.compile(r'<script data-vg-theme-init>(.*?)</script>', re.S)
+
+
+def build_head_block(head_outside, rel=''):
     frag = load_fragment('head.html')
+    # /hesap/ ve /calisan/ sayfalarinin CSP'si satir ici betige izin vermez (VG_CSP_PRIVATE):
+    # ayni tema baslaticisi orada js/vg-theme-init.js dosyasindan (senkron, defer'siz) yuklenir.
+    if re.match(r'^(hesap|calisan)/', rel):
+        ver = hashlib.sha256((ROOT / 'js' / 'vg-theme-init.js').read_bytes().replace(b'\r\n', b'\n')).hexdigest()[:12]
+        frag = THEME_INIT_RE.sub('<script src="/js/vg-theme-init.js?v=%s"></script>' % ver, frag)
     extras = []
     # Fonts and icons are self-hosted (css/fonts.css, css/fa-subset.css in head.html); CDN links are no longer added.
     joined = head_outside + '\n'.join(extras)
@@ -186,7 +195,7 @@ def build_head_block(head_outside):
     return '<!--vg:head-->\n' + '\n'.join(lines) + '\n<!--/vg:head-->'
 
 
-def apply_head(t, warnings):
+def apply_head(t, warnings, rel=''):
     he = t.find('</head>')
     hm = re.search(r'<head\b', t, re.I)
     hs = hm.start() if hm else -1
@@ -208,7 +217,7 @@ def apply_head(t, warnings):
     head = strip_line(head, r'<link\b[^>]*fonts\.googleapis\.com/css[^>]*>')
     head = strip_line(head, r'<link\b[^>]*font-awesome[^>]*>')
     head = strip_line(head, r'<script\s+[^>]*src=["\'][^"\']*vg-shell\.js[^"\']*["\'][^>]*>\s*</script>')
-    block = build_head_block(head.replace(ph, ''))
+    block = build_head_block(head.replace(ph, ''), rel)
     if ph in head:
         ind = line_indent(head, head.index(ph))
         head = head.replace(ph, indent_block(block, ind))
@@ -342,7 +351,7 @@ def process(path):
     warnings = []
     if '<html' not in t.lower() or '<body' not in t.lower():
         return None, None, ['atlandi: tam sayfa degil (parca)']
-    t = apply_head(t, warnings)
+    t = apply_head(t, warnings, rel)
     t = apply_header(t, rel, warnings)
     t = apply_footer(t, warnings)
     t = apply_main(t, warnings)

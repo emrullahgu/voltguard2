@@ -67,12 +67,12 @@ function render() {
 
   const head = metaHead({ title, desc, url: URL, extra: `  <style>
     .mg-year{margin:2rem 0 .6rem;font-size:1.35rem}
-    .mg-item{display:grid;grid-template-columns:7.5rem 1fr;gap:.4rem 1rem;padding:1rem 0;border-top:1px solid #e2e8f0}
-    .mg-date{font-weight:800;color:#0a1628}
-    .mg-date small{display:block;font-weight:600;color:#4f5f74;font-size:.8rem}
+    .mg-item{display:grid;grid-template-columns:7.5rem 1fr;gap:.4rem 1rem;padding:1rem 0;border-top:1px solid var(--th-border)}
+    .mg-date{font-weight:800;color:var(--th-heading)}
+    .mg-date small{display:block;font-weight:600;color:var(--th-text-2);font-size:.8rem}
     .mg-item h3{margin:0 0 .25rem;font-size:1.02rem}
     .mg-item p{margin:.2rem 0}
-    .mg-tag{display:inline-block;margin-left:.35rem;padding:.05rem .45rem;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:.75rem;font-weight:700;vertical-align:middle}
+    .mg-tag{display:inline-block;margin-left:.35rem;padding:.05rem .45rem;border-radius:999px;background:var(--th-tint-blue);color:var(--th-blue-ink);font-size:.75rem;font-weight:700;vertical-align:middle}
     .mg-links{display:flex;flex-wrap:wrap;gap:.2rem 1rem;margin-top:.35rem;font-size:.9rem}
     .mg-links a{display:inline-block;padding:.3rem 0}
     @media (max-width:560px){.mg-item{grid-template-columns:1fr}}
@@ -101,7 +101,7 @@ function render() {
   <main class="article" id="main" tabindex="-1">
     <span class="article__cat">Mevzuat Takibi</span>
     <h1>Elektrik Mevzuatı Değişiklikleri 2025–2026</h1>
-    <p class="article__byline" style="font-size:.85rem;color:#5b6472;margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son kontrol: <time datetime="${checkedIso}">${checkedTr}</time></p>
+    <p class="article__byline" style="font-size:.85rem;color:var(--clr-text-muted);margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son kontrol: <time datetime="${checkedIso}">${checkedTr}</time></p>
     <p class="article__summary">Elektrik tesisatı, enerji piyasası, lisanssız üretim (GES), rüzgâr (RES), şarj hizmeti, yangın ve iş güvenliği alanında izlediğimiz yönetmeliklerde ${FROM_YEAR}'ten bu yana Resmî Gazete'de yayımlanan ${list.length} değişiklik. Liste, VoltSim simülasyonlarının dayandığı mevzuat kaydıyla aynı kaynaktan üretilir ve her kontrolde güncellenir.</p>
     <p>Atlama: ${years.map(y => `<a href="#y${y}">${y}</a>`).join(' · ')} · Tüm yönetmelik ve standartlar için <a href="/bilgi/mevzuat-kutuphanesi.html">mevzuat kütüphanesine</a> bakın.</p>
 ${items}

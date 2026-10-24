@@ -13,6 +13,71 @@
  *   VGShell.scrollTo(id|el)   başlığın altına doğru hizalanmış çapa kaydırması (kayma düzeltmeli)
  * Olay: document 'vg:shell-ready' (başlık hazır olunca).
  */
+// ---------- Renk teması (açık / koyu) ----------
+// <html data-theme="light|dark"> ilk boyamadan önce tools/shell/head.html'deki satır içi betikle yazılır
+// (localStorage 'vg-theme' yoksa işletim sistemi tercihi). Burada: başlıktaki [data-vg-theme-toggle]
+// düğmeleri, açık seçimin saklanması (depolama engelliyse yalnız bu sayfa için), sistem tercihi değişimi.
+// Olay: document 'vg:theme' (detail.theme). API: window.VGTheme.get() / .set('dark'|'light'|null).
+(function () {
+  'use strict';
+  var doc = document, root = doc.documentElement;
+  if (window.VGTheme) return;
+  var KEY = 'vg-theme', mq = null, memo = null, animT = 0;
+  try { mq = window.matchMedia('(prefers-color-scheme: dark)'); } catch (e) { /* eski tarayıcı */ }
+  function stored() {
+    var v = memo;
+    try { v = localStorage.getItem(KEY) || memo; } catch (e) { /* depolama engelli */ }
+    return v === 'dark' || v === 'light' ? v : null;
+  }
+  function system() { return mq && mq.matches ? 'dark' : 'light'; }
+  function current() { return root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
+  function sync() {
+    var dark = current() === 'dark';
+    [].forEach.call(doc.querySelectorAll('[data-vg-theme-toggle]'), function (b) {
+      var label = dark ? 'Açık temaya geç' : 'Koyu temaya geç';
+      b.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      b.setAttribute('aria-label', label);
+      if (b.hasAttribute('title')) b.setAttribute('title', label);
+      var txt = b.querySelector('[data-vg-theme-text]');
+      if (txt) txt.textContent = dark ? 'Açık tema' : 'Koyu tema';
+    });
+  }
+  function apply(theme) {
+    var prev = current();
+    root.setAttribute('data-theme', theme);
+    sync();
+    if (prev !== theme) {
+      try { doc.dispatchEvent(new CustomEvent('vg:theme', { detail: { theme: theme } })); } catch (e) { /* no-op */ }
+    }
+  }
+  function set(theme) {
+    memo = theme === 'dark' || theme === 'light' ? theme : null;
+    try { if (memo) localStorage.setItem(KEY, memo); else localStorage.removeItem(KEY); } catch (e) { /* depolama engelli: yalnız bu sayfa */ }
+    apply(memo || system());
+  }
+  // Satır içi başlatıcı yoksa (eski önbellek) burada uygula
+  if (!root.hasAttribute('data-theme')) root.setAttribute('data-theme', stored() || system());
+  if (mq) {
+    var onSys = function () { if (!stored()) apply(system()); };
+    if (mq.addEventListener) mq.addEventListener('change', onSys); else if (mq.addListener) mq.addListener(onSys);
+  }
+  // Başka sekmede değiştirildiyse eşitle
+  window.addEventListener('storage', function (e) { if (e.key === KEY) apply(stored() || system()); });
+  // bfcache'ten dönüşte güncel seçimi yansıt
+  window.addEventListener('pageshow', function (e) { if (e.persisted) apply(stored() || system()); });
+  doc.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest ? e.target.closest('[data-vg-theme-toggle]') : null;
+    if (!b) return;
+    e.preventDefault();
+    root.classList.add('vg-theme-anim');
+    clearTimeout(animT);
+    animT = setTimeout(function () { root.classList.remove('vg-theme-anim'); }, 450);
+    set(current() === 'dark' ? 'light' : 'dark');
+  });
+  window.VGTheme = { get: current, set: set };
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', sync); else sync();
+})();
+
 (function () {
   'use strict';
 

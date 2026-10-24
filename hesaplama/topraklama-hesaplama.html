@@ -6,14 +6,15 @@
   <base href="/">
   <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
-  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script>
+  <style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
   <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
   <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=98a54d154d91">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=ff9c53bbf0d3">
   <script type="speculationrules">
   {
     "prerender": [
@@ -36,11 +37,11 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <script src="/js/vg-shell.js?v=878d9a5227ee" defer></script>
   <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
-  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <noscript><style>.vg-burger,.vg-theme{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
-  <meta name="color-scheme" content="light only">
+  <meta name="color-scheme" content="light dark">
   <meta name="description" content="Zemin özdirenci ve elektrot geometrisine göre yaklaşık topraklama direncini ve gereken elektrot sayısını hesaplayan ücretsiz araç.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <title>Topraklama Direnci ve Elektrot Hesaplama Aracı | VoltGuard</title>
@@ -55,7 +56,7 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=d152330fb2b0">
+  <link rel="stylesheet" href="/css/style.css?v=6f32f6aa8a17">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/hesaplama/topraklama-hesaplama/#article","headline":"Topraklama Direnci ve Elektrot Hesaplama Aracı","description":"Zemin özdirenci ve elektrot geometrisine göre yaklaşık topraklama direncini ve gereken elektrot sayısını hesaplayan ücretsiz araç.","image":"https://voltguard.com.tr/public/og-image.png","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-23","articleSection":"Elektrik Hesapları","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/hesaplama/topraklama-hesaplama/","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesap Araçları","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Topraklama Hesaplama","item":"https://voltguard.com.tr/hesaplama/topraklama-hesaplama/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Topraklama direnci nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Düşey çubuk için R = ρ ÷ (2π × L) × [ln(8L ÷ d) − 1] formülü kullanılır. Birden fazla çubuk paralel bağlandığında karşılıklı etkileşim nedeniyle toplam direnç R ÷ (n × η) olur; η çubuk sayısı arttıkça düşer."}},{"@type":"Question","name":"Topraklama değeri kaç ohm olmalı?","acceptedAnswer":{"@type":"Answer","text":"Tek bir değer yoktur. TT sistemde koruma topraklaması RA × IΔn ≤ 50 V koşulunu sağlamalıdır (300 mA RCD için 166 Ω, 30 mA için 1666 Ω). Yıldırımdan korunma topraklayıcısı için TS EN 62305-3 10 Ω'un altını önerir. TN sistemlerde ve OG/AG ortak topraklamada değer, dağıtım şirketinin şartı ve Topraklamalar Yönetmeliği'ndeki dokunma gerilimi koşuluyla belirlenir."}},{"@type":"Question","name":"Zemin özdirenci nasıl bulunur?","acceptedAnswer":{"@type":"Answer","text":"Wenner veya Schlumberger dört elektrot yöntemiyle sahada ölçülür. Ölçüm yağışlı mevsimde yapıldıysa kurak dönem için 1,3-1,6 mevsim katsayısıyla düzeltilir. Ön hesap için zemin tipine göre tipik değerler kullanılabilir."}}]},{"@type":"WebApplication","@id":"https://voltguard.com.tr/hesaplama/topraklama-hesaplama/#app","name":"Topraklama Direnci ve Elektrot Hesaplama Aracı","url":"https://voltguard.com.tr/hesaplama/topraklama-hesaplama/","description":"Zemin özdirenci ve elektrot geometrisine göre yaklaşık topraklama direncini ve gereken elektrot sayısını hesaplayan ücretsiz araç.","applicationCategory":"BusinessApplication","applicationSubCategory":"Elektrik mühendisliği hesaplayıcısı","operatingSystem":"Web","browserRequirements":"JavaScript etkin modern tarayıcı","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"TRY"},"provider":{"@id":"https://voltguard.com.tr/#organization"}}]}</script>
 </head>
 <body class="doc-shell">
@@ -99,11 +100,13 @@
           <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
+          <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
           <a class="vg-cta" href="/#iletisim">Teklif Al</a>
         </div>
       </nav>
       <div class="vg-actions">
+        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
         <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>

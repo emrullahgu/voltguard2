@@ -1456,7 +1456,7 @@
     await loadScript('/araclar/vendor/html2canvas.min.js');
     await loadScript('/araclar/vendor/jspdf.umd.min.js');
     const blocks = this.reportDOM();
-    const host = el('div', { class: 'rp-host', 'aria-hidden': 'true' });
+    const host = el('div', { class: 'rp-host th-light', 'aria-hidden': 'true' }); // th-light: koyu temada da açık rapor
     document.body.appendChild(host);
     try {
       const PAGE_W = 794, PAGE_H = 1123, PAD = 46;

@@ -16,6 +16,8 @@ const root = path.resolve(__dirname, '../..');
 const out = path.join(root, '.qa/voltsim');
 fs.mkdirSync(out, { recursive: true });
 const args = process.argv.slice(2);
+// --theme=dark|light: site renk temasını zorlar (PDF raporu iki temada da açık kalmalı)
+const THEME = (args.find(a => a.startsWith('--theme=')) || '').slice(8) || null;
 const only = args.filter(a => !a.startsWith('--'));
 const withPdf = !args.includes('--no-pdf');
 const previews = args.includes('--previews');
@@ -54,8 +56,9 @@ const slugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }
   const report = { pages: [], failures: [] };
   const fail = (slug, msg) => { report.failures.push(slug + ': ' + msg); console.log('  ✕ ' + msg); };
   try {
-    const ctx = await browser.newContext({ viewport: { width: 1440, height: 920 }, locale: 'tr-TR', timezoneId: 'Europe/Istanbul', serviceWorkers: 'block', acceptDownloads: true, deviceScaleFactor: 1 });
+    const ctx = await browser.newContext({ viewport: { width: 1440, height: 920 }, locale: 'tr-TR', timezoneId: 'Europe/Istanbul', serviceWorkers: 'block', acceptDownloads: true, deviceScaleFactor: 1, ...(THEME ? { colorScheme: THEME } : {}) });
     await ctx.addInitScript(() => { window.__qa = { csp: [] }; addEventListener('securitypolicyviolation', e => window.__qa.csp.push(e.violatedDirective + ' ' + e.blockedURI)); try { localStorage.clear(); } catch (_) {} });
+    if (THEME) await ctx.addInitScript(th => { try { localStorage.setItem('vg-theme', th); } catch (_) {} }, THEME);
     const page = await ctx.newPage();
     page.setDefaultTimeout(60000);
     const errors = [], missing = [];

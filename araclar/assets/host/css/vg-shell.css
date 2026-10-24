@@ -7,6 +7,163 @@
    kapsamındadır (sayfaların kendi element seçicileri kabuğa sızamaz).
    ===================================================== */
 
+/* ---------- Renk teması: açık / koyu ----------
+   <html data-theme="light|dark">: tools/shell/head.html satır içi betiği ilk boyamadan önce yazar
+   (kayıtlı seçim yoksa işletim sistemi tercihi); düğme ve kayıt: js/vg-shell.js (VGTheme).
+   Sayfa stilleri renk DEĞERİ yerine bu --th-* tokenlarını kullanır; koyu tema yalnız tokenları değiştirir.
+   Zaten koyu tasarlanmış bölümler (hero, VoltSim, alt bilgi, başlık) iki temada da aynı kalır.
+   Fotoğraf/logo/çizimler asla filtrelenmez; saydam çizimlere koyu temada açık zemin verilir (.th-paper). */
+:root {
+  --th-page: #fff;
+  --th-surface: #fff;
+  --th-surface-2: #f8fafc;
+  --th-surface-3: #f1f5f9;
+  --th-surface-4: #e2e8f0;
+  --th-heading: #0a1628;
+  --th-navy: #1e3a5f;
+  --th-text: #1e293b;
+  --th-text-2: #475569;
+  --th-muted: #5b6b7c;
+  --th-border: #e2e8f0;
+  --th-border-strong: #cbd5e1;
+  --th-accent-text: #b45309;
+  --th-amber-ink: #92400e;
+  --th-amber-ink-2: #78350f;
+  --th-red-ink: #b91c1c;
+  --th-green-ink: #166534;
+  --th-blue-ink: #1e3a8a;
+  --th-pink-ink: #9d174d;
+  --th-violet-ink: #4c1d95;
+  --th-tint-amber: #fffbeb;
+  --th-tint-amber-2: #fef3c7;
+  --th-tint-red: #fef2f2;
+  --th-tint-red-2: #fee2e2;
+  --th-tint-green: #f0fdf4;
+  --th-tint-green-2: #dcfce7;
+  --th-tint-blue: #eff6ff;
+  --th-tint-blue-2: #dbeafe;
+  --th-tint-violet: #ede9fe;
+  --th-tint-pink: #fce7f3;
+  --th-amber-line: #fde68a;
+  --th-red-line: #fecaca;
+  --th-green-line: #bbf7d0;
+  --th-blue-line: #bfdbfe;
+  --th-input-bg: #fff;
+  --th-input-border: #cbd5e1;
+  --th-placeholder: #6b7a8e;
+  --th-code-bg: #f1f5f9;
+  --th-paper: #fff;                /* saydam görsel/çizim zemini: iki temada da açık */
+  --th-paper-ink: #1e293b;
+  --th-shadow-rgb: 15, 23, 42;
+  --th-shadow-a: .08;
+  /* css/style.css ile aynı anlamsal değişkenler: style.css yüklemeyen sayfalarda (hizmetler, araclar, voltsim) da tanımlı */
+  --clr-text: #1e293b;
+  --clr-text-muted: #5b6b7c;
+  --clr-bg: #f8fafc;
+  --clr-bg-gray: #f1f5f9;
+  --clr-border: #e2e8f0;
+  --clr-accent-text: #b45309;
+}
+:root[data-theme="dark"] {
+  --th-page: #0a1220;
+  --th-surface: #121e31;
+  --th-surface-2: #0e1829;
+  --th-surface-3: #172539;
+  --th-surface-4: #203049;
+  --th-heading: #f1f5f9;
+  --th-navy: #b3cbe8;
+  --th-text: #d6dfea;
+  --th-text-2: #bac7d6;
+  --th-muted: #a0b1c5;
+  --th-border: #26374f;
+  --th-border-strong: #3a4f6b;
+  --th-accent-text: #fbbf24;
+  --th-amber-ink: #fcd34d;
+  --th-amber-ink-2: #fde68a;
+  --th-red-ink: #fca5a5;
+  --th-green-ink: #86efac;
+  --th-blue-ink: #93c5fd;
+  --th-pink-ink: #f9a8d4;
+  --th-violet-ink: #c4b5fd;
+  --th-tint-amber: #261f10;
+  --th-tint-amber-2: #33290f;
+  --th-tint-red: #2a1518;
+  --th-tint-red-2: #3a1b1f;
+  --th-tint-green: #0f2419;
+  --th-tint-green-2: #143021;
+  --th-tint-blue: #111f37;
+  --th-tint-blue-2: #172b4b;
+  --th-tint-violet: #211a3a;
+  --th-tint-pink: #2e1626;
+  --th-amber-line: #6b5214;
+  --th-red-line: #7f2d33;
+  --th-green-line: #1f5a3a;
+  --th-blue-line: #2b4a7a;
+  --th-input-bg: #0d1726;
+  --th-input-border: #42587a;
+  --th-placeholder: #8a9bb0;
+  --th-code-bg: #1a283e;
+  --th-shadow-rgb: 0, 0, 0;
+  --th-shadow-a: .4;
+  /* css/style.css ve türevlerinin anlamsal değişkenleri */
+  --clr-text: var(--th-text);
+  --clr-text-muted: var(--th-muted);
+  --clr-bg: var(--th-surface-2);
+  --clr-bg-gray: var(--th-surface-3);
+  --clr-border: var(--th-border);
+  --clr-accent-text: var(--th-accent-text);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.35), 0 1px 2px rgba(0,0,0,.25);
+  --shadow-md: 0 4px 8px -1px rgba(0,0,0,.4), 0 2px 4px -1px rgba(0,0,0,.25);
+  --shadow-lg: 0 10px 25px -3px rgba(0,0,0,.45), 0 4px 6px -2px rgba(0,0,0,.3);
+  --shadow-xl: 0 20px 40px -8px rgba(0,0,0,.55), 0 8px 12px -4px rgba(0,0,0,.3);
+}
+/* Tema değişiminde yumuşak geçiş (yalnız düğmeyle değiştirince; hareket azaltma tercihinde yok) */
+@media (prefers-reduced-motion: no-preference) {
+  html.vg-theme-anim body,
+  html.vg-theme-anim body *:not(canvas):not(img):not(video) { transition: background-color .25s ease, border-color .25s ease, color .2s ease !important; }
+}
+/* Açık ada: koyu temada da açık kalması gereken bölgeler (araç çalışma alanları, rapor önizlemeleri,
+   ayrı React uygulaması). Tokenları açık değerlere döndürür. */
+:root[data-theme="dark"] :is(.th-light, body.vg-engineering--tool, body.company-page) {
+  color-scheme: light;
+    --th-page: #fff; --th-surface: #fff; --th-surface-2: #f8fafc; --th-surface-3: #f1f5f9; --th-surface-4: #e2e8f0;
+    --th-heading: #0a1628; --th-navy: #1e3a5f; --th-text: #1e293b; --th-text-2: #475569; --th-muted: #5b6b7c;
+    --th-border: #e2e8f0; --th-border-strong: #cbd5e1; --th-accent-text: #b45309;
+    --th-amber-ink: #92400e; --th-amber-ink-2: #78350f; --th-red-ink: #b91c1c; --th-green-ink: #166534; --th-blue-ink: #1e3a8a;
+    --th-pink-ink: #9d174d; --th-violet-ink: #4c1d95;
+    --th-tint-amber: #fffbeb; --th-tint-amber-2: #fef3c7; --th-tint-red: #fef2f2; --th-tint-red-2: #fee2e2;
+    --th-tint-green: #f0fdf4; --th-tint-green-2: #dcfce7; --th-tint-blue: #eff6ff; --th-tint-blue-2: #dbeafe;
+    --th-tint-violet: #ede9fe; --th-tint-pink: #fce7f3;
+    --th-amber-line: #fde68a; --th-red-line: #fecaca; --th-green-line: #bbf7d0; --th-blue-line: #bfdbfe;
+    --th-input-bg: #fff; --th-input-border: #cbd5e1; --th-placeholder: #6b7a8e; --th-code-bg: #f1f5f9;
+    --th-shadow-rgb: 15, 23, 42; --th-shadow-a: .08;
+  --clr-text: #1e293b; --clr-text-muted: #5b6b7c; --clr-bg: #f8fafc; --clr-bg-gray: #f1f5f9; --clr-border: #e2e8f0; --clr-accent-text: #b45309;
+}
+/* Saydam zeminli çizim/logo/diyagram: koyu temada açık "kâğıt" zemin (görsel hiçbir zaman filtrelenmez) */
+:root[data-theme="dark"] .th-paper { background-color: var(--th-paper); color: var(--th-paper-ink); border-radius: 8px; }
+:root[data-theme="dark"] img.th-paper { padding: 4px; }
+/* Form alanları: yer tutucu ve tarayıcı varsayılan zemini (alanı kendisi boyamayan sayfalar için) */
+:root[data-theme="dark"] ::placeholder { color: var(--th-placeholder); opacity: 1; }
+:root[data-theme="dark"] :is(input, textarea, select):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]) { accent-color: #f59e0b; }
+/* Yazdırma ve PDF her zaman açık temadır */
+@media print {
+  :root[data-theme="dark"] {
+    color-scheme: light;
+    --th-page: #fff; --th-surface: #fff; --th-surface-2: #f8fafc; --th-surface-3: #f1f5f9; --th-surface-4: #e2e8f0;
+    --th-heading: #0a1628; --th-navy: #1e3a5f; --th-text: #1e293b; --th-text-2: #475569; --th-muted: #5b6b7c;
+    --th-border: #e2e8f0; --th-border-strong: #cbd5e1; --th-accent-text: #b45309;
+    --th-amber-ink: #92400e; --th-amber-ink-2: #78350f; --th-red-ink: #b91c1c; --th-green-ink: #166534; --th-blue-ink: #1e3a8a;
+    --th-pink-ink: #9d174d; --th-violet-ink: #4c1d95;
+    --th-tint-amber: #fffbeb; --th-tint-amber-2: #fef3c7; --th-tint-red: #fef2f2; --th-tint-red-2: #fee2e2;
+    --th-tint-green: #f0fdf4; --th-tint-green-2: #dcfce7; --th-tint-blue: #eff6ff; --th-tint-blue-2: #dbeafe;
+    --th-tint-violet: #ede9fe; --th-tint-pink: #fce7f3;
+    --th-amber-line: #fde68a; --th-red-line: #fecaca; --th-green-line: #bbf7d0; --th-blue-line: #bfdbfe;
+    --th-input-bg: #fff; --th-input-border: #cbd5e1; --th-placeholder: #6b7a8e; --th-code-bg: #f1f5f9;
+    --th-shadow-rgb: 15, 23, 42; --th-shadow-a: .08;
+    background: #fff;
+  }
+}
+
 /* ---------- Tokenlar ---------- */
 :root {
   --vg-navy: #0a1628;
@@ -411,6 +568,42 @@ html.vg-lock { overflow: hidden; }
 .vg-actions .vg-search { width: 40px; height: 40px; }
 @media (min-width: 80rem) {
   .vg-search--bar { display: none; }
+}
+
+/* ---------- Tema düğmesi ([data-vg-theme-toggle]) ---------- */
+.vg-theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: rgba(255, 255, 255, .92);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font: 600 .95rem/1.2 var(--vg-font-h);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+}
+.vg-theme svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.vg-theme__sun { display: none; }
+:root[data-theme="dark"] .vg-theme__sun { display: block; }
+:root[data-theme="dark"] .vg-theme__moon { display: none; }
+.vg-theme:hover { color: #fff; border-color: var(--vg-accent); background: rgba(245, 158, 11, .1); }
+.vg-theme--row {
+  width: 100%;
+  height: auto;
+  min-height: 48px;
+  padding: .7rem 1rem;
+  border-color: rgba(255, 255, 255, .2);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vg-theme svg { transition: transform .35s var(--vg-ease); }
+  .vg-theme:active svg { transform: rotate(-25deg) scale(.92); }
 }
 
 /* ---------- Hesap bağlantısı ([data-vg-account]) ---------- */
@@ -1210,3 +1403,5 @@ html.vg-js .vg-footer:not(.is-inview) *::after {
 .sig-trace__dot { display: none; }
 .vg-header a:focus-visible, .vg-header button:focus-visible,
 .vg-footer a:focus-visible { outline: 3px solid #fbbf24; outline-offset: 4px; }
+/* Ayrı React uygulaması (calisan/uygulama) açık kalır: tema düğmesi orada gösterilmez */
+body.company-page .vg-theme { display: none !important; }

@@ -26,7 +26,7 @@ function compose({ head, main }) {
 
 // Ortak meta bloğu (canonical, Open Graph); extra: sayfaya özgü stil/betik/JSON-LD satırları
 function metaHead({ title, desc, url, type = 'article', robots = 'index, follow, max-image-preview:large, max-snippet:-1', extra = '' }) {
-  return `  <meta name="color-scheme" content="light only">
+  return `  <meta name="color-scheme" content="light dark">
   <meta name="description" content="${esc(desc)}">
   <meta name="robots" content="${robots}">
   <title>${esc(title)}</title>

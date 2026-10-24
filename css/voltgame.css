@@ -1,15 +1,15 @@
 .game-page{margin:0;background:#f7f9fc;color:#0a1628;font:400 15px/1.6 var(--vg-font-b);-webkit-font-smoothing:antialiased}
 .game-main,.game-main *{box-sizing:border-box}
 .game-main{width:min(100%,1360px);margin:0 auto;padding:24px 24px 44px}
-.game-breadcrumb{display:flex;gap:9px;align-items:center;margin-bottom:14px;font-size:.76rem;color:#627084}
-.game-breadcrumb a{color:#9a5708;text-decoration:none}
+.game-breadcrumb{display:flex;gap:9px;align-items:center;margin-bottom:14px;font-size:.76rem;color:var(--clr-text-muted)}
+.game-breadcrumb a{color:var(--clr-accent-text);text-decoration:none}
 .game-breadcrumb a:hover{text-decoration:underline}
 .game-intro{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:22px}
 .game-intro h1{margin:0;font:700 clamp(1.9rem,3vw,2.6rem)/1.1 var(--vg-font-h);letter-spacing:-.04em}
-.game-intro p{margin:8px 0 0;color:#5c6b7f;font-size:.85rem}
+.game-intro p{margin:8px 0 0;color:var(--clr-text-muted);font-size:.85rem}
 .game-meta{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
-.game-meta li{padding:6px 12px;border:1px solid #dde5ed;border-radius:30px;color:#536176;background:#fff;font-size:.7rem;white-space:nowrap}
-.game-meta strong{color:#0a1628;font-weight:650}
+.game-meta li{padding:6px 12px;border:1px solid var(--th-border);border-radius:30px;color:var(--clr-text-muted);background:var(--th-surface);font-size:.7rem;white-space:nowrap}
+.game-meta strong{color:var(--th-heading);font-weight:650}
 .game-stage{overflow:hidden;border:1px solid #24354d;border-radius:16px;background:#0a1628;box-shadow:0 16px 45px #0a162813}
 .game-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:52px;padding:5px 10px 5px 17px;color:#c7d4e6;background:#0d1f3c;border-bottom:1px solid #25364e}
 .game-toolbar__title{font:600 .76rem/1.2 var(--vg-font-h);letter-spacing:.03em}
@@ -26,7 +26,7 @@
 .game-help summary{color:#15263c;font:600 .95rem/1.5 var(--vg-font-h);cursor:pointer;min-height:44px;padding:9px 0}
 .game-help p{margin:8px 0 16px;max-width:78ch}
 .game-help strong{color:#172b49}
-.game-help kbd{padding:2px 5px;background:#fff;border:1px solid #d7e0ea;border-radius:4px;font:.8em var(--vg-font-b);color:#24354d}
+.game-help kbd{padding:2px 5px;background:var(--th-surface);border:1px solid var(--th-border);border-radius:4px;font:.8em var(--vg-font-b);color:var(--th-navy)}
 .game-download{display:flex;align-items:center;justify-content:center;gap:9px;min-height:46px;padding:11px 16px;color:#0a1628;background:#f59e0b;border:1px solid #e6940a;border-radius:9px;font:600 .82rem/1.3 var(--vg-font-h);text-decoration:none;white-space:nowrap}
 .game-download:hover{background:#fbbf24}
 .game-download-note{margin:7px 0 0;text-align:center;color:#718095;font-size:.7rem}

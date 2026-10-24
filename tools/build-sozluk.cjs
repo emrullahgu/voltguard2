@@ -30,20 +30,20 @@ const ld = { '@context': 'https://schema.org', '@graph': [
 
 const head = metaHead({ title, desc, url: URL, type: 'website', extra: `  <style>
     .gl-index{display:flex;flex-wrap:wrap;gap:.35rem;margin:1rem 0 1.4rem;padding:0;list-style:none}
-    .gl-index a{display:inline-flex;align-items:center;justify-content:center;min-width:2.5rem;min-height:2.5rem;border:1px solid #cbd5e1;border-radius:8px;font-weight:700;text-decoration:none;color:#0a1628;background:#fff}
-    .gl-index a:hover,.gl-index a:focus-visible{border-color:#f59e0b;background:#fffbeb}
-    .gl-filter{width:100%;max-width:420px;min-height:44px;padding:.55rem .8rem;border:1px solid #cbd5e1;border-radius:8px;font:inherit}
-    .gl-letter{margin:1.8rem 0 .4rem;font-size:1.4rem;color:#b45309}
+    .gl-index a{display:inline-flex;align-items:center;justify-content:center;min-width:2.5rem;min-height:2.5rem;border:1px solid var(--th-border-strong);border-radius:8px;font-weight:700;text-decoration:none;color:var(--th-heading);background:var(--th-surface)}
+    .gl-index a:hover,.gl-index a:focus-visible{border-color:#f59e0b;background:var(--th-tint-amber)}
+    .gl-filter{width:100%;max-width:420px;min-height:44px;padding:.55rem .8rem;border:1px solid var(--th-border-strong);border-radius:8px;font:inherit}
+    .gl-letter{margin:1.8rem 0 .4rem;font-size:1.4rem;color:var(--clr-accent-text)}
     .gl-list{margin:0}
-    .gl-term{scroll-margin-top:calc(var(--vg-header-h,60px) + 16px);padding:.9rem 0;border-top:1px solid #e2e8f0}
-    .gl-term:target{background:#fffbeb;box-shadow:0 0 0 .6rem #fffbeb;border-radius:4px}
-    .gl-term dt{font-weight:800;font-size:1.05rem;color:#0a1628}
+    .gl-term{scroll-margin-top:calc(var(--vg-header-h,60px) + 16px);padding:.9rem 0;border-top:1px solid var(--th-border)}
+    .gl-term:target{background:var(--th-tint-amber);box-shadow:0 0 0 .6rem #fffbeb;border-radius:4px}
+    .gl-term dt{font-weight:800;font-size:1.05rem;color:var(--th-heading)}
     .gl-term dt a{color:inherit;text-decoration:none}
-    .gl-term .gl-alt{display:block;font-weight:500;font-size:.85rem;color:#4f5f74}
+    .gl-term .gl-alt{display:block;font-weight:500;font-size:.85rem;color:var(--th-text-2)}
     .gl-term dd{margin:.3rem 0 0}
     .gl-links{display:flex;flex-wrap:wrap;gap:.1rem 1rem;margin-top:.3rem;font-size:.9rem}
     .gl-links a{display:inline-block;padding:.3rem 0}
-    .gl-empty{padding:1rem;border-radius:8px;background:#f1f5f9}
+    .gl-empty{padding:1rem;border-radius:8px;background:var(--th-surface-3)}
   </style>
   <script src="/js/sozluk.js?v=0" defer></script>
   <script type="application/ld+json">${JSON.stringify(ld)}</script>
@@ -64,7 +64,7 @@ const main = `  <nav class="breadcrumb" aria-label="breadcrumb">
   <main class="article" id="main" tabindex="-1">
     <span class="article__cat">Sözlük</span>
     <h1>Elektrik Terimleri Sözlüğü</h1>
-    <p class="article__byline" style="font-size:.85rem;color:#5b6472;margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son gözden geçirme: <time datetime="${UPDATED}">${UPDATED.split('-').reverse().join('.')}</time></p>
+    <p class="article__byline" style="font-size:.85rem;color:var(--clr-text-muted);margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son gözden geçirme: <time datetime="${UPDATED}">${UPDATED.split('-').reverse().join('.')}</time></p>
     <p class="article__summary">Sahada, projede ve faturada sık karşılaşılan ${TERMS.length} elektrik kavramının kısa tanımı. Her terimde ilgili standart veya yönetmelik ile konuyu ayrıntılı anlatan rehber, hesap aracı ya da VoltSim simülasyonu bağlantısı bulunur.</p>
     <p><label for="gl-q" class="sr-only">Sözlükte ara</label><input id="gl-q" class="gl-filter" type="search" placeholder="Sözlükte ara: harmonik, RCD, kVA…" autocomplete="off" hidden></p>
     <p class="gl-empty" id="gl-empty" role="status" hidden></p>
