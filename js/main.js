@@ -507,6 +507,19 @@
         serviceSel.value = wanted;
         serviceSel.dispatchEvent(new Event('change', { bubbles: true }));
       }
+      /* Hesap araçlarındaki "Bu sonuçla teklif iste" bağlantısı sonucu sessionStorage 'vgQuoteNote' ile taşır;
+         mesaj alanı boşsa bir kez doldurulur (kullanıcı göndermeden önce düzenleyebilir). */
+      var quoteNote = '';
+      try {
+        quoteNote = String(window.sessionStorage.getItem('vgQuoteNote') || '').replace(/[<>]/g, '').slice(0, 600);
+        window.sessionStorage.removeItem('vgQuoteNote');
+      } catch (err) { /* depolama kapalı / gizli sekme */ }
+      if (quoteNote && messageField && !messageField.value.trim()) {
+        messageField.value = quoteNote;
+        messageField.dataset.auto = '1';
+        messageField.dataset.prefillComplete = '1';
+        syncCounter();
+      }
     }
 
     var resetFormExtras = function () {

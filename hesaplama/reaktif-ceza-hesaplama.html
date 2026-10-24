@@ -156,6 +156,8 @@
         <div class="mini-calc__field"><label for="rc-cap">Kapasitif reaktif enerji (kVArh)</label><input id="rc-cap" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1500"></div>
         <div class="mini-calc__field"><label for="rc-price">Reaktif enerji birim fiyatı (TL/kVArh, isteğe bağlı)</label><input id="rc-price" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="Örn. faturadaki TL/kVArh" aria-describedby="rc-price-hint"><small class="calc-hint" id="rc-price-hint">Boş bırakırsanız faturalanacak miktar kVArh olarak gösterilir.</small></div>
         <div class="mini-calc__field"><label for="rc-first">Bu takvim yılındaki ilk ihlal mi?</label><select id="rc-first"><option value="0" selected>Hayır / emin değilim</option><option value="1">Evet, yılın ilk ihlali</option></select></div>
+        <div class="mini-calc__field"><label for="rc-hours">Dönemde yükün çalıştığı süre (saat, isteğe bağlı)</label><input id="rc-hours" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="Örn. iki vardiya için 450" aria-describedby="rc-hours-hint"><small class="calc-hint" id="rc-hours-hint">Girerseniz ortalama yüke göre gereken kompanzasyon (veya şönt reaktör) gücü tahmin edilir.</small></div>
+        <div class="mini-calc__field"><label for="rc-invest">Kompanzasyon yatırımı (TL, isteğe bağlı)</label><input id="rc-invest" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="Teklif tutarı" aria-describedby="rc-invest-hint"><small class="calc-hint" id="rc-invest-hint">Birim fiyatla birlikte girilirse basit geri ödeme süresi hesaplanır.</small></div>
       </div>
       <div class="mini-calc__result" role="group" aria-label="Hesap sonucu" aria-live="off">
         <div class="calc-live" role="status" aria-live="polite">
@@ -164,6 +166,7 @@
           <span class="mini-calc__result-note" id="rc-detail"></span>
         </div>
         <ul class="calc-breakdown" id="rc-breakdown" aria-label="Hesap dökümü"></ul>
+        <p style="margin:.9rem 0 0"><a class="btn btn--accent btn--md" id="rc-quote" href="/?hizmet=harmonik-filtreli-kompanzasyon#iletisim"><i class="fas fa-paper-plane" aria-hidden="true"></i> Bu sonuçla teklif iste</a></p>
       </div>
     </div>
 
@@ -392,6 +395,7 @@
         var act = num('rc-active', true), ind = num('rc-ind', true), cap = num('rc-cap', true);
         var priceRaw = $('rc-price').value.trim(), price = priceRaw === '' ? null : num('rc-price');
         listEl.textContent = '';
+        quoteNote = '';
         if (cls === 'exempt') {
           resultEl.textContent = 'Reaktif bedel uygulanmaz';
           detailEl.textContent = 'Mesken, aydınlatma ve tek fazla beslenen tüketiciler ile kurulu gücü 15 kW\'a (dahil) kadar olan kullanıcılara reaktif enerji tarifesi uygulanmaz.';
@@ -421,6 +425,29 @@
         if (overI) { row('Sınırı aşan endüktif miktar', qty(ind - maxInd) + ' kVArh', 'is-over'); }
         var cosphi = 1 / Math.sqrt(1 + Math.pow(ind / act, 2));
         row('Endüktif orana karşılık gelen ortalama cosφ', cosphi.toLocaleString('tr-TR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }));
+        // Ön boyutlandırma: ortalama yükte endüktif oranı hedef tanφ'ye (cosφ 0,99 → tanφ ≈ 0,1425) indirmek için Q = P·(tanφ1 − tanφ2).
+        // Kapasitif aşımda ortalama kapasitif güç kadar şönt reaktör / kademe azaltımı gerekir. Kesin güç ölçümle ve yük profiliyle belirlenir.
+        var hours = num('rc-hours', true), invest = num('rc-invest', true), sizing = '';
+        if (isFinite(hours) && hours > 0) {
+          var pAvg = act / hours, tanT = Math.tan(Math.acos(0.99));
+          row('Ortalama aktif güç (çalışma süresine göre)', nf(pAvg, 0) + ' kW');
+          if (overI) {
+            var qNeed = pAvg * Math.max(0, ind / act - tanT);
+            row('Hedef cosφ 0,99 için ek kompanzasyon (ortalama yük)', '≈ ' + nf(qNeed, 0) + ' kVAr', 'is-over');
+            sizing = 'Ortalama yüke göre yaklaşık ' + nf(qNeed, 0) + ' kVAr ek kompanzasyon gerekiyor. ';
+          }
+          if (overC) {
+            var qL = cap / hours;
+            row('Kapasitif yükü dengelemek için (ortalama)', '≈ ' + nf(qL, 0) + ' kVAr şönt reaktör / kademe azaltımı', 'is-over');
+            sizing += 'Kapasitif tarafta ortalama ' + nf(qL, 0) + ' kVAr şönt reaktör veya kademe azaltımı gerekiyor. ';
+          }
+        }
+        if (isFinite(invest) && invest > 0 && cost !== null && cost > 0) {
+          // İlk ihlal bedeli düşüldüğü için geri ödeme yalnız tekrarlayan aylık bedelle anlamlıdır
+          var months = invest / cost;
+          row('Basit geri ödeme (bu dönem bedeli her ay tekrarlanırsa)', months < 1 ? '1 aydan kısa' : '≈ ' + nf(months, 1) + ' ay');
+          sizing += 'Bu dönem bedeli her ay tekrarlanırsa yatırım yaklaşık ' + (months < 1 ? '1 aydan kısa sürede' : nf(months, 1) + ' ayda') + ' geri döner. ';
+        }
         // Not, PDF ve "Hesabıma kaydet" çıktısında da okunduğu için ana sayıları içerir.
         var note = 'Endüktif ' + riText + ', kapasitif ' + rcText + '. ';
         if (!billed) { note += 'Bu dönem için reaktif bedel doğmaz (' + lim.label + ' sınırları).'; }
@@ -430,8 +457,16 @@
           note += first ? ' Yılın ilk ihlali olduğu için bedel faturada gösterilir ve aynı faturada düşülür.' : (price === null ? ' TL karşılığı için faturanızdaki birim fiyatı girin.' : '');
         }
         detailEl.textContent = note;
+        // Teklif formuna taşınacak özet (main.js 'vgQuoteNote' ile mesaj alanına yazar)
+        quoteNote = 'Reaktif ceza hesabı (' + lim.label + '): aktif ' + nf(act, 0) + ' kWh, endüktif ' + nf(ind, 0) + ' kVArh (' + riText + '), kapasitif ' + nf(cap, 0) + ' kVArh (' + rcText + '). ' +
+          (billed ? 'Faturalanacak ' + nf(billed) + ' kVArh' + (cost !== null ? ', tahmini ' + nf(cost) + ' TL' : '') + '. ' : 'Bu dönem sınır içinde. ') + sizing +
+          'Kompanzasyon panomuz için ölçüm ve teklif talep ediyoruz.';
       }
-      ['rc-class', 'rc-active', 'rc-ind', 'rc-cap', 'rc-price', 'rc-first'].forEach(function (id) { $(id).addEventListener('input', update); $(id).addEventListener('change', update); });
+      var quoteNote = '';
+      $('rc-quote').addEventListener('click', function () {
+        try { if (quoteNote) window.sessionStorage.setItem('vgQuoteNote', quoteNote); } catch (err) { /* depolama kapalı */ }
+      });
+      ['rc-class', 'rc-active', 'rc-ind', 'rc-cap', 'rc-price', 'rc-first', 'rc-hours', 'rc-invest'].forEach(function (id) { $(id).addEventListener('input', update); $(id).addEventListener('change', update); });
       update();
     }());
   </script>
