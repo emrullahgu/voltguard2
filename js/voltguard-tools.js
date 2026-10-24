@@ -322,12 +322,21 @@
     });
   }
 
+  // Ölçüm (js/vg-metrics.js): yalnızca araç kimliği ve sabit tür; girdi ve sonuç değerleri asla gönderilmez.
+  function metric(name, props) {
+    var slug = toolSlug();
+    if (!slug || !global.vgTrack) return;
+    props.tool = slug;
+    try { global.vgTrack(name, props); } catch (e) { /* ölçüm kritik değil */ }
+  }
+
   async function handleAction(action, btn, bar) {
     try {
       var a = auth();
       if (action === 'save') {
         var saved = saveCurrentToAccount('');
         if (saved) {
+          metric('scenario_save', { kind: a && a.isLoggedIn() ? 'hesap' : 'tarayici' });
           if (a && a.isLoggedIn()) toast('Hesabınıza kaydedildi.', 'success');
           else { toast('Bu tarayıcıya kaydedildi.', 'success'); showGuestNote(bar); }
         }
@@ -351,8 +360,8 @@
         else if (r.mode !== 'abort') toast('Paylaşım başarısız.', 'error');
         return;
       }
-      if (action === 'pdf') { await exportPdf(); return; }
-      if (action === 'print') { window.print(); return; }
+      if (action === 'pdf') { await exportPdf(); metric('report_download', { fmt: 'pdf' }); return; }
+      if (action === 'print') { metric('report_download', { fmt: 'yazdir' }); window.print(); return; }
     } catch (e) {
       toast(e.message || 'İşlem tamamlanamadı.', 'error');
     }
