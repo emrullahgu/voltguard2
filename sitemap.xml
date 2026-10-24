@@ -199,6 +199,24 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://voltguard.com.tr/hesaplama/trafo-kapasite-artirimi/</loc>
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/hesaplama/harmonik-filtre-ihtiyaci/</loc>
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/hesaplama/fabrika-elektrik-risk-testi/</loc>
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://voltguard.com.tr/hesaplama/kompanzasyon-hesaplama/</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>monthly</changefreq>

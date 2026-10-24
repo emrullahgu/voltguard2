@@ -100,6 +100,42 @@
   force = true
 
 [[redirects]]
+  from = "/hesaplama/trafo-kapasite-artirimi.html"
+  to = "/hesaplama/trafo-kapasite-artirimi/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/trafo-kapasite-artirimi/"
+  to = "/hesaplama/trafo-kapasite-artirimi.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/harmonik-filtre-ihtiyaci.html"
+  to = "/hesaplama/harmonik-filtre-ihtiyaci/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/harmonik-filtre-ihtiyaci/"
+  to = "/hesaplama/harmonik-filtre-ihtiyaci.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/fabrika-elektrik-risk-testi.html"
+  to = "/hesaplama/fabrika-elektrik-risk-testi/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/fabrika-elektrik-risk-testi/"
+  to = "/hesaplama/fabrika-elektrik-risk-testi.html"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/hesaplama/kompanzasyon-hesaplama.html"
   to = "/hesaplama/kompanzasyon-hesaplama/"
   status = 301

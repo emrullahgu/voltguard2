@@ -20,6 +20,7 @@ function hostAssets() {
   return ['css/fonts.css', 'css/fa-subset.css', 'css/vg-shell.css']
     .map(file => `<link rel="stylesheet" href="/${file}?v=${revision(file)}">`).join('') +
     `<script src="/js/vg-shell.js?v=${revision('js/vg-shell.js')}" defer></script>` +
+    `<script src="/js/vg-metrics.js?v=${revision('js/vg-metrics.js')}" defer data-vg-online-only></script>` +
     `<script src="/js/voltguard-auth.js?v=${revision('js/voltguard-auth.js')}" defer data-vg-online-only></script>` +
     '<meta name="color-scheme" content="light only">';
 }
