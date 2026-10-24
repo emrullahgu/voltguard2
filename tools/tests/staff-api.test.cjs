@@ -199,6 +199,8 @@ async function run() {
     await expect(payroll, 'payroll_upload', { form: upload(own.id, '%PDF-1.4\nwithout EOF') }, 422, 'staff_pdf_invalid');
     await expect(payroll, 'payroll_upload', { form: upload(own.id, pdf) }, 200);
     await expect(admin, 'payroll_upload', { form: upload(other.id, pdf) }, 200);
+    await expect(payroll, 'payroll_upload', { form: upload(own.id, pdf) }, 200);
+    check(fs.readdirSync(path.join(sandbox, 'staff/documents')).length, 2, 'Replacing a PDF removes the detached personal document after state commit');
     result = await expect(employee, 'payroll_download', { query: { id: own.id }, raw: true }, 200);
     check(result.data, pdf, 'Owner downloads only real stored PDF bytes');
     check(result.headers.get('content-disposition').startsWith('attachment;'), true, 'PDF always downloads as attachment');
@@ -231,6 +233,7 @@ async function run() {
     mutate(state => { state.invites[crypto.createHash('sha256').update(token(renewedAgain)).digest('hex')].expires = Math.floor(Date.now() / 1000) - 1; });
     await expect(second, 'activate', { body: { token: token(renewedAgain), password } }, 400, 'staff_invite_invalid');
     await expect(payroll, 'payroll_delete', { body: { statementId: other.id } }, 200);
+    check(fs.readdirSync(path.join(sandbox, 'staff/documents')).length, 1, 'Deleting a statement also removes its personal PDF');
     await expect(admin, 'payroll_download', { query: { id: other.id } }, 404, 'staff_not_found');
 
     // Successful session expires even when an attacker retains the legitimate cookie.
@@ -250,7 +253,14 @@ async function run() {
     const stored = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
     check(JSON.stringify(stored).includes(password), false, 'No plaintext password stored');
     check(Object.keys(stored.invites).every(hash => /^[a-f0-9]{64}$/.test(hash)), true, 'Only invite hashes stored');
-    check(Object.keys(stored.rates).every(hash => /^[a-f0-9]{64}$/.test(hash)), true, 'Rate counters use private HMAC keys');
+    check(stored.rates, [], 'Login counters never rewrite the employee/payroll state file');
+    const counters = JSON.parse(fs.readFileSync(path.join(sandbox, 'staff/rates.json'), 'utf8'));
+    check(Object.keys(counters).length > 0 && Object.keys(counters).every(hash => /^[a-f0-9]{64}$/.test(hash)), true, 'Rate counters use private HMAC keys in their own file');
+    check(JSON.stringify(counters).includes('brute@example.test'), false, 'Rate counters never store e-mail addresses');
+    // Only failures are counted: a correct password from the same client is not locked by earlier successes.
+    const steady = client(); await expect(steady, 'me', {}, 200);
+    for (let i = 0; i < 11; i++) { await expect(steady, 'login', { body: { email: 'payroll@example.test', password } }, 200); await expect(steady, 'me', {}, 200); }
+    await expect(outsider, 'activate', { body: { token: '0'.repeat(64), password: 'onlyletterspassword' } }, 422, 'staff_password');
     check(JSON.stringify(stored.audit).includes(employee.secret), false, 'Audit does not store authenticator secrets');
     check(JSON.stringify(stored.audit).includes('42000'), false, 'Audit does not store payroll amounts');
     fs.writeFileSync(stateFile, '{broken'); await expect(outsider, 'me', {}, 503, 'staff_unavailable');

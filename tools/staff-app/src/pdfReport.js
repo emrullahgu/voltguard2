@@ -1,12 +1,16 @@
-import jsPDF from 'jspdf';
-import {applyPlugin} from 'jspdf-autotable';
-import html2canvas from 'html2canvas';
 import { COMPANY_NAME, COMPANY_CONTACT_LINE } from './companyInfo';
 import { sanitizeReportHTML } from './safeReportHTML.mjs';
 
-applyPlugin(jsPDF);
 const FONT = 'VoltGuardNoto';
 let fontPromise;
+let pdfLibrary;
+function loadPDFLibrary() {
+  if (!pdfLibrary) pdfLibrary = Promise.all([import('jspdf'), import('jspdf-autotable')]).then(([{ default: jsPDF }, { applyPlugin }]) => {
+    applyPlugin(jsPDF);
+    return jsPDF;
+  }).catch(error => { pdfLibrary = undefined; throw error; });
+  return pdfLibrary;
+}
 
 export const reportDate = (value = new Date()) => {
   if (!value) return 'Belirtilmedi';
@@ -56,7 +60,7 @@ async function loadFonts() {
 
 /** Every company report embeds the same Unicode font and reserves the footer area. */
 export async function createReportPDF(options = {}) {
-  const fonts = await loadFonts();
+  const [fonts, jsPDF] = await Promise.all([loadFonts(), loadPDFLibrary()]);
   const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true, ...options });
   ['normal', 'bold'].forEach((style, index) => {
     const name = `NotoSans-${index ? 'Bold' : 'Regular'}.ttf`;
@@ -141,6 +145,7 @@ export async function exportTableReport({ title, subtitle, head, body, summary =
 /** Capture a detached clone, preserve edited HTML, and split oversized pages without clipping. */
 export async function exportHTMLReport({ root, selector, filename, title = 'VoltGuard Raporu' }) {
   if (!root) throw new Error('Rapor önizlemesi bulunamadı. Önizlemeyi açıp tekrar deneyin.');
+  const { default: html2canvas } = await import('html2canvas');
   if (document.fonts?.ready) await document.fonts.ready;
   const sources = [...(selector ? root.querySelectorAll(selector) : [])];
   if (!sources.length) sources.push(root);

@@ -74,9 +74,11 @@ function vg_company_ubuntu_same_actor(array $before, int $expectedEpoch): array 
 }
 function vg_company_ubuntu_result($result, array $canonical) {
     if (!is_array($result) || !array_key_exists('data', $result)) return $result;
+    // Only refresh values the caller may already see: the response row was masked (hidden personal fields unset)
+    // and projected (select) for this actor, so the canonical database row must never add keys back.
     $replace = function ($row) use ($canonical) {
         if (!is_array($row) || !is_string($row['id'] ?? null)) return $row;
-        foreach ($canonical as $records) if (is_array($records) && isset($records[$row['id']]) && is_array($records[$row['id']])) return $records[$row['id']];
+        foreach ($canonical as $records) if (is_array($records) && isset($records[$row['id']]) && is_array($records[$row['id']])) return array_replace($row, array_intersect_key($records[$row['id']], $row));
         return $row;
     };
     if (is_array($result['data']) && array_is_list_compat($result['data'])) $result['data'] = array_map($replace, $result['data']);

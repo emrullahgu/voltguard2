@@ -115,9 +115,8 @@ function vg_h_register(VgStore $store, array $body): array
     }
     $company = vg_validate_company($body['company'] ?? '', $errors);
     $phone = vg_validate_phone($body['phone'] ?? '', $errors);
-    if (!vg_bool($body['consent'] ?? false)) {
-        $errors['consent'] = 'Devam etmek için üyelik ve KVKK aydınlatma metnini onaylamanız gerekir.';
-    }
+    // Account creation is an explicit service request. The visible privacy notice is
+    // information, not a general-purpose consent requirement. Legacy consent:true is accepted.
     if ($errors) {
         vg_validation_failed($errors);
     }
@@ -312,7 +311,8 @@ function vg_h_delete_account(VgStore $store, array $body): array
         vg_validation_failed(['confirm' => 'Silme işlemini onaylamak için kutuyu işaretleyin.']);
     }
     vg_verify_user_password($store, $user, $body['password'] ?? '', 'password');
-    $store->deleteUser($user['id']);
+    require_once __DIR__ . '/community.php';
+    vg_community_delete_account($store, $user['id']);
     vg_rl_clear('login_email', $user['email']);
     vg_rl_clear('login_email_ip', $user['email'] . '|' . vg_rl_ip_key());
     vg_session_destroy();
@@ -568,10 +568,18 @@ function vg_h_export(VgStore $store, array $body): array
     foreach (VG_COLLECTIONS as $c) {
         $collections[$c] = $store->getCollection($user['id'], $c)['items'];
     }
+    /* Herkese acik topluluk yorumlari da kisisel veridir; disa aktarmaya eklenir. */
+    require_once __DIR__ . '/community.php';
+    try {
+        $collections['communityComments'] = vg_community_export($user['id']);
+    } catch (VgHttpError $e) {
+        $collections['communityComments'] = null;
+        $collections['communityCommentsNote'] = 'Topluluk yorumları şu anda okunamadı; daha sonra tekrar indirin veya info@voltguard.com.tr adresinden isteyin.';
+    }
     $doc = [
         'format' => 'voltguard-account-export/1',
         'exportedAt' => vg_iso(vg_now()),
-        'notice' => 'VoltGuard Tools hesabınızda saklanan tüm kişisel veriler. Şifreniz geri döndürülemez biçimde (hash) saklandığı için dosyada yer almaz.',
+        'notice' => 'VoltGuard hesabınızda saklanan tüm kişisel veriler (topluluk yorumlarınız dahil). Şifreniz geri döndürülemez biçimde (hash) saklandığı için dosyada yer almaz.',
         'user' => vg_public_user($user) + [
             'consentAt' => (int)$user['consent_at'] > 0 ? vg_iso((int)$user['consent_at']) : null,
             'consentVersion' => $user['consent_ver'],
@@ -606,6 +614,9 @@ function vg_run(): void
 {
     ob_start();
     try {
+        if (PHP_SAPI !== 'cli' && !vg_is_https() && !vg_local_http_request()) {
+            vg_fail(503, 'https_required', 'Hesap işlemleri güvenli HTTPS bağlantısı gerektirir.');
+        }
         $routes = vg_routes();
         $action = vg_action();
         if ($action === '' || !isset($routes[$action])) {
@@ -628,6 +639,13 @@ function vg_run(): void
         /* Oturum cerezi olmadan gelen POST gecerli bir CSRF jetonu tasiyamaz: oturum dosyasi acmadan reddet. */
         if ($method === 'POST' && (!isset($_COOKIE[VG_SESSION_NAME]) || (string)($_SERVER['HTTP_X_VG_CSRF'] ?? '') === '')) {
             vg_fail(403, 'csrf', 'Güvenlik doğrulaması başarısız oldu. Sayfayı yenileyip tekrar deneyin.');
+        }
+        if ($action === 'me') {
+            /* Her anonim 'me' istegi bir oturum dosyasi acar: dosya/inode doldurma selini istemci basina sinirla. */
+            $retry = vg_rl_hit('me_ip', vg_rl_ip_key(56), 1200, 600);
+            if ($retry > 0) {
+                vg_too_many($retry);
+            }
         }
         $store = vg_store();
         vg_session_start();

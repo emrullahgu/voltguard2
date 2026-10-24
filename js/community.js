@@ -20,7 +20,7 @@
   const replyContext = document.getElementById('community-reply-context');
   const replyTo = document.getElementById('community-reply-to');
   const formatter = new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'short' });
-  const state = { items: new Map(), csrf: '', nextBefore: null, canPublish: false, loading: false, publishing: false, replyId: null, guestName: '', user: null };
+  const state = { items: new Map(), csrf: '', nextBefore: null, canPublish: false, moderator: false, loading: false, publishing: false, replyId: null, guestName: '', user: null };
 
   function node(tag, className, text) {
     const element = document.createElement(tag);
@@ -145,13 +145,32 @@
       } else parentNote.append(document.createTextNode('Bir paylaşıma yanıt'));
       article.append(parentNote);
     }
-    article.append(node('p', 'community-message' + (item.deleted ? ' community-message--deleted' : ''), item.deleted ? 'Bu yorum kaldırıldı.' : item.message));
+    const masked = item.hidden === true && !item.message;
+    const text = item.deleted ? 'Bu yorum kaldırıldı.' : masked ? 'Bu yorum ziyaretçi bildirimleri nedeniyle moderatör incelemesinde.' : item.message;
+    article.append(node('p', 'community-message' + (item.deleted || masked ? ' community-message--deleted' : ''), text));
+    if (item.hidden === true && !masked) article.append(node('p', 'community-review-note', 'İncelemede: ' + (Number(item.reports) || 0) + ' bildirim. Herkese gizli.'));
+    else if (Number(item.reports) > 0) article.append(node('p', 'community-review-note', Number(item.reports) + ' bildirim'));
     if (!item.deleted) {
       const actions = node('div', 'community-comment-actions');
-      const reply = node('button', 'community-action', 'Yanıt ver ↗');
-      reply.type = 'button';
-      reply.addEventListener('click', () => setReply(item, true));
-      actions.append(reply);
+      if (!masked) {
+        const reply = node('button', 'community-action', 'Yanıt ver ↗');
+        reply.type = 'button';
+        reply.addEventListener('click', () => setReply(item, true));
+        actions.append(reply);
+      }
+      if (!item.canDelete && !masked) {
+        const report = node('button', 'community-action community-action--report', 'Bildir');
+        report.type = 'button';
+        report.setAttribute('aria-label', item.authorName + ' adlı kişinin yorumunu uygunsuz içerik olarak bildir');
+        report.addEventListener('click', () => reportComment(item, report));
+        actions.append(report);
+      }
+      if (state.moderator && item.hidden === true) {
+        const approve = node('button', 'community-action', 'İncelendi, yayımla');
+        approve.type = 'button';
+        approve.addEventListener('click', () => moderate('approve', item, approve));
+        actions.append(approve);
+      }
       if (item.canDelete === true) {
         const remove = node('button', 'community-action community-action--delete', 'Sil');
         remove.type = 'button';
@@ -187,9 +206,11 @@
       for (const item of result.items) state.items.set(String(item.id), item);
       state.nextBefore = result.nextBefore ?? null;
       state.canPublish = result.canPublish === true;
+      state.moderator = result.moderator === true;
       if (state.replyId && state.items.get(state.replyId)?.deleted) setReply(null, false);
       renderFeed();
-      if (!state.canPublish) status(formStatus, 'Yeni yorumlar şu anda kabul edilmiyor. Daha sonra tekrar deneyebilirsiniz.');
+      if (!state.canPublish && result.guestsAllowed === false) status(formStatus, 'Topluluğa şu anda yalnızca üye hesabıyla yorum yazılabiliyor. Ücretsiz üye olabilir veya giriş yapabilirsiniz.');
+      else if (!state.canPublish) status(formStatus, 'Yeni yorumlar şu anda kabul edilmiyor. Daha sonra tekrar deneyebilirsiniz.');
       else if (!state.publishing && formStatus.textContent === 'Paylaşım alanı hazırlanıyor…') status(formStatus, '');
       if (append) status(feedStatus, result.items.length + ' paylaşım daha yüklendi.');
       updateAccount(window.VG?.Auth?.currentUser?.() || null);
@@ -207,6 +228,30 @@
       more.textContent = 'Önceki paylaşımları yükle ↓';
       feed.setAttribute('aria-busy', 'false');
       updateSubmit();
+    }
+  }
+  async function reportComment(item, button) {
+    if (!window.confirm('Bu yorumu uygunsuz içerik (spam, hakaret, kişisel veri vb.) olarak bildirmek istiyor musunuz? Birden fazla bildirim alan yorumlar moderatör incelemesine kadar gizlenir.')) return;
+    button.disabled = true;
+    try {
+      const result = await request('report', { id: item.id });
+      button.textContent = 'Bildirildi';
+      status(feedStatus, result.hidden ? 'Teşekkürler. Yorum incelemeye alındı.' : 'Teşekkürler. Bildiriminiz moderatörlere iletildi.', 'success');
+      if (result.hidden) await load(false);
+    } catch (error) {
+      button.disabled = false;
+      status(feedStatus, error.message, 'error');
+    }
+  }
+  async function moderate(action, item, button) {
+    button.disabled = true;
+    try {
+      await request(action, { id: item.id });
+      status(feedStatus, 'Yorum yeniden yayımlandı.', 'success');
+      await load(false);
+    } catch (error) {
+      button.disabled = false;
+      status(feedStatus, error.message, 'error');
     }
   }
   function confirmDelete(item, article, trigger) {

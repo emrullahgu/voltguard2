@@ -153,15 +153,29 @@
         <div class="controls">
             <div class="control-group">
                 <label for="voltageInput">Kaçak Potansiyeli (V_toprak):</label>
-                <input type="range" id="voltageInput" min="220" max="380000" step="10" value="380000">
-                <div class="value-display"><span id="kVOut">380 kV</span></div>
+                <input type="range" id="voltageInput" min="220" max="380000" step="10" value="10000">
+                <div class="value-display"><span id="kVOut">10 kV</span></div>
             </div>
 
             <div class="control-group">
                 <label for="stepInput">Adım Boyu (Mesafe):</label>
-                <input type="range" id="stepInput" min="0.0" max="1.5" step="0.1" value="1.0">
+                <input type="range" id="stepInput" min="0.0" max="1.5" step="0.1" value="1.0" aria-describedby="stepHint">
                 <div class="value-display"><span id="sOut">1.0</span> metre</div>
             </div>
+
+            <div class="control-group">
+                <label for="tsInput">Arıza temizleme süresi t<sub>s</sub> (s):</label>
+                <select id="tsInput"><option value="0.1">0,1</option><option value="0.2">0,2</option><option value="0.5" selected>0,5</option><option value="1">1,0</option><option value="2">2,0</option><option value="3">3,0</option></select>
+            </div>
+            <div class="control-group">
+                <label for="rhoInput">Yüzey özdirenci ρ<sub>s</sub> (Ω·m):</label>
+                <select id="rhoInput"><option value="50">50 (nemli toprak)</option><option value="100" selected>100 (toprak)</option><option value="1000">1000 (kuru kum)</option><option value="3000">3000 (çakıl, kaplama)</option></select>
+            </div>
+            <div class="control-group">
+                <label for="kgInput">Vücut ağırlığı (IEEE 80):</label>
+                <select id="kgInput"><option value="0.116" selected>50 kg (k = 0,116)</option><option value="0.157">70 kg (k = 0,157)</option></select>
+            </div>
+            <p id="stepHint" style="font-size:12px;opacity:.8;margin:0 0 8px">Model: yarıküre topraklayıcı (r<sub>0</sub> = 1 m), V(r) = V<sub>0</sub>·r<sub>0</sub>/r. Adım boyu normalde 1 m alınır. İzin verilen adım gerilimi IEEE 80: E<sub>adım</sub> = (1000 + 6·C<sub>s</sub>·ρ<sub>s</sub>)·k/√t<sub>s</sub> (C<sub>s</sub> = 1, yüzey kaplaması yok).</p>
 
             <div class="metrics">
                 <div class="metric-box">
@@ -179,6 +193,10 @@
                 <div class="metric-box" style="grid-column: span 2;">
                     <span class="metric-label">Maruz Kalınan Gerilim (ΔV)</span>
                     <span id="mStepV" class="metric-value danger">-</span>
+                </div>
+                <div class="metric-box" style="grid-column: span 2;">
+                    <span class="metric-label">İzin verilen adım gerilimi (IEEE 80)</span>
+                    <span id="mLimit" class="metric-value">-</span>
                 </div>
             </div>
 
@@ -225,6 +243,13 @@
             const r0 = 1.0; 
             if (rMetre <= r0) return V0;
             return V0 * (r0 / rMetre);
+        }
+
+        function stepLimit() {
+            const ts = parseFloat(document.getElementById('tsInput').value);
+            const rhoS = parseFloat(document.getElementById('rhoInput').value);
+            const k = parseFloat(document.getElementById('kgInput').value);
+            return (1000 + 6 * rhoS) * k / Math.sqrt(ts);
         }
 
         function draw() {
@@ -296,7 +321,8 @@
             ctx.moveTo(currentX, currentY);
             ctx.lineTo(foot2X, foot2Y);
             // Eğer adım boyu 0 ise veya voltaj güvenliyse yeşil, yoksa kırmızı yapıyoruz
-            ctx.strokeStyle = (stepVoltage > 50 && stepLengthMetre > 0) ? '#ff3333' : '#2ecc71';
+            const limitV = stepLimit();
+            ctx.strokeStyle = (stepVoltage > limitV && stepLengthMetre > 0) ? '#ff3333' : '#2ecc71';
             ctx.lineWidth = 2.5;
             ctx.stroke();
 
@@ -310,9 +336,10 @@
             mDistance.innerText = `${distToFoot1Metre.toFixed(2)} metre`;
             mStepV.innerText = formatVoltage(stepVoltage);
             
-            // 50V sınırı ve 0 metre kontrolü ile renklendirme dinamikleştirildi
+            // IEEE 80 izin verilen adım gerilimi (süre, yüzey özdirenci ve vücut ağırlığına bağlı) ile karşılaştırılır
+            document.getElementById('mLimit').innerText = formatVoltage(limitV);
             mStepV.style.color = "";
-            if(stepVoltage > 50 && stepLengthMetre > 0) {
+            if(stepVoltage > limitV && stepLengthMetre > 0) {
                 mStepV.className = "metric-value danger";
             } else {
                 mStepV.className = "metric-value";
@@ -355,6 +382,8 @@
             sOut.innerText = stepInput.value;
             draw();
         });
+
+        ['tsInput', 'rhoInput', 'kgInput'].forEach(id => document.getElementById(id).addEventListener('change', draw));
 
         downloadBtn.addEventListener('click', () => {
             const imageURI = canvas.toDataURL("image/png");

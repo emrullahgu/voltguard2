@@ -53,6 +53,7 @@
     down: 'Hesap sistemine şu anda ulaşılamıyor. İnternet bağlantınızı kontrol edip birkaç dakika sonra tekrar deneyin.',
     login: 'Bu işlem için giriş yapmanız gerekiyor.',
     expired: 'Oturumunuzun süresi doldu. Lütfen yeniden giriş yapın.',
+    staticHost: 'Bu adreste hesap sunucusu çalışmıyor. Giriş, kayıt ve hesap işlemleri için https://voltguard.com.tr adresini kullanın.',
     generic: 'İşlem tamamlanamadı. Lütfen tekrar deneyin.'
   };
 
@@ -264,7 +265,16 @@
         var json = null;
         try { json = text ? JSON.parse(text) : null; } catch (e) { json = null; }
         // PHP çalışmayan statik önizleme (kaynak metin, 404 sayfası) veya ara sunucu hatası: API'ye ulaşılamadı.
-        if (!json || json.api !== API_MARK) throw ApiError('unreachable', MSG.down, res.status);
+        if (!json || json.api !== API_MARK) {
+          // 404/405 + HTML: the page is served by a static host (e.g. Netlify) without the PHP API. This never
+          // recovers by waiting, so say where accounts work instead of "try again in a few minutes".
+          if (!json && (res.status === 404 || res.status === 405)) {
+            var st = ApiError('unreachable', MSG.staticHost, res.status);
+            st.staticHost = true;
+            throw st;
+          }
+          throw ApiError('unreachable', MSG.down, res.status);
+        }
         if (typeof json.csrf === 'string' && json.csrf) state.csrf = json.csrf;
         if (!res.ok || json.ok === false) throw ApiError(json.error, json.message, res.status, json);
         state.apiDown = false;
@@ -1163,7 +1173,7 @@
     box.setAttribute('aria-labelledby', 'vg-legacy-title');
     var target = state.user ? '/hesap/panel.html#eski-veriler' : '/hesap/kayit.html?aktar=1';
     var owners = info.users.filter(function (u) { return u.total > 0; }).length;
-    box.innerHTML = '<strong id="vg-legacy-title">VoltGuard Tools hesabınız yenilendi</strong>' +
+    box.innerHTML = '<strong id="vg-legacy-title">VoltGuard hesap sistemi yenilendi</strong>' +
       '<p>Bu tarayıcıda ' + (owners > 1 ? owners + ' eski hesaba ait toplam ' : 'eski hesabınıza ait ') + info.total + ' kayıt (hesaplama, favori, proje, doküman) var. ' +
       'Artık hesaplar güvenli sunucuda tutuluyor; kayıtlarınızı tek adımda yeni hesabınıza taşıyabilirsiniz.</p>' +
       '<div class="vgl-actions"><a href="' + target + '">' + (state.user ? 'Kayıtlarımı taşı' : 'Hesap oluştur ve taşı') + '</a>' +

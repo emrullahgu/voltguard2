@@ -13,7 +13,7 @@ if (!defined('VG_API')) {
 
 function vg_strip_default_port(string $hostPort): string
 {
-    return (string)preg_replace('/:(80|443)$/', '', strtolower($hostPort));
+    return (string)preg_replace(vg_is_https() ? '/:443$/' : '/:80$/', '', strtolower($hostPort));
 }
 
 function vg_allowed_hosts(): array
@@ -35,17 +35,15 @@ function vg_allowed_hosts(): array
     return $hosts;
 }
 
-function vg_url_is_same_origin(string $url): bool
+function vg_url_is_same_origin(string $url, bool $originOnly = false): bool
 {
     $p = parse_url($url);
-    if (!is_array($p) || empty($p['host']) || empty($p['scheme'])) {
+    if (!is_array($p) || empty($p['host']) || empty($p['scheme']) || isset($p['user']) || isset($p['pass'])) {
         return false;
     }
+    if ($originOnly && (isset($p['query']) || isset($p['fragment']) || !in_array($p['path'] ?? '', ['', '/'], true))) return false;
     $scheme = strtolower((string)$p['scheme']);
-    if ($scheme !== 'http' && $scheme !== 'https') {
-        return false;
-    }
-    if (vg_is_https() && $scheme !== 'https') {
+    if ($scheme !== (vg_is_https() ? 'https' : 'http')) {
         return false;
     }
     $hp = strtolower((string)$p['host']) . (isset($p['port']) ? ':' . (int)$p['port'] : '');
@@ -66,7 +64,7 @@ function vg_require_same_origin(): void
 {
     $origin = (string)($_SERVER['HTTP_ORIGIN'] ?? '');
     if ($origin !== '') {
-        if (!vg_url_is_same_origin($origin)) {
+        if (!vg_url_is_same_origin($origin, true)) {
             vg_fail(403, 'forbidden_origin', 'Bu istek kabul edilmedi.');
         }
         return;
@@ -95,10 +93,8 @@ function vg_session_start(): void
     if (session_status() === PHP_SESSION_ACTIVE) {
         return;
     }
-    $dir = vg_data_dir() . '/sessions';
-    if (!vg_ensure_dir($dir)) {
-        vg_unavailable('session directory is not writable');
-    }
+    $base = vg_private_data_directory(vg_data_dir());
+    $dir = vg_private_data_directory($base . '/sessions', $base);
     /* Gecersiz bicimli cerez: PHP'nin uyari verip oturumu acamamasi yerine yok sayilir (yeni kimlik uretilir). */
     if (isset($_COOKIE[VG_SESSION_NAME]) && (!is_string($_COOKIE[VG_SESSION_NAME])
         || preg_match('/^[A-Za-z0-9,-]{22,256}$/', $_COOKIE[VG_SESSION_NAME]) !== 1)) {
@@ -351,8 +347,8 @@ function vg_kdev_forget(array $user): void
  */
 function vg_rl_file(string $bucket, string $id): string
 {
-    $dir = vg_data_dir() . '/rl';
-    vg_ensure_dir($dir);
+    $base = vg_private_data_directory(vg_data_dir());
+    $dir = vg_private_data_directory($base . '/rl', $base);
     return $dir . '/' . hash_hmac('sha256', $bucket . "\0" . $id, vg_secret()) . '.json';
 }
 
@@ -362,13 +358,11 @@ function vg_rl_update(string $bucket, string $id, callable $fn): array
     $file = vg_rl_file($bucket, $id);
     $fp = @fopen($file, 'c+');
     if ($fp === false) {
-        error_log('VoltGuard api: rate limiter inactive (counter file cannot be opened)');
-        return [];
+        vg_unavailable('rate counter cannot be opened');
     }
     if (!flock($fp, LOCK_EX)) {
         fclose($fp);
-        error_log('VoltGuard api: rate limiter inactive (counter file cannot be locked)');
-        return [];
+        vg_unavailable('rate counter cannot be locked');
     }
     $raw = stream_get_contents($fp);
     $state = is_string($raw) && $raw !== '' ? json_decode($raw, true) : [];
@@ -376,14 +370,13 @@ function vg_rl_update(string $bucket, string $id, callable $fn): array
         $state = [];
     }
     $new = $fn($state, vg_now());
-    rewind($fp);
-    ftruncate($fp, 0);
-    if (is_array($new)) {
-        fwrite($fp, vg_json_encode($new));
-    }
-    fflush($fp);
+    $encoded = is_array($new) ? vg_json_encode($new) : '';
+    $written = rewind($fp) && ftruncate($fp, 0)
+        && ($encoded === '' || fwrite($fp, $encoded) === strlen($encoded)) && fflush($fp);
     flock($fp, LOCK_UN);
     fclose($fp);
+    if (!$written) vg_unavailable('rate counter write failed');
+    @chmod($file, 0600);
     if (!is_array($new)) {
         @unlink($file);
         return [];

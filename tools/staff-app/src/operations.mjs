@@ -4,8 +4,17 @@ export function parseDecimal(value, fallback = 0) {
   if (value == null || String(value).trim() === '') return fallback;
   let text = String(value).trim().replace(/[\s\u00a0]/g, '');
   if (text.includes(',')) {
-    if (text.includes('.') && text.lastIndexOf('.') > text.lastIndexOf(',')) text = text.replace(/,/g, '');
-    else text = text.replace(/\./g, '').replace(',', '.');
+    if (text.includes('.')) {
+      // A separator is a thousands separator only when every group is complete.
+      // Otherwise a mistyped import such as 12.34,56 must not silently become 1234.56.
+      if (text.lastIndexOf('.') > text.lastIndexOf(',')) {
+        if (!/^[+-]?\d{1,3}(?:,\d{3})+\.\d*$/.test(text)) return fallback;
+        text = text.replace(/,/g, '');
+      } else {
+        if (!/^[+-]?\d{1,3}(?:\.\d{3})+,\d*$/.test(text)) return fallback;
+        text = text.replace(/\./g, '').replace(',', '.');
+      }
+    } else text = text.replace(',', '.');
   } else if ((text.match(/\./g) || []).length > 1 && /^[+-]?\d{1,3}(?:\.\d{3})+$/.test(text)) text = text.replace(/\./g, '');
   if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(text)) return fallback;
   const number = Number(text);
@@ -44,36 +53,49 @@ export function parseImportDate(value) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+const importColumnAliases = new Map();
+const normalizeImportColumn = value => value.trim().replace(/I/g, 'ı').replace(/İ/g, 'i').toLowerCase();
 export function findImportColumn(row, names) {
-  const normalized = names.map(name => name.toLocaleLowerCase('tr-TR'));
-  const key = Object.keys(row).find(column => normalized.includes(column.trim().toLocaleLowerCase('tr-TR')));
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return undefined;
+  const aliases = names.join('\u0000');
+  let normalized = importColumnAliases.get(aliases);
+  if (!normalized) { normalized = new Set(names.map(normalizeImportColumn)); importColumnAliases.set(aliases, normalized); }
+  const key = Object.keys(row).find(column => normalized.has(normalizeImportColumn(column)));
   return key === undefined ? undefined : row[key];
 }
 
 export function detectEnergyType(rows) {
   const types = rows.map(row => {
     const code = String(findImportColumn(row, ['Endeks Kodu', 'OBIS', 'OBIS Kodu', 'Enerji Tipi', 'energy_type']) ?? '').toLocaleLowerCase('tr-TR');
-    if (/1\.8\.0|aktif|active/.test(code) && !/reaktif/.test(code)) return 'aktif';
-    if (/5\.8\.0|endüktif|enduktif|induktif|inductive/.test(code)) return 'induktif';
-    if (/8\.8\.0|kapasitif|capacitive/.test(code)) return 'kapasitif';
-    return null;
+    const matches = [
+      ['aktif', /(?:^|[^\d.])1\.8\.0(?:$|[^\d.])|(?:^|[^\p{L}])(?:aktif|active)(?:$|[^\p{L}])/u],
+      ['induktif', /(?:^|[^\d.])5\.8\.0(?:$|[^\d.])|(?:^|[^\p{L}])(?:endüktif|enduktif|induktif|inductive)(?:$|[^\p{L}])/u],
+      ['kapasitif', /(?:^|[^\d.])8\.8\.0(?:$|[^\d.])|(?:^|[^\p{L}])(?:kapasitif|capacitive)(?:$|[^\p{L}])/u]
+    ].filter(([, pattern]) => pattern.test(code));
+    return matches.length === 1 ? matches[0][0] : null;
   });
   return types.length > 0 && types[0] && types.every(type => type === types[0]) ? types[0] : null;
 }
 
 export function prepareEnergyRows(rows, energyType) {
   if (!Array.isArray(rows) || rows.length === 0 || !['aktif', 'induktif', 'kapasitif'].includes(energyType)) throw new Error('Gerçek sayaç verisi ve enerji tipi seçilmelidir.');
+  const dates = new Set();
   const data = rows.map((row, index) => {
     const rawDate = findImportColumn(row, ['Tarih', 'Tarih2']);
-    if (!parseImportDate(rawDate)) throw new Error(`${index + 1}. satırın tarihi geçersiz.`);
+    const date = parseImportDate(rawDate);
+    if (!date) throw new Error(`${index + 1}. satırın tarihi geçersiz.`);
+    if (dates.has(date.getTime())) throw new Error(`${index + 1}. satırda tarih ve saat tekrarlanıyor. Dosyayı tek bir sayaç ve enerji kategorisi için hazırlayın.`);
+    dates.add(date.getTime());
     const tuketim = parseDecimal(findImportColumn(row, ['Tüketim ()', 'Tüketim', 'Tüketim (kWh)', 'Tüketim (kVArh)']), null);
     const endeks = parseDecimal(findImportColumn(row, ['Okunan Endeks Değeri', 'Okunan Değer']), null);
-    const carpan = parseDecimal(findImportColumn(row, ['Çarpan']), 1);
+    const rawMultiplier = findImportColumn(row, ['Çarpan']);
+    const carpan = rawMultiplier == null || String(rawMultiplier).trim() === '' ? 1 : parseDecimal(rawMultiplier, null);
     if (tuketim === null || tuketim < 0 || !(carpan > 0)) throw new Error(`${index + 1}. satırın tüketimi veya çarpanı geçersiz.`);
-    return { id: index + 1, tarih: String(rawDate), tuketim, endeks, carpan, okumaSuresi: parseDecimal(findImportColumn(row, ['Okuma Süresi (Saat)']), null), sonuc: 'Ölçüm verisi' };
+    return { id: index + 1, tarih: typeof rawDate === 'number' || rawDate instanceof Date ? date.toLocaleString('tr-TR') : String(rawDate), tuketim, endeks, carpan, okumaSuresi: parseDecimal(findImportColumn(row, ['Okuma Süresi (Saat)']), null), sonuc: 'Ölçüm verisi' };
   });
-  const sum = data.reduce((total, row) => total + row.tuketim, 0);
-  return { aktifData: energyType === 'aktif' ? data : [], induktifData: energyType === 'induktif' ? data : [], kapasitifData: energyType === 'kapasitif' ? data : [], istatistikler: { toplamTuketim: sum.toFixed(2), ortalamaTuketim: (sum / data.length).toFixed(2), maxTuketim: Math.max(...data.map(row => row.tuketim)).toFixed(2), minTuketim: Math.min(...data.map(row => row.tuketim)).toFixed(2) } };
+  const totals = data.reduce((result, row) => ({ sum: result.sum + row.tuketim, max: Math.max(result.max, row.tuketim), min: Math.min(result.min, row.tuketim) }), { sum: 0, max: -Infinity, min: Infinity });
+  if (!Number.isFinite(totals.sum)) throw new Error('Toplam tüketim sayısal hesaplama sınırını aşıyor.');
+  return { aktifData: energyType === 'aktif' ? data : [], induktifData: energyType === 'induktif' ? data : [], kapasitifData: energyType === 'kapasitif' ? data : [], istatistikler: { toplamTuketim: totals.sum.toFixed(2), ortalamaTuketim: (totals.sum / data.length).toFixed(2), maxTuketim: totals.max.toFixed(2), minTuketim: totals.min.toFixed(2) } };
 }
 
 export function cosPhiFromEnergy(active, reactive) {
@@ -83,18 +105,29 @@ export function cosPhiFromEnergy(active, reactive) {
 }
 
 export function parseEnergySpreadsheet(rows) {
+  if (!Array.isArray(rows) || !rows.length) throw new Error('Sayaç dosyasında ölçüm satırı bulunamadı.');
   const normalized = rows.map((row, index) => {
     const date = parseImportDate(findImportColumn(row, ['Tarih']));
     if (!date) throw new Error(`${index + 1}. satırda geçerli tarih bulunamadı.`);
-    const rawIndex = parseDecimal(findImportColumn(row, ['Okunan Endeks Değeri', 'Okunan Değer']), null);
-    const multiplier = parseDecimal(findImportColumn(row, ['Çarpan']), 1);
-    const explicitIndex = parseDecimal(findImportColumn(row, ['Hesaplanmış Endeks', 'Hesaplanmis Endeks', 'Endeks Değeri']), null);
+    const indexValue = findImportColumn(row, ['Okunan Endeks Değeri', 'Okunan Değer']);
+    const rawIndex = parseDecimal(indexValue, null);
+    const multiplierValue = findImportColumn(row, ['Çarpan']);
+    const multiplier = multiplierValue == null || String(multiplierValue).trim() === '' ? 1 : parseDecimal(multiplierValue, null);
+    const explicitValue = findImportColumn(row, ['Hesaplanmış Endeks', 'Hesaplanmis Endeks', 'Endeks Değeri']);
+    const explicitIndex = parseDecimal(explicitValue, null);
     const calculated = explicitIndex ?? (rawIndex !== null ? rawIndex * multiplier : null);
-    const consumption = parseDecimal(findImportColumn(row, ['Tüketim', 'Tuketim', 'Tüketim ()', 'Tüketim (kWh)', 'Tüketim (kVArh)']), null);
-    if (!(multiplier > 0) || (consumption !== null && consumption < 0)) throw new Error(`${index + 1}. satırda tüketim veya çarpan geçersiz.`);
+    const consumptionValue = findImportColumn(row, ['Tüketim', 'Tuketim', 'Tüketim ()', 'Tüketim (kWh)', 'Tüketim (kVArh)']);
+    const consumption = parseDecimal(consumptionValue, null);
+    for (const [raw, parsed] of [[indexValue, rawIndex], [explicitValue, explicitIndex], [consumptionValue, consumption]]) {
+      if (raw != null && String(raw).trim() !== '' && parsed === null) throw new Error(`${index + 1}. satırda tüketim veya endeks sayısal olmalıdır.`);
+    }
+    if (!(multiplier > 0) || (consumption !== null && consumption < 0) || (rawIndex !== null && rawIndex < 0) || (calculated !== null && (!Number.isFinite(calculated) || calculated < 0))) throw new Error(`${index + 1}. satırda tüketim, endeks veya çarpan geçersiz.`);
     return { date, rawIndex, multiplier, calculated, consumption, raw_data: row };
   }).sort((a, b) => a.date - b.date);
-  return normalized.flatMap((row, index) => {
+  for (let index = 1; index < normalized.length; index++) {
+    if (normalized[index].date.getTime() === normalized[index - 1].date.getTime()) throw new Error('Aynı tarih ve saatte birden fazla sayaç kaydı var. Tek bir sayaç/enerji kategorisi seçip yinelenen satırları düzeltin.');
+  }
+  const result = normalized.flatMap((row, index) => {
     let consumption = row.consumption;
     if (consumption === null) {
       const next = normalized[index + 1];
@@ -107,6 +140,8 @@ export function parseEnergySpreadsheet(rows) {
     const name = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'][row.date.getDay()];
     return [{ tarih: localISODate(row.date), saat: `${name} ${day}.${month} ${row.date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}`, okunan_endeks: row.rawIndex, carpan: row.multiplier, hesaplanmis_endeks: row.calculated, tuketim: consumption, raw_data: row.raw_data }];
   });
+  if (!result.length) throw new Error('Tüketim hesaplamak için en az iki farklı zamanlı endeks veya doğrudan tüketim sütunu gerekli.');
+  return result;
 }
 
 export function workDurationHours(start, end) {
@@ -120,7 +155,12 @@ export function mergeCartItems(cart, additions) {
   for (const item of additions) {
     const quantity = parseDecimal(item.quantity, null);
     if (!(quantity > 0)) throw new Error('Miktar sıfırdan büyük olmalıdır.');
-    const existing = result.find(product => product.name === item.name && product.category === item.category);
+    const existing = result.find(product => product.name === item.name && product.category === item.category
+      && (product.id == null && item.id == null || product.id === item.id)
+      && (product.unit || '') === (item.unit || '')
+      && parseDecimal(product.alis_fiyati ?? product.price, null) === parseDecimal(item.alis_fiyati ?? item.price, null)
+      && (product.kdvOrani ?? 20) === (item.kdvOrani ?? 20)
+      && (product.description || '') === (item.description || ''));
     if (existing) existing.quantity = parseDecimal(existing.quantity) + quantity;
     else result.push({ ...item, quantity, description: item.description || '', kdvOrani: item.kdvOrani ?? 20 });
   }
@@ -129,12 +169,20 @@ export function mergeCartItems(cart, additions) {
 
 export function roundMoney(value) { return Math.round((Number(value) + Number.EPSILON) * 100) / 100; }
 
-export function saleLineTotal(item, discount, profit) { return roundMoney(saleUnitPrice(item, discount, profit) * parseDecimal(item.quantity)); }
+export function saleLineTotal(item, discount, profit) {
+  const quantity = parseDecimal(item.quantity, null);
+  if (!(quantity > 0)) throw new Error('Miktar sıfırdan büyük olmalıdır.');
+  const total = roundMoney(saleUnitPrice(item, discount, profit) * quantity);
+  if (!Number.isFinite(total)) throw new Error('Satır tutarı sayısal hesaplama sınırını aşıyor.');
+  return total;
+}
 
 export function saleUnitPrice(item, discount, profit) {
   const price = parseDecimal(item.alis_fiyati ?? item.price, null), d = parseDecimal(discount, null), p = parseDecimal(profit, null);
   if (price === null || price < 0 || d === null || d < 0 || d > 100 || p === null || p < 0) throw new Error('Fiyat, iskonto veya kâr oranı geçersiz.');
-  return roundMoney(price * (1 - d / 100) * (1 + p / 100));
+  const result = roundMoney(price * (1 - d / 100) * (1 + p / 100));
+  if (!Number.isFinite(result)) throw new Error('Birim fiyat sayısal hesaplama sınırını aşıyor.');
+  return result;
 }
 
 export function installmentAmount(amount, count, offset) {
@@ -155,11 +203,15 @@ export function monthlyAdvanceAmount(advance, year, month) {
 export function directOsosMeasurements(rows, facility) {
   if (!Array.isArray(rows) || !rows.length || !String(facility || '').trim()) throw new Error('Tesis adı ve gerçek ölçümler gerekli.');
   const fields = ['aktif_guc','reaktif_guc','kapasitif_guc','gorunen_guc','gerilim_l1','gerilim_l2','gerilim_l3','akim_l1','akim_l2','akim_l3','guc_faktoru','frekans','toplam_enerji'];
+  const times = new Set();
   return rows.map((row,index) => {
     if (!row || typeof row !== 'object' || Array.isArray(row)) throw new Error(`${index+1}. satır ölçüm nesnesi olmalıdır.`);
     const date = parseImportDate(row.olcum_zamani ?? row.zaman ?? row.tarih);
     if (!date) throw new Error(`${index+1}. satırda gerçek olcum_zamani / zaman / tarih gerekli.`);
     const result = { fabrika_adi: String(facility).trim(), sayac_no: row.sayac_no == null ? null : String(row.sayac_no), olcum_zamani: date.toISOString() };
+    const key = JSON.stringify([result.sayac_no, result.olcum_zamani]);
+    if (times.has(key)) throw new Error(`${index+1}. satırda aynı sayaç ve ölçüm zamanı tekrarlanıyor.`);
+    times.add(key);
     let supplied = 0;
     for (const field of fields) {
       const value = row[field] ?? (field === 'gerilim_l1' ? row.gerilim : field === 'akim_l1' ? row.akim : field === 'toplam_enerji' ? row.enerji : undefined);

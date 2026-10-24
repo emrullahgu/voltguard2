@@ -10,9 +10,9 @@
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261013b">
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=98a54d154d91">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,17 +35,18 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
-  <meta name="description" content="VFD üzerinde OverCurrent (OC) hatası nedenleri: motor kilitlenme, yanlış V/f eğrisi, kısa devre koruması, motor kablosu uzunluğu ve rampalar.">
+  <meta name="description" content="VFD aşırı akım (OC) hatasının nedenleri: kısa rampa, mekanik yük, V/f ayarı, dönen motora kalkış, uzun motor kablosu, çıkış kontaktörü ve sargı arızası.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
-  <title>VFD OverCurrent (OC) Hatası ve Çözümü | VoltGuard</title>
+  <title>VFD Aşırı Akım (OC) Hatası: Nedenleri ve Çözümü | VoltGuard</title>
   <link rel="canonical" href="https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="VFD OverCurrent (OC) Hatası ve Çözümü | VoltGuard">
-  <meta property="og:description" content="VFD üzerinde OverCurrent (OC) hatası nedenleri: motor kilitlenme, yanlış V/f eğrisi, kısa devre koruması, motor kablosu uzunluğu ve rampalar.">
+  <meta property="og:title" content="VFD Aşırı Akım (OC) Hatası: Nedenleri ve Çözümü | VoltGuard">
+  <meta property="og:description" content="VFD aşırı akım (OC) hatasının nedenleri: kısa rampa, mekanik yük, V/f ayarı, dönen motora kalkış, uzun motor kablosu, çıkış kontaktörü ve sargı arızası.">
   <meta property="og:url" content="https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
   <meta property="og:site_name" content="VoltGuard">
@@ -53,8 +54,8 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261012d">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html#article","headline":"VFD OverCurrent (OC) Hatası - Sebepleri ve Çözümü","description":"VFD üzerinde OverCurrent (OC) hatası nedenleri: motor kilitlenme, yanlış V/f eğrisi, kısa devre koruması, motor kablosu uzunluğu ve rampalar.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","articleSection":"VoltGuard'a Sor","image":"https://voltguard.com.tr/public/og-image.png","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard'a Sor","item":"https://voltguard.com.tr/sor.html"},{"@type":"ListItem","position":3,"name":"VFD OverCurrent Hatası","item":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html"}]}]}</script>
+  <link rel="stylesheet" href="/css/style.css?v=d152330fb2b0">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html#article","headline":"VFD Aşırı Akım (OC) Hatası - Sebepleri ve Çözümü","description":"VFD aşırı akım (OC) hatasının nedenleri: kısa rampa, mekanik yük, V/f ayarı, dönen motora kalkış, uzun motor kablosu, çıkış kontaktörü ve sargı arızası.","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-24","articleSection":"VoltGuard'a Sor","image":"https://voltguard.com.tr/public/og-image.png","author":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"publisher":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/","logo":{"@type":"ImageObject","url":"https://voltguard.com.tr/public/icon-512.png"}},"mainEntityOfPage":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard'a Sor","item":"https://voltguard.com.tr/sor.html"},{"@type":"ListItem","position":3,"name":"VFD Aşırı Akım (OC) Hatası","item":"https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html"}]}]}</script>
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -68,6 +69,7 @@
           <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
         </span>
       </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
@@ -84,13 +86,16 @@
               <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
               <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
               <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
               <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
             </ul>
           </li>
           <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
-          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -98,6 +103,7 @@
         </div>
       </nav>
       <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
@@ -107,61 +113,61 @@
   <!--/vg:header-->
 
   <nav class="breadcrumb" aria-label="breadcrumb">
-    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/sor.html">VoltGuard'a Sor</a> &rsaquo; <span>VFD OverCurrent Hatası</span>
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/sor.html">VoltGuard'a Sor</a> &rsaquo; <span>VFD Aşırı Akım (OC) Hatası</span>
   </nav>
 
   <main class="article" id="main" tabindex="-1">
     <div class="qa-tags"><span class="qa-tag">Otomasyon</span><span class="qa-tag qa-tag--equipment">VFD / Motor</span><span class="qa-tag qa-tag--problem">Arıza / Ayar</span></div>
-    <h1>VFD OverCurrent (OC) Hatası - Sebepleri ve Çözümü</h1>
+    <h1>VFD Aşırı Akım (OC) Hatası - Sebepleri ve Çözümü</h1>
+    <p class="article__byline" style="font-size:.85rem;color:#5b6472;margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son gözden geçirme: <time datetime="2026-10-24">24.10.2026</time></p>
 
-    <div class="kb-keyfacts"><h2>Soru</h2><ul><li>"Frekans invertörümüz (VFD) motoru çalıştırırken ya da rampalarken OC (OverCurrent) hatası veriyor. Bazen kalkış anında, bazen tam hızda çalışırken. Sebebi ne olabilir?"</li></ul></div>
+    <div class="kb-keyfacts"><h2>Soru</h2><ul><li>"Frekans dönüştürücümüz (VFD) motoru çalıştırırken ya da rampalarken OC (aşırı akım) hatası veriyor. Bazen kalkış anında, bazen tam hızda çalışırken. Sebebi ne olabilir?"</li></ul></div>
 
     <h2>Kısa Cevap</h2>
-    <p>OverCurrent (OC), VFD çıkış akımının IGBT'nin izin verdiği anlık pik değerini (tipik 200% × In) aşması durumunda tetiklenen mikrosaniye seviyesinde bir korumadır. En yaygın altı neden: <strong>(1)</strong> rampa süresi (accel/decel time) çok kısa, <strong>(2)</strong> motor mekanik yükü aşırı, <strong>(3)</strong> V/f eğrisi yanlış (boost çok yüksek), <strong>(4)</strong> VFD gücü motor için yetersiz, <strong>(5)</strong> uzun motor kablosu + dv/dt filtresi yokluğu, <strong>(6)</strong> motor sargı arızası. Hata anında oluşan frekans ve akım değeri VFD hata kaydından okunmalıdır. Bu nedenle sürücü parametreleri ve motor kablosu, <a href="/hizmetler/plc-scada-otomasyon.html">PLC ve otomasyon</a> projelerinde devreye alma sırasında birlikte kontrol edilmelidir.</p>
+    <p>Aşırı akım (OC) hatası, sürücü çıkış akımının güç yarı iletkenlerini (IGBT) korumak için belirlenmiş anlık eşiği aşmasıyla oluşur. Eşik donanımsaldır ve üreticiye göre genellikle sürücü anma akımının yaklaşık 2–2,5 katı mertebesindedir. Sık görülen nedenler: çok kısa hızlanma/yavaşlama rampası, aşırı mekanik yük, yüksek V/f gerilim takviyesi, dönen motora kalkış, motor kablosunun kapasitif şarj akımı, sürücü çıkışında kontaktörün açılıp kapanması ve motor sargısında kısa devre ya da toprak hatası. Hatanın oluştuğu frekans ve akım değeri sürücünün arıza kaydından okunmalıdır.</p>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Donanımsal OC eşiği değiştirilemez; parametreyle ayarlanan akım sınırı (stall önleme) ise eşiğe ulaşılmadan hızlanmayı yavaşlatır.</li><li>OC anlık bir olaydır; aşırı yük (OL) hatası ise dakikalar içinde biriken ısıl yükten doğar.</li><li>İzin verilen motor kablosu uzunluğu üreticinin veri sayfasında ekranlı ve ekransız kablo için ayrı verilir.</li><li>Yavaşlama sırasında görülen hata çoğu zaman aşırı gerilim (OV) hatasıdır ve farklı çözüm ister.</li><li>Arıza kaydındaki frekans, akım ve DC bara gerilimi kök neden analizinin başlangıcıdır.</li></ul></div>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>OC koruması IGBT'yi ani hasardan koruyan donanımsal bir korumadır; yazılım tarafında değişmez.</li><li>Modern VFD'lerde OC eşiği %180-220 × In arası kalibrelenir.</li><li>Yumuşak kalkış / vektör kontrol OC olaylarını azaltır.</li><li>Motor - VFD kablosu 30 m üstü ise dv/dt veya sinüs filtresi şart.</li><li>OC hatası tekrarlıyorsa değişkenler (frekans, akım) mutlaka kayıt altına alınmalıdır.</li></ul></div>
+    <h2>Aşırı Akım (OC) ile Aşırı Yük (OL) Farkı</h2>
+    <p>İki hata sık karıştırılır. <strong>Aşırı akım (OC)</strong>, mikrosaniyeler içinde tepki veren anlık bir korumadır ve yarı iletkenleri hasardan korur. <strong>Aşırı yük (OL)</strong> ise sürücünün veya motorun ısıl modeline dayanır; anma akımının üzerindeki akım belirli bir süre devam ettiğinde oluşur. OC ani bir olaya, OL birikmiş ısıya işaret eder; kök neden analizinde bu ayrım belirleyicidir.</p>
 
-    <h2>OC ile OL (OverLoad) Farkı</h2>
-    <p>İki hatayı karıştırmak yaygındır. <strong>OverCurrent (OC)</strong>, mikrosaniye içinde tetiklenen anlık bir korumadır; IGBT'yi hasardan korur. <strong>OverLoad (OL)</strong> ise motor koruma amaçlıdır ve dakikalarca süren aşırı yük sonucu tetiklenir. OC her zaman "anlık bir olay" sonucu çıkar; OL "yavaş yavaş biriken ısı" sonucudur. Bu ayırım kök neden analizinde belirleyicidir.</p>
-
-    <h2>6 Yaygın Neden</h2>
+    <h2>Olası Nedenler</h2>
     <ol class="article__list">
-      <li><strong>Çok hızlı rampa:</strong> Fabrika ayarı 2-5 s olarak gelir. Yüksek atalet momenti olan yükte (fan, presse, mikser) motor akım çekişi rampada IGBT sınırını aşar. 10-30 s deneyin.</li>
-      <li><strong>Yüksek mekanik yük:</strong> Rulman sıkışma, kaplin bozukluğu, iş parçası tıkanıklığı motor akımını yükseltir. Motoru mekanikten ayırıp deneyin; hata kalmıyorsa mekanik sorun kesindir.</li>
-      <li><strong>V/f eğrisi ayarı:</strong> Torque boost (düşük hızda ekstra gerilim) fazla ayarlanırsa düşük frekansta motor akımı fırlar. Fabrika ayarında bırakın veya auto-tune yapın.</li>
-      <li><strong>Yanlış VFD boyutlandırma:</strong> VFD'nin nominal akımı (In) motor In × 1,1 üzerinde olmalı. Değişken tork uygulamalarında bu yeterli; sabit tork uygulamalarında bir kademe büyük VFD tercih edin.</li>
-      <li><strong>Uzun motor kablosu:</strong> 30 m üzeri kablo IGBT anahtarlama dalgalarını yansıtır; motor sargı uçlarında 2 × DC bara gerilimi (yaklaşık 1200 V pik) oluşur. dv/dt veya sinüs filtresi eklenmezse VFD OC verir ve motor yalıtımı zarar görür.</li>
-      <li><strong>Motor sargı kısa devresi / toprak arızası:</strong> Sargı içi kısa devre veya toprak arıza durumunda VFD çıkışında normal olmayan akım geçer. Megger ile sargı-toprak ve sargı-sargı izolasyon kontrolü yapılmalı.</li>
+      <li><strong>Çok kısa rampa:</strong> Yüksek ataletli yüklerde (fan, pres volanı, karıştırıcı) kısa hızlanma süresi büyük bir ivme torku ve akım ister. Rampa süresini yükün ataletine göre uzatın.</li>
+      <li><strong>Yüksek mekanik yük:</strong> Rulman sıkışması, kaplin hasarı veya iş parçası sıkışması motor akımını yükseltir. Mümkünse motoru yükten ayırıp deneyin; hata kayboluyorsa sorun mekaniktir.</li>
+      <li><strong>V/f ayarı:</strong> Düşük hızdaki gerilim takviyesi (torque boost) gereğinden yüksekse düşük frekansta mıknatıslama akımı ve toplam akım yükselir. Motor etiket verilerini girip otomatik ayar (auto-tune) yapın.</li>
+      <li><strong>Dönen motora kalkış:</strong> Fan gibi yükler rüzgârla veya önceki çalışmadan dönmeye devam ederken sürücü sıfır frekanstan başlarsa büyük bir akım darbesi oluşur. Dönen motoru yakalama (flying start) işlevini etkinleştirin.</li>
+      <li><strong>Çıkışta kontaktör anahtarlama:</strong> Sürücü çalışırken çıkış kontaktörü açılıp kapanırsa motor anlık olarak devreye girer ve OC oluşur. Çıkış kontaktörü yalnız sürücü dururken anahtarlanmalıdır.</li>
+      <li><strong>Uzun motor kablosu:</strong> Uzun kablonun kapasitesi her anahtarlamada şarj akımı çeker; özellikle küçük güçlü sürücülerde bu akım OC eşiğine ulaşabilir. Üreticinin izin verdiği kablo uzunluğu aşılıyorsa çıkış reaktörü veya sinüs filtresi kullanılır. dv/dt filtresi esas olarak motor yalıtımını gerilim tepelerinden korur.</li>
+      <li><strong>Yanlış sürücü boyutu:</strong> Sürücünün çıkış akımı, motor etiket akımını ve yükün aşırı yük gereksinimini karşılamalıdır. Sabit torklu, ağır kalkışlı uygulamalarda ağır görev (HD) değerine göre seçim yapılır.</li>
+      <li><strong>Sargı veya kablo arızası:</strong> Motor sargısında kısa devre ya da motor veya kabloda toprak hatası anlık yüksek akım yaratır.</li>
     </ol>
 
     <h2>Hata Anında Ne Kontrol Etmeli?</h2>
     <ul class="article__list">
-      <li>Hata kaydında yazan <strong>frekans</strong>: 0-5 Hz arasında OC ise V/f eğrisi veya mekanik problem, tam hızda OC ise motor / kablo problemi.</li>
-      <li><strong>Akım değeri</strong>: OC eşiği kaç ampere ayarlı ve gerçek akım kaç? Fark az ise sınır aşımı, çok ise donanım problemi.</li>
-      <li><strong>Hata sıklığı</strong>: Ilk çalıştırmada mı, yoğun kullanımda mı, sıcak havada mı? Zamansal bağıntı ipucu verir.</li>
-      <li><strong>Fault stack</strong>: Modern VFD'lerde son 10 hata ve o anki değerler kayıtlıdır (Yaskawa U3-01, Siemens Faults menu, ABB parameters group 04).</li>
+      <li><strong>Frekans:</strong> Hata kalkışta, düşük frekansta oluşuyorsa V/f ayarı, dönen motor veya mekanik sıkışma; sabit hızda oluşuyorsa yük darbesi, kablo veya motor arızası olasıdır.</li>
+      <li><strong>Akım ve çalışma durumu:</strong> Hata hızlanmada mı, sabit hızda mı, yavaşlamada mı oluştu? Arıza kaydındaki akım ve DC bara gerilimini not edin.</li>
+      <li><strong>Sıklık ve zamanlama:</strong> İlk çalıştırmada mı, yoğun üretimde mi, sıcak havada mı? Zamansal ilişki ipucu verir.</li>
+      <li><strong>Arıza geçmişi:</strong> Sürücülerin çoğu son arızaları ve o anki değerleri kaydeder; menünün yeri için üretici kılavuzuna bakın.</li>
     </ul>
 
     <h2>Ölçümle Nasıl Doğrularsınız?</h2>
     <ul class="article__list">
-      <li><strong>Pens ampermetre:</strong> Motor kalkış akımını gerçek zamanlı okuyun. Rampa boyunca max akımı not edin.</li>
-      <li><strong>Osiloskop:</strong> Motor girişi V ve I dalga şekli. Yüksek dv/dt görülüyorsa filtre gerekli.</li>
-      <li><strong>Megger ile motor sargısı:</strong> Sargı-toprak izolasyonu &gt; 1 MΩ olmalı.</li>
-      <li><strong>Motor sargı direnç ölçümü:</strong> Üç sargı direnci arasında %5 fark olmamalı.</li>
-      <li><strong>Rulman termal kamerası:</strong> Yük yokken bile rulmanda 15 °C üstü sıcaklık artışı mekanik problemi işaret eder.</li>
+      <li><strong>Motor akımı:</strong> Kalkış ve rampa boyunca sürücünün izleme ekranından veya gerçek RMS pens ampermetreyle en yüksek akımı not edin.</li>
+      <li><strong>Yalıtım direnci:</strong> Ölçümden önce motor kablosunu sürücüden <strong>mutlaka ayırın</strong>; sürücü çıkışına yalıtım test gerilimi uygulanmaz. 1 kV altı motorlarda IEEE 43'e göre 40 °C'ye düzeltilmiş en düşük değer 5 MΩ'dur; kabloyu ayrıca ölçün.</li>
+      <li><strong>Sargı direnci:</strong> Üç sargı direncini mikroohmmetreyle karşılaştırın; belirgin fark sargı veya bağlantı arızasına işaret eder.</li>
+      <li><strong>Mekanik kontrol:</strong> Rulman sıcaklığı ve sesi, kaplin boşluğu ve milin serbest dönüşünü kontrol edin.</li>
     </ul>
 
     <h2>Çözüm Önerileri</h2>
     <ol class="article__list">
-      <li>Rampa süresini 2-3 katına çıkarın (accel: 5 s → 15 s, decel: 5 s → 15 s).</li>
-      <li>V/f eğrisinde otomatik ayarı (auto-tune) çalıştırın; motor plaka verilerini VFD'ye tam girin.</li>
-      <li>Vektör kontrol (sensorless vector, FOC) moduna geçin; düşük hızda daha iyi moment kontrolü sağlar.</li>
-      <li>30 m üstü kabloda dv/dt filtresi; 100 m üstü uygulamada sinüs filtresi kullanın.</li>
-      <li>Motor kablosunu <strong>ekranlı</strong> (CY, EMV) tipe geçirin; ekranı iki uçtan topraklayın.</li>
-      <li>Yumuşak kalkış için "S-curve" (yumuşak eğri rampa) etkinleştirin.</li>
-      <li>Enerji tasarrufu modu (energy save) kapatın; bazen düşük yükte agresif optimizasyon OC tetikleyebilir.</li>
-      <li>Motor eski / sarım yenilenmişse etiket In değerini VFD'ye tam girin; küçük tolerans kritiktir.</li>
-      <li>DC bara gerilimini ölçün; frenleme durumunda &gt; 800 V ise fren direnci veya rejeneratif ünite ekleyin.</li>
+      <li>Hızlanma ve yavaşlama rampalarını yükün ataletine göre uzatın; gerekiyorsa S eğrili rampa kullanın.</li>
+      <li>Motor etiket verilerini sürücüye eksiksiz girin ve otomatik ayarı çalıştırın.</li>
+      <li>Düşük hızda yüksek tork gereken yüklerde sensörsüz vektör kontrolüne geçin.</li>
+      <li>Dönen motora kalkış ihtimali olan yüklerde dönen motoru yakalama işlevini açın.</li>
+      <li>Çıkış kontaktörünü sürücü dururken anahtarlayacak şekilde kumandayı düzenleyin.</li>
+      <li>Kablo uzunluğu üreticinin sınırını aşıyorsa çıkış reaktörü veya sinüs filtresi ekleyin; ekranlı motor kablosunun ekranını iki uçta 360° kelepçeyle topraklayın.</li>
+      <li>Yavaşlamada aşırı gerilim (OV) hatası görülüyorsa yavaşlama süresini uzatın veya fren direnci / rejeneratif ünite ekleyin.</li>
+      <li>Motor sargısı yenilenmişse etiket akımını ve gerekiyorsa motor parametrelerini sürücüye yeniden girin.</li>
     </ol>
 
     <h2>Benzer Sorular</h2>
@@ -170,9 +176,10 @@
       <li><a href="/sor/motor-bir-fazda-dusuk-akim.html">Üç fazlı motorun bir fazında düşük akım okunuyor?</a></li>
       <li><a href="/bilgi/vfd-frekans-invertoru-nedir.html">VFD Nedir? (Bilgi Bankası)</a></li>
       <li><a href="/hesaplama/motor-akimi-hesaplama/">Motor Akımı Hesaplama Aracı</a></li>
+      <li><a href="/voltsim/motor-otomasyon/">VoltSim: Motor ve otomasyon simülasyonu</a></li>
     </ul>
 
-    <p class="kb-disclaimer">Bu cevap genel teknik bilgi amaçlıdır. VFD ayarları üretici kataloğuna göre yapılmalı; kritik proses ekipmanlarında yetkili teknik servisle çalışılmalıdır.</p>
+    <p class="kb-disclaimer">Bu cevap genel teknik bilgi amaçlıdır. Sürücü ayarları üretici kılavuzuna göre yapılmalıdır.</p>
     <div class="kb-cta">
       <div class="kb-cta__text"><strong>VFD ayar, filtre ve motor koordinasyonu için destek alın</strong><span>VoltGuard mühendisleriyle keşif planlayın.</span></div>
       <div style="display:flex;flex-wrap:wrap;gap:.6rem">
@@ -207,7 +214,7 @@
               <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
           </a>
-          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
           <ul class="vg-footer__contact">
             <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
@@ -217,7 +224,7 @@
             <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
             <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
           </address>
-          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
         </div>
         <nav class="vg-footer__nav" aria-label="Alt menü">
           <div class="vg-footer__col">
@@ -249,9 +256,8 @@
               <li><a href="/#referanslar">Referanslarımız</a></li>
               <li><a href="/#surec">Sürecimiz</a></li>
               <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
               <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
               <li><a href="/#katalog">Katalog</a></li>
               <li><a href="/#sss">SSS</a></li>
               <li><a href="/#iletisim">İletişim</a></li>
@@ -267,6 +273,8 @@
               <li><a href="/sor.html">VoltGuard'a Sor</a></li>
               <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
               <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+              <li><a href="/volthaber/">VoltHaber</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
@@ -276,6 +284,7 @@
               <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
               <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
               <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
               <li><a href="/hesap/giris.html">Üye Girişi</a></li>
               <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
@@ -292,39 +301,9 @@
           <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
-      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
-        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          </circle>
-        </svg>
-        <span class="sig-node" aria-hidden="true"></span>
-        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
-          <span class="sig-badge__ring" aria-hidden="true"></span>
-          <span class="sig-badge__aurora" aria-hidden="true"></span>
-          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
-          <span class="sig-badge__body">
-            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
-            <span class="sig-badge__brand">
-              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
-              <span class="sig-badge__eng">Engineering</span>
-            </span>
-          </span>
-          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
-          <span class="sig-badge__shimmer" aria-hidden="true"></span>
-        </a>
-        <span class="sig-node" aria-hidden="true"></span>
-        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
-          </circle>
-        </svg>
-      </div>
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261013a" defer></script>
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
 </body>
 </html>

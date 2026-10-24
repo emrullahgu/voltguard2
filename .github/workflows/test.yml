@@ -1,0 +1,53 @@
+# Her push ve PR'da birim/entegrasyon testlerini çalıştırır (npm test → tools/test.cjs).
+# Tarayıcı denetimleri (site-audit, compat-audit, voltsim-browser) yerelde/önizlemede elle çalıştırılır.
+name: Testler
+
+# Hesap fatura kilidi kalkana kadar yalnız elle çalıştırılır; otomatik testler Ubuntu sunucudaki
+# voltguard-ci (tools/ci/) tarafından yapılır ve PR'da "voltguard-ci" commit durumu olarak görünür.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, fileinfo, openssl, curl, ctype, json, session
+          coverage: none
+
+      # Testler PHP'yi Windows'taki gömülü sürüm gibi "-n" (ini'siz) çağırır; Linux'ta eklentiler ini ile
+      # yüklendiğinden bu sarmalayıcı "-n" bayrağını düşürür, diğer argümanları olduğu gibi iletir.
+      - name: PHP sarmalayıcısı
+        run: |
+          mkdir -p "$RUNNER_TEMP/bin"
+          cat > "$RUNNER_TEMP/bin/php-ci" <<'SH'
+          #!/usr/bin/env bash
+          args=()
+          for a in "$@"; do [ "$a" = "-n" ] || args+=("$a"); done
+          exec php "${args[@]}"
+          SH
+          chmod +x "$RUNNER_TEMP/bin/php-ci"
+          echo "VG_PHP=$RUNNER_TEMP/bin/php-ci" >> "$GITHUB_ENV"
+
+      - name: Testler
+        run: npm test

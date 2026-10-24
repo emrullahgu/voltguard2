@@ -24,6 +24,8 @@ deployment:
     - export DEPLOYPATH=/home/voltgua2/public_html/
     - export VG_STAGEPATH=/home/voltgua2/vg-deploy-stage/
     - /bin/mkdir -p $VG_STAGEPATH
+    # Sozdizimi hatali PHP canliya gitmesin. php komutu bulunamazsa adim atlanir, hata bulursa deploy burada durur.
+    - if command -v php >/dev/null 2>&1; then for f in api/*.php api/lib/*.php contact.php calisan/index.php calisan/uygulama/index.php volthaber/index.php; do php -l "$f" >/dev/null || exit 1; done; fi
     # Install private URL protection before any private file is copied into the web root.
     - /bin/cp .htaccess $DEPLOYPATH
     # ----- 1) Statik varliklar -----
@@ -94,6 +96,16 @@ deployment:
     - /bin/cp -R araclar $DEPLOYPATH/araclar.new
     - /bin/rm -rf $DEPLOYPATH/araclar
     - /bin/mv $DEPLOYPATH/araclar.new $DEPLOYPATH/araclar
+    # VoltSim 3D simulasyon sayfalari; /voltsim/ ve /voltsim/<modul>/ adresleri index.html sunar (.htaccess).
+    - /bin/rm -rf $DEPLOYPATH/voltsim.new
+    - /bin/cp -R voltsim $DEPLOYPATH/voltsim.new
+    - /bin/rm -rf $DEPLOYPATH/voltsim
+    - /bin/mv $DEPLOYPATH/voltsim.new $DEPLOYPATH/voltsim
+    # VoltHaber; /volthaber/ ve alt adresleri volthaber/index.php sunucu tarafinda uretir (.htaccess).
+    - /bin/rm -rf $DEPLOYPATH/volthaber.new
+    - /bin/cp -R volthaber $DEPLOYPATH/volthaber.new
+    - /bin/rm -rf $DEPLOYPATH/volthaber
+    - /bin/mv $DEPLOYPATH/volthaber.new $DEPLOYPATH/volthaber
     # ----- 4) Kok dosyalar -----
     # Kokteki tum .html sayfalari tek gorevle (index.html, 404.html, fabrika-cozumleri.html ... yeni kok sayfalar dahil).
     # Yeni kok sayfa icin AYRI cp satiri YAZMAYIN; dosya depoda yoksa cp hata verip deploy'u o noktada durdurur.

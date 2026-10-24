@@ -15,10 +15,20 @@ const origin = `http://127.0.0.1:${port}`;
 const workspaceHash = crypto.createHash('sha256').update(fs.realpathSync(root).toLowerCase()).digest('hex').slice(0, 20);
 const dataDirectory = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), '.local', 'share'), 'VoltGuard', 'preview-data', workspaceHash);
 const internalToken = crypto.randomBytes(32).toString('hex');
-const phpRoutes = new Set(['/api/auth.php', '/api/community.php', '/api/staff.php', '/api/company.php',
+const phpRoutes = new Set(['/api/auth.php', '/api/community.php', '/api/metrics.php', '/api/volthaber.php', '/api/staff.php', '/api/company.php',
   '/api/company-asset.php', '/api/company-connectors.php', '/calisan/', '/calisan/index.php',
-  '/calisan/uygulama', '/calisan/uygulama/']);
-const csp = fs.readFileSync(path.join(root, '.htaccess'), 'utf8').match(/Header always set Content-Security-Policy "([^"]+)"/)[1];
+  '/calisan/uygulama', '/calisan/uygulama/', '/contact.php']);
+// Mirror the path-specific policies of .htaccess (VG_CSP_SITE / PRIVATE / APP / API).
+const htaccess = fs.readFileSync(path.join(root, '.htaccess'), 'utf8');
+const policies = Object.fromEntries([...htaccess.matchAll(/Header always set Content-Security-Policy "([^"]+)" env=VG_CSP_([A-Z]+)/g)].map(match => [match[2], match[1]]));
+const csp = policies.SITE;
+function cspFor(pathname) {
+  const lower = pathname.toLowerCase();
+  if (/^\/calisan\/uygulama(\/|$)/.test(lower)) return policies.APP;
+  if (/^\/(hesap|calisan)(\/|$)/.test(lower)) return policies.PRIVATE;
+  if (/^\/api\//.test(lower) && !/^\/api\/company-asset\.php/.test(lower)) return policies.API;
+  return csp;
+}
 const maxProxyBody = 10 * 1024 * 1024;
 const hopHeaders = new Set(['connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'transfer-encoding', 'upgrade']);
 const types = {
@@ -86,7 +96,7 @@ async function startPhp() {
     '-d', 'display_errors=0', '-d', 'log_errors=1', '-d', 'upload_max_filesize=8M', '-d', 'post_max_size=10M',
     '-S', `127.0.0.1:${phpPort}`, '-t', root, path.join(root, 'tools/preview-router.php')], {
     cwd: root, windowsHide: true, stdio: ['ignore', 'ignore', 'pipe'],
-    env: { ...process.env, VG_DATA_DIR: dataDirectory, VG_STAFF_SITE_URL: origin, VG_SITE_URL: origin, VG_PREVIEW_INTERNAL_TOKEN: internalToken, VG_MAIL_OUTBOX: '1' }
+    env: { ...process.env, VG_DATA_DIR: dataDirectory, VG_STAFF_SITE_URL: origin, VG_SITE_URL: origin, VG_PREVIEW_INTERNAL_TOKEN: internalToken, VG_MAIL_OUTBOX: '1', VG_CONTACT_ALLOWED_ORIGINS: `${origin},http://localhost:${port}` }
   });
   // Request paths may contain sensitive query parameters. Never echo PHP access logs into the chat.
   phpChild.stderr.on('data', () => {});
@@ -158,6 +168,7 @@ const server = http.createServer((req, res) => {
   let url, pathname;
   try { url = new URL(req.url, origin); pathname = decodeURIComponent(url.pathname); }
   catch (_) { return fail(res, 400, 'Geçersiz adres.'); }
+  res.setHeader('Content-Security-Policy', cspFor(pathname) || csp);
   if (!new Set([`127.0.0.1:${port}`, `localhost:${port}`]).has(String(req.headers.host || '').toLowerCase())) return fail(res, 403, 'Bu kaynak kabul edilmedi.');
   if (pathname.includes('\\') || pathname.includes('\0') || /(^|\/)\./.test(pathname)) return fail(res, 404, 'Sayfa bulunamadı.');
   function redirect(destination) { res.writeHead(301, { Location: destination + url.search }); res.end(); }
@@ -176,7 +187,7 @@ const server = http.createServer((req, res) => {
   if (pathname === '/index.html') return redirect('/');
   if (pathname === '/teklif-araclari.html') return redirect('/hesaplama-araclari/');
   if (/^\/hesaplama\/[a-z0-9-]+\.html$/.test(pathname)) return redirect(pathname.slice(0, -5) + '/');
-  if (/^\/(?:araclar(?:\/[a-z0-9-]+)?|hizmetler)\/index\.html$/.test(pathname)) return redirect(pathname.slice(0, -10));
+  if (/^\/(?:(?:araclar|voltsim)(?:\/[a-z0-9-]+)?|hizmetler)\/index\.html$/.test(pathname)) return redirect(pathname.slice(0, -10));
   if (/^\/hesaplama-araclari\/?$/.test(pathname)) pathname = '/teklif-araclari.html';
   else if (/^\/hesaplama\/[a-z0-9-]+\/?$/.test(pathname)) pathname = pathname.replace(/\/$/, '') + '.html';
   let file = path.resolve(root, '.' + pathname);

@@ -1,4 +1,30 @@
-# VoltGuard Tools hesap API'si (`api/auth.php`)
+# VoltGuard hesap API'si (`api/auth.php`)
+
+## Site sahibinin sunucuda yapması gerekenler (kontrol listesi)
+
+1. **Cloudflare Turnstile (iletişim / teklif / "Sor" formları)** — iki parça birlikte ayarlanır:
+   - Herkese açık *site anahtarı*: `index.html`, `sor.html`, `fabrika-cozumleri.html` içindeki
+     `data-sitekey="REPLACE_WITH_TURNSTILE_SITE_KEY"` değerini Cloudflare panelindeki site anahtarıyla değiştirin.
+     Anahtar yer tutucu kaldıkça sayfalar Turnstile betiğini **hiç yüklemez** (bozuk kutu görünmez).
+   - Gizli anahtar: sunucuda `TURNSTILE_SECRET_KEY` ortam değişkeni. **Gizli anahtarı yalnızca site anahtarı sayfalara
+     yazıldıktan sonra tanımlayın.** Gizli anahtar var ama formda jeton yoksa `contact.php` güvenli tarafta kalır (422
+     "Güvenlik doğrulaması yüklenemedi") ve `error_log`a yapılandırma uyarısı yazar.
+   - Gizli anahtar yoksa formlar çalışır; koruma alan doğrulama, bal tuzağı, IP başına 10 dakikada 5 ve site geneli
+     saatte 40 mesaj sınırıdır (Turnstile açıkken saatte 120). Her gönderimde `error_log`a "bot doğrulaması kapalı" yazılır.
+   - Deploy sonrası bir test mesajı gönderip `info@voltguard.com.tr` kutusunda görün.
+2. **Ortam değişkenleri `.htaccess` ile verilmez**: deploy `.htaccess` dosyasının üzerine yazar ve `SetEnv` satırları kaybolur.
+   cPanel → *MultiPHP INI Editor / LiteSpeed* ya da hosting panelinin ortam değişkeni ekranını kullanın
+   (LiteSpeed'de `lsapi` için `.user.ini` docroot **dışındaki** PHP yapılandırmasıyla). Varsayılanlar canlı için uygundur;
+   zorunlu olan yalnızca Turnstile gizli anahtarıdır.
+3. **Özel veri dizini** `/home/voltgua2/vg-data` (docroot dışı) yazılabilir olmalı; docroot içine düşme seçeneği yoktur, yoksa API 503 döner.
+4. **E-posta**: `noreply@voltguard.com.tr` gönderici olarak izinli olmalı; SPF ve DKIM kayıtlarını doğrulayın.
+5. **Topluluk**: misafir yorumları varsayılan olarak açıktır. `VG_COMMUNITY_GUESTS=off` topluluğu yalnızca üyelere açar;
+   `VG_COMMUNITY_GUEST_DAILY` (varsayılan 100) site geneli günlük misafir yorum sınırıdır. En az bir moderatör atayın
+   (`php tools/community-admin.php grant <kullanıcı-id>`, bkz. `COMMUNITY.md`); 3 farklı ziyaretçinin bildirdiği yorumlar
+   moderatör "İncelendi, yayımla" diyene kadar gizlenir.
+6. **Netlify** (`voltguard2.netlify.app`) yalnızca statik vitrindir: `/hesap/*`, `/calisan/*` ve `/topluluk.html`
+   `https://voltguard.com.tr` adresine 301 ile yönlenir. Netlify'a özel alan adı olarak `voltguard.com.tr` bağlanırsa bu
+   yönlendirmeler döngü yaratır; o durumda `netlify.toml` içindeki bu kuralları kaldırın.
 
 Sunucu tarafı üyelik sistemi: kayıt, giriş/çıkış, profil, şifre değiştirme ve sıfırlama, hesap silme (KVKK),
 favoriler / hesaplama geçmişi / projeler / dokümanlar senkronu ve tüm verilerin JSON olarak dışa aktarımı.
@@ -23,19 +49,21 @@ favoriler / hesaplama geçmişi / projeler / dokümanlar senkronu ve tüm verile
 
 ## Kurulum
 
-Ek kurulum gerekmez: cPanel deploy (`.cpanel.yml`) `api/` klasörünü kopyalar, ilk istekte veri klasörü ve tablolar oluşur.
+cPanel deploy (`.cpanel.yml`) `api/` klasörünü kopyalar. Web kökü dışındaki özel veri dizini yazılabilir olmalıdır; ilk istekte tablolar oluşur. Canlı hesap işlemleri HTTPS gerektirir. Düz HTTP yalnızca loopback istemci ve localhost adresi birlikte doğrulanınca geliştirme için kabul edilir.
 
 **`api/` her deploy'da silinip yeniden kopyalanır; içine asla veri yazılmaz.** Çalışma verisi şu sırayla seçilen klasördedir:
 
 1. `VG_DATA_DIR` ortam değişkeni (verilmişse ve yazılamıyorsa API 503 döner; sessizce başka klasöre geçmez),
 2. `dirname(DOCUMENT_ROOT)/vg-data` → cPanel'de `/home/voltgua2/vg-data` (public_html **dışı**, önerilen),
-3. `DOCUMENT_ROOT/_vgdata` (web'den `.htaccess` ile kapalı; içine ayrıca `Require all denied` içeren `.htaccess` ve boş `index.html` bırakılır).
+
+`DOCUMENT_ROOT/_vgdata` eski kurulumların koruması için kapalı tutulur; hesap, iletişim, oturum ve hız sınırı verisi için artık kullanılmaz. Özel dizin yoksa sistem 503 verir. Dizinlerin fiziksel hedefi de denetlenir; web köküne çıkan sembolik bağlantı/junction kabul edilmez. Eski verisi `_vgdata` altında olan kurulumda dizini yedekleyip web kökü dışına taşıyın ve `VG_DATA_DIR` değerini ayarlayın.
 
 Klasör içeriği (hepsi 0600/0700):
 
 ```
 vg-data/
   store.kind            "sqlite" veya "json" (ilk istekte yazılır; sonradan değişmez → kullanıcılar iki depoya bölünmez)
+  store-kind.lock       ilk depo seçimini eşzamanlı isteklerde kilitler
   vg-accounts.sqlite    SQLite modu: users, user_data, reset_tokens tabloları
   json/                 JSON modu: emails.json, tokens.json, users/<id>.json, data/<id>/<koleksiyon>.json, store.lock
   sessions/             PHP oturum dosyaları (VGSESS)
@@ -55,11 +83,18 @@ Yedekleme: `vg-data/` klasörünü (özellikle `vg-accounts.sqlite` veya `json/`
 | `VG_SITE_URL` | `https://voltguard.com.tr` | Sıfırlama e-postasındaki bağlantının kökü (Host başlığına güvenilmez) |
 | `VG_STORE` | otomatik | `sqlite` / `json` — yalnızca ilk kurulumda etkilidir |
 | `VG_ALLOWED_HOSTS` | — | Origin denetiminde Host'a ek olarak kabul edilecek host'lar (virgüllü) |
+| `VG_TRUSTED_PROXIES` | — | Cloudflare dışındaki HTTPS sonlandırıcı vekillerin IP/CIDR listesi; rastgele istemcinin X-Forwarded-Proto başlığına güvenilmez |
+| `VG_CONTACT_ALLOWED_ORIGINS` | — | İletişim formu staging kökenleri (örn. `https://staging.example`); canlı izinler kanonik HTTPS ve www adresidir |
 | `VG_RATE_SCALE` | `1` | Hız sınırı eşiklerini çarpar (staging/test) |
 | `VG_MAIL_OUTBOX` | — | `1`: e-posta gönderilmez, `outbox/` klasörüne `.eml` yazılır. **Canlıda tanımlamayın.** |
 
-cPanel'de ortam değişkeni için `.htaccess` içine `SetEnv VG_DATA_DIR /home/voltgua2/vg-data` yazılabilir
-(LiteSpeed/Apache `mod_env`). Varsayılanlar canlı sunucu için uygundur; değişken tanımlamak gerekmez.
+| `TURNSTILE_SECRET_KEY` | — | İletişim formları için Turnstile gizli anahtarı (yukarıdaki kontrol listesi) |
+| `TURNSTILE_EXPECTED_HOSTNAME` | `voltguard.com.tr` | Siteverify yanıtında beklenen alan adı |
+| `VG_COMMUNITY_GUESTS` | açık | `off`: topluluğa yalnızca üyeler yazar |
+| `VG_COMMUNITY_GUEST_DAILY` | `100` | Site geneli 24 saatlik misafir yorum sınırı |
+
+Ortam değişkenlerini `.htaccess` (`SetEnv`) ile **vermeyin**: her deploy `.htaccess` dosyasının üzerine yazar. Hosting panelinin
+ortam değişkeni / PHP yapılandırma ekranını kullanın. Varsayılanlar canlı sunucu için uygundur.
 
 ## Uç noktalar
 
@@ -69,12 +104,12 @@ Hata: `{"ok":false,"error":"<kod>","message":"<Türkçe mesaj>","fields":{...}}`
 | İşlem | Yöntem | Gövde (JSON) | Not |
 | --- | --- | --- | --- |
 | `me` | GET | — | `{user|null, csrf, expired?}`; anonim oturumu ve CSRF jetonunu başlatır |
-| `register` | POST | `name, email, password, company?, phone?, consent:true, website:"" (bal tuzağı), remember?` | 201; otomatik giriş |
+| `register` | POST | `name, email, password, company?, phone?, website:"" (bal tuzağı), remember?` | 201; otomatik giriş; eski `consent:true` alanı kabul edilir fakat zorunlu değildir |
 | `login` | POST | `email, password, remember?` | e-posta ve IP başına kademeli kilit |
 | `logout` | POST | `{}` | oturum dosyası silinir, çerez temizlenir |
 | `update_profile` | POST | `name?, company?, phone?, email?, password?` | e-posta değişikliği mevcut şifre ister |
 | `change_password` | POST | `current, password` | diğer oturumlar kapanır, yeni CSRF döner, bildirim e-postası |
-| `delete_account` | POST | `password, confirm:true` | hesap + tüm veriler kalıcı silinir |
+| `delete_account` | POST | `password, confirm:true` | hesap, koleksiyonlar, üye yorumları ve moderatör yetkisi silinir; yanıtlar için kimliksiz boş yorum kaydı kalabilir |
 | `forgot_password` | POST | `email` | her durumda aynı yanıt; jeton 1 saat, tek kullanım |
 | `reset_password` | POST | `token, password` | tüm oturumlar kapanır |
 | `data_get` | GET | `?collection=all|favorites,history,...` | `{collections:{<ad>:{items,rev,updatedAt}}}` |
@@ -104,7 +139,7 @@ breakdown?}, note, savedAt, serverAt`. `result.breakdown` isteğe bağlıdır: h
   sonra 30 sn → 15 dk'ya kadar artan kilit (başkası sahibini kendi bağlantısından kilitleyemez), e-posta başına dağıtık denemelere
   karşı 15 dk'da 50 hata → 15 dk, IP başına 30 hata → 15 dk; kayıt IP başına 10/saat; şifre sıfırlama isteği IP başına 5/15 dk ve
   e-posta başına 3/saat (sessiz); sıfırlama IP başına 10/15 dk; e-posta değişikliği hesap başına 5/saat ve IP başına 10/saat;
-  mevcut şifre doğrulaması kullanıcı başına 5 hata.
+  mevcut şifre doğrulaması kullanıcı başına 5 hata; `me` (anonim oturum açılışı) istemci başına 10 dakikada 1200.
 - Temizlik: süresi dolmuş sayaç (rl/) ve oturum dosyaları saatte en fazla bir kez, yanıt gönderildikten sonra taranıp silinir
   (`gc-rl.last`, `gc-sessions.last` işaret dosyaları).
 - E-posta `mail()` ile `-f noreply@voltguard.com.tr` zarf göndericisiyle gider: cPanel'de bu adresin (veya alan adının)
@@ -112,6 +147,24 @@ breakdown?}, note, savedAt, serverAt`. `result.breakdown` isteğe bağlıdır: h
 - Sıfırlama bağlantısı URL parçasında (`#t=`) taşınır: sunucu günlüklerine ve Referer'a gitmez; veritabanında yalnızca SHA-256 özeti tutulur.
 - Günlüklere (error_log) kişisel veri yazılmaz; yalnızca hata türü/konumu.
 - Cloudflare arkasında `CF-Connecting-IP` yalnızca istek gerçek bir Cloudflare adresinden geliyorsa kullanılır (contact.php ile aynı).
+- Hız sınırı dizini veya sayaç yazımı başarısızsa koruma sessizce devre dışı kalmaz; istek 503 ile kapanır.
+- `store.kind` bozuksa veya var olan veri için kayıpsa depo otomatik değişmez; yedekten kontrollü kurtarma gerekir.
+- `consent_at` ve `consent_ver` eski veri şemasındaki alan adlarıdır. Yeni kayıtlarda bunlar kayıt talebinin zamanı ve sunulan aydınlatma metninin sürümünü belirtir; genel veri işleme rızası sayılmaz.
+
+## İletişim formu (`/contact.php`)
+
+Yalnızca `POST` form verisi, doğrulanan aynı site kökeni ve en fazla 32 KB gövde kabul edilir. Dosya eki alınmaz. Ad, Türkiye cep telefonu, isteğe bağlı e-posta, hizmet alanı, 20–1000 karakter mesaj ve form zaman işareti doğrulanır. Aydınlatma metni formda sunulur; aydınlatma için onay veya genel amaçlı açık rıza gönderimin ön koşulu değildir.
+
+IP adresi e-postaya/günlüğe yazılmaz; spam sayacı özel dizinde HMAC adıyla, IPv6 için /64 gruplamasıyla tutulur. IP başına 10 dakikada 5 istek ve site geneli saatlik sınır (Turnstile kapalıyken 40, açıkken 120) vardır. Sayaç arızası gönderimi durdurur. `TURNSTILE_SECRET_KEY` tanımlıysa Siteverify sunucu doğrulaması ve hostname eşleşmesi zorunludur (jeton yoksa 422 + yapılandırma uyarısı); `TURNSTILE_EXPECTED_HOSTNAME` varsayılanı `voltguard.com.tr` olur. Anahtar yoksa alan doğrulama, bal tuzağı ve hız sınırları çalışır.
+
+## Güvenlik başlıkları
+
+`.htaccess` yol bazlı CSP uygular (`mod_setenvif` ile `VG_CSP_*`): genel sayfalar mevcut politikayı; `/hesap/` ve `/calisan/`
+satır içi betik ve `eval` olmadan (`script-src 'self'`, `frame-ancestors 'none'`); `/calisan/uygulama/` derlenmiş uygulama için
+satır içi betiksiz (`'unsafe-eval'` yalnızca kütüphaneler için); `/api/` `default-src 'none'`. Hesap sayfalarının betikleri
+`js/hesap-*.js` dosyalarındadır; bu sayfalara satır içi `<script>` veya `onclick=` eklemeyin (`tools/tests/account-hardening.test.cjs` denetler).
+
+Mesaj `info@voltguard.com.tr` adresine, sabit alan adı göndericisiyle ve doğrulanmış Reply-To ile gönderilir. `mail()` yoksa veya kabul etmezse 503 döner; başarı yalnızca taşıyıcının iletiyi kabul ettiğini belirtir, gelen kutusu teslim garantisi değildir. `VG_MAIL_OUTBOX=1` yalnızca yerel test içindir; yanıt gerçek e-posta gönderilmediğini açıkça bildirir.
 
 ## curl ile test
 

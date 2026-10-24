@@ -46,7 +46,7 @@
 :where(#vg-tool-workspace) table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 :where(#vg-tool-workspace) th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;text-align:left;padding:6px;border-bottom:1px solid var(--line);white-space:nowrap}
 :where(#vg-tool-workspace) td{padding:4px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
-:where(#vg-tool-workspace) #yukler td input[type=number]{width:70px}
+:where(#vg-tool-workspace) #yukler td input[type=number],:where(#vg-tool-workspace) #yukler td input[inputmode=decimal]{width:70px}
 :where(#vg-tool-workspace) #yukler td input[type=text]{min-width:140px}
 :where(#vg-tool-workspace) #yukler td select{min-width:100px}
 :where(#vg-tool-workspace) #yukler input[type=checkbox]{width:18px;height:18px;padding:0}
@@ -114,7 +114,7 @@
 :where(#vg-tool-workspace) .cmp td:first-child{color:var(--muted)}
 :where(#vg-tool-workspace) .cmp td{white-space:nowrap}
 :where(#vg-tool-workspace) .cmp .sel{background:var(--sunken);font-weight:600}
-</style><link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=2912feacba52"><link rel="stylesheet" href="/css/fa-subset.css?v=875de322c835"><link rel="stylesheet" href="/css/vg-shell.css?v=2968ba733bcb"><script src="/js/vg-shell.js?v=f4956253830f" defer></script><script src="/js/voltguard-auth.js?v=872e5c8ca665" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=3c2e78a2be4c"></head><body data-vg-tool="mesken-ges-depolama" data-vg-original-author="Baki SONAY" data-vg-original-source="Sonay Enerji" data-vg-title="Mesken GES ve Depolama" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[&quot;voltguard:mesken-ges-depolama:meskenGes2&quot;]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+</style><link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=98a54d154d91"><script src="/js/vg-shell.js?v=718b19b08a2a" defer></script><script src="/js/vg-metrics.js?v=88c57247d032" defer data-vg-online-only></script><script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=163b13bd09b7"></head><body data-vg-tool="mesken-ges-depolama" data-vg-original-author="Baki SONAY" data-vg-original-source="Sonay Enerji" data-vg-title="Mesken GES ve Depolama" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[&quot;voltguard:mesken-ges-depolama:meskenGes2&quot;]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
 <header data-vg-no-print class="vg-header doc-header" id="vgHeader">
   <div class="vg-header__bar vg-wrap">
     <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
@@ -124,6 +124,7 @@
         <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
       </span>
     </a>
+    <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
     <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
     <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
       <ul class="vg-nav__list">
@@ -140,13 +141,16 @@
             <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
             <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
             <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+            <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
             <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+            <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
             <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
             <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
           </ul>
         </li>
         <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
-        <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+        <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
       </ul>
       <div class="vg-nav__foot">
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -154,6 +158,7 @@
       </div>
     </nav>
     <div class="vg-actions">
+      <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
       <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
       <a class="vg-cta" href="/#iletisim">Teklif Al</a>
     </div>
@@ -193,21 +198,21 @@
         <h2 id="ayarb">Tasarım ayarları</h2>
         <div class="fields">
           <label class="f">İl (ışınım verisi)<select id="il"></select></label>
-          <label class="f">Panel eğimi (°)<input id="egim" type="number" step="1" min="0" max="90" value="25"></label>
+          <label class="f">Panel eğimi (°)<input id="egim" type="text" inputmode="decimal" autocomplete="off" step="1" min="0" max="90" value="25"></label>
           <label class="f">Panel yönü<select id="yon"><option value="0">Güney</option><option value="-45">Güneydoğu</option><option value="45">Güneybatı</option><option value="-90">Doğu</option><option value="90">Batı</option><option value="db">Doğu-Batı (çift yön)</option><option value="180">Kuzey</option></select></label>
-          <label class="f">Kullanılabilir çatı alanı (m²)<input id="cati" type="number" step="1" min="0" value="60"></label>
-          <label class="f">Panel gücü (Wp)<input id="wp" type="number" step="5" min="100" value="550"></label>
-          <label class="f">Sistem verimi (PR)<input id="pr" type="number" step="0.01" min="0.5" max="0.95" value="0.78"></label>
-          <label class="f">Eşzamanlılık katsayısı<input id="ks" type="number" step="0.05" min="0.2" max="1" value="0.6"></label>
+          <label class="f">Kullanılabilir çatı alanı (m²)<input id="cati" type="text" inputmode="decimal" autocomplete="off" step="1" min="0" value="60"></label>
+          <label class="f">Panel gücü (Wp)<input id="wp" type="text" inputmode="decimal" autocomplete="off" step="5" min="100" value="550"></label>
+          <label class="f">Sistem verimi (PR)<input id="pr" type="text" inputmode="decimal" autocomplete="off" step="0.01" min="0.5" max="0.95" value="0.78"></label>
+          <label class="f">Eşzamanlılık katsayısı<input id="ks" type="text" inputmode="decimal" autocomplete="off" step="0.05" min="0.2" max="1" value="0.6"></label>
           <label class="f" data-m="hib off">Akü tipi<select id="kim"><option value="li">LiFePO4</option><option value="jel">Jel / AGM</option></select></label>
-          <label class="f" data-m="hib off">Akü modülü (kWh)<input id="mod" type="number" step="0.01" min="0.5" value="5.12"></label>
-          <label class="f" data-m="off">Batarya kaç gün yetsin<input id="oton" type="number" step="0.5" min="0.5" value="2"></label>
+          <label class="f" data-m="hib off">Akü modülü (kWh)<input id="mod" type="text" inputmode="decimal" autocomplete="off" step="0.01" min="0.5" value="5.12"></label>
+          <label class="f" data-m="off">Batarya kaç gün yetsin<input id="oton" type="text" inputmode="decimal" autocomplete="off" step="0.5" min="0.5" value="2"></label>
           <label class="f" data-m="off">Panel tasarım ayı<select id="tay"><option value="min">En kötü ay</option><option value="ort">Yıllık ortalama</option></select></label>
-          <label class="f" data-m="ong hib">Tüketimi karşılama oranı (%)<input id="kar" type="number" step="5" min="10" max="200" value="100"></label>
-          <label class="f" data-m="hib">Kesintide yedek süre (saat)<input id="yed" type="number" step="1" min="0" value="6"></label>
+          <label class="f" data-m="ong hib">Tüketimi karşılama oranı (%)<input id="kar" type="text" inputmode="decimal" autocomplete="off" step="5" min="10" max="200" value="100"></label>
+          <label class="f" data-m="hib">Kesintide yedek süre (saat)<input id="yed" type="text" inputmode="decimal" autocomplete="off" step="1" min="0" value="6"></label>
         </div>
         <div class="fields" id="ozel" hidden>
-          <label class="f">Enlem (°K)<input id="oz_lat" type="number" step="0.1" min="30" max="45" value="41"></label>
+          <label class="f">Enlem (°K)<input id="oz_lat" type="text" inputmode="decimal" autocomplete="off" step="0.1" min="30" max="45" value="41"></label>
           <label class="f">Değerlerin birimi<select id="oz_birim"><option value="ay">kWh/m²·ay</option><option value="gun">kWh/m²·gün</option></select></label>
           <label class="f" style="grid-column:1/-1">Yatay global ışınım, 12 aylık değer (Ocak → Aralık)<textarea id="oz_veri" rows="2" placeholder="Meteonorm ya da PVsyst tablosundan 12 değeri yapıştırın: 45,2  62,1  98,4 ..."></textarea></label>
         </div>
@@ -218,13 +223,13 @@
       <section class="panel">
         <h2>Birim fiyatlar ve tarife</h2>
         <div class="fields">
-          <label class="f">Panel (₺/Wp)<input id="f_pan" type="number" step="0.5" min="0" value="9"></label>
-          <label class="f" data-m="ong">Şebeke inverteri (₺/kW)<input id="f_invs" type="number" step="100" min="0" value="4000"></label>
-          <label class="f" data-m="hib off">Hibrit / off-grid inverter (₺/kW)<input id="f_invh" type="number" step="100" min="0" value="9000"></label>
-          <label class="f" data-m="hib off">Akü (₺/kWh)<input id="f_aku" type="number" step="100" min="0" value="9000"></label>
-          <label class="f">Montaj + malzeme (₺/kWp)<input id="f_mon" type="number" step="100" min="0" value="8000"></label>
-          <label class="f">Elektrik alış tarifesi (₺/kWh)<input id="f_al" type="number" step="0.1" min="0" value="3.5"></label>
-          <label class="f" data-m="ong hib">Fazla üretim satış bedeli (₺/kWh)<input id="f_sat" type="number" step="0.1" min="0" value="2"></label>
+          <label class="f">Panel (₺/Wp)<input id="f_pan" type="text" inputmode="decimal" autocomplete="off" step="0.5" min="0" value="9"></label>
+          <label class="f" data-m="ong">Şebeke inverteri (₺/kW)<input id="f_invs" type="text" inputmode="decimal" autocomplete="off" step="100" min="0" value="4000"></label>
+          <label class="f" data-m="hib off">Hibrit / off-grid inverter (₺/kW)<input id="f_invh" type="text" inputmode="decimal" autocomplete="off" step="100" min="0" value="9000"></label>
+          <label class="f" data-m="hib off">Akü (₺/kWh)<input id="f_aku" type="text" inputmode="decimal" autocomplete="off" step="100" min="0" value="9000"></label>
+          <label class="f">Montaj + malzeme (₺/kWp)<input id="f_mon" type="text" inputmode="decimal" autocomplete="off" step="100" min="0" value="8000"></label>
+          <label class="f">Elektrik alış tarifesi (₺/kWh)<input id="f_al" type="text" inputmode="decimal" autocomplete="off" step="0.1" min="0" value="3.5"></label>
+          <label class="f" data-m="ong hib">Fazla üretim satış bedeli (₺/kWh)<input id="f_sat" type="text" inputmode="decimal" autocomplete="off" step="0.1" min="0" value="2"></label>
           <label class="f" data-m="ong hib">Aylık mahsuplaşma<select id="mahsup"><option value="1">Var</option><option value="0">Yok</option></select></label>
         </div>
         <p class="hint">Fiyatlar örnek değerlerdir; güncel piyasa fiyatlarını ve abone tarifesini girin. Geri ödeme basit yöntemle hesaplanır (tarife artışı, bakım ve akü yenileme dahil değil).</p>
@@ -232,9 +237,9 @@
       <section class="panel">
         <h2>Sistem boyutu ve optimizasyon</h2>
         <div class="fields">
-          <label class="f">Panel adedi<input id="m_pan" type="number" min="0" step="1" placeholder="otomatik"></label>
-          <label class="f" data-m="hib off">Akü modülü adedi<input id="m_aku" type="number" min="0" step="1" placeholder="otomatik"></label>
-          <label class="f" data-m="ong hib">Hedef geri ödeme (yıl)<input id="hedef" type="number" min="0" step="0.5" placeholder="en kısa"></label>
+          <label class="f">Panel adedi<input id="m_pan" type="text" inputmode="decimal" autocomplete="off" min="0" step="1" placeholder="otomatik"></label>
+          <label class="f" data-m="hib off">Akü modülü adedi<input id="m_aku" type="text" inputmode="decimal" autocomplete="off" min="0" step="1" placeholder="otomatik"></label>
+          <label class="f" data-m="ong hib">Hedef geri ödeme (yıl)<input id="hedef" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" placeholder="en kısa"></label>
         </div>
         <div class="rowbtns" style="justify-content:flex-start"><button class="btn ana" id="optbul" type="button">Optimumu bul</button><button class="btn" id="otodon" type="button">Otomatiğe dön</button></div>
         <p class="hint" id="optd">Adetler boşken sistem kurala göre otomatik boyutlanır. Optimumu bul, seçili sistem tipi için panel ve akü adedini tarar ve bu kutulara yazar; sonra adetleri değiştirip Hesapla ile yeniden hesaplayabilirsiniz.</p>
@@ -328,12 +333,12 @@ function tablo(){
   $("yukler").tBodies[0].innerHTML=S.rows.map(r=>`<tr data-id="${r.id}" class="${r.on?"":"off"}">
 <td><input type="checkbox" id="r${r.id}_on" data-f="on" ${r.on?"checked":""} aria-label="Kullan"></td>
 <td><input type="text" id="r${r.id}_ad" data-f="ad" value="${esc(r.ad)}"></td>
-<td data-l="Adet"><input type="number" id="r${r.id}_n" data-f="n" min="0" step="1" value="${r.n}"></td>
-<td data-l="Güç (W)"><input type="number" id="r${r.id}_w" data-f="w" min="0" step="10" value="${r.w}"></td>
-<td data-l="Saat/gün"><input type="number" id="r${r.id}_h" data-f="h" min="0" max="24" step="0.1" value="${r.h}"></td>
+<td data-l="Adet"><input type="text" inputmode="decimal" autocomplete="off" id="r${r.id}_n" data-f="n" min="0" step="1" value="${r.n}"></td>
+<td data-l="Güç (W)"><input type="text" inputmode="decimal" autocomplete="off" id="r${r.id}_w" data-f="w" min="0" step="10" value="${r.w}"></td>
+<td data-l="Saat/gün"><input type="text" inputmode="decimal" autocomplete="off" id="r${r.id}_h" data-f="h" min="0" max="24" step="0.1" value="${r.h}"></td>
 <td data-l="Kullanım"><select id="r${r.id}_z" data-f="z">${opt([["gun","Gündüz"],["aks","Akşam/gece"],["tum","Tüm gün"]],r.z)}</select></td>
 <td data-l="Mevsim"><select id="r${r.id}_s" data-f="s">${opt([["yil","Tüm yıl"],["yaz","Yaz"],["kis","Kış"]],r.s)}</select></td>
-<td data-l="Kalkış ×"><input type="number" id="r${r.id}_k" data-f="k" min="1" max="8" step="0.1" value="${r.k}"></td>
+<td data-l="Kalkış ×"><input type="text" inputmode="decimal" autocomplete="off" id="r${r.id}_k" data-f="k" min="1" max="8" step="0.1" value="${r.k}"></td>
 <td data-l="Kritik"><input type="checkbox" id="r${r.id}_kr" data-f="kr" ${r.kr?"checked":""} aria-label="Kritik yük"></td>
 <td class="num" data-l="kWh/gün" id="r${r.id}_e"></td>
 <td><button class="x" type="button" data-sil="1" aria-label="Sil">×</button></td></tr>`).join("");
@@ -356,7 +361,7 @@ function egik(H,lat,beta,yonler){
 
 function hesap(man){ man=man||S.man;
   const v=k=>{
-    const input=$(k),text=String(input.value).trim().replace(',','.'),value=Number(text);
+    const input=$(k),text=String(input.value).trim(),value=trNum(text);
     const label=input.closest('label')?.childNodes[0]?.textContent?.trim()||k;
     if(!text||!Number.isFinite(value)||(input.min!==''&&value<Number(input.min))||(input.max!==''&&value>Number(input.max))) throw new Error(label+': geçerli aralıkta bir sayı girin.');
     return value;
@@ -409,6 +414,15 @@ function hesap(man){ man=man||S.man;
   return{ev,pr,dod,eb,ei,lat:il[0],ozel,ozd,yil,Em,Enm,Ecm,Pp,Pk,off,hib,ong,buyuk,li,wp,pa,nmax,psh,yat,top,ay:Em.map((e,i)=>e*GUN[i])};
 }
 
+/* Türkçe sayı girişi: "3,5" ondalık virgül, "1.234,5" ve "12.500" binlik nokta, "0.78" ondalık nokta. Hatalı biçim NaN döner. */
+function trNum(raw){
+  let t=String(raw==null?'':raw).trim();
+  if(!t||/\s/.test(t))return NaN;
+  if(t.includes(',')){ if(!/^[+-]?(?:\d*|[1-9]\d{0,2}(?:\.\d{3})+),\d+$/.test(t))return NaN; t=t.replace(/\./g,'').replace(',','.'); }
+  else if(/^[+-]?[1-9]\d{0,2}(?:\.\d{3})+$/.test(t)) t=t.replace(/\./g,'');
+  if(!/^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$/.test(t))return NaN;
+  const v=Number(t); return Number.isFinite(v)?v:NaN;
+}
 function ciz(R){
   const md=S.mode, x=R[md], off=md=="off";
   MODLAR.forEach(k=>$("m_"+k).setAttribute("aria-pressed",k==md));
@@ -441,6 +455,9 @@ function ciz(R){
     }
     if(R.ev)N.push(`${f(R.ev/1000,0)} kW AC araç şarjı trifaze abonelik ve en az ${f(R.ev/1000,0)} kW bağlantı gücü gerektirir; şarj gücü eşzamanlılık katsayısı uygulanmadan tam alınır.${md=="off"?" Off-grid sistemde bu güç inverteri ve aküyü çok büyütür; şarj gücünü düşürmek ya da gündüz şarj etmek daha uygundur.":md=="hib"?" Hibritte şarj cihazı şebeke tarafına bağlanır; inverter gücüne dahil edilmedi, kesintide çalışmaz.":""}`);
     if(x.inv>5)N.push("İnverter gücü 5 kW üstünde; trifaze abonelik ve trifaze inverter gerekir.");
+    if(!off)N.push(`Kurulu güç (${f(x.kwp,2)} kWp) ve inverter gücü, bağlantı anlaşmasındaki sözleşme gücünü aşamaz (Lisanssız Elektrik Üretim Yönetmeliği Madde 5-1-h); başvurudan önce sözleşme gücünüzü kontrol edin.`);
+    if(!off&&x.ur>R.yil*1.0001)N.push(`Yıllık üretim (${f(x.ur,0)} kWh) tüketimi (${f(R.yil,0)} kWh) aşıyor. Fazla enerjinin bedeli görevli tedarik şirketinin mahsup/alım uygulamasına bağlıdır (Madde 26); araç satış bedelini sizin girdiğiniz birim fiyatla hesaplar.`);
+    N.push("Geri ödeme basittir: panel degradasyonu (%0,4–0,5/yıl), tarife artışı, finansman, bakım ve akü/inverter yenileme dahil değildir.");
   }
   $("notlar").innerHTML=N.map(n=>Array.isArray(n)?`<li class="ok">${n[1]}</li>`:`<li>${n}</li>`).join("");
   // grafik
@@ -480,15 +497,16 @@ $("hesapla").addEventListener("click",hesapla);
 $("yukler").addEventListener("input",e=>{const tr=e.target.closest("tr[data-id]"),k=e.target.dataset.f;if(!tr||!k)return;
   const r=S.rows.find(r=>r.id==tr.dataset.id); if(!r)return;
   if(e.target.type=="checkbox"){r[k]=e.target.checked; if(k=="on")tr.className=r.on?"":"off"}
-  else r[k]=(k=="ad"||k=="z"||k=="s")?e.target.value:(parseFloat(e.target.value)||0);
+  else if(k=="ad"||k=="z"||k=="s")r[k]=e.target.value;
+  else{const val=trNum(e.target.value);const bad=!Number.isFinite(val)||val<0;e.target.setAttribute('aria-invalid',bad?'true':'false');r[k]=bad?0:val}
   guncelle()});
 $("yukler").addEventListener("click",e=>{if(!e.target.dataset.sil)return;const id=e.target.closest("tr").dataset.id;S.rows=S.rows.filter(r=>r.id!=id);tablo();guncelle()});
 $("ekle").addEventListener("click",()=>{const r=yeni(["Yeni cihaz",1,1,100,1,"gun",1,0,"yil"]);S.rows.push(r);tablo();guncelle();$("r"+r.id+"_ad").select()});
 AYAR.forEach(k=>$(k).addEventListener("input",()=>{if(k=="kim")$("mod").value=$("kim").value=="li"?5.12:2.4;guncelle()}));
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{S.mode=b.dataset.mode;kaydet();ciz(SON);tekhat()}));
-["m_pan","m_aku"].forEach((id,i)=>$(id).addEventListener("input",e=>{const t=e.target.value.trim();S.man[S.mode][i?"m":"n"]=t===""?null:Math.max(0,Math.round(+t)||0);$("optd").textContent="Adetler elle değiştirildi; sonuç için Hesapla'ya basın.";guncelle()}));
+["m_pan","m_aku"].forEach((id,i)=>$(id).addEventListener("input",e=>{const t=e.target.value.trim();S.man[S.mode][i?"m":"n"]=t===""?null:Math.max(0,Math.round(trNum(t))||0);$("optd").textContent="Adetler elle değiştirildi; sonuç için Hesapla'ya basın.";guncelle()}));
 function optimum(){
-  kaydet(); const md=S.mode, T=parseFloat($("hedef").value)||0, B=hesap({...S.man,[md]:{n:null,m:null}}), k=B[md], O=$("optd");
+  kaydet(); const md=S.mode, T=trNum($("hedef").value)||0, B=hesap({...S.man,[md]:{n:null,m:null}}), k=B[md], O=$("optd");
   if(!B.yil){O.textContent="Önce en az bir cihaz seçin.";return}
   const nUst=isFinite(B.nmax)?B.nmax:Math.max(40,k.n*3), mUst=md=="ong"?1:Math.max(8,k.m*2);
   if(nUst<1){O.textContent="Çatı alanına panel sığmıyor.";return}
@@ -618,7 +636,7 @@ yukle();tablo();hesapla();
             <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
           </span>
         </a>
-        <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+        <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
         <ul class="vg-footer__contact">
           <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
           <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
@@ -628,7 +646,7 @@ yukle();tablo();hesapla();
           <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
           <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
         </address>
-        <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+        <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
       </div>
       <nav class="vg-footer__nav" aria-label="Alt menü">
         <div class="vg-footer__col">
@@ -660,9 +678,8 @@ yukle();tablo();hesapla();
             <li><a href="/#referanslar">Referanslarımız</a></li>
             <li><a href="/#surec">Sürecimiz</a></li>
             <li><a href="/#neden-biz">Neden Biz?</a></li>
-            <li><a href="/#guvenlik">Güvenlik</a></li>
             <li><a href="/#haberler">Haberler</a></li>
-            <li><a href="/#emi-demo">Canlı Demo</a></li>
+            <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
             <li><a href="/#katalog">Katalog</a></li>
             <li><a href="/#sss">SSS</a></li>
             <li><a href="/#iletisim">İletişim</a></li>
@@ -678,6 +695,8 @@ yukle();tablo();hesapla();
             <li><a href="/sor.html">VoltGuard'a Sor</a></li>
             <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
             <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+            <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+            <li><a href="/volthaber/">VoltHaber</a></li>
           </ul>
         </div>
         <div class="vg-footer__col">
@@ -687,6 +706,7 @@ yukle();tablo();hesapla();
             <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
             <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
             <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+            <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
             <li><a href="/voltgame.html">VoltGame</a></li>
             <li><a href="/hesap/giris.html">Üye Girişi</a></li>
             <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
@@ -702,36 +722,6 @@ yukle();tablo();hesapla();
         <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
         <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
       </div>
-    </div>
-    <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
-      <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-        <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-          <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-        </circle>
-      </svg>
-      <span class="sig-node" aria-hidden="true"></span>
-      <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
-        <span class="sig-badge__ring" aria-hidden="true"></span>
-        <span class="sig-badge__aurora" aria-hidden="true"></span>
-        <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
-        <span class="sig-badge__body">
-          <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
-          <span class="sig-badge__brand">
-            <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
-            <span class="sig-badge__eng">Engineering</span>
-          </span>
-        </span>
-        <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
-        <span class="sig-badge__shimmer" aria-hidden="true"></span>
-      </a>
-      <span class="sig-node" aria-hidden="true"></span>
-      <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-        <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
-        <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-          <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
-        </circle>
-      </svg>
     </div>
   </div>
 </footer></body></html>

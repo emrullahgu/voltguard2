@@ -10,9 +10,9 @@
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261013b">
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=98a54d154d91">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,17 +35,18 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
-  <meta name="description" content="Güneş paneli ve inverter mantığı, öz tüketim ve şebekeye satış, lisanssız üretim özeti, VFD/LED/kompanzasyon ile verimlilik: başlangıç dersi.">
+  <meta name="description" content="Güneş paneli ve inverter mantığı, öz tüketim ve saatlik mahsuplaşma, lisanssız üretim özeti, LED/VFD/kompanzasyon ile verimlilik: başlangıç dersi.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <title>GES ve Enerji Verimliliği Temelleri (Ders) | VoltGuard</title>
   <link rel="canonical" href="https://voltguard.com.tr/akademi/ges-enerji-verimliligi-giris.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="GES ve Enerji Verimliliği Temelleri (Ders) | VoltGuard">
-  <meta property="og:description" content="Güneş paneli ve inverter mantığı, öz tüketim ve şebekeye satış, lisanssız üretim özeti, VFD/LED/kompanzasyon ile verimlilik: başlangıç dersi.">
+  <meta property="og:description" content="Güneş paneli ve inverter mantığı, öz tüketim ve saatlik mahsuplaşma, lisanssız üretim özeti, LED/VFD/kompanzasyon ile verimlilik: başlangıç dersi.">
   <meta property="og:url" content="https://voltguard.com.tr/akademi/ges-enerji-verimliligi-giris.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
   <meta property="og:site_name" content="VoltGuard">
@@ -53,8 +54,8 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261012d">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/ges-enerji-verimliligi-giris.html#course","name":"GES ve Enerji Verimliliği Temelleri","description":"Güneş paneli ve inverter mantığı, öz tüketim ve şebekeye satış, lisanssız üretim özeti, VFD/LED/kompanzasyon ile verimlilik: başlangıç dersi.","educationalLevel":"Başlangıç","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-10-12","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"GES ve Enerji Verimliliği Temelleri","item":"https://voltguard.com.tr/akademi/ges-enerji-verimliligi-giris.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"GES inverterinin görevi nedir?","acceptedAnswer":{"@type":"Answer","text":"Güneş panelleri doğru akım (DC) üretir; inverter bu DC gücü, şebekeye ve tesis iç tesisatına uygun alternatif akıma (AC) çevirir. Ayrıca panellerin o anki ışınım ve sıcaklık koşullarında en yüksek gücü üretmesini sağlayan MPPT (maksimum güç noktası takibi) işlevini de yürütür."}},{"@type":"Question","name":"Öz tüketim ile şebekeye satış arasındaki fark nedir?","acceptedAnswer":{"@type":"Answer","text":"Öz tüketimde GES'in ürettiği enerji öncelikle tesisin kendi ihtiyacını karşılar, bu da şebekeden çekilen enerjiyi ve faturayı azaltır. Şebekeye satışta ise ihtiyaç fazlası (veya lisanslı üretimde tamamı) şebekeye verilir ve ilgili mevzuat çerçevesinde bir bedelle mahsuplaşılır ya da satılır. Türkiye'de çatı/arazi GES'lerinin büyük kısmı lisanssız üretim kapsamında öz tüketim odaklı tasarlanır."}},{"@type":"Question","name":"Enerji verimliliğinde en hızlı geri dönüşü hangi önlemler sağlar?","acceptedAnswer":{"@type":"Answer","text":"Genel olarak LED aydınlatma dönüşümü ve değişken hızlı sürücü (VFD) uygulamaları, görece düşük yatırımla hızlı geri dönüş sağlayan yaygın önlemlerdir. Ancak kesin geri dönüş süresi, tesisin mevcut ekipmanına, çalışma saatlerine ve enerji birim fiyatına göre yapılacak bir enerji etüdüyle belirlenmelidir."}}]}]}</script>
+  <link rel="stylesheet" href="/css/style.css?v=d152330fb2b0">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/ges-enerji-verimliligi-giris.html#course","name":"GES ve Enerji Verimliliği Temelleri","description":"Güneş paneli ve inverter mantığı, öz tüketim ve saatlik mahsuplaşma, lisanssız üretim özeti ve GES öncesi enerji verimliliği önlemleri.","educationalLevel":"Başlangıç","inLanguage":"tr-TR","datePublished":"2026-09-05","dateModified":"2026-10-24","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"},"author":{"@type":"Organization","name":"VoltGuard Mühendislik Ekibi","url":"https://voltguard.com.tr/ekibimiz.html"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"GES ve Enerji Verimliliği Temelleri","item":"https://voltguard.com.tr/akademi/ges-enerji-verimliligi-giris.html"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"1 kWp güneş paneli yılda ne kadar elektrik üretir?","acceptedAnswer":{"@type":"Answer","text":"Türkiye'de güneye bakan, uygun eğimli ve gölgesiz bir çatıda 1 kWp'lik sistem yılda kabaca 1.300-1.700 kWh üretir. Değer bölgeye, yöne, eğime, sıcaklığa ve sistem kayıplarına göre değişir. Proje için yer verisiyle simülasyon yapılmalıdır."}},{"@type":"Question","name":"Saatlik mahsuplaşma GES boyutunu nasıl etkiler?","acceptedAnswer":{"@type":"Answer","text":"Lisanssız üretimde üretim ve tüketim her saat için ayrı mahsuplaştırılır. Gündüz şebekeye verilen fazla enerji, akşam veya gece tüketimine sayılmaz. Bu nedenle tüketimi gündüz yoğun olan tesislerde GES daha verimlidir. Gündüz tüketimi düşük tesislerde ise büyük GES'in ekonomik faydası azalır."}},{"@type":"Question","name":"GES kurmadan önce hangi verimlilik önlemlerine bakılmalı?","acceptedAnswer":{"@type":"Answer","text":"Aydınlatma, pompa-fan uygulamalarında sürücü kullanımı, basınçlı hava kaçakları ve kompanzasyon ilk bakılacak konulardır. Bu önlemler tüketimi ve tüketim profilini değiştirdiği için GES boyutlandırmasından önce değerlendirilmelidir. Geri dönüş süresi tesisin çalışma saatlerine ve enerji fiyatına göre etütle hesaplanır."}}]}]}</script>
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -68,6 +69,7 @@
           <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
         </span>
       </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
@@ -84,13 +86,16 @@
               <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
               <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
               <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
               <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
             </ul>
           </li>
           <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
-          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -98,6 +103,7 @@
         </div>
       </nav>
       <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
@@ -114,42 +120,44 @@
     <span class="article__cat">GES &amp; Enerji Verimliliği</span>
     <span class="akademi-level akademi-level--baslangic">Başlangıç Seviyesi</span>
     <h1>GES ve Enerji Verimliliği Temelleri</h1>
-    <p class="article__summary">Güneş enerjisi ve enerji verimliliği alanına ilk adımı atanlar için hazırlanan bu derste; güneş panelinin ve inverterin çalışma mantığını, öz tüketim ile şebekeye satış farkını, lisanssız üretim mevzuatının özetini ve temel enerji verimliliği önlemlerini öğreneceksiniz.</p>
+    <p class="article__byline" style="font-size:.85rem;color:#5b6472;margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son gözden geçirme: <time datetime="2026-10-24">24.10.2026</time></p>
+    <p class="article__summary">Bu ders; güneş panelinin ve inverterin çalışma mantığını, öz tüketim ile ihtiyaç fazlası arasındaki farkı, lisanssız üretimin saatlik mahsuplaşma kuralını ve GES'ten önce değerlendirilmesi gereken enerji verimliliği önlemlerini anlatır.</p>
 
-    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Güneş panelinin çalışma prensibi, inverterin görevi (DC/AC dönüşüm + MPPT), öz tüketim/şebekeye satış farkı, lisanssız üretim mevzuatına genel bakış ve temel enerji verimliliği kavramları.</div>
+    <div class="akademi-path"><strong>İlgili araçlar:</strong> <a href="/hesaplama/ges-uretim-hesaplama/">GES üretim hesaplama</a> · <a href="/araclar/ges-tasarim/">GES tasarım uygulaması</a> · <a href="/voltsim/ges/">VoltSim GES modülü</a></div>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Güneş paneli, fotovoltaik etkiyle güneş ışığını doğrudan doğru akım (DC) elektriğe çevirir.</li><li>İnverter, ürettiği DC gücü şebekeye uygun alternatif akıma (AC) çevirir ve MPPT ile en yüksek güç noktasını takip eder.</li><li>Çatı/arazi GES'lerinin büyük kısmı Türkiye'de lisanssız üretim kapsamında, öncelikle öz tüketimi hedefleyerek tasarlanır.</li><li>Enerji verimliliğinde LED dönüşümü ve VFD uygulamaları, görece düşük yatırımla hızlı geri dönüş sağlayan yaygın önlemler arasındadır.</li><li>Reaktif güç kompanzasyonu da bir enerji verimliliği önlemi olarak değerlendirilir; çünkü gereksiz reaktif akımı azaltarak kayıpları düşürür.</li></ul></div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Güneş paneli, fotovoltaik etkiyle ışığı doğru akım (DC) elektriğe çevirir. Çıkış gücü ışınıma, hücre sıcaklığına, yöne-eğime ve gölgelenmeye bağlıdır.</li><li>İnverter, DC gücü şebekeyle senkron alternatif akıma (AC) çevirir ve MPPT ile panellerin en yüksek güç noktasını izler.</li><li>Lisanssız üretimde mahsuplaşma saatliktir; gündüz üretim fazlası akşam tüketimine sayılmaz. Bu nedenle GES, tesisin gündüz tüketim profiline göre boyutlandırılır.</li><li>Tüketimi azaltan önlemler (LED, VFD, kompanzasyon) GES'ten önce değerlendirilirse GES daha doğru boyutlandırılır.</li></ul></div>
 
     <h2>Güneş Paneli Nasıl Çalışır?</h2>
-    <p>Güneş panelleri, fotovoltaik (PV) hücrelerden oluşur. Güneş ışığı bu hücrelere çarptığında, yarı iletken malzeme içindeki elektronlar hareketlenir ve bir doğru akım (DC) elektrik alanı oluşur. Üretilen güç; ışınım şiddetine (irradyans), panel sıcaklığına, panelin yönüne/eğimine ve gölgelenme durumuna bağlı olarak değişir. Bir GES projesinde panellerin doğru yönlendirilmesi ve gölgelenmeden arındırılması, yıllık üretim miktarını doğrudan etkileyen en kritik tasarım kararlarından biridir. Gerçek bir fabrika çatısında bu kararlar keşif ve gölge analiziyle verilir; uygulama tarafı için <a href="/hizmetler/fabrika-cati-ges.html">fabrika çatı GES kurulumu</a> sayfamıza bakabilirsiniz.</p>
+    <p>Güneş panelleri seri bağlı fotovoltaik (PV) hücrelerden oluşur. Hücreye ulaşan ışık, yarı iletkende elektron-boşluk çiftleri oluşturur. p-n eklemindeki iç elektrik alanı bu çiftleri ayırır ve hücre uçlarında DC gerilim oluşur. Üretilen güç; ışınım şiddetine, hücre sıcaklığına (sıcaklık arttıkça güç düşer), panelin yönüne ve eğimine, gölgelenmeye bağlıdır. Kısmi gölge bile bir stringin üretimini belirgin biçimde düşürebilir. Bu nedenle yerleşim, keşif ve gölge analiziyle belirlenir; uygulama için <a href="/hizmetler/fabrika-cati-ges.html">fabrika çatı GES kurulumu</a> sayfamıza bakabilirsiniz.</p>
+    <p><strong>Örnek:</strong> İzmir'de güneye bakan, yaklaşık 30° eğimli bir çatıda 1 kWp'lik sistemin yıllık üretimi kabaca 1.400-1.600 kWh mertebesindedir. 100 kWp'lik bir sistem yılda yaklaşık 140-160 MWh üretir. Kesin değer, yer verisi ve kayıplarla yapılan simülasyonla bulunur.</p>
 
     <h2>İnverterin Görevi: DC/AC Dönüşüm ve MPPT</h2>
-    <p>Panellerin ürettiği DC güç, doğrudan şebekeye veya tesis iç tesisatına verilemez; bu güç, inverter tarafından şebeke frekansı ve gerilimiyle uyumlu alternatif akıma (AC) çevrilir. İnverterin ikinci kritik görevi ise MPPT (Maximum Power Point Tracking / maksimum güç noktası takibi) yapmaktır: güneş panelinin çıkış gerilim-akım eğrisi, ışınım ve sıcaklığa göre sürekli değişir; MPPT algoritması, panellerin o anki koşullarda üretebileceği en yüksek gücü çekecek çalışma noktasını sürekli arar ve ayarlar.</p>
+    <p>Panellerin ürettiği DC güç, tesisatta doğrudan kullanılamaz. İnverter bu gücü şebekenin gerilim ve frekansıyla senkron AC'ye çevirir. Panelin akım-gerilim eğrisi ışınım ve sıcaklıkla sürekli değişir. İnverterin ikinci görevi olan MPPT (maksimum güç noktası takibi), o anki koşullarda en yüksek gücü veren çalışma noktasını sürekli arar. Şebeke bağlantılı inverter ayrıca şebeke gerilimi kesildiğinde üretimi durdurur (ada çalışma koruması).</p>
 
-    <h2>Öz Tüketim ile Şebekeye Satış Arasındaki Fark</h2>
-    <p>Bir GES'in ürettiği enerji iki şekilde değerlendirilebilir. <strong>Öz tüketimde</strong>, üretilen enerji öncelikle tesisin o andaki ihtiyacını karşılar; bu, şebekeden çekilen enerjiyi ve dolayısıyla faturayı azaltır. <strong>Şebekeye satışta/mahsuplaşmada</strong> ise ihtiyaç fazlası enerji şebekeye verilir ve ilgili mevzuat çerçevesinde bir bedelle değerlendirilir. Türkiye'de çatı ve arazi tipi GES projelerinin büyük kısmı, lisanssız üretim kapsamında öncelikle öz tüketimi hedefleyecek şekilde boyutlandırılır; bu konunun mevzuat boyutu <a href="/bilgi/lisanssiz-uretim-ges.html">Lisanssız Elektrik Üretimi ve Güneş Enerjisi (GES)</a> rehberinde ayrıntılı olarak ele alınmıştır.</p>
+    <h2>Öz Tüketim ve İhtiyaç Fazlası</h2>
+    <p><strong>Öz tüketimde</strong> üretilen enerji tesisin o saatteki ihtiyacını karşılar ve şebekeden çekilen enerjiyi azaltır. Üretim tüketimden fazlaysa fark şebekeye verilir. Lisanssız Elektrik Üretim Yönetmeliği'ne (RG 12.05.2019/30772) göre üretim ve tüketim <strong>saatlik</strong> mahsuplaştırılır. Tesisin girdiği bende göre saatlik ihtiyaç fazlası görevli tedarik şirketince satın alınır veya bedelsiz sayılır. Mesken dışı abonelerde yıllık üretim, ilişkili tüketimin iki katını aşamaz. Yönetmelik 2026'da iki kez değişti (RG 02.04.2026/33212 ve 19.10.2026/33405); başvurudan önce <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=31502&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener">güncel metni kontrol edin</a>. Ayrıntılar <a href="/bilgi/lisanssiz-uretim-ges.html">Lisanssız Elektrik Üretimi ve GES</a> rehberindedir.</p>
 
     <h2>Enerji Verimliliğinin Temel Kavramları</h2>
-    <p>Enerji verimliliği, aynı işi daha az enerjiyle yapabilmek anlamına gelir ve genellikle GES yatırımından önce veya onunla birlikte değerlendirilmesi gereken bir konudur — çünkü tüketimi azaltmak, aynı GES sisteminin öz tüketim karşılama oranını da yükseltir. Yaygın enerji verimliliği önlemleri şunlardır:</p>
+    <p>Enerji verimliliği, aynı işi daha az enerjiyle yapmaktır. GES yatırımından önce veya onunla birlikte değerlendirilmelidir; tüketim düştüğünde GES'in boyutu da değişir. Yaygın önlemler:</p>
     <ul class="article__list">
-      <li><strong>LED aydınlatma dönüşümü:</strong> Geleneksel armatürlere göre çok daha düşük güçle aynı aydınlatma seviyesini sağlar.</li>
-      <li><strong>VFD (değişken hızlı sürücü) uygulamaları:</strong> Pompa ve fan gibi değişken yüklü motorların, ihtiyaca göre hız ayarlayarak gereksiz enerji tüketimini azaltmasını sağlar.</li>
-      <li><strong>Reaktif güç kompanzasyonu:</strong> Şebekeden çekilen gereksiz reaktif akımı azaltarak hem kayıpları düşürür hem de reaktif ceza riskini ortadan kaldırır.</li>
-      <li><strong>Yalıtım ve ısı geri kazanımı:</strong> Özellikle sanayi tesislerinde buhar, sıcak su veya proses ısısı kayıplarını azaltır.</li>
+      <li><strong>LED aydınlatma dönüşümü:</strong> Floresan ve metal halide armatürlere göre aynı aydınlık düzeyini daha düşük güçle sağlar.</li>
+      <li><strong>VFD (değişken hızlı sürücü):</strong> Pompa ve fan gibi değişken debili uygulamalarda motor hızını ihtiyaca göre ayarlar; vana veya damper kısmaya göre enerji tüketimini azaltır.</li>
+      <li><strong>Reaktif güç kompanzasyonu:</strong> Hat akımını ve kayıpları azaltır, reaktif bedeli önler. Aşırı kompanzasyon ise kapasitif bedel riski doğurur.</li>
+      <li><strong>Yalıtım ve ısı geri kazanımı:</strong> Buhar, sıcak su ve proses ısısı kayıplarını azaltır.</li>
     </ul>
-    <p>Bu önlemlerin hangi sırayla ve ne ölçüde uygulanacağı, tesise özel bir enerji etüdüyle belirlenir; VoltGuard, İzmir merkezli mühendislik hizmetleri kapsamında GES fizibilitesi ve enerji verimliliği değerlendirmesini birlikte yürütür.</p>
+    <p>Hangi önlemin önce uygulanacağını tesise özel bir enerji etüdü belirler. VoltGuard, GES fizibilitesini yaparken tesisin saatlik tüketim verisini ve bu verimlilik önlemlerini birlikte değerlendirir.</p>
 
     <h2>Sırada Ne Var?</h2>
     <ul class="article__list">
-      <li><strong>Orta seviye:</strong> <a href="/akademi/ges-proje-sebeke-baglanti-orta.html">GES Proje Hesapları ve Şebeke Bağlantı Süreci</a> — ayrıca <a href="/bilgi/lisanssiz-uretim-ges.html">Lisanssız Elektrik Üretimi ve GES</a> rehberini ve <a href="/hesaplama-araclari/">GES hesaplama aracını</a> inceleyebilirsiniz.</li>
-      <li><strong>İleri seviye:</strong> <a href="/akademi/enerji-verimliligi-etudu-vfd-ileri.html">Enerji Verimliliği Etüdü ve VFD Uygulama Örnekleri</a>.</li>
-      <li>Paralel olarak <a href="/akademi/elektrik-tesisati-guc-sistemleri-giris.html">Elektrik Tesisatı ve Güç Sistemlerine Giriş</a> dersine geçebilirsiniz.</li>
+      <li><strong>Orta seviye:</strong> <a href="/akademi/ges-proje-sebeke-baglanti-orta.html">GES Proje Hesapları ve Şebeke Bağlantı Süreci</a></li>
+      <li><strong>İleri seviye:</strong> <a href="/akademi/enerji-verimliligi-etudu-vfd-ileri.html">Enerji Verimliliği Etüdü ve VFD Uygulama Örnekleri</a></li>
+      <li>Paralel olarak: <a href="/akademi/elektrik-tesisati-guc-sistemleri-giris.html">Elektrik Tesisatı ve Güç Sistemlerine Giriş</a></li>
     </ul>
 
     <h2>Sık Sorulan Sorular</h2>
-    <details class="faq-item"><summary class="faq-item__q">GES inverterinin görevi nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Güneş panelleri doğru akım (DC) üretir; inverter bu DC gücü, şebekeye ve tesis iç tesisatına uygun alternatif akıma (AC) çevirir. Ayrıca panellerin o anki ışınım ve sıcaklık koşullarında en yüksek gücü üretmesini sağlayan MPPT (maksimum güç noktası takibi) işlevini de yürütür.</p></div></details>
-    <details class="faq-item"><summary class="faq-item__q">Öz tüketim ile şebekeye satış arasındaki fark nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Öz tüketimde GES'in ürettiği enerji öncelikle tesisin kendi ihtiyacını karşılar, bu da şebekeden çekilen enerjiyi ve faturayı azaltır. Şebekeye satışta ise ihtiyaç fazlası (veya lisanslı üretimde tamamı) şebekeye verilir ve ilgili mevzuat çerçevesinde bir bedelle mahsuplaşılır ya da satılır. Türkiye'de çatı/arazi GES'lerinin büyük kısmı lisanssız üretim kapsamında öz tüketim odaklı tasarlanır.</p></div></details>
-    <details class="faq-item"><summary class="faq-item__q">Enerji verimliliğinde en hızlı geri dönüşü hangi önlemler sağlar? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Genel olarak LED aydınlatma dönüşümü ve değişken hızlı sürücü (VFD) uygulamaları, görece düşük yatırımla hızlı geri dönüş sağlayan yaygın önlemlerdir. Ancak kesin geri dönüş süresi, tesisin mevcut ekipmanına, çalışma saatlerine ve enerji birim fiyatına göre yapılacak bir enerji etüdüyle belirlenmelidir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">1 kWp güneş paneli yılda ne kadar elektrik üretir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Türkiye'de güneye bakan, uygun eğimli ve gölgesiz bir çatıda 1 kWp'lik sistem yılda kabaca 1.300-1.700 kWh üretir. Değer bölgeye, yöne, eğime, sıcaklığa ve sistem kayıplarına göre değişir. Proje için yer verisiyle simülasyon yapılmalıdır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Saatlik mahsuplaşma GES boyutunu nasıl etkiler? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Lisanssız üretimde üretim ve tüketim her saat için ayrı mahsuplaştırılır. Gündüz şebekeye verilen fazla enerji, akşam veya gece tüketimine sayılmaz. Bu nedenle tüketimi gündüz yoğun olan tesislerde GES daha verimlidir. Gündüz tüketimi düşük tesislerde ise büyük GES'in ekonomik faydası azalır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">GES kurmadan önce hangi verimlilik önlemlerine bakılmalı? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Aydınlatma, pompa-fan uygulamalarında sürücü kullanımı, basınçlı hava kaçakları ve kompanzasyon ilk bakılacak konulardır. Bu önlemler tüketimi ve tüketim profilini değiştirdiği için GES boyutlandırmasından önce değerlendirilmelidir. Geri dönüş süresi tesisin çalışma saatlerine ve enerji fiyatına göre etütle hesaplanır.</p></div></details>
 
     <p class="kb-disclaimer">Bu içerik eğitim amaçlıdır ve mühendislik projelendirmesi veya yatırım danışmanlığı yerine geçmez. GES ve enerji verimliliği yatırımlarında güncel mevzuat ve yetkili mühendis değerlendirmesi esas alınmalıdır.</p>
     <div class="kb-cta">
@@ -186,7 +194,7 @@
               <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
           </a>
-          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
           <ul class="vg-footer__contact">
             <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
@@ -196,7 +204,7 @@
             <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
             <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
           </address>
-          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
         </div>
         <nav class="vg-footer__nav" aria-label="Alt menü">
           <div class="vg-footer__col">
@@ -228,9 +236,8 @@
               <li><a href="/#referanslar">Referanslarımız</a></li>
               <li><a href="/#surec">Sürecimiz</a></li>
               <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
               <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
               <li><a href="/#katalog">Katalog</a></li>
               <li><a href="/#sss">SSS</a></li>
               <li><a href="/#iletisim">İletişim</a></li>
@@ -246,6 +253,8 @@
               <li><a href="/sor.html">VoltGuard'a Sor</a></li>
               <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
               <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+              <li><a href="/volthaber/">VoltHaber</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
@@ -255,6 +264,7 @@
               <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
               <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
               <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
               <li><a href="/hesap/giris.html">Üye Girişi</a></li>
               <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
@@ -271,39 +281,9 @@
           <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
-      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
-        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          </circle>
-        </svg>
-        <span class="sig-node" aria-hidden="true"></span>
-        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
-          <span class="sig-badge__ring" aria-hidden="true"></span>
-          <span class="sig-badge__aurora" aria-hidden="true"></span>
-          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
-          <span class="sig-badge__body">
-            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
-            <span class="sig-badge__brand">
-              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
-              <span class="sig-badge__eng">Engineering</span>
-            </span>
-          </span>
-          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
-          <span class="sig-badge__shimmer" aria-hidden="true"></span>
-        </a>
-        <span class="sig-node" aria-hidden="true"></span>
-        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
-          </circle>
-        </svg>
-      </div>
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261013a" defer></script>
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
 </body>
 </html>

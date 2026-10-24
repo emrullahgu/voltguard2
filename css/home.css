@@ -66,7 +66,7 @@
   border: 1px solid rgba(255,255,255,.2);
   border-radius: var(--r-full);
   color: rgba(255,255,255,.78);
-  font-size: .68rem;
+  font-size: .6875rem;
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -592,7 +592,7 @@
     padding: 1rem 1rem 1rem .95rem;
   }
   .vgh-card__icon { grid-row: 1 / span 3; width: 44px; height: 44px; font-size: 1.05rem; }
-  .vgh-card__tag { margin-top: 0; font-size: .66rem; }
+  .vgh-card__tag { margin-top: 0; font-size: .6875rem; }
   .vgh-card__title { font-size: 1.04rem; }
   .vgh-card__text { font-size: .84rem; line-height: 1.5; }
   .vgh-card__more { grid-column: 2; margin-top: .2rem; font-size: .82rem; }
@@ -923,4 +923,48 @@ html { scroll-padding-bottom: 24px; }
   body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
   .contact__form-wrapper { order: -1; }
   .scroll-top { display: none; }
+}
+
+/* ==================== VoltSim tanıtım bandı ==================== */
+.vgh-voltsim { padding: clamp(56px, 7vw, 92px) 0; background: radial-gradient(110% 130% at 100% 0%, #17335a 0%, #0a1628 62%); color: #c7d4e6; overflow: hidden; }
+.vgh-voltsim__inner { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(28px, 4vw, 56px); align-items: center; }
+.vgh-voltsim__badge { display: inline-block; padding: 5px 12px; border: 1px solid rgba(245, 158, 11, .45); border-radius: 30px; color: #fcd34d; font: 700 .72rem/1.2 var(--vg-font-h, 'Outfit', sans-serif); letter-spacing: .08em; text-transform: uppercase; }
+.vgh-voltsim h2 { margin: 14px 0 0; color: #fff; font: 800 clamp(2.4rem, 5vw, 3.6rem)/1 var(--vg-font-h, 'Outfit', sans-serif); letter-spacing: -.04em; }
+.vgh-voltsim__sub { margin: 10px 0 0; color: #fcd34d; font: 650 clamp(1.05rem, 1.8vw, 1.3rem)/1.3 var(--vg-font-h, 'Outfit', sans-serif); }
+.vgh-voltsim__txt > p:not(.vgh-voltsim__sub) { margin: 14px 0 0; max-width: 54ch; color: #c7d4e6; }
+.vgh-voltsim__facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+.vgh-voltsim__facts li { padding: 6px 12px; border: 1px solid #24395c; border-radius: 30px; background: #0f2443; color: #dbe6f3; font-size: .78rem; }
+.vgh-voltsim__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 24px; }
+.vgh-voltsim__link { color: #fcd34d; font-weight: 600; text-decoration: none; }
+.vgh-voltsim__link:hover { text-decoration: underline; }
+.vgh-voltsim__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.vgh-voltsim__grid a { position: relative; display: block; border: 1px solid #24395c; border-radius: 14px; overflow: hidden; background: #0b1a30; aspect-ratio: 16 / 10; transition: transform .3s, border-color .3s, box-shadow .3s; }
+.vgh-voltsim__grid img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.vgh-voltsim__grid span { position: absolute; left: 8px; bottom: 8px; padding: 4px 9px; border-radius: 8px; background: rgba(10, 22, 40, .85); color: #fff; font: 650 .78rem/1.2 var(--vg-font-h, 'Outfit', sans-serif); }
+.vgh-voltsim__grid a:hover { transform: translateY(-3px); border-color: #f59e0b; box-shadow: 0 14px 34px rgba(0, 0, 0, .35); }
+.vgh-voltsim__grid a:focus-visible, .vgh-voltsim__link:focus-visible { outline: 3px solid #d97706; outline-offset: 3px; }
+@media (max-width: 960px) { .vgh-voltsim__inner { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .vgh-voltsim__grid { grid-template-columns: 1fr 1fr; } }
+@media (prefers-reduced-motion: reduce) { .vgh-voltsim__grid a { transition: none; } }
+
+/* Keep technical content readable and controls easy to use on small screens. */
+.hero__typed::after, .hero__typed-word::after { display: none; }
+.hero__typed { color: #e2e8f0; font-size: 1rem; font-weight: 500; }
+.hero__live-pill { animation: none; box-shadow: none; }
+.hero__stat-number { text-shadow: none; font-size: clamp(1.5rem, 3vw, 2.1rem); }
+.scope__inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem 1rem; }
+.scope__inputs label { display: grid; grid-template-columns: 1fr auto; gap: .4rem; font-size: .85rem; color: #dbe6f3; }
+.scope__inputs output { font-variant-numeric: tabular-nums; color: #fcd34d; }
+.scope__inputs input { grid-column: 1 / -1; width: 100%; min-height: 32px; accent-color: #f59e0b; cursor: pointer; }
+.scope__inputs input:focus-visible { outline: 2px solid #fcd34d; outline-offset: 3px; border-radius: 4px; }
+.scope__summary { min-height: 1.6em; color: #e2e8f0; font-size: .85rem; font-variant-numeric: tabular-nums; }
+.contact__map-notice { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem; padding: 2rem; border: 1px solid #cbd5e1; border-radius: 12px; background: #f8fafc; text-align: center; }
+.contact__map-notice h3, .contact__map-notice p { flex-basis: 100%; margin: 0; }
+.contact__map-notice a { text-decoration: underline; text-underline-offset: 3px; }
+.contact__map iframe:not([hidden]) { display: block; margin-top: 1rem; }
+.contact__map [hidden], #loadMap[hidden] { display: none !important; }
+.form__consent { display: block; line-height: 1.65; }
+@media (max-width: 390px) {
+  .scope__inputs { grid-template-columns: minmax(0, 1fr); }
+  .contact__map-notice { padding: 1.2rem; }
 }

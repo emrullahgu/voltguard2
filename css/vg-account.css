@@ -217,6 +217,7 @@ details[open] .vg-history-item__chev { transform: rotate(180deg); }
 /* Ekleme formları (projeler / dokümanlar) */
 .vg-inline-form { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; align-items: start; }
 .vg-inline-form > button { margin-top: 1.42rem; }
+.vg-inline-form > button.vg-inline-form__after-note { margin-top: 0; justify-self: start; }
 .vg-inline-form .vg-field { gap: .3rem; }
 .vg-inline-form textarea { grid-column: auto; min-height: 70px; }
 .vg-inline-form .vg-span-all { grid-column: 1 / -1; }

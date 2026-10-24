@@ -1,17 +1,6 @@
 import { privateStorage as localStorage } from './privateStorage';
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, lazy, Suspense } from 'react';
 import { Calculator, FileText, Settings, Search, Save, Download, Printer, X, Edit3, ChevronRight, CheckCircle, Lightbulb, Zap, Mail, TrendingDown, RefreshCw, UserPlus, Users, MapPin, Percent, UploadCloud, Sparkles, Copy, Type, Bold, Italic, AlignLeft, AlignCenter, AlignRight, FileSpreadsheet, Hammer, Plus, Trash2, Cable, Wrench, Clock, Star, Banknote, Menu, ExternalLink, Fuel, Briefcase, BarChart3, Package } from 'lucide-react';
-import { BordroWithPassword } from './BordroWithPassword.jsx';
-import BeyazYakaBordro from './BeyazYakaBordro.tsx';
-import KesifMetraj from './KesifMetraj.jsx';
-import GorevTakip from './GorevTakip.jsx';
-import Osos from './Osos.jsx';
-import AkaryakitTakip from './AkaryakitTakip.jsx';
-import IsTakip from './IsTakip.jsx';
-import HaftalikRaporlama from './HaftalikRaporlama.jsx';
-import UrunTakip from './UrunTakip.jsx';
-import PeriyodikKontrol from './PeriyodikKontrol.jsx';
-import SimpleAdminPanel from './SimpleAdminPanel.jsx';
 import { useAuth } from './SimpleAuth';
 import { PORTAL_MODULES, initialPortalModule } from './PortalNavigation';
 import { createReportPDF, exportHTMLReport, reportFileName } from './pdfReport';
@@ -20,8 +9,6 @@ import { calculateYGQuote, calculatePeriodicQuote, normalizeProposal, clonePropo
 import { saleLineTotal, saleUnitPrice, roundMoney, parseDecimal } from './operations.mjs';
 import { sanitizeReportHTML, pasteReportHTML, reportHTMLWithReference } from './safeReportHTML.mjs';
 import { supabase } from './supabaseClient';
-import { Document, Paragraph, TextRun, AlignmentType, HeadingLevel, Table, TableCell, TableRow, WidthType, BorderStyle, Packer } from 'docx';
-import { saveAs } from 'file-saver';
 import { historicalInvoice1 as FaturaData, historicalInvoice2 as FaturaData2, cablePrices as KabloFiyatData, packages as HazirPaketler } from './catalogData';
 import { normalizeHistoricalInvoice } from './historicalCatalog.mjs';
 import {
@@ -35,6 +22,19 @@ import {
   COMPANY_PHONE_ADDRESS_LINE
 } from './companyInfo';
 const faturaLogo = '/calisan/uygulama/fatura_logo.png';
+// Load operational workspaces only when the employee opens them.
+const BordroWithPassword = lazy(() => import('./BordroWithPassword.jsx').then(module => ({ default: module.BordroWithPassword })));
+const BeyazYakaBordro = lazy(() => import('./BeyazYakaBordro.tsx'));
+const KesifMetraj = lazy(() => import('./KesifMetraj.jsx'));
+const GorevTakip = lazy(() => import('./GorevTakip.jsx'));
+const Osos = lazy(() => import('./Osos.jsx'));
+const AkaryakitTakip = lazy(() => import('./AkaryakitTakip.jsx'));
+const IsTakip = lazy(() => import('./IsTakip.jsx'));
+const HaftalikRaporlama = lazy(() => import('./HaftalikRaporlama.jsx'));
+const UrunTakip = lazy(() => import('./UrunTakip.jsx'));
+const PeriyodikKontrol = lazy(() => import('./PeriyodikKontrol.jsx'));
+const SimpleAdminPanel = lazy(() => import('./SimpleAdminPanel.jsx'));
+const ModuleLoading = () => <div role="status" aria-live="polite" className="p-6 bg-white rounded-lg border border-gray-200">Bölüm yükleniyor…</div>;
 
 // Fatura verilerini birleitir ve normalize et
 const normalizedFatura1 = normalizeHistoricalInvoice(FaturaData,'Fatura1');
@@ -1589,6 +1589,7 @@ const App = () => {
     if (!selectedCompany) return;
     
     try {
+      const [{ Document, Paragraph, TextRun, AlignmentType, HeadingLevel, Table, TableCell, TableRow, WidthType, BorderStyle, Packer }, { saveAs }] = await Promise.all([import('docx'), import('file-saver')]);
       const fileName = reportFileName('YG_Teklif', selectedCompany.name, 'docx');
       
       // Tablo satirlarini oluştur
@@ -3455,6 +3456,7 @@ const App = () => {
         )}
 
         {/* Bordro Takip Tab */}
+        <Suspense fallback={<ModuleLoading />}>
         {activeTab === 'bordro' && (
           <div className="max-w-full mx-auto">
             <BordroWithPassword />
@@ -3513,6 +3515,8 @@ const App = () => {
             <GorevTakip />
           </div>
         )}
+
+        </Suspense>
 
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
@@ -4308,6 +4312,7 @@ const App = () => {
 
         {/* Keşif Metraj Fiyat Teklifi Tab */}
         {activeTab === 'kesif' && (
+          <Suspense fallback={<ModuleLoading />}>
           <KesifMetraj
             initialSnapshot={kesifInitialSnapshot}
             onCustomerUpdate={customerData=>setKesifCustomer({name:customerData.musteriAdi || '',address:customerData.adres || '',contactName:customerData.yetkili || '',phone:customerData.telefon || '',date:customerData.tarih || ''})}
@@ -4319,6 +4324,7 @@ const App = () => {
               return await saveProposal('kesif',{componentSnapshot:{...snapshot,schemaVersion:1,reportHtml:sanitizeReportHTML(snapshot.reportHtml || '')},customer:{name:form.musteriAdi,address:form.adres,contactName:form.yetkili,phone:form.telefon,date:form.tarih},products,settings:{İskonto:0,kdvOrani:form.kdvOrani ?? 20},totals:{subTotal,İskontoAmount:0,kdvAmount,grandTotal:roundMoney(subTotal+kdvAmount)}},name);
             }}
           />
+          </Suspense>
         )}
 
         {/* OLD KESIF BACKUP - SILME */}

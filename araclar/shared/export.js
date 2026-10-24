@@ -141,7 +141,9 @@
       } catch (_) { throw new Error('Tarayıcı proje kayıt alanını kullanamıyor. Çevrimdışı HTML kopyasını açın veya bu site için kayıt izni verin.'); }
       location.reload(); return;
     }
-    restoreFields(project.fields, !nativeApplied);
+    // A native adapter validates and restores the complete model. A second scalar
+    // snapshot must not overwrite those fields and leave the displayed result stale.
+    if (!nativeApplied) restoreFields(project.fields);
     status('Proje açıldı. Girdiler ve kayıtlı proje verileri geri yüklendi.');
   }
   function syncClone(clone, replaceCanvases = true) {
@@ -587,7 +589,10 @@
     try { const key = `vg-project-pending:${tool()}`; const value = sessionStorage.getItem(key); if (value) { pending = validateProject(JSON.parse(value)); sessionStorage.removeItem(key); } } catch (_) {}
     const embedded = document.getElementById('vg-project-data');
     if (!pending && embedded) { try { pending = validateProject(JSON.parse(embedded.textContent)); } catch (_) {} }
-    if (pending) { applyNative(pending); restoreFields(pending.fields, false); status('Kaydedilmiş proje açıldı.'); }
+    if (pending) {
+      try { if (!applyNative(pending)) restoreFields(pending.fields); status('Kaydedilmiş proje açıldı.'); }
+      catch (error) { status(error.message || 'Kaydedilmiş proje açılamadı. Mevcut girdiler korunuyor.', true); }
+    }
   }
   // Optional per-module adapter: {getState,setState,flush,buildReport,embeddedId,stateComment}.
   // Exported API enables integration tests without replacing browser download behavior.

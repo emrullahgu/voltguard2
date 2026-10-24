@@ -10,9 +10,9 @@
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261013b">
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=98a54d154d91">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,7 +35,8 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -53,11 +54,11 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261012d">
+  <link rel="stylesheet" href="/css/style.css?v=d152330fb2b0">
   <style>
     .article pre.tool-formula{background:#f8fafc;border:1px dashed var(--clr-border);border-radius:5px;padding:.75rem .9rem;overflow-x:auto;font-size:.85rem;line-height:1.5;color:#334155;white-space:pre}
   </style>
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/mikrodenetleyici-i2c-spi-uart-orta.html#course","name":"Mikrodenetleyici Programlama: I2C / SPI / UART Haberleşme","description":"Register tabanlı GPIO, kesme, DMA ve pratik örnekler.","educationalLevel":"Orta","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Mikrodenetleyici Programlama (Orta)","item":"https://voltguard.com.tr/akademi/mikrodenetleyici-i2c-spi-uart-orta.html"}]}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/mikrodenetleyici-i2c-spi-uart-orta.html#course","name":"Mikrodenetleyici Programlama: I2C / SPI / UART Haberleşme","description":"STM32 üzerinde register tabanlı GPIO, EXTI kesmesi, DMA; UART, SPI ve I2C haberleşmesi ve LM75 sıcaklık sensörü okuma örneği.","educationalLevel":"Orta","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-24","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"},"author":{"@type":"Organization","name":"VoltGuard Mühendislik Ekibi","url":"https://voltguard.com.tr/ekibimiz.html"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Mikrodenetleyici Programlama (Orta)","item":"https://voltguard.com.tr/akademi/mikrodenetleyici-i2c-spi-uart-orta.html"}]}]}</script>
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -71,6 +72,7 @@
           <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
         </span>
       </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
@@ -87,13 +89,16 @@
               <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
               <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
               <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
               <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
             </ul>
           </li>
           <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
-          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -101,6 +106,7 @@
         </div>
       </nav>
       <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
@@ -117,45 +123,52 @@
     <span class="article__cat">Elektronik &amp; Mikrodenetleyici</span>
     <span class="akademi-level akademi-level--orta">Orta Seviye</span>
     <h1>Mikrodenetleyici Programlama: I2C / SPI / UART Haberleşme</h1>
-    <p class="article__summary">Orta seviye bu derste; ARM Cortex-M tabanlı mikrodenetleyicilerde (STM32, NXP) GPIO, kesme (interrupt) ve DMA kullanımını, ayrıca en yaygın üç haberleşme protokolü olan UART, SPI ve I2C'yi pratik örneklerle işleyeceğiz. Ön koşul: <a href="elektronik-mikrodenetleyici-temelleri.html">Elektronik ve Mikrodenetleyici Temelleri</a> dersi.</p>
+    <p class="article__byline" style="font-size:.85rem;color:#5b6472;margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son gözden geçirme: <time datetime="2026-10-24">24.10.2026</time></p>
+    <p class="article__summary">Bu ders; ARM Cortex-M tabanlı mikrodenetleyicilerde (STM32, NXP) GPIO, kesme ve DMA kullanımını, UART, SPI ve I2C haberleşmesini kod örnekleri ve bir sıcaklık sensörü okuma uygulamasıyla anlatır.</p>
 
-    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Register tabanlı GPIO kontrol, EXTI kesme, DMA transferi, UART/SPI/I2C protokollerinin fiziksel ve mantıksal katmanları ve bir sensör okuma örneği.</div>
+    <div class="akademi-path"><strong>Ön koşul ve ilgili kaynaklar:</strong> <a href="elektronik-mikrodenetleyici-temelleri.html">Elektronik ve Mikrodenetleyici Temelleri</a> · <a href="/araclar/adc-cozunurluk/">ADC çözünürlük hesabı</a> · <a href="/sor/modbus-rtu-haberlesme-kesiliyor.html">Modbus RTU haberleşmesi neden kesiliyor?</a></div>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Birçok modern MCU ARM Cortex-M0/M0+/M3/M4/M7 çekirdeklerini kullanır; bunlar 32-bit RISC işlemcilerdir (ESP32 gibi bazıları ise Xtensa veya RISC-V çekirdeği kullanır).</li><li>Kesme (interrupt) kullanmayan gömülü sistem yoktur; polling yerine event-driven programlama tercih edilir.</li><li>DMA (Direct Memory Access), CPU yükünü azaltarak yüksek hızlı veri transferini mümkün kılar.</li><li>UART asenkron ve tam çift yönlü (nokta-nokta), SPI senkron ve tam çift yönlü, I2C ise çok cihazlı ve yarı çift yönlü bir bus'tır.</li><li>STM32 CubeIDE, ESP-IDF ve Arduino en yaygın geliştirme ortamlarıdır.</li></ul></div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Birçok MCU ARM Cortex-M0/M0+/M3/M4/M7 çekirdeği kullanır; bunlar 32 bit RISC işlemcilerdir. ESP32 gibi bazı aileler Xtensa veya RISC-V çekirdeği kullanır.</li><li>Olaya bağlı işler (buton, haberleşme, zamanlayıcı) çoğunlukla kesmeyle ele alınır; kesme rutini kısa tutulur, ağır iş ana döngüye bırakılır.</li><li>DMA, çevre birimi ile bellek arasındaki veri taşımayı CPU'dan alır.</li><li>UART asenkron ve nokta-nokta, SPI senkron ve tam çift yönlü, I2C ise iki hatlı, çok cihazlı ve yarı çift yönlü bir bus'tır.</li></ul></div>
 
     <h2>Mikrodenetleyici Mimarisi</h2>
     <p>Bir mikrodenetleyici; CPU çekirdeği (ARM Cortex-M), Flash, RAM, çevre birimleri (GPIO, timer, ADC, UART, SPI, I2C, CAN, USB) ve saat sistemini tek çip halinde barındırır. Endüstriyel gömülü sistemlerde en yaygın seri STM32'dir (STMicroelectronics). Örnek konfigürasyon: STM32F411, ARM Cortex-M4F, 100 MHz, 512 KB Flash, 128 KB RAM, 3 UART, 5 SPI, 3 I2C, 1 ADC, USB, timer. Endüstriyel cihazlarda UART çıkışı çoğunlukla bir RS-485 sürücüsüyle sahaya taşınır ve <a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA otomasyon</a> sistemlerinde Modbus RTU haberleşmesinin fiziksel temelini oluşturur.</p>
 
     <h2>GPIO Kontrolü: Register Tabanlı</h2>
-    <p>Bir LED'i D pinine bağladığımızı düşünelim (PA5, STM32 için). Yapılan işlemler:</p>
+    <p>LED'in PA5 pinine bağlı olduğunu düşünelim (STM32). Yapılan işlemler:</p>
     <ol class="article__list">
       <li>Clock aktif: RCC → AHB1ENR → GPIOAEN = 1</li>
-      <li>Pin modu: GPIOA → MODER[10:11] = 01 (output)</li>
+      <li>Pin modu: GPIOA → MODER[11:10] = 01 (output)</li>
       <li>Çıkış tipi: OTYPER[5] = 0 (push-pull)</li>
-      <li>Hız: OSPEEDR[10:11] = 00 (low speed)</li>
-      <li>Pull-up/down: PUPDR[10:11] = 00 (none)</li>
+      <li>Hız: OSPEEDR[11:10] = 00 (low speed)</li>
+      <li>Pull-up/down: PUPDR[11:10] = 00 (none)</li>
       <li>Çıkış: ODR[5] = 1 (LED yak), = 0 (söndür)</li>
     </ol>
     <p>HAL kütüphanesiyle: <code>HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);</code></p>
 
     <h2>Kesme (Interrupt) ile Buton</h2>
-    <p>Bir butonu PA0'e bağlayıp basıldığında LED durumunu değiştirmek için polling yerine EXTI kesmesi tercih edilir:</p>
+    <p>Buton PA0 ile GND arasına bağlı, PA0'da dahili pull-up açık olsun. Butona basıldığında pin 1'den 0'a düşer; bu nedenle kesme düşen kenarda tetiklenir:</p>
     <pre class="tool-formula">
-// CubeMX ile PA0 = GPIO_EXTI0, Rising Edge, Pull-up
+// CubeMX ile PA0 = GPIO_EXTI0, Falling Edge, Pull-up
 void EXTI0_IRQHandler(void) {
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
 }
 
+static volatile uint32_t last_ms = 0;
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     if (GPIO_Pin == GPIO_PIN_0) {
-        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+        uint32_t now = HAL_GetTick();
+        if (now - last_ms &gt;= 30) {          // 30 ms içindeki sıçramaları yok say
+            last_ms = now;
+            HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+        }
     }
 }
     </pre>
-    <p>Kesme ile buton okurken debounce (yaklaşık 30 ms yazılım gecikmesi) mutlaka uygulanmalıdır; aksi hâlde bir baskı 5-10 kez algılanabilir.</p>
+    <p>Mekanik buton kontağı sıçradığı için tek basış birkaç kesme üretebilir. Kesme rutininde bekleme (HAL_Delay) yapılmaz; yukarıdaki gibi zaman damgasıyla veya bir zamanlayıcıyla filtreleme yapılır. Donanımda RC filtre ve Schmitt tetikleyici de kullanılabilir.</p>
 
     <h2>UART: Seri Haberleşme</h2>
-    <p>UART (Universal Asynchronous Receiver-Transmitter), iki cihaz arasında asenkron seri haberleşme sağlar. Tipik parametreler: 9600 bps, 8 data bit, no parity, 1 stop bit (8N1). RS-232 fiziksel katmanla ±15V, RS-485 ile ±5V ve fark tabanlı çalışır. TTL seviye 3,3V / 5V.</p>
+    <p>UART (Universal Asynchronous Receiver-Transmitter), iki cihaz arasında asenkron seri haberleşme sağlar. Tipik parametreler: 9600 bit/s, 8 veri biti, paritesiz, 1 stop biti (8N1). MCU pinlerindeki UART sinyali TTL/CMOS seviyesindedir (3,3 V veya 5 V) ve yalnızca kart içinde ya da çok kısa bağlantılarda kullanılır. Daha uzun mesafede bir sürücüyle başka bir fiziksel katmana çevrilir: RS-232'de sinyal seviyeleri ±3 V ile ±15 V arasındadır. RS-485'te ise diferansiyel sürücü çıkışı en az ±1,5 V'tur ve tek hat üzerinde çok sayıda cihaz bulunabilir.</p>
     <pre class="tool-formula">
 HAL_UART_Transmit(&amp;huart1, (uint8_t*)"Hello\r\n", 7, 100);
 
@@ -164,7 +177,7 @@ HAL_UART_Transmit_DMA(&amp;huart1, buf, len);
     </pre>
 
     <h2>SPI: Yüksek Hızlı Senkron</h2>
-    <p>SPI (Serial Peripheral Interface), 4 hatlı (MOSI, MISO, SCLK, CS) senkron protokoldür. Aynı bus'ta birden fazla cihaz olabilir; her cihazın kendi CS (Chip Select) hattı vardır. Hız 10-50 MHz'e ulaşır. Örnek uygulama: SPI Flash, OLED ekran, SD kart, ADC (MAX11040 gibi).</p>
+    <p>SPI (Serial Peripheral Interface), 4 hatlı (MOSI, MISO, SCLK, CS) senkron bir protokoldür. Aynı bus'ta birden fazla cihaz olabilir; her cihaz kendi CS (Chip Select) hattıyla seçilir. Hız, cihaza ve kart yerleşimine bağlı olarak onlarca MHz'e çıkabilir. Örnek uygulama: SPI Flash, OLED ekran, SD kart, ADC (MAX11040 gibi).</p>
     <pre class="tool-formula">
 uint8_t tx[2] = {0x01, 0x02};
 uint8_t rx[2];
@@ -174,29 +187,30 @@ HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_SET);
     </pre>
 
     <h2>I2C: Çoklu Cihaz Bus'ı</h2>
-    <p>I2C (Inter-Integrated Circuit), sadece 2 hat (SDA, SCL) kullanan çok cihazlı bir bus'tır. Standart 100 kHz, Fast 400 kHz, Fast+ 1 MHz. Her cihazın 7-bit adresi vardır (128 cihaz teoride). Örnek uygulama: EEPROM (24LC256), sıcaklık sensörü (LM75, BMP280), IMU (MPU6050), RTC (DS3231).</p>
+    <p>I2C (Inter-Integrated Circuit), yalnızca 2 hat (SDA, SCL) kullanan çok cihazlı bir bus'tır. Hız modları: Standard 100 kHz, Fast 400 kHz, Fast-mode Plus 1 MHz. Hatlar açık-drenajdır ve pull-up direnci gerektirir. Direnç değeri bus kapasitansına ve hıza göre seçilir; tipik aralık 2,2-10 kΩ'dur. 7 bit adresleme 128 adres verir; bunların bir kısmı ayrılmış olduğu için kullanılabilir adres sayısı yaklaşık 112'dir. Örnek uygulama: EEPROM (24LC256), sıcaklık sensörü (LM75, BMP280), IMU (MPU6050), RTC (DS3231).</p>
     <pre class="tool-formula">
 // LM75 sıcaklık sensörü örneği
 uint8_t reg = 0x00;  // Temp register
 uint8_t data[2];
 HAL_I2C_Master_Transmit(&amp;hi2c1, 0x90, &amp;reg, 1, 100);
 HAL_I2C_Master_Receive(&amp;hi2c1, 0x90, data, 2, 100);
-int16_t temp = (data[0] &lt;&lt; 8 | data[1]) &gt;&gt; 5;
-float celsius = temp * 0.125f;
+int16_t raw = (int16_t)((data[0] &lt;&lt; 8) | data[1]);  // işaretli 16 bit
+raw &gt;&gt;= 5;                                           // 11 bit, 0,125 °C/bit (LM75B)
+float celsius = raw * 0.125f;
     </pre>
 
     <h2>UART / SPI / I2C Karşılaştırma</h2>
     <div class="table-scroll"><table>
       <thead><tr><th>Protokol</th><th>Tel</th><th>Hız</th><th>Mesafe</th><th>Cihaz</th><th>Yaygın kullanım</th></tr></thead>
       <tbody>
-        <tr><td>UART</td><td>2</td><td>9,6-921,6 kbps</td><td>~15 m (TTL)</td><td>2 (nokta-nokta)</td><td>Debug, GPS, RS-485</td></tr>
-        <tr><td>SPI</td><td>4+</td><td>1-50 MHz</td><td>~30 cm</td><td>4-8 CS başına</td><td>SPI Flash, SD, OLED</td></tr>
-        <tr><td>I2C</td><td>2</td><td>100 kHz-1 MHz</td><td>~1 m</td><td>128 (7-bit adres)</td><td>Sensör, EEPROM, RTC</td></tr>
+        <tr><td>UART</td><td>2 (TX, RX) + GND</td><td>9,6-921,6 kbit/s</td><td>TTL: kart içi; RS-232: ~15 m; RS-485: 1200 m'ye kadar</td><td>2 (nokta-nokta); RS-485 ile çok noktalı</td><td>Debug, GPS, Modbus RTU</td></tr>
+        <tr><td>SPI</td><td>4 + cihaz başına CS</td><td>1-50 MHz</td><td>Kart içi (~30 cm)</td><td>Her CS hattı bir cihaz</td><td>SPI Flash, SD, OLED, ADC</td></tr>
+        <tr><td>I2C</td><td>2</td><td>100 kHz-1 MHz</td><td>Kart içi; bus kapasitansı en fazla 400 pF</td><td>~112 (7 bit adres)</td><td>Sensör, EEPROM, RTC</td></tr>
       </tbody>
     </table></div>
 
     <h2>DMA (Direct Memory Access)</h2>
-    <p>DMA, çevre biriminden RAM'e (veya tersi) CPU müdahalesi olmadan blok halinde veri taşır. CPU sadece transfer başladığında ve bittiğinde meşgul olur; arada başka işleri yapabilir. ADC gibi yüksek hızlı örneklemede (kHz-MHz), UART receive gibi asenkron olaylarda ve SPI/I2C toplu transferlerde şarttır.</p>
+    <p>DMA, çevre biriminden RAM'e (veya tersi) CPU müdahalesi olmadan blok halinde veri taşır. CPU sadece transfer başladığında ve bittiğinde meşgul olur; arada başka işleri yapabilir. Sürekli ADC örneklemesinde, UART ile değişken uzunlukta veri alırken ve SPI/I2C toplu transferlerinde özellikle yararlıdır.</p>
 
     <h2>Debug Araçları</h2>
     <ul class="article__list">
@@ -211,7 +225,7 @@ float celsius = temp * 0.125f;
     <p>Bu orta seviye dersi tamamladıktan sonra:</p>
     <ul class="article__list">
       <li><strong>İleri seviye:</strong> <a href="pcb-tasarim-emi-emc-ileri.html">PCB Tasarımı ve EMI/EMC Uyumluluk</a></li>
-      <li>Uygulamalı: <a href="/bilgi/malzeme-ekipman-tedarik-rehberi.html">Elektronik ve Otomasyon Malzeme Rehberi</a></li>
+      <li>Uygulamalı: <a href="/araclar/rc-rl-filtre/">RC/RL filtre hesabı</a> ve <a href="/araclar/yuklu-gerilim-bolucu/">yüklü gerilim bölücü</a></li>
     </ul>
 
     <p class="kb-disclaimer">Bu içerik eğitim amaçlıdır. Gerçek ürün tasarımında; MCU seçimi, güvenlik, sertifika ve üretim testleri için yetkili mühendis çalışması gereklidir.</p>
@@ -249,7 +263,7 @@ float celsius = temp * 0.125f;
               <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
           </a>
-          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
           <ul class="vg-footer__contact">
             <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
@@ -259,7 +273,7 @@ float celsius = temp * 0.125f;
             <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
             <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
           </address>
-          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
         </div>
         <nav class="vg-footer__nav" aria-label="Alt menü">
           <div class="vg-footer__col">
@@ -291,9 +305,8 @@ float celsius = temp * 0.125f;
               <li><a href="/#referanslar">Referanslarımız</a></li>
               <li><a href="/#surec">Sürecimiz</a></li>
               <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
               <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
               <li><a href="/#katalog">Katalog</a></li>
               <li><a href="/#sss">SSS</a></li>
               <li><a href="/#iletisim">İletişim</a></li>
@@ -309,6 +322,8 @@ float celsius = temp * 0.125f;
               <li><a href="/sor.html">VoltGuard'a Sor</a></li>
               <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
               <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+              <li><a href="/volthaber/">VoltHaber</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
@@ -318,6 +333,7 @@ float celsius = temp * 0.125f;
               <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
               <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
               <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
               <li><a href="/hesap/giris.html">Üye Girişi</a></li>
               <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
@@ -334,39 +350,9 @@ float celsius = temp * 0.125f;
           <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
-      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
-        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          </circle>
-        </svg>
-        <span class="sig-node" aria-hidden="true"></span>
-        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
-          <span class="sig-badge__ring" aria-hidden="true"></span>
-          <span class="sig-badge__aurora" aria-hidden="true"></span>
-          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
-          <span class="sig-badge__body">
-            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
-            <span class="sig-badge__brand">
-              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
-              <span class="sig-badge__eng">Engineering</span>
-            </span>
-          </span>
-          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
-          <span class="sig-badge__shimmer" aria-hidden="true"></span>
-        </a>
-        <span class="sig-node" aria-hidden="true"></span>
-        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
-          </circle>
-        </svg>
-      </div>
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261013a" defer></script>
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
 </body>
 </html>

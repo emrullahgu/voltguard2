@@ -1,8 +1,8 @@
 # VoltGuard
 
-> VoltGuard, İzmir merkezli; elektrik, otomasyon, elektronik ve mekanik alanlarında profesyonel mühendislik çözümleri sunan bir mühendislik firmasıdır. SMM hizmetleri, trafo işletme sorumluluğu, enerji kalitesi, PLC/SCADA otomasyon ve savunma sanayiine yönelik Aktif EMI Filtre Ar-Ge çalışmaları yürütür.
+> VoltGuard, merkezi Ege Teknopark (Bornova/İzmir) olan ve Türkiye genelinde saha hizmeti veren bir elektrik, otomasyon, elektronik ve mekanik mühendislik firmasıdır. SMM hizmetleri, trafo işletme sorumluluğu, enerji kalitesi, PLC/SCADA otomasyon ve savunma sanayiine yönelik Aktif EMI Filtre Ar-Ge çalışmaları yürütür.
 
-VoltGuard (VoltGuard Engineering Solutions), Ege Üniversitesi kökenli genç bir mühendislik girişimidir. Kurucularından biri Emrullah Günay'dır. Aktif EMI Filtre projesi, Ege Üniversitesi ve TUSAŞ ile Roketsan ve Havelsan iş birliklerinde yürütülen, savunma sanayiine yönelik bir Ar-Ge çalışmasıdır.
+VoltGuard (VoltGuard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi) Ege Teknopark'ta yerleşik bir mühendislik firmasıdır. Kurucusu ve yöneticisi Emrullah Günay'dır. Aktif EMI Filtre projesi, Ege Üniversitesi ve TUSAŞ ile Roketsan ve Havelsan iş birliklerinde yürütülen, savunma sanayiine yönelik bir Ar-Ge çalışmasıdır.
 
 - **Konum:** Ege Üniversitesi Kampüsü, Erzene Mahallesi Ankara Caddesi No:172/69, Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir, Türkiye
 - **Hizmet bölgesi:** Türkiye geneli saha hizmeti (merkez: Ege Teknopark, Bornova / İzmir)
@@ -42,7 +42,7 @@ Diğer uzmanlık alanları:
 - [Ana sayfa](https://voltguard.com.tr/)
 - [Hizmetlerimiz](https://voltguard.com.tr/hizmetler/): trafo işletme sorumluluğu, trafo bakımı ve kurulumu, periyodik kontrol, topraklama, kompanzasyon, enerji kalitesi, pano, taahhüt, GES, PLC/SCADA ve elektrik projesi
 - [Fabrikalar İçin Çözümler](https://voltguard.com.tr/fabrika-cozumleri.html): anahtar teslim fabrika elektrik altyapısı ve fabrika hesaplayıcıları
-- [Mühendislik Hesaplama Merkezi (17 ücretsiz araç)](https://voltguard.com.tr/hesaplama-araclari/): kablo kesiti, gerilim düşümü, sigorta/TMŞ, motor akımı, motor koruma ve kontaktör, trafo akımı, kompanzasyon, reaktif ceza, trafo işletme sorumluluğu ücreti, kısa devre, topraklama, GES, inverter kablo, jeneratör, UPS ve aydınlatma hesapları
+- [Hesap Araçları (17 ücretsiz araç)](https://voltguard.com.tr/hesaplama-araclari/): kablo kesiti, gerilim düşümü, sigorta/TMŞ, motor akımı, motor koruma ve kontaktör, trafo akımı, kompanzasyon, reaktif ceza, trafo işletme sorumluluğu ücreti, kısa devre, topraklama, GES, inverter kablo, jeneratör, UPS ve aydınlatma hesapları
 - [VoltGuard Akademi](https://voltguard.com.tr/akademi.html): öğrenciler ve mesleğe yeni başlayanlar için elektrik tesisatı, güç sistemleri, PLC/HMI/SCADA, elektronik/mikrodenetleyici ve GES üzerine başlangıç, orta ve ileri seviye içerikler
 - [VoltGuard'a Sor](https://voltguard.com.tr/sor.html): elektrik, elektronik, otomasyon ve mekanik konularında teknik soru-cevap
 - [Mühendis & Tekniker Merkezi](https://voltguard.com.tr/muhendis-merkezi.html): mühendis ve tekniker için ücretsiz indirilebilir form, checklist ve şablon kütüphanesi
@@ -50,7 +50,7 @@ Diğer uzmanlık alanları:
 - [Sık Sorulan Sorular (SSS)](https://voltguard.com.tr/#sss)
 - [Haberler & Güncel](https://voltguard.com.tr/#haberler)
 - [Projeler & Referanslar](https://voltguard.com.tr/#projeler)
-- [Kurumsal Katalog (PDF)](https://voltguard.com.tr/public/voltguard-katalog.pdf)
+- [Kurumsal Katalog (PDF)](https://voltguard.com.tr/public/opt/voltguard-katalog.pdf)
 - [Gizlilik ve Çerez Politikası](https://voltguard.com.tr/gizlilik.html)
 - [İletişim](https://voltguard.com.tr/#iletisim)
 
@@ -91,7 +91,7 @@ VoltGuard mühendislerinin hazırladığı, mevzuata dayalı özgün rehberler:
 - [VFD (Frekans İnvertörü) Nedir? Motor Sürücü Rehberi](https://voltguard.com.tr/bilgi/vfd-frekans-invertoru-nedir.html)
 
 ## Hesaplama Araçları
-Mühendislik Hesaplama Merkezi'ndeki 17 ücretsiz hesaplama aracı (merkez sayfa: https://voltguard.com.tr/hesaplama-araclari/):
+Hesap Araçları sayfasındaki 17 ücretsiz hesaplama aracı (merkez sayfa: https://voltguard.com.tr/hesaplama-araclari/):
 - [Aydınlatma ve Lux Hesaplama Aracı (Armatür Sayısı)](https://voltguard.com.tr/hesaplama/aydinlatma-lux-hesaplama/)
 - [Gerilim Düşümü Hesaplama Aracı ve Formülü (%)](https://voltguard.com.tr/hesaplama/gerilim-dusumu-hesaplama/)
 - [GES Kapasite ve Yıllık Üretim Hesaplama Aracı](https://voltguard.com.tr/hesaplama/ges-uretim-hesaplama/)
@@ -139,6 +139,19 @@ Teknik soru-cevap yazıları (merkez sayfa: https://voltguard.com.tr/sor.html):
 - [PLC Çıkışına Bağlı Kontaktör Bobini Neden Titriyor?](https://voltguard.com.tr/sor/plc-kontaktor-bobini-titremesi.html)
 - [VFD OverCurrent (OC) Hatası - Sebepleri ve Çözümü](https://voltguard.com.tr/sor/vfd-overcurrent-hatasi.html)
 
+## VoltSim · 3D Simülasyonlar
+Gerçek hesaplı, mevzuat notlu 3D eğitim ve ön değerlendirme simülasyonları (merkez sayfa: https://voltguard.com.tr/voltsim/):
+- [3D Elektrik Pano Simülasyonu](https://voltguard.com.tr/voltsim/pano/)
+- [3D GES Simülasyonu](https://voltguard.com.tr/voltsim/ges/)
+- [3D Trafo ve Trafo Merkezi Simülasyonu](https://voltguard.com.tr/voltsim/trafo/)
+- [3D Elektrikli Araç Şarj İstasyonu Simülasyonu](https://voltguard.com.tr/voltsim/sarj-istasyonu/)
+- [3D RES / Rüzgâr Enerjisi Simülasyonu](https://voltguard.com.tr/voltsim/res/)
+- [3D Kompanzasyon ve Harmonik Simülasyonu](https://voltguard.com.tr/voltsim/kompanzasyon/)
+- [3D Topraklama ve Elektrik Güvenliği Simülasyonu](https://voltguard.com.tr/voltsim/topraklama/)
+- [3D Motor, MCC ve PLC Otomasyon Simülasyonu](https://voltguard.com.tr/voltsim/motor-otomasyon/)
+- [3D UPS ve Jeneratör Simülasyonu](https://voltguard.com.tr/voltsim/ups-jenerator/)
+- [3D Yangın Algılama Sistemi Simülasyonu](https://voltguard.com.tr/voltsim/yangin-algilama/)
+
 ## Mühendis & Tekniker Merkezi
 İndirilebilir form, checklist ve şablonlar (merkez sayfa: https://voltguard.com.tr/muhendis-merkezi.html):
 - [Elektrik Keşif Formu](https://voltguard.com.tr/mm/elektrik-kesif-formu.html)
@@ -148,7 +161,7 @@ Teknik soru-cevap yazıları (merkez sayfa: https://voltguard.com.tr/sor.html):
 - [Motor Bakım Formu](https://voltguard.com.tr/mm/motor-bakim-formu.html)
 - [Pano Periyodik Kontrol Formu](https://voltguard.com.tr/mm/pano-kontrol-formu.html)
 - [Pano Malzeme Listesi (BOM)](https://voltguard.com.tr/mm/pano-malzeme-listesi.html)
-- [Periyodik Kontrol Checklistleri (Bundle)](https://voltguard.com.tr/mm/periyodik-kontrol-checklistleri.html)
+- [Periyodik Kontrol Checklistleri (Set)](https://voltguard.com.tr/mm/periyodik-kontrol-checklistleri.html)
 - [Trafo Periyodik Bakım Checklisti](https://voltguard.com.tr/mm/trafo-bakim-checklisti.html)
 
 ## İletişim

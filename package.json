@@ -3,15 +3,22 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node tools/build-team.cjs && node tools/build-voltgame.cjs && node tools/build-staff.cjs && node tools/build-engineering.cjs && node tools/build-company.cjs",
+    "build": "node tools/build-team.cjs && node tools/build-voltgame.cjs && node tools/build-voltsim.cjs && python tools/shell.py --quiet && node tools/build-staff.cjs && node tools/build-engineering.cjs && node tools/build-company.cjs",
     "build:game": "node tools/build-voltgame.cjs",
+    "build:voltsim": "node tools/build-voltsim.cjs && python tools/shell.py --quiet",
     "setup:game": "npm ci --prefix tools/voltgame/tools --ignore-scripts --no-fund",
     "setup:staff": "npm ci --prefix tools/staff-app --ignore-scripts --no-fund",
     "test": "node tools/test.cjs",
+    "audit": "python tools/audit-site.py --check",
+    "test:site-browser": "python tools/audit-site.py --check && node tools/tests/public-site-browser.cjs",
     "test:browser": "node tools/tests/engineering-browser.cjs",
     "test:game-browser": "node tools/tests/voltgame-browser.cjs",
+    "test:voltsim-browser": "node tools/tests/voltsim-browser.cjs",
     "test:staff-browser": "node tools/tests/staff-browser.cjs && node tools/tests/company-ui-browser.cjs && node tools/tests/company-real-browser.cjs",
-    "preview": "node tools/preview.cjs"
+    "preview": "node tools/preview.cjs",
+    "sync:versions": "python tools/sync-versions.py",
+    "audit:site": "node tools/tests/site-audit.cjs",
+    "build:content": "python tools/shell.py --quiet && node tools/build-mevzuat-guncellemeleri.cjs && node tools/build-sozluk.cjs && node tools/build-arama.cjs && python tools/shell.py --quiet && node tools/build-engage.cjs && node tools/build-search-index.cjs && python tools/sync-versions.py"
   },
   "engines": {
     "node": ">=24"

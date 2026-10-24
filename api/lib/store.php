@@ -344,9 +344,7 @@ final class VgJsonStore implements VgStore
     {
         $this->dir = $dir;
         foreach ([$dir, $dir . '/users', $dir . '/data'] as $d) {
-            if (!vg_ensure_dir($d)) {
-                vg_unavailable('json store directory is not writable');
-            }
+            vg_private_data_directory($d);
         }
     }
 
@@ -360,11 +358,11 @@ final class VgJsonStore implements VgStore
     {
         $fp = @fopen($this->dir . '/store.lock', 'c');
         if ($fp === false) {
-            throw new RuntimeException('json store: lock file cannot be opened');
+            vg_unavailable('json store lock cannot be opened');
         }
         if (!flock($fp, $exclusive ? LOCK_EX : LOCK_SH)) {
             fclose($fp);
-            throw new RuntimeException('json store: lock failed');
+            vg_unavailable('json store lock failed');
         }
         try {
             return $fn();
@@ -381,14 +379,11 @@ final class VgJsonStore implements VgStore
         }
         $raw = @file_get_contents($file);
         if (!is_string($raw)) {
-            throw new RuntimeException('json store: read failed');
-        }
-        if ($raw === '') {
-            return [];
+            vg_unavailable('json store read failed');
         }
         $data = json_decode($raw, true);
         if (!is_array($data)) {
-            throw new RuntimeException('json store: corrupt file ' . basename($file));
+            vg_unavailable('json store contains corrupt JSON');
         }
         return $data;
     }
@@ -399,12 +394,12 @@ final class VgJsonStore implements VgStore
         $tmp = dirname($file) . '/.tmp-' . bin2hex(random_bytes(6));
         if (@file_put_contents($tmp, $json) !== strlen($json)) {
             @unlink($tmp);
-            throw new RuntimeException('json store: write failed');
+            vg_unavailable('json store write failed');
         }
         @chmod($tmp, 0600);
         if (!@rename($tmp, $file)) {
             @unlink($tmp);
-            throw new RuntimeException('json store: rename failed');
+            vg_unavailable('json store atomic replacement failed');
         }
     }
 
@@ -474,9 +469,7 @@ final class VgJsonStore implements VgStore
         return $this->locked(true, function () use ($id, $fields) {
             $file = $this->userFile($id);
             $u = $this->read($file);
-            if (!$u) {
-                return true;
-            }
+            if (!$u) throw new VgHttpError(401, 'unauthorized', VG_MSG_SESSION_GONE);
             $u = vg_normalize_user_row($u);
             $indexFile = $this->dir . '/emails.json';
             $index = null;
@@ -535,14 +528,12 @@ final class VgJsonStore implements VgStore
             $dataDir = $this->dir . '/data/' . $id;
             if (is_dir($dataDir)) {
                 foreach ((array)glob($dataDir . '/*') as $f) {
-                    if (is_string($f) && is_file($f)) {
-                        @unlink($f);
-                    }
+                    if (is_string($f) && is_file($f) && !@unlink($f)) vg_unavailable('account collection deletion failed');
                 }
-                @rmdir($dataDir);
+                if (!@rmdir($dataDir)) vg_unavailable('account collection directory deletion failed');
             }
             if ($u || is_file($this->userFile($id))) {
-                @unlink($this->userFile($id));
+                if (!@unlink($this->userFile($id))) vg_unavailable('account deletion failed');
             }
             return null;
         });
@@ -584,9 +575,7 @@ final class VgJsonStore implements VgStore
             $state = $this->readCollection($uid, $coll);
             $items = array_values($fn($state));
             $new = ['items' => $items, 'rev' => $state['rev'] + 1, 'updatedAt' => vg_now()];
-            if (!vg_ensure_dir($this->dir . '/data/' . $uid)) {
-                throw new RuntimeException('json store: data directory is not writable');
-            }
+            vg_private_data_directory($this->dir . '/data/' . $uid, $this->dir);
             $this->write($this->dataFile($uid, $coll), $new);
             return $new;
         });
@@ -657,18 +646,29 @@ function vg_store(): VgStore
     if ($store !== null) {
         return $store;
     }
-    $dir = vg_data_dir();
+    $dir = vg_private_data_directory(vg_data_dir());
     $marker = $dir . '/store.kind';
-    $kind = is_file($marker) ? trim((string)@file_get_contents($marker)) : '';
-    if ($kind !== 'sqlite' && $kind !== 'json') {
-        $forced = getenv('VG_STORE');
-        if ($forced === 'json' || $forced === 'sqlite') {
-            $kind = $forced;
-        } else {
-            $kind = vg_sqlite_available() ? 'sqlite' : 'json';
+    $lock = @fopen($dir . '/store-kind.lock', 'c');
+    if ($lock === false || !flock($lock, LOCK_EX)) vg_unavailable('store selection cannot be locked');
+    try {
+        $exists = file_exists($marker) || is_link($marker);
+        $kind = $exists ? trim((string)@file_get_contents($marker)) : '';
+        if ($exists && ($kind !== 'sqlite' && $kind !== 'json')) {
+            vg_unavailable('store.kind is corrupt; refusing to switch stores');
         }
-        @file_put_contents($marker, $kind, LOCK_EX);
-        @chmod($marker, 0600);
+        if (!$exists) {
+            // Existing storage without its marker needs recovery, never automatic reselection.
+            if (file_exists($dir . '/vg-accounts.sqlite') || is_dir($dir . '/json')) {
+                vg_unavailable('store.kind missing for existing data');
+            }
+            $forced = getenv('VG_STORE');
+            $kind = in_array($forced, ['json', 'sqlite'], true) ? $forced : (vg_sqlite_available() ? 'sqlite' : 'json');
+            if (@file_put_contents($marker, $kind, LOCK_EX) !== strlen($kind)) vg_unavailable('store.kind cannot be saved');
+            @chmod($marker, 0600);
+        }
+    } finally {
+        flock($lock, LOCK_UN);
+        fclose($lock);
     }
     try {
         if ($kind === 'sqlite') {

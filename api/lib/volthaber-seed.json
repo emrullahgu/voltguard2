@@ -1,0 +1,593 @@
+{
+ "generated": "tools/build-volthaber-seed.cjs",
+ "registryChecked": "2026-10-23",
+ "articles": [
+  {
+   "slug": "23-12-2025-degisikliginden-sonra-elektrik-tesisati-periyodik-kontrolu",
+   "title": "23.12.2025 değişikliğinden sonra elektrik tesisatı periyodik kontrolü: işverenin bilmesi gerekenler",
+   "summary": "İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği'nin Madde 7 ve EK-III hükümleri 23.12.2025'te değişti. Kontrol periyodu, kontrolü kimin yapacağı ve projesi olmayan tesisat için yönetmeliğin söylediklerini maddeleriyle derledik.",
+   "body": "İşyerlerinde elektrik ve topraklama tesisatının periyodik kontrolünün yasal dayanağı, İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği'dir (RG 25.04.2013 / 28628). Yönetmeliğin Madde 7 ve EK-III hükümleri **23.12.2025 tarihli ve 33116 sayılı** Resmî Gazete'de yayımlanan değişiklikle yeniden düzenlendi. Aşağıda, VoltGuard mevzuat kaydında madde metninden doğrulanmış hükümleri sahadaki karşılıklarıyla birlikte özetliyoruz.\n\n## Hangi ekipmanlar kontrole tabi?\n**Madde 7:** EK-III tablolarındaki ekipmanlar yetkili kişilerce periyodik kontrole tabidir; usul ve esaslar EK-III'tedir (değişik: 23.12.2025/33116).\n\n## Kontrol ne sıklıkla ve kim tarafından yapılır?\n**EK-III 2.3.1–2.3.2:** İlgili standartta aksi yoksa tesisatlar yılda bir kontrol edilir; elektrik, topraklama, yıldırımdan korunma, akü, trafo, jeneratör tesisatlarını yetkili elektrik mühendisi/tekniker vb. kontrol eder.\n\n**EK-III Tablo-3:** Elektrik ve topraklama tesisatı, yıldırımdan korunma, jeneratör (TS ISO 8528), yangın algılama (TSE CEN/TS 54-14) için standartta süre yoksa en fazla 1 yıl; akümülatör ve transformatör için 1 yıl.\n\nPratikte bu, standartta daha kısa bir süre öngörülmedikçe elektrik iç tesisatı, topraklama ve yıldırımdan korunma tesisatı için kontrollerin yıllık planlanması anlamına gelir. Trafo ve akü tesisatı için tabloda doğrudan 1 yıl yazılıdır.\n\n## Projesi olmayan tesisat\n**EK-III 2.3.7:** Elektrik, topraklama ve yıldırımdan korunma tesisatlarında kontrolde proje aranır; projesi olmayan tesisat işverence projelendirilmelidir.\n\nProjelendirmede Elektrik İç Tesisleri Proje Hazırlama Yönetmeliği esas alınır; kayıttaki nota göre İş Ekipmanları Yönetmeliği, projesi olmayan elektrik tesisatının bu yönetmeliğe göre projelendirilmesini ister.\n\n## İşveren için kontrol listesi\n- Tesisteki elektrik, topraklama, yıldırımdan korunma, trafo, jeneratör, akü ve yangın algılama sistemlerinin listesini çıkarın.\n- Her biri için son kontrol tarihini ve raporu bulun; ilgili standartta daha kısa süre olup olmadığını kontrol edin.\n- Elektrik tesisatının güncel projesi yoksa kontrol öncesinde projelendirmeyi planlayın.\n- Kontrolü yapacak kişinin yetki belgesini (yetkili elektrik mühendisi / tekniker vb.) dosyaya ekleyin.\n\nTakvimi çıkarmak için [periyodik kontrol planlayıcımızı](/hesaplama/periyodik-kontrol-planlayici/) kullanabilir, ayrıntılı rehber için [elektrik tesisatı periyodik kontrolü](/bilgi/elektrik-tesisati-periyodik-kontrol.html) sayfamıza bakabilirsiniz.\n\n> Bu yazı bilgilendirme amaçlıdır. Madde özetleri VoltGuard mevzuat kaydından (son kontrol 23 Ekim 2026) alınmıştır; bağlayıcı olan [güncel yönetmelik metni](https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=18318&MevzuatTur=7&MevzuatTertip=5) ve [23.12.2025 tarihli Resmî Gazete](https://www.resmigazete.gov.tr/eskiler/2025/12/20251223.htm) metnidir.",
+   "category": "tesisat-guvenlik",
+   "tags": [
+    "periyodik-kontrol",
+    "is-guvenligi",
+    "topraklama",
+    "yildirimdan-korunma"
+   ],
+   "type": "analiz",
+   "source": {
+    "name": "İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği (mevzuat.gov.tr)",
+    "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=18318&MevzuatTur=7&MevzuatTertip=5",
+    "publishedAt": "2025-12-23",
+    "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+   },
+   "image": null,
+   "status": "published",
+   "publishAt": null,
+   "publishedAt": 1792825200,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/hesaplama/periyodik-kontrol-planlayici/",
+     "label": "Periyodik kontrol planlayıcı"
+    },
+    {
+     "url": "/bilgi/elektrik-tesisati-periyodik-kontrol.html",
+     "label": "Elektrik tesisatı periyodik kontrolü"
+    },
+    {
+     "url": "/voltsim/topraklama/",
+     "label": "VoltSim topraklama simülasyonu"
+    }
+   ],
+   "featured": true,
+   "pick": false,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792825200,
+   "updatedAt": 1792825200
+  },
+  {
+   "slug": "reaktif-enerji-sinirlari-50-kva-alti-ve-ustu-isletmelerde-oranlar-ve-ceza",
+   "title": "Reaktif enerji sınırları: 50 kVA altı ve üstü işletmelerde oranlar ve ceza mantığı",
+   "summary": "Dağıtım şebekesine bağlı işletmelerde reaktif enerji sınırları EPDK Tarife Uygulamaları Usul ve Esasları Madde 13'te. Kurulu güce göre değişen endüktif/kapasitif oranları, muaf kullanıcıları ve sınır aşıldığında faturalamanın nasıl yapıldığını madde madde açıkladık.",
+   "body": "Dağıtım şebekesine bağlı işletmelerin reaktif enerji sınırları, EPDK'nın \"Dağıtım Lisansı Sahibi Tüzel Kişiler ve Görevli Tedarik Şirketlerinin Tarife Uygulamalarına İlişkin Usul ve Esaslar\" metninde (RG 31.12.2015 / 29579 (Kurul Kararı 5999-3)) düzenlenir. Sınırlar kurulu güce göre farklıdır ve çoğu işletmede yanlış bilinen bir eşik vardır.\n\n## Kimlere uygulanmaz?\n**Madde 13 (1):** Mesken, aydınlatma, tek fazlı tüketiciler ile kurulu gücü 15 kW'a (dahil) kadar olan kullanıcılara reaktif enerji tarifesi uygulanmaz; takvim yılındaki ilk ihlalin bedeli faturadan düşülür.\n\n## Oranlar\n- **50 kVA altı — Madde 13 (2):** Kurulu gücü 50 kVA'nın altındaki kullanıcılarda sınır: endüktif reaktif aktif enerjinin %33'ü, kapasitif reaktif %20'si.\n- **50 kVA ve üstü — Madde 13 (3):** Kurulu gücü 50 kVA ve üstündeki kullanıcılarda sınır: endüktif %20, kapasitif %15.\n\n## Sınır aşılırsa ne olur?\n**Madde 13 (4),(6):** Sınır aşılırsa ölçülen reaktif enerjinin tamamı faturalanır; iki sınır birden aşılırsa yüksek olan reaktif değer esas alınır.\n\nBu nedenle sınırın az da olsa aşılması, yalnızca aşan kısmın değil ölçülen reaktif enerjinin tamamının faturalanmasına yol açar. Kompanzasyon panosunun hem endüktif hem kapasitif tarafta izlenmesi bu yüzden önemlidir: aşırı kompanzasyon da kapasitif sınırı aşarak ceza doğurabilir.\n\n## İletim sistemine bağlı kullanıcılar farklıdır\n**Elektrik Şebeke Yönetmeliği Madde 14 (1):** İletim sistemine doğrudan bağlı tüketiciler ve dağıtım şirketleri için aylık endüktif reaktif/aktif oranı %20'yi, kapasitif reaktif/aktif oranı %15'i geçemez. Kayıttaki nota göre bu oranlar yalnızca iletime bağlı kullanıcılar içindir; dağıtıma bağlı tüketicilerde yukarıdaki Usul ve Esaslar geçerlidir.\n\n## Ne yapmalı?\n- Son 12 ayın faturalarında endüktif ve kapasitif oranları ayrı ayrı inceleyin.\n- Kurulu gücünüzün 50 kVA eşiğinin hangi tarafında kaldığını kontrol edin; oranlar buna göre değişir.\n- Olası cezayı [reaktif ceza hesaplama](/hesaplama/reaktif-ceza-hesaplama/) aracıyla, gereken kondansatör gücünü [kompanzasyon hesaplama](/hesaplama/kompanzasyon-hesaplama/) aracıyla tahmin edin.\n\n> Not: EPDK sayfasında \"son hali\" olarak yayımlanan metin okunmuştur; metinde sonraki değişikliklerin tarih listesi bulunmadığı için son değişiklik tarihi doğrulanamamıştır. Uygulamadan önce [EPDK'daki güncel metni](https://www.epdk.gov.tr/Detay/Icerik/3-0-1-3/elektrikusul-ve-esaslar) kontrol edin.",
+   "category": "kompanzasyon",
+   "tags": [
+    "reaktif-enerji",
+    "kompanzasyon",
+    "epdk",
+    "tarife"
+   ],
+   "type": "analiz",
+   "source": {
+    "name": "EPDK – Tarife Uygulamalarına İlişkin Usul ve Esaslar",
+    "url": "https://www.epdk.gov.tr/Detay/Icerik/3-0-1-3/elektrikusul-ve-esaslar",
+    "publishedAt": "2015-12-31",
+    "licenseNote": "Kurul kararı (resmî metin); bağlayıcı olan EPDK'nın yayımladığı güncel metindir."
+   },
+   "image": null,
+   "status": "published",
+   "publishAt": null,
+   "publishedAt": 1792824600,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/hesaplama/reaktif-ceza-hesaplama/",
+     "label": "Reaktif ceza hesaplama"
+    },
+    {
+     "url": "/hesaplama/kompanzasyon-hesaplama/",
+     "label": "Kompanzasyon hesaplama"
+    },
+    {
+     "url": "/bilgi/reaktif-guc-kompanzasyonu.html",
+     "label": "Reaktif güç kompanzasyonu rehberi"
+    },
+    {
+     "url": "/voltsim/kompanzasyon/",
+     "label": "VoltSim kompanzasyon simülasyonu"
+    }
+   ],
+   "featured": false,
+   "pick": true,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792824600,
+   "updatedAt": 1792824600
+  },
+  {
+   "slug": "lisanssiz-geste-depolama-19-10-2026-degisikligi-neyi-degistirdi-neyi",
+   "title": "Lisanssız GES'te depolama: 19.10.2026 değişikliği neyi değiştirdi, neyi değiştirmedi?",
+   "summary": "Lisanssız Elektrik Üretim Yönetmeliği 2026'da iki kez kapsamlı değişti. 19.10.2026 değişikliğiyle üretim tesisine bütünleşik depolamada kapasite sınırlaması kaldırıldı; depodan verilen ihtiyaç fazlasına ödeme yapılmaması ve diğer temel kurallar ise sürüyor.",
+   "body": "Elektrik Piyasasında Lisanssız Elektrik Üretim Yönetmeliği (RG 12.05.2019 / 30772), çatı ve arazi GES'leri ile küçük RES'lerin öz tüketim kurallarını belirler. Yönetmelik 2026'da **02.04.2026 (sayı 33212)** ve **19.10.2026 (sayı 33405)** tarihlerinde iki kez kapsamlı biçimde değişti. Bu yazıda depolama açısından neyin değiştiğini kayıttaki doğrulanmış hükümlerle ayırıyoruz.\n\n## Değişen: bütünleşik depolama\n**Ek Madde 3:** Lisanssız üretim tesisine bütünleşik depolama, üretim tesisinin elektriksel gücüne kadar kurulabilir (19.10.2026'da 'kapasite sınırlaması olmaksızın' ibaresi eklendi); depodan verilen ihtiyaç fazlasına ödeme yapılmaz.\n\n19.10.2026 değişikliği ayrıca acil durumda tesislerin uzaktan kontrolünü ve dengeleme talimatına uymayan tesise ihtiyaç fazlası ödemesi yapılmamasını düzenledi.\n\n## Değişmeyen: temel ekonomi kuralları\n- **Saatlik mahsuplaşma ve alım — Madde 26 (1),(4):** 12.05.2019 sonrası çağrı mektubu alanlar ve (ç)/(d) tesislerinde mahsuplaşma saatlik yapılır; (c),(h) vb. tesislerde her saatte şebekeye verilen ihtiyaç fazlası görevli tedarik şirketince 10 yıl satın alınır.\n- **Ödeme yapılmayan durumlar — Madde 26 (5):** (ç) ve (d) bendi tesislerinde mahsuplaşma sonrası şebekeye verilen enerji için ödeme yapılmaz, YEKDEM'e bedelsiz katkı sayılır.\n- **Yıllık üretim sınırı — Madde 26 (17):** Yıllık üretim, ilişkili tüketimin (bir önceki takvim yılı esas) iki katını geçemez; sınır üstü ihtiyaç fazlası bedelsiz YEKDEM katkısıdır; mesken abonelerine uygulanmaz.\n\n## Proje açısından anlamı\nDepolama kapasitesi artık üretim tesisinin elektriksel gücüne kadar sınırlama olmaksızın planlanabilse de, depodan şebekeye verilen ihtiyaç fazlasına ödeme yapılmadığı için depolamanın değeri esas olarak öz tüketimi artırmasından gelir. Depolama boyutlandırması, tesisin saatlik tüketim profiline göre yapılmalıdır; saatlik mahsuplaşma kuralı bunu belirleyici kılar.\n\nKendi tesisiniz için üretim ve öz tüketim dengesini [GES üretim hesaplama](/hesaplama/ges-uretim-hesaplama/) aracı ve [VoltSim GES simülasyonu](/voltsim/ges/) ile inceleyebilirsiniz.\n\n> Yönetmelik kısa aralıklarla değiştiği için hesaplar [güncel metne](https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=31502&MevzuatTur=7&MevzuatTertip=5) göre kontrol edilmelidir. Değişikliklerin tamamı: [RG 02.04.2026](https://www.resmigazete.gov.tr/eskiler/2026/04/20260402.htm), [RG 19.10.2026](https://www.resmigazete.gov.tr/eskiler/2026/10/20261019.htm).",
+   "category": "yenilenebilir",
+   "tags": [
+    "lisanssiz-uretim",
+    "depolama",
+    "ges",
+    "mahsuplasma"
+   ],
+   "type": "analiz",
+   "source": {
+    "name": "Elektrik Piyasasında Lisanssız Elektrik Üretim Yönetmeliği (mevzuat.gov.tr)",
+    "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=31502&MevzuatTur=7&MevzuatTertip=5",
+    "publishedAt": "2026-10-19",
+    "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+   },
+   "image": null,
+   "status": "published",
+   "publishAt": null,
+   "publishedAt": 1792824000,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/voltsim/ges/",
+     "label": "VoltSim GES simülasyonu"
+    },
+    {
+     "url": "/hesaplama/ges-uretim-hesaplama/",
+     "label": "GES üretim hesaplama"
+    },
+    {
+     "url": "/bilgi/lisanssiz-uretim-ges.html",
+     "label": "Lisanssız üretim (GES) rehberi"
+    },
+    {
+     "url": "/hizmetler/fabrika-cati-ges.html",
+     "label": "Fabrika çatı GES"
+    }
+   ],
+   "featured": false,
+   "pick": true,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792824000,
+   "updatedAt": 1792824000
+  },
+  {
+   "slug": "lisanssiz-uretimde-butunlesik-depolamada-kapasite-sinirlamasi-kaldirildi-rg-19",
+   "title": "Lisanssız üretimde bütünleşik depolamada kapasite sınırlaması kaldırıldı (RG 19.10.2026)",
+   "summary": "Elektrik Piyasasında Lisanssız Elektrik Üretim Yönetmeliği'nde 19.10.2026 tarihli ve 33405 sayılı Resmî Gazete'de yayımlanan değişiklik: Acil durumda tesislerin uzaktan kontrolü, dengeleme talimatına uymayan tesise ihtiyaç fazlası ödemesi yapılmaması; üretim tesisine bütünleşik depolamada kapasite sınırlaması kaldırıldı (Ek Madde 3).",
+   "body": "## Künye\n- **Düzenleme:** Elektrik Piyasasında Lisanssız Elektrik Üretim Yönetmeliği (Yönetmelik, EPDK)\n- **Resmî Gazete:** 19.10.2026, sayı 33405 (değişiklik)\n- **Güncel metin:** [mevzuat kaynağı](https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=31502&MevzuatTur=7&MevzuatTertip=5)\n\n## Ne değişti?\nAcil durumda tesislerin uzaktan kontrolü, dengeleme talimatına uymayan tesise ihtiyaç fazlası ödemesi yapılmaması; üretim tesisine bütünleşik depolamada kapasite sınırlaması kaldırıldı (Ek Madde 3).\n\n## İlgili hükümler (VoltGuard mevzuat kaydındaki doğrulanmış özetler)\n- **Ek Madde 3:** Lisanssız üretim tesisine bütünleşik depolama, üretim tesisinin elektriksel gücüne kadar kurulabilir (19.10.2026'da 'kapasite sınırlaması olmaksızın' ibaresi eklendi); depodan verilen ihtiyaç fazlasına ödeme yapılmaz.\n\n## Bu özet hakkında\nBu kısa özet, VoltGuard'ın VoltSim simülasyonlarında kullandığı mevzuat kaydından (son kontrol 23 Ekim 2026) hazırlanmıştır. Değişikliğin tamamı için [Resmî Gazete 19.10.2026](https://www.resmigazete.gov.tr/eskiler/2026/10/20261019.htm) metnine bakın; bağlayıcı olan resmî metindir.",
+   "category": "yenilenebilir",
+   "tags": [
+    "lisanssiz-uretim",
+    "depolama",
+    "ges",
+    "epdk"
+   ],
+   "type": "resmi",
+   "source": {
+    "name": "Resmî Gazete (19.10.2026, sayı 33405)",
+    "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019.htm",
+    "publishedAt": "2026-10-19",
+    "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+   },
+   "image": null,
+   "status": "published",
+   "publishAt": null,
+   "publishedAt": 1792821600,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/voltsim/ges/",
+     "label": "VoltSim GES simülasyonu"
+    },
+    {
+     "url": "/bilgi/lisanssiz-uretim-ges.html",
+     "label": "Lisanssız üretim (GES) rehberi"
+    }
+   ],
+   "featured": false,
+   "pick": true,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792821600,
+   "updatedAt": 1792821600
+  },
+  {
+   "slug": "lisansli-res-ve-geslerin-imar-ve-ruhsat-islemleri-icin-yeni-yonetmelik",
+   "title": "Lisanslı RES ve GES'lerin imar ve ruhsat işlemleri için yeni yönetmelik yayımlandı (RG 24.07.2026)",
+   "summary": "Rüzgâr ve Güneş Enerjisine Dayalı Elektrik Üretim Tesislerinin İmar ve Ruhsat İşlemlerine İlişkin Yönetmelik, 24.07.2026 tarihli ve 33319 sayılı Resmî Gazete'de yayımlandı. 2026'da yürürlüğe giren yeni yönetmelik: lisanslı RES/GES imar ve ruhsat işlemleri ETKB'de toplanmıştır.",
+   "body": "## Künye\n- **Düzenleme:** Rüzgâr ve Güneş Enerjisine Dayalı Elektrik Üretim Tesislerinin İmar ve Ruhsat İşlemlerine İlişkin Yönetmelik (Yönetmelik, ETKB)\n- **Resmî Gazete:** 24.07.2026, sayı 33319 (ilk yayım)\n- **Güncel metin:** [mevzuat kaynağı](https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=46220&MevzuatTur=7&MevzuatTertip=5)\n\n## Ne değişti?\n2026'da yürürlüğe giren yeni yönetmelik: lisanslı RES/GES imar ve ruhsat işlemleri ETKB'de toplanmıştır.\n\n## İlgili hükümler (VoltGuard mevzuat kaydındaki doğrulanmış özetler)\n- **Madde 1:** Önlisans veya üretim lisansı bulunan RES/GES'lerin imar planı, parselasyon, yapı ruhsatı, yapı kullanma izni ve işyeri açma ruhsatı işlemlerinin ETKB tarafından yürütülmesine ilişkin usulleri belirler.\n\n## Bu özet hakkında\nBu kısa özet, VoltGuard'ın VoltSim simülasyonlarında kullandığı mevzuat kaydından (son kontrol 23 Ekim 2026) hazırlanmıştır. Değişikliğin tamamı için [Resmî Gazete 24.07.2026](https://www.resmigazete.gov.tr/eskiler/2026/07/20260724.htm) metnine bakın; bağlayıcı olan resmî metindir.",
+   "category": "yenilenebilir",
+   "tags": [
+    "res",
+    "ges",
+    "imar",
+    "etkb"
+   ],
+   "type": "resmi",
+   "source": {
+    "name": "Resmî Gazete (24.07.2026, sayı 33319)",
+    "url": "https://www.resmigazete.gov.tr/eskiler/2026/07/20260724.htm",
+    "publishedAt": "2026-07-24",
+    "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+   },
+   "image": null,
+   "status": "published",
+   "publishAt": null,
+   "publishedAt": 1792821540,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/voltsim/res/",
+     "label": "VoltSim RES simülasyonu"
+    },
+    {
+     "url": "/voltsim/ges/",
+     "label": "VoltSim GES simülasyonu"
+    }
+   ],
+   "featured": false,
+   "pick": false,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792821540,
+   "updatedAt": 1792821540
+  },
+  {
+   "slug": "lisanssiz-elektrik-uretim-yonetmeliginde-mahsuplasma-osb-ve-depolama-hukumleri",
+   "title": "Lisanssız Elektrik Üretim Yönetmeliği'nde mahsuplaşma, OSB ve depolama hükümleri yeniden düzenlendi (RG 02.04.2026)",
+   "summary": "Elektrik Piyasasında Lisanssız Elektrik Üretim Yönetmeliği'nde 02.04.2026 tarihli ve 33212 sayılı Resmî Gazete'de yayımlanan değişiklik: Mahsuplaşma, OSB ve elektrik bağlantı anlaşması ile depolama hükümleri geniş biçimde yeniden düzenlendi.",
+   "body": "## Künye\n- **Düzenleme:** Elektrik Piyasasında Lisanssız Elektrik Üretim Yönetmeliği (Yönetmelik, EPDK)\n- **Resmî Gazete:** 02.04.2026, sayı 33212 (değişiklik)\n- **Güncel metin:** [mevzuat kaynağı](https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=31502&MevzuatTur=7&MevzuatTertip=5)\n\n## Ne değişti?\nMahsuplaşma, OSB ve elektrik bağlantı anlaşması ile depolama hükümleri geniş biçimde yeniden düzenlendi.\n\n## Bu özet hakkında\nBu kısa özet, VoltGuard'ın VoltSim simülasyonlarında kullandığı mevzuat kaydından (son kontrol 23 Ekim 2026) hazırlanmıştır. Değişikliğin tamamı için [Resmî Gazete 02.04.2026](https://www.resmigazete.gov.tr/eskiler/2026/04/20260402.htm) metnine bakın; bağlayıcı olan resmî metindir.",
+   "category": "yenilenebilir",
+   "tags": [
+    "lisanssiz-uretim",
+    "mahsuplasma",
+    "depolama",
+    "epdk"
+   ],
+   "type": "resmi",
+   "source": {
+    "name": "Resmî Gazete (02.04.2026, sayı 33212)",
+    "url": "https://www.resmigazete.gov.tr/eskiler/2026/04/20260402.htm",
+    "publishedAt": "2026-04-02",
+    "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+   },
+   "image": null,
+   "status": "published",
+   "publishAt": null,
+   "publishedAt": 1792821480,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/hesaplama/ges-uretim-hesaplama/",
+     "label": "GES üretim hesaplama"
+    },
+    {
+     "url": "/bilgi/lisanssiz-uretim-ges.html",
+     "label": "Lisanssız üretim (GES) rehberi"
+    }
+   ],
+   "featured": false,
+   "pick": false,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792821480,
+   "updatedAt": 1792821480
+  },
+  {
+   "slug": "sarj-hizmeti-yonetmeligi-yalniz-kendi-ihtiyaci-icin-kurulan-sarj-unitelerinde",
+   "title": "Şarj Hizmeti Yönetmeliği: yalnız kendi ihtiyacı için kurulan şarj ünitelerinde şarj ağına bağlanma zorunlu değil (RG 23.03.2026)",
+   "summary": "Şarj Hizmeti Yönetmeliği'nde 23.03.2026 tarihli ve 33202 sayılı Resmî Gazete'de yayımlanan değişiklik: Madde 5 muafiyetleri değişti: ticari faaliyet göstermeyen özel istasyonların ve yalnız kendi ihtiyacı için kurulan şarj ünitelerinin şarj ağına bağlanması zorunlu değil. Madde 30 ve 32 değişti, geçici maddeler eklendi.",
+   "body": "## Künye\n- **Düzenleme:** Şarj Hizmeti Yönetmeliği (Yönetmelik, EPDK)\n- **Resmî Gazete:** 23.03.2026, sayı 33202 (değişiklik)\n- **Güncel metin:** [mevzuat kaynağı](https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=39454&MevzuatTur=7&MevzuatTertip=5)\n\n## Ne değişti?\nMadde 5 muafiyetleri değişti: ticari faaliyet göstermeyen özel istasyonların ve yalnız kendi ihtiyacı için kurulan şarj ünitelerinin şarj ağına bağlanması zorunlu değil. Madde 30 ve 32 değişti, geçici maddeler eklendi.\n\n## İlgili hükümler (VoltGuard mevzuat kaydındaki doğrulanmış özetler)\n- **Madde 5:** Ticari faaliyet göstermeyen özel şarj istasyonları ve kullanıcının yalnızca kendi ihtiyacı için kurduğu şarj ünitelerinin şarj ağına bağlanması zorunlu değildir (değişik: 23.03.2026/33202).\n- **Madde 32 (4):** Şarj ağına bağlı olmadan ticari amaçla şarj yapılması Tüketici Hizmetleri Yönetmeliği md.48/1-c kapsamında değerlendirilir ve yetkili mercilere bildirilir.\n\n## Bu özet hakkında\nBu kısa özet, VoltGuard'ın VoltSim simülasyonlarında kullandığı mevzuat kaydından (son kontrol 23 Ekim 2026) hazırlanmıştır. Değişikliğin tamamı için [Resmî Gazete 23.03.2026](https://www.resmigazete.gov.tr/eskiler/2026/03/20260323.htm) metnine bakın; bağlayıcı olan resmî metindir.",
+   "category": "e-mobilite",
+   "tags": [
+    "sarj-istasyonu",
+    "elektrikli-arac",
+    "epdk"
+   ],
+   "type": "resmi",
+   "source": {
+    "name": "Resmî Gazete (23.03.2026, sayı 33202)",
+    "url": "https://www.resmigazete.gov.tr/eskiler/2026/03/20260323.htm",
+    "publishedAt": "2026-03-23",
+    "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+   },
+   "image": null,
+   "status": "published",
+   "publishAt": null,
+   "publishedAt": 1792821420,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/voltsim/sarj-istasyonu/",
+     "label": "VoltSim şarj istasyonu simülasyonu"
+    }
+   ],
+   "featured": false,
+   "pick": false,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792821420,
+   "updatedAt": 1792821420
+  },
+  {
+   "slug": "elektrik-fen-adamlarinin-proje-ve-yapim-yetki-sinirlarini-belirleyen-yeni",
+   "title": "Elektrik fen adamlarının proje ve yapım yetki sınırlarını belirleyen yeni yönetmelik yayımlandı (RG 20.01.2026)",
+   "summary": "Elektrik ile İlgili Fen Adamlarının Yetki, Görev ve Sorumlulukları Hakkında Yönetmelik, 20.01.2026 tarihli ve 33143 sayılı Resmî Gazete'de yayımlandı. Elektrik iç tesisatında mühendis dışındaki fen adamlarının proje ve yapım yetki sınırlarını belirleyen 2026 tarihli yönetmeliktir.",
+   "body": "## Künye\n- **Düzenleme:** Elektrik ile İlgili Fen Adamlarının Yetki, Görev ve Sorumlulukları Hakkında Yönetmelik (Yönetmelik, ÇŞİDB (3194 sayılı İmar Kanunu dayanaklı))\n- **Resmî Gazete:** 20.01.2026, sayı 33143 (ilk yayım)\n- **Güncel metin:** [mevzuat kaynağı](https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=45051&MevzuatTur=7&MevzuatTertip=5)\n\n## Ne değişti?\nElektrik iç tesisatında mühendis dışındaki fen adamlarının proje ve yapım yetki sınırlarını belirleyen 2026 tarihli yönetmeliktir.\n\n## İlgili hükümler (VoltGuard mevzuat kaydındaki doğrulanmış özetler)\n- **Madde 5 (1):** Yapım işleri kurulu güce göre: teknisyen 1.000 kW'a, tekniker/yüksek tekniker 2.000 kW'a, teknik öğretmen 2.500 kW'a kadar üstlenebilir.\n- **Madde 5 (2):** Proje düzenleme yetkisi: teknisyen 30 kW, tekniker/yüksek tekniker 50 kW, teknik öğretmen 80 kW kurulu güce kadar.\n\n## Bu özet hakkında\nBu kısa özet, VoltGuard'ın VoltSim simülasyonlarında kullandığı mevzuat kaydından (son kontrol 23 Ekim 2026) hazırlanmıştır. Değişikliğin tamamı için [Resmî Gazete 20.01.2026](https://www.resmigazete.gov.tr/eskiler/2026/01/20260120.htm) metnine bakın; bağlayıcı olan resmî metindir.",
+   "category": "tesisat-guvenlik",
+   "tags": [
+    "fen-adami",
+    "ic-tesisat",
+    "proje"
+   ],
+   "type": "resmi",
+   "source": {
+    "name": "Resmî Gazete (20.01.2026, sayı 33143)",
+    "url": "https://www.resmigazete.gov.tr/eskiler/2026/01/20260120.htm",
+    "publishedAt": "2026-01-20",
+    "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+   },
+   "image": null,
+   "status": "published",
+   "publishAt": null,
+   "publishedAt": 1792821360,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/bilgi/elektrik-ic-tesis-projelendirme.html",
+     "label": "Elektrik iç tesis projelendirme"
+    }
+   ],
+   "featured": false,
+   "pick": false,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792821360,
+   "updatedAt": 1792821360
+  },
+  {
+   "slug": "is-ekipmanlari-yonetmeligi-degisti-elektrik-tesisati-periyodik-kontrol",
+   "title": "İş Ekipmanları Yönetmeliği değişti: elektrik tesisatı periyodik kontrol esasları yenilendi (RG 23.12.2025)",
+   "summary": "İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği'nde 23.12.2025 tarihli ve 33116 sayılı Resmî Gazete'de yayımlanan değişiklik: Madde 7 ve EK-III değişti: elektrik, topraklama, yıldırımdan korunma, trafo, jeneratör, akü ve yangın algılama sistemlerinin periyodik kontrol usul ve esasları yenilendi.",
+   "body": "## Künye\n- **Düzenleme:** İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği (Yönetmelik, ÇSGB)\n- **Resmî Gazete:** 23.12.2025, sayı 33116 (değişiklik)\n- **Güncel metin:** [mevzuat kaynağı](https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=18318&MevzuatTur=7&MevzuatTertip=5)\n\n## Ne değişti?\nMadde 7 ve EK-III değişti: elektrik, topraklama, yıldırımdan korunma, trafo, jeneratör, akü ve yangın algılama sistemlerinin periyodik kontrol usul ve esasları yenilendi.\n\n## İlgili hükümler (VoltGuard mevzuat kaydındaki doğrulanmış özetler)\n- **Madde 7:** EK-III tablolarındaki ekipmanlar yetkili kişilerce periyodik kontrole tabidir; usul ve esaslar EK-III'tedir (değişik: 23.12.2025/33116).\n- **EK-III 2.3.1–2.3.2:** İlgili standartta aksi yoksa tesisatlar yılda bir kontrol edilir; elektrik, topraklama, yıldırımdan korunma, akü, trafo, jeneratör tesisatlarını yetkili elektrik mühendisi/tekniker vb. kontrol eder.\n- **EK-III Tablo-3:** Elektrik ve topraklama tesisatı, yıldırımdan korunma, jeneratör (TS ISO 8528), yangın algılama (TSE CEN/TS 54-14) için standartta süre yoksa en fazla 1 yıl; akümülatör ve transformatör için 1 yıl.\n\n## Bu özet hakkında\nBu kısa özet, VoltGuard'ın VoltSim simülasyonlarında kullandığı mevzuat kaydından (son kontrol 23 Ekim 2026) hazırlanmıştır. Değişikliğin tamamı için [Resmî Gazete 23.12.2025](https://www.resmigazete.gov.tr/eskiler/2025/12/20251223.htm) metnine bakın; bağlayıcı olan resmî metindir.",
+   "category": "tesisat-guvenlik",
+   "tags": [
+    "periyodik-kontrol",
+    "is-guvenligi",
+    "topraklama"
+   ],
+   "type": "resmi",
+   "source": {
+    "name": "Resmî Gazete (23.12.2025, sayı 33116)",
+    "url": "https://www.resmigazete.gov.tr/eskiler/2025/12/20251223.htm",
+    "publishedAt": "2025-12-23",
+    "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+   },
+   "image": null,
+   "status": "published",
+   "publishAt": null,
+   "publishedAt": 1792821300,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/hesaplama/periyodik-kontrol-planlayici/",
+     "label": "Periyodik kontrol planlayıcı"
+    },
+    {
+     "url": "/bilgi/elektrik-tesisati-periyodik-kontrol.html",
+     "label": "Elektrik tesisatı periyodik kontrolü"
+    }
+   ],
+   "featured": false,
+   "pick": false,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792821300,
+   "updatedAt": 1792821300
+  },
+  {
+   "slug": "ced-yonetmeligi-ruzgar-santrallerinde-esik-turbin-sayisina-gore-belirleniyor",
+   "title": "ÇED Yönetmeliği: rüzgâr santrallerinde eşik türbin sayısına göre belirleniyor (RG 26.06.2025)",
+   "summary": "Çevresel Etki Değerlendirmesi Yönetmeliği'nde 26.06.2025 tarihli ve 32938 sayılı Resmî Gazete'de yayımlanan değişiklik: Rüzgâr enerji santrallerine ilişkin ÇED eşikleri bugünkü hâlini aldı.",
+   "body": "## Künye\n- **Düzenleme:** Çevresel Etki Değerlendirmesi Yönetmeliği (Yönetmelik, ÇŞİDB)\n- **Resmî Gazete:** 26.06.2025, sayı 32938 (değişiklik)\n- **Güncel metin:** [mevzuat kaynağı](https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=39647&MevzuatTur=7&MevzuatTertip=5)\n\n## Ne değişti?\nRüzgâr enerji santrallerine ilişkin ÇED eşikleri bugünkü hâlini aldı.\n\n## İlgili hükümler (VoltGuard mevzuat kaydındaki doğrulanmış özetler)\n- **Ek-1 madde 41:** 15 adet ve üzeri türbinli rüzgar santralleri ile tüm denizüstü rüzgar santralleri ÇED Raporu'na tabidir.\n- **Ek-2 madde 57:** 1–15 adet türbin arası rüzgar santralleri seçme-eleme (ön inceleme) kapsamındadır.\n\n## Bu özet hakkında\nBu kısa özet, VoltGuard'ın VoltSim simülasyonlarında kullandığı mevzuat kaydından (son kontrol 23 Ekim 2026) hazırlanmıştır. Değişikliğin tamamı için [Resmî Gazete 26.06.2025](https://www.resmigazete.gov.tr/eskiler/2025/06/20250626.htm) metnine bakın; bağlayıcı olan resmî metindir.",
+   "category": "yenilenebilir",
+   "tags": [
+    "ced",
+    "res",
+    "ruzgar"
+   ],
+   "type": "resmi",
+   "source": {
+    "name": "Resmî Gazete (26.06.2025, sayı 32938)",
+    "url": "https://www.resmigazete.gov.tr/eskiler/2025/06/20250626.htm",
+    "publishedAt": "2025-06-26",
+    "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+   },
+   "image": null,
+   "status": "published",
+   "publishAt": null,
+   "publishedAt": 1792821240,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/voltsim/res/",
+     "label": "VoltSim RES simülasyonu"
+    }
+   ],
+   "featured": false,
+   "pick": false,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792821240,
+   "updatedAt": 1792821240
+  },
+  {
+   "slug": "elektrik-sebeke-yonetmeliginde-madde-14-ve-ek-18-frekans-tepkisi-hukumleri",
+   "title": "Elektrik Şebeke Yönetmeliği'nde Madde 14 ve Ek-18 frekans tepkisi hükümleri değişti (RG 21.01.2025)",
+   "summary": "Elektrik Şebeke Yönetmeliği'nde 21.01.2025 tarihli ve 32789 sayılı Resmî Gazete'de yayımlanan değişiklik: Madde 14 ve Ek-18 (E.18.4) frekans tepkisi hükümleri değişti.",
+   "body": "## Künye\n- **Düzenleme:** Elektrik Şebeke Yönetmeliği (Yönetmelik, EPDK)\n- **Resmî Gazete:** 21.01.2025, sayı 32789 (değişiklik)\n- **Güncel metin:** [mevzuat kaynağı](https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=19722&MevzuatTur=7&MevzuatTertip=5)\n\n## Ne değişti?\nMadde 14 ve Ek-18 (E.18.4) frekans tepkisi hükümleri değişti.\n\n## İlgili hükümler (VoltGuard mevzuat kaydındaki doğrulanmış özetler)\n- **Madde 14 (1):** İletim sistemine doğrudan bağlı tüketiciler ve dağıtım şirketleri için aylık endüktif reaktif/aktif oranı %20'yi, kapasitif reaktif/aktif oranı %15'i geçemez.\n- **Ek-18 E.18.1:** Ek-18 şebeke bağlantı kriterleri iletime bağlı RES/GES'lere, OG'den dağıtıma bağlı lisanslı GES'lere ve dağıtıma bağlı 10 MW ve üzeri lisanslı RES'lere uygulanır.\n\n## Bu özet hakkında\nBu kısa özet, VoltGuard'ın VoltSim simülasyonlarında kullandığı mevzuat kaydından (son kontrol 23 Ekim 2026) hazırlanmıştır. Değişikliğin tamamı için [Resmî Gazete 21.01.2025](https://www.resmigazete.gov.tr/eskiler/2025/01/20250121.htm) metnine bakın; bağlayıcı olan resmî metindir.",
+   "category": "enerji-piyasasi",
+   "tags": [
+    "sebeke-yonetmeligi",
+    "res",
+    "ges",
+    "epdk"
+   ],
+   "type": "resmi",
+   "source": {
+    "name": "Resmî Gazete (21.01.2025, sayı 32789)",
+    "url": "https://www.resmigazete.gov.tr/eskiler/2025/01/20250121.htm",
+    "publishedAt": "2025-01-21",
+    "licenseNote": "Resmî metin; FSEK md. 31 uyarınca kanun, yönetmelik ve resmî duyurular telif korumasında değildir. Bağlayıcı olan Resmî Gazete metnidir."
+   },
+   "image": null,
+   "status": "published",
+   "publishAt": null,
+   "publishedAt": 1792821180,
+   "author": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "editor": {
+    "id": null,
+    "name": "VoltGuard Mühendislik Ekibi"
+   },
+   "seo": {
+    "title": "",
+    "description": ""
+   },
+   "related": [
+    {
+     "url": "/voltsim/res/",
+     "label": "VoltSim RES simülasyonu"
+    },
+    {
+     "url": "/voltsim/ges/",
+     "label": "VoltSim GES simülasyonu"
+    }
+   ],
+   "featured": false,
+   "pick": false,
+   "origin": "seed",
+   "ingest": null,
+   "flags": [],
+   "createdAt": 1792821180,
+   "updatedAt": 1792821180
+  }
+ ]
+}

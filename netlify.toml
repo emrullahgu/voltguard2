@@ -38,15 +38,49 @@
   force = true
 
 [[redirects]]
+  from = "/voltsim/index.html"
+  to = "/voltsim/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/voltsim/:slug/index.html"
+  to = "/voltsim/:slug/"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/teklif-araclari.html"
   to = "/hesaplama-araclari/"
   status = 301
   force = true
 
+# Temiz hesap adresleri (/hesaplama/x/) force ile yeniden yazılır: aksi hâlde Netlify x.html varken /x/ adresini
+# /x adresine 301 ile yönlendirir ve kanonik adres (sondaki / ile) yönlendirmeye düşer.
+# Eski tek sayfa adresleri klasor adreslerine
+[[redirects]]
+  from = "/voltsim.html"
+  to = "/voltsim/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/volthaber.html"
+  to = "/volthaber/"
+  status = 301
+  force = true
+
+# VoltHaber PHP ile uretilir; statik vitrinde yalnizca index.html (yedek), yayin-ilkeleri ve abonelik sayfalari vardir.
+[[redirects]]
+  from = "/volthaber/*"
+  to = "https://voltguard.com.tr/volthaber/:splat"
+  status = 301
+
 [[redirects]]
   from = "/hesaplama-araclari/"
   to = "/teklif-araclari.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/kablo-kesiti-hesaplama.html"
@@ -58,6 +92,7 @@
   from = "/hesaplama/kablo-kesiti-hesaplama/"
   to = "/hesaplama/kablo-kesiti-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/trafo-akimi-hesaplama.html"
@@ -69,6 +104,55 @@
   from = "/hesaplama/trafo-akimi-hesaplama/"
   to = "/hesaplama/trafo-akimi-hesaplama.html"
   status = 200
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/periyodik-kontrol-planlayici.html"
+  to = "/hesaplama/periyodik-kontrol-planlayici/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/periyodik-kontrol-planlayici/"
+  to = "/hesaplama/periyodik-kontrol-planlayici.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/trafo-kapasite-artirimi.html"
+  to = "/hesaplama/trafo-kapasite-artirimi/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/trafo-kapasite-artirimi/"
+  to = "/hesaplama/trafo-kapasite-artirimi.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/harmonik-filtre-ihtiyaci.html"
+  to = "/hesaplama/harmonik-filtre-ihtiyaci/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/harmonik-filtre-ihtiyaci/"
+  to = "/hesaplama/harmonik-filtre-ihtiyaci.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/fabrika-elektrik-risk-testi.html"
+  to = "/hesaplama/fabrika-elektrik-risk-testi/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/fabrika-elektrik-risk-testi/"
+  to = "/hesaplama/fabrika-elektrik-risk-testi.html"
+  status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/kompanzasyon-hesaplama.html"
@@ -80,6 +164,7 @@
   from = "/hesaplama/kompanzasyon-hesaplama/"
   to = "/hesaplama/kompanzasyon-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/gerilim-dusumu-hesaplama.html"
@@ -91,6 +176,7 @@
   from = "/hesaplama/gerilim-dusumu-hesaplama/"
   to = "/hesaplama/gerilim-dusumu-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/motor-akimi-hesaplama.html"
@@ -102,6 +188,7 @@
   from = "/hesaplama/motor-akimi-hesaplama/"
   to = "/hesaplama/motor-akimi-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/kw-kva-amper-donusturucu.html"
@@ -113,6 +200,7 @@
   from = "/hesaplama/kw-kva-amper-donusturucu/"
   to = "/hesaplama/kw-kva-amper-donusturucu.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/sigorta-tms-secimi.html"
@@ -124,6 +212,7 @@
   from = "/hesaplama/sigorta-tms-secimi/"
   to = "/hesaplama/sigorta-tms-secimi.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/motor-koruma-kontaktor-secimi.html"
@@ -135,6 +224,7 @@
   from = "/hesaplama/motor-koruma-kontaktor-secimi/"
   to = "/hesaplama/motor-koruma-kontaktor-secimi.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/kisa-devre-akimi-hesaplama.html"
@@ -146,6 +236,7 @@
   from = "/hesaplama/kisa-devre-akimi-hesaplama/"
   to = "/hesaplama/kisa-devre-akimi-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/jenerator-gucu-hesaplama.html"
@@ -157,6 +248,7 @@
   from = "/hesaplama/jenerator-gucu-hesaplama/"
   to = "/hesaplama/jenerator-gucu-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/ups-gucu-hesaplama.html"
@@ -168,6 +260,7 @@
   from = "/hesaplama/ups-gucu-hesaplama/"
   to = "/hesaplama/ups-gucu-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/topraklama-hesaplama.html"
@@ -179,6 +272,7 @@
   from = "/hesaplama/topraklama-hesaplama/"
   to = "/hesaplama/topraklama-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/ges-uretim-hesaplama.html"
@@ -190,6 +284,7 @@
   from = "/hesaplama/ges-uretim-hesaplama/"
   to = "/hesaplama/ges-uretim-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/inverter-dc-ac-kablo-secimi.html"
@@ -201,6 +296,7 @@
   from = "/hesaplama/inverter-dc-ac-kablo-secimi/"
   to = "/hesaplama/inverter-dc-ac-kablo-secimi.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/aydinlatma-lux-hesaplama.html"
@@ -212,6 +308,7 @@
   from = "/hesaplama/aydinlatma-lux-hesaplama/"
   to = "/hesaplama/aydinlatma-lux-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/reaktif-ceza-hesaplama.html"
@@ -223,6 +320,7 @@
   from = "/hesaplama/reaktif-ceza-hesaplama/"
   to = "/hesaplama/reaktif-ceza-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama.html"
@@ -234,6 +332,7 @@
   from = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama/"
   to = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama.html"
   status = 200
+  force = true
 
 # ---------------------------------------------------------------------------------------
 # Klasor/uzantisiz adresler (.htaccess ile ayni). "/sor" gibi adresler ayni adli klasor yuzunden
@@ -306,10 +405,30 @@
   status = 301
   force = true
 
+# Hesap, calisan ve topluluk alanlari PHP API ister; Netlify statik yayindir. Bu adresler kanonik siteye gider
+# (voltguard2.netlify.app -> voltguard.com.tr; Netlify ozel alan adi kullanmadigi icin dongu olusmaz).
 [[redirects]]
   from = "/hesap"
-  to = "/hesap/giris.html"
-  status = 302
+  to = "https://voltguard.com.tr/hesap/giris.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesap/*"
+  to = "https://voltguard.com.tr/hesap/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/topluluk.html"
+  to = "https://voltguard.com.tr/topluluk.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/topluluk"
+  to = "https://voltguard.com.tr/topluluk.html"
+  status = 301
   force = true
 
 # Runtime veri klasorleri, sunucu kodu ve gelistirme dosyalari yayinlanmaz (.htaccess'teki engellerin esi).
@@ -324,18 +443,6 @@
   from = "/calisan/uygulama/*"
   to = "/404.html"
   status = 404
-  force = true
-
-[[redirects]]
-  from = "/calisan"
-  to = "/calisan/giris.html"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/calisan/"
-  to = "/calisan/giris.html"
-  status = 302
   force = true
 
 [[redirects]]
@@ -354,6 +461,18 @@
   from = "/calisan/shared-footer.html"
   to = "/404.html"
   status = 404
+  force = true
+
+[[redirects]]
+  from = "/calisan"
+  to = "https://voltguard.com.tr/calisan/giris.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/calisan/*"
+  to = "https://voltguard.com.tr/calisan/:splat"
+  status = 301
   force = true
 
 [[redirects]]
@@ -437,7 +556,8 @@
 # ---------------------------------------------------------------------------------------
 # Guvenlik basliklari ve CSP. .htaccess (cPanel/Apache) ile ayni degerler; ikisi birlikte guncellenmeli.
 # style-src/font-src yalnizca 'self' (+ data: font): yazi tipleri ve ikonlar kendi sunucumuzda; Google Fonts /
-# Font Awesome CDN artik kullanilmiyor. script-src https://cdnjs.cloudflare.com yalnizca jsPDF icin.
+# Font Awesome CDN artik kullanilmiyor. Genel sayfalarda satir ici betik ve Turnstile icin 'unsafe-inline' durur;
+# ozel alanlar (/hesap/, /calisan/) Netlify'da kanonik siteye yonlenir ve orada siki politika (.htaccess) gecerlidir.
 # ---------------------------------------------------------------------------------------
 [[headers]]
   for = "/*"
@@ -447,7 +567,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
-    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com https://assets.apollo.io https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://*.apollo.io https://aplo-evnt.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests"
 
 # ---------------------------------------------------------------------------------------
 # Onbellek politikasi (.htaccess ile ayni). Netlify header kurallari sorgu dizesini (?v=) goremez:

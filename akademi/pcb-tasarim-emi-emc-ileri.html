@@ -10,9 +10,9 @@
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261013b">
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=98a54d154d91">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,7 +35,8 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -53,8 +54,8 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261012d">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/pcb-tasarim-emi-emc-ileri.html#course","name":"PCB Tasarımı ve EMI/EMC Uyumluluk","description":"Layer stack-up, kontrollü empedans, grounding stratejileri, EMC filtre bileşenleri ve CE için EMC testleri: ileri seviye PCB dersi.","educationalLevel":"İleri","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"PCB Tasarımı ve EMI/EMC (İleri)","item":"https://voltguard.com.tr/akademi/pcb-tasarim-emi-emc-ileri.html"}]}]}</script>
+  <link rel="stylesheet" href="/css/style.css?v=d152330fb2b0">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/pcb-tasarim-emi-emc-ileri.html#course","name":"PCB Tasarımı ve EMI/EMC Uyumluluk","description":"Katman dizilimi, kontrollü empedans, dönüş akımı ve topraklama, EMI kaynakları, filtre bileşenleri ve CE için EMC testleri.","educationalLevel":"İleri","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-24","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"},"author":{"@type":"Organization","name":"VoltGuard Mühendislik Ekibi","url":"https://voltguard.com.tr/ekibimiz.html"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"PCB Tasarımı ve EMI/EMC (İleri)","item":"https://voltguard.com.tr/akademi/pcb-tasarim-emi-emc-ileri.html"}]}]}</script>
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -68,6 +69,7 @@
           <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
         </span>
       </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
@@ -84,13 +86,16 @@
               <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
               <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
               <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
               <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
             </ul>
           </li>
           <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
-          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -98,6 +103,7 @@
         </div>
       </nav>
       <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
@@ -114,97 +120,100 @@
     <span class="article__cat">Elektronik &amp; Mikrodenetleyici</span>
     <span class="akademi-level akademi-level--ileri">İleri Seviye</span>
     <h1>PCB Tasarımı ve EMI/EMC Uyumluluk</h1>
-    <p class="article__summary">İleri seviye bu derste; profesyonel PCB tasarımının stack-up mantığını, empedans kontrollü iletken kurallarını, EMI (Electromagnetic Interference) kaynakları ile EMC (Electromagnetic Compatibility) uyumluluk testlerini ele alacağız. Aynı EMC ilkeleri (kısa dönüş yolu, ekranlama, filtreleme) kart seviyesinin ötesinde, sürücü ve PLC içeren <a href="/hizmetler/elektrik-pano-imalati.html">elektrik panosu imalatında</a> da kablo ayrımı ve ekran topraklaması olarak uygulanır. Ön koşul: <a href="mikrodenetleyici-i2c-spi-uart-orta.html">Mikrodenetleyici I2C/SPI/UART (Orta)</a>.</p>
+    <p class="article__byline" style="font-size:.85rem;color:#5b6472;margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son gözden geçirme: <time datetime="2026-10-24">24.10.2026</time></p>
+    <p class="article__summary">Bu ders; çok katmanlı PCB'de katman dizilimini, kontrollü empedansı, dönüş akımı yolunu ve topraklama düzenini, EMI kaynaklarını, filtre bileşenlerini ve CE uygunluğu için yapılan EMC testlerini anlatır. Aynı ilkeler (kısa dönüş yolu, ekranlama, filtreleme), sürücü ve PLC içeren <a href="/hizmetler/elektrik-pano-imalati.html">elektrik panosu imalatında</a> kablo ayrımı ve ekran topraklaması olarak uygulanır.</p>
 
-    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Multi-layer stack-up, kontrollü empedans (Zo), power integrity (PDN), grounding stratejileri, iletim (conducted) ve radyasyon (radiated) emisyonu, ESD ve EFT/BURST testleri.</div>
+    <div class="akademi-path"><strong>Ön koşul ve ilgili kaynaklar:</strong> <a href="mikrodenetleyici-i2c-spi-uart-orta.html">Mikrodenetleyici I2C/SPI/UART (Orta)</a> · <a href="/araclar/pcb-kontrol-listesi/">PCB kontrol listesi</a> · <a href="/araclar/rc-rl-filtre/">RC/RL filtre hesabı</a> · <a href="/araclar/buck-donusturucu/">Buck dönüştürücü</a></div>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Modern hızlı sinyal PCB'lerinde 4, 6 veya 8 katmanlı stack-up standarttır.</li><li>50 Ω tek uçlu ve 90/100 Ω diferansiyel empedans; USB, Ethernet, HDMI için şart.</li><li>Return path (dönüş yolu), sinyal kadar önemli; ground plane bütünlüğü emisyonu belirler.</li><li>Common mode filter (choke) + Y kondansatör = LISN devresi için CE conducted emission düşürücü.</li><li>Ferrite bead, DC blok değil; sadece belirli frekansta empedans artışı yapar.</li><li>CE işareti için EN 55011/55032 (emisyon) ve EN 61000-4-x (bağışıklık) test edilir.</li></ul></div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Hızlı kenarlı sinyaller, kesintisiz bir referans düzlemine komşu katmanda yönlendirilmelidir; emisyonu çoğunlukla dönüş akımının izlediği yol belirler.</li><li>USB 90 Ω, Ethernet ve HDMI 100 Ω diferansiyel empedans ister; tek uçlu hatlarda 50 Ω yaygındır.</li><li>Ferrit boncuk DC'yi bloke etmez; belirli bir frekans bandında empedansı artırır ve doğru akımda doymaya girebilir.</li><li>CE için ürün standardı yoksa jenerik EMC standartları uygulanır: emisyon için EN 61000-6-3/-4 ve EN 55011/55032, bağışıklık için EN 61000-6-1/-2 kapsamında EN 61000-4-x testleri.</li></ul></div>
 
-    <h2>Multi-Layer Stack-Up</h2>
-    <p>PCB tasarımında en kritik karar layer sayısıdır. Genel prensip: her yüksek hızlı sinyal katmanı, kesintisiz bir ground plane komşu katmandan geçmelidir (return current yolu).</p>
+    <h2>Çok Katmanlı Dizilim (Stack-up)</h2>
+    <p>Katman sayısı, maliyeti ve EMC davranışını belirleyen ilk karardır. Temel ilke: her hızlı sinyal katmanının komşusunda kesintisiz bir referans (çoğunlukla GND) düzlemi bulunmalıdır. Böylece dönüş akımı sinyalin hemen altından akar ve döngü alanı küçük kalır.</p>
     <div class="table-scroll"><table>
-      <thead><tr><th>Katman</th><th>Tipik stack-up (6 layer)</th></tr></thead>
+      <thead><tr><th>Katman</th><th>Tipik 6 katmanlı dizilim</th></tr></thead>
       <tbody>
-        <tr><td>L1</td><td>Signal (top) — kontrollü empedans</td></tr>
-        <tr><td>L2</td><td>Ground plane</td></tr>
-        <tr><td>L3</td><td>Signal (internal) — az kritik</td></tr>
-        <tr><td>L4</td><td>Power plane (Vcc)</td></tr>
-        <tr><td>L5</td><td>Ground plane</td></tr>
-        <tr><td>L6</td><td>Signal (bottom)</td></tr>
+        <tr><td>L1</td><td>Sinyal (üst) — kontrollü empedans</td></tr>
+        <tr><td>L2</td><td>GND düzlemi</td></tr>
+        <tr><td>L3</td><td>Sinyal (iç) — daha az kritik</td></tr>
+        <tr><td>L4</td><td>Güç düzlemi</td></tr>
+        <tr><td>L5</td><td>GND düzlemi</td></tr>
+        <tr><td>L6</td><td>Sinyal (alt)</td></tr>
       </tbody>
     </table></div>
-    <p>2 katmanlı basit PCB'ler analog ve düşük hızlı dijital için uygundur. 100 MHz üzeri sinyal, yüksek yoğunluklu BGA veya USB 3.0 için 4-6 katman şarttır.</p>
+    <p>İki katmanlı kartlar analog ve düşük hızlı dijital devreler için yeterli olabilir. Hızlı arayüzler, yoğun BGA kılıflar veya USB 3.x gibi uygulamalarda en az 4 katman gerekir.</p>
 
     <h2>Kontrollü Empedans</h2>
-    <p>Hızlı sinyaller (harmonik içeriği > 50 MHz) transmission line (iletim hattı) gibi davranır. Karakteristik empedansı (Z<sub>0</sub>) yanlış seçilirse sinyal yansıması olur: undershoot, overshoot, ringing, jitter. Standart değerler:</p>
+    <p>Bir iz, kenar geçişi süresine göre elektriksel olarak uzunsa iletim hattı gibi davranır. Pratik ölçüt: iz uzunluğu, sinyalin yükselme süresi boyunca kat ettiği mesafenin yaklaşık 1/6'sını aşıyorsa hat empedansı kontrol edilmelidir. FR-4'te bu hız yaklaşık 15 cm/ns'dir; 1 ns yükselme süresinde ölçüt 2,5 cm civarındadır. Empedans uyumsuzluğu yansımaya, aşma ve çınlamaya yol açar. Tipik değerler:</p>
     <ul class="article__list">
-      <li><strong>USB 2.0:</strong> 90 Ω diferansiyel (D+/D−)</li>
-      <li><strong>USB 3.0:</strong> 90 Ω diferansiyel + kontrollü tek uçlu</li>
-      <li><strong>Ethernet 100Base-TX:</strong> 100 Ω diferansiyel</li>
+      <li><strong>USB 2.0 / 3.x:</strong> 90 Ω diferansiyel</li>
+      <li><strong>Ethernet 100BASE-TX / 1000BASE-T:</strong> 100 Ω diferansiyel</li>
       <li><strong>HDMI, DisplayPort:</strong> 100 Ω diferansiyel</li>
-      <li><strong>CAN, RS-485:</strong> 120 Ω diferansiyel</li>
-      <li><strong>Genel dijital (single-ended):</strong> 50 Ω</li>
+      <li><strong>CAN, RS-485 (kablo ve sonlandırma):</strong> 120 Ω</li>
+      <li><strong>Genel tek uçlu hızlı hatlar:</strong> 50 Ω</li>
     </ul>
-    <p>Empedans; iletken genişliği (W), dielektrik kalınlığı (H) ve dielektrik sabitiyle (Er) belirlenir. PCB üreticisinden empedans hesap tablosu istenir veya Polar Instruments SI9000 gibi yazılım kullanılır.</p>
+    <p>Empedans; iz genişliği (W), dielektrik kalınlığı (H) ve dielektrik sabiti (ε<sub>r</sub>) ile belirlenir. Değerler PCB üreticisinin dizilim tablosundan alınır veya saha çözücüsü (ör. Polar SI9000) ile hesaplanır.</p>
 
-    <h2>Grounding Stratejileri</h2>
+    <h2>Topraklama Düzeni</h2>
     <ul class="article__list">
-      <li><strong>Single-point (star) ground:</strong> Analog düşük frekans; hassas devreler için.</li>
-      <li><strong>Multi-point ground:</strong> Yüksek frekans dijital; her katmanda ground plane.</li>
-      <li><strong>Hybrid ground:</strong> Analog + dijital karışık; ayrık plane, tek nokta bağlantı.</li>
-      <li><strong>Ground stitching:</strong> Ground planeler arasında yoğun via (en yüksek frekansın dalga boyunun yaklaşık 1/20'si veya daha sık; pratikte birkaç mm aralıklı).</li>
-      <li><strong>Return current management:</strong> Sinyal referans plane değiştirirse (top-inner geçiş) mutlaka geri dönüş via'sı eklenir.</li>
+      <li><strong>Tek nokta (yıldız) topraklama:</strong> Düşük frekanslı, hassas analog devrelerde.</li>
+      <li><strong>Çok noktalı topraklama:</strong> Yüksek frekanslı dijital devrelerde; GND düzlemine çok sayıda via ile.</li>
+      <li><strong>Karışık sinyalli kartlar:</strong> Günümüzde çoğu tasarımda GND düzlemi bölünmez. Analog ve dijital bölümler yerleşimle ayrılır, dijital dönüş akımlarının analog bölgeden geçmemesi sağlanır. Bölünmüş düzlem, üzerinden sinyal geçtiğinde emisyonu artırır.</li>
+      <li><strong>Via dikişi (stitching):</strong> GND düzlemleri arasında, ilgilenilen en yüksek frekansın dalga boyunun yaklaşık 1/20'sinden sık aralıklı via'lar.</li>
+      <li><strong>Dönüş akımı:</strong> Sinyal referans düzlemi değiştirdiğinde geçişin yakınına dönüş via'sı (veya düzlemler farklı gerilimdeyse dikiş kondansatörü) konur.</li>
     </ul>
 
     <h2>EMI Kaynakları</h2>
     <ol class="article__list">
-      <li><strong>Anahtarlama gürültüsü:</strong> SMPS (buck/boost), MCU clock, dijital I/O geçişleri.</li>
-      <li><strong>Common mode akım:</strong> Yanlış grounding, kablo yolları farkı.</li>
-      <li><strong>Diferansiyel mode akım:</strong> Yük değişimleri, motor sürücü, IGBT anahtarlama.</li>
-      <li><strong>Anten etkisi:</strong> Uzun iletkenler, kablo demetleri.</li>
-      <li><strong>Kapasitif eşleşme:</strong> Yakın iletkenler arası koupling.</li>
-      <li><strong>Endüktif eşleşme:</strong> Yakın döngüler arası manyetik akı paylaşımı.</li>
+      <li><strong>Anahtarlama gürültüsü:</strong> Anahtarlamalı güç kaynakları (buck/boost), saat sinyalleri, dijital I/O geçişleri.</li>
+      <li><strong>Ortak mod akım:</strong> Kablolar üzerinden dönen akım; çoğunlukla bozuk dönüş yolu veya referans farkı nedeniyle oluşur.</li>
+      <li><strong>Diferansiyel mod akım:</strong> Yük akımının döngüsü; motor sürücü ve IGBT anahtarlama döngüleri.</li>
+      <li><strong>Anten etkisi:</strong> Uzun iletkenler ve karta bağlı kablolar.</li>
+      <li><strong>Kapasitif kuplaj:</strong> Yakın iletkenler arasında.</li>
+      <li><strong>Endüktif kuplaj:</strong> Yakın akım döngüleri arasında.</li>
     </ol>
 
-    <h2>EMC Filtre Bileşenleri</h2>
+    <h2>EMC Filtre ve Koruma Bileşenleri</h2>
     <ul class="article__list">
-      <li><strong>Common mode choke (CMC):</strong> Common mode akımı bastırır; DM'e etki etmez.</li>
-      <li><strong>X-cap:</strong> Faz-nötr arasında; DM gürültüsünü emer.</li>
-      <li><strong>Y-cap:</strong> Faz veya nötr → PE; CM gürültüsünü emer. Kaçak akım sınırı vardır.</li>
-      <li><strong>Ferrite bead:</strong> Yüksek frekansta empedans artışı; DC bloklamaz.</li>
-      <li><strong>LC π filter:</strong> Baraj tipi filtre; yüksek frekans için.</li>
-      <li><strong>Gas discharge tube (GDT):</strong> Sürge koruması; ESD ve yıldırım için.</li>
-      <li><strong>TVS (Transient Voltage Suppressor):</strong> Hızlı sürge kırpma.</li>
-      <li><strong>MOV (Metal Oxide Varistor):</strong> AC şebeke sürge koruması.</li>
+      <li><strong>Ortak mod bobini (CMC):</strong> Ortak mod gürültüyü bastırır; diferansiyel mod akımına etkisi küçüktür.</li>
+      <li><strong>X kondansatör:</strong> Faz-nötr arasında; diferansiyel mod gürültüyü süzer.</li>
+      <li><strong>Y kondansatör:</strong> Faz veya nötr ile PE arasında; ortak mod gürültüyü süzer. Kaçak akım sınırı nedeniyle değeri sınırlıdır.</li>
+      <li><strong>Ferrit boncuk:</strong> Belirli bir bantta empedans artışı; DC'yi bloke etmez.</li>
+      <li><strong>LC / π filtre:</strong> Güç girişlerinde ve hassas beslemelerde alçak geçiren filtre.</li>
+      <li><strong>Gaz deşarj tüpü (GDT):</strong> Yüksek enerjili darbelere (yıldırım kaynaklı aşırı gerilim) karşı; tepki süresi yavaş olduğu için ESD koruması için uygun değildir.</li>
+      <li><strong>TVS diyot:</strong> Hızlı kırpma; ESD ve küçük darbeler.</li>
+      <li><strong>MOV (varistör):</strong> AC şebeke girişinde darbe koruması.</li>
     </ul>
+    <p>Kondüktif emisyon ölçümünde kullanılan LISN (hat empedans stabilizasyon ağı) bir filtre değil, ölçüm düzeneğidir; ürünün şebeke empedansını tanımlı hale getirir.</p>
 
     <h2>EMC Testleri (CE İşareti İçin)</h2>
+    <p>Türkiye'de elektrikli ve elektronik ürünlerin EMC şartları Elektromanyetik Uyumluluk Yönetmeliği (2014/30/AB), elektriksel güvenlik şartları Alçak Gerilim Yönetmeliği (2014/35/AB) ile düzenlenir; güncel metinlerini kontrol edin. Ürüne özgü standart yoksa jenerik standartlar uygulanır: konut/ticari ortam için EN 61000-6-1 (bağışıklık) ve EN 61000-6-3 (emisyon), endüstriyel ortam için EN 61000-6-2 ve EN 61000-6-4. Aşağıdaki seviyeler AC güç girişi ve muhafaza için tipik jenerik değerlerdir:</p>
     <div class="table-scroll"><table>
-      <thead><tr><th>Test</th><th>Standart</th><th>Amaç</th></tr></thead>
+      <thead><tr><th>Test</th><th>Standart</th><th>Tipik seviye (konut / endüstri)</th></tr></thead>
       <tbody>
-        <tr><td>Conducted emission</td><td>EN 55011/55032</td><td>Şebeke üzerine yayılan gürültü</td></tr>
-        <tr><td>Radiated emission</td><td>EN 55011/55032</td><td>Anten üzerinden yayılan gürültü</td></tr>
-        <tr><td>ESD (elektrostatik deşarj)</td><td>EN 61000-4-2</td><td>±8 kV air, ±4 kV contact bağışıklığı</td></tr>
-        <tr><td>Radiated immunity</td><td>EN 61000-4-3</td><td>3-30 V/m elektromanyetik alan bağışıklığı</td></tr>
-        <tr><td>EFT / Burst</td><td>EN 61000-4-4</td><td>±2 kV puls tren bağışıklığı</td></tr>
-        <tr><td>Surge</td><td>EN 61000-4-5</td><td>±2 kV faz-nötr, ±4 kV faz-PE</td></tr>
-        <tr><td>Conducted immunity</td><td>EN 61000-4-6</td><td>10 V rms RF bağışıklığı</td></tr>
-        <tr><td>Voltage dips</td><td>EN 61000-4-11</td><td>Şebeke gerilim düşmesi bağışıklığı</td></tr>
+        <tr><td>Kondüktif emisyon</td><td>EN 55011 (CISPR 11), EN 55032 (CISPR 32)</td><td>150 kHz-30 MHz, sınıf B / sınıf A sınırları</td></tr>
+        <tr><td>Işınım emisyonu</td><td>EN 55011, EN 55032</td><td>30 MHz-1 GHz (ve üstü), sınıf B / sınıf A</td></tr>
+        <tr><td>ESD</td><td>EN 61000-4-2</td><td>±4 kV kontak, ±8 kV hava</td></tr>
+        <tr><td>Işınımlı RF bağışıklığı</td><td>EN 61000-4-3</td><td>3 V/m / 10 V/m</td></tr>
+        <tr><td>EFT / burst</td><td>EN 61000-4-4</td><td>±1 kV / ±2 kV (AC güç portu)</td></tr>
+        <tr><td>Darbe (surge)</td><td>EN 61000-4-5</td><td>±1 kV hat-hat, ±2 kV hat-toprak</td></tr>
+        <tr><td>İletilen RF bağışıklığı</td><td>EN 61000-4-6</td><td>3 V / 10 V</td></tr>
+        <tr><td>Gerilim çukuru ve kesintileri</td><td>EN 61000-4-11</td><td>Standartta tanımlı çukur ve kesinti profilleri</td></tr>
       </tbody>
     </table></div>
+    <p>Kesin seviyeler, ürün ailesi standardından veya jenerik standardın güncel baskısından alınmalıdır.</p>
 
     <h2>PCB Tasarım Yazılımları</h2>
     <ul class="article__list">
-      <li><strong>KiCad:</strong> Açık kaynak, ücretsiz; küçük-orta projelerde yaygın</li>
-      <li><strong>Altium Designer:</strong> Endüstri standardı; profesyonel, high-speed destekli</li>
-      <li><strong>Cadence OrCAD / Allegro:</strong> Büyük şirketler; high-speed ve signal integrity</li>
-      <li><strong>Mentor PADS / Xpedition:</strong> Otomotiv ve havacılık odaklı</li>
-      <li><strong>Autodesk Eagle:</strong> Hobi ve küçük tasarımlar (artık Fusion 360 içinde)</li>
-      <li><strong>EasyEDA:</strong> JLCPCB entegre; hızlı prototip</li>
+      <li><strong>KiCad:</strong> Açık kaynak; küçük ve orta ölçekli projelerde yaygın.</li>
+      <li><strong>Altium Designer:</strong> Ticari; hızlı sinyal ve çok katmanlı tasarım araçları.</li>
+      <li><strong>Cadence OrCAD / Allegro:</strong> Hızlı sinyal ve sinyal bütünlüğü analizi.</li>
+      <li><strong>Siemens EDA (eski Mentor) PADS / Xpedition:</strong> Otomotiv ve havacılıkta yaygın.</li>
+      <li><strong>Autodesk Fusion Electronics:</strong> EAGLE'ın desteği Haziran 2026'da sona erdi; işlevleri Fusion içinde sürüyor.</li>
+      <li><strong>EasyEDA:</strong> Tarayıcı tabanlı; hızlı prototip.</li>
     </ul>
 
-    <h2>Ar-Ge Örneği: VoltGuard Aktif EMI Filtre</h2>
-    <p>VoltGuard'ın yürüttüğü Ar-Ge çalışmalarından biri Aktif EMI Filtre'dir. Klasik pasif CMC + Y-cap filtreler yüksek frekans (150 kHz - 30 MHz) bandında etkilidir; ancak daha düşük frekans (9-150 kHz, IEC 55011 CISPR 11 grup 1) için hacim ve maliyet tarafı yükselir. Aktif EMI filtre, gürültüyü ölçüp ters fazlı bir sinyal enjekte ederek pasif filtre boyutunu 3-5 kat azaltır. Bu tür Ar-Ge ürünleri, güç elektroniği ve endüstriyel elektronikte önemli inovasyon alanlarıdır.</p>
+    <h2>Ar-Ge Konusu: Aktif EMI Filtre</h2>
+    <p>Pasif filtrelerde (CMC ve Y kondansatör) düşük frekanslarda, özellikle 150 kHz'e yakın bölgede gereken endüktans ve kondansatör değerleri büyür. Y kondansatörü de kaçak akım sınırıyla kısıtlıdır. Aktif EMI filtre, gürültüyü algılayıp ters fazlı bir akım veya gerilim enjekte ederek pasif filtrenin yükünü azaltır. Literatürde ortak mod bobini hacminde belirgin küçülme raporlanmıştır. Kazanç; topolojiye, bant genişliğine ve kararlılık sınırlarına bağlıdır ve her tasarımda ölçümle doğrulanmalıdır. VoltGuard Ar-Ge'de bu konu üzerinde çalışmaktadır.</p>
 
     <p class="kb-disclaimer">Bu içerik ileri seviye eğitim amaçlıdır. Ürün seviyesinde EMC sertifikasyonu için akredite laboratuvarda ölçüm gereklidir.</p>
     <div class="kb-cta">
@@ -241,7 +250,7 @@
               <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
           </a>
-          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
           <ul class="vg-footer__contact">
             <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
@@ -251,7 +260,7 @@
             <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
             <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
           </address>
-          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
         </div>
         <nav class="vg-footer__nav" aria-label="Alt menü">
           <div class="vg-footer__col">
@@ -283,9 +292,8 @@
               <li><a href="/#referanslar">Referanslarımız</a></li>
               <li><a href="/#surec">Sürecimiz</a></li>
               <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
               <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
               <li><a href="/#katalog">Katalog</a></li>
               <li><a href="/#sss">SSS</a></li>
               <li><a href="/#iletisim">İletişim</a></li>
@@ -301,6 +309,8 @@
               <li><a href="/sor.html">VoltGuard'a Sor</a></li>
               <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
               <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+              <li><a href="/volthaber/">VoltHaber</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
@@ -310,6 +320,7 @@
               <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
               <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
               <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
               <li><a href="/hesap/giris.html">Üye Girişi</a></li>
               <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
@@ -326,39 +337,9 @@
           <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
-      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
-        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          </circle>
-        </svg>
-        <span class="sig-node" aria-hidden="true"></span>
-        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
-          <span class="sig-badge__ring" aria-hidden="true"></span>
-          <span class="sig-badge__aurora" aria-hidden="true"></span>
-          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
-          <span class="sig-badge__body">
-            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
-            <span class="sig-badge__brand">
-              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
-              <span class="sig-badge__eng">Engineering</span>
-            </span>
-          </span>
-          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
-          <span class="sig-badge__shimmer" aria-hidden="true"></span>
-        </a>
-        <span class="sig-node" aria-hidden="true"></span>
-        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
-          </circle>
-        </svg>
-      </div>
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261013a" defer></script>
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
 </body>
 </html>

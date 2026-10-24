@@ -1,7 +1,7 @@
 {
-  "name": "VoltGuard | Endüstriyel Mühendislik Çözümleri",
+  "name": "VoltGuard Mühendislik",
   "short_name": "VoltGuard",
-  "description": "Elektrik, Otomasyon, Elektronik ve Mekanik alanlarında profesyonel mühendislik çözümleri.",
+  "description": "Elektrik, otomasyon ve enerji mühendisliği: trafo işletme sorumluluğu, periyodik kontrol, kompanzasyon, pano ve GES. Ege Teknopark, İzmir.",
   "lang": "tr",
   "dir": "ltr",
   "id": "/",
@@ -71,7 +71,7 @@
     {
       "name": "Mühendislik Uygulamaları",
       "short_name": "Uygulamalar",
-      "description": "51 ücretsiz mühendislik aracı, şema atölyesi ve proje raporları.",
+      "description": "51 ücretsiz hesap, çizim ve simülasyon aracı.",
       "url": "/araclar/",
       "icons": [
         {

@@ -77,7 +77,7 @@ main:focus { outline: 0; }
 }
 .vg-wrap {
   width: 100%;
-  max-width: 82.5rem;
+  max-width: clamp(82.5rem, calc(88vw + 7.5rem), 102.5rem); /* style.css --container-max ile aynı oranda büyür (+120 px) */
   margin: 0 auto;
   padding: 0 1.25rem;
 }
@@ -280,6 +280,17 @@ html.vg-lock { overflow: hidden; }
   padding-left: .8rem;
 }
 .vg-header .vg-nav__link--factory { color: var(--vg-accent-light); }
+/* VoltSim: küçük "3D" etiketi (mobilde satırın sağında, masaüstünde metnin yanında) */
+.vg-header .vg-nav__link--sim .vg-new {
+  order: 3;
+  margin-left: auto;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font: 700 .6875rem/1 var(--vg-font-h);
+  letter-spacing: .04em;
+  color: var(--vg-navy);
+  background: linear-gradient(135deg, #54c9e2, var(--vg-accent-light));
+}
 .vg-header .vg-nav__link--factory .vg-ping {
   position: relative;
   order: 3;
@@ -371,6 +382,36 @@ html.vg-lock { overflow: hidden; }
 .vg-nav__foot .vg-account,
 .vg-nav__foot .vg-cta { width: 100%; justify-content: center; min-height: 48px; max-width: none; text-align: center; }
 .vg-actions { display: none; }
+
+/* ---------- Site içi arama bağlantısı (/arama.html) ---------- */
+.vg-search {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  color: rgba(255, 255, 255, .92);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+}
+.vg-search::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4.2-4.2'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4.2-4.2'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.vg-search:hover, .vg-search[aria-current] { color: #fff; border-color: var(--vg-accent); background: rgba(245, 158, 11, .1); }
+/* Mobilde menü düğmesinin solunda; boş alanı yalnız arama düğmesi itsin */
+.vg-search--bar { order: 3; margin-left: auto; }
+.vg-search--bar ~ .vg-burger { margin-left: .15rem; }
+.vg-actions .vg-search { width: 40px; height: 40px; }
+@media (min-width: 80rem) {
+  .vg-search--bar { display: none; }
+}
 
 /* ---------- Hesap bağlantısı ([data-vg-account]) ---------- */
 .vg-account {
@@ -515,6 +556,7 @@ html.vg-lock { overflow: hidden; }
   .vg-header .vg-nav__link.is-active,
   .vg-dd:has([aria-current]) > .vg-dd__btn { box-shadow: none; padding-left: .5rem; }
   .vg-header .vg-nav__link--factory .vg-ping { order: 0; margin-left: 0; }
+  .vg-header .vg-nav__link--sim .vg-new { order: 0; margin-left: .1rem; }
   .vg-dd__btn::before { margin: 0 0 3px .05rem; }
   .vg-dd[data-open] > .vg-dd__btn::before { margin-bottom: -3px; }
 
@@ -620,7 +662,7 @@ html.vg-lock { overflow: hidden; }
   color: rgba(255, 255, 255, .78);
   font-style: normal;
 }
-.vg-footer__contact a { align-items: center; width: fit-content; transition: color .2s ease; }
+.vg-footer__contact a { align-items: center; width: fit-content; min-height: 32px; transition: color .2s ease; } /* dokunma hedefi ≥ 24 px (WCAG 2.5.8) */
 .vg-footer__contact a:hover { color: var(--vg-accent); }
 .vg-footer__contact i,
 .vg-footer__addr i,
@@ -910,7 +952,7 @@ html.vg-lock { overflow: hidden; }
 
 .sig-badge__label {
   font-family: var(--vg-font-h);
-  font-size: .56rem;
+  font-size: .6875rem;
   font-weight: 500;
   letter-spacing: .14em;
   text-transform: uppercase;
@@ -973,7 +1015,7 @@ html.vg-lock { overflow: hidden; }
   border: 1px solid rgba(245,158,11,.15);
   background: rgba(245,158,11,.05);
   font-family: var(--vg-font-h);
-  font-size: .54rem;
+  font-size: .6875rem;
   font-weight: 600;
   letter-spacing: .06em;
   color: rgba(245,158,11,.6);
@@ -982,7 +1024,7 @@ html.vg-lock { overflow: hidden; }
 }
 
 .sig-badge__year i {
-  font-size: .48rem;
+  font-size: .6875rem;
 }
 
 .sig-badge:hover .sig-badge__year {
@@ -1047,7 +1089,7 @@ html.vg-lock { overflow: hidden; }
   .sig-badge__icon {
     width: 32px;
     height: 32px;
-    font-size: .68rem;
+    font-size: .6875rem;
   }
 
   .sig-badge__icon::after {
@@ -1060,7 +1102,7 @@ html.vg-lock { overflow: hidden; }
 
   .sig-badge__year {
     padding: .15rem .4rem;
-    font-size: .5rem;
+    font-size: .6875rem;
   }
 }
 
@@ -1084,11 +1126,11 @@ html.vg-lock { overflow: hidden; }
   .sig-badge__icon {
     width: 28px;
     height: 28px;
-    font-size: .6rem;
+    font-size: .6875rem;
   }
 
   .sig-badge__label {
-    font-size: .48rem;
+    font-size: .6875rem;
     letter-spacing: .1em;
   }
 
@@ -1097,7 +1139,7 @@ html.vg-lock { overflow: hidden; }
   }
 
   .sig-badge__eng {
-    font-size: .6rem;
+    font-size: .6875rem;
   }
 
   .sig-badge__year {
@@ -1148,3 +1190,23 @@ html.vg-js .vg-footer:not(.is-inview) *::after {
   .vg-header,
   .vg-footer { display: none !important; }
 }
+
+/* Masaüstü çubuğu 1280–1599 px: VoltSim eklenince menü sığsın diye aralıklar ve yazı boyu sıkılaştırılır. */
+@media (min-width: 80rem) and (max-width: 99.99rem) {
+  .vg-header__bar { gap: .5rem; }
+  .vg-nav__list { gap: 0; }
+  .vg-header .vg-nav__link { padding: .5rem .36rem; font-size: .78rem; }
+  .vg-header .vg-nav__link::after { left: .36rem; right: .36rem; }
+  .vg-header .vg-nav__link[aria-current], .vg-header .vg-nav__link.is-active, .vg-dd:has([aria-current]) > .vg-dd__btn { padding-left: .36rem; }
+  .vg-actions .vg-account { padding-left: .6rem; padding-right: .6rem; }
+}
+@media (min-width: 80rem) and (max-width: 87.49rem) {
+  .vg-header .logo-mark__tagline { display: none; }
+  .vg-header .vg-nav__link { font-size: .75rem; padding: .5rem .3rem; }
+}
+
+/* Navigation and signature remain quiet while the page is being read. */
+.vg-nav__link::before, .sig-badge__shimmer, .sig-node, .sig-node::after { animation: none; }
+.sig-trace__dot { display: none; }
+.vg-header a:focus-visible, .vg-header button:focus-visible,
+.vg-footer a:focus-visible { outline: 3px solid #fbbf24; outline-offset: 4px; }

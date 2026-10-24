@@ -29,7 +29,7 @@
   RewriteCond %{REQUEST_URI} !^/\.well-known/(acme-challenge|pki-validation|cpanel-dcv)/ [NC]
   RewriteCond %{HTTPS} !=on
   RewriteCond %{HTTP:X-Forwarded-Proto} !=https
-  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  RewriteRule ^ https://voltguard.com.tr%{REQUEST_URI} [L,R=301]
 
   # --- Web'den asla erisilemeyecek yollar -------------------------------------------------
   # Nokta ile baslayan dosya/klasorler (.git, .env, .cpanel.yml ...) - .well-known haric.
@@ -76,6 +76,18 @@
   RewriteCond %{THE_REQUEST} \s/hesaplama/kablo-kesiti-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/kablo-kesiti-hesaplama\.html$ /hesaplama/kablo-kesiti-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/kablo-kesiti-hesaplama/?$ /hesaplama/kablo-kesiti-hesaplama.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/periyodik-kontrol-planlayici\.html[\s?]
+  RewriteRule ^hesaplama/periyodik-kontrol-planlayici\.html$ /hesaplama/periyodik-kontrol-planlayici/ [R=301,L]
+  RewriteRule ^hesaplama/periyodik-kontrol-planlayici/?$ /hesaplama/periyodik-kontrol-planlayici.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/trafo-kapasite-artirimi\.html[\s?]
+  RewriteRule ^hesaplama/trafo-kapasite-artirimi\.html$ /hesaplama/trafo-kapasite-artirimi/ [R=301,L]
+  RewriteRule ^hesaplama/trafo-kapasite-artirimi/?$ /hesaplama/trafo-kapasite-artirimi.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/harmonik-filtre-ihtiyaci\.html[\s?]
+  RewriteRule ^hesaplama/harmonik-filtre-ihtiyaci\.html$ /hesaplama/harmonik-filtre-ihtiyaci/ [R=301,L]
+  RewriteRule ^hesaplama/harmonik-filtre-ihtiyaci/?$ /hesaplama/harmonik-filtre-ihtiyaci.html [L]
+  RewriteCond %{THE_REQUEST} \s/hesaplama/fabrika-elektrik-risk-testi\.html[\s?]
+  RewriteRule ^hesaplama/fabrika-elektrik-risk-testi\.html$ /hesaplama/fabrika-elektrik-risk-testi/ [R=301,L]
+  RewriteRule ^hesaplama/fabrika-elektrik-risk-testi/?$ /hesaplama/fabrika-elektrik-risk-testi.html [L]
   RewriteCond %{THE_REQUEST} \s/hesaplama/trafo-akimi-hesaplama\.html[\s?]
   RewriteRule ^hesaplama/trafo-akimi-hesaplama\.html$ /hesaplama/trafo-akimi-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/trafo-akimi-hesaplama/?$ /hesaplama/trafo-akimi-hesaplama.html [L]
@@ -126,6 +138,13 @@
   RewriteRule ^hesaplama/isletme-sorumlulugu-ucret-hesaplama\.html$ /hesaplama/isletme-sorumlulugu-ucret-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/isletme-sorumlulugu-ucret-hesaplama/?$ /hesaplama/isletme-sorumlulugu-ucret-hesaplama.html [L]
 
+  # VoltHaber: sunucuda PHP ile uretilen sayfalar (yayin-ilkeleri.html / abonelik.html statik sunulur)
+  RewriteRule ^volthaber$ /volthaber/ [R=301,L]
+  RewriteCond %{THE_REQUEST} \s/volthaber/index\.(html|php)[\s?]
+  RewriteRule ^volthaber/index\.(html|php)$ /volthaber/ [R=301,L]
+  RewriteRule ^volthaber/$ /volthaber/index.php [L,QSA]
+  RewriteRule ^volthaber/((kategori|etiket)/[a-z0-9-]+/?|[a-z0-9-]+/?|(sitemap|rss)\.xml)$ /volthaber/index.php [L,QSA]
+
   # --- Klasor ve uzantisiz adresler -------------------------------------------------------
   # Ayni adli klasor + .html sayfasi (sor/ + sor.html, akademi/ + akademi.html) olan adreslerde mod_dir,
   # /sor -> /sor/ yonlendirir ve klasorde index olmadigi icin 403/404 verirdi ("VoltGuard'a Sor acilmiyor").
@@ -143,13 +162,16 @@
   RewriteCond %{THE_REQUEST} \s/hizmetler/index\.html[\s?]
   RewriteRule ^hizmetler/index\.html$ /hizmetler/ [R=301,L]
   RewriteRule ^hizmetler/$ /hizmetler/index.html [L]
-  # Public engineering library. DirectorySlash is off, so normalize only real index pages.
-  RewriteCond %{THE_REQUEST} \s/araclar(?:/[a-z0-9-]+)?/index\.html[\s?]
-  RewriteRule ^(araclar(?:/[a-z0-9-]+)?)/index\.html$ /$1/ [R=301,L]
+  # Eski/tahmin edilen tek sayfa adresleri klasör adreslerine (dışarıda paylaşılmış bağlantılar 404 olmasın)
+  RewriteRule ^voltsim\.html$ /voltsim/ [R=301,L]
+  RewriteRule ^volthaber\.html$ /volthaber/ [R=301,L]
+  # Public engineering library and VoltSim simulations. DirectorySlash is off, so normalize only real index pages.
+  RewriteCond %{THE_REQUEST} \s/(?:araclar|voltsim)(?:/[a-z0-9-]+)?/index\.html[\s?]
+  RewriteRule ^((?:araclar|voltsim)(?:/[a-z0-9-]+)?)/index\.html$ /$1/ [R=301,L]
   RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
-  RewriteRule ^(araclar(?:/[a-z0-9-]+)?)$ /$1/ [R=301,L]
+  RewriteRule ^((?:araclar|voltsim)(?:/[a-z0-9-]+)?)$ /$1/ [R=301,L]
   RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
-  RewriteRule ^(araclar(?:/[a-z0-9-]+)?)/$ /$1/index.html [L]
+  RewriteRule ^((?:araclar|voltsim)(?:/[a-z0-9-]+)?)/$ /$1/index.html [L]
   # /<sayfa> ve /<sayfa>/  ->  /<sayfa>.html  (yalnizca dosya gercekten varsa; yeni kok sayfalar otomatik).
   RewriteCond %{DOCUMENT_ROOT}/$1.html -f
   RewriteRule ^([a-z0-9-]+)/?$ /$1.html [R=301,L]
@@ -175,7 +197,7 @@
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
   # 'preload' dropped: only re-add after every subdomain is verified HTTPS-only and the
   # domain has been deliberately submitted to hstspreload.org.
-  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on'"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on' || %{HTTP:X-Forwarded-Proto} == 'https'"
   Header always unset X-Powered-By
 
   # Content-Security-Policy as a real response header so frame-ancestors is enforced
@@ -185,8 +207,29 @@
   #  - worker-src/manifest-src 'self': sw.js ve manifest.json. blob: img/media: tarayicida uretilen onizlemeler.
   #  - style-src/font-src yalnizca 'self' (+ data: font): yazi tipleri ve ikonlar kendi sunucumuzda (css/fonts.css,
   #    css/fa-subset.css); Google Fonts / Font Awesome CDN artik kullanilmiyor. Ayni degerler netlify.toml'da.
-  #  - script-src https://cdnjs.cloudflare.com: yalnizca jsPDF (PDF disa aktarma) icin.
-  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com https://assets.apollo.io https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://*.apollo.io https://aplo-evnt.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests"
+  #  - PDF kodu yerel /js/vendor/ altindan sunulur; izleyici/CDN kaynaklarina izin verilmez.
+  #  - Ozel alanlar daha siki politika alir (asagidaki SetEnvIf): /hesap/ ve /calisan/ satir ici betik ve eval
+  #    calistirmaz (sayfa betikleri js/hesap-*.js, js/staff.js); /calisan/uygulama/ derlenmis sirket uygulamasidir
+  #    (satir ici betik yok, bazi kutuphaneler eval kullanir); /api/ JSON yanitlari hicbir kaynak yuklemez.
+  #    VG_CSP_* degiskenleri mod_setenvif ile ayarlanir; modul yoksa genel politika her yanita uygulanir.
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests" env=VG_CSP_SITE
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'inline-speculation-rules'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'self'; frame-src 'none'; upgrade-insecure-requests" env=VG_CSP_PRIVATE
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; connect-src 'self' blob: data:; frame-src 'self' blob: data:; upgrade-insecure-requests" env=VG_CSP_APP
+  Header always set Content-Security-Policy "default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" env=VG_CSP_API
+  Header always set X-Frame-Options "DENY" env=VG_CSP_PRIVATE
+</IfModule>
+<IfModule mod_setenvif.c>
+  # Ilk eslesme genel siteyi isaretler; ozel yollar bu isareti kaldirip kendi isaretini koyar.
+  # Ic yeniden yazmada (/calisan/ -> /calisan/index.php) kurallar yeni yol icin tekrar calisir; sonuc ayni kalir.
+  SetEnvIf Request_URI "." VG_CSP_SITE=1
+  SetEnvIfNoCase Request_URI "^/(hesap|calisan)(/|$)" VG_CSP_PRIVATE=1 !VG_CSP_SITE
+  SetEnvIfNoCase Request_URI "^/calisan/uygulama(/|$)" VG_CSP_APP=1 !VG_CSP_PRIVATE !VG_CSP_SITE
+  SetEnvIfNoCase Request_URI "^/api/(?!company-asset\.php)" VG_CSP_API=1 !VG_CSP_SITE
+</IfModule>
+<IfModule !mod_setenvif.c>
+  <IfModule mod_headers.c>
+    Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests"
+  </IfModule>
 </IfModule>
 
 # ─────────────────────────────────────

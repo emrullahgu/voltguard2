@@ -13,7 +13,8 @@
 const N = 600;
 const ring = { cpu: new Float32Array(N), gap: new Float32Array(N), n: 0 };
 const hooks = [];
-let last = 0, booted = false, longTasks = 0, longMax = 0, bootT = 0;
+let last = 0, next = 0, raf = 0, visible = true, pageHidden = false, contextLost = false;
+let booted = false, longTasks = 0, longMax = 0, bootT = 0;
 
 function safe(name, fn) { try { fn(); return true; } catch (e) { console.error('[PX.main] ' + name + ' başlatılamadı:', e); return false; } }
 function startupError(msg) {
@@ -24,8 +25,21 @@ function startupError(msg) {
 }
 function param(k) { try { return new URLSearchParams(location.search).get(k); } catch (e) { return null; } }
 
+function awake() { return !document.hidden && !pageHidden && visible && !contextLost; }
+function schedule() { if (awake() && !raf) raf = requestAnimationFrame(frame); }
+function syncLifecycle() {
+  if (!awake()) { cancelAnimationFrame(raf); raf = 0; last = next = 0; }
+  else schedule();
+  if (PX.bus) PX.bus.emit('runtime:visibility', { visible: awake() });
+}
 function frame(now) {
-  requestAnimationFrame(frame);
+  raf = 0;
+  if (!awake()) { last = next = 0; return; }
+  schedule();
+  // Keep the same time-based motion on 60/90/120/144 Hz displays without
+  // multiplying renderer, label and effect work at the native refresh rate.
+  if (next && now < next - 0.5) return;
+  next = now + 1000 / 60 - (next ? (now - next) % (1000 / 60) : 0);
   const t0 = performance.now();
   const dt = last ? Math.min(0.1, (now - last) / 1000) : 1 / 60;
   const gap = last ? now - last : 16.7; last = now;
@@ -48,7 +62,7 @@ function frameStats(last) {
   const inf = PX.scene.info() || {};
   return { frames: ring.n, window: n, cpuAvg: n ? sum / n : 0, cpuMax: max, cpuP95: n ? a[Math.floor(0.95 * (n - 1))] : 0, gapAvg: n ? gsum / n : 0, gapMax: gmax,
     longTasks, longMax, drawCalls: inf.calls, triangles: inf.tris, geometries: inf.geometries, textures: inf.textures,
-    heap: performance.memory ? performance.memory.usedJSHeapSize : null };
+    heap: performance.memory ? performance.memory.usedJSHeapSize : null, suspended: !awake() };
 }
 function boot() {
   if (booted) return; booted = true; bootT = performance.now();
@@ -71,7 +85,22 @@ function boot() {
   if (window.PerformanceObserver) {
     try { new PerformanceObserver(l => { for (const e of l.getEntries()) if (e.startTime > bootT + 2000) { longTasks++; if (e.duration > longMax) longMax = e.duration; } }).observe({ entryTypes: ['longtask'] }); } catch (e) { /* desteklenmiyor */ }
   }
-  requestAnimationFrame(frame);
+  document.addEventListener('visibilitychange', syncLifecycle);
+  window.addEventListener('pagehide', () => { pageHidden = true; syncLifecycle(); });
+  window.addEventListener('pageshow', () => { pageHidden = false; syncLifecycle(); });
+  canvas.addEventListener('webglcontextlost', e => {
+    e.preventDefault(); contextLost = true; syncLifecycle();
+    startupError('3D görüntü bağlantısı kesildi. Tarayıcı bağlantıyı yenilerken oyununuz korunuyor.');
+  });
+  canvas.addEventListener('webglcontextrestored', () => {
+    contextLost = false;
+    const notice = document.querySelector('[data-testid="startup-error"]'); if (notice) notice.remove();
+    PX.scene.resize(true); PX.scene.shadowDirty = true; PX.scene.compile(); syncLifecycle();
+  });
+  if (window.IntersectionObserver) {
+    const io = new IntersectionObserver(es => { visible = es[0].isIntersecting; syncLifecycle(); }); io.observe(canvas);
+  }
+  syncLifecycle();
   // yönlendirme
   const lvl = param('lvl'), daily = param('daily');
   let start = Promise.resolve();

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=98a54d154d91">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Kompanzasyon, harmonik, kısa devre akımı, topraklama, kaçak akım rölesi, GES ve PLC gibi 54 elektrik terimi; kısa tanımlar, ilgili standart ve rehber bağlantıları.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Elektrik Terimleri Sözlüğü: 54 Temel Kavram | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Elektrik Terimleri Sözlüğü: 54 Temel Kavram | VoltGuard">
+  <meta property="og:description" content="Kompanzasyon, harmonik, kısa devre akımı, topraklama, kaçak akım rölesi, GES ve PLC gibi 54 elektrik terimi; kısa tanımlar, ilgili standart ve rehber bağlantıları.">
+  <meta property="og:url" content="https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=d152330fb2b0">
+  <style>
+    .gl-index{display:flex;flex-wrap:wrap;gap:.35rem;margin:1rem 0 1.4rem;padding:0;list-style:none}
+    .gl-index a{display:inline-flex;align-items:center;justify-content:center;min-width:2.5rem;min-height:2.5rem;border:1px solid #cbd5e1;border-radius:8px;font-weight:700;text-decoration:none;color:#0a1628;background:#fff}
+    .gl-index a:hover,.gl-index a:focus-visible{border-color:#f59e0b;background:#fffbeb}
+    .gl-filter{width:100%;max-width:420px;min-height:44px;padding:.55rem .8rem;border:1px solid #cbd5e1;border-radius:8px;font:inherit}
+    .gl-letter{margin:1.8rem 0 .4rem;font-size:1.4rem;color:#b45309}
+    .gl-list{margin:0}
+    .gl-term{scroll-margin-top:calc(var(--vg-header-h,60px) + 16px);padding:.9rem 0;border-top:1px solid #e2e8f0}
+    .gl-term:target{background:#fffbeb;box-shadow:0 0 0 .6rem #fffbeb;border-radius:4px}
+    .gl-term dt{font-weight:800;font-size:1.05rem;color:#0a1628}
+    .gl-term dt a{color:inherit;text-decoration:none}
+    .gl-term .gl-alt{display:block;font-weight:500;font-size:.85rem;color:#4f5f74}
+    .gl-term dd{margin:.3rem 0 0}
+    .gl-links{display:flex;flex-wrap:wrap;gap:.1rem 1rem;margin-top:.3rem;font-size:.9rem}
+    .gl-links a{display:inline-block;padding:.3rem 0}
+    .gl-empty{padding:1rem;border-radius:8px;background:#f1f5f9}
+  </style>
+  <script src="/js/sozluk.js?v=7fe50d7068ff" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"DefinedTermSet","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk","name":"Elektrik Terimleri Sözlüğü","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html","inLanguage":"tr-TR","description":"Kompanzasyon, harmonik, kısa devre akımı, topraklama, kaçak akım rölesi, GES ve PLC gibi 54 elektrik terimi; kısa tanımlar, ilgili standart ve rehber bağlantıları.","publisher":{"@id":"https://voltguard.com.tr/#organization"},"hasDefinedTerm":[{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#yg-ag","name":"AG, OG ve YG","description":"Gerilim seviyesi sınıfları. Alçak gerilim (AG) 1 kV ve altıdır. Türkiye’de 1 kV üzeri dağıtım gerilimleri (ör. 10,5 kV, 34,5 kV) uygulamada orta gerilim (OG) olarak anılır; yönetmeliklerde 1 kV üzeri tüm gerilimler yüksek gerilim (YG) kapsamındadır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#yg-ag","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#akim-tasima-kapasitesi","name":"Akım taşıma kapasitesi (Iz)","description":"Bir iletkenin, belirtilen döşeme ve ortam koşullarında, yalıtımına zarar verecek sıcaklığa ulaşmadan sürekli taşıyabileceği akım. Döşeme yöntemi, ortam sıcaklığı ve gruplama düzeltme katsayılarıyla azaltılır (TS HD 60364-5-52).","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#akim-tasima-kapasitesi","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#aktif-guc","name":"Aktif güç (P)","description":"Yükün işe ve ısıya dönüştürdüğü güç; birimi watt (W) veya kilowatt (kW). Üç fazlı dengeli sistemde P = √3 · U · I · cosφ ile bulunur. Sayaç kWh olarak aktif enerjiyi ölçer.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#aktif-guc","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#ana-potansiyel-dengeleme","name":"Ana potansiyel dengeleme","description":"Binaya giren metal tesisatın (su, gaz, ısıtma boruları, yapı çeliği) ve koruma iletkenlerinin ana topraklama barasında birleştirilmesi. Arıza anında dokunulabilen metal kısımlar arasında tehlikeli gerilim farkı oluşmasını önler.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#ana-potansiyel-dengeleme","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#anma-akimi","name":"Anma akımı (In)","description":"Bir cihazın (şalter, sigorta, motor, trafo) üreticisince belirlenmiş, sürekli çalışmada taşıyabileceği akım. Koruma seçiminde Ib ≤ In ≤ Iz koşulu aranır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#anma-akimi","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#aydinlik-duzeyi","name":"Aydınlık düzeyi (lüks)","description":"Bir yüzeye düşen ışık akısının alana oranı; birimi lüks (lx = lm/m²). İç mekân çalışma alanları için gerekli değerler TS EN 12464-1’de verilir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#aydinlik-duzeyi","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#dc-ac-orani","name":"DC/AC oranı","description":"Bir GES’te panel (DC) kurulu gücünün inverter AC çıkış gücüne oranı. 1’in biraz üzerinde seçilmesi düşük ışınımlı saatlerde verimi artırır; çok yüksek oran öğle saatlerinde kırpmaya (clipping) yol açar.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#dc-ac-orani","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#dokunma-gerilimi","name":"Dokunma gerilimi","description":"Arıza sırasında insanın aynı anda dokunabileceği iki nokta (örneğin metal gövde ile toprak) arasında oluşan gerilim. Koruma, bu gerilimin tehlikeli süre boyunca kalmamasını sağlayacak şekilde seçilir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#dokunma-gerilimi","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#pano","name":"Elektrik panosu","description":"Koruma, kumanda ve ölçü cihazlarının bir mahfaza içinde toplandığı dağıtım ünitesi. Alçak gerilim panoları TS EN IEC 61439 serisine göre tasarlanır ve doğrulanır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#pano","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#enerji-analizoru","name":"Enerji analizörü","description":"Gerilim, akım, güç, enerji, güç faktörü ve harmonikleri ölçüp kaydeden cihaz. Kompanzasyon ve harmonik filtre tasarımı, enerji kalitesi ölçümü ile başlar.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#enerji-analizoru","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#vfd","name":"Frekans invertörü (VFD)","description":"Motorun beslendiği gerilimin frekansını ve genliğini değiştirerek devir ve torku kontrol eden güç elektroniği cihazı. Yumuşak kalkış ve enerji tasarrufu sağlar; harmonik kaynağıdır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#vfd","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#gerilim-dusumu","name":"Gerilim düşümü","description":"Akımın iletken direnci ve reaktansı üzerinden geçerken kaynakla yük arasında oluşan gerilim kaybı. Elektrik İç Tesisleri Yönetmeliği Madde 57’ye göre yapı bağlantı kutusundan tüketiciye kadar aydınlatma/priz devrelerinde %1,5, motor devrelerinde %3 aşılmamalıdır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#gerilim-dusumu","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#gorunur-guc","name":"Görünür güç (S)","description":"Gerilim ile akımın çarpımı; birimi VA veya kVA. Trafo, jeneratör ve UPS gibi kaynaklar kVA ile anılır, çünkü ısınmalarını belirleyen akımdır. S² = P² + Q² (sinüsoidal durumda).","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#gorunur-guc","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#cosfi","name":"Güç faktörü (cosφ)","description":"Aktif gücün görünür güce oranı. Sinüsoidal sistemde akım ile gerilim arasındaki faz açısının kosinüsüdür; harmonik varsa toplam güç faktörü (PF) cosφ’den küçük olur. Düşük güç faktörü aynı iş için daha fazla akım ve reaktif enerji bedeli demektir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#cosfi","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#ges","name":"Güneş enerji santrali (GES)","description":"Fotovoltaik panellerle güneş ışığını doğrudan elektriğe çeviren santral. Panel dizileri inverterlere bağlanır; üretim ışınım, panel eğimi–yönü, sıcaklık ve gölgelenmeye göre değişir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#ges","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#harmonik","name":"Harmonik","description":"Şebeke frekansının (50 Hz) tam katlarındaki akım veya gerilim bileşenleri. Sürücüler, UPS ve LED sürücüler gibi doğrusal olmayan yüklerden kaynaklanır; kondansatör ısınması, nötr akımı artışı ve rezonans riskine yol açar. Toplam harmonik bozulma (THD) ile ifade edilir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#harmonik","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#harmonik-filtre","name":"Harmonik filtre (detuned reaktör)","description":"Kompanzasyon kondansatörüne seri bağlanan reaktör. %7 (189 Hz) veya %14 (134 Hz) gibi bir p oranıyla rezonans frekansını baskın harmoniklerin altına çeker; kondansatörü korur ve harmonik büyümesini önler.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#harmonik-filtre","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#iec-61850","name":"IEC 61850","description":"Trafo merkezi otomasyonunda koruma röleleri, kontrol birimleri ve SCADA arasındaki haberleşmeyi tanımlayan uluslararası standart serisi. Hızlı röleler arası mesajlar için GOOSE, istemci–sunucu verisi için MMS kullanılır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#iec-61850","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#inverter","name":"İnverter (evirici)","description":"Doğru akımı (DC) alternatif akıma (AC) çeviren güç elektroniği cihazı. GES’te panellerin DC gücünü şebekeye uygun AC’ye çevirir ve MPPT ile en yüksek güç noktasını izler.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#inverter","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#isletme-sorumlulugu","name":"İşletme sorumluluğu","description":"Yüksek gerilim tesisinin (trafo merkezi, OG hücreleri) güvenli işletilmesinden, bakım ve manevra düzeninden sorumlu elektrik mühendisinin üstlendiği görev; EMO’nun ilgili yönetmeliğiyle düzenlenir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#isletme-sorumlulugu","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#jenerator","name":"Jeneratör (generatör grubu)","description":"Motorla tahrik edilen alternatörden oluşan yedek veya ana enerji kaynağı. Güç seçiminde sürekli yük kadar büyük motorların kalkış akımı ve gerilim çökmesi de belirleyicidir (TS ISO 8528).","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#jenerator","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kablo-kesiti","name":"Kablo kesiti","description":"İletkenin mm² cinsinden kesit alanı. Akım taşıma kapasitesi, gerilim düşümü, kısa devre dayanımı ve koruma koordinasyonu birlikte sağlanacak şekilde seçilir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kablo-kesiti","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kacak-akim-rolesi","name":"Kaçak akım rölesi (RCD)","description":"Faz ve nötr akımları arasındaki farkı (toprağa kaçan akımı) algılayıp devreyi açan koruma cihazı. 30 mA eşikli olanlar ek hayat koruması, 300 mA olanlar yangın koruması amacıyla kullanılır; AC, A, F ve B tipleri algılayabildikleri akım biçimine göre ayrılır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kacak-akim-rolesi","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kesme-kapasitesi","name":"Kesme kapasitesi (Icu, Ics)","description":"Bir şalterin güvenle kesebileceği en büyük kısa devre akımı. Icu son kesme kapasitesi, Ics işletme kesme kapasitesidir; tesisteki beklenen kısa devre akımından küçük olamaz.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kesme-kapasitesi","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kisa-devre-akimi","name":"Kısa devre akımı (Ik)","description":"Fazlar arasında veya faz ile toprak arasında empedansı çok küçük bir bağlantı oluştuğunda akan akım. Değeri trafo gücü, kısa devre gerilimi (uk) ve kablo empedansıyla belirlenir; IEC 60909’a göre hesaplanır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kisa-devre-akimi","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#uk","name":"Kısa devre gerilimi (uk)","description":"Trafonun sekonderi kısa devre edildiğinde anma akımını akıtmak için primere uygulanması gereken gerilimin anma gerilimine yüzde oranı. Trafonun iç empedansını gösterir; sekonder kısa devre akımı yaklaşık In · 100 / uk’dır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#uk","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kompanzasyon","name":"Kompanzasyon","description":"Endüktif yüklerin çektiği reaktif gücün, yüke yakın kondansatörlerle yerinde karşılanması. Şebekeden çekilen akımı ve reaktif enerji bedelini azaltır; kademeli kondansatörler reaktif güç rölesiyle devreye alınır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kompanzasyon","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kontaktor","name":"Kontaktör","description":"Bobinine uygulanan kumanda gerilimiyle güç kontaklarını açıp kapatan elektromekanik anahtar. Motorlar için AC-3 kullanım kategorisindeki anma akımına (Ie) göre seçilir; kısa devre koruması yapmaz.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kontaktor","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kuvvetli-akim","name":"Kuvvetli akım tesisi","description":"Enerji üretimi, iletimi, dağıtımı ve kullanımına yönelik tesisler; zayıf akım (haberleşme, sinyal) tesislerinden ayrılır. Elektrik Kuvvetli Akım Tesisleri Yönetmeliği ile düzenlenir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#kuvvetli-akim","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#lisanssiz-uretim","name":"Lisanssız üretim","description":"Tüketim tesisiyle ilişkilendirilmiş, lisans almadan yapılabilen elektrik üretimi (çoğunlukla çatı GES). Bağlantı, mahsuplaşma ve ihtiyaç fazlası enerji kuralları Lisanssız Elektrik Üretim Yönetmeliği ile belirlenir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#lisanssiz-uretim","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#modbus","name":"Modbus","description":"Endüstride sayaç, analizör, sürücü ve PLC’ler arasında yaygın kullanılan ana–uç (master–slave) haberleşme protokolü. Modbus RTU genellikle RS-485 hattı, Modbus TCP Ethernet üzerinden çalışır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#modbus","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#motor-koruma-salteri","name":"Motor koruma şalteri (MPCB)","description":"Motoru aşırı yüke karşı ayarlı termik elemanla, kısa devreye karşı manyetik açtırmayla koruyan şalter. Ayar aralığı motor anma akımını kapsayacak şekilde seçilir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#motor-koruma-salteri","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#mppt","name":"MPPT","description":"Maximum Power Point Tracking: inverterin, ışınım ve sıcaklık değiştikçe panel dizisinin gerilim–akım eğrisinde en fazla güç verilen noktayı sürekli araması.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#mppt","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#notr","name":"Nötr iletkeni (N)","description":"Üç fazlı sistemin yıldız noktasına bağlı, dengesiz yük ve tek fazlı yük akımını taşıyan iletken. Koruma iletkeniyle (PE) karıştırılmamalıdır; TN-S sistemde ikisi ayrı çekilir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#notr","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#og-hucre","name":"OG hücresi","description":"Orta gerilimde (1 kV üzeri, 36 kV’a kadar) giriş, ölçü, trafo koruma ve çıkış fonksiyonlarını taşıyan metal mahfazalı şalt ünitesi; kesici, yük ayırıcı, ayırıcı, akım–gerilim trafoları ve koruma rölesini içerir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#og-hucre","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#paratoner","name":"Paratoner (yıldırımdan korunma)","description":"Yıldırımı yakalayıp indirme iletkenleriyle güvenli biçimde toprağa ileten dış yıldırımdan korunma sistemi. Tasarım ve risk değerlendirmesi TS EN 62305 serisine göre yapılır; tesisat periyodik kontrole tabidir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#paratoner","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#periyodik-kontrol","name":"Periyodik kontrol","description":"İş ekipmanı ve tesisatların belirli aralıklarla yetkili kişilerce muayene ve test edilerek raporlanması. İş Ekipmanları Yönetmeliği EK-III’e göre elektrik iç tesisatı, topraklama ve yıldırımdan korunma tesisatı için en uzun aralık bir yıldır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#periyodik-kontrol","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#plc","name":"PLC","description":"Girişlerini okuyup yazılı programa göre çıkışlarını süren endüstriyel kontrol bilgisayarı. Döngüsel tarama (scan) mantığıyla çalışır; ladder, yapısal metin gibi IEC 61131-3 dilleriyle programlanır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#plc","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#reaktif-guc","name":"Reaktif güç (Q)","description":"Motor, trafo ve balast gibi endüktif yüklerde manyetik alan oluşturmak için kaynak ile yük arasında gidip gelen güç; birimi VAr veya kVAr. İş yapmaz ama hatlarda akım ve kayıp oluşturur.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#reaktif-guc","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#reaktif-guc-rolesi","name":"Reaktif güç rölesi","description":"Akım trafosu ve gerilim ölçümüyle güç faktörünü izleyip kompanzasyon kademelerini sırayla devreye alan veya çıkaran kontrol cihazı.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#reaktif-guc-rolesi","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#ruzgar-turbini","name":"Rüzgâr türbini (RES)","description":"Rüzgârın kinetik enerjisini rotor ve jeneratörle elektriğe çeviren makine; birden fazlası rüzgâr enerji santralini (RES) oluşturur. Üretim, rüzgâr hızının yaklaşık küpüyle artar ve kesme hızında türbin durdurulur.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#ruzgar-turbini","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#scada","name":"SCADA","description":"Supervisory Control and Data Acquisition: dağıtık tesislerdeki PLC, RTU ve rölelerden veri toplayıp operatöre izleme, kontrol, alarm ve raporlama sunan sistem.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#scada","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#secicilik","name":"Seçicilik (selektivite)","description":"Arıza durumunda yalnızca arızaya en yakın koruma cihazının açması, üstteki cihazların kapalı kalması. Akım, zaman ve enerji seçiciliği üretici tablolarıyla doğrulanır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#secicilik","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sigorta","name":"Sigorta (NH, gG, aM)","description":"İçindeki eriyen elemanla aşırı akım ve kısa devrede devreyi kesen koruma elemanı. gG genel amaçlı hat koruması, aM yalnız kısa devre için motor koruması sağlar; NH bıçaklı sigortalar yüksek kesme kapasitesiyle dağıtım panolarında kullanılır (IEC 60269).","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sigorta","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sarj-istasyonu","name":"Şarj istasyonu (AC/DC)","description":"Elektrikli araç bataryasını şebekeden dolduran ünite. AC şarjda dönüştürme araç içindeki şarj cihazıyla, DC hızlı şarjda istasyon içindeki doğrultucuyla yapılır. Kamuya açık hizmet Şarj Hizmeti Yönetmeliği ile düzenlenir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sarj-istasyonu","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sont","name":"Şönt reaktör","description":"Hafif yükte kablo kapasitesinin veya fazla kompanzasyonun oluşturduğu kapasitif reaktif gücü dengelemek için şebekeye paralel bağlanan reaktör. Kapasitif reaktif enerji bedelinin önlenmesinde kullanılır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sont","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#tms","name":"TMŞ (termik manyetik şalter)","description":"Aşırı yükte termik (bimetal veya elektronik), kısa devrede manyetik açtırmayla devreyi kesen şalter. Küçük anma akımlarında MCB (IEC 60898), büyüklerde kompakt şalter (MCCB, IEC 60947-2) kullanılır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#tms","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#tn-tt-it","name":"TN, TT ve IT sistemleri","description":"Alçak gerilim şebekelerinin topraklama düzenine göre sınıflandırılması. TN’de gövdeler koruma iletkeniyle kaynak yıldız noktasına, TT’de ayrı bir toprak elektroduna bağlanır; IT’de kaynak topraktan yalıtılmıştır (TS HD 60364).","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#tn-tt-it","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#topraklama","name":"Topraklama","description":"Elektrik tesisinin belirli noktalarının toprak elektrodu üzerinden toprakla iletken biçimde birleştirilmesi. Koruma topraklaması insanları, işletme topraklaması sistemin düzgün çalışmasını korur.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#topraklama","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#topraklama-direnci","name":"Topraklama direnci","description":"Topraklama elektrodu ile uzak toprak arasındaki direnç. Kabul edilebilir değer tek bir sayı değildir; şebeke tipine (TT, TN) ve koruma cihazına göre hesaplanır, ölçümle doğrulanır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#topraklama-direnci","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#trafo","name":"Transformatör (trafo)","description":"Elektromanyetik indüksiyonla gerilimi düşüren veya yükselten makine. Dağıtım trafoları orta gerilimi (örneğin 34,5 kV) 400 V’a düşürür; yağlı veya kuru tip olabilir ve periyodik bakım ister.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#trafo","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#ups","name":"UPS (kesintisiz güç kaynağı)","description":"Şebeke kesildiğinde aküden beslemeyi kesintisiz sürdüren güç kaynağı. Online (çift dönüşümlü) UPS’ler yükü sürekli inverter üzerinden besler; akü süresi yük gücü ve akü kapasitesine bağlıdır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#ups","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#yangin-algilama","name":"Yangın algılama ve uyarı sistemi","description":"Duman, ısı veya alev dedektörleri, butonlar ve sirenlerle yangını erken algılayıp uyarı veren sistem; adresli veya konvansiyonel olabilir. TS EN 54 serisine uygun ürünlerle kurulur ve periyodik kontrole tabidir.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#yangin-algilama","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"},{"@type":"DefinedTerm","@id":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#yildiz-ucgen","name":"Yıldız-üçgen yol verme","description":"Motoru önce yıldız bağlantıda düşük gerilimle kaldırıp sonra üçgene geçiren yol verme yöntemi. Kalkış akımı ve torku doğrudan yol vermeye göre yaklaşık üçte bire iner; yalnız üçgende 400 V’a uygun motorlarda kullanılır.","url":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#yildiz-ucgen","inDefinedTermSet":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html#sozluk"}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Bilgi Bankası","item":"https://voltguard.com.tr/bilgi-bankasi.html"},{"@type":"ListItem","position":3,"name":"Elektrik Terimleri Sözlüğü","item":"https://voltguard.com.tr/bilgi/elektrik-terimleri-sozlugu.html"}]}]}</script>
+</head>
+<body class="doc-shell">
+  <!--vg:header-->
+  <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+        </span>
+      </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
+              <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+              <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
+      </nav>
+      <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+  </header>
+  <!--/vg:header-->
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/bilgi-bankasi.html">Bilgi Bankası</a> &rsaquo; <span>Elektrik Terimleri Sözlüğü</span>
+  </nav>
+
+  <main class="article" id="main" tabindex="-1">
+    <span class="article__cat">Sözlük</span>
+    <h1>Elektrik Terimleri Sözlüğü</h1>
+    <p class="article__byline" style="font-size:.85rem;color:#5b6472;margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son gözden geçirme: <time datetime="2026-10-24">24.10.2026</time></p>
+    <p class="article__summary">Sahada, projede ve faturada sık karşılaşılan 54 elektrik kavramının kısa tanımı. Her terimde ilgili standart veya yönetmelik ile konuyu ayrıntılı anlatan rehber, hesap aracı ya da VoltSim simülasyonu bağlantısı bulunur.</p>
+    <p><label for="gl-q" class="sr-only">Sözlükte ara</label><input id="gl-q" class="gl-filter" type="search" placeholder="Sözlükte ara: harmonik, RCD, kVA…" autocomplete="off" hidden></p>
+    <p class="gl-empty" id="gl-empty" role="status" hidden></p>
+    <nav aria-label="Harf dizini"><ul class="gl-index"><li><a href="#harf-a">A</a></li><li><a href="#harf-d">D</a></li><li><a href="#harf-e">E</a></li><li><a href="#harf-f">F</a></li><li><a href="#harf-g">G</a></li><li><a href="#harf-h">H</a></li><li><a href="#harf-i">I</a></li><li><a href="#harf-i2">İ</a></li><li><a href="#harf-j">J</a></li><li><a href="#harf-k">K</a></li><li><a href="#harf-l">L</a></li><li><a href="#harf-m">M</a></li><li><a href="#harf-n">N</a></li><li><a href="#harf-o">O</a></li><li><a href="#harf-p">P</a></li><li><a href="#harf-r">R</a></li><li><a href="#harf-s">S</a></li><li><a href="#harf-s2">Ş</a></li><li><a href="#harf-t">T</a></li><li><a href="#harf-u">U</a></li><li><a href="#harf-y">Y</a></li></ul></nav>
+    <h2 class="gl-letter" id="harf-a">A</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="yg-ag" data-terms="ag, og ve yg alçak gerilim orta gerilim yüksek gerilim">
+        <dt><a href="#yg-ag">AG, OG ve YG</a><span class="gl-alt">Diğer adları: alçak gerilim, orta gerilim, yüksek gerilim</span></dt>
+        <dd><p>Gerilim seviyesi sınıfları. Alçak gerilim (AG) 1 kV ve altıdır. Türkiye’de 1 kV üzeri dağıtım gerilimleri (ör. 10,5 kV, 34,5 kV) uygulamada orta gerilim (OG) olarak anılır; yönetmeliklerde 1 kV üzeri tüm gerilimler yüksek gerilim (YG) kapsamındadır.</p><div class="gl-links"><a href="/bilgi/kuvvetli-akim-tesisleri.html">Kuvvetli akım tesisleri</a></div></dd>
+      </div>
+      <div class="gl-term" id="akim-tasima-kapasitesi" data-terms="akım taşıma kapasitesi (ız) kablo akım kapasitesi">
+        <dt><a href="#akim-tasima-kapasitesi">Akım taşıma kapasitesi (Iz)</a><span class="gl-alt">Diğer adları: kablo akım kapasitesi</span></dt>
+        <dd><p>Bir iletkenin, belirtilen döşeme ve ortam koşullarında, yalıtımına zarar verecek sıcaklığa ulaşmadan sürekli taşıyabileceği akım. Döşeme yöntemi, ortam sıcaklığı ve gruplama düzeltme katsayılarıyla azaltılır (TS HD 60364-5-52).</p><div class="gl-links"><a href="/bilgi/kablo-kesiti-akim-tasima-tablosu.html">Akım taşıma tablosu</a><a href="/hesaplama/kablo-kesiti-hesaplama/">Kablo kesiti hesaplama</a></div></dd>
+      </div>
+      <div class="gl-term" id="aktif-guc" data-terms="aktif güç (p) kw gerçek güç">
+        <dt><a href="#aktif-guc">Aktif güç (P)</a><span class="gl-alt">Diğer adları: kW, gerçek güç</span></dt>
+        <dd><p>Yükün işe ve ısıya dönüştürdüğü güç; birimi watt (W) veya kilowatt (kW). Üç fazlı dengeli sistemde P = √3 · U · I · cosφ ile bulunur. Sayaç kWh olarak aktif enerjiyi ölçer.</p><div class="gl-links"><a href="/bilgi/kw-kva-amper-donusum.html">kW ve kVA farkı</a><a href="/hesaplama/kw-kva-amper-donusturucu/">kW–kVA–A dönüştürücü</a></div></dd>
+      </div>
+      <div class="gl-term" id="ana-potansiyel-dengeleme" data-terms="ana potansiyel dengeleme eşpotansiyel bara potansiyel dengeleme barası">
+        <dt><a href="#ana-potansiyel-dengeleme">Ana potansiyel dengeleme</a><span class="gl-alt">Diğer adları: eşpotansiyel bara, potansiyel dengeleme barası</span></dt>
+        <dd><p>Binaya giren metal tesisatın (su, gaz, ısıtma boruları, yapı çeliği) ve koruma iletkenlerinin ana topraklama barasında birleştirilmesi. Arıza anında dokunulabilen metal kısımlar arasında tehlikeli gerilim farkı oluşmasını önler.</p><div class="gl-links"><a href="/bilgi/topraklama.html">Topraklama rehberi</a></div></dd>
+      </div>
+      <div class="gl-term" id="anma-akimi" data-terms="anma akımı (ın) nominal akım">
+        <dt><a href="#anma-akimi">Anma akımı (In)</a><span class="gl-alt">Diğer adları: nominal akım</span></dt>
+        <dd><p>Bir cihazın (şalter, sigorta, motor, trafo) üreticisince belirlenmiş, sürekli çalışmada taşıyabileceği akım. Koruma seçiminde Ib ≤ In ≤ Iz koşulu aranır.</p><div class="gl-links"><a href="/hesaplama/sigorta-tms-secimi/">Sigorta / TMŞ seçimi</a><a href="/bilgi/motor-akimi-nominal-tablosu.html">Motor nominal akım tablosu</a></div></dd>
+      </div>
+      <div class="gl-term" id="aydinlik-duzeyi" data-terms="aydınlık düzeyi (lüks) lux aydınlatma şiddeti">
+        <dt><a href="#aydinlik-duzeyi">Aydınlık düzeyi (lüks)</a><span class="gl-alt">Diğer adları: lux, aydınlatma şiddeti</span></dt>
+        <dd><p>Bir yüzeye düşen ışık akısının alana oranı; birimi lüks (lx = lm/m²). İç mekân çalışma alanları için gerekli değerler TS EN 12464-1’de verilir.</p><div class="gl-links"><a href="/hesaplama/aydinlatma-lux-hesaplama/">Aydınlatma lüks hesaplama</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-d">D</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="dc-ac-orani" data-terms="dc/ac oranı inverter yükleme oranı">
+        <dt><a href="#dc-ac-orani">DC/AC oranı</a><span class="gl-alt">Diğer adları: inverter yükleme oranı</span></dt>
+        <dd><p>Bir GES’te panel (DC) kurulu gücünün inverter AC çıkış gücüne oranı. 1’in biraz üzerinde seçilmesi düşük ışınımlı saatlerde verimi artırır; çok yüksek oran öğle saatlerinde kırpmaya (clipping) yol açar.</p><div class="gl-links"><a href="/hesaplama/ges-uretim-hesaplama/">GES üretim hesaplama</a><a href="/voltsim/ges/">VoltSim GES</a></div></dd>
+      </div>
+      <div class="gl-term" id="dokunma-gerilimi" data-terms="dokunma gerilimi temas gerilimi">
+        <dt><a href="#dokunma-gerilimi">Dokunma gerilimi</a><span class="gl-alt">Diğer adları: temas gerilimi</span></dt>
+        <dd><p>Arıza sırasında insanın aynı anda dokunabileceği iki nokta (örneğin metal gövde ile toprak) arasında oluşan gerilim. Koruma, bu gerilimin tehlikeli süre boyunca kalmamasını sağlayacak şekilde seçilir.</p><div class="gl-links"><a href="/bilgi/topraklama-degeri-kac-olmali.html">Topraklama direnci kaç olmalı?</a><a href="/araclar/topraklama-simulatoru/">Topraklama simülatörü</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-e">E</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="pano" data-terms="elektrik panosu dağıtım panosu adp mcc şalt panosu">
+        <dt><a href="#pano">Elektrik panosu</a><span class="gl-alt">Diğer adları: dağıtım panosu, ADP, MCC, şalt panosu</span></dt>
+        <dd><p>Koruma, kumanda ve ölçü cihazlarının bir mahfaza içinde toplandığı dağıtım ünitesi. Alçak gerilim panoları TS EN IEC 61439 serisine göre tasarlanır ve doğrulanır.</p><div class="gl-links"><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik pano imalatı</a><a href="/voltsim/pano/">VoltSim pano</a></div></dd>
+      </div>
+      <div class="gl-term" id="enerji-analizoru" data-terms="enerji analizörü güç analizörü şebeke analizörü">
+        <dt><a href="#enerji-analizoru">Enerji analizörü</a><span class="gl-alt">Diğer adları: güç analizörü, şebeke analizörü</span></dt>
+        <dd><p>Gerilim, akım, güç, enerji, güç faktörü ve harmonikleri ölçüp kaydeden cihaz. Kompanzasyon ve harmonik filtre tasarımı, enerji kalitesi ölçümü ile başlar.</p><div class="gl-links"><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji kalitesi ölçümü</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-f">F</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="vfd" data-terms="frekans invertörü (vfd) sürücü hız kontrol cihazı ac sürücü">
+        <dt><a href="#vfd">Frekans invertörü (VFD)</a><span class="gl-alt">Diğer adları: sürücü, hız kontrol cihazı, AC sürücü</span></dt>
+        <dd><p>Motorun beslendiği gerilimin frekansını ve genliğini değiştirerek devir ve torku kontrol eden güç elektroniği cihazı. Yumuşak kalkış ve enerji tasarrufu sağlar; harmonik kaynağıdır.</p><div class="gl-links"><a href="/bilgi/vfd-frekans-invertoru-nedir.html">VFD nedir?</a><a href="/sor/vfd-overcurrent-hatasi.html">VFD overcurrent hatası</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-g">G</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="gerilim-dusumu" data-terms="gerilim düşümü %e voltaj düşümü">
+        <dt><a href="#gerilim-dusumu">Gerilim düşümü</a><span class="gl-alt">Diğer adları: %e, voltaj düşümü</span></dt>
+        <dd><p>Akımın iletken direnci ve reaktansı üzerinden geçerken kaynakla yük arasında oluşan gerilim kaybı. Elektrik İç Tesisleri Yönetmeliği Madde 57’ye göre yapı bağlantı kutusundan tüketiciye kadar aydınlatma/priz devrelerinde %1,5, motor devrelerinde %3 aşılmamalıdır.</p><div class="gl-links"><a href="/bilgi/gerilim-dusumu-nedir.html">Gerilim düşümü nedir?</a><a href="/hesaplama/gerilim-dusumu-hesaplama/">Gerilim düşümü hesaplama</a></div></dd>
+      </div>
+      <div class="gl-term" id="gorunur-guc" data-terms="görünür güç (s) kva">
+        <dt><a href="#gorunur-guc">Görünür güç (S)</a><span class="gl-alt">Diğer adları: kVA</span></dt>
+        <dd><p>Gerilim ile akımın çarpımı; birimi VA veya kVA. Trafo, jeneratör ve UPS gibi kaynaklar kVA ile anılır, çünkü ısınmalarını belirleyen akımdır. S² = P² + Q² (sinüsoidal durumda).</p><div class="gl-links"><a href="/bilgi/kva-amper-hesaplama.html">kVA kaç amper?</a><a href="/hesaplama/trafo-akimi-hesaplama/">Trafo akımı hesaplama</a></div></dd>
+      </div>
+      <div class="gl-term" id="cosfi" data-terms="güç faktörü (cosφ) cos fi cosfi güç katsayısı">
+        <dt><a href="#cosfi">Güç faktörü (cosφ)</a><span class="gl-alt">Diğer adları: cos fi, cosfi, güç katsayısı</span></dt>
+        <dd><p>Aktif gücün görünür güce oranı. Sinüsoidal sistemde akım ile gerilim arasındaki faz açısının kosinüsüdür; harmonik varsa toplam güç faktörü (PF) cosφ’den küçük olur. Düşük güç faktörü aynı iş için daha fazla akım ve reaktif enerji bedeli demektir.</p><div class="gl-links"><a href="/bilgi/reaktif-guc-kompanzasyonu.html">Reaktif güç kompanzasyonu</a><a href="/sor/cosfi-098-fatura-reaktif-ceza.html">cosφ 0,98 iken neden ceza?</a></div></dd>
+      </div>
+      <div class="gl-term" id="ges" data-terms="güneş enerji santrali (ges) ges fotovoltaik pv çatı ges">
+        <dt><a href="#ges">Güneş enerji santrali (GES)</a><span class="gl-alt">Diğer adları: GES, fotovoltaik, PV, çatı GES</span></dt>
+        <dd><p>Fotovoltaik panellerle güneş ışığını doğrudan elektriğe çeviren santral. Panel dizileri inverterlere bağlanır; üretim ışınım, panel eğimi–yönü, sıcaklık ve gölgelenmeye göre değişir.</p><div class="gl-links"><a href="/bilgi/ges-kac-panel-lazim.html">GES için kaç panel?</a><a href="/hizmetler/fabrika-cati-ges.html">Fabrika çatı GES</a><a href="/voltsim/ges/">VoltSim GES</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-h">H</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="harmonik" data-terms="harmonik thd harmonik bozulma">
+        <dt><a href="#harmonik">Harmonik</a><span class="gl-alt">Diğer adları: THD, harmonik bozulma</span></dt>
+        <dd><p>Şebeke frekansının (50 Hz) tam katlarındaki akım veya gerilim bileşenleri. Sürücüler, UPS ve LED sürücüler gibi doğrusal olmayan yüklerden kaynaklanır; kondansatör ısınması, nötr akımı artışı ve rezonans riskine yol açar. Toplam harmonik bozulma (THD) ile ifade edilir.</p><div class="gl-links"><a href="/bilgi/harmonik-nedir-sorunlari.html">Harmonik nedir?</a><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Harmonik filtreli kompanzasyon</a></div></dd>
+      </div>
+      <div class="gl-term" id="harmonik-filtre" data-terms="harmonik filtre (detuned reaktör) filtre reaktörü ayarsız filtre p oranı">
+        <dt><a href="#harmonik-filtre">Harmonik filtre (detuned reaktör)</a><span class="gl-alt">Diğer adları: filtre reaktörü, ayarsız filtre, p oranı</span></dt>
+        <dd><p>Kompanzasyon kondansatörüne seri bağlanan reaktör. %7 (189 Hz) veya %14 (134 Hz) gibi bir p oranıyla rezonans frekansını baskın harmoniklerin altına çeker; kondansatörü korur ve harmonik büyümesini önler.</p><div class="gl-links"><a href="/voltsim/kompanzasyon/">VoltSim kompanzasyon</a><a href="/akademi/kompanzasyon-harmonik-orta.html">Kompanzasyon ve harmonik eğitimi</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-i">I</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="iec-61850" data-terms="ıec 61850 goose mms">
+        <dt><a href="#iec-61850">IEC 61850</a><span class="gl-alt">Diğer adları: GOOSE, MMS</span></dt>
+        <dd><p>Trafo merkezi otomasyonunda koruma röleleri, kontrol birimleri ve SCADA arasındaki haberleşmeyi tanımlayan uluslararası standart serisi. Hızlı röleler arası mesajlar için GOOSE, istemci–sunucu verisi için MMS kullanılır.</p><div class="gl-links"><a href="/bilgi/scada-iec-61850.html">SCADA ve IEC 61850</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-i2">İ</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="inverter" data-terms="inverter (evirici) invertör evirici">
+        <dt><a href="#inverter">İnverter (evirici)</a><span class="gl-alt">Diğer adları: invertör, evirici</span></dt>
+        <dd><p>Doğru akımı (DC) alternatif akıma (AC) çeviren güç elektroniği cihazı. GES’te panellerin DC gücünü şebekeye uygun AC’ye çevirir ve MPPT ile en yüksek güç noktasını izler.</p><div class="gl-links"><a href="/hesaplama/inverter-dc-ac-kablo-secimi/">İnverter DC/AC kablo seçimi</a><a href="/sor/ges-inverter-gece-tuketimi.html">İnverter gece neden tüketir?</a></div></dd>
+      </div>
+      <div class="gl-term" id="isletme-sorumlulugu" data-terms="işletme sorumluluğu trafo işletme sorumlusu yg işletme sorumluluğu">
+        <dt><a href="#isletme-sorumlulugu">İşletme sorumluluğu</a><span class="gl-alt">Diğer adları: trafo işletme sorumlusu, YG işletme sorumluluğu</span></dt>
+        <dd><p>Yüksek gerilim tesisinin (trafo merkezi, OG hücreleri) güvenli işletilmesinden, bakım ve manevra düzeninden sorumlu elektrik mühendisinin üstlendiği görev; EMO’nun ilgili yönetmeliğiyle düzenlenir.</p><div class="gl-links"><a href="/bilgi/yuksek-gerilim-isletme-sorumlulugu.html">İşletme sorumluluğu nedir?</a><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">Ücret hesaplama</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-j">J</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="jenerator" data-terms="jeneratör (generatör grubu) dizel jeneratör genset">
+        <dt><a href="#jenerator">Jeneratör (generatör grubu)</a><span class="gl-alt">Diğer adları: dizel jeneratör, genset</span></dt>
+        <dd><p>Motorla tahrik edilen alternatörden oluşan yedek veya ana enerji kaynağı. Güç seçiminde sürekli yük kadar büyük motorların kalkış akımı ve gerilim çökmesi de belirleyicidir (TS ISO 8528).</p><div class="gl-links"><a href="/hesaplama/jenerator-gucu-hesaplama/">Jeneratör gücü hesaplama</a><a href="/voltsim/ups-jenerator/">VoltSim UPS-jeneratör</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-k">K</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="kablo-kesiti" data-terms="kablo kesiti iletken kesiti mm²">
+        <dt><a href="#kablo-kesiti">Kablo kesiti</a><span class="gl-alt">Diğer adları: iletken kesiti, mm²</span></dt>
+        <dd><p>İletkenin mm² cinsinden kesit alanı. Akım taşıma kapasitesi, gerilim düşümü, kısa devre dayanımı ve koruma koordinasyonu birlikte sağlanacak şekilde seçilir.</p><div class="gl-links"><a href="/hesaplama/kablo-kesiti-hesaplama/">Kablo kesiti hesaplama</a><a href="/araclar/ag-gerilim-dusumu/">AG gerilim düşümü aracı</a></div></dd>
+      </div>
+      <div class="gl-term" id="kacak-akim-rolesi" data-terms="kaçak akım rölesi (rcd) rccb rcbo hayat koruma rölesi kaçak akım koruma">
+        <dt><a href="#kacak-akim-rolesi">Kaçak akım rölesi (RCD)</a><span class="gl-alt">Diğer adları: RCCB, RCBO, hayat koruma rölesi, kaçak akım koruma</span></dt>
+        <dd><p>Faz ve nötr akımları arasındaki farkı (toprağa kaçan akımı) algılayıp devreyi açan koruma cihazı. 30 mA eşikli olanlar ek hayat koruması, 300 mA olanlar yangın koruması amacıyla kullanılır; AC, A, F ve B tipleri algılayabildikleri akım biçimine göre ayrılır.</p><div class="gl-links"><a href="/bilgi/kacak-akim-rolesi-secimi.html">30 mA mı 300 mA mı?</a><a href="/bilgi/kacak-akim-rolesi-ariza-nedenleri.html">Kaçak akım rölesi neden atar?</a></div></dd>
+      </div>
+      <div class="gl-term" id="kesme-kapasitesi" data-terms="kesme kapasitesi (ıcu, ıcs) kısa devre kesme kapasitesi ıcn">
+        <dt><a href="#kesme-kapasitesi">Kesme kapasitesi (Icu, Ics)</a><span class="gl-alt">Diğer adları: kısa devre kesme kapasitesi, Icn</span></dt>
+        <dd><p>Bir şalterin güvenle kesebileceği en büyük kısa devre akımı. Icu son kesme kapasitesi, Ics işletme kesme kapasitesidir; tesisteki beklenen kısa devre akımından küçük olamaz.</p><div class="gl-links"><a href="/bilgi/kisa-devre-akimi-nedir.html">Kısa devre akımı ve Icu seçimi</a></div></dd>
+      </div>
+      <div class="gl-term" id="kisa-devre-akimi" data-terms="kısa devre akımı (ık) ık3 arıza akımı">
+        <dt><a href="#kisa-devre-akimi">Kısa devre akımı (Ik)</a><span class="gl-alt">Diğer adları: Ik3, arıza akımı</span></dt>
+        <dd><p>Fazlar arasında veya faz ile toprak arasında empedansı çok küçük bir bağlantı oluştuğunda akan akım. Değeri trafo gücü, kısa devre gerilimi (uk) ve kablo empedansıyla belirlenir; IEC 60909’a göre hesaplanır.</p><div class="gl-links"><a href="/hesaplama/kisa-devre-akimi-hesaplama/">Kısa devre akımı hesaplama</a><a href="/bilgi/kisa-devre-akimi-nedir.html">Kısa devre akımı nedir?</a></div></dd>
+      </div>
+      <div class="gl-term" id="uk" data-terms="kısa devre gerilimi (uk) uk% empedans gerilimi">
+        <dt><a href="#uk">Kısa devre gerilimi (uk)</a><span class="gl-alt">Diğer adları: uk%, empedans gerilimi</span></dt>
+        <dd><p>Trafonun sekonderi kısa devre edildiğinde anma akımını akıtmak için primere uygulanması gereken gerilimin anma gerilimine yüzde oranı. Trafonun iç empedansını gösterir; sekonder kısa devre akımı yaklaşık In · 100 / uk’dır.</p><div class="gl-links"><a href="/hesaplama/kisa-devre-akimi-hesaplama/">Kısa devre akımı hesaplama</a></div></dd>
+      </div>
+      <div class="gl-term" id="kompanzasyon" data-terms="kompanzasyon reaktif güç kompanzasyonu kondansatör panosu">
+        <dt><a href="#kompanzasyon">Kompanzasyon</a><span class="gl-alt">Diğer adları: reaktif güç kompanzasyonu, kondansatör panosu</span></dt>
+        <dd><p>Endüktif yüklerin çektiği reaktif gücün, yüke yakın kondansatörlerle yerinde karşılanması. Şebekeden çekilen akımı ve reaktif enerji bedelini azaltır; kademeli kondansatörler reaktif güç rölesiyle devreye alınır.</p><div class="gl-links"><a href="/hesaplama/kompanzasyon-hesaplama/">Kompanzasyon hesaplama</a><a href="/voltsim/kompanzasyon/">VoltSim kompanzasyon</a></div></dd>
+      </div>
+      <div class="gl-term" id="kontaktor" data-terms="kontaktör ac-3">
+        <dt><a href="#kontaktor">Kontaktör</a><span class="gl-alt">Diğer adları: AC-3</span></dt>
+        <dd><p>Bobinine uygulanan kumanda gerilimiyle güç kontaklarını açıp kapatan elektromekanik anahtar. Motorlar için AC-3 kullanım kategorisindeki anma akımına (Ie) göre seçilir; kısa devre koruması yapmaz.</p><div class="gl-links"><a href="/hesaplama/motor-koruma-kontaktor-secimi/">Motor koruma ve kontaktör seçimi</a><a href="/sor/plc-kontaktor-bobini-titremesi.html">Kontaktör bobini neden titrer?</a></div></dd>
+      </div>
+      <div class="gl-term" id="kuvvetli-akim" data-terms="kuvvetli akım tesisi og yg tesisi">
+        <dt><a href="#kuvvetli-akim">Kuvvetli akım tesisi</a><span class="gl-alt">Diğer adları: OG, YG tesisi</span></dt>
+        <dd><p>Enerji üretimi, iletimi, dağıtımı ve kullanımına yönelik tesisler; zayıf akım (haberleşme, sinyal) tesislerinden ayrılır. Elektrik Kuvvetli Akım Tesisleri Yönetmeliği ile düzenlenir.</p><div class="gl-links"><a href="/bilgi/kuvvetli-akim-tesisleri.html">Kuvvetli akım tesisleri</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-l">L</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="lisanssiz-uretim" data-terms="lisanssız üretim mahsuplaşma öz tüketim ges">
+        <dt><a href="#lisanssiz-uretim">Lisanssız üretim</a><span class="gl-alt">Diğer adları: mahsuplaşma, öz tüketim GES</span></dt>
+        <dd><p>Tüketim tesisiyle ilişkilendirilmiş, lisans almadan yapılabilen elektrik üretimi (çoğunlukla çatı GES). Bağlantı, mahsuplaşma ve ihtiyaç fazlası enerji kuralları Lisanssız Elektrik Üretim Yönetmeliği ile belirlenir.</p><div class="gl-links"><a href="/bilgi/lisanssiz-uretim-ges.html">Lisanssız üretim ve GES</a><a href="/bilgi/mevzuat-guncellemeleri.html">Mevzuat değişiklikleri</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-m">M</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="modbus" data-terms="modbus modbus rtu modbus tcp rs-485">
+        <dt><a href="#modbus">Modbus</a><span class="gl-alt">Diğer adları: Modbus RTU, Modbus TCP, RS-485</span></dt>
+        <dd><p>Endüstride sayaç, analizör, sürücü ve PLC’ler arasında yaygın kullanılan ana–uç (master–slave) haberleşme protokolü. Modbus RTU genellikle RS-485 hattı, Modbus TCP Ethernet üzerinden çalışır.</p><div class="gl-links"><a href="/sor/modbus-rtu-haberlesme-kesiliyor.html">Modbus RTU haberleşme kesiliyor</a><a href="/akademi/ladder-programlama-modbus-orta.html">Ladder ve Modbus eğitimi</a></div></dd>
+      </div>
+      <div class="gl-term" id="motor-koruma-salteri" data-terms="motor koruma şalteri (mpcb) motor koruma termik manyetik motor şalteri">
+        <dt><a href="#motor-koruma-salteri">Motor koruma şalteri (MPCB)</a><span class="gl-alt">Diğer adları: motor koruma, termik manyetik motor şalteri</span></dt>
+        <dd><p>Motoru aşırı yüke karşı ayarlı termik elemanla, kısa devreye karşı manyetik açtırmayla koruyan şalter. Ayar aralığı motor anma akımını kapsayacak şekilde seçilir.</p><div class="gl-links"><a href="/hesaplama/motor-koruma-kontaktor-secimi/">MPCB ve kontaktör seçimi</a><a href="/sor/motor-termik-sik-atiyor.html">Motor termiği neden sık atar?</a></div></dd>
+      </div>
+      <div class="gl-term" id="mppt" data-terms="mppt en yüksek güç noktası izleme">
+        <dt><a href="#mppt">MPPT</a><span class="gl-alt">Diğer adları: en yüksek güç noktası izleme</span></dt>
+        <dd><p>Maximum Power Point Tracking: inverterin, ışınım ve sıcaklık değiştikçe panel dizisinin gerilim–akım eğrisinde en fazla güç verilen noktayı sürekli araması.</p><div class="gl-links"><a href="/araclar/ges-tasarim/">GES tasarım aracı</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-n">N</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="notr" data-terms="nötr iletkeni (n) nötr">
+        <dt><a href="#notr">Nötr iletkeni (N)</a><span class="gl-alt">Diğer adları: nötr</span></dt>
+        <dd><p>Üç fazlı sistemin yıldız noktasına bağlı, dengesiz yük ve tek fazlı yük akımını taşıyan iletken. Koruma iletkeniyle (PE) karıştırılmamalıdır; TN-S sistemde ikisi ayrı çekilir.</p><div class="gl-links"><a href="/sor/faz-notr-220v-mi-230v-mi.html">Faz-nötr 220 V mu 230 V mu?</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-o">O</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="og-hucre" data-terms="og hücresi orta gerilim hücresi rmu modüler hücre">
+        <dt><a href="#og-hucre">OG hücresi</a><span class="gl-alt">Diğer adları: orta gerilim hücresi, RMU, modüler hücre</span></dt>
+        <dd><p>Orta gerilimde (1 kV üzeri, 36 kV’a kadar) giriş, ölçü, trafo koruma ve çıkış fonksiyonlarını taşıyan metal mahfazalı şalt ünitesi; kesici, yük ayırıcı, ayırıcı, akım–gerilim trafoları ve koruma rölesini içerir.</p><div class="gl-links"><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo merkezi kurulumu</a><a href="/voltsim/trafo/">VoltSim trafo</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-p">P</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="paratoner" data-terms="paratoner (yıldırımdan korunma) yakalama ucu franklin çubuğu faraday kafesi lps">
+        <dt><a href="#paratoner">Paratoner (yıldırımdan korunma)</a><span class="gl-alt">Diğer adları: yakalama ucu, Franklin çubuğu, Faraday kafesi, LPS</span></dt>
+        <dd><p>Yıldırımı yakalayıp indirme iletkenleriyle güvenli biçimde toprağa ileten dış yıldırımdan korunma sistemi. Tasarım ve risk değerlendirmesi TS EN 62305 serisine göre yapılır; tesisat periyodik kontrole tabidir.</p><div class="gl-links"><a href="/bilgi/yildirimdan-korunma.html">Yıldırımdan korunma rehberi</a></div></dd>
+      </div>
+      <div class="gl-term" id="periyodik-kontrol" data-terms="periyodik kontrol periyodik muayene ek-ııı">
+        <dt><a href="#periyodik-kontrol">Periyodik kontrol</a><span class="gl-alt">Diğer adları: periyodik muayene, EK-III</span></dt>
+        <dd><p>İş ekipmanı ve tesisatların belirli aralıklarla yetkili kişilerce muayene ve test edilerek raporlanması. İş Ekipmanları Yönetmeliği EK-III’e göre elektrik iç tesisatı, topraklama ve yıldırımdan korunma tesisatı için en uzun aralık bir yıldır.</p><div class="gl-links"><a href="/hesaplama/periyodik-kontrol-planlayici/">Periyodik kontrol planlayıcı</a><a href="/bilgi/elektrik-tesisati-periyodik-kontrol.html">Elektrik tesisatı periyodik kontrolü</a></div></dd>
+      </div>
+      <div class="gl-term" id="plc" data-terms="plc programlanabilir lojik kontrolör">
+        <dt><a href="#plc">PLC</a><span class="gl-alt">Diğer adları: programlanabilir lojik kontrolör</span></dt>
+        <dd><p>Girişlerini okuyup yazılı programa göre çıkışlarını süren endüstriyel kontrol bilgisayarı. Döngüsel tarama (scan) mantığıyla çalışır; ladder, yapısal metin gibi IEC 61131-3 dilleriyle programlanır.</p><div class="gl-links"><a href="/bilgi/plc-nedir-nasil-calisir.html">PLC nedir?</a><a href="/voltsim/motor-otomasyon/">VoltSim motor otomasyon</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-r">R</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="reaktif-guc" data-terms="reaktif güç (q) kvar endüktif kapasitif">
+        <dt><a href="#reaktif-guc">Reaktif güç (Q)</a><span class="gl-alt">Diğer adları: kVAr, endüktif, kapasitif</span></dt>
+        <dd><p>Motor, trafo ve balast gibi endüktif yüklerde manyetik alan oluşturmak için kaynak ile yük arasında gidip gelen güç; birimi VAr veya kVAr. İş yapmaz ama hatlarda akım ve kayıp oluşturur.</p><div class="gl-links"><a href="/bilgi/reaktif-guc-kompanzasyonu.html">Reaktif güç rehberi</a><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif ceza hesaplama</a></div></dd>
+      </div>
+      <div class="gl-term" id="reaktif-guc-rolesi" data-terms="reaktif güç rölesi rgr kompanzasyon rölesi">
+        <dt><a href="#reaktif-guc-rolesi">Reaktif güç rölesi</a><span class="gl-alt">Diğer adları: RGR, kompanzasyon rölesi</span></dt>
+        <dd><p>Akım trafosu ve gerilim ölçümüyle güç faktörünü izleyip kompanzasyon kademelerini sırayla devreye alan veya çıkaran kontrol cihazı.</p><div class="gl-links"><a href="/voltsim/kompanzasyon/">VoltSim kompanzasyon</a><a href="/sor/kompanzasyon-kontaktor-ariza-nedenleri.html">Kompanzasyon kontaktör arızaları</a></div></dd>
+      </div>
+      <div class="gl-term" id="ruzgar-turbini" data-terms="rüzgâr türbini (res) res rüzgar santrali">
+        <dt><a href="#ruzgar-turbini">Rüzgâr türbini (RES)</a><span class="gl-alt">Diğer adları: RES, rüzgar santrali</span></dt>
+        <dd><p>Rüzgârın kinetik enerjisini rotor ve jeneratörle elektriğe çeviren makine; birden fazlası rüzgâr enerji santralini (RES) oluşturur. Üretim, rüzgâr hızının yaklaşık küpüyle artar ve kesme hızında türbin durdurulur.</p><div class="gl-links"><a href="/voltsim/res/">VoltSim RES</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-s">S</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="scada" data-terms="scada uzaktan izleme ve kontrol">
+        <dt><a href="#scada">SCADA</a><span class="gl-alt">Diğer adları: uzaktan izleme ve kontrol</span></dt>
+        <dd><p>Supervisory Control and Data Acquisition: dağıtık tesislerdeki PLC, RTU ve rölelerden veri toplayıp operatöre izleme, kontrol, alarm ve raporlama sunan sistem.</p><div class="gl-links"><a href="/bilgi/scada-aritma-tesisi-otomasyonu.html">SCADA ve arıtma otomasyonu</a><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA otomasyon</a></div></dd>
+      </div>
+      <div class="gl-term" id="secicilik" data-terms="seçicilik (selektivite) selektivite koordinasyon">
+        <dt><a href="#secicilik">Seçicilik (selektivite)</a><span class="gl-alt">Diğer adları: selektivite, koordinasyon</span></dt>
+        <dd><p>Arıza durumunda yalnızca arızaya en yakın koruma cihazının açması, üstteki cihazların kapalı kalması. Akım, zaman ve enerji seçiciliği üretici tablolarıyla doğrulanır.</p><div class="gl-links"><a href="/akademi/trafo-kisa-devre-koordinasyon-ileri.html">Kısa devre ve koordinasyon eğitimi</a></div></dd>
+      </div>
+      <div class="gl-term" id="sigorta" data-terms="sigorta (nh, gg, am) bıçaklı sigorta nh sigorta buşon">
+        <dt><a href="#sigorta">Sigorta (NH, gG, aM)</a><span class="gl-alt">Diğer adları: bıçaklı sigorta, NH sigorta, buşon</span></dt>
+        <dd><p>İçindeki eriyen elemanla aşırı akım ve kısa devrede devreyi kesen koruma elemanı. gG genel amaçlı hat koruması, aM yalnız kısa devre için motor koruması sağlar; NH bıçaklı sigortalar yüksek kesme kapasitesiyle dağıtım panolarında kullanılır (IEC 60269).</p><div class="gl-links"><a href="/bilgi/sigorta-amper-kw-tablosu.html">Sigorta amper–kW tablosu</a><a href="/hesaplama/sigorta-tms-secimi/">Sigorta / TMŞ seçimi</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-s2">Ş</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="sarj-istasyonu" data-terms="şarj istasyonu (ac/dc) ev şarj elektrikli araç şarjı wallbox">
+        <dt><a href="#sarj-istasyonu">Şarj istasyonu (AC/DC)</a><span class="gl-alt">Diğer adları: EV şarj, elektrikli araç şarjı, wallbox</span></dt>
+        <dd><p>Elektrikli araç bataryasını şebekeden dolduran ünite. AC şarjda dönüştürme araç içindeki şarj cihazıyla, DC hızlı şarjda istasyon içindeki doğrultucuyla yapılır. Kamuya açık hizmet Şarj Hizmeti Yönetmeliği ile düzenlenir.</p><div class="gl-links"><a href="/voltsim/sarj-istasyonu/">VoltSim şarj istasyonu</a></div></dd>
+      </div>
+      <div class="gl-term" id="sont" data-terms="şönt reaktör şönt kapasitif ceza">
+        <dt><a href="#sont">Şönt reaktör</a><span class="gl-alt">Diğer adları: şönt, kapasitif ceza</span></dt>
+        <dd><p>Hafif yükte kablo kapasitesinin veya fazla kompanzasyonun oluşturduğu kapasitif reaktif gücü dengelemek için şebekeye paralel bağlanan reaktör. Kapasitif reaktif enerji bedelinin önlenmesinde kullanılır.</p><div class="gl-links"><a href="/voltsim/kompanzasyon/">VoltSim kompanzasyon</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-t">T</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="tms" data-terms="tmş (termik manyetik şalter) kompakt şalter mccb otomatik sigorta mcb">
+        <dt><a href="#tms">TMŞ (termik manyetik şalter)</a><span class="gl-alt">Diğer adları: kompakt şalter, MCCB, otomatik sigorta, MCB</span></dt>
+        <dd><p>Aşırı yükte termik (bimetal veya elektronik), kısa devrede manyetik açtırmayla devreyi kesen şalter. Küçük anma akımlarında MCB (IEC 60898), büyüklerde kompakt şalter (MCCB, IEC 60947-2) kullanılır.</p><div class="gl-links"><a href="/bilgi/tms-secimi-rehberi.html">TMŞ seçimi rehberi</a></div></dd>
+      </div>
+      <div class="gl-term" id="tn-tt-it" data-terms="tn, tt ve ıt sistemleri tn-s tn-c tn-c-s şebeke tipi">
+        <dt><a href="#tn-tt-it">TN, TT ve IT sistemleri</a><span class="gl-alt">Diğer adları: TN-S, TN-C, TN-C-S, şebeke tipi</span></dt>
+        <dd><p>Alçak gerilim şebekelerinin topraklama düzenine göre sınıflandırılması. TN’de gövdeler koruma iletkeniyle kaynak yıldız noktasına, TT’de ayrı bir toprak elektroduna bağlanır; IT’de kaynak topraktan yalıtılmıştır (TS HD 60364).</p><div class="gl-links"><a href="/bilgi/ts-hd-60364-tesisat-standartlari.html">TS HD 60364 standartları</a></div></dd>
+      </div>
+      <div class="gl-term" id="topraklama" data-terms="topraklama koruma topraklaması işletme topraklaması">
+        <dt><a href="#topraklama">Topraklama</a><span class="gl-alt">Diğer adları: koruma topraklaması, işletme topraklaması</span></dt>
+        <dd><p>Elektrik tesisinin belirli noktalarının toprak elektrodu üzerinden toprakla iletken biçimde birleştirilmesi. Koruma topraklaması insanları, işletme topraklaması sistemin düzgün çalışmasını korur.</p><div class="gl-links"><a href="/bilgi/topraklama.html">Topraklama nedir?</a><a href="/hesaplama/topraklama-hesaplama/">Topraklama hesaplama</a><a href="/voltsim/topraklama/">VoltSim topraklama</a></div></dd>
+      </div>
+      <div class="gl-term" id="topraklama-direnci" data-terms="topraklama direnci yayılma direnci toprak direnci">
+        <dt><a href="#topraklama-direnci">Topraklama direnci</a><span class="gl-alt">Diğer adları: yayılma direnci, toprak direnci</span></dt>
+        <dd><p>Topraklama elektrodu ile uzak toprak arasındaki direnç. Kabul edilebilir değer tek bir sayı değildir; şebeke tipine (TT, TN) ve koruma cihazına göre hesaplanır, ölçümle doğrulanır.</p><div class="gl-links"><a href="/bilgi/topraklama-degeri-kac-olmali.html">Topraklama değeri kaç olmalı?</a><a href="/hizmetler/topraklama-olcumu.html">Topraklama ölçümü</a></div></dd>
+      </div>
+      <div class="gl-term" id="trafo" data-terms="transformatör (trafo) dağıtım trafosu kuru tip yağlı trafo">
+        <dt><a href="#trafo">Transformatör (trafo)</a><span class="gl-alt">Diğer adları: dağıtım trafosu, kuru tip, yağlı trafo</span></dt>
+        <dd><p>Elektromanyetik indüksiyonla gerilimi düşüren veya yükselten makine. Dağıtım trafoları orta gerilimi (örneğin 34,5 kV) 400 V’a düşürür; yağlı veya kuru tip olabilir ve periyodik bakım ister.</p><div class="gl-links"><a href="/bilgi/trafo-periyodik-bakim.html">Trafo bakımı</a><a href="/hesaplama/trafo-akimi-hesaplama/">Trafo akımı hesaplama</a><a href="/voltsim/trafo/">VoltSim trafo</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-u">U</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="ups" data-terms="ups (kesintisiz güç kaynağı) kesintisiz güç kaynağı online ups">
+        <dt><a href="#ups">UPS (kesintisiz güç kaynağı)</a><span class="gl-alt">Diğer adları: kesintisiz güç kaynağı, online UPS</span></dt>
+        <dd><p>Şebeke kesildiğinde aküden beslemeyi kesintisiz sürdüren güç kaynağı. Online (çift dönüşümlü) UPS’ler yükü sürekli inverter üzerinden besler; akü süresi yük gücü ve akü kapasitesine bağlıdır.</p><div class="gl-links"><a href="/hesaplama/ups-gucu-hesaplama/">UPS gücü hesaplama</a><a href="/voltsim/ups-jenerator/">VoltSim UPS-jeneratör</a></div></dd>
+      </div>
+    </dl>
+    <h2 class="gl-letter" id="harf-y">Y</h2>
+    <dl class="gl-list">
+      <div class="gl-term" id="yangin-algilama" data-terms="yangın algılama ve uyarı sistemi yangın alarm dedektör adresli sistem">
+        <dt><a href="#yangin-algilama">Yangın algılama ve uyarı sistemi</a><span class="gl-alt">Diğer adları: yangın alarm, dedektör, adresli sistem</span></dt>
+        <dd><p>Duman, ısı veya alev dedektörleri, butonlar ve sirenlerle yangını erken algılayıp uyarı veren sistem; adresli veya konvansiyonel olabilir. TS EN 54 serisine uygun ürünlerle kurulur ve periyodik kontrole tabidir.</p><div class="gl-links"><a href="/bilgi/yangin-algilama-uyari-sistemleri.html">Yangın algılama rehberi</a><a href="/voltsim/yangin-algilama/">VoltSim yangın algılama</a></div></dd>
+      </div>
+      <div class="gl-term" id="yildiz-ucgen" data-terms="yıldız-üçgen yol verme y-δ yıldız üçgen">
+        <dt><a href="#yildiz-ucgen">Yıldız-üçgen yol verme</a><span class="gl-alt">Diğer adları: Y-Δ, yıldız üçgen</span></dt>
+        <dd><p>Motoru önce yıldız bağlantıda düşük gerilimle kaldırıp sonra üçgene geçiren yol verme yöntemi. Kalkış akımı ve torku doğrudan yol vermeye göre yaklaşık üçte bire iner; yalnız üçgende 400 V’a uygun motorlarda kullanılır.</p><div class="gl-links"><a href="/voltsim/motor-otomasyon/">VoltSim motor otomasyon</a><a href="/hesaplama/motor-akimi-hesaplama/">Motor akımı hesaplama</a></div></dd>
+      </div>
+    </dl>
+    <p class="kb-disclaimer" style="margin-top:1.6rem">Tanımlar bilgilendirme amaçlı kısa açıklamalardır; tasarım ve uygulamada ilgili standart ile yönetmeliğin güncel tam metni esas alınır.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Tesisiniz için mühendislik desteği</strong><span>Proje, pano, kompanzasyon, topraklama ve periyodik kontrol hizmetleri.</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:.6rem">
+        <a href="/hizmetler/" class="btn btn--accent btn--md"><i class="fas fa-arrow-right" aria-hidden="true"></i> Hizmetlerimiz</a>
+        <a href="/#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
+    </div>
+  </main>
+
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+            </span>
+          </a>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+              <li><a href="/volthaber/">VoltHaber</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
+</body>
+</html>

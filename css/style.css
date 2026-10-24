@@ -48,7 +48,7 @@
   --t-slow:   0.5s ease;
 
   /* Layout */
-  --container-max:  1200px;
+  --container-max:  clamp(1200px, 88vw, 1520px); /* geniş ekranlarda yan boşluklar büyümesin */
   --container-pad:  1.5rem;
   --header-h:       var(--vg-header-h, 72px);   /* yapışkan başlığın yüksekliği: css/vg-shell.css */
 }
@@ -670,6 +670,7 @@ img.img-error {
   text-decoration: none;
   white-space: nowrap;
 }
+.ges-intro__link { display: inline-flex; align-items: center; gap: .4rem; min-height: 32px; }
 
 .ges-intro__link i {
   color: var(--clr-accent-dark);
@@ -1168,7 +1169,7 @@ img.img-error {
   align-items: center;
   gap: .3rem;
   font-family: var(--font-heading);
-  font-size: .68rem;
+  font-size: .6875rem;
   font-weight: 600;
   color: rgba(255,255,255,.65);
   background-color: rgba(255,255,255,.1);
@@ -1179,7 +1180,7 @@ img.img-error {
 }
 
 .project-card__year i {
-  font-size: .6rem;
+  font-size: .6875rem;
 }
 
 /* Project card — meta row (sector + status) */
@@ -1209,7 +1210,7 @@ img.img-error {
 
 .project-card__meta span i {
   color: var(--clr-accent);
-  font-size: .68rem;
+  font-size: .6875rem;
 }
 
 /* Projects CTA */
@@ -1366,6 +1367,7 @@ img.img-error {
   font-weight: 500;
   line-height: 1.55;
 }
+a.contact__item-value { display: inline-block; padding: .2rem 0; }
 
 .contact__item-link:hover {
   color: var(--clr-accent);
@@ -2873,7 +2875,7 @@ button:focus-visible {
   background: #e2483d;
   color: #fff;
   font-family: var(--font-heading);
-  font-size: .68rem;
+  font-size: .6875rem;
   font-weight: 700;
   letter-spacing: .05em;
   padding: .2rem .5rem;
@@ -3009,7 +3011,7 @@ button:focus-visible {
   top: .8rem;
   left: 1rem;
   font-family: var(--font-heading);
-  font-size: .68rem;
+  font-size: .6875rem;
   letter-spacing: .18em;
   color: rgba(59, 130, 246, .8);
 }
@@ -3018,7 +3020,7 @@ button:focus-visible {
   top: .7rem;
   right: 1rem;
   font-family: var(--font-heading);
-  font-size: .68rem;
+  font-size: .6875rem;
   font-weight: 700;
   letter-spacing: .08em;
   padding: .25rem .6rem;
@@ -3052,7 +3054,7 @@ button:focus-visible {
 }
 .readout__label {
   display: block;
-  font-size: .68rem;
+  font-size: .6875rem;
   color: rgba(255, 255, 255, .55);
   text-transform: uppercase;
   letter-spacing: .05em;
@@ -3195,6 +3197,7 @@ button:focus-visible {
 .kb-card__title { font-family: var(--font-heading); font-weight: 700; color: var(--clr-dark); font-size: 1.05rem; line-height: 1.3; }
 .kb-card__desc { color: var(--clr-text-muted); font-size: .9rem; line-height: 1.55; flex: 1; }
 .kb-card__more { color: var(--clr-accent-text); font-weight: 600; font-size: .85rem; }
+p > a.kb-card__more { display: inline-block; padding: .35rem 0; }
 /* 600px altinda menu hamburger ile acilip kapanacagi icin eskiden linkleri gizleyen kural kaldirildi. */
 
 /* Mevzuat & Standartlar Kütüphanesi */
@@ -3218,7 +3221,7 @@ button:focus-visible {
 .kb-libcard__cta { background: var(--clr-accent); color: var(--clr-dark); font-family: var(--font-heading); font-weight: 700; font-size: .9rem; padding: .6rem 1.2rem; border-radius: var(--r-sm); white-space: nowrap; }
 
 /* Akademi */
-.akademi-level { display: inline-block; align-self: flex-start; font-family: var(--font-heading); font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: .25rem .6rem; border-radius: 999px; }
+.akademi-level { display: inline-block; align-self: flex-start; font-family: var(--font-heading); font-size: .6875rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: .25rem .6rem; border-radius: 999px; }
 .akademi-level--baslangic { background: #dcfce7; color: #166534; }
 .akademi-level--orta { background: #fef3c7; color: #92400e; }
 .akademi-level--ileri { background: #fee2e2; color: #991b1b; }
@@ -3431,6 +3434,9 @@ button:focus-visible {
 .vg-form-field input:focus, .vg-form-field select:focus, .vg-form-field textarea:focus { outline: 2px solid rgba(59,130,246,.25); border-color: #3b82f6; }
 .vg-form-field textarea { min-height: 72px; resize: vertical; }
 .vg-form-table { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: .88rem; }
+.vg-form-table { min-width: 640px; }
+/* Dar ekranda tablo sayfayı taşırmasın: tablo bu sarmalayıcı içinde yatay kaydırılır. */
+.vg-form-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
 .vg-form-table th, .vg-form-table td { border: 1px solid var(--clr-border); padding: .5rem .6rem; text-align: left; vertical-align: top; }
 .vg-form-table thead th { background: var(--clr-bg-gray); font-family: var(--font-heading); font-size: .82rem; text-transform: uppercase; letter-spacing: .03em; color: var(--clr-dark); }
 .vg-form-table input, .vg-form-table select, .vg-form-table textarea { width: 100%; border: 0; padding: .25rem; background: transparent; font: inherit; }

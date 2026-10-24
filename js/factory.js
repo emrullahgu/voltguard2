@@ -10,7 +10,7 @@
  *
  * Teklif Sihirbazı /contact.php'ye index.html iletişim formuyla AYNI alanları gönderir:
  *   name, phone, email, subject (elektrik|elektronik|otomasyon|mekanik|diger), message (20-1000),
- *   consent=on, website (honeypot), formTimestamp (ms), cf-turnstile-response (site anahtarı varsa).
+ *   website (honeypot), formTimestamp (ms), cf-turnstile-response (site anahtarı varsa).
  */
 (function () {
   'use strict';
@@ -261,7 +261,7 @@
   var KEY_CALC = 'vg_fx_calc_v1';
   var KEY_LAST_SUBMIT = 'vg_last_submit_at';   // js/main.js ile ortak (60 sn bekleme)
   var SUBMIT_COOLDOWN = 60000;
-  var SUBMIT_TIMEOUT = 20000;                  // sunucu yanıt vermezse gönderimi kes
+  var SUBMIT_TIMEOUT = 25000;                  // sunucu yanıt vermezse gönderimi kes
 
   /* =====================================================================
      Yardımcılar
@@ -601,10 +601,9 @@
         if (d.name.length < 2 || d.name.length > 100) bad.push('name');
         if (!isValidTrMobile(d.phone)) bad.push('phone');
         if (d.email && !isValidEmail(d.email)) bad.push('email');
-        if (!byId('wzConsent').checked) bad.push('consent');
       }
       if (show) {
-        var keys = { 0: ['wzSector'], 1: ['wzTrafo'], 2: ['wzServices'], 3: ['wzUrgency', 'wzCity'], 4: ['name', 'phone', 'email', 'consent'] }[i] || [];
+        var keys = { 0: ['wzSector'], 1: ['wzTrafo'], 2: ['wzServices'], 3: ['wzUrgency', 'wzCity'], 4: ['name', 'phone', 'email'] }[i] || [];
         keys.forEach(function (k) { mark(k, bad.indexOf(k) > -1); });
       }
       if (i === 4 && capOn) {
@@ -866,7 +865,11 @@
           return;
         }
       }
-      if (hp && hp.value.trim()) { showDone('Talebiniz alındı.'); return; }
+      if (hp && hp.value.trim()) {
+        hp.value = '';
+        showErr('Form doğrulanamadı. Yazdıklarınız korundu; lütfen yeniden gönderin.');
+        return;
+      }
       var last = parseInt(store.raw(KEY_LAST_SUBMIT) || '0', 10);
       var now = Date.now();
       if (last && now - last < SUBMIT_COOLDOWN && now - last > 0) {
@@ -881,7 +884,6 @@
       fd.append('email', d.email);
       fd.append('subject', subjectFor(d.services));
       fd.append('message', buildMessage(d));
-      fd.append('consent', 'on');
       fd.append('website', hp ? hp.value : '');
       fd.append('formTimestamp', (ts && ts.value) || String(now));
       if (capOn) fd.append('cf-turnstile-response', capToken());
@@ -896,19 +898,21 @@
 
       var ac = ('AbortController' in win) ? new AbortController() : null;
       var timedOut = false;
-      var to = setTimeout(function () { timedOut = true; if (ac) ac.abort(); }, SUBMIT_TIMEOUT);
+      var to;
       var opts = { method: 'POST', body: fd, headers: { Accept: 'application/json' }, credentials: 'same-origin' };
       if (ac) opts.signal = ac.signal;
 
-      fetch('/contact.php', opts)
+      var request = Promise.resolve().then(function () { return fetch('/contact.php', opts); })
         .then(function (res) {
-          if (timedOut) throw abortErr();
           return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; }, function () {
             return { ok: false, status: res.status, data: { message: 'Sunucudan geçersiz yanıt alındı. Lütfen 0545 434 67 35 numarasından bize ulaşın.' } };
           });
-        })
+        });
+      var deadline = new Promise(function (resolve, reject) {
+        to = setTimeout(function () { timedOut = true; if (ac) ac.abort(); reject(abortErr()); }, SUBMIT_TIMEOUT);
+      });
+      Promise.race([request, deadline])
         .then(function (r) {
-          if (timedOut) throw abortErr();
           if (!r.ok || !r.data || !r.data.success) {
             var er = new Error((r.data && r.data.message) || 'Gönderim başarısız oldu.');
             er.status = r.status;
@@ -922,7 +926,7 @@
           stamp();
           var msg;
           if (timedOut || (err && err.name === 'AbortError')) {
-            msg = 'Sunucu yanıt vermedi. Lütfen tekrar deneyin ya da 0545 434 67 35 numarasını arayın.';
+            msg = 'Gönderim yanıtı alınamadı. Taslağınız korundu. Yeniden göndermeden önce 0545 434 67 35 üzerinden durumu kontrol edebilirsiniz.';
           } else if (err && err.name === 'TypeError') {
             msg = 'Bağlantı hatası. İnternet bağlantınızı kontrol edip tekrar deneyin ya da 0545 434 67 35 numarasını arayın.';
           } else {
@@ -946,7 +950,7 @@
           }
           errBox.focus({ preventScroll: false });
         })
-        .then(function () {
+        .finally(function () {
           clearTimeout(to);
           sending = false;
           form.removeAttribute('aria-busy');

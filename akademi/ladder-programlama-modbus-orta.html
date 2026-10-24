@@ -10,9 +10,9 @@
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261013b">
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=98a54d154d91">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,17 +35,18 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
-  <meta name="description" content="Ladder programlama ve endüstriyel haberleşme (Modbus, Profinet) orta seviye ders: örnek ladder programları, HMI etiketleme ve alan bus mimarisi.">
+  <meta name="description" content="Ladder programlama orta seviye ders: mühürleme, zamanlayıcı ve sayıcı örnekleri, arızada güvenli giriş bağlantısı, Modbus RTU/TCP ve Profinet yapısı.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <title>Ladder Programlama ve Modbus/Profinet | VoltGuard</title>
   <link rel="canonical" href="https://voltguard.com.tr/akademi/ladder-programlama-modbus-orta.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Ladder Programlama ve Modbus/Profinet | VoltGuard">
-  <meta property="og:description" content="Ladder programlama ve endüstriyel haberleşme (Modbus, Profinet) orta seviye ders: örnek ladder programları, HMI etiketleme ve alan bus mimarisi.">
+  <meta property="og:description" content="Ladder programlama orta seviye ders: mühürleme, zamanlayıcı ve sayıcı örnekleri, arızada güvenli giriş bağlantısı, Modbus RTU/TCP ve Profinet yapısı.">
   <meta property="og:url" content="https://voltguard.com.tr/akademi/ladder-programlama-modbus-orta.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
   <meta property="og:site_name" content="VoltGuard">
@@ -53,11 +54,11 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261012d">
+  <link rel="stylesheet" href="/css/style.css?v=d152330fb2b0">
   <style>
     .article pre.tool-formula{background:#f8fafc;border:1px dashed var(--clr-border);border-radius:5px;padding:.75rem .9rem;overflow-x:auto;font-size:.85rem;line-height:1.5;color:#334155;white-space:pre}
   </style>
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/ladder-programlama-modbus-orta.html#course","name":"Ladder Programlama ve Endüstriyel Haberleşme (Modbus, Profinet)","description":"Örnek ladder programları, HMI etiketleme ve alan bus mimarisi.","educationalLevel":"Orta","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Ladder Programlama ve Modbus / Profinet (Orta)","item":"https://voltguard.com.tr/akademi/ladder-programlama-modbus-orta.html"}]}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/ladder-programlama-modbus-orta.html#course","name":"Ladder Programlama ve Endüstriyel Haberleşme (Modbus, Profinet)","description":"Ladder ile mühürleme, zamanlayıcı ve sayıcı örnekleri; arızada güvenli giriş bağlantısı; Modbus RTU/TCP ve Profinet yapısı.","educationalLevel":"Orta","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-24","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"},"author":{"@type":"Organization","name":"VoltGuard Mühendislik Ekibi","url":"https://voltguard.com.tr/ekibimiz.html"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Ladder Programlama ve Modbus / Profinet (Orta)","item":"https://voltguard.com.tr/akademi/ladder-programlama-modbus-orta.html"}]}]}</script>
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -71,6 +72,7 @@
           <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
         </span>
       </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
@@ -87,13 +89,16 @@
               <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
               <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
               <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
               <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
             </ul>
           </li>
           <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
-          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -101,6 +106,7 @@
         </div>
       </nav>
       <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
@@ -117,47 +123,53 @@
     <span class="article__cat">Endüstriyel Otomasyon</span>
     <span class="akademi-level akademi-level--orta">Orta Seviye</span>
     <h1>Ladder Programlama ve Endüstriyel Haberleşme (Modbus, Profinet)</h1>
-    <p class="article__summary">Orta seviye bu derste; Ladder Diagram (LD) mantığını temel örneklerle, latching, timer/counter fonksiyonlarını, ve endüstriyel haberleşme protokolleri Modbus RTU/TCP ile Profinet mimarisini işleyeceğiz. Ön koşul: <a href="plc-endustriyel-otomasyon-giris.html">PLC/HMI/SCADA'ya Giriş</a> dersi.</p>
+    <p class="article__byline" style="font-size:.85rem;color:#5b6472;margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son gözden geçirme: <time datetime="2026-10-24">24.10.2026</time></p>
+    <p class="article__summary">Bu ders; Ladder Diagram (LD) ile mühürleme, zamanlayıcı ve sayıcı örneklerini, girişlerin arıza durumunda güvenli kalacak şekilde nasıl bağlanacağını, Modbus RTU/TCP ve Profinet'in temel yapısını anlatır.</p>
 
-    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Latching devresi, timer ve counter fonksiyonları, edge tetikleme, Modbus RTU/TCP frame yapısı, Profinet cihaz-kontrolör mimarisi ve topoloji seçimi.</div>
+    <div class="akademi-path"><strong>Ön koşul ve ilgili kaynaklar:</strong> <a href="plc-endustriyel-otomasyon-giris.html">PLC/HMI/SCADA'ya Giriş</a> · <a href="/sor/modbus-rtu-haberlesme-kesiliyor.html">Modbus RTU haberleşmesi neden kesiliyor?</a> · <a href="/sor/plc-kontaktor-bobini-titremesi.html">PLC çıkışında kontaktör bobini titremesi</a></div>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Ladder mantığı elektromekanik röle çizimine benzer; en solda güç barası, en sağda çıkış bobini.</li><li>Latching (mühürlü), start-stop butonlu motor çalıştırma devresinin klasik PLC eşdeğeridir.</li><li>Modbus RTU seri (RS-485), Modbus TCP ise Ethernet üzerinden çalışır; ikisi de request-response mantığındadır.</li><li>Profinet 100 Mbps Ethernet üzerinde 250 μs isochronous çalışabilir; RT (Real-Time) ve IRT sınıfları vardır.</li><li>Endüstriyel haberleşmede topoloji: yıldız, hat (line), halka (ring) ve yedekli ring (MRP) yaygın.</li></ul></div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Ladder, röle kumanda şemasına benzer: solda güç barası, sağda bobinler; basamaklar her tarama çevriminde yukarıdan aşağı işlenir.</li><li>Stop butonu ve termik kontağı sahada NC (normalde kapalı) bağlanır, programda açık kontakla sorgulanır. Kablo koparsa motor durur.</li><li>Acil durdurma standart PLC programına bırakılmaz; emniyet rölesi veya emniyet PLC'si ile ISO 13849-1 / IEC 62061'e göre tasarlanır.</li><li>Modbus RTU RS-485 üzerinden, Modbus TCP Ethernet üzerinden çalışır; ikisi de istek-cevap (master-slave / client-server) mantığındadır.</li></ul></div>
 
     <h2>Ladder Diyagram Temel Kuralları</h2>
-    <p>Ladder Diagram (LD), IEC 61131-3 standardının en yaygın grafik dilidir. Sağdan sola değil, <strong>soldan sağa</strong> ve yukarıdan aşağıya okunur. Her satır bir <em>rung</em> (basamak) olarak adlandırılır ve tarama döngüsünde sırayla işlenir. Bu dersteki örnekler, <a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA otomasyon</a> projelerinde en sık yazılan program kalıplarıdır.</p>
+    <p>Ladder Diagram (LD), IEC 61131-3'te tanımlı grafik dillerden biridir. Standardın 2025 tarihli 4. baskısında tanımlı diller LD, FBD, ST ve SFC'dir; IL (Instruction List) bu baskıyla standarttan çıkarılmıştır. Ladder soldan sağa ve yukarıdan aşağıya okunur. Her satıra basamak (rung) denir; basamaklar tarama çevriminde sırayla işlenir. Bu dersteki örnekler, <a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA otomasyon</a> projelerinde sık kullanılan program kalıplarıdır.</p>
     <ul class="article__list">
-      <li><strong>Kontak (NO / NC):</strong> Bir bit değişkeninin durumunu okur (giriş sinyali gibi).</li>
-      <li><strong>Bobin (Coil):</strong> Bir bit değişkenini ayarlar (çıkış veya dahili bayrak).</li>
-      <li><strong>Fonksiyon bloğu:</strong> Timer (TON, TOF, TP), Counter (CTU, CTD, CTUD), matematiksel işlemler.</li>
-      <li><strong>Edge tetikleme:</strong> Yükselen (R_TRIG) ve düşen (F_TRIG) kenar algılama.</li>
+      <li><strong>Kontak (NO / NC):</strong> Bir bit değişkeninin durumunu okur. Programdaki kontak tipi, sahadaki butonun kontak tipiyle aynı şey değildir.</li>
+      <li><strong>Bobin:</strong> Bir bit değişkenine (çıkış veya iç bayrak) değer yazar.</li>
+      <li><strong>Fonksiyon bloğu:</strong> Zamanlayıcı (TON, TOF, TP), sayıcı (CTU, CTD, CTUD), matematiksel işlemler.</li>
+      <li><strong>Kenar algılama:</strong> Yükselen (R_TRIG) ve düşen (F_TRIG) kenar.</li>
     </ul>
 
-    <h2>Örnek 1: Latching Devresi (Start-Stop-Motor)</h2>
-    <p>Bir motorun start butonu (I0.0) ile başlaması, stop butonu (I0.1) ile durması, motorun kendini mühürlemesi ve termik röle (I0.2) ile korunması:</p>
+    <h2>Örnek 1: Mühürleme Devresi (Start-Stop-Motor)</h2>
+    <p>Start butonu (I0.0, NO), stop butonu (I0.1, sahada NC bağlı), termik röle yardımcı kontağı (I0.2, 95-96 NC bağlı) ve motor kontaktörü (Q0.0). Stop butonuna basılmadığında ve termik açmadığında I0.1 ve I0.2 girişleri 1'dir. Bu nedenle programda açık kontakla sorgulanırlar:</p>
     <pre class="tool-formula">
 Rung 1:
-|--[ I0.0 ]--+--[/I0.1 ]--[/I0.2 ]--( Q0.0 )--|
+|--[ I0.0 ]--+--[ I0.1 ]--[ I0.2 ]--( Q0.0 )--|
              |
 |--[ Q0.0 ]--+
     </pre>
-    <p>Bu satırda Q0.0 (motor kontaktör bobini): start butonuna basılırsa VEYA zaten çalışıyorsa (self-hold), stop basılı değilse ve termik açmamışsa ENERJİ. Bu, endüstride en yaygın kalıptır.</p>
+    <p>Q0.0, start butonuna basıldığında veya kendini mühürlediğinde enerjilenir; stop butonuna basıldığında ya da termik açtığında düşer. Stop butonunun kablosu koparsa I0.1 sıfıra düşer ve motor durur; arıza güvenli tarafta kalır. Stop butonu NO bağlanıp programda kapalı kontakla sorgulansaydı kablo kopukluğunda motor durdurulamazdı. Termik kontağının ayrıca kontaktör bobin devresine de seri bağlanması, PLC arızasında bile korumanın sürmesini sağlar.</p>
 
-    <h2>Örnek 2: Timer (TON) ile Gecikmeli Kalkış</h2>
-    <p>Start butonuna basıldıktan 5 s sonra motor kalkışı:</p>
+    <h2>Örnek 2: Zamanlayıcı (TON) ile Gecikmeli Kalkış</h2>
+    <p>Start butonuna basıldıktan 5 s sonra motor kalkışı. Buton anlık olduğu için önce bir iç bayrak (M0.0) ile mühürleme yapılır. Zamanlayıcıyı bu bayrak çalıştırır:</p>
     <pre class="tool-formula">
 Rung 1:
-|--[ I0.0 ]---( T1: TON, PT=5000ms )--|
+|--[ I0.0 ]--+--[ I0.1 ]--[ I0.2 ]--( M0.0 )--|
+             |
+|--[ M0.0 ]--+
 
 Rung 2:
-|--[ T1.Q ]--[/I0.1 ]--( Q0.0 )--|
-    </pre>
-    <p>TON bloğu, girişi HIGH kaldığı sürece PT süresini sayar; süre dolunca Q çıkışı 1 olur. Bu, ısınma, ilk kalibrasyon veya güvenlik gecikmesi için kullanılır.</p>
+|--[ M0.0 ]---( T1: TON, PT = 5 s )--|
 
-    <h2>Örnek 3: Counter (CTU) ile Üretim Sayacı</h2>
-    <p>Fotosel (I0.3) her tetiklendiğinde üretim sayacı artar; 100'e ulaşınca lamba (Q0.5) yanar:</p>
+Rung 3:
+|--[ T1.Q ]--[ I0.1 ]--[ I0.2 ]--( Q0.0 )--|
+    </pre>
+    <p>TON, girişi 1 kaldığı sürece PT süresini sayar; süre dolunca Q çıkışı 1 olur. Zamanlayıcı doğrudan butona bağlansaydı, buton bırakıldığında sıfırlanır ve motor hiç kalkmazdı. Stop veya termik M0.0'ı düşürünce zamanlayıcı sıfırlanır ve Q0.0 da düşer. Bu kalıp ısınma, sıralı kalkış veya güvenlik gecikmesi için kullanılır.</p>
+
+    <h2>Örnek 3: Sayıcı (CTU) ile Üretim Sayacı</h2>
+    <p>Fotosel (I0.3) her tetiklendiğinde sayaç artar; 100'e ulaşınca lamba (Q0.5) yanar:</p>
     <pre class="tool-formula">
 Rung 1:
-|--[ I0.3 ]---( C1: CTU, PV=100 )--|
+|--[ I0.3 ]---( C1: CTU, PV = 100 )--|
 
 Rung 2:
 |--[ C1.Q ]---( Q0.5 )--|
@@ -165,46 +177,47 @@ Rung 2:
 Rung 3 (Reset):
 |--[ I0.4 ]---( C1.R )--|
     </pre>
-    <p>Sayaç girişi (CU) yükselen kenarda +1 sayar; Q çıkışı sayı ≥ PV olduğunda 1 olur. Reset girişi (R) 1 iken sayacı sıfırlar.</p>
+    <p>Sayıcı girişi (CU) yükselen kenarda bir artar; sayı PV değerine ulaşınca Q çıkışı 1 olur. Reset girişi (R) 1 iken sayaç sıfırlanır. Fotosel sinyali tarama süresinden kısa ise sayım kaçabilir; bu durumda hızlı sayıcı girişi kullanılır.</p>
 
-    <h2>Modbus RTU / TCP Protokolü</h2>
-    <p>Modbus, Modicon'un 1979'da geliştirdiği açık bir protokoldür ve endüstride hâlâ en yaygın kullanılan haberleşmelerden biridir.</p>
+    <h2>Modbus RTU / TCP</h2>
+    <p>Modbus, Modicon'un 1979'da yayımladığı açık bir protokoldür. Bugün spesifikasyonları Modbus Organization yayımlamaktadır.</p>
     <div class="table-scroll"><table>
       <thead><tr><th>Özellik</th><th>Modbus RTU</th><th>Modbus TCP</th></tr></thead>
       <tbody>
-        <tr><td>Fiziksel katman</td><td>RS-485 (2 tel)</td><td>Ethernet 10/100 Mbps</td></tr>
-        <tr><td>Uzaklık</td><td>1200 m</td><td>100 m (tek switch)</td></tr>
-        <tr><td>Hız</td><td>9600-115200 bps</td><td>10/100 Mbps</td></tr>
-        <tr><td>Slave sayısı</td><td>247 (32 fiziksel)</td><td>256 (soket bağlı)</td></tr>
-        <tr><td>Adres alanı</td><td>1 byte (0-247)</td><td>Unit ID (0-255)</td></tr>
-        <tr><td>Checksum</td><td>CRC-16</td><td>TCP checksum</td></tr>
+        <tr><td>Fiziksel katman</td><td>RS-485 (2 tel + referans)</td><td>Ethernet</td></tr>
+        <tr><td>Mesafe</td><td>Düşük hızda 1200 m'ye kadar (hız arttıkça kısalır)</td><td>Bakır segment başına 100 m</td></tr>
+        <tr><td>Hız</td><td>Tipik 9600-115200 bit/s</td><td>10/100 Mbit/s</td></tr>
+        <tr><td>Adresleme</td><td>Slave adresi 1-247 (0: yayın)</td><td>IP adresi + Unit ID (ağ geçidi arkasındaki cihaz için)</td></tr>
+        <tr><td>Segmentteki cihaz sayısı</td><td>32 birim yük; 1/8 yüklü alıcılarla 247'ye kadar</td><td>Sunucunun eşzamanlı bağlantı sayısı cihaza bağlıdır</td></tr>
+        <tr><td>Hata denetimi</td><td>CRC-16</td><td>Modbus çerçevesinde CRC yoktur; TCP/Ethernet bütünlük denetimine dayanır</td></tr>
       </tbody>
     </table></div>
     <p>Yaygın fonksiyon kodları: FC01 (Read Coils), FC02 (Read Discrete Inputs), FC03 (Read Holding Registers), FC04 (Read Input Registers), FC05 (Write Single Coil), FC06 (Write Single Register), FC15 (Write Multiple Coils), FC16 (Write Multiple Registers).</p>
 
     <h2>Profinet Mimarisi</h2>
-    <p>Profinet, Profibus'ın Ethernet'e taşınmış halidir ve bugün Avrupa'nın en yaygın endüstriyel haberleşmesidir. IEC 61158 standardına sahiptir ve üç zaman kategorisiyle çalışır:</p>
+    <p>Profinet, PROFIBUS &amp; PROFINET International (PI) tarafından geliştirilen Ethernet tabanlı bir alan haberleşmesidir. Profibus ile aynı kuruluştan gelir ama fiziksel katmanı ve çerçeve yapısı farklıdır. IEC 61158 ve IEC 61784 serilerinde tanımlıdır. Üç iletişim sınıfı vardır:</p>
     <ul class="article__list">
-      <li><strong>NRT (Non Real-Time):</strong> Standart TCP/IP, 100 ms, konfigürasyon ve diagnoz için.</li>
-      <li><strong>RT (Real-Time):</strong> Ethernet Layer 2, 1-10 ms, standart proses kontrolü.</li>
-      <li><strong>IRT (Isochronous Real-Time):</strong> Sinkronize 250 μs - 1 ms, motion control ve robotik.</li>
+      <li><strong>TCP/IP (NRT):</strong> Konfigürasyon, parametre ve teşhis verisi. Gerçek zaman gerektirmez.</li>
+      <li><strong>RT (Real-Time):</strong> Katman 2 Ethernet çerçevesi; tipik çevrim süresi birkaç milisaniye. Standart I/O ve sürücü haberleşmesi.</li>
+      <li><strong>IRT (Isochronous Real-Time):</strong> Zaman senkronlu, 1 ms ve altı çevrim. Hareket kontrolü ve servo uygulamaları.</li>
     </ul>
-    <p>Profinet cihazları üç sınıfa ayrılır: IO Controller (PLC), IO Device (uzak I/O, VFD, sensör), IO Supervisor (mühendislik istasyonu). Topoloji seçenekleri: yıldız, hat (line - hat üzerinde SCALANCE switch), halka (ring - MRP redundancy).</p>
+    <p>Profinet cihaz rolleri: IO Controller (PLC), IO Device (uzak I/O, sürücü, sensör) ve IO Supervisor (mühendislik/teşhis istasyonu). Topoloji olarak yıldız, hat ve halka kullanılır. Halka topolojide yedeklilik MRP ile sağlanır.</p>
 
-    <h2>Alan Bus vs Endüstriyel Ethernet Karşılaştırma</h2>
+    <h2>Alan Haberleşmesi ve Endüstriyel Ethernet Karşılaştırması</h2>
     <div class="table-scroll"><table>
       <thead><tr><th>Protokol</th><th>Fiziksel</th><th>Hız</th><th>Tipik kullanım</th></tr></thead>
       <tbody>
-        <tr><td>Modbus RTU</td><td>RS-485</td><td>115 kbps</td><td>Ölçü ve sayaçlar, basit sensörler</td></tr>
-        <tr><td>Profibus DP</td><td>RS-485</td><td>12 Mbps</td><td>Klasik proses, eski nesil</td></tr>
-        <tr><td>CAN / CANopen</td><td>CAN bus</td><td>1 Mbps</td><td>Araç içi, medikal cihaz</td></tr>
-        <tr><td>Modbus TCP</td><td>Ethernet</td><td>100 Mbps</td><td>SCADA, gateway, uzaktan izleme</td></tr>
-        <tr><td>Profinet RT</td><td>Ethernet</td><td>100 Mbps</td><td>Endüstri 4.0 standart proses</td></tr>
-        <tr><td>EtherCAT</td><td>Ethernet</td><td>100 Mbps</td><td>Motion, robotik, servo</td></tr>
-        <tr><td>EtherNet/IP</td><td>Ethernet</td><td>100 Mbps</td><td>Rockwell, ABD standardı</td></tr>
-        <tr><td>OPC UA</td><td>Ethernet/IT</td><td>Değişken</td><td>Bulut ve IT-OT köprüsü</td></tr>
+        <tr><td>Modbus RTU</td><td>RS-485</td><td>115,2 kbit/s'ye kadar (tipik)</td><td>Enerji analizörleri, sayaçlar, basit cihazlar</td></tr>
+        <tr><td>Profibus DP</td><td>RS-485</td><td>12 Mbit/s'ye kadar</td><td>Mevcut tesislerde I/O ve sürücüler</td></tr>
+        <tr><td>CAN / CANopen</td><td>CAN</td><td>1 Mbit/s'ye kadar</td><td>Mobil makineler, tıbbi cihazlar, gömülü sistemler</td></tr>
+        <tr><td>Modbus TCP</td><td>Ethernet</td><td>100 Mbit/s</td><td>SCADA, ağ geçitleri, uzaktan izleme</td></tr>
+        <tr><td>Profinet</td><td>Ethernet</td><td>100 Mbit/s</td><td>Fabrika ve proses otomasyonu</td></tr>
+        <tr><td>EtherCAT</td><td>Ethernet</td><td>100 Mbit/s</td><td>Hareket kontrolü, robotik, servo</td></tr>
+        <tr><td>EtherNet/IP</td><td>Ethernet</td><td>100 Mbit/s</td><td>Rockwell tabanlı sistemler (ODVA)</td></tr>
+        <tr><td>OPC UA</td><td>Ethernet/IT ağı</td><td>Ağa bağlı</td><td>Sistemler arası veri alışverişi, IT-OT bağlantısı</td></tr>
       </tbody>
     </table></div>
+    <p>Motor kumanda mantığını <a href="/voltsim/motor-otomasyon/">VoltSim Motor ve Otomasyon modülünde</a> deneyebilirsiniz.</p>
 
     <h2>Sıradaki Konu</h2>
     <p>Bu orta seviye dersi tamamladıktan sonra:</p>
@@ -248,7 +261,7 @@ Rung 3 (Reset):
               <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
           </a>
-          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
           <ul class="vg-footer__contact">
             <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
@@ -258,7 +271,7 @@ Rung 3 (Reset):
             <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
             <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
           </address>
-          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
         </div>
         <nav class="vg-footer__nav" aria-label="Alt menü">
           <div class="vg-footer__col">
@@ -290,9 +303,8 @@ Rung 3 (Reset):
               <li><a href="/#referanslar">Referanslarımız</a></li>
               <li><a href="/#surec">Sürecimiz</a></li>
               <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
               <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
               <li><a href="/#katalog">Katalog</a></li>
               <li><a href="/#sss">SSS</a></li>
               <li><a href="/#iletisim">İletişim</a></li>
@@ -308,6 +320,8 @@ Rung 3 (Reset):
               <li><a href="/sor.html">VoltGuard'a Sor</a></li>
               <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
               <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+              <li><a href="/volthaber/">VoltHaber</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
@@ -317,6 +331,7 @@ Rung 3 (Reset):
               <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
               <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
               <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
               <li><a href="/hesap/giris.html">Üye Girişi</a></li>
               <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
@@ -333,39 +348,9 @@ Rung 3 (Reset):
           <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
-      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
-        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          </circle>
-        </svg>
-        <span class="sig-node" aria-hidden="true"></span>
-        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
-          <span class="sig-badge__ring" aria-hidden="true"></span>
-          <span class="sig-badge__aurora" aria-hidden="true"></span>
-          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
-          <span class="sig-badge__body">
-            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
-            <span class="sig-badge__brand">
-              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
-              <span class="sig-badge__eng">Engineering</span>
-            </span>
-          </span>
-          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
-          <span class="sig-badge__shimmer" aria-hidden="true"></span>
-        </a>
-        <span class="sig-node" aria-hidden="true"></span>
-        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
-          </circle>
-        </svg>
-      </div>
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261013a" defer></script>
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
 </body>
 </html>

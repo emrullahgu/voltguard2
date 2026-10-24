@@ -263,12 +263,15 @@
   var mobileCta = qs('#mobileCta');
   var contactSection = qs('#iletisim');
   var contactInView = false;
+  var phoneMQ = window.matchMedia('(max-width: 768px)');
 
   function updateFloatingButtons() {
     var y = window.scrollY;
     if (scrollTopBtn) scrollTopBtn.classList.toggle('visible', y > 420);
-    if (whatsappFloat) whatsappFloat.classList.toggle('visible', y > 200);
-    if (mobileCta) mobileCta.classList.toggle('visible', y > 300 && !contactInView);
+    var ctaOn = !!mobileCta && y > 300 && !contactInView;
+    if (mobileCta) mobileCta.classList.toggle('visible', ctaOn);
+    /* Telefonda yapışkan çubukta WhatsApp zaten var: yüzen balon ikinci kez gösterilmesin. */
+    if (whatsappFloat) whatsappFloat.classList.toggle('visible', y > 200 && !(ctaOn && phoneMQ.matches));
   }
 
   if (contactSection && mobileCta && hasIO) {
@@ -323,8 +326,8 @@
      8. CONTACT FORM — client-side validation & submit
   ------------------------------------------------- */
   var contactForm = qs('#contactForm');
+  var contactSending = false;
   var submitCooldownMs = 60000;
-  var SUBMIT_HTML = '<i class="fas fa-paper-plane" aria-hidden="true"></i> Talebi Gönder';
 
   /* localStorage erişimi gizli sekme / engellenmiş site verisinde istisna fırlatabilir. */
   function safeStorageGet(key) {
@@ -448,7 +451,6 @@
         if ((el.dataset.auto === '1' && el.dataset.prefillComplete !== '1') || /ihtiyacımız:$/i.test(v)) return 'Lütfen ihtiyacınızı kısaca yazın.';
         return '';
       },
-      consent: function (v, el) { return el.checked ? '' : 'Devam etmek için KVKK onayı gerekli.'; }
     };
     var fieldError = function (el) {
       var fn = el && CHECKS[el.id];
@@ -504,6 +506,20 @@
       if (wanted && serviceSel.value !== wanted) {
         serviceSel.value = wanted;
         serviceSel.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      /* Hesap araçlarındaki "Bu sonuçla teklif iste" bağlantısı sonucu sessionStorage 'vgQuoteNote' ile taşır;
+         mesaj alanı boşsa bir kez doldurulur (kullanıcı göndermeden önce düzenleyebilir). */
+      var quoteNote = '';
+      try {
+        quoteNote = String(window.sessionStorage.getItem('vgQuoteNote') || '').replace(/[<>]/g, '').slice(0, 600);
+        window.sessionStorage.removeItem('vgQuoteNote');
+      } catch (err) { /* depolama kapalı / gizli sekme */ }
+      if (quoteNote && messageField && !messageField.value.trim()) {
+        messageField.value = quoteNote;
+        messageField.dataset.auto = '1';
+        messageField.dataset.prefillComplete = '1';
+        messageField.dataset.vgSource = 'arac';
+        syncCounter();
       }
     }
 
@@ -563,6 +579,7 @@
 
     contactForm.addEventListener('submit', function (e) {
       e.preventDefault();
+      if (contactSending) return;
 
       clearInvalidState(contactForm);
 
@@ -572,9 +589,8 @@
 
       /* Honeypot: real users won't fill this hidden field */
       if (websiteTrap && websiteTrap.value.trim()) {
-        showNotification('Mesajınız alındı, teşekkür ederiz.', 'success');
-        contactForm.reset();
-        resetFormExtras();
+        websiteTrap.value = '';
+        showNotification('Form doğrulanamadı. Yazdıklarınız korundu; lütfen yeniden gönderin.', 'error');
         return;
       }
 
@@ -593,7 +609,7 @@
 
       var firstInvalid = null;
       var errorCount = 0;
-      ['name', 'phone', 'email', 'subject', 'message', 'consent'].forEach(function (id) {
+      ['name', 'phone', 'email', 'subject', 'message'].forEach(function (id) {
         var el = qs('#' + id, contactForm);
         var msg = fieldError(el);
         if (!msg) return;
@@ -615,26 +631,43 @@
 
       /* Real submission to backend endpoint */
       var submitBtn = contactForm.querySelector('button[type="submit"]');
+      var submitLabel = submitBtn.innerHTML;
+      contactSending = true;
+      contactForm.setAttribute('aria-busy', 'true');
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Gönderiliyor...';
 
       var payload = new FormData(contactForm);
       payload.set('message', servicePrefix() + message);
 
-      fetch('contact.php', {
+      var controller = typeof AbortController === 'function' ? new AbortController() : null;
+      var timedOut = false;
+      var timeoutId;
+      var options = {
         method: 'POST',
         body: payload,
         headers: {
           'Accept': 'application/json'
         }
-      })
+      };
+      if (controller) options.signal = controller.signal;
+      var request = Promise.resolve().then(function () { return fetch('/contact.php', options); })
         .then(function (response) {
           return response.json().then(function (data) {
             return { ok: response.ok, data: data };
           }).catch(function () {
-            return { ok: false, data: { message: 'Sunucudan geçersiz yanıt alındı.' } };
+            /* JSON dışı yanıt: form sunucusu ulaşılamıyor (404/502 sayfası); kullanıcıya diğer kanalı göster */
+            return { ok: false, data: { message: 'Mesajınız şu an iletilemedi; yazdıklarınız korundu. 0545 434 67 35 numarasını arayabilir veya WhatsApp\'tan yazabilirsiniz.' } };
           });
-        })
+        });
+      var deadline = new Promise(function (resolve, reject) {
+        timeoutId = setTimeout(function () {
+          timedOut = true;
+          if (controller) controller.abort();
+          reject(new Error('Gönderim yanıtı alınamadı. Yazdıklarınız korundu. Yeniden göndermeden önce 0545 434 67 35 üzerinden durumu kontrol edebilirsiniz.'));
+        }, 25000);
+      });
+      Promise.race([request, deadline])
         .then(function (result) {
           if (!result.ok || !result.data || !result.data.success) {
             var srvMsg = result.data && result.data.message ? result.data.message : 'Gönderim başarısız oldu.';
@@ -650,10 +683,12 @@
           }
 
           showNotification(
-            'Talebiniz alındı! En kısa sürede sizinle iletişime geçeceğiz.',
+            result.data.message || 'Mesajınız gönderim sistemine alındı.',
             'success'
           );
           safeStorageSet('vg_last_submit_at', String(Date.now()));
+          if (window.vgTrack) window.vgTrack('quote_submit', { svc: serviceSel && serviceSel.value ? serviceSel.value : '', via: messageField && messageField.dataset.vgSource === 'arac' ? 'arac' : 'form' });
+          if (messageField) delete messageField.dataset.vgSource;
           contactForm.reset();
           resetCaptcha();
           resetFormExtras();
@@ -661,14 +696,19 @@
         .catch(function (error) {
           resetCaptcha();
           if (timestampField) timestampField.value = String(Date.now());
-          var msg = (error && error.name === 'TypeError')
+          var msg = timedOut
+            ? 'Gönderim yanıtı alınamadı. Yazdıklarınız korundu. Yeniden göndermeden önce 0545 434 67 35 üzerinden durumu kontrol edebilirsiniz.'
+            : (error && error.name === 'TypeError')
             ? 'Bağlantı hatası. İnternet bağlantınızı kontrol edip tekrar deneyin.'
             : ((error && error.message) || 'Gönderim sırasında bir hata oluştu.');
           showNotification(msg, 'error');
         })
         .finally(function () {
+          clearTimeout(timeoutId);
+          contactSending = false;
+          contactForm.removeAttribute('aria-busy');
           submitBtn.disabled = false;
-          submitBtn.innerHTML = SUBMIT_HTML;
+          submitBtn.innerHTML = submitLabel;
         });
     });
   }
@@ -800,42 +840,6 @@
     var div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
-  }
-
-  /* ------------------------------------------------
-     10. HERO YAZMA EFEKTİ
-     H1 sabit metindir ("İzmir Elektrik Mühendislik Hizmetleri"). Dönen kelime H1'in dışındaki aria-hidden
-     .hero__typed satırındadır; sabit yükseklikli tek satır olduğu için kelime değişince düzen kaymaz.
-     İlk kelime HTML'de hazır gelir. Hero ekranda değilken ya da sekme gizliyken bekler.
-  ------------------------------------------------- */
-  var typingEl = qs('#heroTyping');
-  var typingWords = ['Projelendirme', 'Bakım', 'Otomasyon', 'Proje Yönetimi'];
-  var wordIndex = 0;
-  var charIndex = typingWords[0].length;
-  var isDeleting = true;
-
-  function typeLoop() {
-    if (!typingEl) return;
-    if (prefersReducedMotion) { typingEl.textContent = typingWords[0]; return; }
-    if (document.hidden || !heroInView) { setTimeout(typeLoop, 700); return; }
-    var currentWord = typingWords[wordIndex];
-    charIndex += isDeleting ? -1 : 1;
-    typingEl.textContent = currentWord.substring(0, charIndex);
-
-    var delay = isDeleting ? 55 : 105;
-    if (!isDeleting && charIndex === currentWord.length) {
-      delay = 2400;
-      isDeleting = true;
-    } else if (isDeleting && charIndex === 0) {
-      isDeleting = false;
-      wordIndex = (wordIndex + 1) % typingWords.length;
-      delay = 380;
-    }
-    setTimeout(typeLoop, delay);
-  }
-
-  if (typingEl && !prefersReducedMotion) {
-    whenPreloaderGone(function () { setTimeout(typeLoop, 3000); });
   }
 
   /* ------------------------------------------------
@@ -1141,6 +1145,10 @@
     var toggle = qs('#emiToggle');
     var stateEl = qs('#emiState');
     var roThd = qs('#roThd'), roPf = qs('#roPf');
+    var summary = qs('#harmonicSummary');
+    var fields = ['harmonic3', 'harmonic5', 'harmonic7', 'harmonicAttenuation'].map(function (id) { return qs('#' + id); });
+    if (!window.VGPowerQuality || fields.some(function (field) { return !field; })) return;
+    var harmonics = [32, 18, 12], attenuation = 80;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var w = 0, h = 0, running = false, rafId = null, inView = !hasIO;
     var filterOn = false, phase = 0, mix = 0;
@@ -1163,25 +1171,19 @@
       ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
     }
     function sample(t) {
-      var base = Math.sin(t);
-      var noisy = base
-        + 0.32 * Math.sin(3 * t + 0.6)
-        + 0.18 * Math.sin(5 * t + 1.2)
-        + 0.12 * Math.sin(7 * t)
-        + 0.07 * Math.sin(11 * t + 0.4)
-        + 0.05 * Math.sin(t * 37.7);
-      return base * mix + (noisy / 1.4) * (1 - mix);
+      var remaining = 1 - mix * attenuation / 100;
+      return Math.sin(t) + remaining * (harmonics[0] / 100 * Math.sin(3 * t)
+        + harmonics[1] / 100 * Math.sin(5 * t) + harmonics[2] / 100 * Math.sin(7 * t));
     }
     function draw() {
       if (w === 0) return;
       ctx.clearRect(0, 0, w, h);
       drawGrid();
-      var amp = h * 0.30;
+      var amp = h * 0.18; // Fixed scale: input and filtered voltage stay comparable.
       var col = (mix > 0.5) ? '245,158,11' : '59,130,246';
       ctx.lineWidth = 2.4;
       ctx.lineJoin = 'round';
-      ctx.shadowBlur = 14;
-      ctx.shadowColor = 'rgba(' + col + ',0.85)';
+      ctx.shadowBlur = 0;
       ctx.strokeStyle = 'rgba(' + col + ',1)';
       ctx.beginPath();
       var cycles = 3;
@@ -1194,16 +1196,23 @@
       ctx.shadowBlur = 0;
     }
     function setReadouts() {
+      harmonics = fields.slice(0, 3).map(function (field) { return Number(field.value); });
+      attenuation = Number(fields[3].value);
+      fields.forEach(function (field) {
+        var output = qs('#' + field.id + 'Value');
+        if (output) output.textContent = field.value + '%';
+      });
+      var result = window.VGPowerQuality.calculate(harmonics, filterOn ? attenuation : 0);
       if (roThd) {
-        roThd.textContent = (filterOn ? 2.8 : 38.5).toFixed(1) + ' %';
-        roThd.classList.toggle('readout__value--good', filterOn);
-        roThd.classList.toggle('readout__value--bad', !filterOn);
+        roThd.textContent = result.outputThd.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + ' %';
+        roThd.classList.remove('readout__value--good', 'readout__value--bad');
       }
       if (roPf) {
-        roPf.textContent = (filterOn ? 0.99 : 0.82).toFixed(2);
-        roPf.classList.toggle('readout__value--good', filterOn);
-        roPf.classList.toggle('readout__value--bad', !filterOn);
+        roPf.textContent = result.outputRms.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + ' V';
+        roPf.classList.remove('readout__value--good', 'readout__value--bad');
       }
+      if (summary) summary.textContent = 'Giriş THD: %' + result.inputThd.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) +
+        ' · Çıkış THD: %' + result.outputThd.toLocaleString('tr-TR', { maximumFractionDigits: 2 });
     }
     function setFilter(on) {
       filterOn = on;
@@ -1211,27 +1220,31 @@
         toggle.setAttribute('aria-pressed', on ? 'true' : 'false');
         toggle.classList.toggle('is-on', on);
         var txt = qs('.scope__toggle-text', toggle);
-        if (txt) txt.textContent = on ? 'Filtreyi Kapat' : 'Filtreyi Aç';
+        if (txt) txt.textContent = on ? 'Bastırmayı Kaldır' : 'Bastırmayı Uygula';
       }
       if (stateEl) {
-        stateEl.textContent = on ? 'FİLTRE AKTİF' : 'FİLTRE KAPALI';
+        stateEl.textContent = on ? 'BASTIRMA UYGULANDI' : 'BASTIRMA KAPALI';
         stateEl.classList.toggle('is-on', on);
       }
       setReadouts();
       if (prefersReducedMotion) { mix = on ? 1 : 0; draw(); }
     }
-    function loop() {
-      if (!prefersReducedMotion) phase -= 0.03;
+    var lastFrame = 0;
+    function loop(now) {
+      rafId = requestAnimationFrame(loop);
+      if (now && now - lastFrame < 1000 / 30) return;
+      lastFrame = now || 0;
+      if (!prefersReducedMotion) phase -= 0.06;
       var target = filterOn ? 1 : 0;
       mix += (target - mix) * 0.08;
       draw();
-      rafId = requestAnimationFrame(loop);
     }
     function start() { if (running) return; if (w === 0) resize(); if (inView && w > 0 && !document.hidden) { running = true; loop(); } }
     function stop() { running = false; if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
     function kickScope() { resize(); if (prefersReducedMotion) draw(); else start(); }
 
     if (toggle) toggle.addEventListener('click', function () { setFilter(!filterOn); });
+    fields.forEach(function (field) { field.addEventListener('input', function () { setReadouts(); if (!running) draw(); }); });
     window.addEventListener('resize', function () { if (!inView) { w = 0; return; } resize(); draw(); }, { passive: true });
 
     setReadouts();
@@ -1246,60 +1259,6 @@
       if (document.hidden) stop(); else if (inView && !prefersReducedMotion) start();
     });
     onMotionChange(function () { if (prefersReducedMotion) { stop(); if (inView) { resize(); draw(); } } else if (inView) start(); });
-  })();
-
-  /* ------------------------------------------------
-     17. COOKIE CONSENT — gates the Apollo tracker behind opt-in
-  ------------------------------------------------- */
-  (function () {
-    var CONSENT_KEY = 'vg_cookie_consent';
-    var banner = qs('#cookieConsent');
-
-    function loadApollo() {
-      if (typeof window.vgInitApollo === 'function') {
-        window.vgInitApollo();
-      }
-    }
-    function readConsent() {
-      try { return localStorage.getItem(CONSENT_KEY); } catch (e) { return null; }
-    }
-    function writeConsent(value) {
-      try { localStorage.setItem(CONSENT_KEY, value); } catch (e) { /* no-op */ }
-    }
-
-    var current = readConsent();
-
-    if (current === 'granted') {
-      /* Returning visitor who already opted in */
-      loadApollo();
-    } else if (current !== 'denied' && banner) {
-      /* No choice recorded yet — present the banner */
-      banner.hidden = false;
-      requestAnimationFrame(function () { banner.classList.add('visible'); });
-    }
-
-    if (banner) {
-      var hideBanner = function () {
-        banner.classList.remove('visible');
-        setTimeout(function () { banner.hidden = true; }, 400);
-      };
-      var acceptBtn = qs('#cookieAccept', banner);
-      var rejectBtn = qs('#cookieReject', banner);
-
-      if (acceptBtn) {
-        acceptBtn.addEventListener('click', function () {
-          writeConsent('granted');
-          hideBanner();
-          loadApollo();
-        });
-      }
-      if (rejectBtn) {
-        rejectBtn.addEventListener('click', function () {
-          writeConsent('denied');
-          hideBanner();
-        });
-      }
-    }
   })();
 
   /* 18. SERVICE WORKER — kayıt artık js/vg-shell.js içinde (tüm sayfalarda) yapılır. */
@@ -1422,26 +1381,21 @@
     if (scrollerMQ.addEventListener) scrollerMQ.addEventListener('change', sync);
   })();
 
-  /* ------------------------------------------------
-     20. LAZY MAP — Google Haritalar iframe'i yalnızca iletişim bölümüne yaklaşınca yüklenir
-     (yavaş bağlantıda tarayıcının loading=lazy eşiği ~2500px; bu, ağır harita betiklerini erken indiriyordu).
-  ------------------------------------------------- */
+  /* External map is loaded only after an explicit user action. */
   (function () {
-    var frame = qs('.contact__map iframe[data-src]');
-    if (!frame) return;
-    function loadMap() {
-      if (!frame.getAttribute('data-src')) return;
-      frame.src = frame.getAttribute('data-src');
+    var frame = qs('#contactMap');
+    var button = qs('#loadMap');
+    if (!frame || !button) return;
+    button.hidden = false;
+    button.addEventListener('click', function () {
+      var source = frame.getAttribute('data-src');
+      if (!source) return;
+      frame.src = source;
       frame.removeAttribute('data-src');
-    }
-    if (hasIO) {
-      var mapObserver = new IntersectionObserver(function (entries) {
-        if (entries[0].isIntersecting) { loadMap(); mapObserver.disconnect(); }
-      }, { rootMargin: '400px 0px' });
-      mapObserver.observe(frame);
-    } else {
-      loadMap();
-    }
+      frame.hidden = false;
+      button.hidden = true;
+      frame.focus();
+    }, { once: true });
   })();
 
 })();

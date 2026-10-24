@@ -111,7 +111,7 @@ body.pt-print .sheetwrap{overflow:visible!important;max-width:none!important}
 body.pt-print .rowlabel{position:static!important}
 </style>
 </head>
-<body><script id="__embedded_state__" type="application/json">{"meta":{"yer":"","kol":"","guc":""},"globals":{"U":"400","cos":"0.9","div":"1","lim":"5"},"kols":[{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]}]}</script>
+<body><script id="__embedded_state__" type="application/json">{"meta":{"yer":"","kol":"","guc":""},"globals":{"U":"400","cos":"0.9","div":"1","lim":"3","temp":"70"},"kols":[{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]},{"tip":"Yeralti","cable":"","devre":"","nokta":"","length":"","yuk":["","","",""]}]}</script>
 <div class="topbar">
   <div>
     <div class="title">⚡ AG Gerilim Düşümü ve Güç Kaybı Hesabı</div>
@@ -121,7 +121,8 @@ body.pt-print .rowlabel{position:static!important}
     <div class="gf"><label>U(V)</label><input id="gU" type="number" value="400"></div>
     <div class="gf"><label>cosφ</label><input id="gCos" type="number" step="0.01" min="0.1" max="1" value="0.9"></div>
     <div class="gf"><label>Diversite</label><input id="gDiv" type="number" step="0.01" value="1"></div>
-    <input id="gLim" type="hidden" value="5">
+    <div class="gf"><label for="gTemp">İletken °C</label><select id="gTemp" title="Direnç bu iletken sıcaklığında alınır (R = R20·[1 + 0,004·(θ − 20)])"><option value="70" selected>70 (PVC tam yük)</option><option value="90">90 (XLPE tam yük)</option><option value="20">20 (soğuk, iyimser)</option></select></div>
+    <div class="gf"><label for="gLim">Sınır</label><select id="gLim" title="Yapı bağlantı kutusundan tüketiciye toplam düşüm sınırı"><option value="1.5">%1,5 EİTY md.57 aydınlatma/priz</option><option value="3" selected>%3 EİTY md.57 motor</option><option value="6.5">%6,5 kendi trafolu aydınlatma</option><option value="8">%8 kendi trafolu motor</option><option value="5">%5 HD 60364 tavsiye</option></select></div>
   </div>
 </div>
 
@@ -206,7 +207,10 @@ function cableOpts(tip,sel){
 }
 
 function numeric(value,label,allowEmpty){
-  const text=String(value??'').trim().replace(',','.');
+  // Türkçe giriş: virgül ondalık; yük ve uzunlukta "1.500" binlik ayraçlı kabul edilir.
+  let text=String(value??'').trim();
+  if(text.includes(','))text=text.replace(/\./g,'').replace(',','.');
+  else if((label==='Yük'||label==='Hat uzunluğu')&&/^[1-9]\d{0,2}(\.\d{3})+$/.test(text))text=text.replace(/\./g,'');
   if(!text&&allowEmpty) return 0;
   if(!text||!/^[+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(text)||!Number.isFinite(Number(text))) throw new Error(label+': sıfır veya pozitif bir sayı girin.');
   return Number(text);
@@ -218,7 +222,10 @@ function calc(k,idx){
   const cos=numeric(gCos.value,'Güç faktörü');
   if(Utri<=0||div<=0||cos<=0||cos>1)throw new Error('Gerilim ve katsayılar pozitif olmalı; güç faktörü en fazla 1 olabilir.');   // güç faktörü
   const tan=Math.sqrt(Math.max(0,1-cos*cos))/cos;          // tanφ
-  const Umono=220;                       // monofaze faz-nötr gerilimi
+  const Umono=Utri/Math.sqrt(3);         // monofaze faz-nötr gerilimi (400 V → 230,9 V)
+  const temp=typeof gTemp!=='undefined'&&gTemp?numeric(gTemp.value,'İletken sıcaklığı'):70;
+  const kTemp=1+0.004*(temp-20);         // tablo r değerleri 20 °C içindir; işletme sıcaklığına çevrilir
+  if(div<1)throw new Error('Diversite katsayısı 1 veya daha büyük olmalıdır (eşzamanlı güç = kurulu güç ÷ diversite).');
   const c=CABLES.find(x=>x.ad===k.cable&&x.tip===k.tip);
   const dev=k.devre===''?1:numeric(k.devre,'Devre sayısı');
   if(!Number.isInteger(dev)||dev<1)throw new Error('Devre sayısı pozitif tam sayı olmalı.');
@@ -238,16 +245,20 @@ function calc(k,idx){
   } else {
     I = P>0 ? (P/(Math.sqrt(3)*Utri*cos))/div : 0;
   }
-  wxl=(P*L)/1e7;
-  Q=P*tan;                               // reaktif yük = P × tanφ
+  const Pd=P/div;                        // eşzamanlı (diversiteli) güç: akım, düşüm ve kayıp aynı güçle hesaplanır
+  wxl=(Pd*L)/1e7;
+  Q=Pd*tan;                              // reaktif yük = P × tanφ
   qxl=(Q*L)/1e7;
   if(c){
     amp=(k.tip==='Havai'?c.hava:c.toprak)*dev;
-    kk=c.k/dev; mm=c.m/dev;          // k1/m1 (mono) veya k3/m3 (tri) — tablodan otomatik
+    // Tablo k/m katsayıları 380 V (üç faz) ve 220 V (tek faz) için hesaplanmıştır; girilen gerilime ölçeklenir: k ∝ 1/U².
+    const uScale=faz==='Mono'?Math.pow(220/Umono,2):Math.pow(380/Utri,2);
+    kk=c.k/dev*uScale*kTemp; mm=c.m/dev*uScale;
     er=kk*wxl; ex=mm*qxl; pe=er+ex;
-    dP=P>0?(er/100)*P:0; pp=P>0?(dP/P)*100:0;
+    // Kayıp: ΔP = I²R = P²·R/(U²·cos²φ) → %ΔP = %e(direnç kısmı) ÷ cos²φ
+    dP=Pd>0?(er/100)*Pd/(cos*cos):0; pp=Pd>0?(dP/Pd)*100:0;
     heat=I;                          // ısı kontrol akımı = yük akımı (faz tipine göre)
-    ok=(heat<amp);
+    ok=(heat<=amp);
   }
   return {c,faz,own,P,I,amp,kk,mm,wxl,er,Q,qxl,ex,pe,dP,pp,heat,ok};
 }
@@ -386,9 +397,9 @@ function updateTot(R,lim){
   el.style.color = !has? '' : (allOk? '#1a7f37' : '#c1121f');
 }
 
-['gU','gCos','gDiv','gLim'].forEach(id=>document.getElementById(id).addEventListener('change',render));
+['gU','gCos','gDiv','gLim','gTemp'].forEach(id=>document.getElementById(id).addEventListener('change',render));
 const gU=document.getElementById('gU'),gCos=document.getElementById('gCos'),gDiv=document.getElementById('gDiv'),
-      gLim=document.getElementById('gLim');
+      gLim=document.getElementById('gLim'),gTemp=document.getElementById('gTemp');
 
 // --- Kaydet (HTML olarak) ---
 let currentName = 'AG_Gerilim_Dusumu';
@@ -410,7 +421,7 @@ function commitPending(){
 function gatherState(){
   return {
     meta:{yer:iYer.value, kol:iKol.value, guc:iGuc.value},
-    globals:{U:gU.value, cos:gCos.value, div:gDiv.value, lim:gLim.value},
+    globals:{U:gU.value, cos:gCos.value, div:gDiv.value, lim:gLim.value, temp:gTemp.value},
     kols:kols
   };
 }
@@ -473,7 +484,7 @@ function loadFile(ev){
         s=JSON.parse(txt);
       }
       if(s.meta){ iYer.value=s.meta.yer||''; iKol.value=s.meta.kol||''; iGuc.value=s.meta.guc||''; }
-      if(s.globals){ gU.value=s.globals.U||400; gCos.value=s.globals.cos||0.80; gDiv.value=s.globals.div||0.98; gLim.value=s.globals.lim||5; }
+      if(s.globals){ gU.value=s.globals.U||400; gCos.value=s.globals.cos||0.80; gDiv.value=s.globals.div||1; gLim.value=String(s.globals.lim||3); if(!gLim.value)gLim.value='3'; gTemp.value=String(s.globals.temp||70); }
       if(Array.isArray(s.kols)){ kols=s.kols.map(k=>({tip:k.tip||'Yeralti',cable:k.cable||'',devre:k.devre||'',nokta:k.nokta||'',length:k.length||'',yuk:k.yuk||['','','','']})); }
       render();
     }catch(err){ alert('Dosya okunamadı: '+err.message); }
@@ -532,7 +543,7 @@ function exportExcelEski(){
     if(tag && tag.textContent.trim()){
       const s=JSON.parse(tag.textContent);
       if(s.meta){ iYer.value=s.meta.yer||''; iKol.value=s.meta.kol||''; iGuc.value=s.meta.guc||''; }
-      if(s.globals){ gU.value=s.globals.U||400; gCos.value=s.globals.cos||0.80; gDiv.value=s.globals.div||0.98; gLim.value=s.globals.lim||5; }
+      if(s.globals){ gU.value=s.globals.U||400; gCos.value=s.globals.cos||0.80; gDiv.value=s.globals.div||1; gLim.value=String(s.globals.lim||3); if(!gLim.value)gLim.value='3'; gTemp.value=String(s.globals.temp||70); }
       if(Array.isArray(s.kols)&&s.kols.length){ kols=s.kols.map(k=>({tip:k.tip||'Yeralti',cable:k.cable||'',devre:k.devre||'',nokta:k.nokta||'',length:k.length||'',yuk:k.yuk||['','','','']})); }
     }
   }catch(e){ /* gömülü veri yoksa sorun değil */ }

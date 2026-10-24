@@ -10,9 +10,9 @@
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/css/fonts.css?v=20261011">
-  <link rel="stylesheet" href="/css/fa-subset.css?v=20261012">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=20261013b">
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=98a54d154d91">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,7 +35,8 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=20261013b" defer></script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
@@ -53,8 +54,8 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=20261012d">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/kompanzasyon-harmonik-orta.html#course","name":"Kompanzasyon ve Harmonik Filtreleme","description":"Kondansatör kademelendirmesi, reaktörlü sistemler, aktif filtre ve saha uygulama örnekleri.","educationalLevel":"Orta","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Kompanzasyon ve Harmonik Filtreleme (Orta)","item":"https://voltguard.com.tr/akademi/kompanzasyon-harmonik-orta.html"}]}]}</script>
+  <link rel="stylesheet" href="/css/style.css?v=d152330fb2b0">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/kompanzasyon-harmonik-orta.html#course","name":"Kompanzasyon ve Harmonik Filtreleme","description":"Kondansatör bankası boyutlandırma, kademe planı, rezonans hesabı, reaktörlü kompanzasyon ve aktif harmonik filtre seçimi.","educationalLevel":"Orta","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-24","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"},"author":{"@type":"Organization","name":"VoltGuard Mühendislik Ekibi","url":"https://voltguard.com.tr/ekibimiz.html"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"Kompanzasyon ve Harmonik Filtreleme (Orta)","item":"https://voltguard.com.tr/akademi/kompanzasyon-harmonik-orta.html"}]}]}</script>
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -68,6 +69,7 @@
           <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
         </span>
       </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
@@ -84,13 +86,16 @@
               <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
               <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
               <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
               <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
             </ul>
           </li>
           <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
-          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -98,6 +103,7 @@
         </div>
       </nav>
       <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
@@ -114,77 +120,78 @@
     <span class="article__cat">Elektrik Tesisatı &amp; Güç Sistemleri</span>
     <span class="akademi-level akademi-level--orta">Orta Seviye</span>
     <h1>Kompanzasyon ve Harmonik Filtreleme</h1>
-    <p class="article__summary">Bu orta seviye derste; kondansatör bankasının nasıl boyutlandırıldığını, kademelendirme mantığını, reaktörlü (detuned) kompanzasyonun neden gerekli olduğunu ve aktif harmonik filtre uygulamalarını öğreneceksiniz. Ön koşul: <a href="elektrik-tesisati-guc-sistemleri-giris.html">Elektrik Tesisatı ve Güç Sistemlerine Giriş</a> dersi ve <a href="/bilgi/reaktif-guc-kompanzasyonu.html">Reaktif Güç Kompanzasyonu</a> rehberi.</p>
+    <p class="article__byline" style="font-size:.85rem;color:#5b6472;margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son gözden geçirme: <time datetime="2026-10-24">24.10.2026</time></p>
+    <p class="article__summary">Bu ders; kondansatör bankasının boyutlandırılmasını, kademe planını, harmonikli şebekede rezonans riskini, reaktörlü (detuned) kompanzasyonu ve aktif harmonik filtrenin ne zaman gerektiğini anlatır.</p>
 
-    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> Reaktif güç dengesi ve kademelendirme mantığı, harmonik-kondansatör rezonans olgusu, reaktörlü (detuned) sistemlerin çalışma prensibi, aktif filtre teknolojisi ve saha uygulama kararları.</div>
+    <div class="akademi-path"><strong>Ön koşul ve ilgili kaynaklar:</strong> <a href="elektrik-tesisati-guc-sistemleri-giris.html">Elektrik Tesisatı ve Güç Sistemlerine Giriş</a> · <a href="/bilgi/reaktif-guc-kompanzasyonu.html">Reaktif Güç Kompanzasyonu</a> · <a href="/sor/cosfi-098-fatura-reaktif-ceza.html">cosφ 0,98 iken neden reaktif bedel geliyor?</a> · <a href="/sor/kompanzasyon-kontaktor-ariza-nedenleri.html">Kompanzasyon kontaktörü arızaları</a></div>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Kondansatör kademesi, en küçük yükün reaktif ihtiyacına yakın olmalı; genelde toplam kompanzasyon 6-12 kademeye ayrılır.</li><li>Klasik (reaktörsüz) kondansatörler yalnızca THDi < %10 tesislerde güvenlidir.</li><li>Reaktörlü (7% - 14%) detuned sistemler harmonik ile rezonans riskini ortadan kaldırır.</li><li>Aktif harmonik filtre (AHF) hem cosφ'yi hem THDi'yi düzeltebilir.</li><li>Kompanzasyon regülatörü doğru cosφ ölçümü için akım trafosu konumuna dikkat edilmelidir (giriş tarafında).</li></ul></div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>En küçük kademe, tesisin en düşük yükteki reaktif ihtiyacına göre seçilir; toplam güç çoğunlukla 6-12 kademeye bölünür.</li><li>Dağıtım şebekesine bağlı ve kurulu gücü 50 kVA ve üzerindeki tesislerde aylık sınırlar %20 endüktif ve %15 kapasitiftir. %20 endüktif sınırı cosφ ≈ 0,981'e karşılık gelir.</li><li>Kondansatörler şebeke endüktansıyla bir rezonans frekansı oluşturur. Bu frekans tesisteki bir harmoniğe yakınsa akım ve gerilim büyür.</li><li>Reaktörlü kademeler rezonans frekansını en düşük önemli harmoniğin altına çeker; reaktörsüz kademeler aynı barada kaldıkça risk sürer.</li></ul></div>
 
     <h2>Kondansatör Kademelendirme Mantığı</h2>
-    <p>Bir tesisin reaktif ihtiyacı gün içinde sabit değildir: makine sayısı, motor yükü, aydınlatma zonlama gibi faktörlerle değişir. Regülatör (RTR-12 gibi), sürekli olarak cosφ'yi ölçer ve gerekiyorsa bir kondansatör kademesini devreye alır veya çıkarır. Kademeler tipik olarak 1:2:4 veya 1:1:2:4 gibi <em>ikili artan</em> serilerde tasarlanır; böylece az sayıda kademeyle çok sayıda farklı toplam kVAr elde edilir. Bu kademe planı, sahada <a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">harmonik filtreli kompanzasyon</a> panolarının tasarımında da ilk adımdır.</p>
+    <p>Tesisin reaktif ihtiyacı gün içinde değişir. Reaktif güç rölesi cosφ'yi (veya reaktif gücü) sürekli ölçer ve kademeleri devreye alır ya da çıkarır. Kademeler 1:1:2:2 veya 1:2:4 gibi serilerle planlanır; böylece az sayıda kontaktörle çok sayıda toplam değer elde edilir. Bu kademe planı, <a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">harmonik filtreli kompanzasyon</a> panolarının tasarımında da ilk adımdır.</p>
     <ul class="article__list">
-      <li><strong>Örnek:</strong> 12 kademe, her biri 25 kVAr → toplam 300 kVAr; 25 → 300 arası tüm 25 kVAr adımları elde edilebilir.</li>
-      <li><strong>Örnek 2:</strong> 6 kademe (12,5-12,5-25-50-100-100) → toplam 300 kVAr, 12,5 kVAr adım.</li>
-      <li>Kademe sayısı çok az olursa cosφ dalgalanır; çok fazla olursa maliyet ve pano boyutu artar.</li>
+      <li><strong>Örnek 1:</strong> 12 kademe × 25 kVAr = 300 kVAr; 25 kVAr adımla 25-300 kVAr arası.</li>
+      <li><strong>Örnek 2:</strong> 6 kademe (12,5-12,5-25-50-100-100) = 300 kVAr; 12,5 kVAr adımla aynı aralık, daha az kontaktör.</li>
+      <li>Kademe sayısı az olursa cosφ salınır; fazla olursa maliyet ve pano boyutu artar. Rölede yeniden bağlama gecikmesi, kondansatörün deşarj süresinden kısa olmamalıdır (IEC 60831-1: 3 dakikada 75 V'un altına).</li>
     </ul>
 
-    <h2>Kompanzasyon Kademesi Nasıl Hesaplanır?</h2>
+    <h2>Kompanzasyon Gücü Nasıl Hesaplanır?</h2>
     <ol class="article__list">
-      <li>Aylık fatura üzerinden aktif ve reaktif enerji tüketimi çıkarılır.</li>
-      <li>Ortalama cosφ = kWh / √(kWh² + kVArh²) formülüyle bulunur.</li>
-      <li>Hedef cosφ belirlenir: kurulu gücü 50 kVA ve üzeri tesislerde %20 endüktif sınırı aylık ortalama cosφ ≈ 0,98'e karşılık geldiğinden hedef genellikle 0,98-0,99 seçilir (50 kVA'nın altındaki %33 sınırı ≈ 0,95).</li>
-      <li>Toplam kVAr = P × (tan(φ<sub>mevcut</sub>) − tan(φ<sub>hedef</sub>)) ile hesaplanır.</li>
-      <li>Kademe sayısı 6-12 arası seçilir; en küçük yük profiline göre en küçük kademe belirlenir.</li>
+      <li>Son 12 ayın faturasından aktif (kWh) ve endüktif/kapasitif reaktif (kVArh) enerji alınır. Mümkünse bir haftalık enerji analizörü kaydı da yapılır.</li>
+      <li>Ortalama cosφ = kWh / √(kWh² + kVArh²).</li>
+      <li>Sınır kontrolü: EPDK Tarife Uygulamalarına İlişkin Usul ve Esaslar (Kurul Kararı 5999-3, RG 31.12.2015/29579) Md. 13'e göre kurulu gücü 15 kW'a kadar olan kullanıcılara reaktif bedel uygulanmaz. 50 kVA'nın altında sınırlar %33 endüktif ve %20 kapasitif, 50 kVA ve üzerinde %20 endüktif ve %15 kapasitiftir. %20 sınırı cosφ ≈ 0,981'e denk geldiği için hedef genellikle 0,99 (tanφ ≈ 0,14) seçilir. <a href="https://www.epdk.gov.tr/Detay/Icerik/3-0-1-3/elektrikusul-ve-esaslar" target="_blank" rel="noopener">Güncel metni EPDK'dan kontrol edin</a>.</li>
+      <li>Gerekli güç: Q<sub>c</sub> = P × (tanφ<sub>mevcut</sub> − tanφ<sub>hedef</sub>). Burada P, kompanzasyonun karşılaması gereken tasarım (tepe) aktif gücüdür (kW); aylık kWh değeri değildir.</li>
+      <li>En küçük kademe, en düşük yükteki (gece, hafta sonu) reaktif ihtiyaca göre seçilir. Böylece düşük yükte kapasitif sınır aşılmaz.</li>
     </ol>
+    <p>Hesabı denemek için <a href="/hesaplama/kompanzasyon-hesaplama/">kompanzasyon hesaplama aracını</a> ve <a href="/araclar/yuk-kompanzasyon/">yük kompanzasyonu uygulamasını</a> kullanabilirsiniz.</p>
 
-    <h2>Harmonik ve Kondansatör: Rezonans Tehlikesi</h2>
-    <p>Kondansatör frekansla ters orantılı reaktans gösterir: X<sub>C</sub> = 1 / (2π × f × C). Şebekenin endüktif reaktansı X<sub>L</sub> ise frekansla doğru orantılıdır. Belirli bir frekansta X<sub>L</sub> = X<sub>C</sub> olur ve devre <strong>rezonansa</strong> girer; bu frekansta akım ve gerilim çok yüksek değerlere ulaşır. Sahada bu riskin önüne geçmek için harmonik filtreli kompanzasyon panolarında reaktörlü (detuned) kademeler kullanılır.</p>
-    <p>Rezonans frekansı: f<sub>r</sub> = (1 / 2π) × √(1 / (L × C)). Türkiye'deki bir tesiste 5. harmonik (250 Hz) yaygındır ve klasik kondansatörle rezonansa girmesi kondansatör patlamasına yol açabilir. Bu risk için iki çözüm vardır:</p>
+    <h2>Harmonik ve Kondansatör: Rezonans</h2>
+    <p>Kondansatörün reaktansı frekansla azalır (X<sub>C</sub> = 1 / (2πfC)), şebekenin endüktif reaktansı ise frekansla artar. Kondansatör bankası ile şebeke endüktansı (çoğunlukla trafonun kısa devre reaktansı) paralel bir rezonans devresi oluşturur. Yaklaşık rezonans frekansı:</p>
+    <p><strong>f<sub>r</sub> ≈ f<sub>1</sub> × √(S<sub>k</sub> / Q<sub>c</sub>)</strong>, burada S<sub>k</sub> baradaki kısa devre gücü, Q<sub>c</sub> devredeki kondansatör gücüdür.</p>
+    <p>Örnek: 1000 kVA, uk = %6 trafo için S<sub>k</sub> ≈ 16,7 MVA. 400 kVAr devredeyken f<sub>r</sub> ≈ 50 × √(16.700/400) ≈ 323 Hz olur. Bu değer 5. ve 7. harmoniğe (250 Hz ve 350 Hz) yakındır. Devreye giren kademe sayısı değiştikçe rezonans frekansı da kayar. VFD ve doğrultucu yükleri bu harmonikleri ürettiği için reaktörsüz bankada akım büyümesi, kondansatör ısınması ve sigorta atması görülür. İki çözüm vardır:</p>
     <ul class="article__list">
-      <li><strong>Reaktörlü (Detuned) kompanzasyon:</strong> Her kondansatörün önüne seri bir reaktör konur. Rezonans frekansı 5. harmoniğin altına (tipik olarak 189 Hz veya 134 Hz) kaydırılır. THDi %10-20 tesislerde güvenli çalışır.</li>
-      <li><strong>Aktif harmonik filtre (AHF):</strong> Rezonans problemini tamamen ortadan kaldırır; ayrıca THDi'yi %5 altına indirir.</li>
+      <li><strong>Reaktörlü (detuned) kompanzasyon:</strong> Her kademeye seri reaktör eklenir ve kademenin rezonans frekansı 5. harmoniğin altına (p = %7 için 189 Hz, %14 için 134 Hz) çekilir. Reaktör, kondansatör uçlarındaki gerilimi U / (1 − p) oranında yükseltir. Bu nedenle %7 reaktörlü kademede kondansatör anma gerilimi en az 440 V, çoğunlukla 460-480 V seçilir.</li>
+      <li><strong>Aktif harmonik filtre (AHF):</strong> Yük akımındaki harmonikleri ölçüp ters fazlı akım enjekte eder. Doğru boyutlandırıldığında bağlantı noktasındaki THDi'yi IEEE 519'daki hedef düzeylere indirebilir. Tesiste reaktörsüz kondansatör kademeleri kalıyorsa rezonans riski ortadan kalkmaz; bu kademelerin de reaktörlü hale getirilmesi gerekir.</li>
     </ul>
 
-    <h2>Reaktörlü Sistem Seçimi</h2>
+    <h2>Reaktör Oranı Seçimi</h2>
     <div class="table-scroll"><table>
-      <thead><tr><th>Reaktör oranı</th><th>Rezonans (Hz)</th><th>Uygun harmonik profili</th></tr></thead>
+      <thead><tr><th>Reaktör oranı (p)</th><th>Ayar frekansı (Hz)</th><th>Uygun harmonik profili</th></tr></thead>
       <tbody>
-        <tr><td>%5,67</td><td>210</td><td>Ağırlıklı 5. harmonik</td></tr>
-        <tr><td>%7</td><td>189</td><td>5. + 7. harmonik dengeli</td></tr>
-        <tr><td>%14</td><td>134</td><td>3. + 5. harmonik (nötr içeren)</td></tr>
+        <tr><td>%5,67</td><td>210</td><td>Ağırlıklı 5. harmonik, düşük THDv</td></tr>
+        <tr><td>%7</td><td>189</td><td>5. ve 7. harmonik; sanayide en yaygın seçim</td></tr>
+        <tr><td>%14</td><td>134</td><td>Belirgin 3. harmonik bileşeni olan tesisler</td></tr>
       </tbody>
     </table></div>
-    <p>3. harmonik ve katları (triplen harmonikler) Dyn bağlı dağıtım trafosunun üçgen (OG) sargısında dolaşır ve OG şebekesine geçmez; ancak AG tarafındaki 4 telli ana panolarda iptal olmaz, nötr iletkeninde toplanır ve kondansatör bataryası tarafından da görülür. 3. harmonik düşük olan tesislerde genellikle %7 reaktör yeterlidir; 3. harmonik belirgin ise (ofis, IT, LED ağırlıklı tek fazlı yükler) yaklaşık 2,7. harmoniğe (134 Hz) ayarlı %14 reaktör seçilir.</p>
+    <p>3. harmonik ve katları dengeli üç fazlı yükte sıfır bileşen gibi davranır ve nötr iletkeninde toplanır. Üçgen bağlı, nötr bağlantısı olmayan kondansatör bankasına sıfır bileşen akımı akmaz. Ancak tek fazlı yüklerin dengesizliği nedeniyle 3. harmoniğin pozitif ve negatif bileşen kısmı bankayı etkiler. Bu bileşen belirginse (ofis, bilgi işlem, LED ağırlıklı tek fazlı yükler) %14 reaktör seçilir; aksi halde %7 yeterlidir.</p>
 
     <h2>Aktif Harmonik Filtre (AHF)</h2>
-    <p>AHF, yükün çektiği harmonik akımı ölçer ve ters fazlı bir akım enjekte ederek şebekeden temiz akım çekilmesini sağlar. Modern IGBT tabanlı AHF'ler ayrıca reaktif güç kompanzasyonu da yapabilir. Uygun uygulamalar:</p>
+    <p>IGBT tabanlı AHF'ler harmonik filtrelemenin yanında reaktif güç ve yük dengesizliği kompanzasyonu da yapabilir. Tipik kullanım alanları:</p>
     <ul class="article__list">
-      <li>Data center, hastane, medikal görüntüleme</li>
+      <li>Veri merkezi, hastane, tıbbi görüntüleme</li>
       <li>Çok sayıda VFD içeren üretim tesisleri</li>
       <li>UPS besleme grupları</li>
-      <li>Rüzgar ve GES bağlantı noktaları</li>
-      <li>Ark ocağı ve endüksiyon fırın tesisleri</li>
+      <li>Harmonik sınırı bağlantı şartı olarak verilmiş tesisler</li>
     </ul>
-    <p>AHF maliyeti klasik kompanzasyona göre 3-5 kat daha yüksektir; ancak enerji kalitesi ve ekipman ömrü açısından yatırım geri dönüşü tipik olarak 3-5 yıldır.</p>
+    <p>AHF'nin maliyeti, aynı reaktif gücü sağlayan reaktörlü bankaya göre belirgin biçimde yüksektir. Bu nedenle AHF çoğunlukla reaktörlü bankayla birlikte, yalnızca harmonik akımı karşılayacak boyutta seçilir.</p>
 
-    <h2>Saha Uygulama Kararı: Karar Ağacı</h2>
+    <h2>Saha Uygulama Kararı</h2>
+    <p>Karar yalnızca THDi değerine bakılarak verilmez. Önce en az bir haftalık enerji kalitesi ölçümü yapılır. Ardından aşağıdaki adımlar izlenir:</p>
     <ul class="article__list">
-      <li>THDi &lt; %10 → Klasik kompanzasyon yeter.</li>
-      <li>THDi %10-20 → Reaktörlü (%7) sistem tercih edilir.</li>
-      <li>THDi &gt; %20 → Aktif harmonik filtre + kondansatör kompanzasyonu birlikte.</li>
-      <li>Hassas yük (hastane, data center) → Aktif filtre şart.</li>
-      <li>Karışık dinamik yük (VFD ağırlıklı) → SVG (statik reaktif jeneratör) veya AHF önerilir.</li>
+      <li><strong>Harmonik üreten yük oranı:</strong> Harmonik üreten yüklerin gücü (G<sub>h</sub>) trafo gücüne (S<sub>n</sub>) oranlanır. Yaygın ön seçim kuralı: G<sub>h</sub>/S<sub>n</sub> ≤ %15 ise standart banka, %15-25 ise reaktörlü banka, daha yükseğinde reaktörlü banka ile filtre birlikte değerlendirilir.</li>
+      <li><strong>Rezonans kontrolü:</strong> Her kademe kombinasyonu için f<sub>r</sub> hesaplanır. Ölçülen harmoniklerden birine yakın düşüyorsa reaktörsüz banka kullanılmaz.</li>
+      <li><strong>Gerilim distorsiyonu:</strong> THDv yüksekse (ör. AG'de %5 üzeri) reaktörlü banka tercih edilir.</li>
+      <li><strong>Hızlı değişen yükler:</strong> Kaynak makineleri, presler ve vinçlerde kontaktörlü kademe yetişmez. Tristör anahtarlamalı kademe, SVG veya AHF değerlendirilir.</li>
     </ul>
+    <p>Kademe ve rezonans davranışını <a href="/voltsim/kompanzasyon/">VoltSim Kompanzasyon modülünde</a>, harmonik spektrumunu <a href="/araclar/harmonik-thd/">harmonik/THD uygulamasında</a> inceleyebilirsiniz.</p>
 
     <h2>Sırada Ne Var?</h2>
-    <p>Bu orta seviye dersi tamamladıktan sonra:</p>
     <ul class="article__list">
       <li><strong>İleri seviye:</strong> <a href="trafo-kisa-devre-koordinasyon-ileri.html">Trafo İşletmesi ve Kısa Devre Koordinasyonu</a></li>
-      <li>Uygulamalı: <a href="/hesaplama/kompanzasyon-hesaplama/">Kompanzasyon Hesaplama Aracı</a> ile pratik yapabilirsiniz.</li>
-      <li>Detaylı analiz: <a href="/bilgi/harmonik-nedir-sorunlari.html">Harmonik Nedir?</a> ile teorik temeli pekiştirin.</li>
+      <li>Teorik temel: <a href="/bilgi/harmonik-nedir-sorunlari.html">Harmonik Nedir?</a></li>
     </ul>
 
-    <p class="kb-disclaimer">Bu içerik eğitim amaçlıdır. Uygulamalı proje ve sertifikalı eğitim için VoltGuard'ın yetkili eğitim programlarına başvurabilirsiniz.</p>
+    <p class="kb-disclaimer">Bu içerik eğitim amaçlıdır. Kompanzasyon tasarımı ölçüme dayalı yapılmalıdır. Reaktif sınırlarını güncel EPDK metninden kontrol edin.</p>
     <div class="kb-cta">
       <div class="kb-cta__text"><strong>Kompanzasyon ve harmonik projesi için mühendislik desteği alın</strong><span>Ölçüm, boyutlandırma ve pano imalatıyla rezonans riskini azaltan bir çözüm kuralım.</span></div>
       <div style="display:flex;flex-wrap:wrap;gap:.6rem">
@@ -219,7 +226,7 @@
               <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
             </span>
           </a>
-          <p class="vg-footer__desc">Elektrik, Otomasyon, Elektronik, Mekanik ve Enerji Sistemleri alanlarında kapsamlı mühendislik hizmetleri sunarak sektörün güvenilir çözüm ortağı olmayı hedefliyoruz.</p>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
           <ul class="vg-footer__contact">
             <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
@@ -229,7 +236,7 @@
             <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
             <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
           </address>
-          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
         </div>
         <nav class="vg-footer__nav" aria-label="Alt menü">
           <div class="vg-footer__col">
@@ -261,9 +268,8 @@
               <li><a href="/#referanslar">Referanslarımız</a></li>
               <li><a href="/#surec">Sürecimiz</a></li>
               <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
               <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Canlı Demo</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
               <li><a href="/#katalog">Katalog</a></li>
               <li><a href="/#sss">SSS</a></li>
               <li><a href="/#iletisim">İletişim</a></li>
@@ -279,6 +285,8 @@
               <li><a href="/sor.html">VoltGuard'a Sor</a></li>
               <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
               <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+              <li><a href="/volthaber/">VoltHaber</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
@@ -288,6 +296,7 @@
               <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
               <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
               <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
               <li><a href="/voltgame.html">VoltGame</a></li>
               <li><a href="/hesap/giris.html">Üye Girişi</a></li>
               <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
@@ -304,39 +313,9 @@
           <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
-      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
-        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          </circle>
-        </svg>
-        <span class="sig-node" aria-hidden="true"></span>
-        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
-          <span class="sig-badge__ring" aria-hidden="true"></span>
-          <span class="sig-badge__aurora" aria-hidden="true"></span>
-          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
-          <span class="sig-badge__body">
-            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
-            <span class="sig-badge__brand">
-              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
-              <span class="sig-badge__eng">Engineering</span>
-            </span>
-          </span>
-          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
-          <span class="sig-badge__shimmer" aria-hidden="true"></span>
-        </a>
-        <span class="sig-node" aria-hidden="true"></span>
-        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
-          </circle>
-        </svg>
-      </div>
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=20261013a" defer></script>
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
 </body>
 </html>
