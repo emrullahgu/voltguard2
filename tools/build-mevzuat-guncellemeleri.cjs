@@ -5,9 +5,8 @@
 // yalnızca kayıtta doğrulanmış bilgiden yazılmıştır (NOTES). Kabuk bilgi/mevzuat-kutuphanesi.html'den alınır.
 //   node tools/build-mevzuat-guncellemeleri.cjs          sayfayı yazar
 //   node tools/build-mevzuat-guncellemeleri.cjs --check  sayfa güncel değilse hata verir
-const fs = require('node:fs');
 const path = require('node:path');
-const root = path.resolve(__dirname, '..');
+const { esc, compose, metaHead, emit, root } = require('./lib/bilgi-page.cjs');
 const regs = require(path.join(root, 'js/voltsim/regulations.js'));
 const OUT = 'bilgi/mevzuat-guncellemeleri.html';
 const URL = 'https://voltguard.com.tr/bilgi/mevzuat-guncellemeleri.html';
@@ -34,7 +33,6 @@ const LINKS = {
   'et-proje': [['/bilgi/mevzuat-kutuphanesi.html', 'Mevzuat ve standartlar kütüphanesi']]
 };
 const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
-const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 function entries() {
   const out = [];
@@ -67,23 +65,7 @@ function render() {
       { '@type': 'ListItem', position: 3, name: 'Mevzuat Kütüphanesi', item: 'https://voltguard.com.tr/bilgi/mevzuat-kutuphanesi.html' },
       { '@type': 'ListItem', position: 4, name: 'Mevzuat Değişiklikleri', item: URL }] }] };
 
-  const head = `  <meta name="color-scheme" content="light only">
-  <meta name="description" content="${esc(desc)}">
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
-  <title>${esc(title)}</title>
-  <link rel="canonical" href="${URL}">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="${esc(title)}">
-  <meta property="og:description" content="${esc(desc)}">
-  <meta property="og:url" content="${URL}">
-  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
-  <meta property="og:site_name" content="VoltGuard">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:locale" content="tr_TR">
-  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=0">
-  <style>
+  const head = metaHead({ title, desc, url: URL, extra: `  <style>
     .mg-year{margin:2rem 0 .6rem;font-size:1.35rem}
     .mg-item{display:grid;grid-template-columns:7.5rem 1fr;gap:.4rem 1rem;padding:1rem 0;border-top:1px solid #e2e8f0}
     .mg-date{font-weight:800;color:#0a1628}
@@ -96,7 +78,7 @@ function render() {
     @media (max-width:560px){.mg-item{grid-template-columns:1fr}}
   </style>
   <script type="application/ld+json">${JSON.stringify(ld)}</script>
-</head>`;
+` });
 
   const items = years.map(y => `    <h2 class="mg-year" id="y${y}">${y}</h2>\n` + list.filter(e => e.iso.startsWith(y)).map(e => {
     const [yy, mm, dd] = e.iso.split('-');
@@ -133,24 +115,7 @@ ${items}
     </div>
   </main>
 `;
-  const tpl = fs.readFileSync(path.join(root, 'bilgi/mevzuat-kutuphanesi.html'), 'utf8').replace(/\r\n/g, '\n');
-  const h0 = tpl.indexOf('  <meta name="color-scheme"'), h1 = tpl.indexOf('</head>') + '</head>'.length;
-  const m0 = tpl.indexOf('  <nav class="breadcrumb"'), m1 = tpl.indexOf('</main>') + '</main>\n'.length;
-  if (h0 < 0 || m0 < 0) throw new Error('şablon işaretleri bulunamadı');
-  let page = tpl.slice(0, h0) + head + tpl.slice(h1, m0) + main + tpl.slice(m1);
-  // Kabuktaki ana kaynak sürümlerini koru (sync-versions günceller)
-  const ver = (tpl.match(/\/css\/style\.css\?v=([0-9a-f]+)/) || [])[1];
-  if (ver) page = page.replace('/css/style.css?v=0', '/css/style.css?v=' + ver);
-  return page;
+  return compose({ head, main });
 }
 
-const page = render();
-const file = path.join(root, OUT);
-if (process.argv.includes('--check')) {
-  const cur = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n') : '';
-  if (cur !== page) { console.error(OUT + ' güncel değil: node tools/build-mevzuat-guncellemeleri.cjs'); process.exit(1); }
-  console.log(OUT + ' güncel');
-} else {
-  fs.writeFileSync(file, page);
-  console.log(OUT + ' yazıldı (' + entries().length + ' değişiklik)');
-}
+emit(OUT, render(), entries().length + ' değişiklik');

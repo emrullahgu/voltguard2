@@ -383,6 +383,36 @@ html.vg-lock { overflow: hidden; }
 .vg-nav__foot .vg-cta { width: 100%; justify-content: center; min-height: 48px; max-width: none; text-align: center; }
 .vg-actions { display: none; }
 
+/* ---------- Site içi arama bağlantısı (/arama.html) ---------- */
+.vg-search {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  color: rgba(255, 255, 255, .92);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+}
+.vg-search::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4.2-4.2'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4.2-4.2'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.vg-search:hover, .vg-search[aria-current] { color: #fff; border-color: var(--vg-accent); background: rgba(245, 158, 11, .1); }
+/* Mobilde menü düğmesinin solunda; boş alanı yalnız arama düğmesi itsin */
+.vg-search--bar { order: 3; margin-left: auto; }
+.vg-search--bar ~ .vg-burger { margin-left: .15rem; }
+.vg-actions .vg-search { width: 40px; height: 40px; }
+@media (min-width: 80rem) {
+  .vg-search--bar { display: none; }
+}
+
 /* ---------- Hesap bağlantısı ([data-vg-account]) ---------- */
 .vg-account {
   display: inline-block;

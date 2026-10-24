@@ -50,6 +50,8 @@ test('css/js ?v= sürümleri dosya içeriğiyle eşleşiyor (python tools/sync-v
   assert.equal(r.status, 0, 'Eski sürüm referansları var; “python tools/sync-versions.py” çalıştırın.\n' + r.stdout.slice(0, 1500));
 });
 
-test('mevzuat değişiklikleri sayfası VoltSim mevzuat kaydıyla güncel (node tools/build-mevzuat-guncellemeleri.cjs)', () => {
-  execFileSync(process.execPath, [path.join(root, 'tools/build-mevzuat-guncellemeleri.cjs'), '--check'], { cwd: root, stdio: 'pipe' });
+test('üretilen sayfalar ve arama dizini kaynaklarıyla güncel (npm run build:content)', () => {
+  for (const tool of ['build-mevzuat-guncellemeleri', 'build-sozluk', 'build-arama', 'build-search-index']) {
+    execFileSync(process.execPath, [path.join(root, 'tools', tool + '.cjs'), '--check'], { cwd: root, stdio: 'pipe' });
+  }
 });
