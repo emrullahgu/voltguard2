@@ -66,7 +66,7 @@
   border: 1px solid rgba(255,255,255,.2);
   border-radius: var(--r-full);
   color: rgba(255,255,255,.78);
-  font-size: .68rem;
+  font-size: .6875rem;
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -592,7 +592,7 @@
     padding: 1rem 1rem 1rem .95rem;
   }
   .vgh-card__icon { grid-row: 1 / span 3; width: 44px; height: 44px; font-size: 1.05rem; }
-  .vgh-card__tag { margin-top: 0; font-size: .66rem; }
+  .vgh-card__tag { margin-top: 0; font-size: .6875rem; }
   .vgh-card__title { font-size: 1.04rem; }
   .vgh-card__text { font-size: .84rem; line-height: 1.5; }
   .vgh-card__more { grid-column: 2; margin-top: .2rem; font-size: .82rem; }

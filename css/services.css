@@ -329,7 +329,7 @@ html { color-scheme: light; scroll-behavior: smooth; }
 .svc-scope { display: grid; gap: 2rem; align-items: start; }
 .svc-checks { display: grid; gap: .65rem; }
 .svc-checks li { position: relative; padding: .85rem 1rem .85rem 3rem; border: 1px solid var(--s-line); border-radius: var(--s-radius-sm); background: #fff; font-size: .97rem; line-height: 1.55; }
-.svc-checks li::before { content: '\f00c'; position: absolute; left: 1rem; top: .95rem; display: grid; place-items: center; width: 1.3rem; height: 1.3rem; border-radius: 50%; background: var(--s-accent); color: var(--s-navy); font: 900 .62rem/1 'Font Awesome 6 Free'; }
+.svc-checks li::before { content: '\f00c'; position: absolute; left: 1rem; top: .95rem; display: grid; place-items: center; width: 1.3rem; height: 1.3rem; border-radius: 50%; background: var(--s-accent); color: var(--s-navy); font: 900 .6875rem/1 'Font Awesome 6 Free'; }
 .svc-checks strong { display: block; margin-bottom: .1rem; }
 .svc-figure { margin: 0; overflow: hidden; border: 1px solid var(--s-line); border-radius: var(--s-radius); background: #fff; box-shadow: var(--s-shadow); }
 .svc-figure img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: var(--svc-focus, 50% 50%); }

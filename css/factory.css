@@ -272,7 +272,7 @@ body {
 .fx-rotor path { stroke: var(--fx-blue-3); stroke-width: 2; stroke-linecap: round; fill: none; }
 .fx-rotor { transform-box: fill-box; transform-origin: center; }
 .fx-vfd { fill: #0c1d38; stroke: var(--fx-blue-2); stroke-width: 1.6; }
-.fx-vfd__t { font: 700 9px/1 var(--fx-h); fill: #bfdbfe; letter-spacing: .04em; }
+.fx-vfd__t { font: 700 11px/1 var(--fx-h); fill: #bfdbfe; letter-spacing: .04em; }
 .fx-trafo__ring { fill: none; stroke: rgba(251, 191, 36, .45); stroke-width: 1.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
 
 /* Akış (js/factory.js ekler): kesikli çizgi kırpılmış alanda transform ile kayar */

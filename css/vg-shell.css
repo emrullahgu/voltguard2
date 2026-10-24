@@ -286,7 +286,7 @@ html.vg-lock { overflow: hidden; }
   margin-left: auto;
   padding: 2px 5px;
   border-radius: 4px;
-  font: 700 .58rem/1 var(--vg-font-h);
+  font: 700 .6875rem/1 var(--vg-font-h);
   letter-spacing: .04em;
   color: var(--vg-navy);
   background: linear-gradient(135deg, #54c9e2, var(--vg-accent-light));
@@ -922,7 +922,7 @@ html.vg-lock { overflow: hidden; }
 
 .sig-badge__label {
   font-family: var(--vg-font-h);
-  font-size: .56rem;
+  font-size: .6875rem;
   font-weight: 500;
   letter-spacing: .14em;
   text-transform: uppercase;
@@ -985,7 +985,7 @@ html.vg-lock { overflow: hidden; }
   border: 1px solid rgba(245,158,11,.15);
   background: rgba(245,158,11,.05);
   font-family: var(--vg-font-h);
-  font-size: .54rem;
+  font-size: .6875rem;
   font-weight: 600;
   letter-spacing: .06em;
   color: rgba(245,158,11,.6);
@@ -994,7 +994,7 @@ html.vg-lock { overflow: hidden; }
 }
 
 .sig-badge__year i {
-  font-size: .48rem;
+  font-size: .6875rem;
 }
 
 .sig-badge:hover .sig-badge__year {
@@ -1059,7 +1059,7 @@ html.vg-lock { overflow: hidden; }
   .sig-badge__icon {
     width: 32px;
     height: 32px;
-    font-size: .68rem;
+    font-size: .6875rem;
   }
 
   .sig-badge__icon::after {
@@ -1072,7 +1072,7 @@ html.vg-lock { overflow: hidden; }
 
   .sig-badge__year {
     padding: .15rem .4rem;
-    font-size: .5rem;
+    font-size: .6875rem;
   }
 }
 
@@ -1096,11 +1096,11 @@ html.vg-lock { overflow: hidden; }
   .sig-badge__icon {
     width: 28px;
     height: 28px;
-    font-size: .6rem;
+    font-size: .6875rem;
   }
 
   .sig-badge__label {
-    font-size: .48rem;
+    font-size: .6875rem;
     letter-spacing: .1em;
   }
 
@@ -1109,7 +1109,7 @@ html.vg-lock { overflow: hidden; }
   }
 
   .sig-badge__eng {
-    font-size: .6rem;
+    font-size: .6875rem;
   }
 
   .sig-badge__year {
