@@ -79,7 +79,7 @@ Canlı site `main` dalını yayınlıyor (7f3be03); PR #10/#11 birleştirilmedi�
 | **Yazma:** ölçüm olayı (`collect`, gerçek beacon biçimi) | 200 `accepted:1`; `/data/metrics/days/2026-10-24.json` dosyasında sayıldı; dosyada IP/UA yok |
 | **Yazma:** üye kaydı | 201, kullanıcı oluştu |
 | **Yazma:** editör yetkisi (CLI) → taslak → yayın | 201 / 200; yazı sayfası 200, listede ve VoltHaber sitemapinde |
-| **Yazma:** bülten aboneliği | 200 JSON — **bulgu, aşağıda K1** |
+| **Yazma:** bülten aboneliği | 200 JSON — 33e37bd'de bulgu K1 (sonra 8c8cba2'de düzeltildi) |
 
 ### 4c. Netlify önizleme (https://deploy-preview-11--voltguard2.netlify.app) — statik, PHP yok
 
@@ -118,9 +118,11 @@ Netlify'da ölçüm betiği `*.netlify.app` alan adında hiç istek göndermez; 
 
 ## 7. Kalan sorunlar
 
+Güncelleme (24.10.2026): K1, güvenlik oturumunun be42b35 · 4d18c65 · 8c8cba2 commit'leriyle birlikte dala alındı; bu üç commit 33e37bd sonrası olduğundan 1–6. bölümlerdeki sonuçlar onları kapsamaz (temiz kopya test sonucu yalnız K1 satırında).
+
 | # | Sorun | Etki | Durum |
 |---|---|---|---|
-| K1 | Bülten aboneliği, e-posta aktarımı başarısız olsa da "Onay e-postası gönderildi" yanıtı veriyor (hazırlıkta e-posta aktarımı yok; hata yalnız `error_log`'a yazılıyor). Testler `VG_MAIL_OUTBOX=1` ile koştuğu için yakalanmıyor. | Ziyaretçi gelmeyecek e-postayı bekler | `api/lib/volthaber.php` VoltHaber oturumunda düzenleniyor; bulgu o oturuma iletildi. Düzeltilmedi. |
+| K1 | ~~Bülten aboneliği, e-posta aktarımı başarısız olsa da "Onay e-postası gönderildi" yanıtı veriyor~~ | — | **Düzeltildi — 8c8cba2** (güvenlik oturumu). Yanıt artık gönderim vaat etmiyor ("Talebiniz alındı…"); sunucuda `mail()` yoksa 503 `mail_unavailable`. Adres bazlı hata bilinçli olarak verilmez (abone olup olmadığını belli ederdi). Doğrulama (temiz kopya, 8c8cba2): `volthaber-api.test.cjs` 272 kontrol geçti, tüm testler 392/392; yeni test eski kodla başarısız. Açık kalan: `mail()` var ama MTA yoksa yanıt 200 (nötr) — gerçek aktarım denemesi yapılmıyor; Apache hazırlık testi bu commit için yeniden koşulmadı. |
 | K2 | `public/` görselleri sürümsüz adla 1 yıl `immutable` | Yeniden üretilen görsel eski ziyaretçide güncellenmez | Düzeltilmedi (görsel adlarını üreten dosyalar başka oturumların alanında) |
 | K3 | Ara commit'ler CI'da test edilmiyor (yalnız dal başı) | Bozuk ara commit fark edilmeyebilir | Bilgi |
 | K4 | Canlıda hiçbir yeni özellik yok; `.htaccess`'in cPanel/LiteSpeed üzerindeki davranışı yalnız Apache 2.4 konteynerinde denendi | Canlı sunucu LiteSpeed ise kural farkları olabilir | Canlı deploy sonrası aynı duman testi canlıya karşı (yalnız okuma) çalıştırılmalı |
