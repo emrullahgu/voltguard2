@@ -131,3 +131,4 @@ Disallow: /_vgdata/
 Disallow: /vg-data/
 
 Sitemap: https://voltguard.com.tr/sitemap.xml
+Sitemap: https://voltguard.com.tr/volthaber/sitemap.xml

@@ -9,7 +9,7 @@ const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..');
 const publish = path.join(root, '.netlify-publish');
 const publicDirectories = ['akademi', 'araclar', 'assets', 'bilgi', 'css', 'fonts',
-  'hesaplama', 'hizmetler', 'js', 'mm', 'public', 'sor', 'voltsim'];
+  'hesaplama', 'hizmetler', 'js', 'mm', 'public', 'sor', 'voltsim', 'volthaber'];
 const rootFiles = fs.readdirSync(root).filter(name => name.endsWith('.html'))
   .concat(['sw.js', 'manifest.json', 'robots.txt', 'sitemap.xml', 'llms.txt']);
 // Account, employee and community pages need the PHP API: netlify.toml sends them to https://voltguard.com.tr.
@@ -37,7 +37,7 @@ if (fs.existsSync(publish)) {
 }
 fs.mkdirSync(publish);
 for (const directory of publicDirectories) fs.cpSync(path.join(root, directory), path.join(publish, directory), {
-  recursive:true, filter:source => !fs.lstatSync(source).isSymbolicLink(),
+  recursive:true, filter:source => !fs.lstatSync(source).isSymbolicLink() && !source.endsWith('.php'),
 });
 for (const file of rootFiles.concat(employeePages)) {
   const target = path.join(publish, file);

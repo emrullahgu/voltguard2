@@ -57,6 +57,12 @@
 
 # Temiz hesap adresleri (/hesaplama/x/) force ile yeniden yazılır: aksi hâlde Netlify x.html varken /x/ adresini
 # /x adresine 301 ile yönlendirir ve kanonik adres (sondaki / ile) yönlendirmeye düşer.
+# VoltHaber PHP ile uretilir; statik vitrinde yalnizca index.html (yedek), yayin-ilkeleri ve abonelik sayfalari vardir.
+[[redirects]]
+  from = "/volthaber/*"
+  to = "https://voltguard.com.tr/volthaber/:splat"
+  status = 301
+
 [[redirects]]
   from = "/hesaplama-araclari/"
   to = "/teklif-araclari.html"

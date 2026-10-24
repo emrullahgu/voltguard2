@@ -138,6 +138,13 @@
   RewriteRule ^hesaplama/isletme-sorumlulugu-ucret-hesaplama\.html$ /hesaplama/isletme-sorumlulugu-ucret-hesaplama/ [R=301,L]
   RewriteRule ^hesaplama/isletme-sorumlulugu-ucret-hesaplama/?$ /hesaplama/isletme-sorumlulugu-ucret-hesaplama.html [L]
 
+  # VoltHaber: sunucuda PHP ile uretilen sayfalar (yayin-ilkeleri.html / abonelik.html statik sunulur)
+  RewriteRule ^volthaber$ /volthaber/ [R=301,L]
+  RewriteCond %{THE_REQUEST} \s/volthaber/index\.(html|php)[\s?]
+  RewriteRule ^volthaber/index\.(html|php)$ /volthaber/ [R=301,L]
+  RewriteRule ^volthaber/$ /volthaber/index.php [L,QSA]
+  RewriteRule ^volthaber/((kategori|etiket)/[a-z0-9-]+/?|[a-z0-9-]+/?|(sitemap|rss)\.xml)$ /volthaber/index.php [L,QSA]
+
   # --- Klasor ve uzantisiz adresler -------------------------------------------------------
   # Ayni adli klasor + .html sayfasi (sor/ + sor.html, akademi/ + akademi.html) olan adreslerde mod_dir,
   # /sor -> /sor/ yonlendirir ve klasorde index olmadigi icin 403/404 verirdi ("VoltGuard'a Sor acilmiyor").

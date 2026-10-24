@@ -19,6 +19,7 @@ $routes = [
     '/api/auth.php' => '/api/auth.php',
     '/api/community.php' => '/api/community.php',
     '/api/metrics.php' => '/api/metrics.php',
+    '/api/volthaber.php' => '/api/volthaber.php',
     '/api/staff.php' => '/api/staff.php',
     '/api/company.php' => '/api/company.php',
     '/api/company-asset.php' => '/api/company-asset.php',

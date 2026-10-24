@@ -58,7 +58,9 @@ function build() {
     const f = fileFor(u);
     if (!f) continue; // PDF vb.
     const html = fs.readFileSync(f, 'utf8');
-    if (/<meta\s+name="robots"\s+content="[^"]*noindex/i.test(html)) continue;
+    // Yanında index.php olan şablonların (VoltHaber) asıl sayfasını PHP üretir; şablondaki noindex yalnız statik yedeğe aittir
+    const phpRendered = fs.existsSync(path.join(path.dirname(f), 'index.php'));
+    if (!phpRendered && /<meta\s+name="robots"\s+content="[^"]*noindex/i.test(html)) continue;
     const e = extract(html);
     const it = { u, s: section(u), t: e.title };
     if (e.h1) it.h = e.h1;

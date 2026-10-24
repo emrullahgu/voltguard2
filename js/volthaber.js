@@ -43,7 +43,7 @@
       btn.disabled = true;
       msg.textContent = 'Gönderiliyor…';
       post('subscribe', { email: email, consent: true, website: form.elements.website.value })
-        .then(function (j) { msg.textContent = j.message || 'Onay e-postası gönderildi.'; msg.classList.add('is-ok'); form.reset(); })
+        .then(function (j) { msg.textContent = j.message || 'Onay e-postası gönderildi.'; msg.classList.add('is-ok'); form.reset(); if (window.vgTrack) window.vgTrack('newsletter_subscribe'); })
         .catch(function (err) { msg.textContent = err.message; msg.classList.add('is-error'); })
         .then(function () { btn.disabled = false; });
     });
