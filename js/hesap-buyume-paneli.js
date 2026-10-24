@@ -17,7 +17,7 @@
   var REF_NAMES = { arama: 'Arama motoru (organik)', sosyal: 'Sosyal medya', dogrudan: 'Doğrudan / yer imi', diger: 'Diğer siteler' };
   var DEV_NAMES = { mobil: 'Mobil', tablet: 'Tablet', masaustu: 'Masaüstü' };
   var SE_NAMES = { google: 'Google', bing: 'Bing', yandex: 'Yandex', duckduckgo: 'DuckDuckGo', yahoo: 'Yahoo', ecosia: 'Ecosia', baidu: 'Baidu', diger: 'Diğer' };
-  var days = 30, csrf = '', loading = false;
+  var days = 30, csrf = '', loading = false, myId = '';
 
   function nf(n) { return Number(n || 0).toLocaleString('tr-TR'); }
   function pct(part, whole, digits) {
@@ -52,7 +52,8 @@
     var W = 760, H = 240, L = 44, R = 10, T = 12, B = 30, iw = W - L - R, ih = H - T - B;
     var max = Math.max.apply(null, series.map(function (d) { return d.pv; })) || 1;
     var step = Math.pow(10, Math.floor(Math.log10(max)));
-    var top = Math.ceil(max / step) * step;
+    var top = Math.max(2, Math.ceil(max / step) * step);
+    if (top % 2) top += step === 1 ? 1 : step;           // orta çizgi tam sayı olsun
     var bw = iw / series.length;
     var y = function (v) { return T + ih - v / top * ih; };
     var out = ['<svg class="gp-chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-labelledby="gp-daily-desc"><desc id="gp-daily-desc">Günlük sayfa görüntüleme (sütun) ve ziyaret (çizgi); toplam ' + nf(total) + ' görüntüleme.</desc>'];
@@ -214,7 +215,7 @@
     if (loading) return;
     loading = true;
     $('gp-status').textContent = 'Yükleniyor…';
-    var me = csrf ? Promise.resolve() : api('/api/auth.php?action=me').then(function (j) { csrf = j.csrf || ''; });
+    var me = csrf ? Promise.resolve() : api('/api/auth.php?action=me').then(function (j) { csrf = j.csrf || ''; myId = j.user && j.user.id ? String(j.user.id) : ''; });
     me.then(function () { return api('/api/metrics.php?action=dashboard&days=' + days, { 'X-VG-CSRF': csrf }); }).then(function (data) {
       loading = false;
       if (data.__status === 403 && data.error === 'csrf') { csrf = ''; }
@@ -223,7 +224,7 @@
         var box = $('gp-forbidden');
         box.hidden = false;
         box.innerHTML = data.error === 'forbidden'
-          ? '<div class="vg-section vg-acct-state" role="alert"><h2>Bu panel için yetkiniz yok</h2><p>Büyüme paneli yalnızca site sahibinin sunucuda <code>php tools/metrics-admin.php grant &lt;üye-kimliği&gt;</code> komutuyla yetkilendirdiği hesaplara açıktır.</p></div>'
+          ? '<div class="vg-section vg-acct-state" role="alert"><h2>Bu panel için yetkiniz yok</h2><p>Büyüme paneli yalnızca site sahibinin sunucuda <code>php tools/metrics-admin.php grant &lt;üye-kimliği&gt;</code> komutuyla yetkilendirdiği hesaplara açıktır.' + (myId ? ' Üye kimliğiniz: <code>' + esc(myId) + '</code>' : '') + '</p></div>'
           : '<div class="vg-section vg-acct-state vg-acct-state--error" role="alert"><h2>Ölçüm verisi alınamadı</h2><p>' + esc(data.message || 'Ölçüm servisine ulaşılamıyor. Bu panel yalnızca PHP API çalışan sunucuda (voltguard.com.tr) kullanılabilir.') + '</p></div>';
         $('gp-status').textContent = '';
         return;

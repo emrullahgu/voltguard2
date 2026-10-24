@@ -18,6 +18,7 @@ $pathname = is_string($rawPath) ? rawurldecode($rawPath) : '';
 $routes = [
     '/api/auth.php' => '/api/auth.php',
     '/api/community.php' => '/api/community.php',
+    '/api/metrics.php' => '/api/metrics.php',
     '/api/staff.php' => '/api/staff.php',
     '/api/company.php' => '/api/company.php',
     '/api/company-asset.php' => '/api/company-asset.php',

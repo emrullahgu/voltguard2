@@ -15,6 +15,7 @@
   function nextStd(kva) { for (var i = 0; i < STD_KVA.length; i++) if (STD_KVA[i] >= kva - 1e-9) return STD_KVA[i]; return null; }
   function tanPhi(cos) { return Math.sqrt(1 - cos * cos) / cos; }
   function round(v, d) { var f = Math.pow(10, d || 0); return Math.round(v * f) / f; }
+  function tr(v, d) { return String(round(v, d)).replace('.', ','); }  // Türkçe ondalık virgül
 
   /* ------------------------------------------------------------------ (a) trafo kapasite artırımı */
   /**
@@ -55,14 +56,14 @@
     res.compDefers = !res.sufficient && cosFut < 0.98 && res.sAt098 <= limit + 1e-9;
     if (res.sufficient) {
       res.status = 'yeterli';
-      res.options.push({ id: 'mevcut', title: 'Mevcut trafo yeterli', detail: 'Plan sonunda yüklenme %' + round(res.loadFuture, 1) + ' ile hedef %' + tgt + ' sınırının altında kalıyor. Yük büyümesini yıllık ölçümle izleyin.' });
+      res.options.push({ id: 'mevcut', title: 'Mevcut trafo yeterli', detail: 'Plan sonunda yüklenme %' + tr(res.loadFuture, 1) + ' ile hedef %' + tgt + ' sınırının altında kalıyor. Yük büyümesini yıllık ölçümle izleyin.' });
       return res;
     }
     res.status = res.loadFuture > 100 ? 'asiri' : 'sinirda';
     var r1 = nextStd(sReq);
     res.replacement = r1;
     if (r1) {
-      res.options.push({ id: 'degisim', title: 'Trafo değişimi: ' + r1 + ' kVA', detail: 'Gereken en az ' + Math.ceil(sReq) + ' kVA için bir üst standart güç ' + r1 + ' kVA; yeni trafoda yüklenme yaklaşık %' + round(sFut / r1 * 100, 0) + '. OG hücre, AG ana şalter, kablo ve kısa devre dayanımı yeni güce göre kontrol edilmelidir.' });
+      res.options.push({ id: 'degisim', title: 'Trafo değişimi: ' + r1 + ' kVA', detail: 'Gereken en az ' + Math.ceil(sReq) + ' kVA için bir üst standart güç ' + r1 + ' kVA; yeni trafoda yüklenme yaklaşık %' + tr(sFut / r1 * 100, 0) + '. OG hücre, AG ana şalter, kablo ve kısa devre dayanımı yeni güce göre kontrol edilmelidir.' });
     } else {
       res.options.push({ id: 'cok-buyuk', title: 'Tek trafo yetersiz (> 3150 kVA)', detail: 'Gereken güç ' + Math.ceil(sReq) + ' kVA; birden fazla trafo veya OG dağıtım/yük bölme çalışması gerekir.' });
     }
@@ -73,11 +74,11 @@
       var ratio = Math.max(sn, r2) / Math.min(sn, r2);
       res.parallelOk = ratio <= 3;
       res.options.push({ id: 'ikinci', title: 'İkinci trafo: ' + r2 + ' kVA', detail: res.parallelOk
-        ? 'Mevcut trafoya ek ' + r2 + ' kVA. Paralel çalışma için bağlantı grubu ve dönüştürme oranı aynı, uk değerleri yakın (±%10) olmalı; güç oranı 1:3 içinde (' + round(ratio, 2) + '). Alternatif: yükleri iki ayrı AG barasına bölmek.'
-        : 'Güç oranı ' + round(ratio, 2) + ' (1:3 üzerinde) olduğundan paralel çalışma önerilmez; yükleri ayrı AG baralarına bölün veya daha büyük tek trafo seçin.' });
+        ? 'Mevcut trafoya ek ' + r2 + ' kVA. Paralel çalışma için bağlantı grubu ve dönüştürme oranı aynı, uk değerleri yakın (±%10) olmalı; güç oranı 1:3 içinde (' + tr(ratio, 2) + '). Alternatif: yükleri iki ayrı AG barasına bölmek.'
+        : 'Güç oranı ' + tr(ratio, 2) + ' (1:3 üzerinde) olduğundan paralel çalışma önerilmez; yükleri ayrı AG baralarına bölün veya daha büyük tek trafo seçin.' });
     }
     if (res.compDefers) {
-      res.options.push({ id: 'kompanzasyon', title: 'Önce kompanzasyon', detail: 'Ortalama cosφ ' + round(cosFut, 2) + ' yerine 0,98 olursa gereken güç ' + Math.ceil(res.sAt098) + ' kVA\'ya iner ve hedef yüklenmenin altında kalır; kapasite artırımı ertelenebilir.' });
+      res.options.push({ id: 'kompanzasyon', title: 'Önce kompanzasyon', detail: 'Ortalama cosφ ' + tr(cosFut, 2) + ' yerine 0,98 olursa gereken güç ' + Math.ceil(res.sAt098) + ' kVA\'ya iner ve hedef yüklenmenin altında kalır; kapasite artırımı ertelenebilir.' });
     }
     return res;
   }
@@ -251,7 +252,7 @@
       max += 3 * q.weight;
       if (opt[2]) critical.push(q.id);
       if (opt[1] > 0) {
-        actions.push({ id: q.id, question: q.q, answer: opt[0], score: opt[1], weight: q.weight, rank: opt[1] * q.weight + (opt[2] ? 10 : 0),
+        actions.push({ id: q.id, question: q.q, answer: opt[0], score: opt[1], weight: q.weight, rank: Math.min(3, opt[1] + (opt[2] ? 1 : 0)) * 100 + opt[1] * q.weight + (opt[2] ? 10 : 0),
           priority: PRIORITY[Math.min(3, opt[1] + (opt[2] ? 1 : 0))], action: q.action, links: q.links, service: q.service, basis: q.basis });
       }
     });

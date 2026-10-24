@@ -15,7 +15,7 @@ const origin = `http://127.0.0.1:${port}`;
 const workspaceHash = crypto.createHash('sha256').update(fs.realpathSync(root).toLowerCase()).digest('hex').slice(0, 20);
 const dataDirectory = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), '.local', 'share'), 'VoltGuard', 'preview-data', workspaceHash);
 const internalToken = crypto.randomBytes(32).toString('hex');
-const phpRoutes = new Set(['/api/auth.php', '/api/community.php', '/api/staff.php', '/api/company.php',
+const phpRoutes = new Set(['/api/auth.php', '/api/community.php', '/api/metrics.php', '/api/staff.php', '/api/company.php',
   '/api/company-asset.php', '/api/company-connectors.php', '/calisan/', '/calisan/index.php',
   '/calisan/uygulama', '/calisan/uygulama/', '/contact.php']);
 // Mirror the path-specific policies of .htaccess (VG_CSP_SITE / PRIVATE / APP / API).
