@@ -269,7 +269,7 @@
     const v = res.values, col = { line: '#9fb2cb', ok: '#10b981', bad: '#ef4444', text: '#e6eef8', dim: '#7f94b0', cu: '#c77b4a', sky: '#38bdf8' };
     const fitT = VS.fitText, R = W - 70;
     // kesit (x–y)
-    const top = 56, secH = Math.min(260, H * 0.42), x0 = -s.L / 2 - v.r, x1 = s.L / 2 + v.r;
+    const top = 84, secH = Math.min(260, H * 0.4), x0 = -s.L / 2 - v.r, x1 = s.L / 2 + v.r;
     const ymax = Math.max(s.H + (s.rods ? s.rodH : 0) + 2, ...v.profile.map(p => p[1] - v.r)) * 1.2;
     const sc = Math.min((R - 40) / (x1 - x0), secH / ymax);
     const X = x => 24 + (x - x0) * sc, Yy = y => top + secH - y * sc;
@@ -280,7 +280,8 @@
     g.strokeStyle = col.sky; g.lineWidth = 2; g.beginPath(); v.profile.forEach((p, i) => { const y = Yy(Math.max(0, p[1] - v.r)); if (i) g.lineTo(X(p[0]), y); else g.moveTo(X(p[0]), y); }); g.stroke();
     // bir küre çizimi (orta konumda)
     const mid = v.profile[Math.floor(v.profile.length / 2)];
-    g.strokeStyle = 'rgba(56,189,248,.45)'; g.setLineDash([5, 4]); g.beginPath(); g.arc(X(mid[0]), Yy(mid[1]), v.r * sc, 0, Math.PI * 2); g.stroke(); g.setLineDash([]);
+    g.save(); g.beginPath(); g.rect(0, top, W, secH + 2); g.clip();
+    g.strokeStyle = 'rgba(56,189,248,.45)'; g.setLineDash([5, 4]); g.beginPath(); g.arc(X(mid[0]), Yy(mid[1]), v.r * sc, 0, Math.PI * 2); g.stroke(); g.setLineDash([]); g.restore();
     g.fillStyle = col.dim; g.font = '12px Inter, sans-serif'; g.textBaseline = 'alphabetic';
     g.fillText(fitT(g, 'Boyuna kesit · küre r = ' + v.r + ' m (LPL ' + v.lpl + ') · mavi: kürenin en alt noktası', R - 24), 24, top - 10);
     // plan: maruziyet haritası
@@ -289,13 +290,14 @@
     const e = v.exp;
     if (v.method === 'mesh') { g.fillStyle = s.mesh && s.meshM <= v.P.mesh && s.perimeter ? 'rgba(16,185,129,.55)' : 'rgba(239,68,68,.55)'; g.fillRect(24, py, pw, phh); }
     else for (let i = 0; i < e.nx; i++) for (let j = 0; j < e.nz; j++) { g.fillStyle = e.exposed[i * e.nz + j] ? 'rgba(239,68,68,.8)' : 'rgba(16,185,129,.5)'; g.fillRect(24 + i * pw / e.nx, py + j * phh / e.nz, pw / e.nx + 0.6, phh / e.nz + 0.6); }
+    if (s.mesh) { g.strokeStyle = '#c77b4a'; g.lineWidth = 1.5; const n1 = Math.max(1, Math.ceil(s.W / s.meshM)), n2 = Math.max(1, Math.ceil(s.L / s.meshM)); g.beginPath(); for (let i = 0; i <= n1; i++) { const y = py + i * phh / n1; g.moveTo(24, y); g.lineTo(24 + pw, y); } for (let i = 0; i <= n2; i++) { const x = 24 + i * pw / n2; g.moveTo(x, py); g.lineTo(x, py + phh); } g.stroke(); }
     g.fillStyle = '#e5e7eb'; v.rods.forEach(p => { g.beginPath(); g.arc(24 + (p[0] + s.L / 2) / s.L * pw, py + (p[1] + s.W / 2) / s.W * phh, 2.5, 0, Math.PI * 2); g.fill(); });
     g.fillStyle = col.cu; downPos(s).forEach(p => g.fillRect(24 + (p[0] + s.L / 2) / s.L * pw - 3, py + (p[1] + s.W / 2) / s.W * phh - 3, 6, 6));
     g.fillStyle = col.dim; g.font = '11px Inter, sans-serif';
     g.fillText(fitT(g, 'Beyaz nokta: çubuk · turuncu kare: iniş iletkeni (' + s.nDown + ', gerekli ' + v.nReq + ') · s = ' + fmt(v.s, 2) + ' m', R - 24), 24, py + phh + 18);
     g.fillText(fitT(g, 'Değerler VoltSim hesap motorundandır; risk analizi (IEC 62305-2) modellenmez.', R - 24), 24, H - 14);
   }
-  function view2dHeight(W) { return 640; }
+  function view2dHeight(W) { return 670; }
 
   /* ---------------------------------------------------------------- görevler */
   const tasks = [

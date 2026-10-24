@@ -119,7 +119,15 @@ const MODULES = [
     lead: 'Binanın çatısına çubuk, kenar ve ağ iletkenleri yerleştirin; seçtiğiniz koruma seviyesinin küresi çatı üzerinde yuvarlansın. Kürenin değdiği korunmasız bölgeler kırmızı görünür; iniş iletkenleri, ayırma mesafesi ve topraklama IEC 62305-3 tablolarıyla kontrol edilir. Risk analizi (IEC 62305-2) bu simülasyonda yapılmaz.',
     tags: ['LPL I–IV', 'Yuvarlanan küre r', 'Koruma açısı (yakl.)', 'Ağ göz boyutu', 'İniş iletkenleri', 's = ki·(kc/km)·l'],
     service: ['/hizmetler/topraklama-olcumu.html', 'Topraklama ölçümü ve paratoner'],
-    related: [['/bilgi/yildirimdan-korunma.html', 'Yıldırımdan korunma rehberi'], ['/hesaplama/topraklama-hesaplama/', 'Topraklama hesabı'], ['/voltsim/topraklama/', 'VoltSim topraklama'], ['/hizmetler/elektrik-periyodik-kontrol.html', 'Elektrik periyodik kontrol']] }
+    related: [['/bilgi/yildirimdan-korunma.html', 'Yıldırımdan korunma rehberi'], ['/hesaplama/topraklama-hesaplama/', 'Topraklama hesabı'], ['/voltsim/topraklama/', 'VoltSim topraklama'], ['/hizmetler/elektrik-periyodik-kontrol.html', 'Elektrik periyodik kontrol']] },
+  { id: 'pompa', slug: 'pompa-vfd', name: 'Pompa & VFD', short: 'Pompa eğrisi, afinite yasaları ve enerji tasarrufu',
+    title: '3D Endüstriyel Pompa ve VFD Simülasyonu: Afinite, Tasarruf | VoltSim',
+    description: 'Pompa H–Q eğrisi ile sistem eğrisinin kesişimini, afinite yasalarını ve vana ile kısma karşısında frekans konvertörünün güç farkını görün; yıllık enerji tasarrufu ve geri ödemeyi kendi tarifenizle hesaplayın.',
+    h1: '3D Endüstriyel Pompa ve VFD Simülasyonu', eyebrow: 'H–Q eğrisi · Afinite · Enerji tasarrufu',
+    lead: 'Pompayı vana ile kısın ya da frekans konvertörüyle yavaşlatın: çalışma noktası, verim ve elektrik gücü anında hesaplanır. Statik basma yüksekliğinin VFD tasarrufunu nasıl sınırladığını ve yıllık çalışma profilinizle geri ödeme süresini görün.',
+    tags: ['H–Q · sistem eğrisi', 'Çalışma noktası', 'Q ∝ n, H ∝ n², P ∝ n³', 'Kısma vs VFD', 'Yıllık kWh', 'Geri ödeme'],
+    service: ['/hizmetler/plc-scada-otomasyon.html', 'PLC, SCADA ve sürücü otomasyonu'],
+    related: [['/bilgi/vfd-frekans-invertoru-nedir.html', 'VFD nedir?'], ['/akademi/enerji-verimliligi-etudu-vfd-ileri.html', 'Enerji verimliliği ve VFD eğitimi'], ['/hesaplama/motor-akimi-hesaplama/', 'Motor akımı hesabı'], ['/voltsim/motor-otomasyon/', 'VoltSim motor ve PLC']] }
 ];
 
 const esc = s => String(s === undefined || s === null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -318,7 +326,7 @@ function landing() {
           </a>
         </li>`).join('');
   return `${head({ title: 'VoltSim — 3D Mühendislik Simülasyon Merkezi | VoltGuard', ogTitle: 'VoltSim — Enerjiyi Gör. Sistemi Kur. Sonucu Ölç.',
-    description: 'Elektrik panosu, GES, trafo, şarj istasyonu, RES, kompanzasyon, topraklama, motor otomasyon, UPS/jeneratör, yangın algılama, selektivite, enerji kalitesi ve yıldırımdan korunma için gerçek hesaplı 3D simülasyonlar.', url, ld, image: '/public/voltsim/pano.webp' })}
+    description: 'Elektrik panosu, GES, trafo, şarj istasyonu, RES, kompanzasyon, topraklama, motor otomasyon, UPS/jeneratör, yangın algılama, selektivite, enerji kalitesi, yıldırımdan korunma ve pompa/VFD için gerçek hesaplı 3D simülasyonlar.', url, ld, image: '/public/voltsim/pano.webp' })}
 <body class="vs-page vsl-page doc-shell">
   <!--vg:header--><!--/vg:header-->
   <main class="vs-main" id="main" tabindex="-1">
