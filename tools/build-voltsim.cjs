@@ -127,7 +127,31 @@ const MODULES = [
     lead: 'Pompayı vana ile kısın ya da frekans konvertörüyle yavaşlatın: çalışma noktası, verim ve elektrik gücü anında hesaplanır. Statik basma yüksekliğinin VFD tasarrufunu nasıl sınırladığını ve yıllık çalışma profilinizle geri ödeme süresini görün.',
     tags: ['H–Q · sistem eğrisi', 'Çalışma noktası', 'Q ∝ n, H ∝ n², P ∝ n³', 'Kısma vs VFD', 'Yıllık kWh', 'Geri ödeme'],
     service: ['/hizmetler/plc-scada-otomasyon.html', 'PLC, SCADA ve sürücü otomasyonu'],
-    related: [['/bilgi/vfd-frekans-invertoru-nedir.html', 'VFD nedir?'], ['/akademi/enerji-verimliligi-etudu-vfd-ileri.html', 'Enerji verimliliği ve VFD eğitimi'], ['/hesaplama/motor-akimi-hesaplama/', 'Motor akımı hesabı'], ['/voltsim/motor-otomasyon/', 'VoltSim motor ve PLC']] }
+    related: [['/bilgi/vfd-frekans-invertoru-nedir.html', 'VFD nedir?'], ['/akademi/enerji-verimliligi-etudu-vfd-ileri.html', 'Enerji verimliliği ve VFD eğitimi'], ['/hesaplama/motor-akimi-hesaplama/', 'Motor akımı hesabı'], ['/voltsim/motor-otomasyon/', 'VoltSim motor ve PLC']] },
+  { id: 'depolama', slug: 'depolama-hibrit', name: 'Depolama & Hibrit', short: 'LiFePO4 batarya, GES/RES/dizel hibrit santral ve dağıtım stratejileri',
+    title: '3D Batarya Enerji Depolama (BESS) ve Hibrit Santral Simülasyonu | VoltSim',
+    description: 'Fabrikanız için LiFePO4 batarya, GES, RES ve dizel jeneratörlü hibrit santrali saat saat simüle edin: öz tüketim, tepe tıraşlama, yedek rezerv, SOC, çevrim ve maliyet.',
+    h1: '3D Batarya Enerji Depolama ve Hibrit Santral Simülasyonu', eyebrow: 'BESS · GES · RES · Dizel · Şebeke',
+    lead: 'Fabrikanın 24 saatlik yük profiline GES, rüzgâr, dizel jeneratör ve LiFePO4 batarya ekleyin. Dağıtım stratejisini seçin; batarya, şebeke ve jeneratör arasındaki güç akışı her saat için hesaplanır ve 3D sahnede canlı akar.',
+    tags: ['SOC · DoD · C-oranı', 'Çevrim verimi √η', 'Öz tüketim / tepe tıraşlama', 'Yedek rezerv · ada modu', 'Üç zamanlı tarife', 'Öz yeterlilik · çevrim'],
+    service: ['/hizmetler/fabrika-cati-ges.html', 'Fabrika çatı GES ve depolama'],
+    related: [['/araclar/mesken-ges-depolama/', 'GES + depolama aracı'], ['/araclar/batarya-enerji-sure/', 'Batarya enerji süresi'], ['/bilgi/lisanssiz-uretim-ges.html', 'Lisanssız üretim (GES)'], ['/hesaplama/ges-uretim-hesaplama/', 'GES üretim hesabı']] },
+  { id: 'ariza', slug: 'ariza-tespit', name: 'Arıza Tespit Lab', short: 'Sanal ölçü aletleriyle AG tesiste arıza bulma ve güvenli ölçüm',
+    title: '3D Elektrik Arıza Tespit Laboratuvarı: Ölçümle Arıza Bulma | VoltSim',
+    description: 'Rastgele ama tekrarlanabilir arıza senaryolarında multimetre, pens ampermetre, 500 V yalıtım ölçer, döngü empedansı ve termal kamerayla ölçüm yapın; teşhisinizi puanlayın.',
+    h1: '3D Elektrik Arıza Tespit Laboratuvarı', eyebrow: 'Multimetre · Yalıtım · Döngü · Termal kamera',
+    lead: 'Küçük bir AG tesiste gizli bir arıza var: açık nötr, gevşek bağlantı, faz kaybı, yalıtım hatası, TT toprak hatası… 3D sahnede noktalara prob bağlayın; her ölçüm devre modelinden hesaplanır. Önce ayırın, kilitleyin, gerilim yokluğunu doğrulayın.',
+    tags: ['Fazör devre çözücü', 'Açık nötr · hayalet gerilim', 'Yalıtım 500 V DC', 'Döngü empedansı', 'Faz sırası', 'EN 50110 beş kural'],
+    service: ['/hizmetler/elektrik-periyodik-kontrol.html', 'Elektrik periyodik kontrol'],
+    related: [['/bilgi/enerjisiz-calisma-is-guvenligi.html', 'Enerjisiz çalışma ve iş güvenliği'], ['/bilgi/kacak-akim-rolesi-ariza-nedenleri.html', 'Kaçak akım rölesi neden atar?'], ['/bilgi/elektrik-tesisati-periyodik-kontrol.html', 'Tesisat periyodik kontrolü'], ['/hesaplama/topraklama-hesaplama/', 'Topraklama hesabı']] },
+  { id: 'konveyor', slug: 'konveyor-scada', name: 'Konveyör & SCADA', short: 'Konveyör hattı, merdiven programı, alarm ve trend ekranı',
+    title: '3D Konveyör Hattı ve SCADA Simülasyonu: PLC Merdiven, Alarm, Trend | VoltSim',
+    description: 'Üç bantlı konveyör hattını PLC ile sırayla kaldırın ve durdurun: fotosel sıkışma algılama, acil durdurma zinciri, kilitlemeler, canlı merdiven diyagramı, alarm listesi ve motor akımı trendi.',
+    h1: '3D Konveyör Hattı ve SCADA Simülasyonu', eyebrow: 'PLC · Fotosel · Acil durdurma · HMI',
+    lead: 'START’a basın: PLC programı çıkış bandını önce, besleme bandını en son kaldırır. Koliler fotosellerden geçer, sayaç artar; sıkışma, termik ve acil durdurma alarmları SCADA ekranına düşer. Çalışan programı canlı vurgulanan merdiven diyagramında izleyin.',
+    tags: ['Sıralı kalkış / duruş', 'TON · TOF · CTU', 'Kilitlemeler', 'Sıkışma algılama', 'Acil durdurma zinciri', 'Alarm onayı · trend'],
+    service: ['/hizmetler/plc-scada-otomasyon.html', 'PLC & SCADA otomasyon'],
+    related: [['/bilgi/plc-nedir-nasil-calisir.html', 'PLC nedir, nasıl çalışır?'], ['/bilgi/scada-aritma-tesisi-otomasyonu.html', 'SCADA ile tesis otomasyonu'], ['/bilgi/vfd-frekans-invertoru-nedir.html', 'Frekans invertörü nedir?'], ['/hesaplama/motor-koruma-kontaktor-secimi/', 'Motor koruma ve kontaktör']] }
 ];
 
 const esc = s => String(s === undefined || s === null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

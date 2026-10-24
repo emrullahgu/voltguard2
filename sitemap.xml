@@ -425,6 +425,24 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://voltguard.com.tr/voltsim/depolama-hibrit/</loc>
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/voltsim/ariza-tespit/</loc>
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/voltsim/konveyor-scada/</loc>
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://voltguard.com.tr/voltsim/yangin-algilama/</loc>
     <lastmod>2026-10-23</lastmod>
     <changefreq>monthly</changefreq>

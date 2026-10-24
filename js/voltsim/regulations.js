@@ -1505,6 +1505,38 @@
   "needsCheck": true
  }
 ];
+  /* Ek modüller (depolama-hibrit, ariza-tespit, konveyor-scada): mevcut kayıtlara modül atfı ve yeni standart kayıtları.
+   * Yeni kayıtlar standarttır (bağlayıcı değil); sürüm/bağlantı bu oturumda resmî katalogdan doğrulanmadığı için needsCheck: true. */
+  [["lisanssiz", ["depolama"]], ["uretim-depolama-kabul", ["depolama"]], ["k6446", ["depolama"]], ["sebeke", ["depolama"]], ["et-proje", ["depolama"]],
+   ["eity", ["ariza"]], ["topraklama", ["ariza"]], ["is-ekipmanlari", ["ariza", "konveyor", "depolama"]], ["hd-60364-4-41", ["ariza"]], ["iec-61008-61009", ["ariza"]], ["iec-60947-2", ["ariza"]],
+   ["iec-61131-3", ["konveyor"]], ["iso-13849-iec-62061", ["konveyor"]], ["iec-60947-4-1", ["konveyor", "ariza"]], ["iec-60034-1", ["konveyor"]]
+  ].forEach(([id, mods]) => { const r = list.find(x => x.id === id); if (r) mods.forEach(m => { if (r.applies.indexOf(m) < 0) r.applies.push(m); }); });
+  list.push(
+    { id: "iec-62619", name: "IEC 62619 Endüstriyel uygulamalar için ikincil lityum hücre ve bataryalar – Güvenlik gereklilikleri", kind: "Standart", issuer: "IEC / TSE", binding: false,
+      version: "IEC 62619 (güncel baskı katalogdan doğrulanmalı)", applies: ["depolama"], needsCheck: true,
+      note: "Sabit enerji depolama dahil endüstriyel kullanımdaki lityum hücre ve bataryaların güvenlik testlerini (aşırı şarj, kısa devre, ısıl kaçak yayılımı vb.) tanımlar." },
+    { id: "iec-62933-5-2", name: "IEC 62933-5-2 Elektrik enerjisi depolama (EES) sistemleri – Şebekeye bağlı elektrokimyasal sistemler için güvenlik gereklilikleri", kind: "Standart", issuer: "IEC", binding: false,
+      version: "IEC 62933-5-2 (güncel baskı katalogdan doğrulanmalı)", applies: ["depolama"], needsCheck: true,
+      note: "Batarya enerji depolama sistemlerinde (BESS) sistem düzeyinde risk değerlendirmesi, yangın/gaz, elektriksel ve kumanda güvenliği gerekliliklerini ele alır." },
+    { id: "hd-60364-6", name: "HD 60364-6 / IEC 60364-6 Alçak gerilim tesisleri – Doğrulama (muayene ve deneyler)", kind: "Standart", issuer: "CENELEC / IEC / TSE", binding: false,
+      version: "HD 60364-6 (güncel baskı katalogdan doğrulanmalı)", applies: ["ariza"], needsCheck: true,
+      note: "İlk ve periyodik doğrulamada süreklilik, yalıtım direnci (ör. 500 V'a kadar devrelerde 500 V DC deney gerilimi, en az 1 MΩ), otomatik kesme, döngü empedansı, RCD ve faz sırası deneylerini tanımlar." },
+    { id: "iec-61557", name: "IEC 61557 serisi AG dağıtım sistemlerinde elektrik güvenliği – Koruma önlemlerinin deney, ölçme ve izleme donanımı", kind: "Standart", issuer: "IEC / TSE", binding: false,
+      version: "IEC 61557 bölümleri (-2 yalıtım, -3 döngü empedansı, -4 süreklilik, -6 RCD, -7 faz sırası)", applies: ["ariza"], needsCheck: true,
+      note: "Yalıtım ölçer, döngü empedansı ölçer, süreklilik, RCD ve faz sırası test cihazlarının performans gerekliliklerini tanımlar." },
+    { id: "en-50110-1", name: "EN 50110-1 Elektrik tesislerinin işletilmesi – Genel gereklilikler", kind: "Standart", issuer: "CENELEC / TSE", binding: false,
+      version: "EN 50110-1 (güncel baskı katalogdan doğrulanmalı)", applies: ["ariza"], needsCheck: true,
+      note: "Enerjisiz çalışmanın beş güvenlik kuralını tanımlar: ayır, tekrar enerjilenmeye karşı kilitle, gerilim yokluğunu doğrula, topraklayıp kısa devre et, yakındaki gerilimli bölümlere karşı koru." },
+    { id: "iec-60204-1", name: "IEC 60204-1 Makinelerde güvenlik – Makinelerin elektrik donanımı – Genel kurallar", kind: "Standart", issuer: "IEC / TSE", binding: false,
+      version: "IEC 60204-1 (güncel baskı katalogdan doğrulanmalı)", applies: ["konveyor"], needsCheck: true,
+      note: "Makine elektrik donanımında durdurma kategorileri (0, 1, 2), acil durdurma, yeniden yol almanın önlenmesi ve kumanda devrelerini tanımlar." },
+    { id: "iso-13850", name: "ISO 13850 Makinelerde güvenlik – Acil durdurma fonksiyonu – Tasarım ilkeleri", kind: "Standart", issuer: "ISO / TSE", binding: false,
+      version: "ISO 13850 (güncel baskı katalogdan doğrulanmalı)", applies: ["konveyor"], needsCheck: true,
+      note: "Acil durdurma düzeninin kilitlenmesi, sıfırlanmasının makineyi kendiliğinden başlatmaması ve durdurma kategorisi seçimi ilkelerini verir." },
+    { id: "iec-62682", name: "IEC 62682 Proses endüstrisi için alarm sistemlerinin yönetimi", kind: "Standart", issuer: "IEC", binding: false,
+      version: "IEC 62682 (ANSI/ISA-18.2 temelli; güncel baskı doğrulanmalı)", applies: ["konveyor"], needsCheck: true,
+      note: "Alarm yaşam döngüsünü, alarm durumlarını (etkin/onaylanmamış, onaylanmış, normale dönmüş) ve operatör onayını tanımlar." }
+  );
   list.checked = "2026-10-23";
   list.checkedText = "23 Ekim 2026";
   return list;
