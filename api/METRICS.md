@@ -27,7 +27,10 @@ metrics/
 ```
 
 Günlük tuz `HMAC(secret.key, "vg-metrics-daily-salt|tarih")` ile bellekte türetilir ve diske yazılmaz. Özetlenmiş anahtarlar
-en geç ertesi gün silindiği için geriye dönük eşleme verisi kalmaz.
+en geç ertesi gün silindiği için geriye dönük eşleme verisi kalmaz. Sınır: tuz `secret.key` dosyasından yeniden
+türetilebildiği için o günün özet dosyasına ve `secret.key` dosyasına birlikte erişen biri IPv4 adres uzayını deneyerek o günün
+adreslerini bulabilir; bu nedenle veri dizininin erişimi sınırlı tutulmalıdır. Özetler anonim değil, kısa ömürlü takma adlardır.
+Anahtar IPv4 adresi ya da IPv6 /48 bloğudur.
 
 ## Uç noktalar
 

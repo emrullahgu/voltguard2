@@ -78,6 +78,9 @@
 .vh-news__form input[type="email"] { padding: .65rem .8rem; border: 1px solid #d6c27c; border-radius: var(--r-sm); font-size: 1rem; min-width: 0; width: 100%; box-sizing: border-box; }
 .vh-consent { display: flex; gap: .5rem; align-items: flex-start; font-size: .8rem; line-height: 1.5; }
 .vh-consent input { margin-top: .2rem; flex: 0 0 auto; width: 1.05rem; height: 1.05rem; }
+.vh-legal { margin: 0 0 .6rem; }
+.vh-legal__t { margin: 0 0 .2rem; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.vh-legal__p { margin: 0; font-size: .8rem; line-height: 1.5; }
 .vh-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .vh-news__msg { min-height: 1.2em; margin: 0 !important; font-size: .85rem !important; }
 .vh-news__msg.is-error { color: #b91c1c; }

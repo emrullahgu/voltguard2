@@ -22,7 +22,7 @@ const VH_SUMMARY_MIN = 40;
 const VH_SUMMARY_MAX = 400;
 const VH_BODY_MAX = 40000;
 const VH_ANALYSIS_BODY_MIN = 300;
-const VH_CONSENT_VERSION = 'volthaber-bulten-2026-10-24';
+const VH_CONSENT_VERSION = 'volthaber-bulten-2026-10-24b';
 const VH_CONFIRM_TTL = 172800;           // onay baglantisi 48 saat
 const VH_MAX_SUBSCRIBERS = 20000;
 const VH_DIGEST_BATCH = 20;              // bir grupta en fazla 20 e-posta
@@ -587,6 +587,21 @@ function vh_count_view(string $articleId): void
     if (preg_match('/^a[a-f0-9]{16}$/', $articleId) !== 1) {
         return;
     }
+    // Ayni istemci (IPv6'da /48) ayni haberi 30 dakikada bir kez sayar: "en cok okunanlar" listesi
+    // tekrarlanan isteklerle yonlendirilemesin ve her istek sayac dosyasini yeniden yazmasin.
+    // Tekillestirme kuralidir, kotu kullanim esigi degil: VG_RATE_SCALE ile olceklenmez.
+    $seen = false;
+    vg_rl_update('vh_view', vg_rl_ip_key(48) . '|' . $articleId, function (array $st, int $now) use (&$seen) {
+        $at = (int)($st['at'] ?? 0);
+        if ($at > $now - 1800) {
+            $seen = true;
+            return $st;
+        }
+        return ['at' => $now];
+    });
+    if ($seen) {
+        return;
+    }
     vh_locked(true, function (string $dir) use ($articleId) {
         $state = vh_read($dir, 'views.json', ['version' => 1, 'views' => []], 4194304);
         $views = is_array($state['views'] ?? null) ? $state['views'] : [];
@@ -1104,7 +1119,8 @@ function vh_subscribe(array $body): array
     if ($email === '' || strlen($email) > 254) {
         vg_fail(422, 'invalid_email', 'Geçerli bir e-posta adresi yazın.', ['email' => 'Geçersiz e-posta.']);
     }
-    $retry = vg_rl_hit('vh_subscribe_ip', vg_rl_ip_key(), 5, 3600);
+    // IPv6'da /48 blogu (kayit ve topluluk ile ayni): tek musteri blogundan cok sayida adresle kayit doldurulamasin.
+    $retry = vg_rl_hit('vh_subscribe_ip', vg_rl_ip_key(48), 5, 3600);
     if ($retry > 0) {
         vg_too_many($retry);
     }
@@ -1112,6 +1128,7 @@ function vh_subscribe(array $body): array
     $send = null;
     vh_locked(true, function (string $dir) use ($email, $now, &$send) {
         $state = vh_subscribers($dir);
+        $purged = vh_purge_expired_pending($state, $now);
         $eh = vh_email_hash($email);
         // E-posta basina gunde 3 onay e-postasi (sessiz: hesap tespiti yok).
         foreach ($state['rates'] as $k => $r) {
@@ -1130,10 +1147,11 @@ function vh_subscribe(array $body): array
                 break;
             }
         }
-        if ($found !== null && $state['subscribers'][$found]['status'] === 'active') {
-            return; // zaten abone: ayni genel yanit
-        }
-        if (count($hits) >= 3) {
+        if (($found !== null && $state['subscribers'][$found]['status'] === 'active') || count($hits) >= 3) {
+            // zaten abone / gunluk sinir: ayni genel yanit; suresi dolan bekleyen kayitlarin silinmesi yine yazilir
+            if ($purged) {
+                vh_write($dir, 'subscribers.json', $state, 16777216);
+            }
             return;
         }
         if ($found === null && count($state['subscribers']) >= VH_MAX_SUBSCRIBERS) {
@@ -1154,11 +1172,35 @@ function vh_subscribe(array $body): array
         $send = [$email, $id, $token];
     });
     if ($send !== null) {
-        if (!vh_mail_confirm($send[0], $send[1], $send[2])) {
-            error_log('VoltHaber: confirmation mail not accepted by transport');
+        // Yanittan sonra gonderilir: yanit suresi adresin zaten abone olup olmadigini belli etmesin.
+        $job = function () use ($send) {
+            if (!vh_mail_confirm($send[0], $send[1], $send[2])) {
+                error_log('VoltHaber: confirmation mail not accepted by transport');
+            }
+        };
+        if (vg_can_finish_early()) {
+            vg_after_response($job);
+        } else {
+            $job();
         }
     }
     return ['ok' => true, 'service' => VH_SERVICE, 'pending' => true, 'message' => 'Onay e-postası gönderildi. Aboneliğiniz e-postadaki bağlantıyı açtığınızda başlar.'];
+}
+
+/**
+ * Onaylanmadan suresi dolan bekleyen kayitlari tamamen siler (aydinlatma metni: "48 saat sonra gecersiz olur").
+ * Rizasi dogrulanmamis e-posta adresi saklanmaz ve bu kayitlar abone sinirini dolduramaz. Degisiklik varsa true.
+ */
+function vh_purge_expired_pending(array &$state, int $now): bool
+{
+    $purged = false;
+    foreach ($state['subscribers'] as $id => $s) {
+        if (is_array($s) && ($s['status'] ?? '') === 'pending' && (int)($s['confirmExpires'] ?? 0) < $now) {
+            unset($state['subscribers'][$id]);
+            $purged = true;
+        }
+    }
+    return $purged;
 }
 
 function vh_confirm(array $body): array
@@ -1178,6 +1220,8 @@ function vh_confirm(array $body): array
         foreach ($state['subscribers'] as $id => $s) {
             if (($s['confirmHash'] ?? '') !== '' && hash_equals((string)$s['confirmHash'], $hash)) {
                 if ((int)($s['confirmExpires'] ?? 0) < $now) {
+                    vh_purge_expired_pending($state, $now);
+                    vh_write($dir, 'subscribers.json', $state, 16777216);
                     vg_fail(410, 'token_expired', 'Onay bağlantısının süresi dolmuş. Lütfen yeniden abone olun.');
                 }
                 $state['subscribers'][$id]['status'] = 'active';

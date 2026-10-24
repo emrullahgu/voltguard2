@@ -330,6 +330,28 @@ async function run() {
     check(r.status, 200, 'Export works');
     ok(r.headers.get('content-type').startsWith('text/csv') && r.text.includes('okur@example.test') && !r.text.includes('ikinci@'), 'CSV contains only active subscribers');
     await expect(member, 'subscribers_export', { body: {} }, 403, 'forbidden');
+    // An unconfirmed address is deleted once its 48 h window has passed (privacy notice promise; cannot fill the cap).
+    const subsFile = path.join(env.VG_DATA_DIR, 'volthaber/subscribers.json');
+    subs = JSON.parse(fs.readFileSync(subsFile, 'utf8'));
+    for (const s of Object.values(subs.subscribers)) if (s.status === 'pending') s.confirmExpires = Math.floor(Date.now() / 1000) - 10;
+    fs.writeFileSync(subsFile, JSON.stringify(subs));
+    await expect(anon, 'subscribe', { body: { email: 'ucuncu@example.test', consent: true }, csrf: false }, 200);
+    subs = JSON.parse(fs.readFileSync(subsFile, 'utf8'));
+    ok(!JSON.stringify(subs).includes('ikinci@example.test') && JSON.stringify(subs).includes('ucuncu@example.test'), 'Expired pending sign-ups are erased, new one kept');
+    r = await expect(editor, 'stats', {}, 200);
+    check([r.body.subscribers.active, r.body.subscribers.pending], [1, 1], 'Only the fresh pending sign-up remains');
+    const lastConfirm = outbox().filter(m => m.includes('ucuncu@example.test')).pop() || '';
+    const expiredToken = (lastConfirm.match(/#onay=([A-Za-z0-9_-]+)/) || [])[1];
+    subs.subscribers[Object.keys(subs.subscribers).find(k => subs.subscribers[k].status === 'pending')].confirmExpires = Math.floor(Date.now() / 1000) - 10;
+    fs.writeFileSync(subsFile, JSON.stringify(subs));
+    await expect(anon, 'confirm', { body: { token: expiredToken }, csrf: false }, 410, 'token_expired');
+    ok(!fs.readFileSync(subsFile, 'utf8').includes('ucuncu@example.test'), 'Opening an expired link also erases the address');
+    // Newsletter form: notice and consent are separate texts with separate headings (KVKK Board decision 2026/347).
+    p = await page('/volthaber/');
+    const news = (p.text.match(/<section class="vh-news"[\s\S]*?<\/section>/) || [''])[0];
+    const consentLabel = (news.match(/<label class="vh-consent">[\s\S]*?<\/label>/) || [''])[0];
+    ok(news.includes('>Aydınlatma</h3>') && news.includes('>Açık rıza</h3>') && news.indexOf('>Aydınlatma</h3>') < news.indexOf('>Açık rıza</h3>'), 'Notice and consent under separate headings, notice first');
+    ok(consentLabel.includes('açık rıza veriyorum') && !/aydınlatma|gizlilik\.html/i.test(consentLabel), 'Consent checkbox does not bundle the privacy notice');
     // digest
     r = await expect(anon, 'list', {}, 200);
     const liveIds = r.body.items.slice(0, 2).map(i => i.id);
@@ -379,6 +401,9 @@ async function run() {
     await page(`/volthaber/${seed[1].slug}/`, { ua: 'Googlebot/2.1' });
     check(Object.values(views()).reduce((a, b) => a + b, 0), c0, 'Bots not counted');
     ok(!JSON.stringify(views()).includes('127.0.0.1'), 'Views are aggregate only');
+    const c1 = Object.values(views()).reduce((a, b) => a + b, 0);
+    for (let i = 0; i < 4; i++) await page(`/volthaber/${seed[2].slug}/`);
+    check(Object.values(views()).reduce((a, b) => a + b, 0), c1 + 1, 'Repeated reads from one client count once per 30 minutes');
     p = await page('/volthaber/yayin-ilkeleri.html');
     ok(p.status === 200 && p.text.includes('FSEK') === false && p.text.includes('Fikir ve Sanat Eserleri Kanunu') && p.text.includes('id="kaldirma"'), 'Policy page');
 

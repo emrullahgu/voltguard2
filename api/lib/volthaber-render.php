@@ -163,7 +163,11 @@ function vh_newsletter(): string
         . '<label for="vh-news-email">E-posta adresiniz</label>'
         . '<input id="vh-news-email" name="email" type="email" required maxlength="254" autocomplete="email" inputmode="email">'
         . '<div class="vh-hp" aria-hidden="true"><label for="vh-news-web">Web sitesi</label><input id="vh-news-web" name="website" type="text" tabindex="-1" autocomplete="off"></div>'
-        . '<label class="vh-consent"><input type="checkbox" name="consent" required> <span>VoltHaber bülteninin e-posta adresime gönderilmesine <strong>açık rıza</strong> veriyorum. E-posta adresimin yalnızca bu amaçla işleneceğini ve rızamı her e-postadaki bağlantıyla geri alabileceğimi biliyorum (<a href="/gizlilik.html">Aydınlatma Metni</a>).</span></label>'
+        // KVK Kurulu 2026/347 ilke karari: aydinlatma ve acik riza ayri baslik ve ayri beyanla, alt alta sunulur.
+        . '<div class="vh-legal"><h3 class="vh-legal__t">Aydınlatma</h3>'
+        . '<p class="vh-legal__p">E-posta adresiniz, VoltGuard tarafından yalnızca bülteni göndermek için, aşağıda vereceğiniz açık rızaya dayanılarak işlenir; üçüncü kişilerle paylaşılmaz. Ayrıntılar ve haklarınız: <a href="/gizlilik.html#volthaber-bulten">VoltHaber bülteni aydınlatma metni</a>.</p></div>'
+        . '<div class="vh-legal"><h3 class="vh-legal__t">Açık rıza</h3>'
+        . '<label class="vh-consent"><input type="checkbox" name="consent" required> <span>VoltHaber bülteninin e-posta adresime gönderilmesine açık rıza veriyorum. Rızamı her e-postadaki bağlantıyla dilediğim zaman geri alabilirim.</span></label></div>'
         . '<button type="submit" class="btn btn--accent">Abone ol</button>'
         . '<p class="vh-news__msg" role="status" aria-live="polite"></p>'
         . '<noscript><p class="vh-news__msg">Abonelik formu için JavaScript gereklidir.</p></noscript>'

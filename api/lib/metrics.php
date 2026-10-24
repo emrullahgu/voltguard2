@@ -344,7 +344,8 @@ function vg_metrics_apply(array &$day, array $event): void
 function vg_metrics_client_key(string $day): string
 {
     $salt = hash_hmac('sha256', 'vg-metrics-daily-salt|' . $day, vg_secret(), true);
-    return substr(hash_hmac('sha256', vg_rl_ip_key(), $salt), 0, 24);
+    // IPv6'da /48: tek musteri blogu gunluk sayac tablosunu (VG_METRICS_RL_KEYS) dolduramasin.
+    return substr(hash_hmac('sha256', vg_rl_ip_key(48), $salt), 0, 24);
 }
 
 /**
