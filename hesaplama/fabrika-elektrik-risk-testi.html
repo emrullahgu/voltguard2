@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/">
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=3ec2a90a1976">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Periyodik kontrol, topraklama, kaçak akım rölesi, termal inceleme, pano, trafo, kompanzasyon ve yedek güç sorularıyla fabrikanızın elektrik risk profilini ve öncelikli aksiyon listesini çıkarın.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Fabrika Elektrik Altyapısı Risk Testi (Ücretsiz Öz Değerlendirme) | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/fabrika-elektrik-risk-testi/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Fabrika Elektrik Altyapısı Risk Testi (Ücretsiz Öz Değerlendirme) | VoltGuard">
+  <meta property="og:description" content="Periyodik kontrol, topraklama, kaçak akım rölesi, termal inceleme, pano, trafo, kompanzasyon ve yedek güç sorularıyla fabrikanızın elektrik risk profilini ve öncelikli aksiyon listesini çıkarın.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/fabrika-elektrik-risk-testi/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta property="og:locale" content="tr_TR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Fabrika Elektrik Altyapısı Risk Testi (Ücretsiz Öz Değerlendirme) | VoltGuard">
+  <meta name="twitter:description" content="Periyodik kontrol, topraklama, kaçak akım rölesi, termal inceleme, pano, trafo, kompanzasyon ve yedek güç sorularıyla fabrikanızın elektrik risk profilini ve öncelikli aksiyon listesini çıkarın.">
+  <meta name="twitter:image" content="https://voltguard.com.tr/public/og-image.png">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=33bf2e764156">
+  <style>
+    .calc-hint { display: block; margin-top: .3rem; font-size: .78rem; line-height: 1.45; color: var(--clr-text-muted); }
+    .calc-breakdown { list-style: none; margin: .35rem 0 0; padding: .65rem 0 0; border-top: 1px solid rgba(255,255,255,.18); display: grid; gap: .4rem; font-size: .82rem; line-height: 1.4; color: rgba(255,255,255,.86); }
+    .calc-breakdown li { display: flex; justify-content: space-between; gap: .75rem; }
+    .calc-breakdown li span:last-child { white-space: nowrap; font-weight: 600; color: #fff; text-align: right; }
+    .calc-breakdown li.is-over span:last-child { color: #fca5a5; }
+    .calc-breakdown li.is-ok span:last-child { color: #86efac; }
+    .calc-options { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .55rem; }
+    .calc-options li { background: rgba(255,255,255,.08); border-radius: 8px; padding: .6rem .75rem; font-size: .83rem; line-height: 1.5; color: rgba(255,255,255,.9); }
+    .calc-options strong { display: block; color: #fff; font-size: .88rem; margin-bottom: .15rem; }
+    .calc-options a { color: #fcd34d; }
+    .calc-badge { display: inline-block; align-self: flex-start; padding: .2rem .6rem; border-radius: 999px; font-size: .78rem; font-weight: 700; background: #dcfce7; color: #14532d; }
+    .calc-badge[data-level="1"] { background: #fef9c3; color: #713f12; }
+    .calc-badge[data-level="2"] { background: #fed7aa; color: #7c2d12; }
+    .calc-badge[data-level="3"] { background: #fecaca; color: #7f1d1d; }
+    .calc-table td { white-space: nowrap; }
+    .calc-table td:first-child { white-space: normal; }
+    .calc-cta-btns { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .calc-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .calc-live { display: flex; flex-direction: column; gap: .5rem; }
+    .calc-sources li { word-break: break-word; }
+    .table-scroll:focus-visible { outline: 3px solid rgba(59,130,246,.45); outline-offset: 2px; }
+    .mini-calc__fields .calc-pair { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+    @media (max-width: 420px) {
+      .mini-calc__fields .calc-pair { grid-template-columns: 1fr; }
+      .calc-breakdown li { flex-wrap: wrap; }
+      .calc-breakdown li span:last-child { white-space: normal; margin-left: auto; }
+    }
+    @media print {
+      .mini-calc__result { background: #fff !important; color: #0a1628 !important; border: 1px solid #0a1628; }
+      .mini-calc__result *, .calc-breakdown li span, .calc-options li, .calc-options strong { color: #0a1628 !important; }
+      .calc-options li { background: #f1f5f9 !important; }
+      .calc-breakdown { border-color: #94a3b8 !important; }
+    }
+    .fr-q small { display: block; font-weight: 400; color: var(--clr-text-muted); font-size: .76rem; margin-top: .15rem; }
+    .fr-progress { font-size: .8rem; color: rgba(255,255,255,.75); }
+    #fr-calc .mini-calc__result { justify-content: flex-start; }
+    @media (min-width: 701px) { #fr-calc .mini-calc__result { position: sticky; top: 5.5rem; align-self: start; max-height: calc(100vh - 7rem); overflow-y: auto; } }
+    @media print { #fr-calc { display: block; } #fr-calc .mini-calc__result { position: static; max-height: none; overflow: visible; margin-top: 1rem; } }
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","@id":"https://voltguard.com.tr/hesaplama/fabrika-elektrik-risk-testi/#app","name":"Fabrika Elektrik Altyapısı Risk Testi","url":"https://voltguard.com.tr/hesaplama/fabrika-elektrik-risk-testi/","description":"Periyodik kontrol, topraklama, kaçak akım rölesi, termal inceleme, pano, trafo, kompanzasyon ve yedek güç sorularıyla fabrikanızın elektrik risk profilini ve öncelikli aksiyon listesini çıkarın.","applicationCategory":"BusinessApplication","applicationSubCategory":"Elektrik mühendisliği ön değerlendirme aracı","operatingSystem":"Web","browserRequirements":"JavaScript etkin modern tarayıcı","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"TRY"},"provider":{"@id":"https://voltguard.com.tr/#organization"},"datePublished":"2026-10-24","dateModified":"2026-10-24"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesap Araçları","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Fabrika Elektrik Risk Testi","item":"https://voltguard.com.tr/hesaplama/fabrika-elektrik-risk-testi/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Elektrik periyodik kontrolü ne sıklıkla yapılmalı?","acceptedAnswer":{"@type":"Answer","text":"İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği EK-III Tablo-3’e göre, ilgili standartta daha kısa süre öngörülmedikçe elektrik iç tesisatı, topraklama, yıldırımdan korunma, transformatör, jeneratör ve akümülatör kontrolleri en fazla 1 yılda bir yapılır."}},{"@type":"Question","name":"Risk testi sonuçlarım bir yere kaydediliyor mu?","acceptedAnswer":{"@type":"Answer","text":"Hayır. Hesaplama tamamen tarayıcınızda yapılır ve yanıtlar sunucuya gönderilmez. Yalnızca siz \"Hesabıma kaydet\" düğmesine basarsanız sonuç kendi üye hesabınıza (giriş yapmadıysanız bu tarayıcıya) kaydedilir; \"Bu sonuçla teklif iste\" ise özeti yalnızca iletişim formundaki mesaj alanına taşır."}},{"@type":"Question","name":"Kaçak akım rölesi neden kritik soru?","acceptedAnswer":{"@type":"Answer","text":"TS HD 60364-4-41, 32 A’ya kadar priz devrelerinde ve dış mekânda kullanılan seyyar cihaz devrelerinde 30 mA kaçak akım rölesini ek koruma olarak ister. Bu koruma olmayan devre doğrudan can güvenliği riskidir; bu nedenle tek başına profili en az \"Yüksek\" yapar."}},{"@type":"Question","name":"Termal kamera incelemesi zorunlu mu?","acceptedAnswer":{"@type":"Answer","text":"Termal inceleme yönetmelikte ayrı bir periyot olarak tanımlı değildir; ancak gevşek bağlantı, aşırı yük ve dengesiz yükü arızadan önce görünür kılar. Yük altındaki panolarda yılda en az bir kez yapılması iyi bir bakım uygulamasıdır."}},{"@type":"Question","name":"Sonuç \"Kritik\" çıktı, ne yapmalıyım?","acceptedAnswer":{"@type":"Answer","text":"Önce listedeki \"Acil\" aksiyonları ele alın: genellikle eksik periyodik kontrol, topraklama ölçümü, kaçak akım koruması veya trafo bakımıdır. Bu kontrolleri yetkili kişilere yaptırıp raporlayın; ardından öncelikli ve planlı aksiyonları bir bakım takvimine bağlayın."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <!--vg:header-->
+  <a class="skip-to-content" href="/hesaplama/fabrika-elektrik-risk-testi/#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+        </span>
+      </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
+              <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+              <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/" aria-current="true">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
+      </nav>
+      <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+  </header>
+  <!--/vg:header-->
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/hesaplama-araclari/">Hesap Araçları</a> &rsaquo; <span>Fabrika Elektrik Risk Testi</span>
+  </nav>
+
+  <main class="article" id="main" tabindex="-1">
+    <span class="article__cat">Fabrikalar İçin</span>
+    <h1>Fabrika Elektrik Altyapısı Risk Testi</h1>
+    <p class="article__summary">12 kısa soruyla fabrikanızın elektrik altyapısındaki riskleri puanlayın: risk profilini, kritik bulguları ve öncelik sırasına konmuş aksiyon listesini ilgili rehber, araç ve hizmet bağlantılarıyla görün. Yanıtlarınız <strong>yalnızca tarayıcınızda</strong> işlenir; hiçbir yere gönderilmez.</p>
+    <div class="mini-calc" id="fr-calc">
+      <div class="mini-calc__fields" id="fr-fields"></div>
+      <div class="mini-calc__result" role="group" aria-label="Risk profili" aria-live="off">
+        <div class="calc-live" role="status" aria-live="polite">
+          <span class="mini-calc__result-label">Risk profili</span>
+          <span class="calc-badge" id="fr-badge" hidden></span>
+          <span class="mini-calc__result-value" id="fr-result">-</span>
+          <span class="mini-calc__result-note" id="fr-detail"></span>
+          <span class="fr-progress" id="fr-progress"></span>
+        </div>
+        <ul class="calc-breakdown" id="fr-breakdown" aria-label="Özet"></ul>
+        <ul class="calc-options" id="fr-options" aria-label="Öncelikli aksiyonlar"></ul>
+        <p style="margin:.9rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem"><a class="btn btn--accent btn--md" id="fr-quote" href="/?hizmet=elektrik-periyodik-kontrol#iletisim"><i class="fas fa-paper-plane" aria-hidden="true"></i> Bu sonuçla teklif iste</a><button type="button" class="btn btn--outline-white btn--md" id="fr-print"><i class="fas fa-file-pdf" aria-hidden="true"></i> PDF olarak kaydet</button></p>
+      </div>
+    </div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>İş Ekipmanları Yönetmeliği EK-III Tablo-3: elektrik iç tesisatı, topraklama, yıldırımdan korunma, transformatör, jeneratör ve akümülatör kontrolleri en fazla 1 yılda bir yapılır.</li><li>Her soru 0 (iyi) – 3 (kötü) puan ve 1–3 ağırlıkla değerlendirilir; toplam, yanıtlanan soruların en kötü durumuna oranla yüzdeye çevrilir.</li><li>Bazı yanıtlar (ör. kaçak akım rölesi olmayan devre, 2 yılı aşan periyodik kontrol) tek başına profili en az "Yüksek" yapar.</li><li>Yanıtlar sunucuya gönderilmez; "PDF olarak kaydet" tarayıcınızın yazdırma penceresini açar.</li></ul></div>
+
+    <h2>Puanlama nasıl yapılır?</h2>
+    <ol class="article__list">
+      <li><strong>Soru puanı:</strong> her yanıt 0 (risk yok), 1 (düşük), 2 (orta) veya 3 (yüksek) puandır.</li>
+      <li><strong>Ağırlık:</strong> can güvenliği ve yasal zorunluluk içeren sorular (periyodik kontrol, topraklama, kaçak akım koruması, trafo bakımı) 3, diğerleri 2 ağırlıklıdır.</li>
+      <li><strong>Risk puanı:</strong> Σ(puan × ağırlık) ÷ Σ(3 × ağırlık) × 100. Profil: &lt; 20 Düşük, 20–40 Orta, 40–65 Yüksek, ≥ 65 Kritik.</li>
+      <li><strong>Kritik bulgu:</strong> İşaretli kritik yanıtlardan biri varsa profil en az "Yüksek" olur.</li>
+      <li><strong>Öncelik:</strong> aksiyonlar puan × ağırlık ve kritik bulgu durumuna göre sıralanır: Acil (0–30 gün), Öncelikli (1–3 ay), Planlı (3–12 ay).</li>
+    </ol>
+    <h2>Bu test neyi ölçmez?</h2>
+    <p>Test bir öz değerlendirmedir: yanıtların doğruluğuna dayanır ve sahada ölçüm yapılmadan risk sınıfı verir. Yasal periyodik kontrol, topraklama ölçümü veya enerji kalitesi analizi yerine geçmez. Sonuçta çıkan "Acil" aksiyonlar için yetkili kişilerce ölçüm ve kontrol yaptırın. Periyodik kontrollerin tarihlerini takip etmek için <a href="/hesaplama/periyodik-kontrol-planlayici/">periyodik kontrol planlayıcıyı</a>, plansız duruşların maliyetini görmek için <a href="/fabrika-cozumleri.html">fabrikalar için çözümler</a> sayfasındaki hesaplayıcıyı kullanabilirsiniz.</p>
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Elektrik periyodik kontrolü ne sıklıkla yapılmalı? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği EK-III Tablo-3’e göre, ilgili standartta daha kısa süre öngörülmedikçe elektrik iç tesisatı, topraklama, yıldırımdan korunma, transformatör, jeneratör ve akümülatör kontrolleri en fazla 1 yılda bir yapılır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Risk testi sonuçlarım bir yere kaydediliyor mu? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Hayır. Hesaplama tamamen tarayıcınızda yapılır ve yanıtlar sunucuya gönderilmez. Yalnızca siz "Hesabıma kaydet" düğmesine basarsanız sonuç kendi üye hesabınıza (giriş yapmadıysanız bu tarayıcıya) kaydedilir; "Bu sonuçla teklif iste" ise özeti yalnızca iletişim formundaki mesaj alanına taşır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Kaçak akım rölesi neden kritik soru? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>TS HD 60364-4-41, 32 A’ya kadar priz devrelerinde ve dış mekânda kullanılan seyyar cihaz devrelerinde 30 mA kaçak akım rölesini ek koruma olarak ister. Bu koruma olmayan devre doğrudan can güvenliği riskidir; bu nedenle tek başına profili en az "Yüksek" yapar.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Termal kamera incelemesi zorunlu mu? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Termal inceleme yönetmelikte ayrı bir periyot olarak tanımlı değildir; ancak gevşek bağlantı, aşırı yük ve dengesiz yükü arızadan önce görünür kılar. Yük altındaki panolarda yılda en az bir kez yapılması iyi bir bakım uygulamasıdır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Sonuç &quot;Kritik&quot; çıktı, ne yapmalıyım? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Önce listedeki "Acil" aksiyonları ele alın: genellikle eksik periyodik kontrol, topraklama ölçümü, kaçak akım koruması veya trafo bakımıdır. Bu kontrolleri yetkili kişilere yaptırıp raporlayın; ardından öncelikli ve planlı aksiyonları bir bakım takvimine bağlayın.</p></div></details>
+
+    <h2>Kaynaklar</h2>
+    <ul class="article__list calc-sources"><li>İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği (RG 25.04.2013/28628), EK-III Tablo-3</li><li>Elektrik İç Tesisleri Yönetmeliği; TS HD 60364-4-41 Elektrik çarpmasına karşı koruma</li><li>EN 50160 Gerilim karakteristikleri; Elektrik Tesislerinde Topraklamalar Yönetmeliği</li><li>VoltGuard: <a href="/bilgi/elektrik-tesisati-periyodik-kontrol.html">Elektrik tesisatı periyodik kontrol rehberi</a>, <a href="/bilgi/topraklama-degeri-kac-olmali.html">Topraklama değeri</a>, <a href="/bilgi/kacak-akim-rolesi-secimi.html">Kaçak akım rölesi seçimi</a></li></ul>
+    <p class="kb-disclaimer">Bu test bir öz değerlendirmedir; bağlayıcı değildir ve yasal periyodik kontrol, ölçüm veya denetim yerine geçmez. Puanlama ağırlıkları VoltGuard saha deneyimine dayanan bir önceliklendirme yöntemidir.</p>
+    <p>İlgili kaynaklar: <a href="/hesaplama/periyodik-kontrol-planlayici/">Periyodik kontrol planlayıcı</a>, <a href="/hesaplama/trafo-kapasite-artirimi/">Trafo kapasite artırımı</a>, <a href="/hesaplama/harmonik-filtre-ihtiyaci/">Harmonik filtre ihtiyacı</a>, <a href="/fabrika-cozumleri.html">Fabrikalar için çözümler</a>, <a href="/mm/pano-kontrol-formu.html">Pano kontrol formu</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Riskleri sahada ölçüp raporlayalım</strong><span>Periyodik kontrol, topraklama ölçümü, termal inceleme ve enerji kalitesi analizi.</span></div>
+      <div class="calc-cta-btns">
+        <a href="/hizmetler/elektrik-periyodik-kontrol.html" class="btn btn--outline-white btn--md">Hizmeti İncele</a>
+        <a href="/?hizmet=elektrik-periyodik-kontrol#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
+    </div>
+    <p style="margin-top:1.6rem"><a href="/hesaplama-araclari/" class="kb-card__more">&larr; Tüm hesap araçları</a></p>
+  </main>
+
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+            </span>
+          </a>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
+
+  <script src="/js/vg-assess.js?v=961b477f30e1"></script>
+  <script>
+    (function () {
+      'use strict';
+      var A = window.VGAssess; if (!A) return;
+      var $ = function (id) { return document.getElementById(id); };
+      var nf = function (n, d) { return Number(n).toLocaleString('tr-TR', { maximumFractionDigits: d === undefined ? 1 : d }); };
+      function num(id) {
+        var raw = $(id).value.trim().replace(/\s/g, '').replace(/^%/, '');
+        if (raw === '') { return NaN; }
+        if (raw.indexOf(',') !== -1) { raw = raw.replace(/\./g, '').replace(',', '.'); }
+        else if (/^\d{1,3}(\.\d{3})+$/.test(raw)) { raw = raw.replace(/\./g, ''); }
+        return /^-?\d*\.?\d+$/.test(raw) ? Number(raw) : NaN;
+      }
+      function row(list, label, value, cls) {
+        var li = document.createElement('li');
+        if (cls) { li.className = cls; }
+        var a = document.createElement('span'); a.textContent = label;
+        var b = document.createElement('span'); b.textContent = value;
+        li.appendChild(a); li.appendChild(b); list.appendChild(li);
+      }
+      function option(list, title, detail, link) {
+        var li = document.createElement('li');
+        var s = document.createElement('strong'); s.textContent = title; li.appendChild(s);
+        li.appendChild(document.createTextNode(detail));
+        if (link) { li.appendChild(document.createTextNode(' ')); var a = document.createElement('a'); a.href = link[0]; a.textContent = link[1]; li.appendChild(a); }
+        list.appendChild(li);
+      }
+      var quoteNote = '';
+      var Q = A.RISK_QUESTIONS, fields = $('fr-fields');
+      Q.forEach(function (q, i) {
+        var wrap = document.createElement('div'); wrap.className = 'mini-calc__field fr-q';
+        var lab = document.createElement('label'); lab.setAttribute('for', 'fr-' + q.id);
+        lab.appendChild(document.createTextNode((i + 1) + '. ' + q.q));
+        var small = document.createElement('small'); small.textContent = q.basis; lab.appendChild(small);
+        var sel = document.createElement('select'); sel.id = 'fr-' + q.id;
+        var empty = document.createElement('option'); empty.value = ''; empty.textContent = 'Seçin…'; sel.appendChild(empty);
+        q.options.forEach(function (o, j) { var op = document.createElement('option'); op.value = String(j); op.textContent = o[0]; sel.appendChild(op); });
+        wrap.appendChild(lab); wrap.appendChild(sel); fields.appendChild(wrap);
+      });
+      var LEVEL_TEXT = ['Düşük risk', 'Orta risk', 'Yüksek risk', 'Kritik risk'];
+      function update() {
+        var answers = {};
+        Q.forEach(function (q) { var v = $('fr-' + q.id).value; if (v !== '') answers[q.id] = Number(v); });
+        var r = A.factoryRisk(answers), list = $('fr-breakdown'), opts = $('fr-options'), badge = $('fr-badge');
+        list.textContent = ''; opts.textContent = ''; quoteNote = '';
+        $('fr-progress').textContent = r.answered + ' / ' + r.total + ' soru yanıtlandı' + (r.complete || !r.answered ? '' : ' (eksik sorular hesaba katılmadı)');
+        if (!r.ok) { $('fr-result').textContent = '-'; $('fr-detail').textContent = 'Soruları yanıtladıkça risk profiliniz burada oluşur.'; badge.hidden = true; return; }
+        badge.hidden = false; badge.setAttribute('data-level', r.level); badge.textContent = LEVEL_TEXT[r.level];
+        $('fr-result').textContent = r.profile + ' · ' + nf(r.score, 0) + '/100';
+        $('fr-detail').textContent = r.critical.length ? r.critical.length + ' kritik bulgu profili en az "Yüksek" seviyesine çıkardı.' : (r.actions.length ? r.actions.length + ' konuda iyileştirme önerisi var.' : 'Yanıtlarınızda risk bulgusu yok.');
+        row(list, 'Risk puanı', nf(r.score, 0) + ' / 100', r.level >= 2 ? 'is-over' : 'is-ok');
+        row(list, 'Kritik bulgu', String(r.critical.length), r.critical.length ? 'is-over' : 'is-ok');
+        row(list, 'Acil aksiyon', String(r.actions.filter(function (a) { return /^Acil/.test(a.priority); }).length));
+        r.actions.forEach(function (a) { option(opts, a.priority + ' · ' + a.answer, ' ' + a.action, a.links[0]); });
+        $('fr-quote').href = '/?hizmet=' + r.service + '#iletisim';
+        quoteNote = 'Fabrika elektrik risk testi: profil ' + r.profile + ' (' + nf(r.score, 0) + '/100, ' + r.answered + '/' + r.total + ' soru). ' +
+          (r.actions.length ? 'Öncelikli konular: ' + r.actions.slice(0, 4).map(function (a) { return a.action.split(';')[0].replace(/\.$/, ''); }).join('; ') + '. ' : '') + 'Sahada kontrol ve teklif talep ediyoruz.';
+      }
+      $('fr-print').addEventListener('click', function () { window.print(); });
+      $('fr-quote').addEventListener('click', function () {
+        try { if (quoteNote) window.sessionStorage.setItem('vgQuoteNote', quoteNote); } catch (err) { /* depolama kapalı */ }
+      });
+      $('fr-calc').addEventListener('input', update);
+      $('fr-calc').addEventListener('change', update);
+      update();
+    }());
+  </script>
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
+  <script src="/js/voltguard-tools.js?v=bc51c38205cf"></script>
+</body></html>

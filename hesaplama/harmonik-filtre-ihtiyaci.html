@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/">
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=3ec2a90a1976">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Sürücü, UPS ve LED gibi doğrusal olmayan yük payı, trafo gücü, uk ve kondansatör gücüyle THD risk sınıfını, paralel rezonans mertebesini (h = √(Sk/Qc)) ve reaktörlü kompanzasyon / aktif filtre ihtiyacını değerlendirin.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Harmonik Filtre İhtiyacı Ön Değerlendirmesi (Rezonans, THD) | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/harmonik-filtre-ihtiyaci/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Harmonik Filtre İhtiyacı Ön Değerlendirmesi (Rezonans, THD) | VoltGuard">
+  <meta property="og:description" content="Sürücü, UPS ve LED gibi doğrusal olmayan yük payı, trafo gücü, uk ve kondansatör gücüyle THD risk sınıfını, paralel rezonans mertebesini (h = √(Sk/Qc)) ve reaktörlü kompanzasyon / aktif filtre ihtiyacını değerlendirin.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/harmonik-filtre-ihtiyaci/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta property="og:locale" content="tr_TR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Harmonik Filtre İhtiyacı Ön Değerlendirmesi (Rezonans, THD) | VoltGuard">
+  <meta name="twitter:description" content="Sürücü, UPS ve LED gibi doğrusal olmayan yük payı, trafo gücü, uk ve kondansatör gücüyle THD risk sınıfını, paralel rezonans mertebesini (h = √(Sk/Qc)) ve reaktörlü kompanzasyon / aktif filtre ihtiyacını değerlendirin.">
+  <meta name="twitter:image" content="https://voltguard.com.tr/public/og-image.png">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=33bf2e764156">
+  <style>
+    .calc-hint { display: block; margin-top: .3rem; font-size: .78rem; line-height: 1.45; color: var(--clr-text-muted); }
+    .calc-breakdown { list-style: none; margin: .35rem 0 0; padding: .65rem 0 0; border-top: 1px solid rgba(255,255,255,.18); display: grid; gap: .4rem; font-size: .82rem; line-height: 1.4; color: rgba(255,255,255,.86); }
+    .calc-breakdown li { display: flex; justify-content: space-between; gap: .75rem; }
+    .calc-breakdown li span:last-child { white-space: nowrap; font-weight: 600; color: #fff; text-align: right; }
+    .calc-breakdown li.is-over span:last-child { color: #fca5a5; }
+    .calc-breakdown li.is-ok span:last-child { color: #86efac; }
+    .calc-options { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .55rem; }
+    .calc-options li { background: rgba(255,255,255,.08); border-radius: 8px; padding: .6rem .75rem; font-size: .83rem; line-height: 1.5; color: rgba(255,255,255,.9); }
+    .calc-options strong { display: block; color: #fff; font-size: .88rem; margin-bottom: .15rem; }
+    .calc-options a { color: #fcd34d; }
+    .calc-badge { display: inline-block; align-self: flex-start; padding: .2rem .6rem; border-radius: 999px; font-size: .78rem; font-weight: 700; background: #dcfce7; color: #14532d; }
+    .calc-badge[data-level="1"] { background: #fef9c3; color: #713f12; }
+    .calc-badge[data-level="2"] { background: #fed7aa; color: #7c2d12; }
+    .calc-badge[data-level="3"] { background: #fecaca; color: #7f1d1d; }
+    .calc-table td { white-space: nowrap; }
+    .calc-table td:first-child { white-space: normal; }
+    .calc-cta-btns { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .calc-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .calc-live { display: flex; flex-direction: column; gap: .5rem; }
+    .calc-sources li { word-break: break-word; }
+    .table-scroll:focus-visible { outline: 3px solid rgba(59,130,246,.45); outline-offset: 2px; }
+    .mini-calc__fields .calc-pair { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+    @media (max-width: 420px) {
+      .mini-calc__fields .calc-pair { grid-template-columns: 1fr; }
+      .calc-breakdown li { flex-wrap: wrap; }
+      .calc-breakdown li span:last-child { white-space: normal; margin-left: auto; }
+    }
+    @media print {
+      .mini-calc__result { background: #fff !important; color: #0a1628 !important; border: 1px solid #0a1628; }
+      .mini-calc__result *, .calc-breakdown li span, .calc-options li, .calc-options strong { color: #0a1628 !important; }
+      .calc-options li { background: #f1f5f9 !important; }
+      .calc-breakdown { border-color: #94a3b8 !important; }
+    }
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","@id":"https://voltguard.com.tr/hesaplama/harmonik-filtre-ihtiyaci/#app","name":"Harmonik Filtre İhtiyacı Ön Değerlendirmesi","url":"https://voltguard.com.tr/hesaplama/harmonik-filtre-ihtiyaci/","description":"Sürücü, UPS ve LED gibi doğrusal olmayan yük payı, trafo gücü, uk ve kondansatör gücüyle THD risk sınıfını, paralel rezonans mertebesini (h = √(Sk/Qc)) ve reaktörlü kompanzasyon / aktif filtre ihtiyacını değerlendirin.","applicationCategory":"BusinessApplication","applicationSubCategory":"Elektrik mühendisliği ön değerlendirme aracı","operatingSystem":"Web","browserRequirements":"JavaScript etkin modern tarayıcı","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"TRY"},"provider":{"@id":"https://voltguard.com.tr/#organization"},"datePublished":"2026-10-24","dateModified":"2026-10-24"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesap Araçları","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Harmonik Filtre İhtiyacı","item":"https://voltguard.com.tr/hesaplama/harmonik-filtre-ihtiyaci/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Rezonans mertebesi nasıl hesaplanır?","acceptedAnswer":{"@type":"Answer","text":"Kondansatör ile trafo/şebeke endüktansının paralel rezonans mertebesi h = √(Sk ÷ Qc) formülüyle bulunur. Sk baradaki kısa devre gücü (kVA), Qc devredeki kondansatör gücüdür (kVAr). Örneğin 15.625 kVA kısa devre gücünde 250 kVAr için h ≈ 7,9 olur; rezonans frekansı yaklaşık 395 Hz’dir."}},{"@type":"Question","name":"Reaktörlü kompanzasyonda p = %7 mi %14 mü seçilmeli?","acceptedAnswer":{"@type":"Answer","text":"Sürücü ve redresör gibi 3 fazlı yüklerin baskın olduğu tesislerde 5. harmoniğin altına (189 Hz) ayarlı p = %7 yaygındır. LED, SMPS, bilgisayar gibi tek fazlı yükler nedeniyle 3. harmonik belirginse 134 Hz ayarlı p = %14 tercih edilir. Kesin seçim harmonik ölçümüyle yapılır."}},{"@type":"Question","name":"Reaktörlü kademede neden daha yüksek gerilimli kondansatör gerekir?","acceptedAnswer":{"@type":"Answer","text":"Seri reaktör kondansatör uçlarındaki gerilimi U ÷ (1 − p) kadar yükseltir. 400 V şebekede p = %7 için yaklaşık 430 V, p = %14 için 465 V olur; bu nedenle 440 V veya 480 V anma gerilimli kondansatör seçilir ve kademenin gerçek kVAr değeri buna göre hesaplanır."}},{"@type":"Question","name":"Aktif filtre ne zaman gerekir?","acceptedAnswer":{"@type":"Answer","text":"Harmonik üreten yük oranı yüksekse (Gh/Sn > %50), ölçülen THDv sınıra yaklaşıyorsa veya yük hızlı değişiyorsa aktif harmonik filtre değerlendirilir. Reaktörlü kompanzasyon rezonansı önler ama harmonik akımları tam olarak süzmez."}},{"@type":"Question","name":"Bu araç ölçümün yerine geçer mi?","acceptedAnswer":{"@type":"Answer","text":"Hayır. Araç tipik THD değerleri ve kısa devre gücüyle risk sınıfı çıkarır. Gerçek harmonik spektrum, yük profili ve kademe davranışı ancak en az bir haftalık enerji kalitesi ölçümüyle belirlenir."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <!--vg:header-->
+  <a class="skip-to-content" href="/hesaplama/harmonik-filtre-ihtiyaci/#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+        </span>
+      </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
+              <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+              <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/" aria-current="true">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
+      </nav>
+      <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+  </header>
+  <!--/vg:header-->
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/hesaplama-araclari/">Hesap Araçları</a> &rsaquo; <span>Harmonik Filtre İhtiyacı</span>
+  </nav>
+
+  <main class="article" id="main" tabindex="-1">
+    <span class="article__cat">Kompanzasyon ve Enerji Kalitesi</span>
+    <h1>Harmonik Filtre İhtiyacı Ön Değerlendirmesi</h1>
+    <p class="article__summary">Trafo bilgilerinizi, toplam yükünüzü, harmonik üreten yüklerinizi ve devredeki kondansatör gücünü girin; harmonik risk sınıfını, kondansatör–şebeke paralel rezonans mertebesini ve reaktörlü (detuned) kompanzasyon, aktif filtre veya önce ölçüm önerisini görün.</p>
+    <div class="mini-calc" id="hf-calc">
+      <div class="mini-calc__fields">
+        <div class="calc-pair">
+        <div class="mini-calc__field"><label for="hf-st">Trafo gücü (kVA)</label><input id="hf-st" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1000"></div>
+        <div class="mini-calc__field"><label for="hf-uk">Trafo uk (%)</label><input id="hf-uk" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="6" aria-describedby="hf-uk-hint"><small class="calc-hint" id="hf-uk-hint">Etiketteki kısa devre gerilimi.</small></div>
+        </div>
+        <div class="mini-calc__field"><label for="hf-sk">OG şebeke kısa devre gücü (MVA, isteğe bağlı)</label><input id="hf-sk" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="250" aria-describedby="hf-sk-hint"><small class="calc-hint" id="hf-sk-hint">Dağıtım şirketinden öğrenilir; boş bırakırsanız şebeke sonsuz güçte kabul edilir (rezonans biraz daha yüksek mertebede hesaplanır).</small></div>
+        <div class="mini-calc__field"><label for="hf-p">Toplam en yüksek yük (kW)</label><input id="hf-p" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="600"></div>
+        <div class="calc-pair">
+        <div class="mini-calc__field"><label for="hf-vfd">Sürücü / VFD (kW)</label><input id="hf-vfd" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="180"></div>
+        <div class="mini-calc__field"><label for="hf-ups">UPS / redresör (kW)</label><input id="hf-ups" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="40"></div>
+        </div>
+        <div class="calc-pair">
+        <div class="mini-calc__field"><label for="hf-led">LED, SMPS, bilgisayar (kW)</label><input id="hf-led" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="30"></div>
+        <div class="mini-calc__field"><label for="hf-other">Kaynak, indüksiyon, diğer (kW)</label><input id="hf-other" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0"></div>
+        </div>
+        <div class="mini-calc__field"><label for="hf-qc">Devredeki kondansatör gücü (kVAr)</label><input id="hf-qc" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="250" aria-describedby="hf-qc-hint"><small class="calc-hint" id="hf-qc-hint">En yüksek yükte devrede olan toplam kademe gücü.</small></div>
+        <div class="mini-calc__field"><label for="hf-reactor">Kompanzasyonda seri reaktör</label><select id="hf-reactor"><option value="none" selected>Yok (reaktörsüz kondansatör)</option><option value="p7">Var, p = %7 (189 Hz)</option><option value="p14">Var, p = %14 (134 Hz)</option></select></div>
+      </div>
+      <div class="mini-calc__result" role="group" aria-label="Değerlendirme sonucu" aria-live="off">
+        <div class="calc-live" role="status" aria-live="polite">
+          <span class="mini-calc__result-label">Harmonik risk sınıfı</span>
+          <span class="calc-badge" id="hf-badge" hidden></span>
+          <span class="mini-calc__result-value" id="hf-result">-</span>
+          <span class="mini-calc__result-note" id="hf-detail"></span>
+        </div>
+        <ul class="calc-breakdown" id="hf-breakdown" aria-label="Hesap dökümü"></ul>
+        <ul class="calc-options" id="hf-options" aria-label="Öneriler"></ul>
+        <p style="margin:.9rem 0 0"><a class="btn btn--accent btn--md" id="hf-quote" href="/?hizmet=harmonik-filtreli-kompanzasyon#iletisim"><i class="fas fa-paper-plane" aria-hidden="true"></i> Bu sonuçla teklif iste</a></p>
+      </div>
+    </div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Paralel rezonans mertebesi h<sub>r</sub> = √(S<sub>k</sub> ÷ Q<sub>c</sub>); 5. veya 7. harmoniğe yakınsa reaktörsüz kondansatör tehlikelidir.</li><li>Harmonik üreten yük gücünün trafo gücüne oranı (G<sub>h</sub>/S<sub>n</sub>) ilk seçim kuralıdır: ≤ %15 standart, %15–25 güçlendirilmiş, %25–50 reaktörlü, &gt; %50 filtre.</li><li>p = %7 reaktör ≈ 189 Hz, p = %14 reaktör ≈ 134 Hz ayarlıdır; kondansatör gerilimi U ÷ (1 − p) kadar yükselir.</li><li>EN 50160 ve IEEE 519, AG barasında THDv için %8 sınırını kullanır; karar ölçümle verilir.</li></ul></div>
+
+    <h2>Nasıl hesaplanır?</h2>
+    <ol class="article__list">
+      <li><strong>Bara kısa devre gücü:</strong> S<sub>k,trafo</sub> = S<sub>n</sub> ÷ u<sub>k</sub>; şebeke ile seri: S<sub>k</sub> = 1 ÷ (1/S<sub>k,trafo</sub> + 1/S<sub>k,şebeke</sub>).</li>
+      <li><strong>Paralel rezonans:</strong> h<sub>r</sub> = √(S<sub>k</sub> ÷ Q<sub>c</sub>), f<sub>r</sub> = 50 Hz × h<sub>r</sub>. 6 darbeli sürücü ve redresörlerin baskın harmonikleri 5., 7., 11. ve 13.; tek fazlı LED/SMPS yüklerinde 3. harmoniktir. h<sub>r</sub> bu mertebelere ±0,5 içinde yaklaşırsa "çok yüksek", ±1 içinde "yüksek" risk sayılır.</li>
+      <li><strong>Harmonik yük oranı:</strong> G<sub>h</sub> = Σ P<sub>doğrusal olmayan</sub> ÷ 0,9 (kVA); G<sub>h</sub>/S<sub>n</sub> sınıfı belirler.</li>
+      <li><strong>Kaba THD tahmini:</strong> her yük türü için tipik akım THD'si (VFD %40, UPS %30, LED/SMPS %80, diğer %40) ile harmonik akım bulunur; gerilim bozulması U<sub>h</sub> ≈ h × I<sub>h</sub> ÷ S<sub>k</sub> ile (3 fazlı yüklerde h = 5, tek fazlılarda h = 3) yaklaşık hesaplanır. Bu değer kondansatörsüz durum içindir; rezonans yakınında gerçek bozulma katlarca büyüyebilir.</li>
+      <li><strong>Risk sınıfı:</strong> G<sub>h</sub>/S<sub>n</sub> sınıfı, THDv tahmini (&lt; %3, %3–5, %5–8, ≥ %8) ve rezonans yakınlığının en kötüsüdür.</li>
+    </ol>
+
+    <h2>Öneri mantığı</h2>
+    <ul class="article__list">
+      <li><strong>Önce ölçüm:</strong> Risk "orta" ve üzerindeyse EN 61000-4-30 Sınıf A analizörle en az 1 hafta ölçüm yapılır; THDv, THDi, harmonik spektrum ve kademe davranışı kaydedilir. <a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji kalitesi ölçümü</a>.</li>
+      <li><strong>Reaktörlü (detuned) kompanzasyon:</strong> Kondansatöre seri reaktörle rezonans en düşük belirgin harmoniğin altına çekilir. 3 fazlı sürücü yükleri baskınsa p = %7 (189 Hz); LED, SMPS gibi tek fazlı yükler doğrusal olmayan yükün %30'unu aşıyorsa 3. harmonik nedeniyle p = %14 (134 Hz) önerilir. Kondansatör anma gerilimi en az U ÷ (1 − p) olmalıdır: 400 V şebekede p = %7 için 430 V (440 V seçilir), p = %14 için 465 V (480 V seçilir).</li>
+      <li><strong>Aktif harmonik filtre:</strong> Harmonik yük oranı %50'yi aşıyor veya THDv tahmini %8'e ulaşıyorsa; filtre akımı ölçülen harmonik akıma göre boyutlandırılır. Sürücülerde DC şok bobini, 12/18 darbeli veya aktif önyüzlü çözümler kaynakta azaltım sağlar.</li>
+    </ul>
+    <p>Mevcut panonuzu reaktörlü sisteme dönüştürme veya aktif filtre seçimi için <a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">harmonik filtreli kompanzasyon hizmetimize</a> bakabilirsiniz. Reaktif ceza alıyorsanız önce <a href="/hesaplama/reaktif-ceza-hesaplama/">reaktif ceza hesaplama</a> aracıyla faturanızı kontrol edin.</p>
+
+    <h2>Örnek hesap</h2>
+    <p>1000 kVA, u<sub>k</sub> %6 trafo ve 250 MVA şebeke: S<sub>k</sub> ≈ 15,6 MVA. Devrede 250 kVAr reaktörsüz kondansatör varken h<sub>r</sub> = √(15.625 ÷ 250) ≈ 7,9; rezonans 7. harmoniğe bir mertebeden yakındır. 250 kW doğrusal olmayan yük G<sub>h</sub> ≈ 278 kVA, G<sub>h</sub>/S<sub>n</sub> ≈ %28 ile reaktörlü sınıfa girer. Sonuç: <strong>yüksek risk</strong>, önce ölçüm, ardından p = %7 reaktörlü kompanzasyon ve 440 V kondansatör.</p>
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Rezonans mertebesi nasıl hesaplanır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Kondansatör ile trafo/şebeke endüktansının paralel rezonans mertebesi h = √(Sk ÷ Qc) formülüyle bulunur. Sk baradaki kısa devre gücü (kVA), Qc devredeki kondansatör gücüdür (kVAr). Örneğin 15.625 kVA kısa devre gücünde 250 kVAr için h ≈ 7,9 olur; rezonans frekansı yaklaşık 395 Hz’dir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Reaktörlü kompanzasyonda p = %7 mi %14 mü seçilmeli? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Sürücü ve redresör gibi 3 fazlı yüklerin baskın olduğu tesislerde 5. harmoniğin altına (189 Hz) ayarlı p = %7 yaygındır. LED, SMPS, bilgisayar gibi tek fazlı yükler nedeniyle 3. harmonik belirginse 134 Hz ayarlı p = %14 tercih edilir. Kesin seçim harmonik ölçümüyle yapılır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Reaktörlü kademede neden daha yüksek gerilimli kondansatör gerekir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Seri reaktör kondansatör uçlarındaki gerilimi U ÷ (1 − p) kadar yükseltir. 400 V şebekede p = %7 için yaklaşık 430 V, p = %14 için 465 V olur; bu nedenle 440 V veya 480 V anma gerilimli kondansatör seçilir ve kademenin gerçek kVAr değeri buna göre hesaplanır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Aktif filtre ne zaman gerekir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Harmonik üreten yük oranı yüksekse (Gh/Sn > %50), ölçülen THDv sınıra yaklaşıyorsa veya yük hızlı değişiyorsa aktif harmonik filtre değerlendirilir. Reaktörlü kompanzasyon rezonansı önler ama harmonik akımları tam olarak süzmez.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Bu araç ölçümün yerine geçer mi? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Hayır. Araç tipik THD değerleri ve kısa devre gücüyle risk sınıfı çıkarır. Gerçek harmonik spektrum, yük profili ve kademe davranışı ancak en az bir haftalık enerji kalitesi ölçümüyle belirlenir.</p></div></details>
+
+    <h2>Kaynaklar</h2>
+    <ul class="article__list calc-sources"><li>EN 50160 Kamu dağıtım şebekelerinde gerilim karakteristikleri (AG'de THDv ≤ %8)</li><li>IEEE 519-2022 Harmonik kontrolü için önerilen uygulamalar</li><li>IEC 61000-4-30 Güç kalitesi ölçüm yöntemleri (Sınıf A)</li><li>Schneider Electric, Electrical Installation Guide, Bölüm L — Güç faktörü düzeltme ve harmonikler (G<sub>h</sub>/S<sub>n</sub> seçim kuralı)</li><li>VoltGuard: <a href="/bilgi/reaktif-guc-kompanzasyonu.html">Reaktif güç kompanzasyonu</a>, <a href="/bilgi/harmonik-nedir-sorunlari.html">Harmonik nedir?</a></li></ul>
+    <p class="kb-disclaimer">Bu araç ön değerlendirme yapar; bağlayıcı değildir. Tipik THD değerleri ve 0,9 güç katsayısı kabulüyle kaba tahmin üretir. Filtre ve reaktör seçimi, tesiste yapılan enerji kalitesi ölçümüne göre yapılmalıdır.</p>
+    <p>İlgili kaynaklar: <a href="/hesaplama/kompanzasyon-hesaplama/">Kompanzasyon (kVAr)</a>, <a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif ceza</a>, <a href="/voltsim/kompanzasyon/">VoltSim 3D kompanzasyon ve harmonik</a>, <a href="/bilgi/vfd-frekans-invertoru-nedir.html">VFD nedir?</a>, <a href="/sor/kompanzasyon-kontaktor-ariza-nedenleri.html">Kompanzasyon kontaktör arızaları</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Harmoniği ölçüp doğru çözümü seçelim</strong><span>Sınıf A enerji kalitesi ölçümü, reaktörlü kompanzasyon ve aktif filtre uygulaması.</span></div>
+      <div class="calc-cta-btns">
+        <a href="/hizmetler/harmonik-filtreli-kompanzasyon.html" class="btn btn--outline-white btn--md">Hizmeti İncele</a>
+        <a href="/?hizmet=harmonik-filtreli-kompanzasyon#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
+    </div>
+    <p style="margin-top:1.6rem"><a href="/hesaplama-araclari/" class="kb-card__more">&larr; Tüm hesap araçları</a></p>
+  </main>
+
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+            </span>
+          </a>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
+
+  <script src="/js/vg-assess.js?v=961b477f30e1"></script>
+  <script>
+    (function () {
+      'use strict';
+      var A = window.VGAssess; if (!A) return;
+      var $ = function (id) { return document.getElementById(id); };
+      var nf = function (n, d) { return Number(n).toLocaleString('tr-TR', { maximumFractionDigits: d === undefined ? 1 : d }); };
+      function num(id) {
+        var raw = $(id).value.trim().replace(/\s/g, '').replace(/^%/, '');
+        if (raw === '') { return NaN; }
+        if (raw.indexOf(',') !== -1) { raw = raw.replace(/\./g, '').replace(',', '.'); }
+        else if (/^\d{1,3}(\.\d{3})+$/.test(raw)) { raw = raw.replace(/\./g, ''); }
+        return /^-?\d*\.?\d+$/.test(raw) ? Number(raw) : NaN;
+      }
+      function row(list, label, value, cls) {
+        var li = document.createElement('li');
+        if (cls) { li.className = cls; }
+        var a = document.createElement('span'); a.textContent = label;
+        var b = document.createElement('span'); b.textContent = value;
+        li.appendChild(a); li.appendChild(b); list.appendChild(li);
+      }
+      function option(list, title, detail, link) {
+        var li = document.createElement('li');
+        var s = document.createElement('strong'); s.textContent = title; li.appendChild(s);
+        li.appendChild(document.createTextNode(detail));
+        if (link) { li.appendChild(document.createTextNode(' ')); var a = document.createElement('a'); a.href = link[0]; a.textContent = link[1]; li.appendChild(a); }
+        list.appendChild(li);
+      }
+      var quoteNote = '';
+      var RISK_TEXT = ['Düşük risk', 'Orta risk', 'Yüksek risk', 'Çok yüksek risk'];
+      function update() {
+        var skRaw = $('hf-sk').value.trim();
+        var r = A.harmonicNeed({ sT: num('hf-st'), ukPct: num('hf-uk'), skGridMva: skRaw === '' ? null : num('hf-sk'), pLoad: num('hf-p'),
+          vfd: num('hf-vfd'), ups: num('hf-ups'), led: num('hf-led'), other: num('hf-other'), qc: num('hf-qc'), reactor: $('hf-reactor').value });
+        var list = $('hf-breakdown'), opts = $('hf-options'), badge = $('hf-badge'), quote = $('hf-quote');
+        list.textContent = ''; opts.textContent = ''; quoteNote = '';
+        if (!r.ok) { $('hf-result').textContent = '-'; $('hf-detail').textContent = r.error; badge.hidden = true; return; }
+        badge.hidden = false; badge.setAttribute('data-level', r.level); badge.textContent = RISK_TEXT[r.level];
+        $('hf-result').textContent = r.risk;
+        $('hf-detail').textContent = r.ghClass + '.' + (r.hr !== null && r.levels.resonance >= 2 ? ' Kondansatör rezonansı ' + r.nearestOrder + '. harmoniğe yakın.' : '');
+        row(list, 'Bara kısa devre gücü', nf(r.sscMva, 1) + ' MVA');
+        row(list, 'Harmonik yük oranı Gh/Sn', '%' + nf(r.ghRatio * 100, 0), r.levels.gh >= 2 ? 'is-over' : 'is-ok');
+        row(list, 'Doğrusal olmayan yük payı', '%' + nf(r.nlShare * 100, 0));
+        row(list, 'Tahmini yük THDi (kaba)', '%' + nf(r.thdiEst, 0));
+        row(list, 'Tahmini THDv (kondansatörsüz, kaba)', '%' + nf(r.thduEst, 1), r.levels.thdu >= 2 ? 'is-over' : 'is-ok');
+        if (r.hr !== null) row(list, 'Paralel rezonans mertebesi hr', nf(r.hr, 2) + ' (' + nf(r.hr * 50, 0) + ' Hz)', r.levels.resonance >= 2 ? 'is-over' : 'is-ok');
+        r.recommendations.forEach(function (t, i) { option(opts, 'Öneri ' + (i + 1), ' ' + t); });
+        quote.href = '/?hizmet=' + r.service + '#iletisim';
+        quoteNote = 'Harmonik ön değerlendirme: ' + nf(num('hf-st'), 0) + ' kVA trafo (uk %' + nf(num('hf-uk'), 1) + '), toplam yük ' + nf(num('hf-p'), 0) + ' kW, doğrusal olmayan yük %' + nf(r.nlShare * 100, 0) +
+          ' (Gh/Sn %' + nf(r.ghRatio * 100, 0) + '), kondansatör ' + nf(num('hf-qc'), 0) + ' kVAr' + (r.hr !== null ? ', rezonans mertebesi ' + nf(r.hr, 1) : '') + '. Risk sınıfı: ' + r.risk + '. ' +
+          (r.level >= 2 ? 'Ölçüm ve reaktörlü kompanzasyon / harmonik filtre teklifi talep ediyoruz.' : 'Enerji kalitesi ölçümü için teklif talep ediyoruz.');
+      }
+      $('hf-quote').addEventListener('click', function () {
+        try { if (quoteNote) window.sessionStorage.setItem('vgQuoteNote', quoteNote); } catch (err) { /* depolama kapalı */ }
+      });
+      $('hf-calc').addEventListener('input', update);
+      $('hf-calc').addEventListener('change', update);
+      update();
+    }());
+  </script>
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
+  <script src="/js/voltguard-tools.js?v=bc51c38205cf"></script>
+</body></html>

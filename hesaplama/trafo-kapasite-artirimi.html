@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/">
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=3ec2a90a1976">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Mevcut trafo gücü, en yüksek yük, cosφ, büyüme planı ve yeni makinelerle trafo yüklenmesini, gereken standart kVA gücünü ve ikinci trafo / değişim seçeneklerini hesaplayın.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Trafo Kapasite Artırımı Ön Değerlendirmesi (kVA) | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/trafo-kapasite-artirimi/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Trafo Kapasite Artırımı Ön Değerlendirmesi (kVA) | VoltGuard">
+  <meta property="og:description" content="Mevcut trafo gücü, en yüksek yük, cosφ, büyüme planı ve yeni makinelerle trafo yüklenmesini, gereken standart kVA gücünü ve ikinci trafo / değişim seçeneklerini hesaplayın.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/trafo-kapasite-artirimi/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta property="og:locale" content="tr_TR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Trafo Kapasite Artırımı Ön Değerlendirmesi (kVA) | VoltGuard">
+  <meta name="twitter:description" content="Mevcut trafo gücü, en yüksek yük, cosφ, büyüme planı ve yeni makinelerle trafo yüklenmesini, gereken standart kVA gücünü ve ikinci trafo / değişim seçeneklerini hesaplayın.">
+  <meta name="twitter:image" content="https://voltguard.com.tr/public/og-image.png">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=33bf2e764156">
+  <style>
+    .calc-hint { display: block; margin-top: .3rem; font-size: .78rem; line-height: 1.45; color: var(--clr-text-muted); }
+    .calc-breakdown { list-style: none; margin: .35rem 0 0; padding: .65rem 0 0; border-top: 1px solid rgba(255,255,255,.18); display: grid; gap: .4rem; font-size: .82rem; line-height: 1.4; color: rgba(255,255,255,.86); }
+    .calc-breakdown li { display: flex; justify-content: space-between; gap: .75rem; }
+    .calc-breakdown li span:last-child { white-space: nowrap; font-weight: 600; color: #fff; text-align: right; }
+    .calc-breakdown li.is-over span:last-child { color: #fca5a5; }
+    .calc-breakdown li.is-ok span:last-child { color: #86efac; }
+    .calc-options { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .55rem; }
+    .calc-options li { background: rgba(255,255,255,.08); border-radius: 8px; padding: .6rem .75rem; font-size: .83rem; line-height: 1.5; color: rgba(255,255,255,.9); }
+    .calc-options strong { display: block; color: #fff; font-size: .88rem; margin-bottom: .15rem; }
+    .calc-options a { color: #fcd34d; }
+    .calc-badge { display: inline-block; align-self: flex-start; padding: .2rem .6rem; border-radius: 999px; font-size: .78rem; font-weight: 700; background: #dcfce7; color: #14532d; }
+    .calc-badge[data-level="1"] { background: #fef9c3; color: #713f12; }
+    .calc-badge[data-level="2"] { background: #fed7aa; color: #7c2d12; }
+    .calc-badge[data-level="3"] { background: #fecaca; color: #7f1d1d; }
+    .calc-table td { white-space: nowrap; }
+    .calc-table td:first-child { white-space: normal; }
+    .calc-cta-btns { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .calc-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .calc-live { display: flex; flex-direction: column; gap: .5rem; }
+    .calc-sources li { word-break: break-word; }
+    .table-scroll:focus-visible { outline: 3px solid rgba(59,130,246,.45); outline-offset: 2px; }
+    .mini-calc__fields .calc-pair { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+    @media (max-width: 420px) {
+      .mini-calc__fields .calc-pair { grid-template-columns: 1fr; }
+      .calc-breakdown li { flex-wrap: wrap; }
+      .calc-breakdown li span:last-child { white-space: normal; margin-left: auto; }
+    }
+    @media print {
+      .mini-calc__result { background: #fff !important; color: #0a1628 !important; border: 1px solid #0a1628; }
+      .mini-calc__result *, .calc-breakdown li span, .calc-options li, .calc-options strong { color: #0a1628 !important; }
+      .calc-options li { background: #f1f5f9 !important; }
+      .calc-breakdown { border-color: #94a3b8 !important; }
+    }
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","@id":"https://voltguard.com.tr/hesaplama/trafo-kapasite-artirimi/#app","name":"Trafo Kapasite Artırımı Ön Değerlendirmesi","url":"https://voltguard.com.tr/hesaplama/trafo-kapasite-artirimi/","description":"Mevcut trafo gücü, en yüksek yük, cosφ, büyüme planı ve yeni makinelerle trafo yüklenmesini, gereken standart kVA gücünü ve ikinci trafo / değişim seçeneklerini hesaplayın.","applicationCategory":"BusinessApplication","applicationSubCategory":"Elektrik mühendisliği ön değerlendirme aracı","operatingSystem":"Web","browserRequirements":"JavaScript etkin modern tarayıcı","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"TRY"},"provider":{"@id":"https://voltguard.com.tr/#organization"},"datePublished":"2026-10-24","dateModified":"2026-10-24"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesap Araçları","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Trafo Kapasite Artırımı","item":"https://voltguard.com.tr/hesaplama/trafo-kapasite-artirimi/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Trafom kaç yüzde yüklenmeli?","acceptedAnswer":{"@type":"Answer","text":"Tasarımda en yüksek yükte %70–80 yüklenme yaygın bir hedeftir; bu, yük büyümesi ve sıcak günler için pay bırakır. Trafo kısa süre anma gücünün üzerinde çalışabilir, fakat sürekli aşırı yüklenme yalıtım ömrünü kısaltır."}},{"@type":"Question","name":"Trafo gücünü artırmak için hangi izinler gerekir?","acceptedAnswer":{"@type":"Answer","text":"Kurulu güç artışı için dağıtım şirketine başvurup bağlantı görüşü almak, yetkili mühendisçe hazırlanan elektrik projesini onaylatmak, uygulama sonrası kabul yaptırmak ve abonelik/sözleşmeyi güncellemek gerekir. Belgeler ve süreler dağıtım şirketine göre değişir."}},{"@type":"Question","name":"İkinci trafo mu, trafo değişimi mi?","acceptedAnswer":{"@type":"Answer","text":"Değişim tek trafo ve daha basit işletme sağlar; eski trafo yedek veya satış konusu olur. İkinci trafo yedeklilik getirir ve yükleri bölmeye imkân verir, ancak paralel çalışma için bağlantı grubu, dönüştürme oranı ve uk değerleri uyumlu olmalı, güç oranı yaklaşık 1:3 içinde kalmalıdır. Karar köşk yeri, OG hücre durumu ve maliyetle birlikte verilir."}},{"@type":"Question","name":"Kompanzasyon trafo kapasite ihtiyacını azaltır mı?","acceptedAnswer":{"@type":"Answer","text":"Evet. Aynı aktif güç için cosφ yükseldikçe çekilen kVA azalır. Örneğin 700 kW yük cosφ 0,80 iken 875 kVA, cosφ 0,98 iken yaklaşık 714 kVA çeker. Araç, kompanzasyonla hedef yüklenmenin altına inilebiliyorsa bunu ayrı bir seçenek olarak gösterir."}},{"@type":"Question","name":"En yüksek yükü nereden öğrenirim?","acceptedAnswer":{"@type":"Answer","text":"OG abonelerde sayaç yük profili (15 dakikalık talep) dağıtım şirketinden veya sayaç okuma sisteminden alınabilir. En güvenilir yol, en yoğun üretim dönemini kapsayan en az bir haftalık enerji analizörü ölçümüdür."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <!--vg:header-->
+  <a class="skip-to-content" href="/hesaplama/trafo-kapasite-artirimi/#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+        </span>
+      </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
+              <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+              <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/" aria-current="true">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
+      </nav>
+      <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+  </header>
+  <!--/vg:header-->
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/hesaplama-araclari/">Hesap Araçları</a> &rsaquo; <span>Trafo Kapasite Artırımı</span>
+  </nav>
+
+  <main class="article" id="main" tabindex="-1">
+    <span class="article__cat">Trafo ve OG Tesisler</span>
+    <h1>Trafo Kapasite Artırımı Ön Değerlendirmesi</h1>
+    <p class="article__summary">Mevcut trafonuzun gücünü, ölçülen veya tahmini en yüksek yükünüzü ve planladığınız büyümeyi girin; bugünkü ve plan sonundaki yüklenmeyi, gereken standart trafo gücünü ve uygulanabilir seçenekleri (trafo değişimi, ikinci trafo, önce kompanzasyon) görün.</p>
+    <div class="mini-calc" id="tk-calc">
+      <div class="mini-calc__fields">
+        <div class="mini-calc__field"><label for="tk-sn">Mevcut trafo gücü (kVA)</label><input id="tk-sn" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="630" aria-describedby="tk-sn-hint"><small class="calc-hint" id="tk-sn-hint">Trafo etiketindeki anma gücü (Sn).</small></div>
+        <div class="calc-pair">
+        <div class="mini-calc__field"><label for="tk-p">En yüksek aktif yük (kW)</label><input id="tk-p" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="400" aria-describedby="tk-p-hint"><small class="calc-hint" id="tk-p-hint">Ölçüm veya sayaç yük profilinden en yüksek değer.</small></div>
+        <div class="mini-calc__field"><label for="tk-cos">Bu yükte cosφ</label><input id="tk-cos" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0,95"></div>
+        </div>
+        <div class="calc-pair">
+        <div class="mini-calc__field"><label for="tk-growth">Yıllık yük büyümesi (%)</label><input id="tk-growth" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="3"></div>
+        <div class="mini-calc__field"><label for="tk-years">Plan süresi (yıl)</label><input id="tk-years" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="5"></div>
+        </div>
+        <div class="mini-calc__field"><label for="tk-new">Eklenecek yeni yükler (kW, toplam kurulu)</label><input id="tk-new" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="150" aria-describedby="tk-new-hint"><small class="calc-hint" id="tk-new-hint">Yeni makine, hat, kompresör, şarj istasyonu vb. kurulu güçlerin toplamı.</small></div>
+        <div class="calc-pair">
+        <div class="mini-calc__field"><label for="tk-ks">Yeni yük eşzamanlılık katsayısı</label><input id="tk-ks" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0,8" aria-describedby="tk-ks-hint"><small class="calc-hint" id="tk-ks-hint">Aynı anda çalışma oranı (0,1–1).</small></div>
+        <div class="mini-calc__field"><label for="tk-newcos">Yeni yüklerin cosφ değeri</label><input id="tk-newcos" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="0,85"></div>
+        </div>
+        <div class="mini-calc__field"><label for="tk-target">Hedef en yüksek yüklenme (%)</label><input id="tk-target" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="80" aria-describedby="tk-target-hint"><small class="calc-hint" id="tk-target-hint">Sürekli yüklenme ve gelecek payı için tipik tasarım hedefi %70–80.</small></div>
+      </div>
+      <div class="mini-calc__result" role="group" aria-label="Değerlendirme sonucu" aria-live="off">
+        <div class="calc-live" role="status" aria-live="polite">
+          <span class="mini-calc__result-label">Plan sonunda trafo yüklenmesi</span>
+          <span class="calc-badge" id="tk-badge" hidden></span>
+          <span class="mini-calc__result-value" id="tk-result">-</span>
+          <span class="mini-calc__result-note" id="tk-detail"></span>
+        </div>
+        <ul class="calc-breakdown" id="tk-breakdown" aria-label="Hesap dökümü"></ul>
+        <ul class="calc-options" id="tk-options" aria-label="Öneriler"></ul>
+        <p style="margin:.9rem 0 0"><a class="btn btn--accent btn--md" id="tk-quote" href="/?hizmet=trafo-merkezi-kurulumu#iletisim"><i class="fas fa-paper-plane" aria-hidden="true"></i> Bu sonuçla teklif iste</a></p>
+      </div>
+    </div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Yüklenme = görünür güç (kVA) ÷ trafo anma gücü; görünür güç S = P ÷ cosφ ile bulunur.</li><li>Mevcut ve yeni yükler aktif (kW) ve reaktif (kVAr) olarak ayrı toplanır: S = √(P² + Q²). Farklı cosφ değerleri böylece doğru birleşir.</li><li>Gereken güç, plan sonundaki yük ÷ hedef yüklenme oranıdır; sonuç bir üst standart trafo gücüne yuvarlanır.</li><li>Kapasite artırımı dağıtım şirketinin bağlantı görüşü, onaylı proje ve kabul işlemleri olmadan yapılamaz.</li></ul></div>
+
+    <h2>Nasıl hesaplanır?</h2>
+    <ol class="article__list">
+      <li><strong>Bugünkü yük:</strong> S<sub>0</sub> = P<sub>en yüksek</sub> ÷ cosφ; yüklenme = S<sub>0</sub> ÷ S<sub>n</sub> × 100.</li>
+      <li><strong>Büyüme:</strong> mevcut aktif yük plan süresi boyunca bileşik büyür: P<sub>1</sub> = P<sub>en yüksek</sub> × (1 + g)<sup>n</sup>; reaktif yük Q<sub>1</sub> = P<sub>1</sub> × tanφ.</li>
+      <li><strong>Yeni yükler:</strong> P<sub>2</sub> = kurulu güç × eşzamanlılık katsayısı; Q<sub>2</sub> = P<sub>2</sub> × tanφ<sub>yeni</sub>.</li>
+      <li><strong>Plan sonu:</strong> S = √((P<sub>1</sub> + P<sub>2</sub>)² + (Q<sub>1</sub> + Q<sub>2</sub>)²); gereken güç S<sub>gerekli</sub> = S ÷ hedef yüklenme.</li>
+      <li><strong>Seçim:</strong> S<sub>gerekli</sub> bir üst standart güce (50, 100, 160, 250, 400, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150 kVA) yuvarlanır. İkinci trafo seçeneğinde eksik güç (S<sub>gerekli</sub> − S<sub>n</sub>) aynı listeden seçilir.</li>
+      <li><strong>AG akımı:</strong> I = S ÷ (√3 × 400 V); ana şalter, bara ve kablo seçimi bu akıma göre kontrol edilir (<a href="/hesaplama/trafo-akimi-hesaplama/">trafo akımı hesaplama</a>).</li>
+    </ol>
+
+    <h2>Kabuller ve sınırlar</h2>
+    <ul class="article__list">
+      <li>En yüksek yük, 15 dakikalık ortalama talep gibi sürekli bir değerdir; motor kalkışı gibi kısa süreli tepeler ayrıca değerlendirilir.</li>
+      <li>Hedef yüklenme varsayılan %80'dir: trafo kısa süre anma gücünün üzerinde çalışabilir, ancak sürekli aşırı yüklenme sargı sıcaklığını ve yalıtım yaşlanmasını artırır (TS EN 60076-7 yükleme kılavuzu). Ortam sıcaklığı, köşk havalandırması ve trafo tipi (yağlı / kuru) bu payı değiştirir.</li>
+      <li>Paralel çalışma için bağlantı grubu ve dönüştürme oranı aynı, kısa devre gerilimleri (uk) yakın olmalıdır; araç güç oranı için yaygın 1:3 sınırını kullanır. Yük paylaşımı S<sub>n</sub> ÷ uk oranıyla orantılıdır.</li>
+      <li>Trafo değiştiğinde AG kısa devre akımı artar; mevcut şalterlerin kesme kapasitesi <a href="/hesaplama/kisa-devre-akimi-hesaplama/">kısa devre akımı hesabı</a> ile kontrol edilmelidir.</li>
+    </ul>
+
+    <h2>Kapasite artırımında izin ve proje süreci</h2>
+    <p>Trafo gücünü artırmak, kurulu güç değişikliği olduğu için tek başına bir ekipman değişimi değildir. Genel akış şöyledir: dağıtım şirketine kurulu güç artışı için başvuru ve <strong>bağlantı görüşü</strong> alınması, yetkili mühendisçe hazırlanan <strong>elektrik projesinin onaylatılması</strong>, uygulama, <strong>kabul</strong> işlemleri ve sözleşme/abonelik güncellemesi. Bu süreç Elektrik Piyasası Bağlantı ve Sistem Kullanım Yönetmeliği, Elektrik Tesisleri Proje Yönetmeliği ve Elektrik Kuvvetli Akım Tesisleri Yönetmeliği çerçevesinde yürür; belge listesi ve süreler dağıtım şirketine göre değişir. Bu araçtaki sonuç, başvuru öncesinde hangi gücü konuşacağınızı görmeniz içindir; <strong>proje ve şebeke onayının yerine geçmez</strong>.</p>
+    <p>Trafo merkezi kurulumu ve kapasite artırımı projelerinde keşif, proje, dağıtım şirketi süreçleri ve uygulamayı birlikte yürütüyoruz: <a href="/hizmetler/trafo-merkezi-kurulumu.html">trafo merkezi kurulumu</a>.</p>
+
+    <h2>Örnek hesap</h2>
+    <p>630 kVA trafoda en yüksek yük 400 kW, cosφ 0,95 (araçtaki varsayılanlar): bugünkü yük 421 kVA, yüklenme %67. Yıllık %3 büyümeyle 5 yıl sonra mevcut yük 464 kW'a çıkar; 150 kW yeni makine (eşzamanlılık 0,8, cosφ 0,85) 120 kW ve 74 kVAr ekler. Plan sonunda S ≈ 626 kVA, yüklenme %99. %80 hedef için en az 783 kVA gerekir: bir üst standart güç <strong>800 kVA</strong>'dır. İkinci trafo seçeneğinde eksik 153 kVA için 160 kVA çıkar; ancak 630/160 güç oranı 1:3'ü aştığı için paralel çalışma yerine yüklerin ayrı baralara bölünmesi önerilir.</p>
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Trafom kaç yüzde yüklenmeli? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Tasarımda en yüksek yükte %70–80 yüklenme yaygın bir hedeftir; bu, yük büyümesi ve sıcak günler için pay bırakır. Trafo kısa süre anma gücünün üzerinde çalışabilir, fakat sürekli aşırı yüklenme yalıtım ömrünü kısaltır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Trafo gücünü artırmak için hangi izinler gerekir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Kurulu güç artışı için dağıtım şirketine başvurup bağlantı görüşü almak, yetkili mühendisçe hazırlanan elektrik projesini onaylatmak, uygulama sonrası kabul yaptırmak ve abonelik/sözleşmeyi güncellemek gerekir. Belgeler ve süreler dağıtım şirketine göre değişir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">İkinci trafo mu, trafo değişimi mi? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Değişim tek trafo ve daha basit işletme sağlar; eski trafo yedek veya satış konusu olur. İkinci trafo yedeklilik getirir ve yükleri bölmeye imkân verir, ancak paralel çalışma için bağlantı grubu, dönüştürme oranı ve uk değerleri uyumlu olmalı, güç oranı yaklaşık 1:3 içinde kalmalıdır. Karar köşk yeri, OG hücre durumu ve maliyetle birlikte verilir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Kompanzasyon trafo kapasite ihtiyacını azaltır mı? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Evet. Aynı aktif güç için cosφ yükseldikçe çekilen kVA azalır. Örneğin 700 kW yük cosφ 0,80 iken 875 kVA, cosφ 0,98 iken yaklaşık 714 kVA çeker. Araç, kompanzasyonla hedef yüklenmenin altına inilebiliyorsa bunu ayrı bir seçenek olarak gösterir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">En yüksek yükü nereden öğrenirim? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>OG abonelerde sayaç yük profili (15 dakikalık talep) dağıtım şirketinden veya sayaç okuma sisteminden alınabilir. En güvenilir yol, en yoğun üretim dönemini kapsayan en az bir haftalık enerji analizörü ölçümüdür.</p></div></details>
+
+    <h2>Kaynaklar</h2>
+    <ul class="article__list calc-sources"><li>TS EN 60076-1 Güç transformatörleri — Genel; TS EN 60076-7 Yağlı güç transformatörleri için yükleme kılavuzu</li><li>Elektrik Piyasası Bağlantı ve Sistem Kullanım Yönetmeliği (bağlantı başvurusu ve bağlantı görüşü)</li><li>Elektrik Tesisleri Proje Yönetmeliği; Elektrik Kuvvetli Akım Tesisleri Yönetmeliği</li><li>VoltGuard: <a href="/bilgi/kisa-devre-akimi-nedir.html">Kısa devre akımı ve trafo tablosu</a>, <a href="/bilgi/kva-amper-hesaplama.html">kVA–amper hesaplama</a></li></ul>
+    <p class="kb-disclaimer">Bu araç ön değerlendirme yapar; bağlayıcı değildir. Kesin trafo gücü yük ölçümü, kısa devre ve koruma hesapları, köşk/hücre durumu ve dağıtım şirketinin bağlantı görüşüyle belirlenir. Kapasite artırımı için onaylı proje ve kabul zorunludur.</p>
+    <p>İlgili kaynaklar: <a href="/hesaplama/trafo-akimi-hesaplama/">Trafo akımı</a>, <a href="/hesaplama/kisa-devre-akimi-hesaplama/">Kısa devre akımı</a>, <a href="/hesaplama/kompanzasyon-hesaplama/">Kompanzasyon</a>, <a href="/voltsim/trafo/">VoltSim 3D trafo merkezi</a>, <a href="/bilgi/trafo-periyodik-bakim.html">Trafo periyodik bakım</a>.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Kapasite artırımını projeden kabule birlikte yürütelim</strong><span>Yük ölçümü, trafo seçimi, dağıtım şirketi başvurusu, proje ve uygulama.</span></div>
+      <div class="calc-cta-btns">
+        <a href="/hizmetler/trafo-merkezi-kurulumu.html" class="btn btn--outline-white btn--md">Hizmeti İncele</a>
+        <a href="/?hizmet=trafo-merkezi-kurulumu#iletisim" class="btn btn--accent btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
+    </div>
+    <p style="margin-top:1.6rem"><a href="/hesaplama-araclari/" class="kb-card__more">&larr; Tüm hesap araçları</a></p>
+  </main>
+
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+            </span>
+          </a>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
+
+  <script src="/js/vg-assess.js?v=961b477f30e1"></script>
+  <script>
+    (function () {
+      'use strict';
+      var A = window.VGAssess; if (!A) return;
+      var $ = function (id) { return document.getElementById(id); };
+      var nf = function (n, d) { return Number(n).toLocaleString('tr-TR', { maximumFractionDigits: d === undefined ? 1 : d }); };
+      function num(id) {
+        var raw = $(id).value.trim().replace(/\s/g, '').replace(/^%/, '');
+        if (raw === '') { return NaN; }
+        if (raw.indexOf(',') !== -1) { raw = raw.replace(/\./g, '').replace(',', '.'); }
+        else if (/^\d{1,3}(\.\d{3})+$/.test(raw)) { raw = raw.replace(/\./g, ''); }
+        return /^-?\d*\.?\d+$/.test(raw) ? Number(raw) : NaN;
+      }
+      function row(list, label, value, cls) {
+        var li = document.createElement('li');
+        if (cls) { li.className = cls; }
+        var a = document.createElement('span'); a.textContent = label;
+        var b = document.createElement('span'); b.textContent = value;
+        li.appendChild(a); li.appendChild(b); list.appendChild(li);
+      }
+      function option(list, title, detail, link) {
+        var li = document.createElement('li');
+        var s = document.createElement('strong'); s.textContent = title; li.appendChild(s);
+        li.appendChild(document.createTextNode(detail));
+        if (link) { li.appendChild(document.createTextNode(' ')); var a = document.createElement('a'); a.href = link[0]; a.textContent = link[1]; li.appendChild(a); }
+        list.appendChild(li);
+      }
+      var quoteNote = '';
+      function update() {
+        var r = A.trafoCapacity({ sn: num('tk-sn'), pPeak: num('tk-p'), cosNow: num('tk-cos'), growthPct: num('tk-growth'), years: num('tk-years'),
+          newKw: num('tk-new'), newCos: num('tk-newcos'), simult: num('tk-ks'), targetPct: num('tk-target') });
+        var list = $('tk-breakdown'), opts = $('tk-options'), badge = $('tk-badge');
+        list.textContent = ''; opts.textContent = ''; quoteNote = '';
+        if (!r.ok) { $('tk-result').textContent = '-'; $('tk-detail').textContent = r.error; badge.hidden = true; return; }
+        var lvl = r.status === 'yeterli' ? 0 : r.status === 'sinirda' ? 2 : 3;
+        badge.hidden = false; badge.setAttribute('data-level', lvl);
+        badge.textContent = r.status === 'yeterli' ? 'Kapasite yeterli' : r.status === 'sinirda' ? 'Hedef yüklenme aşılıyor' : 'Anma gücü aşılıyor';
+        $('tk-result').textContent = '%' + nf(r.loadFuture, 0) + ' (' + nf(r.sFuture, 0) + ' kVA)';
+        $('tk-detail').textContent = r.sufficient ? 'Plan sonunda mevcut trafo hedef yüklenmenin altında kalıyor.'
+          : 'Hedef %' + nf(num('tk-target'), 0) + ' yüklenme için en az ' + nf(Math.ceil(r.sRequired), 0) + ' kVA gerekiyor' + (r.replacement ? '; bir üst standart güç ' + r.replacement + ' kVA.' : '.');
+        row(list, 'Bugünkü yük / yüklenme', nf(r.sNow, 0) + ' kVA · %' + nf(r.loadNow, 0), r.loadNow > num('tk-target') ? 'is-over' : 'is-ok');
+        row(list, 'Plan sonu aktif / reaktif', nf(r.pFuture, 0) + ' kW · ' + nf(r.qFuture, 0) + ' kVAr');
+        row(list, 'Plan sonu ortalama cosφ', nf(r.cosFuture, 2));
+        row(list, 'Plan sonu yüklenme', '%' + nf(r.loadFuture, 0), r.sufficient ? 'is-ok' : 'is-over');
+        row(list, 'Gereken en az güç', nf(Math.ceil(r.sRequired), 0) + ' kVA');
+        row(list, 'Trafo AG anma akımı (400 V)', nf(r.iRated, 0) + ' A');
+        row(list, 'Plan sonu AG akımı', nf(r.iFuture, 0) + ' A', r.iFuture > r.iRated ? 'is-over' : '');
+        r.options.forEach(function (o) { option(opts, o.title, o.detail); });
+        option(opts, 'Zorunlu adımlar', 'Kapasite artırımı için dağıtım şirketinden bağlantı görüşü, onaylı elektrik projesi ve kabul gerekir.');
+        quoteNote = 'Trafo kapasite ön değerlendirmesi: mevcut ' + nf(num('tk-sn'), 0) + ' kVA, en yüksek yük ' + nf(num('tk-p'), 0) + ' kW (cosφ ' + nf(num('tk-cos'), 2) + '), ' +
+          nf(num('tk-years'), 0) + ' yılda %' + nf(num('tk-growth'), 1) + '/yıl büyüme ve ' + nf(num('tk-new'), 0) + ' kW yeni yük. Plan sonu ' + nf(r.sFuture, 0) + ' kVA (%' + nf(r.loadFuture, 0) + ' yüklenme). ' +
+          (r.sufficient ? 'Mevcut trafo yeterli görünüyor; doğrulama ölçümü istiyoruz.' : 'En az ' + nf(Math.ceil(r.sRequired), 0) + ' kVA gerekiyor' + (r.replacement ? ' (' + r.replacement + ' kVA)' : '') + '. Kapasite artırımı için keşif, proje ve teklif talep ediyoruz.');
+      }
+      $('tk-quote').addEventListener('click', function () {
+        try { if (quoteNote) window.sessionStorage.setItem('vgQuoteNote', quoteNote); } catch (err) { /* depolama kapalı */ }
+      });
+      $('tk-calc').addEventListener('input', update);
+      $('tk-calc').addEventListener('change', update);
+      update();
+    }());
+  </script>
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
+  <script src="/js/voltguard-tools.js?v=bc51c38205cf"></script>
+</body></html>
