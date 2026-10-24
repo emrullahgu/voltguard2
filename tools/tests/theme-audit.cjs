@@ -94,7 +94,14 @@ function measure() {
     for (let e = el; e && e.nodeType === 1; e = e.parentElement) {
       const cs = getComputedStyle(e);
       // metnin arkasında olmayan ata (ör. 2 px'lik çizgi içine konumlanmış etiket) zemin sayılmaz
-      if (e !== el) { const r = e.getBoundingClientRect(); if (r.width && r.height && (cx < r.left - 1 || cx > r.right + 1 || cy < r.top - 1 || cy > r.bottom + 1)) continue; }
+      // (ata kırpıyorsa metin kaydırma alanı dışında, yani şu an görünmüyor: ölçülmez)
+      if (e !== el) {
+        const r = e.getBoundingClientRect();
+        if (r.width && r.height && (cx < r.left - 1 || cx > r.right + 1 || cy < r.top - 1 || cy > r.bottom + 1)) {
+          if (cs.overflowX !== 'visible' || cs.overflowY !== 'visible') return { hidden: true };
+          continue;
+        }
+      }
       const bi = cs.backgroundImage;
       if (bi && bi !== 'none') {
         // form denetimlerinde url() yalnız ok/ikon çizimidir: zemin rengi geçerli
@@ -137,7 +144,11 @@ function measure() {
     const size = parseFloat(cs.fontSize), weight = Number(cs.fontWeight) || 400;
     const large = size >= 24 || (size >= 18.66 && weight >= 700);
     const need = large ? 3 : 4.5;
+    // kapalı <details> içeriği görünmez
+    const det = el.closest('details:not([open])');
+    if (det && !el.closest('summary')) return;
     const b = background(el, r);
+    if (b.hidden) return;
     const key = kind + sel(el);
     if (b.over) { if (!seen.has(key + 'o')) { seen.add(key + 'o'); issues.push({ type: 'görsel üstünde', sel: sel(el), text: textSample, note: b.over }); } return; }
     let worst = 99, wbg = null;
@@ -273,13 +284,13 @@ async function auditPageInner(ctx, url, holder) {
         for (let y = 0, i = 0; y < document.documentElement.scrollHeight && i < 40; y += step, i++) { scrollTo(0, y); await new Promise(r => setTimeout(r, 50)); }
         scrollTo(0, 0);
         document.documentElement.classList.add('qa-no-anim');
-        const st = document.createElement('style'); st.textContent = '*,*::before,*::after{transition:none!important;animation-duration:0s!important;animation-delay:0s!important}'; document.head.appendChild(st);
+        const st = document.createElement('style'); st.textContent = '*,*::before,*::after{transition:none!important;animation-duration:0s!important;animation-delay:0s!important}html *{content-visibility:visible!important}'; document.head.appendChild(st);
       });
       await page.waitForTimeout(450);
       info = await page.evaluate(measure);
       imgs = await page.evaluate(measureImages);
     } catch (e) {
-      if (attempt || !/Execution context was destroyed|navigation/i.test(e.message)) { errors.push('yükleme: ' + e.message.slice(0, 160)); break; }
+      if (attempt || !/Execution context was destroyed|navigation|not of type 'Element'/i.test(e.message)) { errors.push('yükleme: ' + e.message.slice(0, 160)); break; }
     }
   }
   return { url, errors, info, imgs };

@@ -823,7 +823,7 @@
 }
 
 /* Bölüm rozetleri gri zeminde >= 4.5:1; katalog PDF rozeti beyaz metinle >= 4.5:1 */
-.section--gray .section__badge { color: var(--clr-accent-text); }
+.section--gray .section__badge { color: var(--th-amber-ink); }
 .catalog__doc-badge { background: #c2362b; }
 
 /* Katalog: PDF'teki eski iletişim bilgisine karşı güncel adres notu */

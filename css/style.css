@@ -187,7 +187,7 @@ button {
   align-items: center;
   gap: .4rem;
   background-color: rgba(245,158,11,.1);
-  color: var(--clr-accent-text);
+  color: var(--th-amber-ink);
   font-family: var(--font-heading);
   font-size: .78rem;
   font-weight: 600;
@@ -3013,7 +3013,7 @@ button:focus-visible {
   font-family: var(--font-heading);
   font-size: .6875rem;
   letter-spacing: .18em;
-  color: rgba(59, 130, 246, .8);
+  color: #7fb0f7;
 }
 .scope__state {
   position: absolute;
@@ -3135,7 +3135,7 @@ button:focus-visible {
 .kb-keyfacts h2 { font-family: var(--font-heading); font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; color: var(--clr-accent-light); margin: 0 0 .8rem; }
 .kb-keyfacts ul { list-style: none; display: grid; gap: .6rem; }
 .kb-keyfacts li { position: relative; padding-left: 1.7rem; line-height: 1.55; color: rgba(255, 255, 255, .9); }
-.kb-keyfacts a { color: var(--clr-accent-light); }
+.kb-keyfacts a, .article .kb-keyfacts li a:not(.btn), .article .kb-keyfacts li a:not(.btn):hover { color: var(--clr-accent-light); }
 .kb-keyfacts li::before { content: "\f0e7"; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; left: 0; top: .1rem; color: var(--clr-accent); font-size: .9rem; }
 
 .kb-sources { background: var(--clr-bg-gray); border: 1px solid var(--clr-border); border-radius: var(--r-md); padding: 1.1rem 1.3rem; margin-top: 1.75rem; font-size: .92rem; }
