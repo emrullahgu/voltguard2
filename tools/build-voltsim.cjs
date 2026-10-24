@@ -95,7 +95,15 @@ const MODULES = [
     lead: 'Bir bölgede yangın başlatın: duman tavana yayılır, dedektörler sırayla algılar, panel ön alarm ve yangın alarmına geçer, sirenler çalar ve tahliye süresi hesaplanır. Eğitim senaryosudur; yangın projesi yerine geçmez.',
     tags: ['Duman yayılımı', 'Bölge alarmı', 'Çift dedektör onayı', 'EN 54-2 durumları', 'Siren / flaşör', 'Tahliye süresi'],
     service: ['/hizmetler/elektrik-projesi.html', 'Elektrik projesi'],
-    related: [['/bilgi/mevzuat-kutuphanesi.html', 'Mevzuat kütüphanesi']] }
+    related: [['/bilgi/mevzuat-kutuphanesi.html', 'Mevzuat kütüphanesi']] },
+  { id: 'depolama', slug: 'depolama-hibrit', name: 'Depolama & Hibrit', short: 'LiFePO4 batarya, GES/RES/dizel hibrit santral ve dağıtım stratejileri',
+    title: '3D Batarya Enerji Depolama (BESS) ve Hibrit Santral Simülasyonu | VoltSim',
+    description: 'Fabrikanız için LiFePO4 batarya, GES, RES ve dizel jeneratörlü hibrit santrali saat saat simüle edin: öz tüketim, tepe tıraşlama, yedek rezerv, SOC, çevrim ve maliyet.',
+    h1: '3D Batarya Enerji Depolama ve Hibrit Santral Simülasyonu', eyebrow: 'BESS · GES · RES · Dizel · Şebeke',
+    lead: 'Fabrikanın 24 saatlik yük profiline GES, rüzgâr, dizel jeneratör ve LiFePO4 batarya ekleyin. Dağıtım stratejisini seçin; batarya, şebeke ve jeneratör arasındaki güç akışı her saat için hesaplanır ve 3D sahnede canlı akar.',
+    tags: ['SOC · DoD · C-oranı', 'Çevrim verimi √η', 'Öz tüketim / tepe tıraşlama', 'Yedek rezerv · ada modu', 'Üç zamanlı tarife', 'Öz yeterlilik · çevrim'],
+    service: ['/hizmetler/fabrika-cati-ges.html', 'Fabrika çatı GES ve depolama'],
+    related: [['/araclar/mesken-ges-depolama/', 'GES + depolama aracı'], ['/araclar/batarya-enerji-sure/', 'Batarya enerji süresi'], ['/bilgi/lisanssiz-uretim-ges.html', 'Lisanssız üretim (GES)'], ['/hesaplama/ges-uretim-hesaplama/', 'GES üretim hesabı']] }
 ];
 
 const esc = s => String(s === undefined || s === null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
