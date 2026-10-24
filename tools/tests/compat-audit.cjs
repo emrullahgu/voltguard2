@@ -63,7 +63,7 @@ const VIEWS = [
       const page = await ctx.newPage(); page.setDefaultTimeout(40000);
       for (const url of PAGES) {
         const errors = [], missing = [];
-        const onC = m => { if (m.type() === 'error' && !/favicon|WebGL|GPU stall|swiftshader|inline-speculation-rules/i.test(m.text())) errors.push(m.text().slice(0, 200)); };
+        const onC = m => { if (m.type() === 'error' && !/favicon|WebGL|GPU stall|swiftshader|inline-speculation-rules|app.netlify.com/i.test(m.text())) errors.push(m.text().slice(0, 200)); };
         const onE = e => errors.push(String(e).slice(0, 200));
         const onR = r => { if (r.status() >= 400 && r.url().startsWith(BASE)) missing.push(r.status() + ' ' + r.url().slice(BASE.length)); };
         page.on('console', onC); page.on('pageerror', onE); page.on('response', onR);

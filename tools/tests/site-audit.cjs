@@ -13,6 +13,7 @@ const root = path.resolve(__dirname, '../..');
 const out = path.join(root, '.qa/audit');
 fs.mkdirSync(out, { recursive: true });
 const BASE = process.env.VG_BASE || 'http://127.0.0.1:4173';
+const NETLIFY_UI = /app.netlify.com/;
 const only = process.argv.slice(2).filter(a => !a.startsWith('--'));
 
 function packagePath(name) {
@@ -67,7 +68,8 @@ const pages = walk('', []).filter(r => !/^(hesap\/|calisan\/)/.test(r) || /^hesa
       page.setDefaultTimeout(45000);
       for (const pg of pages) {
         const errors = [], missing = [];
-        const onConsole = m => { if (m.type() === 'error') errors.push(m.text().slice(0, 240)); };
+        // Netlify önizlemesinin eklediği araç çubuğu (app.netlify.com) sitenin CSP'sine takılır; canlıda yoktur
+        const onConsole = m => { if (m.type() === 'error' && !NETLIFY_UI.test(m.text())) errors.push(m.text().slice(0, 240)); };
         const onError = e => errors.push(String(e).slice(0, 240));
         const onResp = r => { const u = r.url(); if (r.status() >= 400 && u.startsWith(BASE)) missing.push(r.status() + ' ' + u.slice(BASE.length)); };
         page.on('console', onConsole); page.on('pageerror', onError); page.on('response', onResp);

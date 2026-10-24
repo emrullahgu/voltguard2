@@ -9,9 +9,9 @@ const { createHash } = require('node:crypto');
 const root = path.resolve(__dirname, '..');
 const assets = ['css/voltsim.css', 'js/voltsim/core.js', 'js/voltsim/engine.js', 'js/voltsim/regulations.js',
   ...['calc', 'mod'].flatMap(dir => fs.readdirSync(path.join(root, 'js/voltsim', dir)).filter(f => f.endsWith('.js')).sort().map(f => 'js/voltsim/' + dir + '/' + f))];
-const V = createHash('sha256').update(assets.map(file => fs.readFileSync(path.join(root, file), 'utf8')).join('\n')).digest('hex').slice(0, 12);
+const V = createHash('sha256').update(assets.map(file => fs.readFileSync(path.join(root, file), 'utf8').replace(/\r\n/g, '\n')).join('\n')).digest('hex').slice(0, 12);
 // her dosyanın sürümü kendi içeriğinin SHA-256 özetinden (tools/sync-versions.py ve araclar/ üreticisiyle aynı kural)
-const rev = file => { const f = path.join(root, file.replace(/^\//, '')); return fs.existsSync(f) ? createHash('sha256').update(fs.readFileSync(f)).digest('hex').slice(0, 12) : V; };
+const rev = file => { const f = path.join(root, file.replace(/^\//, '')); return fs.existsSync(f) ? createHash('sha256').update(fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n')).digest('hex').slice(0, 12) : V; }; // CRLF/LF farkı yok sayılır
 const regs = require(path.join(root, 'js/voltsim/regulations.js'));
 const SITE = 'https://voltguard.com.tr';
 

@@ -30,7 +30,8 @@ _cache = {}
 def rev(rel):
     if rel not in _cache:
         f = ROOT / rel
-        _cache[rel] = hashlib.sha256(f.read_bytes()).hexdigest()[:12] if f.is_file() else None
+        # CRLF/LF farkı yok sayılır: Windows çalışma kopyası ile Linux'taki (CI, Netlify) git içeriği aynı özeti verir
+        _cache[rel] = hashlib.sha256(f.read_bytes().replace(b'\r\n', b'\n')).hexdigest()[:12] if f.is_file() else None
     return _cache[rel]
 
 

@@ -59,7 +59,7 @@ const slugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }
     const page = await ctx.newPage();
     page.setDefaultTimeout(60000);
     const errors = [], missing = [];
-    page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+    page.on('console', m => { if (m.type() === 'error' && !/app.netlify.com/.test(m.text())) errors.push(m.text()); });
     page.on('pageerror', e => errors.push(String(e && e.stack || e)));
     page.on('response', r => { if (r.status() >= 400 && r.url().startsWith(base)) missing.push(r.status() + ' ' + r.url().slice(base.length)); });
 
