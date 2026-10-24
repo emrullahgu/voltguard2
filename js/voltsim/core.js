@@ -1043,7 +1043,7 @@
       if (this._taskState0 !== undefined) { if (JSON.stringify(this.state) === this._taskState0) return; this._taskState0 = undefined; }
       let ok = false;
       try { ok = !!tk.check(this.validResult, this.state, this.live, this); } catch (_) { ok = false; }
-      if (ok) { done[tk.id] = Date.now(); changed = true; this.activeTask = null; toast('Görev tamamlandı: ' + tk.title, 'ok'); }
+      if (ok) { done[tk.id] = Date.now(); changed = true; this.activeTask = null; toast('Görev tamamlandı: ' + tk.title, 'ok'); if (window.vgTrack) window.vgTrack('sim_complete', { sim: this.def.id }); }
     });
     if (changed) { storageSet(this.taskKey(), JSON.stringify(done)); }
     this.renderTasks();
@@ -1058,6 +1058,7 @@
     }
     if (tk.start) { this.running = true; this.paused = false; if (this.def.start) this.def.start(this); this.syncToolbar(); }
     this.activeTask = tk.id;
+    if (window.vgTrack) window.vgTrack('sim_start', { sim: this.def.id });
     this._taskState0 = JSON.stringify(this.state);
     this.recompute();
     toast('Görev: ' + tk.goal);
@@ -1458,6 +1459,8 @@
   };
   App.prototype.action = async function (act, btn) {
     try {
+      if (window.vgTrack && act === 'start') window.vgTrack('sim_start', { sim: this.def.id });
+      if (window.vgTrack && act === 'report') window.vgTrack('sim_complete', { sim: this.def.id });
       if (act === 'start') {
         this.running = true; this.paused = false; this.simTime = 0;
         if (this.def.start) this.def.start(this); toast(this.def.startText || 'Simülasyon başlatıldı.');
@@ -1636,6 +1639,8 @@
     if (!def) { root.querySelector('[data-vs-analysis]').textContent = 'Simülasyon modülü yüklenemedi.'; return; }
     const app = new App(def, root); window.__vsApp = app;
     app.mount();
+    // Favori yıldızı (js/vg-favorite.js): bu tarayıcıya, giriş yapılmışsa hesaba kaydeder.
+    if (!document.querySelector('script[src^="/js/vg-favorite.js"]')) { const fav = document.createElement('script'); fav.src = '/js/vg-favorite.js'; fav.defer = true; document.head.appendChild(fav); }
   }
   // defer betikleri DOMContentLoaded'dan önce sırayla çalışır; modül dosyaları kaydolduktan sonra başlatılır.
   if (document.readyState === 'complete') boot(); else document.addEventListener('DOMContentLoaded', boot);
