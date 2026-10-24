@@ -111,7 +111,15 @@ const MODULES = [
     lead: 'Enerji analizörünü AG panoya bağlayın: sürücüler ve tek fazlı yükler harmonik akım çeker, kondansatör bankası şebekeyle rezonansa girebilir. Ayarlı reaktörün etkisini empedans eğrisinde, OG arızasının ve motor yol almanın yarattığı çökmeyi rms kaydında görün.',
     tags: ['THDv · THDi', 'h_r = √(Ssc/Qc)', 'Ayarlı reaktör p', 'Nötr akımı (3. harmonik)', 'Çökme · EN 50160', 'VUF dengesizlik'],
     service: ['/hizmetler/enerji-kalitesi-olcumu.html', 'Enerji kalitesi ve harmonik ölçümü'],
-    related: [['/araclar/harmonik-thd/', 'Harmonik THD aracı'], ['/hizmetler/harmonik-filtreli-kompanzasyon.html', 'Harmonik filtreli kompanzasyon'], ['/bilgi/harmonik-nedir-sorunlari.html', 'Harmonik nedir?'], ['/voltsim/kompanzasyon/', 'VoltSim kompanzasyon']] }
+    related: [['/araclar/harmonik-thd/', 'Harmonik THD aracı'], ['/hizmetler/harmonik-filtreli-kompanzasyon.html', 'Harmonik filtreli kompanzasyon'], ['/bilgi/harmonik-nedir-sorunlari.html', 'Harmonik nedir?'], ['/voltsim/kompanzasyon/', 'VoltSim kompanzasyon']] },
+  { id: 'yildirim', slug: 'yildirim', calcs: ['topraklama'], name: 'Yıldırımdan Korunma', short: 'Yuvarlanan küre, koruma açısı, ağ ve iniş iletkenleri',
+    title: '3D Yıldırımdan Korunma Simülasyonu: Yuvarlanan Küre, LPL | VoltSim',
+    description: 'LPL I–IV için yuvarlanan küre (r = 20/30/45/60 m), koruma açısı ve ağ yöntemiyle çatıyı 3D inceleyin; iniş iletkeni sayısı, ayırma mesafesi s = ki·(kc/km)·l ve halka topraklama (IEC 62305-3).',
+    h1: '3D Yıldırımdan Korunma Simülasyonu', eyebrow: 'Yuvarlanan küre · Koruma açısı · Ağ yöntemi',
+    lead: 'Binanın çatısına çubuk, kenar ve ağ iletkenleri yerleştirin; seçtiğiniz koruma seviyesinin küresi çatı üzerinde yuvarlansın. Kürenin değdiği korunmasız bölgeler kırmızı görünür; iniş iletkenleri, ayırma mesafesi ve topraklama IEC 62305-3 tablolarıyla kontrol edilir. Risk analizi (IEC 62305-2) bu simülasyonda yapılmaz.',
+    tags: ['LPL I–IV', 'Yuvarlanan küre r', 'Koruma açısı (yakl.)', 'Ağ göz boyutu', 'İniş iletkenleri', 's = ki·(kc/km)·l'],
+    service: ['/hizmetler/topraklama-olcumu.html', 'Topraklama ölçümü ve paratoner'],
+    related: [['/bilgi/yildirimdan-korunma.html', 'Yıldırımdan korunma rehberi'], ['/hesaplama/topraklama-hesaplama/', 'Topraklama hesabı'], ['/voltsim/topraklama/', 'VoltSim topraklama'], ['/hizmetler/elektrik-periyodik-kontrol.html', 'Elektrik periyodik kontrol']] }
 ];
 
 const esc = s => String(s === undefined || s === null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

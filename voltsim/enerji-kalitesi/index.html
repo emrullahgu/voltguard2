@@ -56,7 +56,7 @@
   <script src="/js/voltsim/engine.js?v=349aa22bb691" defer></script>
   <script src="/js/voltsim/calc/komp.js?v=4d53a1ba46c8" defer></script>
   <script src="/js/voltsim/calc/kalite.js?v=eae4d0cf69be" defer></script>
-  <script src="/js/voltsim/regulations.js?v=3a341c8b9934" defer></script>
+  <script src="/js/voltsim/regulations.js?v=07ce8ef5a40b" defer></script>
   <script src="/js/voltsim/core.js?v=c4cb070939c2" defer></script>
   <script src="/js/voltsim/mod/kalite.js?v=4b9ecd5663a5" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltSim","item":"https://voltguard.com.tr/voltsim/"},{"@type":"ListItem","position":3,"name":"3D Enerji Kalitesi Laboratuvarı","item":"https://voltguard.com.tr/voltsim/enerji-kalitesi/"}]},{"@type":"WebApplication","name":"3D Enerji Kalitesi Laboratuvarı","url":"https://voltguard.com.tr/voltsim/enerji-kalitesi/","applicationCategory":"EngineeringApplication","operatingSystem":"Web","inLanguage":"tr","isAccessibleForFree":true,"description":"Dalga şekli ve spektrumla THDv/THDi, h_r = √(Ssc/Qc) rezonansı, ayarlı reaktör (p = %5,67 / %7 / %14) frekans tepkisi, gerilim çökmesi/yükselmesi ve VUF dengesizliğini analizörle inceleyin.","publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"}}]}</script>
@@ -200,8 +200,71 @@
         <p>Bağlayıcı düzenlemeler (kanun, yönetmelik) ile gönüllü standartlar ayrı listelenmiştir. Standartlar bir yönetmelik atıf yaptığında veya sözleşmede istendiğinde bağlayıcı hale gelir. Son kontrol: <time datetime="2026-10-23">23 Ekim 2026</time>.</p>
       </div>
       <div class="vs-regs__cols">
-        <div><h3>Bağlayıcı düzenlemeler</h3><ul class="vs-reg-list"></ul></div>
-        <div><h3>Standartlar ve rehberler</h3><ul class="vs-reg-list"></ul></div>
+        <div><h3>Bağlayıcı düzenlemeler</h3><ul class="vs-reg-list"><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">EPDK</span></div>
+          <strong>Elektrik Şebeke Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 28.05.2014 / 29013 (mükerrer)</span>
+          <p>RES/GES şebeke bağlantı kriterleri (aktif/reaktif güç kontrolü, frekans tepkisi, arıza sırasında devrede kalma) Ek-18'dedir. Madde 14'teki reaktif oranları yalnız iletime bağlı kullanıcılar içindir; dağıtıma bağlı tüketicilerde EPDK Tarife Uygulamaları Usul ve Esasları geçerlidir.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 14 (1)</b> İletim sistemine doğrudan bağlı tüketiciler ve dağıtım şirketleri için aylık endüktif reaktif/aktif oranı %20'yi, kapasitif reaktif/aktif oranı %15'i geçemez.</li><li><b>Madde 19 (f)</b> Rüzgar ve güneş (fotovoltaik) üretim tesislerinin sisteme bağlantısında Ek-18 hükümleri uygulanır.</li><li><b>Ek-18 E.18.1</b> Ek-18 şebeke bağlantı kriterleri iletime bağlı RES/GES'lere, OG'den dağıtıma bağlı lisanslı GES'lere ve dağıtıma bağlı 10 MW ve üzeri lisanslı RES'lere uygulanır.</li><li><b>Ek-18 E.18.9</b> Elektriksel kurulu gücü 10 MW ve üzeri lisanslı ve lisanssız RES'ler TEİAŞ RİTM üzerinden izlenecek altyapıyı kurmalıdır.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Son değişiklikler: 17.12.2024/32755 (Ek-18 kapsam ve RİTM izleme), 21.01.2025/32789 (Madde 14 ve E.18.4 frekans tepkisi), 29.12.2025/33122.</p>
+          
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=19722&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li></ul></div>
+        <div><h3>Standartlar ve rehberler</h3><ul class="vs-reg-list"><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 60831-1 1000 V'a kadar kendi kendini onaran tip şönt güç kondansatörleri</strong>
+          <span class="vs-reg__rg">IEC 60831-1:2014 (Ed.3)</span>
+          <p>Kompanzasyon kondansatörlerinin anma değerleri ve aşırı yüklenebilirlik şartlarını içerir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: COR1:2014.</p>
+          
+          <a href="https://webstore.iec.ch/en/publication/3609" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">CENELEC / TSE (TS EN 50160)</span></div>
+          <strong>EN 50160 Kamu elektrik şebekelerinden sağlanan elektriğin gerilim karakteristikleri</strong>
+          <span class="vs-reg__rg">EN 50160:2022+A1:2025</span>
+          <p>Şebeke gerilim kalitesinin (gerilim değişimi, flicker, harmonik, dengesizlik) haftalık istatistiksel sınırlarını verir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: EN 50160:2022/A1:2025; A1 ile YG/çok YG harmonik değerleri (Tablo 8) zorunlu hale geldi.</p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 61000-2-2 Elektromanyetik uyumluluk – Kamu AG güç kaynağı sistemlerinde düşük frekanslı iletilen bozulmalar için uyumluluk seviyeleri</strong>
+          <span class="vs-reg__rg">IEC 61000-2-2 (güncel baskı ve değişiklikler kontrol edilmeli)</span>
+          <p>AG şebekede harmonik gerilimler için uyumluluk seviyeleri (ör. 5. harmonik %6, 7. %5, THD %8) verir; ekipman bağışıklık ve emisyon standartlarının referansıdır.</p>
+          
+          
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 61000-4-30 Test ve ölçme teknikleri – Güç kalitesi ölçme yöntemleri</strong>
+          <span class="vs-reg__rg">IEC 61000-4-30 (Sınıf A / S; güncel baskı kontrol edilmeli)</span>
+          <p>Gerilim çökmesi/yükselmesi/kesinti eşikleri, 10 dakikalık toplama aralıkları ve dengesizlik (u2) ölçüm yöntemini tanımlar. EN 50160 uygunluğu bu yöntemle ölçülen verilerle değerlendirilir.</p>
+          
+          
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Endüstri şartnamesi</span><span class="vs-reg__iss">SEMI</span></div>
+          <strong>SEMI F47 Yarı iletken işleme ekipmanı için gerilim çökmesi dayanım şartnamesi</strong>
+          <span class="vs-reg__rg">SEMI F47-0706 (güncel revizyon kontrol edilmeli)</span>
+          <p>Ekipmanın %50 · 200 ms, %70 · 500 ms ve %80 · 1 s çökmelerde çalışmaya devam etmesini ister. Simülasyonda yalnız örnek bir hassas ekipman dayanım eğrisi olarak kullanılır.</p>
+          
+          
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEEE</span></div>
+          <strong>IEEE 519 Elektrik güç sistemlerinde harmonik kontrolü</strong>
+          <span class="vs-reg__rg">IEEE 519-2022</span>
+          <p>Ortak bağlantı noktasında (PCC) gerilim ve akım harmonik sınırlarını (TDD) verir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: Revizyon projesi (P519) 2024'ten beri aktif.</p>
+          
+          <a href="https://standards.ieee.org/ieee/519/10677/" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li></ul></div>
       </div>
     </section>
 
@@ -221,7 +284,7 @@
       <h2 id="more-h">İlgili araçlar</h2>
       <ul class="vs-links"><li><a href="/araclar/harmonik-thd/">Harmonik THD aracı</a></li><li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Harmonik filtreli kompanzasyon</a></li><li><a href="/bilgi/harmonik-nedir-sorunlari.html">Harmonik nedir?</a></li><li><a href="/voltsim/kompanzasyon/">VoltSim kompanzasyon</a></li></ul>
       <h2>Diğer simülasyonlar</h2>
-      <ul class="vs-links"><li><a href="/voltsim/pano/">Elektrik Pano</a></li><li><a href="/voltsim/ges/">GES</a></li><li><a href="/voltsim/trafo/">Trafo</a></li><li><a href="/voltsim/sarj-istasyonu/">Şarj İstasyonu</a></li><li><a href="/voltsim/res/">RES</a></li><li><a href="/voltsim/kompanzasyon/">Kompanzasyon</a></li><li><a href="/voltsim/topraklama/">Topraklama</a></li><li><a href="/voltsim/motor-otomasyon/">Motor &amp; PLC</a></li><li><a href="/voltsim/ups-jenerator/">UPS &amp; Jeneratör</a></li><li><a href="/voltsim/yangin-algilama/">Yangın Algılama</a></li><li><a href="/voltsim/selektivite/">Selektivite</a></li></ul>
+      <ul class="vs-links"><li><a href="/voltsim/pano/">Elektrik Pano</a></li><li><a href="/voltsim/ges/">GES</a></li><li><a href="/voltsim/trafo/">Trafo</a></li><li><a href="/voltsim/sarj-istasyonu/">Şarj İstasyonu</a></li><li><a href="/voltsim/res/">RES</a></li><li><a href="/voltsim/kompanzasyon/">Kompanzasyon</a></li><li><a href="/voltsim/topraklama/">Topraklama</a></li><li><a href="/voltsim/motor-otomasyon/">Motor &amp; PLC</a></li><li><a href="/voltsim/ups-jenerator/">UPS &amp; Jeneratör</a></li><li><a href="/voltsim/yangin-algilama/">Yangın Algılama</a></li><li><a href="/voltsim/selektivite/">Selektivite</a></li><li><a href="/voltsim/yildirim/">Yıldırımdan Korunma</a></li></ul>
     </section>
   </main>
   <!--vg:footer-->

@@ -46,7 +46,8 @@
    "pano",
    "topraklama",
    "motor",
-   "ups"
+   "ups",
+   "selektivite"
   ],
   "note": "Bina içi alçak gerilim tesisatının temel yönetmeliğidir. Gerilim düşümü sınırları sayaçtan değil yapı bağlantı kutusundan itibaren tanımlanır; yönetmelikte sayısal bir 30 mA şartı bulunmaz.",
   "needsCheck": true
@@ -101,7 +102,8 @@
    "trafo",
    "ges",
    "res",
-   "pano"
+   "pano",
+   "yildirim"
   ],
   "note": "YG/AG topraklama tasarımı, dokunma/adım gerilimi ve periyodik ölçümler için temel yönetmeliktir. İzin verilen dokunma gerilimi-süre ilişkisi Şekil-6'dadır.",
   "needsCheck": false
@@ -143,7 +145,8 @@
    "pano",
    "topraklama",
    "ges",
-   "res"
+   "res",
+   "yildirim"
   ],
   "note": "1 kV üstü tesislerin (trafo merkezleri, hücreler, hatlar) kuruluş ve işletme kurallarını içerir. Trafo koruma seçimi ve YG işletme sorumluluğu buradan kaynaklanır.",
   "needsCheck": false
@@ -461,7 +464,8 @@
    "res",
    "ges",
    "komp",
-   "trafo"
+   "trafo",
+   "kalite"
   ],
   "note": "RES/GES şebeke bağlantı kriterleri (aktif/reaktif güç kontrolü, frekans tepkisi, arıza sırasında devrede kalma) Ek-18'dedir. Madde 14'teki reaktif oranları yalnız iletime bağlı kullanıcılar içindir; dağıtıma bağlı tüketicilerde EPDK Tarife Uygulamaları Usul ve Esasları geçerlidir.",
   "needsCheck": false
@@ -625,7 +629,8 @@
    "yangin",
    "trafo",
    "pano",
-   "ups"
+   "ups",
+   "yildirim"
   ],
   "note": "Binalarda trafo odası, jeneratör, acil aydınlatma ve yangın algılama sistemleri için zorunlu yangın güvenliği şartlarını içerir.",
   "needsCheck": false
@@ -749,7 +754,8 @@
   "applies": [
    "pano",
    "komp",
-   "ges"
+   "ges",
+   "selektivite"
   ],
   "note": "Pano imalatı ve tasarım doğrulamasının (sıcaklık artışı, kısa devre dayanımı, dielektrik) temel standardıdır. -2 bölümü PSC panolarını kapsar ve 2020 baskısında PV uygulamaları için ekler içerir.",
   "needsCheck": true
@@ -769,7 +775,8 @@
    "trafo",
    "ges",
    "res",
-   "topraklama"
+   "topraklama",
+   "selektivite"
   ],
   "note": "Kısa devre hesabının uluslararası yöntemidir. Temmuz 2026'da yeni baskı çıktı; TS karşılığının hâlâ 2016 tabanlı olması muhtemel.",
   "needsCheck": true
@@ -795,7 +802,8 @@
    "topraklama",
    "pano",
    "sarj",
-   "ges"
+   "ges",
+   "selektivite"
   ],
   "note": "Otomatik ayırma süreleri, TN/TT/IT koşulları ve 30 mA ek koruma şartlarının kaynağıdır. İş Ekipmanları Yönetmeliği periyodik kontrolde TS HD 60364-4 serisine atıf yapar.",
   "needsCheck": true
@@ -864,7 +872,8 @@
   "applies": [
    "pano",
    "sarj",
-   "ges"
+   "ges",
+   "selektivite"
   ],
   "note": "B, C, D eğrili minyatür devre kesicilerin açma karakteristiklerini tanımlar; kapsamı 440 V, 125 A ve 25 kA'e kadardır.",
   "needsCheck": true
@@ -883,9 +892,23 @@
    "pano",
    "trafo",
    "motor",
-   "ges"
+   "ges",
+   "selektivite"
   ],
   "note": "Endüstriyel kompakt ve açık tip kesicilerin (MCCB/ACB) standardıdır; 1000 V AC / 1500 V DC'ye kadar.",
+  "needsCheck": true
+ },
+ {
+  "id": "iec-60269",
+  "name": "IEC 60269-1 / -2 Alçak gerilim sigortaları (Genel kurallar / Yetkili kişilerce kullanılan sigortalar — NH sistemi)",
+  "kind": "Standart",
+  "issuer": "IEC / TSE",
+  "binding": false,
+  "version": "IEC 60269-1 ve IEC 60269-2 (güncel baskı kontrol edilmeli)",
+  "applies": [
+   "selektivite"
+  ],
+  "note": "gG sigortaların konvansiyonel erime/erimeme akımları (In ≥ 16 A için 1,6·In / 1,25·In) ve zaman–akım kapı değerleri (Imin 10 s, Imax 5 s, Imin/Imax 0,1 s) bu standartlarda verilir. Seçicilik için ön ark ve toplam I²t değerleri üreticiden alınır.",
   "needsCheck": true
  },
  {
@@ -1173,7 +1196,8 @@
   "amendments": "COR1:2014.",
   "version": "IEC 60831-1:2014 (Ed.3)",
   "applies": [
-   "komp"
+   "komp",
+   "kalite"
   ],
   "note": "Kompanzasyon kondansatörlerinin anma değerleri ve aşırı yüklenebilirlik şartlarını içerir.",
   "needsCheck": false
@@ -1207,9 +1231,50 @@
    "komp",
    "ges",
    "ups",
-   "motor"
+   "motor",
+   "kalite"
   ],
   "note": "Şebeke gerilim kalitesinin (gerilim değişimi, flicker, harmonik, dengesizlik) haftalık istatistiksel sınırlarını verir.",
+  "needsCheck": true
+ },
+ {
+  "id": "iec-61000-2-2",
+  "name": "IEC 61000-2-2 Elektromanyetik uyumluluk – Kamu AG güç kaynağı sistemlerinde düşük frekanslı iletilen bozulmalar için uyumluluk seviyeleri",
+  "kind": "Standart",
+  "issuer": "IEC / TSE",
+  "binding": false,
+  "version": "IEC 61000-2-2 (güncel baskı ve değişiklikler kontrol edilmeli)",
+  "applies": [
+   "kalite"
+  ],
+  "note": "AG şebekede harmonik gerilimler için uyumluluk seviyeleri (ör. 5. harmonik %6, 7. %5, THD %8) verir; ekipman bağışıklık ve emisyon standartlarının referansıdır.",
+  "needsCheck": true
+ },
+ {
+  "id": "iec-61000-4-30",
+  "name": "IEC 61000-4-30 Test ve ölçme teknikleri – Güç kalitesi ölçme yöntemleri",
+  "kind": "Standart",
+  "issuer": "IEC / TSE",
+  "binding": false,
+  "version": "IEC 61000-4-30 (Sınıf A / S; güncel baskı kontrol edilmeli)",
+  "applies": [
+   "kalite",
+   "komp"
+  ],
+  "note": "Gerilim çökmesi/yükselmesi/kesinti eşikleri, 10 dakikalık toplama aralıkları ve dengesizlik (u2) ölçüm yöntemini tanımlar. EN 50160 uygunluğu bu yöntemle ölçülen verilerle değerlendirilir.",
+  "needsCheck": true
+ },
+ {
+  "id": "semi-f47",
+  "name": "SEMI F47 Yarı iletken işleme ekipmanı için gerilim çökmesi dayanım şartnamesi",
+  "kind": "Endüstri şartnamesi",
+  "issuer": "SEMI",
+  "binding": false,
+  "version": "SEMI F47-0706 (güncel revizyon kontrol edilmeli)",
+  "applies": [
+   "kalite"
+  ],
+  "note": "Ekipmanın %50 · 200 ms, %70 · 500 ms ve %80 · 1 s çökmelerde çalışmaya devam etmesini ister. Simülasyonda yalnız örnek bir hassas ekipman dayanım eğrisi olarak kullanılır.",
   "needsCheck": true
  },
  {
@@ -1226,7 +1291,8 @@
    "komp",
    "motor",
    "ups",
-   "ges"
+   "ges",
+   "kalite"
   ],
   "note": "Ortak bağlantı noktasında (PCC) gerilim ve akım harmonik sınırlarını (TDD) verir.",
   "needsCheck": false
@@ -1407,6 +1473,36 @@
   ],
   "note": "Acil stop, emniyet rölesi gibi güvenlik fonksiyonlarının PL (ISO 13849-1) veya SIL (IEC 62061) seviyesine göre tasarımını tanımlar.",
   "needsCheck": false
+ },
+ {
+  "id": "iec-62305",
+  "name": "IEC 62305-1/-2/-3/-4 (TS EN 62305) Yıldırımdan korunma – Genel prensipler / Risk yönetimi / Yapılarda fiziksel hasar ve hayati tehlike / İç elektrik ve elektronik sistemler",
+  "kind": "Standart",
+  "issuer": "IEC / CENELEC / TSE",
+  "binding": false,
+  "version": "IEC 62305-1/-3:2010 (Ed.2) değerleri kullanıldı; Ed.3 baskılar ve TS EN karşılıkları kontrol edilmeli",
+  "articles": [
+   {
+    "ref": "62305-3 Tablo 2",
+    "summary": "Yuvarlanan küre yarıçapı LPL I–IV: 20 / 30 / 45 / 60 m; ağ göz boyutu 5×5 / 10×10 / 15×15 / 20×20 m; koruma açısı Şekil 1’den.",
+    "verified": false
+   },
+   {
+    "ref": "62305-3 Tablo 4",
+    "summary": "İniş iletkenleri arası tipik mesafe LPL I–IV: 10 / 10 / 15 / 20 m.",
+    "verified": false
+   },
+   {
+    "ref": "62305-3 6.3",
+    "summary": "Ayırma mesafesi s = ki·(kc/km)·l; ki 0,08 / 0,06 / 0,04 / 0,04 (Tablo 10), km hava 1, katı malzeme 0,5 (Tablo 11), kc Tablo 12 / Ek C.",
+    "verified": false
+   }
+  ],
+  "applies": [
+   "yildirim"
+  ],
+  "note": "Dış yıldırımdan korunma sisteminin (hava sonlandırma, iniş iletkeni, topraklama) tasarım kurallarını ve koruma seviyelerini verir. Gerekli koruma seviyesi IEC 62305-2 risk analiziyle belirlenir; iç koruma ve SPD seçimi IEC 62305-4 kapsamındadır. Tablo değerleri standardın güncel baskısından doğrulanmalıdır.",
+  "needsCheck": true
  }
 ];
   list.checked = "2026-10-23";
