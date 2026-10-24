@@ -642,7 +642,8 @@
           return response.json().then(function (data) {
             return { ok: response.ok, data: data };
           }).catch(function () {
-            return { ok: false, data: { message: 'Sunucudan geçersiz yanıt alındı.' } };
+            /* JSON dışı yanıt: form sunucusu ulaşılamıyor (404/502 sayfası); kullanıcıya diğer kanalı göster */
+            return { ok: false, data: { message: 'Mesajınız şu an iletilemedi; yazdıklarınız korundu. 0545 434 67 35 numarasını arayabilir veya WhatsApp\'tan yazabilirsiniz.' } };
           });
         });
       var deadline = new Promise(function (resolve, reject) {

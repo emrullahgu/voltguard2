@@ -47,8 +47,9 @@ const slugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }
 
 (async () => {
   const { chromium } = require(packagePath('playwright'));
-  await new Promise(r => server.listen(0, '127.0.0.1', r));
-  const base = 'http://127.0.0.1:' + server.address().port;
+  // VG_BASE verilirse yayındaki (ör. Netlify önizleme) siteyi dener; yoksa yerel dosyaları sunar
+  if (!process.env.VG_BASE) await new Promise(r => server.listen(0, '127.0.0.1', r));
+  const base = process.env.VG_BASE || 'http://127.0.0.1:' + server.address().port;
   const browser = await chromium.launch({ headless: true, executablePath: chromePath(), args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const report = { pages: [], failures: [] };
   const fail = (slug, msg) => { report.failures.push(slug + ': ' + msg); console.log('  ✕ ' + msg); };

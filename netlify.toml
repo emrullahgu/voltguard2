@@ -55,10 +55,13 @@
   status = 301
   force = true
 
+# Temiz hesap adresleri (/hesaplama/x/) force ile yeniden yazılır: aksi hâlde Netlify x.html varken /x/ adresini
+# /x adresine 301 ile yönlendirir ve kanonik adres (sondaki / ile) yönlendirmeye düşer.
 [[redirects]]
   from = "/hesaplama-araclari/"
   to = "/teklif-araclari.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/kablo-kesiti-hesaplama.html"
@@ -70,6 +73,7 @@
   from = "/hesaplama/kablo-kesiti-hesaplama/"
   to = "/hesaplama/kablo-kesiti-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/trafo-akimi-hesaplama.html"
@@ -81,6 +85,7 @@
   from = "/hesaplama/trafo-akimi-hesaplama/"
   to = "/hesaplama/trafo-akimi-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/periyodik-kontrol-planlayici.html"
@@ -92,6 +97,7 @@
   from = "/hesaplama/periyodik-kontrol-planlayici/"
   to = "/hesaplama/periyodik-kontrol-planlayici.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/kompanzasyon-hesaplama.html"
@@ -103,6 +109,7 @@
   from = "/hesaplama/kompanzasyon-hesaplama/"
   to = "/hesaplama/kompanzasyon-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/gerilim-dusumu-hesaplama.html"
@@ -114,6 +121,7 @@
   from = "/hesaplama/gerilim-dusumu-hesaplama/"
   to = "/hesaplama/gerilim-dusumu-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/motor-akimi-hesaplama.html"
@@ -125,6 +133,7 @@
   from = "/hesaplama/motor-akimi-hesaplama/"
   to = "/hesaplama/motor-akimi-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/kw-kva-amper-donusturucu.html"
@@ -136,6 +145,7 @@
   from = "/hesaplama/kw-kva-amper-donusturucu/"
   to = "/hesaplama/kw-kva-amper-donusturucu.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/sigorta-tms-secimi.html"
@@ -147,6 +157,7 @@
   from = "/hesaplama/sigorta-tms-secimi/"
   to = "/hesaplama/sigorta-tms-secimi.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/motor-koruma-kontaktor-secimi.html"
@@ -158,6 +169,7 @@
   from = "/hesaplama/motor-koruma-kontaktor-secimi/"
   to = "/hesaplama/motor-koruma-kontaktor-secimi.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/kisa-devre-akimi-hesaplama.html"
@@ -169,6 +181,7 @@
   from = "/hesaplama/kisa-devre-akimi-hesaplama/"
   to = "/hesaplama/kisa-devre-akimi-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/jenerator-gucu-hesaplama.html"
@@ -180,6 +193,7 @@
   from = "/hesaplama/jenerator-gucu-hesaplama/"
   to = "/hesaplama/jenerator-gucu-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/ups-gucu-hesaplama.html"
@@ -191,6 +205,7 @@
   from = "/hesaplama/ups-gucu-hesaplama/"
   to = "/hesaplama/ups-gucu-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/topraklama-hesaplama.html"
@@ -202,6 +217,7 @@
   from = "/hesaplama/topraklama-hesaplama/"
   to = "/hesaplama/topraklama-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/ges-uretim-hesaplama.html"
@@ -213,6 +229,7 @@
   from = "/hesaplama/ges-uretim-hesaplama/"
   to = "/hesaplama/ges-uretim-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/inverter-dc-ac-kablo-secimi.html"
@@ -224,6 +241,7 @@
   from = "/hesaplama/inverter-dc-ac-kablo-secimi/"
   to = "/hesaplama/inverter-dc-ac-kablo-secimi.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/aydinlatma-lux-hesaplama.html"
@@ -235,6 +253,7 @@
   from = "/hesaplama/aydinlatma-lux-hesaplama/"
   to = "/hesaplama/aydinlatma-lux-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/reaktif-ceza-hesaplama.html"
@@ -246,6 +265,7 @@
   from = "/hesaplama/reaktif-ceza-hesaplama/"
   to = "/hesaplama/reaktif-ceza-hesaplama.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama.html"
@@ -257,6 +277,7 @@
   from = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama/"
   to = "/hesaplama/isletme-sorumlulugu-ucret-hesaplama.html"
   status = 200
+  force = true
 
 # ---------------------------------------------------------------------------------------
 # Klasor/uzantisiz adresler (.htaccess ile ayni). "/sor" gibi adresler ayni adli klasor yuzunden
