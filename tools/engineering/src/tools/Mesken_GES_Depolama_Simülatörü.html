@@ -46,7 +46,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;text-align:left;padding:6px;border-bottom:1px solid var(--line);white-space:nowrap}
 td{padding:4px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
-#yukler td input[type=number]{width:70px}
+#yukler td input[type=number],#yukler td input[inputmode=decimal]{width:70px}
 #yukler td input[type=text]{min-width:140px}
 #yukler td select{min-width:100px}
 #yukler input[type=checkbox]{width:18px;height:18px;padding:0}
@@ -148,21 +148,21 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
         <h2 id="ayarb">Tasarım ayarları</h2>
         <div class="fields">
           <label class="f">İl (ışınım verisi)<select id="il"></select></label>
-          <label class="f">Panel eğimi (°)<input id="egim" type="number" step="1" min="0" max="90" value="25"></label>
+          <label class="f">Panel eğimi (°)<input id="egim" type="text" inputmode="decimal" autocomplete="off" step="1" min="0" max="90" value="25"></label>
           <label class="f">Panel yönü<select id="yon"><option value="0">Güney</option><option value="-45">Güneydoğu</option><option value="45">Güneybatı</option><option value="-90">Doğu</option><option value="90">Batı</option><option value="db">Doğu-Batı (çift yön)</option><option value="180">Kuzey</option></select></label>
-          <label class="f">Kullanılabilir çatı alanı (m²)<input id="cati" type="number" step="1" min="0" value="60"></label>
-          <label class="f">Panel gücü (Wp)<input id="wp" type="number" step="5" min="100" value="550"></label>
-          <label class="f">Sistem verimi (PR)<input id="pr" type="number" step="0.01" min="0.5" max="0.95" value="0.78"></label>
-          <label class="f">Eşzamanlılık katsayısı<input id="ks" type="number" step="0.05" min="0.2" max="1" value="0.6"></label>
+          <label class="f">Kullanılabilir çatı alanı (m²)<input id="cati" type="text" inputmode="decimal" autocomplete="off" step="1" min="0" value="60"></label>
+          <label class="f">Panel gücü (Wp)<input id="wp" type="text" inputmode="decimal" autocomplete="off" step="5" min="100" value="550"></label>
+          <label class="f">Sistem verimi (PR)<input id="pr" type="text" inputmode="decimal" autocomplete="off" step="0.01" min="0.5" max="0.95" value="0.78"></label>
+          <label class="f">Eşzamanlılık katsayısı<input id="ks" type="text" inputmode="decimal" autocomplete="off" step="0.05" min="0.2" max="1" value="0.6"></label>
           <label class="f" data-m="hib off">Akü tipi<select id="kim"><option value="li">LiFePO4</option><option value="jel">Jel / AGM</option></select></label>
-          <label class="f" data-m="hib off">Akü modülü (kWh)<input id="mod" type="number" step="0.01" min="0.5" value="5.12"></label>
-          <label class="f" data-m="off">Batarya kaç gün yetsin<input id="oton" type="number" step="0.5" min="0.5" value="2"></label>
+          <label class="f" data-m="hib off">Akü modülü (kWh)<input id="mod" type="text" inputmode="decimal" autocomplete="off" step="0.01" min="0.5" value="5.12"></label>
+          <label class="f" data-m="off">Batarya kaç gün yetsin<input id="oton" type="text" inputmode="decimal" autocomplete="off" step="0.5" min="0.5" value="2"></label>
           <label class="f" data-m="off">Panel tasarım ayı<select id="tay"><option value="min">En kötü ay</option><option value="ort">Yıllık ortalama</option></select></label>
-          <label class="f" data-m="ong hib">Tüketimi karşılama oranı (%)<input id="kar" type="number" step="5" min="10" max="200" value="100"></label>
-          <label class="f" data-m="hib">Kesintide yedek süre (saat)<input id="yed" type="number" step="1" min="0" value="6"></label>
+          <label class="f" data-m="ong hib">Tüketimi karşılama oranı (%)<input id="kar" type="text" inputmode="decimal" autocomplete="off" step="5" min="10" max="200" value="100"></label>
+          <label class="f" data-m="hib">Kesintide yedek süre (saat)<input id="yed" type="text" inputmode="decimal" autocomplete="off" step="1" min="0" value="6"></label>
         </div>
         <div class="fields" id="ozel" hidden>
-          <label class="f">Enlem (°K)<input id="oz_lat" type="number" step="0.1" min="30" max="45" value="41"></label>
+          <label class="f">Enlem (°K)<input id="oz_lat" type="text" inputmode="decimal" autocomplete="off" step="0.1" min="30" max="45" value="41"></label>
           <label class="f">Değerlerin birimi<select id="oz_birim"><option value="ay">kWh/m²·ay</option><option value="gun">kWh/m²·gün</option></select></label>
           <label class="f" style="grid-column:1/-1">Yatay global ışınım, 12 aylık değer (Ocak → Aralık)<textarea id="oz_veri" rows="2" placeholder="Meteonorm ya da PVsyst tablosundan 12 değeri yapıştırın: 45,2  62,1  98,4 ..."></textarea></label>
         </div>
@@ -173,13 +173,13 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
       <section class="panel">
         <h2>Birim fiyatlar ve tarife</h2>
         <div class="fields">
-          <label class="f">Panel (₺/Wp)<input id="f_pan" type="number" step="0.5" min="0" value="9"></label>
-          <label class="f" data-m="ong">Şebeke inverteri (₺/kW)<input id="f_invs" type="number" step="100" min="0" value="4000"></label>
-          <label class="f" data-m="hib off">Hibrit / off-grid inverter (₺/kW)<input id="f_invh" type="number" step="100" min="0" value="9000"></label>
-          <label class="f" data-m="hib off">Akü (₺/kWh)<input id="f_aku" type="number" step="100" min="0" value="9000"></label>
-          <label class="f">Montaj + malzeme (₺/kWp)<input id="f_mon" type="number" step="100" min="0" value="8000"></label>
-          <label class="f">Elektrik alış tarifesi (₺/kWh)<input id="f_al" type="number" step="0.1" min="0" value="3.5"></label>
-          <label class="f" data-m="ong hib">Fazla üretim satış bedeli (₺/kWh)<input id="f_sat" type="number" step="0.1" min="0" value="2"></label>
+          <label class="f">Panel (₺/Wp)<input id="f_pan" type="text" inputmode="decimal" autocomplete="off" step="0.5" min="0" value="9"></label>
+          <label class="f" data-m="ong">Şebeke inverteri (₺/kW)<input id="f_invs" type="text" inputmode="decimal" autocomplete="off" step="100" min="0" value="4000"></label>
+          <label class="f" data-m="hib off">Hibrit / off-grid inverter (₺/kW)<input id="f_invh" type="text" inputmode="decimal" autocomplete="off" step="100" min="0" value="9000"></label>
+          <label class="f" data-m="hib off">Akü (₺/kWh)<input id="f_aku" type="text" inputmode="decimal" autocomplete="off" step="100" min="0" value="9000"></label>
+          <label class="f">Montaj + malzeme (₺/kWp)<input id="f_mon" type="text" inputmode="decimal" autocomplete="off" step="100" min="0" value="8000"></label>
+          <label class="f">Elektrik alış tarifesi (₺/kWh)<input id="f_al" type="text" inputmode="decimal" autocomplete="off" step="0.1" min="0" value="3.5"></label>
+          <label class="f" data-m="ong hib">Fazla üretim satış bedeli (₺/kWh)<input id="f_sat" type="text" inputmode="decimal" autocomplete="off" step="0.1" min="0" value="2"></label>
           <label class="f" data-m="ong hib">Aylık mahsuplaşma<select id="mahsup"><option value="1">Var</option><option value="0">Yok</option></select></label>
         </div>
         <p class="hint">Fiyatlar örnek değerlerdir; güncel piyasa fiyatlarını ve abone tarifesini girin. Geri ödeme basit yöntemle hesaplanır (tarife artışı, bakım ve akü yenileme dahil değil).</p>
@@ -187,9 +187,9 @@ svg text{font-family:var(--body);font-size:11px;fill:var(--muted)}
       <section class="panel">
         <h2>Sistem boyutu ve optimizasyon</h2>
         <div class="fields">
-          <label class="f">Panel adedi<input id="m_pan" type="number" min="0" step="1" placeholder="otomatik"></label>
-          <label class="f" data-m="hib off">Akü modülü adedi<input id="m_aku" type="number" min="0" step="1" placeholder="otomatik"></label>
-          <label class="f" data-m="ong hib">Hedef geri ödeme (yıl)<input id="hedef" type="number" min="0" step="0.5" placeholder="en kısa"></label>
+          <label class="f">Panel adedi<input id="m_pan" type="text" inputmode="decimal" autocomplete="off" min="0" step="1" placeholder="otomatik"></label>
+          <label class="f" data-m="hib off">Akü modülü adedi<input id="m_aku" type="text" inputmode="decimal" autocomplete="off" min="0" step="1" placeholder="otomatik"></label>
+          <label class="f" data-m="ong hib">Hedef geri ödeme (yıl)<input id="hedef" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" placeholder="en kısa"></label>
         </div>
         <div class="rowbtns" style="justify-content:flex-start"><button class="btn ana" id="optbul" type="button">Optimumu bul</button><button class="btn" id="otodon" type="button">Otomatiğe dön</button></div>
         <p class="hint" id="optd">Adetler boşken sistem kurala göre otomatik boyutlanır. Optimumu bul, seçili sistem tipi için panel ve akü adedini tarar ve bu kutulara yazar; sonra adetleri değiştirip Hesapla ile yeniden hesaplayabilirsiniz.</p>
@@ -283,12 +283,12 @@ function tablo(){
   $("yukler").tBodies[0].innerHTML=S.rows.map(r=>`<tr data-id="${r.id}" class="${r.on?"":"off"}">
 <td><input type="checkbox" id="r${r.id}_on" data-f="on" ${r.on?"checked":""} aria-label="Kullan"></td>
 <td><input type="text" id="r${r.id}_ad" data-f="ad" value="${esc(r.ad)}"></td>
-<td data-l="Adet"><input type="number" id="r${r.id}_n" data-f="n" min="0" step="1" value="${r.n}"></td>
-<td data-l="Güç (W)"><input type="number" id="r${r.id}_w" data-f="w" min="0" step="10" value="${r.w}"></td>
-<td data-l="Saat/gün"><input type="number" id="r${r.id}_h" data-f="h" min="0" max="24" step="0.1" value="${r.h}"></td>
+<td data-l="Adet"><input type="text" inputmode="decimal" autocomplete="off" id="r${r.id}_n" data-f="n" min="0" step="1" value="${r.n}"></td>
+<td data-l="Güç (W)"><input type="text" inputmode="decimal" autocomplete="off" id="r${r.id}_w" data-f="w" min="0" step="10" value="${r.w}"></td>
+<td data-l="Saat/gün"><input type="text" inputmode="decimal" autocomplete="off" id="r${r.id}_h" data-f="h" min="0" max="24" step="0.1" value="${r.h}"></td>
 <td data-l="Kullanım"><select id="r${r.id}_z" data-f="z">${opt([["gun","Gündüz"],["aks","Akşam/gece"],["tum","Tüm gün"]],r.z)}</select></td>
 <td data-l="Mevsim"><select id="r${r.id}_s" data-f="s">${opt([["yil","Tüm yıl"],["yaz","Yaz"],["kis","Kış"]],r.s)}</select></td>
-<td data-l="Kalkış ×"><input type="number" id="r${r.id}_k" data-f="k" min="1" max="8" step="0.1" value="${r.k}"></td>
+<td data-l="Kalkış ×"><input type="text" inputmode="decimal" autocomplete="off" id="r${r.id}_k" data-f="k" min="1" max="8" step="0.1" value="${r.k}"></td>
 <td data-l="Kritik"><input type="checkbox" id="r${r.id}_kr" data-f="kr" ${r.kr?"checked":""} aria-label="Kritik yük"></td>
 <td class="num" data-l="kWh/gün" id="r${r.id}_e"></td>
 <td><button class="x" type="button" data-sil="1" aria-label="Sil">×</button></td></tr>`).join("");
@@ -311,7 +311,7 @@ function egik(H,lat,beta,yonler){
 
 function hesap(man){ man=man||S.man;
   const v=k=>{
-    const input=$(k),text=String(input.value).trim().replace(',','.'),value=Number(text);
+    const input=$(k),text=String(input.value).trim(),value=trNum(text);
     const label=input.closest('label')?.childNodes[0]?.textContent?.trim()||k;
     if(!text||!Number.isFinite(value)||(input.min!==''&&value<Number(input.min))||(input.max!==''&&value>Number(input.max))) throw new Error(label+': geçerli aralıkta bir sayı girin.');
     return value;
@@ -364,6 +364,15 @@ function hesap(man){ man=man||S.man;
   return{ev,pr,dod,eb,ei,lat:il[0],ozel,ozd,yil,Em,Enm,Ecm,Pp,Pk,off,hib,ong,buyuk,li,wp,pa,nmax,psh,yat,top,ay:Em.map((e,i)=>e*GUN[i])};
 }
 
+/* Türkçe sayı girişi: "3,5" ondalık virgül, "1.234,5" ve "12.500" binlik nokta, "0.78" ondalık nokta. Hatalı biçim NaN döner. */
+function trNum(raw){
+  let t=String(raw==null?'':raw).trim();
+  if(!t||/\s/.test(t))return NaN;
+  if(t.includes(',')){ if(!/^[+-]?(?:\d*|[1-9]\d{0,2}(?:\.\d{3})+),\d+$/.test(t))return NaN; t=t.replace(/\./g,'').replace(',','.'); }
+  else if(/^[+-]?[1-9]\d{0,2}(?:\.\d{3})+$/.test(t)) t=t.replace(/\./g,'');
+  if(!/^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$/.test(t))return NaN;
+  const v=Number(t); return Number.isFinite(v)?v:NaN;
+}
 function ciz(R){
   const md=S.mode, x=R[md], off=md=="off";
   MODLAR.forEach(k=>$("m_"+k).setAttribute("aria-pressed",k==md));
@@ -438,15 +447,16 @@ $("hesapla").addEventListener("click",hesapla);
 $("yukler").addEventListener("input",e=>{const tr=e.target.closest("tr[data-id]"),k=e.target.dataset.f;if(!tr||!k)return;
   const r=S.rows.find(r=>r.id==tr.dataset.id); if(!r)return;
   if(e.target.type=="checkbox"){r[k]=e.target.checked; if(k=="on")tr.className=r.on?"":"off"}
-  else r[k]=(k=="ad"||k=="z"||k=="s")?e.target.value:(parseFloat(e.target.value)||0);
+  else if(k=="ad"||k=="z"||k=="s")r[k]=e.target.value;
+  else{const val=trNum(e.target.value);const bad=!Number.isFinite(val)||val<0;e.target.setAttribute('aria-invalid',bad?'true':'false');r[k]=bad?0:val}
   guncelle()});
 $("yukler").addEventListener("click",e=>{if(!e.target.dataset.sil)return;const id=e.target.closest("tr").dataset.id;S.rows=S.rows.filter(r=>r.id!=id);tablo();guncelle()});
 $("ekle").addEventListener("click",()=>{const r=yeni(["Yeni cihaz",1,1,100,1,"gun",1,0,"yil"]);S.rows.push(r);tablo();guncelle();$("r"+r.id+"_ad").select()});
 AYAR.forEach(k=>$(k).addEventListener("input",()=>{if(k=="kim")$("mod").value=$("kim").value=="li"?5.12:2.4;guncelle()}));
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{S.mode=b.dataset.mode;kaydet();ciz(SON);tekhat()}));
-["m_pan","m_aku"].forEach((id,i)=>$(id).addEventListener("input",e=>{const t=e.target.value.trim();S.man[S.mode][i?"m":"n"]=t===""?null:Math.max(0,Math.round(+t)||0);$("optd").textContent="Adetler elle değiştirildi; sonuç için Hesapla'ya basın.";guncelle()}));
+["m_pan","m_aku"].forEach((id,i)=>$(id).addEventListener("input",e=>{const t=e.target.value.trim();S.man[S.mode][i?"m":"n"]=t===""?null:Math.max(0,Math.round(trNum(t))||0);$("optd").textContent="Adetler elle değiştirildi; sonuç için Hesapla'ya basın.";guncelle()}));
 function optimum(){
-  kaydet(); const md=S.mode, T=parseFloat($("hedef").value)||0, B=hesap({...S.man,[md]:{n:null,m:null}}), k=B[md], O=$("optd");
+  kaydet(); const md=S.mode, T=trNum($("hedef").value)||0, B=hesap({...S.man,[md]:{n:null,m:null}}), k=B[md], O=$("optd");
   if(!B.yil){O.textContent="Önce en az bir cihaz seçin.";return}
   const nUst=isFinite(B.nmax)?B.nmax:Math.max(40,k.n*3), mUst=md=="ong"?1:Math.max(8,k.m*2);
   if(nUst<1){O.textContent="Çatı alanına panel sığmıyor.";return}

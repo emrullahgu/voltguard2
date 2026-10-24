@@ -265,7 +265,7 @@
   <p class="note" id="acNote">Gerilim dusumu (TEDAS): %e = (k3·P + m3·Q)·L·10⁻⁷ / par, k3/m3 secilen kesit+cinsten TEDAS tablosundan gelir (P,Q watt/var). Akim tasima: Iz = Itablo(doseme) · Ct · Cg · par, kriter Ib &lt; Iz. Ct ortam sicakligi + yalitim (PVC/XLPE), Cg gruplama tablosundan otomatik. Kablo cinsi NYY/NAYY/N2XH/NA2XH ve doseme (toprak/hava) secilebilir; kesit yetmezse satir kirmizi olur. Doseme gruplama faktoru (Cg) HER SEGMENT icin ayri hesaplanir: o segmentin doseme sekli (6 sekil) + raf sayisi + yan yana devre sayisindan, yuklenen "kablo capi kadar bosluk" tablosundan gelir. Boylece INV→pano ve pano→ADP kablolari kendi guzergahina gore degerlendirilir. Faktorsuz secimde Cg=1.00. Onayli projeyle dogrulandi: INV→GESP NA2XH 3x120+70 %0,28; GESP→ADP N2XH 3(1x240) %0,42 mertebesinde.</p>
 
   <p class="note">
-    Her evirici onayli Cevahir AVM GES tek hat semasindaki gercek dizi yapisiyla yuklendi (toplam 2106 panel). Gerilim kontrolleri her eviricinin EN UZUN dizisi uzerinden yapilir (en kritik durum). MPPT akimi = (MPPT'ye bagli dizi) × Isc.
+    Ornek (notr) proje yuklendi: 2 evirici, 15 ve 17 panellik diziler. Ust gerilim kontrolleri (Voc, Vmpp maks) EN UZUN dizi, alt kontroller (Voc, Vmpp min) EN KISA dizi uzerinden yapilir. MPPT kisa devre akimi = 1,25 × (MPPT'ye bagli dizi) × Isc (IEC 62548-1).
     Eviriciler 100 kW AC'ye sinirlandirilmistir (9 × 100 = 900 kWe). DC tarafta ~129 kWp panel bagli olup DC giris gucu bilerek asilmistir (overclocking); AC cikis 100 kW'da kilitlidir — projenin kendi notunda da belirtildigi gibi sorumluluk proje muellifine aittir; turuncu uyari bunu gosterir, hata degildir.
     Yesil guvenli · Sari limite yakin · Turuncu DC guc asimi · Kirmizi gerilim/akim asimi. Degerleri semaya gore elle duzeltebilir, evirici ekleyip cikarabilirsin.
   </p>
@@ -304,7 +304,7 @@ var nextId=1;
 
 function defaultInverter(name){
   return {id:nextId++, name:name||'Evirici',
-    totalPanels:236, stringCount:15, maxPanelsPerString:16, mpptCount:10, stringsPerMppt:2,
+    totalPanels:236, stringCount:15, maxPanelsPerString:16, minPanelsPerString:16, mpptCount:10, stringsPerMppt:2,
     vMax:1100, mppMax:1000, mppMin:200, iMpptOp:30, iMaxMppt:40, pLimit:150, acLimit:100};
 }
 
@@ -388,7 +388,7 @@ function syncAcForInverter(inv){
     if(insAt<0) acSegs.push(seg); else acSegs.splice(insAt,0,seg);
   }
 }
-var INV_FIELDS=['totalPanels','stringCount','maxPanelsPerString','stringsPerMppt','vMax','mppMax','mppMin','iMpptOp','iMaxMppt','pLimit','acLimit','acConn','mpptCount'];
+var INV_FIELDS=['totalPanels','stringCount','maxPanelsPerString','minPanelsPerString','stringsPerMppt','vMax','mppMax','mppMin','iMpptOp','iMaxMppt','pLimit','acLimit','acConn','mpptCount'];
 function applyFirstToAll(){
   if(inverters.length<2){ alert('En az 2 evirici olmali.'); return; }
   if(!confirm('1. eviricinin tum degerleri diger eviricilere kopyalanacak. Devam?')) return;
@@ -437,6 +437,7 @@ function renderAll(){
         fld(inv.id,'totalPanels','Toplam panel',inv.totalPanels,1,true)+
         fld(inv.id,'stringCount','Dolu giris / toplam',inv.stringCount+' / '+(Math.max(1,Math.round(inv.mpptCount)||10)*Math.max(1,Math.round(inv.stringsPerMppt)||1)),1,true,true)+
         fld(inv.id,'maxPanelsPerString','En uzun dizi (panel)',inv.maxPanelsPerString,1,true)+
+        fld(inv.id,'minPanelsPerString','En kisa dizi (panel)',inv.minPanelsPerString||inv.maxPanelsPerString,1,true)+
         fld(inv.id,'mpptCount','MPPT sayisi',inv.mpptCount||10,1)+
         fld(inv.id,'stringsPerMppt','MPPT\'ye dizi',inv.stringsPerMppt,1)+
         fld(inv.id,'vMax','Max DC gerilim',inv.vMax,10)+
@@ -490,9 +491,11 @@ function recalc(){
     // En düşük gerilim kontrolleri hücre sıcaklığıyla yapılır: Thücre ≈ Tortam,max + 30 K (NOCT ≈ 45 °C, 1000 W/m²).
     var tcellMax=tmax+30;
     var maxVoc=a*voc*(1+kA*Math.max(0,tnom-tmin)/100);
-    var minVoc=a*voc*(1-kA*Math.max(0,tcellMax-tnom)/100);
+    // Alt sınır kontrolleri en kısa dizi ile yapılır (en düşük gerilim).
+    var b=(inv.minPanelsPerString>0)?Math.min(inv.minPanelsPerString,a):a;
+    var minVoc=b*voc*(1-kA*Math.max(0,tcellMax-tnom)/100);
     var maxVmpp=a*vmpp*(1+kmA*Math.max(0,tnom-tmin)/100);
-    var minVmpp=a*vmpp*(1-kmA*Math.max(0,tcellMax-tnom)/100);
+    var minVmpp=b*vmpp*(1-kmA*Math.max(0,tcellMax-tnom)/100);
     var iMpptImpp=inv.stringsPerMppt*impp;
     var iMpptIsc=1.25*inv.stringsPerMppt*isc;   // IEC 62548-1: Isc tasarım akımı = 1,25·Isc,STC
     var totalPanels=inv.totalPanels;
@@ -503,9 +506,9 @@ function recalc(){
 
     var checks=[
       {nm:'Max acik devre gerilim (Voc, Tmin)',v:maxVoc,lim:inv.vMax,dir:'<',u:'V',d:0},
-      {nm:'Min dizi gerilim (Voc, Thücre = Tmax + 30 K)',v:minVoc,lim:inv.mppMin,dir:'>',u:'V',d:0},
+      {nm:'Min dizi gerilim (en kisa dizi '+b+' panel, Voc, Thücre = Tmax + 30 K)',v:minVoc,lim:inv.mppMin,dir:'>',u:'V',d:0},
       {nm:'Max MPPT gerilim (Vmpp, Tmin)',v:maxVmpp,lim:inv.mppMax,dir:'<',u:'V',d:0},
-      {nm:'Min MPPT gerilim (Vmpp, Thücre = Tmax + 30 K)',v:minVmpp,lim:inv.mppMin,dir:'>',u:'V',d:0},
+      {nm:'Min MPPT gerilim (en kisa dizi '+b+' panel, Vmpp, Thücre = Tmax + 30 K)',v:minVmpp,lim:inv.mppMin,dir:'>',u:'V',d:0},
       {nm:'MPPT akimi (dizi x Impp)',v:iMpptImpp,lim:inv.iMpptOp,dir:'<',u:'A',d:1},
       {nm:'MPPT kisa devre akimi (1,25 x dizi x Isc)',v:iMpptIsc,lim:inv.iMaxMppt,dir:'<',u:'A',d:1},
       {nm:'DC giris gucu (kW)',v:dcKw,lim:inv.pLimit,dir:'<',u:'kW',d:1},
@@ -545,7 +548,7 @@ function recalc(){
   document.getElementById('gAC').textContent=fmt(grandAC,0)+' kW';
   var gv=document.getElementById('grandverdict');
   if(inverters.length===0){ gv.textContent='Henuz evirici eklenmedi'; gv.style.background='var(--surface2)'; gv.style.color='var(--muted)'; }
-  else if(allOk){ gv.textContent='\u2713 Tum eviricilerde gerilim/akim on kontrolleri saglaniyor (IEC 62548-1, en uzun dizi)  \u00b7  DC/AC: '+fmt(grandAC>0?grandDC/grandAC:0,2); gv.style.background='var(--ok-bg)'; gv.style.color='var(--ok-tx)'; }
+  else if(allOk){ gv.textContent='\u2713 Tum eviricilerde gerilim/akim on kontrolleri saglaniyor (IEC 62548-1; en uzun ve en kisa dizi)  \u00b7  DC/AC: '+fmt(grandAC>0?grandDC/grandAC:0,2); gv.style.background='var(--ok-bg)'; gv.style.color='var(--ok-tx)'; }
   else { gv.textContent='\u2717 En az bir eviricide limit asimi var'; gv.style.background='var(--no-bg)'; gv.style.color='var(--no-tx)'; }
   if(typeof renderInvMath==='function') renderInvMath();
   recordChange();
@@ -557,53 +560,43 @@ function recalc(){
 
 
 var presets=[
-  {name:'INV.1', totalPanels:236, stringCount:15, maxPanelsPerString:16},
-  {name:'INV.2', totalPanels:234, stringCount:13, maxPanelsPerString:18},
-  {name:'INV.3', totalPanels:230, stringCount:15, maxPanelsPerString:16},
-  {name:'INV.4', totalPanels:230, stringCount:14, maxPanelsPerString:17},
-  {name:'INV.5', totalPanels:234, stringCount:16, maxPanelsPerString:15},
-  {name:'INV.6', totalPanels:230, stringCount:14, maxPanelsPerString:17},
-  {name:'INV.7', totalPanels:236, stringCount:13, maxPanelsPerString:19},
-  {name:'INV.8', totalPanels:240, stringCount:14, maxPanelsPerString:18},
-  {name:'INV.9', totalPanels:236, stringCount:14, maxPanelsPerString:17}
+  // Örnek (nötr) yerleşim: 2 evirici, farklı uzunlukta diziler. Kendi projenizin dizi tablosunu girin veya içe aktarın.
+  {name:'INV.1', totalPanels:192, stringCount:12, maxPanelsPerString:17, minPanelsPerString:15},
+  {name:'INV.2', totalPanels:160, stringCount:10, maxPanelsPerString:17, minPanelsPerString:15}
 ];
 presets.forEach(function(pre){
   var inv=defaultInverter(pre.name);
   inv.totalPanels=pre.totalPanels;
   inv.stringCount=pre.stringCount;
   inv.maxPanelsPerString=pre.maxPanelsPerString;
+  inv.minPanelsPerString=pre.minPanelsPerString||pre.maxPanelsPerString;
   inverters.push(inv);
 });
 renderAll();
 
 var dcRaw=[
-["DZ.1.1",99,17],["DZ.1.2",97,17],["DZ.1.3",79,17],["DZ.1.4",77,17],["DZ.1.5",88,13],
-["DZ.1.6",86,13],["DZ.1.7",73,13],["DZ.1.8",71,13],["DZ.1.9",79,15],["DZ.1.10",77,15],
-["DZ.1.11",53,18],["DZ.1.13",54,18],["DZ.1.15",56,18],["DZ.1.17",72,18],["DZ.1.19",77,14],
-["DZ.2.1",49,18],["DZ.2.2",47,18],["DZ.2.3",45,18],["DZ.2.4",43,18],["DZ.2.5",57,18],
-["DZ.2.6",59,18],["DZ.2.7",61,18],["DZ.2.9",63,18],["DZ.2.11",65,18],["DZ.2.13",67,18],
-["DZ.2.15",89,18],["DZ.2.17",87,18],["DZ.2.19",119,18],
-["DZ.3.1",75,12],["DZ.3.2",90,12],["DZ.3.3",77,12],["DZ.3.4",92,12],["DZ.3.5",84,16],
-["DZ.3.6",103,16],["DZ.3.7",86,16],["DZ.3.8",105,16],["DZ.3.9",123,16],["DZ.3.10",141,16],
-["DZ.3.11",121,16],["DZ.3.13",143,16],["DZ.3.15",132,18],["DZ.3.17",150,18],["DZ.3.19",152,18],
-["DZ.4.1",170,15],["DZ.4.2",204,15],["DZ.4.3",168,15],["DZ.4.4",202,15],["DZ.4.5",166,17],
-["DZ.4.6",195,17],["DZ.4.7",164,17],["DZ.4.8",193,17],["DZ.4.9",153,18],["DZ.4.11",187,18],
-["DZ.4.13",185,18],["DZ.4.15",149,18],["DZ.4.17",183,18],["DZ.4.19",181,18],
-["DZ.5.1",186,15],["DZ.5.2",184,15],["DZ.5.3",180,12],["DZ.5.4",178,12],["DZ.5.5",198,13],
-["DZ.5.6",196,13],["DZ.5.7",176,13],["DZ.5.8",174,13],["DZ.5.9",194,12],["DZ.5.10",192,12],
-["DZ.5.11",217,14],["DZ.5.12",219,14],["DZ.5.13",225,18],["DZ.5.15",227,18],["DZ.5.17",229,18],["DZ.5.19",231,18],
-["DZ.6.1",205,15],["DZ.6.2",207,15],["DZ.6.3",213,16],["DZ.6.4",215,16],["DZ.6.5",199,17],
-["DZ.6.6",201,17],["DZ.6.7",223,18],["DZ.6.8",225,18],["DZ.6.9",203,18],["DZ.6.11",205,18],
-["DZ.6.13",227,18],["DZ.6.15",229,18],["DZ.6.17",207,18],["DZ.6.19",209,18],
-["DZ.7.1",153,15],["DZ.7.2",155,15],["DZ.7.3",157,16],["DZ.7.4",190,16],["DZ.7.5",188,17],
-["DZ.7.6",186,17],["DZ.7.7",184,18],["DZ.7.9",182,18],["DZ.7.11",180,18],["DZ.7.13",178,18],
-["DZ.7.15",212,18],["DZ.7.17",234,18],["DZ.7.19",236,18],
-["DZ.8.1",113,16],["DZ.8.2",93,16],["DZ.8.3",115,16],["DZ.8.4",95,16],["DZ.8.5",117,16],
-["DZ.8.6",97,16],["DZ.8.7",119,16],["DZ.8.8",99,16],["DZ.8.9",125,18],["DZ.8.11",91,18],
-["DZ.8.13",127,18],["DZ.8.15",93,18],["DZ.8.17",129,18],["DZ.8.19",131,18],
-["DZ.9.1",121,18],["DZ.9.2",123,18],["DZ.9.3",125,18],["DZ.9.4",127,18],["DZ.9.5",129,18],
-["DZ.9.6",99,18],["DZ.9.7",97,18],["DZ.9.8",95,18],["DZ.9.9",90,16],["DZ.9.11",88,16],
-["DZ.9.13",84,13],["DZ.9.15",82,13],["DZ.9.17",84,18],["DZ.9.19",82,14]
+["DZ.1.1",36,17],
+["DZ.1.2",42,15],
+["DZ.1.3",48,17],
+["DZ.1.4",54,15],
+["DZ.1.5",60,17],
+["DZ.1.6",66,15],
+["DZ.1.7",72,17],
+["DZ.1.8",78,15],
+["DZ.1.9",84,17],
+["DZ.1.10",90,15],
+["DZ.1.11",96,17],
+["DZ.1.12",102,15],
+["DZ.2.1",36,17],
+["DZ.2.2",42,15],
+["DZ.2.3",48,17],
+["DZ.2.4",54,15],
+["DZ.2.5",60,17],
+["DZ.2.6",66,15],
+["DZ.2.7",72,17],
+["DZ.2.8",78,15],
+["DZ.2.9",84,17],
+["DZ.2.10",90,15]
 ];
 // Tablo B1 - Hava sicakliklarinda dosenmis kablolar icin duzeltme faktorleri (referans 30 C) - AC+DC ortak
 var B1PVC={"10":1.22,"15":1.17,"20":1.12,"25":1.06,"30":1.00,"35":0.94,"40":0.87,"45":0.79,"50":0.71,"55":0.61,"60":0.50};
@@ -680,8 +673,8 @@ function syncStringCountsFromDizeler(){
     iv.stringCount=mine.length;
     // toplam panel ve en uzun dizi de DC tablosundan turetilir
     if(mine.length){
-      var sum=0,mx=0; mine.forEach(function(d){ var p=parseFloat(d.p)||0; sum+=p; if(p>mx) mx=p; });
-      iv.totalPanels=sum; iv.maxPanelsPerString=mx;
+      var sum=0,mx=0,mn=Infinity; mine.forEach(function(d){ var p=parseFloat(d.p)||0; sum+=p; if(p>mx) mx=p; if(p>0&&p<mn) mn=p; });
+      iv.totalPanels=sum; iv.maxPanelsPerString=mx; iv.minPanelsPerString=isFinite(mn)?mn:mx;
     }
   });
   renderAll();   // evirici kartlarini ve barlari guncelle

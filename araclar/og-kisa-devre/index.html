@@ -247,7 +247,7 @@
           <option>IEC cmin — röle duyarlılığı (OG 1,00 / AG 0,95)</option>
         </select>
       </div>
-      <div class="hint">Nk: TEİAŞ bağlantı görüşü / sistem etüdü değeri. Doğrudan topraklı şebekede xo/x1 ≈ 2, R1/x1 ≈ 0,1 alınır. IEC 60909'a göre teçhizat boyutlandırmasında cmax, koruma duyarlılık kontrolünde cmin kullanılır (varsayılan); TEDAŞ şablonu c=1 varsayar ve en büyük akımı düşük gösterir. Şebeke empedansı Z<sub>Q</sub> = c·U<sub>n</sub>²/S″<sub>kQ</sub> ile alınır. Hat tablolarındaki dirençler işletme sıcaklığı değerleridir; en büyük I″k için IEC 60909 iletken direncini 20 °C'de ister (R20 ≈ R ÷ 1,2–1,3) — kritik teçhizat seçiminde R değerini R20 olarak girin. Tek damarlı XLPE kablolarda sıfır bileşen değerlerini üretici verisinden girin.</div>
+      <div class="hint">Nk: TEİAŞ bağlantı görüşü / sistem etüdü değeri. Doğrudan topraklı şebekede xo/x1 ≈ 2, R1/x1 ≈ 0,1 alınır. IEC 60909'a göre teçhizat boyutlandırmasında cmax, koruma duyarlılık kontrolünde cmin kullanılır (varsayılan); TEDAŞ şablonu c=1 varsayar ve en büyük akımı düşük gösterir. Şebeke empedansı Z<sub>Q</sub> = c·U<sub>n</sub>²/S″<sub>kQ</sub> ile alınır. Hat dirençleri R20 (20 °C) olarak girilir ve c moduna göre çevrilir: IEC cmax → R20 (en büyük I″k), IEC cmin → 1,5·R20 (arıza sonu sıcaklığı), TEDAŞ şablonu → işletme sıcaklığı. Tek damarlı XLPE kablolarda sıfır bileşen ekran dönüşüyle (R0 ≈ R + 3·R<sub>ekran</sub>, X0 ≈ 0,8·X) yaklaşık doldurulur; üretici verisi varsa onu girin.</div>
     </div>
   </div>
 
@@ -354,33 +354,34 @@
 /* ================= REFERANS VERİLERİ (TEDAŞ şablonu TABLOLAR/KAT sayfalarından) ================= */
 const ILETKENLER = [
   // tip: 'havai' | 'kablo3' (üç damar) | 'kablo1' (tek damar XLPE) ; grp: dropdown grubu
-  {grp:'Havai Hat — ACSR', ad:'3xSwallow (26,69 mm²)',   tip:'havai',  R:1.26708, X_yuk:0.4644, X_dus:0.4549},
-  {grp:'Havai Hat — ACSR', ad:'3xRaven (53,52 mm²)',     tip:'havai',  R:0.67081, X_yuk:0.4619, X_dus:0.4524},
-  {grp:'Havai Hat — ACSR', ad:'3xPigeon (85,12 mm²)',    tip:'havai',  R:0.43291, X_yuk:0.4433, X_dus:0.4388},
-  {grp:'Havai Hat — ACSR', ad:'3xPartridge (134,87 mm²)', tip:'havai',  R:0.23913, X_yuk:0.3626, X_dus:0.3531},
-  {grp:'Havai Hat — ACSR', ad:'3xHawk (241,65 mm²)',     tip:'havai',  R:0.13416, X_yuk:0.3427, X_dus:0.3332},
-  {grp:'Havai Hat — ACSR', ad:'3xDrake (402,56 mm²)',    tip:'havai',  R:0.08217, X_yuk:0.3277, X_dus:0.3182},
-  {grp:'Havai Hat — ACSR', ad:'3/0 AWG (85,12 mm²) — TM kademe', tip:'havai', R:0.3366, X_yuk:0.3406, X_dus:0.3406},
-  {grp:'Havai Hat — ACSR', ad:'477 MCM (241,65 mm²) — TM kademe', tip:'havai', R:0.1194, X_yuk:0.3071, X_dus:0.3071},
-  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x35) mm² Cu XLPE',  tip:'kablo1', R:0.6707, X_yuk:0.212, X_dus:0.212},
-  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x50) mm² Cu XLPE',  tip:'kablo1', R:0.4954, X_yuk:0.203, X_dus:0.203},
-  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x70) mm² Cu XLPE',  tip:'kablo1', R:0.3430, X_yuk:0.195, X_dus:0.195},
-  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x95) mm² Cu XLPE',  tip:'kablo1', R:0.2470, X_yuk:0.188, X_dus:0.188},
-  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x120) mm² Cu XLPE', tip:'kablo1', R:0.1958, X_yuk:0.183, X_dus:0.183},
-  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x150) mm² Cu XLPE', tip:'kablo1', R:0.1587, X_yuk:0.177, X_dus:0.177},
-  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x185) mm² Cu XLPE', tip:'kablo1', R:0.1268, X_yuk:0.172, X_dus:0.172},
-  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x240) mm² Cu XLPE', tip:'kablo1', R:0.0965, X_yuk:0.166, X_dus:0.166},
-  // AL XLPE 20,3/35 kV tek damar — R: AC 90°C (IEC 60228 DC20 × 1,28; şablonun Cu değerleriyle aynı türetim), X: yumak (trefoil) tipik katalog değeri
-  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x35/16) mm² AL XLPE',  tip:'kablo1', R:1.1110, X_yuk:0.212, X_dus:0.212},
-  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x50/16) mm² AL XLPE',  tip:'kablo1', R:0.8205, X_yuk:0.203, X_dus:0.203},
-  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x70/16) mm² AL XLPE',  tip:'kablo1', R:0.5670, X_yuk:0.195, X_dus:0.195},
-  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x95/16) mm² AL XLPE',  tip:'kablo1', R:0.4096, X_yuk:0.188, X_dus:0.188},
-  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x120/16) mm² AL XLPE', tip:'kablo1', R:0.3238, X_yuk:0.183, X_dus:0.183},
-  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x150/25) mm² AL XLPE', tip:'kablo1', R:0.2637, X_yuk:0.177, X_dus:0.177},
-  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x185/25) mm² AL XLPE', tip:'kablo1', R:0.2099, X_yuk:0.172, X_dus:0.172},
-  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x240/25) mm² AL XLPE', tip:'kablo1', R:0.1600, X_yuk:0.166, X_dus:0.166},
-  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x300/25) mm² AL XLPE', tip:'kablo1', R:0.1280, X_yuk:0.161, X_dus:0.161},
-  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x400/35) mm² AL XLPE', tip:'kablo1', R:0.0996, X_yuk:0.155, X_dus:0.155},
+  {grp:'Havai Hat — ACSR', ad:'3xSwallow (26,69 mm²)',   tip:'havai',  R20:1.0742, Rhot:1.26708, R:1.0742, X_yuk:0.4644, X_dus:0.4549},
+  {grp:'Havai Hat — ACSR', ad:'3xRaven (53,52 mm²)',     tip:'havai',  R20:0.5361, Rhot:0.67081, R:0.5361, X_yuk:0.4619, X_dus:0.4524},
+  {grp:'Havai Hat — ACSR', ad:'3xPigeon (85,12 mm²)',    tip:'havai',  R20:0.3366, Rhot:0.43291, R:0.3366, X_yuk:0.4433, X_dus:0.4388},
+  {grp:'Havai Hat — ACSR', ad:'3xPartridge (134,87 mm²)', tip:'havai',  R20:0.2142, Rhot:0.23913, R:0.2142, X_yuk:0.3626, X_dus:0.3531},
+  {grp:'Havai Hat — ACSR', ad:'3xHawk (241,65 mm²)',     tip:'havai',  R20:0.1194, Rhot:0.13416, R:0.1194, X_yuk:0.3427, X_dus:0.3332},
+  {grp:'Havai Hat — ACSR', ad:'3xDrake (402,56 mm²)',    tip:'havai',  R20:0.0718, Rhot:0.08217, R:0.0718, X_yuk:0.3277, X_dus:0.3182},
+  {grp:'Havai Hat — ACSR', ad:'3/0 AWG (85,12 mm²) — TM kademe', tip:'havai', R20:0.3366, Rhot:0.3972, R:0.3366, X_yuk:0.3406, X_dus:0.3406},
+  {grp:'Havai Hat — ACSR', ad:'477 MCM (241,65 mm²) — TM kademe', tip:'havai', R20:0.1194, Rhot:0.1409, R:0.1194, X_yuk:0.3071, X_dus:0.3071},
+  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x35) mm² Cu XLPE',  tip:'kablo1', R20:0.524, Rhot:0.6707, R:0.524, X_yuk:0.212, X_dus:0.212},
+  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x50) mm² Cu XLPE',  tip:'kablo1', R20:0.387, Rhot:0.4954, R:0.387, X_yuk:0.203, X_dus:0.203},
+  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x70) mm² Cu XLPE',  tip:'kablo1', R20:0.268, Rhot:0.343, R:0.268, X_yuk:0.195, X_dus:0.195},
+  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x95) mm² Cu XLPE',  tip:'kablo1', R20:0.193, Rhot:0.247, R:0.193, X_yuk:0.188, X_dus:0.188},
+  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x120) mm² Cu XLPE', tip:'kablo1', R20:0.153, Rhot:0.1958, R:0.153, X_yuk:0.183, X_dus:0.183},
+  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x150) mm² Cu XLPE', tip:'kablo1', R20:0.124, Rhot:0.1587, R:0.124, X_yuk:0.177, X_dus:0.177},
+  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x185) mm² Cu XLPE', tip:'kablo1', R20:0.0991, Rhot:0.1268, R:0.0991, X_yuk:0.172, X_dus:0.172},
+  {grp:'Yeraltı Kablo — Cu XLPE 34,5 kV', ad:'Kablo 3(1x240) mm² Cu XLPE', tip:'kablo1', R20:0.0754, Rhot:0.0965, R:0.0754, X_yuk:0.166, X_dus:0.166},
+  // R20: iletken DC direnci 20 °C (IEC 60228; ACSR katalog). Rhot: TEDAŞ şablonunun işletme sıcaklığı değeri (kablo ≈ 1,28·R20, ACSR ≈ 1,12–1,29·R20).
+  // Hesapta: IEC cmax → R20, IEC cmin → arıza sonu sıcaklığı 1,5·R20, TEDAŞ şablonu → Rhot. X: yumak (trefoil) tipik katalog değeri.
+  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x35/16) mm² AL XLPE',  tip:'kablo1', R20:0.868, Rhot:1.111, R:0.868, X_yuk:0.212, X_dus:0.212},
+  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x50/16) mm² AL XLPE',  tip:'kablo1', R20:0.641, Rhot:0.8205, R:0.641, X_yuk:0.203, X_dus:0.203},
+  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x70/16) mm² AL XLPE',  tip:'kablo1', R20:0.443, Rhot:0.567, R:0.443, X_yuk:0.195, X_dus:0.195},
+  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x95/16) mm² AL XLPE',  tip:'kablo1', R20:0.32, Rhot:0.4096, R:0.32, X_yuk:0.188, X_dus:0.188},
+  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x120/16) mm² AL XLPE', tip:'kablo1', R20:0.253, Rhot:0.3238, R:0.253, X_yuk:0.183, X_dus:0.183},
+  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x150/25) mm² AL XLPE', tip:'kablo1', R20:0.206, Rhot:0.2637, R:0.206, X_yuk:0.177, X_dus:0.177},
+  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x185/25) mm² AL XLPE', tip:'kablo1', R20:0.164, Rhot:0.2099, R:0.164, X_yuk:0.172, X_dus:0.172},
+  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x240/25) mm² AL XLPE', tip:'kablo1', R20:0.125, Rhot:0.16, R:0.125, X_yuk:0.166, X_dus:0.166},
+  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x300/25) mm² AL XLPE', tip:'kablo1', R20:0.1, Rhot:0.128, R:0.1, X_yuk:0.161, X_dus:0.161},
+  {grp:'Yeraltı Kablo — AL XLPE 34,5 kV', ad:'Kablo 3(1x400/35) mm² AL XLPE', tip:'kablo1', R20:0.0778, Rhot:0.0996, R:0.0778, X_yuk:0.155, X_dus:0.155},
   {grp:'Diğer', ad:'— Özel (elle gir) —', tip:'ozel', R:0.2, X_yuk:0.35, X_dus:0.35}
 ];
 const BAGLANTI = [
@@ -672,7 +673,7 @@ function hatEkle(data){
     </div>
     <div class="grid3" style="margin-top:7px">
       <div class="fld"><label>Uzunluk l (km)</label><input id="h${id}_l" value="1"></div>
-      <div class="fld"><label>R (Ω/km)</label><input id="h${id}_R" value=""></div>
+      <div class="fld"><label title="İletken direnci 20 °C; hesapta seçilen c moduna göre sıcaklığa çevrilir">R20 (Ω/km)</label><input id="h${id}_R" value=""></div>
       <div class="fld"><label>X (Ω/km)</label><input id="h${id}_X" value=""></div>
     </div>
     <div class="grid2" style="margin-top:7px">
@@ -688,7 +689,9 @@ function hatEkle(data){
     if(data.nk!==undefined) $('h'+id+'_nk').value = data.nk;
     if(data.dv!==undefined) $('h'+id+'_dv').value = data.dv;
     $('h'+id+'_l').value = data.l;
-    $('h'+id+'_R').value = data.R; $('h'+id+'_X').value = data.X;
+    const cKayit = ILETKENLER.find(x=>x.ad===tv);
+    const rKayit = (cKayit && cKayit.Rhot && Math.abs(parseFloat(String(data.R).replace(',','.'))-cKayit.Rhot)<1e-6) ? cKayit.R20 : data.R;
+    $('h'+id+'_R').value = rKayit; $('h'+id+'_X').value = data.X;
     $('h'+id+'_R0').value = data.R0; $('h'+id+'_X0').value = data.X0;
   } else {
     hatDoldur(id);
@@ -727,6 +730,11 @@ function hatDoldur(id){
     const x0 = yuksek ? c.x0_yuk : c.x0_dus;
     $('h'+id+'_R0').value = +(c.R*r0).toFixed(5);
     $('h'+id+'_X0').value = +(X*x0).toFixed(5);
+  } else if(c.tip === 'kablo1'){
+    // Tek damarlı XLPE, ekran iki uçtan topraklı: R0 ≈ R + 3·Rekran, X0 ≈ 0,8·X (tipik; üretici verisi esastır).
+    const m = /\/(\d+)\)/.exec(c.ad); const ekran = m ? +m[1] : 16;
+    $('h'+id+'_R0').value = +(c.R + 3*(17.9/ekran)).toFixed(5);
+    $('h'+id+'_X0').value = +(X*0.8).toFixed(5);
   } else {
     $('h'+id+'_R0').value = +(c.R+0.15).toFixed(5);
     $('h'+id+'_X0').value = +(X*3).toFixed(5);
@@ -794,6 +802,10 @@ function hesapla(){
   let cOG=1, cAG=1;
   if(cModu.indexOf('cmax')>=0){ cOG=1.10; cAG=1.05; }
   else if(cModu.indexOf('cmin')>=0){ cOG=1.00; cAG=0.95; }
+  // Hat dirençleri R20 olarak girilir. IEC cmax: 20 °C; IEC cmin: arıza sonu sıcaklığı (≈ 1,5·R20, IEC 60909-0 RL = [1 + 0,004·(θe − 20)]·R20, θe ≈ 145 °C);
+  // TEDAŞ şablonu: işletme sıcaklığı (tablodaki Rhot/R20 oranı; özel iletkende 1,24).
+  const rMod = cModu.indexOf('cmax')>=0 ? 'r20' : cModu.indexOf('cmin')>=0 ? 'son' : 'isletme';
+  hatlar.forEach(h=>{ const c=ILETKENLER.find(x=>x.ad===h.tip); const kHot=(c&&c.R20)?c.Rhot/c.R20:1.24; h.kR = rMod==='r20'?1:rMod==='son'?1.5:kHot; h.R*=h.kR; });
   const IbazOG = BAZ*1e6/(Math.sqrt(3)*Uog*1e3);   // A
   const IbazAG = Uag>0 ? BAZ*1e6/(Math.sqrt(3)*Uag*1e3) : 0;
 
