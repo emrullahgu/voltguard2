@@ -232,7 +232,8 @@ async function layout(page, frame, name) {
     report.release = await frame.evaluate(() => PX.BUILD);
     report.worker = await workerReady(frame);
     assert.ok((await page.locator('.vg-header .vg-brand').getAttribute('href')) === '/');
-    assert.equal(await page.locator('.vg-header .vg-nav__link[href="/voltgame.html"]').getAttribute('aria-current'), 'page');
+    // VoltGame, Kaynaklar açılır menüsünde: bağlantı geçerli sayfa olarak işaretlenmeli
+    assert.equal(await page.locator('.vg-header a[href="/voltgame.html"]').first().getAttribute('aria-current'), 'page');
     await layout(page, frame, 'desktop 1440x1000');
 
     const completeness = await frame.evaluate(() => {
