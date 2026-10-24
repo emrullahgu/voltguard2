@@ -491,9 +491,9 @@
     scr.position.set(0, 0.06, 0.092); set.screen = scr;
     set.led = k.sphere(0.018, M.ledOff, -0.17, -0.14, 0.09, cp);
     const estop = k.cyl(0.035, 0.035, 0.03, M.plasticRed, 0.17, -0.14, 0.1, cp, 16); estop.rotation.x = Math.PI / 2;
-    k.pickable(cp, nm + 'Jeneratör kontrol paneli', a => { const L = a.live, r = a.validResult.values; return ['Durum: ' + (L.ats.genRunning ? (L.ats.state === 'GEN_START' ? 'yol alıyor' : 'çalışıyor 1500 d/dk · 50 Hz') : 'hazırda bekliyor'), 'Set yükü: ' + fmt(r.genLoadKVA / r.gp.n, 0, 'kVA') + ' (%' + fmt(r.gp.perSetPct, 0) + ')', 'Tüketim ≈ ' + fmt(r.gp.fuelPerSet, 1, 'l/sa') + ' (set) · toplam depo ' + fmt(L.fuelL, 0, 'l')]; }, mainsActions);
-    k.pickable(alt, nm + 'Alternatör', a => ['Senkron alternatör, ' + a.state.genKVA + ' kVA (prime)', 'Yüklenme %' + fmt(a.validResult.values.gp.perSetPct, 0), 'Adım yük kabulü: Jeneratör grubundaki plan (ISO 8528-5, temsili sınır)']);
-    k.pickable(can, nm + 'Dizel jeneratör seti', a => { const r = a.validResult.values; return [a.state.genKVA + ' kVA · kabinli, kaide yakıt tanklı (' + a.state.tank + ' l)', 'Yakıt süresi (tam depo): ' + fmt(r.fuelHours, 1, 'sa'), 'Özgül tüketim ' + fmt(a.state.fuel, 2) + ' l/kWh (yükten bağımsız kabul)', a.state.nGen > 1 ? a.state.nGen + ' set senkron barada eşit yük paylaşır.' : 'Tek set: yedek yok.']; }, mainsActions);
+    k.pickable(cp, nm + 'Jeneratör kontrol paneli', a => { const L = a.live, r = (a.validResult || {}).values; if (!r) return []; return ['Durum: ' + (L.ats.genRunning ? (L.ats.state === 'GEN_START' ? 'yol alıyor' : 'çalışıyor 1500 d/dk · 50 Hz') : 'hazırda bekliyor'), 'Set yükü: ' + fmt(r.genLoadKVA / r.gp.n, 0, 'kVA') + ' (%' + fmt(r.gp.perSetPct, 0) + ')', 'Tüketim ≈ ' + fmt(r.gp.fuelPerSet, 1, 'l/sa') + ' (set) · toplam depo ' + fmt(L.fuelL, 0, 'l')]; }, mainsActions);
+    k.pickable(alt, nm + 'Alternatör', a => ['Senkron alternatör, ' + a.state.genKVA + ' kVA (prime)', 'Yüklenme %' + (a.validResult ? fmt(a.validResult.values.gp.perSetPct, 0) : '—'), 'Adım yük kabulü: Jeneratör grubundaki plan (ISO 8528-5, temsili sınır)']);
+    k.pickable(can, nm + 'Dizel jeneratör seti', a => { const r = (a.validResult || {}).values; if (!r) return []; return [a.state.genKVA + ' kVA · kabinli, kaide yakıt tanklı (' + a.state.tank + ' l)', 'Yakıt süresi (tam depo): ' + fmt(r.fuelHours, 1, 'sa'), 'Özgül tüketim ' + fmt(a.state.fuel, 2) + ' l/kWh (yükten bağımsız kabul)', a.state.nGen > 1 ? a.state.nGen + ' set senkron barada eşit yük paylaşır.' : 'Tek set: yedek yok.']; }, mainsActions);
     // egzoz dumanı (temsili, yalnız çalışırken)
     const pm = new T.MeshBasicMaterial({ color: 0x9aa3ad, transparent: true, opacity: 0.25, depthWrite: false });
     for (let i = 0; i < 6; i++) { const p = new T.Mesh(new T.SphereGeometry(0.12, 10, 8), pm.clone()); p.visible = false; p.userData.ph = i / 6; k.viewer.root.add(p); set.puffs.push(p); }
@@ -555,7 +555,7 @@
         sc.mods.push({ led: led });
         const ix = i;
         k.pickable(m, 'Güç modülü ' + (i + 1) + ' / ' + n, a => {
-          const st = a.state, r = a.validResult.values, failed = ix >= st.upsModules - Math.min(st.failedMods || 0, st.upsModules - 1);
+          const st = a.state, r = (a.validResult || {}).values; if (!r) return []; const failed = ix >= st.upsModules - Math.min(st.failedMods || 0, st.upsModules - 1);
           return [st.modKVA + ' kVA · doğrultucu + inverter + şarj', 'Durum: ' + (failed ? 'ARIZALI (devre dışı)' : 'çalışıyor, modül başına %' + fmt(r.mod.perModPct, 0)), 'N = ' + r.mod.N + ' · ' + st.redundancy + ' hedefi ' + (r.mod.configOK ? 'sağlanıyor' : 'sağlanmıyor'), 'Modüller yükü eşit paylaşır; arızalı modül sıcak değiştirilebilir (hot-swap).'];
         }, a => {
           const st = a.state, failed = ix >= st.upsModules - Math.min(st.failedMods || 0, st.upsModules - 1);
@@ -577,7 +577,7 @@
     const scr = k.screen(0.34, 0.2, 384, (gx, w, h) => drawUPS(gx, w, h, app), g, { emissive: 0.9 });
     scr.position.set(-0.15, 1.93, 0.412); sc.upsScreen = scr;
     sc.upsLeds = ['Şebeke', 'Akü', 'Arıza'].map((n, i) => k.sphere(0.018, M.ledOff, 0.2 + i * 0.09, 1.93, 0.412, g));
-    k.pickable(g, modular ? 'Modüler online UPS' : 'Online UPS (çift dönüşüm)', a => { const r = a.validResult.values, L = a.live; return [(r.mod ? r.mod.active + ' / ' + a.state.upsModules + ' modül × ' + a.state.modKVA : a.state.upsKVA) + ' kVA · çıkış PF ' + fmt(a.state.upsPF, 2) + ' · η ' + fmt(a.state.etaInv, 1) + ' %', 'Yüklenme %' + fmt(r.upsLoad, 0) + ' (IEC 62040-3)', 'Mod: ' + supplyText(L), 'Çıkış yolu: ' + X.modeName(L.byp) + (a.state.bypSync ? '' : ' · bypass senkron dışı'), 'Doğrultucu → DC bara → inverter; statik anahtar senkronken bypass’a kesintisiz geçer.']; }, bypActions);
+    k.pickable(g, modular ? 'Modüler online UPS' : 'Online UPS (çift dönüşüm)', a => { const r = (a.validResult || {}).values, L = a.live; if (!r) return []; return [(r.mod ? r.mod.active + ' / ' + a.state.upsModules + ' modül × ' + a.state.modKVA : a.state.upsKVA) + ' kVA · çıkış PF ' + fmt(a.state.upsPF, 2) + ' · η ' + fmt(a.state.etaInv, 1) + ' %', 'Yüklenme %' + fmt(r.upsLoad, 0) + ' (IEC 62040-3)', 'Mod: ' + supplyText(L), 'Çıkış yolu: ' + X.modeName(L.byp) + (a.state.bypSync ? '' : ' · bypass senkron dışı'), 'Doğrultucu → DC bara → inverter; statik anahtar senkronken bypass’a kesintisiz geçer.']; }, bypActions);
     // bakım bypass panosu (harici): Q2 UPS çıkış ayırıcısı, Q3 bakım bypass anahtarı, mimik ekran
     const mb = k.group(null, -1.05, 0, -2.3);
     k.box(0.56, 0.08, 0.4, M.plasticDark, 0, 0.04, 0, mb);
@@ -654,7 +654,7 @@
     }
     [body, strip, term].forEach(m => { m.castShadow = true; m.receiveShadow = true; k.viewer.root.add(m); });
     sc.bat = { strip: strip, base: base, shown: shown };
-    k.pickable(frame, 'Akü grubu (VRLA)', a => { const r = a.validResult.values, st = a.state; return [st.nBlocks + ' × ' + st.Vblock + ' V seri · ' + st.strings + ' paralel grup · ' + st.Ah + ' Ah', 'Toplam ' + fmt(r.Ebat, 1, 'kWh') + ' · DC ' + fmt(r.Vbat, 0, 'V'), 'Yedekleme ≈ ' + VS.fmtDuration(r.runtime) + ' (DoD %' + st.dod + ', k_T ' + st.kTemp + ', k_yaş ' + st.kAge + ')', total > shown ? 'Sahnede ' + shown + ' / ' + total + ' blok gösteriliyor.' : 'Akü odası havalandırması: TS EN IEC 62485-2']; });
+    k.pickable(frame, 'Akü grubu (VRLA)', a => { const r = (a.validResult || {}).values, st = a.state; if (!r) return []; return [st.nBlocks + ' × ' + st.Vblock + ' V seri · ' + st.strings + ' paralel grup · ' + st.Ah + ' Ah', 'Toplam ' + fmt(r.Ebat, 1, 'kWh') + ' · DC ' + fmt(r.Vbat, 0, 'V'), 'Yedekleme ≈ ' + VS.fmtDuration(r.runtime) + ' (DoD %' + st.dod + ', k_T ' + fmt(r.derate.kTemp, 2) + ', k_yaş ' + fmt(r.derate.kAge, 2) + ')', total > shown ? 'Sahnede ' + shown + ' / ' + total + ' blok gösteriliyor.' : 'Akü odası havalandırması: TS EN IEC 62485-2']; });
     k.pickable(body, 'Akü bloğu', a => ['Blok ' + a.state.Vblock + ' V · ' + a.state.Ah + ' Ah', 'SOC %' + fmt(a.live.soc * 100, 0)]);
     sc.batLabel = k.label('Akü · ' + total + ' blok', frame, [x0 + rw / 2, 2.15, z0]);
     if (total > shown) k.label('+' + (total - shown) + ' blok gösterilmiyor', frame, [x0 + rw / 2, 0.1, z0 + 0.5], 'vs-label--sm');
@@ -692,7 +692,7 @@
     }
     [units, ledA, ledB].forEach(m => { m.castShadow = m === units; k.viewer.root.add(m); });
     sc.srv = { ledA: ledA, ledB: ledB };
-    k.pickable(g, 'Kritik yükler · sunucu kabinleri', a => { const r = a.validResult.values; return [fmt(a.state.Pcrit, 0, 'kW') + ' · cosφ ' + fmt(a.state.pfCrit, 2) + ' → ' + fmt(r.Scrit, 1, 'kVA'), 'Besleme: ' + supplyText(a.live), 'UPS çıkışından beslenir; kesinti anında aküden kesintisiz devam eder.']; });
+    k.pickable(g, 'Kritik yükler · sunucu kabinleri', a => { const r = (a.validResult || {}).values; if (!r) return []; return [fmt(a.state.Pcrit, 0, 'kW') + ' · cosφ ' + fmt(a.state.pfCrit, 2) + ' → ' + fmt(r.Scrit, 1, 'kVA'), 'Besleme: ' + supplyText(a.live), 'UPS çıkışından beslenir; kesinti anında aküden kesintisiz devam eder.']; });
     sc.srvLabel = k.label('Kritik yükler · sunucular', g, [x0 + 1.24, 2.35, z]);
   }
 
@@ -720,10 +720,10 @@
 
   /* durum → sahne: kesiciler, akışlar, LED’ler, ekranlar (yalnız değişince) */
   function applyState(k, app) {
-    const sc = app.scene3, L = app.live, M = k.mats; if (!sc || !L || !app.validResult) return;
+    const sc = app.scene3, L = app.live, M = k.mats; if (!sc || !L || !app.validResult) return false;
     const p = paths(L), a = L.ats, r = app.validResult.values;
     const sig = [a.state, a.QM, a.QG, L.mains, L.dropped, JSON.stringify(L.byp), L.interrupts, app.state.bypSync, Math.round(L.soc * 100), Math.round(L.fuelL), Math.round(a.timer * 2), app.state.accel, r.upsLoad, app.state.failedMods].join('|');
-    if (sig === sc.sig) return;
+    if (sig === sc.sig) return false;
     sc.sig = sig;
     ['QM', 'QG'].forEach(n => {
       const b = sc.brk[n], on = a[n];
@@ -759,16 +759,18 @@
     sc.batLabel.set('Akü · SOC %' + fmt(L.soc * 100, 0)); sc.batLabel.level(L.soc < 0.2 ? 'bad' : p.onBat ? 'warn' : 'ok');
     sc.srvLabel.set('Kritik yükler · ' + (p.crit ? 'besleniyor' : 'KESİK')); sc.srvLabel.level(p.crit ? 'ok' : 'bad');
     sc.otherLabel.set('Diğer yükler · ' + (p.bus ? 'besleniyor' : 'enerjisiz')); sc.otherLabel.level(p.bus ? 'ok' : 'warn');
+    return true;
   }
   function update(k, res, s, live, app) { if (app.scene3) app.scene3.sig = ''; applyState(k, app); }
   function animate(k, dt, res, s, L, app) {
-    const sc = app.scene3; if (!sc || !L) return;
-    applyState(k, app);
-    const p = paths(L), run = L.ats.genRunning;
-    sc.fans.forEach(f => { const on = f.key === 'gen' ? run : p.bus; f.v = (f.v || 0) + ((on ? 14 : 0) - (f.v || 0)) * Math.min(1, dt * 1.5); if (!k.reducedMotion) f.obj.rotation[f.axis] += f.v * dt; });
+    const sc = app.scene3; if (!sc || !L) return false;
+    let moving = applyState(k, app);
+    const p = paths(L), run = L.ats.genRunning, rm = k.reducedMotion;
+    sc.fans.forEach(f => { const on = f.key === 'gen' ? run : p.bus, want = on ? 14 : 0; f.v = (f.v || 0) + (want - (f.v || 0)) * Math.min(1, dt * 1.5); if (Math.abs(want - f.v) < 0.01) f.v = want; if (!rm && f.v > 0 && dt > 0) { f.obj.rotation[f.axis] += f.v * dt; moving = true; } });
     // jeneratör titreşimi ve egzoz dumanı (temsili)
     sc.gens.forEach(gs => {
-      gs.group.position.y = run && !k.reducedMotion ? Math.sin(app.simTime * 90 + gs.idx) * 0.003 : 0;
+      gs.group.position.y = run && !rm ? Math.sin(app.simTime * 90 + gs.idx) * 0.003 : 0;
+      if (run && !rm && dt > 0) moving = true;
       gs.puffs.forEach(m => {
         m.visible = run && !k.reducedMotion;
         if (!m.visible) return;
@@ -779,7 +781,9 @@
       });
     });
     // sunucu LED’leri: yanıp sönme
-    if (p.crit && !k.reducedMotion) sc.srv.ledB.visible = Math.floor(app.simTime * 6) % 3 !== 0; else sc.srv.ledB.visible = true;
+    const lb = p.crit && !rm ? Math.floor(app.simTime * 6) % 3 !== 0 : true;
+    if (lb !== sc.srv.ledB.visible) { sc.srv.ledB.visible = lb; moving = true; }
+    return moving;
   }
 
   /* ---------------------------------------------------------------- 2D tek hat şeması

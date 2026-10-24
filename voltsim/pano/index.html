@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=f4956253830f" defer></script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <title>3D Elektrik Pano Simülasyonu: Kısa Devre ve Koruma | VoltSim</title>
@@ -51,13 +51,13 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/voltsim.css?v=6ba92f3f897f">
+  <link rel="stylesheet" href="/css/voltsim.css?v=aa31f280fe98">
   <script src="/js/vendor/three-r128.min.js?v=9274bbcec8d9" defer></script>
-  <script src="/js/voltsim/engine.js?v=6a8ec06cc100" defer></script>
-  <script src="/js/voltsim/calc/pano.js?v=eeeb4042bda3" defer></script>
+  <script src="/js/voltsim/engine.js?v=f0ad9fc767ad" defer></script>
+  <script src="/js/voltsim/calc/pano.js?v=540227388127" defer></script>
   <script src="/js/voltsim/regulations.js?v=3a341c8b9934" defer></script>
-  <script src="/js/voltsim/core.js?v=c5239afa95c0" defer></script>
-  <script src="/js/voltsim/mod/pano.js?v=9d55d3072df2" defer></script>
+  <script src="/js/voltsim/core.js?v=d2d95dd2685a" defer></script>
+  <script src="/js/voltsim/mod/pano.js?v=4cbe7158aace" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltSim","item":"https://voltguard.com.tr/voltsim/"},{"@type":"ListItem","position":3,"name":"3D Elektrik Pano Simülasyonu","item":"https://voltguard.com.tr/voltsim/pano/"}]},{"@type":"WebApplication","name":"3D Elektrik Pano Simülasyonu","url":"https://voltguard.com.tr/voltsim/pano/","applicationCategory":"EngineeringApplication","operatingSystem":"Web","inLanguage":"tr","isAccessibleForFree":true,"description":"ADP, MCC ve transfer panolarını 3D inceleyin; yük ekleyin, motor çalıştırın, faz akımı, gerilim düşümü, kısa devre ve koruma koordinasyonunu anlık hesaplayın.","publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"}}]}</script>
 </head>
 <body class="vs-page doc-shell">
@@ -90,13 +90,13 @@
               <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
               <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
               <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
               <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
             </ul>
           </li>
           <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
           <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/" aria-current="true">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
-          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
         </ul>
         <div class="vg-nav__foot">
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -142,22 +142,22 @@
       </div>
 
       <div class="vs-mtabs" role="tablist" aria-label="Çalışma alanı">
-        <button type="button" role="tab" data-vs-pane="params" aria-selected="false">Parametreler</button>
-        <button type="button" role="tab" data-vs-pane="stage" aria-selected="true">3D Simülasyon</button>
-        <button type="button" role="tab" data-vs-pane="analysis" aria-selected="false">Analiz</button>
+        <button type="button" role="tab" id="vs-tab-params" aria-controls="vs-pane-params" data-vs-pane="params" aria-selected="false" tabindex="-1">Parametreler</button>
+        <button type="button" role="tab" id="vs-tab-stage" aria-controls="vs-pane-stage" data-vs-pane="stage" aria-selected="true">3D Simülasyon</button>
+        <button type="button" role="tab" id="vs-tab-analysis" aria-controls="vs-pane-analysis" data-vs-pane="analysis" aria-selected="false" tabindex="-1">Analiz</button>
       </div>
 
       <div class="vs-work" data-pane="stage">
-        <section class="vs-left" aria-labelledby="vs-left-h">
+        <section class="vs-left" id="vs-pane-params" aria-labelledby="vs-left-h">
           <h2 class="vs-panel-h" id="vs-left-h">Parametreler</h2>
           <div class="vs-scroll" data-vs-controls></div>
         </section>
-        <section class="vs-center" aria-label="3D simülasyon alanı">
+        <section class="vs-center" id="vs-pane-stage" aria-label="3D simülasyon alanı">
           <div class="vs-stage" data-vs-stage data-mode="3d">
-            <canvas class="vs-canvas" role="img" aria-label="3D Elektrik Pano Simülasyonu — döndürmek için sürükleyin, ok tuşları ve +/− ile kamera"></canvas>
+            <canvas class="vs-canvas" role="img" aria-label="3D Elektrik Pano Simülasyonu — döndürmek için sürükleyin; klavyede ok tuşları ve +/− kamera, [ ve ] ekipman seçer, Enter ayrıntı kartını açar"></canvas>
             <canvas class="vs-2d" data-vs-2d role="img" aria-label="2D şema görünümü"></canvas>
             <div class="vs-labels" aria-hidden="true"></div>
-            <div class="vs-hud"><span class="vs-badge" data-vs-badge data-level="info" role="status" aria-live="polite">Hazırlanıyor…</span></div>
+            <div class="vs-hud"><span class="vs-badge" data-vs-badge data-level="info">Hazırlanıyor…</span></div>
             <div class="vs-vtools" role="group" aria-label="Görünüm araçları">
               <button class="vs-vt" type="button" data-vs-act="labels" aria-pressed="true" title="Etiketler" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span class="sr-only">Etiketler</span></button>
               <button class="vs-vt" type="button" data-vs-act="ghost" aria-pressed="false" title="Şeffaf kapak" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" stroke-dasharray="3 3"/><path d="M9 9h6v6H9z"/></svg><span class="sr-only">Şeffaf kapak</span></button>
@@ -169,11 +169,11 @@
             </div>
             <div class="vs-clip" data-vs-clip hidden><label>Kesit konumu <input type="range" min="0" max="100" value="55"></label></div>
             <div class="vs-info" data-vs-info hidden role="dialog" aria-label="Ekipman ayrıntısı"></div>
-            <p class="vs-hint">Sürükle: döndür · Sağ tık/iki parmak: kaydır · Tekerlek: yakınlaştır · Ekipmana tıkla: ayrıntı</p>
+            <p class="vs-hint">Sürükle: döndür · Sağ tık/iki parmak: kaydır · Tekerlek: yakınlaştır · Ekipmana tıkla ya da [ ] ve Enter: ayrıntı</p>
             <div class="vs-fallback" data-vs-fallback hidden role="status" aria-live="polite"><strong>3D görünüm açılamadı.</strong> Tarayıcınız WebGL desteklemiyor ya da kapalı; 2D şema gösteriliyor. Hesaplar, grafikler ve rapor çalışmaya devam eder.</div>
           </div>
         </section>
-        <section class="vs-right" aria-labelledby="vs-right-h">
+        <section class="vs-right" id="vs-pane-analysis" aria-labelledby="vs-right-h">
           <h2 class="vs-panel-h" id="vs-right-h">Analiz</h2>
           <div class="vs-scroll" data-vs-analysis>
             <div data-vs-ro></div>
@@ -435,7 +435,7 @@
             <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
             <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
           </address>
-          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
         </div>
         <nav class="vg-footer__nav" aria-label="Alt menü">
           <div class="vg-footer__col">
@@ -467,7 +467,6 @@
               <li><a href="/#referanslar">Referanslarımız</a></li>
               <li><a href="/#surec">Sürecimiz</a></li>
               <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
               <li><a href="/#haberler">Haberler</a></li>
               <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
               <li><a href="/#katalog">Katalog</a></li>
@@ -510,36 +509,6 @@
           <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
           <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
         </div>
-      </div>
-      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
-        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          </circle>
-        </svg>
-        <span class="sig-node" aria-hidden="true"></span>
-        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
-          <span class="sig-badge__ring" aria-hidden="true"></span>
-          <span class="sig-badge__aurora" aria-hidden="true"></span>
-          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
-          <span class="sig-badge__body">
-            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
-            <span class="sig-badge__brand">
-              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
-              <span class="sig-badge__eng">Engineering</span>
-            </span>
-          </span>
-          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
-          <span class="sig-badge__shimmer" aria-hidden="true"></span>
-        </a>
-        <span class="sig-node" aria-hidden="true"></span>
-        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
-          </circle>
-        </svg>
       </div>
     </div>
   </footer>

@@ -143,7 +143,7 @@
         a.renderControls(); a.invalidate();
       } },
       { type: 'range', key: 'cos2', label: 'Hedef cosφ', min: 0.9, max: 1, step: 0.005, digits: 3 },
-      { type: 'seg', key: 'program', label: 'Kademe programı', options: [['optimal', 'En iyi kombinasyon'], ['linear', 'Sıralı (lineer)']], help: 'Kademe sayısı sınırsız: en iyi kombinasyon dinamik programlamayla, sıralı program liste sırasıyla seçer.' },
+      { type: 'seg', key: 'program', label: 'Kademe programı', options: [['optimal', 'En iyi kombinasyon'], ['linear', 'Sıralı (lineer)']], help: 'En iyi kombinasyon hedefe en yakın kademe toplamını seçer; sıralı program kademeleri liste sırasıyla devreye alır.' },
       { type: 'select', key: 'ctRatio', label: 'Akım trafosu oranı (…/5 A)', options: CT.map(v => [v, v + '/5 A']) },
       { type: 'seg', key: 'ctPos', label: 'Akım trafosu konumu', options: [['giris', 'Tesis girişi (doğru)'], ['load', 'Yük çıkışı (hatalı)']] },
       r ? { type: 'note', html: 'C/k ≈ <b>' + fmt(r.x.ck, 3) + ' A</b> (en küçük kademe ' + fmt(r.x.qmin, 1) + ' kVAr) · tepki eşiği ≈ 0,65·C/k → ±' + fmt(0.65 * r.x.qmin, 1) + ' kVAr ölü bant' } : null,
@@ -386,6 +386,9 @@
     im.count = list.length; im.castShadow = true; im.receiveShadow = true; im.instanceMatrix.needsUpdate = true;
     parent.add(im); return im;
   }
+  // tıklama hedefleri için görünmez malzeme: kurulum başına tek örnek paylaşılır
+  let HIT = null;
+  const hitMatOf = k => HIT || (HIT = new k.T.MeshBasicMaterial({ visible: false }));
   /** Üç bacaklı demir nüveli reaktör (yerel koordinat, sargılar instanced listeye eklenir). */
   function reactor(k, parent, x, y, z, sc, coilList) {
     const M = k.mats, g = k.group(parent, x, y, z); g.scale.setScalar(sc);
@@ -393,7 +396,7 @@
     k.box(0.32, 0.012, 0.13, M.galv, 0, -0.135, 0, g);
     for (let j = 0; j < 3; j++) { const lx = -0.095 + j * 0.095; k.box(0.05, 0.17, 0.05, M.darkSteel, lx, 0, 0, g); coilList.push({ p: [x + lx * sc, y, z], s: [sc, sc, sc] }); k.box(0.016, 0.03, 0.01, M.copper, lx, 0.14, 0.03, g); }
     k.box(0.2, 0.028, 0.03, M.plasticDark, 0, 0.14, 0.045, g);
-    const hit = k.box(0.34, 0.32, 0.14, new k.T.MeshBasicMaterial({ visible: false }), 0, 0, 0, g); hit.castShadow = false;
+    const hit = k.box(0.34, 0.32, 0.14, hitMatOf(k), 0, 0, 0, g); hit.castShadow = false;
     return g;
   }
   /** Kademe anahtarı: kontaktör (ön yükleme dirençli blok) veya tristör modülü (soğutuculu). */
@@ -410,7 +413,7 @@
       k.box(0.07, 0.05, 0.004, M.plasticWhite, 0, -0.015, 0.057, g);
     }
     const ind = k.box(0.022, 0.014, 0.008, M.ledOff, 0, 0.02, fast ? 0.05 : 0.058, g);
-    const hit = k.box(0.18, 0.32, 0.14, new k.T.MeshBasicMaterial({ visible: false }), 0, -0.03, 0, g); hit.castShadow = false;
+    const hit = k.box(0.18, 0.32, 0.14, hitMatOf(k), 0, -0.03, 0, g); hit.castShadow = false;
     return { g: g, ind: ind };
   }
 
@@ -426,18 +429,20 @@
 
     // ---- gövde
     const body = k.group(null, 0, 0, 0);
-    k.box(W, S.plinth, S.d - 0.02, M.plasticDark, 0, S.plinth / 2, 0, body);
+    // süsleme parçaları statik grupta: kurulum sonunda malzemeye göre birleşir (draw call azalır)
+    const deco = k.staticGroup(body);
+    k.box(W, S.plinth, S.d - 0.02, M.plasticDark, 0, S.plinth / 2, 0, deco);
     k.shell(k.box(W + 0.02, 0.03, S.d + 0.02, M.panelRAL7035, 0, S.plinth + S.h + 0.015, 0, body));
-    k.box(W, S.h, 0.02, M.panelRAL7035, 0, S.plinth + S.h / 2, -S.d / 2 + 0.01, body);
+    k.box(W, S.h, 0.02, M.panelRAL7035, 0, S.plinth + S.h / 2, -S.d / 2 + 0.01, deco);
     k.shell(k.box(0.02, S.h, S.d, M.panelRAL7035, x0 + 0.01, S.plinth + S.h / 2, 0, body));
     k.shell(k.box(0.02, S.h, S.d, M.panelRAL7035, -x0 - 0.01, S.plinth + S.h / 2, 0, body));
-    for (let i = 1; i < lay.nSec; i++) { k.box(0.025, S.h, 0.03, M.darkSteel, x0 + i * S.w, S.plinth + S.h / 2, S.d / 2 - 0.02, body); k.box(0.006, S.h - 0.1, S.d - 0.1, M.galv, x0 + i * S.w, S.plinth + S.h / 2, -0.02, body); }
-    for (let j = 0; j < 3; j++) k.box(W - 0.06, 0.03, 0.008, M.copper, 0, Y.bus - j * 0.05, -0.24, body);
-    for (let x = x0 + 0.1; x < -x0; x += 0.8) k.box(0.035, 0.17, 0.04, M.plasticRed, x, Y.bus - 0.05, -0.265, body);
+    for (let i = 1; i < lay.nSec; i++) { k.box(0.025, S.h, 0.03, M.darkSteel, x0 + i * S.w, S.plinth + S.h / 2, S.d / 2 - 0.02, deco); k.box(0.006, S.h - 0.1, S.d - 0.1, M.galv, x0 + i * S.w, S.plinth + S.h / 2, -0.02, deco); }
+    for (let j = 0; j < 3; j++) k.box(W - 0.06, 0.03, 0.008, M.copper, 0, Y.bus - j * 0.05, -0.24, deco);
+    for (let x = x0 + 0.1; x < -x0; x += 0.8) k.box(0.035, 0.17, 0.04, M.plasticRed, x, Y.bus - 0.05, -0.265, deco);
     // katmanlar (patlatılmış görünüm: anahtarlama → kondansatör → reaktör)
     const gSw = k.group(body), gCap = k.group(body), gReac = k.group(body);
     k.explodable(gSw, [0, 0, 0.6]); k.explodable(gCap, [0, 0, 0.38]); k.explodable(gReac, [0, 0, 0.18]);
-    const hitMat = new T.MeshBasicMaterial({ visible: false });
+    HIT = null; const hitMat = hitMatOf(k);
     const fuseList = [], canList = [], capTop = [], coilList = [];
     const canGeo = new T.CylinderGeometry(0.042, 0.042, 0.25, 22), capGeo = new T.CylinderGeometry(0.03, 0.034, 0.026, 14);
     const fuseGeo = new T.BoxGeometry(0.03, 0.064, 0.032), coilGeo = new T.CylinderGeometry(0.044, 0.044, 0.17, 22, 1, true), coilEndGeo = new T.CylinderGeometry(0.044, 0.044, 0.004, 22);
@@ -457,15 +462,17 @@
         k.shell(k.box(S.w - 0.02, S.h - 0.02, 0.022, M.panelRAL7035, S.w / 2 - 0.01, S.plinth + S.h / 2, 0.011, pivot));
         k.box(0.02, 0.16, 0.03, M.plasticDark, S.w - 0.07, S.plinth + S.h / 2, 0.035, pivot);
         const fan = k.group(g, 0, S.plinth + S.h + 0.03, -0.02);
-        k.box(0.34, 0.1, 0.02, M.panelRAL7035, 0, 0.05, 0.16, fan); k.box(0.34, 0.1, 0.02, M.panelRAL7035, 0, 0.05, -0.16, fan);
-        k.box(0.02, 0.1, 0.34, M.panelRAL7035, 0.16, 0.05, 0, fan); k.box(0.02, 0.1, 0.34, M.panelRAL7035, -0.16, 0.05, 0, fan);
-        for (let r = 0; r < 9; r++) k.box(0.3, 0.006, 0.012, M.darkSteel, 0, 0.1, -0.13 + r * 0.032, fan);
+        const fh = k.staticGroup(fan);
+        k.box(0.34, 0.1, 0.02, M.panelRAL7035, 0, 0.05, 0.16, fh); k.box(0.34, 0.1, 0.02, M.panelRAL7035, 0, 0.05, -0.16, fh);
+        k.box(0.02, 0.1, 0.34, M.panelRAL7035, 0.16, 0.05, 0, fh); k.box(0.02, 0.1, 0.34, M.panelRAL7035, -0.16, 0.05, 0, fh);
+        for (let r = 0; r < 9; r++) k.box(0.3, 0.006, 0.012, M.darkSteel, 0, 0.1, -0.13 + r * 0.032, fh);
         const imp = k.group(fan, 0, 0.05, 0);
         for (let b = 0; b < 5; b++) { const bl = k.box(0.12, 0.006, 0.04, M.plasticDark, 0.06, 0, 0, null); const arm = new T.Group(); arm.rotation.y = b / 5 * Math.PI * 2; bl.rotation.x = 0.35; arm.add(bl); imp.add(arm); }
         k.pickable(fan, 'Çatı fanı ve termostat', () => ['Termostat (tipik 30–35 °C) fanı çalıştırır; kapı altındaki filtreli ızgaradan hava alınır.', 'Kondansatör ömrü sıcaklığa çok duyarlıdır (IEC 60831-1 sıcaklık sınıfı −25/D: ortam ≤ 45 °C tepe, ≤ 35 °C 24 sa ort.).', det ? 'Ayarlı reaktör kayıpları kondansatörün birkaç katıdır; cebri havalandırma gerekir.' : '']);
         sc.fans.push({ imp: imp, sec: si });
       }
-      for (let r = 0; r < 7; r++) k.box(0.3, 0.008, 0.004, M.darkSteel, S.w / 2, S.plinth + 0.12 + r * 0.025, 0.024, pivot);
+      const louv = k.staticGroup(pivot);
+      for (let r = 0; r < 7; r++) k.box(0.3, 0.008, 0.004, M.darkSteel, S.w / 2, S.plinth + 0.12 + r * 0.025, 0.024, louv);
       sc.doors.push(pivot);
       const isSh = si > lay.nCap;
       const tag = k.screen(0.2, 0.045, 256, (gx, w, h) => { gx.fillStyle = '#f4f4f0'; gx.fillRect(0, 0, w, h); gx.fillStyle = '#111'; gx.font = 'bold 26px Arial'; gx.textAlign = 'center'; gx.textBaseline = 'middle'; gx.fillText(si === 0 ? '+K0 GİRİŞ' : isSh ? '+R' + (si - lay.nCap) + ' REAKTÖR' : '+K' + si + ' KADEME', w / 2, h / 2); }, pivot);
@@ -579,7 +586,7 @@
       k.cyl(0.008, 0.008, 0.06, M.brass, bx, topY + 0.25, -td * 0.25, tr, 8);
     }
     for (let j = 0; j < 4; j++) { const bx = -tw * 0.3 + j * tw * 0.2; k.cyl(0.032, 0.036, 0.12, M.porcelainGrey, bx, topY + 0.06, td * 0.28, tr, 12); k.box(0.05, 0.08, 0.012, M.copper, bx, topY + 0.16, td * 0.28, tr); }
-    const tp = k.screen(0.22, 0.13, 256, (gx, w, h) => { gx.fillStyle = '#d9dde1'; gx.fillRect(0, 0, w, h); gx.fillStyle = '#111'; gx.font = 'bold 22px Arial'; gx.fillText('TRAFO ' + s.Sr_kVA + ' kVA', 10, 30); gx.font = '18px Arial'; gx.fillText('Dyn11 · 34,5/0,4 kV', 10, 62); gx.fillText('uk = %' + fmt(s.uk, 1), 10, 92); gx.fillText('ONAN', 10, 120); }, tr);
+    const tp = k.screen(0.22, 0.13, 256, (gx, w, h) => { gx.fillStyle = '#d9dde1'; gx.fillRect(0, 0, w, h); gx.fillStyle = '#111'; gx.font = 'bold 22px Arial'; gx.fillText('TRAFO ' + s.Sr_kVA + ' kVA', 10, 30); gx.font = '18px Arial'; gx.fillText('Dyn11 · 34,5/' + fmt(s.U_LL / 1000, s.U_LL % 100 ? 2 : 1) + ' kV', 10, 62); gx.fillText('uk = %' + fmt(s.uk, 1), 10, 92); gx.fillText('ONAN', 10, 120); }, tr);
     tp.position.set(tw * 0.25, 0.1 + th * 0.65, td / 2 + 0.002);
     k.pickable(tr, 'Besleme trafosu', () => { const r = app.validResult; return r ? ['Sr = ' + s.Sr_kVA + ' kVA · uk = %' + fmt(s.uk, 1) + ' · Sk ≈ ' + fmt(r.x.Sk / 1e3, 1) + ' MVA', 'Xs = uk·U²/Sr = ' + fmt(r.values.Xs * 1e3, 2) + ' mΩ (50 Hz), Rs = Xs/8', 'Şebeke harmonik akımı: THDi %' + fmt(r.values.THDiSupply, 1), 'Yüklenme ≈ %' + fmt(r.values.S / s.Sr_kVA * 100, 0)] : []; });
     sc.trafoLbl = k.label('Trafo', tr, [0, topY + 0.42, 0]);
@@ -656,7 +663,7 @@
     g.textAlign = 'right'; g.fillStyle = r.Qnet < 0 ? '#fca5a5' : '#86efac'; g.fillText(r.Qnet < 0 ? 'KAP' : 'IND', w - 10, 20); g.textAlign = 'left';
     g.fillStyle = '#e2e8f0'; g.font = 'bold 50px monospace'; g.fillText(fmt(r.cosNew, 2), 14, 74);
     g.font = 'bold 15px monospace'; g.fillStyle = '#94a3b8'; g.fillText('cosφ', w - 62, 70);
-    g.fillStyle = '#fcd34d'; g.font = 'bold 18px monospace'; g.fillText('Q ' + fmt(r.Qnet, 1) + ' kvar', 12, 104);
+    g.fillStyle = '#fcd34d'; g.font = 'bold 18px monospace'; g.fillText('Q ' + fmt(r.Qnet, 1) + ' kVAr', 12, 104);
     const n = s.steps.length, perRow = Math.min(n, 16), bw = (w - 20) / perRow - 2, rows = Math.ceil(n / perRow), bh = Math.min(30, 44 / rows - 2);
     s.steps.forEach((q, i) => {
       const x = 10 + (i % perRow) * (bw + 2), y = 116 + Math.floor(i / perRow) * (bh + 2), on = r.steps[i], pend = c && c.pending && c.pending.i === i && s.mode === 'auto';
@@ -699,18 +706,27 @@
     sc.relay.redraw();
   }
   function animate(k, dt, res, s, live, app) {
-    const sc = app.scene3; if (!sc) return;
+    const sc = app.scene3; if (!sc) return false;
+    let moving = false;
     const target = s.doorOpen ? -1.62 : 0;
-    sc.doors.forEach((d, i) => { const tt = target * (1 - (i % 4) * 0.015); d.rotation.y += (tt - d.rotation.y) * Math.min(1, dt * 4); });
-    const per = layout(s).per;
+    sc.doors.forEach((d, i) => { const tt = target * (1 - (i % 4) * 0.015), e = tt - d.rotation.y; if (Math.abs(e) > 1e-4 && dt > 0) { d.rotation.y += e * Math.min(1, dt * 4); moving = true; } else d.rotation.y = tt; });
+    const L = layout(s), per = L.per;
     sc.fans.forEach(f => {
       let on = false; for (let j = 0; j < per; j++) if (res.values.steps[(f.sec - 1) * per + j]) on = true;
-      if (f.sec > layout(s).nCap && res.x) on = res.x.shuntQ > 0;
-      f.spd = (f.spd || 0) + ((on ? 14 : 0) - (f.spd || 0)) * Math.min(1, dt * 1.5);
-      if (!k.reducedMotion) f.imp.rotation.y += f.spd * dt;
+      if (f.sec > L.nCap && res.x) on = res.x.shuntQ > 0;
+      const want = on ? 14 : 0;
+      f.spd = (f.spd || 0) + (want - (f.spd || 0)) * Math.min(1, dt * 1.5);
+      if (Math.abs(f.spd - want) < 0.01) f.spd = want;
+      if (!k.reducedMotion && f.spd > 0 && dt > 0) { f.imp.rotation.y += f.spd * dt; moving = true; }
     });
     sc.rt = (sc.rt || 0) + dt;
-    if (sc.rt > 0.3) { sc.rt = 0; sc.relay.redraw(); }
+    if (sc.rt > 0.3) {
+      sc.rt = 0;
+      // röle ekranı yalnız gösterdiği değerler değişince yeniden çizilir
+      const v = res.values, c = app.live.ctrl, p = c && c.pending && s.mode === 'auto' ? c.pending : null;
+      sc.relay.redraw([s.mode, fmt(v.cosNew, 2), fmt(v.Qnet, 1), v.steps.join(''), (s.stepFuse || []).join(''), p ? p.i + (p.on ? '+' : '-') + Math.round(Math.max(p.left, p.on ? c.discharge[p.i] : 0)) + (Math.floor(performance.now() / 300) % 2) : ''].join('|'));
+    }
+    return moving;
   }
 
   /* ---------------------------------------------------------------- 2D tek hat şeması (çok kademede satırlara sarılır) */

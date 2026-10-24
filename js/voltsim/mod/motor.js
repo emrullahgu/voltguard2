@@ -742,7 +742,7 @@
     sc.mushroom.position.z = L.estopPressed ? -0.012 : 0;
     // G/Ç LED’leri: I0.0–I0.4 girişler, Q0.0–Q0.4 çıkışlar
     const inp = L.inp, on = [inp.start, inp.stop, inp.estop, inp.ol, inp.reset, false, false, false, p.K1, p.K2, p.K3, p.K1, L.olTripped || p.estopLatched, false, false, false];
-    const cOn = new k.T.Color(0x22e07a).convertSRGBToLinear(), cOff = new k.T.Color(0x1f2a33);
+    const cOn = sc._cOn || (sc._cOn = new k.T.Color(0x22e07a).convertSRGBToLinear()), cOff = sc._cOff || (sc._cOff = new k.T.Color(0x1f2a33));
     on.forEach((b, i) => sc.leds.setColorAt(i, b ? cOn : cOff)); sc.leds.instanceColor.needsUpdate = true;
     const ph = motorPhase(s, L, res.values);
     sc.motorLabel.set('M1 · ' + fmt(L.rpm, 0) + ' d/dk · ' + fmt(L.I, 0) + ' A'); sc.motorLabel.level(ph.lv);
@@ -751,15 +751,22 @@
     if (sc.vfd) sc.vfd.redraw();
   }
   function animate(k, dt, res, s, L, app) {
-    const sc = app.scene3; if (!sc) return;
+    const sc = app.scene3; if (!sc) return false;
+    let moving = false;
     const target = s.doorOpen ? -1.75 : 0;
-    sc.doors.forEach((d, i) => { const tt = target * (1 - i * 0.03); d.rotation.y += (tt - d.rotation.y) * Math.min(1, dt * 4); });
+    sc.doors.forEach((d, i) => { const tt = target * (1 - i * 0.03), e = tt - d.rotation.y; if (Math.abs(e) > 1e-4 && dt > 0) { d.rotation.y += e * Math.min(1, dt * 4); moving = true; } else d.rotation.y = tt; });
     // dönen parçalar: görsel hız gerçek devirle orantılı fakat yavaşlatılmış (örnekleme kırpışmasını önlemek için)
     const w = k.reducedMotion ? 0 : L.rpm / 1500 * 9;
-    sc.rot.forEach(o => { if (o.userData.axisZ) o.rotation.z -= w * dt * 0.6; else o.rotation.x += w * dt; });
-    // tick yalnız analiz yenilenince update çağrıldığından canlı göstergeler burada da tazelenir
+    if (w > 0 && dt > 0) { sc.rot.forEach(o => { if (o.userData.axisZ) o.rotation.z -= w * dt * 0.6; else o.rotation.x += w * dt; }); moving = true; }
+    // tick yalnız analiz yenilenince update çağrıldığından canlı göstergeler burada da tazelenir — yalnız gösterilen değerler değişince
     sc._t = (sc._t || 0) + dt;
-    if (sc._t > 0.1) { sc._t = 0; update(k, res, s, L, app); }
+    if (sc._t > 0.1) {
+      sc._t = 0;
+      const p = L.plc, i = L.inp;
+      const sig = [Math.round(L.rpm), Math.round(L.I * 10), p.K1, p.K2, p.K3, p.fault, p.estopLatched, L.olTripped, L.estopPressed, i.start, i.stop, i.estop, i.ol, i.reset, L.tRun > (res.values.sim.tStart || 0)].join('|');
+      if (sig !== sc._sig) { sc._sig = sig; update(k, res, s, L, app); moving = true; }
+    }
+    return moving;
   }
 
   /* ---------------------------------------------------------------- 2D: canlı merdiven (ladder) diyagramı */

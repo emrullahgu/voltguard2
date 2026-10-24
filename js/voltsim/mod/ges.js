@@ -85,6 +85,7 @@
     }
     const inp = Object.assign({}, s, ll, {
       Pmod: Number(s.Pmod) * (1 + gain),
+      Isc: Number(s.Isc) * (1 + gain),   // IEC 62548-1: bifasiyal kazanç kısa devre akımını da artırır
       nMod: Math.max(1, Math.round(num(s.nMod, 1, 1, 1e6)) - fleet.offModules),
       Pac: Math.max(0.001, fleet.PacActive),
       stringsPerMppt: Math.max(1, plan.maxPerMppt),
@@ -130,7 +131,14 @@
     const v = r.values, ck = (id, label, status, detail, ref) => r.checks.push({ id: id, label: label, status: status, detail: detail, ref: ref || null });
     const Np = m.plan.maxPerMppt;
     ck('inputs', 'MPPT giriş sayısı', m.plan.overInputs ? 'fail' : 'ok', m.plan.nStrings + ' string → ' + m.plan.M + ' MPPT (' + s.invCount + ' × ' + s.nMppt + '); MPPT başına en çok ' + Np + ' string / ' + s.inPerMppt + ' giriş.' + (m.plan.overInputs ? ' Giriş yetmiyor: dış birleştirme kutusu, daha fazla MPPT veya inverter gerekir.' : ''));
-    const fu = X.stringFuse(Number(s.Isc), Np, Number(s.fuseMax), Number(s.strFuse));
+    // bifasiyal kazanç enerjiye eklenir; DC/AC oranı ve özgül verim ise etiket (ön yüz) gücüyle verilir
+    if (m.gain > 0) {
+      const kWpRaw = v.kWp / (1 + m.gain);
+      v.dcac = kWpRaw / v.Pac; v.specYield = kWpRaw > 0 ? v.annual / kWpRaw : 0;
+      const dc = r.checks.find(c => c.id === 'dcac');
+      if (dc) { dc.status = v.dcac >= 0.9 && v.dcac <= 1.35 ? 'ok' : 'warn'; dc.detail = fmt(v.dcac, 2) + ' (ön yüz kWp ile; tipik tasarım aralığı 0,9–1,35; üretici sınırı esastır)'; }
+    }
+    const fu = X.stringFuse(Number(s.Isc) * (1 + m.gain), Np, Number(s.fuseMax), Number(s.strFuse));
     ck('fuse', 'String sigortası (IEC 62548-1)', fu.ok ? 'ok' : 'fail', (fu.needed ? 'Gerekli: (Np − 1)·1,25·Isc = ' + fmt(fu.reverse, 1) + ' A > modül maks. seri sigorta ' + s.fuseMax + ' A. ' : 'Np = ' + Np + ': ters akım modül sınırını aşmıyor, sigorta zorunlu değil. ') + 'Uygun aralık ' + fmt(fu.lo, 1) + '–' + fmt(fu.hi, 1) + ' A' + (fu.suggest ? ' (ör. ' + fu.suggest + ' A gPV)' : '') + '; seçili: ' + (s.strFuse ? s.strFuse + ' A' : 'yok') + '.', 'IEC 62548-1');
     if (s.spdOn) { const sp = X.spdCheck(Number(s.spdUcpv), v.string.vocCold); ck('spd', 'DC parafudr (SPD Tip 2) Ucpv', sp.ok ? 'ok' : 'fail', 'Ucpv ' + s.spdUcpv + ' V ≥ Voc(Tmin) ' + fmt(v.string.vocCold, 0) + ' V olmalı.', 'TS EN 61643-31'); }
     else ck('spd', 'DC parafudr (SPD)', 'warn', 'DC tarafta SPD seçilmedi. Gereklilik yıldırım risk değerlendirmesine ve kablo uzunluğuna bağlıdır.', 'TS HD 60364-7-712');
@@ -293,6 +301,9 @@
   /* ---------------------------------------------------------------- zaman adımı: gün boyunca saat ilerler */
   function tick(app, dt) {
     const s = app.state, L = app.live;
+    // kullanıcı saat kaydırıcısını tutarken oynatma saati geri yazmaz
+    const inp = app.root.querySelector('[data-vs-controls] input[data-key="hour"]');
+    if (inp && document.activeElement === inp) return false;
     let h = Number(s.hour) + dt * HOURS_PER_S;
     if (h > 20.5) h = 5; // yeni gün (aynı ayın temsilî günü)
     s.hour = Math.round(h * 1000) / 1000;
@@ -812,10 +823,10 @@
   /* güneş, ışık ve gökyüzü: saat her karede ilerlediği için animate içinde (yalnız görsel) */
   const SKY = { night: 0x0b1a30, dusk: 0xb87452, day: 0x6f9fd2, high: 0x88b6e2, over: 0x8e99a6 };
   function animate(k, dt, res, s, live, app) {
-    const sc = app.scene3; if (!sc) return;
+    const sc = app.scene3; if (!sc) return false;
     const T = k.T, v = k.viewer, ll = latLon(s);
     const key = ll.lat + ',' + ll.lon + ',' + s.month + ',' + s.hour + ',' + s.cloud + ',' + s.azimuth;
-    if (sc.sunKey === key) return;
+    if (sc.sunKey === key) return false;   // güneş yerinde: kare çizmeye gerek yok
     sc.sunKey = key;
     const sp = G.sunPosition(ll.lat, ll.lon, MONTH_MID[clamp(Math.round(s.month), 1, 12) - 1], Number(s.hour), 3);
     const d = sunDir(T, sp);
@@ -828,18 +839,21 @@
     const dl = sunDir(T, { elevation: Math.max(el, 3), azimuth: sp.azimuth });
     v.sun.position.copy(v.sun.target.position).addScaledVector(dl, sc.shadowHalf * 2.4);
     v.sun.intensity = 6.0 * sstep(-1, 12, el) * (0.25 + 0.75 * cf);
-    const warm = new T.Color(0xffb36b).lerp(new T.Color(0xfff3e0), sstep(3, 30, el));
+    const C = sc._c || (sc._c = { warm: new T.Color(), a: new T.Color(), b: new T.Color() });
+    const warm = C.warm.setHex(0xffb36b).lerp(C.a.setHex(0xfff3e0), sstep(3, 30, el));
     v.sun.color.copy(warm).convertSRGBToLinear();
-    const sky = new T.Color(SKY.night).lerp(new T.Color(SKY.dusk), sstep(-7, 3, el) * (1 - sstep(4, 20, el)));
-    if (el > 4) sky.lerp(new T.Color(SKY.day).lerp(new T.Color(SKY.high), sstep(20, 60, el)), sstep(4, 20, el));
-    sky.lerp(new T.Color(SKY.over), (1 - cf) * day * 0.85);
-    v.scene.background = sky;
+    const sky = (v.scene.background && v.scene.background.isColor) ? v.scene.background : (v.scene.background = new T.Color());
+    sky.setHex(SKY.night).lerp(C.a.setHex(SKY.dusk), sstep(-7, 3, el) * (1 - sstep(4, 20, el)));
+    if (el > 4) sky.lerp(C.a.setHex(SKY.day).lerp(C.b.setHex(SKY.high), sstep(20, 60, el)), sstep(4, 20, el));
+    sky.lerp(C.a.setHex(SKY.over), (1 - cf) * day * 0.85);
     if (v.scene.fog) v.scene.fog.color.copy(sky).convertSRGBToLinear();
-    if (v.hemi) { v.hemi.intensity = 0.06 + 0.3 * day; v.hemi.color.copy(sky).lerp(new T.Color(0xffffff), 0.5).convertSRGBToLinear(); }
+    if (v.hemi) { v.hemi.intensity = 0.06 + 0.3 * day; v.hemi.color.copy(sky).lerp(C.a.setHex(0xffffff), 0.5).convertSRGBToLinear(); }
     v.renderer.toneMappingExposure = 0.38 + 0.4 * day;
     sc.sun.material.color.set(el < 8 ? 0xffb26b : 0xffe7b0).convertSRGBToLinear();
     sc.lSun.set('Güneş · ' + (el > 0 ? fmt(el, 0) + '°' : 'ufkun altında') + ' · ' + fmtHour(s.hour));
     void dt; void res; void live;
+    k.invalidate(true);   // güneş yönü değişti: gölge haritası bir kez yeniden çizilir
+    return true;
   }
 
   /* ---------------------------------------------------------------- 2D tek hat şeması (ölçeklenir; gerekirse dikey kaydırma) */

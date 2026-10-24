@@ -106,8 +106,9 @@
     for (let h = 0; h < 24; h++) {
       const P = num(o.Ppeak_kW, 0) * profileMult(o.profile, h + 0.5);
       const K = P / cos / Sr;
-      const loss = (o.energized === false ? 0 : num(o.P0, 0)) + num(o.Pk, 0) * K * K;
-      hours.push({ h: h, K: K, P: P, loss: loss }); E += loss / 1000; Ecu += num(o.Pk, 0) * K * K / 1000; Eload += P;
+      const on = o.energized !== false, cu = on ? num(o.Pk, 0) * K * K : 0;   // enerjisiz trafoda boşta ve yük kaybı yok
+      const loss = (on ? num(o.P0, 0) : 0) + cu;
+      hours.push({ h: h, K: K, P: P, loss: loss }); E += loss / 1000; Ecu += cu / 1000; Eload += P;
     }
     return { hours: hours, Eday: E, Ecu: Ecu, E0: E - Ecu, Eload: Eload, Eyear: E * 365, costYear: E * 365 * num(o.price, 0), lossPct: Eload > 0 ? E / Eload * 100 : 0 };
   }

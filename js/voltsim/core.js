@@ -16,7 +16,9 @@
     d = d === undefined ? 1 : d;
     const key = d;
     if (!nf[key]) nf[key] = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d });
-    return nf[key].format(v) + (unit ? ' ' + unit : '');
+    const r = nf[key].format(v);
+    // -0 / -0,0 gösterilmez; sayı ile birim arasında bölünmez dar boşluk (U+202F)
+    return (/^-0(,0*)?$/.test(r) ? r.slice(1) : r) + (unit ? ' ' + unit : '');
   }
   /** Büyüklüğe göre birim önekli biçim (W→kW→MW). */
   function fmtPower(W, d) {
@@ -33,7 +35,7 @@
   function fmtDuration(min) {
     if (!isFinite(min)) return '—';
     if (min < 1) return fmt(min * 60, 0, 's');
-    const h = Math.floor(min / 60), m = Math.round(min % 60);
+    const tot = Math.round(min), h = Math.floor(tot / 60), m = tot % 60; // önce dakikaya yuvarla: “1 sa 60 dk” olmaz
     return h ? h + ' sa ' + m + ' dk' : m + ' dk';
   }
   const esc = s => String(s === undefined || s === null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -81,6 +83,19 @@
     const out = []; for (let v = Math.ceil(min / step) * step; v <= max + step * 1e-6; v += step) out.push(Math.abs(v) < step * 1e-9 ? 0 : v);
     return out;
   }
+  /** Tik etiketi basamak sayısı adım büyüklüğünden (0,25 → 2 basamak; 0,02 “0,0” olmaz). */
+  function tickDigits(ticks) {
+    const st = ticks.length > 1 ? Math.abs(ticks[1] - ticks[0]) : 1;
+    if (!(st > 0) || st >= 1) return 0;
+    for (let d = 1; d <= 4; d++) if (Math.abs(st * Math.pow(10, d) - Math.round(st * Math.pow(10, d))) < 1e-6) return d;
+    return 4;
+  }
+  /** Metni verilen piksel genişliğine sığdırır (gerekirse … ile kısaltır); 2D şemalarda ortak. */
+  function fitText(g, text, w) {
+    text = String(text); if (g.measureText(text).width <= w) return text;
+    while (text.length > 1 && g.measureText(text + '…').width > w) text = text.slice(0, -1);
+    return text + '…';
+  }
   function drawChart(canvas, spec) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const W = canvas.clientWidth || 300, H = canvas.clientHeight || 160;
@@ -91,10 +106,13 @@
     let xs = [], ys = [];
     series.forEach(s => s.data.forEach(p => { xs.push(p[0]); ys.push(p[1]); }));
     (spec.hLines || []).forEach(h => ys.push(h.y));
-    let xmin = spec.x && spec.x.min !== undefined ? spec.x.min : Math.min.apply(null, xs.concat([0]));
-    let xmax = spec.x && spec.x.max !== undefined ? spec.x.max : Math.max.apply(null, xs.concat([1]));
-    let ymin = spec.y && spec.y.min !== undefined ? spec.y.min : Math.min(0, Math.min.apply(null, ys.concat([0])));
-    let ymax = spec.y && spec.y.max !== undefined ? spec.y.max : Math.max.apply(null, ys.concat([1])) * 1.08;
+    // eksenler veri aralığından: küçük değerli seriler (0–0,2) grafiğin dibine ezilmez
+    const mn = a => a.reduce((m, v) => (v < m ? v : m), Infinity), mx = a => a.reduce((m, v) => (v > m ? v : m), -Infinity);
+    const xLo = xs.length ? mn(xs) : 0, xHi = xs.length ? mx(xs) : 1, yLo = ys.length ? mn(ys) : 0, yHi = ys.length ? mx(ys) : 1;
+    let xmin = spec.x && spec.x.min !== undefined ? spec.x.min : Math.min(0, xLo);
+    let xmax = spec.x && spec.x.max !== undefined ? spec.x.max : (xHi > xmin ? xHi : xmin + 1);
+    let ymin = spec.y && spec.y.min !== undefined ? spec.y.min : Math.min(0, yLo);
+    let ymax = spec.y && spec.y.max !== undefined ? spec.y.max : (yHi > ymin ? ymin + (yHi - ymin) * 1.08 : ymin + 1);
     if (ymax <= ymin) ymax = ymin + 1; if (xmax <= xmin) xmax = xmin + 1;
     const X = x => pad.l + (x - xmin) / (xmax - xmin) * (W - pad.l - pad.r);
     const Y = y => H - pad.b - (y - ymin) / (ymax - ymin) * (H - pad.t - pad.b);
@@ -102,16 +120,16 @@
     g.strokeStyle = 'rgba(148,163,184,.16)'; g.fillStyle = '#8ea3bf'; g.lineWidth = 1;
     const yt = spec.y && spec.y.ticks ? spec.y.ticks : niceTicks(ymin, ymax, 4), xt = spec.x && spec.x.ticks ? spec.x.ticks : niceTicks(xmin, xmax, Math.max(3, Math.floor(W / 70)));
     g.textAlign = 'right';
-    yt.forEach(v => { const y = Y(v); g.beginPath(); g.moveTo(pad.l, y); g.lineTo(W - pad.r, y); g.stroke(); g.fillText((spec.y && spec.y.fmt ? spec.y.fmt(v) : fmt(v, Math.abs(v) < 10 && v % 1 ? 1 : 0)), pad.l - 6, y); });
+    yt.forEach(v => { const y = Y(v); g.beginPath(); g.moveTo(pad.l, y); g.lineTo(W - pad.r, y); g.stroke(); g.fillText((spec.y && spec.y.fmt ? spec.y.fmt(v) : fmt(v, tickDigits(yt))), pad.l - 6, y); });
     g.textAlign = 'center'; g.textBaseline = 'top';
-    xt.forEach(v => { const x = X(v); if (x < pad.l - 1 || x > W - pad.r + 1) return; g.fillText(spec.x && spec.x.fmt ? spec.x.fmt(v) : fmt(v, v % 1 ? 1 : 0), x, H - pad.b + 6); });
+    xt.forEach(v => { const x = X(v); if (x < pad.l - 1 || x > W - pad.r + 1) return; g.fillText(spec.x && spec.x.fmt ? spec.x.fmt(v) : fmt(v, tickDigits(xt)), x, H - pad.b + 6); });
     if (spec.x && spec.x.label) { g.textAlign = 'right'; g.fillStyle = '#6f84a1'; g.fillText(spec.x.label, W - pad.r, H - 12); }
     if (spec.y && spec.y.label) { g.save(); g.textAlign = 'left'; g.textBaseline = 'top'; g.fillStyle = '#6f84a1'; g.fillText(spec.y.label, pad.l + 4, pad.t); g.restore(); }
     (spec.hLines || []).forEach(h => {
       g.save(); g.setLineDash([4, 4]); g.strokeStyle = h.color || PALETTE.red; g.beginPath(); g.moveTo(pad.l, Y(h.y)); g.lineTo(W - pad.r, Y(h.y)); g.stroke(); g.restore();
       if (h.label) { g.fillStyle = h.color || PALETTE.red; g.textAlign = 'right'; g.textBaseline = 'bottom'; g.fillText(h.label, W - pad.r - 2, Y(h.y) - 2); }
     });
-    series.forEach((s, si) => {
+    series.forEach(s => {
       const col = PALETTE[s.color] || s.color || PALETTE.amber;
       if (s.type === 'bar') {
         const n = s.data.length, bw = Math.max(2, (W - pad.l - pad.r) / Math.max(n, 1) * (s.width || 0.62));
@@ -129,7 +147,6 @@
         s.data.forEach((p, i) => { const x = X(p[0]), y = Y(p[1]); if (i) g.lineTo(x, y); else g.moveTo(x, y); });
         g.lineTo(X(s.data[s.data.length - 1][0]), Y(Math.max(ymin, 0))); g.lineTo(X(s.data[0][0]), Y(Math.max(ymin, 0))); g.closePath(); g.fill(); g.globalAlpha = 1;
       }
-      void si;
     });
     (spec.markers || []).forEach((m, mi) => {
       if (m.x === undefined || !isFinite(m.x)) return;
@@ -143,7 +160,8 @@
   /* ------------------------------------------------------------------ 3D görüntüleyici */
   // A scene rebuild owns its complete kit. Dispose each resource once, including
   // textures and cloned transparent materials that are no longer in the tree.
-  function disposeTree(root, extra) {
+  // keep: modül düzeyinde önbelleğe alınan (sahneler arası yeniden kullanılan) kaynaklar; bunlar dispose edilmez.
+  function disposeTree(root, extra, keep) {
     const resources = new Set();
     const materials = new Set();
     const material = m => {
@@ -158,19 +176,67 @@
       if (o.isInstancedMesh && o.dispose) o.dispose();
     });
     if (extra) extra.forEach(r => { if (r.isMaterial) material(r); else resources.add(r); });
-    resources.forEach(r => { if (r.dispose) r.dispose(); });
+    resources.forEach(r => { if (keep && keep.has(r)) return; if (r.dispose) r.dispose(); });
+  }
+
+  /** Statik grup birleştirme: grubun DOĞRUDAN alt mesh'lerinden aynı malzeme ve gölge ayarındakiler tek BufferGeometry'de
+   * toplanır (draw call azaltır). İç içe gruplar (kapak menteşesi, fan, seçilebilir parça) ve kabuk (kesit) mesh'leri
+   * olduğu gibi kalır; birleşik mesh grubun çocuğu olduğundan grup dönse/taşınsa da doğru konumda kalır. */
+  function mergeStatic(T, group, owned, skip) {
+    group.updateMatrixWorld(true);
+    const inv = new T.Matrix4().copy(group.matrixWorld).invert();
+    const buckets = new Map(), victims = [];
+    group.children.forEach(o => {
+      if (!o.isMesh || o.isInstancedMesh || o.children.length || o.userData.noMerge || o.userData.merged || Array.isArray(o.material) || !o.visible || (skip && skip.has(o))) return;
+      const g = o.geometry; if (!g || !g.attributes.position) return;
+      const key = o.material.uuid + '|' + (o.castShadow ? 1 : 0) + (o.receiveShadow ? 1 : 0);
+      let b = buckets.get(key); if (!b) buckets.set(key, b = { mat: o.material, cast: o.castShadow, recv: o.receiveShadow, list: [] });
+      b.list.push(o);
+    });
+    const m = new T.Matrix4(), nm = new T.Matrix3(), v = new T.Vector3();
+    buckets.forEach(b => {
+      if (b.list.length < 2) return;
+      let n = 0; const parts = b.list.map(o => { const g = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry; n += g.attributes.position.count; return { o: o, g: g, tmp: g !== o.geometry }; });
+      const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), uv = new Float32Array(n * 2);
+      let off = 0;
+      parts.forEach(p => {
+        m.multiplyMatrices(inv, p.o.matrixWorld); nm.getNormalMatrix(m);
+        const P = p.g.attributes.position, N = p.g.attributes.normal, U = p.g.attributes.uv;
+        for (let i = 0; i < P.count; i++) {
+          v.fromBufferAttribute(P, i).applyMatrix4(m); pos[(off + i) * 3] = v.x; pos[(off + i) * 3 + 1] = v.y; pos[(off + i) * 3 + 2] = v.z;
+          if (N) { v.fromBufferAttribute(N, i).applyMatrix3(nm).normalize(); nor[(off + i) * 3] = v.x; nor[(off + i) * 3 + 1] = v.y; nor[(off + i) * 3 + 2] = v.z; }
+          if (U) { uv[(off + i) * 2] = U.getX(i); uv[(off + i) * 2 + 1] = U.getY(i); }
+        }
+        off += P.count;
+        if (p.tmp) p.g.dispose();
+        victims.push(p.o);
+      });
+      const geo = new T.BufferGeometry();
+      geo.setAttribute('position', new T.BufferAttribute(pos, 3)); geo.setAttribute('normal', new T.BufferAttribute(nor, 3)); geo.setAttribute('uv', new T.BufferAttribute(uv, 2));
+      geo.computeBoundingSphere();
+      const mesh = new T.Mesh(geo, b.mat); mesh.castShadow = b.cast; mesh.receiveShadow = b.recv; mesh.userData.merged = true;
+      group.add(mesh);
+    });
+    victims.forEach(o => { if (o.parent) o.parent.remove(o); if (!owned.has(o.geometry)) o.geometry.dispose(); });
+    return victims.length;
   }
   function Viewer(stage, canvas, opts) {
     const T = window.THREE;
     this.T = T; this.stage = stage; this.canvas = canvas; this.opts = opts || {};
     opts = this.opts; this._cleanups = []; this._size = { w: 0, h: 0, pr: 0 };
-    const quality = coarse || (navigator.hardwareConcurrency || 4) <= 4 ? 'low' : 'high';
+    // ?vsq=low|high ile katman zorlanabilir (test ve destek için)
+    const forced = (location.search.match(/[?&]vsq=(low|high)/) || [])[1];
+    const quality = forced || (coarse || (navigator.hardwareConcurrency || 4) <= 4 ? 'low' : 'high');
     this.quality = quality;
     const r = new T.WebGLRenderer({ canvas: canvas, antialias: quality === 'high', alpha: false, powerPreference: 'high-performance' });
     r.outputEncoding = T.sRGBEncoding; r.toneMapping = T.ACESFilmicToneMapping; r.toneMappingExposure = opts.exposure || 0.92;
     r.physicallyCorrectLights = true;
-    r.shadowMap.enabled = true; r.shadowMap.type = T.PCFSoftShadowMap;
+    // gölge haritası önbellekli: yalnız sahne/ışık değişince yeniden çizilir (invalidateShadows)
+    r.shadowMap.enabled = true; r.shadowMap.type = quality === 'high' ? T.PCFSoftShadowMap : T.PCFShadowMap;
+    r.shadowMap.autoUpdate = false; r.shadowMap.needsUpdate = true;
     r.localClippingEnabled = true;
+    this.dirty = true; this.wake = null; this.keep = new Set(); this._shadowT = 0;
+    this._tmp = { v: new T.Vector3(), r: new T.Vector3(), u: new T.Vector3(), m: new T.Vector2() };
     this.renderer = r;
     this.scene = new T.Scene();
     this.scene.background = new T.Color(opts.background || 0x0b1a30);
@@ -192,7 +258,7 @@
     this.resize();
     this.visible = true; this.contextLost = false;
     if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver(es => { this.visible = es[0].isIntersecting; }); io.observe(stage);
+      const io = new IntersectionObserver(es => { this.visible = es[0].isIntersecting; if (this.visible) this.invalidate(); }); io.observe(stage);
       this._cleanups.push(() => io.disconnect());
     }
     this._listen(window, 'resize', () => this.resize());
@@ -200,8 +266,28 @@
       const ro = new ResizeObserver(() => this.resize()); ro.observe(stage); this._cleanups.push(() => ro.disconnect());
     }
     this._listen(canvas, 'webglcontextlost', e => { e.preventDefault(); this.contextLost = true; if (this.onContextLost) this.onContextLost(); });
-    this._listen(canvas, 'webglcontextrestored', () => { this.contextLost = false; this.resize(); if (this.onContextRestored) this.onContextRestored(); });
+    this._listen(canvas, 'webglcontextrestored', () => { this.contextLost = false; this.resize(); this.invalidateShadows(); if (this.onContextRestored) this.onContextRestored(); });
   }
+  /** Sonraki uygun karede yeniden çizim iste (boşta duran döngüyü uyandırır). */
+  Viewer.prototype.invalidate = function () { this.dirty = true; if (this.wake) this.wake(); };
+  /** Gölge haritasını da yeniden çizdir (sahne geometrisi, ışık veya patlatma/kesit değişince). */
+  Viewer.prototype.invalidateShadows = function () { this.renderer.shadowMap.needsUpdate = true; this.invalidate(); };
+  /** Kamera hareket ediyor mu (sürükleme, sönümleme, otomatik dönüş)? */
+  Viewer.prototype.moving = function () {
+    return this.dragging || (this.autoSpin && !reduceMotion) || Math.abs(this.damp.theta) > 1e-4 || Math.abs(this.damp.phi) > 1e-4;
+  };
+  /** Build sonrası: küçük parçalarda gölge düşürmeyi kapat (gölge geçişindeki nesne sayısını azaltır). */
+  Viewer.prototype.pruneShadows = function () {
+    const c = this.sun.shadow.camera, half = Math.max(1, (c.right - c.left) / 2), lim = 0.006 * half;
+    const T = this.T, s = new T.Vector3();
+    this.root.traverse(o => {
+      if (!o.isMesh || !o.castShadow || o.isInstancedMesh || !o.geometry) return;
+      const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere();
+      o.getWorldScale(s);
+      if (g.boundingSphere.radius * Math.max(s.x, s.y, s.z) < lim) { o.castShadow = false; o.userData.vsNoCast = true; }
+    });
+    this.invalidateShadows();
+  };
   Viewer.prototype._listen = function (target, type, fn, options) {
     target.addEventListener(type, fn, options); this._cleanups.push(() => target.removeEventListener(type, fn, options));
   };
@@ -235,6 +321,7 @@
   };
   Viewer.prototype.setShadowBox = function (half, far) {
     const c = this.sun.shadow.camera; c.left = c.bottom = -half; c.right = c.top = half; c.far = far || half * 6; c.updateProjectionMatrix();
+    this.invalidateShadows();
   };
   Viewer.prototype.setView = function (v) {
     this.home = { target: v.target.slice(), r: v.r, theta: v.theta, phi: v.phi };
@@ -245,6 +332,7 @@
     if (!this.home) return;
     this.target.set(this.home.target[0], this.home.target[1], this.home.target[2]);
     this.sph.r = this.home.r; this.sph.theta = this.home.theta; this.sph.phi = this.home.phi; this.damp.theta = this.damp.phi = 0;
+    this.invalidate();
   };
   Viewer.prototype.resize = function () {
     const w = this.stage.clientWidth, h = this.stage.clientHeight;
@@ -255,6 +343,7 @@
     this._size = { w: w, h: h, pr: pr };
     this.renderer.setPixelRatio(pr); this.renderer.setSize(w, h, false);
     this.camera.aspect = w / h; this.camera.updateProjectionMatrix();
+    this.invalidate();
   };
   Viewer.prototype._bindControls = function () {
     const c = this.canvas, self = this;
@@ -264,96 +353,125 @@
       c.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
       last = { x: e.clientX, y: e.clientY }; moved = 0; panMode = e.button === 2 || e.shiftKey || pts.size === 2;
       if (pts.size === 2) { const a = Array.from(pts.values()); pinch = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); }
-      c.classList.add('is-drag'); self.autoSpinPaused = true; self._hideHint();
+      c.classList.add('is-drag'); self.dragging = true; self.autoSpinPaused = true; self._hideHint(); self.invalidate();
     });
     let hoverT = 0;
     this._listen(c, 'pointermove', e => {
       if (!pts.has(e.pointerId)) {
-        if (e.pointerType === 'mouse' && performance.now() - hoverT > 90) { hoverT = performance.now(); c.style.cursor = self._hit(e) ? 'pointer' : ''; }
+        if (e.pointerType === 'mouse' && performance.now() - hoverT > 120) { hoverT = performance.now(); c.style.cursor = self._hit(e) ? 'pointer' : ''; }
         return;
       }
-      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const pp = pts.get(e.pointerId); pp.x = e.clientX; pp.y = e.clientY;
       if (pts.size === 2) {
         const a = Array.from(pts.values()); const d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y);
         if (pinch) self.zoom(pinch / d); pinch = d;
         const mx = (a[0].x + a[1].x) / 2, my = (a[0].y + a[1].y) / 2;
         if (last && last.pair) self.pan(mx - last.x, my - last.y);
-        last = { x: mx, y: my, pair: true }; moved += 10; return;
+        last = { x: mx, y: my, pair: true }; moved += 10; self.invalidate(); return;
       }
       const dx = e.clientX - last.x, dy = e.clientY - last.y; moved += Math.abs(dx) + Math.abs(dy);
       if (panMode) self.pan(dx, dy);
       else { self.damp.theta = -dx * 0.0062; self.damp.phi = -dy * 0.0062; self.sph.theta += self.damp.theta; self.sph.phi += self.damp.phi; }
-      last = { x: e.clientX, y: e.clientY };
+      last.x = e.clientX; last.y = e.clientY; last.pair = false;
+      self.invalidate();
     });
     const up = e => {
       if (!pts.has(e.pointerId)) return;
       pts.delete(e.pointerId); c.classList.remove('is-drag');
       if (moved < 6 && e.type === 'pointerup' && pts.size === 0) self._pick(e);
-      if (pts.size === 0) { pinch = 0; last = null; }
+      if (pts.size === 0) { pinch = 0; last = null; self.dragging = false; }
       else { const p = pts.values().next().value; last = { x: p.x, y: p.y }; pinch = 0; }
+      self.invalidate();
     };
     this._listen(c, 'pointerup', up); this._listen(c, 'pointercancel', up); this._listen(c, 'lostpointercapture', up);
     this._listen(c, 'contextmenu', e => e.preventDefault());
-    this._listen(c, 'wheel', e => { e.preventDefault(); self.zoom(Math.exp(e.deltaY * 0.0012)); self._hideHint(); }, { passive: false });
+    // sayfa kaydırmayı engellememek için: tekerlek yalnız sahne odaktayken (tıklanmışken) ya da Ctrl ile yakınlaştırır
+    this._listen(c, 'wheel', e => {
+      if (document.activeElement !== c && !e.ctrlKey) { self._flashHint('Yakınlaştırmak için önce sahneye tıklayın (ya da Ctrl + tekerlek).'); return; }
+      e.preventDefault(); self.zoom(Math.exp(e.deltaY * 0.0012)); self._hideHint(); self.invalidate();
+    }, { passive: false });
     c.tabIndex = 0;
     this._listen(c, 'keydown', e => {
       const k = e.key; let used = true;
       if (k === 'ArrowLeft') self.sph.theta -= 0.12; else if (k === 'ArrowRight') self.sph.theta += 0.12;
       else if (k === 'ArrowUp') self.sph.phi -= 0.08; else if (k === 'ArrowDown') self.sph.phi += 0.08;
       else if (k === '+' || k === '=') self.zoom(0.88); else if (k === '-') self.zoom(1.14);
-      else if (k === '0') self.resetView(); else used = false;
-      if (used) e.preventDefault();
+      else if (k === '0') self.resetView();
+      else if (k === ']' || k === '[' || k === 'PageDown' || k === 'PageUp') self.cycle(k === ']' || k === 'PageDown' ? 1 : -1);
+      else if (k === 'Enter' && self.selected) { self.viaKeyboard = true; if (self.onSelect) self.onSelect(self.selected, true, true); }
+      else if (k === 'Escape' && self.selected) self.select(null);
+      else used = false;
+      if (used) { e.preventDefault(); self.invalidate(); }
     });
   };
   Viewer.prototype._hideHint = function () { const h = this.stage.querySelector('.vs-hint'); if (h) h.classList.add('is-hidden'); };
+  Viewer.prototype._flashHint = function (t) {
+    const h = this.stage.querySelector('.vs-hint'); if (!h) return;
+    if (!h.dataset.base) h.dataset.base = h.textContent;
+    h.textContent = t; h.classList.remove('is-hidden');
+    clearTimeout(this._hintT); this._hintT = setTimeout(() => { h.textContent = h.dataset.base; h.classList.add('is-hidden'); }, 1800);
+  };
   Viewer.prototype.zoom = function (k) { this.sph.r = E.clamp(this.sph.r * k, this.limits.rMin, this.limits.rMax); };
   Viewer.prototype.pan = function (dx, dy) {
-    const T = this.T, s = this.sph.r * 0.0016;
-    const right = new T.Vector3().setFromMatrixColumn(this.camera.matrix, 0), up = new T.Vector3().setFromMatrixColumn(this.camera.matrix, 1);
-    this.target.addScaledVector(right, -dx * s).addScaledVector(up, dy * s);
+    const s = this.sph.r * 0.0016, t = this._tmp;
+    t.r.setFromMatrixColumn(this.camera.matrix, 0); t.u.setFromMatrixColumn(this.camera.matrix, 1);
+    this.target.addScaledVector(t.r, -dx * s).addScaledVector(t.u, dy * s);
+  };
+  /** Klavye: [ / ] (PageUp/PageDown) ile seçilebilir ekipmanlar arasında gezinme. */
+  Viewer.prototype.cycle = function (dir) {
+    const list = this.pickables.filter(p => p.obj.visible); if (!list.length) return;
+    const i = list.indexOf(this.selected);
+    this.viaKeyboard = true;
+    this.select(list[((i < 0 ? (dir > 0 ? -1 : 0) : i) + dir + list.length) % list.length]);
   };
   /** İmleç altındaki seçilebilir ekipman (yoksa null). */
   Viewer.prototype._hit = function (e) {
     if (!this.pickables.length) return null;
-    const T = this.T, rect = this.canvas.getBoundingClientRect();
-    const m = new T.Vector2((e.clientX - rect.left) / rect.width * 2 - 1, -(e.clientY - rect.top) / rect.height * 2 + 1);
+    const T = this.T, rect = this.canvas.getBoundingClientRect(), m = this._tmp.m;
+    m.set((e.clientX - rect.left) / rect.width * 2 - 1, -(e.clientY - rect.top) / rect.height * 2 + 1);
     const rc = this._rc || (this._rc = new T.Raycaster()); rc.setFromCamera(m, this.camera);
-    const objs = this.pickables.filter(p => p.obj.visible).map(p => p.obj);
+    const objs = this._pickObjs || (this._pickObjs = []);
+    objs.length = 0; this.pickables.forEach(p => { if (p.obj.visible) objs.push(p.obj); });
     const hit = rc.intersectObjects(objs, true).find(h => !this.clipOn || this.clipPlane.distanceToPoint(h.point) >= 0);
     if (!hit) return null;
     let o = hit.object; let p = null;
     while (o && !p) { p = this.pickables.find(x => x.obj === o); o = o.parent; }
     return p;
   };
-  Viewer.prototype._pick = function (e) { this.select(this._hit(e)); };
+  Viewer.prototype._pick = function (e) { this.viaKeyboard = false; this.select(this._hit(e)); };
   Viewer.prototype.select = function (p) {
     if (this.selected && this.selected.box) {
       const old = this.selected.box; this.root.remove(old); disposeTree(old); this.selected.box = null;
     }
     this.selected = p;
-    if (p) {
+    if (p && !p.obj.isInstancedMesh) {
+      // BoxHelper InstancedMesh örneklerini bilmez (yerel orijinde kutu çizer): vurgu yalnız tekil nesnelerde
       const T = this.T;
       const box = new T.BoxHelper(p.obj, 0xfcd34d); box.material.depthTest = false; box.renderOrder = 10; box.material.transparent = true; box.material.opacity = 0.9;
       p.box = box; this.root.add(box);
     }
-    if (this.onSelect) this.onSelect(p);
+    if (this.onSelect) this.onSelect(p, this.viaKeyboard);
+    this.invalidate();
   };
   Viewer.prototype.addLabel = function (text, obj, offset, cls) {
-    const T = this.T;
+    const T = this.T, self = this;
     const node = el('span', { class: 'vs-label' + (cls ? ' ' + cls : '') }); node.textContent = text;
     this.labelLayer.appendChild(node);
-    const l = { el: node, obj: obj, off: new T.Vector3().fromArray(offset || [0, 0, 0]), set: t => { if (node.textContent !== t) node.textContent = t; }, level: lv => { node.dataset.level = lv || ''; } };
+    const l = { el: node, obj: obj, off: new T.Vector3().fromArray(offset || [0, 0, 0]), tf: '', shown: true,
+      set: t => { if (node.textContent !== t) { node.textContent = t; self.dirty = true; } },
+      level: lv => { lv = lv || ''; if (node.dataset.level !== lv) node.dataset.level = lv; } };
     this.labels.push(l); return l;
   };
   Viewer.prototype.clear = function () {
     this.labels.forEach(l => l.el.remove()); this.labels = []; this.pickables = []; this.shells = []; this.explodables = []; this.animated = [];
     this.select(null);
-    disposeTree(this.root, this._kitResources); this._kitResources = null;
+    disposeTree(this.root, this._kitResources, this.keep); this._kitResources = null;
     while (this.root.children.length) this.root.remove(this.root.children[0]);
+    this._applied = 0; this.invalidateShadows();
   };
   Viewer.prototype.dispose = function () {
     if (this.disposed) return; this.disposed = true;
-    this._cleanups.splice(0).forEach(fn => fn()); this.clear();
+    this._cleanups.splice(0).forEach(fn => fn()); this.keep.clear(); this.clear();
     if (this._envTarget) this._envTarget.dispose();
     this.scene.traverse(o => { if (o.shadow && o.shadow.map) o.shadow.map.dispose(); });
     this.renderer.dispose();
@@ -362,30 +480,35 @@
     const planes = this.clipOn ? [this.clipPlane] : [];
     this.root.traverse(o => {
       if (!o.material || o.userData.noClip) return;
-      (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { m.clippingPlanes = planes; m.clipShadows = true; m.needsUpdate = true; });
+      (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => {
+        if (m.clippingPlanes && m.clippingPlanes.length === planes.length) { m.clippingPlanes = planes; return; }
+        m.clippingPlanes = planes; m.clipShadows = true; m.needsUpdate = true;
+      });
     });
+    this.invalidateShadows();
   };
   Viewer.prototype.applyTransparent = function () {
     this.shells.forEach(m => {
-      if (!m.userData.origMat) m.userData.origMat = m.material;
+      if (!m.userData.origMat) { m.userData.origMat = m.material; m.userData.origCast = m.castShadow; }
       if (this.transparent) {
         if (!m.userData.ghostMat) { const g = m.userData.origMat.clone(); g.transparent = true; g.opacity = 0.14; g.depthWrite = false; m.userData.ghostMat = g; }
         m.material = m.userData.ghostMat; m.castShadow = false;
-      } else { m.material = m.userData.origMat; m.castShadow = true; }
+      } else { m.material = m.userData.origMat; m.castShadow = m.userData.origCast; }
     });
     this.applyClip();
   };
+  /** Kamera, patlatma ve etiketleri günceller ve sahneyi çizer. */
   Viewer.prototype.frame = function (dt) {
     if (this.disposed || this.contextLost) return;
-    const T = this.T;
     if (reduceMotion) this.damp.theta = this.damp.phi = 0;
     if (this.autoSpin && !reduceMotion) this.sph.theta += dt * 0.12;
     else if (Math.abs(this.damp.theta) > 1e-4 || Math.abs(this.damp.phi) > 1e-4) {
       // eylemsizlik: bırakınca yavaşça durur
-      if (!this.canvas.classList.contains('is-drag')) {
+      if (!this.dragging) {
         const frames = dt * 60, decay = Math.pow(0.86, frames), distance = (1 - decay) / (1 - 0.86);
         this.sph.theta += this.damp.theta * distance; this.sph.phi += this.damp.phi * distance; this.damp.theta *= decay; this.damp.phi *= decay;
-      }
+        if (Math.abs(this.damp.theta) <= 1e-4 && Math.abs(this.damp.phi) <= 1e-4) this.damp.theta = this.damp.phi = 0;
+      } else { this.damp.theta *= 0.5; this.damp.phi *= 0.5; }
     }
     this.sph.phi = E.clamp(this.sph.phi, this.limits.phiMin, this.limits.phiMax);
     const s = this.sph;
@@ -394,22 +517,30 @@
     const R = s.r * fit;
     this.camera.position.set(this.target.x + R * Math.sin(s.phi) * Math.sin(s.theta), this.target.y + R * Math.cos(s.phi), this.target.z + R * Math.sin(s.phi) * Math.cos(s.theta));
     this.camera.lookAt(this.target);
-    this.explodables.forEach(x => { x.obj.position.copy(x.base).addScaledVector(x.dir, this.explode); });
+    if (this._applied !== this.explode) { this.explodables.forEach(x => { x.obj.position.copy(x.base).addScaledVector(x.dir, this.explode); }); this._applied = this.explode; this.renderer.shadowMap.needsUpdate = true; }
     if (this.selected && this.selected.box) this.selected.box.update();
     this.renderer.render(this.scene, this.camera);
-    // etiketler
-    const w = this._size.w, h = this._size.h, v = this._labelVector || (this._labelVector = new T.Vector3());
-    this.labels.forEach(l => {
-      if (!this.showLabels || (l.obj && !l.obj.visible)) { l.el.style.display = 'none'; return; }
-      if (l.obj) { l.obj.updateWorldMatrix(true, false); v.copy(l.off).applyMatrix4(l.obj.matrixWorld); } else v.copy(l.off);
-      if (this.clipOn && this.clipPlane.distanceToPoint(v) < -0.02) { l.el.style.display = 'none'; return; }
-      v.project(this.camera);
-      if (v.z > 1 || v.x < -1.1 || v.x > 1.1 || v.y < -1.1 || v.y > 1.1) { l.el.style.display = 'none'; return; }
-      l.el.style.display = '';
-      l.el.style.transform = 'translate(' + ((v.x + 1) / 2 * w).toFixed(1) + 'px,' + ((1 - v.y) / 2 * h).toFixed(1) + 'px) translate(-50%,-100%)';
-    });
+    this.dirty = false;
+    // etiketler: render sonrası matrixWorld günceldir; yalnız değişen stil yazılır
+    const w = this._size.w, h = this._size.h, v = this._tmp.v;
+    for (let i = 0; i < this.labels.length; i++) {
+      const l = this.labels[i];
+      let show = this.showLabels && !(l.obj && !l.obj.visible), tf = '';
+      if (show) {
+        if (l.obj) v.copy(l.off).applyMatrix4(l.obj.matrixWorld); else v.copy(l.off);
+        if (this.clipOn && this.clipPlane.distanceToPoint(v) < -0.02) show = false;
+        else {
+          v.project(this.camera);
+          if (v.z > 1 || v.x < -1.1 || v.x > 1.1 || v.y < -1.1 || v.y > 1.1) show = false;
+          else tf = 'translate(' + Math.round((v.x + 1) / 2 * w) + 'px,' + Math.round((1 - v.y) / 2 * h) + 'px) translate(-50%,-100%)';
+        }
+      }
+      if (show !== l.shown) { l.el.style.display = show ? '' : 'none'; l.shown = show; }
+      if (show && tf !== l.tf) { l.el.style.transform = tf; l.tf = tf; }
+    }
   };
   Viewer.prototype.snapshot = function (w) {
+    if (this.contextLost) return null;
     this.frame(0);
     const src = this.canvas; const ratio = src.height / src.width; const out = document.createElement('canvas');
     out.width = w || 1200; out.height = Math.round(out.width * ratio);
@@ -434,7 +565,10 @@
     const matCache = {};
     function std(key, o) {
       if (matCache[key]) return matCache[key];
-      const m = o.physical ? new T.MeshPhysicalMaterial(o.p) : new T.MeshStandardMaterial(o.p);
+      // düşük katmanda fiziksel (clearcoat/transmission) malzemeler standart malzemeye düşürülür
+      let p = o.p;
+      if (o.physical && viewer.quality === 'low') { p = Object.assign({}, p); ['clearcoat', 'clearcoatRoughness', 'transmission'].forEach(k => delete p[k]); }
+      const m = o.physical && viewer.quality !== 'low' ? new T.MeshPhysicalMaterial(p) : new T.MeshStandardMaterial(p);
       m.envMapIntensity = o.env === undefined ? 1 : o.env; linearize(m); matCache[key] = m; resources.add(m); return m;
     }
     const mats = {
@@ -483,7 +617,19 @@
       ledBlue: std('lb', { p: { color: 0x38bdf8, emissive: 0x38bdf8, emissiveIntensity: 2.2, roughness: 0.4 } })
     };
     const geoCache = {};
-    function boxGeo(w, h, d) { const k = 'b' + w + ',' + h + ',' + d; if (!geoCache[k]) { geoCache[k] = new T.BoxGeometry(w, h, d); resources.add(geoCache[k]); } return geoCache[k]; }
+    const cached = (k, make) => { if (!geoCache[k]) { geoCache[k] = make(); resources.add(geoCache[k]); } return geoCache[k]; };
+    function boxGeo(w, h, d) { return cached('b' + w + ',' + h + ',' + d, () => new T.BoxGeometry(w, h, d)); }
+    const lowSeg = n => (viewer.quality === 'low' ? Math.max(8, Math.round(n * 0.6)) : n);
+    function rboxGeo(w, h, d, r) {
+      return cached('rb' + [w, h, d, r].join(','), () => {
+        const s = new T.Shape(), rr = Math.min(r, w / 2 - 1e-3, h / 2 - 1e-3);
+        s.moveTo(-w / 2 + rr, -h / 2); s.lineTo(w / 2 - rr, -h / 2); s.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + rr); s.lineTo(w / 2, h / 2 - rr); s.quadraticCurveTo(w / 2, h / 2, w / 2 - rr, h / 2);
+        s.lineTo(-w / 2 + rr, h / 2); s.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - rr); s.lineTo(-w / 2, -h / 2 + rr); s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + rr, -h / 2);
+        const b = Math.min(rr * 0.5, d * 0.2);
+        const g = new T.ExtrudeGeometry(s, { depth: Math.max(d - 2 * b, 1e-3), bevelEnabled: true, bevelThickness: b, bevelSize: b * 0.9, bevelSegments: 3, curveSegments: 6 });
+        g.translate(0, 0, -(d - 2 * b) / 2); return g;
+      });
+    }
     function mesh(geo, mat, x, y, z, parent, opt) {
       const m = new T.Mesh(geo, mat);
       m.position.set(x || 0, y || 0, z || 0);
@@ -495,56 +641,75 @@
       T: T, mats: mats,
       /** Gölgeli, paylaşımlı geometrili kutu. */
       box: (w, h, d, mat, x, y, z, parent, opt) => mesh(boxGeo(w, h, d), mat, x, y, z, parent, opt),
-      cyl: (rt, rb, h, mat, x, y, z, parent, seg) => mesh(new T.CylinderGeometry(rt, rb, h, seg || 24), mat, x, y, z, parent),
-      sphere: (r, mat, x, y, z, parent) => mesh(new T.SphereGeometry(r, 20, 14), mat, x, y, z, parent),
+      /** Silindir ve küre geometrileri de parametreye göre paylaşılır (geometriyi değiştirecekseniz önce clone()). */
+      cyl: (rt, rb, h, mat, x, y, z, parent, seg) => { const n = lowSeg(seg || 24); return mesh(cached('c' + [rt, rb, h, n].join(','), () => new T.CylinderGeometry(rt, rb, h, n)), mat, x, y, z, parent); },
+      sphere: (r, mat, x, y, z, parent) => mesh(cached('s' + r + (viewer.quality === 'low' ? 'l' : ''), () => (viewer.quality === 'low' ? new T.SphereGeometry(r, 12, 9) : new T.SphereGeometry(r, 20, 14))), mat, x, y, z, parent),
       /** Yuvarlatılmış kenarlı kutu (ExtrudeGeometry + bevel): pano gövdeleri, cihazlar. */
-      rbox: (w, h, d, r, mat, x, y, z, parent) => {
-        const k = 'rb' + [w, h, d, r].join(',');
-        let g = geoCache[k];
-        if (!g) {
-          const s = new T.Shape(), rr = Math.min(r, w / 2 - 1e-3, h / 2 - 1e-3);
-          s.moveTo(-w / 2 + rr, -h / 2); s.lineTo(w / 2 - rr, -h / 2); s.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + rr); s.lineTo(w / 2, h / 2 - rr); s.quadraticCurveTo(w / 2, h / 2, w / 2 - rr, h / 2);
-          s.lineTo(-w / 2 + rr, h / 2); s.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - rr); s.lineTo(-w / 2, -h / 2 + rr); s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + rr, -h / 2);
-          const b = Math.min(rr * 0.5, d * 0.2);
-          g = new T.ExtrudeGeometry(s, { depth: Math.max(d - 2 * b, 1e-3), bevelEnabled: true, bevelThickness: b, bevelSize: b * 0.9, bevelSegments: 3, curveSegments: 6 });
-          g.translate(0, 0, -(d - 2 * b) / 2); geoCache[k] = g; resources.add(g);
-        }
-        return mesh(g, mat, x, y, z, parent);
-      },
+      rbox: (w, h, d, r, mat, x, y, z, parent) => mesh(rboxGeo(w, h, d, r), mat, x, y, z, parent),
+      /** Yalnız geometri (sahneye mesh eklemez; InstancedMesh için). */
+      rboxGeo: rboxGeo,
       group: (parent, x, y, z) => { const g = new T.Group(); g.position.set(x || 0, y || 0, z || 0); (parent || viewer.root).add(g); return g; },
+      /** Statik süsleme grubu: build bitince alt mesh'leri malzeme başına tek geometride birleştirilir. İçine seçilebilir,
+       * hareket eden, malzemesi değişen veya kabuk (şeffaflaşan) parça konmamalıdır. */
+      staticGroup: (parent, x, y, z) => { const g = kit.group(parent, x, y, z); g.userData.vsStatic = true; return g; },
+      /** Var olan grubu statik işaretler: kurulum sonunda doğrudan alt mesh'leri malzemeye göre birleştirilir.
+       * Modülün sonradan malzemesini/konumunu değiştirdiği mesh'ler { noMerge } ile ya da ayrı grupta tutulmalıdır. */
+      markStatic: g => { if (g) g.userData.vsStatic = true; return g; },
       tube: (points, radius, mat, parent, seg) => {
         const curve = new T.CatmullRomCurve3(points.map(p => Array.isArray(p) ? new T.Vector3(p[0], p[1], p[2]) : p), false, 'catmullrom', 0.2);
-        const m = mesh(new T.TubeGeometry(curve, seg || Math.max(16, points.length * 10), radius, 10, false), mat, 0, 0, 0, parent);
+        const m = mesh(new T.TubeGeometry(curve, lowSeg(seg || Math.max(16, points.length * 10)), radius, viewer.quality === 'low' ? 6 : 10, false), mat, 0, 0, 0, parent);
         m.userData.curve = curve; return m;
       },
-      /** Canvas dokulu düzlem: etiket plakası, ekran. draw(g, w, h) her redraw() çağrısında çalışır. */
+      /** Canvas dokulu düzlem: etiket plakası, ekran. draw(g, w, h) redraw() çağrısında çalışır;
+       * redraw(sig) verilirse imza değişmedikçe yeniden çizilmez (gereksiz doku yüklemesi olmaz). */
       screen: (pw, ph, px, draw, parent, opt) => {
-        const cv = document.createElement('canvas'); cv.width = px; cv.height = Math.round(px * ph / pw);
+        // düşük katmanda küçük ekranlar yarı çözünürlükte (çizim kodu mantıksal px ile çalışmaya devam eder)
+        const real = viewer.quality === 'low' && px > 192 && pw < 0.2 ? Math.round(px / 2) : px;
+        const cv = document.createElement('canvas'); cv.width = real; cv.height = Math.round(real * ph / pw);
         const tex = new T.CanvasTexture(cv); tex.encoding = T.sRGBEncoding; tex.anisotropy = 4;
         const mat = new T.MeshStandardMaterial({ map: tex, roughness: 0.4, metalness: 0, emissive: (opt && opt.emissive) ? 0xffffff : 0x000000, emissiveMap: (opt && opt.emissive) ? tex : null, emissiveIntensity: (opt && opt.emissive) || 0 });
         const m = mesh(new T.PlaneGeometry(pw, ph), mat, 0, 0, 0, parent, { noShadow: true });
         m.castShadow = false;
-        m.redraw = function () { const g = cv.getContext('2d'); draw(g, cv.width, cv.height); tex.needsUpdate = true; };
+        let last;
+        m.redraw = function (sig) {
+          if (sig !== undefined && sig === last) return;
+          last = sig;
+          const g = cv.getContext('2d'); g.setTransform(cv.width / px, 0, 0, cv.width / px, 0, 0);
+          draw(g, px, Math.round(px * ph / pw)); tex.needsUpdate = true; viewer.dirty = true;
+        };
         m.redraw(); return m;
       },
       ground: (size, mat, y) => {
         const g = mesh(new T.PlaneGeometry(size, size), mat || mats.concrete, 0, y || 0, 0, viewer.root);
         g.rotation.x = -Math.PI / 2; g.castShadow = false; g.userData.noClip = true; return g;
       },
-      /** Bir eğri boyunca hareket eden enerji akış parçacıkları (InstancedMesh). */
+      /** Bir eğri boyunca hareket eden enerji akış parçacıkları (InstancedMesh). Eğri bir kez örneklenir (LUT);
+       * karede bellek ayırmaz. update() çizim gerekiyorsa true döner. */
       flow: (curve, count, color, size, parent) => {
-        const geo = new T.SphereGeometry(size || 0.02, 8, 6);
+        const geo = cached('fs' + (size || 0.02), () => new T.SphereGeometry(size || 0.02, 8, 6));
         const mat = new T.MeshBasicMaterial({ color: color || 0xfcd34d, transparent: true, opacity: 0.95 });
         const im = new T.InstancedMesh(geo, mat, count); im.castShadow = false; im.userData.noClip = false;
         (parent || viewer.root).add(im);
-        const dummy = new T.Object3D(); let phase = 0;
+        const N = 128, lut = new Float32Array((N + 1) * 3), p = new T.Vector3();
+        for (let i = 0; i <= N; i++) { curve.getPointAt(i / N, p); lut[i * 3] = p.x; lut[i * 3 + 1] = p.y; lut[i * 3 + 2] = p.z; }
+        const id = new T.Matrix4(); for (let i = 0; i < count; i++) im.setMatrixAt(i, id);
+        const arr = im.instanceMatrix.array;
+        let phase = 0, drawn = false;
+        const place = () => {
+          for (let i = 0; i < count; i++) {
+            const t = ((i / count + phase) % 1) * N, k = Math.floor(t), f = t - k, a = k * 3, b = Math.min(N, k + 1) * 3, o = i * 16 + 12;
+            arr[o] = lut[a] + (lut[b] - lut[a]) * f; arr[o + 1] = lut[a + 1] + (lut[b + 1] - lut[a + 1]) * f; arr[o + 2] = lut[a + 2] + (lut[b + 2] - lut[a + 2]) * f;
+          }
+          im.instanceMatrix.needsUpdate = true;
+        };
         const f = { mesh: im, speed: 0, dir: 1, visible: true,
           update(dt) {
-            im.visible = f.visible && f.speed > 0.0001;
-            if (!im.visible) return;
-            if (!reduceMotion) phase = (phase + dt * f.speed * f.dir + 1000) % 1;
-            for (let i = 0; i < count; i++) { const t = (i / count + phase) % 1; dummy.position.copy(curve.getPointAt(t)); dummy.updateMatrix(); im.setMatrixAt(i, dummy.matrix); }
-            im.instanceMatrix.needsUpdate = true;
+            const vis = f.visible && f.speed > 0.0001;
+            if (vis !== im.visible) { im.visible = vis; if (!vis) return true; }
+            if (!vis) return false;
+            if (reduceMotion) { if (drawn) return false; place(); drawn = true; return true; }
+            phase = (phase + dt * f.speed * f.dir + 1000) % 1; place(); drawn = true;
+            return dt > 0;
           } };
         viewer.animated.push(f); return f;
       },
@@ -558,6 +723,10 @@
       heat: (t, target) => { t = E.clamp(t, 0, 1); const c = target || new T.Color(); return c.setHSL((1 - t) * 0.62, 0.85, 0.5); },
       /** Modülün kendi oluşturduğu malzeme: sRGB hex → doğrusal (sahne kurulumundan sonra eklenenler için). */
       mat: (hex, o) => { const m = new T.MeshStandardMaterial(Object.assign({ color: hex, roughness: 0.6, metalness: 0 }, o || {})); linearize(m); resources.add(m); return m; },
+      /** Sahneler arası yeniden kullanılan (modül düzeyinde önbelleğe alınan) kaynak: yeniden kurulumda dispose edilmez. */
+      keep: r => { if (r) viewer.keep.add(r); return r; },
+      /** Bir sonraki karede yeniden çizim iste; shadows=true ise gölge haritası da yenilenir. */
+      invalidate: shadows => { if (shadows) viewer.invalidateShadows(); else viewer.invalidate(); },
       linearize: linearize,
       viewer: viewer,
       get reducedMotion() { return reduceMotion; },
@@ -567,6 +736,29 @@
   }
 
   /* ------------------------------------------------------------------ uygulama */
+  /** Kayıtlı ya da dosyadan yüklenen durumu varsayılan şablonla tip uyumlu birleştirir: eksik alanlar şablondan gelir,
+   * tipi uymayan alanlar atılır, nesne dizilerinin her öğesi ilk şablon öğesiyle tamamlanır, prototip anahtarları yok sayılır. */
+  const BAD_KEYS = { __proto__: 1, constructor: 1, prototype: 1 };
+  function sanitize(tpl, src) {
+    if (src === undefined) return clone(tpl);
+    if (tpl === null || tpl === undefined) return src === undefined ? tpl : clone(src);
+    if (Array.isArray(tpl)) {
+      if (!Array.isArray(src)) return clone(tpl);
+      const t0 = tpl[0];
+      if (t0 === undefined) return clone(src);
+      if (t0 !== null && typeof t0 === 'object' && !Array.isArray(t0)) return src.filter(x => x && typeof x === 'object' && !Array.isArray(x)).map(x => sanitize(t0, x));
+      return src.every(x => typeof x === typeof t0) ? clone(src) : clone(tpl);
+    }
+    if (typeof tpl === 'object') {
+      if (!src || typeof src !== 'object' || Array.isArray(src)) return clone(tpl);
+      const out = clone(tpl);
+      Object.keys(src).forEach(k => { if (BAD_KEYS[k]) return; out[k] = k in tpl ? sanitize(tpl[k], src[k]) : clone(src[k]); });
+      return out;
+    }
+    if (typeof tpl === 'number') return typeof src === 'number' && isFinite(src) ? src : tpl;
+    return typeof src === typeof tpl ? src : tpl;
+  }
+
   function App(def, rootEl) {
     this.def = def; this.root = rootEl;
     this.state = clone(def.defaults());
@@ -574,11 +766,13 @@
     this.running = !!def.autoRun; this.paused = false; this.simTime = 0;
     this.result = null; this.validResult = null;
     this.mode = '3d';
+    this.schema = def.schema || 1; // durum biçimi değişince modülde artırılır; eski kayıtlar yok sayılır
     this.storageKey = 'voltsim:' + def.id + ':v1';
+    this._open = {}; this._faults = {};
   }
   App.prototype.set = function (key, value, opts) {
     setPath(this.state, key, value);
-    if (opts && opts.rebuild) this.renderControls();
+    if (opts && opts.rebuild) this.renderControls(!opts.defer);
     this.invalidate();
   };
   App.prototype.get = function (key) { return getPath(this.state, key); };
@@ -587,6 +781,25 @@
     this._pending = true;
     this._computeRaf = requestAnimationFrame(() => { this._pending = false; this.recompute(); });
   };
+  /** Kaydırıcı sürüklenirken / sayı yazılırken sahne yeniden kurulumu ertelenir (hesap ve grafikler anında güncellenir). */
+  App.prototype.holding = function () { return !!this._dragHold || performance.now() < (this._holdUntil || 0); };
+  App.prototype.holdRebuild = function (ms) {
+    this._holdUntil = performance.now() + ms; clearTimeout(this._holdT);
+    this._holdT = setTimeout(() => { if (this._rebuildPending) this.invalidate(); }, ms + 30);
+  };
+  App.prototype.releaseHold = function () {
+    if (!this._dragHold) return;
+    this._dragHold = false;
+    if (this._rebuildPending) this.invalidate();
+    if (this._ctrlPending) setTimeout(() => { if (this._ctrlPending && !this.controlsBusy()) this.renderControls(); }, 0);
+  };
+  /** Bir kez hata bildirir; döngü ve uygulama çalışmayı sürdürür. */
+  App.prototype.fault = function (where, err) {
+    if (this._faults[where]) return; this._faults[where] = true;
+    console.error('VoltSim ' + where + ':', err);
+    toast(where === 'build' ? '3D sahne kurulamadı; hesaplar, grafikler ve 2D şema çalışmaya devam ediyor.' : 'Sahnenin bir bölümü güncellenemedi (' + where + '); hesaplar etkilenmedi.', 'bad');
+  };
+  App.prototype.saveState = function () { storageSet(this.storageKey, JSON.stringify({ schema: this.schema, engine: E.version, savedAt: Date.now(), state: this.state })); };
   App.prototype.recompute = function () {
     if (this._disposed) return;
     let res;
@@ -594,12 +807,26 @@
     this.result = res;
     if (res.ok) this.validResult = res;
     this.renderAnalysis();
-    if (this.viewer && this.def.scene.rebuildOn && this.def.scene.rebuildOn(this.state) !== this._sceneSig) this.rebuildScene();
-    if (this.kit && this.validResult && this.def.scene && this.def.scene.update) this.def.scene.update(this.kit, this.validResult, this.state, this.live, this);
+    if (this.viewer) {
+      let sig = null;
+      try { sig = this.def.scene.rebuildOn ? this.def.scene.rebuildOn(this.state) : null; } catch (_) { sig = this._sceneSig; }
+      if (this._forceRebuild || sig !== this._sceneSig) {
+        if (!this._forceRebuild && this.holding()) this._rebuildPending = true;
+        else this.rebuildScene(sig);
+      }
+      if (this.kit && this.validResult && this.def.scene.update && !this._sceneError) {
+        try { this.def.scene.update(this.kit, this.validResult, this.state, this.live, this); } catch (e) { this.fault('update', e); }
+      }
+      this.viewer.invalidate();
+    }
     if (this.mode === '2d') this.draw2d();
     this.updateBadge();
     this.checkTasks();
-    clearTimeout(this._save); this._save = setTimeout(() => storageSet(this.storageKey, JSON.stringify({ savedAt: Date.now(), state: this.state })), 600);
+    clearTimeout(this._save); this._save = setTimeout(() => this.saveState(), 600);
+  };
+  App.prototype.say = function (text) {
+    const r = this.root.querySelector('[data-vs-live]'); if (!r) return;
+    r.textContent = ''; setTimeout(() => { r.textContent = text; }, 30);
   };
   App.prototype.updateBadge = function () {
     const b = this.root.querySelector('[data-vs-badge]'); if (!b) return;
@@ -609,45 +836,82 @@
       const f = r.checks.filter(c => c.status === 'fail').length, w = r.checks.filter(c => c.status === 'warn').length;
       if (f) { lv = 'bad'; txt = f + ' uygunsuzluk'; } else if (w) { lv = 'warn'; txt = w + ' uyarı'; }
     }
-    if (this.def.badge && r && r.ok) { const custom = this.def.badge(r, this.state, this.live, this); if (custom) { lv = custom.level; txt = custom.text; } }
-    b.dataset.level = lv; b.textContent = txt;
+    if (this.def.badge && r && r.ok) { try { const custom = this.def.badge(r, this.state, this.live, this); if (custom) { lv = custom.level; txt = custom.text; } } catch (_) { } }
+    // ekran okuyucuya yalnız seviye değişince duyurulur (rozet metni saniyede birkaç kez değişebilir)
+    if (b.dataset.level !== lv && this._badgeInit) this.say('Durum: ' + txt);
+    this._badgeInit = true;
+    if (b.dataset.level !== lv) b.dataset.level = lv;
+    if (b.textContent !== txt) b.textContent = txt;
   };
 
   /* --- kontroller (sol panel) */
-  App.prototype.renderControls = function () {
+  /** Kullanıcı bir kaydırıcıyı sürüklüyor ya da sayı/metin alanına yazıyorsa panel yeniden kurulmaz (ertelenir). */
+  App.prototype.controlsBusy = function () {
+    if (this._dragHold) return true;
+    const host = this.root.querySelector('[data-vs-controls]'), a = document.activeElement;
+    return !!(host && a && host.contains(a) && (a.tagName === 'TEXTAREA' || (a.tagName === 'INPUT' && /^(range|number|text)$/.test(a.type))));
+  };
+  App.prototype.renderControls = function (force) {
+    if (!force && this.controlsBusy()) { this._ctrlPending = true; return; }
+    this._ctrlPending = false;
     const host = this.root.querySelector('[data-vs-controls]');
-    const active = document.activeElement && host.contains(document.activeElement) ? document.activeElement.dataset.key : null;
+    const act = document.activeElement && host.contains(document.activeElement) ? document.activeElement : null;
+    const active = act ? act.dataset.key : null, activeVal = act ? act.getAttribute('data-v') : null;
+    const scroll = host.scrollTop;
     host.innerHTML = '';
     const groups = typeof this.def.controls === 'function' ? this.def.controls(this.state, this) : this.def.controls;
     groups.forEach(gr => {
       if (!gr) return;
-      const fs = el('fieldset', { class: 'vs-group' + (gr.collapsed ? ' is-collapsible' : '') });
+      const fs = el('fieldset', { class: 'vs-group' + (gr.collapsed !== undefined ? ' is-collapsible' : '') });
       const lg = el('legend', { class: 'vs-group__title', text: gr.title });
       fs.appendChild(lg);
-      const body = gr.collapsed !== undefined ? el('details', { open: !gr.collapsed ? true : undefined }, [el('summary', { text: gr.summary || 'Ayrıntılar' })]) : fs;
-      if (body !== fs) fs.appendChild(body);
+      let body = fs;
+      if (gr.collapsed !== undefined) {
+        const key = String(gr.title).replace(/\s*\(\d+\)\s*$/, '');
+        const open = this._open[key] !== undefined ? this._open[key] : !gr.collapsed;
+        body = el('details', { open: open ? true : undefined }, [el('summary', { text: gr.summary || 'Ayrıntılar' })]);
+        body.addEventListener('toggle', () => { this._open[key] = body.open; });
+        fs.appendChild(body);
+      }
       gr.items.forEach(it => { if (it) body.appendChild(this.control(it)); });
       host.appendChild(fs);
     });
-    if (active) { const n = host.querySelector('[data-key="' + active + '"]'); if (n) n.focus(); }
+    host.scrollTop = scroll;
+    if (active) {
+      const cands = Array.from(host.querySelectorAll('[data-key="' + active + '"]'));
+      const n = cands.find(x => activeVal !== null && x.getAttribute('data-v') === activeVal) || cands.find(x => x.getAttribute('aria-checked') === 'true' || x.getAttribute('aria-pressed') === 'true') || cands[0];
+      if (n) n.focus({ preventScroll: true });
+    }
   };
+  const digitsOf = it => (it.digits === undefined ? (it.step < 1 ? (it.step < 0.1 ? 2 : 1) : 0) : it.digits);
   App.prototype.control = function (it) {
     const id = nextId('vsc'), self = this;
     const val = it.key ? this.get(it.key) : undefined;
     const help = it.help ? el('p', { class: 'vs-help', id: id + '-h', text: it.help }) : null;
     if (it.type === 'range' || it.type === 'number') {
-      const out = el('output', { for: id, text: (it.fmt ? it.fmt(val) : fmt(val, it.digits === undefined ? (it.step < 1 ? (it.step < 0.1 ? 2 : 1) : 0) : it.digits, it.unit)) });
+      const show = v => (it.fmt ? it.fmt(v) : fmt(v, digitsOf(it), it.unit));
+      const out = el('output', { for: id, text: show(val) });
       const lab = el('label', { for: id }, [el('span', { text: it.label }), out]);
-      const attrs = { id: id, type: it.type, min: it.min, max: it.max, step: it.step || 1, value: val, 'data-key': it.key, 'aria-describedby': help ? id + '-h' : undefined, class: it.type === 'range' ? 'vs-range' : 'vs-input', inputmode: it.type === 'number' ? 'decimal' : undefined };
+      // durum değeri aralık dışındaysa (ör. faz değişince güç sınırı) kaydırıcı değeri kırpmasın: aralık genişletilir
+      let min = it.min, max = it.max;
+      if (it.type === 'range' && typeof val === 'number' && isFinite(val)) { if (val < min) min = val; if (val > max) max = val; }
+      const attrs = { id: id, type: it.type, min: min, max: max, step: it.step || 1, value: val, 'data-key': it.key, 'aria-describedby': help ? id + '-h' : undefined, class: it.type === 'range' ? 'vs-range' : 'vs-input', inputmode: it.type === 'number' ? 'decimal' : undefined };
       const input = el('input', attrs);
-      const paint = () => { if (it.type === 'range') input.style.setProperty('--p', ((input.value - it.min) / (it.max - it.min) * 100) + '%'); };
+      const paint = () => { if (it.type === 'range') input.style.setProperty('--p', ((input.value - min) / ((max - min) || 1) * 100) + '%'); };
       paint();
+      if (it.type === 'range') {
+        input.addEventListener('pointerdown', () => { self._dragHold = true; });
+        input.addEventListener('keydown', () => self.holdRebuild(450));
+        input.addEventListener('change', () => self.releaseHold());
+      }
       input.addEventListener('input', () => {
         const v = Number(input.value);
         if (it.type === 'number' && (input.value === '' || !isFinite(v))) { input.setAttribute('aria-invalid', 'true'); return; }
         input.removeAttribute('aria-invalid');
-        out.textContent = it.fmt ? it.fmt(v) : fmt(v, it.digits === undefined ? (it.step < 1 ? (it.step < 0.1 ? 2 : 1) : 0) : it.digits, it.unit);
-        paint(); self.set(it.key, v, { rebuild: it.rebuild });
+        out.textContent = show(v);
+        paint();
+        if (it.type === 'number') self.holdRebuild(700);
+        self.set(it.key, v, { rebuild: it.rebuild, defer: true });
       });
       return el('div', { class: 'vs-field' }, [lab, input, help]);
     }
@@ -664,18 +928,25 @@
     }
     if (it.type === 'seg') {
       const wrap = el('div', { class: 'vs-seg', role: 'radiogroup', 'aria-label': it.label });
+      const btns = [];
+      const pick = v => { self.set(it.key, typeof val === 'number' ? Number(v) : v, { rebuild: true }); if (it.onChange) it.onChange(v, self); };
       (it.options || []).forEach(o => {
-        const v = Array.isArray(o) ? o[0] : o.value, l = Array.isArray(o) ? o[1] : o.label;
-        const b = el('button', { type: 'button', role: 'radio', 'aria-checked': String(v) === String(val) ? 'true' : 'false', 'data-key': it.key, text: l });
-        b.addEventListener('click', () => { self.set(it.key, typeof val === 'number' ? Number(v) : v, { rebuild: true }); if (it.onChange) it.onChange(v, self); });
-        wrap.appendChild(b);
+        const v = Array.isArray(o) ? o[0] : o.value, l = Array.isArray(o) ? o[1] : o.label, on = String(v) === String(val);
+        const b = el('button', { type: 'button', role: 'radio', 'aria-checked': on ? 'true' : 'false', tabindex: on ? '0' : '-1', 'data-key': it.key, 'data-v': String(v), text: l });
+        b.addEventListener('click', () => pick(v));
+        b.addEventListener('keydown', e => {
+          const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0; if (!d) return;
+          e.preventDefault(); const i = btns.indexOf(b), n = btns[(i + d + btns.length) % btns.length]; n.click();
+        });
+        btns.push(b); wrap.appendChild(b);
       });
+      if (!btns.some(b => b.getAttribute('tabindex') === '0') && btns[0]) btns[0].setAttribute('tabindex', '0');
       return el('div', { class: 'vs-field' }, [el('span', { class: 'vs-field__label', text: it.label }), wrap, help]);
     }
     if (it.type === 'chips') {
       const wrap = el('div', { class: 'vs-chips', role: 'group', 'aria-label': it.label });
       (it.options || []).forEach(o => {
-        const b = el('button', { type: 'button', class: 'vs-chip', 'aria-pressed': String(o.value) === String(val) ? 'true' : 'false', 'data-key': it.key, style: o.color ? '--c:' + o.color : undefined }, [o.dot ? el('i', { 'aria-hidden': 'true' }) : null, o.label]);
+        const b = el('button', { type: 'button', class: 'vs-chip', 'aria-pressed': String(o.value) === String(val) ? 'true' : 'false', 'data-key': it.key, 'data-v': String(o.value), style: o.color ? '--c:' + o.color : undefined }, [o.dot ? el('i', { 'aria-hidden': 'true' }) : null, o.label]);
         b.addEventListener('click', () => { self.set(it.key, o.value, { rebuild: true }); if (it.onChange) it.onChange(o.value, self); });
         wrap.appendChild(b);
       });
@@ -707,13 +978,15 @@
     if (r && r.errors && r.errors.length) parts.push('<div class="vs-errors" role="alert"><strong>Girdi hatası</strong><ul>' + r.errors.map(e => '<li>' + esc(e) + '</li>').join('') + '</ul><p>Sahne ve sonuçlar son geçerli değerleri gösteriyor.</p></div>');
     const vr = this.validResult;
     if (vr) {
-      const ro = this.def.readouts(vr, s, this.live, this);
+      let ro = []; try { ro = this.def.readouts(vr, s, this.live, this) || []; } catch (e) { this.fault('readouts', e); }
       parts.push('<div class="vs-readouts">' + ro.map(x => '<div class="vs-ro' + (x.wide ? ' vs-ro--wide' : '') + '"' + (x.level ? ' data-level="' + x.level + '"' : '') + (x.hint ? ' title="' + esc(x.hint) + '"' : '') + '><span>' + esc(x.label) + '</span><b>' + esc(x.value) + '</b>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '') + '</div>').join('') + '</div>');
     }
-    host.querySelector('[data-vs-ro]').innerHTML = parts.join('');
+    // yalnız içerik değişince yazılır (seçim, ipucu ve ekran okuyucu konumu korunur)
+    const roHtml = parts.join(''), roBox = host.querySelector('[data-vs-ro]');
+    if (roBox._html !== roHtml) { roBox.innerHTML = roHtml; roBox._html = roHtml; }
     // grafikler: kanvaslar yeniden kullanılır
     const ch = host.querySelector('[data-vs-charts]');
-    const charts = vr && this.def.charts ? this.def.charts(vr, s, this.live, this) : [];
+    let charts = []; try { charts = vr && this.def.charts ? this.def.charts(vr, s, this.live, this) || [] : []; } catch (e) { this.fault('charts', e); }
     if (ch.dataset.sig !== charts.map(c => c.id).join(',')) {
       ch.innerHTML = ''; ch.dataset.sig = charts.map(c => c.id).join(',');
       charts.forEach(c => {
@@ -748,7 +1021,8 @@
     const icon = { ok: '✓', warn: '!', fail: '✕', info: 'i' };
     const list = vr ? vr.checks : [];
     const order = { fail: 0, warn: 1, info: 3, ok: 2 };
-    ck.innerHTML = list.slice().sort((a, b) => order[a.status] - order[b.status]).map(c => '<li data-status="' + c.status + '"><b aria-hidden="true">' + icon[c.status] + '</b><div><strong>' + esc(c.label) + '</strong><span>' + esc(c.detail) + '</span>' + (c.ref ? '<em>' + esc(c.ref) + '</em>' : '') + '</div><span class="sr-only">' + { ok: 'uygun', warn: 'uyarı', fail: 'uygun değil', info: 'bilgi' }[c.status] + '</span></li>').join('');
+    const ckHtml = list.slice().sort((a, b) => order[a.status] - order[b.status]).map(c => '<li data-status="' + c.status + '"><b aria-hidden="true">' + icon[c.status] + '</b><div><strong>' + esc(c.label) + '</strong><span>' + esc(c.detail) + '</span>' + (c.ref ? '<em>' + esc(c.ref) + '</em>' : '') + '</div><span class="sr-only">' + { ok: 'uygun', warn: 'uyarı', fail: 'uygun değil', info: 'bilgi' }[c.status] + '</span></li>').join('');
+    if (ck._html !== ckHtml) { ck.innerHTML = ckHtml; ck._html = ckHtml; }
     const asm = host.querySelector('[data-vs-assumptions]');
     if (vr && asm.dataset.sig !== JSON.stringify(vr.assumptions)) {
       asm.dataset.sig = JSON.stringify(vr.assumptions);
@@ -765,6 +1039,8 @@
     let changed = false;
     tasks.forEach(tk => {
       if (done[tk.id] || this.activeTask !== tk.id) return;
+      // görev başlangıç durumunda (kullanıcı ya da benzetim henüz bir şey değiştirmeden) tamamlanmış sayılmaz
+      if (this._taskState0 !== undefined) { if (JSON.stringify(this.state) === this._taskState0) return; this._taskState0 = undefined; }
       let ok = false;
       try { ok = !!tk.check(this.validResult, this.state, this.live, this); } catch (_) { ok = false; }
       if (ok) { done[tk.id] = Date.now(); changed = true; this.activeTask = null; toast('Görev tamamlandı: ' + tk.title, 'ok'); }
@@ -773,13 +1049,16 @@
     this.renderTasks();
   };
   App.prototype.startTask = function (tk) {
+    // "Tekrarla": tamamlanmış görev yeniden değerlendirilebilsin
+    if (this.doneTasks && this.doneTasks[tk.id]) { delete this.doneTasks[tk.id]; storageSet(this.taskKey(), JSON.stringify(this.doneTasks)); }
     if (tk.state) {
       this.state = Object.assign(clone(this.def.defaults()), clone(tk.state));
       this.live = this.def.initLive ? this.def.initLive(this.state) : {}; this.simTime = 0;
-      this.rebuildScene(); this.renderControls();
+      this._forceRebuild = true; this.renderControls(true);
     }
     if (tk.start) { this.running = true; this.paused = false; if (this.def.start) this.def.start(this); this.syncToolbar(); }
     this.activeTask = tk.id;
+    this._taskState0 = JSON.stringify(this.state);
     this.recompute();
     toast('Görev: ' + tk.goal);
   };
@@ -832,7 +1111,7 @@
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.fillStyle = '#0b1a30'; g.fillRect(0, 0, W, H);
-    this.def.view2d(g, W, H, this.validResult, this.state, this.live, this);
+    try { this.def.view2d(g, W, H, this.validResult, this.state, this.live, this); } catch (e) { this.fault('2d', e); }
   };
 
   /* --- 3D */
@@ -843,28 +1122,41 @@
     try {
       this.viewer = new Viewer(stage, canvas, { background: this.def.scene.background });
     } catch (e) { console.warn('WebGL başlatılamadı', e); return false; }
+    this.viewer.wake = () => { if (this._wake) this._wake(); };
     this.kit = makeKit(this.viewer);
-    this._sceneSig = this.def.scene.rebuildOn ? this.def.scene.rebuildOn(this.state) : null;
-    try { this.def.scene.build(this.kit, this.state, this); }
+    try { this._sceneSig = this.def.scene.rebuildOn ? this.def.scene.rebuildOn(this.state) : null; } catch (_) { this._sceneSig = null; }
+    try { this.def.scene.build(this.kit, this.state, this); this.finishScene(); }
     catch (e) { console.warn('3D sahne kurulamadı', e); this.viewer.dispose(); this.viewer = null; this.kit = null; return false; }
-    linearizeTree(this.viewer.scene);
-    this.viewer.applyClip();
     const info = stage.querySelector('[data-vs-info]');
-    const showInfo = p => {
+    info.tabIndex = -1;
+    const close = () => { this.viewer.select(null); canvas.focus({ preventScroll: true }); };
+    info.addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); close(); } });
+    const showInfo = (p, viaKeyboard, focusCard) => {
       if (!p) { info.hidden = true; return; }
-      const lines = typeof p.info === 'function' ? p.info(this) : p.info || [];
-      const acts = (typeof p.actions === 'function' ? p.actions(this) : p.actions || []).filter(Boolean);
-      info.innerHTML = '<button type="button" class="vs-info__x" aria-label="Kapat">×</button><strong>' + esc(typeof p.title === 'function' ? p.title(this) : p.title) + '</strong>' + (lines.length ? '<ul>' + lines.map(l => '<li>' + esc(l) + '</li>').join('') + '</ul>' : '');
+      let lines = [], acts = [], title = '';
+      try { title = typeof p.title === 'function' ? p.title(this) : p.title; } catch (e) { this.fault('info', e); }
+      try {
+        lines = typeof p.info === 'function' ? p.info(this) || [] : p.info || [];
+        acts = (typeof p.actions === 'function' ? p.actions(this) || [] : p.actions || []).filter(Boolean);
+      } catch (e) { this.fault('info', e); }
+      info.innerHTML = '<button type="button" class="vs-info__x" aria-label="Kapat">×</button><strong>' + esc(title) + '</strong>' + (lines.length ? '<ul>' + lines.map(l => '<li>' + esc(l) + '</li>').join('') + '</ul>' : '');
       if (acts.length) {
         const row = el('div', { class: 'vs-info__acts' });
         acts.forEach(a => row.appendChild(el('button', { type: 'button', class: 'vs-btn' + (a.variant ? ' vs-btn--' + a.variant : ''), text: a.label, onclick: () => {
-          a.onClick(this); this.renderControls(); this.invalidate();
-          requestAnimationFrame(() => requestAnimationFrame(() => { if (this.viewer.selected === p) showInfo(p); }));
+          try { a.onClick(this); } catch (e) { this.fault('action', e); }
+          this.renderControls(); this.invalidate();
+          const back = info.contains(document.activeElement);
+          requestAnimationFrame(() => requestAnimationFrame(() => { if (this.viewer && this.viewer.selected === p) { showInfo(p, false); if (back) { const b = info.querySelector('.vs-info__acts .vs-btn') || info; b.focus({ preventScroll: true }); } } }));
         } })));
         info.appendChild(row);
       }
+      info.setAttribute('aria-label', 'Ekipman ayrıntısı: ' + title);
       info.hidden = false;
-      info.querySelector('.vs-info__x').onclick = () => this.viewer.select(null);
+      info.querySelector('.vs-info__x').onclick = close;
+      if (viaKeyboard) {
+        this.say(title + (acts.length ? '. Ayrıntı ve işlemler için Enter.' : ''));
+        if (focusCard) (info.querySelector('.vs-info__acts .vs-btn') || info).focus({ preventScroll: true });
+      }
     };
     this.viewer.onSelect = showInfo;
     this.viewer.onContextLost = () => {
@@ -880,36 +1172,71 @@
     };
     return true;
   };
+  /** Build sonrası ortak adımlar: renk dönüşümü, statik grupların birleştirilmesi, küçük parçalarda gölgenin kapatılması. */
+  App.prototype.finishScene = function () {
+    const v = this.viewer, T = v.T;
+    linearizeTree(v.scene);
+    const owned = new Set(v._kitResources || []); v.keep.forEach(r => owned.add(r));
+    const groups = []; v.root.traverse(o => { if (o.userData.vsStatic) groups.push(o); });
+    const skip = new Set(v.shells); v.pickables.forEach(p => skip.add(p.obj)); v.explodables.forEach(x => skip.add(x.obj));
+    groups.forEach(g => { try { mergeStatic(T, g, owned, skip); } catch (e) { console.warn('birleştirme atlandı', e); } });
+    v.pruneShadows();
+    v.applyTransparent();
+    this._sceneError = false;
+  };
   App.prototype.loop = function () {
-    let last = 0, next = 0, acc = 0;
+    let last = 0, next = 0, acc = 0, lastRender = 0, idle = 0, shadowT = 0, wasAnim = false;
     this._visible = true; this._pageHidden = false; this._raf = 0;
     const awake = () => !this._disposed && !this._pageHidden && !document.hidden && this._visible;
     const schedule = () => { if (awake() && !this._raf) this._raf = requestAnimationFrame(step); };
     const sync = () => {
       if (!awake()) { cancelAnimationFrame(this._raf); this._raf = 0; last = next = 0; }
-      else schedule();
+      else { if (this.viewer) this.viewer.dirty = true; schedule(); }
     };
+    const FRAME = 1000 / 60, AMBIENT = 1000 / 30, AMBIENT_LOW = 1000 / 24;
     const step = now => {
       this._raf = 0; if (!awake()) { last = next = 0; return; }
       // High-refresh displays should not double the GPU load of an engineering
       // workspace. Keep elapsed time, and resume without a background time jump.
       if (next && now < next - 0.5) { schedule(); return; }
-      next = now + 1000 / 60 - (next ? (now - next) % (1000 / 60) : 0);
+      next = now + FRAME - (next ? (now - next) % FRAME : 0);
       const dt = last ? Math.min(0.1, (now - last) / 1000) : 0; last = now;
-      if (this.running && !this.paused && this.def.tick) {
+      const running = this.running && !this.paused && !!this.def.tick;
+      if (running) {
         this.simTime += dt;
-        const changed = this.def.tick(this, dt);
+        let changed = false;
+        try { changed = this.def.tick(this, dt); } catch (e) { this.fault('tick', e); }
         acc += dt;
         if (changed && acc > 0.2) { acc = 0; this.renderAnalysis(); this.updateBadge(); this.checkTasks(); if (this.mode === '2d') this.draw2d(); }
       }
-      if (this.viewer && !this.viewer.contextLost && this.viewer.visible && this.mode === '3d') {
+      let keep = running;
+      const v = this.viewer;
+      if (v && !v.contextLost && v.visible && this.mode === '3d') {
         const animDt = this.paused ? 0 : dt;
-        if (this.def.scene.animate && this.validResult) this.def.scene.animate(this.kit, animDt, this.validResult, this.state, this.live, this);
-        this.viewer.animated.forEach(a => a.update(animDt));
-        this.viewer.frame(dt);
+        let anim = false, flows = false;
+        if (this.def.scene.animate && this.validResult && this.kit && !this._sceneError) {
+          // animate() çizim gerekiyorsa true döner; dönüş değeri olmayan eski modüller çalışırken her kare çizilir
+          try { const r = this.def.scene.animate(this.kit, animDt, this.validResult, this.state, this.live, this); anim = r === undefined ? (this.running && !this.paused) : !!r; } catch (e) { this.fault('animate', e); }
+        }
+        for (let i = 0; i < v.animated.length; i++) { try { if (v.animated[i].update(animDt)) flows = true; } catch (e) { this.fault('flow', e); } }
+        // animasyon yeni durduysa son konumun gölgesi bir kez daha çizilir
+        if (wasAnim && !anim) { v.renderer.shadowMap.needsUpdate = true; v.dirty = true; }
+        wasAnim = anim;
+        const cam = v.moving() || !!this._explodeRaf;
+        const want = v.dirty || cam || anim || flows;
+        // yalnız ortam animasyonu (akış, fan, dönen rotor) varken 30 fps yeterli (düşük katmanda 24 fps); kamera/etkileşimde tam hız
+        const gap = !v.dirty && !cam ? (v.quality === 'low' ? AMBIENT_LOW : AMBIENT) : 0;
+        if (want && now - lastRender >= gap - 1) {
+          if (anim && now - shadowT > 200) { v.renderer.shadowMap.needsUpdate = true; shadowT = now; }
+          try { v.frame(dt); } catch (e) { v.dirty = false; this.fault('render', e); }
+          lastRender = now;
+        }
+        keep = keep || want;
       }
-      schedule();
+      // hiçbir şey değişmiyorsa birkaç kare sonra döngü durur; viewer.invalidate() / app.invalidate() yeniden uyandırır
+      if (keep) { idle = 0; schedule(); } else if (++idle < 3) schedule(); else { last = next = 0; }
     };
+    this._wake = schedule;
     this._loopSync = sync;
     document.addEventListener('visibilitychange', sync);
     const hide = e => { this._pageHidden = true; sync(); if (!e.persisted) this.dispose(); };
@@ -921,14 +1248,17 @@
     }
     schedule();
   };
+  /** Simülasyon başlatıldı/devam ettirildiğinde döngüyü uyandır. */
+  App.prototype.wake = function () { if (this.viewer) this.viewer.dirty = true; if (this._wake) this._wake(); };
   App.prototype.dispose = function () {
     if (this._disposed) return; this._disposed = true;
     cancelAnimationFrame(this._raf); cancelAnimationFrame(this._explodeRaf); cancelAnimationFrame(this._computeRaf);
-    clearTimeout(this._save); clearTimeout(this._rs);
-    storageSet(this.storageKey, JSON.stringify({ savedAt: Date.now(), state: this.state }));
+    clearTimeout(this._save); clearTimeout(this._rs); clearTimeout(this._holdT);
+    this.saveState();
     if (this._loopCleanup) this._loopCleanup();
     if (this._appObserver) this._appObserver.disconnect();
     if (this._onResize) window.removeEventListener('resize', this._onResize);
+    if (this._docCleanup) this._docCleanup();
     if (this.viewer) this.viewer.dispose();
   };
   App.prototype.setMode = function (mode) {
@@ -939,35 +1269,58 @@
     stage.classList.toggle('has-fallback', !!(fallback && !fallback.hidden));
     const tab = this.root.querySelector('[data-vs-pane="stage"]'); if (tab) tab.textContent = mode === '2d' ? '2D Şema' : '3D Simülasyon';
     const b = this.root.querySelector('[data-vs-act="mode"]'); if (b) { b.setAttribute('aria-pressed', mode === '2d' ? 'true' : 'false'); b.querySelector('span').textContent = mode === '2d' ? '3D görünüm' : '2D şema'; }
-    if (mode === '2d') this.draw2d(); else if (this.viewer) this.viewer.resize();
+    if (mode === '2d') this.draw2d(); else if (this.viewer) { this.viewer.resize(); this.viewer.invalidate(); }
   };
 
   /* --- proje kaydet / yükle */
   App.prototype.project = function () {
-    return { format: 'voltsim-project', version: 1, module: this.def.id, title: this.def.title, savedAt: new Date().toISOString(), engine: E.version, state: this.state };
+    return { format: 'voltsim-project', version: 1, schema: this.schema, module: this.def.id, title: this.def.title, savedAt: new Date().toISOString(), engine: E.version, state: this.state };
+  };
+  /** Sahneyi baştan kurmak ve analizleri yenilemek için ortak yol (senaryo, görev, sıfırlama, proje yükleme). */
+  App.prototype.applyState = function (state) {
+    this.state = state;
+    this.live = this.def.initLive ? this.def.initLive(this.state) : {};
+    this.simTime = 0; this.activeTask = null;
+    this._forceRebuild = true;
+    this.renderControls(true); this.recompute(); this.renderTasks();
   };
   App.prototype.loadProject = function (obj) {
     if (!obj || obj.format !== 'voltsim-project') throw new Error('Bu dosya bir VoltSim projesi değil.');
     if (obj.module !== this.def.id) throw new Error('Bu proje “' + (obj.title || obj.module) + '” simülasyonuna ait. İlgili simülasyon sayfasından yükleyin.');
-    if (!obj.state || typeof obj.state !== 'object') throw new Error('Proje dosyasında girdi bulunamadı.');
-    const merged = Object.assign(clone(this.def.defaults()), obj.state);
-    const test = this.def.compute(merged, this);
-    this.state = merged;
-    if (this.def.initLive) this.live = this.def.initLive(this.state);
-    this.rebuildScene();
-    this.renderControls(); this.recompute();
+    if (!obj.state || typeof obj.state !== 'object' || Array.isArray(obj.state)) throw new Error('Proje dosyasında girdi bulunamadı.');
+    if (obj.schema && obj.schema > this.schema) throw new Error('Proje bu sayfadan daha yeni bir VoltSim sürümüyle kaydedilmiş.');
+    const merged = sanitize(this.def.defaults(), obj.state);
+    let test;
+    try { test = this.def.compute(merged, this); } catch (e) { throw new Error('Proje bu sürümle hesaplanamadı: ' + e.message); }
+    const prev = this.state;
+    this.running = !!this.def.autoRun; this.paused = false;
+    this.applyState(merged);
+    if (this._sceneError) { this.applyState(prev); throw new Error('Proje 3D sahnede kurulamadı; önceki çalışmanız korundu.'); }
+    if (this.running && this.def.start) { try { this.def.start(this); } catch (e) { this.fault('start', e); } }
+    this.syncToolbar(); this.wake();
     return test;
   };
-  App.prototype.rebuildScene = function () {
-    if (!this.viewer) return;
-    this._sceneSig = this.def.scene.rebuildOn ? this.def.scene.rebuildOn(this.state) : null;
-    // sahne güncel durumun sonucuyla kurulsun (senaryo/proje yüklemede eski sonuç kullanılmasın)
-    try { const r = this.def.compute(this.state, this); this.result = r; if (r.ok) this.validResult = r; } catch (_) { /* hata recompute'ta gösterilir */ }
+  App.prototype.rebuildScene = function (sig) {
+    if (!this.viewer) return true;
+    this._forceRebuild = false; this._rebuildPending = false;
+    if (sig === undefined) { try { sig = this.def.scene.rebuildOn ? this.def.scene.rebuildOn(this.state) : null; } catch (_) { sig = null; } }
+    this._sceneSig = sig;
     this.viewer.clear();
-    this.kit = makeKit(this.viewer);
-    this.def.scene.build(this.kit, this.state, this);
-    linearizeTree(this.viewer.scene);
-    this.viewer.applyTransparent();
+    this.kit = makeKit(this.viewer); this.scene3 = null;
+    try {
+      this.def.scene.build(this.kit, this.state, this);
+      this.finishScene();
+      const fb = this.root.querySelector('[data-vs-fallback]');
+      if (fb && fb.dataset.build) { fb.hidden = true; delete fb.dataset.build; this.setMode(this.mode); }
+      return true;
+    } catch (e) {
+      // başarısız kurulum: yarım sahne temizlenir, uygulama 2D şema ve hesaplarla devam eder
+      this.viewer.clear(); this.kit = makeKit(this.viewer); this.scene3 = null; this._sceneError = true;
+      this.fault('build', e);
+      const fb = this.root.querySelector('[data-vs-fallback]');
+      if (fb) { fb.hidden = false; fb.dataset.build = '1'; fb.textContent = '3D sahne bu girdilerle kurulamadı. Hesaplar ve 2D şema çalışıyor; girdileri değiştirin ya da Sıfırla ile varsayılana dönün.'; }
+      return false;
+    }
   };
   function download(name, mime, data) {
     const blob = data instanceof Blob ? data : new Blob([data], { type: mime });
@@ -989,9 +1342,15 @@
       const n = Math.max.apply(null, c.series.map(s => s.data.length));
       for (let i = 0; i < n; i++) rows.push([c.series[0].data[i] ? c.series[0].data[i][0] : ''].concat(c.series.map(s => s.data[i] ? s.data[i][1] : '')));
     });
-    const cell = v => { const s = typeof v === 'number' ? String(Math.round(v * 1e6) / 1e6).replace('.', ',') : String(v === undefined ? '' : v); return /[;"\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
-    return '﻿' + rows.map(r => r.map(cell).join(';')).join('\r\n');
+    return '﻿' + rows.map(r => r.map(csvCell).join(';')).join('\r\n');
   };
+  /** CSV hücresi: sayılarda ondalık virgül; metinde ; " satır sonu tırnaklanır; formül gibi başlayan metin (=, +, @, -harf)
+   * elektronik tabloda çalıştırılmasın diye ' ile başlatılır. */
+  function csvCell(v) {
+    let s = typeof v === 'number' ? String(Math.round(v * 1e6) / 1e6).replace('.', ',') : String(v === undefined || v === null ? '' : v);
+    if (typeof v !== 'number' && /^(?:[=+@\t\r]|-(?![\d,.]))/.test(s)) s = "'" + s;
+    return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
   function flatInputs(app) {
     const out = [];
     const groups = typeof app.def.controls === 'function' ? app.def.controls(app.state, app) : app.def.controls;
@@ -1001,7 +1360,7 @@
       if (it.type === 'select' || it.type === 'seg' || it.type === 'chips') { const o = (it.options || []).find(o => String(Array.isArray(o) ? o[0] : o.value) === String(v)); v = o ? (Array.isArray(o) ? o[1] : o.label) : v; }
       else if (it.type === 'toggle') v = v ? 'Evet' : 'Hayır';
       else if (it.fmt) v = it.fmt(v);
-      else if (typeof v === 'number') v = fmt(v, it.digits === undefined ? (it.step < 1 ? 2 : 0) : it.digits, it.unit);
+      else if (typeof v === 'number') v = fmt(v, digitsOf(it), it.unit);
       else if (it.format) v = it.format(v);
       out.push({ group: g.title, label: it.label, value: String(v) });
     }));
@@ -1023,26 +1382,26 @@
     const snap = this.viewer && this.mode === '3d' ? this.viewer.snapshot(1400) : (this.root.querySelector('[data-vs-2d]') ? (this.draw2d(), this.root.querySelector('[data-vs-2d]').toDataURL('image/png')) : null);
     const charts = Array.from(this.root.querySelectorAll('.vs-chart')).map(f => ({ title: f.querySelector('figcaption').textContent, img: f.querySelector('canvas').toDataURL('image/png') }));
     const blocks = [];
+    // başlık, bölümün ilk parçasıyla aynı blokta tutulur (sayfa sonunda yetim başlık kalmaz)
+    const section = (head, parts) => { (parts.length ? parts : ['']).forEach((p, i) => blocks.push((i ? '' : head) + p)); };
     blocks.push('<header class="rp-head"><img src="/public/voltguard-logo.webp" alt="" width="54" height="54"><div><strong>VoltGuard · VoltSim Teknik Raporu</strong><span>' + esc(d.title) + '</span></div><div class="rp-meta">' + esc(now.toLocaleDateString('tr-TR')) + ' ' + esc(now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })) + '<br>Motor sürümü ' + esc(E.version) + '</div></header>');
     blocks.push('<p class="rp-disc"><b>Önemli:</b> VoltSim mühendislik eğitimi ve ön değerlendirme amacıyla hazırlanmıştır. Nihai proje, ekipman seçimi, uygulama ve mevzuat uygunluğu yetkili mühendis tarafından değerlendirilmelidir. Bu rapor resmî proje onayı veya mevzuata uygunluk belgesi değildir.</p>');
     if (snap) blocks.push('<figure class="rp-fig"><img src="' + snap + '" alt=""><figcaption>Simülasyon görünümü</figcaption></figure>');
     const inputs = flatInputs(this);
-    blocks.push('<h2>1. Girilen değerler</h2>');
     let grp = null, rows = '';
     inputs.forEach(x => { if (x.group !== grp) { grp = x.group; rows += '<tr class="rp-g"><td colspan="2">' + esc(grp || '') + '</td></tr>'; } rows += '<tr><td>' + esc(x.label) + '</td><td>' + esc(x.value) + '</td></tr>'; });
-    // uzun tabloları sayfalanabilir parçalara böl
-    chunkRows(rows, 22).forEach(part => blocks.push('<table class="rp-t">' + part + '</table>'));
-    blocks.push('<h2>2. Hesaplanan sonuçlar</h2>');
+    section('<h2>1. Girilen değerler</h2>', chunkRows(rows, 22).map(part => '<table class="rp-t">' + part + '</table>'));
     const ro = d.readouts(r, this.state, this.live, this);
-    chunkRows(ro.map(x => '<tr><td>' + esc(x.label) + '</td><td>' + esc(x.value) + (x.sub ? ' <small>' + esc(x.sub) + '</small>' : '') + '</td></tr>').join(''), 22).forEach(p => blocks.push('<table class="rp-t">' + p + '</table>'));
+    section('<h2>2. Hesaplanan sonuçlar</h2>', chunkRows(ro.map(x => '<tr><td>' + esc(x.label) + '</td><td>' + esc(x.value) + (x.sub ? ' <small>' + esc(x.sub) + '</small>' : '') + '</td></tr>').join(''), 22).map(p => '<table class="rp-t">' + p + '</table>'));
     charts.forEach(c => blocks.push('<figure class="rp-chart"><img src="' + c.img + '" alt=""><figcaption>' + esc(c.title) + '</figcaption></figure>'));
-    blocks.push('<h2>3. Uygunluk ön kontrolü</h2><p class="rp-small">Ön kontroller simülasyon modelinin sınırları içindedir; tasarım doğrulaması ve resmî onay yerine geçmez.</p>');
     const st = { ok: 'Uygun', warn: 'Uyarı', fail: 'Uygun değil', info: 'Bilgi' };
-    chunkRows(r.checks.map(c => '<tr data-s="' + c.status + '"><td>' + esc(st[c.status]) + '</td><td><b>' + esc(c.label) + '</b><br>' + esc(c.detail) + (c.ref ? '<br><i>' + esc(c.ref) + '</i>' : '') + '</td></tr>').join(''), 9).forEach(p => blocks.push('<table class="rp-t rp-checks">' + p + '</table>'));
-    blocks.push('<h2>4. Kullanılan bağıntılar</h2><ul class="rp-l">' + (r.formulas || []).map(f => '<li><code>' + esc(f) + '</code></li>').join('') + '</ul>');
-    blocks.push('<h2>5. Varsayımlar ve sınırlamalar</h2><ul class="rp-l">' + (r.assumptions || []).map(f => '<li>' + esc(f) + '</li>').join('') + '</ul>');
-    blocks.push('<h2>6. Mevzuat ve standart kaynakları</h2><p class="rp-small">Bağlayıcı düzenlemeler (kanun/yönetmelik) ile gönüllü standartlar ayrı belirtilmiştir. Son kontrol tarihi: ' + esc(window.VoltSimRegsChecked || '') + '. Güncel konsolide metin resmî kaynaktan doğrulanmalıdır.</p>');
-    chunkRows(regs.map(x => '<tr><td>' + esc(x.binding ? 'Bağlayıcı' : 'Standart / rehber') + '</td><td><b>' + esc(x.name) + '</b>' + (x.rg ? ' · RG ' + esc(x.rg) : '') + (x.version ? ' · ' + esc(x.version) : '') + (x.url ? '<br><span class="rp-url">' + esc(x.url) + '</span>' : '') + (x.needsCheck ? '<br><i>Güncel mevzuat doğrulaması gereklidir.</i>' : '') + '</td></tr>').join(''), 8).forEach(p => blocks.push('<table class="rp-t rp-checks">' + p + '</table>'));
+    section('<h2>3. Uygunluk ön kontrolü</h2><p class="rp-small">Ön kontroller simülasyon modelinin sınırları içindedir; tasarım doğrulaması ve resmî onay yerine geçmez.</p>',
+      chunkRows(r.checks.map(c => '<tr data-s="' + c.status + '"><td>' + esc(st[c.status]) + '</td><td><b>' + esc(c.label) + '</b><br>' + esc(c.detail) + (c.ref ? '<br><i>' + esc(c.ref) + '</i>' : '') + '</td></tr>').join(''), 9).map(p => '<table class="rp-t rp-checks">' + p + '</table>'));
+    const list = (head, items, code) => { for (let i = 0; i < Math.max(1, items.length); i += 12) blocks.push((i ? '' : head) + '<ul class="rp-l">' + items.slice(i, i + 12).map(f => '<li>' + (code ? '<code>' + esc(f) + '</code>' : esc(f)) + '</li>').join('') + '</ul>'); };
+    list('<h2>4. Kullanılan bağıntılar</h2>', r.formulas || [], true);
+    list('<h2>5. Varsayımlar ve sınırlamalar</h2>', r.assumptions || [], false);
+    section('<h2>6. Mevzuat ve standart kaynakları</h2><p class="rp-small">Bağlayıcı düzenlemeler (kanun/yönetmelik) ile gönüllü standartlar ayrı belirtilmiştir. Son kontrol tarihi: ' + esc(window.VoltSimRegsChecked || '') + '. Güncel konsolide metin resmî kaynaktan doğrulanmalıdır.</p>',
+      chunkRows(regs.map(x => '<tr><td>' + esc(x.binding ? 'Bağlayıcı' : 'Standart / rehber') + '</td><td><b>' + esc(x.name) + '</b>' + (x.rg ? ' · RG ' + esc(x.rg) : '') + (x.version ? ' · ' + esc(x.version) : '') + (x.url ? '<br><span class="rp-url">' + esc(x.url) + '</span>' : '') + (x.needsCheck ? '<br><i>Güncel mevzuat doğrulaması gereklidir.</i>' : '') + '</td></tr>').join(''), 8).map(p => '<table class="rp-t rp-checks">' + p + '</table>'));
     blocks.push('<footer class="rp-foot">voltguard.com.tr · VoltSim · ' + esc(location.href.split('#')[0]) + '<br>Girdileriniz yalnızca tarayıcınızda işlenmiştir; bu rapor VoltGuard’a otomatik gönderilmez.</footer>');
     return blocks;
   };
@@ -1057,35 +1416,44 @@
     const blocks = this.reportDOM();
     const host = el('div', { class: 'rp-host', 'aria-hidden': 'true' });
     document.body.appendChild(host);
-    const PAGE_W = 794, PAGE_H = 1123, PAD = 46;
-    const pages = [];
-    let page = null, used = 0;
-    const newPage = () => { page = el('div', { class: 'rp-page' }); host.appendChild(page); pages.push(page); used = PAD * 2; };
-    newPage();
-    for (const b of blocks) {
-      const node = el('div', { class: 'rp-block', html: b }); // bloktaki tüm öğeler (başlık + liste) birlikte taşınır
-      page.appendChild(node);
-      await waitImages(node);
-      const h = node.getBoundingClientRect().height + 10;
-      if (used + h > PAGE_H - 20 && page.children.length > 1) { page.removeChild(node); newPage(); page.appendChild(node); }
-      used += h;
-    }
-    const jsPDF = window.jspdf.jsPDF;
-    const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true });
-    doc.setProperties({ title: 'VoltSim · ' + this.def.title, subject: 'VoltSim teknik raporu', author: 'VoltGuard', creator: 'VoltSim' });
-    for (let i = 0; i < pages.length; i++) {
-      const p = pages[i];
-      p.appendChild(el('div', { class: 'rp-num', text: 'Sayfa ' + (i + 1) + ' / ' + pages.length }));
-      const cv = await window.html2canvas(p, { scale: 2, backgroundColor: '#ffffff', logging: false, width: PAGE_W, height: PAGE_H, windowWidth: PAGE_W });
-      if (i) doc.addPage();
-      doc.addImage(cv.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, 210, 297);
-    }
-    host.remove();
-    download(fileStem(this.def.id) + '-rapor.pdf', 'application/pdf', doc.output('blob'));
+    try {
+      const PAGE_W = 794, PAGE_H = 1123, PAD = 46;
+      const pages = [];
+      let page = null, used = 0;
+      const newPage = () => { page = el('div', { class: 'rp-page' }); host.appendChild(page); pages.push(page); used = PAD * 2; };
+      newPage();
+      for (const b of blocks) {
+        const node = el('div', { class: 'rp-block', html: b }); // bloktaki tüm öğeler (başlık + tablo) birlikte taşınır
+        page.appendChild(node);
+        await waitImages(node);
+        const h = node.getBoundingClientRect().height + 10;
+        if (used + h > PAGE_H - 20 && page.children.length > 1) { page.removeChild(node); newPage(); page.appendChild(node); }
+        used += h;
+      }
+      const jsPDF = window.jspdf.jsPDF;
+      const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true });
+      doc.setProperties({ title: 'VoltSim · ' + this.def.title, subject: 'VoltSim teknik raporu', author: 'VoltGuard', creator: 'VoltSim' });
+      const scale = coarse ? 1.5 : 2; // mobil tarayıcıların tuval belleği sınırı
+      for (let i = 0; i < pages.length; i++) {
+        const p = pages[i];
+        p.appendChild(el('div', { class: 'rp-num', text: 'Sayfa ' + (i + 1) + ' / ' + pages.length }));
+        const cv = await window.html2canvas(p, { scale: scale, backgroundColor: '#ffffff', logging: false, width: PAGE_W, height: PAGE_H, windowWidth: PAGE_W });
+        if (i) doc.addPage();
+        doc.addImage(cv.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, 210, 297);
+        cv.width = cv.height = 0;
+      }
+      download(fileStem(this.def.id) + '-rapor.pdf', 'application/pdf', doc.output('blob'));
+    } finally { host.remove(); }
   };
   function waitImages(node) { return Promise.all(Array.from(node.querySelectorAll('img')).map(i => i.complete ? null : new Promise(r => { i.onload = i.onerror = r; }))); }
 
   /* --- araç çubuğu eylemleri */
+  App.prototype.toggleExpanded = function (on) {
+    const work = this.root.querySelector('.vs-work');
+    work.classList.toggle('is-expanded', on); document.body.classList.toggle('vs-expanded', on);
+    const b = this.root.querySelector('[data-vs-act="full"]'); if (b) b.setAttribute('aria-pressed', String(on));
+    setTimeout(() => { if (this.viewer) this.viewer.resize(); this.renderAnalysis(); }, 120);
+  };
   App.prototype.action = async function (act, btn) {
     try {
       if (act === 'start') {
@@ -1095,25 +1463,29 @@
         if (!this.running) { this.running = true; this.paused = false; if (this.def.start && !this._startedOnce) this.def.start(this); }
         else this.paused = !this.paused;
       } else if (act === 'reset') {
-        this.state = clone(this.def.defaults()); this.live = this.def.initLive ? this.def.initLive(this.state) : {};
-        this.running = !!this.def.autoRun; this.paused = false; this.simTime = 0;
         storageDel(this.storageKey);
-        this._sceneSig = undefined; this.rebuildScene(); this.renderControls(); this.recompute(); if (this.viewer) this.viewer.resetView();
+        this.running = !!this.def.autoRun; this.paused = false;
+        this.applyState(clone(this.def.defaults()));
+        if (this.running && this.def.start) this.def.start(this);
+        if (this.viewer) this.viewer.resetView();
         toast('Varsayılan değerlere dönüldü.');
       } else if (act === 'camera') { if (this.viewer) this.viewer.resetView(); }
       else if (act === 'full') {
         const work = this.root.querySelector('.vs-work');
-        if (document.fullscreenElement) await document.exitFullscreen();
-        else if (work.requestFullscreen && !/iPhone|iPad/.test(navigator.userAgent)) await work.requestFullscreen();
-        else { work.classList.toggle('is-expanded'); document.body.classList.toggle('vs-expanded'); }
+        const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+        if (fsEl) await (document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen());
+        else if (work.classList.contains('is-expanded')) this.toggleExpanded(false);
+        else if (document.fullscreenEnabled && work.requestFullscreen) await work.requestFullscreen();
+        else if (document.webkitFullscreenEnabled && work.webkitRequestFullscreen) work.webkitRequestFullscreen();
+        else this.toggleExpanded(true);
         setTimeout(() => { if (this.viewer) this.viewer.resize(); this.renderAnalysis(); }, 120);
       } else if (act === 'mode') this.setMode(this.mode === '3d' ? '2d' : '3d');
       else if (act === 'report') { btn && (btn.disabled = true); toast('Rapor hazırlanıyor…'); await this.pdf(); toast('PDF rapor indirildi.', 'ok'); }
       else if (act === 'csv') { download(fileStem(this.def.id) + '.csv', 'text/csv;charset=utf-8', this.csv()); toast('CSV indirildi.', 'ok'); }
       else if (act === 'save') { download(fileStem(this.def.id) + '.voltsim.json', 'application/json', JSON.stringify(this.project(), null, 2)); toast('Proje dosyası indirildi.', 'ok'); }
       else if (act === 'load') { this.root.querySelector('[data-vs-file]').click(); }
-      else if (act === 'spin') { if (this.viewer) { this.viewer.autoSpin = !this.viewer.autoSpin; btn.setAttribute('aria-pressed', String(this.viewer.autoSpin)); } }
-      else if (act === 'labels') { if (this.viewer) { this.viewer.showLabels = !this.viewer.showLabels; btn.setAttribute('aria-pressed', String(this.viewer.showLabels)); } }
+      else if (act === 'spin') { if (this.viewer) { this.viewer.autoSpin = !this.viewer.autoSpin; btn.setAttribute('aria-pressed', String(this.viewer.autoSpin)); this.viewer.invalidate(); } }
+      else if (act === 'labels') { if (this.viewer) { this.viewer.showLabels = !this.viewer.showLabels; btn.setAttribute('aria-pressed', String(this.viewer.showLabels)); this.viewer.invalidate(); } }
       else if (act === 'ghost') { if (this.viewer) { this.viewer.transparent = !this.viewer.transparent; this.viewer.applyTransparent(); btn.setAttribute('aria-pressed', String(this.viewer.transparent)); } }
       else if (act === 'section') {
         if (!this.viewer) return;
@@ -1125,10 +1497,10 @@
         cancelAnimationFrame(this._explodeRaf);
         const on = btn.getAttribute('aria-pressed') !== 'true'; btn.setAttribute('aria-pressed', String(on));
         const from = this.viewer.explode, to = on ? 1 : 0, t0 = performance.now();
-        const anim = now => { if (this._disposed) return; const k = Math.min(1, (now - t0) / (reduceMotion ? 1 : 500)); this.viewer.explode = from + (to - from) * (1 - Math.pow(1 - k, 3)); this._explodeRaf = k < 1 ? requestAnimationFrame(anim) : 0; };
+        const anim = now => { if (this._disposed) return; const k = Math.min(1, (now - t0) / (reduceMotion ? 1 : 500)); this.viewer.explode = from + (to - from) * (1 - Math.pow(1 - k, 3)); this._explodeRaf = k < 1 ? requestAnimationFrame(anim) : 0; this.viewer.invalidateShadows(); };
         this._explodeRaf = requestAnimationFrame(anim);
       }
-      this.syncToolbar();
+      this.syncToolbar(); this.wake();
     } catch (e) { console.error(e); toast(e.message || 'İşlem tamamlanamadı.', 'bad'); }
     finally { if (btn) btn.disabled = false; }
   };
@@ -1136,28 +1508,45 @@
     if (!this.viewer) return;
     const b = this.def.scene.bounds || [-2, 2];
     this.viewer.clipPlane.constant = b[0] + (b[1] - b[0]) * pct / 100;
+    this.viewer.invalidateShadows();
   };
   App.prototype.syncToolbar = function () {
     const p = this.root.querySelector('[data-vs-act="pause"]');
-    if (p) { const on = this.running && !this.paused; p.setAttribute('aria-pressed', String(on)); p.querySelector('span').textContent = !this.running ? 'Devam et' : this.paused ? 'Devam et' : 'Durdur'; }
+    // aria-pressed = duraklatıldı mı; etiket yapılacak işi söyler
+    if (p) { const stopped = !this.running || this.paused; p.setAttribute('aria-pressed', String(stopped)); p.querySelector('span').textContent = stopped ? 'Devam et' : 'Duraklat'; p.setAttribute('aria-label', stopped ? 'Simülasyona devam et' : 'Simülasyonu duraklat'); }
     const st = this.root.querySelector('[data-vs-act="start"]');
     if (st) st.querySelector('span').textContent = this.running && this.simTime > 0 ? 'Yeniden başlat' : 'Simülasyonu başlat';
   };
 
   /* --- kurulum */
+  App.prototype.restoreSaved = function () {
+    const saved = storageGet(this.storageKey);
+    if (!saved) return false;
+    try {
+      const o = JSON.parse(saved);
+      if (!o || !o.state || typeof o.state !== 'object') return false;
+      if ((o.schema || 1) !== this.schema) { storageDel(this.storageKey); return false; }
+      const st = sanitize(this.def.defaults(), o.state);
+      this.def.compute(st, this); // hesap istisna atıyorsa kayıt bu sürümle uyumsuzdur
+      this.state = st; return true;
+    } catch (_) { storageDel(this.storageKey); return false; }
+  };
   App.prototype.mount = function () {
     const self = this, root = this.root, d = this.def;
+    // canlı bölgeler baştan var olmalı (ilk duyuru kaçmasın)
+    if (!document.getElementById('vsToast')) document.body.appendChild(el('div', { id: 'vsToast', class: 'vs-toast', role: 'status', 'aria-live': 'polite' }));
+    if (!root.querySelector('[data-vs-live]')) root.appendChild(el('div', { class: 'sr-only', 'data-vs-live': '', role: 'status', 'aria-live': 'polite' }));
     // senaryolar
     const sc = root.querySelector('[data-vs-scenario]');
     if (sc) {
       (d.scenarios || []).forEach(s => sc.appendChild(el('option', { value: s.id, text: s.name })));
       sc.addEventListener('change', () => {
         const s = (d.scenarios || []).find(x => x.id === sc.value); if (!s) return;
-        self.state = Object.assign(clone(d.defaults()), clone(s.state || {}));
-        if (s.apply) s.apply(self.state);
-        self.live = d.initLive ? d.initLive(self.state) : {}; self.simTime = 0;
-        self.rebuildScene(); self.renderControls(); self.recompute();
+        const st = Object.assign(clone(d.defaults()), clone(s.state || {}));
+        if (s.apply) s.apply(st);
+        self.applyState(st);
         if (s.start) { self.running = true; self.paused = false; if (d.start) d.start(self); }
+        self.syncToolbar(); self.wake();
         toast('Senaryo yüklendi: ' + s.name);
         const desc = root.querySelector('[data-vs-scenario-desc]'); if (desc) desc.textContent = s.desc || '';
         sc.value = '';
@@ -1171,21 +1560,43 @@
       const f = file.files[0]; if (!f) return;
       if (f.size > 2 * 1024 * 1024) { toast('Dosya çok büyük (en çok 2 MB).', 'bad'); return; }
       const rd = new FileReader();
-      rd.onload = () => { try { self.loadProject(JSON.parse(rd.result)); toast('Proje yüklendi.', 'ok'); } catch (e) { toast(e.message || 'Proje okunamadı.', 'bad'); } file.value = ''; };
+      rd.onload = () => {
+        try { const t = self.loadProject(JSON.parse(rd.result)); toast(t && t.ok === false ? 'Proje yüklendi; girdilerde hata var (Analiz panelinde).' : 'Proje yüklendi.', t && t.ok === false ? 'bad' : 'ok'); }
+        catch (e) { toast(e.message || 'Proje okunamadı.', 'bad'); }
+        file.value = '';
+      };
       rd.readAsText(f);
     });
     // mobil sekmeler
-    root.querySelectorAll('[data-vs-pane]').forEach(b => b.addEventListener('click', () => {
-      root.querySelectorAll('[data-vs-pane]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
-      root.querySelector('.vs-work').dataset.pane = b.dataset.vsPane;
-      setTimeout(() => { if (self.viewer) self.viewer.resize(); self.renderAnalysis(); if (self.mode === '2d') self.draw2d(); }, 30);
-    }));
-    // kayıtlı oturum
-    const saved = storageGet(this.storageKey);
-    if (saved) {
-      try { const o = JSON.parse(saved); if (o && o.state) { this.state = Object.assign(clone(d.defaults()), o.state); this._restored = true; } } catch (_) { }
+    const tabs = Array.from(root.querySelectorAll('[data-vs-pane]'));
+    tabs.forEach((b, i) => {
+      b.addEventListener('click', () => {
+        tabs.forEach(x => { x.setAttribute('aria-selected', String(x === b)); x.tabIndex = x === b ? 0 : -1; });
+        root.querySelector('.vs-work').dataset.pane = b.dataset.vsPane;
+        setTimeout(() => { if (self.viewer) self.viewer.resize(); self.renderAnalysis(); if (self.mode === '2d') self.draw2d(); }, 30);
+      });
+      // WAI-ARIA sekme deseni: ←/→, Home/End
+      b.addEventListener('keydown', e => {
+        const n = tabs.length, j = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : -1;
+        if (j < 0) return; e.preventDefault(); tabs[j].focus(); tabs[j].click();
+      });
+    });
+    // panel kullanımı bitince ertelenen yeniden kurulumlar uygulanır
+    const host = root.querySelector('[data-vs-controls]');
+    const onUp = () => self.releaseHold();
+    const onKey = e => { if (e.key === 'Escape' && root.querySelector('.vs-work.is-expanded')) self.toggleExpanded(false); };
+    document.addEventListener('pointerup', onUp); document.addEventListener('pointercancel', onUp); document.addEventListener('keydown', onKey);
+    host.addEventListener('focusout', () => setTimeout(() => { if (self._ctrlPending && !self.controlsBusy()) self.renderControls(); if (self._rebuildPending && !self.holding()) self.invalidate(); }, 0));
+    this._docCleanup = () => { document.removeEventListener('pointerup', onUp); document.removeEventListener('pointercancel', onUp); document.removeEventListener('keydown', onKey); };
+    // kayıtlı oturum (şema sürümü ve tip denetimiyle)
+    this._restored = this.restoreSaved();
+    let ok3d = this.init3d();
+    if (!ok3d && this._restored && window.THREE) {
+      // eski/uyumsuz kayıt sahneyi kuramadı: kayıt atılır, varsayılanla yeniden denenir
+      storageDel(this.storageKey); this.state = clone(d.defaults()); this._restored = false;
+      ok3d = this.init3d();
+      toast('Kayıtlı çalışma bu sürümle açılamadı; varsayılan değerlere dönüldü.', 'bad');
     }
-    const ok3d = this.init3d();
     if (!ok3d) {
       const fb = root.querySelector('[data-vs-fallback]'); if (fb) fb.hidden = false;
       const mb = root.querySelector('[data-vs-act="mode"]'); if (mb) mb.disabled = true;
@@ -1196,9 +1607,9 @@
       if (d.scene.shadowBox) this.viewer.setShadowBox(d.scene.shadowBox[0], d.scene.shadowBox[1]);
     }
     if (d.initLive) this.live = d.initLive(this.state);
-    this.renderControls(); this.recompute();
+    this.renderControls(true); this.recompute();
     if (this._restored) toast('Son çalışmanız geri yüklendi. Sıfırla ile varsayılana dönebilirsiniz.');
-    if (this.running && d.start) d.start(this);
+    if (this.running && d.start) { try { d.start(this); } catch (e) { this.fault('start', e); } }
     this.syncToolbar();
     this._onResize = () => { clearTimeout(self._rs); self._rs = setTimeout(() => { self.renderAnalysis(); if (self.mode === '2d') self.draw2d(); }, 150); };
     window.addEventListener('resize', this._onResize);
@@ -1209,12 +1620,13 @@
   /* ------------------------------------------------------------------ dışa açık API */
   window.VoltSim = {
     E: E, toast: toast, fmt: fmt, fmtPower: fmtPower, fmtEnergy: fmtEnergy, fmtDuration: fmtDuration, esc: esc, el: el, PALETTE: PALETTE, drawChart: drawChart,
+    fitText: fitText, sanitize: sanitize, csvCell: csvCell,
     get reduceMotion() { return reduceMotion; },
     register: function (def) { modules[def.id] = def; },
     modules: modules,
     get app() { return window.__vsApp; }
   };
-  if (motionQuery && motionQuery.addEventListener) motionQuery.addEventListener('change', e => { reduceMotion = e.matches; });
+  if (motionQuery && motionQuery.addEventListener) motionQuery.addEventListener('change', e => { reduceMotion = e.matches; if (window.__vsApp) window.__vsApp.wake(); });
   function boot() {
     const root = document.querySelector('[data-vs-module]');
     if (!root) return;

@@ -346,7 +346,7 @@
     const sc = { flows: [], bodyFlows: [] };
     app.scene3 = sc;
     // ---- toprak bloğu: L biçimli kesit (ön-sağ çeyrek açık), üç katman
-    const tex = soilTexture(T);
+    const tex = k.keep(soilTexture(T));   // modül önbelleği: yeniden kurulumda dispose edilmez
     const layers = [
       { y0: 0, y1: -0.35, mat: k.mat(0x5b4331, { roughness: 1, map: tex }), name: 'Bitkisel toprak' },
       { y0: -0.35, y1: -1.7, mat: k.mat(0x8c5d38, { roughness: 1, map: tex }), name: 'Killi alt toprak' },
@@ -400,7 +400,7 @@
       im.castShadow = true; el.add(im);
       list.forEach(x => { k.box(0.06, 0.05, 0.06, M.brass, x, -ROD_TOP + 0.02, 0, el); k.cyl(rr, 0.001, 0.08, M.steel, x, -ROD_TOP - s.L - 0.04, 0, el, 10); });
       if (n > 1) k.box((n - 1) * s.s, 0.012, 0.04, gv, 0, -ROD_TOP + 0.03, 0, el);
-      k.pickable(el, 'Topraklama çubukları', () => { const r = app.validResult && app.validResult.values; return r ? [n + ' × ' + fmt(s.L, 1) + ' m · Ø ' + fmt(s.d * 1000, 0) + ' mm · aralık ' + fmt(s.s, 1) + ' m', 'R1 = ' + fmt(G.rod(s.rho, s.L, s.d), 1) + ' Ω (tek çubuk, Dwight) → R = ' + fmt(r.R, 2) + ' Ω (BS 7430 sıra katsayısı)', 'Çubukları birleştiren şeridin katkısı hesaba katılmamıştır (güvenli taraf).'] : []; }, electrodeActions);
+      k.pickable(el, 'Topraklama çubukları', () => { const r = app.validResult && app.validResult.values; return r ? [n + ' × ' + fmt(s.L, 1) + ' m · Ø ' + fmt(s.d * 1000, 0) + ' mm · aralık ' + fmt(s.s, 1) + ' m', 'R1 = ' + fmt(G.rod(s.rho * (s.season || 1), s.L, s.d), 1) + ' Ω (tek çubuk, Dwight) → R = ' + fmt(r.R, 2) + ' Ω (BS 7430 sıra katsayısı)', 'Çubukları birleştiren şeridin katkısı hesaba katılmamıştır (güvenli taraf).'] : []; }, electrodeActions);
       sc.feed = [list.reduce((a, x) => (Math.abs(x - st.aebX) < Math.abs(a - st.aebX) ? x : a), list[0]), -ROD_TOP + 0.04, 0];
       list.forEach(x => {
         sc.flows.push(k.flow(new T.LineCurve3(new T.Vector3(x, -ROD_TOP, 0.02), new T.Vector3(x, -ROD_TOP - s.L, 0.02)), 10, 0xfb923c, 0.03));
@@ -609,13 +609,16 @@
     sc.amt = -1;
   }
   function animate(k, dt, res, s, live, app) {
-    const sc = app.scene3; if (!sc) return;
+    const sc = app.scene3; if (!sc) return false;
     const f = live.fault, active = f && !f.done && res.values.GPR > 0;
     const tgt = active ? 1 : 0.4;
     sc.cur = sc.cur === undefined ? tgt : sc.cur + (tgt - sc.cur) * Math.min(1, dt * (k.reducedMotion ? 100 : 5));
-    if (sc.amt < 0 || Math.abs(sc.cur - sc.amt) > 0.02) paint(k, sc, sc.cur);
+    if (Math.abs(tgt - sc.cur) < 0.005) sc.cur = tgt;
+    let moving = false;
+    if (sc.amt < 0 || Math.abs(sc.cur - sc.amt) > 0.02 || (sc.cur === tgt && sc.amt !== tgt)) { paint(k, sc, sc.cur); moving = true; }
     sc.flows.forEach(fl => { fl.speed = active ? 0.55 : 0; });
     sc.bodyFlows.forEach((fl, i) => { fl.speed = active && (i === 0 ? sc.overT : sc.overS) ? 0.8 : 0; });
+    return moving;
   }
 
   /* ---------------------------------------------------------------- 2D kesit şeması */

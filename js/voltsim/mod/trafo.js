@@ -233,7 +233,9 @@
             row.appendChild(VS.el('button', { type: 'button', class: 'vs-cl__sw', 'aria-label': c.name + ' hücresini sil', text: 'Sil', onclick: () => {
               if (a.state.cells.length <= 1) { VS.toast('En az bir hücre kalmalı.'); return; }
               a.state.cells.splice(i, 1); if (!kindOf(a.state)) VS.toast('Trafo koruma hücresi kalmadı: kesicili ya da sigortalı hücre ekleyin.', 'bad');
-              a.state.sw = C.initialSw(); a.renderControls(); a.invalidate();
+              // manevra durumu yalnız trafo koruma hücresi silinince sıfırlanır (topraklı/ayrılmış trafo sessizce enerjilenmez)
+              if (i === tpi) { a.state.sw = C.initialSw(); if (a.live.events) a.live.events.push(clock(a.live.clock) + ' trafo koruma hücresi silindi — manevra durumu başlangıca alındı'); }
+              a.renderControls(); a.invalidate();
             } }));
             list.appendChild(row);
           });
@@ -842,11 +844,12 @@
     sc.state = '';
   }
   function animate(k, dt, res, s, live, app) {
-    const sc = app.scene3; if (!sc) return;
+    const sc = app.scene3; if (!sc) return false;
     const x = res.values.ext;
-    // hücre kapağı ve fanlar her karede (yalnız görsel)
-    sc.cells.forEach(c => { if (c.door) { const tgt = s.sw.door ? -1.6 : 0; c.door.rotation.y += (tgt - c.door.rotation.y) * Math.min(1, dt * 5 || 1); } });
-    if (!k.reducedMotion) sc.fans.forEach(f => { if (live.fans && x.en.mv) f.userData.rot.rotation.y += dt * 18; });
+    let moving = false;
+    // hücre kapağı ve fanlar (yalnız görsel)
+    sc.cells.forEach(c => { if (c.door) { const tgt = s.sw.door ? -1.6 : 0, e = tgt - c.door.rotation.y; if (Math.abs(e) > 1e-4) { c.door.rotation.y += e * Math.min(1, dt * 5 || 1); moving = true; } else c.door.rotation.y = tgt; } });
+    if (!k.reducedMotion && live.fans && x.en.mv && dt > 0 && sc.fans.length) { sc.fans.forEach(f => { f.userData.rot.rotation.y += dt * 18; }); moving = true; }
     const st = [live.tripped, live.alarm, live.buch, JSON.stringify(s.sw), s.cells.length].join('|');
     if (st !== sc.state) {
       sc.state = st;
@@ -854,11 +857,16 @@
       sc.cells.forEach(c => { c.scr.redraw(); const live3 = c.i === tpi ? x.en.mv : true; c.leds.forEach(l => { l.material = live3 ? k.mats.ledRed : k.mats.ledOff; }); });
       if (sc.relay) sc.relay.redraw();
       if (sc.buchLed) sc.buchLed.material = live.buch ? k.mats.ledAmber : k.mats.ledOff;
+      moving = true;
     }
     const now = performance.now();
-    if (now - (sc.last || 0) < 200) return;
+    if (now - (sc.last || 0) < 200) return moving;
     sc.last = now;
     const hs = live.temps.hotSpot;
+    // sıcaklık göstergesi ve sargı rengi yalnız gösterilen değer değişince (0,5 °C adım) güncellenir
+    const tSig = [Math.round(hs * 2), Math.round(live.temps.topOil * 2), x.en.mv, s.alarmOil, s.tripOil, s.fanOn, s.fanOff, s.cooling, live.tripped, live.alarm, live.fans, v0(res)].join('|');
+    if (tSig === sc.tSig) return moving;
+    sc.tSig = tSig; moving = true;
     if (sc.dial) sc.dial.redraw();
     const h = clamp((hs - 40) / (dry(s) ? 140 : 100), 0, 1);
     k.heat(h, sc.wMat.emissive); sc.wMat.emissive.convertSRGBToLinear(); sc.wMat.emissiveIntensity = x.en.mv ? 0.25 + h * 1.4 : 0;
@@ -866,7 +874,9 @@
     const v = res.values;
     sc.lTr.set(fmt(s.Sr_kVA, 0) + ' kVA · ' + (x.en.mv ? 'K %' + fmt(v.k * 100, 0) + ' · ' + (dry(s) ? 'θ ' + fmt(hs, 0) : 'θ ' + fmt(live.temps.topOil, 0) + '/' + fmt(hs, 0)) + ' °C' : 'ENERJİSİZ') + (live.tripped ? ' · AÇTI' : live.alarm ? ' · ALARM' : '') + (live.fans && x.en.mv ? ' · fan' : ''));
     sc.lTr.level(live.tripped ? 'bad' : live.alarm || v.k > 1 || live.buch ? 'warn' : x.en.mv ? 'ok' : '');
+    return moving;
   }
+  const v0 = res => Math.round(res.values.k * 100) + ',' + res.values.ext.en.mv;
 
   /* ---------------------------------------------------------------- 2D tek hat şeması (hücre sayısıyla ölçeklenir) */
   function layout2d(W, s) {

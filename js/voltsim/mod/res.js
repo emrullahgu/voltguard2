@@ -56,7 +56,7 @@
       if (!(t.cutOut > t.vRated)) err.push(nm + 'cut-out nominal hızdan büyük olmalı.');
       if (!(t.rpmMax > t.rpmMin && t.rpmMin >= 0)) err.push(nm + 'devir aralığı geçersiz.');
       const cp = X.cpFromDatasheet(t);
-      if (cp > R.BETZ) err.push(nm + 'föy değerleri Cp = ' + cp.toFixed(3) + ' gerektiriyor; Betz sınırı (0,593) aşılamaz. Nominal hızı artırın veya gücü düşürün.');
+      if (cp > R.BETZ) err.push(nm + 'föy değerleri Cp = ' + fmt(cp, 3) + ' gerektiriyor; Betz sınırı (0,593) aşılamaz. Nominal hızı artırın veya gücü düşürün.');
     });
     s.strings.forEach((x, i) => {
       if (!s.types[x.type]) err.push((x.name || 'Dizi ' + (i + 1)) + ': türbin tipi bulunamadı.');
@@ -105,18 +105,18 @@
       cf: aep.net / (Pplanned * 8760) });
     // ek kontroller
     const ck = r.checks.filter(c => c.id !== 'region');
-    ck.push({ id: 'region', label: 'Çalışma bölgesi (ön türbin)', status: region === 'stop' || region === 'climate' ? 'warn' : 'info', detail: REGION[region] + (region === 'rated' ? ' · gereken Cp ' + v.cpReq.toFixed(3) : ''), ref: null });
-    ck.push({ id: 'types', label: 'Föyden türetilen Cp', status: 'info', detail: s.types.map(t => t.name + ': Cp ' + X.cpFromDatasheet(t).toFixed(3)).join(' · '), ref: 'P_n = ½·ρ0·A·Cp·v_n³·η' });
+    ck.push({ id: 'region', label: 'Çalışma bölgesi (ön türbin)', status: region === 'stop' || region === 'climate' ? 'warn' : 'info', detail: REGION[region] + (region === 'rated' ? ' · gereken Cp ' + fmt(v.cpReq, 3) : ''), ref: null });
+    ck.push({ id: 'types', label: 'Föyden türetilen Cp', status: 'info', detail: s.types.map(t => t.name + ': Cp ' + fmt(X.cpFromDatasheet(t), 3)).join(' · '), ref: 'P_n = ½·ρ0·A·Cp·v_n³·η' });
     farm.strings.forEach((st, i) => {
       const Iz = MV_AMP[s.cableS] || 0;
-      if (st.I > Iz) ck.push({ id: 'cable' + i, label: (s.strings[i].name || 'Dizi ' + (i + 1)) + ' · OG kablo akımı', status: 'fail', detail: st.I.toFixed(0) + ' A > ' + Iz + ' A (' + s.cableS + ' mm² Al, tipik toprak altı değeri). Kesiti büyütün veya diziyi bölün.', ref: 'Üretici kataloğu / IEC 60502-2' });
+      if (st.I > Iz) ck.push({ id: 'cable' + i, label: (s.strings[i].name || 'Dizi ' + (i + 1)) + ' · OG kablo akımı', status: 'fail', detail: fmt(st.I, 0) + ' A > ' + Iz + ' A (' + s.cableS + ' mm² Al, tipik toprak altı değeri). Kesiti büyütün veya diziyi bölün.', ref: 'Üretici kataloğu / IEC 60502-2' });
     });
     const Imax = Math.max.apply(null, farm.strings.map(x => x.I));
-    ck.push({ id: 'mv', label: 'OG toplama kablosu', status: Imax <= (MV_AMP[s.cableS] || 0) ? 'ok' : 'fail', detail: 'En yüklü dizi ' + Imax.toFixed(0) + ' A / taşıma ' + (MV_AMP[s.cableS] || '—') + ' A · kayıp ' + farm.lossCable.toFixed(1) + ' kW', ref: 'Al XLPE, tipik değer — katalogdan doğrulayın' });
-    ck.push({ id: 'ss', label: 'Trafo merkezi yüklenmesi', status: farm.ssLoading <= 1 ? 'ok' : 'warn', detail: '%' + (farm.ssLoading * 100).toFixed(0) + ' (' + s.ssMVA + ' MVA) · kurulu ' + (Pplanned / 1000).toFixed(1) + ' MW', ref: null });
-    if (s.curtail > 0) ck.push({ id: 'curtail', label: 'Şebeke işletmecisi güç sınırı', status: 'info', detail: 'Bağlantı noktası sınırı ' + s.curtail + ' MW · kısılan ' + (farm.curtailed / 1000).toFixed(2) + ' MW', ref: null });
+    ck.push({ id: 'mv', label: 'OG toplama kablosu', status: Imax <= (MV_AMP[s.cableS] || 0) ? 'ok' : 'fail', detail: 'En yüklü dizi ' + fmt(Imax, 0) + ' A / taşıma ' + (MV_AMP[s.cableS] || '—') + ' A · kayıp ' + fmt(farm.lossCable, 1) + ' kW', ref: 'Al XLPE, tipik değer — katalogdan doğrulayın' });
+    ck.push({ id: 'ss', label: 'Trafo merkezi yüklenmesi', status: farm.ssLoading <= 1 ? 'ok' : 'warn', detail: '%' + fmt(farm.ssLoading * 100, 0) + ' (' + s.ssMVA + ' MVA) · kurulu ' + fmt(Pplanned / 1000, 1) + ' MW', ref: null });
+    if (s.curtail > 0) ck.push({ id: 'curtail', label: 'Şebeke işletmecisi güç sınırı', status: 'info', detail: 'Bağlantı noktası sınırı ' + s.curtail + ' MW · kısılan ' + fmt(farm.curtailed / 1000, 2) + ' MW', ref: null });
     if (climate.stop) ck.push({ id: 'climate', label: 'İklim koruması (örnek ayar)', status: 'warn', detail: climate.reason + ': park durduruldu.', ref: null });
-    if (Math.abs(yawErr) > 5) ck.push({ id: 'yaw', label: 'Sapma (yaw) hatası', status: 'warn', detail: Math.abs(yawErr).toFixed(0) + '° · güç çarpanı ≈ cos²γ = ' + yawF.toFixed(3) + ' (yaklaşım)', ref: null });
+    if (Math.abs(yawErr) > 5) ck.push({ id: 'yaw', label: 'Sapma (yaw) hatası', status: 'warn', detail: fmt(Math.abs(yawErr), 0) + '° · güç çarpanı ≈ cos²γ = ' + fmt(yawF, 3) + ' (yaklaşım)', ref: null });
     ck.push({ id: 'hyst', label: 'Cut-out sonrası yeniden devreye girme', status: 'info', detail: 'Örnek ayar: v < ' + s.restartV + ' m/s en az ' + s.restartDelay + ' s sürünce yeniden devreye girer (üretici ayarı esastır).', ref: null });
     r.checks = ck;
     r.assumptions = r.assumptions.concat([
@@ -232,7 +232,7 @@
         t ? { type: 'number', key: T + 'etaMech', label: 'Mekanik verim', min: 0.8, max: 1, step: 0.005, digits: 3 } : null,
         t ? { type: 'number', key: T + 'etaGen', label: 'Jeneratör + çevirici verimi', min: 0.8, max: 1, step: 0.005, digits: 3 } : null,
         t ? { type: 'number', key: T + 'trafoKVA', label: 'Türbin trafosu (0,69/' + fmt(s.mvKV, 1) + ' kV)', min: 50, max: 25000, step: 50, unit: 'kVA' } : null,
-        t ? { type: 'note', text: 'Föyden türetilen Cp = ' + X.cpFromDatasheet(t).toFixed(3) + ' (nominal hızda nominal güç, ρ0 = 1,225). Betz sınırı 16/27 ≈ 0,593: ideal rotor, rotor alanından geçen kinetik gücün (½·ρ·A·v³) en çok %59,3’ünü alabilir.' } : null
+        t ? { type: 'note', text: 'Föyden türetilen Cp = ' + fmt(X.cpFromDatasheet(t), 3) + ' (nominal hızda nominal güç, ρ0 = 1,225). Betz sınırı 16/27 ≈ 0,593: ideal rotor, rotor alanından geçen kinetik gücün (½·ρ·A·v³) en çok %59,3’ünü alabilir.' } : null
       ] },
       { title: 'Diziler ve OG toplama', items: [
         { type: 'custom', render: stringRows },
@@ -332,7 +332,10 @@
   }
 
   /* ---------------------------------------------------------------- 3D: geometri */
-  let G = null;
+  let G = null, KIT = null;
+  // modül önbelleğindeki geometriler sahne yeniden kurulurken dispose edilmez (kit.keep); her kurulumda yeniden yüklenmez
+  function keepGeos(o) { if (!KIT || !o) return; if (o.isBufferGeometry) KIT.keep(o); else Object.keys(o).forEach(n => { if (o[n] && o[n].isBufferGeometry) KIT.keep(o[n]); }); }
+  function keepAll() { if (!G) return; keepGeos(G); Object.keys(G.blades).forEach(n => keepGeos(G.blades[n])); Object.keys(G.types).forEach(n => keepGeos(G.types[n])); }
   function hAt(x, z) {
     const r = Math.hypot(x, z), f = r < 230 ? 0 : r > 520 ? 1 : (r - 230) / 290;
     const h = 16 * Math.sin(x / 260 + 0.6) * Math.cos(z / 330) + 11 * Math.sin((x + z) / 190) + 30 * Math.exp(-((x + 900) ** 2 + (z + 1300) ** 2) / 5e5) + 22 * Math.exp(-((x - 1100) ** 2 + (z + 700) ** 2) / 3e5);
@@ -382,7 +385,7 @@
     for (let j = 0; j < NP; j++) idx.push((NS - 1) * NP + j, tip, (NS - 1) * NP + (j + 1) % NP);
     const geo = new T.BufferGeometry();
     geo.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); geo.setIndex(idx); geo.computeVertexNormals();
-    G.blades[key] = geo; return geo;
+    G.blades[key] = geo; keepGeos(geo); return geo;
   }
   function spinnerGeo(T, r) {
     const pts = [new T.Vector2(0.001, -0.9 * r), new T.Vector2(r * 0.98, -0.9 * r)];
@@ -400,8 +403,8 @@
     const T = k.T, d = dims(t), key = d.D + '|' + d.hub;
     if (G.types[key]) return G.types[key];
     const r = Math.min(d.Hn, d.Wn);
-    const tg = { d: d, tower: new T.CylinderGeometry(d.rt, d.rb, d.Ht, 40, 4), top: k.rbox(d.L, d.Hn * 0.56, d.Wn, r * 0.22, k.mats.bladeWhite).geometry, low: k.rbox(d.L, d.Hn * 0.46, d.Wn, r * 0.16, k.mats.bladeWhite).geometry, spin: spinnerGeo(T, d.hubR), blade: bladeGeo(T, d.hubR * 0.8, d.Rt) };
-    G.types[key] = tg; return tg;
+    const tg = { d: d, tower: new T.CylinderGeometry(d.rt, d.rb, d.Ht, 40, 4), top: k.rboxGeo(d.L, d.Hn * 0.56, d.Wn, r * 0.22), low: k.rboxGeo(d.L, d.Hn * 0.46, d.Wn, r * 0.16), spin: spinnerGeo(T, d.hubR), blade: bladeGeo(T, d.hubR * 0.8, d.Rt) };
+    G.types[key] = tg; keepGeos(tg); return tg;
   }
   const toWorld = p => [p.x, hAt(p.x, -p.y), -p.y];
   /** Görsel rotor devri (sayı olarak gösterilmez): λ·v/R, föy devir aralığında; durmuşsa 0. */
@@ -411,7 +414,8 @@
   /* ---------------------------------------------------------------- 3D: sahne kurulumu */
   function rebuildOn(s) { return JSON.stringify([s.types.map(t => [t.D, t.hub]), s.strings.map(x => [x.type, Math.round(x.n), x.name]), s.rowDir, s.spacing, s.rowGap]); }
   function build(k, s, app) {
-    const T = k.T, M = k.mats, v = k.viewer, g = geos(T);
+    KIT = k;
+    const T = k.T, M = k.mats, v = k.viewer, g = geos(T); keepAll();
     if (validate(s).length) { app.scene3 = null; v.scene.fog = null; k.ground(400, M.grass, 0); return; }
     const t0 = fgType(s), d = dims(t0);
     const lay = X.layoutFarm(s.strings.map(x => ({ type: x.type, n: Math.round(x.n) })), s.types, s);
@@ -619,7 +623,7 @@
   function typeInfo(app, ti) {
     const r = app.validResult, s = app.state, t = s.types[ti]; if (!r || !t || !r.values.farm) return [];
     const tur = r.values.farm.turbines.filter(x => x.type === ti);
-    return ['Föy: ' + fmt(t.Prated, 0) + ' kW · D ' + t.D + ' m · h ' + t.hub + ' m · v_n ' + t.vRated + ' m/s', 'Cut-in/out ' + t.cutIn + ' / ' + t.cutOut + ' m/s · ' + t.rpmMin + '–' + t.rpmMax + ' rpm', 'Türetilen Cp ' + X.cpFromDatasheet(t).toFixed(3),
+    return ['Föy: ' + fmt(t.Prated, 0) + ' kW · D ' + t.D + ' m · h ' + t.hub + ' m · v_n ' + t.vRated + ' m/s', 'Cut-in/out ' + t.cutIn + ' / ' + t.cutOut + ' m/s · ' + t.rpmMin + '–' + t.rpmMax + ' rpm', 'Türetilen Cp ' + fmt(X.cpFromDatasheet(t), 3),
       tur.length + ' türbin · toplam ' + MW(tur.reduce((a, x) => a + x.P, 0)) + ' · en yavaş ' + fmt(Math.min.apply(null, tur.map(x => x.v)), 1) + ' m/s'];
   }
   function stringInfo(app, si) {
@@ -656,32 +660,36 @@
     if (sc.hvFlow) sc.hvFlow.speed = f.poi > 0 ? 0.02 + 0.2 * f.poi / Math.max(1, v.Pplanned) : 0;
   }
   function animate(k, dt, res, s, live, app) {
-    const sc = app.scene3; if (!sc || !res.values.farm) return;
-    const v = res.values, d = sc.d, f = v.farm, t0 = fgType(s);
+    const sc = app.scene3; if (!sc || !res.values.farm) return false;
+    const v = res.values, d = sc.d, f = v.farm, t0 = fgType(s), rm = k.reducedMotion;
+    let moving = false;
     const tau = v.rpm > live.rpmVis ? 4 : 5;
     live.rpmVis += (v.rpm - live.rpmVis) * Math.min(1, dt / tau);
     if (live.rpmVis < 0.02 && v.rpm === 0) live.rpmVis = 0;
-    live.rotAng -= live.rpmVis * Math.PI * 2 / 60 * (k.reducedMotion ? 0 : dt);
-    sc.rotor.rotation.x = live.rotAng;
+    live.rotAng -= live.rpmVis * Math.PI * 2 / 60 * (rm ? 0 : dt);
+    if (sc.rotor.rotation.x !== live.rotAng) { sc.rotor.rotation.x = live.rotAng; moving = true; }
     const pt = visPitch(t0, Object.assign({}, f.turbines[0], { region: v.region === 'hyst' || v.region === 'climate' ? 'stop' : v.region })), dp = pt - live.pitch;
-    live.pitch += Math.sign(dp) * Math.min(Math.abs(dp), 8 * dt);
+    if (Math.abs(dp) > 1e-6 && dt > 0) { live.pitch += Math.sign(dp) * Math.min(Math.abs(dp), 8 * dt); moving = true; }
     sc.blades.forEach(b => { b.rotation.y = live.pitch * Math.PI / 180; });
     sc.pitchLabel.set('Kanat açısı ~' + fmt(live.pitch, 0) + '° (temsili)' + (v.region === 'rated' ? ' · Cp gereken ' + fmt(v.cpReq, 3) : ''));
     const target = s.yawMode === 'manual' ? s.yawManual : s.windDir;
     const e = X.angleDiff(target, live.yaw);
-    live.yaw = (live.yaw + Math.sign(e) * Math.min(Math.abs(e), YAW_RATE * dt) + 360) % 360;
+    if (Math.abs(e) > 1e-6 && dt > 0) { live.yaw = (live.yaw + Math.sign(e) * Math.min(Math.abs(e), YAW_RATE * dt) + 360) % 360; moving = true; }
     const yawRad = Math.PI / 2 - live.yaw * Math.PI / 180, windRad = Math.PI / 2 - s.windDir * Math.PI / 180;
     sc.yaw.rotation.y = yawRad;
     sc.arrow.rotation.y = windRad; sc.mastVane.rotation.y = windRad;
-    if (!k.reducedMotion) sc.cups.rotation.y -= v10Now(s, live) * 0.9 * dt;
+    const cupW = v10Now(s, live) * 0.9 * dt;
+    if (!rm && cupW) { sc.cups.rotation.y -= cupW; moving = true; }
     sc.vane.rotation.y = (s.windDir - live.yaw) * Math.PI / 180;
     live.blink += dt;
-    sc.beacon.material = k.reducedMotion || (live.blink % 1.5) < 0.75 ? k.mats.ledRed : k.mats.ledOff;
+    const bm = rm || (live.blink % 1.5) < 0.75 ? k.mats.ledRed : k.mats.ledOff;
+    if (sc.beacon.material !== bm) { sc.beacon.material = bm; moving = true; }
     if (Math.abs(e) > 3) sc.nacLabel.set(VS.fmtPower(v.P * 1000) + ' · yönleniyor (' + fmt(Math.abs(e), 0) + '°)');
     // rüzgâr çizgileri
     const fx = -Math.cos(windRad), fz = Math.sin(windRad), dm = sc._dm || (sc._dm = new k.T.Object3D());
-    sc.streaks.visible = !k.reducedMotion && v.vHub > 0.3;
-    if (sc.streaks.visible) {
+    sc.streaks.visible = !rm && v.vHub > 0.3;
+    if (sc.streaks.visible && dt > 0) {
+      moving = true;
       sc.str.forEach((p, i) => {
         const sp = v.vHub * Math.pow(Math.max(p.y, 2) / d.hub, s.alpha);
         p.u += sp * dt * 1.5; if (p.u > sc.span) p.u -= 2 * sc.span;
@@ -690,17 +698,30 @@
       });
       sc.streaks.instanceMatrix.needsUpdate = true;
     }
-    // diğer türbinler: park modelindeki kendi hızlarıyla
+    // diğer türbinler: park modelindeki kendi hızlarıyla; ≤30 Hz ve yalnız bir şey değişince (duran parkta tampon yüklenmez)
     const yawAll = Math.PI / 2 - (s.windDir) * Math.PI / 180;
+    sc._bgT = (sc._bgT || 0) + dt;
+    if (sc._bgT < 1 / 30 && sc._bgYaw === yawAll) return moving;
+    const bdt = sc._bgT; sc._bgT = 0;
     sc.sets.forEach(set => {
+      let chg = sc._bgYaw !== yawAll || !set._done;
+      set.list.forEach(o => {
+        const tur = f.turbines[o.i]; if (!tur) return;
+        const ty = s.types[set.ti]; if (!ty) return;
+        const want = visRpm(ty, s, tur), pw = visPitch(ty, tur);
+        if (sc.rpm[o.i] > 1e-3 || Math.abs(want - sc.rpm[o.i]) > 1e-3 || Math.abs(pw - sc.pitch[o.i]) > 1e-3) chg = true;
+      });
+      if (!chg) return;
+      set._done = true; moving = true;
       const c = set.chain, tg = set.tg, ty = s.types[set.ti]; if (!ty) return;
       set.list.forEach((o, q) => {
         const tur = f.turbines[o.i]; if (!tur) return;
         const want = visRpm(ty, s, tur);
-        sc.rpm[o.i] += (want - sc.rpm[o.i]) * Math.min(1, dt / 4);
-        sc.ang[o.i] -= sc.rpm[o.i] * Math.PI * 2 / 60 * (k.reducedMotion ? 0 : dt);
+        sc.rpm[o.i] += (want - sc.rpm[o.i]) * Math.min(1, bdt / 4);
+        if (want === 0 && sc.rpm[o.i] < 0.02) sc.rpm[o.i] = 0;
+        sc.ang[o.i] -= sc.rpm[o.i] * Math.PI * 2 / 60 * (rm ? 0 : bdt);
         const pw = visPitch(ty, tur), dpp = pw - sc.pitch[o.i];
-        sc.pitch[o.i] += Math.sign(dpp) * Math.min(Math.abs(dpp), 8 * dt);
+        sc.pitch[o.i] += Math.sign(dpp) * Math.min(Math.abs(dpp), 8 * bdt);
         c[0].position.set(o.w[0], o.w[1] + tg.d.hub + 0.9, o.w[2]); c[0].rotation.set(0, yawAll, 0);
         c[2].rotation.set(sc.ang[o.i], 0, 0);
         c[5].position.set(-0.12 * tg.d.L, tg.d.Hn * 0.24, 0); c[0].updateMatrixWorld(true);
@@ -712,6 +733,8 @@
       });
       set.nacTop.instanceMatrix.needsUpdate = true; set.nacLow.instanceMatrix.needsUpdate = true; set.spin.instanceMatrix.needsUpdate = true; set.blade.instanceMatrix.needsUpdate = true;
     });
+    sc._bgYaw = yawAll;
+    return moving;
   }
 
   /* ---------------------------------------------------------------- 2D tek hat şeması (kaydırılabilir) */
@@ -789,7 +812,7 @@
       { id: 'wakeRow', name: 'Rüzgâr dizi boyunca · yoğun iz', desc: 'Rüzgâr dizi eksenine paralel (280°): arkadaki türbinler belirgin yavaşlar.', state: st({ windDir: 100, v10: 6.5 }) },
       { id: 'mixed', name: 'Karma park · 3 tip, 4 dizi', desc: 'Farklı föylere sahip türbinler; dizi başına kablo akımı ve kayıplar.', state: st({ types: [lib('t36'), lib('t45'), lib('t20')], strings: [{ name: 'Dizi A', type: 0, n: 6 }, { name: 'Dizi B', type: 1, n: 5 }, { name: 'Dizi C', type: 2, n: 8 }, { name: 'Dizi D', type: 1, n: 5 }], ssMVA: 100, cableS: 300 }) },
       { id: 'highland', name: 'Yüksek rakım · düşük hava yoğunluğu', desc: '1800 m ve 5 °C: ρ düşer; güç eğrisi sağa kayar (IEC 61400-12-1 düzeltmesi).', state: st({ alt: 1800, T: 5, v10: 7.5, alpha: 0.2 }) },
-      { id: 'big', name: 'Büyük park · 60 × 6 MW, 6 dizi', desc: 'Sınırsız ölçek: 360 MW kurulu güç, OG toplama ve trafo merkezi yüklenmesi.', state: st({ types: [lib('t60')], strings: [0, 1, 2, 3, 4, 5].map(i => ({ name: 'Dizi ' + String.fromCharCode(65 + i), type: 0, n: 10 })), cableS: 630, mvKV: 34.5, ssMVA: 400, homeKm: 8 }) },
+      { id: 'big', name: 'Büyük park · 60 × 6 MW, 6 dizi', desc: '360 MW kurulu güç, OG toplama ve trafo merkezi yüklenmesi.', state: st({ types: [lib('t60')], strings: [0, 1, 2, 3, 4, 5].map(i => ({ name: 'Dizi ' + String.fromCharCode(65 + i), type: 0, n: 10 })), cableS: 630, mvKV: 34.5, ssMVA: 400, homeKm: 8 }) },
       { id: 'small', name: 'Küçük türbinler · 4 × 250 kW', desc: 'Yüksek devirli küçük türbinler, kısa kule.', state: st({ types: [lib('t025')], strings: [{ name: 'Dizi A', type: 0, n: 4 }], ssMVA: 2, cableS: 95, homeKm: 0.5, mvKV: 20 }) }
     ],
     tasks: [

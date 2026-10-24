@@ -200,22 +200,22 @@ function modulePage(m) {
       </div>
 
       <div class="vs-mtabs" role="tablist" aria-label="Çalışma alanı">
-        <button type="button" role="tab" data-vs-pane="params" aria-selected="false">Parametreler</button>
-        <button type="button" role="tab" data-vs-pane="stage" aria-selected="true">3D Simülasyon</button>
-        <button type="button" role="tab" data-vs-pane="analysis" aria-selected="false">Analiz</button>
+        <button type="button" role="tab" id="vs-tab-params" aria-controls="vs-pane-params" data-vs-pane="params" aria-selected="false" tabindex="-1">Parametreler</button>
+        <button type="button" role="tab" id="vs-tab-stage" aria-controls="vs-pane-stage" data-vs-pane="stage" aria-selected="true">3D Simülasyon</button>
+        <button type="button" role="tab" id="vs-tab-analysis" aria-controls="vs-pane-analysis" data-vs-pane="analysis" aria-selected="false" tabindex="-1">Analiz</button>
       </div>
 
       <div class="vs-work" data-pane="stage">
-        <section class="vs-left" aria-labelledby="vs-left-h">
+        <section class="vs-left" id="vs-pane-params" aria-labelledby="vs-left-h">
           <h2 class="vs-panel-h" id="vs-left-h">Parametreler</h2>
           <div class="vs-scroll" data-vs-controls></div>
         </section>
-        <section class="vs-center" aria-label="3D simülasyon alanı">
+        <section class="vs-center" id="vs-pane-stage" aria-label="3D simülasyon alanı">
           <div class="vs-stage" data-vs-stage data-mode="3d">
-            <canvas class="vs-canvas" role="img" aria-label="${esc(m.h1)} — döndürmek için sürükleyin, ok tuşları ve +/− ile kamera"></canvas>
+            <canvas class="vs-canvas" role="img" aria-label="${esc(m.h1)} — döndürmek için sürükleyin; klavyede ok tuşları ve +/− kamera, [ ve ] ekipman seçer, Enter ayrıntı kartını açar"></canvas>
             <canvas class="vs-2d" data-vs-2d role="img" aria-label="2D şema görünümü"></canvas>
             <div class="vs-labels" aria-hidden="true"></div>
-            <div class="vs-hud"><span class="vs-badge" data-vs-badge data-level="info" role="status" aria-live="polite">Hazırlanıyor…</span></div>
+            <div class="vs-hud"><span class="vs-badge" data-vs-badge data-level="info">Hazırlanıyor…</span></div>
             <div class="vs-vtools" role="group" aria-label="Görünüm araçları">
               <button class="vs-vt" type="button" data-vs-act="labels" aria-pressed="true" title="Etiketler" data-vs-3donly>${ico('<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>')}<span class="sr-only">Etiketler</span></button>
               <button class="vs-vt" type="button" data-vs-act="ghost" aria-pressed="false" title="Şeffaf kapak" data-vs-3donly>${ico('<rect x="4" y="4" width="16" height="16" rx="2" stroke-dasharray="3 3"/><path d="M9 9h6v6H9z"/>')}<span class="sr-only">Şeffaf kapak</span></button>
@@ -227,11 +227,11 @@ function modulePage(m) {
             </div>
             <div class="vs-clip" data-vs-clip hidden><label>Kesit konumu <input type="range" min="0" max="100" value="55"></label></div>
             <div class="vs-info" data-vs-info hidden role="dialog" aria-label="Ekipman ayrıntısı"></div>
-            <p class="vs-hint">Sürükle: döndür · Sağ tık/iki parmak: kaydır · Tekerlek: yakınlaştır · Ekipmana tıkla: ayrıntı</p>
+            <p class="vs-hint">Sürükle: döndür · Sağ tık/iki parmak: kaydır · Tekerlek: yakınlaştır · Ekipmana tıkla ya da [ ] ve Enter: ayrıntı</p>
             <div class="vs-fallback" data-vs-fallback hidden role="status" aria-live="polite"><strong>3D görünüm açılamadı.</strong> Tarayıcınız WebGL desteklemiyor ya da kapalı; 2D şema gösteriliyor. Hesaplar, grafikler ve rapor çalışmaya devam eder.</div>
           </div>
         </section>
-        <section class="vs-right" aria-labelledby="vs-right-h">
+        <section class="vs-right" id="vs-pane-analysis" aria-labelledby="vs-right-h">
           <h2 class="vs-panel-h" id="vs-right-h">Analiz</h2>
           <div class="vs-scroll" data-vs-analysis>
             <div data-vs-ro></div>

@@ -281,3 +281,35 @@ test('doğrulayıcı: sıfır, negatif ve sayı olmayan girişler', () => {
   assert.equal(v.errors.length, 3);
   assert.equal(new E.Validator().num('2,5', 'K'), 2.5);
 });
+
+test('pano: otomatik kesme — prizli son devre ≤ 63 A için 0,4 s, sabit bağlı > 32 A için 5 s (TS HD 60364-4-41)', () => {
+  const c = o => Object.assign({ name: 'X', phase: '3F', P_kW: 10, cos: 0.9, eff: 1, motor: false, on: true, kind: 'MCB', curve: 'C', In: 40, S: 10, L: 20, method: 'C' }, o);
+  const fixed = E.pano.compute(panoInput({ circuits: [c()] })).values.circuits[0];
+  const sock = E.pano.compute(panoInput({ circuits: [c({ socket: true })] })).values.circuits[0];
+  const big = E.pano.compute(panoInput({ circuits: [c({ socket: true, In: 80, S: 25 })] })).values.circuits[0];
+  const small = E.pano.compute(panoInput({ circuits: [c({ In: 32, S: 6 })] })).values.circuits[0];
+  assert.equal(fixed.tReq, 5, 'sabit bağlı 40 A');
+  assert.equal(sock.tReq, 0.4, 'prizli 40 A');
+  assert.equal(big.tReq, 5, 'prizli 80 A (> 63 A)');
+  assert.equal(small.tReq, 0.4, 'sabit bağlı 32 A');
+});
+
+test('pano: MCCB ani açma toleransı — gereken Ia = 1,2·Ii (TS EN 60947-2)', () => {
+  const m = o => Object.assign({ name: 'M', phase: '3F', P_kW: 20, cos: 0.85, eff: 1, motor: false, on: true, kind: 'MCCB', In: 63, S: 16, L: 10, method: 'C' }, o);
+  near(E.pano.compute(panoInput({ circuits: [m({ Ii: 630 })] })).values.circuits[0].Ia, 756, 1e-9, 'Ii 630 A');
+  near(E.pano.compute(panoInput({ circuits: [m()] })).values.circuits[0].Ia, 1.2 * 630, 1e-9, 'Ii verilmezse 10·In');
+});
+
+test('yangın: smokeStep çift tamponla yeni diziyle aynı sonucu verir ve tamponu yeniden kullanır', () => {
+  const walls = new Uint8Array(36); walls[7] = 1; walls[20] = 1;
+  let a = new Float32Array(36), b = new Float32Array(36), spare = new Float32Array(36);
+  for (let i = 0; i < 40; i++) {
+    a = E.yangin.smokeStep(a, 6, 6, [{ x: 3, y: 3, rate: 0.15 }], 0.5, walls);
+    const out = E.yangin.smokeStep(b, 6, 6, [{ x: 3, y: 3, rate: 0.15 }], 0.5, walls, spare);
+    assert.equal(out, spare, 'sonuç verilen tampona yazılır');
+    spare = b; b = out;
+  }
+  assert.deepEqual(Array.from(b), Array.from(a));
+  assert.equal(a[7], 0, 'duvar hücresi boş kalır');
+  assert.notEqual(E.yangin.smokeStep(a, 6, 6, null, 0.5, walls, a), a, 'girdiyle aynı tampon verilirse yeni dizi');
+});

@@ -243,7 +243,7 @@
       const genKVA = useGen ? v.num(input.gen_kVA, 'Jeneratör gücü', { min: 10, max: 5000, unit: 'kVA' }) : 0;
       // jeneratörün kalıcı kısa devre akımı (uyarma sistemine bağlı; AREP/PMG'de tipik ~3·In, kendinden uyartımlıda çok daha düşük)
       const genSust = useGen ? v.num(input.gen_sust === undefined ? 3 : input.gen_sust, 'Jeneratör kalıcı kısa devre akımı', { min: 0.5, max: 6, unit: '×In' }) : 0;
-      const Igen = useGen ? currentFromS(genKVA * 1e3, v.num(input.U_LL, 'Gerilim', { min: 200, max: 1000 })) : 0;
+      const Igen = useGen ? currentFromS(genKVA * 1e3, U_LL) : 0;
       const src = useGen ? generatorImpedance(U_LL, genKVA, v.num(input.gen_xd, "Jeneratör X''d", { min: 5, max: 30, unit: '%' })) : sourceImpedance({
         U_LL: U_LL,
         SkQ_MVA: v.num(input.SkQ_MVA, 'OG şebeke kısa devre gücü', { min: 0, max: 5000, unit: 'MVA' }),
@@ -296,10 +296,11 @@
         // jeneratörde 0,4 s kesme süresi boyunca alt-geçici akım sönümlenir: kalıcı akımla sınırla
         const Ik1sub = shortCircuit1Min(U_LL, src, { R: feed.R + cab.R, X: feed.X + cab.X });
         const Ik1 = useGen ? Math.min(Ik1sub, genSust * Igen) : Ik1sub;
-        // gerekli kesme süresi (TS HD 60364-4-41, TN 230 V): son devre ≤ 32 A → 0,4 s; dağıtım ve > 32 A → 5 s
-        const tReq = c.In <= 32 ? 0.4 : 5;
+        // gerekli kesme süresi (TS HD 60364-4-41:2017, 411.3.2.2, TN 230 V): ≤ 63 A prizli son devre ve ≤ 32 A sabit
+        // bağlı son devre → 0,4 s; dağıtım devreleri ve bunların dışındakiler → 5 s
+        const tReq = (c.socket ? c.In <= 63 : c.In <= 32) ? 0.4 : 5;
         const g = FUSE_GATES[c.In];
-        const Ia = c.kind === 'FUSE' ? (g ? (tReq === 0.4 ? g[3] : g[1]) : Infinity) : c.kind === 'MCB' ? (MCB_MAG[c.curve] || MCB_MAG.C)[1] * c.In : (c.Ii || 10 * c.In);
+        const Ia = c.kind === 'FUSE' ? (g ? (tReq === 0.4 ? g[3] : g[1]) : Infinity) : c.kind === 'MCB' ? (MCB_MAG[c.curve] || MCB_MAG.C)[1] * c.In : 1.2 * (c.Ii || 10 * c.In); // TS EN 60947-2 8.3.3.1.2: ani açma ±%20 → garantili açma 1,2·Ii
         const startI = c.motor ? Ib * (c.start === 'YD' ? (c.IstIn || 6.5) / 3 : c.start === 'VFD' ? 1.0 : c.start === 'SOFT' ? 3 : (c.IstIn || 6.5)) : 0;
         const coord = Ib <= c.In && c.In <= Iz && I2 <= 1.45 * Iz;
         const ass = breakerAssessment({ kind: c.kind || 'MCB', curve: c.curve, In: c.In, Ir: c.In, Ii: c.Ii }, f.I);
@@ -314,7 +315,7 @@
         checks.push(check('vd' + i, nm + ': gerilim düşümü', r.vd + feedVd <= r.vdLimit ? 'ok' : 'warn',
           'Devre %' + round(r.vd, 2) + ' + besleme %' + round(feedVd, 2) + ' = %' + round(r.vd + feedVd, 2) + ' (sınır %' + r.vdLimit + '; pano yapı bağlantı kutusu kabul edildi)', 'EİTY Madde 57'));
         checks.push(check('ad' + i, nm + ': hat sonu arızada otomatik kesme', r.disconnectOK ? 'ok' : 'fail',
-          'Ik1,min ≈ ' + round(r.Ik1, 0) + ' A, ' + r.tReq + ' s içinde kesme için gereken Ia = ' + round(r.Ia, 0) + ' A' + (c.kind === 'FUSE' ? ' (gG kapısı ' + (r.tReq === 0.4 ? 'Imax 0,1 s, güvenli tarafta' : 'Imax 5 s') + ')' : ''), 'TS HD 60364-4-41'));
+          'Ik1,min ≈ ' + round(r.Ik1, 0) + ' A, ' + r.tReq + ' s içinde kesme için gereken Ia = ' + round(r.Ia, 0) + ' A' + (c.kind === 'FUSE' ? ' (gG kapısı ' + (r.tReq === 0.4 ? 'Imax 0,1 s, güvenli tarafta' : 'Imax 5 s') + ')' : c.kind === 'MCCB' ? ' (1,2·Ii: ani açma toleransı)' : '') + (r.tReq === 0.4 && c.socket && c.In > 32 ? ' · prizli son devre ≤ 63 A' : ''), 'TS HD 60364-4-41'));
       });
       checks.push(check('main', 'Ana şalter yüklenmesi (Ir ayarına göre)', loading <= 80 ? 'ok' : loading <= 100 ? 'warn' : 'fail', 'En yüklü faz ' + round(Imax, 1) + ' A / Ir ' + round(mainIr, 0) + ' A (%' + round(loading, 0) + ')'));
       checks.push(check('bus', 'Bara ≥ ana şalter', busbar >= mainIn ? 'ok' : 'fail', 'Bara ' + busbar + ' A, ana şalter ' + mainIn + ' A', 'TS EN IEC 61439-1'));
@@ -772,6 +773,7 @@
         soc += dE / cap; Ebatt += dE; Egrid += Pgrid * step; t += step;
       }
       sim.push({ t: t * 60, soc: soc * 100, Pgrid: 0, Pbatt: 0 });
+      const unfinished = soc < soc1 - 1e-6;   // 100 sa koruması ya da sıfır güç: hedef SOC'ye ulaşılamadı
       const ideal = cap * Math.max(soc1 - soc0, 0);
       const startDemand = demandAt(soc0);
       const alloc0 = Math.min(startDemand, shareLoad(Array(nPoints).fill(startDemand), siteKW)[0]);
@@ -788,8 +790,9 @@
         : 'DC şarj cihazının AC beslemesi için üretici ve TS HD 60364-7-722 gereklilikleri; DC çıkış izolasyon izleme cihaz içindedir (IEC 61851-23).', 'TS HD 60364-7-722'));
       checks.push(check('reg', 'Mevzuat kapsamı', 'info', input.publicService ? 'Herkese açık ücretli şarj hizmeti: şarj ağı işletmeci lisansı sahibi bir ağa bağlı olarak verilir.' : 'Ticari olmayan özel kullanım: Şarj Hizmeti Yönetmeliği Madde 5 kapsamında şarj ağına bağlanma yükümlülüğü yoktur; iç tesis ve dağıtım bağlantı kuralları geçerlidir.', 'Şarj Hizmeti Yönetmeliği'));
       if (curve === 'constant') checks.push(check('curve', 'Şarj eğrisi', 'info', 'Sabit güç varsayımı kullanıldı; gerçek süre daha uzun olabilir.'));
+      if (unfinished) checks.push(check('finish', 'Hedef SOC', 'warn', 'Hedef SOC %' + round(soc1 * 100, 0) + ' simülasyon süresinde (' + round(t, 1) + ' sa) ulaşılamadı; ulaşılan %' + round(soc * 100, 1) + '. Şarj gücü çok düşük.'));
       return result(v, {
-        ideal: ideal, Egrid: Egrid, Ebatt: Ebatt, minutes: t * 60, sim: sim, startGrid: alloc0, startDemand: startDemand,
+        ideal: ideal, Egrid: Egrid, Ebatt: Ebatt, minutes: t * 60, finished: !unfinished, sim: sim, startGrid: alloc0, startDemand: startDemand,
         ac: ac, phaseCurrent: prof.kind === 'AC' ? ac.I * (alloc0 / Math.max(startDemand, 1e-9)) : null, kind: prof.kind,
         lossKWh: Egrid - Ebatt, perPoint: siteKW / nPoints, totalDemand: totalDemand, shareCap: shareCap
       }, checks, {
@@ -896,7 +899,8 @@
   const komp = (function () {
     /** Gerekli kondansatör gücü: Qc = P·(tanφ1 − tanφ2) */
     function requiredQc(P, cos1, cos2) { return P * (Math.tan(Math.acos(cos1)) - Math.tan(Math.acos(cos2))); }
-    /** Otomatik regülatör: hedefe en yakın, aşırı kompanzasyon yapmayan kademe kombinasyonu (ikili arama). */
+    /** Otomatik regülatör: hedefe en yakın, aşırı kompanzasyon yapmayan kademe kombinasyonu (tüm kombinasyonlar denenir;
+     * ilk 12 kademeyle sınırlı — daha fazla kademe için ext.komp.controller kullanılır). */
     function chooseSteps(steps, Qneed) {
       let best = { mask: 0, Q: 0 };
       const n = Math.min(steps.length, 12);
@@ -924,7 +928,7 @@
       const Qneed = requiredQc(P, cos1, cos2);
       const on = manual || chooseSteps(steps, Math.max(Qneed - Qcap + shunt, 0)); // kapasitif yük kondansatör ihtiyacını azaltır, şönt reaktör artırır
       const QcNom = steps.reduce((a, q, i) => a + (on[i] ? q : 0), 0); // kademe etiket gücü (anma gerilim ve frekansta)
-      // ayarlı (detuned) grupta kondansatör uçlarında gerilim U/(1−p) olur; bara tarafına verilen Q ≈ Qc_nom/(1−p) (kondansatör anma geriliminin buna göre seçildiği varsayılır)
+      // kademe gücü bara tarafındaki etkin güç olarak girilir (ayarlı grupta kondansatör anma gerilimi U/(1−p)'ye göre seçilmiş kabul edilir)
       const QcEff = QcNom;
       const Qnet = Ql - QcEff - Qcap + shunt;
       const S = Math.hypot(P, Qnet);
@@ -960,14 +964,14 @@
       const Ic1 = QcEff > 0 ? QcEff * 1e3 / (Math.sqrt(3) * U) : 0;
       const capOver = Ic1 > 0 ? Math.sqrt(Ic1 * Ic1 + sumIc) / Ic1 : 1;
       const checks = [];
-      checks.push(check('cos', 'Hedef cosφ', cosNew >= cos2 - 0.005 && Qnet >= 0 ? 'ok' : Qnet < 0 ? 'warn' : 'warn', 'cosφ = ' + round(cosNew, 3) + ' (' + state + '), Q_net = ' + round(Qnet, 1) + ' kVAr'));
+      checks.push(check('cos', 'Hedef cosφ', cosNew >= cos2 - 0.005 && Qnet >= 0 ? 'ok' : 'warn', 'cosφ = ' + round(cosNew, 3) + ' (' + state + '), Q_net = ' + round(Qnet, 1) + ' kVAr'));
       const amp = spectrum.filter(s => s.amp > 1.2);
       if (p === 0 && QcEff > 0) checks.push(check('res', 'Paralel rezonans riski', amp.length ? 'fail' : (hPar && [5, 7, 11, 13].some(h => Math.abs(hPar - h) < 1) ? 'warn' : 'info'), 'Rezonans mertebesi h ≈ √(Xc/Xs) = ' + round(hPar, 2) + (amp.length ? '; büyüyen harmonikler: ' + amp.map(s => s.h + '.').join(', ') : '') + '. Harmonikli tesiste ayarlı (detuned) kompanzasyon değerlendirilmelidir.'));
       if (p > 0) checks.push(check('tune', 'Ayar frekansı', hRes < 4.8 ? 'ok' : 'warn', 'f_r = ' + round(50 * hRes, 0) + ' Hz (h = ' + round(hRes, 2) + '); 5. harmoniğin altında olmalıdır.'));
       checks.push(check('thdv', 'THDv (AG bara, hesaplanan)', THDv <= 5 ? 'ok' : THDv <= 8 ? 'warn' : 'fail', '%' + round(THDv, 2) + ' · TS EN 50160, bir haftalık 10 dakikalık ortalamaların %95’i için THD ≤ %8 öngörür (istatistiksel sınır; anlık değer değildir).', 'TS EN 50160'));
       checks.push(check('thdi', 'THDi', 'info', 'Yük akımı %' + round(THDiLoad, 1) + ' · Şebeke (trafo) akımı %' + round(THDiSupply, 1)));
       if (QcEff > 0) checks.push(check('capI', 'Kondansatör akım yüklenmesi', capOver <= 1.3 ? 'ok' : 'fail', round(capOver, 2) + '×I_n (IEC 60831-1: sürekli ≤ 1,3·In)', 'IEC 60831-1'));
-      // EPDK Kurul Kararı 5999-3 Md. 13: kurulu güç < 50 kVA → %33 / %20; ≥ 50 kVA → %20 / %15; ≤ 15 kW kullanıcılar muaf
+      // EPDK Kurul Kararı 5999-3 Md. 13: kurulu güç < 50 kVA → %33 / %20; ≥ 50 kVA → %20 / %15 (muafiyet eşikleri bu modelde uygulanmaz)
       const kur = v.num(input.installed_kVA === undefined ? Sr : input.installed_kVA, 'Kurulu güç', { min: 1, max: 1e6, unit: 'kVA' });
       const lim = kur < 50 ? { ind: 33, cap: 20 } : { ind: 20, cap: 15 };
       const ratio = P > 0 ? Qnet / P * 100 : 0;
@@ -1306,7 +1310,7 @@
       checks.push(check('ups', 'UPS yüklenmesi', upsLoad <= 80 ? 'ok' : upsLoad <= 100 ? 'warn' : 'fail', '%' + round(upsLoad, 0) + ' (kVA ve kW sınırının büyüğü)', 'IEC 62040-3'));
       checks.push(check('bridge', 'Akü süresi ≥ jeneratör devreye girme', rt * 60 >= tGap * 3 ? 'ok' : rt * 60 >= tGap ? 'warn' : 'fail', 'Yedekleme ≈ ' + round(rt, 1) + ' dk; devreye girme ' + tGap + ' s'));
       checks.push(check('gen', 'Jeneratör yüklenmesi', genPct <= 80 ? 'ok' : genPct <= 100 ? 'warn' : 'fail', '%' + round(genPct, 0) + ' (' + round(genLoadKVA, 0) + ' kVA / ' + genKVA + ' kVA). Akü şarj gücü ve UPS doğrultucu harmonikleri için üretici boyutlandırma önerisi esastır.', 'ISO 8528'));
-      checks.push(check('ats', 'ATS kilitleme', 'ok', 'Açık geçiş (break-before-make): şebeke ve jeneratör kesicileri elektriksel ve mekanik kilitli; senkron paralel çalışma bu modelde yoktur.', 'TS EN 60947-6-1'));
+      checks.push(check('ats', 'ATS kilitleme', 'info', 'Açık geçiş (break-before-make): şebeke ve jeneratör kesicileri elektriksel ve mekanik kilitli; senkron paralel çalışma bu modelde yoktur.', 'TS EN 60947-6-1'));
       return result(v, { Scrit: Scrit, upsLoad: upsLoad, Vbat: Vbat, runtime: rt, genLoadKW: genLoadKW, genLoadKVA: genLoadKVA, genPct: genPct, fuelHours: hours, Ebat: Vbat * Ah * strings / 1000 }, checks, {
         assumptions: [
           'Akü süresi sabit güç ve doğrusal kapasite yaklaşımıyla; Peukert etkisi, deşarj sonu gerilimi ve yüksek akımda kapasite düşüşü katsayılarla temsil edilir. Üretici deşarj tablosu esastır.',
@@ -1323,21 +1327,23 @@
   /* ================================================================== YANGIN ALGILAMA (eğitim senaryosu) */
   const yangin = (function () {
     /** Duman yayılımı: ızgara üzerinde difüzyon + kaynak; tavan altı yoğunluk 0–1. Saf fonksiyon. */
-    function smokeStep(grid, w, h, src, dt, walls) {
-      const out = new Float32Array(grid.length);
+    /** Tek difüzyon adımı. out verilirse (grid ile aynı boyda, grid'den farklı tampon) sonuç oraya yazılır (çift tampon:
+     * karede bellek ayrılmaz); verilmezse yeni dizi döner. Sonuç her iki yolda da aynıdır. */
+    function smokeStep(grid, w, h, src, dt, walls, out) {
+      if (!out || out === grid || out.length !== grid.length) out = new Float32Array(grid.length);
       const D = 0.18, decay = 0.002;
       for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-        const i = y * w + x; if (walls && walls[i]) continue;
-        let sum = 0, nb = 0;
-        [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(d => {
-          const xx = x + d[0], yy = y + d[1];
-          if (xx < 0 || yy < 0 || xx >= w || yy >= h) return;
-          const j = yy * w + xx; if (walls && walls[j]) return;
-          sum += grid[j]; nb++;
-        });
-        out[i] = grid[i] + D * dt * (sum - nb * grid[i]) - decay * dt * grid[i];
+        const i = y * w + x;
+        if (walls && walls[i]) { out[i] = 0; continue; }
+        const g0 = grid[i];
+        let sum = 0, nb = 0, j;
+        if (x + 1 < w) { j = i + 1; if (!(walls && walls[j])) { sum += grid[j]; nb++; } }
+        if (x > 0) { j = i - 1; if (!(walls && walls[j])) { sum += grid[j]; nb++; } }
+        if (y + 1 < h) { j = i + w; if (!(walls && walls[j])) { sum += grid[j]; nb++; } }
+        if (y > 0) { j = i - w; if (!(walls && walls[j])) { sum += grid[j]; nb++; } }
+        out[i] = g0 + D * dt * (sum - nb * g0) - decay * dt * g0;
       }
-      if (src) src.forEach(s => { const i = s.y * w + s.x; out[i] = Math.min(1, out[i] + s.rate * dt); });
+      if (src) for (let k = 0; k < src.length; k++) { const i = src[k].y * w + src[k].x; out[i] = Math.min(1, out[i] + src[k].rate * dt); }
       for (let i = 0; i < out.length; i++) out[i] = clamp(out[i], 0, 1);
       return out;
     }

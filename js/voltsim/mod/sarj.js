@@ -101,14 +101,15 @@
     const sold = hub.chargeE, revenue = s.publicService ? sold * s.salePrice : 0;
     Object.assign(v, { sel: sel, limit: lim, hub: hub, circ: circ, selFinish: hp.finishMin, revenue: revenue, margin: revenue - hub.cost });
     const ck = r.checks;
-    ck.push({ id: 'peak', label: 'Bağlantı gücü (tepe talep)', status: hub.overMin > 0 ? 'fail' : hub.peak > lim * 0.95 ? 'warn' : 'ok', detail: 'Tepe ' + hub.peak.toFixed(1) + ' kW (' + clock(s.startHour, hub.peakAt) + ') / sınır ' + lim.toFixed(1) + ' kW' + (hub.overMin ? ' · ' + hub.overMin + ' dk aşım' : '') + (s.dlm ? ' · OCPP yük yönetimi açık' : ' · yük yönetimi kapalı'), ref: s.connMode === 'trafo' ? 'Trafo ' + s.trafoKVA + ' kVA × 0,95' : 'Bağlantı anlaşması' });
+    ck.push({ id: 'peak', label: 'Bağlantı gücü (tepe talep)', status: hub.overMin > 0 ? 'fail' : hub.peak > lim * 0.95 ? 'warn' : 'ok', detail: 'Tepe ' + fmt(hub.peak, 1) + ' kW (' + clock(s.startHour, hub.peakAt) + ') / sınır ' + fmt(lim, 1) + ' kW' + (hub.overMin ? ' · ' + hub.overMin + ' dk aşım' : '') + (s.dlm ? ' · OCPP yük yönetimi açık' : ' · yük yönetimi kapalı'), ref: s.connMode === 'trafo' ? 'Trafo ' + s.trafoKVA + ' kVA × 0,95' : 'Bağlantı anlaşması' });
     const paused = hub.points.filter(x => x.pausedMin > 0);
     if (paused.length) ck.push({ id: 'pause', label: 'Duraklatılan oturumlar (6 A alt sınırı)', status: 'info', detail: paused.length + ' nokta toplam ' + paused.reduce((a, x) => a + x.pausedMin, 0) + ' dk bekledi: AC oturumlar 6 A’in altına indirilemez, yetmeyen güçte sıradaki oturum duraklatılır.', ref: 'IEC 61851-1 (kontrol pilotu)' });
     s.points.forEach((q, i) => {
       const c = circ[i];
       if (!compatible(q)) ck.push({ id: 'conn' + i, label: q.name + ' · soket uyumu', status: 'fail', detail: CONN[q.conn] + ' tabancası aracın ' + (q.car.inlet === 'chademo' ? 'CHAdeMO' : 'CCS2') + ' soketine uymaz; oturum başlamaz.', ref: null });
-      if (!c.coord) ck.push({ id: 'coord' + i, label: q.name + ' · koruma–kablo koordinasyonu', status: 'fail', detail: 'Ib ' + c.Ib.toFixed(1) + ' A ≤ In ' + q.In + ' A ≤ Iz ' + c.Iz.toFixed(0) + ' A sağlanmıyor (' + q.S + ' mm² ' + q.method + ').', ref: 'TS HD 60364-4-43' });
-      if (c.vd > 3) ck.push({ id: 'vd' + i, label: q.name + ' · gerilim düşümü', status: c.vd > 5 ? 'fail' : 'warn', detail: '%' + c.vd.toFixed(2) + ' (' + q.L + ' m, ' + q.S + ' mm²) — tasarım hedefi ≤ %3', ref: 'TS HD 60364-5-52' });
+      if (!c.izTable) ck.push({ id: 'iz' + i, label: q.name + ' · kablo akım taşıma', status: 'warn', detail: q.S + ' mm² için seçilen döşeme yönteminde tablo değeri yok (TS HD 60364-5-52); kesit ya da yöntem değiştirin.', ref: 'TS HD 60364-5-52' });
+      else if (!c.coord) ck.push({ id: 'coord' + i, label: q.name + ' · koruma–kablo koordinasyonu', status: 'fail', detail: 'Ib ' + fmt(c.Ib, 1) + ' A ≤ In ' + q.In + ' A ≤ Iz ' + fmt(c.Iz, 0) + ' A sağlanmıyor (' + q.S + ' mm² ' + q.method + ').', ref: 'TS HD 60364-4-43' });
+      if (c.vd > 3) ck.push({ id: 'vd' + i, label: q.name + ' · gerilim düşümü', status: c.vd > 5 ? 'fail' : 'warn', detail: '%' + fmt(c.vd, 2) + ' (' + q.L + ' m, ' + q.S + ' mm²) — tasarım hedefi ≤ %3', ref: 'TS HD 60364-5-52' });
       if (!c.rcdOk) ck.push({ id: 'rcd' + i, label: q.name + ' · kaçak akım koruması', status: 'fail', detail: c.kind === 'AC' ? RCD[q.rcd] + ' yetmez: Tip A + 6 mA DC algılama (RDC-DD, cihazda ya da ayrı) veya Tip B gerekir.' : 'DC cihazın AC beslemesi için RCD yok.', ref: 'TS HD 60364-7-722' });
       if (s.publicService && !q.meter) ck.push({ id: 'meter' + i, label: q.name + ' · enerji ölçümü', status: 'warn', detail: 'Ücretli hizmette satılan enerji nokta bazında ölçülmelidir (MID onaylı sayaç).', ref: null });
     });
@@ -116,7 +117,7 @@
     ck.push({ id: 'circ', label: 'Nokta besleme devreleri', status: bad ? 'fail' : 'ok', detail: bad ? bad + ' noktada koruma/kablo/RCD uygunsuz' : s.points.length + ' nokta: Ib ≤ In ≤ Iz, ΔU ve RCD uygun', ref: 'TS HD 60364-7-722' });
     if (s.salePrice > 0 && !s.publicService) ck.push({ id: 'billing', label: 'Ücretlendirme ve mevzuat kapsamı', status: 'fail', detail: 'Kullanıcılardan enerji bedeli alınıyor: bu, özel (ticari olmayan) kullanım değildir. Herkese açık ücretli şarj hizmeti senaryosunu seçin.', ref: 'Şarj Hizmeti Yönetmeliği' });
     if (s.deadline > 0) ck.push({ id: 'deadline', label: 'Hedef süre', status: hub.allDone && hub.lastFinish <= s.deadline ? 'ok' : 'warn', detail: 'Tüm araçlar ' + (hub.allDone ? dur(hub.lastFinish) : 'bitmiyor') + ' / hedef ' + dur(s.deadline), ref: null });
-    if (s.pvKWp > 0 || s.batKWh > 0) ck.push({ id: 'der', label: 'GES / batarya katkısı', status: 'info', detail: 'GES ' + hub.pvE.toFixed(1) + ' kWh (temsili açık gün)' + (s.batKWh > 0 ? ' · batarya deşarj ' + hub.batOut.toFixed(1) + ' kWh' : ''), ref: null });
+    if (s.pvKWp > 0 || s.batKWh > 0) ck.push({ id: 'der', label: 'GES / batarya katkısı', status: 'info', detail: 'GES ' + fmt(hub.pvE, 1) + ' kWh (temsili açık gün)' + (s.batKWh > 0 ? ' · batarya deşarj ' + fmt(hub.batOut, 1) + ' kWh' : ''), ref: null });
     r.assumptions = r.assumptions.filter(a => a.indexOf('Eşzamanlı noktalar') < 0).concat([
       'Şarj merkezi: her nokta kendi aracı, bataryası ve SOC’siyle 1 dk adımla simüle edilir; paylaşım önceliğe göre (yüksek öncelik önce), kademe içinde eşit su doldurma.',
       'AC oturumlarda en küçük akım 6 A’dir (IEC 61851-1 kontrol pilotu); yetmeyen güçte oturum duraklatılır. DC’de alt sınır yok kabul edildi.',
@@ -172,7 +173,7 @@
   function controls(s) {
     const i = Math.max(0, Math.min(s.sel, s.points.length - 1)), p = s.points[i], P = 'points.' + i + '.', C = P + 'car.';
     const dc = p && kindOf(p) === 'DC';
-    const groups = [{ title: 'Şarj noktaları (' + s.points.length + ')', items: [{ type: 'custom', render: pointList }, { type: 'note', text: 'Nokta sayısında yapay sınır yoktur; 3D’de park yerleri sıralara sarılır, 2D şema kaydırılır. Satıra tıklayın: seçili nokta aşağıda düzenlenir; “Takılı/Boşta” fiş, ▶/■ oturum.' }] }];
+    const groups = [{ title: 'Şarj noktaları (' + s.points.length + ')', items: [{ type: 'custom', render: pointList }, { type: 'note', text: '3D’de park yerleri sıralara sarılır, 2D şema kaydırılır. Satıra tıklayın: seçili nokta aşağıda düzenlenir; “Takılı/Boşta” fiş, ▶/■ oturum.' }] }];
     if (p) {
       groups.push({ title: 'Seçili araç · ' + p.name, items: [
         { type: 'range', key: C + 'capacity', label: 'Batarya kapasitesi (kullanılabilir)', min: 10, max: 250, step: 1, unit: 'kWh' },
@@ -487,6 +488,8 @@
   }
   function build(k, s, app) {
     const T = k.T, M = k.mats, v = k.viewer, Xm = mats(k);
+    // modül önbelleğindeki geometri ve malzemeler yeniden kurulumda dispose edilmez (her seferinde GPU'ya yeniden yüklenmez)
+    [geos(T), Xm].forEach(o => Object.keys(o).forEach(n => { const x = o[n]; if (Array.isArray(x)) x.forEach(y => k.keep(y)); else if (x && (x.isBufferGeometry || x.isMaterial)) k.keep(x); }));
     if (validatePoints(s).length) { app.scene3 = null; k.ground(200, Xm.grass, -0.02); return; }
     const n = s.points.length, rows = Math.ceil(n / PER_ROW), cols = Math.min(n, PER_ROW);
     const sc = { app: app, cars: [], units: [], flows: [], lastScr: -1, lastMods: [] };
@@ -497,13 +500,19 @@
     const asphalt = mesh(k, new T.PlaneGeometry(xR - xL, zB - zT), M.asphalt, (xL + xR) / 2, 0, (zB + zT) / 2, v.root);
     asphalt.rotation.x = -Math.PI / 2; asphalt.castShadow = false; asphalt.userData.noClip = true;
     const wheels = [];
+    // park yeri süslemeleri (zemin boyası, ada, babalar, piktogram) statik grupta birleşir; piktogram dokusu tek ve paylaşımlı
+    const pk = k.staticGroup(null);
+    let icon0 = null;
     s.points.forEach((p, i) => {
       const b = bayPos(i), bx = b.x, bz = b.z, ix = bx + ISLAND_X, dc = kindOf(p) === 'DC';
-      k.box(2.5, 0.006, 5.2, Xm.evGreen, bx, 0.004, bz).castShadow = false;
-      k.box(0.1, 0.008, 5.2, Xm.line, bx - 1.35, 0.005, bz).castShadow = false;
-      const pict = k.screen(1.2, 1.2, 256, drawBayIcon, v.root); pict.rotation.x = -Math.PI / 2; pict.position.set(bx, 0.009, bz + 1.7);
-      k.rbox(1.0, 0.16, 5.0, 0.05, M.concrete, ix, 0.08, bz - 0.4);
-      [-2.7, 1.9].forEach(zz => { k.cyl(0.07, 0.07, 0.9, M.plasticYellow, ix, 0.6, bz + zz, null, 16); k.cyl(0.072, 0.072, 0.12, M.plasticDark, ix, 0.75, bz + zz, null, 16); });
+      k.box(2.5, 0.006, 5.2, Xm.evGreen, bx, 0.004, bz, pk).castShadow = false;
+      k.box(0.1, 0.008, 5.2, Xm.line, bx - 1.35, 0.005, bz, pk).castShadow = false;
+      let pict;
+      if (!icon0) pict = icon0 = k.screen(1.2, 1.2, 256, drawBayIcon, pk);
+      else { pict = new T.Mesh(icon0.geometry, icon0.material); pict.receiveShadow = true; pk.add(pict); }
+      pict.rotation.x = -Math.PI / 2; pict.position.set(bx, 0.009, bz + 1.7);
+      k.rbox(1.0, 0.16, 5.0, 0.05, M.concrete, ix, 0.08, bz - 0.4, pk);
+      [-2.7, 1.9].forEach(zz => { k.cyl(0.07, 0.07, 0.9, M.plasticYellow, ix, 0.6, bz + zz, pk, 16); k.cyl(0.072, 0.072, 0.12, M.plasticDark, ix, 0.75, bz + zz, pk, 16); });
       const car = buildCar(k, bx, bz, Xm.paints[i % Xm.paints.length], wheels, sc, i);
       k.pickable(car.body, () => s.points[i].name + ' · ' + (CARS[s.points[i].car.preset] || CARS.sedan).name, () => pointInfo(app, i), a => pointActions(a, i));
       const u = dc ? buildDC(k, ix, bz - 0.55, sc, i) : buildAC(k, ix, bz - 0.8, sc, i);
@@ -636,10 +645,14 @@
   }
 
   /* ---------------------------------------------------------------- sahne güncelleme */
-  function update(k, res, s, live, app) { const sc = app.scene3; if (!sc) return; sc.lastScr = -1; sc.lastMods = []; animate(k, 0, res, s, live, app); }
+  function update(k, res, s, live, app) { const sc = app.scene3; if (!sc) return; sc.lastScr = -1; sc.lastMods = []; sc.lastJ = -1; animate(k, 0, res, s, live, app); }
   function animate(k, dt, res, s, live, app) {
     const sc = app.scene3; if (!sc || !res.values.hub) return;
     const h = res.values.hub, j = at(h, live.t), T = k.T, M = k.mats, col = sc._color || (sc._color = new T.Color());
+    // sahne yalnız zaman serisinde yeni bir adıma geçilince güncellenir; enerji akışları kendi karelerini ister
+    const jk = j + (live.done ? 'd' : '');
+    if (jk === sc.lastJ) return false;
+    sc.lastJ = jk;
     s.points.forEach((p, i) => {
       const car = sc.cars[i], u = sc.units[i]; if (!car || !u || !h.P[i]) return;
       const P = h.P[i][j] || 0, soc = h.soc[i][j] || 0, done = h.points[i].finishMin !== null && h.points[i].finishMin <= live.t + 1e-6, paused = !!h.paused[i][j];
@@ -666,6 +679,7 @@
     const tag = Math.floor(live.t * 3 / Math.max(rate(s, h), 0.1)) + (live.done ? 1e6 : 0);
     if (tag !== sc.lastScr) { sc.lastScr = tag; sc.units.forEach(u => u.scr.redraw()); sc.meter.redraw(); }
     void dt;
+    return true;
   }
 
   /* ---------------------------------------------------------------- 2D tek hat şeması (kaydırılabilir) */

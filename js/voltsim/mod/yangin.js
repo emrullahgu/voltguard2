@@ -280,7 +280,9 @@
       const h = Math.min(0.5, left); left -= h;
       // duman: motorun difüzyon adımı (duvarlar engel)
       L.rate = Math.min(0.25, GROWTH[s.growth] * L.t * L.t);
-      L.grid = Y.smokeStep(L.grid, GW, GH, [{ x: f.x, y: f.y, rate: L.rate }], h, WALLS);
+      // çift tampon: adım başına yeni dizi ayrılmaz; gridV sürümü 3D boyamaya değişikliği bildirir
+      const src = L._src || (L._src = [{ x: 0, y: 0, rate: 0 }]); src[0].x = f.x; src[0].y = f.y; src[0].rate = L.rate;
+      const prev = L.grid; L.grid = Y.smokeStep(prev, GW, GH, src, h, WALLS, L._gridB); L._gridB = prev; L.gridV = (L.gridV || 0) + 1;
       L.t += h;
       // dedektörler: optik = yerel yoğunluk, ısı = τ gecikmeli yerel değer, ışın = hat ortalaması
       L.dets.forEach((d, i) => {
@@ -535,7 +537,7 @@
   const FY = 0.15; // döşeme üst kotu
   function rebuildOn(s) { return [s.area, s.height, s.sounders, s.nLoops, detSig(s)].join('|'); }
 
-  /** Çekirdek kit ilkelleri ebeveyn verilmezse nesneyi sahneye eklemez; burada varsayılan ebeveyn kök gruptur. */
+  /** Ebeveyn verilmeyen ilkeller için varsayılan ebeveyni açıkça kök grup yapar (çağrıların okunurluğu için). */
   function rootKit(k) {
     const r = k.viewer.root;
     return Object.assign({}, k, {
@@ -554,6 +556,7 @@
     const X = gx => gx * cs - W / 2, Z = gy => gy * cs - D / 2;
     const sc = { G: G, dets: [], beams: [], clock: 0, panelT: 0, zl: {} };
     app.scene3 = sc;
+    const dec = k.staticGroup(null);   // sabit süsleme (zemin çizgileri, kolonlar, aşıklar): kurulum sonunda birleşir
     const R = rng(42);
     // saha ve döşeme
     k.ground(Math.max(W, D) * 5, M.asphalt, 0);
@@ -563,7 +566,7 @@
     k.box(12 * cs, 0.012, 8 * cs, new T.MeshStandardMaterial({ color: 0x8b7b66, roughness: 0.7 }), X(6), FY + 0.006, Z(20));
     k.box(7 * cs, 0.012, 8 * cs, new T.MeshStandardMaterial({ color: 0x5b6470, roughness: 0.4 }), X(16.5), FY + 0.006, Z(20));
     // depo koridor çizgileri (sarı)
-    [2, 4, 6, 8, 10, 12].forEach(gy => k.box(16 * cs, 0.004, 0.1, M.plasticYellow, X(10), FY + 0.004, Z(gy) + (gy % 4 === 2 ? -0.15 : 0.15), null, { noShadow: true }));
+    [2, 4, 6, 8, 10, 12].forEach(gy => k.box(16 * cs, 0.004, 0.1, M.plasticYellow, X(10), FY + 0.004, Z(gy) + (gy % 4 === 2 ? -0.15 : 0.15), dec, { noShadow: true }));
 
     // dış duvarlar: arka ve sol tam yükseklik, ön ve sağ kesit (alçak) — içerisi görünsün
     const Hw = H + 1.1, t = 0.2;
@@ -591,7 +594,7 @@
     const nF = Math.max(3, Math.round(W / 7.5) + 1), xs = [];
     for (let i = 0; i < nF; i++) xs.push(-W / 2 + 0.2 + i * (W - 0.4) / (nF - 1));
     const TD = Math.min(1.2, 0.9 + H * 0.02);
-    xs.forEach(x => { [-D / 2 + 0.2, D / 2 - 0.2].forEach(z => k.box(0.28, H + TD, 0.3, M.darkSteel, x, FY + (H + TD) / 2, z)); });
+    xs.forEach(x => { [-D / 2 + 0.2, D / 2 - 0.2].forEach(z => k.box(0.28, H + TD, 0.3, M.darkSteel, x, FY + (H + TD) / 2, z, dec)); });
     const webGeo = new T.BoxGeometry(1, 1, 1), nPan = Math.max(6, Math.round(D / 1.6));
     const web = new T.InstancedMesh(webGeo, M.galv, xs.length * (nPan * 2 + 2) + xs.length * 2);
     web.castShadow = true; web.receiveShadow = true;
@@ -604,7 +607,7 @@
       for (let j = 0; j < nPan; j++) { const z = -D / 2 + (j + 0.5) * p, len = Math.hypot(p, TD); put(x, FY + H + TD / 2, z, 0.06, len, 0.06, (j % 2 ? 1 : -1) * Math.atan2(p, TD)); }
     });
     web.count = wi; web.instanceMatrix.needsUpdate = true; v.root.add(web);
-    for (let z = -D / 2 + 0.3; z <= D / 2; z += 2.2) k.box(W, 0.14, 0.08, M.galv, 0, FY + H + TD + 0.07, z);
+    for (let z = -D / 2 + 0.3; z <= D / 2; z += 2.2) k.box(W, 0.14, 0.08, M.galv, 0, FY + H + TD + 0.07, z, dec);
     // çatı kaplaması: yalnız arka şerit (kesit görünüm); şeffaf/patlatma ile açılır
     const roof = k.group(null, 0, 0, 0);
     const rd = D * 0.36;
@@ -628,7 +631,7 @@
     });
     // depo–üretim açık geçişi: sarılmış kepenk ve tehlike bandı
     const drum = k.cyl(0.22, 0.22, 4 * cs, M.galv, X(20.5), FY + H - 0.3, Z(7)); drum.rotation.x = Math.PI / 2;
-    [5, 9].forEach(gy => k.box(0.2, 1.4, 0.05, M.plasticYellow, X(20.5), FY + 0.7, Z(gy) + (gy === 5 ? 0.04 : -0.04)));
+    [5, 9].forEach(gy => k.box(0.2, 1.4, 0.05, M.plasticYellow, X(20.5), FY + 0.7, Z(gy) + (gy === 5 ? 0.04 : -0.04), dec));
 
     buildRacks(k, s, G, X, Z, R);
     buildProduction(k, G, X, Z);
@@ -846,7 +849,7 @@
   }
 
   /* dedektörler: noktasal (optik/ısı) InstancedMesh ile çizilir; seçim için her dedektörde görünmez vekil kutu
-   * (malzeme görünmez, ışın testi çalışır) bulunur. Işın tipi dedektörler ayrı nesnelerdir. Sayı sınırı yoktur. */
+   * (malzeme görünmez, ışın testi çalışır) bulunur. Işın tipi dedektörler ayrı nesnelerdir. */
   function buildDetectors(k, s, G, X, Z, sc, app) {
     const T = k.T, M = k.mats;
     const yC = FY + G.H;
@@ -896,7 +899,7 @@
     sc.ledCol = { green: new T.Color(0x22e07a).convertSRGBToLinear(), red: new T.Color(0xff3030).convertSRGBToLinear(), amber: new T.Color(0xf59e0b).convertSRGBToLinear(), off: new T.Color(0x2a323b) };
   }
   /** Yerleştirme: yerleştirme modunda tavanda ızgaralı saydam düzlem. Tıklanan hücre ışın testiyle bulunur
-   * (imleç konumu kaydedilir); boş hücrede “Dedektör ekle”, dolu hücrede “Kaldır”. Sayı sınırı yoktur. */
+   * (imleç konumu kaydedilir); boş hücrede “Dedektör ekle”, dolu hücrede “Kaldır”. */
   const PTR = { x: 0, y: 0, ok: false };
   function buildPlacement(k, s, G, X, Z, sc) {
     const T = k.T, yC = FY + G.H - 0.005, v = k.viewer;
@@ -1002,10 +1005,9 @@
     });
     sc.smokeGrid = null;
   }
-  function paintSmoke(sc, grid) {
-    // smokeStep returns a new grid. Identity avoids per-frame scans and still
-    // redraws redistribution with the same total smoke concentration.
-    if (sc.smokeGrid === grid) return; sc.smokeGrid = grid;
+  function paintSmoke(sc, grid, ver) {
+    // ızgara kimliği + sürüm (çift tampon) değişmedikçe doku yeniden yüklenmez
+    if (sc.smokeGrid === grid && sc.smokeV === ver) return false; sc.smokeGrid = grid; sc.smokeV = ver;
     sc.smoke.forEach(l => {
       const d = l.data;
       for (let gy = 0; gy < GH; gy++) for (let gx = 0; gx < GW; gx++) {
@@ -1015,6 +1017,7 @@
       }
       l.tex.needsUpdate = true;
     });
+    return true;
   }
 
   /* yangın: alev konileri, titreşen nokta ışık, yükselen duman sütunu */
@@ -1047,7 +1050,7 @@
     const col = new T.Color(), shirts = [0xf2c200, 0xf97316, 0x2563eb, 0x0f766e, 0xe5e7eb, 0x1e293b];
     for (let i = 0; i < 60; i++) sc.body.setColorAt(i, col.setHex(shirts[i % shirts.length]));
     [sc.body, sc.head].forEach(m => { m.castShadow = true; m.count = 0; k.viewer.root.add(m); });
-    k.pickable(sc.body, 'Bina kullanıcıları', () => { const a = VS.app, L = a.live; return [a.state.occupants + ' kişi · sahnede ' + L.people.length + ' figür', 'Alarmdan ' + T_RESP + ' s sonra 1,2 m/s ile en yakın çıkışa yürür (motor varsayımı).', 'Kapı kuyruğu figürlerde canlandırılmaz; kapı akış süresi hesapta yer alır.']; });
+    k.pickable(sc.body, 'Bina kullanıcıları', a => { const L = a.live; return [a.state.occupants + ' kişi · sahnede ' + L.people.length + ' figür', 'Alarmdan ' + T_RESP + ' s sonra 1,2 m/s ile en yakın çıkışa yürür (motor varsayımı).', 'Kapı kuyruğu figürlerde canlandırılmaz; kapı akış süresi hesapta yer alır.']; });
   }
 
   /* sahne güncelleme: hesap/girdi değişince */
@@ -1070,25 +1073,37 @@
     const lost = loopModel(s).lostSnd; (sc.lens || []).forEach((m, i) => { m.material = lost.has(i) ? k.mats.ledOff : sc.beacon; });
   }
   function animate(k, dt, res, s, L, app) {
-    const sc = app.scene3; if (!sc || !L.dets) return;
+    const sc = app.scene3; if (!sc || !L.dets) return false;
     const M = k.mats, G = sc.G, T = k.T;
     sc.clock += dt;
     const rm = k.reducedMotion;
-    paintSmoke(sc, L.grid);
+    let draw = paintSmoke(sc, L.grid, L.gridV);
     // alev ve ışık (yangın büyüklüğü kaynak debisine bağlı)
     const sz = L.burning || L.t > 0 ? 0.35 + 1.6 * Math.sqrt(L.rate / 0.25) : 0;
     sc.fire.visible = sz > 0;
+    const dm = sc._dm || (sc._dm = new T.Object3D());
+    // alev titreşimi ve duman sütunu yalnız yangın sürerken (ya da büyüklük değişince) güncellenir
+    const fireAnim = sz > 0 && !rm && dt > 0, fireChg = sz !== sc._sz;
+    sc._sz = sz;
+    if (fireAnim || fireChg) {
+    draw = true;
     sc.flames.forEach((fl, i) => { const fk = rm ? 1 : 0.85 + 0.25 * Math.sin(sc.clock * (9 + i * 3) + i); fl.m.scale.set(sz, sz * fk, sz); fl.m.position.y = fl.h * sz * fk / 2; });
     sc.fireLight.intensity = sz ? (rm ? 60 : 50 + 25 * Math.sin(sc.clock * 13) * Math.sin(sc.clock * 7.3)) * sz : 0;
-    const dm = sc._dm || (sc._dm = new T.Object3D());
     for (let i = 0; i < 16; i++) {
       const ph = rm ? i / 16 : (i / 16 + sc.clock * 0.12) % 1, r = 0.18 + ph * 0.9 * Math.max(0.5, sz);
       dm.position.set(Math.sin(i * 2.3) * ph * 0.6, 0.6 + ph * (G.H - 0.8), Math.cos(i * 1.7) * ph * 0.6); dm.scale.setScalar(sz ? r : 0.0001); dm.updateMatrix(); sc.plume.setMatrixAt(i, dm.matrix);
     }
     sc.plume.instanceMatrix.needsUpdate = true;
+    }
     // dedektör LED'leri: normal → 4 s'de bir yeşil yanıp söner, alarm → kırmızı, arıza → sarı, devre dışı → sönük
     const st = detStates(s, L), blink = rm || (sc.clock % 4) < 0.18;
     const LC = sc.ledCol, flash = (sc.clock * 3 | 0) % 2 || rm;
+    // LED renkleri yalnız durum ya da yanıp sönme evresi değişince yazılır
+    const fire = L.panel.mode === 'fire';
+    const ledSig = (blink ? 1 : 0) + (flash ? 2 : 0) + (fire && !rm && (sc.clock * 1.5) % 1 < 0.25 ? 4 : 0) + (fire && (rm || (sc.clock * 2 | 0) % 2) ? 8 : 0) + '|' + st.map((x, i) => x.state + (x.disabled ? 'd' : '') + (L.dets[i] && L.dets[i].alarm ? 'a' : '')).join('') + '|' + fire + L.panel.faults + s.disableZone;
+    const ledChg = ledSig !== sc._ledSig; sc._ledSig = ledSig;
+    if (ledChg) {
+    draw = true;
     st.forEach((x, i) => {
       const d = sc.dets[i]; if (!d) return;
       const al = L.dets[i] && L.dets[i].alarm;
@@ -1098,8 +1113,8 @@
       if (d.beam) { d.beam.opacity = al && !x.disabled ? 0.55 : 0.16; d.beam.color.setHex(al ? 0xff2222 : 0xff8888); }
     });
     if (sc.detLeds && sc.detLeds.instanceColor) sc.detLeds.instanceColor.needsUpdate = true;
+    }
     // siren / flaşör
-    const fire = L.panel.mode === 'fire';
     sc.beacon.emissiveIntensity = fire ? (rm ? 2.2 : ((sc.clock * 1.5) % 1 < 0.25 ? 4 : 0.2)) : 0;
     // panel LED'leri: YANGIN, ARIZA, DEVRE DIŞI, ENERJİ
     if (sc.panelLeds) {
@@ -1108,10 +1123,16 @@
       sc.panelLeds[2].material = s.disableZone ? M.ledAmber : M.ledOff;
       sc.panelLeds[3].material = M.ledGreen;
     }
-    sc.panelT += dt; if (sc.panelT > 0.5 && sc.panelScr) { sc.panelT = 0; sc.panelScr.redraw(); }
+    // panel ekranı 0,5 s'de bir; içerik (mod, arıza, süre, kayıt, yanıp sönme) değişmedikçe doku yüklenmez
+    sc.panelT += dt; if (sc.panelT > 0.5 && sc.panelScr) { sc.panelT = 0; const p = L.panel; sc.panelScr.redraw([p.mode, p.faults, Math.round(L.t || 0), L.silenced, (L.plog || []).length, L.dets.filter(d => d.alarm).length, s.disableZone, p.mode === 'fire' ? Math.floor((L.t || 0) * 2 + sc.clock * 2) % 2 : 0].join('|')); }
+    sc.fireLabel.set(L.burning ? 'Yangın · ' + fmt(L.t, 0) + ' s' : L.t > 0 ? 'Yangın (durdu)' : 'Yangın başlangıç noktası');
     // kişiler
     const n = L.people.length; let j = 0;
     const moving = L.tAlarm !== null && L.t >= L.tAlarm + T_RESP;
+    // kişiler yalnız tahliye sürerken ya da sayı/konum değişince yeniden yerleştirilir
+    let pSig = n; for (let i = 0; i < n; i++) { const p = L.people[i]; pSig += p.out ? 7 : p.x * 31 + p.y * 17 + p.dir; }
+    if (!(moving && !rm && dt > 0) && pSig === sc._pSig) return draw;
+    sc._pSig = pSig; draw = true;
     for (let i = 0; i < n; i++) {
       const p = L.people[i]; if (p.out) continue;
       const bob = moving && !rm ? Math.abs(Math.sin(sc.clock * 8 + p.ph)) * 0.04 : 0;
@@ -1121,7 +1142,7 @@
     dm.rotation.set(0, 0, 0);
     sc.body.count = sc.head.count = j; sc.body.instanceMatrix.needsUpdate = sc.head.instanceMatrix.needsUpdate = true;
     if (sc.body.instanceColor) sc.body.instanceColor.needsUpdate = true;
-    sc.fireLabel.set(L.burning ? 'Yangın · ' + fmt(L.t, 0) + ' s' : L.t > 0 ? 'Yangın (durdu)' : 'Yangın başlangıç noktası');
+    return draw;
   }
 
   /* ---------------------------------------------------------------- 2D plan şeması */

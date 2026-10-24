@@ -138,7 +138,7 @@ textarea.vs-input{resize:vertical;font-family:ui-monospace,Consolas,monospace;fo
 .vs-errors p{margin:4px 0 0;color:#fca5a5aa;font-size:.68rem}
 .vs-readouts{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:0 0 14px;border:1px solid #1f3352;border-radius:12px;overflow:hidden;background:#1f3352}
 .vs-ro{padding:8px 11px;background:#0a1a33}
-.vs-ro span{display:block;color:#7f94b0;font-size:.62rem;line-height:1.3;text-transform:uppercase;letter-spacing:.05em}
+.vs-ro span{display:block;color:#7f94b0;font-size:.68rem;line-height:1.3;text-transform:uppercase;letter-spacing:.05em}
 .vs-ro b{display:block;margin-top:2px;color:#fff;font:650 .95rem/1.25 var(--vg-font-h);font-variant-numeric:tabular-nums}
 .vs-ro small{display:block;color:#7f94b0;font-size:.64rem}
 .vs-ro[data-level="warn"] b{color:#fcd34d}
@@ -347,8 +347,9 @@ textarea.vs-input{resize:vertical;font-family:ui-monospace,Consolas,monospace;fo
 }
 @media(max-width:600px){
   .vs-toolbar{padding:8px}
-  .vs-tb span{display:none}
-  .vs-tb--primary span{display:inline}
+  /* metin görsel olarak gizlenir ama erişilebilir ad olarak kalır */
+  .vs-tb>span:not(.sr-only){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+  .vs-tb--primary>span:not(.sr-only){position:static;width:auto;height:auto;overflow:visible;clip:auto;clip-path:none}
   .vs-tb{padding:7px 10px}
   .vs-tb--select select{max-width:180px}
   .vs-vtools{flex-direction:row;flex-wrap:wrap;justify-content:flex-end;left:auto;max-width:150px}
@@ -356,7 +357,8 @@ textarea.vs-input{resize:vertical;font-family:ui-monospace,Consolas,monospace;fo
   .vs-hud{top:auto;bottom:12px;left:12px}
   .vs-hint{display:none}
   .vs-info{bottom:52px}
-  .vs-clip{right:10px;top:96px}
+  .vs-clip{right:10px;left:auto;top:auto;bottom:10px}
+  .vs-clip input{width:120px}
   .vsl-hero h1{font-size:2.6rem}
 }
 @media(prefers-reduced-motion:reduce){.vs-page *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}

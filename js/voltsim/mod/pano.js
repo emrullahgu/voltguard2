@@ -7,13 +7,13 @@
   const P = E.pano;
 
   /* ---------------------------------------------------------------- devre önayarları */
-  const C = (o) => Object.assign({ on: true, tripped: false, tripReason: '', kind: 'MCB', curve: 'C', In: 16, S: 2.5, L: 25, method: 'B1', rcd: 0, cos: 0.95, eff: 0.9, motor: false, cap: false, shunt: false, detune: 0, running: false, start: 'DOL', IstIn: 7 }, o);
+  const C = (o) => Object.assign({ on: true, tripped: false, tripReason: '', kind: 'MCB', curve: 'C', In: 16, S: 2.5, L: 25, method: 'B1', rcd: 0, cos: 0.95, eff: 0.9, motor: false, cap: false, shunt: false, socket: false, detune: 0, running: false, start: 'DOL', IstIn: 7 }, o);
   const PRESETS = {
     ADP: () => [
       C({ name: 'Aydınlatma', phase: 'L1', P_kW: 3.2, cos: 0.95, curve: 'B', In: 16, S: 2.5, L: 30 }),
-      C({ name: 'Priz grubu', phase: 'L2', P_kW: 2.6, cos: 0.9, In: 16, S: 2.5, L: 25, rcd: 30 }),
+      C({ name: 'Priz grubu', phase: 'L2', P_kW: 2.6, cos: 0.9, In: 16, S: 2.5, L: 25, rcd: 30, socket: true }),
       C({ name: 'Ofis klima', phase: 'L3', P_kW: 2.8, cos: 0.92, In: 20, S: 4, L: 25 }),
-      C({ name: 'Kaynak prizi 3~', phase: '3F', P_kW: 9, cos: 0.9, In: 32, S: 6, L: 20, rcd: 30 }),
+      C({ name: 'Kaynak prizi 3~', phase: '3F', P_kW: 9, cos: 0.9, In: 32, S: 6, L: 20, rcd: 30, socket: true }),
       C({ name: 'Kompresör 3~', phase: '3F', P_kW: 15, cos: 0.86, eff: 0.92, motor: true, running: true, kind: 'MCCB', In: 40, S: 10, L: 35, method: 'C', IstIn: 7 }),
       C({ name: 'Konveyör 3~', phase: '3F', P_kW: 5.5, cos: 0.82, eff: 0.89, motor: true, running: true, curve: 'D', In: 16, S: 4, L: 40, method: 'C', start: 'DOL', IstIn: 6.5 })
     ],
@@ -43,13 +43,13 @@
       C({ name: 'Kritik aydınlatma', phase: 'L1', P_kW: 2.2, cos: 0.95, curve: 'B', In: 16, S: 2.5, L: 40 }),
       C({ name: 'Bilgi işlem UPS girişi', phase: '3F', P_kW: 18, cos: 0.95, In: 40, S: 10, L: 25, method: 'C' }),
       C({ name: 'Yangın pompası 3~', phase: '3F', P_kW: 15, cos: 0.86, eff: 0.92, motor: true, running: false, kind: 'MCCB', In: 40, S: 10, L: 30, method: 'C', start: 'YD' }),
-      C({ name: 'Priz grubu', phase: 'L2', P_kW: 2, cos: 0.9, In: 16, S: 2.5, L: 30, rcd: 30 }),
+      C({ name: 'Priz grubu', phase: 'L2', P_kW: 2, cos: 0.9, In: 16, S: 2.5, L: 30, rcd: 30, socket: true }),
       C({ name: 'Asansör 3~', phase: '3F', P_kW: 7.5, cos: 0.85, eff: 0.9, motor: true, running: true, curve: 'D', In: 25, S: 6, L: 35, method: 'C', start: 'VFD' })
     ]
   };
   const ADD = {
     light: () => C({ name: 'Aydınlatma', phase: 'L1', P_kW: 1.5, cos: 0.95, curve: 'B', In: 10, S: 1.5, L: 25 }),
-    socket: () => C({ name: 'Priz', phase: 'L2', P_kW: 2, cos: 0.9, In: 16, S: 2.5, L: 25, rcd: 30 }),
+    socket: () => C({ name: 'Priz', phase: 'L2', P_kW: 2, cos: 0.9, In: 16, S: 2.5, L: 25, rcd: 30, socket: true }),
     load3: () => C({ name: '3F yük', phase: '3F', P_kW: 10, cos: 0.9, In: 25, S: 6, L: 25, method: 'C' }),
     motor: () => C({ name: 'Motor 3~', phase: '3F', P_kW: 7.5, cos: 0.84, eff: 0.9, motor: true, running: false, curve: 'D', In: 20, S: 4, L: 30, method: 'C', IstIn: 7 }),
     cap: () => C({ name: 'Kondansatör kademesi', phase: '3F', P_kW: 20, cap: true, kind: 'FUSE', In: 50, S: 16, L: 3, method: 'C' }),
@@ -84,7 +84,6 @@
   function circDev(c) { return { kind: c.kind, curve: c.curve, In: c.In, Ir: c.In, Ii: c.Ii || 10 * c.In }; }
   function qLabel(c) { return c.shunt ? fmt(c.P_kW, 1, 'kVAr') + ' şönt reaktör' : fmt(c.P_kW, 1, 'kVAr') + (c.detune ? ' filtreli kademe (p %' + fmt(c.detune, c.detune % 1 ? 2 : 0) + ')' : ' kondansatör kademesi'); }
   function cOf(app) { return app.state.circuits[app.state.sel] || app.state.circuits[0]; }
-  function circuitAt(app) { return 'circuits.' + app.state.sel + '.'; }
 
   /* ---------------------------------------------------------------- kontroller */
   function controls(s, app) {
@@ -149,7 +148,7 @@
           } }));
         });
         box.appendChild(add);
-        box.appendChild(VS.el('p', { class: 'vs-note', text: s.circuits.length + ' devre · sınır yoktur; pano bölümleri ve şema devre sayısına göre büyür.' }));
+        box.appendChild(VS.el('p', { class: 'vs-note', text: s.circuits.length + ' devre · pano bölümleri ve tek hat şeması devre sayısına göre büyür.' }));
       } }
     ] });
     if (c) {
@@ -170,6 +169,7 @@
         { type: 'select', key: sel + 'S', label: 'Kablo kesiti (Cu)', options: E.CABLE_SIZES.map(v => [v, fmt(v, v % 1 ? 1 : 0) + ' mm²']) },
         { type: 'select', key: sel + 'method', label: 'Döşeme yöntemi', options: Object.keys(E.INSTALL_METHODS).map(k => [k, E.INSTALL_METHODS[k]]) },
         { type: 'range', key: sel + 'L', label: 'Kablo uzunluğu', min: 1, max: 250, step: 1, unit: 'm' },
+        isC ? null : { type: 'toggle', key: sel + 'socket', label: 'Priz son devresi (≤ 63 A → 0,4 s kesme)', help: 'TS HD 60364-4-41: ≤ 63 A prizli son devreler ve ≤ 32 A sabit bağlı son devreler TN sistemde 0,4 s içinde kesilmelidir.' },
         isC ? null : { type: 'select', key: sel + 'rcd', label: 'Kaçak akım koruması', options: [[0, 'Yok'], [30, '30 mA (hayat koruma)'], [300, '300 mA (yangın koruma)']] },
         cr ? { type: 'note', html: 'Ib <b>' + fmt(cr.Ib, 1, 'A') + '</b> · In <b>' + c.In + ' A</b> · Iz <b>' + fmt(cr.Iz, 1, 'A') + '</b> · ΔU <b>%' + fmt(cr.vd, 2) + '</b> · Ik1,min <b>' + fmt(cr.Ik1, 0, 'A') + '</b>' } : null,
         { type: 'buttons', items: [
@@ -358,7 +358,7 @@
         markers: [{ x: lg(cr.Ib), label: 'Ib', color: '#94a3b8' }, { x: lg(cr.Ik1), label: 'Ik1,min', color: '#f472b6' }, { x: lg(v.Ik3), label: 'Ik3 bara', color: '#ef4444' }],
         alt: 'Seçili devre ve ana şalter için TS EN 60898-1 / 60947-2 / IEC 60269 sınır noktalarından çizilen açma bantları. Üretici eğrisi değildir. ' + (res.checks.find(x => x.id === 'sel' + s.sel) || {}).detail });
     }
-    if (live.hist.length > 2) ch.push({ id: 'trend', title: 'Anlık eğilim · en yüklü faz akımı (kalkış dahil)', series: [{ name: 'Imax (A)', color: 'amber', area: true, data: live.hist.slice() }], hLines: [{ y: s.mainIn, label: 'In ' + s.mainIn + ' A', color: '#ef4444' }], x: { label: 's' }, y: { label: 'A' }, alt: 'Simülasyon süresince en yüklü faz akımı.' });
+    if (live.hist.length > 2) ch.push({ id: 'trend', title: 'Anlık eğilim · en yüklü faz akımı (kalkış dahil)', series: [{ name: 'Imax (A)', color: 'amber', area: true, data: live.hist.slice() }], hLines: [{ y: v.mainIr, label: 'Ir ' + fmt(v.mainIr, 0) + ' A', color: '#ef4444' }], x: { label: 's' }, y: { label: 'A' }, alt: 'Simülasyon süresince en yüklü faz akımı.' });
     return ch;
   }
 
@@ -387,6 +387,8 @@
     const x0 = -W / 2;
     const scene = {};
     app.scene3 = scene;
+    // kıvılcım ışığı baştan (yoğunluk 0) eklenir: ilk arızada ışık sayısı değişip tüm gölgelendiriciler yeniden derlenmez
+    scene.flash = new k.T.PointLight(0x9fd8ff, 0, 1.5); k.viewer.root.add(scene.flash);
     scene.devices = []; scene.doors = []; scene.flows = []; scene.motors = [];
     // zemin: epoksi kaplı elektrik odası
     const floor = k.ground(30, new T.MeshStandardMaterial({ color: 0x3a434d, roughness: 0.82, metalness: 0 }), 0);
@@ -403,25 +405,28 @@
 
     // gövde
     const body = k.group(null, 0, 0, 0);
-    k.box(W, S.plinth, S.d - 0.02, M.plasticDark, 0, S.plinth / 2, 0, body);
+    // süsleme parçaları statik grupta: kurulum sonunda malzemeye göre tek mesh'te birleşir (draw call azalır)
+    const deco = k.staticGroup(body);
+    k.box(W, S.plinth, S.d - 0.02, M.plasticDark, 0, S.plinth / 2, 0, deco);
     const top = k.box(W + 0.02, 0.03, S.d + 0.02, M.panelRAL7035, 0, S.plinth + S.h + 0.015, 0, body); k.shell(top);
-    const back = k.box(W, S.h, 0.02, M.panelRAL7035, 0, S.plinth + S.h / 2, -S.d / 2 + 0.01, body); void back;
+    k.box(W, S.h, 0.02, M.panelRAL7035, 0, S.plinth + S.h / 2, -S.d / 2 + 0.01, deco);
     const sideL = k.box(0.02, S.h, S.d, M.panelRAL7035, x0 + 0.01, S.plinth + S.h / 2, 0, body); k.shell(sideL);
     const sideR = k.box(0.02, S.h, S.d, M.panelRAL7035, -x0 - 0.01, S.plinth + S.h / 2, 0, body); k.shell(sideR);
-    for (let i = 1; i < secs.length; i++) k.box(0.025, S.h, 0.03, M.darkSteel, x0 + i * S.w, S.plinth + S.h / 2, S.d / 2 - 0.02, body);
+    for (let i = 1; i < secs.length; i++) k.box(0.025, S.h, 0.03, M.darkSteel, x0 + i * S.w, S.plinth + S.h / 2, S.d / 2 - 0.02, deco);
 
     // baralar: L1, L2, L3, N, PE (yatay, üst bölmede, arkada)
     const busY = S.plinth + S.h - 0.18, busZ = -0.16;
     const busMat = {}; scene.busMat = busMat;
+    const busDeco = k.staticGroup(null);
     ['L1', 'L2', 'L3', 'N', 'PE'].forEach((p, j) => {
       const m = M.copper.clone(); m.emissive = new T.Color(0x000000); busMat[p] = m;
       const y = busY - j * 0.065, z = busZ + (j >= 3 ? -0.06 : 0);
       const bar = k.box(W - 0.06, 0.04, 0.01, m, 0, y, z);
       k.pickable(bar, p + ' barası', () => { const r = app.validResult && app.validResult.values; return r ? ['Anma: ' + s.busbarIn + ' A', p === 'PE' ? 'Koruma iletkeni barası' : p === 'N' ? 'Nötr akımı: ' + fmt(r.phases.N, 1, 'A') : 'Faz akımı: ' + fmt(r.phases[p], 1, 'A'), 'TS EN IEC 61439-1: bara sıcaklık artışı tasarım doğrulamasıyla gösterilir.'] : []; });
       // renk işaret bantları
-      for (let x = x0 + 0.25; x < -x0 - 0.1; x += 0.4) k.box(0.03, 0.046, 0.016, M[p], x, y, z);
+      for (let x = x0 + 0.25; x < -x0 - 0.1; x += 0.4) k.box(0.03, 0.046, 0.016, M[p], x, y, z, busDeco);
       // mesnet izolatörleri
-      if (j === 0) for (let x = x0 + 0.12; x < -x0; x += 0.8) k.box(0.04, 0.36, 0.05, M.plasticRed, x, busY - 0.13, busZ - 0.03);
+      if (j === 0) for (let x = x0 + 0.12; x < -x0; x += 0.8) k.box(0.04, 0.36, 0.05, M.plasticRed, x, busY - 0.13, busZ - 0.03, busDeco);
       if (p !== 'PE') { const curve = new T.LineCurve3(new T.Vector3(x0 + 0.05, y, z + 0.012), new T.Vector3(-x0 - 0.05, y, z + 0.012)); scene.flows.push({ p: p, f: k.flow(curve, 18, p === 'N' ? 0x60a5fa : 0xfcd34d, 0.009) }); }
     });
     k.label('Baralar L1·L2·L3·N·PE', null, [x0 + 0.5, busY + 0.06, busZ]);
@@ -438,7 +443,8 @@
       k.shell(door);
       k.box(0.02, 0.16, 0.03, M.plasticDark, S.w - 0.07, S.plinth + S.h / 2, 0.035, pivot); // kol
       // havalandırma ızgarası
-      for (let r = 0; r < 6; r++) k.box(0.26, 0.008, 0.004, M.darkSteel, S.w / 2, S.plinth + 0.18 + r * 0.025, 0.024, pivot);
+      const louv = k.staticGroup(pivot);
+      for (let r = 0; r < 6; r++) k.box(0.26, 0.008, 0.004, M.darkSteel, S.w / 2, S.plinth + 0.18 + r * 0.025, 0.024, louv);
       scene.doors.push(pivot);
       // bölüm içerikleri
       if (sec.type === 'inc' || sec.type === 'inc2') buildIncomer(k, g, sec.type === 'inc2', s, app, scene, pivot);
@@ -609,11 +615,12 @@
   function buildDin(k, g, items, s, app, scene) {
     const M = k.mats;
     const rails = [S.plinth + 1.5, S.plinth + 1.2, S.plinth + 0.9];
-    rails.forEach(y => k.box(S.w - 0.14, 0.035, 0.008, M.galv, 0, y, -S.d / 2 + 0.05, g));
+    const dz = k.staticGroup(g);   // raylar, kanallar ve klemensler: tek parça süsleme
+    rails.forEach(y => k.box(S.w - 0.14, 0.035, 0.008, M.galv, 0, y, -S.d / 2 + 0.05, dz));
     // kablo kanalları
-    rails.forEach(y => k.box(S.w - 0.12, 0.05, 0.05, M.plasticGrey, 0, y + 0.13, -S.d / 2 + 0.07, g));
+    rails.forEach(y => k.box(S.w - 0.12, 0.05, 0.05, M.plasticGrey, 0, y + 0.13, -S.d / 2 + 0.07, dz));
     // klemens dizisi
-    for (let j = 0; j < 22; j++) k.box(0.0055, 0.045, 0.04, j % 5 === 4 ? M.plasticYellow : j % 5 === 3 ? M.plasticBlue : M.plasticGrey, -0.3 + j * 0.0062 * 4.5, S.plinth + 0.4, -S.d / 2 + 0.07, g);
+    for (let j = 0; j < 22; j++) k.box(0.0055, 0.045, 0.04, j % 5 === 4 ? M.plasticYellow : j % 5 === 3 ? M.plasticBlue : M.plasticGrey, -0.3 + j * 0.0062 * 4.5, S.plinth + 0.4, -S.d / 2 + 0.07, dz);
     let rail = 0, x = -S.w / 2 + 0.1;
     const place = (wMod) => { const w = wMod * 0.018; if (x + w > S.w / 2 - 0.08) { rail++; x = -S.w / 2 + 0.1; } const px = x + w / 2; x += w + 0.004; return { x: px, y: rails[Math.min(rail, 2)] }; };
     if (s.panelType === 'OTOM' && !scene.plcLeds) {
@@ -738,25 +745,32 @@
     void T;
   }
   function animate(k, dt, res, s, live, app) {
-    const sc = app.scene3; if (!sc) return;
+    const sc = app.scene3; if (!sc) return false;
+    let moving = false;
     // kapak açılıp kapanma
     const target = s.doorOpen ? -1.62 : 0;
-    sc.doors.forEach((d, i) => { const tt = target * (1 - i * 0.02); d.rotation.y += (tt - d.rotation.y) * Math.min(1, dt * 4); });
+    sc.doors.forEach((d, i) => { const tt = target * (1 - i * 0.02), e = tt - d.rotation.y; if (Math.abs(e) > 1e-4 && dt > 0) { d.rotation.y += e * Math.min(1, dt * 4); moving = true; } else d.rotation.y = tt; });
     sc.motors.forEach(m => {
       const c = s.circuits[m.ci], cr = res.values.circuits[m.ci];
       m.speed = m.speed || 0;
       const want = cr && cr.active ? (c.start === 'VFD' ? 1 : 1) * 25 : 0;
       m.speed += (want - m.speed) * Math.min(1, dt * (c.start === 'DOL' ? 1.6 : 0.7));
-      if (!k.reducedMotion) m.fan.rotation.x += m.speed * dt;
+      if (Math.abs(want - m.speed) < 0.01) m.speed = want;
+      if (!k.reducedMotion && m.speed > 0 && dt > 0) { m.fan.rotation.x += m.speed * dt; moving = true; }
     });
     // kısa devre kıvılcımı
     if (live.spark && sc.devices[live.spark.i]) {
       const d = sc.devices[live.spark.i];
-      if (!sc.flash) { sc.flash = new k.T.PointLight(0x9fd8ff, 0, 1.5); k.viewer.root.add(sc.flash); }
       d.dev.getWorldPosition(sc.flash.position);
-      sc.flash.intensity = live.spark.t < 0.6 && !k.reducedMotion ? 6 * Math.abs(Math.sin(live.spark.t * 40)) : 0;
-    } else if (sc.flash) sc.flash.intensity = 0;
-    if (sc.plcLeds) sc.plcLeds.forEach((l, i) => { l.material = (Math.floor(app.simTime * 2 + i * 1.7) % 3 === 0) ? k.mats.ledGreen : k.mats.ledOff; });
+      const fi = live.spark.t < 0.6 && !k.reducedMotion ? 6 * Math.abs(Math.sin(live.spark.t * 40)) : 0;
+      if (fi !== sc.flash.intensity) { sc.flash.intensity = fi; moving = true; }
+    } else if (sc.flash.intensity) { sc.flash.intensity = 0; moving = true; }
+    // PLC G/Ç LED'leri yalnız benzetim çalışırken yanıp söner
+    if (sc.plcLeds && app.running && !app.paused) {
+      const ph = Math.floor(app.simTime * 2);
+      if (ph !== sc._plcPh) { sc._plcPh = ph; sc.plcLeds.forEach((l, i) => { l.material = (Math.floor(app.simTime * 2 + i * 1.7) % 3 === 0) ? k.mats.ledGreen : k.mats.ledOff; }); moving = true; }
+    }
+    return moving;
   }
 
   /* ---------------------------------------------------------------- 2D tek hat şeması */
@@ -847,7 +861,8 @@
         check: (r, s) => s.circuits[1] && s.circuits[1].running && r.values.circuits[1].active },
       { id: 'pf', title: 'Güç faktörünü 0,95’in üstüne çıkar', goal: 'Kompanzasyon panosunda kademeleri yöneterek cosφ ≥ 0,95 yapın; aşırı kompanzasyona (kapasitif) düşmeyin.', hint: 'Kademeleri tek tek açıp kapatın ve Analiz’deki güç faktörünü izleyin.',
         state: (() => { const d = defaults('KOMP'); d.rgrAuto = false; d.circuits.forEach(c => { if (c.cap) c.on = false; }); return d; })(),
-        check: r => r.values.pf >= 0.95 && r.values.Q >= 0 },
+        // yükleri kapatarak (P → 0) çözülemez: kompanzasyon dışı tüm devreler açık ve çalışır kalmalı
+        check: (r, s) => r.values.pf >= 0.95 && r.values.Q >= 0 && s.circuits.every(c => c.cap || c.shunt || (c.on && !c.tripped)) && s.circuits[0].P_kW >= 96 },
       { id: 'gen', title: 'Jeneratörde otomatik kesmeyi sağla', goal: 'Transfer panosu jeneratörden besleniyor. Tüm devrelerde hat sonu arızada otomatik kesme koşulu (Ik1,min ≥ Ia) sağlansın.', hint: 'Uzun devrelerde kesiti büyütün, B eğrisi seçin ya da jeneratör gücünü/X’’d değerini değiştirin. Jeneratörde kısa devre akımı şebekeye göre çok düşüktür.',
         state: Object.assign(defaults('TRANSFER'), { source: 'gen', gen_kVA: 100 }),
         check: (r, s) => s.source === 'gen' && r.checks.filter(c => /^ad\d/.test(c.id)).every(c => c.status === 'ok') }
@@ -884,5 +899,4 @@
     view2d: view2d,
     view2dHeight: view2dHeight
   });
-  void circuitAt;
 })();

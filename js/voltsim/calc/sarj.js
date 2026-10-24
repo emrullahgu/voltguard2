@@ -178,9 +178,9 @@
     const Iz = E.cableIz(c.S, c.method || 'C', phases === 1 ? 2 : 3);
     const R = c.L / (KAPPA_CU * c.S), X = X_PER_M * c.L;
     const vd = phases === 1 ? 2 * Ib * R / U_PH * 100 : Math.sqrt(3) * Ib * (R * 1 + X * 0) / U_LL * 100;
-    const coord = Ib <= c.In + 1e-9 && c.In <= Iz + 1e-9;
+    const coord = Ib <= c.In + 1e-9 && c.In <= Iz + 1e-9;   // tablo dışı kesitte Iz = NaN → coord false (izTable ile ayrıca bildirilir)
     const rcdOk = prof.kind === 'DC' ? c.rcd !== 'none' : c.rcd === 'A-RDCDD' || c.rcd === 'B';
-    return { kind: prof.kind, phases: phases, Ib: Ib, Iz: Iz, vd: vd, coord: coord, rcdOk: rcdOk, R: R, lossW: (phases === 1 ? 2 : 3) * Ib * Ib * R };
+    return { kind: prof.kind, phases: phases, Ib: Ib, Iz: Iz, vd: vd, coord: coord, izTable: isFinite(Iz), rcdOk: rcdOk, R: R, lossW: (phases === 1 ? 2 : 3) * Ib * Ib * R };
   }
 
   return { AC_MIN_A: AC_MIN_A, acMinKW: acMinKW, allocate: allocate, BASE_PROFILES: BASE_PROFILES, baseLoadAt: baseLoadAt, touPeriod: touPeriod, priceAt: priceAt, pvAt: pvAt, pointDemand: pointDemand, simulateHub: simulateHub, circuit: circuit };
