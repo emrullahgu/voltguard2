@@ -1,0 +1,145 @@
+<?php
+/*
+ * VoltHaber kaynak kaydi (ilk kurulumda sources.json'a kopyalanir; editor panelinden degistirilebilir).
+ * Her kaynagin akisi 24.10.2026'da tek tek cekilerek dogrulandi; kanit "notes" alanindadir.
+ * Varsayilan olarak YALNIZCA erisimin acikca uygun oldugu kaynaklar aciktir. Ozel yayin kuruluslari izin alinana kadar kapalidir.
+ * Ingest yalnizca baslik + baglanti + tarih + kaynak adi saklar; govde, ozet ve gorsel ALINMAZ.
+ */
+declare(strict_types=1);
+
+if (!defined('VG_API')) {
+    http_response_code(404);
+    exit;
+}
+
+function vh_registry(): array
+{
+    return [
+        [
+            'id' => 'etkb-haber',
+            'name' => 'T.C. Enerji ve Tabii Kaynaklar Bakanlığı – Haberler',
+            'homepage' => 'https://enerji.gov.tr/',
+            'feedUrl' => 'https://enerji.gov.tr/RSS/17?t=1',
+            'format' => 'etkb',
+            'category' => 'enerji-piyasasi',
+            'permission' => 'kamu',
+            'termsUrl' => 'https://enerji.gov.tr/',
+            'fallbackLink' => '',
+            'licenseNote' => 'Kamu kurumu duyurusu; yalnızca başlık ve bağlantı kullanılır.',
+            'notes' => '24.10.2026 kontrol: https://enerji.gov.tr/rss sayfasında listelenen RSS/17 akışı text/xml, <rss version="2.0"> döndürdü; en yeni öğe 23.10.2026 tarihli. Akış standart dışı: öğelerde <link> ve <pubDate> yok, tarih PublishStartDate (AA/GG/YYYY) alanında. Bu nedenle bağlantı boş gelir; editör yayından önce haberin tam adresini (enerji.gov.tr/haber-detay?id=…) girmelidir. robots.txt: Allow / (yalnızca /duyurular yasak; /RSS serbest). Kullanım koşulu sayfası bulunamadı, alt bilgide "Tüm Hakları Saklıdır". Kamu kurumu duyurusu; başlık + bağlantı dışında içerik alınmaz.',
+            'enabled' => true,
+        ],
+        [
+            'id' => 'etkb-duyuru',
+            'name' => 'T.C. Enerji ve Tabii Kaynaklar Bakanlığı – Duyurular',
+            'homepage' => 'https://enerji.gov.tr/',
+            'feedUrl' => 'https://enerji.gov.tr/RSS/15?t=1',
+            'format' => 'etkb',
+            'category' => 'mevzuat',
+            'permission' => 'kamu',
+            'termsUrl' => 'https://enerji.gov.tr/',
+            'fallbackLink' => '',
+            'licenseNote' => 'Kamu kurumu duyurusu; yalnızca başlık ve bağlantı kullanılır.',
+            'notes' => '24.10.2026 kontrol: RSS/15 akışı çalışıyor (en yeni öğe 23.10.2026, il/ilçe bazlı proje ve izin duyuruları). Biçim RSS/17 ile aynı (bağlantı ve pubDate yok). Çoğunlukla yerel proje duyurusu olduğu için gürültülü; varsayılan kapalı.',
+            'enabled' => false,
+        ],
+        [
+            'id' => 'epias',
+            'name' => 'EPİAŞ – Duyurular',
+            'homepage' => 'https://www.epias.com.tr/',
+            'feedUrl' => 'https://www.epias.com.tr/feed/',
+            'format' => 'rss',
+            'category' => 'enerji-piyasasi',
+            'permission' => 'kamu',
+            'termsUrl' => 'https://www.epias.com.tr/',
+            'fallbackLink' => '',
+            'licenseNote' => 'Piyasa işletmecisinin kamuya açık duyurusu; yalnızca başlık ve bağlantı kullanılır.',
+            'notes' => '24.10.2026 kontrol: https://www.epias.com.tr/feed/ geçerli RSS 2.0 (WordPress, 10 öğe); en yeni öğe "Kasım 2026 Dönemi Serbest Tüketici Listelerinin Yayımlanması…", 23.10.2026. robots.txt yalnızca /wp-admin/ yolunu yasaklıyor. Ayrı bir kullanım koşulları sayfası bulunamadı. Piyasa işletmecisinin kendi yayınladığı duyuru akışı; başlık + bağlantı dışında içerik alınmaz. Şeffaflık Platformu API\'si kimlik doğrulama istiyor (401) ve kullanılmıyor.',
+            'enabled' => true,
+        ],
+        [
+            'id' => 'ec-energy',
+            'name' => 'European Commission – Energy News',
+            'homepage' => 'https://energy.ec.europa.eu/news_en',
+            'feedUrl' => 'https://energy.ec.europa.eu/node/2/rss_en',
+            'format' => 'rss',
+            'category' => 'enerji-piyasasi',
+            'permission' => 'lisansli',
+            'termsUrl' => 'https://commission.europa.eu/legal-notice_en',
+            'fallbackLink' => '',
+            'licenseNote' => '© European Union – CC BY 4.0; kaynak gösterilerek kullanılır.',
+            'notes' => '24.10.2026 kontrol: /news_en sayfasındaki bağlantıdan alınan node/2/rss_en geçerli RSS 2.0 ("Energy | News", 30 öğe), en yeni öğe 23.10.2026. Öğeler tarih sırasında değil, sıralama içeri alırken yapılır. robots.txt yalnızca yönetim yollarını yasaklıyor. Yasal uyarı: AB içeriği CC BY 4.0, kaynak gösterilerek yeniden kullanılabilir.',
+            'enabled' => true,
+        ],
+        [
+            'id' => 'epdk',
+            'name' => 'EPDK – Duyurular',
+            'homepage' => 'https://www.epdk.gov.tr/',
+            'feedUrl' => 'https://www.epdk.gov.tr/Detay/Rss',
+            'format' => 'rss',
+            'category' => 'mevzuat',
+            'permission' => 'kamu',
+            'termsUrl' => 'https://www.epdk.gov.tr/',
+            'fallbackLink' => '',
+            'licenseNote' => 'Kamu kurumu duyurusu; yalnızca başlık ve bağlantı kullanılır.',
+            'notes' => '24.10.2026 kontrol: ana sayfa /Detay/Rss bağlantısı veriyor ancak adres 3 denemede 25–60 sn içinde 0 bayt ile zaman aşımına uğradı (aynı sunucudaki başka sayfa 0,3 sn). Çalışan akış doğrulanamadı; kapalı. Akış düzelirse editör "Şimdi tara" ile deneyip açabilir.',
+            'enabled' => false,
+        ],
+        [
+            'id' => 'irena',
+            'name' => 'IRENA – News',
+            'homepage' => 'https://www.irena.org/',
+            'feedUrl' => 'https://www.irena.org/iapi/rssfeed/News',
+            'format' => 'rss',
+            'category' => 'yenilenebilir',
+            'permission' => 'izin-gerekli',
+            'termsUrl' => 'https://www.irena.org/terms-and-conditions',
+            'fallbackLink' => '',
+            'licenseNote' => '',
+            'notes' => '24.10.2026 kontrol: akış çalışıyor (RSS 2.0, 21 öğe, en yeni 16.10.2026). Ancak kullanım koşulları siteye robot veya otomatik yöntemle erişimi yasaklıyor ve kopyalamaya yalnızca ticari olmayan amaçla izin veriyor. Yazılı izin alınana kadar kapalı.',
+            'enabled' => false,
+        ],
+        [
+            'id' => 'gunder',
+            'name' => 'GÜNDER',
+            'homepage' => 'https://www.gunder.org.tr/',
+            'feedUrl' => 'https://www.gunder.org.tr/feed/',
+            'format' => 'rss',
+            'category' => 'yenilenebilir',
+            'permission' => 'izin-gerekli',
+            'termsUrl' => 'https://www.gunder.org.tr/kullanim-sartlari/',
+            'fallbackLink' => '',
+            'licenseNote' => '',
+            'notes' => '24.10.2026 kontrol: akış geçerli RSS 2.0 ama güncel değil (en yeni öğe 21.02.2025). Kullanım şartları yazılı izin olmadan içeriğin çoğaltılmasını yasaklıyor; robots.txt "use=reference" sinyali veriyor. İzin alınana kadar kapalı.',
+            'enabled' => false,
+        ],
+        [
+            'id' => 'yesilhaber',
+            'name' => 'Yeşil Haber',
+            'homepage' => 'https://yesilhaber.net/',
+            'feedUrl' => 'https://yesilhaber.net/feed/',
+            'format' => 'rss',
+            'category' => 'yenilenebilir',
+            'permission' => 'izin-gerekli',
+            'termsUrl' => 'https://yesilhaber.net/kullanim-kosullari/',
+            'fallbackLink' => '',
+            'licenseNote' => '',
+            'notes' => '24.10.2026 kontrol: akış çalışıyor (RSS 2.0, 40 öğe, en yeni 24.10.2026). Kullanım koşulları izinsiz kopyalama, ticari kullanım ve izinsiz veri toplamayı yasaklıyor. Özel yayın kuruluşu; yazılı izin alınana kadar kapalı.',
+            'enabled' => false,
+        ],
+        [
+            'id' => 'enerjigunlugu',
+            'name' => 'Enerji Günlüğü',
+            'homepage' => 'https://www.enerjigunlugu.net/',
+            'feedUrl' => 'https://www.enerjigunlugu.net/rss/',
+            'format' => 'rss',
+            'category' => 'enerji-piyasasi',
+            'permission' => 'izin-gerekli',
+            'termsUrl' => 'https://www.enerjigunlugu.net/kunye-sf.htm',
+            'fallbackLink' => '',
+            'licenseNote' => '',
+            'notes' => '24.10.2026 kontrol: sayfada <link rel=alternate> ile duyurulan akış çalışıyor (RSS 2.0, 27 öğe, en yeni 24.10.2026). Kullanım koşulu bulunamadı. Özel yayın kuruluşu; koşullar belirsiz olduğu için yazılı izin alınana kadar kapalı.',
+            'enabled' => false,
+        ],
+    ];
+}
