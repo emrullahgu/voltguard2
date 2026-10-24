@@ -3434,6 +3434,9 @@ p > a.kb-card__more { display: inline-block; padding: .35rem 0; }
 .vg-form-field input:focus, .vg-form-field select:focus, .vg-form-field textarea:focus { outline: 2px solid rgba(59,130,246,.25); border-color: #3b82f6; }
 .vg-form-field textarea { min-height: 72px; resize: vertical; }
 .vg-form-table { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: .88rem; }
+.vg-form-table { min-width: 640px; }
+/* Dar ekranda tablo sayfayı taşırmasın: tablo bu sarmalayıcı içinde yatay kaydırılır. */
+.vg-form-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
 .vg-form-table th, .vg-form-table td { border: 1px solid var(--clr-border); padding: .5rem .6rem; text-align: left; vertical-align: top; }
 .vg-form-table thead th { background: var(--clr-bg-gray); font-family: var(--font-heading); font-size: .82rem; text-transform: uppercase; letter-spacing: .03em; color: var(--clr-dark); }
 .vg-form-table input, .vg-form-table select, .vg-form-table textarea { width: 100%; border: 0; padding: .25rem; background: transparent; font: inherit; }

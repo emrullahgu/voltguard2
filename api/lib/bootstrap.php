@@ -382,7 +382,7 @@ function vg_private_data_directory(string $candidate, ?string $anchor = null): s
 
 /**
  * Calisma verisi klasoru (kullanicilar, oturumlar, sayaclar). api/ her deploy'da silindigi icin ASLA api/ icinde degildir.
- * Sira: VG_DATA_DIR ortam degiskeni -> docroot'un bir ustu/vg-data (public_html disi) -> docroot/_vgdata (.htaccess ile kapali).
+ * Sira: VG_DATA_DIR ortam degiskeni -> docroot'un bir ustu/vg-data (public_html disi). Ikisi de yoksa 503.
  * VG_DATA_DIR verilmis ama kullanilamiyorsa sessizce baska klasore gecilmez (veri bolunmesin): 503 doner.
  */
 function vg_data_dir(): string
@@ -400,14 +400,13 @@ function vg_data_dir(): string
         vg_protect_dir($p);
         return $dir = $p;
     }
-    $root = vg_doc_root();
-    foreach ([dirname($root) . '/vg-data', $root . '/_vgdata'] as $p) {
-        if (vg_ensure_dir($p)) {
-            vg_protect_dir($p);
-            return $dir = $p;
-        }
+    /* Yalnizca docroot DISI: eski docroot/_vgdata yedegi artik kullanilmaz (api/README.md). */
+    $p = dirname(vg_doc_root()) . '/vg-data';
+    if (vg_ensure_dir($p)) {
+        vg_protect_dir($p);
+        return $dir = $p;
     }
-    vg_unavailable('no writable data directory');
+    vg_unavailable('no writable data directory outside document root');
     return '';
 }
 

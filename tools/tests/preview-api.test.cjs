@@ -29,7 +29,7 @@ function fixtureWorkspace() {
     fs.copyFileSync(source, target);
   }
   for (const relative of ['.htaccess', 'tools/preview.cjs', 'tools/preview-router.php', 'api/auth.php', 'api/community.php',
-    'api/staff.php', 'api/company.php', 'api/company-asset.php', 'api/company-connectors.php', 'tools/staff-admin.php', 'calisan/index.php', 'calisan/uygulama/index.php']) copy(relative);
+    'api/staff.php', 'api/company.php', 'api/company-asset.php', 'api/company-connectors.php', 'tools/staff-admin.php', 'calisan/index.php', 'calisan/uygulama/index.php', 'contact.php']) copy(relative);
   for (const name of fs.readdirSync(path.join(root, 'api/lib')).filter(name => name.endsWith('.php'))) copy('api/lib/' + name);
   function write(relative, content) {
     const target = path.join(fixture, relative);
@@ -114,12 +114,18 @@ async function run() {
     const captions = await request('/public/video/captions-fixture.vtt');
     check(captions.headers.get('content-type'), 'text/vtt; charset=utf-8', 'Native Turkish captions have supported UTF-8 type');
     check((await captions.text()).includes('Türkçe altyazı'), true, 'Turkish caption bytes preserved');
-    for (const url of ['/api/lib/staff.php', '/api/lib/community.php', '/api/COMMUNITY.md', '/tools/staff-admin.php', '/tools/preview-router.php', '/voltguardekleyelim/', '/.qa/php/runtime/php.exe', '/_vgdata/users.json', '/calisan/shared-header.html', '/calisan/shared-footer.html', '/contact.php', '/api/auth.php/extra',
+    for (const url of ['/api/lib/staff.php', '/api/lib/community.php', '/api/COMMUNITY.md', '/tools/staff-admin.php', '/tools/preview-router.php', '/voltguardekleyelim/', '/.qa/php/runtime/php.exe', '/_vgdata/users.json', '/calisan/shared-header.html', '/calisan/shared-footer.html', '/api/auth.php/extra',
       '/calisan/uygulama/entry-tags.html', '/calisan/uygulama/index.html', '/calisan/uygulama/index.php', '/calisan/uygulama/source.json', '/calisan/uygulama/src/main.jsx']) {
       const response = await request(url);
       check(response.status, 404, `${url} never exposes source or private files`);
       check((await response.text()).includes('<?php'), false, 'No PHP source response');
     }
+    // The preview executes the real contact endpoint (outbox mode): it accepts only POST and never shows source.
+    const contactGet = await request('/contact.php');
+    check(contactGet.status, 405, 'Preview contact endpoint runs PHP and rejects GET');
+    const contactBody = await contactGet.text();
+    check(contactBody.includes('<?php'), false, 'Contact endpoint never returns PHP source');
+    check(JSON.parse(contactBody).success, false, 'Contact GET returns a JSON refusal');
     for(const url of ['/api.new','/api.new/company.php','/calisan.new','/calisan.new/uygulama/assets/private.js'])check((await request(url)).status,404,'Deployment staging path is never served');
     const privateFiles = ['/api/company.php?action=bootstrap', '/api/company-asset.php?file=assets/protected-test.js',
       '/calisan/uygulama/assets/protected-test.js', '/calisan/uygulama/fonts/protected-test.ttf',

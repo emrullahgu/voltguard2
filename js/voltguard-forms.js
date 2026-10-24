@@ -81,6 +81,9 @@
 
   function csvEscape(s) {
     var str = String(s == null ? '' : s);
+    // CSV formula injection: Excel/Calc execute cells starting with = + - @ (or tab/CR). Plain numbers such as
+    // "-12,5" stay numeric; any other such cell is prefixed with an apostrophe so it is shown as text.
+    if (/^[=+\-@\t\r]/.test(str) && !/^-?\d+([.,]\d+)?$/.test(str)) str = "'" + str;
     if (/[",\r\n;]/.test(str)) return '"' + str.replace(/"/g, '""') + '"';
     return str;
   }

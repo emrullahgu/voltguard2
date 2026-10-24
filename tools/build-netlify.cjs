@@ -9,10 +9,11 @@ const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..');
 const publish = path.join(root, '.netlify-publish');
 const publicDirectories = ['akademi', 'araclar', 'assets', 'bilgi', 'css', 'fonts',
-  'hesap', 'hesaplama', 'hizmetler', 'js', 'mm', 'public', 'sor', 'voltsim'];
+  'hesaplama', 'hizmetler', 'js', 'mm', 'public', 'sor', 'voltsim'];
 const rootFiles = fs.readdirSync(root).filter(name => name.endsWith('.html'))
   .concat(['sw.js', 'manifest.json', 'robots.txt', 'sitemap.xml', 'llms.txt']);
-const employeePages = ['calisan/giris.html', 'calisan/etkinlestir.html'];
+// Account, employee and community pages need the PHP API: netlify.toml sends them to https://voltguard.com.tr.
+const employeePages = [];
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'public/voltgame/release.json'), 'utf8'));
 assert.equal(manifest.rules, 4);
 assert.equal(manifest.levels.length, 27);
@@ -44,5 +45,5 @@ for (const file of rootFiles.concat(employeePages)) {
   fs.copyFileSync(path.join(root, file), target);
 }
 for (const forbidden of ['api', 'tools', 'VoltGame', 'vesikalar', 'voltguardekleyelim', '.qa',
-  'calisan/uygulama', 'contact.php']) assert.ok(!fs.existsSync(path.join(publish, forbidden)), 'Excluded from static publication: ' + forbidden);
+  'calisan', 'hesap', 'contact.php']) assert.ok(!fs.existsSync(path.join(publish, forbidden)), 'Excluded from static publication: ' + forbidden);
 console.log('Netlify static release ready: site, 51 engineering tools, VoltSim, team and complete VoltGame. PHP and development sources excluded.');

@@ -49,6 +49,7 @@
 
   function errorMessage(e) {
     if (!e) return 'İşlem tamamlanamadı. Lütfen tekrar deneyin.';
+    if (e.code === 'unreachable' && e.staticHost && e.message) return e.message;
     if (e.code === 'unreachable') return (Auth && Auth.MESSAGES.down) || 'Hesap sistemine şu anda ulaşılamıyor.';
     return e.message || 'İşlem tamamlanamadı. Lütfen tekrar deneyin.';
   }
@@ -341,7 +342,7 @@
           }
           if (gate) { gate.hidden = true; gate.innerHTML = ''; }
           if (content) content.hidden = false;
-          if (down && alertEl) alertBox(alertEl, 'warning', 'Hesap sistemine şu anda ulaşılamıyor; yalnızca bu tarayıcıda kayıtlı veriler gösteriliyor.');
+          if (down && alertEl) alertBox(alertEl, 'warning', (down.staticHost ? down.message + ' Bu sayfada yalnızca' : 'Hesap sistemine şu anda ulaşılamıyor; yalnızca') + ' bu tarayıcıda kayıtlı veriler gösteriliyor.');
           wasMember = !!user;
           memberId = user ? user.id : null;
           if (opts.onReady) opts.onReady({ user: user, apiDown: !!down });

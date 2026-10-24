@@ -318,10 +318,30 @@
   status = 301
   force = true
 
+# Hesap, calisan ve topluluk alanlari PHP API ister; Netlify statik yayindir. Bu adresler kanonik siteye gider
+# (voltguard2.netlify.app -> voltguard.com.tr; Netlify ozel alan adi kullanmadigi icin dongu olusmaz).
 [[redirects]]
   from = "/hesap"
-  to = "/hesap/giris.html"
-  status = 302
+  to = "https://voltguard.com.tr/hesap/giris.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesap/*"
+  to = "https://voltguard.com.tr/hesap/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/topluluk.html"
+  to = "https://voltguard.com.tr/topluluk.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/topluluk"
+  to = "https://voltguard.com.tr/topluluk.html"
+  status = 301
   force = true
 
 # Runtime veri klasorleri, sunucu kodu ve gelistirme dosyalari yayinlanmaz (.htaccess'teki engellerin esi).
@@ -336,18 +356,6 @@
   from = "/calisan/uygulama/*"
   to = "/404.html"
   status = 404
-  force = true
-
-[[redirects]]
-  from = "/calisan"
-  to = "/calisan/giris.html"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/calisan/"
-  to = "/calisan/giris.html"
-  status = 302
   force = true
 
 [[redirects]]
@@ -366,6 +374,18 @@
   from = "/calisan/shared-footer.html"
   to = "/404.html"
   status = 404
+  force = true
+
+[[redirects]]
+  from = "/calisan"
+  to = "https://voltguard.com.tr/calisan/giris.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/calisan/*"
+  to = "https://voltguard.com.tr/calisan/:splat"
+  status = 301
   force = true
 
 [[redirects]]
@@ -449,7 +469,8 @@
 # ---------------------------------------------------------------------------------------
 # Guvenlik basliklari ve CSP. .htaccess (cPanel/Apache) ile ayni degerler; ikisi birlikte guncellenmeli.
 # style-src/font-src yalnizca 'self' (+ data: font): yazi tipleri ve ikonlar kendi sunucumuzda; Google Fonts /
-# Font Awesome CDN artik kullanilmiyor. script-src yalnizca jsPDF icin.
+# Font Awesome CDN artik kullanilmiyor. Genel sayfalarda satir ici betik ve Turnstile icin 'unsafe-inline' durur;
+# ozel alanlar (/hesap/, /calisan/) Netlify'da kanonik siteye yonlenir ve orada siki politika (.htaccess) gecerlidir.
 # ---------------------------------------------------------------------------------------
 [[headers]]
   for = "/*"

@@ -6,7 +6,7 @@
   var token = new URLSearchParams(location.hash.slice(1)).get('t') || '';
   if (page === 'activate' && location.hash) history.replaceState(null, '', location.pathname);
   var roles = {employee: 'Çalışan', payroll: 'Bordro sorumlusu', admin: 'Yönetici'};
-  var statuses = {active: 'Aktif', invited: 'Davet gönderilmeye hazır', enrollment: 'Doğrulama kurulumu bekleniyor', disabled: 'Erişimi kapalı'};
+  var statuses = {active: 'Aktif', invited: 'Davet bağlantısı oluşturuldu, etkinleştirme bekleniyor', enrollment: 'Doğrulama kurulumu bekleniyor', disabled: 'Erişimi kapalı'};
   var money = new Intl.NumberFormat('tr-TR', {style: 'currency', currency: 'TRY'});
   function $(id) { return document.getElementById(id); }
   // Formlar betik bağlanana kadar gönderilemez (aksi halde tarayıcı varsayılan gönderimi yapardı); bağlanınca etkinleşir.
@@ -167,11 +167,23 @@
     $('staff-security-email').textContent = user.email; $('staff-security-role').textContent = roles[user.role];
     $('staff-people-tab').hidden = !manage;
     if (manage) { $('staff-payroll-title').textContent = 'Bordro yönetimi'; document.querySelector('[data-staff-tab="payroll"]').textContent = 'Bordrolar'; }
+    // WAI-ARIA tabs: roving tabindex, arrow/Home/End keys move between visible tabs.
+    function selectTab(tab, focus) {
+      document.querySelectorAll('[data-staff-tab]').forEach(function (t) {
+        var active = t === tab; t.classList.toggle('is-active', active); t.setAttribute('aria-selected', String(active)); t.tabIndex = active ? 0 : -1; $('staff-tab-' + t.dataset.staffTab).hidden = !active;
+      });
+      if (focus) tab.focus();
+    }
     document.querySelectorAll('[data-staff-tab]').forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        document.querySelectorAll('[data-staff-tab]').forEach(function (t) {
-          var active = t === tab; t.classList.toggle('is-active', active); t.setAttribute('aria-selected', String(active)); $('staff-tab-' + t.dataset.staffTab).hidden = !active;
-        });
+      tab.addEventListener('click', function () { selectTab(tab, false); });
+      tab.addEventListener('keydown', function (ev) {
+        var tabs = Array.from(document.querySelectorAll('[data-staff-tab]')).filter(function (t) { return !t.hidden; });
+        var index = tabs.indexOf(tab), next = null;
+        if (ev.key === 'ArrowRight') next = tabs[(index + 1) % tabs.length];
+        else if (ev.key === 'ArrowLeft') next = tabs[(index - 1 + tabs.length) % tabs.length];
+        else if (ev.key === 'Home') next = tabs[0];
+        else if (ev.key === 'End') next = tabs[tabs.length - 1];
+        if (next) { ev.preventDefault(); selectTab(next, true); }
       });
     });
     $('staff-logout').addEventListener('click', function () { busy(document.body, async function () { await api('logout', {}); location.replace('/calisan/giris.html'); }); });

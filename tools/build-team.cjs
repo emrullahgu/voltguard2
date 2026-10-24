@@ -33,14 +33,21 @@ for (const person of people) {
   if (fs.existsSync(original)) fs.copyFileSync(original, target);
   if (!fs.existsSync(target)) throw Error('Missing approved photo for '+person.name);
   person.src = '/public/ekibimiz/'+file;
+  // Optimised WebP copies (public/opt/ekibimiz/<id>-160.webp / -480.webp) are used when present.
+  const opt = size => path.join(root, 'public', 'opt', 'ekibimiz', `${person.id}-${size}.webp`);
+  if (fs.existsSync(opt(160)) && fs.existsSync(opt(480))) {
+    person.src = `/public/opt/ekibimiz/${person.id}-480.webp`;
+    person.srcSmall = `/public/opt/ekibimiz/${person.id}-160.webp`;
+  }
 }
 const byId = Object.fromEntries(people.map(p => [p.id,p]));
-const photo = (p, cls='', eager=false) => `<img class="${cls}" src="${p.src}" alt="${escape(p.name)}" width="240" height="240" ${eager?'fetchpriority="high"':'loading="lazy"'} decoding="async">`;
+const photo = (p, cls='', eager=false) => `<img${cls?` class="${cls}"`:''} src="${p.src}"${p.srcSmall?` srcset="${p.srcSmall} 160w, ${p.src} 480w" sizes="(max-width: 480px) 45vw, 240px"`:''} alt="${escape(p.name)}" width="240" height="240" ${eager?'fetchpriority="high"':'loading="lazy"'} decoding="async">`;
+const thumb = p => `<img src="${p.srcSmall||p.src}" alt="" width="48" height="48" loading="lazy" decoding="async">`;
 const portrait = p => `<button class="team-person" type="button" data-person="${p.id}" data-unit="${p.unit}" data-search="${escape(p.name+' '+p.role+' '+p.unitName+' '+(p.groupLabel||''))}" aria-label="${escape(p.name+' — '+p.role+'; kişi kartını aç')}"><span class="team-person__portrait">${photo(p)}<span class="team-person__open" aria-hidden="true">${icon('arrow')}</span></span><span class="team-person__text"><strong>${escape(p.name)}</strong><span>${escape(p.role)}</span></span></button>`;
 const leader = byId['emrullah-gunay'];
 const branches = data.units.map((u,i) => {
   const description = descriptions[u.id];
-  const preview = u.people.slice(0,4).map(p => photo(byId[p.id])).join('');
+  const preview = u.people.slice(0,4).map(p => thumb(byId[p.id])).join('');
   const groups = u.groups ? `<div class="team-branch__groups">${u.groups.map(g => `<span>${escape(g.name)}<b>${u.people.filter(p=>p.group===g.id).length}</b></span>`).join('')}</div>` : '';
   return `<a class="team-branch" href="#kadro" data-explore="${u.id}" data-branch="${u.id}"><span class="team-branch__top"><span class="team-branch__icon">${icon(description.icon)}</span><span class="team-branch__number">0${i+1}</span></span><span class="team-branch__tag">${description.tag}</span><h3>${description.short}</h3><p>${escape(u.name)}</p><span class="team-branch__portraits" aria-hidden="true">${preview}</span><span class="team-branch__count"><strong>${u.people.length}</strong> ekip arkadaşı</span>${groups}<span class="team-branch__action">Ekibi keşfet ${icon('arrow')}</span></a>`;
 }).join('\n');
@@ -56,13 +63,13 @@ const html=`<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!--vg:head--><!--/vg:head-->
-  <title>Ekibimiz — VoltGuard Çalışma Ağacı</title>
+  <title>Ekibimiz | VoltGuard</title>
   <meta name="description" content="VoltGuard ekibini tanıyın. Kemalpaşa merkez ofis, depo, Ege Teknopark Ar-Ge ve saha birimlerinde çalışan 26 ekip arkadaşımızın fotoğraflı çalışma ağacı.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://voltguard.com.tr/ekibimiz.html">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Ekibimiz | VoltGuard">
-  <meta property="og:description" content="Dört birim, 26 ekip arkadaşı. VoltGuard’ın fotoğraflı çalışma ağacını keşfedin.">
+  <meta property="og:description" content="VoltGuard'ın mühendis, ofis ve saha ekibi: dört birimde 26 kişi.">
   <meta property="og:url" content="https://voltguard.com.tr/ekibimiz.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
   <meta property="og:locale" content="tr_TR">
@@ -71,18 +78,18 @@ const html=`<!DOCTYPE html>
   <link rel="stylesheet" href="/css/team.css?v=20261015b">
   <script src="/js/voltguard-auth.js?v=20261013a" defer></script>
   <script src="/js/team.js?v=20261013b" defer></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"VoltGuard Ekibimiz","url":"https://voltguard.com.tr/ekibimiz.html","inLanguage":"tr-TR","isPartOf":{"@type":"WebSite","name":"VoltGuard","url":"https://voltguard.com.tr/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"VoltGuard Ekibimiz","url":"https://voltguard.com.tr/ekibimiz.html","inLanguage":"tr-TR","isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website","name":"VoltGuard","url":"https://voltguard.com.tr/"},"about":{"@id":"https://voltguard.com.tr/#organization"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Ekibimiz","item":"https://voltguard.com.tr/ekibimiz.html"}]}}</script>
 </head>
 <body class="team-page">
   <!--vg:header--><!--/vg:header-->
   <main id="main" tabindex="-1">
     <section class="team-hero team-wrap" aria-labelledby="team-title">
       <div class="team-hero__copy">
-        <a class="team-breadcrumb" href="/">Ana Sayfa <span aria-hidden="true">/</span> <span>Ekibimiz</span></a>
-        <p class="team-eyebrow"><span></span> VOLTGUARD’I VAR EDEN İNSANLAR</p>
-        <h1 id="team-title">Aynı enerji.<br><em>Birlikte daha güçlü.</em></h1>
-        <p class="team-hero__description">Fikirden projeye, ofisten sahaya. Farklı uzmanlıklarımızı aynı hedefte buluşturan ekibimizi tanıyın.</p>
-        <a class="team-button" href="#calisma-agaci">Çalışma ağacını keşfet ${icon('arrow')}</a>
+        <nav class="team-breadcrumb" aria-label="Sayfa konumu"><a href="/">Ana Sayfa</a> <span aria-hidden="true">/</span> <span aria-current="page">Ekibimiz</span></nav>
+        <p class="team-eyebrow"><span></span> VOLTGUARD EKİBİ</p>
+        <h1 id="team-title">Ekibimiz</h1>
+        <p class="team-hero__description">Projeleri hazırlayan mühendisler, ofis ekibi ve sahada uygulamayı yapan ustalarımız. Birimlere göre kadromuz aşağıda.</p>
+        <a class="team-button" href="#calisma-agaci">Birimleri görün ${icon('arrow')}</a>
         <div class="team-hero__numbers"><span><strong>26</strong>Ekip arkadaşı</span><span><strong>4</strong>Çalışma birimi</span><span><strong>16</strong>Saha çalışanı</span></div>
       </div>
       <div class="team-hero__visual" aria-label="Ekibimizden yüzler">
@@ -94,16 +101,15 @@ const html=`<!DOCTYPE html>
         <button class="team-hero-person team-hero-person--two" type="button" data-profile="ibrahim-ince" aria-label="İbrahim İnce kişi kartını aç">${photo(byId['ibrahim-ince'])}</button>
         <button class="team-hero-person team-hero-person--three" type="button" data-profile="sedat-sasmaz" aria-label="Sedat Şaşmaz kişi kartını aç">${photo(byId['sedat-sasmaz'])}</button>
         <button class="team-hero-person team-hero-person--four" type="button" data-profile="emirhan-aktas" aria-label="Emirhan Aktaş kişi kartını aç">${photo(byId['emirhan-aktas'])}</button>
-        <span class="team-hero__label">Bir ekibin gücü,<br><strong>her bir insanında.</strong></span>
       </div>
     </section>
     <section class="team-tree team-wrap" id="calisma-agaci" aria-labelledby="tree-title">
-      <div class="team-section-heading"><div><p class="team-eyebrow">İNSANLARIMIZ. BİRİMLERİMİZ.</p><h2 id="tree-title">Tek ekip, dört güçlü kol.</h2></div><p>Mühendislikten uygulamaya<br>birbirini tamamlayan bir yapı.</p></div>
+      <div class="team-section-heading"><div><p class="team-eyebrow">ORGANİZASYON</p><h2 id="tree-title">Birimlerimiz</h2></div><p>Mühendislik, ofis, Ar-Ge<br>ve saha uygulaması.</p></div>
       <div class="team-tree__root"><img class="team-tree__brand" src="/public/voltguard-logo.webp" width="45" height="45" alt=""><div><strong>Volt<span>Guard</span></strong><small>ÇALIŞMA AĞACIMIZ</small></div><span class="team-tree__total">26 kişi</span></div>
       <div class="team-tree__branches">${branches}</div>
     </section>
     <section class="team-roster team-wrap" id="kadro" aria-labelledby="roster-title">
-      <div class="team-section-heading"><div><p class="team-eyebrow">İŞİN ARKASINDAKİ EKİP</p><h2 id="roster-title">Her yüz, ortak bir hedef.</h2></div><p>Bir kişi kartına dokunun;<br>görevini ve birimini tanıyın.</p></div>
+      <div class="team-section-heading"><div><p class="team-eyebrow">KADRO</p><h2 id="roster-title">Kadromuz</h2></div><p>Kişi kartında görev ve<br>birim bilgisi yer alır.</p></div>
       <div class="team-controls" hidden>
         <div class="team-filters" role="group" aria-label="Ekip birimini seç"><button type="button" data-filter="all" aria-pressed="true">Tüm ekip <span>26</span></button>${data.units.map(u=>`<button type="button" data-filter="${u.id}" aria-pressed="false">${descriptions[u.id].short} <span>${u.people.length}</span></button>`).join('')}</div>
         <label class="team-search">${icon('search')}<span class="team-sr-only">İsim, görev veya birim ara</span><input id="team-search" type="search" placeholder="İsim, görev veya birim ara" autocomplete="off" maxlength="100"></label>
@@ -113,7 +119,7 @@ const html=`<!DOCTYPE html>
       ${roster}
       <noscript><p class="team-noscript">Ekibimizin tamamı aşağıda yer alıyor. Arama ve kişi kartları için JavaScript’i etkinleştirebilirsiniz.</p></noscript>
     </section>
-    <section class="team-closing team-wrap"><span class="team-closing__bolt" aria-hidden="true">ϟ</span><div><p class="team-eyebrow">BİRLİKTE HAYATA GEÇİRELİM</p><h2>Bir sonraki projenizde<br>yanınızda olalım.</h2></div><a class="team-button" href="/#iletisim">Projenizi anlatın ${icon('arrow')}</a></section>
+    <section class="team-closing team-wrap"><span class="team-closing__bolt" aria-hidden="true">ϟ</span><div><p class="team-eyebrow">İLETİŞİM</p><h2>Tesisiniz için<br>teklif alın.</h2></div><a class="team-button" href="/#iletisim">Teklif Al ${icon('arrow')}</a></section>
   </main>
   <dialog class="team-dialog" aria-labelledby="profile-name"><button class="team-dialog__close" type="button" aria-label="Kişi kartını kapat">${icon('close')}</button><div class="team-dialog__portrait"><img alt="" width="320" height="380"></div><div class="team-dialog__content"><p class="team-eyebrow" id="profile-unit"></p><h2 id="profile-name"></h2><p class="team-dialog__role" id="profile-role"></p><span class="team-dialog__company">VOLTGUARD · EKİBİMİZ</span></div></dialog>
   <script id="team-data" type="application/json">${payload}</script>

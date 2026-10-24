@@ -37,7 +37,13 @@ function vg_contact_origin_allowed(string $url, bool $originOnly): bool
 /** Server verification is mandatory whenever Turnstile is configured. */
 function vg_contact_verify_captcha(string $secret, string $token): void
 {
-    if ($token === '' || strlen($token) > 2048) {
+    if ($token === '') {
+        /* A configured secret with no token usually means the public site key in the HTML is still a placeholder,
+           so no widget could be shown. Fail closed (spam protection stays on) but make the cause visible. */
+        error_log('VoltGuard contact: Turnstile secret is set but the form sent no token (check data-sitekey in index.html, sor.html, fabrika-cozumleri.html)');
+        vg_fail(422, 'captcha_required', 'Güvenlik doğrulaması yüklenemedi. Sayfayı yenileyip tekrar deneyin; sorun sürerse bizi telefonla veya info@voltguard.com.tr adresinden arayın.');
+    }
+    if (strlen($token) > 2048) {
         vg_fail(422, 'captcha_required', 'Lütfen güvenlik doğrulamasını tamamlayın.');
     }
     $payload = http_build_query(['secret' => $secret, 'response' => $token, 'remoteip' => vg_client_ip()]);
@@ -123,7 +129,12 @@ function vg_contact_submit(): string
     $retry = vg_rl_hit('contact_ip', vg_rl_ip_key(), 5, 600);
     if ($retry > 0) vg_too_many($retry, 'Çok fazla mesaj gönderdiniz. Lütfen birkaç dakika sonra yeniden deneyin.');
     $secret = getenv('TURNSTILE_SECRET_KEY');
-    if (is_string($secret) && $secret !== '' && $secret !== 'REPLACE_WITH_TURNSTILE_SECRET_KEY') vg_contact_verify_captcha($secret, $captcha);
+    $captchaOn = is_string($secret) && $secret !== '' && $secret !== 'REPLACE_WITH_TURNSTILE_SECRET_KEY';
+    /* Site-wide ceiling protects the mailbox from distributed floods; stricter while bot verification is off. */
+    $global = vg_rl_hit('contact_global', 'all', $captchaOn ? 120 : 40, 3600);
+    if ($global > 0) vg_too_many($global, 'Şu anda çok sayıda mesaj alınıyor. Lütfen biraz sonra tekrar deneyin veya bizi telefonla arayın.');
+    if ($captchaOn) vg_contact_verify_captcha($secret, $captcha);
+    elseif (getenv('VG_MAIL_OUTBOX') !== '1') error_log('VoltGuard contact: TURNSTILE_SECRET_KEY is not configured; bot verification is off (see api/README.md)');
     if (!vg_mail_can_send()) vg_fail(503, 'mail_unavailable', 'Mesaj gönderimi şu anda kullanılamıyor. Lütfen telefonla iletişime geçin.');
     $body = "Yeni iletişim talebi:\n\nAd Soyad: {$name}\nTelefon: {$phone}\nE-posta: " . ($email ?: '-')
         . "\nHizmet Alanı: {$subjects[$subject]}\nTarih: " . vg_local_time(time()) . " (TSİ)\n\nMesaj:\n{$message}\n";

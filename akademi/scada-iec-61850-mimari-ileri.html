@@ -35,17 +35,17 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=f4956253830f" defer></script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light only">
-  <meta name="description" content="SCADA mimarisi ve IEC 61850 ileri seviye ders: server-client mimarisi, GOOSE mesajlaşma, MMS, SV protokolleri ve trafo merkezi entegrasyonu.">
+  <meta name="description" content="SCADA mimarisi ve IEC 61850 ileri seviye ders: Purdue katmanları, MMS, GOOSE ve SV servisleri, SCL dosyaları, proses barası ve OT siber güvenliği.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <title>SCADA Mimarisi ve IEC 61850 (İleri Ders) | VoltGuard</title>
   <link rel="canonical" href="https://voltguard.com.tr/akademi/scada-iec-61850-mimari-ileri.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="SCADA Mimarisi ve IEC 61850 (İleri Ders) | VoltGuard">
-  <meta property="og:description" content="SCADA mimarisi ve IEC 61850 ileri seviye ders: server-client mimarisi, GOOSE mesajlaşma, MMS, SV protokolleri ve trafo merkezi entegrasyonu.">
+  <meta property="og:description" content="SCADA mimarisi ve IEC 61850 ileri seviye ders: Purdue katmanları, MMS, GOOSE ve SV servisleri, SCL dosyaları, proses barası ve OT siber güvenliği.">
   <meta property="og:url" content="https://voltguard.com.tr/akademi/scada-iec-61850-mimari-ileri.html">
   <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
   <meta property="og:site_name" content="VoltGuard">
@@ -53,8 +53,8 @@
   <meta property="og:locale" content="tr_TR">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/style.css?v=3d7056f5965c">
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/scada-iec-61850-mimari-ileri.html#course","name":"SCADA Mimarisi ve IEC 61850 Entegrasyonu","description":"Server-client mimarisi, GOOSE mesajlaşma, MMS, SV protokolleri ve trafo merkezi entegrasyonu.","educationalLevel":"İleri","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-12","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"SCADA Mimarisi ve IEC 61850 (İleri)","item":"https://voltguard.com.tr/akademi/scada-iec-61850-mimari-ileri.html"}]}]}</script>
+  <link rel="stylesheet" href="/css/style.css?v=8f267038988a">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://voltguard.com.tr/akademi/scada-iec-61850-mimari-ileri.html#course","name":"SCADA Mimarisi ve IEC 61850 Entegrasyonu","description":"Purdue modeline göre SCADA katmanları, IEC 61850 veri modeli, MMS/GOOSE/SV, SCL dosyaları, istasyon ve proses barası, IEC 62351/62443.","educationalLevel":"İleri","inLanguage":"tr-TR","datePublished":"2026-09-08","dateModified":"2026-10-24","provider":{"@type":"Organization","@id":"https://voltguard.com.tr/#organization","name":"VoltGuard","url":"https://voltguard.com.tr/"},"isPartOf":{"@type":"WebSite","@id":"https://voltguard.com.tr/#website"},"author":{"@type":"Organization","name":"VoltGuard Mühendislik Ekibi","url":"https://voltguard.com.tr/ekibimiz.html"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltGuard Akademi","item":"https://voltguard.com.tr/akademi.html"},{"@type":"ListItem","position":3,"name":"SCADA Mimarisi ve IEC 61850 (İleri)","item":"https://voltguard.com.tr/akademi/scada-iec-61850-mimari-ileri.html"}]}]}</script>
 </head>
 <body class="doc-shell">
   <!--vg:header-->
@@ -86,13 +86,13 @@
               <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
               <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
               <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
               <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
               <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
             </ul>
           </li>
           <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
           <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
-          <li><a class="vg-nav__link" href="/voltgame.html">VoltGame</a></li>
         </ul>
         <div class="vg-nav__foot">
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -116,96 +116,99 @@
     <span class="article__cat">Endüstriyel Otomasyon</span>
     <span class="akademi-level akademi-level--ileri">İleri Seviye</span>
     <h1>SCADA Mimarisi ve IEC 61850 Entegrasyonu</h1>
-    <p class="article__summary">İleri seviye bu derste; büyük ölçekli SCADA sistemlerinin katmanlı mimarisini, IEC 61850 protokol ailesini (MMS, GOOSE, SV) ve trafo merkezi otomasyonunun (station bus / process bus) mimari kararlarını ele alacağız. Ön koşul: <a href="ladder-programlama-modbus-orta.html">Ladder Programlama ve Modbus/Profinet</a> dersi ve <a href="/bilgi/scada-iec-61850.html">SCADA ve IEC 61850</a> rehberi.</p>
+    <p class="article__byline" style="font-size:.85rem;color:#5b6472;margin:.25rem 0 1rem">Hazırlayan: VoltGuard Mühendislik Ekibi · Son gözden geçirme: <time datetime="2026-10-24">24.10.2026</time></p>
+    <p class="article__summary">Bu ders; büyük SCADA sistemlerinin katmanlı mimarisini, IEC 61850'nin veri modelini ve haberleşme servislerini (MMS, GOOSE, SV), istasyon ve proses barası mimarisini ve OT siber güvenliğinin temel standartlarını anlatır.</p>
 
-    <div class="akademi-path"><strong>Bu derste ne öğreneceksiniz?</strong> SCADA katmanlı mimarisi, HMI-Server-Historian ayrımı, IEC 61850 veri modeli (Logical Node), MMS/GOOSE/SV protokolleri, station bus + process bus mimarisi ve siber güvenlik.</div>
+    <div class="akademi-path"><strong>Ön koşul ve ilgili kaynaklar:</strong> <a href="ladder-programlama-modbus-orta.html">Ladder Programlama ve Modbus/Profinet</a> · <a href="/bilgi/scada-iec-61850.html">SCADA ve IEC 61850</a> · <a href="/bilgi/plc-nedir-nasil-calisir.html">PLC Nedir?</a></div>
 
-    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Büyük SCADA sistemleri en az üç katmanlıdır: Field, Control, Enterprise; yatay olarak HMI, Server, Historian, OPC/Gateway ayrımı yapılır.</li><li>IEC 61850, elektrik tesisleri için özel bir haberleşme protokolü ailesi; MMS (client-server), GOOSE (peer-to-peer alarm), SV (sample values) protokollerini içerir.</li><li>Logical Node modeli, gerçek dünyadaki koruma-kontrol fonksiyonlarını standart nesnelere haritalar (XCBR = kesici, PTOC = aşırı akım).</li><li>Station bus (istasyon otobüsü) HMI-IED bağlantısı; process bus (proses otobüsü) IED-CT/VT bağlantısı için kullanılır.</li><li>Modern SCADA için IEC 62351 siber güvenlik standardı uygulanır.</li></ul></div>
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul><li>Endüstriyel kontrol ağları çoğunlukla Purdue modeline göre seviyelere (Level 0-5) ayrılır; OT ile IT arasına bir DMZ konur.</li><li>IEC 61850, güç sistemi otomasyonu için veri modeli ve haberleşme servislerini tanımlar: MMS (istemci-sunucu), GOOSE (olay yayını) ve SV (örneklenmiş değerler).</li><li>Mantıksal düğüm (Logical Node) modeli, koruma ve kontrol işlevlerini standart nesnelere eşler (ör. XCBR kesici, PTOC aşırı akım).</li><li>Güç sistemi protokollerinin güvenliği IEC 62351'de, endüstriyel kontrol sistemlerinin ve tesisin siber güvenliği IEC 62443 serisinde ele alınır.</li></ul></div>
 
     <h2>SCADA Katmanlı Mimari</h2>
-    <p>Modern bir endüstriyel SCADA çözümü hiyerarşik olarak beş katmandan oluşur (Purdue modeli):</p>
+    <p>Endüstriyel kontrol sistemleri çoğunlukla Purdue referans modeliyle tanımlanır:</p>
     <ul class="article__list">
       <li><strong>Level 0 - Fiziksel proses:</strong> Sensörler, aktüatörler, motorlar, kesiciler.</li>
-      <li><strong>Level 1 - Kontrol cihazları:</strong> PLC, RTU, IED (Intelligent Electronic Device).</li>
-      <li><strong>Level 2 - Denetim (Supervisory):</strong> Yerel HMI, SCADA server, ölçü toplama.</li>
-      <li><strong>Level 3 - Operasyon:</strong> Historian, MES, batch server, mühendislik istasyonları.</li>
-      <li><strong>Level 4/5 - Kurumsal:</strong> ERP, iş zekası, bulut, dış paylaşım.</li>
+      <li><strong>Level 1 - Kontrol cihazları:</strong> PLC, RTU, IED (akıllı elektronik cihaz).</li>
+      <li><strong>Level 2 - Denetim:</strong> Yerel HMI, SCADA sunucusu, veri toplama.</li>
+      <li><strong>Level 3 - Operasyon:</strong> Historian, MES, batch sunucusu, mühendislik istasyonları.</li>
+      <li><strong>Level 4-5 - Kurumsal:</strong> ERP, iş zekâsı, bulut ve dış bağlantılar.</li>
     </ul>
-    <p>Level 3 ile 4 arasında DMZ ("industrial DMZ") kurulur; OT ağı IT ağından ateş duvarı ve tek yönlü veri diyotu ile ayrılır. Trafo merkezi ve fabrika enerji izleme projelerinde bu ayrım, <a href="/hizmetler/plc-scada-otomasyon.html">SCADA ve enerji izleme</a> altyapısının ilk tasarım kararlarındandır.</p>
+    <p>Level 3 ile Level 4 arasına endüstriyel DMZ kurulur. OT ağı, IT ağından güvenlik duvarıyla, gerektiğinde tek yönlü veri diyotuyla ayrılır. Trafo merkezi ve fabrika enerji izleme projelerinde bu ayrım, <a href="/hizmetler/plc-scada-otomasyon.html">SCADA ve enerji izleme</a> altyapısının ilk tasarım kararlarındandır.</p>
 
     <h2>SCADA'nın Bileşenleri</h2>
     <div class="table-scroll"><table>
       <thead><tr><th>Bileşen</th><th>Rol</th></tr></thead>
       <tbody>
-        <tr><td>HMI (Client)</td><td>Operatör grafik arayüzü; alarm, komut, trend gösterimi</td></tr>
-        <tr><td>SCADA Server</td><td>PLC/IED'lerden veri toplama, mantıksal işlem, HMI'lere dağıtım</td></tr>
-        <tr><td>Historian (Data server)</td><td>Zamanlı veri saklama (dakika, saat, yıl); trend ve rapor</td></tr>
-        <tr><td>OPC / Gateway</td><td>Farklı protokoller arası köprü (Modbus → OPC UA gibi)</td></tr>
-        <tr><td>Web / Mobile</td><td>Uzaktan erişim ve mobil uygulama</td></tr>
-        <tr><td>Engineering Station</td><td>Konfigürasyon ve mühendislik değişikliği</td></tr>
-        <tr><td>Redundant Server</td><td>Hot-standby yedek; otomatik geçiş</td></tr>
+        <tr><td>HMI (istemci)</td><td>Operatör arayüzü; alarm, komut, trend</td></tr>
+        <tr><td>SCADA sunucusu</td><td>PLC/IED'lerden veri toplama, işleme, HMI'lere dağıtım</td></tr>
+        <tr><td>Historian</td><td>Zaman damgalı veri arşivi; trend ve rapor</td></tr>
+        <tr><td>OPC / ağ geçidi</td><td>Protokoller arası dönüşüm (ör. Modbus → OPC UA)</td></tr>
+        <tr><td>Web / mobil erişim</td><td>Uzaktan izleme; DMZ üzerinden ve yetkilendirmeyle</td></tr>
+        <tr><td>Mühendislik istasyonu</td><td>Konfigürasyon ve değişiklik yönetimi</td></tr>
+        <tr><td>Yedek sunucu</td><td>Sıcak yedek; otomatik devralma</td></tr>
       </tbody>
     </table></div>
-    <p>Türkiye'de yaygın SCADA yazılımları: Siemens WinCC (Comfort/Advanced/Professional), Schneider AVEVA (Wonderware) InTouch/System Platform, ABB 800xA, GE iFIX, Ignition, Rockwell FactoryTalk.</p>
+    <p>Türkiye'de yaygın SCADA yazılımları: Siemens WinCC, AVEVA (eski Wonderware) InTouch/System Platform, ABB 800xA, GE iFIX, Inductive Automation Ignition, Rockwell FactoryTalk.</p>
 
-    <h2>IEC 61850: Trafo Merkezi Standardı</h2>
-    <p>IEC 61850, 2003'te yayınlanan ve trafo merkezi (substation) otomasyonu için özel geliştirilmiş, birden fazla üreticinin cihazlarının birbirleriyle sorunsuz haberleşmesini sağlayan bir standarttır. Üç ana protokol içerir:</p>
+    <h2>IEC 61850</h2>
+    <p>IEC 61850'nin ilk bölümleri 2002-2005 arasında trafo merkezi otomasyonu için yayımlandı. Ed.2 ve Ed.2.1 ile kapsamı genişletildi; standart bugün "güç sistemi otomasyonu için haberleşme ağları ve sistemleri" adını taşır. Amacı, farklı üreticilerin cihazlarının ortak bir veri modeli ve yapılandırma diliyle birlikte çalışmasıdır. Üç ana haberleşme servisi vardır:</p>
 
     <h3>1. MMS (Manufacturing Message Specification)</h3>
-    <p>Client-Server mimarisiyle çalışır. HMI, gateway veya SCADA (client), IED'den (server) veri okur veya komut yazar. Yavaş ama güvenilir; alarm listesi, ölçüm değerleri ve kontrol komutları için kullanılır. TCP/IP üzerinde çalışır.</p>
+    <p>İstemci-sunucu mimarisiyle çalışır. HMI, ağ geçidi veya SCADA (istemci), IED'den (sunucu) veri okur, raporları alır ve komut gönderir. Ölçüm değerleri, olay kayıtları ve kontrol komutları için kullanılır. TCP/IP üzerinde çalışır.</p>
 
     <h3>2. GOOSE (Generic Object Oriented Substation Event)</h3>
-    <p>Peer-to-peer publish/subscribe mimarisiyle çalışır. Bir IED, bir olay yayınlar (kesici açtı, arıza algılandı) ve diğer IED'ler bunu abone olarak alır. Layer 2 üzerinde çalışır ve 4 ms gibi çok kısa sürede iletilir. Röle koruma sinyallemesi için idealdir; yıllardır bakır kabloyla yapılan trip röle sinyallerinin yerini alır.</p>
+    <p>Yayıncı-abone mimarisiyle çalışır. Bir IED bir olayı (kesici açtı, koruma çalıştı) yayınlar; abone olan IED'ler bunu alır. Doğrudan katman 2 Ethernet üzerinde taşınır. IEC 61850-5, koruma açma mesajları için 3 ms aktarım süresi öngörür (tip 1A, performans sınıfı P2/P3). GOOSE, IED'ler arasındaki kablolu kilitleme ve açma sinyallerinin yerini alabilir.</p>
 
-    <h3>3. SV (Sampled Values) / Process Bus</h3>
-    <p>CT (Current Transformer) ve VT (Voltage Transformer) sekonderlerinin dijital olarak paylaşılması. Klasik sistemde her IED CT sekonderi tel ile alır; SV mimarisinde bir Merging Unit örnek değerleri Ethernet'e yayınlar, tüm IED'ler abone olur. Bu, saha kabloları radikal biçimde azaltır. 4000 sample/second (50 Hz için 80 örnek/periyot) tipiktir.</p>
+    <h3>3. SV (Sampled Values) ve Proses Barası</h3>
+    <p>Akım ve gerilim trafosu sekonder büyüklüklerinin dijital olarak paylaşılmasıdır. Klasik sistemde her IED akım ve gerilim trafosu sekonderini kabloyla alır. SV mimarisinde birleştirme birimi (merging unit) örnekleri Ethernet'e yayınlar, IED'ler abone olur. Bu yapı saha kablajını önemli ölçüde azaltır. IEC 61850-9-2 LE uygulamasında koruma için 50 Hz'de periyot başına 80 örnek (4000 örnek/s) kullanılır. IEC 61869-9, koruma için frekanstan bağımsız 4800 örnek/s öngörür.</p>
 
-    <h2>Logical Node Modeli</h2>
-    <p>IEC 61850'nin devrimci fikri, gerçek dünyadaki fonksiyonları standart yazılım nesnelerine (Logical Node - LN) haritalamaktır. Örnekler:</p>
+    <h2>Mantıksal Düğüm (Logical Node) Modeli</h2>
+    <p>IEC 61850'nin temel yaklaşımı, sahadaki işlevleri standart veri nesnelerine eşlemektir. Örnekler:</p>
     <ul class="article__list">
-      <li><strong>XCBR:</strong> Kesici (Circuit Breaker)</li>
-      <li><strong>XSWI:</strong> Ayırıcı (Switch/Isolator)</li>
-      <li><strong>PTOC:</strong> Aşırı akım koruma (Over Current)</li>
-      <li><strong>PDIF:</strong> Diferansiyel koruma (Differential)</li>
-      <li><strong>PDIS:</strong> Mesafe koruma (Distance)</li>
-      <li><strong>MMXU:</strong> Ölçüm değerleri (Measurement Unit)</li>
-      <li><strong>RREC:</strong> Otomatik reklozer (Auto Reclosing)</li>
-      <li><strong>CSWI:</strong> Anahtar kontrol (Switch Controller)</li>
+      <li><strong>XCBR:</strong> Kesici</li>
+      <li><strong>XSWI:</strong> Ayırıcı</li>
+      <li><strong>PTOC:</strong> Zaman gecikmeli aşırı akım koruması</li>
+      <li><strong>PDIF:</strong> Diferansiyel koruma</li>
+      <li><strong>PDIS:</strong> Mesafe koruması</li>
+      <li><strong>MMXU:</strong> Ölçüm değerleri</li>
+      <li><strong>RREC:</strong> Otomatik tekrar kapama</li>
+      <li><strong>CSWI:</strong> Anahtarlama kontrolü</li>
     </ul>
-    <p>Her LN'nin standart veri sınıfları (Data Objects) ve niteliksel özellikleri (Data Attributes) vardır. Bu sayede Siemens, ABB, Schneider veya GE'nin IED'leri aynı MMS/GOOSE mesajlarını okur.</p>
+    <p>Her mantıksal düğümün standart veri nesneleri ve nitelikleri vardır. Ortak model, farklı üreticilerin IED'lerinin aynı sistemde çalışmasını mümkün kılar. Ancak birlikte çalışabilirlik kendiliğinden oluşmaz; SCL yapılandırması ve fabrika ile saha kabul testleriyle doğrulanır.</p>
 
-    <h2>Station Bus ve Process Bus Mimarisi</h2>
+    <h2>İstasyon Barası ve Proses Barası</h2>
     <div class="table-scroll"><table>
-      <thead><tr><th>Bus</th><th>Amaç</th><th>Protokol</th><th>Ekipman</th></tr></thead>
+      <thead><tr><th>Bara</th><th>Bağlantı</th><th>Servisler</th><th>Altyapı</th></tr></thead>
       <tbody>
-        <tr><td>Station Bus</td><td>IED-HMI-Gateway</td><td>MMS, GOOSE</td><td>Ethernet switch (industrial)</td></tr>
-        <tr><td>Process Bus</td><td>IED-Merging Unit</td><td>SV, GOOSE</td><td>PTP zaman senkron, PRP/HSR</td></tr>
+        <tr><td>İstasyon barası</td><td>IED - HMI - ağ geçidi</td><td>MMS, GOOSE</td><td>Endüstriyel Ethernet anahtarları; SNTP/PTP zaman senkronu</td></tr>
+        <tr><td>Proses barası</td><td>IED - birleştirme birimi</td><td>SV, GOOSE</td><td>PTP zaman senkronu (IEC 61850-9-3), PRP/HSR yedeklilik</td></tr>
       </tbody>
     </table></div>
-    <p>Yedekli topoloji için PRP (Parallel Redundancy Protocol) veya HSR (High-availability Seamless Redundancy) uygulanır. Ağ elemanı arızasında 0 ms'de geçiş sağlanır (bumpless).</p>
+    <p>Yedekli ağ için PRP (Parallel Redundancy Protocol) veya HSR (High-availability Seamless Redundancy) kullanılır. Her iki yöntem de çerçeveleri iki yoldan gönderdiği için tek bir ağ elemanı arızasında kesintisiz (sıfır devralma süreli) çalışır.</p>
 
     <h2>SCL (Substation Configuration Language)</h2>
-    <p>IEC 61850'nin ikinci devrimci fikri, tüm istasyonun XML tabanlı bir dil (SCL) ile tanımlanmasıdır:</p>
+    <p>IEC 61850-6, istasyonun ve cihazların XML tabanlı SCL dosyalarıyla tanımlanmasını öngörür:</p>
     <ul class="article__list">
-      <li><strong>SSD (System Specification Description):</strong> Elektrik şema.</li>
-      <li><strong>ICD (IED Capability Description):</strong> Cihazın yeteneği (üreticiden).</li>
-      <li><strong>SCD (Substation Configuration Description):</strong> Bütünleşmiş istasyon dosyası.</li>
-      <li><strong>CID (Configured IED Description):</strong> Cihaza yüklenen konfigürasyon.</li>
+      <li><strong>SSD (System Specification Description):</strong> Sistem şartnamesi: tek hat şeması ve istenen işlevler.</li>
+      <li><strong>ICD (IED Capability Description):</strong> Cihazın yetenekleri (üreticiden gelir).</li>
+      <li><strong>IID (Instantiated IED Description):</strong> Proje için hazırlanmış tek cihaz tanımı.</li>
+      <li><strong>SCD (Substation Configuration Description):</strong> İstasyonun tam yapılandırması; tüm IED'ler ve haberleşme.</li>
+      <li><strong>CID (Configured IED Description):</strong> Cihaza yüklenen yapılandırma.</li>
+      <li><strong>SED (System Exchange Description):</strong> Projeler arası arayüz bilgisi.</li>
     </ul>
-    <p>Bu sayede tesis dokümantasyonu tek bir SCD dosyasında toplanır ve otomasyonun bakımı, genişletilmesi standartlaşır.</p>
+    <p>Güncel SCD dosyası, istasyonun haberleşme dokümantasyonunun merkezidir; genişletme ve bakım bu dosya üzerinden yapılır.</p>
 
-    <h2>SCADA Siber Güvenlik: IEC 62351</h2>
+    <h2>Siber Güvenlik: IEC 62351 ve IEC 62443</h2>
     <ul class="article__list">
-      <li>MMS için TLS 1.2+ zorunlu; sertifika tabanlı kimlik doğrulama.</li>
-      <li>GOOSE için signature/authentication (henüz zorunlu değil ama önerilir).</li>
-      <li>Ağ ayrımı: DMZ, VLAN, firewall, IDS/IPS (SCADA aware).</li>
-      <li>USB portlarının fiziksel kilitlenmesi, whitelist uygulaması.</li>
-      <li>Rol tabanlı erişim (RBAC), olay kaydı (log), SIEM entegrasyonu.</li>
-      <li>Değişiklik yönetimi ve zafiyet tarama (Bandolier, Nessus SCADA aware).</li>
+      <li><strong>IEC 62351:</strong> Güç sistemi protokollerinin güvenliği. MMS için TLS ve sertifika tabanlı kimlik doğrulama (62351-3/-4); GOOSE ve SV için mesaj kimlik doğrulama (62351-6). Hangi önlemlerin uygulanacağı proje şartnamesinde ve cihaz desteğine göre belirlenir.</li>
+      <li><strong>IEC 62443:</strong> Endüstriyel kontrol sistemlerinde bölge ve kanal yaklaşımı, güvenlik seviyeleri, ürün ve entegratör gereklilikleri.</li>
+      <li>Ağ ayrımı: DMZ, VLAN, güvenlik duvarı, endüstriyel protokolleri tanıyan saldırı tespit sistemleri.</li>
+      <li>USB ve servis portlarının kontrolü, uygulama beyaz listesi.</li>
+      <li>Rol tabanlı erişim, merkezi olay kaydı, değişiklik yönetimi.</li>
+      <li>Varlık envanteri ve zafiyet takibi: OT ağında aktif tarama dikkatle yapılmalı; pasif izleme araçları tercih edilmelidir.</li>
     </ul>
 
-    <h2>Örnek Vaka: 154/34,5 kV Trafo Merkezi</h2>
-    <p>Bir 154/34,5 kV trafo merkezinde 3 adet 154 kV feeder, 2 adet 154/34,5 kV trafo ve 20 adet 34,5 kV feeder bulunur. Her feeder için ayrı IED (koruma-kontrol) kullanılır. Station bus çift LAN (PRP), process bus (yeni tesiste) opsiyonel HSR ile kurulur. HMI redundant server + 3 client, gateway ise DNP3/IEC 60870-5-104 üzerinden uzaktan kontrol merkezine bağlanır. Ölçü değerleri MMS ile 1 s'de bir; kesici trip GOOSE ile 4 ms'de yayınlanır.</p>
+    <h2>Örnek: 154/34,5 kV Trafo Merkezi</h2>
+    <p>3 adet 154 kV fider, 2 adet 154/34,5 kV trafo ve 20 adet 34,5 kV fiderden oluşan bir trafo merkezinde her fider için ayrı koruma-kontrol IED'si kullanılır. İstasyon barası PRP ile çift LAN olarak kurulur. Proses barası yeni tesislerde, genellikle HSR veya PRP ile, isteğe bağlı olarak eklenir. HMI'da yedekli sunucu ve istemciler bulunur. Uzak kontrol merkezine bağlantı ağ geçidi üzerinden IEC 60870-5-104 ile yapılır. Ölçüm değerleri MMS raporlarıyla periyodik veya değişime bağlı olarak gönderilir. Koruma açma ve kilitleme sinyalleri GOOSE ile birkaç milisaniyede iletilir.</p>
 
     <p class="kb-disclaimer">Bu içerik ileri seviye eğitim amaçlıdır. Gerçek trafo merkezi otomasyon projesi için sertifikalı sistem entegratörü ve yetkili mühendis çalışması gereklidir.</p>
     <div class="kb-cta">
@@ -252,7 +255,7 @@
             <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
             <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
           </address>
-          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah GÜNAY</p>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
         </div>
         <nav class="vg-footer__nav" aria-label="Alt menü">
           <div class="vg-footer__col">
@@ -284,7 +287,6 @@
               <li><a href="/#referanslar">Referanslarımız</a></li>
               <li><a href="/#surec">Sürecimiz</a></li>
               <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#guvenlik">Güvenlik</a></li>
               <li><a href="/#haberler">Haberler</a></li>
               <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
               <li><a href="/#katalog">Katalog</a></li>
@@ -328,39 +330,9 @@
           <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
         </div>
       </div>
-      <div class="footer__signature" role="group" aria-label="VoltGuard Engineering imzası">
-        <svg class="sig-trace sig-trace--left" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" path="M0,10 L60,10 L70,4 L90,16 L100,10 L200,10" />
-          </circle>
-        </svg>
-        <span class="sig-node" aria-hidden="true"></span>
-        <a href="/" class="sig-badge" aria-label="VoltGuard Engineering web sitesi">
-          <span class="sig-badge__ring" aria-hidden="true"></span>
-          <span class="sig-badge__aurora" aria-hidden="true"></span>
-          <span class="sig-badge__icon" aria-hidden="true"><img src="/public/voltguard-logo.webp" width="38" height="38" alt="" loading="lazy" decoding="async"></span>
-          <span class="sig-badge__body">
-            <span class="sig-badge__label">Tasarım &amp; Geliştirme</span>
-            <span class="sig-badge__brand">
-              <span class="sig-badge__volt">Volt</span><span class="sig-badge__guard">Guard</span>
-              <span class="sig-badge__eng">Engineering</span>
-            </span>
-          </span>
-          <span class="sig-badge__year" aria-hidden="true"><i class="fas fa-microchip"></i> 2026</span>
-          <span class="sig-badge__shimmer" aria-hidden="true"></span>
-        </a>
-        <span class="sig-node" aria-hidden="true"></span>
-        <svg class="sig-trace sig-trace--right" aria-hidden="true" viewBox="0 0 200 20" preserveAspectRatio="none">
-          <path class="sig-trace__path" d="M0,10 L100,10 L110,4 L130,16 L140,10 L200,10" />
-          <circle class="sig-trace__dot" r="3" cx="0" cy="10">
-            <animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s" path="M200,10 L140,10 L130,16 L110,4 L100,10 L0,10" />
-          </circle>
-        </svg>
-      </div>
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/voltguard-auth.js?v=872e5c8ca665" defer></script>
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
 </body>
 </html>

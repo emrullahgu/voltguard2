@@ -23,7 +23,7 @@ async function run() {
   const probe = spawnSync(php, ['-n', '-v'], { encoding: 'utf8', windowsHide: true });
   if (probe.error || probe.status !== 0) throw new Error('Set VG_PHP to a PHP 7.4+ executable to run these checks.');
   const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'voltguard-community-api-'));
-  const environment = { ...process.env, VG_DATA_DIR: sandbox, VG_STORE: 'json', VG_MAIL_OUTBOX: '1', VG_RATE_SCALE: '1' };
+  const environment = { ...process.env, VG_DATA_DIR: sandbox, VG_STORE: 'json', VG_MAIL_OUTBOX: '1', VG_RATE_SCALE: '1', VG_COMMUNITY_GUEST_DAILY: '4' };
   const port = await unusedPort();
   const base = `http://127.0.0.1:${port}`;
   const child = spawn(php, ['-n', '-S', `127.0.0.1:${port}`, '-t', root], { env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
@@ -159,6 +159,43 @@ async function run() {
     check(Object.keys(stored.posts[memberPostId]).sort(), ['createdAt', 'deleted', 'deletedAt', 'id', 'parentId'].sort(), 'Account deletion erases private author identity and comment content');
     check(JSON.stringify(stored).includes('@example.test'), false, 'Community does not store email addresses');
     check(Object.keys(stored.rates).every(key => /^[a-f0-9]{64}$/.test(key)), true, 'Spam counters use HMAC keys');
+
+    // Reserved display names cannot impersonate VoltGuard, staff roles or moderators.
+    const c = client(), d = client(), e = client();
+    for (const actor of [c, d, e]) await expect(actor, 'list', {}, 200);
+    for (const name of ['VoltGuard', 'V0lt-Guard Destek', 'Site Yönetici', 'moderatör', 'Admin', 'Emrullah Günay'])
+      await expect(c, 'publish', { body: { authorName: name, message: 'Taklit denemesi.' } }, 422, 'reserved_name');
+    // Reports: three distinct visitors hide a comment until a moderator reviews it.
+    result = await expect(c, 'publish', { body: { authorName: 'Rapor Edilen', message: 'Bildirilecek yorum.' } }, 201);
+    const reportedId = result.body.item.id;
+    await expect(c, 'report', { body: { id: reportedId } }, 409, 'own_comment');
+    await expect(d, 'report', { body: { id: 'c_' + '0'.repeat(24) } }, 404, 'comment_not_found');
+    await expect(d, 'report', { body: { id: reportedId, reason: 'x' } }, 400, 'invalid_request');
+    result = await expect(d, 'report', { body: { id: reportedId } }, 200); check(result.body.hidden, false, 'One report does not hide a comment');
+    await expect(d, 'report', { body: { id: reportedId } }, 200);
+    await expect(e, 'report', { body: { id: reportedId } }, 200);
+    result = await expect(a, 'report', { body: { id: reportedId } }, 200); check(result.body.hidden, true, 'Three distinct reporters hide the comment');
+    result = await expect(b, 'list', {}, 200);
+    const masked = result.body.items.find(item => item.id === reportedId);
+    check([masked.hidden, masked.message, masked.authorName], [true, '', 'İncelemedeki yorum'], 'Hidden comment content and author are withheld from the public');
+    await expect(d, 'approve', { body: { id: reportedId } }, 403, 'forbidden');
+    const mod = client(); await expect(mod, 'me', { endpoint: 'auth' }, 200);
+    result = await expect(mod, 'register', { endpoint: 'auth', body: { name: 'Topluluk Moderatörü', email: `moderator-${unique}@example.test`, password: 'Deneme12345', consent: true } }, 201);
+    check(spawnSync(php, ['-n', path.join(root, 'tools/community-admin.php'), 'grant', result.body.user.id], { env: environment, encoding: 'utf8', windowsHide: true }).status, 0, 'Second moderator provisioned');
+    result = await expect(mod, 'list', {}, 200);
+    const review = result.body.items.find(item => item.id === reportedId);
+    check([review.message, review.reports], ['Bildirilecek yorum.', 3], 'Moderator sees reported content and report count');
+    await expect(mod, 'approve', { body: { id: reportedId } }, 200);
+    result = await expect(b, 'list', {}, 200);
+    check(result.body.items.find(item => item.id === reportedId).message, 'Bildirilecek yorum.', 'Approved comment is visible again');
+    // Site-wide guest quota (VG_COMMUNITY_GUEST_DAILY=4 in this test): members are not limited by it.
+    await expect(d, 'publish', { body: { authorName: 'Dördüncü Misafir', message: 'Kota içindeki yorum.' } }, 201);
+    result = await expect(e, 'publish', { body: { authorName: 'Beşinci Misafir', message: 'Kota dışındaki yorum.' } }, 429, 'rate_limited');
+    check(result.body.message.includes('misafir yorum kotası'), true, 'Guest quota explains member alternative');
+    await expect(mod, 'publish', { body: { message: 'Üye kotadan etkilenmez.' } }, 201);
+    const storedAfter = JSON.parse(fs.readFileSync(path.join(sandbox, 'community/comments.json'), 'utf8'));
+    check(storedAfter.posts[reportedId].reviewed, true, 'Moderator review is persisted');
+    check((storedAfter.posts[reportedId].reports || []).length, 0, 'Approval clears stored reports');
     const corruptFile = path.join(sandbox, 'community/comments.json');
     fs.writeFileSync(corruptFile, '{broken');
     await expect(a, 'list', {}, 503, 'unavailable');

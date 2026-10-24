@@ -24,6 +24,8 @@ deployment:
     - export DEPLOYPATH=/home/voltgua2/public_html/
     - export VG_STAGEPATH=/home/voltgua2/vg-deploy-stage/
     - /bin/mkdir -p $VG_STAGEPATH
+    # Sozdizimi hatali PHP canliya gitmesin. php komutu bulunamazsa adim atlanir, hata bulursa deploy burada durur.
+    - if command -v php >/dev/null 2>&1; then for f in api/*.php api/lib/*.php contact.php calisan/index.php calisan/uygulama/index.php; do php -l "$f" >/dev/null || exit 1; done; fi
     # Install private URL protection before any private file is copied into the web root.
     - /bin/cp .htaccess $DEPLOYPATH
     # ----- 1) Statik varliklar -----

@@ -22,6 +22,7 @@ $routes = [
     '/api/company.php' => '/api/company.php',
     '/api/company-asset.php' => '/api/company-asset.php',
     '/api/company-connectors.php' => '/api/company-connectors.php',
+    '/contact.php' => '/contact.php',
     '/calisan/' => '/calisan/index.php',
     '/calisan/index.php' => '/calisan/index.php',
     '/calisan/uygulama' => '/calisan/uygulama/index.php',

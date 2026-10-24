@@ -1,4 +1,30 @@
-# VoltGuard Tools hesap API'si (`api/auth.php`)
+# VoltGuard hesap API'si (`api/auth.php`)
+
+## Site sahibinin sunucuda yapması gerekenler (kontrol listesi)
+
+1. **Cloudflare Turnstile (iletişim / teklif / "Sor" formları)** — iki parça birlikte ayarlanır:
+   - Herkese açık *site anahtarı*: `index.html`, `sor.html`, `fabrika-cozumleri.html` içindeki
+     `data-sitekey="REPLACE_WITH_TURNSTILE_SITE_KEY"` değerini Cloudflare panelindeki site anahtarıyla değiştirin.
+     Anahtar yer tutucu kaldıkça sayfalar Turnstile betiğini **hiç yüklemez** (bozuk kutu görünmez).
+   - Gizli anahtar: sunucuda `TURNSTILE_SECRET_KEY` ortam değişkeni. **Gizli anahtarı yalnızca site anahtarı sayfalara
+     yazıldıktan sonra tanımlayın.** Gizli anahtar var ama formda jeton yoksa `contact.php` güvenli tarafta kalır (422
+     "Güvenlik doğrulaması yüklenemedi") ve `error_log`a yapılandırma uyarısı yazar.
+   - Gizli anahtar yoksa formlar çalışır; koruma alan doğrulama, bal tuzağı, IP başına 10 dakikada 5 ve site geneli
+     saatte 40 mesaj sınırıdır (Turnstile açıkken saatte 120). Her gönderimde `error_log`a "bot doğrulaması kapalı" yazılır.
+   - Deploy sonrası bir test mesajı gönderip `info@voltguard.com.tr` kutusunda görün.
+2. **Ortam değişkenleri `.htaccess` ile verilmez**: deploy `.htaccess` dosyasının üzerine yazar ve `SetEnv` satırları kaybolur.
+   cPanel → *MultiPHP INI Editor / LiteSpeed* ya da hosting panelinin ortam değişkeni ekranını kullanın
+   (LiteSpeed'de `lsapi` için `.user.ini` docroot **dışındaki** PHP yapılandırmasıyla). Varsayılanlar canlı için uygundur;
+   zorunlu olan yalnızca Turnstile gizli anahtarıdır.
+3. **Özel veri dizini** `/home/voltgua2/vg-data` (docroot dışı) yazılabilir olmalı; docroot içine düşme seçeneği yoktur, yoksa API 503 döner.
+4. **E-posta**: `noreply@voltguard.com.tr` gönderici olarak izinli olmalı; SPF ve DKIM kayıtlarını doğrulayın.
+5. **Topluluk**: misafir yorumları varsayılan olarak açıktır. `VG_COMMUNITY_GUESTS=off` topluluğu yalnızca üyelere açar;
+   `VG_COMMUNITY_GUEST_DAILY` (varsayılan 100) site geneli günlük misafir yorum sınırıdır. En az bir moderatör atayın
+   (`php tools/community-admin.php grant <kullanıcı-id>`, bkz. `COMMUNITY.md`); 3 farklı ziyaretçinin bildirdiği yorumlar
+   moderatör "İncelendi, yayımla" diyene kadar gizlenir.
+6. **Netlify** (`voltguard2.netlify.app`) yalnızca statik vitrindir: `/hesap/*`, `/calisan/*` ve `/topluluk.html`
+   `https://voltguard.com.tr` adresine 301 ile yönlenir. Netlify'a özel alan adı olarak `voltguard.com.tr` bağlanırsa bu
+   yönlendirmeler döngü yaratır; o durumda `netlify.toml` içindeki bu kuralları kaldırın.
 
 Sunucu tarafı üyelik sistemi: kayıt, giriş/çıkış, profil, şifre değiştirme ve sıfırlama, hesap silme (KVKK),
 favoriler / hesaplama geçmişi / projeler / dokümanlar senkronu ve tüm verilerin JSON olarak dışa aktarımı.
@@ -62,8 +88,13 @@ Yedekleme: `vg-data/` klasörünü (özellikle `vg-accounts.sqlite` veya `json/`
 | `VG_RATE_SCALE` | `1` | Hız sınırı eşiklerini çarpar (staging/test) |
 | `VG_MAIL_OUTBOX` | — | `1`: e-posta gönderilmez, `outbox/` klasörüne `.eml` yazılır. **Canlıda tanımlamayın.** |
 
-cPanel'de ortam değişkeni için `.htaccess` içine `SetEnv VG_DATA_DIR /home/voltgua2/vg-data` yazılabilir
-(LiteSpeed/Apache `mod_env`). Varsayılanlar canlı sunucu için uygundur; değişken tanımlamak gerekmez.
+| `TURNSTILE_SECRET_KEY` | — | İletişim formları için Turnstile gizli anahtarı (yukarıdaki kontrol listesi) |
+| `TURNSTILE_EXPECTED_HOSTNAME` | `voltguard.com.tr` | Siteverify yanıtında beklenen alan adı |
+| `VG_COMMUNITY_GUESTS` | açık | `off`: topluluğa yalnızca üyeler yazar |
+| `VG_COMMUNITY_GUEST_DAILY` | `100` | Site geneli 24 saatlik misafir yorum sınırı |
+
+Ortam değişkenlerini `.htaccess` (`SetEnv`) ile **vermeyin**: her deploy `.htaccess` dosyasının üzerine yazar. Hosting panelinin
+ortam değişkeni / PHP yapılandırma ekranını kullanın. Varsayılanlar canlı sunucu için uygundur.
 
 ## Uç noktalar
 
@@ -108,7 +139,7 @@ breakdown?}, note, savedAt, serverAt`. `result.breakdown` isteğe bağlıdır: h
   sonra 30 sn → 15 dk'ya kadar artan kilit (başkası sahibini kendi bağlantısından kilitleyemez), e-posta başına dağıtık denemelere
   karşı 15 dk'da 50 hata → 15 dk, IP başına 30 hata → 15 dk; kayıt IP başına 10/saat; şifre sıfırlama isteği IP başına 5/15 dk ve
   e-posta başına 3/saat (sessiz); sıfırlama IP başına 10/15 dk; e-posta değişikliği hesap başına 5/saat ve IP başına 10/saat;
-  mevcut şifre doğrulaması kullanıcı başına 5 hata.
+  mevcut şifre doğrulaması kullanıcı başına 5 hata; `me` (anonim oturum açılışı) istemci başına 10 dakikada 1200.
 - Temizlik: süresi dolmuş sayaç (rl/) ve oturum dosyaları saatte en fazla bir kez, yanıt gönderildikten sonra taranıp silinir
   (`gc-rl.last`, `gc-sessions.last` işaret dosyaları).
 - E-posta `mail()` ile `-f noreply@voltguard.com.tr` zarf göndericisiyle gider: cPanel'de bu adresin (veya alan adının)
@@ -124,7 +155,14 @@ breakdown?}, note, savedAt, serverAt`. `result.breakdown` isteğe bağlıdır: h
 
 Yalnızca `POST` form verisi, doğrulanan aynı site kökeni ve en fazla 32 KB gövde kabul edilir. Dosya eki alınmaz. Ad, Türkiye cep telefonu, isteğe bağlı e-posta, hizmet alanı, 20–1000 karakter mesaj ve form zaman işareti doğrulanır. Aydınlatma metni formda sunulur; aydınlatma için onay veya genel amaçlı açık rıza gönderimin ön koşulu değildir.
 
-IP adresi e-postaya/günlüğe yazılmaz; spam sayacı özel dizinde HMAC adıyla, IPv6 için /64 gruplamasıyla tutulur. Geçerli form başına 10 dakikada 5 istek sınırı vardır. Sayaç arızası gönderimi durdurur. `TURNSTILE_SECRET_KEY` tanımlıysa Siteverify sunucu doğrulaması ve hostname eşleşmesi zorunludur; `TURNSTILE_EXPECTED_HOSTNAME` varsayılanı `voltguard.com.tr` olur. Anahtar yoksa alan doğrulama, bal tuzağı ve hız sınırı çalışır.
+IP adresi e-postaya/günlüğe yazılmaz; spam sayacı özel dizinde HMAC adıyla, IPv6 için /64 gruplamasıyla tutulur. IP başına 10 dakikada 5 istek ve site geneli saatlik sınır (Turnstile kapalıyken 40, açıkken 120) vardır. Sayaç arızası gönderimi durdurur. `TURNSTILE_SECRET_KEY` tanımlıysa Siteverify sunucu doğrulaması ve hostname eşleşmesi zorunludur (jeton yoksa 422 + yapılandırma uyarısı); `TURNSTILE_EXPECTED_HOSTNAME` varsayılanı `voltguard.com.tr` olur. Anahtar yoksa alan doğrulama, bal tuzağı ve hız sınırları çalışır.
+
+## Güvenlik başlıkları
+
+`.htaccess` yol bazlı CSP uygular (`mod_setenvif` ile `VG_CSP_*`): genel sayfalar mevcut politikayı; `/hesap/` ve `/calisan/`
+satır içi betik ve `eval` olmadan (`script-src 'self'`, `frame-ancestors 'none'`); `/calisan/uygulama/` derlenmiş uygulama için
+satır içi betiksiz (`'unsafe-eval'` yalnızca kütüphaneler için); `/api/` `default-src 'none'`. Hesap sayfalarının betikleri
+`js/hesap-*.js` dosyalarındadır; bu sayfalara satır içi `<script>` veya `onclick=` eklemeyin (`tools/tests/account-hardening.test.cjs` denetler).
 
 Mesaj `info@voltguard.com.tr` adresine, sabit alan adı göndericisiyle ve doğrulanmış Reply-To ile gönderilir. `mail()` yoksa veya kabul etmezse 503 döner; başarı yalnızca taşıyıcının iletiyi kabul ettiğini belirtir, gelen kutusu teslim garantisi değildir. `VG_MAIL_OUTBOX=1` yalnızca yerel test içindir; yanıt gerçek e-posta gönderilmediğini açıkça bildirir.
 

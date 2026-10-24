@@ -54,6 +54,9 @@ body.community-page{margin:0;background:#f8fafc;color:#1e293b;font:16px/1.6 var(
 .community-action{min-height:36px;padding:7px 2px;background:transparent;border:0;color:#b45309;font-size:.78rem;border-radius:4px}
 .community-action:hover{text-decoration:underline;text-underline-offset:3px}
 .community-action--delete{color:#5b6b7c}
+.community-action--report{color:#5b6b7c}
+.community-action:disabled{opacity:.6;cursor:default;text-decoration:none}
+.community-review-note{margin:8px 0 0;font-size:.74rem;color:#92400e}
 .community-delete-confirm{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;font-size:.8rem}
 .community-delete-confirm span{width:100%;color:#991b1b}
 .community-delete-confirm .community-secondary{min-height:34px;padding:8px 12px;font-size:.76rem}

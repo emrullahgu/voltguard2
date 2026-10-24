@@ -110,6 +110,26 @@ function vg_company_visible(array $s, array $u, string $table, array $row): bool
     // Null / email / name matching NEVER implies employee ownership.
     return is_array($employee) && ($employee['user_id'] ?? null) === $u['id'];
 }
+/*
+ * Table x role permission matrix (server-side; the UI never decides).
+ *   select : every approved employee; payroll tables additionally pass vg_company_visible().
+ *   write  : operational tables for every employee, payroll tables only for admin/payroll (see query()).
+ *   delete : admin everywhere; payroll managers on payroll tables; ordinary employees only rows they
+ *            created themselves in day-to-day work tables. Master data and issued quotes: admin only.
+ * Personal identifiers that ordinary employees do not need are hidden from them and cannot be filtered on.
+ */
+const VG_COMPANY_OWN_DELETE_TABLES = ['gorevler', 'is_takip_kayitlar', 'urun_takip', 'fuel_records', 'haftalik_raporlar', 'osos_olcumler'];
+const VG_COMPANY_MANAGER_FIELDS = ['drivers' => ['tc_no', 'license_no'], 'is_takip_calisanlar' => ['telefon', 'email']];
+function vg_company_can_delete(array $u, string $table, array $row): bool {
+    if ($u['role'] === 'admin') return true;
+    if (vg_company_sensitive($table)) return vg_company_manage($u);
+    return in_array($table, VG_COMPANY_OWN_DELETE_TABLES, true) && ($row['created_by'] ?? null) === $u['id'];
+}
+function vg_company_hidden_fields(array $u, string $table): array { return vg_company_manage($u) ? [] : (VG_COMPANY_MANAGER_FIELDS[$table] ?? []); }
+function vg_company_mask_rows(array $u, string $table, array $rows): array {
+    $hidden = vg_company_hidden_fields($u, $table); if (!$hidden) return $rows;
+    return array_map(function ($row) use ($hidden) { foreach ($hidden as $field) unset($row[$field]); return $row; }, $rows);
+}
 function vg_company_field(string $table, $field): string { if (!is_string($field) || !in_array($field, vg_company_schema()[$table], true)) vg_company_fail(400, 'company_field', 'Desteklenmeyen kayıt alanı.'); return $field; }
 function vg_company_filters(string $table, $filters): array {
     if (!is_array($filters) || count($filters) > 24) vg_company_fail(400, 'company_filter', 'Kayıt filtresi geçersiz.');
@@ -237,14 +257,21 @@ function vg_company_query(array &$s, array $u, array $input): array {
     if ($op !== 'select' && in_array($table, ['company_documents', 'bordro_daily_logs', 'beyaz_yaka_monthly_payroll', 'beyaz_yaka_advances'], true)) vg_company_fail(403, '42501', 'Bu kayıt için kontrollü ve sürümlü kayıt işlemini kullanın.');
     if ($table === 'proposals' && !in_array($op, ['select', 'insert', 'delete'], true)) vg_company_fail(403, '42501', 'Kayıtlı teklif değiştirilmez; yeni teklif sürümü oluşturun.');
     if (in_array($op, ['update', 'delete'], true) && !$filters) vg_company_fail(400, 'company_filter_required', 'Değiştirilecek kayıt açıkça seçilmeli.');
+    $hidden = vg_company_hidden_fields($u, $table);
+    if ($hidden) {
+        $used = array_map(function ($f) { return $f['field'] ?? ''; }, $filters);
+        foreach ((is_array($input['order'] ?? null) ? $input['order'] : []) as $o) $used[] = is_array($o) ? ($o['field'] ?? '') : '';
+        if (array_intersect($used, $hidden)) vg_company_fail(403, '42501', 'Bu alan yalnızca yönetici ve bordro sorumlusu tarafından görülebilir.');
+    }
     $selected = []; foreach ($s['tables'][$table] as $id => $r) if (vg_company_visible($s, $u, $table, $r) && vg_company_matches($r, $filters)) $selected[$id] = $r;
-    if ($op === 'select') return vg_company_slice($s, $table, array_values($selected), $input);
+    if ($op === 'select') return vg_company_slice($s, $table, vg_company_mask_rows($u, $table, array_values($selected)), $input);
     if ($op === 'delete') {
+        foreach ($selected as $row) if (!vg_company_can_delete($u, $table, $row)) vg_company_fail(403, '42501', 'Bu kaydı silme yetkiniz yok. Silme işlemi için şirket yöneticinize başvurun.');
         foreach ($selected as $id => $row) {
             foreach ($s['tables'] as $otherTable => $records) foreach ($records as $other) if (($other['employee_id'] ?? null) === $id || ($other['vehicle_id'] ?? null) === $id || ($other['driver_id'] ?? null) === $id || ($other['calisan_id'] ?? null) === $id || ($other['lokasyon_id'] ?? null) === $id) vg_company_conflict('Kayıt geçmiş kayıtlarla ilişkili; silmek yerine pasif yapın.');
             unset($s['tables'][$table][$id]); vg_company_audit($s, $u, 'delete:' . $table, $id);
         }
-        return !empty($input['returning']) ? vg_company_slice($s, $table, array_values($selected), $input) : ['data' => null, 'count' => count($selected)];
+        return !empty($input['returning']) ? vg_company_slice($s, $table, vg_company_mask_rows($u, $table, array_values($selected)), $input) : ['data' => null, 'count' => count($selected)];
     }
     $raw = $input['rows'] ?? null; if ($op === 'update') $rows = [is_array($raw) && array_is_list_compat($raw) && count($raw) === 1 ? $raw[0] : $raw]; else $rows = is_array($raw) && array_is_list_compat($raw) ? $raw : [$raw];
     if (!$rows || count($rows) > 5000) vg_company_fail(); $affected = [];
@@ -277,7 +304,7 @@ function vg_company_query(array &$s, array $u, array $input): array {
             $s['tables'][$table][$merged['id']] = $merged; $affected[] = $merged; vg_company_audit($s, $u, $op . ':' . $table, $merged['id']);
         }
     }
-    return !empty($input['returning']) ? vg_company_slice($s, $table, $affected, $input) : ['data' => null, 'count' => count($affected)];
+    return !empty($input['returning']) ? vg_company_slice($s, $table, vg_company_mask_rows($u, $table, $affected), $input) : ['data' => null, 'count' => count($affected)];
 }
 
 function vg_company_payroll_default(array $employee, string $id, int $month, int $year): array {

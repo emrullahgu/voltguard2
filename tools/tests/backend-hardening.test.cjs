@@ -81,7 +81,8 @@ test('Contact and account endpoints validate actual HTTP requests without a real
     assert.match(eml, /Şule İletişim/); assert.match(eml, /Reply-To: contact-fixture@example.test/);
     assert.doesNotMatch(eml, /IP:|X-Mailer: PHP/);
     const counters = fs.readdirSync(path.join(data, 'rl')).filter(name => name.endsWith('.json'));
-    assert.equal(counters.length, 1); assert.match(counters[0], /^[a-f0-9]{64}\.json$/);
+    // Per-client counter plus the site-wide contact ceiling; both are HMAC-named, never raw IPs.
+    assert.equal(counters.length, 2); for (const name of counters) assert.match(name, /^[a-f0-9]{64}\.json$/);
     for (let i = 0; i < 4; i++) assert.equal((await submit(valid)).response.status, 200);
     result = await submit(valid); assert.equal(result.response.status, 429); assert.ok(Number(result.response.headers.get('retry-after')) > 0);
     assert.equal(fs.readdirSync(outbox).length, 5, 'Rejected submissions do not send email');

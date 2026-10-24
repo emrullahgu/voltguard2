@@ -10,7 +10,7 @@
  *
  * Teklif Sihirbazı /contact.php'ye index.html iletişim formuyla AYNI alanları gönderir:
  *   name, phone, email, subject (elektrik|elektronik|otomasyon|mekanik|diger), message (20-1000),
- *   consent=on, website (honeypot), formTimestamp (ms), cf-turnstile-response (site anahtarı varsa).
+ *   website (honeypot), formTimestamp (ms), cf-turnstile-response (site anahtarı varsa).
  */
 (function () {
   'use strict';
@@ -884,7 +884,6 @@
       fd.append('email', d.email);
       fd.append('subject', subjectFor(d.services));
       fd.append('message', buildMessage(d));
-      fd.append('consent', 'on');
       fd.append('website', hp ? hp.value : '');
       fd.append('formTimestamp', (ts && ts.value) || String(now));
       if (capOn) fd.append('cf-turnstile-response', capToken());

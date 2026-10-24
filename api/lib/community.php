@@ -10,6 +10,47 @@ if (!defined('VG_API')) {
 const VG_COMMUNITY_MAX_POSTS = 5000;
 const VG_COMMUNITY_MAX_BYTES = 20971520;
 const VG_COMMUNITY_MESSAGE_MAX = 2000;
+/* Reports from this many different visitors hide a comment until a moderator reviews it. */
+const VG_COMMUNITY_REPORT_HIDE = 3;
+/* Site-wide guest comments per 24 hours (VG_COMMUNITY_GUEST_DAILY overrides; members are not affected). */
+const VG_COMMUNITY_GUEST_DAILY = 100;
+
+/** Guest posting mode: VG_COMMUNITY_GUESTS=off makes the community members-only. */
+function vg_community_guests_allowed(): bool
+{
+    return strtolower(trim((string)getenv('VG_COMMUNITY_GUESTS'))) !== 'off';
+}
+
+function vg_community_guest_daily(): int
+{
+    $value = getenv('VG_COMMUNITY_GUEST_DAILY');
+    return is_string($value) && preg_match('/^[0-9]{1,5}$/D', $value) === 1 ? (int)$value : VG_COMMUNITY_GUEST_DAILY;
+}
+
+/** Folds Turkish letters, look-alike digits and separators so "V0lt-Guard" and "Yönetici" are recognized. */
+function vg_community_name_key(string $name): string
+{
+    $lower = function_exists('mb_strtolower') ? mb_strtolower($name, 'UTF-8') : strtolower($name);
+    $lower = strtr($lower, ['ı' => 'i', 'İ' => 'i', 'i̇' => 'i', 'ö' => 'o', 'ü' => 'u', 'ş' => 's', 'ç' => 'c', 'ğ' => 'g', 'â' => 'a', 'î' => 'i', 'û' => 'u',
+        '0' => 'o', '1' => 'i', '3' => 'e', '4' => 'a', '5' => 's', '7' => 't', '@' => 'a', '$' => 's']);
+    return (string)preg_replace('/[^a-z]/', '', $lower);
+}
+
+/** Guest display names may not impersonate the company, its staff roles or moderators. */
+function vg_community_reserved_name(string $name): bool
+{
+    $key = vg_community_name_key($name);
+    foreach (['voltguard', 'moderator', 'moderater', 'yonetici', 'yonetim', 'administrator', 'sitesahibi', 'emrullahgunay'] as $reserved) {
+        if (strpos($key, $reserved) !== false) return true;
+    }
+    return in_array($key, ['admin', 'destek', 'support', 'ekip', 'resmi', 'official', 'sistem'], true);
+}
+
+function vg_community_post_hidden(array $post): bool
+{
+    return empty($post['deleted']) && empty($post['reviewed']) && is_array($post['reports'] ?? null)
+        && count($post['reports']) >= VG_COMMUNITY_REPORT_HIDE;
+}
 
 function vg_community_id($value): string
 {
@@ -216,6 +257,21 @@ function vg_community_delete_account(VgStore $store, string $uid): void
     });
 }
 
+/** The member's own public comments for the KVKK data export (no other visitor's data). */
+function vg_community_export(string $uid): array
+{
+    return vg_community_locked(false, function (string $dir) use ($uid) {
+        $state = vg_community_read_state($dir);
+        $out = [];
+        foreach ($state['posts'] as $post) {
+            if (!$post['deleted'] && ($post['authorId'] ?? null) === $uid) {
+                $out[] = ['id' => $post['id'], 'parentId' => $post['parentId'], 'message' => $post['message'], 'createdAt' => vg_iso($post['createdAt'])];
+            }
+        }
+        return $out;
+    });
+}
+
 function vg_community_fields(array $body, array $allowed): void
 {
     foreach (array_keys($body) as $field) {
@@ -251,11 +307,14 @@ function vg_community_guest_name($raw): string
     if (vg_strlen($name) < 2 || vg_strlen($name) > 60 || preg_match('/\p{L}/u', $name) !== 1) {
         vg_fail(422, 'invalid_name', 'Lütfen 2–60 karakter uzunluğunda bir ad yazın.', ['authorName' => 'Ad alanı 2–60 karakter uzunluğunda olmalı.']);
     }
+    if (vg_community_reserved_name($name)) {
+        vg_fail(422, 'reserved_name', 'Bu görünen ad VoltGuard ekibine ayrılmıştır. Lütfen kendi adınızı veya bir takma ad yazın.', ['authorName' => 'Bu ad VoltGuard ekibine ayrılmıştır.']);
+    }
     return $name;
 }
 
 /** Persist spam counters with the comment under the same lock; storage errors fail closed. */
-function vg_community_rate(array &$state, string $kind, string $identifier, int $maximum, int $window): void
+function vg_community_rate(array &$state, string $kind, string $identifier, int $maximum, int $window, string $message = 'Çok hızlı yorum gönderiyorsunuz. Lütfen biraz bekleyin.'): void
 {
     $now = vg_now();
     foreach ($state['rates'] as $key => $counter) {
@@ -269,7 +328,7 @@ function vg_community_rate(array &$state, string $kind, string $identifier, int 
         return is_int($time) && $time > $now - $window && $time <= $now;
     }));
     if (count($hits) >= $maximum) {
-        vg_too_many(max(1, $window - ($now - min($hits))), 'Çok hızlı yorum gönderiyorsunuz. Lütfen biraz bekleyin.');
+        vg_too_many(max(1, $window - ($now - min($hits))), $message);
     }
     if (!isset($state['rates'][$key]) && count($state['rates']) >= 20000) {
         vg_fail(503, 'unavailable', 'Topluluk şu anda yoğun. Lütfen biraz sonra tekrar deneyin.');
@@ -289,16 +348,25 @@ function vg_community_public_post(array $post, VgStore $store, array $identity, 
         $account = $store->findUserById($author);
         $names[$author] = $account === null ? 'Silinmiş üye' : vg_text($account['name'], 80);
     }
-    return [
+    $hidden = vg_community_post_hidden($post);
+    $masked = $hidden && !$moderator;
+    $out = [
         'id' => $post['id'],
         'parentId' => $post['parentId'],
-        'authorName' => $deleted ? 'Yorum silindi' : $names[$author],
-        'authorType' => $deleted ? null : ($guest ? 'guest' : 'member'),
-        'message' => $deleted ? '' : $post['message'],
+        'authorName' => $deleted ? 'Yorum silindi' : ($masked ? 'İncelemedeki yorum' : $names[$author]),
+        'authorType' => $deleted || $masked ? null : ($guest ? 'guest' : 'member'),
+        'message' => $deleted || $masked ? '' : $post['message'],
         'createdAt' => vg_iso($post['createdAt']),
         'deleted' => $deleted,
         'canDelete' => !$deleted && ($moderator || $identity['actor'] === $author),
     ];
+    if ($hidden) {
+        $out['hidden'] = true;
+    }
+    if ($moderator && !$deleted) {
+        $out['reports'] = is_array($post['reports'] ?? null) ? count($post['reports']) : 0;
+    }
+    return $out;
 }
 
 function vg_community_list(VgStore $store, array $identity): array
@@ -350,7 +418,8 @@ function vg_community_list(VgStore $store, array $identity): array
         }
         return ['ok' => true, 'service' => 'vg-community/1', 'items' => $items,
             'nextBefore' => $offset + count($page) < count($posts) && $page ? $page[count($page) - 1]['id'] : null,
-            'canPublish' => true, 'moderator' => $moderator];
+            'canPublish' => $user !== null || vg_community_guests_allowed(), 'guestsAllowed' => vg_community_guests_allowed(),
+            'moderator' => $moderator];
     });
 }
 
@@ -359,6 +428,9 @@ function vg_community_publish(VgStore $store, array $identity, array $body): arr
     vg_community_fields($body, ['message', 'parentId', 'website', 'authorName']);
     if (array_key_exists('website', $body) && $body['website'] !== '') {
         vg_fail(422, 'invalid_request', 'Yorum gönderilemedi.');
+    }
+    if ($identity['member'] === null && !vg_community_guests_allowed()) {
+        vg_fail(403, 'members_only', 'Topluluğa şu anda yalnızca üye hesabıyla yorum yazılabiliyor. Ücretsiz üye olabilir veya giriş yapabilirsiniz.');
     }
     $message = vg_community_message($body['message'] ?? null);
     $guestName = $identity['member'] === null ? vg_community_guest_name($body['authorName'] ?? null) : null;
@@ -398,7 +470,13 @@ function vg_community_publish(VgStore $store, array $identity, array $body): arr
         vg_community_rate($state, 'publish_short', $actor, 1, 15);
         vg_community_rate($state, 'publish_quarter', $actor, 10, 900);
         vg_community_rate($state, 'publish_day', $actor, 40, 86400);
-        vg_community_rate($state, 'publish_ip', vg_rl_ip_key(), 30, 3600);
+        // IPv6 visitors are grouped by /48 so rotating addresses inside one customer block does not reset the limit.
+        vg_community_rate($state, 'publish_ip', vg_rl_ip_key(48), 30, 3600);
+        if ($guestName !== null) {
+            // Site-wide guest quota: distributed spam cannot fill the community; members can still write.
+            vg_community_rate($state, 'guest_day', 'all', max(1, vg_community_guest_daily()), 86400,
+                'Bugün için misafir yorum kotası doldu. Üye hesabıyla giriş yaparak yorum yazabilir ya da yarın tekrar deneyebilirsiniz.');
+        }
         foreach ($state['posts'] as $post) {
             if (!$post['deleted'] && $post['authorId'] === $actor && $post['message'] === $message
                 && $post['parentId'] === $parent && $post['createdAt'] > vg_now() - 86400) {
@@ -450,12 +528,70 @@ function vg_community_delete(array $identity, array $body): array
     });
 }
 
+/** Any visitor can report a comment once; enough distinct reports hide it until a moderator reviews it. */
+function vg_community_report(array $identity, array $body): array
+{
+    vg_community_fields($body, ['id']);
+    $id = vg_community_id($body['id'] ?? null);
+    if ($id === '') {
+        vg_fail(422, 'invalid_id', 'Yorum kimliği geçersiz.');
+    }
+    return vg_community_locked(true, function (string $dir) use ($identity, $id) {
+        $state = vg_community_read_state($dir);
+        $post = $state['posts'][$id] ?? null;
+        if ($post === null || $post['deleted']) {
+            vg_fail(404, 'comment_not_found', 'Yorum bulunamadı.');
+        }
+        if ($post['authorId'] === $identity['actor']) {
+            vg_fail(409, 'own_comment', 'Kendi yorumunuzu bildiremezsiniz; dilerseniz silebilirsiniz.');
+        }
+        $mark = substr(hash_hmac('sha256', 'community-report|' . $identity['actor'], vg_secret()), 0, 24);
+        $reports = is_array($post['reports'] ?? null) ? array_values(array_filter($post['reports'], 'is_string')) : [];
+        if (!in_array($mark, $reports, true)) {
+            vg_community_rate($state, 'report', $identity['actor'], 20, 3600, 'Kısa sürede çok fazla bildirim gönderdiniz. Lütfen daha sonra tekrar deneyin.');
+            vg_community_rate($state, 'report_ip', vg_rl_ip_key(48), 40, 3600, 'Kısa sürede çok fazla bildirim gönderildi. Lütfen daha sonra tekrar deneyin.');
+            if (count($reports) < 50) {
+                $reports[] = $mark;
+            }
+            $state['posts'][$id]['reports'] = $reports;
+            vg_community_write_json($dir . '/comments.json', $state, VG_COMMUNITY_MAX_BYTES);
+        }
+        return ['ok' => true, 'service' => 'vg-community/1', 'id' => $id, 'reported' => true,
+            'hidden' => vg_community_post_hidden($state['posts'][$id])];
+    });
+}
+
+/** Moderators restore a reviewed comment; later reports are still counted but no longer hide it. */
+function vg_community_approve(array $identity, array $body): array
+{
+    vg_community_fields($body, ['id']);
+    $id = vg_community_id($body['id'] ?? null);
+    if ($id === '') {
+        vg_fail(422, 'invalid_id', 'Yorum kimliği geçersiz.');
+    }
+    return vg_community_locked(true, function (string $dir) use ($identity, $id) {
+        $state = vg_community_read_state($dir);
+        $user = $identity['member'];
+        if ($user === null || !in_array($user['id'], vg_community_moderators($dir), true)) {
+            vg_fail(403, 'forbidden', 'Bu işlem için moderatör yetkisi gerekiyor.');
+        }
+        $post = $state['posts'][$id] ?? null;
+        if ($post === null || $post['deleted']) {
+            vg_fail(404, 'comment_not_found', 'Yorum bulunamadı.');
+        }
+        $state['posts'][$id]['reports'] = [];
+        $state['posts'][$id]['reviewed'] = true;
+        vg_community_write_json($dir . '/comments.json', $state, VG_COMMUNITY_MAX_BYTES);
+        return ['ok' => true, 'service' => 'vg-community/1', 'id' => $id, 'hidden' => false];
+    });
+}
+
 function vg_community_run(): void
 {
     ob_start();
     try {
         $action = vg_action();
-        $routes = ['list' => 'GET', 'publish' => 'POST', 'delete' => 'POST'];
+        $routes = ['list' => 'GET', 'publish' => 'POST', 'delete' => 'POST', 'report' => 'POST', 'approve' => 'POST'];
         if (!isset($routes[$action])) {
             vg_fail(404, 'unknown_action', 'Geçersiz işlem.');
         }
@@ -497,6 +633,10 @@ function vg_community_run(): void
             $result['csrf'] = $csrf;
         } elseif ($action === 'publish') {
             $result = vg_community_publish($store, $identity, $body);
+        } elseif ($action === 'report') {
+            $result = vg_community_report($identity, $body);
+        } elseif ($action === 'approve') {
+            $result = vg_community_approve($identity, $body);
         } else {
             $result = vg_community_delete($identity, $body);
         }

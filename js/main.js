@@ -263,12 +263,15 @@
   var mobileCta = qs('#mobileCta');
   var contactSection = qs('#iletisim');
   var contactInView = false;
+  var phoneMQ = window.matchMedia('(max-width: 768px)');
 
   function updateFloatingButtons() {
     var y = window.scrollY;
     if (scrollTopBtn) scrollTopBtn.classList.toggle('visible', y > 420);
-    if (whatsappFloat) whatsappFloat.classList.toggle('visible', y > 200);
-    if (mobileCta) mobileCta.classList.toggle('visible', y > 300 && !contactInView);
+    var ctaOn = !!mobileCta && y > 300 && !contactInView;
+    if (mobileCta) mobileCta.classList.toggle('visible', ctaOn);
+    /* Telefonda yapışkan çubukta WhatsApp zaten var: yüzen balon ikinci kez gösterilmesin. */
+    if (whatsappFloat) whatsappFloat.classList.toggle('visible', y > 200 && !(ctaOn && phoneMQ.matches));
   }
 
   if (contactSection && mobileCta && hasIO) {
@@ -820,42 +823,6 @@
     var div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
-  }
-
-  /* ------------------------------------------------
-     10. HERO YAZMA EFEKTİ
-     H1 sabit metindir ("İzmir Elektrik Mühendislik Hizmetleri"). Dönen kelime H1'in dışındaki aria-hidden
-     .hero__typed satırındadır; sabit yükseklikli tek satır olduğu için kelime değişince düzen kaymaz.
-     İlk kelime HTML'de hazır gelir. Hero ekranda değilken ya da sekme gizliyken bekler.
-  ------------------------------------------------- */
-  var typingEl = qs('#heroTyping');
-  var typingWords = ['Projelendirme', 'Bakım', 'Otomasyon', 'Proje Yönetimi'];
-  var wordIndex = 0;
-  var charIndex = typingWords[0].length;
-  var isDeleting = true;
-
-  function typeLoop() {
-    if (!typingEl) return;
-    if (prefersReducedMotion) { typingEl.textContent = typingWords[0]; return; }
-    if (document.hidden || !heroInView) { setTimeout(typeLoop, 700); return; }
-    var currentWord = typingWords[wordIndex];
-    charIndex += isDeleting ? -1 : 1;
-    typingEl.textContent = currentWord.substring(0, charIndex);
-
-    var delay = isDeleting ? 55 : 105;
-    if (!isDeleting && charIndex === currentWord.length) {
-      delay = 2400;
-      isDeleting = true;
-    } else if (isDeleting && charIndex === 0) {
-      isDeleting = false;
-      wordIndex = (wordIndex + 1) % typingWords.length;
-      delay = 380;
-    }
-    setTimeout(typeLoop, delay);
-  }
-
-  if (typingEl && !prefersReducedMotion) {
-    whenPreloaderGone(function () { setTimeout(typeLoop, 3000); });
   }
 
   /* ------------------------------------------------

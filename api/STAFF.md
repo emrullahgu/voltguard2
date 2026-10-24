@@ -60,6 +60,10 @@ PDF yükleme 8 MB ile sınırlıdır. Gerçek PHP yüklemesi, fileinfo MIME, `%P
 
 JSON deposu atomik yeniden adlandırma ve özel kilit kullanır. Hatalı/okunamayan veri veya kilit alınamaması erişimi kapatır. Çok sunuculu/yoğun kullanım için bu dosya deposu yerine aynı erişim kurallarını koruyan veritabanı gerekir. Mevcut ölçek tek sunucu içindir.
 
+Hız sayaçları `state.json` yerine ayrı `staff/rates.json` dosyasında (kendi kilidiyle) tutulur; giriş denemesi çalışan/bordro dosyasını yeniden yazmaz. Giriş kilidi yalnızca hatalı denemeleri sayar: e-posta+istemci çifti 15 dakikada 10, e-posta geneli 50, istemci (IPv6 /56) 30 hata. Şifreler 12–64 karakter, harf ve rakam içermelidir. PDF bordro indirmede yetki kilit altında doğrulanır, dosya akışı kilit bırakıldıktan sonra yapılır.
+
+Şirket uygulaması yetki matrisi (`api/lib/company.php`): okuma tüm onaylı çalışanlara (bordro tabloları yalnızca eşleşen kişiye ve yöneticilere); yazma operasyon tablolarında tüm çalışanlara, bordro tablolarında yönetici/bordro sorumlusuna; **silme** yönetici için her yerde, bordro sorumlusu için bordro tablolarında, olağan çalışan için yalnızca kendi oluşturduğu günlük iş kayıtlarında (`gorevler`, `is_takip_kayitlar`, `urun_takip`, `fuel_records`, `haftalik_raporlar`, `osos_olcumler`). Ana veriler (araç, sürücü, ürün, lokasyon, fabrika) ve teklifler yalnızca yönetici tarafından silinir. Sürücü kimlik/ehliyet numarası ve iş takibi çalışan telefonu/e-postası olağan çalışana gösterilmez ve bu alanlarla filtrelenemez.
+
 `vg_staff_require_user()` PHP özel sayfa kapısıdır. Ortak `bootstrap.php`, `security.php` ve `staff.php` yüklenip bu fonksiyon HTML gönderilmeden çağrılır. 401 girişe yönlendirilir; 503 özel veri göstermez. Yalnızca ana menüden bağlantıyı gizlemek güvenlik kontrolü değildir.
 
 ## Yedek ve doğrulama

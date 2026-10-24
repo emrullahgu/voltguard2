@@ -44,10 +44,11 @@ function vg_staff_dir(): string {
 }
 
 /** One exclusive lock serializes invites, replay counters and payroll authorization. */
-function vg_staff_store(callable $fn) {
+function vg_staff_store(callable $fn, bool $readOnly = false) {
     $dir = vg_staff_dir();
     $lock = @fopen($dir . '/store.lock', 'c');
-    if ($lock === false || !flock($lock, LOCK_EX)) vg_staff_error(503, 'staff_unavailable', 'Çalışan sistemi şu anda kullanılamıyor.');
+    // Read-only callers (session checks, asset gate) share the lock; writers remain exclusive.
+    if ($lock === false || !flock($lock, $readOnly ? LOCK_SH : LOCK_EX)) vg_staff_error(503, 'staff_unavailable', 'Çalışan sistemi şu anda kullanılamıyor.');
     @chmod($dir . '/store.lock', 0600);
     try {
         $file = $dir . '/state.json';
@@ -58,11 +59,13 @@ function vg_staff_store(callable $fn) {
             if (!is_array($decoded) || ($decoded['version'] ?? null) !== 1) throw new RuntimeException('invalid staff store');
             foreach (['users', 'invites', 'payroll', 'rates', 'audit'] as $key) if (!isset($decoded[$key]) || !is_array($decoded[$key])) throw new RuntimeException('invalid staff collection');
             $state = $decoded;
+            // Counters live in rates.json; a login attempt never rewrites personal or payroll state.
+            $state['rates'] = [];
         }
         $before = vg_json_encode($state);
         $result = $fn($state);
         $after = vg_json_encode($state);
-        if ($after !== $before) {
+        if ($after !== $before && !$readOnly) {
             $tmp = $dir . '/state-' . bin2hex(random_bytes(12)) . '.tmp';
             if (@file_put_contents($tmp, $after, LOCK_EX) !== strlen($after)) { @unlink($tmp); throw new RuntimeException('staff write failed'); }
             @chmod($tmp, 0600);
@@ -81,21 +84,92 @@ function vg_staff_audit(array &$state, string $event, ?string $target = null): v
     $state['audit'] = array_slice($state['audit'], -500);
 }
 
-/** Unlike best-effort counters, failed private storage prevents requests. */
-function vg_staff_rate(string $bucket, string $key, int $max, int $window = 900): void {
-    $retry = vg_staff_store(function (array &$s) use ($bucket, $key, $max, $window) {
+/**
+ * Abuse counters live in their own private file (staff/rates.json) under a separate lock, so a login attempt
+ * never rewrites the employee/payroll state. Failed private storage still prevents requests.
+ */
+function vg_staff_rates(callable $fn) {
+    $dir = vg_staff_dir();
+    $lock = @fopen($dir . '/rates.lock', 'c');
+    if ($lock === false || !flock($lock, LOCK_EX)) vg_staff_error(503, 'staff_unavailable', 'Çalışan sistemi şu anda kullanılamıyor.');
+    @chmod($dir . '/rates.lock', 0600);
+    try {
+        $file = $dir . '/rates.json'; $rates = [];
+        if (is_file($file)) {
+            $raw = @file_get_contents($file); $decoded = is_string($raw) ? json_decode($raw, true, 8) : null;
+            if (is_array($decoded)) $rates = $decoded;
+            else error_log('VoltGuard staff: unreadable rate counter file was reset');
+        }
         $now = time();
-        foreach ($s['rates'] as $id => $r) if (($r['until'] ?? 0) <= $now) unset($s['rates'][$id]);
-        $id = hash_hmac('sha256', 'staff:' . $bucket . ':' . $key, vg_secret());
-        $r = $s['rates'][$id] ?? ['hits' => [], 'until' => $now + $window];
-        $hits = array_values(array_filter($r['hits'], function ($t) use ($now, $window) { return is_int($t) && $t > $now - $window; }));
+        foreach ($rates as $id => $r) if (!is_array($r) || !is_int($r['until'] ?? null) || $r['until'] <= $now) unset($rates[$id]);
+        $before = vg_json_encode($rates);
+        $result = $fn($rates, $now);
+        $after = vg_json_encode($rates);
+        if ($after !== $before) {
+            $tmp = $dir . '/rates-' . bin2hex(random_bytes(12)) . '.tmp';
+            if (@file_put_contents($tmp, $after, LOCK_EX) !== strlen($after)) { @unlink($tmp); throw new RuntimeException('staff rate write failed'); }
+            @chmod($tmp, 0600);
+            if (!@rename($tmp, $file)) { @unlink($tmp); throw new RuntimeException('staff rate rename failed'); }
+            @chmod($file, 0600);
+        }
+        return $result;
+    } finally {
+        flock($lock, LOCK_UN);
+        fclose($lock);
+    }
+}
+
+function vg_staff_rate_id(string $bucket, string $key): string {
+    return hash_hmac('sha256', 'staff:' . $bucket . ':' . $key, vg_secret());
+}
+
+function vg_staff_rate_hits(array $rates, string $id, int $now, int $window): array {
+    $hits = $rates[$id]['hits'] ?? [];
+    return array_values(array_filter(is_array($hits) ? $hits : [], function ($t) use ($now, $window) { return is_int($t) && $t > $now - $window; }));
+}
+
+function vg_staff_rate_limited(int $retry): void {
+    vg_fail(429, 'staff_rate_limited', 'Çok fazla deneme yapıldı. Lütfen daha sonra yeniden deneyin.', [], ['Retry-After: ' . $retry], ['retryAfter' => $retry]);
+}
+
+/** Counts this request and rejects it when the window is already full. */
+function vg_staff_rate(string $bucket, string $key, int $max, int $window = 900): void {
+    $retry = vg_staff_rates(function (array &$rates, int $now) use ($bucket, $key, $max, $window) {
+        $id = vg_staff_rate_id($bucket, $key);
+        $hits = vg_staff_rate_hits($rates, $id, $now, $window);
         if (count($hits) >= $max) return max(1, $window - ($now - min($hits)));
-        if (count($s['rates']) >= 20000 && !isset($s['rates'][$id])) return $window;
+        if (count($rates) >= 20000 && !isset($rates[$id])) return $window;
         $hits[] = $now;
-        $s['rates'][$id] = ['hits' => $hits, 'until' => $now + $window];
+        $rates[$id] = ['hits' => $hits, 'until' => $now + $window];
         return 0;
     });
-    if ($retry > 0) vg_fail(429, 'staff_rate_limited', 'Çok fazla deneme yapıldı. Lütfen daha sonra yeniden deneyin.', [], ['Retry-After: ' . $retry], ['retryAfter' => $retry]);
+    if ($retry > 0) vg_staff_rate_limited($retry);
+}
+
+/** Failure-only limits: every limit is checked first; a failure is recorded only after it happened. */
+function vg_staff_rate_guard(array $limits): void {
+    $retry = vg_staff_rates(function (array &$rates, int $now) use ($limits) {
+        $wait = 0;
+        foreach ($limits as [$bucket, $key, $max, $window]) {
+            $hits = vg_staff_rate_hits($rates, vg_staff_rate_id($bucket, $key), $now, $window);
+            if (count($hits) >= $max) $wait = max($wait, $window - ($now - min($hits)), 1);
+        }
+        return $wait;
+    });
+    if ($retry > 0) vg_staff_rate_limited($retry);
+}
+
+function vg_staff_rate_record(array $limits): void {
+    vg_staff_rates(function (array &$rates, int $now) use ($limits) {
+        foreach ($limits as [$bucket, $key, $max, $window]) {
+            $id = vg_staff_rate_id($bucket, $key);
+            if (count($rates) >= 20000 && !isset($rates[$id])) continue;
+            $hits = vg_staff_rate_hits($rates, $id, $now, $window);
+            $hits[] = $now;
+            $rates[$id] = ['hits' => array_slice($hits, -200), 'until' => $now + $window];
+        }
+        return null;
+    });
 }
 
 function vg_staff_session_start(): void {
@@ -112,6 +186,9 @@ function vg_staff_session_start(): void {
     ini_set('session.use_only_cookies', '1');
     ini_set('session.use_trans_sid', '0');
     ini_set('session.gc_maxlifetime', (string)VG_STAFF_ABSOLUTE);
+    // Distribution cron jobs do not clean private save paths: let PHP collect expired employee sessions.
+    ini_set('session.gc_probability', '1');
+    ini_set('session.gc_divisor', '100');
     session_cache_limiter('');
     session_name(VG_STAFF_COOKIE);
     session_set_cookie_params(['lifetime' => 0, 'path' => '/', 'secure' => vg_is_https(), 'httponly' => true, 'samesite' => 'Strict']);
@@ -165,7 +242,7 @@ function vg_staff_user_in(array $state): ?array {
 
 function vg_staff_require_user(): array {
     vg_staff_session_start();
-    $u = vg_staff_store(function (array &$s) { return vg_staff_user_in($s); });
+    $u = vg_staff_store(function (array &$s) { return vg_staff_user_in($s); }, true);
     if ($u === null) vg_staff_error(401, 'staff_unauthorized', 'Çalışan hesabınızla ve doğrulama kodunuzla giriş yapın.');
     return vg_staff_public_user($u);
 }
@@ -181,6 +258,7 @@ function vg_staff_password($value): string {
     if (!is_string($value) || !preg_match('//u', $value)) vg_staff_error(422, 'staff_password', 'Şifre 12–64 karakter ve en fazla 72 bayt olmalı.');
     $count = preg_match_all('/./us', $value);
     if ($count < 12 || $count > 64 || strlen($value) > 72 || strpos($value, "\0") !== false) vg_staff_error(422, 'staff_password', 'Şifre 12–64 karakter ve en fazla 72 bayt olmalı.');
+    if (preg_match('/\p{L}/u', $value) !== 1 || preg_match('/\p{Nd}/u', $value) !== 1) vg_staff_error(422, 'staff_password', 'Şifre en az bir harf ve bir rakam içermeli.');
     return $value;
 }
 
@@ -323,18 +401,26 @@ function vg_staff_dispatch(string $action, array $body): array {
     });
     if ($action === 'login') {
         $email = strtolower(trim(is_string($body['email'] ?? null) ? $body['email'] : ''));
-        vg_staff_rate('login-ip', vg_rl_ip_key(), 30);
-        vg_staff_rate('login-email', $email, 10);
+        $ip = vg_rl_ip_key();
+        // Only failures count. The address+client pair locks first; the address-wide limit is deliberately high so
+        // someone who merely knows an employee's e-mail cannot keep that employee locked out from another network.
+        $limits = [['login-pair', $email . '|' . $ip, 10, 900], ['login-email', $email, 50, 900], ['login-ip', vg_rl_ip_key(56), 30, 900]];
+        vg_staff_rate_guard($limits);
         $pw = is_string($body['password'] ?? null) ? $body['password'] : '';
         if (strlen($pw) > 256) $pw = '';
-        return vg_staff_store(function (array &$s) use ($email, $pw) {
-            $found = null; foreach ($s['users'] as $u) if ($u['email'] === $email) { $found = $u; break; }
-            // A valid static dummy bcrypt hash avoids generating a new hash on every failed login.
-            $hash = $found['password'] ?? '$2y$12$wXYfSiKtABLDKBQgXXFxyOcXeA5c1BiMeO.gMwV3sCuh.cBOaxnVy';
-            $matches = password_verify($pw, $hash);
-            if (!$found || !$matches || !in_array($found['status'], ['active', 'enrollment'], true)) vg_staff_error(401, 'staff_login_failed', 'E-posta, şifre veya çalışan erişimi geçersiz.');
-            return vg_staff_begin_pending($found, empty($found['mfaSecret']) ? 'enroll' : 'verify');
-        });
+        try {
+            return vg_staff_store(function (array &$s) use ($email, $pw) {
+                $found = null; foreach ($s['users'] as $u) if ($u['email'] === $email) { $found = $u; break; }
+                // A valid static dummy bcrypt hash avoids generating a new hash on every failed login.
+                $hash = $found['password'] ?? '$2y$12$wXYfSiKtABLDKBQgXXFxyOcXeA5c1BiMeO.gMwV3sCuh.cBOaxnVy';
+                $matches = password_verify($pw, $hash);
+                if (!$found || !$matches || !in_array($found['status'], ['active', 'enrollment'], true)) vg_staff_error(401, 'staff_login_failed', 'E-posta, şifre veya çalışan erişimi geçersiz.');
+                return vg_staff_begin_pending($found, empty($found['mfaSecret']) ? 'enroll' : 'verify');
+            });
+        } catch (VgHttpError $e) {
+            if ($e->errCode === 'staff_login_failed') vg_staff_rate_record($limits);
+            throw $e;
+        }
     }
     if ($action === 'activate') {
         vg_staff_rate('activate-ip', vg_rl_ip_key(), 15, 3600);
@@ -454,8 +540,9 @@ function vg_staff_pdf_upload(array $input): array {
 }
 
 function vg_staff_pdf_download(string $id): void {
-    // Keep the store lock until streaming finishes: disable cannot race authorization.
-    vg_staff_store(function (array &$s) use ($id) {
+    // Authorize and open the file under the lock, then stream WITHOUT holding it: a slow client must never block
+    // every employee login and payroll operation. Revocation applies from the next request onwards.
+    $file = vg_staff_store(function (array &$s) use ($id) {
         $u = vg_staff_require_in($s); $row = $s['payroll'][$id] ?? null;
         if (!$row || !vg_staff_payroll_visible($u, $row) || empty($row['pdfFile']) || !preg_match('/^[a-f0-9]{48}\.pdf$/D', $row['pdfFile'])) vg_staff_error(404, 'staff_not_found', 'Kayıt bulunamadı.');
         $directory = vg_staff_private_directory(vg_staff_dir() . '/documents', vg_staff_dir());
@@ -463,12 +550,15 @@ function vg_staff_pdf_download(string $id): void {
         $actual = realpath($path);
         if ($actual === false || strpos(strtolower(str_replace('\\', '/', $actual)), strtolower(rtrim(str_replace('\\', '/', $directory), '/')) . '/') !== 0) vg_staff_error(404, 'staff_not_found', 'Kayıt bulunamadı.');
         $stream = @fopen($path, 'rb'); if ($stream === false) vg_staff_error(404, 'staff_not_found', 'Kayıt bulunamadı.');
-        vg_common_headers(200, []);
-        header('Content-Type: application/pdf'); header('Content-Disposition: attachment; filename="bordro-' . $row['period'] . '.pdf"');
-        header('Content-Length: ' . filesize($path)); header("Content-Security-Policy: sandbox; default-src 'none'");
-        fpassthru($stream); fclose($stream);
-        return null;
+        return ['stream' => $stream, 'period' => $row['period']];
     });
+    $stat = fstat($file['stream']);
+    if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
+    vg_common_headers(200, []);
+    header('Content-Type: application/pdf'); header('Content-Disposition: attachment; filename="bordro-' . $file['period'] . '.pdf"');
+    if (is_array($stat)) header('Content-Length: ' . $stat['size']);
+    header("Content-Security-Policy: sandbox; default-src 'none'");
+    fpassthru($file['stream']); fclose($file['stream']);
 }
 
 function vg_staff_run(): void {

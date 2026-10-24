@@ -28,6 +28,8 @@ başarılı topluluk yanıtları ayrıca `service: "vg-community/1"` içerir.
 | `list` | GET | `?action=list&limit=20&before=c_…` | `items`, `nextBefore`, `canPublish:true`, `moderator`, `csrf` |
 | `publish` | POST | `{message, authorName?, parentId?:null|"c_…", website?:""}` | 201 ve `item` |
 | `delete` | POST | `{id:"c_…"}` | `{id,deleted:true}` |
+| `report` | POST | `{id:"c_…"}` | `{id,reported:true,hidden}`; ziyaretçi başına bir kez, 3 farklı bildirimde yorum moderatör incelemesine kadar gizlenir; kendi yorumu bildirilemez (409 `own_comment`) |
+| `approve` | POST | `{id:"c_…"}` | yalnızca moderatör; bildirimleri temizler ve yorumu yeniden yayımlar |
 
 Yazmalar `Content-Type: application/json`, oturum çerezi ve `X-VG-CSRF` başlığı gerektirir.
 CSRF jetonu topluluğun `list` yanıtından veya `/api/auth.php?action=me` ile alınır;
