@@ -2,10 +2,10 @@
 # Tarayıcı denetimleri (site-audit, compat-audit, voltsim-browser) yerelde/önizlemede elle çalıştırılır.
 name: Testler
 
+# Hesap fatura kilidi kalkana kadar yalnız elle çalıştırılır; otomatik testler Ubuntu sunucudaki
+# voltguard-ci (tools/ci/) tarafından yapılır ve PR'da "voltguard-ci" commit durumu olarak görünür.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read

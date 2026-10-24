@@ -1,0 +1,15 @@
+[Unit]
+Description=VoltGuard CI: yeni commit'leri test et ve GitHub commit durumunu yaz
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=emrullah
+Group=emrullah
+Environment=VG_CI_HOME=/home/emrullah/servisler/voltguard-ci
+ExecStart=/home/emrullah/servisler/voltguard-ci/voltguard-ci.sh
+# Üretim konteynerlerinin önüne geçmesin
+Nice=15
+IOSchedulingClass=idle
+TimeoutStartSec=45min

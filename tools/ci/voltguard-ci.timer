@@ -1,0 +1,11 @@
+[Unit]
+Description=VoltGuard CI zamanlayıcısı (3 dakikada bir)
+
+[Timer]
+OnBootSec=2min
+OnUnitInactiveSec=3min
+RandomizedDelaySec=20s
+Persistent=false
+
+[Install]
+WantedBy=timers.target

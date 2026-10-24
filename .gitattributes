@@ -17,3 +17,6 @@
 /araclar/vendor/xlsx-js-style.LICENSE text eol=lf
 /araclar/vendor/symbols/NOTICE.txt text eol=lf
 /araclar/vendor/pcb-checklist/UNLICENSE.txt text eol=lf
+
+# CI betikleri Linux sunucuda çalışır
+/tools/ci/** text eol=lf
