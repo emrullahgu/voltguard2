@@ -518,6 +518,7 @@
         messageField.value = quoteNote;
         messageField.dataset.auto = '1';
         messageField.dataset.prefillComplete = '1';
+        messageField.dataset.vgSource = 'arac';
         syncCounter();
       }
     }
@@ -686,6 +687,8 @@
             'success'
           );
           safeStorageSet('vg_last_submit_at', String(Date.now()));
+          if (window.vgTrack) window.vgTrack('quote_submit', { svc: serviceSel && serviceSel.value ? serviceSel.value : '', via: messageField && messageField.dataset.vgSource === 'arac' ? 'arac' : 'form' });
+          if (messageField) delete messageField.dataset.vgSource;
           contactForm.reset();
           resetCaptcha();
           resetFormExtras();

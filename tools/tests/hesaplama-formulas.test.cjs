@@ -114,7 +114,9 @@ test('Hesaplama sayfaları ortak modülü yükler ve WebApplication JSON-LD içe
     const ld = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(m => JSON.parse(m[1]));
     const types = ld.flatMap(d => (d['@graph'] || [d]).map(n => n['@type']));
     assert.ok(types.includes('WebApplication'), file + ' WebApplication');
-    if (!['reaktif-ceza-hesaplama.html', 'periyodik-kontrol-planlayici.html'].includes(file)) assert.match(html, /\/js\/calculator-config\.js\?v=/, file);
+    // Ön değerlendirme araçları hesaplarını js/vg-assess.js'ten alır (tools/tests/assess-tools.test.cjs).
+    if (!['reaktif-ceza-hesaplama.html', 'periyodik-kontrol-planlayici.html', 'trafo-kapasite-artirimi.html',
+      'harmonik-filtre-ihtiyaci.html', 'fabrika-elektrik-risk-testi.html'].includes(file)) assert.match(html, /\/js\/calculator-config\.js\?v=/, file);
     assert.doesNotMatch(html, /<input[^>]+type="number"/, file + ': Türkçe ondalık için metin girişi kullanılır');
   }
 });

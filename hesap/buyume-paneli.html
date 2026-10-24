@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=3ec2a90a1976">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <meta name="color-scheme" content="light only">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="same-origin">
+  <title>Büyüme Paneli | VoltGuard Hesabı</title>
+  <meta name="description" content="VoltGuard yöneticileri için çerezsiz, anonim site ölçümü ve büyüme paneli.">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="stylesheet" href="../css/style.css?v=20261012d">
+  <link rel="stylesheet" href="../css/vg-account.css?v=20261013a">
+  <style>
+    .gp { max-width: 1180px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+    .gp h1 { font-size: clamp(1.5rem, 3.5vw, 2rem); margin: 0 0 .4rem; }
+    .gp h2 { font-size: 1.15rem; margin: 0 0 .75rem; }
+    .gp h3 { font-size: 1rem; margin: 1rem 0 .5rem; }
+    .gp-lead { color: var(--clr-text-muted); margin: 0 0 1.25rem; max-width: 70ch; line-height: 1.6; }
+    .gp-bar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: 0 0 1.25rem; }
+    .gp-bar button { font: inherit; font-size: .9rem; padding: .45rem .9rem; border-radius: 999px; border: 1px solid var(--clr-border); background: #fff; color: var(--clr-text); cursor: pointer; min-height: 40px; }
+    .gp-bar button[aria-pressed="true"] { background: #0a1628; color: #fff; border-color: #0a1628; }
+    .gp-bar button:focus-visible, .gp summary:focus-visible { outline: 3px solid rgba(59,130,246,.5); outline-offset: 2px; }
+    .gp-status { font-size: .85rem; color: var(--clr-text-muted); margin-left: auto; }
+    .gp-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); margin-bottom: 1rem; }
+    .gp-card { background: #fff; border: 1px solid var(--clr-border); border-radius: 12px; padding: 1.1rem 1.15rem; min-width: 0; }
+    .gp-card--wide { grid-column: 1 / -1; }
+    .gp-kpis { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); margin-bottom: 1rem; }
+    .gp-kpi { background: #fff; border: 1px solid var(--clr-border); border-radius: 12px; padding: .85rem 1rem; }
+    .gp-kpi span { display: block; font-size: .78rem; color: var(--clr-text-muted); line-height: 1.35; }
+    .gp-kpi strong { display: block; font-size: 1.55rem; line-height: 1.2; margin-top: .25rem; color: #0a1628; font-variant-numeric: tabular-nums; }
+    .gp-kpi small { display: block; font-size: .75rem; color: var(--clr-text-muted); margin-top: .15rem; }
+    .gp-empty { color: var(--clr-text-muted); font-size: .9rem; background: #f5f7fa; border-radius: 8px; padding: .75rem .9rem; margin: 0; line-height: 1.55; }
+    .gp-empty strong { color: #334155; }
+    .gp-chart { width: 100%; height: auto; display: block; }
+    .gp-chart text { font-size: 11px; fill: #64748b; font-family: inherit; }
+    .gp-legend { display: flex; flex-wrap: wrap; gap: .9rem; font-size: .8rem; color: #475569; margin: .4rem 0 0; padding: 0; list-style: none; }
+    .gp-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
+    .gp-hbars { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+    .gp-hbars li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .2rem .75rem; font-size: .88rem; }
+    .gp-hbars .gp-track { grid-column: 1 / -1; height: 8px; background: #eef2f7; border-radius: 4px; overflow: hidden; }
+    .gp-hbars .gp-fill { display: block; height: 100%; background: #1d4ed8; border-radius: 4px; }
+    .gp-hbars b { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .gp-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .gp table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+    .gp th, .gp td { text-align: left; padding: .45rem .5rem; border-bottom: 1px solid #e5e9f0; vertical-align: top; }
+    .gp td.n, .gp th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .gp td code { font-size: .8rem; word-break: break-all; }
+    .gp details { margin-top: .6rem; font-size: .85rem; }
+    .gp summary { cursor: pointer; color: #1d4ed8; }
+    .gp-plan ol { margin: .4rem 0 0 1.1rem; padding: 0; line-height: 1.6; }
+    .gp-plan li { margin-bottom: .45rem; }
+    .gp-note { font-size: .8rem; color: var(--clr-text-muted); line-height: 1.55; margin: .6rem 0 0; }
+    .gp-target { font-variant-numeric: tabular-nums; }
+    .vg-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    @media print { .gp-bar { display: none; } .gp-card, .gp-kpi { break-inside: avoid; } }
+  </style>
+</head>
+<body class="doc-shell">
+  <!--vg:header-->
+  <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+        </span>
+      </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
+              <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+              <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html" aria-current="true">Üye Girişi</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
+      </nav>
+      <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html" aria-current="true">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+  </header>
+  <!--/vg:header-->
+  <main class="vg-acct gp" id="main" tabindex="-1">
+    <h1 id="page-title" tabindex="-1"><i class="fas fa-chart-line" aria-hidden="true"></i> Büyüme paneli</h1>
+    <p class="gp-lead">Çerezsiz, anonim ve yalnızca günlük toplamlardan oluşan birinci taraf ölçüm. Kişi bazında iz, IP adresi veya tarayıcı kimliği tutulmaz; bu nedenle "tekil ziyaretçi" ölçülmez. <strong>Ziyaret</strong>, siteye dışarıdan (arama, sosyal, doğrudan, diğer) giriş yapılan sayfa görüntülemesidir.</p>
+    <div data-vg-alert class="vg-acct-alert" hidden></div>
+    <div data-vg-gate><noscript><p class="vg-acct-alert vg-acct-alert--warning">Panel için tarayıcınızda JavaScript açık olmalıdır.</p></noscript></div>
+    <div data-vg-content hidden>
+      <div class="gp-bar" role="group" aria-label="Tarih aralığı">
+        <button type="button" data-days="7" aria-pressed="false">Son 7 gün</button>
+        <button type="button" data-days="30" aria-pressed="true">Son 30 gün</button>
+        <button type="button" data-days="90" aria-pressed="false">Son 90 gün</button>
+        <button type="button" data-days="365" aria-pressed="false">Son 12 ay</button>
+        <span class="gp-status" id="gp-status" role="status" aria-live="polite"></span>
+      </div>
+      <div id="gp-forbidden" hidden></div>
+      <div id="gp-body" hidden>
+        <section aria-labelledby="gp-kpi-title">
+          <h2 id="gp-kpi-title" class="vg-sr-only">Özet göstergeler</h2>
+          <div class="gp-kpis" id="gp-kpis"></div>
+        </section>
+        <div class="gp-grid">
+          <section class="gp-card gp-card--wide" aria-labelledby="gp-daily-title">
+            <h2 id="gp-daily-title">Günlük sayfa görüntüleme ve ziyaret</h2>
+            <div id="gp-daily"></div>
+          </section>
+          <section class="gp-card" aria-labelledby="gp-weekly-title">
+            <h2 id="gp-weekly-title">Haftalık ve aylık ziyaret</h2>
+            <div id="gp-periods"></div>
+          </section>
+          <section class="gp-card" aria-labelledby="gp-sources-title">
+            <h2 id="gp-sources-title">Trafik kaynakları</h2>
+            <div id="gp-sources"></div>
+          </section>
+          <section class="gp-card" aria-labelledby="gp-devices-title">
+            <h2 id="gp-devices-title">Cihaz dağılımı</h2>
+            <div id="gp-devices"></div>
+          </section>
+          <section class="gp-card" aria-labelledby="gp-conv-title">
+            <h2 id="gp-conv-title">Teklif dönüşümleri ve iletişim</h2>
+            <div id="gp-conversions"></div>
+          </section>
+          <section class="gp-card gp-card--wide" aria-labelledby="gp-pages-title">
+            <h2 id="gp-pages-title">En çok görüntülenen sayfalar</h2>
+            <div id="gp-pages"></div>
+          </section>
+          <section class="gp-card" aria-labelledby="gp-sims-title">
+            <h2 id="gp-sims-title">VoltSim: başlatma → tamamlama</h2>
+            <div id="gp-sims"></div>
+          </section>
+          <section class="gp-card" aria-labelledby="gp-tools-title">
+            <h2 id="gp-tools-title">Hesap araçları kullanımı</h2>
+            <div id="gp-tools"></div>
+          </section>
+          <section class="gp-card" aria-labelledby="gp-vh-title">
+            <h2 id="gp-vh-title">VoltHaber görüntülemeleri</h2>
+            <div id="gp-volthaber"></div>
+          </section>
+          <section class="gp-card" aria-labelledby="gp-gsc-title">
+            <h2 id="gp-gsc-title">Google Search Console (gösterim / tıklama)</h2>
+            <p class="gp-empty"><strong>Veri henüz mevcut değil.</strong> Arama motorundaki gösterim, tıklama ve sıralama verisi sitenin kendi ölçümünden elde edilemez; bu panel bu değerleri tahmin etmez.</p>
+            <p class="gp-note">Bağlamak için: 1) <a href="https://search.google.com/search-console" rel="noopener noreferrer" target="_blank">Google Search Console</a>'da "Alan adı" mülkü olarak <code>voltguard.com.tr</code> ekleyin ve DNS TXT kaydıyla doğrulayın. 2) <code>https://voltguard.com.tr/sitemap.xml</code> site haritasını gönderin. 3) "Performans" raporunu aylık olarak dışa aktarın veya Search Console API'si için bir hizmet hesabı oluşturup bu panele sunucu tarafında entegrasyon ekleyin (henüz yapılmadı). Organik arama payı aşağıda sitenin kendi ölçümünden (arama motoru referrer'ı) gösterilir.</p>
+          </section>
+          <section class="gp-card gp-card--wide gp-plan" aria-labelledby="gp-plan-title">
+            <h2 id="gp-plan-title">30 / 60 / 90 günlük ölçüm planı</h2>
+            <div id="gp-baseline"></div>
+            <ol>
+              <li><strong>0–30. gün: Taban (baseline).</strong> Ölçüm yayına alınır, kendi ziyaretlerimiz hariç tutulmaz ama DNT/GPC açık tarayıcılar ve botlar sayılmaz. Hedef sayı koyulmaz; ilk 30 günün toplamları taban olarak kaydedilir: ziyaret, organik arama payı, araç kullanımı → teklif tıklaması oranı, teklif formu gönderimi, VoltSim tamamlama oranı, WhatsApp/telefon tıklaması. Bu sürede Google Search Console bağlanır ve sitemap gönderilir.</li>
+              <li><strong>31–60. gün: İlk iyileştirme turu.</strong> En çok giriş alan 10 sayfa ve en çok kullanılan 5 araç için başlık/açıklama, iç bağlantı ve "Bu sonuçla teklif iste" görünürlüğü iyileştirilir. Hedefler tabana göre <em>göreli</em> izlenir: organik ziyaret tabana göre +%10, araçtan teklif tıklaması oranı +%15, VoltSim tamamlama oranı +5 puan. Taban oluşmadan bu hedefler hesaplanmaz.</li>
+              <li><strong>61–90. gün: Ölçekleme ve karar.</strong> Tabana göre organik ziyaret +%20, teklif formu gönderimi +%20 hedeflenir. Hedefi tutan içerik türleri (rehber, araç, simülasyon, VoltHaber) çoğaltılır; tutmayanlar için başlık ve iç bağlantı yeniden ele alınır. 90. günde Search Console gösterim/tıklama verisiyle birlikte yeni bir 90 günlük plan yazılır.</li>
+            </ol>
+            <p class="gp-note">Hedefler sabit sayı değil, ölçülen tabana göre yüzde değişimdir. Taban, ölçümün ilk 30 tam günüdür; panel ilk 30 günden sonra taban değerleri ve hedef eşikleri otomatik hesaplar, 60. günden sonra son 30 günü tabanla karşılaştırır.</p>
+          </section>
+        </div>
+        <p class="gp-note" id="gp-quality"></p>
+      </div>
+    </div>
+  </main>
+
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+            </span>
+          </a>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
+
+  <script src="../js/voltguard-auth.js?v=20261013a"></script>
+  <script src="../js/vg-account.js?v=20261012d"></script>
+  <script src="../js/hesap-buyume-paneli.js?v=20261024c"></script>
+</body>
+</html>
