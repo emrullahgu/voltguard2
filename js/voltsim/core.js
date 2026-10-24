@@ -1218,7 +1218,9 @@
           // animate() çizim gerekiyorsa true döner; dönüş değeri olmayan eski modüller çalışırken her kare çizilir
           try { const r = this.def.scene.animate(this.kit, animDt, this.validResult, this.state, this.live, this); anim = r === undefined ? (this.running && !this.paused) : !!r; } catch (e) { this.fault('animate', e); }
         }
-        for (let i = 0; i < v.animated.length; i++) { try { if (v.animated[i].update(animDt)) flows = true; } catch (e) { this.fault('flow', e); } }
+        // enerji akışları yalnız benzetim çalışırken hareket eder; duran/duraklatılmış sahne tamamen durağandır (kare çizilmez)
+        const flowDt = this.running && !this.paused ? animDt : 0;
+        for (let i = 0; i < v.animated.length; i++) { try { if (v.animated[i].update(flowDt)) flows = true; } catch (e) { this.fault('flow', e); } }
         // animasyon yeni durduysa son konumun gölgesi bir kez daha çizilir
         if (wasAnim && !anim) { v.renderer.shadowMap.needsUpdate = true; v.dirty = true; }
         wasAnim = anim;

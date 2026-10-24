@@ -1201,9 +1201,12 @@
       if (!v.errors.length) {
         const sim = startup(m, method, { J: J, loadPct: loadPct, loadType: input.loadType === 'quad' ? 'quad' : 'const', tYD: input.tYD, ramp: input.ramp, softLimit: input.softLimit });
         const nom = sim.nom;
-        const Irun = nom.In * Math.max(0.35, loadPct / 100);
+        // Y-Δ'da röle ana kontaktör (K1) kolunda, yani sargı (faz) akımında ise üçgende In/√3 taşır ve ona ayarlanır
+        const inPhase = method === 'YD' && input.olPos === 'phase';
+        const Iref = inPhase ? nom.In / SQRT3 : nom.In;
+        const Irun = Iref * Math.max(0.35, loadPct / 100);
         const checks = [];
-        checks.push(check('ir', 'Termik ayarı ≈ In', Ir >= nom.In * 0.95 && Ir <= nom.In * 1.1 ? 'ok' : 'warn', 'In = ' + round(nom.In, 1) + ' A, ayar ' + Ir + ' A' + (method === 'YD' ? ' (Y-Δ’da röle faz akımında ise In/√3 = ' + round(nom.In / SQRT3, 1) + ' A)' : '')));
+        checks.push(check('ir', 'Termik ayarı ≈ ' + (inPhase ? 'In/√3 (faz akımı)' : 'In'), Ir >= Iref * 0.95 && Ir <= Iref * 1.1 ? 'ok' : 'warn', (inPhase ? 'Röle sargı kolunda: In/√3 = ' + round(Iref, 1) + ' A' : 'In = ' + round(nom.In, 1) + ' A' + (method === 'YD' ? ' (röle hat akımında)' : '')) + ', ayar ' + Ir + ' A'));
         checks.push(check('start', 'Yol alma', sim.stalled || !sim.tStart ? 'fail' : sim.tStart > 10 ? 'warn' : 'ok', sim.tStart ? 'Yol alma ≈ ' + round(sim.tStart, 1) + ' s, tepe akım ≈ ' + round(sim.Imax, 0) + ' A' : 'Motor yük momentini yenemedi (devrilme/yetersiz moment).'));
         checks.push(check('ol', 'Aşırı yük rölesi (çalışma)', overloadAssessment(olCls, Ir, Irun).trips ? 'warn' : 'ok', overloadAssessment(olCls, Ir, Irun).text, 'TS EN IEC 60947-4-1'));
         if (method === 'YD') {

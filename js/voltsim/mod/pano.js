@@ -248,7 +248,7 @@
     // ana şalter (TS EN 60947-2: ≥ 1,3·Ir kesin açma bölgesi)
     if (!L.mainTripped && res.values.Imax >= 1.3 * res.values.mainIr) {
       L.mainTimer += dt; changed = true;
-      if (L.mainTimer > 8) { L.mainTripped = true; s.circuits.forEach(cc => { cc.tripped = true; cc.tripReason = 'Ana şalter açtı'; if (cc.motor) cc.running = false; }); L.events.push('Ana şalter aşırı yükte açtı (temsili süre).'); app.renderControls(); app.invalidate(); }
+      if (L.mainTimer > 8) { L.mainTripped = true; s.circuits.forEach(cc => { if (cc.motor) cc.running = false; }); L.events.push('Ana şalter aşırı yükte açtı: bara enerjisiz, çıkış cihazları kapalı konumda kaldı; motor kontaktörleri gerilim kesilince düştü.'); app.renderControls(); app.invalidate(); }
     } else if (!L.mainTripped) L.mainTimer = 0;
     // anlık eğilim
     L.histT += dt;
@@ -311,7 +311,7 @@
       { label: 'Ik3 (bara, yakl.)', value: fmt(v.Ik3 / 1e3, 2, 'kA'), level: v.Ik3 > s.mainIcu_kA * 1e3 ? 'bad' : 'ok', sub: 'ip ' + fmt(v.ip / 1e3, 1) + ' kA · ' + (v.source === 'gen' ? 'jeneratör' : 'şebeke') }
     ];
     if (c && cr) {
-      out.push({ label: c.name + ' · akım', value: fmt(cr.I, 1, 'A'), sub: cr.active ? 'Yüklenme %' + fmt(cr.loadPct, 0) + ' · ' + (c.tripped ? 'AÇTI' : 'çalışıyor') : (c.tripped ? 'AÇTI: ' + c.tripReason : 'devre dışı'), level: c.tripped ? 'bad' : lvl(cr.loadPct), wide: true });
+      out.push({ label: c.name + ' · akım', value: fmt(cr.I, 1, 'A'), sub: cr.active ? 'Yüklenme %' + fmt(cr.loadPct, 0) + ' · ' + (c.tripped ? 'AÇTI' : 'çalışıyor') : (c.tripped ? 'AÇTI: ' + c.tripReason : live.mainTripped && c.on ? 'enerjisiz (ana şalter açık)' : 'devre dışı'), level: c.tripped ? 'bad' : lvl(cr.loadPct), wide: true });
       if (c.motor) out.push({ label: 'Kalkış akımı (tepe)', value: fmt(cr.startI, 0, 'A'), sub: { DOL: 'doğrudan', YD: 'yıldız–üçgen', SOFT: 'yumuşak yol verici', VFD: 'frekans konvertörü' }[c.start] });
       if (s.leak_mA > 0) out.push({ label: 'Kaçak akım', value: fmt(s.leak_mA, 0, 'mA'), level: c.rcd ? (s.leak_mA >= c.rcd ? 'bad' : 'warn') : 'bad', sub: c.rcd ? E.rcdAssessment(c.rcd, s.leak_mA).text : 'Bu devrede RCD yok: dokunma gerilimi riski!' });
     }
@@ -455,7 +455,7 @@
       plate.position.set(S.w / 2, S.plinth + S.h - 0.12, 0.024);
     });
     // pano üstü isim plakası
-    const name = k.screen(Math.min(1.2, W * 0.6), 0.09, 512, (gx, w, h) => { gx.fillStyle = '#0a1628'; gx.fillRect(0, 0, w, h); gx.fillStyle = '#fcd34d'; gx.font = 'bold 40px Arial'; gx.textAlign = 'center'; gx.textBaseline = 'middle'; gx.fillText(TYPE_LABEL[s.panelType].toUpperCase(), w / 2, h / 2); });
+    const name = k.screen(Math.min(1.2, W * 0.6), 0.09, 512, (gx, w, h) => { gx.fillStyle = '#0a1628'; gx.fillRect(0, 0, w, h); gx.fillStyle = '#fcd34d'; gx.textAlign = 'center'; gx.textBaseline = 'middle'; const t = TYPE_LABEL[s.panelType].toLocaleUpperCase('tr-TR'); let fs = Math.floor(h * 0.7); gx.font = 'bold ' + fs + 'px Arial'; while (fs > 10 && gx.measureText(t).width > w * 0.92) { fs--; gx.font = 'bold ' + fs + 'px Arial'; } gx.fillText(t, w / 2, h / 2 + 1); });   // levha metni genişliğe ve yüksekliğe sığdırılır
     name.position.set(0, S.plinth + S.h + 0.09, S.d / 2 - 0.05);
     // motorlar zeminde (pano yanında)
     let mi = 0;
@@ -627,7 +627,7 @@
       // PLC rafı ve güç kaynağı (eğitim gösterimi)
       const psu = place(4); k.rbox(0.07, 0.09, 0.11, 0.005, M.plasticGrey, psu.x, psu.y, -S.d / 2 + 0.1, g);
       const cpu = place(5); const cp = k.rbox(0.09, 0.1, 0.1, 0.006, M.plasticDark, cpu.x, cpu.y, -S.d / 2 + 0.1, g);
-      k.pickable(cp, 'PLC CPU', () => ['IEC 61131-3 programlanabilir denetleyici (eğitim gösterimi)', 'Emniyet fonksiyonları için ISO 13849-1 / IEC 62061’e göre doğrulanmış emniyet rölesi gerekir.']);
+      k.pickable(cp, 'PLC CPU', () => ['IEC 61131-3 programlanabilir denetleyici', 'Emniyet fonksiyonları için ISO 13849-1 / IEC 62061’e göre doğrulanmış emniyet rölesi gerekir.']);
       scene.plcLeds = [];
       for (let j = 0; j < 3; j++) { const io = place(2); const m = k.rbox(0.035, 0.1, 0.1, 0.004, M.plasticDark, io.x, io.y, -S.d / 2 + 0.1, g); for (let q = 0; q < 6; q++) scene.plcLeds.push(k.sphere(0.003, M.ledOff, io.x - 0.006, io.y + 0.035 - q * 0.012, -S.d / 2 + 0.152, g)); void m; }
       k.label('PLC · G/Ç', cp, [0, 0.07, 0.05], 'vs-label--sm');
@@ -683,7 +683,7 @@
     const cr = r.circuits[ci];
     return [
       (isQ(c) ? qLabel(c) : (c.motor ? 'Motor ' : '') + fmt(c.P_kW, 1, 'kW') + ' · cosφ ' + fmt(c.cos, 2)) + ' · ' + c.phase,
-      'Akım: ' + fmt(cr.I, 1, 'A') + (c.tripped ? ' · AÇTI (' + c.tripReason + ')' : !cr.active ? ' · devre dışı' : ''),
+      'Akım: ' + fmt(cr.I, 1, 'A') + (c.tripped ? ' · AÇTI (' + c.tripReason + ')' : !cr.active ? (app.live.mainTripped && c.on ? ' · enerjisiz (ana şalter açık)' : ' · devre dışı') : ''),
       (c.kind === 'MCB' ? 'MCB ' + c.curve : c.kind === 'FUSE' ? 'NH gG sigorta ' : 'MCCB ') + c.In + ' A · ' + fmt(c.S, c.S % 1 ? 1 : 0) + ' mm² · ' + c.L + ' m',
       'Iz = ' + fmt(cr.Iz, 1, 'A') + ' · ΔU = %' + fmt(cr.vd, 2) + ' · Ik1,min ≈ ' + fmt(cr.Ik1, 0, 'A'),
       cr.assessment.text
@@ -734,12 +734,12 @@
       const d = sc.devices[i]; const cr = v.circuits[i]; if (!d || !cr) return;
       const on = c.on && !c.tripped;
       if (d.handle) { d.handle.position.y = d.kind === 'mcb' ? (on ? 0.012 : -0.004) : on ? 0.0 : -0.025; d.handle.rotation.x = on ? 0 : 0.5; }
-      if (d.lamp) d.lamp.material = c.tripped ? M.ledRed : cr.active ? M.ledGreen : c.on ? M.ledAmber : M.ledOff;
-      if (d.label) { d.label.set(c.name + (cr.active ? ' · ' + fmt(cr.I, 0) + ' A' : c.tripped ? ' · AÇTI' : ' · kapalı')); d.label.level(c.tripped ? 'bad' : cr.loadPct > 100 ? 'warn' : cr.active ? 'ok' : ''); }
+      if (d.lamp) d.lamp.material = c.tripped ? M.ledRed : cr.active ? M.ledGreen : c.on && !v.noSupply ? M.ledAmber : M.ledOff;
+      if (d.label) { d.label.set(c.name + (cr.active ? ' · ' + fmt(cr.I, 0) + ' A' : c.tripped ? ' · AÇTI' : v.noSupply && c.on ? ' · enerjisiz' : ' · kapalı')); d.label.level(c.tripped ? 'bad' : cr.loadPct > 100 ? 'warn' : cr.active ? 'ok' : ''); }
       if (d.flow) d.flow.speed = cr.active ? Math.min(1.4, 0.15 + cr.loadPct / 100) : 0;
       if (d.dev && d.dev.userData.vfdScreen) d.dev.userData.vfdScreen.redraw();
     });
-    sc.motors.forEach(m => { const c = s.circuits[m.ci]; const cr = v.circuits[m.ci]; if (!c || !cr) return; m.label.set(c.name + (cr.active ? ' · çalışıyor' : c.tripped ? ' · AÇTI' : ' · duruyor')); m.label.level(c.tripped ? 'bad' : cr.active ? 'ok' : ''); });
+    sc.motors.forEach(m => { const c = s.circuits[m.ci]; const cr = v.circuits[m.ci]; if (!c || !cr) return; m.label.set(c.name + (cr.active ? ' · çalışıyor' : c.tripped ? ' · AÇTI' : v.noSupply ? ' · enerjisiz' : ' · duruyor')); m.label.level(c.tripped ? 'bad' : cr.active ? 'ok' : ''); });
     if (sc.analyzer) sc.analyzer.redraw();
     if (sc.rgr) sc.rgr.redraw();
     void T;
@@ -835,7 +835,7 @@
       g.fillStyle = col.dim; g.font = '10px Inter, sans-serif';
       g.fillText(clip(g, fmt(cr.I, 1) + ' A · ΔU %' + fmt(cr.vd, 1), w), x, by + 176);
       g.fillText(clip(g, fmt(c.S, c.S % 1 ? 1 : 0) + ' mm² · ' + c.L + ' m', w), x, by + 190);
-      if (c.tripped) { g.fillStyle = col.bad; g.fillText('AÇTI', x, by + 206); }
+      if (c.tripped) { g.fillStyle = col.bad; g.fillText('AÇTI', x, by + 206); } else if (live.mainTripped && c.on) { g.fillStyle = col.dim; g.fillText('enerjisiz', x, by + 206); }
     });
   }
 
@@ -877,8 +877,11 @@
       { id: 'unbal', name: 'Dengesiz yük · tek fazda yığılma', desc: 'Tüm tek fazlı yükler L1’de; nötr akımı ve dengesizlik artar.', state: (() => { const d = defaults('ADP'); d.circuits.forEach(c => { if (c.phase !== '3F') c.phase = 'L1'; }); return d; })() }
     ],
     controls: controls,
-    compute: s => {
-      const r = P.compute(s);
+    compute: (s, app) => {
+      // ana şalter açıksa bara enerjisiz: çıkışların kendi cihazları kapalı kalır ama hiçbir devre beslenmez (akım/güç 0)
+      const noSupply = !!(app && app.live && app.live.mainTripped);
+      const r = P.compute(noSupply ? Object.assign({}, s, { circuits: s.circuits.map(c => Object.assign({}, c, { on: false })) }) : s);
+      if (r.values) r.values.noSupply = noSupply;
       const X = E.ext && E.ext.pano;
       if (r.ok && X) {
         const up = mainDev(s, r.values);

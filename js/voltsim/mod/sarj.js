@@ -117,7 +117,7 @@
     ck.push({ id: 'circ', label: 'Nokta besleme devreleri', status: bad ? 'fail' : 'ok', detail: bad ? bad + ' noktada koruma/kablo/RCD uygunsuz' : s.points.length + ' nokta: Ib ≤ In ≤ Iz, ΔU ve RCD uygun', ref: 'TS HD 60364-7-722' });
     if (s.salePrice > 0 && !s.publicService) ck.push({ id: 'billing', label: 'Ücretlendirme ve mevzuat kapsamı', status: 'fail', detail: 'Kullanıcılardan enerji bedeli alınıyor: bu, özel (ticari olmayan) kullanım değildir. Herkese açık ücretli şarj hizmeti senaryosunu seçin.', ref: 'Şarj Hizmeti Yönetmeliği' });
     if (s.deadline > 0) ck.push({ id: 'deadline', label: 'Hedef süre', status: hub.allDone && hub.lastFinish <= s.deadline ? 'ok' : 'warn', detail: 'Tüm araçlar ' + (hub.allDone ? dur(hub.lastFinish) : 'bitmiyor') + ' / hedef ' + dur(s.deadline), ref: null });
-    if (s.pvKWp > 0 || s.batKWh > 0) ck.push({ id: 'der', label: 'GES / batarya katkısı', status: 'info', detail: 'GES ' + fmt(hub.pvE, 1) + ' kWh (temsili açık gün)' + (s.batKWh > 0 ? ' · batarya deşarj ' + fmt(hub.batOut, 1) + ' kWh' : ''), ref: null });
+    if (s.pvKWp > 0 || s.batKWh > 0) ck.push({ id: 'der', label: 'GES / batarya katkısı', status: 'info', detail: 'GES ' + fmt(hub.pvE, 1) + ' kWh (açık gün)' + (s.batKWh > 0 ? ' · batarya deşarj ' + fmt(hub.batOut, 1) + ' kWh' : ''), ref: null });
     r.assumptions = r.assumptions.filter(a => a.indexOf('Eşzamanlı noktalar') < 0).concat([
       'Şarj merkezi: her nokta kendi aracı, bataryası ve SOC’siyle 1 dk adımla simüle edilir; paylaşım önceliğe göre (yüksek öncelik önce), kademe içinde eşit su doldurma.',
       'AC oturumlarda en küçük akım 6 A’dir (IEC 61851-1 kontrol pilotu); yetmeyen güçte oturum duraklatılır. DC’de alt sınır yok kabul edildi.',
@@ -455,19 +455,27 @@
     const pts = [from, new T.Vector3(from.x - 0.12, 0.35, from.z + 0.25), new T.Vector3((from.x + end.x) / 2 - 0.05, 0.13, (from.z + end.z) / 2),
       new T.Vector3(end.x + 0.25, 0.25, end.z - 0.2), new T.Vector3(end.x + 0.22, end.y - 0.04, end.z), new T.Vector3(end.x + 0.1, end.y, end.z)];
     const cab = k.tube(pts, dc ? 0.024 : 0.016, dc ? Xm.cable : Xm.cableOrange, k.viewer.root, 90);
-    connector(k, k.viewer.root, dc).position.copy(end);
-    return { cab: cab, flow: k.flow(cab.userData.curve, dc ? 22 : 16, dc ? 0x38bdf8 : 0xfcd34d, dc ? 0.03 : 0.024) };
+    const con = connector(k, k.viewer.root, dc); con.position.copy(end);
+    return { cab: cab, con: con, flow: k.flow(cab.userData.curve, dc ? 22 : 16, dc ? 0x38bdf8 : 0xfcd34d, dc ? 0.03 : 0.024) };
   }
   function idleCable(k, from, holster, dc) {
     const T = k.T, Xm = mats(k);
     const pts = [from, new T.Vector3(from.x - 0.15, 0.45, from.z + 0.1), new T.Vector3(holster.x - 0.22, 0.3, holster.z + 0.15), new T.Vector3(holster.x - 0.1, holster.y - 0.2, holster.z), holster];
-    k.tube(pts, dc ? 0.024 : 0.016, dc ? Xm.cable : Xm.cableOrange, k.viewer.root, 60);
+    const cab = k.tube(pts, dc ? 0.024 : 0.016, dc ? Xm.cable : Xm.cableOrange, k.viewer.root, 60);
     const con = connector(k, k.viewer.root, dc); con.position.copy(holster); con.rotation.z = Math.PI / 2;
+    return { cab: cab, con: con };
+  }
+  /** Fiş tak/çıkar sahneyi yeniden kurmaz: iki kablo konumu da kurulur, yalnız görünürlük değişir. */
+  function showPlug(sc, i, on) {
+    const c = sc.cables[i]; if (!c || c.on === on) return false;
+    c.on = on; c.plug.cab.visible = c.plug.con.visible = on; c.plug.flow.visible = on;
+    c.idle.cab.visible = c.idle.con.visible = !on;
+    return true;
   }
 
   /* ---------------------------------------------------------------- 3D: sahne */
   function bayPos(i) { const r = Math.floor(i / PER_ROW), c = i % PER_ROW; return { x: -c * BAY, z: -r * ROWZ, r: r, c: c }; }
-  function rebuildOn(s) { return JSON.stringify([s.points.map(p => [kindOf(p), p.plugged, p.car.preset]), s.connMode, s.baseProfile === 'none', s.pvKWp > 0, s.batKWh > 0, s.publicService]); }
+  function rebuildOn(s) { return JSON.stringify([s.points.map(p => [kindOf(p), p.car.preset]), s.connMode, s.baseProfile === 'none', s.pvKWp > 0, s.batKWh > 0, s.publicService]); }
   function pointActions(app, i) {
     const p = app.state.points[i]; if (!p) return [];
     return [
@@ -492,7 +500,7 @@
     [geos(T), Xm].forEach(o => Object.keys(o).forEach(n => { const x = o[n]; if (Array.isArray(x)) x.forEach(y => k.keep(y)); else if (x && (x.isBufferGeometry || x.isMaterial)) k.keep(x); }));
     if (validatePoints(s).length) { app.scene3 = null; k.ground(200, Xm.grass, -0.02); return; }
     const n = s.points.length, rows = Math.ceil(n / PER_ROW), cols = Math.min(n, PER_ROW);
-    const sc = { app: app, cars: [], units: [], flows: [], lastScr: -1, lastMods: [] };
+    const sc = { app: app, cars: [], units: [], flows: [], cables: [], lastScr: -1, lastMods: [] };
     app.scene3 = sc;
     v.scene.fog = new T.Fog(0x9fb9d4, 40 + rows * 10, 130 + rows * 25);
     k.ground(400, Xm.grass, -0.02);
@@ -517,9 +525,10 @@
       k.pickable(car.body, () => s.points[i].name + ' · ' + (CARS[s.points[i].car.preset] || CARS.sedan).name, () => pointInfo(app, i), a => pointActions(a, i));
       const u = dc ? buildDC(k, ix, bz - 0.55, sc, i) : buildAC(k, ix, bz - 0.8, sc, i);
       k.pickable(u.g, () => s.points[i].name + ' · ' + (PROF[s.points[i].profile] || PROF.AC11).name, () => pointInfo(app, i), a => pointActions(a, i));
-      const fl = p.plugged ? plugCable(k, u.plugW, car.inlet, dc) : (idleCable(k, u.plugW, u.holsterW, dc), null);
-      if (fl) k.pickable(fl.cab, () => s.points[i].name + ' · ' + (dc ? 'DC kablo (mod 4)' : 'AC kablo (mod 3)'), () => pointInfo(app, i), a => pointActions(a, i));
-      sc.units.push(u); sc.flows.push(fl ? fl.flow : null); sc.cars.push(car);
+      const fl = plugCable(k, u.plugW, car.inlet, dc), idle = idleCable(k, u.plugW, u.holsterW, dc);
+      sc.cables[i] = { plug: fl, idle: idle, on: null }; showPlug(sc, i, !!p.plugged);
+      k.pickable(fl.cab, () => s.points[i].name + ' · ' + (dc ? 'DC kablo (mod 4)' : 'AC kablo (mod 3)'), () => pointInfo(app, i), a => pointActions(a, i));
+      sc.units.push(u); sc.flows.push(fl.flow); sc.cars.push(car);
       const bar = k.group(null, bx, 2.05, bz);
       const bg = new T.Mesh(new T.BoxGeometry(0.06, 0.13, 1.7), Xm.barBg); bar.add(bg);
       const fill = new T.Mesh(new T.BoxGeometry(0.07, 0.1, 1.64), new T.MeshBasicMaterial({ color: 0x38bdf8 })); bar.add(fill);
@@ -645,7 +654,7 @@
   }
 
   /* ---------------------------------------------------------------- sahne güncelleme */
-  function update(k, res, s, live, app) { const sc = app.scene3; if (!sc) return; sc.lastScr = -1; sc.lastMods = []; sc.lastJ = -1; animate(k, 0, res, s, live, app); }
+  function update(k, res, s, live, app) { const sc = app.scene3; if (!sc) return; let ch = false; s.points.forEach((p, i) => { if (showPlug(sc, i, !!p.plugged)) ch = true; }); if (ch) k.invalidate(true); sc.lastScr = -1; sc.lastMods = []; sc.lastJ = -1; animate(k, 0, res, s, live, app); }
   function animate(k, dt, res, s, live, app) {
     const sc = app.scene3; if (!sc || !res.values.hub) return;
     const h = res.values.hub, j = at(h, live.t), T = k.T, M = k.mats, col = sc._color || (sc._color = new T.Color());

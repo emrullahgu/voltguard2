@@ -313,3 +313,13 @@ test('yangın: smokeStep çift tamponla yeni diziyle aynı sonucu verir ve tampo
   assert.equal(a[7], 0, 'duvar hücresi boş kalır');
   assert.notEqual(E.yangin.smokeStep(a, 6, 6, null, 0.5, walls, a), a, 'girdiyle aynı tampon verilirse yeni dizi');
 });
+
+test('motor: Y-Δ termik röle konumu — sargı kolunda In/√3, hat akımında In', () => {
+  const base = { Pn: 11, Un: 400, eff: 0.91, cos: 0.85, nn: 1460, poles: 4, IstIn: 7, TkTn: 2.8, method: 'YD', loadPct: 30, J: 0.2, olClass: '10', loadType: 'quad', tYD: 4 };
+  const In = E.motor.compute(Object.assign({}, base, { Ir: 21 })).values.nom.In;
+  const ck = o => E.motor.compute(Object.assign({}, base, o)).checks.find(c => c.id === 'ir').status;
+  assert.equal(ck({ Ir: Math.round(In * 10) / 10, olPos: 'line' }), 'ok', 'hat akımında In');
+  assert.equal(ck({ Ir: Math.round(In / Math.sqrt(3) * 10) / 10, olPos: 'line' }), 'warn', 'hat akımında In/√3 düşük');
+  assert.equal(ck({ Ir: Math.round(In / Math.sqrt(3) * 10) / 10, olPos: 'phase' }), 'ok', 'sargı kolunda In/√3');
+  assert.equal(ck({ Ir: Math.round(In * 10) / 10, olPos: 'phase' }), 'warn', 'sargı kolunda In fazla');
+});

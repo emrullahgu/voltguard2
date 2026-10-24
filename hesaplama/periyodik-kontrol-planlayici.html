@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/">
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=2912feacba52">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=875de322c835">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=c3a5982c2ac7">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <meta name="color-scheme" content="light only">
+  <meta name="description" content="Elektrik, topraklama, paratoner, trafo, jeneratör, akü ve yangın algılama periyodik kontrol tarihlerini planlayın; takvim (.ics) ve CSV olarak indirin.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <title>Periyodik Kontrol Planlayıcı: Elektrik ve Topraklama | VoltGuard</title>
+  <link rel="canonical" href="https://voltguard.com.tr/hesaplama/periyodik-kontrol-planlayici/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Periyodik Kontrol Planlayıcı: Elektrik ve Topraklama | VoltGuard">
+  <meta property="og:description" content="Elektrik, topraklama, paratoner, trafo, jeneratör, akü ve yangın algılama periyodik kontrol tarihlerini planlayın; takvim (.ics) ve CSV olarak indirin.">
+  <meta property="og:url" content="https://voltguard.com.tr/hesaplama/periyodik-kontrol-planlayici/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:locale" content="tr_TR">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=9a7f961f888a">
+  <style>
+    .pk-table{width:100%;border-collapse:collapse;min-width:640px}
+    .pk-table th{text-align:left;font-size:.8rem;color:var(--clr-text-muted,#4f5f74);padding:.4rem}
+    .pk-table td{padding:.3rem .4rem;vertical-align:middle}
+    .pk-table input,.pk-table select{width:100%;min-height:40px;padding:.4rem .5rem;border:1px solid #cbd5e1;border-radius:8px;font:inherit;background:#fff}
+    .pk-table input[type=number]{max-width:90px}
+    .pk-table input[aria-invalid=true]{border-color:#b91c1c}
+    .pk-del{min-height:40px;padding:.4rem .7rem;border:1px solid #fecaca;border-radius:8px;background:#fff5f5;color:#991b1b;font-weight:600;cursor:pointer}
+    .pk-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
+    .pk-actions button{min-height:44px;padding:.55rem 1rem;border:1px solid #0a1628;border-radius:8px;background:#fff;color:#0a1628;font-weight:600;cursor:pointer}
+    .pk-actions button.pk-primary{background:#0a1628;color:#fff}
+    .pk-summary{margin:.6rem 0;padding:.6rem .8rem;border-radius:8px;font-weight:700;background:#ecfdf5;color:#065f46}
+    .pk-summary[data-level=soon]{background:#fffbeb;color:#92400e}
+    .pk-summary[data-level=late]{background:#fef2f2;color:#991b1b}
+    .pk-plan{list-style:none;padding:0;margin:0}
+    .pk-plan li{display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;padding:.55rem .2rem;border-bottom:1px solid #e2e8f0}
+    .pk-plan li em{margin-left:auto;font-style:normal;font-weight:600;color:#065f46}
+    .pk-plan li[data-level=soon] em{color:#92400e}
+    .pk-plan li[data-level=late] em{color:#991b1b}
+    .pk-warn{padding:.5rem .7rem;border-radius:8px;background:#fffbeb;color:#92400e}
+    @media (max-width:680px){
+      .pk-table{min-width:0}.pk-table thead{display:none}
+      .pk-table,.pk-table tbody{display:block}
+      .pk-table tr{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;padding:.7rem 0;border-bottom:1px solid #e2e8f0}
+      .pk-table td{display:block;padding:0 .6rem;border:0}
+      .pk-table td:nth-child(-n+4)::before{display:block;margin-bottom:.15rem;font-size:.75rem;font-weight:700;color:#4f5f74}
+      .pk-table td:nth-child(1)::before{content:"Alan / tesis"}
+      .pk-table td:nth-child(2)::before{content:"Kontrol konusu"}
+      .pk-table td:nth-child(3)::before{content:"Son kontrol"}
+      .pk-table td:nth-child(4)::before{content:"Periyot (ay)"}
+      .pk-table td:nth-child(1),.pk-table td:nth-child(2){grid-column:1/-1}
+      .pk-table td:nth-child(5){grid-column:1/-1;text-align:right}
+      .pk-table input[type=number]{max-width:none}
+    }
+    @media print{.vg-header,.vg-footer,.pk-actions,.kb-cta,.breadcrumb{display:none!important}.pk-table input,.pk-table select{border:0}}
+  </style>
+  <script src="/js/periyodik-planlayici.js?v=6810a656f700" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","@id":"https://voltguard.com.tr/hesaplama/periyodik-kontrol-planlayici/#app","name":"Periyodik Kontrol Planlayıcı","url":"https://voltguard.com.tr/hesaplama/periyodik-kontrol-planlayici/","description":"Elektrik, topraklama, paratoner, trafo, jeneratör, akü ve yangın algılama periyodik kontrol tarihlerini planlayın; takvim (.ics) ve CSV olarak indirin.","applicationCategory":"BusinessApplication","applicationSubCategory":"Periyodik kontrol planlama","operatingSystem":"Web","browserRequirements":"JavaScript etkin modern tarayıcı","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"TRY"},"provider":{"@id":"https://voltguard.com.tr/#organization"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Hesap Araçları","item":"https://voltguard.com.tr/hesaplama-araclari/"},{"@type":"ListItem","position":3,"name":"Periyodik Kontrol Planlayıcı","item":"https://voltguard.com.tr/hesaplama/periyodik-kontrol-planlayici/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Elektrik tesisatı periyodik kontrolü ne sıklıkla yapılır?","acceptedAnswer":{"@type":"Answer","text":"İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği EK-III Tablo-3'e göre ilgili standartta daha kısa bir süre öngörülmemişse elektrik iç tesisatı, topraklama tesisatı ve yıldırımdan korunma tesisatı en fazla yılda bir kontrol edilir."}},{"@type":"Question","name":"Periyodik kontrolü kim yapar?","acceptedAnswer":{"@type":"Answer","text":"Kontroller yönetmelikte tanımlanan yetkili kişilerce yapılır; elektrik, topraklama ve yıldırımdan korunma tesisatlarında yetkili elektrik mühendisi veya tekniker kontrol eder ve sonuç raporlanır."}},{"@type":"Question","name":"Planlayıcıya girdiğim bilgiler nereye gidiyor?","acceptedAnswer":{"@type":"Answer","text":"Hiçbir yere gönderilmez. Liste yalnızca kullandığınız tarayıcıda saklanır; takvim veya CSV dosyasını kendiniz indirirsiniz."}}]}]}</script>
+</head>
+<body class="doc-shell">
+  <!--vg:header-->
+  <a class="skip-to-content" href="/hesaplama/periyodik-kontrol-planlayici/#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+        </span>
+      </a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
+              <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+              <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/" aria-current="true">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
+      </nav>
+      <div class="vg-actions">
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+  </header>
+  <!--/vg:header-->
+
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="/">Ana Sayfa</a> &rsaquo; <a href="/hesaplama-araclari/">Hesap Araçları</a> &rsaquo; <span>Periyodik Kontrol Planlayıcı</span>
+  </nav>
+
+  <main class="article" id="main" tabindex="-1">
+    <span class="article__cat">İş Güvenliği ve Periyodik Kontrol</span>
+    <h1>Periyodik Kontrol Planlayıcı</h1>
+    <p class="article__summary">Tesisinizdeki elektrik, topraklama, yıldırımdan korunma, trafo, jeneratör, akü ve yangın algılama sistemlerinin son kontrol tarihlerini girin; bir sonraki kontrol tarihlerini, gecikmeleri ve yaklaşan kontrolleri tek listede görün. Planı takviminize (.ics) ya da CSV olarak alın.</p>
+
+    <section id="pk-app" aria-labelledby="pk-h">
+      <h2 id="pk-h">Kontrol listeniz</h2>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Periyodik kontrol listesi">
+        <table class="pk-table">
+          <thead><tr><th scope="col">Alan / tesis</th><th scope="col">Kontrol konusu</th><th scope="col">Son kontrol</th><th scope="col">Periyot (ay)</th><th scope="col"><span class="sr-only">İşlem</span></th></tr></thead>
+          <tbody id="pk-rows"></tbody>
+        </table>
+      </div>
+      <p class="calc-hint" id="pk-mh">Yönetmelik kapsamındaki kalemlerde periyot en fazla 12 aydır; ilgili standart daha kısa süre öngörüyorsa o süreyi girin. “Diğer” satırında kendi periyodunuzu belirleyebilirsiniz.</p>
+      <p class="pk-warn" id="pk-warn" role="alert" hidden></p>
+      <div class="pk-actions">
+        <button type="button" id="pk-add">+ Kalem ekle</button>
+        <button type="button" id="pk-ics" class="pk-primary">Takvime ekle (.ics)</button>
+        <button type="button" id="pk-csv">CSV indir</button>
+        <button type="button" id="pk-print">Yazdır</button>
+        <button type="button" id="pk-reset">Listeyi sıfırla</button>
+      </div>
+      <h2>Kontrol takvimi</h2>
+      <p class="pk-summary" id="pk-summary" role="status" aria-live="polite"></p>
+      <ol class="pk-plan" id="pk-plan"></ol>
+    </section>
+    <noscript><p>Planlayıcı için JavaScript gereklidir. Kontrol periyotları aşağıda açıklanmıştır.</p></noscript>
+
+    <div class="kb-keyfacts"><h2>Öne Çıkanlar</h2><ul>
+      <li>İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği EK-III Tablo-3: ilgili standartta daha kısa süre yoksa elektrik iç tesisatı, topraklama, yıldırımdan korunma, jeneratör ve yangın algılama için en fazla 1 yıl; akümülatör ve transformatör için 1 yıl.</li>
+      <li>Kontrolleri yetkili kişiler yapar; elektrik, topraklama ve yıldırımdan korunma tesisatlarında projesi olmayan tesisat işverence projelendirilmelidir (EK-III 2.3.7).</li>
+      <li>Takvim dosyası her kontrolü periyoduyla tekrarlar ve 14 gün önce hatırlatır. Verileriniz yalnız bu tarayıcıda saklanır.</li>
+    </ul></div>
+
+    <h2>Dayanak</h2>
+    <p>Periyotlar, İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği'nden (RG 25.04.2013/28628; son değişiklik RG 23.12.2025/33116, Madde 7 ve EK-III) alınmıştır. Güncel metin için <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=18318&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">mevzuat.gov.tr</a> sayfasını kontrol edin. Topraklama ölçümünün yöntemi ve kabul değerleri için <a href="/bilgi/topraklama-degeri-kac-olmali.html">topraklama değeri rehberine</a>, elektrik tesisatı kontrolünün kapsamı için <a href="/bilgi/elektrik-tesisati-periyodik-kontrol.html">periyodik kontrol rehberine</a> bakabilirsiniz.</p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    <details class="faq-item"><summary class="faq-item__q">Elektrik tesisatı periyodik kontrolü ne sıklıkla yapılır? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği EK-III Tablo-3'e göre ilgili standartta daha kısa bir süre öngörülmemişse elektrik iç tesisatı, topraklama tesisatı ve yıldırımdan korunma tesisatı en fazla yılda bir kontrol edilir.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Periyodik kontrolü kim yapar? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Kontroller yönetmelikte tanımlanan yetkili kişilerce yapılır; elektrik, topraklama ve yıldırımdan korunma tesisatlarında yetkili elektrik mühendisi veya tekniker kontrol eder ve sonuç raporlanır.</p></div></details>
+    <details class="faq-item"><summary class="faq-item__q">Planlayıcıya girdiğim bilgiler nereye gidiyor? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary><div class="faq-item__a"><p>Hiçbir yere gönderilmez. Liste yalnızca kullandığınız tarayıcıda saklanır; takvim veya CSV dosyasını kendiniz indirirsiniz.</p></div></details>
+
+    <p class="kb-disclaimer">Planlayıcı hatırlatma amaçlıdır; tesisinize özgü periyot ve kapsam, ilgili standart ve yetkili kişinin değerlendirmesiyle belirlenir.</p>
+    <div class="kb-cta">
+      <div class="kb-cta__text"><strong>Periyodik kontrolünüzü planlayalım</strong><span>Elektrik, topraklama ve yıldırımdan korunma tesisatı kontrolleri ve raporlaması.</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:.6rem">
+        <a href="/hizmetler/elektrik-periyodik-kontrol.html" class="btn btn--accent btn--md"><i class="fas fa-arrow-right" aria-hidden="true"></i> Periyodik Kontrol Hizmeti</a>
+        <a href="/#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+      </div>
+    </div>
+    <p style="margin-top:1.6rem"><a href="/hesaplama-araclari/" class="kb-card__more">&larr; Tüm hesap araçları</a></p>
+  </main>
+
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+            </span>
+          </a>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
+
+  <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
+  <script src="/js/voltguard-tools.js?v=bc51c38205cf"></script>
+</body></html>

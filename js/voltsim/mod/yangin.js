@@ -408,7 +408,7 @@
     return acts;
   }
   /** Yerleştirme noktaları (yalnız yerleştirme modunda görünür). */
-  function slotInfo(app, gx, gy) { const z = zoneAt(gx, gy); return ['Tavan noktası (' + gx + ', ' + gy + ') · ' + (z ? z.name : '—'), 'Eklenecek tip: ' + TYPE_NAME[typeFor(app.state.detType, z ? z.id : '') === 'beam' ? 'optik' : typeFor(app.state.detType, z ? z.id : '')] + ' dedektörü', 'Yerleşim eğitim amaçlıdır; onaylı tasarım değildir (TSE CEN/TS 54-14).']; }
+  function slotInfo(app, gx, gy) { const z = zoneAt(gx, gy); return ['Tavan noktası (' + gx + ', ' + gy + ') · ' + (z ? z.name : '—'), 'Eklenecek tip: ' + TYPE_NAME[typeFor(app.state.detType, z ? z.id : '') === 'beam' ? 'optik' : typeFor(app.state.detType, z ? z.id : '')] + ' dedektörü']; }
 
   /** Sol panel düğmeleri için: eylemden sonra kontrolleri ve hesabı tazele (3D kart düğmelerinde çekirdek bunu yapar). */
   const act = fn => a => { fn(a); a.renderControls(); a.invalidate(); };
@@ -1354,7 +1354,7 @@
         hint: 'Döngüyü sınıf A (iki uçtan beslenen ring) olarak kablolayın: “Sınıf A kablolama” anahtarını açın.',
         state: sce({ classA: false, loopFault: 'open', faultLoop: 2 }),
         check: (r, s) => s.loopFault === 'open' && s.classA !== false && loopModel(s).loops[loopModel(s).fl - 1].lost.length === 0 },
-      { id: 'coverage', title: 'Depo A’yı ısı dedektörleriyle kapsa', goal: 'Tavan 6 m, dedektör tipi ısı. Depo A’daki dedektörler sökülmüş; örnek kapsama yarıçapıyla Depo A’nın en az %95’ini kapsayın (eğitim gösterimi).',
+      { id: 'coverage', title: 'Depo A’yı ısı dedektörleriyle kapsa', goal: 'Tavan 6 m, dedektör tipi ısı. Depo A’daki dedektörler sökülmüş; örnek kapsama yarıçapıyla Depo A’nın en az %95’ini kapsayın.',
         hint: 'Yerleştirme modu ve “Kapsama alanlarını göster” açık. Isı dedektörünün örnek yarıçapı ' + fmt(YC.COVER.isi.r, 1) + ' m; noktaları yaklaşık 6–7 m arayla dağıtın.',
         state: sce({ detType: 'isi', height: 6, removed: AUTO_DEPO(), placeMode: true, showCov: true }),
         check: (r, s) => s.detType === 'isi' && s.height <= 7.5 && r.values.cov && r.values.cov.zones.depo >= 0.95 }

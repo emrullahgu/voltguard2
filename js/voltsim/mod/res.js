@@ -227,8 +227,8 @@
         t ? { type: 'number', key: T + 'cutIn', label: 'Devreye girme (cut-in)', min: 1, max: 8, step: 0.5, unit: 'm/s', digits: 1 } : null,
         t ? { type: 'number', key: T + 'vRated', label: 'Nominal hız (föy)', min: 6, max: 20, step: 0.1, unit: 'm/s', digits: 1 } : null,
         t ? { type: 'number', key: T + 'cutOut', label: 'Devreden çıkma (cut-out)', min: 15, max: 40, step: 0.5, unit: 'm/s', digits: 1 } : null,
-        t ? { type: 'number', key: T + 'rpmMin', label: 'Rotor devri min.', min: 0, max: 60, step: 0.5, unit: 'rpm', digits: 1 } : null,
-        t ? { type: 'number', key: T + 'rpmMax', label: 'Rotor devri maks.', min: 1, max: 60, step: 0.5, unit: 'rpm', digits: 1 } : null,
+        t ? { type: 'number', key: T + 'rpmMin', label: 'Rotor devri min.', min: 0, max: 60, step: 0.5, unit: 'd/dk', digits: 1 } : null,
+        t ? { type: 'number', key: T + 'rpmMax', label: 'Rotor devri maks.', min: 1, max: 60, step: 0.5, unit: 'd/dk', digits: 1 } : null,
         t ? { type: 'number', key: T + 'etaMech', label: 'Mekanik verim', min: 0.8, max: 1, step: 0.005, digits: 3 } : null,
         t ? { type: 'number', key: T + 'etaGen', label: 'Jeneratör + çevirici verimi', min: 0.8, max: 1, step: 0.005, digits: 3 } : null,
         t ? { type: 'number', key: T + 'trafoKVA', label: 'Türbin trafosu (0,69/' + fmt(s.mvKV, 1) + ' kV)', min: 50, max: 25000, step: 50, unit: 'kVA' } : null,
@@ -279,7 +279,7 @@
       { label: 'Hava yoğunluğu ρ', value: fmt(v.rho, 3, 'kg/m³'), sub: s.rhoMode === 'manual' ? 'Elle' : s.T + ' °C · ' + s.alt + ' m' },
       { label: 'Ön türbin gücü', value: VS.fmtPower(v.P * 1000), level: lv, sub: REGION[v.region] },
       { label: v.region === 'rated' ? 'Gereken Cp' : 'Cp (föyden)', value: fmt(v.region === 'rated' ? v.cpReq : v.cp, 3), sub: 'Betz sınırı 0,593' + (Math.abs(v.yawErr) > 1 ? ' · yaw ×' + fmt(v.yawF, 3) : '') },
-      { label: 'Rotor devri', value: fmt(v.rpm, 1, 'rpm'), sub: 'Uç hızı ' + fmt(v.tip, 1) + ' m/s · aralık ' + fmt(ty.rpmMin, 1) + '–' + fmt(ty.rpmMax, 1) },
+      { label: 'Rotor devri', value: fmt(v.rpm, 1, 'd/dk'), sub: 'Uç hızı ' + fmt(v.tip, 1) + ' m/s · aralık ' + fmt(ty.rpmMin, 1) + '–' + fmt(ty.rpmMax, 1) },
       { label: 'Nominal hız (ρ sahada)', value: fmt(v.vRated, 1, 'm/s'), sub: 'Föy ' + fmt(ty.vRated, 1) + ' m/s @ 1,225 · v_n = v·(ρ/ρ0)^⅓' },
       { label: 'Park türbin gücü', value: MW(f.Pturb), sub: v.n + ' türbin · anlık iz kaybı %' + fmt(f.wakeLoss * 100, 1) },
       { label: 'Elektrik kayıpları', value: fmt(f.lossTrafo + f.lossCable + f.lossSS, 0, 'kW'), sub: 'Trafo ' + fmt(f.lossTrafo, 0) + ' · kablo ' + fmt(f.lossCable, 0) + ' · TM ' + fmt(f.lossSS, 0) + ' kW' },
@@ -470,7 +470,7 @@
     k.pickable(bearing, 'Ana yatak', () => ['Rotor yükünü şasiye aktaran ana yatak', 'Rotor eğimi ~5° (kanat–kule açıklığı için)']);
     const gb = k.cyl(1.25 * sF, 1.05 * sF, 2.4 * sF, gearMat, 0.04 * d.L, -d.Hn * 0.06, 0, yaw, 32); gb.rotation.z = Math.PI / 2;
     k.box(0.5 * sF, 0.6 * sF, 3.4 * sF, gearMat, 0.04 * d.L, -d.Hn * 0.2, 0, yaw);
-    k.pickable(gb, 'Dişli kutusu (planet + helisel)', () => { const r = app.validResult; return ['Rotor devrini jeneratör devrine yükseltir (temsili)', 'Mekanik verim η_mek = ' + fmt(t0.etaMech, 3), r ? 'Rotor devri: ' + fmt(r.values.rpm, 1) + ' rpm' : '']; });
+    k.pickable(gb, 'Dişli kutusu (planet + helisel)', () => { const r = app.validResult; return ['Rotor devrini jeneratör devrine yükseltir', 'Mekanik verim η_mek = ' + fmt(t0.etaMech, 3), r ? 'Rotor devri: ' + fmt(r.values.rpm, 1) + ' d/dk' : '']; });
     k.explodable(gb, [0, 0, d.Wn * 0.9]);
     const disc = k.cyl(0.8 * sF, 0.8 * sF, 0.12 * sF, M.steel, -0.08 * d.L, -d.Hn * 0.06, 0, yaw, 32); disc.rotation.z = Math.PI / 2;
     const caliper = k.box(0.3 * sF, 0.5 * sF, 0.35 * sF, M.plasticRed, -0.08 * d.L, -d.Hn * 0.06 + 0.75 * sF, 0, yaw);
@@ -479,7 +479,7 @@
     const cpl = k.cyl(0.22 * sF, 0.22 * sF, 0.1 * d.L, M.steel, -0.15 * d.L, -d.Hn * 0.06, 0, yaw, 16); cpl.rotation.z = Math.PI / 2;
     const gen = k.cyl(1.05 * sF, 1.05 * sF, 2.8 * sF, genMat, -0.3 * d.L, -d.Hn * 0.06, 0, yaw, 32); gen.rotation.z = Math.PI / 2;
     for (let j = 0; j < 5; j++) { const rr = k.cyl(1.12 * sF, 1.12 * sF, 0.08 * sF, genMat, -0.3 * d.L - 1.1 * sF + j * 0.55 * sF, -d.Hn * 0.06, 0, yaw, 32); rr.rotation.z = Math.PI / 2; }
-    k.pickable(gen, 'Jeneratör (temsili)', () => { const r = app.validResult; return ['Jeneratör + çevirici verimi η = ' + fmt(t0.etaGen, 3), r ? 'Elektrik gücü: ' + VS.fmtPower(r.values.P * 1000) : '', 'Çıkış ≈ 0,69 kV; türbin trafosuyla OG’ye yükseltilir']; });
+    k.pickable(gen, 'Jeneratör', () => { const r = app.validResult; return ['Jeneratör + çevirici verimi η = ' + fmt(t0.etaGen, 3), r ? 'Elektrik gücü: ' + VS.fmtPower(r.values.P * 1000) : '', 'Çıkış ≈ 0,69 kV; türbin trafosuyla OG’ye yükseltilir']; });
     k.explodable(gen, [0, 0, -d.Wn * 0.9]);
     for (let j = 0; j < 3; j++) k.box(0.9 * sF, 1.9 * sF, 0.7 * sF, M.panelRAL7035, -0.52 * d.L, -d.Hn * 0.12, (j - 1) * 0.8 * sF, yaw);
     const yring = new T.Mesh(new T.TorusGeometry(d.rt * 0.95, 0.15 * sF + 0.05, 8, 40), M.steel); yring.rotation.x = Math.PI / 2; yring.position.set(0, -d.Hn * 0.5, 0); yaw.add(yring);
@@ -499,7 +499,7 @@
       const bl = new T.Mesh(bg, white); bl.castShadow = true; bl.receiveShadow = true; holder.add(bl);
       k.cyl(d.hubR * 0.42, d.hubR * 0.42, 0.5, M.galv, 0, d.hubR * 0.85, 0, holder, 20);
       sc.blades.push(bl);
-      if (j === 0) k.pickable(bl, 'Kanat (aerofoil kesitli, burulmalı)', () => { const r = app.validResult; return ['Uzunluk ≈ ' + fmt(d.Rt - d.hubR * 0.8, 1) + ' m', r ? 'Uç hızı: ' + fmt(r.values.tip, 1) + ' m/s' : '', 'Kanat açısı (temsili): ' + fmt(app.live.pitch, 0) + '°']; }, fgActs);
+      if (j === 0) k.pickable(bl, 'Kanat (aerofoil kesitli, burulmalı)', () => { const r = app.validResult; return ['Uzunluk ≈ ' + fmt(d.Rt - d.hubR * 0.8, 1) + ' m', r ? 'Uç hızı: ' + fmt(r.values.tip, 1) + ' m/s' : '', 'Kanat açısı: ' + fmt(app.live.pitch, 0) + '°']; }, fgActs);
     }
     sc.nacLabel = k.label('Türbin', yaw, [-0.1 * d.L, d.Hn * 0.9 + 2, 0]);
     sc.pitchLabel = k.label('Kanat açısı', tilt, [d.hubR * 1.6, -d.hubR * 1.6, 0], 'vs-label--sm');
@@ -606,7 +606,7 @@
   function turbineInfo(app) {
     const r = app.validResult, s = app.state; if (!r || !r.values.farm) return [];
     const v = r.values, t = fgType(s);
-    return [t.name + ' · ' + fmt(t.Prated, 0) + ' kW · D ' + t.D + ' m · h ' + t.hub + ' m', 'Durum: ' + REGION[v.region] + ' · ' + VS.fmtPower(v.P * 1000), 'Rotor ' + fmt(v.rpm, 1) + ' rpm · uç hızı ' + fmt(v.tip, 1) + ' m/s',
+    return [t.name + ' · ' + fmt(t.Prated, 0) + ' kW · D ' + t.D + ' m · h ' + t.hub + ' m', 'Durum: ' + REGION[v.region] + ' · ' + VS.fmtPower(v.P * 1000), 'Rotor ' + fmt(v.rpm, 1) + ' d/dk · uç hızı ' + fmt(v.tip, 1) + ' m/s',
       'Yaw: ' + (s.yawMode === 'manual' ? 'elle ' + s.yawManual + '° · hata ' + fmt(Math.abs(v.yawErr), 0) + '° · güç ×' + fmt(v.yawF, 3) : 'otomatik'), '“Şeffaf kapak” ve patlatılmış görünüm iç donanımı gösterir'];
   }
   function turbineActions(app) {
@@ -623,7 +623,7 @@
   function typeInfo(app, ti) {
     const r = app.validResult, s = app.state, t = s.types[ti]; if (!r || !t || !r.values.farm) return [];
     const tur = r.values.farm.turbines.filter(x => x.type === ti);
-    return ['Föy: ' + fmt(t.Prated, 0) + ' kW · D ' + t.D + ' m · h ' + t.hub + ' m · v_n ' + t.vRated + ' m/s', 'Cut-in/out ' + t.cutIn + ' / ' + t.cutOut + ' m/s · ' + t.rpmMin + '–' + t.rpmMax + ' rpm', 'Türetilen Cp ' + fmt(X.cpFromDatasheet(t), 3),
+    return ['Föy: ' + fmt(t.Prated, 0) + ' kW · D ' + t.D + ' m · h ' + t.hub + ' m · v_n ' + t.vRated + ' m/s', 'Cut-in/out ' + t.cutIn + ' / ' + t.cutOut + ' m/s · ' + t.rpmMin + '–' + t.rpmMax + ' d/dk', 'Türetilen Cp ' + fmt(X.cpFromDatasheet(t), 3),
       tur.length + ' türbin · toplam ' + MW(tur.reduce((a, x) => a + x.P, 0)) + ' · en yavaş ' + fmt(Math.min.apply(null, tur.map(x => x.v)), 1) + ' m/s'];
   }
   function stringInfo(app, si) {
@@ -648,7 +648,7 @@
   function update(k, res, s, live, app) {
     const sc = app.scene3; if (!sc || !res.values.farm) return;
     const v = res.values, f = v.farm;
-    sc.nacLabel.set(VS.fmtPower(v.P * 1000) + ' · ' + fmt(v.rpm, 1) + ' rpm · ' + REGION[v.region]);
+    sc.nacLabel.set(VS.fmtPower(v.P * 1000) + ' · ' + fmt(v.rpm, 1) + ' d/dk · ' + REGION[v.region]);
     sc.nacLabel.level(v.region === 'stop' || v.region === 'climate' ? 'bad' : v.region === 'idle' || v.region === 'service' || v.region === 'hyst' ? 'warn' : 'ok');
     sc.windLabel.set('Rüzgâr ' + fmt(v.vHub, 1) + ' m/s · ' + s.windDir + '° (' + compass(s.windDir) + ')');
     sc.windLabel.level(v.vHub >= fgType(s).cutOut ? 'bad' : '');
@@ -671,7 +671,7 @@
     const pt = visPitch(t0, Object.assign({}, f.turbines[0], { region: v.region === 'hyst' || v.region === 'climate' ? 'stop' : v.region })), dp = pt - live.pitch;
     if (Math.abs(dp) > 1e-6 && dt > 0) { live.pitch += Math.sign(dp) * Math.min(Math.abs(dp), 8 * dt); moving = true; }
     sc.blades.forEach(b => { b.rotation.y = live.pitch * Math.PI / 180; });
-    sc.pitchLabel.set('Kanat açısı ~' + fmt(live.pitch, 0) + '° (temsili)' + (v.region === 'rated' ? ' · Cp gereken ' + fmt(v.cpReq, 3) : ''));
+    sc.pitchLabel.set('Kanat açısı ~' + fmt(live.pitch, 0) + '°' + (v.region === 'rated' ? ' · Cp gereken ' + fmt(v.cpReq, 3) : ''));
     const target = s.yawMode === 'manual' ? s.yawManual : s.windDir;
     const e = X.angleDiff(target, live.yaw);
     if (Math.abs(e) > 1e-6 && dt > 0) { live.yaw = (live.yaw + Math.sign(e) * Math.min(Math.abs(e), YAW_RATE * dt) + 360) % 360; moving = true; }
@@ -837,7 +837,7 @@
     charts: charts,
     tick: tick,
     badge: res => (res.values.region === 'stop' || res.values.region === 'hyst' ? { level: 'bad', text: REGION[res.values.region] } : res.values.region === 'climate' ? { level: 'bad', text: 'İklim duruşu' } : null),
-    reportInputs: s => s.types.map((t, i) => ({ group: 'Türbin föyleri', label: (i + 1) + '. ' + t.name, value: fmt(t.Prated, 0) + ' kW · D ' + t.D + ' m · h ' + t.hub + ' m · ' + t.cutIn + '/' + t.vRated + '/' + t.cutOut + ' m/s · ' + t.rpmMin + '–' + t.rpmMax + ' rpm · η ' + t.etaMech + '×' + t.etaGen + ' · trafo ' + t.trafoKVA + ' kVA' }))
+    reportInputs: s => s.types.map((t, i) => ({ group: 'Türbin föyleri', label: (i + 1) + '. ' + t.name, value: fmt(t.Prated, 0) + ' kW · D ' + t.D + ' m · h ' + t.hub + ' m · ' + t.cutIn + '/' + t.vRated + '/' + t.cutOut + ' m/s · ' + t.rpmMin + '–' + t.rpmMax + ' d/dk · η ' + t.etaMech + '×' + t.etaGen + ' · trafo ' + t.trafoKVA + ' kVA' }))
       .concat(s.strings.map((x, i) => ({ group: 'Diziler', label: (i + 1) + '. ' + x.name, value: x.n + ' × ' + typeOf(s, x.type).name }))),
     scene: { build: build, update: update, animate: animate, rebuildOn: rebuildOn, bounds: [-30, 30], background: 0xb3c8de },
     view2d: view2d,

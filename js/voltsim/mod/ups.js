@@ -156,7 +156,7 @@
         { type: 'range', key: 'tank', label: 'Yakıt deposu (set başına)', min: 50, max: 5000, step: 10, unit: 'l' },
         { type: 'select', key: 'genClass', label: 'Performans sınıfı (ISO 8528-5)', options: [['G1', 'G1 · genel yükler'], ['G2', 'G2 · ticari / aydınlatma + motor'], ['G3', 'G3 · hassas (telekom, UPS)']] },
         { type: 'select', key: 'stepPlan', label: 'Yük devreye alma planı', options: [['all', 'Tek adım (tüm yük)'], ['two', '2 adım: UPS → diğer yük'], ['three', '3 adım: UPS → diğer ½ → diğer ½']] },
-        r ? { type: 'note', html: 'Adım sınırı (temsili) <b>%' + r.steps.limit + '</b> · ' + r.steps.steps.map((x, i) => (i + 1) + '. adım %' + fmt(x.pct, 0)).join(' · ') + ' → <b>' + (r.steps.ok ? 'uygun' : 'aşılıyor') + '</b>' } : null
+        r ? { type: 'note', html: 'Adım sınırı <b>%' + r.steps.limit + '</b> · ' + r.steps.steps.map((x, i) => (i + 1) + '. adım %' + fmt(x.pct, 0)).join(' · ') + ' → <b>' + (r.steps.ok ? 'uygun' : 'aşılıyor') + '</b>' } : null
       ] },
       { title: 'ATS süreleri', items: [
         { type: 'range', key: 'tConfirm', label: 'Kesinti onay süresi', min: 0.5, max: 30, step: 0.5, unit: 's', digits: 1 },
@@ -171,7 +171,7 @@
         s.plan ? { type: 'range', key: 'cutAt', label: 'Kesinti anı', min: 1, max: 120, step: 1, unit: 's' } : null,
         s.plan ? { type: 'range', key: 'outDur', label: 'Kesinti süresi', min: 1, max: 14400, step: 1, fmt: v => VS.fmtDuration(v / 60) } : null,
         { type: 'select', key: 'accel', label: 'Zaman hızlandırma', options: [1, 2, 5, 10, 30, 60, 120, 600].map(v => [v, '×' + v]) },
-        { type: 'note', text: 'Varsayım (temsili): şebeke/jeneratör dönünce akü ≈ ' + RECHARGE_H + ' saatte boştan tam doluma şarj olur; yakıt yalnız yüklü çalışmada hesaplanır.' }
+        { type: 'note', text: 'Varsayım: şebeke/jeneratör dönünce akü ≈ ' + RECHARGE_H + ' saatte boştan tam doluma şarj olur; yakıt yalnız yüklü çalışmada hesaplanır.' }
       ] },
       r ? { title: 'Black start test planı', collapsed: true, summary: r.plan.length + ' adım', items: [
         { type: 'note', html: '<ol style="margin:0;padding-left:18px">' + r.plan.map(x => '<li><b>' + VS.esc(x.title) + ':</b> ' + VS.esc(x.detail) + '</li>').join('') + '</ol>' },
@@ -947,7 +947,7 @@
       { id: 'bypass', name: 'Statik bypass’ta unutulan UPS · kesinti', desc: 'UPS bakım sonrası statik bypass’ta kalmış: 10. saniyedeki 20 s kesintide akü köprüsü yoktur, kritik yük düşer. İnverter’e dönerek tekrar deneyin.', state: Object.assign(defaults(), { startBypass: true, cutAt: 10, outDur: 20, accel: 1 }), start: true },
       { id: 'moduler', name: 'Modüler UPS · modül arızası (N+1)', desc: '3 × 20 kVA modüler UPS, 32 kW kritik yük: bir modül arızalıyken kalan iki modül yükü %89 ile taşır; ikinci arızada UPS statik bypass’a geçer. 3D’de modüllere tıklayın.', state: Object.assign(defaults(), { upsArch: 'modular', upsModules: 3, modKVA: 20, failedMods: 1 }), start: true },
       { id: 'paralel', name: 'Paralel jeneratörler · 2 × 150 kVA', desc: 'İki set senkron barada yükü paylaşır; bir set devre dışı kalırsa diğeri yükü taşıyabilir mi (N+1)? Senkron panosuna tıklayın.', state: Object.assign(defaults(), { nGen: 2, genKVA: 150, Pother: 90 }), start: true },
-      { id: 'uzun', name: 'Uzun kesinti · yakıt ve akü şarjı', desc: '2 saatlik kesinti, ×120 hızlandırılmış: jeneratör yakıt tüketir; şebeke dönünce akü (temsili) şarj olur.', state: Object.assign(defaults(), { outDur: 7200, accel: 120, tank: 200 }), start: true }
+      { id: 'uzun', name: 'Uzun kesinti · yakıt ve akü şarjı', desc: '2 saatlik kesinti, ×120 hızlandırılmış: jeneratör yakıt tüketir; şebeke dönünce akü şarj olur.', state: Object.assign(defaults(), { outDur: 7200, accel: 120, tank: 200 }), start: true }
     ],
     tasks: [
       { id: 'ride20', title: '20 s kesintiyi yük düşmeden atlat', goal: 'Bakımdan sonra UPS statik bypass’ta unutulmuş. 30. saniyede 20 s şebeke kesintisi olacak: kesinti bitene kadar kritik yük hiç kesilmesin.', hint: 'UPS bypass grubunda ya da 3D’de UPS kabinine tıklayıp “İnverter’e dön” deyin; inverter yolunda akü kesintiyi köprüler.',
@@ -962,7 +962,7 @@
       { id: 'gen80', title: 'Jeneratörü %80 yüklenmeye göre seç', goal: 'Kritik yük (32 kW) ve 60 kW diğer yükle jeneratör yüklenmesi %80’i aşmasın.', hint: 'Jeneratör gücünü bir üst kademeye çıkarın; yükleri azaltmak çözüm sayılmaz.',
         state: Object.assign(defaults(), { genKVA: 100 }),
         check: (r, s) => s.Pother >= 60 && s.Pcrit >= 32 && r.values.genPct <= 80 },
-      { id: 'step', title: 'Adım yük kabulünü sağla', goal: '200 kVA jeneratör ve 120 kW diğer yükte her yük adımı performans sınıfının (temsili) adım sınırının altında kalsın; jeneratörü büyütmeyin.', hint: 'Yük devreye alma planını 3 adıma çevirin ve adım grafiğini izleyin.',
+      { id: 'step', title: 'Adım yük kabulünü sağla', goal: '200 kVA jeneratör ve 120 kW diğer yükte her yük adımı performans sınıfının adım sınırının altında kalsın; jeneratörü büyütmeyin.', hint: 'Yük devreye alma planını 3 adıma çevirin ve adım grafiğini izleyin.',
         state: Object.assign(defaults(), { Pother: 120, stepPlan: 'all' }),
         check: (r, s) => s.genKVA <= 200 && s.Pother >= 120 && r.values.steps.ok },
       { id: 'n1', title: 'Modül arızasında yük inverterde kalsın (N+1)', goal: '2 × 20 kVA modüler UPS 32 kW kritik yükü taşıyor ama yedeği yok. Bir güç modülü arızalıyken bile yük inverter (akü korumalı) yolunda kalsın ve hiç kesilmesin.', hint: 'Modül sayısını N+1’e çıkarın, sonra “Arızalı modül” ile ya da 3D’de modüle tıklayarak bir arıza oluşturun. UPS bypass’a geçtiyse “İnverter’e dön”.',

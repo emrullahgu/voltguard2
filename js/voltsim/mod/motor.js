@@ -13,7 +13,7 @@
     return {
       Pn: 15, Un: 400, eff: 0.92, cos: 0.86, nn: 1460, poles: 4, IstIn: 7, TkTn: 2.8, TstTn: 2.2,
       method: 'YD', loadKind: 'pump', loadType: 'quad', loadPct: 90, J: 0.6,
-      Ir: 27.5, olClass: '10', tYD: 4, ramp: 5, softLimit: 4, doorOpen: true,
+      Ir: 27.5, olPos: 'line', olClass: '10', tYD: 4, ramp: 5, softLimit: 4, doorOpen: true,
       uPct: 100, vfdSpeed: 100, flowPct: 70, hours: 6000, price: 3.5, plcInterlock: true
     };
   }
@@ -38,6 +38,8 @@
     const ve = CX.voltageEffect(u, { TkTn: s.TkTn, TstTn: s.TstTn === undefined ? 2.2 : s.TstTn, IstIn: s.IstIn });
     return Object.assign({}, s, { TkTn: ve.TkTn, TstTn: ve.TstTn, IstIn: ve.IstIn });
   }
+  /** Rölenin gördüğü akım: Y-Δ'da sargı kolundaysa üçgende hat akımının 1/√3'ü (yıldızda hat akımı = sargı akımı). */
+  function relayCurrent(s, L) { return s.method === 'YD' && s.olPos === 'phase' && L.plc && L.plc.K3 ? L.I / Math.sqrt(3) : L.I; }
   function compute(s) {
     const si = effInput(s);
     const r = MO.compute(si);
@@ -173,12 +175,13 @@
     L.steady = L.tRun >= 0 && started && !L.inj.locked && !L.inj.phase ? L.steady + dt : 0;
     // termik aşırı yük rölesi (sınıf sınırları engine’den; süre temsili)
     if (L.tRun >= 0 && !L.olTripped) {
-      const a = MO.overloadAssessment(s.olClass, s.Ir, L.I);
+      const Irel = relayCurrent(s, L);
+      const a = MO.overloadAssessment(s.olClass, s.Ir, Irel);
       L.olHot = a.trips === true;
       if (a.trips === true) {
         L.olTimer += dt;
-        const lim = CX.olDelay(s.olClass, L.I / s.Ir);
-        if (L.olTimer >= lim) { L.olTripped = true; L.olText = a.text; L.tripCause = L.inj.phase ? 'phase' : L.inj.locked ? 'locked' : 'overload'; log(L, 'Termik röle açtı (I = ' + fmt(L.I, 0) + ' A = ' + fmt(L.I / s.Ir, 1) + '·Ir). ' + a.text); }
+        const lim = CX.olDelay(s.olClass, Irel / s.Ir);
+        if (L.olTimer >= lim) { L.olTripped = true; L.olText = a.text; L.tripCause = L.inj.phase ? 'phase' : L.inj.locked ? 'locked' : 'overload'; log(L, 'Termik röle açtı (I = ' + fmt(L.I, 0) + ' A = ' + fmt(Irel / s.Ir, 1) + '·Ir). ' + a.text); }
       } else L.olTimer = Math.max(0, L.olTimer - dt * 0.5);
     } else if (!L.olTripped) { L.olHot = false; L.olTimer = Math.max(0, L.olTimer - dt * 0.5); }
     // geçmiş (grafik ve 2D için)
@@ -266,6 +269,7 @@
         { type: 'range', key: 'TstTn', label: 'Kalkış momenti Tst/Tn', min: 0.8, max: 3.2, step: 0.1, digits: 1, help: 'Katalog değeri; IE3 4 kutuplu motorlarda tipik 2–2,6.' }
       ] },
       { title: 'Motor koruma', items: [
+        s.method === 'YD' ? { type: 'seg', key: 'olPos', label: 'Termik röle konumu', options: [['line', 'Hat (şebeke) akımı'], ['phase', 'Sargı kolu (In/√3)']], help: 'K1 ana kontaktör kolundaki röle sargı akımını ölçer; üçgende In/√3’e ayarlanır.' } : null,
         { type: 'number', key: 'Ir', label: 'Termik röle ayarı Ir', min: 0.1, max: 2000, step: 0.1, unit: 'A', digits: 1, help: v ? 'Hesaplanan In = ' + fmt(v.nom.In, 1, 'A') + (s.method === 'YD' ? ' · röle faz devresindeyse In/√3 = ' + fmt(v.nom.In / Math.sqrt(3), 1, 'A') : '') : null },
         { type: 'select', key: 'olClass', label: 'Açma sınıfı (IEC 60947-4-1)', options: Object.keys(MO.TRIP_CLASS).map(k => [k, 'Sınıf ' + k + ' · 7,2·Ir’de ' + MO.TRIP_CLASS[k][0] + '–' + MO.TRIP_CLASS[k][1] + ' s']) },
         { type: 'note', text: 'Termik açma süresi üretici eğrisine bağlıdır. Simülasyon yalnız sınıf aralığını kullanır; görsel gecikme temsilidir (I²t ölçekli, en çok 30 s’ye kısaltılmış).' }
@@ -454,7 +458,7 @@
     k.rbox(0.1, 0.11, 0.1, 0.006, M.plasticDark, 0, 0, 0, cpu);
     k.box(0.06, 0.02, 0.004, M.plasticGrey, 0, 0.03, 0.051, cpu);
     sc.cpuRun = k.box(0.008, 0.006, 0.004, M.ledGreen, -0.03, -0.03, 0.051, cpu);
-    k.pickable(cpu, 'PLC CPU (IEC 61131-3)', () => { const p = app.live.plc; return ['Tarama döngüsü: girişleri oku → merdiven mantığı → çıkışları yaz.', 'RUN: ' + (p.run ? 'mühürlü' : 'beklemede') + ' · Y-Δ zamanlayıcı T1 = ' + fmt(p.timer, 2) + ' s', 'K2/K3 kilitlemesi programda: ' + (app.state.plcInterlock !== false ? 'AÇIK' : 'KAPALI — ihlaller denetlenip engelleniyor'), 'Eğitim amaçlı mantık. Emniyet fonksiyonu değildir (ISO 13849-1 / IEC 62061).']; },
+    k.pickable(cpu, 'PLC CPU (IEC 61131-3)', () => { const p = app.live.plc; return ['Tarama döngüsü: girişleri oku → merdiven mantığı → çıkışları yaz.', 'RUN: ' + (p.run ? 'mühürlü' : 'beklemede') + ' · Y-Δ zamanlayıcı T1 = ' + fmt(p.timer, 2) + ' s', 'K2/K3 kilitlemesi programda: ' + (app.state.plcInterlock !== false ? 'AÇIK' : 'KAPALI — ihlaller denetlenip engelleniyor')]; },
       a => [{ label: a.state.plcInterlock !== false ? 'Kilitlemeyi programdan kaldır' : 'Kilitlemeyi geri ekle', variant: a.state.plcInterlock !== false ? 'warn' : 'primary', onClick: x => { x.state.plcInterlock = x.state.plcInterlock === false; log(x.live, 'PLC programı: K2/K3 kilitlemesi ' + (x.state.plcInterlock ? 'eklendi.' : 'kaldırıldı.')); } },
         a.state.method === 'YD' ? { label: 'T1 −1 s', onClick: x => { x.state.tYD = Math.max(1, x.state.tYD - 1); } } : null,
         a.state.method === 'YD' ? { label: 'T1 +1 s', onClick: x => { x.state.tYD = Math.min(15, x.state.tYD + 1); } } : null]);
@@ -779,7 +783,7 @@
     g.font = 'bold 13px Inter, sans-serif'; g.fillStyle = col.text; g.textAlign = 'left';
     g.fillText('PLC merdiven diyagramı · ' + METHOD_LABEL[s.method], x0, 62);
     g.font = '11px Inter, sans-serif'; g.fillStyle = col.dim;
-    g.fillText(small ? 'Yeşil: enerjili / iletken. Eğitim amaçlıdır.' : 'Yeşil: enerjili / iletken. Eğitim amaçlı mantık — emniyet fonksiyonu değildir (ISO 13849-1 / IEC 62061).', x0, 80);
+    g.fillText('Yeşil: enerjili / iletken.', x0, 80);
     const top = 122;
     const rungs = [
       { id: 'R1', note: 'Başlat / durdur mühürleme', branch: [{ t: 'NO', l: 'I0.0 Başlat', c: inp.start }, { t: 'NO', l: 'Q0.0 K1 (mühür)', c: p.run && p.K1 }],
