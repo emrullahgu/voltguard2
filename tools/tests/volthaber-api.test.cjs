@@ -407,6 +407,32 @@ async function run() {
     p = await page('/volthaber/yayin-ilkeleri.html');
     ok(p.status === 200 && p.text.includes('FSEK') === false && p.text.includes('Fikir ve Sanat Eserleri Kanunu') && p.text.includes('id="kaldirma"'), 'Policy page');
 
+    // ---------------------------------------------------------------- real mail transport (no outbox)
+    // Without VG_MAIL_OUTBOX the reply must never claim the confirmation mail was sent: no mail() -> 503;
+    // mail() present but the transport rejects (no SMTP here) -> neutral "received" wording only.
+    for (const [label, phpArgs, status] of [['mail() disabled', ['-d', 'disable_functions=mail'], 503], ['transport rejects', ['-d', 'SMTP=127.0.0.1', '-d', `smtp_port=${await unusedPort()}`], 200]]) {
+      const mailPort = await unusedPort();
+      const mailEnv = { ...env, VG_MAIL_OUTBOX: '', VG_DATA_DIR: path.join(sandbox, 'data-mail-' + mailPort) };
+      fs.mkdirSync(mailEnv.VG_DATA_DIR);
+      const mailServer = spawn(php, ['-n', ...phpArgs, '-S', `127.0.0.1:${mailPort}`, '-t', root, path.join(root, 'tools/volthaber-dev-router.php')], { env: mailEnv, stdio: 'ignore', windowsHide: true });
+      try {
+        let res;
+        for (let i = 0; i < 100; i++) {
+          try {
+            res = await fetch(`http://127.0.0.1:${mailPort}/api/volthaber.php?action=subscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: `http://127.0.0.1:${mailPort}` }, body: JSON.stringify({ email: 'posta@example.test', consent: true }) });
+            break;
+          } catch { await new Promise(resolve => setTimeout(resolve, 30)); }
+        }
+        const body = await res.json();
+        check(res.status, status, `${label}: subscribe status`);
+        if (status === 503) check(body.error, 'mail_unavailable', `${label}: explicit mail error, nothing stored`);
+        ok(!/gönderildi/i.test(body.message || ''), `${label}: reply does not claim the mail was sent`);
+      } finally {
+        mailServer.kill();
+        await new Promise(resolve => { if (mailServer.exitCode !== null) resolve(); else { mailServer.once('exit', resolve); setTimeout(resolve, 3000); } });
+      }
+    }
+
     // ---------------------------------------------------------------- storage safety
     ok(!fs.existsSync(path.join(root, 'volthaber', 'articles.json')) && fs.existsSync(path.join(env.VG_DATA_DIR, 'volthaber', 'articles.json')), 'Data lives outside docroot');
     fs.writeFileSync(path.join(env.VG_DATA_DIR, 'volthaber/articles.json'), '{broken');

@@ -1101,6 +1101,9 @@ function vh_mail_confirm(string $email, string $subId, string $token): bool
     return vg_mail_send($email, 'VoltHaber aboneliğinizi onaylayın', $body, 'volthaber-confirm');
 }
 
+/* Teslim vaat etmez: e-posta yanittan sonra gonderilir; tasiyici reddederse yalnizca error_log kaydi olur. */
+const VH_SUBSCRIBE_MESSAGE = 'Talebiniz alındı. Aboneliğiniz, e-posta adresinize gönderilecek onay bağlantısını açtığınızda başlar. Onay e-postası birkaç dakika içinde gelmezse istenmeyen e-posta klasörünü kontrol edin veya info@voltguard.com.tr adresine yazın.';
+
 function vh_subscribe(array $body): array
 {
     foreach (array_keys($body) as $k) {
@@ -1110,7 +1113,7 @@ function vh_subscribe(array $body): array
     }
     // Bal tuzagi: botlara basarili gibi gorunur, hicbir sey kaydedilmez.
     if (isset($body['website']) && $body['website'] !== '') {
-        return ['ok' => true, 'service' => VH_SERVICE, 'pending' => true, 'message' => 'Onay e-postası gönderildi. Gelen kutunuzu kontrol edin.'];
+        return ['ok' => true, 'service' => VH_SERVICE, 'pending' => true, 'message' => VH_SUBSCRIBE_MESSAGE];
     }
     if (($body['consent'] ?? null) !== true) {
         vg_fail(422, 'consent_required', 'Bülten için açık rıza kutusunu işaretlemeniz gerekir.', ['consent' => 'Zorunlu.']);
@@ -1118,6 +1121,11 @@ function vh_subscribe(array $body): array
     $email = vg_normalize_email($body['email'] ?? '');
     if ($email === '' || strlen($email) > 254) {
         vg_fail(422, 'invalid_email', 'Geçerli bir e-posta adresi yazın.', ['email' => 'Geçersiz e-posta.']);
+    }
+    // Genel e-posta yetenegi kayittan once denetlenir (sifre sifirlama ile ayni); adres bazinda teslim sonucu
+    // bildirilmez, yoksa yanit adresin zaten abone olup olmadigini belli eder.
+    if (!vg_mail_can_send()) {
+        vg_fail(503, 'mail_unavailable', 'Bülten onay e-postası şu anda gönderilemiyor. Lütfen daha sonra tekrar deneyin veya info@voltguard.com.tr adresinden destek alın.');
     }
     // IPv6'da /48 blogu (kayit ve topluluk ile ayni): tek musteri blogundan cok sayida adresle kayit doldurulamasin.
     $retry = vg_rl_hit('vh_subscribe_ip', vg_rl_ip_key(48), 5, 3600);
@@ -1184,7 +1192,7 @@ function vh_subscribe(array $body): array
             $job();
         }
     }
-    return ['ok' => true, 'service' => VH_SERVICE, 'pending' => true, 'message' => 'Onay e-postası gönderildi. Aboneliğiniz e-postadaki bağlantıyı açtığınızda başlar.'];
+    return ['ok' => true, 'service' => VH_SERVICE, 'pending' => true, 'message' => VH_SUBSCRIBE_MESSAGE];
 }
 
 /**
