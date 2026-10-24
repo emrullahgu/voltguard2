@@ -173,8 +173,14 @@ async function run() {
     await expect(d, 'report', { body: { id: reportedId, reason: 'x' } }, 400, 'invalid_request');
     result = await expect(d, 'report', { body: { id: reportedId } }, 200); check(result.body.hidden, false, 'One report does not hide a comment');
     await expect(d, 'report', { body: { id: reportedId } }, 200);
-    await expect(e, 'report', { body: { id: reportedId } }, 200);
-    result = await expect(a, 'report', { body: { id: reportedId } }, 200); check(result.body.hidden, true, 'Three distinct reporters hide the comment');
+    result = await expect(e, 'report', { body: { id: reportedId } }, 200); check(result.body.hidden, false, 'Second session from the same network is not a second reporter');
+    result = await expect(a, 'report', { body: { id: reportedId } }, 200); check(result.body.hidden, false, 'Throwaway sessions from one network cannot hide a comment');
+    // Every test client shares 127.0.0.1: two reports from other networks are seeded directly into the private store.
+    const commentsFile = path.join(sandbox, 'community/comments.json');
+    const seeded = JSON.parse(fs.readFileSync(commentsFile, 'utf8'));
+    check(seeded.posts[reportedId].reportNets.length, 1, 'One network mark for the local client');
+    seeded.posts[reportedId].reportNets.push('a'.repeat(24), 'b'.repeat(24));
+    fs.writeFileSync(commentsFile, JSON.stringify(seeded));
     result = await expect(b, 'list', {}, 200);
     const masked = result.body.items.find(item => item.id === reportedId);
     check([masked.hidden, masked.message, masked.authorName], [true, '', 'İncelemedeki yorum'], 'Hidden comment content and author are withheld from the public');
@@ -192,10 +198,15 @@ async function run() {
     await expect(d, 'publish', { body: { authorName: 'Dördüncü Misafir', message: 'Kota içindeki yorum.' } }, 201);
     result = await expect(e, 'publish', { body: { authorName: 'Beşinci Misafir', message: 'Kota dışındaki yorum.' } }, 429, 'rate_limited');
     check(result.body.message.includes('misafir yorum kotası'), true, 'Guest quota explains member alternative');
-    await expect(mod, 'publish', { body: { message: 'Üye kotadan etkilenmez.' } }, 201);
+    result = await expect(mod, 'publish', { body: { message: 'Üye kotadan etkilenmez.' } }, 201);
+    check(result.body.item.authorName, 'Topluluk Moderatörü', 'A moderator keeps a staff-like display name');
+    const impostor = client(); await expect(impostor, 'me', { endpoint: 'auth' }, 200);
+    await expect(impostor, 'register', { endpoint: 'auth', body: { name: 'VoltGuard Destek', email: `impostor-${unique}@example.test`, password: 'Deneme12345' } }, 201);
+    result = await expect(impostor, 'publish', { body: { message: 'Ekip adına yazıyormuş gibi.' } }, 201);
+    check(result.body.item.authorName, 'Üye', 'A member account name cannot impersonate VoltGuard staff');
     const storedAfter = JSON.parse(fs.readFileSync(path.join(sandbox, 'community/comments.json'), 'utf8'));
     check(storedAfter.posts[reportedId].reviewed, true, 'Moderator review is persisted');
-    check((storedAfter.posts[reportedId].reports || []).length, 0, 'Approval clears stored reports');
+    check((storedAfter.posts[reportedId].reports || []).length + (storedAfter.posts[reportedId].reportNets || []).length, 0, 'Approval clears stored reports');
     const corruptFile = path.join(sandbox, 'community/comments.json');
     fs.writeFileSync(corruptFile, '{broken');
     await expect(a, 'list', {}, 503, 'unavailable');

@@ -280,7 +280,7 @@ function vg_company_query(array &$s, array $u, array $input): array {
         if ($op === 'upsert') {
             $conflict = $input['onConflict'] ?? 'id'; $keys = is_string($conflict) ? explode(',', str_replace(' ', '', $conflict)) : [];
             if ($keys !== ['id'] && $keys !== vg_company_unique($table)) vg_company_fail(400, 'company_conflict_key');
-            $targets = [null]; foreach ($s['tables'][$table] as $existing) { $same = true; foreach ($keys as $key) if (!array_key_exists($key, $row) || !vg_company_equal($row[$key], $existing[$key] ?? null)) $same = false; if ($same) { $targets = [$existing]; break; } }
+            $targets = [null]; foreach ($s['tables'][$table] as $existing) { $same = true; foreach ($keys as $key) if (!array_key_exists($key, $row) || !vg_company_equal($row[$key], $existing[$key] ?? null)) $same = false; if ($same) { if (!vg_company_visible($s, $u, $table, $existing)) vg_company_fail(403, '42501', 'Bu kayda erişim yetkiniz yok.'); $targets = [$existing]; break; } }
         }
         foreach ($targets as $old) {
             $merged = $old ? array_merge($old, $row) : array_merge(vg_company_defaults($table), $row);
@@ -373,6 +373,8 @@ function vg_company_rpc(array &$s, array $u, string $name, array $a) {
         if (!in_array($kind, ['kesif_teklif', 'osos_rapor', 'osos_fabrika', 'periyodik_rapor', 'teklif', 'yg_teklif'], true) || !is_string($key) || !preg_match('/^[A-Za-z0-9_:.-]{1,128}$/D', $key) || ($expected !== null && (!is_int($expected) || $expected < 1))) vg_company_fail();
         $old = null; foreach ($s['tables']['company_documents'] as $r) if ($r['kind'] === $kind && $r['record_id'] === $key) { $old = $r; break; }
         if (($old && $old['revision'] !== $expected) || (!$old && $expected !== null) || ($name === 'app_company_document_delete' && !$old)) vg_company_conflict();
+        // Issued quotes and reports: admin, or the employee who created the record (same rule as vg_company_can_delete).
+        if ($name === 'app_company_document_delete' && $u['role'] !== 'admin' && ($old['created_by'] ?? null) !== $u['id']) vg_company_fail(403, '42501', 'Bu belgeyi yalnızca oluşturan çalışan veya yönetici silebilir.');
         if ($name === 'app_company_document_delete') { unset($s['tables']['company_documents'][$old['id']]); vg_company_audit($s, $u, 'document_deleted', $key); return null; }
         $payload = $a['p_payload'] ?? null; if (!is_array($payload) || array_is_list_compat($payload) || strlen(vg_json_encode($payload)) > 2097152) vg_company_fail();
         $row = vg_company_stamp($u, ['kind' => $kind, 'record_id' => $key, 'payload' => $payload, 'revision' => $old ? $old['revision'] + 1 : 1], $old); $s['tables']['company_documents'][$row['id']] = $row; vg_company_audit($s, $u, 'document_saved', $key); return $row;

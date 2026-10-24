@@ -48,8 +48,11 @@ function vg_community_reserved_name(string $name): bool
 
 function vg_community_post_hidden(array $post): bool
 {
-    return empty($post['deleted']) && empty($post['reviewed']) && is_array($post['reports'] ?? null)
-        && count($post['reports']) >= VG_COMMUNITY_REPORT_HIDE;
+    // Distinct reporting networks decide, not sessions: one visitor with throwaway sessions cannot hide a comment.
+    // Records written before network marks existed keep the earlier per-session count.
+    $marks = is_array($post['reportNets'] ?? null) ? $post['reportNets'] : ($post['reports'] ?? null);
+    return empty($post['deleted']) && empty($post['reviewed']) && is_array($marks)
+        && count($marks) >= VG_COMMUNITY_REPORT_HIDE;
 }
 
 function vg_community_id($value): string
@@ -337,7 +340,7 @@ function vg_community_rate(array &$state, string $kind, string $identifier, int 
     $state['rates'][$key] = ['hits' => $hits, 'until' => $now + $window];
 }
 
-function vg_community_public_post(array $post, VgStore $store, array $identity, bool $moderator, array &$names): array
+function vg_community_public_post(array $post, VgStore $store, array $identity, bool $moderator, array &$names, array $moderatorIds = []): array
 {
     $deleted = $post['deleted'];
     $author = $deleted ? '' : $post['authorId'];
@@ -347,6 +350,10 @@ function vg_community_public_post(array $post, VgStore $store, array $identity, 
     } elseif ($author !== '' && !array_key_exists($author, $names)) {
         $account = $store->findUserById($author);
         $names[$author] = $account === null ? 'Silinmiş üye' : vg_text($account['name'], 80);
+    }
+    // Member account names get the same anti-impersonation rule as guest names; only moderators may carry them.
+    if (!$guest && $author !== '' && vg_community_reserved_name($names[$author]) && !in_array($author, $moderatorIds, true)) {
+        $names[$author] = 'Üye';
     }
     $hidden = vg_community_post_hidden($post);
     $masked = $hidden && !$moderator;
@@ -394,7 +401,8 @@ function vg_community_list(VgStore $store, array $identity): array
     return vg_community_locked(false, function (string $dir) use ($store, $identity, $before, $limit) {
         $state = vg_community_read_state($dir);
         $user = $identity['member'];
-        $moderator = $user !== null && in_array($user['id'], vg_community_moderators($dir), true);
+        $moderatorIds = vg_community_moderators($dir);
+        $moderator = $user !== null && in_array($user['id'], $moderatorIds, true);
         $posts = array_reverse(array_values($state['posts']));
         $offset = 0;
         if ($before !== null) {
@@ -414,7 +422,7 @@ function vg_community_list(VgStore $store, array $identity): array
         $names = [];
         $items = [];
         foreach ($page as $post) {
-            $items[] = vg_community_public_post($post, $store, $identity, $moderator, $names);
+            $items[] = vg_community_public_post($post, $store, $identity, $moderator, $names, $moderatorIds);
         }
         return ['ok' => true, 'service' => 'vg-community/1', 'items' => $items,
             'nextBefore' => $offset + count($page) < count($posts) && $page ? $page[count($page) - 1]['id'] : null,
@@ -491,10 +499,11 @@ function vg_community_publish(VgStore $store, array $identity, array $body): arr
         }
         $state['posts'][$id] = $post;
         vg_community_write_json($dir . '/comments.json', $state, VG_COMMUNITY_MAX_BYTES);
-        $moderator = $user !== null && in_array($user['id'], vg_community_moderators($dir), true);
+        $moderatorIds = vg_community_moderators($dir);
+        $moderator = $user !== null && in_array($user['id'], $moderatorIds, true);
         $names = $user === null ? [] : [$user['id'] => vg_text($user['name'], 80)];
         return ['_status' => 201, 'ok' => true, 'service' => 'vg-community/1',
-            'item' => vg_community_public_post($post, $store, $identity, $moderator, $names)];
+            'item' => vg_community_public_post($post, $store, $identity, $moderator, $names, $moderatorIds)];
     });
 }
 
@@ -554,6 +563,13 @@ function vg_community_report(array $identity, array $body): array
                 $reports[] = $mark;
             }
             $state['posts'][$id]['reports'] = $reports;
+            // One mark per client network (IPv4 address or IPv6 /48), bound to this comment.
+            $net = substr(hash_hmac('sha256', 'community-report-net|' . $id . '|' . vg_rl_ip_key(48), vg_secret()), 0, 24);
+            $nets = is_array($post['reportNets'] ?? null) ? array_values(array_filter($post['reportNets'], 'is_string')) : [];
+            if (!in_array($net, $nets, true) && count($nets) < 50) {
+                $nets[] = $net;
+            }
+            $state['posts'][$id]['reportNets'] = $nets;
             vg_community_write_json($dir . '/comments.json', $state, VG_COMMUNITY_MAX_BYTES);
         }
         return ['ok' => true, 'service' => 'vg-community/1', 'id' => $id, 'reported' => true,
@@ -580,6 +596,7 @@ function vg_community_approve(array $identity, array $body): array
             vg_fail(404, 'comment_not_found', 'Yorum bulunamadı.');
         }
         $state['posts'][$id]['reports'] = [];
+        $state['posts'][$id]['reportNets'] = [];
         $state['posts'][$id]['reviewed'] = true;
         vg_community_write_json($dir . '/comments.json', $state, VG_COMMUNITY_MAX_BYTES);
         return ['ok' => true, 'service' => 'vg-community/1', 'id' => $id, 'hidden' => false];

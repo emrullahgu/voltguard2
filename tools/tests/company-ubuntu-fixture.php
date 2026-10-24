@@ -205,6 +205,12 @@ try {
         'invalid catalog collection' => array_replace_recursive(fixture_snapshot_response($state), ['catalog' => ['historicalInvoice1' => 'invalid']]),
     ];
     foreach ($invalidResponses as $label => $response) fixture_error(static function () use ($config, $response) { vg_company_ubuntu_store(static function (array &$s) { return ['data' => null]; }, $config, static function () use ($response) { return $response; }); }, 503, null, 'Malformed remote ' . $label);
+    // Committed canonical rows refresh values but never re-add fields masked or projected away for this actor.
+    $canonical = ['drivers' => ['d1' => ['id' => 'd1', 'full_name' => 'Kanonik Ad', 'tc_no' => '10000000146', 'license_no' => 'L-1', 'updated_at' => 'T2']]];
+    $masked = vg_company_ubuntu_result(['data' => [['id' => 'd1', 'full_name' => 'Eski Ad', 'updated_at' => 'T1']], 'count' => 1], $canonical);
+    fixture_check($masked['data'][0], ['id' => 'd1', 'full_name' => 'Kanonik Ad', 'updated_at' => 'T2'], 'Returned rows keep the actor masking and projection');
+    $single = vg_company_ubuntu_result(['data' => ['id' => 'd1', 'full_name' => 'Eski Ad']], $canonical);
+    fixture_check(array_key_exists('tc_no', $single['data']), false, 'Single returned row cannot regain hidden identity number');
     fixture_error(static function () use ($config) { vg_company_ubuntu_store(static function () { return []; }, $config, static function () { throw new RuntimeException('Simulated offline private host'); }); }, 503, 'company_ubuntu_unavailable', 'Offline transport fails closed');
     fixture_error(static function () use ($config) { vg_company_ubuntu_call($config, ['op' => 'snapshot'], static function () { return ['protocol' => 'vg-ubuntu-company/1', 'ok' => false, 'status' => 200, 'code' => 'dangerous invalid code']; }); }, 503, 'company_ubuntu_unavailable', 'Remote errors cannot forge successful status or unsafe codes');
 
