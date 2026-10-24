@@ -156,3 +156,14 @@ test('EN 50110: gerilimli noktada DC ölçüm ihlal; ayır + kilitle + doğrula 
   assert.equal(sc1.total, 60 + 15 + 15 + (10 - 10 - 4));
   assert.equal(X.score(sc, s, { type: 'insul', loc: 'F3' }, 'beginner').typeOk, false);
 });
+
+test('TT görevi çözülebilir: güvenli ölçüm yoluyla ≥ 80 puan', () => {
+  const sc = X.scenario(61, 'advanced', 'ttEarth');
+  let s = X.newSession(sc), r;
+  r = X.record(sc, s, { inst: 'volt', a: 'HPE', b: 'RE' }); s = r.sess; assert.ok(r.m.value > 200);
+  s = X.operate(sc, s, 'q0', false).sess; s = X.operate(sc, s, 'q0', 'lock').sess;
+  r = X.record(sc, s, { inst: 'volt', a: 'PE', b: 'RE' }); s = r.sess; assert.ok(r.m.dead);
+  r = X.record(sc, s, { inst: 'ohm', a: 'PE', b: 'EL' }); s = r.sess;
+  assert.ok(r.m.value > 100, 'sağlamda ≈ 0,01 Ω; kopukta yalnız arıza yolu: ' + r.m.text); assert.deepEqual(r.e.rules, []);
+  assert.equal(X.score(sc, s, { type: 'ttEarth', loc: 'earth' }, 'advanced').total, 100);
+});

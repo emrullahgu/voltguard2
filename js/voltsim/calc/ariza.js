@@ -120,7 +120,7 @@
     ttEarth: { name: 'TT: koruma topraklaması kopuk ve gövde kaçağı', loc: 'earth', optimal: 3,
       symptom: ['Isıtıcıya dokunan personel çarpıldığını söylüyor; hiçbir koruma (RCD dahil) açmamış. Tesis TT sistemli.', 'Gövdeye dokununca çarpılma bildirildi; koruma açmadı.'],
       hint: 'Isıtıcı gövdesi ile uzak toprak sondası arasında gerilim ölçün. Döngü empedansı (L–PE) ve PE barası ile toprak elektrodu arasındaki sürekliliğe bakın.',
-      path: ['Gövde – uzak toprak sondası arası gerilim ≈ faz gerilimi: gövde gerilimli (tehlike!). Alanı kapatın.', 'Döngü empedansı ölçer L–PE’de ölçemez (devre yok) ve PE–N arasında anormal gerilim görür.', 'Devreyi ayırıp PE barası ile toprak elektrodu arasında süreklilik: OL → topraklama iletkeni kopuk. Elektrodun kendisi (3 kazık yöntemi) normal olabilir.'],
+      path: ['Gövde – uzak toprak sondası arası gerilim ≈ faz gerilimi: gövde gerilimli (tehlike!). Alanı kapatın.', 'Döngü empedansı ölçer L–PE’de ölçemez (devre yok) ve PE–N arasında anormal gerilim görür.', 'Q0’ı açıp kilitleyin, gerilim yokluğunu doğrulayın; PE barası ile toprak elektrodu arasında süreklilik: sağlamda ≈ 0,01 Ω, burada OL ya da yalnız arızalı cihaz ve şebeke üzerinden yüzlerce Ω → topraklama iletkeni kopuk. Elektrodun kendisi (3 kazık) normal olabilir.'],
       explain: 'TT sistemde gövde kaçağı ancak toprak üzerinden dönebilirse RCD’yi açtırır. Topraklama iletkeni kopunca devre kapanmaz, akım akmaz ve RCD açmaz; bütün PE’ye bağlı gövdeler faz gerilimine çıkar.' }
   };
   const POOLS = { beginner: ['insul', 'overload', 'coil', 'phaseSeq'], intermediate: ['insul', 'overload', 'coil', 'phaseSeq', 'phaseLoss', 'looseConn', 'npe'], advanced: Object.keys(FAULTS) };
@@ -322,7 +322,8 @@
       const A = PT[q.a], B = PT[q.b];
       if (!A || !B) return { ok: false, text: 'İki ölçüm noktası seçin (kırmızı ve siyah prob).' };
       const u = C.abs(C.sub(V(A.node), V(B.node)));
-      const circ = A.circ === 'bus' || A.circ === 'supply' || A.circ === 'earth' ? B.circ : A.circ;
+      const feeder = c => /^F[1-4]$|^app$/.test(c);
+      const circ = feeder(A.circ) ? A.circ : feeder(B.circ) ? B.circ : A.circ === 'bus' || B.circ === 'bus' ? 'bus' : A.circ;
       if (inst === 'volt') return { ok: true, value: u, unit: 'V', text: fmtN(u, 1) + ' V AC', circ: circ, a: A.id, b: B.id, dead: u < 50 && vAbs(A.node) < 50 && vAbs(B.node) < 50 };
       // DC ölçümler: gerilimli noktaya bağlanırsa alet ölçmez ve kural ihlalidir
       const live = u > 25 || vAbs(A.node) > 50 || vAbs(B.node) > 50;

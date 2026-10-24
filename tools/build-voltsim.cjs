@@ -103,7 +103,15 @@ const MODULES = [
     lead: 'Fabrikanın 24 saatlik yük profiline GES, rüzgâr, dizel jeneratör ve LiFePO4 batarya ekleyin. Dağıtım stratejisini seçin; batarya, şebeke ve jeneratör arasındaki güç akışı her saat için hesaplanır ve 3D sahnede canlı akar.',
     tags: ['SOC · DoD · C-oranı', 'Çevrim verimi √η', 'Öz tüketim / tepe tıraşlama', 'Yedek rezerv · ada modu', 'Üç zamanlı tarife', 'Öz yeterlilik · çevrim'],
     service: ['/hizmetler/fabrika-cati-ges.html', 'Fabrika çatı GES ve depolama'],
-    related: [['/araclar/mesken-ges-depolama/', 'GES + depolama aracı'], ['/araclar/batarya-enerji-sure/', 'Batarya enerji süresi'], ['/bilgi/lisanssiz-uretim-ges.html', 'Lisanssız üretim (GES)'], ['/hesaplama/ges-uretim-hesaplama/', 'GES üretim hesabı']] }
+    related: [['/araclar/mesken-ges-depolama/', 'GES + depolama aracı'], ['/araclar/batarya-enerji-sure/', 'Batarya enerji süresi'], ['/bilgi/lisanssiz-uretim-ges.html', 'Lisanssız üretim (GES)'], ['/hesaplama/ges-uretim-hesaplama/', 'GES üretim hesabı']] },
+  { id: 'ariza', slug: 'ariza-tespit', name: 'Arıza Tespit Lab', short: 'Sanal ölçü aletleriyle AG tesiste arıza bulma ve güvenli ölçüm',
+    title: '3D Elektrik Arıza Tespit Laboratuvarı: Ölçümle Arıza Bulma | VoltSim',
+    description: 'Rastgele ama tekrarlanabilir arıza senaryolarında multimetre, pens ampermetre, 500 V yalıtım ölçer, döngü empedansı ve termal kamerayla ölçüm yapın; teşhisinizi puanlayın.',
+    h1: '3D Elektrik Arıza Tespit Laboratuvarı', eyebrow: 'Multimetre · Yalıtım · Döngü · Termal kamera',
+    lead: 'Küçük bir AG tesiste gizli bir arıza var: açık nötr, gevşek bağlantı, faz kaybı, yalıtım hatası, TT toprak hatası… 3D sahnede noktalara prob bağlayın; her ölçüm devre modelinden hesaplanır. Önce ayırın, kilitleyin, gerilim yokluğunu doğrulayın.',
+    tags: ['Fazör devre çözücü', 'Açık nötr · hayalet gerilim', 'Yalıtım 500 V DC', 'Döngü empedansı', 'Faz sırası', 'EN 50110 beş kural'],
+    service: ['/hizmetler/elektrik-periyodik-kontrol.html', 'Elektrik periyodik kontrol'],
+    related: [['/bilgi/enerjisiz-calisma-is-guvenligi.html', 'Enerjisiz çalışma ve iş güvenliği'], ['/bilgi/kacak-akim-rolesi-ariza-nedenleri.html', 'Kaçak akım rölesi neden atar?'], ['/bilgi/elektrik-tesisati-periyodik-kontrol.html', 'Tesisat periyodik kontrolü'], ['/hesaplama/topraklama-hesaplama/', 'Topraklama hesabı']] }
 ];
 
 const esc = s => String(s === undefined || s === null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
