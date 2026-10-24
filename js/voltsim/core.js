@@ -96,12 +96,42 @@
     while (text.length > 1 && g.measureText(text + '…').width > w) text = text.slice(0, -1);
     return text + '…';
   }
+  /** Log eksen etiketi: 0,01 · 0,1 · 1 · 10 · 100 · 1 k · 10 k · 1 M */
+  function fmtLog(v) {
+    if (v >= 1e6) return fmt(v / 1e6, v >= 1e7 ? 0 : 0) + ' M';
+    if (v >= 1e3) return fmt(v / 1e3, 0) + ' k';
+    if (v >= 1) return fmt(v, 0);
+    return fmt(v, Math.min(4, Math.max(1, Math.ceil(-Math.log10(v) - 1e-9))));
+  }
   function drawChart(canvas, spec) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const W = canvas.clientWidth || 300, H = canvas.clientHeight || 160;
     if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) { canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); }
     const g = canvas.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
     const pad = { l: 44, r: 10, t: 10, b: 30 };
+    // logaritmik eksen (spec.x.log / spec.y.log): çizim log10 uzayında yapılır; sıfır/negatif ve sonsuz noktalar atlanır
+    const lgx = !!(spec.x && spec.x.log), lgy = !!(spec.y && spec.y.log);
+    if (lgx || lgy) {
+      const ok = p => isFinite(p[0]) && isFinite(p[1]) && (!lgx || p[0] > 0) && (!lgy || p[1] > 0);
+      const tr = p => [lgx ? Math.log10(p[0]) : p[0], lgy ? Math.log10(p[1]) : p[1]];
+      const ax = (a, lg) => {
+        if (!a || !lg) return a;
+        const o = Object.assign({}, a, { log: false });
+        if (a.min !== undefined) o.min = Math.log10(a.min);
+        if (a.max !== undefined) o.max = Math.log10(a.max);
+        const lo = o.min !== undefined ? Math.floor(o.min + 1e-9) : -3, hi = o.max !== undefined ? Math.ceil(o.max - 1e-9) : 4;
+        o.ticks = a.ticks ? a.ticks.filter(t => t > 0).map(t => Math.log10(t)) : Array.from({ length: hi - lo + 1 }, (_, i) => lo + i);
+        o.minor = []; for (let d = lo; d < hi; d++) for (let m = 2; m <= 9; m++) o.minor.push(d + Math.log10(m));
+        o.fmt = v => (a.fmt ? a.fmt(Math.pow(10, v)) : fmtLog(Math.pow(10, v)));
+        return o;
+      };
+      spec = Object.assign({}, spec, {
+        x: ax(spec.x, lgx), y: ax(spec.y, lgy),
+        series: (spec.series || []).map(s => Object.assign({}, s, { data: (s.data || []).filter(ok).map(tr) })),
+        hLines: (spec.hLines || []).filter(h => !lgy || h.y > 0).map(h => Object.assign({}, h, { y: lgy ? Math.log10(h.y) : h.y })),
+        markers: (spec.markers || []).filter(m => !lgx || m.x > 0).map(m => Object.assign({}, m, { x: lgx ? Math.log10(m.x) : m.x, y: m.y === undefined ? undefined : lgy ? (m.y > 0 ? Math.log10(m.y) : undefined) : m.y }))
+      });
+    }
     const series = (spec.series || []).filter(s => s.data && s.data.length);
     let xs = [], ys = [];
     series.forEach(s => s.data.forEach(p => { xs.push(p[0]); ys.push(p[1]); }));
@@ -117,7 +147,16 @@
     const X = x => pad.l + (x - xmin) / (xmax - xmin) * (W - pad.l - pad.r);
     const Y = y => H - pad.b - (y - ymin) / (ymax - ymin) * (H - pad.t - pad.b);
     g.font = '10px Inter, system-ui, sans-serif'; g.textBaseline = 'middle';
-    g.strokeStyle = 'rgba(148,163,184,.16)'; g.fillStyle = '#8ea3bf'; g.lineWidth = 1;
+    g.lineWidth = 1;
+    // log eksende ara çizgiler (2…9 × 10^n)
+    if ((spec.x && spec.x.minor) || (spec.y && spec.y.minor)) {
+      g.strokeStyle = 'rgba(148,163,184,.07)'; g.beginPath();
+      ((spec.x && spec.x.minor) || []).forEach(v => { if (v > xmin && v < xmax) { const x = X(v); g.moveTo(x, pad.t); g.lineTo(x, H - pad.b); } });
+      ((spec.y && spec.y.minor) || []).forEach(v => { if (v > ymin && v < ymax) { const y = Y(v); g.moveTo(pad.l, y); g.lineTo(W - pad.r, y); } });
+      g.stroke();
+      if (spec.x && spec.x.minor) { g.strokeStyle = 'rgba(148,163,184,.16)'; g.beginPath(); (spec.x.ticks || []).forEach(v => { const x = X(v); if (x >= pad.l - 1 && x <= W - pad.r + 1) { g.moveTo(x, pad.t); g.lineTo(x, H - pad.b); } }); g.stroke(); }
+    }
+    g.strokeStyle = 'rgba(148,163,184,.16)'; g.fillStyle = '#8ea3bf';
     const yt = spec.y && spec.y.ticks ? spec.y.ticks : niceTicks(ymin, ymax, 4), xt = spec.x && spec.x.ticks ? spec.x.ticks : niceTicks(xmin, xmax, Math.max(3, Math.floor(W / 70)));
     g.textAlign = 'right';
     yt.forEach(v => { const y = Y(v); g.beginPath(); g.moveTo(pad.l, y); g.lineTo(W - pad.r, y); g.stroke(); g.fillText((spec.y && spec.y.fmt ? spec.y.fmt(v) : fmt(v, tickDigits(yt))), pad.l - 6, y); });

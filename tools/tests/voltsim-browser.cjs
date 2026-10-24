@@ -68,7 +68,8 @@ const slugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }
       await page.goto(base + '/voltsim/', { waitUntil: 'load' });
       await page.screenshot({ path: path.join(out, 'landing-desktop.png'), fullPage: true });
       const cards = await page.locator('.vsl-card').count();
-      if (cards !== 10) fail('landing', 'kart sayısı ' + cards);
+      const expected = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }).filter(d => d.isDirectory()).length;
+      if (cards !== expected) fail('landing', 'kart sayısı ' + cards + ' (beklenen ' + expected + ')');
       console.log('landing: ' + cards + ' kart');
     }
 
@@ -181,7 +182,7 @@ const slugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }
   if (previews) {
     const sharp = require(packagePath('sharp'));
     const dest = path.join(root, 'public/voltsim'); fs.mkdirSync(dest, { recursive: true });
-    const ids = { pano: 'pano', ges: 'ges', trafo: 'trafo', 'sarj-istasyonu': 'sarj', res: 'res', kompanzasyon: 'komp', topraklama: 'topraklama', 'motor-otomasyon': 'motor', 'ups-jenerator': 'ups', 'yangin-algilama': 'yangin' };
+    const ids = { pano: 'pano', ges: 'ges', trafo: 'trafo', 'sarj-istasyonu': 'sarj', res: 'res', kompanzasyon: 'komp', topraklama: 'topraklama', 'motor-otomasyon': 'motor', 'ups-jenerator': 'ups', 'yangin-algilama': 'yangin', selektivite: 'selektivite', 'enerji-kalitesi': 'kalite', yildirim: 'yildirim', 'pompa-vfd': 'pompa' };
     for (const slug of slugs) {
       const src = path.join(out, slug + '-preview.png'); if (!fs.existsSync(src)) continue;
       await sharp(src).resize(960, 600, { fit: 'cover', position: 'centre' }).webp({ quality: 80 }).toFile(path.join(dest, ids[slug] + '.webp'));

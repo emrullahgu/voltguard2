@@ -95,7 +95,39 @@ const MODULES = [
     lead: 'Bir bölgede yangın başlatın: duman tavana yayılır, dedektörler sırayla algılar, panel ön alarm ve yangın alarmına geçer, sirenler çalar ve tahliye süresi hesaplanır. Eğitim senaryosudur; yangın projesi yerine geçmez.',
     tags: ['Duman yayılımı', 'Bölge alarmı', 'Çift dedektör onayı', 'EN 54-2 durumları', 'Siren / flaşör', 'Tahliye süresi'],
     service: ['/hizmetler/elektrik-projesi.html', 'Elektrik projesi'],
-    related: [['/bilgi/mevzuat-kutuphanesi.html', 'Mevzuat kütüphanesi']] }
+    related: [['/bilgi/mevzuat-kutuphanesi.html', 'Mevzuat kütüphanesi']] },
+  { id: 'selektivite', slug: 'selektivite', name: 'Selektivite', short: 'Kısa devre akımları, koruma eğrileri ve seçicilik',
+    title: '3D Kısa Devre ve Selektivite Simülasyonu: ACB, MCCB, MCB, gG | VoltSim',
+    description: 'Trafodan son devreye radyal AG şebekede baralardaki Ik3 ve Ik1 akımlarını hesaplayın; ACB/MCCB LSI, MCB ve gG sigorta eğrileriyle zaman–akım seçiciliğini log–log grafikte inceleyin.',
+    h1: '3D Kısa Devre ve Selektivite Simülasyonu', eyebrow: 'Ik3 · Ik1 · Zaman–akım eğrisi · Seçicilik',
+    lead: 'Ana dağıtım panosundan tali panolara kadar koruma ağacını kurun, baraya tıklayıp arızayı oraya koyun. Kısa devre akımları IEC 60909 yaklaşımıyla, cihaz bantları IEC 60898-1, IEC 60269-2 ve IEC 60947-2 sınırlarıyla hesaplanır; enerji (I²t) seçiciliği üretici tablosu gerektirir.',
+    tags: ['Ik3 / Ik1 (IEC 60909 yakl.)', 'Log–log TCC', 'LSI · Ir · tsd · Ii', 'MCB B/C/D · gG', 'Seçicilik sınırı Is', 'Kesme kapasitesi'],
+    service: ['/hizmetler/elektrik-projesi.html', 'Elektrik projesi'],
+    related: [['/hesaplama/kisa-devre-akimi-hesaplama/', 'Kısa devre akımı hesabı'], ['/hesaplama/sigorta-tms-secimi/', 'Sigorta ve TMŞ seçimi'], ['/araclar/ag-kisa-devre/', 'AG kısa devre aracı'], ['/akademi/trafo-kisa-devre-koordinasyon-ileri.html', 'Trafo, kısa devre ve koordinasyon eğitimi']] },
+  { id: 'kalite', slug: 'enerji-kalitesi', calcs: ['komp'], name: 'Enerji Kalitesi', short: 'Harmonik, rezonans, gerilim çökmesi ve dengesizlik',
+    title: '3D Enerji Kalitesi Laboratuvarı: Harmonik, THD, Çökme | VoltSim',
+    description: 'Dalga şekli ve spektrumla THDv/THDi, h_r = √(Ssc/Qc) rezonansı, ayarlı reaktör (p = %5,67 / %7 / %14) frekans tepkisi, gerilim çökmesi/yükselmesi ve VUF dengesizliğini analizörle inceleyin.',
+    h1: '3D Enerji Kalitesi Laboratuvarı', eyebrow: 'Harmonik · Rezonans · Çökme · Dengesizlik',
+    lead: 'Enerji analizörünü AG panoya bağlayın: sürücüler ve tek fazlı yükler harmonik akım çeker, kondansatör bankası şebekeyle rezonansa girebilir. Ayarlı reaktörün etkisini empedans eğrisinde, OG arızasının ve motor yol almanın yarattığı çökmeyi rms kaydında görün.',
+    tags: ['THDv · THDi', 'h_r = √(Ssc/Qc)', 'Ayarlı reaktör p', 'Nötr akımı (3. harmonik)', 'Çökme · EN 50160', 'VUF dengesizlik'],
+    service: ['/hizmetler/enerji-kalitesi-olcumu.html', 'Enerji kalitesi ve harmonik ölçümü'],
+    related: [['/araclar/harmonik-thd/', 'Harmonik THD aracı'], ['/hizmetler/harmonik-filtreli-kompanzasyon.html', 'Harmonik filtreli kompanzasyon'], ['/bilgi/harmonik-nedir-sorunlari.html', 'Harmonik nedir?'], ['/voltsim/kompanzasyon/', 'VoltSim kompanzasyon']] },
+  { id: 'yildirim', slug: 'yildirim', calcs: ['topraklama'], name: 'Yıldırımdan Korunma', short: 'Yuvarlanan küre, koruma açısı, ağ ve iniş iletkenleri',
+    title: '3D Yıldırımdan Korunma Simülasyonu: Yuvarlanan Küre, LPL | VoltSim',
+    description: 'LPL I–IV için yuvarlanan küre (r = 20/30/45/60 m), koruma açısı ve ağ yöntemiyle çatıyı 3D inceleyin; iniş iletkeni sayısı, ayırma mesafesi s = ki·(kc/km)·l ve halka topraklama (IEC 62305-3).',
+    h1: '3D Yıldırımdan Korunma Simülasyonu', eyebrow: 'Yuvarlanan küre · Koruma açısı · Ağ yöntemi',
+    lead: 'Binanın çatısına çubuk, kenar ve ağ iletkenleri yerleştirin; seçtiğiniz koruma seviyesinin küresi çatı üzerinde yuvarlansın. Kürenin değdiği korunmasız bölgeler kırmızı görünür; iniş iletkenleri, ayırma mesafesi ve topraklama IEC 62305-3 tablolarıyla kontrol edilir. Risk analizi (IEC 62305-2) bu simülasyonda yapılmaz.',
+    tags: ['LPL I–IV', 'Yuvarlanan küre r', 'Koruma açısı (yakl.)', 'Ağ göz boyutu', 'İniş iletkenleri', 's = ki·(kc/km)·l'],
+    service: ['/hizmetler/topraklama-olcumu.html', 'Topraklama ölçümü ve paratoner'],
+    related: [['/bilgi/yildirimdan-korunma.html', 'Yıldırımdan korunma rehberi'], ['/hesaplama/topraklama-hesaplama/', 'Topraklama hesabı'], ['/voltsim/topraklama/', 'VoltSim topraklama'], ['/hizmetler/elektrik-periyodik-kontrol.html', 'Elektrik periyodik kontrol']] },
+  { id: 'pompa', slug: 'pompa-vfd', name: 'Pompa & VFD', short: 'Pompa eğrisi, afinite yasaları ve enerji tasarrufu',
+    title: '3D Endüstriyel Pompa ve VFD Simülasyonu: Afinite, Tasarruf | VoltSim',
+    description: 'Pompa H–Q eğrisi ile sistem eğrisinin kesişimini, afinite yasalarını ve vana ile kısma karşısında frekans konvertörünün güç farkını görün; yıllık enerji tasarrufu ve geri ödemeyi kendi tarifenizle hesaplayın.',
+    h1: '3D Endüstriyel Pompa ve VFD Simülasyonu', eyebrow: 'H–Q eğrisi · Afinite · Enerji tasarrufu',
+    lead: 'Pompayı vana ile kısın ya da frekans konvertörüyle yavaşlatın: çalışma noktası, verim ve elektrik gücü anında hesaplanır. Statik basma yüksekliğinin VFD tasarrufunu nasıl sınırladığını ve yıllık çalışma profilinizle geri ödeme süresini görün.',
+    tags: ['H–Q · sistem eğrisi', 'Çalışma noktası', 'Q ∝ n, H ∝ n², P ∝ n³', 'Kısma vs VFD', 'Yıllık kWh', 'Geri ödeme'],
+    service: ['/hizmetler/plc-scada-otomasyon.html', 'PLC, SCADA ve sürücü otomasyonu'],
+    related: [['/bilgi/vfd-frekans-invertoru-nedir.html', 'VFD nedir?'], ['/akademi/enerji-verimliligi-etudu-vfd-ileri.html', 'Enerji verimliliği ve VFD eğitimi'], ['/hesaplama/motor-akimi-hesaplama/', 'Motor akımı hesabı'], ['/voltsim/motor-otomasyon/', 'VoltSim motor ve PLC']] }
 ];
 
 const esc = s => String(s === undefined || s === null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -163,7 +195,7 @@ function modulePage(m) {
   const others = MODULES.filter(x => x !== m);
   const ld = { '@context': 'https://schema.org', '@graph': [crumbLd([['/', 'Ana Sayfa'], ['/voltsim/', 'VoltSim'], [url, m.h1]]),
     { '@type': 'WebApplication', name: m.h1, url: SITE + url, applicationCategory: 'EngineeringApplication', operatingSystem: 'Web', inLanguage: 'tr', isAccessibleForFree: true, description: m.description, publisher: { '@type': 'Organization', name: 'VoltGuard', url: SITE + '/' } }] };
-  const scripts = ['/js/vendor/three-r128.min.js', '/js/voltsim/engine.js', `/js/voltsim/calc/${m.id}.js`, '/js/voltsim/regulations.js', '/js/voltsim/core.js', `/js/voltsim/mod/${m.id}.js`]
+  const scripts = ['/js/vendor/three-r128.min.js', '/js/voltsim/engine.js', ...(m.calcs || []).map(c => `/js/voltsim/calc/${c}.js`), `/js/voltsim/calc/${m.id}.js`, '/js/voltsim/regulations.js', '/js/voltsim/core.js', `/js/voltsim/mod/${m.id}.js`]
     .map(s => `  <script src="${s}?v=${rev(s)}" defer></script>\n`).join('');
   const ico = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
   return `${head({ title: m.title, description: m.description, url, ld, scripts, image: `/public/voltsim/${m.id}.webp` })}
@@ -294,7 +326,7 @@ function landing() {
           </a>
         </li>`).join('');
   return `${head({ title: 'VoltSim — 3D Mühendislik Simülasyon Merkezi | VoltGuard', ogTitle: 'VoltSim — Enerjiyi Gör. Sistemi Kur. Sonucu Ölç.',
-    description: 'Elektrik panosu, GES, trafo, şarj istasyonu, RES, kompanzasyon, topraklama, motor otomasyon, UPS/jeneratör ve yangın algılama için gerçek hesaplı 3D simülasyonlar.', url, ld, image: '/public/voltsim/pano.webp' })}
+    description: 'Elektrik panosu, GES, trafo, şarj istasyonu, RES, kompanzasyon, topraklama, motor otomasyon, UPS/jeneratör, yangın algılama, selektivite, enerji kalitesi, yıldırımdan korunma ve pompa/VFD için gerçek hesaplı 3D simülasyonlar.', url, ld, image: '/public/voltsim/pano.webp' })}
 <body class="vs-page vsl-page doc-shell">
   <!--vg:header--><!--/vg:header-->
   <main class="vs-main" id="main" tabindex="-1">
@@ -309,7 +341,7 @@ function landing() {
       </div>
       <div class="vsl-hero__img"><img src="/public/voltsim/hero.webp?v=${rev('/public/voltsim/hero.webp')}" alt="VoltSim 3D pano ve enerji sistemleri sahnesi" width="960" height="600" fetchpriority="high"></div>
       <ul class="vsl-facts">
-        <li><strong>10</strong><span>simülasyon modülü</span></li>
+        <li><strong>${MODULES.length}</strong><span>simülasyon modülü</span></li>
         <li><strong>Ayrı motor</strong><span>test edilen hesap fonksiyonları</span></li>
         <li><strong>PDF · JSON · CSV</strong><span>rapor ve proje dosyası</span></li>
         <li><strong>Kaynaklı</strong><span>mevzuat ve standart paneli</span></li>
