@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=3ec2a90a1976">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <meta name="color-scheme" content="light only">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="same-origin">
+  <title>VoltHaber Editör Paneli | VoltGuard Hesabı</title>
+  <meta name="description" content="VoltHaber editör paneli.">
+  <link rel="icon" type="image/png" href="../public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="../public/apple-touch-icon.png">
+  <link rel="stylesheet" href="../css/style.css?v=0">
+  <link rel="stylesheet" href="../css/vg-account.css?v=0">
+  <link rel="stylesheet" href="../css/volthaber.css?v=0">
+</head>
+<body class="doc-shell">
+  <!--vg:header-->
+  <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+        </span>
+      </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
+          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
+          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
+          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
+          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
+            <ul class="vg-dd__menu" id="vgDdKaynaklar">
+              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
+              <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+              <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
+            </ul>
+          </li>
+          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html" aria-current="true">Üye Girişi</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
+      </nav>
+      <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html" aria-current="true">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+  </header>
+  <!--/vg:header-->
+  <main class="vhp" id="main" tabindex="-1">
+    <nav class="vg-panel__nav" aria-label="Hesap menüsü" data-vg-acct-nav hidden>
+      <button type="button" class="vg-panel__logout" data-vg-logout data-vg-member>Çıkış yap</button>
+      <p class="vg-sync" data-vg-sync role="status" aria-live="polite"></p>
+    </nav>
+    <p class="vh-mast__kicker vhp-muted"><a href="panel.html">Hesabım</a> &rsaquo; VoltHaber</p>
+    <h1>VoltHaber editör paneli</h1>
+    <p class="vhp-lead">Gelen kutusu, taslaklar, yayın planı, kaynaklar, bülten ve sosyal medya taslakları. Hiçbir içerik otomatik yayımlanmaz veya paylaşılmaz.</p>
+    <div class="vhp-alert" data-vhp-alert role="alert" hidden></div>
+    <div data-vhp-gate class="vhp-gate"><p class="vhp-muted" role="status">Yetki denetleniyor…</p><noscript><p>Panel için JavaScript gereklidir.</p></noscript></div>
+
+    <div data-vhp-app hidden>
+      <div class="vhp-tabs" role="tablist" aria-label="Panel bölümleri">
+        <button type="button" role="tab" id="t-inbox" aria-controls="p-inbox" aria-selected="true" data-tab="inbox">Gelen kutusu</button>
+        <button type="button" role="tab" id="t-posts" aria-controls="p-posts" aria-selected="false" data-tab="posts" tabindex="-1">Yazılar</button>
+        <button type="button" role="tab" id="t-edit" aria-controls="p-edit" aria-selected="false" data-tab="edit" tabindex="-1">Düzenleyici</button>
+        <button type="button" role="tab" id="t-sources" aria-controls="p-sources" aria-selected="false" data-tab="sources" tabindex="-1">Kaynaklar</button>
+        <button type="button" role="tab" id="t-logs" aria-controls="p-logs" aria-selected="false" data-tab="logs" tabindex="-1">Günlükler</button>
+        <button type="button" role="tab" id="t-stats" aria-controls="p-stats" aria-selected="false" data-tab="stats" tabindex="-1">İstatistik ve bülten</button>
+        <button type="button" role="tab" id="t-social" aria-controls="p-social" aria-selected="false" data-tab="social" tabindex="-1">Sosyal taslak</button>
+      </div>
+
+      <section class="vhp-panel" id="p-inbox" role="tabpanel" aria-labelledby="t-inbox">
+        <div class="vhp-bar">
+          <button type="button" class="vhp-btn vhp-btn--primary" data-act="fetch-all">Şimdi tara</button>
+          <span class="vhp-muted">Kaynaklardan yalnızca başlık, bağlantı ve tarih alınır. Yayımlamak için kendi özetinizi yazmalısınız.</span>
+        </div>
+        <div class="vhp-table-wrap"><table class="vhp-table"><thead><tr><th>Başlık</th><th>Kaynak</th><th>Tarih</th><th>İşlem</th></tr></thead><tbody data-list="inbox"></tbody></table></div>
+      </section>
+
+      <section class="vhp-panel" id="p-posts" role="tabpanel" aria-labelledby="t-posts" hidden>
+        <div class="vhp-bar">
+          <label class="vh-sr" for="f-status">Durum</label>
+          <select id="f-status"><option value="">Tüm durumlar</option><option value="draft">Taslak</option><option value="scheduled">Planlı</option><option value="published">Yayında</option><option value="archived">Arşiv</option></select>
+          <label class="vh-sr" for="f-q">Ara</label>
+          <input id="f-q" type="search" placeholder="Başlık veya etiket ara" maxlength="80">
+          <button type="button" class="vhp-btn" data-act="posts-reload">Listele</button>
+          <button type="button" class="vhp-btn vhp-btn--accent" data-act="new">Yeni yazı</button>
+        </div>
+        <div class="vhp-table-wrap"><table class="vhp-table"><thead><tr><th>Başlık</th><th>Tür</th><th>Durum</th><th>Okunma</th><th>Güncelleme</th><th>İşlem</th></tr></thead><tbody data-list="posts"></tbody></table></div>
+      </section>
+
+      <section class="vhp-panel" id="p-edit" role="tabpanel" aria-labelledby="t-edit" hidden>
+        <div class="vhp-editor">
+          <form class="vhp-form" data-form="article" novalidate>
+            <p class="vhp-muted" data-ed-status>Yeni yazı</p>
+            <div class="vhp-field"><label for="e-title">Başlık</label><input id="e-title" name="title" maxlength="160" required></div>
+            <div class="vhp-row">
+              <div class="vhp-field"><label for="e-type">Tür</label><select id="e-type" name="type"><option value="analiz">VoltGuard Analizi</option><option value="resmi">Resmî Duyuru Özeti</option><option value="kaynak">Kaynak Bağlantısı</option></select></div>
+              <div class="vhp-field"><label for="e-category">Kategori</label><select id="e-category" name="category"></select></div>
+            </div>
+            <div class="vhp-field"><label for="e-summary">Editör özeti <small data-count="summary"></small></label><textarea id="e-summary" name="summary" rows="3" maxlength="400"></textarea><small>40–400 karakter, kendi cümlelerinizle. Kaynak başlığını tekrar etmeyin.</small></div>
+            <div class="vhp-field"><label for="e-body">Metin (sınırlı Markdown)</label><textarea id="e-body" name="body" rows="14" maxlength="40000"></textarea><small>## başlık, ### alt başlık, - madde, 1. sıralı, &gt; alıntı, **kalın**, *italik*, `kod`, [metin](https://…). HTML desteklenmez.</small></div>
+            <div class="vhp-row">
+              <div class="vhp-field"><label for="e-tags">Etiketler</label><input id="e-tags" name="tags" placeholder="virgülle ayırın (en fazla 8)"></div>
+              <div class="vhp-field"><label for="e-slug">Adres (slug)</label><input id="e-slug" name="slug" maxlength="90" placeholder="boş bırakılırsa başlıktan"></div>
+            </div>
+            <fieldset><legend>Kaynak</legend>
+              <div class="vhp-row">
+                <div class="vhp-field"><label for="e-src-name">Kaynak adı</label><input id="e-src-name" name="src_name" maxlength="120"></div>
+                <div class="vhp-field"><label for="e-src-url">Kaynak bağlantısı (https)</label><input id="e-src-url" name="src_url" type="url" maxlength="600"></div>
+                <div class="vhp-field"><label for="e-src-date">Kaynak tarihi</label><input id="e-src-date" name="src_date" type="date"></div>
+                <div class="vhp-field"><label for="e-src-lic">Kullanım / lisans notu</label><input id="e-src-lic" name="src_lic" maxlength="300"></div>
+              </div>
+            </fieldset>
+            <fieldset><legend>Görsel (isteğe bağlı)</legend>
+              <div class="vhp-field"><label for="e-img-url">Görsel adresi</label><input id="e-img-url" name="img_url" maxlength="600" placeholder="/public/... veya lisanslı https adresi"></div>
+              <div class="vhp-row">
+                <div class="vhp-field"><label for="e-img-credit">Künye</label><input id="e-img-credit" name="img_credit" maxlength="160"></div>
+                <div class="vhp-field"><label for="e-img-rights">Kullanım hakkı kaydı</label><input id="e-img-rights" name="img_rights" maxlength="400" placeholder="Kendi çekimimiz / lisans no, tarih"></div>
+              </div>
+            </fieldset>
+            <fieldset><legend>SEO ve bağlantılar</legend>
+              <div class="vhp-field"><label for="e-seo-title">SEO başlığı <small data-count="seo_title"></small></label><input id="e-seo-title" name="seo_title" maxlength="70"></div>
+              <div class="vhp-field"><label for="e-seo-desc">SEO açıklaması <small data-count="seo_desc"></small></label><textarea id="e-seo-desc" name="seo_desc" rows="2" maxlength="170"></textarea></div>
+              <div class="vhp-field"><label for="e-related">İlgili araç ve simülasyonlar</label><textarea id="e-related" name="related" rows="3" placeholder="/voltsim/ges/ | VoltSim GES simülasyonu"></textarea><small>Her satıra "site içi yol | etiket". Öneriler: <span data-tool-hints></span></small></div>
+              <label class="vhp-check"><input type="checkbox" name="featured"> Ana sayfada manşet</label>
+              <label class="vhp-check"><input type="checkbox" name="pick"> Editörün seçtikleri</label>
+            </fieldset>
+            <div class="vhp-bar">
+              <button type="submit" class="vhp-btn vhp-btn--primary">Kaydet</button>
+              <button type="button" class="vhp-btn vhp-btn--accent" data-act="publish">Kaydet ve yayımla</button>
+              <label class="vh-sr" for="e-when">Yayın zamanı</label>
+              <input id="e-when" type="datetime-local">
+              <button type="button" class="vhp-btn" data-act="schedule">Planla</button>
+              <button type="button" class="vhp-btn vhp-btn--danger" data-act="archive">Arşivle</button>
+              <a class="vhp-btn" data-ed-view hidden target="_blank" rel="noopener">Sayfayı aç</a>
+            </div>
+          </form>
+          <div class="vhp-preview" aria-live="off"><div class="vhp-preview__label">Canlı önizleme (sunucuda işlenmiş)</div><div class="article vh-article" data-preview></div></div>
+        </div>
+      </section>
+
+      <section class="vhp-panel" id="p-sources" role="tabpanel" aria-labelledby="t-sources" hidden>
+        <p class="vhp-muted">"İzin gerekli" durumundaki kaynaklar yazılı izin kaydedilmeden açılamaz. Her kaynağın doğrulama kanıtı notlarda.</p>
+        <div class="vhp-table-wrap"><table class="vhp-table"><thead><tr><th>Kaynak</th><th>İzin</th><th>Durum</th><th>Son tarama</th><th>Notlar</th><th>İşlem</th></tr></thead><tbody data-list="sources"></tbody></table></div>
+        <form class="vhp-form" data-form="source" novalidate style="margin-top:1rem">
+          <fieldset><legend data-src-legend>Kaynak ekle / düzenle</legend>
+            <div class="vhp-row">
+              <div class="vhp-field"><label for="s-id">Kimlik</label><input id="s-id" name="id" maxlength="40" placeholder="ornek-kurum"></div>
+              <div class="vhp-field"><label for="s-name">Ad</label><input id="s-name" name="name" maxlength="120"></div>
+              <div class="vhp-field"><label for="s-feed">Akış adresi (https)</label><input id="s-feed" name="feedUrl" maxlength="600"></div>
+              <div class="vhp-field"><label for="s-home">Ana sayfa</label><input id="s-home" name="homepage" maxlength="600"></div>
+              <div class="vhp-field"><label for="s-terms">Kullanım koşulları</label><input id="s-terms" name="termsUrl" maxlength="600"></div>
+              <div class="vhp-field"><label for="s-format">Biçim</label><select id="s-format" name="format"><option value="rss">RSS</option><option value="atom">Atom</option><option value="etkb">enerji.gov.tr RSS</option></select></div>
+              <div class="vhp-field"><label for="s-cat">Kategori</label><select id="s-cat" name="category"></select></div>
+              <div class="vhp-field"><label for="s-perm">İzin durumu</label><select id="s-perm" name="permission"><option value="kamu">Kamu kurumu</option><option value="lisansli">Açık lisans</option><option value="izinli">Yazılı izin var</option><option value="izin-gerekli">İzin gerekli</option><option value="reddedildi">Reddedildi</option></select></div>
+            </div>
+            <div class="vhp-field"><label for="s-lic">Kullanım notu (yazılarda gösterilir)</label><input id="s-lic" name="licenseNote" maxlength="300"></div>
+            <div class="vhp-field"><label for="s-notes">Notlar / kanıt (adres + kontrol tarihi)</label><textarea id="s-notes" name="notes" rows="3" maxlength="2000"></textarea></div>
+            <label class="vhp-check"><input type="checkbox" name="enabled"> Etkin</label>
+            <div class="vhp-bar"><button type="submit" class="vhp-btn vhp-btn--primary">Kaynağı kaydet</button><button type="reset" class="vhp-btn">Temizle</button></div>
+          </fieldset>
+        </form>
+      </section>
+
+      <section class="vhp-panel" id="p-logs" role="tabpanel" aria-labelledby="t-logs" hidden>
+        <h2 class="vh-mini-h">Tarama günlüğü</h2>
+        <div class="vhp-table-wrap"><table class="vhp-table"><thead><tr><th>Zaman</th><th>Kaynak</th><th>Sonuç</th><th>Öğe / yeni</th><th>Süre</th><th>Tetikleyen</th></tr></thead><tbody data-list="fetchlog"></tbody></table></div>
+        <h2 class="vh-mini-h" style="margin-top:1.4rem">Yayın günlüğü</h2>
+        <div class="vhp-table-wrap"><table class="vhp-table"><thead><tr><th>Zaman</th><th>İşlem</th><th>Kayıt</th><th>Editör</th></tr></thead><tbody data-list="publog"></tbody></table></div>
+      </section>
+
+      <section class="vhp-panel" id="p-stats" role="tabpanel" aria-labelledby="t-stats" hidden>
+        <div class="vhp-stats" data-stats></div>
+        <div class="vhp-bar"><button type="button" class="vhp-btn" data-act="export">Aktif aboneleri CSV olarak indir</button><span class="vhp-muted">Dışa aktarma yayın günlüğüne kaydedilir. Dosyayı güvenli saklayın.</span></div>
+        <h2 class="vh-mini-h" style="margin-top:1.2rem">En çok okunanlar</h2>
+        <div class="vhp-table-wrap"><table class="vhp-table"><thead><tr><th>Yazı</th><th>Okunma</th></tr></thead><tbody data-list="mostread"></tbody></table></div>
+        <h2 class="vh-mini-h" style="margin-top:1.4rem">Bülten gönder</h2>
+        <form class="vhp-form" data-form="digest" novalidate>
+          <div class="vhp-field"><label for="d-subject">Konu</label><input id="d-subject" name="subject" maxlength="120" placeholder="VoltHaber – Ekim 2026"></div>
+          <div class="vhp-field"><label for="d-intro">Giriş metni</label><textarea id="d-intro" name="intro" rows="3" maxlength="1500"></textarea></div>
+          <fieldset><legend>Yazılar (1–10, yalnız yayındakiler)</legend><div data-digest-articles class="vhp-form"></div></fieldset>
+          <div class="vhp-bar"><button type="submit" class="vhp-btn vhp-btn--primary">Bülteni oluştur</button><span class="vhp-muted">Gönderim 20'şerlik gruplar hâlinde, gruplar arasında en az 60 saniye beklenerek yapılır.</span></div>
+        </form>
+        <div class="vhp-table-wrap" style="margin-top:.8rem"><table class="vhp-table"><thead><tr><th>Bülten</th><th>Alıcı</th><th>Gönderilen</th><th>Durum</th><th>İşlem</th></tr></thead><tbody data-list="digests"></tbody></table></div>
+      </section>
+
+      <section class="vhp-panel" id="p-social" role="tabpanel" aria-labelledby="t-social" hidden>
+        <div class="vhp-bar"><label for="soc-article">Yazı</label><select id="soc-article" style="max-width:100%"></select><button type="button" class="vhp-btn vhp-btn--primary" data-act="social">Taslakları üret</button></div>
+        <p class="vhp-muted" data-soc-notice>Taslaklar şablondan üretilir ve hiçbir platformda otomatik paylaşılmaz.</p>
+        <div class="vhp-social" data-social hidden>
+          <div class="vhp-field"><label for="soc-li">LinkedIn gönderisi</label><textarea id="soc-li" rows="10"></textarea><button type="button" class="vhp-btn" data-copy="soc-li">Kopyala</button></div>
+          <div class="vhp-field"><label for="soc-ig">Instagram açıklaması</label><textarea id="soc-ig" rows="10"></textarea><button type="button" class="vhp-btn" data-copy="soc-ig">Kopyala</button></div>
+          <div class="vhp-field"><label for="soc-yt">YouTube Shorts konu ve akış</label><textarea id="soc-yt" rows="10"></textarea><button type="button" class="vhp-btn" data-copy="soc-yt">Kopyala</button></div>
+          <div class="vhp-field"><span class="vhp-muted">Bilgi kartı (1080×1350 PNG)</span><canvas width="1080" height="1350" data-card aria-label="Bilgi kartı önizlemesi" role="img"></canvas><button type="button" class="vhp-btn vhp-btn--accent" data-act="card-png">PNG indir</button></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+            </span>
+          </a>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
+  <script src="../js/voltguard-auth.js?v=0"></script>
+  <script src="../js/vg-account.js?v=0"></script>
+  <script src="../js/hesap-volthaber.js?v=0"></script>
+</body>
+</html>
