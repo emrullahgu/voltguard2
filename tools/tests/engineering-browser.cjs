@@ -158,12 +158,26 @@ async function designSnapshot(page) {
     const header = document.querySelector('.vg-header');
     const exportPanel = document.querySelector('#vg-export');
     const exportBox = exportPanel?.getBoundingClientRect();
+    // Katalog/bilgi sayfaları tema yüzeyini, teknik araçlar açık kâğıt yüzeyini kullanır. Renkleri sayfanın
+    // amaçlanan host tokenlarından çöz; ana sitedeki farklı bir yüzey rolünün RGB değerine zorlamayalım.
+    let expectedBody = null;
+    if (document.body.classList.contains('vg-engineering')) {
+      const tokens = getComputedStyle(document.body), probe = document.createElement('span');
+      probe.hidden = true;
+      probe.style.setProperty('color', 'var(--vg-host-text)', 'important');
+      probe.style.setProperty('background-color', 'var(--vg-host-bg)', 'important');
+      document.body.appendChild(probe);
+      const resolved = getComputedStyle(probe);
+      expectedBody = { color: resolved.color, background: resolved.backgroundColor,
+        textToken: tokens.getPropertyValue('--vg-host-text').trim(), bgToken: tokens.getPropertyValue('--vg-host-bg').trim() };
+      probe.remove();
+    }
     return { headerMarkup: signature('.vg-header'), footerMarkup: signature('.vg-footer'),
       logoMarkup: signature('.vg-header .logo-mark'),
       shell: Object.fromEntries(['.vg-header', '.vg-header__bar', '.vg-header .vg-brand',
         '.vg-header .vg-nav__link', '.vg-header .vg-cta', '.vg-footer', '.vg-footer__h',
         '.vg-footer .vg-cta', '.logo-mark__bolt'].map(selector => [selector, style(selector)])),
-      body: style('body'), heading: style('h1'), primaryAction: style('.hero .primary,#vg-export .vg-primary'),
+      body: style('body'), expectedBody, heading: style('h1'), primaryAction: style('.hero .primary,#vg-export .vg-primary'),
       fontsLoaded: ['Inter', 'Outfit'].every(family => Array.from(document.fonts).some(face => face.family.replace(/["']/g, '') === family && face.status === 'loaded')),
       viewport: innerWidth, width: document.documentElement.scrollWidth,
       h1: document.querySelectorAll('h1').length,
@@ -202,7 +216,9 @@ function checkDesign(state, route, mode = 'desktop') {
   assert.ok(state.footerMarkup === reference.footerMarkup, route + ' shared footer markup');
   assert.ok(state.logoMarkup === reference.logoMarkup, route + ' shared logo markup');
   assert.deepEqual(state.shell, reference.shell, route + ' shell styles match the main site');
-  for (const property of ['font', 'color', 'background']) assert.equal(state.body[property], reference.body[property], route + ' body ' + property);
+  assert.equal(state.body.font, reference.body.font, route + ' body font');
+  assert.ok(state.expectedBody?.textToken && state.expectedBody?.bgToken, route + ' host color tokens are defined');
+  for (const property of ['color', 'background']) assert.equal(state.body[property], state.expectedBody[property], route + ' body ' + property);
   assert.equal(state.heading?.font, reference.heading.font, route + ' heading font');
   assert.ok(state.fontsLoaded, route + ' brand fonts loaded');
   assert.ok(state.mainPresent && state.titleBelowHeader, route + ' main title visible below sticky header');

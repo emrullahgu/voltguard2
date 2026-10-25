@@ -52,10 +52,11 @@ async function main() {
         return /^https?:/.test(url) && !url.startsWith(base + '/') ? route.abort() : route.continue();
       });
       const queue = routes.slice();
+      const captures = [];
       await Promise.all(Array.from({length:3}, async () => {
         while (queue.length) {
-          const page = await context.newPage();
           const route = queue.shift();
+          const page = await context.newPage();
           const item = {route,width,errors:[],csp:[],failures:[]};
           const onError = error => item.errors.push(error.message);
           const onConsole = message => {if(message.type()==='error' && /Content Security Policy|violates.*directive/i.test(message.text())) item.csp.push(message.text());};
@@ -64,8 +65,23 @@ async function main() {
           try {
             const response = await page.goto(base+route, {waitUntil:'load',timeout:30000});
             item.status = response.status();
-            if (/^\/hesap\/(?:panel|projeler|dokumanlar|favoriler|gecmis)\.html$/.test(route)) {
+            if (/^\/hesap\/(?:panel|projeler|dokumanlar)\.html$/.test(route)) {
               await page.waitForURL(url => url.pathname === '/hesap/giris.html', {timeout:15000});
+            }
+            if (/^\/hesap\/(?:favoriler|gecmis)\.html$/.test(route)) {
+              await page.locator('#guest-note').waitFor({state:'visible',timeout:15000});
+              item.guest = await page.evaluate(() => {
+                const auth = window.VG && window.VG.Auth;
+                const visible = el => !!el && !el.hidden && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
+                return {path:location.pathname,authReady:!!auth,signedIn:auth ? auth.isLoggedIn() : null,
+                  identityPresent:auth ? auth.currentUser() != null : null,
+                  guestNavVisible:visible(document.querySelector('[data-vg-guest]')),
+                  memberControlsVisible:[...document.querySelectorAll('[data-vg-member]')].filter(visible).length};
+              });
+              if (item.guest.path !== route || !item.guest.authReady || item.guest.signedIn || item.guest.identityPresent ||
+                  !item.guest.guestNavVisible || item.guest.memberControlsVisible) {
+                throw new Error('Guest favorites/history must stay public without an authenticated identity: '+JSON.stringify(item.guest));
+              }
             }
             await page.evaluate(() => document.fonts.ready);
             await page.waitForTimeout(150);
@@ -82,7 +98,7 @@ async function main() {
                 nodes:issue.nodes.map(node => ({target:node.target,summary:node.failureSummary,html:node.html.slice(0,350)}))})));
             }
             if (['/','/gizlilik.html','/fabrika-cozumleri.html','/hesaplama-araclari/','/voltsim/','/topluluk.html'].includes(route)) {
-              await page.screenshot({path:path.join(output,`${route.replace(/[^a-z0-9]+/gi,'-')||'home'}-${width}.png`),fullPage:route!=='/'});
+              captures.push({route,item});
             }
           } catch (error) { item.errors.push(error.message); }
           page.removeListener('pageerror',onError); page.removeListener('console',onConsole); page.removeListener('response',onResponse);
@@ -91,6 +107,26 @@ async function main() {
           if(results.length%30===0) console.log(`Audited ${results.length}/${routes.length*2} page/viewports`);
         }
       }));
+      // Tall representative screenshots need an isolated compositor surface; capture after concurrent audit pages close.
+      for (const {route,item} of captures) {
+        const page = await context.newPage();
+        try {
+          await page.goto(base+route, {waitUntil:'load',timeout:30000});
+          await page.evaluate(() => document.fonts.ready);
+          await page.waitForTimeout(150);
+          const options = {path:path.join(output,`${route.replace(/[^a-z0-9]+/gi,'-')||'home'}-${width}.png`),fullPage:route!=='/'};
+          try { await page.screenshot(options); }
+          catch (error) {
+            // Preserve a transient Chromium protocol error and retry once; persistent and unrelated errors fail the audit.
+            if (!/Protocol error \(Page\.captureScreenshot\): Unable to capture screenshot/.test(error.message)) throw error;
+            item.screenshotRetry = error.message;
+            console.log(`Retrying transient screenshot capture: ${route} at ${width}px`);
+            await page.waitForTimeout(150);
+            await page.screenshot(options);
+          }
+        } catch (error) { item.errors.push(error.message); }
+        finally { await page.close(); }
+      }
       await context.close();
     }
     const failures = results.filter(item => item.errors.length || item.csp.length || item.failures.length || item.overflow>1 || item.brokenImages?.length || item.accessibility?.length);

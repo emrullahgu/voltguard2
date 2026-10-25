@@ -35,6 +35,42 @@ test('Head initializer sets data-theme before paint from storage, else OS prefer
   assert.ok(read('js/vg-theme-init.js').includes(initInline.trim()), 'js/vg-theme-init.js matches the inline initializer');
 });
 
+test('Shell follows system preference after another tab removes or clears the theme override', () => {
+  const attrs = new Map(), storage = new Map(), docListeners = {}, windowListeners = {}, events = [];
+  const rootEl = { getAttribute: k => attrs.get(k) || null, setAttribute: (k, v) => attrs.set(k, v), hasAttribute: k => attrs.has(k),
+    classList: { add() {}, remove() {} } };
+  const mq = { matches: false, addEventListener: (type, fn) => { mq.onChange = fn; } };
+  const doc = { documentElement: rootEl, readyState: 'complete', getElementById: () => null, querySelectorAll: () => [],
+    addEventListener: (type, fn) => { (docListeners[type] ||= []).push(fn); }, dispatchEvent: e => events.push(e) };
+  const win = { matchMedia: () => mq, addEventListener: (type, fn) => { (windowListeners[type] ||= []).push(fn); } };
+  const context = vm.createContext({ window: win, document: doc,
+    localStorage: { getItem: k => storage.get(k) || null, setItem: (k, v) => storage.set(k, v), removeItem: k => storage.delete(k) },
+    CustomEvent: function (type, opts) { this.type = type; this.detail = opts.detail; }, setTimeout: () => 1, clearTimeout() {} });
+  const shell = read('js/vg-shell.js');
+  vm.runInContext(shell, context);
+  vm.runInContext(shell, context);
+  assert.equal(docListeners.click.length, 1, 'loading the shared script twice adds one toggle handler');
+  const notify = key => windowListeners.storage.forEach(fn => fn({ key }));
+
+  win.VGTheme.set('dark');
+  storage.delete('vg-theme'); notify('vg-theme');
+  assert.equal(win.VGTheme.get(), 'light', 'removing the override discards this tab’s memo');
+  mq.matches = true; mq.onChange();
+  assert.equal(win.VGTheme.get(), 'dark', 'system changes are followed after removal');
+
+  win.VGTheme.set('light');
+  storage.clear(); notify(null);
+  assert.equal(win.VGTheme.get(), 'dark', 'localStorage.clear has a null key and also clears the memo');
+  mq.matches = false; mq.onChange();
+  assert.equal(win.VGTheme.get(), 'light', 'system changes are followed after clear');
+
+  storage.set('vg-theme', 'dark'); notify('vg-theme');
+  assert.equal(win.VGTheme.get(), 'dark', 'another tab’s explicit preference is applied');
+  mq.onChange();
+  assert.equal(win.VGTheme.get(), 'dark', 'an explicit preference still overrides the system');
+  assert.ok(events.some(e => e.type === 'vg:theme' && e.detail.theme === 'light'));
+});
+
 test('Every shell page initializes the theme and none is light-only', () => {
   const skip = new Set(['node_modules', 'tools', '.qa', '.git', '.claude', 'public',
     '.netlify-publish', 'voltguardekleyelim', 'vesikalar', 'VoltGame', 'voltgame']);

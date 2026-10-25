@@ -62,7 +62,9 @@
     if (mq.addEventListener) mq.addEventListener('change', onSys); else if (mq.addListener) mq.addListener(onSys);
   }
   // Başka sekmede değiştirildiyse eşitle
-  window.addEventListener('storage', function (e) { if (e.key === KEY) apply(stored() || system()); });
+  window.addEventListener('storage', function (e) {
+    if (e.key === KEY || e.key === null) { memo = null; apply(stored() || system()); }
+  });
   // bfcache'ten dönüşte güncel seçimi yansıt
   window.addEventListener('pageshow', function (e) { if (e.persisted) apply(stored() || system()); });
   doc.addEventListener('click', function (e) {
