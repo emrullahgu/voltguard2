@@ -26,28 +26,20 @@
   /** Motorun doğal moment–devir eğrisi: motorun kendi moment–kayma fonksiyonu (MO.kloss) örneklenerek. */
   function naturalCurve(s) {
     const m = { Pn: s.Pn, Un: s.Un, eff: s.eff, cos: s.cos, nn: s.nn, poles: Number(s.poles), f: 50, IstIn: s.IstIn, TkTn: s.TkTn, TstTn: s.TstTn };
-    const nom = MO.nominal(m), T = MO.kloss(m, nom), pts = [];
-    for (let i = 0; i <= 80; i++) { const sl = Math.max(1 - i / 80, nom.sn * 0.02); pts.push([nom.ns * (1 - sl), T(sl)]); }
+    const nom = MO.nominal(m), T = MO.kloss(m, nom), pts = [], u = (s.uPct || 100) / 100;
+    for (let i = 0; i <= 80; i++) { const sl = Math.max(1 - i / 80, nom.sn * 0.02); pts.push([nom.ns * (1 - sl), T(sl) * u * u]); }
     return pts;
-  }
-  /** Şebeke gerilimi Un’dan farklıysa moment ∝ U², kalkış akımı ∝ U (CX.voltageEffect) ile motor girdileri ölçeklenir;
-   * yol alma benzetimi yine engine motor.compute/startup ile yapılır. Pompa/fan için kısma–VFD enerji karşılaştırması eklenir. */
-  function effInput(s) {
-    const u = (s.uPct || 100) / 100;
-    if (Math.abs(u - 1) < 1e-6) return s;
-    const ve = CX.voltageEffect(u, { TkTn: s.TkTn, TstTn: s.TstTn === undefined ? 2.2 : s.TstTn, IstIn: s.IstIn });
-    return Object.assign({}, s, { TkTn: ve.TkTn, TstTn: ve.TstTn, IstIn: ve.IstIn });
   }
   /** Rölenin gördüğü akım: Y-Δ'da sargı kolundaysa üçgende hat akımının 1/√3'ü (yıldızda hat akımı = sargı akımı). */
   function relayCurrent(s, L) { return s.method === 'YD' && s.olPos === 'phase' && L.plc && L.plc.K3 ? L.I / Math.sqrt(3) : L.I; }
   function compute(s) {
-    const si = effInput(s);
-    const r = MO.compute(si);
+    // Anma parametreleri korunur; gerilim etkisi eğrilerin genliğine uygulanır.
+    const r = MO.compute(Object.assign({}, s, { uFactor: (s.uPct || 100) / 100 }));
     if (!r.ok) return r;
     const u = (s.uPct || 100) / 100;
-    r.values.natural = naturalCurve(si);
+    r.values.natural = naturalCurve(s);
     r.values.u = u;
-    r.values.IrunU = r.values.Irun * CX.voltageEffect(u, si).runCurrentFactor;
+    r.values.IrunU = r.values.Irun * CX.voltageEffect(u, s).runCurrentFactor;
     if (Math.abs(u - 1) > 1e-6) r.checks.push({ id: 'u', label: 'Şebeke gerilimi', status: Math.abs(u - 1) > 0.1 ? 'fail' : Math.abs(u - 1) > 0.05 ? 'warn' : 'ok', detail: '%' + Math.round(u * 100) + ' Un: moment ×' + fmt(u * u, 2) + ' (∝ U²), kalkış akımı ×' + fmt(u, 2) + ', aynı yükte çalışma akımı ≈ ×' + fmt(1 / u, 2) + '. TS EN 60034-1 A bölgesi ±%5.', ref: 'TS EN 60034-1' });
     if (s.loadType === 'quad') {
       const P100 = s.Pn * s.loadPct / 100;
@@ -919,3 +911,4 @@
     view2d: view2d
   });
 })();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  

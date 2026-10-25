@@ -1,12 +1,16 @@
 /* VoltSim mevzuat ve standart kayıtları.
- * Kaynaklar: mevzuat.gov.tr, resmigazete.gov.tr, epdk.gov.tr, webstore.iec.ch, iso.org, standards.ieee.org (son kontrol 23.10.2026).
+ * Kaynaklar: mevzuat.gov.tr, resmigazete.gov.tr, epdk.gov.tr, webstore.iec.ch, iso.org, standards.ieee.org.
+ * Kayıt alanları: url (resmî kaynak / katalog sayfası), kind (düzenleme türü), rg / version / amendments (sürüm ve değişiklikler),
+ * note + applies (uygulanabilir kapsam ve ilgili modüller), verifiedAt (kaydın resmî kaynakla GERÇEKTEN karşılaştırıldığı tarih, YYYY-AA-GG).
+ * verifiedAt yalnız elle, doğrulama yapıldığında yazılır; derleme/çalışma anında bugünün tarihine çekilmez (calc-identity testi denetler).
+ * null → resmî kaynaktan doğrulanmadı. 2026-10-23 tarihli kayıtlar o gün mevzuat.gov.tr / EPDK / katalog sayfasından açılıp okunmuştur.
  * binding: true → kanun/yönetmelik/kurul kararı (bağlayıcı); false → standart/rehber (atıf yapılmadıkça gönüllü).
  * needsCheck: doğrulanamayan veya ücretli metne bağlı bilgi → arayüzde "Güncel mevzuat doğrulaması gereklidir" uyarısı.
  * Standart metinleri telif korumalıdır; burada yalnızca kısa açıklama bulunur. */
 (function (root, factory) {
   const data = factory();
   if (typeof module === "object" && module.exports) module.exports = data;
-  else { root.VoltSimRegs = data; root.VoltSimRegsChecked = data.checkedText; }
+  else root.VoltSimRegs = data;
 })(typeof self !== "undefined" ? self : this, function () {
   "use strict";
   const list = [
@@ -19,6 +23,7 @@
   "rg": "04.11.1984 / 18565",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=10391&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Başlıca değişiklikler: 30.11.1995/22479 (Madde 57 gerilim düşümü dahil), 25.10.1996/22798, 12.07.1998/23400, 08.12.2000/24254, 16.06.2004/25494 (Madde 18 sayaç/koruma). Lexpera konsolide listesine göre son değişiklik 12.01.2020/31006 (Madde 7, 19, 24). mevzuat.gov.tr metni yalnızca .doc ek olarak sunuyor; madde metinleri bir kamu (MEB) kopyasından okundu.",
   "articles": [
    {
@@ -61,6 +66,7 @@
   "rg": "03.12.2003 / 25305",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=9721&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "applies": [
    "pano",
    "topraklama",
@@ -79,6 +85,7 @@
   "rg": "21.08.2001 / 24500",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=10392&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Konsolide metinde görülen değişiklik: 04.12.2019/30968 (Madde 2 Dayanak).",
   "articles": [
    {
@@ -117,6 +124,7 @@
   "rg": "30.11.2000 / 24246",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=9949&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Konsolide metinde değişiklikler: 08.02.2007/26428, 23.01.2018/30310, 12.01.2020/31006, 11.05.2023/32187.",
   "articles": [
    {
@@ -160,6 +168,7 @@
   "rg": "30.12.2014 / 29221 (mükerrer)",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=20383&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Değişiklikler: 07.11.2015/29525, 25.01.2019/30666, 09.04.2021/31449, 10.05.2021/31480, 09.05.2024/32541, 09.02.2025/32808.",
   "articles": [
    {
@@ -197,6 +206,7 @@
   "rg": "25.04.2013 / 28628",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=18318&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Değişiklikler: 02.05.2014/28988, 23.07.2016/29779, 24.04.2017/30047, 18.02.2022/31754, 04.02.2024/32450, 23.12.2025/33116 (Madde 7 ve EK-III'te değişiklikler; değişiklik gerçektir).",
   "articles": [
    {
@@ -241,6 +251,7 @@
   "rg": "30.03.2013 / 28603",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=6446&MevzuatTur=1&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Konsolide metinde en son işlenen değişiklikler 2025 tarihli 7552 ve 7554 sayılı kanunlarla.",
   "articles": [
    {
@@ -276,6 +287,7 @@
   "rg": "18.05.2005 / 25819",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=5346&MevzuatTur=1&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Konsolide metinde son değişiklikler: 02.05.2024 tarihli 7501 s. Kanun (md. 6), 19.07.2025 tarihli 7554 s. Kanun (Ek Madde 1 eklendi).",
   "articles": [
    {
@@ -300,6 +312,7 @@
   "rg": "12.05.2019 / 30772",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=31502&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Çok sayıda değişiklik; son olanlar 17.12.2024/32755, 25.11.2025/33088, 02.04.2026/33212 (mahsuplaşma, OSB/EB, depolama hükümleri geniş biçimde yenilendi) ve 19.10.2026/33405 (acil durumda uzaktan kontrol, dengeleme talimatına uymayana ödeme yapılmaması, depolama kapasite sınırının kaldırılması).",
   "articles": [
    {
@@ -349,6 +362,7 @@
   "rg": "02.04.2022 / 31797",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=39454&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Değişiklikler: 06.09.2022/31945, 28.07.2023/32262, 09.08.2023/32274, 17.08.2023/32282, 23.10.2024/32701, 23.03.2026/33202 (Madde 5 muafiyetler ve Madde 30, 32 değişti; yeni geçici maddeler).",
   "articles": [
    {
@@ -387,6 +401,7 @@
   "rg": "22.02.2018 / 30340",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=24408&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Elektrikli araç hükümleri 25.03.2021/31434 ile eklendi; sonraki değişiklikler 16.06.2022/31868, 12.08.2023/32277, 27.12.2025/33120 (EV oranlarını değiştirmemiş görünüyor).",
   "articles": [
    {
@@ -420,6 +435,7 @@
   "rg": "02.11.2013 / 28809",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=18985&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Sık değişen yönetmelik; son değişiklikler 25.07.2025/32966, 29.12.2025/33122, 29.04.2026/33238, 19.10.2026/33405.",
   "applies": [
    "ges",
@@ -437,6 +453,7 @@
   "rg": "28.05.2014 / 29013 (mükerrer)",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=19722&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Son değişiklikler: 17.12.2024/32755 (Ek-18 kapsam ve RİTM izleme), 21.01.2025/32789 (Madde 14 ve E.18.4 frekans tepkisi), 29.12.2025/33122.",
   "articles": [
    {
@@ -479,6 +496,7 @@
   "rg": "31.12.2015 / 29579 (Kurul Kararı 5999-3)",
   "url": "https://www.epdk.gov.tr/Detay/Icerik/3-0-1-3/elektrikusul-ve-esaslar",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "EPDK sayfasında 'son hali' olarak yayımlanan Word metni okundu; metinde sonraki değişikliklerin tarih listesi yok, bu nedenle son değişiklik tarihi doğrulanamadı.",
   "articles": [
    {
@@ -517,6 +535,7 @@
   "rg": "20.10.2015 / 29508",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=21189&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Değişiklikler: 12.01.2020/31006, 29.12.2022/32058 (büyük ölçüde yeniden düzenleme), 01.10.2025/33034, 03.10.2026/33389.",
   "articles": [
    {
@@ -550,6 +569,7 @@
   "rg": "24.07.2026 / 33319",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=46220&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "articles": [
    {
     "ref": "Madde 1",
@@ -573,6 +593,7 @@
   "rg": "29.07.2022 / 31907",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=39647&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Rüzgar eşikleri 26.06.2025/32938 değişikliğiyle bugünkü halini aldı; 05.03.2026/33187 değişikliği rüzgar maddelerine dokunmuyor.",
   "articles": [
    {
@@ -607,6 +628,7 @@
   "rg": "19.12.2007 / 26735",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=200712937&MevzuatTur=21&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Son değişiklikler: 04.11.2020/31294, 20.11.2021/31665, 01.07.2025/32943.",
   "articles": [
    {
@@ -644,6 +666,7 @@
   "rg": "18.03.2004 / 25406",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=14362&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Değişiklikler: 12.01.2008/26754, 22.01.2019/30663, 05.10.2024/32683.",
   "articles": [
    {
@@ -674,6 +697,7 @@
   "rg": "20.01.2026 / 33143",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=45051&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "articles": [
    {
     "ref": "Madde 5 (1)",
@@ -701,6 +725,7 @@
   "rg": "07.05.1995 / 22280",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=5244&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Konsolide metinde son değişiklikler 11.12.2019/30975 ve 06.11.2021/31651.",
   "articles": [
    {
@@ -725,6 +750,7 @@
   "rg": "19.02.2020 / 31044",
   "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=34288&MevzuatTur=7&MevzuatTertip=5",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Değişiklikler: 09.04.2021/31449, 13.05.2025/32899.",
   "articles": [
    {
@@ -749,6 +775,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/32338",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "IEC 61439-1:2020 için COR1:2021 ve COR2:2023 yayımlandı.",
   "version": "IEC 61439-1:2020 (Ed.3), IEC 61439-2:2020 (Ed.3)",
   "applies": [
@@ -768,6 +795,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/68454",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Ed.3 (2026-07-23) 2016 baskısının yerini aldı.",
   "version": "IEC 60909-0:2026 (Ed.3); önceki IEC 60909-0:2016",
   "applies": [
@@ -789,6 +817,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/60169",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "IEC 60364-4-41:2005+AMD1:2017 konsolide baskı.",
   "version": "IEC 60364-4-41:2005+AMD1:2017; HD 60364-4-41:2017 (CENELEC sürüm etiketi kontrol edilmeli)",
   "articles": [
@@ -816,6 +845,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/103734",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "IEC tarafında AMD1:2024 yayımlandı (2024-11-22); CENELEC HD karşılığı kontrol edilmeli.",
   "version": "IEC 60364-5-52:2009+AMD1:2024; HD 60364-5-52:2011 (+A11)",
   "applies": [
@@ -835,6 +865,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/65748",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "IEC 60364-7-712:2025 yeni baskı olarak yayımlandı.",
   "version": "IEC 60364-7-712:2025; HD 60364-7-712:2016 (CENELEC'in güncel sürümü kontrol edilmeli)",
   "applies": [
@@ -851,6 +882,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/29958",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "CENELEC'te yeni revizyon projesi 2024'te açıldı.",
   "version": "IEC 60364-7-722:2018 (Ed.2); HD 60364-7-722:2018",
   "applies": [
@@ -867,6 +899,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/66269",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "AMD1:2019 ve COR1:2020.",
   "version": "IEC 60898-1:2015+AMD1:2019 (Ed.2.1)",
   "applies": [
@@ -886,6 +919,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/66277",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Ed.6 (2024), 2016 baskısı ve AMD1:2019'un yerini aldı.",
   "version": "IEC 60947-2:2024 (Ed.6)",
   "applies": [
@@ -919,6 +953,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/67980",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Her ikisinde Ed.4 2024-11-21'de yayımlandı ve 2010 baskılarının yerini aldı.",
   "version": "IEC 61008-1:2024 (Ed.4), IEC 61009-1:2024 (Ed.4)",
   "applies": [
@@ -937,6 +972,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/110893",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "AMD1:2025 (Aralık 2025): ayırma düzenleri, bifasiyal modüller ve ark/PID ile ilgili ekler.",
   "version": "IEC 62548-1:2023+AMD1:2025",
   "applies": [
@@ -953,6 +989,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/63726",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "AMD1:2018.",
   "version": "IEC 62446-1:2016+AMD1:2018",
   "applies": [
@@ -969,6 +1006,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/61345",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "version": "IEC 61215-1:2021 (Ed.2) ve teknolojiye özel 61215-1-x / 61215-2:2021",
   "applies": [
    "ges"
@@ -984,6 +1022,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/59803",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "version": "IEC 61730-1:2023 (Ed.3); IEC 61730-2:2023",
   "applies": [
    "ges"
@@ -999,6 +1038,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/6470",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "IEC 62109-1 Ed.2 (2026) ön sürüm olarak duyuruldu; nihai yayımı doğrulanamadı.",
   "version": "IEC 62109-1:2010, IEC 62109-2:2011",
   "applies": [
@@ -1016,6 +1056,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/588",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "version": "IEC 60076-1:2011 (Ed.3)",
   "applies": [
    "trafo"
@@ -1031,6 +1072,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/34351",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "version": "IEC 60076-7:2018 (Ed.2)",
   "applies": [
    "trafo"
@@ -1045,6 +1087,7 @@
   "issuer": "CENELEC / TSE",
   "binding": false,
   "urlVerified": false,
+  "verifiedAt": null,
   "amendments": "EN 50588-1:2015 ve A1:2016 geri çekildi; yerini EN 50588-1:2017 aldı (ikincil kaynaklar).",
   "version": "EN 50588-1:2017",
   "applies": [
@@ -1061,6 +1104,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/96236",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "AMD1:2024.",
   "version": "IEC 62271-200:2021+AMD1:2024 (Ed.3.1)",
   "applies": [
@@ -1080,6 +1124,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/66264",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "COR1:2023.",
   "version": "IEC 62271-202:2022 (Ed.3)",
   "applies": [
@@ -1098,6 +1143,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/33644",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "COR1:2023.",
   "version": "IEC 61851-1:2017 (Ed.3)",
   "applies": [
@@ -1114,6 +1160,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/86317",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "62196-2 Ed.4 2025-11-25; 62196-3 Ed.3 2026-04-23 (TS 62196-3-1 içeriği Ek AA olarak eklendi).",
   "version": "IEC 62196-2:2025 (Ed.4), IEC 62196-3:2026 (Ed.3)",
   "applies": [
@@ -1130,6 +1177,7 @@
   "binding": false,
   "url": "https://www.iso.org/standard/77845.html",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "ISO 15118-20:2022/Amd 1:2026 (AC DER, MCS, güvenlik); ISO 15118-2'nin yeni baskısı DIS aşamasında.",
   "version": "ISO 15118-20:2022 (+Amd1:2026), ISO 15118-2:2014",
   "applies": [
@@ -1146,6 +1194,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/111042",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "AMD1:2025 ve ISH1:2025.",
   "version": "IEC 61400-1:2019+AMD1:2025 (Ed.4)",
   "applies": [
@@ -1162,6 +1211,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/68499",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "COR1:2025.",
   "version": "IEC 61400-12-1:2022 (Ed.3)",
   "applies": [
@@ -1178,6 +1228,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/29528",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "version": "IEC 61400-21-1:2019 (Ed.1)",
   "applies": [
    "res"
@@ -1193,6 +1244,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/3609",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "COR1:2014.",
   "version": "IEC 60831-1:2014 (Ed.3)",
   "applies": [
@@ -1210,6 +1262,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/26596",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "version": "IEC 61921:2017 (Ed.2)",
   "applies": [
    "komp",
@@ -1225,6 +1278,7 @@
   "issuer": "CENELEC / TSE (TS EN 50160)",
   "binding": false,
   "urlVerified": false,
+  "verifiedAt": null,
   "amendments": "EN 50160:2022/A1:2025; A1 ile YG/çok YG harmonik değerleri (Tablo 8) zorunlu hale geldi.",
   "version": "EN 50160:2022+A1:2025",
   "applies": [
@@ -1285,6 +1339,7 @@
   "binding": false,
   "url": "https://standards.ieee.org/ieee/519/10677/",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Revizyon projesi (P519) 2024'ten beri aktif.",
   "version": "IEEE 519-2022",
   "applies": [
@@ -1305,6 +1360,7 @@
   "binding": false,
   "url": "https://standards.ieee.org/ieee/80/4089/",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "IEEE 80-2013 2024-03-21'de 'Inactive-Reserved' durumuna alındı; yeni revizyon projesi 2025'te onaylandı.",
   "version": "IEEE 80-2013 (son yayımlanmış baskı)",
   "applies": [
@@ -1321,6 +1377,7 @@
   "issuer": "BSI",
   "binding": false,
   "urlVerified": false,
+  "verifiedAt": null,
   "amendments": "BS 7430:2026 31 Mayıs 2026'da yürürlüğe girdi; BS 7430:2011+A1:2015 geri çekildi (ECA ve IHS kayıtları; BSI mağazası doğrulanmalı).",
   "version": "BS 7430:2026",
   "applies": [
@@ -1337,6 +1394,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/74487",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "COR1:2026 (2026-03-16).",
   "version": "IEC 60947-4-1:2023 (Ed.5)",
   "applies": [
@@ -1353,6 +1411,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/89961",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Ed.15 2026-03-13'te 2022 baskısının yerini aldı.",
   "version": "IEC 60034-1:2026 (Ed.15)",
   "applies": [
@@ -1369,6 +1428,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/60140",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "version": "IEC 62040-3:2021 (Ed.3)",
   "applies": [
    "ups"
@@ -1384,6 +1444,7 @@
   "binding": false,
   "url": "https://www.iso.org/standard/68539.html",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Yeni baskı taslak aşamasında (ISO/DIS 8528-1).",
   "version": "ISO 8528-1:2018",
   "applies": [
@@ -1401,6 +1462,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/90494",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Ed.4 2026-04-02'de 2021 baskısının yerini aldı (bypass/izolasyon, kapalı geçişli ATSE, yangın pompası kontrolörleri ekleri).",
   "version": "IEC 60947-6-1:2026 (Ed.4)",
   "applies": [
@@ -1418,6 +1480,7 @@
   "issuer": "CEN / TSE (TS EN 54-2)",
   "binding": false,
   "urlVerified": false,
+  "verifiedAt": null,
   "amendments": "A1:2006 ve AC:1999 ile birlikte geçerli; CPR kapsamında uyumlaştırılmış.",
   "version": "EN 54-2:1997+A1:2006",
   "applies": [
@@ -1433,6 +1496,7 @@
   "issuer": "CEN / TSE (TSE CEN/TS 54-14)",
   "binding": false,
   "urlVerified": false,
+  "verifiedAt": null,
   "amendments": "CEN/TS 54-14:2018, 2004 baskısının yerini aldı.",
   "version": "CEN/TS 54-14:2018",
   "applies": [
@@ -1449,6 +1513,7 @@
   "binding": false,
   "url": "https://webstore.iec.ch/en/publication/68533",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "Ed.4 2025-05; Instruction List (IL) çıkarıldı, UTF-8 dize desteği eklendi.",
   "version": "IEC 61131-3:2025 (Ed.4)",
   "applies": [
@@ -1466,6 +1531,7 @@
   "binding": false,
   "url": "https://www.iso.org/standard/73481.html",
   "urlVerified": true,
+  "verifiedAt": "2026-10-23",
   "amendments": "IEC 62061:2021/AMD1:2024 (2024-03-28).",
   "version": "ISO 13849-1:2023 (Ed.4); IEC 62061:2021+AMD1:2024",
   "applies": [
@@ -1537,7 +1603,7 @@
       version: "IEC 62682 (ANSI/ISA-18.2 temelli; güncel baskı doğrulanmalı)", applies: ["konveyor"], needsCheck: true,
       note: "Alarm yaşam döngüsünü, alarm durumlarını (etkin/onaylanmamış, onaylanmış, normale dönmüş) ve operatör onayını tanımlar." }
   );
-  list.checked = "2026-10-23";
-  list.checkedText = "23 Ekim 2026";
+  // sonradan eklenen kayıtlar resmî katalogdan doğrulanmadı: tarih uydurulmaz
+  list.forEach(r => { if (!("verifiedAt" in r)) r.verifiedAt = null; });
   return list;
 });

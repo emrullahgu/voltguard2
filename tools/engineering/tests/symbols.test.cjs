@@ -8,6 +8,10 @@ test('261 licensed symbols have finite nonempty geometry and safe local artwork'
  assert.equal(library.length,261);assert.equal(library.filter(s=>s.source==='basverdoes').length,74);assert.equal(library.filter(s=>s.source==='upb-lea').length,187);assert.equal(new Set(library.map(s=>s.id)).size,261);
  for(const symbol of library){const box=symbol.viewBox.split(/\s+/).map(Number);assert.equal(box.length,4,symbol.id);assert.ok(box.every(Number.isFinite),symbol.id);assert.ok(box[2]>0&&box[3]>0,symbol.id);assert.ok(symbol.body.length>10,symbol.id);assert.doesNotMatch(symbol.body,/<(?:script|image|foreignObject|iframe)|\bon[a-z]+\s*=|javascript:|href="[^#]/i,symbol.id)}
 });
+test('symbol artwork has unique element IDs and every internal reference resolves inside its own symbol',()=>{
+ for(const symbol of library){const ids=[...symbol.body.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(ids).size,ids.length,symbol.id+' duplicate id');
+  for(const m of symbol.body.matchAll(/(?:href="#|url\(#)([^")]+)/g))assert.ok(ids.includes(m[1]),symbol.id+' → #'+m[1])}
+});
 test('diagram JSON roundtrip keeps nodes, labels and anchored edges',()=>{const state=model(),actual=core.validate(JSON.parse(JSON.stringify(state)),library);assert.equal(JSON.stringify(actual),JSON.stringify(state));assert.equal(actual.nodes[0].label,'R1 · 10 Ω')});
 test('imports reject unknown symbols, duplicate IDs and invalid numeric geometry',()=>{
  for(const mutate of [s=>s.nodes[0].symbol='not-a-symbol',s=>s.nodes[1].id='n1',s=>s.nodes[0].x=NaN,s=>s.nodes[0].x='200',s=>s.nodes[0].y=900,s=>s.nodes[0].rotation=45,s=>s.nodes[0].label='x'.repeat(81)]){const s=model();mutate(s);assert.throws(()=>core.validate(s,library))}

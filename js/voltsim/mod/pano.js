@@ -887,7 +887,7 @@
         const up = mainDev(s, r.values);
         s.circuits.forEach((c, i) => {
           const sv = X.selectivity(up, circDev(c), r.values.Ik3);
-          r.checks.push({ id: 'sel' + i, label: c.name + ': ana şalter ile seçicilik', status: sv.status === 'fail' ? 'warn' : sv.status === 'warn' ? 'info' : sv.status, sel: sv.status, detail: sv.text + (sv.overlapThermal ? ' Termik bölgede bantlar çakışıyor.' : ''), ref: 'TS EN 60947-2 Ek A (yaklaşık)' });
+          r.checks.push({ id: 'sel' + i, label: c.name + ': ana şalter ile seçicilik', status: sv.status === 'fail' || sv.overlapThermal ? 'warn' : sv.status === 'warn' ? 'info' : sv.status, sel: sv.status, detail: sv.text + (sv.overlapThermal ? ' Termik bölgede bantlar çakışıyor.' : ''), ref: 'TS EN 60947-2 Ek A (yaklaşık)' });
         });
         r.assumptions = (r.assumptions || []).concat(['Seçicilik yalnız ani açma eşikleriyle (akım seçiciliği) değerlendirilir; zaman/enerji seçiciliği ve üretici seçicilik tabloları dahil değildir. Zaman–akım bantları standart sınır noktalarının log–log birleştirilmesidir, üretici eğrisi değildir.']);
       }

@@ -40,11 +40,12 @@
   function lockedRotor(Ist) { return { I: Ist, rpm: 0, note: 'Kilitli rotor: I = Ist, devir 0.' }; }
 
   /** Gerilim sapması (u = U/Un). Moment ∝ U² (Tk, Tst); kalkış akımı ∝ U; sabit mil gücünde çalışma akımı ≈ ∝ 1/u
-   * (aktif bileşen yaklaşımı). Girdi katsayıları motor.compute'a ölçeklenmiş olarak verilir. */
+   * (aktif bileşen yaklaşımı). Değerler kırpılmaz: düşük gerilimde Tk/Tn < 1 olabilir (stall: motor devrilir).
+   * Benzetimde ölçekleme motor.compute içinde uFactor ile yapılır. */
   function voltageEffect(u, m) {
     const k2 = u * u;
     return { torqueFactor: k2, startCurrentFactor: u, runCurrentFactor: 1 / u,
-      TkTn: Math.max(1.6, m.TkTn * k2), TstTn: Math.max(0.5, m.TstTn * k2), IstIn: Math.max(3, m.IstIn * u), clamped: m.TkTn * k2 < 1.6 };
+      TkTn: m.TkTn * k2, TstTn: m.TstTn * k2, IstIn: m.IstIn * u, stall: m.TkTn * k2 < 1 };
   }
 
   /** Frekans konvertöründe hız ayar noktası (sp = n/nn, afinite yasaları). Karesel yükte T ∝ sp², P ∝ sp³;

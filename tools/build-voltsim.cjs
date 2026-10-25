@@ -3,16 +3,21 @@
 // VoltSim sayfa üreticisi: voltsim/index.html (tanıtım) ve voltsim/<slug>/index.html (simülasyonlar).
 // Ortak başlık/alt bilgi tools/shell.py ile eklenir: `node tools/build-voltsim.cjs && python tools/shell.py`.
 // Mevzuat paneli js/voltsim/regulations.js verisinden statik HTML olarak üretilir (JS kapalıyken ve arama motorlarında görünür).
+// Hesaplama kimlikleri (js/voltsim/identity.js) her modül sayfasında ve /voltsim/hesap-kimlikleri/ sayfasında statik olarak yer alır.
 const fs = require('node:fs');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
 const root = path.resolve(__dirname, '..');
-const assets = ['css/voltsim.css', 'js/voltsim/core.js', 'js/voltsim/engine.js', 'js/voltsim/regulations.js',
+const assets = ['css/voltsim.css', 'js/voltsim/core.js', 'js/voltsim/engine.js', 'js/voltsim/regulations.js', 'js/voltsim/identity.js',
   ...['calc', 'mod'].flatMap(dir => fs.readdirSync(path.join(root, 'js/voltsim', dir)).filter(f => f.endsWith('.js')).sort().map(f => 'js/voltsim/' + dir + '/' + f))];
 const V = createHash('sha256').update(assets.map(file => fs.readFileSync(path.join(root, file), 'utf8').replace(/\r\n/g, '\n')).join('\n')).digest('hex').slice(0, 12);
 // her dosyanın sürümü kendi içeriğinin SHA-256 özetinden (tools/sync-versions.py ve araclar/ üreticisiyle aynı kural)
 const rev = file => { const f = path.join(root, file.replace(/^\//, '')); return fs.existsSync(f) ? createHash('sha256').update(fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n')).digest('hex').slice(0, 12) : V; }; // CRLF/LF farkı yok sayılır
 const regs = require(path.join(root, 'js/voltsim/regulations.js'));
+const ident = require(path.join(root, 'js/voltsim/identity.js'));
+const engineVersion = require(path.join(root, 'js/voltsim/engine.js')).version;
+const calcConfigVersion = require(path.join(root, 'js/calculator-config.js')).version;
+const trDate = iso => iso ? iso.split('-').reverse().join('.') : '';
 const SITE = 'https://voltguard.com.tr';
 /* Sonuç ekranındaki bağlama özel teklif eylemi (js/voltsim/core.js openQuote → js/vg-quote.js → teklif sihirbazı).
    Anahtarlar api/lib/enquiry.php VG_ENQ_SIM_KINDS ile aynı olmalıdır. */
@@ -199,9 +204,10 @@ function regsSection(id) {
           <div class="vs-reg__top"><span class="vs-reg__kind">${esc(r.kind)}</span>${r.issuer ? `<span class="vs-reg__iss">${esc(r.issuer)}</span>` : ''}</div>
           <strong>${esc(r.name)}</strong>
           ${r.rg ? `<span class="vs-reg__rg">Resmî Gazete ${esc(r.rg)}</span>` : ''}${r.version ? `<span class="vs-reg__rg">${esc(r.version)}</span>` : ''}
-          <p>${esc(r.note)}</p>
+          <p><b>Kapsam:</b> ${esc(r.note)}</p>
           ${arts.length ? `<ul class="vs-reg__arts">${arts.map(a => `<li><b>${esc(a.ref)}</b> ${esc(a.summary)}</li>`).join('')}</ul>` : ''}
           ${r.amendments ? `<p class="vs-reg__am">Değişiklikler: ${esc(r.amendments)}</p>` : ''}
+          <p class="vs-reg__ver">${r.verifiedAt ? `Resmî kaynakla doğrulandı: <time datetime="${r.verifiedAt}">${trDate(r.verifiedAt)}</time>` : 'Resmî kaynaktan doğrulanmadı'}</p>
           ${r.needsCheck ? '<p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>' : ''}
           ${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${r.binding ? 'Resmî kaynak' : 'Katalog sayfası'} ↗</a>` : ''}
         </li>`;
@@ -209,12 +215,41 @@ function regsSection(id) {
   return `<section class="vs-regs" id="mevzuat" aria-labelledby="mevzuat-h">
       <div class="vs-sec-head">
         <h2 id="mevzuat-h">Mevzuat ve teknik standartlar</h2>
-        <p>Bağlayıcı düzenlemeler (kanun, yönetmelik) ile gönüllü standartlar ayrı listelenmiştir. Standartlar bir yönetmelik atıf yaptığında veya sözleşmede istendiğinde bağlayıcı hale gelir. Son kontrol: <time datetime="${regs.checked}">${esc(regs.checkedText)}</time>.</p>
+        <p>Bağlayıcı düzenlemeler (kanun, yönetmelik) ile gönüllü standartlar ayrı listelenmiştir. Standartlar bir yönetmelik atıf yaptığında veya sözleşmede istendiğinde bağlayıcı hale gelir. Doğrulama tarihi her kayıtta ayrı yazılıdır; tarihi olmayan kayıt resmî kaynaktan doğrulanmamıştır.</p>
       </div>
       <div class="vs-regs__cols">
         <div><h3>Bağlayıcı düzenlemeler</h3><ul class="vs-reg-list">${binding.map(item).join('')}</ul></div>
         <div><h3>Standartlar ve rehberler</h3><ul class="vs-reg-list">${std.map(item).join('')}</ul></div>
       </div>
+    </section>`;
+}
+
+/** Hesaplama kimliği gövdesi: amaç, birimli girdi/çıktı, yöntem, varsayım, geçerlilik, veri, kaynak, motor sürümü, testler. */
+function identityBody(e) {
+  const ver = e.engine === 'voltsim' ? `VoltSim motoru ${engineVersion}` : e.engine === 'calculator-config' ? `Hesap yapılandırması ${calcConfigVersion}` : e.engine === 'vg-assess' ? 'VGAssess (js/vg-assess.js)' : 'Araç kaynağı (tools/engineering/src)';
+  const io = rows => `<table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}</tbody></table>`;
+  const ul = (list, code) => `<ul>${list.map(x => `<li>${code ? `<code>${esc(x)}</code>` : esc(x)}</li>`).join('')}</ul>`;
+  return `<p>${esc(e.purpose)}</p>
+          <h4>Girdiler</h4>${io(e.inputs)}
+          <h4>Çıktılar</h4>${io(e.outputs)}
+          <h4>Yöntem / bağıntılar</h4>${ul(e.method, true)}
+          <h4>Varsayımlar</h4>${ul(e.assumptions)}
+          <h4>Geçerlilik sınırları</h4>${ul(e.validity)}
+          <h4>Gerekli katalog / saha verisi</h4>${e.requiredData.length ? ul(e.requiredData.map(d => d.label + ' (' + d.kind + ')' + (d.note ? ' — örnek değerde bırakılırsa sonuç "Varsayımsal"' : ''))) : '<p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>'}
+          <h4>Teknik kaynak</h4>${ul(e.sources)}
+          <p class="vs-id__meta"><span>Hesap motoru: ${esc(ver)}</span><span>Kimlik gözden geçirme: ${esc(e.reviewedWith)}</span><span>Uygulama: ${esc(e.impl.join(', '))}</span><span>Doğrulama testleri: ${esc(e.tests.map(t => t.split('/').pop()).join(', '))}</span></p>`;
+}
+const STATUS_NOTE = 'Sonuç durumları ayrıdır: ' + ident.ORDER.map(c => `“${ident.STATUS[c].label}”`).join(', ') + '. Hiçbiri mevzuata uygunluk veya uygulama onayı anlamına gelmez.';
+function identitySection(id) {
+  const e = ident.byModule(id);
+  if (!e) return '';
+  return `<section class="vs-ident" id="hesap-kimligi" aria-labelledby="ident-h">
+      <div class="vs-sec-head"><h2 id="ident-h">Hesaplama kimliği</h2><p>${esc(e.name)}. ${esc(STATUS_NOTE)} <a href="/voltsim/hesap-kimlikleri/#${e.id}">Tüm hesaplama kimlikleri →</a></p></div>
+      <details class="vs-id"><summary>Yöntem, birimler, varsayımlar ve doğrulama testleri</summary>
+        <div class="vs-id__body">
+          ${identityBody(e)}
+        </div>
+      </details>
     </section>`;
 }
 
@@ -228,7 +263,7 @@ function modulePage(m) {
   const ld = { '@context': 'https://schema.org', '@graph': [crumbLd([['/', 'Ana Sayfa'], ['/voltsim/', 'VoltSim'], [url, m.h1]]),
     { '@type': 'WebApplication', name: m.h1, url: SITE + url, applicationCategory: 'EngineeringApplication', operatingSystem: 'Web', inLanguage: 'tr', isAccessibleForFree: true, description: m.description, publisher: { '@type': 'Organization', name: 'VoltGuard', url: SITE + '/' } }] };
   const quote = QUOTE[m.id];
-  const scripts = ['/js/vendor/three-r128.min.js', '/js/voltsim/engine.js', ...(m.calcs || []).map(c => `/js/voltsim/calc/${c}.js`), `/js/voltsim/calc/${m.id}.js`, '/js/voltsim/regulations.js', ...(quote ? ['/js/vg-quote.js'] : []), '/js/voltsim/core.js', `/js/voltsim/mod/${m.id}.js`]
+  const scripts = ['/js/vendor/three-r128.min.js', '/js/voltsim/engine.js', ...(m.calcs || []).map(c => `/js/voltsim/calc/${c}.js`), `/js/voltsim/calc/${m.id}.js`, '/js/voltsim/regulations.js', '/js/voltsim/identity.js', ...(quote ? ['/js/vg-quote.js'] : []), '/js/voltsim/core.js', `/js/voltsim/mod/${m.id}.js`]
     .map(s => `  <script src="${s}?v=${rev(s)}" defer></script>\n`).join('');
   const ico = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
   return `${head({ title: m.title, description: m.description, url, ld, scripts, image: `/public/voltsim/${m.id}.webp` })}
@@ -241,6 +276,8 @@ function modulePage(m) {
         <p class="vs-eyebrow">VoltSim · ${esc(m.eyebrow)}</p>
         <h1>${esc(m.h1)}</h1>
         <p class="vs-lead">${esc(m.lead)}</p>
+        <button type="button" class="vg-fav" aria-pressed="false" data-vg-fav disabled>${ico('<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>')}<span>Favorilere ekle</span></button>
+        <span class="vg-fav-msg" role="status" aria-live="polite"></span>
       </div>
       <ul class="vs-tags" aria-label="Hesaplama ve analizler">${m.tags.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
     </header>
@@ -260,6 +297,7 @@ function modulePage(m) {
           <button class="vs-tb" type="button" data-vs-act="save">${ico('<path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"/>')}<span>Projeyi kaydet</span></button>
           <button class="vs-tb" type="button" data-vs-act="load">${ico('<path d="M12 15V3m-4 4 4-4 4 4M5 15v6h14v-6"/>')}<span>Projeyi yükle</span></button>
           <input type="file" accept=".json,application/json" data-vs-file hidden>
+          <label class="vs-tb vs-tb--select" title="3D görüntü kalitesi: düşük ayar pil ve eski telefonlar için daha akıcıdır"><span class="sr-only">3D görüntü kalitesi</span><select data-vs-quality><option value="auto">Kalite: Otomatik</option><option value="high">Kalite: Yüksek</option><option value="low">Kalite: Düşük (mobil/pil)</option></select></label>
         </div>
         <p class="vs-scn" data-vs-scenario-desc aria-live="polite"></p>
       </div>
@@ -301,15 +339,17 @@ function modulePage(m) {
           <div class="vs-scroll" data-vs-analysis>
             <div data-vs-ro></div>
             <div class="vs-charts" data-vs-charts></div>
-            <h3 class="vs-sub">Uygunluk ön kontrolü</h3>
-            <p class="vs-small">Model sınırları içindeki ön kontroldür; tasarım doğrulaması veya resmî onay değildir.</p>
+            <h3 class="vs-sub">Sonuç durumu</h3>
+            <div class="vs-status" data-vs-status aria-live="polite"></div>
+            <h3 class="vs-sub">Ön kontroller</h3>
+            <p class="vs-small">Model sınırları içindeki ön kontroldür; tasarım doğrulaması, mevzuata uygunluk belgesi veya uygulama onayı değildir.</p>
             <ul class="vs-checks" data-vs-checks></ul>
             <details class="vs-asm"><summary>Varsayımlar ve bağıntılar</summary><div data-vs-assumptions></div></details>${quote ? `
             <div class="vs-quote">
               <button class="vs-cbtn vs-cbtn--primary" type="button" data-vs-act="quote">${esc(quote)}</button>
               <p class="vs-small">Aktarılacak girdileri ve sonuçları önce size gösteririz; siz onaylayıp teklif formunu göndermedikçe hiçbir değer VoltGuard’a iletilmez.</p>
             </div>` : ''}
-            <a class="vs-jump" href="#mevzuat">Mevzuat ve standartlar ↓</a>
+            <a class="vs-jump" href="#hesap-kimligi">Hesaplama kimliği ↓</a> <a class="vs-jump" href="#mevzuat">Mevzuat ve standartlar ↓</a>
           </div>
         </section>
       </div>
@@ -317,6 +357,8 @@ function modulePage(m) {
     </div>
 
     <p class="vs-disclaimer"><strong>Önemli:</strong> ${DISCLAIMER} Girdileriniz yalnızca tarayıcınızda işlenir; ${quote ? 'siz teklif taslağına ekleyip formu göndermedikçe ' : ''}VoltGuard’a gönderilmez.</p>
+
+    ${identitySection(m.id)}
 
     ${regsSection(m.id)}
 
@@ -404,7 +446,7 @@ function landing() {
       <div class="vs-sec-head"><h2 id="vsl-trust-h">Mühendislik güvenilirliği</h2></div>
       <div class="vsl-trust__grid">
         <article><h3>Görsel değil, hesap önce</h3><p>Formüller 3D sahneden bağımsız, otomatik testlerle doğrulanan fonksiyonlardır. Örneğin 1000 kVA, 400 V trafonun AG akımı 1443 A; 60 kWh bataryada %20→%80 ideal enerji 36 kWh.</p></article>
-        <article><h3>Varsayımlar açık</h3><p>Her sonucun yanında kullanılan bağıntı ve sınırlama yazar. Üretici eğrisi gerektiren konularda (açma süresi, sıcaklık, akü deşarjı) kesin değer uydurulmaz.</p></article>
+        <article><h3>Varsayımlar açık</h3><p>Her sonucun yanında kullanılan bağıntı ve sınırlama yazar. Üretici eğrisi gerektiren konularda (açma süresi, sıcaklık, akü deşarjı) kesin değer uydurulmaz. Her hesabın yöntemi, birimleri ve testleri <a href="/voltsim/hesap-kimlikleri/">Hesaplama Kimlikleri</a> sayfasındadır.</p></article>
         <article><h3>Mevzuat ayrımı</h3><p>Bağlayıcı yönetmelikler ile gönüllü standartlar ayrı gösterilir; doğrulanamayan bilgi “Güncel mevzuat doğrulaması gereklidir” notuyla işaretlenir.</p></article>
       </div>
     </section>
@@ -415,6 +457,47 @@ function landing() {
       <div><h2 id="cta-h">Bu sistemi tesisiniz için projelendirelim.</h2><p>VoltGuard mühendislik ekibiyle projenizi gerçek tesis koşullarına göre değerlendirin.</p></div>
       <div class="vs-cta__btns"><a class="vs-cbtn vs-cbtn--primary" href="/#iletisim">VoltGuard’dan Teklif Al</a><a class="vs-cbtn" href="/sor.html">Mühendislik Desteği Al</a><a class="vs-cbtn" href="/hizmetler/">Hizmetlerimizi İnceleyin</a></div>
     </section>
+  </main>
+  <!--vg:footer--><!--/vg:footer-->
+</body>
+</html>
+`;
+}
+
+function identitiesPage() {
+  const url = '/voltsim/hesap-kimlikleri/';
+  const FAM = [['voltsim', 'VoltSim simülasyonları'], ['hesaplama', 'Hesaplama sayfaları'], ['araclar', 'Mühendislik araçları (araclar/)']];
+  const ld = { '@context': 'https://schema.org', '@graph': [crumbLd([['/', 'Ana Sayfa'], ['/voltsim/', 'VoltSim'], [url, 'Hesaplama Kimlikleri']]),
+    { '@type': 'TechArticle', headline: 'Hesaplama Kimlikleri', url: SITE + url, inLanguage: 'tr', description: 'VoltGuard hesaplarının yöntemi, birimleri, varsayımları, geçerlilik sınırları ve doğrulama testleri.' }] };
+  const statusList = ident.ORDER.map(c => `<li data-code="${c}"><b>${esc(ident.STATUS[c].label)}</b> — ${esc(ident.STATUS[c].desc)}</li>`).join('');
+  const groups = FAM.map(([fam, title]) => {
+    const list = ident.entries.filter(e => e.family === fam);
+    return `<section class="vs-ident" aria-labelledby="fam-${fam}">
+      <h2 id="fam-${fam}">${esc(title)} <small>(${list.length})</small></h2>
+      ${list.map(e => `<details class="vs-id" id="${e.id}"><summary><span>${esc(e.name)}</span> <a href="${e.page}">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          ${identityBody(e)}
+        </div>
+      </details>`).join('\n      ')}
+    </section>`;
+  }).join('\n    ');
+  return `${head({ title: 'Hesaplama Kimlikleri: Yöntem, Birim ve Varsayımlar | VoltGuard', ogTitle: 'Hesaplama Kimlikleri', description: 'VoltSim, hesaplama sayfaları ve mühendislik araçlarındaki her hesabın yöntemi, girdi/çıktı birimleri, varsayımları, geçerlilik sınırları, teknik kaynağı, motor sürümü ve doğrulama testleri.', url, ld })}
+<body class="vs-page doc-shell">
+  <!--vg:header--><!--/vg:header-->
+  <main class="vs-main" id="main" tabindex="-1">
+    <nav class="vs-crumb" aria-label="Sayfa yolu"><a href="/">Ana Sayfa</a><span aria-hidden="true">/</span><a href="/voltsim/">VoltSim</a><span aria-hidden="true">/</span><span aria-current="page">Hesaplama Kimlikleri</span></nav>
+    <header class="vs-head"><div>
+      <p class="vs-eyebrow">VoltGuard · Teknik doğruluk</p>
+      <h1>Hesaplama Kimlikleri</h1>
+      <p class="vs-lead">Her hesabın neyi, hangi yöntemle, hangi varsayımla ve hangi doğruluk sınırı içinde hesapladığı. Kimlikler hesap motoru sürümüne bağlıdır: motor değiştiğinde kimlik yeniden gözden geçirilmeden otomatik testler geçmez. Referans testleri bağımsız el hesabı veya yayımlanmış örnek değerlerle yazılır; fonksiyon kendi çıktısıyla doğrulanmaz.</p>
+    </div></header>
+    <section class="vs-ident" aria-labelledby="st-h">
+      <h2 id="st-h">Sonuç durumları</h2>
+      <ul class="vs-id__status">${statusList}</ul>
+      <p class="vs-small">Durumlar öncelik sırasıyla belirlenir. “Hesaplandı” bir ön hesabın girilen değerlerle tamamlandığını söyler; mevzuata uygunluk veya uygulama onayı değildir.</p>
+    </section>
+    ${groups}
+    <p class="vs-disclaimer"><strong>Önemli:</strong> ${DISCLAIMER}</p>
   </main>
   <!--vg:footer--><!--/vg:footer-->
 </body>
@@ -442,5 +525,6 @@ function writeIfChanged(file, text) {
 let changed = 0;
 if (writeIfChanged('voltsim/index.html', landing())) changed++;
 for (const m of MODULES) if (writeIfChanged(`voltsim/${m.slug}/index.html`, modulePage(m))) changed++;
-console.log(`VoltSim: ${MODULES.length + 1} sayfa üretildi (${changed} değişti). Ardından: python tools/shell.py voltsim`);
+if (writeIfChanged('voltsim/hesap-kimlikleri/index.html', identitiesPage())) changed++;
+console.log(`VoltSim: ${MODULES.length + 2} sayfa üretildi (${changed} değişti). Ardından: python tools/shell.py voltsim`);
 module.exports = { MODULES };

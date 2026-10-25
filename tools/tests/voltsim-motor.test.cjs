@@ -34,7 +34,9 @@ test('gerilim düşümü: moment U², kalkış akımı U, çalışma akımı 1/U
   const v = C.voltageEffect(0.9, { TkTn: 2.8, TstTn: 2.2, IstIn: 7 });
   near(v.torqueFactor, 0.81, 1e-12); near(v.TkTn, 2.268, 1e-9); near(v.TstTn, 1.782, 1e-9); near(v.IstIn, 6.3, 1e-9);
   near(v.runCurrentFactor, 1 / 0.9, 1e-12);
-  assert.equal(C.voltageEffect(0.85, { TkTn: 1.8, TstTn: 2, IstIn: 7 }).TkTn, 1.6, 'Tk/Tn en az 1,6');
+  // kırpma yok: 1,8 × 0,85² = 1,3005 (elle); 1,8 × 0,7² = 0,882 < 1 → devrilme
+  near(C.voltageEffect(0.85, { TkTn: 1.8, TstTn: 2, IstIn: 7 }).TkTn, 1.3005, 1e-9);
+  assert.equal(C.voltageEffect(0.7, { TkTn: 1.8, TstTn: 2, IstIn: 7 }).stall, true);
 });
 
 test('VFD afinite: karesel yükte P ∝ n³', () => {

@@ -149,7 +149,7 @@
 :where(#vg-tool-workspace) #printHead :is(h1,.vg-original-title){font-size:15px}
 :where(#vg-tool-workspace) #printHead p{font-size:10px;color:#333}
 </style>
-<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=98a54d154d91"><script src="/js/vg-shell.js?v=718b19b08a2a" defer></script><script src="/js/vg-metrics.js?v=44aefc57c2b6" defer data-vg-online-only></script><script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=163b13bd09b7"></head>
+<link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=559c615bb841"><script src="/js/vg-shell.js?v=1a6fa8877736" defer></script><script src="/js/vg-metrics.js?v=44aefc57c2b6" defer data-vg-online-only></script><script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer data-vg-online-only></script><meta name="color-scheme" content="light only"><link rel="stylesheet" href="../assets/host-theme.css?v=163b13bd09b7"></head>
 <body data-vg-tool="og-kisa-devre" data-vg-original-author="Baki SONAY" data-vg-original-source="Sonay Enerji" data-vg-title="OG Kısa Devre Simülatörü" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[&quot;voltguard:og-kisa-devre:og_kd_sim_v3&quot;]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
 <header data-vg-no-print class="vg-header doc-header" id="vgHeader">
   <div class="vg-header__bar vg-wrap">
@@ -161,31 +161,95 @@
       </span>
     </a>
     <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+    <button class="vg-theme vg-theme--bar" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
     <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
     <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
       <ul class="vg-nav__list">
-        <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
-        <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
-        <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
-        <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
-        <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
-        <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+        <li class="vg-nav__home"><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
         <li class="vg-dd" data-vg-dd>
-          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
-          <ul class="vg-dd__menu" id="vgDdKaynaklar">
-            <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
-            <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
-            <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
-            <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
-            <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
-            <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
-            <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
-            <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
-            <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
-            <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
-          </ul>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdHizmetler">Hizmetler</button>
+          <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdHizmetler">
+            <div class="vg-dd__cols">
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblTrafo">Trafo ve yüksek gerilim</span>
+                <ul aria-labelledby="vgDdLblTrafo">
+                  <li><a class="vg-dd__link" href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/trafo-bakimi.html">Trafo ve OG Hücre Bakımı</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+                </ul>
+              </div>
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblOlcum">Ölçüm, kontrol ve verimlilik</span>
+                <ul aria-labelledby="vgDdLblOlcum">
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+                </ul>
+              </div>
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblProje">Proje, uygulama ve otomasyon</span>
+                <ul aria-labelledby="vgDdLblProje">
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="vg-dd__foot">
+              <a class="vg-dd__more" href="/hizmetler/" data-vg-match="/hizmetler/">Tüm hizmetler</a>
+              <a class="vg-dd__more" href="/fabrika-cozumleri.html">Fabrikalar için çözümler</a>
+            </div>
+          </div>
         </li>
-        <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+        <li><a class="vg-nav__link" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKurumsal">Kurumsal</button>
+          <div class="vg-dd__menu" id="vgDdKurumsal">
+            <ul>
+              <li><a class="vg-dd__link" href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a class="vg-dd__link" href="/#projeler">Projeler</a></li>
+              <li><a class="vg-dd__link" href="/#referanslar">Referanslarımız</a></li>
+              <li><a class="vg-dd__link" href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a class="vg-dd__link" href="/#haberler">Sahadan Haberler</a></li>
+              <li><a class="vg-dd__link" href="/#iletisim">İletişim</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Teknik Kaynaklar</button>
+          <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdKaynaklar">
+            <div class="vg-dd__cols">
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblHesap">Hesapla ve simüle et</span>
+                <ul aria-labelledby="vgDdLblHesap">
+                  <li><a class="vg-dd__item" href="/hesaplama-araclari/" data-vg-match="/hesaplama/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h8"/></svg></span><span class="vg-dd__txt"><strong>Hesap Araçları</strong><small>Reaktif ceza, kablo kesiti, ücret hesapları</small></span></a></li>
+                  <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+                  <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+                </ul>
+              </div>
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblOgren">Öğren</span>
+                <ul aria-labelledby="vgDdLblOgren">
+                  <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+                  <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+                  <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+                  <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+                </ul>
+              </div>
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblSor">Sor ve paylaş</span>
+                <ul aria-labelledby="vgDdLblSor">
+                  <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+                  <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+                  <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </li>
         <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
       </ul>
       <div class="vg-nav__foot">
@@ -195,6 +259,7 @@
     </nav>
     <div class="vg-actions">
       <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
       <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
       <a class="vg-cta" href="/#iletisim">Teklif Al</a>
     </div>
@@ -262,6 +327,7 @@
         <div class="fld"><label>Uk (%)</label><input id="tUk" value="12"></div>
         <div class="fld"><label>OG Gerilimi (kV)</label><input id="tUog" value="34.5"></div>
       </div>
+      <div class="fld" style="margin-top:8px"><label>Yük (bakır) kaybı Pk (kW) <span class="tag">boş/0 = R ihmal</span></label><input id="tPk" value="" placeholder="Etiket/test raporu"></div>
       <div class="fld" style="margin-top:8px"><label>TM / Kaynak Adı (şablonda görünür)</label><input id="tAd" value="" placeholder="Kaynak / trafo merkezi adı"></div>
       <div class="fld" style="margin-top:8px"><label>Bağlantı Tipi (xtro/xtr1 tablodan)</label><select id="tBag"></select></div>
       <div class="grid2" style="margin-top:8px">
@@ -284,7 +350,7 @@
         <div class="fld"><label>Rn — Nötr Direnci (Ω) <span class="tag">0 = yok</span></label><input id="tRn" value="20"></div>
         <div class="fld"><label>xtro / xtr1 <span class="tag">oto</span></label><input id="tX01" value="1"></div>
       </div>
-      <div class="hint">Rtr ≈ 0 (omik direnç ihmal). Paralel trafolarda x/n alınır; MVA metodunda Sk'lar toplanır. OG (sekonder) çıkışı üçgen olan bağlantılarda trafonun nötrü olmadığından "Trafo nötründen" seçeneği otomatik kilitlenir ve "Topraklama trafosu (zigzak)" zorunlu olur — bu durumda 3 faz / 2 faz arızaya etki olmaz, sıfır bileşen yolu yalnız zigzak X₀ + 3Rn üzerinden kapanır.</div>
+      <div class="hint">Pk girilirse trafo direnci R<sub>T</sub> = Pk/Nn (pu, kendi bazında) hesaba katılır ve X<sub>T</sub> = √(u<sub>k</sub>² − u<sub>R</sub>²) olur (IEC 60909-0); boş bırakılırsa R<sub>T</sub> ≈ 0 kabul edilir (I″k biraz büyük, κ biraz yüksek çıkar). Paralel trafolarda x/n alınır; MVA metodunda Sk'lar toplanır. OG (sekonder) çıkışı üçgen olan bağlantılarda trafonun nötrü olmadığından "Trafo nötründen" seçeneği otomatik kilitlenir ve "Topraklama trafosu (zigzak)" zorunlu olur — bu durumda 3 faz / 2 faz arızaya etki olmaz, sıfır bileşen yolu yalnız zigzak X₀ + 3Rn üzerinden kapanır.</div>
     </div>
   </div>
 
@@ -304,6 +370,7 @@
         <div class="fld"><label>Uk (%)</label><input id="dUk" value="4.5"></div>
         <div class="fld"><label>AG Gerilimi (kV)</label><input id="dUag" value="0.4"></div>
       </div>
+      <div class="fld" style="margin-top:8px"><label>Yük (bakır) kaybı Pk (kW) <span class="tag">boş/0 = R ihmal</span></label><input id="dPk" value="" placeholder="ör. 630 kVA: ≈ 6,5 kW"></div>
       <div class="fld" style="margin-top:8px"><label>Bağlantı Tipi</label><select id="dBag"></select></div>
       <div class="grid2" style="margin-top:8px">
         <div class="fld"><label>xtro / xtr1 <span class="tag">oto</span></label><input id="dX01" value="1"></div>
@@ -788,6 +855,9 @@ function hesapla(){
   const X0tt=num('tX0t');
   $('ttX0Satir').style.display = ttVar?'':'none';
   const NnD=num('dNn')/1000, UkD=num('dUk'), Uag=num('dUag'), x01d=num('dX01');
+  // Trafo yük kaybı (kW): boş/0 → R ihmal. uR = Pk/Sn; uR ≥ uk fiziksel değildir.
+  const optNum = id => { const v = String($(id).value).trim(); return v === '' ? 0 : num(id); };
+  const PkT = optNum('tPk'), PkD = optNum('dPk');
   const t=num('gT'), m=num('gM'), n=num('gN');
   let hatlar;try{hatlar=hatListesi();}catch(error){invalidateResult(error.message);return;}
   const positive=[Nk,UnS,NnT,UkT,Uog,t];
@@ -795,6 +865,8 @@ function hesapla(){
   if(positive.some(v=>!Number.isFinite(v)||v<=0)||UkT>100||nonnegative.some(v=>!Number.isFinite(v)||v<0)||m+n<=0||!Number.isInteger(nTrf)||nTrf<1){
     invalidateResult('Şebeke, trafo ve termik hesap girdilerini kontrol edin. Güç, gerilim, uk ve süre sıfırdan büyük olmalı.');return;
   }
+  if(!Number.isFinite(PkT)||PkT<0||!Number.isFinite(PkD)||PkD<0){invalidateResult('Trafo yük kaybı Pk boş, sıfır veya pozitif olmalı.');return;}
+  if(PkT/(NnT*1000)*100>=UkT||(NnD>0&&PkD/(NnD*1000)*100>=UkD)){invalidateResult('Trafo yük kaybından gelen u_R = Pk/Sn, uk değerinden küçük olmalı; katalog değerlerini kontrol edin.');return;}
   if(ttVar&&(!Number.isFinite(X0tt)||X0tt<=0)){invalidateResult('Topraklama trafosunun sıfır bileşen reaktansı pozitif olmalı.');return;}
   if(NnD>0&&([UkD,Uag,x01d].some(v=>!Number.isFinite(v)||v<=0)||UkD>100)){
     invalidateResult('Dağıtım trafosunun gerilimi, uk ve sıfır bileşen oranı pozitif olmalı.');return;
@@ -818,8 +890,10 @@ function hesapla(){
   const x1s = cOG*BAZ/Nk, x0s = ttVar?0:(x01s*x1s), R1s = rxs*x1s; // IEC 60909: ZQ = c·Un²/S″kQ
   eleman.push({ad:'Şebeke'+(ttVar?' (sıfır bileşen: üçgen sargı ile izole)':''), un:UnS+' kV', R1:R1s,R2:R1s,R0:ttVar?0:R1s, X1:x1s,X2:x1s,X0:x0s, n1:true,n0:true});
   // İndirici trafo (paralel: x/n)
-  const xt1 = (UkT/100)*(BAZ/NnT)/nTrf, xt0 = ttVar?0:(x01t*xt1);
-  eleman.push({ad:(nTrf>1?nTrf+'x ':'')+'İndirici Trafo '+UnS+'/'+Uog+' kV'+(nTrf>1?' (paralel)':''), un:UnS+'/'+Uog, R1:0,R2:0,R0:0, X1:xt1,X2:xt1,X0:xt0, n1:true,n0:true});
+  // zT = uk·(BAZ/Sn), rT = uR·(BAZ/Sn) (uR = Pk/Sn), xT = √(zT² − rT²); paralel n trafo: /n
+  const zt1 = (UkT/100)*(BAZ/NnT)/nTrf, rt1 = (PkT/(NnT*1000))*(BAZ/NnT)/nTrf;
+  const xt1 = Math.sqrt(Math.max(zt1*zt1 - rt1*rt1, 0)), xt0 = ttVar?0:(x01t*xt1), rt0 = ttVar?0:rt1;
+  eleman.push({ad:(nTrf>1?nTrf+'x ':'')+'İndirici Trafo '+UnS+'/'+Uog+' kV'+(nTrf>1?' (paralel)':''), un:UnS+'/'+Uog, R1:rt1,R2:rt1,R0:rt0, X1:xt1,X2:xt1,X0:xt0, n1:true,n0:true});
   // Topraklama trafosu (zigzak): yalnız sıfır bileşende
   if(ttVar){
     const x0tt=X0tt*BAZ/(Uog*Uog);
@@ -835,15 +909,16 @@ function hesapla(){
       R1:h.R*k, R2:h.R*k, R0:h.R0*k, X1:h.X*k, X2:h.X*k, X0:h.X0*k, n1:true,n0:true});
   });
   // Dağıtım trafosu
-  const xd1 = NnD>0 ? (UkD/100)*(BAZ/NnD) : 0, xd0 = x01d*xd1;
+  const zd1 = NnD>0 ? (UkD/100)*(BAZ/NnD) : 0, rd1 = NnD>0 ? (PkD/(NnD*1000))*(BAZ/NnD) : 0;
+  const xd1 = Math.sqrt(Math.max(zd1*zd1 - rd1*rd1, 0)), xd0 = x01d*xd1, rd0 = rd1; // Dyn: Z0T ≈ ZT (R0 ≈ R1)
   const dtVar = NnD>0;
-  if(dtVar) eleman.push({ad:'Dağıtım Trafosu '+Uog+'/'+Uag+' kV — '+fmt(NnD*1000,0)+' kVA', un:Uog+'/'+Uag, R1:0,R2:0,R0:0, X1:xd1,X2:xd1,X0:xd0, n1:false,n0:false, dt:true});
+  if(dtVar) eleman.push({ad:'Dağıtım Trafosu '+Uog+'/'+Uag+' kV — '+fmt(NnD*1000,0)+' kVA', un:Uog+'/'+Uag, R1:rd1,R2:rd1,R0:rd0, X1:xd1,X2:xd1,X0:xd0, n1:false,n0:false, dt:true});
 
   // Nokta 1 toplamları (OG dağıtım trafosu girişi): şebeke+TM+hatlar
   let R1_1=0,X1_1=0,R0_1=0,X0_1=0;
   eleman.forEach(e=>{ if(e.n1){R1_1+=e.R1;X1_1+=e.X1;} if(e.n0){R0_1+=e.R0;X0_1+=e.X0;} });
   // Nokta 2 (0,4 kV bara): + dağıtım trafosu (doğru/ters); sıfır ayrıca ele alınır
-  const R1_2=R1_1, X1_2=X1_1+xd1;
+  const R1_2=R1_1+rd1, X1_2=X1_1+xd1;
 
   /* --- Nokta 1: 3 faz --- */
   const Z1_1=Math.hypot(R1_1,X1_1);
@@ -851,7 +926,7 @@ function hesapla(){
   /* --- Kademeli düğümler (tek hat şeması) --- */
   const kademe=[];
   { // Düğüm 0: OG bara (şebeke + TM trafo)
-    let cr=R1s, cx=x1s+xt1;
+    let cr=R1s+rt1, cx=x1s+xt1;
     let z=Math.hypot(cr,cx);
     kademe.push({ad:'OG Bara', cinsi:'', L:0, R:cr, X:cx, Z:z, Ipu:cOG/z, IkA:(cOG/z)*IbazOG, Sk:cOG*BAZ/z});
     hatlar.forEach(h=>{
@@ -872,12 +947,14 @@ function hesapla(){
   const dBagAd = $('dBag').value;
   const dPrimerUcgen = dBagAd.startsWith('Üçgen');
   let Z0_2R, Z0_2X;
-  if(dPrimerUcgen || !dtVar){ Z0_2R=0; Z0_2X=xd0; }
-  else { Z0_2R=R0_1+3*RnPu; Z0_2X=X0_1+xd0; }
+  if(dPrimerUcgen || !dtVar){ Z0_2R=rd0; Z0_2X=xd0; }
+  else { Z0_2R=R0_1+3*RnPu+rd0; Z0_2X=X0_1+xd0; }
   const Z0_2=Math.hypot(Z0_2R,Z0_2X);
   const k2=Z0_2/Z1_2;
-  const Ik2t_04 = k2<1 ? 3/(1+2*k2)*Ik04 : NaN;
-  const Ik1_04 = Ik04*3/(2+k2);
+  // IEC 60909-0 (Z2 = Z1), karmaşık toplamla: iki faz-toprakta toprak akımı I″kE2E = 3·c/|Z1 + 2·Z0|,
+  // faz-toprakta I″k1 = 3·c/|2·Z1 + Z0| (genlik oranıyla değil; k her değerinde tanımlıdır)
+  const Ik2t_04 = 3*cAG/Math.hypot(R1_2+2*Z0_2R, X1_2+2*Z0_2X)*IbazAG;
+  const Ik1_04 = 3*cAG/Math.hypot(2*R1_2+Z0_2R, 2*X1_2+Z0_2X)*IbazAG;
   /* --- Nokta 1: faz-toprak (tam simetrili bileşenler + basit yaklaşım) --- */
   const ZtR = 2*R1_1 + R0_1 + 3*RnPu;
   const ZtX = 2*X1_1 + X0_1;
@@ -965,19 +1042,15 @@ function hesapla(){
   if(dtVar){
     h+=`<h3 style="color:var(--amber);font-size:13px;margin:10px 0 6px">3.3 — İki Faz-Toprak Arızası (0,4 kV bara)</h3>`;
     h+=`<div class="formula">Z₀ = ${dPrimerUcgen?'j·x<sub>tr0</sub> (primer üçgen — OG sıfır bileşeni izole)':'Z₀(OG)+j·x<sub>tr0</sub>'} = ${fmt(Z0_2,5)} pu &nbsp;|&nbsp; k = Z₀/Z₁ = <b>${fmt(k2,4)}</b> ${k2<1?'&lt; 1':'≥ 1'}</div>`;
-    if(k2<1){
-      h+=`<div class="formula">I″kt = 3/(1+2k) · I″k04 = 3/(1+${fmt(2*k2,4)}) · ${fkA(Ik04)} = <b class="big">${fkA(Ik2t_04)}</b></div>`;
-      h+=`<div class="note">k &lt; 1 → topraktan geçen dengesiz akım 3 fazlı arıza akımından büyüktür; teçhizat seçiminde dikkate alınır.</div>`;
-    } else {
-      h+=`<div class="note">k ≥ 1 → iki faz-toprak arızasında topraktan geçen akım, 3 fazlı arıza akımını aşmaz.</div>`;
-    }
+    h+=`<div class="formula">I″kE2E = 3·c / |Z₁ + 2·Z₀| · I<sub>baz</sub> = 3·${fmt(cAG,2)} / ${fmt(Math.hypot(R1_2+2*Z0_2R, X1_2+2*Z0_2X),5)} pu · ${fA(IbazAG)} = <b class="big">${fkA(Ik2t_04)}</b> (karmaşık toplam, IEC 60909-0)</div>`;
+    h+=`<div class="note">${Ik2t_04>Ik04 ? 'Topraktan geçen akım 3 fazlı arıza akımından büyük (k &lt; 1 eğilimi); teçhizat ve topraklama seçiminde dikkate alınır.' : 'Topraktan geçen akım 3 fazlı arıza akımını aşmıyor (k ≥ 1 eğilimi).'}</div>`;
   }
   h+=`<h3 style="color:var(--amber);font-size:13px;margin:10px 0 6px">3.4 — Faz-Toprak Arızası</h3>`;
   h+=`<div class="formula">N1: Z<sub>t</sub> = Z₁+Z₂+Z₀+3Rn = (${fmt(ZtR,4)}) + j·(${fmt(ZtX,4)}) = ${fmt(Zt,4)} pu</div>`;
   h+=`<div class="formula">I₀ = 1/Z<sub>t</sub> = ${fmt(I0pu,5)} pu → I″k1 = 3·I₀·I<sub>baz</sub> = <b class="big">${fA(Ik1_1)}</b></div>`;
   if(Rn>0) h+=`<div class="note">Basit yaklaşım (yalnız Rn ile): I″k1 ≈ 3/(3·Rn<sub>pu</sub>)·I<sub>baz</sub> = ${fA(Ik1_basit)} — nötr direnci diğer empedanslara baskındır.</div>`;
   if(dtVar){
-    h+=`<div class="formula">N2 (0,4 kV): I″k1 = I″k04 · 3/(2+k) = ${fkA(Ik04)} · 3/${fmt(2+k2,4)} = <b class="big">${fkA(Ik1_04)}</b></div>`;
+    h+=`<div class="formula">N2 (0,4 kV): I″k1 = 3·c / |2·Z₁ + Z₀| · I<sub>baz</sub> = 3·${fmt(cAG,2)} / ${fmt(Math.hypot(2*R1_2+Z0_2R, 2*X1_2+Z0_2X),5)} pu · ${fA(IbazAG)} = <b class="big">${fkA(Ik1_04)}</b></div>`;
     if(dPrimerUcgen) h+=`<div class="note">Dağıtım trafosu giriş sargısı üçgen olduğundan 0,4 kV faz-toprak arızası OG tarafına toprak akımı olarak yansımaz.</div>`;
   }
   h+=`<h3 style="color:var(--amber);font-size:13px;margin:10px 0 6px">3.5 — Asimetrik Darbe Kısa Devre Akımları (ip = κ·√2·I″k3, κ = 1,02 + 0,98·e<sup>−3R/X</sup>)</h3>`;
@@ -1023,7 +1096,7 @@ function hesapla(){
 /* ================= DURUM / KAYIT ================= */
 const LS_KEY='voltguard:og-kisa-devre:og_kd_sim_v3';
 function durumAl(){
-  const ids=['pAd','pTar','tAd','sNk','sUn','sX01','sRX','sCmod','tNn','tUk','tUog','tRn','tX01','tAdet','tTopMod','tX0t','dNn','dUk','dUag','dX01','gT','gM','gN'];
+  const ids=['pAd','pTar','tAd','sNk','sUn','sX01','sRX','sCmod','tNn','tUk','tPk','tUog','tRn','tX01','tAdet','tTopMod','tX0t','dNn','dUk','dPk','dUag','dX01','gT','gM','gN'];
   const st={f:{},tBag:$('tBag').value,dBag:$('dBag').value,hatlar:[]};
   ids.forEach(i=>st.f[i]=$(i).value);
   document.querySelectorAll('#hatList .seg').forEach(seg=>{

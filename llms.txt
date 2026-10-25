@@ -15,7 +15,7 @@ VoltGuard (VoltGuard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirk
 Fabrika, OSB ve işletmeler için Türkiye geneli saha hizmeti (merkez sayfa: https://voltguard.com.tr/hizmetler/):
 - [Trafo (YG) İşletme Sorumluluğu](https://voltguard.com.tr/hizmetler/trafo-isletme-sorumlulugu.html): aylık denetim, manevra, rapor ve işletme kayıtları; EMO 2026 en az ücret tablosu bilgisi ve teklif
 - [Trafo Bakımı ve OG Hücre Bakımı](https://voltguard.com.tr/hizmetler/trafo-bakimi.html): yağ testi, sargı direnci, izolasyon ölçümü ve OG hücre bakımı, raporlu teslim
-- [Trafo Merkezi Kurulumu](https://voltguard.com.tr/hizmetler/trafo-merkezi-kurulumu.html): proje, beton köşk montajı, OG bağlantı, testler ve geçici kabul; anahtar teslim kurulum
+- [Trafo Merkezi Kurulumu ve Güç Artırımı](https://voltguard.com.tr/hizmetler/trafo-merkezi-kurulumu.html): yeni trafo merkezi veya trafo güç artırımı; yük ölçümü, proje, köşk montajı, OG bağlantı, testler ve geçici kabul
 - [Elektrik Tesisatı Periyodik Kontrolü](https://voltguard.com.tr/hizmetler/elektrik-periyodik-kontrol.html): ölçümler, kaçak akım testi ve raporlama
 - [Topraklama ve Paratoner Ölçümü](https://voltguard.com.tr/hizmetler/topraklama-olcumu.html): trafo, fabrika ve GES için raporlu ölçüm, sınır değer yorumu ve iyileştirme
 - [Kompanzasyon Panosu ve Harmonik Filtreli Kompanzasyon](https://voltguard.com.tr/hizmetler/harmonik-filtreli-kompanzasyon.html): harmonik ölçümüne göre reaktörlü kompanzasyon, aktif filtre, devreye alma ve takip

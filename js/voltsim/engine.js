@@ -590,6 +590,7 @@
           pvgis ? 'Aylık üretim: kullanıcının girdiği PVGIS kWh/kWp değerleri (PVGIS kayıpları dahil kabul edilir).' : 'Işınım: Meinel açık gök modeli; bulut etkisi Kasten–Czeplak. Bu bir senaryodur, sahaya özgü kesin üretim değildir.',
           'Düzlem ışınımı: izotropik gök (Liu–Jordan), albedo ' + p.albedo + '.',
           'Hücre sıcaklığı NOCT modeli; güç sıcaklık katsayısı γPmax.',
+          'Sistem kayıpları %' + p.dcLoss + ' (inverter hariç) kullanıcı varsayımıdır; %14 başlangıç değeri PVGIS’in genel varsayılanıdır (orada inverter kaybı dahil), tesise özgü ölçülmüş bir değer değildir. İnverter verimi %' + p.invEff + ' ayrıca uygulanır.',
           'Gölge: sıra arası geometrik gölge, doğrusal kayıp; uyumsuzluk (mismatch) ve bypass diyot etkileri dahil değildir.',
           'Öz tüketim: seçilen tüketim profiline göre saatlik eşleşme; gerçek yük verisi ile değişir.',
           'Ekonomik sonuç kullanıcının girdiği fiyat ve yatırım bedeline dayanır; vergi, finansman ve tarife değişimleri dahil değildir.'
@@ -964,6 +965,8 @@
       const Ic1 = QcEff > 0 ? QcEff * 1e3 / (Math.sqrt(3) * U) : 0;
       const capOver = Ic1 > 0 ? Math.sqrt(Ic1 * Ic1 + sumIc) / Ic1 : 1;
       const checks = [];
+      // çelişkili girdi: hedef mevcut değerin altındaysa P·(tanφ1 − tanφ2) negatiftir; kondansatör gerekmez (negatif kVAr önerilmez)
+      if (cos2 < cos1) checks.push(check('target', 'Hedef cosφ mevcut değerin altında', 'warn', 'Hedef ' + round(cos2, 3) + ' < mevcut ' + round(cos1, 3) + ': ek kondansatör gerekmez (P·(tanφ1 − tanφ2) = ' + round(Qneed, 1) + ' kVAr < 0). Girdileri kontrol edin.'));
       checks.push(check('cos', 'Hedef cosφ', cosNew >= cos2 - 0.005 && Qnet >= 0 ? 'ok' : 'warn', 'cosφ = ' + round(cosNew, 3) + ' (' + state + '), Q_net = ' + round(Qnet, 1) + ' kVAr'));
       const amp = spectrum.filter(s => s.amp > 1.2);
       if (p === 0 && QcEff > 0) checks.push(check('res', 'Paralel rezonans riski', amp.length ? 'fail' : (hPar && [5, 7, 11, 13].some(h => Math.abs(hPar - h) < 1) ? 'warn' : 'info'), 'Rezonans mertebesi h ≈ √(Xc/Xs) = ' + round(hPar, 2) + (amp.length ? '; büyüyen harmonikler: ' + amp.map(s => s.h + '.').join(', ') : '') + '. Harmonikli tesiste ayarlı (detuned) kompanzasyon değerlendirilmelidir.'));
@@ -1118,6 +1121,8 @@
     /** Yol alma benzetimi (Euler). method: DOL | YD | SOFT | VFD */
     function startup(m, method, opt) {
       const nom = nominal(m), T = kloss(m, nom), Ifn = currentModel(m, nom);
+      // Gerilim eğrinin genliğini değiştirir; anma değerlerinden bulunan devrilme kayması aynı kalır.
+      const u = opt.uFactor === undefined ? 1 : opt.uFactor;
       const ws = 2 * Math.PI * nom.ns / 60;
       const J = opt.J, Tl = opt.loadPct / 100 * nom.Tn;
       const pts = [];
@@ -1125,7 +1130,7 @@
       const tYD = opt.tYD || 5;
       for (let i = 0; i < 6000 && t < 40; i++) {
         const s = clamp(1 - w / ws, 1e-4, 1);
-        let Tm = T(s), I = Ifn(s);
+        let Tm = T(s) * u * u, I = Ifn(s) * u;
         if (method === 'YD' && t < tYD) { Tm /= 3; I /= 3; }
         else if (method === 'SOFT') { const lim = opt.softLimit || 3; const k = Math.min(1, lim * nom.In / I); Tm *= k * k; I *= k; }
         else if (method === 'VFD') { // sabit akım sınırlı ivmelenme (V/f), rampa süresi
@@ -1191,6 +1196,9 @@
         TkTn: v.num(input.TkTn, 'Devrilme momenti Tk/Tn', { min: 1.6, max: 4 }),
         TstTn: v.num(input.TstTn === undefined ? 2.2 : input.TstTn, 'Kalkış momenti Tst/Tn', { min: 0.5, max: 4 })
       };
+      // şebeke gerilimi Un'dan farklıysa (u = U/Un): moment ∝ u², kalkış akımı ∝ u. Kloss eğrisi anma
+      // değerlerinden kurulur; startup genliği ölçekler. Tk/Tn'yi önceden ölçeklemek kaymayı değiştirir ve < 1 iken NaN üretir.
+      const u = input.uFactor === undefined ? 1 : v.num(input.uFactor, 'Şebeke gerilimi oranı U/Un', { min: 0.5, max: 1.2 });
       const ns = 120 * 50 / m.poles;
       if (m.nn >= ns) v.errors.push('Anma devri senkron devirden (' + ns + ' d/dk) küçük olmalı.');
       const method = v.oneOf(input.method, 'Yol verme', ['DOL', 'YD', 'SOFT', 'VFD']);
@@ -1199,7 +1207,7 @@
       const olCls = input.olClass || '10';
       const Ir = v.num(input.Ir, 'Termik ayarı', { min: 0.1, max: 2000, unit: 'A' });
       if (!v.errors.length) {
-        const sim = startup(m, method, { J: J, loadPct: loadPct, loadType: input.loadType === 'quad' ? 'quad' : 'const', tYD: input.tYD, ramp: input.ramp, softLimit: input.softLimit });
+        const sim = startup(m, method, { J: J, loadPct: loadPct, loadType: input.loadType === 'quad' ? 'quad' : 'const', tYD: input.tYD, ramp: input.ramp, softLimit: input.softLimit, uFactor: u });
         const nom = sim.nom;
         // Y-Δ'da röle ana kontaktör (K1) kolunda, yani sargı (faz) akımında ise üçgende In/√3 taşır ve ona ayarlanır
         const inPhase = method === 'YD' && input.olPos === 'phase';
@@ -1208,6 +1216,7 @@
         const checks = [];
         checks.push(check('ir', 'Termik ayarı ≈ ' + (inPhase ? 'In/√3 (faz akımı)' : 'In'), Ir >= Iref * 0.95 && Ir <= Iref * 1.1 ? 'ok' : 'warn', (inPhase ? 'Röle sargı kolunda: In/√3 = ' + round(Iref, 1) + ' A' : 'In = ' + round(nom.In, 1) + ' A' + (method === 'YD' ? ' (röle hat akımında)' : '')) + ', ayar ' + Ir + ' A'));
         checks.push(check('start', 'Yol alma', sim.stalled || !sim.tStart ? 'fail' : sim.tStart > 10 ? 'warn' : 'ok', sim.tStart ? 'Yol alma ≈ ' + round(sim.tStart, 1) + ' s, tepe akım ≈ ' + round(sim.Imax, 0) + ' A' : 'Motor yük momentini yenemedi (devrilme/yetersiz moment).'));
+        if (m.TkTn * u * u < 1) checks.push(check('tk', 'Devrilme momenti (gerilim etkisi)', 'fail', 'Tk/Tn = ' + round(m.TkTn, 2) + ' × ' + round(u * u, 3) + ' = ' + round(m.TkTn * u * u, 2) + ' < 1: motor anma yükünü taşıyamaz, devrilir.'));
         checks.push(check('ol', 'Aşırı yük rölesi (çalışma)', overloadAssessment(olCls, Ir, Irun).trips ? 'warn' : 'ok', overloadAssessment(olCls, Ir, Irun).text, 'TS EN IEC 60947-4-1'));
         if (method === 'YD') {
           const tY = input.tYD || 5, before = sim.pts.filter(p => p.t < tY);
@@ -1307,12 +1316,13 @@
       const upsInput = Pcrit / etaInv; // kW, akü şarjı hariç
       const genLoadKW = upsInput + Pother;
       const genLoadKVA = upsInput / 0.95 + Pother / pfOther;
-      const genPct = genLoadKVA / genKVA * 100;
+      // jeneratör seti kVA'da cosφ 0,8 ile anma değerlidir: kW sınırı kVA·0,8 (ISO 8528-1). Yüklenme ikisinin büyüğüdür.
+      const genPct = Math.max(genLoadKVA / genKVA, genLoadKW / (genKVA * 0.8)) * 100;
       const hours = fuel > 0 ? tank / (fuel * genLoadKW) : Infinity;
       const checks = [];
       checks.push(check('ups', 'UPS yüklenmesi', upsLoad <= 80 ? 'ok' : upsLoad <= 100 ? 'warn' : 'fail', '%' + round(upsLoad, 0) + ' (kVA ve kW sınırının büyüğü)', 'IEC 62040-3'));
       checks.push(check('bridge', 'Akü süresi ≥ jeneratör devreye girme', rt * 60 >= tGap * 3 ? 'ok' : rt * 60 >= tGap ? 'warn' : 'fail', 'Yedekleme ≈ ' + round(rt, 1) + ' dk; devreye girme ' + tGap + ' s'));
-      checks.push(check('gen', 'Jeneratör yüklenmesi', genPct <= 80 ? 'ok' : genPct <= 100 ? 'warn' : 'fail', '%' + round(genPct, 0) + ' (' + round(genLoadKVA, 0) + ' kVA / ' + genKVA + ' kVA). Akü şarj gücü ve UPS doğrultucu harmonikleri için üretici boyutlandırma önerisi esastır.', 'ISO 8528'));
+      checks.push(check('gen', 'Jeneratör yüklenmesi', genPct <= 80 ? 'ok' : genPct <= 100 ? 'warn' : 'fail', '%' + round(genPct, 0) + ' (' + round(genLoadKVA, 0) + ' kVA / ' + genKVA + ' kVA; ' + round(genLoadKW, 0) + ' kW / ' + round(genKVA * 0.8, 0) + ' kWe — büyüğü). Akü şarj gücü ve UPS doğrultucu harmonikleri için üretici boyutlandırma önerisi esastır.', 'ISO 8528'));
       checks.push(check('ats', 'ATS kilitleme', 'info', 'Açık geçiş (break-before-make): şebeke ve jeneratör kesicileri elektriksel ve mekanik kilitli; senkron paralel çalışma bu modelde yoktur.', 'TS EN 60947-6-1'));
       return result(v, { Scrit: Scrit, upsLoad: upsLoad, Vbat: Vbat, runtime: rt, genLoadKW: genLoadKW, genLoadKVA: genLoadKVA, genPct: genPct, fuelHours: hours, Ebat: Vbat * Ah * strings / 1000 }, checks, {
         assumptions: [
@@ -1389,12 +1399,10 @@
   })();
 
   return {
-    version: '2026.10.23',
+    version: '2026.10.24',
     SQRT3: SQRT3, C: C, clamp: clamp, round: round, Validator: Validator,
     threePhaseCurrent: threePhaseCurrent, currentFromS: currentFromS, singlePhaseCurrent: singlePhaseCurrent, powerTriangle: powerTriangle,
     FUSE_GATES: FUSE_GATES, FUSE_SIZES: FUSE_SIZES, fuseAssessment: fuseAssessment, fuseI2: fuseI2, fuseConvTime: fuseConvTime,
     cableIz: cableIz, CABLE_SIZES: CABLE_SIZES, INSTALL_METHODS: INSTALL_METHODS, breakerAssessment: breakerAssessment, rcdAssessment: rcdAssessment,
     sourceImpedance: sourceImpedance, generatorImpedance: generatorImpedance, cableImpedance: cableImpedance, shortCircuit3: shortCircuit3, shortCircuit1Min: shortCircuit1Min,
-    pano: pano, ges: ges, trafo: trafo, sarj: sarj, res: res, komp: komp, topraklama: topraklama, motor: motor, ups: ups, yangin: yangin
-  };
-});
+    pano: pano, ges: ges, trafo: trafo, sarj: sarj, res: res, k

@@ -195,7 +195,8 @@
     const sag = sagDivider({ U_kV: v.num(input.mvU_kV, 'OG gerilimi', { min: 1, max: 40, unit: 'kV' }), Sk_MVA: v.num(input.mvSk_MVA, 'OG bara kısa devre gücü', { min: 10, max: 5000, unit: 'MVA' }), xr: 10,
       r_ohm_km: v.num(input.line_r, 'Hat direnci', { min: 0.01, max: 2, unit: 'Ω/km' }), x_ohm_km: v.num(input.line_x, 'Hat reaktansı', { min: 0.05, max: 1, unit: 'Ω/km' }), L_km: v.num(input.faultKm, 'Arıza uzaklığı', { min: 0, max: 60, unit: 'km' }) });
     const tSag = v.num(input.sagMs, 'Arıza temizleme süresi', { min: 10, max: 60000, unit: 'ms' });
-    const motor = motorStartDip({ U_LL: U, P_kW: v.num(input.motorKW, 'Motor gücü', { min: 0.5, max: 3000, unit: 'kW' }), eff: 0.94, cos: 0.86, kStart: v.num(input.kStart, 'Yol alma akımı', { min: 1, max: 9, unit: '×In' }), Sk_kVA: net.Ssc });
+    const kStart = v.num(input.kStart, 'Yol alma akımı', { min: 1, max: 9, unit: '×In' });
+    const motor = motorStartDip({ U_LL: U, P_kW: v.num(input.motorKW, 'Motor gücü', { min: 0.5, max: 3000, unit: 'kW' }), eff: 0.94, cos: 0.86, kStart: kStart, Sk_kVA: net.Ssc });
     const ev = input.event === 'motor' ? { u: motor.u, t: v.num(input.motorMs, 'Yol alma süresi', { min: 50, max: 30000, unit: 'ms' }), src: 'motor' }
       : input.event === 'swell' ? { u: v.num(input.swellPct, 'Yükselme', { min: 100, max: 180, unit: '%' }), t: tSag, src: 'swell' }
         : input.event === 'interruption' ? { u: 0, t: tSag, src: 'kesinti' } : { u: sag.u, t: tSag, src: 'og' };
@@ -204,7 +205,7 @@
     const drops = contactorDrops(ev.u, ev.t, thr, dly);
     const Uab = v.num(input.Uab, 'Uab', { min: 300, max: 500, unit: 'V' }), Ubc = v.num(input.Ubc, 'Ubc', { min: 300, max: 500, unit: 'V' }), Uca = v.num(input.Uca, 'Uca', { min: 300, max: 500, unit: 'V' });
     if (v.errors.length) return { ok: false, errors: v.errors, warnings: [], checks: [], values: {} };
-    const VUF = vuf(Uab, Ubc, Uca), LVUR = lvur(Uab, Ubc, Uca), I2 = motorI2(VUF, input.kStart || 6);
+    const VUF = vuf(Uab, Ubc, Uca), LVUR = lvur(Uab, Ubc, Uca), I2 = motorI2(VUF, kStart);
     const checks = [];
     const f = (x, d) => E.round(x, d === undefined ? 1 : d).toString().replace('.', ',');
     const ck = (id, label, status, detail, ref) => checks.push({ id: id, label: label, status: status, detail: detail, ref: ref || null });

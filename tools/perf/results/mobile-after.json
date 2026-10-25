@@ -1,0 +1,685 @@
+{
+  "env": {
+    "kind": "laboratuvar (sentetik) — saha/RUM verisi değildir",
+    "date": "2026-10-24T15:07:04.752Z",
+    "root": "C:\\Users\\emrul\\AppData\\Local\\Temp\\claude\\C--Users-emrul-OneDrive-Masa-st--voltguardcomtr\\4d70f154-1f88-4fdc-81fa-e99b729a5b57\\scratchpad\\base",
+    "compare": "C:\\Users\\emrul\\AppData\\Local\\Temp\\claude\\C--Users-emrul-OneDrive-Masa-st--voltguardcomtr\\4d70f154-1f88-4fdc-81fa-e99b729a5b57\\scratchpad\\after",
+    "order": "ABBA dönüşümlü",
+    "profile": "mobile",
+    "profileLabel": "Slow 4G (562,5 ms RTT, ~1,44 Mbit/s), CPU 4×, 412×823 @1,75x",
+    "runs": 7,
+    "browser": "Chrome 155.0.8059.85 headless",
+    "gpu": "ANGLE (Intel, Intel(R) Arc(TM) 140T GPU (16GB) (0x00007D51) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "playwright": "1.62.1",
+    "node": "v24.18.0",
+    "machine": "Intel(R) Core(TM) Ultra 7 255H × 16, 31 GB, Windows_NT 10.0.26300",
+    "server": "yerel Node statik sunucu, Brotli q5, önbellek kapalı (soğuk yükleme)"
+  },
+  "pages": {
+    "home": {
+      "url": "/",
+      "lcp": 3484,
+      "fcp": 2684,
+      "cls": 0,
+      "clsLoad": 0,
+      "inp": 160,
+      "tbt": 901,
+      "ttfb": 5,
+      "load": 5641,
+      "ready3d": null,
+      "heapMB": 2.4,
+      "requests": 56,
+      "kb": {
+        "total": 346.6,
+        "html": 25.4,
+        "css": 42.2,
+        "font": 82.1,
+        "img": 134,
+        "js": 60.8,
+        "other": 2.1
+      },
+      "requestsInitial": 42,
+      "kbInitial": {
+        "total": 346.6,
+        "html": 25.4,
+        "css": 42.2,
+        "font": 82.1,
+        "img": 134,
+        "js": 60.8,
+        "other": 2.1
+      },
+      "lcpRange": [
+        2960,
+        4492
+      ],
+      "lcpEl": "IMG.hero__bg-img TrafoBakimYuksekGerilim-hero-480.webp",
+      "three": [],
+      "worstInp": [
+        "keydown 280ms (gecikme 88, işlem 10)",
+        "pointerdown 248ms (gecikme 23, işlem 2)",
+        "pointerdown 296ms (gecikme 102, işlem 22)",
+        "keyup 160ms (gecikme 74, işlem 0)",
+        "pointerdown 136ms (gecikme 30, işlem 2)",
+        "pointerdown 136ms (gecikme 6, işlem 1)",
+        "pointerdown 160ms (gecikme 39, işlem 15)"
+      ],
+      "shifts": [],
+      "largest": [
+        [
+          "/fonts/inter-latin.d14332d6.woff2",
+          36933
+        ],
+        [
+          "/fonts/outfit-latin.dbb71e00.woff2",
+          32185
+        ],
+        [
+          "/",
+          25976
+        ],
+        [
+          "/public/opt/TrafoBakimYuksekGerilim-hero-480.webp",
+          23643
+        ],
+        [
+          "/css/style.css",
+          19138
+        ],
+        [
+          "/public/opt/referanslar/ege-240.webp",
+          18913
+        ]
+      ],
+      "interactions": [
+        "click #vgBurger",
+        "click #vgBurger",
+        "click #emiToggle",
+        "fill #dtHours",
+        "select #service"
+      ],
+      "errors": [],
+      "machineCpuBusyPct": 59
+    },
+    "hizmet": {
+      "url": "/hizmetler/elektrik-projesi.html",
+      "lcp": 2608,
+      "fcp": 2384,
+      "cls": 0,
+      "clsLoad": 0,
+      "inp": 104,
+      "tbt": 110,
+      "ttfb": 3,
+      "load": 3439,
+      "ready3d": null,
+      "heapMB": 1,
+      "requests": 18,
+      "kb": {
+        "total": 218.4,
+        "html": 14.7,
+        "css": 22.5,
+        "font": 82.1,
+        "img": 84.9,
+        "js": 12.2,
+        "other": 1.9
+      },
+      "requestsInitial": 18,
+      "kbInitial": {
+        "total": 218.4,
+        "html": 14.7,
+        "css": 22.5,
+        "font": 82.1,
+        "img": 84.9,
+        "js": 12.2,
+        "other": 1.9
+      },
+      "lcpRange": [
+        2316,
+        3252
+      ],
+      "lcpEl": "P.svc-lead",
+      "three": [],
+      "worstInp": [
+        "pointerdown 120ms (gecikme 32, işlem 6)",
+        "pointerdown 80ms (gecikme 1, işlem 3)",
+        "pointerdown 120ms (gecikme 15, işlem 6)",
+        "pointerdown 104ms (gecikme 8, işlem 6)",
+        "pointerdown 80ms (gecikme 8, işlem 5)",
+        "pointerdown 136ms (gecikme 7, işlem 7)",
+        "pointerdown 96ms (gecikme 1, işlem 3)"
+      ],
+      "shifts": [],
+      "largest": [
+        [
+          "/public/opt/ekip-ruhu-pano-kurulumu-960.webp",
+          69273
+        ],
+        [
+          "/fonts/inter-latin.d14332d6.woff2",
+          36933
+        ],
+        [
+          "/fonts/outfit-latin.dbb71e00.woff2",
+          32185
+        ],
+        [
+          "/public/voltguard-logo.webp",
+          17643
+        ],
+        [
+          "/hizmetler/elektrik-projesi.html",
+          15090
+        ],
+        [
+          "/fonts/fa-solid-900.c5da1f4b.woff2",
+          13701
+        ]
+      ],
+      "interactions": [
+        "click #vgBurger",
+        "click #vgBurger",
+        "click summary"
+      ],
+      "errors": [],
+      "machineCpuBusyPct": 54
+    },
+    "araclar": {
+      "url": "/araclar/",
+      "lcp": 4472,
+      "fcp": 4472,
+      "cls": 0,
+      "clsLoad": 0,
+      "inp": 136,
+      "tbt": 1009,
+      "ttfb": 5,
+      "load": 5093,
+      "ready3d": null,
+      "heapMB": 1,
+      "requests": 21,
+      "kb": {
+        "total": 172.4,
+        "html": 14.1,
+        "css": 21.3,
+        "js": 28,
+        "img": 17.2,
+        "font": 91.9,
+        "other": 0
+      },
+      "requestsInitial": 20,
+      "kbInitial": {
+        "total": 172.4,
+        "html": 14.1,
+        "css": 21.3,
+        "js": 28,
+        "img": 17.2,
+        "font": 91.9,
+        "other": 0
+      },
+      "lcpRange": [
+        2808,
+        5580
+      ],
+      "lcpEl": "H1",
+      "three": [],
+      "worstInp": [
+        "pointerdown 136ms (gecikme 23, işlem 2)",
+        "pointerdown 192ms (gecikme 22, işlem 11)",
+        "pointerdown 168ms (gecikme 12, işlem 4)",
+        "pointerdown 488ms (gecikme 29, işlem 12)",
+        "pointerdown 88ms (gecikme 6, işlem 2)",
+        "pointerdown 88ms (gecikme 9, işlem 5)",
+        "pointerdown 128ms (gecikme 14, işlem 8)"
+      ],
+      "shifts": [],
+      "largest": [
+        [
+          "/fonts/inter-latin.d14332d6.woff2",
+          36933
+        ],
+        [
+          "/fonts/outfit-latin.dbb71e00.woff2",
+          32185
+        ],
+        [
+          "/js/voltguard-auth.js",
+          17674
+        ],
+        [
+          "/public/voltguard-logo.webp",
+          17643
+        ],
+        [
+          "/araclar/",
+          14412
+        ],
+        [
+          "/fonts/fa-solid-900.c5da1f4b.woff2",
+          13701
+        ]
+      ],
+      "interactions": [
+        "click button.filter[data-filter=\"ges\"]",
+        "type #tool-search",
+        "click button.filter[data-filter=\"all\"]"
+      ],
+      "errors": [],
+      "machineCpuBusyPct": 64
+    },
+    "iletisim": {
+      "url": "/#iletisim",
+      "lcp": 3172,
+      "fcp": 2512,
+      "cls": 0,
+      "clsLoad": 0,
+      "inp": 136,
+      "tbt": 493,
+      "ttfb": 5,
+      "load": 4827,
+      "ready3d": null,
+      "heapMB": 1.9,
+      "requests": 73,
+      "kb": {
+        "total": 346.6,
+        "html": 25.4,
+        "css": 42.2,
+        "font": 82.1,
+        "img": 134,
+        "js": 60.8,
+        "other": 2.1,
+        "media": 0
+      },
+      "requestsInitial": 73,
+      "kbInitial": {
+        "total": 346.6,
+        "html": 25.4,
+        "css": 42.2,
+        "font": 82.1,
+        "img": 134,
+        "js": 60.8,
+        "other": 2.1,
+        "media": 0
+      },
+      "lcpRange": [
+        2508,
+        3276
+      ],
+      "lcpEl": "IMG.hero__bg-img TrafoBakimYuksekGerilim-hero-480.webp",
+      "three": [],
+      "worstInp": [
+        "pointerdown 256ms (gecikme 18, işlem 170)",
+        "pointerdown 96ms (gecikme 7, işlem 2)",
+        "keyup 96ms (gecikme 19, işlem 0)",
+        "keyup 192ms (gecikme 4, işlem 0)",
+        "keyup 144ms (gecikme 28, işlem 0)",
+        "pointerdown 72ms (gecikme 19, işlem 5)",
+        "keydown 136ms (gecikme 17, işlem 1)"
+      ],
+      "shifts": [],
+      "largest": [
+        [
+          "/fonts/inter-latin.d14332d6.woff2",
+          36933
+        ],
+        [
+          "/fonts/outfit-latin.dbb71e00.woff2",
+          32185
+        ],
+        [
+          "/",
+          25976
+        ],
+        [
+          "/public/opt/TrafoBakimYuksekGerilim-hero-480.webp",
+          23643
+        ],
+        [
+          "/css/style.css",
+          19138
+        ],
+        [
+          "/public/opt/referanslar/ege-240.webp",
+          18913
+        ]
+      ],
+      "interactions": [
+        "type #name",
+        "select #service",
+        "type #message"
+      ],
+      "errors": [],
+      "machineCpuBusyPct": 56
+    },
+    "teklif": {
+      "url": "/teklif-araclari.html",
+      "lcp": 2856,
+      "fcp": 2856,
+      "cls": 0,
+      "clsLoad": 0,
+      "inp": 184,
+      "tbt": 77,
+      "ttfb": 5,
+      "load": 3250,
+      "ready3d": null,
+      "heapMB": 1.3,
+      "requests": 20,
+      "kb": {
+        "total": 220,
+        "html": 30.8,
+        "css": 32.7,
+        "font": 91.9,
+        "img": 17.2,
+        "js": 45.6,
+        "other": 1.9
+      },
+      "requestsInitial": 20,
+      "kbInitial": {
+        "total": 220,
+        "html": 30.8,
+        "css": 32.7,
+        "font": 91.9,
+        "img": 17.2,
+        "js": 45.6,
+        "other": 1.9
+      },
+      "lcpRange": [
+        2340,
+        3212
+      ],
+      "lcpEl": "P",
+      "three": [],
+      "worstInp": [
+        "pointerdown 88ms (gecikme 4, işlem 1)",
+        "pointerdown 184ms (gecikme 7, işlem 1)",
+        "pointerdown 376ms (gecikme 12, işlem 4)",
+        "pointerdown 264ms (gecikme 13, işlem 5)",
+        "pointerdown 136ms (gecikme 5, işlem 5)",
+        "pointerdown 104ms (gecikme 3, işlem 1)",
+        "pointerdown 288ms (gecikme 21, işlem 11)"
+      ],
+      "shifts": [],
+      "largest": [
+        [
+          "/fonts/inter-latin.d14332d6.woff2",
+          36933
+        ],
+        [
+          "/fonts/outfit-latin.dbb71e00.woff2",
+          32185
+        ],
+        [
+          "/teklif-araclari.html",
+          31557
+        ],
+        [
+          "/css/style.css",
+          19138
+        ],
+        [
+          "/js/voltguard-auth.js",
+          17674
+        ],
+        [
+          "/public/voltguard-logo.webp",
+          17643
+        ]
+      ],
+      "interactions": [
+        "type #ges-bill",
+        "click #trafo-tab",
+        "click #ges-tab"
+      ],
+      "errors": [],
+      "machineCpuBusyPct": 56
+    },
+    "voltsim": {
+      "url": "/voltsim/",
+      "lcp": 2504,
+      "fcp": 2488,
+      "cls": 0,
+      "clsLoad": 0,
+      "inp": 56,
+      "tbt": 3,
+      "ttfb": 3,
+      "load": 2875,
+      "ready3d": null,
+      "heapMB": 1,
+      "requests": 24,
+      "kb": {
+        "total": 317.5,
+        "html": 9.5,
+        "css": 21.8,
+        "font": 91.9,
+        "img": 184.6,
+        "js": 9.6,
+        "other": 0
+      },
+      "requestsInitial": 24,
+      "kbInitial": {
+        "total": 317.5,
+        "html": 9.5,
+        "css": 21.8,
+        "font": 91.9,
+        "img": 184.6,
+        "js": 9.6,
+        "other": 0
+      },
+      "lcpRange": [
+        2412,
+        3100
+      ],
+      "lcpEl": "IMG hero.webp?v=d35f620cdb80",
+      "three": [],
+      "worstInp": [
+        "pointerdown 96ms (gecikme 14, işlem 5)",
+        "pointerdown 56ms (gecikme 2, işlem 2)",
+        "pointerdown 64ms (gecikme 3, işlem 3)",
+        "pointerdown 24ms (gecikme 2, işlem 1)",
+        "pointerdown 40ms (gecikme 2, işlem 1)",
+        "pointerdown 120ms (gecikme 17, işlem 6)",
+        "pointerdown 40ms (gecikme 3, işlem 1)"
+      ],
+      "shifts": [],
+      "largest": [
+        [
+          "/public/voltsim/ges.webp",
+          37171
+        ],
+        [
+          "/fonts/inter-latin.d14332d6.woff2",
+          36933
+        ],
+        [
+          "/fonts/outfit-latin.dbb71e00.woff2",
+          32185
+        ],
+        [
+          "/public/voltsim/hero.webp",
+          30963
+        ],
+        [
+          "/public/voltsim/komp.webp",
+          26315
+        ],
+        [
+          "/public/voltsim/trafo.webp",
+          24403
+        ]
+      ],
+      "interactions": [
+        "click #vgBurger",
+        "click #vgBurger"
+      ],
+      "errors": [],
+      "machineCpuBusyPct": 22
+    },
+    "vs:trafo": {
+      "url": "/voltsim/trafo/",
+      "lcp": 2752,
+      "fcp": 2752,
+      "cls": 0,
+      "clsLoad": 0,
+      "inp": 168,
+      "tbt": 1039,
+      "ttfb": 3,
+      "load": 5821,
+      "ready3d": 4807,
+      "heapMB": 10.5,
+      "requests": 26,
+      "kb": {
+        "total": 420.3,
+        "html": 13.3,
+        "font": 82.1,
+        "css": 21.8,
+        "img": 17.2,
+        "js": 283.9,
+        "other": 1.9
+      },
+      "requestsInitial": 25,
+      "kbInitial": {
+        "total": 420.3,
+        "html": 13.3,
+        "font": 82.1,
+        "css": 21.8,
+        "img": 17.2,
+        "js": 283.9,
+        "other": 1.9
+      },
+      "lcpRange": [
+        2488,
+        3072
+      ],
+      "lcpEl": "P.vs-lead",
+      "three": [
+        "three-r128.min.js"
+      ],
+      "worstInp": [
+        "keydown 64ms (gecikme 9, işlem 35)",
+        "keydown 168ms (gecikme 28, işlem 65)",
+        "keyup 336ms (gecikme 20, işlem 0)",
+        "keydown 224ms (gecikme 30, işlem 82)",
+        "keydown 64ms (gecikme 5, işlem 27)",
+        "keyup 400ms (gecikme 27, işlem 0)",
+        "pointerdown 168ms (gecikme 47, işlem 9)"
+      ],
+      "shifts": [],
+      "largest": [
+        [
+          "/js/vendor/three-r128.min.js",
+          137066
+        ],
+        [
+          "/fonts/inter-latin.d14332d6.woff2",
+          36933
+        ],
+        [
+          "/js/voltsim/core.js",
+          36284
+        ],
+        [
+          "/js/voltsim/engine.js",
+          35431
+        ],
+        [
+          "/fonts/outfit-latin.dbb71e00.woff2",
+          32185
+        ],
+        [
+          "/js/voltsim/mod/trafo.js",
+          29581
+        ]
+      ],
+      "interactions": [
+        "click [data-vs-act=\"pause\"]",
+        "click [data-vs-act=\"pause\"]",
+        "select [data-vs-scenario]",
+        "click [data-vs-act=\"labels\"]"
+      ],
+      "errors": [],
+      "machineCpuBusyPct": 23
+    },
+    "vs:yangin-algilama": {
+      "url": "/voltsim/yangin-algilama/",
+      "lcp": 3060,
+      "fcp": 3060,
+      "cls": 0,
+      "clsLoad": 0,
+      "inp": 536,
+      "tbt": 2642,
+      "ttfb": 4,
+      "load": 6916,
+      "ready3d": 5440,
+      "heapMB": 11.4,
+      "requests": 25,
+      "kb": {
+        "total": 422.7,
+        "html": 10.9,
+        "font": 82.1,
+        "css": 21.8,
+        "img": 17.2,
+        "js": 288.7,
+        "other": 1.9
+      },
+      "requestsInitial": 25,
+      "kbInitial": {
+        "total": 422.7,
+        "html": 10.9,
+        "font": 82.1,
+        "css": 21.8,
+        "img": 17.2,
+        "js": 288.7,
+        "other": 1.9
+      },
+      "lcpRange": [
+        2564,
+        3708
+      ],
+      "lcpEl": "P.vs-lead",
+      "three": [
+        "three-r128.min.js"
+      ],
+      "worstInp": [
+        "pointerdown 88ms (gecikme 22, işlem 3)",
+        "keyup 512ms (gecikme 62, işlem 0)",
+        "keyup 536ms (gecikme 57, işlem 0)",
+        "pointerdown 152ms (gecikme 52, işlem 3)",
+        "keyup 664ms (gecikme 102, işlem 0)",
+        "keyup 1064ms (gecikme 62, işlem 0)",
+        "keyup 1096ms (gecikme 63, işlem 0)"
+      ],
+      "shifts": [],
+      "largest": [
+        [
+          "/js/vendor/three-r128.min.js",
+          137066
+        ],
+        [
+          "/fonts/inter-latin.d14332d6.woff2",
+          36933
+        ],
+        [
+          "/js/voltsim/core.js",
+          36284
+        ],
+        [
+          "/js/voltsim/engine.js",
+          35431
+        ],
+        [
+          "/js/voltsim/mod/yangin.js",
+          34658
+        ],
+        [
+          "/fonts/outfit-latin.dbb71e00.woff2",
+          32185
+        ]
+      ],
+      "interactions": [
+        "click [data-vs-act=\"pause\"]",
+        "click [data-vs-act=\"pause\"]",
+        "select [data-vs-scenario]",
+        "click [data-vs-act=\"labels\"]"
+      ],
+      "errors": [],
+      "machineCpuBusyPct": 64
+    }
+  }
+}

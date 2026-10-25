@@ -39,11 +39,17 @@
     const Hv = hsys(sy, Qt), Pv = power(Qt, Hv, etaAt(p, Qt, s), o.etaM, o.etaVfd, o.rho);
     return { Qt: Qt, s: s, Hp: th.Hp, Hvalve: th.Hv, Hsys: Hv, feasible: th.feasible && s <= 1 + 1e-9, Pthrottle: Pt.Pel, Pvfd: Pv.Pel, Ph: Pv.Ph, etaThrottle: etaAt(p, Qt, 1), etaVfd: etaAt(p, Qt, s) };
   }
-  /** Yıllık enerji: profile [[debi oranı (Qd'ye göre), saat], …]. */
+  /** Yıllık enerji: profile [[debi oranı (Qd'ye göre), saat], …]. Tam hızda bile sağlanamayan (feasible = false)
+   * satırlar enerjiye katılmaz ve infeasible listesinde döner (fiziksel olmayan işletme noktası tasarrufu bozmasın). */
   function annual(p, sy, Qd, profile, o) {
     let Et = 0, Ev = 0, h = 0;
-    const rows = profile.map(r => { const c = compare(p, sy, Qd * r[0], o); Et += c.Pthrottle * r[1]; Ev += c.Pvfd * r[1]; h += r[1]; return Object.assign({ frac: r[0], hours: r[1] }, c); });
-    return { rows: rows, Ethrottle: Et, Evfd: Ev, saving: Et - Ev, hours: h };
+    const infeasible = [];
+    const rows = profile.map((r, i) => {
+      const c = compare(p, sy, Qd * r[0], o);
+      if (c.feasible) { Et += c.Pthrottle * r[1]; Ev += c.Pvfd * r[1]; h += r[1]; } else infeasible.push(i);
+      return Object.assign({ frac: r[0], hours: r[1] }, c);
+    });
+    return { rows: rows, Ethrottle: Et, Evfd: Ev, saving: Et - Ev, hours: h, infeasible: infeasible };
   }
   const AFFINITY = { Q: s => s, H: s => s * s, P: s => s * s * s };
 
@@ -83,6 +89,7 @@
     ck('bep', 'VFD ile BEP’e yakınlık', bepRatio >= 0.95 ? 'ok' : bepRatio >= 0.85 ? 'warn' : 'fail', 'η = ' + f(cmp.etaVfd * 100, 1) + ' % (en iyi ' + f(p.etaMax * 100, 1) + ' %). Uzun süre BEP’ten uzakta çalışma titreşim ve yatak ömrünü etkiler.', 'Üretici pompa eğrisi esastır');
     if (Hst > 0) ck('static', 'Statik basma yüksekliği', sMin > 0.6 ? 'warn' : 'info', 'Hst = ' + f(Hst) + ' m: ' + f(sMin * 100, 0) + ' % hızın altında debi sıfırdır. Statik yük yüksekse VFD tasarrufu afinite yasasının (P ∝ n³) verdiğinden azdır.');
     if (cmp.s < 0.3 && cmp.feasible) ck('minspeed', 'Düşük hız', 'warn', 'Hız %30’un altında: motor soğutması (kendinden fanlı) ve minimum debi sınırı üreticiden kontrol edilmeli.');
+    if (year.infeasible.length) ck('profile', 'İşletme profili', 'warn', 'Profil satırı ' + year.infeasible.map(i => i + 1).join(', ') + ': bu debi tam hızda bile sağlanamıyor; yıllık enerji ve tasarrufa katılmadı (' + f(year.hours, 0) + ' sa hesaba girdi).');
     ck('pay', 'Geri ödeme (basit)', payback <= 3 ? 'ok' : payback <= 6 ? 'info' : 'warn', 'Yıllık tasarruf ' + f(year.saving, 0) + ' kWh × ' + f(tariff, 2) + ' TL/kWh = ' + f(savingTL, 0) + ' TL · yatırım ' + f(cost, 0) + ' TL → ' + (isFinite(payback) ? f(payback, 1) + ' yıl' : 'tasarruf yok') + '. Faiz, bakım ve fiyat artışı dahil değildir.');
     return {
       ok: true, errors: [], warnings: [], checks: checks,

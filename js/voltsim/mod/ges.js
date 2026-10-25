@@ -263,7 +263,7 @@
         { type: 'note', text: 'Bağlantı noktasında çift yönlü sayaç dağıtım şirketi tarafından belirlenir. Kontroller ön değerlendirmedir; IEC 62548-1, TS HD 60364-7-712 ve üretici talimatları esastır.' }
       ] },
       { title: 'Kayıplar ve sıcaklık', items: [
-        { type: 'range', key: 'dcLoss', label: 'Sistem kayıpları', min: 0, max: 30, step: 0.5, unit: '%', digits: 1, help: 'Kablo, uyumsuzluk, LID vb. toplamı. %14, PVGIS’in varsayılan sistem kaybıdır.' },
+        { type: 'range', key: 'dcLoss', label: 'Sistem kayıpları (inverter hariç)', min: 0, max: 30, step: 0.5, unit: '%', digits: 1, help: 'Varsayımdır, tesise göre değiştirin: kablo, uyumsuzluk, LID/LeTID, kullanılabilirlik toplamı. Başlangıçtaki %14, PVGIS’in genel varsayılanıdır ve her tesis için geçerli fiziksel bir değer değildir; PVGIS’te inverter kaybı da bu %14’e dahildir, burada inverter verimi ayrıca uygulanır.' },
         { type: 'range', key: 'soiling', label: 'Kirlenme (toz, kuş pisliği)', min: 0, max: 20, step: 0.5, unit: '%', digits: 1, help: '3D’de modüllere tıklayıp “Panelleri temizle” ile sıfırlanır.' },
         { type: 'range', key: 'Tmin', label: 'Tasarım en düşük ortam sıcaklığı', min: -40, max: 20, step: 1, unit: '°C', help: 'Soğuk ve açık sabahta string Voc en yüksek değerini alır.' },
         { type: 'range', key: 'Tmax', label: 'Tasarım en yüksek ortam sıcaklığı', min: 15, max: 55, step: 1, unit: '°C' }

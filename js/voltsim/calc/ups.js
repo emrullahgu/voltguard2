@@ -155,11 +155,13 @@
    * yükten bağımsız sabit alınır (gerçekte düşük yükte l/kWh artar). tankPerSet: her setin kaide deposu (l).
    * o: { nGen, genKVA, loadKVA, loadKW, fuel (l/kWh), tankPerSet } */
   function genParallel(o) {
+    // setler kVA'da cosφ 0,8 ile anmalıdır (ISO 8528-1): kW sınırı 0,8·kVA; yüklenme kVA ve kW oranlarının büyüğüdür
     const n = Math.max(1, o.nGen), total = n * o.genKVA;
-    const Nreq = Math.max(1, Math.ceil(o.loadKVA / o.genKVA - 1e-9));
+    const per = sets => Math.max(o.loadKVA / (sets * o.genKVA), (o.loadKW || 0) / (sets * o.genKVA * 0.8));
+    const Nreq = Math.max(1, Math.ceil(per(1) - 1e-9));
     const perSetKW = o.loadKW / n, fuelPerSet = perSetKW * o.fuel;
-    return { n: n, totalKVA: total, perSetPct: o.loadKVA / total * 100, Nreq: Nreq, n1: n - 1 >= Nreq,
-      afterLossPct: n > 1 ? o.loadKVA / ((n - 1) * o.genKVA) * 100 : Infinity,
+    return { n: n, totalKVA: total, perSetPct: per(n) * 100, Nreq: Nreq, n1: n - 1 >= Nreq,
+      afterLossPct: n > 1 ? per(n - 1) * 100 : Infinity,
       perSetKW: perSetKW, fuelPerSet: fuelPerSet, fuelTotal: fuelPerSet * n, hours: fuelPerSet > 0 ? o.tankPerSet / fuelPerSet : Infinity };
   }
   /** Senkronizasyon kontrolü (ANSI 25 benzeri izin). Sınırlar TEMSİLİDİR: ΔU ≤ %5, Δf ≤ 0,2 Hz, Δφ ≤ 10°.

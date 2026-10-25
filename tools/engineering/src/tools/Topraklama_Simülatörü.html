@@ -557,11 +557,11 @@ function render1(){
   ]);
   let vh="";const lim=mode==="T"?ust:ust;
   const what=mode==="T"?"Dokunma":"Adım";
-  if(Usrc<=lim)vh=verdict("ok","GÜVENLİ",`${what} gerilimi ${fmt(Usrc,0)} V, izin verilen ${fmt(lim,0)} V'un altında. Vücut akımı ${fmt(bc.I*1000,0)} mA; Çizelge-C.1'e göre ${fmt(tF,2)} s için sınır yaklaşık ${fmt(ibp,0)} mA.`);
+  if(Usrc<=lim)vh=verdict("ok","SINIR İÇİNDE",`${what} gerilimi ${fmt(Usrc,0)} V, izin verilen ${fmt(lim,0)} V'un altında. Vücut akımı ${fmt(bc.I*1000,0)} mA; Çizelge-C.1'e göre ${fmt(tF,2)} s için sınır yaklaşık ${fmt(ibp,0)} mA.`);
   else vh=verdict("bad","TEHLİKELİ",`${what} gerilimi ${fmt(Usrc,0)} V, izin verilen ${fmt(lim,0)} V'u aşıyor. Çözüm yolları: U<sub>E</sub>'yi düşürmek (daha küçük R<sub>E</sub>), korumayı hızlandırmak (t<sub>F</sub>), potansiyel düzenleyici halka veya çakıl tabakası.`);
   if(mode==="S")vh+=`<div class="hint" style="margin-top:6px">Adım gerilimi için yönetmelik ayrı bir sınır vermez (Madde 5-d1). Burada karşılaştırma için dokunma sınırı kullanıldı; gerçek sınır biraz daha yüksektir. En büyük adım gerilimi x ≈ ${fmt(sx,1)} m'de ${fmt(smax,0)} V.</div>`;
   if(mode==="T"&&xin>2.5)vh+=`<div class="hint" style="margin-top:6px">x = ${fmt(xin,1)} m'den gövdeye uzanılamaz; dokunma hesabı 2,5 m ile yapıldı. Uzaktaki durumu görmek için adım gerilimine geçin.</div>`;
-  $("#v1").innerHTML=vh;setBar("t1",Usrc<=lim?"ok":"bad",Usrc<=lim?"GÜVENLİ":"TEHLİKELİ",`${mode==="T"?"U<sub>T</sub>":"U<sub>S</sub>"} ${fmt(Usrc,0)} V · sınır ${fmt(lim,0)} V`);
+  $("#v1").innerHTML=vh;setBar("t1",Usrc<=lim?"ok":"bad",Usrc<=lim?"SINIR İÇİNDE":"TEHLİKELİ",`${mode==="T"?"U<sub>T</sub>":"U<sub>S</sub>"} ${fmt(Usrc,0)} V · sınır ${fmt(lim,0)} V`);
   draw1(m,mode,xs,Usrc,Usrc>lim,bc.I);
 }
 function draw1(m,mode,xs,Usrc,danger,bI){
@@ -798,7 +798,7 @@ function render4(){
   else if(path==="c2")vh=verdict("ok","UYGUN · C2",`${IEf} = ${fmtA(IE)} A → U<sub>E</sub> = ${fmt(UE,0)} V ≤ 2·U<sub>Tp</sub> = ${fmt(2*ut,0)} V. Ek önlem gerekmez. Potansiyel sürüklenmeleri yine ayrıca kontrol edilmelidir.`);
   else if(path==="m")vh=verdict("warn","M ÖNLEMLERİ",`U<sub>E</sub> = ${fmt(UE,0)} V, 2·U<sub>Tp</sub>'yi aşıyor ama 4·U<sub>Tp</sub> = ${fmt(4*ut,0)} V'un altında. Ek-D'de tanımlı M önlemleri alınırsa tesis uygun sayılır.`);
   else vh=verdict("bad","İSPAT GEREKLİ",`U<sub>E</sub> = ${fmt(UE,0)} V, 4·U<sub>Tp</sub> = ${fmt(4*ut,0)} V'u aşıyor. Dokunma gerilimi ölçme veya hesapla belirlenmeli ve U<sub>T</sub> ≤ U<sub>Tp</sub> ispatlanmalıdır (Madde 7, Ek-G). Alternatif: Z<sub>E</sub>'yi düşürmek, korumayı hızlandırmak.`);
-  $("#v4").innerHTML=vh;setBar("t4",{c1:"ok",c2:"ok",m:"warn",p:"bad"}[path],{c1:"UYGUN",c2:"UYGUN",m:"M ÖNLEMİ",p:"İSPAT"}[path],`U<sub>E</sub> ${fmt(UE,0)} V · 2U<sub>Tp</sub> ${fmt(2*ut,0)} V`);
+  $("#v4").innerHTML=vh;setBar("t4",{c1:"ok",c2:"ok",m:"warn",p:"bad"}[path],{c1:"SAĞLANIYOR",c2:"SAĞLANIYOR",m:"M ÖNLEMİ",p:"İSPAT"}[path],`U<sub>E</sub> ${fmt(UE,0)} V · 2U<sub>Tp</sub> ${fmt(2*ut,0)} V`);
   // M önlemleri
   const longF=t>5;let mh=`<h3>Ek-D · Çizelge-D.1: bu tesis için ek önlemler</h3>`;
   if(path==="m"){const wall=loc==="ic"?["M1","Bina dış duvarları (birini seçin)",["M1.1 Dış duvar iletken olmayan malzemeden (tuğla, ahşap) veya dışarıdan dokunulabilen topraklı metal yok","M1.2 Duvarın ~1 m dışında, en çok 0,5 m derinlikte, tesise bağlı yüzeysel topraklayıcı","M1.3 Basılan yerin yalıtımı: ≥100 mm çakıl, mıcırlı asfalt veya ≥1×1 m, 2,5 mm yalıtkan örtü (yandan dokunmada 1,25 m genişlik)"]]:["M2","Dış çitler (birini seçin, kapılarda M2.4 ayrıca)",["M2.1 İletken olmayan veya plastik kaplı örgü tel çit","M2.2 Çitin 1 m dışında, en çok 0,5 m derinlikte, çite bağlı yüzeysel topraklayıcı","M2.3 Basılan yerin M1.3'e göre yalıtılması ve çitin topraklanması","M2.4 Topraklamaya bağlı kapıların açılma bölgesinde potansiyel düzenleme veya yalıtım; ayrı topraklı çitte kapı ile çit arasında ≥2,5 m ayrım"]];
@@ -887,19 +887,19 @@ function render5(){
   $("#h5").textContent={TN:"TN-C-S sistem · hata akımı koruma iletkeninden döner",TT:"TT sistem · hata akımı topraktan döner",IT:"IT sistem · ilk arızada akım çok küçüktür"}[sys];
   if(sys==="TN"){
     if(isRCD){const dn=+V("a_dn");const RA=V("a_RA");st=[{k:"I<sub>Δn</sub>",v:fmt(dn*1000,0),u:"mA"},{k:"Z<sub>s</sub> sınırı (U<sub>0</sub>/I<sub>Δn</sub>)",v:fmt(U0/dn,0),u:"Ω",hl:1}];
-      vh=verdict("ok","UYGUN",`TN-S bölümünde RCD ile Z<sub>s</sub>·I<sub>Δn</sub> ≤ U<sub>0</sub> koşulu pratikte her zaman sağlanır (Z<sub>s</sub> ≤ ${fmt(U0/dn,0)} Ω). Dikkat: TN-C sisteminde RCD kullanılmaz; RCD'nin yük tarafında PEN bulunmamalıdır (Madde 8-a3.8).`);
+      vh=verdict("ok","SAĞLANIYOR",`TN-S bölümünde RCD ile Z<sub>s</sub>·I<sub>Δn</sub> ≤ U<sub>0</sub> koşulu pratikte her zaman sağlanır (Z<sub>s</sub> ≤ ${fmt(U0/dn,0)} Ω). Dikkat: TN-C sisteminde RCD kullanılmaz; RCD'nin yük tarafında PEN bulunmamalıdır (Madde 8-a3.8).`);
     }else{
       const needT=V("a_circ")==="son"?(TAB2[U0]||0.4):5;const ia=Ia5(dev,In,needT);
       const th=V("a_th"),kf=1+0.00393*(80-th),Zs=V("a_Zs"),Zc=Zs*kf,Zmax=U0/ia.Ia,Ik=U0/Zc;const m=+V("a_pe");const UT=U0*m/(1+m)*0.8;
       st=[{k:"Gerekli açma süresi",v:fmt(needT,1),u:"s"},{k:"Açma akımı I<sub>a</sub>",v:fmtA(ia.Ia),u:"A"},{k:"İzin verilen Z<sub>s</sub>",v:fmt(Zmax,3),u:"Ω",hl:1},{k:"Z<sub>s</sub> (80 °C, ×"+fmt(kf,2)+")",v:fmt(Zc,3),u:"Ω"},{k:"Hata akımı I<sub>k</sub>",v:fmtA(Ik),u:"A"},{k:"Dokunma ger. (tahmini)",v:"≈"+fmt(UT,0),u:"V"}];
       if(!isFinite(ia.Ia))vh=verdict("warn","VERİ YOK",ia.src+". Üretici eğrisi kullanılmalıdır.");
-      else if(Zc<=Zmax)vh=verdict("ok","UYGUN",`Z<sub>s</sub>·I<sub>a</sub> = ${fmt(Zc,3)}·${fmtA(ia.Ia)} = ${fmt(Zc*ia.Ia,0)} V ≤ U<sub>0</sub> = ${U0} V. Hata akımı ${fmtA(Ik)} A, koruma ${fmt(needT,1)} s içinde açar (${ia.src}).`);
-      else vh=verdict("bad","UYGUN DEĞİL",`Z<sub>s</sub>·I<sub>a</sub> = ${fmt(Zc*ia.Ia,0)} V &gt; ${U0} V. Hata akımı (${fmtA(Ik)} A) korumayı zamanında açtırmaya yetmiyor. Çözümler: daha büyük kesit veya kısa hat (Z<sub>s</sub>↓), daha küçük I<sub>n</sub> / B tipi, RCD ya da tamamlayıcı potansiyel dengeleme (Madde 8-a3.6).`);
+      else if(Zc<=Zmax)vh=verdict("ok","SAĞLANIYOR",`Z<sub>s</sub>·I<sub>a</sub> = ${fmt(Zc,3)}·${fmtA(ia.Ia)} = ${fmt(Zc*ia.Ia,0)} V ≤ U<sub>0</sub> = ${U0} V. Hata akımı ${fmtA(Ik)} A, koruma ${fmt(needT,1)} s içinde açar (${ia.src}).`);
+      else vh=verdict("bad","SAĞLANMIYOR",`Z<sub>s</sub>·I<sub>a</sub> = ${fmt(Zc*ia.Ia,0)} V &gt; ${U0} V. Hata akımı (${fmtA(Ik)} A) korumayı zamanında açtırmaya yetmiyor. Çözümler: daha büyük kesit veya kısa hat (Z<sub>s</sub>↓), daha küçük I<sub>n</sub> / B tipi, RCD ya da tamamlayıcı potansiyel dengeleme (Madde 8-a3.6).`);
       if(th!==80)vh+=`<p class="hint" style="margin:6px 0 0">${fmt(th,0)} °C'de ölçülen değer işletme sıcaklığına (80 °C) düzeltildi: ${fmt(Zs,3)} × ${fmt(kf,2)} = ${fmt(Zc,3)} Ω (Madde 10-c6.2).</p>`;
       vh+=`<p class="hint" style="margin:4px 0 0">Dokunma gerilimi tahmini: hata akımı faz ve PE iletkenleri üzerinden döner, gerilimin yaklaşık PE payı kadarı gövdede görülür (trafo empedansı ihmal, %80 kabulü). Bu yüzden ${fmt(UT,0)} V civarı gerilimin hızla kesilmesi şarttır.</p>`;
       mh=tableTN(dev,In,needT,U0);
     }
-    if(ohl){const RBt=V("a_RBt"),RE=V("a_RE"),lim=50/(U0-50);const ok=RBt/RE<=lim;vh+=verdict(ok?"ok":"bad",ok?"UYGUN":"UYGUN DEĞİL",`Madde 8-a3.7: R<sub>B</sub>/R<sub>E</sub> = ${fmt(RBt,2)}/${fmt(RE,1)} = ${fmt(RBt/RE,3)} ${ok?"≤":"&gt;"} 50/(U<sub>0</sub>−50) = ${fmt(lim,3)}. ${ok?"Faz iletkeni toprağa değdiğinde PEN potansiyeli 50 V'u aşmaz.":"Faz-toprak temasında PEN ve bağlı gövdeler 50 V'u aşar; R<sub>B</sub> küçültülmeli (çok noktadan topraklama)."} Madde 10-c6.1.5: R<sub>B</sub> > 2 Ω ise yabancı iletken kısımlar ölçülür.`)}
+    if(ohl){const RBt=V("a_RBt"),RE=V("a_RE"),lim=50/(U0-50);const ok=RBt/RE<=lim;vh+=verdict(ok?"ok":"bad",ok?"SAĞLANIYOR":"SAĞLANMIYOR",`Madde 8-a3.7: R<sub>B</sub>/R<sub>E</sub> = ${fmt(RBt,2)}/${fmt(RE,1)} = ${fmt(RBt/RE,3)} ${ok?"≤":"&gt;"} 50/(U<sub>0</sub>−50) = ${fmt(lim,3)}. ${ok?"Faz iletkeni toprağa değdiğinde PEN potansiyeli 50 V'u aşmaz.":"Faz-toprak temasında PEN ve bağlı gövdeler 50 V'u aşar; R<sub>B</sub> küçültülmeli (çok noktadan topraklama)."} Madde 10-c6.1.5: R<sub>B</sub> > 2 Ω ise yabancı iletken kısımlar ölçülür.`)}
   }
   if(sys==="TT"){
     const RA=V("a_RA"),RB=V("a_RB"),UL=+V("a_UL");let Ia,src;
@@ -908,8 +908,8 @@ function render5(){
     if(!isFinite(Ia)){stats($("#s5"),[]);$("#v5").innerHTML=verdict("warn","VERİ YOK",src+". Daha küçük bir anma akımı seçin.");$("#m5").hidden=true;drawSys5(sys);return}
     const RAmax=UL/Ia,Id=U0/(RA+RB),UF=Id*RA,trip=Id>=Ia;
     st=[{k:"Açma akımı I<sub>a</sub>",v:fmtA(Ia),u:"A"},{k:"İzin verilen R<sub>A</sub>",v:fmt(RAmax,RAmax<10?2:0),u:"Ω",hl:1},{k:"Hata akımı I<sub>d</sub>",v:fmtA(Id),u:"A"},{k:"Gövde gerilimi",v:fmt(UF,0),u:"V"},{k:"Koruma açar mı?",v:trip?"Evet":"Hayır",u:""}];
-    if(RA*Ia<=UL&&trip)vh=verdict("ok","UYGUN",`R<sub>A</sub>·I<sub>a</sub> = ${fmt(RA,1)}·${fmtA(Ia)} = ${fmt(RA*Ia,1)} V ≤ ${UL} V (${src}). Hata akımı ${fmtA(Id)} A korumayı çalıştırır.`);
-    else if(trip)vh=verdict("bad","UYGUN DEĞİL",`R<sub>A</sub>·I<sub>a</sub> = ${fmt(RA*Ia,0)} V &gt; ${UL} V. Koruma açsa da sınır koşul sağlanmıyor; R<sub>A</sub> en çok ${fmt(RAmax,2)} Ω olmalı.`);
+    if(RA*Ia<=UL&&trip)vh=verdict("ok","SAĞLANIYOR",`R<sub>A</sub>·I<sub>a</sub> = ${fmt(RA,1)}·${fmtA(Ia)} = ${fmt(RA*Ia,1)} V ≤ ${UL} V (${src}). Hata akımı ${fmtA(Id)} A korumayı çalıştırır.`);
+    else if(trip)vh=verdict("bad","SAĞLANMIYOR",`R<sub>A</sub>·I<sub>a</sub> = ${fmt(RA*Ia,0)} V &gt; ${UL} V. Koruma açsa da sınır koşul sağlanmıyor; R<sub>A</sub> en çok ${fmt(RAmax,2)} Ω olmalı.`);
     else vh=verdict("bad","AÇMAZ · TEHLİKE",`Hata akımı I<sub>d</sub> = U<sub>0</sub>/(R<sub>A</sub>+R<sub>B</sub>) = ${fmtA(Id)} A, açma akımı ${fmtA(Ia)} A'in altında. Koruma hiç açmaz ve gövdede sürekli ${fmt(UF,0)} V kalır. TT sistemde aşırı akım düzenleri ancak çok küçük R<sub>A</sub> ile işe yarar; çözüm RCD'dir.`);
     mh=`<h3>Çizelge-12 · RCD ile izin verilen en büyük R<sub>A</sub></h3><div class="tscroll"><table class="t"><tr><th>I<sub>Δn</sub></th><th>10 mA</th><th>30 mA</th><th>100 mA</th><th>300 mA</th><th>500 mA</th></tr><tr><td>U<sub>L</sub> = 50 V</td><td>5000</td><td>1666</td><td>500</td><td>166</td><td>100</td></tr><tr><td>U<sub>L</sub> = 25 V</td><td>2500</td><td>833</td><td>250</td><td>83</td><td>50</td></tr><tr><td>S tipi, 50 V</td><td>—</td><td>—</td><td>250</td><td>83</td><td>50</td></tr></table></div>`;
   }
@@ -980,7 +980,7 @@ function drawSys5(sys){
     if(live&&S5.IB>0.5)s+=`<path class="flow" style="stroke:${dz?"var(--bad)":"var(--cu)"};stroke-width:2.5" d="M${HX},${HY+40} L${px},${GY-60} L${px},${GY-34} L${px-10},${GY}"/>`;
     if(dz)s+=`<path d="M${HX-6},${HY+30} l8,-10 l-2,8 l8,-6" fill="none" stroke="var(--pe-y)" stroke-width="2.5"/>`;
     // durum rozeti
-    const bt=A5.tripped?"KESİLDİ":S5.danger?"TEHLİKELİ":"GÜVENLİ",bc=A5.tripped?"var(--ok)":S5.danger?"var(--bad)":"var(--ok)",bw=big?118:90;
+    const bt=A5.tripped?"KESİLDİ":S5.danger?"TEHLİKELİ":"SINIR İÇİNDE",bc=A5.tripped?"var(--ok)":S5.danger?"var(--bad)":"var(--ok)",bw=big?118:90;
     s+=`<rect x="${px-bw/2}" y="${GY-124}" width="${bw}" height="${big?26:20}" rx="4" fill="${bc}"/><text x="${px}" y="${GY-124+(big?19:14)}" text-anchor="middle" style="fill:var(--surface);font-weight:700">${bt}</text>`;
   }
   $("#g5c").innerHTML={IT:"Turuncu yol: küçük kapasitif akım I<sub>d</sub> hat kapasitelerinden döner → yalıtım izleme alarmı.",TT:"Turuncu yol: akım toprak üzerinden döner, I<sub>d</sub> = U<sub>0</sub>/(R<sub>A</sub>+R<sub>B</sub>).",TN:"Turuncu yol: akım metalik yoldan (PE/PEN) döner → büyük I<sub>k</sub>, hızlı açma."}[sys];

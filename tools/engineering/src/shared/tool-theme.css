@@ -92,6 +92,8 @@
     font-family: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif !important;
     color: #0a1628;
   }
+  /* build.cjs dedupeToolTitle: sayfa H1'ini tekrarlayan uygulama başlığı <p> olur; h2 görünümünü korur */
+  .vg-engineering #vg-tool-workspace p.vg-original-title { display: block; margin-block: .83em; font-size: 1.5em; }
   .vg-engineering #vg-tool-workspace :is(h1, .vg-original-title) {
     font-weight: 700;
     line-height: 1.25;

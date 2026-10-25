@@ -232,7 +232,7 @@ async function layout(page, frame, name) {
     report.release = await frame.evaluate(() => PX.BUILD);
     report.worker = await workerReady(frame);
     assert.ok((await page.locator('.vg-header .vg-brand').getAttribute('href')) === '/');
-    // VoltGame, Kaynaklar açılır menüsünde: bağlantı geçerli sayfa olarak işaretlenmeli
+    // VoltGame, Teknik Kaynaklar açılır menüsünde: bağlantı geçerli sayfa olarak işaretlenmeli
     assert.equal(await page.locator('.vg-header a[href="/voltgame.html"]').first().getAttribute('aria-current'), 'page');
     await layout(page, frame, 'desktop 1440x1000');
 

@@ -176,8 +176,10 @@
     return { path: path, rows: rows, first: first ? first.i : null, tClear: tc, alsoTrip: alsoTrip, downMay: downMay, ideal: ideal, selective: first !== null && first.i === ideal && alsoTrip.length === 0 };
   }
 
-  /** TS HD 60364-4-41 411.3.2: ≤ 32 A son devre 0,4 s (TN, 230 V), diğerleri 5 s. */
-  function tRequired(d, isFinal) { return isFinal && d.In <= 32 ? 0.4 : 5; }
+  /** TS HD 60364-4-41:2017 411.3.2.2 (TN, U0 = 230 V): ≤ 63 A priz devreleri ve ≤ 32 A sabit yük besleyen son devreler 0,4 s;
+   * dağıtım devreleri ve diğerleri 5 s (411.3.2.3). Devrenin priz/sabit yük ayrımı bilinmediğinde güvenli tarafta ≤ 63 A kabul edilir.
+   * TT sisteminde süreler 0,2 s'dir ve bu modülde kapsanmaz. */
+  function tRequired(d, isFinal) { return isFinal && d.In <= (d.fixedLoad ? 32 : 63) ? 0.4 : 5; }
 
   /** Tam hesap: girdi doğrulama, ağ kısa devre akımları, cihaz kontrolleri, ebeveyn–çocuk seçicilik çiftleri ve seçili arıza. */
   function compute(input) {

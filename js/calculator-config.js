@@ -14,7 +14,7 @@
   var SQRT3 = Math.sqrt(3);
 
   var config = {
-    version: '2026-10-23',
+    version: '2026-10-24',
     // Fiyat varsayımı tutulmaz: GES yatırım maliyeti, elektrik birim bedeli, proje ve güç artırımı birim bedelleri
     // kullanıcının kendi teklif/fatura değerleriyle girilir (sahibi onaylı kaynaklı bir değer verene kadar).
     pricing: {
@@ -395,10 +395,12 @@
 
   /* --------------------------------------------------------------- kompanzasyon (EPDK 5999-3) */
   var REACTIVE_LIMITS = { ge50: { ind: 20, cap: 15, label: '50 kVA ve üzeri' }, lt50: { ind: 33, cap: 20, label: '15 kW üzeri, 50 kVA altı' } };
-  /** Qc = P·(tanφ1 − tanφ2); endüktif oran = tanφ·100 (aylık kVArh/kWh). */
+  /** Qc = P·(tanφ1 − tanφ2); endüktif oran = tanφ·100 (aylık kVArh/kWh).
+      Geçersiz girdi (P < 0, cosφ ∉ (0, 1]) NaN döndürür; hedef ≤ mevcut ise Qc ≤ 0 ve contradictory = true (kondansatör gerekmez). */
   function compensation(P_kW, cos1, cos2) {
+    if (!(P_kW >= 0) || !(cos1 > 0 && cos1 <= 1) || !(cos2 > 0 && cos2 <= 1)) { return { Qc: NaN, ratio1: NaN, ratio2: NaN, contradictory: false }; }
     var t1 = Math.tan(Math.acos(cos1)), t2 = Math.tan(Math.acos(cos2));
-    return { Qc: P_kW * (t1 - t2), ratio1: t1 * 100, ratio2: t2 * 100 };
+    return { Qc: P_kW * (t1 - t2), ratio1: t1 * 100, ratio2: t2 * 100, contradictory: cos2 <= cos1 };
   }
   /** Endüktif oran sınırına karşılık gelen en düşük cosφ: cosφ = 1/√(1 + (oran/100)²) */
   function cosForRatio(ratioPct) { return 1 / Math.sqrt(1 + Math.pow(ratioPct / 100, 2)); }
@@ -443,6 +445,9 @@
     + '.calc-assumptions{margin:.9rem 0 0;padding:.75rem .9rem;border-left:3px solid var(--clr-accent,#f59e0b);background:var(--clr-bg-gray,#f5f7fa);font-size:.84rem;line-height:1.55;color:var(--clr-text,#1e293b);grid-column:1/-1}'
     + '.calc-assumptions strong{display:block;margin-bottom:.2rem}'
     + '.calc-assumptions:empty{display:none}'
+    + '.calc-status{margin:0 0 .35rem;padding:.3rem .6rem;border-radius:6px;font-size:.78rem;line-height:1.4;background:rgba(255,255,255,.1);color:#fff;border-left:3px solid #93c5fd}'
+    + '.calc-status[data-code="hesaplandi"]{border-left-color:#86efac}.calc-status[data-code="varsayimsal"]{border-left-color:#93c5fd}'
+    + '.calc-status[data-code="inceleme"]{border-left-color:#fcd34d}.calc-status[data-code="veri-eksik"]{border-left-color:#fca5a5}'
     + '@media (max-width:420px){.calc-breakdown li{flex-wrap:wrap}.calc-breakdown li span:last-child{margin-left:auto}}'
     + '@media print{.mini-calc__result{background:#fff!important;color:#0a1628!important;border:1px solid #0a1628}.mini-calc__result *,.calc-breakdown li span{color:#0a1628!important}}';
 
@@ -503,8 +508,39 @@
       ul.appendChild(li);
     });
   }
+  /** Sonuç durumu: js/voltsim/identity.js STATUS ile aynı dört ayrı durum (calc-identity testi eşitliği denetler).
+      Hiçbiri "mevzuata uygundur" veya "uygulama için onaylıdır" anlamına gelmez. */
+  var STATUS = {
+    'veri-eksik': { label: 'Veri eksik', desc: 'Gerekli bir girdi boş, geçersiz ya da diğer girdilerle çelişkili. Sonuç üretilmedi; işaretli alanları düzeltin.' },
+    'inceleme': { label: 'Mühendis incelemesi gerekli', desc: 'En az bir ön kontrol sağlanmadı ya da sonuç modelin geçerlilik sınırına yakın. Yetkili mühendis değerlendirmesi olmadan uygulamaya esas alınmamalıdır.' },
+    'varsayimsal': { label: 'Varsayımsal', desc: 'Sonuç örnek, tipik veya senaryo değerlerine dayanıyor. Katalog ve saha verisi girildiğinde değişebilir.' },
+    'hesaplandi': { label: 'Hesaplandı', desc: 'Girilen değerlerle, belirtilen yöntem ve varsayımlar içinde hesaplandı. Ön hesaptır; mevzuata uygunluk veya uygulama onayı değildir.' }
+  };
+  /** out.status verilmezse: sınırı aşan satır (is-over) varsa "inceleme", yoksa "hesaplandı". out.statusReasons: gerekçeler. */
+  function statusOf(out) {
+    if (out.status && STATUS[out.status]) { return out.status; }
+    return (out.rows || []).some(function (r) { return r[2] === 'is-over'; }) ? 'inceleme' : 'hesaplandi';
+  }
+  function renderStatus(p, out) {
+    var res = document.getElementById(p + '-result');
+    if (!res || !res.parentNode) { return; }
+    var box = document.getElementById(p + '-status');
+    if (!box) {
+      box = document.createElement('p');
+      box.id = p + '-status'; box.className = 'calc-status';
+      res.parentNode.insertBefore(box, res);
+    }
+    var code = statusOf(out), st = STATUS[code];
+    box.setAttribute('data-code', code);
+    box.textContent = '';
+    var b = document.createElement('strong'); b.textContent = st.label; box.appendChild(b);
+    var reasons = (out.statusReasons || []).filter(Boolean);
+    box.appendChild(document.createTextNode(' · ' + (reasons.length ? reasons.join(' ') : st.desc)));
+    box.title = st.desc;
+  }
   /** Sonucu yazar. p: önek (ör. 'vd') → #p-result, #p-detail, #p-breakdown, #p-assumptions */
   function show(p, out) {
+    renderStatus(p, out);
     document.getElementById(p + '-result').textContent = out.value;
     document.getElementById(p + '-detail').textContent = out.note || '';
     setList(document.getElementById(p + '-breakdown'), out.rows);
@@ -518,7 +554,7 @@
       }
     }
   }
-  function fail(p, msg) { show(p, { value: '-', note: msg, rows: [], assumptions: [] }); }
+  function fail(p, msg) { show(p, { value: '-', note: msg, rows: [], assumptions: [], status: 'veri-eksik' }); }
   function bind(ids, fn) {
     ids.forEach(function (id) {
       var el = document.getElementById(id);
@@ -528,7 +564,7 @@
     ensureStyles();
     fn();
   }
-  config.ui = { ensureStyles: ensureStyles, fmt: fmt, pct: pct, reader: reader, show: show, fail: fail, bind: bind, setList: setList };
+  config.ui = { ensureStyles: ensureStyles, fmt: fmt, pct: pct, reader: reader, show: show, fail: fail, bind: bind, setList: setList, STATUS: STATUS, statusOf: statusOf };
 
   return config;
 }));

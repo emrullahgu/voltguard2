@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=559c615bb841">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=1a6fa8877736" defer></script>
+  <script src="/js/vg-metrics.js?v=44aefc57c2b6" defer></script>
+  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <title>Hesaplama Kimlikleri: Yöntem, Birim ve Varsayımlar | VoltGuard</title>
+  <meta name="description" content="VoltSim, hesaplama sayfaları ve mühendislik araçlarındaki her hesabın yöntemi, girdi/çıktı birimleri, varsayımları, geçerlilik sınırları, teknik kaynağı, motor sürümü ve doğrulama testleri.">
+  <link rel="canonical" href="https://voltguard.com.tr/voltsim/hesap-kimlikleri/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Hesaplama Kimlikleri">
+  <meta property="og:description" content="VoltSim, hesaplama sayfaları ve mühendislik araçlarındaki her hesabın yöntemi, girdi/çıktı birimleri, varsayımları, geçerlilik sınırları, teknik kaynağı, motor sürümü ve doğrulama testleri.">
+  <meta property="og:url" content="https://voltguard.com.tr/voltsim/hesap-kimlikleri/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:locale" content="tr_TR">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/voltsim.css?v=721d79efd8fb">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltSim","item":"https://voltguard.com.tr/voltsim/"},{"@type":"ListItem","position":3,"name":"Hesaplama Kimlikleri","item":"https://voltguard.com.tr/voltsim/hesap-kimlikleri/"}]},{"@type":"TechArticle","headline":"Hesaplama Kimlikleri","url":"https://voltguard.com.tr/voltsim/hesap-kimlikleri/","inLanguage":"tr","description":"VoltGuard hesaplarının yöntemi, birimleri, varsayımları, geçerlilik sınırları ve doğrulama testleri."}]}</script>
+</head>
+<body class="vs-page doc-shell">
+  <!--vg:header-->
+  <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+        </span>
+      </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <button class="vg-theme vg-theme--bar" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li class="vg-nav__home"><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdHizmetler">Hizmetler</button>
+            <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdHizmetler">
+              <div class="vg-dd__cols">
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblTrafo">Trafo ve yüksek gerilim</span>
+                  <ul aria-labelledby="vgDdLblTrafo">
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-bakimi.html">Trafo ve OG Hücre Bakımı</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblOlcum">Ölçüm, kontrol ve verimlilik</span>
+                  <ul aria-labelledby="vgDdLblOlcum">
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblProje">Proje, uygulama ve otomasyon</span>
+                  <ul aria-labelledby="vgDdLblProje">
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="vg-dd__foot">
+                <a class="vg-dd__more" href="/hizmetler/" data-vg-match="/hizmetler/">Tüm hizmetler</a>
+                <a class="vg-dd__more" href="/fabrika-cozumleri.html">Fabrikalar için çözümler</a>
+              </div>
+            </div>
+          </li>
+          <li><a class="vg-nav__link" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKurumsal">Kurumsal</button>
+            <div class="vg-dd__menu" id="vgDdKurumsal">
+              <ul>
+                <li><a class="vg-dd__link" href="/#hakkimizda">Hakkımızda</a></li>
+                <li><a class="vg-dd__link" href="/#projeler">Projeler</a></li>
+                <li><a class="vg-dd__link" href="/#referanslar">Referanslarımız</a></li>
+                <li><a class="vg-dd__link" href="/ekibimiz.html">Ekibimiz</a></li>
+                <li><a class="vg-dd__link" href="/#haberler">Sahadan Haberler</a></li>
+                <li><a class="vg-dd__link" href="/#iletisim">İletişim</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Teknik Kaynaklar</button>
+            <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdKaynaklar">
+              <div class="vg-dd__cols">
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblHesap">Hesapla ve simüle et</span>
+                  <ul aria-labelledby="vgDdLblHesap">
+                    <li><a class="vg-dd__item" href="/hesaplama-araclari/" data-vg-match="/hesaplama/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h8"/></svg></span><span class="vg-dd__txt"><strong>Hesap Araçları</strong><small>Reaktif ceza, kablo kesiti, ücret hesapları</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblOgren">Öğren</span>
+                  <ul aria-labelledby="vgDdLblOgren">
+                    <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblSor">Sor ve paylaş</span>
+                  <ul aria-labelledby="vgDdLblSor">
+                    <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/" aria-current="true">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
+      </nav>
+      <div class="vg-actions">
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+  </header>
+  <!--/vg:header-->
+  <main class="vs-main" id="main" tabindex="-1">
+    <nav class="vs-crumb" aria-label="Sayfa yolu"><a href="/">Ana Sayfa</a><span aria-hidden="true">/</span><a href="/voltsim/">VoltSim</a><span aria-hidden="true">/</span><span aria-current="page">Hesaplama Kimlikleri</span></nav>
+    <header class="vs-head"><div>
+      <p class="vs-eyebrow">VoltGuard · Teknik doğruluk</p>
+      <h1>Hesaplama Kimlikleri</h1>
+      <p class="vs-lead">Her hesabın neyi, hangi yöntemle, hangi varsayımla ve hangi doğruluk sınırı içinde hesapladığı. Kimlikler hesap motoru sürümüne bağlıdır: motor değiştiğinde kimlik yeniden gözden geçirilmeden otomatik testler geçmez. Referans testleri bağımsız el hesabı veya yayımlanmış örnek değerlerle yazılır; fonksiyon kendi çıktısıyla doğrulanmaz.</p>
+    </div></header>
+    <section class="vs-ident" aria-labelledby="st-h">
+      <h2 id="st-h">Sonuç durumları</h2>
+      <ul class="vs-id__status"><li data-code="veri-eksik"><b>Veri eksik</b> — Gerekli bir girdi boş, geçersiz ya da diğer girdilerle çelişkili. Sonuç üretilmedi; işaretli alanları düzeltin.</li><li data-code="inceleme"><b>Mühendis incelemesi gerekli</b> — En az bir ön kontrol sağlanmadı ya da sonuç modelin geçerlilik sınırına yakın. Yetkili mühendis değerlendirmesi olmadan uygulamaya esas alınmamalıdır.</li><li data-code="varsayimsal"><b>Varsayımsal</b> — Sonuç örnek, tipik veya senaryo değerlerine dayanıyor. Katalog ve saha verisi girildiğinde değişebilir.</li><li data-code="hesaplandi"><b>Hesaplandı</b> — Girilen değerlerle, belirtilen yöntem ve varsayımlar içinde hesaplandı. Ön hesaptır; mevzuata uygunluk veya uygulama onayı değildir.</li></ul>
+      <p class="vs-small">Durumlar öncelik sırasıyla belirlenir. “Hesaplandı” bir ön hesabın girilen değerlerle tamamlandığını söyler; mevzuata uygunluk veya uygulama onayı değildir.</p>
+    </section>
+    <section class="vs-ident" aria-labelledby="fam-voltsim">
+      <h2 id="fam-voltsim">VoltSim simülasyonları <small>(17)</small></h2>
+      <details class="vs-id" id="voltsim-pano"><summary><span>AG pano: faz akımları, kablo ve koruma</span> <a href="/voltsim/pano/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Bir AG panosundaki devrelerin faz akımlarını, kablo akım taşıma ve gerilim düşümünü, aşırı yük koşullarını ve yaklaşık kısa devre/otomatik kesme kontrolünü verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>U_LL</td><td>V</td><td>Hat gerilimi (faz-faz)</td></tr><tr><td>P_kW</td><td>kW</td><td>Devre gücü: motorlarda mil (çıkış) gücü, kondansatörde kVAr, şönt reaktörde kVAr</td></tr><tr><td>cos</td><td>—</td><td>Güç faktörü (temel bileşen)</td></tr><tr><td>L</td><td>m</td><td>Kablo boyu (tek yön)</td></tr><tr><td>S</td><td>mm²</td><td>Kablo kesiti</td></tr><tr><td>In / Ir / Ii</td><td>A</td><td>Koruma ayarları</td></tr><tr><td>SkQ_MVA, Sr_kVA, uk</td><td>MVA, kVA, %</td><td>Kaynak (OG şebeke + trafo)</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>L1/L2/L3/N</td><td>A</td><td>Faz ve nötr akımı (fazör toplamı)</td></tr><tr><td>P, Q, S</td><td>kW, kVAr, kVA</td><td>Pano toplam güçleri</td></tr><tr><td>ΔU</td><td>%</td><td>Gerilim düşümü (3F: hat, 1F: faz-nötr gerilimine göre)</td></tr><tr><td>Ik3, Ik1min</td><td>kA</td><td>Yaklaşık kısa devre akımları</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>3F: I = P/(√3·U_LL·cosφ); 1F: I = P/(U_LL/√3·cosφ)</code></li><li><code>Motor: P_el = P_mil/η</code></li><li><code>Faz akımı = Σ fazör (dengesiz 1F yükler doğru toplanır)</code></li><li><code>ΔU_3F = √3·I·(R·cosφ + X·sinφ); ΔU_1F = 2·I·(R·cosφ + X·sinφ)</code></li><li><code>Ib ≤ In ≤ Iz, I2 ≤ 1,45·Iz</code></li><li><code>Ik3 = c·U/(√3·|Z|), c = 1,05</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Sinüzoidal akım; harmonik akımlar faz/nötr akımına eklenmez.</li><li>Iz: bakır PVC, 30 °C ortam, düzeltme katsayısı uygulanmaz (TS HD 60364-5-52 tabloları).</li><li>Kablo reaktansı X′ = 0,08 Ω/km (tipik).</li><li>Kısa devre IEC 60909 yaklaşımı; motor katkısı yok.</li><li>Kondansatör kayıpları ≈ 3 W/kVAr (ayarlı kademede 6 W/kVAr); şönt reaktör kaybı ≈ %1 (tipik).</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>AG (U_LL ≤ 1000 V) dağıtım panoları.</li><li>Harmonik ağırlıklı yüklerde nötr akımı olduğundan düşük görünebilir.</li><li>Açma süreleri için üretici eğrisi esastır; burada yalnız standart kapı değerleri kullanılır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>OG şebeke kısa devre gücü (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>TS HD 60364-4-41, -4-43, -5-52</li><li>IEC 60909-0</li><li>TS EN 60898-1, TS EN 60947-2, IEC 60269-1/-2</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/engine.js · pano.compute, js/voltsim/calc/pano.js</span><span>Doğrulama testleri: voltsim-engine.test.cjs, voltsim-pano.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-ges"><summary><span>Çatı GES: üretim, string ve sıcaklık</span> <a href="/voltsim/ges/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Çatı GES’in anlık/günlük/yıllık üretim senaryosunu, string gerilimlerinin sıcaklık kontrollerini, inverter kırpmasını ve öz tüketimini verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>nMod × Pmod</td><td>adet × Wp</td><td>DC kurulu güç (kWp)</td></tr><tr><td>Pac</td><td>kW (AC)</td><td>İnverter AC anma gücü</td></tr><tr><td>Voc, Vmp, Isc</td><td>V, V, A</td><td>Modül STC değerleri (katalog)</td></tr><tr><td>βVoc, βVmp, γPmax</td><td>%/°C</td><td>Sıcaklık katsayıları (katalog, negatif)</td></tr><tr><td>Tmin, Tmax</td><td>°C</td><td>Sahanın en düşük/en yüksek ortam sıcaklığı</td></tr><tr><td>dcLoss</td><td>%</td><td>İnverter hariç sistem kayıpları (değiştirilebilir varsayım)</td></tr><tr><td>invEff</td><td>%</td><td>İnverter verimi</td></tr><tr><td>pvgisMonthly</td><td>kWh/kWp·ay</td><td>İsteğe bağlı ölçüm tabanlı aylık özgül üretim</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>kWp</td><td>kWp</td><td>DC kurulu güç</td></tr><tr><td>dcac</td><td>—</td><td>DC/AC oranı</td></tr><tr><td>annual</td><td>kWh/yıl (AC)</td><td>Yıllık AC üretim senaryosu</td></tr><tr><td>specYield</td><td>kWh/kWp</td><td>Özgül üretim</td></tr><tr><td>vocCold</td><td>V</td><td>Tmin’de string Voc</td></tr><tr><td>vmpHot</td><td>V</td><td>Sıcak hücrede string Vmp</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>G_POA = DNI·cosθ + DHI·(1 + cosβ)/2 + GHI·ρ·(1 − cosβ)/2</code></li><li><code>Tc = Ta + (NOCT − 20)/800·G</code></li><li><code>P_DC = n·P_STC·G/1000·[1 + γ·(Tc − 25)]·(1 − kayıp)</code></li><li><code>P_AC = min(P_DC·η_inv, P_AC,nom)</code></li><li><code>Voc,soğuk = Ns·Voc·[1 + βVoc·(Tmin − 25)]</code></li><li><code>Vmp,sıcak = Ns·Vmp·[1 + βVmp·(Tmax + (NOCT − 20)·1000/800 − 25)]</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Işınım: Meinel açık gök × Kasten–Czeplak bulut senaryosu (ölçüm verisi değildir). PVGIS aylık değerleri girilirse yıllık üretim onlardan alınır.</li><li>Sistem kaybı varsayılanı %14’tür ve değiştirilebilir. Bu değer PVGIS’in genel varsayılanıdır (PVGIS’te inverter kaybı dahildir); burada inverter verimi ayrıca uygulandığından aynı %14 değeri kaybı yaklaşık 1–2 puan fazla sayar. Tesise özgü kayıp dökümü (kablo, uyumsuzluk, kirlilik, LID/LeTID, kullanılabilirlik) ile değiştirilmelidir.</li><li>Voc kontrolünde hücre sıcaklığı = en düşük ortam sıcaklığı (şafak, ışınımsız) kabul edilir.</li><li>Gölge doğrusal kayıp; bypass diyot ve uyumsuzluk etkileri dahil değil.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Türkiye enlemleri (35–43°), sabit eğimli sistemler.</li><li>Sonuç üretim tahmini değil senaryodur; yatırım kararı için sahaya özgü PVGIS/ölçüm verisi ve kayıp dökümü gerekir.</li><li>Lisanssız üretim sınırları güncel mevzuattan ayrıca doğrulanmalıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Işınım verisi (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li><li>Sistem kayıpları (%14) (kullanıcı) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li><li>En düşük ortam sıcaklığı (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li><li>En yüksek ortam sıcaklığı (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>IEC 62548-1 (FV dizileri)</li><li>PVGIS (JRC) yöntem notları — %14 varsayılan sistem kaybı</li><li>Duffie &amp; Beckman, Solar Engineering of Thermal Processes (güneş geometrisi, Liu–Jordan)</li><li>Lisanssız Elektrik Üretim Yönetmeliği</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/engine.js · ges.compute, js/voltsim/calc/ges.js</span><span>Doğrulama testleri: voltsim-engine.test.cjs, voltsim-ges.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-trafo"><summary><span>Trafo: yüklenme, kayıp, verim, sıcaklık, yaklaşık kısa devre</span> <a href="/voltsim/trafo/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Dağıtım trafosunun yük altındaki akımlarını, yüklenme oranını, kayıplarını, verimini, gerilim değişimini, sıcak nokta sıcaklığını ve AG baradaki yaklaşık simetrik kısa devre akımını verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Sr_kVA</td><td>kVA</td><td>Anma gücü</td></tr><tr><td>U1_kV, U2_V</td><td>kV, V</td><td>Hat gerilimleri</td></tr><tr><td>P0, Pk</td><td>W</td><td>Boşta ve yük kaybı (katalog/etiket)</td></tr><tr><td>uk</td><td>%</td><td>Kısa devre gerilimi</td></tr><tr><td>P_kW, cos</td><td>kW, —</td><td>Yükün aktif gücü ve güç faktörü</td></tr><tr><td>SkQ_MVA</td><td>MVA</td><td>OG şebeke kısa devre gücü (0 = sonsuz)</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>I1n, I2n</td><td>A</td><td>Anma akımları = Sr/(√3·U)</td></tr><tr><td>k</td><td>—</td><td>Yüklenme = S/Sr (S = P/cosφ)</td></tr><tr><td>losses</td><td>W</td><td>P0 + Pk·k²</td></tr><tr><td>eff</td><td>%</td><td>Verim</td></tr><tr><td>IkT</td><td>A</td><td>Yalnız trafo: In/uk (c = 1)</td></tr><tr><td>Ik</td><td>A</td><td>Trafo + OG şebeke, c = 1,05</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>I = S/(√3·U_LL)</code></li><li><code>K = S/Sr = P/(cosφ·Sr)</code></li><li><code>P_kayıp = P0 + Pk·K²</code></li><li><code>η = P/(P + P_kayıp)</code></li><li><code>Ik ≈ In/uk (sonsuz şebeke)</code></li><li><code>Ik3 = 1,05·U/(√3·|ZQ + ZT|)</code></li><li><code>IEC 60076-7 kararlı hal ısıl model, V = 2^((θh − 98)/6)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Dengeli üç faz, sinüzoidal yük; harmonik kayıp artışı (K faktörü) dahil değil.</li><li>P0/Pk/uk önayarları örnek katalog değerleridir; etiket değeri girilmelidir.</li><li>Kısa devre yaklaşık: kablo, motor katkısı ve KT düzeltmesi yok; IEC 60909’a tam uygun hesap değildir.</li><li>Isıl model ONAN dağıtım trafosu varsayılanları; üretici ısıl verisi yoksa göstergedir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Yağlı/kuru dağıtım trafoları, 25 kVA–40 MVA.</li><li>Kısa devre sonucu koruma cihazı Icu seçimine doğrudan esas alınmamalı; tam IEC 60909 hesabı gerekir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Boşta kayıp P0 (katalog)</li><li>Yük kaybı Pk (katalog)</li><li>Kısa devre gerilimi uk (katalog)</li><li>OG şebeke kısa devre gücü (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60076-1 (anma değerleri, gerilim değişimi)</li><li>IEC 60076-7 (yükleme kılavuzu)</li><li>IEC 60909-0</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/engine.js · trafo.compute, js/voltsim/calc/trafo.js</span><span>Doğrulama testleri: voltsim-engine.test.cjs, voltsim-trafo.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-sarj"><summary><span>EV şarj: güç sınırı, süre ve enerji</span> <a href="/voltsim/sarj-istasyonu/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>AC/DC şarj noktalarında gücü sınırlayan unsuru (istasyon, araç OBC/DC kabulü, tesis gücü), şarj süresini, bataryaya giren ve şebekeden çekilen enerjiyi verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>capacity</td><td>kWh</td><td>Kullanılabilir batarya kapasitesi</td></tr><tr><td>soc0, soc1</td><td>%</td><td>Başlangıç/hedef SOC</td></tr><tr><td>profil</td><td>—</td><td>AC 1F/3F akım veya DC istasyon gücü (kW, DC çıkış)</td></tr><tr><td>obcPhases, obcI</td><td>—, A</td><td>Araç dahili şarj cihazı sınırı</td></tr><tr><td>dcMax</td><td>kW</td><td>Araç maks. DC kabul gücü</td></tr><tr><td>effAC, effDC</td><td>%</td><td>Şebeke → batarya verimi</td></tr><tr><td>siteKW</td><td>kW</td><td>Tesisin şarja ayırabildiği güç</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>ideal</td><td>kWh</td><td>Bataryaya giren ideal enerji = C·ΔSOC (kayıpsız)</td></tr><tr><td>Ebatt</td><td>kWh</td><td>Simülasyonda bataryaya giren enerji</td></tr><tr><td>Egrid</td><td>kWh</td><td>Şebekeden çekilen enerji (kayıplar dahil)</td></tr><tr><td>minutes</td><td>dk</td><td>Şarj süresi</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>E_ideal = C·(SOC_hedef − SOC_baş)</code></li><li><code>P_AC = n_faz·230 V·I (n_faz = min(istasyon, OBC), I = min(istasyon, OBC))</code></li><li><code>P_DC = min(istasyon, araç·eğri(SOC))</code></li><li><code>E_şebeke = ∫P_şebeke·dt, E_batarya = η·E_şebeke</code></li><li><code>Yük paylaşımı: eşit (su doldurma)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>230 V faz-nötr gerilimi; 3 faz 32 A = 3·230·32 ≈ 22,1 kW (= √3·400·32).</li><li>DC eğrisi tipiktir (SOC %50’ye kadar tam, %80’de yarı, %100’de ≈ %15 güç); araç modeline göre değişir.</li><li>Kayıplar verim çarpanıyla ayrıca eklenir; ideal enerji kayıpsızdır.</li><li>Batarya ön ısıtma/soğutma tüketimi, sıcaklık ve yaşlanma etkisi dahil değil.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Mod 3 AC ve Mod 4 DC şarj; istasyon DC gerilim/akım sınırları ayrıca modellenmez.</li><li>Süre senaryodur; gerçek süre araç BMS eğrisine bağlıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 61851-1, -23</li><li>TS HD 60364-7-722</li><li>Şarj Hizmeti Yönetmeliği (EPDK)</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/engine.js · sarj.compute, js/voltsim/calc/sarj.js</span><span>Doğrulama testleri: voltsim-engine.test.cjs, voltsim-sarj.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-komp"><summary><span>Kompanzasyon, şönt reaktör ve harmonik rezonans</span> <a href="/voltsim/kompanzasyon/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Hedef güç faktörü için gereken kondansatör gücünü, kademe seçimini, şönt reaktörün etkisini, reaktif/aktif enerji oranını ve kondansatörlü baranın harmonik rezonans davranışını ayrı ayrı verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P_kW</td><td>kW</td><td>Aktif güç</td></tr><tr><td>cos1, cos2</td><td>—</td><td>Mevcut ve hedef cosφ (temel bileşen)</td></tr><tr><td>steps</td><td>kVAr</td><td>Kademe güçleri (bara geriliminde etkin)</td></tr><tr><td>shunt_kvar</td><td>kVAr</td><td>Şönt reaktör (endüktif, kapasitif kaymayı dengeler)</td></tr><tr><td>detune p</td><td>%</td><td>Ayarlı (detuned) kademe seri reaktör oranı</td></tr><tr><td>harmonics</td><td>% I1</td><td>Yük harmonik akım spektrumu</td></tr><tr><td>Sr_kVA, uk</td><td>kVA, %</td><td>Kaynak trafo</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Qneed</td><td>kVAr</td><td>P·(tanφ1 − tanφ2)</td></tr><tr><td>Qnet</td><td>kVAr</td><td>Kompanzasyon sonrası net reaktif güç</td></tr><tr><td>cosNew</td><td>—</td><td>Yeni güç faktörü</td></tr><tr><td>hPar / hRes</td><td>—</td><td>Paralel rezonans / ayar mertebesi</td></tr><tr><td>THDv</td><td>%</td><td>AG bara gerilim THD (hesaplanan)</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Qc = P·(tanφ1 − tanφ2)</code></li><li><code>Q_net = Q_L − Q_C − Q_kapasitif yük + Q_şönt</code></li><li><code>h_r = √(Xc/Xs) (reaktörsüz), f_r = 50/√p (ayarlı)</code></li><li><code>Z_bara(h) = Zs(h)·Zc(h)/(Zs(h) + Zc(h))</code></li><li><code>THD = √(Σ X_h²)/X_1</code></li><li><code>Endüktif oran = Q/P·100 (sabit yükte aylık kVArh/kWh)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Kondansatör (kapasitif kVAr üretir), şönt reaktör (endüktif kVAr tüketir, harmonik süzmez) ve ayarlı kademe/harmonik filtre (seri reaktörlü kol; rezonansı 5. harmoniğin altına çeker) ayrı modellenir; aktif filtre ayrı bir cihazdır.</li><li>Kaynak: trafo reaktansı, R = X/8, OG şebeke sonsuz; arka plan gerilim harmoniği yok.</li><li>Harmonik spektrum önayarı örnektir; gerçek değerlendirme TS EN 61000-4-30 sınıf A ölçüm gerektirir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>AG kompanzasyon panosu, tek bara.</li><li>Hedef cosφ mevcut değerden düşükse kondansatör gerekmez (uyarı verilir).</li><li>EPDK oran sınırları anlık güçten hesaplanır; fatura aylık enerjiye göredir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Harmonik spektrum (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li><li>Trafo uk (katalog)</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>EPDK Kurul Kararı (reaktif enerji sınırları, Madde 13)</li><li>IEC 60831-1 (AG şönt kondansatörler)</li><li>TS EN 50160</li><li>IEC 61000-2-2</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/engine.js · komp.compute, js/voltsim/calc/komp.js</span><span>Doğrulama testleri: voltsim-engine.test.cjs, voltsim-komp.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-topraklama"><summary><span>Topraklama direnci ve dokunma/adım gerilimi</span> <a href="/voltsim/topraklama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Çubuk, şerit ve ağ topraklayıcının yayılma direncini, TT/IT koruma koşulunu ve OG arıza akımında GPR ile IEEE 80 dokunma/adım gerilimi ön kontrolünü verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>rho</td><td>Ω·m</td><td>Toprak özdirenci (Wenner ölçümü)</td></tr><tr><td>L, d, n, s</td><td>m, m, adet, m</td><td>Çubuk boyu, çapı, sayısı, aralığı</td></tr><tr><td>IdN_mA</td><td>mA</td><td>RCD anma kaçak akımı</td></tr><tr><td>UL</td><td>V</td><td>Sınır dokunma gerilimi</td></tr><tr><td>IF, tf</td><td>A, s</td><td>OG topraklama arıza akımı ve süresi</td></tr><tr><td>rhoS, hs</td><td>Ω·m, m</td><td>Yüzey tabakası</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>R</td><td>Ω</td><td>Yayılma direnci</td></tr><tr><td>GPR</td><td>V</td><td>IF·R</td></tr><tr><td>Etouch/Estep</td><td>V</td><td>İzin verilen dokunma/adım (IEEE 80, 50 kg)</td></tr><tr><td>Em/Es</td><td>V</td><td>Ağ için hesaplanan dokunma/adım</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>R_çubuk = ρ/(2πL)·[ln(8L/d) − 1] (Dwight)</code></li><li><code>n çubuk: R1·(1 + λ·a)/n (BS 7430)</code></li><li><code>R_ağ = ρ·[1/L_T + 1/√(20A)·(1 + 1/(1 + h√(20/A)))] (Sverak)</code></li><li><code>TT: R_A·IΔn ≤ U_L</code></li><li><code>E_dokunma = (1000 + 1,5·Cs·ρs)·0,116/√t</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Homojen toprak; mevsimsel değişim seçilen katsayı dışında modellenmez.</li><li>Ağ hesabında iletken çapı 0,01 m, kare ağ, kenar çubuksuz kabul edilir.</li><li>TN sisteminde elektrot direnci tek başına kabul ölçütü değildir (çevrim empedansı esastır).</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Elektrot tasarımı ön boyutlandırması; kabul ölçülen direnç ve sistem tipine göre yapılır.</li><li>Türk Topraklamalar Yönetmeliği’ndeki izin verilen dokunma gerilimi eğrisiyle ayrıca karşılaştırılmalıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Toprak özdirenci (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li><li>OG topraklama arıza akımı (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>Elektrik Tesislerinde Topraklamalar Yönetmeliği</li><li>TS HD 60364-4-41</li><li>IEEE 80</li><li>BS 7430</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/engine.js · topraklama.compute, js/voltsim/calc/topraklama.js</span><span>Doğrulama testleri: voltsim-engine.test.cjs, voltsim-topraklama.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-res"><summary><span>RES: türbin gücü, yıllık üretim, iz kaybı</span> <a href="/voltsim/res/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Rüzgâr türbini güç eğrisinden anlık gücü, Weibull dağılımıyla yıllık enerji senaryosunu, iz (wake) kaybını ve iç şebeke kablo/trafo kayıplarını verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>v10, href, α</td><td>m/s, m, —</td><td>Referans hız, ölçüm yüksekliği, kayma üssü</td></tr><tr><td>T, alt</td><td>°C, m</td><td>Hava yoğunluğu için sıcaklık ve rakım</td></tr><tr><td>türbin</td><td>kW, m</td><td>Anma gücü, rotor çapı, Cp eğrisi (katalog)</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P</td><td>kW</td><td>Anlık elektrik gücü</td></tr><tr><td>AEP</td><td>MWh/yıl</td><td>Yıllık enerji senaryosu</td></tr><tr><td>wake</td><td>%</td><td>İz kaybı</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>P = ½·ρ·A·Cp·v³·η (Betz: Cp ≤ 16/27)</code></li><li><code>v_hub = v_ref·(h/h_ref)^α</code></li><li><code>ρ = p/(287,05·T)</code></li><li><code>AEP = 8760·Σ P(v)·f(v)·Δv (Weibull)</code></li><li><code>Jensen/Katić iz modeli</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Weibull dağılımı ve yön dağılımı varsayımsaldır; ölçüm direği/LiDAR verisi değildir.</li><li>İç şebeke kablosunda κAl = 35 m/(Ω·mm²) (20 °C); işletme sıcaklığında kayıplar ≈ %20 daha yüksek olabilir.</li><li>Trafo merkezi dizinin ilk türbin ucunda kabul edilir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Ön fizibilite senaryosu; enerji verimi raporu (IEC 61400-12-1 ölçümüne dayalı) yerine geçmez.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Rüzgâr hızı (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li><li>Kayma üssü α (saha)</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>IEC 61400-1, IEC 61400-12-1</li><li>Betz limiti</li><li>Jensen (1983) / Katić (1986) iz modeli</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/engine.js · res.compute, js/voltsim/calc/res.js</span><span>Doğrulama testleri: voltsim-res.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-ups"><summary><span>UPS, akü süresi ve jeneratör yüklenmesi</span> <a href="/voltsim/ups-jenerator/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Kritik yükte UPS yüklenmesini, akü yedekleme süresini, jeneratörün kVA ve kW yüklenmesini, yakıt süresini ve ATS geçiş zinciri zamanlamasını verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Pcrit, pfCrit</td><td>kW, —</td><td>Kritik yük</td></tr><tr><td>upsKVA, upsPF</td><td>kVA, —</td><td>UPS anma gücü (kW = kVA·PF)</td></tr><tr><td>nBlocks·Vblock, Ah, DoD</td><td>V, Ah, %</td><td>Akü grubu (katalog)</td></tr><tr><td>genKVA</td><td>kVA (cosφ 0,8)</td><td>Jeneratör anma gücü</td></tr><tr><td>fuel</td><td>l/kWh</td><td>Özgül yakıt tüketimi</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>upsLoad</td><td>%</td><td>max(S/S_UPS, P/P_UPS)</td></tr><tr><td>runtime</td><td>dk</td><td>Akü yedekleme süresi</td></tr><tr><td>genPct</td><td>%</td><td>max(kVA/kVA_n, kW/(0,8·kVA_n))</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>t = V·Ah·DoD·k_θ·k_yaş / (P/η_inv)</code></li><li><code>Jeneratör kW sınırı = 0,8·kVA (ISO 8528-1)</code></li><li><code>Yakıt süresi = depo / (özgül tüketim·P)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Sabit güç deşarjı, doğrusal kapasite; Peukert etkisi yok.</li><li>Doğrultucu güç faktörü 0,95 kabul edilir; akü şarj gücü dahil değildir.</li><li>Adım yük kabul sınırları (G1/G2/G3) temsilîdir; üretici verisi esastır.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Akü süresi göstergedir; üretici sabit güç tablosu (W/hücre) ile doğrulanmalıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Akü kapasitesi (katalog)</li><li>Özgül yakıt tüketimi (katalog)</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>IEC 62040-3</li><li>ISO 8528-1/-5</li><li>IEEE 485</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/engine.js · ups.compute, js/voltsim/calc/ups.js</span><span>Doğrulama testleri: voltsim-ups.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-kalite"><summary><span>Enerji kalitesi: harmonik, çökme, dengesizlik</span> <a href="/voltsim/enerji-kalitesi/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>AG baradaki gerilim harmoniklerini (kondansatör/ayarlı filtre koluyla), OG arızası ve motor kalkışı kaynaklı gerilim çökmesini ve faz gerilimi dengesizliğini verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Sr_kVA, uk, SkQ_MVA</td><td>kVA, %, MVA</td><td>Kaynak</td></tr><tr><td>harm</td><td>% I1</td><td>Yük harmonik spektrumu</td></tr><tr><td>Uab, Ubc, Uca</td><td>V</td><td>Hat gerilimleri (dengesizlik)</td></tr><tr><td>kStart</td><td>×In</td><td>Motor kalkış akımı</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>THDv</td><td>%</td><td>Gerilim THD</td></tr><tr><td>VUF</td><td>%</td><td>Negatif/pozitif bileşen oranı (IEC)</td></tr><tr><td>LVUR</td><td>%</td><td>NEMA hat gerilimi dengesizliği</td></tr><tr><td>u</td><td>%</td><td>Çökme derinliği</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Z_bara(h) = Zs(h) ∥ Z_kol(h)</code></li><li><code>THD = √(Σ U_h²)/U_1</code></li><li><code>VUF = √((1 − √(3 − 6β))/(1 + √(3 − 6β)))·100</code></li><li><code>LVUR = max sapma/ortalama·100</code></li><li><code>Gerilim bölücü: u = Zf/(Zs + Zf)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>X/R = 8, arka plan gerilim harmoniği yok, doğrusal süperpozisyon.</li><li>Üçlü harmoniklerde Z0 = ZT; nötr iletkeni modellenmez.</li><li>THDi anlık temel bileşene göredir (TDD/IEEE 519 değildir).</li><li>Motor kalkış düşümünde η = 0,94, cosφ = 0,86 sabit.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>TS EN 50160 karşılaştırması istatistiksel sınıra göredir; uygunluk kararı TS EN 61000-4-30 sınıf A ölçümle verilir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Harmonik spektrum (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li><li>OG şebeke kısa devre gücü (saha)</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>TS EN 50160</li><li>IEC 61000-2-2, IEC 61000-4-30</li><li>IEC 60831-1</li><li>SEMI F47</li><li>NEMA MG 1</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/calc/kalite.js</span><span>Doğrulama testleri: voltsim-kalite.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-selektivite"><summary><span>Koruma seçiciliği ve kesme süresi</span> <a href="/voltsim/selektivite/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>ACB/MCCB/MCB/gG cihazlarının akım–zaman bantlarını, kısa devre akımlarında hangi cihazın açtığını, akım seçiciliğini ve TN otomatik kesme süresini değerlendirir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>devices</td><td>A, s</td><td>Cihaz tipi ve ayarları (Ir, tr, Isd, tsd, Ii)</td></tr><tr><td>L, S</td><td>m, mm²</td><td>Kablo</td></tr><tr><td>Sr_kVA, uk, Pk_W, SkQ_MVA</td><td>—</td><td>Kaynak</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Ik3, Ik1min</td><td>kA</td><td>Her bara/devre sonu</td></tr><tr><td>ilk açan</td><td>—</td><td>Bant karşılaştırması</td></tr><tr><td>tReq</td><td>s</td><td>Gerekli kesme süresi</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>IEC 60909: c = 1,05 / 0,95</code></li><li><code>Bant ayrımıyla akım seçiciliği</code></li><li><code>TS HD 60364-4-41: son devre ≤ 63 A priz / ≤ 32 A sabit yük 0,4 s, diğerleri 5 s (TN, 230 V)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Ik1,min için iletken direnci 1,24·R20 alınır (IEC 60909’un arıza sonu sıcaklığına göre iyimser olabilir).</li><li>Zaman (Icw) ve enerji seçiciliği modellenmez; üretici seçicilik tablosu esastır.</li><li>TT sistemi (0,2 s) kapsanmaz.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>AG radyal dağıtım; üretici eğrisi olmadan kesin açma süresi verilmez.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>OG şebeke kısa devre gücü (saha)</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60909-0</li><li>IEC 60898-1, IEC 60947-2 Ek A, IEC 60269-2</li><li>TS HD 60364-4-41</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/calc/selektivite.js</span><span>Doğrulama testleri: voltsim-selektivite.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-yildirim"><summary><span>Dış yıldırımdan korunma (LPS)</span> <a href="/voltsim/yildirim/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Yuvarlanan küre ve koruma açısı yöntemleriyle çatı maruziyetini, iniş iletkeni sayısını, ayırma mesafesini ve yıllık tehlikeli olay sayısını verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>lpl</td><td>—</td><td>Koruma seviyesi (I–IV)</td></tr><tr><td>L, W, H</td><td>m</td><td>Yapı boyutları</td></tr><tr><td>rodH, rodD</td><td>m</td><td>Çubuk yüksekliği/aralığı</td></tr><tr><td>NG</td><td>1/km²·yıl</td><td>Yıldırım yoğunluğu</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>açık alan</td><td>%</td><td>Korumasız çatı payı</td></tr><tr><td>s</td><td>m</td><td>Ayırma mesafesi</td></tr><tr><td>ND</td><td>1/yıl</td><td>Tehlikeli olay sayısı</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Küre yarıçapı r (IEC 62305-3 Tablo 2)</code></li><li><code>s = ki·(kc/km)·l</code></li><li><code>AD = L·W + 2·3H·(L + W) + π·(3H)²</code></li><li><code>ND = NG·AD·Cd·10⁻⁶</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Düz çatı, basitleştirilmiş kc.</li><li>Gerekli LPL, IEC 62305-2 risk analiziyle belirlenir; burada kullanıcı seçer.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Ön tasarım; iç koruma ve SPD seçimi (IEC 62305-4) kapsam dışıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Yıldırım yoğunluğu NG (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>IEC 62305-1/-2/-3</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/calc/yildirim.js</span><span>Doğrulama testleri: voltsim-yildirim.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-depolama"><summary><span>Batarya depolama ve hibrit sistem enerji dengesi</span> <a href="/voltsim/depolama-hibrit/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>GES/RES/dizel ve bataryalı tesisin saatlik enerji dengesini, öz tüketimi, tepe tıraşlamayı, kesintide beslemeyi ve basit ekonomiyi verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>batKWh, batKW</td><td>kWh, kW</td><td>Batarya enerji ve güç anması</td></tr><tr><td>dod, rte</td><td>%</td><td>Deşarj derinliği, çevrim (gidiş-dönüş) verimi</td></tr><tr><td>pvKWp, pvAC</td><td>kWp, kW</td><td>GES DC/AC gücü</td></tr><tr><td>load</td><td>kW (saatlik)</td><td>Yük profili</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>self</td><td>%</td><td>Öz tüketim</td></tr><tr><td>peakImp</td><td>kW</td><td>Şebeke tepe çekişi</td></tr><tr><td>uns</td><td>kWh</td><td>Beslenemeyen enerji</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>E_çıkış = E_giriş·RTE (√RTE şarjda, √RTE deşarjda; bir kez)</code></li><li><code>SOC ∈ [1 − DoD, 1]</code></li><li><code>P_bat ≤ min(PCS, C-oranı·E)</code></li><li><code>Dizel: F = 0,08145·P_n + 0,246·P (l/h)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>1 saatlik adım; 15 dk talep tepeleri daha yüksek olabilir.</li><li>GES üretimi motorun temsilî gününden (varsayılan %14 sistem kaybı — PVGIS genel varsayılanı, tesise özgü değil).</li><li>Kapasite kaybı ve yardımcı tüketim (HVAC) günlük hesaba katılmaz.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Senaryo analizi; yatırım kararı için ölçülmüş 15 dk yük profili ve sahaya özgü üretim gerekir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Yük profili (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>IEC 62619</li><li>IEC 62933-5-2</li><li>Lisanssız Elektrik Üretim Yönetmeliği</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/calc/depolama.js</span><span>Doğrulama testleri: voltsim-depolama.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-motor"><summary><span>Asenkron motor yol alma ve koruma</span> <a href="/voltsim/motor-otomasyon/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Asenkron motorun anma akımını, yol verme yöntemine göre kalkış akımı/süresini, termik röle ayarını ve gerilim sapmasının moment/akım etkisini verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Pn</td><td>kW (mil, çıkış)</td><td>Etiket gücü — mekanik çıkış</td></tr><tr><td>Un</td><td>V (hat)</td><td>Anma gerilimi</td></tr><tr><td>eff, cos</td><td>—</td><td>Etiket verimi ve güç faktörü</td></tr><tr><td>IstIn, TkTn, TstTn</td><td>—</td><td>Katalog oranları</td></tr><tr><td>uPct</td><td>% Un</td><td>Şebeke gerilimi</td></tr><tr><td>J, loadPct</td><td>kg·m², %</td><td>Atalet ve yük momenti</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>In</td><td>A</td><td>Pn/(√3·Un·η·cosφ)</td></tr><tr><td>P_el</td><td>kW</td><td>Şebekeden çekilen = Pn/η</td></tr><tr><td>tStart</td><td>s</td><td>Yol alma süresi</td></tr><tr><td>Imax</td><td>A</td><td>Tepe akım</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>In = Pn/(√3·Un·η·cosφ) (Pn mil gücü)</code></li><li><code>Tn = 9550·Pn/nn</code></li><li><code>T(s) = 2Tk/(s/sk + sk/s) (Kloss)</code></li><li><code>J·dω/dt = Tm − TL</code></li><li><code>Gerilim etkisi: T ∝ u², Ist ∝ u (kırpılmaz; Tk·u² &lt; 1 → devrilme)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Basitleştirilmiş eşdeğer devre; sürtünme yok.</li><li>Termik röle süresi sınıf sınırlarından temsilîdir.</li><li>Kısma/VFD enerji karşılaştırmasında tipik santrifüj eğri (0,45 + 0,55·q).</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Eğitim ve ön değerlendirme; gerçek yol alma için yük momenti eğrisi ve üretici motor verisi gerekir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Kalkış akımı oranı (katalog)</li><li>Devrilme momenti oranı (katalog)</li><li>Toplam atalet (kullanıcı)</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60034-1</li><li>TS EN IEC 60947-4-1</li><li>ISO 13849-1 (güvenlik fonksiyonu bilgisi)</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/engine.js · motor.compute, js/voltsim/calc/motor.js</span><span>Doğrulama testleri: voltsim-motor.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-pompa"><summary><span>Pompa: kısma ve VFD enerji karşılaştırması</span> <a href="/voltsim/pompa-vfd/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Pompa ve sistem eğrisinden çalışma noktasını, kısma ile VFD hız kontrolünün elektrik gücünü ve yıllık enerji tasarrufunu verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>H0, Qr, Hr, Qbep, ηmax</td><td>m, m³/h, m, m³/h, —</td><td>Pompa eğrisi (katalog)</td></tr><tr><td>Hst, Qd, Hd</td><td>m, m³/h, m</td><td>Sistem eğrisi</td></tr><tr><td>etaM, etaVfd</td><td>—</td><td>Motor ve sürücü verimi</td></tr><tr><td>profile</td><td>%, sa</td><td>Yıllık debi profili</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P_kısma, P_VFD</td><td>kW (elektrik)</td><td>Şebekeden çekilen güç</td></tr><tr><td>saving</td><td>kWh/yıl</td><td>Yıllık tasarruf (sağlanabilen satırlar)</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>P_hid = ρ·g·Q·H</code></li><li><code>P_el = P_hid/(η_pompa·η_motor·η_VFD)</code></li><li><code>Afinite: Q ∝ n, H ∝ n², P ∝ n³</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Motor/VFD verimi sabit; pompa verimi BEP etrafında parabolik.</li><li>Tam hızda sağlanamayan profil satırları enerjiye katılmaz ve uyarı verilir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Santrifüj pompa, tek pompa; paralel pompa ve kavitasyon (NPSH) kapsam dışı.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Statik basma yüksekliği (saha)</li><li>Yıllık debi profili (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>Afinite yasaları</li><li>IEC 60034-30-1 (motor verim sınıfları, bilgi)</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/calc/pompa.js</span><span>Doğrulama testleri: voltsim-pompa.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-konveyor"><summary><span>Konveyör PLC/SCADA mantığı</span> <a href="/voltsim/konveyor-scada/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Sıralı kalkış/duruş, kilitleme, sıkışma algılama ve alarm yaşam döngüsünü (PLC tarama benzetimi) gösterir; mühendislik boyutlandırması yapmaz.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>zamanlayıcılar</td><td>s</td><td>TON/TOF ayarları</td></tr><tr><td>bant hızı</td><td>m/s</td><td>Ürün akışı</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>durum</td><td>—</td><td>Hat ve alarm durumları</td></tr><tr><td>I</td><td>A</td><td>Yükle doğrusal temsilî motor akımı</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>PLC tarama döngüsü (IEC 61131-3 mantığı)</code></li><li><code>Alarm durumları IEC 62682</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Motor verisi (η 0,84/0,86, cosφ 0,8) temsilîdir; akım yükle doğrusal kabul edilir.</li><li>Acil durdurma eğitim amaçlıdır; emniyet fonksiyonu ISO 13849-1 ile doğrulanmalıdır.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Eğitim benzetimi; sayısal sonuçlar tasarım değeri değildir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 61131-3</li><li>IEC 62682</li><li>IEC 60204-1</li><li>ISO 13850</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/calc/konveyor.js</span><span>Doğrulama testleri: voltsim-konveyor.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-ariza"><summary><span>Arıza tespit laboratuvarı</span> <a href="/voltsim/ariza-tespit/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Senaryo arızalarında ölçü aleti okumalarını (gerilim, süreklilik, yalıtım, döngü empedansı) düğüm analiziyle üretir ve güvenli çalışma kurallarını puanlar.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>senaryo</td><td>—</td><td>Arıza tipi, tohum</td></tr><tr><td>ölçüm</td><td>—</td><td>Alet ve uçlar</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>okuma</td><td>V, Ω, MΩ</td><td>Ölçü aleti değeri</td></tr><tr><td>puan</td><td>—</td><td>Teşhis ve güvenlik kuralları</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Karmaşık düğüm gerilimi çözümü (Norton kaynakları)</code></li><li><code>RCD 0,7·IΔn eşiği (temsilî)</code></li><li><code>Yalıtım ≥ 1 MΩ (HD 60364-6)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Senaryo parametreleri eğitim amaçlıdır; kaçak direnci 1 GΩ varsayılır.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Eğitim aracıdır; saha ölçümü yerine geçmez.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>EN 50110-1</li><li>HD 60364-6</li><li>IEC 61557</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/calc/ariza.js</span><span>Doğrulama testleri: voltsim-ariza.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="voltsim-yangin"><summary><span>Yangın algılama ve tahliye (eğitim)</span> <a href="/voltsim/yangin-algilama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Dedektör yanıtını, kapsama oranını, adresli döngü arızalarını ve kaba tahliye süresini gösterir; yangın projesi değildir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>dedektör</td><td>—</td><td>Tip, konum, eşik</td></tr><tr><td>tavan</td><td>m</td><td>Yükseklik</td></tr><tr><td>kişi</td><td>adet</td><td>Tahliye</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>t_algılama</td><td>s</td><td>İlk alarm</td></tr><tr><td>kapsama</td><td>%</td><td>Alan oranı</td></tr><tr><td>t_tahliye</td><td>s</td><td>Kaba tahliye süresi</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Birinci derece gecikme (τ)</code></li><li><code>Kapsama yarıçapı</code></li><li><code>Dijkstra en kısa yol</code></li><li><code>t = t_alg + t_tepki + max(L/v, N/(W·Fs))</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Duman yayılımı 2B difüzyon modelidir (CFD değil).</li><li>Kapsama yarıçapları BS 5839-1 tipindeki değerlerdir; TSE CEN/TS 54-14 yerleşim kuralları ayrıca uygulanmalıdır.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Eğitim gösterimi; dedektör yerleşimi onaylı tasarım değildir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>TS EN 54-2, -7, -13</li><li>TSE CEN/TS 54-14</li><li>Binaların Yangından Korunması Hakkında Yönetmelik</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/engine.js · yangin.compute, js/voltsim/calc/yangin.js</span><span>Doğrulama testleri: voltsim-yangin.test.cjs</span></p>
+        </div>
+      </details>
+    </section>
+    <section class="vs-ident" aria-labelledby="fam-hesaplama">
+      <h2 id="fam-hesaplama">Hesaplama sayfaları <small>(17)</small></h2>
+      <details class="vs-id" id="hesap-kw-kva-amper"><summary><span>kW / kVA / kVAr / A dönüştürücü</span> <a href="/hesaplama/kw-kva-amper-donusturucu/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Aktif, görünür ve reaktif güç ile hat akımı arasında dönüşüm yapar.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>değer</td><td>kW | kVA | A</td><td>Bilinen büyüklük</td></tr><tr><td>U</td><td>V</td><td>400 V üç faz (hat) veya 230 V tek faz (faz-nötr)</td></tr><tr><td>cosφ</td><td>—</td><td>Güç faktörü</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P</td><td>kW</td><td>Aktif güç</td></tr><tr><td>S</td><td>kVA</td><td>Görünür güç</td></tr><tr><td>Q</td><td>kVAr</td><td>Reaktif güç</td></tr><tr><td>I</td><td>A</td><td>Hat akımı</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>S = P/cosφ, Q = S·sinφ</code></li><li><code>3F: I = S·1000/(√3·U_LL); 1F: I = S·1000/U_fn</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Dengeli, sinüzoidal yük; harmonikli yükte gerçek güç faktörü (PF) cosφ’den düşüktür.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Tek frekans (50 Hz) temel bileşen.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60050-131 (güç tanımları)</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: hesaplama/kw-kva-amper-donusturucu.html</span><span>Doğrulama testleri: calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-trafo-akimi"><summary><span>Trafo anma akımı</span> <a href="/hesaplama/trafo-akimi-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Trafonun primer ve sekonder sargısındaki anma akımını verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Sr</td><td>kVA</td><td>Anma gücü</td></tr><tr><td>U</td><td>V</td><td>Sekonder hat gerilimi (400 V 3F / 230 V 1F)</td></tr><tr><td>U1</td><td>V</td><td>Primer hat gerilimi</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>I2</td><td>A</td><td>Sekonder anma akımı</td></tr><tr><td>I1</td><td>A</td><td>Primer anma akımı</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>I = Sr·1000/(√3·U_LL) (üç faz); I = Sr·1000/U (tek faz)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Anma akımı görünür güçten hesaplanır, cosφ’den bağımsızdır; aşırı yük, ortam sıcaklığı ve harmonik derating dahil değildir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Dengeli üç faz.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60076-1</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · transformerCurrent</span><span>Doğrulama testleri: calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-kisa-devre"><summary><span>AG kısa devre akımı (IEC 60909 yaklaşımı)</span> <a href="/hesaplama/kisa-devre-akimi-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Trafo AG çıkışında ve kablo sonunda en büyük üç faz ve en küçük tek faz kısa devre akımını verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>S, uk, Pk</td><td>kVA, %, W</td><td>Trafo</td></tr><tr><td>SkQ</td><td>MVA</td><td>OG şebeke (boş = sonsuz)</td></tr><tr><td>L, S, malzeme, paralel</td><td>m, mm²</td><td>Kablo</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Ik3</td><td>kA</td><td>c = 1,05</td></tr><tr><td>ip</td><td>kA</td><td>Darbe akımı</td></tr><tr><td>Ik1min</td><td>kA</td><td>c = 0,95, 1,24·R20</td></tr><tr><td>Icu</td><td>kA</td><td>Önerilen kesme kapasitesi basamağı</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>ZT = uk·U²/Sr, RT = Pk·U²/Sr²</code></li><li><code>Ik3 = c·U/(√3·|Z|)</code></li><li><code>κ = 1,02 + 0,98·e^(−3R/X)</code></li><li><code>Ik1 = c·U0/|(2Z1 + Z0)/3 + 2·Zkablo|</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>c_max = 1,05 (±%6 tolerans); ±%10 tolerans için IEC 60909 c_max = 1,10 öngörür.</li><li>Motor katkısı ve KT düzeltmesi yok; Dyn trafoda Z0T ≈ ZT.</li><li>SkQ ve Pk girilmezse sonuç &quot;Varsayımsal&quot; olarak işaretlenir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>AG radyal şebeke; koruma cihazı seçimi için üretici verisiyle tam IEC 60909 hesabı gerekir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60909-0</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · shortCircuit</span><span>Doğrulama testleri: hesaplama-formulas.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-gerilim-dusumu"><summary><span>Gerilim düşümü</span> <a href="/hesaplama/gerilim-dusumu-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Kablo boyunca yüzde gerilim düşümünü ve EİTY Madde 57 sınırıyla karşılaştırmasını verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>I</td><td>A</td><td>Yük akımı</td></tr><tr><td>L</td><td>m (tek yön)</td><td>Kablo boyu</td></tr><tr><td>S</td><td>mm²</td><td>Kesit</td></tr><tr><td>U</td><td>V</td><td>3F: hat gerilimi; 1F: faz-nötr</td></tr><tr><td>cosφ</td><td>—</td><td>Güç faktörü</td></tr><tr><td>θ</td><td>°C</td><td>İletken sıcaklığı</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>ΔU</td><td>V, %</td><td>Gerilim düşümü</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>ΔU = k·I·L·(R′·cosφ + X′·sinφ); k = √3 (3F) veya 2 (1F)</code></li><li><code>R′ = (1/κ20)·(1 + α·(θ − 20))/S</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>X′ = 0,08 Ω/km (tipik AG kablo).</li><li>EİTY sınırları yapı bağlantı kutusundan tüketiciye kadardır.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>AG kablolar; harmonik akımlar dahil değil.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>Elektrik İç Tesisleri Yönetmeliği Madde 57</li><li>TS HD 60364-5-52 Ek G</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · voltageDrop</span><span>Doğrulama testleri: hesaplama-formulas.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-kablo-kesiti"><summary><span>Kablo kesiti seçimi</span> <a href="/hesaplama/kablo-kesiti-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Koruma anma akımı, düzeltilmiş akım taşıma kapasitesi ve gerilim düşümüne göre en küçük uygun bakır kesiti seçer.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P veya I</td><td>kW, A</td><td>Yük</td></tr><tr><td>U</td><td>V</td><td>Hat/faz gerilimi</td></tr><tr><td>yöntem, ortam, grup</td><td>—, °C, adet</td><td>Döşeme koşulları</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>S</td><td>mm²</td><td>Kesit</td></tr><tr><td>In</td><td>A</td><td>Koruma</td></tr><tr><td>Iz</td><td>A</td><td>Düzeltilmiş kapasite</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Ib ≤ In ≤ Iz, I2 ≤ 1,45·Iz</code></li><li><code>Iz = Iz,tablo·kθ·kg</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Bakır PVC (70 °C) tabloları; alüminyum ve XLPE için bu araçta tablo yoktur.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>AG, ≤ 240 mm².</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>TS HD 60364-5-52</li><li>TS HD 60364-4-43</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · selectCable</span><span>Doğrulama testleri: hesaplama-formulas.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-kompanzasyon"><summary><span>Kompanzasyon (kondansatör gücü)</span> <a href="/hesaplama/kompanzasyon-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Hedef güç faktörü için gereken kondansatör gücünü ve EPDK endüktif oran sınırı karşılaştırmasını verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P</td><td>kW</td><td>Aktif güç</td></tr><tr><td>cosφ1, cosφ2</td><td>—</td><td>Mevcut ve hedef</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Qc</td><td>kVAr</td><td>Gerekli kondansatör</td></tr><tr><td>oran</td><td>%</td><td>kVArh/kWh</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Qc = P·(tanφ1 − tanφ2)</code></li><li><code>oran = tanφ·100</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Sabit, sinüzoidal yük; harmonikli tesiste ayarlı (detuned) kompanzasyon gerekir — şönt reaktör ve harmonik filtre ayrı cihazlardır.</li><li>Hedef ≤ mevcut ise kondansatör gerekmez (negatif kVAr önerilmez).</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Aylık enerji oranı, sabit yükte anlık orana eşit kabul edilir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>EPDK Kurul Kararı (reaktif enerji, Madde 13)</li><li>IEC 60831-1</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · compensation</span><span>Doğrulama testleri: calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-motor-akimi"><summary><span>Motor anma akımı</span> <a href="/hesaplama/motor-akimi-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Motor mil (çıkış) gücünden şebekeden çekilen akımı ve elektriksel giriş gücünü verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P</td><td>kW (mil)</td><td>Etiket gücü — mekanik çıkış</td></tr><tr><td>cosφ, η</td><td>—, %</td><td>Etiket değerleri</td></tr><tr><td>U</td><td>V</td><td>400 V 3F / 230 V 1F</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>I</td><td>A</td><td>Anma akımı</td></tr><tr><td>P_el</td><td>kW</td><td>Elektriksel giriş = P/η</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>I = P·1000/(√3·U·cosφ·η)</code></li><li><code>P_el = P_mil/η</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Anma yükünde; kısmi yükte cosφ ve η düşer. Etiketteki In bu hesaptan önce gelir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>AG asenkron motor.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60034-1</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · loadCurrent</span><span>Doğrulama testleri: calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-ges-uretim"><summary><span>GES kurulu güç ve yıllık üretim ön hesabı</span> <a href="/hesaplama/ges-uretim-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Tüketim, alan ve sözleşme gücüne göre GES kurulu gücünü ve bölgesel tipik özgül verimle yıllık üretimi tahmin eder.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>tüketim</td><td>kWh/ay</td><td>Aylık tüketim</td></tr><tr><td>alan</td><td>m²</td><td>Kullanılabilir alan</td></tr><tr><td>bölge</td><td>kWh/kWp·yıl</td><td>Tipik özgül verim (1300–1650)</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P</td><td>kWp</td><td>Kurulu güç</td></tr><tr><td>E</td><td>kWh/yıl</td><td>Yıllık üretim</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>P = min(tüketim·gündüz oranı/özgül verim; alan/m²·kWp⁻¹; sözleşme gücü)</code></li><li><code>E = P·özgül verim·0,95</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Bölge değerleri tipik özgül verimdir (sahaya özgü değil); 0,95 ek kirlenme/kullanılabilirlik/ilk yıl degradasyon payıdır, tam PR değildir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Ön fizibilite; sonuç her zaman &quot;Varsayımsal&quot; işaretlenir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>Lisanssız Elektrik Üretim Yönetmeliği</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: hesaplama/ges-uretim-hesaplama.html</span><span>Doğrulama testleri: calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-jenerator"><summary><span>Jeneratör gücü</span> <a href="/hesaplama/jenerator-gucu-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Sürekli yük ve en büyük motorun kalkışına göre jeneratör kVA değerini verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P, cosφ, eşzamanlılık</td><td>kW, —, —</td><td>Yük</td></tr><tr><td>motor</td><td>kW</td><td>En büyük motor</td></tr><tr><td>yol verme</td><td>—</td><td>DOL/YD/SS/VFD</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>S</td><td>kVA</td><td>Gerekli ve standart güç</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>S1 = max(P·ks/cosφ, P·ks/0,8)·(1 + pay)</code></li><li><code>S2 = Sst·x″d·(1 − ΔU)/ΔU</code></li><li><code>S = max(S1, S2)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Jeneratör kVA’da cosφ 0,8 anmalıdır (kW sınırı = 0,8·kVA).</li><li>Kalkış akımı katsayıları ve x″d = 0,20 tipiktir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Tek jeneratör, ada çalışma.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>ISO 8528-1/-5</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · generatorSize</span><span>Doğrulama testleri: hesaplama-formulas.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-ups"><summary><span>UPS gücü ve akü</span> <a href="/hesaplama/ups-gucu-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>UPS kVA değerini ve istenen sürede blok başına gereken sabit gücü verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P</td><td>kW</td><td>Kritik yük</td></tr><tr><td>pf</td><td>—</td><td>UPS çıkış güç faktörü</td></tr><tr><td>t</td><td>dk</td><td>Yedekleme süresi</td></tr><tr><td>Udc</td><td>V</td><td>Akü gerilimi</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>S</td><td>kVA</td><td>UPS</td></tr><tr><td>W/blok</td><td>W</td><td>Sabit güç</td></tr><tr><td>Ah</td><td>Ah (C10)</td><td>Yaklaşık kapasite</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>S = P/pf·(1 + pay)</code></li><li><code>P_dc = P/η_inv</code></li><li><code>W/blok = P_dc·1,25/n_blok</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Tipik VRLA kapasite oranı tablosu, 1,75 V/hücre, yaşlanma 1,25.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Ön seçim; üretici sabit güç tablosu esastır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 62040-3</li><li>IEEE 485</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · upsSize</span><span>Doğrulama testleri: hesaplama-formulas.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-topraklama"><summary><span>Çubuk topraklayıcı sayısı</span> <a href="/hesaplama/topraklama-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Hedef topraklama direnci için gereken düşey çubuk sayısını verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>ρ</td><td>Ω·m</td><td>Toprak özdirenci</td></tr><tr><td>L, d</td><td>m</td><td>Çubuk</td></tr><tr><td>mevsim</td><td>—</td><td>Katsayı</td></tr><tr><td>R_hedef</td><td>Ω</td><td>Hedef</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>n</td><td>adet</td><td>Çubuk sayısı</td></tr><tr><td>R</td><td>Ω</td><td>Yaklaşık direnç</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>R1 = ρ/(2πL)·(ln(8L/d) − 1)</code></li><li><code>Rn = R1/(n·η(n))</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Homojen toprak; paralel çalışma verimi tipik (BS 7430 / IEEE 142 eğilimi); aralık ≥ çubuk boyu.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>≤ 30 çubuk; kabul ölçülen dirençle yapılır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>Elektrik Tesislerinde Topraklamalar Yönetmeliği</li><li>BS 7430</li><li>IEEE 142</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · rodResistance, rodsFor</span><span>Doğrulama testleri: hesaplama-formulas.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-inverter-kablo"><summary><span>İnverter DC/AC kablo seçimi</span> <a href="/hesaplama/inverter-dc-ac-kablo-secimi/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>FV dizisi DC kablosu ve inverter AC kablosu için kesit önerir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Isc, Np</td><td>A, adet</td><td>Dizi</td></tr><tr><td>L, U</td><td>m, V</td><td>Hat</td></tr><tr><td>P_AC</td><td>kW</td><td>İnverter</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>S_DC, S_AC</td><td>mm²</td><td>Kesitler</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Ib,DC = 1,25·Isc·Np (IEC 62548)</code></li><li><code>Iz (EN 50618) ≥ Ib</code></li><li><code>ΔU_DC = 2·I·L·R′</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>DC düşüm 70 °C iletken direnciyle; H1Z2Z2-K tek kablo havada 60 °C.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Sınırlar %1 DC / %1,5 AC tavsiyedir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 62548-1</li><li>EN 50618</li><li>TS HD 60364-5-52</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · selectDcCable, selectCable</span><span>Doğrulama testleri: calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-isletme-ucreti"><summary><span>YG işletme sorumluluğu ücreti</span> <a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>EMO en az ücret tablosuyla aylık YG işletme sorumluluğu ve bakım bedelini hesaplar.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>tip, kVA, fider, ENH</td><td>—</td><td>Tesis</td></tr><tr><td>bk</td><td>—</td><td>Bölgesel katsayı</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>toplam</td><td>TL/ay (KDV hariç)</td><td>En az ücret</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>EMO 2026 Ücret Tanımları Kısım III kademeleri</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Tablo 05.03.2026 yürürlüklü EMO kararıdır (kayıtta kontrol tarihi 12.10.2026); her yıl yenilenir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>En az ücrettir; teklif değildir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>EMO YK 04.03.2026 tarih ve 49/60 sayılı karar</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · calcIsletmeUcreti</span><span>Doğrulama testleri: hesaplama-formulas.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-sigorta-tms"><summary><span>Sigorta / TMS seçimi</span> <a href="/hesaplama/sigorta-tms-secimi/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Yük akımına göre MCB/MCCB/gG anma akımını ve aşırı yük koşulunu verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P</td><td>kW</td><td>Yük</td></tr><tr><td>U, cosφ</td><td>V, —</td><td>Gerilim (3F hat / 1F faz-nötr)</td></tr><tr><td>Iz</td><td>A</td><td>Kablo kapasitesi</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>In</td><td>A</td><td>Koruma anma akımı</td></tr><tr><td>I2</td><td>A</td><td>Konvansiyonel açma akımı</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Ib ≤ In ≤ Iz; I2 ≤ 1,45·Iz (gG: I2 = 1,6·In)</code></li><li><code>Manyetik açma: B 3–5·In, C 5–10·In, D 10–20·In</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Dengeli, sinüzoidal yük; kısa devre kesme kapasitesi ve seçicilik ayrıca kontrol edilir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>AG son devreler.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>TS HD 60364-4-43</li><li>TS EN 60898-1</li><li>IEC 60269-1</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/calculator-config.js · pickProtection, overloadOk</span><span>Doğrulama testleri: hesaplama-formulas.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-motor-koruma"><summary><span>Motor koruma ve kontaktör seçimi</span> <a href="/hesaplama/motor-koruma-kontaktor-secimi/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Motor anma akımından AC-3 kontaktör ve motor koruma şalteri ayar aralığını önerir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P</td><td>kW (mil)</td><td>Etiket gücü</td></tr><tr><td>U</td><td>V</td><td>Hat/faz gerilimi</td></tr><tr><td>yol verme</td><td>—</td><td>DOL/YD/SS</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>In</td><td>A</td><td>Motor akımı</td></tr><tr><td>kontaktör</td><td>A (AC-3)</td><td>Standart basamak</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>In = P/(√3·U·cosφ·η)</code></li><li><code>YD: kontaktörler In/√3 taşır</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>cosφ 0,86 ve tipik verim kabulü; etiket akımı esastır.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>AG asenkron motor, AC-3 kullanım.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>TS EN 60947-4-1</li><li>IEC 60034-1</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: hesaplama/motor-koruma-kontaktor-secimi.html</span><span>Doğrulama testleri: calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-aydinlatma"><summary><span>Aydınlatma (lümen yöntemi)</span> <a href="/hesaplama/aydinlatma-lux-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Hedef ortalama aydınlık düzeyi için armatür sayısını ve toplam gücü tahmin eder.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>A</td><td>m²</td><td>Alan</td></tr><tr><td>E</td><td>lux</td><td>Hedef</td></tr><tr><td>Φ, P</td><td>lm, W</td><td>Armatür</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>n</td><td>adet</td><td>Armatür</td></tr><tr><td>P</td><td>W</td><td>Toplam güç</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>n = E·A/(Φ·UF·MF)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Kullanım faktörü tipik değerdir; düzgünlük, UGR ve Ra hesaplanmaz.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Sonuç &quot;Varsayımsal&quot;; fotometrik hesapla doğrulanmalıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>TS EN 12464-1</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Hesap yapılandırması 2026-10-24</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: hesaplama/aydinlatma-lux-hesaplama.html</span><span>Doğrulama testleri: calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="hesap-harmonik-filtre"><summary><span>Harmonik filtre ihtiyacı ön değerlendirmesi</span> <a href="/hesaplama/harmonik-filtre-ihtiyaci/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Doğrusal olmayan yük payı, trafo kısa devre gücü ve kondansatör rezonansına göre kaba harmonik risk sınıfı verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>sT, uk, Sk</td><td>kVA, %, MVA</td><td>Kaynak</td></tr><tr><td>VFD/UPS/LED payları</td><td>kW</td><td>Doğrusal olmayan yük</td></tr><tr><td>Qc, reaktör</td><td>kVAr, p</td><td>Kompanzasyon</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Gh/Sn</td><td>%</td><td>Harmonik yük oranı</td></tr><tr><td>THDi, THDv</td><td>%</td><td>Kaba tahmin</td></tr><tr><td>hr</td><td>—</td><td>Paralel rezonans mertebesi</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>hr = √(Ssc/Qc) (reaktörsüz); p = %7 → 189 Hz, p = %14 → 134 Hz</code></li><li><code>U_h ≈ h·I_h·X_k</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Yük türüne göre tipik THD katsayıları ve cosφ ≈ 0,9; tahmin kabadır, ölçüm yerine geçmez.</li><li>Ayarlı (detuned) kompanzasyon, pasif ayarlı filtre ve aktif filtre ayrı çözümlerdir; şönt reaktör harmonik süzmez.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Risk sınıfı; filtre boyutlandırması TS EN 61000-4-30 sınıf A ölçüm gerektirir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 61000-3-12</li><li>TS EN 50160</li><li>IEC 60831-1</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VGAssess (js/vg-assess.js)</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: js/vg-assess.js · harmonicNeed</span><span>Doğrulama testleri: assess-tools.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+    </section>
+    <section class="vs-ident" aria-labelledby="fam-araclar">
+      <h2 id="fam-araclar">Mühendislik araçları (araclar/) <small>(7)</small></h2>
+      <details class="vs-id" id="arac-ag-kisa-devre"><summary><span>AG kısa devre simülatörü</span> <a href="/araclar/ag-kisa-devre/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Trafodan başlayan AG kablo zinciri boyunca düğüm kısa devre akımlarını ve koruma cihazı ön kontrolünü verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>trafo</td><td>kVA, %, W</td><td>Sr, uk, Pcu</td></tr><tr><td>segment</td><td>m, mm²</td><td>Kablo/hat</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>I″k3, ip, I″k1</td><td>kA</td><td>Düğüm akımları</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Vektörel: Zk = √((ΣR)² + (ΣX)²)</code></li><li><code>Skaler: Zk = Σ|Zi| (akımı küçük verir; Icu kontrolü her iki modda vektörel akımla)</code></li><li><code>c_max seçilebilir: 1,05 (±%6 tolerans) veya 1,10 (±%10 tolerans); c_min = 0,95</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>OG şebeke sonsuz; KT ve motor katkısı yok.</li><li>Ik1,min için iletken direnci 1,24·R20 (iyimser olabilir).</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Ön kontrol; &quot;Ön kontrol sağlanıyor&quot; uygunluk onayı değildir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60909-0 (Tablo 1: gerilim katsayısı c)</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Araç kaynağı (tools/engineering/src)</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: tools/engineering/src/tools/AG_Kısa_Devre_Simülatörü.html</span><span>Doğrulama testleri: araclar-fixes.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="arac-ges-tasarim"><summary><span>GES tasarım simülatörü</span> <a href="/araclar/ges-tasarim/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>String gerilim/akım kontrolleri, DC/AC kablo ve yıllık üretim simülasyonu.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>modül</td><td>V, A, %/°C</td><td>Katalog değerleri</td></tr><tr><td>Tmin, Tmax</td><td>°C</td><td>Saha sıcaklıkları</td></tr><tr><td>cosφ</td><td>—</td><td>AC hat</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Max Voc, Min Vmpp</td><td>V</td><td>String</td></tr><tr><td>%e, ΔP</td><td>%, W</td><td>AC hat</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Max Voc = N·Voc·(1 + |k|·max(0, Tnom − Tmin)/100)</code></li><li><code>Min Vmpp: hücre ≈ Tmax + 30 K</code></li><li><code>AC: Q = P·tanφ (girilmemişse), ΔP = 3I²R</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>DC kablo iletkenliği 70 °C iletken sıcaklığına düzeltilir: κθ = κ20/(1 + α·50) (Cu 56 → 46,8; Al 35 → 29,1).</li><li>Diğer kayıplar %12 (değiştirilebilir) ve inverter %98,5 sabit.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Ön tasarım; üretici string hesaplayıcısıyla doğrulanmalıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 62548-1</li><li>TEDAŞ k/m tabloları</li><li>IEC 60228 (iletken direnci)</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Araç kaynağı (tools/engineering/src)</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: tools/engineering/src/tools/GES_Tasarım_Similatörü.html</span><span>Doğrulama testleri: araclar-fixes.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="arac-ag-gerilim-dusumu"><summary><span>AG gerilim düşümü ve güç kaybı</span> <a href="/araclar/ag-gerilim-dusumu/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>AG dağıtım hattında kümülatif yüklerle yüzde gerilim düşümünü ve güç kaybını verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P, Q, L</td><td>kW, kVAr, m</td><td>Segment</td></tr><tr><td>U, cosφ, θ</td><td>V, —, °C</td><td>Genel</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>%e</td><td>%</td><td>Düşüm</td></tr><tr><td>%P</td><td>%</td><td>Kayıp</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>%e = (k·P + m·Q)·L/10⁷, k,m ∝ 1/U²</code></li><li><code>R = R20·(1 + 0,004·Δθ)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>TEDAŞ k/m tabloları; akım taşıma düzeltmesi (ortam/gruplama) uygulanmaz.</li><li>Sınır seçilmezse %3 (EİTY Md. 57 motor) kullanılır.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>AG radyal hat.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>Elektrik İç Tesisleri Yönetmeliği Madde 57</li><li>TEDAŞ</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Araç kaynağı (tools/engineering/src)</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: tools/engineering/src/tools/AG_Gerilim_Düşümü_ve_Güç_Kaybı_Hesabı.html</span><span>Doğrulama testleri: calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="arac-og-kisa-devre"><summary><span>OG kısa devre simülatörü</span> <a href="/araclar/og-kisa-devre/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>OG şebeke, indirici trafo, OG hatları ve dağıtım trafosu üzerinden OG ve 0,4 kV barada üç faz, iki faz, faz-toprak ve iki faz-toprak kısa devre akımlarını verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>S″kQ</td><td>MVA</td><td>Şebeke kısa devre gücü</td></tr><tr><td>Nn, uk, Pk</td><td>MVA/kVA, %, kW</td><td>Trafolar (Pk boş = R ihmal)</td></tr><tr><td>hat</td><td>km, Ω/km</td><td>OG hatları</td></tr><tr><td>Rn</td><td>Ω</td><td>Nötr direnci</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>I″k3, I″k2</td><td>kA</td><td>Simetrik akımlar</td></tr><tr><td>I″k1, I″kE2E</td><td>kA</td><td>Toprak arızaları</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>pu sistemi (100 MVA baz)</code></li><li><code>rT = (Pk/Sn)·(Sb/Sn), xT = √(zT² − rT²)</code></li><li><code>I″k1 = 3c/|2Z1 + Z0|</code></li><li><code>I″kE2E = 3c/|Z1 + 2Z0| (karmaşık toplam)</code></li><li><code>c = 1,10/1,05 (cmax) veya 1,00/0,95 (cmin)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Z2 = Z1; Dyn dağıtım trafosunda Z0 ≈ Z1 (R0 ≈ R1).</li><li>Pk girilmezse trafo R ≈ 0 kabul edilir (akım biraz büyük).</li><li>KT düzeltmesi ve motor katkısı yok.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Radyal OG dağıtım; koruma ayarı için tam IEC 60909 / kısa devre yazılımıyla doğrulanmalıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60909-0</li><li>TEDAŞ kısa devre hesap şablonu</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Araç kaynağı (tools/engineering/src)</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: tools/engineering/src/tools/OG_Kisa_Devre_Simulatoru.html</span><span>Doğrulama testleri: araclar-fixes.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="arac-adim-gerilimi"><summary><span>Adım gerilimi simülatörü</span> <a href="/araclar/adim-gerilimi/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Yarıküre topraklayıcı çevresindeki potansiyel dağılımından adım gerilimini ve IEEE 80 izin verilen adım gerilimini gösterir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>V0</td><td>V</td><td>Topraklayıcı potansiyeli</td></tr><tr><td>ρ</td><td>Ω·m</td><td>Zemin özdirenci</td></tr><tr><td>ρs, hs</td><td>Ω·m, m</td><td>Yüzey tabakası (isteğe bağlı)</td></tr><tr><td>ts</td><td>s</td><td>Arıza süresi</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>ΔV</td><td>V</td><td>Adım gerilimi</td></tr><tr><td>E_adım</td><td>V</td><td>İzin verilen</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>V(r) = V0·r0/r (r0 = 1 m)</code></li><li><code>Cs = 1 − 0,09·(1 − ρ/ρs)/(2hs + 0,09)</code></li><li><code>E_adım = (1000 + 6·Cs·ρs)·k/√ts (k = 0,116 / 0,157)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Homojen zemin, yarıküre elektrot (eğitim modeli).</li><li>Tabaka yoksa Cs = 1 ve ρs = ρ.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Eğitim/ön değerlendirme; tesis için ağ topraklama hesabı ve ölçüm gerekir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEEE 80-2013</li><li>Elektrik Tesislerinde Topraklamalar Yönetmeliği</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Araç kaynağı (tools/engineering/src)</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: tools/engineering/src/tools/Adım_Gerilimi.html</span><span>Doğrulama testleri: araclar-fixes.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="arac-sabit-kondansator"><summary><span>Trafo sabit kondansatörü</span> <a href="/araclar/sabit-kondansator-hesabi/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Dağıtım trafosunun boşta ve yük altındaki reaktif tüketimini karşılayacak sabit kondansatör gücünü verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>Sn, I0, Pcu, uk</td><td>kVA, %, W, %</td><td>Trafo etiket/test verisi</td></tr><tr><td>kWh, kVArh, gün, saat</td><td>—</td><td>Fatura (k için)</td></tr><tr><td>F</td><td>—</td><td>Yük eğrisi biçim katsayısı k_rms/k_ort</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>QL1</td><td>kVAr</td><td>Boşta</td></tr><tr><td>QL2′</td><td>kVAr</td><td>Yükte = k²·QL2</td></tr><tr><td>Qc</td><td>kVAr</td><td>Toplam</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>QL1 = √((I0·Sn)² − P0²)</code></li><li><code>QL2 = √((uk·Sn)² − Pcu²)</code></li><li><code>k_etkin = F·S_ort/Sn; QL2′ = k_etkin²·QL2</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Değişken yükte E[k²] ≥ E[k]²; F girilmezse 1,0 (sabit yük, alt sınır).</li><li>Faturadaki endüktif kVArh mevcut kompanzasyon sonrası net değerdir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Ön hesap; kademe seçimi sayaç verisiyle kontrol edilmelidir.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>EPDK reaktif enerji düzenlemesi</li><li>IEC 60076-1</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Araç kaynağı (tools/engineering/src)</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: tools/engineering/src/tools/Sabit_Kondansatör_Hesabı.html</span><span>Doğrulama testleri: araclar-fixes.test.cjs</span></p>
+        </div>
+      </details>
+      <details class="vs-id" id="arac-lab-guc"><summary><span>Güç üçgeni, kompanzasyon, THD, EV şarj, batarya (Lab araçları)</span> <a href="/araclar/guc-ucgeni/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Temel güç bağıntıları: güç üçgeni, kompanzasyon kondansatörü, harmonik THD, motor hız-tork, batarya enerjisi ve ideal AC şarj süresi.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P, cosφ, U</td><td>kW, —, V</td><td>Güç üçgeni</td></tr><tr><td>C, ΔSoC, P, η</td><td>kWh, %, kW, —</td><td>EV şarj</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>S, Q, I</td><td>kVA, kVAr, A</td><td>—</td></tr><tr><td>E, t</td><td>kWh, h</td><td>Şarj</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>S = P/cosφ, Q = P·tanφ</code></li><li><code>Qc = P·(tanφ1 − tanφ2)</code></li><li><code>THD = √Σ Xh²/X1</code></li><li><code>E = C·ΔSoC; t = E/(P·η)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>EV şarjında sabit güç; DC eğrisi (taper) yok. 60 kWh %20→%80: 36 kWh depolanan, η 0,9 ile 40 kWh şebekeden.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Eğitim/ön hesap.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60050-131</li><li>IEC 61000-4-7 (THD tanımı)</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: Araç kaynağı (tools/engineering/src)</span><span>Kimlik gözden geçirme: 2026-10-24</span><span>Uygulama: tools/engineering/src/shared/engineering-core.js</span><span>Doğrulama testleri: calculations.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+    </section>
+    <p class="vs-disclaimer"><strong>Önemli:</strong> VoltSim mühendislik eğitimi ve ön değerlendirme amacıyla hazırlanmıştır. Nihai proje, ekipman seçimi, uygulama ve mevzuat uygunluğu yetkili mühendis tarafından değerlendirilmelidir.</p>
+  </main>
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+            </span>
+          </a>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+              <li><a href="/volthaber/">VoltHaber</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
+</body>
+</html>

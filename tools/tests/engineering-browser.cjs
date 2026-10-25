@@ -332,7 +332,7 @@ async function checkMobile(context, base) {
 
 async function checkMobileMenu(page, route) {
   const burger = page.locator('#vgBurger');
-  const dropdown = page.locator('#vgHeader .vg-dd__btn');
+  const dropdown = page.locator('#vgHeader .vg-dd__btn[aria-controls="vgDdKaynaklar"]');
   try {
     await burger.click();
     assert.equal(await burger.getAttribute('aria-expanded'), 'true', route + ' mobile menu opens');

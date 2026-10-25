@@ -108,7 +108,8 @@ def main():
         if not private and file.name != '404.html':
             if len(page.canonicals) != 1:
                 issue(file, 'canonical', page.canonicals)
-            elif page.canonicals[0] not in sitemap:
+            # noindex pages (search, game) must stay out of the sitemap.
+            elif page.canonicals[0] not in sitemap and 'noindex' not in page.meta.get('robots', ''):
                 issue(file, 'sitemap', page.canonicals[0])
         for id, count in collections.Counter(page.ids).items():
             if count > 1:

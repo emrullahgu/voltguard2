@@ -168,14 +168,22 @@
                 <select id="tsInput"><option value="0.1">0,1</option><option value="0.2">0,2</option><option value="0.5" selected>0,5</option><option value="1">1,0</option><option value="2">2,0</option><option value="3">3,0</option></select>
             </div>
             <div class="control-group">
-                <label for="rhoInput">Yüzey özdirenci ρ<sub>s</sub> (Ω·m):</label>
-                <select id="rhoInput"><option value="50">50 (nemli toprak)</option><option value="100" selected>100 (toprak)</option><option value="1000">1000 (kuru kum)</option><option value="3000">3000 (çakıl, kaplama)</option></select>
+                <label for="rhoInput">Zemin (toprak) özdirenci ρ (Ω·m):</label>
+                <select id="rhoInput"><option value="50">50 (nemli toprak)</option><option value="100" selected>100 (toprak)</option><option value="1000">1000 (kuru kum)</option></select>
+            </div>
+            <div class="control-group">
+                <label for="layerInput">Yüzey tabakası ρ<sub>s</sub> (Ω·m):</label>
+                <select id="layerInput"><option value="0" selected>Yok (C<sub>s</sub> = 1, ρ<sub>s</sub> = ρ)</option><option value="3000">Çakıl, ıslak ≈ 3000</option><option value="5000">Çakıl, kuru ≈ 5000</option><option value="10000">Asfalt ≈ 10 000</option></select>
+            </div>
+            <div class="control-group">
+                <label for="hsInput">Yüzey tabakası kalınlığı h<sub>s</sub> (m):</label>
+                <select id="hsInput"><option value="0.05">0,05</option><option value="0.1" selected>0,10</option><option value="0.15">0,15</option><option value="0.2">0,20</option></select>
             </div>
             <div class="control-group">
                 <label for="kgInput">Vücut ağırlığı (IEEE 80):</label>
                 <select id="kgInput"><option value="0.116" selected>50 kg (k = 0,116)</option><option value="0.157">70 kg (k = 0,157)</option></select>
             </div>
-            <p id="stepHint" style="font-size:12px;opacity:.8;margin:0 0 8px">Model: yarıküre topraklayıcı (r<sub>0</sub> = 1 m), V(r) = V<sub>0</sub>·r<sub>0</sub>/r. Adım boyu normalde 1 m alınır. İzin verilen adım gerilimi IEEE 80: E<sub>adım</sub> = (1000 + 6·C<sub>s</sub>·ρ<sub>s</sub>)·k/√t<sub>s</sub> (C<sub>s</sub> = 1, yüzey kaplaması yok).</p>
+            <p id="stepHint" style="font-size:12px;opacity:.8;margin:0 0 8px">Model: yarıküre topraklayıcı (r<sub>0</sub> = 1 m), V(r) = V<sub>0</sub>·r<sub>0</sub>/r. Adım boyu normalde 1 m alınır. İzin verilen adım gerilimi IEEE 80: E<sub>adım</sub> = (1000 + 6·C<sub>s</sub>·ρ<sub>s</sub>)·k/√t<sub>s</sub> C<sub>s</sub> yüzey tabakası azaltma katsayısıdır: tabaka yoksa C<sub>s</sub> = 1 ve ρ<sub>s</sub> zemin özdirencidir; tabaka varsa C<sub>s</sub> = 1 − 0,09·(1 − ρ/ρ<sub>s</sub>)/(2h<sub>s</sub> + 0,09) (IEEE 80-2013 Denk. 27). İnce tabakada C<sub>s</sub> &lt; 1 olduğundan sınır, ρ<sub>s</sub>’nin doğrudan kullanıldığı değerden düşüktür.</p>
 
             <div class="metrics">
                 <div class="metric-box">
@@ -245,11 +253,19 @@
             return V0 * (r0 / rMetre);
         }
 
+        /** IEEE 80: yüzey tabakası azaltma katsayısı Cs (tabaka yoksa 1, ρs = ρ) */
+        function surfaceCs() {
+            const rho = parseFloat(document.getElementById('rhoInput').value);
+            const layer = parseFloat(document.getElementById('layerInput').value);
+            const hs = parseFloat(document.getElementById('hsInput').value);
+            if (!(layer > 0)) return { Cs: 1, rhoS: rho };
+            return { Cs: 1 - 0.09 * (1 - rho / layer) / (2 * hs + 0.09), rhoS: layer };
+        }
         function stepLimit() {
             const ts = parseFloat(document.getElementById('tsInput').value);
-            const rhoS = parseFloat(document.getElementById('rhoInput').value);
             const k = parseFloat(document.getElementById('kgInput').value);
-            return (1000 + 6 * rhoS) * k / Math.sqrt(ts);
+            const sc = surfaceCs();
+            return (1000 + 6 * sc.Cs * sc.rhoS) * k / Math.sqrt(ts);
         }
 
         function draw() {
@@ -337,7 +353,8 @@
             mStepV.innerText = formatVoltage(stepVoltage);
             
             // IEEE 80 izin verilen adım gerilimi (süre, yüzey özdirenci ve vücut ağırlığına bağlı) ile karşılaştırılır
-            document.getElementById('mLimit').innerText = formatVoltage(limitV);
+            const sc = surfaceCs();
+            document.getElementById('mLimit').innerText = formatVoltage(limitV) + ' (Cs = ' + sc.Cs.toFixed(3).replace('.', ',') + ', ρs = ' + sc.rhoS + ' Ω·m)';
             mStepV.style.color = "";
             if(stepVoltage > limitV && stepLengthMetre > 0) {
                 mStepV.className = "metric-value danger";
@@ -383,7 +400,7 @@
             draw();
         });
 
-        ['tsInput', 'rhoInput', 'kgInput'].forEach(id => document.getElementById(id).addEventListener('change', draw));
+        ['tsInput', 'rhoInput', 'layerInput', 'hsInput', 'kgInput'].forEach(id => document.getElementById(id).addEventListener('change', draw));
 
         downloadBtn.addEventListener('click', () => {
             const imageURI = canvas.toDataURL("image/png");

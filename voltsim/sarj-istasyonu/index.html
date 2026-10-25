@@ -12,7 +12,7 @@
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
   <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=98a54d154d91">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=559c615bb841">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,7 +35,7 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=718b19b08a2a" defer></script>
+  <script src="/js/vg-shell.js?v=1a6fa8877736" defer></script>
   <script src="/js/vg-metrics.js?v=44aefc57c2b6" defer></script>
   <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
@@ -52,12 +52,13 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/voltsim.css?v=fb5ab91f1fd1">
+  <link rel="stylesheet" href="/css/voltsim.css?v=721d79efd8fb">
   <script src="/js/vendor/three-r128.min.js?v=9274bbcec8d9" defer></script>
-  <script src="/js/voltsim/engine.js?v=349aa22bb691" defer></script>
+  <script src="/js/voltsim/engine.js?v=f5f4d7943782" defer></script>
   <script src="/js/voltsim/calc/sarj.js?v=f6da34b55d95" defer></script>
-  <script src="/js/voltsim/regulations.js?v=cdb7ce815792" defer></script>
-  <script src="/js/voltsim/core.js?v=de9b0101330e" defer></script>
+  <script src="/js/voltsim/regulations.js?v=0675c8898607" defer></script>
+  <script src="/js/voltsim/identity.js?v=2fe3f7b4d80f" defer></script>
+  <script src="/js/voltsim/core.js?v=ea21d1032739" defer></script>
   <script src="/js/voltsim/mod/sarj.js?v=78b2ae49e4fe" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltSim","item":"https://voltguard.com.tr/voltsim/"},{"@type":"ListItem","position":3,"name":"3D Elektrikli Araç Şarj İstasyonu Simülasyonu","item":"https://voltguard.com.tr/voltsim/sarj-istasyonu/"}]},{"@type":"WebApplication","name":"3D Elektrikli Araç Şarj İstasyonu Simülasyonu","url":"https://voltguard.com.tr/voltsim/sarj-istasyonu/","applicationCategory":"EngineeringApplication","operatingSystem":"Web","inLanguage":"tr","isAccessibleForFree":true,"description":"AC 7,4–22 kW ve DC 60–180 kW şarjı simüle edin: batarya SOC, araç kabul gücü, şarj eğrisi, verim, eşzamanlı araçlar ve dinamik yük paylaşımı.","publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"}}]}</script>
 </head>
@@ -74,31 +75,95 @@
         </span>
       </a>
       <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <button class="vg-theme vg-theme--bar" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
-          <li><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
-          <li><a class="vg-nav__link" href="/hizmetler/" data-vg-match="/hizmetler/">Hizmetler</a></li>
-          <li><a class="vg-nav__link" href="/#projeler">Projeler</a></li>
-          <li><a class="vg-nav__link" href="/#referanslar">Referanslarımız</a></li>
-          <li><a class="vg-nav__link" href="/ekibimiz.html">Ekibimiz</a></li>
-          <li><a class="vg-nav__link vg-nav__link--factory" href="/fabrika-cozumleri.html">Fabrikalar İçin<span class="vg-ping" aria-hidden="true"></span></a></li>
+          <li class="vg-nav__home"><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
           <li class="vg-dd" data-vg-dd>
-            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Kaynaklar</button>
-            <ul class="vg-dd__menu" id="vgDdKaynaklar">
-              <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
-              <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
-              <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
-              <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
-              <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
-              <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
-              <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
-              <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
-              <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
-              <li><a class="vg-dd__item" href="/calisan/giris.html" data-vg-match="/calisan/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span class="vg-dd__txt"><strong>Çalışan Portalı</strong><small>Şirket personeline özel bordro ve hesap alanı</small></span></a></li>
-            </ul>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdHizmetler">Hizmetler</button>
+            <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdHizmetler">
+              <div class="vg-dd__cols">
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblTrafo">Trafo ve yüksek gerilim</span>
+                  <ul aria-labelledby="vgDdLblTrafo">
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-bakimi.html">Trafo ve OG Hücre Bakımı</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblOlcum">Ölçüm, kontrol ve verimlilik</span>
+                  <ul aria-labelledby="vgDdLblOlcum">
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblProje">Proje, uygulama ve otomasyon</span>
+                  <ul aria-labelledby="vgDdLblProje">
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="vg-dd__foot">
+                <a class="vg-dd__more" href="/hizmetler/" data-vg-match="/hizmetler/">Tüm hizmetler</a>
+                <a class="vg-dd__more" href="/fabrika-cozumleri.html">Fabrikalar için çözümler</a>
+              </div>
+            </div>
           </li>
-          <li><a class="vg-nav__link" href="/hesaplama-araclari/" data-vg-match="/hesaplama/">Hesap Araçları</a></li>
+          <li><a class="vg-nav__link" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKurumsal">Kurumsal</button>
+            <div class="vg-dd__menu" id="vgDdKurumsal">
+              <ul>
+                <li><a class="vg-dd__link" href="/#hakkimizda">Hakkımızda</a></li>
+                <li><a class="vg-dd__link" href="/#projeler">Projeler</a></li>
+                <li><a class="vg-dd__link" href="/#referanslar">Referanslarımız</a></li>
+                <li><a class="vg-dd__link" href="/ekibimiz.html">Ekibimiz</a></li>
+                <li><a class="vg-dd__link" href="/#haberler">Sahadan Haberler</a></li>
+                <li><a class="vg-dd__link" href="/#iletisim">İletişim</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Teknik Kaynaklar</button>
+            <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdKaynaklar">
+              <div class="vg-dd__cols">
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblHesap">Hesapla ve simüle et</span>
+                  <ul aria-labelledby="vgDdLblHesap">
+                    <li><a class="vg-dd__item" href="/hesaplama-araclari/" data-vg-match="/hesaplama/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h8"/></svg></span><span class="vg-dd__txt"><strong>Hesap Araçları</strong><small>Reaktif ceza, kablo kesiti, ücret hesapları</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblOgren">Öğren</span>
+                  <ul aria-labelledby="vgDdLblOgren">
+                    <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblSor">Sor ve paylaş</span>
+                  <ul aria-labelledby="vgDdLblSor">
+                    <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
           <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/" aria-current="true">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
@@ -108,6 +173,7 @@
       </nav>
       <div class="vg-actions">
         <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
@@ -122,6 +188,8 @@
         <p class="vs-eyebrow">VoltSim · AC wallbox · DC hızlı şarj · Yük yönetimi</p>
         <h1>3D Elektrikli Araç Şarj İstasyonu Simülasyonu</h1>
         <p class="vs-lead">Aracı şarj noktasına bağlayın, AC veya DC seçin ve şarjı başlatın. Gücü her an cihaz, araç ve tesis sınırlarının en küçüğü belirler; SOC ve güç grafikleri canlı çizilir.</p>
+        <button type="button" class="vg-fav" aria-pressed="false" data-vg-fav disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg><span>Favorilere ekle</span></button>
+        <span class="vg-fav-msg" role="status" aria-live="polite"></span>
       </div>
       <ul class="vs-tags" aria-label="Hesaplama ve analizler"><li>SOC → enerji</li><li>Şarj eğrisi</li><li>Araç / cihaz / tesis sınırı</li><li>Verim ve kayıp</li><li>Dinamik yük paylaşımı</li><li>RCD gereksinimi</li></ul>
     </header>
@@ -141,6 +209,7 @@
           <button class="vs-tb" type="button" data-vs-act="save"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"/></svg><span>Projeyi kaydet</span></button>
           <button class="vs-tb" type="button" data-vs-act="load"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M5 15v6h14v-6"/></svg><span>Projeyi yükle</span></button>
           <input type="file" accept=".json,application/json" data-vs-file hidden>
+          <label class="vs-tb vs-tb--select" title="3D görüntü kalitesi: düşük ayar pil ve eski telefonlar için daha akıcıdır"><span class="sr-only">3D görüntü kalitesi</span><select data-vs-quality><option value="auto">Kalite: Otomatik</option><option value="high">Kalite: Yüksek</option><option value="low">Kalite: Düşük (mobil/pil)</option></select></label>
         </div>
         <p class="vs-scn" data-vs-scenario-desc aria-live="polite"></p>
       </div>
@@ -182,11 +251,13 @@
           <div class="vs-scroll" data-vs-analysis>
             <div data-vs-ro></div>
             <div class="vs-charts" data-vs-charts></div>
-            <h3 class="vs-sub">Uygunluk ön kontrolü</h3>
-            <p class="vs-small">Model sınırları içindeki ön kontroldür; tasarım doğrulaması veya resmî onay değildir.</p>
+            <h3 class="vs-sub">Sonuç durumu</h3>
+            <div class="vs-status" data-vs-status aria-live="polite"></div>
+            <h3 class="vs-sub">Ön kontroller</h3>
+            <p class="vs-small">Model sınırları içindeki ön kontroldür; tasarım doğrulaması, mevzuata uygunluk belgesi veya uygulama onayı değildir.</p>
             <ul class="vs-checks" data-vs-checks></ul>
             <details class="vs-asm"><summary>Varsayımlar ve bağıntılar</summary><div data-vs-assumptions></div></details>
-            <a class="vs-jump" href="#mevzuat">Mevzuat ve standartlar ↓</a>
+            <a class="vs-jump" href="#hesap-kimligi">Hesaplama kimliği ↓</a> <a class="vs-jump" href="#mevzuat">Mevzuat ve standartlar ↓</a>
           </div>
         </section>
       </div>
@@ -195,46 +266,67 @@
 
     <p class="vs-disclaimer"><strong>Önemli:</strong> VoltSim mühendislik eğitimi ve ön değerlendirme amacıyla hazırlanmıştır. Nihai proje, ekipman seçimi, uygulama ve mevzuat uygunluğu yetkili mühendis tarafından değerlendirilmelidir. Girdileriniz yalnızca tarayıcınızda işlenir; VoltGuard’a gönderilmez.</p>
 
+    <section class="vs-ident" id="hesap-kimligi" aria-labelledby="ident-h">
+      <div class="vs-sec-head"><h2 id="ident-h">Hesaplama kimliği</h2><p>EV şarj: güç sınırı, süre ve enerji. Sonuç durumları ayrıdır: “Veri eksik”, “Mühendis incelemesi gerekli”, “Varsayımsal”, “Hesaplandı”. Hiçbiri mevzuata uygunluk veya uygulama onayı anlamına gelmez. <a href="/voltsim/hesap-kimlikleri/#voltsim-sarj">Tüm hesaplama kimlikleri →</a></p></div>
+      <details class="vs-id"><summary>Yöntem, birimler, varsayımlar ve doğrulama testleri</summary>
+        <div class="vs-id__body">
+          <p>AC/DC şarj noktalarında gücü sınırlayan unsuru (istasyon, araç OBC/DC kabulü, tesis gücü), şarj süresini, bataryaya giren ve şebekeden çekilen enerjiyi verir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>capacity</td><td>kWh</td><td>Kullanılabilir batarya kapasitesi</td></tr><tr><td>soc0, soc1</td><td>%</td><td>Başlangıç/hedef SOC</td></tr><tr><td>profil</td><td>—</td><td>AC 1F/3F akım veya DC istasyon gücü (kW, DC çıkış)</td></tr><tr><td>obcPhases, obcI</td><td>—, A</td><td>Araç dahili şarj cihazı sınırı</td></tr><tr><td>dcMax</td><td>kW</td><td>Araç maks. DC kabul gücü</td></tr><tr><td>effAC, effDC</td><td>%</td><td>Şebeke → batarya verimi</td></tr><tr><td>siteKW</td><td>kW</td><td>Tesisin şarja ayırabildiği güç</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>ideal</td><td>kWh</td><td>Bataryaya giren ideal enerji = C·ΔSOC (kayıpsız)</td></tr><tr><td>Ebatt</td><td>kWh</td><td>Simülasyonda bataryaya giren enerji</td></tr><tr><td>Egrid</td><td>kWh</td><td>Şebekeden çekilen enerji (kayıplar dahil)</td></tr><tr><td>minutes</td><td>dk</td><td>Şarj süresi</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>E_ideal = C·(SOC_hedef − SOC_baş)</code></li><li><code>P_AC = n_faz·230 V·I (n_faz = min(istasyon, OBC), I = min(istasyon, OBC))</code></li><li><code>P_DC = min(istasyon, araç·eğri(SOC))</code></li><li><code>E_şebeke = ∫P_şebeke·dt, E_batarya = η·E_şebeke</code></li><li><code>Yük paylaşımı: eşit (su doldurma)</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>230 V faz-nötr gerilimi; 3 faz 32 A = 3·230·32 ≈ 22,1 kW (= √3·400·32).</li><li>DC eğrisi tipiktir (SOC %50’ye kadar tam, %80’de yarı, %100’de ≈ %15 güç); araç modeline göre değişir.</li><li>Kayıplar verim çarpanıyla ayrıca eklenir; ideal enerji kayıpsızdır.</li><li>Batarya ön ısıtma/soğutma tüketimi, sıcaklık ve yaşlanma etkisi dahil değil.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Mod 3 AC ve Mod 4 DC şarj; istasyon DC gerilim/akım sınırları ayrıca modellenmez.</li><li>Süre senaryodur; gerçek süre araç BMS eğrisine bağlıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>IEC 61851-1, -23</li><li>TS HD 60364-7-722</li><li>Şarj Hizmeti Yönetmeliği (EPDK)</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/engine.js · sarj.compute, js/voltsim/calc/sarj.js</span><span>Doğrulama testleri: voltsim-engine.test.cjs, voltsim-sarj.test.cjs, calc-reference.test.cjs, calc-edge.test.cjs</span></p>
+        </div>
+      </details>
+    </section>
+
     <section class="vs-regs" id="mevzuat" aria-labelledby="mevzuat-h">
       <div class="vs-sec-head">
         <h2 id="mevzuat-h">Mevzuat ve teknik standartlar</h2>
-        <p>Bağlayıcı düzenlemeler (kanun, yönetmelik) ile gönüllü standartlar ayrı listelenmiştir. Standartlar bir yönetmelik atıf yaptığında veya sözleşmede istendiğinde bağlayıcı hale gelir. Son kontrol: <time datetime="2026-10-23">23 Ekim 2026</time>.</p>
+        <p>Bağlayıcı düzenlemeler (kanun, yönetmelik) ile gönüllü standartlar ayrı listelenmiştir. Standartlar bir yönetmelik atıf yaptığında veya sözleşmede istendiğinde bağlayıcı hale gelir. Doğrulama tarihi her kayıtta ayrı yazılıdır; tarihi olmayan kayıt resmî kaynaktan doğrulanmamıştır.</p>
       </div>
       <div class="vs-regs__cols">
         <div><h3>Bağlayıcı düzenlemeler</h3><ul class="vs-reg-list"><li class="vs-reg">
           <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ETKB</span></div>
           <strong>Elektrik Tesisleri Proje Yönetmeliği</strong>
           <span class="vs-reg__rg">Resmî Gazete 30.12.2014 / 29221 (mükerrer)</span>
-          <p>Üretim, iletim, dağıtım ve YG tesislerinin proje onay ve kabul süreçlerini düzenler. Onaysız projeyle kurulan tesise enerji verilmez.</p>
+          <p><b>Kapsam:</b> Üretim, iletim, dağıtım ve YG tesislerinin proje onay ve kabul süreçlerini düzenler. Onaysız projeyle kurulan tesise enerji verilmez.</p>
           <ul class="vs-reg__arts"><li><b>Madde 5</b> Tasarımda TS, EN, IEC/ISO standartları, IEEE vb. uluslararası kodlar, ilgili mevzuat ve kamu şartnameleri esas alınır.</li><li><b>Madde 8</b> Proje onayı, kabul ve tutanak onay/teslim yetkisi Bakanlığa aittir; Bakanlık bu yetkiyi kurum/kuruluş veya tüzel kişilere devredebilir.</li><li><b>Madde 9 (2)-(4)</b> Proje onayı yapılmamış tesise enerji verilemez, kabulü yapılamaz ve işletilmesi yasaktır.</li></ul>
           <p class="vs-reg__am">Değişiklikler: Değişiklikler: 07.11.2015/29525, 25.01.2019/30666, 09.04.2021/31449, 10.05.2021/31480, 09.05.2024/32541, 09.02.2025/32808.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           
           <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=20383&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
         </li><li class="vs-reg">
           <div class="vs-reg__top"><span class="vs-reg__kind">Kanun</span><span class="vs-reg__iss">TBMM</span></div>
           <strong>Elektrik Piyasası Kanunu (6446)</strong>
           <span class="vs-reg__rg">Resmî Gazete 30.03.2013 / 28603</span>
-          <p>Elektrik piyasasının çerçeve kanunudur; lisanssız (öz tüketim) üretimin yasal dayanağı Madde 14'tür.</p>
+          <p><b>Kapsam:</b> Elektrik piyasasının çerçeve kanunudur; lisanssız (öz tüketim) üretimin yasal dayanağı Madde 14'tür.</p>
           <ul class="vs-reg__arts"><li><b>Madde 14 (1)</b> Lisans ve şirket kurma yükümlülüğünden muaf faaliyetleri sayar: imdat grupları, şebekeye bağlı olmayan üretim, en fazla 1 MW YEK tesisi, üretim-tüketimi aynı ölçüm noktasında olan ve şebekeye enerji vermeyen YEK tesisi, sözleşme gücüyle (belediye/sanayi/tarımsal sulama için iki katı) sınırlı YEK tesisi vb.</li><li><b>Madde 14 (2)</b> Cumhurbaşkanı, lisanssız YEK kurulu güç üst sınırını kaynak bazında beş katına kadar artırabilir.</li><li><b>Madde 14 (3)-(4)</b> Lisanssız üreticinin ihtiyaç fazlası 5346 sayılı Kanun fiyatlarından alınır; bağlantı ve satış usulleri EPDK yönetmeliğiyle düzenlenir.</li></ul>
           <p class="vs-reg__am">Değişiklikler: Konsolide metinde en son işlenen değişiklikler 2025 tarihli 7552 ve 7554 sayılı kanunlarla.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           
           <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=6446&amp;MevzuatTur=1&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
         </li><li class="vs-reg">
           <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">EPDK</span></div>
           <strong>Şarj Hizmeti Yönetmeliği</strong>
           <span class="vs-reg__rg">Resmî Gazete 02.04.2022 / 31797</span>
-          <p>Ev/işyeri için kendi kullanımına kurulan şarj ünitesi lisans veya şarj ağı gerektirmez; ücret karşılığı herkese hizmet ise lisanslı bir şarj ağına bağlı olmalıdır.</p>
+          <p><b>Kapsam:</b> Ev/işyeri için kendi kullanımına kurulan şarj ünitesi lisans veya şarj ağı gerektirmez; ücret karşılığı herkese hizmet ise lisanslı bir şarj ağına bağlı olmalıdır.</p>
           <ul class="vs-reg__arts"><li><b>Madde 3 (tanım)</b> Şarj hizmeti, elektrikli araçların ticari amaçla ve bedel karşılığında şarj edilmesidir.</li><li><b>Madde 4</b> Şarj ağı işletmeciliği EPDK'dan alınan şarj ağı işletmeci lisansıyla yapılır; tarifesi düzenlemeye tabi lisans sahipleri başvuramaz.</li><li><b>Madde 5</b> Ticari faaliyet göstermeyen özel şarj istasyonları ve kullanıcının yalnızca kendi ihtiyacı için kurduğu şarj ünitelerinin şarj ağına bağlanması zorunlu değildir (değişik: 23.03.2026/33202).</li><li><b>Madde 32 (4)</b> Şarj ağına bağlı olmadan ticari amaçla şarj yapılması Tüketici Hizmetleri Yönetmeliği md.48/1-c kapsamında değerlendirilir ve yetkili mercilere bildirilir.</li></ul>
           <p class="vs-reg__am">Değişiklikler: Değişiklikler: 06.09.2022/31945, 28.07.2023/32262, 09.08.2023/32274, 17.08.2023/32282, 23.10.2024/32701, 23.03.2026/33202 (Madde 5 muafiyetler ve Madde 30, 32 değişti; yeni geçici maddeler).</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           
           <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=39454&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
         </li><li class="vs-reg">
           <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ÇŞİDB</span></div>
           <strong>Otopark Yönetmeliği</strong>
           <span class="vs-reg__rg">Resmî Gazete 22.02.2018 / 30340</span>
-          <p>Yeni binalarda ve AVM/genel otoparklarda asgari elektrikli araç şarj yeri oranlarını belirler.</p>
+          <p><b>Kapsam:</b> Yeni binalarda ve AVM/genel otoparklarda asgari elektrikli araç şarj yeri oranlarını belirler.</p>
           <ul class="vs-reg__arts"><li><b>Madde 5 (1)-j</b> Zorunlu otopark sayısı 20 ve üzeri olan yeni yapıların ruhsat başvurularında otopark yerlerinin en az %5'i (en az 1 adet) şarj ünitesi dahil elektrikli araca uygun düzenlenmelidir.</li><li><b>Madde 6 (5)</b> Yeni bölge/genel otoparklar ile AVM otoparklarında en az %10 elektrikli araca uygun yer; 30.000 m² üstü AVM'lerde en az 1, 70.000 m² üstünde en az 2 hızlı şarj ünitesi gerekir.</li><li><b>Geçici Madde 4 (2)-(3)</b> %5 oranı 01.01.2023'e kadar %2, %10 oranı aynı tarihe kadar %5 uygulanmıştı (geçiş dönemi sona erdi).</li></ul>
           <p class="vs-reg__am">Değişiklikler: Elektrikli araç hükümleri 25.03.2021/31434 ile eklendi; sonraki değişiklikler 16.06.2022/31868, 12.08.2023/32277, 27.12.2025/33120 (EV oranlarını değiştirmemiş görünüyor).</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           
           <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=24408&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
         </li></ul></div>
@@ -242,72 +334,80 @@
           <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">CENELEC / IEC / TSE (TS HD 60364-4-41)</span></div>
           <strong>HD 60364-4-41 / IEC 60364-4-41 Alçak gerilim tesisleri – Elektrik çarpmasına karşı korunma</strong>
           <span class="vs-reg__rg">IEC 60364-4-41:2005+AMD1:2017; HD 60364-4-41:2017 (CENELEC sürüm etiketi kontrol edilmeli)</span>
-          <p>Otomatik ayırma süreleri, TN/TT/IT koşulları ve 30 mA ek koruma şartlarının kaynağıdır. İş Ekipmanları Yönetmeliği periyodik kontrolde TS HD 60364-4 serisine atıf yapar.</p>
+          <p><b>Kapsam:</b> Otomatik ayırma süreleri, TN/TT/IT koşulları ve 30 mA ek koruma şartlarının kaynağıdır. İş Ekipmanları Yönetmeliği periyodik kontrolde TS HD 60364-4 serisine atıf yapar.</p>
           
           <p class="vs-reg__am">Değişiklikler: IEC 60364-4-41:2005+AMD1:2017 konsolide baskı.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
           <a href="https://webstore.iec.ch/en/publication/60169" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
         </li><li class="vs-reg vs-reg--check">
           <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">CENELEC / IEC / TSE (TS HD 60364-5-52)</span></div>
           <strong>HD 60364-5-52 / IEC 60364-5-52 Elektrik donanımının seçimi ve tesisi – Kablo sistemleri</strong>
           <span class="vs-reg__rg">IEC 60364-5-52:2009+AMD1:2024; HD 60364-5-52:2011 (+A11)</span>
-          <p>Kablo akım taşıma kapasitesi tabloları, düzeltme katsayıları ve döşeme yöntemleri bu standarttadır. Gerilim düşümü için bilgilendirici değerler verir; bağlayıcı sınırlar Türkiye'de EİTY Madde 57'dedir.</p>
+          <p><b>Kapsam:</b> Kablo akım taşıma kapasitesi tabloları, düzeltme katsayıları ve döşeme yöntemleri bu standarttadır. Gerilim düşümü için bilgilendirici değerler verir; bağlayıcı sınırlar Türkiye'de EİTY Madde 57'dedir.</p>
           
           <p class="vs-reg__am">Değişiklikler: IEC tarafında AMD1:2024 yayımlandı (2024-11-22); CENELEC HD karşılığı kontrol edilmeli.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
           <a href="https://webstore.iec.ch/en/publication/103734" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
         </li><li class="vs-reg vs-reg--check">
           <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">CENELEC / IEC / TSE</span></div>
           <strong>HD 60364-7-722 / IEC 60364-7-722 Özel tesisler – Elektrikli araç beslemeleri</strong>
           <span class="vs-reg__rg">IEC 60364-7-722:2018 (Ed.2); HD 60364-7-722:2018</span>
-          <p>Her şarj noktası için ayrı devre, RCD ve DC kaçak akım koruması gibi EV besleme kurallarını içerir.</p>
+          <p><b>Kapsam:</b> Her şarj noktası için ayrı devre, RCD ve DC kaçak akım koruması gibi EV besleme kurallarını içerir.</p>
           
           <p class="vs-reg__am">Değişiklikler: CENELEC'te yeni revizyon projesi 2024'te açıldı.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
           <a href="https://webstore.iec.ch/en/publication/29958" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
         </li><li class="vs-reg vs-reg--check">
           <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE (TS EN 60898-1)</span></div>
           <strong>IEC 60898-1 Ev ve benzeri tesisler için aşırı akım koruma devre kesicileri (MCB) – AC</strong>
           <span class="vs-reg__rg">IEC 60898-1:2015+AMD1:2019 (Ed.2.1)</span>
-          <p>B, C, D eğrili minyatür devre kesicilerin açma karakteristiklerini tanımlar; kapsamı 440 V, 125 A ve 25 kA'e kadardır.</p>
+          <p><b>Kapsam:</b> B, C, D eğrili minyatür devre kesicilerin açma karakteristiklerini tanımlar; kapsamı 440 V, 125 A ve 25 kA'e kadardır.</p>
           
           <p class="vs-reg__am">Değişiklikler: AMD1:2019 ve COR1:2020.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
           <a href="https://webstore.iec.ch/en/publication/66269" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
         </li><li class="vs-reg vs-reg--check">
           <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE (TS EN 61008-1, TS EN 61009-1)</span></div>
           <strong>IEC 61008-1 / IEC 61009-1 Kaçak akım koruma şalterleri (RCCB) / Aşırı akım korumalı kaçak akım şalterleri (RCBO)</strong>
           <span class="vs-reg__rg">IEC 61008-1:2024 (Ed.4), IEC 61009-1:2024 (Ed.4)</span>
-          <p>Ev tipi kaçak akım şalterlerinin açma eşikleri ve süreleri bu standartlardadır. TS EN karşılıkları büyük olasılıkla hâlâ 2010 tabanlıdır.</p>
+          <p><b>Kapsam:</b> Ev tipi kaçak akım şalterlerinin açma eşikleri ve süreleri bu standartlardadır. TS EN karşılıkları büyük olasılıkla hâlâ 2010 tabanlıdır.</p>
           
           <p class="vs-reg__am">Değişiklikler: Her ikisinde Ed.4 2024-11-21'de yayımlandı ve 2010 baskılarının yerini aldı.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
           <a href="https://webstore.iec.ch/en/publication/67980" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
         </li><li class="vs-reg">
           <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
           <strong>IEC 61851-1 Elektrikli araç iletkenli şarj sistemi – Genel gereklilikler</strong>
           <span class="vs-reg__rg">IEC 61851-1:2017 (Ed.3)</span>
-          <p>Şarj modları (Mod 1–4), pilot sinyali ve şarj istasyonu güvenlik şartlarını tanımlar.</p>
+          <p><b>Kapsam:</b> Şarj modları (Mod 1–4), pilot sinyali ve şarj istasyonu güvenlik şartlarını tanımlar.</p>
           
           <p class="vs-reg__am">Değişiklikler: COR1:2023.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           
           <a href="https://webstore.iec.ch/en/publication/33644" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
         </li><li class="vs-reg">
           <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
           <strong>IEC 62196-2 / -3 EV fiş, priz ve araç bağlantı elemanları (AC Tip 2 / DC CCS)</strong>
           <span class="vs-reg__rg">IEC 62196-2:2025 (Ed.4), IEC 62196-3:2026 (Ed.3)</span>
-          <p>AC (Tip 2) ve DC (CCS) konnektör boyut ve test şartlarıdır.</p>
+          <p><b>Kapsam:</b> AC (Tip 2) ve DC (CCS) konnektör boyut ve test şartlarıdır.</p>
           
           <p class="vs-reg__am">Değişiklikler: 62196-2 Ed.4 2025-11-25; 62196-3 Ed.3 2026-04-23 (TS 62196-3-1 içeriği Ek AA olarak eklendi).</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           
           <a href="https://webstore.iec.ch/en/publication/86317" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
         </li><li class="vs-reg vs-reg--check">
           <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">ISO</span></div>
           <strong>ISO 15118 Araç–şebeke haberleşme arayüzü</strong>
           <span class="vs-reg__rg">ISO 15118-20:2022 (+Amd1:2026), ISO 15118-2:2014</span>
-          <p>Plug &amp; Charge ve çift yönlü (V2G) şarj haberleşmesinin standardıdır.</p>
+          <p><b>Kapsam:</b> Plug &amp; Charge ve çift yönlü (V2G) şarj haberleşmesinin standardıdır.</p>
           
           <p class="vs-reg__am">Değişiklikler: ISO 15118-20:2022/Amd 1:2026 (AC DER, MCS, güvenlik); ISO 15118-2'nin yeni baskısı DIS aşamasında.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
           <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
           <a href="https://www.iso.org/standard/77845.html" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
         </li></ul></div>

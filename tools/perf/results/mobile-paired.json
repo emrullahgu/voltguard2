@@ -1,0 +1,92 @@
+{
+  "env": {
+    "kind": "laboratuvar (sentetik) — saha/RUM verisi değildir",
+    "date": "2026-10-24T15:07:04.752Z",
+    "root": "C:\\Users\\emrul\\AppData\\Local\\Temp\\claude\\C--Users-emrul-OneDrive-Masa-st--voltguardcomtr\\4d70f154-1f88-4fdc-81fa-e99b729a5b57\\scratchpad\\base",
+    "compare": "C:\\Users\\emrul\\AppData\\Local\\Temp\\claude\\C--Users-emrul-OneDrive-Masa-st--voltguardcomtr\\4d70f154-1f88-4fdc-81fa-e99b729a5b57\\scratchpad\\after",
+    "order": "ABBA dönüşümlü",
+    "profile": "mobile",
+    "profileLabel": "Slow 4G (562,5 ms RTT, ~1,44 Mbit/s), CPU 4×, 412×823 @1,75x",
+    "runs": 7,
+    "browser": "Chrome 155.0.8059.85 headless",
+    "gpu": "ANGLE (Intel, Intel(R) Arc(TM) 140T GPU (16GB) (0x00007D51) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "playwright": "1.62.1",
+    "node": "v24.18.0",
+    "machine": "Intel(R) Core(TM) Ultra 7 255H × 16, 31 GB, Windows_NT 10.0.26300",
+    "server": "yerel Node statik sunucu, Brotli q5, önbellek kapalı (soğuk yükleme)"
+  },
+  "paired": {
+    "home": {
+      "lcp": 196,
+      "fcp": -52,
+      "inp": -16,
+      "tbt": 725,
+      "ready3d": 0,
+      "clsMilli": -803,
+      "kbInitial": -93.6
+    },
+    "hizmet": {
+      "lcp": -276,
+      "fcp": 152,
+      "inp": -8,
+      "tbt": -11,
+      "ready3d": 0,
+      "clsMilli": 0,
+      "kbInitial": 0
+    },
+    "araclar": {
+      "lcp": 352,
+      "fcp": 352,
+      "inp": 8,
+      "tbt": 630,
+      "ready3d": 0,
+      "clsMilli": 0,
+      "kbInitial": 0
+    },
+    "iletisim": {
+      "lcp": 112,
+      "fcp": 196,
+      "inp": 32,
+      "tbt": -838,
+      "ready3d": 0,
+      "clsMilli": -965,
+      "kbInitial": -93.6
+    },
+    "teklif": {
+      "lcp": -144,
+      "fcp": -144,
+      "inp": 24,
+      "tbt": -77,
+      "ready3d": 0,
+      "clsMilli": 0,
+      "kbInitial": 0.1
+    },
+    "voltsim": {
+      "lcp": -396,
+      "fcp": -328,
+      "inp": 16,
+      "tbt": -25,
+      "ready3d": 0,
+      "clsMilli": 0,
+      "kbInitial": 0.3
+    },
+    "vs:trafo": {
+      "lcp": -152,
+      "fcp": -152,
+      "inp": -344,
+      "tbt": -249,
+      "ready3d": 41,
+      "clsMilli": -54,
+      "kbInitial": 2.8
+    },
+    "vs:yangin-algilama": {
+      "lcp": -328,
+      "fcp": -328,
+      "inp": -464,
+      "tbt": -1534,
+      "ready3d": -307,
+      "clsMilli": -51,
+      "kbInitial": 2.8
+    }
+  }
+}

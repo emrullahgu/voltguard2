@@ -139,7 +139,7 @@ test('faz sırası, bobin, TT ve aşırı yük', () => {
 test('EN 50110: gerilimli noktada DC ölçüm ihlal; ayır + kilitle + doğrula kuralı; puan', () => {
   const { sc, s: s0 } = sess0('coil');
   let r = X.record(sc, s0, { inst: 'ohm', a: 'A1', b: 'A2' });
-  assert.equal(r.m.violation, undefined === r.m.violation ? undefined : r.m.violation); // A1 ölüyse (k1 kapalı) ihlal yok
+  assert.notEqual(r.m.violation, true, 'A1 ölüyse (k1 kapalı) ihlal yok');
   let s = X.operate(sc, s0, 'k1', true).sess;
   r = X.record(sc, s, { inst: 'ohm', a: 'A1', b: 'A2' });
   assert.equal(r.m.violation, true); s = r.sess;

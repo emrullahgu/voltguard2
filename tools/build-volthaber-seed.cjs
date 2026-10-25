@@ -9,6 +9,8 @@
 //   node tools/build-volthaber-seed.cjs           yazar
 //   node tools/build-volthaber-seed.cjs --check   güncel değilse hata
 const fs = require('node:fs');
+// mevzuat kayıtlarının gerçekten doğrulandığı en son tarih (kayıt bazında verifiedAt; bugüne çekilmez)
+const LAST_VERIFIED = (iso => new Date(iso + 'T12:00:00Z').toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }))(require('../js/voltsim/regulations.js').map(r => r.verifiedAt).filter(Boolean).sort().pop());
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const regs = require(path.join(root, 'js/voltsim/regulations.js'));
@@ -72,7 +74,7 @@ function resmi([id, date, title, category, tags, refs, related], i) {
     ...refs.map(ref => `- **${ref}:** ${art(id, ref)}`),
     '',
     '## Bu özet hakkında',
-    `Bu kısa özet, VoltGuard'ın VoltSim simülasyonlarında kullandığı mevzuat kaydından (son kontrol ${regs.checkedText}) hazırlanmıştır. Değişikliğin tamamı için [Resmî Gazete ${date}](${rgUrl(date)}) metnine bakın; bağlayıcı olan resmî metindir.`
+    `Bu kısa özet, VoltGuard'ın VoltSim simülasyonlarında kullandığı mevzuat kaydından (son kontrol ${LAST_VERIFIED}) hazırlanmıştır. Değişikliğin tamamı için [Resmî Gazete ${date}](${rgUrl(date)}) metnine bakın; bağlayıcı olan resmî metindir.`
   ].filter((l, k, a) => l !== '' || (a[k - 1] !== '' && k > 0)).join('\n');
   return {
     slug: slug(title), title, summary: trimTo(summary, 400), body, category, tags, type: 'resmi',
@@ -127,7 +129,7 @@ const ANALIZ = [
       '',
       'Takvimi çıkarmak için [periyodik kontrol planlayıcımızı](/hesaplama/periyodik-kontrol-planlayici/) kullanabilir, ayrıntılı rehber için [elektrik tesisatı periyodik kontrolü](/bilgi/elektrik-tesisati-periyodik-kontrol.html) sayfamıza bakabilirsiniz.',
       '',
-      `> Bu yazı bilgilendirme amaçlıdır. Madde özetleri VoltGuard mevzuat kaydından (son kontrol ${regs.checkedText}) alınmıştır; bağlayıcı olan [güncel yönetmelik metni](${reg(ie).url}) ve [23.12.2025 tarihli Resmî Gazete](${rgUrl('23.12.2025')}) metnidir.`
+      `> Bu yazı bilgilendirme amaçlıdır. Madde özetleri VoltGuard mevzuat kaydından (son kontrol ${LAST_VERIFIED}) alınmıştır; bağlayıcı olan [güncel yönetmelik metni](${reg(ie).url}) ve [23.12.2025 tarihli Resmî Gazete](${rgUrl('23.12.2025')}) metnidir.`
     ].join('\n')
   },
   {
@@ -212,7 +214,7 @@ if (new Set(articles.map(a => a.source.url)).size !== articles.length) {
   // Aynı kaynak adresi yinelenen kaynak sayılır; analizler mevzuat.gov.tr metnine, özetler RG sayfasına bağlanır.
   const seen = {}; for (const a of articles) { if (seen[a.source.url]) throw new Error('yinelenen kaynak: ' + a.source.url); seen[a.source.url] = 1; }
 }
-const json = JSON.stringify({ generated: 'tools/build-volthaber-seed.cjs', registryChecked: regs.checked, articles }, null, 1) + '\n';
+const json = JSON.stringify({ generated: 'tools/build-volthaber-seed.cjs', registryChecked: regs.map(r => r.verifiedAt).filter(Boolean).sort().pop(), articles }, null, 1) + '\n';
 if (process.argv.includes('--check')) {
   const cur = fs.existsSync(OUT) ? fs.readFileSync(OUT, 'utf8').replace(/\r\n/g, '\n') : '';
   if (cur !== json) { console.error('api/lib/volthaber-seed.json güncel değil: node tools/build-volthaber-seed.cjs'); process.exit(1); }

@@ -123,9 +123,11 @@ test('modüler UPS: N, N+1 ve modül kaybı (3 × 20 kVA, 32 kW)', () => {
 test('paralel jeneratörler: paylaşım, N+1 ve yakıt', () => {
   const g = X.genParallel({ nGen: 2, genKVA: 200, loadKVA: 106, loadKW: 93.7, fuel: 0.27, tankPerSet: 400 });
   assert.equal(g.totalKVA, 400);
-  assert.ok(Math.abs(g.perSetPct - 26.5) < 1e-9);
+  // kVA: 106/400 = %26,5; kW: 93,7/(400 × 0,8) = %29,28125 → büyüğü (cosφ 0,88 > 0,8 olduğundan kW sınırı belirler)
+  assert.ok(Math.abs(g.perSetPct - 29.28125) < 1e-9);
   assert.equal(g.Nreq, 1); assert.equal(g.n1, true);
-  assert.ok(Math.abs(g.afterLossPct - 53) < 1e-9);
+  // bir set kaybında: 93,7/160 = %58,5625 (kVA'ya göre yalnız %53 görünürdü)
+  assert.ok(Math.abs(g.afterLossPct - 58.5625) < 1e-9);
   assert.ok(Math.abs(g.fuelPerSet - 93.7 / 2 * 0.27) < 1e-9);
   assert.ok(Math.abs(g.hours - 400 / (93.7 / 2 * 0.27)) < 1e-9);
   // engine ile tutarlılık: toplam depo / toplam tüketim = set başına süre
@@ -134,7 +136,9 @@ test('paralel jeneratörler: paylaşım, N+1 ve yakıt', () => {
   assert.ok(Math.abs(g2.hours - r.values.fuelHours) < 1e-9);
   assert.ok(Math.abs(g2.perSetPct - r.values.genPct) < 1e-9);
   const h = X.genParallel({ nGen: 2, genKVA: 100, loadKVA: 150, loadKW: 130, fuel: 0.27, tankPerSet: 200 });
-  assert.equal(h.Nreq, 2); assert.equal(h.n1, false); assert.ok(h.afterLossPct > 100);
+  assert.equal(h.Nreq, 2); assert.equal(h.n1, false);
+  // 130 kW / 80 kWe = %162,5
+  assert.ok(Math.abs(h.afterLossPct - 162.5) < 1e-9);
 });
 
 test('senkronizasyon: ölü bara serbest, canlı barada sınırlar', () => {

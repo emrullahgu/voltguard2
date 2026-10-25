@@ -28,6 +28,9 @@
 @media (min-width: 80rem) {
   :root { --vg-header-h: 68px; }
 }
+/* Tema destekleyen sayfalarda (<html data-vg-themes>) koyu temada tarayıcı denetimleri ve kaydırma çubukları da koyu.
+   style.css'i yüklemeyen sayfalar (ör. /hizmetler/ → services.css) için burada. */
+:root[data-theme="dark"] { color-scheme: dark; }
 main:focus { outline: 0; }
 [data-vg-anchor-focus]:focus { outline: 0; }
 
@@ -279,7 +282,6 @@ html.vg-lock { overflow: hidden; }
   box-shadow: inset 3px 0 0 var(--vg-accent);
   padding-left: .8rem;
 }
-.vg-header .vg-nav__link--factory { color: var(--vg-accent-light); }
 /* VoltSim: küçük "3D" etiketi (mobilde satırın sağında, masaüstünde metnin yanında) */
 .vg-header .vg-nav__link--sim .vg-new {
   order: 3;
@@ -291,33 +293,7 @@ html.vg-lock { overflow: hidden; }
   color: var(--vg-navy);
   background: linear-gradient(135deg, #54c9e2, var(--vg-accent-light));
 }
-.vg-header .vg-nav__link--factory .vg-ping {
-  position: relative;
-  order: 3;
-  flex: none;
-  width: 7px;
-  height: 7px;
-  margin-left: auto;
-  border-radius: 50%;
-  background: var(--vg-accent);
-}
-/* Nabız halkası: yalnızca transform/opacity (birleştiricide çalışır; box-shadow animasyonu her karede boyama yapıyordu) */
-.vg-header .vg-nav__link--factory .vg-ping::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: rgba(245, 158, 11, .55);
-  animation: vgPing 2.2s ease-out infinite;
-  pointer-events: none;
-}
-@keyframes vgPing {
-  0%   { transform: scale(1); opacity: 1; }
-  70%  { transform: scale(3.3); opacity: 0; }
-  100% { transform: scale(3.3); opacity: 0; }
-}
-
-/* Kaynaklar açılır menüsü: mobilde akordeon */
+/* Açılır menüler (Hizmetler / Kurumsal / Teknik Kaynaklar): mobilde akordeon, masaüstünde panel */
 .vg-dd__btn::before {
   content: '';
   order: 3;
@@ -341,7 +317,7 @@ html.vg-lock { overflow: hidden; }
   transition: max-height .28s var(--vg-ease), opacity .2s ease, visibility 0s linear .28s;
 }
 .vg-dd[data-open] > .vg-dd__menu {
-  max-height: 26rem;
+  max-height: 80rem;
   visibility: visible;
   opacity: 1;
   padding-bottom: .6rem;
@@ -376,6 +352,35 @@ html.vg-lock { overflow: hidden; }
 .vg-dd__txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .vg-dd__txt strong { font: 600 .95rem/1.2 var(--vg-font-h); color: #fff; }
 .vg-dd__txt small { font: 400 .78rem/1.3 var(--vg-font-b); color: rgba(255, 255, 255, .62); }
+/* Gruplu menü: grup etiketi başlık DEĞİLDİR (sayfa başlık hiyerarşisine karışmasın); liste aria-labelledby ile bağlanır */
+.vg-dd__group + .vg-dd__group { margin-top: .35rem; }
+.vg-dd__label {
+  display: block;
+  padding: .7rem .5rem .3rem;
+  font: 700 .7rem/1.2 var(--vg-font-h);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .55);
+}
+.vg-dd__link,
+.vg-dd__more {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: .55rem .5rem;
+  font: 500 .95rem/1.25 var(--vg-font-h);
+  color: rgba(255, 255, 255, .88);
+  border-radius: 8px;
+  transition: background-color .2s ease, color .2s ease;
+}
+.vg-dd__link:hover,
+.vg-dd__more:hover { color: #fff; background: rgba(255, 255, 255, .07); }
+.vg-dd__link[aria-current],
+.vg-dd__more[aria-current] { color: #fff; background: rgba(245, 158, 11, .12); box-shadow: inset 3px 0 0 var(--vg-accent); }
+.vg-dd__foot { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin-top: .35rem; padding-top: .35rem; border-top: 1px solid var(--vg-line); }
+.vg-dd__more { font-weight: 600; color: var(--vg-accent-light); }
+.vg-dd__more::after { content: '→'; margin-left: .4rem; transition: transform .2s var(--vg-ease); }
+.vg-dd__more:hover::after { transform: translateX(3px); }
 
 /* Panel altı: hesap + teklif (mobil) */
 .vg-nav__foot { display: grid; gap: .65rem; margin-top: 1.1rem; }
@@ -411,6 +416,49 @@ html.vg-lock { overflow: hidden; }
 .vg-actions .vg-search { width: 40px; height: 40px; }
 @media (min-width: 80rem) {
   .vg-search--bar { display: none; }
+}
+
+/* ---------- Tema düğmesi ([data-vg-theme-toggle]) ----------
+   Yalnızca tema destekleyen sayfalarda görünür: js/vg-theme.js <html data-vg-themes> görünce data-theme yazar. */
+.vg-theme {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: rgba(255, 255, 255, .92);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+}
+html[data-theme] .vg-theme { display: inline-flex; }
+.vg-theme::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  /* açık temada ay (koyuya geç), koyu temada güneş (açığa geç) */
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.vg-theme[aria-pressed="true"]::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='4.5'/%3E%3Cpath d='M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='4.5'/%3E%3Cpath d='M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4'/%3E%3C/svg%3E");
+}
+.vg-theme:hover { color: #fff; border-color: var(--vg-accent); background: rgba(245, 158, 11, .1); }
+.vg-theme--bar { order: 3; }
+/* ≤ 400 px: logo + arama + tema + menü tek satıra sığsın (menü düğmesi ekran dışına taşmasın) */
+@media (max-width: 25rem) {
+  html[data-theme] .vg-header__bar { gap: .35rem; }
+  html[data-theme] .vg-brand .logo-mark__tagline { display: none; }
+}
+.vg-actions .vg-theme { width: 40px; height: 40px; }
+@media (min-width: 80rem) {
+  html[data-theme] .vg-theme--bar { display: none; }
 }
 
 /* ---------- Hesap bağlantısı ([data-vg-account]) ---------- */
@@ -555,8 +603,8 @@ html.vg-lock { overflow: hidden; }
   .vg-header .vg-nav__link[aria-current],
   .vg-header .vg-nav__link.is-active,
   .vg-dd:has([aria-current]) > .vg-dd__btn { box-shadow: none; padding-left: .5rem; }
-  .vg-header .vg-nav__link--factory .vg-ping { order: 0; margin-left: 0; }
   .vg-header .vg-nav__link--sim .vg-new { order: 0; margin-left: .1rem; }
+  .vg-nav__home { display: none; }               /* masaüstünde logo ana sayfaya gider */
   .vg-dd__btn::before { margin: 0 0 3px .05rem; }
   .vg-dd[data-open] > .vg-dd__btn::before { margin-bottom: -3px; }
 
@@ -598,6 +646,21 @@ html.vg-lock { overflow: hidden; }
     transition-delay: 0s;
   }
   .vg-dd__item { padding: .55rem .6rem; }
+  .vg-dd__menu > ul { display: grid; }
+  .vg-dd__label { padding: .5rem .6rem .35rem; }
+  .vg-dd__link { min-height: 40px; padding: .5rem .6rem; font-size: .9rem; }
+  .vg-dd__foot { padding: .5rem .1rem 0; }
+  .vg-dd__more { min-height: 40px; padding: .5rem .6rem; font-size: .88rem; }
+  .vg-dd__group + .vg-dd__group { margin-top: 0; }
+  /* Mega panel: başlığa göre ortalanır (düğmenin konumundan bağımsız, dar masaüstünde taşmaz) */
+  .vg-dd:has(> .vg-dd__menu--mega) { position: static; }
+  .vg-dd__menu--mega {
+    top: calc(100% - 2px);
+    width: min(58rem, calc(100vw - 2.5rem));
+    padding: .75rem;
+  }
+  .vg-dd__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .25rem 1rem; }
+  .vg-dd__menu--mega .vg-dd__item { align-items: flex-start; }
 }
 
 /* =====================================================

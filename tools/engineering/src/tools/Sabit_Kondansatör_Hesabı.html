@@ -118,6 +118,8 @@ footer{color:var(--muted);font-size:11.5px}
       <label for="wr">Endüktif reaktif tüketim (kVArh)</label><input id="wr" inputmode="decimal">
       <label for="gun">Fatura dönemi (gün)</label><input id="gun" inputmode="decimal">
       <label for="saat">Günlük çalışma (saat)</label><input id="saat" inputmode="decimal">
+      <label for="ff">Yük eğrisi biçim katsayısı F = k<sub>rms</sub>/k<sub>ort</sub> <small>(boş = 1,0 sabit yük)</small></label><input id="ff" inputmode="decimal" placeholder="1,0 – 1,3">
+      <small style="color:var(--muted)">Trafo reaktif tüketimi k² ile değişir; değişken yükte ortalama k’nin karesi, k²’nin ortalamasından küçüktür (E[k²] ≥ E[k]²). Sayaç yük profilinden F = √(ortalama S²)/ortalama S bulunabilir; bilinmiyorsa 1,0 alt sınırdır.</small>
     </div>
     <div class="f" id="gElle" style="margin-top:10px">
       <label for="k">Yüklenme oranı k = I<sub>y</sub>/I<sub>n</sub></label><input id="k" inputmode="decimal">
@@ -172,7 +174,7 @@ var T=[[50,230,1050,2.76,4.5],[100,380,2100,2.27,4.5],[125,420,2400,2.14,4.5],[1
 [800,1520,9700,1.50,6],[1000,1600,12200,1.40,6],[1250,1950,14000,1.40,6],[1600,2350,16500,1.30,6],
 [2000,3000,21000,1.10,6],[2500,3800,24000,1.00,6]];
 var KAD=[2.5,5,7.5,10,12.5,15,20,25,30,40,50,60,75,100,125,150,200,250,300];
-var IDS=['proje','hazirlayan','snv','beta','p0','pcu','uk','wa','wr','gun','saat','k'];
+var IDS=['proje','hazirlayan','snv','beta','p0','pcu','uk','wa','wr','gun','saat','ff','k'];
 var KEY='sabitKondansator_v1';
 function $(i){return document.getElementById(i)}
 function num(i){var text=String($(i).value).trim().replace(',','.');return text!==''&&/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(text)&&Number.isFinite(Number(text))?Number(text):NaN}
@@ -234,7 +236,15 @@ function hesap(){
           L.push('   Qt  = '+f(wr,0)+' / '+f(t,0)+' = '+f(Q,1)+' kVAr');
           L.push('   S   = √(Pt² + Qt²) = '+f(St,1)+' kVA');
           L.push('   k   = S / Sn = '+f(St,1)+' / '+f(S,0)+' = '+f(k,4));
-          if(k>1)err='Fatura tüketimi bu trafoya ait olamaz: ortalama yük '+f(St,0)+' kVA, trafo gücü '+f(S,0)+' kVA (k = '+f(k,2)+'). Bu trafonun kendi fatura değerlerini girin.'; }
+          if(k>1)err='Fatura tüketimi bu trafoya ait olamaz: ortalama yük '+f(St,0)+' kVA, trafo gücü '+f(S,0)+' kVA (k = '+f(k,2)+'). Bu trafonun kendi fatura değerlerini girin.';
+          else{
+            // k² ortalaması: E[k²] = (F·k_ort)²; F boşsa 1 (sabit yük, alt sınır)
+            var ffRaw=String($('ff').value).trim(), F=ffRaw===''?1:num('ff');
+            if(!(F>=1&&F<=2))err='Biçim katsayısı F 1,0 ile 2,0 arasında olmalı (boş bırakılırsa 1,0).';
+            else if(F!==1){ L.push('   F   = '+f(F,3)+' (yük eğrisi biçim katsayısı) → k_etkin = F·k = '+f(F*k,4)); k=Math.min(1,F*k); }
+            else L.push('   F   = 1 (sabit yük kabulü; değişken yükte k² ortalaması daha büyüktür)');
+            L.push('   Not: faturadaki endüktif kVArh, mevcut kompanzasyon sonrası NET değerdir.');
+          } }
       }else{ k=num('k'); if(!(k>=0&&k<=1))err='Yüklenme oranı k 0 ile 1 arasında olmalı.'; else L.push('   k   = '+f(k,4)+' (elle girildi)'); }
       if(!err){Q2=k*k*QF;
         L.push('');L.push('4) Yüklenme oranına göre sekonder tüketim');
@@ -251,7 +261,7 @@ function hesap(){
   $('rQc').textContent=f(Qc,2);$('rAlt').textContent=isNaN(alt)?'–':f(alt,1);$('rUst').textContent=isNaN(ust)?'–':f(ust,1);
   var y5=S*0.05;$('r5').textContent=f(y5,1);
   var n='%5 kuralı hesaplanan değerin '+f(y5/Qc,1)+' katı. ';
-  n+=(m==='bos')?'Tesis sürekli çalışmadığı için alt kademe seçmek kapasitif ceza riskini azaltır; 7/24 çalışmada üst kademe uygundur.'
+  n+=(m==='bos')?'Tesis sürekli çalışmadığı için alt kademe seçmek kapasitif ceza riskini azaltır; 7/24 sürekli yüklü çalışmada üst kademe değerlendirilebilir; sayaç verisiyle kontrol edin.'
                :'Üst kademe seçilirse düşük yüklü saatlerde kapasitif tarafa geçme riski sayaç verileriyle kontrol edilmelidir.';
   $('rNot').hidden=false;$('rNot').textContent=n;$('adim').textContent=L.join('\n');kaydet();
 }

@@ -170,7 +170,16 @@ def set_current(html, rel):
 
 
 # --------------------------------------------------------------------------- <head>
-def build_head_block(head_outside):
+# Tema (acik/koyu) ilk boyamadan ONCE secilir: yalnizca <html data-vg-themes> sayfalarinda (CSS'i tema degiskenlerine
+# gecmis sayfalar; css/style.css :root[data-theme="dark"]). Tercih localStorage 'vg-theme', yoksa sistem tercihi.
+# Satir ici olmasi bilincli: harici dosya her sayfaya engelleyici bir istek eklerdi. Ozel CSP'li (hesap/calisan)
+# sayfalar data-vg-themes tasimadigi icin bu betigi almaz. Dugme davranisi: js/vg-shell.js.
+THEME_BOOT = ("<script>(function(d){try{var t=localStorage.getItem('vg-theme')}catch(e){}"
+              "if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';"
+              "d.setAttribute('data-theme',t)})(document.documentElement)</script>")
+
+
+def build_head_block(head_outside, themed=False):
     frag = load_fragment('head.html')
     extras = []
     # Fonts and icons are self-hosted (css/fonts.css, css/fa-subset.css in head.html); CDN links are no longer added.
@@ -183,6 +192,8 @@ def build_head_block(head_outside):
         pre.append('<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>')
     frag = frag.replace('<!--@preconnect-->', '\n'.join(pre)).replace('<!--@extras-->', '\n'.join(extras))
     lines = [l for l in frag.split('\n') if l.strip()]
+    if themed:
+        lines.insert(1, THEME_BOOT)                      # theme-color'dan sonra, stil dosyalarından önce
     return '<!--vg:head-->\n' + '\n'.join(lines) + '\n<!--/vg:head-->'
 
 
@@ -208,7 +219,8 @@ def apply_head(t, warnings):
     head = strip_line(head, r'<link\b[^>]*fonts\.googleapis\.com/css[^>]*>')
     head = strip_line(head, r'<link\b[^>]*font-awesome[^>]*>')
     head = strip_line(head, r'<script\s+[^>]*src=["\'][^"\']*vg-shell\.js[^"\']*["\'][^>]*>\s*</script>')
-    block = build_head_block(head.replace(ph, ''))
+    themed = re.search(r'<html\b[^>]*\sdata-vg-themes\b', t[:hs], re.I) is not None
+    block = build_head_block(head.replace(ph, ''), themed)
     if ph in head:
         ind = line_indent(head, head.index(ph))
         head = head.replace(ph, indent_block(block, ind))

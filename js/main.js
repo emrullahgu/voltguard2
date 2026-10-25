@@ -130,34 +130,14 @@
   }
 
   /* ------------------------------------------------
-     1c. HERO PARALLAX + SPOTLIGHT
+     1c. KAYDIRMA: yüzen düğmeler (kahraman paralaks/ışık efekti kaldırıldı: dekor içerikten baskın olmasın)
   ------------------------------------------------- */
-  var heroBgImg = qs('.hero__bg-img');
-  var heroDecoration = qs('.hero__decoration');
-  var heroSpotlight = qs('#heroSpotlight');
-  var heroSection = qs('#anasayfa');
-  var heroInView = true;
-
-  function updateParallax() {
-    if (prefersReducedMotion || !heroInView) return;
-    var scrollY = window.scrollY;
-    if (scrollY < window.innerHeight) {
-      if (heroBgImg) {
-        heroBgImg.style.transform = 'translateY(' + (scrollY * 0.3) + 'px) scale(1.05)';
-      }
-      if (heroDecoration) {
-        heroDecoration.style.transform = 'translateY(calc(-50% + ' + (scrollY * 0.15) + 'px))';
-      }
-    }
-  }
-
   var scrollTicking = false;
 
   window.addEventListener('scroll', function () {
     if (!scrollTicking) {
       requestAnimationFrame(function () {
         updateScrollProgress();
-        updateParallax();
         updateFloatingButtons();
         scrollTicking = false;
       });
@@ -165,46 +145,7 @@
     }
   }, { passive: true });
 
-  if (heroSection && hasIO) {
-    new IntersectionObserver(function (entries) {
-      heroInView = entries[0].isIntersecting;
-    }).observe(heroSection);
-  }
-
-  if (heroSpotlight && heroSection) {
-    /* rAF throttle: mousemove saniyede yüzlerce kez ateşleniyor; sadece bir sonraki frame'de uygula. */
-    var spotPending = false;
-    var spotX = 0, spotY = 0;
-    var spotRect = null;
-
-    var applySpotlight = function () {
-      spotPending = false;
-      heroSpotlight.style.left = spotX + 'px';
-      heroSpotlight.style.top = spotY + 'px';
-      heroSpotlight.style.opacity = '0.95';
-    };
-
-    heroSection.addEventListener('mousemove', function (e) {
-      if (!desktopMQ.matches || prefersReducedMotion) return;
-      if (!spotRect) spotRect = heroSection.getBoundingClientRect();
-      spotX = e.clientX - spotRect.left;
-      spotY = e.clientY - spotRect.top;
-      if (!spotPending) {
-        spotPending = true;
-        requestAnimationFrame(applySpotlight);
-      }
-    }, { passive: true });
-
-    /* Layout değişebilir: scroll/resize sonrası rect'i tazele. */
-    window.addEventListener('resize', function () { spotRect = null; }, { passive: true });
-    window.addEventListener('scroll', function () { spotRect = null; }, { passive: true });
-
-    heroSection.addEventListener('mouseleave', function () {
-      heroSpotlight.style.opacity = '0.7';
-      heroSpotlight.style.left = '72%';
-      heroSpotlight.style.top = '38%';
-    });
-  }
+  var heroSection = qs('#anasayfa');   // §15 devre tuvali bu bölüm görünürken çizer
 
   updateScrollProgress();
 
@@ -908,47 +849,6 @@
   }
 
   /* ------------------------------------------------
-     12. PROJECT CARD TILT EFFECT
-  ------------------------------------------------- */
-  var projectCards = qsAll('.project-card--overlay');
-
-  projectCards.forEach(function (card) {
-    var tiltPending = false;
-    var tiltX = 0, tiltY = 0;
-    var cardRect = null;
-
-    function applyTilt() {
-      tiltPending = false;
-      if (!cardRect) return;
-      var centerX = cardRect.width / 2;
-      var centerY = cardRect.height / 2;
-      var rotateX = ((tiltY - centerY) / centerY) * -6;
-      var rotateY = ((tiltX - centerX) / centerX) * 6;
-      card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale(1.02)';
-    }
-
-    card.addEventListener('mouseenter', function () {
-      cardRect = card.getBoundingClientRect();
-    });
-
-    card.addEventListener('mousemove', function (e) {
-      if (!desktopMQ.matches || prefersReducedMotion) return;
-      if (!cardRect) cardRect = card.getBoundingClientRect();
-      tiltX = e.clientX - cardRect.left;
-      tiltY = e.clientY - cardRect.top;
-      if (!tiltPending) {
-        tiltPending = true;
-        requestAnimationFrame(applyTilt);
-      }
-    }, { passive: true });
-
-    card.addEventListener('mouseleave', function () {
-      cardRect = null;
-      card.style.transform = '';
-    });
-  });
-
-  /* ------------------------------------------------
      13. KART IŞIĞI — .vgh-spot kartlarında imleci izleyen yumuşak ışık (--mx/--my)
      Tek bir pasif dinleyici, rAF ile kısılır; yalnızca fare + hareket serbestken.
   ------------------------------------------------- */
@@ -1351,9 +1251,25 @@
     onMotionChange(syncPlayback);
   })();
 
-  /* Tanıtım filmlerinin sesleri aynı anda çalmasın. */
+  /* Tanıtım filmleri: sesleri aynı anda çalmasın; kapak görseli (poster) görünüme ~600px kala atanır.
+     poster özniteliği tembel yüklenmez: sayfanın en altındaki iki kapak ilk yüklemede ~96 KB indiriyordu.
+     ≤600px ekranda 640px'lik kapak (data-poster-sm) yeterlidir. */
   (function () {
     var films = qsAll('.vgh-film__player video');
+    var smallScreen = window.matchMedia('(max-width: 600px)').matches;
+    function poster(v) {
+      var p = (smallScreen && v.getAttribute('data-poster-sm')) || v.getAttribute('data-poster');
+      if (p) v.poster = p;
+      v.removeAttribute('data-poster'); v.removeAttribute('data-poster-sm');
+    }
+    if (hasIO) {
+      var po = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { poster(e.target); po.unobserve(e.target); } });
+      }, { rootMargin: '600px 0px' });
+      films.forEach(function (v) { if (v.hasAttribute('data-poster')) po.observe(v); });
+    } else {
+      films.forEach(poster);
+    }
     films.forEach(function (film) {
       film.addEventListener('play', function () {
         films.forEach(function (other) {
@@ -1382,6 +1298,32 @@
     }
     sync();
     if (scrollerMQ.addEventListener) scrollerMQ.addEventListener('change', sync);
+  })();
+
+  /* ------------------------------------------------
+     19c. HABERLER — ilk 6 kayıt görünür, kalanı düğmeyle açılır (JS yoksa hepsi görünür; css/home.css)
+  ------------------------------------------------- */
+  (function () {
+    var grid = qs('#newsGrid');
+    var btn = qs('#newsMore');
+    if (!grid || !btn) return;
+    var extra = grid.children.length - 6;
+    if (extra <= 0) return;
+    var label = btn.firstChild;
+    var count = btn.querySelector('.news__count');
+    function set(open) {
+      grid.classList.toggle('is-collapsed', !open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      label.nodeValue = open ? 'Daha az göster ' : 'Tüm kayıtları göster ';
+      if (count) count.textContent = open ? '' : '(+' + extra + ')';
+    }
+    set(false);
+    btn.hidden = false;
+    btn.addEventListener('click', function () {
+      var open = grid.classList.contains('is-collapsed');
+      set(open);
+      if (!open) grid.scrollIntoView({ block: 'nearest', behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    });
   })();
 
   /* External map is loaded only after an explicit user action. */

@@ -212,6 +212,7 @@ svg.sema .sv-tv{fill:#f5fbfa;font:600 11px Consolas,monospace}
         <div class="fld"><label>Uk (%)</label><input id="tUk" value="12"></div>
         <div class="fld"><label>OG Gerilimi (kV)</label><input id="tUog" value="34.5"></div>
       </div>
+      <div class="fld" style="margin-top:8px"><label>Yük (bakır) kaybı Pk (kW) <span class="tag">boş/0 = R ihmal</span></label><input id="tPk" value="" placeholder="Etiket/test raporu"></div>
       <div class="fld" style="margin-top:8px"><label>TM / Kaynak Adı (şablonda görünür)</label><input id="tAd" value="" placeholder="Kaynak / trafo merkezi adı"></div>
       <div class="fld" style="margin-top:8px"><label>Bağlantı Tipi (xtro/xtr1 tablodan)</label><select id="tBag"></select></div>
       <div class="grid2" style="margin-top:8px">
@@ -234,7 +235,7 @@ svg.sema .sv-tv{fill:#f5fbfa;font:600 11px Consolas,monospace}
         <div class="fld"><label>Rn — Nötr Direnci (Ω) <span class="tag">0 = yok</span></label><input id="tRn" value="20"></div>
         <div class="fld"><label>xtro / xtr1 <span class="tag">oto</span></label><input id="tX01" value="1"></div>
       </div>
-      <div class="hint">Rtr ≈ 0 (omik direnç ihmal). Paralel trafolarda x/n alınır; MVA metodunda Sk'lar toplanır. OG (sekonder) çıkışı üçgen olan bağlantılarda trafonun nötrü olmadığından "Trafo nötründen" seçeneği otomatik kilitlenir ve "Topraklama trafosu (zigzak)" zorunlu olur — bu durumda 3 faz / 2 faz arızaya etki olmaz, sıfır bileşen yolu yalnız zigzak X₀ + 3Rn üzerinden kapanır.</div>
+      <div class="hint">Pk girilirse trafo direnci R<sub>T</sub> = Pk/Nn (pu, kendi bazında) hesaba katılır ve X<sub>T</sub> = √(u<sub>k</sub>² − u<sub>R</sub>²) olur (IEC 60909-0); boş bırakılırsa R<sub>T</sub> ≈ 0 kabul edilir (I″k biraz büyük, κ biraz yüksek çıkar). Paralel trafolarda x/n alınır; MVA metodunda Sk'lar toplanır. OG (sekonder) çıkışı üçgen olan bağlantılarda trafonun nötrü olmadığından "Trafo nötründen" seçeneği otomatik kilitlenir ve "Topraklama trafosu (zigzak)" zorunlu olur — bu durumda 3 faz / 2 faz arızaya etki olmaz, sıfır bileşen yolu yalnız zigzak X₀ + 3Rn üzerinden kapanır.</div>
     </div>
   </div>
 
@@ -254,6 +255,7 @@ svg.sema .sv-tv{fill:#f5fbfa;font:600 11px Consolas,monospace}
         <div class="fld"><label>Uk (%)</label><input id="dUk" value="4.5"></div>
         <div class="fld"><label>AG Gerilimi (kV)</label><input id="dUag" value="0.4"></div>
       </div>
+      <div class="fld" style="margin-top:8px"><label>Yük (bakır) kaybı Pk (kW) <span class="tag">boş/0 = R ihmal</span></label><input id="dPk" value="" placeholder="ör. 630 kVA: ≈ 6,5 kW"></div>
       <div class="fld" style="margin-top:8px"><label>Bağlantı Tipi</label><select id="dBag"></select></div>
       <div class="grid2" style="margin-top:8px">
         <div class="fld"><label>xtro / xtr1 <span class="tag">oto</span></label><input id="dX01" value="1"></div>
@@ -738,6 +740,9 @@ function hesapla(){
   const X0tt=num('tX0t');
   $('ttX0Satir').style.display = ttVar?'':'none';
   const NnD=num('dNn')/1000, UkD=num('dUk'), Uag=num('dUag'), x01d=num('dX01');
+  // Trafo yük kaybı (kW): boş/0 → R ihmal. uR = Pk/Sn; uR ≥ uk fiziksel değildir.
+  const optNum = id => { const v = String($(id).value).trim(); return v === '' ? 0 : num(id); };
+  const PkT = optNum('tPk'), PkD = optNum('dPk');
   const t=num('gT'), m=num('gM'), n=num('gN');
   let hatlar;try{hatlar=hatListesi();}catch(error){invalidateResult(error.message);return;}
   const positive=[Nk,UnS,NnT,UkT,Uog,t];
@@ -745,6 +750,8 @@ function hesapla(){
   if(positive.some(v=>!Number.isFinite(v)||v<=0)||UkT>100||nonnegative.some(v=>!Number.isFinite(v)||v<0)||m+n<=0||!Number.isInteger(nTrf)||nTrf<1){
     invalidateResult('Şebeke, trafo ve termik hesap girdilerini kontrol edin. Güç, gerilim, uk ve süre sıfırdan büyük olmalı.');return;
   }
+  if(!Number.isFinite(PkT)||PkT<0||!Number.isFinite(PkD)||PkD<0){invalidateResult('Trafo yük kaybı Pk boş, sıfır veya pozitif olmalı.');return;}
+  if(PkT/(NnT*1000)*100>=UkT||(NnD>0&&PkD/(NnD*1000)*100>=UkD)){invalidateResult('Trafo yük kaybından gelen u_R = Pk/Sn, uk değerinden küçük olmalı; katalog değerlerini kontrol edin.');return;}
   if(ttVar&&(!Number.isFinite(X0tt)||X0tt<=0)){invalidateResult('Topraklama trafosunun sıfır bileşen reaktansı pozitif olmalı.');return;}
   if(NnD>0&&([UkD,Uag,x01d].some(v=>!Number.isFinite(v)||v<=0)||UkD>100)){
     invalidateResult('Dağıtım trafosunun gerilimi, uk ve sıfır bileşen oranı pozitif olmalı.');return;
@@ -768,8 +775,10 @@ function hesapla(){
   const x1s = cOG*BAZ/Nk, x0s = ttVar?0:(x01s*x1s), R1s = rxs*x1s; // IEC 60909: ZQ = c·Un²/S″kQ
   eleman.push({ad:'Şebeke'+(ttVar?' (sıfır bileşen: üçgen sargı ile izole)':''), un:UnS+' kV', R1:R1s,R2:R1s,R0:ttVar?0:R1s, X1:x1s,X2:x1s,X0:x0s, n1:true,n0:true});
   // İndirici trafo (paralel: x/n)
-  const xt1 = (UkT/100)*(BAZ/NnT)/nTrf, xt0 = ttVar?0:(x01t*xt1);
-  eleman.push({ad:(nTrf>1?nTrf+'x ':'')+'İndirici Trafo '+UnS+'/'+Uog+' kV'+(nTrf>1?' (paralel)':''), un:UnS+'/'+Uog, R1:0,R2:0,R0:0, X1:xt1,X2:xt1,X0:xt0, n1:true,n0:true});
+  // zT = uk·(BAZ/Sn), rT = uR·(BAZ/Sn) (uR = Pk/Sn), xT = √(zT² − rT²); paralel n trafo: /n
+  const zt1 = (UkT/100)*(BAZ/NnT)/nTrf, rt1 = (PkT/(NnT*1000))*(BAZ/NnT)/nTrf;
+  const xt1 = Math.sqrt(Math.max(zt1*zt1 - rt1*rt1, 0)), xt0 = ttVar?0:(x01t*xt1), rt0 = ttVar?0:rt1;
+  eleman.push({ad:(nTrf>1?nTrf+'x ':'')+'İndirici Trafo '+UnS+'/'+Uog+' kV'+(nTrf>1?' (paralel)':''), un:UnS+'/'+Uog, R1:rt1,R2:rt1,R0:rt0, X1:xt1,X2:xt1,X0:xt0, n1:true,n0:true});
   // Topraklama trafosu (zigzak): yalnız sıfır bileşende
   if(ttVar){
     const x0tt=X0tt*BAZ/(Uog*Uog);
@@ -785,15 +794,16 @@ function hesapla(){
       R1:h.R*k, R2:h.R*k, R0:h.R0*k, X1:h.X*k, X2:h.X*k, X0:h.X0*k, n1:true,n0:true});
   });
   // Dağıtım trafosu
-  const xd1 = NnD>0 ? (UkD/100)*(BAZ/NnD) : 0, xd0 = x01d*xd1;
+  const zd1 = NnD>0 ? (UkD/100)*(BAZ/NnD) : 0, rd1 = NnD>0 ? (PkD/(NnD*1000))*(BAZ/NnD) : 0;
+  const xd1 = Math.sqrt(Math.max(zd1*zd1 - rd1*rd1, 0)), xd0 = x01d*xd1, rd0 = rd1; // Dyn: Z0T ≈ ZT (R0 ≈ R1)
   const dtVar = NnD>0;
-  if(dtVar) eleman.push({ad:'Dağıtım Trafosu '+Uog+'/'+Uag+' kV — '+fmt(NnD*1000,0)+' kVA', un:Uog+'/'+Uag, R1:0,R2:0,R0:0, X1:xd1,X2:xd1,X0:xd0, n1:false,n0:false, dt:true});
+  if(dtVar) eleman.push({ad:'Dağıtım Trafosu '+Uog+'/'+Uag+' kV — '+fmt(NnD*1000,0)+' kVA', un:Uog+'/'+Uag, R1:rd1,R2:rd1,R0:rd0, X1:xd1,X2:xd1,X0:xd0, n1:false,n0:false, dt:true});
 
   // Nokta 1 toplamları (OG dağıtım trafosu girişi): şebeke+TM+hatlar
   let R1_1=0,X1_1=0,R0_1=0,X0_1=0;
   eleman.forEach(e=>{ if(e.n1){R1_1+=e.R1;X1_1+=e.X1;} if(e.n0){R0_1+=e.R0;X0_1+=e.X0;} });
   // Nokta 2 (0,4 kV bara): + dağıtım trafosu (doğru/ters); sıfır ayrıca ele alınır
-  const R1_2=R1_1, X1_2=X1_1+xd1;
+  const R1_2=R1_1+rd1, X1_2=X1_1+xd1;
 
   /* --- Nokta 1: 3 faz --- */
   const Z1_1=Math.hypot(R1_1,X1_1);
@@ -801,7 +811,7 @@ function hesapla(){
   /* --- Kademeli düğümler (tek hat şeması) --- */
   const kademe=[];
   { // Düğüm 0: OG bara (şebeke + TM trafo)
-    let cr=R1s, cx=x1s+xt1;
+    let cr=R1s+rt1, cx=x1s+xt1;
     let z=Math.hypot(cr,cx);
     kademe.push({ad:'OG Bara', cinsi:'', L:0, R:cr, X:cx, Z:z, Ipu:cOG/z, IkA:(cOG/z)*IbazOG, Sk:cOG*BAZ/z});
     hatlar.forEach(h=>{
@@ -822,12 +832,14 @@ function hesapla(){
   const dBagAd = $('dBag').value;
   const dPrimerUcgen = dBagAd.startsWith('Üçgen');
   let Z0_2R, Z0_2X;
-  if(dPrimerUcgen || !dtVar){ Z0_2R=0; Z0_2X=xd0; }
-  else { Z0_2R=R0_1+3*RnPu; Z0_2X=X0_1+xd0; }
+  if(dPrimerUcgen || !dtVar){ Z0_2R=rd0; Z0_2X=xd0; }
+  else { Z0_2R=R0_1+3*RnPu+rd0; Z0_2X=X0_1+xd0; }
   const Z0_2=Math.hypot(Z0_2R,Z0_2X);
   const k2=Z0_2/Z1_2;
-  const Ik2t_04 = k2<1 ? 3/(1+2*k2)*Ik04 : NaN;
-  const Ik1_04 = Ik04*3/(2+k2);
+  // IEC 60909-0 (Z2 = Z1), karmaşık toplamla: iki faz-toprakta toprak akımı I″kE2E = 3·c/|Z1 + 2·Z0|,
+  // faz-toprakta I″k1 = 3·c/|2·Z1 + Z0| (genlik oranıyla değil; k her değerinde tanımlıdır)
+  const Ik2t_04 = 3*cAG/Math.hypot(R1_2+2*Z0_2R, X1_2+2*Z0_2X)*IbazAG;
+  const Ik1_04 = 3*cAG/Math.hypot(2*R1_2+Z0_2R, 2*X1_2+Z0_2X)*IbazAG;
   /* --- Nokta 1: faz-toprak (tam simetrili bileşenler + basit yaklaşım) --- */
   const ZtR = 2*R1_1 + R0_1 + 3*RnPu;
   const ZtX = 2*X1_1 + X0_1;
@@ -915,19 +927,15 @@ function hesapla(){
   if(dtVar){
     h+=`<h3 style="color:var(--amber);font-size:13px;margin:10px 0 6px">3.3 — İki Faz-Toprak Arızası (0,4 kV bara)</h3>`;
     h+=`<div class="formula">Z₀ = ${dPrimerUcgen?'j·x<sub>tr0</sub> (primer üçgen — OG sıfır bileşeni izole)':'Z₀(OG)+j·x<sub>tr0</sub>'} = ${fmt(Z0_2,5)} pu &nbsp;|&nbsp; k = Z₀/Z₁ = <b>${fmt(k2,4)}</b> ${k2<1?'&lt; 1':'≥ 1'}</div>`;
-    if(k2<1){
-      h+=`<div class="formula">I″kt = 3/(1+2k) · I″k04 = 3/(1+${fmt(2*k2,4)}) · ${fkA(Ik04)} = <b class="big">${fkA(Ik2t_04)}</b></div>`;
-      h+=`<div class="note">k &lt; 1 → topraktan geçen dengesiz akım 3 fazlı arıza akımından büyüktür; teçhizat seçiminde dikkate alınır.</div>`;
-    } else {
-      h+=`<div class="note">k ≥ 1 → iki faz-toprak arızasında topraktan geçen akım, 3 fazlı arıza akımını aşmaz.</div>`;
-    }
+    h+=`<div class="formula">I″kE2E = 3·c / |Z₁ + 2·Z₀| · I<sub>baz</sub> = 3·${fmt(cAG,2)} / ${fmt(Math.hypot(R1_2+2*Z0_2R, X1_2+2*Z0_2X),5)} pu · ${fA(IbazAG)} = <b class="big">${fkA(Ik2t_04)}</b> (karmaşık toplam, IEC 60909-0)</div>`;
+    h+=`<div class="note">${Ik2t_04>Ik04 ? 'Topraktan geçen akım 3 fazlı arıza akımından büyük (k &lt; 1 eğilimi); teçhizat ve topraklama seçiminde dikkate alınır.' : 'Topraktan geçen akım 3 fazlı arıza akımını aşmıyor (k ≥ 1 eğilimi).'}</div>`;
   }
   h+=`<h3 style="color:var(--amber);font-size:13px;margin:10px 0 6px">3.4 — Faz-Toprak Arızası</h3>`;
   h+=`<div class="formula">N1: Z<sub>t</sub> = Z₁+Z₂+Z₀+3Rn = (${fmt(ZtR,4)}) + j·(${fmt(ZtX,4)}) = ${fmt(Zt,4)} pu</div>`;
   h+=`<div class="formula">I₀ = 1/Z<sub>t</sub> = ${fmt(I0pu,5)} pu → I″k1 = 3·I₀·I<sub>baz</sub> = <b class="big">${fA(Ik1_1)}</b></div>`;
   if(Rn>0) h+=`<div class="note">Basit yaklaşım (yalnız Rn ile): I″k1 ≈ 3/(3·Rn<sub>pu</sub>)·I<sub>baz</sub> = ${fA(Ik1_basit)} — nötr direnci diğer empedanslara baskındır.</div>`;
   if(dtVar){
-    h+=`<div class="formula">N2 (0,4 kV): I″k1 = I″k04 · 3/(2+k) = ${fkA(Ik04)} · 3/${fmt(2+k2,4)} = <b class="big">${fkA(Ik1_04)}</b></div>`;
+    h+=`<div class="formula">N2 (0,4 kV): I″k1 = 3·c / |2·Z₁ + Z₀| · I<sub>baz</sub> = 3·${fmt(cAG,2)} / ${fmt(Math.hypot(2*R1_2+Z0_2R, 2*X1_2+Z0_2X),5)} pu · ${fA(IbazAG)} = <b class="big">${fkA(Ik1_04)}</b></div>`;
     if(dPrimerUcgen) h+=`<div class="note">Dağıtım trafosu giriş sargısı üçgen olduğundan 0,4 kV faz-toprak arızası OG tarafına toprak akımı olarak yansımaz.</div>`;
   }
   h+=`<h3 style="color:var(--amber);font-size:13px;margin:10px 0 6px">3.5 — Asimetrik Darbe Kısa Devre Akımları (ip = κ·√2·I″k3, κ = 1,02 + 0,98·e<sup>−3R/X</sup>)</h3>`;
@@ -973,7 +981,7 @@ function hesapla(){
 /* ================= DURUM / KAYIT ================= */
 const LS_KEY='og_kd_sim_v3';
 function durumAl(){
-  const ids=['pAd','pTar','tAd','sNk','sUn','sX01','sRX','sCmod','tNn','tUk','tUog','tRn','tX01','tAdet','tTopMod','tX0t','dNn','dUk','dUag','dX01','gT','gM','gN'];
+  const ids=['pAd','pTar','tAd','sNk','sUn','sX01','sRX','sCmod','tNn','tUk','tPk','tUog','tRn','tX01','tAdet','tTopMod','tX0t','dNn','dUk','dPk','dUag','dX01','gT','gM','gN'];
   const st={f:{},tBag:$('tBag').value,dBag:$('dBag').value,hatlar:[]};
   ids.forEach(i=>st.f[i]=$(i).value);
   document.querySelectorAll('#hatList .seg').forEach(seg=>{

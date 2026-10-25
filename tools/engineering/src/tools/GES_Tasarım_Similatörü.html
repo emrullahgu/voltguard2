@@ -155,7 +155,7 @@
   <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end; margin-bottom:12px;">
     <div class="fld" style="max-width:200px;"><label>İletken cinsi</label>
       <select id="dcMat" style="width:110px; padding:6px 8px; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); font-size:14px;">
-        <option value="cu">Bakır (K=56)</option><option value="al">Alüminyum (K=35)</option>
+        <option value="cu">Bakır (κ20=56 → 70 °C’de 46,8)</option><option value="al">Alüminyum (κ20=35 → 70 °C’de 29,1)</option>
       </select></div>
     <div class="fld" style="max-width:240px;"><label>Ortam sıcaklığı (°C)</label>
       <div style="display:flex; align-items:center; gap:8px;">
@@ -167,7 +167,7 @@
     <div class="fld" style="max-width:160px;"><label>Gerilim düşümü kriteri (%)</label><input type="number" id="dcCrit" value="2" step="0.1"></div>
     <div class="fld" style="max-width:160px;"><label>Dizi Impp (A)</label><input type="number" id="dcImpp" value="13" step="0.1"></div>
   </div>
-  <div style="font-size:12px; color:var(--muted); margin-bottom:10px;" id="dcFactors">Otomatik faktorler → K = 56 (bakir)  ·  Ct = 0.94  ·  Cg her dizide ayri (doseme sekli + raf + devre)  ·  Impp = 13 A</div>
+  <div style="font-size:12px; color:var(--muted); margin-bottom:10px;" id="dcFactors">Otomatik faktorler → K = 46.8 (κ20 = 56, 70 °C iletken sicakligina duzeltilmis, bakir)  ·  Ct = 0.94  ·  Cg her dizide ayri (doseme sekli + raf + devre)  ·  Impp = 13 A</div>
   <div id="dcVerdict" style="text-align: center; font-size: 15px; font-weight: 600; padding: 10px; border-radius: 8px; margin-bottom: 12px; background: var(--ok-bg); color: var(--ok-tx);">✓ Tum diziler uygun (akim + gerilim)  ·  en kotu gerilim DZ.7.6 %1.99</div>
   <div id="dcLossBox" class="card" style="margin-bottom:12px;"><h2>DC kablo guc kaybi (I²R)</h2><div class="metrics" id="dcLossMetrics"></div><p style="font-size:10.5px; color:var(--muted); margin:8px 0 0; line-height:1.5;">Her dizi icin P<sub>kayip</sub> = ΔU<sub>dize</sub> × I<sub>mpp</sub> (ΔU gidis-donus toplam gerilim dususu). Iletken sicakliginda hesaplanir; STC anlik kayiptir.</p></div>
   <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; padding:10px 12px; margin-bottom:12px; background:var(--surface2); border:1px solid var(--border); border-radius:10px;">
@@ -589,11 +589,15 @@ var dcDizeler=dcRaw.map(function(d){
 });
 renumberDizeler();  // baslangic adlarini DZ.<evirici>.<sirali> yap
 
+/* DC kablo iletken sıcaklığı (°C): FV kablosunda tam yük işletme sıcaklığı için tipik kabul (js/calculator-config.js selectDcCable ile aynı) */
+var DC_TCOND=70;
 function dcFactorsNow(){
   function nearest(tbl,key){var ks=Object.keys(tbl).map(Number).sort(function(a,b){return a-b;});var best=ks[0];for(var i=0;i<ks.length;i++){if(ks[i]<=key)best=ks[i];}return tbl[String(best)];}
   var mat=document.getElementById('dcMat').value;
   return {
-    K: mat==='cu'?56:35, mat:mat,
+    // iletkenlik 20 °C değerinden işletme sıcaklığına (DC_TCOND) düzeltilir: κθ = κ20/(1 + α·(θ − 20));
+    // 20 °C değeriyle hesap sıcak iletkende düşüm ve kaybı ≈ %20 düşük gösterirdi (Cu 70 °C: 56 → 46,8)
+    K: +((mat==='cu'?56:35)/(1+(mat==='cu'?0.00393:0.00403)*(DC_TCOND-20))).toFixed(2), K20: mat==='cu'?56:35, theta: DC_TCOND, mat:mat,
     Ct: nearest(B1PVC, parseFloat(document.getElementById('dcTamb').value)||35),
     crit: parseFloat(document.getElementById('dcCrit').value)||2,
     impp: parseFloat(document.getElementById('dcImpp').value)||13,
@@ -722,7 +726,7 @@ function refreshDC(){
 
 function calcDC(){
   var f=dcFactorsNow();
-  document.getElementById('dcFactors').innerHTML='Otomatik faktorler &rarr; K = '+f.K+' ('+(f.mat==='cu'?'bakir':'aluminyum')+')  &middot;  Ct = '+f.Ct.toFixed(2)+'  &middot;  Cg her dizide ayri (doseme sekli + raf + devre)  &middot;  Impp = '+f.impp+' A';
+  document.getElementById('dcFactors').innerHTML='Otomatik faktorler &rarr; K = '+f.K+' (\u03ba20 = '+f.K20+', '+f.theta+' \u00b0C iletken sicakligina duzeltilmis, '+(f.mat==='cu'?'bakir':'aluminyum')+')  &middot;  Ct = '+f.Ct.toFixed(2)+'  &middot;  Cg her dizide ayri (doseme sekli + raf + devre)  &middot;  Impp = '+f.impp+' A';
   var dcb=document.getElementById('dcCtBadge'); if(dcb) dcb.innerHTML='Ct (PVC) &rarr; <b>'+f.Ct.toFixed(2)+'</b>';
 
   var trs=dcDizeler.map(function(d,i){
@@ -972,14 +976,17 @@ function acRowVals(s,Tamb,circ,crit){
   var Ct=nearest(isPvc?B1pvc:B1xlpe,Tamb);
   var Iz=Iz0*Ct*Cg*s.par;
   var U=(parseFloat((document.getElementById('acVolt')||{}).value)||400);
-  var pUk=(k3*s.P*1000 + m3*s.Q*1000)*s.L*1e-7/(s.par||1);
-  pUk=pUk*Math.pow(400/U,2);      // TEDAS k3/m3 400V icin tanimli; %e ~ 1/U^2, secilen U'ya olcekle
   var cosfi=parseFloat((document.getElementById('acCosfi')||{}).value)||1;
   if(cosfi<=0||cosfi>1) cosfi=1;
+  // Q girilmemişse cosφ'den türetilir (Q = P·tanφ); aksi halde reaktif düşüm payı sıfır kalır ve %e düşük çıkar
+  var Q=(s.Q>0)?s.Q:s.P*Math.tan(Math.acos(cosfi));
+  var scaleU=Math.pow(400/U,2);   // TEDAS k3/m3 400V icin tanimli; %e ~ 1/U^2, secilen U'ya olcekle
+  var pUkR=k3*s.P*1000*s.L*1e-7/(s.par||1)*scaleU;   // yalnız dirençli pay
+  var pUk=(k3*s.P*1000 + m3*Q*1000)*s.L*1e-7/(s.par||1)*scaleU;
   var Ib=(s.P*1000)/(Math.sqrt(3)*U*cosfi);
   var iOk=Ib<Iz, vOk=pUk<crit;
   var dUhat=(pUk/100)*U;          // V, hat gerilim dususu
-  var Ploss=Math.sqrt(3)*Ib*dUhat; // W, trifaze toplam kayip
+  var Ploss=(pUkR/100)*s.P*1000/(cosfi*cosfi); // W, 3·I²·R = (%e_R/100)·P/cos²φ (reaktif düşüm kayıp değildir)
   var Pseg=s.P*1000;             // W, segment aktif gucu
   return {Iz:Iz,pUk:pUk,Ib:Ib,iOk:iOk,vOk:vOk,ok:iOk&&vOk,Cg:Cg,Ct:Ct,Ploss:Ploss,Pseg:Pseg};
 }
@@ -1120,18 +1127,19 @@ function renderInvMath(){
   var h='<div class="mathbox"><h4>Evirici uygunluk hesabi \u2014 kullanilan formuller</h4>'+
     '<div>Panel: Voc='+fmt(voc,2)+' V, Vmpp='+fmt(vmpp,2)+' V, Isc='+fmt(isc,2)+' A, Impp='+fmt(impp,2)+' A, Pmax='+fmt(pmax,0)+' Wp; '+
       'k(Voc)='+fmt(k,3)+' %/\u00b0C, k(Vmpp)='+fmt(kmpp,3)+' %/\u00b0C; Tmin='+fmt(tmin,0)+', Tmax='+fmt(tmax,0)+', Tnom='+fmt(tnom,0)+' \u00b0C</div>'+
-    '<div class="frm">Max Voc = N\u00b7Voc\u00b7(1 + k\u00b7|Tmin\u2212Tnom|/100)</div> '+
-    '<div class="frm">Min Vmpp = N\u00b7Vmpp\u00b7(1 \u2212 kmpp\u00b7|Tmax\u2212Tnom|/100)</div> '+
+    '<div class="frm">Max Voc = N\u00b7Voc\u00b7(1 + |k|\u00b7max(0, Tnom\u2212Tmin)/100)</div> '+
+    '<div class="frm">Min Vmpp = N\u00b7Vmpp\u00b7(1 \u2212 |kmpp|\u00b7max(0, Tmax + 30 \u2212 Tnom)/100) (h\u00fccre \u2248 ortam + 30 K)</div> '+
     '<div class="frm">I(MPPT) = (MPPT\u2019ye dizi)\u00b7Impp</div> '+
     '<div class="frm">DC guc = (panel adedi)\u00b7Pmax/1000 [kW]</div> '+
     '<div class="frm">DC/AC = DC guc / AC limit</div>'+
     '<div class="ex">N = en uzun dizideki panel adedi. Renkli barlarda gosterilen her deger bu formullerle hesaplanir.</div>';
   if(inverters[0]){
     var inv=inverters[0], N=inv.maxPanelsPerString;
-    var maxVoc=N*voc*(1+(k*Math.abs(tmin-tnom))/100);
+    // katalog katsayısı negatif yazılır; kontrolle aynı olsun diye büyüklüğü kullanılır (işaretli k raporda düşük Voc gösterirdi)
+    var maxVoc=N*voc*(1+(Math.abs(k)*Math.max(0,tnom-tmin))/100);
     var dcKw=inv.totalPanels*pmax/1000;
     h+='<div class="ex"><b>Ornek ('+inv.name+'):</b> '+
-      'Max Voc = '+N+'\u00b7'+fmt(voc,2)+'\u00b7(1 + '+fmt(k,3)+'\u00b7|'+fmt(tmin,0)+'\u2212'+fmt(tnom,0)+'|/100) = <b>'+fmt(maxVoc,0)+' V</b> (limit '+fmt(inv.vMax,0)+' V); '+
+      'Max Voc = '+N+'\u00b7'+fmt(voc,2)+'\u00b7(1 + '+fmt(Math.abs(k),3)+'\u00b7max(0, '+fmt(tnom,0)+'\u2212'+fmt(tmin,0)+')/100) = <b>'+fmt(maxVoc,0)+' V</b> (limit '+fmt(inv.vMax,0)+' V); '+
       'DC guc = '+inv.totalPanels+'\u00b7'+fmt(pmax,0)+'/1000 = <b>'+fmt(dcKw,1)+' kW</b>; '+
       'DC/AC = '+fmt(dcKw,1)+'/'+fmt(inv.acLimit,0)+' = <b>'+fmt(inv.acLimit>0?dcKw/inv.acLimit:0,2)+'</b></div>';
   }
@@ -1142,7 +1150,7 @@ function renderDcMath(){
   var el=document.getElementById('dcMath'); if(!el) return;
   var f=dcFactorsNow();
   var h='<div class="mathbox"><h4>DC kablo hesabi \u2014 kullanilan formuller</h4>'+
-    '<div>Sabitler: K='+f.K+' ('+(f.mat==='cu'?'bakir':'aluminyum')+'), Ct='+f.Ct.toFixed(2)+' (sicaklik), Impp='+f.impp+' A, Vmpp(panel)='+fmt(f.vmpp,2)+' V, kriter %Uk &lt; '+f.crit+'</div>'+
+    '<div>Sabitler: K='+f.K+' (\u03ba20='+f.K20+'/(1+\u03b1\u00b7('+f.theta+'\u221220)), '+(f.mat==='cu'?'bakir':'aluminyum')+'), Ct='+f.Ct.toFixed(2)+' (sicaklik), Impp='+f.impp+' A, Vmpp(panel)='+fmt(f.vmpp,2)+' V, kriter %Uk &lt; '+f.crit+'</div>'+
     '<div class="frm">Cd = Ct \u00d7 Cg</div> '+
     '<div class="frm">Iz = Itablo(kesit) \u00b7 Cd</div> '+
     '<div class="frm">Uk = 2 \u00b7 L \u00b7 Impp / (S \u00b7 K) [V]</div> '+

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!--
+=====================================================================================================
+ VoltGuard GERÇEK PROJE İNCELEMESİ ŞABLONU  (tools/templates/proje-inceleme.html)
+ Akış: Problem → İnceleme → Uygulanan çözüm → Doğrulanmış sonuç → Kullanılan yöntem
+ Stil: /css/services.css (hizmet sayfalarıyla aynı bileşenler) · Kabuk: python tools/shell.py <dosya>
+=====================================================================================================
+
+ BU ŞABLON NE İÇİN?
+  Bir hizmet sayfasının iddiasını (ör. "önce ölçüm, sonra pano") gerçek bir işte nasıl uyguladığımızı
+  gösteren, kayıtlara dayalı inceleme. Pazarlama hikâyesi değildir. Kayıtta olmayan hiçbir şey yazılmaz.
+
+ YAYIN ÖNCESİ ZORUNLU KONTROL LİSTESİ (hepsi "evet" değilse yayınlamayın; robots noindex kalsın)
+  [ ] Müşteri adı: müşteriden YAZILI yayın izni var mı? (e-posta/yazı arşivde, tarihli). Yoksa adı,
+      logosu, adresi, tabelası ve tanınabilir binası yazılmaz/gösterilmez: "İzmir'de bir gıda fabrikası" gibi.
+  [ ] Görseller: her fotoğrafı VoltGuard ekibi mi çekti, müşteri sahasında çekim ve yayın izni var mı?
+      Kişi yüzleri, plaka, ekran, belge numarası, tabela bulanıklaştırıldı mı?
+  [ ] Her sayı bir kayda bağlı mı? (fatura dönemi, analizör kayıt dosyası, test raporu, tutanak).
+      Kaynağı olmayan oran, tutar, süre, tasarruf YAZILMAZ. Tahmin varsa "tahmin" diye etiketlenir.
+  [ ] "Önce" ve "sonra" aynı yöntemle mi ölçüldü? (aynı ölçüm noktası, benzer çalışma dönemi). Değilse
+      karşılaştırma yapılmaz; iki değer ayrı ayrı ve koşullarıyla verilir.
+  [ ] Proje tutarı, teklif bedeli, müşteri sözü (alıntı): ancak müşterinin yazılı onayıyla ve birebir.
+      Uydurma ya da "temsili" müşteri sözü, yıldız, puan KULLANILMAZ.
+  [ ] İlişki türü doğru mu? Bu şablon yalnızca VoltGuard'ın yürüttüğü MÜŞTERİ işi içindir. Program
+      katılımı (ör. hızlandırıcı/tedarikçi programı), akademik ilişki (tez, seminer, onur belgesi) ve Ar-Ge
+      iş birliği (ör. Aktif EMI Filtre) müşteri referansı gibi sunulmaz; bunlar için ayrı sayfa/bölüm kullanın.
+  [ ] Mevzuat/standart atıfları metni kontrol edilerek mi yazıldı? (ad + RG tarih/sayı veya standart no).
+  [ ] İçeriği sahada çalışan mühendis okudu ve onayladı mı? (adı "Hazırlayan" alanına yazılır).
+
+ YAYINLAMA (ilk inceleme yayınlanırken bir kez)
+  1. Dosya: projeler/<slug>.html (slug: tesis-turu-problem, il adı ZORUNLU DEĞİL; ilçe adını değiştirerek
+     çoğaltılmış sayfa üretmeyin). Bu yorum bloğunu ve ŞABLON NOTU yorumlarını silin.
+  2. .htaccess temiz URL kuralındaki klasör listesine "projeler" ekleyin; tools/audit-site.py DIRECTORIES'e
+     ekleyin; sitemap.xml'e yalnızca robots "index" olan incelemeleri ekleyin.
+  3. İlgili hizmet sayfasının #kaynaklar bölümüne bir kart ekleyin (etiket: svc-tag--hizmet, metin "Proje
+     incelemesi"); hizmet sayfasından incelemeye, incelemeden hizmet sayfasına bağlantı olsun.
+  4. python tools/shell.py projeler/<slug>.html  ·  python tools/sync-versions.py  ·  npm test
+=====================================================================================================
+-->
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!--vg:head--><!--/vg:head-->
+  <meta name="color-scheme" content="light only">
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{META_DESCRIPTION}}">
+  <!-- ŞABLON NOTU: Kontrol listesi tamamlanana kadar noindex KALIR. Onaydan sonra "index, follow" yapın. -->
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://voltguard.com.tr/projeler/{{SLUG}}.html">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="tr_TR">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta property="og:title" content="{{TITLE}}">
+  <meta property="og:description" content="{{META_DESCRIPTION}}">
+  <meta property="og:url" content="https://voltguard.com.tr/projeler/{{SLUG}}.html">
+  <meta property="og:image" content="https://voltguard.com.tr/public/{{OG_IMAGE_FILE}}">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="stylesheet" href="/css/services.css?v=0ae451e5608c">
+  <script>document.documentElement.classList.add('svc-js');setTimeout(function(){if(!window.__svcReady)document.documentElement.classList.add('svc-noanim')},3000);</script>
+  <script src="/js/services.js?v=fa099b741bcf" defer></script>
+  <!-- ŞABLON NOTU: Yalnızca Article + BreadcrumbList. Review, AggregateRating, ratingValue, müşteri
+       Organization düğümü ve "testimonial" KULLANILMAZ. headline = H1, datePublished = yayın günü. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "@id": "https://voltguard.com.tr/projeler/{{SLUG}}.html#article",
+        "headline": "{{H1}}",
+        "description": "{{META_DESCRIPTION}}",
+        "inLanguage": "tr-TR",
+        "datePublished": "{{YYYY-MM-DD}}",
+        "dateModified": "{{YYYY-MM-DD}}",
+        "author": { "@id": "https://voltguard.com.tr/#organization" },
+        "publisher": { "@id": "https://voltguard.com.tr/#organization" },
+        "about": { "@id": "https://voltguard.com.tr/hizmetler/{{SERVICE_SLUG}}.html#service" },
+        "mainEntityOfPage": "https://voltguard.com.tr/projeler/{{SLUG}}.html"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": "https://voltguard.com.tr/" },
+          { "@type": "ListItem", "position": 2, "name": "{{SERVICE_NAME}}", "item": "https://voltguard.com.tr/hizmetler/{{SERVICE_SLUG}}.html" },
+          { "@type": "ListItem", "position": 3, "name": "{{H1}}", "item": "https://voltguard.com.tr/projeler/{{SLUG}}.html" }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="svc-page" data-service="{{SERVICE_SLUG}}">
+  <!--vg:header--><!--/vg:header-->
+
+  <main class="svc" id="main" tabindex="-1">
+    <section class="svc-hero" aria-labelledby="svc-h1">
+      <div class="svc-wrap">
+        <nav class="svc-crumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/">Ana Sayfa</a></li>
+            <li><a href="/hizmetler/{{SERVICE_SLUG}}.html">{{SERVICE_NAME}}</a></li>
+            <li><span aria-current="page">Proje incelemesi</span></li>
+          </ol>
+        </nav>
+        <p class="svc-eyebrow"><i class="fas fa-clipboard-list" aria-hidden="true"></i> Proje incelemesi</p>
+        <!-- ŞABLON NOTU: H1 problemi ve tesis türünü söyler, sonucu abartmaz. Ör. "Gıda fabrikasında reaktörsüz
+             kompanzasyonda tekrarlayan kondansatör arızası". -->
+        <h1 id="svc-h1">{{H1}}</h1>
+        <p class="svc-lead">{{TEK_PARAGRAF_OZET: problem, ne yapıldı, neyin doğrulandığı. Sayı varsa kaynağıyla.}}</p>
+        <!-- ŞABLON NOTU: Müşteri satırı yalnızca yazılı izin varsa; yoksa "Müşteri: yayın izni olmadığı için
+             adı paylaşılmamıştır" yazın ya da satırı silin. -->
+        <ul class="svc-chips" aria-label="Proje bilgileri">
+          <li><i class="fas fa-industry" aria-hidden="true"></i> Tesis: {{TESIS_TURU}}</li>
+          <li><i class="fas fa-location-dot" aria-hidden="true"></i> {{IL}}</li>
+          <li><i class="fas fa-calendar-alt" aria-hidden="true"></i> {{AY_YIL_BASLANGIC}} - {{AY_YIL_BITIS}}</li>
+          <li><i class="fas fa-bolt" aria-hidden="true"></i> {{TEKNIK_OLCEK: ör. 1.600 kVA trafo, 400 V}}</li>
+        </ul>
+      </div>
+    </section>
+
+    <nav class="svc-toc" aria-label="Bu sayfada">
+      <div class="svc-wrap">
+        <ul>
+          <li><a href="#problem">Problem</a></li>
+          <li><a href="#inceleme">İnceleme</a></li>
+          <li><a href="#cozum">Uygulanan çözüm</a></li>
+          <li><a href="#sonuc">Doğrulanmış sonuç</a></li>
+          <li><a href="#yontem">Yöntem</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- 1. PROBLEM: müşterinin bize geldiği haliyle. Belirti, ne zamandır sürdüğü, işletmeye etkisi. -->
+    <section class="svc-sec" id="problem" aria-labelledby="h-problem">
+      <div class="svc-wrap">
+        <div class="svc-sec__head">
+          <p class="svc-kicker">1 · Problem</p>
+          <h2 id="h-problem">{{PROBLEM_BASLIGI}}</h2>
+          <p class="svc-sec__intro">{{Belirtiler ve başvuru nedeni. Kaynak: müşteri bildirimi, fatura, arıza kaydı.}}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. İNCELEME: ne ölçüldü, nerede, ne kadar süre, hangi cihaz sınıfıyla; hangi hipotezler elendi. -->
+    <section class="svc-sec svc-sec--alt" id="inceleme" aria-labelledby="h-inceleme">
+      <div class="svc-wrap">
+        <div class="svc-sec__head">
+          <p class="svc-kicker">2 · İnceleme</p>
+          <h2 id="h-inceleme">{{INCELEME_BASLIGI}}</h2>
+        </div>
+        <ul class="svc-checks">
+          <li><strong>{{Ölçüm / kontrol}}</strong>{{Ölçüm noktası, süre, cihaz sınıfı (ör. IEC 61000-4-30 Sınıf A analizör), kayıt aralığı.}}</li>
+          <li><strong>{{Bulgu}}</strong>{{Ne bulundu; hangi olası neden elendi ve neden.}}</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3. UYGULANAN ÇÖZÜM: neden bu çözüm, hangi alternatif neden seçilmedi. Marka/model yazılabilir. -->
+    <section class="svc-sec" id="cozum" aria-labelledby="h-cozum">
+      <div class="svc-wrap">
+        <div class="svc-sec__head">
+          <p class="svc-kicker">3 · Uygulanan çözüm</p>
+          <h2 id="h-cozum">{{COZUM_BASLIGI}}</h2>
+          <p class="svc-sec__intro">{{Seçilen çözüm ve gerekçesi; reddedilen alternatifler. Kesinti süresi, iş güvenliği önlemleri.}}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. DOĞRULANMIŞ SONUÇ: yalnızca ölçülmüş/belgelenmiş değerler. Her satırın KAYNAĞI zorunlu.
+         Doğrulama henüz yapılmadıysa tabloyu silin ve "Doğrulama ölçümü {{tarih}} tarihinde yapılacak" yazın. -->
+    <section class="svc-sec svc-sec--alt" id="sonuc" aria-labelledby="h-sonuc">
+      <div class="svc-wrap">
+        <div class="svc-sec__head">
+          <p class="svc-kicker">4 · Doğrulanmış sonuç</p>
+          <h2 id="h-sonuc">{{SONUC_BASLIGI}}</h2>
+        </div>
+        <div class="svc-table-wrap">
+          <table class="svc-table svc-table--text">
+            <caption>Önce ve sonra<small>Aynı ölçüm noktası ve benzer çalışma dönemi; koşul farkı varsa satırda belirtilir.</small></caption>
+            <thead>
+              <tr><th scope="col">Gösterge</th><th scope="col">Önce</th><th scope="col">Sonra</th><th scope="col">Kaynak</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">{{ör. Endüktif reaktif / aktif oranı}}</th><td>{{değer}}</td><td>{{değer}}</td><td>{{ör. GDZ faturası 2026/03 ve 2026/06}}</td></tr>
+              <tr><th scope="row">{{ör. THDi, ana pano}}</th><td>{{değer}}</td><td>{{değer}}</td><td>{{ör. analizör kaydı, 7 gün, ölçüm raporu no}}</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="svc-note">
+          <i class="fas fa-circle-info" aria-hidden="true"></i>
+          <p><strong>Sınırlar.</strong> {{Sonucu etkileyebilecek koşullar: üretim değişimi, mevsim, ölçülmeyenler. Genelleme yapılmaz: bu sonuç başka bir tesiste aynı olmayabilir.}}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. KULLANILAN YÖNTEM: tekrarlanabilir olsun. Standartlar, hesap, araçlar; ilgili hesaplama aracı ve VoltSim. -->
+    <section class="svc-sec" id="yontem" aria-labelledby="h-yontem">
+      <div class="svc-wrap">
+        <div class="svc-sec__head">
+          <p class="svc-kicker">5 · Kullanılan yöntem</p>
+          <h2 id="h-yontem">Yöntem, standartlar ve araçlar</h2>
+        </div>
+        <ul class="svc-fine">
+          <li>{{Standart / yönetmelik: ad + numara veya RG tarih/sayı}}</li>
+          <li>{{Hesap yöntemi ve varsayımlar}}</li>
+          <li>Benzer bir ön hesap için: <a href="/hesaplama/{{HESAPLAMA_SLUG}}/">{{HESAPLAMA_ADI}}</a> · 3D deneme: <a href="/voltsim/{{VOLTSIM_SLUG}}/">{{VOLTSIM_ADI}}</a></li>
+        </ul>
+        <p class="svc-meta"><span><i class="fas fa-pen" aria-hidden="true"></i>Hazırlayan: {{SAHADAKI_MUHENDIS_ADI}}</span><span><i class="fas fa-clock-rotate-left" aria-hidden="true"></i>Yayın: {{GG Ay YYYY}}</span></p>
+      </div>
+    </section>
+
+    <section class="svc-cta" aria-labelledby="h-cta">
+      <div class="svc-wrap svc-cta__in">
+        <div>
+          <h2 id="h-cta">Benzer bir sorun mu yaşıyorsunuz?</h2>
+          <p>{{Hizmete özel tek cümle: keşif için hangi bilgileri göndermeleri gerektiği.}}</p>
+        </div>
+        <div class="svc-cta__btns">
+          <a class="svc-btn svc-btn--primary" href="/?hizmet={{SERVICE_SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
+          <a class="svc-btn svc-btn--ghost" href="/hizmetler/{{SERVICE_SLUG}}.html"><i class="fas fa-arrow-right" aria-hidden="true"></i> Hizmet ayrıntıları</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!--vg:footer--><!--/vg:footer-->
+</body>
+</html>

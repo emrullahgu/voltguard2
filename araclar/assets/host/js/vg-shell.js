@@ -1,6 +1,6 @@
 /*!
  * VoltGuard – vg-shell.js
- * Ortak site başlığı (#vgHeader) davranışı: mobil menü, "Kaynaklar" açılır menüsü, kaydırma gölgesi,
+ * Ortak site başlığı (#vgHeader) davranışı: mobil menü, açılır menüler (Hizmetler / Kurumsal / Teknik Kaynaklar), tema düğmesi, kaydırma gölgesi,
  * Esc / dışarı tıklama / klavye gezinmesi, aria-current senkronu, çapa hizalama, yıl, prefetch yedeği,
  * alt bilgi animasyonlarının ekran dışındayken duraklatılması, service worker kaydı (/sw.js).
  * Bağımlılık yok, defer ile yüklenir. İki kez yüklense de ikinci çalıştırma kendini devre dışı bırakır.
@@ -188,6 +188,40 @@
     });
   }
   refreshCurrent();
+
+  /* ---------- Tema düğmesi ([data-vg-theme-toggle]) ----------
+     Yalnızca <html data-vg-themes> sayfalarında (CSS'i tema değişkenlerine geçmiş sayfalar). İlk seçim, boyamadan önce
+     tools/shell.py THEME_BOOT satır içi betiğinde yapılır; burası düğmeyi, kaydı ve sistem tercihi değişimini yönetir.
+     Kayıt yoksa işletim sistemi tercihi izlenir. Olay: document 'vg:theme' {detail:{theme}} (tuval çizen bileşenler için). */
+  (function theme() {
+    if (!root.hasAttribute('data-vg-themes')) return;
+    var btns = [].slice.call(doc.querySelectorAll('[data-vg-theme-toggle]'));
+    var sysMQ = window.matchMedia('(prefers-color-scheme: dark)');
+    function stored() {
+      try { var v = localStorage.getItem('vg-theme'); return v === 'light' || v === 'dark' ? v : null; } catch (err) { return null; }
+    }
+    function apply(t) {
+      var changed = root.getAttribute('data-theme') !== t;
+      root.setAttribute('data-theme', t);
+      btns.forEach(function (b) {
+        b.hidden = false;
+        b.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
+        b.title = t === 'dark' ? 'Açık temaya geç' : 'Koyu temaya geç';
+      });
+      if (changed) { try { doc.dispatchEvent(new CustomEvent('vg:theme', { detail: { theme: t } })); } catch (err) { /* eski tarayıcı */ } }
+    }
+    apply(stored() || (sysMQ.matches ? 'dark' : 'light'));
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var t = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        try { localStorage.setItem('vg-theme', t); } catch (err) { /* gizli pencere: yalnızca bu sayfa için */ }
+        apply(t);
+      });
+    });
+    function onSys() { if (!stored()) apply(sysMQ.matches ? 'dark' : 'light'); }
+    if (sysMQ.addEventListener) sysMQ.addEventListener('change', onSys);
+    else if (sysMQ.addListener) sysMQ.addListener(onSys);
+  }());
 
   /* ---------- Ana sayfada bölüm izleme (Hizmetler / Projeler vurgusu) ---------- */
   (function spy() {

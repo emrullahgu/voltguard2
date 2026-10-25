@@ -6,6 +6,12 @@
    Yeni sınıflar "vgh-" önekiyle adlandırıldı (başka sayfaların sınıflarıyla çakışmasın).
    ===================================================== */
 
+/* ---------- Bölüm yükseklikleri baştan gerçek olsun ----------
+   style.css .section'a content-visibility:auto + 800px tahmini boy verir. Ana sayfaya her sayfadan /#iletisim,
+   /#hizmetler gibi derin bağlantılarla gelinir; tahmini boylar sırayla gerçek boya dönerken hedef ve altbilgi
+   kayıyordu (ölçülen CLS 0,80–0,97). Ana sayfada boyama tasarrufu ölçülemeyecek kadar küçük olduğundan kapalı. */
+.section{content-visibility:visible;contain-intrinsic-size:none}
+
 /* ---------- Özgün kurum logoları: aynı kökende, özgün renk ve oranlarla ---------- */
 .vgh-references{background:var(--clr-bg);border-block:1px solid var(--clr-border);scroll-margin-top:calc(var(--vg-header-h) + 16px)}
 .vgh-references__heading{display:flex;justify-content:space-between;align-items:end;gap:32px;margin-bottom:34px}
@@ -26,67 +32,9 @@
 @media(max-width:767px){.vgh-references__heading{display:block}.vgh-references__heading>p{text-align:left;margin-top:18px;font-size:.84rem}.vgh-references__heading>p br{display:none}.vgh-references__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.vgh-reference{padding:17px 13px 15px;min-height:167px;gap:12px}.vgh-reference__logo{height:92px}.vgh-reference__logo img{max-height:72px}.vgh-reference--round .vgh-reference__logo img{width:74px;max-height:78px}.vgh-reference--vertical .vgh-reference__logo img{height:88px;width:68px;max-height:88px}.vgh-reference--erdemir .vgh-reference__logo img{width:105px;max-height:80px}.vgh-references__grid>li:last-child{grid-column:1/-1}.vgh-references__grid>li:last-child .vgh-reference{min-height:155px}.vgh-references__grid>li:last-child img{max-width:150px}}
 @media(prefers-reduced-motion:reduce){.vgh-reference{transition:none}.vgh-reference:hover{transform:none}}
 
-/* ---------- Ön yükleyici: oturumda bir kez; JS gecikse bile en geç ~1 sn sonra kalkar ---------- */
-.vg-pl-skip .preloader { display: none; }
-.preloader { animation: vghPreloaderOut .35s ease 1s forwards; }
-@keyframes vghPreloaderOut { to { opacity: 0; visibility: hidden; } }
-
-/* ---------- Kaydırma ilerleme çubuğu: width yerine transform (her karede layout yok) ---------- */
-.scroll-progress {
-  width: 100%;
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  transition: none;
-  border-radius: 0;
-}
-
 /* =====================================================
    HERO
    ===================================================== */
-/* H1 sabit metin, her genişlikte 3 satır: "İzmir Elektrik / Mühendislik / Hizmetleri".
-   Dönen kelime H1'in DIŞINDA, aria-hidden bir satırda (.hero__typed); arama motoru ve ekran okuyucu
-   her zaman aynı başlığı görür. */
-.hero__title-line { display: block; }
-.hero__title { margin-bottom: .9rem; }
-.hero__typed {
-  display: flex;
-  align-items: center;
-  gap: .7rem;
-  height: 2rem;                              /* sabit yükseklik + tek satır: kelime değişince düzen kaymaz (CLS 0) */
-  margin: 0 0 1.4rem;
-  overflow: hidden;
-  white-space: nowrap;
-  font-family: var(--font-heading);
-  line-height: 1;
-  animation: fadeInUp .9s ease .15s both;
-}
-.hero__typed-label {
-  flex: none;
-  padding: .34rem .62rem;
-  border: 1px solid rgba(255,255,255,.2);
-  border-radius: var(--r-full);
-  color: rgba(255,255,255,.78);
-  font-size: .6875rem;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.hero__typed-word {
-  color: var(--clr-accent-light);
-  font-size: clamp(1.1rem, 2vw, 1.4rem);
-  font-weight: 700;
-}
-.hero__typed-word::after {                  /* yazma imleci: metne "|" karışmasın diye CSS ile çizilir */
-  content: '';
-  display: inline-block;
-  width: .09em;
-  height: .9em;
-  margin-left: .14em;
-  vertical-align: -.08em;
-  border-radius: 1px;
-  background: currentColor;
-  animation: cursorBlink .75s step-end infinite;
-}
 /* İstatistikler: değerler HTML'de gerçek; ekrandaysa sayaç sıfırlanmaz, kısa bir vurgu oynar (js/main.js §11) */
 .hero__stat-number.is-pulse { animation: vghStatPulse .9s cubic-bezier(.34,1.56,.64,1) both; }
 @keyframes vghStatPulse {
@@ -100,151 +48,21 @@
   mix-blend-mode: screen;
 }
 
-.hero__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .35rem 1.6rem;
-  margin-top: 1.25rem;
-  animation: fadeInUp .9s ease .38s both;
-}
-.hero__links a {
-  display: inline-flex;
-  align-items: center;
-  gap: .45rem;
-  min-height: 44px;
-  color: rgba(255,255,255,.82);
-  font-family: var(--font-heading);
-  font-size: .92rem;
-  font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: rgba(255,255,255,.28);
-  text-underline-offset: 6px;
-  text-decoration-thickness: 1px;
-  transition: color var(--t-fast), text-decoration-color var(--t-fast);
-}
-.hero__links a:hover,
-.hero__links a:focus-visible {
-  color: #fff;
-  text-decoration-color: var(--clr-accent);
-}
-.hero__links i {
-  font-size: .72rem;
-  color: var(--clr-accent);
-  transition: transform var(--t-fast);
-}
-.hero__links a:hover i { transform: translateY(2px); }
-
 /* Koyu zeminde klavye odak halkası daha görünür olsun */
 .hero a:focus-visible,
 .hero .btn:focus-visible,
 .projects a:focus-visible,
-.catalog a:focus-visible,
-.cta-banner a:focus-visible,
 .showcase button:focus-visible {
   outline-color: var(--clr-accent-light);
 }
 
 .hero__stat-number { font-variant-numeric: tabular-nums; }
 
-/* Hesap araçları satırı (istatistik şeridinin altında, tek satır) */
-.hero__tools {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: .25rem 1.1rem;
-  margin-top: 1.2rem;
-  padding-top: .9rem;
-  border-top: 1px solid rgba(255,255,255,.08);
-  text-align: center;
-}
-.hero__tools p {
-  margin: 0;
-  color: rgba(255,255,255,.7);
-  font-size: .9rem;
-}
-.hero__tools-link {
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  min-height: 44px;
-  color: var(--clr-accent-light);
-  font-family: var(--font-heading);
-  font-size: .92rem;
-  font-weight: 700;
-}
-.hero__tools-link .fa-arrow-right { font-size: .75rem; transition: transform var(--t-fast); }
-.hero__tools-link:hover { color: #fff; }
-.hero__tools-link:hover .fa-arrow-right { transform: translateX(3px); }
-
 @media (max-width: 768px) {
   .hero__stat:nth-child(2n)::after { display: none; }   /* 2 sütunda satır sonundaki ayırıcı */
   .hero__content { padding-top: 2rem; padding-bottom: 2rem; }
   .hero__subtitle { margin-bottom: 1.75rem; }
-  .hero__links { gap: 0 1.25rem; margin-top: .75rem; }
   .hero__stats { padding: 1.25rem 0 .75rem; }
-  .hero__tools p { font-size: .84rem; }
-}
-
-/* =====================================================
-   GÜVEN ŞERİDİ (yalnızca sayfadaki bilgilerden)
-   ===================================================== */
-.vgh-trust {
-  position: relative;
-  z-index: 2;
-  background: var(--clr-white);
-  border-bottom: 1px solid var(--clr-border);
-}
-.vgh-trust__list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 0;
-  padding: .35rem 0;
-  list-style: none;
-}
-.vgh-trust__item {
-  flex: 1 1 0;
-  min-width: 190px;
-  display: flex;
-  align-items: center;
-  gap: .7rem;
-  padding: .85rem .75rem;
-  font-size: .85rem;
-  line-height: 1.35;
-  color: var(--clr-text-muted);
-}
-.vgh-trust__item i {
-  flex: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: rgba(245,158,11,.12);
-  color: var(--clr-accent-text);
-  font-size: .95rem;
-  transition: transform .4s cubic-bezier(.22,.8,.3,1), background-color var(--t-base);
-}
-.vgh-trust__item:hover i { transform: translateY(-2px) scale(1.06); background: rgba(245,158,11,.2); }
-.vgh-trust__item strong {
-  display: block;
-  color: var(--clr-dark);
-  font-family: var(--font-heading);
-  font-size: .95rem;
-  font-weight: 700;
-}
-/* 6 öğe: orta genişlikte 3 + 3 (tek öğenin alt satıra taşıp tüm satırı kaplamasını önler) */
-@media (min-width: 561px) and (max-width: 1180px) {
-  .vgh-trust__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .vgh-trust__item { min-width: 0; }
-}
-@media (max-width: 560px) {
-  .vgh-trust__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: .5rem 0; }
-  .vgh-trust__item:last-child:nth-child(odd) { grid-column: 1 / -1; justify-content: center; }
-  .vgh-trust__item { min-width: 150px; padding: .55rem .35rem; gap: .55rem; font-size: .8rem; }
-  .vgh-trust__item i { width: 34px; height: 34px; font-size: .85rem; }
-  .vgh-trust__item strong { font-size: .86rem; }
 }
 
 /* =====================================================
@@ -400,7 +218,7 @@
   flex-direction: column;
   gap: .95rem;
   padding: 1.5rem 1.5rem 1.35rem;
-  background: var(--clr-white);
+  background: var(--surface);
   border: 1px solid var(--clr-border);
   border-radius: var(--r-lg);
   box-shadow: var(--shadow-lg);
@@ -436,7 +254,7 @@
   font-size: 1.2rem;
   font-weight: 700;
   line-height: 1.3;
-  color: var(--clr-dark);
+  color: var(--ink);
   margin-top: -.2rem;
 }
 .vgh-calc__field { display: flex; flex-direction: column; }
@@ -602,14 +420,6 @@
 }
 
 /* =====================================================
-   GES tanıtımı: Fabrikalar bölümünden ayrışsın; hareketi azalt tercihinde poster görünsün
-   ===================================================== */
-.ges-intro { background: var(--clr-white); }
-@media (prefers-reduced-motion: reduce) {
-  .ges-intro__video video { display: block; }
-}
-
-/* =====================================================
    BÖLÜM BAŞLIKLARI: görünür olunca altı çizilen vurgu
    ===================================================== */
 .section__header.reveal {
@@ -627,48 +437,6 @@
   transition: transform .9s cubic-bezier(.22,.8,.3,1) .25s;
 }
 .section__header.visible .section__title::after { transform: scaleX(1); }
-
-/* =====================================================
-   HİZMETLER: hover + klavye odağı için aynı mikro etkileşimler
-   ===================================================== */
-.service-card {
-  transition: transform .35s cubic-bezier(.22,.8,.3,1), box-shadow .35s ease, border-color .35s ease, opacity .65s ease;
-}
-.service-card:focus-within {
-  box-shadow: var(--shadow-xl);
-  transform: translateY(-5px);
-  border-color: rgba(245,158,11,.3);
-}
-.service-card:focus-within::before,
-.service-card:focus-within::after { opacity: 1; }
-.service-card:focus-within .service-card__cover img { transform: scale(1.06); }
-/* rotateY(180deg) ikonu ayna gibi ters gösteriyordu; yerine hafif kalkma + eğilme */
-.service-card:hover .service-card__icon,
-.service-card:focus-within .service-card__icon {
-  transform: translateY(-3px) rotate(-6deg) scale(1.06);
-  transition: transform .45s cubic-bezier(.34,1.56,.64,1);
-}
-.service-card__list li {
-  transition: color var(--t-fast), transform .3s ease;
-}
-.service-card__list li::before { transition: transform .3s ease, background-color .3s ease; }
-.service-card:hover .service-card__list li::before,
-.service-card:focus-within .service-card__list li::before { transform: scale(1.35); }
-.service-card__list li:hover { color: var(--clr-text); transform: translateX(3px); }
-.service-card__link {
-  min-height: 44px;
-  padding-right: .25rem;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 5px;
-  transition: gap var(--t-base), text-decoration-color var(--t-base), color var(--t-base);
-}
-.service-card__link:hover,
-.service-card__link:focus-visible {
-  gap: .7rem;
-  color: var(--clr-dark);
-  text-decoration-color: var(--clr-accent);
-}
 
 /* =====================================================
    SÜREÇ: görünür olunca bağlantı çizgisi soldan sağa dolar, adımlar sırayla yanar
@@ -720,19 +488,6 @@
 .contact__map { background: #e9eef5; min-height: 250px; }
 @media (min-width: 769px) { .contact__map { min-height: 320px; } }
 
-/* Katalog: ekran ve baskı kopyası seçenekleri */
-.catalog__meta {
-  margin-top: .9rem;
-  font-size: .82rem;
-  color: rgba(255,255,255,.62);
-}
-.catalog__meta a {
-  color: var(--clr-accent-light);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.catalog__meta a:hover { color: #fff; }
-
 /* Ekran okuyucuya özel metin */
 .vgh-sr {
   position: absolute !important;
@@ -748,22 +503,14 @@
 
 /* Hareketi azalt: bu dosyadaki sürekli/sıralı animasyonlar (genel kural style.css'te) */
 @media (prefers-reduced-motion: reduce) {
-  .hero__typed-word::after { animation: none; }
   .hero__stat-number.is-pulse { animation: none; }
   .section__header .section__title::after { transform: none; transition: none; }
   .process__timeline::after { transform: none; transition: none; }
   .process__timeline.is-drawn .process__step-icon { animation: none; }
   .vgh-card,
   .vgh-card__icon,
-  .vgh-card__num,
-  .vgh-trust__item i { transition: none; }
+  .vgh-card__num { transition: none; }
 }
-.service-card__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 1.6rem;
-}
-
 /* Hakkımızda: iki eylem düğmesi */
 .about__actions {
   display: flex;
@@ -772,7 +519,7 @@
 }
 .btn--ghost-dark {
   background-color: transparent;
-  color: var(--clr-dark);
+  color: var(--ink);
   border-color: rgba(10,22,40,.28);
 }
 .btn--ghost-dark:hover {
@@ -781,32 +528,7 @@
   color: var(--clr-white);
   transform: translateY(-2px);
 }
-.catalog__size { font-weight: 500; opacity: .8; }
 
-/* =====================================================
-   HİZMET SAYFASI BAĞLANTILARI (/hizmetler/<slug>.html) — renk dışında alt çizgiyle de ayrışır
-   ===================================================== */
-.service-card__list a {
-  display: inline-block;                    /* hedef yüksekliği >= 24px (WCAG 2.5.8) */
-  padding: .1rem 0;
-  color: var(--clr-text);
-  text-decoration: underline;
-  text-decoration-color: rgba(180,83,9,.38);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  transition: color var(--t-fast), text-decoration-color var(--t-fast);
-}
-.service-card__list a:hover,
-.service-card__list a:focus-visible {
-  color: var(--clr-accent-text);
-  text-decoration-color: currentColor;
-  text-decoration-thickness: 2px;
-}
-.service-card__list a:focus-visible {
-  outline: 2px solid var(--clr-accent-text);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
 .services__more {
   display: flex;
   flex-wrap: wrap;
@@ -823,7 +545,8 @@
 }
 
 /* Bölüm rozetleri gri zeminde >= 4.5:1; katalog PDF rozeti beyaz metinle >= 4.5:1 */
-.section--gray .section__badge { color: #9a4708; }
+.section--gray .section__badge,
+.vgh-references .section__badge { color: #9a4708; }
 .catalog__doc-badge { background: #c2362b; }
 
 /* Katalog: PDF'teki eski iletişim bilgisine karşı güncel adres notu */
@@ -952,9 +675,6 @@ html { scroll-padding-bottom: 24px; }
 @media (prefers-reduced-motion: reduce) { .vgh-voltsim__grid a { transition: none; } }
 
 /* Keep technical content readable and controls easy to use on small screens. */
-.hero__typed::after, .hero__typed-word::after { display: none; }
-.hero__typed { color: #e2e8f0; font-size: 1rem; font-weight: 500; }
-.hero__live-pill { animation: none; box-shadow: none; }
 .hero__stat-number { text-shadow: none; font-size: clamp(1.5rem, 3vw, 2.1rem); }
 .scope__inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem 1rem; }
 .scope__inputs label { display: grid; grid-template-columns: 1fr auto; gap: .4rem; font-size: .85rem; color: #dbe6f3; }
@@ -972,3 +692,191 @@ html { scroll-padding-bottom: 24px; }
   .scope__inputs { grid-template-columns: minmax(0, 1fr); }
   .contact__map-notice { padding: 1.2rem; }
 }
+
+/* =====================================================
+   HERO: ne yapıyoruz + kime + sonraki adım; sağda iki ziyaretçi yolu
+   ===================================================== */
+.vgh-hero.hero__content {
+  max-width: var(--container-max);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 2rem 3.5rem;
+}
+.vgh-hero__copy { max-width: 720px; }
+.vgh-hero .hero__badge { letter-spacing: .04em; text-transform: none; font-size: .82rem; margin-bottom: 1.25rem; }
+.vgh-hero .hero__title { margin-bottom: 1.1rem; font-size: clamp(2rem, 4.4vw, 3.4rem); }
+.hero__title-line { display: block; }
+.vgh-hero .hero__subtitle { margin-bottom: 2rem; }
+.vgh-hero__note { margin: 1.1rem 0 0; color: rgba(255,255,255,.72); font-size: .92rem; }
+.vgh-hero__note a {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  min-height: 44px;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(255,255,255,.35);
+  text-underline-offset: 5px;
+}
+.vgh-hero__note a:hover { text-decoration-color: var(--clr-accent); }
+.vgh-hero__note i { font-size: .7rem; color: var(--clr-accent); }
+
+.vgh-paths { display: grid; gap: .75rem; }
+.vgh-paths__title {
+  margin: 0 0 .1rem;
+  color: rgba(255,255,255,.7);
+  font: 700 .75rem/1.2 var(--font-heading);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.vgh-path {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  min-height: 44px;
+  padding: 1.1rem 1.15rem;
+  color: #fff;
+  background: rgba(13, 31, 60, .72);
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: var(--r-md);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: border-color var(--t-fast), background-color var(--t-fast);
+}
+.vgh-path:hover { border-color: var(--clr-accent); background: rgba(19, 42, 77, .85); }
+.vgh-path__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  color: var(--clr-dark);
+  background: var(--clr-accent);
+  font-size: 1.05rem;
+}
+.vgh-path__txt { display: grid; gap: .3rem; }
+.vgh-path__txt strong { font: 700 1.02rem/1.3 var(--font-heading); }
+.vgh-path__txt strong::after { content: ' →'; color: var(--clr-accent-light); }
+.vgh-path__txt small { color: rgba(255,255,255,.74); font-size: .86rem; line-height: 1.5; }
+@media (min-width: 64rem) {
+  .vgh-hero.hero__content { grid-template-columns: minmax(0, 1.25fr) minmax(19rem, .85fr); }
+}
+@media (max-width: 768px) {
+  .vgh-hero .hero__actions .btn { width: 100%; justify-content: center; }
+  .vgh-path { padding: .95rem 1rem; }
+}
+
+/* İstatistik şeridi artık liste (<ul>) */
+.hero__stats-grid { margin: 0; padding: 0; list-style: none; }
+
+/* =====================================================
+   HİZMETLER: karar vermeyi kolaylaştıran dört grup
+   ===================================================== */
+.vgh-services__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16.5rem), 1fr)); gap: 1.25rem; }
+.vgh-svc {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-sm);
+}
+.vgh-svc__media { aspect-ratio: 4 / 3; overflow: hidden; background: var(--clr-bg-gray); }
+.vgh-svc__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.vgh-svc__body { display: flex; flex: 1; flex-direction: column; gap: .6rem; padding: 1.15rem 1.2rem 1.25rem; }
+.vgh-svc__title { margin: 0; color: var(--ink); font: 700 1.12rem/1.3 var(--font-heading); }
+.vgh-svc__desc { margin: 0; color: var(--clr-text-muted); font-size: .9rem; line-height: 1.6; }
+.vgh-svc__list { display: grid; gap: .1rem; margin: .1rem 0 .4rem; padding: 0; list-style: none; }
+.vgh-svc__list a {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-height: 40px;
+  color: var(--clr-text);
+  font-size: .93rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--clr-border);
+  text-decoration: none;
+}
+.vgh-svc__list a::after { content: '→'; margin-left: auto; color: var(--clr-accent-text); transition: transform var(--t-fast); }
+.vgh-svc__list a:hover { color: var(--ink); }
+.vgh-svc__list a:hover::after { transform: translateX(3px); }
+.vgh-svc__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  min-height: 44px;
+  margin-top: auto;
+  color: var(--clr-accent-text);
+  font: 700 .9rem/1.2 var(--font-heading);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 5px;
+}
+.vgh-svc__cta:hover { text-decoration-color: currentColor; }
+.vgh-services__more {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  text-align: center;
+  scroll-margin-top: calc(var(--vg-header-h) + 16px);
+}
+.vgh-services__more p { max-width: 52rem; margin: 0; color: var(--clr-text-muted); font-size: .93rem; }
+.vgh-services__more p a { color: var(--clr-accent-text); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.vgh-services__links { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .75rem 1.25rem; }
+.vgh-services__pdf { display: inline-flex; align-items: center; gap: .45rem; min-height: 44px; color: var(--clr-text); font-weight: 600; font-size: .9rem; text-decoration: underline; text-underline-offset: 4px; }
+.vgh-services__pdf i { color: #c2362b; }
+
+/* =====================================================
+   TEKNİK KAYNAKLAR: ikinci ziyaretçi yolu
+   ===================================================== */
+.vgh-teknik { background: var(--surface); scroll-margin-top: calc(var(--vg-header-h) + 8px); }
+.vgh-teknik__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 1.25rem; }
+.vgh-teknik__group { padding: 1.2rem; background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: var(--r-md); }
+.vgh-teknik__h { margin: 0 0 .6rem; color: var(--clr-text-muted); font: 700 .78rem/1.2 var(--font-heading); letter-spacing: .1em; text-transform: uppercase; }
+.vgh-teknik__group ul { display: grid; gap: .35rem; margin: 0; padding: 0; list-style: none; }
+.vgh-res {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  min-height: 56px;
+  padding: .55rem .6rem;
+  color: var(--clr-text);
+  border-radius: 10px;
+  transition: background-color var(--t-fast);
+}
+.vgh-res:hover { background: rgba(245,158,11,.1); }
+.vgh-res__icon { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 10px; color: var(--clr-accent-text); background: rgba(245,158,11,.12); }
+.vgh-res strong { display: block; color: var(--ink); font: 700 .98rem/1.3 var(--font-heading); }
+.vgh-res small { display: block; color: var(--clr-text-muted); font-size: .84rem; line-height: 1.45; }
+
+/* =====================================================
+   HABERLER: ilk 6 kayıt (js/main.js §19c; JS yoksa hepsi görünür)
+   ===================================================== */
+.news__grid.is-collapsed > :nth-child(n+7) { display: none; }
+.news__more { display: flex; justify-content: center; margin-top: 2rem; }
+.news__more [hidden] { display: none; }
+.news__count { font-weight: 500; opacity: .8; }
+
+/* Hareketi azalt: kaydırınca beliren öğeler baştan görünür */
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-left, .reveal-right, .reveal-scale { opacity: 1; transform: none; }
+  .vgh-path, .vgh-svc__list a::after, .vgh-res { transition: none; }
+}
+
+/* =====================================================
+   KOYU TEMA (ana sayfa): değişkenle çözülemeyen sabit renkler
+   ===================================================== */
+:root[data-theme="dark"] .section__badge { color: var(--clr-accent-text); background-color: rgba(245,158,11,.12); }
+:root[data-theme="dark"] .vgh-reference { background: #f8fafc; color: #334155; }       /* özgün renkli logolar açık zeminde kalır */
+:root[data-theme="dark"] .vgh-reference__name { color: #475569; }
+:root[data-theme="dark"] .btn--ghost-dark { color: var(--ink); border-color: rgba(226,232,240,.35); }
+:root[data-theme="dark"] .btn--ghost-dark:hover { background-color: var(--ink); border-color: var(--ink); color: var(--clr-dark); }
+:root[data-theme="dark"] .btn--primary { background-color: #1e3a5f; border-color: #36597f; }
+:root[data-theme="dark"] .contact__map { background: var(--clr-bg); }
+:root[data-theme="dark"] .contact__map-notice { background: var(--surface); border-color: var(--clr-border); color: var(--clr-text); }

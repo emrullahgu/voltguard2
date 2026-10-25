@@ -176,7 +176,7 @@ body.pt-print .rowlabel{position:static!important}
     <span class="eqval" id="eq_ex">—</span>
     <span class="eqop">=</span>
     <span class="eqval eqbig" id="eq_e">—</span>
-    <span class="eqcmp" id="eq_e_cmp">&lt; 5</span>
+    <span class="eqcmp" id="eq_e_cmp">&lt; 3</span>
     <span class="eqsep"></span>
     <span class="eqlabel">%P =</span>
     <span class="eqval eqbig" id="eq_p">—</span>
@@ -266,7 +266,7 @@ function calc(k,idx){
 function fmt(x,d){return (x||x===0)?(+x).toFixed(d):'—';}
 
 function render(){
-  const lim=+gLim.value||5;
+  const lim=+gLim.value||3; // select varsayılanı (%3 EİTY md.57 motor) ile aynı
   let R;try{R=kols.map(calc);document.documentElement.dataset.vgInvalid='false';}
   catch(error){document.documentElement.dataset.vgInvalid='true';document.getElementById('sheet').innerHTML='<tr><td role="alert">'+htmlEsc(error.message)+'</td></tr>';document.querySelectorAll('#eqbar .eqval').forEach(el=>{el.textContent='—';});return;}
   // build rows
@@ -339,7 +339,7 @@ function render(){
        const eOver = r.pe>=lim;
        const pOver = r.pp>=lim;
        const good = !ampOver && !eOver && !pOver;
-       let txt='✓ UYGUN';
+       let txt='✓ Sınır içinde (ön kontrol)';
        if(ampOver) txt='⚠ KESİT AZ';
        else if(eOver) txt='⚠ %e AŞIM';
        else if(pOver) txt='⚠ %P AŞIM';
@@ -392,7 +392,7 @@ function updateTot(R,lim){
   const ok=has&&valid.every(r=>r.ok&&r.pe<lim);
   const allOk = ok && !totEOver && !totPOver;
   const el=document.getElementById('eq_ok');
-  el.textContent=has?(allOk?'✓ UYGUN':'✕ UYGUN DEĞİLDİR'):'—';
+  el.textContent=has?(allOk?'✓ Sınır içinde (ön kontrol)':'✕ Sınır aşılıyor'):'—';
   el.classList.toggle('bad', has && !allOk);
   el.style.color = !has? '' : (allOk? '#1a7f37' : '#c1121f');
 }

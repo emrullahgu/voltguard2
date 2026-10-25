@@ -20,6 +20,15 @@ function normalizeToolDocument(html){
   document=document.replace(/<h1\b([^>]*)>/gi,(full,attrs)=>`<h2${/\bclass\s*=\s*["']/.test(attrs)?attrs.replace(/\bclass\s*=\s*(["'])([^"']*)\1/i,(_,quote,names)=>`class=${quote}${names} vg-original-title${quote}`):attrs+' class="vg-original-title"'}>`).replace(/<\/h1>/gi,'</h2>');
   return document.replace(/<!--VOLTGUARD_SOURCE_BLOCK_(\d+)-->/g,(_,i)=>blocks[Number(i)]);
 }
+// The host page's <h1> already names the tool. A native heading with the same text would be announced twice
+// and duplicates the outline: the inputs panel gets a descriptive heading, an app-bar title becomes plain text.
+function dedupeToolTitle(html,name){
+  const blocks=[],key=s=>s.replace(/<[^>]+>/g,'').replace(/&#(\d+);/g,(_,n)=>String.fromCodePoint(Number(n))).replace(/&amp;/g,'&').replace(/\s+/g,' ').trim().toLocaleLowerCase('tr');
+  let document=html.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,block=>`<!--VOLTGUARD_TITLE_BLOCK_${blocks.push(block)-1}-->`);
+  document=document.replace(/(<section class="eng-panel eng-inputs">)<h2>([\s\S]*?)<\/h2>/,(full,open,text)=>key(text)===key(name)?`${open}<h2>Girdiler</h2>`:full);
+  document=document.replace(/<h2(\b[^>]*\bvg-original-title\b[^>]*)>([\s\S]*?)<\/h2>/g,(full,attrs,text)=>key(text)===key(name)?`<p${attrs}>${text}</p>`:full);
+  return document.replace(/<!--VOLTGUARD_TITLE_BLOCK_(\d+)-->/g,(_,i)=>blocks[Number(i)]);
+}
 function head(title,description,route='/',schema=[]){const canonical=origin+route;return `<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(description)}"><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#10243b"><link rel="canonical" href="${canonical}"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${canonical}"><meta property="og:image" content="${origin}/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="${route==='/'?'':'../'.repeat(route.split('/').filter(Boolean).length)}assets/voltguard-icon-64.png" type="image/png">${schema.length?`<script type="application/ld+json">${json({'@context':'https://schema.org','@graph':schema})}</script>`:''}`}
 function brand(prefix=''){return `<a class="brand" href="${prefix||'./'}"><img src="${prefix}assets/voltguard-logo.webp" alt="" width="51" height="51"><div><div class="brand-name">Volt<em>Guard</em></div><span class="brand-sub">Mühendislik araçları</span></div></a>`}
 function header(prefix=''){return `<a class="skip" href="#main">İçeriğe geç</a><header class="site-header"><div class="container header-row">${brand(prefix)}<nav class="header-nav" aria-label="Ana menü"><a href="${prefix}#araclar">Hesap araçları</a><a href="${prefix}#nasil-calisir">Nasıl çalışır?</a><a href="${prefix}yontem/">Yöntem ve kaynaklar</a><a href="${prefix}acik-kaynak/">Açık kaynak</a></nav><a class="header-action" href="${prefix}sirket/">Şirket Portalı ${icon('arrow')}</a></div></header>`}
@@ -47,7 +56,7 @@ for(const t of catalog){let h=fs.readFileSync(path.join(src,'tools',t.file),'utf
   // Clear prior project data without touching executable script templates.
   if(['ges-tasarim','ag-gerilim-dusumu'].includes(t.slug))h=h.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi,(full,attrs,body)=>/type=["']application\/json["']/.test(attrs)?`<script${attrs}>null</script>`:full);
   const route='/araclar/'+t.slug+'/',canonical=origin+route;
-  h=normalizeToolDocument(h);
+  h=dedupeToolTitle(normalizeToolDocument(h),t.name);
   const appSchema=[{'@type':'WebApplication',name:t.name,url:canonical,description:t.description,applicationCategory:'UtilitiesApplication',operatingSystem:'Web',inLanguage:'tr-TR',isAccessibleForFree:true,offers:{'@type':'Offer',price:0,priceCurrency:'TRY'},publisher:{'@type':'Organization',name:'VoltGuard',url:origin}},{'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'VoltGuard',item:origin+'/'},{'@type':'ListItem',position:2,name:t.name,item:canonical}]}];
   if(t.original)appSchema[0].creator={'@type':'Person',name:credit.author,jobTitle:'Elektrik-Elektronik Mühendisi',url:credit.profileUrl};
   h=h.replace(/<head([^>]*)>/i,`<head$1>${head(t.name+' | VoltGuard',t.description,route,appSchema)}<link rel="stylesheet" href="../../shared/tool-shell.css"><link rel="stylesheet" href="../../shared/export.css">`);

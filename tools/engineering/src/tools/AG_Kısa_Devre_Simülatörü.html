@@ -169,6 +169,12 @@ table.ref th{background:var(--bg2);color:var(--teal)}
         <label class="f">Bakır Kayıpları P<sub>Cu</sub> 75°C (W)
           <input id="tPcu" type="number" oninput="calc()">
         </label>
+        <label class="f">Gerilim katsayısı c<sub>max</sub> / c<sub>min</sub> (IEC 60909-0 Tablo 1)
+          <select id="tC" onchange="calc()">
+            <option value="1.05" selected>1,05 / 0,95 — AG, gerilim toleransı ±%6</option>
+            <option value="1.10">1,10 / 0,95 — AG, gerilim toleransı ±%10</option>
+          </select>
+        </label>
         <label class="f">Z<sub>T</sub> (mΩ)<input id="tZ" readonly></label>
         <label class="f">R<sub>T</sub> (mΩ)<input id="tR" readonly></label>
         <label class="f">X<sub>T</sub> (mΩ)<input id="tX" readonly></label>
@@ -187,7 +193,7 @@ table.ref th{background:var(--bg2);color:var(--teal)}
   <!-- SEGMENTLER -->
   <div class="card">
     <h2>SEGMENT ZİNCİRİ &amp; DÜĞÜM NOKTALARI
-      <span class="tag">Trafo → (segment → düğüm) → … &nbsp; I″k3 = c·U<sub>n</sub> / (√3·Z<sub>k</sub>) , c=1,05</span></h2>
+      <span class="tag">Trafo → (segment → düğüm) → … &nbsp; I″k3 = c·U<sub>n</sub> / (√3·Z<sub>k</sub>) , c<sub>max</sub> seçilebilir (1,05 / 1,10)</span></h2>
     <div class="body" id="segList"></div>
   </div>
 
@@ -196,7 +202,7 @@ table.ref th{background:var(--bg2);color:var(--teal)}
     <h2>HESAP ESASLARI</h2>
     <div class="body muted">
       <b>Vektörel (IEC 909):</b> Z<sub>k</sub>=√((ΣR)²+(ΣX)²) — dirençler ve reaktanslar ayrı ayrı toplanır (EMO/İzmir yöntemi).&nbsp;
-      <b>Skaler ΣZ (Pratik):</b> Z<sub>k</sub>=ΣZ<sub>i</sub> — segment empedans genlikleri doğrudan toplanır (TEDAŞ pratik hesap şablonu; güvenli tarafta, biraz büyük akım verir).<br>
+      <b>Skaler ΣZ (Pratik):</b> Z<sub>k</sub>=ΣZ<sub>i</sub> — segment empedans genlikleri doğrudan toplanır (TEDAŞ pratik hesap şablonu). |ΣZ| ≤ Σ|Z| olduğundan bu yöntem empedansı büyük, kısa devre akımını <b>küçük</b> verir; kesme kapasitesi (I<sub>cu</sub>) kontrolü bu yüzden her iki yöntemde de vektörel (büyük) akımla yapılır.<br>
       Darbe akımı: i<sub>p</sub> = κ·√2·I″k3, κ = 1,02 + 0,98·e<sup>−3R/X</sup>.&nbsp;
       Tek fazlı en küçük akım (yaklaşık): I″k1 = 0,95·U<sub>n</sub> / (√3·Z<sub>döngü</sub>), Z<sub>döngü</sub>=√((R<sub>T</sub>+Σ(R<sub>faz</sub>+R<sub>PEN</sub>))²+(X<sub>T</sub>+Σ(X<sub>faz</sub>+X<sub>PEN</sub>))²) (Dyn trafoda Z<sub>0T</sub> ≈ Z<sub>T</sub> → kaynak payı (2Z<sub>T</sub>+Z<sub>0T</sub>)/3 = Z<sub>T</sub>) — burada iletken dirençleri en yüksek işletme sıcaklığında (1,24·R<sub>20</sub>) alınır, I″k3'te ise 20°C direnci kullanılır (EMO md.14). PEN kesiti boş bırakılırsa faz kesitine eşit varsayılır.&nbsp;
       Minyatür kesici can güvenliği: I<sub>a</sub>=k·I<sub>n</sub> (B:5×, C:10×, D:20×) &lt; I″k1 olmalıdır; I″k1, cihazın koruduğu devrenin en uzak noktasında (son segment ucu) sağlanmalıdır.<br>
@@ -437,6 +443,10 @@ function showCalculationError(errors){
 }
 
 
+/* IEC 60909-0 Tablo 1: AG (100 V–1 kV) şebekede c_max 1,05 (tolerans ±%6) veya 1,10 (±%10); c_min 0,95 */
+function CMAX(){ const v = Number((sel('tC')||{}).value); return v === 1.1 ? 1.1 : 1.05; }
+function CMIN(){ return 0.95; }
+const cTxt = v => v.toFixed(2).replace('.', ',');
 /* ============ ANA HESAP ============ */
 function calc(){
   const t = trafoRX();
@@ -452,9 +462,10 @@ function calc(){
     `R<sub>T</sub> = P<sub>Cu</sub>·U<sub>n</sub>²/S² = ${t.Pcu}W·${t.Un}²/(${t.S}kVA)² = <b>${t.RT.toFixed(3)} mΩ</b> &nbsp;|&nbsp; `+
     `X<sub>T</sub> = √(Z<sub>T</sub>²−R<sub>T</sub>²) = <b>${t.XT.toFixed(3)} mΩ</b>`;
   // Trafo buşing kısa devresi (pratik: I"k3 ≈ 1,5·S / uk)
-  const IkBus = 1.05*t.Un/(Math.sqrt(3)*t.ZT); // kA (mΩ ile V -> kA)
+  const cmax = CMAX(), cmin = CMIN();
+  const IkBus = cmax*t.Un/(Math.sqrt(3)*t.ZT); // kA (mΩ ile V -> kA)
   const IkPrak = 1.5*t.S/t.uk/1000; // kA: 1,5·S(kVA)/uk (uk kesir) → A, /1000 → kA
-  sel('tBus').innerHTML = `Trafo AG buşinglerinde: I″k3 = 1,05·U<sub>n</sub>/(√3·Z<sub>T</sub>) = <b>${IkBus.toFixed(2)} kA</b> &nbsp; (pratik: 1,5·S/u<sub>k%</sub> = ${IkPrak.toFixed(2)} kA) &nbsp;·&nbsp; Önerilen TMŞ: <b>${TMS[t.S]?("3x"+TMS[t.S]+" A"):"—"}</b>`;
+  sel('tBus').innerHTML = `Trafo AG buşinglerinde: I″k3 = ${cTxt(cmax)}·U<sub>n</sub>/(√3·Z<sub>T</sub>) = <b>${IkBus.toFixed(2)} kA</b> &nbsp; (pratik: 1,5·S/u<sub>k%</sub> = ${IkPrak.toFixed(2)} kA) &nbsp;·&nbsp; Önerilen TMŞ: <b>${TMS[t.S]?("3x"+TMS[t.S]+" A"):"—"}</b>`;
 
   // zincir
   let sumR = t.RT, sumX = t.XT, sumZ = t.ZT;
@@ -472,16 +483,18 @@ function calc(){
     loopR += rx.Rmin + rx.Rpen; loopX += rx.X + rx.Xpen;
     loop20R += rx.R + rx.Rpen20; loop20X += rx.X + rx.Xpen;
     const Zk = (mode==='vec') ? Math.sqrt(sumR*sumR+sumX*sumX) : sumZ;
-    let Ik3 = 1.05*t.Un/(Math.sqrt(3)*Zk); // kA (3-faz)
+    let Ik3 = cmax*t.Un/(Math.sqrt(3)*Zk); // kA (3-faz)
     const Zloop20 = Math.sqrt(loop20R*loop20R+loop20X*loop20X);
-    const Ik1max = 1.05*t.Un/(Math.sqrt(3)*Zloop20); // kA (monofaz kolda en büyük)
+    const Ik1max = cmax*t.Un/(Math.sqrt(3)*Zloop20); // kA (monofaz kolda en büyük)
     const mono = monoChain;
     const rox = mono ? (loop20X>0?loop20R/loop20X:99) : (sumX>0?sumR/sumX:99);
     const kappa = 1.02 + 0.98*Math.exp(-3*rox);
-    const IkMax = mono ? Ik1max : Ik3;      // kesme kontrolü ve ip bu değerle
+    const IkMax = mono ? Ik1max : Ik3;      // gösterim ve ip bu değerle
+    // Icu kontrolü: skaler ΣZ akımı küçük verdiğinden (|ΣZ| ≤ Σ|Z|) kesme kontrolü daima vektörel (büyük) akımla yapılır
+    const IkBrk = mono ? Ik1max : Math.max(Ik3, cmax*t.Un/(Math.sqrt(3)*Math.sqrt(sumR*sumR+sumX*sumX)));
     const ip = kappa*Math.SQRT2*IkMax;
     const Zloop = Math.sqrt(loopR*loopR+loopX*loopX);
-    const Ik1 = 0.95*t.Un/(Math.sqrt(3)*Zloop); // kA (en küçük)
+    const Ik1 = cmin*t.Un/(Math.sqrt(3)*Zloop); // kA (en küçük)
     // --- Termik eşdeğer kısa devre akımı ve kablo kesit dayanımı ---
     // I_th = I″k·√(m+n) ; n=1 (AA bileşeni sabit, jeneratörden uzak k.d.)
     // m = DC bileşenin termik etkisi (IEC 60909-0 md.11):
@@ -499,7 +512,7 @@ function calc(){
     const Smin = rx.qFaz>0 ? (Ith*1000*Math.sqrt(tkd)/kVal) : 0; // mm²
     const qEff = rx.qFaz*(rx.adet||1);
     const kesitOK = rx.qFaz>0 ? (qEff >= Smin) : null;
-    nodes.push({seg:s,rx,sumR,sumX,Zk,Ik3,Ik1max,IkMax,mono,kappa,ip,Ith,mFac,tkd,Smin,qEff,kesitOK,kVal,Ik1,Zloop,Zloop20,idx:i+1});
+    nodes.push({seg:s,rx,sumR,sumX,Zk,Ik3,Ik1max,IkMax,IkBrk,mono,kappa,ip,Ith,mFac,tkd,Smin,qEff,kesitOK,kVal,Ik1,Zloop,Zloop20,idx:i+1});
   });
   renderSegments(nodes, t);
   sel('sldBox').innerHTML = segments.length ? buildSLD(nodes,t) : '<span class="muted">Segment eklenince şema burada oluşur.</span>';
@@ -630,15 +643,15 @@ function renderSegments(nodes, t){
     let chkHtml = "", uygun=null, chkTxt="";
     if(s.cihaz==="tms"||s.cihaz==="sya"){
       const icu = parseFloat(s.icu)||0;
-      uygun = n.IkMax <= icu;
-      chkTxt = `${n.IkMax.toFixed(2)} kA ${uygun?'≤':'>'} ${icu} kA`;
+      uygun = n.IkBrk <= icu;
+      chkTxt = `${n.IkBrk.toFixed(2)} kA ${uygun?'≤':'>'} ${icu} kA`;
       chkHtml = `<label class="f">Kesme Kap. I<sub>cu</sub> (kA)<input type="number" step="0.5" value="${s.icu}" onchange="upd(${n.seg.id},'icu',this.value)"></label>
         <span class="kv">${chkTxt}</span>
-        <span class="badge ${uygun?'ok':'no'}">${uygun?'UYGUNDUR':'UYGUN DEĞİL'}</span>`;
+        <span class="badge ${uygun?'ok':'no'}">${uygun?'Ön kontrol sağlanıyor':'Sağlanmıyor'}</span>`;
     } else if(s.cihaz==="mcb"){
       const icu = parseFloat(s.icu)||0;
       const Ia = MCB_K[s.mcbChar]*(parseFloat(s.mcbIn)||16); // A
-      const okKesme = n.IkMax <= icu;
+      const okKesme = n.IkBrk <= icu;
       const okAcma = Ia < n.Ik1*1000;
       uygun = okKesme && okAcma;
       chkHtml = `
@@ -646,8 +659,8 @@ function renderSegments(nodes, t){
           ${Object.keys(MCB_K).map(c=>`<option ${c===s.mcbChar?'selected':''}>${c}</option>`).join('')}</select></label>
         <label class="f">I<sub>n</sub> (A)<input type="number" value="${s.mcbIn}" style="width:70px" onchange="upd(${s.id},'mcbIn',this.value)"></label>
         <label class="f">I<sub>cu</sub> (kA)<input type="number" step="0.5" value="${s.icu}" style="width:70px" onchange="upd(${s.id},'icu',this.value)"></label>
-        <span class="kv">Kesme: ${n.IkMax.toFixed(2)}${okKesme?'≤':'&gt;'}${icu} kA · Açma: I<sub>a</sub>=${Ia} A ${okAcma?'&lt;':'≥'} I″k1=${(n.Ik1*1000).toFixed(0)} A</span>
-        <span class="badge ${uygun?'ok':'no'}">${uygun?'UYGUNDUR':'UYGUN DEĞİL'}</span>`;
+        <span class="kv">Kesme: ${n.IkBrk.toFixed(2)}${okKesme?'≤':'&gt;'}${icu} kA · Açma: I<sub>a</sub>=${Ia} A ${okAcma?'&lt;':'≥'} I″k1=${(n.Ik1*1000).toFixed(0)} A</span>
+        <span class="badge ${uygun?'ok':'no'}">${uygun?'Ön kontrol sağlanıyor':'Sağlanmıyor'}</span>`;
     } else {
       chkHtml = `<span class="muted">Kontrol yok</span>`;
     }
@@ -799,7 +812,7 @@ function trafoAuto(){
 function stateObj(){
   return {v:1, mode, uid, kappaSet,
     proje:{ad:sel('pAd').value,tr:sel('pTr').value,kol:sel('pKol').value,tarih:sel('pTarih').value},
-    trafo:{S:sel('tS').value,og:sel('tOG').value,Un:sel('tUn').value,uk:sel('tUk').value,pcu:sel('tPcu').value},
+    trafo:{S:sel('tS').value,og:sel('tOG').value,Un:sel('tUn').value,uk:sel('tUk').value,pcu:sel('tPcu').value,c:sel('tC').value},
     segments};
 }
 function applyState(st){
@@ -811,7 +824,7 @@ function applyState(st){
   sel('kEmo').classList.toggle('on',kappaSet==='emo');
   sel('kIec').classList.toggle('on',kappaSet==='iec');
   if(st.proje){sel('pAd').value=st.proje.ad||"";sel('pTr').value=st.proje.tr||"";sel('pKol').value=st.proje.kol||"";sel('pTarih').value=st.proje.tarih||""}
-  if(st.trafo){sel('tS').value=st.trafo.S;sel('tOG').value=st.trafo.og;sel('tUn').value=st.trafo.Un;sel('tUk').value=st.trafo.uk;sel('tPcu').value=st.trafo.pcu}
+  if(st.trafo){sel('tS').value=st.trafo.S;sel('tOG').value=st.trafo.og;sel('tUn').value=st.trafo.Un;sel('tUk').value=st.trafo.uk;sel('tPcu').value=st.trafo.pcu;if(st.trafo.c)sel('tC').value=st.trafo.c}
   segments = (st.segments||[]).map(s=>Object.assign({yalitim:'pvc',tkd:0.2,penEsit:false,devre:'dagitim'},s));
 }
 function autosave(){
@@ -920,7 +933,7 @@ function buildPrint(){
   let h = `
   <div class="rp-band">
     <div class="rp-title"><h1>AG KISA DEVRE HESAP RAPORU</h1>
-      <small>IEC 60909 esaslı · ${mode==='vec'?'Vektörel yöntem: Z<sub>k</sub>=√((ΣR)²+(ΣX)²)':'Pratik yöntem: Z<sub>k</sub>=ΣZ'} · c<sub>max</sub>=1,05 / c<sub>min</sub>=0,95</small></div>
+      <small>IEC 60909 esaslı · ${mode==='vec'?'Vektörel yöntem: Z<sub>k</sub>=√((ΣR)²+(ΣX)²)':'Pratik yöntem: Z<sub>k</sub>=ΣZ'} · c<sub>max</sub>=${cTxt(CMAX())} / c<sub>min</sub>=${cTxt(CMIN())}</small></div>
   </div>
   <div class="rp-meta">
     <div><b>Proje Adı</b>${esc(p.ad)}</div>
@@ -972,7 +985,7 @@ function buildPrint(){
 
   // 4 - Akımlar
   h += secH(4,"DÜĞÜM NOKTALARINDA KISA DEVRE AKIMLARI");
-  h += `<div class="frow" style="margin-bottom:4px">I″k3 = ${frac("c · U<sub>n</sub>","√3 · Z<sub>k</sub>")} (c=1,05) &nbsp;·&nbsp; i<sub>p</sub> = κ·√2·I″k3, κ=1,02+0,98·e<sup>−3R/X</sup> &nbsp;·&nbsp; I″k1 = ${frac("0,95 · U<sub>n</sub>","√3 · Z<sub>döngü</sub>")}</div>
+  h += `<div class="frow" style="margin-bottom:4px">I″k3 = ${frac("c · U<sub>n</sub>","√3 · Z<sub>k</sub>")} (c=${cTxt(CMAX())}) &nbsp;·&nbsp; i<sub>p</sub> = κ·√2·I″k3, κ=1,02+0,98·e<sup>−3R/X</sup> &nbsp;·&nbsp; I″k1 = ${frac("0,95 · U<sub>n</sub>","√3 · Z<sub>döngü</sub>")}</div>
   <table><tr><th>Düğüm</th><th>ΣR (mΩ)</th><th>ΣX (mΩ)</th><th>Z<sub>k</sub> (mΩ)</th><th>I″k3 (kA)</th><th>R/X</th><th>κ</th><th>i<sub>p</sub> (kA)</th><th>Z<sub>döngü</sub> (mΩ)</th><th>I″k1 min (kA)</th></tr>`;
   nodes.forEach(n=>{
     h+=`<tr><td><b>${esc(n.seg.dugumAd||n.idx)}</b>${n.mono?' (1~)':''}</td><td>${(n.mono?0+0:0)||n.sumR.toFixed(3)}</td><td>${n.sumX.toFixed(3)}</td><td>${(n.mono?n.Zloop20:n.Zk).toFixed(3)}${n.mono?'*':''}</td><td><b>${n.IkMax.toFixed(3)}</b>${n.mono?' (I″k1max)':''}</td><td>${(n.mono?(n.Zloop20>0?'—':'—'):(n.sumR/n.sumX).toFixed(3))}</td><td>${n.kappa.toFixed(3)}</td><td>${n.ip.toFixed(2)}</td><td>${n.Zloop.toFixed(2)}</td><td>${n.Ik1.toFixed(3)}</td></tr>`;
@@ -997,20 +1010,20 @@ function buildPrint(){
     const s=n.seg; let cihaz="—",kontrol="—",sonucCls="",sonuc="—";
     if(s.cihaz==="tms"||s.cihaz==="sya"){
       cihaz = s.cihaz==="tms"?"TMŞ":"SYA / NH Sigorta";
-      const ok = n.IkMax<s.icu;
-      kontrol = `${n.mono?'I″k1(max)':'I″k3'} = ${n.IkMax.toFixed(2)} kA ${ok?'&lt;':'≥'} I<sub>cu</sub> = ${s.icu} kA`;
-      sonuc = ok?"UYGUNDUR":"UYGUN DEĞİLDİR"; sonucCls = ok?"ok":"no";
+      const ok = n.IkBrk<s.icu;
+      kontrol = `${n.mono?'I″k1(max)':'I″k3'} = ${n.IkBrk.toFixed(2)} kA ${ok?'&lt;':'≥'} I<sub>cu</sub> = ${s.icu} kA`;
+      sonuc = ok?"Ön kontrol sağlanıyor":"Sağlanmıyor"; sonucCls = ok?"ok":"no";
     } else if(s.cihaz==="mcb"){
       const Ia=MCB_K[s.mcbChar]*s.mcbIn;
-      const ok1=n.IkMax<s.icu, ok2=Ia<n.Ik1*1000;
+      const ok1=n.IkBrk<s.icu, ok2=Ia<n.Ik1*1000;
       cihaz = `${s.mcbChar}${s.mcbIn} A Minyatür Kesici`;
-      kontrol = `Kesme: ${n.IkMax.toFixed(2)} ${ok1?'&lt;':'≥'} ${s.icu} kA &nbsp;·&nbsp; Açma (can güv.): I<sub>a</sub>=${Ia} A ${ok2?'&lt;':'≥'} I″k1=${(n.Ik1*1000).toFixed(0)} A`;
-      sonuc = (ok1&&ok2)?"UYGUNDUR":"UYGUN DEĞİLDİR"; sonucCls=(ok1&&ok2)?"ok":"no";
+      kontrol = `Kesme: ${n.IkBrk.toFixed(2)} ${ok1?'&lt;':'≥'} ${s.icu} kA &nbsp;·&nbsp; Açma (can güv.): I<sub>a</sub>=${Ia} A ${ok2?'&lt;':'≥'} I″k1=${(n.Ik1*1000).toFixed(0)} A`;
+      sonuc = (ok1&&ok2)?"Ön kontrol sağlanıyor":"Sağlanmıyor"; sonucCls=(ok1&&ok2)?"ok":"no";
     }
     h+=`<tr><td>${esc(n.seg.dugumAd||n.idx)}</td><td>${cihaz}</td><td style="text-align:left">${kontrol}</td><td class="${sonucCls}">${sonuc}</td></tr>`;
   });
   h+=`</table>
-  <div class="rp-foot">Hesap esasları: IEC 60909 / EMO "Alçak Gerilim Tesislerinde Kısa Devre Hesapları". En büyük akımda iletken direnci 20°C, en küçük akımda 1,24·R<sub>20</sub> (en yüksek işletme sıcaklığı) esas alınmıştır. Özgül iletkenlik: κ<sub>Cu</sub>=${KCU()}, κ<sub>Al</sub>=${KAL()} m/Ω·mm² (${kappaSet==='emo'?'EMO ders notu':'IEC 60909 tablo'}). c<sub>max</sub>=1,05 / c<sub>min</sub>=0,95 (AG, ±%5 tolerans). Termik: I<sub>th</sub>=I″k·√(m+1), S<sub>min</sub>=I<sub>th</sub>·√t/k. Trafo verileri: BEST (50–1600 kVA), Maksan (2000–2500 kVA).</div>`;
+  <div class="rp-foot">Hesap esasları: IEC 60909 / EMO "Alçak Gerilim Tesislerinde Kısa Devre Hesapları". En büyük akımda iletken direnci 20°C, en küçük akımda 1,24·R<sub>20</sub> (en yüksek işletme sıcaklığı) esas alınmıştır. Özgül iletkenlik: κ<sub>Cu</sub>=${KCU()}, κ<sub>Al</sub>=${KAL()} m/Ω·mm² (${kappaSet==='emo'?'EMO ders notu':'IEC 60909 tablo'}). c<sub>max</sub>=${cTxt(CMAX())} / c<sub>min</sub>=${cTxt(CMIN())} (AG, IEC 60909-0 Tablo 1: ±%6 toleransta 1,05, ±%10 toleransta 1,10). Termik: I<sub>th</sub>=I″k·√(m+1), S<sub>min</sub>=I<sub>th</sub>·√t/k. Trafo verileri: BEST (50–1600 kVA), Maksan (2000–2500 kVA).</div>`;
   sel('printReport').innerHTML = h;
   return true;
 }

@@ -84,7 +84,7 @@
     return { ok: true, errors: [], values: values, checks: checks,
       assumptions: [
         '1 saatlik adım: güç ve enerji saatlik ortalamadır; 15 dakikalık talep tepeleri saat içindeki dalgalanmayla daha yüksek olabilir.',
-        'GES saatlik üretimi engine.ges temsilî gününden (Meinel açık gök × Kasten–Czeplak bulut, NOCT sıcaklığı, %14 sistem kaybı, inverter kırpması).',
+        'GES saatlik üretimi engine.ges temsilî gününden (Meinel açık gök × Kasten–Czeplak bulut, NOCT sıcaklığı, varsayılan %14 sistem kaybı — PVGIS genel varsayılanı, tesise özgü değer değildir —, inverter kırpması).',
         'RES: genel küçük türbin (Cp 0,42, nominal 11,5 m/s); saatlik hız ortalama × (1 + 0,2·cos) günlük döngüsüyle temsilîdir.',
         'Batarya: ηşarj = ηdeşarj = √(çevrim verimi); SOC penceresi 1 − DoD … %100; güç P_max = min(PCS, C·E). Hücre sıcaklığı, kendi kendine deşarj ve yardımcı tüketim (HVAC) ihmal edilmiştir.',
         'Ömür basitleştirilmiştir: min(takvim ömrü, çevrim ömrü / yıllık çevrim). Kapasite kaybı (ör. ömür sonunda %70–80) günlük hesaba katılmaz; gerçek değer üretici garanti eğrisinden alınır.',
