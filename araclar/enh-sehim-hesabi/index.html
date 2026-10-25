@@ -6,7 +6,7 @@
 
 <style>
 #vg-tool-workspace{
-  --ink:#0f1b24; --ink2:#33465a; --muted:#6b7f92;
+  --ink:#0f1b24; --ink2:#33465a; --muted:#55697c;
   --paper:#eef2f6; --card:#fff; --line:#d3dde6;
   --blue:#1d4ed8; --blue-bg:#e5eefc; --teal:#0e7c86;
   --ok:#15803d; --danger:#b91c1c; --warn:#b45309;
@@ -44,7 +44,7 @@
 :where(#vg-tool-workspace) .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:960px){:where(#vg-tool-workspace) .g5,:where(#vg-tool-workspace) .g4,:where(#vg-tool-workspace) .g3{grid-template-columns:1fr 1fr}}
 
-:where(#vg-tool-workspace) button.act{background:linear-gradient(180deg,#12909c,#0b6a73);color:#fff;border:0;border-radius:7px;padding:8px 15px;
+:where(#vg-tool-workspace) button.act{background:linear-gradient(180deg,#0e7480,#0b6a73);color:#fff;border:0;border-radius:7px;padding:8px 15px;
   font-size:13px;cursor:pointer;font-weight:600;font-family:var(--sans);
   box-shadow:0 1px 2px rgba(15,27,36,.18),inset 0 1px 0 rgba(255,255,255,.18);transition:filter .15s,transform .08s}
 :where(#vg-tool-workspace) button.act:hover{filter:brightness(1.08)}
@@ -224,11 +224,13 @@
         <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
       </ul>
       <div class="vg-nav__foot">
+        <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
     </nav>
     <div class="vg-actions">
+      <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
       <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
       <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
       <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -548,7 +550,7 @@ function renderDirek(rebuild){
     if(son) d.a=0;                                   // son direkten sonra açıklık yoktur
     tr.innerHTML = "<td class='l'><input data-i='"+i+"' data-k='dn' value='"+esc(d.dn)+"' style='text-align:left'></td>"
       + "<td><select data-i='"+i+"' data-k='tip'>"+opt+"</select></td>"
-      + (son ? "<td class='num' style='color:#6b7f92;background:#f5f8fa'>— hat sonu —</td>"
+      + (son ? "<td class='num' style='color:#55697c;background:#f5f8fa'>— hat sonu —</td>"
              : "<td><input data-i='"+i+"' data-k='a' value='"+esc(d.a||"")+"'></td>")
       + "<td class='num'>"+(m?(m.bi+1):"—")+"</td>"
       + "<td class='num'>"+(m&&m.first?"<b>"+nf(m.ar,2)+"</b>":(m?nf(m.ar,2):"—"))+"</td>"
@@ -618,7 +620,7 @@ function renderRes(){
       + H.map(function(){ return "<td class='tn'></td><td></td>"; }).join("");
     tb.appendChild(tr);
   }
-  if(!tb.children.length) tb.innerHTML="<tr><td colspan='4' class='l' style='color:#6b7f92'>Direk ve açıklık girin.</td></tr>";
+  if(!tb.children.length) tb.innerHTML="<tr><td colspan='4' class='l' style='color:#55697c'>Direk ve açıklık girin.</td></tr>";
   var S=fn($("cS").value);
   $("kL").textContent = L?nf(L,2):"—";
   $("kA").textContent = maxA?nf(maxA,2):"—";
@@ -651,7 +653,7 @@ function sahaTablo(){
       tb.appendChild(tr);
     });
   });
-  if(!tb.children.length) tb.innerHTML="<tr><td colspan='8' class='l' style='color:#6b7f92'>Direk ve açıklık girin.</td></tr>";
+  if(!tb.children.length) tb.innerHTML="<tr><td colspan='8' class='l' style='color:#55697c'>Direk ve açıklık girin.</td></tr>";
 }
 
 /* ---------- Grafik ---------- */
@@ -694,8 +696,8 @@ function grafik(B){
   });
   g.push('<line x1="'+L+'" y1="'+(H-Bm)+'" x2="'+(W-R)+'" y2="'+(H-Bm)+'" stroke="#33465a"/>');
   g.push('<line x1="'+L+'" y1="'+T+'" x2="'+L+'" y2="'+(H-Bm)+'" stroke="#33465a"/>');
-  g.push('<text x="'+(L-7)+'" y="'+(T-5)+'" font-size="'+FS+'" fill="#6b7f92" text-anchor="end" font-family="Segoe UI,Arial">f (m)</text>');
-  g.push('<text x="'+((L+W-R)/2)+'" y="'+(H-Bm+34)+'" font-size="'+FS+'" fill="#6b7f92" text-anchor="middle" font-family="Segoe UI,Arial">sıcaklık (°C)</text>');
+  g.push('<text x="'+(L-7)+'" y="'+(T-5)+'" font-size="'+FS+'" fill="#55697c" text-anchor="end" font-family="Segoe UI,Arial">f (m)</text>');
+  g.push('<text x="'+((L+W-R)/2)+'" y="'+(H-Bm+34)+'" font-size="'+FS+'" fill="#55697c" text-anchor="middle" font-family="Segoe UI,Arial">sıcaklık (°C)</text>');
   series.forEach(function(s,si){
     var c=COL[si%COL.length];
     g.push('<path d="'+s.pts.map(function(p,i){ return (i?"L":"M")+X(p.t).toFixed(1)+" "+Y(p.f).toFixed(1); }).join(" ")+'" fill="none" stroke="'+c+'" stroke-width="2.2"/>');

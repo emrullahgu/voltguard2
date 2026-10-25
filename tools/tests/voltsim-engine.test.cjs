@@ -228,6 +228,33 @@ test('motor: moment eğrisi kalkışta Tst, devrilmede Tk, anma kaymasında Tn',
   assert.ok(heavy.values.sim.tStart > 0, 'tam yük sabit momentte DOL kalkabilmeli');
 });
 
+test('motor: düşük gerilimde devrilme sonlu kalır ve doğal moment eğrisi U² ile ölçeklenir', () => {
+  const base = { Pn: 15, Un: 400, eff: 0.92, cos: 0.86, nn: 1460, poles: 4, IstIn: 7, TkTn: 1.8, TstTn: 1.6, method: 'DOL', loadPct: 100, J: 0.6, Ir: 27.5, loadType: 'const' };
+  const low = E.motor.compute(Object.assign({}, base, { uFactor: 0.7 }));
+  assert.ok(low.ok, low.errors.join());
+  assert.ok(low.values.sim.stalled, '0,7² × 1,8 = 0,882 Tn tam yükü taşıyamaz');
+  assert.equal(low.values.sim.tStart, null);
+  assert.ok(Number.isFinite(low.values.sim.Imax));
+  for (const p of low.values.sim.pts) for (const key of ['t', 'rpm', 'I', 'T']) assert.ok(Number.isFinite(p[key]), key + ' sonlu olmalı');
+  near(low.values.sim.pts[0].T, 1.6 * low.values.nom.Tn * 0.49, 1e-9, 'kalkış momenti U²');
+  near(low.values.sim.pts[0].I, 7 * low.values.nom.In * 0.7, 1e-9, 'kalkış akımı U');
+
+  // Tarayıcı modülünün çizdiği eğri de düşük gerilimde sonlu olmalı; aynı devirlerde genlik U² ile değişir.
+  const fs = require('node:fs'), vm = require('node:vm');
+  let def;
+  const browserEngine = Object.assign({}, E, { ext: { motor: require('../../js/voltsim/calc/motor.js') } });
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../../js/voltsim/mod/motor.js'), 'utf8'), {
+    window: { VoltSim: { E: browserEngine, fmt: String, register: value => { def = value; } } }
+  });
+  const rated = def.compute(Object.assign(def.defaults(), base, { uPct: 100 }));
+  const lowered = def.compute(Object.assign(def.defaults(), base, { uPct: 70 }));
+  lowered.values.natural.forEach((p, i) => {
+    assert.ok(p.every(Number.isFinite), 'doğal eğri sonlu olmalı');
+    near(p[0], rated.values.natural[i][0], 1e-9, 'devir ekseni korunur');
+    near(p[1], rated.values.natural[i][1] * 0.49, 1e-9, 'moment eğrisinin tamamı U²');
+  });
+});
+
 test('PLC: Y-Δ kilitleme, acil durdurma mühürlemesi', () => {
   let s = { run: false, timer: 0, K1: false, K2: false, K3: false, estopLatched: false };
   const inp = { start: true, stop: true, estop: true, ol: true, reset: false, method: 'YD' };

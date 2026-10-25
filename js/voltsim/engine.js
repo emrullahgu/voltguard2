@@ -1405,4 +1405,6 @@
     FUSE_GATES: FUSE_GATES, FUSE_SIZES: FUSE_SIZES, fuseAssessment: fuseAssessment, fuseI2: fuseI2, fuseConvTime: fuseConvTime,
     cableIz: cableIz, CABLE_SIZES: CABLE_SIZES, INSTALL_METHODS: INSTALL_METHODS, breakerAssessment: breakerAssessment, rcdAssessment: rcdAssessment,
     sourceImpedance: sourceImpedance, generatorImpedance: generatorImpedance, cableImpedance: cableImpedance, shortCircuit3: shortCircuit3, shortCircuit1Min: shortCircuit1Min,
-    pano: pano, ges: ges, trafo: trafo, sarj: sarj, res: res, k
+    pano: pano, ges: ges, trafo: trafo, sarj: sarj, res: res, komp: komp, topraklama: topraklama, motor: motor, ups: ups, yangin: yangin
+  };
+});

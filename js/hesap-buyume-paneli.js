@@ -96,7 +96,7 @@
     var out = ['<svg class="gp-chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-labelledby="gp-daily-desc"><desc id="gp-daily-desc">Günlük sayfa görüntüleme (sütun) ve ziyaret (çizgi); toplam ' + nf(total) + ' görüntüleme.</desc>'];
     [0, .5, 1].forEach(function (f) {
       var v = Math.round(top * f);
-      out.push('<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="#e5e9f0" stroke-width="1"/>');
+      out.push('<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="#e5e9f0" style="stroke:var(--th-border,#e5e9f0)" stroke-width="1"/>');
       out.push('<text x="' + (L - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + nf(v) + '</text>');
     });
     var labelEvery = Math.ceil(series.length / 8);
@@ -107,11 +107,11 @@
         (h > 0 ? '<rect x="' + (x + 1) + '" y="' + (T + ih - h) + '" width="' + w + '" height="' + h + '" rx="' + Math.min(3, w / 2) + '" fill="#93b4f5"/>' : '') + '</g>');
       if (i % labelEvery === 0) out.push('<text x="' + (x + bw / 2) + '" y="' + (H - 10) + '" text-anchor="middle">' + esc(d.d.slice(5).split('-').reverse().join('.')) + '</text>');
     });
-    out.push('<polyline fill="none" stroke="#0a1628" stroke-width="2" stroke-linejoin="round" points="' + series.map(function (d, i) {
+    out.push('<polyline fill="none" stroke="#0a1628" style="stroke:var(--th-heading,#0a1628)" stroke-width="2" stroke-linejoin="round" points="' + series.map(function (d, i) {
       return (L + i * bw + bw / 2).toFixed(1) + ',' + y(d.en).toFixed(1);
     }).join(' ') + '"/>');
     out.push('</svg>');
-    out.push('<ul class="gp-legend"><li><i style="background:#93b4f5"></i>Sayfa görüntüleme</li><li><i style="background:#0a1628"></i>Ziyaret (dışarıdan giriş)</li></ul>');
+    out.push('<ul class="gp-legend"><li><i style="background:#93b4f5"></i>Sayfa görüntüleme</li><li><i style="background:var(--th-heading,#0a1628)"></i>Ziyaret (dışarıdan giriş)</li></ul>');
     out.push('<details><summary>Tablo olarak göster</summary>' + table(['Gün', 'Görüntüleme', 'Ziyaret', 'Kullanım', 'Sonuç', 'Teklif başl.', 'Kabul'], series.slice().reverse().map(function (d) {
       return [esc(d.d) + (d.none ? ' <small>(veri yok)</small>' : ''), nf(d.pv), nf(d.en), nf(d.use), nf(d.res), nf(d.qs), nf(d.ok)];
     }), 'Günlük değerler') + '</details>');

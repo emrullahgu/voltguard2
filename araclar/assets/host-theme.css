@@ -82,13 +82,13 @@ body.vg-engineering {
 .vg-engineering--catalog :is(.section-heading p, .workflow p, .knowledge p, .faq details p) { font-size: .9rem; color: var(--vg-host-muted); }
 .vg-engineering--catalog .kicker { font: 600 .72rem/1.4 var(--vg-host-heading); letter-spacing: .08em; color: var(--vg-host-accent-text); }
 .vg-engineering--catalog .search input { min-height: 44px; border-color: var(--vg-host-border); border-radius: 6px; font-size: .88rem; color: var(--vg-host-text); }
-.vg-engineering--catalog .filter { min-height: 40px; background: #fff; color: var(--vg-host-muted); border-color: var(--vg-host-border); border-radius: 6px; font: 600 .8rem/1.35 var(--vg-host-heading); }
-.vg-engineering--catalog .filter:hover { background: #fffbeb; border-color: var(--vg-host-accent); }
+.vg-engineering--catalog .filter { min-height: 40px; background: var(--th-surface); color: var(--vg-host-muted); border-color: var(--vg-host-border); border-radius: 6px; font: 600 .8rem/1.35 var(--vg-host-heading); }
+.vg-engineering--catalog .filter:hover { background: var(--th-tint-amber); border-color: var(--vg-host-accent); }
 .vg-engineering--catalog .filter.active { background: var(--vg-host-navy); border-color: var(--vg-host-navy); color: #fff; }
 .vg-engineering--catalog .filter .count { font-size: .72rem; opacity: 1; }
 .vg-engineering--catalog .tool-grid { gap: 1.25rem; }
 .vg-engineering--catalog .tool-card {
-  background: #fff;
+  background: var(--th-surface);
   border-color: var(--vg-host-border);
   border-radius: 12px;
   padding: 1.3rem 1.4rem;
@@ -103,12 +103,12 @@ body.vg-engineering {
 .vg-engineering--catalog .tool-card p { font-size: .9rem; line-height: 1.55; color: var(--vg-host-muted); }
 .vg-engineering--catalog .card-bottom { color: var(--vg-host-accent-text); font: 600 .85rem/1.4 var(--vg-host-body); }
 .vg-engineering--catalog .favorite { color: var(--vg-host-muted); width: 36px; height: 36px; }
-.vg-engineering--catalog .favorite[aria-pressed=true] { color: #b45309; }
+.vg-engineering--catalog .favorite[aria-pressed=true] { color: var(--clr-accent-text); }
 .vg-engineering--catalog :is(.result-row, .recent) { font-size: .8rem; color: var(--vg-host-muted); }
 .vg-engineering--catalog .empty { border-color: var(--vg-host-border); border-radius: 12px; font-size: .9rem; }
 .vg-engineering--catalog :is(.workflow, .knowledge) { padding-block: 3rem; }
 .vg-engineering--catalog .workflow h3 { font-size: 1.05rem; }
-.vg-engineering--catalog .step-number { border-color: #fde68a; background: #fffbeb; color: #b45309; border-radius: 6px; font-family: var(--vg-host-heading); }
+.vg-engineering--catalog .step-number { border-color: var(--th-amber-line); background: var(--th-tint-amber); color: var(--clr-accent-text); border-radius: 6px; font-family: var(--vg-host-heading); }
 .vg-engineering--catalog .knowledge article { border-radius: 12px; border-color: var(--vg-host-border); box-shadow: var(--vg-host-shadow); }
 .vg-engineering--catalog .knowledge h2 { font-size: 1.45rem; letter-spacing: 0; }
 .vg-engineering--catalog .knowledge a { font-size: .88rem; }
@@ -129,12 +129,12 @@ body.vg-engineering {
 .vg-engineering--info .document-page :is(.portal-entry, .resource-card) { border-color: var(--vg-host-border); border-radius: 12px; box-shadow: var(--vg-host-shadow); }
 .vg-engineering--info .portal-entry { border-left-color: var(--vg-host-accent); }
 .vg-engineering--info .portal-entry h2 { margin-top: 0; }
-.vg-engineering--info .resource-summary div { background: #fff; border-color: var(--vg-host-border); box-shadow: var(--vg-host-shadow); }
+.vg-engineering--info .resource-summary div { background: var(--th-surface); border-color: var(--vg-host-border); box-shadow: var(--vg-host-shadow); }
 .vg-engineering--info .resource-summary strong { font-family: var(--vg-host-heading); color: var(--vg-host-accent-text); }
 .vg-engineering--info .resource-controls :is(input, select) { border-color: var(--vg-host-border); border-radius: 6px; min-height: 44px; }
 .vg-engineering--info .resource-card h3 { font-size: 1.05rem; font-weight: 700; }
 .vg-engineering--info .resource-card p { font-size: .9rem; line-height: 1.65; }
-.vg-engineering--info .resource-tag { background: #fffbeb; color: #92400e; }
+.vg-engineering--info .resource-tag { background: var(--th-tint-amber); color: var(--th-amber-ink); }
 .vg-engineering--info .resource-license { background: var(--vg-host-gray); color: var(--vg-host-muted); }
 .vg-engineering--info .document-page th { font-family: var(--vg-host-heading); background: var(--vg-host-navy); color: #fff; }
 .vg-engineering--info .document-page :is(th, td) { padding: .65rem .9rem; font-size: .86rem; border-color: var(--vg-host-border); }
@@ -180,6 +180,7 @@ body.vg-engineering {
   .vg-engineering #vg-top summary { font: 600 .85rem/1.5 var(--vg-host-heading); color: #fcd34d; }
   .vg-engineering #vg-top .vg-method { color: rgba(255, 255, 255, .78); font-size: .82rem; line-height: 1.8; }
   .vg-engineering #vg-top .vg-method strong { color: #fff; }
+  .vg-engineering #vg-top .vg-method a { color: #fcd34d; }
   .vg-engineering #vg-top :focus-visible { outline-color: #fcd34d; }
   .vg-engineering #vg-tool-workspace { min-width: 0; padding-block: 1.5rem 3rem; background: var(--vg-host-bg) !important; }
   .vg-engineering #vg-origin { font: .75rem/1.7 var(--vg-host-body); color: var(--vg-host-muted); margin: 0 auto; padding: 1rem 1.5rem 2rem; }
@@ -187,12 +188,12 @@ body.vg-engineering {
   .vg-engineering #vg-export details { border-color: var(--vg-host-border); border-radius: 12px; box-shadow: 0 10px 25px -3px rgba(0, 0, 0, .12); }
   .vg-engineering #vg-export summary { font-family: var(--vg-host-heading); color: var(--vg-host-navy); }
   .vg-engineering #vg-export summary::before { background: var(--vg-host-accent); color: var(--vg-host-navy); border-radius: 6px; }
-  .vg-engineering #vg-export button { font: 600 .8rem/1.35 var(--vg-host-heading); color: var(--vg-host-navy); background: #fff; border-color: var(--vg-host-border); border-radius: 6px; }
-  .vg-engineering #vg-export button:hover { background: #fffbeb; border-color: var(--vg-host-accent); }
+  .vg-engineering #vg-export button { font: 600 .8rem/1.35 var(--vg-host-heading); color: var(--vg-host-navy); background: var(--th-surface); border-color: var(--vg-host-border); border-radius: 6px; }
+  .vg-engineering #vg-export button:hover { background: var(--th-tint-amber); border-color: var(--vg-host-accent); }
   .vg-engineering #vg-export button.vg-primary { background: var(--vg-host-accent); border-color: var(--vg-host-accent); color: var(--vg-host-navy); }
   .vg-engineering #vg-export button.vg-primary:hover { background: #fcd34d; border-color: #fcd34d; }
   .vg-engineering #vg-export :is(.vg-export-note, #vg-export-status) { color: var(--vg-host-muted); }
-  .vg-engineering #vg-export #vg-export-status[data-error=true] { color: #b91c1c; }
+  .vg-engineering #vg-export #vg-export-status[data-error=true] { color: var(--th-red-ink); }
 }
 @media screen and (max-width: 720px) {
   .vg-engineering--catalog .hero-grid { padding-block: 2.25rem; gap: 2rem; }
@@ -219,4 +220,28 @@ body.vg-engineering {
   .vg-engineering #vg-origin,
   .vg-engineering #vg-export { display: none !important; }
   .vg-engineering #vg-tool-workspace { margin: 0; padding: 0; }
+}
+
+/* Koyu tema (data-theme, css/vg-shell.css --th-*): katalog ve bilgi sayfaları koyulaşır. Araç sayfalarında
+   #vg-tool-workspace bilinçli olarak açık "kâğıt" kalır: teknik çizimler, grafik renkleri ve yazdırma/PDF
+   düzenleri açık zemine göre tasarlanmıştır (color-scheme: light, sabit açık zemin). */
+@media screen {
+  :root[data-theme="dark"] body.vg-engineering:not(.vg-engineering--tool) {
+    --vg-host-text: var(--th-text);
+    --vg-host-muted: var(--th-muted);
+    --vg-host-bg: var(--th-page);
+    --vg-host-gray: var(--th-surface-3);
+    --vg-host-border: var(--th-border);
+    --vg-host-accent-text: var(--th-accent-text);
+    --vg-host-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+    --ink: var(--th-text);
+    --muted: var(--th-muted);
+    --line: var(--th-border);
+    --paper: var(--th-page);
+    color-scheme: dark;
+  }
+  :root[data-theme="dark"] body.vg-engineering:not(.vg-engineering--tool) :is(.tools-section, .workflow, .knowledge, .faq, .document-page) :is(h1, h2, h3, h4),
+  :root[data-theme="dark"] .vg-engineering--catalog .stat-strip strong { color: var(--th-heading); }
+  :root[data-theme="dark"] .vg-engineering--catalog .filter.active { background: var(--th-heading); border-color: var(--th-heading); color: #0a1628; }
+  :root[data-theme="dark"] body.vg-engineering--tool { background: #f8fafc; color-scheme: light; }
 }

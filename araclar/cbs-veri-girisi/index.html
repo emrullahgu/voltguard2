@@ -29,10 +29,10 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   --paper:#f6f4ee; --card:#ffffff; --field:#fbfaf6;
   --cu:#b45c2e;           /* copper – primary action */
   --cu-deep:#8f4620;
-  --volt:#1f7a6d;         /* voltage teal – accents/valid */
+  --volt:#18665b;         /* voltage teal – accents/valid */
   --volt-soft:#e2f0ec;
   --warn:#b23b3b; --warn-soft:#f6e4e2;
-  --focus:#1f7a6d;
+  --focus:#18665b;
   --shadow:0 1px 0 rgba(18,34,43,.04), 0 8px 24px -18px rgba(18,34,43,.5);
 }
 :where(#vg-tool-workspace) *{box-sizing:border-box}
@@ -365,11 +365,13 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
       </ul>
       <div class="vg-nav__foot">
+        <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
     </nav>
     <div class="vg-actions">
+      <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
       <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
       <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
       <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -884,7 +886,7 @@ function fieldCell(sec,f,rec,ri){
     const opts=['<option value="">— seçiniz —</option>']
       .concat(list.map(o=>`<option ${o===val?'selected':''}>${esc(o)}</option>`))
       .concat(val && !list.includes(val)?[`<option selected>${esc(val)}</option>`]:[])
-      .concat([`<option value="__add__" style="font-weight:600;color:#1f7a6d">＋ Listede yok, ekle…</option>`]);
+      .concat([`<option value="__add__" style="font-weight:600;color:#18665b">＋ Listede yok, ekle…</option>`]);
     ctrl=`<select id="${id}" data-key="${f.key}" data-fk="${esc(f.key)}">${opts.join('')}</select>`;
   }else if(f.type==='date'){
     ctrl=`<input id="${id}" data-key="${f.key}" type="date" value="${esc(val)}">`;

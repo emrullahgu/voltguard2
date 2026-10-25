@@ -22,7 +22,15 @@ function hostAssets() {
     `<script src="/js/vg-shell.js?v=${revision('js/vg-shell.js')}" defer></script>` +
     `<script src="/js/vg-metrics.js?v=${revision('js/vg-metrics.js')}" defer data-vg-online-only></script>` +
     `<script src="/js/voltguard-auth.js?v=${revision('js/voltguard-auth.js')}" defer data-vg-online-only></script>` +
-    '<meta name="color-scheme" content="light only">';
+    '<meta name="color-scheme" content="light dark">' + themeInit();
+}
+
+// Renk teması başlatıcısı: tools/shell/head.html ile tek kaynak (ilk boyamadan önce data-theme)
+function themeInit() {
+  const head = fs.readFileSync(path.join(__dirname, 'shell/head.html'), 'utf8');
+  const script = head.match(/<script data-vg-theme-init>[\s\S]*?<\/script>/);
+  if (!script) throw new Error('tools/shell/head.html: tema başlatıcısı bulunamadı');
+  return script[0] + '<style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}</style>';
 }
 
 function integrateHostShell(html, route, isTool) {

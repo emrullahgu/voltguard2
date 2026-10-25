@@ -29,8 +29,8 @@
 :where(#vg-tool-workspace) .topbar{background:var(--ink);color:#EAF2F0;padding:14px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
   border-bottom:4px solid var(--amber)}
 :where(#vg-tool-workspace) .topbar :is(h1,.vg-original-title){font-family:var(--disp);font-size:20px;letter-spacing:.06em;text-transform:uppercase;margin:0;font-weight:700}
-:where(#vg-tool-workspace) .topbar .sub{font-family:var(--mono);font-size:11px;color:#9FBDB9;letter-spacing:.04em}
-:where(#vg-tool-workspace) .mark{margin-left:auto;text-align:right;font-family:var(--mono);font-size:11px;color:#9FBDB9;line-height:1.35}
+:where(#vg-tool-workspace) .topbar .sub{font-family:var(--mono);font-size:11px;color:#4f7470;letter-spacing:.04em}
+:where(#vg-tool-workspace) .mark{margin-left:auto;text-align:right;font-family:var(--mono);font-size:11px;color:#4f7470;line-height:1.35}
 :where(#vg-tool-workspace) .mark b{color:var(--amber);font-weight:600;letter-spacing:.05em}
 
 /* ---------- Sekmeler ---------- */
@@ -88,7 +88,7 @@
 :where(#vg-tool-workspace) .rline span:first-child{color:var(--mut)}
 :where(#vg-tool-workspace) .rline b{font-weight:600}
 :where(#vg-tool-workspace) .rbig{background:var(--ink);color:#fff;padding:12px 14px;border-radius:2px;margin:12px 0}
-:where(#vg-tool-workspace) .rbig .lbl{font-family:var(--disp);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9FBDB9}
+:where(#vg-tool-workspace) .rbig .lbl{font-family:var(--disp);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#4f7470}
 :where(#vg-tool-workspace) .rbig .val{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--amber);line-height:1.15}
 :where(#vg-tool-workspace) .pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 @media(max-width:520px){:where(#vg-tool-workspace) .pick{grid-template-columns:1fr}}
@@ -397,11 +397,13 @@
         <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
       </ul>
       <div class="vg-nav__foot">
+        <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
     </nav>
     <div class="vg-actions">
+      <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
       <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
       <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
       <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>

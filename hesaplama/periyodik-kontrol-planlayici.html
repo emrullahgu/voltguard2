@@ -6,14 +6,15 @@
   <base href="/">
   <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
-  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script>
+  <style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
   <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
   <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=559c615bb841">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=d800ac271429">
   <script type="speculationrules">
   {
     "prerender": [
@@ -36,11 +37,11 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=1a6fa8877736" defer></script>
-  <script src="/js/vg-metrics.js?v=44aefc57c2b6" defer></script>
-  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <script src="/js/vg-shell.js?v=878d9a5227ee" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
+  <noscript><style>.vg-burger,.vg-theme{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
-  <meta name="color-scheme" content="light only">
+  <meta name="color-scheme" content="light dark">
   <meta name="description" content="Elektrik, topraklama, paratoner, trafo, jeneratör, akü ve yangın algılama periyodik kontrol tarihlerini planlayın; takvim (.ics) ve CSV olarak indirin.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <title>Periyodik Kontrol Planlayıcı: Elektrik ve Topraklama | VoltGuard</title>
@@ -58,30 +59,30 @@
   <link rel="stylesheet" href="/css/style.css?v=8ad22bb89f00">
   <style>
     .pk-table{width:100%;border-collapse:collapse;min-width:640px}
-    .pk-table th{text-align:left;font-size:.8rem;color:var(--clr-text-muted,#4f5f74);padding:.4rem}
+    .pk-table th{text-align:left;font-size:.8rem;color:var(--clr-text-muted,var(--th-text-2));padding:.4rem}
     .pk-table td{padding:.3rem .4rem;vertical-align:middle}
-    .pk-table input,.pk-table select{width:100%;min-height:40px;padding:.4rem .5rem;border:1px solid #cbd5e1;border-radius:8px;font:inherit;background:#fff}
+    .pk-table input,.pk-table select{width:100%;min-height:40px;padding:.4rem .5rem;border:1px solid var(--th-border-strong);border-radius:8px;font:inherit;background:var(--th-surface)}
     .pk-table input[type=number]{max-width:90px}
     .pk-table input[aria-invalid=true]{border-color:#b91c1c}
-    .pk-del{min-height:40px;padding:.4rem .7rem;border:1px solid #fecaca;border-radius:8px;background:#fff5f5;color:#991b1b;font-weight:600;cursor:pointer}
+    .pk-del{min-height:40px;padding:.4rem .7rem;border:1px solid var(--th-red-line);border-radius:8px;background:#fff5f5;color:#991b1b;font-weight:600;cursor:pointer}
     .pk-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}
-    .pk-actions button{min-height:44px;padding:.55rem 1rem;border:1px solid #0a1628;border-radius:8px;background:#fff;color:#0a1628;font-weight:600;cursor:pointer}
+    .pk-actions button{min-height:44px;padding:.55rem 1rem;border:1px solid #0a1628;border-radius:8px;background:var(--th-surface);color:var(--th-heading);font-weight:600;cursor:pointer}
     .pk-actions button.pk-primary{background:#0a1628;color:#fff}
-    .pk-summary{margin:.6rem 0;padding:.6rem .8rem;border-radius:8px;font-weight:700;background:#ecfdf5;color:#065f46}
-    .pk-summary[data-level=soon]{background:#fffbeb;color:#92400e}
-    .pk-summary[data-level=late]{background:#fef2f2;color:#991b1b}
+    .pk-summary{margin:.6rem 0;padding:.6rem .8rem;border-radius:8px;font-weight:700;background:var(--th-tint-green);color:var(--th-green-ink)}
+    .pk-summary[data-level=soon]{background:var(--th-tint-amber);color:var(--th-amber-ink)}
+    .pk-summary[data-level=late]{background:var(--th-tint-red);color:var(--th-red-ink)}
     .pk-plan{list-style:none;padding:0;margin:0}
-    .pk-plan li{display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;padding:.55rem .2rem;border-bottom:1px solid #e2e8f0}
-    .pk-plan li em{margin-left:auto;font-style:normal;font-weight:600;color:#065f46}
-    .pk-plan li[data-level=soon] em{color:#92400e}
-    .pk-plan li[data-level=late] em{color:#991b1b}
-    .pk-warn{padding:.5rem .7rem;border-radius:8px;background:#fffbeb;color:#92400e}
+    .pk-plan li{display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;padding:.55rem .2rem;border-bottom:1px solid var(--th-border)}
+    .pk-plan li em{margin-left:auto;font-style:normal;font-weight:600;color:var(--th-green-ink)}
+    .pk-plan li[data-level=soon] em{color:var(--th-amber-ink)}
+    .pk-plan li[data-level=late] em{color:var(--th-red-ink)}
+    .pk-warn{padding:.5rem .7rem;border-radius:8px;background:var(--th-tint-amber);color:var(--th-amber-ink)}
     @media (max-width:680px){
       .pk-table{min-width:0}.pk-table thead{display:none}
       .pk-table,.pk-table tbody{display:block}
-      .pk-table tr{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;padding:.7rem 0;border-bottom:1px solid #e2e8f0}
+      .pk-table tr{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;padding:.7rem 0;border-bottom:1px solid var(--th-border)}
       .pk-table td{display:block;padding:0 .6rem;border:0}
-      .pk-table td:nth-child(-n+4)::before{display:block;margin-bottom:.15rem;font-size:.75rem;font-weight:700;color:#4f5f74}
+      .pk-table td:nth-child(-n+4)::before{display:block;margin-bottom:.15rem;font-size:.75rem;font-weight:700;color:var(--th-text-2)}
       .pk-table td:nth-child(1)::before{content:"Alan / tesis"}
       .pk-table td:nth-child(2)::before{content:"Kontrol konusu"}
       .pk-table td:nth-child(3)::before{content:"Son kontrol"}
@@ -108,7 +109,6 @@
         </span>
       </a>
       <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
-      <button class="vg-theme vg-theme--bar" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
@@ -200,13 +200,14 @@
           <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
+          <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
           <a class="vg-cta" href="/#iletisim">Teklif Al</a>
         </div>
       </nav>
       <div class="vg-actions">
+        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
         <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
-        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>

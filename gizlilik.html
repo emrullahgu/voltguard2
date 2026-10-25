@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
-  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script>
+  <style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
   <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
   <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=559c615bb841">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=d800ac271429">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,11 +36,11 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=1a6fa8877736" defer></script>
-  <script src="/js/vg-metrics.js?v=44aefc57c2b6" defer></script>
-  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <script src="/js/vg-shell.js?v=878d9a5227ee" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
+  <noscript><style>.vg-burger,.vg-theme{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
-  <meta name="color-scheme" content="light only">
+  <meta name="color-scheme" content="light dark">
   <meta name="description" content="VoltGuard Gizlilik ve Çerez Politikası, KVKK aydınlatma metni ve kullanılan üçüncü taraf hizmetler hakkında bilgilendirme.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <title>Gizlilik ve Çerez Politikası | VoltGuard</title>
@@ -59,7 +60,6 @@
   <link rel="apple-touch-icon" href="public/apple-touch-icon.png">
   <style>
     :root {
-      color-scheme: light;
       --clr-dark: #0a1628;
       --clr-accent: #f59e0b;       /* marka accent (büyük/UI) — site geneliyle aynı */
       --clr-accent-text: #b45309;  /* küçük metin/link — WCAG AA (~5:1 beyaz üzerinde) */
@@ -67,11 +67,12 @@
       --clr-muted: #5b6b7c;
       --clr-line: #e2e8f0;
     }
+    :root[data-theme="dark"] { --clr-muted: var(--th-muted); --clr-line: var(--th-border); }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
       color: var(--clr-text);
-      background: #f8fafc;
+      background: var(--th-surface-2);
       line-height: 1.7;
     }
     main a { color: var(--clr-accent-text); }
@@ -85,7 +86,7 @@
       font-size: clamp(1.8rem, 5vw, 2.6rem);
       font-weight: 800;
       letter-spacing: -.02em;
-      color: var(--clr-dark);
+      color: var(--th-heading);
       margin-bottom: .35rem;
     }
     .updated { color: var(--clr-muted); font-size: .9rem; margin-bottom: 2rem; }
@@ -93,7 +94,7 @@
       font-family: "Outfit", sans-serif;
       font-size: 1.3rem;
       font-weight: 700;
-      color: var(--clr-dark);
+      color: var(--th-heading);
       margin: 2.25rem 0 .75rem;
       padding-top: 1.25rem;
       border-top: 1px solid var(--clr-line);
@@ -101,21 +102,21 @@
     main p, main li { color: var(--clr-text); }
     main ul { margin: .5rem 0 1rem 1.25rem; }
     main li { margin-bottom: .5rem; }
-    .table-wrap { margin: 1rem 0; overflow-x: auto; border: 1px solid var(--clr-line); border-radius: 10px; background: #fff; }
+    .table-wrap { margin: 1rem 0; overflow-x: auto; border: 1px solid var(--clr-line); border-radius: 10px; background: var(--th-surface); }
     table {
       width: 100%; min-width: 560px; border-collapse: collapse; margin: 0; font-size: .92rem;
-      background: #fff;
+      background: var(--th-surface);
     }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .85em; background: #f1f5f9; padding: .05rem .3rem; border-radius: 4px; overflow-wrap: anywhere; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .85em; background: var(--th-surface-3); padding: .05rem .3rem; border-radius: 4px; overflow-wrap: anywhere; }
     th, td { text-align: left; padding: .7rem .85rem; border-bottom: 1px solid var(--clr-line); vertical-align: top; }
-    th { background: #f1f5f9; font-family: "Outfit", sans-serif; color: var(--clr-dark); }
+    th { background: var(--th-surface-3); font-family: "Outfit", sans-serif; color: var(--th-heading); }
     tr:last-child td { border-bottom: none; }
     .tag { display: inline-block; font-size: .78rem; font-weight: 600; padding: .15rem .55rem; border-radius: 999px; }
-    .tag--req { background: #dcfce7; color: #166534; }
-    .tag--opt { background: #fef3c7; color: #92400e; }
-    .tag--info { background: #e0e7ff; color: #3730a3; }
+    .tag--req { background: var(--th-tint-green-2); color: var(--th-green-ink); }
+    .tag--opt { background: var(--th-tint-amber-2); color: var(--th-amber-ink); }
+    .tag--info { background: var(--th-tint-blue-2); color: var(--th-blue-ink); }
     .callout {
-      background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px;
+      background: var(--th-tint-amber); border: 1px solid #fed7aa; border-radius: 12px;
       padding: 1rem 1.25rem; margin: 1.5rem 0;
     }
     .consent-reset {
@@ -142,7 +143,6 @@
         </span>
       </a>
       <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
-      <button class="vg-theme vg-theme--bar" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
@@ -234,13 +234,14 @@
           <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
+          <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
           <a class="vg-cta" href="/#iletisim">Teklif Al</a>
         </div>
       </nav>
       <div class="vg-actions">
+        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
         <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
-        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>

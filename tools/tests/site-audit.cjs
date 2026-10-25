@@ -15,6 +15,9 @@ fs.mkdirSync(out, { recursive: true });
 const BASE = process.env.VG_BASE || 'http://127.0.0.1:4173';
 const NETLIFY_UI = /app.netlify.com/;
 const only = process.argv.slice(2).filter(a => !a.startsWith('--'));
+// --theme=dark|light: renk temasını zorlar (localStorage 'vg-theme' + prefers-color-scheme); çıktı adına eklenir
+const THEME = (process.argv.find(a => a.startsWith('--theme=')) || '').slice(8) || null;
+const OUT_NAME = 'otomatik' + (THEME ? '-' + THEME : '');
 
 function packagePath(name) {
   try { return require.resolve(name); } catch (_) {}
@@ -62,7 +65,8 @@ const pages = walk('', []).filter(r => !/^(hesap\/|calisan\/)/.test(r) || /^hesa
   }
   try {
     for (const vp of [{ w: 1440, h: 900, tag: 'masaüstü' }, { w: 390, h: 844, tag: 'mobil' }]) {
-      const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, locale: 'tr-TR', serviceWorkers: 'block', deviceScaleFactor: 1, hasTouch: vp.w < 600 });
+      const ctx = await browser.newContext({ viewport: { width: vp.w, height: vp.h }, locale: 'tr-TR', serviceWorkers: 'block', deviceScaleFactor: 1, hasTouch: vp.w < 600, ...(THEME ? { colorScheme: THEME } : {}) });
+      if (THEME) await ctx.addInitScript(t => { try { localStorage.setItem('vg-theme', t); } catch (_) {} }, THEME);
       await ctx.addInitScript(() => { window.__qa = { csp: [] }; addEventListener('securitypolicyviolation', e => window.__qa.csp.push(e.violatedDirective + ' ' + e.blockedURI)); });
       const page = await ctx.newPage();
       page.setDefaultTimeout(45000);
@@ -150,12 +154,12 @@ const pages = walk('', []).filter(r => !/^(hesap\/|calisan\/)/.test(r) || /^hesa
   });
   Object.keys(titles).filter(t => titles[t].length > 1).forEach(t => add('P1', titles[t].join(', '), 'aynı başlık: “' + t + '”'));
   Object.keys(descs).filter(t => descs[t].length > 1).forEach(t => add('P2', descs[t].join(', '), 'aynı açıklama'));
-  fs.writeFileSync(path.join(out, 'otomatik.json'), JSON.stringify({ base: BASE, pages: pages.length, report, issues }, null, 1));
+  fs.writeFileSync(path.join(out, OUT_NAME + '.json'), JSON.stringify({ base: BASE, pages: pages.length, report, issues }, null, 1));
   const order = { P0: 0, P1: 1, P2: 2, P3: 3 };
   issues.sort((a, b) => order[a.sev] - order[b.sev] || a.pg.localeCompare(b.pg));
   const cnt = s => issues.filter(x => x.sev === s).length;
   const md = ['# Otomatik site denetimi', '', pages.length + ' sayfa × 2 görünüm · P0 ' + cnt('P0') + ' · P1 ' + cnt('P1') + ' · P2 ' + cnt('P2') + ' · P3 ' + cnt('P3'), '']
     .concat(issues.map(x => '- [' + x.sev + '] ' + x.pg + ' — ' + x.msg));
-  fs.writeFileSync(path.join(out, 'otomatik.md'), md.join('\n'));
-  console.log('\n' + pages.length + ' sayfa denetlendi · P0 ' + cnt('P0') + ' · P1 ' + cnt('P1') + ' · P2 ' + cnt('P2') + ' · P3 ' + cnt('P3') + ' → .qa/audit/otomatik.md');
+  fs.writeFileSync(path.join(out, OUT_NAME + '.md'), md.join('\n'));
+  console.log('\n' + pages.length + ' sayfa denetlendi · P0 ' + cnt('P0') + ' · P1 ' + cnt('P1') + ' · P2 ' + cnt('P2') + ' · P3 ' + cnt('P3') + ' → .qa/audit/' + OUT_NAME + '.md');
 })().catch(e => { console.error(e); process.exitCode = 1; });

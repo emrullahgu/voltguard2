@@ -40,7 +40,7 @@
   .field{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed #e2ecea}
   .field:last-child{border-bottom:0}
   .field label{font-size:.9rem}
-  .field label small{display:block;color:#7a8784;font-size:.74rem;letter-spacing:.02em}
+  .field label small{display:block;color:#5f6b68;font-size:.74rem;letter-spacing:.02em}
   .field input,.field select{font:inherit;font-size:.92rem;padding:7px 10px;border:1px solid var(--line);border-radius:8px;width:130px;text-align:right;background:#fff;color:var(--num);font-weight:600}
   .field select{text-align:left;color:var(--ink);width:160px}
   .field.ro{opacity:.92}
@@ -77,8 +77,8 @@
   button{font:inherit;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid var(--ice-dk);background:var(--ice-dk);color:#fff;cursor:pointer}
   button.ghost{background:#fff;color:var(--ice-dk)}
   button:hover{filter:brightness(1.06)}
-  .note{font-size:.78rem;color:#6a7773;margin-top:14px;line-height:1.5}
-  .foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:.76rem;color:#6a7773;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .note{font-size:.78rem;color:#56625f;margin-top:14px;line-height:1.5}
+  .foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:.76rem;color:#56625f;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
   @media print{
     @page{size:A4 portrait;margin:8mm}
@@ -479,7 +479,7 @@ function drawViz(hb, hproje, pass, aort){
 
     <text x="${xvSec-12}" y="${yvSec+34}" font-size="11" fill="${sag}" font-weight="700"
           text-anchor="middle">hb = ${fmt(hb,1)} m (hesap)</text>
-    <text x="${xvSec-12}" y="${yvSec+48}" font-size="9" fill="#6a7773" text-anchor="middle">hb ≥ h_proje ⇒ ${pass?'kurtarıyor':'kurtarmıyor'}</text>
+    <text x="${xvSec-12}" y="${yvSec+48}" font-size="9" fill="#56625f" text-anchor="middle">hb ≥ h_proje ⇒ ${pass?'kurtarıyor':'kurtarmıyor'}</text>
 
     <rect x="${W-220}" y="${padT-6}" width="200" height="20" rx="10" fill="${pass?'#e7f6ee':'#fbeae6'}" stroke="${sag}"/>
     <text x="${W-120}" y="${padT+8}" font-size="11.5" font-weight="700" fill="${sag}" text-anchor="middle">${pass?'h ≥ h_proje · KURTARIYOR ✓':'h < h_proje · KURTARMIYOR ✕'}</text>

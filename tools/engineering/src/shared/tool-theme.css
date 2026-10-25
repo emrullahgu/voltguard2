@@ -244,5 +244,37 @@
 
 /* Acknowledgement of the external author of the original calculator set. */
 .vg-source-credit{max-width:1120px;margin:2rem auto;padding:1.2rem 1.4rem;border:1px solid #d8e9ef;border-left:4px solid #f59e0b;border-radius:12px;background:#fffbeb;color:#18394a;font:400 14px/1.7 var(--vg-host-body,Arial,sans-serif)}
-.vg-source-credit strong{font-weight:700;color:#0a1628}.vg-source-credit a{color:#b45309;text-decoration:underline;text-underline-offset:3px}.vg-source-credit p{margin:.35rem 0!important}.vg-source-credit small{display:block;font-size:12px;color:#526877}.vg-source-credit--compact{margin:0;padding:.8rem 1rem;text-align:left;font-size:13px}.vg-source-credit--compact small{font-size:11px}
+.vg-source-credit strong{font-weight:700;color:#0a1628}.vg-source-credit a{color:#b45309;text-decoration:underline;text-underline-offset:3px}.vg-source-credit p{margin:.35rem 0!important}.vg-source-credit small{display:block;font-size:12px;color:#46586a}.vg-source-credit--compact{margin:0;padding:.8rem 1rem;text-align:left;font-size:13px}.vg-source-credit--compact small{font-size:11px}
 @media(max-width:600px){.vg-source-credit{margin:1.4rem 1rem;padding:1rem}.vg-source-credit--compact{margin:0}}
+
+/* Kontrast düzeltmeleri (tema denetimi, tools/tests/theme-audit.cjs): açık zemindeki amber metin koyu amber,
+   amber zemindeki metin lacivert; kaynak araçta koyu panel olarak kalan bölgelerde açık metin. */
+@media screen {
+  .vg-engineering[data-vg-tool="og-gerilim-dusumu"] #vg-tool-workspace :is(td[id$="_div_hat"], td[id$="_e_seg"], td[id$="_dp"], td[id$="_p_seg"], td.lbl, .fml b) { color: #b45309 !important; }
+  .vg-engineering[data-vg-tool="og-gerilim-dusumu"] #vg-tool-workspace :is(td.lbl, #tot_dp) { color: #92400e !important; }
+  .vg-engineering[data-vg-tool="og-gerilim-dusumu"] #vg-tool-workspace :is(.hdr span.no-print, #mainTable th.lbl-hdr) { color: #0a1628 !important; }
+  .vg-engineering[data-vg-tool="og-gerilim-dusumu"] #vg-tool-workspace #mainTable th.seg-hdr { background: #f59e0b !important; color: #0a1628 !important; }
+  .vg-engineering[data-vg-tool="azami-aciklik-hesabi"] #vg-tool-workspace :is(.imza b, .geombaslik) { color: #b45309 !important; }
+  .vg-engineering[data-vg-tool="azami-aciklik-hesabi"] #vg-tool-workspace :is(.result p.lab, #o_gov) { color: #92400e !important; }
+  .vg-engineering[data-vg-tool="azami-aciklik-hesabi"] #vg-tool-workspace #steps span { color: #475569 !important; }
+  .vg-engineering[data-vg-tool="azami-aciklik-hesabi"] #vg-tool-workspace #svglayer svg text[fill="#d93636"] { fill: #c62828; }
+  .vg-engineering[data-vg-tool="ag-tek-hat-semasi"] #vg-tool-workspace .out-row.reserve input::placeholder { color: #475569; }
+  .vg-engineering[data-vg-tool="sabit-kondansator-hesabi"] #vg-tool-workspace #rQc,
+  .vg-engineering[data-vg-tool="ag-tek-hat-semasi"] #vg-tool-workspace #dlSvg { color: #b45309 !important; }
+  .vg-engineering[data-vg-tool="ag-tek-hat-semasi"] #vg-tool-workspace .out-row.reserve .idx { color: #475569 !important; opacity: 1 !important; }
+  .vg-engineering[data-vg-tool="beton-kosk-yerlesim"] #vg-tool-workspace :is(#yerBtns .kbtn:not(.on), #seriBtns .kbtn:not(.on), #panoSel, #panoSel b, #panoSel span) { color: #e2e8f0 !important; }
+  .vg-engineering[data-vg-tool="beton-kosk-yerlesim"] #vg-tool-workspace #viewTabs .vt { color: #c7d3e0 !important; }
+  .vg-engineering[data-vg-tool="beton-kosk-yerlesim"] #vg-tool-workspace #viewTabs .vt.on { color: #fff !important; }
+  .vg-engineering[data-vg-tool="beton-kosk-yerlesim"] #vg-tool-workspace :is(#hToplam span, #checks .chk small) { color: #475569 !important; opacity: 1 !important; }
+  .vg-engineering[data-vg-tool="kablo-kanal-plani"] #vg-tool-workspace #tiplist .tipcard.active .trow b { color: #15803d !important; }
+  .vg-engineering[data-vg-tool="kablo-kanal-plani"] #vg-tool-workspace :is(#editform .grid2 button, #renkBtn .small) { color: #0a1628 !important; }
+  .vg-engineering[data-vg-tool="kablo-kanal-plani"] #vg-tool-workspace #editform .katbox { background: #fff !important; }
+  .vg-engineering[data-vg-tool="kablo-kanal-plani"] #vg-tool-workspace #editform .katbox h3 { color: #0a1628 !important; }
+  .vg-engineering[data-vg-tool="kablo-kanal-plani"] #vg-tool-workspace #editform .katbox :is(.small, .small b, .small span) { color: #475569 !important; }
+  .vg-engineering[data-vg-tool="og-kisa-devre"] #vg-tool-workspace .fld label .tag { color: #b6c4d5 !important; }
+  .vg-engineering[data-vg-tool="og-kisa-devre"] #vg-tool-workspace :is(tr.top td, td.res) { color: #0a1628 !important; }
+  .vg-engineering[data-vg-tool="ncz-dxf-donusturucu"] #vg-tool-workspace #drop .btn-browse { color: #fff !important; }
+  .vg-engineering[data-vg-tool="cbs-veri-girisi"] #vg-tool-workspace .brand .mk { background: #0a1628; color: #fff !important; border-radius: 6px; }
+  .vg-engineering[data-vg-tool="ges-tasarim"] #vg-tool-workspace .bar-head .vl { color: #15805e !important; }
+  .vg-engineering[data-vg-tool="enh-uplift-hesabi"] #vg-tool-workspace #tabbar .tab.on { background: #0e7480 !important; }
+}

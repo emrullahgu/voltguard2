@@ -11,6 +11,7 @@ const root = path.resolve(__dirname, '../..');
 const output = path.join(root, '.qa', 'engineering');
 const catalog = require('../engineering/src/catalog.cjs');
 const exportsOnly = process.argv.includes('--exports-only');
+const theme = (process.argv.find(a => a.startsWith('--theme=')) || '').slice(8) || null;
 const reportFile = path.join(output, exportsOnly ? 'export-report.json' : 'browser-report.json');
 const report = { reference: {}, landing: {}, documents: [], tools: [], mobile: [], exports: {}, findings: [] };
 const designReferences = {};
@@ -427,7 +428,9 @@ async function checkExports(context, base) {
   const browser = await chromium.launch({ headless: true, executablePath: chromePath() });
   try {
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: 'tr-TR',
-      timezoneId: 'Europe/Istanbul', acceptDownloads: true, serviceWorkers: 'block' });
+      timezoneId: 'Europe/Istanbul', acceptDownloads: true, serviceWorkers: 'block', ...(theme ? { colorScheme: theme } : {}) });
+    // --theme=dark|light: site renk temasını zorlar; dışa aktarılan rapor/PDF yine açık kalmalı
+    if (theme) await context.addInitScript(th => { try { localStorage.setItem('vg-theme', th); } catch (_) {} }, theme);
     if (!exportsOnly) {
       await checkReference(context, base);
       await checkLanding(context, base);

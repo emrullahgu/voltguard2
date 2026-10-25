@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
-  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <script src="/js/vg-theme-init.js?v=928d2d32672c"></script>
+  <style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
   <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
   <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=559c615bb841">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=d800ac271429">
   <script type="speculationrules">
   {
     "prerender": [
@@ -35,11 +36,11 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=1a6fa8877736" defer></script>
-  <script src="/js/vg-metrics.js?v=44aefc57c2b6" defer></script>
-  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <script src="/js/vg-shell.js?v=878d9a5227ee" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
+  <noscript><style>.vg-burger,.vg-theme{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
-  <meta name="color-scheme" content="light only">
+  <meta name="color-scheme" content="light dark">
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="same-origin">
   <title>Büyüme Paneli | VoltGuard Hesabı</title>
@@ -55,27 +56,27 @@
     .gp h3 { font-size: 1rem; margin: 1rem 0 .5rem; }
     .gp-lead { color: var(--clr-text-muted); margin: 0 0 1.25rem; max-width: 70ch; line-height: 1.6; }
     .gp-bar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: 0 0 1.25rem; }
-    .gp-bar button { font: inherit; font-size: .9rem; padding: .45rem .9rem; border-radius: 999px; border: 1px solid var(--clr-border); background: #fff; color: var(--clr-text); cursor: pointer; min-height: 40px; }
+    .gp-bar button { font: inherit; font-size: .9rem; padding: .45rem .9rem; border-radius: 999px; border: 1px solid var(--clr-border); background: var(--th-surface); color: var(--clr-text); cursor: pointer; min-height: 40px; }
     .gp-bar button[aria-pressed="true"] { background: #0a1628; color: #fff; border-color: #0a1628; }
     .gp-bar button:focus-visible, .gp summary:focus-visible { outline: 3px solid rgba(59,130,246,.5); outline-offset: 2px; }
     .gp-status { font-size: .85rem; color: var(--clr-text-muted); margin-left: auto; }
     .gp-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); margin-bottom: 1rem; }
-    .gp-card { background: #fff; border: 1px solid var(--clr-border); border-radius: 12px; padding: 1.1rem 1.15rem; min-width: 0; }
+    .gp-card { background: var(--th-surface); border: 1px solid var(--clr-border); border-radius: 12px; padding: 1.1rem 1.15rem; min-width: 0; }
     .gp-card--wide { grid-column: 1 / -1; }
     .gp-kpis { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); margin-bottom: 1rem; }
-    .gp-kpi { background: #fff; border: 1px solid var(--clr-border); border-radius: 12px; padding: .85rem 1rem; }
+    .gp-kpi { background: var(--th-surface); border: 1px solid var(--clr-border); border-radius: 12px; padding: .85rem 1rem; }
     .gp-kpi span { display: block; font-size: .78rem; color: var(--clr-text-muted); line-height: 1.35; }
-    .gp-kpi strong { display: block; font-size: 1.55rem; line-height: 1.2; margin-top: .25rem; color: #0a1628; font-variant-numeric: tabular-nums; }
+    .gp-kpi strong { display: block; font-size: 1.55rem; line-height: 1.2; margin-top: .25rem; color: var(--th-heading); font-variant-numeric: tabular-nums; }
     .gp-kpi small { display: block; font-size: .75rem; color: var(--clr-text-muted); margin-top: .15rem; }
-    .gp-empty { color: var(--clr-text-muted); font-size: .9rem; background: #f5f7fa; border-radius: 8px; padding: .75rem .9rem; margin: 0; line-height: 1.55; }
-    .gp-empty strong { color: #334155; }
+    .gp-empty { color: var(--clr-text-muted); font-size: .9rem; background: var(--th-surface-3); border-radius: 8px; padding: .75rem .9rem; margin: 0; line-height: 1.55; }
+    .gp-empty strong { color: var(--th-text-2); }
     .gp-chart { width: 100%; height: auto; display: block; }
-    .gp-chart text { font-size: 11px; fill: #64748b; font-family: inherit; }
-    .gp-legend { display: flex; flex-wrap: wrap; gap: .9rem; font-size: .8rem; color: #475569; margin: .4rem 0 0; padding: 0; list-style: none; }
+    .gp-chart text { font-size: 11px; fill: var(--clr-text-muted); font-family: inherit; }
+    .gp-legend { display: flex; flex-wrap: wrap; gap: .9rem; font-size: .8rem; color: var(--th-text-2); margin: .4rem 0 0; padding: 0; list-style: none; }
     .gp-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
     .gp-hbars { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
     .gp-hbars li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .2rem .75rem; font-size: .88rem; }
-    .gp-hbars .gp-track { grid-column: 1 / -1; height: 8px; background: #eef2f7; border-radius: 4px; overflow: hidden; }
+    .gp-hbars .gp-track { grid-column: 1 / -1; height: 8px; background: var(--th-surface-3); border-radius: 4px; overflow: hidden; }
     .gp-hbars .gp-fill { display: block; height: 100%; background: #1d4ed8; border-radius: 4px; }
     .gp-hbars b { font-variant-numeric: tabular-nums; font-weight: 600; }
     .gp-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -130,7 +131,6 @@
         </span>
       </a>
       <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
-      <button class="vg-theme vg-theme--bar" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
@@ -222,13 +222,14 @@
           <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
+          <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html" aria-current="true">Üye Girişi</a>
           <a class="vg-cta" href="/#iletisim">Teklif Al</a>
         </div>
       </nav>
       <div class="vg-actions">
+        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
         <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
-        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html" aria-current="true">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>

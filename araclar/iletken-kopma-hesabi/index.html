@@ -40,7 +40,7 @@
   :where(#vg-tool-workspace) .field{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed #e2ecea}
   :where(#vg-tool-workspace) .field:last-child{border-bottom:0}
   :where(#vg-tool-workspace) .field label{font-size:.9rem}
-  :where(#vg-tool-workspace) .field label small{display:block;color:#7a8784;font-size:.74rem;letter-spacing:.02em}
+  :where(#vg-tool-workspace) .field label small{display:block;color:#5f6b68;font-size:.74rem;letter-spacing:.02em}
   :where(#vg-tool-workspace) .field input,:where(#vg-tool-workspace) .field select{font:inherit;font-size:.92rem;padding:7px 10px;border:1px solid var(--line);border-radius:8px;width:130px;text-align:right;background:#fff;color:var(--num);font-weight:600}
   :where(#vg-tool-workspace) .field select{text-align:left;color:var(--ink);width:160px}
   :where(#vg-tool-workspace) .field.ro{opacity:.92}
@@ -77,8 +77,8 @@
   :where(#vg-tool-workspace) button{font:inherit;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid var(--ice-dk);background:var(--ice-dk);color:#fff;cursor:pointer}
   :where(#vg-tool-workspace) button.ghost{background:#fff;color:var(--ice-dk)}
   :where(#vg-tool-workspace) button:hover{filter:brightness(1.06)}
-  :where(#vg-tool-workspace) .note{font-size:.78rem;color:#6a7773;margin-top:14px;line-height:1.5}
-  :where(#vg-tool-workspace) .foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:.76rem;color:#6a7773;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  :where(#vg-tool-workspace) .note{font-size:.78rem;color:#56625f;margin-top:14px;line-height:1.5}
+  :where(#vg-tool-workspace) .foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:.76rem;color:#56625f;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
   @media print{
     @page{size:A4 portrait;margin:8mm}
@@ -225,11 +225,13 @@
         <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
       </ul>
       <div class="vg-nav__foot">
+        <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
     </nav>
     <div class="vg-actions">
+      <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
       <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
       <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
       <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
@@ -594,7 +596,7 @@ function drawViz(hb, hproje, pass, aort){
 
     <text x="${xvSec-12}" y="${yvSec+34}" font-size="11" fill="${sag}" font-weight="700"
           text-anchor="middle">hb = ${fmt(hb,1)} m (hesap)</text>
-    <text x="${xvSec-12}" y="${yvSec+48}" font-size="9" fill="#6a7773" text-anchor="middle">hb ≥ h_proje ⇒ ${pass?'kurtarıyor':'kurtarmıyor'}</text>
+    <text x="${xvSec-12}" y="${yvSec+48}" font-size="9" fill="#56625f" text-anchor="middle">hb ≥ h_proje ⇒ ${pass?'kurtarıyor':'kurtarmıyor'}</text>
 
     <rect x="${W-220}" y="${padT-6}" width="200" height="20" rx="10" fill="${pass?'#e7f6ee':'#fbeae6'}" stroke="${sag}"/>
     <text x="${W-120}" y="${padT+8}" font-size="11.5" font-weight="700" fill="${sag}" text-anchor="middle">${pass?'h ≥ h_proje · KURTARIYOR ✓':'h < h_proje · KURTARMIYOR ✕'}</text>

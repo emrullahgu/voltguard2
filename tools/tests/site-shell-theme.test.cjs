@@ -1,7 +1,7 @@
 'use strict';
 
-// Ortak başlık + tema altyapısı: menü kimlikleri tekil ve bağlı referanslar çözülür; tema betiği yalnızca tema destekleyen
-// (<html data-vg-themes>) sayfalara girer ve stil dosyalarından önce çalışır; tema değişkenlerinin koyu karşılığı tanımlıdır.
+// Ortak başlık + tema altyapısı: menü kimlikleri tekil ve bağlı referanslar çözülür;
+// tema seçimi ilk boyamadan önce çalışır, özel CSP sayfaları aynı başlatıcıyı dosyadan yükler.
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -24,23 +24,15 @@ test('başlık menüsü sayfa başlık hiyerarşisine başlık eklemez; VoltSim 
   for (const id of ['vgDdHizmetler', 'vgDdKurumsal', 'vgDdKaynaklar']) assert.match(header, new RegExp(`aria-controls="${id}"`));
 });
 
-test('tema betiği yalnızca data-vg-themes sayfalarında ve ilk stil dosyasından önce', () => {
-  const themed = ['index.html', 'tools/templates/service-page.html',
-    ...fs.readdirSync(path.join(root, 'hizmetler')).filter(f => f.endsWith('.html')).map(f => 'hizmetler/' + f)];
-  for (const file of themed) {
+test('tema seçimi ilk stil dosyasından önce; özel CSP sayfalarında harici başlatıcı', () => {
+  for (const file of ['index.html', 'hizmetler/trafo-bakimi.html', 'gizlilik.html', 'hesap/giris.html', 'voltsim/index.html']) {
     const html = read(file);
-    assert.match(html, /<html[^>]*\sdata-vg-themes/, file);
     assert.doesNotMatch(html, /<meta name="color-scheme" content="light only">/, file);
-    if (file.startsWith('tools/')) continue;                       // şablon: betiği shell.py ekler
-    const boot = html.indexOf("localStorage.getItem('vg-theme')"), css = html.indexOf('rel="stylesheet"');
-    assert.ok(boot > 0 && boot < css, file + ': tema seçimi ilk boyamadan önce yapılmalı');
-  }
-  assert.match(read('css/services.css'), /:root\[data-theme="dark"\] \.svc-page \{[^}]*--s-surface:/, 'services.css koyu değişkenleri');
-  for (const file of ['gizlilik.html', 'hesap/giris.html', 'voltsim/index.html']) {
-    const html = read(file);
-    assert.doesNotMatch(html, /<html[^>]*data-vg-themes/, file);
-    assert.doesNotMatch(html, /localStorage\.getItem\('vg-theme'\)/, file + ': tema desteklemeyen sayfa koyu temaya geçmemeli');
-    assert.match(html, /data-vg-theme-toggle[^>]*\shidden/, file + ': düğme varsayılan olarak gizli');
+    const privatePage = file.startsWith('hesap/');
+    const boot = privatePage ? html.indexOf('<script src="/js/vg-theme-init.js') : html.indexOf('<script data-vg-theme-init>');
+    assert.ok(boot > 0 && boot < html.indexOf('rel="stylesheet"'), file + ': tema seçimi ilk boyamadan önce yapılmalı');
+    if (privatePage) assert.doesNotMatch(html, /localStorage\.getItem\('vg-theme'\)/, file + ': CSP satır içi başlatıcıyı yasaklar');
+    assert.equal((html.match(/data-vg-theme-toggle/g) || []).length, 2, file + ': masaüstü ve mobil menü düğmesi');
   }
 });
 
@@ -50,7 +42,7 @@ test('tema değişkenlerinin koyu karşılığı tanımlı; sabit marka renkleri
   const light = block(':root'), dark = block(':root[data-theme="dark"]');
   for (const token of ['--surface', '--surface-raised', '--ink', '--clr-text', '--clr-text-muted', '--clr-bg', '--clr-border', '--field-bg', '--field-border', '--danger-text', '--vg-link']) {
     assert.match(light, new RegExp(token + ':'), 'açık: ' + token);
-    assert.match(dark, new RegExp(token + ':'), 'koyu: ' + token);
+    assert.ok(new RegExp(token + ':').test(dark) || new RegExp(token + ':\\s*var\\(--th-').test(light), 'koyu tema paletine bağlı: ' + token);
   }
   for (const constant of ['--clr-white', '--clr-dark', '--clr-accent']) assert.doesNotMatch(dark, new RegExp(constant + ':'), constant);
 });

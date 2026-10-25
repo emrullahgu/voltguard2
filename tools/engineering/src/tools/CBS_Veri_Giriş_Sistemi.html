@@ -29,10 +29,10 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   --paper:#f6f4ee; --card:#ffffff; --field:#fbfaf6;
   --cu:#b45c2e;           /* copper – primary action */
   --cu-deep:#8f4620;
-  --volt:#1f7a6d;         /* voltage teal – accents/valid */
+  --volt:#18665b;         /* voltage teal – accents/valid */
   --volt-soft:#e2f0ec;
   --warn:#b23b3b; --warn-soft:#f6e4e2;
-  --focus:#1f7a6d;
+  --focus:#18665b;
   --shadow:0 1px 0 rgba(18,34,43,.04), 0 8px 24px -18px rgba(18,34,43,.5);
 }
 *{box-sizing:border-box}
@@ -769,7 +769,7 @@ function fieldCell(sec,f,rec,ri){
     const opts=['<option value="">— seçiniz —</option>']
       .concat(list.map(o=>`<option ${o===val?'selected':''}>${esc(o)}</option>`))
       .concat(val && !list.includes(val)?[`<option selected>${esc(val)}</option>`]:[])
-      .concat([`<option value="__add__" style="font-weight:600;color:#1f7a6d">＋ Listede yok, ekle…</option>`]);
+      .concat([`<option value="__add__" style="font-weight:600;color:#18665b">＋ Listede yok, ekle…</option>`]);
     ctrl=`<select id="${id}" data-key="${f.key}" data-fk="${esc(f.key)}">${opts.join('')}</select>`;
   }else if(f.type==='date'){
     ctrl=`<input id="${id}" data-key="${f.key}" type="date" value="${esc(val)}">`;

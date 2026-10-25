@@ -3,20 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="light only">
+  <meta name="color-scheme" content="light dark">
   <meta name="description" content="Kablo kesiti, gerilim düşümü, sigorta/TMŞ, kompanzasyon, reaktif ceza, kısa devre, GES ve trafo işletme sorumluluğu ücreti için ücretsiz hesaplama araçları.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <base href="/">
   <!--vg:head-->
   <meta name="theme-color" content="#0a1628">
-  <style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script>
+  <style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
   <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
   <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
-  <link rel="stylesheet" href="/css/vg-shell.css?v=559c615bb841">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=d800ac271429">
   <script type="speculationrules">
   {
     "prerender": [
@@ -39,9 +40,9 @@
     ]
   }
   </script>
-  <script src="/js/vg-shell.js?v=1a6fa8877736" defer></script>
-  <script src="/js/vg-metrics.js?v=44aefc57c2b6" defer></script>
-  <noscript><style>.vg-burger{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <script src="/js/vg-shell.js?v=878d9a5227ee" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
+  <noscript><style>.vg-burger,.vg-theme{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <link rel="canonical" href="https://voltguard.com.tr/hesaplama-araclari/">
   <title>Elektrik Hesaplama Araçları (21 Ücretsiz Araç) | VoltGuard</title>
@@ -247,35 +248,35 @@
   }
   </script>
   <style>
-    .tool-page { background: #f1f5f9; min-height: 100vh; }
+    .tool-page { background: var(--th-surface-3); min-height: 100vh; }
     .tool-header { background: #0a1628; color: #fff; padding: 1rem 0; }
     .tool-header__inner { max-width: 1200px; padding: 0 1.5rem; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
     .tool-brand { color: #fff; font-family: "Outfit", sans-serif; font-size: 1.25rem; font-weight: 800; }
     .tool-brand i { color: #f59e0b; margin-right: .4rem; }
     .tool-brand__image { width: 38px; height: 38px; border-radius: 8px; object-fit: contain; vertical-align: middle; margin-right: .55rem; }
     .tool-back { color: #dbeafe; font-weight: 600; font-size: .92rem; }
-    .tool-hero { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 3.5rem 0 2.75rem; }
+    .tool-hero { background: var(--th-surface); border-bottom: 1px solid var(--th-border); padding: 3.5rem 0 2.75rem; }
     .tool-hero__inner, .tool-main { width: 100%; max-width: 1200px; min-width: 0; box-sizing: border-box; padding: 0 1.5rem; margin: auto; }
-    .tool-eyebrow { color: #b45309; font: 700 .78rem "Outfit", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
-    .tool-hero h1 { color: #0a1628; font: 800 clamp(2rem, 4vw, 3.3rem)/1.1 "Outfit", sans-serif; margin: .5rem 0 .85rem; }
-    .tool-hero p { color: #475569; max-width: 720px; font-size: 1.04rem; }
+    .tool-eyebrow { color: var(--clr-accent-text); font: 700 .78rem "Outfit", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    .tool-hero h1 { color: var(--th-heading); font: 800 clamp(2rem, 4vw, 3.3rem)/1.1 "Outfit", sans-serif; margin: .5rem 0 .85rem; }
+    .tool-hero p { color: var(--th-text-2); max-width: 720px; font-size: 1.04rem; }
     .tool-main { padding-top: 2rem; padding-bottom: 4rem; }
     .tool-categories { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin-bottom: 2rem; }
-    .tool-category { background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; color: #334155; cursor: pointer; min-width: 0; min-height: 92px; padding: .85rem; font: 700 .88rem/1.4 "Outfit", sans-serif; text-align: left; overflow-wrap: anywhere; }
-    .tool-category i { color: #b45309; display: block; font-size: 1.15rem; margin-bottom: .5rem; }
-    .tool-category--active, .tool-category[aria-selected="true"] { background: #fffbeb; border-color: #f59e0b; color: #0a1628; }
+    .tool-category { background: var(--th-surface); border: 1px solid var(--th-border); border-radius: 6px; color: var(--th-text-2); cursor: pointer; min-width: 0; min-height: 92px; padding: .85rem; font: 700 .88rem/1.4 "Outfit", sans-serif; text-align: left; overflow-wrap: anywhere; }
+    .tool-category i { color: var(--clr-accent-text); display: block; font-size: 1.15rem; margin-bottom: .5rem; }
+    .tool-category--active, .tool-category[aria-selected="true"] { background: var(--th-tint-amber); border-color: #f59e0b; color: var(--th-heading); }
     .tool-category:hover, .tool-category:focus-visible { border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245,158,11,.18); }
     .tool-panel { display: none; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 1.25rem; min-width: 0; }
     .tool-panel.active { display: grid; }
-    .tool-card { min-width: 0; max-width: 100%; box-sizing: border-box; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: clamp(1.2rem, 3vw, 2rem); }
-    .tool-card h2 { font: 800 1.55rem "Outfit", sans-serif; color: #0a1628; margin-bottom: .4rem; }
-    .tool-card__intro { color: #64748b; margin-bottom: 1.4rem; }
+    .tool-card { min-width: 0; max-width: 100%; box-sizing: border-box; background: var(--th-surface); border: 1px solid var(--th-border); border-radius: 8px; padding: clamp(1.2rem, 3vw, 2rem); }
+    .tool-card h2 { font: 800 1.55rem "Outfit", sans-serif; color: var(--th-heading); margin-bottom: .4rem; }
+    .tool-card__intro { color: var(--clr-text-muted); margin-bottom: 1.4rem; }
     .tool-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
     .tool-field { display: grid; min-width: 0; gap: .4rem; }
     .tool-field--wide { grid-column: 1 / -1; }
     .tool-field[hidden] { display: none; }
-    .tool-field label { color: #334155; font-size: .9rem; font-weight: 600; }
-    .tool-field input, .tool-field select { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 5px; padding: .75rem .8rem; color: #0f172a; font: inherit; background: #fff; }
+    .tool-field label { color: var(--th-text-2); font-size: .9rem; font-weight: 600; }
+    .tool-field input, .tool-field select { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; border: 1px solid var(--th-border-strong); border-radius: 5px; padding: .75rem .8rem; color: var(--th-heading); font: inherit; background: var(--th-surface); }
     .tool-field input:focus, .tool-field select:focus { outline: 3px solid rgba(59,130,246,.2); border-color: #3b82f6; }
     .tool-result { min-width: 0; max-width: 100%; box-sizing: border-box; overflow-wrap: anywhere; background: #0a1628; color: #fff; border-radius: 8px; padding: clamp(1.2rem, 3vw, 2rem); display: flex; flex-direction: column; justify-content: space-between; gap: 1.1rem; }
     .tool-result__label { color: #fcd34d; font: 700 .78rem "Outfit", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
@@ -291,14 +292,14 @@
     .tool-request:disabled, .tool-download:disabled, .tool-share:disabled { opacity: .45; cursor: not-allowed; }
     .tool-result__list[hidden] { display: none; }
     .tool-share-status { color: #bbf7d0; font-size: .8rem; min-height: 1.2em; }
-    .tool-note { margin-top: 1.25rem; background: #eff6ff; border-left: 3px solid #3b82f6; color: #334155; padding: .85rem 1rem; font-size: .86rem; line-height: 1.6; }
-    .tool-note a { color: #1d4ed8; font-weight: 600; text-decoration: underline; }
-    .tool-formula { margin-top: 1rem; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 5px; padding: .75rem .9rem; font-size: .84rem; line-height: 1.65; color: #334155; }
-    .tool-formula strong { color: #0a1628; }
+    .tool-note { margin-top: 1.25rem; background: var(--th-tint-blue); border-left: 3px solid #3b82f6; color: var(--th-text-2); padding: .85rem 1rem; font-size: .86rem; line-height: 1.6; }
+    .tool-note a { color: var(--th-blue-ink); font-weight: 600; text-decoration: underline; }
+    .tool-formula { margin-top: 1rem; background: var(--th-surface-2); border: 1px dashed var(--th-border-strong); border-radius: 5px; padding: .75rem .9rem; font-size: .84rem; line-height: 1.65; color: var(--th-text-2); }
+    .tool-formula strong { color: var(--th-heading); }
     .tool-member-grid { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr); gap: 2rem; align-items: center; }
     @media (max-width: 760px) { .tool-member-grid { grid-template-columns: minmax(0,1fr); gap: 1.25rem; } }
-    .tool-source { color: #64748b; font-size: .82rem; margin: 1.5rem 0 0; }
-    .tool-source a { color: #b45309; text-decoration: underline; }
+    .tool-source { color: var(--clr-text-muted); font-size: .82rem; margin: 1.5rem 0 0; }
+    .tool-source a { color: var(--clr-accent-text); text-decoration: underline; }
     @media (max-width: 760px) { .tool-categories { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; } .tool-panel, .tool-fields { grid-template-columns: minmax(0, 1fr); } .tool-field--wide { grid-column: auto; } .tool-header__inner { padding: 0 1.1rem; } .tool-hero__inner, .tool-main { padding-left: 1.1rem; padding-right: 1.1rem; } }
   </style>
 </head>
@@ -315,7 +316,6 @@
         </span>
       </a>
       <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
-      <button class="vg-theme vg-theme--bar" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
       <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
       <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
         <ul class="vg-nav__list">
@@ -407,13 +407,14 @@
           <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
+          <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
           <a class="vg-cta" href="/#iletisim">Teklif Al</a>
         </div>
       </nav>
       <div class="vg-actions">
+        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
         <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
-        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu tema" hidden></button>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
         <a class="vg-cta" href="/#iletisim">Teklif Al</a>
       </div>
@@ -495,8 +496,8 @@
         <aside class="tool-result"><div><span class="tool-result__label">Teknik ön değerlendirme</span><div class="tool-result__amount" id="technical-amount" aria-live="polite">-</div><p class="tool-result__detail" id="technical-detail"></p></div><ul class="tool-result__list"><li><i class="fas fa-check"></i><span id="technical-scope"></span></li><li><i class="fas fa-check"></i>Sonuç varsayımlara dayanır, mühendislik doğrulaması gerekir.</li></ul><button class="tool-download" data-pdf-title="Teknik On Degerlendirme"><i class="fas fa-file-pdf"></i> PDF özeti indir</button><button class="tool-share"><i class="fas fa-link"></i> Hesabı paylaş</button><span class="tool-share-status" role="status" aria-live="polite"></span><button class="tool-request" data-tool="teknik hesaplama">Bu sonuçla teklif al</button></aside>
       </section>
 
-      <section aria-label="Bağımsız hesaplama araçları" style="margin-top:2.5rem;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:clamp(1.4rem,3vw,2.2rem);">
-        <div style="margin-bottom:1.25rem"><span class="tool-eyebrow">Bağımsız Hesap Sayfaları</span><h2 style="color:#0a1628;font:800 clamp(1.4rem,3vw,2rem) 'Outfit',sans-serif;margin:.35rem 0 .3rem">Hesaplama araçlarını ayrı sayfada aç</h2><p style="color:#475569;max-width:820px">Her araç kendi sayfasında; formül, örnek çözüm ve sık sorulan sorularla birlikte açıklanır. SEO ve kolay paylaşım için tercih edilir.</p></div>
+      <section aria-label="Bağımsız hesaplama araçları" style="margin-top:2.5rem;background:var(--th-surface);border:1px solid var(--th-border);border-radius:8px;padding:clamp(1.4rem,3vw,2.2rem);">
+        <div style="margin-bottom:1.25rem"><span class="tool-eyebrow">Bağımsız Hesap Sayfaları</span><h2 style="color:var(--th-heading);font:800 clamp(1.4rem,3vw,2rem) 'Outfit',sans-serif;margin:.35rem 0 .3rem">Hesaplama araçlarını ayrı sayfada aç</h2><p style="color:var(--th-text-2);max-width:820px">Her araç kendi sayfasında; formül, örnek çözüm ve sık sorulan sorularla birlikte açıklanır. SEO ve kolay paylaşım için tercih edilir.</p></div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:.9rem">
           <a class="kb-card" href="hesaplama/kablo-kesiti-hesaplama/"><span class="kb-card__icon"><i class="fas fa-ruler-horizontal" aria-hidden="true"></i></span><span class="kb-card__title">Kablo Kesiti Hesaplama</span><span class="kb-card__desc">Yük gücü ve gerilim bilgisiyle ön bakır kesit önerisi.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
           <a class="kb-card" href="hesaplama/gerilim-dusumu-hesaplama/"><span class="kb-card__icon"><i class="fas fa-chart-line" aria-hidden="true"></i></span><span class="kb-card__title">Gerilim Düşümü (%)</span><span class="kb-card__desc">Akım, kesit ve uzunluğa göre yüzdesel düşüm ve sınır kontrolü.</span><span class="kb-card__more">Aracı Aç &rarr;</span></a>
