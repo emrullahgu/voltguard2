@@ -1605,5 +1605,7 @@
   );
   // sonradan eklenen kayıtlar resmî katalogdan doğrulanmadı: tarih uydurulmaz
   list.forEach(r => { if (!("verifiedAt" in r)) r.verifiedAt = null; });
+  /* Fabrika Senaryosu trafo, pano ve kompanzasyon hesaplarını birlikte kullanır: bu modüllere atfedilen kayıtlar ona da uygulanır. */
+  list.forEach(r => { if (["trafo", "pano", "komp"].some(m => r.applies.indexOf(m) >= 0) && r.applies.indexOf("fabrika") < 0) r.applies.push("fabrika"); });
   return list;
 });

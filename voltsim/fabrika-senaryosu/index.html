@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script>
+  <style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=d800ac271429">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=878d9a5227ee" defer></script>
+  <script src="/js/vg-metrics.js?v=88c57247d032" defer></script>
+  <noscript><style>.vg-burger,.vg-theme{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <title>Fabrika Senaryosu: Trafo, Pano ve Kompanzasyon Birlikte | VoltSim</title>
+  <meta name="description" content="Bir fabrikanın trafo, ana dağıtım panosu ve kompanzasyonunu tek senaryoda inceleyin: yükleri açıp kapatın, trafo yüklenmesi, cosφ, kademe, harmonik ve kayıplar aynı hesaptan birlikte güncellensin.">
+  <link rel="canonical" href="https://voltguard.com.tr/voltsim/fabrika-senaryosu/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Fabrika Senaryosu: Trafo, Pano ve Kompanzasyon Birlikte | VoltSim">
+  <meta property="og:description" content="Bir fabrikanın trafo, ana dağıtım panosu ve kompanzasyonunu tek senaryoda inceleyin: yükleri açıp kapatın, trafo yüklenmesi, cosφ, kademe, harmonik ve kayıplar aynı hesaptan birlikte güncellensin.">
+  <meta property="og:url" content="https://voltguard.com.tr/voltsim/fabrika-senaryosu/">
+  <meta property="og:image" content="https://voltguard.com.tr/public/voltsim/fabrika.webp">
+  <meta property="og:locale" content="tr_TR">
+  <meta property="og:site_name" content="VoltGuard">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/voltsim.css?v=41c5865bd22e">
+  <script src="/js/vendor/three-r128.min.js?v=9274bbcec8d9" defer></script>
+  <script src="/js/voltsim/engine.js?v=cc4bdf3b9426" defer></script>
+  <script src="/js/voltsim/calc/trafo.js?v=2aa2aca1ff6e" defer></script>
+  <script src="/js/voltsim/calc/komp.js?v=4d53a1ba46c8" defer></script>
+  <script src="/js/voltsim/calc/fabrika.js?v=49137af2ee72" defer></script>
+  <script src="/js/voltsim/regulations.js?v=84afe7603551" defer></script>
+  <script src="/js/voltsim/identity.js?v=8d1e64fb9446" defer></script>
+  <script src="/js/voltsim/core.js?v=498fc99742d7" defer></script>
+  <script src="/js/voltsim/mod/fabrika.js?v=205aff085535" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltSim","item":"https://voltguard.com.tr/voltsim/"},{"@type":"ListItem","position":3,"name":"Fabrika Senaryosu: Trafo, Pano ve Kompanzasyon","item":"https://voltguard.com.tr/voltsim/fabrika-senaryosu/"}]},{"@type":"WebApplication","name":"Fabrika Senaryosu: Trafo, Pano ve Kompanzasyon","url":"https://voltguard.com.tr/voltsim/fabrika-senaryosu/","applicationCategory":"EngineeringApplication","operatingSystem":"Web","inLanguage":"tr","isAccessibleForFree":true,"description":"Bir fabrikanın trafo, ana dağıtım panosu ve kompanzasyonunu tek senaryoda inceleyin: yükleri açıp kapatın, trafo yüklenmesi, cosφ, kademe, harmonik ve kayıplar aynı hesaptan birlikte güncellensin.","publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr/"}}]}</script>
+</head>
+<body class="vs-page doc-shell">
+  <!--vg:header-->
+  <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+        </span>
+      </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li class="vg-nav__home"><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdHizmetler">Hizmetler</button>
+            <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdHizmetler">
+              <div class="vg-dd__cols">
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblTrafo">Trafo ve yüksek gerilim</span>
+                  <ul aria-labelledby="vgDdLblTrafo">
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-bakimi.html">Trafo ve OG Hücre Bakımı</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblOlcum">Ölçüm, kontrol ve verimlilik</span>
+                  <ul aria-labelledby="vgDdLblOlcum">
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblProje">Proje, uygulama ve otomasyon</span>
+                  <ul aria-labelledby="vgDdLblProje">
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="vg-dd__foot">
+                <a class="vg-dd__more" href="/hizmetler/" data-vg-match="/hizmetler/">Tüm hizmetler</a>
+                <a class="vg-dd__more" href="/fabrika-cozumleri.html">Fabrikalar için çözümler</a>
+              </div>
+            </div>
+          </li>
+          <li><a class="vg-nav__link" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKurumsal">Kurumsal</button>
+            <div class="vg-dd__menu" id="vgDdKurumsal">
+              <ul>
+                <li><a class="vg-dd__link" href="/#hakkimizda">Hakkımızda</a></li>
+                <li><a class="vg-dd__link" href="/#projeler">Projeler</a></li>
+                <li><a class="vg-dd__link" href="/#referanslar">Referanslarımız</a></li>
+                <li><a class="vg-dd__link" href="/ekibimiz.html">Ekibimiz</a></li>
+                <li><a class="vg-dd__link" href="/#haberler">Sahadan Haberler</a></li>
+                <li><a class="vg-dd__link" href="/#iletisim">İletişim</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Teknik Kaynaklar</button>
+            <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdKaynaklar">
+              <div class="vg-dd__cols">
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblHesap">Hesapla ve simüle et</span>
+                  <ul aria-labelledby="vgDdLblHesap">
+                    <li><a class="vg-dd__item" href="/hesaplama-araclari/" data-vg-match="/hesaplama/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h8"/></svg></span><span class="vg-dd__txt"><strong>Hesap Araçları</strong><small>Reaktif ceza, kablo kesiti, ücret hesapları</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/" aria-current="true"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblOgren">Öğren</span>
+                  <ul aria-labelledby="vgDdLblOgren">
+                    <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblSor">Sor ve paylaş</span>
+                  <ul aria-labelledby="vgDdLblSor">
+                    <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
+                    <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/" aria-current="true">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        </div>
+      </nav>
+      <div class="vg-actions">
+        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+      </div>
+    </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+  </header>
+  <!--/vg:header-->
+  <main class="vs-main" id="main" tabindex="-1">
+    <nav class="vs-crumb" aria-label="Sayfa yolu"><a href="/">Ana Sayfa</a><span aria-hidden="true">/</span><a href="/voltsim/">VoltSim</a><span aria-hidden="true">/</span><span aria-current="page">Fabrika Senaryosu</span></nav>
+    <header class="vs-head">
+      <div>
+        <p class="vs-eyebrow">VoltSim · Ortak senaryo · 3D genel görünüm · Tek hat şeması</p>
+        <h1>Fabrika Senaryosu: Trafo, Pano ve Kompanzasyon</h1>
+        <p class="vs-lead">Trafo, ana dağıtım panosu ve kompanzasyon simülasyonlarının hesap motorları tek bir tesis verisiyle çalışır. Bir yükü kapattığınızda pano akımı, kademe seçimi, cosφ, harmonikler ve trafo yüklenmesi aynı girdilerden birlikte yeniden hesaplanır; değişiklik olay geçmişine yazılır.</p>
+        <button type="button" class="vg-fav" aria-pressed="false" data-vg-fav disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg><span>Favorilere ekle</span></button>
+        <span class="vg-fav-msg" role="status" aria-live="polite"></span>
+      </div>
+      <ul class="vs-tags" aria-label="Hesaplama ve analizler"><li>Ortak hesap zinciri</li><li>Yük aç/kapat</li><li>Kademe ve cosφ</li><li>Trafo yüklenmesi</li><li>A/B karşılaştırma</li><li>Olay geçmişi</li></ul>
+    </header>
+    <p class="vs-scope" role="note"><strong>Kapsam:</strong> Eğitim ve ön değerlendirme modeli. Gerçek zamanlı tesis bağlantısı yoktur; bu bir canlı dijital ikiz değildir. Değerler ölçüm değil, girdiğiniz verilerden hesaplanır.</p>
+
+    <div class="vs-app" data-vs-module="fabrika">
+      <div class="vs-toolbar" role="toolbar" aria-label="Simülasyon araçları">
+        <div class="vs-toolbar__g">
+          <button class="vs-tb vs-tb--primary" type="button" data-vs-act="start"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg><span>Simülasyonu başlat</span></button>
+          <button class="vs-tb" type="button" data-vs-act="pause" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><span>Durdur</span></button>
+          <button class="vs-tb" type="button" data-vs-act="reset"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg><span>Sıfırla</span></button>
+          <label class="vs-tb vs-tb--select"><span class="sr-only">Örnek senaryo yükle</span><select data-vs-scenario><option value="">Örnek senaryo yükle…</option></select></label>
+        </div>
+        <div class="vs-toolbar__g">
+          <button class="vs-tb" type="button" data-vs-act="mode" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4zM3 12l9 4 9-4M3 17l9 4 9-4"/></svg><span>2D şema</span></button>
+          <button class="vs-tb" type="button" data-vs-act="report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5"/></svg><span>Teknik rapor (PDF)</span></button>
+          <button class="vs-tb" type="button" data-vs-act="csv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 10h16M4 15h16M10 4v16"/></svg><span>CSV</span></button>
+          <button class="vs-tb" type="button" data-vs-act="save"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"/></svg><span>JSON dışa aktar</span></button>
+          <button class="vs-tb" type="button" data-vs-act="load"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m-4 4 4-4 4 4M5 15v6h14v-6"/></svg><span>JSON içe aktar</span></button>
+          <input type="file" accept=".json,application/json" data-vs-file hidden>
+          <label class="vs-tb vs-tb--select" title="3D görüntü kalitesi: düşük ayar pil ve eski telefonlar için daha akıcıdır"><span class="sr-only">3D görüntü kalitesi</span><select data-vs-quality><option value="auto">Kalite: Otomatik</option><option value="high">Kalite: Yüksek</option><option value="low">Kalite: Düşük (mobil/pil)</option></select></label>
+        </div>
+        <p class="vs-scn" data-vs-scenario-desc aria-live="polite"></p>
+      </div>
+
+      <div class="vs-mtabs" role="tablist" aria-label="Çalışma alanı">
+        <button type="button" role="tab" id="vs-tab-params" aria-controls="vs-pane-params" data-vs-pane="params" aria-selected="false" tabindex="-1">Parametreler</button>
+        <button type="button" role="tab" id="vs-tab-stage" aria-controls="vs-pane-stage" data-vs-pane="stage" aria-selected="true">3D Simülasyon</button>
+        <button type="button" role="tab" id="vs-tab-analysis" aria-controls="vs-pane-analysis" data-vs-pane="analysis" aria-selected="false" tabindex="-1">Analiz</button>
+      </div>
+
+      <div class="vs-work" data-pane="stage">
+        <section class="vs-left" id="vs-pane-params" aria-labelledby="vs-left-h">
+          <h2 class="vs-panel-h" id="vs-left-h">Parametreler</h2>
+          <div class="vs-scroll" data-vs-controls></div>
+        </section>
+        <section class="vs-center" id="vs-pane-stage" aria-label="3D simülasyon alanı">
+          <div class="vs-stage" data-vs-stage data-mode="3d">
+            <canvas class="vs-canvas" role="img" aria-label="Fabrika Senaryosu: Trafo, Pano ve Kompanzasyon — döndürmek için sürükleyin; klavyede ok tuşları ve +/− kamera, [ ve ] ekipman seçer, Enter ayrıntı kartını açar"></canvas>
+            <canvas class="vs-2d" data-vs-2d role="img" aria-label="2D şema görünümü"></canvas>
+            <div class="vs-labels" aria-hidden="true"></div>
+            <div class="vs-hud"><span class="vs-badge" data-vs-badge data-level="info">Hazırlanıyor…</span></div>
+            <div class="vs-vtools" role="group" aria-label="Görünüm araçları">
+              <button class="vs-vt" type="button" data-vs-act="labels" aria-pressed="true" title="Etiketler" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span class="sr-only">Etiketler</span></button>
+              <button class="vs-vt" type="button" data-vs-act="ghost" aria-pressed="false" title="Şeffaf kapak" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" stroke-dasharray="3 3"/><path d="M9 9h6v6H9z"/></svg><span class="sr-only">Şeffaf kapak</span></button>
+              <button class="vs-vt" type="button" data-vs-act="section" aria-pressed="false" title="Kesit görünümü" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M12 2v20"/></svg><span class="sr-only">Kesit görünümü</span></button>
+              <button class="vs-vt" type="button" data-vs-act="explode" aria-pressed="false" title="Patlatılmış görünüm" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v5m0 8v5M3 12h5m8 0h5"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg><span class="sr-only">Patlatılmış görünüm</span></button>
+              <button class="vs-vt" type="button" data-vs-act="spin" aria-pressed="false" title="Otomatik döndür" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg><span class="sr-only">Otomatik döndür</span></button>
+              <button class="vs-vt" type="button" data-vs-act="camera" title="Kamerayı sıfırla" data-vs-3donly><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4m10 0h4M12 3v4m0 10v4"/><circle cx="12" cy="12" r="4"/></svg><span class="sr-only">Kamera görünümünü sıfırla</span></button>
+              <button class="vs-vt" type="button" data-vs-act="full" title="Tam ekran"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg><span class="sr-only">Tam ekran</span></button>
+            </div>
+            <div class="vs-clip" data-vs-clip hidden><label>Kesit konumu <input type="range" min="0" max="100" value="55"></label></div>
+            <div class="vs-info" data-vs-info hidden role="dialog" aria-label="Ekipman ayrıntısı"></div>
+            <p class="vs-hint">Sürükle: döndür · Sağ tık/iki parmak: kaydır · Tekerlek: yakınlaştır · Ekipmana tıkla ya da [ ] ve Enter: ayrıntı</p>
+            <div class="vs-fallback" data-vs-fallback hidden role="status" aria-live="polite"><strong>3D görünüm açılamadı.</strong> Tarayıcınız WebGL desteklemiyor ya da kapalı; 2D şema gösteriliyor. Hesaplar, grafikler ve rapor çalışmaya devam eder.</div>
+          </div>
+        </section>
+        <section class="vs-right" id="vs-pane-analysis" aria-labelledby="vs-right-h">
+          <h2 class="vs-panel-h" id="vs-right-h">Analiz</h2>
+          <div class="vs-scroll" data-vs-analysis>
+            <div data-vs-ro></div>
+            <div class="vs-charts" data-vs-charts></div>
+            <h3 class="vs-sub">Sonuç durumu</h3>
+            <div class="vs-status" data-vs-status aria-live="polite"></div>
+            <h3 class="vs-sub">Ön kontroller</h3>
+            <p class="vs-small">Model sınırları içindeki ön kontroldür; tasarım doğrulaması, mevzuata uygunluk belgesi veya uygulama onayı değildir.</p>
+            <ul class="vs-checks" data-vs-checks></ul>
+            <details class="vs-asm"><summary>Varsayımlar ve bağıntılar</summary><div data-vs-assumptions></div></details>
+            <a class="vs-jump" href="#hesap-kimligi">Hesaplama kimliği ↓</a> <a class="vs-jump" href="#mevzuat">Mevzuat ve standartlar ↓</a>
+          </div>
+        </section>
+      </div>
+      <noscript><p class="vs-noscript">Simülasyon için JavaScript gereklidir. Aşağıdaki mevzuat ve standart bilgileri JavaScript olmadan da okunabilir.</p></noscript>
+    </div>
+
+    <p class="vs-disclaimer"><strong>Önemli:</strong> VoltSim mühendislik eğitimi ve ön değerlendirme amacıyla hazırlanmıştır. Nihai proje, ekipman seçimi, uygulama ve mevzuat uygunluğu yetkili mühendis tarafından değerlendirilmelidir. Girdileriniz yalnızca tarayıcınızda işlenir; VoltGuard’a gönderilmez.</p>
+
+    <section class="vs-ident" id="hesap-kimligi" aria-labelledby="ident-h">
+      <div class="vs-sec-head"><h2 id="ident-h">Hesaplama kimliği</h2><p>Fabrika: ortak trafo, pano ve kompanzasyon senaryosu. Sonuç durumları ayrıdır: “Veri eksik”, “Mühendis incelemesi gerekli”, “Varsayımsal”, “Hesaplandı”. Hiçbiri mevzuata uygunluk veya uygulama onayı anlamına gelmez. <a href="/voltsim/hesap-kimlikleri/#voltsim-fabrika">Tüm hesaplama kimlikleri →</a></p></div>
+      <details class="vs-id"><summary>Yöntem, birimler, varsayımlar ve doğrulama testleri</summary>
+        <div class="vs-id__body">
+          <p>Aynı tesis girdileriyle yükleri, kompanzasyon kademelerini, ADP barasını ve trafoyu sırayla hesaplar; günlük reaktif enerji oranını, trafo kaybını ve iki senaryonun farkını gösterir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>loads</td><td>kW, —, m, mm², A</td><td>Yük grupları: motor mil gücü, cosφ, verim, kablo ve koruma</td></tr><tr><td>trafo</td><td>kVA, V, W, %</td><td>Trafo anma değerleri, P0/Pk kayıpları ve uk</td></tr><tr><td>supply</td><td>kV, MVA</td><td>OG gerilimi ve şebeke kısa devre gücü</td></tr><tr><td>board</td><td>A, kA, m, mm²</td><td>Ana şalter, bara ve trafo–ADP kablosu</td></tr><tr><td>comp</td><td>kVAr, %, —</td><td>Kademeler, reaktör oranı, çalışma modu ve hedef cosφ</td></tr><tr><td>facility.shift, facility.price</td><td>—, TL/kWh</td><td>Örnek günlük yük profili ve enerji birim fiyatı</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P, Q, S, I</td><td>kW, kVAr, kVA, A</td><td>Yük toplamları ve ADP bara durumu</td></tr><tr><td>Qc, cosφ, THDv</td><td>kVAr, —, %</td><td>Kompanzasyon sonrası durum</td></tr><tr><td>K, losses, θh</td><td>—, W, °C</td><td>Trafo yüklenmesi, kaybı ve kararlı sıcak noktası</td></tr><tr><td>indPct, capPct</td><td>%</td><td>Örnek günün reaktif/aktif enerji oranları</td></tr><tr><td>lossYear, costYear</td><td>kWh/yıl, TL/yıl</td><td>Aynı örnek günün 365 kez tekrarıyla kayıp ve maliyet</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Yükler → E.komp.compute → E.pano.compute → E.trafo.compute (aynı senaryo)</code></li><li><code>P_el = P_mil/η; Q_bara = ΣQ_yük − ΣQ_kademe; K = S_bara/Sr</code></li><li><code>Her saat aynı zincir: E_kayıp,gün = Σ(P0 + Pk·K_h²)·1 sa</code></li><li><code>A/B karşılaştırması her senaryoyu aynı motorlarla yeniden hesaplar</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Dengeli üç faz, tek trafo ve tek ADP; akımlar anma bara geriliminde hesaplanır, gerilim düşümünün akıma geri etkisi yoktur.</li><li>Yük türlerinin harmonik profilleri örnektir; akımlar aynı faz açısıyla aritmetik toplanır.</li><li>Trafo ısıl modeli kararlı ONAN varsayılanlarıdır; harmoniklerin trafo kayıp artışına etkisi dahil değildir.</li><li>Otomatik röle ideal kalıcı durum modeli; tüm aktif yükler örnek vardiya profiliyle aynı oranda değişir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Eğitim ve ön değerlendirme; gerçek zamanlı tesis bağlantısı ve canlı dijital ikiz değildir.</li><li>AG ana dağıtım modeli: en çok 5000 kVA; bakır çıkış kesiti en çok 120 mm², üstü paralel kablo.</li><li>OG koruma, röle ayarı, seçicilik ve ölçülmüş aylık fatura analizi kapsam dışıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Yük ve harmonik profilleri (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li><li>Trafo boşta kaybı P0 (katalog)</li><li>Trafo yük kaybı Pk (katalog)</li><li>Trafo kısa devre gerilimi uk (katalog)</li><li>OG şebeke kısa devre gücü (saha)</li><li>Günlük yük profili (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60076-1, IEC 60076-7</li><li>IEC 60909-0</li><li>TS HD 60364-4-41, -4-43, -5-52</li><li>IEC 60831-1</li><li>EPDK Kurul Kararı 5999-3, Madde 13</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/calc/fabrika.js, js/voltsim/engine.js, js/voltsim/calc/trafo.js, js/voltsim/calc/komp.js</span><span>Doğrulama testleri: voltsim-fabrika.test.cjs, voltsim-tasks.test.cjs, calc-identity.test.cjs</span></p>
+        </div>
+      </details>
+    </section>
+
+    <section class="vs-regs" id="mevzuat" aria-labelledby="mevzuat-h">
+      <div class="vs-sec-head">
+        <h2 id="mevzuat-h">Mevzuat ve teknik standartlar</h2>
+        <p>Bağlayıcı düzenlemeler (kanun, yönetmelik) ile gönüllü standartlar ayrı listelenmiştir. Standartlar bir yönetmelik atıf yaptığında veya sözleşmede istendiğinde bağlayıcı hale gelir. Doğrulama tarihi her kayıtta ayrı yazılıdır; tarihi olmayan kayıt resmî kaynaktan doğrulanmamıştır.</p>
+      </div>
+      <div class="vs-regs__cols">
+        <div><h3>Bağlayıcı düzenlemeler</h3><ul class="vs-reg-list"><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ETKB</span></div>
+          <strong>Elektrik İç Tesisleri Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 04.11.1984 / 18565</span>
+          <p><b>Kapsam:</b> Bina içi alçak gerilim tesisatının temel yönetmeliğidir. Gerilim düşümü sınırları sayaçtan değil yapı bağlantı kutusundan itibaren tanımlanır; yönetmelikte sayısal bir 30 mA şartı bulunmaz.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 57 a.3-i</b> Yapı bağlantı kutusu ile tüketim araçları arasındaki gerilim düşümü, sürekli en büyük işletme akımında aydınlatma ve priz devrelerinde %1,5'i, motor devrelerinde %3'ü geçmemelidir (değişik: RG 30.11.1995/22479).</li><li><b>Madde 57 a.3-ii</b> Yapı veya yapı kümesi kendi transformatöründen besleniyorsa, transformatör çıkış uçları ile yapı bağlantı kutusu arasındaki gerilim düşümü %5'i geçmemelidir.</li><li><b>Madde 18</b> Yapı bağlantı kutusuna yangın koruma amaçlı, sayaç kolon devrelerine hayat koruma eşikli kaçak akım düzeni ile termik-manyetik şalter/otomatik sigorta konulması ve koruma düzenleri arasında seçicilik sağlanması istenir; mA değeri yazılmaz (değişik: RG 16.06.2004/25494).</li><li><b>Madde 39</b> Hata akımı koruma düzeni arızalı devreyi 0,2 s içinde açmalı, korunan aygıtların topraklama direnci R ≤ 50 V / IΔn olmalı; özellikle banyo gibi tehlikeli yerlerdeki priz devrelerinde hata akımı korumanın kullanılması 'tavsiye edilir'.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Başlıca değişiklikler: 30.11.1995/22479 (Madde 57 gerilim düşümü dahil), 25.10.1996/22798, 12.07.1998/23400, 08.12.2000/24254, 16.06.2004/25494 (Madde 18 sayaç/koruma). Lexpera konsolide listesine göre son değişiklik 12.01.2020/31006 (Madde 7, 19, 24). mevzuat.gov.tr metni yalnızca .doc ek olarak sunuyor; madde metinleri bir kamu (MEB) kopyasından okundu.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=10391&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ETKB</span></div>
+          <strong>Elektrik İç Tesisleri Proje Hazırlama Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 03.12.2003 / 25305</span>
+          <p><b>Kapsam:</b> İç tesisat projelerinin (kuvvet, aydınlatma, kompanzasyon, koruma, yangın algılama vb.) nasıl hazırlanacağını düzenler. İş Ekipmanları Yönetmeliği, projesi olmayan elektrik tesisatının bu yönetmeliğe göre projelendirilmesini ister.</p>
+          
+          
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=9721&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ETKB</span></div>
+          <strong>Elektrik Tesislerinde Topraklamalar Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 21.08.2001 / 24500</span>
+          <p><b>Kapsam:</b> YG/AG topraklama tasarımı, dokunma/adım gerilimi ve periyodik ölçümler için temel yönetmeliktir. İzin verilen dokunma gerilimi-süre ilişkisi Şekil-6'dadır.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 5-d ve Şekil-6</b> YG şebekelerindeki toprak hataları için izin verilen en yüksek dokunma gerilimi (UTp) hata süresine bağlı bir eğri olarak Şekil-6'da verilir; akım eğridekinden uzun sürerse UTp için 75 V kullanılabilir. Bu bir ek değil, Madde 5 içindeki şekildir.</li><li><b>Ek-C</b> Dokunma gerilimi ile vücut akımı ilişkisini ve ayakkabı, yüzey kaplaması gibi ek dirençlerin hesaba katılma yöntemini açıklar.</li><li><b>Ek-P</b> Önerilen muayene/ölçme periyotları: üretim-iletim-dağıtım tesisleri 2 yıl, hatlar 5 yıl; sanayi ve ticaret merkezlerinde topraklama direnci ölçümü 1 yıl, diğer kontroller 2 yıl; parlayıcı-patlayıcı ve ıslak ortamlarda en fazla 1 yıl.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Konsolide metinde görülen değişiklik: 04.12.2019/30968 (Madde 2 Dayanak).</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=10392&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ETKB</span></div>
+          <strong>Elektrik Kuvvetli Akım Tesisleri Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 30.11.2000 / 24246</span>
+          <p><b>Kapsam:</b> 1 kV üstü tesislerin (trafo merkezleri, hücreler, hatlar) kuruluş ve işletme kurallarını içerir. Trafo koruma seçimi ve YG işletme sorumluluğu buradan kaynaklanır.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 38</b> Her dağıtım transformatörünün AG çıkışına termik-manyetik açıcılı ana kesici konulmalı; belirli koşullarda dağıtım şirketleri bundan muaf tutulabilir.</li><li><b>Madde 40-a</b> 400 kVA'ya kadar dağıtım trafoları giriş tarafında sigortalı ayırıcı ile korunur; 400 kVA üstünde röleli kesici, 1600 kVA'ya kadar ise uygun sigortalı yük ayırıcısı da kullanılabilir.</li><li><b>Madde 40-b</b> Ölçü transformatörü sınıfları: enerji ölçümünde akım trafosu 0,5, gerilim trafosu 1; koruma için en az 3 sınıfı.</li><li><b>Madde 60</b> Tüm YG kuvvetli akım tesislerinde teknik konulardan sorumlu bir elektrik mühendisi bulunmalı; 154 kV ve üstü tesislerde en az bir elektrik mühendisi işletme sorumlusu olmalıdır.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Konsolide metinde değişiklikler: 08.02.2007/26428, 23.01.2018/30310, 12.01.2020/31006, 11.05.2023/32187.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=9949&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ETKB</span></div>
+          <strong>Elektrik Tesisleri Proje Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 30.12.2014 / 29221 (mükerrer)</span>
+          <p><b>Kapsam:</b> Üretim, iletim, dağıtım ve YG tesislerinin proje onay ve kabul süreçlerini düzenler. Onaysız projeyle kurulan tesise enerji verilmez.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 5</b> Tasarımda TS, EN, IEC/ISO standartları, IEEE vb. uluslararası kodlar, ilgili mevzuat ve kamu şartnameleri esas alınır.</li><li><b>Madde 8</b> Proje onayı, kabul ve tutanak onay/teslim yetkisi Bakanlığa aittir; Bakanlık bu yetkiyi kurum/kuruluş veya tüzel kişilere devredebilir.</li><li><b>Madde 9 (2)-(4)</b> Proje onayı yapılmamış tesise enerji verilemez, kabulü yapılamaz ve işletilmesi yasaktır.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Değişiklikler: 07.11.2015/29525, 25.01.2019/30666, 09.04.2021/31449, 10.05.2021/31480, 09.05.2024/32541, 09.02.2025/32808.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=20383&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ÇSGB</span></div>
+          <strong>İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 25.04.2013 / 28628</span>
+          <p><b>Kapsam:</b> İşyerlerinde elektrik ve topraklama tesisatının yıllık periyodik kontrolünün yasal dayanağıdır. 23.12.2025 değişikliği Madde 7 ve EK-III'ü yeniden düzenlemiştir.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 7</b> EK-III tablolarındaki ekipmanlar yetkili kişilerce periyodik kontrole tabidir; usul ve esaslar EK-III'tedir (değişik: 23.12.2025/33116).</li><li><b>EK-III 2.3.1–2.3.2</b> İlgili standartta aksi yoksa tesisatlar yılda bir kontrol edilir; elektrik, topraklama, yıldırımdan korunma, akü, trafo, jeneratör tesisatlarını yetkili elektrik mühendisi/tekniker vb. kontrol eder.</li><li><b>EK-III 2.3.7</b> Elektrik, topraklama ve yıldırımdan korunma tesisatlarında kontrolde proje aranır; projesi olmayan tesisat işverence projelendirilmelidir.</li><li><b>EK-III Tablo-3</b> Elektrik ve topraklama tesisatı, yıldırımdan korunma, jeneratör (TS ISO 8528), yangın algılama (TSE CEN/TS 54-14) için standartta süre yoksa en fazla 1 yıl; akümülatör ve transformatör için 1 yıl.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Değişiklikler: 02.05.2014/28988, 23.07.2016/29779, 24.04.2017/30047, 18.02.2022/31754, 04.02.2024/32450, 23.12.2025/33116 (Madde 7 ve EK-III'te değişiklikler; değişiklik gerçektir).</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=18318&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">EPDK</span></div>
+          <strong>Elektrik Şebeke Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 28.05.2014 / 29013 (mükerrer)</span>
+          <p><b>Kapsam:</b> RES/GES şebeke bağlantı kriterleri (aktif/reaktif güç kontrolü, frekans tepkisi, arıza sırasında devrede kalma) Ek-18'dedir. Madde 14'teki reaktif oranları yalnız iletime bağlı kullanıcılar içindir; dağıtıma bağlı tüketicilerde EPDK Tarife Uygulamaları Usul ve Esasları geçerlidir.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 14 (1)</b> İletim sistemine doğrudan bağlı tüketiciler ve dağıtım şirketleri için aylık endüktif reaktif/aktif oranı %20'yi, kapasitif reaktif/aktif oranı %15'i geçemez.</li><li><b>Madde 19 (f)</b> Rüzgar ve güneş (fotovoltaik) üretim tesislerinin sisteme bağlantısında Ek-18 hükümleri uygulanır.</li><li><b>Ek-18 E.18.1</b> Ek-18 şebeke bağlantı kriterleri iletime bağlı RES/GES'lere, OG'den dağıtıma bağlı lisanslı GES'lere ve dağıtıma bağlı 10 MW ve üzeri lisanslı RES'lere uygulanır.</li><li><b>Ek-18 E.18.9</b> Elektriksel kurulu gücü 10 MW ve üzeri lisanslı ve lisanssız RES'ler TEİAŞ RİTM üzerinden izlenecek altyapıyı kurmalıdır.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Son değişiklikler: 17.12.2024/32755 (Ek-18 kapsam ve RİTM izleme), 21.01.2025/32789 (Madde 14 ve E.18.4 frekans tepkisi), 29.12.2025/33122.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=19722&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Kurul Kararı</span><span class="vs-reg__iss">EPDK</span></div>
+          <strong>Dağıtım Lisansı Sahibi Tüzel Kişiler ve Görevli Tedarik Şirketlerinin Tarife Uygulamalarına İlişkin Usul ve Esaslar</strong>
+          <span class="vs-reg__rg">Resmî Gazete 31.12.2015 / 29579 (Kurul Kararı 5999-3)</span>
+          <p><b>Kapsam:</b> Dağıtım şebekesine bağlı işletmelerin reaktif ceza sınırlarını belirler. 9 kW değil 15 kW eşiği geçerlidir; 50 kVA altı ve üstü için oranlar farklıdır.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 13 (1)</b> Mesken, aydınlatma, tek fazlı tüketiciler ile kurulu gücü 15 kW'a (dahil) kadar olan kullanıcılara reaktif enerji tarifesi uygulanmaz; takvim yılındaki ilk ihlalin bedeli faturadan düşülür.</li><li><b>Madde 13 (2)</b> Kurulu gücü 50 kVA'nın altındaki kullanıcılarda sınır: endüktif reaktif aktif enerjinin %33'ü, kapasitif reaktif %20'si.</li><li><b>Madde 13 (3)</b> Kurulu gücü 50 kVA ve üstündeki kullanıcılarda sınır: endüktif %20, kapasitif %15.</li><li><b>Madde 13 (4),(6)</b> Sınır aşılırsa ölçülen reaktif enerjinin tamamı faturalanır; iki sınır birden aşılırsa yüksek olan reaktif değer esas alınır.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: EPDK sayfasında 'son hali' olarak yayımlanan Word metni okundu; metinde sonraki değişikliklerin tarih listesi yok, bu nedenle son değişiklik tarihi doğrulanamadı.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://www.epdk.gov.tr/Detay/Icerik/3-0-1-3/elektrikusul-ve-esaslar" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">Cumhurbaşkanlığı (BKK 2007/12937); uygulamada ÇŞİDB/İçişleri</span></div>
+          <strong>Binaların Yangından Korunması Hakkında Yönetmelik</strong>
+          <span class="vs-reg__rg">Resmî Gazete 19.12.2007 / 26735</span>
+          <p><b>Kapsam:</b> Binalarda trafo odası, jeneratör, acil aydınlatma ve yangın algılama sistemleri için zorunlu yangın güvenliği şartlarını içerir.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 65</b> Transformatör odasının duvar, taban ve tavanı en az 120 dakika yangına dayanıklı olmalı; yağlı trafoda yağ toplama çukuru gerekir.</li><li><b>Madde 67</b> Elektrik tesisatı, kaçış yolu ve acil aydınlatma ile yangın algılama sistemleri ilgili yönetmelik ve standartlara göre tasarlanıp ruhsat veren idarenin onayına tabidir; periyodik kontrolü bina sahibi/yöneticisi yaptırır.</li><li><b>Madde 74–75</b> Yangın algılama ve uyarı sistemleri EN 54'e uygun olmalı; yangın butonlarına yatay erişim mesafesi 60 m'yi geçmemeli ve butonlar 110–130 cm yüksekliğe konmalıdır.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Son değişiklikler: 04.11.2020/31294, 20.11.2021/31665, 01.07.2025/32943.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=200712937&amp;MevzuatTur=21&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Oda düzenlemesi</span><span class="vs-reg__iss">EMO (TMMOB)</span></div>
+          <strong>TMMOB Elektrik Mühendisleri Odası Elektrik Yüksek Gerilim Tesisleri İşletme Sorumluluğu Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 18.03.2004 / 25406</span>
+          <p><b>Kapsam:</b> YG tesisleri için işletme sorumlusu mühendisin görev ve yetkilerini düzenleyen meslek odası yönetmeliğidir. Dayanağı TMMOB Kanunu olduğundan bağlayıcılığı oda üyeleri ve sözleşme ilişkisi üzerinden işler; YG tesisinde sorumlu mühendis şartı ayrıca EKAT Madde 60'tadır.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 3</b> Hukuki dayanağı 6235 sayılı TMMOB Kanunu'dur.</li><li><b>Madde 4</b> YG tesislerinde geçici kabulden başlayarak tesis gerilim altında kaldığı sürece uygulanır.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Değişiklikler: 12.01.2008/26754, 22.01.2019/30663, 05.10.2024/32683.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=14362&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ÇŞİDB (3194 sayılı İmar Kanunu dayanaklı)</span></div>
+          <strong>Elektrik ile İlgili Fen Adamlarının Yetki, Görev ve Sorumlulukları Hakkında Yönetmelik</strong>
+          <span class="vs-reg__rg">Resmî Gazete 20.01.2026 / 33143</span>
+          <p><b>Kapsam:</b> Elektrik iç tesisatında mühendis dışındaki fen adamlarının proje ve yapım yetki sınırlarını belirleyen 2026 tarihli yönetmeliktir.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 5 (1)</b> Yapım işleri kurulu güce göre: teknisyen 1.000 kW'a, tekniker/yüksek tekniker 2.000 kW'a, teknik öğretmen 2.500 kW'a kadar üstlenebilir.</li><li><b>Madde 5 (2)</b> Proje düzenleme yetkisi: teknisyen 30 kW, tekniker/yüksek tekniker 50 kW, teknik öğretmen 80 kW kurulu güce kadar.</li></ul>
+          
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=45051&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Yönetmelik</span><span class="vs-reg__iss">ETKB</span></div>
+          <strong>Elektrik Tesisleri Kabul Yönetmeliği</strong>
+          <span class="vs-reg__rg">Resmî Gazete 07.05.1995 / 22280</span>
+          <p><b>Kapsam:</b> İletim/dağıtım tesislerinin geçici ve kesin kabul usulünü düzenler. Üretim ve depolama tesisleri için ayrıca 2020 tarihli Kabul Yönetmeliği vardır.</p>
+          <ul class="vs-reg__arts"><li><b>Madde 1–2</b> Yapımı tamamlanan üretim, iletim ve dağıtım tesislerinin kabul işlemlerini kapsar.</li></ul>
+          <p class="vs-reg__am">Değişiklikler: Konsolide metinde son değişiklikler 11.12.2019/30975 ve 06.11.2021/31651.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=5244&amp;MevzuatTur=7&amp;MevzuatTertip=5" target="_blank" rel="noopener noreferrer">Resmî kaynak ↗</a>
+        </li></ul></div>
+        <div><h3>Standartlar ve rehberler</h3><ul class="vs-reg-list"><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE (TS EN IEC 61439-1, -2)</span></div>
+          <strong>IEC 61439-1/-2 Alçak gerilim anahtarlama ve kumanda düzeni panoları (Genel kurallar / Güç panoları)</strong>
+          <span class="vs-reg__rg">IEC 61439-1:2020 (Ed.3), IEC 61439-2:2020 (Ed.3)</span>
+          <p><b>Kapsam:</b> Pano imalatı ve tasarım doğrulamasının (sıcaklık artışı, kısa devre dayanımı, dielektrik) temel standardıdır. -2 bölümü PSC panolarını kapsar ve 2020 baskısında PV uygulamaları için ekler içerir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: IEC 61439-1:2020 için COR1:2021 ve COR2:2023 yayımlandı.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/32338" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 60909-0 Üç fazlı AC sistemlerde kısa devre akımları – Akımların hesaplanması</strong>
+          <span class="vs-reg__rg">IEC 60909-0:2026 (Ed.3); önceki IEC 60909-0:2016</span>
+          <p><b>Kapsam:</b> Kısa devre hesabının uluslararası yöntemidir. Temmuz 2026'da yeni baskı çıktı; TS karşılığının hâlâ 2016 tabanlı olması muhtemel.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: Ed.3 (2026-07-23) 2016 baskısının yerini aldı.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/68454" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">CENELEC / IEC / TSE (TS HD 60364-4-41)</span></div>
+          <strong>HD 60364-4-41 / IEC 60364-4-41 Alçak gerilim tesisleri – Elektrik çarpmasına karşı korunma</strong>
+          <span class="vs-reg__rg">IEC 60364-4-41:2005+AMD1:2017; HD 60364-4-41:2017 (CENELEC sürüm etiketi kontrol edilmeli)</span>
+          <p><b>Kapsam:</b> Otomatik ayırma süreleri, TN/TT/IT koşulları ve 30 mA ek koruma şartlarının kaynağıdır. İş Ekipmanları Yönetmeliği periyodik kontrolde TS HD 60364-4 serisine atıf yapar.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: IEC 60364-4-41:2005+AMD1:2017 konsolide baskı.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/60169" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">CENELEC / IEC / TSE (TS HD 60364-5-52)</span></div>
+          <strong>HD 60364-5-52 / IEC 60364-5-52 Elektrik donanımının seçimi ve tesisi – Kablo sistemleri</strong>
+          <span class="vs-reg__rg">IEC 60364-5-52:2009+AMD1:2024; HD 60364-5-52:2011 (+A11)</span>
+          <p><b>Kapsam:</b> Kablo akım taşıma kapasitesi tabloları, düzeltme katsayıları ve döşeme yöntemleri bu standarttadır. Gerilim düşümü için bilgilendirici değerler verir; bağlayıcı sınırlar Türkiye'de EİTY Madde 57'dedir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: IEC tarafında AMD1:2024 yayımlandı (2024-11-22); CENELEC HD karşılığı kontrol edilmeli.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/103734" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE (TS EN 60898-1)</span></div>
+          <strong>IEC 60898-1 Ev ve benzeri tesisler için aşırı akım koruma devre kesicileri (MCB) – AC</strong>
+          <span class="vs-reg__rg">IEC 60898-1:2015+AMD1:2019 (Ed.2.1)</span>
+          <p><b>Kapsam:</b> B, C, D eğrili minyatür devre kesicilerin açma karakteristiklerini tanımlar; kapsamı 440 V, 125 A ve 25 kA'e kadardır.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: AMD1:2019 ve COR1:2020.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/66269" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 60947-2 Alçak gerilim anahtarlama düzenleri – Devre kesiciler</strong>
+          <span class="vs-reg__rg">IEC 60947-2:2024 (Ed.6)</span>
+          <p><b>Kapsam:</b> Endüstriyel kompakt ve açık tip kesicilerin (MCCB/ACB) standardıdır; 1000 V AC / 1500 V DC'ye kadar.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: Ed.6 (2024), 2016 baskısı ve AMD1:2019'un yerini aldı.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/66277" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE (TS EN 61008-1, TS EN 61009-1)</span></div>
+          <strong>IEC 61008-1 / IEC 61009-1 Kaçak akım koruma şalterleri (RCCB) / Aşırı akım korumalı kaçak akım şalterleri (RCBO)</strong>
+          <span class="vs-reg__rg">IEC 61008-1:2024 (Ed.4), IEC 61009-1:2024 (Ed.4)</span>
+          <p><b>Kapsam:</b> Ev tipi kaçak akım şalterlerinin açma eşikleri ve süreleri bu standartlardadır. TS EN karşılıkları büyük olasılıkla hâlâ 2010 tabanlıdır.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: Her ikisinde Ed.4 2024-11-21'de yayımlandı ve 2010 baskılarının yerini aldı.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/67980" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 60076-1 Güç transformatörleri – Genel</strong>
+          <span class="vs-reg__rg">IEC 60076-1:2011 (Ed.3)</span>
+          <p><b>Kapsam:</b> Transformatör anma değerleri, toleranslar ve rutin/tip testlerinin genel standardıdır.</p>
+          
+          
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://webstore.iec.ch/en/publication/588" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 60076-7 Yağlı güç transformatörleri için yükleme kılavuzu</strong>
+          <span class="vs-reg__rg">IEC 60076-7:2018 (Ed.2)</span>
+          <p><b>Kapsam:</b> Sıcak nokta sıcaklığı, yaşlanma hızı ve aşırı yükleme sınırlarının hesabı için rehberdir. Tablo değerleri standart metninden ayrıca doğrulanmalıdır.</p>
+          
+          
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/34351" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">CENELEC / TSE</span></div>
+          <strong>EN 50588-1 Orta güç transformatörleri 50 Hz, en yüksek donanım gerilimi 36 kV'u aşmayan – Genel gereklilikler</strong>
+          <span class="vs-reg__rg">EN 50588-1:2017</span>
+          <p><b>Kapsam:</b> AB Ekotasarım (548/2014) verim sınıflarıyla ilişkili dağıtım trafosu kayıp şartlarını içerir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: EN 50588-1:2015 ve A1:2016 geri çekildi; yerini EN 50588-1:2017 aldı (ikincil kaynaklar).</p>
+          <p class="vs-reg__ver">Resmî kaynaktan doğrulanmadı</p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 62271-200 Metal muhafazalı AC anahtarlama düzenleri (1–52 kV)</strong>
+          <span class="vs-reg__rg">IEC 62271-200:2021+AMD1:2024 (Ed.3.1)</span>
+          <p><b>Kapsam:</b> OG hücrelerinin (LSC, IAC iç ark sınıfı vb.) tasarım ve test standardıdır.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: AMD1:2024.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://webstore.iec.ch/en/publication/96236" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 62271-202 Prefabrik trafo merkezleri (1–52 kV)</strong>
+          <span class="vs-reg__rg">IEC 62271-202:2022 (Ed.3)</span>
+          <p><b>Kapsam:</b> Beton/metal köşk tipi trafo merkezlerinin sıcaklık sınıfı ve iç ark testlerini tanımlar.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: COR1:2023.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://webstore.iec.ch/en/publication/66264" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 60831-1 1000 V'a kadar kendi kendini onaran tip şönt güç kondansatörleri</strong>
+          <span class="vs-reg__rg">IEC 60831-1:2014 (Ed.3)</span>
+          <p><b>Kapsam:</b> Kompanzasyon kondansatörlerinin anma değerleri ve aşırı yüklenebilirlik şartlarını içerir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: COR1:2014.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://webstore.iec.ch/en/publication/3609" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 61921 Güç kondansatörleri – AG güç faktörü düzeltme bankaları</strong>
+          <span class="vs-reg__rg">IEC 61921:2017 (Ed.2)</span>
+          <p><b>Kapsam:</b> Kompanzasyon panolarının (kondansatör bankaları) tasarım ve testleri; uygulanabildiği yerde IEC 61439-1/-2 ile birlikte kullanılır.</p>
+          
+          
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://webstore.iec.ch/en/publication/26596" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">CENELEC / TSE (TS EN 50160)</span></div>
+          <strong>EN 50160 Kamu elektrik şebekelerinden sağlanan elektriğin gerilim karakteristikleri</strong>
+          <span class="vs-reg__rg">EN 50160:2022+A1:2025</span>
+          <p><b>Kapsam:</b> Şebeke gerilim kalitesinin (gerilim değişimi, flicker, harmonik, dengesizlik) haftalık istatistiksel sınırlarını verir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: EN 50160:2022/A1:2025; A1 ile YG/çok YG harmonik değerleri (Tablo 8) zorunlu hale geldi.</p>
+          <p class="vs-reg__ver">Resmî kaynaktan doğrulanmadı</p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 61000-4-30 Test ve ölçme teknikleri – Güç kalitesi ölçme yöntemleri</strong>
+          <span class="vs-reg__rg">IEC 61000-4-30 (Sınıf A / S; güncel baskı kontrol edilmeli)</span>
+          <p><b>Kapsam:</b> Gerilim çökmesi/yükselmesi/kesinti eşikleri, 10 dakikalık toplama aralıkları ve dengesizlik (u2) ölçüm yöntemini tanımlar. EN 50160 uygunluğu bu yöntemle ölçülen verilerle değerlendirilir.</p>
+          
+          
+          <p class="vs-reg__ver">Resmî kaynaktan doğrulanmadı</p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEEE</span></div>
+          <strong>IEEE 519 Elektrik güç sistemlerinde harmonik kontrolü</strong>
+          <span class="vs-reg__rg">IEEE 519-2022</span>
+          <p><b>Kapsam:</b> Ortak bağlantı noktasında (PCC) gerilim ve akım harmonik sınırlarını (TDD) verir.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: Revizyon projesi (P519) 2024'ten beri aktif.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://standards.ieee.org/ieee/519/10677/" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEEE</span></div>
+          <strong>IEEE 80 AC trafo merkezi topraklamasında güvenlik kılavuzu</strong>
+          <span class="vs-reg__rg">IEEE 80-2013 (son yayımlanmış baskı)</span>
+          <p><b>Kapsam:</b> Trafo merkezi topraklama ızgarası, adım ve dokunma gerilimi hesabında yaygın kullanılan kılavuzdur.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: IEEE 80-2013 2024-03-21'de 'Inactive-Reserved' durumuna alındı; yeni revizyon projesi 2025'te onaylandı.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://standards.ieee.org/ieee/80/4089/" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg vs-reg--check">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 60947-6-1 Çok fonksiyonlu donanım – Transfer anahtarlama donanımı (ATS)</strong>
+          <span class="vs-reg__rg">IEC 60947-6-1:2026 (Ed.4)</span>
+          <p><b>Kapsam:</b> Şebeke-jeneratör otomatik transfer şalterlerinin standardıdır.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: Ed.4 2026-04-02'de 2021 baskısının yerini aldı (bypass/izolasyon, kapalı geçişli ATSE, yangın pompası kontrolörleri ekleri).</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          <p class="vs-reg__warn">Güncel mevzuat doğrulaması gereklidir.</p>
+          <a href="https://webstore.iec.ch/en/publication/90494" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li><li class="vs-reg">
+          <div class="vs-reg__top"><span class="vs-reg__kind">Standart</span><span class="vs-reg__iss">IEC / TSE</span></div>
+          <strong>IEC 61131-3 Programlanabilir kontrolörler – Programlama dilleri</strong>
+          <span class="vs-reg__rg">IEC 61131-3:2025 (Ed.4)</span>
+          <p><b>Kapsam:</b> PLC programlama dillerini (ST, LD, FBD, SFC) tanımlar.</p>
+          
+          <p class="vs-reg__am">Değişiklikler: Ed.4 2025-05; Instruction List (IL) çıkarıldı, UTF-8 dize desteği eklendi.</p>
+          <p class="vs-reg__ver">Resmî kaynakla doğrulandı: <time datetime="2026-10-23">23.10.2026</time></p>
+          
+          <a href="https://webstore.iec.ch/en/publication/68533" target="_blank" rel="noopener noreferrer">Katalog sayfası ↗</a>
+        </li></ul></div>
+      </div>
+    </section>
+
+    <section class="vs-cta" aria-labelledby="cta-h">
+      <div>
+        <h2 id="cta-h">Bu sistemi tesisiniz için projelendirelim.</h2>
+        <p>VoltGuard mühendislik ekibiyle projenizi gerçek tesis koşullarına göre değerlendirin. Raporunuzu paylaşmak isterseniz indirip teklif talebinize ekleyebilirsiniz; simülasyon girdileri bizimle siz istemedikçe paylaşılmaz.</p>
+      </div>
+      <div class="vs-cta__btns">
+        <a class="vs-cbtn vs-cbtn--primary" href="/#iletisim">VoltGuard’dan Teklif Al</a>
+        <a class="vs-cbtn" href="/sor.html">Mühendislik Desteği Al</a>
+        <a class="vs-cbtn" href="/hizmetler/harmonik-filtreli-kompanzasyon.html">İlgili Hizmeti İncele: Harmonik filtreli kompanzasyon</a>
+      </div>
+    </section>
+
+    <section class="vs-more" aria-labelledby="more-h">
+      <h2 id="more-h">İlgili araçlar</h2>
+      <ul class="vs-links"><li><a href="/voltsim/trafo/">VoltSim trafo</a></li><li><a href="/voltsim/pano/">VoltSim pano</a></li><li><a href="/voltsim/kompanzasyon/">VoltSim kompanzasyon</a></li><li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo merkezi kurulumu</a></li><li><a href="/hesaplama/kompanzasyon-hesaplama/">Kompanzasyon hesabı</a></li></ul>
+      <h2>Diğer simülasyonlar</h2>
+      <ul class="vs-links"><li><a href="/voltsim/pano/">Elektrik Pano</a></li><li><a href="/voltsim/ges/">GES</a></li><li><a href="/voltsim/trafo/">Trafo</a></li><li><a href="/voltsim/sarj-istasyonu/">Şarj İstasyonu</a></li><li><a href="/voltsim/res/">RES</a></li><li><a href="/voltsim/kompanzasyon/">Kompanzasyon</a></li><li><a href="/voltsim/topraklama/">Topraklama</a></li><li><a href="/voltsim/motor-otomasyon/">Motor &amp; PLC</a></li><li><a href="/voltsim/ups-jenerator/">UPS &amp; Jeneratör</a></li><li><a href="/voltsim/yangin-algilama/">Yangın Algılama</a></li><li><a href="/voltsim/selektivite/">Selektivite</a></li><li><a href="/voltsim/enerji-kalitesi/">Enerji Kalitesi</a></li><li><a href="/voltsim/yildirim/">Yıldırımdan Korunma</a></li><li><a href="/voltsim/pompa-vfd/">Pompa &amp; VFD</a></li><li><a href="/voltsim/depolama-hibrit/">Depolama &amp; Hibrit</a></li><li><a href="/voltsim/ariza-tespit/">Arıza Tespit Lab</a></li><li><a href="/voltsim/konveyor-scada/">Konveyör &amp; SCADA</a></li></ul>
+    </section>
+  </main>
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <img class="vg-brand__image" src="/public/voltguard-logo.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+            </span>
+          </a>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr">
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
+          </address>
+          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
+              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
+              <li><a href="/#projeler">Projeler</a></li>
+              <li><a href="/#referanslar">Referanslarımız</a></li>
+              <li><a href="/#surec">Sürecimiz</a></li>
+              <li><a href="/#neden-biz">Neden Biz?</a></li>
+              <li><a href="/#haberler">Haberler</a></li>
+              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
+              <li><a href="/#katalog">Katalog</a></li>
+              <li><a href="/#sss">SSS</a></li>
+              <li><a href="/#iletisim">İletişim</a></li>
+              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
+              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
+              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
+              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
+              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+              <li><a href="/volthaber/">VoltHaber</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
+              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
+              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
+              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
+              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
+</body>
+</html>

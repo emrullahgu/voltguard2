@@ -4,6 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
 const root = path.resolve(__dirname, '../..');
 const read = f => fs.readFileSync(path.join(root, f), 'utf8');
 const I = require('../../js/voltsim/identity.js');
@@ -18,6 +19,18 @@ const pageFile = url => {
   const rel = url.replace(/^\//, '').replace(/\/$/, '');
   return [rel + '.html', rel + '/index.html'].find(f => fs.existsSync(path.join(root, f)));
 };
+
+// Gerçek modül tanımını DOM kurmadan kaydet: defaults() hesap dosyasına taşınsa da iç içe anahtarlar doğrulanır.
+function moduleDefaults(id) {
+  let def;
+  E.ext = E.ext || {};
+  E.ext[id] = require(path.join(root, 'js/voltsim/calc', id + '.js'));
+  const fmt = String;
+  const win = { matchMedia: () => ({ matches: false }), VoltSim: { E, fmt, fmtPower: fmt, fmtEnergy: fmt, fmtDuration: fmt, esc: String, el: () => ({}), toast: () => {}, PALETTE: {}, reduceMotion: false, register: d => { def = d; } } };
+  vm.runInNewContext(read('js/voltsim/mod/' + id + '.js'), { window: win, self: win });
+  assert.ok(def && typeof def.defaults === 'function', id + ': modül varsayılanları okunamadı');
+  return def.defaults();
+}
 
 test('her kimlik zorunlu alanların hepsini taşır', () => {
   const ids = new Set();
@@ -55,13 +68,36 @@ test('her VoltSim modülünün ve her hesap sayfasının bir kimliği vardır', 
 
 test('requiredData anahtarları modülün varsayılan durumunda tanımlıdır', () => {
   for (const e of I.entries.filter(x => x.family === 'voltsim')) {
-    const src = read('js/voltsim/mod/' + e.module + '.js');
-    const def = src.slice(src.indexOf('function defaults'), src.indexOf('function defaults') + 2500);
+    const defaults = moduleDefaults(e.module);
     for (const d of e.requiredData) {
       assert.ok(d.label && ['katalog', 'saha', 'kullanıcı'].includes(d.kind), e.id + ': ' + JSON.stringify(d));
-      assert.ok(new RegExp('\\b' + d.key.split('.')[0] + ':').test(def), e.id + ': varsayılanlarda yok ' + d.key);
+      assert.notEqual(I.getPath(defaults, d.key), undefined, e.id + ': varsayılanlarda yok ' + d.key);
     }
   }
+});
+
+test('fabrika örnek tesis verileri hesaplandı yerine varsayımsal olarak sınıflanır', () => {
+  const F = require('../../js/voltsim/calc/fabrika.js');
+  const defaults = F.defaults(), r = F.evaluate(defaults);
+  const assumed = I.assumedInputs(I.byModule('fabrika'), defaults, F.defaults());
+  assert.ok(assumed.some(x => /Yük ve harmonik/.test(x)));
+  assert.ok(assumed.some(x => /OG şebeke/.test(x)));
+  assert.equal(I.classify({ errors: r.errors, checks: r.checks, assumed }).code, 'varsayimsal');
+});
+
+test('JSON proje ekleri yüklenince A/B ve olay geçmişi aynı işlemde yeniden çizilir', () => {
+  const win = { VoltSimEngine: E, matchMedia: () => ({ matches: false }) };
+  const source = read('js/voltsim/core.js').replace('window.VoltSim = {', 'window.VoltSim = { App: App,');
+  vm.runInNewContext(source, { window: win, document: { readyState: 'loading', addEventListener() {} }, matchMedia: win.matchMedia });
+  const extras = { log: [{ text: 'Dosyadaki olay' }], ab: { A: { name: 'Dosyadaki A' } } };
+  const app = new win.VoltSim.App({ id: 'fabrika', defaults: () => ({ value: 0 }), compute: () => ({ ok: true }), loadExtras: (x, a) => { a.loadedExtras = x; } }, {});
+  const rendered = [];
+  app.renderAnalysis = () => rendered.push(app.loadedExtras);
+  app.applyState = state => { app.state = state; app.renderAnalysis(); };
+  app.syncToolbar = app.wake = () => {};
+  const result = app.loadProject({ format: 'voltsim-project', module: 'fabrika', schema: 1, state: { value: 1 }, extras });
+  assert.equal(result.ok, true);
+  assert.equal(rendered.at(-1), extras, 'son çizim içe aktarılan ek verileri kullanmalı');
 });
 
 test('hesap sayfalarının durum etiketleri VoltSim ile aynıdır', () => {

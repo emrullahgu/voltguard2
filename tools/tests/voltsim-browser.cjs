@@ -96,11 +96,11 @@ const slugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }
       await page.screenshot({ path: path.join(out, slug + '-desktop.png') });
       if (previews) {
         // kart görseli: etiketler, rozet ve araç düğmeleri olmadan yalnız sahne
-        await page.evaluate(() => { document.querySelectorAll('.vs-vt[data-vs-act="labels"]').forEach(b => b.click()); document.querySelectorAll('.vs-vtools,.vs-hud,.vs-hint').forEach(e => { e.style.visibility = 'hidden'; }); });
+        await page.evaluate(() => { document.querySelectorAll('.vs-vt[data-vs-act="labels"]').forEach(b => b.click()); document.querySelectorAll('.vs-vtools,.vs-hud,.vs-hint,.vs-fab-legend').forEach(e => { e.style.visibility = 'hidden'; }); });
         await page.waitForTimeout(400);
         const stage = page.locator('.vs-stage');
         await stage.screenshot({ path: path.join(out, slug + '-preview.png') });
-        await page.evaluate(() => { document.querySelectorAll('.vs-vt[data-vs-act="labels"]').forEach(b => b.click()); document.querySelectorAll('.vs-vtools,.vs-hud,.vs-hint').forEach(e => { e.style.visibility = ''; }); });
+        await page.evaluate(() => { document.querySelectorAll('.vs-vt[data-vs-act="labels"]').forEach(b => b.click()); document.querySelectorAll('.vs-vtools,.vs-hud,.vs-hint,.vs-fab-legend').forEach(e => { e.style.visibility = ''; }); });
       }
       // parametre değişimi sonucu değiştirmeli
       const before = await page.evaluate(() => JSON.stringify(window.__vsApp.validResult.values, (k, v) => (typeof v === 'number' ? Math.round(v * 1000) / 1000 : v)).slice(0, 4000));
@@ -185,7 +185,7 @@ const slugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }
   if (previews) {
     const sharp = require(packagePath('sharp'));
     const dest = path.join(root, 'public/voltsim'); fs.mkdirSync(dest, { recursive: true });
-    const ids = { pano: 'pano', ges: 'ges', trafo: 'trafo', 'sarj-istasyonu': 'sarj', res: 'res', kompanzasyon: 'komp', topraklama: 'topraklama', 'motor-otomasyon': 'motor', 'ups-jenerator': 'ups', 'yangin-algilama': 'yangin', selektivite: 'selektivite', 'enerji-kalitesi': 'kalite', yildirim: 'yildirim', 'pompa-vfd': 'pompa', 'depolama-hibrit': 'depolama', 'ariza-tespit': 'ariza', 'konveyor-scada': 'konveyor' };
+    const ids = { pano: 'pano', ges: 'ges', trafo: 'trafo', 'sarj-istasyonu': 'sarj', res: 'res', kompanzasyon: 'komp', topraklama: 'topraklama', 'motor-otomasyon': 'motor', 'ups-jenerator': 'ups', 'yangin-algilama': 'yangin', selektivite: 'selektivite', 'enerji-kalitesi': 'kalite', yildirim: 'yildirim', 'pompa-vfd': 'pompa', 'depolama-hibrit': 'depolama', 'ariza-tespit': 'ariza', 'konveyor-scada': 'konveyor', 'fabrika-senaryosu': 'fabrika' };
     for (const slug of slugs) {
       const src = path.join(out, slug + '-preview.png'); if (!fs.existsSync(src)) continue;
       await sharp(src).resize(960, 600, { fit: 'cover', position: 'centre' }).webp({ quality: 80 }).toFile(path.join(dest, ids[slug] + '.webp'));

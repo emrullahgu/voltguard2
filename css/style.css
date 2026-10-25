@@ -69,7 +69,6 @@
 
 /* Legacy aliases use the shared --th-* palette, including dark mode and print overrides. */
 :root[data-theme="dark"] {
-  color-scheme: dark;
   --surface: var(--th-surface);
   --surface-raised: var(--th-surface-3);
   --ink: var(--th-heading);   /* 15.6:1 */

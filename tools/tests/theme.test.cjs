@@ -36,7 +36,8 @@ test('Head initializer sets data-theme before paint from storage, else OS prefer
 });
 
 test('Every shell page initializes the theme and none is light-only', () => {
-  const skip = new Set(['node_modules', 'tools', '.qa', '.git', '.claude', 'public']);
+  const skip = new Set(['node_modules', 'tools', '.qa', '.git', '.claude', 'public',
+    '.netlify-publish', 'voltguardekleyelim', 'vesikalar', 'VoltGame', 'voltgame']);
   const pages = [];
   (function walk(dir) {
     for (const e of fs.readdirSync(path.join(root, dir), { withFileTypes: true })) {

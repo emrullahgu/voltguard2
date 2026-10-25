@@ -187,9 +187,6 @@
 @media (min-width: 80rem) {
   :root { --vg-header-h: 68px; }
 }
-/* Tema destekleyen sayfalarda (<html data-vg-themes>) koyu temada tarayıcı denetimleri ve kaydırma çubukları da koyu.
-   style.css'i yüklemeyen sayfalar (ör. /hizmetler/ → services.css) için burada. */
-:root[data-theme="dark"] { color-scheme: dark; }
 main:focus { outline: 0; }
 [data-vg-anchor-focus]:focus { outline: 0; }
 

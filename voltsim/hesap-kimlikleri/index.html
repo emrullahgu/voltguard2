@@ -53,7 +53,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/css/voltsim.css?v=721d79efd8fb">
+  <link rel="stylesheet" href="/css/voltsim.css?v=41c5865bd22e">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"VoltSim","item":"https://voltguard.com.tr/voltsim/"},{"@type":"ListItem","position":3,"name":"Hesaplama Kimlikleri","item":"https://voltguard.com.tr/voltsim/hesap-kimlikleri/"}]},{"@type":"TechArticle","headline":"Hesaplama Kimlikleri","url":"https://voltguard.com.tr/voltsim/hesap-kimlikleri/","inLanguage":"tr","description":"VoltGuard hesaplarının yöntemi, birimleri, varsayımları, geçerlilik sınırları ve doğrulama testleri."}]}</script>
 </head>
 <body class="vs-page doc-shell">
@@ -188,7 +188,20 @@
       <p class="vs-small">Durumlar öncelik sırasıyla belirlenir. “Hesaplandı” bir ön hesabın girilen değerlerle tamamlandığını söyler; mevzuata uygunluk veya uygulama onayı değildir.</p>
     </section>
     <section class="vs-ident" aria-labelledby="fam-voltsim">
-      <h2 id="fam-voltsim">VoltSim simülasyonları <small>(17)</small></h2>
+      <h2 id="fam-voltsim">VoltSim simülasyonları <small>(18)</small></h2>
+      <details class="vs-id" id="voltsim-fabrika"><summary><span>Fabrika: ortak trafo, pano ve kompanzasyon senaryosu</span> <a href="/voltsim/fabrika-senaryosu/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Aynı tesis girdileriyle yükleri, kompanzasyon kademelerini, ADP barasını ve trafoyu sırayla hesaplar; günlük reaktif enerji oranını, trafo kaybını ve iki senaryonun farkını gösterir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>loads</td><td>kW, —, m, mm², A</td><td>Yük grupları: motor mil gücü, cosφ, verim, kablo ve koruma</td></tr><tr><td>trafo</td><td>kVA, V, W, %</td><td>Trafo anma değerleri, P0/Pk kayıpları ve uk</td></tr><tr><td>supply</td><td>kV, MVA</td><td>OG gerilimi ve şebeke kısa devre gücü</td></tr><tr><td>board</td><td>A, kA, m, mm²</td><td>Ana şalter, bara ve trafo–ADP kablosu</td></tr><tr><td>comp</td><td>kVAr, %, —</td><td>Kademeler, reaktör oranı, çalışma modu ve hedef cosφ</td></tr><tr><td>facility.shift, facility.price</td><td>—, TL/kWh</td><td>Örnek günlük yük profili ve enerji birim fiyatı</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>P, Q, S, I</td><td>kW, kVAr, kVA, A</td><td>Yük toplamları ve ADP bara durumu</td></tr><tr><td>Qc, cosφ, THDv</td><td>kVAr, —, %</td><td>Kompanzasyon sonrası durum</td></tr><tr><td>K, losses, θh</td><td>—, W, °C</td><td>Trafo yüklenmesi, kaybı ve kararlı sıcak noktası</td></tr><tr><td>indPct, capPct</td><td>%</td><td>Örnek günün reaktif/aktif enerji oranları</td></tr><tr><td>lossYear, costYear</td><td>kWh/yıl, TL/yıl</td><td>Aynı örnek günün 365 kez tekrarıyla kayıp ve maliyet</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>Yükler → E.komp.compute → E.pano.compute → E.trafo.compute (aynı senaryo)</code></li><li><code>P_el = P_mil/η; Q_bara = ΣQ_yük − ΣQ_kademe; K = S_bara/Sr</code></li><li><code>Her saat aynı zincir: E_kayıp,gün = Σ(P0 + Pk·K_h²)·1 sa</code></li><li><code>A/B karşılaştırması her senaryoyu aynı motorlarla yeniden hesaplar</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>Dengeli üç faz, tek trafo ve tek ADP; akımlar anma bara geriliminde hesaplanır, gerilim düşümünün akıma geri etkisi yoktur.</li><li>Yük türlerinin harmonik profilleri örnektir; akımlar aynı faz açısıyla aritmetik toplanır.</li><li>Trafo ısıl modeli kararlı ONAN varsayılanlarıdır; harmoniklerin trafo kayıp artışına etkisi dahil değildir.</li><li>Otomatik röle ideal kalıcı durum modeli; tüm aktif yükler örnek vardiya profiliyle aynı oranda değişir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Eğitim ve ön değerlendirme; gerçek zamanlı tesis bağlantısı ve canlı dijital ikiz değildir.</li><li>AG ana dağıtım modeli: en çok 5000 kVA; bakır çıkış kesiti en çok 120 mm², üstü paralel kablo.</li><li>OG koruma, röle ayarı, seçicilik ve ölçülmüş aylık fatura analizi kapsam dışıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><ul><li>Yük ve harmonik profilleri (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li><li>Trafo boşta kaybı P0 (katalog)</li><li>Trafo yük kaybı Pk (katalog)</li><li>Trafo kısa devre gerilimi uk (katalog)</li><li>OG şebeke kısa devre gücü (saha)</li><li>Günlük yük profili (saha) — örnek değerde bırakılırsa sonuç &quot;Varsayımsal&quot;</li></ul>
+          <h4>Teknik kaynak</h4><ul><li>IEC 60076-1, IEC 60076-7</li><li>IEC 60909-0</li><li>TS HD 60364-4-41, -4-43, -5-52</li><li>IEC 60831-1</li><li>EPDK Kurul Kararı 5999-3, Madde 13</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: VoltSim motoru 2026.10.24</span><span>Kimlik gözden geçirme: 2026.10.24</span><span>Uygulama: js/voltsim/calc/fabrika.js, js/voltsim/engine.js, js/voltsim/calc/trafo.js, js/voltsim/calc/komp.js</span><span>Doğrulama testleri: voltsim-fabrika.test.cjs, voltsim-tasks.test.cjs, calc-identity.test.cjs</span></p>
+        </div>
+      </details>
       <details class="vs-id" id="voltsim-pano"><summary><span>AG pano: faz akımları, kablo ve koruma</span> <a href="/voltsim/pano/">sayfaya git ↗</a></summary>
         <div class="vs-id__body">
           <p>Bir AG panosundaki devrelerin faz akımlarını, kablo akım taşıma ve gerilim düşümünü, aşırı yük koşullarını ve yaklaşık kısa devre/otomatik kesme kontrolünü verir.</p>

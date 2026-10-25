@@ -29,6 +29,16 @@ const QUOTE = {
 };
 
 const MODULES = [
+  { id: 'fabrika', slug: 'fabrika-senaryosu', calcs: ['trafo', 'komp'], name: 'Fabrika Senaryosu', short: 'Trafo, ana dağıtım panosu ve kompanzasyon tek ortak hesapta',
+    title: 'Fabrika Senaryosu: Trafo, Pano ve Kompanzasyon Birlikte | VoltSim',
+    description: 'Bir fabrikanın trafo, ana dağıtım panosu ve kompanzasyonunu tek senaryoda inceleyin: yükleri açıp kapatın, trafo yüklenmesi, cosφ, kademe, harmonik ve kayıplar aynı hesaptan birlikte güncellensin.',
+    h1: 'Fabrika Senaryosu: Trafo, Pano ve Kompanzasyon', eyebrow: 'Ortak senaryo · 3D genel görünüm · Tek hat şeması',
+    lead: 'Trafo, ana dağıtım panosu ve kompanzasyon simülasyonlarının hesap motorları tek bir tesis verisiyle çalışır. Bir yükü kapattığınızda pano akımı, kademe seçimi, cosφ, harmonikler ve trafo yüklenmesi aynı girdilerden birlikte yeniden hesaplanır; değişiklik olay geçmişine yazılır.',
+    scope: 'Eğitim ve ön değerlendirme modeli. Gerçek zamanlı tesis bağlantısı yoktur; bu bir canlı dijital ikiz değildir. Değerler ölçüm değil, girdiğiniz verilerden hesaplanır.',
+    labels: { save: 'JSON dışa aktar', load: 'JSON içe aktar' },
+    tags: ['Ortak hesap zinciri', 'Yük aç/kapat', 'Kademe ve cosφ', 'Trafo yüklenmesi', 'A/B karşılaştırma', 'Olay geçmişi'],
+    service: ['/hizmetler/harmonik-filtreli-kompanzasyon.html', 'Harmonik filtreli kompanzasyon'],
+    related: [['/voltsim/trafo/', 'VoltSim trafo'], ['/voltsim/pano/', 'VoltSim pano'], ['/voltsim/kompanzasyon/', 'VoltSim kompanzasyon'], ['/hizmetler/trafo-merkezi-kurulumu.html', 'Trafo merkezi kurulumu'], ['/hesaplama/kompanzasyon-hesaplama/', 'Kompanzasyon hesabı']] },
   { id: 'pano', slug: 'pano', name: 'Elektrik Pano', short: 'AG dağıtım, MCC, kompanzasyon, otomasyon ve transfer panoları',
     title: '3D Elektrik Pano Simülasyonu: Kısa Devre ve Koruma | VoltSim',
     description: 'ADP, MCC ve transfer panolarını 3D inceleyin; yük ekleyin, motor çalıştırın, faz akımı, gerilim düşümü, kısa devre ve koruma koordinasyonunu anlık hesaplayın.',
@@ -281,7 +291,7 @@ function modulePage(m) {
       </div>
       <ul class="vs-tags" aria-label="Hesaplama ve analizler">${m.tags.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
     </header>
-
+${m.scope ? `    <p class="vs-scope" role="note"><strong>Kapsam:</strong> ${esc(m.scope)}</p>\n` : ''}
     <div class="vs-app" data-vs-module="${m.id}">
       <div class="vs-toolbar" role="toolbar" aria-label="Simülasyon araçları">
         <div class="vs-toolbar__g">
@@ -294,8 +304,8 @@ function modulePage(m) {
           <button class="vs-tb" type="button" data-vs-act="mode" aria-pressed="false">${ico('<path d="M3 7l9-4 9 4-9 4zM3 12l9 4 9-4M3 17l9 4 9-4"/>')}<span>2D şema</span></button>
           <button class="vs-tb" type="button" data-vs-act="report">${ico('<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5"/>')}<span>Teknik rapor (PDF)</span></button>
           <button class="vs-tb" type="button" data-vs-act="csv">${ico('<path d="M4 4h16v16H4zM4 10h16M4 15h16M10 4v16"/>')}<span>CSV</span></button>
-          <button class="vs-tb" type="button" data-vs-act="save">${ico('<path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"/>')}<span>Projeyi kaydet</span></button>
-          <button class="vs-tb" type="button" data-vs-act="load">${ico('<path d="M12 15V3m-4 4 4-4 4 4M5 15v6h14v-6"/>')}<span>Projeyi yükle</span></button>
+          <button class="vs-tb" type="button" data-vs-act="save">${ico('<path d="M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7"/>')}<span>${esc((m.labels || {}).save || 'Projeyi kaydet')}</span></button>
+          <button class="vs-tb" type="button" data-vs-act="load">${ico('<path d="M12 15V3m-4 4 4-4 4 4M5 15v6h14v-6"/>')}<span>${esc((m.labels || {}).load || 'Projeyi yükle')}</span></button>
           <input type="file" accept=".json,application/json" data-vs-file hidden>
           <label class="vs-tb vs-tb--select" title="3D görüntü kalitesi: düşük ayar pil ve eski telefonlar için daha akıcıdır"><span class="sr-only">3D görüntü kalitesi</span><select data-vs-quality><option value="auto">Kalite: Otomatik</option><option value="high">Kalite: Yüksek</option><option value="low">Kalite: Düşük (mobil/pil)</option></select></label>
         </div>
@@ -405,7 +415,7 @@ function landing() {
           </a>
         </li>`).join('');
   return `${head({ title: 'VoltSim — 3D Mühendislik Simülasyon Merkezi | VoltGuard', ogTitle: 'VoltSim — Enerjiyi Gör. Sistemi Kur. Sonucu Ölç.',
-    description: `${MODULES.length} gerçek hesaplı 3D mühendislik simülasyonu: pano, trafo, GES, kompanzasyon, selektivite, enerji kalitesi, batarya depolama, arıza tespit ve PLC/SCADA. Ücretsiz.`, url, ld, image: '/public/voltsim/pano.webp' })}
+    description: `${MODULES.length} gerçek hesaplı 3D mühendislik simülasyonu: ortak fabrika senaryosu, pano, trafo, GES, kompanzasyon, selektivite, enerji kalitesi, batarya depolama, arıza tespit ve PLC/SCADA. Ücretsiz.`, url, ld, image: '/public/voltsim/pano.webp' })}
 <body class="vs-page vsl-page doc-shell">
   <!--vg:header--><!--/vg:header-->
   <main class="vs-main" id="main" tabindex="-1">
