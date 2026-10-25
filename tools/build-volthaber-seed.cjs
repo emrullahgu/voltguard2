@@ -5,6 +5,8 @@
 //  - "resmi" özetler: js/voltsim/regulations.js kaydındaki Resmî Gazete değişiklikleri ve doğrulanmış madde özetleri
 //    (kısa açıklamalar tools/build-mevzuat-guncellemeleri.cjs ile aynı NOTES metnidir).
 //  - "analiz" yazıları: aynı kayıttaki doğrulanmış (verified:true) madde özetleri ve sitedeki mevcut sayfalara bağlantılar.
+//  - "PENDING": yayın akışını bekleyen gerçek içerik (taslak); kaynakları elle doğrulandı, kaynak bağlantıları ve
+//    hazırlık notu kayıtta. Yayına yalnızca editörlerin kaynak/teknik kontrolü ve yayın onayıyla çıkar.
 // Uydurma sayı, alıntı, olay veya şirket yoktur. Kayıttaki her rakam ilgili maddeye atıfla kullanılır.
 //   node tools/build-volthaber-seed.cjs           yazar
 //   node tools/build-volthaber-seed.cjs --check   güncel değilse hata
@@ -203,7 +205,79 @@ function analiz(a, i) {
   };
 }
 
-const articles = [...ANALIZ.map(analiz), ...RESMI.map(resmi)];
+// ------------------------------------------------------------------ yayın akışını bekleyen gerçek içerik
+// Taslak olarak eklenir: kaynak kontrolü, teknik kontrol ve yayın onayını VoltHaber editörleri panelden yapar.
+// Hazırlık sırasında açılan kaynaklar ve açık kalan nokta kaydın geçmişine yazılır (review.history).
+const PREPARED = Date.UTC(2026, 9, 24, 14, 0, 0) / 1000; // 24.10.2026 17:00 TSİ
+const KARAR_PDF = 'https://www.resmigazete.gov.tr/eskiler/2026/10/20261024-11.pdf';
+const OLCUM_YON = 'https://www.resmigazete.gov.tr/eskiler/2023/12/20231228-2.htm';
+const PENDING = [
+  {
+    title: 'EPDK, Kullanıcı Mobil Uygulamasına veri sağlayan dağıtım şirketlerine performans ölçütleri getirdi',
+    category: 'mevzuat', type: 'resmi', eventDate: '2026-10-22',
+    tags: ['epdk', 'olcum-sistemleri', 'akilli-sayac', 'dagitim-sirketi', 'tuketim-verisi'],
+    summary: 'EPDK, 22.10.2026 tarihli ve 14982 sayılı kararıyla dağıtım şirketlerinin Kullanıcı Mobil Uygulaması ve internet sitesine sağladığı veri servisleri için aylık performans ölçütleri belirledi: ortalama ve p95 yanıt süresi en fazla 3000 ms, hata oranı üst sınırı %4\'ten başlayıp 1 Mayıs 2027\'den itibaren %1. Karar 24.10.2026 tarihli Resmî Gazete\'de yayımlandı.',
+    source: { name: 'Resmî Gazete (24.10.2026, sayı 33410) – EPDK Kurul Kararı 14982', url: KARAR_PDF, publishedAt: '2026-10-24', licenseNote: LICENSE_RG },
+    extraSources: [
+      { name: 'Elektrik Piyasası Ölçüm Sistemleri Yönetmeliği (Resmî Gazete 28.12.2023, sayı 32413)', url: OLCUM_YON, publishedAt: '2023-12-28', licenseNote: LICENSE_RG }
+    ],
+    related: [['/hizmetler/enerji-kalitesi-olcumu.html', 'Enerji kalitesi ölçümü hizmeti'], ['/voltsim/enerji-kalitesi/', 'VoltSim enerji kalitesi simülasyonu'], ['/hizmetler/plc-scada-otomasyon.html', 'PLC ve SCADA otomasyon hizmeti'], ['/hesaplama/reaktif-ceza-hesaplama/', 'Reaktif ceza hesaplama']],
+    body: [
+      '## Künye',
+      '- **Karar:** Enerji Piyasası Düzenleme Kurulu, 22.10.2026 tarihli ve 14982 sayılı karar',
+      '- **Yayım:** Resmî Gazete, 24.10.2026, sayı 33410',
+      '- **Dayanak:** Elektrik Piyasası Ölçüm Sistemleri Yönetmeliği, 7. madde, üçüncü fıkra',
+      '- **Yükümlü taraf:** elektrik dağıtım şirketleri',
+      '',
+      '## Kararda ne var?',
+      'Karar, kullanıcı mobil uygulaması ve internet sitesi üzerinden kullanıcılara sunulan veri girişi, görüntüleme ve raporlama servisleri için aylık performans ölçütleri belirliyor:',
+      '- **Ortalama yanıt süresi:** en fazla 3000 ms',
+      '- **p95 yanıt süresi:** en fazla 3000 ms (isteklerin yüzde 95\'i bu sürenin içinde yanıtlanmalı)',
+      '- **Azami hata oranı** (dağıtım şirketinin sorumluluğundaki toplam işlem veya istek içinde hatayla sonuçlananlar): 31.01.2027\'ye kadar %4; 01.02.2027–30.04.2027 arasında %2; 01.05.2027\'den itibaren %1',
+      '',
+      'Kararın ikinci maddesine göre 2026 yılı Aralık ayından itibaren, aylık performans raporlarında bu ölçütleri sağlamayan şirketler için 6446 sayılı Elektrik Piyasası Kanunu\'nun 16. maddesi kapsamında işlem tesis edilecek.',
+      '',
+      '## Uygulama neyi gösteriyor?',
+      'Yönetmeliğin 7. maddesi Kullanıcı Mobil Uygulaması ve internet sitesini EPİAŞ\'ın kurup işlettiği bir kanal olarak tanımlıyor; dağıtım şirketleri üçüncü fıkra uyarınca verileri EPİAŞ\'a sağlıyor ve verilerin doğruluğundan sorumlu. Yönetmeliğin 28.12.2023\'te yayımlanan metnine göre uygulama, kullanıcı sayacının kabiliyeti ölçüsünde asgari olarak şunları sunuyor:',
+      '- saatlik, günlük, aylık ve yıllık tüketim ve/veya üretim bilgisi',
+      '- tarife zaman dilimi bazında aylık tüketim',
+      '- beklenmedik aşırı tüketim, kullanıma kapalı dönemde tüketim ve kullanıcının belirlediği tüketim eşiğinin aşılması hâlinde uyarı',
+      '- kesinti listesi ile tedarik sürekliliği tazminatına esas toplam kesinti süresi ve sayısı',
+      '- kullanıcının etkilendiği teknik kalite olaylarına ilişkin sayaç verileri'
+    ].join('\n'),
+    impact: [
+      '- Karar işletmelere doğrudan bir yükümlülük getirmiyor; ölçütler dağıtım şirketleri için konuldu.',
+      '- Uygulamadaki tüketim, kesinti ve teknik kalite olayı verilerine erişimin hızı ve hatasızlığı için sayısal hedef belirlendi: yanıt süresi en fazla 3000 ms, hata oranı 1 Mayıs 2027\'den itibaren en fazla %1.',
+      '- Geçiş döneminde izin verilen hata oranı daha yüksek: 31.01.2027\'ye kadar %4, Şubat–Nisan 2027 arasında %2.',
+      '- Tüketimini saatlik ve tarife dilimi bazında izleyen, kesintileri ve teknik kalite olaylarını kayıt altına almak isteyen işletmeler bu verileri bir kayıt kaynağı olarak kullanabilir; verinin kapsamı sayacın kabiliyetiyle sınırlıdır.'
+    ].join('\n'),
+    commentary: [
+      'Uygulamadaki sayaç verisi işletmeler için yararlı ikinci bir kayıt, ancak tesis içi ölçümün yerine geçmez. Fatura sayacı tesisin bağlantı noktasını gösterir; hangi makinenin, hangi hattın veya hangi kompanzasyon kademesinin soruna yol açtığını göstermez. Reaktif oranlar, harmonikler ve gerilim çökmeleri gibi enerji kalitesi sorunlarının nedenini bulmak için pano seviyesinde enerji analizörüyle süreli ölçüm gerekir.',
+      '',
+      'Önerimiz:',
+      '- Uygulamadaki aylık tüketimi ve kesinti listesini kendi enerji izleme veya SCADA kayıtlarınızla düzenli karşılaştırın; açıklanamayan farklar sayaç, ölçü trafosu veya tesis tarafında incelenmesi gereken bir duruma işaret edebilir.',
+      '- Üretim duruşlarını kesinti kayıtlarıyla eşleştirin; tarih ve süre bilgisi kesintiye bağlı başvurularda işinize yarar.',
+      '- Uygulamada teknik kalite olayı görüyorsanız kaynağını tesis içinde ölçerek doğrulayın.'
+    ].join('\n'),
+    history: [{
+      at: PREPARED, by: 'Hazırlık: Claude (yapay zekâ asistanı)', action: 'prepared', stage: 'draft',
+      note: 'Kaynaklar 24.10.2026\'da açıldı: RG 24.10.2026/33410 fihristi ve karar PDF\'i (20261024-11.pdf); RG 28.12.2023/32413 yönetmelik metni (20231228-2.htm). Rakamlar, tarihler ve kanun maddesi karar metniyle karşılaştırıldı. Açık nokta: yönetmeliğin 7. maddesinin 2023 sonrası değişip değişmediği doğrulanamadı; teknik kontrolde güncel metin kontrol edilmeli. Görsel kullanılmadı. Yayın için editör kontrolleri ve onayı gerekir.'
+    }]
+  }
+];
+
+function pending(a) {
+  return {
+    slug: slug(a.title), title: a.title, summary: a.summary, body: a.body, impact: a.impact, commentary: a.commentary, eventDate: a.eventDate,
+    category: a.category, tags: a.tags, type: a.type, source: a.source, extraSources: a.extraSources, image: null,
+    status: 'draft', publishAt: null, publishedAt: null, author: AUTHOR, editor: null,
+    review: { stage: 'draft', checks: {}, hold: null, history: a.history },
+    seo: { title: '', description: '' }, related: a.related.map(([url, label]) => ({ url, label })),
+    featured: false, pick: false, origin: 'seed', ingest: null, flags: [], createdAt: PREPARED, updatedAt: PREPARED
+  };
+}
+
+const articles = [...ANALIZ.map(analiz), ...RESMI.map(resmi), ...PENDING.map(pending)];
 for (const a of articles) {
   if (a.title.length < 10 || a.title.length > 160) throw new Error('başlık uzunluğu: ' + a.title);
   if (a.summary.length < 40 || a.summary.length > 400) throw new Error('özet uzunluğu: ' + a.title + ' ' + a.summary.length);
@@ -221,5 +295,5 @@ if (process.argv.includes('--check')) {
   console.log('api/lib/volthaber-seed.json güncel');
 } else {
   fs.writeFileSync(OUT, json);
-  console.log(`api/lib/volthaber-seed.json yazıldı (${ANALIZ.length} analiz, ${RESMI.length} resmî özet)`);
+  console.log(`api/lib/volthaber-seed.json yazıldı (${ANALIZ.length} analiz, ${RESMI.length} resmî özet, ${PENDING.length} akış bekleyen taslak)`);
 }

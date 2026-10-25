@@ -16,13 +16,15 @@ function vh_api_routes(): array
     return [
         // herkese acik
         'list' => ['GET', 'public'], 'article' => ['GET', 'public'], 'most_read' => ['GET', 'public'], 'categories' => ['GET', 'public'],
+        'status' => ['GET', 'public'],
         'subscribe' => ['POST', 'public'], 'confirm' => ['POST', 'public'], 'unsubscribe' => ['POST', 'public'],
         // oturum bilgisi (editor mi?)
         'editor_me' => ['GET', 'session'],
         // editor
         'editor_list' => ['GET', 'editor'], 'editor_get' => ['GET', 'editor'], 'save' => ['POST', 'editor'], 'preview' => ['POST', 'editor'],
         'publish' => ['POST', 'editor'], 'schedule' => ['POST', 'editor'], 'archive' => ['POST', 'editor'], 'to_draft' => ['POST', 'editor'],
-        'discard' => ['POST', 'editor'], 'sources' => ['GET', 'editor'], 'source_save' => ['POST', 'editor'], 'fetch_run' => ['POST', 'editor'],
+        'discard' => ['POST', 'editor'], 'submit' => ['POST', 'editor'], 'review' => ['POST', 'editor'], 'hold' => ['POST', 'editor'],
+        'sources' => ['GET', 'editor'], 'source_save' => ['POST', 'editor'], 'fetch_run' => ['POST', 'editor'],
         'fetch_log' => ['GET', 'editor'], 'pub_log' => ['GET', 'editor'], 'stats' => ['GET', 'editor'], 'subscribers_export' => ['POST', 'editor'],
         'social' => ['GET', 'editor'], 'digest_list' => ['GET', 'editor'], 'digest_create' => ['POST', 'editor'], 'digest_send' => ['POST', 'editor'],
     ];
@@ -171,6 +173,9 @@ function vh_public_action(string $action, array $body): array
             return vh_public_article($a, $views, false);
         }, vh_most_read($live, $views, $limit))];
     }
+    if ($action === 'status') {
+        return ['ok' => true, 'service' => VH_SERVICE] + vh_freshness($live);
+    }
     // categories
     $out = [];
     foreach (vh_categories() as $id => $c) {
@@ -246,7 +251,10 @@ function vh_editor_action(string $action, array $body, array $user): array
                 unset($v['body'], $v['bodyHtml']);
                 return $v;
             }, $p['items']), 'page' => $p['page'], 'pages' => $p['pages'], 'total' => $p['total'],
-                'categories' => vh_categories(), 'types' => vh_types(), 'tools' => vh_tool_links()];
+                'categories' => vh_categories(), 'types' => vh_types(), 'tools' => vh_tool_links(), 'stages' => vh_stages(),
+                'steps' => array_map(function ($s) {
+                    return ['stage' => $s[0], 'name' => $s[2], 'checklist' => $s[3]];
+                }, vh_review_steps())];
 
         case 'editor_get':
             $id = vh_get_param('id');
@@ -282,17 +290,18 @@ function vh_editor_action(string $action, array $body, array $user): array
                 } elseif (count($state['articles']) >= VH_MAX_ARTICLES) {
                     vg_fail(422, 'storage_full', 'Kayıt sınırına ulaşıldı.');
                 }
+                // Yayindaki yazida icerik degisirse son onayli surum yayinda kalir, degisiklik akistan yeniden gecer.
                 $a = vh_build_article($body, $existing, $state, $user);
-                // Yayindaki yaziyi guncellerken yayin kurallari yeniden denetlenir.
-                if (in_array($a['status'], ['published', 'scheduled'], true)) {
-                    vh_assert_publishable($a);
-                    $a['editor'] = ['id' => $user['id'], 'name' => $user['name']];
-                }
                 $state['articles'][$a['id']] = $a;
                 vh_save_articles($dir, $state);
                 vh_log($dir, 'publog.json', ['at' => vg_now(), 'action' => $existing ? 'update' : 'create', 'id' => $a['id'], 'title' => $a['title'], 'by' => $user['name']], 500);
                 return $ok + ['_status' => $existing ? 200 : 201, 'item' => vh_editor_view($a, [])];
             });
+
+        case 'submit':
+        case 'review':
+        case 'hold':
+            return vh_review_action($action, $body, $user);
 
         case 'publish':
         case 'schedule':
@@ -324,16 +333,33 @@ function vh_editor_action(string $action, array $body, array $user): array
                     unset($state['articles'][$id]);
                 } elseif ($action === 'publish' || $action === 'schedule') {
                     vh_assert_publishable($a);
-                    $wasLive = $a['status'] === 'published' && is_int($a['publishedAt']);
+                    $wasLive = vh_is_live($a, $now);
+                    if ($wasLive && $action === 'schedule') {
+                        vg_fail(409, 'already_live', 'Yayındaki yazı planlanamaz; onaylı düzeltmeyi "Yayımla" ile yayına alın.');
+                    }
+                    if ($wasLive) {
+                        // Onayli duzeltme: ilk yayin tarihi korunur, guncelleme tarihi yalnizca burada yazilir.
+                        $a['publishedAt'] = vh_live_at($a);
+                        $a['revisedAt'] = $now;
+                    } else {
+                        $a['publishedAt'] = $action === 'publish' ? $now : null;
+                    }
                     $a['status'] = $action === 'publish' ? 'published' : 'scheduled';
                     $a['publishAt'] = $publishAt;
-                    $a['publishedAt'] = $action === 'publish' ? ($wasLive ? $a['publishedAt'] : $now) : null;
+                    $a['liveCopy'] = null;
                     $a['editor'] = ['id' => $user['id'], 'name' => $user['name']];
+                    vh_history($a, $user, $action . ($wasLive ? '_revision' : ''));
                 } elseif ($action === 'archive') {
                     $a['status'] = 'archived';
+                    $a['liveCopy'] = null;
+                    vh_history($a, $user, 'archive');
                 } else {
+                    // Yayindan kaldirma: onaylar da dusurulur; yeniden yayin akisi bastan yapilir.
                     $a['status'] = 'draft';
                     $a['publishAt'] = null;
+                    $a['liveCopy'] = null;
+                    vh_reset_review($a);
+                    vh_history($a, $user, 'to_draft');
                 }
                 if ($action !== 'discard') {
                     $a['updatedAt'] = $now;
@@ -355,9 +381,10 @@ function vh_editor_action(string $action, array $body, array $user): array
                 $src['lastFetchAt'] = isset($rt['lastFetchAt']) ? vg_iso((int)$rt['lastFetchAt']) : null;
                 $src['lastOkAt'] = isset($rt['lastOkAt']) ? vg_iso((int)$rt['lastOkAt']) : null;
                 $src['lastStatus'] = (string)($rt['lastStatus'] ?? '');
+                $src['termsFresh'] = vh_terms_fresh($src);
                 $items[] = $src;
             }
-            return $ok + ['items' => $items, 'categories' => vh_categories()];
+            return $ok + ['items' => $items, 'categories' => vh_categories(), 'scheduler' => vh_scheduler_status($s)];
 
         case 'source_save':
             return vh_locked(true, function (string $dir) use ($body, $ok, $user) {

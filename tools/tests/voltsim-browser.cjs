@@ -44,8 +44,13 @@ const server = http.createServer((req, res) => {
   fs.createReadStream(file).pipe(res);
 });
 
-const slugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }).filter(d => d.isDirectory()).map(d => d.name)
-  .filter(s => !only.length || only.includes(s) || only.some(o => s.startsWith(o)));
+// Hesaplama kimlikleri gibi bilgi sayfaları simülasyon değildir; yalnız uygulama kökü bulunan sayfalar denetlenir.
+const allSlugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }).filter(d => d.isDirectory()).map(d => d.name)
+  .filter(s => {
+    const file = path.join(root, 'voltsim', s, 'index.html');
+    return fs.existsSync(file) && /\bdata-vs-module\s*=/.test(fs.readFileSync(file, 'utf8'));
+  });
+const slugs = allSlugs.filter(s => !only.length || only.includes(s) || only.some(o => s.startsWith(o)));
 
 (async () => {
   const { chromium } = require(packagePath('playwright'));
@@ -71,7 +76,7 @@ const slugs = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }
       await page.goto(base + '/voltsim/', { waitUntil: 'load' });
       await page.screenshot({ path: path.join(out, 'landing-desktop.png'), fullPage: true });
       const cards = await page.locator('.vsl-card').count();
-      const expected = fs.readdirSync(path.join(root, 'voltsim'), { withFileTypes: true }).filter(d => d.isDirectory()).length;
+      const expected = allSlugs.length;
       if (cards !== expected) fail('landing', 'kart sayısı ' + cards + ' (beklenen ' + expected + ')');
       console.log('landing: ' + cards + ' kart');
     }

@@ -12,13 +12,15 @@
   var Auth = window.VG.Auth, UI = window.VG.AccountUI, esc = UI.esc;
   var API = '/api/volthaber.php';
   var csrf = '';
-  var meta = { categories: {}, types: {}, tools: [] };
+  var meta = { categories: {}, types: {}, tools: [], stages: {}, steps: {} };
   var current = null;          // düzenlenen kayıt
   var alertEl = doc.querySelector('[data-vhp-alert]');
   var $ = function (s, c) { return (c || doc).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || doc).querySelectorAll(s)); };
   var STATUS = { draft: 'Taslak', scheduled: 'Planlı', published: 'Yayında', archived: 'Arşiv' };
-  var ERRORS = { rate_limited: 'çok sık', permission_required: 'izin gerekli', fixture_missing: 'test akışı yok', blocked_address: 'engelli adres', dns_failed: 'DNS hatası', xml_rejected: 'XML reddedildi', xml_invalid: 'geçersiz XML', not_a_feed: 'akış değil', too_large: 'çok büyük', time_budget: 'süre doldu' };
+  var ERRORS = { rate_limited: 'çok sık', permission_required: 'izin gerekli', fixture_missing: 'test akışı yok', blocked_address: 'engelli adres', dns_failed: 'DNS hatası', xml_rejected: 'XML reddedildi', xml_invalid: 'geçersiz XML', not_a_feed: 'akış değil', too_large: 'çok büyük', time_budget: 'süre doldu',
+    host_not_allowed: 'izinli alan adı dışı', terms_check_required: 'koşullar yeniden kontrol edilmeli', not_fetchable: 'taranmaz kaynak', network_error_28: 'zaman aşımı' };
+  var HOLD = { eksik: 'Eksik bilgi', celiskili: 'Çelişkili bilgi' };
 
   function say(kind, text) {
     alertEl.hidden = !text;
@@ -87,7 +89,7 @@
           esc(a.title) + (a.flags.indexOf('link_missing') >= 0 ? '<span class="vhp-flag">Kaynak akışı bağlantı vermiyor: haberin tam adresini girin.</span>' : ''),
           esc(src.name || '') + (src.url ? '<br><a href="' + esc(src.url) + '" target="_blank" rel="noopener noreferrer">kaynağı aç</a>' : ''),
           esc(src.publishedAt || ''),
-          btn('edit', a.id, 'Özet yaz ve düzenle', 'vhp-btn--primary') + btn('discard', a.id, 'Sil', 'vhp-btn--danger')
+          btn('edit', a.id, 'Taslağı hazırla', 'vhp-btn--primary') + btn('discard', a.id, 'Sil', 'vhp-btn--danger')
         ]);
       }).join('') : row(['Gelen kutusu boş. "Şimdi tara" ile etkin kaynakları tarayabilirsiniz.', '', '', '']);
     }).catch(function (e) { tb.innerHTML = row([esc(e.message), '', '', '']); });
@@ -101,13 +103,15 @@
       setMeta(j);
       tb.innerHTML = j.items.length ? j.items.map(function (a) {
         var acts = btn('edit', a.id, 'Düzenle');
-        if (a.status === 'draft' || a.status === 'scheduled') acts += btn('publish-id', a.id, 'Yayımla', 'vhp-btn--accent');
+        if (a.review.stage === 'approved' && (a.status === 'draft' || a.liveCopy)) acts += btn('publish-id', a.id, 'Yayımla', 'vhp-btn--accent');
         if (a.status !== 'archived') acts += btn('archive-id', a.id, 'Arşivle', 'vhp-btn--danger');
         if (a.status !== 'draft') acts += btn('draft-id', a.id, 'Taslağa al');
         acts += btn('social-id', a.id, 'Sosyal');
         return row([
           (a.live ? '<a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.title) + '</a>' : esc(a.title)) + (a.flags.indexOf('similar_title') >= 0 ? '<span class="vhp-flag">Benzer başlıklı kayıt var</span>' : ''),
-          esc(meta.types[a.type] || a.type), statusPill(a) + (a.publishAt ? '<br><small>' + esc(fmt(a.publishAt)) + '</small>' : ''),
+          esc(meta.types[a.type] || a.type), statusPill(a) + (a.publishAt ? '<br><small>' + esc(fmt(a.publishAt)) + '</small>' : '')
+            + '<br><small>' + esc(meta.stages[a.review.stage] || a.review.stage) + (a.liveCopy ? ' · düzeltme bekliyor' : '') + '</small>'
+            + (a.review.hold ? '<span class="vhp-flag">' + esc(HOLD[a.review.hold.kind]) + ': ' + esc(a.review.hold.reason) + '</span>' : ''),
           String(a.views), esc(fmt(a.updatedAt)), acts]);
       }).join('') : row(['Kayıt yok.', '', '', '', '', '']);
     }).catch(function (e) { tb.innerHTML = row([esc(e.message), '', '', '', '', '']); });
@@ -116,6 +120,7 @@
   function setMeta(j) {
     if (!j.categories) return;
     meta.categories = j.categories; meta.types = j.types || meta.types; meta.tools = j.tools || meta.tools;
+    meta.stages = j.stages || meta.stages; meta.steps = j.steps || meta.steps;
     ['#e-category', '#s-cat'].forEach(function (sel) {
       var s = $(sel);
       if (s.options.length) return;
@@ -132,23 +137,70 @@
     f.title.value = a ? a.title : ''; f.type.value = a ? a.type : 'analiz';
     if (a && a.category) f.category.value = a.category;
     f.summary.value = a ? a.summary : ''; f.body.value = a ? a.body : '';
+    f.impact.value = a ? a.impact : ''; f.commentary.value = a ? a.commentary : '';
+    f.eventDate.value = a ? a.eventDate : ''; f.revisionNote.value = a ? a.revisionNote : '';
+    f.extra.value = a ? a.extraSources.map(function (x) { return [x.name, x.url, x.publishedAt, x.licenseNote].join(' | '); }).join('\n') : '';
     f.tags.value = a ? a.tags.join(', ') : ''; f.slug.value = a ? a.slug : '';
     var s = (a && a.source) || {};
     f.src_name.value = s.name || ''; f.src_url.value = s.url || ''; f.src_date.value = (s.publishedAt || '').slice(0, 10); f.src_lic.value = s.licenseNote || '';
     var im = (a && a.image) || {};
-    f.img_url.value = im.url || ''; f.img_credit.value = im.credit || ''; f.img_rights.value = im.rightsNote || '';
+    f.img_url.value = im.url || ''; f.img_credit.value = im.credit || ''; f.img_rights.value = im.rightsNote || ''; f.img_lic.value = im.licenseUrl || '';
     f.seo_title.value = a ? a.seo.title : ''; f.seo_desc.value = a ? a.seo.description : '';
     f.related.value = a ? a.related.map(function (r) { return r.url + ' | ' + r.label; }).join('\n') : '';
     f.featured.checked = !!(a && a.featured); f.pick.checked = !!(a && a.pick);
     $('[data-ed-status]').textContent = a ? (STATUS[a.status] || a.status) + ' · son güncelleme ' + fmt(a.updatedAt) + (a.origin === 'ingest' ? ' · kaynak tarayıcıdan geldi (özgün başlık: ' + ((a.ingest || {}).originalTitle || '') + ')' : '') : 'Yeni yazı';
     var view = $('[data-ed-view]');
     view.hidden = !(a && a.live); if (a) view.href = a.url;
-    clearErrors(); counts(); preview();
+    clearErrors(); counts(); preview(); flow(a);
+  }
+
+  /* yayın akışı kutusu */
+  var NEXT = { source_check: 'source', tech_check: 'technical', approval: 'approval' };
+  function flow(a) {
+    var box = $('[data-flow]');
+    box.hidden = !a;
+    if (!a) return;
+    var r = a.review, order = ['source', 'technical', 'approval'];
+    $('[data-flow-steps]').innerHTML = '<li class="' + (r.stage === 'draft' || r.stage === 'legacy' ? 'is-now' : 'is-done') + '">Taslak' + (r.stage === 'legacy' ? ' (akış öncesi yayın)' : '') + '</li>'
+      + order.map(function (k) {
+        var c = r.checks[k], st = meta.steps[k] || {};
+        return '<li class="' + (c ? 'is-done' : (NEXT[r.stage] === k ? 'is-now' : '')) + '">' + esc(st.name || k) + (c ? ': ' + esc(c.by) + ', ' + esc(fmt(new Date(c.at * 1000).toISOString())) + '<br><small>' + esc(c.note) + '</small>' : '') + '</li>';
+      }).join('') + '<li class="' + (a.status === 'published' && r.stage === 'approved' && !a.liveCopy ? 'is-done' : '') + '">Yayın</li>';
+    var hold = $('[data-flow-hold]');
+    hold.hidden = !r.hold;
+    hold.textContent = r.hold ? HOLD[r.hold.kind] + ' (' + r.hold.by + '): ' + r.hold.reason + ' — Kayıt taslakta tutuluyor; düzeltip çözüm notuyla yeniden gönderin.' : '';
+    var act = $('[data-flow-act]'), html = '';
+    if (r.stage === 'draft' || r.stage === 'legacy') {
+      html += (r.hold ? '<div class="vhp-field"><label for="fl-res">Çözüm notu</label><input id="fl-res" maxlength="500"></div>' : '')
+        + '<button type="button" class="vhp-btn vhp-btn--primary" data-act="flow-submit">Kaydet ve kaynak kontrolüne gönder</button>';
+    } else if (NEXT[r.stage]) {
+      var st = meta.steps[NEXT[r.stage]] || { checklist: {} };
+      html += '<fieldset><legend>' + esc(st.name || '') + '</legend>' + Object.keys(st.checklist).map(function (k) {
+        return '<label class="vhp-check"><input type="checkbox" name="ck" value="' + esc(k) + '"> ' + esc(st.checklist[k]) + '</label>';
+      }).join('') + '<div class="vhp-field"><label for="fl-note">Kontrol notu (kanıt: hangi kaynak, ne karşılaştırıldı)</label><textarea id="fl-note" rows="2" maxlength="500"></textarea></div>'
+        + '<button type="button" class="vhp-btn vhp-btn--primary" data-act="flow-review" data-step="' + esc(NEXT[r.stage]) + '">Kontrolü onayla</button></fieldset>';
+    } else if (r.stage === 'approved') {
+      html += '<p class="vhp-muted">Akış tamamlandı. ' + (a.status === 'published' && !a.liveCopy ? 'Yazı yayında.' : '"Yayımla" veya "Planla" ile yayına alabilirsiniz.') + '</p>';
+    }
+    if (r.stage !== 'approved' || a.status !== 'published') {
+      html += '<details class="vhp-hold"><summary>Taslakta tut (eksik veya çelişkili bilgi)</summary>'
+        + '<div class="vhp-row"><div class="vhp-field"><label for="fl-kind">Neden</label><select id="fl-kind"><option value="eksik">Eksik bilgi</option><option value="celiskili">Çelişkili bilgi</option></select></div>'
+        + '<div class="vhp-field"><label for="fl-reason">Gerekçe</label><input id="fl-reason" maxlength="500"></div></div>'
+        + '<button type="button" class="vhp-btn vhp-btn--danger" data-act="flow-hold">Taslakta tut</button></details>';
+    }
+    act.innerHTML = html;
+    $('[data-flow-hist]').innerHTML = r.history.slice().reverse().map(function (h) {
+      return '<li><small>' + esc(fmt(new Date(h.at * 1000).toISOString())) + ' · ' + esc(h.by) + ' · ' + esc(h.action) + '</small>' + (h.note ? '<br>' + esc(h.note) : '') + '</li>';
+    }).join('');
   }
   function collect(confirmSimilar) {
     var f = form.elements;
     var body = {
       title: f.title.value.trim(), type: f.type.value, category: f.category.value, summary: f.summary.value.trim(), body: f.body.value,
+      impact: f.impact.value, commentary: f.commentary.value, eventDate: f.eventDate.value, revisionNote: f.revisionNote.value.trim(),
+      extraSources: f.extra.value.split('\n').map(function (l) { return l.trim(); }).filter(Boolean).map(function (l) {
+        var p = l.split('|').map(function (x) { return x.trim(); }); return { name: p[0] || '', url: p[1] || '', publishedAt: p[2] || '', licenseNote: p.slice(3).join(' | ') };
+      }),
       tags: f.tags.value.split(',').map(function (t) { return t.trim(); }).filter(Boolean),
       seo: { title: f.seo_title.value.trim(), description: f.seo_desc.value.trim() },
       related: f.related.value.split('\n').map(function (l) { return l.trim(); }).filter(Boolean).map(function (l) {
@@ -158,12 +210,12 @@
     };
     if (f.slug.value.trim()) body.slug = f.slug.value.trim();
     body.source = (f.src_name.value.trim() || f.src_url.value.trim()) ? { name: f.src_name.value.trim(), url: f.src_url.value.trim(), publishedAt: f.src_date.value, licenseNote: f.src_lic.value.trim() } : null;
-    body.image = f.img_url.value.trim() ? { url: f.img_url.value.trim(), credit: f.img_credit.value.trim(), rightsNote: f.img_rights.value.trim() } : null;
+    body.image = f.img_url.value.trim() ? { url: f.img_url.value.trim(), credit: f.img_credit.value.trim(), rightsNote: f.img_rights.value.trim(), licenseUrl: f.img_lic.value.trim() } : null;
     if (current) { body.id = current.id; body.updatedAt = current.updatedAt; }
     if (confirmSimilar) body.confirmSimilar = true;
     return body;
   }
-  var FIELD_MAP = { title: 'title', summary: 'summary', body: 'body', category: 'category', type: 'type', tags: 'tags', slug: 'slug', 'source.url': 'src_url', 'source.name': 'src_name', 'source.publishedAt': 'src_date', 'image.url': 'img_url', 'image.credit': 'img_credit', 'image.rightsNote': 'img_rights', 'seo.title': 'seo_title', 'seo.description': 'seo_desc', related: 'related' };
+  var FIELD_MAP = { title: 'title', summary: 'summary', body: 'body', category: 'category', type: 'type', tags: 'tags', slug: 'slug', 'source.url': 'src_url', 'source.name': 'src_name', 'source.publishedAt': 'src_date', 'image.url': 'img_url', 'image.credit': 'img_credit', 'image.rightsNote': 'img_rights', 'image.licenseUrl': 'img_lic', 'seo.title': 'seo_title', 'seo.description': 'seo_desc', related: 'related', impact: 'impact', commentary: 'commentary', eventDate: 'eventDate', extraSources: 'extra', revisionNote: 'revisionNote' };
   function clearErrors() { $$('.vhp-field.has-error', form).forEach(function (f) { f.classList.remove('has-error'); var e = $('.vhp-err', f); if (e) e.remove(); }); }
   function showErrors(fields) {
     clearErrors();
@@ -207,6 +259,19 @@
       case 'social-id': showTab('social'); $('#soc-article').value = id; social(); break;
       case 'posts-reload': loaders.posts(); break;
       case 'publish': save(false).then(function (a) { return lifecycle('publish', a.id); }).then(function (j) { fill(j.item); say('ok', 'Yayımlandı: ' + j.item.url); }, fail); break;
+      case 'flow-submit':
+        var res = $('#fl-res');
+        save(false).then(function (a) { return lifecycle('submit', a.id, res ? { resolution: res.value.trim() } : null); }).then(function (j) { fill(j.item); say('ok', 'Kaynak kontrolüne gönderildi.'); }, fail);
+        break;
+      case 'flow-review':
+        if (!current) break;
+        var ck = {}; $$('input[name="ck"]', $('[data-flow-act]')).forEach(function (i) { ck[i.value] = i.checked; });
+        lifecycle('review', current.id, { step: b.getAttribute('data-step'), checklist: ck, note: $('#fl-note').value.trim() }).then(function (j) { fill(j.item); say('ok', 'Kontrol kaydedildi: ' + (meta.stages[j.item.review.stage] || '')); }, fail);
+        break;
+      case 'flow-hold':
+        if (!current) break;
+        lifecycle('hold', current.id, { kind: $('#fl-kind').value, reason: $('#fl-reason').value.trim() }).then(function (j) { fill(j.item); say('ok', 'Kayıt taslakta tutuluyor.'); }, fail);
+        break;
       case 'schedule':
         var when = $('#e-when').value;
         if (!when) { say('error', 'Yayın zamanını seçin.'); break; }
@@ -267,10 +332,13 @@
     var tb = $('[data-list="sources"]');
     api('sources').then(function (j) {
       sources = j.items; setMeta({ categories: j.categories });
+      var sc = $('[data-sched]');
+      sc.className = 'vhp-alert vhp-alert--' + (j.scheduler.healthy ? 'ok' : 'error');
+      sc.textContent = j.scheduler.message + (j.scheduler.lastCronAt ? ' Son zamanlanmış çalışma: ' + fmt(j.scheduler.lastCronAt) + '.' : '');
       tb.innerHTML = j.items.map(function (s) {
         return row([
           '<strong>' + esc(s.name) + '</strong><br><small>' + esc(s.feedUrl) + '</small>',
-          esc(s.permission), s.enabled ? '<span class="vhp-st vhp-st--published">Etkin</span>' : '<span class="vhp-st vhp-st--archived">Kapalı</span>',
+          esc(s.permission) + '<br><small>Metin: ' + esc(s.contentTerms) + ' · Görsel: ' + esc(s.imageTerms) + '<br>Koşul kontrolü: ' + esc(s.termsCheckedAt || 'yok') + (s.termsFresh ? '' : ' (yenilenmeli)') + '</small>', s.enabled ? '<span class="vhp-st vhp-st--published">Etkin</span>' : '<span class="vhp-st vhp-st--archived">Kapalı</span>',
           esc(fmt(s.lastFetchAt)) + (s.lastStatus ? '<br><small>' + esc(ERRORS[s.lastStatus] || s.lastStatus) + '</small>' : ''),
           '<div class="vhp-src-notes">' + esc(s.notes) + (s.termsUrl ? '<br><a href="' + esc(s.termsUrl) + '" target="_blank" rel="noopener noreferrer">koşullar</a>' : '') + '</div>',
           btn('src-edit', s.id, 'Düzenle') + btn('fetch-one', s.id, 'Şimdi tara')]);
@@ -281,7 +349,7 @@
   function editSource(id) {
     var s = sources.filter(function (x) { return x.id === id; })[0];
     if (!s) return;
-    ['id', 'name', 'feedUrl', 'homepage', 'termsUrl', 'format', 'category', 'permission', 'licenseNote', 'notes'].forEach(function (k) { sform.elements[k].value = s[k] || ''; });
+    ['id', 'name', 'feedUrl', 'homepage', 'termsUrl', 'format', 'category', 'permission', 'licenseNote', 'notes', 'contentTerms', 'imageTerms', 'termsCheckedAt'].forEach(function (k) { sform.elements[k].value = s[k] || ''; });
     sform.elements.enabled.checked = !!s.enabled;
     sform.elements.id.readOnly = true;
     $('[data-src-legend]').textContent = 'Kaynağı düzenle: ' + s.name;
@@ -291,7 +359,7 @@
   sform.addEventListener('submit', function (e) {
     e.preventDefault();
     var body = {};
-    ['id', 'name', 'feedUrl', 'homepage', 'termsUrl', 'format', 'category', 'permission', 'licenseNote', 'notes'].forEach(function (k) { body[k] = sform.elements[k].value.trim(); });
+    ['id', 'name', 'feedUrl', 'homepage', 'termsUrl', 'format', 'category', 'permission', 'licenseNote', 'notes', 'contentTerms', 'imageTerms', 'termsCheckedAt'].forEach(function (k) { body[k] = sform.elements[k].value.trim(); });
     body.enabled = sform.elements.enabled.checked;
     api('source_save', { body: body }).then(function () { say('ok', 'Kaynak kaydedildi.'); sform.reset(); loaders.sources(); }, function (err) { say('error', err.message); });
   });

@@ -5,6 +5,9 @@
  * Guvenlik: yalnizca https:443; ad cozumlenir ve ozel/yerel/ayrilmis adresler engellenir; baglanti cozulmus IP'ye
  * sabitlenir (DNS yeniden baglama yok); yonlendirmeler elle ve her adimda yeniden denetlenir; zaman asimi ve boyut siniri;
  * DOCTYPE/ENTITY iceren XML reddedilir; kaynak basina hiz siniri; hata gunlugu.
+ * Izinli kaynak listesi: yalnizca kayittaki kaynaklar taranir ve her istek (yonlendirmeler dahil) o kaynagin kendi
+ * alan adlarinda kalmak zorundadir. Kullanim kosullari bir yildan uzun suredir kontrol edilmemis kaynak taranmaz.
+ * Tarama hatasi hicbir kaydin tarihini degistirmez; son basarili tarama zamani (lastOkAt) korunur.
  */
 declare(strict_types=1);
 
@@ -25,7 +28,20 @@ const VH_FETCH_FORCE_INTERVAL = 300;  // editor "Simdi tara": kaynak basina 5 dk
 
 function vh_source_fields(): array
 {
-    return ['id', 'name', 'homepage', 'feedUrl', 'format', 'category', 'permission', 'termsUrl', 'fallbackLink', 'licenseNote', 'notes', 'enabled'];
+    return ['id', 'name', 'homepage', 'feedUrl', 'format', 'category', 'permission', 'termsUrl', 'fallbackLink', 'licenseNote', 'notes', 'enabled',
+        'contentTerms', 'imageTerms', 'termsCheckedAt'];
+}
+
+/** Metin ve gorsel kullanim kosulu degerleri (kaynak kaydinda). */
+function vh_content_terms(): array
+{
+    return ['baslik-baglanti' => 'Yalnızca başlık ve bağlantı', 'resmi-metin' => 'Resmî metin (telif koruması dışı)',
+        'acik-lisans' => 'Açık lisans (koşullarıyla)', 'yazili-izin' => 'Yazılı izinle', 'kullanilamaz' => 'Kullanılamaz'];
+}
+
+function vh_image_terms(): array
+{
+    return ['yok' => 'Görsel kullanılmaz', 'tek-tek' => 'Her görsel ayrıca doğrulanır', 'izinli' => 'Yazılı izinle'];
 }
 
 /** Saklanan kaynaklar + kayitta olup henuz saklanmamis olanlar. */
@@ -40,7 +56,17 @@ function vh_sources(string $dir): array
         }
     }
     $runtime = is_array($state['runtime'] ?? null) ? $state['runtime'] : [];
-    return ['version' => 1, 'sources' => array_values($sources), 'runtime' => $runtime];
+    // Kosul alanlari olmadan saklanmis kaynaklar kayittaki degerle (yoksa en kisitli degerle) tamamlanir.
+    $defaults = array_column(vh_registry(), null, 'id');
+    foreach ($sources as $i => $s) {
+        foreach (['contentTerms' => 'baslik-baglanti', 'imageTerms' => 'yok', 'termsCheckedAt' => ''] as $k => $v) {
+            if (!isset($s[$k])) {
+                $sources[$i][$k] = $defaults[$s['id'] ?? ''][$k] ?? $v;
+            }
+        }
+    }
+    return ['version' => 1, 'sources' => array_values($sources), 'runtime' => $runtime,
+        'scheduler' => is_array($state['scheduler'] ?? null) ? $state['scheduler'] : null];
 }
 
 function vh_find_source(array $state, string $id): ?array
@@ -78,8 +104,8 @@ function vh_clean_source(array $in, ?array $existing): array
         }
     }
     $format = (string)($in['format'] ?? ($existing['format'] ?? 'rss'));
-    if (!in_array($format, ['rss', 'atom', 'etkb'], true)) {
-        vg_fail(422, 'invalid_field', 'Biçim rss, atom veya etkb olmalı.', ['format' => 'Geçersiz.']);
+    if (!in_array($format, ['rss', 'atom', 'etkb', 'none'], true)) {
+        vg_fail(422, 'invalid_field', 'Biçim rss, atom, etkb veya none (taranmayan başvuru kaynağı) olmalı.', ['format' => 'Geçersiz.']);
     }
     $cat = (string)($in['category'] ?? ($existing['category'] ?? ''));
     if (!isset(vh_categories()[$cat])) {
@@ -89,9 +115,27 @@ function vh_clean_source(array $in, ?array $existing): array
     if (!in_array($perm, ['kamu', 'lisansli', 'izinli', 'izin-gerekli', 'reddedildi'], true)) {
         vg_fail(422, 'invalid_field', 'İzin durumu geçersiz.', ['permission' => 'Geçersiz.']);
     }
+    $ct = (string)($in['contentTerms'] ?? ($existing['contentTerms'] ?? 'baslik-baglanti'));
+    if (!isset(vh_content_terms()[$ct])) {
+        vg_fail(422, 'invalid_field', 'Metin kullanım koşulu geçersiz.', ['contentTerms' => 'Geçersiz.']);
+    }
+    $it = (string)($in['imageTerms'] ?? ($existing['imageTerms'] ?? 'yok'));
+    if (!isset(vh_image_terms()[$it])) {
+        vg_fail(422, 'invalid_field', 'Görsel kullanım koşulu geçersiz.', ['imageTerms' => 'Geçersiz.']);
+    }
+    $tc = (string)($in['termsCheckedAt'] ?? ($existing['termsCheckedAt'] ?? ''));
+    if ($tc !== '' && (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $tc, $m) !== 1 || !checkdate((int)$m[2], (int)$m[3], (int)$m[1]) || $tc > gmdate('Y-m-d', vg_now() + 86400))) {
+        vg_fail(422, 'invalid_field', 'Koşul kontrol tarihi YYYY-AA-GG ve bugün ya da öncesi olmalı.', ['termsCheckedAt' => 'YYYY-AA-GG']);
+    }
     $enabled = array_key_exists('enabled', $in) ? $in['enabled'] === true : !empty($existing['enabled']);
     if ($enabled && in_array($perm, ['izin-gerekli', 'reddedildi'], true)) {
         vg_fail(422, 'permission_required', 'İzin durumu "izin gerekli" veya "reddedildi" olan kaynak etkinleştirilemez. Önce yazılı izni kaydedin.', ['enabled' => 'İzin gerekli.']);
+    }
+    if ($enabled && $format === 'none') {
+        vg_fail(422, 'invalid_field', 'Başvuru kaynağı (none) taranmaz, etkinleştirilemez.', ['enabled' => 'Taranmaz.']);
+    }
+    if ($enabled && ($ct === 'kullanilamaz' || !vh_terms_fresh(['termsCheckedAt' => $tc]))) {
+        vg_fail(422, 'terms_check_required', 'Kaynağı etkinleştirmeden önce kullanım koşullarını kontrol edip tarihini girin (en fazla 1 yıl önce).', ['termsCheckedAt' => 'Kontrol tarihi gerekli.']);
     }
     return [
         'id' => $id,
@@ -106,6 +150,9 @@ function vh_clean_source(array $in, ?array $existing): array
         'licenseNote' => vh_line($in['licenseNote'] ?? ($existing['licenseNote'] ?? ''), 'licenseNote', 'Kullanım notu', 0, 300, false),
         'notes' => vh_multiline($in['notes'] ?? ($existing['notes'] ?? ''), 'notes', 'Notlar', 2000),
         'enabled' => $enabled,
+        'contentTerms' => $ct,
+        'imageTerms' => $it,
+        'termsCheckedAt' => $tc,
     ];
 }
 
@@ -175,7 +222,7 @@ function vh_resolve_public(string $host, string &$why): string
 }
 
 /** URL tarama icin uygun mu? Dondurur: [host, ip, path] veya hata. */
-function vh_check_fetch_url(string $url, string &$why): array
+function vh_check_fetch_url(string $url, string &$why, array $allowHosts = []): array
 {
     $why = '';
     $p = strlen($url) <= 600 && preg_match('/[\x00-\x20\x7F<>"\'`\\\\]/', $url) !== 1 ? parse_url($url) : false;
@@ -188,6 +235,11 @@ function vh_check_fetch_url(string $url, string &$why): array
         return [];
     }
     $host = strtolower(trim((string)$p['host'], '[]'));
+    // Izinli liste: kaynagin kendi alan adlari disina (yonlendirmeyle bile) cikilmaz. Ad cozulmeden once denetlenir.
+    if ($allowHosts && !in_array((string)preg_replace('/^www\./', '', $host), $allowHosts, true)) {
+        $why = 'host_not_allowed';
+        return [];
+    }
     if ($host === 'localhost' || substr($host, -6) === '.local' || substr($host, -10) === '.localhost' || substr($host, -9) === '.internal') {
         $why = 'blocked_address';
         return [];
@@ -298,11 +350,11 @@ function vh_http_once(string $host, string $ip, string $path, string &$why): arr
 }
 
 /** Yonlendirmeleri (en fazla 3) her adimda yeniden denetleyerek getirir. */
-function vh_http_get(string $url, string &$why, int &$status): string
+function vh_http_get(string $url, string &$why, int &$status, array $allowHosts = []): string
 {
     $status = 0;
     for ($hop = 0; $hop < 4; $hop++) {
-        $target = vh_check_fetch_url($url, $why);
+        $target = vh_check_fetch_url($url, $why, $allowHosts);
         if (!$target) {
             return '';
         }
@@ -496,6 +548,13 @@ function vh_fetch_body(array $source, string &$why, int &$status): string
 {
     $test = vh_test_feed_dir();
     if ($test !== '') {
+        // <kaynak>.error: ag hatasi benzetimi (ör. "network_error_28" = zaman asimi, "http_503").
+        $err = $test . '/' . $source['id'] . '.error';
+        if (is_file($err)) {
+            $why = trim((string)file_get_contents($err, false, null, 0, 64));
+            $status = preg_match('/^http_(\d{3})$/', $why, $m) === 1 ? (int)$m[1] : 0;
+            return '';
+        }
         $file = $test . '/' . $source['id'] . '.xml';
         $status = is_file($file) ? 200 : 404;
         if (!is_file($file)) {
@@ -509,7 +568,7 @@ function vh_fetch_body(array $source, string &$why, int &$status): string
         }
         return $raw;
     }
-    return vh_http_get($source['feedUrl'], $why, $status);
+    return vh_http_get($source['feedUrl'], $why, $status, vh_source_hosts($source));
 }
 
 /**
@@ -535,8 +594,16 @@ function vh_run_fetch(array $opts): array
         if ($only === '' && empty($src['enabled'])) {
             continue;
         }
+        if (($src['format'] ?? '') === 'none') {
+            $results[] = ['sourceId' => $src['id'], 'name' => $src['name'], 'ok' => false, 'error' => 'not_fetchable', 'items' => 0, 'added' => 0, 'httpStatus' => 0, 'ms' => 0];
+            continue;
+        }
         if (in_array($src['permission'] ?? '', ['izin-gerekli', 'reddedildi'], true)) {
             $results[] = ['sourceId' => $src['id'], 'name' => $src['name'], 'ok' => false, 'error' => 'permission_required', 'items' => 0, 'added' => 0, 'httpStatus' => 0, 'ms' => 0];
+            continue;
+        }
+        if (($src['contentTerms'] ?? '') === 'kullanilamaz' || !vh_terms_fresh($src)) {
+            $results[] = ['sourceId' => $src['id'], 'name' => $src['name'], 'ok' => false, 'error' => 'terms_check_required', 'items' => 0, 'added' => 0, 'httpStatus' => 0, 'ms' => 0];
             continue;
         }
         $last = (int)($plan['runtime'][$src['id']]['lastFetchAt'] ?? 0);
@@ -600,8 +667,15 @@ function vh_run_fetch(array $opts): array
             vh_prune_inbox($state);
             vh_save_articles($dir, $state);
         }
-        $toStore = $sources;
-        vh_write($dir, 'sources.json', $toStore, 4194304);
+        // Zamanlayici kalp atisi: panel ve durum bilgisi zamanlanmis taramanin gercekten calisip calismadigini buradan okur.
+        $sched = is_array($sources['scheduler'] ?? null) ? $sources['scheduler'] : [];
+        $sched['lastRunAt'] = $now;
+        $sched['lastTrigger'] = $trigger;
+        if ($trigger === 'cron') {
+            $sched['lastCronAt'] = $now;
+        }
+        $sources['scheduler'] = $sched;
+        vh_write($dir, 'sources.json', $sources, 4194304);
         return ['results' => $out, 'scheduledPublished' => $published];
     });
 }
@@ -671,4 +745,55 @@ function vh_prune_inbox(array &$state): void
         }
         unset($state['articles'][$id]);
     }
+}
+
+/* ------------------------------------------------------------------ guncellik ve zamanlayici durumu */
+
+/** Zamanlanmis tarama gercekten calisiyor mu? Yalnizca kayitli calismalara dayanir; tahmin yapilmaz. */
+function vh_scheduler_status(array $sourcesState): array
+{
+    $s = is_array($sourcesState['scheduler'] ?? null) ? $sourcesState['scheduler'] : [];
+    $cron = (int)($s['lastCronAt'] ?? 0);
+    $healthy = $cron > 0 && vg_now() - $cron <= 2 * 3600;
+    return [
+        'lastCronAt' => $cron ? vg_iso($cron) : null,
+        'lastRunAt' => isset($s['lastRunAt']) ? vg_iso((int)$s['lastRunAt']) : null,
+        'healthy' => $healthy,
+        'message' => $cron === 0 ? 'Zamanlanmış tarama hiç çalışmamış: sunucuda cron görevi kurulu değil veya çalışmıyor. Tarama yalnızca "Şimdi tara" ile yapılır.'
+            : ($healthy ? 'Zamanlanmış tarama çalışıyor.' : 'Zamanlanmış tarama 2 saatten uzun süredir çalışmadı; cron görevini kontrol edin.'),
+    ];
+}
+
+/**
+ * Okura gosterilen guncellik bilgisi. Kaynak kesilse de son dogrulanmis icerik gosterilir ve hicbir tarih yeni veri
+ * gelmis gibi degistirilmez. lastVerifiedAt: yayindaki iceriklerdeki en son yayin onayi.
+ */
+function vh_freshness(array $live): array
+{
+    $verified = 0;
+    foreach ($live as $a) {
+        $c = $a['review']['checks']['approval'] ?? null;
+        if ($c && $c['at'] > $verified) {
+            $verified = (int)$c['at'];
+        }
+    }
+    $state = vh_locked(false, function (string $dir) {
+        return vh_sources($dir);
+    });
+    $sources = [];
+    $degraded = false;
+    foreach ($state['sources'] as $src) {
+        if (empty($src['enabled'])) {
+            continue;
+        }
+        $rt = $state['runtime'][$src['id']] ?? [];
+        $tried = isset($rt['lastFetchAt']);
+        $okNow = ($rt['lastStatus'] ?? '') === 'ok';
+        $degraded = $degraded || ($tried && !$okNow);
+        $sources[] = ['name' => $src['name'], 'reachable' => $tried ? $okNow : null,
+            'lastOkAt' => isset($rt['lastOkAt']) ? vg_iso((int)$rt['lastOkAt']) : null,
+            'lastCheckedAt' => $tried ? vg_iso((int)$rt['lastFetchAt']) : null];
+    }
+    return ['lastVerifiedAt' => $verified ? vg_iso($verified) : null, 'degraded' => $degraded, 'sources' => $sources,
+        'scheduler' => ['healthy' => vh_scheduler_status($state)['healthy']]];
 }

@@ -516,6 +516,7 @@ function identitiesPage() {
 }
 
 function writeIfChanged(file, text) {
+  text = text.replace(/[ \t]+$/gm, '');
   const abs = path.join(root, file);
   fs.mkdirSync(path.dirname(abs), { recursive: true });
   // shell.py'nin eklediği bölgeleri koru: mevcut dosyadaki vg bölgelerini yeni metne taşı
