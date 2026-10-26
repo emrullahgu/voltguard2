@@ -1158,8 +1158,37 @@ function vh_mail_confirm(string $email, string $subId, string $token): bool
     return vg_mail_send($email, 'VoltHaber aboneliğinizi onaylayın', $body, 'volthaber-confirm');
 }
 
-/* Teslim vaat etmez: e-posta yanittan sonra gonderilir; tasiyici reddederse yalnizca error_log kaydi olur. */
+/* Adresin abone olup olmadigini veya adres bazinda teslim sonucunu aciklamaz. */
 const VH_SUBSCRIBE_MESSAGE = 'Talebiniz alındı. Aboneliğiniz, e-posta adresinize gönderilecek onay bağlantısını açtığınızda başlar. Onay e-postası birkaç dakika içinde gelmezse istenmeyen e-posta klasörünü kontrol edin veya info@voltguard.com.tr adresine yazın.';
+const VH_SUBSCRIBE_PREVIEW_MESSAGE = 'Talebiniz alındı. Bu önizlemede e-postalar gerçek adreslere gönderilmez. Bültene abone olmak için voltguard.com.tr üzerindeki canlı VoltHaber sayfasını kullanın.';
+
+function vh_subscribe_response(): array
+{
+    return ['ok' => true, 'service' => VH_SERVICE, 'pending' => true,
+        'message' => getenv('VG_MAIL_OUTBOX') === '1' ? VH_SUBSCRIBE_PREVIEW_MESSAGE : VH_SUBSCRIBE_MESSAGE];
+}
+
+/** Tekrar gonderimde ayni 48 saatlik baglanti kullanilir; ham jeton veride saklanmaz. */
+function vh_confirmation_token(string $id, string $nonce): string
+{
+    return vg_b64url(substr(hash_hmac('sha256', 'vh-confirm|' . $id . '|' . $nonce, vg_secret(), true), 0, 24));
+}
+
+/** Basarisiz gonderim gunluk kotayi tuketmez; eszamanli gonderimler once yer ayirir. */
+function vh_finish_confirmation_attempt(string $rateKey, string $attempt, bool $accepted): void
+{
+    vh_locked(true, function (string $dir) use ($rateKey, $attempt, $accepted) {
+        $state = vh_subscribers($dir);
+        if (!isset($state['rates'][$rateKey]['pending'][$attempt])) {
+            return;
+        }
+        unset($state['rates'][$rateKey]['pending'][$attempt]);
+        if ($accepted) {
+            $state['rates'][$rateKey]['hits'][] = vg_now();
+        }
+        vh_write($dir, 'subscribers.json', $state, 16777216);
+    });
+}
 
 function vh_subscribe(array $body): array
 {
@@ -1170,7 +1199,7 @@ function vh_subscribe(array $body): array
     }
     // Bal tuzagi: botlara basarili gibi gorunur, hicbir sey kaydedilmez.
     if (isset($body['website']) && $body['website'] !== '') {
-        return ['ok' => true, 'service' => VH_SERVICE, 'pending' => true, 'message' => VH_SUBSCRIBE_MESSAGE];
+        return vh_subscribe_response();
     }
     if (($body['consent'] ?? null) !== true) {
         vg_fail(422, 'consent_required', 'Bülten için açık rıza kutusunu işaretlemeniz gerekir.', ['consent' => 'Zorunlu.']);
@@ -1205,6 +1234,10 @@ function vh_subscribe(array $body): array
         $hits = array_values(array_filter((array)($state['rates'][$rk]['hits'] ?? []), function ($t) use ($now) {
             return is_int($t) && $t > $now - 86400;
         }));
+        // Islem kesilirse rezervasyon 5 dakika sonra kendiliginden serbest kalir.
+        $pending = array_filter((array)($state['rates'][$rk]['pending'] ?? []), function ($t) use ($now) {
+            return is_int($t) && $t > $now - 300;
+        });
         $found = null;
         foreach ($state['subscribers'] as $id => $s) {
             if (($s['emailHash'] ?? '') === $eh) {
@@ -1212,7 +1245,7 @@ function vh_subscribe(array $body): array
                 break;
             }
         }
-        if (($found !== null && $state['subscribers'][$found]['status'] === 'active') || count($hits) >= 3) {
+        if (($found !== null && $state['subscribers'][$found]['status'] === 'active') || count($hits) + count($pending) >= 3) {
             // zaten abone / gunluk sinir: ayni genel yanit; suresi dolan bekleyen kayitlarin silinmesi yine yazilir
             if ($purged) {
                 vh_write($dir, 'subscribers.json', $state, 16777216);
@@ -1222,25 +1255,43 @@ function vh_subscribe(array $body): array
         if ($found === null && count($state['subscribers']) >= VH_MAX_SUBSCRIBERS) {
             vg_fail(503, 'unavailable', 'Bülten şu anda yeni abone kabul etmiyor.');
         }
-        $token = vg_b64url(random_bytes(24));
         $id = $found ?? ('s' . bin2hex(random_bytes(10)));
+        $existing = $found !== null ? $state['subscribers'][$found] : null;
+        $isPending = $existing !== null && ($existing['status'] ?? '') === 'pending' && (int)($existing['confirmExpires'] ?? 0) > $now;
+        $reuse = $isPending && is_string($existing['confirmNonce'] ?? null)
+            && preg_match('/^[A-Za-z0-9_-]{32}$/', $existing['confirmNonce']) === 1;
+        $nonce = $reuse ? $existing['confirmNonce'] : vg_b64url(random_bytes(24));
+        $token = vh_confirmation_token($id, $nonce);
         $state['subscribers'][$id] = [
             'id' => $id, 'email' => $email, 'emailHash' => $eh, 'status' => 'pending',
-            'consentAt' => $now, 'consentVersion' => VH_CONSENT_VERSION, 'ipHash' => vh_ip_hash(),
+            'consentAt' => $isPending ? $existing['consentAt'] : $now,
+            'consentVersion' => $isPending ? $existing['consentVersion'] : VH_CONSENT_VERSION,
+            'ipHash' => $isPending ? (string)($existing['ipHash'] ?? '') : vh_ip_hash(),
             'createdAt' => $found !== null ? (int)($state['subscribers'][$found]['createdAt'] ?? $now) : $now,
             'confirmedAt' => null, 'unsubscribedAt' => null,
-            'confirmHash' => hash('sha256', $token), 'confirmExpires' => $now + VH_CONFIRM_TTL,
+            'confirmHash' => hash('sha256', $token), 'confirmNonce' => $nonce,
+            'confirmExpires' => $isPending ? $existing['confirmExpires'] : $now + VH_CONFIRM_TTL,
+            // Onceki surumun rastgele jetonu gec gelen e-postalarda kendi suresi sonuna kadar gecerli kalir.
+            'confirmPreviousHash' => $isPending ? ($reuse ? ($existing['confirmPreviousHash'] ?? '') : ($existing['confirmHash'] ?? '')) : '',
+            'confirmPreviousExpires' => $isPending ? ($reuse ? ($existing['confirmPreviousExpires'] ?? 0) : $existing['confirmExpires']) : 0,
         ];
-        $hits[] = $now;
-        $state['rates'][$rk] = ['hits' => $hits, 'until' => $now + 86400];
+        $attempt = bin2hex(random_bytes(12));
+        $pending[$attempt] = $now;
+        $state['rates'][$rk] = ['hits' => $hits, 'pending' => $pending, 'until' => $now + 86400];
         vh_write($dir, 'subscribers.json', $state, 16777216);
-        $send = [$email, $id, $token];
+        $send = [$email, $id, $token, $rk, $attempt];
     });
     if ($send !== null) {
         // Yanittan sonra gonderilir: yanit suresi adresin zaten abone olup olmadigini belli etmesin.
         $job = function () use ($send) {
-            if (!vh_mail_confirm($send[0], $send[1], $send[2])) {
-                error_log('VoltHaber: confirmation mail not accepted by transport');
+            $accepted = false;
+            try {
+                $accepted = vh_mail_confirm($send[0], $send[1], $send[2]);
+                if (!$accepted) {
+                    error_log('VoltHaber: confirmation mail not accepted by transport');
+                }
+            } finally {
+                vh_finish_confirmation_attempt($send[3], $send[4], $accepted);
             }
         };
         if (vg_can_finish_early()) {
@@ -1249,7 +1300,7 @@ function vh_subscribe(array $body): array
             $job();
         }
     }
-    return ['ok' => true, 'service' => VH_SERVICE, 'pending' => true, 'message' => VH_SUBSCRIBE_MESSAGE];
+    return vh_subscribe_response();
 }
 
 /**
@@ -1283,8 +1334,11 @@ function vh_confirm(array $body): array
     return vh_locked(true, function (string $dir) use ($hash, $now) {
         $state = vh_subscribers($dir);
         foreach ($state['subscribers'] as $id => $s) {
-            if (($s['confirmHash'] ?? '') !== '' && hash_equals((string)$s['confirmHash'], $hash)) {
-                if ((int)($s['confirmExpires'] ?? 0) < $now) {
+            $current = ($s['confirmHash'] ?? '') !== '' && hash_equals((string)$s['confirmHash'], $hash);
+            $previous = ($s['confirmPreviousHash'] ?? '') !== '' && hash_equals((string)$s['confirmPreviousHash'], $hash);
+            if ($current || $previous) {
+                $expires = (int)($s[$current ? 'confirmExpires' : 'confirmPreviousExpires'] ?? 0);
+                if ($expires < $now) {
                     vh_purge_expired_pending($state, $now);
                     vh_write($dir, 'subscribers.json', $state, 16777216);
                     vg_fail(410, 'token_expired', 'Onay bağlantısının süresi dolmuş. Lütfen yeniden abone olun.');
@@ -1293,6 +1347,7 @@ function vh_confirm(array $body): array
                 $state['subscribers'][$id]['confirmedAt'] = $now;
                 $state['subscribers'][$id]['confirmHash'] = '';
                 $state['subscribers'][$id]['confirmExpires'] = 0;
+                unset($state['subscribers'][$id]['confirmNonce'], $state['subscribers'][$id]['confirmPreviousHash'], $state['subscribers'][$id]['confirmPreviousExpires']);
                 vh_write($dir, 'subscribers.json', $state, 16777216);
                 return ['ok' => true, 'service' => VH_SERVICE, 'confirmed' => true];
             }

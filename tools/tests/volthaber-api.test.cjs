@@ -346,6 +346,7 @@ async function run() {
     await expect(anon, 'subscribe', { body: { email: 'bot@example.test', consent: true, website: 'http://spam' }, csrf: false }, 200);
     check(outbox().length, before, 'Honeypot sends nothing');
     r = await expect(anon, 'subscribe', { body: { email: 'Okur@Example.test', consent: true }, csrf: false }, 200);
+    ok(r.body.message.includes('önizlemede e-postalar gerçek adreslere gönderilmez'), 'Preview response explains that real mail is not sent');
     const confirmMail = outbox().slice(-1)[0];
     const token = (confirmMail.match(/#onay=([A-Za-z0-9_-]{32})/) || [])[1];
     ok(token, 'Double opt-in mail with token');
@@ -355,6 +356,20 @@ async function run() {
     let rec = Object.values(subs.subscribers)[0];
     check([rec.status, rec.consentVersion.startsWith('volthaber-bulten'), /^[a-f0-9]{32}$/.test(rec.ipHash), typeof rec.consentAt], ['pending', true, true, 'number'], 'Consent timestamp, version and IP hash recorded');
     ok(!JSON.stringify(subs).includes('127.0.0.1'), 'Raw IP never stored');
+    const initialExpires = rec.confirmExpires;
+    await expect(anon, 'subscribe', { body: { email: 'okur@example.test', consent: true }, csrf: false }, 200);
+    const resentToken = (outbox().slice(-1)[0].match(/#onay=([A-Za-z0-9_-]{32})/) || [])[1];
+    check(resentToken, token, 'Resending confirmation keeps delayed earlier links valid');
+    subs = JSON.parse(fs.readFileSync(path.join(env.VG_DATA_DIR, 'volthaber/subscribers.json'), 'utf8'));
+    rec = Object.values(subs.subscribers)[0];
+    check(rec.confirmExpires, initialExpires, 'Resending does not extend the original 48-hour window');
+    ok(!JSON.stringify(subs).includes(token), 'Raw confirmation token is never stored');
+    // Existing pre-upgrade random links remain valid when the first stable-token resend occurs.
+    delete rec.confirmNonce;
+    fs.writeFileSync(path.join(env.VG_DATA_DIR, 'volthaber/subscribers.json'), JSON.stringify(subs));
+    await expect(anon, 'subscribe', { body: { email: 'okur@example.test', consent: true }, csrf: false }, 200);
+    subs = JSON.parse(fs.readFileSync(path.join(env.VG_DATA_DIR, 'volthaber/subscribers.json'), 'utf8'));
+    check(subs.subscribers[rec.id].confirmPreviousHash, rec.confirmHash, 'Previously issued random token survives upgrade');
     r = await expect(editor, 'stats', {}, 200);
     check(r.body.subscribers.active, 0, 'Pending is not active');
     await expect(anon, 'confirm', { body: { token: 'A'.repeat(32) }, csrf: false }, 404, 'invalid_token');
@@ -448,6 +463,35 @@ async function run() {
     p = await page('/volthaber/yayin-ilkeleri.html');
     ok(p.status === 200 && p.text.includes('FSEK') === false && p.text.includes('Fikir ve Sanat Eserleri Kanunu') && p.text.includes('id="kaldirma"'), 'Policy page');
 
+    // Overlapping FPM requests reserve their allowance before background transport starts.
+    // Finishing an old job may update the counter, but cannot undo confirmation or unsubscribe.
+    const overlapData = path.join(sandbox, 'data-mail-overlap');
+    fs.mkdirSync(overlapData);
+    const overlap = spawnSync(php, ['-n', '-r', `
+      define('VG_API', 1);
+      function litespeed_finish_request() {}
+      $root = ${JSON.stringify(root.replace(/\\/g, '/'))};
+      foreach (['bootstrap', 'store', 'security', 'validate', 'mailer', 'volthaber'] as $lib) require $root . '/api/lib/' . $lib . '.php';
+      $_SERVER['REMOTE_ADDR'] = '198.51.100.10'; $consentIpHash = vh_ip_hash();
+      for ($i = 0; $i < 4; $i++) {
+        $_SERVER['REMOTE_ADDR'] = '198.51.100.' . (10 + $i);
+        vh_subscribe(['email' => 'overlap@example.test', 'consent' => true]);
+      }
+      $read = function () { return vh_locked(false, function ($dir) { return vh_subscribers($dir); }); };
+      $before = $read(); $jobs = vg_after_response(); $record = array_values($before['subscribers'])[0];
+      $reserved = count(array_values($before['rates'])[0]['pending']);
+      $token = vh_confirmation_token($record['id'], $record['confirmNonce']);
+      $jobs[0](); vh_confirm(['token' => $token]); $jobs[1]();
+      $active = $read()['subscribers'][$record['id']]['status'];
+      vh_unsubscribe(['token' => vh_unsub_token($record['id'])]); $jobs[2]();
+      $after = $read(); $rate = array_values($after['rates'])[0]; $final = $after['subscribers'][$record['id']];
+      echo json_encode(['jobs' => count($jobs), 'reserved' => $reserved, 'consentIpPreserved' => hash_equals($consentIpHash, $record['ipHash']), 'activeAfterJob' => $active,
+        'finalStatus' => $final['status'], 'finalEmail' => $final['email'], 'hits' => count($rate['hits']), 'pending' => count($rate['pending'])]);
+    `], { env: { ...env, VG_DATA_DIR: overlapData }, encoding: 'utf8', windowsHide: true });
+    check(overlap.status, 0, 'Overlapping background confirmation fixture succeeds');
+    check(JSON.parse(overlap.stdout), { jobs: 3, reserved: 3, consentIpPreserved: true, activeAfterJob: 'active', finalStatus: 'unsubscribed', finalEmail: '', hits: 3, pending: 0 },
+      'Concurrent allowance is reserved and old mail completion cannot resurrect a subscriber');
+
     // ---------------------------------------------------------------- real mail transport (no outbox)
     // Without VG_MAIL_OUTBOX the reply must never claim the confirmation mail was sent: no mail() -> 503;
     // mail() present but the transport rejects (no SMTP here) -> neutral "received" wording only.
@@ -468,6 +512,45 @@ async function run() {
         check(res.status, status, `${label}: subscribe status`);
         if (status === 503) check(body.error, 'mail_unavailable', `${label}: explicit mail error, nothing stored`);
         ok(!/gönderildi/i.test(body.message || ''), `${label}: reply does not claim the mail was sent`);
+        if (label === 'transport rejects') {
+          const failedFile = path.join(mailEnv.VG_DATA_DIR, 'volthaber/subscribers.json');
+          let failedState = JSON.parse(fs.readFileSync(failedFile, 'utf8'));
+          const failedRecord = Object.values(failedState.subscribers)[0];
+          const retryBody = JSON.stringify({ email: 'posta@example.test', consent: true });
+          for (let retry = 0; retry < 3; retry++) {
+            const again = await fetch(`http://127.0.0.1:${mailPort}/api/volthaber.php?action=subscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: `http://127.0.0.1:${mailPort}` }, body: retryBody });
+            check(again.status, 200, 'Transport failure remains a neutral response');
+          }
+          failedState = JSON.parse(fs.readFileSync(failedFile, 'utf8'));
+          check(Object.values(failedState.subscribers)[0].confirmHash, failedRecord.confirmHash, 'Failed retries keep the same pending confirmation token');
+          const failedRate = Object.values(failedState.rates)[0];
+          check([failedRate.hits.length, Object.keys(failedRate.pending).length], [0, 0], 'Rejected sends consume no daily mail allowance and release reservations');
+          // A crashed worker cannot indefinitely reserve all three allowed sends.
+          const oldAttempt = Math.floor(Date.now() / 1000) - 600;
+          failedRate.pending = { stalled1: oldAttempt, stalled2: oldAttempt, stalled3: oldAttempt };
+          fs.writeFileSync(failedFile, JSON.stringify(failedState));
+          const recoveryPort = await unusedPort();
+          const recoveryServer = spawn(php, ['-n', '-S', `127.0.0.1:${recoveryPort}`, '-t', root, path.join(root, 'tools/volthaber-dev-router.php')], { env: { ...mailEnv, VG_MAIL_OUTBOX: '1' }, stdio: 'ignore', windowsHide: true });
+          try {
+            let recovered;
+            for (let wait = 0; wait < 40; wait++) {
+              try {
+                recovered = await fetch(`http://127.0.0.1:${recoveryPort}/api/volthaber.php?action=subscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: `http://127.0.0.1:${recoveryPort}` }, body: retryBody });
+                break;
+              } catch (_) { await new Promise(resolve => setTimeout(resolve, 50)); }
+            }
+            check(recovered && recovered.status, 200, 'Transport recovery accepts a fresh retry');
+            const recoveredState = JSON.parse(fs.readFileSync(failedFile, 'utf8'));
+            const recoveredRate = Object.values(recoveredState.rates)[0];
+            check([recoveredRate.hits.length, Object.keys(recoveredRate.pending).length], [1, 0], 'Only accepted mail counts after stale reservations expire');
+            const recoveredMail = fs.readFileSync(path.join(mailEnv.VG_DATA_DIR, 'outbox', fs.readdirSync(path.join(mailEnv.VG_DATA_DIR, 'outbox'))[0]), 'utf8');
+            const recoveredToken = (recoveredMail.match(/#onay=([A-Za-z0-9_-]{32})/) || [])[1];
+            ok(recoveredToken && require('node:crypto').createHash('sha256').update(recoveredToken).digest('hex') === failedRecord.confirmHash, 'Recovered mail uses the original pending token');
+          } finally {
+            recoveryServer.kill();
+            await new Promise(resolve => { if (recoveryServer.exitCode !== null) resolve(); else { recoveryServer.once('exit', resolve); setTimeout(resolve, 3000); } });
+          }
+        }
       } finally {
         mailServer.kill();
         await new Promise(resolve => { if (mailServer.exitCode !== null) resolve(); else { mailServer.once('exit', resolve); setTimeout(resolve, 3000); } });

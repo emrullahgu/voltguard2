@@ -75,6 +75,21 @@ vg-data/
 
 Yedekleme: `vg-data/` klasörünü (özellikle `vg-accounts.sqlite` veya `json/`) yedekleyin. `sessions/`, `rl/` yedeklenmesi gerekmez.
 
+### Giriş ve e-posta sorunları için salt okunur tanı
+
+Sunucunun **özel terminalinde**, web PHP'siyle aynı `VG_DATA_DIR` ortamını kullanarak çalıştırın:
+
+```sh
+php tools/diagnose-access.php --docroot /home/voltgua2/public_html
+php tools/diagnose-access.php --docroot /home/voltgua2/public_html --email kullanici@example.com
+```
+
+`tools/` cPanel yayınına kopyalanmaz; betiği sunucudaki Git çalışma kopyasından veya web kökü dışındaki özel bir konumdan çalıştırın. HTTP üzerinden çalışmaz. Betik seçilen depo ile eski `public_html/_vgdata` deposunun varlığını, türünü, hesap sayılarını ve yalnızca istenen e-posta için hesap varlığını/çalışan rolü, durumu ve MFA kurulumunu raporlar. Diğer kullanıcıları, şifre/özetleri, davetleri, anahtarları veya jetonları yazdırmaz. `legacy_*` bulguları veri dizini farkını gösterir; betik hiçbir veriyi taşımaz veya onarmaz.
+
+Dizin, oturum, kilit, veritabanı veya kayıt oluşturmaz; izinleri değiştirmez ve e-posta göndermez. SQLite yalnızca değişmez/salt okunur kipte açılır; WAL/journal yan dosyaları varsa tutarlı çevrimdışı kopya istenir. CLI PHP sürümü, eklentileri ve ortamı web PHP'sinden farklı olabilir. `mail()`/outbox bayrakları teslim testi değildir; `VG_MAIL_OUTBOX=1` gerçek posta gönderimini kapatır. Çıktı istenen e-posta adresini içeriyorsa yalnızca yetkili kişilerle paylaşın.
+
+DNS posta denetiminde aynı alan adı için birden çok `v=spf1` TXT kaydı varsa SPF sonucu `PermError` olur ([RFC 7208 §4.5](https://www.rfc-editor.org/rfc/rfc7208#section-4.5)). Yetkili gönderim kaynaklarını, mevcut göndericileri koruyarak **tek SPF kaydında** birleştirin; tanı betiği DNS değiştirmez. MX kayıtları Google'a işaret ediyorsa cPanel'de `Remote Mail Exchanger` yönlendirmesini doğrulayın. Paneldeki gerçek posta akışı ve teslim günlükleri görülmeden bu ayarı otomatik değiştirmeyin.
+
 ### Ortam değişkenleri (isteğe bağlı)
 
 | Değişken | Varsayılan | Açıklama |

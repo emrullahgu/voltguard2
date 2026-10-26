@@ -171,7 +171,7 @@ function vh_newsletter(): string
         . '<button type="submit" class="btn btn--accent">Abone ol</button>'
         . '<p class="vh-news__msg" role="status" aria-live="polite"></p>'
         . '<noscript><p class="vh-news__msg">Abonelik formu için JavaScript gereklidir.</p></noscript>'
-        . '</form></section>';
+        . '</form><p>Bülten aboneliği ile site üyeliği ayrı kayıtlardır. <a href="/hesap/giris.html">Üye girişi</a> · <a href="/hesap/kayit.html">Ücretsiz üye ol</a>. Yönetici davetiyle açılan personel hesabınız için <a href="/calisan/giris.html">çalışan girişini</a> kullanın.</p></section>';
 }
 
 function vh_tools_block(string $cat = ''): string
