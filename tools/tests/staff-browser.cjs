@@ -70,7 +70,8 @@ async function fixtureAPI(req,res,url) {
   if (action==='login') {
     if (body.password!=='FixturePass123!' || !body.email.includes('@')) return json(res,session,401,{error:'staff_login_failed',message:'E-posta, şifre veya çalışan erişimi geçersiz.'});
     session.pending={mode:session.loginMode};
-    if(session.loginMode==='enroll')session.pending.secret=SECRET;
+    if(session.loginMode==='enroll')session.pending.secret=session.nextEnrollmentSecret || SECRET;
+    session.challengeExpired=false;
     session.csrf += '-pending';
     return json(res,session,200,{mfa_required:true,...session.pending,csrf:session.csrf});
   }
@@ -80,6 +81,10 @@ async function fixtureAPI(req,res,url) {
     return json(res,session,200,{mfa_required:true,mode:'enroll',secret:SECRET,csrf:session.csrf});
   }
   if (action==='mfa_enroll' || action==='mfa_verify') {
+    if (session.challengeExpired) {
+      session.pending=null;
+      return json(res,session,401,{error:'staff_challenge_expired',message:'Giriş adımını yeniden başlatın.'});
+    }
     if (body.code!=='123456') return json(res,session,401,{error:'staff_code',message:'Doğrulama kodu geçersiz. Yeniden deneyin.'});
     session.user={...session.target};session.pending=null;session.csrf += '-authenticated';
     return json(res,session,200,{user:session.user,csrf:session.csrf});
@@ -252,6 +257,71 @@ async function fillPayroll(page,period,pdf) {
       assert.equal(await page.locator('#staff-secret').inputValue(),SECRET);
       const sessionId=observed.filter(row=>row.action==='me').at(-1).session;
       assert.equal(observed.filter(row=>row.session===sessionId&&['activate','login'].includes(row.action)).length,0);
+      await context.close();
+    });
+    await scenario('Expired first enrollment clears the old key and offers an explicit password restart',async()=>{
+      const context=await contextWith({role:'employee',loginMode:'enroll'}),page=await context.newPage();
+      await page.goto(base+'/calisan/etkinlestir.html#t='+TOKEN,{waitUntil:'networkidle'});
+      await page.locator('#staff-activate-form [name=password]').fill('FixturePass123!');
+      await page.locator('#staff-activate-form [name=confirm]').fill('FixturePass123!');
+      await page.getByRole('button',{name:'Şifremi belirle'}).click();
+      await page.waitForFunction(()=>!document.getElementById('staff-factor').hidden);
+      const sid=observed.filter(row=>row.action==='activate').at(-1).session,session=sessions.get(sid);
+      session.challengeExpired=true;
+      session.nextEnrollmentSecret='KRSXG5DSNFXGOIDB';
+      await page.locator('#staff-factor-form [name=code]').fill('123456');
+      await page.locator('#staff-factor-form button').click();
+      await page.waitForFunction(()=>!document.getElementById('staff-activation-recovery').hidden);
+      assert.ok(await page.locator('#staff-factor').isHidden());
+      assert.ok(await page.locator('#staff-activate-form').isHidden());
+      assert.equal(await page.locator('#staff-secret').inputValue(),'');
+      assert.equal(await page.locator('#staff-factor-form [name=code]').inputValue(),'');
+      assert.match(await page.locator('#staff-status').innerText(),/10 dakika/);
+      assert.match(await page.locator('#staff-status').innerText(),/yeni anahtarı/);
+      assert.equal(session.user,null,'Expiry must not authenticate');
+      assert.equal(observed.filter(row=>row.session===sid&&row.action==='login').length,0,'No automatic password submission');
+      assert.equal(observed.filter(row=>row.session===sid&&row.action==='mfa_enroll').length,1,'No automatic code retry');
+      for(const width of [390,320])await checkLayout(page,'expired-enrollment',width);
+      await page.locator('#staff-activation-recovery a[href="/calisan/giris.html"]').click();
+      await page.waitForURL(base+'/calisan/giris.html');
+      await page.locator('#staff-login-form [name=email]').fill('employee@example.invalid');
+      await page.locator('#staff-login-form [name=password]').fill('FixturePass123!');
+      await page.locator('#staff-login-form button').click();
+      await page.waitForFunction(()=>!document.getElementById('staff-factor').hidden);
+      assert.equal(await page.locator('#staff-secret').inputValue(),session.nextEnrollmentSecret,'Restart shows the new setup key');
+      assert.match(await page.locator('#staff-enroll').innerText(),/yeni anahtarı/);
+      assert.equal(observed.filter(row=>row.session===sid&&row.action==='activate').length,1,'Restart does not reactivate the consumed invitation');
+      await context.close();
+    });
+    await scenario('Expired normal MFA returns to password login with the email retained',async()=>{
+      const context=await contextWith({role:'admin'}),page=await context.newPage();
+      await page.setViewportSize({width:390,height:844});
+      await page.goto(base+'/calisan/giris.html',{waitUntil:'networkidle'});
+      await page.locator('#staff-login-form [name=email]').fill('admin@example.invalid');
+      await page.locator('#staff-login-form [name=password]').fill('FixturePass123!');
+      await page.locator('#staff-login-form button').click();
+      await page.waitForFunction(()=>!document.getElementById('staff-factor').hidden);
+      const sid=observed.filter(row=>row.action==='login').at(-1).session,session=sessions.get(sid);
+      session.challengeExpired=true;
+      await page.locator('#staff-factor-form [name=code]').fill('123456');
+      await page.locator('#staff-factor-form button').click();
+      await page.waitForFunction(()=>!document.getElementById('staff-login-form').hidden);
+      assert.ok(await page.locator('#staff-factor').isHidden());
+      assert.equal(await page.locator('#staff-secret').inputValue(),'');
+      assert.equal(await page.locator('#staff-factor-form [name=code]').inputValue(),'');
+      assert.equal(await page.locator('#staff-login-form [name=email]').inputValue(),'admin@example.invalid');
+      assert.equal(await page.locator('#staff-login-form [name=password]').inputValue(),'');
+      assert.match(await page.locator('#staff-status').innerText(),/10 dakika/);
+      assert.equal(session.user,null);
+      assert.equal(observed.filter(row=>row.session===sid&&row.action==='login').length,1,'No automatic login after expiry');
+      assert.equal(observed.filter(row=>row.session===sid&&row.action==='mfa_verify').length,1,'No automatic code retry');
+      await page.locator('#staff-login-form [name=password]').fill('FixturePass123!');
+      await page.locator('#staff-login-form button').click();
+      await page.waitForFunction(()=>!document.getElementById('staff-factor').hidden);
+      await page.locator('#staff-factor-form [name=code]').fill('123456');
+      await page.locator('#staff-factor-form button').click();
+      await page.waitForURL(base+'/calisan/');
+      assert.equal(observed.filter(row=>row.session===sid&&row.action==='login').length,2);
       await context.close();
     });
     await scenario('First MFA enrollment explains app codes and keeps the setup key in view',async()=>{

@@ -55,6 +55,21 @@
     $('staff-recovery-title').focus({preventScroll: true});
     $('staff-activation-recovery').scrollIntoView({block: 'start', behavior: 'instant'});
   }
+  function expiredChallenge() {
+    $('staff-secret').value = '';
+    $('staff-factor-form').elements.code.value = '';
+    $('staff-factor').hidden = true;
+    $('staff-enroll').hidden = true;
+    factorMode = 'verify';
+    var message = 'Doğrulama adımı sona erdi. Bu adım 10 dakika geçerlidir; oturum değiştiğinde de kapanır. ';
+    if (page === 'activate') {
+      activationRecovery(message + 'Belirlediğiniz şifreyle çalışan girişinden devam edin. Kurulum yeniden açıldığında gösterilen yeni anahtarı doğrulayıcı uygulamaya yeniden ekleyin.');
+    } else {
+      $('staff-login-form').hidden = false;
+      status(message + 'Şifrenizle yeniden giriş yapın.', true);
+      $('staff-login-form').elements.password.focus();
+    }
+  }
   function challenge(data) {
     factorMode = data.mode || 'verify';
     ['staff-login-form', 'staff-activate-form'].forEach(function (id) { if ($(id)) $(id).hidden = true; });
@@ -99,7 +114,11 @@
       ev.preventDefault(); var form = ev.currentTarget;
       busy(form, async function () {
         var code = form.elements.code.value; form.elements.code.value = '';
-        await api(factorMode === 'enroll' ? 'mfa_enroll' : 'mfa_verify', {code: code});
+        try { await api(factorMode === 'enroll' ? 'mfa_enroll' : 'mfa_verify', {code: code}); }
+        catch (e) {
+          if (e.code === 'staff_challenge_expired') { expiredChallenge(); return; }
+          throw e;
+        }
         $('staff-secret').value = ''; location.replace('/calisan/');
       });
     });
