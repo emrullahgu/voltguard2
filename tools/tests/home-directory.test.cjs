@@ -49,16 +49,25 @@ test('all current public VoltHaber publications appear as canonical article link
   }
 });
 
-test('every native directory link is generated as an escaped static anchor and icons exist', () => {
-  const html=D.renderDirectory(entries), css=read('css/fa-subset.css');
+test('every native directory link is generated as an escaped static anchor and category images exist', () => {
+  const html=D.renderDirectory(entries);
   assert.equal((html.match(/data-directory-entry /g)||[]).length,entries.length);
+  assert.deepEqual([...html.matchAll(/<a href="([^"]+)"/g)].map(m=>m[1]).sort(),entries.map(e=>e.u).sort(),
+    'Visual category cards retain every canonical content destination');
   assert.equal((html.match(/<details\b/g)||[]).length,D.CATEGORIES.length);
   assert.doesNotMatch(html,/<details\b[^>]*\sopen(?:\s|>)/);
   assert.match(html,/id="homeDirectoryControls" hidden/);
-  for (const category of D.CATEGORIES) assert.ok(css.includes('.'+category.icon+':'),category.icon+' is bundled');
+  const images=[...html.matchAll(/<img\b[^>]*>/g)].map(m=>m[0]);
+  assert.equal(images.length,D.CATEGORIES.length);
+  for (const category of D.CATEGORIES) {
+    assert.match(category.image,/^\/public\/[^?#]+\.(?:webp|avif|png|jpe?g)$/i);
+    assert.ok(fs.statSync(D.fileFor(category.image)).size>0,category.image+' is a bundled image');
+    assert.ok(images.some(tag=>(tag.match(/\bsrc="([^"]+)"/)||[])[1]===category.image),category.id+' uses its bundled image');
+  }
   const malicious=D.renderDirectory([{u:'/arama.html',t:'<img onerror="bad">',c:'kurumsal',kind:'Sayfa',keywords:'" onclick="bad'}]);
+  assert.equal((malicious.match(/<img\b/g)||[]).length,1,'Only the legitimate category image is emitted');
   assert.ok(malicious.includes('&lt;img onerror=&quot;bad&quot;&gt;'));
-  assert.doesNotMatch(malicious,/<img\b|\sonclick="bad/);
+  assert.doesNotMatch(malicious,/\s(?:onerror|onclick)="bad/);
 });
 
 test('homepage directory stays fresh and does not contaminate the homepage search record', () => {

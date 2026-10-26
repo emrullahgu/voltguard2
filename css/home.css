@@ -113,12 +113,20 @@
 .vgh-directory__groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:12px}
 .vgh-directory__group{min-width:0;overflow:hidden;border:1px solid #43536b;border-radius:9px;background:#132b49}
 .vgh-directory__group[open]{grid-column:1/-1;border-color:#a38240}
-.vgh-directory__group summary{display:flex;align-items:center;gap:13px;min-height:83px;padding:17px;list-style:none;cursor:pointer}
+.vgh-directory__group summary{display:flex;align-items:center;gap:13px;min-height:108px;padding:14px;list-style:none;cursor:pointer}
 .vgh-directory__group summary::-webkit-details-marker{display:none}
-.vgh-directory__group summary>span:nth-child(2){flex:1;min-width:0}
+.vgh-directory__copy{flex:1;min-width:0}
 .vgh-directory__group summary strong{display:block;font:550 .87rem/1.4 var(--font-heading);color:#fff;overflow-wrap:anywhere}
 .vgh-directory__group summary small{display:block;margin-top:5px;font-size:.65rem;line-height:1.5;color:#c4d1e2}
-.vgh-directory__icon{display:grid;place-items:center;flex-shrink:0;width:33px;height:36px;border-radius:7px;background:#23394e;color:#fcd34d;font-size:1rem}
+.vgh-directory__image{display:block;flex:0 0 104px;width:104px;height:78px;overflow:hidden;border-radius:6px;background:#09192c}
+.vgh-directory__image img{display:block;width:100%;height:100%;object-fit:cover}
+.vgh-directory__group summary:hover .vgh-directory__image{outline:1px solid #8092aa}
+.vgh-directory__group[data-directory-group="hizmetler"] .vgh-directory__image img{object-position:50% 45%}
+.vgh-directory__group[data-directory-group="rehber"] .vgh-directory__image img{object-position:50% 40%}
+.vgh-directory__group[data-directory-group="projeler"] .vgh-directory__image img{object-position:50% 32%}
+.vgh-directory__group[data-directory-group="haberler"] .vgh-directory__image img{object-position:50% 45%}
+.vgh-directory__group[data-directory-group="kurumsal"] .vgh-directory__image img{object-position:50% 42%}
+.vgh-directory__group[data-directory-group="belgeler"] .vgh-directory__image img{object-fit:contain;padding:4px}
 .vgh-directory__chevron{flex-shrink:0;color:#fcd34d;font-size:1.3rem;line-height:1;transition:transform .15s}
 .vgh-directory__group[open] .vgh-directory__chevron{transform:rotate(180deg)}
 .vgh-directory__group ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 18px;margin:0;padding:4px 20px 15px;list-style:none;border-top:1px solid #43536b}
@@ -131,8 +139,9 @@
 .vgh-directory__group li a:hover>span:first-child{text-decoration:underline;text-underline-offset:4px;color:#fcd34d}
 .vgh-directory :is(input,select,button,summary,a):focus-visible{outline:3px solid #fcd34d;outline-offset:3px}
 @media(max-width:1000px){.vgh-directory__groups{grid-template-columns:repeat(2,minmax(0,1fr))}.vgh-directory__group ul{grid-template-columns:repeat(2,minmax(0,1fr))}.vgh-directory__controls{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}.vgh-directory__controls>button{grid-column:1/-1;justify-self:start}.vgh-directory__heading{align-items:start;flex-direction:column;gap:14px}}
-@media(max-width:600px){.vgh-directory{margin-top:32px;padding-top:28px}.vgh-directory__controls{grid-template-columns:1fr}.vgh-directory__groups{grid-template-columns:1fr;gap:10px}.vgh-directory__group summary{min-height:75px;padding:14px 16px}.vgh-directory__group ul{grid-template-columns:1fr;padding:3px 16px 12px}.vgh-directory__bar{align-items:start;flex-direction:column}.vgh-directory__group li a{min-height:48px;font-size:.78rem}.vgh-directory__heading>p{font-size:.77rem}}
+@media(max-width:600px){.vgh-directory{margin-top:32px;padding-top:28px}.vgh-directory__controls{grid-template-columns:1fr}.vgh-directory__groups{grid-template-columns:1fr;gap:10px}.vgh-directory__group summary{min-height:104px;padding:12px}.vgh-directory__image{flex-basis:96px;width:96px;height:78px}.vgh-directory__group ul{grid-template-columns:1fr;padding:3px 16px 12px}.vgh-directory__bar{align-items:start;flex-direction:column}.vgh-directory__group li a{min-height:48px;font-size:.78rem}.vgh-directory__heading>p{font-size:.77rem}}
 @media(prefers-reduced-motion:reduce){.vgh-directory__chevron{transition:none}}
+@media(max-width:79.99rem){html:not(.vg-js) .home-page .vg-header{position:static}}
 .vgh-contact__inner{display:flex;justify-content:space-between;align-items:center;gap:28px}
 .vgh-contact p:not(.vgh-eyebrow){margin:13px 0 0;color:var(--clr-text-muted);font-size:.88rem}
 .vgh-contact__actions{display:flex;align-items:center;gap:16px 28px;flex-wrap:wrap}

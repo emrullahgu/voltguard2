@@ -11,21 +11,22 @@ const PUBLIC_NEWS = require('../js/home-volthaber.js');
 const START = '<!--vg:directory-->';
 const END = '<!--/vg:directory-->';
 const CATEGORIES = [
-  ['hizmetler', 'Hizmetler', 'fa-industry'],
-  ['hesap', 'Hesap araçları', 'fa-calculator'],
-  ['muhendislik', 'Mühendislik uygulamaları', 'fa-drafting-compass'],
-  ['simulasyon', 'VoltSim ve oyun', 'fa-layer-group'],
-  ['rehber', 'Rehberler ve mevzuat', 'fa-book-open'],
-  ['akademi', 'Akademi ve dersler', 'fa-graduation-cap'],
-  ['soru', 'Sorular ve topluluk', 'fa-lightbulb'],
-  ['form', 'Formlar ve şablonlar', 'fa-clipboard-list'],
-  ['projeler', 'Saha projeleri', 'fa-industry'],
-  ['haberler', 'Haberler ve VoltHaber', 'fa-file-lines'],
-  ['kurumsal', 'Şirket ve iletişim', 'fa-building'],
-  ['sozluk', 'Elektrik terimleri', 'fa-book-open'],
-  ['belgeler', 'Belgeler ve indirmeler', 'fa-file-pdf'],
-  ['uyelik', 'Üyelik ve çalışan girişi', 'fa-users']
-].map(([id, title, icon]) => ({id, title, icon}));
+  // Existing field/team photos, document previews and actual product screens.
+  ['hizmetler', 'Hizmetler', '/public/opt/panokurulumuverevizyonu-640.webp', 640, 800],
+  ['hesap', 'Hesap araçları', '/public/home/hesap-araclari.webp', 772, 611],
+  ['muhendislik', 'Mühendislik uygulamaları', '/public/home/directory/muhendislik.webp', 480, 360],
+  ['simulasyon', 'VoltSim ve oyun', '/public/home/directory/voltsim.webp', 480, 360],
+  ['rehber', 'Rehberler ve mevzuat', '/public/opt/Trafoolcum-640.webp', 640, 853],
+  ['akademi', 'Akademi ve dersler', '/public/opt/haberler/h6-640.webp', 640, 360],
+  ['soru', 'Sorular ve topluluk', '/public/opt/haberler/ege-teknopark-topluluk-bulusmasi-640.webp', 640, 426],
+  ['form', 'Formlar ve şablonlar', '/public/home/directory/formlar.webp', 480, 360],
+  ['projeler', 'Saha projeleri', '/public/opt/trafo-kiosk-vinc-montaji-640.webp', 640, 853],
+  ['haberler', 'Haberler ve VoltHaber', '/public/opt/haberler/h3-640.webp', 640, 429],
+  ['kurumsal', 'Şirket ve iletişim', '/public/opt/ekip-ruhu-pano-kurulumu-640.webp', 640, 853],
+  ['sozluk', 'Elektrik terimleri', '/public/opt/haberler/Elektronik-640.webp', 640, 380],
+  ['belgeler', 'Belgeler ve indirmeler', '/public/brosur/voltguard-brosur-kapak.webp', 546, 1158],
+  ['uyelik', 'Üyelik ve çalışan girişi', '/public/home/directory/uyelik.webp', 480, 360]
+].map(([id, title, image, width, height]) => ({id, title, image, width, height}));
 const EXTRA = [
   ['/arama.html', 'Sitede arama', 'kurumsal', 'Sayfa'],
   ['/voltgame.html', 'VoltGame elektrik oyunu', 'simulasyon', 'Oyun'],
@@ -160,6 +161,7 @@ function buildCatalogue() {
 }
 function renderDirectory(entries) {
   const groups = CATEGORIES.map(c=>({...c,entries:entries.filter(e=>e.c===c.id)})).filter(c=>c.entries.length);
+  for (const group of groups) fileFor(group.image);
   return `${START}
   <div id="tum-icerikler" class="vgh-directory-anchor"><div class="vgh-directory" id="homeDirectory" role="region" aria-labelledby="homeDirectoryTitle">
     <div class="vgh-directory__heading"><div><p class="vgh-eyebrow">Bütün içerikler tek yerde</p><h3 id="homeDirectoryTitle">VoltGuard'ı baştan sona keşfedin.</h3></div><p>Bir kategori açın veya arayın; aradığınız içeriğe doğrudan ulaşın.</p></div>
@@ -171,7 +173,7 @@ function renderDirectory(entries) {
     <div class="vgh-directory__bar"><p id="homeDirectoryCount" role="status" aria-live="polite" aria-atomic="true">${entries.length} içerik bağlantısı · ${groups.length} kategori</p><div id="homeDirectoryActions" hidden><button type="button" id="homeDirectoryOpen" aria-controls="homeDirectoryGroups">Tümünü aç</button><button type="button" id="homeDirectoryClose" aria-controls="homeDirectoryGroups">Tümünü kapat</button></div></div>
     <p id="homeDirectoryEmpty" class="vgh-directory__empty" hidden>Bu aramada içerik bulunamadı. Aramayı kısaltın veya filtreleri temizleyin.</p>
     <div id="homeDirectoryGroups" class="vgh-directory__groups">
-${groups.map(c=>`      <details class="vgh-directory__group" data-directory-group="${c.id}"><summary><span class="vgh-directory__icon" aria-hidden="true"><i class="fas ${c.icon}"></i></span><span><strong>${esc(c.title)}</strong><small data-directory-group-count>${c.entries.length} içerik</small></span><span class="vgh-directory__chevron" aria-hidden="true">⌄</span></summary><ul>
+${groups.map(c=>`      <details class="vgh-directory__group" data-directory-group="${c.id}"><summary><span class="vgh-directory__image" aria-hidden="true"><img src="${esc(c.image)}" width="${c.width}" height="${c.height}" alt="" loading="lazy" decoding="async"></span><span class="vgh-directory__copy"><strong>${esc(c.title)}</strong><small data-directory-group-count>${c.entries.length} içerik</small></span><span class="vgh-directory__chevron" aria-hidden="true">⌄</span></summary><ul>
 ${c.entries.map(e=>`        <li data-directory-entry data-directory-kind="${esc(e.kind)}" data-directory-search="${esc(e.t+' '+e.keywords)}"><a href="${esc(e.u)}"><span>${esc(e.t)}</span><small>${esc(e.kind)}</small><span aria-hidden="true">↗</span></a></li>`).join('\n')}
       </ul></details>`).join('\n')}
     </div>

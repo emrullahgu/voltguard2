@@ -208,6 +208,31 @@
         "js/main.js"
       ],
       "verification": "327 kaynak hedefiyle327statik bağlantı tam eşleşti.492birim testi,7261dizin kontrolü,45canlı entegrasyon kontrolü,105haber derin bağlantı kontrolü ve280ortak navigasyon kontrolü geçti."
+    },
+    {
+      "id": "VG08",
+      "priority": "P1",
+      "title": "Ana sayfanın içerik kategorilerinde gerçek görseller",
+      "status": "complete",
+      "basis": "Kullanıcının 14 içerik kategorisinde gerçek görsel isteği",
+      "acceptance": [
+        "Yedi mevcut saha/ekip/etkinlik fotoğrafı, altı gerçek ürün/tasarım ekranı ve bir broşür önizlemesi",
+        "14 ayrı görsel; ekranda hesap, tesis veya şifre verisi kullanılmaz",
+        "Kompakt görseller kategori açıldığında büyümez ve sayfa düzenini bozmaz",
+        "327 hedef, arama, kategori seçimi, klavye ve JavaScript kapalı erişim korunur",
+        "Görseller boyutları ayrılmış, dekoratif alt metinli ve tembel yüklemeli sunulur"
+      ],
+      "files": [
+        "index.html",
+        "css/home.css",
+        "tools/build-home-directory.cjs",
+        "tools/tests/home-directory.test.cjs",
+        "public/home/directory/muhendislik.webp",
+        "public/home/directory/voltsim.webp",
+        "public/home/directory/formlar.webp",
+        "public/home/directory/uyelik.webp"
+      ],
+      "verification": "14 ilgili birim testi ve 207 sayfalık statik denetim temiz. Sekiz ekran/tema düzeninde 14 benzersiz görsel, 327 hedef, gerçek görsel tıklaması, klavye, arama ve aç/kapat kontrolleri geçti. Yeni dört görsel oturumsuz gerçek yerel arayüzlerden alındı; VoltSim gerçek WebGL sahnesi kullanıyor."
     }
   ],
   "releaseChecks": {
