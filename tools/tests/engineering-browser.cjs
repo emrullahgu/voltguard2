@@ -2,6 +2,7 @@
 
 // Headless integration QA: run after node tools/build-engineering.cjs.
 // Set VG_NODE_MODULES and VOLTGUARD_CHROME when using a different local runtime.
+// --all-pdf-only downloads every tool's PDF; --pdf-tool=<slug> narrows a rerun.
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
@@ -11,8 +12,9 @@ const root = path.resolve(__dirname, '../..');
 const output = path.join(root, '.qa', 'engineering');
 const catalog = require('../engineering/src/catalog.cjs');
 const exportsOnly = process.argv.includes('--exports-only');
+const allPdfOnly = process.argv.includes('--all-pdf-only');
 const theme = (process.argv.find(a => a.startsWith('--theme=')) || '').slice(8) || null;
-const reportFile = path.join(output, exportsOnly ? 'export-report.json' : 'browser-report.json');
+const reportFile = path.join(output, allPdfOnly ? 'all-pdf-report.json' : exportsOnly ? 'export-report.json' : 'browser-report.json');
 const report = { reference: {}, landing: {}, documents: [], tools: [], mobile: [], exports: {}, findings: [] };
 const designReferences = {};
 fs.mkdirSync(output, { recursive: true });
@@ -436,6 +438,81 @@ async function checkExports(context, base) {
   }
 }
 
+async function checkAllPdf(context, base) {
+  const { PDFDocument } = require(packagePath('pdf-lib'));
+  report.pdfs = [];
+  const only = process.argv.find(a => a.startsWith('--pdf-tool='))?.slice(11);
+  for (const tool of catalog.filter(tool => !only || tool.slug === only)) {
+    const page = await context.newPage();
+    const state = capture(page, base);
+    try {
+      await page.goto(base + '/araclar/' + tool.slug + '/', { waitUntil: 'networkidle' });
+      await page.waitForFunction(() => !!window.VoltGuardExports);
+      if (tool.slug === 'enh-sehim-hesabi') {
+        // This route deliberately starts with an empty pole list. Supply a
+        // synthetic, positive span through its public controls before exporting.
+        await page.locator('#btnAdd').click(); await page.locator('#btnAdd').click();
+        await page.locator('#tbD input[data-k="a"]').first().fill('150');
+        await page.locator('#tbD input[data-k="a"]').first().dispatchEvent('change');
+        await page.locator('#tbD select[data-k="tip"]').last().selectOption('TRF-D');
+      }
+      if (tool.slug === 'ag-aw-baginti-hesabi') await page.locator('#btnAdd').click();
+      if (tool.slug === 'mesken-ges-depolama') await page.evaluate(async () => {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script'); script.src = '/araclar/vendor/html2canvas.min.js';
+          script.onload = resolve; script.onerror = reject; document.head.appendChild(script);
+        });
+        const capture = window.html2canvas; window.__pdfSchematics = [];
+        window.html2canvas = function (node, options) {
+          const svg = node.querySelector('svg#th');
+          if (svg) {
+            const box = svg.getBoundingClientRect(), viewport = svg.closest('.scroll').getBoundingClientRect();
+            window.__pdfSchematics.push({ width: box.width, left: box.left - viewport.left, right: box.right - viewport.right });
+          }
+          return capture.call(this, node, options);
+        };
+      });
+      await page.locator('#vg-export details').evaluate(details => { details.open = true; });
+      const buttons = page.locator('#vg-export [data-action="pdf"],#vg-export [data-action="pdf-active"]');
+      for (let index = 0; index < await buttons.count(); index++) {
+        const action = await buttons.nth(index).getAttribute('data-action');
+        const pending = page.waitForEvent('download', { timeout: 90000 }).catch(() => null);
+        await buttons.nth(index).click();
+        await page.waitForFunction(() => {
+          const box = document.querySelector('#vg-export-status');
+          return box?.dataset.error === 'true' || box?.textContent.startsWith('PDF indirildi.');
+        }, null, { timeout: 90000 });
+        const error = await page.locator('#vg-export-status').getAttribute('data-error');
+        assert.notEqual(error, 'true', tool.slug + ': ' + await page.locator('#vg-export-status').textContent());
+        const result = await pending;
+        assert.ok(result, tool.slug + ' actual PDF download completed');
+        const file = path.join(output, tool.slug + '-' + action + '.pdf');
+        await result.saveAs(file);
+        const bytes = fs.readFileSync(file);
+        assert.equal(bytes.subarray(0, 5).toString(), '%PDF-', tool.slug + ' valid PDF');
+        const pdf = await PDFDocument.load(bytes);
+        assert.ok(pdf.getPageCount() > 0, tool.slug + ' PDF has pages');
+        report.pdfs.push({ tool: tool.slug, action, file, bytes: bytes.length, pages: pdf.getPageCount() });
+        if (tool.slug === 'mesken-ges-depolama') {
+          const schematics = await page.evaluate(() => window.__pdfSchematics);
+          assert.ok(schematics.length, 'Home GES PDF captures its single-line schematic');
+          assert.ok(schematics.every(s => s.width > 100 && s.left >= -1 && s.right <= 1), 'Complete home GES schematic fits its report viewport');
+          report.schematics = schematics;
+        }
+      }
+      assert.deepEqual(state.errors, [], tool.slug + ' PDF page errors');
+      assert.deepEqual(state.localFailures, [], tool.slug + ' PDF resource errors');
+      assert.deepEqual(state.csp, [], tool.slug + ' PDF CSP errors');
+      console.log('PDF checked: ' + tool.slug);
+    } catch (error) {
+      const status = await page.locator('#vg-export-status').textContent().catch(() => '');
+      report.findings.push({ stage: 'pdf', slug: tool.slug, message: error.message, status, ...state });
+      console.log('PDF failed: ' + tool.slug + ' ' + error.message + ' ' + status);
+    } finally { await page.close(); }
+    fs.writeFileSync(reportFile, JSON.stringify(report, null, 2));
+  }
+}
+
 (async () => {
   assert.ok(fs.existsSync(path.join(root, 'araclar/index.html')), 'Build /araclar before running browser QA');
   const { chromium } = require(packagePath('playwright'));
@@ -447,7 +524,7 @@ async function checkExports(context, base) {
       timezoneId: 'Europe/Istanbul', acceptDownloads: true, serviceWorkers: 'block', ...(theme ? { colorScheme: theme } : {}) });
     // --theme=dark|light: site renk temasını zorlar; dışa aktarılan rapor/PDF yine açık kalmalı
     if (theme) await context.addInitScript(th => { try { localStorage.setItem('vg-theme', th); } catch (_) {} }, theme);
-    if (!exportsOnly) {
+    if (!exportsOnly && !allPdfOnly) {
       await checkReference(context, base);
       await checkLanding(context, base);
       await checkDocuments(context, base);
@@ -458,11 +535,11 @@ async function checkExports(context, base) {
       }
       await checkMobile(context, base);
     }
-    try { await checkExports(context, base); }
+    try { if (allPdfOnly) await checkAllPdf(context, base); else await checkExports(context, base); }
     catch (error) { report.findings.push({ stage: 'exports', message: error.message }); }
     fs.writeFileSync(reportFile, JSON.stringify(report, null, 2));
     assert.equal(report.findings.length, 0, JSON.stringify(report.findings, null, 2));
-    console.log(exportsOnly ? 'Passed: JSON import/export, PDF, offline HTML, Excel and DXF exports.' : 'Passed: catalog interactions, ' + catalog.length + ' tool routes under root CSP, ' + report.mobile.length + ' mobile routes, JSON/PDF/offline HTML/Excel/DXF exports.');
+    console.log(allPdfOnly ? 'Passed: actual PDF downloads from ' + new Set(report.pdfs.map(pdf => pdf.tool)).size + ' engineering tools (' + report.pdfs.length + ' exports).' : exportsOnly ? 'Passed: JSON import/export, PDF, offline HTML, Excel and DXF exports.' : 'Passed: catalog interactions, ' + catalog.length + ' tool routes under root CSP, ' + report.mobile.length + ' mobile routes, JSON/PDF/offline HTML/Excel/DXF exports.');
   } finally {
     fs.writeFileSync(reportFile, JSON.stringify(report, null, 2));
     await browser.close(); await new Promise(resolve => server.close(resolve));

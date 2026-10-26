@@ -282,6 +282,7 @@ textarea.vs-input{resize:vertical;font-family:ui-monospace,Consolas,monospace;fo
 .rp-small{margin:0 0 6px;color:#6b7a8e;font-size:11px}
 .rp-url{color:#9a5708;font-size:11px;word-break:break-all}
 .rp-foot{margin-top:14px;padding-top:8px;border-top:1px solid #dbe3ec;color:#6b7a8e;font-size:11px}
+.rp-page>.rp-foot{position:absolute;left:50px;right:50px;bottom:46px;margin:0}
 .rp-num{position:absolute;right:50px;bottom:22px;color:#94a3b8;font-size:11px}
 
 /* ---------------------------------------------------------------- tanıtım sayfası */

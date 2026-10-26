@@ -115,3 +115,11 @@ test('Trafo and periodic control reject nonfinite values, missing inputs and fra
   for(const values of [{kva:Infinity},{kva:9999999999999},{feederYa:NaN},{feederSk:Infinity},{enhM:Infinity},{bk:0},{type:'invalid'}])assert.equal(h.config.calcIsletmeUcreti({type:'bina',kva:1000,...values}).ok,false,JSON.stringify(values));
   assert.equal(h.config.calcIsletmeUcreti({type:'bina',kva:1000}).total,12006);
 });
+
+test('Positive efficiency payback periods never round to a misleading zero years',()=>{
+  const h=harness();h.set({'technical-tool':'efficiency'});h.hub.configure();
+  h.set({'technical-a':'600000','technical-b':'3,50','technical-c':'12','technical-d':'10000'});h.hub.technical();
+  assert.ok(h.valid('teknik-panel'));assert.match(h.el('technical-detail').textContent,/0,1 yıldan kısa geri dönüş/);assert.doesNotMatch(h.el('technical-detail').textContent,/yaklaşık 0 yıl/);
+  h.set({'technical-d':'100000'});h.hub.technical();assert.match(h.el('technical-detail').textContent,/yaklaşık 0,4 yıl geri dönüş/);
+  h.set({'technical-d':'0'});h.hub.technical();assert.match(h.el('technical-detail').textContent,/yatırım tutarını girin/);
+});

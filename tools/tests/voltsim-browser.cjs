@@ -110,7 +110,9 @@ const slugs = allSlugs.filter(s => !only.length || only.includes(s) || only.some
       // parametre değişimi sonucu değiştirmeli
       const before = await page.evaluate(() => JSON.stringify(window.__vsApp.validResult.values, (k, v) => (typeof v === 'number' ? Math.round(v * 1000) / 1000 : v)).slice(0, 4000));
       const changed = await page.evaluate(() => {
-        const r = Array.from(document.querySelectorAll('[data-vs-controls] input[type=range]')).find(x => !x.closest('[hidden]'));
+        // In the panel model a protection setting need not change load results
+        // while the load stays below its threshold. Change cable length there.
+        const r = document.querySelector('[data-vs-controls] input[type=range][data-key="feedL"]') || Array.from(document.querySelectorAll('[data-vs-controls] input[type=range]')).find(x => !x.closest('[hidden]'));
         if (!r) return 'no-range';
         const min = Number(r.min), max = Number(r.max), cur = Number(r.value);
         r.value = String(cur < (min + max) / 2 ? max : min); r.dispatchEvent(new Event('input', { bubbles: true })); return r.dataset.key;
@@ -159,10 +161,41 @@ const slugs = allSlugs.filter(s => !only.length || only.includes(s) || only.some
       if (fs.statSync(csvFile).size < 200) fail(slug, 'CSV çok kısa');
       // PDF
       if (withPdf) {
+        // Inspect the exact page DOM captured by html2canvas as well as the
+        // downloaded PDF: a valid PDF header alone misses clipped report blocks
+        // and pages containing only source/privacy information.
+        await page.evaluate(async () => {
+          if (!window.html2canvas) await new Promise((resolve, reject) => {
+            const s = document.createElement('script'); s.src = '/araclar/vendor/html2canvas.min.js';
+            s.dataset.src = s.src.replace(location.origin, ''); s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
+          });
+          const capture = window.html2canvas;
+          window.__pdfPages = [];
+          window.html2canvas = function (node, options) {
+            if (node.matches('.rp-page')) {
+              const box = node.getBoundingClientRect(), foot = node.querySelector('.rp-foot');
+              const limit = foot ? foot.getBoundingClientRect().top : box.bottom - 46;
+              const blocks = [...node.querySelectorAll(':scope > .rp-block')];
+              window.__pdfPages.push({ contentBlocks: blocks.length,
+                clipped: blocks.filter(b => b.getBoundingClientRect().bottom > limit - 4 || b.getBoundingClientRect().right > box.right - 49).map(b => b.innerText.slice(0, 120)),
+                footer: foot && foot.innerText });
+            }
+            return capture.call(this, node, options);
+          };
+        });
         const [pdf] = await Promise.all([page.waitForEvent('download', { timeout: 240000 }), page.click('[data-vs-act="report"]')]);
         const pdfFile = path.join(out, slug + '.pdf'); await pdf.saveAs(pdfFile);
         const head = fs.readFileSync(pdfFile).slice(0, 5).toString();
         if (head !== '%PDF-') fail(slug, 'PDF geçersiz');
+        const pdfPages = await page.evaluate(() => window.__pdfPages);
+        if (!pdfPages.length) fail(slug, 'PDF sayfa yakalaması yok');
+        pdfPages.forEach((p, i) => {
+          if (!p.contentBlocks) fail(slug, 'PDF yalnız alt bilgi içeriyor: sayfa ' + (i + 1));
+          if (p.clipped.length) fail(slug, 'PDF içerik taşması: sayfa ' + (i + 1) + ' ' + p.clipped.join(' | '));
+          if (!p.footer || !p.footer.includes('otomatik gönderilmez')) fail(slug, 'PDF kaynak/gizlilik bilgisi eksik: sayfa ' + (i + 1));
+        });
+        report.pdfPages = report.pdfPages || {};
+        report.pdfPages[slug] = pdfPages;
       }
       // mobil
       await page.setViewportSize({ width: 390, height: 844 });

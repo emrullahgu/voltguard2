@@ -297,22 +297,47 @@
           var t = cell.text === '' && !isHead ? '-' : cell.text;
           return doc.splitTextToSize(pdfSafe(t), Math.max(widths[i] - 2, 3));
         });
-        var h = Math.max.apply(null, sets.map(function (s) { return s.length || 1; })) * lh + 1.6;
-        if (y + h > bottom) {
+        var lines = Math.max.apply(null, sets.map(function (s) { return s.length || 1; }));
+        function newPage() {
           doc.addPage(); y = margin;
           if (!isHead && headRow) drawRow(headRow, true);
         }
-        var x = margin;
-        r.forEach(function (cell, i) {
-          if (isHead) { doc.setFillColor(238, 241, 245); doc.rect(x, y, widths[i], h, 'FD'); }
-          else doc.rect(x, y, widths[i], h);
-          doc.setFont('helvetica', isHead ? 'bold' : 'normal');
-          doc.setFontSize(8);
-          doc.setTextColor(30);
-          sets[i].forEach(function (ln, k) { doc.text(ln, x + 1, y + 3.1 + k * lh); });
-          x += widths[i];
-        });
-        y += h;
+        // Keep an ordinary row together. An oversized note is split into visible
+        // row fragments instead of being drawn below the physical page boundary.
+        var headerLines = !isHead && headRow ? Math.max.apply(null, headRow.map(function (cell, i) {
+          doc.setFont('helvetica', 'bold');
+          return doc.splitTextToSize(pdfSafe(cell.text), Math.max(widths[i] - 2, 3)).length || 1;
+        })) : 0;
+        var headerHeight = headerLines ? headerLines * lh + 1.6 : 0;
+        var fullRowHeight = lines * lh + 1.6;
+        if (y + fullRowHeight > bottom && fullRowHeight <= bottom - margin - headerHeight) newPage();
+        var contextLines = isHead ? 1 : Math.max.apply(null, sets.map(function (s) { return s.length <= 10 ? s.length : 1; }));
+        for (var offset = 0; offset < lines;) {
+          var capacity = Math.floor((bottom - y - 1.6) / lh);
+          if (capacity < Math.min(contextLines, lines - offset)) { newPage(); continue; }
+          var take = Math.min(capacity, lines - offset);
+          var fragment = sets.map(function (cellLines) {
+            // Repeat short row identifiers/statuses so a continued note keeps
+            // the same checklist context on every page.
+            return offset && cellLines.length <= offset && cellLines.length <= 10 ? cellLines : cellLines.slice(offset, offset + take);
+          });
+          var paintedLines = Math.max.apply(null, fragment.map(function (s) { return s.length || 1; }));
+          if (paintedLines > capacity) { newPage(); continue; }
+          var h = paintedLines * lh + 1.6;
+          var x = margin;
+          r.forEach(function (cell, i) {
+            if (isHead) { doc.setFillColor(238, 241, 245); doc.rect(x, y, widths[i], h, 'FD'); }
+            else doc.rect(x, y, widths[i], h);
+            doc.setFont('helvetica', isHead ? 'bold' : 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(30);
+            fragment[i].forEach(function (ln, k) { doc.text(ln, x + 1, y + 3.1 + k * lh); });
+            x += widths[i];
+          });
+          y += h;
+          offset += take;
+          if (offset < lines) newPage();
+        }
       }
 
       rows.forEach(function (r) { drawRow(r, r.head); });
@@ -333,6 +358,10 @@
     doc.setDrawColor(200); doc.line(margin, y, 210 - margin, y); y += 6;
     plain(9);
 
+    // Keep the form's visible usage instructions and scope notes in the archived copy.
+    qq('.vg-form-desc').forEach(drawNote);
+    y += 3;
+
     qq('.vg-form-section').forEach(function (sec) {
       var h = sec.querySelector('h2');
       ensure(16);
@@ -343,6 +372,7 @@
       Array.from(sec.children).forEach(function (node) {
         if (node.matches('h2, .vg-form-add-row')) return;
         if (node.matches('table')) drawTable(node);
+        else if (node.matches('.vg-form-table-wrap')) qq('table', node).forEach(drawTable);
         else if (node.matches('.vg-form-total')) drawTotals(node);
         else if (node.querySelector(CONTROLS)) drawFields(node);
         else drawNote(node);

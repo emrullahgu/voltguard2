@@ -999,7 +999,8 @@
         },
         efficiency: function (v) {
           var saving = v.a * v.b * v.c / 100;
-          return [money(saving) + ' yıllık tasarruf potansiyeli', v.d > 0 ? money(v.d) + ' yatırım için yaklaşık ' + fmt(v.d / saving, 1) + ' yıl geri dönüş.' : 'Geri dönüş süresi için yatırım tutarını girin.', 'VFD, LED, basınçlı hava ve GES senaryoları detaylandırılabilir.'];
+          var payback = v.d / saving;
+          return [money(saving) + ' yıllık tasarruf potansiyeli', v.d > 0 ? money(v.d) + ' yatırım için ' + (payback < 0.1 ? '0,1 yıldan kısa' : 'yaklaşık ' + fmt(payback, 1) + ' yıl') + ' geri dönüş.' : 'Geri dönüş süresi için yatırım tutarını girin.', 'VFD, LED, basınçlı hava ve GES senaryoları detaylandırılabilir.'];
         },
         mechanical: function (v) {
           var pump = v.a / 3600 * v.b * 9.81 / (v.c / 100) / (v.d / 100);
@@ -1258,7 +1259,7 @@
             doc.setFontSize(12);
             doc.text(toPdfText('Formül ve varsayımlar'), 15, y); y += 7;
             doc.setFontSize(9);
-            writeLines(doc.splitTextToSize(toPdfText(formulaBox.textContent.replace(/\s+/g, ' ').trim()), 180), 4.6);
+            writeLines(doc.splitTextToSize(toPdfText(formulaBox.innerText.replace(/\s+/g, ' ').trim()), 180), 4.6);
           }
           y = Math.max(y + 4, 180);
           if (y > 262) { doc.addPage(); y = 20; }

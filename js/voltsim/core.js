@@ -1611,7 +1611,6 @@
     list('<h2>5. Varsayımlar ve sınırlamalar</h2>', r.assumptions || [], false);
     section('<h2>6. Mevzuat ve standart kaynakları</h2><p class="rp-small">Bağlayıcı düzenlemeler (kanun/yönetmelik) ile gönüllü standartlar ayrı belirtilmiştir. Doğrulama tarihi her kayıt için ayrıdır; tarihi olmayan kayıt resmî kaynaktan doğrulanmamıştır. Güncel konsolide metin resmî kaynaktan doğrulanmalıdır.</p>',
       chunkRows(regs.map(x => '<tr><td>' + esc(x.binding ? 'Bağlayıcı' : 'Standart / rehber') + '</td><td><b>' + esc(x.name) + '</b>' + (x.rg ? ' · RG ' + esc(x.rg) : '') + (x.version ? ' · ' + esc(x.version) : '') + (x.url ? '<br><span class="rp-url">' + esc(x.url) + '</span>' : '') + '<br><i>' + esc(x.verifiedAt ? 'Resmî kaynakla son doğrulama: ' + x.verifiedAt.split('-').reverse().join('.') : 'Resmî kaynaktan doğrulanmadı') + '</i>' + (x.needsCheck ? '<br><i>Güncel mevzuat doğrulaması gereklidir.</i>' : '') + '</td></tr>').join(''), 8).map(p => '<table class="rp-t rp-checks">' + p + '</table>'));
-    blocks.push('<footer class="rp-foot">voltguard.com.tr · VoltSim · ' + esc(location.href.split('#')[0]) + '<br>Girdileriniz yalnızca tarayıcınızda işlenmiştir; bu rapor VoltGuard’a otomatik gönderilmez.</footer>');
     return blocks;
   };
   function chunkRows(html, n) {
@@ -1628,16 +1627,24 @@
     try {
       const PAGE_W = 794, PAGE_H = 1123, PAD = 46;
       const pages = [];
-      let page = null, used = 0;
-      const newPage = () => { page = el('div', { class: 'rp-page' }); host.appendChild(page); pages.push(page); used = PAD * 2; };
+      let page = null, used = 0, contentCount = 0;
+      // Source/privacy information belongs to each page's reserved footer, never
+      // to a separate final content block that can produce a footer-only page.
+      const footer = '<footer class="rp-foot">voltguard.com.tr · VoltSim · ' + esc(location.href.split('#')[0]) + '<br>Girdileriniz yalnızca tarayıcınızda işlenmiştir; bu rapor VoltGuard’a otomatik gönderilmez.</footer>';
+      const newPage = () => {
+        page = el('div', { class: 'rp-page', html: footer }); host.appendChild(page); pages.push(page);
+        used = PAD * 2 + page.querySelector('.rp-foot').getBoundingClientRect().height + 12;
+        contentCount = 0;
+      };
       newPage();
       for (const b of blocks) {
         const node = el('div', { class: 'rp-block', html: b }); // bloktaki tüm öğeler (başlık + tablo) birlikte taşınır
         page.appendChild(node);
         await waitImages(node);
         const h = node.getBoundingClientRect().height + 10;
-        if (used + h > PAGE_H - 20 && page.children.length > 1) { page.removeChild(node); newPage(); page.appendChild(node); }
+        if (used + h > PAGE_H - 20 && contentCount > 0) { page.removeChild(node); newPage(); page.appendChild(node); }
         used += h;
+        contentCount++;
       }
       const jsPDF = window.jspdf.jsPDF;
       const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true });

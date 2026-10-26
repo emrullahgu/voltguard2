@@ -238,6 +238,13 @@
     const info = doc.createElement('span'); info.textContent = `${title()} · ${new Date().toLocaleString('tr-TR')}`; banner.append(brand, info); section.prepend(banner);
     const origin = originNotice(doc, 'vg-report-credit');
     if (origin) banner.after(origin);
+    // The live home-GES schematic scrolls on narrow screens. In the report its
+    // complete viewBox must fit the page instead of keeping a 760px minimum
+    // width inside a clipped scroll viewport.
+    if (tool() === 'mesken-ges-depolama') {
+      const schematic = section.querySelector('svg#th');
+      if (schematic) schematic.style.setProperty('min-width', '0', 'important');
+    }
     // Print copies display the current values, never browser-dependent form widgets.
     fields(section).forEach(el => {
       if (el.type === 'range') { el.remove(); return; }
