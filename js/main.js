@@ -1337,7 +1337,7 @@
   })();
 
   /* ------------------------------------------------
-     19c. HABERLER — ilk 6 kayıt görünür, kalanı düğmeyle açılır (JS yoksa hepsi görünür; css/home.css)
+     19c. HABERLER — ilk 6 kayıt görünür; haber çapası gizli kaydı açar (JS yoksa hepsi görünür; css/interior.css)
   ------------------------------------------------- */
   (function () {
     var grid = qs('#newsGrid');
@@ -1347,16 +1347,62 @@
     if (extra <= 0) return;
     var label = btn.firstChild;
     var count = btn.querySelector('.news__count');
+    var jumpVersion = 0;
     function set(open) {
       grid.classList.toggle('is-collapsed', !open);
       btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       label.nodeValue = open ? 'Daha az göster ' : 'Tüm kayıtları göster ';
-      if (count) count.textContent = open ? '' : '(+' + extra + ')';
+      if (count) count.textContent = open ? '(' + grid.children.length + ' kayıt)' : '(+' + extra + ')';
+    }
+    function articleForHash(hash) {
+      var id;
+      try { id = decodeURIComponent(String(hash || '').replace(/^#/, '')); } catch (err) { return null; }
+      // Resolve actual direct cards, never selectors or arbitrary object keys from a fragment.
+      var target = id && document.getElementById(id);
+      return target && target.parentNode === grid && target.classList.contains('news-card') ? target : null;
+    }
+    function isExtra(target) {
+      return target && Array.prototype.indexOf.call(grid.children, target) >= 6;
+    }
+    function revealHash() {
+      var token = ++jumpVersion;
+      var target = articleForHash(location.hash);
+      if (!target) return;
+      if (isExtra(target)) set(true);
+      requestAnimationFrame(function () {
+        if (token !== jumpVersion || articleForHash(location.hash) !== target) return;
+        if (window.VGShell && window.VGShell.scrollTo) window.VGShell.scrollTo(target);
+        else target.scrollIntoView({ block: 'start', behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+        focusAnchorTarget(target);
+      });
     }
     set(false);
     btn.hidden = false;
+    revealHash();
+    window.addEventListener('hashchange', revealHash);
+    // The shared shell uses pushState for same-page anchors, which does not emit hashchange.
+    document.addEventListener('click', function (event) {
+      if (event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      var anchor = event.target && event.target.closest ? event.target.closest('a[href*="#"]') : null;
+      if (!anchor || (anchor.target && anchor.target !== '_self')) return;
+      var url;
+      try { url = new URL(anchor.href, location.href); } catch (err) { return; }
+      if (url.origin !== location.origin || url.pathname !== location.pathname) return;
+      var target = articleForHash(url.hash);
+      if (isExtra(target)) set(true);
+    }, true);
     btn.addEventListener('click', function () {
       var open = grid.classList.contains('is-collapsed');
+      jumpVersion++;
+      if (!open) {
+        var active = document.activeElement;
+        var hidesFocus = Array.prototype.some.call(grid.children, function (card, index) { return index >= 6 && card.contains(active); });
+        if (hidesFocus) { try { btn.focus({ preventScroll: true }); } catch (err) { btn.focus(); } }
+        // An explicit collapse clears an extra-article fragment instead of leaving a hidden target in the URL.
+        if (isExtra(articleForHash(location.hash))) {
+          try { history.replaceState(null, '', location.pathname + location.search + '#haberler'); } catch (err) { /* no-op */ }
+        }
+      }
       set(open);
       if (!open) grid.scrollIntoView({ block: 'nearest', behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     });

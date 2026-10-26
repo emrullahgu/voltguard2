@@ -25,10 +25,15 @@ const mime = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; char
   '.avif': 'image/avif', '.ico': 'image/x-icon', '.mp4': 'video/mp4', '.pdf': 'application/pdf'};
 const existingNote = 'QA: Kullanıcının daha önce yazdığı pano arızası açıklaması korunmalı.';
 const genericPrompt = 'Tesisimiz için teklif ön değerlendirme talep ediyoruz; açıklamamızı ekleyeceğiz.';
+const publicNews = JSON.parse(fs.readFileSync(path.join(root, 'tools/data/home-directory-volthaber.json'), 'utf8')).entries;
+const publicNewsPaths = new Set(publicNews.map(entry => entry.u));
 const checked = (condition, message) => {report.checks++; assert.ok(condition, message);};
 const json = (res, value) => {res.writeHead(200, {'Content-Type': mime['.json'], 'Cache-Control': 'no-store'}); res.end(JSON.stringify(value));};
 
 function fileFor(urlPath) {
+  // Public PHP article routes use their static shell in this frontend fixture.
+  // Publication coverage is checked independently against the saved public list.
+  if (publicNewsPaths.has(urlPath)) return path.join(root, 'volthaber/index.html');
   let rel;
   try {rel = decodeURIComponent(urlPath).replace(/^\//, '');} catch (_) {return null;}
   if (rel.split('/').some(part => part.startsWith('.') || part === 'tools' || part === 'api') || rel.includes('\\')) return null;
@@ -42,6 +47,11 @@ const server = http.createServer((req, res) => {
   try {
     const url = new URL(req.url, 'http://fixture');
     if (url.pathname === '/api/metrics.php') {report.metricsStubbed++; return json(res, {ok: true});}
+    if (url.pathname === '/api/volthaber.php' && req.method === 'GET' && url.searchParams.get('action') === 'list') {
+      const page=Number(url.searchParams.get('page')||1), pages=Math.max(1,Math.ceil(publicNews.length/12));
+      return json(res,{ok:true,service:'vg-volthaber/1',page,pages,total:publicNews.length,
+        items:publicNews.slice((page-1)*12,page*12).map(entry=>({url:entry.u,title:entry.t,summary:''}))});
+    }
     if (url.pathname === '/api/auth.php' && req.method === 'GET' && url.searchParams.get('action') === 'me') {
       return json(res, {api: 'vg-auth/1', ok: true, user: null, csrf: 'a'.repeat(64)});
     }
@@ -138,6 +148,12 @@ async function snapshot(page) {
       for (let parent = element; parent; parent = parent.parentElement) {
         const style = getComputedStyle(parent);
         if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) return false;
+        // Native closed <details> content can retain layout rectangles in Chromium
+        // even though it is not painted. Only its direct summary is visible.
+        if (parent.tagName === 'DETAILS' && !parent.open) {
+          const summary=parent.querySelector(':scope > summary');
+          if (!summary || !summary.contains(element)) return false;
+        }
       }
       return true;
     };

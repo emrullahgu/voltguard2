@@ -182,6 +182,31 @@
       ],
       "files": [],
       "userConfirmation": "Kullanıcı 26 Ekim 2026 tarihinde güncel belgelerin proje klasöründe bulunmadığını bildirdi."
+    },
+    {
+      "id": "VG07",
+      "priority": "P0",
+      "title": "Ana sayfadan yayınlanmış tüm içeriklere erişim",
+      "status": "complete",
+      "basis": "Kullanıcının 29 hedefle sınırlı olmayan tam içerik yönlendirmesi isteği",
+      "acceptance": [
+        "Site haritasındaki tüm195hedef ve54sözlük maddesi",
+        "9proje,15saha haberi,2film ve merkezi bölüm bağlantıları",
+        "11canlıVoltHaber yazısı ve yayın akışından güncelleme",
+        "Broşür/katalog/teknik araçlar ve giriş ekranları",
+        "Türkçe arama,kategori,klavye ve JavaScript kapalı kullanım"
+      ],
+      "files": [
+        "index.html",
+        "js/home-directory.js",
+        "js/home-volthaber.js",
+        "tools/build-home-directory.cjs",
+        "tools/data/home-directory-volthaber.json",
+        "tools/update-home-volthaber.cjs",
+        "haberler.html",
+        "js/main.js"
+      ],
+      "verification": "327 kaynak hedefiyle327statik bağlantı tam eşleşti.492birim testi,7261dizin kontrolü,45canlı entegrasyon kontrolü,105haber derin bağlantı kontrolü ve280ortak navigasyon kontrolü geçti."
     }
   ],
   "releaseChecks": {

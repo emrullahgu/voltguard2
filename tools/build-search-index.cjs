@@ -41,7 +41,8 @@ function extract(html) {
   const pick = re => { const m = html.match(re); return m ? text(m[1]) : ''; };
   const title = pick(/<title>([\s\S]*?)<\/title>/i).replace(/\s*[|–-]\s*VoltGuard.*$/i, '');
   const desc = decode((html.match(/<meta\s+name="description"\s+content="([^"]*)"/i) || [, ''])[1]);
-  let body = html.replace(/<!--vg:header-->[\s\S]*?<!--\/vg:header-->/, '').replace(/<!--vg:footer-->[\s\S]*?<!--\/vg:footer-->/, '');
+  let body = html.replace(/<!--vg:header-->[\s\S]*?<!--\/vg:header-->/, '').replace(/<!--vg:footer-->[\s\S]*?<!--\/vg:footer-->/, '')
+    .replace(/<!--vg:directory-->[\s\S]*?<!--\/vg:directory-->/, '');
   const main = body.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i);
   body = (main ? main[1] : (body.match(/<body\b[^>]*>([\s\S]*)<\/body>/i) || [, ''])[1])
     .replace(/<(script|style|noscript|svg|template|nav|header|footer)\b[\s\S]*?<\/\1>/gi, ' ');

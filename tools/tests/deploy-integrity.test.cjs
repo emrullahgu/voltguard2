@@ -51,7 +51,7 @@ test('css/js ?v= sürümleri dosya içeriğiyle eşleşiyor (python tools/sync-v
 });
 
 test('üretilen sayfalar ve arama dizini kaynaklarıyla güncel (npm run build:content)', () => {
-  for (const tool of ['build-mevzuat-guncellemeleri', 'build-sozluk', 'build-arama', 'build-search-index']) {
+  for (const tool of ['build-mevzuat-guncellemeleri', 'build-sozluk', 'build-arama', 'build-home-directory', 'build-search-index']) {
     execFileSync(process.execPath, [path.join(root, 'tools', tool + '.cjs'), '--check'], { cwd: root, stdio: 'pipe' });
   }
 });

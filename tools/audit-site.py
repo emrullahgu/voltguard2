@@ -12,6 +12,8 @@ from urllib.parse import unquote, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
 ORIGIN = 'https://voltguard.com.tr'
+NEWS_SNAPSHOT = ROOT / 'tools/data/home-directory-volthaber.json'
+PUBLISHED_ARTICLES = {entry['u'] for entry in json.loads(NEWS_SNAPSHOT.read_text(encoding='utf-8'))['entries']} if NEWS_SNAPSHOT.is_file() else set()
 DIRECTORIES = ['akademi', 'araclar', 'bilgi', 'calisan', 'hesap', 'hesaplama', 'hizmetler', 'mm', 'sor', 'voltsim']
 
 
@@ -75,6 +77,10 @@ def resolve(path):
         return file / 'index.html'
     if file.exists():
         return file
+    # Public articles are PHP routes backed by the published snapshot, not one
+    # physical HTML file per slug. Unknown article paths still fail the audit.
+    if path in PUBLISHED_ARTICLES and (ROOT / 'volthaber/index.php').is_file():
+        return ROOT / 'volthaber/index.php'
     if not file.suffix:
         return file.with_suffix('.html')
     return file
