@@ -445,7 +445,7 @@
     + '.calc-assumptions{margin:.9rem 0 0;padding:.75rem .9rem;border-left:3px solid var(--clr-accent,#f59e0b);background:var(--clr-bg-gray,#f5f7fa);font-size:.84rem;line-height:1.55;color:var(--clr-text,#1e293b);grid-column:1/-1}'
     + '.calc-assumptions strong{display:block;margin-bottom:.2rem}'
     + '.calc-assumptions:empty{display:none}'
-    + '.calc-status{margin:0 0 .35rem;padding:.3rem .6rem;border-radius:6px;font-size:.78rem;line-height:1.4;background:rgba(255,255,255,.1);color:#fff;border-left:3px solid #93c5fd}'
+    + '.mini-calc__result .calc-status{margin:0 0 .35rem;padding:.3rem .6rem;border-radius:6px;font-size:.78rem;line-height:1.4;background:rgba(255,255,255,.1);color:#fff;border-left:3px solid #93c5fd}'
     + '.calc-status[data-code="hesaplandi"]{border-left-color:#86efac}.calc-status[data-code="varsayimsal"]{border-left-color:#93c5fd}'
     + '.calc-status[data-code="inceleme"]{border-left-color:#fcd34d}.calc-status[data-code="veri-eksik"]{border-left-color:#fca5a5}'
     + '@media (max-width:420px){.calc-breakdown li{flex-wrap:wrap}.calc-breakdown li span:last-child{margin-left:auto}}'
