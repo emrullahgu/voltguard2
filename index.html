@@ -74,7 +74,7 @@
   <link rel="manifest" href="manifest.json">
   <!-- Sayfalar arası önden yükleme vg:head içindeki speculation rules ile yapılır (eski <link rel=prefetch> etiketleri kaldırıldı). -->
   <link rel="stylesheet" href="css/style.css?v=f5a7da9dd78a">
-  <link rel="stylesheet" href="css/home.css?v=f6ef03a8a6f6">
+  <link rel="stylesheet" href="css/home.css?v=ba5384c9ea96">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -457,7 +457,9 @@
   <!--/vg:header-->
 
   <main id="main" tabindex="-1">
-<section class="vgh-intro" id="anasayfa" aria-labelledby="heroTitle"><div class="container vgh-intro__grid">
+<section class="vgh-intro" id="anasayfa" aria-labelledby="heroTitle">
+  <canvas id="heroCircuit" class="hero__circuit" aria-hidden="true"></canvas>
+  <div class="container vgh-intro__grid">
   <div class="vgh-intro__copy"><p class="vgh-eyebrow">İzmir · Ege Teknopark</p>
     <h1 id="heroTitle">İşletmenize değer katan<br><span>elektrik mühendisliği.</span></h1>
     <p class="vgh-intro__lead">Trafo, ölçüm, pano ve otomasyon ihtiyaçlarınız için keşiften bakıma tek ekip.</p>

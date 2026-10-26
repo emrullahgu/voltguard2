@@ -2,8 +2,9 @@
 .home-page .section{content-visibility:visible;contain-intrinsic-size:none}
 .home-page main{overflow:clip}
 .vgh-eyebrow{margin:0 0 14px;color:var(--clr-accent-text);font:650 .74rem/1.5 var(--font-heading);letter-spacing:.1em;text-transform:uppercase}
-.vgh-intro{padding:56px 0 48px;background:#0a1628;color:#fff}
-.vgh-intro__grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(32px,5vw,80px);align-items:center}
+.vgh-intro{position:relative;isolation:isolate;overflow:hidden;padding:56px 0 48px;background:radial-gradient(ellipse at 15% 55%,rgba(245,158,11,.09),transparent 55%),radial-gradient(ellipse at 85% 25%,rgba(59,130,246,.08),transparent 50%),#0a1628;color:#fff}
+.vgh-intro .hero__circuit{z-index:0;opacity:.9}
+.vgh-intro__grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(32px,5vw,80px);align-items:center}
 .vgh-intro__copy{min-width:0;padding:18px 0}
 .vgh-intro .vgh-eyebrow{color:#fcd34d}
 .vgh-intro h1{margin:0;font:650 clamp(2.2rem,4.1vw,4.4rem)/1.12 var(--font-heading);letter-spacing:-.04em;color:#fff}
