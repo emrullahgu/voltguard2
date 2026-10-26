@@ -21,7 +21,7 @@
   var REF_NAMES = { arama: 'Arama motoru (organik)', sosyal: 'Sosyal medya', dogrudan: 'Doğrudan / yer imi', diger: 'Diğer siteler' };
   var DEV_NAMES = { mobil: 'Mobil', tablet: 'Tablet', masaustu: 'Masaüstü', '(bilinmiyor)': 'Bilinmiyor (DNT/GPC ya da eski istemci)' };
   var SE_NAMES = { google: 'Google', bing: 'Bing', yandex: 'Yandex', duckduckgo: 'DuckDuckGo', yahoo: 'Yahoo', ecosia: 'Ecosia', baidu: 'Baidu', diger: 'Diğer' };
-  var FORM_NAMES = { iletisim: 'Ana sayfa iletişim formu', teklif: 'Fabrika teklif sihirbazı' };
+  var FORM_NAMES = { iletisim: 'İletişim formu', teklif: 'Fabrika teklif sihirbazı' };
   var FIELD_NAMES = { ad: 'Ad soyad', telefon: 'Telefon', eposta: 'E-posta', konu: 'Hizmet alanı', hizmet: 'İlgilenilen hizmet', mesaj: 'Mesaj',
     guvenlik: 'Güvenlik doğrulaması', sektor: 'Sektör', trafo: 'Trafo', hizmetler: 'Hizmetler', aciliyet: 'Aciliyet', il: 'İl', not: 'Not',
     diger: 'Diğer alan', baslangic: 'Alan seçilmeden' };

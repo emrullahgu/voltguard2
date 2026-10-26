@@ -378,7 +378,7 @@ ${m.scope ? `    <p class="vs-scope" role="note"><strong>Kapsam:</strong> ${esc(
         <p>VoltGuard mühendislik ekibiyle projenizi gerçek tesis koşullarına göre değerlendirin. Raporunuzu paylaşmak isterseniz indirip teklif talebinize ekleyebilirsiniz; simülasyon girdileri bizimle siz istemedikçe paylaşılmaz.</p>
       </div>
       <div class="vs-cta__btns">
-        ${quote ? `<a class="vs-cbtn vs-cbtn--primary" href="/fabrika-cozumleri.html#teklif" data-vs-quote-open>${esc(quote)}</a>` : '<a class="vs-cbtn vs-cbtn--primary" href="/#iletisim">VoltGuard’dan Teklif Al</a>'}
+        ${quote ? `<a class="vs-cbtn vs-cbtn--primary" href="/fabrika-cozumleri.html#teklif" data-vs-quote-open>${esc(quote)}</a>` : '<a class="vs-cbtn vs-cbtn--primary" href="/iletisim.html#iletisim">VoltGuard’dan Teklif Al</a>'}
         <a class="vs-cbtn" href="/sor.html">Mühendislik Desteği Al</a>
         <a class="vs-cbtn" href="${m.service[0]}">İlgili Hizmeti İncele: ${esc(m.service[1])}</a>
       </div>
@@ -465,7 +465,7 @@ function landing() {
 
     <section class="vs-cta" aria-labelledby="cta-h">
       <div><h2 id="cta-h">Bu sistemi tesisiniz için projelendirelim.</h2><p>VoltGuard mühendislik ekibiyle projenizi gerçek tesis koşullarına göre değerlendirin.</p></div>
-      <div class="vs-cta__btns"><a class="vs-cbtn vs-cbtn--primary" href="/#iletisim">VoltGuard’dan Teklif Al</a><a class="vs-cbtn" href="/sor.html">Mühendislik Desteği Al</a><a class="vs-cbtn" href="/hizmetler/">Hizmetlerimizi İnceleyin</a></div>
+      <div class="vs-cta__btns"><a class="vs-cbtn vs-cbtn--primary" href="/iletisim.html#iletisim">VoltGuard’dan Teklif Al</a><a class="vs-cbtn" href="/sor.html">Mühendislik Desteği Al</a><a class="vs-cbtn" href="/hizmetler/">Hizmetlerimizi İnceleyin</a></div>
     </section>
   </main>
   <!--vg:footer--><!--/vg:footer-->

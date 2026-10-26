@@ -21,7 +21,8 @@ test('başlıktaki kimlikler tekil; aria-controls ve aria-labelledby hedefleri b
 test('başlık menüsü sayfa başlık hiyerarşisine başlık eklemez; VoltSim üst menüde görünür kalır', () => {
   assert.doesNotMatch(header, /<h[1-6]\b/, 'menü grup etiketleri başlık değil, <span> olmalı');
   assert.match(header, /class="vg-nav__link vg-nav__link--sim" href="\/voltsim\/"/);
-  for (const id of ['vgDdHizmetler', 'vgDdKurumsal', 'vgDdKaynaklar']) assert.match(header, new RegExp(`aria-controls="${id}"`));
+  for (const id of ['vgDdHizmetler', 'vgDdKurumsal']) assert.match(header, new RegExp(`aria-controls="${id}"`));
+  assert.match(header, /href="\/teknik-kaynaklar\.html"/, 'technical content stays accessible from its dedicated hub');
 });
 
 test('tema seçimi ilk stil dosyasından önce; özel CSP sayfalarında harici başlatıcı', () => {

@@ -15,6 +15,7 @@ const output = path.join(root, '.qa/site-audit');
 const a11yMode = process.argv.includes('--a11y');
 const axePath = process.env.VG_AXE || path.join(root, '.qa/a11y/node_modules/axe-core/axe.min.js');
 const templates = new Set(['/', '/gizlilik.html', '/fabrika-cozumleri.html', '/ekibimiz.html',
+  '/hakkimizda.html', '/projeler.html', '/haberler.html', '/iletisim.html', '/teknik-kaynaklar.html',
   '/hesaplama-araclari/', '/hesap/giris.html', '/hesap/kayit.html', '/calisan/giris.html',
   '/topluluk.html', '/sor.html', '/bilgi-bankasi.html', '/akademi.html',
   '/hizmetler/trafo-bakimi.html', '/bilgi/gerilim-dusumu-nedir.html',

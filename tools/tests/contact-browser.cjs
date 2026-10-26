@@ -47,7 +47,7 @@ const server = http.createServer((request, response) => {
   fs.createReadStream(file).pipe(response);
 });
 const pages = [
-  {name: 'contact', url: '/index.html', form: '#contactForm', text: '#message', trap: '#website', button: '#contactForm button[type=submit]', status: '.vg-notification'},
+  {name: 'contact', url: '/iletisim.html#iletisim', form: '#contactForm', text: '#message', trap: '#website', button: '#contactForm button[type=submit]', status: '.vg-notification'},
   {name: 'question', url: '/sor.html', form: '#qaForm', text: '#qa-message', trap: '#qa-website', button: '#qaSubmit', status: '#qaStatus'},
   {name: 'factory', url: '/fabrika-cozumleri.html', form: '#fxWizForm', text: '#wzNote', trap: '#wzWebsite', button: '[data-fx-w=submit]', status: '#fxWizErr'},
 ];

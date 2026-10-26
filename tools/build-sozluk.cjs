@@ -75,7 +75,7 @@ ${body}
       <div class="kb-cta__text"><strong>Tesisiniz için mühendislik desteği</strong><span>Proje, pano, kompanzasyon, topraklama ve periyodik kontrol hizmetleri.</span></div>
       <div style="display:flex;flex-wrap:wrap;gap:.6rem">
         <a href="/hizmetler/" class="btn btn--accent btn--md"><i class="fas fa-arrow-right" aria-hidden="true"></i> Hizmetlerimiz</a>
-        <a href="/#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+        <a href="/iletisim.html#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
       </div>
     </div>
   </main>

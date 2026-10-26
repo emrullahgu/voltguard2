@@ -111,7 +111,7 @@ ${items}
       <div class="kb-cta__text"><strong>Tesisiniz yeni kurallara uygun mu?</strong><span>Periyodik kontrol, GES, şarj istasyonu ve trafo projelerinde güncel mevzuata göre değerlendirme.</span></div>
       <div style="display:flex;flex-wrap:wrap;gap:.6rem">
         <a href="/hizmetler/elektrik-periyodik-kontrol.html" class="btn btn--accent btn--md"><i class="fas fa-arrow-right" aria-hidden="true"></i> Periyodik Kontrol Hizmeti</a>
-        <a href="/#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
+        <a href="/iletisim.html#iletisim" class="btn btn--outline-white btn--md"><i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al</a>
       </div>
     </div>
   </main>

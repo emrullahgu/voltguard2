@@ -19,10 +19,10 @@
 
  KURALLAR (özet; ayrıntı rapordaki "contracts" listesinde)
   - Tek <h1>; bölümler <h2>, kartlar/adımlar <h3>. Görünür breadcrumb = BreadcrumbList.
-  - Bağlantılar KÖK-MUTLAK: /, /#iletisim, /hizmetler/<slug>.html, /hesaplama/<slug>/, /bilgi/x.html.
+  - Bağlantılar KÖK-MUTLAK: /, /iletisim.html#iletisim, /hizmetler/<slug>.html, /hesaplama/<slug>/, /bilgi/x.html.
     "../" veya index.html#iletisim yok. Hesaplayıcılar yalnızca /hesaplama/<slug>/ temiz adresiyle.
-  - CTA: "Teklif Al" -> /?hizmet=<slug>#iletisim (data-vg-teklif özniteliğiyle; ana sayfa formu hizmeti önceden
-    seçer, slug index.html'deki "İlgilendiğiniz hizmet" seçeneklerinde olmalı; hub hizmetler/index.html /#iletisim
+  - CTA: "Teklif Al" -> /iletisim.html?hizmet=<slug>#iletisim (data-vg-teklif özniteliğiyle; iletişim formu hizmeti önceden
+    seçer, slug iletisim.html'deki "İlgilendiğiniz hizmet" seçeneklerinde olmalı; hub hizmetler/index.html /iletisim.html#iletisim
     kullanır), "Ücretsiz Ön Değerlendirme" -> /fabrika-cozumleri.html, telefon tel:+905454346735,
     WhatsApp https://wa.me/905454346735?text=...
   - Hesaplayıcı: hizmete uyan /hesaplama/<slug>/ aracına Kaynaklar kartına EK OLARAK metin içinde (kapsam, ücret
@@ -163,7 +163,7 @@
           <h1 id="svc-h1">{{H1_MAIN}} <span class="svc-h1-sub">{{H1_SUB}}</span></h1>
           <p class="svc-lead">{{LEAD_1_2_CUMLE}}</p>
           <div class="svc-hero__cta">
-            <a class="svc-btn svc-btn--primary" href="/?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
+            <a class="svc-btn svc-btn--primary" href="/iletisim.html?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
             <a class="svc-btn svc-btn--ghost" href="/fabrika-cozumleri.html#teklif"><i class="fas fa-clipboard-check" aria-hidden="true"></i> Ücretsiz Ön Değerlendirme</a>
           </div>
           <p class="svc-hero__contact">
@@ -295,7 +295,7 @@
               <li>{{ON_BILGI_1}}</li>
               <!-- ... 3-5 madde -->
             </ul>
-            <a class="svc-btn svc-btn--primary svc-btn--block" href="/?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
+            <a class="svc-btn svc-btn--primary svc-btn--block" href="/iletisim.html?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
           </div>
         </div>
         <ol class="svc-steps">
@@ -411,7 +411,7 @@
           <p class="svc-cta__meta"><span><i class="fas fa-clock" aria-hidden="true"></i>Ofis: Pazartesi-Cuma 08:00-18:00</span><span><i class="fas fa-headset" aria-hidden="true"></i>Acil arıza hattı: 7/24</span><span><i class="fas fa-location-dot" aria-hidden="true"></i>Ege Teknopark, Bornova/İzmir</span></p>
         </div>
         <div class="svc-cta__btns">
-          <a class="svc-btn svc-btn--primary" href="/?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
+          <a class="svc-btn svc-btn--primary" href="/iletisim.html?hizmet={{SLUG}}#iletisim" data-vg-teklif><i class="fas fa-file-signature" aria-hidden="true"></i> Teklif Al</a>
           <a class="svc-btn svc-btn--ghost" href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a>
           <a class="svc-btn svc-btn--ghost svc-btn--wa" href="https://wa.me/905454346735?text={{WA_TEXT_URLENCODED}}" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
         </div>

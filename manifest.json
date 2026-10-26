@@ -46,7 +46,7 @@
       "name": "Teklif Al",
       "short_name": "Teklif Al",
       "description": "Projeniz için ücretsiz teklif ve keşif talebi gönderin.",
-      "url": "/#iletisim",
+      "url": "/iletisim.html#iletisim",
       "icons": [
         {
           "src": "/public/icon-192.png",

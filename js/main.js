@@ -1,5 +1,5 @@
 /**
- * VoltGuard – main.js  (yalnızca ana sayfa: index.html)
+ * VoltGuard – main.js  (ana sayfa ve kurumsal içerik sayfaları)
  * Endüstriyel Mühendislik Çözümleri
  *
  * Başlık/menü/çapa kaydırma: js/vg-shell.js (tüm sayfalarda ortak).
@@ -451,6 +451,28 @@
         serviceSel.value = wanted;
         serviceSel.dispatchEvent(new Event('change', { bubbles: true }));
       }
+      // Moving the form to its own page must preserve both complete calculator
+      // summaries and incomplete prompts without overwriting a visitor's draft.
+      var contactDraft = null;
+      try {
+        var serializedDraft = window.sessionStorage.getItem('vgContactDraft');
+        window.sessionStorage.removeItem('vgContactDraft');
+        contactDraft = JSON.parse(serializedDraft || 'null');
+      } catch (err) { /* storage unavailable or malformed draft */ }
+      if (contactDraft && typeof contactDraft === 'object') {
+        var draftSubject = String(contactDraft.subject || '');
+        if (/^(elektrik|elektronik|otomasyon|mekanik|diger)$/.test(draftSubject) && subjectSel && !subjectSel.value) {
+          subjectSel.value = draftSubject;
+          subjectSel.dataset.auto = '1';
+        }
+        if (typeof contactDraft.text === 'string' && messageField && !messageField.value.trim()) {
+          messageField.value = contactDraft.text.slice(0, 1000);
+          messageField.dataset.auto = '1';
+          if (contactDraft.complete === true) messageField.dataset.prefillComplete = '1';
+          else delete messageField.dataset.prefillComplete;
+          syncCounter();
+        }
+      }
       /* Hesap araçlarındaki "Bu sonuçla teklif iste" bağlantısı sonucu sessionStorage 'vgQuoteNote' ile taşır;
          mesaj alanı boşsa bir kez doldurulur (kullanıcı göndermeden önce düzenleyebilir). */
       var quoteNote = '';
@@ -663,9 +685,23 @@
      (ya da yalnızca daha önce otomatik doldurulmuşsa) doldurulur; kullanıcının yazdığı metne dokunulmaz.
   ------------------------------------------------- */
   document.addEventListener('click', function (e) {
-    if (!contactForm || !e.target || !e.target.closest) return;
+    if (!e.target || !e.target.closest) return;
     var link = e.target.closest('a[data-prefill], a[data-subject]');
     if (!link) return;
+    if (!contactForm) {
+      if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || link.target === '_blank') return;
+      var destination;
+      try { destination = new URL(link.href, location.href); } catch (err) { return; }
+      if (destination.origin !== location.origin || destination.pathname !== '/iletisim.html') return;
+      try {
+        window.sessionStorage.setItem('vgContactDraft', JSON.stringify({
+          text: (link.getAttribute('data-prefill') || '').slice(0, 1000),
+          subject: link.getAttribute('data-subject') || '',
+          complete: link.hasAttribute('data-prefill-complete')
+        }));
+      } catch (err) { /* manual form entry remains available if storage is blocked */ }
+      return;
+    }
     var subjectSel = qs('#subject', contactForm);
     var msgField = qs('#message', contactForm);
     var subject = link.getAttribute('data-subject');

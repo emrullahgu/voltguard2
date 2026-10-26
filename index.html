@@ -37,12 +37,11 @@
   }
   </script>
   <script src="/js/vg-shell.js?v=c97b3cdc9a27" defer></script>
-  <script src="/js/vg-metrics.js?v=44aefc57c2b6" defer></script>
+  <script src="/js/vg-metrics.js?v=906f1f067ec5" defer></script>
   <noscript><style>.vg-burger,.vg-theme{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
-  <!-- LCP: hero arka planı (ön-bulanıklaştırılmış, opaklık .18). imagesrcset/imagesizes, .hero__bg-img görselinin
-       srcset/sizes değerleriyle BİREBİR aynı olmalı; yoksa görsel iki kez iner. -->
-  <link rel="preload" as="image" type="image/webp" fetchpriority="high" href="public/opt/TrafoBakimYuksekGerilim-hero-864.webp" imagesrcset="public/opt/TrafoBakimYuksekGerilim-hero-480.webp 480w, public/opt/TrafoBakimYuksekGerilim-hero-864.webp 864w" imagesizes="(max-width: 600px) 160px, 100vw">
+  <link rel="preload" as="image" href="/public/opt/TrafoBakimYuksekGerilim-864.webp" imagesrcset="/public/opt/TrafoBakimYuksekGerilim-640.webp 640w, /public/opt/TrafoBakimYuksekGerilim-864.webp 864w" imagesizes="(max-width: 760px) 92vw, 43vw" fetchpriority="high">
+  <script src="/js/home-routes.js"></script>
   <meta name="color-scheme" content="light dark">
   <meta name="description" content="Ege Teknopark merkezli VoltGuard Mühendislik: trafo işletme sorumluluğu, periyodik kontrol, kompanzasyon, pano ve GES. Ücretsiz keşif için arayın.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -75,50 +74,110 @@
   <link rel="manifest" href="manifest.json">
   <!-- Sayfalar arası önden yükleme vg:head içindeki speculation rules ile yapılır (eski <link rel=prefetch> etiketleri kaldırıldı). -->
   <link rel="stylesheet" href="css/style.css?v=f5a7da9dd78a">
-  <link rel="stylesheet" href="css/home.css?v=6121b9e2c38f">
+  <link rel="stylesheet" href="css/home.css?v=f6ef03a8a6f6">
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": [
-          "ProfessionalService",
-          "ElectricalContractor"
-        ],
-        "@id": "https://voltguard.com.tr/#organization",
-        "name": "VoltGuard",
-        "alternateName": [
-          "VoltGuard Mühendislik",
-          "VoltGuard Engineering Solutions"
-        ],
-        "legalName": "VoltGuard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi",
-        "taxID": "9251324900",
-        "url": "https://voltguard.com.tr/",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://voltguard.com.tr/public/icon-512.png",
-          "width": 512,
-          "height": 512
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "ProfessionalService",
+        "ElectricalContractor"
+      ],
+      "@id": "https://voltguard.com.tr/#organization",
+      "name": "VoltGuard",
+      "alternateName": [
+        "VoltGuard Mühendislik",
+        "VoltGuard Engineering Solutions"
+      ],
+      "legalName": "VoltGuard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi",
+      "taxID": "9251324900",
+      "url": "https://voltguard.com.tr/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://voltguard.com.tr/public/icon-512.png",
+        "width": 512,
+        "height": 512
+      },
+      "image": [
+        "https://voltguard.com.tr/public/og-image.png",
+        "https://voltguard.com.tr/public/ekip-ruhu-pano-kurulumu.jpg",
+        "https://voltguard.com.tr/public/trafo-kiosk-vinc-montaji.jpg"
+      ],
+      "description": "İzmir Bornova Ege Teknopark merkezli VoltGuard; Türkiye genelinde fabrikalar ve sanayi tesisleri için trafo işletme sorumluluğu, trafo bakımı ve kurulumu, elektrik periyodik kontrol, kompanzasyon, pano imalatı, elektrik taahhüt, GES, PLC/SCADA otomasyon ve elektrik projesi hizmetleri sunar; Aktif EMI Filtre Ar-Ge çalışmaları yürütür.",
+      "slogan": "Endüstriyel Gücünüzü Güvenle Yönetin",
+      "telephone": "+905454346735",
+      "email": "info@voltguard.com.tr",
+      "priceRange": "₺₺",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69 Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43",
+        "addressLocality": "Bornova",
+        "addressRegion": "İzmir",
+        "addressCountry": "TR"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "opens": "08:00",
+          "closes": "18:00"
+        }
+      ],
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "İzmir"
         },
-        "image": [
-          "https://voltguard.com.tr/public/og-image.png",
-          "https://voltguard.com.tr/public/ekip-ruhu-pano-kurulumu.jpg",
-          "https://voltguard.com.tr/public/trafo-kiosk-vinc-montaji.jpg"
-        ],
-        "description": "İzmir Bornova Ege Teknopark merkezli VoltGuard; Türkiye genelinde fabrikalar ve sanayi tesisleri için trafo işletme sorumluluğu, trafo bakımı ve kurulumu, elektrik periyodik kontrol, kompanzasyon, pano imalatı, elektrik taahhüt, GES, PLC/SCADA otomasyon ve elektrik projesi hizmetleri sunar; Aktif EMI Filtre Ar-Ge çalışmaları yürütür.",
-        "slogan": "Endüstriyel Gücünüzü Güvenle Yönetin",
-        "telephone": "+905454346735",
-        "email": "info@voltguard.com.tr",
-        "priceRange": "₺₺",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69 Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43",
-          "addressLocality": "Bornova",
-          "addressRegion": "İzmir",
-          "addressCountry": "TR"
-        },
-        "openingHoursSpecification": [
-          {
+        {
+          "@type": "Country",
+          "name": "Türkiye"
+        }
+      ],
+      "founder": {
+        "@type": "Person",
+        "name": "Emrullah Günay"
+      },
+      "knowsAbout": [
+        "Trafo işletme sorumluluğu",
+        "Trafo bakımı",
+        "Trafo merkezi kurulumu",
+        "Elektrik tesisatı periyodik kontrolü",
+        "Topraklama ve yıldırımdan korunma",
+        "Reaktif güç kompanzasyonu",
+        "Harmonik filtreleme",
+        "Enerji kalitesi analizi",
+        "Elektrik pano imalatı",
+        "Elektrik taahhüt",
+        "Güneş enerjisi santrali (GES)",
+        "PLC ve SCADA otomasyon",
+        "Elektrik projesi (SMM)",
+        "Endüstriyel elektronik ve gömülü sistemler",
+        "Mekanik sistemler ve üretim hatları",
+        "Aktif EMI filtre",
+        "Elektromanyetik uyumluluk (EMC)"
+      ],
+      "sameAs": [
+        "https://www.instagram.com/voltguard_/",
+        "https://www.linkedin.com/company/voltguard"
+      ],
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "telephone": "+905454346735",
+          "email": "info@voltguard.com.tr",
+          "contactType": "customer service",
+          "areaServed": "TR",
+          "availableLanguage": [
+            "Turkish"
+          ],
+          "hoursAvailable": {
             "@type": "OpeningHoursSpecification",
             "dayOfWeek": [
               "Monday",
@@ -130,312 +189,182 @@
             "opens": "08:00",
             "closes": "18:00"
           }
-        ],
-        "areaServed": [
-          {
-            "@type": "City",
-            "name": "İzmir"
-          },
-          {
-            "@type": "Country",
-            "name": "Türkiye"
-          }
-        ],
-        "founder": {
-          "@type": "Person",
-          "name": "Emrullah Günay"
         },
-        "knowsAbout": [
-          "Trafo işletme sorumluluğu",
-          "Trafo bakımı",
-          "Trafo merkezi kurulumu",
-          "Elektrik tesisatı periyodik kontrolü",
-          "Topraklama ve yıldırımdan korunma",
-          "Reaktif güç kompanzasyonu",
-          "Harmonik filtreleme",
-          "Enerji kalitesi analizi",
-          "Elektrik pano imalatı",
-          "Elektrik taahhüt",
-          "Güneş enerjisi santrali (GES)",
-          "PLC ve SCADA otomasyon",
-          "Elektrik projesi (SMM)",
-          "Endüstriyel elektronik ve gömülü sistemler",
-          "Mekanik sistemler ve üretim hatları",
-          "Aktif EMI filtre",
-          "Elektromanyetik uyumluluk (EMC)"
-        ],
-        "sameAs": [
-          "https://www.instagram.com/voltguard_/",
-          "https://www.linkedin.com/company/voltguard"
-        ],
-        "contactPoint": [
-          {
-            "@type": "ContactPoint",
-            "telephone": "+905454346735",
-            "email": "info@voltguard.com.tr",
-            "contactType": "customer service",
-            "areaServed": "TR",
-            "availableLanguage": [
-              "Turkish"
+        {
+          "@type": "ContactPoint",
+          "telephone": "+905454346735",
+          "contactType": "emergency",
+          "areaServed": "TR",
+          "availableLanguage": [
+            "Turkish"
+          ],
+          "hoursAvailable": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
             ],
-            "hoursAvailable": {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": [
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday"
-              ],
-              "opens": "08:00",
-              "closes": "18:00"
-            }
-          },
-          {
-            "@type": "ContactPoint",
-            "telephone": "+905454346735",
-            "contactType": "emergency",
-            "areaServed": "TR",
-            "availableLanguage": [
-              "Turkish"
-            ],
-            "hoursAvailable": {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": [
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday"
-              ],
-              "opens": "00:00",
-              "closes": "23:59"
-            }
+            "opens": "00:00",
+            "closes": "23:59"
           }
-        ],
-        "hasOfferCatalog": {
-          "@type": "OfferCatalog",
-          "name": "VoltGuard Hizmetleri",
-          "url": "https://voltguard.com.tr/hizmetler/",
-          "itemListElement": [
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/trafo-isletme-sorumlulugu.html#service",
-                "name": "Trafo (YG) İşletme Sorumluluğu",
-                "url": "https://voltguard.com.tr/hizmetler/trafo-isletme-sorumlulugu.html"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/harmonik-filtreli-kompanzasyon.html#service",
-                "name": "Kompanzasyon Panosu ve Harmonik Filtreli Kompanzasyon",
-                "url": "https://voltguard.com.tr/hizmetler/harmonik-filtreli-kompanzasyon.html"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/elektrik-periyodik-kontrol.html#service",
-                "name": "Elektrik Tesisatı Periyodik Kontrolü ve İç Tesisat Uygunluk Raporu",
-                "url": "https://voltguard.com.tr/hizmetler/elektrik-periyodik-kontrol.html"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/trafo-bakimi.html#service",
-                "name": "Trafo Bakımı ve OG Hücre Bakımı",
-                "url": "https://voltguard.com.tr/hizmetler/trafo-bakimi.html"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/topraklama-olcumu.html#service",
-                "name": "Topraklama ve Paratoner Ölçümü",
-                "url": "https://voltguard.com.tr/hizmetler/topraklama-olcumu.html"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/elektrik-pano-imalati.html#service",
-                "name": "Elektrik Pano İmalatı ve Pano Revizyonu",
-                "url": "https://voltguard.com.tr/hizmetler/elektrik-pano-imalati.html"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/plc-scada-otomasyon.html#service",
-                "name": "PLC ve SCADA Otomasyon, Enerji İzleme",
-                "url": "https://voltguard.com.tr/hizmetler/plc-scada-otomasyon.html"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/trafo-merkezi-kurulumu.html#service",
-                "name": "Trafo Merkezi Kurulumu ve Güç Artırımı",
-                "url": "https://voltguard.com.tr/hizmetler/trafo-merkezi-kurulumu.html"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/enerji-kalitesi-olcumu.html#service",
-                "name": "Enerji Kalitesi Ölçümü, Harmonik Analizi ve Termografi",
-                "url": "https://voltguard.com.tr/hizmetler/enerji-kalitesi-olcumu.html"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/elektrik-taahhut.html#service",
-                "name": "Elektrik Taahhüt: Fabrika ve Endüstriyel Elektrik Tesisatı",
-                "url": "https://voltguard.com.tr/hizmetler/elektrik-taahhut.html"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/elektrik-projesi.html#service",
-                "name": "Elektrik Proje Çizimi ve Proje Onayı (SMM)",
-                "url": "https://voltguard.com.tr/hizmetler/elektrik-projesi.html"
-              }
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "@id": "https://voltguard.com.tr/hizmetler/fabrika-cati-ges.html#service",
-                "name": "Fabrika Çatı GES Kurulumu (Öz Tüketim)",
-                "url": "https://voltguard.com.tr/hizmetler/fabrika-cati-ges.html"
-              }
-            }
-          ]
         }
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://voltguard.com.tr/#website",
-        "url": "https://voltguard.com.tr/",
-        "name": "VoltGuard",
-        "alternateName": "VoltGuard Mühendislik",
-        "inLanguage": "tr-TR",
-        "publisher": {
-          "@id": "https://voltguard.com.tr/#organization"
-        }
-      },
-      {
-        "@type": "WebPage",
-        "@id": "https://voltguard.com.tr/#webpage",
-        "url": "https://voltguard.com.tr/",
-        "name": "İzmir Elektrik Mühendislik Firması | VoltGuard Mühendislik",
-        "description": "Ege Teknopark merkezli VoltGuard Mühendislik: trafo işletme sorumluluğu, periyodik kontrol, kompanzasyon, pano ve GES. Ücretsiz keşif için arayın.",
-        "inLanguage": "tr-TR",
-        "about": {
-          "@type": "Service",
-          "name": "Elektrik mühendislik hizmetleri"
-        },
-        "isPartOf": {
-          "@id": "https://voltguard.com.tr/#website"
-        },
-        "mainEntity": {
-          "@id": "https://voltguard.com.tr/#organization"
-        },
-        "dateModified": "2026-10-26"
-      },
-      {
-        "@type": "FAQPage",
-        "@id": "https://voltguard.com.tr/#faq",
-        "mainEntity": [
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "VoltGuard Hizmetleri",
+        "url": "https://voltguard.com.tr/hizmetler/",
+        "itemListElement": [
           {
-            "@type": "Question",
-            "name": "VoltGuard hangi hizmetleri sunuyor?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "VoltGuard; elektrik (SMM, trafo işletme sorumluluğu, enerji kalitesi ve harmonik analiz, pano kurulumu, topraklama ve yıldırımdan korunma), otomasyon (PLC/SCADA), elektronik & gömülü sistemler, mekanik sistemler ve enerji sistemleri & verimlilik (GES, enerji üretim-iletim-dağıtım altyapıları) alanlarında anahtar teslim mühendislik hizmetleri sunar."
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/trafo-isletme-sorumlulugu.html#service",
+              "name": "Trafo (YG) İşletme Sorumluluğu",
+              "url": "https://voltguard.com.tr/hizmetler/trafo-isletme-sorumlulugu.html"
             }
           },
           {
-            "@type": "Question",
-            "name": "VoltGuard hangi bölgelere hizmet veriyor?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Merkezimiz İzmir Bornova'da, Ege Teknopark'tadır. Türkiye'nin tüm illerinde sahada hizmet veriyoruz; keşif ve teklif ücretsizdir."
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/harmonik-filtreli-kompanzasyon.html#service",
+              "name": "Kompanzasyon Panosu ve Harmonik Filtreli Kompanzasyon",
+              "url": "https://voltguard.com.tr/hizmetler/harmonik-filtreli-kompanzasyon.html"
             }
           },
           {
-            "@type": "Question",
-            "name": "SMM (Serbest Müşavir Mühendislik) hizmeti veriyor musunuz?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Evet. EMO SMM büro tescilimiz ve YG (trafo) işletme sorumluluğu yetkimizle SMM hizmetleri ve trafo işletme sorumluluğu sağlıyoruz."
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/elektrik-periyodik-kontrol.html#service",
+              "name": "Elektrik Tesisatı Periyodik Kontrolü ve İç Tesisat Uygunluk Raporu",
+              "url": "https://voltguard.com.tr/hizmetler/elektrik-periyodik-kontrol.html"
             }
           },
           {
-            "@type": "Question",
-            "name": "Trafo işletme sorumluluğu ve periyodik kontrol hizmeti var mı?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Evet. YG (trafo) işletme sorumluluğunu EMO'nun matbu sözleşmesiyle üstleniyor; işyeri elektrik ve topraklama tesisatının yıllık periyodik kontrolünü, trafo bakımını ve ölçümlerini raporlu olarak yapıyoruz."
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/trafo-bakimi.html#service",
+              "name": "Trafo Bakımı ve OG Hücre Bakımı",
+              "url": "https://voltguard.com.tr/hizmetler/trafo-bakimi.html"
             }
           },
           {
-            "@type": "Question",
-            "name": "Keşif ve teklif ücretli mi?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Hayır. Teknik ihtiyacınızı değerlendirip ücretsiz danışmanlık ve teklif desteği sağlıyoruz."
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/topraklama-olcumu.html#service",
+              "name": "Topraklama ve Paratoner Ölçümü",
+              "url": "https://voltguard.com.tr/hizmetler/topraklama-olcumu.html"
             }
           },
           {
-            "@type": "Question",
-            "name": "Acil arıza durumunda size nasıl ulaşabilirim?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Acil arızalar için 7/24 acil arıza hattımıza 0545 434 67 35 numarasından ulaşabilirsiniz. Ofis çalışma saatlerimiz Pazartesi–Cuma 08:00–18:00'dir."
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/elektrik-pano-imalati.html#service",
+              "name": "Elektrik Pano İmalatı ve Pano Revizyonu",
+              "url": "https://voltguard.com.tr/hizmetler/elektrik-pano-imalati.html"
             }
           },
           {
-            "@type": "Question",
-            "name": "Aktif EMI Filtre projeniz nedir?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Ege Üniversitesi'nde tez projesi olarak başlayan; bugün Ege Üniversitesi ve TUSAŞ ile Roketsan ve Havelsan iş birliklerinde yürüttüğümüz, savunma sanayiine yönelik elektromanyetik uyumluluk (EMC) Ar-Ge çalışmamızdır."
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/plc-scada-otomasyon.html#service",
+              "name": "PLC ve SCADA Otomasyon, Enerji İzleme",
+              "url": "https://voltguard.com.tr/hizmetler/plc-scada-otomasyon.html"
             }
           },
           {
-            "@type": "Question",
-            "name": "VoltGuard ile nasıl iletişime geçebilirim?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "0545 434 67 35 numarasından, info@voltguard.com.tr e-posta adresinden veya sitedeki iletişim formundan bize ulaşabilirsiniz."
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/trafo-merkezi-kurulumu.html#service",
+              "name": "Trafo Merkezi Kurulumu ve Güç Artırımı",
+              "url": "https://voltguard.com.tr/hizmetler/trafo-merkezi-kurulumu.html"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/enerji-kalitesi-olcumu.html#service",
+              "name": "Enerji Kalitesi Ölçümü, Harmonik Analizi ve Termografi",
+              "url": "https://voltguard.com.tr/hizmetler/enerji-kalitesi-olcumu.html"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/elektrik-taahhut.html#service",
+              "name": "Elektrik Taahhüt: Fabrika ve Endüstriyel Elektrik Tesisatı",
+              "url": "https://voltguard.com.tr/hizmetler/elektrik-taahhut.html"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/elektrik-projesi.html#service",
+              "name": "Elektrik Proje Çizimi ve Proje Onayı (SMM)",
+              "url": "https://voltguard.com.tr/hizmetler/elektrik-projesi.html"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://voltguard.com.tr/hizmetler/fabrika-cati-ges.html#service",
+              "name": "Fabrika Çatı GES Kurulumu (Öz Tüketim)",
+              "url": "https://voltguard.com.tr/hizmetler/fabrika-cati-ges.html"
             }
           }
         ]
       }
-    ]
-  }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://voltguard.com.tr/#website",
+      "url": "https://voltguard.com.tr/",
+      "name": "VoltGuard",
+      "alternateName": "VoltGuard Mühendislik",
+      "inLanguage": "tr-TR",
+      "publisher": {
+        "@id": "https://voltguard.com.tr/#organization"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://voltguard.com.tr/#webpage",
+      "url": "https://voltguard.com.tr/",
+      "name": "İzmir Elektrik Mühendislik Firması | VoltGuard Mühendislik",
+      "description": "Ege Teknopark merkezli VoltGuard Mühendislik: trafo işletme sorumluluğu, periyodik kontrol, kompanzasyon, pano ve GES. Ücretsiz keşif için arayın.",
+      "inLanguage": "tr-TR",
+      "about": {
+        "@type": "Service",
+        "name": "Elektrik mühendislik hizmetleri"
+      },
+      "isPartOf": {
+        "@id": "https://voltguard.com.tr/#website"
+      },
+      "mainEntity": {
+        "@id": "https://voltguard.com.tr/#organization"
+      },
+      "dateModified": "2026-10-26"
+    }
+  ]
+}
   </script>
 </head>
-<body>
+<body class="home-page">
 
 
 
@@ -498,61 +427,29 @@
             <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKurumsal">Kurumsal</button>
             <div class="vg-dd__menu" id="vgDdKurumsal">
               <ul>
-                <li><a class="vg-dd__link" href="/#hakkimizda">Hakkımızda</a></li>
-                <li><a class="vg-dd__link" href="/#projeler">Projeler</a></li>
-                <li><a class="vg-dd__link" href="/#referanslar">Referanslarımız</a></li>
+                <li><a class="vg-dd__link" href="/hakkimizda.html">Hakkımızda</a></li>
+                <li><a class="vg-dd__link" href="/projeler.html">Projeler ve Referanslar</a></li>
+                <li><a class="vg-dd__link" href="/haberler.html">Sahadan Haberler</a></li>
                 <li><a class="vg-dd__link" href="/ekibimiz.html">Ekibimiz</a></li>
+                <li><a class="vg-dd__link" href="/iletisim.html">İletişim</a></li>
                 <li><a class="vg-dd__link" href="/calisan/giris.html">Çalışan Girişi</a></li>
-                <li><a class="vg-dd__link" href="/#haberler">Sahadan Haberler</a></li>
-                <li><a class="vg-dd__link" href="/#iletisim">İletişim</a></li>
               </ul>
             </div>
           </li>
-          <li class="vg-dd" data-vg-dd>
-            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKaynaklar">Teknik Kaynaklar</button>
-            <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdKaynaklar">
-              <div class="vg-dd__cols">
-                <div class="vg-dd__group">
-                  <span class="vg-dd__label" id="vgDdLblHesap">Hesapla ve simüle et</span>
-                  <ul aria-labelledby="vgDdLblHesap">
-                    <li><a class="vg-dd__item" href="/hesaplama-araclari/" data-vg-match="/hesaplama/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h8"/></svg></span><span class="vg-dd__txt"><strong>Hesap Araçları</strong><small>Reaktif ceza, kablo kesiti, ücret hesapları</small></span></a></li>
-                    <li><a class="vg-dd__item" href="/araclar/" data-vg-match="/araclar/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendislik Uygulamaları</strong><small>51 ücretsiz hesap, çizim ve simülasyon aracı</small></span></a></li>
-                    <li><a class="vg-dd__item" href="/voltsim/" data-vg-match="/voltsim/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></span><span class="vg-dd__txt"><strong>VoltSim</strong><small>3D pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
-                  </ul>
-                </div>
-                <div class="vg-dd__group">
-                  <span class="vg-dd__label" id="vgDdLblOgren">Öğren</span>
-                  <ul aria-labelledby="vgDdLblOgren">
-                    <li><a class="vg-dd__item" href="/bilgi-bankasi.html" data-vg-match="/bilgi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="vg-dd__txt"><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri</small></span></a></li>
-                    <li><a class="vg-dd__item" href="/akademi.html" data-vg-match="/akademi/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="8" r="7"/><path d="M8.2 13.9 7 23l5-3 5 3-1.2-9.1"/></svg></span><span class="vg-dd__txt"><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
-                    <li><a class="vg-dd__item" href="/muhendis-merkezi.html" data-vg-match="/mm/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></span><span class="vg-dd__txt"><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
-                    <li><a class="vg-dd__item" href="/volthaber/" data-vg-match="/volthaber/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M4 4h13a3 3 0 0 1 3 3v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="vg-dd__txt"><strong>VoltHaber</strong><small>Sektör haberleri, mevzuat özetleri, analizler</small></span></a></li>
-                  </ul>
-                </div>
-                <div class="vg-dd__group">
-                  <span class="vg-dd__label" id="vgDdLblSor">Sor ve paylaş</span>
-                  <ul aria-labelledby="vgDdLblSor">
-                    <li><a class="vg-dd__item" href="/sor.html" data-vg-match="/sor/"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGuard'a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
-                    <li><a class="vg-dd__item" href="/topluluk.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg></span><span class="vg-dd__txt"><strong>Topluluk</strong><small>Herkese açık yorum ve paylaşımlar</small></span></a></li>
-                    <li><a class="vg-dd__item" href="/voltgame.html"><span class="vg-dd__ico" aria-hidden="true"><svg class="vg-ico" viewBox="0 0 24 24" width="20" height="20" focusable="false"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg></span><span class="vg-dd__txt"><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </li>
+          <li><a class="vg-nav__link" href="/teknik-kaynaklar.html" data-vg-match="/teknik-kaynaklar.html">Teknik Kaynaklar</a></li>
           <li><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/">VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
         </ul>
         <div class="vg-nav__foot">
           <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
           <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
-          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
         </div>
       </nav>
       <div class="vg-actions">
         <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
         <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
         <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
-        <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+        <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
       </div>
     </div>
     <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
@@ -560,1277 +457,36 @@
   <!--/vg:header-->
 
   <main id="main" tabindex="-1">
-  <!-- ==================== HERO: ne yapıyoruz, kime, sonraki adım + iki ziyaretçi yolu ==================== -->
-  <section class="hero" id="anasayfa" aria-labelledby="heroTitle">
-    <div class="hero__bg" aria-hidden="true">
-      <!-- Ön-bulanıklaştırılmış, düşük kaliteli arka plan (opaklık .18 + luminosity). Telefonda 480w yeterli olduğu için
-           sizes bilinçli olarak küçük; <head>'deki preload'un imagesrcset/imagesizes değerleriyle aynı tutun. -->
-      <img src="public/opt/TrafoBakimYuksekGerilim-hero-864.webp" srcset="public/opt/TrafoBakimYuksekGerilim-hero-480.webp 480w, public/opt/TrafoBakimYuksekGerilim-hero-864.webp 864w" sizes="(max-width: 600px) 160px, 100vw" width="864" height="1920" alt="" class="hero__bg-img" fetchpriority="high" decoding="async">
-      <!-- "Elektrik akımı" tuvali (js/main.js §15): sayfa yüklendikten sonra başlar, görünmezken / sekme gizliyken durur,
-           "hareketi azalt" tercihinde yalnızca sabit devre izleri çizilir. -->
-      <canvas id="heroCircuit" class="hero__circuit"></canvas>
-    </div>
-    <div class="hero__overlay" aria-hidden="true"></div>
-
-    <div class="container hero__content vgh-hero">
-      <div class="vgh-hero__copy">
-        <p class="hero__badge"><i class="fas fa-bolt" aria-hidden="true"></i> İzmir Ege Teknopark · Türkiye geneli saha hizmeti</p>
-        <h1 class="hero__title" id="heroTitle">
-          <span class="hero__title-line">Fabrika ve işletmeler için</span>
-          <span class="hero__title-line hero__title--accent">elektrik mühendisliği</span>
-        </h1>
-        <p class="hero__subtitle">
-          Trafo işletme sorumluluğu, periyodik kontrol, kompanzasyon, pano, otomasyon ve çatı GES işlerinizi
-          keşiften projeye, uygulamadan bakıma kadar tek ekip olarak yürütüyoruz.
-        </p>
-        <div class="hero__actions">
-          <a href="#iletisim" class="btn btn--accent btn--lg" data-subject="elektrik" data-prefill="Tesisimiz için teklif / ücretsiz ön değerlendirme talep ediyoruz. Kısaca ihtiyacımız: ">
-            <i class="fas fa-clipboard-check" aria-hidden="true"></i> Teklif / Ön Değerlendirme
-          </a>
-          <a href="#teknik" class="btn btn--outline-white btn--lg">
-            <i class="fas fa-layer-group" aria-hidden="true"></i> Araçları ve VoltSim’i Keşfet
-          </a>
-        </div>
-        <p class="vgh-hero__note">Keşif ve teklif ücretsizdir. <a href="#tanitim-videosu">VoltGuard’ı 10 dakikada tanıyın <i class="fas fa-play" aria-hidden="true"></i></a></p>
-      </div>
-
-      <nav class="vgh-paths" aria-labelledby="pathsTitle">
-        <p class="vgh-paths__title" id="pathsTitle">Ne arıyorsunuz?</p>
-        <a class="vgh-path" href="#hizmetler">
-          <span class="vgh-path__icon" aria-hidden="true"><i class="fas fa-industry"></i></span>
-          <span class="vgh-path__txt">
-            <strong>Fabrikam veya işletmem için hizmet arıyorum</strong>
-            <small>Trafo, ölçüm ve kontrol, pano, otomasyon, GES: hizmet gruplarını ve ücretsiz ön değerlendirmeyi görün.</small>
-          </span>
-        </a>
-        <a class="vgh-path" href="#teknik">
-          <span class="vgh-path__icon" aria-hidden="true"><i class="fas fa-calculator"></i></span>
-          <span class="vgh-path__txt">
-            <strong>Hesaplama, simülasyon veya teknik bilgi arıyorum</strong>
-            <small>Ücretsiz hesap araçları, VoltSim 3D simülasyonları, bilgi bankası ve akademi.</small>
-          </span>
-        </a>
-      </nav>
-    </div>
-
-    <div class="hero__stats" aria-label="Yetki ve hizmet bilgileri">
-      <div class="container">
-        <ul class="hero__stats-grid">
-          <li class="hero__stat"><span class="hero__stat-number">EMO</span> <span class="hero__stat-label">SMM büro tescili</span></li>
-          <li class="hero__stat"><span class="hero__stat-number">YG</span> <span class="hero__stat-label">İşletme sorumluluğu yetkisi</span></li>
-          <li class="hero__stat"><span class="hero__stat-number">TR</span> <span class="hero__stat-label">Türkiye geneli saha hizmeti</span></li>
-          <li class="hero__stat"><span class="hero__stat-number">7/24</span> <span class="hero__stat-label">Acil arıza hattı</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== HİZMETLERİMİZ (karar vermeyi kolaylaştıran gruplar; ayrıntı /hizmetler/ sayfalarında) ==================== -->
-  <section class="vgh-services section section--gray" id="hizmetler" aria-labelledby="servicesTitle">
-    <div class="container">
-      <div class="section__header">
-        <span class="section__badge">İşletmeniz için</span>
-        <h2 class="section__title" id="servicesTitle">İhtiyacınıza göre hizmetlerimiz</h2>
-        <p class="section__desc">
-          Hizmetlerimizi tesisinizde çözmek istediğiniz işe göre dört grupta topladık. Her bağlantı, kapsamı ve süreci
-          anlatan ayrıntı sayfasına gider.
-        </p>
-      </div>
-      <div class="vgh-services__grid">
-        <article class="vgh-svc" aria-labelledby="svcTrafo">
-          <div class="vgh-svc__media"><img src="public/opt/trafo-astor-kurulumu-640.webp" srcset="public/opt/trafo-astor-kurulumu-640.webp 640w, public/opt/trafo-astor-kurulumu-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, 300px" width="960" height="1280" alt="VoltGuard ekibinin devreye aldığı güç trafosu" loading="lazy" decoding="async"></div>
-          <div class="vgh-svc__body">
-            <h3 class="vgh-svc__title" id="svcTrafo">Trafo ve yüksek gerilim</h3>
-            <p class="vgh-svc__desc">Trafo merkeziniz için yasal sorumluluk, bakım ve kurulum.</p>
-            <ul class="vgh-svc__list">
-              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">İzmir trafo (YG) işletme sorumluluğu</a></li>
-              <li><a href="/hizmetler/trafo-bakimi.html">Trafo ve OG hücre bakımı</a></li>
-              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo merkezi kurulumu ve devreye alma</a></li>
-            </ul>
-            <a href="#iletisim" class="vgh-svc__cta" data-subject="elektrik" data-prefill="Trafo merkezimiz için (işletme sorumluluğu / bakım / kurulum) teklif almak istiyoruz. Kısaca ihtiyacımız: ">Bu konuda teklif iste<span class="vgh-sr"> – Trafo ve yüksek gerilim</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-          </div>
-        </article>
-        <article class="vgh-svc" aria-labelledby="svcOlcum">
-          <div class="vgh-svc__media"><img src="public/opt/Trafoolcum-640.webp" srcset="public/opt/Trafoolcum-640.webp 640w, public/opt/Trafoolcum-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, 300px" width="960" height="1280" alt="Trafo ölçümünde kullanılan ölçü cihazı" loading="lazy" decoding="async"></div>
-          <div class="vgh-svc__body">
-            <h3 class="vgh-svc__title" id="svcOlcum">Ölçüm, kontrol ve verimlilik</h3>
-            <p class="vgh-svc__desc">Yasal periyodik kontroller, raporlu ölçümler ve reaktif ceza riskini azaltan kompanzasyon.</p>
-            <ul class="vgh-svc__list">
-              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik tesisatı periyodik kontrolü</a></li>
-              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama ve yıldırımdan korunma ölçümü</a></li>
-              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji kalitesi ve harmonik ölçümü</a></li>
-              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon ve harmonik filtre panosu</a></li>
-            </ul>
-            <a href="#iletisim" class="vgh-svc__cta" data-subject="elektrik" data-prefill="Periyodik kontrol / ölçüm / kompanzasyon için teklif almak istiyoruz. Kısaca ihtiyacımız: ">Bu konuda teklif iste<span class="vgh-sr"> – Ölçüm, kontrol ve verimlilik</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-          </div>
-        </article>
-        <article class="vgh-svc" aria-labelledby="svcProje">
-          <div class="vgh-svc__media"><img src="public/opt/panokurulumuverevizyonu-640.webp" srcset="public/opt/panokurulumuverevizyonu-640.webp 640w, public/opt/panokurulumuverevizyonu-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, 300px" width="960" height="1200" alt="VoltGuard elektrik pano kurulumu ve revizyonu" loading="lazy" decoding="async"></div>
-          <div class="vgh-svc__body">
-            <h3 class="vgh-svc__title" id="svcProje">Proje, pano ve taahhüt</h3>
-            <p class="vgh-svc__desc">SMM ve elektrik projesi, pano imalatı, kurulum, revizyon ve arıza giderme.</p>
-            <ul class="vgh-svc__list">
-              <li><a href="/hizmetler/elektrik-projesi.html">SMM ve elektrik projesi</a></li>
-              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik pano imalatı ve revizyonu</a></li>
-              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik taahhüt ve tesis kurulumu</a></li>
-            </ul>
-            <a href="#iletisim" class="vgh-svc__cta" data-subject="elektrik" data-prefill="Elektrik projesi / pano / taahhüt işi için teklif almak istiyoruz. Kısaca ihtiyacımız: ">Bu konuda teklif iste<span class="vgh-sr"> – Proje, pano ve taahhüt</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-          </div>
-        </article>
-        <article class="vgh-svc" aria-labelledby="svcOtomasyon">
-          <div class="vgh-svc__media"><img src="public/opt/scada-biyolojik-aritma-proses-ekrani-640.webp" srcset="public/opt/scada-biyolojik-aritma-proses-ekrani-640.webp 640w, public/opt/scada-biyolojik-aritma-proses-ekrani-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, 300px" width="1280" height="720" alt="VoltGuard tarafından hazırlanan arıtma tesisi SCADA proses ekranı" loading="lazy" decoding="async"></div>
-          <div class="vgh-svc__body">
-            <h3 class="vgh-svc__title" id="svcOtomasyon">Otomasyon ve enerji</h3>
-            <p class="vgh-svc__desc">PLC/SCADA ile izlenebilir üretim; öz tüketime odaklı fabrika çatı GES.</p>
-            <ul class="vgh-svc__list">
-              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA otomasyon</a></li>
-              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika çatı GES kurulumu</a></li>
-              <li><a href="/bilgi/lisanssiz-uretim-ges.html">Lisanssız üretim (GES) rehberi</a></li>
-            </ul>
-            <a href="#iletisim" class="vgh-svc__cta" data-subject="otomasyon" data-prefill="Otomasyon (PLC/SCADA) veya çatı GES için teklif almak istiyoruz. Kısaca ihtiyacımız: ">Bu konuda teklif iste<span class="vgh-sr"> – Otomasyon ve enerji</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-          </div>
-        </article>
-      </div>
-      <div class="vgh-services__more" id="katalog">
-        <p><strong>Elektronik, gömülü sistem ve mekanik</strong> işleri (PCB ve kart tasarımı, veri toplama, makine ve hat kurulumu) için de
-          <a href="#iletisim" data-subject="elektronik" data-prefill="Elektronik / gömülü sistem veya mekanik iş için teklif almak istiyoruz. Kısaca ihtiyacımız: ">teklif isteyebilirsiniz</a>.</p>
-        <div class="vgh-services__links">
-          <a href="/hizmetler/" class="btn btn--primary btn--md">Tüm hizmetler <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-          <a href="/fabrika-cozumleri.html" class="btn btn--ghost-dark btn--md">Fabrikalar için çözümler</a>
-          <a href="public/opt/voltguard-katalog.pdf" class="vgh-services__pdf" target="_blank" rel="noopener"><i class="fas fa-file-pdf" aria-hidden="true"></i> Kurumsal katalog (PDF, 3,7 MB)</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== FABRİKALAR İÇİN (fabrika-cozumleri.html tanıtımı) ==================== -->
-  <section class="vgh-factory section" id="fabrikalar" aria-labelledby="factoryTitle">
-    <div class="container">
-      <div class="section__header reveal">
-        <span class="section__badge"><i class="fas fa-industry" aria-hidden="true"></i> Fabrikalar İçin</span>
-        <h2 class="section__title" id="factoryTitle">Fabrikanızın Elektrik Riskini ve Maliyetini Rakamlarla Görün</h2>
-        <p class="section__desc">
-          Bakım, üretim ve satın alma ekipleri için hazırladığımız ücretsiz araçlarla tesisinizi ön değerlendirmeden
-          geçirin; sonucu ekibinizle paylaşın, teklif talebinizi tek adımda iletin.
-        </p>
-      </div>
-
-      <div class="vgh-factory__layout">
-        <ul class="vgh-factory__cards">
-          <li class="reveal" data-delay="0">
-            <article class="vgh-card vgh-spot">
-              <span class="vgh-card__num" aria-hidden="true">01</span>
-              <span class="vgh-card__icon" aria-hidden="true"><i class="fas fa-clipboard-check" aria-hidden="true"></i></span>
-              <span class="vgh-card__tag">Ön değerlendirme</span>
-              <h3 class="vgh-card__title"><a class="vgh-card__link" href="/fabrika-cozumleri.html#saglik-testi">Elektrik Sağlık Testi</a></h3>
-              <p class="vgh-card__text">Kısa sorularla tesisinizin elektrik altyapısındaki risk seviyesini görün; önce neye bakılması gerektiğini öğrenin.</p>
-              <span class="vgh-card__more" aria-hidden="true">Testi başlat <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-            </article>
-          </li>
-          <li class="reveal" data-delay="1">
-            <article class="vgh-card vgh-spot">
-              <span class="vgh-card__num" aria-hidden="true">02</span>
-              <span class="vgh-card__icon" aria-hidden="true"><i class="fas fa-file-invoice" aria-hidden="true"></i></span>
-              <span class="vgh-card__tag">Fatura analizi</span>
-              <h3 class="vgh-card__title"><a class="vgh-card__link" href="/fabrika-cozumleri.html#reaktif-ceza">Reaktif Ceza Hesabı</a></h3>
-              <p class="vgh-card__text">Faturanızdaki aktif ve reaktif tüketimden reaktif enerji bedeli riskinizi ve kompanzasyon ihtiyacınızı tahmin edin.</p>
-              <span class="vgh-card__more" aria-hidden="true">Hesapla <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-            </article>
-          </li>
-          <li class="reveal" data-delay="2">
-            <article class="vgh-card vgh-spot">
-              <span class="vgh-card__num" aria-hidden="true">03</span>
-              <span class="vgh-card__icon" aria-hidden="true"><i class="fas fa-gauge-high" aria-hidden="true"></i></span>
-              <span class="vgh-card__tag">Maliyet</span>
-              <h3 class="vgh-card__title"><a class="vgh-card__link" href="/fabrika-cozumleri.html#durus-maliyeti">Duruş Maliyeti</a></h3>
-              <p class="vgh-card__text">Plansız bir duruşun saatlik ve yıllık maliyetini hesaplayın; önleyici bakım bütçesini rakamla savunun.</p>
-              <span class="vgh-card__more" aria-hidden="true">Hesapla <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-            </article>
-          </li>
-          <li class="reveal" data-delay="3">
-            <article class="vgh-card vgh-spot">
-              <span class="vgh-card__num" aria-hidden="true">04</span>
-              <span class="vgh-card__icon" aria-hidden="true"><i class="fas fa-file-signature" aria-hidden="true"></i></span>
-              <span class="vgh-card__tag">Satın alma</span>
-              <h3 class="vgh-card__title"><a class="vgh-card__link" href="/fabrika-cozumleri.html#teklif-sihirbazi">Teklif Sihirbazı</a></h3>
-              <p class="vgh-card__text">İhtiyacınızı adım adım seçin; satın alma sürecinize uygun, eksiksiz bir teklif talebi oluşturun.</p>
-              <span class="vgh-card__more" aria-hidden="true">Sihirbazı aç <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
-            </article>
-          </li>
-        </ul>
-
-        <!-- JS olmadan da çalışır: GET ile /fabrika-cozumleri.html?saat=..&tl=..#durus-maliyeti adresine gider. -->
-        <form class="vgh-calc reveal" id="downtimeCalc" data-delay="2" action="/fabrika-cozumleri.html#durus-maliyeti" method="get" aria-labelledby="downtimeTitle">
-          <span class="vgh-calc__badge"><i class="fas fa-gauge-high" aria-hidden="true"></i> Hızlı tahmin</span>
-          <h3 class="vgh-calc__title" id="downtimeTitle">Plansız duruşlar size yılda kaça mal oluyor?</h3>
-
-          <div class="vgh-calc__field">
-            <div class="vgh-calc__row">
-              <label for="dtHours">Yıllık plansız duruş süresi</label>
-              <span class="vgh-calc__val" id="dtHoursOut" aria-hidden="true">24 saat</span>
-            </div>
-            <input class="vgh-range" type="range" id="dtHours" name="saat" min="1" max="240" step="1" value="24" aria-valuetext="24 saat" style="--p:.0962">
-          </div>
-
-          <div class="vgh-calc__field">
-            <div class="vgh-calc__row">
-              <label for="dtRate">Bir saatlik duruşun maliyeti</label>
-              <span class="vgh-calc__val" id="dtRateOut" aria-hidden="true">50.000 TL</span>
-            </div>
-            <input class="vgh-range" type="range" id="dtRate" name="tl" min="5000" max="500000" step="5000" value="50000" aria-valuetext="50.000 TL" aria-describedby="dtRateHint" style="--p:.0909">
-            <p class="vgh-calc__hint" id="dtRateHint">Kayıp üretim, boşta kalan işçilik, hurda ve yeniden devreye alma giderlerinin toplamı.</p>
-          </div>
-
-          <div class="vgh-calc__result">
-            <span class="vgh-calc__result-label">Tahmini yıllık duruş maliyeti</span>
-            <strong class="vgh-calc__total" id="dtTotal">1.200.000 TL</strong>
-            <span class="vgh-calc__monthly" id="dtMonthly">Aylık ortalama ≈ 100.000 TL</span>
-          </div>
-          <p class="vgh-sr" id="dtLive" aria-live="polite" aria-atomic="true"></p>
-          <noscript><p class="vgh-calc__hint">Anlık sonuç için tarayıcınızda JavaScript açık olmalıdır. “Detaylı Hesapla” ayrıntılı hesaplayıcıyı açar.</p></noscript>
-
-          <p class="vgh-calc__note">
-            <i class="fas fa-circle-info" aria-hidden="true"></i>
-            <span>Varsayım: yıllık maliyet = yıllık duruş saati × saatlik maliyet. Değerler sizin tahmininizdir; sonuç bilgilendirme amaçlı bir tahmindir, teklif veya garanti değildir.</span>
-          </p>
-
-          <div class="vgh-calc__actions">
-            <button type="submit" class="btn btn--primary btn--md">
-              Detaylı Hesapla <i class="fas fa-arrow-right" aria-hidden="true"></i>
-            </button>
-            <a href="#iletisim" class="btn btn--accent btn--md" id="dtQuote" data-subject="elektrik" data-prefill-complete data-prefill="Fabrikamız için ücretsiz ön değerlendirme talep ediyoruz. Duruş maliyeti hızlı tahmini: yılda yaklaşık 24 saat plansız duruş, saatlik yaklaşık 50.000 TL, yıllık yaklaşık 1.200.000 TL.">
-              <i class="fas fa-clipboard-check" aria-hidden="true"></i> Ücretsiz Ön Değerlendirme
-            </a>
-          </div>
-        </form>
-      </div>
-
-      <div class="vgh-factory__cta reveal">
-        <a href="/fabrika-cozumleri.html" class="btn btn--primary btn--lg">
-          <i class="fas fa-industry" aria-hidden="true"></i> Tüm Fabrika Çözümlerini Gör
-        </a>
-        <p>Keşif ve teklif ücretsizdir; ihtiyacınızı sahada birlikte değerlendiririz.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="projects section" id="projeler">
-    <div class="wave-divider wave-divider--top" aria-hidden="true">
-      <svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0,60 C360,0 720,60 1080,20 C1260,0 1380,30 1440,20 L1440,0 L0,0 Z" fill="currentColor"/></svg>
-    </div>
-    <div class="container">
-
-      <div class="section__header reveal">
-        <span class="section__badge">Saha Çalışmalarımız</span>
-        <h2 class="section__title">Gerçekleştirdiğimiz Çalışmalar</h2>
-        <p class="section__desc">
-          Endüstriyel tesislerde ve ticari yapılarda yaptığımız saha çalışmalarından örnekler.
-        </p>
-      </div>
-
-      <div class="projects__grid" role="region" aria-label="Gerçekleştirdiğimiz çalışmalar">
-
-        <div class="project-card project-card--overlay reveal" data-delay="0">
-          <img src="public/opt/panokurulumuverevizyonu-640.webp" srcset="public/opt/panokurulumuverevizyonu-640.webp 640w, public/opt/panokurulumuverevizyonu-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1200" alt="Elektrik Pano Kurulumu ve Revizyonu" loading="lazy" decoding="async">
-          <div class="project-card__overlay-content">
-            <div class="project-card__tags">
-              <span class="project-card__category">Elektrik</span>
-              <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
-            </div>
-            <h3 class="project-card__title">Pano Kurulumu &amp; Revizyonu</h3>
-            <p class="project-card__desc">Endüstriyel tesiste komple elektrik pano kurulumu, devreye alma ve enerji kalitesi raporlaması.</p>
-            <div class="project-card__meta">
-              <span><i class="fas fa-industry" aria-hidden="true"></i> Endüstriyel Tesis</span>
-              <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="project-card project-card--overlay reveal" data-delay="1">
-          <img src="public/opt/acil-cikis-levhasi-montaji-640.webp" srcset="public/opt/acil-cikis-levhasi-montaji-640.webp 640w, public/opt/acil-cikis-levhasi-montaji-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="VoltGuard ekibinin endüstriyel tesiste acil çıkış levhası montajı" loading="lazy" decoding="async">
-          <div class="project-card__overlay-content">
-            <div class="project-card__tags">
-              <span class="project-card__category">Elektrik Güvenliği</span>
-              <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2026</span>
-            </div>
-            <h3 class="project-card__title">Acil Çıkış Levhası Montajı</h3>
-            <p class="project-card__desc">Endüstriyel tesis için acil çıkış yönlendirmesi ve elektrik bağlantılarının montajını tamamladık.</p>
-            <div class="project-card__meta">
-              <span><i class="fas fa-industry" aria-hidden="true"></i> Endüstriyel Tesis</span>
-              <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="project-card project-card--overlay reveal" data-delay="1">
-          <img src="public/opt/Trafoolcum-640.webp" srcset="public/opt/Trafoolcum-640.webp 640w, public/opt/Trafoolcum-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="Trafo Ölçüm ve Enerji Kalitesi Analizi" loading="lazy" decoding="async">
-          <div class="project-card__overlay-content">
-            <div class="project-card__tags">
-              <span class="project-card__category">Enerji Kalitesi</span>
-              <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
-            </div>
-            <h3 class="project-card__title">Trafo Ölçüm &amp; Enerji Analizi</h3>
-            <p class="project-card__desc">Periyodik trafo ölçümü ve enerji kalitesi kaydı; bulgular raporla teslim edildi.</p>
-            <div class="project-card__meta">
-              <span><i class="fas fa-bolt" aria-hidden="true"></i> Enerji Sektörü</span>
-              <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="project-card project-card--overlay reveal" data-delay="2">
-          <img src="public/opt/HarmonikFiltreliKompanzasyon-640.webp" srcset="public/opt/HarmonikFiltreliKompanzasyon-640.webp 640w, public/opt/HarmonikFiltreliKompanzasyon-800.webp 800w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="800" height="1067" alt="Harmonik Filtreli Kompanzasyon" loading="lazy" decoding="async">
-          <div class="project-card__overlay-content">
-            <div class="project-card__tags">
-              <span class="project-card__category">Kompanzasyon</span>
-              <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2024</span>
-            </div>
-            <h3 class="project-card__title">Harmonik Filtreli Kompanzasyon</h3>
-            <p class="project-card__desc">Harmonik analizi, filtreleme çözümü ve güç faktörü düzeltme sistemi tasarımı ile kurulumu.</p>
-            <div class="project-card__meta">
-              <span><i class="fas fa-industry" aria-hidden="true"></i> Üretim Tesisi</span>
-              <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="project-card project-card--overlay reveal" data-delay="0">
-          <img src="public/opt/TrafoBakimYuksekGerilim-640.webp" srcset="public/opt/TrafoBakimYuksekGerilim-640.webp 640w, public/opt/TrafoBakimYuksekGerilim-864.webp 864w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="864" height="1920" alt="Trafo Bakımı – Yüksek Gerilim" loading="lazy" decoding="async">
-          <div class="project-card__overlay-content">
-            <div class="project-card__tags">
-              <span class="project-card__category">Yüksek Gerilim</span>
-              <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2024</span>
-            </div>
-            <h3 class="project-card__title">Trafo Bakımı &amp; Yüksek Gerilim</h3>
-            <p class="project-card__desc">Yüksek gerilim trafo periyodik bakımı, kontrol ve güvenlik testleri çalışması.</p>
-            <div class="project-card__meta">
-              <span><i class="fas fa-bolt" aria-hidden="true"></i> Enerji Altyapısı</span>
-              <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="project-card project-card--overlay reveal" data-delay="2">
-          <img src="public/opt/EgitimSetleri-640.webp" srcset="public/opt/EgitimSetleri-640.webp 640w, public/opt/EgitimSetleri-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="716" alt="Eğitim Setleri – Teknik Eğitim" loading="lazy" decoding="async">
-          <div class="project-card__overlay-content">
-            <div class="project-card__tags">
-              <span class="project-card__category">Teknik Eğitim</span>
-              <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
-            </div>
-            <h3 class="project-card__title">Endüstriyel Eğitim Sistemleri</h3>
-            <p class="project-card__desc">PLC, otomasyon ve elektrik konularında uygulamalı teknik eğitim setleri tasarımı ve kurulumu.</p>
-            <div class="project-card__meta">
-              <span><i class="fas fa-graduation-cap" aria-hidden="true"></i> Eğitim</span>
-              <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="project-card project-card--overlay reveal" data-delay="0">
-          <img src="public/opt/trafo-kiosk-vinc-montaji-640.webp" srcset="public/opt/trafo-kiosk-vinc-montaji-640.webp 640w, public/opt/trafo-kiosk-vinc-montaji-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="Trafo Kiosk Vinç ile Montajı" loading="lazy" decoding="async">
-          <div class="project-card__overlay-content">
-            <div class="project-card__tags">
-              <span class="project-card__category">Trafo</span>
-              <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
-            </div>
-            <h3 class="project-card__title">Trafo Kiosk Montajı</h3>
-            <p class="project-card__desc">Prefabrik trafo kiosk ünitesinin vinçle taşınması ve saha yerleşimi; temel bağlantı ve kabul öncesi hazırlık.</p>
-            <div class="project-card__meta">
-              <span><i class="fas fa-tower-broadcast" aria-hidden="true"></i> OG Tesisi</span>
-              <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="project-card project-card--overlay reveal" data-delay="1">
-          <img src="public/opt/trafo-astor-kurulumu-640.webp" srcset="public/opt/trafo-astor-kurulumu-640.webp 640w, public/opt/trafo-astor-kurulumu-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1279" alt="Yağlı Tip Güç Trafosu Kurulumu" loading="lazy" decoding="async">
-          <div class="project-card__overlay-content">
-            <div class="project-card__tags">
-              <span class="project-card__category">Trafo</span>
-              <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
-            </div>
-            <h3 class="project-card__title">Güç Trafosu Devreye Alma</h3>
-            <p class="project-card__desc">Yağlı tip güç trafosunun OG bağlantıları, güvenlik işaretlemesi ve devreye alma öncesi kontrolleri.</p>
-            <div class="project-card__meta">
-              <span><i class="fas fa-plug" aria-hidden="true"></i> Trafo İşletmesi</span>
-              <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="project-card project-card--overlay reveal" data-delay="2">
-          <img src="public/opt/titiz-duzenli-kablo-tavasi-640.webp" srcset="public/opt/titiz-duzenli-kablo-tavasi-640.webp 640w, public/opt/titiz-duzenli-kablo-tavasi-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="Renk Kodlu Düzenli Kablo Tavası Uygulaması" loading="lazy" decoding="async">
-          <div class="project-card__overlay-content">
-            <div class="project-card__tags">
-              <span class="project-card__category">Elektrik</span>
-              <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
-            </div>
-            <h3 class="project-card__title">Kablo Tavası ve Düzenli Kablolama</h3>
-            <p class="project-card__desc">Renk kodlu, etiketli ve düzenli kablo tavası uygulaması ile bakımı kolay, izlenebilir bir kablolama altyapısı.</p>
-            <div class="project-card__meta">
-              <span><i class="fas fa-ruler-combined" aria-hidden="true"></i> İşçilik Kalitesi</span>
-              <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="projects__cta reveal">
-        <p>Tesisiniz için benzer bir çalışma mı planlıyorsunuz?</p>
-        <a href="#iletisim" class="btn btn--accent btn--md" data-prefill="Benzer bir proje için teklif almak istiyoruz. Kısaca ihtiyacımız: ">
-          Benzer Bir Proje İçin Teklif Al <i class="fas fa-arrow-right" aria-hidden="true"></i>
-        </a>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ==================== REFERANSLAR ==================== -->
-  <section class="vgh-references section" id="referanslar" aria-labelledby="referencesTitle">
-    <div class="container">
-      <div class="vgh-references__heading">
-        <div><span class="section__badge">Referanslarımız</span><h2 class="section__title" id="referencesTitle">Birlikte çalıştığımız kurumlar</h2></div>
-        <p>Sanayi, savunma ve akademi alanında birlikte çalıştığımız kurumlar.</p>
-      </div>
-      <ul class="vgh-references__grid" aria-label="VoltGuard referansları">
-        <li><a class="vgh-reference vgh-reference--round" href="https://www.dimes.com.tr/" target="_blank" rel="noopener noreferrer" aria-label="DİMES — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/opt/referanslar/dimes-240.webp" alt="" width="240" height="235" loading="lazy" decoding="async"></span><span class="vgh-reference__name">DİMES</span></a></li>
-        <li><a class="vgh-reference" href="https://www.roketsan.com.tr/tr" target="_blank" rel="noopener noreferrer" aria-label="ROKETSAN — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/roketsan.svg" alt="" width="880" height="200" loading="lazy" decoding="async"></span><span class="vgh-reference__name">ROKETSAN</span></a></li>
-        <li><a class="vgh-reference" href="https://www.tusas.com/" target="_blank" rel="noopener noreferrer" aria-label="TUSAŞ — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/tusas.svg" alt="" width="174" height="67" loading="lazy" decoding="async"></span><span class="vgh-reference__name">TUSAŞ · Türk Havacılık Uzay Sanayii</span></a></li>
-        <li><a class="vgh-reference vgh-reference--vertical" href="https://tubitak.gov.tr/tr" target="_blank" rel="noopener noreferrer" aria-label="TÜBİTAK — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/tubitak.svg" alt="" width="111" height="136" loading="lazy" decoding="async"></span><span class="vgh-reference__name">TÜBİTAK</span></a></li>
-        <li><a class="vgh-reference vgh-reference--round" href="https://ege.edu.tr/tr-0/anasayfa.html" target="_blank" rel="noopener noreferrer" aria-label="Ege Üniversitesi — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/opt/referanslar/ege-240.webp" alt="" width="240" height="240" loading="lazy" decoding="async"></span><span class="vgh-reference__name">Ege Üniversitesi</span></a></li>
-        <li><a class="vgh-reference vgh-reference--erdemir" href="https://www.erdemir.com.tr/" target="_blank" rel="noopener noreferrer" aria-label="ERDEMİR — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/opt/referanslar/erdemir-320.webp" alt="" width="320" height="242" loading="lazy" decoding="async"></span><span class="vgh-reference__name">ERDEMİR</span></a></li>
-        <li><a class="vgh-reference" href="https://www.vestel.com.tr/" target="_blank" rel="noopener noreferrer" aria-label="VESTEL — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/opt/referanslar/vestel-400.webp" alt="" width="400" height="103" loading="lazy" decoding="async"></span><span class="vgh-reference__name">VESTEL</span></a></li>
-        <li><a class="vgh-reference" href="https://www.habas.com.tr/" target="_blank" rel="noopener noreferrer" aria-label="HABAŞ — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/opt/referanslar/habas-400.webp" alt="" width="400" height="100" loading="lazy" decoding="async"></span><span class="vgh-reference__name">HABAŞ</span></a></li>
-        <li><a class="vgh-reference" href="https://www.ektam.com/" target="_blank" rel="noopener noreferrer" aria-label="EKTAM — resmî sitesini yeni sekmede aç"><span class="vgh-reference__logo"><img src="/public/referanslar/ektam.png" alt="" width="140" height="89" loading="lazy" decoding="async"></span><span class="vgh-reference__name">EKTAM</span></a></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ==================== ÇALIŞMA SÜRECİMİZ ==================== -->
-  <section class="process section" id="surec">
-    <div class="container">
-
-      <div class="section__header reveal">
-        <span class="section__badge">Nasıl Çalışıyoruz?</span>
-        <h2 class="section__title">4 Adımda Proje Sürecimiz</h2>
-        <p class="section__desc">
-          Her işte keşif, yazılı kapsam, uygulama ve belgeli teslim aynı sırayla ilerler; her adımın çıktısını yazılı olarak paylaşırız.
-        </p>
-      </div>
-
-      <div class="process__timeline">
-        <div class="process__step reveal" data-delay="0">
-          <div class="process__step-number">01</div>
-          <div class="process__step-icon"><i class="fas fa-search" aria-hidden="true"></i></div>
-          <h3 class="process__step-title">Analiz &amp; Keşif</h3>
-          <p class="process__step-desc">Tesisinizi yerinde inceliyor, teknik ihtiyaçlarınızı detaylı olarak analiz ediyoruz.</p>
-        </div>
-        <div class="process__step reveal" data-delay="1">
-          <div class="process__step-number">02</div>
-          <div class="process__step-icon"><i class="fas fa-drafting-compass" aria-hidden="true"></i></div>
-          <h3 class="process__step-title">Tasarım &amp; Planlama</h3>
-          <p class="process__step-desc">Size özel mühendislik çözümü tasarlıyor, proje planını ve zaman çizelgesini oluşturuyoruz.</p>
-        </div>
-        <div class="process__step reveal" data-delay="2">
-          <div class="process__step-number">03</div>
-          <div class="process__step-icon"><i class="fas fa-tools" aria-hidden="true"></i></div>
-          <h3 class="process__step-title">Uygulama &amp; Kurulum</h3>
-          <p class="process__step-desc">Uzman ekibimizle projeyi hayata geçiriyor, tüm kurulum ve devreye alma işlemlerini tamamlıyoruz.</p>
-        </div>
-        <div class="process__step reveal" data-delay="3">
-          <div class="process__step-number">04</div>
-          <div class="process__step-icon"><i class="fas fa-headset" aria-hidden="true"></i></div>
-          <h3 class="process__step-title">Destek &amp; Bakım</h3>
-          <p class="process__step-desc">Proje sonrası periyodik bakım hizmetleri ve 7/24 acil arıza hattımızla yanınızdayız.</p>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ==================== HAKKIMIZDA ==================== -->
-  <section class="about section" id="hakkimizda">
-    <div class="container">
-      <div class="about__grid">
-
-        <div class="about__content reveal-left">
-          <span class="section__badge">Hakkımızda</span>
-          <h2 class="section__title">Tesisinizi tanıyarak<br>işe başlıyoruz</h2>
-          <p class="about__text">
-            İzmir Ege Teknopark’taki ekibimizle elektrik, otomasyon, elektronik, mekanik ve enerji işleri yürütüyoruz.
-            İlk adımda tesisin mevcut durumunu, ölçüm sonuçlarını ve işletmenin ihtiyacını birlikte değerlendiriyoruz.
-          </p>
-          <p class="about__text">
-            Keşfin ardından işin kapsamını, kullanılacak ekipmanı ve teslim edilecek belgeleri netleştiriyoruz.
-            Proje, saha uygulaması ve bakım çalışmalarını tesisin çalışma takvimine göre planlıyoruz.
-          </p>
-          <ul class="about__features">
-            <li><i class="fas fa-check-circle" aria-hidden="true"></i> EMO'ya tescilli SMM bürosu</li>
-            <li><i class="fas fa-check-circle" aria-hidden="true"></i> YG (trafo) işletme sorumluluğu yetkisi</li>
-            <li><i class="fas fa-check-circle" aria-hidden="true"></i> Periyodik bakım ve 7/24 acil arıza hattı</li>
-            <li><i class="fas fa-check-circle" aria-hidden="true"></i> Yönetmeliklere ve TS HD 60364, TS EN 61439 standartlarına göre test ve raporlama</li>
-          </ul>
-          <div class="about__actions">
-            <a href="/ekibimiz.html" class="btn btn--primary btn--md">
-              Ekibimizi Tanıyın <i class="fas fa-arrow-right" aria-hidden="true"></i>
-            </a>
-            <a href="#tanitim-videosu" class="btn btn--ghost-dark btn--md">
-              Tanıtım Videosunu İzle
-            </a>
-          </div>
-        </div>
-
-        <div class="about__image reveal-right">
-          <div class="about__img-wrapper">
-            <!-- Kullanıcı fotoğrafı: public/Trafoisletmesorumlulugu.jpeg -->
-            <img src="public/opt/Trafoisletmesorumlulugu-640.webp" srcset="public/opt/Trafoisletmesorumlulugu-640.webp 640w, public/opt/Trafoisletmesorumlulugu-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 94vw, (max-width: 1200px) 452px, 540px" width="960" height="1719" alt="VoltGuard – Trafo İşletme Sorumluluğu" loading="lazy" decoding="async">
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== NEDEN BİZ ==================== -->
-  <section class="why-us section" id="neden-biz">
-    <div class="container">
-
-      <div class="section__header reveal">
-        <span class="section__badge">Neden VoltGuard?</span>
-        <h2 class="section__title">Nasıl Çalışıyoruz</h2>
-        <p class="section__desc">
-          Sözleşmeli, belgeli ve ölçüme dayalı çalışırız; arıza hattımız iş tesliminden sonra da açıktır.
-        </p>
-      </div>
-
-      <div class="why-us__banner reveal">
-        <img src="public/opt/ekip-ruhu-pano-kurulumu-640.webp" srcset="public/opt/ekip-ruhu-pano-kurulumu-640.webp 640w, public/opt/ekip-ruhu-pano-kurulumu-960.webp 960w, public/opt/ekip-ruhu-pano-kurulumu-1200.webp 1200w" sizes="(max-width: 1200px) calc(100vw - 48px), 1152px" width="1200" height="1600" alt="VoltGuard saha ekibi" loading="lazy" decoding="async">
-        <div class="why-us__banner-caption">
-          <i class="fas fa-users" aria-hidden="true"></i>
-          <span>VoltGuard saha ekibi, bir pano kurulumunun ardından</span>
-        </div>
-      </div>
-
-      <div class="why-us__grid">
-        <div class="why-card reveal" data-delay="0">
-          <div class="why-card__icon"><i class="fas fa-user-tie" aria-hidden="true"></i></div>
-          <h3 class="why-card__title">Kendi Mühendis ve Saha Kadromuz</h3>
-          <p class="why-card__desc">Elektrik, elektronik ve makine mühendisleriyle usta ve teknikerlerden oluşan kendi ekibimizle çalışırız. Kadromuzu <a href="/ekibimiz.html">Ekibimiz</a> sayfasında görebilirsiniz.</p>
-        </div>
-        <div class="why-card reveal" data-delay="1">
-          <div class="why-card__icon"><i class="fas fa-shield-alt" aria-hidden="true"></i></div>
-          <h3 class="why-card__title">Önce İş Güvenliği</h3>
-          <p class="why-card__desc">Enerjisiz çalışmada kilitleme-etiketleme ve gerilim yokluğu kontrolü uygular, çalışma alanını işletme sorumlusuyla birlikte güvenceye alırız.</p>
-        </div>
-        <div class="why-card reveal" data-delay="2">
-          <div class="why-card__icon"><i class="fas fa-clock" aria-hidden="true"></i></div>
-          <h3 class="why-card__title">Yazılı İş Programı</h3>
-          <p class="why-card__desc">Kapsamı, aşamaları ve enerji kesintisi pencerelerini işe başlamadan, üretim takviminize göre yazılı olarak planlarız.</p>
-        </div>
-        <div class="why-card reveal" data-delay="0">
-          <div class="why-card__icon"><i class="fas fa-headset" aria-hidden="true"></i></div>
-          <h3 class="why-card__title">7/24 Acil Arıza Hattı</h3>
-          <p class="why-card__desc">Arıza ve acil durumlarda <a href="tel:+905454346735">0545 434 67 35</a> numaralı acil arıza hattımıza haftanın her günü 24 saat ulaşabilirsiniz; ofisimiz Pazartesi–Cuma 08:00–18:00 arasında açıktır.</p>
-        </div>
-        <div class="why-card reveal" data-delay="1">
-          <div class="why-card__icon"><i class="fas fa-project-diagram" aria-hidden="true"></i></div>
-          <h3 class="why-card__title">Anahtar Teslim Projeler</h3>
-          <p class="why-card__desc">Tasarım, mühendislik, kurulum ve devreye alma süreçlerinin tamamını tek çatı altında yönetiyoruz.</p>
-        </div>
-        <div class="why-card reveal" data-delay="2">
-          <div class="why-card__icon"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
-          <h3 class="why-card__title">Ölçüme Dayalı Karar</h3>
-          <p class="why-card__desc">Kompanzasyon, filtre ve iyileştirme önerilerini ölçüm sonuçlarına göre önceliklendirir, uygulamadan sonra tekrar ölçeriz.</p>
-        </div>
-      </div>
-
-      <div class="services__more reveal">
-        <a href="/ekibimiz.html" class="btn btn--primary btn--md">Ekibimizi Tanıyın <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-        <p>Projelerimizin arkasındaki insanları ve çalışma yapımızı keşfedin.</p>
-      </div>
-
-    </div>
-  </section>
-
-  <section class="vgh-film section" id="tanitim-videosu" aria-label="VoltGuard tanıtım videoları">
-    <article class="container vgh-film__grid" id="voltguard-kimdir" aria-labelledby="companyFilmTitle">
-      <div class="vgh-film__copy">
-        <span class="section__badge">Bizi Tanıyın</span>
-        <h2 class="section__title" id="companyFilmTitle">VoltGuard Kimdir?</h2>
-        <p>Elektrik, otomasyon, elektronik, mekanik ve enerji sistemlerinde çalışıyoruz. İzmir Ege Teknopark'taki mühendislik birikimimizi saha deneyimiyle birleştiriyor; keşif ve projelendirmeden uygulama, ölçüm ve teknik takibe kadar yanınızda oluyoruz.</p>
-        <p class="vgh-film__meta">9 dakika 46 saniye · Türkçe şirket tanıtımı</p>
-        <div class="vgh-film__actions">
-          <a href="/public/video/voltguard-kimdir-20261015.mp4" class="btn btn--accent btn--md" download="VoltGuard-Kimdir.mp4"><i class="fas fa-download" aria-hidden="true"></i> Şirket tanıtımını indir</a>
-          <a href="#calisanlarimizin-duygulari" class="vgh-film__link">Ekibimizin sesinden dinleyin <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
-        </div>
-      </div>
-      <div class="vgh-film__player">
-        <video controls playsinline preload="none" width="1280" height="720" data-poster="/public/video/voltguard-kimdir-kapak-20261015.webp" data-poster-sm="/public/video/voltguard-kimdir-kapak-20261015-640.webp" aria-label="VoltGuard Kimdir? — Şirket tanıtımı" aria-describedby="companyFilmCaption">
-          <source src="/public/video/voltguard-kimdir-20261015.mp4" type="video/mp4">
-          Tarayıcınız video oynatmayı desteklemiyorsa <a href="/public/video/voltguard-kimdir-20261015.mp4">VoltGuard Kimdir? videosunu açın</a>.
-        </video>
-        <p id="companyFilmCaption">Hizmetlerimizi, mühendislik yaklaşımımızı ve sahadaki çalışmalarımızı tanıyın. Ses ve tam ekran seçeneklerini oynatıcıdan ayarlayabilirsiniz.</p>
-      </div>
-    </article>
-    <article class="container vgh-film__grid" id="calisanlarimizin-duygulari" aria-labelledby="filmTitle">
-      <div class="vgh-film__copy">
-        <span class="section__badge">Ekip Filmi</span>
-        <h2 class="section__title" id="filmTitle">Ekibimizin sesinden</h2>
-        <p>Ekibimizin sahadaki anlarını ve kendi anlatımlarını bir araya getirdik. VoltGuard'da birlikte çalışmayı, bu işi her gün yapan arkadaşlarımızdan dinleyin.</p>
-        <p class="vgh-film__meta">34 saniye · Çalışanlarımızın kendi sesleri</p>
-        <div class="vgh-film__actions">
-          <a href="/public/video/voltguard-calisanlarimizin-duygulari-20261015.mp4" class="btn btn--accent btn--md" download="VoltGuard-Calisanlarimizin-Duygulari.mp4"><i class="fas fa-download" aria-hidden="true"></i> Ekip filmini indir</a>
-          <a href="/ekibimiz.html" class="vgh-film__link">Ekibimizi yakından tanıyın <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-        </div>
-      </div>
-      <div class="vgh-film__player">
-        <video controls playsinline preload="none" width="1280" height="720" data-poster="/public/video/voltguard-calisanlarimizin-duygulari-kapak-20261015.webp" data-poster-sm="/public/video/voltguard-calisanlarimizin-duygulari-kapak-20261015-640.webp" aria-label="VoltGuard — Çalışanlarımızın Duyguları" aria-describedby="filmCaption">
-          <source src="/public/video/voltguard-calisanlarimizin-duygulari-20261015.mp4" type="video/mp4">
-          Tarayıcınız video oynatmayı desteklemiyorsa <a href="/public/video/voltguard-calisanlarimizin-duygulari-20261015.mp4">Çalışanlarımızın Duyguları videosunu açın</a>.
-        </video>
-        <p id="filmCaption">Videoyu oynatın; ses ve tam ekran seçeneklerini oynatıcıdan ayarlayabilirsiniz.</p>
-      </div>
-    </article>
-  </section>
-
-  <!-- ==================== TEKNİK KAYNAKLAR (ikinci ziyaretçi yolu) ==================== -->
-  <section class="vgh-teknik section" id="teknik" aria-labelledby="teknikTitle">
-    <div class="container">
-      <div class="section__header">
-        <span class="section__badge">Hesaplama, simülasyon ve bilgi</span>
-        <h2 class="section__title" id="teknikTitle">Teknik kaynaklar</h2>
-        <p class="section__desc">Mühendis, tekniker ve öğrenciler için ücretsiz araçlar ve rehberler. Kayıt gerektirmez; sonuçlar tarayıcınızda hesaplanır.</p>
-      </div>
-      <div class="vgh-teknik__grid">
-        <div class="vgh-teknik__group">
-          <h3 class="vgh-teknik__h">Hesapla ve simüle et</h3>
-          <ul>
-            <li><a class="vgh-res" href="/hesaplama-araclari/"><span class="vgh-res__icon" aria-hidden="true"><i class="fas fa-calculator"></i></span><span><strong>Hesap Araçları</strong><small>Reaktif ceza, kablo kesiti, işletme sorumluluğu ücreti</small></span></a></li>
-            <li><a class="vgh-res" href="/araclar/"><span class="vgh-res__icon" aria-hidden="true"><i class="fas fa-th-large"></i></span><span><strong>Mühendislik Uygulamaları</strong><small>51 hesap, çizim ve simülasyon aracı</small></span></a></li>
-            <li><a class="vgh-res" href="/voltsim/"><span class="vgh-res__icon" aria-hidden="true"><i class="fas fa-layer-group"></i></span><span><strong>VoltSim 3D</strong><small>Pano, GES, trafo ve enerji simülasyonları</small></span></a></li>
-          </ul>
-        </div>
-        <div class="vgh-teknik__group">
-          <h3 class="vgh-teknik__h">Öğren</h3>
-          <ul>
-            <li><a class="vgh-res" href="/bilgi-bankasi.html"><span class="vgh-res__icon" aria-hidden="true"><i class="fas fa-book-open"></i></span><span><strong>Bilgi Bankası</strong><small>Uygulamalı elektrik rehberleri ve tablolar</small></span></a></li>
-            <li><a class="vgh-res" href="/akademi.html"><span class="vgh-res__icon" aria-hidden="true"><i class="fas fa-graduation-cap"></i></span><span><strong>Akademi</strong><small>Başlangıçtan ileri seviyeye dersler</small></span></a></li>
-            <li><a class="vgh-res" href="/muhendis-merkezi.html"><span class="vgh-res__icon" aria-hidden="true"><i class="fas fa-clipboard-list"></i></span><span><strong>Mühendis Merkezi</strong><small>Form, checklist ve tablo şablonları</small></span></a></li>
-            <li><a class="vgh-res" href="/volthaber/"><span class="vgh-res__icon" aria-hidden="true"><i class="fas fa-file-lines"></i></span><span><strong>VoltHaber</strong><small>Sektör haberleri ve mevzuat özetleri</small></span></a></li>
-          </ul>
-        </div>
-        <div class="vgh-teknik__group">
-          <h3 class="vgh-teknik__h">Sor ve paylaş</h3>
-          <ul>
-            <li><a class="vgh-res" href="/sor.html"><span class="vgh-res__icon" aria-hidden="true"><i class="fas fa-lightbulb"></i></span><span><strong>VoltGuard’a Sor</strong><small>Teknik sorunuza mühendis cevabı</small></span></a></li>
-            <li><a class="vgh-res" href="/topluluk.html"><span class="vgh-res__icon" aria-hidden="true"><i class="fas fa-users"></i></span><span><strong>Topluluk</strong><small>Herkese açık soru ve paylaşımlar</small></span></a></li>
-            <li><a class="vgh-res" href="/voltgame.html"><span class="vgh-res__icon" aria-hidden="true"><i class="fas fa-gamepad"></i></span><span><strong>VoltGame</strong><small>Elektrik manevra bulmacası</small></span></a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="vgh-voltsim" id="voltsim" aria-labelledby="voltsimTitle">
-    <div class="container vgh-voltsim__inner">
-      <div class="vgh-voltsim__txt">
-        <span class="vgh-voltsim__badge">3D Simülasyon Merkezi</span>
-        <h2 id="voltsimTitle">VoltSim</h2>
-        <p class="vgh-voltsim__sub">Enerjiyi Gör. Sistemi Kur. Sonucu Ölç.</p>
-        <p>VoltGuard mühendisliğiyle geliştirilen interaktif 3D simülasyon laboratuvarı. Panoyu açın, motoru çalıştırın, GES’in gün içi üretimini, trafonun kayıplarını ve şarj süresini gerçek hesaplarla inceleyin; sonucu PDF rapor olarak alın.</p>
-        <ul class="vgh-voltsim__facts"><li>18 simülasyon</li><li>Test edilen hesap motoru</li><li>Mevzuat ve standart notları</li></ul>
-        <div class="vgh-voltsim__actions">
-          <a class="btn btn--accent btn--lg" href="/voltsim/">VoltSim’i keşfet <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-          <a class="vgh-voltsim__link" href="/voltsim/pano/">Pano simülasyonunu aç</a>
-        </div>
-      </div>
-      <ul class="vgh-voltsim__grid" aria-label="Öne çıkan simülasyonlar">
-          <li><a href="/voltsim/pano/"><img src="/public/voltsim/pano.webp?v=20261023a" width="320" height="200" alt="" loading="lazy" decoding="async"><span>Elektrik Pano</span></a></li>
-          <li><a href="/voltsim/ges/"><img src="/public/voltsim/ges.webp?v=20261023a" width="320" height="200" alt="" loading="lazy" decoding="async"><span>Çatı GES</span></a></li>
-          <li><a href="/voltsim/trafo/"><img src="/public/voltsim/trafo.webp?v=20261023a" width="320" height="200" alt="" loading="lazy" decoding="async"><span>Trafo Merkezi</span></a></li>
-          <li><a href="/voltsim/sarj-istasyonu/"><img src="/public/voltsim/sarj.webp?v=20261023a" width="320" height="200" alt="" loading="lazy" decoding="async"><span>Şarj İstasyonu</span></a></li>
-          <li><a href="/voltsim/res/"><img src="/public/voltsim/res.webp?v=20261023a" width="320" height="200" alt="" loading="lazy" decoding="async"><span>Rüzgâr (RES)</span></a></li>
-          <li><a href="/voltsim/kompanzasyon/"><img src="/public/voltsim/komp.webp?v=20261023a" width="320" height="200" alt="" loading="lazy" decoding="async"><span>Kompanzasyon</span></a></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="showcase section" id="emi-demo" aria-labelledby="emiDemoTitle">
-    <div class="container">
-      <div class="section__header reveal">
-        <span class="section__badge">Güç Kalitesi Hesabı</span>
-        <h2 class="section__title" id="emiDemoTitle">Harmonikler dalga biçimini nasıl değiştirir?</h2>
-        <p class="section__desc">
-          3., 5. ve 7. harmoniklerin temel bileşene oranını değiştirin. Gerilim THD’sini ve toplam RMS gerilimi hesaplayın; seçtiğiniz bastırmanın etkisini karşılaştırın.
-        </p>
-      </div>
-
-      <div class="scope reveal">
-        <div class="scope__screen">
-          <canvas id="emiScope" aria-hidden="true"></canvas>
-          <span class="scope__tag">HESAPLANAN DALGA · 50 Hz</span>
-          <span class="scope__state" id="emiState">BASTIRMA KAPALI</span>
-        </div>
-
-        <div class="scope__panel">
-          <div class="scope__readouts">
-            <div class="readout">
-              <span class="readout__label">Frekans</span>
-              <span class="readout__value" id="roFreq">50.0 Hz</span>
-            </div>
-            <div class="readout">
-              <span class="readout__label">Temel Bileşen RMS</span>
-              <span class="readout__value" id="roVolt">230 V</span>
-            </div>
-            <div class="readout">
-              <span class="readout__label">Gerilim THD</span>
-              <span class="readout__value readout__value--bad" id="roThd">Hesaplanıyor</span>
-            </div>
-            <div class="readout">
-              <span class="readout__label">Toplam RMS</span>
-              <span class="readout__value" id="roPf">Hesaplanıyor</span>
-            </div>
-          </div>
-
-          <div class="scope__inputs">
-            <label for="harmonic3">3. harmonik <output id="harmonic3Value" for="harmonic3">32%</output><input id="harmonic3" type="range" min="0" max="50" value="32"></label>
-            <label for="harmonic5">5. harmonik <output id="harmonic5Value" for="harmonic5">18%</output><input id="harmonic5" type="range" min="0" max="50" value="18"></label>
-            <label for="harmonic7">7. harmonik <output id="harmonic7Value" for="harmonic7">12%</output><input id="harmonic7" type="range" min="0" max="50" value="12"></label>
-            <label for="harmonicAttenuation">Harmonik bastırma <output id="harmonicAttenuationValue" for="harmonicAttenuation">80%</output><input id="harmonicAttenuation" type="range" min="0" max="100" value="80"></label>
-          </div>
-          <p id="harmonicSummary" class="scope__summary" role="status" aria-live="polite"></p>
-          <button type="button" class="btn btn--accent btn--md scope__toggle" id="emiToggle" aria-pressed="false">
-            <i class="fas fa-power-off" aria-hidden="true"></i>
-            <span class="scope__toggle-text">Bastırmayı Uygula</span>
-          </button>
-
-          <p class="scope__hint">
-            Model: THD = √(V₃² + V₅² + V₇²) / V₁; temel bileşen 230 V RMS ve 50 Hz. Bastırma tüm harmoniklere aynı oranda uygulanır. Sonuç bir saha ölçümü veya cihaz performans garantisi değildir; güç faktörü bu verilerden çıkarılamaz.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== GÜNÜN İÇERİĞİ (js/vg-engage.js) ==================== -->
-  <section class="section vgh-engage" aria-labelledby="vg-engage-title">
-    <div class="container">
-      <div class="section__header"><span class="section__badge">Her gün yeni</span><h2 class="section__title" id="vg-engage-title">Bugün VoltGuard'da</h2><p class="section__desc">Günün teknik bilgisi, haftanın simülasyonu ve haftanın mühendislik sorusu.</p></div>
-      <div data-vg-engage></div>
-    </div>
-  </section>
-  <script src="/js/vg-engage-data.js?v=ad9e8a868629" defer></script>
-  <script src="/js/vg-engage.js?v=eddc2df83c35" defer></script>
-
-  <!-- ==================== HABERLER & GÜNCEL ==================== -->
-  <section class="news section section--gray" id="haberler">
-    <div class="container">
-
-      <div class="section__header reveal">
-        <span class="section__badge">Saha ve Etkinlikler</span>
-        <h2 class="section__title">Sahadan ve Etkinliklerden</h2>
-        <p class="section__desc">
-          Saha çalışmalarımızdan, Ar-Ge projemizden ve katıldığımız etkinliklerden kayıtlar.
-        </p>
-      </div>
-
-      <div class="news__grid" id="newsGrid">
-
-        <article class="news-card reveal" data-delay="0">
-          <div class="news-card__media">
-            <img src="public/opt/haberler/ege-teknopark-topluluk-bulusmasi-640.webp" srcset="public/opt/haberler/ege-teknopark-topluluk-bulusmasi-640.webp 640w, public/opt/haberler/ege-teknopark-topluluk-bulusmasi-800.webp 800w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="800" height="533" alt="Ege Teknopark topluluk buluşmasında VoltGuard ekibi" loading="lazy" decoding="async">
-            <span class="news-card__cat">Ege Teknopark</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">Ege Teknopark Topluluk Buluşması</h3>
-            <p class="news-card__text">
-              Ege Teknopark'taki girişimci ve paydaşlarla bir araya gelerek ortak proje olanaklarını konuştuk.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="0">
-          <div class="news-card__media">
-            <img src="public/opt/haberler/h1-640.webp" srcset="public/opt/haberler/h1-640.webp 640w, public/opt/haberler/h1-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="887" alt="VoltGuard ekibi Ege Üniversitesi Rektörü Prof. Dr. Musa Alcı ile" loading="lazy" decoding="async">
-            <span class="news-card__cat">Ar-Ge &amp; Savunma</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">Ege Üniversitesi Rektörü ile Aktif EMI Filtre Görüşmesi</h3>
-            <p class="news-card__text">
-              Ege Üniversitesi Rektörü Prof. Dr. Musa Alcı ile bir araya gelerek, tez projesi olarak
-              başlayan ve bugün Ege Üniversitesi ve TUSAŞ ile Roketsan ve Havelsan iş birliklerinde
-              yürüttüğümüz Aktif EMI Filtre çalışmamızı paylaştık.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="1">
-          <div class="news-card__media">
-            <img src="public/opt/haberler/h8-640.webp" srcset="public/opt/haberler/h8-640.webp 640w, public/opt/haberler/h8-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="720" alt="VoltGuard, Take Off İstanbul'da Roketsan standında" loading="lazy" decoding="async">
-            <span class="news-card__cat">Girişimcilik</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">Take Off İstanbul – Roketsan Standı</h3>
-            <p class="news-card__text">
-              Take Off İstanbul sürecinde bizleri standına davet eden ROKETSAN'a teşekkür ederiz.
-              İki gün boyunca çalışmalarımızı tanıttık ve yatırımcılarla görüştük.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="2">
-          <div class="news-card__media">
-            <img src="public/opt/haberler/h5-640.webp" srcset="public/opt/haberler/h5-640.webp 640w, public/opt/haberler/h5-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="720" alt="Ege Üniversitesi Elektrik-Elektronik Mühendisliği bitirme tezi sunumları" loading="lazy" decoding="async">
-            <span class="news-card__cat">Etkinlik</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">Bitirme Tezi Sunumları</h3>
-            <p class="news-card__text">
-              Ege Üniversitesi Elektrik-Elektronik Mühendisliği Bölümü öğrencilerinin bitirme tezi
-              sunumlarına katıldık ve projeleri inceledik.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="0">
-          <div class="news-card__media">
-            <img src="public/opt/haberler/h6-640.webp" srcset="public/opt/haberler/h6-640.webp 640w, public/opt/haberler/h6-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="540" alt="Genç Beyinler Yeni Fikirler etkinliğinde jüri üyeliği" loading="lazy" decoding="async">
-            <span class="news-card__cat">Etkinlik</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">Genç Beyinler Yeni Fikirler – Jüri Üyeliği</h3>
-            <p class="news-card__text">
-              "Genç Beyinler Yeni Fikirler" etkinliğinde jüri üyesi olarak öğrencilerin teknoloji
-              projelerini değerlendirdik.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="1">
-          <div class="news-card__media">
-            <img src="public/opt/haberler/h7-640.webp" srcset="public/opt/haberler/h7-640.webp 640w, public/opt/haberler/h7-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="640" alt="MÜSİAD İzmir Geleneksel Bahar ve Aile Şenliği" loading="lazy" decoding="async">
-            <span class="news-card__cat">Etkinlik</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">MÜSİAD İzmir Bahar ve Aile Şenliği</h3>
-            <p class="news-card__text">
-              MÜSİAD'ın 36. kuruluş yıl dönümü kapsamında düzenlenen MÜSİAD İzmir Geleneksel Bahar ve
-              Aile Şenliği'ne katıldık. Nazik davetleri için MÜSİAD İzmir Başkanı Sn. Gökhan Temur'a ve
-              tüm MÜSİAD İzmir ailesine teşekkür eder, nice güçlü yıllar dileriz.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="2">
-          <div class="news-card__media">
-            <img src="public/opt/haberler/h9-640.webp" srcset="public/opt/haberler/h9-640.webp 640w, public/opt/haberler/h9-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="830" alt="KESAİD kahvaltı buluşması" loading="lazy" decoding="async">
-            <span class="news-card__cat">Etkinlik</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">KESAİD Kahvaltısı</h3>
-            <p class="news-card__text">
-              KESAİD Kahvaltısı'nda iş insanları ve akademisyenlerle bir araya geldik. Ev sahipliği için
-              KESAİD YK Başkanı Sn. Yeşim Işıklı'ya teşekkür ederiz.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="0">
-          <div class="news-card__media">
-            <img src="public/opt/haberler/h11-640.webp" srcset="public/opt/haberler/h11-640.webp 640w, public/opt/haberler/h11-800.webp 800w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="800" height="1422" alt="TUSAŞ Tedarikçi Günü etkinliği" loading="lazy" decoding="async">
-            <span class="news-card__cat">Etkinlik</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">TUSAŞ Tedarikçi Günü</h3>
-            <p class="news-card__text">
-              TUSAŞ Tedarikçi Günü'nde yerimizi aldık. Sektör paydaşlarıyla bir araya gelerek iş birliği
-              fırsatlarını değerlendirdik ve yeni bağlantılar kurduk.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="1">
-          <div class="news-card__media">
-            <img src="public/opt/haberler/h2-640.webp" srcset="public/opt/haberler/h2-640.webp 640w, public/opt/haberler/h2-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="720" alt="Trafo kontrolü ve arıza tespiti saha çalışması" loading="lazy" decoding="async">
-            <span class="news-card__cat">Saha Çalışması</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">Trafo Kontrolü ve Arıza Tespiti</h3>
-            <p class="news-card__text">
-              Bir trafo merkezinde kontrol ve arıza tespiti yaptık: çalışma durumu incelendi, risk
-              oluşturan noktalar belirlendi ve bulgular raporlandı.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="2">
-          <div class="news-card__media">
-            <img src="public/opt/haberler/h3-640.webp" srcset="public/opt/haberler/h3-640.webp 640w, public/opt/haberler/h3-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="643" alt="VoltGuard elektrik pano kurulumu" loading="lazy" decoding="async">
-            <span class="news-card__cat">Saha Çalışması</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">Pano Kurulumu Tamamlandı</h3>
-            <p class="news-card__text">
-              Bir dağıtım panosunun kurulumunu tamamladık: ekipman yerleşimi, kablo güzergâhları,
-              bağlantı kontrolleri ve devreye alma.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="0">
-          <div class="news-card__media">
-            <img src="public/opt/haberler/h4-640.webp" srcset="public/opt/haberler/h4-640.webp 640w, public/opt/haberler/h4-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="743" alt="Elektrik panosu revizyon çalışması" loading="lazy" decoding="async">
-            <span class="news-card__cat">Saha Çalışması</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">Elektrik Panosu Revizyonu</h3>
-            <p class="news-card__text">
-              Mevcut bir elektrik panosunu revize ettik: pano içi yerleşim düzenlendi, bağlantılar
-              kontrol edildi ve ekipman yerleşimi yeniden yapıldı.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="2">
-          <div class="news-card__media">
-            <img src="public/opt/ekip-ruhu-pano-kurulumu-640.webp" srcset="public/opt/ekip-ruhu-pano-kurulumu-640.webp 640w, public/opt/ekip-ruhu-pano-kurulumu-960.webp 960w, public/opt/ekip-ruhu-pano-kurulumu-1200.webp 1200w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="1200" height="1600" alt="VoltGuard ekibi pano kurulumu sonrası saha ekibi" loading="lazy" decoding="async">
-            <span class="news-card__cat">Ekip</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">Pano Kurulumu Sonrası Saha Ekibi</h3>
-            <p class="news-card__text">
-              Bir pano kurulumu ve devreye alma çalışmasını tamamlayan saha ekibimiz.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="0">
-          <div class="news-card__media">
-            <img src="public/opt/anahtar-teslim-elektrik-altyapisi-640.webp" srcset="public/opt/anahtar-teslim-elektrik-altyapisi-640.webp 640w, public/opt/anahtar-teslim-elektrik-altyapisi-960.webp 960w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="960" height="1280" alt="İnşaat aşamasında elektrik altyapısı - kablo tavası ve tesisat montajı" loading="lazy" decoding="async">
-            <span class="news-card__cat">Anahtar Teslim</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">İnşaat Aşamasında Elektrik Altyapısı</h3>
-            <p class="news-card__text">
-              İnşaat aşamasındaki bir yapıda kablo tavası ve tesisat altyapısını kuruyoruz; kaba
-              inşaattan devreye almaya kadar işi aynı ekip yürütüyor.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="1">
-          <div class="news-card__media">
-            <img src="public/opt/motivasyon-ekip-kulturu-640.webp" srcset="public/opt/motivasyon-ekip-kulturu-640.webp 640w, public/opt/motivasyon-ekip-kulturu-900.webp 900w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 45vw, (max-width: 1200px) 472px, 363px" width="900" height="1600" alt="VoltGuard ekibinde kurumsal kültür ve motivasyon" loading="lazy" decoding="async">
-            <span class="news-card__cat">Kurumsal Kültür</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">Ekibimizden</h3>
-            <p class="news-card__text">
-              Saha ve ofis ekibimizden bir kare.
-            </p>
-          </div>
-        </article>
-
-        <article class="news-card reveal" data-delay="2">
-          <div class="news-card__media">
-            <video data-poster="public/opt/ekip-guclu-durmak-yok-yola-devam-poster.webp" width="478" height="850" autoplay muted loop playsinline preload="none" aria-hidden="true" data-lazy-video>
-              <source data-src="public/opt/ekip-guclu-durmak-yok-yola-devam.mp4" data-src-sm="public/opt/ekip-guclu-durmak-yok-yola-devam-sm.mp4" type="video/mp4">
-            </video>
-            <noscript><img src="public/opt/ekip-guclu-durmak-yok-yola-devam-poster.webp" width="478" height="850" alt="" loading="lazy" decoding="async"></noscript>
-            <span class="news-card__cat">Ekip</span>
-          </div>
-          <div class="news-card__body">
-            <h3 class="news-card__title">Sahadan Kısa Bir Kayıt</h3>
-            <p class="news-card__text">
-              Saha ekibimizin çalışma gününden kısa bir video kaydı.
-            </p>
-          </div>
-        </article>
-
-      </div>
-      <div class="news__more">
-        <button type="button" class="btn btn--ghost-dark btn--md" id="newsMore" aria-controls="newsGrid" aria-expanded="false" hidden>Tüm kayıtları göster <span class="news__count"></span></button>
-      </div>
-    </div>
-  </section>
-  <!-- ==================== SERTİFİKALARIMIZ ==================== -->
-  <section class="certs section" aria-labelledby="certsTitle">
-    <div class="container">
-      <div class="section__header reveal">
-        <span class="section__badge">Belgelerimiz</span>
-        <h2 class="section__title" id="certsTitle">Akademik Başarı ve Sanayi İş Birliği Belgeleri</h2>
-        <p class="section__desc">
-          Ege Üniversitesi ve TUSAŞ ile Roketsan ve Havelsan iş birliklerinde yürüttüğümüz Aktif EMI Filtre
-          çalışmamıza ait onur ve katılım belgelerimiz.
-        </p>
-      </div>
-      <div class="certs__grid">
-        <figure class="certs__item reveal" data-delay="0">
-          <img src="public/opt/sertifika-ege-universitesi-onur-belgesi-640.webp" srcset="public/opt/sertifika-ege-universitesi-onur-belgesi-640.webp 640w, public/opt/sertifika-ege-universitesi-onur-belgesi-894.webp 894w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 93vw, (max-width: 1200px) 305px, 363px" width="894" height="591" alt="Ege Üniversitesi Mühendislik Fakültesi Onur Belgesi - Emrullah Günay" loading="lazy" decoding="async">
-          <figcaption>Ege Üniversitesi<br>Onur Belgesi</figcaption>
-        </figure>
-        <figure class="certs__item reveal" data-delay="1">
-          <img src="public/opt/sertifika-ege-universitesi-endustriyel-tesisler-640.webp" srcset="public/opt/sertifika-ege-universitesi-endustriyel-tesisler-640.webp 640w, public/opt/sertifika-ege-universitesi-endustriyel-tesisler-997.webp 997w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 93vw, (max-width: 1200px) 305px, 363px" width="997" height="711" alt="Ege Üniversitesi Elektrik-Elektronik Mühendisliği Endüstriyel Tesisler semineri katılım ve başarı sertifikası" loading="lazy" decoding="async">
-          <figcaption>Endüstriyel Tesisler Semineri<br>Katılım ve Başarı Sertifikası</figcaption>
-        </figure>
-        <figure class="certs__item reveal" data-delay="2">
-          <img src="public/opt/sertifika-tusas-liftup-katilim-belgesi-640.webp" srcset="public/opt/sertifika-tusas-liftup-katilim-belgesi-640.webp 640w, public/opt/sertifika-tusas-liftup-katilim-belgesi-1024.webp 1024w" sizes="(max-width: 600px) 91vw, (max-width: 1023px) 93vw, (max-width: 1200px) 305px, 363px" width="1024" height="622" alt="Turkish Aerospace TUSAŞ LIFT UP Sanayi Odaklı Lisans Bitirme Projeleri katılım belgesi - VoltGuard Engineers" loading="lazy" decoding="async">
-          <figcaption>TUSAŞ LIFT UP Programı<br>Katılım Belgesi</figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== SSS / FAQ ==================== -->
-  <section class="faq section section--gray" id="sss" aria-label="Sık sorulan sorular">
-    <div class="container">
-      <div class="section__header reveal">
-        <span class="section__badge">SSS</span>
-        <h2 class="section__title">Sık Sorulan Sorular</h2>
-        <p class="section__desc">VoltGuard hizmetleri hakkında en çok merak edilenler.</p>
-      </div>
-
-      <div class="faq__list reveal">
-        <details class="faq-item">
-          <summary class="faq-item__q">VoltGuard hangi hizmetleri sunuyor? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
-          <div class="faq-item__a">
-            <p>VoltGuard; elektrik (SMM, trafo işletme sorumluluğu, enerji kalitesi ve harmonik analiz, pano kurulumu, topraklama ve yıldırımdan korunma), otomasyon (PLC/SCADA), elektronik &amp; gömülü sistemler, mekanik sistemler ve enerji sistemleri &amp; verimlilik (GES, enerji üretim-iletim-dağıtım altyapıları) alanlarında anahtar teslim mühendislik hizmetleri sunar.</p>
-          </div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-item__q">VoltGuard hangi bölgelere hizmet veriyor? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
-          <div class="faq-item__a">
-            <p>Merkezimiz İzmir Bornova'da, Ege Teknopark'tadır. Türkiye'nin tüm illerinde sahada hizmet veriyoruz; keşif ve teklif ücretsizdir.</p>
-          </div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-item__q">SMM (Serbest Müşavir Mühendislik) hizmeti veriyor musunuz? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
-          <div class="faq-item__a">
-            <p>Evet. EMO SMM büro tescilimiz ve YG (trafo) işletme sorumluluğu yetkimizle SMM hizmetleri ve trafo işletme sorumluluğu sağlıyoruz.</p>
-          </div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-item__q">Trafo işletme sorumluluğu ve periyodik kontrol hizmeti var mı? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
-          <div class="faq-item__a">
-            <p>Evet. YG (trafo) işletme sorumluluğunu EMO'nun matbu sözleşmesiyle üstleniyor; işyeri elektrik ve topraklama tesisatının yıllık periyodik kontrolünü, trafo bakımını ve ölçümlerini raporlu olarak yapıyoruz. Ayrıntılar: <a href="/hizmetler/trafo-isletme-sorumlulugu.html">trafo işletme sorumluluğu</a>, <a href="/hizmetler/elektrik-periyodik-kontrol.html">elektrik periyodik kontrol</a>.</p>
-          </div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-item__q">Keşif ve teklif ücretli mi? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
-          <div class="faq-item__a">
-            <p>Hayır. Teknik ihtiyacınızı değerlendirip ücretsiz danışmanlık ve teklif desteği sağlıyoruz.</p>
-          </div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-item__q">Acil arıza durumunda size nasıl ulaşabilirim? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
-          <div class="faq-item__a">
-            <p>Acil arızalar için 7/24 acil arıza hattımıza <a href="tel:+905454346735">0545 434 67 35</a> numarasından ulaşabilirsiniz. Ofis çalışma saatlerimiz Pazartesi–Cuma 08:00–18:00'dir.</p>
-          </div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-item__q">Aktif EMI Filtre projeniz nedir? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
-          <div class="faq-item__a">
-            <p>Ege Üniversitesi'nde tez projesi olarak başlayan; bugün Ege Üniversitesi ve TUSAŞ ile Roketsan ve Havelsan iş birliklerinde yürüttüğümüz, savunma sanayiine yönelik elektromanyetik uyumluluk (EMC) Ar-Ge çalışmamızdır.</p>
-          </div>
-        </details>
-        <details class="faq-item">
-          <summary class="faq-item__q">VoltGuard ile nasıl iletişime geçebilirim? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
-          <div class="faq-item__a">
-            <p>0545 434 67 35 numarasından, info@voltguard.com.tr e-posta adresinden veya sitedeki iletişim formundan bize ulaşabilirsiniz.</p>
-          </div>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== İLETİŞİM ==================== -->
-  <section class="contact section" id="iletisim">
-    <div class="container">
-
-      <div class="section__header reveal">
-        <span class="section__badge">İletişim</span>
-        <h2 class="section__title">Teknik Çözümlerimiz için<br>Bizimle İletişime Geçin</h2>
-        <p class="section__desc">
-          Proje talepleriniz, teknik danışmanlık ve destek için aşağıdaki kanallardan bize ulaşabilirsiniz.
-        </p>
-      </div>
-
-      <div class="contact__grid">
-
-        <!-- İletişim Bilgileri -->
-        <div class="contact__info reveal-left">
-          <h3 class="contact__info-title">İletişim Bilgileri</h3>
-
-          <div class="contact__item">
-            <div class="contact__item-icon"><i class="fas fa-user-tie" aria-hidden="true"></i></div>
-            <div class="contact__item-body">
-              <span class="contact__item-label">Yetkili Kişi</span>
-              <span class="contact__item-value">Emrullah Günay</span>
-            </div>
-          </div>
-
-          <div class="contact__item">
-            <div class="contact__item-icon"><i class="fas fa-phone-alt" aria-hidden="true"></i></div>
-            <div class="contact__item-body">
-              <span class="contact__item-label">Telefon</span>
-              <a href="tel:+905454346735" class="contact__item-value contact__item-link">
-                0545 434 67 35
-              </a>
-            </div>
-          </div>
-
-          <div class="contact__item">
-            <div class="contact__item-icon"><i class="fas fa-clock" aria-hidden="true"></i></div>
-            <div class="contact__item-body">
-              <span class="contact__item-label">Çalışma Saatleri</span>
-              <span class="contact__item-value">Pazartesi–Cuma <span class="vgh-nowrap">08:00–18:00</span></span>
-              <span class="contact__item-note">7/24 acil arıza hattı: <a href="tel:+905454346735" class="contact__item-link">0545 434 67 35</a></span>
-            </div>
-          </div>
-
-          <div class="contact__item">
-            <div class="contact__item-icon"><i class="fas fa-envelope" aria-hidden="true"></i></div>
-            <div class="contact__item-body">
-              <span class="contact__item-label">E-posta</span>
-              <a href="mailto:info@voltguard.com.tr" class="contact__item-value contact__item-link">
-                info@voltguard.com.tr
-              </a>
-            </div>
-          </div>
-
-          <div class="contact__item">
-            <div class="contact__item-icon"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>
-            <div class="contact__item-body">
-              <span class="contact__item-label">Adres</span>
-              <address class="contact__item-value">
-                Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>
-                Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir
-              </address>
-            </div>
-          </div>
-        </div>
-
-        <!-- İletişim Formu -->
-        <div class="contact__form-wrapper reveal-right">
-          <form class="contact__form" id="contactForm" action="contact.php" method="post" novalidate>
-            <h3 class="contact__form-title">Teklif veya Ön Değerlendirme Talebi</h3>
-            <p>Aynı kapsamdaki yazılı teklifinizi bizimle karşılaştırın; daha avantajlı fiyat seçeneğini birlikte değerlendirelim. Hizmet kapsamını ve koşullarını netleştirerek teklif sunuyoruz.</p>
-            <p class="contact__form-security"><i class="fas fa-envelope" aria-hidden="true"></i> Talebiniz yalnızca info@voltguard.com.tr adresine iletilir.</p>
-
-            <div class="form__row">
-              <div class="form__group">
-                <label for="name" class="form__label">Ad Soyad <span aria-hidden="true">*</span></label>
-                <input type="text" id="name" name="name" class="form__input"
-                       placeholder="Adınız Soyadınız" required minlength="2" maxlength="100" autocomplete="name">
-              </div>
-              <div class="form__group">
-                <label for="phone" class="form__label">Telefon (cep veya sabit) <span aria-hidden="true">*</span></label>
-                <input type="tel" id="phone" name="phone" class="form__input"
-                       placeholder="05XX XXX XX XX" required autocomplete="tel"
-                       inputmode="tel" pattern="[0-9\s\+\-\(\)]{10,17}">
-              </div>
-            </div>
-
-            <div class="form__group">
-              <label for="email" class="form__label">E-posta</label>
-              <input type="email" id="email" name="email" class="form__input"
-                     placeholder="ornek@email.com" autocomplete="email">
-            </div>
-
-            <div class="form__row">
-              <div class="form__group">
-                <label for="subject" class="form__label">Hizmet Alanı <span aria-hidden="true">*</span></label>
-                <select id="subject" name="subject" class="form__input" required>
-                  <option value="">Hizmet seçiniz...</option>
-                  <option value="elektrik">Elektrik Hizmetleri</option>
-                  <option value="elektronik">Elektronik &amp; Gömülü Sistemler</option>
-                  <option value="otomasyon">Otomasyon Sistemleri</option>
-                  <option value="mekanik">Mekanik Sistemler</option>
-                  <option value="diger">Diğer / Genel Danışmanlık</option>
-                </select>
-              </div>
-              <!-- contact.php yalnızca 5 "subject" değerini kabul eder; seçilen hizmet js/main.js ile mesajın başına eklenir. -->
-              <div class="form__group">
-                <label for="service" class="form__label">İlgilendiğiniz hizmet <span class="form__optional">(isteğe bağlı)</span></label>
-                <select id="service" name="service" class="form__input">
-                  <option value="">Belirtmek istemiyorum</option>
-                  <optgroup label="Elektrik">
-                    <option value="trafo-isletme-sorumlulugu" data-subject="elektrik">Trafo (YG) İşletme Sorumluluğu</option>
-                    <option value="harmonik-filtreli-kompanzasyon" data-subject="elektrik">Kompanzasyon ve Harmonik Filtre</option>
-                    <option value="elektrik-periyodik-kontrol" data-subject="elektrik">Elektrik Periyodik Kontrol</option>
-                    <option value="trafo-bakimi" data-subject="elektrik">Trafo Bakımı ve OG Hücre Bakımı</option>
-                    <option value="topraklama-olcumu" data-subject="elektrik">Topraklama ve Paratoner Ölçümü</option>
-                    <option value="elektrik-pano-imalati" data-subject="elektrik">Elektrik Pano İmalatı ve Revizyonu</option>
-                    <option value="trafo-merkezi-kurulumu" data-subject="elektrik">Trafo Merkezi Kurulumu</option>
-                    <option value="enerji-kalitesi-olcumu" data-subject="elektrik">Enerji Kalitesi Ölçümü ve Harmonik Analizi</option>
-                    <option value="elektrik-taahhut" data-subject="elektrik">Elektrik Taahhüt</option>
-                    <option value="elektrik-projesi" data-subject="elektrik">Elektrik Projesi (SMM)</option>
-                  </optgroup>
-                  <optgroup label="Otomasyon">
-                    <option value="plc-scada-otomasyon" data-subject="otomasyon">PLC ve SCADA Otomasyon</option>
-                  </optgroup>
-                  <optgroup label="Enerji">
-                    <option value="fabrika-cati-ges" data-subject="diger">Fabrika Çatı GES</option>
-                  </optgroup>
-                </select>
-              </div>
-            </div>
-
-            <div class="form__group">
-              <label for="message" class="form__label">Mesajınız <span aria-hidden="true">*</span></label>
-              <textarea id="message" name="message" class="form__input form__textarea"
-                        placeholder="Projenizi veya talebinizi kısaca açıklayın..."
-                        rows="5" maxlength="1000" required></textarea>
-              <div class="form__meta">
-                <span class="form__counter" id="messageCounter">0 / 1000</span>
-              </div>
-            </div>
-
-            <div class="form__group form__hp" aria-hidden="true">
-              <label for="website" class="form__label">Web Sitesi</label>
-              <input type="text" id="website" name="website" class="form__input" tabindex="-1" autocomplete="off">
-            </div>
-
-            <p class="form__consent" id="contactPrivacy">Adınız, iletişim bilgileriniz ve mesajınız talebinizi değerlendirmek ve yanıtlamak için VoltGuard tarafından işlenir. <a href="/gizlilik.html#iletisim-verileri">İletişim formu aydınlatması</a>.</p>
-
-            <div class="form__captcha">
-              <div class="cf-turnstile"
-                   data-sitekey="REPLACE_WITH_TURNSTILE_SITE_KEY"
-                   data-theme="light"
-                   data-language="tr"
-                   data-retry="auto"></div>
-            </div>
-
-            <input type="hidden" id="formTimestamp" name="formTimestamp" value="">
-
-            <button type="submit" class="btn btn--accent btn--full">
-              <i class="fas fa-paper-plane" aria-hidden="true"></i> Talebi Gönder
-            </button>
-            <p class="form__note">
-              * Zorunlu alanlar. Lütfen mesaja şifre, kimlik veya özel şirket belgesi eklemeyin.
-            </p>
-          </form>
-        </div>
-
-      </div>
-
-      <div class="contact__map reveal">
-        <div class="contact__map-notice" id="mapNotice">
-          <h3>Ege Teknopark, Bornova</h3>
-          <p>Haritayı açtığınızda Google, IP adresiniz ve tarayıcı bilgileriniz gibi bağlantı verilerini alabilir.</p>
-          <button type="button" class="btn btn--primary btn--md" id="loadMap" aria-controls="contactMap" hidden>Haritayı yükle</button>
-          <a href="https://www.google.com/maps/search/?api=1&amp;query=Ege+Teknopark+Bornova+Izmir" target="_blank" rel="noopener noreferrer">Google Haritalar’da yol tarifi al</a>
-        </div>
-        <iframe id="contactMap" hidden data-src="https://www.google.com/maps?output=embed&q=Ege%20%C3%9Cniversitesi%20Kamp%C3%BCs%C3%BC%20Erzene%20Mahallesi%20Ankara%20Caddesi%20No%3A172%2F69%20Ege%20Teknopark%20TGB%20Turkuaz%20B%20Blok%20%C4%B0%C3%A7%20Kap%C4%B1%20No%3A43%20Kat%3A2%20BB43%20Bornova%20%C4%B0zmir&z=16"
-          width="100%" height="320" style="border:0; border-radius:12px;"
-          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer"
-          title="VoltGuard Konum - Ege Teknopark, Bornova, İzmir"></iframe>
-      </div>
-
-    </div>
-  </section>
-  </main>
+<section class="vgh-intro" id="anasayfa" aria-labelledby="heroTitle"><div class="container vgh-intro__grid">
+  <div class="vgh-intro__copy"><p class="vgh-eyebrow">İzmir · Ege Teknopark</p>
+    <h1 id="heroTitle">İşletmenize değer katan<br><span>elektrik mühendisliği.</span></h1>
+    <p class="vgh-intro__lead">Trafo, ölçüm, pano ve otomasyon ihtiyaçlarınız için keşiften bakıma tek ekip.</p>
+    <div class="vgh-actions"><a class="btn btn--accent btn--lg" href="/iletisim.html#iletisim">Projenizi konuşalım <i class="fas fa-arrow-right" aria-hidden="true"></i></a><a class="vgh-intro__link" href="/hizmetler/">Hizmetleri inceleyin</a></div>
+    <ul class="vgh-intro__facts" aria-label="Yetki ve hizmet bilgileri"><li><i class="fas fa-shield-alt" aria-hidden="true"></i> EMO SMM tescilli büro</li><li><i class="fas fa-phone-alt" aria-hidden="true"></i> 7/24 acil arıza hattı</li></ul>
+  </div>
+  <figure class="vgh-intro__photo"><img src="/public/opt/TrafoBakimYuksekGerilim-864.webp" srcset="/public/opt/TrafoBakimYuksekGerilim-640.webp 640w, /public/opt/TrafoBakimYuksekGerilim-864.webp 864w" sizes="(max-width: 760px) 92vw, 43vw" width="864" height="1920" alt="Sahada trafo ve yüksek gerilim bağlantıları" fetchpriority="high" decoding="async"><figcaption><span>Sahadan bir kare</span><strong>Trafo ve yüksek gerilim</strong></figcaption></figure>
+</div></section>
+<section class="vgh-section" id="hizmetler" aria-labelledby="servicesTitle"><div class="container">
+  <div class="vgh-heading"><div><p class="vgh-eyebrow">Hizmetlerimiz</p><h2 id="servicesTitle">Tesisiniz için doğru çözüm.</h2></div><a class="vgh-text-link" href="/hizmetler/">Tüm hizmetler <i class="fas fa-arrow-right" aria-hidden="true"></i></a></div>
+  <div class="vgh-service-grid">
+    <a class="vgh-service" href="/hizmetler/trafo-isletme-sorumlulugu.html"><span class="vgh-service__icon" aria-hidden="true"><i class="fas fa-bolt"></i></span><h3>Trafo ve yüksek gerilim</h3><p>İzmir trafo işletme sorumluluğu, bakım ve devreye alma.</p><span class="vgh-service__arrow" aria-hidden="true">↗</span></a>
+    <a class="vgh-service" href="/hizmetler/elektrik-periyodik-kontrol.html"><span class="vgh-service__icon" aria-hidden="true"><i class="fas fa-chart-line"></i></span><h3>Ölçüm ve kontrol</h3><p>Periyodik kontrol, enerji kalitesi ve kompanzasyon.</p><span class="vgh-service__arrow" aria-hidden="true">↗</span></a>
+    <a class="vgh-service" href="/hizmetler/elektrik-pano-imalati.html"><span class="vgh-service__icon" aria-hidden="true"><i class="fas fa-drafting-compass"></i></span><h3>Proje ve pano</h3><p>Elektrik projeleri, pano imalatı ve saha uygulamaları.</p><span class="vgh-service__arrow" aria-hidden="true">↗</span></a>
+    <a class="vgh-service" href="/hizmetler/plc-scada-otomasyon.html"><span class="vgh-service__icon" aria-hidden="true"><i class="fas fa-gears"></i></span><h3>Otomasyon ve enerji</h3><p>PLC / SCADA sistemleri ve fabrika çatı GES çözümleri.</p><span class="vgh-service__arrow" aria-hidden="true">↗</span></a>
+  </div>
+  <a class="vgh-factory-link" href="/fabrika-cozumleri.html"><span><i class="fas fa-industry" aria-hidden="true"></i> Fabrikanızın riskini ve maliyetini değerlendirin.</span><strong>Fabrikalar için çözümler <i class="fas fa-arrow-right" aria-hidden="true"></i></strong></a>
+</div></section>
+<section class="vgh-section vgh-section--tint" id="secilen-projeler" aria-labelledby="projectsTitle"><div class="container">
+  <div class="vgh-heading"><div><p class="vgh-eyebrow">Saha çalışmalarımız</p><h2 id="projectsTitle">Sözü sahada tamamlıyoruz.</h2></div><a class="vgh-text-link" href="/projeler.html">Tüm projeler <i class="fas fa-arrow-right" aria-hidden="true"></i></a></div>
+  <div class="vgh-project-grid">
+    <a class="vgh-project" href="/projeler.html#projeler"><img src="/public/opt/panokurulumuverevizyonu-960.webp" width="960" height="1200" alt="Endüstriyel tesiste elektrik panosu kurulumu" loading="lazy" decoding="async"><div><span>Elektrik · Saha uygulaması</span><h3>Pano kurulumu ve revizyonu</h3><i class="fas fa-arrow-right" aria-hidden="true"></i></div></a>
+    <a class="vgh-project" href="/projeler.html#projeler"><img src="/public/opt/Trafoolcum-960.webp" width="960" height="1280" alt="Trafo ölçümü ve enerji analizi çalışması" loading="lazy" decoding="async"><div><span>Ölçüm · Enerji kalitesi</span><h3>Trafo ölçümü ve enerji analizi</h3><i class="fas fa-arrow-right" aria-hidden="true"></i></div></a>
+  </div>
+</div></section>
+<section class="vgh-section" aria-labelledby="aboutTitle"><div class="container vgh-about"><div><p class="vgh-eyebrow">VoltGuard Mühendislik</p><h2 id="aboutTitle">Önce tesisinizi dinliyoruz.</h2></div><div><p>İzmir Ege Teknopark merkezli mühendislik ekibimizle projenizi planlıyor, uyguluyor ve sahada takip ediyoruz.</p><div class="vgh-inline-links"><a class="vgh-text-link" href="/hakkimizda.html">Bizi tanıyın <i class="fas fa-arrow-right" aria-hidden="true"></i></a><a class="vgh-text-link" href="/projeler.html#referanslar">Referanslarımız</a></div></div></div></section>
+<section class="vgh-resources" aria-labelledby="resourcesTitle"><div class="container vgh-resources__inner"><div><p class="vgh-eyebrow">Mühendisler için</p><h2 id="resourcesTitle">Hesaplayın. Öğrenin. Simüle edin.</h2><p>Ücretsiz hesap araçları, teknik rehberler ve VoltSim bir arada.</p></div><a class="btn btn--outline-white btn--md" href="/teknik-kaynaklar.html">Teknik kaynakları keşfedin <i class="fas fa-arrow-right" aria-hidden="true"></i></a></div></section>
+<section class="vgh-section vgh-contact" id="hizli-iletisim" aria-labelledby="contactTitle"><div class="container vgh-contact__inner"><div><p class="vgh-eyebrow">Birlikte başlayalım</p><h2 id="contactTitle">İhtiyacınızı konuşalım.</h2><p>Keşif ve teklif için ekibimize ulaşın.</p></div><div class="vgh-contact__actions"><a class="btn btn--accent btn--lg" href="/iletisim.html#iletisim">Teklif alın <i class="fas fa-arrow-right" aria-hidden="true"></i></a><a class="vgh-text-link" href="tel:+905454346735">0545 434 67 35</a></div></div></section>
+</main>
 
   <!--vg:footer-->
   <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
@@ -1841,7 +497,7 @@
           <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
         </div>
         <div class="vg-footer__cta-btns">
-          <a class="vg-cta" href="/#iletisim">Teklif Al</a>
+          <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
           <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
         </div>
       </div>
@@ -1862,75 +518,49 @@
             <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
             <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
           </ul>
-          <address class="vg-footer__addr">
-            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-            <span>Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69<br>Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir</span>
-          </address>
-          <p class="vg-footer__person"><i class="fas fa-user-tie" aria-hidden="true"></i> Emrullah Günay</p>
+          <address class="vg-footer__addr"><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span>Ege Teknopark, Bornova / İzmir</span></address>
         </div>
         <nav class="vg-footer__nav" aria-label="Alt menü">
           <div class="vg-footer__col">
             <h3 class="vg-footer__h">Hizmetler</h3>
             <ul>
               <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
-              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin Çözümler</a></li>
               <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
-              <li><a href="/hizmetler/trafo-bakimi.html">Trafo Bakımı</a></li>
-              <li><a href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
-              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
-              <li><a href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
-              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
-              <li><a href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
-              <li><a href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
-              <li><a href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
-              <li><a href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
-              <li><a href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
-              <li><a href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
             <h3 class="vg-footer__h">Kurumsal</h3>
             <ul>
-              <li><a href="/#hakkimizda">Hakkımızda</a></li>
+              <li><a href="/hakkimizda.html">Hakkımızda</a></li>
+              <li><a href="/projeler.html">Projeler ve Referanslar</a></li>
+              <li><a href="/haberler.html">Sahadan Haberler</a></li>
               <li><a href="/ekibimiz.html">Ekibimiz</a></li>
-              <li><a href="/#hizmetler">Hizmet Alanlarımız</a></li>
-              <li><a href="/#projeler">Projeler</a></li>
-              <li><a href="/#referanslar">Referanslarımız</a></li>
-              <li><a href="/#surec">Sürecimiz</a></li>
-              <li><a href="/#neden-biz">Neden Biz?</a></li>
-              <li><a href="/#haberler">Haberler</a></li>
-              <li><a href="/#emi-demo">Harmonik Hesabı</a></li>
-              <li><a href="/#katalog">Katalog</a></li>
-              <li><a href="/#sss">SSS</a></li>
-              <li><a href="/#iletisim">İletişim</a></li>
-              <li><a href="/gizlilik.html">Gizlilik &amp; KVKK</a></li>
+              <li><a href="/iletisim.html">İletişim ve Teklif</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
             <h3 class="vg-footer__h">Kaynaklar</h3>
             <ul>
+              <li><a href="/teknik-kaynaklar.html">Teknik Kaynaklar</a></li>
               <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
-              <li><a href="/akademi.html">VoltGuard Akademi</a></li>
-              <li><a href="/muhendis-merkezi.html">Mühendis &amp; Tekniker Merkezi</a></li>
-              <li><a href="/sor.html">VoltGuard'a Sor</a></li>
-              <li><a href="/topluluk.html">Topluluk · Herkese Açık</a></li>
-              <li><a href="/bilgi/mevzuat-kutuphanesi.html">Mevzuat Kütüphanesi</a></li>
-              <li><a href="/bilgi/elektrik-terimleri-sozlugu.html">Elektrik Terimleri Sözlüğü</a></li>
+              <li><a href="/akademi.html">Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis Merkezi</a></li>
               <li><a href="/volthaber/">VoltHaber</a></li>
+              <li><a href="/sor.html">VoltGuard’a Sor</a></li>
             </ul>
           </div>
           <div class="vg-footer__col">
-            <h3 class="vg-footer__h">Araçlar &amp; Hesap</h3>
+            <h3 class="vg-footer__h">Araçlar ve Hesap</h3>
             <ul>
               <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
-              <li><a href="/araclar/">Mühendislik Uygulamaları · 51 Araç</a></li>
-              <li><a href="/hesaplama/reaktif-ceza-hesaplama/">Reaktif Ceza Hesaplama</a></li>
-              <li><a href="/hesaplama/isletme-sorumlulugu-ucret-hesaplama/">İşletme Sorumluluğu Ücreti</a></li>
-              <li><a href="/voltsim/">VoltSim · 3D Simülasyonlar</a></li>
-              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları</a></li>
+              <li><a href="/voltsim/">VoltSim 3D</a></li>
+              <li><a href="/topluluk.html">Topluluk</a></li>
               <li><a href="/hesap/giris.html">Üye Girişi</a></li>
-              <li><a href="/calisan/giris.html">Çalışan Portalı</a></li>
-              <li><a href="/hesap/kayit.html">Üye Ol</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Girişi</a></li>
             </ul>
           </div>
         </nav>
@@ -1969,26 +599,13 @@
     <a href="https://wa.me/905454346735?text=Merhaba%2C%20VoltGuard%20web%20sitenizden%20ula%C5%9F%C4%B1yorum." class="mobile-cta__btn mobile-cta__btn--wp" target="_blank" rel="noopener noreferrer">
       <i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp
     </a>
-    <a href="#iletisim" class="mobile-cta__btn mobile-cta__btn--form">
+    <a href="/iletisim.html#iletisim" class="mobile-cta__btn mobile-cta__btn--form">
       <i class="fas fa-paper-plane" aria-hidden="true"></i> Teklif Al
     </a>
   </nav>
 
-  <script>
-    (function () {
-      var widget = document.querySelector('.cf-turnstile');
-      var sitekey = widget ? (widget.getAttribute('data-sitekey') || '') : '';
-      if (!widget || !sitekey || sitekey.indexOf('REPLACE_WITH') === 0) return;
-      var script = document.createElement('script');
-      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
-    }());
-  </script>
-  <script src="js/power-quality.js?v=b24a1dceb526" defer></script>
-  <script src="/js/vg-quote.js?v=f22d85594f5a" defer></script>
-  <script src="js/main.js?v=d592407e6506" defer></script>
+<script src="/js/vg-quote.js?v=f22d85594f5a" defer></script>
+  <script src="js/main.js?v=583a43f97fb6" defer></script>
   <noscript>
     <style>
       .preloader { display: none !important; }

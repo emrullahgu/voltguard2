@@ -37,7 +37,7 @@ const PAGES = {
   hizmet: { url: '/hizmetler/elektrik-projesi.html', interactions: [['click', '#vgBurger'], ['click', '#vgBurger'], ['click', 'summary']] },
   araclar: { url: '/araclar/', interactions: [['click', 'button.filter[data-filter="ges"]'], ['type', '#tool-search', 'kablo'], ['click', 'button.filter[data-filter="all"]']] },
   // Tüm sayfalardaki "Teklif Al / İletişim" bağlantısı: ana sayfanın form bölümüne derin bağlantı
-  iletisim: { url: '/#iletisim', interactions: [['type', '#name', 'Ayse Yilmaz'], ['select', '#service'], ['type', '#message', 'Pano revizyonu icin teklif']] },
+  iletisim: { url: '/iletisim.html#iletisim', interactions: [['type', '#name', 'Ayse Yilmaz'], ['select', '#service'], ['type', '#message', 'Pano revizyonu icin teklif']] },
   teklif: { url: '/teklif-araclari.html', interactions: [['type', '#ges-bill', '42500'], ['click', '#trafo-tab'], ['click', '#ges-tab']] },
   voltsim: { url: '/voltsim/', interactions: [['click', '#vgBurger'], ['click', '#vgBurger']] }
 };

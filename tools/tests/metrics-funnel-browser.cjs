@@ -69,8 +69,10 @@ async function main() {
     let page = await desk.newPage(); watch(page, 'desktop');
     await page.goto(base + '/hizmetler/trafo-bakimi.html', { waitUntil: 'load' });
     expect(await page.evaluate(() => window.vgTrack && window.vgTrack.enabled && window.vgTrack.test), 'tracker enabled in test mode on 127.0.0.1 even under automation');
-    await Promise.all([page.waitForURL(/\/\?hizmet=trafo-bakimi#iletisim$/), page.locator('a[data-vg-teklif]').first().click()]);
+    await Promise.all([page.waitForURL(/\/iletisim\.html\?hizmet=trafo-bakimi#iletisim$/), page.locator('a[data-vg-teklif]').first().click()]);
     await page.waitForTimeout(600);
+    expect(await page.inputValue('#service') === 'trafo-bakimi', 'contact page preselects the service from the quote link');
+    expect(await page.inputValue('#subject') === 'elektrik', 'service preselection also fills the contact subject');
     await page.fill('#name', PII.name);
     await page.click('#contactForm button[type="submit"]');
     await page.waitForTimeout(300);
@@ -131,7 +133,9 @@ async function main() {
     has('q_err', 'iletisim|telefon|masaustu', 'client validation error on the phone field');
     has('q_ok', 'iletisim|masaustu|yok|elektrik', 'accepted request counted by the backend');
     has('q_ok_src', 'iletisim|/hizmetler/trafo-bakimi.html', 'accepted request attributed to the service page');
-    has('contact', 'tel|ana-sayfa', 'phone link click recorded as contact intent');
+    // The phone link is now on the dedicated contact page, which uses the
+    // existing "diger" section rather than the homepage section.
+    has('contact', 'tel|diger', 'contact-page phone link click recorded as contact intent');
     has('sim_open', 'trafo', 'simulation_open');
     has('sim_result', 'trafo', 'simulation_result after a user change');
     has('report', 'sim-trafo|csv', 'report_download (CSV)');

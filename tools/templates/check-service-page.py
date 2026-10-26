@@ -20,8 +20,8 @@ NE DENETLER
   - Ic baglantilar dosyaya cozulur (/, /hesaplama-araclari/, /hesaplama/<slug>/, /klasor/, /x.html);
     henuz yazilmamis /hizmetler/*.html sayfalari UYARI, digerleri HATA. Sayfa ici #capa hedefleri var mi;
     baska sayfaya giden /x.html#capa baglantilarinda hedef dosyada id="capa" var mi.
-  - "Teklif Al" ([data-vg-teklif]): hizmet sayfasinda /?hizmet=<slug>#iletisim (slug, index.html'deki
-    "Ilgilendiginiz hizmet" seceneklerinde olmali); hub'da /#iletisim.
+  - "Teklif Al" ([data-vg-teklif]): hizmet sayfasinda /iletisim.html?hizmet=<slug>#iletisim (slug, iletisim.html'deki
+    "Ilgilendiginiz hizmet" seceneklerinde olmali); hub'da /iletisim.html#iletisim.
   - Uyari: Kaynaklar kartlari disinda /hesaplama/ aracina baglam ici baglanti yoksa; main icinde veri disi
     (--svc-focus / aspect-ratio / object-fit disinda) satir ici style varsa.
   - <img>: width/height/alt; public/Trafoisletmesorumlulugu.jpeg yasak; goreli (../) yol yok
@@ -175,8 +175,8 @@ def file_ids(f):
 
 
 def service_options():
-    """index.html iletisim formundaki "Ilgilendiginiz hizmet" secenek degerleri (?hizmet= on secimi)."""
-    t = (ROOT / 'index.html').read_text(encoding='utf-8-sig')
+    """iletisim.html formundaki "Ilgilendiginiz hizmet" secenek degerleri (?hizmet= on secimi)."""
+    t = (ROOT / 'iletisim.html').read_text(encoding='utf-8-sig')
     m = re.search(r'<select[^>]*id="service"[^>]*>(.*?)</select>', t, re.S)
     return set(re.findall(r'<option value="([a-z0-9-]+)"', m.group(1) if m else t))
 
@@ -226,7 +226,7 @@ def check(path, fix=False):
     if 'Trafoisletmesorumlulugu' in t:
         errs.append('public/Trafoisletmesorumlulugu.jpeg kullanilmis (yasak)')
     if re.search(r'(?:href|src)="\.\./', t) or 'index.html#iletisim' in t:
-        errs.append('goreli (../) yol veya index.html#iletisim kullanilmis; kok-mutlak (/, /#iletisim) kullanin')
+        errs.append('goreli (../) yol veya index.html#iletisim kullanilmis; kok-mutlak (/, /iletisim.html#iletisim) kullanin')
     if not is_hub:
         slug = rel.rsplit('/', 1)[-1][:-5]
         if not re.search(r'<body[^>]*data-service="%s"' % re.escape(slug), t):
@@ -331,11 +331,11 @@ def check(path, fix=False):
     # --- "Teklif Al" hedefi
     teklif = [h for h, a in pg.anchors if 'data-vg-teklif' in a]
     if is_hub:
-        want_teklif = '/#iletisim'
+        want_teklif = '/iletisim.html#iletisim'
     else:
-        want_teklif = '/?hizmet=%s#iletisim' % slug
+        want_teklif = '/iletisim.html?hizmet=%s#iletisim' % slug
         if slug not in service_options():
-            errs.append('index.html "Ilgilendiginiz hizmet" listesinde %s secenegi yok (?hizmet= on secimi calismaz)' % slug)
+            errs.append('iletisim.html "Ilgilendiginiz hizmet" listesinde %s secenegi yok (?hizmet= on secimi calismaz)' % slug)
     if not teklif:
         errs.append('[data-vg-teklif] "Teklif Al" baglantisi yok')
     for h in teklif:

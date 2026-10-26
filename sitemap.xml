@@ -6,38 +6,9 @@
     <lastmod>2026-10-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <image:image>
-      <image:loc>https://voltguard.com.tr/public/og-image.png</image:loc>
-      <image:title>VoltGuard | Endüstriyel Mühendislik Çözümleri</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://voltguard.com.tr/public/haberler/h1.jpg</image:loc>
-      <image:title>Aktif EMI Filtre iş birliği</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://voltguard.com.tr/public/haberler/h8.jpg</image:loc>
-      <image:title>Take Off İstanbul – Roketsan standı</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://voltguard.com.tr/public/acil-cikis-levhasi-montaji.jpeg</image:loc>
-      <image:title>Endüstriyel tesiste acil çıkış levhası montajı</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://voltguard.com.tr/public/haberler/ege-teknopark-topluluk-bulusmasi.jpg</image:loc>
-      <image:title>Ege Teknopark topluluk buluşması</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://voltguard.com.tr/public/sertifika-tusas-liftup-katilim-belgesi.jpg</image:loc>
-      <image:title>TUSAŞ LIFT UP Katılım Belgesi</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://voltguard.com.tr/public/trafo-kiosk-vinc-montaji.jpg</image:loc>
-      <image:title>Trafo kiosk vinç ile montajı</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://voltguard.com.tr/public/titiz-duzenli-kablo-tavasi.jpg</image:loc>
-      <image:title>Renk kodlu düzenli kablo tavası uygulaması</image:title>
-    </image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/TrafoBakimYuksekGerilim-864.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/panokurulumuverevizyonu-960.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/Trafoolcum-960.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://voltguard.com.tr/hizmetler/</loc>
@@ -457,6 +428,74 @@
   <url>
     <loc>https://voltguard.com.tr/voltsim/yangin-algilama/</loc>
     <lastmod>2026-10-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/hakkimizda.html</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/Trafoisletmesorumlulugu-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/ekip-ruhu-pano-kurulumu-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/sertifika-ege-universitesi-onur-belgesi-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/sertifika-ege-universitesi-endustriyel-tesisler-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/sertifika-tusas-liftup-katilim-belgesi-640.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/projeler.html</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/panokurulumuverevizyonu-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/acil-cikis-levhasi-montaji-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/Trafoolcum-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/HarmonikFiltreliKompanzasyon-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/TrafoBakimYuksekGerilim-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/EgitimSetleri-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/trafo-kiosk-vinc-montaji-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/trafo-astor-kurulumu-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/titiz-duzenli-kablo-tavasi-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/referanslar/dimes-240.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/referanslar/roketsan.svg</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/referanslar/tusas.svg</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/referanslar/tubitak.svg</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/referanslar/ege-240.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/referanslar/erdemir-320.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/referanslar/vestel-400.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/referanslar/habas-400.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/referanslar/ektam.png</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/haberler.html</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/haberler/ege-teknopark-topluluk-bulusmasi-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/haberler/h1-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/haberler/h8-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/haberler/h5-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/haberler/h6-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/haberler/h7-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/haberler/h9-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/haberler/h11-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/haberler/h2-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/haberler/h3-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/haberler/h4-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/ekip-ruhu-pano-kurulumu-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/anahtar-teslim-elektrik-altyapisi-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/motivasyon-ekip-kulturu-640.webp</image:loc></image:image>
+    <image:image><image:loc>https://voltguard.com.tr/public/opt/ekip-guclu-durmak-yok-yola-devam-poster.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/iletisim.html</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/teknik-kaynaklar.html</loc>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

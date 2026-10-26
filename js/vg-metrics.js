@@ -253,7 +253,7 @@
     try { u = new URL(a.getAttribute('href'), w.location.href); } catch (e) { return ''; }
     if (!sameSite(u.hostname.toLowerCase())) return '';
     var p = normPath(u.pathname);
-    if (u.hash === '#iletisim' && p === '/') return 'iletisim';
+    if ((u.hash === '#iletisim' && p === '/') || /^\/iletisim(?:\.html|\/)?$/.test(p)) return 'iletisim';
     if (/^#teklif(-sihirbazi)?$/.test(u.hash) && /^\/fabrika-cozumleri(\.html|\/)?$/.test(p)) return 'teklif';
     return '';
   }

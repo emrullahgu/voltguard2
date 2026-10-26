@@ -119,7 +119,7 @@ const html=`<!DOCTYPE html>
       ${roster}
       <noscript><p class="team-noscript">Ekibimizin tamamı aşağıda yer alıyor. Arama ve kişi kartları için JavaScript’i etkinleştirebilirsiniz.</p></noscript>
     </section>
-    <section class="team-closing team-wrap"><span class="team-closing__bolt" aria-hidden="true">ϟ</span><div><p class="team-eyebrow">İLETİŞİM</p><h2>Tesisiniz için<br>teklif alın.</h2></div><a class="team-button" href="/#iletisim">Teklif Al ${icon('arrow')}</a></section>
+    <section class="team-closing team-wrap"><span class="team-closing__bolt" aria-hidden="true">ϟ</span><div><p class="team-eyebrow">İLETİŞİM</p><h2>Tesisiniz için<br>teklif alın.</h2></div><a class="team-button" href="/iletisim.html#iletisim">Teklif Al ${icon('arrow')}</a></section>
   </main>
   <dialog class="team-dialog" aria-labelledby="profile-name"><button class="team-dialog__close" type="button" aria-label="Kişi kartını kapat">${icon('close')}</button><div class="team-dialog__portrait"><img alt="" width="320" height="380"></div><div class="team-dialog__content"><p class="team-eyebrow" id="profile-unit"></p><h2 id="profile-name"></h2><p class="team-dialog__role" id="profile-role"></p><span class="team-dialog__company">VOLTGUARD · EKİBİMİZ</span></div></dialog>
   <script id="team-data" type="application/json">${payload}</script>

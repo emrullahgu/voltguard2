@@ -47,12 +47,12 @@ Diğer uzmanlık alanları:
 - [VoltGuard'a Sor](https://voltguard.com.tr/sor.html): elektrik, elektronik, otomasyon ve mekanik konularında teknik soru-cevap
 - [Mühendis & Tekniker Merkezi](https://voltguard.com.tr/muhendis-merkezi.html): mühendis ve tekniker için ücretsiz indirilebilir form, checklist ve şablon kütüphanesi
 - [Hizmet alanlarımız (ana sayfa)](https://voltguard.com.tr/#hizmetler)
-- [Sık Sorulan Sorular (SSS)](https://voltguard.com.tr/#sss)
-- [Haberler & Güncel](https://voltguard.com.tr/#haberler)
-- [Projeler & Referanslar](https://voltguard.com.tr/#projeler)
+- [Sık Sorulan Sorular (SSS)](https://voltguard.com.tr/iletisim.html#sss)
+- [Haberler & Güncel](https://voltguard.com.tr/haberler.html#haberler)
+- [Projeler & Referanslar](https://voltguard.com.tr/projeler.html#projeler)
 - [Kurumsal Katalog (PDF)](https://voltguard.com.tr/public/opt/voltguard-katalog.pdf)
 - [Gizlilik ve Çerez Politikası](https://voltguard.com.tr/gizlilik.html)
-- [İletişim](https://voltguard.com.tr/#iletisim)
+- [İletişim](https://voltguard.com.tr/iletisim.html#iletisim)
 
 ## Bilgi Bankası (uzman rehber içerikler)
 VoltGuard mühendislerinin hazırladığı, mevzuata dayalı özgün rehberler:

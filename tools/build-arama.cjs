@@ -54,7 +54,7 @@ const main = `  <nav class="breadcrumb" aria-label="breadcrumb">
     <div class="ss-tips" id="ss-tips">
       <h2>Sık aranan konular</h2>
       <ul>${TIPS.map(t => `<li><button type="button" data-q="${t}">${t}</button></li>`).join('')}</ul>
-      <p>Aradığınızı bulamazsanız <a href="/bilgi/elektrik-terimleri-sozlugu.html">elektrik terimleri sözlüğüne</a>, <a href="/bilgi-bankasi.html">bilgi bankasına</a> ya da <a href="/hesaplama-araclari/">hesap araçlarına</a> göz atın veya <a href="/#iletisim">bize yazın</a>.</p>
+      <p>Aradığınızı bulamazsanız <a href="/bilgi/elektrik-terimleri-sozlugu.html">elektrik terimleri sözlüğüne</a>, <a href="/bilgi-bankasi.html">bilgi bankasına</a> ya da <a href="/hesaplama-araclari/">hesap araçlarına</a> göz atın veya <a href="/iletisim.html#iletisim">bize yazın</a>.</p>
     </div>
   </main>
 `;

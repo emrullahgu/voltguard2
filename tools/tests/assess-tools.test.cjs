@@ -123,14 +123,14 @@ test('Risk testi links point to existing pages', () => {
 
 test('Tool pages: JSON-LD, quote hand-off, shared toolbar and assess module', () => {
   const pages = { 'trafo-kapasite-artirimi': 'trafo-merkezi-kurulumu', 'harmonik-filtre-ihtiyaci': 'harmonik-filtreli-kompanzasyon', 'fabrika-elektrik-risk-testi': 'elektrik-periyodik-kontrol' };
-  const services = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const services = fs.readFileSync(path.join(root, 'iletisim.html'), 'utf8');
   for (const [slug, service] of Object.entries(pages)) {
     const html = fs.readFileSync(path.join(root, 'hesaplama', slug + '.html'), 'utf8');
     const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
     const types = ld['@graph'].map(x => x['@type']);
     for (const type of ['WebApplication', 'BreadcrumbList', 'FAQPage']) assert.ok(types.includes(type), `${slug} ${type}`);
     assert.match(html, new RegExp(`<link rel="canonical" href="https://voltguard.com.tr/hesaplama/${slug}/">`));
-    assert.match(html, new RegExp(`href="/\\?hizmet=${service}#iletisim"`), `${slug} quote link`);
+    assert.match(html, new RegExp(`href="/iletisim\\.html\\?hizmet=${service}#iletisim"`), `${slug} quote link`);
     assert.match(services, new RegExp(`value="${service}"`), `${service} exists in the contact form`);
     assert.match(html, /sessionStorage\.setItem\('vgQuoteNote'/, `${slug} hands the result to the contact form`);
     assert.match(html, /src="\/js\/vg-assess\.js\?v=/);
