@@ -23,3 +23,6 @@
 
 # CI betikleri Linux sunucuda çalışır
 /tools/ci/** text eol=lf
+
+# PDF streams and cross-reference offsets must retain their exact bytes.
+*.pdf binary
