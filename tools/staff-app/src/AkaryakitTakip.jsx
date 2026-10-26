@@ -9,6 +9,8 @@ const faturaLogo = '/calisan/uygulama/fatura_logo.png';
 export default function AkaryakitTakip() {
   const [kayitlar, setKayitlar] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const submitBusy = useRef(false);
   const [showModal, setShowModal] = useState(false);
   const [showPdfPreview, setShowPdfPreview] = useState(false);
   const pdfPreviewRef = useRef(null);
@@ -75,6 +77,9 @@ export default function AkaryakitTakip() {
   // Kayıt ekle/güncelle - Basitleştirilmiş (406 hatası düzeltildi)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitBusy.current) return;
+    submitBusy.current = true;
+    setSaving(true);
     
     try {
       const amount = parseDecimal(formData.toplam_tutar, null);
@@ -160,6 +165,9 @@ export default function AkaryakitTakip() {
     } catch (error) {
       console.error('Kayıt hatası:', error);
       alert('Kayıt işlemi sırasında bir hata oluştu: ' + error.message);
+    } finally {
+      submitBusy.current = false;
+      setSaving(false);
     }
   };
 
@@ -544,6 +552,7 @@ export default function AkaryakitTakip() {
                     {editingId ? 'Kayıt Güncelle' : 'Yeni Yakıt Kaydı'}
                   </h2>
                   <button
+                    disabled={saving}
                     onClick={() => { setShowModal(false); setEditingId(null); resetForm(); }}
                     className="p-2 hover:bg-white/20 rounded-lg transition"
                   >
@@ -551,7 +560,8 @@ export default function AkaryakitTakip() {
                   </button>
                 </div>
               </div>
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <form onSubmit={handleSubmit} aria-busy={saving} className="p-6">
+                <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Tarih *</label>
@@ -611,10 +621,11 @@ export default function AkaryakitTakip() {
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
+                    disabled={saving}
                     className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg transition"
                   >
                     <Save className="w-5 h-5" />
-                    <span>{editingId ? 'Güncelle' : 'Kaydet'}</span>
+                    <span>{saving ? 'Kaydediliyor…' : editingId ? 'Güncelle' : 'Kaydet'}</span>
                   </button>
                   <button
                     type="button"
@@ -624,6 +635,7 @@ export default function AkaryakitTakip() {
                     İptal
                   </button>
                 </div>
+                </fieldset>
               </form>
             </div>
           </div>

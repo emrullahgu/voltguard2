@@ -268,7 +268,12 @@ function vg_company_query(array &$s, array $u, array $input): array {
     if ($op === 'delete') {
         foreach ($selected as $row) if (!vg_company_can_delete($u, $table, $row)) vg_company_fail(403, '42501', 'Bu kaydı silme yetkiniz yok. Silme işlemi için şirket yöneticinize başvurun.');
         foreach ($selected as $id => $row) {
-            foreach ($s['tables'] as $otherTable => $records) foreach ($records as $other) if (($other['employee_id'] ?? null) === $id || ($other['vehicle_id'] ?? null) === $id || ($other['driver_id'] ?? null) === $id || ($other['calisan_id'] ?? null) === $id || ($other['lokasyon_id'] ?? null) === $id) vg_company_conflict('Kayıt geçmiş kayıtlarla ilişkili; silmek yerine pasif yapın.');
+            // PHP converts numeric ID keys to integers, while imported relations can be strings.
+            $id = (string)$id;
+            foreach ($s['tables'] as $otherTable => $records) foreach ($records as $other) {
+                foreach (['employee_id', 'vehicle_id', 'driver_id', 'calisan_id', 'lokasyon_id'] as $field) if (vg_company_equal($other[$field] ?? null, $id)) vg_company_conflict('Kayıt geçmiş kayıtlarla ilişkili; silmek yerine pasif yapın.');
+                if ($table === 'is_takip_malzemeler' && $otherTable === 'is_takip_kayitlar' && is_array($other['kullanilan_malzemeler'] ?? null) && in_array($id, $other['kullanilan_malzemeler'], true)) vg_company_conflict('Kayıt geçmiş kayıtlarla ilişkili; silmek yerine pasif yapın.');
+            }
             unset($s['tables'][$table][$id]); vg_company_audit($s, $u, 'delete:' . $table, $id);
         }
         return !empty($input['returning']) ? vg_company_slice($s, $table, vg_company_mask_rows($u, $table, array_values($selected)), $input) : ['data' => null, 'count' => count($selected)];

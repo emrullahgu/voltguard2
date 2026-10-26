@@ -6,11 +6,13 @@ import { PORTAL_MODULES, initialPortalModule } from './PortalNavigation';
 import { createReportPDF, exportHTMLReport, reportFileName } from './pdfReport';
 import * as XLSX from 'xlsx';
 import { calculateYGQuote, calculatePeriodicQuote, normalizeProposal, cloneProposal, newDraftReference, normalizeKesifSnapshot } from './proposalSnapshots.mjs';
-import { saleLineTotal, saleUnitPrice, roundMoney, parseDecimal } from './operations.mjs';
+import { saleLineTotal, saleUnitPrice, roundMoney, parseDecimal, localISODate } from './operations.mjs';
 import { sanitizeReportHTML, pasteReportHTML, reportHTMLWithReference } from './safeReportHTML.mjs';
 import { supabase } from './supabaseClient';
 import { historicalInvoice1 as FaturaData, historicalInvoice2 as FaturaData2, cablePrices as KabloFiyatData, packages as HazirPaketler } from './catalogData';
 import { normalizeHistoricalInvoice } from './historicalCatalog.mjs';
+import CompanyDashboard from './CompanyDashboard.jsx';
+import { calculateGESQuote } from './gesQuote.mjs';
 import {
   COMPANY_ADDRESS_LINE_1,
   COMPANY_ADDRESS_LINE_2,
@@ -176,6 +178,7 @@ const App = () => {
   const moduleCloseRef = useRef(null);
   const setActiveTab = (module) => {
     if (!PORTAL_MODULES.some(item => item.id === module && (!item.adminOnly || currentUser?.role === 'admin'))) return;
+    if (module === activeTab) return;
     if (module !== activeTab && !window.dispatchEvent(new CustomEvent('vg:before-module-change',{cancelable:true,detail:{from:activeTab,to:module}}))) return;
     updateActiveTab(module);
     const next = new URL(window.location.href);
@@ -193,6 +196,8 @@ const App = () => {
   }, [currentUser?.role,activeTab]);
   React.useEffect(() => {
     if (!isSidebarOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     moduleCloseRef.current?.focus();
     const onKey = event => {
       if (event.key === 'Escape') { setIsSidebarOpen(false); moduleButtonRef.current?.focus(); }
@@ -205,7 +210,7 @@ const App = () => {
       }
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = previousOverflow; };
   }, [isSidebarOpen]);
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -382,7 +387,7 @@ const App = () => {
     customerName: '',
     location: 'Kemalpaşa / İZMİR',
     usdRate: 34.50,
-    offerDate: new Date().toISOString().split('T')[0],
+    offerDate: localISODate(),
     autoPower: 25, // kW
     laborRate: 10,
     transportRate: 1,
@@ -392,6 +397,12 @@ const App = () => {
   });
 
   const [gesItems, setGesItems] = useState([]);
+  const gesCalculation = useMemo(() => {
+    try { return { value: calculateGESQuote(gesForm, gesItems), error: null }; }
+    catch (error) { return { value: null, error }; }
+  }, [gesForm, gesItems]);
+  const gesError = gesCalculation.error;
+
 
   const [gesDB] = useState({
     // Eski veriler (yedek)
@@ -706,13 +717,16 @@ const App = () => {
     return await saveProposal('kesif',{customer:kesifCustomer,products:kesifProducts,settings:kesifSettings,totals:calculateKesifTotals()},name);
   };
   const saveGESProposal=async()=>{
-    if(!gesForm.customerName?.trim() || !gesItems.length){alert('Müşteri adı ve malzeme listesini tamamlayın.');return null;}const name=prompt('Teklif adı:',gesForm.customerName+' - GES Teklifi');if(!name)return;
-    return await saveProposal('ges',{form:gesForm,items:gesItems,totals:calculateGESTotals(),reportHtml:reportHTML('ges-printable-area',gesEditableContent)},name);
+    if(gesError){alert('Teklif kaydedilemedi: '+gesError.message);return null;}
+    if(!gesForm.customerName?.trim()){alert('Müşteri adını girin.');return null;}const name=prompt('Teklif adı:',gesForm.customerName+' - GES Teklifi');if(!name)return;
+    const {form,items,totals}=gesCalculation.value;
+    return await saveProposal('ges',{form,items,totals,reportHtml:reportHTML('ges-printable-area',gesEditableContent)},name);
   };
 
   // GES Fonksiyonlari
   const loadDefaultGESPackage = () => {
-    const kw = parseFloat(gesForm.autoPower) || 12;
+    const kw = parseDecimal(gesForm.autoPower, null);
+    if (kw === null || kw <= 0) { alert('Kurulu güç sıfırdan büyük bir sayı olmalı.'); return; }
     const panelCount = Math.ceil((kw * 1000) / 600); // 600W panel kullanimi
     
     const items = [
@@ -763,39 +777,6 @@ const App = () => {
     setGesItems(updated);
   };
 
-  const calculateGESTotals = () => {
-    const materialTotal = gesItems.reduce((sum, item) => sum + ((item.qty || 0) * (item.price || 0)), 0);
-    
-    const laborRate = parseFloat(gesForm.laborRate) / 100;
-    const transportRate = parseFloat(gesForm.transportRate) / 100;
-    const overheadRate = parseFloat(gesForm.overheadRate) / 100;
-    const marginRate = parseFloat(gesForm.marginRate) / 100;
-    const vatRate = parseFloat(gesForm.vatRate) / 100;
-    const usdToTl = parseFloat(gesForm.usdRate) || 1;
-
-    const laborCost = materialTotal * laborRate;
-    const transportCost = materialTotal * transportRate;
-    const overheadCost = materialTotal * overheadRate;
-    
-    const directCost = materialTotal + laborCost + transportCost + overheadCost;
-    const marginAmount = directCost * marginRate;
-    const grandTotalExVat = directCost + marginAmount;
-    const vatAmount = grandTotalExVat * vatRate;
-    const finalTotal = grandTotalExVat + vatAmount;
-
-    return {
-      materialTotal,
-      laborCost,
-      transportCost,
-      overheadCost,
-      directCost,
-      marginAmount,
-      grandTotalExVat,
-      vatAmount,
-      finalTotal,
-      tlTotal: finalTotal * usdToTl
-    };
-  };
 
   const formatMoney = (amount, currency = '$') => {
     return currency + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -803,6 +784,7 @@ const App = () => {
 
   // GES PDF Export
   const handleGESPDFExport = async () => {
+    if (gesError) { alert('PDF oluşturulamadı: ' + gesError.message); return; }
     if (!gesForm.customerName || gesItems.length === 0) {
       alert('Lütfen müşteri bilgilerini doldurun ve malzeme ekleyin.'); return;
     }
@@ -1658,7 +1640,7 @@ const App = () => {
               spacing: { after: 300 }
             }),
             new Paragraph({
-              text: `Ref: $<span data-vg-reference="">{selectedCompany.refNo}</span>`,
+              text: `Ref: ${selectedCompany.refNo}`,
               alignment: AlignmentType.RIGHT,
               spacing: { after: 100 }
             }),
@@ -2001,7 +1983,7 @@ const App = () => {
  };
 
   const toggleEditorMode=()=>{const element=document.getElementById('printable-paper');if(element)setEditableContent(reportHTMLWithReference(element.innerHTML,selectedCompany?.refNo || proposalReferences.yg));setEditorMode(!editorMode);};
- const toggleGesEditorMode=()=>{const element=document.getElementById('ges-printable-area');if(element)setGesEditableContent(reportHTMLWithReference(element.innerHTML,proposalReferences.ges));setGesEditorMode(!gesEditorMode);};
+ const toggleGesEditorMode=()=>{if(gesError){alert(gesError.message);return;}const element=document.getElementById('ges-printable-area');if(element)setGesEditableContent(reportHTMLWithReference(element.innerHTML,proposalReferences.ges));setGesEditorMode(!gesEditorMode);};
  const togglePeriodicEditorMode=()=>{const element=document.getElementById('periodic-printable-paper');if(element)setPeriodicEditableContent(reportHTMLWithReference(element.innerHTML,proposalReferences.periodic));setPeriodicEditorMode(!periodicEditorMode);};
 
   // Periyodik Kontrol PDF Export
@@ -2029,7 +2011,7 @@ const App = () => {
     
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Ref: $<span data-vg-reference="">{selectedCompany.refNo}</span>`, pageWidth - margin, margin + 10, { align: 'right' });
+    doc.text(`Ref: ${selectedCompany.refNo}`, pageWidth - margin, margin + 10, { align: 'right' });
     doc.text(new Date().toLocaleDateString('tr-TR'), pageWidth - margin, margin + 15, { align: 'right' });
     
     // Firma Bilgileri
@@ -2088,15 +2070,15 @@ const App = () => {
     <div className="portal-app bg-gray-50 text-gray-800 font-sans" data-portal-module={activeTab}>
       <style>{`
         @media print {
-          @page { 
-            margin: 0; 
-            size: A4 portrait; 
+          @page {
+            margin: 0;
+            size: A4 portrait;
           }
-          #vg-company-workspace * { 
-            visibility: hidden; 
+          #vg-company-workspace * {
+            visibility: hidden;
           }
-          #printable-paper, #printable-paper * { 
-            visibility: visible; 
+          #printable-paper, #printable-paper * {
+            visibility: visible;
           }
           #vg-company-workspace * {
             -webkit-print-color-adjust: exact;
@@ -2119,17 +2101,17 @@ const App = () => {
             page-break-after: always !important;
             page-break-inside: avoid !important;
           }
-          .page-break { 
+          .page-break {
             page-break-before: always !important;
             page-break-after: always !important;
             margin: 0 !important;
           }
-          .no-print, .no-print-border { 
-            display: none !important; 
+          .no-print, .no-print-border {
+            display: none !important;
             border: none !important;
           }
         }
-        
+
         /* PDF Export specific styles */
         .pdf-page {
           page-break-after: always;
@@ -2156,7 +2138,7 @@ const App = () => {
         .pdf-exporting .print-hide {
           display: none !important;
         }
-      `}</style>
+`}</style>
       
       {/* Header */}
       <header className="bg-blue-900 text-white shadow-lg no-print">
@@ -2373,15 +2355,22 @@ const App = () => {
                       className="px-3 py-2 text-sm border rounded w-full"
                     />
                     <input 
-                      type="number" 
+                      type="text"
+                      inputMode="decimal"
                       placeholder="Dolar Kuru"
+                      aria-label="Dolar kuru (TL)"
+                      aria-invalid={gesError?.field === 'usdRate'}
+                      aria-describedby="ges-validation"
                       value={gesForm.usdRate}
-                      onChange={(e) => setGesForm({...gesForm, usdRate: parseFloat(e.target.value)})}
+                      onChange={(e) => setGesForm({...gesForm, usdRate: e.target.value})}
                       step="0.01"
                       className="px-3 py-2 text-sm border rounded w-full"
                     />
                     <input 
                       type="date"
+                      aria-label="Teklif tarihi"
+                      aria-invalid={gesError?.field === 'offerDate'}
+                      aria-describedby="ges-validation"
                       value={gesForm.offerDate}
                       onChange={(e) => setGesForm({...gesForm, offerDate: e.target.value})}
                       className="px-3 py-2 text-sm border rounded w-full"
@@ -2405,15 +2394,21 @@ const App = () => {
                   </div>
                 </div>
 
+                <p id="ges-validation" role={gesError ? 'alert' : undefined} className={gesError ? 'p-3 bg-red-50 text-red-900 border border-red-200 rounded text-sm' : 'text-sm text-gray-600'}>{gesError ? gesError.message : 'Dolar kurunu 1 USD için TL olarak girin. Miktarlar pozitif, fiyat ve oranlar sıfır veya pozitif olmalı; ondalık için virgül kullanabilirsiniz.'}</p>
+
                 {/* Hizli Paket Yikleyici */}
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                   <div className="flex items-end gap-2">
                     <div className="flex-1">
                       <label className="block text-xs font-medium text-gray-600 mb-1">Kurulu Güç (kW)</label>
                       <input 
-                        type="number"
+                        type="text"
+                        inputMode="decimal"
+                        aria-label="Kurulu güç (kW)"
+                        aria-invalid={gesError?.field === 'autoPower'}
+                        aria-describedby="ges-validation"
                         value={gesForm.autoPower}
-                        onChange={(e) => setGesForm({...gesForm, autoPower: parseFloat(e.target.value)})}
+                        onChange={(e) => setGesForm({...gesForm, autoPower: e.target.value})}
                         className="px-3 py-2 text-sm border rounded w-full"
                       />
                     </div>
@@ -2686,25 +2681,33 @@ const App = () => {
                           <div className="flex-1 flex items-center border rounded px-2 bg-gray-50">
                             <span className="text-xs text-gray-500 mr-1">Adet:</span>
                             <input 
-                              type="number"
+                              type="text"
+                              inputMode="decimal"
+                              aria-label={`${idx + 1}. satır miktarı`}
+                              aria-invalid={gesError?.field === `items.${idx}.qty`}
+                              aria-describedby="ges-validation"
                               value={item.qty}
-                              onChange={(e) => updateGESItem(idx, 'qty', parseFloat(e.target.value))}
+                              onChange={(e) => updateGESItem(idx, 'qty', e.target.value)}
                               className="w-full bg-transparent py-1 outline-none text-right text-sm focus:bg-white"
                             />
                           </div>
                           <div className="flex-1 flex items-center border rounded px-2 bg-gray-50">
                             <span className="text-xs text-gray-500 mr-1">Birim($):</span>
                             <input 
-                              type="number"
+                              type="text"
+                              inputMode="decimal"
                               step="0.01"
+                              aria-label={`${idx + 1}. satır birim fiyatı`}
+                              aria-invalid={gesError?.field === `items.${idx}.price`}
+                              aria-describedby="ges-validation"
                               value={item.price}
-                              onChange={(e) => updateGESItem(idx, 'price', parseFloat(e.target.value))}
+                              onChange={(e) => updateGESItem(idx, 'price', e.target.value)}
                               className="w-full bg-transparent py-1 outline-none text-right text-sm focus:bg-white"
                             />
                           </div>
                           <div className="flex-1 flex items-center border rounded px-2 bg-blue-50">
                             <span className="text-xs text-blue-700 mr-1">Toplam:</span>
-                            <span className="text-sm font-bold text-blue-800">${((item.qty || 0) * (item.price || 0)).toFixed(2)}</span>
+                            <span className="text-sm font-bold text-blue-800">{(() => { const qty=parseDecimal(item.qty,null),price=parseDecimal(item.price,null);return qty!==null&&qty>0&&price!==null&&price>=0?'$'+(qty*price).toFixed(2):'—'; })()}</span>
                           </div>
                         </div>
                       </div>
@@ -2719,45 +2722,65 @@ const App = () => {
                     <div className="flex justify-between items-center gap-2">
                       <span className="flex-1">Montaj ve iilik (%)</span>
                       <input 
-                        type="number"
+                        type="text"
+                        inputMode="decimal"
+                        aria-label="Montaj oranı (%)"
+                        aria-invalid={gesError?.field === 'laborRate'}
+                        aria-describedby="ges-validation"
                         value={gesForm.laborRate}
-                        onChange={(e) => setGesForm({...gesForm, laborRate: parseFloat(e.target.value) || 0})}
+                        onChange={(e) => setGesForm({...gesForm, laborRate: e.target.value})}
                         className="w-20 text-right border rounded px-2 py-1"
                       />
                     </div>
                     <div className="flex justify-between items-center gap-2">
                       <span className="flex-1">Nakliye ve Lojistik (%)</span>
                       <input 
-                        type="number"
+                        type="text"
+                        inputMode="decimal"
+                        aria-label="Nakliye oranı (%)"
+                        aria-invalid={gesError?.field === 'transportRate'}
+                        aria-describedby="ges-validation"
                         value={gesForm.transportRate}
-                        onChange={(e) => setGesForm({...gesForm, transportRate: parseFloat(e.target.value) || 0})}
+                        onChange={(e) => setGesForm({...gesForm, transportRate: e.target.value})}
                         className="w-20 text-right border rounded px-2 py-1"
                       />
                     </div>
                     <div className="flex justify-between items-center gap-2">
                       <span className="flex-1">Mih. Hizmetleri & Teknik Destek (%)</span>
                       <input 
-                        type="number"
+                        type="text"
+                        inputMode="decimal"
+                        aria-label="Mühendislik oranı (%)"
+                        aria-invalid={gesError?.field === 'overheadRate'}
+                        aria-describedby="ges-validation"
                         value={gesForm.overheadRate}
-                        onChange={(e) => setGesForm({...gesForm, overheadRate: parseFloat(e.target.value) || 0})}
+                        onChange={(e) => setGesForm({...gesForm, overheadRate: e.target.value})}
                         className="w-20 text-right border rounded px-2 py-1"
                       />
                     </div>
                     <div className="flex justify-between items-center gap-2 font-bold">
                       <span className="flex-1">KAR ORANI (%)</span>
                       <input 
-                        type="number"
+                        type="text"
+                        inputMode="decimal"
+                        aria-label="Kâr oranı (%)"
+                        aria-invalid={gesError?.field === 'marginRate'}
+                        aria-describedby="ges-validation"
                         value={gesForm.marginRate}
-                        onChange={(e) => setGesForm({...gesForm, marginRate: parseFloat(e.target.value) || 0})}
+                        onChange={(e) => setGesForm({...gesForm, marginRate: e.target.value})}
                         className="w-20 text-right border border-yellow-400 bg-white rounded px-2 py-1"
                       />
                     </div>
                     <div className="flex justify-between items-center gap-2 border-t border-yellow-200 pt-2">
                       <span className="flex-1">KDV (%)</span>
                       <input 
-                        type="number"
+                        type="text"
+                        inputMode="decimal"
+                        aria-label="KDV oranı (%)"
+                        aria-invalid={gesError?.field === 'vatRate'}
+                        aria-describedby="ges-validation"
                         value={gesForm.vatRate}
-                        onChange={(e) => setGesForm({...gesForm, vatRate: parseFloat(e.target.value) || 0})}
+                        onChange={(e) => setGesForm({...gesForm, vatRate: e.target.value})}
                         className="w-20 text-right border rounded px-2 py-1"
                       />
                     </div>
@@ -2768,6 +2791,7 @@ const App = () => {
                 <div className="space-y-2">
                   <button 
                     onClick={toggleGesEditorMode}
+                    disabled={!!gesError}
                     className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg font-semibold transition flex items-center justify-center"
                   >
                     <Edit3 className="w-5 h-5 mr-2"/>
@@ -2776,7 +2800,7 @@ const App = () => {
                   
                   <button 
                     onClick={saveGESProposal}
-                    disabled={gesItems.length === 0}
+                    disabled={gesItems.length === 0 || !!gesError}
                     className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 px-6 rounded-lg font-semibold transition flex items-center justify-center"
                   >
                     <Save className="w-5 h-5 mr-2"/>
@@ -2785,7 +2809,7 @@ const App = () => {
                   
                   <button 
                     onClick={handleGESPDFExport}
-                    disabled={gesItems.length === 0}
+                    disabled={gesItems.length === 0 || !!gesError}
                     className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 px-6 rounded-lg font-semibold transition flex items-center justify-center"
                   >
                     <FileText className="w-5 h-5 mr-2"/>
@@ -2793,8 +2817,8 @@ const App = () => {
                   </button>
                   
                   <button 
-                    onClick={() => window.print()}
-                    disabled={gesItems.length === 0}
+                    onClick={() => { if (!gesError) window.print(); }}
+                    disabled={gesItems.length === 0 || !!gesError}
                     className="w-full bg-gray-700 hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 px-6 rounded-lg font-semibold transition flex items-center justify-center"
                   >
                     <Printer className="w-5 h-5 mr-2"/>
@@ -2817,6 +2841,7 @@ const App = () => {
                     </div>
                     <button 
                       onClick={toggleGesEditorMode}
+                    disabled={!!gesError}
                       className="bg-white text-indigo-600 px-4 py-1 rounded hover:bg-indigo-50 transition"
                     >
                       Kaydet ve ik
@@ -2867,18 +2892,19 @@ const App = () => {
                 contentEditable={gesEditorMode}
                 suppressContentEditableWarning={true}
                 className={gesEditorMode ? 'outline-2 outline-dashed outline-indigo-400 w-full' : 'w-full'}
-               onPaste={pasteReportHTML} dangerouslySetInnerHTML={gesEditableContent ? {__html:reportHTMLWithReference(gesEditableContent,proposalReferences.ges)} : undefined}>{gesEditableContent ? null : <><div className="vg-reference-line" style={{fontSize:"9pt",marginBottom:"8px"}}>Referans: <span data-vg-reference="">{proposalReferences.ges}</span></div>
+               onPaste={pasteReportHTML} dangerouslySetInnerHTML={!gesError && gesEditableContent ? {__html:reportHTMLWithReference(gesEditableContent,proposalReferences.ges)} : undefined}>{!gesError && gesEditableContent ? null : <><div className="vg-reference-line" style={{fontSize:"9pt",marginBottom:"8px"}}>Referans: <span data-vg-reference="">{proposalReferences.ges}</span></div>
               {(() => {
-                const totals = calculateGESTotals();
-                const dateObj = new Date(gesForm.offerDate);
+                if (gesError) return <p className="p-6 bg-white rounded text-gray-700">Önizlemeyi hazırlamak için formdaki hatayı düzeltin.</p>;
+                const { totals, form: reportForm, items: reportItems } = gesCalculation.value;
+                const dateObj = new Date(reportForm.offerDate + 'T00:00:00');
                 
                 // Dinamik sayfalama: Her sayfada maksimum 18 ürün
                 const ITEMS_PER_PAGE = 18;
-                const totalPages = Math.ceil(gesItems.length / ITEMS_PER_PAGE) + 1; // +1 Şartlar sayfasi
+                const totalPages = Math.ceil(reportItems.length / ITEMS_PER_PAGE) + 1; // +1 Şartlar sayfasi
                 const itemPages = [];
                 
-                for (let i = 0; i < gesItems.length; i += ITEMS_PER_PAGE) {
-                  itemPages.push(gesItems.slice(i, i + ITEMS_PER_PAGE));
+                for (let i = 0; i < reportItems.length; i += ITEMS_PER_PAGE) {
+                  itemPages.push(reportItems.slice(i, i + ITEMS_PER_PAGE));
                 }
                 
                 return (
@@ -2913,8 +2939,8 @@ const App = () => {
                               <div className="flex justify-between items-end">
                                 <div>
                                   <span className="text-xs text-blue-600 uppercase font-semibold">Sayın Yetkili / Miteri</span>
-                                  <h3 className="text-lg font-bold text-gray-800">{gesForm.customerName}</h3>
-                                  <p className="text-gray-600 text-sm">{gesForm.location}</p>
+                                  <h3 className="text-lg font-bold text-gray-800">{reportForm.customerName}</h3>
+                                  <p className="text-gray-600 text-sm">{reportForm.location}</p>
                                 </div>
                                 <div className="text-right">
                                   <div className="text-xs text-blue-600">Para Birimi</div>
@@ -2964,21 +2990,21 @@ const App = () => {
                               <td className="border border-gray-300 p-2 font-semibold">Malzeme Toplami:</td>
                               <td className="border border-gray-300 p-2 text-right font-semibold">{formatMoney(totals.materialTotal)}</td>
                             </tr>
-                            {gesForm.laborRate > 0 && (
+                            {reportForm.laborRate > 0 && (
                               <tr>
-                                <td className="border border-gray-300 p-2">+ Montaj ve iilik ({gesForm.laborRate}%):</td>
+                                <td className="border border-gray-300 p-2">+ Montaj ve iilik ({reportForm.laborRate}%):</td>
                                 <td className="border border-gray-300 p-2 text-right">{formatMoney(totals.laborCost)}</td>
                               </tr>
                             )}
-                            {gesForm.transportRate > 0 && (
+                            {reportForm.transportRate > 0 && (
                               <tr>
-                                <td className="border border-gray-300 p-2">+ Nakliye ve Lojistik ({gesForm.transportRate}%):</td>
+                                <td className="border border-gray-300 p-2">+ Nakliye ve Lojistik ({reportForm.transportRate}%):</td>
                                 <td className="border border-gray-300 p-2 text-right">{formatMoney(totals.transportCost)}</td>
                               </tr>
                             )}
-                            {gesForm.overheadRate > 0 && (
+                            {reportForm.overheadRate > 0 && (
                               <tr>
-                                <td className="border border-gray-300 p-2">+ Mih. Hizmetleri & Teknik Destek ({gesForm.overheadRate}%):</td>
+                                <td className="border border-gray-300 p-2">+ Mih. Hizmetleri & Teknik Destek ({reportForm.overheadRate}%):</td>
                                 <td className="border border-gray-300 p-2 text-right">{formatMoney(totals.overheadCost)}</td>
                               </tr>
                             )}
@@ -2986,9 +3012,9 @@ const App = () => {
                               <td className="border border-gray-300 p-2 font-semibold">Proje Toplam Maliyeti:</td>
                               <td className="border border-gray-300 p-2 text-right font-semibold">{formatMoney(totals.directCost)}</td>
                             </tr>
-                            {gesForm.marginRate > 0 && (
+                            {reportForm.marginRate > 0 && (
                               <tr className="bg-green-50">
-                                <td className="border border-gray-300 p-2 font-semibold text-green-700">+ Kar marjı ({gesForm.marginRate}%):</td>
+                                <td className="border border-gray-300 p-2 font-semibold text-green-700">+ Kar marjı ({reportForm.marginRate}%):</td>
                                 <td className="border border-gray-300 p-2 text-right font-semibold text-green-700">{formatMoney(totals.marginAmount)}</td>
                               </tr>
                             )}
@@ -2996,9 +3022,9 @@ const App = () => {
                               <td className="border border-gray-300 p-3 font-bold text-[10pt]">GENEL TOPLAM (KDV Hariç):</td>
                               <td className="border border-gray-300 p-3 text-right font-bold text-[10pt]">{formatMoney(totals.grandTotalExVat)}</td>
                             </tr>
-                            {gesForm.vatRate > 0 && (
+                            {reportForm.vatRate > 0 && (
                               <tr className="bg-blue-50">
-                                <td className="border border-gray-300 p-2 font-semibold text-blue-700">+ KDV (%{gesForm.vatRate}):</td>
+                                <td className="border border-gray-300 p-2 font-semibold text-blue-700">+ KDV (%{reportForm.vatRate}):</td>
                                 <td className="border border-gray-300 p-2 text-right font-semibold text-blue-700">{formatMoney(totals.vatAmount)}</td>
                               </tr>
                             )}
@@ -3054,15 +3080,15 @@ const App = () => {
                       <div className="grid grid-cols-2 gap-3 text-[9pt]">
                         <div>
                           <span className="text-gray-600">Miteri:</span>
-                          <p className="font-semibold text-gray-800">{gesForm.customerName}</p>
+                          <p className="font-semibold text-gray-800">{reportForm.customerName}</p>
                         </div>
                         <div>
                           <span className="text-gray-600">Lokasyon:</span>
-                          <p className="font-semibold text-gray-800">{gesForm.location}</p>
+                          <p className="font-semibold text-gray-800">{reportForm.location}</p>
                         </div>
                         <div>
                           <span className="text-gray-600">Kurulu Güç:</span>
-                          <p className="font-semibold text-gray-800">{gesForm.autoPower} kW</p>
+                          <p className="font-semibold text-gray-800">{reportForm.autoPower} kW</p>
                         </div>
                         <div>
                           <span className="text-gray-600">Toplam Tutar (KDV Dahil):</span>
@@ -3519,245 +3545,7 @@ const App = () => {
         </Suspense>
 
         {/* Dashboard Tab */}
-        {activeTab === 'dashboard' && (
-          <div className="space-y-6">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg p-8 text-white">
-              <h1 className="text-3xl font-bold mb-2">VoltGuard Ürün ve Fiyat Veritabanı</h1>
-              <p className="text-indigo-100">Yüklenen geçmiş fatura ürünleri ve birim fiyatlarının analizi. Güncel katalog veya güncel satış fiyatı değildir.</p>
-            </div>
-
-            {/* Genel istatistikler */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold">Toplam Ürün</p>
-                    <p className="text-3xl font-bold text-blue-600 mt-2">{productStats.toplamUrun}</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      F1: {normalizedFatura1.length} | F2: {normalizedFatura2.length}
-                    </p>
-                  </div>
-                  <FileSpreadsheet className="w-12 h-12 text-blue-500 opacity-20"/>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold">Farklı Marka</p>
-                    <p className="text-3xl font-bold text-green-600 mt-2">{productStats.markalar.length}</p>
-                  </div>
-                  <Users className="w-12 h-12 text-green-500 opacity-20"/>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-purple-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold">Kablo Kategorisi</p>
-                    <p className="text-3xl font-bold text-purple-600 mt-2">{KabloFiyatData.kategoriler.length}</p>
-                  </div>
-                  <Cable className="w-12 h-12 text-purple-500 opacity-20"/>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-orange-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold">Geçmiş fatura ort. birim fiyatı</p>
-                    <p className="text-3xl font-bold text-orange-600 mt-2">{productStats.ortalamaFiyat.toFixed(2)} ₺</p>
-                  </div>
-                  <TrendingDown className="w-12 h-12 text-orange-500 opacity-20"/>
-                </div>
-              </div>
-
-              {/* Veri Kaynaklari */}
-              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg shadow-lg p-6 border-l-4 border-indigo-500">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold">Veri Kaynağı</p>
-                    <p className="text-lg font-bold text-indigo-600 mt-2">2 Fatura</p>
-                    <div className="mt-2 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600">Fatura1: {normalizedFatura1.length}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600">Fatura2: {normalizedFatura2.length}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <FileText className="w-12 h-12 text-indigo-500 opacity-20"/>
-                </div>
-              </div>
-            </div>
-
-            {/* Kategori Dağılımı */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                  <FileSpreadsheet className="w-6 h-6 mr-2 text-indigo-600"/>
-                  Kategori Dağılımı
-                </h3>
-                <div className="space-y-3">
-                  {productStats.kategoriSayilari.map(({ ad, adet }) => (
-                    <div key={ad} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700 font-medium">{ad}</span>
-                      <div className="flex items-center gap-2">
-                        <div className="bg-indigo-100 rounded-full h-2 w-32">
-                          <div
-                            className="bg-indigo-600 h-2 rounded-full"
-                            style={{ width: `${productStats.toplamUrun > 0 ? (adet / productStats.toplamUrun) * 100 : 0}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-sm font-bold text-indigo-600">{adet}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Top 5 Markalar */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                  <Users className="w-6 h-6 mr-2 text-green-600"/>
-                  En Popüler Markalar
-                </h3>
-                <div className="space-y-3">
-                  {productStats.enPopulerMarkalar.map(([marka, adet], idx) => (
-                    <div key={marka} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold text-gray-400">#{idx + 1}</span>
-                        <span className="text-sm text-gray-700 font-medium">{marka}</span>
-                      </div>
-                      <span className="text-sm font-bold text-green-600 bg-green-100 px-3 py-1 rounded-full">{adet} ürün</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Fiyat Analizi */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* En Pahali ürünler */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                  <TrendingDown className="w-6 h-6 mr-2 text-red-600"/>
-                  En Pahalı 10 Ürün
-                </h3>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {productStats.enPahali.map((urun, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded hover:bg-gray-100 transition">
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold text-gray-800">{urun.ürün}</p>
-                        <p className="text-xs text-gray-500">{urun.MARKA}</p>
-                      </div>
-                      <span className="text-sm font-bold text-red-600">{urun["BİRİM FİYAT"]} ?</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* En Ucuz ürünler */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                  <TrendingDown className="w-6 h-6 mr-2 text-green-600"/>
-                  En Ekonomik 10 ürün
-                </h3>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {productStats.enUcuz.map((urun, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded hover:bg-gray-100 transition">
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold text-gray-800">{urun.ürün}</p>
-                        <p className="text-xs text-gray-500">{urun.MARKA}</p>
-                      </div>
-                      <span className="text-sm font-bold text-green-600">{urun["BİRİM FİYAT"]} ?</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Kablo Fiyat Bilgileri */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                <Cable className="w-6 h-6 mr-2 text-purple-600"/>
-                Serer Kablo Fiyat Listesi özeti
-              </h3>
-              <div className="bg-purple-50 p-4 rounded-lg mb-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                  <div>
-                    <p className="text-gray-600">Firma</p>
-                    <p className="font-bold text-purple-800">{KabloFiyatData.firma}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Telefon</p>
-                    <p className="font-bold text-purple-800">{KabloFiyatData.telefon}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Web</p>
-                    <p className="font-bold text-purple-800">{KabloFiyatData.web}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">KDV</p>
-                    <p className="font-bold text-red-600">{KabloFiyatData.kdvDahil ? 'Dahil' : `Hariç (%${KabloFiyatData.kdvOrani})`}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {KabloFiyatData.kategoriler.map((kategori) => (
-                  <div key={kategori.id} className="border border-purple-200 rounded-lg p-4 hover:shadow-md transition">
-                    <h4 className="font-bold text-purple-800 mb-1">{kategori.ad}</h4>
-                    <p className="text-xs text-gray-600 mb-3">{kategori.aciklama}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">{kategori.urunler.length} ieit kablo</span>
-                      <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">ID: {kategori.id}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Keşif Projelerinde Kullanım */}
-            {kesifProducts.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                  <Hammer className="w-6 h-6 mr-2 text-orange-600"/>
-                  Mevcut Keşif Projesindeki Ürün Analizi
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  <div className="bg-orange-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">Toplam Kalem</p>
-                    <p className="text-2xl font-bold text-orange-600">{kesifProducts.length}</p>
-                  </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">Malzeme</p>
-                    <p className="text-2xl font-bold text-blue-600">{kesifProducts.filter(p => p.type === 'normal').length}</p>
-                  </div>
-                  <div className="bg-purple-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">Kablo</p>
-                    <p className="text-2xl font-bold text-purple-600">{kesifProducts.filter(p => p.type === 'kablo').length}</p>
-                  </div>
-                </div>
-                {productStats.enCokkullanılanlar.length > 0 && (
-                  <div>
-                    <h4 className="font-bold text-gray-700 mb-3">En çok Kullanilan ürünler:</h4>
-                    <div className="space-y-2">
-                      {productStats.enCokkullanılanlar.map(([urun, adet]) => (
-                        <div key={urun} className="flex items-center justify-between p-3 bg-gray-50 rounded hover:bg-gray-100 transition">
-                          <span className="text-sm font-medium text-gray-800">{urun}</span>
-                          <span className="text-sm font-bold text-orange-600 bg-orange-100 px-3 py-1 rounded-full">{adet}x kullanildi</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+        {activeTab === 'dashboard' && <CompanyDashboard invoice1={normalizedFatura1} invoice2={normalizedFatura2} cable={KabloFiyatData} stats={productStats} products={kesifProducts} onSelect={setActiveTab} />}
 
         {/* Tab Content: Manuel Giriş */}
         {activeTab === 'manual' && (

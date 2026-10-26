@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { supabase } from './supabaseClient';
 import { parseDecimal, parseImportDate, parseEnergySpreadsheet, cosPhiFromEnergy, localISODate } from './operations.mjs';
+import { currentWeekPeriod } from './weekPeriod.mjs';
 import * as XLSX from 'xlsx';
 import { exportHTMLReport, reportFileName } from './pdfReport';
 import { LineChart as RechartsLine, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, BarChart as RechartsBar, Bar } from 'recharts';
@@ -14,6 +15,8 @@ import { LineChart as RechartsLine, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
 export default function HaftalikRaporlama() {
   const [raporlar, setRaporlar] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const submitBusy = useRef(false);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [showPdfPreview, setShowPdfPreview] = useState(false);
@@ -354,6 +357,7 @@ export default function HaftalikRaporlama() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitBusy.current) return;
 
     const gucFaktoru = parseFloat(formData.guc_faktoru);
     const hedefGucFaktoru = parseFloat(formData.hedef_guc_faktoru);
@@ -380,6 +384,8 @@ export default function HaftalikRaporlama() {
       return;
     }
     
+    submitBusy.current = true;
+    setSaving(true);
     try {
       const rapor = {
         ...formData,
@@ -422,6 +428,9 @@ export default function HaftalikRaporlama() {
     } catch (error) {
       console.error('Kaydetme hatası:', error);
       alert('Kayıt sırasında hata oluştu: ' + error.message);
+    } finally {
+      submitBusy.current = false;
+      setSaving(false);
     }
   };
 
@@ -504,26 +513,12 @@ export default function HaftalikRaporlama() {
   };
 
   const resetForm = () => {
-    const today = new Date();
-    const dayOfWeek = today.getDay(); 
-    const monday = new Date(today);
-    const sunday = new Date(today);
-    
-    const daysToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    monday.setDate(today.getDate() + daysToMonday);
-    sunday.setDate(monday.getDate() + 6);
-    
-    const formatDate = (date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
+    const period = currentWeekPeriod();
     
     setFormData({
       fabrika_adi: '',
-      hafta_baslangic: formatDate(monday),
-      hafta_bitis: formatDate(sunday),
+      hafta_baslangic: period.start,
+      hafta_bitis: period.end,
       guc_faktoru: '',
       reaktif_guc: '',
       aktif_guc: '',
@@ -982,6 +977,7 @@ export default function HaftalikRaporlama() {
                     {editingId ? 'Raporu Düzenle' : 'Yeni Haftalık Rapor'}
                   </h2>
                   <button
+                    disabled={saving}
                     onClick={() => { setShowModal(false); setEditingId(null); resetForm(); }}
                     className="p-2 hover:bg-white/20 rounded-lg transition"
                   >
@@ -990,7 +986,8 @@ export default function HaftalikRaporlama() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-6">
+              <form onSubmit={handleSubmit} aria-busy={saving} className="p-6">
+                <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
                 {/* Fatura Verisi Bilgilendirmesi */}
                 <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
                   <div className="flex items-start gap-3">
@@ -1033,26 +1030,12 @@ export default function HaftalikRaporlama() {
                       <button
                         type="button"
                         onClick={() => {
-                          const today = new Date();
-                          const dayOfWeek = today.getDay();
-                          const monday = new Date(today);
-                          const sunday = new Date(today);
-                          
-                          const daysToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-                          monday.setDate(today.getDate() + daysToMonday);
-                          sunday.setDate(monday.getDate() + 6);
-                          
-                          const formatDate = (date) => {
-                            const year = date.getFullYear();
-                            const month = String(date.getMonth() + 1).padStart(2, '0');
-                            const day = String(date.getDate()).padStart(2, '0');
-                            return `${year}-${month}-${day}`;
-                          };
+                          const period = currentWeekPeriod();
                           
                           setFormData({
                             ...formData,
-                            hafta_baslangic: formatDate(monday),
-                            hafta_bitis: formatDate(sunday)
+                            hafta_baslangic: period.start,
+                            hafta_bitis: period.end
                           });
                         }}
                         className="text-xs px-3 py-1 bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 transition"
@@ -1478,10 +1461,11 @@ export default function HaftalikRaporlama() {
                 <div className="flex gap-3 pt-6 mt-6 border-t border-gray-200">
                   <button
                     type="submit"
+                    disabled={saving}
                     className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg transition"
                   >
                     <Save className="w-5 h-5" />
-                    <span>{editingId ? 'Güncelle' : 'Kaydet'}</span>
+                    <span>{saving ? 'Kaydediliyor…' : editingId ? 'Güncelle' : 'Kaydet'}</span>
                   </button>
                   <button
                     type="button"
@@ -1491,6 +1475,7 @@ export default function HaftalikRaporlama() {
                     İptal
                   </button>
                 </div>
+                </fieldset>
               </form>
             </div>
           </div>
@@ -1945,8 +1930,12 @@ export default function HaftalikRaporlama() {
                   {(() => {
                     const durum = getDurum(selectedRapor);
                     const trend = getTrend(selectedRapor);
-                    const gucFaktoruFark = (parseFloat(selectedRapor.guc_faktoru) - parseFloat(selectedRapor.onceki_hafta_guc_faktoru)) * 100;
-                    const gucFaktoruYuzde = ((parseFloat(selectedRapor.guc_faktoru) / parseFloat(selectedRapor.hedef_guc_faktoru)) * 100).toFixed(1);
+                    const current = parseDecimal(selectedRapor.guc_faktoru, null);
+                    const previous = parseDecimal(selectedRapor.onceki_hafta_guc_faktoru, null);
+                    const target = parseDecimal(selectedRapor.hedef_guc_faktoru, null);
+                    const cost = parseDecimal(selectedRapor.maliyet, null);
+                    const gucFaktoruFark = current !== null && previous !== null ? (current - previous) * 100 : null;
+                    const gucFaktoruYuzde = current !== null && target > 0 ? ((current / target) * 100).toFixed(1) : null;
 
                     const pages = [];
                     
@@ -1997,8 +1986,8 @@ export default function HaftalikRaporlama() {
                           <h3 style={{ fontSize: '12px', fontWeight: 'bold', color: '#2c3e50', marginBottom: '5px' }}>Haftalık Özet</h3>
                           <p style={{ fontSize: '10px', lineHeight: '1.6', color: '#555', margin: 0 }}>
                             Bu hafta güç faktörü <strong>{selectedRapor.guc_faktoru}</strong> seviyesinde ölçülmüştür. 
-                            Bu değer hedef <strong>{selectedRapor.hedef_guc_faktoru}</strong> değerinin <strong>%{gucFaktoruYuzde}</strong>'sine karşılık gelmektedir. 
-                            Önceki haftaya göre {gucFaktoruFark >= 0 ? <strong style={{ color: '#10b981' }}>artış</strong> : <strong style={{ color: '#ef4444' }}>düşüş</strong>} göstermiştir ({Math.abs(gucFaktoruFark).toFixed(1)}%). 
+                            {gucFaktoruYuzde === null ? 'Hedef oranı hesaplanamıyor. ' : <>Bu değer hedef <strong>{selectedRapor.hedef_guc_faktoru}</strong> değerinin <strong>%{gucFaktoruYuzde}</strong>'sine karşılık gelmektedir. </>}
+                            {gucFaktoruFark === null ? 'Önceki hafta ölçümü olmadığı için karşılaştırma yapılamıyor. ' : gucFaktoruFark === 0 ? 'Önceki haftaya göre sabit kalmıştır (0.0%). ' : <>Önceki haftaya göre {gucFaktoruFark > 0 ? <strong style={{ color: '#10b981' }}>artış</strong> : <strong style={{ color: '#ef4444' }}>düşüş</strong>} göstermiştir ({Math.abs(gucFaktoruFark).toFixed(1)}%). </>}
                             {durum.text === 'UYGUN' ? 
                               <><strong style={{ color: '#10b981', fontSize: '12px' }}> ✓ Performans hedeflerimize uygundur.</strong> Mevcut kompanzasyon sistemi etkin çalışmaktadır.</> : 
                               durum.text === 'DİKKAT' ? 
@@ -2057,7 +2046,7 @@ export default function HaftalikRaporlama() {
                               </tr>
                               <tr style={{ background: 'white' }}>
                                 <td style={{ padding: '10px', fontSize: '11px', fontWeight: 'bold', color: '#334155', border: '1px solid #e2e8f0' }}>Maliyet</td>
-                                <td style={{ padding: '10px', fontSize: '11px', color: '#1e293b', border: '1px solid #e2e8f0' }}>{parseFloat(selectedRapor.maliyet).toLocaleString('tr-TR')} ₺</td>
+                                <td style={{ padding: '10px', fontSize: '11px', color: '#1e293b', border: '1px solid #e2e8f0' }}>{cost === null ? 'Belirtilmedi' : `${cost.toLocaleString('tr-TR')} ₺`}</td>
                                 <td style={{ padding: '10px', fontSize: '11px', color: '#64748b', border: '1px solid #e2e8f0' }}>Toplam enerji maliyeti</td>
                               </tr>
                               <tr style={{ background: '#f8fafc' }}>
@@ -2075,13 +2064,13 @@ export default function HaftalikRaporlama() {
                               </tr>
                               <tr style={{ background: 'white' }}>
                                 <td style={{ padding: '10px', fontSize: '11px', fontWeight: 'bold', color: '#334155', border: '1px solid #e2e8f0' }}>Önceki Hafta Güç Faktörü</td>
-                                <td style={{ padding: '10px', fontSize: '11px', color: '#1e293b', border: '1px solid #e2e8f0' }}>{selectedRapor.onceki_hafta_guc_faktoru}</td>
+                                <td style={{ padding: '10px', fontSize: '11px', color: '#1e293b', border: '1px solid #e2e8f0' }}>{previous === null ? 'Belirtilmedi' : selectedRapor.onceki_hafta_guc_faktoru}</td>
                                 <td style={{ padding: '10px', fontSize: '11px', color: '#64748b', border: '1px solid #e2e8f0' }}>Karşılaştırma için</td>
                               </tr>
                               <tr style={{ background: '#f8fafc' }}>
                                 <td style={{ padding: '10px', fontSize: '11px', fontWeight: 'bold', color: '#334155', border: '1px solid #e2e8f0' }}>Trend</td>
                                 <td style={{ padding: '10px', fontSize: '11px', color: '#1e293b', border: '1px solid #e2e8f0' }}>{trend.text}</td>
-                                <td style={{ padding: '10px', fontSize: '11px', color: '#64748b', border: '1px solid #e2e8f0' }}>{gucFaktoruFark >= 0 ? 'Pozitif yönde' : 'Negatif yönde'}</td>
+                                <td style={{ padding: '10px', fontSize: '11px', color: '#64748b', border: '1px solid #e2e8f0' }}>{gucFaktoruFark === null ? 'Karşılaştırma yok' : gucFaktoruFark > 0 ? 'Pozitif yönde' : gucFaktoruFark < 0 ? 'Negatif yönde' : 'Sabit'}</td>
                               </tr>
                             </tbody>
                           </table>

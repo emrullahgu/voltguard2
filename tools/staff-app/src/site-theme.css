@@ -33,6 +33,7 @@
 #vg-company-workspace .portal-navigation nav { display:flex; flex-wrap:wrap; gap:.45rem 1rem; align-items:center; }
 #vg-company-workspace .portal-navigation nav :is(a,button) { display:inline-flex; align-items:center; min-height:42px; color:var(--portal-navy); font:500 .875rem/1.4 'Outfit',sans-serif; text-decoration:none; padding:.35rem 0; background:none; border:0; }
 #vg-company-workspace .portal-navigation nav :is(a,button):hover { color:var(--portal-amber-dark); }
+#vg-company-workspace .portal-navigation__toggle { min-height:42px; padding:.45rem .65rem; border:1px solid #cbd5e1; border-radius:6px; color:var(--portal-navy); background:#fff; font-size:.8rem; font-weight:600; }
 #vg-company-workspace .portal-app .flex { min-width:0; }
 #vg-company-workspace .portal-app .flex > :is(div,section,nav,form,label) { min-width:0; max-width:100%; }
 #vg-company-workspace .portal-app .flex.gap-2:not(.flex-col):not(button):not(label) { flex-wrap:wrap; }
@@ -80,9 +81,18 @@
 #vg-company-workspace .fixed.inset-0 { z-index:1102; }
 #vg-company-workspace .fixed.inset-0 > .bg-white { max-width:calc(100vw - 2rem); max-height:calc(100dvh - 2rem); overflow-y:auto; margin:1rem; }
 @media(max-width:767px) {
-  #vg-company-workspace .portal-navigation { padding:1.2rem 1rem; gap:.75rem; }
-  #vg-company-workspace .portal-navigation nav { gap:.25rem .85rem; }
-  #vg-company-workspace .portal-app>header { margin:1rem .75rem 0; }
+  #vg-company-workspace .portal-navigation { display:grid; grid-template-columns:minmax(0,1fr) auto; padding:.75rem; gap:.5rem; }
+  #vg-company-workspace .portal-navigation__title { font-size:1rem; }
+  #vg-company-workspace .portal-navigation__identity p { font-size:.75rem; gap:.25rem .5rem; }
+  #vg-company-workspace .portal-navigation nav { grid-column:1/-1; gap:.25rem .85rem; border-top:1px solid #e2e8f0; padding-top:.4rem; }
+  #vg-company-workspace .portal-app>header { margin:.75rem .75rem 0; }
+  #vg-company-workspace .portal-app>header .container { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.5rem; padding:.75rem; }
+  #vg-company-workspace .portal-app>header .container > .flex { flex-wrap:nowrap; gap:.5rem; }
+  #vg-company-workspace .portal-app>header h1 { font-size:1.1rem; }
+  #vg-company-workspace .portal-app>header p { font-size:.7rem; }
+  #vg-company-workspace .portal-app>header .container > .flex > svg { width:24px; height:24px; flex-shrink:0; }
+  #vg-company-workspace .portal-app>header button { padding:.5rem; font-size:.8rem; }
+  #vg-company-workspace .portal-module-toolbar { margin-bottom:1rem; gap:.65rem; }
   #vg-company-workspace .portal-app>.container { padding-left:.75rem; padding-right:.75rem; }
   #vg-company-workspace :is(.p-6,.p-8) { padding:1rem; }
   #vg-company-workspace .grid-cols-3:not(.md\:grid-cols-3) { grid-template-columns:repeat(1,minmax(0,1fr)); }

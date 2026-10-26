@@ -13,6 +13,8 @@ export default function IsTakip() {
   const [lokasyonlar, setLokasyonlar] = useState([]);
   const [malzemeler, setMalzemeler] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const submitBusy = useRef(false);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [modalType, setModalType] = useState(''); // 'kayit', 'calisan', 'lokasyon', 'malzeme'
@@ -102,6 +104,9 @@ export default function IsTakip() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitBusy.current) return;
+    submitBusy.current = true;
+    setSaving(true);
     
     try {
       if (!formData.calisan_id || !formData.lokasyon_id || !formData.yapilan_is.trim()) throw new Error('Çalışan, lokasyon ve yapılan iş açıklaması zorunludur.');
@@ -137,6 +142,9 @@ export default function IsTakip() {
     } catch (error) {
       console.error('Kaydetme hatası:', error);
       alert('Kayıt sırasında hata oluştu: ' + error.message);
+    } finally {
+      submitBusy.current = false;
+      setSaving(false);
     }
   };
 
@@ -192,6 +200,9 @@ export default function IsTakip() {
   // Çalışan yönetimi fonksiyonları
   const handleCalisanSubmit = async (e) => {
     e.preventDefault();
+    if (submitBusy.current) return;
+    submitBusy.current = true;
+    setSaving(true);
     try {
       if (editingId) {
         const { error } = await supabase
@@ -214,6 +225,9 @@ export default function IsTakip() {
     } catch (error) {
       console.error('Kaydetme hatası:', error);
       alert('Kayıt sırasında hata oluştu: ' + error.message);
+    } finally {
+      submitBusy.current = false;
+      setSaving(false);
     }
   };
 
@@ -248,6 +262,9 @@ export default function IsTakip() {
   // Lokasyon yönetimi fonksiyonları
   const handleLokasyonSubmit = async (e) => {
     e.preventDefault();
+    if (submitBusy.current) return;
+    submitBusy.current = true;
+    setSaving(true);
     try {
       if (editingId) {
         const { error } = await supabase
@@ -270,6 +287,9 @@ export default function IsTakip() {
     } catch (error) {
       console.error('Kaydetme hatası:', error);
       alert('Kayıt sırasında hata oluştu: ' + error.message);
+    } finally {
+      submitBusy.current = false;
+      setSaving(false);
     }
   };
 
@@ -303,6 +323,9 @@ export default function IsTakip() {
   // Malzeme yönetimi fonksiyonları
   const handleMalzemeSubmit = async (e) => {
     e.preventDefault();
+    if (submitBusy.current) return;
+    submitBusy.current = true;
+    setSaving(true);
     try {
       if (parseDecimal(malzemeForm.stok_durumu, null) === null || parseDecimal(malzemeForm.stok_durumu) < 0) throw new Error('Stok miktarı geçerli ve sıfır veya daha büyük olmalıdır.');
       const malzemeData = {
@@ -331,6 +354,9 @@ export default function IsTakip() {
     } catch (error) {
       console.error('Kaydetme hatası:', error);
       alert('Kayıt sırasında hata oluştu: ' + error.message);
+    } finally {
+      submitBusy.current = false;
+      setSaving(false);
     }
   };
 
@@ -1024,6 +1050,7 @@ export default function IsTakip() {
                     {modalType === 'malzeme' && (editingId ? 'Malzemeyi Düzenle' : 'Yeni Malzeme')}
                   </h2>
                   <button
+                    disabled={saving}
                     onClick={() => { 
                       setShowModal(false); 
                       setEditingId(null); 
@@ -1041,7 +1068,8 @@ export default function IsTakip() {
 
               {/* İş Kaydı Formu */}
               {modalType === 'kayit' && (
-              <form onSubmit={handleSubmit} className="p-6">
+              <form onSubmit={handleSubmit} aria-busy={saving} className="p-6">
+                <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Tarih *</label>
@@ -1157,7 +1185,7 @@ export default function IsTakip() {
                     className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-lg transition"
                   >
                     <Save className="w-5 h-5" />
-                    <span>{editingId ? 'Güncelle' : 'Kaydet'}</span>
+                    <span>{saving ? 'Kaydediliyor…' : editingId ? 'Güncelle' : 'Kaydet'}</span>
                   </button>
                   <button
                     type="button"
@@ -1167,12 +1195,14 @@ export default function IsTakip() {
                     İptal
                   </button>
                 </div>
+                </fieldset>
               </form>
               )}
 
               {/* Çalışan Formu */}
               {modalType === 'calisan' && (
-              <form onSubmit={handleCalisanSubmit} className="p-6">
+              <form onSubmit={handleCalisanSubmit} aria-busy={saving} className="p-6">
+                <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Ad Soyad *</label>
@@ -1237,12 +1267,14 @@ export default function IsTakip() {
                     İptal
                   </button>
                 </div>
+                </fieldset>
               </form>
               )}
 
               {/* Lokasyon Formu */}
               {modalType === 'lokasyon' && (
-              <form onSubmit={handleLokasyonSubmit} className="p-6">
+              <form onSubmit={handleLokasyonSubmit} aria-busy={saving} className="p-6">
+                <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Lokasyon Adı *</label>
@@ -1297,12 +1329,14 @@ export default function IsTakip() {
                     İptal
                   </button>
                 </div>
+                </fieldset>
               </form>
               )}
 
               {/* Malzeme Formu */}
               {modalType === 'malzeme' && (
-              <form onSubmit={handleMalzemeSubmit} className="p-6">
+              <form onSubmit={handleMalzemeSubmit} aria-busy={saving} className="p-6">
+                <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Malzeme Adı *</label>
@@ -1375,6 +1409,7 @@ export default function IsTakip() {
                     İptal
                   </button>
                 </div>
+                </fieldset>
               </form>
               )}
             </div>

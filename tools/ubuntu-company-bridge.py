@@ -378,16 +378,21 @@ class Repository:
         self.db.execute("INSERT INTO voltguard_site.rows(site,table_name,row_key,fields) VALUES(" + sql_text(self.site) + "," + sql_text(table) + "," + sql_text(key) + "," + sql_json(virtual) + ") ON CONFLICT(site,table_name,row_key) DO UPDATE SET fields=EXCLUDED.fields;")
         return normalize(table, actual, {"fields": virtual})
 
-    def _check_delete_relations(self, old_raw, changes):
+    def _check_delete_relations(self, deleted_table, old_raw, changes):
         identifier = str(old_raw.get("id", ""))
         if not identifier:
             return
         planned = {(change["table"], change["id"]): change["row"] for change in changes}
         for table, columns in self.columns.items():
             relations = set(columns) & {"employee_id", "vehicle_id", "driver_id", "calisan_id", "lokasyon_id"}
-            if not relations:
+            materials = deleted_table == "is_takip_malzemeler" and table == "is_takip_kayitlar" and "kullanilan_malzemeler" in columns
+            if not relations and not materials:
                 continue
-            predicates = " OR ".join(sql_ident(field) + "::text=" + sql_text(identifier) for field in relations)
+            conditions = [sql_ident(field) + "::text=" + sql_text(identifier) for field in relations]
+            if materials:
+                # to_jsonb supports legacy PostgreSQL arrays as well as JSON/JSONB arrays.
+                conditions.append('to_jsonb("kullanilan_malzemeler") ? ' + sql_text(identifier))
+            predicates = " OR ".join(conditions)
             if table in PRIVATE_TABLES:
                 predicates = "site=" + sql_text(self.site) + " AND (" + predicates + ")"
             records = self.db.json("SELECT coalesce(json_agg(to_jsonb(t)), '[]'::json) FROM (SELECT * FROM " + table_target(table) + " WHERE " + predicates + " FOR UPDATE) t;")
@@ -395,7 +400,12 @@ class Repository:
                 marker = (table, row_key(table, row))
                 if marker in planned:
                     replacement = planned[marker]
-                    if replacement is None or all(str(replacement.get(field, "")) != identifier for field in relations):
+                    if replacement is None:
+                        continue
+                    scalar_reference = any(str(replacement.get(field, "")) == identifier for field in relations)
+                    material_ids = replacement.get("kullanilan_malzemeler")
+                    material_reference = materials and isinstance(material_ids, list) and identifier in material_ids
+                    if not scalar_reference and not material_reference:
                         continue
                 # Even legacy ON DELETE CASCADE must not silently erase history.
                 raise BridgeError("bridge_relation_in_use", 409)
@@ -442,7 +452,7 @@ class Repository:
             rows.setdefault(table, {})
             if desired is None:
                 if old_raw:
-                    self._check_delete_relations(old_raw, changes)
+                    self._check_delete_relations(table, old_raw, changes)
                     self.db.execute("DELETE FROM " + table_target(table) + " WHERE " + self._where(table, old_raw) + "; DELETE FROM voltguard_site.rows WHERE site=" + sql_text(self.site) + " AND table_name=" + sql_text(table) + " AND row_key=" + sql_text(row_key(table, old_raw)) + ";")
                 rows[table][key] = None
             else:

@@ -107,6 +107,45 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(result["user_id"], STAFF)
         self.assertIn('"user_id":null', db.statements[0])
 
+    def test_material_delete_checks_history_arrays_inside_transaction(self):
+        history = {"id": LEGACY, "kullanilan_malzemeler": [ID]}
+        db = FakeDB(history)
+        repo = bridge.Repository(db)
+        repo.site = SITE
+        # No scalar FK column: material history must still be queried and locked.
+        repo.columns = {"is_takip_kayitlar": {"id": {"type": "uuid"}, "kullanilan_malzemeler": {"type": "ARRAY"}}}
+        self.reject(lambda: repo._check_delete_relations("is_takip_malzemeler", {"id": ID}, []), "bridge_relation_in_use")
+        self.assertIn('to_jsonb("kullanilan_malzemeler")', db.statements[0])
+        self.assertIn(bridge.sql_text(ID), db.statements[0])
+        self.assertIn("FOR UPDATE", db.statements[0])
+
+    def test_material_history_guard_honors_only_replacements_removing_reference(self):
+        history = {"id": LEGACY, "kullanilan_malzemeler": [ID]}
+        repo = bridge.Repository(FakeDB(history))
+        repo.site = SITE
+        repo.columns = {"is_takip_kayitlar": {"id": {"type": "uuid"}, "kullanilan_malzemeler": {"type": "jsonb"}}}
+        change = {"table": "is_takip_kayitlar", "id": LEGACY, "row": {**history, "notlar": "Edited only"}}
+        self.reject(lambda: repo._check_delete_relations("is_takip_malzemeler", {"id": ID}, [change]), "bridge_relation_in_use")
+        for replacement in (None, {**history, "kullanilan_malzemeler": []}, {**history, "kullanilan_malzemeler": [OTHER]}):
+            repo._check_delete_relations("is_takip_malzemeler", {"id": ID}, [{**change, "row": replacement}])
+
+    def test_material_array_guard_is_scoped_to_material_deletion(self):
+        db = FakeDB({"id": LEGACY, "kullanilan_malzemeler": [ID]})
+        repo = bridge.Repository(db)
+        repo.site = SITE
+        repo.columns = {"is_takip_kayitlar": {"id": {"type": "uuid"}, "kullanilan_malzemeler": {"type": "ARRAY"}}}
+        repo._check_delete_relations("products", {"id": ID}, [])
+        self.assertEqual(db.statements, [])
+
+    def test_scalar_history_guard_still_rejects_numeric_foreign_keys(self):
+        history = {"id": LEGACY, "vehicle_id": 12}
+        repo = bridge.Repository(FakeDB(history))
+        repo.site = SITE
+        repo.columns = {"fuel_records": {"id": {"type": "uuid"}, "vehicle_id": {"type": "bigint"}}}
+        self.reject(lambda: repo._check_delete_relations("vehicles", {"id": 12}, []), "bridge_relation_in_use")
+        change = {"table": "fuel_records", "id": LEGACY, "row": {**history, "vehicle_id": 13}}
+        repo._check_delete_relations("vehicles", {"id": 12}, [change])
+
     def test_storage_is_versioned_and_byte_bounded(self):
         bridge.validate_commit({"storageChanges": [{"key": "theme", "before": None, "value": "ş"}]}, ADMIN)
         self.reject(lambda: bridge.validate_commit({"storageChanges": [{"key": "theme", "before": "bad", "value": "x"}]}, ADMIN), "bridge_storage")

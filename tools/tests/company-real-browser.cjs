@@ -12,7 +12,7 @@ const root = path.resolve(__dirname, '../..');
 const ownWhiteOnly=process.argv.includes('--own-white-only');
 const workflowArgument=process.argv.find(argument=>argument.startsWith('--workflows='));
 const selectedWorkflows=workflowArgument?new Set(workflowArgument.slice(12).split(',')):null;
-const output = path.join(root, ownWhiteOnly?'.qa/company-own-white':selectedWorkflows?'.qa/company-focused':'.qa/company-real');
+const output = path.join(root, process.env.VG_COMPANY_SUBMIT_FOCUS==='1'?(process.argv.includes('--weekly-pdf-only')?'.qa/company-weekly-pdf':'.qa/company-submit'):ownWhiteOnly?'.qa/company-own-white':selectedWorkflows?'.qa/company-focused':'.qa/company-real');
 const php = process.env.VG_PHP || path.join(root, '.qa/php/runtime/php.exe');
 const packages = process.env.VG_NODE_MODULES || process.env.VOLTGUARD_NODE_MODULES || path.join(os.homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules');
 const { chromium } = require(path.join(packages, 'playwright'));
@@ -148,6 +148,10 @@ async function run() {
         check(await page.locator('[data-payroll-access="manage"]').count(),0,'Own employee has no payroll management mode');check(await page.getByRole('button',{name:/Yeni çalışan/i}).count(),0,'Own employee cannot create payroll employee');
         report.mounts.push({id:'beyaz-yaka',identity:'ordinary employee',...dimensions});await page.screenshot({path:path.join(output,'employee-beyaz-yaka-390-real.png'),fullPage:true});
       });
+      return;
+    }
+    if(process.env.VG_COMPANY_SUBMIT_FOCUS==='1'){
+      await require('./company-submit-scenarios.cjs')({page,admin,api,rows,waitRow,mount,fill,workflow,check,report,download,output});
       return;
     }
     for(const id of modules){
