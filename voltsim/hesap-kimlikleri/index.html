@@ -120,6 +120,7 @@
                 <li><a class="vg-dd__link" href="/projeler.html">Projeler ve Referanslar</a></li>
                 <li><a class="vg-dd__link" href="/haberler.html">Sahadan Haberler</a></li>
                 <li><a class="vg-dd__link" href="/ekibimiz.html">Ekibimiz</a></li>
+                  <li><a class="vg-dd__link" href="/dokumanlar.html">Belgeler ve İndirmeler</a></li>
                 <li><a class="vg-dd__link" href="/iletisim.html">İletişim</a></li>
                 <li><a class="vg-dd__link" href="/calisan/giris.html">Çalışan Girişi</a></li>
               </ul>
@@ -394,7 +395,20 @@
       </details>
     </section>
     <section class="vs-ident" aria-labelledby="fam-hesaplama">
-      <h2 id="fam-hesaplama">Hesaplama sayfaları <small>(17)</small></h2>
+      <h2 id="fam-hesaplama">Hesaplama sayfaları <small>(18)</small></h2>
+      <details class="vs-id" id="hesap-tep"><summary><span>TEP enerji tüketimi dönüştürücüsü</span> <a href="/hesaplama/tep-hesaplama/">sayfaya git ↗</a></summary>
+        <div class="vs-id__body">
+          <p>Aynı dönemin elektrik, doğal gaz, motorin ve LPG tüketimini ETKB tablo katsayılarıyla TEP ortak enerji birimine çevirir.</p>
+          <h4>Girdiler</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>elektrik</td><td>kWh</td><td>Aynı dönem enerji tüketimi</td></tr><tr><td>doğal gaz</td><td>m³</td><td>Kaynak tablonun hacim birimi</td></tr><tr><td>motorin</td><td>kg</td><td>Kütle; litre değil</td></tr><tr><td>LPG</td><td>kg</td><td>Kütle; hacim değil</td></tr></tbody></table>
+          <h4>Çıktılar</h4><table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody><tr><td>toplam</td><td>TEP</td><td>Dört kalemin toplam enerji karşılığı</td></tr><tr><td>kalemler</td><td>TEP</td><td>Her kaynak için ayrı döküm</td></tr></tbody></table>
+          <h4>Yöntem / bağıntılar</h4><ul><li><code>TEP = kWh × 0,000086 + m³ × 0,000825 + motorin_kg × 0,00102 + LPG_kg × 0,00109.</code></li></ul>
+          <h4>Varsayımlar</h4><ul><li>ETKB Ek-3 tablosundaki alt ısıl değerler kullanılır; gerçek yakıt kalorifik değeri farklı olabilir.</li><li>Aynı dönem ve çakışmayan tüketimler toplanır. Kaynak kontrolü 26.10.2026; bu tarih veri setinin yayın tarihi değildir.</li></ul>
+          <h4>Geçerlilik sınırları</h4><ul><li>Sıvı yakıt litre dönüşümü, LPG hacmi, tasarruf veya resmî yükümlülük kararı yoktur.</li><li>Her girdi 0 ile 1.000.000.000.000 arasında sonlu sayı olmalıdır.</li></ul>
+          <h4>Gerekli katalog / saha verisi</h4><p>Ek veri gerekmez; girdiler doğrudan kullanıcıdan alınır.</p>
+          <h4>Teknik kaynak</h4><ul><li>ETKB Kamu Binalarında Tasarruf Hedefi, Ek-3 TEP Dönüşüm Tablosu: https://enerji.gov.tr/Media/Dizin/EVCED/tr/EnerjiVerimlili%C4%9Fi/KamuBinTasHedefi/Ek-3.xlsm (satırlar 29, 38, 52, 56; 26.10.2026 kontrolü)</li></ul>
+          <p class="vs-id__meta"><span>Hesap motoru: TEP dönüştürücü 2026-10-26</span><span>Kimlik gözden geçirme: 2026-10-26</span><span>Uygulama: js/tep-calculator.js · calculate, hesaplama/tep-hesaplama.html</span><span>Doğrulama testleri: tep-calculator.test.cjs</span></p>
+        </div>
+      </details>
       <details class="vs-id" id="hesap-kw-kva-amper"><summary><span>kW / kVA / kVAr / A dönüştürücü</span> <a href="/hesaplama/kw-kva-amper-donusturucu/">sayfaya git ↗</a></summary>
         <div class="vs-id__body">
           <p>Aktif, görünür ve reaktif güç ile hat akımı arasında dönüşüm yapar.</p>
@@ -763,6 +777,7 @@
               <li><a href="/projeler.html">Projeler ve Referanslar</a></li>
               <li><a href="/haberler.html">Sahadan Haberler</a></li>
               <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+                <li><a href="/dokumanlar.html">Belgeler ve İndirmeler</a></li>
               <li><a href="/iletisim.html">İletişim ve Teklif</a></li>
             </ul>
           </div>

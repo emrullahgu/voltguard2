@@ -11,6 +11,8 @@
 /tools/engineering/dist/
 /tools/engineering/storage-map.json
 /.qa/
+/output/pdf/
+/tmp/pdfs/
 # Local preview configuration and nested agent checkouts.
 /.claude/
 # User supplied footage and full quality local exports; curated web film is public/video.

@@ -1,0 +1,203 @@
+{
+  "title": "VoltGuard site geliştirme yapılacaklar listesi",
+  "reviewedOn": "2026-10-26",
+  "scope": "Belirtilen dört firma ve altı farklı sektör firmasıyla karşılaştırma; Türkiye'deki tüm sitelerin eksiksiz envanteri değildir. Senda bakımda olduğu için yalnız görünen iletişim ve bakım ekranı incelendi.",
+  "companies": [
+    {
+      "name": "Kobinerji",
+      "url": "https://www.kobinerji.com/",
+      "focus": "Hizmetler, TEP hesaplama, kaynaklar"
+    },
+    {
+      "name": "Senda Elektrik",
+      "url": "https://sendaelektrik.com.tr/",
+      "focus": "Bakım ekranı ve iletişim; ayrıntılı site erişilemedi"
+    },
+    {
+      "name": "Senkron Mühendislik Kemalpaşa",
+      "url": "https://senkronmuhendislik.com.tr/belgelerimiz/",
+      "focus": "Belge sınıflandırması; görünen eski belgeler güncel kabul edilmedi"
+    },
+    {
+      "name": "Gamatek",
+      "url": "https://gamatekelektrik.com.tr/kurumsal/ticari-bilgilerimiz",
+      "focus": "Görünür kurumsal kimlik, talep ve süreç"
+    },
+    {
+      "name": "Prota Elektrik",
+      "url": "https://www.protaelektrik.com.tr/referanslar",
+      "focus": "İndirilebilir referans PDF ve sektörler"
+    },
+    {
+      "name": "Metro Elektrik",
+      "url": "https://www.metroelektrik.com.tr/muhendislik-ve-taahhut/",
+      "focus": "Proje kapsamı ve aşamaları"
+    },
+    {
+      "name": "Progen Elektrik",
+      "url": "https://progenelektrik.com/ekipmanlarimiz/",
+      "focus": "Ekipman ve kalibrasyon sunumu; tarihler güncel kabul edilmedi"
+    },
+    {
+      "name": "BES Enerji",
+      "url": "https://www.besenerji.net/cihaz-parkuru",
+      "focus": "Ölçüm kabiliyeti ve teknik talep bilgileri"
+    },
+    {
+      "name": "HMI Mühendislik",
+      "url": "https://www.hmi.com.tr/referanslar",
+      "focus": "Proje kapsamı, sektör ve teknoloji açıklığı"
+    },
+    {
+      "name": "ALME Energy",
+      "url": "https://www.almeenergy.com/hizmetler/operasyon.html",
+      "focus": "Kurulum sonrası bakım ve işletme kapsamı"
+    }
+  ],
+  "alreadyPresent": [
+    "Hizmet kapsamları ve teslimler",
+    "Hizmete özel SSS",
+    "Keşiften teslime süreç",
+    "Sektör çözümleri",
+    "Teklif formu ve hizmet ön seçimi",
+    "Hesap araçları ve VoltSim",
+    "Ekip, haberler ve gerçek saha fotoğrafları"
+  ],
+  "tasks": [
+    {
+      "id": "VG01",
+      "priority": "P0",
+      "title": "İki yüzlü üç panelli yeni broşür PDF",
+      "status": "complete",
+      "basis": "Kullanıcının örnek PDF isteği",
+      "acceptance": [
+        "Gerçek fotoğraflar ve doğru Türkçe",
+        "A4 yatay iki sayfa",
+        "Çalışan iletişim ve QR bağlantıları",
+        "Her sayfanın baskı ve metin kontrolü"
+      ],
+      "files": [
+        "tools/build-brochure.py",
+        "public/voltguard-brosur.pdf",
+        "public/brosur/voltguard-brosur-onizleme.webp",
+        "public/brosur/voltguard-brosur-kapak.webp"
+      ],
+      "verification": "2 A4 yatay yüz, 10 bağlantı, Türkçe metin ve gömülü kullanılan fontlar; bağımsız iki yüz görsel QA temiz; QR decode doğru"
+    },
+    {
+      "id": "VG02",
+      "priority": "P0",
+      "title": "Herkese açık belgeler ve indirmeler merkezi",
+      "status": "complete",
+      "basis": "Prota PDF bulunurluğu ve mevcut katalog bağlantısının zayıf görünürlüğü",
+      "acceptance": [
+        "Broşür ve 58 sayfalık katalog ayrı sunulur",
+        "Ana sayfadan görsel erişim",
+        "Mevcut teknik form ve kontrol listeleri",
+        "Doğru dosya bilgileri ve mobil indirme"
+      ],
+      "files": [
+        "dokumanlar.html",
+        "css/downloads.css",
+        "index.html",
+        "hizmetler/index.html",
+        "tools/shell/header.html",
+        "tools/shell/footer.html"
+      ],
+      "verification": "665 kontrol, 6 yerleşim, JavaScript kapalı erişim ve iki gerçek PDF indirmesi geçti"
+    },
+    {
+      "id": "VG03",
+      "priority": "P1",
+      "title": "Gerçek proje kartlarında kategori filtresi ve arama",
+      "status": "complete",
+      "basis": "Metro ve HMI kapsam sunumu; mevcut dokuz gerçek kartın bulunurluğu",
+      "acceptance": [
+        "Kategori, Türkçe arama, boş sonuç ve tümünü göster",
+        "Klavye ve JavaScript kapalı erişim",
+        "İlgili hizmet ve teklif bağlantısı",
+        "Yeni müşteri, kapasite veya sonuç iddiası üretilmez"
+      ],
+      "files": [
+        "projeler.html",
+        "css/projects.css",
+        "js/projects.js"
+      ],
+      "verification": "998 kontrol, 8 yerleşim,9 gerçek teklif akışı; kategori/arama/boşdurum/klavye/noJS geçti"
+    },
+    {
+      "id": "VG04",
+      "priority": "P1",
+      "title": "Doğrulanmış görünür kurumsal bilgiler",
+      "status": "complete",
+      "basis": "Gamatek ticari bilgi paneli ve VoltGuard katalog/JSON-LD bilgileri",
+      "acceptance": [
+        "Mevcut unvan, VKN, adres ve iletişim tutarlı",
+        "Akademik belgeler doğru türle etiketlenir",
+        "Yeni sicil veya akreditasyon iddiası eklenmez"
+      ],
+      "files": [
+        "hakkimizda.html",
+        "iletisim.html",
+        "css/interior.css"
+      ],
+      "verification": "510 kontrol,18 yerleşim; kurumsal alanlar mevcut kaynakla eşleşti; en düşük metin kontrastı4,58:1"
+    },
+    {
+      "id": "VG05",
+      "priority": "P2",
+      "title": "Resmî katsayı kaynaklı TEP hesaplayıcı",
+      "status": "complete",
+      "basis": "Kobinerji'deki TEP aracının VoltGuard karşılığı yok",
+      "acceptance": [
+        "ETKB birincil katsayı kaynağı",
+        "Birim ve varsayımlar açık",
+        "Geçersiz girdide eski sonuç temizlenir",
+        "Formül ve tarayıcı kontrolleri",
+        "Hesap araçlarından bulunur"
+      ],
+      "files": [
+        "hesaplama/tep-hesaplama.html",
+        "js/tep-calculator.js",
+        "tools/tests/tep-calculator.test.cjs",
+        "tools/tests/tep-browser.cjs"
+      ],
+      "primarySource": "https://enerji.gov.tr/Media/Dizin/EVCED/tr/EnerjiVerimlili%C4%9Fi/KamuBinTasHedefi/Ek-3.xlsm",
+      "verification": "15 matematik/kimlik testi, 161 son üretim sonrası tarayıcı kontrolü, 6 yerleşim ve gerçek tek sayfalık PDF geçti"
+    },
+    {
+      "id": "VG06",
+      "priority": "P2",
+      "title": "Güncel mesleki yetki ve kalibrasyon kanıtları",
+      "status": "needs_source_documents",
+      "basis": "Senkron, Progen ve BES belge sunumu",
+      "required": [
+        "Yayımlanabilir güncel SMM/YG veya diğer gerçek yetki belgeleri",
+        "Yayımlanacak cihazların doğrulanmış model/envanter ve geçerli kalibrasyon belgeleri"
+      ],
+      "acceptance": [
+        "Yalnız gerçek ve güncel belgeler yayımlanır",
+        "Kişisel bilgiler korunur",
+        "Akademik katılım belgeleriyle karıştırılmaz"
+      ],
+      "files": [],
+      "userConfirmation": "Kullanıcı 26 Ekim 2026 tarihinde güncel belgelerin proje klasöründe bulunmadığını bildirdi."
+    }
+  ],
+  "releaseChecks": {
+    "unitTestsPassed": 482,
+    "unitTestsFailed": 0,
+    "staticPages": 207,
+    "staticFindings": 0,
+    "browserChecks": {
+      "downloads": 665,
+      "projects": 998,
+      "corporateIntegration": 510,
+      "tep": 161
+    },
+    "brochurePages": 2,
+    "brochureBytes": 944860,
+    "brochureQr": "https://voltguard.com.tr/iletisim.html",
+    "sharedBuilds": "VoltSim, shell, çalışan ortak menüleri, mühendislik araçları/ZIP, arama dizini ve sürümler güncel"
+  }
+}

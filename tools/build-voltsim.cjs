@@ -17,6 +17,7 @@ const regs = require(path.join(root, 'js/voltsim/regulations.js'));
 const ident = require(path.join(root, 'js/voltsim/identity.js'));
 const engineVersion = require(path.join(root, 'js/voltsim/engine.js')).version;
 const calcConfigVersion = require(path.join(root, 'js/calculator-config.js')).version;
+const tepVersion = require(path.join(root, 'js/tep-calculator.js')).version;
 const trDate = iso => iso ? iso.split('-').reverse().join('.') : '';
 const SITE = 'https://voltguard.com.tr';
 /* Sonuç ekranındaki bağlama özel teklif eylemi (js/voltsim/core.js openQuote → js/vg-quote.js → teklif sihirbazı).
@@ -236,7 +237,7 @@ function regsSection(id) {
 
 /** Hesaplama kimliği gövdesi: amaç, birimli girdi/çıktı, yöntem, varsayım, geçerlilik, veri, kaynak, motor sürümü, testler. */
 function identityBody(e) {
-  const ver = e.engine === 'voltsim' ? `VoltSim motoru ${engineVersion}` : e.engine === 'calculator-config' ? `Hesap yapılandırması ${calcConfigVersion}` : e.engine === 'vg-assess' ? 'VGAssess (js/vg-assess.js)' : 'Araç kaynağı (tools/engineering/src)';
+  const ver = e.engine === 'voltsim' ? `VoltSim motoru ${engineVersion}` : e.engine === 'calculator-config' ? `Hesap yapılandırması ${calcConfigVersion}` : e.engine === 'tep-calculator' ? `TEP dönüştürücü ${tepVersion}` : e.engine === 'vg-assess' ? 'VGAssess (js/vg-assess.js)' : 'Araç kaynağı (tools/engineering/src)';
   const io = rows => `<table class="vs-id__t"><thead><tr><th>Büyüklük</th><th>Birim</th><th>Açıklama</th></tr></thead><tbody>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}</tbody></table>`;
   const ul = (list, code) => `<ul>${list.map(x => `<li>${code ? `<code>${esc(x)}</code>` : esc(x)}</li>`).join('')}</ul>`;
   return `<p>${esc(e.purpose)}</p>

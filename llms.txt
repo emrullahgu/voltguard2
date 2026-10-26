@@ -51,6 +51,8 @@ Diğer uzmanlık alanları:
 - [Haberler & Güncel](https://voltguard.com.tr/haberler.html#haberler)
 - [Projeler & Referanslar](https://voltguard.com.tr/projeler.html#projeler)
 - [Kurumsal Katalog (PDF)](https://voltguard.com.tr/public/opt/voltguard-katalog.pdf)
+- [Kurumsal Broşür (PDF, 2 yüz)](https://voltguard.com.tr/public/voltguard-brosur.pdf)
+- [Belgeler ve İndirmeler](https://voltguard.com.tr/dokumanlar.html)
 - [Gizlilik ve Çerez Politikası](https://voltguard.com.tr/gizlilik.html)
 - [İletişim](https://voltguard.com.tr/iletisim.html#iletisim)
 

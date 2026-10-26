@@ -252,6 +252,16 @@
       impl: ['js/voltsim/engine.js · yangin.compute', 'js/voltsim/calc/yangin.js'], tests: [T('voltsim-yangin.test.cjs')] },
 
     /* ===================== hesaplama/*.html (js/calculator-config.js) ===================== */
+    { id: 'hesap-tep', family: H, page: '/hesaplama/tep-hesaplama/', name: 'TEP enerji tüketimi dönüştürücüsü', engine: 'tep-calculator', reviewedWith: '2026-10-26',
+      purpose: 'Aynı dönemin elektrik, doğal gaz, motorin ve LPG tüketimini ETKB tablo katsayılarıyla TEP ortak enerji birimine çevirir.',
+      inputs: [['elektrik', 'kWh', 'Aynı dönem enerji tüketimi'], ['doğal gaz', 'm³', 'Kaynak tablonun hacim birimi'], ['motorin', 'kg', 'Kütle; litre değil'], ['LPG', 'kg', 'Kütle; hacim değil']],
+      outputs: [['toplam', 'TEP', 'Dört kalemin toplam enerji karşılığı'], ['kalemler', 'TEP', 'Her kaynak için ayrı döküm']],
+      method: ['TEP = kWh × 0,000086 + m³ × 0,000825 + motorin_kg × 0,00102 + LPG_kg × 0,00109.'],
+      assumptions: ['ETKB Ek-3 tablosundaki alt ısıl değerler kullanılır; gerçek yakıt kalorifik değeri farklı olabilir.', 'Aynı dönem ve çakışmayan tüketimler toplanır. Kaynak kontrolü 26.10.2026; bu tarih veri setinin yayın tarihi değildir.'],
+      validity: ['Sıvı yakıt litre dönüşümü, LPG hacmi, tasarruf veya resmî yükümlülük kararı yoktur.', 'Her girdi 0 ile 1.000.000.000.000 arasında sonlu sayı olmalıdır.'], requiredData: [],
+      sources: ['ETKB Kamu Binalarında Tasarruf Hedefi, Ek-3 TEP Dönüşüm Tablosu: https://enerji.gov.tr/Media/Dizin/EVCED/tr/EnerjiVerimlili%C4%9Fi/KamuBinTasHedefi/Ek-3.xlsm (satırlar 29, 38, 52, 56; 26.10.2026 kontrolü)'],
+      impl: ['js/tep-calculator.js · calculate', 'hesaplama/tep-hesaplama.html'], tests: [T('tep-calculator.test.cjs')] },
+
     { id: 'hesap-kw-kva-amper', family: H, page: '/hesaplama/kw-kva-amper-donusturucu/', name: 'kW / kVA / kVAr / A dönüştürücü', engine: 'calculator-config', reviewedWith: '2026-10-24',
       purpose: 'Aktif, görünür ve reaktif güç ile hat akımı arasında dönüşüm yapar.',
       inputs: [['değer', 'kW | kVA | A', 'Bilinen büyüklük'], ['U', 'V', '400 V üç faz (hat) veya 230 V tek faz (faz-nötr)'], ['cosφ', '—', 'Güç faktörü']],

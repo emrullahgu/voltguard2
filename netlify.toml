@@ -203,6 +203,18 @@
   force = true
 
 [[redirects]]
+  from = "/hesaplama/tep-hesaplama.html"
+  to = "/hesaplama/tep-hesaplama/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/hesaplama/tep-hesaplama/"
+  to = "/hesaplama/tep-hesaplama.html"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/hesaplama/sigorta-tms-secimi.html"
   to = "/hesaplama/sigorta-tms-secimi/"
   status = 301

@@ -67,6 +67,14 @@
 .vgh-proof__logos img:last-child{max-width:68px;height:40px}
 .vgh-proof__link{flex-shrink:0;font:600 .75rem/1.5 var(--font-body)}
 .vgh-proof:hover .vgh-proof__link{text-decoration:underline;text-underline-offset:4px}
+.vgh-brochure{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:28px;align-items:center;margin-top:34px;padding:24px 28px;border:1px solid var(--clr-border);border-radius:12px;background:var(--clr-bg-gray)}
+.vgh-brochure__cover{display:block;line-height:0;border-radius:4px;box-shadow:0 8px 20px #0a16282b}
+.vgh-brochure__cover img{display:block;width:70px;height:auto;border-radius:4px}
+.vgh-brochure h3{margin:0;font:600 clamp(1.2rem,2vw,1.65rem)/1.3 var(--font-heading);color:var(--clr-text)}
+.vgh-brochure p:not(.vgh-eyebrow){margin:10px 0 0;font-size:.81rem;line-height:1.7;color:var(--clr-text-muted)}
+.vgh-brochure .vgh-eyebrow{font-size:.64rem;margin-bottom:8px}
+.vgh-brochure__actions{display:flex;flex-direction:column;gap:6px;align-items:center}
+.vgh-brochure__actions .vgh-text-link{font-size:.73rem}
 .vgh-resources{padding:clamp(48px,5.5vw,80px) 0;background:#0d203b;color:#fff;scroll-margin-top:calc(var(--vg-header-h) + 16px)}
 .vgh-resources .vgh-eyebrow{color:#fcd34d;margin-bottom:10px}
 .vgh-resources .vgh-heading h2{color:#fff}
@@ -109,6 +117,7 @@
   .vgh-project-grid{gap:14px}.vgh-project>img{height:190px}.vgh-project>div{padding:18px}.vgh-project h3{font-size:1.05rem}.vgh-project p{font-size:.76rem}
   .vgh-about{grid-template-columns:1fr;gap:24px}.vgh-about__photo>img{height:280px}.vgh-about p:not(.vgh-eyebrow){font-size:.87rem;line-height:1.85}
   .vgh-proof{margin-top:28px;gap:16px}.vgh-proof__logos{padding:12px;gap:14px}.vgh-proof__logos img{height:28px}.vgh-proof__logos img:last-child{height:34px}
+  .vgh-brochure{grid-template-columns:60px minmax(0,1fr);gap:20px;padding:22px}.vgh-brochure__cover img{width:60px}.vgh-brochure__actions{grid-column:1/-1;align-items:flex-start;flex-direction:row;flex-wrap:wrap;gap:8px 18px}
   .vgh-resources{padding:42px 0}.vgh-discovery-grid{grid-template-columns:1fr;gap:16px}
   .vgh-discovery{display:grid;grid-template-columns:38% minmax(0,1fr);align-items:stretch}.vgh-discovery>img{height:100%;min-height:200px;object-fit:cover}.vgh-discovery--calculator>img{object-position:69% 30%}
   .vgh-discovery>div{padding:20px}.vgh-discovery h3{font-size:1.12rem}.vgh-discovery p{font-size:.77rem;margin-bottom:16px}.vgh-discovery .vgh-card-cta{font-size:.72rem}

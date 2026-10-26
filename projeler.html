@@ -66,6 +66,7 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="/css/style.css?v=f5a7da9dd78a">
   <link rel="stylesheet" href="/css/interior.css">
+  <link rel="stylesheet" href="/css/projects.css?v=f0327b63cbd2">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","@id":"https://voltguard.com.tr/projeler.html#webpage","url":"https://voltguard.com.tr/projeler.html","name":"Projeler ve Referanslarımız | VoltGuard Mühendislik","description":"VoltGuard’ın pano, trafo, kompanzasyon, kablolama ve enerji projelerinden saha görüntüleri ile birlikte çalıştığı kurumları inceleyin.","inLanguage":"tr-TR","isPartOf":{"@id":"https://voltguard.com.tr/#website"},"about":{"@id":"https://voltguard.com.tr/#organization"},"dateModified":"2026-10-26"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ana Sayfa","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Projeler ve referanslarımız","item":"https://voltguard.com.tr/projeler.html"}]}]}</script>
 </head>
 <body class="interior-page interior-page--projects">
@@ -132,6 +133,7 @@
                 <li><a class="vg-dd__link" href="/projeler.html" aria-current="page">Projeler ve Referanslar</a></li>
                 <li><a class="vg-dd__link" href="/haberler.html">Sahadan Haberler</a></li>
                 <li><a class="vg-dd__link" href="/ekibimiz.html">Ekibimiz</a></li>
+                  <li><a class="vg-dd__link" href="/dokumanlar.html">Belgeler ve İndirmeler</a></li>
                 <li><a class="vg-dd__link" href="/iletisim.html">İletişim</a></li>
                 <li><a class="vg-dd__link" href="/calisan/giris.html">Çalışan Girişi</a></li>
               </ul>
@@ -173,157 +175,172 @@
 
       <div class="section__header reveal">
         <span class="section__badge">Saha Çalışmalarımız</span>
-        <h2 class="section__title">Gerçekleştirdiğimiz Çalışmalar</h2>
+        <h2 class="section__title" id="projectListTitle">Gerçekleştirdiğimiz Çalışmalar</h2>
         <p class="section__desc">
           Endüstriyel tesislerde ve ticari yapılarda yaptığımız saha çalışmalarından örnekler.
         </p>
       </div>
 
-      <div class="projects__grid" role="region" aria-label="Gerçekleştirdiğimiz çalışmalar">
+      <div class="vgp-controls" id="projectFilters" hidden>
+        <div class="vgp-search"><label for="projectSearch">Proje arayın</label><div class="vgp-search__row"><input type="search" id="projectSearch" placeholder="Trafo, pano, kablo..." autocomplete="off" maxlength="80" aria-controls="projectGallery"><button type="button" id="projectClear" hidden>Aramayı temizle</button></div></div>
+        <fieldset class="vgp-categories"><legend>Çalışma alanı</legend><div><button type="button" data-vgp-filter="all" aria-pressed="true" aria-controls="projectGallery">Tümü <span>(9)</span></button><button type="button" data-vgp-filter="elektrik" aria-pressed="false" aria-controls="projectGallery">Elektrik <span>(3)</span></button><button type="button" data-vgp-filter="trafo" aria-pressed="false" aria-controls="projectGallery">Trafo ve OG <span>(4)</span></button><button type="button" data-vgp-filter="enerji" aria-pressed="false" aria-controls="projectGallery">Enerji kalitesi <span>(2)</span></button><button type="button" data-vgp-filter="egitim" aria-pressed="false" aria-controls="projectGallery">Teknik eğitim <span>(1)</span></button></div></fieldset>
+      </div>
+      <div class="vgp-resultbar"><p id="projectResultCount" role="status" aria-live="polite" aria-atomic="true">9 saha çalışması gösteriliyor.</p><button type="button" id="projectReset" hidden>Tümünü göster</button></div>
+      <div class="vgp-empty" id="projectEmpty" hidden><h3>Bu aramada çalışma bulunamadı.</h3><p>Başka bir sözcük deneyin veya “Tümünü göster” ile filtreleri temizleyin.</p></div>
+      <div class="vgp-grid" id="projectGallery" role="region" aria-labelledby="projectListTitle">
 
-        <div class="project-card project-card--overlay reveal" data-delay="0">
-          <img src="public/opt/panokurulumuverevizyonu-640.webp" srcset="public/opt/panokurulumuverevizyonu-640.webp 640w, public/opt/panokurulumuverevizyonu-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1200" alt="Elektrik Pano Kurulumu ve Revizyonu" loading="lazy" decoding="async">
+        <article class="project-card project-card--overlay vgp-card" id="proje-pano-kurulumu-revizyonu" data-vgp-category="elektrik" aria-labelledby="proje-pano-kurulumu-revizyonu-title">
+          <img src="public/opt/panokurulumuverevizyonu-640.webp" srcset="public/opt/panokurulumuverevizyonu-640.webp 640w, public/opt/panokurulumuverevizyonu-960.webp 960w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 44vw, 29vw" width="960" height="1200" alt="Elektrik Pano Kurulumu ve Revizyonu" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Elektrik</span>
               <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
             </div>
-            <h3 class="project-card__title">Pano Kurulumu &amp; Revizyonu</h3>
+            <h3 class="project-card__title" id="proje-pano-kurulumu-revizyonu-title">Pano Kurulumu &amp; Revizyonu</h3>
             <p class="project-card__desc">Endüstriyel tesiste komple elektrik pano kurulumu, devreye alma ve enerji kalitesi raporlaması.</p>
             <div class="project-card__meta">
               <span><i class="fas fa-industry" aria-hidden="true"></i> Endüstriyel Tesis</span>
               <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
             </div>
+            <div class="vgp-card__actions"><a href="/hizmetler/elektrik-pano-imalati.html" aria-label="Pano Kurulumu &amp; Revizyonu için ilgili hizmeti inceleyin">İlgili hizmet <span aria-hidden="true">↗</span></a><a href="/iletisim.html?hizmet=elektrik-pano-imalati#iletisim" data-subject="elektrik" data-prefill="Pano Kurulumu &amp; Revizyonu benzeri bir çalışma için teklif talep ediyoruz. Tesisimiz ve ihtiyacımız: " aria-label="Pano Kurulumu &amp; Revizyonu benzeri bir çalışma için teklif isteyin">Benzer proje isteyin <span aria-hidden="true">↗</span></a></div>
           </div>
-        </div>
+        </article>
 
-        <div class="project-card project-card--overlay reveal" data-delay="1">
-          <img src="public/opt/acil-cikis-levhasi-montaji-640.webp" srcset="public/opt/acil-cikis-levhasi-montaji-640.webp 640w, public/opt/acil-cikis-levhasi-montaji-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="VoltGuard ekibinin endüstriyel tesiste acil çıkış levhası montajı" loading="lazy" decoding="async">
+        <article class="project-card project-card--overlay vgp-card" id="proje-acil-cikis-levhasi-montaji" data-vgp-category="elektrik" aria-labelledby="proje-acil-cikis-levhasi-montaji-title">
+          <img src="public/opt/acil-cikis-levhasi-montaji-640.webp" srcset="public/opt/acil-cikis-levhasi-montaji-640.webp 640w, public/opt/acil-cikis-levhasi-montaji-960.webp 960w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 44vw, 29vw" width="960" height="1280" alt="VoltGuard ekibinin endüstriyel tesiste acil çıkış levhası montajı" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Elektrik Güvenliği</span>
               <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2026</span>
             </div>
-            <h3 class="project-card__title">Acil Çıkış Levhası Montajı</h3>
+            <h3 class="project-card__title" id="proje-acil-cikis-levhasi-montaji-title">Acil Çıkış Levhası Montajı</h3>
             <p class="project-card__desc">Endüstriyel tesis için acil çıkış yönlendirmesi ve elektrik bağlantılarının montajını tamamladık.</p>
             <div class="project-card__meta">
               <span><i class="fas fa-industry" aria-hidden="true"></i> Endüstriyel Tesis</span>
               <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
             </div>
+            <div class="vgp-card__actions"><a href="/hizmetler/elektrik-taahhut.html" aria-label="Acil Çıkış Levhası Montajı için ilgili hizmeti inceleyin">İlgili hizmet <span aria-hidden="true">↗</span></a><a href="/iletisim.html?hizmet=elektrik-taahhut#iletisim" data-subject="elektrik" data-prefill="Acil Çıkış Levhası Montajı benzeri bir çalışma için teklif talep ediyoruz. Tesisimiz ve ihtiyacımız: " aria-label="Acil Çıkış Levhası Montajı benzeri bir çalışma için teklif isteyin">Benzer proje isteyin <span aria-hidden="true">↗</span></a></div>
           </div>
-        </div>
+        </article>
 
-        <div class="project-card project-card--overlay reveal" data-delay="1">
-          <img src="public/opt/Trafoolcum-640.webp" srcset="public/opt/Trafoolcum-640.webp 640w, public/opt/Trafoolcum-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="Trafo Ölçüm ve Enerji Kalitesi Analizi" loading="lazy" decoding="async">
+        <article class="project-card project-card--overlay vgp-card" id="proje-trafo-olcum-enerji-analizi" data-vgp-category="trafo enerji" aria-labelledby="proje-trafo-olcum-enerji-analizi-title">
+          <img src="public/opt/Trafoolcum-640.webp" srcset="public/opt/Trafoolcum-640.webp 640w, public/opt/Trafoolcum-960.webp 960w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 44vw, 29vw" width="960" height="1280" alt="Trafo Ölçüm ve Enerji Kalitesi Analizi" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Enerji Kalitesi</span>
               <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
             </div>
-            <h3 class="project-card__title">Trafo Ölçüm &amp; Enerji Analizi</h3>
+            <h3 class="project-card__title" id="proje-trafo-olcum-enerji-analizi-title">Trafo Ölçüm &amp; Enerji Analizi</h3>
             <p class="project-card__desc">Periyodik trafo ölçümü ve enerji kalitesi kaydı; bulgular raporla teslim edildi.</p>
             <div class="project-card__meta">
               <span><i class="fas fa-bolt" aria-hidden="true"></i> Enerji Sektörü</span>
               <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
             </div>
+            <div class="vgp-card__actions"><a href="/hizmetler/enerji-kalitesi-olcumu.html" aria-label="Trafo Ölçüm &amp; Enerji Analizi için ilgili hizmeti inceleyin">İlgili hizmet <span aria-hidden="true">↗</span></a><a href="/iletisim.html?hizmet=enerji-kalitesi-olcumu#iletisim" data-subject="elektrik" data-prefill="Trafo Ölçüm &amp; Enerji Analizi benzeri bir çalışma için teklif talep ediyoruz. Tesisimiz ve ihtiyacımız: " aria-label="Trafo Ölçüm &amp; Enerji Analizi benzeri bir çalışma için teklif isteyin">Benzer proje isteyin <span aria-hidden="true">↗</span></a></div>
           </div>
-        </div>
+        </article>
 
-        <div class="project-card project-card--overlay reveal" data-delay="2">
-          <img src="public/opt/HarmonikFiltreliKompanzasyon-640.webp" srcset="public/opt/HarmonikFiltreliKompanzasyon-640.webp 640w, public/opt/HarmonikFiltreliKompanzasyon-800.webp 800w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="800" height="1067" alt="Harmonik Filtreli Kompanzasyon" loading="lazy" decoding="async">
+        <article class="project-card project-card--overlay vgp-card" id="proje-harmonik-filtreli-kompanzasyon" data-vgp-category="enerji" aria-labelledby="proje-harmonik-filtreli-kompanzasyon-title">
+          <img src="public/opt/HarmonikFiltreliKompanzasyon-640.webp" srcset="public/opt/HarmonikFiltreliKompanzasyon-640.webp 640w, public/opt/HarmonikFiltreliKompanzasyon-800.webp 800w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 44vw, 29vw" width="800" height="1067" alt="Harmonik Filtreli Kompanzasyon" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Kompanzasyon</span>
               <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2024</span>
             </div>
-            <h3 class="project-card__title">Harmonik Filtreli Kompanzasyon</h3>
+            <h3 class="project-card__title" id="proje-harmonik-filtreli-kompanzasyon-title">Harmonik Filtreli Kompanzasyon</h3>
             <p class="project-card__desc">Harmonik analizi, filtreleme çözümü ve güç faktörü düzeltme sistemi tasarımı ile kurulumu.</p>
             <div class="project-card__meta">
               <span><i class="fas fa-industry" aria-hidden="true"></i> Üretim Tesisi</span>
               <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
             </div>
+            <div class="vgp-card__actions"><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html" aria-label="Harmonik Filtreli Kompanzasyon için ilgili hizmeti inceleyin">İlgili hizmet <span aria-hidden="true">↗</span></a><a href="/iletisim.html?hizmet=harmonik-filtreli-kompanzasyon#iletisim" data-subject="elektrik" data-prefill="Harmonik Filtreli Kompanzasyon benzeri bir çalışma için teklif talep ediyoruz. Tesisimiz ve ihtiyacımız: " aria-label="Harmonik Filtreli Kompanzasyon benzeri bir çalışma için teklif isteyin">Benzer proje isteyin <span aria-hidden="true">↗</span></a></div>
           </div>
-        </div>
+        </article>
 
-        <div class="project-card project-card--overlay reveal" data-delay="0">
-          <img src="public/opt/TrafoBakimYuksekGerilim-640.webp" srcset="public/opt/TrafoBakimYuksekGerilim-640.webp 640w, public/opt/TrafoBakimYuksekGerilim-864.webp 864w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="864" height="1920" alt="Trafo Bakımı – Yüksek Gerilim" loading="lazy" decoding="async">
+        <article class="project-card project-card--overlay vgp-card" id="proje-trafo-bakimi-yuksek-gerilim" data-vgp-category="trafo" aria-labelledby="proje-trafo-bakimi-yuksek-gerilim-title">
+          <img src="public/opt/TrafoBakimYuksekGerilim-640.webp" srcset="public/opt/TrafoBakimYuksekGerilim-640.webp 640w, public/opt/TrafoBakimYuksekGerilim-864.webp 864w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 44vw, 29vw" width="864" height="1920" alt="Trafo Bakımı – Yüksek Gerilim" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Yüksek Gerilim</span>
               <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2024</span>
             </div>
-            <h3 class="project-card__title">Trafo Bakımı &amp; Yüksek Gerilim</h3>
+            <h3 class="project-card__title" id="proje-trafo-bakimi-yuksek-gerilim-title">Trafo Bakımı &amp; Yüksek Gerilim</h3>
             <p class="project-card__desc">Yüksek gerilim trafo periyodik bakımı, kontrol ve güvenlik testleri çalışması.</p>
             <div class="project-card__meta">
               <span><i class="fas fa-bolt" aria-hidden="true"></i> Enerji Altyapısı</span>
               <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
             </div>
+            <div class="vgp-card__actions"><a href="/hizmetler/trafo-bakimi.html" aria-label="Trafo Bakımı &amp; Yüksek Gerilim için ilgili hizmeti inceleyin">İlgili hizmet <span aria-hidden="true">↗</span></a><a href="/iletisim.html?hizmet=trafo-bakimi#iletisim" data-subject="elektrik" data-prefill="Trafo Bakımı &amp; Yüksek Gerilim benzeri bir çalışma için teklif talep ediyoruz. Tesisimiz ve ihtiyacımız: " aria-label="Trafo Bakımı &amp; Yüksek Gerilim benzeri bir çalışma için teklif isteyin">Benzer proje isteyin <span aria-hidden="true">↗</span></a></div>
           </div>
-        </div>
+        </article>
 
-        <div class="project-card project-card--overlay reveal" data-delay="2">
-          <img src="public/opt/EgitimSetleri-640.webp" srcset="public/opt/EgitimSetleri-640.webp 640w, public/opt/EgitimSetleri-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="716" alt="Eğitim Setleri – Teknik Eğitim" loading="lazy" decoding="async">
+        <article class="project-card project-card--overlay vgp-card" id="proje-endustriyel-egitim-sistemleri" data-vgp-category="egitim" aria-labelledby="proje-endustriyel-egitim-sistemleri-title">
+          <img src="public/opt/EgitimSetleri-640.webp" srcset="public/opt/EgitimSetleri-640.webp 640w, public/opt/EgitimSetleri-960.webp 960w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 44vw, 29vw" width="960" height="716" alt="Eğitim Setleri – Teknik Eğitim" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Teknik Eğitim</span>
               <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
             </div>
-            <h3 class="project-card__title">Endüstriyel Eğitim Sistemleri</h3>
+            <h3 class="project-card__title" id="proje-endustriyel-egitim-sistemleri-title">Endüstriyel Eğitim Sistemleri</h3>
             <p class="project-card__desc">PLC, otomasyon ve elektrik konularında uygulamalı teknik eğitim setleri tasarımı ve kurulumu.</p>
             <div class="project-card__meta">
               <span><i class="fas fa-graduation-cap" aria-hidden="true"></i> Eğitim</span>
               <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
             </div>
+            <div class="vgp-card__actions"><a href="/hakkimizda.html#hakkimizda" aria-label="Endüstriyel Eğitim Sistemleri için çalışma kapsamımızı inceleyin">Çalışma kapsamımız <span aria-hidden="true">↗</span></a><a href="/iletisim.html#iletisim" data-subject="mekanik" data-prefill="Endüstriyel Eğitim Sistemleri benzeri bir çalışma için teklif talep ediyoruz. Tesisimiz ve ihtiyacımız: " aria-label="Endüstriyel Eğitim Sistemleri benzeri bir çalışma için teklif isteyin">Benzer proje isteyin <span aria-hidden="true">↗</span></a></div>
           </div>
-        </div>
+        </article>
 
-        <div class="project-card project-card--overlay reveal" data-delay="0">
-          <img src="public/opt/trafo-kiosk-vinc-montaji-640.webp" srcset="public/opt/trafo-kiosk-vinc-montaji-640.webp 640w, public/opt/trafo-kiosk-vinc-montaji-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="Trafo Kiosk Vinç ile Montajı" loading="lazy" decoding="async">
+        <article class="project-card project-card--overlay vgp-card" id="proje-trafo-kiosk-montaji" data-vgp-category="trafo" aria-labelledby="proje-trafo-kiosk-montaji-title">
+          <img src="public/opt/trafo-kiosk-vinc-montaji-640.webp" srcset="public/opt/trafo-kiosk-vinc-montaji-640.webp 640w, public/opt/trafo-kiosk-vinc-montaji-960.webp 960w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 44vw, 29vw" width="960" height="1280" alt="Trafo Kiosk Vinç ile Montajı" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Trafo</span>
               <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
             </div>
-            <h3 class="project-card__title">Trafo Kiosk Montajı</h3>
+            <h3 class="project-card__title" id="proje-trafo-kiosk-montaji-title">Trafo Kiosk Montajı</h3>
             <p class="project-card__desc">Prefabrik trafo kiosk ünitesinin vinçle taşınması ve saha yerleşimi; temel bağlantı ve kabul öncesi hazırlık.</p>
             <div class="project-card__meta">
               <span><i class="fas fa-tower-broadcast" aria-hidden="true"></i> OG Tesisi</span>
               <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
             </div>
+            <div class="vgp-card__actions"><a href="/hizmetler/trafo-merkezi-kurulumu.html" aria-label="Trafo Kiosk Montajı için ilgili hizmeti inceleyin">İlgili hizmet <span aria-hidden="true">↗</span></a><a href="/iletisim.html?hizmet=trafo-merkezi-kurulumu#iletisim" data-subject="elektrik" data-prefill="Trafo Kiosk Montajı benzeri bir çalışma için teklif talep ediyoruz. Tesisimiz ve ihtiyacımız: " aria-label="Trafo Kiosk Montajı benzeri bir çalışma için teklif isteyin">Benzer proje isteyin <span aria-hidden="true">↗</span></a></div>
           </div>
-        </div>
+        </article>
 
-        <div class="project-card project-card--overlay reveal" data-delay="1">
-          <img src="public/opt/trafo-astor-kurulumu-640.webp" srcset="public/opt/trafo-astor-kurulumu-640.webp 640w, public/opt/trafo-astor-kurulumu-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1279" alt="Yağlı Tip Güç Trafosu Kurulumu" loading="lazy" decoding="async">
+        <article class="project-card project-card--overlay vgp-card" id="proje-guc-trafosu-devreye-alma" data-vgp-category="trafo" aria-labelledby="proje-guc-trafosu-devreye-alma-title">
+          <img src="public/opt/trafo-astor-kurulumu-640.webp" srcset="public/opt/trafo-astor-kurulumu-640.webp 640w, public/opt/trafo-astor-kurulumu-960.webp 960w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 44vw, 29vw" width="960" height="1279" alt="Yağlı Tip Güç Trafosu Kurulumu" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Trafo</span>
               <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
             </div>
-            <h3 class="project-card__title">Güç Trafosu Devreye Alma</h3>
+            <h3 class="project-card__title" id="proje-guc-trafosu-devreye-alma-title">Güç Trafosu Devreye Alma</h3>
             <p class="project-card__desc">Yağlı tip güç trafosunun OG bağlantıları, güvenlik işaretlemesi ve devreye alma öncesi kontrolleri.</p>
             <div class="project-card__meta">
               <span><i class="fas fa-plug" aria-hidden="true"></i> Trafo İşletmesi</span>
               <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
             </div>
+            <div class="vgp-card__actions"><a href="/hizmetler/trafo-merkezi-kurulumu.html" aria-label="Güç Trafosu Devreye Alma için ilgili hizmeti inceleyin">İlgili hizmet <span aria-hidden="true">↗</span></a><a href="/iletisim.html?hizmet=trafo-merkezi-kurulumu#iletisim" data-subject="elektrik" data-prefill="Güç Trafosu Devreye Alma benzeri bir çalışma için teklif talep ediyoruz. Tesisimiz ve ihtiyacımız: " aria-label="Güç Trafosu Devreye Alma benzeri bir çalışma için teklif isteyin">Benzer proje isteyin <span aria-hidden="true">↗</span></a></div>
           </div>
-        </div>
+        </article>
 
-        <div class="project-card project-card--overlay reveal" data-delay="2">
-          <img src="public/opt/titiz-duzenli-kablo-tavasi-640.webp" srcset="public/opt/titiz-duzenli-kablo-tavasi-640.webp 640w, public/opt/titiz-duzenli-kablo-tavasi-960.webp 960w" sizes="(max-width: 600px) 80vw, (max-width: 1023px) 74vw, 372px" width="960" height="1280" alt="Renk Kodlu Düzenli Kablo Tavası Uygulaması" loading="lazy" decoding="async">
+        <article class="project-card project-card--overlay vgp-card" id="proje-kablo-tavasi-duzenli-kablolama" data-vgp-category="elektrik" aria-labelledby="proje-kablo-tavasi-duzenli-kablolama-title">
+          <img src="public/opt/titiz-duzenli-kablo-tavasi-640.webp" srcset="public/opt/titiz-duzenli-kablo-tavasi-640.webp 640w, public/opt/titiz-duzenli-kablo-tavasi-960.webp 960w" sizes="(max-width: 600px) 92vw, (max-width: 1100px) 44vw, 29vw" width="960" height="1280" alt="Renk Kodlu Düzenli Kablo Tavası Uygulaması" loading="lazy" decoding="async">
           <div class="project-card__overlay-content">
             <div class="project-card__tags">
               <span class="project-card__category">Elektrik</span>
               <span class="project-card__year"><i class="fas fa-calendar-alt" aria-hidden="true"></i> 2025</span>
             </div>
-            <h3 class="project-card__title">Kablo Tavası ve Düzenli Kablolama</h3>
+            <h3 class="project-card__title" id="proje-kablo-tavasi-duzenli-kablolama-title">Kablo Tavası ve Düzenli Kablolama</h3>
             <p class="project-card__desc">Renk kodlu, etiketli ve düzenli kablo tavası uygulaması ile bakımı kolay, izlenebilir bir kablolama altyapısı.</p>
             <div class="project-card__meta">
               <span><i class="fas fa-ruler-combined" aria-hidden="true"></i> İşçilik Kalitesi</span>
               <span><i class="fas fa-check-circle" aria-hidden="true"></i> Tamamlandı</span>
             </div>
+            <div class="vgp-card__actions"><a href="/hizmetler/elektrik-taahhut.html" aria-label="Kablo Tavası ve Düzenli Kablolama için ilgili hizmeti inceleyin">İlgili hizmet <span aria-hidden="true">↗</span></a><a href="/iletisim.html?hizmet=elektrik-taahhut#iletisim" data-subject="elektrik" data-prefill="Kablo Tavası ve Düzenli Kablolama benzeri bir çalışma için teklif talep ediyoruz. Tesisimiz ve ihtiyacımız: " aria-label="Kablo Tavası ve Düzenli Kablolama benzeri bir çalışma için teklif isteyin">Benzer proje isteyin <span aria-hidden="true">↗</span></a></div>
           </div>
-        </div>
+        </article>
 
       </div>
 
@@ -407,6 +424,7 @@
               <li><a href="/projeler.html">Projeler ve Referanslar</a></li>
               <li><a href="/haberler.html">Sahadan Haberler</a></li>
               <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+                <li><a href="/dokumanlar.html">Belgeler ve İndirmeler</a></li>
               <li><a href="/iletisim.html">İletişim ve Teklif</a></li>
             </ul>
           </div>
@@ -474,6 +492,7 @@
 
 
 
+  <script src="/js/projects.js?v=1f60554d548b" defer></script>
   <script src="/js/vg-quote.js?v=f22d85594f5a" defer></script>
   <script src="/js/main.js?v=583a43f97fb6" defer></script>
   <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>

@@ -487,3 +487,15 @@ html { scroll-padding-bottom: 24px; }
 
 @media (prefers-reduced-motion: reduce) { .interior-page .reveal, .interior-page .reveal-left, .interior-page .reveal-right, .interior-page .reveal-scale { opacity: 1; transform: none; } .interior-page .process__timeline::after, .interior-page .section__header .section__title::after { transform: none; transition: none; } .interior-page .process__step-icon { animation: none !important; } }
 @media (max-width: 560px) { .interior-page--contact .contact__form-wrapper, .interior-page--contact .contact__info { padding: 1.25rem; } }
+
+/* Visible corporate identity uses the same existing catalogue and site facts. */
+.interior-corporate{background:var(--clr-bg-gray);scroll-margin-top:calc(var(--vg-header-h) + 16px)}
+.interior-company-data{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0;border:1px solid var(--clr-border);border-radius:12px;overflow:hidden;background:var(--th-surface)}
+.interior-company-data>div{min-width:0;padding:22px 26px;border-bottom:1px solid var(--clr-border)}
+.interior-company-data>div:nth-last-child(-n+2){border-bottom:0}
+.interior-company-data__wide{grid-column:1/-1}
+.interior-company-data dt{margin:0 0 8px;color:var(--clr-text-muted);font-size:.75rem;font-weight:550}
+.interior-company-data dd{margin:0;color:var(--clr-text);font-size:.93rem;line-height:1.85;overflow-wrap:anywhere}
+.interior-company-data a{color:var(--clr-text);text-underline-offset:4px}
+.interior-company-links{display:flex;flex-wrap:wrap;gap:12px 30px;margin:22px 0 0}
+@media(max-width:560px){.interior-company-data{grid-template-columns:1fr}.interior-company-data>div{padding:19px 20px}.interior-company-data>div:nth-last-child(2){border-bottom:1px solid var(--clr-border)}.interior-company-data dd{font-size:.87rem}.interior-company-links .interior-text-link{font-size:.8rem}}
