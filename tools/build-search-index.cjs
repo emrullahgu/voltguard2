@@ -79,7 +79,7 @@ function build() {
 const out = build();
 const file = path.join(root, OUT);
 if (process.argv.includes('--check')) {
-  const cur = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+  const cur = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n') : '';
   if (cur !== out) { console.error(OUT + ' güncel değil: node tools/build-search-index.cjs'); process.exit(1); }
   console.log(OUT + ' güncel');
 } else {

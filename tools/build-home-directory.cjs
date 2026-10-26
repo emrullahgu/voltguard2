@@ -179,7 +179,7 @@ ${c.entries.map(e=>`        <li data-directory-entry data-directory-kind="${esc(
 ${END}`;
 }
 function updateHome(check=false) {
-  const file = path.join(ROOT,'index.html'), current=fs.readFileSync(file,'utf8');
+  const file = path.join(ROOT,'index.html'), current=fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n');
   if (!current.includes(START)||!current.includes(END)) throw Error('Homepage directory markers are missing');
   const entries=buildCatalogue(), block=renderDirectory(entries);
   const next=current.replace(/<!--vg:directory-->[\s\S]*?<!--\/vg:directory-->/,block);
