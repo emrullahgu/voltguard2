@@ -2,6 +2,9 @@
 /public/voltgame/** text=auto eol=lf
 /tools/voltgame/** text=auto eol=lf
 
+# Content-hashed company bundles must retain their emitted bytes on Windows too.
+/calisan/uygulama/assets/** text=auto eol=lf
+
 # Canonical distributed license bytes must match on Windows and Linux.
 /tools/engineering/src/vendor/power-electricpy-LICENSE.txt text eol=lf
 /tools/engineering/src/vendor/power-pypsa-LICENSE.txt text eol=lf
