@@ -202,7 +202,7 @@ function build() {
   fs.mkdirSync(path.join(host, 'css'), { recursive: true });
   fs.mkdirSync(path.join(host, 'js'), { recursive: true });
   fs.mkdirSync(path.join(host, 'public'), { recursive: true });
-  fs.copyFileSync(path.join(project, 'public/voltguard-logo.webp'), path.join(host, 'public/voltguard-logo.webp'));
+  fs.copyFileSync(path.join(project, 'public/voltguard-logo-transparent.webp'), path.join(host, 'public/voltguard-logo-transparent.webp'));
   for (const file of ['fonts.css', 'fa-subset.css', 'vg-shell.css'])
     fs.copyFileSync(path.join(project, 'css', file), path.join(host, 'css', file));
   fs.copyFileSync(path.join(project, 'js/vg-shell.js'), path.join(host, 'js/vg-shell.js'));

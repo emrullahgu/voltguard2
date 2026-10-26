@@ -11,7 +11,7 @@ function rewriteReference(reference,entryName,navigation=false){
   // These main-site assets are copied into the integrated staging directory by
   // the host builder and included by walk() with the rest of the public library.
   if(/^\/(?:css|js|fonts)\//.test(pathname))target='assets/host'+pathname;
-  else if(pathname==='/public/voltguard-logo.webp')target='assets/host'+pathname;
+  else if(pathname==='/public/voltguard-logo-transparent.webp')target='assets/host'+pathname;
   else if(/^\/araclar(?:\/|$)/.test(pathname)){
     target=pathname.replace(/^\/araclar\/?/,'');
     if(!target||target.endsWith('/'))target+='index.html';
