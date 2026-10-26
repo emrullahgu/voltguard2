@@ -168,20 +168,21 @@
     {
       "id": "VG06",
       "priority": "P2",
-      "title": "Güncel mesleki yetki ve kalibrasyon kanıtları",
-      "status": "needs_source_documents",
+      "title": "Mesleki yetki ve kalibrasyon belgelerinin paylaşım politikası",
+      "status": "complete",
       "basis": "Senkron, Progen ve BES belge sunumu",
-      "required": [
-        "Yayımlanabilir güncel SMM/YG veya diğer gerçek yetki belgeleri",
-        "Yayımlanacak cihazların doğrulanmış model/envanter ve geçerli kalibrasyon belgeleri"
-      ],
+      "resolution": "not_published_privacy",
       "acceptance": [
-        "Yalnız gerçek ve güncel belgeler yayımlanır",
-        "Kişisel bilgiler korunur",
+        "Mesleki yetki ve kalibrasyon belgelerinin kişisel verilerin korunması gözetilerek kamuya açık yayımlanmadığı belirtilir",
+        "Belge bekleniyor ifadesi veya belgelerin doğrulandığına ilişkin iddia kullanılmaz",
         "Akademik katılım belgeleriyle karıştırılmaz"
       ],
-      "files": [],
-      "userConfirmation": "Kullanıcı 26 Ekim 2026 tarihinde güncel belgelerin proje klasöründe bulunmadığını bildirdi."
+      "files": [
+        "dokumanlar.html",
+        "hakkimizda.html"
+      ],
+      "userConfirmation": "Kullanıcı belgelerin proje klasöründe bulunmadığını bildirdi; maddenin beklemede bırakılmamasını ve kişisel verilerin korunması nedeniyle kamuya açık yayımlanmadığı notuyla kapatılmasını istedi.",
+      "verification": "Belge paylaşım notu Belgeler ve İndirmeler ile Hakkımızda sayfalarına eklendi; mevcut akademik belgeler kendi türleriyle sunulmaya devam ediyor."
     },
     {
       "id": "VG07",
