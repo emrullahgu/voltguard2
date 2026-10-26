@@ -1398,6 +1398,7 @@ export default function BordroTakip() {
     const isTaksitli = (expense.installment_total || 1) > 1;
     const currentTaksit = expense.installment_current || 1;
     const totalTaksit = expense.installment_total || 1;
+    const installmentAmount = monthlyAdvanceAmount(expense, currentYear, currentMonth);
     
     
     
@@ -1407,9 +1408,9 @@ export default function BordroTakip() {
 
 Bu kayıt taksitli bir ${expense.type} kaydıdır:
 ━━━━━━━━━━━━━━━━━━━━━
-💰 Toplam Tutar: ${formatCurrency(expense.amount * totalTaksit)}
+💰 Toplam Tutar: ${formatCurrency(expense.amount)}
 📊 Taksit Planı: ${totalTaksit} ay
-🔢 Şu anki ay: ${currentTaksit}/${totalTaksit} (${formatCurrency(expense.amount)}/ay)
+🔢 Şu anki ay: ${currentTaksit}/${totalTaksit} (bu dönem ${formatCurrency(installmentAmount)})
 📝 Açıklama: ${expense.description || '-'}
 ━━━━━━━━━━━━━━━━━━━━━
 
@@ -1429,7 +1430,7 @@ TÜM TAKSİT PLANINI silmek istiyor musunuz?
     
     const confirmMessage = `⚠️ Bu kaydı silmek istediğinizden EMİN misiniz?\n\n` +
       `Tür: ${expense.type}\n` +
-      `Tutar: ${isTaksitli ? `${formatCurrency(expense.amount)}/ay (${totalTaksit} ay, Toplam: ${formatCurrency(expense.amount * totalTaksit)})` : formatCurrency(expense.amount)}\n` +
+      `Tutar: ${isTaksitli ? `Bu dönem ${formatCurrency(installmentAmount)} (${totalTaksit} ay, Toplam: ${formatCurrency(expense.amount)})` : formatCurrency(expense.amount)}\n` +
       `Açıklama: ${expense.description}\n\n` +
       (isTaksitli ? `⚠️ TÜM TAKSİT PLANI SİLİNECEK!\n\n` : '') +
       `🔒 Bu işlem GERİ ALINAMAZ!\n\n` +
@@ -1447,7 +1448,7 @@ TÜM TAKSİT PLANINI silmek istiyor musunuz?
     
     // İkinci onay (ekstra güvenlik)
     const finalConfirm = isTaksitli
-      ? `⚠️ SON ONAY\n\nGerçekten ${totalTaksit} aylık taksit planının TAMAMINI silmek istediğinize emin misiniz?\n\nToplam: ${formatCurrency(expense.amount * totalTaksit)}\n\nBu işlem GERİ ALINAMAZ!`
+      ? `⚠️ SON ONAY\n\nGerçekten ${totalTaksit} aylık taksit planının TAMAMINI silmek istediğinize emin misiniz?\n\nToplam: ${formatCurrency(expense.amount)}\n\nBu işlem GERİ ALINAMAZ!`
       : `⚠️ SON ONAY\n\nGerçekten ${formatCurrency(expense.amount)} tutarındaki ${expense.type} kaydını silmek istediğinize emin misiniz?\n\nBu işlem GERİ ALINAMAZ!`;
     
     if (!window.confirm(finalConfirm)) {
@@ -2027,13 +2028,15 @@ TÜM TAKSİT PLANINI silmek istiyor musunuz?
       const employeeIndex=new Map<string,Employee[]>();
       for(const employee of employees){const key=employee.name.trim().toLocaleLowerCase('tr-TR');employeeIndex.set(key,[...(employeeIndex.get(key)||[]),employee]);}
       const prepared=jsonData.map((row:any,index)=>{
-        const name=String(row['İSİM']??row['AD SOYAD']??row['PERSONEL']??'').trim();
+        // Accept the application's own title-case export as well as older uppercase templates.
+        const cells:any=Object.fromEntries(Object.entries(row).map(([key,value])=>[key.trim().toLocaleUpperCase('tr-TR').replace(/\s+/g,' '),value]));
+        const name=String(cells['İSİM']??cells['ISIM']??cells['AD SOYAD']??cells['PERSONEL']??'').trim();
         if(!name)return null;
         const matches=employeeIndex.get(name.toLocaleLowerCase('tr-TR'))||[];
         if(matches.length>1)throw new Error(`${index+2}. satır: Aynı isimde birden fazla personel var. Şirket kaydında isimleri ayırt edip yeniden aktarın.`);
-        const agreed=parseDecimal(row['ANLAŞILAN MAAŞ']??row['NET MAAŞ'],null),official=parseDecimal(row['RESMİ MAAŞ']??row['SGK MAAŞ'],null);
+        const agreed=parseDecimal(cells['ANLAŞILAN MAAŞ']??cells['NET MAAŞ'],null),official=parseDecimal(cells['RESMİ MAAŞ']??cells['SGK MAAŞ'],null);
         if((!matches.length&&(agreed===null||official===null)) || agreed!==null&&agreed<0 || official!==null&&official<0)throw new Error(`${index+2}. satır: Yeni personel için gerçek net ve muhasebe maaş tutarları gereklidir; tutarlar negatif olamaz.`);
-        return {name,tc:String(row['TC KIMLIK NO']??row['TC']??row['TC NO']??'').trim(),agreed,official};
+        return {name,tc:String(cells['TC KİMLİK NO']??cells['TC KIMLIK NO']??cells['TC']??cells['TC NO']??'').trim(),agreed,official};
       }).filter(Boolean);
       if(!prepared.length)throw new Error('İSİM / AD SOYAD / PERSONEL sütununda aktarılacak personel bulunamadı.');
       if(!confirm(`${prepared.length} personel satırı gerçek maaş bilgileriyle aktarılacak.\n\nGÜN / ÇALIŞILAN GÜN toplamından tarih, çalışma saati veya devamsızlık kaydı oluşturulmaz. Puantajı gerçek gün kayıtlarıyla doldurun. Devam edilsin mi?`))return;

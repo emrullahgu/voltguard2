@@ -416,17 +416,17 @@ const App = () => {
     
     // Yeni Veritabanı - Kategorize Edilmi Fiyatlar (%35 İskontolu)
     batteries: {
-      'orbit_51v_100ah_hv': { name: 'ORBiT 51.2 V 100 Ah LiFePO4 Aki-High Voltage-Metal Kasa', price: 920.40, brand: 'ORBiT' },
-      'orbit_51v_50ah_hv': { name: 'ORBiT 51.2 V 050 Ah LiFePO4 Aki-High Voltage-Metal Kasa', price: 651.96, brand: 'ORBiT' },
-      'orbit_51v_100ah_lv': { name: 'ORBiT 51.2 V 100 Ah LiFePO4 Aki-Low Voltage-Ekranli-Metal Kasa', price: 936.00, brand: 'ORBiT' },
-      'orbit_51v_280ah_lv': { name: 'ORBiT 51.2 V 280 Ah LiFePO4 Aki-Low Voltage-Metal Kasa', price: 2373.19, brand: 'ORBiT' },
-      'orbit_48v_100ah_wall': { name: 'ORBiT 48 V 100 Ah LiFePO4 Aki-Ekranli Duvar Tipi', price: 950.72, brand: 'ORBiT' },
-      'orbit_48v_100ah_metal': { name: 'ORBiT 48 V 100 Ah LiFePO4 Aki-Ekranli-Metal Kasa', price: 901.68, brand: 'ORBiT' },
-      'orbit_24v_100ah': { name: 'ORBiT 24 V 100 Ah LiFePO4 Aki-ABS Kasa', price: 479.11, brand: 'ORBiT' },
-      'orbit_24v_210ah': { name: 'ORBiT 24 V 210 Ah LiFePO4 Aki-ABS Kasa', price: 937.47, brand: 'ORBiT' },
-      'orbit_12v_100ah': { name: 'ORBiT 12 V 100 Ah LiFePO4 Aki-ABS Kasa', price: 275.34, brand: 'ORBiT' },
-      'orbit_12v_200ah': { name: 'ORBiT 12 V 200 Ah LiFePO4 Aki-ABS Kasa', price: 479.01, brand: 'ORBiT' },
-      'orbit_12v_420ah': { name: 'ORBiT 12 V 420 Ah LiFePO4 Aki-ABS Kasa', price: 937.47, brand: 'ORBiT' }
+      'orbit_51v_100ah_hv': { name: 'ORBiT 51.2 V 100 Ah LiFePO4 Akü-High Voltage-Metal Kasa', price: 920.40, brand: 'ORBiT' },
+      'orbit_51v_50ah_hv': { name: 'ORBiT 51.2 V 050 Ah LiFePO4 Akü-High Voltage-Metal Kasa', price: 651.96, brand: 'ORBiT' },
+      'orbit_51v_100ah_lv': { name: 'ORBiT 51.2 V 100 Ah LiFePO4 Akü-Low Voltage-Ekranlı-Metal Kasa', price: 936.00, brand: 'ORBiT' },
+      'orbit_51v_280ah_lv': { name: 'ORBiT 51.2 V 280 Ah LiFePO4 Akü-Low Voltage-Metal Kasa', price: 2373.19, brand: 'ORBiT' },
+      'orbit_48v_100ah_wall': { name: 'ORBiT 48 V 100 Ah LiFePO4 Akü-Ekranlı Duvar Tipi', price: 950.72, brand: 'ORBiT' },
+      'orbit_48v_100ah_metal': { name: 'ORBiT 48 V 100 Ah LiFePO4 Akü-Ekranlı-Metal Kasa', price: 901.68, brand: 'ORBiT' },
+      'orbit_24v_100ah': { name: 'ORBiT 24 V 100 Ah LiFePO4 Akü-ABS Kasa', price: 479.11, brand: 'ORBiT' },
+      'orbit_24v_210ah': { name: 'ORBiT 24 V 210 Ah LiFePO4 Akü-ABS Kasa', price: 937.47, brand: 'ORBiT' },
+      'orbit_12v_100ah': { name: 'ORBiT 12 V 100 Ah LiFePO4 Akü-ABS Kasa', price: 275.34, brand: 'ORBiT' },
+      'orbit_12v_200ah': { name: 'ORBiT 12 V 200 Ah LiFePO4 Akü-ABS Kasa', price: 479.01, brand: 'ORBiT' },
+      'orbit_12v_420ah': { name: 'ORBiT 12 V 420 Ah LiFePO4 Akü-ABS Kasa', price: 937.47, brand: 'ORBiT' }
     },
     
     bms: {
@@ -435,48 +435,48 @@ const App = () => {
     },
     
     panels: {
-      'set_600w': { name: 'PV - GüçNEi PANELi- SET SOLAR 600 WP', price: 170.28, brand: 'SET SOLAR' },
-      'set_460w': { name: 'PV - GüçNEi PANELi- SET SOLAR 460 WP', price: 127.51, brand: 'SET SOLAR' }
+      'set_600w': { name: 'PV - GÜNEŞ PANELİ - SET SOLAR 600 WP', price: 170.28, brand: 'SET SOLAR' },
+      'set_460w': { name: 'PV - GÜNEŞ PANELİ - SET SOLAR 460 WP', price: 127.51, brand: 'SET SOLAR' }
     },
     
     inverters: {
       // Hibrit inverterler
-      'deye_5kw_mono': { name: 'DEYE 05 KW MONOFAZE HiBRiT iNVERTER', price: 1296.00, brand: 'DEYE', type: 'hibrit' },
-      'deye_8kw_mono': { name: 'DEYE 08 KW MONOFAZE HiBRiT iNVERTER', price: 2052.00, brand: 'DEYE', type: 'hibrit' },
-      'deye_12kw_tri': { name: 'DEYE 12 KW TRiFAZE HiBRiT iNVERTER', price: 2808.00, brand: 'DEYE', type: 'hibrit' },
-      'deye_20kw_hv': { name: 'DEYE 20 KW HIGH VOLTAGE (HV) TRiFAZE HiBRiT iNVERTER', price: 2976.00, brand: 'DEYE', type: 'hibrit' },
-      'deye_20kw_lv': { name: 'DEYE 20 KW LOW VOLTAGE (LV) TRiFAZE HiBRiT iNVERTER', price: 4170.00, brand: 'DEYE', type: 'hibrit' },
-      'deye_25kw_hv': { name: 'DEYE 25 KW HIGH VOLTAGE (HV) TRiFAZE HiBRiT iNVERTER', price: 3552.00, brand: 'DEYE', type: 'hibrit' },
-      'deye_50kw_hv': { name: 'DEYE 50 KW HIGH VOLTAGE TRiFAZE HiBRiT iNVERTER', price: 7080.00, brand: 'DEYE', type: 'hibrit' },
+      'deye_5kw_mono': { name: 'DEYE 05 KW MONOFAZE HİBRİT İNVERTER', price: 1296.00, brand: 'DEYE', type: 'hibrit' },
+      'deye_8kw_mono': { name: 'DEYE 08 KW MONOFAZE HİBRİT İNVERTER', price: 2052.00, brand: 'DEYE', type: 'hibrit' },
+      'deye_12kw_tri': { name: 'DEYE 12 KW TRİFAZE HİBRİT İNVERTER', price: 2808.00, brand: 'DEYE', type: 'hibrit' },
+      'deye_20kw_hv': { name: 'DEYE 20 KW HIGH VOLTAGE (HV) TRİFAZE HİBRİT İNVERTER', price: 2976.00, brand: 'DEYE', type: 'hibrit' },
+      'deye_20kw_lv': { name: 'DEYE 20 KW LOW VOLTAGE (LV) TRİFAZE HİBRİT İNVERTER', price: 4170.00, brand: 'DEYE', type: 'hibrit' },
+      'deye_25kw_hv': { name: 'DEYE 25 KW HIGH VOLTAGE (HV) TRİFAZE HİBRİT İNVERTER', price: 3552.00, brand: 'DEYE', type: 'hibrit' },
+      'deye_50kw_hv': { name: 'DEYE 50 KW HIGH VOLTAGE TRİFAZE HİBRİT İNVERTER', price: 7080.00, brand: 'DEYE', type: 'hibrit' },
       'deye_80kw': { name: 'Deye 80kW Hibrit inverter', price: 10043.28, brand: 'DEYE', type: 'hibrit' },
-      'srp_6kw_mono': { name: 'SRP 06 KW MONOFAZE HiBRiT iNVERTER-LV', price: 1423.50, brand: 'SRP', type: 'hibrit' },
-      'srp_15kw_tri': { name: 'SRP 15 KW TRiFAZE HiBRiT iNVERTER-LV', price: 3590.34, brand: 'SRP', type: 'hibrit' },
-      'srp_30kw_tri': { name: 'SRP 30 KW TRiFAZE HiBRiT iNVERTER-HV', price: 4952.22, brand: 'SRP', type: 'hibrit' },
+      'srp_6kw_mono': { name: 'SRP 06 KW MONOFAZE HİBRİT İNVERTER-LV', price: 1423.50, brand: 'SRP', type: 'hibrit' },
+      'srp_15kw_tri': { name: 'SRP 15 KW TRİFAZE HİBRİT İNVERTER-LV', price: 3590.34, brand: 'SRP', type: 'hibrit' },
+      'srp_30kw_tri': { name: 'SRP 30 KW TRİFAZE HİBRİT İNVERTER-HV', price: 4952.22, brand: 'SRP', type: 'hibrit' },
       
       // Offgrid inverterler
-      'orbit_6.2kw_parallel': { name: 'ORBiT 6.2 KW TAM SiNiS OFFGRiD iNVERTER-12 PCS PARALLEL', price: 407.99, brand: 'ORBiT', type: 'offgrid' },
-      'orbit_6.2kw_single': { name: 'ORBiT 6.2 KW TAM SiNiS OFFGRiD iNVERTER-NON PARALLEL', price: 364.84, brand: 'ORBiT', type: 'offgrid' },
-      'srp_5kw_mono': { name: 'SRP 05 KW MONOFAZE OFFGRiD iNVERTER-LV', price: 420.95, brand: 'SRP', type: 'offgrid' },
+      'orbit_6.2kw_parallel': { name: 'ORBiT 6.2 KW TAM SİNÜS OFFGRID İNVERTER-12 PCS PARALLEL', price: 407.99, brand: 'ORBiT', type: 'offgrid' },
+      'orbit_6.2kw_single': { name: 'ORBiT 6.2 KW TAM SİNÜS OFFGRID İNVERTER-NON PARALLEL', price: 364.84, brand: 'ORBiT', type: 'offgrid' },
+      'srp_5kw_mono': { name: 'SRP 05 KW MONOFAZE OFFGRID İNVERTER-LV', price: 420.95, brand: 'SRP', type: 'offgrid' },
       
       // Ongrid inverterler
-      'huawei_50ktl': { name: 'HUAWEi 50 KTL iNVERTER', price: 3946.80, brand: 'HUAWEI', type: 'ongrid' }
+      'huawei_50ktl': { name: 'HUAWEI 50 KTL İNVERTER', price: 3946.80, brand: 'HUAWEI', type: 'ongrid' }
     },
     
     cabinets: {
-      'cabinet_5': { name: 'KABiNET-05 GüçZLi', price: 612.60, brand: 'ORBiT' },
-      'cabinet_8': { name: 'KABiNET-08 GüçZLi', price: 634.67, brand: 'ORBiT' },
-      'cabinet_12': { name: 'KABiNET-12 GüçZLi', price: 819.70, brand: 'ORBiT' },
-      'cabinet_16': { name: 'KABiNET-16 GüçZLi', price: 1100.10, brand: 'ORBiT' }
+      'cabinet_5': { name: 'KABİNET-05', price: 612.60, brand: 'ORBiT' },
+      'cabinet_8': { name: 'KABİNET-08', price: 634.67, brand: 'ORBiT' },
+      'cabinet_12': { name: 'KABİNET-12', price: 819.70, brand: 'ORBiT' },
+      'cabinet_16': { name: 'KABİNET-16', price: 1100.10, brand: 'ORBiT' }
     },
     
     cables: {
       'dc_cable': { name: 'KABLO-DC (Metre)', price: 0.78, brand: 'Genel' },
-      'mc4_connector': { name: 'KONNEKTiR-MC4', price: 1.63, brand: 'SCTUBLE' }
+      'mc4_connector': { name: 'KONNEKTÖR-MC4', price: 1.63, brand: 'SCTUBLE' }
     },
     
     accessories: {
-      'pole_positive': { name: 'KUTUP BAiI KONNEKTiRi-POZiTiF', price: 3.51, brand: 'ORBiT' },
-      'pole_negative': { name: 'KUTUP BAiI KONNEKTiRi-NEGATiF', price: 3.51, brand: 'ORBiT' },
+      'pole_positive': { name: 'KUTUP BAŞI KONNEKTÖRÜ-POZİTİF', price: 3.51, brand: 'ORBiT' },
+      'pole_negative': { name: 'KUTUP BAŞI KONNEKTÖRÜ-NEGATİF', price: 3.51, brand: 'ORBiT' },
       'charger_12v': { name: '12V-12A BATTERY CHARGER', price: 31.98, brand: 'ORBiT' },
       'charger_24v': { name: '24V-100A BATTERY CHARGER', price: 520.03, brand: 'Genel' }
     },
@@ -733,12 +733,12 @@ const App = () => {
       { brand: gesDB.panels.set_600w.brand, desc: gesDB.panels.set_600w.name, qty: panelCount, price: gesDB.panels.set_600w.price },
       { brand: gesDB.inverters.deye_12kw_tri.brand, desc: gesDB.inverters.deye_12kw_tri.name, qty: 1, price: gesDB.inverters.deye_12kw_tri.price },
       { brand: gesDB.batteries.orbit_51v_100ah_hv.brand, desc: gesDB.batteries.orbit_51v_100ah_hv.name, qty: 2, price: gesDB.batteries.orbit_51v_100ah_hv.price },
-      { brand: gesDB.cables.dc_cable.brand, desc: gesDB.cables.dc_cable.name + ' (Kirmizi)', qty: 50, price: gesDB.cables.dc_cable.price },
+      { brand: gesDB.cables.dc_cable.brand, desc: gesDB.cables.dc_cable.name + ' (Kırmızı)', qty: 50, price: gesDB.cables.dc_cable.price },
       { brand: gesDB.cables.dc_cable.brand, desc: gesDB.cables.dc_cable.name + ' (Siyah)', qty: 50, price: gesDB.cables.dc_cable.price },
       { brand: gesDB.cables.mc4_connector.brand, desc: gesDB.cables.mc4_connector.name, qty: 10, price: gesDB.cables.mc4_connector.price },
-      { brand: 'ABB', desc: 'Pano & Sigorta Takimi - DC/AC koruma', qty: 1, price: 1250 },
+      { brand: 'ABB', desc: 'Pano & Sigorta Takımı - DC/AC koruma', qty: 1, price: 1250 },
       { brand: 'DEYE', desc: 'Deye Smart Meter + Wi-Fi', qty: 1, price: 103 },
-      { brand: 'Konstriksiyon', desc: 'Aliminyum Alt Yapi Seti', qty: panelCount, price: 25 },
+      { brand: 'Konstrüksiyon', desc: 'Alüminyum Alt Yapı Seti', qty: panelCount, price: 25 },
       { brand: 'Lojistik', desc: 'Nakliye Hizmeti', qty: 1, price: 250 }
     ];
     
@@ -755,7 +755,7 @@ const App = () => {
       { brand: gesDB.cabinets.cabinet_16.brand, desc: gesDB.cabinets.cabinet_16.name, qty: 1, price: gesDB.cabinets.cabinet_16.price },
       { brand: gesDB.cables.mc4_connector.brand, desc: gesDB.cables.mc4_connector.name, qty: 30, price: gesDB.cables.mc4_connector.price },
       { brand: gesDB.cables.dc_cable.brand, desc: gesDB.cables.dc_cable.name, qty: 200, price: gesDB.cables.dc_cable.price },
-      { brand: 'Hizmet', desc: 'Ticari Sistem Montaj ve Mihendislik', qty: 1, price: 2000.00 }
+      { brand: 'Hizmet', desc: 'Ticari Sistem Montajı ve Mühendislik', qty: 1, price: 2000.00 }
     ];
     
     setGesItems(items);
@@ -2065,51 +2065,39 @@ const App = () => {
   };
 
   // --- UI Components ---
+  const printRoot = { proposal: '#printable-paper', ges: '#ges-printable-area', periodic: '#periodic-printable-paper', kesif: '#kesif-printable-paper', kontrol: '#periodic-control-report', osos: '#osos-printable-report', 'haftalik-raporlama': '#haftalik-rapor-printable' }[activeTab];
 
   return (
     <div className="portal-app bg-gray-50 text-gray-800 font-sans" data-portal-module={activeTab}>
       <style>{`
         @media print {
-          @page {
-            margin: 0;
-            size: A4 portrait;
+          @page { margin: 0; size: A4 portrait; }
+          #vg-company-workspace * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .no-print, .no-print-border { display: none !important; border: none !important; }
+          ${printRoot ? `
+          body:has(${printRoot}), body :has(${printRoot}) {
+            display: block !important; position: static !important; overflow: visible !important;
+            width: auto !important; max-width: none !important; height: auto !important;
+            min-height: 0 !important; max-height: none !important; margin: 0 !important;
+            padding: 0 !important; transform: none !important; background: white !important;
           }
-          #vg-company-workspace * {
-            visibility: hidden;
+          body:has(${printRoot}) :not(${printRoot}):not(${printRoot} *):not(:has(${printRoot})) { display: none !important; }
+          ${printRoot}, ${printRoot} * { visibility: visible !important; }
+          ${printRoot} { display: block !important; position: relative !important; width: 210mm !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; background: white; }
+          ${printRoot} > .vg-reference-line { position: absolute; top: 2mm; left: 10mm; margin: 0 !important; }
+          ${printRoot} :is(.pdf-page,.ges-pdf-page,.periodic-pdf-page,.kesif-pdf-page,.haftalik-pdf-page,.print-container) {
+            box-shadow: none !important; margin: 0 !important; width: 210mm !important; max-width: 100% !important;
+            page-break-before: auto !important; page-break-after: always !important; page-break-inside: avoid !important;
           }
-          #printable-paper, #printable-paper * {
-            visibility: visible;
-          }
-          #vg-company-workspace * {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
-          #printable-paper {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            background: white;
-            z-index: 9999;
-          }
-          #printable-paper > div {
-            box-shadow: none !important;
-            margin: 0 !important;
-            max-width: 100% !important;
-            page-break-after: always !important;
-            page-break-inside: avoid !important;
-          }
-          .page-break {
-            page-break-before: always !important;
-            page-break-after: always !important;
-            margin: 0 !important;
-          }
-          .no-print, .no-print-border {
-            display: none !important;
-            border: none !important;
-          }
+          ${printRoot} :is(.pdf-page,.ges-pdf-page,.periodic-pdf-page,.kesif-pdf-page,.haftalik-pdf-page,.print-container):last-child { page-break-after: auto !important; }
+          ${printRoot} table { page-break-inside: auto !important; }
+          ${printRoot} tr { page-break-inside: avoid !important; }
+          #ges-printable-area .ges-pdf-page, #periodic-printable-paper .periodic-pdf-page { padding-bottom: 28mm !important; }
+          #ges-printable-area .ges-pdf-page .flex.justify-end.mt-auto > [class~="w-1/2"] { width: 66.6667% !important; }
+          #periodic-printable-paper .periodic-pdf-page img.h-24 { height: 80px !important; }
+          #periodic-printable-paper .periodic-pdf-page .mb-8 { margin-bottom: 16px !important; }
+          #periodic-printable-paper .flex.justify-between > span:last-child { white-space: nowrap; }
+          ` : ''}
         }
 
         /* PDF Export specific styles */
@@ -2795,7 +2783,7 @@ const App = () => {
                     className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg font-semibold transition flex items-center justify-center"
                   >
                     <Edit3 className="w-5 h-5 mr-2"/>
-                    {gesEditorMode ? '📊 Düzenleme Modundan ik' : '📊 Düzenleme Modu'}
+                    {gesEditorMode ? '📊 Düzenleme Modundan çık' : '📊 Düzenleme Modu'}
                   </button>
                   
                   <button 
@@ -2837,14 +2825,14 @@ const App = () => {
                   <div className="bg-indigo-600 text-white px-4 py-3 rounded-lg flex items-center justify-between">
                     <div className="flex items-center">
                       <Edit3 className="w-5 h-5 mr-2"/>
-                      <span className="font-semibold">Düzenleme Modu Aktif - Metinleri doğrudan dizenleyebilirsiniz</span>
+                      <span className="font-semibold">Düzenleme Modu Aktif - Metinleri doğrudan düzenleyebilirsiniz</span>
                     </div>
                     <button 
                       onClick={toggleGesEditorMode}
                     disabled={!!gesError}
                       className="bg-white text-indigo-600 px-4 py-1 rounded hover:bg-indigo-50 transition"
                     >
-                      Kaydet ve ik
+                      Kaydet ve çık
                     </button>
                   </div>
                   
@@ -2892,7 +2880,7 @@ const App = () => {
                 contentEditable={gesEditorMode}
                 suppressContentEditableWarning={true}
                 className={gesEditorMode ? 'outline-2 outline-dashed outline-indigo-400 w-full' : 'w-full'}
-               onPaste={pasteReportHTML} dangerouslySetInnerHTML={!gesError && gesEditableContent ? {__html:reportHTMLWithReference(gesEditableContent,proposalReferences.ges)} : undefined}>{!gesError && gesEditableContent ? null : <><div className="vg-reference-line" style={{fontSize:"9pt",marginBottom:"8px"}}>Referans: <span data-vg-reference="">{proposalReferences.ges}</span></div>
+               onPaste={pasteReportHTML} dangerouslySetInnerHTML={!gesError && gesEditableContent ? {__html:reportHTMLWithReference(gesEditableContent,proposalReferences.ges)} : undefined}>{!gesError && gesEditableContent ? null : <>
               {(() => {
                 if (gesError) return <p className="p-6 bg-white rounded text-gray-700">Önizlemeyi hazırlamak için formdaki hatayı düzeltin.</p>;
                 const { totals, form: reportForm, items: reportItems } = gesCalculation.value;
@@ -2930,6 +2918,7 @@ const App = () => {
                               <h2 className="text-2xl font-bold text-blue-700">FİYAT TEKLİFİ</h2>
                               <p className="text-blue-600 text-xs mt-1">Güneş Enerjisi Sistemi</p>
                               <p className="text-gray-500 text-xs mt-1">Tarih: {dateObj.toLocaleDateString('tr-TR')}</p>
+                              <p className="text-gray-500 text-xs mt-1">Referans: <span data-vg-reference="">{proposalReferences.ges}</span></p>
                             </div>
                           </div>
 
@@ -2938,7 +2927,7 @@ const App = () => {
                             <div className="mb-4 bg-blue-50 p-4 rounded-lg border border-blue-200">
                               <div className="flex justify-between items-end">
                                 <div>
-                                  <span className="text-xs text-blue-600 uppercase font-semibold">Sayın Yetkili / Miteri</span>
+                                  <span className="text-xs text-blue-600 uppercase font-semibold">Sayın Yetkili / Müşteri</span>
                                   <h3 className="text-lg font-bold text-gray-800">{reportForm.customerName}</h3>
                                   <p className="text-gray-600 text-sm">{reportForm.location}</p>
                                 </div>
@@ -2983,39 +2972,39 @@ const App = () => {
                           {/* özet Hesaplar (Sadece son ürün sayfasinda) */}
                           {isLastItemPage && (
                             <div className="flex justify-end mt-auto mb-8">
-                      <div className="w-1/2">
+                      <div style={{width:'66.6667%'}}>
                         <table className="w-full text-[9pt] border-collapse border border-gray-300">
                           <tbody>
                             <tr className="bg-gray-50">
-                              <td className="border border-gray-300 p-2 font-semibold">Malzeme Toplami:</td>
-                              <td className="border border-gray-300 p-2 text-right font-semibold">{formatMoney(totals.materialTotal)}</td>
+                              <td className="border border-gray-300 p-1 font-semibold">Malzeme Toplami:</td>
+                              <td className="border border-gray-300 p-1 text-right font-semibold">{formatMoney(totals.materialTotal)}</td>
                             </tr>
                             {reportForm.laborRate > 0 && (
                               <tr>
-                                <td className="border border-gray-300 p-2">+ Montaj ve iilik ({reportForm.laborRate}%):</td>
-                                <td className="border border-gray-300 p-2 text-right">{formatMoney(totals.laborCost)}</td>
+                                <td className="border border-gray-300 p-1">+ Montaj ve işçilik ({reportForm.laborRate}%):</td>
+                                <td className="border border-gray-300 p-1 text-right">{formatMoney(totals.laborCost)}</td>
                               </tr>
                             )}
                             {reportForm.transportRate > 0 && (
                               <tr>
-                                <td className="border border-gray-300 p-2">+ Nakliye ve Lojistik ({reportForm.transportRate}%):</td>
-                                <td className="border border-gray-300 p-2 text-right">{formatMoney(totals.transportCost)}</td>
+                                <td className="border border-gray-300 p-1">+ Nakliye ve Lojistik ({reportForm.transportRate}%):</td>
+                                <td className="border border-gray-300 p-1 text-right">{formatMoney(totals.transportCost)}</td>
                               </tr>
                             )}
                             {reportForm.overheadRate > 0 && (
                               <tr>
-                                <td className="border border-gray-300 p-2">+ Mih. Hizmetleri & Teknik Destek ({reportForm.overheadRate}%):</td>
-                                <td className="border border-gray-300 p-2 text-right">{formatMoney(totals.overheadCost)}</td>
+                                <td className="border border-gray-300 p-1">+ Mühendislik Hizmetleri ve Teknik Destek ({reportForm.overheadRate}%):</td>
+                                <td className="border border-gray-300 p-1 text-right">{formatMoney(totals.overheadCost)}</td>
                               </tr>
                             )}
                             <tr className="bg-gray-50">
-                              <td className="border border-gray-300 p-2 font-semibold">Proje Toplam Maliyeti:</td>
-                              <td className="border border-gray-300 p-2 text-right font-semibold">{formatMoney(totals.directCost)}</td>
+                              <td className="border border-gray-300 p-1 font-semibold">Proje Toplam Maliyeti:</td>
+                              <td className="border border-gray-300 p-1 text-right font-semibold">{formatMoney(totals.directCost)}</td>
                             </tr>
                             {reportForm.marginRate > 0 && (
                               <tr className="bg-green-50">
-                                <td className="border border-gray-300 p-2 font-semibold text-green-700">+ Kar marjı ({reportForm.marginRate}%):</td>
-                                <td className="border border-gray-300 p-2 text-right font-semibold text-green-700">{formatMoney(totals.marginAmount)}</td>
+                                <td className="border border-gray-300 p-1 font-semibold text-green-700">+ Kar marjı ({reportForm.marginRate}%):</td>
+                                <td className="border border-gray-300 p-1 text-right font-semibold text-green-700">{formatMoney(totals.marginAmount)}</td>
                               </tr>
                             )}
                             <tr style={{backgroundColor: '#c8f0c8'}}>
@@ -3024,19 +3013,19 @@ const App = () => {
                             </tr>
                             {reportForm.vatRate > 0 && (
                               <tr className="bg-blue-50">
-                                <td className="border border-gray-300 p-2 font-semibold text-blue-700">+ KDV (%{reportForm.vatRate}):</td>
-                                <td className="border border-gray-300 p-2 text-right font-semibold text-blue-700">{formatMoney(totals.vatAmount)}</td>
+                                <td className="border border-gray-300 p-1 font-semibold text-blue-700">+ KDV (%{reportForm.vatRate}):</td>
+                                <td className="border border-gray-300 p-1 text-right font-semibold text-blue-700">{formatMoney(totals.vatAmount)}</td>
                               </tr>
                             )}
-                            <tr className="bg-yellow-600 text-white">
-                              <td className="border border-gray-300 p-3 font-bold text-[11pt]">iDENECEK TUTAR (KDV Dahil):</td>
+                            <tr className="bg-blue-900 text-white">
+                              <td className="border border-gray-300 p-3 font-bold text-[11pt]">ÖDENECEK TUTAR (KDV Dahil):</td>
                               <td className="border border-gray-300 p-3 text-right font-bold text-[11pt]">{formatMoney(totals.finalTotal)}</td>
                             </tr>
                           </tbody>
                         </table>
                         <div className="mt-3 p-2 bg-gray-50 rounded border border-gray-200">
-                          <p className="text-[8pt] text-gray-500 text-center">Toplam idenecek TUTAR TL Karilii</p>
-                          <p className="text-[12pt] font-black text-gray-800 text-center">{formatMoney(totals.tlTotal, '?')}</p>
+                          <p className="text-[8pt] text-gray-500 text-center">Ödenecek tutarın TL karşılığı</p>
+                          <p className="text-[12pt] font-black text-gray-800 text-center">{formatMoney(totals.tlTotal, '₺')}</p>
                         </div>
                       </div>
                             </div>
@@ -3071,6 +3060,7 @@ const App = () => {
                       <div className="text-right">
                         <h2 className="text-xl font-bold text-gray-800">TEKLİF ŞARTLARI</h2>
                         <p className="text-gray-500 text-xs mt-1">Güneş Enerjisi Sistemi</p>
+                        <p className="text-gray-500 text-xs mt-1">Referans: <span data-vg-reference="">{proposalReferences.ges}</span></p>
                       </div>
                     </div>
 
@@ -3079,7 +3069,7 @@ const App = () => {
                       <h3 className="text-[11pt] font-bold text-blue-900 mb-2">Teklif özeti</h3>
                       <div className="grid grid-cols-2 gap-3 text-[9pt]">
                         <div>
-                          <span className="text-gray-600">Miteri:</span>
+                          <span className="text-gray-600">Müşteri:</span>
                           <p className="font-semibold text-gray-800">{reportForm.customerName}</p>
                         </div>
                         <div>
@@ -3099,12 +3089,12 @@ const App = () => {
 
                     {/* Genel Şartlar */}
                     <div className="mb-6">
-                      <h3 className="text-[11pt] font-bold text-gray-800 mb-3 pb-2 border-b-2 border-gray-300 uppercase">Genel Şartlar ve Koiullar</h3>
+                      <h3 className="text-[11pt] font-bold text-gray-800 mb-3 pb-2 border-b-2 border-gray-300 uppercase">Genel Şartlar ve Koşullar</h3>
                       
                       <div className="space-y-4">
                         <div className="bg-gray-50 p-3 rounded">
                           <h4 className="text-[10pt] font-bold text-gray-700 mb-2 flex items-center">
-                            <span className="text-blue-600 mr-2">1.</span> Teklif Geçerlilik Siresi
+                            <span className="text-blue-600 mr-2">1.</span> Teklif Geçerlilik Süresi
                           </h4>
                           <p className="text-[9pt] text-gray-700 pl-5">
                             Bu teklif <strong>30 (otuz) gün</strong> süreyle geçerlidir. Belirtilen süre sonunda fiyatlar döviz kuru ve hammadde değişikliklerine bağlı olarak güncellenecektir.
@@ -3116,11 +3106,11 @@ const App = () => {
                             <span className="text-blue-600 mr-2">2.</span> Kapsam ve Hizmetler
                           </h4>
                           <ul className="list-disc list-inside text-[9pt] text-gray-700 pl-5 space-y-1">
-                            <li>Tüm ekipmanlarin tedariki (panel, inverter, aki, kablo, bailanti malzemeleri)</li>
+                            <li>Tüm ekipmanların tedariki (panel, inverter, akü, kablo, bağlantı malzemeleri)</li>
                             <li>Proje kapsamında gerekli tüm teknik hırdavat ve bağlantı malzemeleri dahildir.</li>
                             <li>Profesyonel montaj ve kurulum hizmetleri</li>
                             <li>Sistem devreye alma ve test işlemleri</li>
-                            <li>Montaj sonrasi sistem eitümi ve kullanim kilavuzu</li>
+                            <li>Montaj sonrası sistem eğitimi ve kullanım kılavuzu</li>
                           </ul>
                         </div>
 
@@ -3129,7 +3119,7 @@ const App = () => {
                             <span className="text-blue-600 mr-2">3.</span> Ekipman Kalitesi ve Belgeler
                           </h4>
                           <p className="text-[9pt] text-gray-700 pl-5">
-                            Tüm ekipmanlar <strong>orijinal, sifir ve CE belgeli</strong> olup, gerekli kalite sertifikalari, test raporlari ve kullanim kilavuzlari ile birlikte teslim edilir. Ekipmanlar uluslararasi kalite standartlarina uygundur.
+                            Tüm ekipmanlar <strong>orijinal, sıfır ve CE belgeli</strong> olup, gerekli kalite sertifikaları, test raporları ve kullanım kılavuzları ile birlikte teslim edilir. Ekipmanlar uluslararası kalite standartlarına uygundur.
                           </p>
                         </div>
 
@@ -3138,7 +3128,7 @@ const App = () => {
                             <span className="text-blue-600 mr-2">4.</span> Garanti ve Servis
                           </h4>
                           <p className="text-[9pt] text-gray-700 pl-5">
-                            Sistem devreye alma sonrasi <strong>1 (bir) yil</strong> iilik garantisi verilmektedir. Ekipman garantileri iretici firma garantileri ierievesindedir (Genellikle paneller 25 yil, inverterler 10 yil, akiler 5-10 yil).
+                            Sistem devreye alma sonrası <strong>1 (bir) yıl</strong> işçilik garantisi verilmektedir. Ekipman garantileri üretici firma garantileri çerçevesindedir (Genellikle paneller 25 yıl, inverterler 10 yıl, aküler 5-10 yıl).
                           </p>
                         </div>
 
@@ -3827,7 +3817,7 @@ const App = () => {
                     className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-bold transition shadow-md flex justify-center items-center gap-2"
                   >
                     <Edit3 className="h-4 w-4"/>
-                    {periodicEditorMode ? 'Düzenleme Modundan ik' : 'Düzenleme Modu'}
+                    {periodicEditorMode ? 'Düzenleme Modundan çık' : 'Düzenleme Modu'}
                   </button>
                   <div className="grid grid-cols-2 gap-3">
                     <button 
@@ -3860,7 +3850,7 @@ const App = () => {
                 <div className="mb-4 bg-indigo-600 text-white p-4 rounded-lg flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Edit3 className="h-5 w-5"/>
-                    <span className="font-bold">Düzenleme Modu Aktif - Metinleri doğrudan dizenleyebilirsiniz</span>
+                    <span className="font-bold">Düzenleme Modu Aktif - Metinleri doğrudan düzenleyebilirsiniz</span>
                   </div>
                   <button 
                     onClick={togglePeriodicEditorMode}
@@ -3917,16 +3907,16 @@ const App = () => {
                   <h4 className="text-sm font-bold text-gray-700 border-b border-gray-200 mb-2 pb-1">1. Tesis Bilgileri</h4>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div className="p-2 bg-gray-50 rounded">
-                      <span className="text-gray-500 block text-xs">Kurulu Trafo Güçci</span>
+                      <span className="text-gray-500 block text-xs">Kurulu Trafo Gücü</span>
                       <span className="font-semibold text-gray-800">{periodicInputs.trafoGucu} kVA</span>
                     </div>
                     <div className="p-2 bg-gray-50 rounded">
                       <span className="text-gray-500 block text-xs">Kapali Alan</span>
-                      <span className="font-semibold text-gray-800">{periodicInputs.yapiAlani} mi</span>
+                      <span className="font-semibold text-gray-800">{periodicInputs.yapiAlani} m²</span>
                     </div>
                     <div className="p-2 bg-gray-50 rounded">
                       <span className="text-gray-500 block text-xs">Tesis Yeri</span>
-                      <span className="font-semibold text-gray-800">{periodicCustomer.city || '[iehir]'}</span>
+                      <span className="font-semibold text-gray-800">{periodicCustomer.city || 'Belirtilmedi'}</span>
                     </div>
                     <div className="p-2 bg-gray-50 rounded">
                       <span className="text-gray-500 block text-xs">Kapsam</span>
@@ -5406,7 +5396,7 @@ const App = () => {
                       className="w-full flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg mb-2 transition"
                     >
                       <Edit3 className="h-4 w-4" />
-                      <span>{editorMode ? '📊 Düzenleme Modundan ik' : '📊 Düzenleme Modu'}</span>
+                      <span>{editorMode ? '📊 Düzenleme Modundan çık' : '📊 Düzenleme Modu'}</span>
                     </button>
                     
                     {/* PDF Export */}
@@ -5520,13 +5510,13 @@ const App = () => {
                   <div className="bg-indigo-600 text-white px-4 py-3 rounded-lg flex items-center justify-between">
                     <div className="flex items-center">
                       <Edit3 className="w-5 h-5 mr-2"/>
-                      <span className="font-semibold">Düzenleme Modu Aktif - Metinleri doğrudan dizenleyebilirsiniz</span>
+                      <span className="font-semibold">Düzenleme Modu Aktif - Metinleri doğrudan düzenleyebilirsiniz</span>
                     </div>
                     <button 
                       onClick={toggleEditorMode}
                       className="bg-white text-indigo-600 px-4 py-1 rounded hover:bg-indigo-50 transition"
                     >
-                      Kaydet ve ik
+                      Kaydet ve çık
                     </button>
                   </div>
                   

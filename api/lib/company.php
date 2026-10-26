@@ -52,7 +52,7 @@ function vg_company_time(?string $previous = null): string {
     return $value;
 }
 function vg_company_user(array $u): array {
-    return vg_staff_public_user($u) + ['companyRole' => $u['role'], 'company' => 'VoltGuard', 'approved' => ($u['status'] ?? 'active') === 'active', 'can_access_bordro' => vg_company_manage($u), 'must_change_password' => ($u['status'] ?? 'active') !== 'active', 'status' => $u['status'] ?? 'active', 'created_at' => $u['createdAt'] ?? null];
+    return vg_staff_public_user($u) + ['companyRole' => $u['role'], 'company' => 'VoltGuard', 'approved' => ($u['status'] ?? 'active') === 'active', 'can_access_bordro' => vg_company_manage($u), 'must_change_password' => empty($u['password']) || empty($u['mfaSecret']), 'status' => $u['status'] ?? 'active', 'created_at' => $u['createdAt'] ?? null];
 }
 function vg_company_dir(): string { $base = realpath(vg_data_dir()); if ($base === false) throw new RuntimeException('company private base'); return vg_staff_private_directory($base . '/company', $base); }
 function vg_company_catalog(): array {
@@ -333,7 +333,7 @@ function vg_company_rpc(array &$s, array $u, string $name, array $a) {
     if (in_array($name, ['app_onayli', 'app_admin', 'app_portal_bordro'], true)) return $name === 'app_onayli' || ($name === 'app_admin' ? $u['role'] === 'admin' : vg_company_manage($u));
     if ($name === 'app_change_own_password') {
         vg_staff_rate('company-password-user', $u['id'], 5); $password = vg_staff_password($a['p_new'] ?? null); $old = $a['p_old'] ?? '';
-        return vg_staff_store(function (array &$staff) use ($u, $old, $password) { $record = $staff['users'][$u['id']] ?? null; if (!$record || !is_string($old) || !password_verify($old, $record['password'])) vg_company_fail(422, 'staff_wrong_password', 'Mevcut şifre doğrulanamadı.'); $hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]); if (!is_string($hash)) throw new RuntimeException('company password hash'); $staff['users'][$u['id']]['password'] = $hash; $staff['users'][$u['id']]['epoch']++; vg_staff_audit($staff, 'password_changed', $u['id']); unset($_SESSION['staff'], $_SESSION['staff_pending']); vg_staff_rotate(); return null; });
+        return vg_staff_store(function (array &$staff) use ($u, $old, $password) { $record = $staff['users'][$u['id']] ?? null; if (!$record || !is_string($old) || !password_verify($old, $record['password'])) vg_company_fail(422, 'staff_wrong_password', 'Mevcut şifre doğrulanamadı.'); $hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]); if (!is_string($hash)) throw new RuntimeException('company password hash'); $staff['users'][$u['id']]['password'] = $hash; $staff['users'][$u['id']]['epoch']++; $staff['users'][$u['id']]['trustedDevices'] = []; vg_staff_device_cookie(null); vg_staff_audit($staff, 'password_changed', $u['id']); unset($_SESSION['staff'], $_SESSION['staff_pending']); vg_staff_rotate(); return null; });
     }
     if (in_array($name, ['app_portal_account_audit', 'app_portal_invite', 'app_portal_recover_mfa', 'app_portal_update_user'], true)) {
         if ($u['role'] !== 'admin') vg_company_fail(403, '42501', 'Şirket yöneticisi yetkisi gerekiyor.');

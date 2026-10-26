@@ -6,3 +6,7 @@
 @media(max-width:800px){.staff-login{grid-template-columns:1fr;gap:1.5rem}.staff-intro{padding:0}.staff-wrap{padding:1.75rem 1.2rem 3rem}.staff-card{padding:1.2rem}.staff-form-grid{grid-template-columns:1fr}.staff-money{grid-template-columns:1fr}.staff-panel-heading h1{font-size:1.7rem}.staff-person{align-items:flex-start}.staff-page input,.staff-page select,.staff-page textarea{font-size:16px}}
 @media print{.staff-page .vg-header,.staff-page .vg-footer,.staff-tabs,.staff-record-actions,.staff-manager,#staff-logout,#staff-refresh{display:none!important}}
 .staff-page main a.staff-primary,.staff-page main a.staff-primary:hover{color:#0a1628}
+
+.staff-card label.staff-remember{display:flex;align-items:flex-start;gap:.7rem}.staff-card .staff-remember input[type=checkbox]{width:20px;min-height:20px;height:20px;flex:0 0 20px;margin:.2rem 0 0;padding:0;accent-color:#b45309}.staff-remember small{display:block;font-weight:400;color:var(--clr-text-muted);font-size:.8rem;line-height:1.5;margin-top:.3rem}
+/* Avoid the untransformed mega-menu box extending the employee panel's scroll area. */
+@media(min-width:80rem){.staff-page .vg-dd__menu--mega{left:max(1.25rem,calc(50% - 29rem));transform:translateY(8px)}.staff-page .vg-dd[data-open]>.vg-dd__menu--mega{transform:translateY(0)}}

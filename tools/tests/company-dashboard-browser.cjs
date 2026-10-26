@@ -1,17 +1,22 @@
 'use strict';
 // Standalone synthetic catalog/quote fixture; never sends requests to the live site.
 const fs = require('node:fs'), path = require('node:path'), http = require('node:http'), os = require('node:os'), assert = require('node:assert/strict'), { spawnSync } = require('node:child_process');
-const root = path.resolve(__dirname, '../..'), dist = path.join(root, 'tools/staff-app/dist'), output = path.join(root, '.qa/company-dashboard-ges');
+const gesPdfOnly = process.env.VG_GES_PDF_FOCUS === '1', sourceMode = process.env.VG_COMPANY_SOURCE === '1';
+const root = path.resolve(__dirname, '../..'), dist = path.join(root, 'tools/staff-app/dist'), output = path.join(root, gesPdfOnly ? '.qa/company-ges-pdf' : '.qa/company-dashboard-ges');
 const packages = process.env.VG_NODE_MODULES || path.join(os.homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules');
 const { chromium } = require(path.join(packages, 'playwright'));
 const JSZip = require(path.join(packages, 'jszip'));
+const esbuild = require(path.join(root, 'tools/staff-app/node_modules/esbuild'));
+// Optional in-memory source entry allows focused QA before the coordinated build;
+// the committed production stylesheet still exercises its real workspace scope.
+const sourceBundle = sourceMode ? esbuild.buildSync({ entryPoints: [path.join(root, 'tools/staff-app/src/portal-main.jsx')], bundle: true, write: false, format: 'esm', platform: 'browser', target: 'es2022', loader: { '.css': 'empty' }, external: ['buffer'], define: { 'import.meta.env': '{"BASE_URL":"/calisan/uygulama/"}' }, logLevel: 'silent' }).outputFiles[0].text : null;
 // The advanced PDF handler is currently a dormant fallback. Exercise its exact
 // source with real PDF/font libraries in this fixture, without exposing a test hook in the app.
 const appSource = fs.readFileSync(path.join(root, 'tools/staff-app/src/App.jsx'), 'utf8');
 const fallbackStart = appSource.indexOf('  const handleAdvancedPDFExport = async () => {');
 assert(fallbackStart >= 0);
 const fallbackSource = appSource.slice(fallbackStart, appSource.indexOf('\n  // --- UI Components ---', fallbackStart));
-const fallbackBundle = require(path.join(root, 'tools/staff-app/node_modules/esbuild')).buildSync({
+const fallbackBundle = esbuild.buildSync({
   stdin: { contents: `import { createReportPDF } from './pdfReport.js'; import { COMPANY_NAME, COMPANY_EMAIL_WEBSITE_LINE, COMPANY_PHONE, COMPANY_ADDRESS_LINE_1, COMPANY_ADDRESS_LINE_2 } from './companyInfo.js'; export async function downloadFallback({ selectedCompany, params }) { const formatCurrency = value => Number(value).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }); ${fallbackSource} await handleAdvancedPDFExport(); }`, resolveDir: path.join(root, 'tools/staff-app/src'), sourcefile: 'qa-pdf-fallback.js' },
   bundle: true, write: false, format: 'esm', platform: 'browser', target: 'es2022', define: { 'import.meta.env': '{"BASE_URL":"/calisan/uygulama/"}' }, logLevel: 'silent'
 }).outputFiles[0].text;
@@ -27,6 +32,7 @@ function json(res, data, api = 'vg-company/1') { res.writeHead(200, { 'Content-T
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://fixture.invalid');
+    if (url.pathname === '/__qa/source.js' && sourceBundle) { res.writeHead(200, { 'Content-Type': 'text/javascript' }); return res.end(sourceBundle); }
     if (url.pathname === '/__qa/pdf-fallback.js') { res.writeHead(200, { 'Content-Type': 'text/javascript' }); return res.end(fallbackBundle); }
     if (url.pathname.startsWith('/api/')) {
       let raw = ''; for await (const chunk of req) raw += chunk;
@@ -41,13 +47,13 @@ const server = http.createServer(async (req, res) => {
       }
       return json(res, { data: [] });
     }
-    if (url.pathname === '/calisan/uygulama/') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(fs.readFileSync(path.join(dist, 'index.html'), 'utf8').replace('</head>', '<link rel="stylesheet" href="/css/fonts.css"></head>')); }
+    if (url.pathname === '/calisan/uygulama/') { let html = fs.readFileSync(path.join(dist, 'index.html'), 'utf8').replace('</head>', '<link rel="stylesheet" href="/css/fonts.css"></head>'); if (sourceBundle) html = html.replace(/<script\b[^>]*type="module"[^>]*><\/script>/, '<script type="module" src="/__qa/source.js"></script>'); res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(html); }
     const file = url.pathname.startsWith('/calisan/uygulama/') ? path.resolve(dist, '.' + url.pathname.slice('/calisan/uygulama'.length)) : path.resolve(root, '.' + url.pathname);
     if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) { res.writeHead(404); return res.end(); }
     res.writeHead(200, { 'Content-Type': ({ '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.ttf': 'font/ttf', '.woff2': 'font/woff2' })[path.extname(file)] || 'application/octet-stream' }); fs.createReadStream(file).pipe(res);
   } catch (error) { res.writeHead(500); res.end(error.message); }
 });
-async function check(name, action) { try { await action(); report.checks.push({ name, pass: true }); } catch (error) { report.checks.push({ name, pass: false, error: error.stack }); console.error(name + ': ' + error.message); } }
+async function check(name, action) { if (gesPdfOnly && !name.startsWith('GES PDF ') && !name.startsWith('Native print ')) return; try { await action(); report.checks.push({ name, pass: true }); } catch (error) { report.checks.push({ name, pass: false, error: error.stack }); console.error(name + ': ' + error.message); } }
 (async () => {
   fs.mkdirSync(output, { recursive: true }); await new Promise(resolve => server.listen(0, '127.0.0.1', resolve)); const base = 'http://127.0.0.1:' + server.address().port;
   const executablePath = [process.env.VG_CHROME, process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Google/Chrome/Application/chrome.exe')].filter(Boolean).find(fs.existsSync);
@@ -112,6 +118,51 @@ async function check(name, action) { try { await action(); report.checks.push({ 
       const result = spawnSync(process.env.VG_PYTHON || 'python', ['-c', 'import sys; from pypdf import PdfReader; print("\\n".join(page.extract_text() or "" for page in PdfReader(sys.argv[1]).pages))', pdfPath], { encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
       assert.equal(result.status, 0, result.stderr); assert(result.stdout.includes('Ref: ' + reference)); assert.equal(/<span|data-vg-reference|\$<|\{selectedCompany\.refNo\}/.test(result.stdout), false);
       report.exports = { reference, word: { file: wordPath, bytes: fs.statSync(wordPath).size }, pdf: { file: pdfPath, bytes: fs.statSync(pdfPath).size, textIncludesReference: true } };
+    } finally { await context.close(); }
+  });
+  for (const scenario of [{ name: 'commercial-desktop', width: 1440, rows: 8 }, { name: 'commercial-mobile', width: 390, rows: 8 }, { name: 'home-desktop', width: 1440, rows: 10, home: true }, { name: 'home-edited-reopened', width: 1440, rows: 10, home: true, editSaved: true }, { name: 'edited-legacy-reference', width: 1440, rows: 8, edited: true }, { name: 'long-items', width: 1440, rows: 18 }]) await check('GES PDF ' + scenario.name + ' has readable pages, totals and no empty continuation', async () => {
+    const { context, page } = await pageFor('empty', scenario.width); try {
+      await open(page, 'ges'); await page.getByPlaceholder('Müşteri adı', { exact: true }).fill('Sentetik GES tesisi');
+      if (scenario.home) { await page.getByLabel('Kurulu güç (kW)', { exact: true }).fill(scenario.editSaved ? '25' : '12'); await page.getByRole('button', { name: 'Ev Tipi', exact: true }).click(); }
+      for (let index = await page.getByPlaceholder('ürün Açıklaması', { exact: true }).count(); index < scenario.rows; index++) { await page.getByRole('button', { name: 'Manuel Satır Ekle', exact: true }).click(); await page.getByPlaceholder('ürün Açıklaması', { exact: true }).nth(index).fill('Sentetik pano ve montaj ekipmanı - test satırı ' + (index + 1)); await page.getByLabel((index + 1) + '. satır birim fiyatı', { exact: true }).fill('25,50'); }
+      if (scenario.edited) {
+        await page.getByRole('button', { name: /Düzenleme Modu/ }).first().click();
+        await page.locator('#ges-printable-area').evaluate(root => { const reference = root.querySelector('[data-vg-reference]').textContent; root.querySelectorAll('.ges-pdf-page [data-vg-reference]').forEach(node => node.parentElement.remove()); const line = document.createElement('div'); line.className = 'vg-reference-line'; line.textContent = 'Referans: '; const marker = document.createElement('span'); marker.setAttribute('data-vg-reference', ''); marker.textContent = reference; line.append(marker); root.prepend(line); const paragraph = document.createElement('p'); paragraph.textContent = 'Sentetik düzenleme notu korunmalıdır.'; root.querySelector('.ges-pdf-page').firstElementChild.append(paragraph); });
+        await page.getByRole('button', { name: /Düzenleme Modu/ }).first().click();
+        assert((await page.locator('#ges-printable-area').innerText()).includes('Sentetik düzenleme notu korunmalıdır.'));
+      }
+      if (scenario.editSaved) {
+        await page.getByRole('button', { name: /Düzenleme Modu/ }).first().click(); await page.locator('#ges-printable-area').evaluate(root => { const paragraph = [...root.querySelectorAll('p')].find(node => !node.querySelector('[data-vg-reference]') && node.textContent.trim()); paragraph.append(' QA-GES-EDITOR'); const summary = root.querySelector('.ges-pdf-page .flex.justify-end.mt-auto > div'); summary.classList.add('w-1/2'); summary.style.width = '50%'; }); await page.getByRole('button', { name: /Düzenleme Modu/ }).first().click();
+        const saved = page.waitForResponse(response => response.url().includes('action=query') && response.request().method() === 'POST' && response.request().postDataJSON()?.operation === 'insert'); await page.getByRole('button', { name: 'Teklifi Kaydet', exact: true }).click(); await saved; await open(page, 'saved'); await page.getByRole('button', { name: /^GES Teklifleri/ }).click(); await page.getByRole('button', { name: 'Yükle', exact: true }).last().click(); await page.locator('[data-portal-module="ges"]').waitFor(); assert((await page.locator('#ges-printable-area').innerText()).includes('QA-GES-EDITOR'));
+      }
+      await page.evaluate(() => document.fonts.ready);
+      const metrics = await page.locator('.ges-pdf-page').first().evaluate(source => {
+        const workspace = source.closest('#vg-company-workspace'), host = document.createElement('div'); host.style.cssText = 'position:fixed;left:-100000px;top:0;width:210mm'; const clone = source.cloneNode(true); Object.assign(clone.style, { width: '210mm', maxWidth: 'none', height: 'auto', minHeight: '297mm', margin: '0', boxShadow: 'none', overflow: 'visible' }); clone.querySelectorAll('div').forEach(node => { if ((node.style.position === 'absolute' || node.className.includes('absolute')) && (node.style.bottom || /bottom-/.test(node.className)) && /Sayfa\s+\d/.test(node.textContent)) node.remove(); }); host.append(clone); workspace.append(host);
+        try { const box = clone.getBoundingClientRect(), relative = node => { const r = node.getBoundingClientRect(); return { left: r.left - box.left, top: r.top - box.top, width: r.width, height: r.height }; }; const payable = [...clone.querySelectorAll('tr')].find(row => /ÖDENECEK TUTAR/.test(row.textContent)), tl = [...clone.querySelectorAll('p')].find(node => node.textContent.startsWith('₺')); return { width: clone.offsetWidth, height: clone.scrollHeight, font: getComputedStyle(clone).fontFamily, rowFont: getComputedStyle(clone.querySelector('tbody td')).fontSize, payable: payable && relative(payable), payableText: payable?.textContent, tl: tl && relative(tl), tlText: tl?.textContent, pageCount: source.parentElement.querySelectorAll('.ges-pdf-page').length }; } finally { host.remove(); }
+      });
+      assert.match(metrics.font, /Inter/); assert(parseFloat(metrics.rowFont) >= 12); assert(metrics.payable && metrics.tl); assert(metrics.tlText.startsWith('₺')); assert.equal(metrics.tlText.includes('?'), false);
+      const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'PDF İndir', exact: true }).click()]); const destination = path.join(output, scenario.name + '.pdf'); await download.saveAs(destination);
+      const inspection = spawnSync(process.env.VG_PYTHON || 'python', ['-c', 'import sys,json,fitz; d=fitz.open(sys.argv[1]); out=[]\nfor p in d:\n pix=p.get_pixmap(matrix=fitz.Matrix(1,1),clip=fitz.Rect(0,0,p.rect.width,p.rect.height-55),alpha=False); b=pix.samples; ink=sum(min(b[i:i+3])<235 for i in range(0,len(b),3)); out.append({"page":p.number+1,"ink":ink,"coverage":ink/(pix.width*pix.height),"footer":p.get_text()})\nprint(json.dumps({"pages":len(d),"body":out}))', destination], { encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
+      assert.equal(inspection.status, 0, inspection.stderr); const pdf = JSON.parse(inspection.stdout); if (scenario.rows <= 10) assert.equal(pdf.pages, 2, 'Default commercial/home quote must occupy its two intended A4 pages.'); for (const body of pdf.body) { assert(body.coverage > 0.003, 'Empty or almost empty continuation page ' + body.page); assert(body.footer.includes('Sayfa ' + body.page + ' / ' + pdf.pages)); }
+      const prefix = path.join(output, scenario.name), render = spawnSync('pdftoppm', ['-scale-to', '1400', '-png', destination, prefix], { encoding: 'utf8' }); assert.equal(render.status, 0, render.stderr);
+      report.pdfLayouts ||= []; report.pdfLayouts.push({ scenario, metrics, file: destination, bytes: fs.statSync(destination).size, ...pdf });
+      if (scenario.rows <= 10) {
+        await page.emulateMedia({ media: 'print' });
+        try {
+          assert.equal(await page.locator('#ges-printable-area').evaluate(node => getComputedStyle(node).visibility), 'visible');
+          const nativePath = path.join(output, scenario.name + '-native-print.pdf'); await page.pdf({ path: nativePath, format: 'A4', printBackground: true, preferCSSPageSize: true });
+          const native = spawnSync(process.env.VG_PYTHON || 'python', ['-c', 'import sys,json,fitz; d=fitz.open(sys.argv[1]); print(json.dumps({"pages":len(d),"text":"\\n".join(p.get_text() for p in d)},ensure_ascii=True))', nativePath], { encoding: 'utf8' }); assert.equal(native.status, 0, native.stderr); const printed = JSON.parse(native.stdout); assert.equal(printed.pages, 2, 'Native browser print keeps both report pages without a blank portal page.'); assert(printed.text.includes('ÖDENECEK TUTAR')); assert(printed.text.includes('₺')); assert.equal(printed.text.includes('Manuel Satır Ekle'), false); if (scenario.edited) assert(printed.text.includes('Sentetik düzenleme notu korunmalıdır.'));
+          const nativeRender = spawnSync('pdftoppm', ['-scale-to', '1400', '-png', nativePath, path.join(output, scenario.name + '-native-print')], { encoding: 'utf8' }); assert.equal(nativeRender.status, 0, nativeRender.stderr);
+          report.pdfLayouts.at(-1).nativePrint = { file: nativePath, pages: printed.pages, includesPayableTotal: true, excludesEditor: true };
+        } finally { await page.emulateMedia({ media: null }); }
+      }
+      console.log('PDF ' + scenario.name + ': ' + pdf.pages + ' pages');
+    } finally { await context.close(); }
+  });
+  await check('Native print periodic quote retains totals and both logical A4 pages', async () => {
+    const { context, page } = await pageFor('empty'); try {
+      await open(page, 'periodic'); await page.getByPlaceholder('Firma adı', { exact: true }).fill('Sentetik periyodik tesis'); await page.locator('.portal-app input[type=number]').nth(2).fill('10'); await page.getByRole('button', { name: 'Hesapla', exact: true }).click(); await page.emulateMedia({ media: 'print' });
+      const file = path.join(output, 'periodic-native-print.pdf'); await page.pdf({ path: file, format: 'A4', printBackground: true, preferCSSPageSize: true }); const extracted = spawnSync(process.env.VG_PYTHON || 'python', ['-c', 'import sys,json,fitz;d=fitz.open(sys.argv[1]);print(json.dumps({"pages":len(d),"text":"\\n".join(p.get_text() for p in d)},ensure_ascii=True))', file], { encoding: 'utf8' }); assert.equal(extracted.status, 0, extracted.stderr); const pdf = JSON.parse(extracted.stdout); assert.equal(pdf.pages, 2); assert(pdf.text.includes('TEKLİF EDiLEN')); assert(pdf.text.includes('Sentetik periyodik tesis')); assert.equal(pdf.text.split('\n').some(line => line.trim() === 'Hesapla'), false); const rendered = spawnSync('pdftoppm', ['-scale-to', '1400', '-png', file, path.join(output, 'periodic-native-print')], { encoding: 'utf8' }); assert.equal(rendered.status, 0, rendered.stderr); report.periodicNativePrint = { file, pages: pdf.pages, includesTotal: true };
     } finally { await context.close(); }
   });
 })().catch(error => { report.errors.push(error.stack); process.exitCode = 1; }).finally(async () => { if (browser) await browser.close(); await new Promise(resolve => server.close(resolve)); fs.writeFileSync(path.join(output, 'browser-report.json'), JSON.stringify(report, null, 2)); console.log(JSON.stringify({ passed: report.checks.filter(check => check.pass).length, total: report.checks.length, errors: report.errors.length, report: path.join(output, 'browser-report.json') })); if (report.errors.length || report.checks.some(check => !check.pass)) process.exitCode = 1; });

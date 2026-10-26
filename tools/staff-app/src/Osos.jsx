@@ -157,6 +157,10 @@ export default function Osos() {
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (!['image/png','image/jpeg','image/webp'].includes(file.type) || file.size > 1048576) {
+        alert('Logo için en fazla 1 MB boyutunda PNG, JPEG veya WebP dosyası seçin.');
+        e.target.value = ''; return;
+      }
       const reader = new FileReader();
       reader.onload = (event) => {
         setLogo(event.target.result);
@@ -245,6 +249,7 @@ export default function Osos() {
     }
     try {
       const pdf = await createReportPDF({ title: 'Otomatik Sayaç Okuma Sistemi Raporu' });
+      if (logo) fitReportImage(pdf, logo, 14, 12, 26, 18);
       pdf.setFontSize(18); pdf.setFont(undefined, 'bold'); pdf.setTextColor(24, 57, 95);
       pdf.text('OSOS ENERJİ RAPORU', 105, 22, { align: 'center' });
       pdf.setFont(undefined, 'normal'); pdf.setFontSize(9); pdf.setTextColor(50);
@@ -1778,10 +1783,10 @@ export default function Osos() {
               
               <div className="flex items-center gap-4 pt-3 border-t">
                 <label className="flex-shrink-0">
-                  <span className="block text-sm font-medium text-gray-700 mb-2">veya Dosyadan Yükle:</span>
+                  <span className="block text-sm font-medium text-gray-700 mb-2">veya Dosyadan Yükle (PNG, JPEG, WebP; en fazla 1 MB):</span>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/jpeg,image/webp"
                     onChange={handleLogoUpload}
                     className="p-2 border rounded text-sm"
                   />
@@ -1892,7 +1897,7 @@ export default function Osos() {
       )}
 
       {/* Print View */}
-      <div ref={reportRef} className={`bg-white shadow-md rounded-lg p-8 max-w-7xl mx-auto ${!editMode || printMode ? '' : 'hidden'}`}>
+      <div id="osos-printable-report" ref={reportRef} className={`bg-white shadow-md rounded-lg p-8 max-w-7xl mx-auto ${!editMode || printMode ? '' : 'hidden'}`}>
         {/* Logo ve Başlık */}
         <div className="flex justify-between items-start mb-6 border-b-2 border-gray-300 pb-4">
           {logo && (

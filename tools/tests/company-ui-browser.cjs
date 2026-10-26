@@ -14,11 +14,11 @@ let logs=blue.map(e=>({id:'log-'+e.id,employee_id:e.id,day:1,month,year,type:'No
 let osos=[{id:'qa-measurement',fabrika_adi:'QA Tesis',olcum_zamani:stamp,aktif_guc:5,reaktif_guc:null,gerilim_l1:230,gerilim_l2:null,gerilim_l3:null,frekans:50,guc_faktoru:null}];
 const weekly=[{id:'qa-weekly-report',fabrika_adi:'QA Enerji Tesisi',hafta_baslangic:'2026-10-05',hafta_bitis:'2026-10-11',guc_faktoru:0.98,reaktif_guc:24,aktif_guc:120,kompanzasyon_durumu:'Dengeli',enerji_tuketimi:300,maliyet:750,onceki_hafta_guc_faktoru:0.96,hedef_guc_faktoru:0.95,notlar:'Sentetik UI testi',updated_at:stamp}];
 const payroll=e=>({id:'pay-'+e.id,employee_id:e.id,month,year,base_salary:e.monthly_salary,overtime_pay:0,bonus:0,meal_allowance:0,transport_allowance:0,other_earnings:0,advance_deduction:0,sgk_employee:0,unemployment_employee:0,income_tax:0,stamp_tax:0,other_deductions:0,net_payment:e.monthly_salary,sgk_employer:0,unemployment_employer:0,total_employer_cost:e.monthly_salary,worked_days:30,total_days:30,paid_leave_days:0,unpaid_leave_days:0,sick_leave_days:0,is_paid:false,payment_method:'Banka',notes:'UI test kaydı',logs:{1:{day:1,type:'Normal',startTime:'08:00',endTime:'18:00',overtimeHours:0,description:'UI test kaydı'}},expenses:[],updated_at:stamp});
-let whitePayroll=white.map(payroll),rpcCalls=[],queryEvents=[],privateValues={},storageFailure=false,casFailure=false,logoutFailure=false,profileDelay=false,version=0;
+let whitePayroll=white.map(payroll),rpcCalls=[],queryEvents=[],privateValues={},storageFailure=false,casFailure=false,logoutFailure=false,forgetDevicesFailure=false,profileDelay=false,version=0;
 function roleFor(req){return (req.headers.cookie||'').match(/(?:^|;\s*)fixture_role=(admin|employee|payroll)/)?.[1]||'admin';}
 function send(res,code,data,api='vg-company/1'){res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify({api,ok:code<400,csrf:'a'.repeat(64),...data}));}
 function allowedRows(table,role){let rows={users:Object.values(users),bordro_employees:blue,bordro_daily_logs:logs,bordro_expenses:[],monthly_payroll_summary:[],beyaz_yaka_employees:white,beyaz_yaka_monthly_payroll:whitePayroll,beyaz_yaka_advances:[],osos_olcumler:osos,haftalik_raporlar:weekly}[table]||[];if(role==='employee'){if(table==='users')rows=rows.filter(e=>e.id===users.employee.id);if(table.endsWith('_employees'))rows=rows.filter(e=>e.user_id===users.employee.id);if(table==='bordro_daily_logs')rows=rows.filter(e=>e.employee_id===blue[0].id);if(table==='beyaz_yaka_monthly_payroll')rows=rows.filter(e=>e.employee_id===white[0].id);}return rows;}
-async function api(req,res,url){const role=roleFor(req),action=url.searchParams.get('action');let raw='';for await(const c of req)raw+=c;const body=raw?JSON.parse(raw):{};report.requests[action]=(report.requests[action]||0)+1;if(url.pathname==='/api/staff.php'){if(action==='logout'&&logoutFailure){await new Promise(resolve=>setTimeout(resolve,400));return send(res,503,{error:'fixture_logout_error',message:'QA: çıkış sunucusu kullanılamıyor.'},'vg-staff/1');}return send(res,200,{user:users[role],mfa:null},'vg-staff/1');}if(action==='bootstrap')return send(res,200,{data:{user:users[role],capabilities:{managePayroll:role!=='employee',dataSource:fixtureDataSource},storage:privateValues[role]||{},catalog:{historicalInvoice1:[],historicalInvoice2:[],cablePrices:{kategoriler:[]},packages:{paketler:[]}}}});
+async function api(req,res,url){const role=roleFor(req),action=url.searchParams.get('action');let raw='';for await(const c of req)raw+=c;const body=raw?JSON.parse(raw):{};report.requests[action]=(report.requests[action]||0)+1;if(url.pathname==='/api/staff.php'){if(action==='forget_devices'&&forgetDevicesFailure){await new Promise(resolve=>setTimeout(resolve,300));return send(res,503,{error:'fixture_device_error',message:'QA: cihazlar şu an kaldırılamadı.'},'vg-staff/1');}if(action==='forget_devices')return send(res,200,{user:null},'vg-staff/1');if(action==='logout'&&logoutFailure){await new Promise(resolve=>setTimeout(resolve,400));return send(res,503,{error:'fixture_logout_error',message:'QA: çıkış sunucusu kullanılamıyor.'},'vg-staff/1');}return send(res,200,{user:users[role],mfa:null},'vg-staff/1');}if(action==='bootstrap')return send(res,200,{data:{user:users[role],capabilities:{managePayroll:role!=='employee',dataSource:fixtureDataSource},storage:privateValues[role]||{},catalog:{historicalInvoice1:[],historicalInvoice2:[],cablePrices:{kategoriler:[]},packages:{paketler:[]}}}});
 if(action==='health')return send(res,200,{data:{online:true,dataSource:fixtureDataSource}});
 if(action==='storage'){if(storageFailure)return send(res,503,{error:'fixture_storage_error',message:'QA: özel kayıt sunucusu kullanılamıyor.'});privateValues[role]||={};if(body.value===null)delete privateValues[role][body.key];else privateValues[role][body.key]=body.value;return send(res,200,{data:true});}
 if(action==='query'){const q=body;if(profileDelay&&q.table==='users'&&q.operation==='update')await new Promise(resolve=>setTimeout(resolve,500));let rows=allowedRows(q.table,role).map(e=>({...e}));for(const f of q.filters||[]){if(f.op==='eq')rows=rows.filter(e=>e[f.field]===f.value);if(f.op==='is')rows=rows.filter(e=>(e[f.field]??null)===f.value);if(f.op==='in')rows=rows.filter(e=>f.value.includes(e[f.field]));}if(q.operation==='insert'){if(q.table==='osos_olcumler'){osos.push(...q.rows);rows=q.rows;}else rows=q.rows||[];}queryEvents.push({role,table:q.table,filters:q.filters,single:q.single,status:q.single==='one'&&!rows.length?406:200,resultCount:rows.length});if(q.single==='one'&&!rows.length)return send(res,406,{error:'PGRST116',message:'Testte kayıt yok.'});return send(res,200,{data:q.single?rows[0]||null:rows,count:rows.length});}
@@ -61,7 +61,7 @@ await check('compact account navigation and profile keyboard focus',async()=>{
     assert(await close.evaluate(e=>e===document.activeElement));
     assert.equal(await p.evaluate(()=>document.body.style.overflow),'hidden');
     await p.keyboard.press('Shift+Tab');
-    assert(await dialog.getByRole('button',{name:'Şifreyi değiştir ve oturumları kapat',exact:true}).evaluate(e=>e===document.activeElement));
+    assert(await dialog.getByRole('button',{name:'Hatırlanan cihazları kaldır ve çıkış yap',exact:true}).evaluate(e=>e===document.activeElement));
     await p.keyboard.press('Tab');assert(await close.evaluate(e=>e===document.activeElement));
     profileDelay=true;
     await dialog.getByRole('button',{name:'Profili kaydet',exact:true}).click();
@@ -77,6 +77,20 @@ await check('compact account navigation and profile keyboard focus',async()=>{
     await p.waitForFunction(()=>!document.querySelector('#portal-account-links').hidden);
     assert(await p.getByRole('button',{name:'Profil ve güvenlik',exact:true}).isVisible());
   }finally{profileDelay=false;await c.close();}
+});
+await check('remembered device revocation preserves failed form and retry signs out once',async()=>{
+  const {c,p}=await context('admin',390);try{
+    await p.route('**/calisan/giris.html',route=>route.fulfill({status:200,contentType:'text/html; charset=utf-8',body:'<!doctype html><html><head><meta charset="utf-8"></head><body><h1>QA çalışan girişi</h1></body></html>'}));
+    await open(p,'dashboard');await p.getByRole('button',{name:'Çalışan menüsü',exact:true}).click();
+    await p.getByRole('button',{name:'Profil ve güvenlik',exact:true}).click();
+    const dialog=p.getByRole('dialog',{name:'Profil ve güvenlik',exact:true}),button=dialog.getByRole('button',{name:'Hatırlanan cihazları kaldır ve çıkış yap',exact:true});
+    const before=report.requests.forget_devices||0;forgetDevicesFailure=true;
+    await button.click();assert(await button.isDisabled());
+    await dialog.getByRole('alert').filter({hasText:'QA: cihazlar şu an kaldırılamadı.'}).waitFor();
+    assert(await button.isEnabled());assert(await dialog.isVisible());assert.equal(report.requests.forget_devices-before,1);
+    forgetDevicesFailure=false;await button.click();await p.waitForURL('**/calisan/giris.html');
+    assert.equal(report.requests.forget_devices-before,2);await p.getByRole('heading',{name:'QA çalışan girişi',exact:true}).waitFor({state:'visible'});
+  }finally{forgetDevicesFailure=false;await c.close();}
 });
 await check('same module selection preserves history and drawer scroll restores',async()=>{
   const {c,p}=await context('admin',390);try{

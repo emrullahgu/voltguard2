@@ -1,5 +1,5 @@
 import { privateStorage as localStorage } from './privateStorage';
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Search, Calculator, ShoppingCart, Trash2, Copy, FileText, Plus, X, Sparkles, MessageSquare, Send, Loader2, Mail, Download, Building2, Eye, ExternalLink, Save, Clock, Cable, Percent, Banknote, Edit3, CheckCircle, User } from 'lucide-react';
 import { createReportPDF, exportHTMLReport, writeReportParagraph, reportFileName, reportMoney, reportNumber } from './pdfReport';
 import { sanitizeReportHTML, pasteReportHTML, reportHTMLWithReference } from './safeReportHTML.mjs';
@@ -119,6 +119,7 @@ const KesifMetraj = ({ initialSnapshot, onSaveSnapshot, onCustomerUpdate }) => {
     tarih: new Date().toLocaleDateString('tr-TR'),
     gecerlilikSuresi: '30 gün'
   });
+  const teklifValidity = String(teklifForm.gecerlilikSuresi ?? '').trim() || 'Belirtilmedi';
 
   useEffect(() => {
     if (!initialSnapshot) return;
@@ -139,6 +140,13 @@ const KesifMetraj = ({ initialSnapshot, onSaveSnapshot, onCustomerUpdate }) => {
     if(loaded?.form===teklifForm && loaded?.cart===cart && loaded?.discount===discount && loaded?.profit===profit)return;
     setEditableContent('');setEditorMode(false);
   },[teklifForm,cart,discount,profit]);
+
+  useLayoutEffect(() => {
+    if (!isPdfPreviewOpen || editorMode || !editableContent) return;
+    const paper = document.getElementById('kesif-printable-paper');
+    const safeContent = sanitizeReportHTML(editableContent);
+    if (paper && paper.innerHTML !== safeContent) paper.innerHTML = safeContent;
+  }, [isPdfPreviewOpen, editorMode, editableContent]);
 
   // Örnek Malzeme Şablonları
   const scenarios = [
@@ -796,7 +804,7 @@ const KesifMetraj = ({ initialSnapshot, onSaveSnapshot, onCustomerUpdate }) => {
   const handleGenerateEmail = () => {
     if (cart.length === 0) return;
     const lines = cart.map(item => `${item.category} - ${item.name}: ${item.quantity} ${item.unit || 'birim'} × ${saleUnitPrice(item, discount, profit).toFixed(2)} TL = ${(saleLineTotal(item, discount, profit)).toFixed(2)} TL (KDV %${item.kdvOrani ?? 20})`);
-    setGeneratedEmail(`Sayın ${teklifForm.musteriAdi || 'Yetkili'},\n\nTalebiniz doğrultusunda hazırladığımız ${teklifForm.teklifNo || ''} numaralı teklifin kalemleri aşağıdadır:\n\n${lines.join('\n')}\n\nKDV hariç toplam: ${grandTotal.toFixed(2)} TL\nKDV toplamı: ${vatTotal.toFixed(2)} TL\nKDV dahil toplam: ${totalIncludingVat.toFixed(2)} TL\n\nGeçerlilik: ${teklifForm.gecerlilik || 'Teklif koşullarında belirtilir'}\n${teklifForm.odemeSekli ? 'Ödeme: ' + teklifForm.odemeSekli + '\n' : ''}${teklifForm.notlar ? '\n' + teklifForm.notlar : ''}\n\nSaygılarımızla,\n${teklifForm.firmaAdi || 'VoltGuard'}\n${teklifForm.yetkili || ''}\n${teklifForm.telefon || ''}\n${teklifForm.email || ''}`);
+    setGeneratedEmail(`Sayın ${teklifForm.musteriAdi || 'Yetkili'},\n\nTalebiniz doğrultusunda hazırladığımız ${teklifForm.teklifNo || ''} numaralı teklifin kalemleri aşağıdadır:\n\n${lines.join('\n')}\n\nKDV hariç toplam: ${grandTotal.toFixed(2)} TL\nKDV toplamı: ${vatTotal.toFixed(2)} TL\nKDV dahil toplam: ${totalIncludingVat.toFixed(2)} TL\n\nGeçerlilik: ${teklifValidity}\n${teklifForm.odemeSekli ? 'Ödeme: ' + teklifForm.odemeSekli + '\n' : ''}${teklifForm.notlar ? '\n' + teklifForm.notlar : ''}\n\nSaygılarımızla,\n${teklifForm.firmaAdi || 'VoltGuard'}\n${teklifForm.yetkili || ''}\n${teklifForm.telefon || ''}\n${teklifForm.email || ''}`);
     setAiLoading(false);
     setIsEmailModalOpen(true);
   };
@@ -830,7 +838,7 @@ const KesifMetraj = ({ initialSnapshot, onSaveSnapshot, onCustomerUpdate }) => {
         ['Müşteri', teklifForm.musteriAdi], ['Satıcı firma', teklifForm.firmaAdi], ['Yetkili', teklifForm.yetkili],
         ['Telefon', teklifForm.telefon || 'Belirtilmedi'], ['E-posta', teklifForm.email || 'Belirtilmedi'],
         ['Adres', teklifForm.adres || 'Belirtilmedi'], ['Proje', teklifForm.projeAdi || 'Belirtilmedi'],
-        ['Teklif no', teklifForm.teklifNo], ['Teklif tarihi', teklifForm.tarih], ['Geçerlilik', teklifForm.gecerlilikSuresi]
+        ['Teklif no', teklifForm.teklifNo], ['Teklif tarihi', teklifForm.tarih], ['Geçerlilik', teklifValidity]
       ], theme: 'grid', columnStyles: { 0: { cellWidth: 42 } } });
       const cents = value => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
       const salePrice = item => cents(calculateDiscountedPrice(Number(item.alis_fiyati ?? item.price ?? 0)));
@@ -1833,7 +1841,7 @@ ${teklifForm.aciklama}`, { y: doc.lastAutoTable.finalY + 10 });
               )}
               <p style={{ margin: '3px 0', lineHeight: '1.6' }}><strong>Teklif No:</strong> {teklifForm.teklifNo}</p>
               <p style={{ margin: '3px 0', lineHeight: '1.6' }}><strong>Tarih:</strong> {teklifForm.tarih}</p>
-              <p style={{ margin: '3px 0', lineHeight: '1.6' }}><strong>Geçerlilik:</strong> {teklifForm.gecerlilikSuresi}</p>
+              <p style={{ margin: '3px 0', lineHeight: '1.6' }}><strong>Geçerlilik:</strong> {teklifValidity}</p>
             </div>
           </div>
 
@@ -1985,7 +1993,7 @@ ${teklifForm.aciklama}`, { y: doc.lastAutoTable.finalY + 10 });
           <div style={{ marginBottom: '8mm' }}>
             <h3 style={{ fontSize: '13px', fontWeight: 'bold', color: '#2c3e50', marginBottom: '5px' }}>3. TEKLİF GEÇERLİLİĞİ</h3>
             <p style={{ fontSize: '11px', lineHeight: '1.8', color: '#555', textAlign: 'justify' }}>
-              Teklifimizde yer alan kablo ve trafo gibi emtia piyasalarına (Bakır/LME ve Döviz) endeksli ürünler nedeniyle, teklifimiz {teklifForm.gecerlilikSuresi} süreyle geçerlidir. Bu süreden sonra oluşabilecek maliyet artışlarını revize etme hakkımız saklıdır.
+              Teklifimizde yer alan kablo ve trafo gibi emtia piyasalarına (Bakır/LME ve Döviz) endeksli ürünler nedeniyle, teklifimiz {teklifValidity} süreyle geçerlidir. Bu süreden sonra oluşabilecek maliyet artışlarını revize etme hakkımız saklıdır.
             </p>
           </div>
 
@@ -2195,7 +2203,7 @@ ${teklifForm.aciklama}`, { y: doc.lastAutoTable.finalY + 10 });
                                   )}
                                   <p style={{ margin: '2px 0', lineHeight: '1.5' }}><strong>Teklif No:</strong> {teklifForm.teklifNo}</p>
                                   <p style={{ margin: '2px 0', lineHeight: '1.5' }}><strong>Tarih:</strong> {teklifForm.tarih}</p>
-                                  <p style={{ margin: '2px 0', lineHeight: '1.5' }}><strong>Geçerlilik:</strong> {teklifForm.gecerlilikSuresi}</p>
+                                  <p style={{ margin: '2px 0', lineHeight: '1.5' }}><strong>Geçerlilik:</strong> {teklifValidity}</p>
                                 </div>
                               </div>
                             </>
@@ -2350,7 +2358,7 @@ ${teklifForm.aciklama}`, { y: doc.lastAutoTable.finalY + 10 });
                               <span style={{ marginRight: '8px', fontSize: '16px' }}>•</span> Teklif Geçerliliği
                             </h3>
                             <p style={{ fontSize: '12px', lineHeight: '2', color: '#444', textAlign: 'justify', paddingLeft: '20px' }}>
-                              Teklifimizde yer alan kablo ve trafo gibi emtia piyasalarına (Bakır/LME ve Döviz) endeksli ürünler nedeniyle, teklifimiz 3 iş günü süreyle geçerlidir. Bu süreden sonra oluşabilecek maliyet artışlarını revize etme hakkımız saklıdır.
+                              Teklifimizde yer alan kablo ve trafo gibi emtia piyasalarına (Bakır/LME ve Döviz) endeksli ürünler nedeniyle, teklifimiz {teklifValidity} süreyle geçerlidir. Bu süreden sonra oluşabilecek maliyet artışlarını revize etme hakkımız saklıdır.
                             </p>
                           </div>
 
@@ -2436,16 +2444,20 @@ ${teklifForm.aciklama}`, { y: doc.lastAutoTable.finalY + 10 });
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Kategori</label>
-                <select
+                <label htmlFor="edit-product-category" className="block text-sm font-semibold mb-2">Kategori</label>
+                <input
+                  id="edit-product-category"
+                  type="text"
+                  list="edit-product-categories"
                   value={editingProduct.category}
                   onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                >
+                />
+                <datalist id="edit-product-categories">
                   {categories.filter(c => c !== 'Tümü').map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
-                </select>
+                </datalist>
               </div>
 
               <div>
@@ -2523,15 +2535,20 @@ ${teklifForm.aciklama}`, { y: doc.lastAutoTable.finalY + 10 });
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Kategori *</label>
-                <select
+                <label htmlFor="newProductCategory" className="block text-sm font-semibold mb-2">Kategori *</label>
+                <input
                   id="newProductCategory"
+                  type="text"
+                  list="new-product-categories"
+                  defaultValue={categories.find(category => category !== 'Tümü') || ''}
+                  placeholder="Örn: Kablo"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
-                >
+                />
+                <datalist id="new-product-categories">
                   {categories.filter(c => c !== 'Tümü').map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
-                </select>
+                </datalist>
               </div>
 
               <div>
@@ -2605,26 +2622,26 @@ ${teklifForm.aciklama}`, { y: doc.lastAutoTable.finalY + 10 });
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }
-        
+
         /* PDF Page Styling */
         .kesif-pdf-page {
           page-break-after: always;
           page-break-inside: avoid;
         }
-        
+
         @media print {
           .kesif-pdf-page {
             margin: 0;
             box-shadow: none;
             page-break-after: always;
           }
-          
+
           body {
             margin: 0;
             padding: 0;
           }
         }
-      `}</style>
+`}</style>
     </div>
   );
 };

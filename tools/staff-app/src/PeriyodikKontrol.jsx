@@ -48,7 +48,8 @@ export default function PeriyodikKontrol() {
   const [savedReports,setSavedReports]=useState([]);
   const [showSavedReports,setShowSavedReports]=useState(false);
   const [sharedReportError,setSharedReportError]=useState('');
-  const [logo, setLogo] = useState(null); // Logo state
+  // Keep the bundled logo by URL; embedding its full PNG exceeds the private API's 2 MB request limit.
+  const [logo, setLogo] = useState(faturaLogo);
   
   // AI State
   const [isAiGenerating, setIsAiGenerating] = useState(false);
@@ -105,63 +106,6 @@ export default function PeriyodikKontrol() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [aiChatHistory, showAiChat]);
-
-  // Logo yükleme
-  useEffect(() => {
-    const loadLogo = async () => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          resolve({
-            data: canvas.toDataURL('image/png'),
-            width: img.width,
-            height: img.height
-          });
-        };
-        img.onerror = () => {
-          // Hata durumunda alternatif logo dene
-          const altImg = new Image();
-          altImg.crossOrigin = 'anonymous';
-          altImg.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = altImg.width;
-            canvas.height = altImg.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(altImg, 0, 0);
-            resolve({
-              data: canvas.toDataURL('image/png'),
-              width: altImg.width,
-              height: altImg.height
-            });
-          };
-          altImg.onerror = () => {
-            // Logo yüklenemezse boş logo kullan
-            resolve({
-              data: '',
-              width: 0,
-              height: 0
-            });
-          };
-          altImg.src = '/calisan/uygulama/fatura_logo.png';
-        };
-        img.src = faturaLogo;
-      });
-    };
-
-    loadLogo().then(logoInfo => {
-      if (logoInfo.data) {
-        setLogo(logoInfo.data);
-      }
-    }).catch(err => {
-      console.error('Logo yüklenemedi:', err);
-    });
-  }, []);
 
   // --- Event Handlers ---
   const handleCommonChange = (e) => {

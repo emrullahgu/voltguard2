@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { bootstrapCompany, clearStaffClientState, getStaffIdentity, supabase } from './supabaseClient.js';
+import { bootstrapCompany, clearStaffClientState, forgetRememberedDevices, getStaffIdentity, supabase } from './supabaseClient.js';
 import { privateStorage } from './privateStorage.js';
 
 const Context = createContext(null);
@@ -72,8 +72,9 @@ export function AuthProvider({ children }) {
     leave();
   };
   const signIn = async () => { window.location.replace(loginUrl()); throw new Error('Şifre ve doğrulayıcı kodu için çalışan giriş ekranını kullanın.'); };
+  const forgetDevices = async () => { await privateStorage.flush(); await forgetRememberedDevices(); leave(); };
   const register = async () => { throw new Error('Çalışan hesabını şirket yöneticisi davet eder.'); };
 
   return <Context.Provider value={{ currentUser, loading, authError, recheck, signIn, signOut, updateUser,
-    changeOwnPassword, isAuthenticated: !!currentUser, register }}>{children}</Context.Provider>;
+    changeOwnPassword, forgetDevices, isAuthenticated: !!currentUser, register }}>{children}</Context.Provider>;
 }

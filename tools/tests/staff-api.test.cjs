@@ -80,9 +80,9 @@ async function run() {
     actor.secret = result.data.secret;
     return result;
   }
-  async function enroll(actor) {
+  async function enroll(actor, rememberDevice = false) {
     actor.enrollCode = totp(actor.secret);
-    const result = await expect(actor, 'mfa_enroll', { body: { code: actor.enrollCode } }, 200);
+    const result = await expect(actor, 'mfa_enroll', { body: { code: actor.enrollCode, rememberDevice } }, 200);
     actor.user = result.data.user; return result;
   }
   function upload(statementId, contents, type = 'application/pdf', filename = 'bordro.pdf') {
@@ -190,6 +190,81 @@ async function run() {
     check(result.data.canManage, false, 'Employee cannot manage statement');
     result = await expect(second, 'payroll_list', {}, 200); check(result.data.items.map(item => item.id), [other.id], 'Second employee sees only own statement');
     check((await request(payroll, 'payroll_list')).data.items.length, 2, 'Payroll manager sees authorized company statements');
+
+    // Remembered factors use real HTTP cookies and durable private state, never an authenticated fixture shortcut.
+    await expect(outsider, 'forget_devices', { body: {} }, 401, 'staff_unauthorized');
+    const deviceUser = client();
+    result = await expect(admin, 'create_invite', { body: { email: 'device@example.test', name: 'Remembered Device Employee', role: 'employee' } }, 200);
+    await activate(deviceUser, result.data);
+    result = await enroll(deviceUser, true);
+    const deviceId = deviceUser.user.id;
+    let remembered = deviceUser.cookies.get('VGSTAFFDEVICE');
+    check(/^[a-f0-9]{32}\.[a-f0-9]{64}$/.test(remembered), true, 'Opt-in creates a 256-bit opaque device validator');
+    check(result.headers.getSetCookie().some(value => value.startsWith('VGSTAFFDEVICE=') && /HttpOnly/.test(value) && /SameSite=Strict/.test(value) && /expires=/i.test(value)), true, 'Remembered factor is a persistent HttpOnly Strict cookie');
+    check(JSON.stringify(result.data).includes(remembered), false, 'Device token is never exposed to JavaScript API payloads');
+    const selector = remembered.split('.')[0];
+    const deviceState = JSON.parse(fs.readFileSync(stateFile, 'utf8')).users[deviceId].trustedDevices[selector];
+    check(JSON.stringify(deviceState).includes(remembered.split('.')[1]), false, 'Only a validator hash is retained in private storage');
+    check(deviceState.expires > Date.now() / 1000 + 29 * 86400 && deviceState.expires <= Date.now() / 1000 + 30 * 86400, true, 'Remembered factor expires within 30 days');
+    const deviceClient = async value => { const a = client(); if (value) a.cookies.set('VGSTAFFDEVICE', value); await expect(a, 'me', {}, 200); return a; };
+    const deviceLogin = (a, extra = {}) => expect(a, 'login', { body: { email: 'device@example.test', password }, ...extra }, 200);
+    const passwordOnly = await deviceClient();
+    check((await deviceLogin(passwordOnly)).data.mode, 'verify', 'A new browser still requires the authenticator');
+    const cookieOnly = await deviceClient(remembered);
+    check((await request(cookieOnly, 'me')).data.user, null, 'A remembered cookie alone never restores an employee session');
+    await expect(cookieOnly, 'login', { body: { email: 'device@example.test', password: 'IncorrectPassword123!' } }, 401, 'staff_login_failed');
+    check((await request(cookieOnly, 'me')).data.user, null, 'Remembered browser still must prove the correct password');
+    result = await deviceLogin(cookieOnly);
+    check(result.data.user.id, deviceId, 'Correct password and remembered factor skip the repeated code screen');
+    check(result.data.mfa_required, undefined, 'Successful remembered login completes the normal employee session');
+    const oldRemembered = remembered; remembered = cookieOnly.cookies.get('VGSTAFFDEVICE');
+    check(remembered !== oldRemembered, true, 'Remembered validator rotates after each password login');
+    check(JSON.parse(fs.readFileSync(stateFile, 'utf8')).users[deviceId].trustedDevices[selector].expires, deviceState.expires, 'Rotation never extends the original 30-day expiry');
+    await panel(cookieOnly, 200);
+    const replay = await deviceClient(oldRemembered);
+    check((await deviceLogin(replay)).data.mode, 'verify', 'An old rotated validator cannot be replayed');
+    const tampered = await deviceClient(remembered.slice(0, -1) + (remembered.endsWith('0') ? '1' : '0'));
+    check((await deviceLogin(tampered)).data.mode, 'verify', 'Tampered validators fall back to MFA');
+    const differentBrowser = await deviceClient(remembered);
+    check((await deviceLogin(differentBrowser, { headers: { 'User-Agent': 'Different browser fixture' } })).data.mode, 'verify', 'A changed browser agent requires MFA');
+    const wrongAccount = await deviceClient(remembered);
+    result = await expect(wrongAccount, 'login', { body: { email: 'payroll@example.test', password } }, 200);
+    check(result.data.mode, 'verify', 'A remembered employee factor cannot authenticate another account');
+    await expect(cookieOnly, 'logout', { body: {} }, 200);
+    check((await request(cookieOnly, 'me')).data.user, null, 'Logout ends the authenticated session');
+    check((await deviceLogin(cookieOnly)).data.user.id, deviceId, 'Opt-in survives ordinary logout, while still requiring the password');
+    remembered = cookieOnly.cookies.get('VGSTAFFDEVICE');
+    mutate(s => { s.users[deviceId].trustedDevices[selector].expires = Math.floor(Date.now() / 1000) - 1; });
+    const expiredDevice = await deviceClient(remembered);
+    check((await deviceLogin(expiredDevice)).data.mode, 'verify', 'Expired remembered factors require a fresh code');
+    mutate(s => { s.users[deviceId].trustedDevices[selector].expires = deviceState.expires; });
+    const epochDevice = await deviceClient(remembered);
+    mutate(s => { s.users[deviceId].epoch++; });
+    check((await deviceLogin(epochDevice)).data.mode, 'verify', 'Account revocation invalidates previously remembered factors');
+    await expect(cookieOnly, 'payroll_list', {}, 401, 'staff_unauthorized');
+    mutate(s => { s.users[deviceId].lastTotpStep = -1; });
+    result = await expect(epochDevice, 'mfa_verify', { body: { code: totp(deviceUser.secret), rememberDevice: true } }, 200);
+    remembered = epochDevice.cookies.get('VGSTAFFDEVICE');
+    await expect(epochDevice, 'forget_devices', { body: {}, csrf: false }, 403, 'staff_csrf');
+    await expect(epochDevice, 'forget_devices', { body: {} }, 200);
+    check(JSON.parse(fs.readFileSync(stateFile, 'utf8')).users[deviceId].trustedDevices, [], 'Forget devices clears every persistent factor');
+    check((await request(epochDevice, 'me')).data.user, null, 'Forget devices also closes the initiating session');
+    const forgottenDevice = await deviceClient(remembered);
+    check((await deviceLogin(forgottenDevice)).data.mode, 'verify', 'A revoked remembered token cannot be reused');
+    check(JSON.stringify(JSON.parse(fs.readFileSync(stateFile, 'utf8')).audit).includes(remembered), false, 'Audit never retains device validators');
+    let latestDevice;
+    for (let i = 0; i < 6; i++) {
+      latestDevice = await deviceClient(); await deviceLogin(latestDevice);
+      mutate(s => { s.users[deviceId].lastTotpStep = -1; });
+      await expect(latestDevice, 'mfa_verify', { body: { code: totp(deviceUser.secret), rememberDevice: true } }, 200);
+    }
+    check(Object.keys(JSON.parse(fs.readFileSync(stateFile, 'utf8')).users[deviceId].trustedDevices).length, 5, 'Remembered factors are bounded to five devices per account');
+    remembered = latestDevice.cookies.get('VGSTAFFDEVICE');
+    await expect(latestDevice, 'rpc', { endpoint: 'company', body: { name: 'app_change_own_password', args: { p_old: password, p_new: 'DifferentSecurePassword123!' } } }, 200);
+    check(JSON.parse(fs.readFileSync(stateFile, 'utf8')).users[deviceId].trustedDevices, [], 'Password changes remove every remembered factor');
+    const changedPasswordDevice = await deviceClient(remembered);
+    result = await expect(changedPasswordDevice, 'login', { body: { email: 'device@example.test', password: 'DifferentSecurePassword123!' } }, 200);
+    check(result.data.mode, 'verify', 'Even the new password requires a fresh code after a password change');
     await expect(employee, 'payroll_delete', { body: { statementId: other.id } }, 403, 'staff_forbidden');
     await expect(employee, 'payroll_download', { query: { id: other.id } }, 404, 'staff_not_found');
 

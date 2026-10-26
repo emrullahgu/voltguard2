@@ -3,7 +3,7 @@ import {useAuth} from './SimpleAuth';
 import MfaSettings from './MfaSettings';
 
 export default function UserProfile({onClose}) {
-  const {currentUser, updateUser, changeOwnPassword} = useAuth();
+  const {currentUser, updateUser, changeOwnPassword, forgetDevices} = useAuth();
   const [name, setName] = useState(currentUser.name || '');
   const [old, setOld] = useState(''), [password, setPassword] = useState(''), [confirmPassword, setConfirm] = useState('');
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
@@ -60,7 +60,7 @@ export default function UserProfile({onClose}) {
         <label>Yeni şifre tekrar<input disabled={busy} type="password" value={confirmPassword} onChange={event => setConfirm(event.target.value)} minLength={12} maxLength={64} required autoComplete="new-password" className="w-full border rounded p-3 mt-1" /></label>
         <button disabled={busy} className="bg-slate-800 text-white rounded px-4 py-2">Şifreyi değiştir ve oturumları kapat</button>
       </form>
-      <MfaSettings email={currentUser.email} />
+      <MfaSettings busy={busy} onForget={() => run(forgetDevices)} />
       <p className="text-sm border-t mt-6 pt-4 text-slate-600">Hesap erişiminizi şirket yöneticiniz yönetir. Çalışan ayrılışında erişim kapatılır; şirket kayıtları silinmez.</p>
     </section>
   </div>;

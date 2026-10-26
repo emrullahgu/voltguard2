@@ -110,12 +110,17 @@ async function run() {
     const changeArgs = { p_user_id: managed.user.id, p_name: 'Renamed Account', p_role: 'employee', p_bordro: false, p_approved: true };
     r = await rpc(admin, 'app_portal_update_user', changeArgs); check(r.data.data.role, 'employee', 'Administrative role update uses validated real role');
     await expect(managed, 'bootstrap', undefined, 401, 'staff_unauthorized');
-    await rpc(admin, 'app_portal_update_user', { ...changeArgs, p_approved: false });
+    r = await rpc(admin, 'app_portal_update_user', { ...changeArgs, p_approved: false });
+    check(r.data.data.must_change_password, false, 'Disabling an enrolled employee does not turn it into an unactivated invitation');
+    check(r.data.data.approved, false, 'Disabled enrolled employee still has no company access');
     await rpc(admin, 'app_portal_update_user', { ...changeArgs, p_approved: true });
     await expect(managed, 'bootstrap', undefined, 401, 'staff_unauthorized');
     await rpc(admin, 'app_portal_recover_mfa', { p_user_id: managed.user.id }, 409, 'company_recovery_requires_invite');
     await rpc(admin, 'app_portal_invite', { p_user_id: managed.user.id, p_email: 'wrong@example.test', p_name: 'Managed Account', p_role: 'employee', p_bordro: false }, 422, 'company_staff_identity');
     const recoveryInvite = (await rpc(admin, 'app_portal_invite', { p_user_id: managed.user.id, p_email: 'managed@example.test', p_name: 'Managed Account', p_role: 'employee', p_bordro: false })).data.data;
+    r = await query(admin, 'users', 'select', { filters: filterId(managed.user.id), single: 'one' });
+    check(r.data.data.must_change_password, true, 'A renewed invitation still requires activation and a new password');
+    await rpc(admin, 'app_portal_update_user', { ...changeArgs, p_approved: true }, 409, 'company_activation_required');
     await rpc(admin, 'app_portal_recover_mfa', { p_user_id: managed.user.id });
     await activate(managed, recoveryInvite); check(managed.user.role, 'employee', 'Recovery preserves private invitation activation and fresh mandatory MFA');
     r = await rpc(admin, 'app_portal_account_audit', {}); check(Array.isArray(r.data.data), true, 'Private administrator can read safe audit history');

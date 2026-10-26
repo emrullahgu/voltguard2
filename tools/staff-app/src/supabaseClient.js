@@ -88,6 +88,12 @@ export async function companyRequest(action, body) {
   return transport(action, body);
 }
 
+export async function forgetRememberedDevices() {
+  await bootstrapCompany();
+  await transport('forget_devices', {}, 'vg-staff/1', '/api/staff.php');
+  clearStaffClientState();
+}
+
 configurePrivateStorage({
   identity: getStaffIdentity,
   async persist(key, value, expectedOwner) {

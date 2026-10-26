@@ -38,6 +38,10 @@ const check = (actual, expected, message) => { assert.deepEqual(actual, expected
     }
     if (action === 'rpc') return reply(200, { api, ok: true, data: { saved: true, ...body.args } });
     if (action === 'logout') { state.active = false; return reply(200, { api, ok: true, csrf: 'b'.repeat(64), user: null }); }
+    if (action === 'forget_devices') {
+      if (state.failure) return reply(503, { api, ok: false, error: 'unavailable', message: state.failure });
+      state.active = false; return reply(200, { api, ok: true, csrf: 'c'.repeat(64), user: null });
+    }
     throw new Error('Unknown fixture action');
   };
   const sdk = await import(pathToFileURL(path.resolve(__dirname, '../staff-app/src/supabaseClient.js')).href);
@@ -145,5 +149,13 @@ const check = (actual, expected, message) => { assert.deepEqual(actual, expected
   const expired = await sdk.supabase.auth.getSession();
   check(expired.data.session, null, 'Expired session cannot reconstruct employee identity');
   check(expired.error.status, 401, 'Expired status reaches caller');
+  state.active = true; await sdk.initializePortal(); state.failure = 'Cihaz işlemi başarısız.';
+  await assert.rejects(sdk.forgetRememberedDevices(), /başarısız/); checks++;
+  check(sdk.getStaffIdentity().id, state.user.id, 'Failed device revocation keeps the current identity available for retry');
+  state.failure = null; await sdk.forgetRememberedDevices();
+  check(requests.at(-1).url, '/api/staff.php?action=forget_devices', 'Device revocation uses the CSRF-protected employee endpoint');
+  check(requests.at(-1).options.headers['X-VG-STAFF-CSRF'], state.csrf, 'Device revocation carries the current employee CSRF');
+  check(sdk.getStaffIdentity(), null, 'Successful revocation clears the current identity');
+  check(privateStorage.length, 0, 'Successful revocation clears private in-memory records');
   console.log(`Company client: ${checks} checks passed; fixtures isolated from all real staff data.`);
 })().catch(error => { console.error(error.message); process.exitCode = 1; });

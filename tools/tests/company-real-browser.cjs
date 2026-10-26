@@ -12,7 +12,7 @@ const root = path.resolve(__dirname, '../..');
 const ownWhiteOnly=process.argv.includes('--own-white-only');
 const workflowArgument=process.argv.find(argument=>argument.startsWith('--workflows='));
 const selectedWorkflows=workflowArgument?new Set(workflowArgument.slice(12).split(',')):null;
-const output = path.join(root, process.env.VG_COMPANY_SUBMIT_FOCUS==='1'?(process.argv.includes('--weekly-pdf-only')?'.qa/company-weekly-pdf':'.qa/company-submit'):ownWhiteOnly?'.qa/company-own-white':selectedWorkflows?'.qa/company-focused':'.qa/company-real');
+const output = path.join(root, process.env.VG_COMPANY_ADMIN_OUTPUT_FOCUS==='1'?'.qa/company-admin-outputs':process.env.VG_COMPANY_OUTPUT_FOCUS==='1'?(process.argv.includes('--payroll-only')?'.qa/company-payroll-outputs':process.env.VG_COMPANY_PROPOSAL_OUTPUT_FOCUS==='1'?'.qa/company-proposal-outputs':'.qa/company-outputs'):process.env.VG_COMPANY_SUBMIT_FOCUS==='1'?(process.argv.includes('--weekly-pdf-only')?'.qa/company-weekly-pdf':'.qa/company-submit'):ownWhiteOnly?'.qa/company-own-white':selectedWorkflows?'.qa/company-focused':'.qa/company-real');
 const php = process.env.VG_PHP || path.join(root, '.qa/php/runtime/php.exe');
 const packages = process.env.VG_NODE_MODULES || process.env.VOLTGUARD_NODE_MODULES || path.join(os.homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules');
 const { chromium } = require(path.join(packages, 'playwright'));
@@ -125,7 +125,7 @@ async function run() {
     const context=await browser.newContext({viewport:{width:1440,height:1050},locale:'tr-TR',timezoneId:'Europe/Istanbul',acceptDownloads:true,serviceWorkers:'block'});
     await context.addCookies([...admin.cookies].filter(([name])=>name==='VGSTAFF').map(([name,value])=>({name,value,url:base,httpOnly:true,sameSite:'Strict'})));
     page=await context.newPage();page.setDefaultTimeout(10000);
-    page.on('dialog',dialog=>dialog.type()==='prompt'?dialog.accept(dialog.defaultValue()||'QA teklif'):dialog.accept());
+    page.on('dialog',dialog=>{report.dialogs ||= [];report.dialogs.push({phase,type:dialog.type(),message:redact(dialog.message())});const action=dialog.type()==='confirm'&&/otomatik olarak doldurulsun/i.test(dialog.message())?dialog.dismiss():dialog.type()==='prompt'?dialog.accept(dialog.defaultValue()||'QA teklif'):dialog.accept();action.catch(error=>{if(!/Not attached to an active page|Target (page|context|browser).*closed/i.test(error.message))report.pageErrors.push({phase,message:redact(error.message)});});});
     page.on('pageerror',error=>report.pageErrors.push({phase,message:redact(error.message)}));
     page.on('console',message=>{if(message.type()==='error')report.consoleErrors.push({phase,message:redact(message.text())});});
     page.on('response',async response=>{
@@ -150,8 +150,16 @@ async function run() {
       });
       return;
     }
+    if(process.env.VG_COMPANY_ADMIN_OUTPUT_FOCUS==='1'){
+      await require('./company-output-admin.cjs')({page,admin,employee,api,rows,waitRow,mount,fill,workflow,check,report,download,output,base,browser});
+      return;
+    }
     if(process.env.VG_COMPANY_SUBMIT_FOCUS==='1'){
       await require('./company-submit-scenarios.cjs')({page,admin,api,rows,waitRow,mount,fill,workflow,check,report,download,output});
+      return;
+    }
+    if(process.env.VG_COMPANY_OUTPUT_FOCUS==='1'){
+      await require('./company-output-scenarios.cjs')({page,admin,employee,api,rows,waitRow,mount,fill,workflow,check,report,download,output,base,browser});
       return;
     }
     for(const id of modules){

@@ -69,6 +69,7 @@ async function fixtureAPI(req,res,url) {
   if (req.method==='POST' && req.headers['x-vg-staff-csrf']!==session.csrf) return json(res,session,403,{error:'staff_csrf',message:'Güvenlik doğrulaması başarısız oldu.'});
   if (action==='login') {
     if (body.password!=='FixturePass123!' || !body.email.includes('@')) return json(res,session,401,{error:'staff_login_failed',message:'E-posta, şifre veya çalışan erişimi geçersiz.'});
+    if (session.remembered) { session.user={...session.target};session.pending=null;session.csrf+='-remembered';return json(res,session,200,{user:session.user,csrf:session.csrf}); }
     session.pending={mode:session.loginMode};
     if(session.loginMode==='enroll')session.pending.secret=session.nextEnrollmentSecret || SECRET;
     session.challengeExpired=false;
@@ -87,6 +88,7 @@ async function fixtureAPI(req,res,url) {
     }
     if (body.code!=='123456') return json(res,session,401,{error:'staff_code',message:'Doğrulama kodu geçersiz. Yeniden deneyin.'});
     session.user={...session.target};session.pending=null;session.csrf += '-authenticated';
+    session.remembered=body.rememberDevice===true;
     return json(res,session,200,{user:session.user,csrf:session.csrf});
   }
   if (action==='logout') { session.user=null;session.pending=null;session.csrf += '-loggedout';return json(res,session,200,{user:null,csrf:session.csrf}); }
@@ -170,6 +172,10 @@ async function checkLayout(page,name,width) {
       titleFont:getComputedStyle(document.querySelector('h1')).fontFamily};
   });
   report.layouts.push({name,...layout});
+  if(layout.width>width+1) {
+    report.layouts.at(-1).outsideMain=await page.evaluate(()=>Array.from(document.querySelectorAll('body *')).filter(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return r.right>innerWidth+1&&r.width;}).map(e=>({tag:e.tagName,id:e.id,cls:e.className,text:e.textContent.slice(0,100)})).slice(0,16));
+    await page.screenshot({path:path.join(output,name+'-overflow-'+width+'.png')});
+  }
   assert.ok(layout.width<=width+1,name+' page overflow '+layout.width+'/'+width);assert.deepEqual(layout.controls,[],name+' clipped controls');
   assert.ok(layout.bodyFont.startsWith('Inter'));assert.ok(layout.titleFont.startsWith('Outfit'));
   await page.screenshot({path:path.join(output,name+'-'+width+'.png')});
@@ -395,6 +401,32 @@ async function fillPayroll(page,period,pdf) {
       await page.locator('#staff-logout').click();await page.waitForURL(base+'/calisan/giris.html');
       assert.deepEqual(await page.evaluate(()=>JSON.parse(sessionStorage.getItem('qa-private-scrub'))),{records:0,people:0,invite:''});
       await context.close();
+    });
+    await scenario('Remember device is opt-in and subsequent password login skips repeated MFA',async()=>{
+      const context=await contextWith({role:'employee'}),page=await context.newPage();
+      try {
+        await page.goto(base+'/calisan/giris.html',{waitUntil:'networkidle'});
+        await page.locator('#staff-login-form [name=email]').fill('employee@example.invalid');
+        await page.locator('#staff-login-form [name=password]').fill('FixturePass123!');
+        await page.locator('#staff-login-form button').click();
+        await page.locator('#staff-factor').waitFor({state:'visible'});
+        assert.equal(await page.locator('[name=rememberDevice]').isChecked(),false,'Remembering a device always requires a deliberate opt-in');
+        for(const width of [390,320])await checkLayout(page,'remember-device',width);
+        await page.getByLabel('Bu cihazı 30 gün hatırla',{exact:false}).check();
+        await page.locator('#staff-factor-form [name=code]').fill('123456');
+        await page.locator('#staff-factor-form button').click();
+        await page.waitForURL(base+'/calisan/');
+        const sid=observed.filter(row=>row.action==='mfa_verify').at(-1).session;
+        assert.equal(observed.filter(row=>row.session===sid&&row.action==='mfa_verify').at(-1).body.rememberDevice,true);
+        await page.locator('#staff-logout').click();await page.waitForURL(base+'/calisan/giris.html');
+        assert.equal(await page.locator('#staff-login-form [name=password]').inputValue(),'');
+        await page.locator('#staff-login-form [name=email]').fill('employee@example.invalid');
+        await page.locator('#staff-login-form [name=password]').fill('FixturePass123!');
+        await page.locator('#staff-login-form button').click();
+        await page.waitForURL(base+'/calisan/');
+        assert.equal(observed.filter(row=>row.session===sid&&row.action==='mfa_verify').length,1,'Remembered login never sends an extra code verification');
+        assert.equal(observed.filter(row=>row.session===sid&&row.action==='login').length,2);
+      }finally{await context.close();}
     });
     await scenario('Password login → MFA verification → admin payroll, invitations and disable',async()=>{
       const context=await contextWith({role:'admin'}),page=await context.newPage();

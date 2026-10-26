@@ -168,6 +168,8 @@ const BeyazYakaBordro: React.FC = () => {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [payrollData, setPayrollData] = useState<MonthlyPayroll | null>(null);
   const [advances, setAdvances] = useState<Advance[]>([]);
+  const summaryExportInFlight = useRef(false);
+  const [exportingSummary, setExportingSummary] = useState(false);
   const expenseSaveInFlight = useRef(false);
   const expenseRequestRef = useRef<{ id: string; fingerprint: string } | null>(null);
   const [payrollDirty, setPayrollDirty] = useState(false);
@@ -875,7 +877,7 @@ const BeyazYakaBordro: React.FC = () => {
         ['Çalışan', selectedEmployee.name], ['TC kimlik no', selectedEmployee.tc_no || 'Belirtilmedi'],
         ['Pozisyon', selectedEmployee.position || 'Belirtilmedi'], ['Departman', selectedEmployee.department || 'Belirtilmedi'],
         ['Çalışma günü', `${payrollData.worked_days}/${payrollData.total_days}`]
-      ], theme: 'grid' });
+      ], theme: 'grid', styles: {fontSize: 9, cellPadding: 2} });
       const tableData: any[] = [
         ['Temel ücret', money('base_salary')], ['Mesai ücreti', money('overtime_pay')], ['Prim', money('bonus')],
         ['Yemek yardımı', money('meal_allowance')], ['Ulaşım yardımı', money('transport_allowance')],
@@ -889,7 +891,7 @@ const BeyazYakaBordro: React.FC = () => {
         ['İşsizlik işveren payı', money('unemployment_employer')], ['TOPLAM İŞVEREN MALİYETİ', money('total_employer_cost')]
       ];
       doc.autoTable({ startY: (doc as any).lastAutoTable.finalY + 7, head: [['Açıklama', 'Tutar']], body: tableData,
-        columnStyles: { 1: { halign: 'right' } }, theme: 'striped',
+        columnStyles: { 1: { halign: 'right' } }, theme: 'striped', styles: {fontSize: 9, cellPadding: 2},
         didParseCell: (data: any) => {
           if (data.section === 'body' && /^(TOPLAM|NET ÖDEME)/.test(String(data.row.raw[0]))) {
             data.cell.styles.fillColor = [232, 238, 246]; data.cell.styles.fontStyle = 'bold';
@@ -909,25 +911,43 @@ const BeyazYakaBordro: React.FC = () => {
     } catch (error: any) { alert('PDF oluşturulamadı: ' + error.message); }
   };
 
-  const exportSummaryToExcel = () => {
-    const summaryData = employees.map(emp => {
-      // Her çalışan için bordro hesapla
-      const empPayroll = createDefaultPayroll(emp);
-      return {
-        'çalışan': emp.name,
-        'Pozisyon': emp.position || '-',
-        'Departman': emp.department || '-',
-        'Temel Maaş': emp.monthly_salary,
-        'Net Ödeme': empPayroll.net_payment,
-        'İşveren Maliyeti': empPayroll.total_employer_cost,
-        'İşe Başlama': new Date(emp.start_date).toLocaleDateString('tr-TR')
-      };
-    });
-
-    const ws = XLSX.utils.json_to_sheet(summaryData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Beyaz Yaka Özet');
-    XLSX.writeFile(wb, `beyaz_yaka_ozet_${MONTHS[currentMonth]}_${currentYear}.xlsx`);
+  const exportSummaryToExcel = async () => {
+    if (summaryExportInFlight.current || loading || !employees.length) return;
+    summaryExportInFlight.current = true; setExportingSummary(true);
+    const exportMonth = currentMonth, exportYear = currentYear, exportEmployees = [...employees];
+    try {
+      const saved = new Map<string, MonthlyPayroll>();
+      for (let start = 0; ; start += 1000) {
+        const {data, error} = await supabase.from('beyaz_yaka_monthly_payroll').select('*')
+          .eq('month', exportMonth).eq('year', exportYear).order('id').range(start, start + 999);
+        if (error) throw error;
+        for (const row of data || []) {
+          if (saved.has(row.employee_id)) throw new Error('Aynı çalışan ve dönem için birden fazla bordro kaydı var. Kayıtları kontrol edin.');
+          saved.set(row.employee_id, row);
+        }
+        if (!data || data.length < 1000) break;
+      }
+      const summaryData = exportEmployees.map(emp => {
+        const payroll = saved.get(emp.id);
+        return {
+          'çalışan': emp.name,
+          'Pozisyon': emp.position || '-',
+          'Departman': emp.department || '-',
+          'Dönem': `${MONTHS[exportMonth]} ${exportYear}`,
+          'Kayıt durumu': payroll ? 'Kaydedilmiş dönem' : 'Dönem kaydı yok',
+          'Temel Maaş': payroll?.base_salary ?? null,
+          'Net Ödeme': payroll?.net_payment ?? null,
+          'İşveren Maliyeti': payroll?.total_employer_cost ?? null,
+          'İşe Başlama': reportDate(emp.start_date)
+        };
+      });
+      const ws = XLSX.utils.json_to_sheet(summaryData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Beyaz Yaka Özet');
+      XLSX.writeFile(wb, `beyaz_yaka_ozet_${MONTHS[exportMonth]}_${exportYear}.xlsx`);
+    } catch (error: any) {
+      showMessage('error', 'Excel oluşturulamadı: ' + (error?.message || 'Dönem kayıtları yüklenemedi. Yeniden deneyin.'));
+    } finally { summaryExportInFlight.current = false; setExportingSummary(false); }
   };
 
   const resetEmployeeForm = () => {
@@ -1069,10 +1089,12 @@ const BeyazYakaBordro: React.FC = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={exportSummaryToExcel}
+                    disabled={exportingSummary || loading || !employees.length}
+                    aria-busy={exportingSummary}
                     className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
                   >
                     <Download size={18} />
-                    Excel indir
+                    {exportingSummary ? 'Excel hazırlanıyor…' : 'Excel indir'}
                   </button>
                   <button
                     onClick={() => {

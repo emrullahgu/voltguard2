@@ -34,6 +34,7 @@
     return data;
   }
   async function busy(form, work) {
+    if (form.getAttribute('aria-busy') === 'true') return;
     var buttons = Array.from(form.querySelectorAll('button'));
     buttons.forEach(function (b) { b.disabled = true; });
     form.setAttribute('aria-busy', 'true'); status('');
@@ -92,6 +93,7 @@
         var password = login.elements.password.value;
         login.elements.password.value = '';
         var data = await api('login', {email: login.elements.email.value.trim(), password: password});
+        if (data.user) { location.replace('/calisan/'); return; }
         challenge(data);
       });
     });
@@ -114,7 +116,7 @@
       ev.preventDefault(); var form = ev.currentTarget;
       busy(form, async function () {
         var code = form.elements.code.value; form.elements.code.value = '';
-        try { await api(factorMode === 'enroll' ? 'mfa_enroll' : 'mfa_verify', {code: code}); }
+        try { await api(factorMode === 'enroll' ? 'mfa_enroll' : 'mfa_verify', {code: code, rememberDevice: !!form.elements.rememberDevice?.checked}); }
         catch (e) {
           if (e.code === 'staff_challenge_expired') { expiredChallenge(); return; }
           throw e;

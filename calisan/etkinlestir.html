@@ -40,7 +40,7 @@
   <!--/vg:head-->
   <title>Çalışan Hesabını Etkinleştir | VoltGuard</title>
   <meta name="description" content="VoltGuard çalışan davetinizi kullanarak şifrenizi ve doğrulayıcı uygulamanızı ayarlayın."><meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
-  <link rel="icon" href="/public/favicon-32.png"><link rel="stylesheet" href="/css/staff.css?v=c5916febab11"><script src="/js/staff.js?v=c0198de6fe2c" defer></script>
+  <link rel="icon" href="/public/favicon-32.png"><link rel="stylesheet" href="/css/staff.css?v=408066f04b8d"><script src="/js/staff.js?v=0a1f9bc8fc81" defer></script>
 </head><body class="staff-page" data-staff-page="activate">
   <!--vg:header-->
   <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
@@ -173,7 +173,7 @@
         <label>Uygulamaya eklenecek kurulum anahtarı<input id="staff-secret" readonly autocomplete="off" spellcheck="false"></label>
         <button type="button" class="staff-secondary" id="staff-copy-secret">Kurulum anahtarını kopyala</button>
         <p class="staff-muted">Anahtarı ekledikten sonra uygulama her 30 saniyede yeni bir kod üretir. Kodun süresi dolduysa yeni kodu kullanın. Kurulum adımını 10 dakika içinde tamamlayın. Şifreyle yeniden başlattığınızda gösterilen yeni anahtarı doğrulayıcı uygulamaya yeniden ekleyin.</p>
-      </div><form id="staff-factor-form" method="post" action="#" novalidate><label>Uygulamadaki 6 haneli kod<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" aria-describedby="staff-code-help" required></label><button class="staff-primary" type="submit" disabled data-vg-wait>Doğrula ve hesabımı aç</button></form></section>
+      </div><form id="staff-factor-form" method="post" action="#" novalidate><label>Uygulamadaki 6 haneli kod<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" aria-describedby="staff-code-help" required></label><label class="staff-remember"><input name="rememberDevice" type="checkbox"><span>Bu cihazı 30 gün hatırla<small>Yalnızca size ait cihazlarda seçin. Sonraki girişlerde şifreniz yeterlidir; yeni cihazda yeniden kod istenir.</small></span></label><button class="staff-primary" type="submit" disabled data-vg-wait>Doğrula ve hesabımı aç</button></form></section>
     <section id="staff-activation-recovery" hidden aria-labelledby="staff-recovery-title" class="staff-recovery"><h2 id="staff-recovery-title" tabindex="-1">Çalışan girişinden devam edin</h2><p>Şifrenizi daha önce belirlediyseniz hesabınızın kurulumuna o şifreyle devam edebilirsiniz. Doğrulayıcı uygulama kurulumu tamamlanmadıysa girişten sonra yeniden açılır.</p><a class="staff-primary staff-recovery-link" href="/calisan/giris.html">Şifremle giriş yapıp devam et →</a><p class="staff-muted">Şifrenizi henüz belirlemediyseniz yeni bir davet için şirket yöneticinizle görüşün.</p></section>
     <p class="staff-bottom"><a href="/calisan/giris.html">Çalışan girişine dön</a></p></section></main>
   <!--vg:footer-->

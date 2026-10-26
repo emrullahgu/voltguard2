@@ -142,6 +142,24 @@ export async function exportTableReport({ title, subtitle, head, body, summary =
   return doc;
 }
 
+function reportContentHeight(canvas) {
+  const context = canvas.getContext('2d');
+  // A4 min-height and the removed HTML footer reserve can leave white padding.
+  // It must not create another PDF page or move the last total to a continuation.
+  for (let bottom = canvas.height; bottom > 0;) {
+    const height = Math.min(128, bottom), top = bottom - height;
+    const pixels = context.getImageData(0, top, canvas.width, height).data;
+    for (let row = height - 1; row >= 0; row--) {
+      const first = row * canvas.width * 4, last = first + canvas.width * 4;
+      for (let pixel = first; pixel < last; pixel += 4) {
+        if (pixels[pixel + 3] && (pixels[pixel] < 255 || pixels[pixel + 1] < 255 || pixels[pixel + 2] < 255)) return top + row + 1;
+      }
+    }
+    bottom = top;
+  }
+  return 0;
+}
+
 /** Capture a detached clone, preserve edited HTML, and split oversized pages without clipping. */
 export async function exportHTMLReport({ root, selector, filename, title = 'VoltGuard Raporu' }) {
   if (!root) throw new Error('Rapor önizlemesi bulunamadı. Önizlemeyi açıp tekrar deneyin.');
@@ -168,7 +186,21 @@ export async function exportHTMLReport({ root, selector, filename, title = 'Volt
       const atBottom = node.style.bottom || /bottom-/.test(node.className);
       if (footerPosition && atBottom && /Sayfa\s+\d/i.test(node.textContent)) node.remove();
     });
-    host.appendChild(clone); document.body.appendChild(host);
+    // Older saved pages kept their reference above the selected page wrappers.
+    // Preserve it when each page is captured separately.
+    const reference = root.querySelector('[data-vg-reference]')?.textContent?.trim();
+    if (reference && !clone.querySelector('[data-vg-reference]')) {
+      const line = document.createElement('p');
+      line.style.cssText = 'font-size:9pt;line-height:1.3;margin:0 0 8px;color:#475569;';
+      line.textContent = `Referans: ${reference}`;
+      clone.prepend(line);
+    }
+    // Production utilities are scoped to the company workspace. Moving a report
+    // outside that scope drops its typography, table layout and box sizing.
+    host.setAttribute('aria-hidden', 'true');
+    host.inert = true;
+    host.appendChild(clone);
+    (root.closest('#vg-company-workspace') || document.body).appendChild(host);
     try {
       const images = [...clone.querySelectorAll('img')];
       await Promise.all(images.map(image => image.complete ? Promise.resolve() : new Promise(resolve => {
@@ -179,13 +211,18 @@ export async function exportHTMLReport({ root, selector, filename, title = 'Volt
       const canvas = await html2canvas(clone, { scale: 2, width: clone.offsetWidth, height: Math.max(clone.scrollHeight, clone.offsetHeight),
         windowWidth: 1100, useCORS: true, allowTaint: false, logging: false, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0 });
       if (!canvas.width || !canvas.height) throw new Error('Rapor görüntüsü oluşturulamadı.');
+      const contentHeight = reportContentHeight(canvas);
+      if (!contentHeight) continue;
       const widthMM = 190;
       // Prefer existing row boundaries, so table text does not straddle a page break.
       const rect = clone.getBoundingClientRect();
       const tableHead = clone.querySelector('thead');
-      let headerImage, headerHeightMM = 0;
+      let headerImage, headerHeightMM = 0, tableStart = 0, tableEnd = 0;
       if (tableHead) {
         const box = tableHead.getBoundingClientRect();
+        const tableBox = tableHead.closest('table').getBoundingClientRect();
+        tableStart = Math.round((tableBox.top - rect.top) * 2);
+        tableEnd = Math.round((tableBox.bottom - rect.top) * 2);
         const header = document.createElement('canvas');
         header.width = canvas.width; header.height = Math.max(1, Math.round(box.height * 2));
         header.getContext('2d').drawImage(canvas, 0, Math.round((box.top - rect.top) * 2), canvas.width, header.height, 0, 0, canvas.width, header.height);
@@ -196,12 +233,13 @@ export async function exportHTMLReport({ root, selector, filename, title = 'Volt
         const box = element.getBoundingClientRect();
         return [Math.round((box.top - rect.top) * 2), Math.round((box.bottom - rect.top) * 2)];
       }).filter(y => y > 0).sort((a, b) => a - b);
-      for (let offset = 0; offset < canvas.height;) {
+      for (let offset = 0; offset < contentHeight;) {
         const continuation = offset > 0;
-        const imageTop = continuation ? 20 + headerHeightMM : 8;
+        const repeatHeader = continuation && headerImage && offset > tableStart && offset < tableEnd;
+        const imageTop = continuation ? 20 + (repeatHeader ? headerHeightMM : 0) : 8;
         const maximumPixels = Math.floor((281 - imageTop) * canvas.width / widthMM);
-        let end = Math.min(offset + maximumPixels, canvas.height);
-        if (end < canvas.height) {
+        let end = Math.min(offset + maximumPixels, contentHeight);
+        if (end < contentHeight) {
           const boundary = boundaries.filter(y => y > offset + maximumPixels * 0.65 && y <= end).pop();
           if (boundary) end = boundary;
         }
@@ -212,13 +250,14 @@ export async function exportHTMLReport({ root, selector, filename, title = 'Volt
         if (continuation) {
           doc.setFont(undefined, 'bold'); doc.setFontSize(9); doc.setTextColor(24, 57, 95);
           doc.text(`${title} - devam`, 10, 13);
-          if (headerImage) doc.addImage(headerImage, 'JPEG', 10, 18, widthMM, headerHeightMM, undefined, 'FAST');
+          if (repeatHeader) doc.addImage(headerImage, 'JPEG', 10, 18, widthMM, headerHeightMM, undefined, 'FAST');
         }
         doc.addImage(slice.toDataURL('image/jpeg', 0.96), 'JPEG', 10, imageTop, widthMM, height * widthMM / canvas.width, undefined, 'FAST');
         offset = end;
       }
     } finally { host.remove(); }
   }
+  if (!pageCount) throw new Error('PDF oluşturmak için rapora içerik ekleyin.');
   doc.save(filename);
   return doc;
 }

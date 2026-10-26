@@ -590,10 +590,10 @@ export default function HaftalikRaporlama() {
   };
 
   const getDurum = (rapor) => {
-    const gucFaktoru = parseFloat(rapor.guc_faktoru);
-    const hedef = parseFloat(rapor.hedef_guc_faktoru);
+    const gucFaktoru = parseDecimal(rapor.guc_faktoru, null);
+    const hedef = parseDecimal(rapor.hedef_guc_faktoru, null);
 
-    if (!Number.isFinite(gucFaktoru) || !Number.isFinite(hedef)) {
+    if (gucFaktoru === null || gucFaktoru < 0 || gucFaktoru > 1 || hedef === null || hedef <= 0 || hedef > 1) {
       return { text: 'VERİ EKSİK', color: 'gray', icon: AlertTriangle, bg: 'bg-slate-100', textColor: 'text-slate-700' };
     }
     
@@ -635,19 +635,20 @@ export default function HaftalikRaporlama() {
     .sort((first, second) => new Date(first.hafta_baslangic) - new Date(second.hafta_baslangic))
     .map(rapor => ({
       hafta: new Date(rapor.hafta_baslangic).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }),
-      guc_faktoru: Number(rapor.guc_faktoru),
-      hedef: Number(rapor.hedef_guc_faktoru)
+      guc_faktoru: parseDecimal(rapor.guc_faktoru, null),
+      hedef: parseDecimal(rapor.hedef_guc_faktoru, null)
     }));
 
   // İstatistikler
+  const measuredPowerFactors = filtreliRaporlar.map(rapor => parseDecimal(rapor.guc_faktoru, null)).filter(value => value !== null && value >= 0 && value <= 1);
   const istatistikler = {
     toplamRapor: filtreliRaporlar.length,
     uygunRapor: filtreliRaporlar.filter(r => getDurum(r).text === 'UYGUN').length,
     dikkatRapor: filtreliRaporlar.filter(r => getDurum(r).text === 'DİKKAT').length,
     uygunDegilRapor: filtreliRaporlar.filter(r => getDurum(r).text === 'UYGUN DEĞİL').length,
-    ortalamaGucFaktoru: filtreliRaporlar.length > 0 
-      ? (filtreliRaporlar.reduce((sum, r) => sum + parseFloat(r.guc_faktoru), 0) / filtreliRaporlar.length).toFixed(3)
-      : 0,
+    ortalamaGucFaktoru: measuredPowerFactors.length > 0
+      ? (measuredPowerFactors.reduce((sum, value) => sum + value, 0) / measuredPowerFactors.length).toFixed(3)
+      : '—',
     toplamMaliyet: filtreliRaporlar.reduce((sum, r) => sum + (parseFloat(r.maliyet) || 0), 0)
   };
 
@@ -1897,7 +1898,7 @@ export default function HaftalikRaporlama() {
                           alert('Değişiklikler kaydedildi!');
                           setSelectedRapor(editedPdfData);
                           setPdfEditMode(false);
-                          fetchRaporlar(); // Listeyi güncelle
+                          await loadData(); // Listeyi güncelle
                         }
                       }}
                       className="px-3 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium flex items-center gap-2 transition-colors"
@@ -1985,14 +1986,15 @@ export default function HaftalikRaporlama() {
                         <div style={{ marginTop: '6mm', marginBottom: '6mm', padding: '10px', backgroundColor: '#f8f9fa', borderLeft: '4px solid #2980b9' }}>
                           <h3 style={{ fontSize: '12px', fontWeight: 'bold', color: '#2c3e50', marginBottom: '5px' }}>Haftalık Özet</h3>
                           <p style={{ fontSize: '10px', lineHeight: '1.6', color: '#555', margin: 0 }}>
-                            Bu hafta güç faktörü <strong>{selectedRapor.guc_faktoru}</strong> seviyesinde ölçülmüştür. 
+                            {current === null ? 'Bu hafta güç faktörü kaydı bulunmuyor. ' : <>Bu hafta güç faktörü <strong>{selectedRapor.guc_faktoru}</strong> seviyesinde ölçülmüştür. </>}
                             {gucFaktoruYuzde === null ? 'Hedef oranı hesaplanamıyor. ' : <>Bu değer hedef <strong>{selectedRapor.hedef_guc_faktoru}</strong> değerinin <strong>%{gucFaktoruYuzde}</strong>'sine karşılık gelmektedir. </>}
                             {gucFaktoruFark === null ? 'Önceki hafta ölçümü olmadığı için karşılaştırma yapılamıyor. ' : gucFaktoruFark === 0 ? 'Önceki haftaya göre sabit kalmıştır (0.0%). ' : <>Önceki haftaya göre {gucFaktoruFark > 0 ? <strong style={{ color: '#10b981' }}>artış</strong> : <strong style={{ color: '#ef4444' }}>düşüş</strong>} göstermiştir ({Math.abs(gucFaktoruFark).toFixed(1)}%). </>}
-                            {durum.text === 'UYGUN' ? 
-                              <><strong style={{ color: '#10b981', fontSize: '12px' }}> ✓ Performans hedeflerimize uygundur.</strong> Mevcut kompanzasyon sistemi etkin çalışmaktadır.</> : 
+                            {durum.text === 'VERİ EKSİK' ?
+                              <><strong style={{color:'#64748b',fontSize:'12px'}}>Ölçüm veya hedef bilgisi eksik.</strong> Karşılaştırma için eksik dönem bilgilerini tamamlayın.</> : durum.text === 'UYGUN' ?
+                              <><strong style={{ color: '#10b981', fontSize: '12px' }}> Kaydedilmiş güç faktörü seçilen hedefe ulaşıyor.</strong> Dönem ölçümleri ve bakım kayıtlarıyla takip edin.</> :
                               durum.text === 'DİKKAT' ? 
-                              <><strong style={{ color: '#f59e0b', fontSize: '12px' }}> ⚠ Dikkat gerektirir.</strong> Kompanzasyon sistemi gözden geçirilmeli, reaktif enerji cezası riski mevcuttur.</> : 
-                              <><strong style={{ color: '#ef4444', fontSize: '12px' }}> ✗ ACİL: Hedefin altındadır.</strong> Kompanzasyon sistemi yetersiz, reaktif enerji cezası alınmaktadır. Hemen iyileştirme gereklidir.</>}
+                              <><strong style={{ color: '#f59e0b', fontSize: '12px' }}> Kaydedilmiş güç faktörü hedefe yakın.</strong> Ölçüm eğilimi ve bakım kayıtları birlikte incelenmeli.</> :
+                              <><strong style={{ color: '#ef4444', fontSize: '12px' }}> Kaydedilmiş güç faktörü seçilen hedefin altında.</strong> Neden ve bakım ihtiyacı, ilgili dönem ölçümleriyle değerlendirilmelidir.</>}
                           </p>
                         </div>
 
@@ -2108,26 +2110,28 @@ export default function HaftalikRaporlama() {
                           <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#2980b9', margin: '0 0 5mm 0', borderBottom: '1px solid #2980b9', paddingBottom: '2mm' }}>KOMPANZASYON ANALİZİ VE ÖNERİLER</h3>
                           <div style={{ background: '#f0f9ff', border: '2px solid #2980b9', borderRadius: '8px', padding: '15px' }}>
                             <div style={{ fontSize: '11px', color: '#2c3e50', lineHeight: '1.8' }}>
-                              {durum.text === 'UYGUN' ? (
+                              {durum.text === 'VERİ EKSİK' ? (
                                 <>
-                                  <p style={{ margin: '0 0 10px 0' }}><strong style={{ color: '#10b981' }}>✓ Kompanzasyon sisteminiz optimal çalışıyor.</strong></p>
-                                  <p style={{ margin: '0 0 10px 0' }}>✓ Mevcut bakım planına devam ediniz.</p>
+                                  <p style={{margin:'0 0 10px 0'}}><strong>Ölçüm ve hedef bilgileri tamamlanmalı.</strong></p>
+                                  <p style={{margin:0}}>Bakım ve kompanzasyon ihtiyacı, dönem ölçümleri ve saha kayıtlarıyla değerlendirilir.</p>
+                                </>
+                              ) : durum.text === 'UYGUN' ? (
+                                <>
+                                  <p style={{ margin: '0 0 10px 0' }}><strong style={{ color: '#10b981' }}>Kaydedilmiş güç faktörü seçili hedefi karşılıyor.</strong></p>
+                                  <p style={{ margin: '0 0 10px 0' }}>Ölçüm ve bakım kayıtlarıyla dönem takibini sürdürün.</p>
                                   <p style={{ margin: '0' }}>✓ Periyodik ölçüm ve raporlamaya devam edilmeli.</p>
                                 </>
                               ) : durum.text === 'DİKKAT' ? (
                                 <>
-                                  <p style={{ margin: '0 0 10px 0' }}><strong style={{ color: '#f59e0b' }}>⚠ Kompanzasyon sistemi kontrol edilmeli.</strong></p>
-                                  <p style={{ margin: '0 0 10px 0' }}>⚠ Arıza durumundaki kademeler onarılmalı.</p>
-                                  <p style={{ margin: '0 0 10px 0' }}>⚠ Reaktör ve kapasitör değerleri test edilmeli.</p>
-                                  <p style={{ margin: '0' }}>⚠ Bir sonraki hafta yakın takip gerekli.</p>
+                                  <p style={{ margin: '0 0 10px 0' }}><strong style={{ color: '#f59e0b' }}>Kaydedilmiş güç faktörü seçili hedefe yakın.</strong></p>
+                                  <p style={{ margin: '0 0 10px 0' }}>Döneme ait ölçüm eğilimi ve bakım kayıtlarını inceleyin.</p>
+                                  <p style={{ margin: '0' }}>Takip ölçümleriyle değişimi değerlendirin.</p>
                                 </>
                               ) : (
                                 <>
-                                  <p style={{ margin: '0 0 10px 0' }}><strong style={{ color: '#ef4444' }}>✗ ACİL: Ek kompanzasyon ekipmanı gerekli.</strong></p>
-                                  <p style={{ margin: '0 0 10px 0' }}>✗ Mevcut sistem yetersiz, kapasite artırılmalı.</p>
-                                  <p style={{ margin: '0 0 10px 0' }}>✗ Reaktif enerji cezası ödeniyor.</p>
-                                  <p style={{ margin: '0 0 10px 0' }}>✗ Elektrik mühendisi değerlendirmesi yapılmalı.</p>
-                                  <p style={{ margin: '0' }}>✗ Yatırım getirisi (ROI) hesaplaması için iletişime geçiniz.</p>
+                                  <p style={{ margin: '0 0 10px 0' }}><strong style={{ color: '#ef4444' }}>Kaydedilmiş güç faktörü seçili hedefin altında.</strong></p>
+                                  <p style={{ margin: '0 0 10px 0' }}>Ölçüm dönemi ile endüktif ve kapasitif enerji kayıtlarını inceleyin.</p>
+                                  <p style={{ margin: '0' }}>Kompanzasyon ve kapasite kararları saha ölçümleriyle değerlendirilmelidir.</p>
                                 </>
                               )}
                             </div>
@@ -2148,7 +2152,7 @@ export default function HaftalikRaporlama() {
                           <div style={{ background: '#f8f9fa', border: '1px solid #ddd', borderRadius: '8px', padding: '12px' }}>
                             <div style={{ fontSize: '10px', color: '#2c3e50', lineHeight: '1.8' }}>
                               <p style={{ margin: '0 0 8px 0' }}><strong>📅 Bir Sonraki Rapor:</strong> {new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('tr-TR')}</p>
-                              <p style={{ margin: '0 0 8px 0' }}><strong>🔧 Önerilen Bakım:</strong> {durum.text === 'UYGUN' ? 'Rutin kontrol yeterli' : durum.text === 'DİKKAT' ? 'Önümüzdeki 2 hafta içinde kontrol' : 'Acil müdahale gerekli'}</p>
+                              <p style={{ margin: '0 0 8px 0' }}><strong>Bakım takibi:</strong> {durum.text === 'VERİ EKSİK' ? 'Ölçüm ve hedef bilgileri tamamlandıktan sonra değerlendirilmeli' : 'Bakım ihtiyacı saha ölçümleri ve dönem kayıtlarıyla değerlendirilmeli'}</p>
                               <p style={{ margin: '0 0 8px 0' }}><strong>Destek İletişim:</strong> Teknik destek için +90 545 434 67 35 numaralı telefonu arayabilirsiniz.</p>
                               <p style={{ margin: '0' }}><strong>📧 Rapor Gönderimi:</strong> Bu rapor otomatik olarak kayıt altına alınmıştır.</p>
                             </div>

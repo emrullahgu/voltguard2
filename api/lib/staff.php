@@ -6,6 +6,8 @@ const VG_STAFF_COOKIE = 'VGSTAFF';
 const VG_STAFF_IDLE = 1800;
 const VG_STAFF_ABSOLUTE = 28800;
 const VG_STAFF_CHALLENGE = 600;
+const VG_STAFF_DEVICE_COOKIE = 'VGSTAFFDEVICE';
+const VG_STAFF_DEVICE_TTL = 2592000; // A remembered factor lasts 30 days; password/session limits do not change.
 const VG_STAFF_PDF_LIMIT = 8388608;
 
 function vg_staff_error(int $status = 403, string $code = 'staff_forbidden', string $message = 'Bu işlem için geçerli çalışan yetkisi gerekiyor.'): void {
@@ -316,6 +318,58 @@ function vg_staff_finish_login(array $u): array {
     return ['user' => vg_staff_public_user($u), 'csrf' => vg_staff_csrf()];
 }
 
+/** The browser gets a random validator; only its hash is retained in private storage. */
+function vg_staff_device_cookie(?string $value, int $expires = 0): void {
+    if (!setcookie(VG_STAFF_DEVICE_COOKIE, $value ?? '', ['expires' => $value === null ? time() - 3600 : $expires,
+        'path' => '/', 'secure' => vg_is_https(), 'httponly' => true, 'samesite' => 'Strict'])) throw new RuntimeException('staff device cookie failed');
+    if ($value === null) unset($_COOKIE[VG_STAFF_DEVICE_COOKIE]);
+    else $_COOKIE[VG_STAFF_DEVICE_COOKIE] = $value;
+}
+
+function vg_staff_device_parts(): ?array {
+    $raw = $_COOKIE[VG_STAFF_DEVICE_COOKIE] ?? null;
+    if (!is_string($raw) || preg_match('/^([a-f0-9]{32})\.([a-f0-9]{64})$/D', $raw, $parts) !== 1) return null;
+    return [$parts[1], $parts[2]];
+}
+
+function vg_staff_device_agent(): string { return hash('sha256', substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 1024)); }
+
+function vg_staff_devices_clean(array &$u): void {
+    $devices = $u['trustedDevices'] ?? [];
+    $u['trustedDevices'] = [];
+    if (!is_array($devices)) return;
+    foreach ($devices as $id => $device) if (is_string($id) && preg_match('/^[a-f0-9]{32}$/D', $id) === 1 && is_array($device)
+        && is_int($device['expires'] ?? null) && $device['expires'] > time() && ($device['epoch'] ?? null) === $u['epoch']
+        && is_string($device['hash'] ?? null) && is_string($device['agent'] ?? null)) $u['trustedDevices'][$id] = $device;
+}
+
+function vg_staff_device_issue(array &$u): void {
+    vg_staff_devices_clean($u);
+    $old = vg_staff_device_parts();
+    if ($old) unset($u['trustedDevices'][$old[0]]);
+    // Bounded per account. Most recently confirmed devices remain available.
+    while (count($u['trustedDevices']) >= 5) array_shift($u['trustedDevices']);
+    $selector = bin2hex(random_bytes(16)); $validator = bin2hex(random_bytes(32)); $expires = time() + VG_STAFF_DEVICE_TTL;
+    $u['trustedDevices'][$selector] = ['hash' => hash('sha256', $validator), 'agent' => vg_staff_device_agent(), 'epoch' => $u['epoch'], 'expires' => $expires];
+    vg_staff_device_cookie($selector . '.' . $validator, $expires);
+}
+
+/** Called only after password verification. A device cookie alone can never start a session. */
+function vg_staff_device_accept(array &$u): bool {
+    vg_staff_devices_clean($u);
+    $parts = vg_staff_device_parts();
+    $d = $parts ? ($u['trustedDevices'][$parts[0]] ?? null) : null;
+    if (!$d || !hash_equals($d['hash'], hash('sha256', $parts[1])) || !hash_equals($d['agent'], vg_staff_device_agent())) {
+        if (isset($_COOKIE[VG_STAFF_DEVICE_COOKIE])) vg_staff_device_cookie(null);
+        return false;
+    }
+    // Rotate on use without sliding the original 30-day expiry.
+    $validator = bin2hex(random_bytes(32));
+    $u['trustedDevices'][$parts[0]]['hash'] = hash('sha256', $validator);
+    vg_staff_device_cookie($parts[0] . '.' . $validator, $d['expires']);
+    return true;
+}
+
 function vg_staff_make_invite(array &$state, array $input, bool $bootstrap = false): array {
     $email = strtolower(trim(is_string($input['email'] ?? null) ? $input['email'] : ''));
     $name = trim(is_string($input['name'] ?? null) ? $input['name'] : '');
@@ -415,6 +469,11 @@ function vg_staff_dispatch(string $action, array $body): array {
                 $hash = $found['password'] ?? '$2y$12$wXYfSiKtABLDKBQgXXFxyOcXeA5c1BiMeO.gMwV3sCuh.cBOaxnVy';
                 $matches = password_verify($pw, $hash);
                 if (!$found || !$matches || !in_array($found['status'], ['active', 'enrollment'], true)) vg_staff_error(401, 'staff_login_failed', 'E-posta, şifre veya çalışan erişimi geçersiz.');
+                if ($found['status'] === 'active' && !empty($found['mfaSecret']) && vg_staff_device_accept($found)) {
+                    $s['users'][$found['id']] = $found;
+                    vg_staff_audit($s, 'login_remembered_device', $found['id']);
+                    return vg_staff_finish_login($found);
+                }
                 return vg_staff_begin_pending($found, empty($found['mfaSecret']) ? 'enroll' : 'verify');
             });
         } catch (VgHttpError $e) {
@@ -455,6 +514,7 @@ function vg_staff_dispatch(string $action, array $body): array {
             if ($step < 0) vg_staff_error(401, 'staff_mfa_failed', 'Doğrulama kodu geçersiz veya daha önce kullanılmış.');
             $u['lastTotpStep'] = $step;
             if ($mode === 'enroll') { $u['mfaSecret'] = $secret; $u['status'] = 'active'; $u['epoch']++; }
+            if (($body['rememberDevice'] ?? false) === true) vg_staff_device_issue($u);
             $s['users'][$u['id']] = $u;
             vg_staff_audit($s, $mode === 'enroll' ? 'mfa_enrolled' : 'login', $u['id']);
             return vg_staff_finish_login($u);
@@ -463,6 +523,14 @@ function vg_staff_dispatch(string $action, array $body): array {
     if ($action === 'logout') {
         $_SESSION = []; vg_staff_rotate(); return ['user' => null, 'csrf' => vg_staff_csrf()];
     }
+    if ($action === 'forget_devices') return vg_staff_store(function (array &$s) {
+        $u = vg_staff_require_in($s);
+        $s['users'][$u['id']]['trustedDevices'] = [];
+        $s['users'][$u['id']]['epoch']++;
+        vg_staff_audit($s, 'remembered_devices_revoked', $u['id']);
+        vg_staff_device_cookie(null); $_SESSION = []; vg_staff_rotate();
+        return ['user' => null, 'csrf' => vg_staff_csrf()];
+    });
     if ($action === 'create_invite') {
         vg_staff_rate('invite-ip', vg_rl_ip_key(), 30, 3600);
         return vg_staff_store(function (array &$s) use ($body) { vg_staff_require_in($s, ['admin']); return vg_staff_make_invite($s, $body); });
@@ -566,7 +634,7 @@ function vg_staff_run(): void {
     try {
         vg_check_fetch_site(); vg_staff_session_start(); $action = vg_action(); $method = vg_method();
         $reads = ['me', 'users', 'payroll_list', 'payroll_download'];
-        $writes = ['login', 'activate', 'mfa_verify', 'mfa_enroll', 'logout', 'create_invite', 'disable_user', 'payroll_create', 'payroll_delete', 'payroll_upload'];
+        $writes = ['login', 'activate', 'mfa_verify', 'mfa_enroll', 'logout', 'forget_devices', 'create_invite', 'disable_user', 'payroll_create', 'payroll_delete', 'payroll_upload'];
         if (!in_array($action, array_merge($reads, $writes), true)) vg_staff_error(404, 'staff_action_not_found', 'İşlem bulunamadı.');
         if (($method === 'GET' && !in_array($action, $reads, true)) || ($method === 'POST' && !in_array($action, $writes, true)) || !in_array($method, ['GET', 'POST'], true)) vg_staff_error(405, 'staff_method', 'İstek yöntemi desteklenmiyor.');
         $input = [];
