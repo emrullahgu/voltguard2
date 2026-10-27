@@ -85,7 +85,7 @@ test('The employee wrapper blocks only active writes and permits refresh/navigat
  function findButton(node){if(!node||typeof node!=='object')return null;if(node.type==='button'&&node.props.children.includes(' Yenile'))return node;for(const child of node.props?.children||[]){const found=findButton(child);if(found)return found;}return null;}
  const refresh=findButton(tree);assert.ok(refresh);
  receive({pending:1,error:'Previous synthetic failure',outcome:'rejected'});assert.equal(leave(),true);refresh.props.onClick();assert.equal(states[1],0);
- receive({pending:0,error:'Synthetic validation failed',outcome:'rejected'});assert.equal(leave(),false);refresh.props.onClick();assert.equal(states[1],1);
+ receive({pending:0,error:'Synthetic validation failed',outcome:'rejected'});assert.equal(states[3],'','The saving notice clears when the active request ends');assert.equal(leave(),false);refresh.props.onClick();assert.equal(states[1],1);
  receive({pending:0,error:'Synthetic timeout',outcome:'unknown'});assert.equal(leave(),false);
 });
 test('Central theme matches site navy/amber and legacy white-label controls retain readable contrast',()=>{

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { MapPin, RefreshCw, Maximize2, Minimize2 } from 'lucide-react';
 
 const ENTRY = '/calisan/uygulama/saha.php';
+const SAVING_NOTICE = 'Saha kayıtlarınız kaydediliyor. Kaydetme tamamlandıktan sonra bölüm değiştirebilirsiniz.';
 
 export default function SahaTakip() {
   const frame = useRef(null);
@@ -37,6 +38,7 @@ export default function SahaTakip() {
       if (event.data.type === 'vg:saha-storage') {
         storage.current = { pending: Number.isSafeInteger(event.data.pending) && event.data.pending > 0 ? event.data.pending : 0, error: typeof event.data.error === 'string' ? event.data.error.slice(0, 300) : null, outcome: event.data.outcome === 'rejected' ? 'rejected' : event.data.error ? 'unknown' : null };
         setWriteStatus(storage.current);
+        if (storage.current.pending === 0) setMessage(previous => previous === SAVING_NOTICE ? '' : previous);
       }
       if (event.data.type === 'vg:saha-notice' && typeof event.data.message === 'string') setMessage(event.data.message.slice(0, 300));
       if (event.data.type === 'vg:saha-session-expired') location.replace('/calisan/giris.html');
@@ -44,7 +46,7 @@ export default function SahaTakip() {
     const beforeLeave = event => {
       if (storage.current.pending > 0) {
         event.preventDefault();
-        setMessage('Saha kayıtlarınız kaydediliyor. Kaydetme tamamlandıktan sonra bölüm değiştirebilirsiniz.');
+        setMessage(SAVING_NOTICE);
       }
     };
     window.addEventListener('message', receive);
@@ -60,7 +62,7 @@ export default function SahaTakip() {
 
   const retry = () => {
     if (storage.current.pending > 0) {
-      setMessage('Saha kayıtlarınız kaydediliyor. İstek tamamlandığında yeniden açabilirsiniz.');
+      setMessage(SAVING_NOTICE);
       return;
     }
     storage.current = { pending: 0, error: null, outcome: null };

@@ -94,11 +94,36 @@ module.exports = async function sahaScenarios({ page, admin, api, mount, workflo
     await page.getByRole('button', { name: 'Modüller', exact: true }).click();
     await page.getByRole('button', { name: 'Görev takibi', exact: true }).click();
     check(await page.locator('[data-portal-module]').getAttribute('data-portal-module'), 'saha-takip', 'A pending save prevents module unmount');
+    const savingNotice = page.getByText('Saha kayıtlarınız kaydediliyor. Kaydetme tamamlandıktan sonra bölüm değiştirebilirsiniz.', { exact: true });
+    await savingNotice.waitFor({ state: 'visible' });
     await frame().locator('body').evaluate(() => parent.postMessage({ type: 'vg:saha-storage', pending: 0 }, location.origin));
+    await savingNotice.waitFor({ state: 'hidden' });
+    check(await savingNotice.isVisible(), false, 'The saving warning clears immediately when the actual pending count reaches zero');
     await page.screenshot({ path: path.join(output, 'saha-mobile-real.png'), fullPage: true });
     await page.getByRole('button', { name: 'Modüller', exact: true }).click();
     await page.getByRole('button', { name: 'Görev takibi', exact: true }).click();
     check(await page.locator('[data-portal-module]').getAttribute('data-portal-module'), 'gorev', 'Navigation continues after writes are complete');
     await page.setViewportSize({ width: 1440, height: 1050 });
+  });
+  await workflow('saha-basic-guide', async () => {
+    await mount('saha-takip'); await ready();
+    const requests = [];
+    const onRequest = request => {
+      const url = new URL(request.url());
+      if (url.pathname.startsWith('/api/') || ['fetch', 'xhr'].includes(request.resourceType())) requests.push({ path: url.pathname, method: request.method() });
+    };
+    page.on('request', onRequest);
+    try {
+      await frame().getByLabel('SahaTakip Rehberi aç', { exact: true }).click();
+      await frame().getByText('Merhaba! SahaTakip temel kullanım rehberiyim. Menüleri ve kayıt adımlarını anlatabilirim. Yapay zekâ, dosya analizi ve ajan bağlantısı şu anda etkin değil.', { exact: true }).waitFor({ state: 'visible' });
+      for (const label of ['Fotoğraf ekle', 'PDF ekle', 'Otonom ajan']) check(await frame().getByLabel(label, { exact: true }).count(), 0, 'Unconfigured AI control is absent: ' + label);
+      await frame().getByPlaceholder('Kullanım sorusu yazın: müşteri, teklif, görev…', { exact: true }).fill('Müşteri nasıl eklenir?');
+      await frame().getByLabel('Rehbere sor', { exact: true }).click();
+      await frame().getByText('Müşteri eklemek için Müşteriler bölümündeki + butonunu kullanın. Mevcut müşteriyi düzenlemek için kartını açın; işlemler erişim yetkinize göre sunucuya kaydedilir.', { exact: true }).waitFor({ state: 'visible' });
+      check(requests, [], 'The basic guide answers locally without making an API or external AI request');
+      const inner = await frame().locator('body').evaluate(() => ({ width: innerWidth, content: document.documentElement.scrollWidth }));
+      check(inner.content <= inner.width + 2, true, 'The guide fits the Saha application frame');
+      await page.screenshot({ path: path.join(output, 'saha-guide-real.png'), fullPage: true });
+    } finally { page.off('request', onRequest); report.sahaGuideRequests = requests; }
   });
 };
