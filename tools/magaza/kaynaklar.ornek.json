@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "open": false,
+  "margin": {
+    "default": 0.15,
+    "byCategory": {"gunes-panelleri": 0.1},
+    "byProduct": {}
+  },
+  "shipping": {"feeTry": 0, "freeOverTry": 0},
+  "paymentHours": 24,
+  "fxBuffer": 0,
+  "blockedSuppliers": ["sikayeti-cok.example"],
+  "sources": {
+    "vgm-0101": [
+      {"url": "https://tedarikci-bir.example/urun/ornek-model", "supplier": "tedarikci-bir.example", "vatIncluded": true, "currency": "TRY", "priority": 1},
+      {"url": "https://tedarikci-iki.example/p/ornek-model", "supplier": "tedarikci-iki.example", "vatIncluded": false, "currency": "USD", "priority": 2}
+    ]
+  }
+}

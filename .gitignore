@@ -27,3 +27,5 @@ node_modules/
 /tools/staff-app/src/hazir-paketler.json
 /tools/staff-app/src/serer-kablo-fiyat.json
 /tools/engineering/.publish-stage/
+# Magaza tedarik kaynaklari, alis fiyatlari ve gorsel kaynaklari yalnizca sunucunun ozel veri klasorune aktarilir.
+/tools/magaza/ozel/

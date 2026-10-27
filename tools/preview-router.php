@@ -20,6 +20,7 @@ $routes = [
     '/api/community.php' => '/api/community.php',
     '/api/metrics.php' => '/api/metrics.php',
     '/api/volthaber.php' => '/api/volthaber.php',
+    '/api/magaza.php' => '/api/magaza.php',
     '/api/staff.php' => '/api/staff.php',
     '/api/company.php' => '/api/company.php',
     '/api/company-asset.php' => '/api/company-asset.php',
@@ -30,6 +31,10 @@ $routes = [
     '/calisan/uygulama' => '/calisan/uygulama/index.php',
     '/calisan/uygulama/' => '/calisan/uygulama/index.php',
 ];
+/* Magaza sayfalari magaza/index.php tarafindan REQUEST_URI'ye gore uretilir (.htaccess ile ayni yollar). */
+if (preg_match('#^/magaza/(?:(?:kategori|urun)/[a-z0-9-]+/?|sitemap\.xml)?$#D', $pathname) === 1) {
+    $routes[$pathname] = '/magaza/index.php';
+}
 if (!isset($routes[$pathname]) || strpos($pathname, "\0") !== false || strpos($pathname, '\\') !== false) {
     http_response_code(404);
     header('Content-Type: text/plain; charset=utf-8');

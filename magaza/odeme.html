@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="tr" data-vg-themes>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--vg:head-->
+  <meta name="theme-color" content="#0a1628">
+  <script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script>
+  <style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:140ms;animation-timing-function:ease-out}@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}</style>
+  <link rel="preload" href="/fonts/outfit-latin.dbb71e00.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.d14332d6.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-solid-900.c5da1f4b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fa-brands-400.b1bcf9db.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522">
+  <link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2">
+  <link rel="stylesheet" href="/css/vg-shell.css?v=5c8e44a56be2">
+  <script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "urls": ["/bilgi-bankasi.html", "/hesaplama-araclari/", "/sor.html", "/fabrika-cozumleri.html", "/akademi.html"],
+        "eagerness": "moderate"
+      }
+    ],
+    "prefetch": [
+      {
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/hesap/*", "/calisan/*", "/api/*", "/contact.php", "/*.php", "/*.pdf", "/js/*", "/css/*", "/public/*", "/assets/*", "/txt/*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow], [target=_blank], [download]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+  </script>
+  <script src="/js/vg-shell.js?v=c97b3cdc9a27" defer></script>
+  <script src="/js/vg-metrics.js?v=906f1f067ec5" defer></script>
+  <noscript><style>.vg-burger,.vg-theme{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
+  <!--/vg:head-->
+  <meta name="color-scheme" content="light dark">
+  <title>Ödeme ve Sipariş | VoltGuard Mağaza</title>
+  <meta name="description" content="VoltGuard Mağaza sipariş formu: fatura ve teslimat bilgileri, ön bilgilendirme formu, mesafeli satış sözleşmesi ve havale/EFT ödeme bilgileri.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://voltguard.com.tr/magaza/odeme.html">
+  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css?v=f5a7da9dd78a">
+  <link rel="stylesheet" href="/css/magaza.css?v=d8981068da85">
+</head>
+<body class="doc-shell vgm-page">
+  <!--vg:header-->
+  <a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+  <header class="vg-header doc-header" id="vgHeader">
+    <div class="vg-header__bar vg-wrap">
+      <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+        <img class="vg-brand__image" src="/public/voltguard-logo-transparent.webp" width="50" height="50" alt="" decoding="async">
+        <span class="vg-brand__copy" aria-hidden="true">
+          <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+          <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+        </span>
+      </a>
+      <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+      <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+        <ul class="vg-nav__list">
+          <li class="vg-nav__home"><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdHizmetler">Hizmetler</button>
+            <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdHizmetler">
+              <div class="vg-dd__cols">
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblTrafo">Trafo ve yüksek gerilim</span>
+                  <ul aria-labelledby="vgDdLblTrafo">
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-bakimi.html">Trafo ve OG Hücre Bakımı</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblOlcum">Ölçüm, kontrol ve verimlilik</span>
+                  <ul aria-labelledby="vgDdLblOlcum">
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+                  </ul>
+                </div>
+                <div class="vg-dd__group">
+                  <span class="vg-dd__label" id="vgDdLblProje">Proje, uygulama ve otomasyon</span>
+                  <ul aria-labelledby="vgDdLblProje">
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+                    <li><a class="vg-dd__link" href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="vg-dd__foot">
+                <a class="vg-dd__more" href="/hizmetler/" data-vg-match="/hizmetler/">Tüm hizmetler</a>
+                <a class="vg-dd__more" href="/fabrika-cozumleri.html">Fabrikalar için çözümler</a>
+              </div>
+            </div>
+          </li>
+          <li><a class="vg-nav__link" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          <li class="vg-dd" data-vg-dd>
+            <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKurumsal">Kurumsal</button>
+            <div class="vg-dd__menu" id="vgDdKurumsal">
+              <ul>
+                <li><a class="vg-dd__link" href="/hakkimizda.html">Hakkımızda</a></li>
+                <li><a class="vg-dd__link" href="/projeler.html">Projeler ve Referanslar</a></li>
+                <li><a class="vg-dd__link" href="/haberler.html">Sahadan Haberler</a></li>
+                <li><a class="vg-dd__link" href="/ekibimiz.html">Ekibimiz</a></li>
+                  <li><a class="vg-dd__link" href="/dokumanlar.html">Belgeler ve İndirmeler</a></li>
+                <li><a class="vg-dd__link" href="/iletisim.html">İletişim</a></li>
+                <li><a class="vg-dd__link" href="/calisan/giris.html">Çalışan Girişi</a></li>
+              </ul>
+            </div>
+          </li>
+          <li><a class="vg-nav__link" href="/teknik-kaynaklar.html" data-vg-match="/teknik-kaynaklar.html">Teknik Kaynaklar</a></li>
+          <li class="vg-nav__feature"><a class="vg-nav__link" href="/magaza/" data-vg-match="/magaza/" aria-current="true"><svg class="vg-nav__feature-icon" viewBox="0 0 24 24" width="22" height="22" focusable="false" aria-hidden="true"><path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 10.5V7a3 3 0 0 1 6 0v3.5"/></svg>Mağaza</a></li>
+          <li class="vg-nav__feature"><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/"><svg class="vg-nav__feature-icon" viewBox="0 0 24 24" width="22" height="22" focusable="false" aria-hidden="true"><path d="m12 3 9 5v8l-9 5-9-5V8zm0 10 9-5M12 13 3 8m9 5v8"/></svg>VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+          <li class="vg-nav__feature"><a class="vg-nav__link" href="/voltgame.html"><svg class="vg-nav__feature-icon" viewBox="0 0 24 24" width="22" height="22" focusable="false" aria-hidden="true"><path d="M7 7h10a4 4 0 0 1 4 3.4l1 6.2a2.5 2.5 0 0 1-4.2 2.2L15 16H9l-2.8 2.8A2.5 2.5 0 0 1 2 16.6l1-6.2A4 4 0 0 1 7 7Z"/><path d="M7 10v4m-2-2h4m7-1h.01M19 13h.01"/></svg>VoltGame</a></li>
+          <li class="vg-nav__feature"><a class="vg-nav__link" href="/volthaber/" data-vg-match="/volthaber/"><svg class="vg-nav__feature-icon" viewBox="0 0 24 24" width="22" height="22" focusable="false" aria-hidden="true"><path d="M5 4h15v15a2 2 0 0 1-2 2H5a3 3 0 0 1-3-3V8h3m0-4v14a1 1 0 0 1-2 0"/><path d="M9 8h7m-7 4h7m-7 4h3m3 0h1"/></svg>VoltHaber</a></li>
+        </ul>
+        <div class="vg-nav__foot">
+          <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
+          <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+          <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
+        </div>
+      </nav>
+      <div class="vg-actions">
+        <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+        <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
+      </div>
+    </div>
+    <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+  </header>
+  <!--/vg:header-->
+  <main class="vgm vgm--checkout" id="main" tabindex="-1">
+    <div class="vgm-bar"><div class="vgm-wrap vgm-bar__in"><nav class="vgm-bar__nav" aria-label="Mağaza menüsü"><a class="vgm-bar__brand" href="/magaza/">Mağaza</a><a class="vgm-bar__opt" href="/magaza/siparis-takip.html">Sipariş takibi</a><a class="vgm-bar__opt" href="/magaza/odeme-ve-teslimat.html">Ödeme ve teslimat</a></nav><a class="vgm-bar__cart" href="/magaza/sepet.html" data-vgm-cart-link><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 4h2.2l2.1 10.2a1.5 1.5 0 0 0 1.5 1.2h8.4a1.5 1.5 0 0 0 1.4-1l2-6.4H6.1"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg><span class="vgm-bar__label">Sepet</span><span class="vgm-badge" data-vgm-cart-count hidden>0</span></a></div></div>
+    <div class="vgm-wrap">
+      <nav class="vgm-crumb" aria-label="Sayfa yolu"><ol><li><a href="/">Ana sayfa</a></li><li><a href="/magaza/">Mağaza</a></li><li><a href="/magaza/sepet.html">Sepet</a></li><li><span aria-current="page">Ödeme ve sipariş</span></li></ol></nav>
+      <header class="vgm-head"><h1>Ödeme ve sipariş</h1><p class="vgm-lead">Bilgilerinizi girin, sözleşme metinlerini okuyup onaylayın. Ödeme yalnızca havale/EFT ile alınır; banka bilgileri sipariş sonrası gösterilir ve e-postayla gönderilir.</p></header>
+
+      <div data-vgm-checkout-page>
+        <noscript><div class="vgm-notice vgm-notice--warn">Sipariş vermek için tarayıcınızda JavaScript açık olmalıdır. Yardım için <a href="/iletisim.html#iletisim">bize yazabilirsiniz</a>.</div></noscript>
+        <p class="vgm-state" data-vgm-state role="status" aria-live="polite">Sipariş bilgileriniz yükleniyor…</p>
+        <div data-vgm-notices role="status" aria-live="polite"></div>
+
+        <section class="vgm-success" data-vgm-success tabindex="-1" aria-labelledby="vgm-succ-h" hidden>
+          <div class="vgm-success__head"><span class="vgm-success__tick" aria-hidden="true">✓</span>
+            <div><h2 id="vgm-succ-h">Siparişiniz alındı</h2><p class="vgm-lead" data-vgm-success-msg></p></div></div>
+          <dl class="vgm-pay">
+            <div><dt>Sipariş numaranız</dt><dd class="vgm-mono" data-vgm-pay="reference"></dd><button type="button" class="vgm-btn vgm-btn--ghost vgm-noprint" data-vgm-copy="reference">Kopyala</button></div>
+            <div><dt>Ödenecek tutar (KDV dahil)</dt><dd data-vgm-pay="amount"></dd><button type="button" class="vgm-btn vgm-btn--ghost vgm-noprint" data-vgm-copy="amount">Kopyala</button></div>
+            <div><dt>Son ödeme zamanı</dt><dd data-vgm-pay="payBy"></dd></div>
+            <div><dt>Banka</dt><dd data-vgm-pay="bankName"></dd></div>
+            <div><dt>Hesap sahibi</dt><dd data-vgm-pay="holder"></dd><button type="button" class="vgm-btn vgm-btn--ghost vgm-noprint" data-vgm-copy="holder">Kopyala</button></div>
+            <div><dt>IBAN</dt><dd class="vgm-mono" data-vgm-pay="iban"></dd><button type="button" class="vgm-btn vgm-btn--ghost vgm-noprint" data-vgm-copy="iban">Kopyala</button></div>
+          </dl>
+          <div class="vgm-notice vgm-notice--warn vgm-success__note"><strong>Açıklama alanına sipariş numaranızı yazın.</strong> Havale/EFT açıklamasındaki sipariş numarası ödemenizi eşleştirmemizi sağlar. Ödeme hesabımıza geçtikten sonra siparişiniz hazırlanır; son ödeme zamanına kadar ödeme yapılmayan siparişler iptal edilebilir.</div>
+          <p class="vgm-status vgm-noprint" data-vgm-copy-status role="status" aria-live="polite"></p>
+          <p class="vgm-actions vgm-noprint"><button type="button" class="vgm-btn vgm-btn--primary" data-vgm-print>Yazdır</button><a class="vgm-btn vgm-btn--ghost" href="/magaza/siparis-takip.html" data-vgm-track-link>Siparişi takip et</a><a class="vgm-link" href="/magaza/">Alışverişe devam et</a></p>
+        </section>
+
+        <section class="vgm-empty-state" data-vgm-empty hidden>
+          <h2>Sepetiniz boş</h2>
+          <p>Sipariş verebilmek için önce sepetinize ürün ekleyin.</p>
+          <p class="vgm-actions"><a class="vgm-btn vgm-btn--primary" href="/magaza/">Mağazaya git</a><a class="vgm-link" href="/magaza/siparis-takip.html">Mevcut siparişimi takip et</a></p>
+        </section>
+
+        <div class="vgm-checkout" data-vgm-checkout hidden>
+          <form class="vgm-form" data-vgm-form novalidate autocomplete="on">
+            <div class="vgm-errsum" data-vgm-errors role="alert" tabindex="-1" hidden></div>
+
+            <fieldset class="vgm-fieldset">
+              <legend>İletişim bilgileri</legend>
+              <div class="vgm-cols vgm-cols--2">
+                <div class="vgm-field vgm-span-2"><label for="f-name">Ad Soyad <span class="req" aria-hidden="true">*</span></label><input id="f-name" name="customer.name" type="text" autocomplete="name" maxlength="80" required></div>
+                <div class="vgm-field"><label for="f-email">E-posta <span class="req" aria-hidden="true">*</span></label><input id="f-email" name="customer.email" type="email" inputmode="email" autocomplete="email" maxlength="120" required></div>
+                <div class="vgm-field"><label for="f-phone">Telefon <span class="req" aria-hidden="true">*</span></label><input id="f-phone" name="customer.phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" placeholder="05xx xxx xx xx" required></div>
+              </div>
+            </fieldset>
+
+            <fieldset class="vgm-fieldset">
+              <legend>Fatura bilgileri</legend>
+              <div class="vgm-choice" role="radiogroup" aria-label="Fatura türü">
+                <label class="vgm-check"><input type="radio" name="billing.type" value="bireysel" checked> Bireysel</label>
+                <label class="vgm-check"><input type="radio" name="billing.type" value="kurumsal"> Kurumsal</label>
+              </div>
+              <div class="vgm-cols vgm-cols--2" data-vgm-bireysel>
+                <div class="vgm-field"><label for="f-tckn">T.C. kimlik no (isteğe bağlı)</label><input id="f-tckn" name="billing.tckn" type="text" inputmode="numeric" autocomplete="off" maxlength="11" aria-describedby="f-tckn-hint"><p class="vgm-field__hint" id="f-tckn-hint">Faturada T.C. kimlik numaranız yazılmasını istiyorsanız girin.</p></div>
+              </div>
+              <div class="vgm-cols vgm-cols--3" data-vgm-kurumsal hidden>
+                <div class="vgm-field vgm-span-2"><label for="f-company">Firma ünvanı <span class="req" aria-hidden="true">*</span></label><input id="f-company" name="billing.company" type="text" autocomplete="organization" maxlength="150"></div>
+                <div class="vgm-field"><label for="f-vkn">Vergi kimlik no (VKN) <span class="req" aria-hidden="true">*</span></label><input id="f-vkn" name="billing.vkn" type="text" inputmode="numeric" autocomplete="off" maxlength="11"></div>
+                <div class="vgm-field vgm-span-2"><label for="f-taxoffice">Vergi dairesi <span class="req" aria-hidden="true">*</span></label><input id="f-taxoffice" name="billing.taxOffice" type="text" autocomplete="off" maxlength="60"></div>
+              </div>
+              <div class="vgm-cols vgm-cols--2">
+                <div class="vgm-field vgm-span-2"><label for="f-address">Fatura adresi <span class="req" aria-hidden="true">*</span></label><textarea id="f-address" name="billing.address" rows="2" autocomplete="street-address" maxlength="300" required></textarea></div>
+                <div class="vgm-field"><label for="f-city">İl <span class="req" aria-hidden="true">*</span></label><input id="f-city" name="billing.city" type="text" autocomplete="address-level1" maxlength="40" required></div>
+                <div class="vgm-field"><label for="f-district">İlçe <span class="req" aria-hidden="true">*</span></label><input id="f-district" name="billing.district" type="text" autocomplete="address-level2" maxlength="40" required></div>
+              </div>
+            </fieldset>
+
+            <fieldset class="vgm-fieldset">
+              <legend>Teslimat adresi</legend>
+              <label class="vgm-check"><input type="checkbox" data-vgm-same checked> Fatura adresiyle aynı</label>
+              <div class="vgm-cols vgm-cols--2" data-vgm-ship hidden>
+                <div class="vgm-field"><label for="s-name">Teslim alacak kişi <span class="req" aria-hidden="true">*</span></label><input id="s-name" name="shippingAddress.name" type="text" autocomplete="shipping name" maxlength="120"></div>
+                <div class="vgm-field"><label for="s-phone">Telefon <span class="req" aria-hidden="true">*</span></label><input id="s-phone" name="shippingAddress.phone" type="tel" inputmode="tel" autocomplete="shipping tel" maxlength="40"></div>
+                <div class="vgm-field vgm-span-2"><label for="s-address">Teslimat adresi <span class="req" aria-hidden="true">*</span></label><textarea id="s-address" name="shippingAddress.address" rows="2" autocomplete="shipping street-address" maxlength="300"></textarea></div>
+                <div class="vgm-field"><label for="s-city">İl <span class="req" aria-hidden="true">*</span></label><input id="s-city" name="shippingAddress.city" type="text" autocomplete="shipping address-level1" maxlength="40"></div>
+                <div class="vgm-field"><label for="s-district">İlçe <span class="req" aria-hidden="true">*</span></label><input id="s-district" name="shippingAddress.district" type="text" autocomplete="shipping address-level2" maxlength="40"></div>
+                <div class="vgm-field"><label for="s-postal">Posta kodu (isteğe bağlı)</label><input id="s-postal" name="shippingAddress.postalCode" type="text" inputmode="numeric" autocomplete="shipping postal-code" maxlength="5"></div>
+              </div>
+            </fieldset>
+
+            <div class="vgm-field"><label for="f-notes">Sipariş notu (isteğe bağlı)</label><textarea id="f-notes" name="notes" rows="3" maxlength="1000"></textarea></div>
+
+            <section class="vgm-docs-panel" aria-labelledby="vgm-docs-h">
+              <h2 id="vgm-docs-h">Ön bilgilendirme ve sözleşme</h2>
+              <p class="vgm-fine">Aşağıdaki metinler girdiğiniz bilgilerle doldurulur ve siparişinizle birlikte kaydedilir; e-postanıza aynı metinler gönderilir. Onay vermeden önce okuyun.</p>
+              <div class="vgm-doc"><h3 id="vgm-doc-pre-h">Ön Bilgilendirme Formu</h3><p class="vgm-doc__state" data-vgm-doc-state="preInfo">Metin hazırlanıyor…</p><pre class="vgm-doc__text" data-vgm-doc="preInfo" tabindex="0" aria-labelledby="vgm-doc-pre-h" hidden></pre></div>
+              <div class="vgm-doc"><h3 id="vgm-doc-con-h">Mesafeli Satış Sözleşmesi</h3><p class="vgm-doc__state" data-vgm-doc-state="contract">Metin hazırlanıyor…</p><pre class="vgm-doc__text" data-vgm-doc="contract" tabindex="0" aria-labelledby="vgm-doc-con-h" hidden></pre></div>
+              <div class="vgm-field" data-vgm-consent-field="consents.preInfo"><label class="vgm-check"><input type="checkbox" name="consents.preInfo" data-vgm-consent disabled required> <span>Ön Bilgilendirme Formu’nu okudum ve onaylıyorum. <span class="req" aria-hidden="true">*</span></span></label></div>
+              <div class="vgm-field" data-vgm-consent-field="consents.contract"><label class="vgm-check"><input type="checkbox" name="consents.contract" data-vgm-consent disabled required> <span>Mesafeli Satış Sözleşmesi’ni okudum ve onaylıyorum. <span class="req" aria-hidden="true">*</span></span></label></div>
+              <p class="vgm-fine">Kişisel verilerin işlenmesine ilişkin <a href="/magaza/kvkk-aydinlatma.html" target="_blank" rel="noopener">aydınlatma metnini</a> okuyabilirsiniz; bu metin bilgilendirme amaçlıdır ve onay gerektirmez.</p>
+            </section>
+
+            <div class="vgm-notice vgm-notice--warn" data-vgm-reconfirm-wrap hidden>
+              <label class="vgm-check"><input type="checkbox" data-vgm-reconfirm> <span data-vgm-reconfirm-text>Güncel toplam tutarı onaylıyorum.</span></label>
+            </div>
+
+            <div class="vgm-hp" aria-hidden="true"><label for="f-web">Web sitesi</label><input id="f-web" type="text" name="website" tabindex="-1" autocomplete="off"></div>
+
+            <div class="vgm-captcha" data-vgm-captcha>
+              <div class="cf-turnstile" data-sitekey="REPLACE_WITH_TURNSTILE_SITE_KEY" data-theme="auto" data-language="tr" data-retry="auto"></div>
+            </div>
+
+            <div class="vgm-submit">
+              <p class="vgm-status" data-vgm-status role="status" aria-live="polite"></p>
+              <button type="submit" class="vgm-btn vgm-btn--primary vgm-btn--block" data-vgm-submit>Siparişi onayla ve gönder</button>
+              <p class="vgm-fine">Siparişi göndermekle ödeme yükümlülüğü altına girersiniz. Ödeme yalnızca havale/EFT ile yapılır; kredi kartı kabul edilmez. Kişisel verileriniz sipariş ve fatura sürecinde işlenir; ayrıntılar için <a href="/magaza/kvkk-aydinlatma.html" target="_blank" rel="noopener">KVKK aydınlatma metnini</a> okuyabilirsiniz.</p>
+            </div>
+          </form>
+
+          <aside class="vgm-summary-box" aria-labelledby="vgm-sum-h">
+            <h2 id="vgm-sum-h">Sipariş özeti</h2>
+            <ul class="vgm-mini" data-vgm-mini></ul>
+            <dl class="vgm-totals" data-vgm-totals aria-live="polite">
+              <div><dt>Ara toplam (KDV hariç)</dt><dd data-vgm-t="tryNet">—</dd></div>
+              <div><dt>KDV</dt><dd data-vgm-t="tryVat">—</dd></div>
+              <div><dt>Kargo</dt><dd data-vgm-t="shippingTry">—</dd></div>
+              <div class="vgm-totals__grand"><dt>Toplam (KDV dahil)</dt><dd data-vgm-t="tryGross">—</dd></div>
+            </dl>
+            <p class="vgm-expiry" data-vgm-expiry></p>
+            <p class="vgm-fine">Fiyatlar her gün TCMB döviz kuruyla güncellenir; siparişte gördüğünüz Türk lirası tutar sabitlenir.</p>
+            <p class="vgm-actions"><a class="vgm-link" href="/magaza/sepet.html">Sepeti düzenle</a></p>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!--vg:footer-->
+  <footer class="footer vg-footer" id="vgFooter" role="contentinfo">
+    <div class="vg-footer__cta">
+      <div class="vg-wrap vg-footer__cta-in">
+        <div class="vg-footer__cta-text">
+          <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+          <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+        </div>
+        <div class="vg-footer__cta-btns">
+          <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
+          <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="vg-wrap">
+      <div class="vg-footer__grid">
+        <div class="vg-footer__brand">
+          <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+            <img class="vg-brand__image" src="/public/voltguard-logo-transparent.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+            <span class="vg-brand__copy" aria-hidden="true">
+              <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+              <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+            </span>
+          </a>
+          <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+          <ul class="vg-footer__contact">
+            <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+            <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+            <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+          </ul>
+          <address class="vg-footer__addr"><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span>Ege Teknopark, Bornova / İzmir</span></address>
+        </div>
+        <nav class="vg-footer__nav" aria-label="Alt menü">
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Hizmetler</h3>
+            <ul>
+              <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+              <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+              <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Periyodik Kontrol</a></li>
+              <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon</a></li>
+              <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+              <li><a href="/magaza/">Mağaza</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kurumsal</h3>
+            <ul>
+              <li><a href="/hakkimizda.html">Hakkımızda</a></li>
+              <li><a href="/projeler.html">Projeler ve Referanslar</a></li>
+              <li><a href="/haberler.html">Sahadan Haberler</a></li>
+              <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+                <li><a href="/dokumanlar.html">Belgeler ve İndirmeler</a></li>
+              <li><a href="/iletisim.html">İletişim ve Teklif</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Kaynaklar</h3>
+            <ul>
+              <li><a href="/teknik-kaynaklar.html">Teknik Kaynaklar</a></li>
+              <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+              <li><a href="/akademi.html">Akademi</a></li>
+              <li><a href="/muhendis-merkezi.html">Mühendis Merkezi</a></li>
+              <li><a href="/volthaber/">VoltHaber</a></li>
+              <li><a href="/sor.html">VoltGuard’a Sor</a></li>
+            </ul>
+          </div>
+          <div class="vg-footer__col">
+            <h3 class="vg-footer__h">Araçlar ve Hesap</h3>
+            <ul>
+              <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+              <li><a href="/araclar/">Mühendislik Uygulamaları</a></li>
+              <li><a href="/voltsim/">VoltSim 3D</a></li>
+              <li><a href="/voltgame.html">VoltGame</a></li>
+              <li><a href="/topluluk.html">Topluluk</a></li>
+              <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+              <li><a href="/calisan/giris.html">Çalışan Girişi</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="vg-footer__pay">
+        <img src="/public/magaza/odeme/logo_band_white.svg" width="428" height="32" alt="iyzico ile Öde, Mastercard, Visa, American Express ve Troy" loading="lazy" decoding="async">
+        <p>Kredi kartı ile ödeme iyzico güvencesiyle yakında. Şu an siparişlerde ödeme yalnızca havale/EFT ile alınır.</p>
+      </div>
+      <div class="vg-footer__bottom">
+        <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a> &middot; <a href="/magaza/odeme-ve-teslimat.html" class="vg-footer__legal">Ödeme ve Teslimat</a> &middot; <a href="/magaza/iade-ve-cayma.html" class="vg-footer__legal">İade ve Cayma</a> &middot; <a href="/magaza/mesafeli-satis-sozlesmesi.html" class="vg-footer__legal">Mesafeli Satış Sözleşmesi</a></p>
+        <div class="vg-footer__social">
+          <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--/vg:footer-->
+  <script src="/js/magaza.js?v=ecbd70a2a19b" defer></script>
+</body>
+</html>

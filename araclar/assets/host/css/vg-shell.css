@@ -938,6 +938,21 @@ html.vg-lock { overflow: hidden; }
 .vg-footer__col a:hover { color: var(--vg-accent); transform: translateX(3px); }
 .vg-footer__col a[aria-current] { color: #fff; }
 
+/* iyzico / kart logolari (iyzico uye isyeri kriteri); footer her temada koyu oldugu icin beyaz bant */
+.vg-footer__pay {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem 1.25rem;
+  padding: 1.1rem 0;
+  border-top: 1px solid rgba(255, 255, 255, .08);
+  font-size: .8rem;
+  color: rgba(255, 255, 255, .62);
+  text-align: center;
+}
+.vg-footer__pay img { width: min(100%, 428px); height: auto; opacity: .92; }
+.vg-footer__pay p { margin: 0; }
 .vg-footer__bottom {
   display: flex;
   flex-direction: column;

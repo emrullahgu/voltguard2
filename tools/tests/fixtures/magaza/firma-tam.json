@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "unvan": "Sentetik Test Elektrik Ltd. Şti.",
+  "kisaAd": "VoltGuard",
+  "adres": "Test Mah. Örnek Sok. No:1 Bornova",
+  "adresKisa": "Ege Teknopark, Bornova / İzmir",
+  "il": "İzmir",
+  "telefon": "0545 434 67 35",
+  "eposta": "info@voltguard.com.tr",
+  "web": "https://voltguard.com.tr",
+  "mersis": "0000000000000001",
+  "vkn": "0000000001",
+  "vergiDairesi": "Test VD",
+  "ticaretSicil": "000001",
+  "kep": null,
+  "etbis": "Test",
+  "mudur": "Test Müdür",
+  "sermaye": "10.000 TL / 10.000 TL",
+  "iadeKargo": "Test Kargo",
+  "banka": {
+    "ad": "Test Bank A.Ş.",
+    "hesapSahibi": "Sentetik Test Elektrik Ltd. Şti.",
+    "iban": "TR33 0006 1005 1978 6457 8413 26",
+    "paraBirimi": "TRY"
+  },
+  "belgeSurumu": "2026-10-27",
+  "not": "Yalnızca otomatik testler için sentetik satıcı kimliği."
+}

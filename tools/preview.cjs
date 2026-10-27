@@ -15,7 +15,7 @@ const origin = `http://127.0.0.1:${port}`;
 const workspaceHash = crypto.createHash('sha256').update(fs.realpathSync(root).toLowerCase()).digest('hex').slice(0, 20);
 const dataDirectory = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), '.local', 'share'), 'VoltGuard', 'preview-data', workspaceHash);
 const internalToken = crypto.randomBytes(32).toString('hex');
-const phpRoutes = new Set(['/api/auth.php', '/api/community.php', '/api/metrics.php', '/api/volthaber.php', '/api/staff.php', '/api/company.php',
+const phpRoutes = new Set(['/api/auth.php', '/api/community.php', '/api/metrics.php', '/api/volthaber.php', '/api/magaza.php', '/api/staff.php', '/api/company.php',
   '/api/company-asset.php', '/api/company-connectors.php', '/calisan/', '/calisan/index.php',
   '/calisan/uygulama', '/calisan/uygulama/', '/contact.php']);
 // Mirror the path-specific policies of .htaccess (VG_CSP_SITE / PRIVATE / APP / API).
@@ -174,6 +174,9 @@ const server = http.createServer((req, res) => {
   function redirect(destination) { res.writeHead(301, { Location: destination + url.search }); res.end(); }
   if (pathname === '/calisan') return redirect('/calisan/');
   if (phpRoutes.has(pathname)) return proxyPhp(req, res, pathname);
+  // Mağaza vitrini, kategori ve ürün sayfaları sunucuda istek anındaki fiyatla üretilir (.htaccess ile aynı yollar).
+  if (pathname === '/magaza') return redirect('/magaza/');
+  if (/^\/magaza\/(?:(?:kategori|urun)\/[a-z0-9-]+\/?|sitemap\.xml)?$/.test(pathname)) return proxyPhp(req, res, '/magaza/index.php');
   if (/^\/calisan\/uygulama\/(?:assets|fonts|licenses)\/.+/.test(pathname) || pathname === '/calisan/uygulama/fatura_logo.png') {
     const file = pathname.slice('/calisan/uygulama/'.length);
     const query = new URLSearchParams(url.search);

@@ -318,6 +318,36 @@
     <priority>0.3</priority>
   </url>
   <url>
+    <loc>https://voltguard.com.tr/magaza/odeme-ve-teslimat.html</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/magaza/iade-ve-cayma.html</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/magaza/mesafeli-satis-sozlesmesi.html</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/magaza/on-bilgilendirme-formu.html</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://voltguard.com.tr/magaza/kvkk-aydinlatma.html</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://voltguard.com.tr/public/opt/voltguard-katalog.pdf</loc>
     <lastmod>2026-10-23</lastmod>
     <changefreq>yearly</changefreq>

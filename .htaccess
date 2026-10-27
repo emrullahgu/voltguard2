@@ -148,6 +148,15 @@
   RewriteRule ^volthaber/$ /volthaber/index.php [L,QSA]
   RewriteRule ^volthaber/((kategori|etiket)/[a-z0-9-]+/?|[a-z0-9-]+/?|(sitemap|rss)\.xml)$ /volthaber/index.php [L,QSA]
 
+  # VoltGuard Magaza: vitrin, kategori ve urun sayfalari sunucuda PHP ile, istek anindaki guncel fiyatla uretilir
+  # (api/MAGAZA.md). Sepet, odeme, siparis takibi ve hukuki sayfalar magaza/ altinda statik .html dosyalaridir;
+  # uzantisiz adresleri asagidaki genel klasor kurali .html adresine yonlendirir.
+  RewriteRule ^magaza$ /magaza/ [R=301,L]
+  RewriteCond %{THE_REQUEST} \s/magaza/index\.(html|php)[\s?]
+  RewriteRule ^magaza/index\.(html|php)$ /magaza/ [R=301,L]
+  RewriteRule ^magaza/$ /magaza/index.php [L,QSA]
+  RewriteRule ^magaza/((kategori|urun)/[a-z0-9-]+/?|sitemap\.xml)$ /magaza/index.php [L,QSA]
+
   # --- Klasor ve uzantisiz adresler -------------------------------------------------------
   # Ayni adli klasor + .html sayfasi (sor/ + sor.html, akademi/ + akademi.html) olan adreslerde mod_dir,
   # /sor -> /sor/ yonlendirir ve klasorde index olmadigi icin 403/404 verirdi ("VoltGuard'a Sor acilmiyor").
@@ -180,7 +189,7 @@
   RewriteRule ^([a-z0-9-]+)/?$ /$1.html [R=301,L]
   # /<klasor>/<sayfa> ve /<klasor>/<sayfa>/ -> /<klasor>/<sayfa>.html (hesaplama/ yukaridaki ciftlerle yonetilir).
   RewriteCond %{DOCUMENT_ROOT}/$1/$2.html -f
-  RewriteRule ^(bilgi|akademi|sor|mm|hesap|hizmetler)/([a-z0-9-]+)/?$ /$1/$2.html [R=301,L]
+  RewriteRule ^(bilgi|akademi|sor|mm|hesap|hizmetler|magaza)/([a-z0-9-]+)/?$ /$1/$2.html [R=301,L]
 </IfModule>
 
 # mod_dir'in "/sor -> /sor/" yonlendirmesini kapatir; boylece yukaridaki .html kurallari her zaman once calisir.

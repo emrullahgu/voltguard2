@@ -1,0 +1,4020 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "gunes-panelleri",
+      "name": "Güneş Panelleri",
+      "title": "Güneş Paneli Fiyatları",
+      "intro": "Çatı ve arazi GES projeleri için N-tipi TOPCon ve yarım hücreli güneş panelleri. Panel seçimi, dizi hesabı ve kurulum için mühendislerimize danışabilirsiniz.",
+      "order": 10
+    },
+    {
+      "id": "inverterler",
+      "name": "İnverterler",
+      "title": "On-Grid, Hibrit ve Off-Grid İnverter Fiyatları",
+      "intro": "On-grid ve hibrit güneş inverterleri. Kurulu güce, şebeke bağlantısına ve depolama ihtiyacına uygun modeli birlikte belirleyebiliriz.",
+      "order": 20
+    },
+    {
+      "id": "enerji-depolama",
+      "name": "Akü ve Enerji Depolama",
+      "title": "Lityum Akü ve Enerji Depolama Fiyatları",
+      "intro": "Güneş sistemleri ve kesintisiz enerji için lityum (LiFePO4) ve jel aküler. Akü kapasitesi ve inverter uyumunu kontrol ederek seçin.",
+      "order": 30
+    },
+    {
+      "id": "ges-montaj-ve-kablolama",
+      "name": "GES Montaj ve Kablolama",
+      "title": "GES Montaj, Solar Kablo ve Bağlantı Malzemeleri",
+      "intro": "GES sistemlerinin DC tarafı için MC4 konnektörler, solar kablolar ve koruma elemanları. Doğru kesit ve gerilim sınıfı güvenli bir sistemin temelidir.",
+      "order": 40
+    },
+    {
+      "id": "sarj-istasyonlari",
+      "name": "Elektrikli Araç Şarj Cihazları",
+      "title": "Elektrikli Araç Şarj Cihazı Fiyatları",
+      "intro": "Ev, otopark ve işletmeler için Type 2 AC elektrikli araç şarj cihazları. Bağlantı gücü ve koruma ihtiyacını kurulum öncesinde değerlendiriyoruz.",
+      "order": 50
+    },
+    {
+      "id": "koruma-cihazlari",
+      "name": "Sigorta ve Koruma Cihazları",
+      "title": "Otomatik Sigorta, Kaçak Akım Rölesi ve Parafudr Fiyatları",
+      "intro": "Otomatik sigortalar, kaçak akım röleleri, kompakt şalterler ve parafudrlar. Pano tasarımında seçicilik ve kısa devre dayanımına göre seçilmelidir.",
+      "order": 60
+    },
+    {
+      "id": "kompanzasyon",
+      "name": "Kompanzasyon",
+      "title": "Reaktif Güç Rölesi, Kondansatör ve Reaktör Fiyatları",
+      "intro": "Reaktif güç kontrol röleleri, kompanzasyon kondansatörleri ve şönt reaktörler. Reaktif ceza riskini azaltmak için ölçüme dayalı seçim yapın.",
+      "order": 70
+    },
+    {
+      "id": "olcu-ve-test",
+      "name": "Ölçü ve Test Cihazları",
+      "title": "Multimetre, Pens Ampermetre ve Test Cihazı Fiyatları",
+      "intro": "Multimetre, pens ampermetre, izolasyon ve topraklama test cihazları ile enerji analizörleri. Bakım ve periyodik kontrol işleri için güvenilir ölçüm.",
+      "order": 80
+    },
+    {
+      "id": "pano-malzemeleri",
+      "name": "Pano ve Kumanda Malzemeleri",
+      "title": "Kontaktör, Termik Röle ve Pano Malzemesi Fiyatları",
+      "intro": "Kontaktörler, termik röleler, motor koruma şalterleri ve pano kumanda malzemeleri. Motor gücüne ve kullanım kategorisine göre seçim yapılmalıdır.",
+      "order": 90
+    },
+    {
+      "id": "kablolar",
+      "name": "Kablolar",
+      "title": "Enerji ve Solar Kablo Fiyatları",
+      "intro": "NYY, NYM, H07RN-F ve halojensiz enerji kabloları metre ile. Kesit seçimi için akım taşıma ve gerilim düşümü hesabımızdan yararlanabilirsiniz.",
+      "order": 100
+    },
+    {
+      "id": "aydinlatma",
+      "name": "LED Aydınlatma",
+      "title": "LED Projektör ve Endüstriyel Aydınlatma Fiyatları",
+      "intro": "Fabrika, depo ve dış alanlar için LED projektörler, yüksek tavan armatürleri ve acil aydınlatma ürünleri. Aydınlatma hesabıyla doğru armatürü seçin.",
+      "order": 110
+    },
+    {
+      "id": "topraklama-ve-yildirim",
+      "name": "Topraklama ve Yıldırımdan Korunma",
+      "title": "Topraklama ve Yıldırımdan Korunma Malzemeleri",
+      "intro": "Topraklama çubukları, klemensler, topraklama baraları ve yıldırımdan korunma aksesuarları. Ölçümle doğrulanmış güvenli bir topraklama için.",
+      "order": 120
+    }
+  ],
+  "products": [
+    {
+      "id": "vgm-0101",
+      "slug": "tommatech-tt600-144tn10-topcon-gunes-paneli",
+      "name": "TommaTech TT600-144TN10 600 W TOPCon Güneş Paneli",
+      "brand": "TommaTech",
+      "mpn": "TT600-144TN10",
+      "gtin": null,
+      "category": "gunes-panelleri",
+      "summary": "600 W gücünde, 144 yarım hücreli N-tipi TOPCon güneş paneli; çatı ve GES projeleri için.",
+      "description": [
+        "TommaTech TT600-144TN10, 144 yarım kesim (half-cut) hücreden oluşan, 600 W anma gücünde bir N-tipi TOPCon monokristal güneş paneli modülüdür. Yarım hücre yapısı gölgelenme ve ısınma kayıplarını azaltmaya yardımcı olur; N-tipi hücre teknolojisi ise yıllık bozunumun düşük kalmasına katkı sağlar.",
+        "Yaklaşık 2278 x 1134 mm ölçüsüyle fabrika ve depo çatıları, ticari binalar ve orta ölçekli GES projeleri için uygun bir güç sınıfıdır. Panel boyutu nedeniyle taşıma nakliye ile yapılır; montaj öncesinde seçilecek eviricinin gerilim ve akım aralığına göre dizi (string) hesabı yapılmalıdır."
+      ],
+      "specs": [
+        [
+          "Anma gücü",
+          "600 W"
+        ],
+        [
+          "Hücre teknolojisi",
+          "N-tipi TOPCon monokristal"
+        ],
+        [
+          "Hücre yapısı",
+          "144 yarım kesim (half-cut) hücre"
+        ],
+        [
+          "Ölçüler",
+          "yaklaşık 2278 x 1134 mm"
+        ],
+        [
+          "Model kodu",
+          "TT600-144TN10"
+        ],
+        [
+          "Kullanım alanı",
+          "Ticari çatı ve GES projeleri"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/tommatech-tt600-144tn10-topcon-gunes-paneli.e0b00928.webp",
+          "thumb": "/public/magaza/tommatech-tt600-144tn10-topcon-gunes-paneli.e0b00928-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "TommaTech 600 W TOPCon half-cut güneş paneli, gümüş çerçeveli"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "nakliye",
+      "maxQty": 36,
+      "listUsd": 163.61,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0102",
+        "vgm-0103"
+      ]
+    },
+    {
+      "id": "vgm-0102",
+      "slug": "tommatech-tt450-108tn10-topcon-gunes-paneli",
+      "name": "TommaTech TT450-108TN10 450 W TOPCon Güneş Paneli",
+      "brand": "TommaTech",
+      "mpn": "TT450-108TN10",
+      "gtin": null,
+      "category": "gunes-panelleri",
+      "summary": "450 W gücünde, 108 yarım hücreli N-tipi TOPCon güneş paneli; sınırlı çatı alanları için.",
+      "description": [
+        "TommaTech TT450-108TN10, 108 yarım kesim (half-cut) hücreli, 450 W anma gücünde N-tipi TOPCon monokristal güneş paneli modülüdür. Daha küçük gövdesi sayesinde taşıması ve çatıya yerleştirmesi 600 W sınıfı panellere göre kolaydır.",
+        "Yaklaşık 1722 x 1134 mm ölçüleriyle konut çatıları, küçük ticari tesisler ve alanı kısıtlı çatılar için uygun bir seçenektir. Boyu 150 cm'yi aştığından nakliye ile gönderilir; dizi hesabında eviricinin MPPT gerilim aralığı ve akım sınırı mutlaka kontrol edilmelidir."
+      ],
+      "specs": [
+        [
+          "Anma gücü",
+          "450 W"
+        ],
+        [
+          "Hücre teknolojisi",
+          "N-tipi TOPCon monokristal"
+        ],
+        [
+          "Hücre yapısı",
+          "108 yarım kesim (half-cut) hücre"
+        ],
+        [
+          "Ölçüler",
+          "yaklaşık 1722 x 1134 mm"
+        ],
+        [
+          "Model kodu",
+          "TT450-108TN10"
+        ],
+        [
+          "Kullanım alanı",
+          "Konut ve küçük çatı sistemleri"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/tommatech-tt450-108tn10-topcon-gunes-paneli.f4ab9e95.webp",
+          "thumb": "/public/magaza/tommatech-tt450-108tn10-topcon-gunes-paneli.f4ab9e95-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "TommaTech 450 W TOPCon half-cut güneş paneli, gümüş çerçeveli"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "nakliye",
+      "maxQty": 50,
+      "listUsd": 138.58,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0101",
+        "vgm-0103"
+      ]
+    },
+    {
+      "id": "vgm-0103",
+      "slug": "lexron-lxr-hc-655m-topcon-gunes-paneli",
+      "name": "Lexron LXR-HC-655M 655 W Half-Cut TOPCon Güneş Paneli",
+      "brand": "Lexron",
+      "mpn": "LXR-HC-655M",
+      "gtin": null,
+      "category": "gunes-panelleri",
+      "summary": "655 W gücünde, 132 yarım hücreli TOPCon güneş paneli; büyük çatı ve arazi GES projeleri için.",
+      "description": [
+        "Lexron LXR-HC-655M, 132 yarım kesim hücreli, 655 W anma gücünde TOPCon monokristal güneş paneli modülüdür. Açık devre gerilimi yaklaşık 50,34 V, kısa devre akımı yaklaşık 16,53 A olup azami sistem gerilimi 1500 V'tur; bu değerler uzun dizili büyük ölçekli sistemler için uygundur.",
+        "Yaklaşık 2382 x 1134 mm ölçüsüyle fabrika çatıları ve arazi tipi GES projelerinde panel sayısını ve montaj süresini azaltmak için tercih edilir. Büyük boyutu nedeniyle nakliye ile gönderilir; seçilecek evirici ve DC kablo kesitleri yüksek akım değerine göre kontrol edilmelidir."
+      ],
+      "specs": [
+        [
+          "Anma gücü",
+          "655 W"
+        ],
+        [
+          "Hücre teknolojisi",
+          "TOPCon monokristal"
+        ],
+        [
+          "Hücre yapısı",
+          "132 yarım kesim (half-cut) hücre"
+        ],
+        [
+          "Açık devre gerilimi (Voc)",
+          "50,34 V"
+        ],
+        [
+          "Maks. güç gerilimi (Vmp)",
+          "42,32 V"
+        ],
+        [
+          "Kısa devre akımı (Isc)",
+          "16,53 A"
+        ],
+        [
+          "Maks. güç akımı (Imp)",
+          "15,48 A"
+        ],
+        [
+          "Azami sistem gerilimi",
+          "1500 V"
+        ],
+        [
+          "Ölçüler",
+          "yaklaşık 2382 x 1134 mm"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/lexron-lxr-hc-655m-topcon-gunes-paneli.bbf48fdc.webp",
+          "thumb": "/public/magaza/lexron-lxr-hc-655m-topcon-gunes-paneli.bbf48fdc-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Lexron 655 W half-cut TOPCon güneş paneli görseli"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "nakliye",
+      "maxQty": 36,
+      "listUsd": 171.31,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0101",
+        "vgm-0102"
+      ]
+    },
+    {
+      "id": "vgm-0201",
+      "slug": "growatt-mod-10000tl3-x-10kw-trifaze-on-grid-inverter",
+      "name": "Growatt MOD 10000TL3-X 10 kW trifaze on-grid inverter",
+      "brand": "Growatt",
+      "mpn": "MOD 10000TL3-X",
+      "gtin": null,
+      "category": "inverterler",
+      "summary": "10 kW trifaze, 2 MPPT girişli şebeke bağlantılı string inverter; çatı GES ve küçük fabrikalar için.",
+      "description": [
+        "Growatt MOD 10000TL3-X, 10 kW nominal çıkış gücüne sahip trifaze şebeke bağlantılı (on-grid) string inverterdir. İki bağımsız MPPT girişi sayesinde farklı yönelim veya eğimdeki panel dizilerini ayrı ayrı izleyerek verimi artırır.",
+        "Çatı tipi GES, atölye ve küçük ölçekli sanayi tesislerinde dağıtım şebekesine 400 V trifaze bağlanır. Akü desteği yoktur; saf şebeke bağlantılı üretim için tasarlanmıştır. Dizi gerilimi, kablo kesiti ve şebeke bağlantı şartları proje bazında hesaplanmalıdır."
+      ],
+      "specs": [
+        [
+          "Nominal AC güç",
+          "10 kW"
+        ],
+        [
+          "Faz",
+          "Trifaze, 400 V"
+        ],
+        [
+          "MPPT girişi",
+          "2 adet"
+        ],
+        [
+          "Tip",
+          "On-grid string inverter"
+        ],
+        [
+          "Akü desteği",
+          "Yok"
+        ],
+        [
+          "Koruma sınıfı",
+          "IP66"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/growatt-mod-10000tl3-x-10kw-trifaze-on-grid-inverter.1c26ef4d.webp",
+          "thumb": "/public/magaza/growatt-mod-10000tl3-x-10kw-trifaze-on-grid-inverter.1c26ef4d-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Growatt MOD 10000TL3-X 10 kW trifaze şebeke bağlantılı inverter ön görünüm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Growatt MOD 3-15KTL3-X ürün sayfası (üretici)",
+          "url": "https://en.growatt.com/products/mod-3-15ktl3-x-x2(pro)"
+        }
+      ],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 10,
+      "listUsd": 1524.43,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0202",
+        "vgm-0203",
+        "vgm-0204"
+      ]
+    },
+    {
+      "id": "vgm-0202",
+      "slug": "fronius-symo-advanced-10-0-3-m-on-grid-inverter",
+      "name": "Fronius Symo Advanced 10.0-3-M 10 kW Trifaze On-Grid İnverter",
+      "brand": "Fronius",
+      "mpn": "Symo Advanced 10.0-3-M",
+      "gtin": null,
+      "category": "inverterler",
+      "summary": "10 kW AC çıkışlı, çift MPPT girişli, şebeke bağlantılı trifaze Fronius string inverter; fabrika çatı GES projeleri için.",
+      "description": [
+        "Fronius Symo Advanced 10.0-3-M, 10 kW nominal AC çıkış gücüne sahip üç fazlı, trafosuz, şebeke bağlantılı bir string inverterdir. İki ayrı MPPT girişi sayesinde farklı eğim veya yönlere sahip iki PV dizisi bağımsız olarak izlenebilir; geniş MPP gerilim aralığı kısmi gölgelenmeli çatılarda da verimli çalışmayı kolaylaştırır.",
+        "Endüstriyel çatı ve arazi GES projelerinde, fabrika ve işletme ihtiyacı için orta ölçekli bağlantı noktalarında tercih edilir. Dahili veri iletişimi ve izleme seçenekleri ile uzaktan takip yapılabilir. Bu model bataryasız on-grid kullanım içindir; akü bağlantısı gerektiren sistemlerde hibrit inverter seçilmelidir. Cihaz ağırdır, montaj için iki kişi ve uygun duvar taşıyıcısı önerilir."
+      ],
+      "specs": [
+        [
+          "Nominal AC çıkış gücü",
+          "10 kW"
+        ],
+        [
+          "Faz yapısı",
+          "Trifaze, 400 V"
+        ],
+        [
+          "MPPT sayısı",
+          "2"
+        ],
+        [
+          "Maksimum DC giriş gerilimi",
+          "1000 V"
+        ],
+        [
+          "Topoloji",
+          "Trafosuz, şebeke bağlantılı (on-grid)"
+        ],
+        [
+          "Maksimum verim",
+          "yaklaşık %97,8"
+        ],
+        [
+          "Koruma sınıfı",
+          "IP 66"
+        ],
+        [
+          "Ağırlık",
+          "yaklaşık 43 kg"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/fronius-symo-advanced-10-0-3-m-on-grid-inverter.d9de0b32.webp",
+          "thumb": "/public/magaza/fronius-symo-advanced-10-0-3-m-on-grid-inverter.d9de0b32-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Fronius Symo Advanced 10.0-3-M trifaze on-grid inverter, önden görünüm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Fronius Symo Advanced ürün sayfası",
+          "url": "https://www.fronius.com/tr-tr/turkey/solar-energy/installers-partners/technical-data/all-products/inverters/fronius-symo-advanced/fronius-symo-advanced-10-0-3-m"
+        }
+      ],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "nakliye",
+      "maxQty": 10,
+      "listUsd": 2443.74,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0201",
+        "vgm-0203",
+        "vgm-0204"
+      ]
+    },
+    {
+      "id": "vgm-0203",
+      "slug": "foxess-p3-10-0-sh-hibrit-inverter",
+      "name": "FoxESS P3-10.0-SH 10 kW Trifaze Hibrit İnverter (HV)",
+      "brand": "FoxESS",
+      "mpn": "P3-10.0-SH",
+      "gtin": null,
+      "category": "inverterler",
+      "summary": "10 kW trifaze yüksek gerilimli (HV) hibrit inverter; GES ve batarya depolamalı sistemler için, depolamaya hazır tasarım.",
+      "description": [
+        "FoxESS P3-10.0-SH, 10 kW nominal çıkış gücüne sahip üç fazlı bir hibrit inverterdir. Fotovoltaik dizileri şebekeye aktarmanın yanı sıra yüksek gerilimli (HV) lityum batarya grubuyla birlikte çalışarak enerji depolamaya imkan tanır; böylece gündüz üretilen fazla enerji akşam saatlerinde kullanılabilir.",
+        "Küçük ve orta ölçekli işletmelerde, atölye ve ofis çatı GES uygulamalarında depolamalı sistem kurmak isteyenler için uygundur. Batarya modülleri ve akıllı sayaç ayrıca temin edilir; seçimde batarya markasının inverter ile uyumlu HV seri olmasına dikkat edilmelidir. Nakliye ve montaj için ürün ağırlığı göz önünde bulundurulmalıdır."
+      ],
+      "specs": [
+        [
+          "Nominal AC çıkış gücü",
+          "10 kW"
+        ],
+        [
+          "Faz yapısı",
+          "Trifaze, 400 V"
+        ],
+        [
+          "Inverter tipi",
+          "Hibrit (PV + batarya)"
+        ],
+        [
+          "Batarya tarafı",
+          "Yüksek gerilim (HV)"
+        ],
+        [
+          "MPPT sayısı",
+          "2"
+        ],
+        [
+          "Seri",
+          "FoxESS P3-SH"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/foxess-p3-10-0-sh-hibrit-inverter.3ea2c02e.webp",
+          "thumb": "/public/magaza/foxess-p3-10-0-sh-hibrit-inverter.3ea2c02e-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "FoxESS P3-10.0-SH 10 kW trifaze hibrit inverter, önden görünüm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "FoxESS resmi web sitesi",
+          "url": "https://www.fox-ess.com/"
+        }
+      ],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "nakliye",
+      "maxQty": 10,
+      "listUsd": 2169.81,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0201",
+        "vgm-0202",
+        "vgm-0204"
+      ]
+    },
+    {
+      "id": "vgm-0204",
+      "slug": "solax-x3-neo-lv-10-0k-hibrit-inverter",
+      "name": "Solax Power X3-NEO-LV 10 kW Trifaze Hibrit İnverter (48V)",
+      "brand": "Solax",
+      "mpn": "X3-NEO-LV-10.0k",
+      "gtin": null,
+      "category": "inverterler",
+      "summary": "10 kW trifaze düşük gerilimli (48 V batarya) hibrit inverter; depolamalı GES sistemleri ve yedek güç uygulamaları için.",
+      "description": [
+        "Solax X3-NEO-LV-10.0k, 10 kW nominal çıkış gücüne sahip üç fazlı bir hibrit inverterdir. Batarya tarafı 48 V düşük gerilimli lityum akü grupları için tasarlanmıştır; bu sayede PV üretimi, batarya şarjı ve şebeke etkileşimi tek cihazla yönetilir.",
+        "Ticari binalarda ve küçük işletmelerde, depolamalı veya yedekli GES kurulumlarında kullanılır. Düşük gerilimli sistemde yüksek güçte batarya akımı büyük olacağından kablo kesiti, sigorta ve batarya uyumluluğu proje aşamasında doğru hesaplanmalıdır. Batarya ve izleme aksesuarları ayrıca temin edilir."
+      ],
+      "specs": [
+        [
+          "Nominal AC çıkış gücü",
+          "10 kW"
+        ],
+        [
+          "Faz yapısı",
+          "Trifaze, 400 V"
+        ],
+        [
+          "Inverter tipi",
+          "Hibrit (PV + batarya)"
+        ],
+        [
+          "Batarya tarafı",
+          "Düşük gerilim, 48 V (LV)"
+        ],
+        [
+          "Seri",
+          "Solax X3-NEO"
+        ],
+        [
+          "Model kodu",
+          "X3-NEO-LV-10.0k"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/solax-x3-neo-lv-10-0k-hibrit-inverter.096ae02e.webp",
+          "thumb": "/public/magaza/solax-x3-neo-lv-10-0k-hibrit-inverter.096ae02e-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Solax Power X3-NEO-LV 10 kW trifaze hibrit inverter, önden görünüm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Solax Power resmi web sitesi",
+          "url": "https://www.solaxpower.com/"
+        }
+      ],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "nakliye",
+      "maxQty": 10,
+      "listUsd": 2660.12,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0201",
+        "vgm-0202",
+        "vgm-0203"
+      ]
+    },
+    {
+      "id": "vgm-0301",
+      "slug": "lexron-lxr105-12v-105ah-jel-aku",
+      "name": "Lexron LXR105 12V 105Ah Derin Döngü Jel Akü",
+      "brand": "Lexron",
+      "mpn": "LXR105",
+      "gtin": null,
+      "category": "enerji-depolama",
+      "summary": "Güneş enerjisi ve yedekleme sistemleri için 12V 105Ah bakımsız, derin döngülü VRLA jel akü.",
+      "description": [
+        "Lexron LXR105 (LXR12-105), 12 volt nominal gerilimli ve 105 Ah kapasiteli, valf kontrollü (VRLA) jel elektrolitli bir akümülatördür. Jel yapısı sayesinde sıvı eklenmesi gerekmez, bakım gerektirmez ve sızdırmaz yapısıyla kapalı ortamlarda güvenle kullanılabilir.",
+        "Derin deşarj ve tekrarlı şarj döngülerine uygun tasarımı nedeniyle küçük ölçekli off-grid GES sistemlerinde, solar aydınlatmada, kamera ve haberleşme yedeklemesinde ve düşük güçlü hibrit invertör uygulamalarında tercih edilir. 24V veya 48V sistem için seri bağlanabilir; aynı marka, kapasite ve yaşta akülerin birlikte kullanılması önerilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Lexron"
+        ],
+        [
+          "Model",
+          "LXR12-105"
+        ],
+        [
+          "Nominal gerilim",
+          "12 V"
+        ],
+        [
+          "Kapasite",
+          "105 Ah"
+        ],
+        [
+          "Akü tipi",
+          "VRLA jel, bakımsız"
+        ],
+        [
+          "Kullanım",
+          "Derin döngü / solar"
+        ],
+        [
+          "Terminal",
+          "Ön erişimli kutup başı"
+        ],
+        [
+          "Teslimat",
+          "Nakliye ile (ağır ürün)"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/lexron-lxr105-12v-105ah-jel-aku.31d619be.webp",
+          "thumb": "/public/magaza/lexron-lxr105-12v-105ah-jel-aku.31d619be-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Lexron LXR12-105 12V 105Ah derin döngü jel akü, yandan görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "nakliye",
+      "maxQty": 20,
+      "listUsd": 194.4,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0302",
+        "vgm-0303",
+        "vgm-0304"
+      ]
+    },
+    {
+      "id": "vgm-0302",
+      "slug": "tommatech-pb-51-2v-100ah-lifepo4-batarya",
+      "name": "Tommatech PB Serisi 51.2V 100Ah LiFePO4 Lityum Batarya",
+      "brand": "Tommatech",
+      "mpn": "BTR-P-PB-51.2V-100AH",
+      "gtin": null,
+      "category": "enerji-depolama",
+      "summary": "Hibrit invertörler için 51.2V 100Ah (5.12 kWh) alçak gerilim LiFePO4 enerji depolama bataryası.",
+      "description": [
+        "Tommatech PB serisi, 51.2 V nominal gerilim ve 100 Ah kapasite ile yaklaşık 5.12 kWh enerji depolayan alçak gerilimli (48 V sınıfı) lityum demir fosfat (LiFePO4) bataryadır. LiFePO4 kimyası kurşun-asit akülere göre daha yüksek kullanılabilir kapasite ve daha uzun çevrim ömrü sunar.",
+        "Konutlarda, küçük ticari işletmelerde ve GES projelerinde 48 V uyumlu hibrit invertörlerle enerji depolama amacıyla kullanılır. Kapasiteyi artırmak için paralel bağlantı yapılabilir; invertör uyumluluğu ve haberleşme protokolü sipariş öncesinde kontrol edilmelidir. Yaklaşık 45 kg ağırlığı nedeniyle nakliye ile gönderilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Tommatech"
+        ],
+        [
+          "Seri",
+          "PB Serisi"
+        ],
+        [
+          "Kimya",
+          "LiFePO4 (lityum demir fosfat)"
+        ],
+        [
+          "Nominal gerilim",
+          "51.2 V"
+        ],
+        [
+          "Kapasite",
+          "100 Ah"
+        ],
+        [
+          "Enerji",
+          "5.12 kWh"
+        ],
+        [
+          "Sistem sınıfı",
+          "Alçak gerilim (48 V)"
+        ],
+        [
+          "Yaklaşık ağırlık",
+          "45 kg"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/tommatech-pb-51-2v-100ah-lifepo4-batarya.0848458e.webp",
+          "thumb": "/public/magaza/tommatech-pb-51-2v-100ah-lifepo4-batarya.0848458e-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Tommatech PB serisi 51.2V 100Ah LiFePO4 lityum batarya modülü"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "nakliye",
+      "maxQty": 10,
+      "listUsd": 1058.63,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0301",
+        "vgm-0303",
+        "vgm-0304"
+      ]
+    },
+    {
+      "id": "vgm-0303",
+      "slug": "foxess-ep12-yuksek-voltaj-lifepo4-batarya",
+      "name": "FoxESS EP12 11.52 kWh Yüksek Voltaj LiFePO4 Lityum Batarya",
+      "brand": "FoxESS",
+      "mpn": "EP12",
+      "gtin": null,
+      "category": "enerji-depolama",
+      "summary": "11.52 kWh kapasiteli, yüksek voltajlı LiFePO4 enerji depolama bataryası; FoxESS hibrit eviricilerle ticari ve GES projeleri için.",
+      "description": [
+        "FoxESS EP12, yüksek voltajlı (HV) mimaride tasarlanmış, lityum demir fosfat (LiFePO4) hücreli bir enerji depolama bataryasıdır. 11.52 kWh nominal kapasitesi sayesinde gündüz üretilen güneş enerjisini depolayıp akşam ve gece saatlerinde tüketime aktarmak veya şebeke kesintisinde yedek besleme sağlamak için kullanılır.",
+        "İşletme, küçük fabrika ve büyük konut ölçeğindeki GES projelerinde tercih edilir. Yüksek voltajlı yapı daha düşük akımla çalışma imkânı verdiğinden kablo kesitleri ve kayıplar azalır. Batarya, FoxESS yüksek voltaj uyumlu hibrit eviricilerle kullanılmak üzere tasarlanmıştır; evirici modeli ve modül sayısı seçiminde uyumluluk mutlaka proje bazında doğrulanmalıdır. Ürün ağır olduğundan nakliye ile teslim edilir, fiyat ve teslimat için teklif alınız."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "FoxESS"
+        ],
+        [
+          "Model",
+          "EP12"
+        ],
+        [
+          "Nominal kapasite",
+          "11.52 kWh"
+        ],
+        [
+          "Hücre teknolojisi",
+          "LiFePO4 (lityum demir fosfat)"
+        ],
+        [
+          "Sistem tipi",
+          "Yüksek voltajlı (HV) batarya"
+        ],
+        [
+          "Uyumlu evirici",
+          "FoxESS HV hibrit eviriciler"
+        ],
+        [
+          "Montaj",
+          "Duvar veya zemin"
+        ],
+        [
+          "Kullanım alanı",
+          "Ticari ve konut GES depolama, yedek güç"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/foxess-ep12-yuksek-voltaj-lifepo4-batarya.bc128374.webp",
+          "thumb": "/public/magaza/foxess-ep12-yuksek-voltaj-lifepo4-batarya.bc128374-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "FoxESS EP12 11.52 kWh yüksek voltaj LiFePO4 lityum batarya, önden görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "nakliye",
+      "maxQty": 10,
+      "listUsd": 3887.29,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0301",
+        "vgm-0302",
+        "vgm-0304"
+      ]
+    },
+    {
+      "id": "vgm-0304",
+      "slug": "lexron-51-2v-314ah-lifepo4-batarya",
+      "name": "Lexron 51.2V 314Ah (16 kWh) LiFePO4 Lityum Batarya",
+      "brand": "Lexron",
+      "mpn": "LEXRON-51.2V-314AH",
+      "gtin": null,
+      "category": "enerji-depolama",
+      "summary": "51.2V 314Ah (yaklaşık 16 kWh) LiFePO4 lityum batarya; 48V eviricilerle GES depolama ve yedek güç uygulamaları için.",
+      "description": [
+        "Lexron 51.2V 314Ah batarya, lityum demir fosfat (LiFePO4) hücrelerden oluşan, yaklaşık 16 kWh enerji depolayan 48V sınıfı bir depolama ünitesidir. Üzerindeki ekran ile gerilim, akım ve doluluk durumu izlenebilir; tekerlekli kasası ağır ünitenin yerleştirilmesini kolaylaştırır.",
+        "Fabrika, atölye ve ticari binalarda yedek güç, GES ile birlikte kullanılan enerji depolama ve tepe yük kaydırma uygulamalarında kullanılır. 48V (51.2V nominal) akü girişli hibrit veya şebekeden bağımsız eviricilerle çalışır; evirici modelinin batarya haberleşme ve akım değerleri kurulumdan önce kontrol edilmelidir. Yüksek ağırlığı nedeniyle nakliye ile teslim edilir, teslimat bedeli için teklif alınız."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Lexron"
+        ],
+        [
+          "Nominal gerilim",
+          "51.2 V"
+        ],
+        [
+          "Kapasite",
+          "314 Ah"
+        ],
+        [
+          "Enerji",
+          "yaklaşık 16 kWh"
+        ],
+        [
+          "Hücre teknolojisi",
+          "LiFePO4 (lityum demir fosfat)"
+        ],
+        [
+          "Sistem sınıfı",
+          "48 V evirici uyumlu"
+        ],
+        [
+          "Gösterge",
+          "LCD ekran"
+        ],
+        [
+          "Kasa",
+          "Tekerlekli, yer tipi"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/lexron-51-2v-314ah-lifepo4-batarya.f5db28a5.webp",
+          "thumb": "/public/magaza/lexron-51-2v-314ah-lifepo4-batarya.f5db28a5-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Lexron 51.2V 314Ah 16 kWh LiFePO4 lityum batarya, tekerlekli kasa"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "nakliye",
+      "maxQty": 10,
+      "listUsd": 3079.65,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0301",
+        "vgm-0302",
+        "vgm-0303"
+      ]
+    },
+    {
+      "id": "vgm-0401",
+      "slug": "victron-energy-smartsolar-mppt-100-50-sarj-kontrol-cihazi",
+      "name": "Victron Energy SmartSolar MPPT 100/50 Şarj Kontrol Cihazı",
+      "brand": "Victron Energy",
+      "mpn": "SCC110050210",
+      "gtin": null,
+      "category": "ges-montaj-ve-kablolama",
+      "summary": "100 V PV girişli, 50 A çıkışlı, Bluetooth'lu MPPT şarj kontrol cihazı; 12/24 V akü sistemleri için.",
+      "description": [
+        "Victron Energy SmartSolar MPPT 100/50, 12 V veya 24 V akü gruplarını güneş panellerinden şarj etmek için tasarlanmış MPPT tipi şarj kontrol cihazıdır. En yüksek 100 V açık devre PV gerilimini kabul eder ve akü tarafında 50 A'e kadar şarj akımı verir. Akü gerilimini otomatik algılar, değişen ışınımda panelden en yüksek gücü çekmeye çalışır.",
+        "Dahili Bluetooth sayesinde VictronConnect uygulamasıyla ayar ve izleme yapılabilir; ayrı bir ekran gerekmez. Şebekeden bağımsız (off-grid) tesislerde, yedekli sistemlerde, karavan, tekne ve hibrit GES projelerinde kullanılır. Panel dizisini seçerken soğuk havadaki açık devre geriliminin 100 V'u aşmamasına dikkat edilmelidir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Victron Energy"
+        ],
+        [
+          "Model",
+          "SmartSolar MPPT 100/50"
+        ],
+        [
+          "Ürün kodu",
+          "SCC110050210"
+        ],
+        [
+          "Maksimum PV açık devre gerilimi",
+          "100 V"
+        ],
+        [
+          "Maksimum şarj akımı",
+          "50 A"
+        ],
+        [
+          "Akü gerilimi",
+          "12 / 24 V (otomatik algılama)"
+        ],
+        [
+          "Maksimum PV gücü",
+          "12 V'ta yaklaşık 700 W, 24 V'ta yaklaşık 1400 W"
+        ],
+        [
+          "Haberleşme",
+          "Bluetooth (VictronConnect)"
+        ],
+        [
+          "Koruma sınıfı",
+          "IP43"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/victron-smartsolar-mppt-100-50-sarj-kontrol.2afb8e7c.webp",
+          "thumb": "/public/magaza/victron-smartsolar-mppt-100-50-sarj-kontrol.2afb8e7c-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Victron Energy SmartSolar MPPT 100/50 Bluetooth'lu şarj kontrol cihazı ön görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 10,
+      "listUsd": 225.11,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0402",
+        "vgm-0403"
+      ]
+    },
+    {
+      "id": "vgm-0402",
+      "slug": "pantec-dcb10-32a-1000vdc-dc-devre-kesici",
+      "name": "Pantec DCB10 32A 1000 VDC DC Devre Kesici",
+      "brand": "Pantec",
+      "mpn": "DCB10",
+      "gtin": null,
+      "category": "ges-montaj-ve-kablolama",
+      "summary": "Panel ve birleştirme kutularında string koruma ve ayırma için 32 A, 1000 VDC raya montaj DC devre kesici.",
+      "description": [
+        "Pantec DCB10, fotovoltaik dizi hatlarında DC tarafı korumak ve gerektiğinde devreyi güvenle açmak için kullanılan 32 A anma akımlı, 1000 V DC gerilim sınıfında bir devre kesicidir. C tipi koruma karakteristiğine sahiptir ve 35 mm standart DIN raya monte edilir. Üretici tarafından tek bir cihaz olarak sunulan bu kesici, DC arkı söndürecek şekilde yapıldığından AC küçük otomat sigortalarıyla değiştirilemez.",
+        "GES string kutularında, inverter girişi öncesinde ve DC pano uygulamalarında panel hattını izole etmek için kullanılır. Montajda cihaz üzerindeki kutup yönü işaretlerine uyulmalı, kablo kesiti ve string akımı 32 A sınırına göre seçilmelidir. 1000 V üzerindeki sistemlerde kullanılmamalıdır."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Pantec"
+        ],
+        [
+          "Model",
+          "DCB10"
+        ],
+        [
+          "Anma akımı (In)",
+          "32 A"
+        ],
+        [
+          "Anma gerilimi",
+          "1000 V DC"
+        ],
+        [
+          "Koruma karakteristiği",
+          "C tipi"
+        ],
+        [
+          "Kesme kapasitesi",
+          "6 kA (satıcı sayfasına göre)"
+        ],
+        [
+          "Montaj",
+          "35 mm DIN ray"
+        ],
+        [
+          "Kullanım alanı",
+          "GES DC string koruma ve ayırma"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/pantec-dcb10-32a-1000vdc-dc-devre-kesici.25df33e5.webp",
+          "thumb": "/public/magaza/pantec-dcb10-32a-1000vdc-dc-devre-kesici.25df33e5-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Pantec 32A 1000 VDC DC devre kesici ön görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 25.98,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0401",
+        "vgm-0403"
+      ]
+    },
+    {
+      "id": "vgm-0403",
+      "slug": "staubli-mc4-evo2-konnektor-seti-4-6mm",
+      "name": "Stäubli MC4-Evo 2 Konnektör Seti (erkek + dişi) 4-6 mm²",
+      "brand": "Stäubli (Multi-Contact)",
+      "mpn": "PV-KBT4-KST4-EVO2-4-6",
+      "gtin": null,
+      "category": "ges-montaj-ve-kablolama",
+      "summary": "4-6 mm² solar kablo için orijinal Stäubli MC4-Evo 2 erkek ve dişi konnektör çifti.",
+      "description": [
+        "Stäubli (Multi-Contact) MC4-Evo 2, fotovoltaik tesislerde güneş paneli kablolarını birbirine ve inverter hattına bağlamak için kullanılan 4-6 mm² kesitli solar kablolara uygun konnektör çiftidir. Set, bir erkek ve bir dişi konnektörden oluşur; 1500 V DC sistemlere uygun yapıdadır ve takıldığında yüksek koruma sınıfıyla toza ve suya karşı kapalı bir bağlantı sağlar.",
+        "GES kurulumlarında panel kablosu uçlarının sonlandırılmasında ve kablo uzatmalarında kullanılır. Sıkma kontağı, uygun kesitli solar kablo ve doğru sıkma aleti ile monte edilmelidir. Aynı üreticinin uyumlu olmayan konnektörleriyle karıştırılması, temas direnci ve ısınma riski doğurabileceğinden önerilmez."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Stäubli (Multi-Contact)"
+        ],
+        [
+          "Model",
+          "MC4-Evo 2 (PV-KBT4/KST4-EVO 2)"
+        ],
+        [
+          "Ürün kodu",
+          "PV-KBT4-KST4-EVO2-4-6"
+        ],
+        [
+          "Set içeriği",
+          "1 erkek + 1 dişi konnektör"
+        ],
+        [
+          "Kablo kesiti",
+          "4-6 mm²"
+        ],
+        [
+          "Anma gerilimi",
+          "1500 V DC"
+        ],
+        [
+          "Bağlantı tipi",
+          "Sıkma kontaklı, kilitli geçmeli"
+        ],
+        [
+          "Kullanım alanı",
+          "GES panel ve DC hat bağlantısı"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/staubli-mc4-evo2-konnektor-seti-4-6mm.6a091d3e.webp",
+          "thumb": "/public/magaza/staubli-mc4-evo2-konnektor-seti-4-6mm.6a091d3e-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Stäubli Multi-Contact MC4-Evo 2 erkek ve dişi konnektör çifti"
+        }
+      ],
+      "documents": [],
+      "unit": "takım",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 2.83,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0401",
+        "vgm-0402"
+      ]
+    },
+    {
+      "id": "vgm-0501",
+      "slug": "schneider-evh4s11nc-evlink-wallbox-11kw-kablolu-sarj",
+      "name": "Schneider Electric EVlink Wallbox 11 kW 16 A T2 Kablolu Şarj Cihazı",
+      "brand": "Schneider Electric",
+      "mpn": "EVH4S11NC",
+      "gtin": null,
+      "category": "sarj-istasyonlari",
+      "summary": "11 kW, üç fazlı, Tip 2 kablolu duvar tipi AC elektrikli araç şarj cihazı; ofis, fabrika otoparkı ve konut için.",
+      "description": [
+        "EVlink Wallbox EVH4S11NC, üç fazlı 400 V şebekeden 16 A ile 11 kW'a kadar AC şarj sağlayan, kablosu üzerinde sabit Tip 2 fişi bulunan duvar tipi bir şarj cihazıdır. Kablo cihaza bağlı geldiği için kullanıcı ayrıca şarj kablosu taşımak zorunda kalmaz; aracı fişe takıp şarja başlamak yeterlidir.",
+        "Fabrika ve ofis otoparkları, site ve işyeri girişleri ile müstakil konutlarda araç başına tek nokta şarj için uygundur. Montaj öncesinde besleme hattının, kaçak akım ve aşırı akım koruma elemanlarının 16 A üç faz yüke göre projelendirilmesi, GES bulunan tesislerde ise şarj yükünün tesis kapasitesiyle birlikte değerlendirilmesi önerilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "EVlink Wallbox"
+        ],
+        [
+          "Model kodu",
+          "EVH4S11NC"
+        ],
+        [
+          "Anma gücü",
+          "11 kW"
+        ],
+        [
+          "Anma akımı",
+          "16 A"
+        ],
+        [
+          "Besleme",
+          "Üç faz, 400 V AC"
+        ],
+        [
+          "Şarj tipi",
+          "AC (Mod 3)"
+        ],
+        [
+          "Araç bağlantısı",
+          "Tip 2, kablolu (kablo cihaza bağlı)"
+        ],
+        [
+          "Montaj",
+          "Duvar tipi"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-evh4s11nc-evlink-wallbox-11kw-t2-kablolu.3196e085.webp",
+          "thumb": "/public/magaza/schneider-evh4s11nc-evlink-wallbox-11kw-t2-kablolu.3196e085-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric EVlink Wallbox 11 kW kablolu Tip 2 elektrikli araç şarj cihazı, önden görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 20,
+      "listUsd": 806.0,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0502",
+        "vgm-0503",
+        "vgm-0504"
+      ]
+    },
+    {
+      "id": "vgm-0502",
+      "slug": "schneider-evh5a22n2s-evlink-charge-22kw-ac-sarj-istasyonu",
+      "name": "Schneider Electric EVlink Charge 22 kW 32 A Haberleşmeli AC Şarj İstasyonu",
+      "brand": "Schneider Electric",
+      "mpn": "EVH5A22N2S",
+      "gtin": null,
+      "category": "sarj-istasyonlari",
+      "summary": "22 kW, 32 A üç fazlı, Tip 2 soketli (kablosuz) haberleşme özellikli AC şarj istasyonu; ticari ve filo alanları için.",
+      "description": [
+        "EVlink Charge EVH5A22N2S, üç fazlı şebekeden 32 A ile 22 kW'a kadar AC şarj verebilen, Tip 2 soketli bir şarj istasyonudur. Kablo cihazla birlikte gelmez; kullanıcı kendi Tip 2 şarj kablosunu takarak çalışır, bu da farklı araç ve kablo uzunluklarına esneklik sağlar. Haberleşme özelliği sayesinde şarj yönetim sistemlerine bağlanacak ticari kurulumlara uygundur.",
+        "Fabrika, lojistik ve filo otoparkları, AVM ve otel gibi ticari alanlarda, aynı anda yüksek güçle şarj gereken noktalarda tercih edilir. 32 A üç faz besleme hattı, uygun koruma elemanları ve gerekiyorsa yük dengeleme planlanmalıdır; araç tarafındaki yerleşik şarj cihazı gücü 22 kW'tan düşükse şarj hızı araçla sınırlı kalır."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "EVlink Charge"
+        ],
+        [
+          "Model kodu",
+          "EVH5A22N2S"
+        ],
+        [
+          "Anma gücü",
+          "22 kW"
+        ],
+        [
+          "Anma akımı",
+          "32 A"
+        ],
+        [
+          "Besleme",
+          "Üç faz, 400 V AC"
+        ],
+        [
+          "Şarj tipi",
+          "AC (Mod 3)"
+        ],
+        [
+          "Araç bağlantısı",
+          "Tip 2 soket (kablo dahil değil)"
+        ],
+        [
+          "Haberleşme",
+          "Var (haberleşmeli model)"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-evh5a22n2s-evlink-charge-22kw-ac-sarj.cc4b58ba.webp",
+          "thumb": "/public/magaza/schneider-evh5a22n2s-evlink-charge-22kw-ac-sarj.cc4b58ba-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric EVlink Charge 22 kW AC elektrikli araç şarj istasyonu, önden görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 20,
+      "listUsd": 1083.45,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0501",
+        "vgm-0503",
+        "vgm-0504"
+      ]
+    },
+    {
+      "id": "vgm-0503",
+      "slug": "huawei-scharger-22kt-s0-22kw-sarj",
+      "name": "Huawei SCharger 22 kW 32 A AC Akıllı Elektrikli Araç Şarj Cihazı",
+      "brand": "Huawei",
+      "mpn": "SCharger-22KT-S0",
+      "gtin": null,
+      "category": "sarj-istasyonlari",
+      "summary": "Huawei SCharger 22 kW, 32 A üç fazlı akıllı AC şarj cihazı; GES ve FusionSolar sistemleriyle uyumlu çalışır.",
+      "description": [
+        "Huawei SCharger-22KT-S0, üç fazlı şebekede 32 A'e kadar akım sağlayan, duvara monte edilen akıllı bir AC elektrikli araç şarj cihazıdır. Şarj gücü kurulum koşullarına göre yaklaşık 1,4 kW ile 22 kW arasında ayarlanabilir; Wi-Fi veya Ethernet üzerinden Modbus TCP ve OCPP 1.6 ile haberleşir, RFID, uygulama ve Bluetooth ile yetkilendirme yapılabilir.",
+        "Cihaz, Huawei hibrit ve şebeke bağlantılı inverterlerle birlikte kullanıldığında güneş enerjisi fazlasıyla önceliklendirilmiş şarj imkânı sunar. Fabrika otoparkları, ofis ve tesis şarj noktaları ile GES projelerine entegre uygulamalar için uygundur. Soket tipi (kablosuz bağlantılı) modeldir; şarj kablosu aracın Tip 2 kablosuyla sağlanır. Kurulumda uygun koruma elemanı ve TN veya TT şebeke yapısı gerekir."
+      ],
+      "specs": [
+        [
+          "Anma gücü",
+          "22 kW (üç faz)"
+        ],
+        [
+          "Maksimum akım",
+          "32 A"
+        ],
+        [
+          "Şebeke yapısı",
+          "TN / TT"
+        ],
+        [
+          "Konnektör",
+          "Tip 2 soket"
+        ],
+        [
+          "Haberleşme",
+          "Wi-Fi, Ethernet, Modbus TCP, OCPP 1.6"
+        ],
+        [
+          "Yetkilendirme",
+          "RFID, uygulama, Bluetooth"
+        ],
+        [
+          "Koruma",
+          "Dahili 6 mA DC kaçak akım algılama"
+        ],
+        [
+          "Montaj",
+          "Duvar tipi, iç ve dış mekân"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/huawei-scharger-22kt-s0-22kw-sarj.725867bd.webp",
+          "thumb": "/public/magaza/huawei-scharger-22kt-s0-22kw-sarj.725867bd-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Huawei SCharger 22 kW akıllı AC elektrikli araç şarj cihazı, duvar tipi"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Huawei SCharger-7KS-S0 / 22KT-S0 teknik özellikler",
+          "url": "https://solar.huawei.com/en/products/scharger-7ks-s0-22kt-s0/specs/"
+        }
+      ],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 20,
+      "listUsd": 1071.95,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0501",
+        "vgm-0502",
+        "vgm-0504"
+      ]
+    },
+    {
+      "id": "vgm-0504",
+      "slug": "tommatech-likya-22kw-kablolu-sarj",
+      "name": "TommaTech Likya 22 kW 3 Faz 400 V Kablolu Elektrikli Araç Şarj İstasyonu",
+      "brand": "TommaTech",
+      "mpn": "EVC-LIKYA-AC-22K-LED-KBL",
+      "gtin": null,
+      "category": "sarj-istasyonlari",
+      "summary": "TommaTech Likya 22 kW, 3 faz 400 V kablolu AC şarj istasyonu; iç ve dış mekân için ekonomik çözüm.",
+      "description": [
+        "TommaTech Likya, 3 faz 400 V şebekeden 22 kW'a kadar AC şarj sağlayan, üzerinde sabit Tip 2 şarj kablosu bulunan duvar tipi bir elektrikli araç şarj istasyonudur. Üzerindeki LED göstergeler şarja uygunluk, komut bekleme, şarj başlangıcı ve arıza durumlarını gösterir; Bluetooth ile kontrol edilebilir.",
+        "Kompakt gövdesi ve geniş çalışma sıcaklık aralığı sayesinde iç ve dış mekânda kullanılabilir. Konut, ofis, otopark ve fabrika şarj noktaları gibi maliyet odaklı çok adetli kurulumlar için uygundur. Kablolu yapısı sayesinde araç kablosu gerektirmez. Montaj öncesinde besleme hattı kesiti ve uygun kaçak akım koruması proje bazında belirlenmelidir."
+      ],
+      "specs": [
+        [
+          "Anma gücü",
+          "22 kW"
+        ],
+        [
+          "Besleme",
+          "3 faz, 400 V AC"
+        ],
+        [
+          "Konnektör",
+          "Tip 2, sabit kablolu"
+        ],
+        [
+          "Şarj modu",
+          "Mod 3"
+        ],
+        [
+          "Durum göstergesi",
+          "LED (5 durum)"
+        ],
+        [
+          "Kablosuz bağlantı",
+          "Bluetooth"
+        ],
+        [
+          "Kullanım yeri",
+          "İç ve dış mekân"
+        ],
+        [
+          "Garanti",
+          "2 yıl (satıcı beyanı)"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/tommatech-likya-22kw-kablolu-sarj.73223179.webp",
+          "thumb": "/public/magaza/tommatech-likya-22kw-kablolu-sarj.73223179-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "TommaTech Likya 22 kW kablolu elektrikli araç şarj istasyonu"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 20,
+      "listUsd": 916.35,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0501",
+        "vgm-0502",
+        "vgm-0503"
+      ]
+    },
+    {
+      "id": "vgm-0601",
+      "slug": "schneider-a9f74316-ic60n-3p-16a-c-otomat",
+      "name": "Schneider Electric Acti9 iC60N 3 Kutuplu 16A C Eğrisi 6kA Otomatik Sigorta",
+      "brand": "Schneider Electric",
+      "mpn": "A9F74316",
+      "gtin": "3606480079658",
+      "category": "koruma-cihazlari",
+      "summary": "Acti9 iC60N serisi 3 kutuplu, 16A, C eğrili, 6kA kesme kapasiteli DIN ray tipi otomatik sigorta.",
+      "description": [
+        "Acti9 iC60N, panolarda aşırı akım ve kısa devre koruması için kullanılan modüler bir minyatür devre kesicidir. Bu model üç kutuplu, 16A anma akımlı ve C eğrilidir; 6kA kesme kapasitesiyle (IEC 60898-1) tipik bina ve küçük sanayi dağıtım panolarına uygundur.",
+        "Üç fazlı motor, pompa, havalandırma ve aydınlatma grubu çıkışlarında ya da GES yardımcı beslemelerinin AC tarafında kullanılabilir. C eğrisi, orta seviyede kalkış akımı çeken yükler için uygundur. DIN raya geçmeli montaj yapılır; Acti9 serisinin kaçak akım ve yardımcı kontak modülleriyle birlikte kullanılabilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "Acti9 iC60N"
+        ],
+        [
+          "Kutup sayısı",
+          "3P"
+        ],
+        [
+          "Anma akımı",
+          "16 A"
+        ],
+        [
+          "Açma eğrisi",
+          "C"
+        ],
+        [
+          "Kesme kapasitesi",
+          "6 kA (IEC 60898-1)"
+        ],
+        [
+          "Anma gerilimi",
+          "230/400 V AC, 50/60 Hz"
+        ],
+        [
+          "Montaj",
+          "35 mm DIN ray"
+        ],
+        [
+          "Genişlik",
+          "3 modül (54 mm)"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-a9f74316-ic60n-3p-16a-c-otomat.fa2d461a.webp",
+          "thumb": "/public/magaza/schneider-a9f74316-ic60n-3p-16a-c-otomat.fa2d461a-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric Acti9 iC60N 3 kutuplu 16A C eğrisi otomatik sigorta, önden görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 17.54,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0602",
+        "vgm-0603",
+        "vgm-0604"
+      ]
+    },
+    {
+      "id": "vgm-0602",
+      "slug": "schneider-a9f74116-ic60n-1p-16a-c-otomat",
+      "name": "Schneider Electric Acti9 iC60N 1 Kutuplu 16A C Eğrisi 6kA Otomatik Sigorta",
+      "brand": "Schneider Electric",
+      "mpn": "A9F74116",
+      "gtin": "3606480079474",
+      "category": "koruma-cihazlari",
+      "summary": "Acti9 iC60N serisi 1 kutuplu, 16A, C eğrili, 6kA kesme kapasiteli DIN ray tipi otomatik sigorta.",
+      "description": [
+        "Acti9 iC60N, elektrik panolarında aşırı akım ve kısa devre koruması sağlayan modüler bir minyatür devre kesicidir. Bu model tek kutuplu, 16A anma akımlı ve C eğrilidir; 6kA kesme kapasitesi (IEC 60898-1) ile konut ve işyeri dağıtım panolarında yaygın olarak tercih edilir.",
+        "Priz ve aydınlatma devreleri, küçük tek fazlı yükler ve kontrol devresi besleme hatları için uygundur. C eğrisi, kısa süreli kalkış akımı çeken yüklerde gereksiz açmayı azaltır. Tek modül genişliğiyle DIN raya geçmeli monte edilir ve Acti9 serisinin yardımcı modülleriyle genişletilebilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "Acti9 iC60N"
+        ],
+        [
+          "Kutup sayısı",
+          "1P"
+        ],
+        [
+          "Anma akımı",
+          "16 A"
+        ],
+        [
+          "Açma eğrisi",
+          "C"
+        ],
+        [
+          "Kesme kapasitesi",
+          "6 kA (IEC 60898-1)"
+        ],
+        [
+          "Anma gerilimi",
+          "230/400 V AC, 50/60 Hz"
+        ],
+        [
+          "Montaj",
+          "35 mm DIN ray"
+        ],
+        [
+          "Genişlik",
+          "1 modül (18 mm)"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-a9f74116-ic60n-1p-16a-c-otomat.f973b655.webp",
+          "thumb": "/public/magaza/schneider-a9f74116-ic60n-1p-16a-c-otomat.f973b655-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric Acti9 iC60N 1 kutuplu 16A C eğrisi otomatik sigorta, önden görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 4.47,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0601",
+        "vgm-0603",
+        "vgm-0604"
+      ]
+    },
+    {
+      "id": "vgm-0603",
+      "slug": "schneider-a9r41463-iid-4p-63a-30ma-kacak-akim-roles",
+      "name": "Schneider Electric Acti9 iID 4 Kutuplu 63A 30mA AC Tipi Kaçak Akım Koruma Rölesi",
+      "brand": "Schneider Electric",
+      "mpn": "A9R41463",
+      "gtin": "3606480089107",
+      "category": "koruma-cihazlari",
+      "summary": "Acti9 iID serisi 4 kutuplu, 63A, 30mA duyarlılıklı, AC tipi kaçak akım koruma rölesi (RCCB).",
+      "description": [
+        "Acti9 iID, topraklama hatasından kaynaklanan kaçak akımları algılayıp devreyi açan modüler bir kaçak akım koruma rölesidir. Bu model dört kutuplu (3 faz + nötr), 63A anma akımlı, 30mA duyarlılıklı ve AC tiptedir; insan can güvenliğini hedefleyen ek koruma için kullanılır.",
+        "Üç fazlı dağıtım panolarında ana giriş veya grup koruması olarak, atölye, fabrika hattı ve yardımcı servis panolarında kullanılabilir. Kaçak akım rölesi aşırı akıma karşı koruma sağlamaz; bu nedenle yukarısına uygun akımlı otomatik sigorta veya devre kesici seri bağlanmalıdır. DIN raya geçmeli monte edilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "Acti9 iID"
+        ],
+        [
+          "Kutup sayısı",
+          "4P (3 faz + nötr)"
+        ],
+        [
+          "Anma akımı",
+          "63 A"
+        ],
+        [
+          "Kaçak akım duyarlılığı",
+          "30 mA"
+        ],
+        [
+          "Tip",
+          "AC"
+        ],
+        [
+          "Anma gerilimi",
+          "230/400 V AC, 50/60 Hz"
+        ],
+        [
+          "Montaj",
+          "35 mm DIN ray"
+        ],
+        [
+          "Genişlik",
+          "4 modül (72 mm)"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-a9r41463-iid-4p-63a-30ma-kacak-akim-roles.7e39af29.webp",
+          "thumb": "/public/magaza/schneider-a9r41463-iid-4p-63a-30ma-kacak-akim-roles.7e39af29-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric Acti9 iID 4 kutuplu 63A 30mA AC tipi kaçak akım koruma rölesi"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 45.15,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0601",
+        "vgm-0602",
+        "vgm-0604"
+      ]
+    },
+    {
+      "id": "vgm-0604",
+      "slug": "siemens-sentron-5sv5344-6-4-kutuplu-40a-30ma-a-tipi-kacak-akim-roleli",
+      "name": "Siemens Sentron 5SV5344-6 4 Kutuplu 40A 30mA A Tipi Kaçak Akım Koruma Rölesi",
+      "brand": "Siemens",
+      "mpn": "5SV5344-6",
+      "gtin": null,
+      "category": "koruma-cihazlari",
+      "summary": "Siemens Sentron 5SV5 serisi, 4 kutuplu, 40A anma akımlı, 30mA hassasiyetli A tipi kaçak akım koruma rölesi.",
+      "description": [
+        "Siemens 5SV5344-6, üç faz ve nötr hattını birlikte izleyen dört kutuplu bir kaçak akım koruma rölesidir. 40A anma akımı ve 30mA hassasiyeti sayesinde insanı dolaylı temasa karşı korumak için tasarlanmıştır. A tipi yapısı, sinüsoidal AC kaçak akımların yanı sıra darbeli doğru akım bileşeni içeren kaçaklara da duyarlıdır.",
+        "Elektronik yük içeren tesislerde, örneğin frekans konvertörü, aydınlatma sürücüsü, EV şarj noktası veya GES AC dağıtım panolarında, AC tipin yetersiz kalabileceği durumlarda tercih edilir. Ana pano ya da kat panosunda, yukarı akışta uygun bir otomatik sigorta veya kısa devre koruması ile birlikte kullanılmalıdır; kendi başına aşırı akım koruması sağlamaz."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Siemens"
+        ],
+        [
+          "Seri",
+          "Sentron 5SV5"
+        ],
+        [
+          "Model",
+          "5SV5344-6"
+        ],
+        [
+          "Kutup sayısı",
+          "4 kutuplu (3 faz + nötr)"
+        ],
+        [
+          "Anma akımı",
+          "40 A"
+        ],
+        [
+          "Anma kaçak akım hassasiyeti",
+          "30 mA"
+        ],
+        [
+          "Kaçak akım tipi",
+          "A tipi"
+        ],
+        [
+          "Anma gerilimi",
+          "230/400 V AC, 50 Hz"
+        ],
+        [
+          "Montaj",
+          "35 mm DIN ray"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/siemens-5sv5344-6-kacak-akim-roleli-40a-30ma.7fb291e4.webp",
+          "thumb": "/public/magaza/siemens-5sv5344-6-kacak-akim-roleli-40a-30ma.7fb291e4-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Siemens Sentron 5SV5344-6 dört kutuplu 40A 30mA A tipi kaçak akım koruma rölesi"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 42.57,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0601",
+        "vgm-0602",
+        "vgm-0603"
+      ]
+    },
+    {
+      "id": "vgm-0605",
+      "slug": "schneider-electric-c16f3tm160-compact-nsx160f-3p-160a-kompakt-salter",
+      "name": "Schneider Electric ComPact NSX160F 3P 160A (TM160D, 112-160A) 36kA Kompakt Şalter",
+      "brand": "Schneider Electric",
+      "mpn": "C16F3TM160",
+      "gtin": "3606481997104",
+      "category": "koruma-cihazlari",
+      "summary": "Schneider ComPact NSX160F, 3 kutuplu, 36kA kesme kapasiteli, 112-160A ayarlı termik manyetik kompakt şalter.",
+      "description": [
+        "Schneider Electric C16F3TM160, ComPact NSX160F gövdesi ile TM160D termik manyetik açtırıcıyı birleştiren 3 kutuplu bir kompakt şalterdir (MCCB). Termik ayar aralığı 112-160A olup, 415V AC'de 36kA kesme kapasitesi sunar. Aşırı yük ve kısa devre korumasını tek cihazda sağlar.",
+        "Alt dağıtım panoları, motor besleme çıkışları ve 160A'e kadar olan fabrika hatları için uygundur. GES projelerinde inverter AC çıkış koruması gibi orta akım uygulamalarında kullanılabilir. Seçimde hat kesiti, kısa devre seviyesi ve gerekirse seçicilik hesabının kontrol edilmesi önerilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "ComPact NSX"
+        ],
+        [
+          "Model",
+          "C16F3TM160 (NSX160F)"
+        ],
+        [
+          "Kutup sayısı",
+          "3 kutuplu"
+        ],
+        [
+          "Anma akımı",
+          "160 A"
+        ],
+        [
+          "Açtırıcı",
+          "TM160D termik manyetik"
+        ],
+        [
+          "Termik ayar aralığı",
+          "112-160 A"
+        ],
+        [
+          "Kesme kapasitesi (415 V AC)",
+          "36 kA"
+        ],
+        [
+          "Frekans",
+          "50/60 Hz"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-c16f3tm160-compact-nsx160f-kompakt-salter.74f6bfdb.webp",
+          "thumb": "/public/magaza/schneider-c16f3tm160-compact-nsx160f-kompakt-salter.74f6bfdb-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric ComPact NSX160F 3 kutuplu 160A termik manyetik kompakt şalter"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 20,
+      "listUsd": 127.01,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0601",
+        "vgm-0602",
+        "vgm-0603"
+      ]
+    },
+    {
+      "id": "vgm-0606",
+      "slug": "schneider-electric-c25f3tm250-compact-nsx250f-3p-250a-kompakt-salter",
+      "name": "Schneider Electric ComPact NSX250F 3P 250A (TM250D) 36kA Kompakt Şalter",
+      "brand": "Schneider Electric",
+      "mpn": "C25F3TM250",
+      "gtin": "3606481997142",
+      "category": "koruma-cihazlari",
+      "summary": "Schneider ComPact NSX250F, 3 kutuplu, 36kA kesme kapasiteli, 175-250A ayarlı termik manyetik kompakt şalter.",
+      "description": [
+        "Schneider Electric C25F3TM250, ComPact NSX250F gövdesine TM250D termik manyetik açtırıcı takılmış 3 kutuplu bir kompakt şalterdir. Termik ayar aralığı 175-250A olup, 415V AC'de 36kA kesme kapasitesine sahiptir. Aşırı yük ve kısa devre korumasını tek cihazda toplar.",
+        "250A sınıfı bu model, fabrika ve atölye ana girişlerinde, orta ölçekli GES AC pano girişlerinde ve büyük motor çıkışlarında kullanılır. Montajda kablo kesiti, bağlantı uçları ve üst akıştaki koruma ile seçicilik uyumu kontrol edilmelidir; gerektiğinde hat tarafı için uygun klemens aksesuarı ayrıca seçilmelidir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "ComPact NSX"
+        ],
+        [
+          "Model",
+          "C25F3TM250 (NSX250F)"
+        ],
+        [
+          "Kutup sayısı",
+          "3 kutuplu"
+        ],
+        [
+          "Anma akımı",
+          "250 A"
+        ],
+        [
+          "Açtırıcı",
+          "TM250D termik manyetik"
+        ],
+        [
+          "Termik ayar aralığı",
+          "175-250 A"
+        ],
+        [
+          "Kesme kapasitesi (415 V AC)",
+          "36 kA"
+        ],
+        [
+          "Frekans",
+          "50/60 Hz"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-c25f3tm250-compact-nsx250f-kompakt-salter.d7fae911.webp",
+          "thumb": "/public/magaza/schneider-c25f3tm250-compact-nsx250f-kompakt-salter.d7fae911-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric ComPact NSX250F 3 kutuplu 250A termik manyetik kompakt şalter"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 10,
+      "listUsd": 154.43,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0601",
+        "vgm-0602",
+        "vgm-0603"
+      ]
+    },
+    {
+      "id": "vgm-0607",
+      "slug": "schneider-ez9l33620-easy9-parafudr",
+      "name": "Schneider Electric Easy9 EZ9L33620 1P+N Tip 2 Parafudr",
+      "brand": "Schneider Electric",
+      "mpn": "EZ9L33620",
+      "gtin": "3606480586767",
+      "category": "koruma-cihazlari",
+      "summary": "Schneider Electric Easy9 serisi, 1P+N yapılı, Tip 2 (C sınıfı) alçak gerilim parafudrü; etikette Imax 20 kA (8/20) yazar.",
+      "description": [
+        "Schneider Electric EZ9L33620, Easy9 serisinden Tip 2 (SPD T2) bir alçak gerilim parafudrüdür. Faz ve nötr hattı için iki modüllü 1P+N yapıdadır; ürün etiketinde Imax 20 kA (8/20 dalga) değeri belirtilir. DIN raya monte edilir.",
+        "Dağıtım panolarında ve GES projelerinde AC tarafta, ana sigortadan sonra anahtarlanan geçici aşırı gerilimlere karşı ek koruma için kullanılır. Parafudr koruması için doğru yedek sigorta ve topraklama bağlantısı gerekir; kurulum yetkili elektrik personelince yapılmalıdır."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "Easy9"
+        ],
+        [
+          "Model",
+          "EZ9L33620"
+        ],
+        [
+          "Tip",
+          "Tip 2 (SPD T2)"
+        ],
+        [
+          "Yapı",
+          "1P+N"
+        ],
+        [
+          "Maksimum deşarj akımı (Imax)",
+          "20 kA (8/20)"
+        ],
+        [
+          "Montaj",
+          "DIN ray"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-ez9l33620-easy9-parafudr.4a9c27d1.webp",
+          "thumb": "/public/magaza/schneider-ez9l33620-easy9-parafudr.4a9c27d1-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric Easy9 EZ9L33620 1P+N Tip 2 parafudr önden görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 42.02,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0601",
+        "vgm-0602",
+        "vgm-0603"
+      ]
+    },
+    {
+      "id": "vgm-0701",
+      "slug": "entes-rg3-12e-reaktif-guc-kontrol-roles",
+      "name": "Entes RG3-12E 12 Kademeli Reaktif Güç Kontrol Rölesi",
+      "brand": "Entes",
+      "mpn": "RG3-12E",
+      "gtin": "8699421437285",
+      "category": "kompanzasyon",
+      "summary": "12 kademeli, üç fazlı ölçümlü yerli reaktif güç kontrol rölesi; kompanzasyon panoları için giriş seviyesi çözüm.",
+      "description": [
+        "Entes RG3-12E, alçak gerilim kompanzasyon panolarında şebekenin reaktif güç ihtiyacını ölçüp kondansatör kademelerini otomatik devreye alan veya çıkaran 12 kademeli reaktif güç kontrol rölesidir. Ön panelde üç ayrı dijital gösterge ile fazlara ait değerler izlenebilir; kademe, alarm ve kapasitif/endüktif durum ledleriyle görünür.",
+        "Fabrika, atölye ve ticari binalardaki yeni kompanzasyon panolarında olduğu kadar eski röle değişimlerinde de kullanılır. Pano kapağına monte edilen kare gövdesi ve 12 kademeye kadar çıkışı sayesinde küçük ve orta ölçekli panolara uyar. Devreye almadan önce akım trafosu oranı ve hedef cos φ değeri ayarlanmalıdır."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Entes"
+        ],
+        [
+          "Model",
+          "RG3-12E"
+        ],
+        [
+          "Ürün tipi",
+          "Reaktif güç kontrol rölesi"
+        ],
+        [
+          "Kademe sayısı",
+          "12"
+        ],
+        [
+          "Ölçüm",
+          "Üç fazlı, fazlara ayrı gösterge"
+        ],
+        [
+          "Gösterge",
+          "3 x 4 hane LED"
+        ],
+        [
+          "Montaj",
+          "Pano kapağı (kare ön panel)"
+        ],
+        [
+          "Ürün kodu",
+          "M3682"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/entes-rg3-12e-reaktif-guc-kontrol-roles.b5ad21c7.webp",
+          "thumb": "/public/magaza/entes-rg3-12e-reaktif-guc-kontrol-roles.b5ad21c7-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Entes RG3-12E 12 kademeli reaktif güç kontrol rölesi ön panel görünümü"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 124.67,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0702",
+        "vgm-0703",
+        "vgm-0704"
+      ]
+    },
+    {
+      "id": "vgm-0702",
+      "slug": "siemens-4rb2250-3ea50-25-kvar-kondansator",
+      "name": "Siemens 4RB2250-3EA50 25 kVAr 400 V Üç Fazlı Güç Kondansatörü",
+      "brand": "Siemens",
+      "mpn": "4RB2250-3EA50",
+      "gtin": null,
+      "category": "kompanzasyon",
+      "summary": "Siemens 25 kVAr, 400 V üç fazlı kuru tip MKP güç kondansatörü; fabrika kompanzasyon panoları için.",
+      "description": [
+        "Siemens 4RB2250-3EA50, alçak gerilim şebekelerinde reaktif güç kompanzasyonu için tasarlanmış 25 kVAr anma gücünde, 400 V üç fazlı silindirik güç kondansatörüdür. Metalize polipropilen (MKP) filmli kuru tip yapısı, uzun ömür ve kendi kendini iyileştirme özelliği sağlar.",
+        "Yüksek güçlü kademe gerektiren fabrika ve atölye kompanzasyon panolarında, otomatik reaktif güç rölesi ile birlikte kademeli çalıştırılır. Harmonik oranı yüksek tesislerde kondansatör tek başına değil, uygun detuned reaktörle birlikte seçilmelidir; kontaktör ve kablo kesiti de kademe akımına göre belirlenmelidir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Siemens"
+        ],
+        [
+          "Model",
+          "4RB2250-3EA50"
+        ],
+        [
+          "Anma gücü",
+          "25 kVAr"
+        ],
+        [
+          "Anma gerilimi",
+          "400 V"
+        ],
+        [
+          "Faz",
+          "Üç fazlı"
+        ],
+        [
+          "Dielektrik",
+          "MKP (metalize polipropilen), kuru tip"
+        ],
+        [
+          "Gövde",
+          "Silindirik alüminyum kasa"
+        ],
+        [
+          "Kullanım",
+          "Alçak gerilim reaktif güç kompanzasyonu"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/siemens-4rb2250-3ea50-25-kvar-kondansator.90b6b9ee.webp",
+          "thumb": "/public/magaza/siemens-4rb2250-3ea50-25-kvar-kondansator.90b6b9ee-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Siemens SICAP serisi silindirik alçak gerilim güç kondansatörü"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 70.02,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0701",
+        "vgm-0703",
+        "vgm-0704"
+      ]
+    },
+    {
+      "id": "vgm-0703",
+      "slug": "entes-cxd-450-12-5-kvar-kondansator",
+      "name": "Entes CXD-450-12,5 12,5 kVAr 450 V Üç Fazlı Kondansatör",
+      "brand": "Entes",
+      "mpn": "ENT.CXD-450-12,5",
+      "gtin": null,
+      "category": "kompanzasyon",
+      "summary": "Entes CXD serisi 12,5 kVAr, 450 V üç fazlı silindirik güç kondansatörü; küçük ve orta pano kademeleri için.",
+      "description": [
+        "Entes ENT.CXD-450-12,5, alçak gerilim kompanzasyon panolarında kullanılan 12,5 kVAr anma gücünde, 450 V anma gerilimli üç fazlı silindirik güç kondansatörüdür. Yerli üretim CXD serisinin bir parçasıdır ve üç fazlı bağlantısı sayesinde tek gövdeyle bir panonun bir kademesini oluşturur.",
+        "Küçük ve orta ölçekli kompanzasyon panolarında, reaktif güç kontrol rölesi ve kontaktörlerle birlikte kademeli olarak kullanılır. 450 V anma gerilimi, şebeke gerilim dalgalanmalarına karşı ek pay bırakır. Kontaktör ve kablo seçimi kademe akımına göre yapılmalı; harmonik içeren şebekelerde reaktörlü çözüm tercih edilmelidir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Entes"
+        ],
+        [
+          "Model",
+          "ENT.CXD-450-12,5"
+        ],
+        [
+          "Anma gücü",
+          "12,5 kVAr"
+        ],
+        [
+          "Anma gerilimi",
+          "450 V"
+        ],
+        [
+          "Faz",
+          "Üç fazlı"
+        ],
+        [
+          "Gövde",
+          "Silindirik alüminyum kasa"
+        ],
+        [
+          "Ürün kodu",
+          "M1897"
+        ],
+        [
+          "Kullanım",
+          "Alçak gerilim reaktif güç kompanzasyonu"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/entes-cxd-450-12-5-kvar-kondansator.bf62ef10.webp",
+          "thumb": "/public/magaza/entes-cxd-450-12-5-kvar-kondansator.bf62ef10-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Entes CXD serisi üç fazlı silindirik güç kondansatörü"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 64.69,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0701",
+        "vgm-0702",
+        "vgm-0704"
+      ]
+    },
+    {
+      "id": "vgm-0704",
+      "slug": "schneider-electric-lc1dfkm7-kompanzasyon-kontaktoru",
+      "name": "Schneider Electric TeSys LC1DFKM7 12,5 kVAr Kompanzasyon Kontaktörü",
+      "brand": "Schneider Electric",
+      "mpn": "LC1DFKM7",
+      "gtin": "3606480401787",
+      "category": "kompanzasyon",
+      "summary": "TeSys Deca serisi, 220 V AC bobinli, ön direnç bloklu 12,5 kVAr (400 V) kondansatör anahtarlama kontaktörü.",
+      "description": [
+        "LC1DFKM7, kompanzasyon panolarında kondansatör kademelerini devreye alıp çıkarmak için tasarlanmış üç kutuplu bir kontaktördür. Kontaklara birlikte verilen ön direnç kablo halkaları, kondansatör enerjilenirken oluşan yüksek ani akım darbesini sınırlar; böylece hem kontak hem de kondansatör ömrü korunur.",
+        "400 V şebekede 12,5 kVAr kademeler için uygundur, bobin gerilimi 220 V AC'dir ve 1 NA + 1 NK yardımcı kontak içerir. Fabrika ve atölye reaktif güç kompanzasyon panolarında, GES bağlantı noktası güç faktörü düzeltme panolarında ve mevcut panoların bakım-yenileme işlerinde kademe kontaktörü olarak kullanılır. Bobin gerilimini ve kademe gücünü sipariş öncesi pano projesiyle karşılaştırın."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "TeSys Deca (LC1D..K)"
+        ],
+        [
+          "Kullanım",
+          "Kondansatör anahtarlama"
+        ],
+        [
+          "Kutup sayısı",
+          "3"
+        ],
+        [
+          "Anma gücü (400 V)",
+          "12,5 kVAr"
+        ],
+        [
+          "Bobin gerilimi",
+          "220 V AC, 50/60 Hz"
+        ],
+        [
+          "Yardımcı kontak",
+          "1 NA + 1 NK"
+        ],
+        [
+          "Ön direnç bloğu",
+          "Dahil (kablo halkalı)"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-lc1dfkm7-kompanzasyon-kontaktoru.8628a9ae.webp",
+          "thumb": "/public/magaza/schneider-lc1dfkm7-kompanzasyon-kontaktoru.8628a9ae-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric TeSys LC1DFKM7 12,5 kVAr kompanzasyon kontaktörü, ön direnç kablo halkalarıyla"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 54.05,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0701",
+        "vgm-0702",
+        "vgm-0703"
+      ]
+    },
+    {
+      "id": "vgm-0705",
+      "slug": "schneider-electric-lvr05125a40t-harmonik-filtre-reaktoru",
+      "name": "Schneider Electric VarPlus LVR05125A40T 12,5 kVAr Harmonik Filtre Reaktörü",
+      "brand": "Schneider Electric",
+      "mpn": "LVR05125A40T",
+      "gtin": null,
+      "category": "kompanzasyon",
+      "summary": "400 V, 50 Hz şebekede 12,5 kVAr kondansatör kademesini harmoniklerden koruyan %5,67 ayarlı (210 Hz) üç fazlı reaktör.",
+      "description": [
+        "LVR05125A40T, kondansatörle seri bağlanarak harmonik filtre devresi oluşturan üç fazlı bir reaktördür. Yaklaşık 210 Hz'e ayarlıdır (%5,67 oranı); bu sayede 5. ve daha yüksek harmoniklerin kondansatöre aşırı akım bindirmesi ve rezonans oluşturması engellenir.",
+        "400 V, 50 Hz şebekede 12,5 kVAr kademe için seçilir. Sürücü (VFD), LED aydınlatma, UPS ve eviriciler gibi doğrusal olmayan yüklerin bulunduğu fabrikalarda ve GES bağlantı panolarında kompanzasyonun güvenle çalışması için kullanılır. Reaktör, kondansatör gerilimi ve kademe gücüyle birlikte projelendirilmelidir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "VarPlus"
+        ],
+        [
+          "Ürün tipi",
+          "Harmonik filtre (detuned) reaktörü"
+        ],
+        [
+          "Kademe gücü",
+          "12,5 kVAr"
+        ],
+        [
+          "Şebeke gerilimi",
+          "400 V, 50 Hz"
+        ],
+        [
+          "Ayar oranı",
+          "%5,67 (p = 5,67)"
+        ],
+        [
+          "Ayar frekansı",
+          "210 Hz"
+        ],
+        [
+          "Faz sayısı",
+          "3"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-lvr05125a40t-harmonik-filtre-reaktoru.bd712f45.webp",
+          "thumb": "/public/magaza/schneider-lvr05125a40t-harmonik-filtre-reaktoru.bd712f45-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric VarPlus LVR05125A40T 12,5 kVAr üç fazlı harmonik filtre reaktörü"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 305.82,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0701",
+        "vgm-0702",
+        "vgm-0703"
+      ]
+    },
+    {
+      "id": "vgm-0801",
+      "slug": "uni-t-ut33c-plus-dijital-multimetre",
+      "name": "Uni-T UT33C+ Cep Tipi Dijital Multimetre",
+      "brand": "Uni-T",
+      "mpn": "UT33C+",
+      "gtin": null,
+      "category": "olcu-ve-test",
+      "summary": "Cep boyutunda, 2000 sayımlı ekranlı, sıcaklık ölçebilen ve darbeye dayanıklı kılıflı dijital multimetre.",
+      "description": [
+        "Uni-T UT33C+, avuç içine sığan boyutlarıyla (134 x 77 x 47 mm, pil dahil yaklaşık 206 g) günlük saha işleri için tasarlanmış bir dijital multimetredir. 2000 sayımlı LCD ekranı, manuel kademe seçimi, veri tutma ve ekran aydınlatma özelliği sunar. DC gerilimi 600 V'a, AC gerilimi 600 V'a kadar ölçer; ayrıca doğru akım, direnç, diyot, süreklilik ve sıcaklık ölçümleri yapabilir.",
+        "Koruyucu kauçuk kılıfı ve 2 metre yükseklikten düşme testine uygun yapısı sayesinde pano başında, atölyede ve montaj sahasında rahatça taşınır. Pano bakımı, aydınlatma ve priz hattı kontrolü, GES kurulumunda dizi geriliminin hızlı kontrolü gibi temel işlerde kullanılır. Pil ve K tipi termokupl cihazla birlikte verilir; AC akım ve yüksek hassasiyetli güç analizi gerektiren işler için pens ampermetre tercih edilmelidir."
+      ],
+      "specs": [
+        [
+          "Ekran sayımı",
+          "2000"
+        ],
+        [
+          "DC gerilim",
+          "200 mV / 2 V / 20 V / 200 V / 600 V"
+        ],
+        [
+          "AC gerilim",
+          "200 V / 600 V"
+        ],
+        [
+          "DC akım",
+          "2000 µA / 20 mA / 200 mA / 10 A"
+        ],
+        [
+          "Direnç",
+          "200 Ω - 200 kΩ, 20 MΩ"
+        ],
+        [
+          "Sıcaklık",
+          "-40 °C ~ 1000 °C (K tipi termokupl)"
+        ],
+        [
+          "Ek fonksiyonlar",
+          "Diyot testi, süreklilik zili, veri tutma, ekran aydınlatma"
+        ],
+        [
+          "Güç",
+          "2 x 1,5 V AAA (R03) pil"
+        ],
+        [
+          "Boyut",
+          "134 x 77 x 47 mm"
+        ],
+        [
+          "Ağırlık",
+          "Yaklaşık 206 g (pil dahil)"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/uni-t-ut33c-plus-dijital-multimetre.02b9966a.webp",
+          "thumb": "/public/magaza/uni-t-ut33c-plus-dijital-multimetre.02b9966a-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Uni-T UT33C+ cep tipi dijital multimetre, önden görünüm"
+        },
+        {
+          "src": "/public/magaza/uni-t-ut33c-plus-dijital-multimetre.07e3983b.webp",
+          "thumb": "/public/magaza/uni-t-ut33c-plus-dijital-multimetre.07e3983b-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Uni-T UT33C+ multimetre ve çıkarılmış koruyucu kırmızı kılıfı"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Uni-T UT33+ serisi ürün sayfası (üretici)",
+          "url": "https://meters.uni-trend.com/product/ut33plus-series/"
+        }
+      ],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 14.68,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0802",
+        "vgm-0803",
+        "vgm-0804"
+      ]
+    },
+    {
+      "id": "vgm-0802",
+      "slug": "uni-t-ut206a-pens-ampermetre",
+      "name": "Uni-T UT206A 1000 A Dijital Pens Ampermetre",
+      "brand": "Uni-T",
+      "mpn": "UT206A",
+      "gtin": null,
+      "category": "olcu-ve-test",
+      "summary": "1000 A AC akım ölçen, 40 mm çene açıklıklı, 4000 sayımlı otomatik kademeli dijital pens ampermetre.",
+      "description": [
+        "Uni-T UT206A, 1000 A'e kadar AC akımı iletkene temas etmeden ölçen, 4000 sayımlı ve otomatik kademeli bir dijital pens ampermetredir. 40 mm çene açıklığı sayesinde kalın kabloları ve küçük bara parçalarını sarabilir. AC ve DC gerilim (600 V), direnç, frekans, süreklilik, diyot testi ve sıcaklık ölçümü de yapabilir; CAT II 600 V / CAT III 300 V sınıfındadır.",
+        "Veri tutma, bağıl ölçüm (REL), ekran aydınlatma ve otomatik kapanma özellikleri vardır; 9 V pille çalışır. Fabrikalarda motor ve besleme hattı akımının kontrolü, pano bakımında faz dengesizliği tespiti, GES AC çıkış hatlarında yük kontrolü gibi işlerde kullanılır. Taşıma çantası, ölçüm uçları ve temaslı sıcaklık probu cihazla birlikte gelir."
+      ],
+      "specs": [
+        [
+          "Ekran sayımı",
+          "4000"
+        ],
+        [
+          "AC akım",
+          "1000 A"
+        ],
+        [
+          "AC gerilim",
+          "600 V"
+        ],
+        [
+          "DC gerilim",
+          "600 V"
+        ],
+        [
+          "Direnç",
+          "40 MΩ"
+        ],
+        [
+          "Frekans",
+          "10 Hz ~ 10 MHz"
+        ],
+        [
+          "Sıcaklık",
+          "-40 °C ~ 1000 °C"
+        ],
+        [
+          "Çene açıklığı",
+          "40 mm"
+        ],
+        [
+          "Emniyet sınıfı",
+          "CAT II 600 V / CAT III 300 V"
+        ],
+        [
+          "Güç",
+          "9 V pil (6F22)"
+        ],
+        [
+          "Boyut / ağırlık",
+          "236 x 97 x 40 mm / yaklaşık 350 g"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/uni-t-ut206a-pens-ampermetre.92bc352b.webp",
+          "thumb": "/public/magaza/uni-t-ut206a-pens-ampermetre.92bc352b-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Uni-T UT206A 1000 A dijital pens ampermetre, önden görünüm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Uni-T UT205A/UT206A ürün sayfası ve kullanım kılavuzu (üretici)",
+          "url": "https://meters.uni-trend.com/product/ut205a-ut206a/"
+        }
+      ],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 58.74,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0801",
+        "vgm-0803",
+        "vgm-0804"
+      ]
+    },
+    {
+      "id": "vgm-0803",
+      "slug": "uni-t-ut511-izolasyon-test-cihazi",
+      "name": "Uni-T UT511 İzolasyon Direnci Test Cihazı",
+      "brand": "Uni-T",
+      "mpn": "UT511",
+      "gtin": null,
+      "category": "olcu-ve-test",
+      "summary": "100 V ile 1000 V arası test gerilimi sunan, PI/DAR ölçümlü, 18 kayıt hafızalı dijital megger.",
+      "description": [
+        "Uni-T UT511, kablo, motor, trafo ve pano yalıtımının ölçülmesi için geliştirilmiş dijital izolasyon direnci test cihazıdır. 100 V ile 1000 V arasında test gerilimi uygular ve 2 MΩ ile 10 GΩ aralığına kadar (1000 V'ta) ölçüm yapar. Geniş ekranında 30 segmentli analog çubuk gösterge, 9999 sayımlı dijital değer ve test gerilimi birlikte izlenir; kısa devre akımı 2 mA'in altındadır.",
+        "Polarizasyon indeksi (PI) ve dielektrik absorpsiyon oranı (DAR) ölçümü, üst/alt limit karşılaştırma, zamanlı ölçüm ve 18 grup veri kaydı sunar. Ölçüm sonrası otomatik deşarj ve yüksek gerilim uyarısı kullanıcıyı korur. Tesisat devreye alma, periyodik bakım ve GES DC kablo yalıtım kontrollerinde kullanılır. 8 adet LR14 (C) pille çalışır; ölçüm uçları ve taşıma kutusu ile verilir."
+      ],
+      "specs": [
+        [
+          "Test gerilimleri",
+          "100 V ~ 1000 V"
+        ],
+        [
+          "Yalıtım direnci aralığı",
+          "1000 V'ta 2 MΩ ~ 10 GΩ"
+        ],
+        [
+          "Doğruluk",
+          "±(%3 + 5)"
+        ],
+        [
+          "Kısa devre akımı",
+          "< 2 mA"
+        ],
+        [
+          "Ek fonksiyonlar",
+          "PI / DAR, karşılaştırma, zamanlı ölçüm"
+        ],
+        [
+          "Veri kaydı",
+          "18 grup"
+        ],
+        [
+          "Gerilim ölçümü",
+          "DC 1000 V, AC 750 V"
+        ],
+        [
+          "Ekran",
+          "9999 sayım, 30 segment analog çubuk"
+        ],
+        [
+          "Güç",
+          "8 x 1,5 V LR14 (C) pil"
+        ],
+        [
+          "Boyut",
+          "202 x 155 x 94 mm"
+        ],
+        [
+          "Ağırlık",
+          "Yaklaşık 1,2 kg"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/uni-t-ut511-izolasyon-test-cihazi.0bc938c4.webp",
+          "thumb": "/public/magaza/uni-t-ut511-izolasyon-test-cihazi.0bc938c4-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Uni-T UT511 izolasyon direnci test cihazı, önden görünüm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Uni-T UT510 serisi ürün sayfası (üretici)",
+          "url": "https://meters.uni-trend.com/product/ut510-series/"
+        }
+      ],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 20,
+      "listUsd": 139.7,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0801",
+        "vgm-0802",
+        "vgm-0804"
+      ]
+    },
+    {
+      "id": "vgm-0804",
+      "slug": "uni-t-ut521-topraklama-test-cihazi",
+      "name": "Uni-T UT521 Dijital Topraklama Test Cihazı",
+      "brand": "Uni-T",
+      "mpn": "UT521",
+      "gtin": "6935750552100",
+      "category": "olcu-ve-test",
+      "summary": "3 telli ve basit 2 telli ölçüm yapan, 2000 Ω'a kadar ölçen dijital topraklama direnci test cihazı.",
+      "description": [
+        "Uni-T UT521, topraklama sistemlerinin direncini ölçmek için tasarlanmış giriş seviyesi bir dijital topraklama test cihazıdır. Hassas 3 telli yöntemin yanı sıra pratik 2 telli ölçüm de yapabilir; 20 Ω, 200 Ω ve 2000 Ω olmak üzere üç ölçüm kademesi sunar ve ayrıca 200 V AC'ye kadar toprak gerilimini gösterir.",
+        "Trafo merkezi, pano ve paratoner topraklamalarının kabul ve periyodik kontrollerinde, GES sahalarında çerçeve ve inverter topraklaması testlerinde sahada rahatça kullanılır. Çift yalıtımlı gövdesi, LCD arka aydınlatması, veri tutma ve düşük pil uyarısı vardır; 6 adet LR6 (AA) pille çalışır. Standart pakette ölçüm uçları, toprak çubuğu ve taşıma çantası bulunur."
+      ],
+      "specs": [
+        [
+          "Ölçüm yöntemi",
+          "3 telli (hassas) ve basit 2 telli"
+        ],
+        [
+          "Toprak direnci kademeleri",
+          "0-20 Ω / 0-200 Ω / 0-2000 Ω"
+        ],
+        [
+          "Doğruluk",
+          "±(%2 + 3 hane); 20 Ω kademesinde ±(%2 + 10 hane)"
+        ],
+        [
+          "AC toprak gerilimi",
+          "0-200 V (50/60 Hz), ±(%1 + 4)"
+        ],
+        [
+          "Ekran sayacı",
+          "2000 hane, LCD arka aydınlatmalı"
+        ],
+        [
+          "Veri hafızası",
+          "20 kayıt"
+        ],
+        [
+          "Besleme",
+          "6 x 1,5 V (LR6) pil"
+        ],
+        [
+          "Otomatik kapanma",
+          "Yaklaşık 10 dakika"
+        ],
+        [
+          "Ölçüler / ağırlık",
+          "160 x 100 x 70,5 mm / yaklaşık 560 g"
+        ],
+        [
+          "Sertifika",
+          "CE, UKCA"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/uni-t-ut521-topraklama-test-cihazi.2517e0bd.webp",
+          "thumb": "/public/magaza/uni-t-ut521-topraklama-test-cihazi.2517e0bd-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Uni-T UT521 dijital topraklama direnci test cihazı, ön görünüm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Uni-T UT520 serisi ürün sayfası",
+          "url": "https://meters.uni-trend.com/product/ut520-series/"
+        },
+        {
+          "title": "UT521 kullanım kılavuzu",
+          "url": "https://meters.uni-trend.com/download/ut521-user-manual/"
+        }
+      ],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 20,
+      "listUsd": 204.24,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0801",
+        "vgm-0802",
+        "vgm-0803"
+      ]
+    },
+    {
+      "id": "vgm-0901",
+      "slug": "schneider-lc1d32m7-tesys-d-kontaktor",
+      "name": "Schneider Electric TeSys D LC1D32M7 Kontaktör 32 A 220 V AC",
+      "brand": "Schneider Electric",
+      "mpn": "LC1D32M7",
+      "gtin": "3389110351088",
+      "category": "pano-malzemeleri",
+      "summary": "3 kutuplu, 32 A AC-3 (15 kW) TeSys D kontaktör; 220 V AC bobin, 1NA+1NK yardımcı kontak dahil.",
+      "description": [
+        "LC1D32M7, Schneider Electric TeSys D ailesinin 32 A sınıfındaki üç kutuplu güç kontaktörüdür. 400 V AC-3 kullanımda yaklaşık 15 kW'a kadar motoru anahtarlar; bobini 220 V AC (50/60 Hz) ile çalışır ve gövdesinde bir normalde açık, bir normalde kapalı yardımcı kontak bulunur.",
+        "Fabrika pompa ve fan sürücüleri, kompresör panoları ve GES tesislerindeki yardımcı hizmet panolarında standart bir seçimdir. Termik aşırı yük rölesi olarak LRD serisi, kısa devre koruması için GV2 motor koruma şalterleriyle birlikte kullanılabilir; ilave yardımcı kontak blokları üst kısmına takılır."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "TeSys D"
+        ],
+        [
+          "Kutup sayısı",
+          "3"
+        ],
+        [
+          "AC-3 nominal akım (440 V)",
+          "32 A"
+        ],
+        [
+          "AC-3 motor gücü (400 V)",
+          "15 kW"
+        ],
+        [
+          "Bobin gerilimi",
+          "220 V AC, 50/60 Hz"
+        ],
+        [
+          "Yardımcı kontak",
+          "1 NA + 1 NK (dahili)"
+        ],
+        [
+          "Kontak yapısı",
+          "Güç kontakları 3 NA"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-lc1d32m7-tesys-d-kontaktor.e2d73e1b.webp",
+          "thumb": "/public/magaza/schneider-lc1d32m7-tesys-d-kontaktor.e2d73e1b-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric TeSys D LC1D32M7 3 kutuplu 32 A kontaktör, önden görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 50.55,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0902",
+        "vgm-0903",
+        "vgm-0904"
+      ]
+    },
+    {
+      "id": "vgm-0902",
+      "slug": "schneider-lrd14-termik-role-7-10a",
+      "name": "Schneider Electric TeSys LRD14 Termik Aşırı Yük Rölesi 7-10 A",
+      "brand": "Schneider Electric",
+      "mpn": "LRD14",
+      "gtin": "3389110346817",
+      "category": "pano-malzemeleri",
+      "summary": "TeSys LRD14 termik aşırı yük rölesi; 7-10 A ayar aralığı, Class 10A, 1NA+1NK yardımcı kontak.",
+      "description": [
+        "LRD14, TeSys D kontaktörlerin altına doğrudan monte edilen termik aşırı yük rölesidir. 7-10 A akım ayar aralığına sahiptir, Class 10A tetikleme eğrisi sunar ve bir normalde açık, bir normalde kapalı kontak içerir; bu sayede motor 4 kW sınıfında iken aşırı akımda kontaktörü devre dışı bırakabilir.",
+        "Röle, ayar kadranından motor etiket akımına göre ayarlanır; RESET ve STOP butonları panoda pratik kullanım sağlar. LC1D09 ile LC1D38 arasındaki kontaktörlerle uyumludur, bu nedenle LC1D32 gibi modellerle birlikte pompa, fan ve konveyör motor çıkışlarında yaygın olarak kullanılır."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "TeSys LRD"
+        ],
+        [
+          "Ayar aralığı",
+          "7-10 A"
+        ],
+        [
+          "Tetikleme sınıfı",
+          "Class 10A"
+        ],
+        [
+          "Kutup sayısı",
+          "3"
+        ],
+        [
+          "Yardımcı kontak",
+          "1 NA + 1 NK"
+        ],
+        [
+          "Montaj",
+          "Kontaktör altına doğrudan"
+        ],
+        [
+          "Uyumlu kontaktör",
+          "LC1D09-D38 serisi"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-lrd14-termik-role-7-10a.654886b8.webp",
+          "thumb": "/public/magaza/schneider-lrd14-termik-role-7-10a.654886b8-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric TeSys LRD14 7-10 A termik aşırı yük rölesi, önden görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 24.79,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0901",
+        "vgm-0903",
+        "vgm-0904"
+      ]
+    },
+    {
+      "id": "vgm-0903",
+      "slug": "schneider-gv2me14-motor-koruma-salteri-6-10a",
+      "name": "Schneider Electric TeSys GV2ME14 Motor Koruma Şalteri 6-10 A",
+      "brand": "Schneider Electric",
+      "mpn": "GV2ME14",
+      "gtin": "3389110343137",
+      "category": "pano-malzemeleri",
+      "summary": "TeSys GV2ME14 termik-manyetik motor koruma şalteri; 6-10 A ayar aralığı, butonlu açma-kapama.",
+      "description": [
+        "GV2ME14, TeSys GV2 ailesinden üç kutuplu, termik-manyetik motor koruma şalteridir. Tek cihazda hem aşırı yük hem kısa devre koruması sağlar; 6-10 A ayar aralığı sayesinde yaklaşık 4 kW'a kadar olan üç fazlı motorlar için kullanılır. Kadranla akım ayarı yapılır, START ve STOP butonları ile manuel açma-kapama sağlanır.",
+        "Pano ve makine imalatında motor çıkışlarını sigorta ve ayrı termik röle kullanmadan korumak için tercih edilir. Kontaktör ile birlikte kullanıldığında kompakt bir motor yolverici grubu oluşturur; aksesuar olarak yardımcı kontak ve alarm blokları takılabilir. Ürün seçimi için motor etiket akımının ayar aralığı içinde kalmasına dikkat edilmelidir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "TeSys GV2"
+        ],
+        [
+          "Koruma tipi",
+          "Termik-manyetik"
+        ],
+        [
+          "Ayar aralığı",
+          "6-10 A"
+        ],
+        [
+          "Kutup sayısı",
+          "3"
+        ],
+        [
+          "Kumanda",
+          "START/STOP butonlu"
+        ],
+        [
+          "Montaj",
+          "DIN ray veya plaka"
+        ],
+        [
+          "Tipik motor gücü",
+          "4 kW (400 V)"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-gv2me14-motor-koruma-salteri-6-10a.e4156042.webp",
+          "thumb": "/public/magaza/schneider-gv2me14-motor-koruma-salteri-6-10a.e4156042-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric TeSys GV2ME14 6-10 A motor koruma şalteri, önden görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 33.52,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0901",
+        "vgm-0902",
+        "vgm-0904"
+      ]
+    },
+    {
+      "id": "vgm-0904",
+      "slug": "siemens-3rt2026-1ap00-kontaktor-s0-25a",
+      "name": "Siemens SIRIUS 3RT2026-1AP00 Kontaktör S0 boy 25 A 230 V AC",
+      "brand": "Siemens",
+      "mpn": "3RT2026-1AP00",
+      "gtin": null,
+      "category": "pano-malzemeleri",
+      "summary": "S0 boy, 25 A (AC-3, 11 kW) güç kontaktörü; 230 V AC bobin, 1NA+1NK yardımcı kontaklı, vidalı bağlantılı.",
+      "description": [
+        "Siemens SIRIUS 3RT2026-1AP00, S0 gövde boyutunda üç kutuplu bir güç kontaktörüdür. 400 V şebekede AC-3 kullanımda 25 A akım ve 11 kW motor gücüne kadar anahtarlama yapar. Bobini 230 V AC (50/60 Hz) ile çalışır ve üzerinde 1 normalde açık ile 1 normalde kapalı yardımcı kontak bulunur.",
+        "Fabrika pano ve kumanda hatlarında pompa, fan, kompresör ve konveyör motorlarının yol verilmesi için uygundur. Vidalı klemens bağlantısı sahada sıkma ve bakım işini kolaylaştırır. Aynı S0 boyundaki SIRIUS motor koruma şalterleri ve 3RU/3RB aşırı akım röleleriyle birlikte standart bir motor yolverici grubu oluşturulabilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Siemens"
+        ],
+        [
+          "Seri",
+          "SIRIUS 3RT2"
+        ],
+        [
+          "Gövde boyutu",
+          "S0"
+        ],
+        [
+          "Kutup sayısı",
+          "3"
+        ],
+        [
+          "AC-3 akım (400 V)",
+          "25 A"
+        ],
+        [
+          "AC-3 motor gücü (400 V)",
+          "11 kW"
+        ],
+        [
+          "Bobin gerilimi",
+          "230 V AC (50/60 Hz)"
+        ],
+        [
+          "Yardımcı kontak",
+          "1 NA + 1 NK"
+        ],
+        [
+          "Bağlantı tipi",
+          "Vidalı klemens"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/siemens-3rt2026-1ap00-kontaktor.f80da12a.webp",
+          "thumb": "/public/magaza/siemens-3rt2026-1ap00-kontaktor.f80da12a-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Siemens SIRIUS 3RT2026-1AP00 S0 boy kontaktör"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 41.06,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0901",
+        "vgm-0902",
+        "vgm-0903"
+      ]
+    },
+    {
+      "id": "vgm-0905",
+      "slug": "siemens-3rv2011-1ca10-motor-koruma-salteri-s00",
+      "name": "Siemens SIRIUS 3RV2011-1CA10 Motor Koruma Şalteri S00 1,8-2,5 A",
+      "brand": "Siemens",
+      "mpn": "3RV2011-1CA10",
+      "gtin": null,
+      "category": "pano-malzemeleri",
+      "summary": "S00 boy, 1,8-2,5 A ayar aralıklı, termik ve manyetik korumalı motor koruma şalteri; 100 kA kısa devre kapasiteli.",
+      "description": [
+        "Siemens SIRIUS 3RV2011-1CA10, S00 gövde boyutunda üç kutuplu bir motor koruma şalteridir. 1,8 ile 2,5 A arasında ayarlanabilen termik aşırı yük elemanını ve sabit manyetik kısa devre tetikleyicisini bir arada taşır. Kısa devre kesme kapasitesi 100 kA seviyesindedir ve vidalı klemens bağlantılıdır.",
+        "Küçük pompalar, fanlar, yardımcı tahrikler ve kumanda devrelerinde motoru aşırı yük ile kısa devreye karşı tek cihazla korur; el ile açma-kapama ve ayırma işlevi de sunar. Aynı S00 boyundaki SIRIUS 3RT2 kontaktörlerle yan yana takılarak kompakt bir motor yolverici oluşturulabilir. Ürün başlıklarında geçen '18-25 A' ifadesi hatalıdır, doğru aralık 1,8-2,5 A'dır."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Siemens"
+        ],
+        [
+          "Seri",
+          "SIRIUS 3RV2"
+        ],
+        [
+          "Gövde boyutu",
+          "S00"
+        ],
+        [
+          "Kutup sayısı",
+          "3"
+        ],
+        [
+          "Ayar aralığı",
+          "1,8-2,5 A"
+        ],
+        [
+          "Koruma",
+          "Termik aşırı yük ve manyetik kısa devre"
+        ],
+        [
+          "Kısa devre kapasitesi",
+          "100 kA"
+        ],
+        [
+          "Bağlantı tipi",
+          "Vidalı klemens"
+        ],
+        [
+          "Kullanım",
+          "Motor koruma ve ayırma"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/siemens-3rv2011-1ca10-motor-koruma-salteri.8cff60a0.webp",
+          "thumb": "/public/magaza/siemens-3rv2011-1ca10-motor-koruma-salteri.8cff60a0-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Siemens SIRIUS 3RV2011-1CA10 S00 boy motor koruma şalteri"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 37.88,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0901",
+        "vgm-0902",
+        "vgm-0903"
+      ]
+    },
+    {
+      "id": "vgm-0906",
+      "slug": "siemens-3rp2505-1aw30-zaman-roles-13-fonksiyon",
+      "name": "Siemens SIRIUS 3RP2505-1AW30 Zaman Rölesi 13 fonksiyonlu 12-240 V",
+      "brand": "Siemens",
+      "mpn": "3RP2505-1AW30",
+      "gtin": null,
+      "category": "pano-malzemeleri",
+      "summary": "13 fonksiyonlu, 0,05 sn-100 sn aralıklı, 12-240 V AC/DC beslemeli, 1 CO çıkışlı SIRIUS zaman rölesi.",
+      "description": [
+        "Siemens SIRIUS 3RP2505-1AW30, 22,5 mm genişliğinde, ray montajlı çok fonksiyonlu bir zaman rölesidir. 13 farklı zamanlama fonksiyonu sunar, süre aralığı 0,05 saniyeden 100 saniyeye kadardır ve 12-240 V AC/DC arasındaki geniş besleme gerilimiyle çalışır. Çıkışta bir adet değiştirici (1 CO) kontak bulunur.",
+        "Yıldız-üçgen yol verme, gecikmeli devreye alma ve bırakma, darbe ve flaşör gibi kumanda uygulamalarında tek bir cihazla birçok işlevi karşılar; böylece depoda tutulacak farklı röle çeşidi azalır. Geniş gerilim aralığı sayesinde hem AC hem DC kumanda devrelerinde kullanılabilir. Vidalı klemens bağlantısı vardır."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Siemens"
+        ],
+        [
+          "Seri",
+          "SIRIUS 3RP25"
+        ],
+        [
+          "Fonksiyon sayısı",
+          "13"
+        ],
+        [
+          "Zaman aralığı",
+          "0,05 sn - 100 sn"
+        ],
+        [
+          "Besleme gerilimi",
+          "12-240 V AC/DC"
+        ],
+        [
+          "Çıkış kontağı",
+          "1 CO (değiştirici)"
+        ],
+        [
+          "Genişlik",
+          "22,5 mm"
+        ],
+        [
+          "Montaj",
+          "DIN ray"
+        ],
+        [
+          "Bağlantı tipi",
+          "Vidalı klemens"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/siemens-3rp2505-1aw30-zaman-roles.6387b5e3.webp",
+          "thumb": "/public/magaza/siemens-3rp2505-1aw30-zaman-roles.6387b5e3-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Siemens SIRIUS 3RP2505-1AW30 çok fonksiyonlu zaman rölesi"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 72.87,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-0901",
+        "vgm-0902",
+        "vgm-0903"
+      ]
+    },
+    {
+      "id": "vgm-1001",
+      "slug": "hes-nyy-3x4-yeralti-kablo",
+      "name": "HES Kablo NYY 3x4 mm² bakır iletkenli PVC yeraltı kablosu",
+      "brand": "HES Kablo",
+      "mpn": "NYY 3x4",
+      "gtin": null,
+      "category": "kablolar",
+      "summary": "3 damarlı, 4 mm² bakır iletkenli, 0,6/1 kV PVC izoleli ve kılıflı NYY yeraltı enerji kablosu; metre ile satılır.",
+      "description": [
+        "NYY, alçak gerilim şebekelerinde kullanılan, bakır iletkenli ve PVC yalıtımlı, PVC dış kılıflı klasik bir enerji kablosudur. Bu model 3 damarlı ve 4 mm² kesitlidir, 0,6/1 kV gerilim sınıfındadır ve iletken sıcaklığı sürekli işletmede 70 °C'ye kadar çıkabilir.",
+        "Doğrudan toprağa gömme, kablo kanalı veya boru içinde döşeme için uygundur. Pano besleme hatları, bahçe ve açık alan aydınlatması, şantiye dağıtımı ve fabrikalarda alt pano bağlantıları tipik kullanım alanlarıdır. Halojen içermediği iddia edilmez; yangın güvenliği şart olan yerlerde N2XH gibi halojensiz tipler tercih edilmelidir. Kesit ve akım taşıma kapasitesi, döşeme koşuluna göre proje hesabıyla doğrulanmalıdır."
+      ],
+      "specs": [
+        [
+          "Kablo tipi",
+          "NYY (yeraltı enerji kablosu)"
+        ],
+        [
+          "Damar sayısı ve kesit",
+          "3 x 4 mm²"
+        ],
+        [
+          "İletken malzemesi",
+          "Bakır (Cu)"
+        ],
+        [
+          "Anma gerilimi",
+          "0,6/1 kV"
+        ],
+        [
+          "Yalıtım ve dış kılıf",
+          "PVC"
+        ],
+        [
+          "Sürekli işletme sıcaklığı",
+          "70 °C"
+        ],
+        [
+          "Satış birimi",
+          "Metre"
+        ],
+        [
+          "Uygulama",
+          "Yeraltı, kanal, boru ve pano besleme"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/hes-nyy-3x4-yeralti-kablo.dd61709c.webp",
+          "thumb": "/public/magaza/hes-nyy-3x4-yeralti-kablo.dd61709c-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "HES Kablo NYY 3x4 mm² bakır iletkenli PVC yeraltı kablosu, kesit görünümü"
+        }
+      ],
+      "documents": [],
+      "unit": "metre",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 100,
+      "listUsd": 2.53,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1002",
+        "vgm-1003",
+        "vgm-1004"
+      ]
+    },
+    {
+      "id": "vgm-1002",
+      "slug": "hes-n2xh-5x4-halojensiz-kablo",
+      "name": "HES Kablo N2XH 5x4 mm² halojen içermeyen enerji kablosu",
+      "brand": "HES Kablo",
+      "mpn": "N2XH 5x4",
+      "gtin": null,
+      "category": "kablolar",
+      "summary": "5 damarlı, 4 mm² bakır iletkenli, 0,6/1 kV halojen içermeyen ve yangında az duman yayan N2XH enerji kablosu; metre ile satılır.",
+      "description": [
+        "N2XH, bakır iletkenli, çapraz bağlı polietilen (XLPE) yalıtımlı ve halojen içermeyen (HFFR) kılıflı bir enerji kablosudur. Yanma sırasında zehirli ve aşındırıcı gaz ile yoğun duman çıkışını sınırlar, bu yüzden insanların yoğun bulunduğu veya ekipmanın korunması gereken yerlerde tercih edilir. Anma gerilimi 0,6/1 kV, iletkenin sürekli işletme sıcaklığı 90 °C'dir.",
+        "5 x 4 mm² yapısıyla üç faz, nötr ve koruma iletkeni içeren hatlar için uygundur: fabrika ve atölyelerde motor ve pano besleme, alışveriş merkezi, hastane, okul, tünel ve veri merkezi gibi yangın güvenliği şartlı projelerde kullanılır. Güneş enerjisi santrallerinde AC tarafı iç mekân hatlarında da düşünülebilir. Kesit ve akım kapasitesi, döşeme yöntemi ve gerilim düşümü hesabıyla doğrulanmalıdır."
+      ],
+      "specs": [
+        [
+          "Kablo tipi",
+          "N2XH (halojen içermeyen enerji kablosu)"
+        ],
+        [
+          "Damar sayısı ve kesit",
+          "5 x 4 mm²"
+        ],
+        [
+          "İletken malzemesi",
+          "Bakır (Cu)"
+        ],
+        [
+          "Anma gerilimi",
+          "0,6/1 kV"
+        ],
+        [
+          "Yalıtım",
+          "XLPE"
+        ],
+        [
+          "Dış kılıf",
+          "Halojen içermeyen (HFFR)"
+        ],
+        [
+          "Sürekli işletme sıcaklığı",
+          "90 °C"
+        ],
+        [
+          "Satış birimi",
+          "Metre"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/hes-n2xh-5x4-halojensiz-kablo.8705905d.webp",
+          "thumb": "/public/magaza/hes-n2xh-5x4-halojensiz-kablo.8705905d-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "HES Kablo N2XH 5x4 mm² halojen içermeyen enerji kablosu, kesit görünümü"
+        }
+      ],
+      "documents": [],
+      "unit": "metre",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 80,
+      "listUsd": 4.18,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1001",
+        "vgm-1003",
+        "vgm-1004"
+      ]
+    },
+    {
+      "id": "vgm-1003",
+      "slug": "hes-nym-3x2-5-antigron-kablo",
+      "name": "HES Kablo NYM (NVV) 3x2,5 mm² Antigron bina içi kablo",
+      "brand": "HES Kablo",
+      "mpn": "NYM 3x2,5 Antigron",
+      "gtin": null,
+      "category": "kablolar",
+      "summary": "3 damarlı, 2,5 mm² bakır iletkenli, 300/500 V PVC kılıflı NYM (Antigron) bina içi tesisat kablosu; metre ile satılır.",
+      "description": [
+        "NYM, Türkiye'de Antigron adıyla da bilinen, bakır iletkenli, PVC yalıtımlı ve gri PVC dış kılıflı sabit tesisat kablosudur. Anma gerilimi 300/500 V, iletkenin sürekli işletme sıcaklığı 70 °C'dir. 3 x 2,5 mm² yapısı faz, nötr ve koruma iletkeninden oluşur.",
+        "Konut, ofis ve işyerlerinde sıva altı ve sıva üstü priz hatları ile genel amaçlı aydınlatma ve küçük güç devrelerinde, kuru ve nemli iç mekânlarda kullanılır. Doğrudan toprağa gömülmez ve doğrudan güneş ışığına açık dış mekânda kullanılmamalıdır. Devre koruma ve kesit seçimi, hat uzunluğu ve yüke göre yetkili tesisat mühendisliği hesabıyla yapılmalıdır."
+      ],
+      "specs": [
+        [
+          "Kablo tipi",
+          "NYM (NVV, Antigron)"
+        ],
+        [
+          "Damar sayısı ve kesit",
+          "3 x 2,5 mm²"
+        ],
+        [
+          "İletken malzemesi",
+          "Bakır (Cu)"
+        ],
+        [
+          "Anma gerilimi",
+          "300/500 V"
+        ],
+        [
+          "Yalıtım ve dış kılıf",
+          "PVC (gri kılıf)"
+        ],
+        [
+          "Sürekli işletme sıcaklığı",
+          "70 °C"
+        ],
+        [
+          "Satış birimi",
+          "Metre"
+        ],
+        [
+          "Uygulama",
+          "Bina içi sabit tesisat, priz hatları"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/hes-nym-3x2-5-antigron-kablo.2896834d.webp",
+          "thumb": "/public/magaza/hes-nym-3x2-5-antigron-kablo.2896834d-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "HES Kablo NYM 3x2,5 mm² Antigron gri bina içi kablo, kesit görünümü"
+        }
+      ],
+      "documents": [],
+      "unit": "metre",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 200,
+      "listUsd": 1.53,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1001",
+        "vgm-1002",
+        "vgm-1004"
+      ]
+    },
+    {
+      "id": "vgm-1004",
+      "slug": "hes-h07v-k-1x4-siyah-montaj-kablosu",
+      "name": "HES H07V-K (NYAF) 1x4 mm² siyah çok telli montaj kablosu",
+      "brand": "HES Kablo",
+      "mpn": "H07V-K 1x4 Siyah",
+      "gtin": "9008007001403",
+      "category": "kablolar",
+      "summary": "4 mm² kesitli, esnek bakır iletkenli, siyah PVC yalıtımlı tek damarlı pano ve kumanda montaj kablosu; metre ile satılır.",
+      "description": [
+        "H07V-K, halk arasında NYAF olarak bilinen, çok telli esnek bakır iletkene ve PVC yalıtıma sahip tek damarlı bir montaj kablosudur. Bu üründe iletken kesiti 4 mm², yalıtım rengi siyahtır. 450/750 V anma gerilimine uygundur ve iletken sıcaklığı en fazla 70 °C olacak şekilde kullanılır.",
+        "Esnek yapısı sayesinde pano içi güç ve kumanda bağlantılarında, motor sürücü ve kontaktör çıkışlarında, sac kanal ya da boru içi çekimlerde rahatça yönlendirilir. Uçlara kablo pabucu veya yüksük takılarak kullanılması önerilir. Doğrudan gömülü veya dış ortam uygulamalarında kullanılmaz; ürün metre üzerinden satılır, kesilerek verilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "HES Kablo"
+        ],
+        [
+          "Tip",
+          "H07V-K (NYAF)"
+        ],
+        [
+          "Kesit",
+          "1 x 4 mm²"
+        ],
+        [
+          "İletken",
+          "Çok telli esnek bakır (sınıf 5)"
+        ],
+        [
+          "Yalıtım",
+          "PVC"
+        ],
+        [
+          "Renk",
+          "Siyah"
+        ],
+        [
+          "Anma gerilimi",
+          "450/750 V"
+        ],
+        [
+          "Azami iletken sıcaklığı",
+          "70 °C"
+        ],
+        [
+          "Satış birimi",
+          "Metre"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/hes-h07v-k-1x4-siyah-montaj-kablosu.a8cfc664.webp",
+          "thumb": "/public/magaza/hes-h07v-k-1x4-siyah-montaj-kablosu.a8cfc664-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "HES Kablo H07V-K 4 mm² siyah NYAF montaj kablosu rulosu, önden görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "metre",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 500,
+      "listUsd": 0.74,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1001",
+        "vgm-1002",
+        "vgm-1003"
+      ]
+    },
+    {
+      "id": "vgm-1005",
+      "slug": "nexans-nym-4x4-tesisat-kablosu",
+      "name": "Nexans NYM 4x4 mm² tesisat kablosu",
+      "brand": "Nexans",
+      "mpn": "10523093 NYM 4x4",
+      "gtin": null,
+      "category": "kablolar",
+      "summary": "4 damarlı, her damar 4 mm² bakır iletkenli, PVC kılıflı Nexans NYM tesisat kablosu; metre ile satılır.",
+      "description": [
+        "NYM, iç mekân sabit tesisatında kullanılan, PVC yalıtımlı damarları ortak PVC kılıf içinde toplayan bir tesisat kablosudur. Bu model dört damarlı olup her damar 4 mm² bakır iletkene sahiptir. 300/500 V anma gerilimine uygundur ve iletken sıcaklığı en fazla 70 °C olacak şekilde kullanılır.",
+        "Sıva altı, sıva üstü ve kuru ortamdaki boru veya kanal içi hatlarda; üç fazlı ocak, EV şarj istasyonu besleme hattı ve tali pano besleme gibi görece yüksek akımlı devrelerde tercih edilir. Doğrudan toprağa gömülü ya da dış ortamda güneşe açık döşemede kullanılmaz; ürün metre üzerinden satılır, istenen uzunlukta kesilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Nexans"
+        ],
+        [
+          "Tip",
+          "NYM"
+        ],
+        [
+          "Damar sayısı ve kesit",
+          "4 x 4 mm²"
+        ],
+        [
+          "İletken",
+          "Bakır"
+        ],
+        [
+          "Yalıtım ve kılıf",
+          "PVC"
+        ],
+        [
+          "Anma gerilimi",
+          "300/500 V"
+        ],
+        [
+          "Azami iletken sıcaklığı",
+          "70 °C"
+        ],
+        [
+          "Kullanım yeri",
+          "İç mekân sabit tesisat"
+        ],
+        [
+          "Satış birimi",
+          "Metre"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/nexans-nym-4x4-tesisat-kablosu.2f67e41a.webp",
+          "thumb": "/public/magaza/nexans-nym-4x4-tesisat-kablosu.2f67e41a-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Nexans NYM tesisat kablosu, bakır iletkenli damarların görünümü"
+        }
+      ],
+      "documents": [],
+      "unit": "metre",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 300,
+      "listUsd": 3.96,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1001",
+        "vgm-1002",
+        "vgm-1003"
+      ]
+    },
+    {
+      "id": "vgm-1101",
+      "slug": "philips-bvp150-led100-cw-100w-led-projektor",
+      "name": "Philips BVP150 LED100/CW 100 W LED Projektör 6500K",
+      "brand": "Philips",
+      "mpn": "919933011501",
+      "gtin": null,
+      "category": "aydinlatma",
+      "summary": "Philips BVP150 LED100/CW, 100 W gücünde, 6500K soğuk beyaz ışıklı IP65 korumalı dış mekan LED projektörü.",
+      "description": [
+        "Philips BVP150 LED100/CW, 100 W gücünde ve 6500K soğuk beyaz ışık veren bir LED projektördür. Gövdesi üzerinde IP65 koruma sınıfı belirtilir; toza karşı tam, su püskürtmesine karşı korumalıdır ve açık havada kullanıma uygundur.",
+        "Fabrika sahaları, depo girişleri, açık stok alanları ve otopark gibi geniş yüzeylerin aydınlatmasında tercih edilir. Ayaklı gövdesi sayesinde duvara, direğe veya zemine sabitlenebilir; GES saha aydınlatmasında şebeke bağlantılı tesis alanları için de kullanılabilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Philips"
+        ],
+        [
+          "Model",
+          "BVP150 LED100/CW"
+        ],
+        [
+          "Sipariş kodu",
+          "919933011501"
+        ],
+        [
+          "Güç",
+          "100 W"
+        ],
+        [
+          "Renk sıcaklığı",
+          "6500 K (soğuk beyaz)"
+        ],
+        [
+          "Koruma sınıfı",
+          "IP65"
+        ],
+        [
+          "Ürün tipi",
+          "LED projektör"
+        ],
+        [
+          "Kullanım yeri",
+          "Dış mekan, saha ve endüstriyel alan"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/philips-bvp150-led100-cw-100w-led-projektor.46b8eb57.webp",
+          "thumb": "/public/magaza/philips-bvp150-led100-cw-100w-led-projektor.46b8eb57-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Philips BVP150 LED100 CW 100 W LED projektör, ön görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 46.94,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1102",
+        "vgm-1103",
+        "vgm-1104"
+      ]
+    },
+    {
+      "id": "vgm-1102",
+      "slug": "cata-ct-4663-200w-slim-led-projektor",
+      "name": "Cata CT-4663 200 W Slim LED Projektör Beyaz Işık",
+      "brand": "Cata",
+      "mpn": "CT-4663",
+      "gtin": "8680998222763",
+      "category": "aydinlatma",
+      "summary": "Cata CT-4663, 200 W, 6400K beyaz ışıklı, 17800 lümen SMD LED'li slim dış mekan projektörü.",
+      "description": [
+        "Cata CT-4663, 200 W gücünde slim yapılı bir SMD LED projektördür. 6400K beyaz ışık ve yaklaşık 17800 lümen ışık akışı sunar, 220 V şebeke gerilimiyle çalışır. Gövde ölçüsü 41 x 28,5 cm, koruma sınıfı IP64'tür.",
+        "Geniş açık alanların aydınlatılmasında uygun maliyetli bir çözümdür: otopark, şantiye, depo çevresi ve sanayi sahaları için uygundur. Siyah gövdesi ve ayaklı bağlantı yapısıyla duvara veya direğe monte edilebilir; yağmura karşı korumalıdır ancak daldırma için uygun değildir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Cata"
+        ],
+        [
+          "Model",
+          "CT-4663"
+        ],
+        [
+          "Güç",
+          "200 W"
+        ],
+        [
+          "Işık rengi",
+          "Beyaz, 6400 K"
+        ],
+        [
+          "Işık akışı",
+          "17800 lm"
+        ],
+        [
+          "LED tipi",
+          "SMD LED"
+        ],
+        [
+          "Besleme gerilimi",
+          "220 V"
+        ],
+        [
+          "Koruma sınıfı",
+          "IP64"
+        ],
+        [
+          "Ürün ölçüsü",
+          "41 x 28,5 cm"
+        ],
+        [
+          "Kasa rengi",
+          "Siyah"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/cata-ct-4663-200w-slim-led-projektor.61f7f31f.webp",
+          "thumb": "/public/magaza/cata-ct-4663-200w-slim-led-projektor.61f7f31f-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Cata CT-4663 200 W slim LED projektör, beyaz ışık, ön görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 20.95,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1101",
+        "vgm-1103",
+        "vgm-1104"
+      ]
+    },
+    {
+      "id": "vgm-1103",
+      "slug": "cata-ct-4698-200w-miami-solar-led-projektor",
+      "name": "Cata CT-4698 200 W Miami Solar LED Projektör (taşınabilir, kumandalı)",
+      "brand": "Cata",
+      "mpn": "CT-4698",
+      "gtin": "8680998237866",
+      "category": "aydinlatma",
+      "summary": "Cata CT-4698 Miami, şebekeden bağımsız çalışan, 7200 mAh pilli, kumandalı taşınabilir solar LED projektör.",
+      "description": [
+        "Cata CT-4698 Miami, güneş paneliyle şarj olan taşınabilir bir LED projektördür. 7200 mAh pil kapasitesi, 3200K / 4000K / 6400K arasında seçilebilir ışık rengi, yüzde yüz dim özelliği ve yaklaşık 2200 lümen ışık akışı sunar. Koruma sınıfı IP44'tür.",
+        "Şebeke olmayan şantiye, bahçe, etkinlik ve kamp alanlarında geçici aydınlatma sağlar. USB Type-A ve Type-C çıkışlarıyla telefon şarjına, acil durum ışığı moduyla kesintilerde yedek aydınlatmaya imkân verir. 180 derece ayarlanabilir ayağı ve 17 x 21 cm gövdesiyle kolay taşınır."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Cata"
+        ],
+        [
+          "Model",
+          "CT-4698 Miami"
+        ],
+        [
+          "Güç",
+          "200 W"
+        ],
+        [
+          "Işık rengi",
+          "3200 K / 4000 K / 6400 K"
+        ],
+        [
+          "Işık akışı",
+          "2200 lm"
+        ],
+        [
+          "Enerji kaynağı",
+          "Güneş paneli"
+        ],
+        [
+          "Pil kapasitesi",
+          "7200 mAh"
+        ],
+        [
+          "Çıkışlar",
+          "USB Type-A ve Type-C"
+        ],
+        [
+          "Koruma sınıfı",
+          "IP44"
+        ],
+        [
+          "Ürün ölçüsü",
+          "17 x 21 cm"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/cata-ct-4698-200w-miami-solar-led-projektor.06bcfc91.webp",
+          "thumb": "/public/magaza/cata-ct-4698-200w-miami-solar-led-projektor.06bcfc91-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Cata CT-4698 200 W Miami solar LED projektör, ön görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 14.26,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1101",
+        "vgm-1102",
+        "vgm-1104"
+      ]
+    },
+    {
+      "id": "vgm-1104",
+      "slug": "philips-wt066c-led36-120-cm-etanj-armatur",
+      "name": "Philips WT066C LED36 120 cm 36 W 6500K LED Etanj Armatür",
+      "brand": "Philips",
+      "mpn": "919933020901",
+      "gtin": null,
+      "category": "aydinlatma",
+      "summary": "120 cm boyunda, 36 W, 6500K soğuk beyaz ışıklı Philips WT066C etanj LED armatür; nemli ve tozlu mekanlar için.",
+      "description": [
+        "Philips WT066C, 120 cm uzunluğunda, 36 W gücünde ve 6500K soğuk beyaz ışık veren etanj bir LED armatürdür. Tozun ve neme karşı sızdırmaz gövdesi sayesinde floresan etanj armatürlerin yerine doğrudan LED çözümü olarak kullanılır; sürücüsü armatürün içindedir, ayrıca balast gerekmez.",
+        "Atölye, depo, otopark, üretim hattı ve teknik hacimler gibi nemli veya tozlu ortamlarda genel aydınlatma için uygundur. Tavana yüzey montajı yapılır, tek hatta art arda bağlanarak sıralı aydınlatma kurulabilir. Montaj öncesi kullanılacak mekanın IP ve çalışma sıcaklığı gereksinimlerini ürün etiketiyle karşılaştırmanızı öneririz."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Philips"
+        ],
+        [
+          "Model",
+          "WT066C LED36 L1200"
+        ],
+        [
+          "Sipariş kodu",
+          "919933020901"
+        ],
+        [
+          "Güç",
+          "36 W"
+        ],
+        [
+          "Renk sıcaklığı",
+          "6500K (soğuk beyaz)"
+        ],
+        [
+          "Uzunluk",
+          "120 cm"
+        ],
+        [
+          "Tip",
+          "Etanj LED armatür"
+        ],
+        [
+          "Kullanım alanı",
+          "Atölye, depo, otopark"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/philips-wt066c-led36-120-cm-etanj-armatur.779be301.webp",
+          "thumb": "/public/magaza/philips-wt066c-led36-120-cm-etanj-armatur.779be301-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Philips WT066C LED36 120 cm LED etanj armatür, yandan görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 23.08,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1101",
+        "vgm-1102",
+        "vgm-1103"
+      ]
+    },
+    {
+      "id": "vgm-1105",
+      "slug": "philips-rc048b-led-panel-60x60-36w",
+      "name": "Philips RC048B LED Panel 60x60 36 W 6500K",
+      "brand": "Philips",
+      "mpn": "919933002501",
+      "gtin": null,
+      "category": "aydinlatma",
+      "summary": "Philips RC048B 60x60 cm, 36 W, 6500K LED panel; ofis ve ticari alanlarda standart tavan modülüne uygun.",
+      "description": [
+        "Philips RC048B, 60x60 cm ölçüsünde, 36 W gücünde ve 6500K (865) renk sıcaklığında bir LED panel armatürdür. Standart 60x60 modüler tavan sistemlerine yerleştirilebilir ve eski floresan ızgaralı armatürlerin yerine kullanılabilir.",
+        "Ofis, toplantı odası, koridor, okul ve mağaza gibi ticari mekanlarda düzgün ve parlamasız genel aydınlatma sağlar. Siparişten önce tavan sisteminizin 60x60 gömme ölçüsüne uygun olduğunu ve ışık rengi tercihinizin (soğuk beyaz 6500K) mekana uyduğunu kontrol ediniz."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Philips"
+        ],
+        [
+          "Model",
+          "RC048B"
+        ],
+        [
+          "Sipariş kodu",
+          "919933002501"
+        ],
+        [
+          "Güç",
+          "36 W"
+        ],
+        [
+          "Renk sıcaklığı",
+          "6500K (865)"
+        ],
+        [
+          "Ölçü",
+          "60 x 60 cm"
+        ],
+        [
+          "Tip",
+          "Gömme LED panel"
+        ],
+        [
+          "Kullanım alanı",
+          "Ofis, ticari alanlar"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/philips-rc048b-led-panel-60x60-36w.765e416f.webp",
+          "thumb": "/public/magaza/philips-rc048b-led-panel-60x60-36w.765e416f-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Philips RC048B 60x60 cm 36 W LED panel, önden görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 26.51,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1101",
+        "vgm-1102",
+        "vgm-1103"
+      ]
+    },
+    {
+      "id": "vgm-1106",
+      "slug": "cata-ct-9167-led-exit-cikis-armaturu",
+      "name": "Cata CT-9167 3 W LED Exit Çıkış Armatürü (3 saat akülü)",
+      "brand": "Cata",
+      "mpn": "CT-9167",
+      "gtin": "8698943812488",
+      "category": "aydinlatma",
+      "summary": "Cata CT-9167, 3 W LED'li, 3 saat akülü Exit çıkış yönlendirme armatürü; acil çıkış levhası olarak kullanılır.",
+      "description": [
+        "Cata CT-9167, 3 W gücünde LED'li, şarjlı aküsü sayesinde şebeke kesildiğinde yaklaşık 3 saat yanmaya devam eden bir acil çıkış yönlendirme armatürüdür. Yeşil zemin üzerinde ok, koşan figür ve ÇIKIŞ / EXIT yazısı bulunur; asma veya duvar montajına uygundur.",
+        "İşyeri, fabrika, okul, otel ve toplu kullanım alanlarında yangın ve acil durum yönetmeliklerinin istediği kaçış yolu işaretlemesi için kullanılır. Hafif ve küçük olduğu için paketle gönderilebilir. Montaj yerini ve yönlendirme okunu proje planınıza göre belirleyiniz; ürünün periyodik akü testi yapılmalıdır."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Cata"
+        ],
+        [
+          "Model",
+          "CT-9167"
+        ],
+        [
+          "Güç",
+          "3 W LED"
+        ],
+        [
+          "Akü süresi",
+          "3 saat"
+        ],
+        [
+          "Tip",
+          "Exit çıkış yönlendirme armatürü"
+        ],
+        [
+          "Yazı",
+          "ÇIKIŞ / EXIT"
+        ],
+        [
+          "Montaj",
+          "Asma / duvar"
+        ],
+        [
+          "GTIN",
+          "8698943812488"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/cata-ct-9167-led-exit-cikis-armaturu.b0ede613.webp",
+          "thumb": "/public/magaza/cata-ct-9167-led-exit-cikis-armaturu.b0ede613-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Cata CT-9167 LED Exit çıkış yönlendirme armatürü, yeşil ok ve koşan figür"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 50,
+      "listUsd": 3.67,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1101",
+        "vgm-1102",
+        "vgm-1103"
+      ]
+    },
+    {
+      "id": "vgm-1201",
+      "slug": "schneider-electric-a9l40600-acti9-iprd40-parafudr",
+      "name": "Schneider Electric A9L40600 Acti 9 iPRD40 3P+N Tip 2 Parafudr 40 kA",
+      "brand": "Schneider Electric",
+      "mpn": "A9L40600",
+      "gtin": "3606480506383",
+      "category": "topraklama-ve-yildirim",
+      "summary": "Üç faz ve nötr hatlar için 40 kA Imax değerli, değiştirilebilir kartuşlu Tip 2 (C sınıfı) parafudr.",
+      "description": [
+        "Acti 9 iPRD40, alçak gerilim dağıtım panolarında şebekeden gelen anahtarlama ve dolaylı yıldırım kaynaklı geçici aşırı gerilimleri toprağa ileten, DIN raya takılan Tip 2 (C sınıfı) bir parafudrdur. 3P+N yapısı ile üç fazlı sistemlerde her faz ve nötr hattı için ayrı kartuş içerir; maksimum boşalma akımı 40 kA (8/20 µs), nominal boşalma akımı 20 kA seviyesindedir.",
+        "Kartuşlar arızalandığında pencere rengi kırmızıya döner ve yalnızca ilgili kartuş yuvasından çıkarılıp değiştirilebilir; bu sayede tüm cihazı sökmeye gerek kalmaz. Fabrika ve atölye tali panolarında, GES AC çıkış panolarında ve ticari binaların ana dağıtım panolarında, ana girişteki Tip 1 koruma ile birlikte kademeli koruma için uygundur."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "Acti 9 iPRD40"
+        ],
+        [
+          "Model kodu",
+          "A9L40600"
+        ],
+        [
+          "Parafudr tipi",
+          "Tip 2 (C sınıfı), kartuşlu"
+        ],
+        [
+          "Kutup sayısı",
+          "3P+N"
+        ],
+        [
+          "Maksimum boşalma akımı (Imax, 8/20 µs)",
+          "40 kA"
+        ],
+        [
+          "Nominal boşalma akımı (In, 8/20 µs)",
+          "20 kA"
+        ],
+        [
+          "Montaj",
+          "35 mm DIN ray"
+        ],
+        [
+          "Durum göstergesi",
+          "Kartuş üzerinde görsel (kırmızı = değiştir)"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-a9l40600-iprd40-parafudr.a8b64797.webp",
+          "thumb": "/public/magaza/schneider-a9l40600-iprd40-parafudr.a8b64797-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric Acti 9 iPRD40 3P+N kartuşlu Tip 2 parafudr ön görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 20,
+      "listUsd": 104.04,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1202",
+        "vgm-1203",
+        "vgm-1204"
+      ]
+    },
+    {
+      "id": "vgm-1202",
+      "slug": "schneider-electric-ez9l33620-easy9-parafudr-1p-n",
+      "name": "Schneider Electric EZ9L33620 Easy9 1P+N Tip 2 Parafudr 20 kA",
+      "brand": "Schneider Electric",
+      "mpn": "EZ9L33620",
+      "gtin": "3606480586767",
+      "category": "topraklama-ve-yildirim",
+      "summary": "Tek faz konut ve küçük tesis panoları için 20 kA Imax değerli, kartuşlu Tip 2 (C sınıfı) parafudr.",
+      "description": [
+        "Easy9 serisi EZ9L33620, tek fazlı şebekelerde faz ile toprak arasındaki geçici aşırı gerilimleri sınırlayan Tip 2 (C sınıfı) parafudrdur. 1P+N yapısında faz kartuşu ile nötr-toprak kartuşu birlikte gelir; maksimum boşalma akımı 20 kA (8/20 µs) olup konut ve küçük işyeri panoları için ekonomik bir koruma sağlar.",
+        "Cihaz 35 mm DIN rayına takılır ve ön yüzdeki gösterge kırmızıya döndüğünde devre dışı olduğunu bildirir. Aydınlatma, priz ve küçük GES evirici AC çıkış hatlarının bulunduğu tali panolarda, yüksek yıldırım riski taşımayan yerlerde kullanılabilir; ana girişte yıldırım akımı gereken yerlerde Tip 1 ürün tercih edilmelidir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Schneider Electric"
+        ],
+        [
+          "Seri",
+          "Easy9"
+        ],
+        [
+          "Model kodu",
+          "EZ9L33620"
+        ],
+        [
+          "Parafudr tipi",
+          "Tip 2 (C sınıfı), kartuşlu"
+        ],
+        [
+          "Kutup sayısı",
+          "1P+N"
+        ],
+        [
+          "Maksimum boşalma akımı (Imax, 8/20 µs)",
+          "20 kA"
+        ],
+        [
+          "Montaj",
+          "35 mm DIN ray"
+        ],
+        [
+          "Durum göstergesi",
+          "Ön yüzde renk göstergesi (kırmızı = devre dışı)"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/schneider-ez9l33620-easy9-parafudr.ea7c8ecb.webp",
+          "thumb": "/public/magaza/schneider-ez9l33620-easy9-parafudr.ea7c8ecb-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Schneider Electric Easy9 1P+N Tip 2 20 kA kartuşlu parafudr ön görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 30,
+      "listUsd": 41.34,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1201",
+        "vgm-1203",
+        "vgm-1204"
+      ]
+    },
+    {
+      "id": "vgm-1203",
+      "slug": "siemens-5sd7444-1-kombine-parafudr-tip-1-2",
+      "name": "Siemens 5SD7444-1 Kombine Parafudr Tip 1+2 (B+C) 100 kA 3P+N",
+      "brand": "Siemens",
+      "mpn": "5SD7444-1",
+      "gtin": null,
+      "category": "topraklama-ve-yildirim",
+      "summary": "Bina ana girişi ve GES panoları için B+C sınıfı, 100 kA yıldırım akımı dayanımlı kombine parafudr.",
+      "description": [
+        "Siemens 5SD7444-1, B ve C sınıfını (Tip 1+2) tek ürün içinde birleştiren, üç faz ve nötr hatlar için tasarlanmış kombine parafudrdur. Doğrudan yıldırım düşmesi riski olan veya dış yıldırımdan korunma sistemi bulunan yapıların ana giriş panolarında yıldırım akımını toprağa güvenle ileten bir koruma katmanı oluşturur; ürün tanımında 100 kA toplam değer belirtilmiştir.",
+        "Cihaz TT ve TN-S sistemlerinde kullanılabilir ve DIN raya monte edilir. Fabrika ana dağıtım panoları, GES AC toplama panoları ve çatı üzerinde paratoner bulunan binalarda tek cihazla hem Tip 1 hem Tip 2 koruma ihtiyacını karşılar; daha ileri kademelerde hassas yükler için ek Tip 3 koruma düşünülebilir."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "Siemens"
+        ],
+        [
+          "Model kodu",
+          "5SD7444-1"
+        ],
+        [
+          "Parafudr tipi",
+          "Kombine Tip 1+2 (B+C sınıfı)"
+        ],
+        [
+          "Kutup yapısı",
+          "3P+N (4 kutup)"
+        ],
+        [
+          "Yıldırım akımı dayanımı",
+          "100 kA (ürün tanımına göre toplam)"
+        ],
+        [
+          "Uygun sistemler",
+          "TT ve TN-S"
+        ],
+        [
+          "Montaj",
+          "35 mm DIN ray"
+        ],
+        [
+          "Uzaktan sinyalleme",
+          "Üzerinde sinyal kontak klemensi mevcut"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/siemens-5sd7444-1-kombine-parafudr.71747408.webp",
+          "thumb": "/public/magaza/siemens-5sd7444-1-kombine-parafudr.71747408-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "Siemens 5SD7444-1 Tip 1+2 kombine parafudr 3P+N ön görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 10,
+      "listUsd": 643.65,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1201",
+        "vgm-1202",
+        "vgm-1204"
+      ]
+    },
+    {
+      "id": "vgm-1204",
+      "slug": "abb-ovr-t1-t2-3n-12-5-275s-p-qs-parafudr",
+      "name": "ABB OVR T1-T2 3N 12.5-275s P QS Kartuşlu Parafudr Tip 1+2 3P+N",
+      "brand": "ABB",
+      "mpn": "OVR T1-T2 3N 12.5-275s P QS",
+      "gtin": "3660308524997",
+      "category": "topraklama-ve-yildirim",
+      "summary": "3 faz + nötr hatlar için değiştirilebilir kartuşlu Tip 1+2 parafudr; 275 V AC, faz başına 12,5 kA (10/350) darbe akımı.",
+      "description": [
+        "ABB OVR T1-T2 3N 12.5-275s P QS, üç fazlı dört telli (3P+N) şebekelerde yıldırım akımı ve anahtarlama kaynaklı aşırı gerilimlere karşı koruma sağlayan, Tip 1+2 sınıfı kartuşlu parafudrdur. Faz modülleri 275 V AC çalışma gerilimine, 12,5 kA (10/350 µs) darbe akımına ve 80 kA maksimum boşalma akımına göre, nötr modülü ise 50 kA darbe akımı kapasitesine göre tasarlanmıştır.",
+        "Fiş-tak (QS) kartuş yapısı sayesinde hasar gören modül, hattı tamamen sökmeden yenisiyle değiştirilebilir; yeşil/kırmızı gösterge modül durumunu gözle kontrol etmeye imkân verir. Endüstriyel tesis ana panolarında, bina giriş panolarında ve GES projelerinde inverter AC çıkış tarafında kullanılabilir. Seçim yaparken topraklama sistemi tipini, hat ön sigortasını ve koruma bölgeleri arasındaki kablo mesafesini proje şartnamesine göre doğrulayın."
+      ],
+      "specs": [
+        [
+          "Marka",
+          "ABB"
+        ],
+        [
+          "Model",
+          "OVR T1-T2 3N 12.5-275s P QS"
+        ],
+        [
+          "Sipariş kodu",
+          "2CTB815710R1900"
+        ],
+        [
+          "Koruma sınıfı",
+          "Tip 1+2 (Sınıf I+II)"
+        ],
+        [
+          "Kutup yapısı",
+          "3P+N"
+        ],
+        [
+          "Maksimum sürekli çalışma gerilimi (Uc)",
+          "275 V AC"
+        ],
+        [
+          "Darbe akımı Iimp (10/350 µs)",
+          "12,5 kA (faz), 50 kA (nötr)"
+        ],
+        [
+          "Nominal boşalma akımı In (8/20 µs)",
+          "20 kA (faz), 50 kA (nötr)"
+        ],
+        [
+          "Maksimum boşalma akımı Imax (8/20 µs)",
+          "80 kA (faz), 100 kA (nötr)"
+        ],
+        [
+          "Montaj",
+          "DIN ray, değiştirilebilir fiş-tak kartuş"
+        ]
+      ],
+      "images": [
+        {
+          "src": "/public/magaza/abb-ovr-t1-t2-3n-12-5-275s-p-qs-parafudr.0d3b594c.webp",
+          "thumb": "/public/magaza/abb-ovr-t1-t2-3n-12-5-275s-p-qs-parafudr.0d3b594c-400.webp",
+          "w": 800,
+          "h": 800,
+          "alt": "ABB OVR T1-T2 3N 12.5-275s P QS kartuşlu Tip 1+2 parafudr, ön görünüm"
+        }
+      ],
+      "documents": [],
+      "unit": "adet",
+      "vat": 20,
+      "shipping": "kargo",
+      "maxQty": 20,
+      "listUsd": 404.7,
+      "listCheckedAt": "2026-10-27T16:23:39Z",
+      "related": [
+        "vgm-1201",
+        "vgm-1202",
+        "vgm-1203"
+      ]
+    }
+  ]
+}

@@ -76,6 +76,12 @@
   to = "https://voltguard.com.tr/volthaber/:splat"
   status = 301
 
+# Magaza fiyatlari ve siparisler PHP sunucusunda uretilir; statik yansida eski fiyat gosterilmez.
+[[redirects]]
+  from = "/magaza/*"
+  to = "https://voltguard.com.tr/magaza/:splat"
+  status = 301
+
 [[redirects]]
   from = "/hesaplama-araclari/"
   to = "/teklif-araclari.html"

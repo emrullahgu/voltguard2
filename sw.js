@@ -18,7 +18,8 @@
        * ?v= sürümlü URL ve yazı tipleri değişmez kabul edilir: önbellekten anında, 7 günden eskiyse arka planda tazelenir.
        * Sürümsüz css/js/görsel: önbellekten anında + arka planda tazele (HTTP başlıkları geçerlidir).
    - ASLA önbelleğe alınmaz / hiç dokunulmaz: POST ve diğer GET-dışı istekler, /api/, *.php (contact.php),
-     /_vgdata/ /vg-data/, Range (video), Authorization başlıklı istekler, çapraz köken istekler.
+     /_vgdata/ /vg-data/, /magaza/ (güncel fiyatlı sayfalar), Range (video), Authorization başlıklı istekler,
+     çapraz köken istekler.
      Hesap/kullanıcı verisi yalnızca API üzerinden gelir; SW bunu hiçbir zaman saklamaz.
 
    Güncelleme: sw.js sunucuda no-cache; VERSION değişince install -> skipWaiting -> activate -> clients.claim,
@@ -28,7 +29,7 @@
    ===================================================== */
 'use strict';
 
-const VERSION = '2026-10-23.1';
+const VERSION = '2026-10-27.1';
 const PREFIX = 'vgsw-';
 const CACHE_STATIC = PREFIX + 'static-' + VERSION;
 const CACHE_PAGES = PREFIX + 'pages-' + VERSION;
@@ -58,7 +59,8 @@ const SHELL_PAGES = ['/404.html'];  // '/' ayrıca kurulumda indirilir
 const STATIC_RE = /\.(?:css|m?js|woff2?|ttf|otf|png|jpe?g|gif|webp|avif|svg|ico)$/i;
 const IMAGE_RE = /\.(?:png|jpe?g|gif|webp|avif|svg|ico)$/i;
 const FONT_RE = /\.(?:woff2?|ttf|otf)$/i;
-const NEVER_PREFIXES = ['/api/', '/calisan/uygulama/', '/_vgdata/', '/vg-data/', '/vgdata/', '/vesikalar/', '/VoltGame/', '/voltgame/', '/tools/'];
+// /magaza/: fiyatlar istek anında üretilir; bayat bir kopya asla gösterilmez (ürün görselleri /public/magaza/ altında önbelleğe girer).
+const NEVER_PREFIXES = ['/api/', '/calisan/uygulama/', '/_vgdata/', '/vg-data/', '/vgdata/', '/vesikalar/', '/VoltGame/', '/voltgame/', '/tools/', '/magaza/'];
 // Bu yollardaki HTML sayfaları ağdan gelir ama ASLA saklanmaz / önbellekten verilmez (hesap alanı).
 const PRIVATE_PAGE_PREFIXES = ['/hesap/', '/calisan/'];
 
