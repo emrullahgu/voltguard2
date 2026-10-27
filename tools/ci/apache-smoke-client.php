@@ -62,14 +62,16 @@ function api(string $method, string $path, ?array $json = null, array $headers =
 
 // ------------------------------------------------------------------ yönlendirme ve statik sayfalar
 echo "## Rotalar\n";
-// The imported native workspace stays private under actual Apache rewrites.
+// Employee module assets stay private under actual Apache rewrites.
 expectStatus('/calisan/uygulama/saha.php', 303, '', null, '/calisan/giris.html');
 expectStatus('/calisan/uygulama/saha-entry.html', 403);
-$sahaAssets = glob('/var/www/html/calisan/uygulama/assets/saha/_expo/static/js/web/*.js') ?: [];
-line(count($sahaAssets) > 0, 'Saha web export is present in the private deployment');
-if ($sahaAssets) {
-    $sahaPath = substr($sahaAssets[0], strlen('/var/www/html'));
-    expectStatus($sahaPath, 401, 'application/json', 'staff_unauthorized');
+expectStatus('/calisan/uygulama/employee-modules-manifest.json', 403);
+expectStatus('/api/company.php?action=module_assets', 401, 'application/json', 'staff_unauthorized');
+$moduleAssets = glob('/var/www/html/calisan/uygulama/assets/saha/_expo/static/js/web/*.js') ?: [];
+line(count($moduleAssets) > 0, 'Protected employee module assets are present in the deployment');
+if ($moduleAssets) {
+    $moduleAssetPath = substr($moduleAssets[0], strlen('/var/www/html'));
+    expectStatus($moduleAssetPath, 401, 'application/json', 'staff_unauthorized');
 }
 expectStatus('/api/saha-asset.php?bucket=photos&path=synthetic-missing.png', 401, 'application/json', 'staff_unauthorized');
 expectStatus('/voltsim/', 200, 'text/html', 'VoltSim');

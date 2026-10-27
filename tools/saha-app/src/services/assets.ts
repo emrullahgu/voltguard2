@@ -2,7 +2,7 @@
 // Şirket sunucusu + AsyncStorage cache. customerName/siteName local-only.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Asset, AssetType } from '../types';
-import { supabase, SUPABASE_CONFIGURED } from './supabase';
+import { supabase } from './supabase';
 import { auditRepo } from './data/auditRepo';
 
 const KEY = '@SahaTakip:assets';
@@ -55,29 +55,20 @@ function rid(): string {
   return 'asset_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
 }
 
+async function cachedAssets(): Promise<Asset[]> {
+  const raw = await AsyncStorage.getItem(KEY);
+  const list = raw ? JSON.parse(raw) : [];
+  if (!Array.isArray(list)) throw new Error('Kayıt önbelleği doğrulanamadı. Listeyi yenileyin.');
+  return list;
+}
 export async function listAssets(): Promise<Asset[]> {
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase
-        .from('assets')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (!error && data) {
-        const cacheRaw = await AsyncStorage.getItem(KEY);
-        const cache: Asset[] = cacheRaw ? JSON.parse(cacheRaw) : [];
-        const cacheById = new Map(cache.map(c => [c.id, c]));
-        const list = data.map((r: any) => fromRow(r, cacheById.get(r.id)));
-        await AsyncStorage.setItem(KEY, JSON.stringify(list));
-        return list;
-      }
-    } catch { /* fallback */ }
-  }
-  try {
-    const raw = await AsyncStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as Asset[]) : [];
-  } catch {
-    return [];
-  }
+  const {data,error} = await supabase.from('assets').select('*').order('created_at',{ascending:false});
+  if (error) throw error;
+  if (!Array.isArray(data)) throw new Error('Sunucu kayıt listesi doğrulanamadı.');
+  const previous=new Map((await cachedAssets()).map(item=>[item.id,item]));
+  const list=data.map((row:any)=>fromRow(row,previous.get(row.id)));
+  await AsyncStorage.setItem(KEY,JSON.stringify(list));
+  return list;
 }
 
 export async function getAsset(id: string): Promise<Asset | undefined> {
@@ -85,51 +76,37 @@ export async function getAsset(id: string): Promise<Asset | undefined> {
   return all.find(a => a.id === id);
 }
 
-export async function createAsset(input: Omit<Asset, 'id' | 'createdAt'>): Promise<Asset> {
-  let next: Asset = { ...input, id: rid(), createdAt: new Date().toISOString() };
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase.from('assets').insert(toRow(next)).select().single();
-      if (!error && data) next = fromRow(data, next);
-    } catch { /* keep local */ }
-  }
-  const all = await listAssets();
-  all.unshift(next);
-  await AsyncStorage.setItem(KEY, JSON.stringify(all));
-  void auditRepo.logCurrent({ action: 'asset.create', tableName: 'assets', refId: next.id, meta: { type: next.type, name: (next as any).name } });
-  return next;
+export async function createAsset(input:Omit<Asset,'id'|'createdAt'>):Promise<Asset> {
+  const draft:Asset={...input,id:rid(),createdAt:new Date().toISOString()};
+  const {data,error}=await supabase.from('assets').insert(toRow(draft)).select().single();
+  if(error)throw error;
+  if(!data?.id)throw new Error('Kayıt sonucu doğrulanamadı. Yeniden göndermeden önce listeyi kontrol edin.');
+  const saved=fromRow(data,draft),all=await cachedAssets();
+  await AsyncStorage.setItem(KEY,JSON.stringify([saved,...all.filter(item=>item.id!==saved.id)]));
+  void auditRepo.logCurrent({action:'asset.create',tableName:'assets',refId:saved.id,meta:{type:saved.type,name:saved.name}});
+  return saved;
 }
-
-export async function updateAsset(id: string, patch: Partial<Asset>): Promise<Asset | undefined> {
-  const all = await listAssets();
-  const i = all.findIndex(a => a.id === id);
-  if (i < 0) return undefined;
-  let merged: Asset = { ...all[i], ...patch, id: all[i].id };
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try {
-      const { data, error } = await supabase
-        .from('assets')
-        .update(toRow(merged))
-        .eq('id', id)
-        .select()
-        .single();
-      if (!error && data) merged = fromRow(data, merged);
-    } catch { /* ignore */ }
-  }
-  all[i] = merged;
-  await AsyncStorage.setItem(KEY, JSON.stringify(all));
-  void auditRepo.logCurrent({ action: 'asset.update', tableName: 'assets', refId: id });
-  return all[i];
+export async function updateAsset(id:string,patch:Partial<Asset>):Promise<Asset|undefined> {
+  // Use the previously loaded DTO; a fresh server read would silently advance
+  // the native CAS revision and overwrite a concurrent employee edit.
+  const all=await cachedAssets(),previous=all.find(item=>item.id===id);
+  if(!previous)throw new Error('Güncel kayıt yüklenmeli. Listeyi yenileyin.');
+  const draft={...previous,...patch,id};
+  const {data,error}=await supabase.from('assets').update(toRow(draft)).eq('id',id).select().single();
+  if(error)throw error;
+  if(!data?.id)throw new Error('Güncelleme sonucu doğrulanamadı. Listeyi kontrol edin.');
+  const saved=fromRow(data,draft);
+  await AsyncStorage.setItem(KEY,JSON.stringify(all.map(item=>item.id===id?saved:item)));
+  void auditRepo.logCurrent({action:'asset.update',tableName:'assets',refId:id});
+  return saved;
 }
-
-export async function deleteAsset(id: string): Promise<void> {
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try { await supabase.from('assets').delete().eq('id', id); } catch { /* ignore */ }
-  }
-  const all = await listAssets();
-  const next = all.filter(a => a.id !== id);
-  await AsyncStorage.setItem(KEY, JSON.stringify(next));
-  void auditRepo.logCurrent({ action: 'asset.delete', tableName: 'assets', refId: id });
+export async function deleteAsset(id:string):Promise<void> {
+  const {data,error}=await supabase.from('assets').delete().eq('id',id).select('id');
+  if(error)throw error;
+  if(!Array.isArray(data)||!data.some(row=>row.id===id))throw new Error('Silme işlemi doğrulanamadı. Listeyi kontrol edin.');
+  const all=await cachedAssets();
+  await AsyncStorage.setItem(KEY,JSON.stringify(all.filter(item=>item.id!==id)));
+  void auditRepo.logCurrent({action:'asset.delete',tableName:'assets',refId:id});
 }
 
 export async function listByCustomer(customerId: string): Promise<Asset[]> {

@@ -18,15 +18,31 @@ function load(relative,stubs={},globals={}){
 }
 function transportFixture(){
  const notices=[],calls=[];let next=async()=>({api:'vg-company/1',ok:true,data:{saved:true}});
- const child={location:{origin:'https://synthetic.invalid'},parent:{postMessage:message=>notices.push(message)},top:{location:{replace:()=>{}}},dispatchEvent:()=>{},addEventListener:()=>{}};
- const api=load('portal/api.ts',{}, {window:child,CustomEvent:class{constructor(type,args){this.type=type;this.detail=args?.detail;}},fetch:async(url,options)=>{
+ const child={location:{origin:'https://synthetic.invalid'},top:{location:{replace:()=>{}}},dispatchEvent:()=>{},addEventListener:()=>{}};
+ const fetch=async(url,options)=>{
   calls.push({url,options});
   if(url.includes('action=saha_bootstrap'))return {ok:true,status:200,json:async()=>({api:'vg-company/1',ok:true,csrf:'a'.repeat(64),data:{user:{id:'synthetic-staff'},profile:{id:'synthetic-staff',approval_status:'approved'},capabilities:{}}})};
   const payload=await next();return {ok:payload.ok,status:payload.status||200,json:async()=>payload};
- }});
+ };
+ const api=load('portal/api.ts',{'./networkPolicy':{scopedFetch:fetch},'./moduleHostBridge':{emitModuleEvent:(type,fields)=>notices.push({...fields,type})}}, {window:child,CustomEvent:class{constructor(type,args){this.type=type;this.detail=args?.detail;}}});
  return {api,notices,calls,setNext:fn=>{next=fn;}};
 }
 const mutation=api=>api.portalRpc('app_saha_query',{operation:'insert',table:'synthetic',payload:{label:'Synthetic isolated record'}});
+function heldTransport(f){
+ let complete,enter;
+ const entered=new Promise(resolve=>{enter=resolve;});
+ f.setNext(()=>new Promise(resolve=>{complete=resolve;enter();}));
+ return {
+  async wait(running){
+   let timer;
+   try{
+    await Promise.race([entered,running.then(()=>{throw new Error('Request completed before entering the held transport');}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('Held transport was not entered within 10 seconds')),10000);})]);
+    assert.equal(typeof complete,'function','The real transport must be entered before asserting an in-flight counter');
+   }finally{clearTimeout(timer);}
+  },
+  release(){assert.equal(typeof complete,'function');complete({api:'vg-company/1',ok:true,data:{}});},
+ };
+}
 
 test('Rejected validation and unsupported requests finish cleanly without trapping later work',async()=>{
  const f=transportFixture();
@@ -51,6 +67,28 @@ test('Actual in-flight writes still prevent logout and cannot be dismissed early
  complete({api:'vg-company/1',ok:true,data:{saved:true}});await running;
  assert.equal(f.api.getPendingWrites(),0);assert.equal(f.api.clearWriteFailure(),true);
 });
+test('Only known usage telemetry and visit_active reads are excluded from the business pending guard',async()=>{
+ const f=transportFixture();await f.api.bootstrapPortal();
+ const requests=[['app_saha_cache',{key:'app_usage_buffer_v1',operation:'get'}],['app_saha_cache',{key:'app_usage_buffer_v1',operation:'set',value:'{}'}],['app_saha_rpc',{name:'bump_app_usage',args:{}}],['app_saha_rpc',{name:'visit_active',args:{}}]];
+ for(const [name,args]of requests){
+  const held=heldTransport(f),running=f.api.portalRpc(name,args);await held.wait(running);
+  try{assert.equal(f.api.getPendingWrites(),0,name+'/'+(args.operation||args.name));}finally{held.release();await running;}
+ }
+ for(const name of ['run_due_templates','visit_check_in','visit_check_out']){
+  const held=heldTransport(f),running=f.api.portalRpc('app_saha_rpc',{name,args:{}});await held.wait(running);
+  try{assert.equal(f.api.getPendingWrites(),1,name);}finally{held.release();await running;}
+ }
+});
+test('Failed telemetry stays quiet through private storage; visit_active and business errors remain visible',async()=>{
+ const f=transportFixture();await f.api.bootstrapPortal();f.setNext(async()=>({api:'vg-company/1',ok:false,status:503,message:'Synthetic telemetry unavailable'}));
+ const storage=load('portal/privateStorage.ts',{'./api':f.api});
+ await assert.rejects(storage.default.setItem('app_usage_buffer_v1','{}'),/Synthetic telemetry unavailable/);
+ await assert.rejects(f.api.portalRpc('app_saha_rpc',{name:'bump_app_usage',args:{}}),/Synthetic telemetry unavailable/);
+ assert.equal(f.api.getPendingWrites(),0);assert.equal(f.api.getWriteStatus().error,null);assert.equal(f.notices.length,0);
+ await assert.rejects(f.api.portalRpc('app_saha_rpc',{name:'visit_active',args:{}}),/Synthetic telemetry unavailable/);
+ assert.ok(f.notices.some(event=>event.type==='vg:saha-notice'));assert.equal(f.api.getWriteStatus().error,null);
+ await assert.rejects(mutation(f.api),/Synthetic telemetry unavailable/);assert.match(f.api.getWriteStatus().error,/Synthetic telemetry unavailable/);
+});
 test('Timed-out responses are marked uncertain and never claim the write was not committed',async()=>{
  const f=transportFixture();f.setNext(async()=>{throw Object.assign(new Error('Synthetic abort'),{name:'AbortError'});});
  await assert.rejects(mutation(f.api),/sonucu doğrulanamadı/);
@@ -70,22 +108,23 @@ test('Private storage keeps committed memory after a rejected write without reta
  assert.equal(await storage.getItem('synthetic-key'),'committed');assert.equal(sets,1);
  assert.equal(failures[0].error.status,403);
 });
-test('The employee wrapper blocks only active writes and permits refresh/navigation after rejection',()=>{
- const handlers=new Map(),states=[],refs=[];let stateIndex=0,refIndex=0;
- const iframe={postMessage:()=>{}};
+test('The native employee host blocks active writes and releases its notice after controller completion',async()=>{
+ const handlers=new Map(),states=[],refs=[],effects=[];let stateIndex=0,refIndex=0,effectIndex=0,onEvent;
+ const controller={canGoBack:()=>false,setRoute:()=>{},clearWriteFailure:()=>{},unmount:()=>{}};
  const react={createElement:(type,props,...children)=>({type,props:{...props,children}}),useRef:initial=>{
-  const ref={current:refIndex++===0?{contentWindow:iframe}:initial};refs.push(ref);return ref;
- },useState:initial=>{const index=stateIndex++;states[index]=initial;return [initial,value=>{states[index]=typeof value==='function'?value(states[index]):value;}];},useEffect:effect=>{effect();}};
- const location={origin:'https://synthetic.invalid',replace:()=>{}};
+  const index=refIndex++;if(!refs[index])refs[index]={current:index===0?{}:initial};return refs[index];
+ },useState:initial=>{const index=stateIndex++;if(!(index in states))states[index]=initial;return [states[index],value=>{states[index]=typeof value==='function'?value(states[index]):value;}];},useEffect:(effect,deps)=>{const index=effectIndex++,previous=effects[index];if(!previous||deps.some((value,i)=>value!==previous[i])){effects[index]=deps;effect();}}};
  const window={addEventListener:(name,fn)=>handlers.set(name,fn),removeEventListener:()=>{}};
- const Wrapper=load('../../staff-app/src/SahaTakip.jsx',{'react':react,'lucide-react':{MapPin:()=>null,RefreshCw:()=>null,Maximize2:()=>null,Minimize2:()=>null}},{window,location,setTimeout:()=>1,clearTimeout:()=>{}}).default;
- const tree=Wrapper();
- const receive=data=>handlers.get('message')({origin:location.origin,source:iframe,data:{type:'vg:saha-storage',...data}});
+ const runtime={mount:async(host,options)=>{assert.equal(host,refs[0].current);assert.equal(options.route,'Customers');onEvent=options.onEvent;return controller;}};
+ const Wrapper=load('../../staff-app/src/EmployeeModule.jsx',{'react':react,'./employeeRuntime':{loadEmployeeRuntime:async()=>({runtime,styles:[]})}},{window,document:{documentElement:{dataset:{theme:'light'}}}}).default;
+ const render=refreshKey=>{stateIndex=0;refIndex=0;effectIndex=0;return Wrapper({route:'Customers',title:'Müşteriler',refreshKey});};
+ render(0);
+ await Promise.resolve();await Promise.resolve();await Promise.resolve();
+ assert.equal(typeof onEvent,'function');assert.equal(handlers.has('message'),false,'window messages cannot forge native controller events');
+ const receive=data=>onEvent({type:'vg:saha-storage',...data});
  const leave=()=>{const event={defaultPrevented:false,preventDefault(){this.defaultPrevented=true;}};handlers.get('vg:before-module-change')(event);return event.defaultPrevented;};
- function findButton(node){if(!node||typeof node!=='object')return null;if(node.type==='button'&&node.props.children.includes(' Yenile'))return node;for(const child of node.props?.children||[]){const found=findButton(child);if(found)return found;}return null;}
- const refresh=findButton(tree);assert.ok(refresh);
- receive({pending:1,error:'Previous synthetic failure',outcome:'rejected'});assert.equal(leave(),true);refresh.props.onClick();assert.equal(states[1],0);
- receive({pending:0,error:'Synthetic validation failed',outcome:'rejected'});assert.equal(states[3],'','The saving notice clears when the active request ends');assert.equal(leave(),false);refresh.props.onClick();assert.equal(states[1],1);
+ receive({pending:1,error:'Previous synthetic failure',outcome:'rejected'});assert.equal(leave(),true);assert.match(states[1],/sunucuya yazılıyor/);render(1);assert.equal(states.at(-1),0,'Parent refresh cannot unmount an in-flight write');
+ receive({pending:0,error:'Synthetic validation failed',outcome:'rejected'});assert.equal(states[1],'','The saving notice clears when the active request ends');assert.equal(leave(),false);render(2);assert.equal(states.at(-1),1,'Parent refresh remounts the native runtime after completion');
  receive({pending:0,error:'Synthetic timeout',outcome:'unknown'});assert.equal(leave(),false);
 });
 test('Central theme matches site navy/amber and legacy white-label controls retain readable contrast',()=>{
@@ -100,4 +139,16 @@ test('Central theme matches site navy/amber and legacy white-label controls reta
  assert.ok(contrast('#ffffff',theme.brand.green)>=4.5);
  assert.ok(contrast(theme.brand.amber,theme.brand.onAmber)>=4.5);
  assert.ok(contrast('#ffffff',theme.getThemeTokens('light').text.faint)>=4.5);
+});
+test('Embedded module colors inherit live site CSS variables while standalone theme tokens remain plain colors',()=>{
+ const plain=load('theme.ts');
+ const embedded=load('theme.ts',{}, {window:{VoltGuardEmployeeModules:{version:1}}});
+ for(const mode of ['light','dark'])for(const group of ['bg','text','border'])for(const [name,value] of Object.entries(plain.getThemeTokens(mode)[group])){
+  assert.equal(plain.getDisplayTokens(mode)[group][name],value,'standalone output keeps the original color');
+  const displayed=embedded.getDisplayTokens(mode)[group][name];assert.ok(displayed.startsWith('var(--vg-module-'+group+'-'+name+', '));assert.match(displayed,/, #[a-f0-9]{6}\)$/);
+ }
+ assert.match(embedded.colors.bg.primary,/^var\(--vg-module-bg-primary,/);
+ assert.match(embedded.colors.text.primary,/^var\(--vg-module-text-primary,/);
+ const css=fs.readFileSync(path.resolve(__dirname,'../staff-app/src/site-theme.css'),'utf8');
+ for(const mode of ['light','dark'])for(const group of ['bg','text','border'])for(const name of Object.keys(plain.getThemeTokens(mode)[group]))assert.ok(css.includes('--vg-module-'+group+'-'+name+':'+plain.getThemeTokens(mode)[group][name]),'host defines '+mode+' '+group+'.'+name);
 });

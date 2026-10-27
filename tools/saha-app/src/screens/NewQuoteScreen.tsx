@@ -40,7 +40,7 @@ import {
   DEFAULT_PROFIT,
   DEFAULT_VAT,
 } from '../data/pozCatalog';
-import { listRecentPozes, recordQuoteLines, RecentPoz } from '../services/recentPozes';
+import { listRecentPozes, RecentPoz } from '../services/recentPozes';
 import { MATERIAL_CATALOG, MATERIAL_CATEGORIES, MATERIAL_BRANDS } from '../data/initialData';
 import { loadOverrides, applyOverrides, loadCustomProducts, type OverrideMap } from '../services/catalogOverrides';
 import { newUuid } from '../services/data/repository';
@@ -94,6 +94,8 @@ export default function NewQuoteScreen() {
   const [uploadingImg, setUploadingImg] = useState(false);
   const [recents, setRecents] = useState<RecentPoz[]>([]);
   const [showRecents, setShowRecents] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const submitting = React.useRef(false);
 
   // Teklife görsel ekle: galeriden seç → küçült → storage'a yükle → public URL'i listeye ekle.
   // URL saklanır (base64 DB'yi şişirmesin); PDF'e ve ekrana basılır.
@@ -180,6 +182,7 @@ export default function NewQuoteScreen() {
   };
 
   const handleSave = async () => {
+    if (submitting.current) return;
     if (!customer) {
       Alert.alert('Eksik bilgi', 'Lütfen müşteri seçiniz.');
       return;
@@ -209,51 +212,56 @@ export default function NewQuoteScreen() {
   };
 
   const proceedSave = async () => {
-    if (!customer) return;
-    if (editingQuote) {
-      const updated: Quote = {
-        ...editingQuote,
+    if (!customer || submitting.current) return;
+    submitting.current = true;
+    setSaving(true);
+    try {
+      if (editingQuote) {
+        const updated: Quote = {
+          ...editingQuote,
+          customerName: customer.shortName,
+          customerTitle: customer.title,
+          title,
+          engineer: editingQuote.engineer || engineerName,
+          lines,
+          notes,
+          images,
+          subtotal: totals.subtotal,
+          vatTotal: totals.vatTotal,
+          grandTotal: totals.grandTotal,
+          revision: (editingQuote.revision ?? 0) + 1,
+        };
+        // Kayıt başarısını bekle: başarısızsa ekrandan ÇIKMA (önceden kullanıcı
+        // revizyon kaydedildi sanıp çıkıyordu ama DB'de değişmemişti — Req#3).
+        const res = await updateQuote(updated);
+        if (!res.ok) { Alert.alert('Kaydedilemedi', res.error || 'Teklif güncellenemedi.'); return; }
+        navigation.goBack();
+        return;
+      }
+      const number = generateQuoteNumber();
+      const quote: Quote = {
+        id: newUuid(),
+        number,
         customerName: customer.shortName,
         customerTitle: customer.title,
         title,
-        engineer: editingQuote.engineer || engineerName,
+        date: localDateISO(),
+        engineer: engineerName,
         lines,
+        status: 'Taslak',
         notes,
         images,
         subtotal: totals.subtotal,
         vatTotal: totals.vatTotal,
         grandTotal: totals.grandTotal,
-        revision: (editingQuote.revision ?? 0) + 1,
       };
-      // Kayıt başarısını bekle: başarısızsa ekrandan ÇIKMA (önceden kullanıcı
-      // revizyon kaydedildi sanıp çıkıyordu ama DB'de değişmemişti — Req#3).
-      const res = await updateQuote(updated);
-      if (!res.ok) { Alert.alert('Kaydedilemedi', res.error || 'Teklif güncellenemedi.'); return; }
-      recordQuoteLines(lines);
+      const res = await addQuote(quote);
+      if (!res.ok) { Alert.alert('Kaydedilemedi', res.error || 'Teklif oluşturulamadı.'); return; }
       navigation.goBack();
-      return;
+    } finally {
+      submitting.current = false;
+      setSaving(false);
     }
-    const number = generateQuoteNumber();
-    const quote: Quote = {
-      id: newUuid(),
-      number,
-      customerName: customer.shortName,
-      customerTitle: customer.title,
-      title,
-      date: localDateISO(),
-      engineer: engineerName,
-      lines,
-      status: 'Taslak',
-      notes,
-      images,
-      subtotal: totals.subtotal,
-      vatTotal: totals.vatTotal,
-      grandTotal: totals.grandTotal,
-    };
-    const res = await addQuote(quote);
-    if (!res.ok) { Alert.alert('Kaydedilemedi', res.error || 'Teklif oluşturulamadı.'); return; }
-    recordQuoteLines(lines);
-    navigation.goBack();
   };
 
   const filteredPoz = useMemo(
@@ -560,9 +568,9 @@ export default function NewQuoteScreen() {
         <TouchableOpacity style={styles.cancelBtn} onPress={() => navigation.goBack()} activeOpacity={0.8}>
           <Text style={styles.cancelBtnText}>İptal</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.saveBtn} onPress={handleSave} activeOpacity={0.85}>
+        <TouchableOpacity style={[styles.saveBtn, saving && { opacity: 0.6 }]} onPress={handleSave} disabled={saving} accessibilityState={{ busy: saving, disabled: saving }} activeOpacity={0.85}>
           <Ionicons name="save-outline" size={18} color="#fff" />
-          <Text style={styles.saveBtnText}>{editingQuote ? 'Değişiklikleri Kaydet' : 'Teklifi Kaydet'}</Text>
+          <Text style={styles.saveBtnText}>{saving ? 'Kaydediliyor…' : editingQuote ? 'Değişiklikleri Kaydet' : 'Teklifi Kaydet'}</Text>
         </TouchableOpacity>
       </View>
       </KeyboardAvoidingView>

@@ -189,9 +189,9 @@ export default function NewWorkOrderScreen() {
           multiline
         />
 
-        <TouchableOpacity style={styles.submitBtn} onPress={submit} activeOpacity={0.85}>
+        <TouchableOpacity style={[styles.submitBtn, saving && { opacity: 0.6 }]} onPress={submit} disabled={saving} accessibilityState={{ busy: saving, disabled: saving }} activeOpacity={0.85}>
           <Ionicons name="checkmark-circle" size={20} color="#fff" />
-          <Text style={styles.submitText}>İş Emrini Oluştur</Text>
+          <Text style={styles.submitText}>{saving ? 'Kaydediliyor…' : 'İş Emrini Oluştur'}</Text>
         </TouchableOpacity>
         <View style={{ height: 40 }} />
       </ScrollView>

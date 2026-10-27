@@ -14,12 +14,10 @@ import { supabase } from './supabase';
 const KEY = '@SahaTakip:quote_revisions';
 
 async function loadAll(): Promise<QuoteRevision[]> {
-  try {
-    const raw = await AsyncStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as QuoteRevision[]) : [];
-  } catch {
-    return [];
-  }
+  const raw = await AsyncStorage.getItem(KEY);
+  const list = raw ? JSON.parse(raw) : [];
+  if (!Array.isArray(list)) throw new Error('Teklif revizyon geçmişi doğrulanamadı.');
+  return list as QuoteRevision[];
 }
 
 async function saveAll(list: QuoteRevision[]) {
@@ -61,18 +59,15 @@ async function fetchRemote(quoteId: string): Promise<QuoteRevision[]> {
 
 async function pushRemote(rev: QuoteRevision): Promise<void> {
   if (!isOnlineMode()) return;
-  try {
-    // id alanı gönderilmez — Şirket sunucusu tarafında uuid default üretir
-    await supabase.from('quote_revisions').insert({
-      quote_id: rev.quoteId,
-      revision: rev.revision,
-      snapshot: rev.snapshot,
-      reason: rev.reason ?? null,
-      created_at: rev.createdAt,
-    });
-  } catch (e) {
-    console.warn('[quote_revisions.push]', e);
-  }
+  // id alanı gönderilmez — Şirket sunucusu tarafında uuid default üretir
+  const { error } = await supabase.from('quote_revisions').insert({
+    quote_id: rev.quoteId,
+    revision: rev.revision,
+    snapshot: rev.snapshot,
+    reason: rev.reason ?? null,
+    created_at: rev.createdAt,
+  });
+  if (error) throw error;
 }
 
 export async function listRevisions(quoteId: string): Promise<QuoteRevision[]> {
@@ -92,7 +87,7 @@ export async function listRevisions(quoteId: string): Promise<QuoteRevision[]> {
 export async function recordRevision(
   quote: Quote,
   reason?: string,
-): Promise<QuoteRevision> {
+): Promise<QuoteRevision & { notice?: string }> {
   const all = await loadAll();
   const existing = all.filter(r => r.quoteId === quote.id);
   const nextRev = existing.length > 0 ? Math.max(...existing.map(r => r.revision)) + 1 : 1;
@@ -106,8 +101,14 @@ export async function recordRevision(
   };
   all.push(rev);
   await saveAll(all);
-  // Online ise uzaktaki tabloya da yaz — başarısız olsa bile lokal güvende
-  pushRemote(rev).catch(() => {});
+  // The shared history has acknowledged the snapshot. Await the additional
+  // legacy table write too, without turning its failure into a lost snapshot.
+  try {
+    await pushRemote(rev);
+  } catch (error) {
+    console.warn('[quote_revisions.push]', error);
+    return { ...rev, notice: 'Revizyon geçmişi kaydedildi; ek revizyon tablosu güncellenemedi.' };
+  }
   return rev;
 }
 

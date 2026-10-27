@@ -23,7 +23,7 @@ export default function EnvironmentInfoScreen() {
           <View style={s.heroIcon}><Ionicons name="cube-outline" size={26} color="#fff" /></View>
           <View style={{ flex: 1 }}>
             <Text style={s.heroT}>{env.env.toUpperCase()}</Text>
-            <Text style={s.heroS}>SahaTakip v{env.appVersion} · build #{env.buildNumber}</Text>
+            <Text style={s.heroS}>VoltGuard v{env.appVersion} · build #{env.buildNumber}</Text>
           </View>
         </View>
 

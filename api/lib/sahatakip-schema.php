@@ -3025,6 +3025,72 @@ function vg_saha_schema(): array {
     "recorded_at": {
       "type": "timestamptz"
     }
+  },
+  "visits": {
+    "id": {
+      "type": "uuid"
+    },
+    "user_id": {
+      "type": "uuid",
+      "references": [
+        "profiles",
+        "id"
+      ]
+    },
+    "customer_id": {
+      "type": "uuid",
+      "references": [
+        "customers",
+        "id"
+      ],
+      "required": true
+    },
+    "customer_name": {
+      "type": "text"
+    },
+    "start_at": {
+      "type": "timestamptz",
+      "required": true
+    },
+    "start_lat": {
+      "type": "numeric",
+      "required": true
+    },
+    "start_lng": {
+      "type": "numeric",
+      "required": true
+    },
+    "end_at": {
+      "type": "timestamptz"
+    },
+    "end_lat": {
+      "type": "numeric"
+    },
+    "end_lng": {
+      "type": "numeric"
+    },
+    "status": {
+      "type": "text",
+      "required": true
+    },
+    "notes": {
+      "type": "text"
+    },
+    "photos": {
+      "type": "text[]"
+    },
+    "created_at": {
+      "type": "timestamptz"
+    },
+    "updated_at": {
+      "type": "timestamptz"
+    },
+    "created_by": {
+      "type": "uuid"
+    },
+    "updated_by": {
+      "type": "uuid"
+    }
   }
 }
 SCHEMA, true, 64, JSON_THROW_ON_ERROR);

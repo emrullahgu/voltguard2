@@ -3,6 +3,8 @@ import React, { useState, useMemo, useRef, lazy, Suspense } from 'react';
 import { Calculator, FileText, Settings, Search, Save, Download, Printer, X, Edit3, ChevronRight, CheckCircle, Lightbulb, Zap, Mail, TrendingDown, RefreshCw, UserPlus, Users, MapPin, Percent, UploadCloud, Sparkles, Copy, Type, Bold, Italic, AlignLeft, AlignCenter, AlignRight, FileSpreadsheet, Hammer, Plus, Trash2, Cable, Wrench, Clock, Star, Banknote, Menu, ExternalLink, Fuel, Briefcase, BarChart3, Package } from 'lucide-react';
 import { useAuth } from './SimpleAuth';
 import { PORTAL_MODULES, initialPortalModule } from './PortalNavigation';
+import { MODULE_GROUPS, availableModules, findEmployeeModule, moduleVariants, selectedVariant } from './employeeModules';
+import EmployeeHome from './EmployeeHome.jsx';
 import { createReportPDF, exportHTMLReport, reportFileName } from './pdfReport';
 import * as XLSX from 'xlsx';
 import { calculateYGQuote, calculatePeriodicQuote, normalizeProposal, cloneProposal, newDraftReference, normalizeKesifSnapshot } from './proposalSnapshots.mjs';
@@ -36,7 +38,7 @@ const HaftalikRaporlama = lazy(() => import('./HaftalikRaporlama.jsx'));
 const UrunTakip = lazy(() => import('./UrunTakip.jsx'));
 const PeriyodikKontrol = lazy(() => import('./PeriyodikKontrol.jsx'));
 const SimpleAdminPanel = lazy(() => import('./SimpleAdminPanel.jsx'));
-const SahaTakip = lazy(() => import('./SahaTakip.jsx'));
+const EmployeeModule = lazy(() => import('./EmployeeModule.jsx'));
 const ModuleLoading = () => <div role="status" aria-live="polite" className="p-6 bg-white rounded-lg border border-gray-200">Bölüm yükleniyor…</div>;
 
 // Fatura verilerini birleitir ve normalize et
@@ -177,24 +179,39 @@ const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const moduleButtonRef = useRef(null);
   const moduleCloseRef = useRef(null);
-  const setActiveTab = (module) => {
-    if (!PORTAL_MODULES.some(item => item.id === module && (!item.adminOnly || currentUser?.role === 'admin'))) return;
-    if (module === activeTab) return;
-    if (module !== activeTab && !window.dispatchEvent(new CustomEvent('vg:before-module-change',{cancelable:true,detail:{from:activeTab,to:module}}))) return;
-    updateActiveTab(module);
+  const currentModule = findEmployeeModule(activeTab, currentUser);
+  const [variantId, setVariantId] = useState(() => selectedVariant(currentModule, currentUser)?.id || '');
+  const [nativeRefresh, setNativeRefresh] = useState(0);
+  const variants = moduleVariants(currentModule, currentUser);
+  const activeVariant = variants.find(item => item.id === variantId) || variants[0] || null;
+  const [moduleSearch, setModuleSearch] = useState('');
+  const setActiveTab = (module, variant) => {
+    const target = findEmployeeModule(module, currentUser);
+    if (!target) return;
+    const targetVariants = moduleVariants(target, currentUser);
+    const nextVariant = targetVariants.find(item => item.id === variant) || targetVariants[0];
+    if (module === activeTab && (nextVariant?.id || '') === (activeVariant?.id || '')) return;
+    if (!window.dispatchEvent(new CustomEvent('vg:before-module-change', { cancelable: true, detail: { from: activeTab, to: module, variant: nextVariant?.id } }))) return;
+    updateActiveTab(module); setVariantId(nextVariant?.id || '');
     const next = new URL(window.location.href);
     next.searchParams.set('module', module);
+    if (nextVariant && nextVariant !== targetVariants[0]) next.searchParams.set('bolum', nextVariant.id); else next.searchParams.delete('bolum');
     window.history.pushState({}, '', next);
   };
   React.useEffect(() => {
     const onHistory = () => {
       const next = initialPortalModule(currentUser);
-      if (next !== activeTab && !window.dispatchEvent(new CustomEvent('vg:before-module-change',{cancelable:true,detail:{from:activeTab,to:next}}))) { const url = new URL(window.location.href); url.searchParams.set('module',activeTab); window.history.pushState({},'',url); return; }
-      updateActiveTab(next);
+      const nextVariant = selectedVariant(findEmployeeModule(next, currentUser), currentUser)?.id || '';
+      if ((next !== activeTab || nextVariant !== (activeVariant?.id || '')) && !window.dispatchEvent(new CustomEvent('vg:before-module-change', { cancelable: true, detail: { from: activeTab, to: next } }))) {
+        const url = new URL(window.location.href); url.searchParams.set('module', activeTab);
+        if (activeVariant?.id) url.searchParams.set('bolum', activeVariant.id); else url.searchParams.delete('bolum');
+        window.history.pushState({}, '', url); return;
+      }
+      updateActiveTab(next); setVariantId(nextVariant);
     };
     window.addEventListener('popstate', onHistory);
     return () => window.removeEventListener('popstate', onHistory);
-  }, [currentUser?.role,activeTab]);
+  }, [currentUser?.role, activeTab, activeVariant?.id]);
   React.useEffect(() => {
     if (!isSidebarOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -2067,6 +2084,7 @@ const App = () => {
 
   // --- UI Components ---
   const printRoot = { proposal: '#printable-paper', ges: '#ges-printable-area', periodic: '#periodic-printable-paper', kesif: '#kesif-printable-paper', kontrol: '#periodic-control-report', osos: '#osos-printable-report', 'haftalik-raporlama': '#haftalik-rapor-printable' }[activeTab];
+  const showQuoteTools = ['dashboard', 'manual', 'periodic', 'ges', 'kesif', 'saved', 'proposal'].includes(activeTab);
 
   return (
     <div className="portal-app bg-gray-50 text-gray-800 font-sans" data-portal-module={activeTab}>
@@ -2130,7 +2148,7 @@ const App = () => {
 `}</style>
       
       {/* Header */}
-      <header className="bg-blue-900 text-white shadow-lg no-print">
+      {showQuoteTools && <header className="bg-blue-900 text-white shadow-lg no-print">
         <div className="container mx-auto px-3 md:px-6 py-3 md:py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center space-x-2 md:space-x-3">
             <Calculator className="h-6 w-6 md:h-8 md:w-8 text-yellow-400" />
@@ -2154,10 +2172,10 @@ const App = () => {
             </button>
           </div>
         </div>
-      </header>
+      </header>}
 
       {/* Settings Panel (Collapsible) */}
-      {isSettingsOpen && (
+      {showQuoteTools && isSettingsOpen && (
         <div className="bg-white border-b border-gray-200 shadow-inner">
           <div className="container mx-auto px-3 md:px-6 py-4 md:py-6">
             <h3 className="font-semibold text-gray-700 mb-3 md:mb-4 flex items-center text-sm md:text-base">
@@ -2301,7 +2319,8 @@ const App = () => {
       <aside id="portal-modules" className="portal-module-drawer no-print" hidden={!isSidebarOpen} role="dialog" aria-modal="true" aria-labelledby="portal-module-title">
         <div className="portal-module-drawer__heading"><h2 id="portal-module-title">Şirket modülleri</h2><button type="button" ref={moduleCloseRef} onClick={() => { setIsSidebarOpen(false); moduleButtonRef.current?.focus(); }} aria-label="Modül menüsünü kapat"><X size={22} /></button></div>
         <nav aria-label="Şirket modülleri">
-          {['Teklifler', 'İş ve kayıtlar', 'Enerji ve kontrol', 'Bordro', ...(currentUser?.role === 'admin' ? ['Yönetim'] : [])].map(group => <div className="portal-module-group" key={group}><h3>{group}</h3>{PORTAL_MODULES.filter(item => item.group === group && (!item.adminOnly || currentUser?.role === 'admin')).map(item => <button type="button" key={item.id} disabled={item.draftOnly && !selectedCompany} aria-current={activeTab === item.id ? 'page' : undefined} onClick={() => { setActiveTab(item.id); setIsSidebarOpen(false); moduleButtonRef.current?.focus(); }}><span>{item.label}</span><ChevronRight size={16} /></button>)}</div>)}
+          <label className="employee-drawer-search"><Search size={18} aria-hidden="true" /><span className="sr-only">Modüllerde ara</span><input type="search" placeholder="Modül ara…" value={moduleSearch} onChange={event => setModuleSearch(event.target.value)} /></label>
+          {MODULE_GROUPS.map(group => { const items = availableModules(currentUser).filter(item => item.group === group && [item.label, item.description, ...(item.variants || []).map(variant => variant.label)].join(' ').toLocaleLowerCase('tr-TR').includes(moduleSearch.trim().toLocaleLowerCase('tr-TR'))); return items.length ? <div className="portal-module-group" key={group}><h3>{group}</h3>{items.map(item => <button type="button" key={item.id} disabled={item.draftOnly && !selectedCompany} aria-current={activeTab === item.id ? 'page' : undefined} onClick={() => { setActiveTab(item.id); setIsSidebarOpen(false); moduleButtonRef.current?.focus(); }}><span>{item.label}</span><ChevronRight size={16} /></button>)}</div> : null; })}
 
         </nav>
       </aside>
@@ -2311,6 +2330,10 @@ const App = () => {
         
         <div className="portal-module-toolbar no-print"><button type="button" ref={moduleButtonRef} onClick={() => setIsSidebarOpen(true)} aria-expanded={isSidebarOpen} aria-controls="portal-modules"><Menu size={20} /> Modüller</button><p>{PORTAL_MODULES.find(item => item.id === activeTab)?.label}</p></div>
 
+        {activeTab === 'uygulamalar' && <EmployeeHome user={currentUser} onSelect={setActiveTab} />}
+        {activeTab !== 'uygulamalar' && <header className="employee-domain-heading"><div><p className="employee-eyebrow">{currentModule?.group}</p><h1>{currentModule?.label}</h1><p>{currentModule?.description}</p></div><div className="employee-domain-actions">{activeVariant?.route && <button type="button" onClick={() => setNativeRefresh(value => value + 1)}><RefreshCw size={16} /> Kayıtları yenile</button>}<button type="button" onClick={() => setActiveTab('uygulamalar')}>Tüm uygulamalar <ChevronRight size={17} /></button></div></header>}
+        {variants.length > 1 && <nav className="employee-domain-tabs" data-employee-module-variants="" aria-label={`${currentModule?.label} bölümleri`}>{variants.map(variant => <button type="button" key={variant.id} aria-current={activeVariant?.id === variant.id ? 'page' : undefined} onClick={() => setActiveTab(activeTab, variant.id)}>{variant.label}</button>)}</nav>}
+        {activeVariant?.route ? <Suspense fallback={<ModuleLoading />}><EmployeeModule route={activeVariant.route} title={currentModule?.label} refreshKey={nativeRefresh} /></Suspense> : <>
         {/* GES Teklifi Tab */}
         {activeTab === 'ges' && (
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-4 md:gap-6 h-auto lg:h-[calc(100vh-200px)]">
@@ -3474,7 +3497,6 @@ const App = () => {
 
         {/* Bordro Takip Tab */}
         <Suspense fallback={<ModuleLoading />}>
-        {activeTab === 'saha-takip' && <SahaTakip />}
         {activeTab === 'bordro' && (
           <div className="max-w-full mx-auto">
             <BordroWithPassword />
@@ -6037,6 +6059,7 @@ const App = () => {
           </div>
         )}
 
+        </>}
       </div>
 
       {/* Hazir Paket Modal */}

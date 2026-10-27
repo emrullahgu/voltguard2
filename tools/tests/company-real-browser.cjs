@@ -21,7 +21,8 @@ const chrome = [process.env.VOLTGUARD_CHROME, process.env.VG_CHROME,
   process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Google/Chrome/Application/chrome.exe'),
   process.env['PROGRAMFILES(X86)'] && path.join(process.env['PROGRAMFILES(X86)'], 'Google/Chrome/Application/chrome.exe'),
   process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Microsoft/Edge/Application/msedge.exe')].filter(Boolean).find(file => fs.existsSync(file));
-const allModules = ['dashboard','manual','periodic','kesif','ges','saved','saha-takip','gorev','is-takip','urun-takip','akaryakit','kontrol','osos','haftalik-raporlama','bordro','beyaz-yaka','admin'];
+const employeeManifest=JSON.parse(fs.readFileSync(path.join(root,'tools/employee-modules.json'),'utf8'));
+const allModules = ['uygulamalar',...employeeManifest.modules.filter(item=>!item.draftOnly&&!item.capability).map(item=>item.id)];
 const requestedModules = process.argv.find(argument=>argument.startsWith('--modules='))?.slice(10).split(',');
 const modules = requestedModules || allModules;
 for(const id of modules)assert.ok(allModules.includes(id),'Known module: '+id);
@@ -167,7 +168,7 @@ async function run() {
       await workflow('mount:'+id,async()=>{await mount(id);const bounds=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));report.mounts.push({id,...bounds,apiErrors:report.apiErrors.length-before});if(['dashboard','bordro','beyaz-yaka'].includes(id))await page.screenshot({path:path.join(output,id+'-real.png')});});
     }
     if(process.argv.includes('--mount-only'))return;
-    if(modules.includes('saha-takip')) await require('./saha-browser-scenarios.cjs')({page,admin,employee,api,mount,workflow,check,report,output,base,browser});
+    if(modules.some(id=>id==='uygulamalar'||employeeManifest.modules.some(item=>item.id===id&&item.variants.some(variant=>variant.route)))) await require('./saha-browser-scenarios.cjs')({page,admin,employee,api,mount,workflow,check,report,output,base,browser});
     await workflow('work-employee-location-material-record-crud',async()=>{
       await mount('is-takip');await page.getByRole('button',{name:/^Çalışanlar/}).click();await page.getByRole('button',{name:'Yeni Çalışan',exact:true}).click();
       await page.getByPlaceholder('Örn: Ahmet Yılmaz').fill('QA Teknik Personel');await page.getByPlaceholder('Örn: Teknisyen, Usta, Mühendis').fill('QA Teknisyen');await page.getByRole('button',{name:'Kaydet',exact:true}).click();

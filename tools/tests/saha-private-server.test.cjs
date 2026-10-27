@@ -29,14 +29,14 @@ async function stop(child) {
   await new Promise(resolve => { child.once('exit', resolve); setTimeout(() => { if (child.exitCode === null) child.kill(); resolve(); }, 3000).unref(); });
 }
 
-test('Real private Saha HTML and nested Expo assets enforce MFA and fail closed without PHP', { timeout: 30000 }, async t => {
+test('Native runtime manifest and assets enforce MFA; the retired project entry cannot serve a second application', { timeout: 30000 }, async t => {
   if (!fs.existsSync(php)) return t.skip('A PHP runtime is required for the real gate check.');
   const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'vg-saha-gate-'));
   const fixture = path.join(sandbox, 'site'), local = path.join(sandbox, 'private-data');
   function write(relative, bytes) { const file = path.join(fixture, relative); fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, bytes); }
   function copy(relative) { write(relative, fs.readFileSync(path.join(root, relative))); }
   for (const relative of ['.htaccess', 'tools/preview.cjs', 'tools/preview-router.php', 'tools/staff-admin.php',
-    'api/staff.php', 'api/company-asset.php', 'api/saha-asset.php', 'calisan/uygulama/saha.php']) copy(relative);
+    'api/staff.php', 'api/company.php', 'api/company-asset.php', 'api/saha-asset.php', 'calisan/uygulama/saha.php']) copy(relative);
   for (const name of fs.readdirSync(path.join(root, 'api/lib')).filter(name => name.endsWith('.php'))) copy('api/lib/' + name);
   write('index.html', '<!doctype html><title>Synthetic host</title>');
   write('SahaTakip-main/index.html', 'SYNTHETIC_SOURCE_MUST_STAY_PRIVATE');
@@ -73,11 +73,13 @@ test('Real private Saha HTML and nested Expo assets enforce MFA and fail closed 
     for (const url of [asset, font]) { const result = await request(url); assert.equal(result.status, 401); assert.equal((await result.text()).includes('SYNTHETIC_PRIVATE'), false); }
     const attachment = await request('/api/saha-asset.php?bucket=synthetic&path=missing.png');
     assert.equal(attachment.status, 401); assert.equal((await attachment.json()).api, 'vg-company/1');
+    const runtime = await request('/api/company.php?action=module_assets');
+    assert.equal(runtime.status, 401); assert.equal((await runtime.json()).api, 'vg-company/1');
   }
   try {
     active = await start(true);
     await closed();
-    for (const url of ['/calisan/uygulama/saha-entry.html', '/calisan/uygulama/assets/saha/index.html',
+    for (const url of ['/calisan/uygulama/saha-entry.html', '/calisan/uygulama/employee-modules-manifest.json', '/calisan/uygulama/assets/saha/index.html',
       '/SahaTakip-main/index.html', '/SahaTakip-main/', '/tools/saha-app/src/entry.js']) {
       const result = await request(url); assert.ok([401, 404].includes(result.status)); assert.equal((await result.text()).includes('SYNTHETIC_'), false);
     }
@@ -95,23 +97,43 @@ test('Real private Saha HTML and nested Expo assets enforce MFA and fail closed 
     result = await (await request('/api/staff.php?action=mfa_enroll', { code: totp(result.secret) })).json();
     assert.equal(result.ok, true); csrf = result.csrf;
     const page = await request('/calisan/uygulama/saha.php');
-    assert.equal(page.status, 200); assert.match(await page.text(), /SYNTHETIC_PRIVATE_SAHA/);
+    assert.equal(page.status, 303); assert.equal(new URL(page.headers.get('location'),active.base).pathname,'/calisan/uygulama/');
+    assert.doesNotMatch(await page.text(), /SYNTHETIC_PRIVATE_SAHA|<html|<iframe/i);
     assert.match(page.headers.get('cache-control'), /no-store/);
-    assert.match(page.headers.get('content-security-policy'), /frame-ancestors 'self'/);
-    assert.doesNotMatch(page.headers.get('content-security-policy'), /unsafe-eval/);
-    assert.equal(page.headers.get('x-frame-options'), 'SAMEORIGIN');
+    const runtime = await request('/api/company.php?action=module_assets');
+    assert.equal(runtime.status,200);assert.match(runtime.headers.get('cache-control'),/no-store/);
+    const listed=await runtime.json();assert.equal(listed.api,'vg-company/1');assert.equal(listed.ok,true);
+    assert.deepEqual(listed.data,{scripts:[asset],styles:[]});
+    assert.equal((await request('/api/company.php?action=module_assets',{})).status,405);
+    assert.equal((await request('/api/company.php?action=module_assets',undefined,{headers:{'Sec-Fetch-Site':'cross-site'}})).status,403);
     for (const [url, type] of [[asset, 'text/javascript'], [font, 'font/ttf']]) {
       const response = await request(url + '?file=assets/other.js');
       assert.equal(response.status, 200); assert.match(response.headers.get('content-type'), new RegExp(type));
       assert.match(response.headers.get('cache-control'), /private/); assert.match(await response.text(), /SYNTHETIC_PRIVATE/);
     }
     assert.equal((await request(asset, undefined, { method: 'HEAD' })).status, 200);
-    assert.equal((await request('/calisan/uygulama/saha.php', undefined, { method: 'HEAD' })).status, 200);
-    for (const file of ['assets/saha/../index.php', 'assets/saha/index.html', 'assets/saha/private.env', 'assets/saha/source.json', 'assets/saha/../../saha-entry.html']) {
+    assert.equal((await request('/calisan/uygulama/saha.php', undefined, { method: 'HEAD' })).status, 303);
+    assert.equal((await request('/calisan/uygulama/employee-modules-manifest.json')).status,404);
+    const manifest=path.join(fixture,'calisan/uygulama/employee-modules-manifest.json');
+    const validManifest=fs.readFileSync(manifest);
+    for(const invalid of [
+      {version:1,scripts:['https://external.invalid/private.js'],styles:[]},
+      {version:1,scripts:[ASSET_BASE+'../private.js'],styles:[]},
+      {version:1,scripts:[ASSET_BASE+'missing.js'],styles:[]},
+      {version:1,scripts:Array(9).fill(asset),styles:[]},
+      {version:1,scripts:[],styles:[]},
+      {version:2,scripts:[asset],styles:[]}
+    ]){
+      fs.writeFileSync(manifest,JSON.stringify(invalid));
+      assert.equal((await request('/api/company.php?action=module_assets')).status,503,'untrusted runtime manifest fails closed');
+    }
+    fs.writeFileSync(manifest,validManifest);
+    assert.equal((await request('/api/company.php?action=module_assets')).status,200);
+    for (const file of ['employee-modules-manifest.json','assets/saha/../index.php', 'assets/saha/index.html', 'assets/saha/private.env', 'assets/saha/source.json', 'assets/saha/../../saha-entry.html']) {
       const response = await request('/api/company-asset.php?file=' + encodeURIComponent(file)); assert.equal(response.status, 404);
     }
     await stop(active.child); active = await start(false);
-    for (const url of ['/calisan/uygulama/saha.php', asset, font, '/api/saha-asset.php?bucket=synthetic&path=missing.png']) {
+    for (const url of ['/calisan/uygulama/saha.php', asset, font, '/api/company.php?action=module_assets','/api/saha-asset.php?bucket=synthetic&path=missing.png']) {
       const response = await request(url); assert.equal(response.status, 503); assert.equal((await response.text()).includes('SYNTHETIC_PRIVATE'), false);
     }
   } finally {

@@ -10,7 +10,7 @@ export default function ChangePasswordScreen() {
   };
   return <SafeAreaView style={s.safe}><View style={s.card}>
     <Text style={s.title}>Çalışan hesabı güvenliği</Text>
-    <Text style={s.text}>SahaTakip için ayrı bir şifre yoktur. Şifre veya doğrulayıcı uygulama değişikliği gerekiyorsa şirket yöneticinizden yeni etkinleştirme daveti isteyin.</Text>
+    <Text style={s.text}>Tüm modüller çalışan hesabınızın şifresini kullanır. Şifre veya doğrulayıcı uygulama değişikliği gerekiyorsa şirket yöneticinizden yeni etkinleştirme daveti isteyin.</Text>
     <TouchableOpacity style={s.button} onPress={openAccount}><Text style={s.buttonText}>Çalışan portalında hesap güvenliği</Text></TouchableOpacity>
   </View></SafeAreaView>;
 }

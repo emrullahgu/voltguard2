@@ -1,11 +1,11 @@
 // ====================================================================
 // formResponses — POZ-DEV-052, 053
-// Form doldurma cevapları + revizyon geçmişi. AsyncStorage tabanlı.
+// Sunucuda doğrulanmış form cevapları; mevcut revizyon görünümü çalışan deposunda tutulur.
 // ====================================================================
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormResponse, FormResponseRevision, FormFieldValue } from '../types';
-import { supabase, SUPABASE_CONFIGURED } from './supabase';
+import { supabase } from './supabase';
 
 const RESP_KEY = '@SahaTakip:form_responses';
 const REV_KEY = '@SahaTakip:form_response_revisions';
@@ -48,23 +48,19 @@ function nowISO() {
 
 // ---------------- RESPONSES ----------------
 
+async function cachedResponses(): Promise<FormResponse[]> {
+  const raw=await AsyncStorage.getItem(RESP_KEY);
+  const list=raw?JSON.parse(raw):[];
+  if(!Array.isArray(list))throw new Error('Form kayıt görünümü doğrulanamadı. Listeyi yenileyin.');
+  return list;
+}
 export async function listResponses(): Promise<FormResponse[]> {
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase.from('form_responses').select('*').order('updated_at', { ascending: false });
-      if (!error && data) {
-        const list = data.map(respFromRow);
-        await AsyncStorage.setItem(RESP_KEY, JSON.stringify(list));
-        return list;
-      }
-    } catch { /* fallback */ }
-  }
-  try {
-    const raw = await AsyncStorage.getItem(RESP_KEY);
-    return raw ? (JSON.parse(raw) as FormResponse[]) : [];
-  } catch {
-    return [];
-  }
+  const {data,error}=await supabase.from('form_responses').select('*').order('updated_at',{ascending:false});
+  if(error)throw error;
+  if(!Array.isArray(data))throw new Error('Form listesi sunucudan doğrulanamadı.');
+  const list=data.map(respFromRow);
+  await saveResponses(list);
+  return list;
 }
 
 export async function listResponsesByWorkOrder(
@@ -98,7 +94,7 @@ export async function createResponse(input: {
   filledBy?: string;
   values: Record<string, FormFieldValue>;
 }): Promise<FormResponse> {
-  const all = await listResponses();
+  const all = await cachedResponses();
   const t = nowISO();
   let resp: FormResponse = {
     id: uid(),
@@ -112,15 +108,12 @@ export async function createResponse(input: {
     createdAt: t,
     updatedAt: t,
   };
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const row = respToRow(resp);
-      // Postgres generates id (uuid); omit so it auto-generates
-      delete (row as any).id;
-      const { data, error } = await supabase.from('form_responses').insert(row).select().single();
-      if (!error && data) resp = respFromRow(data);
-    } catch { /* offline */ }
-  }
+  const row=respToRow(resp);delete (row as any).id;
+  const {data,error}=await supabase.from('form_responses').insert(row).select().single();
+  if(error)throw error;
+  if(!data?.id)throw new Error('Form kaydının sonucu doğrulanamadı. Yeniden göndermeden önce listeyi kontrol edin.');
+  resp=respFromRow(data);
+
   await saveResponses([resp, ...all]);
   await recordRevision({
     responseId: resp.id,
@@ -138,9 +131,9 @@ export async function updateResponse(
   editedBy?: string,
   reason?: string,
 ): Promise<FormResponse | null> {
-  const all = await listResponses();
+  const all = await cachedResponses();
   const idx = all.findIndex(r => r.id === responseId);
-  if (idx < 0) return null;
+  if (idx < 0) throw new Error('Güncel form kaydı yüklenmeli. Listeyi yenileyin.');
   const prev = all[idx];
   const nextRev = (prev.revision ?? 1) + 1;
   const updated: FormResponse = {
@@ -149,15 +142,11 @@ export async function updateResponse(
     revision: nextRev,
     updatedAt: nowISO(),
   };
-  if (SUPABASE_CONFIGURED) {
-    try {
-      await supabase.from('form_responses').update({
-        values: newValues,
-        revision: nextRev,
-        updated_at: updated.updatedAt,
-      }).eq('id', responseId);
-    } catch { /* offline */ }
-  }
+  const {data,error}=await supabase.from('form_responses').update({values:newValues,revision:nextRev,updated_at:updated.updatedAt}).eq('id',responseId).select().single();
+  if(error)throw error;
+  if(!data?.id)throw new Error('Form güncellemesinin sonucu doğrulanamadı. Listeyi kontrol edin.');
+  Object.assign(updated,respFromRow(data));
+
   all[idx] = updated;
   await saveResponses(all);
   await recordRevision({
@@ -170,15 +159,14 @@ export async function updateResponse(
   return updated;
 }
 
-export async function deleteResponse(id: string) {
-  if (SUPABASE_CONFIGURED) {
-    try { await supabase.from('form_responses').delete().eq('id', id); } catch { /* offline */ }
-  }
-  const all = await listResponses();
-  await saveResponses(all.filter(r => r.id !== id));
-  // Revizyonları da temizle
-  const revs = await listAllRevisions();
-  await saveRevisions(revs.filter(r => r.id.split('::')[0] !== id));
+export async function deleteResponse(id:string) {
+  const {data,error}=await supabase.from('form_responses').delete().eq('id',id).select('id');
+  if(error)throw error;
+  if(!Array.isArray(data)||!data.some(row=>row.id===id))throw new Error('Form silme işlemi doğrulanamadı. Listeyi kontrol edin.');
+  const all=await cachedResponses();
+  await saveResponses(all.filter(item=>item.id!==id));
+  const revisions=await listAllRevisions();
+  await saveRevisions(revisions.filter(item=>item.responseId!==id));
 }
 
 // ---------------- REVISIONS ----------------
@@ -189,12 +177,10 @@ interface StoredRevision extends FormResponseRevision {
 }
 
 async function listAllRevisions(): Promise<StoredRevision[]> {
-  try {
-    const raw = await AsyncStorage.getItem(REV_KEY);
-    return raw ? (JSON.parse(raw) as StoredRevision[]) : [];
-  } catch {
-    return [];
-  }
+  const raw=await AsyncStorage.getItem(REV_KEY);
+  const list=raw?JSON.parse(raw):[];
+  if(!Array.isArray(list))throw new Error('Form revizyon görünümü doğrulanamadı.');
+  return list;
 }
 
 async function saveRevisions(list: StoredRevision[]) {

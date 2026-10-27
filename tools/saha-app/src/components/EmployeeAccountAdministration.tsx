@@ -13,7 +13,7 @@ export default function EmployeeAccountAdministration() {
   };
   return <SafeAreaView style={s.safe}><View style={s.card}>
     <Text style={s.title}>Çalışan hesapları ve erişim</Text>
-    <Text style={s.text}>Çalışan davetleri, hesap onayları ve erişim yetkileri VoltGuard çalışan portalından yönetilir. SahaTakip aynı onaylı hesabı kullanır.</Text>
+    <Text style={s.text}>Çalışan davetleri, hesap onayları ve erişim yetkileri VoltGuard çalışan portalından yönetilir. Tüm modüller aynı onaylı çalışan hesabını kullanır.</Text>
     <Text style={s.text}>{profile?.role === 'admin' ? 'Çalışan portalındaki “Çalışanlar” bölümünden davet oluşturabilir ve hesap durumlarını yönetebilirsiniz.' : 'Hesap açma ve erişim değişiklikleri için şirket yöneticinize başvurun. Çalışan portalında kendi hesap güvenliğinizi görebilirsiniz.'}</Text>
     {error ? <Text style={s.text} accessibilityRole="alert">{error}</Text> : null}
     <TouchableOpacity style={s.button} onPress={open}><Text style={s.buttonText}>VoltGuard çalışan portalını aç</Text></TouchableOpacity>

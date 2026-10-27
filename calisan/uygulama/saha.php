@@ -21,12 +21,6 @@ try {
     http_response_code(503); header('Content-Type: text/plain; charset=utf-8');
     echo 'Saha Takip şu anda kullanılamıyor.'; exit;
 }
-if (!is_file(__DIR__.'/saha-entry.html')) {
-    http_response_code(503); header('Content-Type: text/plain; charset=utf-8');
-    echo 'Saha Takip hazırlanıyor.'; exit;
-}
-header('Content-Type: text/html; charset=utf-8');
-header("Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self' blob:; connect-src 'self' blob: data:; frame-src 'self' blob: data:");
-header('Permissions-Policy: camera=(self), microphone=(self), geolocation=(self), payment=(), usb=()');
 session_write_close();
-if (vg_method() !== 'HEAD') readfile(__DIR__.'/saha-entry.html');
+header('Location: /calisan/uygulama/?module=uygulamalar', true, 303);
+exit;

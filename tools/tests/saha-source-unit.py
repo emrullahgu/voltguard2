@@ -48,6 +48,17 @@ class SourceTests(unittest.TestCase):
         repo.site = SITE
         return repo
 
+    def test_visit_uses_private_extension_when_source_has_no_visits_table(self):
+        expected = row("visits", {"id": ID, "user_id": b.saha_staff_id(ACTOR["id"]), "customer_id": LEGACY})
+        db = FakeDB([expected])
+        repo = self.repo(db)
+        self.assertIn("visits", source.ALLOWED)
+        repo.write(expected, None, ACTOR)
+        statements = "\n".join(db.statements)
+        self.assertIn("INSERT INTO voltguard_site.saha_records", statements)
+        self.assertNotIn("INSERT INTO public", statements)
+        self.assertNotIn("INSERT INTO auth", statements)
+
     def test_reviewed_collections_never_include_authentication_or_secrets(self):
         for name in ("profiles", "two_factor", "security_policies", "kvkk_consents",
                      "api_keys", "app_settings", "pending_user_approvals", "push_tokens"):

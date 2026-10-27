@@ -1,0 +1,358 @@
+{
+  "groups": [
+    "Teklifler",
+    "İş ve kayıtlar",
+    "Stok ve araçlar",
+    "Enerji ve kontrol",
+    "Ofis ve iletişim",
+    "Personel ve bordro",
+    "Finans ve raporlar",
+    "Yönetim"
+  ],
+  "modules": [
+    {
+      "id": "dashboard",
+      "label": "Ürün ve fiyat analizi",
+      "description": "Geçmiş fatura ürünlerini, birim fiyatlarını ve katalog dağılımını inceleyin.",
+      "group": "Teklifler",
+      "variants": [{ "id": "kayitlar", "label": "Fiyat analizi", "legacy": true }]
+    },
+    {
+      "id": "manual",
+      "label": "YG işletme sorumluluğu teklifi",
+      "description": "Trafo ve yüksek gerilim işletme sorumluluğu için teklif hazırlayın.",
+      "group": "Teklifler",
+      "variants": [{ "id": "kayitlar", "label": "Teklif hazırla", "legacy": true }]
+    },
+    {
+      "id": "periodic",
+      "label": "Periyodik kontrol teklifi",
+      "description": "Kontrol kapsamını ve hizmet bedellerini düzenleyin.",
+      "group": "Teklifler",
+      "variants": [{ "id": "kayitlar", "label": "Teklif hazırla", "legacy": true }]
+    },
+    {
+      "id": "kesif",
+      "label": "Keşif ve metraj",
+      "description": "Proje malzemelerini, miktarlarını ve keşif bedellerini hesaplayın.",
+      "group": "Teklifler",
+      "variants": [{ "id": "kayitlar", "label": "Keşif çalışması", "legacy": true }]
+    },
+    {
+      "id": "ges",
+      "label": "GES teklifi",
+      "description": "Güneş enerjisi projesinin ekipman ve hizmet teklifini oluşturun.",
+      "group": "Teklifler",
+      "variants": [{ "id": "kayitlar", "label": "Teklif hazırla", "legacy": true }]
+    },
+    {
+      "id": "saved",
+      "label": "Kaydedilen teklifler",
+      "description": "Hazırlanan teklifleri yeniden açın ve düzenleyin.",
+      "group": "Teklifler",
+      "variants": [{ "id": "kayitlar", "label": "Teklif arşivi", "legacy": true }]
+    },
+    {
+      "id": "proposal",
+      "label": "Teklif önizleme",
+      "description": "Seçili teklifin çıktı ve sunum görünümünü kontrol edin.",
+      "group": "Teklifler",
+      "draftOnly": true,
+      "variants": [{ "id": "kayitlar", "label": "Önizleme", "legacy": true }]
+    },
+    {
+      "id": "musteri-teklifleri",
+      "label": "Müşteri teklifleri",
+      "description": "Müşteriye bağlı teklifleri, kalemlerini, revizyonlarını ve sonuçlarını yönetin.",
+      "group": "Teklifler",
+      "variants": [
+        { "id": "liste", "label": "Teklif listesi", "route": "Quotes" },
+        { "id": "akis", "label": "Teklif süreci", "route": "QuoteFlowHub" },
+        { "id": "turler", "label": "Teklif türleri", "route": "ProposalsHub" },
+        { "id": "hesaplar", "label": "Keşif ve fiyatlandırma", "route": "SmartQuoteHub" }
+      ]
+    },
+    {
+      "id": "musteriler",
+      "label": "Müşteriler",
+      "description": "Müşteri bilgilerini, tesisleri, ziyaretleri ve müşteri ilişkilerini takip edin.",
+      "group": "İş ve kayıtlar",
+      "variants": [
+        { "id": "liste", "label": "Müşteri listesi", "route": "Customers" },
+        { "id": "iliskiler", "label": "Müşteri ilişkileri", "route": "CustomerHub", "roles": ["admin", "payroll"] },
+        { "id": "deneyim", "label": "Geri bildirim ve onaylar", "route": "CustomerExperienceHub", "roles": ["admin"] },
+        { "id": "paylasim", "label": "Müşteri paylaşım alanı", "route": "CpHub", "roles": ["admin"] }
+      ]
+    },
+    {
+      "id": "is-emirleri",
+      "label": "İş emirleri",
+      "description": "İşleri müşteriye bağlayın, ekibe atayın ve tamamlanma sürecini izleyin.",
+      "group": "İş ve kayıtlar",
+      "variants": [
+        { "id": "liste", "label": "İş emri listesi", "route": "WorkOrders" },
+        { "id": "planlama", "label": "Atama ve iş akışı", "route": "WorkOrderFlowHub" }
+      ]
+    },
+    {
+      "id": "gorev",
+      "label": "Görev takibi",
+      "description": "Günlük görevleri, yapılacakları ve ekip görev planını yönetin.",
+      "group": "İş ve kayıtlar",
+      "variants": [
+        { "id": "kayitlar", "label": "Görev kayıtları", "legacy": true },
+        { "id": "planlama", "label": "Görev planı ve kanban", "route": "TaskHub" },
+        { "id": "yapilacaklar", "label": "Yapılacaklar", "route": "Todo" }
+      ]
+    },
+    {
+      "id": "is-takip",
+      "label": "İş takibi",
+      "description": "Personel, çalışma yeri ve kullanılan malzemelerle iş kayıtlarını tutun.",
+      "group": "İş ve kayıtlar",
+      "variants": [{ "id": "kayitlar", "label": "İş kayıtları", "legacy": true }]
+    },
+    {
+      "id": "servisler",
+      "label": "Servis kayıtları",
+      "description": "Teknik servis formlarını, saha fotoğraflarını ve yapılan işlemleri kaydedin.",
+      "group": "İş ve kayıtlar",
+      "variants": [
+        { "id": "liste", "label": "Servis kayıtları", "route": "Services" },
+        { "id": "yeni", "label": "Yeni servis formu", "route": "NewService" }
+      ]
+    },
+    {
+      "id": "formlar",
+      "label": "Formlar ve kontrol listeleri",
+      "description": "Form şablonlarını oluşturun, yanıtları ve sonuçlarını inceleyin.",
+      "group": "İş ve kayıtlar",
+      "variants": [{ "id": "yonetim", "label": "Form yönetimi", "route": "FormHub" }]
+    },
+    {
+      "id": "saha-planlama",
+      "label": "Saha planlaması",
+      "description": "Günlük işleri, vardiyaları, bölgeleri ve saha çalışma tercihlerini düzenleyin.",
+      "group": "İş ve kayıtlar",
+      "variants": [
+        { "id": "operasyon", "label": "Günlük saha planı", "route": "FieldOpsHub" },
+        { "id": "calisma", "label": "Çalışma tercihleri ve bağlantı", "route": "FieldHub" }
+      ]
+    },
+    {
+      "id": "urun-takip",
+      "label": "Ürün takibi",
+      "description": "Ürün kayıtlarını, katalogları ve envanter bilgilerini yönetin.",
+      "group": "Stok ve araçlar",
+      "variants": [
+        { "id": "kayitlar", "label": "Ürün kayıtları", "legacy": true },
+        { "id": "katalog", "label": "Katalog ve envanter", "route": "InventoryHub" }
+      ]
+    },
+    {
+      "id": "stok",
+      "label": "Stok ve zimmet",
+      "description": "Malzeme, depo, stok hareketi ve personel zimmetlerini takip edin.",
+      "group": "Stok ve araçlar",
+      "variants": [{ "id": "yonetim", "label": "Stok yönetimi", "route": "StockHub" }]
+    },
+    {
+      "id": "akaryakit",
+      "label": "Araç ve akaryakıt",
+      "description": "Yakıt kayıtlarını, araç bakımını, hasarları ve yaklaşan vadeleri takip edin.",
+      "group": "Stok ve araçlar",
+      "variants": [
+        { "id": "kayitlar", "label": "Akaryakıt kayıtları", "legacy": true },
+        { "id": "filo", "label": "Araç ve filo yönetimi", "route": "VehicleHub" }
+      ]
+    },
+    {
+      "id": "ekipman",
+      "label": "Ekipman ve bakım",
+      "description": "Tesis varlıklarını, ekipman bakımını, arızaları ve servis geçmişini yönetin.",
+      "group": "Stok ve araçlar",
+      "variants": [
+        { "id": "bakim", "label": "Ekipman ve bakım planları", "route": "AssetHub" },
+        { "id": "tesis", "label": "Tesis varlıkları ve denetimler", "route": "SectorHub" }
+      ]
+    },
+    {
+      "id": "kontrol",
+      "label": "Periyodik kontrol raporları",
+      "description": "Elektrik tesislerinin kontrol ölçümlerini ve raporlarını hazırlayın.",
+      "group": "Enerji ve kontrol",
+      "variants": [{ "id": "kayitlar", "label": "Kontrol raporları", "legacy": true }]
+    },
+    {
+      "id": "osos",
+      "label": "OSOS ve ölçüm kayıtları",
+      "description": "Sayaç ölçümlerini içe aktarın, enerji kayıtlarını ve alarmları inceleyin.",
+      "group": "Enerji ve kontrol",
+      "variants": [
+        { "id": "kayitlar", "label": "Ölçüm kayıtları", "legacy": true },
+        { "id": "enerji", "label": "Enerji takibi ve alarmlar", "route": "OsosHub" }
+      ]
+    },
+    {
+      "id": "haftalik-raporlama",
+      "label": "Haftalık enerji raporları",
+      "description": "Enerji tüketimini ve ölçüm dönemlerini raporlayın.",
+      "group": "Enerji ve kontrol",
+      "variants": [
+        { "id": "kayitlar", "label": "Enerji raporları", "legacy": true },
+        { "id": "donemler", "label": "Haftalık ölçüm özetleri", "route": "WeeklyReports" }
+      ]
+    },
+    {
+      "id": "kalite",
+      "label": "Kalite ve iş güvenliği",
+      "description": "Uygunsuzlukları, düzeltici faaliyetleri, riskleri ve denetimleri takip edin.",
+      "group": "Enerji ve kontrol",
+      "variants": [{ "id": "denetim", "label": "Kalite ve denetim", "route": "ComplianceHub" }]
+    },
+    {
+      "id": "takvim",
+      "label": "Takvim",
+      "description": "Toplantıları, etkinlikleri ve çalışma takvimini düzenleyin.",
+      "group": "Ofis ve iletişim",
+      "variants": [{ "id": "etkinlikler", "label": "Çalışma takvimi", "route": "Calendar" }]
+    },
+    {
+      "id": "ofis",
+      "label": "Ofis çalışma alanı",
+      "description": "Çalışma sayfalarını, panoları, toplantıları ve şirket bilgilerini bir arada kullanın.",
+      "group": "Ofis ve iletişim",
+      "variants": [
+        { "id": "calisma", "label": "Sayfalar, panolar ve toplantılar", "route": "OfficeHub" },
+        { "id": "firma", "label": "Şirket bilgileri", "route": "Company" }
+      ]
+    },
+    {
+      "id": "mesajlar",
+      "label": "Ekip mesajları",
+      "description": "Katıldığınız ekip görüşmelerini ve mesaj eklerini takip edin.",
+      "group": "Ofis ve iletişim",
+      "variants": [{ "id": "gorusmeler", "label": "Görüşmeler", "route": "Messages" }]
+    },
+    {
+      "id": "bildirimler",
+      "label": "Bildirimler",
+      "description": "Uygulama bildirimlerini ve bildirim tercihlerini yönetin.",
+      "group": "Ofis ve iletişim",
+      "variants": [{ "id": "merkez", "label": "Bildirim merkezi", "route": "NotificationHub" }]
+    },
+    {
+      "id": "yapay-zeka",
+      "label": "Yapay zekâ araçları",
+      "description": "Yapay zekâ bağlantısı etkinleştirildiğinde analiz ve yardımcı araçları kullanın.",
+      "group": "Ofis ve iletişim",
+      "capability": "externalAI",
+      "variants": [
+        { "id": "analiz", "label": "Analiz ve belge araçları", "route": "AiHub", "capability": "externalAI" },
+        { "id": "asistan", "label": "Asistan ve bilgi tabanı", "route": "AiAssistantHub", "capability": "externalAI" }
+      ]
+    },
+    {
+      "id": "mesai",
+      "label": "Mesai",
+      "description": "Kendi mesai başlangıç, bitiş ve saha giriş kayıtlarınızı yönetin.",
+      "group": "Personel ve bordro",
+      "variants": [{ "id": "kayit", "label": "Mesai kaydım", "route": "Shift" }]
+    },
+    {
+      "id": "ekip-takibi",
+      "label": "Ekip ve konum takibi",
+      "description": "Yetkiniz kapsamındaki ekip mesailerini, konumları ve operasyon durumunu inceleyin.",
+      "group": "Personel ve bordro",
+      "roles": ["admin", "payroll"],
+      "variants": [
+        { "id": "personel", "label": "Personel ve vardiya takibi", "route": "PersonnelTrackingHub" },
+        { "id": "konum", "label": "Operasyon ve konum", "route": "LiveOpsHub" },
+        { "id": "mesailer", "label": "Ekip mesaileri", "route": "AdminShiftDashboard" }
+      ]
+    },
+    {
+      "id": "bordro",
+      "label": "Personel bordrosu",
+      "description": "Yetkinize göre bordroları, puantajı ve izin kayıtlarını inceleyin.",
+      "group": "Personel ve bordro",
+      "variants": [
+        { "id": "kayitlar", "label": "Personel bordroları", "legacy": true },
+        { "id": "aylik", "label": "Aylık bordro hesapları", "route": "Bordro" },
+        { "id": "personel", "label": "Personel ve hesap bağlantıları", "route": "Employees", "roles": ["admin", "payroll"] },
+        { "id": "puantaj", "label": "Puantaj ve izin yönetimi", "route": "PayrollHub", "roles": ["admin", "payroll"] }
+      ]
+    },
+    {
+      "id": "beyaz-yaka",
+      "label": "Beyaz yaka bordrosu",
+      "description": "Beyaz yaka personel bordrosunu ve dönem kayıtlarını yönetin.",
+      "group": "Personel ve bordro",
+      "variants": [{ "id": "kayitlar", "label": "Dönem bordroları", "legacy": true }]
+    },
+    {
+      "id": "siparisler",
+      "label": "Siparişler",
+      "description": "Siparişleri, tekrar eden siparişleri ve sipariş sonuçlarını takip edin.",
+      "group": "Finans ve raporlar",
+      "roles": ["admin", "payroll"],
+      "variants": [{ "id": "yonetim", "label": "Sipariş yönetimi", "route": "OrdHub" }]
+    },
+    {
+      "id": "finans",
+      "label": "Finans ve masraflar",
+      "description": "Tahsilatları, müşteri bakiyelerini, kasayı ve masraf kayıtlarını inceleyin.",
+      "group": "Finans ve raporlar",
+      "roles": ["admin", "payroll"],
+      "variants": [
+        { "id": "finans", "label": "Tahsilat ve kasa", "route": "FinanceHub" },
+        { "id": "masraflar", "label": "Masraf kayıtları", "route": "Expenses" }
+      ]
+    },
+    {
+      "id": "raporlar",
+      "label": "Operasyon raporları",
+      "description": "İş sonuçlarını, dönem karşılaştırmalarını ve yönetim göstergelerini inceleyin.",
+      "group": "Finans ve raporlar",
+      "variants": [
+        { "id": "donem", "label": "Dönem raporları", "route": "ReportingHub" },
+        { "id": "analiz", "label": "İş ve performans analizi", "route": "BiHub", "roles": ["admin", "payroll"] },
+        { "id": "yonetim", "label": "Yönetim göstergeleri", "route": "ExecHub", "roles": ["admin", "payroll"] }
+      ]
+    },
+    {
+      "id": "admin",
+      "label": "Çalışan yönetimi",
+      "description": "Çalışan hesaplarını, davetleri ve erişim durumlarını yönetin.",
+      "group": "Yönetim",
+      "roles": ["admin"],
+      "adminOnly": true,
+      "variants": [{ "id": "kayitlar", "label": "Çalışan hesapları", "legacy": true }]
+    },
+    {
+      "id": "yonetim-araclari",
+      "label": "Yönetim ve sistem araçları",
+      "description": "Yetki denetimini, bağlantı durumunu, sistem bakımını ve yönetici rehberlerini inceleyin.",
+      "group": "Yönetim",
+      "roles": ["admin"],
+      "variants": [
+        { "id": "yetki", "label": "Yetki ve denetim", "route": "GovernanceHub" },
+        { "id": "guvenlik", "label": "Güvenlik ve veri talepleri", "route": "SecHub" },
+        { "id": "baglantilar", "label": "Bağlantı ve veri araçları", "route": "ConnectivityHub" },
+        { "id": "entegrasyonlar", "label": "İçe aktarma ve bağlantı ayarları", "route": "IntegrationsHub" },
+        { "id": "kurumsal", "label": "Kurumsal bağlantılar", "route": "EnterpriseIntegrationsHub" },
+        { "id": "dis-hizmetler", "label": "Dış hizmet yapılandırması", "route": "ExtHub" },
+        { "id": "gelismis", "label": "Gelişmiş bağlantılar", "route": "AdvHub" },
+        { "id": "platform", "label": "Sistem yönetimi", "route": "PlatformHub" },
+        { "id": "firma", "label": "Firma ve lisans yönetimi", "route": "SaasHub" },
+        { "id": "kalite", "label": "Uygulama kalite kayıtları", "route": "QualityHub" },
+        { "id": "kontroller", "label": "Teknik kalite kontrolleri", "route": "QaHub" },
+        { "id": "senaryolar", "label": "Kabul testleri", "route": "UatHub" },
+        { "id": "kapsam", "label": "İşlev kapsamı", "route": "CovHub" },
+        { "id": "yayin", "label": "Yayın ve derleme bilgileri", "route": "DepHub" },
+        { "id": "destek", "label": "İşletim ve destek", "route": "GoLiveHub" },
+        { "id": "rehberler", "label": "Yönetici ve kullanım rehberleri", "route": "DocHub" }
+      ]
+    }
+  ]
+}

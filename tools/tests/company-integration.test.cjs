@@ -61,6 +61,17 @@ test('Compiled application carries no original cloud credentials, invoice files 
   }
   const all = files(published);
   for (const file of all.filter(file => /\.(?:json|map)$/.test(file))) {
+    if(path.relative(published,file)==='employee-modules-manifest.json') {
+      const manifest=JSON.parse(fs.readFileSync(file,'utf8'));
+      assert.deepEqual(Object.keys(manifest).sort(),['scripts','styles','version']);assert.equal(manifest.version,1);
+      assert.ok(Array.isArray(manifest.scripts)&&manifest.scripts.length>0&&manifest.scripts.length<=8);assert.ok(Array.isArray(manifest.styles)&&manifest.styles.length<=8);
+      for(const [kind,extension] of [['scripts','m?js'],['styles','css']])for(const url of manifest[kind]){
+        assert.match(url,new RegExp('^/calisan/uygulama/assets/saha/[A-Za-z0-9/_., @()+-]+\\.'+extension+'$'));assert.equal(url.includes('..'),false);
+        assert.equal(fs.statSync(path.join(root,url.slice(1))).isFile(),true,'Only existing compiled runtime assets belong to the private manifest');
+      }
+      assert.equal(privateRewrite('/calisan/uygulama/employee-modules-manifest.json')?.flags.split(',').includes('F'),true,'The runtime manifest has no raw public URL');
+      continue;
+    }
     assert.equal(path.relative(published, file).startsWith('licenses' + path.sep), true, 'Any package metadata belongs only to inert licence material.');
   }
 });
@@ -194,6 +205,8 @@ test('Private application uses the shared site shell and scoped styles', () => {
   const css = fs.readFileSync(styles[0], 'utf8');
   assert.equal(css.includes('#vg-company-workspace'), true);
   assert.equal(css.includes('#vg-tool-workspace'), false);
+  assert.doesNotMatch(css,/#vg-company-workspace[^,{]*\s+#vg-company-workspace/,'Scoped theme rules must not require a workspace nested inside itself');
   assert.equal(/@import\s/.test(css), false, 'Final application has no late or external stylesheet import.');
-  assert.match(read('calisan/index.php'), /href="\/calisan\/uygulama\/"/);
+  const employeeLinks=[...read('calisan/index.php').matchAll(/href="([^"<>]+)"/g)].map(match=>new URL(match[1],'https://fixture.invalid'));
+  assert.ok(employeeLinks.some(url=>url.pathname==='/calisan/uygulama/'&&url.searchParams.get('module')==='uygulamalar'),'Employee panel opens the unified application grid');
 });

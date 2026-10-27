@@ -264,6 +264,24 @@ class BridgeTests(unittest.TestCase):
         self.assertTrue(bridge.saha_visible(ADMIN, location, {}))
         bridge.saha_validate_change(ADMIN, None, location, {})
 
+    def test_visit_owner_and_concurrent_active_visit_are_checked_at_commit(self):
+        import hashlib
+        employee = {"id": STAFF, "role": "employee"}
+        me = bridge.saha_staff_id(STAFF)
+        def visit(identifier):
+            return {"id": hashlib.sha256(("visits:" + identifier).encode()).hexdigest(), "collection": "visits", "record_id": identifier,
+                    "payload": {"id": identifier, "user_id": me, "customer_id": ID, "start_at": "2026-10-27T10:00:00Z", "start_lat": 38,
+                                "start_lng": 27, "status": "active", "end_at": None, "created_by": me, "updated_by": me}, "revision": 1}
+        first, second = visit(ID), visit(LEGACY)
+        bridge.saha_validate_change(employee, None, first, {})
+        self.reject(lambda: bridge.saha_validate_change(employee, None, second, {first["id"]: first}), "bridge_saha_visit_active")
+        forged = {**first, "payload": {**first["payload"], "user_id": bridge.saha_staff_id(OTHER)}}
+        self.reject(lambda: bridge.saha_validate_change(employee, None, forged, {}), "bridge_saha_visit_owner")
+        closed = {**first, "revision": 2, "payload": {**first["payload"], "status": "completed", "end_at": "2026-10-27T11:00:00Z"}}
+        bridge.saha_validate_change(employee, first, closed, {first["id"]: first})
+        self.reject(lambda: bridge.saha_validate_change(employee, closed, {**closed, "revision": 3}, {}), "bridge_saha_visit_immutable")
+        self.reject(lambda: bridge.saha_validate_change(employee, first, None, {}), "bridge_saha_visit_owner")
+
     def test_saha_shared_cache_allowlists_match_the_native_php_api(self):
         import re
         source = (SOURCE.parent.parent / "api/lib/sahatakip.php").read_text(encoding="utf-8")

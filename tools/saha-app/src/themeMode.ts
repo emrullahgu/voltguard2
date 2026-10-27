@@ -4,12 +4,12 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useColorScheme, Platform, Alert, Appearance } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { brand, __activeThemeMode, THEME_STORAGE_KEY, getThemeTokens } from './theme';
+import { brand, __activeThemeMode, THEME_STORAGE_KEY, getThemeTokens, getDisplayTokens } from './theme';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
 export function getPalette(mode: 'light' | 'dark') {
-  return getThemeTokens(mode);
+  return getDisplayTokens(mode);
 }
 
 let storedMode: ThemeMode = __activeThemeMode;

@@ -70,7 +70,7 @@ export type SyncState = 'idle' | 'syncing' | 'offline' | 'error';
  *  (Gereksinim 3). ok=DB yazımı başarılı; başarısızsa hata mesajı döner. */
 // queued=true → işlem yerel sync kuyruğuna alındı, henüz sunucuya YAZILMADI (offline).
 // Üst katman "kaydedildi" yerine "kuyruğa alındı" demeli (Gereksinim 3 — dürüstlük).
-export type WriteResult = { ok: boolean; error?: string; queued?: boolean };
+export type WriteResult = { ok: boolean; error?: string; queued?: boolean; notice?: string };
 
 export interface AppContextType {
   workOrders: WorkOrder[];
@@ -80,6 +80,7 @@ export interface AppContextType {
   orders: Order[];
   toast: ToastMessage | null;
   syncState: SyncState;
+  hasCanonicalData: boolean;
   showToast: (message: string, type?: 'success' | 'error') => void;
   approveReport: (id: string) => void;
   clientAccept: (id: string) => void;
@@ -129,9 +130,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
   const [orders, setOrders] = useState<Order[]>([]);
+  const acceptingQuotes = React.useRef(new Map<string, Promise<string | null>>());
   const [toast, setToast] = useState<ToastMessage | null>(null);
+  const [hasCanonicalData, setHasCanonicalData] = useState(false);
   const [syncState, setSyncState] = useState<SyncState>(
-    isOnlineMode() ? 'idle' : 'offline'
+    isOnlineMode() ? 'syncing' : 'offline'
   );
 
   useEffect(() => {
@@ -143,6 +146,28 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
+  };
+
+  // A form may leave only after every write it started has settled. Optional
+  // audit/notification failures cannot undo an acknowledged business record or
+  // tell the user to submit that record again.
+  const finishSavedWrite = async (
+    message: string,
+    effects: Array<{ label: string; run: () => Promise<unknown> }>,
+    extra: Pick<WriteResult, 'queued'> = {},
+  ): Promise<WriteResult> => {
+    const outcomes = await Promise.allSettled(effects.map(effect => Promise.resolve().then(effect.run)));
+    const incomplete = outcomes.flatMap((outcome, index) => {
+      if (outcome.status === 'rejected') {
+        console.warn('[saved.' + effects[index].label + ']', outcome.reason);
+        return [effects[index].label];
+      }
+      const result = outcome.value as { deliveryErrors?: string[] } | undefined;
+      return result?.deliveryErrors?.length ? [effects[index].label] : [];
+    });
+    const notice = incomplete.length ? `${incomplete.join(' ve ')} tamamlanamadı; ana kayıt kaydedildi, tekrar göndermeyin.` : undefined;
+    showToast(notice ? `${message} ${notice}` : message);
+    return { ok: true, ...extra, ...(notice ? { notice } : {}) };
   };
 
   // ===== Repo'dan yükle (POZ-DEV-002..005) =====
@@ -170,6 +195,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       if (wR.status === 'fulfilled') setWorkOrders(wR.value); else console.warn('[refresh.workOrders]', wR.reason);
       if (eR.status === 'fulfilled') setEmployees(eR.value); else console.warn('[refresh.employees]', eR.reason);
       const anyFailed = [qR, cR, wR, eR].some(r => r.status === 'rejected');
+      if (!anyFailed) setHasCanonicalData(true);
       setSyncState(anyFailed ? 'error' : 'idle');
       // SLA ihlali PROAKTİF taraması (Req#7): yenilenen iş emirleri üzerinden her WO için
       // bir kez bildir (slaWatcher AsyncStorage seti ile spam önler). Taze wR.value
@@ -185,6 +211,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   // İlk yükleme + auth değiştiğinde
   useEffect(() => {
+    setHasCanonicalData(false);
+    if (!userId) { setSyncState(isOnlineMode() ? 'syncing' : 'offline'); return; }
     refresh();
     // Demo modda kuyruk anlamsız (Şirket sunucusu'e drain edilmiyor) — sessizce temizle
     if (isDemoMode) {
@@ -222,8 +250,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       showToast('⚠️ Onaylanamadı: ' + (e?.message || 'bilinmeyen hata'), 'error');
       return;
     }
-    auditRepo.log(userId, { action: 'work_order.approve', tableName: 'work_orders', refId: id });
-    showToast(`${id} onaylandı (durum: Teklif Gönderildi).`);
+    await finishSavedWrite(`${id} onaylandı (durum: Teklif Gönderildi).`, [
+      { label: 'Denetim kaydı', run: () => auditRepo.log(userId, { action: 'work_order.approve', tableName: 'work_orders', refId: id }) },
+    ]);
   };
 
   const clientAccept = async (id: string) => {
@@ -238,21 +267,23 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       showToast('⚠️ Müşteri onayı kaydedilemedi: ' + (e?.message || 'bilinmeyen hata'), 'error');
       return;
     }
-    auditRepo.log(userId, { action: 'work_order.client_accept', tableName: 'work_orders', refId: id });
-    showToast('Müşteri onayı kaydedildi (durum: Faturalandırıldı).');
+    await finishSavedWrite('Müşteri onayı kaydedildi (durum: Faturalandırıldı).', [
+      { label: 'Denetim kaydı', run: () => auditRepo.log(userId, { action: 'work_order.client_accept', tableName: 'work_orders', refId: id }) },
+    ]);
   };
 
   const addWorkOrder = async (order: WorkOrder): Promise<WriteResult> => {
+    let saved: WorkOrder;
     try {
-      const saved = await workOrdersRepo.insert(order);
-      setWorkOrders(prev => [saved, ...prev.filter(item => item.id !== saved.id)]);
-      showToast('İş emri şirket sunucusuna kaydedildi.');
-      void auditRepo.log(userId, { action: 'work_order.create', tableName: 'work_orders', refId: saved.id });
-      return {ok:true};
+      saved = await workOrdersRepo.insert(order);
     } catch (error:any) {
       const message=error?.message||'İş emri kaydedilemedi.';
       showToast(message,'error'); return {ok:false,error:message};
     }
+    setWorkOrders(prev => [saved, ...prev.filter(item => item.id !== saved.id)]);
+    return finishSavedWrite('İş emri şirket sunucusuna kaydedildi.', [
+      { label: 'Denetim kaydı', run: () => auditRepo.log(userId, { action: 'work_order.create', tableName: 'work_orders', refId: saved.id }) },
+    ]);
   };
 
   // ===== ATTENDANCE / WAGE =====
@@ -343,14 +374,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       showToast('⚠️ Teklif kaydedilemedi: ' + (e?.message || 'bilinmeyen hata'), 'error');
       return { ok: false, error: e?.message || 'kayıt başarısız' };
     }
-    auditRepo.log(userId, { action: 'quote.create', tableName: 'quotes', refId: q.id });
-    void Notify.quoteCreated(q.customerName, q.title, q.id);
     // Çevrimdışıysa teklif yalnız yerel kuyruğa alındı; "kaydedildi" demek yalan olur (Req#3).
     const queued = isWriteQueued(q.id);
-    showToast(queued
+    return finishSavedWrite(queued
       ? `Teklif ${saved.number} yerel kaydedildi — internet gelince sunucuya gönderilecek.`
-      : `Teklif ${saved.number} kaydedildi.`);
-    return { ok: true, queued };
+      : `Teklif ${saved.number} kaydedildi.`, [
+      { label: 'Denetim kaydı', run: () => auditRepo.log(userId, { action: 'quote.create', tableName: 'quotes', refId: q.id }) },
+      { label: 'Bildirim', run: () => Notify.quoteCreated(q.customerName, q.title, q.id) },
+      { label: 'Son kullanılan pozlar', run: () => recordQuoteLines(q.lines) },
+    ], { queued });
   };
 
   const updateQuote = async (q: Quote): Promise<WriteResult> => {
@@ -364,9 +396,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       showToast('⚠️ Teklif güncellenemedi: ' + (e?.message || 'bilinmeyen hata'), 'error');
       return { ok: false, error: e?.message || 'güncelleme başarısız' };
     }
-    auditRepo.log(userId, { action: 'quote.update', tableName: 'quotes', refId: q.id });
-    showToast(`Teklif ${q.number} güncellendi.`);
-    return { ok: true };
+    return finishSavedWrite(`Teklif ${q.number} güncellendi.`, [
+      { label: 'Denetim kaydı', run: () => auditRepo.log(userId, { action: 'quote.update', tableName: 'quotes', refId: q.id }) },
+      { label: 'Son kullanılan pozlar', run: () => recordQuoteLines(q.lines) },
+    ]);
   };
 
   const deleteQuote = (id: string) => {
@@ -404,21 +437,38 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       showToast('⚠️ Durum kaydedilemedi: ' + (e?.message || 'bilinmeyen hata'), 'error');
       return { ok: false, error: e?.message || 'güncelleme başarısız' };
     }
-    auditRepo.log(userId, { action: 'quote.status', tableName: 'quotes', refId: id, meta: { status } });
     // Durum geçişlerinde ekibe bildirim (önceden tanımlı ama HİÇ çağrılmıyordu — Req#7).
-    if (status === 'Müşteriye Gönderildi') void Notify.quoteSent(target.customerName, id);
-    else if (status === 'Kabul Edildi') void Notify.quoteAccepted(target.customerName, id);
-    showToast(`Teklif durumu: ${status}`);
-    return { ok: true };
+    return finishSavedWrite(`Teklif durumu: ${status}`, [
+      { label: 'Denetim kaydı', run: () => auditRepo.log(userId, { action: 'quote.status', tableName: 'quotes', refId: id, meta: { status } }) },
+      ...(status === 'Müşteriye Gönderildi' ? [{ label: 'Bildirim', run: () => Notify.quoteSent(target.customerName, id) }]
+        : status === 'Kabul Edildi' ? [{ label: 'Bildirim', run: () => Notify.quoteAccepted(target.customerName, id) }] : []),
+    ]);
   };
 
   // FAZ 4 — Revizyon kaydet (POZ-DEV-038)
   const reviseQuote = async (q: Quote, reason?: string): Promise<WriteResult> => {
-    await recordRevision(q, reason);
-    await recordQuoteLines(q.lines);
+    let revision: Awaited<ReturnType<typeof recordRevision>>;
+    try {
+      revision = await recordRevision(q, reason);
+    } catch (error: any) {
+      const message = 'Revizyon geçmişi kaydedilemedi: ' + (error?.message || 'Sunucu hatası.');
+      showToast(message, 'error');
+      return { ok: false, error: message };
+    }
     // await: önceden fire-and-forget'ti; reviseQuote DB yazımı bitmeden resolve oluyor,
     // {ok:false} yutuluyordu. Sonucu çağırana ilet (updateQuote zaten rollback+toast yapar).
-    return updateQuote({ ...q, revision: (q.revision ?? 0) + 1 });
+    const result = await updateQuote({ ...q, revision: (q.revision ?? 0) + 1 });
+    if (!result.ok) {
+      const message = 'Revizyon geçmişi kaydedildi; teklif güncellenemedi: ' + result.error;
+      showToast(message, 'error');
+      return { ...result, error: message };
+    }
+    if (revision.notice) {
+      const notice = [result.notice, revision.notice].filter(Boolean).join(' ');
+      showToast(`Teklif ${q.number} güncellendi. ${notice}`);
+      return { ...result, notice };
+    }
+    return result;
   };
 
   // FAZ 4 — Paylaşılabilir kabul linki tokeni üret (POZ-DEV-040)
@@ -435,18 +485,19 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // FAZ 4 — Teklif kabul edilince iş emri oluştur (POZ-DEV-039 + 040)
-  const acceptQuoteAndCreateWorkOrder = async (
+  const acceptQuoteAndCreateWorkOrderCore = async (
     quoteId: string,
     signedBy?: string,
     signature?: string,
   ): Promise<string | null> => {
     const q = quotes.find(x => x.id === quoteId);
     if (!q) return null;
+    const existingOrder = workOrders.find(order => order.sourceQuoteId === quoteId);
     // İDEMPOTENT KORUMA: zaten kabul edilmiş teklif tekrar iş emri ÜRETMEZ
     // (paylaşılan link + doğrudan çağrı ile çift iş emri / üzerine yazma engellenir).
     if (q.generatedWorkOrderId || q.status === 'Kabul Edildi' || q.status === 'Faturalandırıldı') {
       showToast('Bu teklif zaten kabul edilmiş.', 'error');
-      return q.generatedWorkOrderId ?? null;
+      return q.generatedWorkOrderId ?? existingOrder?.id ?? null;
     }
     const year = new Date().getFullYear();
     const woPrefix = `IE-${year}-`;
@@ -456,7 +507,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       const n = parseInt(w.id.slice(woPrefix.length), 10);
       return Number.isFinite(n) && n > m ? n : m;
     }, 0);
-    const woId = `${woPrefix}${String(maxWoSeq + 1).padStart(3, '0')}`;
+    const woId = existingOrder?.id ?? `${woPrefix}${String(maxWoSeq + 1).padStart(3, '0')}`;
     // q.lines bozuk/eski kayıtta undefined olabilir → guard (yoksa .map/.reduce çöker).
     const qLines = q.lines ?? [];
     // İşçilik = montaj + (söküm SEÇİLİYSE söküm bedeli) — calcLineTotal ile aynı
@@ -508,28 +559,30 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     // DÜRÜSTLÜK (Req#3): iş emri DB'ye GERÇEKTEN yazılana kadar kabul akışı
     // tamamlanmış SAYILMAZ. İnsert await edilir; başarısızsa optimistik WO geri alınır,
     // teklif KABUL EDİLMİŞ işaretlenmez ve null dönülür (sahte "kabul edildi" yok).
-    setWorkOrders(prev => [newWo, ...prev]);
-    try {
-      await workOrdersRepo.insert(newWo);
-    } catch (e: any) {
-      setWorkOrders(prev => prev.filter(w => w.id !== woId)); // rollback
-      // ÇOKLU CİHAZ YARIŞI: başka bir cihaz/oturum bu teklikten zaten iş emri
-      // üretmişse DB'deki uq_work_orders_source_quote unique index 23505 verir.
-      // Bu sahte bir hata değil — teklif zaten kabul edilmiş demektir; kullanıcıya
-      // doğru mesajı ver, mevcut WO id'sini dön (varsa).
-      const code = e?.code || e?.details;
-      if (code === '23505' || /uq_work_orders_source_quote|duplicate key/i.test(e?.message || '')) {
-        showToast('Bu teklif başka bir cihazda zaten kabul edilmiş.', 'error');
-        return q.generatedWorkOrderId ?? null;
+    if (!existingOrder) {
+      setWorkOrders(prev => [newWo, ...prev]);
+      try {
+        await workOrdersRepo.insert(newWo);
+      } catch (e: any) {
+        setWorkOrders(prev => prev.filter(w => w.id !== woId)); // rollback
+        // A competing session may already have created the source-linked order.
+        // Its id is returned only if it was already acknowledged in this state.
+        const code = e?.code || e?.details;
+        if (code === '23505' || /uq_work_orders_source_quote|duplicate key/i.test(e?.message || '')) {
+          showToast('Bu teklif için başka bir oturumda iş emri oluşturulmuş. Kabul durumunu doğrulamak için listeyi yenileyin.', 'error');
+          return null;
+        }
+        console.warn('[wo.insert.fromQuote]', e);
+        showToast('⚠️ İş emri kaydedilemedi, teklif kabul edilmedi: ' + (e?.message || 'bilinmeyen hata'), 'error');
+        return null;
       }
-      console.warn('[wo.insert.fromQuote]', e);
-      showToast('⚠️ İş emri kaydedilemedi, teklif kabul edilmedi: ' + (e?.message || 'bilinmeyen hata'), 'error');
-      return null;
     }
     // İş emri oluşumu da loglanır + bildirilir (manuel addWorkOrder ile tutarlı;
     // önceden yalnız 'quote.accept' loglanıyordu — iş emri sessizce doğuyordu).
-    auditRepo.log(userId, { action: 'work_order.create', tableName: 'work_orders', refId: woId, meta: { fromQuote: q.id } });
-    void Notify.workOrderCreated(newWo.client, newWo.serviceName, woId);
+    const orderEffects = existingOrder ? [] : [
+      { label: 'İş emri denetim kaydı', run: () => auditRepo.log(userId, { action: 'work_order.create', tableName: 'work_orders', refId: woId, meta: { fromQuote: q.id } }) },
+      { label: 'İş emri bildirimi', run: () => Notify.workOrderCreated(newWo.client, newWo.serviceName, woId) },
+    ];
 
     const acceptedQuote: Quote = {
       ...q,
@@ -544,19 +597,32 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       await quotesRepo.update(q.id, acceptedQuote);
     } catch (e: any) {
       // İş emri oluştu ama teklif kabul durumu yazılamadı — kullanıcıyı AÇIKÇA uyar
-      // (sessiz başarı yok). WO mevcut olduğundan woId yine dönülür.
+      // (sessiz başarı yok). A null result prevents callers claiming acceptance;
+      // the persisted sourceQuoteId is reused if the user explicitly retries.
       console.warn('[quote.accept]', e);
-      showToast('⚠️ İş emri oluştu ama teklif kabul durumu kaydedilemedi: ' + (e?.message || 'bilinmeyen hata'), 'error');
+      setQuotes(prev => prev.map(x => (x.id === q.id ? q : x)));
+      const message = `İş emri ${woId} kaydedildi; teklif kabul durumu kaydedilemedi: ${e?.message || 'bilinmeyen hata'}. Yeniden denediğinizde aynı iş emri kullanılacak.`;
+      const result = await finishSavedWrite(message, orderEffects);
+      showToast([message, result.notice].filter(Boolean).join(' '), 'error');
+      return null;
     }
-    auditRepo.log(userId, {
-      action: 'quote.accept',
-      tableName: 'quotes',
-      refId: q.id,
-      meta: { workOrderId: woId, signedBy },
-    });
-    void Notify.quoteAccepted(q.customerTitle || q.customerName, q.id);
-    showToast(`Teklif kabul edildi → ${woId}`);
+    await finishSavedWrite(`Teklif kabul edildi → ${woId}`, [
+      ...orderEffects,
+      { label: 'Teklif denetim kaydı', run: () => auditRepo.log(userId, { action: 'quote.accept', tableName: 'quotes', refId: q.id, meta: { workOrderId: woId, signedBy } }) },
+      { label: 'Teklif kabul bildirimi', run: () => Notify.quoteAccepted(q.customerTitle || q.customerName, q.id) },
+    ]);
     return woId;
+  };
+
+  const acceptQuoteAndCreateWorkOrder = (quoteId: string, signedBy?: string, signature?: string): Promise<string | null> => {
+    const pending = acceptingQuotes.current.get(quoteId);
+    if (pending) return pending;
+    const running = Promise.resolve().then(() => acceptQuoteAndCreateWorkOrderCore(quoteId, signedBy, signature));
+    acceptingQuotes.current.set(quoteId, running);
+    void running.finally(() => {
+      if (acceptingQuotes.current.get(quoteId) === running) acceptingQuotes.current.delete(quoteId);
+    }).catch(() => {});
+    return running;
   };
 
   // ===== CUSTOMER actions =====
@@ -570,13 +636,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       showToast('⚠️ Müşteri kaydedilemedi: ' + (e?.message || 'bilinmeyen hata'), 'error');
       return { ok: false, error: e?.message || 'kayıt başarısız' };
     }
-    auditRepo.log(userId, { action: 'customer.create', tableName: 'customers', refId: c.id });
-    void Notify.customerCreated(c.shortName, c.id);
     const queued = isWriteQueued(c.id);
-    showToast(queued
+    return finishSavedWrite(queued
       ? `${c.shortName} yerel kaydedildi — internet gelince sunucuya gönderilecek.`
-      : `${c.shortName} eklendi.`);
-    return { ok: true, queued };
+      : `${c.shortName} eklendi.`, [
+      { label: 'Denetim kaydı', run: () => auditRepo.log(userId, { action: 'customer.create', tableName: 'customers', refId: c.id }) },
+      { label: 'Bildirim', run: () => Notify.customerCreated(c.shortName, c.id) },
+    ], { queued });
   };
 
   const updateCustomer = async (c: Customer): Promise<WriteResult> => {
@@ -590,9 +656,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       showToast('⚠️ Müşteri güncellenemedi: ' + (e?.message || 'bilinmeyen hata'), 'error');
       return { ok: false, error: e?.message || 'güncelleme başarısız' };
     }
-    auditRepo.log(userId, { action: 'customer.update', tableName: 'customers', refId: c.id });
-    showToast(`${c.shortName} güncellendi.`);
-    return { ok: true };
+    return finishSavedWrite(`${c.shortName} güncellendi.`, [
+      { label: 'Denetim kaydı', run: () => auditRepo.log(userId, { action: 'customer.update', tableName: 'customers', refId: c.id }) },
+    ]);
   };
 
   const deleteCustomer = async (id: string): Promise<WriteResult> => {
@@ -607,9 +673,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       showToast('Müşteri silinemedi: ' + (e?.message || 'yetki yok'), 'error');
       return { ok: false, error: e?.message || 'silme başarısız' };
     }
-    if (cust) showToast(`${cust.shortName} silindi.`, 'error');
-    auditRepo.log(userId, { action: 'customer.delete', tableName: 'customers', refId: id });
-    return { ok: true };
+    return finishSavedWrite(cust ? `${cust.shortName} silindi.` : 'Müşteri silindi.', [
+      { label: 'Denetim kaydı', run: () => auditRepo.log(userId, { action: 'customer.delete', tableName: 'customers', refId: id }) },
+    ]);
   };
 
   const addOrder = (o: Order) => {
@@ -676,15 +742,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
     setWorkOrders(prev => prev.map(w => (w.id === id ? next : w)));
     const res = await persistWorkOrder(next, {
-      successMsg: `Durum: ${status}`,
       rollback: () => setWorkOrders(prev => prev.map(w => (w.id === id ? current : w))),
     });
     if (!res.ok) return res; // DB başarısız → audit/bildirim YOK, dürüst hata dön
-    auditRepo.log(userId, { action: 'work_order.status', tableName: 'work_orders', refId: id, meta: { status } });
     // Tüm ekibe durum bildirimi (her iş herkese bildirim olarak gider).
-    if (status === 'Başladı') void Notify.workOrderStarted(current.client, id);
-    else if (status === 'Tamamlandı') void Notify.workOrderCompleted(current.client, id);
-    return { ok: true };
+    return finishSavedWrite(`Durum: ${status}`, [
+      { label: 'Denetim kaydı', run: () => auditRepo.log(userId, { action: 'work_order.status', tableName: 'work_orders', refId: id, meta: { status } }) },
+      ...(status === 'Başladı' ? [{ label: 'Bildirim', run: () => Notify.workOrderStarted(current.client, id) }]
+        : status === 'Tamamlandı' ? [{ label: 'Bildirim', run: () => Notify.workOrderCompleted(current.client, id) }] : []),
+    ]);
   };
 
   const assignWorkOrder = (id: string, employeeId: string, employeeName: string) => {
@@ -922,9 +988,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       try { Alert.alert('İş emri silinemedi', msg); } catch { /* ignore */ }
       return { ok: false, error: msg };
     }
-    showToast('İş emri silindi.');
-    auditRepo.log(userId, { action: 'work_order.delete', tableName: 'work_orders', refId: id });
-    return { ok: true };
+    return finishSavedWrite('İş emri silindi.', [
+      { label: 'Denetim kaydı', run: () => auditRepo.log(userId, { action: 'work_order.delete', tableName: 'work_orders', refId: id }) },
+    ]);
   };
 
   const generateFromRecurring = async (): Promise<number> => {
@@ -945,6 +1011,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         orders,
         toast,
         syncState,
+        hasCanonicalData,
         showToast,
         approveReport,
         clientAccept,

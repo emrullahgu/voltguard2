@@ -1,21 +1,31 @@
 import React,{useEffect,useState} from 'react';
 import {View,Text,Pressable,StyleSheet} from 'react-native';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {SafeAreaFrameContext,SafeAreaInsetsContext} from 'react-native-safe-area-context';
 import {AppProvider,useAppContext} from './src/context/AppContext';
 import {AuthProvider,useAuth} from './src/context/AuthContext';
 import {VisitProvider} from './src/context/VisitContext';
-import AppNavigator from './src/navigation';
+import ModuleNavigator from './src/navigation';
 import ErrorBoundary from './src/components/ErrorBoundary';
-import {postParent,bootstrapPortal} from './src/portal/api';
+import {emitModuleEvent,subscribeModuleEvents} from './src/portal/moduleHostBridge';
 import {installWebAlertShim} from './src/utils/webAlertShim';
+import {colors} from './src/theme';
+import {useModuleDimensions} from './src/portal/moduleDimensions';
 installWebAlertShim();
-function Workspace(){
-  const {loading,user}=useAuth(); const {syncState}=useAppContext(); const [notice,setNotice]=useState('');
-  useEffect(()=>{ const listener=(event:any)=>setNotice(event.detail||'İşlem tamamlanamadı.'); window.addEventListener('vg:saha-notice',listener); return()=>window.removeEventListener('vg:saha-notice',listener);},[]);
-  useEffect(()=>{if(!loading&&user&&syncState==='idle')postParent('vg:saha-ready');},[loading,user,syncState]);
+type ModuleProps={initialRoute?:string;initialParams?:any};
+export function Workspace(props:ModuleProps){
+  const {loading,user}=useAuth();const [notice,setNotice]=useState('');
+  const {syncState,hasCanonicalData,refresh}=useAppContext();
+  useEffect(()=>subscribeModuleEvents(event=>{if(event.type==='vg:saha-notice')setNotice(event.message||'İşlem tamamlanamadı.');}),[]);
+  useEffect(()=>{if(!loading&&!user)emitModuleEvent('vg:saha-error',{message:'Çalışan oturumu doğrulanamadı.'});},[loading,user]);
+  useEffect(()=>{if(!loading&&user&&!hasCanonicalData&&(syncState==='error'||syncState==='offline'))emitModuleEvent('vg:saha-error',{message:'Şirket kayıtları yüklenemedi. Bağlantınızı kontrol edip yeniden deneyin.'});},[loading,user,hasCanonicalData,syncState]);
   if(loading)return <View style={styles.loading}><Text>Çalışan oturumu doğrulanıyor…</Text></View>;
-  if(!user)return <View style={styles.loading}><Text accessibilityRole="alert">Çalışan oturumu doğrulanamadı.</Text><Pressable onPress={()=>window.location.reload()}><Text>Yeniden dene</Text></Pressable></View>;
-  return <View style={styles.root}>{notice?<View accessibilityRole="alert" style={styles.notice}><Text style={styles.noticeText}>{notice}</Text><Pressable accessibilityRole="button" accessibilityLabel="Uyarıyı kapat" onPress={()=>setNotice('')}><Text style={styles.noticeText}>Kapat</Text></Pressable></View>:null}<AppNavigator/></View>;
+  if(!user)return <View style={styles.loading}><Text accessibilityRole="alert">Çalışan oturumu doğrulanamadı.</Text></View>;
+  if(!hasCanonicalData){
+    if(syncState==='error'||syncState==='offline')return <View style={styles.loading}><Text accessibilityRole="alert">Şirket kayıtları yüklenemedi. Bağlantınızı kontrol edip yeniden deneyin.</Text><Pressable accessibilityRole="button" onPress={()=>{void refresh();}}><Text>Yeniden dene</Text></Pressable></View>;
+    return <View style={styles.loading}><Text>Şirket kayıtları yükleniyor…</Text></View>;
+  }
+  return <View style={styles.root}>{notice?<View accessibilityRole="alert" style={styles.notice}><Text style={styles.noticeText}>{notice}</Text><Pressable accessibilityRole="button" accessibilityLabel="Uyarıyı kapat" onPress={()=>setNotice('')}><Text style={styles.noticeText}>Kapat</Text></Pressable></View>:null}<ModuleNavigator {...props}/></View>;
 }
-export default function App(){return <SafeAreaProvider><ErrorBoundary><AuthProvider><VisitProvider><AppProvider><Workspace/></AppProvider></VisitProvider></AuthProvider></ErrorBoundary></SafeAreaProvider>}
-const styles=StyleSheet.create({root:{flex:1,minHeight:0,backgroundColor:'#f5f7fa'},loading:{flex:1,padding:32,gap:16,backgroundColor:'#f5f7fa'},notice:{backgroundColor:'#fff4dc',borderBottomWidth:1,borderColor:'#d99b36',padding:12,gap:8,flexDirection:'row',justifyContent:'space-between'},noticeText:{color:'#744b10',fontFamily:'Inter',fontSize:14,lineHeight:21}});
+const moduleInsets={top:0,right:0,bottom:0,left:0};
+export default function EmployeeModuleApp(props:ModuleProps){const size=useModuleDimensions();return <SafeAreaInsetsContext.Provider value={moduleInsets}><SafeAreaFrameContext.Provider value={{x:0,y:0,width:size.width,height:size.height}}><ErrorBoundary><AuthProvider><VisitProvider><AppProvider><Workspace {...props}/></AppProvider></VisitProvider></AuthProvider></ErrorBoundary></SafeAreaFrameContext.Provider></SafeAreaInsetsContext.Provider>}
+const styles=StyleSheet.create({root:{flex:1,minHeight:0,backgroundColor:colors.bg.primary},loading:{flex:1,padding:24,gap:16,backgroundColor:colors.bg.primary},notice:{backgroundColor:'#fff4dc',borderBottomWidth:1,borderColor:'#b45309',padding:12,gap:8,flexDirection:'row',justifyContent:'space-between'},noticeText:{color:'#744b10',fontFamily:'Inter',fontSize:14,lineHeight:21}});

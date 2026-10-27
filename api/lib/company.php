@@ -448,11 +448,32 @@ function vg_company_staff_role($role, $bordro): string {
     return $role === 'admin' ? 'admin' : (($role === 'payroll' || $bordro) ? 'payroll' : 'employee');
 }
 
+function vg_company_module_assets(): array {
+    $root = realpath(dirname(__DIR__, 2) . '/calisan/uygulama');
+    $file = $root ? $root . '/employee-modules-manifest.json' : '';
+    if (!$root || !is_file($file) || is_link($file) || filesize($file) > 8192) vg_company_fail(503, 'company_module_assets', 'Modül dosyaları henüz hazır değil.');
+    $manifest = json_decode((string)file_get_contents($file), true);
+    if (!is_array($manifest) || ($manifest['version'] ?? null) !== 1) vg_company_fail(503, 'company_module_assets');
+    foreach (['scripts' => 'm?js', 'styles' => 'css'] as $kind => $extension) {
+        $values = $manifest[$kind] ?? null;
+        if (!is_array($values) || count($values) > 8 || ($kind === 'scripts' && !$values)) vg_company_fail(503, 'company_module_assets');
+        foreach ($values as $url) {
+            if (!is_string($url) || strpos($url, '..') !== false || !preg_match('#^/calisan/uygulama/assets/saha/[A-Za-z0-9/_., @()+-]+\\.' . $extension . '$#D', $url)) vg_company_fail(503, 'company_module_assets');
+            $asset = realpath(dirname(__DIR__, 2) . $url);
+            if (!$asset || strpos(str_replace('\\', '/', $asset), str_replace('\\', '/', $root) . '/assets/saha/') !== 0 || !is_file($asset)) vg_company_fail(503, 'company_module_assets');
+        }
+    }
+    return ['scripts' => array_values($manifest['scripts']), 'styles' => array_values($manifest['styles'])];
+}
+
 function vg_company_run(): void {
     ob_start();
     try {
         vg_check_fetch_site(); vg_staff_session_start(); $u = vg_staff_require_user(); $action = vg_action(); $method = vg_method();
-        if ($action === 'health') {
+        if ($action === 'module_assets') {
+            if ($method !== 'GET') vg_company_fail(405, 'company_method');
+            $out = ['data' => vg_company_module_assets()];
+        } elseif ($action === 'health') {
             if ($method !== 'GET') vg_company_fail(405, 'company_method');
             $remote = vg_company_ubuntu_config();
             if ($remote !== null) vg_company_ubuntu_call($remote, ['op' => 'health', 'actor' => ['id' => $u['id'], 'role' => $u['role']]]);

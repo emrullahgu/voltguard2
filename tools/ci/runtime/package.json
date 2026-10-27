@@ -1,0 +1,9 @@
+{
+  "name": "voltguard-ci-runtime",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@babel/core": "7.29.0",
+    "typescript": "6.0.3"
+  }
+}

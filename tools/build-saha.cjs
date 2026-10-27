@@ -13,6 +13,7 @@ function packageExport(root, dist) {
   const application = path.join(root, 'calisan', 'uygulama');
   const target = path.join(application, 'assets', 'saha');
   const entry = path.join(application, 'saha-entry.html');
+  const manifestFile = path.join(application, 'employee-modules-manifest.json');
   function within(base, candidate) {
     const relative = path.relative(base, candidate);
     return relative !== '' && !relative.startsWith('..' + path.sep) && relative !== '..' && !path.isAbsolute(relative);
@@ -63,6 +64,15 @@ function packageExport(root, dist) {
     if (!within(path.dirname(target), directory) || fs.lstatSync(directory).isSymbolicLink() || !within(path.dirname(target), fs.realpathSync(directory))) throw new Error('Invalid Saha output removal.');
     noLinks(directory); fs.rmSync(directory, { recursive: true });
   }
+  function moveDirectory(from, to) {
+    for (let attempt = 0; ; attempt++) {
+      try { fs.renameSync(from, to); return; }
+      catch (error) {
+        if (attempt >= 7 || !['EPERM', 'EACCES', 'EBUSY', 'ENOTEMPTY'].includes(error.code)) throw error;
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 150 * (attempt + 1));
+      }
+    }
+  }
   try {
     copy(sourceRoot);
     // Expo's small boot scripts remain executable under script-src 'self'.
@@ -85,10 +95,17 @@ function packageExport(root, dist) {
       return attribute + '=' + quote + ASSET_BASE + local + quote;
     });
     html = html.replace(/<head([^>]*)>/i, '<head$1><base href="' + ASSET_BASE + '"><meta name="robots" content="noindex,nofollow,noarchive">');
-    if (fs.existsSync(target)) removeStage(target);
-    fs.renameSync(staged, target);
+    const scripts = [...html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/gi)].map(match => match[1]);
+    const styles = [...html.matchAll(/<link\b[^>]*>/gi)].map(match => match[0]).filter(tag => /\brel=["']stylesheet["']/i.test(tag)).map(tag => /\bhref=["']([^"']+)["']/i.exec(tag)?.[1]).filter(Boolean);
+    if (!scripts.length || scripts.some(url => !url.startsWith(ASSET_BASE) || !/\.m?js$/.test(url)) || styles.some(url => !url.startsWith(ASSET_BASE) || !/\.css$/.test(url))) throw new Error('Employee module runtime assets are invalid.');
+    const previous = path.join(path.dirname(target), '.saha-previous-' + crypto.randomBytes(8).toString('hex'));
+    if (fs.existsSync(target)) { noLinks(target); moveDirectory(target, previous); }
+    try { moveDirectory(staged, target); }
+    catch (error) { if (fs.existsSync(previous) && !fs.existsSync(target)) moveDirectory(previous, target); throw error; }
     fs.writeFileSync(entry, html);
-    return { files: outputs.size, bytes, entry, target };
+    fs.writeFileSync(manifestFile, JSON.stringify({ version: 1, scripts, styles }) + '\n');
+    if (fs.existsSync(previous)) removeStage(previous);
+    return { files: outputs.size, bytes, entry, target, manifestFile };
   } finally {
     if (fs.existsSync(staged)) removeStage(staged);
   }

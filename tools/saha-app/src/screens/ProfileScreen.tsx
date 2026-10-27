@@ -31,7 +31,7 @@ export default function ProfileScreen() {
       {profile?.phone ? <Text style={s.text}>{profile.phone}</Text> : null}
     </View>
     <View style={s.card}><Text style={s.title}>Çalışan hesabınız</Text>
-      <Text style={s.text}>SahaTakip, mevcut VoltGuard çalışan oturumunuzu kullanır. Ad, telefon, fotoğraf ve erişim yetkisi değişikliklerini şirket yöneticinizle güncelleyebilirsiniz.</Text>
+      <Text style={s.text}>Bu modüller mevcut VoltGuard çalışan oturumunuzu kullanır. Ad, telefon, fotoğraf ve erişim yetkisi değişikliklerini şirket yöneticinizle güncelleyebilirsiniz.</Text>
       <Text style={s.text}>Şifre, doğrulayıcı uygulama ve cihaz değişikliği için çalışan portalındaki “Hesap güvenliği” bölümünü kullanın.</Text>
       <TouchableOpacity style={s.button} onPress={openAccount}><Ionicons name="shield-checkmark-outline" size={20} color="#fff" /><Text style={s.buttonText}>Çalışan hesabını aç</Text></TouchableOpacity>
     </View>

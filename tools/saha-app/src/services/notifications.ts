@@ -206,6 +206,7 @@ export interface EmitResult {
   notification: AppNotification;
   channels: NotificationChannel[];
   dispatch: Partial<Record<NotificationChannel, { ok: boolean; message?: string }>>;
+  deliveryErrors?: string[];
 }
 
 export async function emitEvent(
@@ -311,65 +312,101 @@ export async function notifyEveryone(
   return notifyUsers({ all: true, excludeUserId, email: true }, type, title, message, relatedId);
 }
 
+// Resolve only after the local record and every remote branch have settled.
+// A caller awaiting Notify must never leave a detached write behind. Delivery
+// problems are optional effects of an already saved business record.
+async function completeNotification(
+  local: () => Promise<EmitResult>,
+  remote: Array<() => Promise<{ ok: boolean; error?: string }>>,
+): Promise<EmitResult> {
+  const [localResult, ...remoteResults] = await Promise.allSettled([
+    Promise.resolve().then(local),
+    ...remote.map(send => Promise.resolve().then(send)),
+  ]);
+  if (localResult.status === 'rejected') throw localResult.reason;
+  const result = localResult.value as EmitResult;
+  const deliveryErrors = remoteResults.flatMap(outcome => outcome.status === 'rejected'
+    ? [String(outcome.reason?.message || outcome.reason)]
+    : !(outcome.value as { ok: boolean }).ok ? [(outcome.value as { error?: string }).error || 'Uzak bildirim iletilemedi.'] : []);
+  for (const channel of Object.values(result.dispatch)) {
+    if (channel && !channel.ok) deliveryErrors.push(channel.message || 'Bildirim kanalı gönderimi tamamlanamadı.');
+  }
+  return deliveryErrors.length ? { ...result, deliveryErrors } : result;
+}
+
 // Convenience emitters
 // Her emitter: (1) emitEvent → işlemi yapanın bildirim merkezi + local push,
 // (2) notifyEveryone → TÜM ekibe uzak push + in-app kayıt (yapan kişi hariç).
 // Böylece "yapılan her iş herkese bildirim olarak gider".
 export const Notify = {
   workOrderCreated: (client: string, service: string, workOrderId: string) => {
-    void notifyEveryone('work_order_created', 'Yeni İş Emri', `${client} — ${service}`, workOrderId).catch(() => {});
-    return emitEvent('work_order_created', 'Yeni İş Emri', `${client} — ${service}`, { relatedId: workOrderId });
+    return completeNotification(
+      () => emitEvent('work_order_created', 'Yeni İş Emri', `${client} — ${service}`, { relatedId: workOrderId }),
+      [() => notifyEveryone('work_order_created', 'Yeni İş Emri', `${client} — ${service}`, workOrderId)],
+    );
   },
   workOrderAssigned: (assignee: string, client: string, workOrderId: string, assigneeUserId?: string) => {
     // Atanan kişiye FARKLI cihazından haber ver (uzak push). user_id biliniyorsa
     // onunla, yoksa ada göre eşleştir. (Best-effort; deploy yoksa sessiz geçer.)
-    void notifyUsers(
+    return completeNotification(
+      () => emitEvent('work_order_assigned', 'İş Atandı', `${assignee} → ${client}`, { relatedId: workOrderId }),
+      [() => notifyUsers(
       assigneeUserId ? { userIds: [assigneeUserId] } : { userNames: [assignee] },
       'work_order_assigned',
       'Size İş Atandı',
       `${client}`,
       workOrderId,
-    ).catch(() => { /* sessiz */ });
+    ),
     // Tüm ekibe de bilgi ver (kim kime atandı görünür).
-    void notifyEveryone('work_order_assigned', 'İş Atandı', `${assignee} → ${client}`, workOrderId).catch(() => {});
-    // Yöneticinin kendi bildirim merkezi/local push'u için olay kaydı.
-    return emitEvent(
-      'work_order_assigned',
-      'İş Atandı',
-      `${assignee} → ${client}`,
-      { relatedId: workOrderId },
+      () => notifyEveryone('work_order_assigned', 'İş Atandı', `${assignee} → ${client}`, workOrderId)],
     );
   },
   workOrderStarted: (client: string, workOrderId: string) => {
-    void notifyEveryone('work_order_started', 'İş Başladı', client, workOrderId).catch(() => {});
-    return emitEvent('work_order_started', 'İş Başladı', client, { relatedId: workOrderId });
+    return completeNotification(
+      () => emitEvent('work_order_started', 'İş Başladı', client, { relatedId: workOrderId }),
+      [() => notifyEveryone('work_order_started', 'İş Başladı', client, workOrderId)],
+    );
   },
   workOrderCompleted: (client: string, workOrderId: string) => {
-    void notifyEveryone('work_order_completed', 'İş Tamamlandı', client, workOrderId).catch(() => {});
-    return emitEvent('work_order_completed', 'İş Tamamlandı', client, { relatedId: workOrderId });
+    return completeNotification(
+      () => emitEvent('work_order_completed', 'İş Tamamlandı', client, { relatedId: workOrderId }),
+      [() => notifyEveryone('work_order_completed', 'İş Tamamlandı', client, workOrderId)],
+    );
   },
   slaBreach: (client: string, hoursOverdue: number, workOrderId: string) => {
-    void notifyEveryone('sla_breach', 'SLA İhlali', `${client} — ${hoursOverdue.toFixed(1)} sa gecikme`, workOrderId).catch(() => {});
-    return emitEvent('sla_breach', 'SLA İhlali', `${client} — ${hoursOverdue.toFixed(1)} sa gecikme`, { relatedId: workOrderId });
+    return completeNotification(
+      () => emitEvent('sla_breach', 'SLA İhlali', `${client} — ${hoursOverdue.toFixed(1)} sa gecikme`, { relatedId: workOrderId }),
+      [() => notifyEveryone('sla_breach', 'SLA İhlali', `${client} — ${hoursOverdue.toFixed(1)} sa gecikme`, workOrderId)],
+    );
   },
   quoteCreated: (client: string, title: string, quoteId: string) => {
-    void notifyEveryone('custom', 'Yeni Teklif', `${client} — ${title}`, quoteId).catch(() => {});
-    return emitEvent('custom', 'Yeni Teklif', `${client} — ${title}`, { relatedId: quoteId });
+    return completeNotification(
+      () => emitEvent('custom', 'Yeni Teklif', `${client} — ${title}`, { relatedId: quoteId }),
+      [() => notifyEveryone('custom', 'Yeni Teklif', `${client} — ${title}`, quoteId)],
+    );
   },
   quoteSent: (client: string, quoteId: string) => {
-    void notifyEveryone('quote_sent', 'Teklif Gönderildi', client, quoteId).catch(() => {});
-    return emitEvent('quote_sent', 'Teklif Gönderildi', client, { relatedId: quoteId });
+    return completeNotification(
+      () => emitEvent('quote_sent', 'Teklif Gönderildi', client, { relatedId: quoteId }),
+      [() => notifyEveryone('quote_sent', 'Teklif Gönderildi', client, quoteId)],
+    );
   },
   quoteAccepted: (client: string, quoteId: string) => {
-    void notifyEveryone('quote_accepted', 'Teklif Onaylandı', client, quoteId).catch(() => {});
-    return emitEvent('quote_accepted', 'Teklif Onaylandı', client, { relatedId: quoteId });
+    return completeNotification(
+      () => emitEvent('quote_accepted', 'Teklif Onaylandı', client, { relatedId: quoteId }),
+      [() => notifyEveryone('quote_accepted', 'Teklif Onaylandı', client, quoteId)],
+    );
   },
   customerCreated: (name: string, customerId: string) => {
-    void notifyEveryone('custom', 'Yeni Müşteri', name, customerId).catch(() => {});
-    return emitEvent('custom', 'Yeni Müşteri', name, { relatedId: customerId });
+    return completeNotification(
+      () => emitEvent('custom', 'Yeni Müşteri', name, { relatedId: customerId }),
+      [() => notifyEveryone('custom', 'Yeni Müşteri', name, customerId)],
+    );
   },
   paymentReceived: (client: string, amount: number, paymentId: string) => {
-    void notifyEveryone('payment_received', 'Tahsilat Alındı', `${client} — ${amount.toLocaleString('tr-TR')} ₺`, paymentId).catch(() => {});
-    return emitEvent('payment_received', 'Tahsilat Alındı', `${client} — ${amount.toLocaleString('tr-TR')} ₺`, { relatedId: paymentId });
+    return completeNotification(
+      () => emitEvent('payment_received', 'Tahsilat Alındı', `${client} — ${amount.toLocaleString('tr-TR')} ₺`, { relatedId: paymentId }),
+      [() => notifyEveryone('payment_received', 'Tahsilat Alındı', `${client} — ${amount.toLocaleString('tr-TR')} ₺`, paymentId)],
+    );
   },
 };
