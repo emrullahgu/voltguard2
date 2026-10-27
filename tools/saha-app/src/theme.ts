@@ -56,7 +56,14 @@ const LIGHT_TOKENS = {
 };
 
 export function getThemeTokens(mode: 'light'|'dark') { return mode === 'light' ? LIGHT_TOKENS : DARK_TOKENS; }
-const __TOKENS = getThemeTokens(__activeThemeMode);
+export function getDisplayTokens(mode: 'light'|'dark') {
+  if (typeof window === 'undefined' || !(window as any).VoltGuardEmployeeModules) return getThemeTokens(mode);
+  // CSS variables inherit through the module host into ShadowRoot. Static
+  // StyleSheets therefore follow the site's theme without resetting forms.
+  const group = (name: 'bg'|'border'|'text') => Object.fromEntries(Object.entries(LIGHT_TOKENS[name]).map(([key, fallback]) => [key, `var(--vg-module-${name}-${key}, ${fallback})`]));
+  return { bg: group('bg'), border: group('border'), text: group('text') } as typeof LIGHT_TOKENS;
+}
+const __TOKENS = getDisplayTokens(__activeThemeMode);
 
 export const colors = {
   bg: { ...__TOKENS.bg, tertiary: __TOKENS.bg.secondary },

@@ -81,7 +81,7 @@ export default function WebhooksScreen() {
         <View style={styles.infoBox}>
           <Ionicons name="information-circle-outline" size={14} color="#8b5cf6" />
           <Text style={styles.infoText}>
-            Webhook'lar olay tetiklendiğinde POST isteği gönderir. Gizli anahtarınız X-SahaTakip-Secret başlığı ile iletilir.
+            Webhook'lar olay tetiklendiğinde POST isteği gönderir. Gizli anahtar yapılandırılan imza başlığı ile iletilir.
           </Text>
         </View>
 
@@ -139,7 +139,7 @@ export default function WebhooksScreen() {
               <Text style={styles.fLabel}>URL</Text>
               <TextInput style={styles.input} value={fUrl} onChangeText={setFUrl} placeholder="https://hooks.example.com/webhook" placeholderTextColor={colors.text.faint} autoCapitalize="none" />
               <Text style={styles.fLabel}>Gizli Anahtar (opsiyonel)</Text>
-              <TextInput style={styles.input} value={fSecret} onChangeText={setFSecret} placeholder="X-SahaTakip-Secret başlığı" placeholderTextColor={colors.text.faint} autoCapitalize="none" />
+              <TextInput style={styles.input} value={fSecret} onChangeText={setFSecret} placeholder="İmzalama anahtarı" placeholderTextColor={colors.text.faint} autoCapitalize="none" />
               <Text style={styles.fLabel}>Olaylar</Text>
               <View style={styles.evPicker}>
                 {WEBHOOK_EVENTS.map(ev => {

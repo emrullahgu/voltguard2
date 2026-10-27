@@ -4,7 +4,7 @@ import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const require = createRequire(import.meta.url);
-const {scopeCss} = require('../engineering/scope-css.cjs');
+const {scopeCompanyCss} = require('./scope-company-css.cjs');
 const root = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   base:'/calisan/uygulama/',
@@ -12,8 +12,7 @@ export default defineConfig({
     name:'company-css-isolation',
     generateBundle(_,bundle) {
       for(const asset of Object.values(bundle)) if(asset.type==='asset' && asset.fileName.endsWith('.css')) {
-        asset.source = scopeCss(String(asset.source)).replaceAll('#vg-tool-workspace','#vg-company-workspace')
-          .replace(/:where\(#vg-company-workspace\)\s+(#vg-company-workspace)/g,'$1');
+        asset.source = scopeCompanyCss(String(asset.source));
       }
     }
   }],

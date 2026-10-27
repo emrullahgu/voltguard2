@@ -11,12 +11,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, spacing, radius, typography } from '../theme';
 import { useAuth } from '../context/AuthContext';
 import { RootStackParamList } from '../types';
+import { isModuleHost } from '../portal/moduleHostBridge';
 
 const ROLE_LABEL: Record<string, string> = {
   admin: 'Yönetici', manager: 'Müdür', engineer: 'Mühendis', field: 'Saha Personeli',
 };
 
 export default function AppHeader({ title }: { title?: string }) {
+  if (isModuleHost()) return null;
   const nav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const { profile, user, signOut, isDemoMode } = useAuth();

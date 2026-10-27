@@ -59,7 +59,7 @@ export default function CpLoginScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={s.footer}>{brand?.footerText ?? '© 2024 SahaTakip'}</Text>
+        <Text style={s.footer}>{brand?.footerText ?? '© VoltGuard'}</Text>
       </ScrollView>
     </SafeAreaView>
   );

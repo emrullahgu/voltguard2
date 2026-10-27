@@ -226,7 +226,7 @@ Hatalı: ${res.failed}`);
         const history: AiMessage[] = next
           .filter(m => !m.pending)
           .map(m => ({ role: m.role, content: m.text }));
-        const sysMsg: AiMessage = { role: 'system', content: 'Sen SahaTakip\'in Türkçe konuşan saha asistanısın. Kısa, net, eyleme dönük yanıt ver.' };
+        const sysMsg: AiMessage = { role: 'system', content: 'Sen VoltGuard çalışanlarının Türkçe konuşan iş asistanısın. Kısa, net, eyleme dönük yanıt ver.' };
         const useStream = provider === 'openai' || provider === 'auto';
         if (useStream) {
           // Streaming: token token UI'a yansıt
@@ -333,7 +333,7 @@ Hatalı: ${res.failed}`);
     } else if (channel === 'gmail') {
       Alert.prompt?.('E-posta alıcısı', 'mail@firma.com', async (to) => {
         if (!to) return;
-        const r = await sendGmail({ to, subject: 'SahaTakip Asistan', text: last.text });
+        const r = await sendGmail({ to, subject: 'VoltGuard Asistan', text: last.text });
         Alert.alert(r.ok ? 'Gönderildi' : 'Hata', r.ok ? 'E-posta gönderildi.' : (r.error ?? 'Başarısız'));
       });
     } else {

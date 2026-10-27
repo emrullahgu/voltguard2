@@ -2,7 +2,7 @@
 // Şirket sunucusu + AsyncStorage cache. customerName/salespersonName local-only (not in schema).
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SalesVisit, SalesVisitOutcome } from '../types';
-import { supabase, SUPABASE_CONFIGURED } from './supabase';
+import { supabase } from './supabase';
 
 const KEY = '@SahaTakip:sales_visits';
 
@@ -50,30 +50,20 @@ function toRow(v: SalesVisit): Record<string, any> {
   return row;
 }
 
+async function cachedVisits(): Promise<SalesVisit[]> {
+  const raw = await AsyncStorage.getItem(KEY);
+  const list = raw ? JSON.parse(raw) : [];
+  if (!Array.isArray(list)) throw new Error('Kayıt önbelleği doğrulanamadı. Listeyi yenileyin.');
+  return list;
+}
 export async function listVisits(): Promise<SalesVisit[]> {
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase
-        .from('sales_visits')
-        .select('*')
-        .order('visit_date', { ascending: false });
-      if (!error && data) {
-        // Preserve customerName/salespersonName from cache if available
-        const cacheRaw = await AsyncStorage.getItem(KEY);
-        const cache: SalesVisit[] = cacheRaw ? JSON.parse(cacheRaw) : [];
-        const cacheById = new Map(cache.map(c => [c.id, c]));
-        const list = data.map((r: any) => fromRow(r, cacheById.get(r.id)));
-        await AsyncStorage.setItem(KEY, JSON.stringify(list));
-        return list;
-      }
-    } catch { /* fallback */ }
-  }
-  try {
-    const raw = await AsyncStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as SalesVisit[]) : [];
-  } catch {
-    return [];
-  }
+  const {data,error} = await supabase.from('sales_visits').select('*').order('visit_date',{ascending:false});
+  if (error) throw error;
+  if (!Array.isArray(data)) throw new Error('Sunucu kayıt listesi doğrulanamadı.');
+  const previous=new Map((await cachedVisits()).map(item=>[item.id,item]));
+  const list=data.map((row:any)=>fromRow(row,previous.get(row.id)));
+  await AsyncStorage.setItem(KEY,JSON.stringify(list));
+  return list;
 }
 
 export async function getVisit(id: string): Promise<SalesVisit | undefined> {
@@ -81,63 +71,34 @@ export async function getVisit(id: string): Promise<SalesVisit | undefined> {
   return all.find(v => v.id === id);
 }
 
-export async function createVisit(
-  input: Omit<SalesVisit, 'id' | 'createdAt'>,
-): Promise<SalesVisit> {
-  let next: SalesVisit = {
-    ...input,
-    id: rid(),
-    visitDate: input.visitDate || new Date().toISOString(),
-    createdAt: new Date().toISOString(),
-  };
-  if (SUPABASE_CONFIGURED && UUID_RE.test(next.customerId)) {
-    try {
-      const { data, error } = await supabase
-        .from('sales_visits')
-        .insert(toRow(next))
-        .select()
-        .single();
-      if (!error && data) next = fromRow(data, next);
-    } catch { /* keep local */ }
-  }
-  const all = await listVisits();
-  all.unshift(next);
-  await AsyncStorage.setItem(KEY, JSON.stringify(all));
-  return next;
+export async function createVisit(input:Omit<SalesVisit,'id'|'createdAt'>):Promise<SalesVisit> {
+  const draft:SalesVisit={...input,id:rid(),visitDate:input.visitDate||new Date().toISOString(),createdAt:new Date().toISOString()};
+  const {data,error}=await supabase.from('sales_visits').insert(toRow(draft)).select().single();
+  if(error)throw error;
+  if(!data?.id)throw new Error('Kayıt sonucu doğrulanamadı. Yeniden göndermeden önce listeyi kontrol edin.');
+  const saved=fromRow(data,draft),all=await cachedVisits();
+  await AsyncStorage.setItem(KEY,JSON.stringify([saved,...all.filter(item=>item.id!==saved.id)]));
+  return saved;
 }
-
-export async function updateVisit(
-  id: string,
-  patch: Partial<SalesVisit>,
-): Promise<SalesVisit | undefined> {
-  const all = await listVisits();
-  const i = all.findIndex(v => v.id === id);
-  if (i < 0) return undefined;
-  const merged: SalesVisit = { ...all[i], ...patch, id: all[i].id };
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try {
-      const { data, error } = await supabase
-        .from('sales_visits')
-        .update(toRow(merged))
-        .eq('id', id)
-        .select()
-        .single();
-      if (!error && data) all[i] = fromRow(data, merged);
-      else all[i] = merged;
-    } catch { all[i] = merged; }
-  } else {
-    all[i] = merged;
-  }
-  await AsyncStorage.setItem(KEY, JSON.stringify(all));
-  return all[i];
+export async function updateVisit(id:string,patch:Partial<SalesVisit>):Promise<SalesVisit|undefined> {
+  // Use the previously loaded DTO; a fresh server read would silently advance
+  // the native CAS revision and overwrite a concurrent employee edit.
+  const all=await cachedVisits(),previous=all.find(item=>item.id===id);
+  if(!previous)throw new Error('Güncel kayıt yüklenmeli. Listeyi yenileyin.');
+  const draft={...previous,...patch,id};
+  const {data,error}=await supabase.from('sales_visits').update(toRow(draft)).eq('id',id).select().single();
+  if(error)throw error;
+  if(!data?.id)throw new Error('Güncelleme sonucu doğrulanamadı. Listeyi kontrol edin.');
+  const saved=fromRow(data,draft);
+  await AsyncStorage.setItem(KEY,JSON.stringify(all.map(item=>item.id===id?saved:item)));
+  return saved;
 }
-
-export async function deleteVisit(id: string): Promise<void> {
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try { await supabase.from('sales_visits').delete().eq('id', id); } catch { /* ignore */ }
-  }
-  const all = await listVisits();
-  await AsyncStorage.setItem(KEY, JSON.stringify(all.filter(v => v.id !== id)));
+export async function deleteVisit(id:string):Promise<void> {
+  const {data,error}=await supabase.from('sales_visits').delete().eq('id',id).select('id');
+  if(error)throw error;
+  if(!Array.isArray(data)||!data.some(row=>row.id===id))throw new Error('Silme işlemi doğrulanamadı. Listeyi kontrol edin.');
+  const all=await cachedVisits();
+  await AsyncStorage.setItem(KEY,JSON.stringify(all.filter(item=>item.id!==id)));
 }
 
 export async function listByCustomer(customerId: string): Promise<SalesVisit[]> {

@@ -185,6 +185,20 @@ def saha_validate_change(actor, old, desired, records):
     if len(encode(payload).encode()) > 2 * 1024 * 1024:
         raise BridgeError("bridge_saha_capacity", 413)
     me = saha_staff_id(actor["id"])
+    if collection == "visits":
+        if desired is None or payload.get("user_id") != me or old and old.get("payload", {}).get("user_id") != me:
+            raise BridgeError("bridge_saha_visit_owner", 403)
+        if old:
+            previous = old["payload"]
+            if previous.get("end_at") or any(payload.get(f) != previous.get(f) for f in ("customer_id", "user_id", "start_at", "start_lat", "start_lng")):
+                raise BridgeError("bridge_saha_visit_immutable", 403)
+            if not payload.get("end_at") or payload.get("status") != "completed":
+                raise BridgeError("bridge_saha_visit_state")
+        else:
+            if payload.get("end_at") or payload.get("status") != "active":
+                raise BridgeError("bridge_saha_visit_state")
+            if any(r.get("collection") == "visits" and r.get("record_id") != identifier and r.get("payload", {}).get("user_id") == me and not r.get("payload", {}).get("end_at") for r in records.values()):
+                raise BridgeError("bridge_saha_visit_active", 409)
     if collection == "_cache":
         key, value = payload.get("key"), payload.get("value")
         if not isinstance(key, str) or key not in SAHA_SHARED_CACHE | SAHA_MANAGED_CACHE | SAHA_ADMIN_CACHE or identifier != hashlib.sha256(key.encode()).hexdigest():

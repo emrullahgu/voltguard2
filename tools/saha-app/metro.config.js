@@ -1,5 +1,7 @@
 const {getDefaultConfig}=require('expo/metro-config'); const path=require('path');
 const config=getDefaultConfig(__dirname);
+// Shared module entry policy is the same reviewed catalogue used by the host.
+config.watchFolders=[...new Set([...(config.watchFolders||[]),path.resolve(__dirname,'..')])];
 config.resolver.assetExts=[...new Set([...config.resolver.assetExts,'woff2','woff'])];
 const aliases={
  '@react-native-async-storage/async-storage':'src/portal/privateStorage.ts',
@@ -11,6 +13,10 @@ const aliases={
 };
 const original=config.resolver.resolveRequest;
 config.resolver.resolveRequest=(context,name,platform)=>{
+ if(platform==='web'&&/[/\\]react-native-web[/\\].*[/\\]Modal[/\\]index\.js$/.test(context.originModulePath||'')) {
+  const modal={ './ModalPortal':'src/portal/NativeModalPortal.tsx','./ModalFocusTrap':'src/portal/NativeModalFocusTrap.tsx' }[name];
+  if(modal)return {filePath:path.resolve(__dirname,modal),type:'sourceFile'};
+ }
  if(platform==='web'&&aliases[name])return {filePath:path.resolve(__dirname,aliases[name]),type:'sourceFile'};
  if(name==='@supabase/supabase-js')throw new Error('Remote SDK is not permitted in the employee app.');
  return original?original(context,name,platform):context.resolveRequest(context,name,platform);

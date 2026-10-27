@@ -58,6 +58,8 @@ export default function CustomerFormScreen() {
     setForm(prev => ({ ...prev, [k]: v }));
 
   const [enriching, setEnriching] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const submitting = React.useRef(false);
   const enrich = async () => {
     const name = (form.title || form.shortName || '').trim();
     if (!name) { Alert.alert('Apollo', 'Önce firma adını (kısa ad/ünvan) girin.'); return; }
@@ -84,6 +86,7 @@ export default function CustomerFormScreen() {
   };
 
   const handleSave = async () => {
+    if (submitting.current) return;
     if (!form.shortName.trim() || !form.title.trim()) {
       Alert.alert('Eksik bilgi', 'Kısa ad ve resmi ünvan zorunludur.');
       return;
@@ -107,9 +110,16 @@ export default function CustomerFormScreen() {
 
     // Kayıt başarısını bekle: başarısızsa formu KAPATMA (önceden kullanıcı eklendi
     // sanıp çıkıyordu ama DB'de yoktu — Req#3). Hata toast'ı AppContext'ten gelir.
-    const res = isEdit ? await updateCustomer(form) : await addCustomer(form);
-    if (!res.ok) return;
-    navigation.goBack();
+    submitting.current = true;
+    setSaving(true);
+    try {
+      const res = isEdit ? await updateCustomer(form) : await addCustomer(form);
+      if (!res.ok) return;
+      navigation.goBack();
+    } finally {
+      submitting.current = false;
+      setSaving(false);
+    }
   };
 
   return (
@@ -185,9 +195,9 @@ export default function CustomerFormScreen() {
             </>
           )}
 
-          <TouchableOpacity style={styles.saveBtn} onPress={handleSave} activeOpacity={0.85}>
+          <TouchableOpacity style={[styles.saveBtn, saving && { opacity: 0.6 }]} onPress={handleSave} disabled={saving} accessibilityState={{ busy: saving, disabled: saving }} activeOpacity={0.85}>
             <Ionicons name={isEdit ? 'save-outline' : 'add-circle-outline'} size={18} color="#fff" />
-            <Text style={styles.saveBtnText}>{isEdit ? 'Güncelle' : 'Müşteri Ekle'}</Text>
+            <Text style={styles.saveBtnText}>{saving ? 'Kaydediliyor…' : isEdit ? 'Güncelle' : 'Müşteri Ekle'}</Text>
           </TouchableOpacity>
 
           {isEdit && (

@@ -4028,6 +4028,7 @@ export type RootStackParamList = {
   ApolloLeads: undefined;
   Map: undefined;
   Shift: undefined;
+  Employees: undefined;
   EmployeeDetail: { employeeId: string };
   LocationHistory: { userId: string; employeeName?: string };
   Geofences: undefined;

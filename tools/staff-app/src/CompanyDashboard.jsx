@@ -16,7 +16,7 @@ export default function CompanyDashboard({ invoice1, invoice2, cable, stats, pro
   const summary = dashboardSummary(invoice1, invoice2, cable);
   const categories = stats.kategoriSayilari.filter(category => category.adet > 0);
   return <div className="space-y-6" data-company-dashboard="">
-    <section className="saha-launcher" aria-labelledby="saha-launcher-title"><div><p className="saha-launcher__eyebrow">Saha ve ofis</p><h2 id="saha-launcher-title">SahaTakip</h2><p>İş emirlerini planlayın; teklif, müşteri ve ekip çalışmalarını takip edin.</p></div><button type="button" onClick={() => onSelect('saha-takip')}>SahaTakip’i aç <span aria-hidden="true">→</span></button></section>
+
     <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg p-8 text-white">
       <h1 className="text-3xl font-bold mb-2">VoltGuard Ürün ve Fiyat Veritabanı</h1>
       <p className="text-indigo-100">Yüklenen geçmiş fatura ürünleri ve birim fiyatlarının analizi. Güncel katalog veya güncel satış fiyatı değildir.</p>

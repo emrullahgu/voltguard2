@@ -45,7 +45,7 @@
   # Original imports and game development sources are never public.
   RewriteRule ^(tools|voltguardekleyelim|vesikalar|VoltGame|SahaTakip-main)(/|$) - [F,L,NC]
   RewriteRule ^calisan/shared-(header|footer)\.html$ - [F,L,NC]
-  RewriteRule ^calisan/uygulama/(entry-tags\.html|saha-entry\.html|index\.html|\.vite)(/|$) - [F,L,NC]
+  RewriteRule ^calisan/uygulama/(entry-tags\.html|saha-entry\.html|employee-modules-manifest\.json|index\.html|\.vite)(/|$) - [F,L,NC]
   RewriteRule ^calisan/uygulama$ /calisan/uygulama/ [R=301,L]
   RewriteRule ^calisan/uygulama/$ /calisan/uygulama/index.php [L]
   RewriteRule ^calisan/uygulama/(assets|fonts|licenses)/(.*)$ /api/company-asset.php?file=$1/$2 [L]

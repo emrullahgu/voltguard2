@@ -59,6 +59,7 @@ function vg_saha_visible(array $s,array $u,string $table,array $record): bool {
 }
 function vg_saha_writable(array $s,array $u,string $table,?array $record,array $row,string $operation): void {
     $me=vg_saha_user_id($u); $admin=$u['role']==='admin'; $old=$record['payload']??null;
+    if($table==='visits')vg_company_fail(403,'saha_visit_rpc','Ziyaretler giriş ve çıkış işlemleriyle kaydedilir.');
     if(in_array($table,VG_SAHA_DENIED,true) || in_array($table,['profiles','latest_locations'],true)) vg_company_fail(403,'saha_readonly','Bu alan mevcut çalışan yönetiminden veya sunucu bağlantısından yönetilir.');
     if(in_array($table,VG_SAHA_HR,true) && !vg_company_manage($u)) vg_company_fail(403,'saha_payroll','Personel ve bordro yönetim yetkisi gerekiyor.');
     if($record && !vg_saha_visible($s,$u,$table,$record)) vg_company_fail(403,'saha_scope','Bu kayıt için erişiminiz yok.');
@@ -277,6 +278,43 @@ function vg_saha_run_due_templates(array &$s,array $u): array {
     }
     return ['orders'=>$orders,'tableVersions'=>$versions?: (object)[]];
 }
+function vg_saha_visit_result(?array $record,array $checks=[]): array {
+    if(!$record)return ['visit'=>null,'revision'=>0];
+    return ['visit'=>$record['payload'],'revision'=>$record['revision'],'tableVersions'=>['visits'=>[$record['record_id']=>$record['revision']]]+($checks?['location_checkins'=>$checks]:[])];
+}
+function vg_saha_visit(array &$s,array $u,string $operation,array $a): array {
+    $me=vg_saha_user_id($u);$active=null;
+    foreach(vg_saha_all($s,'visits')as $record)if(($record['payload']['user_id']??null)===$me&&empty($record['payload']['end_at'])){
+        if($active)vg_company_conflict('Birden fazla açık ziyaret bulundu. Kayıtlarınızı yöneticiyle kontrol edin.');
+        $active=$record;
+    }
+    if($operation==='visit_active')return vg_saha_visit_result($active);
+    $lat=$a['lat']??null;$lng=$a['lng']??null;
+    if((!is_int($lat)&&!is_float($lat))||(!is_int($lng)&&!is_float($lng))||!is_finite((float)$lat)||!is_finite((float)$lng)||$lat < -90||$lat > 90||$lng < -180||$lng > 180)vg_company_fail(422,'saha_visit_location','Geçerli konum bilgisi gerekiyor.');
+    $now=vg_company_time();$checks=[];
+    if($operation==='visit_check_in'){
+        $customer=vg_saha_find($s,'customers',$a['customer_id']??null);
+        if(!$customer||!empty($customer['payload']['deleted_at'])||!vg_saha_visible($s,$u,'customers',$customer))vg_company_fail(422,'saha_reference','Ziyaret için kayıtlı bir müşteri seçin.');
+        if($active){if($active['payload']['customer_id']!==$customer['record_id'])vg_company_conflict('Önce açık ziyaretinizi tamamlayın.');return vg_saha_visit_result($active);}
+        $id=vg_company_id();$payload=['id'=>$id,'user_id'=>$me,'customer_id'=>$customer['record_id'],'customer_name'=>$customer['payload']['short_name']??$customer['payload']['title']??'','start_at'=>$now,'start_lat'=>$lat,'start_lng'=>$lng,'end_at'=>null,'status'=>'active','notes'=>'','photos'=>[],'created_at'=>$now,'updated_at'=>$now,'created_by'=>$me,'updated_by'=>$me];
+        $saved=vg_saha_put($s,$u,'visits',$payload,null);$kind='start';
+    }else{
+        $old=vg_saha_find($s,'visits',$a['id']??null);
+        if(!$old||($old['payload']['user_id']??null)!==$me)vg_company_fail(404,'saha_visit_missing','Ziyaret kaydı bulunamadı.');
+        // Retry of a confirmed checkout is idempotent and never adds another check-in event.
+        if(!empty($old['payload']['end_at']))return vg_saha_visit_result($old);
+        vg_saha_expect_version($old,[$old['record_id']=>$a['revision']??null],$old['record_id']);
+        $notes=$a['notes']??'';$photos=$a['photos']??[];
+        if(!is_string($notes)||strlen($notes)>8000||!is_array($photos)||($photos!==[]&&!array_is_list_compat($photos))||count($photos)>20)vg_company_fail(422,'saha_visit_notes','Ziyaret notu veya görsellerini kontrol edin.');
+        foreach($photos as $photo)if(!is_string($photo)||strlen($photo)>2000||strpos($photo,'/api/saha-asset.php?')!==0)vg_company_fail(422,'saha_visit_photos','Yalnız şirket dosya alanındaki görseller eklenebilir.');
+        $payload=array_merge($old['payload'],['end_at'=>$now,'end_lat'=>$lat,'end_lng'=>$lng,'status'=>'completed','notes'=>$notes,'photos'=>$photos,'updated_at'=>$now,'updated_by'=>$me]);
+        $saved=vg_saha_put($s,$u,'visits',$payload,$old);$id=$old['record_id'];$kind='end';
+    }
+    $checkId=vg_saha_uuid('visit-'.$kind.':'.$id);
+    $check=['id'=>$checkId,'user_id'=>$me,'customer_id'=>$saved['payload']['customer_id'],'site_code'=>'visit:'.$id.':'.$kind,'method'=>'manual','lat'=>$lat,'lng'=>$lng,'recorded_at'=>$now,'created_at'=>$now,'updated_at'=>$now,'created_by'=>$me,'updated_by'=>$me];
+    $checkRecord=vg_saha_put($s,$u,'location_checkins',$check,null);$checks[$checkId]=$checkRecord['revision'];
+    return vg_saha_visit_result($saved,$checks);
+}
 function vg_saha_rpc(array &$s,array $u,string $name,array $a){
     if($name==='app_saha_bootstrap'){
         $cache=[];$sharedKeys=vg_saha_shared_cache_keys();foreach($s['storage'][$u['id']]??[]as $key=>$value)if(strpos($key,'saha:')===0&&!in_array(substr($key,5),$sharedKeys,true))$cache[substr($key,5)]=$value;
@@ -289,6 +327,7 @@ function vg_saha_rpc(array &$s,array $u,string $name,array $a){
         $source=$a['name']??'';$args=$a['args']??[];if(!is_string($source)||!is_array($args))vg_company_fail(400,'saha_rpc');
         if($source==='list_all_users'){if($u['role']!=='admin')vg_company_fail(403,'saha_admin');return vg_saha_profiles($u);}
         if($source==='bump_app_usage')return vg_saha_bump_usage($s,$u,$args);
+        if(in_array($source,['visit_active','visit_check_in','visit_check_out'],true))return vg_saha_visit($s,$u,$source,$args);
         if($source==='run_due_templates')return vg_saha_run_due_templates($s,$u);
         if($source==='is_name_available'){$requested=$args['p_name']??$args['name']??'';if(!is_string($requested)||strlen($requested)>120)vg_company_fail(400,'saha_name');foreach(vg_saha_profiles($u)as $p)if(strcasecmp($p['full_name'],$requested)===0)return false;return true;}
         vg_company_fail(503,'saha_service_unavailable','Bu işlem mevcut çalışan yönetiminden veya yapılandırılmış sunucu bağlantısından yürütülmelidir.');

@@ -1,22 +1,10 @@
 // ====================================================================
 // vehicles — POZ-DEV-060
-// Araç kataloğu + sürücü eşleştirme. Şirket sunucusu + AsyncStorage cache.
+// Araç kataloğu + sürücü eşleştirme. Yalnız doğrulanmış şirket sunucusu kayıtları.
 // ====================================================================
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Vehicle } from '../types';
-import { supabase, SUPABASE_CONFIGURED } from './supabase';
-import { auditRepo } from './data/auditRepo';
-
-async function currentUserId(): Promise<string | null> {
-  try {
-    const { data } = await supabase.auth.getUser();
-    return data.user?.id ?? null;
-  } catch { return null; }
-}
-
-const KEY = '@SahaTakip:vehicles';
-
+import { supabase } from './supabase';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function uuidOrNull(v?: string | null): string | null { return v && UUID_RE.test(v) ? v : null; }
 
@@ -79,25 +67,10 @@ function toRow(v: Vehicle): Record<string, any> {
 }
 
 export async function listVehicles(): Promise<Vehicle[]> {
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase
-        .from('vehicles')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (!error && data) {
-        const list = data.map(fromRow);
-        await AsyncStorage.setItem(KEY, JSON.stringify(list));
-        return list;
-      }
-    } catch { /* fallback */ }
-  }
-  try {
-    const raw = await AsyncStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as Vehicle[]) : [];
-  } catch {
-    return [];
-  }
+  const { data, error } = await supabase.from('vehicles').select('*').order('created_at', { ascending: false });
+  if (error) throw error;
+  if (!Array.isArray(data)) throw new Error('Araç listesi sunucudan doğrulanamadı. Yeniden yükleyin.');
+  return data.map(fromRow);
 }
 
 export async function getVehicle(id: string): Promise<Vehicle | null> {
@@ -112,63 +85,20 @@ export async function findVehicleByPlate(plate: string): Promise<Vehicle | null>
   return all.find(v => v.plate.replace(/\s+/g, '').toUpperCase() === norm) ?? null;
 }
 
-export async function saveVehicles(list: Vehicle[]) {
-  await AsyncStorage.setItem(KEY, JSON.stringify(list));
+export async function upsertVehicle(v: Vehicle): Promise<Vehicle> {
+  // Do not refresh rows before writing: the native query must retain the form's
+  // previously observed CAS revision so another employee's edit is not overwritten.
+  const { data, error } = await supabase.from('vehicles').upsert(toRow(v), { onConflict: 'id' }).select().single();
+  if (error) throw error;
+  if (!data?.id) throw new Error('Araç işleminin sonucu doğrulanamadı. Yeniden göndermeden önce kayıt listesini kontrol edin.');
+  return fromRow(data);
 }
 
-export async function upsertVehicle(v: Vehicle) {
-  let saved: Vehicle = v;
-  const isNew = !UUID_RE.test(v.id) || !(await getVehicle(v.id));
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase
-        .from('vehicles')
-        .upsert(toRow(v), { onConflict: 'id' })
-        .select()
-        .single();
-      if (error) {
-        console.warn('[vehicles.upsert]', error.message);
-      } else if (data) {
-        saved = fromRow(data);
-      }
-    } catch (e: any) {
-      console.warn('[vehicles.upsert.exception]', e?.message ?? e);
-    }
-  }
-  const all = await listVehicles();
-  const idx = all.findIndex(x => x.id === saved.id || x.id === v.id);
-  if (idx >= 0) all[idx] = saved;
-  else all.unshift(saved);
-  await saveVehicles(all);
-  // Audit
-  const uid = await currentUserId();
-  if (uid) {
-    void auditRepo.log(uid, {
-      action: isNew ? 'vehicle.create' : 'vehicle.update',
-      tableName: 'vehicles',
-      refId: saved.id,
-      meta: { plate: saved.plate },
-    });
-  }
-}
-
-export async function deleteVehicle(id: string) {
-  const target = await getVehicle(id);
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try { await supabase.from('vehicles').delete().eq('id', id); } catch { /* ignore */ }
-  }
-  const all = await listVehicles();
-  await saveVehicles(all.filter(v => v.id !== id));
-  // Audit
-  const uid = await currentUserId();
-  if (uid) {
-    void auditRepo.log(uid, {
-      action: 'vehicle.delete',
-      tableName: 'vehicles',
-      refId: id,
-      meta: { plate: target?.plate },
-    });
-  }
+export async function deleteVehicle(id: string): Promise<void> {
+  if (!id) throw new Error('Silinecek araç seçilmelidir.');
+  const { data, error } = await supabase.from('vehicles').delete().eq('id', id).select('id');
+  if (error) throw error;
+  if (!Array.isArray(data) || !data.some(row => row.id === id)) throw new Error('Araç silme işlemi doğrulanamadı. Güncel kayıt listesini kontrol edin.');
 }
 
 export function newVehicle(): Vehicle {

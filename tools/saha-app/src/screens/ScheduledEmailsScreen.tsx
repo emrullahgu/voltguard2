@@ -396,7 +396,7 @@ function EditModal({
                 style={styles.input}
                 value={editing.subject_template ?? ''}
                 onChangeText={t => setField('subject_template', t)}
-                placeholder="SahaTakip {{label}} Rapor — {{date}}"
+                placeholder="VoltGuard {{label}} Rapor — {{date}}"
                 placeholderTextColor={colors.text.faint}
               />
             </Field>

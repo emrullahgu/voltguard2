@@ -1,11 +1,13 @@
 /* Native employee-session transport. No browser token or third-party SDK. */
+import { scopedFetch } from './networkPolicy';
+import { emitModuleEvent } from './moduleHostBridge';
 export type PortalUser = { id: string; email?: string; user_metadata?: { full_name?: string }; app_metadata?: { role?: string } };
 export type PortalBootstrap = { user: PortalUser; profile: any; capabilities: Record<string, any>; cache?: Record<string, string>; sharedCacheKeys?: string[] };
 let csrf = '';
 let identity: PortalBootstrap | null = null;
 let booting: Promise<PortalBootstrap> | null = null;
 const resetters = new Set<() => void>();
-const nativeFetch = globalThis.fetch.bind(globalThis);
+const nativeFetch = scopedFetch;
 let pendingWrites=0;
 let writeError='';
 export type WriteFailureOutcome = 'rejected' | 'unknown';
@@ -15,6 +17,7 @@ export function getWriteStatus(){return {pending:pendingWrites,error:writeError|
 function publishWrites(){postParent('vg:saha-storage',getWriteStatus());}
 export function getPendingWrites(){return pendingWrites;}
 export function reportWriteFailure(error:any,outcome?:WriteFailureOutcome){
+  if(error?.quietTelemetry===true)return;
   writeError=String(error?.message||error);
   const status=Number(error?.status);
   writeOutcome=outcome||error?.writeOutcome||(status>=400&&status<500&&status!==408?'rejected':'unknown');
@@ -25,9 +28,10 @@ export function clearWriteFailure(){
   writeError='';writeOutcome=null;publishWrites();return true;
 }
 export function postParent(type: string, fields: Record<string, any> = {}) {
-  if (typeof window !== 'undefined' && window.parent !== window) window.parent.postMessage({ type, ...fields }, window.location.origin);
+  emitModuleEvent(type, fields);
 }
 export function reportPortalError(error: any) {
+  if(error?.quietTelemetry===true)return error;
   const message = String(error?.message || error || 'İşlem tamamlanamadı.');
   if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('vg:saha-notice', { detail: message }));
   postParent('vg:saha-notice', { message });
@@ -44,7 +48,7 @@ function loginRequired() {
   clearPortalMemory();
   if (typeof window !== 'undefined') window.top!.location.replace('/calisan/giris.html');
 }
-export async function transport(action: string, body?: unknown, endpoint = '/api/company.php', expected = 'vg-company/1'): Promise<any> {
+export async function transport(action: string, body?: unknown, endpoint = '/api/company.php', expected = 'vg-company/1', quietTelemetry = false): Promise<any> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 30000);
   try {
@@ -69,7 +73,9 @@ export async function transport(action: string, body?: unknown, endpoint = '/api
     return payload.data;
   } catch (error: any) {
     if (error?.name === 'AbortError') error = Object.assign(new Error('Şirket sunucusu zamanında yanıt vermedi. İşlemin sonucu doğrulanamadı; yeniden göndermeden önce kayıt listesini kontrol edin.'),{writeOutcome:'unknown'});
-    reportPortalError(error); throw error;
+    if(quietTelemetry)error=Object.assign(error instanceof Error?error:new Error(String(error?.message||error)),{quietTelemetry:true});
+    else reportPortalError(error);
+    throw error;
   } finally { clearTimeout(timer); }
 }
 export function bootstrapPortal(force = false): Promise<PortalBootstrap> {
@@ -86,9 +92,11 @@ export function bootstrapPortal(force = false): Promise<PortalBootstrap> {
   return booting;
 }
 export async function portalRpc<T = any>(name: string, args: Record<string, any> = {}): Promise<T> {
-  const mutation=(name==='app_saha_query'&&args.operation!=='select')||(name==='app_saha_cache'&&['set','remove','clear'].includes(args.operation))||(name==='app_saha_storage'&&['upload','remove'].includes(args.operation))||['app_saha_rpc','app_saha_function'].includes(name);
+  const telemetry=(name==='app_saha_cache'&&args.key==='app_usage_buffer_v1'&&['get','set'].includes(args.operation))||(name==='app_saha_rpc'&&args.name==='bump_app_usage');
+  const readOnlyRpc=name==='app_saha_rpc'&&args.name==='visit_active';
+  const mutation=!telemetry&&!readOnlyRpc&&((name==='app_saha_query'&&args.operation!=='select')||(name==='app_saha_cache'&&['set','remove','clear'].includes(args.operation))||(name==='app_saha_storage'&&['upload','remove'].includes(args.operation))||['app_saha_rpc','app_saha_function'].includes(name));
   if(mutation){pendingWrites++;publishWrites();}
-  try {await bootstrapPortal();return await transport('rpc', { name, args });}
+  try {await bootstrapPortal();return await transport('rpc', { name, args },'/api/company.php','vg-company/1',telemetry);}
   catch(error){if(mutation)reportWriteFailure(error);throw error;}
   finally{if(mutation){pendingWrites--;publishWrites();}}
 }

@@ -2,7 +2,7 @@
 // Sayaç / Pano / Trafo / GES ölçüm kayıtları. Şirket sunucusu + AsyncStorage cache.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { EnergyReading, EnergyReadingKind } from '../types';
-import { supabase, SUPABASE_CONFIGURED } from './supabase';
+import { supabase } from './supabase';
 
 const KEY = '@SahaTakip:energy_readings';
 
@@ -90,29 +90,20 @@ function rid(): string {
   return 'rd_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
 }
 
+async function cachedReadings(): Promise<EnergyReading[]> {
+  const raw = await AsyncStorage.getItem(KEY);
+  const list = raw ? JSON.parse(raw) : [];
+  if (!Array.isArray(list)) throw new Error('Kayıt önbelleği doğrulanamadı. Listeyi yenileyin.');
+  return list;
+}
 export async function listReadings(): Promise<EnergyReading[]> {
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase
-        .from('energy_readings')
-        .select('*')
-        .order('date', { ascending: false });
-      if (!error && data) {
-        const cacheRaw = await AsyncStorage.getItem(KEY);
-        const cache: EnergyReading[] = cacheRaw ? JSON.parse(cacheRaw) : [];
-        const cacheById = new Map(cache.map(c => [c.id, c]));
-        const list = data.map((r: any) => fromRow(r, cacheById.get(r.id)));
-        await AsyncStorage.setItem(KEY, JSON.stringify(list));
-        return list;
-      }
-    } catch { /* fallback */ }
-  }
-  try {
-    const raw = await AsyncStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as EnergyReading[]) : [];
-  } catch {
-    return [];
-  }
+  const {data,error} = await supabase.from('energy_readings').select('*').order('date',{ascending:false});
+  if (error) throw error;
+  if (!Array.isArray(data)) throw new Error('Sunucu kayıt listesi doğrulanamadı.');
+  const previous=new Map((await cachedReadings()).map(item=>[item.id,item]));
+  const list=data.map((row:any)=>fromRow(row,previous.get(row.id)));
+  await AsyncStorage.setItem(KEY,JSON.stringify(list));
+  return list;
 }
 
 export async function getReading(id: string): Promise<EnergyReading | undefined> {
@@ -120,62 +111,34 @@ export async function getReading(id: string): Promise<EnergyReading | undefined>
   return all.find(r => r.id === id);
 }
 
-export async function createReading(
-  input: Omit<EnergyReading, 'id' | 'createdAt'>,
-): Promise<EnergyReading> {
-  let next: EnergyReading = {
-    ...input,
-    id: rid(),
-    date: input.date || new Date().toISOString(),
-    createdAt: new Date().toISOString(),
-  };
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase
-        .from('energy_readings')
-        .insert(toRow(next))
-        .select()
-        .single();
-      if (!error && data) next = fromRow(data, next);
-    } catch { /* keep local */ }
-  }
-  const all = await listReadings();
-  all.unshift(next);
-  await AsyncStorage.setItem(KEY, JSON.stringify(all));
-  return next;
+export async function createReading(input:Omit<EnergyReading,'id'|'createdAt'>):Promise<EnergyReading> {
+  const draft:EnergyReading={...input,id:rid(),date:input.date||new Date().toISOString(),createdAt:new Date().toISOString()};
+  const {data,error}=await supabase.from('energy_readings').insert(toRow(draft)).select().single();
+  if(error)throw error;
+  if(!data?.id)throw new Error('Kayıt sonucu doğrulanamadı. Yeniden göndermeden önce listeyi kontrol edin.');
+  const saved=fromRow(data,draft),all=await cachedReadings();
+  await AsyncStorage.setItem(KEY,JSON.stringify([saved,...all.filter(item=>item.id!==saved.id)]));
+  return saved;
 }
-
-export async function updateReading(
-  id: string,
-  patch: Partial<EnergyReading>,
-): Promise<EnergyReading | undefined> {
-  const all = await listReadings();
-  const i = all.findIndex(r => r.id === id);
-  if (i < 0) return undefined;
-  let merged: EnergyReading = { ...all[i], ...patch, id: all[i].id };
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try {
-      const { data, error } = await supabase
-        .from('energy_readings')
-        .update(toRow(merged))
-        .eq('id', id)
-        .select()
-        .single();
-      if (!error && data) merged = fromRow(data, merged);
-    } catch { /* ignore */ }
-  }
-  all[i] = merged;
-  await AsyncStorage.setItem(KEY, JSON.stringify(all));
-  return all[i];
+export async function updateReading(id:string,patch:Partial<EnergyReading>):Promise<EnergyReading|undefined> {
+  // Use the previously loaded DTO; a fresh server read would silently advance
+  // the native CAS revision and overwrite a concurrent employee edit.
+  const all=await cachedReadings(),previous=all.find(item=>item.id===id);
+  if(!previous)throw new Error('Güncel kayıt yüklenmeli. Listeyi yenileyin.');
+  const draft={...previous,...patch,id};
+  const {data,error}=await supabase.from('energy_readings').update(toRow(draft)).eq('id',id).select().single();
+  if(error)throw error;
+  if(!data?.id)throw new Error('Güncelleme sonucu doğrulanamadı. Listeyi kontrol edin.');
+  const saved=fromRow(data,draft);
+  await AsyncStorage.setItem(KEY,JSON.stringify(all.map(item=>item.id===id?saved:item)));
+  return saved;
 }
-
-export async function deleteReading(id: string): Promise<void> {
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try { await supabase.from('energy_readings').delete().eq('id', id); } catch { /* ignore */ }
-  }
-  const all = await listReadings();
-  const next = all.filter(r => r.id !== id);
-  await AsyncStorage.setItem(KEY, JSON.stringify(next));
+export async function deleteReading(id:string):Promise<void> {
+  const {data,error}=await supabase.from('energy_readings').delete().eq('id',id).select('id');
+  if(error)throw error;
+  if(!Array.isArray(data)||!data.some(row=>row.id===id))throw new Error('Silme işlemi doğrulanamadı. Listeyi kontrol edin.');
+  const all=await cachedReadings();
+  await AsyncStorage.setItem(KEY,JSON.stringify(all.filter(item=>item.id!==id)));
 }
 
 export async function listByAsset(assetId: string): Promise<EnergyReading[]> {
