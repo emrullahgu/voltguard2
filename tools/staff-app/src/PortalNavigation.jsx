@@ -10,6 +10,7 @@ export const PORTAL_MODULES = [
   { id: 'ges', label: 'GES teklifi', group: 'Teklifler' },
   { id: 'saved', label: 'Kaydedilen teklifler', group: 'Teklifler' },
   { id: 'proposal', label: 'Teklif önizleme', group: 'Teklifler', draftOnly: true },
+  { id: 'saha-takip', label: 'SahaTakip', group: 'İş ve kayıtlar' },
   { id: 'gorev', label: 'Görev takibi', group: 'İş ve kayıtlar' },
   { id: 'is-takip', label: 'İş takibi', group: 'İş ve kayıtlar' },
   { id: 'urun-takip', label: 'Ürün takibi', group: 'İş ve kayıtlar' },

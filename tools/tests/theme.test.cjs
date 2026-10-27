@@ -73,7 +73,7 @@ test('Shell follows system preference after another tab removes or clears the th
 
 test('Every shell page initializes the theme and none is light-only', () => {
   const skip = new Set(['node_modules', 'tools', '.qa', '.git', '.claude', 'public',
-    '.netlify-publish', 'voltguardekleyelim', 'vesikalar', 'VoltGame', 'voltgame']);
+    '.netlify-publish', 'voltguardekleyelim', 'vesikalar', 'VoltGame', 'voltgame', 'SahaTakip-main']);
   const pages = [];
   (function walk(dir) {
     for (const e of fs.readdirSync(path.join(root, dir), { withFileTypes: true })) {

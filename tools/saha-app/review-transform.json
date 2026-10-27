@@ -1,0 +1,140 @@
+{
+  "date": "2026-10-27",
+  "notes": [
+    "No original source changed",
+    "Private source catalogs excluded",
+    "Seed object arrays removed",
+    "Unconfigured external services fail closed",
+    "No offline commits"
+  ],
+  "records": [
+    {
+      "file": "src/screens/NcPhotoEvidenceScreen.tsx",
+      "edits": 1
+    },
+    {
+      "file": "src/services/advanced.ts",
+      "edits": 8
+    },
+    {
+      "file": "src/services/ai.ts",
+      "edits": 17
+    },
+    {
+      "file": "src/services/aiAssistant.ts",
+      "edits": 25
+    },
+    {
+      "file": "src/services/aiChatSessions.ts",
+      "edits": 7
+    },
+    {
+      "file": "src/services/aiCopilot.ts",
+      "edits": 6
+    },
+    {
+      "file": "src/services/aiKnowledgeBase.ts",
+      "edits": 5
+    },
+    {
+      "file": "src/services/aiRouter.ts",
+      "edits": 15
+    },
+    {
+      "file": "src/services/aiTelemetry.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/apollo.ts",
+      "edits": 5
+    },
+    {
+      "file": "src/services/calendar.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/enterpriseIntegrations.ts",
+      "edits": 40
+    },
+    {
+      "file": "src/services/extensions.ts",
+      "edits": 4
+    },
+    {
+      "file": "src/services/fieldOps.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/formTemplates.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/gesProposals.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/integrations.ts",
+      "edits": 17
+    },
+    {
+      "file": "src/services/liveOps.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/messaging.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/osos.ts",
+      "edits": 21
+    },
+    {
+      "file": "src/services/parasut.ts",
+      "edits": 10
+    },
+    {
+      "file": "src/services/payroll.ts",
+      "edits": 2
+    },
+    {
+      "file": "src/services/performance.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/photoUpload.ts",
+      "edits": 2
+    },
+    {
+      "file": "src/services/platform.ts",
+      "edits": 4
+    },
+    {
+      "file": "src/services/productItems.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/quoteTemplates.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/recurringTasks.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/taskCollab.ts",
+      "edits": 2
+    },
+    {
+      "file": "src/services/tasks.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/transformerProposals.ts",
+      "edits": 1
+    },
+    {
+      "file": "src/services/users.ts",
+      "edits": 1
+    }
+  ]
+}

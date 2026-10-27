@@ -109,7 +109,7 @@ fa-handshake fa-lightbulb fa-bullseye fa-rocket fa-warehouse fa-truck-fast
 
 # Files / folders the scanner never reads.
 SKIP_DIRS = {'.git', 'node_modules', 'tools', 'fonts', '__pycache__',
-             'voltguardekleyelim', 'araclar', '.qa'}
+             'voltguardekleyelim', 'SahaTakip-main', 'araclar', '.qa'}
 SKIP_FILES = {'css/fa-subset.css', 'css/fonts.css'}
 SCAN_EXT = ('.html', '.htm', '.php', '.js', '.mjs', '.css')
 # Folders below a skipped one that ARE read: the shared header/footer/head fragments that

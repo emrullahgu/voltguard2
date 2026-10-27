@@ -62,6 +62,16 @@ function api(string $method, string $path, ?array $json = null, array $headers =
 
 // ------------------------------------------------------------------ yönlendirme ve statik sayfalar
 echo "## Rotalar\n";
+// The imported native workspace stays private under actual Apache rewrites.
+expectStatus('/calisan/uygulama/saha.php', 303, '', null, '/calisan/giris.html');
+expectStatus('/calisan/uygulama/saha-entry.html', 403);
+$sahaAssets = glob('/var/www/html/calisan/uygulama/assets/saha/_expo/static/js/web/*.js') ?: [];
+line(count($sahaAssets) > 0, 'Saha web export is present in the private deployment');
+if ($sahaAssets) {
+    $sahaPath = substr($sahaAssets[0], strlen('/var/www/html'));
+    expectStatus($sahaPath, 401, 'application/json', 'staff_unauthorized');
+}
+expectStatus('/api/saha-asset.php?bucket=photos&path=synthetic-missing.png', 401, 'application/json', 'staff_unauthorized');
 expectStatus('/voltsim/', 200, 'text/html', 'VoltSim');
 expectStatus('/voltsim', 301, '', null, '/voltsim/');
 expectStatus('/voltsim.html', 301, '', null, '/voltsim/');
@@ -114,8 +124,7 @@ line($p['status'] === 200 && stripos($p['type'], 'application/json') === 0 && ($
     'metrics popular: JSON ve ok', $p['status'] . ' ' . substr($p['body'], 0, 120));
 
 echo "## Gerçek yazma işlemleri\n";
-// 1) Ölçüm: tarayıcı beacon'ı gibi text/plain gövde; günlük toplam dosyasında sayılmalı
-$day = date('Y-m-d');
+// 1) Loopback hazırlık trafiği canlı rapora karışmadan test toplamlarına yazılmalı.
 // js/vg-metrics.js ile aynı gövde: {v:1, ev:[{e,p,r,se,d}]}
 $payload = json_encode(['v' => 1, 'ev' => [['e' => 'pageview', 'p' => '/voltsim/', 'r' => 'arama', 'se' => 'google', 'd' => 'masaustu']]]);
 $ctx = stream_context_create(['http' => ['method' => 'POST', 'ignore_errors' => true, 'content' => $payload,
@@ -123,12 +132,21 @@ $ctx = stream_context_create(['http' => ['method' => 'POST', 'ignore_errors' => 
 $resp = @file_get_contents($base . '/api/metrics.php?action=collect', false, $ctx);
 $st = 0; foreach ($http_response_header ?? [] as $hl) if (preg_match('#^HTTP/\S+ (\d{3})#', $hl, $mm)) $st = (int)$mm[1];
 clearstatcache();
-$files = glob($data . '/metrics/days/*') ?: [];
+$collected = json_decode((string)$resp, true);
+$bucketDirectory = ['live' => 'days', 'test' => 'test-days'][$collected['bucket'] ?? ''] ?? null;
+$files = $bucketDirectory !== null ? (glob($data . '/metrics/' . $bucketDirectory . '/*.json') ?: []) : [];
 $found = false;
-foreach ($files as $f) { $txt = (string)@file_get_contents($f); if (strpos($f, $day) !== false && strpos($txt, '/voltsim/') !== false) $found = true; }
-line($st >= 200 && $st < 300 && $found, 'Ölçüm olayı günlük toplam dosyasına yazıldı', "HTTP $st " . substr((string)$resp, 0, 160) . ", dosyalar: " . implode(',', array_map('basename', $files)));
+foreach ($files as $f) {
+    $dayData = json_decode((string)@file_get_contents($f), true);
+    if (is_array($dayData) && basename($f) === ($dayData['date'] ?? '') . '.json'
+        && ($dayData['pv'] ?? 0) === 1 && ($dayData['pages']['/voltsim/'] ?? 0) === 1
+        && ($dayData['ev']['pageview'] ?? 0) === 1) $found = true;
+}
+line($st === 200 && ($collected['bucket'] ?? '') === 'test' && ($collected['accepted'] ?? 0) === 1 && $found,
+    'Ölçüm olayı gerçek test günlük toplamlarına yazıldı', "HTTP $st " . substr((string)$resp, 0, 160) . ", dosyalar: " . implode(',', array_map('basename', $files)));
+line((glob($data . '/metrics/days/*.json') ?: []) === [], 'Hazırlık ölçümü canlı günlük toplamlarına karışmadı');
 $raw = implode('', array_map(fn($f) => (string)@file_get_contents($f), $files));
-line(strpos($raw, '127.0.0.1') === false && stripos($raw, 'Mozilla') === false, 'Ölçüm dosyasında IP veya tarayıcı bilgisi yok');
+line($raw !== '' && strpos($raw, '127.0.0.1') === false && stripos($raw, 'Mozilla') === false, 'Ölçüm dosyasında IP veya tarayıcı bilgisi yok');
 
 // 2) Üyelik + editör yetkisi + yazı yayını (sunucu oturumu, CSRF ve Apache yönlendirmeleriyle)
 $me = api('GET', '/api/auth.php?action=me');
@@ -145,9 +163,29 @@ if ($uid !== '') {
     $title = 'Duman testi yazısı ' . date('His');
     $save = api('POST', '/api/volthaber.php?action=save', ['title' => $title, 'type' => 'analiz', 'category' => 'kompanzasyon',
         'summary' => 'Bu yazı Apache hazırlık ortamında yönlendirme, oturum ve yayın akışını uçtan uca denetlemek için oluşturuldu.',
+        'impact' => 'Bu sentetik kayıt yalnız hazırlık ortamındaki yayın iş akışını sınar; gerçek bir fabrika, teknik karar veya mevzuat değişikliği hakkında iddia içermez.',
+        'commentary' => 'VoltGuard hazırlık ortamı testi: kaynak bilgisi ve yorum alanlarının ayrı kaydedildiğini doğruluyoruz; bu metin canlı sitede yayımlanmaz.',
+        'eventDate' => gmdate('Y-m-d'),
+        'source' => ['name' => 'Sentetik Apache test kaynağı', 'url' => 'https://smoke.example.test/fixture', 'publishedAt' => gmdate('Y-m-d'),
+            'licenseNote' => 'Yalnız izole hazırlık ortamındaki sentetik test kaydı; üçüncü taraf metin veya görsel kullanılmaz.'],
         'body' => str_repeat('Hazırlık ortamı duman testi gövde metni; gerçek yayın değildir ve canlı sitede bulunmaz. ', 6)], ['X-VG-CSRF' => $csrf]);
     $id = $save['json']['item']['id'] ?? '';
     line(in_array($save['status'], [200, 201], true) && $id !== '', 'Taslak kaydedildi', $save['status'] . ' ' . substr($save['body'], 0, 160));
+    $blocked = api('POST', '/api/volthaber.php?action=publish', ['id' => $id], ['X-VG-CSRF' => $csrf]);
+    line($blocked['status'] === 422 && ($blocked['json']['error'] ?? '') === 'not_approved', 'Onaylanmamış taslağın doğrudan yayını engellendi');
+    $submitted = api('POST', '/api/volthaber.php?action=submit', ['id' => $id], ['X-VG-CSRF' => $csrf]);
+    line($submitted['status'] === 200 && ($submitted['json']['item']['review']['stage'] ?? '') === 'source_check', 'Sentetik taslak kaynak kontrolüne gönderildi', (string)$submitted['status']);
+    $checklists = [
+        'source' => [['sourcesOpened' => true, 'termsChecked' => true, 'noCopiedText' => true, 'imagesLicensed' => true], 'tech_check'],
+        'technical' => [['claimsVerified' => true, 'impactReviewed' => true, 'commentarySeparated' => true, 'linksChecked' => true], 'approval'],
+        'approval' => [['readyToPublish' => true], 'approved'],
+    ];
+    foreach ($checklists as $step => [$checklist, $nextStage]) {
+        $reviewed = api('POST', '/api/volthaber.php?action=review', ['id' => $id, 'step' => $step, 'checklist' => $checklist,
+            'note' => 'Sentetik test fikstürü denetlendi; üçüncü taraf içerik veya görsel yok.'], ['X-VG-CSRF' => $csrf]);
+        line($reviewed['status'] === 200 && ($reviewed['json']['item']['review']['stage'] ?? '') === $nextStage,
+            'Gerçek yayın akışı kontrolü: ' . $step, $reviewed['status'] . ' ' . substr($reviewed['body'], 0, 160));
+    }
     $pub = api('POST', '/api/volthaber.php?action=publish', ['id' => $id], ['X-VG-CSRF' => $csrf]);
     $slug = $pub['json']['item']['slug'] ?? '';
     line($pub['status'] === 200 && $slug !== '', 'Yazı yayımlandı', $pub['status'] . ' ' . substr($pub['body'], 0, 160));

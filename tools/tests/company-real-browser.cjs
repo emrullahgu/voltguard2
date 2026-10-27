@@ -21,7 +21,7 @@ const chrome = [process.env.VOLTGUARD_CHROME, process.env.VG_CHROME,
   process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Google/Chrome/Application/chrome.exe'),
   process.env['PROGRAMFILES(X86)'] && path.join(process.env['PROGRAMFILES(X86)'], 'Google/Chrome/Application/chrome.exe'),
   process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Microsoft/Edge/Application/msedge.exe')].filter(Boolean).find(file => fs.existsSync(file));
-const allModules = ['dashboard','manual','periodic','kesif','ges','saved','gorev','is-takip','urun-takip','akaryakit','kontrol','osos','haftalik-raporlama','bordro','beyaz-yaka','admin'];
+const allModules = ['dashboard','manual','periodic','kesif','ges','saved','saha-takip','gorev','is-takip','urun-takip','akaryakit','kontrol','osos','haftalik-raporlama','bordro','beyaz-yaka','admin'];
 const requestedModules = process.argv.find(argument=>argument.startsWith('--modules='))?.slice(10).split(',');
 const modules = requestedModules || allModules;
 for(const id of modules)assert.ok(allModules.includes(id),'Known module: '+id);
@@ -133,7 +133,7 @@ async function run() {
       if(response.status()>=400&&pathname.startsWith('/api/')){
         let payload;try{payload=await response.json();}catch{payload={};}
         const request=response.request();let input={};try{input=request.postDataJSON()||{};}catch{}
-        report.apiErrors.push({phase,path:pathname,status:response.status(),error:payload.error,message:redact(payload.message||''),action:new URL(response.url()).searchParams.get('action'),table:input.table,operation:input.operation,select:input.select,filters:input.filters?.map(({op,field})=>({op,field})),rpc:input.name});
+        report.apiErrors.push({phase,path:pathname,status:response.status(),error:payload.error,message:redact(payload.message||''),action:new URL(response.url()).searchParams.get('action'),table:input.table,operation:input.operation,select:input.select,filters:input.filters?.map(({op,field})=>({op,field})),rpc:input.name,sahaFunction:input.name==='app_saha_function'?input.args?.name:undefined});
       }
     });
     if(ownWhiteOnly){
@@ -167,6 +167,7 @@ async function run() {
       await workflow('mount:'+id,async()=>{await mount(id);const bounds=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));report.mounts.push({id,...bounds,apiErrors:report.apiErrors.length-before});if(['dashboard','bordro','beyaz-yaka'].includes(id))await page.screenshot({path:path.join(output,id+'-real.png')});});
     }
     if(process.argv.includes('--mount-only'))return;
+    if(modules.includes('saha-takip')) await require('./saha-browser-scenarios.cjs')({page,admin,employee,api,mount,workflow,check,report,output,base,browser});
     await workflow('work-employee-location-material-record-crud',async()=>{
       await mount('is-takip');await page.getByRole('button',{name:/^Çalışanlar/}).click();await page.getByRole('button',{name:'Yeni Çalışan',exact:true}).click();
       await page.getByPlaceholder('Örn: Ahmet Yılmaz').fill('QA Teknik Personel');await page.getByPlaceholder('Örn: Teknisyen, Usta, Mühendis').fill('QA Teknisyen');await page.getByRole('button',{name:'Kaydet',exact:true}).click();

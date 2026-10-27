@@ -8,12 +8,13 @@ try {
     vg_check_fetch_site(); vg_staff_require_user();
     if(!in_array(vg_method(),['GET','HEAD'],true)) vg_fail(405,'method_not_allowed','İstek yöntemi desteklenmiyor.');
     $name=$_GET['file']??'';
-    if(!is_string($name)||strlen($name)>260||preg_match('#^[A-Za-z0-9/_., -]+$#D',$name)!==1||strpos($name,'..')!==false||$name[0]==='/') vg_fail(404,'not_found','Dosya bulunamadı.');
+    if(!is_string($name)||$name===''||strlen($name)>1024||preg_match('#^[A-Za-z0-9/_., @()+-]+$#D',$name)!==1||strpos($name,'..')!==false||$name[0]==='/') vg_fail(404,'not_found','Dosya bulunamadı.');
     if(!preg_match('#^(assets|fonts|licenses)/#D',$name)&&$name!=='fatura_logo.png')vg_fail(404,'not_found','Dosya bulunamadı.');
     $root=realpath(dirname(__DIR__).'/calisan/uygulama');
     $file=realpath($root.'/'.$name);
-    $mime=['js'=>'text/javascript; charset=utf-8','css'=>'text/css; charset=utf-8','png'=>'image/png','jpg'=>'image/jpeg','jpeg'=>'image/jpeg','webp'=>'image/webp','svg'=>'image/svg+xml','ico'=>'image/x-icon','woff2'=>'font/woff2','woff'=>'font/woff','ttf'=>'font/ttf','txt'=>'text/plain; charset=utf-8','json'=>'application/json; charset=utf-8','html'=>'text/html; charset=utf-8'];
+    $mime=['js'=>'text/javascript; charset=utf-8','mjs'=>'text/javascript; charset=utf-8','css'=>'text/css; charset=utf-8','png'=>'image/png','jpg'=>'image/jpeg','jpeg'=>'image/jpeg','webp'=>'image/webp','gif'=>'image/gif','avif'=>'image/avif','svg'=>'image/svg+xml','ico'=>'image/x-icon','woff2'=>'font/woff2','woff'=>'font/woff','ttf'=>'font/ttf','otf'=>'font/otf','wasm'=>'application/wasm','mp3'=>'audio/mpeg','wav'=>'audio/wav','ogg'=>'audio/ogg','mp4'=>'video/mp4','webm'=>'video/webm','pdf'=>'application/pdf','txt'=>'text/plain; charset=utf-8','json'=>'application/json; charset=utf-8','html'=>'text/html; charset=utf-8'];
     $extension=strtolower(pathinfo($name,PATHINFO_EXTENSION));
+    if(strpos($name,'assets/saha/')===0&&in_array($extension,['html','json','txt'],true))vg_fail(404,'not_found','Dosya bulunamadı.');
     if(preg_match('#^licenses/[A-Za-z0-9_.-]+/(LICENSE|LICENCE|NOTICE|COPYING|license|licence)(\.(txt|md))?$#D',$name)) { $mime[$extension]='text/plain; charset=utf-8'; }
     if(!$root||!$file||strpos(strtolower(str_replace('\\','/',$file)),strtolower(str_replace('\\','/',$root)).'/')!==0||!is_file($file)||!isset($mime[$extension])||in_array(strtolower($name),['entry-tags.html','index.html'],true)) vg_fail(404,'not_found','Dosya bulunamadı.');
     vg_common_headers(200,[]);

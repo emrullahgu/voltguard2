@@ -52,6 +52,10 @@ export function AuthProvider({ children }) {
   }, [recheck, leave]);
 
   const signOut = async () => {
+    if (!window.dispatchEvent(new CustomEvent('vg:before-sign-out', { cancelable: true }))) {
+      const error = new Error('SahaTakip kayıtları kaydedilmeden oturum kapatılamaz. Kaydı tamamlayıp yeniden deneyin.');
+      setAuthError(error.message); throw error;
+    }
     const { error } = await supabase.auth.signOut();
     if (error) { setAuthError(error.message); throw error; }
     leave();

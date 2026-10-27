@@ -23,12 +23,14 @@ $routes = [
     '/api/staff.php' => '/api/staff.php',
     '/api/company.php' => '/api/company.php',
     '/api/company-asset.php' => '/api/company-asset.php',
+    '/api/saha-asset.php' => '/api/saha-asset.php',
     '/api/company-connectors.php' => '/api/company-connectors.php',
     '/contact.php' => '/contact.php',
     '/calisan/' => '/calisan/index.php',
     '/calisan/index.php' => '/calisan/index.php',
     '/calisan/uygulama' => '/calisan/uygulama/index.php',
     '/calisan/uygulama/' => '/calisan/uygulama/index.php',
+    '/calisan/uygulama/saha.php' => '/calisan/uygulama/saha.php',
 ];
 if (!isset($routes[$pathname]) || strpos($pathname, "\0") !== false || strpos($pathname, '\\') !== false) {
     http_response_code(404);
@@ -48,7 +50,7 @@ header('X-Content-Type-Options: nosniff');
 if (!is_file($root . $target)) {
     http_response_code(503);
     header('Cache-Control: no-store');
-    if (strpos($target, '/api/company') === 0) {
+    if (strpos($target, '/api/company') === 0 || $target === '/api/saha-asset.php') {
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['api' => 'vg-company/1', 'ok' => false, 'error' => 'unavailable', 'message' => 'Çalışan hizmeti şu anda kullanılamıyor.']);
     } else {

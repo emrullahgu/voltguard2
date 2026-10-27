@@ -43,9 +43,9 @@
   RewriteRule ^api/(.+/)?_[^/]*$ - [F,L]
   RewriteRule ^voltgame/?$ /voltgame.html [R=301,L,NC]
   # Original imports and game development sources are never public.
-  RewriteRule ^(tools|voltguardekleyelim|vesikalar|VoltGame)(/|$) - [F,L,NC]
+  RewriteRule ^(tools|voltguardekleyelim|vesikalar|VoltGame|SahaTakip-main)(/|$) - [F,L,NC]
   RewriteRule ^calisan/shared-(header|footer)\.html$ - [F,L,NC]
-  RewriteRule ^calisan/uygulama/(entry-tags\.html|index\.html|\.vite)(/|$) - [F,L,NC]
+  RewriteRule ^calisan/uygulama/(entry-tags\.html|saha-entry\.html|index\.html|\.vite)(/|$) - [F,L,NC]
   RewriteRule ^calisan/uygulama$ /calisan/uygulama/ [R=301,L]
   RewriteRule ^calisan/uygulama/$ /calisan/uygulama/index.php [L]
   RewriteRule ^calisan/uygulama/(assets|fonts|licenses)/(.*)$ /api/company-asset.php?file=$1/$2 [L]
@@ -198,6 +198,8 @@
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+  # The employee workspace can request these features only through its own UI.
+  Header always set Permissions-Policy "camera=(self), microphone=(self), geolocation=(self), payment=(), usb=()" env=VG_PERMISSIONS_SAHA
   # 'preload' dropped: only re-add after every subdomain is verified HTTPS-only and the
   # domain has been deliberately submitted to hstspreload.org.
   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on' || %{HTTP:X-Forwarded-Proto} == 'https'"
@@ -218,6 +220,7 @@
   Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'inline-speculation-rules' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com; frame-src 'self' https://www.google.com https://www.google.com.tr https://maps.google.com https://challenges.cloudflare.com; upgrade-insecure-requests" env=VG_CSP_SITE
   Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'inline-speculation-rules'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'self'; frame-src 'none'; upgrade-insecure-requests" env=VG_CSP_PRIVATE
   Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; connect-src 'self' blob: data:; frame-src 'self' blob: data:; upgrade-insecure-requests" env=VG_CSP_APP
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; connect-src 'self' blob: data:; frame-src 'self' blob: data:; upgrade-insecure-requests" env=VG_CSP_SAHA
   Header always set Content-Security-Policy "default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" env=VG_CSP_API
   Header always set X-Frame-Options "DENY" env=VG_CSP_PRIVATE
 </IfModule>
@@ -227,6 +230,8 @@
   SetEnvIf Request_URI "." VG_CSP_SITE=1
   SetEnvIfNoCase Request_URI "^/(hesap|calisan)(/|$)" VG_CSP_PRIVATE=1 !VG_CSP_SITE
   SetEnvIfNoCase Request_URI "^/calisan/uygulama(/|$)" VG_CSP_APP=1 !VG_CSP_PRIVATE !VG_CSP_SITE
+  SetEnvIfNoCase Request_URI "^/calisan/uygulama/saha\.php$" VG_CSP_SAHA=1 !VG_CSP_APP !VG_CSP_PRIVATE !VG_CSP_SITE
+  SetEnvIfNoCase Request_URI "^/calisan/uygulama/($|index\.php$|saha\.php$)" VG_PERMISSIONS_SAHA=1
   SetEnvIfNoCase Request_URI "^/api/(?!company-asset\.php)" VG_CSP_API=1 !VG_CSP_SITE
 </IfModule>
 <IfModule !mod_setenvif.c>
@@ -394,6 +399,7 @@ FileETag MTime Size
 # Runtime veri klasorleri (mod_rewrite yoksa da kapali kalsin).
 <IfModule mod_alias.c>
   RedirectMatch 403 ^/(_vgdata|vg-data|vgdata)(/|$)
+  RedirectMatch 403 (?i)^/(tools|voltguardekleyelim|vesikalar|VoltGame|SahaTakip-main)(/|$)
 </IfModule>
 
 # ─────────────────────────────────────

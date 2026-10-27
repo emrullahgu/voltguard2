@@ -32,6 +32,7 @@ ACTOR_NAMESPACE = uuid.UUID("ca7024d7-29bd-5a83-9a88-8a277c94031b")
 FIELDS = {
     "proposals": "type name data reference_no",
     "company_documents": "kind record_id payload revision",
+    "saha_records": "collection record_id payload revision",
     "products": "name category price original_name is_new is_active",
     "urun_takip": "urun_adi kategori marka model miktar birim lokasyon aciklama seri_no tarih user_email",
     "gorevler": "baslik aciklama durum oncelik atanan_kisi baslangic_tarihi bitis_tarihi notlar",
@@ -62,7 +63,7 @@ SCHEMA = {table: set(COMMON + fields.split()) for table, fields in FIELDS.items(
 OWNERSHIP = {"bordro_employees", "beyaz_yaka_employees", "is_takip_calisanlar"}
 ACTOR_FIELDS = {"created_by", "updated_by", "last_modified_by"}
 FK_NATIVE = OWNERSHIP | {"activity_logs", "monthly_payroll_summary"}
-PRIVATE_TABLES = {"osos_fabrikalar", "beyaz_yaka_leaves", "beyaz_yaka_bonuses"}
+PRIVATE_TABLES = {"osos_fabrikalar", "beyaz_yaka_leaves", "beyaz_yaka_bonuses", "saha_records"}
 EXTRA_FIELDS = {"bordro_expenses": {"installment_total", "installment_current"}}
 
 
@@ -98,6 +99,132 @@ def sql_ident(value):
 
 def sensitive(table):
     return table.startswith(("bordro_", "beyaz_yaka_")) or table == "monthly_payroll_summary"
+
+
+SAHA_HR = {"employees", "attendance", "payroll_records", "bordro_aylik", "leave_requests"}
+SAHA_PERSONAL = {"locations", "location_checkins", "shifts", "geofence_events", "vehicle_route_points", "notification_preferences", "notifications", "app_usage", "ai_chat_sessions", "ai_chat_messages", "email_schedules", "email_dispatch_log", "sales_visits", "visits"}
+SAHA_DENIED = {"api_keys", "app_settings", "einvoice_config", "webhooks", "pending_user_approvals", "push_tokens", "ai_ingest_queue", "erp_adapters"}
+SAHA_SHARED_CACHE = set("tasks_v1 product_items_v1 task_comments_v1 task_attachments_v1 transformer_quotes_v1 osos_readings_v1 weekly_reports_v1 osos_alarms_v1 osos_alarm_rules_v1 osos_auto_report_v1 osos_daily_summary_v1 @SahaTakip:recurring_templates office_pages_v1 office_boards_v1 office_meetings_v1 @SahaTakip:import_history ges_quotes_v1 calendar_events_v1 @SahaTakip:maintenance_plans eq_assets_v1 eq_maint_v1 eq_fault_v1 eq_plans_v1 fo_jobs_v1 fo_check_v1 fo_qc_v1 fo_perf_v1 fo_zones_v1 fo_plan_v1 fo_emerg_v1 feedback_entries_v1 gov_departments_v1 gov_regions_v1 gov_approvals_v1 cx_quote_approvals_v1 cx_customer_comments_v1 cx_satisfaction_surveys_v1 cx_auto_reports_v1".split())
+SAHA_MANAGED_CACHE = {"timesheet_v1", "payroll_runs_v1", "bordro_v1", "@SahaTakip:cash_entries"}
+SAHA_SHARED_CACHE.update({"@SahaTakip:customer_documents", "lo_heat_v1", "lo_personnel_v1", "lo_routes_v1", "lo_eta_v1", "lo_perf_v1"})
+SAHA_ADMIN_CACHE = {"lo_entities_v1", "lo_devs_v1", "lo_events_v1", "lo_replay_v1"}
+
+
+def saha_staff_id(staff):
+    value = list(hashlib.sha256(("voltguard-sahatakip-staff:" + staff).encode()).hexdigest())
+    value[12], value[16] = "5", format((int(value[16], 16) & 3) | 8, "x")
+    value = "".join(value)
+    return value[:8] + "-" + value[8:12] + "-" + value[12:16] + "-" + value[16:20] + "-" + value[20:32]
+
+
+def saha_members(records, conversation):
+    return {row.get("payload", {}).get("user_id") for row in records.values() if row.get("collection") == "conversation_participants" and row.get("payload", {}).get("conversation_id") == conversation}
+
+
+def saha_find(records, collection, identifier):
+    return next((row for row in records.values() if row.get("collection") == collection and row.get("record_id") == identifier), None)
+
+
+def saha_visible(actor, row, records):
+    collection, payload, me = row.get("collection"), row.get("payload", {}), saha_staff_id(actor["id"])
+    if collection in SAHA_DENIED:
+        return False
+    if collection == "_cache":
+        key = payload.get("key")
+        return isinstance(key, str) and (key in SAHA_SHARED_CACHE or key in SAHA_MANAGED_CACHE and actor["role"] != "employee" or key in SAHA_ADMIN_CACHE and actor["role"] == "admin")
+    if collection in SAHA_HR:
+        if actor["role"] != "employee" or collection == "employees":
+            return True
+        employee = saha_find(records, "employees", payload.get("employee_id"))
+        return payload.get("user_id") == me or bool(employee and employee.get("payload", {}).get("user_id") == me)
+    if collection in SAHA_PERSONAL:
+        return actor["role"] == "admin" or payload.get("user_id", payload.get("created_by")) == me
+    if collection in {"conversations", "conversation_participants", "messages"}:
+        conversation = payload.get("id") if collection == "conversations" else payload.get("conversation_id")
+        parent = row if collection == "conversations" else saha_find(records, "conversations", conversation)
+        return me in saha_members(records, conversation) or bool(parent and parent.get("payload", {}).get("created_by") == me)
+    if collection == "audit_log":
+        return actor["role"] == "admin" or payload.get("user_id") == me
+    if collection == "_files" and payload.get("bucket") == "chat-attachments" and row.get("created_by") != actor["id"]:
+        return any(other.get("collection") == "messages" and other.get("payload", {}).get("attachment_url") == payload.get("path") and saha_visible(actor, other, records) for other in records.values())
+    return True
+
+
+def saha_snapshot_records(actor, records):
+    # Decide every row's visibility against the original ownership graph.
+    # Redacting employee payloads during that pass can hide a later payroll
+    # row belonging to this same employee (and makes results order-dependent).
+    visible = {key: dict(row) for key, row in records.items() if saha_visible(actor, row, records)}
+    if actor["role"] == "employee":
+        me = saha_staff_id(actor["id"])
+        for row in visible.values():
+            if row.get("collection") == "employees":
+                payload = row.get("payload", {})
+                safe = {"id", "full_name", "role", "active", "created_at", "updated_at"}
+                # PHP still needs this employee's own identity link to apply
+                # HR row checks. Its public directory projection removes it.
+                if payload.get("user_id") == me:
+                    safe.add("user_id")
+                row["payload"] = {field: value for field, value in payload.items() if field in safe}
+    return visible
+
+
+def saha_validate_change(actor, old, desired, records):
+    row = desired or old
+    if not isinstance(row, dict) or not isinstance(row.get("payload"), dict):
+        raise BridgeError("bridge_saha_record")
+    collection, identifier, payload = row.get("collection"), row.get("record_id"), row["payload"]
+    if not isinstance(collection, str) or not re.fullmatch(r"_files|_cache|[a-z][a-z0-9_]{0,63}", collection) or collection in SAHA_DENIED or collection in {"profiles", "latest_locations"}:
+        raise BridgeError("bridge_saha_collection", 403)
+    if not isinstance(identifier, str) or row.get("id") != hashlib.sha256((collection + ":" + identifier).encode()).hexdigest() or payload.get("id") != identifier:
+        raise BridgeError("bridge_saha_record")
+    if old and any(old.get(field) != row.get(field) for field in ("id", "collection", "record_id")):
+        raise BridgeError("bridge_saha_immutable", 403)
+    if desired and (not isinstance(desired.get("revision"), int) or desired["revision"] != (old.get("revision", 0) + 1 if old else 1)):
+        raise BridgeError("bridge_saha_revision", 409)
+    if len(encode(payload).encode()) > 2 * 1024 * 1024:
+        raise BridgeError("bridge_saha_capacity", 413)
+    me = saha_staff_id(actor["id"])
+    if collection == "_cache":
+        key, value = payload.get("key"), payload.get("value")
+        if not isinstance(key, str) or key not in SAHA_SHARED_CACHE | SAHA_MANAGED_CACHE | SAHA_ADMIN_CACHE or identifier != hashlib.sha256(key.encode()).hexdigest():
+            raise BridgeError("bridge_saha_cache", 403)
+        if key in SAHA_MANAGED_CACHE and actor["role"] == "employee":
+            raise BridgeError("bridge_saha_payroll", 403)
+        if key in SAHA_ADMIN_CACHE and actor["role"] != "admin":
+            raise BridgeError("bridge_saha_scope", 403)
+        if desired is None or value is not None and (not isinstance(value, str) or "\x00" in value or len(value.encode()) > 2 * 1024 * 1024):
+            raise BridgeError("bridge_saha_cache", 403)
+    if collection in SAHA_HR and actor["role"] == "employee":
+        raise BridgeError("bridge_saha_payroll", 403)
+    if old and not saha_visible(actor, old, records):
+        raise BridgeError("bridge_saha_scope", 403)
+    if desired and collection not in {"_files", "_cache"}:
+        for field in ("created_by", "updated_by", "sender_id", "uploaded_by", "actor_id"):
+            if field in payload and payload[field] != (old or {}).get("payload", {}).get(field, me) and field != "updated_by":
+                raise BridgeError("bridge_saha_actor", 403)
+        if payload.get("updated_by") != me:
+            raise BridgeError("bridge_saha_actor", 403)
+    if collection in SAHA_PERSONAL and actor["role"] != "admin" and payload.get("user_id", payload.get("created_by")) != me:
+        raise BridgeError("bridge_saha_owner", 403)
+    if collection == "conversation_participants":
+        parent = saha_find(records, "conversations", payload.get("conversation_id"))
+        old_payload = (old or {}).get("payload", {})
+        changed = {key for key in set(old_payload) | set(payload) if old_payload.get(key) != payload.get(key)}
+        self_read = old and desired and old_payload.get("user_id") == me and changed <= {"last_read_at", "updated_at", "updated_by"}
+        if not self_read and (not parent or parent.get("payload", {}).get("created_by") != me):
+            raise BridgeError("bridge_saha_participant", 403)
+    elif collection == "messages":
+        if not saha_visible(actor, row, records) or payload.get("sender_id") != me:
+            raise BridgeError("bridge_saha_participant", 403)
+    elif collection == "_files":
+        if old and old.get("created_by") != actor["id"] and actor["role"] != "admin":
+            raise BridgeError("bridge_saha_owner", 403)
+    elif old and collection != "_cache" and actor["role"] == "employee" and old.get("payload", {}).get("created_by") != me:
+        assigned = old.get("payload", {}).get("assigned_to_id")
+        employee = saha_find(records, "employees", assigned)
+        if assigned != me and not (employee and employee.get("payload", {}).get("user_id") == me) and collection not in SAHA_PERSONAL | {"stock_balances", "stock_movements", "form_responses", "employees"}:
+            raise BridgeError("bridge_saha_owner", 403)
 
 
 def actor_id(staff_id, site):
@@ -262,6 +389,10 @@ class Repository:
                 side = sides.get((table, key))
                 normalized[table][key] = normalize(table, raw, side)
                 hashes[table][key] = row_token(raw, side)
+        if "saha_records" in normalized:
+            records = normalized["saha_records"]
+            normalized["saha_records"] = saha_snapshot_records(actor, records)
+            hashes["saha_records"] = {key: value for key, value in hashes["saha_records"].items() if key in normalized["saha_records"]}
         if actor["role"] == "employee":
             for table in tables:
                 if table == "activity_logs":
@@ -429,6 +560,7 @@ class Repository:
         tables = list(dict.fromkeys(change["table"] for change in changes))
         raw_tables, sides = self.read_tables(tables, lock=True), self.sidecars()
         indexed = {table: {row_key(table, row): row for row in rows} for table, rows in raw_tables.items()}
+        saha_records = {key: normalize("saha_records", raw, sides.get(("saha_records", key))) for key, raw in indexed.get("saha_records", {}).items()}
         resolved = []
         for change in changes:
             table, key, desired = change["table"], change["id"], change["row"]
@@ -440,6 +572,9 @@ class Repository:
                 raise BridgeError("bridge_conflict", 409)
             if old_raw and desired and table != "company_documents" and str(desired.get("id")) != actual_key:
                 raise BridgeError("bridge_immutable")
+            if table == "saha_records":
+                old = normalize(table, old_raw, old_side) if old_raw else None
+                saha_validate_change(actor, old, desired, saha_records)
             resolved.append((change, old_raw, old_side))
         prefs = self.prefs(actor, lock=True)
         for change in preferences:
@@ -533,6 +668,9 @@ CREATE TABLE IF NOT EXISTS voltguard_site.beyaz_yaka_bonuses(
  site text NOT NULL,id uuid NOT NULL DEFAULT gen_random_uuid(),employee_id uuid NOT NULL REFERENCES public.beyaz_yaka_employees(id) ON DELETE RESTRICT,
  bonus_type text,amount numeric,bonus_date date,month integer,year integer,description text,is_applied boolean DEFAULT false,
  created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now(),created_by text,updated_by text,PRIMARY KEY(site,id));
+CREATE TABLE IF NOT EXISTS voltguard_site.saha_records(
+ site text NOT NULL,id text NOT NULL,collection text NOT NULL,record_id text NOT NULL,payload jsonb NOT NULL,revision integer NOT NULL CHECK(revision>0),
+ created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now(),created_by text,updated_by text,PRIMARY KEY(site,id),UNIQUE(site,collection,record_id));
 REVOKE ALL ON ALL TABLES IN SCHEMA voltguard_site FROM PUBLIC,anon,authenticated;
 REVOKE ALL ON ALL SEQUENCES IN SCHEMA voltguard_site FROM PUBLIC,anon,authenticated;
 ALTER TABLE voltguard_site.rows ENABLE ROW LEVEL SECURITY;
@@ -542,6 +680,7 @@ ALTER TABLE voltguard_site.commits ENABLE ROW LEVEL SECURITY;
 ALTER TABLE voltguard_site.osos_fabrikalar ENABLE ROW LEVEL SECURITY;
 ALTER TABLE voltguard_site.beyaz_yaka_leaves ENABLE ROW LEVEL SECURITY;
 ALTER TABLE voltguard_site.beyaz_yaka_bonuses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE voltguard_site.saha_records ENABLE ROW LEVEL SECURITY;
 COMMIT;
 """
 

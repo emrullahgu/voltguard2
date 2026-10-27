@@ -1,4 +1,4 @@
-# Her push ve PR'da birim/entegrasyon testlerini çalıştırır (npm test → tools/test.cjs).
+# Elle başlatıldığında birim/entegrasyon testlerini çalıştırır (npm test → tools/test.cjs).
 # Tarayıcı denetimleri (site-audit, compat-audit, voltsim-browser) yerelde/önizlemede elle çalıştırılır.
 name: Testler
 
@@ -48,6 +48,11 @@ jobs:
           SH
           chmod +x "$RUNNER_TEMP/bin/php-ci"
           echo "VG_PHP=$RUNNER_TEMP/bin/php-ci" >> "$GITHUB_ENV"
+
+      # Saha servis testleri gerçek TypeScript kaynaklarını derleyerek çalıştırır.
+      # Derleyici sürümü ve arşiv özeti uygulamanın package-lock.json dosyasına bağlıdır.
+      - name: Saha test bağımlılıkları
+        run: npm ci --prefix tools/saha-app --ignore-scripts --no-fund --no-audit
 
       - name: Testler
         run: npm test
