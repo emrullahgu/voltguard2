@@ -36,6 +36,7 @@ const HaftalikRaporlama = lazy(() => import('./HaftalikRaporlama.jsx'));
 const UrunTakip = lazy(() => import('./UrunTakip.jsx'));
 const PeriyodikKontrol = lazy(() => import('./PeriyodikKontrol.jsx'));
 const SimpleAdminPanel = lazy(() => import('./SimpleAdminPanel.jsx'));
+const SahaTakip = lazy(() => import('./SahaTakip.jsx'));
 const ModuleLoading = () => <div role="status" aria-live="polite" className="p-6 bg-white rounded-lg border border-gray-200">Bölüm yükleniyor…</div>;
 
 // Fatura verilerini birleitir ve normalize et
@@ -3473,6 +3474,7 @@ const App = () => {
 
         {/* Bordro Takip Tab */}
         <Suspense fallback={<ModuleLoading />}>
+        {activeTab === 'saha-takip' && <SahaTakip />}
         {activeTab === 'bordro' && (
           <div className="max-w-full mx-auto">
             <BordroWithPassword />

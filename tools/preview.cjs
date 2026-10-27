@@ -16,14 +16,15 @@ const workspaceHash = crypto.createHash('sha256').update(fs.realpathSync(root).t
 const dataDirectory = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), '.local', 'share'), 'VoltGuard', 'preview-data', workspaceHash);
 const internalToken = crypto.randomBytes(32).toString('hex');
 const phpRoutes = new Set(['/api/auth.php', '/api/community.php', '/api/metrics.php', '/api/volthaber.php', '/api/staff.php', '/api/company.php',
-  '/api/company-asset.php', '/api/company-connectors.php', '/calisan/', '/calisan/index.php',
-  '/calisan/uygulama', '/calisan/uygulama/', '/contact.php']);
+  '/api/company-asset.php', '/api/saha-asset.php', '/api/company-connectors.php', '/calisan/', '/calisan/index.php',
+  '/calisan/uygulama', '/calisan/uygulama/', '/calisan/uygulama/saha.php', '/contact.php']);
 // Mirror the path-specific policies of .htaccess (VG_CSP_SITE / PRIVATE / APP / API).
 const htaccess = fs.readFileSync(path.join(root, '.htaccess'), 'utf8');
 const policies = Object.fromEntries([...htaccess.matchAll(/Header always set Content-Security-Policy "([^"]+)" env=VG_CSP_([A-Z]+)/g)].map(match => [match[2], match[1]]));
 const csp = policies.SITE;
 function cspFor(pathname) {
   const lower = pathname.toLowerCase();
+  if (lower === '/calisan/uygulama/saha.php') return policies.SAHA;
   if (/^\/calisan\/uygulama(\/|$)/.test(lower)) return policies.APP;
   if (/^\/(hesap|calisan)(\/|$)/.test(lower)) return policies.PRIVATE;
   if (/^\/api\//.test(lower) && !/^\/api\/company-asset\.php/.test(lower)) return policies.API;
@@ -119,14 +120,14 @@ function fail(res, code, message, json = false) {
   if (res.headersSent) return res.destroy();
   res.writeHead(code, { 'Content-Type': json ? 'application/json; charset=utf-8' : 'text/plain; charset=utf-8' });
   const requestPath = new URL(res.req.url, origin).pathname;
-  const api = /^\/api\/company(?:-asset|-connectors)?\.php$/.test(requestPath) || /^\/calisan\/uygulama\//.test(requestPath)
+  const api = /^\/api\/(?:company(?:-asset|-connectors)?|saha-asset)\.php$/.test(requestPath) || /^\/calisan\/uygulama\//.test(requestPath)
     ? 'vg-company/1' : requestPath === '/api/staff.php' ? 'vg-staff/1' : 'vg-auth/1';
   res.end(json ? JSON.stringify({ api, ok: false, error: code === 413 ? 'too_large' : code === 405 ? 'method_not_allowed' : 'unavailable', message }) : message);
 }
 
 function blockedPath(pathname) {
   return pathname.includes('\\') || pathname.includes('\0') || /(^|\/)\./.test(pathname)
-    || /^\/(tools|voltguardekleyelim|vesikalar|VoltGame|api|_vgdata|vg-data|vgdata)(\/|$)/i.test(pathname)
+    || /^\/(tools|voltguardekleyelim|vesikalar|VoltGame|SahaTakip-main|api|_vgdata|vg-data|vgdata)(\/|$)/i.test(pathname)
     || /^\/(?:api|calisan)\.new(?:\/|$)/i.test(pathname)
     || /^\/calisan\/shared-(?:header|footer)\.html$/i.test(pathname)
     || /^\/calisan\/uygulama(?:\/|$)/i.test(pathname)
@@ -169,6 +170,7 @@ const server = http.createServer((req, res) => {
   try { url = new URL(req.url, origin); pathname = decodeURIComponent(url.pathname); }
   catch (_) { return fail(res, 400, 'Geçersiz adres.'); }
   res.setHeader('Content-Security-Policy', cspFor(pathname) || csp);
+  if (/^\/calisan\/uygulama\/(?:$|index\.php$|saha\.php$)/.test(pathname)) res.setHeader('Permissions-Policy', 'camera=(self), microphone=(self), geolocation=(self), payment=(), usb=()');
   if (!new Set([`127.0.0.1:${port}`, `localhost:${port}`]).has(String(req.headers.host || '').toLowerCase())) return fail(res, 403, 'Bu kaynak kabul edilmedi.');
   if (pathname.includes('\\') || pathname.includes('\0') || /(^|\/)\./.test(pathname)) return fail(res, 404, 'Sayfa bulunamadı.');
   function redirect(destination) { res.writeHead(301, { Location: destination + url.search }); res.end(); }

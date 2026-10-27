@@ -6,6 +6,9 @@
 /vesikalar/
 # Supplied game checkout stays local; maintained source is in tools/voltgame/.
 /VoltGame/
+/SahaTakip-main/
+/tools/saha-app/dist/
+/tools/saha-app/.expo/
 /tools/voltgame/.build/
 /tools/voltgame/tools/test/out/
 /tools/engineering/dist/

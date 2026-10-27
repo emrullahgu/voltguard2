@@ -183,7 +183,8 @@ class BridgeTests(unittest.TestCase):
         self.assertNotIn("DISABLE ROW LEVEL SECURITY", bridge.INSTALL_SQL)
         self.assertNotIn("ALTER TABLE public", bridge.INSTALL_SQL)
         self.assertNotIn("CREATE OR REPLACE FUNCTION public", bridge.INSTALL_SQL)
-        self.assertEqual(bridge.INSTALL_SQL.count("ENABLE ROW LEVEL SECURITY"), 7)
+        self.assertEqual(bridge.INSTALL_SQL.count("ENABLE ROW LEVEL SECURITY"), 4 + len(bridge.PRIVATE_TABLES))
+        self.assertIn("ALTER TABLE voltguard_site.saha_records ENABLE ROW LEVEL SECURITY", bridge.INSTALL_SQL)
         self.assertIn("REVOKE ALL ON SCHEMA voltguard_site FROM PUBLIC,anon,authenticated", bridge.INSTALL_SQL)
 
     def test_private_catalog_requires_complete_bounded_typed_inputs(self):
@@ -197,6 +198,78 @@ class BridgeTests(unittest.TestCase):
             self.reject(lambda: bridge.read_catalog({"historicalInvoice1": sources["historicalInvoice1"]}), "bridge_catalog_config")
             Path(sources["historicalInvoice1"]).write_text("{}", encoding="utf-8")
             self.reject(lambda: bridge.read_catalog(sources), "bridge_catalog")
+
+    def test_saha_native_identity_ownership_and_revision(self):
+        import hashlib
+        me = bridge.saha_staff_id(STAFF)
+        self.assertRegex(me, r"^[a-f0-9]{8}-[a-f0-9]{4}-5[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$")
+        row = {"id": hashlib.sha256(("customers:" + ID).encode()).hexdigest(), "collection": "customers", "record_id": ID, "revision": 1, "payload": {"id": ID, "created_by": me, "updated_by": me}, "created_by": STAFF}
+        bridge.saha_validate_change(ADMIN, None, row, {})
+        self.reject(lambda: bridge.saha_validate_change(ADMIN, row, {**row, "revision": 1}, {row["id"]: row}), "bridge_saha_revision")
+        forged = {**row, "payload": {**row["payload"], "created_by": bridge.saha_staff_id(OTHER)}}
+        self.reject(lambda: bridge.saha_validate_change(ADMIN, None, forged, {}), "bridge_saha_actor")
+
+    def test_saha_personal_hr_and_chat_visibility(self):
+        employee = {"id": STAFF, "role": "employee"}
+        me, other = bridge.saha_staff_id(STAFF), bridge.saha_staff_id(OTHER)
+        private = {"collection": "locations", "payload": {"id": ID, "user_id": other}}
+        self.assertFalse(bridge.saha_visible(employee, private, {}))
+        self.assertTrue(bridge.saha_visible(ADMIN, private, {}))
+        chat = {"collection": "conversations", "record_id": ID, "payload": {"id": ID, "created_by": other}}
+        self.assertFalse(bridge.saha_visible(employee, chat, {}))
+        membership = {"collection": "conversation_participants", "payload": {"conversation_id": ID, "user_id": me}}
+        self.assertTrue(bridge.saha_visible(employee, chat, {"chat": chat, "membership": membership}))
+        self.assertFalse(bridge.saha_visible(employee, {"collection": "api_keys", "payload": {}}, {}))
+
+    def test_saha_snapshot_keeps_hr_ownership_checks_order_independent(self):
+        employee = {"id": STAFF, "role": "employee"}
+        me, other = bridge.saha_staff_id(STAFF), bridge.saha_staff_id(OTHER)
+        records = {
+            "owner": {"collection": "employees", "record_id": "e1", "payload": {"id": "e1", "user_id": me, "full_name": "Synthetic One", "monthly_wage": 12345}},
+            "other": {"collection": "employees", "record_id": "e2", "payload": {"id": "e2", "user_id": other, "full_name": "Synthetic Two", "monthly_wage": 54321}},
+            "mine": {"collection": "attendance", "payload": {"id": "a1", "employee_id": "e1"}},
+            "theirs": {"collection": "attendance", "payload": {"id": "a2", "employee_id": "e2"}},
+        }
+        forward = bridge.saha_snapshot_records(employee, records)
+        reverse = bridge.saha_snapshot_records(employee, dict(reversed(list(records.items()))))
+        self.assertEqual(forward, reverse)
+        self.assertIn("mine", forward)
+        self.assertNotIn("theirs", forward)
+        self.assertNotIn("monthly_wage", forward["owner"]["payload"])
+        self.assertNotIn("user_id", forward["other"]["payload"])
+        self.assertTrue(bridge.saha_visible(employee, forward["mine"], forward))
+        self.assertEqual(records["owner"]["payload"]["monthly_wage"], 12345)
+
+    def test_saha_shared_cache_is_allowlisted_role_guarded_and_never_unversioned_delete(self):
+        import hashlib
+        employee = {"id": STAFF, "role": "employee"}
+        def cache(key, revision=1):
+            identifier = hashlib.sha256(key.encode()).hexdigest()
+            return {"id": hashlib.sha256(("_cache:" + identifier).encode()).hexdigest(), "collection": "_cache", "record_id": identifier, "payload": {"id": identifier, "key": key, "value": "[]"}, "revision": revision, "created_by": OTHER}
+        ordinary = cache("tasks_v1")
+        bridge.saha_validate_change(employee, None, ordinary, {})
+        bridge.saha_validate_change(employee, ordinary, {**ordinary, "revision": 2}, {ordinary["id"]: ordinary})
+        tombstone = {**ordinary, "revision": 2, "payload": {**ordinary["payload"], "value": None}}
+        bridge.saha_validate_change(employee, ordinary, tombstone, {})
+        self.reject(lambda: bridge.saha_validate_change(employee, ordinary, None, {}), "bridge_saha_cache")
+        private = cache("payroll_runs_v1")
+        self.assertFalse(bridge.saha_visible(employee, private, {}))
+        self.reject(lambda: bridge.saha_validate_change(employee, None, private, {}), "bridge_saha_payroll")
+        bridge.saha_validate_change(ADMIN, None, private, {})
+        self.reject(lambda: bridge.saha_validate_change(ADMIN, None, cache("not-approved"), {}), "bridge_saha_cache")
+        location = cache("lo_entities_v1")
+        for actor in (employee, {"id": STAFF, "role": "payroll"}):
+            self.assertFalse(bridge.saha_visible(actor, location, {}))
+            self.reject(lambda: bridge.saha_validate_change(actor, None, location, {}), "bridge_saha_scope")
+        self.assertTrue(bridge.saha_visible(ADMIN, location, {}))
+        bridge.saha_validate_change(ADMIN, None, location, {})
+
+    def test_saha_shared_cache_allowlists_match_the_native_php_api(self):
+        import re
+        source = (SOURCE.parent.parent / "api/lib/sahatakip.php").read_text(encoding="utf-8")
+        for php, expected in (("VG_SAHA_SHARED_CACHE", bridge.SAHA_SHARED_CACHE), ("VG_SAHA_MANAGED_CACHE", bridge.SAHA_MANAGED_CACHE), ("VG_SAHA_ADMIN_CACHE", bridge.SAHA_ADMIN_CACHE)):
+            body = re.search(r"const " + php + r" = \[(.*?)\];", source).group(1)
+            self.assertEqual(set(re.findall(r"'([^']+)'", body)), expected)
 
 
 if __name__ == "__main__":

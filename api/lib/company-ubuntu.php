@@ -9,9 +9,10 @@ function vg_company_ubuntu_config(): ?array {
     $actual = realpath($file); $base = realpath($directory);
     if ($actual === false || $base === false || strpos(strtolower(str_replace('\\', '/', $actual)), strtolower(str_replace('\\', '/', $base)) . '/') !== 0 || filesize($file) > 8192) throw new RuntimeException('invalid ubuntu configuration');
     $config = json_decode((string)file_get_contents($file), true);
-    if (!is_array($config) || ($config['version'] ?? null) !== 1 || array_diff(array_keys($config), ['version','host','helper','site','sshExecutable','timeout'])) throw new RuntimeException('invalid ubuntu configuration');
+    if (!is_array($config) || ($config['version'] ?? null) !== 1 || array_diff(array_keys($config), ['version','host','helper','sahaHelper','site','sshExecutable','timeout'])) throw new RuntimeException('invalid ubuntu configuration');
     if (!is_string($config['host'] ?? null) || !preg_match('/^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$/D', $config['host']) || !is_string($config['helper'] ?? null) || !preg_match('#^/home/[A-Za-z0-9_-]+/[A-Za-z0-9_./-]+\.py$#D', $config['helper']) || strpos($config['helper'], '..') !== false || !is_string($config['site'] ?? null) || !preg_match('/^[a-f0-9]{32,64}$/D', $config['site'])) throw new RuntimeException('invalid ubuntu target');
     $config['timeout'] = $config['timeout'] ?? 25;
+    if (isset($config['sahaHelper']) && (!is_string($config['sahaHelper']) || !preg_match('#^/home/[A-Za-z0-9_-]+/[A-Za-z0-9_./-]+\.py$#D', $config['sahaHelper']) || strpos($config['sahaHelper'], '..') !== false)) throw new RuntimeException('invalid saha ubuntu target');
     if (!is_int($config['timeout']) || $config['timeout'] < 5 || $config['timeout'] > 45) throw new RuntimeException('invalid ubuntu timeout');
     $executable = $config['sshExecutable'] ?? (PHP_OS_FAMILY === 'Windows' ? 'C:\\Windows\\System32\\OpenSSH\\ssh.exe' : '/usr/bin/ssh');
     if (!is_string($executable) || strpos($executable, "\0") !== false || !is_file($executable) || !is_readable($executable)) throw new RuntimeException('ubuntu ssh unavailable');
@@ -49,6 +50,16 @@ function vg_company_ubuntu_transport(array $config, array $request): array {
         if (is_resource($process)) { @proc_terminate($process); @proc_close($process); }
         foreach ([$input, $output, $error] as $file) if (is_file($file)) @unlink($file);
     }
+}
+
+function vg_company_saha_remote_config(array $config): array {
+    $helper = $config['sahaHelper'] ?? null;
+    if ($helper === null && basename($config['helper']) === 'company_store.py') $helper = dirname($config['helper']) . '/saha_store.py';
+    if (!is_string($helper) || !preg_match('#^/home/[A-Za-z0-9_-]+/[A-Za-z0-9_./-]+\.py$#D', $helper) || strpos($helper, '..') !== false) vg_company_fail(503, 'company_saha_source', 'SahaTakip veri bağlantısı henüz yapılandırılmadı.');
+    $config['helper'] = $helper;
+    // Internal routing marker; ubuntu.json must never be able to relax the company catalog contract.
+    $config['sahaSource'] = true;
+    return $config;
 }
 
 function vg_company_ubuntu_call(array $config, array $request, ?callable $transport = null): array {
@@ -101,11 +112,13 @@ function vg_company_ubuntu_store(callable $fn, array $config, ?callable $transpo
         if (!is_array($state['tables'][$table])) vg_company_fail(503, 'company_ubuntu_response');
         foreach ($state['tables'][$table] as $id => $row) if (!is_array($row) || (string)$id !== (string)($row['id'] ?? '') || !vg_company_ubuntu_token($tokens['rows'][$table][(string)$id] ?? null)) vg_company_fail(503, 'company_ubuntu_response');
     }
-    $catalog = $response['catalog'] ?? null;
-    $catalogKeys = ['historicalInvoice1','historicalInvoice2','cablePrices','packages'];
-    if (!is_array($catalog) || array_diff(array_keys($catalog), $catalogKeys) || array_diff($catalogKeys, array_keys($catalog))) vg_company_fail(503, 'company_ubuntu_catalog');
-    foreach ($catalog as $value) if (!is_array($value)) vg_company_fail(503, 'company_ubuntu_catalog');
-    $GLOBALS['vg_company_ubuntu_catalog'] = $catalog;
+    if (($config['sahaSource'] ?? false) !== true) {
+        $catalog = $response['catalog'] ?? null;
+        $catalogKeys = ['historicalInvoice1','historicalInvoice2','cablePrices','packages'];
+        if (!is_array($catalog) || array_diff(array_keys($catalog), $catalogKeys) || array_diff($catalogKeys, array_keys($catalog))) vg_company_fail(503, 'company_ubuntu_catalog');
+        foreach ($catalog as $value) if (!is_array($value)) vg_company_fail(503, 'company_ubuntu_catalog');
+        $GLOBALS['vg_company_ubuntu_catalog'] = $catalog;
+    }
     $GLOBALS['vg_company_data_source'] = 'ubuntu';
     vg_company_ubuntu_same_actor($actor, $epoch); $before = $state;
     $result = $fn($state, $actor);

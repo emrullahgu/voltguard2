@@ -16,6 +16,7 @@ function files(directory) {
   });
 }
 const assetFiles = () => files(path.join(published, 'assets'));
+const staffAssetFiles = () => assetFiles().filter(file => !path.relative(path.join(published, 'assets'), file).startsWith('saha' + path.sep));
 
 test('Published entry is PHP-only and refers to existing, current private build assets', () => {
   assert.equal(fs.existsSync(path.join(published, 'index.php')), true);
@@ -34,8 +35,8 @@ test('Published entry is PHP-only and refers to existing, current private build 
   const distAssets = path.join(root, 'tools/staff-app/dist/assets');
   if (fs.existsSync(distAssets)) {
     const names = directory => files(directory).map(file => path.relative(directory, file)).sort();
-    assert.deepEqual(names(path.join(published, 'assets')), names(distAssets), 'Stale generated bundles are pruned.');
-    for (const asset of assetFiles()) {
+    assert.deepEqual(names(path.join(published, 'assets')).filter(name => !name.startsWith('saha' + path.sep)), names(distAssets), 'Stale generated staff bundles are pruned.');
+    for (const asset of staffAssetFiles()) {
       const emitted = path.join(distAssets, path.relative(path.join(published, 'assets'), asset));
       assert.equal(fs.readFileSync(asset).equals(fs.readFileSync(emitted)), true, 'Published bytes match the final build.');
     }
@@ -188,7 +189,7 @@ test('Private application uses the shared site shell and scoped styles', () => {
   assert.equal(links[0]?.[1], '/');
   assert.equal(links[0]?.[2].trim(), 'Ana Sayfa');
   assert.match(read('calisan/uygulama/index.php'), /id="vg-company-workspace"/);
-  const styles = assetFiles().filter(file => file.endsWith('.css'));
+  const styles = staffAssetFiles().filter(file => file.endsWith('.css'));
   assert.equal(styles.length, 1);
   const css = fs.readFileSync(styles[0], 'utf8');
   assert.equal(css.includes('#vg-company-workspace'), true);

@@ -117,6 +117,22 @@ try {
     file_put_contents(vg_company_dir() . '/catalog.json', vg_json_encode(['historicalInvoice1' => [['name' => 'Local catalog must not replace remote']], 'historicalInvoice2' => [], 'cablePrices' => [], 'packages' => []]));
     fixture_check(vg_company_catalog()['historicalInvoice1'], [], 'Configured Ubuntu catalog is authoritative over local cached catalog');
 
+    // Original Saha data is a separate source and deliberately has no company price catalog.
+    $sahaConfig = vg_company_saha_remote_config(array_merge($config, ['sahaHelper' => '/home/fixture/saha_store.py']));
+    fixture_check($sahaConfig['helper'], '/home/fixture/saha_store.py', 'Saha transport selects its private source helper');
+    fixture_check($sahaConfig['sahaSource'], true, 'Saha catalog exemption is stamped only by internal routing');
+    $sahaResponse = fixture_snapshot_response($state); unset($sahaResponse['catalog']);
+    $companyCatalog = ['historicalInvoice1' => [['name' => 'Company catalog remains authoritative']], 'historicalInvoice2' => [], 'cablePrices' => [], 'packages' => []];
+    $GLOBALS['vg_company_ubuntu_catalog'] = $companyCatalog;
+    $sahaSnapshot = vg_company_ubuntu_store(static function (array &$s, array $actor) { return ['data' => ['actor' => $actor['id'], 'version' => $s['version']]]; }, $sahaConfig, static function () use ($sahaResponse) { return $sahaResponse; });
+    fixture_check($sahaSnapshot['data'], ['actor' => 'synthetic-employee', 'version' => 1], 'Actual PHP adapter accepts authenticated catalog-free Saha snapshots');
+    fixture_check($GLOBALS['vg_company_ubuntu_catalog'], $companyCatalog, 'Saha snapshot cannot replace the existing company catalog');
+    unset($GLOBALS['vg_company_ubuntu_catalog']);
+    vg_company_ubuntu_store(static function () { return []; }, $sahaConfig, static function () use ($sahaResponse) { return $sahaResponse; });
+    fixture_check(array_key_exists('vg_company_ubuntu_catalog', $GLOBALS), false, 'Saha snapshot does not synthesize a global company catalog');
+    fixture_error(static function () use ($config, $sahaResponse) { vg_company_ubuntu_store(static function () { return []; }, $config, static function () use ($sahaResponse) { return $sahaResponse; }); }, 503, 'company_ubuntu_catalog', 'Main company adapter still requires the complete catalog');
+    $GLOBALS['vg_company_ubuntu_catalog'] = $companyCatalog;
+
     $server->rewriteCanonical = static function (array $row): array { if (isset($row['updated_at'])) $row['updated_at'] = '2026-10-13T12:00:00.123456+00:00'; return $row; };
     $oldToken = $server->token($state['tables']['products']['old-product']);
     $result = fixture_query($server, $config, 'products', 'update', ['rows' => ['price' => 12], 'filters' => [['op' => 'eq', 'field' => 'id', 'value' => 'old-product']], 'single' => 'one']);
@@ -238,6 +254,7 @@ try {
     $invalidConfigs = [
         '{broken',
         vg_json_encode(array_merge($config, ['password' => 'unexpected field'])),
+        vg_json_encode(array_merge($config, ['sahaSource' => true])),
         vg_json_encode(array_merge($config, ['host' => 'host; unsafe-command'])),
         vg_json_encode(array_merge($config, ['helper' => '/home/fixture/../secret.py'])),
         vg_json_encode(array_merge($config, ['site' => 'not-a-site-identity'])),

@@ -108,7 +108,36 @@
   #vg-company-workspace .portal-app .flex.space-x-2 > * { margin-left:0; }
 }
 @media(prefers-reduced-motion:reduce) { #vg-company-workspace *,#vg-company-workspace *::before,#vg-company-workspace *::after { animation:none!important; transition:none!important; } }
+#vg-company-workspace .saha-launcher { display:flex; align-items:center; justify-content:space-between; gap:1.5rem; padding:1.5rem; border:1px solid #d8e0e9; border-left:4px solid var(--portal-amber); border-radius:12px; background:#fff; }
+#vg-company-workspace .saha-launcher__eyebrow { margin:0 0 .25rem; color:var(--portal-amber-dark); font-size:.75rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+#vg-company-workspace .saha-launcher h2 { margin:0 0 .4rem; color:var(--portal-navy); font-size:1.6rem; }
+#vg-company-workspace .saha-launcher p:not(.saha-launcher__eyebrow) { margin:0; color:var(--portal-muted); font-size:.9rem; }
+#vg-company-workspace .saha-launcher button { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; gap:.8rem; min-height:44px; padding:.65rem 1rem; border:0; border-radius:6px; background:var(--portal-amber); color:var(--portal-navy); font-weight:600; }
+#vg-company-workspace .saha-launcher button:hover { background:var(--portal-navy); color:white; }
+#vg-company-workspace .saha-workspace { overflow:hidden; border:1px solid #d8e0e9; border-radius:12px; background:#fff; }
+#vg-company-workspace .saha-workspace__heading { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; padding:1.1rem 1.25rem; border-bottom:1px solid #e2e8f0; background:var(--portal-navy); color:#fff; }
+#vg-company-workspace .saha-workspace__identity { display:flex; align-items:center; gap:.8rem; min-width:0; }
+#vg-company-workspace .saha-workspace__icon { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; width:44px; height:44px; border-radius:10px; background:var(--portal-amber); color:var(--portal-navy); }
+#vg-company-workspace .saha-workspace h1 { margin:0; color:#fff; font-size:1.5rem; }
+#vg-company-workspace .saha-workspace__heading p { margin:.25rem 0 0; color:#cbd5e1; font-size:.8rem; }
+#vg-company-workspace .saha-workspace__actions { display:flex; flex-wrap:wrap; gap:.5rem; }
+#vg-company-workspace .saha-workspace__actions button { display:inline-flex; align-items:center; justify-content:center; gap:.4rem; min-height:44px; padding:.5rem .7rem; border:1px solid #607087; border-radius:6px; color:#fff; background:transparent; font-size:.8rem; }
+#vg-company-workspace .saha-workspace__actions button:hover { background:#21334b; }
+#vg-company-workspace .saha-workspace__status { display:flex; align-items:center; flex-wrap:wrap; gap:.75rem; margin:0; padding:.8rem 1.25rem; background:#fffbeb; color:#92400e; font-size:.85rem; }
+#vg-company-workspace .saha-workspace__status button { min-height:44px; padding:.3rem .6rem; background:white; color:#92400e; border:1px solid #d97706; border-radius:6px; }
+#vg-company-workspace .saha-workspace__frame { display:block; width:100%; height:clamp(650px,80dvh,1000px); border:0; background:#f8fafc; }
+#vg-company-workspace .saha-workspace--expanded { position:fixed; inset:1rem; z-index:1090; display:flex; flex-direction:column; max-width:none; box-shadow:0 0 0 2rem #0a1628b3; }
+#vg-company-workspace .saha-workspace--expanded .saha-workspace__frame { flex:1; height:auto; min-height:0; }
+@media(max-width:767px) {
+  #vg-company-workspace .saha-launcher { align-items:flex-start; flex-direction:column; gap:1rem; padding:1rem; }
+  #vg-company-workspace .saha-launcher button { width:100%; }
+  #vg-company-workspace .saha-workspace__heading { padding:.85rem; }
+  #vg-company-workspace .saha-workspace__actions { width:100%; }
+  #vg-company-workspace .saha-workspace__actions button { flex:1; }
+  #vg-company-workspace .saha-workspace--expanded { inset:.35rem; }
+}
 @media print {
+  #vg-company-workspace .saha-workspace { display:none; }
   #vg-company-workspace { background:white; }
   #vg-company-workspace :is(.no-print,.print-hide,.portal-navigation,.portal-module-toolbar) { display:none!important; }
   #vg-company-workspace .print-only { display:block!important; }

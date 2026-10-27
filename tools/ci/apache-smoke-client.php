@@ -62,6 +62,16 @@ function api(string $method, string $path, ?array $json = null, array $headers =
 
 // ------------------------------------------------------------------ yönlendirme ve statik sayfalar
 echo "## Rotalar\n";
+// The imported native workspace stays private under actual Apache rewrites.
+expectStatus('/calisan/uygulama/saha.php', 303, '', null, '/calisan/giris.html');
+expectStatus('/calisan/uygulama/saha-entry.html', 403);
+$sahaAssets = glob('/var/www/html/calisan/uygulama/assets/saha/_expo/static/js/web/*.js') ?: [];
+line(count($sahaAssets) > 0, 'Saha web export is present in the private deployment');
+if ($sahaAssets) {
+    $sahaPath = substr($sahaAssets[0], strlen('/var/www/html'));
+    expectStatus($sahaPath, 401, 'application/json', 'staff_unauthorized');
+}
+expectStatus('/api/saha-asset.php?bucket=photos&path=synthetic-missing.png', 401, 'application/json', 'staff_unauthorized');
 expectStatus('/voltsim/', 200, 'text/html', 'VoltSim');
 expectStatus('/voltsim', 301, '', null, '/voltsim/');
 expectStatus('/voltsim.html', 301, '', null, '/voltsim/');

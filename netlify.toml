@@ -524,6 +524,18 @@
   force = true
 
 [[redirects]]
+  from = "/SahaTakip-main"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/SahaTakip-main/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
   from = "/voltguardekleyelim/*"
   to = "/404.html"
   status = 404

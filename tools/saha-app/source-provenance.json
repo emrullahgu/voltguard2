@@ -1,0 +1,2765 @@
+{
+  "source": "User-provided local SahaTakip-main source; original unchanged",
+  "reviewedAt": "2026-10-27",
+  "excluded": [
+    ".env*",
+    "Company",
+    "supabase",
+    "scripts",
+    "logs",
+    "src/data",
+    "__tests__",
+    "ürünler.json",
+    "source lock configuration and private catalogs"
+  ],
+  "copiedSourceFiles": [
+    {
+      "path": "src/theme.ts",
+      "sha256": "863953B01E7612BE19EC2805EA346783AC83A6E6B2734B297DFAC22554C88B05"
+    },
+    {
+      "path": "src/themeMode.ts",
+      "sha256": "4DE4BA303D936D782F1DC0171B523586867DA33EBC20BF2BBA5BE3D3AF1F8153"
+    },
+    {
+      "path": "src/components/AppHeader.tsx",
+      "sha256": "351A2B16A4D24627D5C524D80B06EED678B345B1D9E99A38F593FBF7F00E8E2E"
+    },
+    {
+      "path": "src/components/BulkSelectionBar.tsx",
+      "sha256": "901775BB00D7A4DF53D446CF8AE006BD4388936DEA1B9A23FFF1491C907BBBDE"
+    },
+    {
+      "path": "src/components/ChatbotFAB.tsx",
+      "sha256": "D2B01BAA0C50E5A0496CDF7947FEC12056E55AB2882F2795AAF921C029A62E18"
+    },
+    {
+      "path": "src/components/ConnectionBanner.tsx",
+      "sha256": "CB23BFB8076F137F33646D3ABAA73D0907166EA9A751651B7A905C69E195AF96"
+    },
+    {
+      "path": "src/components/CustomerPicker.tsx",
+      "sha256": "02103D0C2DA169B6A463E17671E0651F349A2FE349F0BFD34E384155D8784099"
+    },
+    {
+      "path": "src/components/DocSectionView.tsx",
+      "sha256": "1AFE0422468384D77B463AFC83B9515B2DA5F663E1FDA92150749C67A34B5C0D"
+    },
+    {
+      "path": "src/components/DynamicForm.tsx",
+      "sha256": "F109FDE4DFC326BBC86DCA71B4865A16AA6437A25D7AD3D3FB48A17007604AD8"
+    },
+    {
+      "path": "src/components/EmptyState.tsx",
+      "sha256": "194A0D86E8D0FC8EC74B74D09C449F86D3EF558011A4C748FA3DD5D89708A18C"
+    },
+    {
+      "path": "src/components/ErrorBoundary.tsx",
+      "sha256": "97F2D02D5C60865AAF7DE39F43E572F4B39318835A08F5F45AA043A80983074F"
+    },
+    {
+      "path": "src/components/ErrorState.tsx",
+      "sha256": "C7B7A4877918695F7658F31F9895DD0F40E7A9E388AC1FD1FF1BFE2D804E5C90"
+    },
+    {
+      "path": "src/components/FadeInView.tsx",
+      "sha256": "7A499599F857B959DB346A70BCCB2E8CF0AB2B64B498449302E30EC420588F37"
+    },
+    {
+      "path": "src/components/GlobalToast.tsx",
+      "sha256": "DFB0BD083538D533DF3D88878C2AF4B3455462ACB81CACFB84E19911D5D3EF85"
+    },
+    {
+      "path": "src/components/LoadingSkeleton.tsx",
+      "sha256": "31AB100BD61343C8CCE98C367C7DEC2737DEF0F38BA32EB62E75712DC0CB7A29"
+    },
+    {
+      "path": "src/components/MarkdownText.tsx",
+      "sha256": "140FF8461BBA0690B0016C72CA9309C5A58D6D92F693AC559924DB5C9B80DA1B"
+    },
+    {
+      "path": "src/components/MiniBarChart.tsx",
+      "sha256": "1163F9108733733D3C5AE6FFD5EE25EB0A1F59DAF296B3EFE97B1C87A04A5064"
+    },
+    {
+      "path": "src/components/PressableScale.tsx",
+      "sha256": "68618D771D072825DB9BB74093ACD5DB153B33578FE98882FCBC112A0B7C48B1"
+    },
+    {
+      "path": "src/components/RoleGuard.tsx",
+      "sha256": "EA0F538899FC1CFA7F6B308FA7684244E10580E1F1378CC3AD6E15FCFDD8F022"
+    },
+    {
+      "path": "src/components/RoleLockScreen.tsx",
+      "sha256": "DCACBCD62DC86B21A57FBC62814D41DC87DEA0E7F655B6AA6A35A299EE62D7ED"
+    },
+    {
+      "path": "src/components/RowMenu.tsx",
+      "sha256": "97BF5680CE0B6E6BF69CDAD08DC6672C99933652B330EDE2D7487FC68B6483D1"
+    },
+    {
+      "path": "src/components/SearchFilterBar.tsx",
+      "sha256": "A069E246CC0AB601BC08015A1FC812ADF8E3185ECF86D520E140E8616646397B"
+    },
+    {
+      "path": "src/components/SignaturePad.tsx",
+      "sha256": "C5E9A58CBF630EA191457B5ACC54E5906021D5BFF684B16F53B5F949D56B4FFD"
+    },
+    {
+      "path": "src/components/StatusBadge.tsx",
+      "sha256": "4DDFF6EEEC08E456253608B25CFDE46AAD5FC0C942A7659D7E1B0217159570A3"
+    },
+    {
+      "path": "src/components/SunucuDurumu.tsx",
+      "sha256": "FAD6EDFD44926E60CE41C11CEFCE315079FABDBBE574BF5D4AA2AB528AFFBB13"
+    },
+    {
+      "path": "src/components/Toast.tsx",
+      "sha256": "1FD0F17D77046BD4890E42397F70AA75DB98DF95DEA4F52F0369D4B2C5CCA006"
+    },
+    {
+      "path": "src/components/UatE2EView.tsx",
+      "sha256": "5EE0B0BCA47C0158985DD13EF8CBCC4FA3398C7A281653FE1B63DBC6E36DB2D2"
+    },
+    {
+      "path": "src/components/UatScenarioList.tsx",
+      "sha256": "CA9C297E19FEB16442E2F848BC810AC0911806D1779311A72FAED8B685B52FCA"
+    },
+    {
+      "path": "src/config/brand.ts",
+      "sha256": "8B3C031BA2D32D69220CECA71BDE1FEA44E99B14F32632465DC3E58446CE90BD"
+    },
+    {
+      "path": "src/config/logoBase64.ts",
+      "sha256": "81512401447C5D4835F7DDA8030B13970D535D4934E4E44B33F77B8FD8F97A42"
+    },
+    {
+      "path": "src/context/AppContext.tsx",
+      "sha256": "328DEF8D638D1D72A5E92CFA03CD2B2324B73006CA01242763D9CA16DCFB73D9"
+    },
+    {
+      "path": "src/context/AuthContext.tsx",
+      "sha256": "2B28BB911F2B937507B8BAB773108C1B4BFB8186351BB05D69B85B1725E42B2A"
+    },
+    {
+      "path": "src/context/VisitContext.tsx",
+      "sha256": "9C3561E4A33FC93606CF45B817AC8194FAF0CB98BBCB0E2CD273DE434AC93226"
+    },
+    {
+      "path": "src/hooks/useDebouncedValue.ts",
+      "sha256": "F78DD0EC295B2083907806795BE9E70DF29279F6D98D194502FA8D22BB322BBF"
+    },
+    {
+      "path": "src/hooks/useFormState.ts",
+      "sha256": "E09B34427D2251CBD8E955088A25CFA309E9FF23B64C249FF1A9A6ED878F7014"
+    },
+    {
+      "path": "src/hooks/useOptimisticMutation.ts",
+      "sha256": "D8E321C40D43125EC687FF5278A6FFBF412CCF69F86F208137F80E9F6C46D4D8"
+    },
+    {
+      "path": "src/navigation/index.tsx",
+      "sha256": "C2FDEB58C3F628A5284A149A1193B91E5BEB68E6980D655BA31FEB705457A285"
+    },
+    {
+      "path": "src/screens/AccessRulesScreen.tsx",
+      "sha256": "64E00522AE2E12CA1512E4DEEA70822BA88C691F74AD59FF95B9798EE615A160"
+    },
+    {
+      "path": "src/screens/AdminAlertsScreen.tsx",
+      "sha256": "272198577A300153C1ABEC677DB2C7BB927FAB849C02206544AF8350BD2C7EB5"
+    },
+    {
+      "path": "src/screens/AdminShiftDashboardScreen.tsx",
+      "sha256": "E2E0A75564B31CA0F22A1CA28DB28A122FB6B2E2A484032798469D61559F6AF0"
+    },
+    {
+      "path": "src/screens/AdvBIScreen.tsx",
+      "sha256": "D29630DDE1EA091B05D3DDE56F6AC90155089A9AD90AA70F6C21AB0EB4709F9A"
+    },
+    {
+      "path": "src/screens/AdvCallCenterScreen.tsx",
+      "sha256": "6CE5B987D274504FED59B45589825A9718E2DB22A153EDF137DFF1E24CFAD148"
+    },
+    {
+      "path": "src/screens/AdvCollectionForecastScreen.tsx",
+      "sha256": "742B7DF93827AB4A2B8AB0C16496F2975403A9EB7E1371A77158B9C1D74076B5"
+    },
+    {
+      "path": "src/screens/AdvEcommerceScreen.tsx",
+      "sha256": "A5ABFE0C13A4637241070153B613FA98527D8865787869BBAD1C779B6C65B51B"
+    },
+    {
+      "path": "src/screens/AdvHubScreen.tsx",
+      "sha256": "21F4631926156F2C9991BE445B950CA0CAE2AA2333152AAD06D16A0AD33909C0"
+    },
+    {
+      "path": "src/screens/AdvRfmScreen.tsx",
+      "sha256": "A040CA94C94013A0EFE9A1B135B80316CA35D488C2D55F9536B052A006456499"
+    },
+    {
+      "path": "src/screens/AdvVoiceAIScreen.tsx",
+      "sha256": "45D0DF0B93E8F4F91E0DDD123EF3B4BA96B41CB0E3E97763A06A2D111691678C"
+    },
+    {
+      "path": "src/screens/AgentConsoleScreen.tsx",
+      "sha256": "43BD5611B56F196DC5611886EB9FE757C46DA967303B0EED323F8D4F11C93F41"
+    },
+    {
+      "path": "src/screens/AgentSuggestionsScreen.tsx",
+      "sha256": "9539B7CD58D73AB17FBBC4E765D332318CFDA45476FE992F1225FBA9E17A02AE"
+    },
+    {
+      "path": "src/screens/AgingReportScreen.tsx",
+      "sha256": "324A9B0E60DCDB28C006A971C105C7E57AC62CD723C95D980D5FE51F635DCCBD"
+    },
+    {
+      "path": "src/screens/AiAssistantHubScreen.tsx",
+      "sha256": "146036309D0D059762E5ECA42466FBFB746A51DCF58307D8FE81BE9C4ED5E0E4"
+    },
+    {
+      "path": "src/screens/AiAssistantScreen.tsx",
+      "sha256": "D3180FEC5D31793505DEE78ED0A3CBF0B6AB3546A0147594FB87AA8D11A56326"
+    },
+    {
+      "path": "src/screens/AiChatScreen.tsx",
+      "sha256": "1992F9170BBA9C39B18D896D97F7DDD7091E9D5036AA4F63DC995C428F86FB2B"
+    },
+    {
+      "path": "src/screens/AiCustomerInsightScreen.tsx",
+      "sha256": "C8A3431A464EAA30C1EA9C9BF7043331EB5A2C7D0EE3F4DBF98A38D0E31FC0A7"
+    },
+    {
+      "path": "src/screens/AiDailyReportScreen.tsx",
+      "sha256": "DDDAB70EA8A2C37A1E6BAEB0A8346915F9D1383F4D75F0711FE15722A2F9D733"
+    },
+    {
+      "path": "src/screens/AiExecSummaryScreen.tsx",
+      "sha256": "FB84E8BF338F61F2BABC31BE88E5D9829292A193B8659333836F8A3D71DDFA4A"
+    },
+    {
+      "path": "src/screens/AiHubScreen.tsx",
+      "sha256": "1167B744705D673BDC9D9AAB8554007D21ED415EE97F6E49607E665365A9F98E"
+    },
+    {
+      "path": "src/screens/AiInsightsScreen.tsx",
+      "sha256": "8C01A3FC8D175F8B69470998C37EE0ADB3FEB0D2670ABC52958555008255AA9A"
+    },
+    {
+      "path": "src/screens/AiKnowledgeBaseScreen.tsx",
+      "sha256": "9E203310E5527FB1629FD8EF14A9BBD18328C3E4E6DA6C018004293A991DE4BB"
+    },
+    {
+      "path": "src/screens/AiPermissionsScreen.tsx",
+      "sha256": "FAA18B5FF4E0B2E322455E0847A5EE2132C993D72134E370FC8BD53A5A8215DE"
+    },
+    {
+      "path": "src/screens/AiPozSuggestScreen.tsx",
+      "sha256": "D7EED274537592BA19BDBE9FDE292DF0468217AD26606A1C2A12210ED54814DF"
+    },
+    {
+      "path": "src/screens/AiQuoteDraftDetailScreen.tsx",
+      "sha256": "56066D8A6E85189E102B654DDE701AA6BCCE52C7CD5891DFAC204BA91C247314"
+    },
+    {
+      "path": "src/screens/AiQuoteDraftScreen.tsx",
+      "sha256": "D9AA8278940B4527DEC969337B234FDAB4A7B656F45CE43AAAA7085C733BF04F"
+    },
+    {
+      "path": "src/screens/AiQuoteImprovementsScreen.tsx",
+      "sha256": "BB688AD7B36C0B1C2F2E14AF08CDD6548C0DF4485C1F4146FD6317ED5FC5A662"
+    },
+    {
+      "path": "src/screens/AiRiskAlertsScreen.tsx",
+      "sha256": "48AA79CFA855FFF2AC11835D5C3F16BA7A900095864A1D93F25621EE5727F6D8"
+    },
+    {
+      "path": "src/screens/AiSessionsScreen.tsx",
+      "sha256": "B3FAA2F6A5E8588C0288909BA1E4F47021F18549CA57915F7690848040C536BE"
+    },
+    {
+      "path": "src/screens/AiSettingsScreen.tsx",
+      "sha256": "EB2D76F7121F4C877A7AD108508F66D13FA195245EFC5BB8A33E7A633F17346F"
+    },
+    {
+      "path": "src/screens/AiUsageLogsScreen.tsx",
+      "sha256": "AD67D7C3CFEEABBDC158CBF540F3BBAAD295A566DC5D459AC4009C2DADA0BC3F"
+    },
+    {
+      "path": "src/screens/AiWorkOrderSummaryScreen.tsx",
+      "sha256": "296B30352195DAFB13C41906BE7A34F75ABA20BD1EA4421867B93B4173E354EF"
+    },
+    {
+      "path": "src/screens/AllUsersScreen.tsx",
+      "sha256": "539499FF333BCB6D1881CBF67538D58CC13EA9915F8897E7F5E25485664991C4"
+    },
+    {
+      "path": "src/screens/AnomaliesScreen.tsx",
+      "sha256": "3504F3A6F1FDC37C94E321F88DDC0A77CB3DEF7617785A427E5AD0AED0CC7637"
+    },
+    {
+      "path": "src/screens/ApiKeysScreen.tsx",
+      "sha256": "E59123866E3206148F2B5D9BDECE018F4ADDAA50A6ED143056F353B22BF84B74"
+    },
+    {
+      "path": "src/screens/ApiUsageLogsScreen.tsx",
+      "sha256": "A0B4BD860844B5F9F98E963C808715A2DB2D1C6E62098BD4D311DFA2E5C45E94"
+    },
+    {
+      "path": "src/screens/ApolloLeadsScreen.tsx",
+      "sha256": "992BFA98A62B42233C61C82A254154171AEB0861C516BB27294BA145DD47E3F1"
+    },
+    {
+      "path": "src/screens/ApprovalDetailScreen.tsx",
+      "sha256": "C8A4A9751B4C2FDC29A5095C0A7263C1D95331C173C28E2B25033CC4C4E31FC9"
+    },
+    {
+      "path": "src/screens/ApprovalsScreen.tsx",
+      "sha256": "246AA91E1C754668596C14C378E5D44F3EA429FF7EC20280B9E675FD1186CE6A"
+    },
+    {
+      "path": "src/screens/AppUpdateScreen.tsx",
+      "sha256": "4EE0DCF75B6B9669DDAF19BB638433175B06432FB985A85852643014FEA404D4"
+    },
+    {
+      "path": "src/screens/ArchiveJobsScreen.tsx",
+      "sha256": "F2F7CD45A55CFBB533F640801EA68FAF93297A707B459EDBE03F7D04112D4A88"
+    },
+    {
+      "path": "src/screens/ArchivePoliciesScreen.tsx",
+      "sha256": "D565D1D109A8A5F9175E36FE042E629BC216B7DA4C1E177C4EDB53ED471BFF57"
+    },
+    {
+      "path": "src/screens/AssetCostAnalysisScreen.tsx",
+      "sha256": "B3E2C020F827678BEFBE47DE92239954827FD563B35A2A13C69E75DA771A4224"
+    },
+    {
+      "path": "src/screens/AssetDetailScreen.tsx",
+      "sha256": "2F42A8F32C53993F5ED408281FA72CA42AE496BF41F7CBD140BC5DD2FAFC2E7B"
+    },
+    {
+      "path": "src/screens/AssetFaultHistoryScreen.tsx",
+      "sha256": "6C165B6327BD30E23C6043546F1873C0F066CC49802CC963BDC975E27DFA9948"
+    },
+    {
+      "path": "src/screens/AssetFormScreen.tsx",
+      "sha256": "78171E31D3D141260192F2C3718A1EC307221EE2BF42B941E30D2CFE35D45539"
+    },
+    {
+      "path": "src/screens/AssetHistoryScreen.tsx",
+      "sha256": "D42A7947F7F5B6FA63CEC1D36AA37A9A17EDFB4FADD66B81CC91F5B03BF8F312"
+    },
+    {
+      "path": "src/screens/AssetHubScreen.tsx",
+      "sha256": "93BDFE7CD91751B5C71A04439939D39CD6354700CAC8144A8F73DB9E4FB80F4B"
+    },
+    {
+      "path": "src/screens/AssetListScreen.tsx",
+      "sha256": "AADF0979E5599E8891BA93C841C2EC604D3AD98ADAB80F5F548DCF84EFF6D668"
+    },
+    {
+      "path": "src/screens/AssetMaintenanceHistoryScreen.tsx",
+      "sha256": "8EEE65B09B795AB433C2DB8B164DA9F63210738E5668AC2077D5406347DF13AE"
+    },
+    {
+      "path": "src/screens/AssetQrScreen.tsx",
+      "sha256": "C4BBE33C97D12157025304526FCF409E274D29F22C9411ECD106CE77CA7C2689"
+    },
+    {
+      "path": "src/screens/AssetsScreen.tsx",
+      "sha256": "C98272F46F7603AF3E51743F2606C28834B2A88B40004FA36C1FA86BC3E8791F"
+    },
+    {
+      "path": "src/screens/AssignmentsScreen.tsx",
+      "sha256": "BD563A5DD3CDF8E6CA0C5128ED3200343B97D998A0A43BF81A11D0EFB8E2FAFA"
+    },
+    {
+      "path": "src/screens/AttendanceReportScreen.tsx",
+      "sha256": "D87966989EDADB56432ECA6B31227CD5502F020E04A90FE4D8F498919E3FE52E"
+    },
+    {
+      "path": "src/screens/AuditDetailScreen.tsx",
+      "sha256": "39199AE78526447FBA2E2C8C879F275DCE96A2CDC0F21705D4A0C78FFDBA7589"
+    },
+    {
+      "path": "src/screens/AuditLogScreen.tsx",
+      "sha256": "B43534B922F87D3AFF0FAD4DCD96043C54D96587B549489C8A296C90E69F41CE"
+    },
+    {
+      "path": "src/screens/AuditLogV2Screen.tsx",
+      "sha256": "C489A07AC1E2B6CB2BC68F675DA7FBDFC2E7DA7DD869AA153F3B5E642E25DC11"
+    },
+    {
+      "path": "src/screens/AuditReportScreen.tsx",
+      "sha256": "2F3137FEC1D8DB721ECBBCE54772FE182EBC5B0617F13A129604D802938F8CC0"
+    },
+    {
+      "path": "src/screens/AuditScheduleScreen.tsx",
+      "sha256": "226D0415C3AEAD9D470E097BB8E4C345AF2CDA16F5A3077DC2BC982482441194"
+    },
+    {
+      "path": "src/screens/AuditScoringScreen.tsx",
+      "sha256": "40B22239E26E4A3AA01C1F74ED586A765AE31AE11F6FC40BA430AA4D0C93CE9B"
+    },
+    {
+      "path": "src/screens/AutoAssignScreen.tsx",
+      "sha256": "B0664253033A42AC588F8BF7ACAF1F5AA5CB26FB286F3FE8A007F4E8B2734A6E"
+    },
+    {
+      "path": "src/screens/AutoReportFormScreen.tsx",
+      "sha256": "A386A0FE7400CF2FB0C0963D8E3C00FD3EA18EC6E7C0FC62AF84DC78E61BC80B"
+    },
+    {
+      "path": "src/screens/AutoReportsScreen.tsx",
+      "sha256": "D7A51C6968AC5C5391A8890D610161452F633BDD12921300C52B6CF86F9D132B"
+    },
+    {
+      "path": "src/screens/BackupReportScreen.tsx",
+      "sha256": "E2C75B87C3A015E79FD3B2A6F7D056DDD40E22EDE8108F4B519332D55DAD918A"
+    },
+    {
+      "path": "src/screens/BackupScreen.tsx",
+      "sha256": "93E91222D59921369E08A635740BBF4822C873A9648C6C47A7F589D445537CF4"
+    },
+    {
+      "path": "src/screens/BackupsScreen.tsx",
+      "sha256": "4538F17274D3302E268A92D6A18D75849A495C2082940AACCC48434BA7C14AD8"
+    },
+    {
+      "path": "src/screens/BarcodeScanScreen.tsx",
+      "sha256": "C23699565C754D1DB22C681AD0A9E145FF3611A0D0237F74ACC965B306C6F217"
+    },
+    {
+      "path": "src/screens/BiHubScreen.tsx",
+      "sha256": "DF93E411539C6D6F5B0D7B68375EA16393932A7E42C555629F9FBA3F50534B92"
+    },
+    {
+      "path": "src/screens/BordroScreen.tsx",
+      "sha256": "13D1A99F1CB1B4F11F9A3F4E673706A0F1A35B8C96FA8FFC8E6C476710830173"
+    },
+    {
+      "path": "src/screens/BroadcastMessageScreen.tsx",
+      "sha256": "35771839AEC0D313BA1D6C956C4C187528E0C68F91F601BBCFF38AA38DABC4DF"
+    },
+    {
+      "path": "src/screens/BudgetVsActualScreen.tsx",
+      "sha256": "1709057D44F3DE5E59F33976FAC66E45E3C21EAC3EFBB323F878965DB04C4726"
+    },
+    {
+      "path": "src/screens/BulkAssignScreen.tsx",
+      "sha256": "844DA546C7665D7D06E33D1E6F9A108715BE2F283208F2EB40B059C83CBD30C6"
+    },
+    {
+      "path": "src/screens/CalendarEventDetailScreen.tsx",
+      "sha256": "637DD47520984155055945D6D54CA649A35D2E1C2D20E120484DEA46C34FA177"
+    },
+    {
+      "path": "src/screens/CalendarEventFormScreen.tsx",
+      "sha256": "A41529BE21A719078036421933BC070596B7B34B5A7615CD2A825299F0101F1A"
+    },
+    {
+      "path": "src/screens/CalendarScreen.tsx",
+      "sha256": "DA893B9AE8A21080E1E090CBDCF832DD00A84F5E56F68233CDC5298B12E34703"
+    },
+    {
+      "path": "src/screens/CapaScreen.tsx",
+      "sha256": "F3616E310EA02D37AD2CAAA8C8921838E532D1FA93ADCAF37047F6823D4B7689"
+    },
+    {
+      "path": "src/screens/CashRegisterScreen.tsx",
+      "sha256": "29884CBC475B376A19A9E26701220478DC4C89C271D00413EB522FEDDEED8467"
+    },
+    {
+      "path": "src/screens/CeoSummaryScreen.tsx",
+      "sha256": "543E1353F0233F823340C79E90099594E8E963774CA9DDCF49E650EC68BA5646"
+    },
+    {
+      "path": "src/screens/ChangePasswordScreen.tsx",
+      "sha256": "0374E7FF21B4F57D1D291906A4BFDC1479363B19FAD3DBEA462D57E7DAF9E6E7"
+    },
+    {
+      "path": "src/screens/ChatThreadScreen.tsx",
+      "sha256": "1C8EBD456D7611724ADABBBEA126CBA3332CAB794FFA77D54C088E7F0C74216F"
+    },
+    {
+      "path": "src/screens/CheckinScannerScreen.tsx",
+      "sha256": "8D6F0E91169A3AC4BFEEB343228FAF06E603FC9DE3068CE3E0CA697538249A3A"
+    },
+    {
+      "path": "src/screens/CompanyScreen.tsx",
+      "sha256": "B400F658290AC1519AA4E95FC4C1BE3066A534C3CBB7A4A95CA5E6F07D093D2C"
+    },
+    {
+      "path": "src/screens/CompensationQuoteScreen.tsx",
+      "sha256": "B4BC9C44002B8ACE23CB251BDF2AA71D238784452DDB8946164266BEA7B2DC64"
+    },
+    {
+      "path": "src/screens/ComplianceHubScreen.tsx",
+      "sha256": "9BBFA116889ED7AABDC4EDB8A74E46CB53723472B1EF29092439C5D14730F162"
+    },
+    {
+      "path": "src/screens/ConflictResolverScreen.tsx",
+      "sha256": "7C8B8ADE87FD26DFD19917E2876CE84AB6D69C557636B2D80D39B036D428D902"
+    },
+    {
+      "path": "src/screens/ConnectivityHubScreen.tsx",
+      "sha256": "4C0F289DE9F01E28DC4F8CF4E904A33D7759CEEC9E47985E27265430F2CC07A7"
+    },
+    {
+      "path": "src/screens/ConnectivityMonitorScreen.tsx",
+      "sha256": "09EE87C07845BE6ABDCE6DAC0CE5A03ED44E8D4DA32B5A7C51CE8C50E4D2F718"
+    },
+    {
+      "path": "src/screens/CoPilotScreen.tsx",
+      "sha256": "86A61572F4D59B866244DF21B7EAB780EE338A52B97EEBCA50E4C911EC8836E9"
+    },
+    {
+      "path": "src/screens/CostlyWorkOrdersScreen.tsx",
+      "sha256": "9976EFFC2482FFE3F4716BA33744E5999CAB48D50816D822BCFFD9125F355557"
+    },
+    {
+      "path": "src/screens/CovCategoryScreen.tsx",
+      "sha256": "21345BC6975F1ACA66C668AEC8F49637B7A6E75FD2B9275F3EA77FF83C73CD1A"
+    },
+    {
+      "path": "src/screens/CovHubScreen.tsx",
+      "sha256": "AD22A868EF6104690DA09138A1B903756539ED7E87BB2B93F3D54D894DCE9CC2"
+    },
+    {
+      "path": "src/screens/CovMatrixScreen.tsx",
+      "sha256": "41BEC5AAA63AD0F9C0BFB77DA773C4BDA8457A338FFCD22E0D7440B2981E78C1"
+    },
+    {
+      "path": "src/screens/CovSummaryScreen.tsx",
+      "sha256": "9B30CDE658969DA4479D1EE0AF99BC9B5037279B7FFB060DFD7048627AEECF5D"
+    },
+    {
+      "path": "src/screens/CpBrandingScreen.tsx",
+      "sha256": "1869A9AE718020F0497262E1655AFE876CE40802A64D10E229BF67A4B9BFE60A"
+    },
+    {
+      "path": "src/screens/CpDashboardScreen.tsx",
+      "sha256": "458CD9A694981A759059569B023870852736DAFC558FBDAFDD9FE96FE0A5E8DB"
+    },
+    {
+      "path": "src/screens/CpDocumentArchiveScreen.tsx",
+      "sha256": "278BD38F80DA591258573E03BDC2747C83E8C08940E8F0CD47D58A01B5A4218E"
+    },
+    {
+      "path": "src/screens/CpHubScreen.tsx",
+      "sha256": "30CA5DCB0D0A7C3377BEA76CDE0F682A2D8A56EA3E4E78E03C9DBE960BBC98A4"
+    },
+    {
+      "path": "src/screens/CpLoginScreen.tsx",
+      "sha256": "D480B872F39DBDFBBACC2EE86B3D1FD2AAA22EF9DDC3F7BD0A3121EC4EA75253"
+    },
+    {
+      "path": "src/screens/CpNotificationsScreen.tsx",
+      "sha256": "43E97BA0B8167DC99BFEBD04C0290FBEE1F417C31A33F72098D936BF8C2D3817"
+    },
+    {
+      "path": "src/screens/CpQuoteApprovalScreen.tsx",
+      "sha256": "C56B501BB47D26A665664E57EC04B90279DAB8E7F2EACF8AEDD9CF44E47F6103"
+    },
+    {
+      "path": "src/screens/CpSatisfactionScreen.tsx",
+      "sha256": "C7125D5F00D8BC2AB5BEFA1618B01E388732A23B849B4D409A44611E60CCA02A"
+    },
+    {
+      "path": "src/screens/CpServiceRequestScreen.tsx",
+      "sha256": "65CEBDAF4016A98E6AFC392848DE817989C0BBF53A24C4CA3DC9B2771375E45A"
+    },
+    {
+      "path": "src/screens/CpShareLinkSecurityScreen.tsx",
+      "sha256": "A6C1288454E2DABA21CC4856335C722A88475EBBE065B733D81070F4D593AC44"
+    },
+    {
+      "path": "src/screens/CpWorkOrderTrackingScreen.tsx",
+      "sha256": "F45C3E91873300C34A96057DF866A49E3919D1DE58DE9AFF6DCFA675125D21E2"
+    },
+    {
+      "path": "src/screens/CrashReportDetailScreen.tsx",
+      "sha256": "78CD1725BCE96850AACCBCC7227F7FBC2344F5E4C43A793007EB9592F4584E80"
+    },
+    {
+      "path": "src/screens/CrashReportsScreen.tsx",
+      "sha256": "B6D73E496FBA8A735A66AFECC2484C89D39CFE259EF168B4C4342661DD35D675"
+    },
+    {
+      "path": "src/screens/CrmConnectionsScreen.tsx",
+      "sha256": "3D6CAA061A10DCF5CB4B2C84E0DD6628AA04D0E895823E70388A757FD1BD2807"
+    },
+    {
+      "path": "src/screens/CustomerBalancesScreen.tsx",
+      "sha256": "4843BA2704A9953EEE748E4DEC0C8613BC2CA3556DE665190D741DE5D8BEF0AE"
+    },
+    {
+      "path": "src/screens/CustomerCommentsScreen.tsx",
+      "sha256": "E00D2C298ADA5FC5E268A7A7D68E29149C447CB4AD63C7A34E27233541E165F4"
+    },
+    {
+      "path": "src/screens/CustomerDocumentsScreen.tsx",
+      "sha256": "5935312ABB1917C678FB6DC12747CBBBCBE2D03E2F7297CA9760276CE4926A4E"
+    },
+    {
+      "path": "src/screens/CustomerExperienceHubScreen.tsx",
+      "sha256": "FB59955FE17A57A256D7CF1AC2047A576F722A953E956B4138ABC5F7BEE284E8"
+    },
+    {
+      "path": "src/screens/CustomerFormScreen.tsx",
+      "sha256": "0693C3EDC049745CA90CC36ABE3E7C939C801CDF2AEEB8771C2697D3F0C2D89A"
+    },
+    {
+      "path": "src/screens/CustomerHistoryScreen.tsx",
+      "sha256": "961CFC289A466D15D83EF393E6CF5D2A4AAB201F7E10014A13B406A558362360"
+    },
+    {
+      "path": "src/screens/CustomerHubScreen.tsx",
+      "sha256": "D2EE67BAA2F9D77D830B89EB02581480A0ED890D0EE51D613DBED20C961C8C89"
+    },
+    {
+      "path": "src/screens/CustomerNotificationPrefsScreen.tsx",
+      "sha256": "08453D70A701FC9436EDA1FBFD7F675BBF83B51D3E8032C7F41D7975925D2CD7"
+    },
+    {
+      "path": "src/screens/CustomerPortalScreen.tsx",
+      "sha256": "0F0B994D358FEEA528B2678C77D52C6542334809F08FB315EFFF539F59F70522"
+    },
+    {
+      "path": "src/screens/CustomerProfitabilityScreen.tsx",
+      "sha256": "9FC1797C1AFE8BFA7FFCAEC3BE630799504D4065452A23FDE1700893BF2205FA"
+    },
+    {
+      "path": "src/screens/CustomerRatingsAllScreen.tsx",
+      "sha256": "578FBABC7C137ADB3C4EB7DC7AEBB2B75733814CCF082EF91632F05FAFC3E9FE"
+    },
+    {
+      "path": "src/screens/CustomerSitesMapScreen.tsx",
+      "sha256": "43D08F95EDEF8D275849E8F01221ACD05933062D4AA0069073EF5678F0FC886F"
+    },
+    {
+      "path": "src/screens/CustomerSitesScreen.tsx",
+      "sha256": "2A7AF5B5571C91915D27EB0B53FE57EA525C13C3B8B275E552F499FE83E7E3F7"
+    },
+    {
+      "path": "src/screens/CustomersScreen.tsx",
+      "sha256": "F30CF21927C96077125F0B7ED7927003197019ED5BE8661BA9B4B7AC57943F66"
+    },
+    {
+      "path": "src/screens/DashboardScreen.tsx",
+      "sha256": "9F050E378BC6EBD84CDA78C05149D6ACDCA820A3B63F59E06EBA2304DAECBEA0"
+    },
+    {
+      "path": "src/screens/DataErasureScreen.tsx",
+      "sha256": "16B61FACAF2A3CD4C94E48952FBA38511A8217FE779EFB8A0AEE6DAF124AFCDD"
+    },
+    {
+      "path": "src/screens/DataExportScreen.tsx",
+      "sha256": "8957D4DD8A163154EDFCB972C13E4AD8CFB1EDD2A47EA6A77771E2180D06B15F"
+    },
+    {
+      "path": "src/screens/DataMigrationScreen.tsx",
+      "sha256": "4BDF2DC66E0BE859984EC42F5B9C4DBF2A379D78211D64224EC0E4385AB7381B"
+    },
+    {
+      "path": "src/screens/DbIndexHintsScreen.tsx",
+      "sha256": "740F10C17188586046CEA0CAB3B85ABB7064C8F5B9A0BAC4D847A618DFF81F5B"
+    },
+    {
+      "path": "src/screens/DepAiProvidersScreen.tsx",
+      "sha256": "01DE4C4CCFCCB29E83964E8941D04E8BF02D3C1A6E8B9CA2C3392F66C338F9FF"
+    },
+    {
+      "path": "src/screens/DepAiSecurityScreen.tsx",
+      "sha256": "C6CA4CEE6462F21A247161A7363645070610563DF756DF7540E353DD0F8BC4F8"
+    },
+    {
+      "path": "src/screens/DepApkBuildScreen.tsx",
+      "sha256": "D604D57FA22DEB6E0DC8C0955620777B8172785B6D3F651ECD2EE6AFF36813C1"
+    },
+    {
+      "path": "src/screens/DepartmentFormScreen.tsx",
+      "sha256": "4AB93DE0B88EDB9FFC3A3AD1084A5F053E9D661F37B483246D47F69F853980D0"
+    },
+    {
+      "path": "src/screens/DepartmentKpisScreen.tsx",
+      "sha256": "854488713A6691DFA5F18F20BF2F1D186459801179C8BE63B4E1E2BDBC4181A2"
+    },
+    {
+      "path": "src/screens/DepartmentsScreen.tsx",
+      "sha256": "4420AB17950998055CDB90A3063A9C2F809D47355FBB705F975D4AA454E1B0FD"
+    },
+    {
+      "path": "src/screens/DepBuildErrorsScreen.tsx",
+      "sha256": "B2BF6469ED12F9EC823B17FD583B93BF88CD0BEE5119A53E31D08567258E7AFA"
+    },
+    {
+      "path": "src/screens/DepHubScreen.tsx",
+      "sha256": "2DB355E36C4AFCBA332658129D8A94C86D87B6CEFB2768E40B5A84DE19885F0A"
+    },
+    {
+      "path": "src/screens/DepMobileWarningsScreen.tsx",
+      "sha256": "C7F6AA2B916AF50CCBFF6989B48584DBC71AEC5069F0B300F8F4FCFD813B31C2"
+    },
+    {
+      "path": "src/screens/DepNetlifyScreen.tsx",
+      "sha256": "A061850A1D8A34DE5F21647E16590FBD919D03E08BFE833856B454B694AC624D"
+    },
+    {
+      "path": "src/screens/DepRlsPoliciesScreen.tsx",
+      "sha256": "A71B2F41753635F0B502912575CA471E7491CF45DEA92A55FA3F59FEC8B4C7BB"
+    },
+    {
+      "path": "src/screens/DepStorageScreen.tsx",
+      "sha256": "FC047C2557B0DCBE5EC65732089E69B8DB6A824DD699CFE09982F88637C79467"
+    },
+    {
+      "path": "src/screens/DepSupabaseScreen.tsx",
+      "sha256": "24EA6E3455B0DDD1A8257C443D447F9C9EE938F87C4D57F240B7D10834D1B253"
+    },
+    {
+      "path": "src/screens/DepWebWarningsScreen.tsx",
+      "sha256": "AC6C753E088CE252FAE7AFC7B77211804A92516F3314E6E2206C90A657E62C66"
+    },
+    {
+      "path": "src/screens/DocAdminGuideScreen.tsx",
+      "sha256": "7013884A873D0F0AD186FA4EA25AF206D67423203465EACB5EA920F1BC3E7B04"
+    },
+    {
+      "path": "src/screens/DocApkOpsScreen.tsx",
+      "sha256": "FA7D5150DDFE7EB439DB3B8244D5BE6CBA619C9A86DEAC84703D4DE54B2A5D8F"
+    },
+    {
+      "path": "src/screens/DocChecklistScreen.tsx",
+      "sha256": "DB7B6F360558B348DFDFBBCD1E9EAF9405F2B8F8B9C73948A43CB52460382E4C"
+    },
+    {
+      "path": "src/screens/DocCustomerGuideScreen.tsx",
+      "sha256": "7854906F55C4225569870C9137A74469024FA6448B0E0997B3FE8029F1410B05"
+    },
+    {
+      "path": "src/screens/DocFaqScreen.tsx",
+      "sha256": "D52CD98800E07F25E4953147EAB399F7B16BAF2065B589A161A8CBEA5D4E0275"
+    },
+    {
+      "path": "src/screens/DocFieldGuideScreen.tsx",
+      "sha256": "9CAB9F25B445977A7D66CDF42CC79336027062B9C5A5B8320C8F5E75157C4CEA"
+    },
+    {
+      "path": "src/screens/DocHubScreen.tsx",
+      "sha256": "4539034F921F24D7053D214542BF370B39504B7FD03BD8CEB1B26CA7E1160793"
+    },
+    {
+      "path": "src/screens/DocManagerGuideScreen.tsx",
+      "sha256": "125D91953A77C3FEB3617CDE7F1A7B09CC3E54E1B3D6F7057B082C8BF86DC662"
+    },
+    {
+      "path": "src/screens/DocNetlifyOpsScreen.tsx",
+      "sha256": "09FBACAC52FC9A2495F5F27C7A07F0A87EB183E020972D968244E7E678B849ED"
+    },
+    {
+      "path": "src/screens/DocSupabaseOpsScreen.tsx",
+      "sha256": "32FD6B887FD9F74A97F9889F937A606B72E82882155FC8347FB344057E0EA37F"
+    },
+    {
+      "path": "src/screens/DocTrainingScreen.tsx",
+      "sha256": "36619E5A74369D42E9130039227FCA71BB331BCF72922FA207F1D5F47CA79D9A"
+    },
+    {
+      "path": "src/screens/DrPlanScreen.tsx",
+      "sha256": "12859A8F2F7DBD56121B6D4D89542D05FBAF7A4FABD1AF9C548E916314D2AB40"
+    },
+    {
+      "path": "src/screens/EInvoiceScreen.tsx",
+      "sha256": "BD11D8E4BDC67742F004B62A766200564C77E4FDC5200300B2644A478FE1E0A8"
+    },
+    {
+      "path": "src/screens/EmployeeDetailScreen.tsx",
+      "sha256": "DC9ACA9FA8349FF05538D587EE14B50ED80BEEAE7046C2F1FE860CA4CBC6235B"
+    },
+    {
+      "path": "src/screens/EmployeeRankingScreen.tsx",
+      "sha256": "0645E6B3AE3BE23191093B3FA98809FD469AA3E8F2E87F9924A58CE510D5758C"
+    },
+    {
+      "path": "src/screens/EnergyAssetTypesScreen.tsx",
+      "sha256": "809FBF710ED481953F75BB31EAA24A5D7B33F54E5F6D0DA166F0DA4595EBE0C1"
+    },
+    {
+      "path": "src/screens/EnergyReadingFormScreen.tsx",
+      "sha256": "A2086B072244255D6AAF2781B8A86609BDDD6A13DDD2D635ED5059297711EA26"
+    },
+    {
+      "path": "src/screens/EnterpriseIntegrationsHubScreen.tsx",
+      "sha256": "643FBA5C12BEE3E7B4DB39CB33051B184547628DC3345FE2C589B92C6D28937C"
+    },
+    {
+      "path": "src/screens/EnvironmentInfoScreen.tsx",
+      "sha256": "8F7054579DC1A7F223C7148BAE1FD2FCD2C1929B2ACD4F5E9C707C1B4522F2F0"
+    },
+    {
+      "path": "src/screens/ErpAdaptersScreen.tsx",
+      "sha256": "77D1D91B5966ADCB3035B7DD8A66FC76902F2410FDB15BAD34BD726323D0E9A9"
+    },
+    {
+      "path": "src/screens/ErpConnectionFormScreen.tsx",
+      "sha256": "A60050410FA49F2756522E9361993DA3693918F825FAE38CDF7C3FB7506451C3"
+    },
+    {
+      "path": "src/screens/ErpConnectionsScreen.tsx",
+      "sha256": "3C734212F4380FB6F9AC1208A36C7413E7179A95BF27B5C06F8555D70E6D9D8D"
+    },
+    {
+      "path": "src/screens/ErpCustomersScreen.tsx",
+      "sha256": "A310965ACDC9BCF555CAA222880CEA2E7A7DA0F7C89F8C40DEA835C541FC696D"
+    },
+    {
+      "path": "src/screens/ErpInvoiceDraftsScreen.tsx",
+      "sha256": "D25FB9423E9A2E44615FF28511E7C116ABBD2B0674BB9F1B71381A4B493A04BA"
+    },
+    {
+      "path": "src/screens/ErpStockScreen.tsx",
+      "sha256": "C07017EDB9EEF1E2E4CDAE755222C2EEB875DD25F29D7A652324376B3B607DDE"
+    },
+    {
+      "path": "src/screens/ErpSyncJobsScreen.tsx",
+      "sha256": "5963F688F48065594D16EC5DD4A1847208C9CE93DDE6722B2892464D7A7B8F95"
+    },
+    {
+      "path": "src/screens/EtaEstimateScreen.tsx",
+      "sha256": "A1EF45910C37348503216A3FA2DEC84391F7BF6F5D619BF5C9C34168A4F19687"
+    },
+    {
+      "path": "src/screens/ExcelImportScreen.tsx",
+      "sha256": "35C28CD53D669CD3A0A80C62C2A902AFBE838C07C09CB1FE78319BF81FFC348C"
+    },
+    {
+      "path": "src/screens/ExecHubScreen.tsx",
+      "sha256": "9746E260D49E9CFF9C366E1A84EBE143536214EBAAA1E72EA5B11A5F9607AE60"
+    },
+    {
+      "path": "src/screens/ExecutiveDashboardScreen.tsx",
+      "sha256": "434E9055CBFF0265BE067596B243DEF3E650B858B0B121DED46E22D1BEA96A53"
+    },
+    {
+      "path": "src/screens/ExecutiveSummaryScreen.tsx",
+      "sha256": "F9E2C82594112AACFF6D622F028D9B6ADE46B09D5305E6ABBB7E0C6B27FFD0B6"
+    },
+    {
+      "path": "src/screens/ExpensesScreen.tsx",
+      "sha256": "2232D53043DF34760A4516AEE7ED8D8E090C9E88480D048DF6E14046DA261FAE"
+    },
+    {
+      "path": "src/screens/ExtConfigScreen.tsx",
+      "sha256": "51FE589435D4D8CD9F3F05911D97885D53269C3AE94B2DBDEAFC24310ADC4E4E"
+    },
+    {
+      "path": "src/screens/ExternalApiKeysScreen.tsx",
+      "sha256": "3A6D45F27FDEC5916CA84C0839301576F2A32F39228060D1EF4EC91A62AC4A07"
+    },
+    {
+      "path": "src/screens/ExtHubScreen.tsx",
+      "sha256": "99C05287AA7D3DF34C68E4BC9124CB9D227CBA5B7606994F1CC314D412822B15"
+    },
+    {
+      "path": "src/screens/ExtLogsScreen.tsx",
+      "sha256": "2386D3C87C4B4EF93B9256FA860C198E722D116991A89195C8548027C20714A1"
+    },
+    {
+      "path": "src/screens/FeedbackDetailScreen.tsx",
+      "sha256": "44CA710DE0BD3C656AF079655B9418819E13BA843FF9FE4B431534905AB8297A"
+    },
+    {
+      "path": "src/screens/FeedbackFormScreen.tsx",
+      "sha256": "DAB071AA43A7C60A86585654FF2D5A66F27D2D9D678760DB22B66190E02AE6DE"
+    },
+    {
+      "path": "src/screens/FeedbackScreen.tsx",
+      "sha256": "7AA7E1C9CC826B58D720D7CAD21D02F1CD1BBB5766B7A092028E9DE5EE9EFF73"
+    },
+    {
+      "path": "src/screens/FieldChecklistScreen.tsx",
+      "sha256": "8B5BA6C987032E818BE8B24733B79179D1E119448C37DDA4536F582858776E71"
+    },
+    {
+      "path": "src/screens/FieldCommandCenterScreen.tsx",
+      "sha256": "1242077D5065C9EA00A9BEFD04A0957F97776C3F2F674D4C232D8C818FA6A33F"
+    },
+    {
+      "path": "src/screens/FieldEmergencyScreen.tsx",
+      "sha256": "34993B129FF2A05B811221D26905B2D8B9E2B04C4233442E35129C5A8D5EEDF1"
+    },
+    {
+      "path": "src/screens/FieldFavoritesScreen.tsx",
+      "sha256": "814FE7FC3CDB237CAAF1AF52C99366A58E716DBD17B01B2D0D6950EE89748C2D"
+    },
+    {
+      "path": "src/screens/FieldHubScreen.tsx",
+      "sha256": "64060DCDBBB0F2B6B1C11DCC32F0D9FB316ED055067338B1060A29A4CE9C3E40"
+    },
+    {
+      "path": "src/screens/FieldJobDetailScreen.tsx",
+      "sha256": "935FF2D07A8F899B7A1F9587994773DDE78B5902DC51F9B42F4E7C0197190BE3"
+    },
+    {
+      "path": "src/screens/FieldJobsScreen.tsx",
+      "sha256": "1FC539EF886A0D63AC370126A3375F3359C5EEA21B67E169C75C431CE4242CAA"
+    },
+    {
+      "path": "src/screens/FieldOpsHubScreen.tsx",
+      "sha256": "64531F02751668E5494C488F6597B1D606F5D8D97FD93722C6DC0F618CAD7EA6"
+    },
+    {
+      "path": "src/screens/FieldPerformanceScreen.tsx",
+      "sha256": "30591A0138A1DB3DB372FCCC991A3A0032BB8AA5204C08072997E08578BCFDBE"
+    },
+    {
+      "path": "src/screens/FieldQualityCheckScreen.tsx",
+      "sha256": "282DF8FA3047C7D8E03C09788CB7EC1721CA046FEAF4F10FF01A1B203BD353A6"
+    },
+    {
+      "path": "src/screens/FieldSettingsScreen.tsx",
+      "sha256": "43E511AEF5B519D85E76BDB3DF105FF11C56A81813B76D2F198CD24899D1581D"
+    },
+    {
+      "path": "src/screens/FieldShiftPlanScreen.tsx",
+      "sha256": "8996FB65DAF77C13B49741A1165C04F78004978823E18AA1A938175CAB821163"
+    },
+    {
+      "path": "src/screens/FieldShiftScreen.tsx",
+      "sha256": "2C7B01EE8DD796020F0F1F785F8E62CC7E9C7B0ACD1E8FFFC0874D01E0DF0342"
+    },
+    {
+      "path": "src/screens/FieldTodayScreen.tsx",
+      "sha256": "5B29B169792F4E57FCBE4477BD44C38373C07FAA7CF27B3B6F1B76008EAC658F"
+    },
+    {
+      "path": "src/screens/FieldZonesScreen.tsx",
+      "sha256": "9DAC301C37E0656B0709CB02BA8CBF352CD26CA76EAA83494A5F64E5D07A6245"
+    },
+    {
+      "path": "src/screens/FinanceHubScreen.tsx",
+      "sha256": "C53C10C42251CA219C0000D08D5D17106C0A6443298136C49D6A1FCAD1A9262E"
+    },
+    {
+      "path": "src/screens/ForgotPasswordScreen.tsx",
+      "sha256": "DA7EA537DE6E646305D8616C68B8601F500240D4235798774D6AF1CBA865DB76"
+    },
+    {
+      "path": "src/screens/FormBuilderScreen.tsx",
+      "sha256": "2A21974990F8F0B823DC59DC3703FB479AC418E6F05FD98654281DD230EA43FC"
+    },
+    {
+      "path": "src/screens/FormFillScreen.tsx",
+      "sha256": "38020EBCEB951849A335B056DC8FD0A90A00297764E0C03AD59EF215B9E24048"
+    },
+    {
+      "path": "src/screens/FormHubScreen.tsx",
+      "sha256": "48EF138C7A6364E64F887C0090860D8883E639CB22DE4EF19110FC34582654A7"
+    },
+    {
+      "path": "src/screens/FormResponseDetailScreen.tsx",
+      "sha256": "C0D99C965C88B30BA23B50E21690D01B9CF9221BDD172E2FD5D504C494A4DEB5"
+    },
+    {
+      "path": "src/screens/FormResponsesScreen.tsx",
+      "sha256": "3CCDFF58D7701B20FEA3A5319B984CEFD336E473F7B63A63C60E1479B6B25537"
+    },
+    {
+      "path": "src/screens/FormStatsScreen.tsx",
+      "sha256": "A4FE16C3FB0818D6128D08C00EB77FE7238AF7DB42775F191C1796DD37BA36C3"
+    },
+    {
+      "path": "src/screens/FormTemplatesScreen.tsx",
+      "sha256": "52A0B50F074DEEA3CD0AD8301968484DE465667A01D38D1F57187C25A48888CA"
+    },
+    {
+      "path": "src/screens/FuelConsumptionScreen.tsx",
+      "sha256": "EF355ADEC8349C946A8E348E3DFDB7E4B18A9623D4D97E348CF2290D50AF2683"
+    },
+    {
+      "path": "src/screens/FuelReportScreen.tsx",
+      "sha256": "7847CC2A251F9F057B8C2F93698915B9C9978F40AB93660E943FE96013F7A10C"
+    },
+    {
+      "path": "src/screens/GeofencesScreen.tsx",
+      "sha256": "81A5B5E2B224FC38C54FABB9F0A8D5D3F61283A6ECC7133DACC1F4D716503C34"
+    },
+    {
+      "path": "src/screens/GesProposalFormScreen.tsx",
+      "sha256": "156F68686D04A36DA0A2A1B039BA43822A41A82A8593B2EBC372FABB60F07F52"
+    },
+    {
+      "path": "src/screens/GesProposalsScreen.tsx",
+      "sha256": "45560DB12CDBA82560D2819A91085A88427C0B46FF227D1E98B810C434D12906"
+    },
+    {
+      "path": "src/screens/GesQuoteScreen.tsx",
+      "sha256": "20B3BA5582470159524BFABA036D4DA4E212E7C035DFF5265D5F8212324A7DCF"
+    },
+    {
+      "path": "src/screens/GlobalSearchScreen.tsx",
+      "sha256": "9908F1FA0B831A79B6F72A16B966B4CDB8B213F7C6D638AC74D2A7805760EA7F"
+    },
+    {
+      "path": "src/screens/GoLiveBacklogScreen.tsx",
+      "sha256": "BA98F95980E9262419AABC903022F858FFADF43AB7F2F58E81CBAC299D879682"
+    },
+    {
+      "path": "src/screens/GoLiveBugTasksScreen.tsx",
+      "sha256": "0B44FB3C9ADE55129360C908A994E69B5D5A757FAF5A931BA7BEAE5BB25298D4"
+    },
+    {
+      "path": "src/screens/GoLiveChecklistScreen.tsx",
+      "sha256": "91DB2899085CDA1BCD3FC5A9A831B355192B857673B9A39783AFDC67ADC0FAB1"
+    },
+    {
+      "path": "src/screens/GoLiveFeedbackScreen.tsx",
+      "sha256": "A7845165D0FC6F4C0D4F14280AA8B81AA763EE9737C2BEF02E5B89D3E1D54052"
+    },
+    {
+      "path": "src/screens/GoLiveHubScreen.tsx",
+      "sha256": "64EECF2C401C2DD79C20FAE448259EE73575BE16A6F42A3E840C3456C8361C43"
+    },
+    {
+      "path": "src/screens/GoLiveLogsScreen.tsx",
+      "sha256": "478B736A41104CA01795890B83276BCA3F7B80E98CC08317B95BC55C7FFE1923"
+    },
+    {
+      "path": "src/screens/GoLiveMonitorScreen.tsx",
+      "sha256": "6CE48F541B2604DBEE6D6993207571931CFF27264304EC6FE7C35F0295C49E76"
+    },
+    {
+      "path": "src/screens/GoLiveMonthlyScreen.tsx",
+      "sha256": "F0DF1641204C95DEB8BC9FFB7DC9F042EB580BC4F988F91878C628E99887FC5A"
+    },
+    {
+      "path": "src/screens/GoLiveReleasesScreen.tsx",
+      "sha256": "68EE94429EDBB5BF6682AE314ABE3EEDB8622969F153F82FD7D6A017BC86F7A4"
+    },
+    {
+      "path": "src/screens/GoLiveSupportScreen.tsx",
+      "sha256": "83928CF3ED2197FC1B9963EDAE57BB4831AF7C44458EA02F1B5827BF86FCF310"
+    },
+    {
+      "path": "src/screens/GoLiveWeeklyScreen.tsx",
+      "sha256": "9C6FCF8877664943F22AFBB126C81CC4581E0B5CFF1E5C1079042EFD97EE0EF1"
+    },
+    {
+      "path": "src/screens/GovernanceHubScreen.tsx",
+      "sha256": "931536ADF45ECB278C7B8559D49CF9C7EFCD8E0A87E2E674286B4698EC0A0C44"
+    },
+    {
+      "path": "src/screens/HomeScreen.tsx",
+      "sha256": "C500FE1E52F0DB1609D9417610C3290D5F8847AB274DA6924EB6A1A8A79A89CE"
+    },
+    {
+      "path": "src/screens/HvTransformerQuoteScreen.tsx",
+      "sha256": "E985E2F2FDC1AB8363345698BE6922D28F85B30751A5A53454FCF0DDA4025D93"
+    },
+    {
+      "path": "src/screens/IncomeReportScreen.tsx",
+      "sha256": "E442BC5B20729A637334D4C94AB806056C2D4E81A273F1A5ECAC424BFE2CD2FF"
+    },
+    {
+      "path": "src/screens/InspectionFormScreen.tsx",
+      "sha256": "E1F952B5F973E76C1A8C1F76AA89AEBE37016DCF51F94585A49DB0AB02474E75"
+    },
+    {
+      "path": "src/screens/InspectionsScreen.tsx",
+      "sha256": "FC1F6EF5E5FE5E3B74B65A55F991C123B36BCC1368A46FC56A4F8C2E9C8F4FBA"
+    },
+    {
+      "path": "src/screens/IntegrationApiKeysScreen.tsx",
+      "sha256": "AB61F6325A15F552EB3DCB051892F45C2998875C062587C566A550D110FD99E0"
+    },
+    {
+      "path": "src/screens/IntegrationErrorsScreen.tsx",
+      "sha256": "4D6F26B65BE12CB1045DD9B9ED0109B785C56E147130F662F3B2FF56534E69D8"
+    },
+    {
+      "path": "src/screens/IntegrationHealthScreen.tsx",
+      "sha256": "3E42F01B2CBCA6671B9CE1F12D50D214F3FA62C0ECAB2A77AE7E45CEC92EC29D"
+    },
+    {
+      "path": "src/screens/IntegrationsHubScreen.tsx",
+      "sha256": "B847672647000D6255F74AF28ACB53316EF02AD595396699BF3CC55036D880D8"
+    },
+    {
+      "path": "src/screens/IntegrationWebhookDeliveriesScreen.tsx",
+      "sha256": "91F17735BDE36AE0647E8445EFAA2F846BD342100230E90DC34B004661DB00D5"
+    },
+    {
+      "path": "src/screens/IntegrationWebhookFormScreen.tsx",
+      "sha256": "0C2BAAE80B956899EEC93218B6C8531ACDF0829A44568D1D464776275FA6CCCF"
+    },
+    {
+      "path": "src/screens/IntegrationWebhooksScreen.tsx",
+      "sha256": "7FB12CDF9F446CC91077A4356DBBB206B6B1D6F340D87B759B2726B04A85F413"
+    },
+    {
+      "path": "src/screens/InventoryHubScreen.tsx",
+      "sha256": "588D045616DB8E796DC35B66E8055B8DB6718B19E045E93AA01CA5D528010F9A"
+    },
+    {
+      "path": "src/screens/JobHeatmapScreen.tsx",
+      "sha256": "BC9840E029E9406979C2A710018E7F597CC033370857F73038548D1FA50CBA85"
+    },
+    {
+      "path": "src/screens/JobRatingScreen.tsx",
+      "sha256": "3F83ACF49C0A29FC29CA99B974CAD1618B527104C6E7F1C3A4BB559772D62FBC"
+    },
+    {
+      "path": "src/screens/KpiOverviewScreen.tsx",
+      "sha256": "150739D50DB83CCA2C6E0CB1FB16CEBBA9B427419954C81E4422EC2376843FF1"
+    },
+    {
+      "path": "src/screens/KvkkAccessLogsScreen.tsx",
+      "sha256": "119AAE58529C73A540F83A950A538DFB01E0DAC9008CFD8D08104E6C65AD1436"
+    },
+    {
+      "path": "src/screens/KvkkRequestsScreen.tsx",
+      "sha256": "45EA66CD035BE5BBA70301EF2764123900DCBE9EEB4B79B9AA8FDF1A7CCF1974"
+    },
+    {
+      "path": "src/screens/KvkkScreen.tsx",
+      "sha256": "A42750B39715C2C316736C639EE762600463E9682C174616AA9C13E294242F77"
+    },
+    {
+      "path": "src/screens/LeaveRequestsScreen.tsx",
+      "sha256": "B41A1B41562832E8FF7AAD926BCCD538C9862DABF9FC2F1D96F1C7BA15FA33F0"
+    },
+    {
+      "path": "src/screens/LicensesScreen.tsx",
+      "sha256": "D7EB2B5A7BFCD494EFE05EADD3D59929969348160CB30127F094072A833267A4"
+    },
+    {
+      "path": "src/screens/LiveOpsHubScreen.tsx",
+      "sha256": "621B93509D01C026CA9A75058AB2142F35C11B06B2ECD82EBB61B1A4070EB270"
+    },
+    {
+      "path": "src/screens/LiveOpsMapScreen.tsx",
+      "sha256": "4325DCB096CD80C04CD774045F6733028C322E1F600EEBF42059773F6499D616"
+    },
+    {
+      "path": "src/screens/LiveTrackingScreen.tsx",
+      "sha256": "02670AFED10DEB5D908D90C2ABEC360D60FE17CE49D2E287128C00ECE9F1C8E0"
+    },
+    {
+      "path": "src/screens/LocationHistoryScreen.tsx",
+      "sha256": "7842C98AA60A178766A6C61FB390F16E26A4769B1A1D96B3C09E5C5784F12B92"
+    },
+    {
+      "path": "src/screens/LoginScreen.tsx",
+      "sha256": "384C44534CAFD38509C235514B0BBD6FEB12C563FB3DE004EDE74C8822A0A8D9"
+    },
+    {
+      "path": "src/screens/LowStockAlertsScreen.tsx",
+      "sha256": "98DF04614CF65636FEB136878472B23083841DA8010805FA9A34930AA8722F93"
+    },
+    {
+      "path": "src/screens/MaintenanceAlertsScreen.tsx",
+      "sha256": "CCA9FB7ACBD599165DA398B27FE17C7F5FB06BC14B32DE88883579891BA5048C"
+    },
+    {
+      "path": "src/screens/MaintenanceModeScreen.tsx",
+      "sha256": "86C3454B1BBC0A166D66FEAAADD66F5029BAD6F7F3209AEF6AC4C298F94148A8"
+    },
+    {
+      "path": "src/screens/MaintenancePlanScreen.tsx",
+      "sha256": "E027517FF488AF4F6AC84E36E4E5AABEACF499A43CA0BAEE3203FA95FF1228EE"
+    },
+    {
+      "path": "src/screens/MaintenancePlansScreen.tsx",
+      "sha256": "D81FE83E951F6B9F0DBA329101139875440AD06F86118F262A3839A6526A5342"
+    },
+    {
+      "path": "src/screens/ManagerCommandCenterScreen.tsx",
+      "sha256": "5B599863A2AA85732640FA19AC8622778DC38E516421241F741821222A85E68B"
+    },
+    {
+      "path": "src/screens/ManagerScreen.tsx",
+      "sha256": "B811BC5381A569CA07B912CC5644A9209BFB104B79C375E3D45AC3FD10EE96A0"
+    },
+    {
+      "path": "src/screens/MapScreen.tsx",
+      "sha256": "9CBFA9F3B1A755CD8B7819E3BA34986B21FB4C21B54E708833D1FD947C62E9B1"
+    },
+    {
+      "path": "src/screens/MaterialFormScreen.tsx",
+      "sha256": "DD505E0F70CC00BEB9F59D016C6AAE5356B64D79F4BC7377BD2D83F97F2DF247"
+    },
+    {
+      "path": "src/screens/MaterialsScreen.tsx",
+      "sha256": "6F1DC772186E8F9936CAA832047CB41D0B76215649C8E0E415A05086506C7E0A"
+    },
+    {
+      "path": "src/screens/MessagesScreen.tsx",
+      "sha256": "D4569EA8AD5FB1508E85AA3F9FDBBDA2CFEC6CDB25009DE4ABD8E6FB138E7B8F"
+    },
+    {
+      "path": "src/screens/MockLocationAlertsScreen.tsx",
+      "sha256": "4CD90361958DF65B2F569D6149C1C7A512B8FEFEB28F91701CD8F4D72AA8E85D"
+    },
+    {
+      "path": "src/screens/ModulesScreen.tsx",
+      "sha256": "0412B3F8E203530AF5287D8FE28361C7B39C4912E6AAD1C1F8909843F1B6FB2A"
+    },
+    {
+      "path": "src/screens/NcAssignmentScreen.tsx",
+      "sha256": "A3A54217A0A422E3A106A337BF0BB18CACF3E6AB3ADA727EA14911A4267BC04E"
+    },
+    {
+      "path": "src/screens/NcPhotoEvidenceScreen.tsx",
+      "sha256": "8649B2C213307514DBF8B3B3149C38E5BC0220220C72087E3D615C41F52FE954"
+    },
+    {
+      "path": "src/screens/NewQuoteScreen.tsx",
+      "sha256": "4C0915FF30BFE19F0FD766B8E36A257F432051792C28F7BFE7C782D09FC1FB81"
+    },
+    {
+      "path": "src/screens/NewServiceScreen.tsx",
+      "sha256": "F24FE7E116FE5C91C15808775180654322871EE1F002A0B6A6896DF54FD077F6"
+    },
+    {
+      "path": "src/screens/NewWorkOrderScreen.tsx",
+      "sha256": "F9C664417D4EB10619E0A2459FA207B7B85D0CB41DF005CF4284CA89E2210917"
+    },
+    {
+      "path": "src/screens/NfcCheckinScreen.tsx",
+      "sha256": "47F694D3CAD7BC69370648DBADEBC08FC8A87B979A9B0F56EB2079057FFF3291"
+    },
+    {
+      "path": "src/screens/NonconformitiesScreen.tsx",
+      "sha256": "65D4057CE9C4630D93BB67348EBE476FB1E89E75520B02370E8FB0A9B27FFD55"
+    },
+    {
+      "path": "src/screens/NonConformityScreen.tsx",
+      "sha256": "3AB880BE1A6FA14B94A038C2EBD1A6D3891ABC4D28F0122D2A9D6E3C0F245DA7"
+    },
+    {
+      "path": "src/screens/NotificationHubScreen.tsx",
+      "sha256": "611435EFD9D604B75509735CA7AAD762A4D129C474F360A2E546191B5E40FF5C"
+    },
+    {
+      "path": "src/screens/NotificationPreferencesScreen.tsx",
+      "sha256": "1134A104DCB015D15FDDE46F4D9DC50D14B8F405BE9810A9EDB31CD8BFF42237"
+    },
+    {
+      "path": "src/screens/NotificationsScreen.tsx",
+      "sha256": "8F44F78E3A2455D9D7F14C4E6CF35A6212812F20C3630DB302EC50B0BD7BBC2A"
+    },
+    {
+      "path": "src/screens/NotificationStatsScreen.tsx",
+      "sha256": "0112CF58301BC889988309B537107DDFA66C193E82F63EFD3D40B45E9896BFEE"
+    },
+    {
+      "path": "src/screens/OfficeBoardScreen.tsx",
+      "sha256": "8E6E7C615441F73664555AA2A4411EC2B8D29682EF872A54FF91873D041766BD"
+    },
+    {
+      "path": "src/screens/OfficeBoardsScreen.tsx",
+      "sha256": "85E232EAA531E04D3DDB252543ABD1265EF1A879318E6010A3D29B7AF33E52F2"
+    },
+    {
+      "path": "src/screens/OfficeHubScreen.tsx",
+      "sha256": "0718F41BA2CAAC3425A81B40F8A7FDF1EB86505A12292652B2F6824FA55C492E"
+    },
+    {
+      "path": "src/screens/OfficeMeetingScreen.tsx",
+      "sha256": "478D8E2B86F8B0E6946D66DA63C5F8D4D47D5054FD822402EB7FD1C0FD9DFE44"
+    },
+    {
+      "path": "src/screens/OfficeMeetingsScreen.tsx",
+      "sha256": "3F17C929DCD2B9E7EF3F0304017D1D364F65A7A1AA39D4D5A0B690859BFB6B1C"
+    },
+    {
+      "path": "src/screens/OfficePageScreen.tsx",
+      "sha256": "F8BC7A0EA989C88BD7BD385C22AD6EBB1C95DCF676975E129B46085AC1033D03"
+    },
+    {
+      "path": "src/screens/OfficePagesScreen.tsx",
+      "sha256": "E666DC26177DC1095CB21445CD5CA85825D85D90286A16D833D83B6556EAF648"
+    },
+    {
+      "path": "src/screens/OfflineOpDetailScreen.tsx",
+      "sha256": "C0D0A6FC94F6DA8B57F5DFA73E5F085D9088264FC500553B9F21DA5DBEF89C08"
+    },
+    {
+      "path": "src/screens/OfflineQueueScreen.tsx",
+      "sha256": "7EB5308FD33240AF4EB535899F656BF86C9D3B8324900299E01E6383DBAD92C5"
+    },
+    {
+      "path": "src/screens/OperationReplayScreen.tsx",
+      "sha256": "4BEC35BC46628AF0A07F618CDF428342F58FEBD98554A1CD99591109B2E20932"
+    },
+    {
+      "path": "src/screens/OpsHealthScoreScreen.tsx",
+      "sha256": "494CE74D51D88B0163ABF86C63903FACC0A4EF4936EFB679A5AD596822DAB769"
+    },
+    {
+      "path": "src/screens/OrdAnalyticsScreen.tsx",
+      "sha256": "A935728B4CA9549FE975CD08C974E6144A6AEAC344B5E8E8ECF13DA5ADA17C03"
+    },
+    {
+      "path": "src/screens/OrdDetailScreen.tsx",
+      "sha256": "83F1BC733B1A616F0166A8C12825F6F19A8C59CBB62647DDFC549E4B4E204048"
+    },
+    {
+      "path": "src/screens/OrdFormScreen.tsx",
+      "sha256": "14965CE31CB57F23976E50E8DA4BBC3368FDBD1B9D3D3D277D113EA2626B98D3"
+    },
+    {
+      "path": "src/screens/OrdHubScreen.tsx",
+      "sha256": "8AFC1B7B85472C27E73153BA331ED5A7DC50B60F6116F548420E5EAEB7787164"
+    },
+    {
+      "path": "src/screens/OrdListScreen.tsx",
+      "sha256": "B144E5794E9563C7FF728BBA417135AA14BEC4F62D70F4919C9C93070EA53509"
+    },
+    {
+      "path": "src/screens/OrdRecurringScreen.tsx",
+      "sha256": "BB9E111CAC5796DD54F3BB16A2EDD62DD2116FC7DFAC5AC61D0556632438021B"
+    },
+    {
+      "path": "src/screens/OsosAutomationScreen.tsx",
+      "sha256": "F8ACF6A45F28E54031CB1EE9A96196FB496C9BD67D78AB6133346C41B7C550C8"
+    },
+    {
+      "path": "src/screens/OsosHubScreen.tsx",
+      "sha256": "9F8F701A734BCE7E87497D686F2B2EA9B57C57B646C55004B310DB622525F900"
+    },
+    {
+      "path": "src/screens/OsosImportScreen.tsx",
+      "sha256": "E7C997BE19AD766DA177450D2A8AD7B2EC01A0AE69E285F484D3F685B2F4E431"
+    },
+    {
+      "path": "src/screens/OsosReadingsScreen.tsx",
+      "sha256": "E97F4D760157420310AF65B8330EC12397DB4F4A855D18F71DE324B7509AE771"
+    },
+    {
+      "path": "src/screens/PackagesScreen.tsx",
+      "sha256": "A143B75432F9168A46ABC58D24F3CE61736EB49F755966EBAF2FBA81D0BB96AE"
+    },
+    {
+      "path": "src/screens/ParasutSettingsScreen.tsx",
+      "sha256": "A02B2E6D59731CCE46E3549B35329AE5FAD2CE1689C2B5EAE3A140D7CB7E685C"
+    },
+    {
+      "path": "src/screens/PaymentDetailScreen.tsx",
+      "sha256": "CED9FE0E4E1E960E2FC61C6F7A10CF835948894F60716765F28765C323BBAAFF"
+    },
+    {
+      "path": "src/screens/PaymentFormScreen.tsx",
+      "sha256": "71DB547788FDC63CEBDB8DC01EA026524BC66BAE9CBA64C5181BABFDA37949E2"
+    },
+    {
+      "path": "src/screens/PaymentsScreen.tsx",
+      "sha256": "AF4400466801D29BC02BAEB826FEFF08CA0E7A8EAFCF15BAB7B3D267E0FBD73C"
+    },
+    {
+      "path": "src/screens/PayrollDetailScreen.tsx",
+      "sha256": "57E39D12E4E843BDDF9F53A7322167F72D0C12C209729D695D55B3875669D7DD"
+    },
+    {
+      "path": "src/screens/PayrollHubScreen.tsx",
+      "sha256": "7E0F6D30839FF7CD90102145DE81679A5E60C1EDAB08905D918D2B60380FB5F5"
+    },
+    {
+      "path": "src/screens/PayrollRunsScreen.tsx",
+      "sha256": "99DC5EB2E3EF155975CD102D1FCF5AC288F2D2AF70AB66E1CB593B60206EEBB8"
+    },
+    {
+      "path": "src/screens/PendingApprovalScreen.tsx",
+      "sha256": "6A1F2F0D67603661A4C7A9045A5EEB436640997A9FA9B3CD8E37AD95885EFE26"
+    },
+    {
+      "path": "src/screens/PerformanceMetricsScreen.tsx",
+      "sha256": "C202B2CEDFA727990721CE647919DF3218FB218BFD74BD0DC8221CE7C55CCF66"
+    },
+    {
+      "path": "src/screens/PeriodicCheckQuoteScreen.tsx",
+      "sha256": "9659B7797B68C5B0C86E9430E3D8379E80EA846FAE75BCDC699798FE1816AF10"
+    },
+    {
+      "path": "src/screens/PermissionsScreen.tsx",
+      "sha256": "815A0F957AB3803E4F8147D12B7ED02FFCC039F3A1C4AD8108C528B47134620D"
+    },
+    {
+      "path": "src/screens/PersonnelAvailabilityScreen.tsx",
+      "sha256": "138B6224F256D5853987FD31DED930B781458777E18BEE43B209292CC6902127"
+    },
+    {
+      "path": "src/screens/PersonnelTrackingHubScreen.tsx",
+      "sha256": "7FA2700E8C369114481B1F63B1E75FA83C7BC20308E1F74AA669B9135D31442F"
+    },
+    {
+      "path": "src/screens/PhotoAnalysisScreen.tsx",
+      "sha256": "13CF91457B510ADBDDECF93D7E155E0CD3F521E094359FFD1D84D5EC6048DD27"
+    },
+    {
+      "path": "src/screens/PivotExportScreen.tsx",
+      "sha256": "85C2C67BFEEF638474CB39608611102903B67E85967624F5D32274381C99AE31"
+    },
+    {
+      "path": "src/screens/PlatformHubScreen.tsx",
+      "sha256": "8E58895999ABCA49101D2295125B76C514474406A4596B223A62168237833FB6"
+    },
+    {
+      "path": "src/screens/PortalUserFormScreen.tsx",
+      "sha256": "8D022C1B47A604C79F273E7C36D68065EA91753EB87A45374842567719462730"
+    },
+    {
+      "path": "src/screens/PortalUsersScreen.tsx",
+      "sha256": "DE0E800E7F0A2A32503D5203D65425FAE704670C801B616164B7C07CD65D1680"
+    },
+    {
+      "path": "src/screens/PozLibraryScreen.tsx",
+      "sha256": "659706459FC017BB9F855BDC5AF1E499EB6A7B8AB8DE6686DC2DFDA620950049"
+    },
+    {
+      "path": "src/screens/PriceListVersionsScreen.tsx",
+      "sha256": "B93EAE81AF74332EBD7F5863304B6D6D9AC4115B8DDB108E9E9E3882C114D578"
+    },
+    {
+      "path": "src/screens/ProductCatalogScreen.tsx",
+      "sha256": "8C0B2C9FBAA90C5404AE16FB3C10EB0C67E4D0150B4EB8AE2C6BB5F3B541D69D"
+    },
+    {
+      "path": "src/screens/ProductItemDetailScreen.tsx",
+      "sha256": "21C193FD70849BF76EFCC59050D37F2004AF313D0176DB0449ADE3F9E9A2A913"
+    },
+    {
+      "path": "src/screens/ProductItemFormScreen.tsx",
+      "sha256": "CF7E5B557C3FE3654C2883B982F96BFD517716F4B62E4513F2660621901CFBCF"
+    },
+    {
+      "path": "src/screens/ProductItemsScreen.tsx",
+      "sha256": "921DAC0E6857DD5804D8DD9FDB1E17412C840AA74FE2859DE0AFB4885517F599"
+    },
+    {
+      "path": "src/screens/ProfileScreen.tsx",
+      "sha256": "C4688B3E4293F80D20D29ACCE5FF8509C8A732393693F3AE31EB5007BA71B744"
+    },
+    {
+      "path": "src/screens/ProfitableCustomersScreen.tsx",
+      "sha256": "9E290AF233F8257C3622AF0B91B76060262D1D87CBB9FB29DF82A81ED6192018"
+    },
+    {
+      "path": "src/screens/ProposalsHubScreen.tsx",
+      "sha256": "B10A4204DA552DCAB1E622CD8087DC19A2B91F8B67C9B2D1ED80DB6CE41B67C5"
+    },
+    {
+      "path": "src/screens/QaApiErrorsScreen.tsx",
+      "sha256": "1B94F428566DD001E26F973FBB78C0BAE5EF5F416D366FF2850954A1233EC453"
+    },
+    {
+      "path": "src/screens/QaConsoleScreen.tsx",
+      "sha256": "315BAD78891CC3CAE707C381D505EF56A87506881D25DFE49497FB4A1DC5B2FC"
+    },
+    {
+      "path": "src/screens/QaHubScreen.tsx",
+      "sha256": "7C25A4E79098C135A6B6C9959815288045AB65B3EC6B602289983B858D4BF860"
+    },
+    {
+      "path": "src/screens/QaModulesScreen.tsx",
+      "sha256": "234C7E9F5737523BD1BD84FA558E91EE93F537EEDB7D82D263A4BE0DF02ECE0C"
+    },
+    {
+      "path": "src/screens/QaPerformanceScreen.tsx",
+      "sha256": "CB83A41B1ECA8690685D32AA7F8D550801D62D6FD2BB607196933B74A8320315"
+    },
+    {
+      "path": "src/screens/QaQueriesScreen.tsx",
+      "sha256": "DB800CB1609E2BE4EC944F0E64495639C74E7BF872DE54D0E8BBA49DD40F3211"
+    },
+    {
+      "path": "src/screens/QaReportScreen.tsx",
+      "sha256": "0377E7A3DDAA5C13FD80A492EE6E3F786DE08AE10EDD6D884E6B5F3F8DDAECF8"
+    },
+    {
+      "path": "src/screens/QaSharedScreen.tsx",
+      "sha256": "A1FD8FFEA3DFC25EFB61803FEE1667B0864F569F9E7759AB1C546BEB97B4ED9B"
+    },
+    {
+      "path": "src/screens/QaTypesScreen.tsx",
+      "sha256": "ED9DD16EFBF9A9660CCB0E78688AFB8C236944A0A31670ED1D0A1480940559B3"
+    },
+    {
+      "path": "src/screens/QaUiStatesScreen.tsx",
+      "sha256": "F13A8763EF1BA3C2C3D3E63279E4462AA47162F533E01D1A6DB782DC2ABA05F5"
+    },
+    {
+      "path": "src/screens/QaUnusedScreen.tsx",
+      "sha256": "D8A07AF3780C65BE5DB2A91E3D667E6248099B3511873D8E41B964658B932ED7"
+    },
+    {
+      "path": "src/screens/QualityDashboardScreen.tsx",
+      "sha256": "C9A911A3BDB47210DC4A0C349578C6D9CCC65124F7323435B46F9530927B1E96"
+    },
+    {
+      "path": "src/screens/QualityHubScreen.tsx",
+      "sha256": "BC24C5AD99639F2886A13916C61E4AAB8B10B1ED1EFB3FC092809627182CB2F5"
+    },
+    {
+      "path": "src/screens/QuoteAcceptScreen.tsx",
+      "sha256": "402B8DE81472E6EC322AAD7DA4E43F833B4E7B40ED7C8C9E665BE04A6B8EFB93"
+    },
+    {
+      "path": "src/screens/QuoteApprovalsScreen.tsx",
+      "sha256": "33E072CBF7DFCBAF89ECB6DD48EFBE55DA023A8E01D3F0670066CAC642A2AEF1"
+    },
+    {
+      "path": "src/screens/QuoteCalculatorScreen.tsx",
+      "sha256": "B5752AF873D43DEDC7BEE5666D0230A339975B55282B3AB07F74764726F0F49D"
+    },
+    {
+      "path": "src/screens/QuoteConversionScreen.tsx",
+      "sha256": "8D55452E2E74AB37584692F53706946F9DFD183374B9FB9C7D0BF78AEAD38506"
+    },
+    {
+      "path": "src/screens/QuoteDetailScreen.tsx",
+      "sha256": "50BD6E91CF5591B96841573C8DEA542530AFEEF40AB40F96DA5539B694AAFFE9"
+    },
+    {
+      "path": "src/screens/QuoteEmailScreen.tsx",
+      "sha256": "40564086E1925D0ACFF72B4680B0161F809D9703C059B5301806870C456CC04A"
+    },
+    {
+      "path": "src/screens/QuoteFlowHubScreen.tsx",
+      "sha256": "772A7576C8C45C4899B48DAD16CEF81590FECB36AC4D001A78FFF926ABF6EEE5"
+    },
+    {
+      "path": "src/screens/QuoteOutcomesScreen.tsx",
+      "sha256": "D0BB2EE3F66CCE9AB0ADE35BAA1E70FD3057ADD231FC2CA45EFCD2AAF0D52B59"
+    },
+    {
+      "path": "src/screens/QuoteRevisionCompareScreen.tsx",
+      "sha256": "239C2D3F473421E69F1DF6D1EC498DFF65013211067D20CABDBA0885D0490EBB"
+    },
+    {
+      "path": "src/screens/QuoteRevisionsScreen.tsx",
+      "sha256": "C74BD87CD5734C90009B7712CBE591FADEC32EC9609109806853F32E82001685"
+    },
+    {
+      "path": "src/screens/QuoteShareScreen.tsx",
+      "sha256": "9EFC6B064E6A8515070D8879DC3AE7C396F8F6940D685EE4BCB550A1A9B64BC6"
+    },
+    {
+      "path": "src/screens/QuotesScreen.tsx",
+      "sha256": "36C178E8CD564DDC6D28E347A718B9DA5E5A47944F7871C45D80051869FF590C"
+    },
+    {
+      "path": "src/screens/QuoteTemplatesScreen.tsx",
+      "sha256": "F17C1F31101F069222B8B7F40C0958CED4F5B91FE5C564DB3664D5FBCB31046B"
+    },
+    {
+      "path": "src/screens/QuoteToOrderScreen.tsx",
+      "sha256": "51D3CF50B62AD27160A4C471312A84182613B5301D7F8AEBC305D60D0A10701E"
+    },
+    {
+      "path": "src/screens/QuoteWinLossScreen.tsx",
+      "sha256": "28BB9FCFCDFD3C4CE6EE44F93A4473AADC256A0FF98C8770C1472FF971EA8ABA"
+    },
+    {
+      "path": "src/screens/RecentPozScreen.tsx",
+      "sha256": "8BC969FC4B4DB7555D571F43EDCFFB9A478F3DFB6C294BD452E4D7B1C9718EFE"
+    },
+    {
+      "path": "src/screens/RecurringTasksScreen.tsx",
+      "sha256": "7690C1500947EF1866BFCFB6B92677266D7BF9EE01D781FF80E6E3D1583022F0"
+    },
+    {
+      "path": "src/screens/RegionFormScreen.tsx",
+      "sha256": "593CAF03A56DB0BA00B298F84FC322E1204228FD6929D65E8440BA8179A0B148"
+    },
+    {
+      "path": "src/screens/RegionHeatmapScreen.tsx",
+      "sha256": "0960149A802B4F23DDA6B0D1A07028526C6AC242F4351180C3E55EE33816B79A"
+    },
+    {
+      "path": "src/screens/RegionsScreen.tsx",
+      "sha256": "C84E55E6AB14084FEB9FF5041DA8F6DC3D06A9DAFBD0B96E3EDAFF36ECF2DBCB"
+    },
+    {
+      "path": "src/screens/ReleaseNotesScreen.tsx",
+      "sha256": "F4DA5B06DE570484771BD53AC6303CBBFFB54D84B47215B97EA2AF7467A6269D"
+    },
+    {
+      "path": "src/screens/ReportComparisonScreen.tsx",
+      "sha256": "2DA5030F446BA00D484EFDDFD9AC6EF69A4546DE4C35B53957978F8E9D9BCDD3"
+    },
+    {
+      "path": "src/screens/ReportDetailScreen.tsx",
+      "sha256": "50CCDC4B937D3292A22D1A654D73DAB8E9B44BB17FD874537AF7AE6AFF67FEAC"
+    },
+    {
+      "path": "src/screens/ReportingHubScreen.tsx",
+      "sha256": "A687F8D8244F3B7D6B38BAF7E09CE035D0D0A3D51E260FF6F0F4EE3CA9C89737"
+    },
+    {
+      "path": "src/screens/ReportsScreen.tsx",
+      "sha256": "0AD7F51501485646E71789BBE3B7126925435C1B9A3B2E61EF21262141974B69"
+    },
+    {
+      "path": "src/screens/ResetPasswordScreen.tsx",
+      "sha256": "75596C29F8D8330143FAF559C30FC17034DA8A7F59873582FFCA6454817FE094"
+    },
+    {
+      "path": "src/screens/RestoreTestsScreen.tsx",
+      "sha256": "65237E86B5D1FB12EE65CD4D2BC0A59B88BFDB6F6A228D497E87EB6D63EA0137"
+    },
+    {
+      "path": "src/screens/RevenueKpiScreen.tsx",
+      "sha256": "28544BC3A8932CAA42151BE067E064F504365E5FF295957E44C386335F577F7D"
+    },
+    {
+      "path": "src/screens/RiskAssessmentScreen.tsx",
+      "sha256": "0C84D224DB92E264FAD437E161629765F70070B4880E13B4FCBDAC8D1C0F02FA"
+    },
+    {
+      "path": "src/screens/RoleMatrixScreen.tsx",
+      "sha256": "32750C1C1140CD30A236323EF1A5B31C0D961479EAD27EDF1AFD139CE37215A2"
+    },
+    {
+      "path": "src/screens/RoleMatrixV2Screen.tsx",
+      "sha256": "37DBBAA92C0F0934B8DF47B35978CC56E296D478B9C696793EDAD1A9276BA9A0"
+    },
+    {
+      "path": "src/screens/RouteDeviationAlertsScreen.tsx",
+      "sha256": "E78ABAFF2A65956E004E11066738B96107DB0DF1B57B75EFCC8DA644ADC4FFDF"
+    },
+    {
+      "path": "src/screens/RouteOptimizerScreen.tsx",
+      "sha256": "82347A5FEE77404FDE042376FED856C57E867A1EEA2161D58A384E849AC6DF58"
+    },
+    {
+      "path": "src/screens/SaasBillingScreen.tsx",
+      "sha256": "216AE7E2B0DE1BC2D89F007AD7E25A9816CF4EB57744A6695AFF000D39638C62"
+    },
+    {
+      "path": "src/screens/SaasBrandingScreen.tsx",
+      "sha256": "0857F8EBB3A47BE3303D282B228F2139F0E184E8A9809A0BE302007F4C43299E"
+    },
+    {
+      "path": "src/screens/SaasHealthScreen.tsx",
+      "sha256": "38C9BCD366130750686809BFC5ED499BC2438209794B40584A83F002D6D9E163"
+    },
+    {
+      "path": "src/screens/SaasHubScreen.tsx",
+      "sha256": "19859308107F3328C7AA13B3C162EECAE4AE75FB79F7D2995C6B2B62AE7FA811"
+    },
+    {
+      "path": "src/screens/SaasIsolationScreen.tsx",
+      "sha256": "621ED4BB90291B5BD329970A5695A8154B29949493A3B1B1E6608EC52FDEDBAB"
+    },
+    {
+      "path": "src/screens/SaasLicensesScreen.tsx",
+      "sha256": "E3ADBF0D60DF6176CC2B874F0BBDB961BBC41A8A7B74231F7B0B457B5CBB7302"
+    },
+    {
+      "path": "src/screens/SaasModulesScreen.tsx",
+      "sha256": "1E4E6A126DCA781B9C1E13B75A31F4CAABA72CE7A3567ED737AF3522F3BC17D4"
+    },
+    {
+      "path": "src/screens/SaasPackagesScreen.tsx",
+      "sha256": "4DE50972BEC2A677AB73287BDBA01927B4FB9B96659EBAC43F9ABFC68CA0223C"
+    },
+    {
+      "path": "src/screens/SaasSuperAdminScreen.tsx",
+      "sha256": "94A5D37389A90CFEB159281E3DCA3CC2798AC5E1918AEF6A6FDE9B5CA7DCB5C1"
+    },
+    {
+      "path": "src/screens/SaasTenantsScreen.tsx",
+      "sha256": "46342B7353543B3ED73680066133B713112621518A7060CA4CEE60B8C05F57C5"
+    },
+    {
+      "path": "src/screens/SaasUsageLimitsScreen.tsx",
+      "sha256": "CF78192012F7F222A36BB67161C26055454D83687DFEE2FE8DE5D97C9663AE72"
+    },
+    {
+      "path": "src/screens/SafetyChecklistsScreen.tsx",
+      "sha256": "BEE751F9B5B4DE60F76D474A2ED1C652BD3DCF0D9A8A8FEBCECB316879F7DED1"
+    },
+    {
+      "path": "src/screens/SalesVisitFormScreen.tsx",
+      "sha256": "5155C48124927E31E89C5CD2C7569FD8551A983074A68B003B79B2D3B7101C39"
+    },
+    {
+      "path": "src/screens/SalesVisitsScreen.tsx",
+      "sha256": "803745586BFEC7AEF7C7275A6641455ECE6FC52F269FDF0747C2E7F5A47B30E2"
+    },
+    {
+      "path": "src/screens/SatisfactionSurveysScreen.tsx",
+      "sha256": "17C9C701945EF651207490F80A286FB209411DD95DAA256E6ACD87F5BDB2FB3C"
+    },
+    {
+      "path": "src/screens/ScheduledEmailsScreen.tsx",
+      "sha256": "468E4D8AA1F03BCDE3BEAE3ED3434D23C1B70A47E1EF6613D92900964B732081"
+    },
+    {
+      "path": "src/screens/SecClassificationScreen.tsx",
+      "sha256": "7F71C57E75548B614B953D08FFA0846AE6BA1C4F021AB1E2AE06DB5C18701D92"
+    },
+    {
+      "path": "src/screens/SecDevicesScreen.tsx",
+      "sha256": "1600BDF819E41F41342C7817C97511A776B015E990A9544D1D935A408BA77522"
+    },
+    {
+      "path": "src/screens/SecHealthScreen.tsx",
+      "sha256": "1E6CDC0939BB55C397DD006E507809A7B7A42EE7413B92722712AFD1499C47AB"
+    },
+    {
+      "path": "src/screens/SecHubScreen.tsx",
+      "sha256": "8FCA6815931AA8385DC70EB98491A9FE2859A3504466FDF9F8DA4CDDF5D0EBA9"
+    },
+    {
+      "path": "src/screens/SectorHubScreen.tsx",
+      "sha256": "A8392A9DED44753458DD8F94E557839FFD35F9E4893C87598ED3E5F3837F2D75"
+    },
+    {
+      "path": "src/screens/ServiceCardScreen.tsx",
+      "sha256": "CED9F2123E7A407FE8938C6602DE15F76820C0065646F116F486014CDF7B8888"
+    },
+    {
+      "path": "src/screens/ServicesScreen.tsx",
+      "sha256": "E477A01630FBF63CC100607F12B586DE207E94800457192FA01CE8D938EA8CB6"
+    },
+    {
+      "path": "src/screens/SessionLogsScreen.tsx",
+      "sha256": "B170CF55D4DA0AA7E09311BC4310B456F6245149738F8182B0BD6AB04D41EE1E"
+    },
+    {
+      "path": "src/screens/ShareLinkDetailScreen.tsx",
+      "sha256": "66929A4E80F2AD7ECFCF79C9066BEB5EAB1C2FE2C626E171E3008801D37681B9"
+    },
+    {
+      "path": "src/screens/ShareLinkFormScreen.tsx",
+      "sha256": "6CC85DFE7721F84065C5F0781271A3031C9DBC1D3953FC513DB6BC4BEF204744"
+    },
+    {
+      "path": "src/screens/ShareLinksScreen.tsx",
+      "sha256": "50534CCAEF132834EF9D8143282A801AE2F455BEA07EFC84AE38B26AAA30112C"
+    },
+    {
+      "path": "src/screens/ShiftHistoryScreen.tsx",
+      "sha256": "DC6EF20CBB289AA3B3D36D7777DE7885782F183F68B9ECBD1044C8075B62D43B"
+    },
+    {
+      "path": "src/screens/ShiftScreen.tsx",
+      "sha256": "006F54C53964C7AF3D88CC37C6EF8FA1C26CFF153EE62EF9C09E80ACE99BF23E"
+    },
+    {
+      "path": "src/screens/SignupScreen.tsx",
+      "sha256": "6C91D57C2631B27E9D1E685149C5F834563F528945231323F7DC6335337CFE0C"
+    },
+    {
+      "path": "src/screens/SiteEventLogsScreen.tsx",
+      "sha256": "988801B6BE9674D3C19DC624ED68B7BCAFBF30ED9E8921284BCA80634A82F9B6"
+    },
+    {
+      "path": "src/screens/SlaScreen.tsx",
+      "sha256": "FDB7E3E5E5501E8A78D536F9B67793950CD9309CD5F8FD261D946CBE92BB7DDC"
+    },
+    {
+      "path": "src/screens/SlaTrackingScreen.tsx",
+      "sha256": "ED27036CAA7E3DDE4DA27230DB16C27FFC25FD7EB8DDD053D7D36BB034B5D59F"
+    },
+    {
+      "path": "src/screens/SmartPozSuggestScreen.tsx",
+      "sha256": "D66850156C01CD53E4C7CFF79ECF98B2FA443B0C4FCBB522277AC97D3D39851C"
+    },
+    {
+      "path": "src/screens/SmartQuoteHubScreen.tsx",
+      "sha256": "3D2911D26A12E1EF6803A2AB31DE45D233C80ABC4B163C4F7DA51B606EBEF4D6"
+    },
+    {
+      "path": "src/screens/SmartRouteSuggestScreen.tsx",
+      "sha256": "80BDDA130AAC153E611197F8E34ACCAE07FF72ADDA76134E8B854D438E01643E"
+    },
+    {
+      "path": "src/screens/StaffPerformanceScreen.tsx",
+      "sha256": "C9BF7C97C56B417886EEC6C30C857F7F77FFECD10798E9445F89173214F12630"
+    },
+    {
+      "path": "src/screens/StockConsumptionScreen.tsx",
+      "sha256": "8D2F1E1846E0BDA71CD4C29E084D2C6F56A26D9C34E976221C6F19C300E1FD3C"
+    },
+    {
+      "path": "src/screens/StockHubScreen.tsx",
+      "sha256": "3EBE81CC58DEF09250B464E15B09C09B520EBD4DB18ECDC5891BDB32D768DB62"
+    },
+    {
+      "path": "src/screens/StockMovementScreen.tsx",
+      "sha256": "363C6E0F4402C2E3F914C386850B8763B624AEC92E160B725353441593A3EEF8"
+    },
+    {
+      "path": "src/screens/StockMovementsScreen.tsx",
+      "sha256": "09614D07EBE5E7711414D2B3A4824E471B7B177F4B98599F7F792AC99196D85C"
+    },
+    {
+      "path": "src/screens/StockScreen.tsx",
+      "sha256": "CB8E05CB7619D54B3735F2004564BB485C2D03BB60B3EC4FC138354443A2E8E7"
+    },
+    {
+      "path": "src/screens/StockSummaryScreen.tsx",
+      "sha256": "8600E8F8E785CA706B37E940AC556A657D3DEC879C3A9F2B3DBB9B94F4A700A5"
+    },
+    {
+      "path": "src/screens/StockTurnoverScreen.tsx",
+      "sha256": "1C0E5F15EDD7FC17ACBE13ABC14CEDC5F4CED1CC08B44BD4004884FF2FFCF146"
+    },
+    {
+      "path": "src/screens/SurveyDetailScreen.tsx",
+      "sha256": "7243CAB036A57E543BEC2C21F10FD1C8919F0D2D28FF071A30B529E360D49F67"
+    },
+    {
+      "path": "src/screens/SurveyFormDetailScreen.tsx",
+      "sha256": "ADFD96AF87C769B0A7AD56B0B5AB8B049089E0E0AE1632244C4E1CB0793BD4E9"
+    },
+    {
+      "path": "src/screens/SurveyFormsScreen.tsx",
+      "sha256": "CFA049A64DE817727E9EFA5E257ECFC1317FB7B2E2B8EA2C5AA21232C1B67A91"
+    },
+    {
+      "path": "src/screens/SuspiciousActivityScreen.tsx",
+      "sha256": "A7130DB9B8D67F37802F123827FAAF904394282AD7B1653E724F71FAA8C45B63"
+    },
+    {
+      "path": "src/screens/SuspiciousLoginsScreen.tsx",
+      "sha256": "D9AF4359053EC1CF6B4DC238893C0548ADF882D4161C3E83802CB291DE0D4A1C"
+    },
+    {
+      "path": "src/screens/SyncHistoryScreen.tsx",
+      "sha256": "53B326E73D6FA0020305867E73E6D7C10B2F8CA01384662838DDD0F6B02DC0C9"
+    },
+    {
+      "path": "src/screens/SyncStatusScreen.tsx",
+      "sha256": "01B8E81B373C0BA60D54CF81F5EF405DC29B074C55272BA7535D4589AA1AFBE4"
+    },
+    {
+      "path": "src/screens/SystemHealthScreen.tsx",
+      "sha256": "83E99F74F7B57641083D7026B61449DA2D9EA4DC128105FC0756ACCA4163B224"
+    },
+    {
+      "path": "src/screens/TaskAnalyticsScreen.tsx",
+      "sha256": "B0E400DECD7F06A0A726915D7403357CAB22D8D6E85DED3131B552EC195EEC4B"
+    },
+    {
+      "path": "src/screens/TaskDetailScreen.tsx",
+      "sha256": "533DBE2BAFE1AFB63CD6AE0039BDF62AE2A95D70DAC6EBC88EC449A796DC7646"
+    },
+    {
+      "path": "src/screens/TaskFormScreen.tsx",
+      "sha256": "7C3AFB6E7872B1FCB10C48E33F4D7C8EABB4973B4020653CD7B818F44CBDB854"
+    },
+    {
+      "path": "src/screens/TaskHubScreen.tsx",
+      "sha256": "0EFA4DF60CEA167836DF12D80EDBCE3C89E408700B2C165ABB2A51590BC15617"
+    },
+    {
+      "path": "src/screens/TaskKanbanScreen.tsx",
+      "sha256": "0F492C2A0FAA68B13EEFAC7E5F0927468EB8C31C8EECC1D3E75C6ED2FEA78789"
+    },
+    {
+      "path": "src/screens/TasksScreen.tsx",
+      "sha256": "3171CB22564C4D0BA4FEFDC36C63AB3C9EE524EE6B128729A45F447B710B88CD"
+    },
+    {
+      "path": "src/screens/TeamPerformanceLayerScreen.tsx",
+      "sha256": "93847FFDD9B709F57962BC54E48E896A05CBFE46AFC32CBDA1EB06DDC11C5C5B"
+    },
+    {
+      "path": "src/screens/TenantFormScreen.tsx",
+      "sha256": "B0C814D4260CC34D529DEDB2A33A63C246C847A7F469C64C3205E24083DBE628"
+    },
+    {
+      "path": "src/screens/TenantMembersScreen.tsx",
+      "sha256": "DFF0DD5C9E37D0309283377CEE509A82321143E21E167CEC55F86FBB8EE0BF83"
+    },
+    {
+      "path": "src/screens/TenantSettingsScreen.tsx",
+      "sha256": "53B9BB388BCA2958E3E730180B7278545AAC10C65308B633AFCC5C80EE98D36F"
+    },
+    {
+      "path": "src/screens/TenantsScreen.tsx",
+      "sha256": "7A7EFDF0272EBFDB87D9C2999E66D62FE1BC3734EF6D06A3FA8C4AD491B8DD99"
+    },
+    {
+      "path": "src/screens/TestPlanScreen.tsx",
+      "sha256": "6DA761DA6DEBE21226E0A3D2BF57EE7D78E19B0B2D18B62740588AA29AD2E064"
+    },
+    {
+      "path": "src/screens/TimesheetScreen.tsx",
+      "sha256": "F50F5B143CDA22EBD74145D547CAAC4466954D2B7E41C262835037F0B715DDE1"
+    },
+    {
+      "path": "src/screens/TodoScreen.tsx",
+      "sha256": "4B918112B15F8D782129E2D532A8D6471DF417C89A15CA64999ACC181E8070C9"
+    },
+    {
+      "path": "src/screens/TransformerProposalFormScreen.tsx",
+      "sha256": "1798C8AC2A65263ECBB28E3E0BA1837818408C04BDBD9DFB4C7BE0EB89DEDD6E"
+    },
+    {
+      "path": "src/screens/TransformerProposalsScreen.tsx",
+      "sha256": "8284601120C9A4A3001AA430862BAB2FCD2F7D501BC15F337709D562E83DE724"
+    },
+    {
+      "path": "src/screens/TwoFactorScreen.tsx",
+      "sha256": "FD2C0A58B28BCEADF67F99AC0A9069CC0F712028175FF12E4C2EE37E080380F3"
+    },
+    {
+      "path": "src/screens/UatAdminScreen.tsx",
+      "sha256": "3F547BE9A985DD4C3A6398EAFBA7BD96470C1BDFF337B54633D58B4148D8765D"
+    },
+    {
+      "path": "src/screens/UatCustomerScreen.tsx",
+      "sha256": "ABCCF38F6F082236BD2FF72C3286595D4C9BEC32C4F3FBEB32BA88EF1A50B175"
+    },
+    {
+      "path": "src/screens/UatFieldScreen.tsx",
+      "sha256": "69564B89FE354F8D232C4C65CBFF2529F4C45917118D5C6D91D1DC37E6A6355D"
+    },
+    {
+      "path": "src/screens/UatHubScreen.tsx",
+      "sha256": "9C0B296C9FF2518274B625F20CCA4DF3EA27F1A5F297F2ECA7A9640BCEAFF77C"
+    },
+    {
+      "path": "src/screens/UatLocationScreen.tsx",
+      "sha256": "2A37EC5CF477E6D06DB798E99218B3B4B4972AC6BC84A630287FA7F8A83F9262"
+    },
+    {
+      "path": "src/screens/UatManagerScreen.tsx",
+      "sha256": "F9D20815B993E8177359437CC8E6F49760CB363BD03909CAE36A88D884FF0022"
+    },
+    {
+      "path": "src/screens/UatNotificationScreen.tsx",
+      "sha256": "A900D53DDBBA54D440FC9774202DC7E3BD3702EDE7A41B77ED436170439460F4"
+    },
+    {
+      "path": "src/screens/UatQuoteScreen.tsx",
+      "sha256": "915FBEF86E73D27C825BF65DAC9189A02CD3AFB006F405C534D82FFBCFC29F2E"
+    },
+    {
+      "path": "src/screens/UatReportScreen.tsx",
+      "sha256": "03F8AFAA745675391EBEB990AC30A10ED4C0860522FDBCBAE3B7B3515D0B6717"
+    },
+    {
+      "path": "src/screens/UatStockScreen.tsx",
+      "sha256": "FEB37D4EBCB6D9B2ECF28436C731F523D7BC0F42E08E71965A1FCC455C19F2C0"
+    },
+    {
+      "path": "src/screens/UatWorkOrderScreen.tsx",
+      "sha256": "C19342DE27B33A54CEAE06688E9975A21B37A8E9B5596BC9A73541B001D35F77"
+    },
+    {
+      "path": "src/screens/UsageLimitsScreen.tsx",
+      "sha256": "57507A02F46136E12A788FCB8A5EA4FF5CEB0BBF83CC4991F18DD32F826BA053"
+    },
+    {
+      "path": "src/screens/UsageScoreScreen.tsx",
+      "sha256": "62B4BF2D1CC9D87301474C3CF9BE121B7F2FE6049A9DF121233F5F191EE633A8"
+    },
+    {
+      "path": "src/screens/UserApprovalsScreen.tsx",
+      "sha256": "261C4684628B90D72701C1ABC99322A001399D4216F406F07902D9C3EDD8F8B5"
+    },
+    {
+      "path": "src/screens/UsersAdminScreen.tsx",
+      "sha256": "20DF05499BD19F36A7B952A9E92DB1854A838C8564F2D2878D4335DCE929768E"
+    },
+    {
+      "path": "src/screens/VehicleAlertsScreen.tsx",
+      "sha256": "4FE2587B0216CFA4C099D374E07F01B9C4775D00CEB3C1BDF6403483DEB23F43"
+    },
+    {
+      "path": "src/screens/VehicleCostAnalysisScreen.tsx",
+      "sha256": "E7A28B54098829F5271C296425258D8F8A4C965CADE7CD746B59DD5E654D5D3D"
+    },
+    {
+      "path": "src/screens/VehicleDamageFormScreen.tsx",
+      "sha256": "57E5B787F68E282A383BE9A228CE0E4EDFFBF9C6084B179EE04F3446E9DF5E4C"
+    },
+    {
+      "path": "src/screens/VehicleDamagesScreen.tsx",
+      "sha256": "2F866D1F7C535D4CA87059D3CC7A076F029E7703AE3739CDDBA420EC0C254D2E"
+    },
+    {
+      "path": "src/screens/VehicleDetailScreen.tsx",
+      "sha256": "D0FABA035AD6C141826C3A341A0C8E0A710E88BDD4E3FF7C19DE7784CF0BE4CC"
+    },
+    {
+      "path": "src/screens/VehicleEfficiencyScreen.tsx",
+      "sha256": "3B1B78B52C490BA413706F744447DFCBF7858AB035D7431845F271CF13BAB12B"
+    },
+    {
+      "path": "src/screens/VehicleFormScreen.tsx",
+      "sha256": "A278CD2CCB039ED3CA6A7C9DB3E6E74970C0B3D49B572593D99C9E8D037AAF9A"
+    },
+    {
+      "path": "src/screens/VehicleFuelStatsScreen.tsx",
+      "sha256": "D6008BA764189EDDF621E2A9E26B7C6D77CC5456AF709F7E6EAF8E3663A122A5"
+    },
+    {
+      "path": "src/screens/VehicleHubScreen.tsx",
+      "sha256": "E30C2A06F63A14816A8DAD0FC7DA9FB47519829D8CF01A7D5D52E45D4AFAAF7C"
+    },
+    {
+      "path": "src/screens/VehicleLogFormScreen.tsx",
+      "sha256": "D892CFBFDD990275201FC2F16E3519D0C10D51845662195053FFFFAAFA1D1FBF"
+    },
+    {
+      "path": "src/screens/VehicleLogsScreen.tsx",
+      "sha256": "CB59569C406EC45E8663F10C31894C2AED46156DBE41D8E0EB12B313E6E63869"
+    },
+    {
+      "path": "src/screens/VehicleRouteScreen.tsx",
+      "sha256": "EB759ED40C7E43B8187AEA2F359287C8CF802B54D8020E731B51204EB6C911E8"
+    },
+    {
+      "path": "src/screens/VehiclesScreen.tsx",
+      "sha256": "2718FA729BD6F2A90DC360F0E788341C9EC8BE9CD83666DEA96AF786FF5D0A14"
+    },
+    {
+      "path": "src/screens/VisionScannerScreen.tsx",
+      "sha256": "F8CA24B27CD909F42B9EF20ADE187B0A80508A4B42EC0AD9CD4AC37D9FC513DC"
+    },
+    {
+      "path": "src/screens/VoiceNoteScreen.tsx",
+      "sha256": "8084DFCEC11BAA9C5F467D41086B56C71F00198491F3D6F3D18078FA659D1358"
+    },
+    {
+      "path": "src/screens/VoiceReportScreen.tsx",
+      "sha256": "4772183A3F095B10EC45486571F746C867410CD592D42EA643841BC7EBD6E5A7"
+    },
+    {
+      "path": "src/screens/WarehouseDetailScreen.tsx",
+      "sha256": "957A0BD608128BF3B9ECC7465031F47A3ED99BA7DE5B2304BE7620C59705FC17"
+    },
+    {
+      "path": "src/screens/WarehouseFormScreen.tsx",
+      "sha256": "D8D35BE4F269E465E491C05658E4F1C8B055C2A91502BE1278D44A3382E5E956"
+    },
+    {
+      "path": "src/screens/WarehousesScreen.tsx",
+      "sha256": "CE675A3D5BDE72AFCE079FC4FDE118F1A5FC2F506926BA4DDB5ECEBB9014F5EF"
+    },
+    {
+      "path": "src/screens/WarrantyTrackingScreen.tsx",
+      "sha256": "8C527E26E832327DB3C382960CE7CEEE4DA0798573C1DA1F69E9C493B62E930B"
+    },
+    {
+      "path": "src/screens/WebAdminScreen.tsx",
+      "sha256": "53C48A756CF8EC5E599678A16BB98F41BC4379C22184499F427A7CA21A57FD0F"
+    },
+    {
+      "path": "src/screens/WebhooksScreen.tsx",
+      "sha256": "0A73EA015B1F36435BB9B8EF217E6C952AB2F29171E76CDECFE12ADF00117143"
+    },
+    {
+      "path": "src/screens/WeeklyReportDetailScreen.tsx",
+      "sha256": "F58559D5DEDE56BBAB51B18AC660F29EFF190CE0232D0CB82EB5001870E9680C"
+    },
+    {
+      "path": "src/screens/WeeklyReportsScreen.tsx",
+      "sha256": "6B123E18D57679B42B81CF930305F628721C9A732B7261694DAF67AE648D32F4"
+    },
+    {
+      "path": "src/screens/WorkOrderCostDashboardScreen.tsx",
+      "sha256": "0F56FC95EA5858018CBF9D19E82BFDB3C88CFABF83618DBB09C868A8F18A409C"
+    },
+    {
+      "path": "src/screens/WorkOrderDetailScreen.tsx",
+      "sha256": "9398E8D60952E083CE2F5610DC40387DD2F7965FA73EC31DEA9F6F0B0C02B828"
+    },
+    {
+      "path": "src/screens/WorkOrderFlowHubScreen.tsx",
+      "sha256": "39AA484C59FA737330C2BF0A97BF3C33B007D37BF88E352D7C2CDDCDD099A948"
+    },
+    {
+      "path": "src/screens/WorkOrderFormsScreen.tsx",
+      "sha256": "ADB30A21215D87A2B553943EAB43EDED51E71D954A1E7C78B4B1C6EA9D30FF7E"
+    },
+    {
+      "path": "src/screens/WorkOrderKanbanScreen.tsx",
+      "sha256": "BFDCD24A4209EDFE65AF29A3C08A90851179ECF50EE56A91143C737B78B16AAA"
+    },
+    {
+      "path": "src/screens/WorkOrdersScreen.tsx",
+      "sha256": "F98E91CF1B399DA4E3C281B9412C08DBAB64D092EBAB776B936C3F3B142817B9"
+    },
+    {
+      "path": "src/services/activityPdf.ts",
+      "sha256": "7B1E4ED637977F6165DBE202FAB6EC4F59A027A53D8E993B429F10D4FA5B66D4"
+    },
+    {
+      "path": "src/services/advanced.ts",
+      "sha256": "6CDA46F39E5AEE673B184B47EE18B2684DD3BE496F0D683B3388548B093A2C4C"
+    },
+    {
+      "path": "src/services/ai.ts",
+      "sha256": "1760E7FA29487A1F36ED1D05FCF5EF0EA176C2D5528144303A0EDD8149C17B22"
+    },
+    {
+      "path": "src/services/aiAssistant.ts",
+      "sha256": "16E74013ACB113569790E9935D4F6C9ED83BE66342A118B81F1B53F1B0AABA3B"
+    },
+    {
+      "path": "src/services/aiChatSessions.ts",
+      "sha256": "34EE2EAAFBA988ED57490D916C9D26F30FB214A553EA60DA3B11B8D8CDEFF9F9"
+    },
+    {
+      "path": "src/services/aiCopilot.ts",
+      "sha256": "C092DC2D28FC8F2167E1CA2CCD2F30254C954B6998007AE689C1C37EF76D269A"
+    },
+    {
+      "path": "src/services/aiErrorHandler.ts",
+      "sha256": "4FC812F4EE2B1156BD2B4B368A45EB3C6B7FC7E933B2D63ABFDB4A3288DCB7CF"
+    },
+    {
+      "path": "src/services/aiExport.ts",
+      "sha256": "EA347D685F30883E569FE491FCCFC0FCCA95C8C9BA0BB8BB63A743FF715EF1D3"
+    },
+    {
+      "path": "src/services/aiKnowledgeBase.ts",
+      "sha256": "315D259273475DD1C51A42AB129BB3AECE3F195B949F1F9640D18CC40B733DFC"
+    },
+    {
+      "path": "src/services/aiRouter.ts",
+      "sha256": "A81FAC6C9238280FF34EAFBEDAE346E113C324731DAC5F7BD90F7897AC10B1A2"
+    },
+    {
+      "path": "src/services/aiTelemetry.ts",
+      "sha256": "1C79D94BA5CBCBF9070E0B07386CCE3425A2C6C6231F27044531BB62AC63A657"
+    },
+    {
+      "path": "src/services/analytics.ts",
+      "sha256": "77DBD2E820569D4705BEC9F57B7371884D5B62B2600B4144B025F37D0F3BEADA"
+    },
+    {
+      "path": "src/services/anomalies.ts",
+      "sha256": "2D5B69182DBC3CE6EDA67B297751975897183C556404137B2036D84618A113BD"
+    },
+    {
+      "path": "src/services/apollo.ts",
+      "sha256": "0823EF1EBD850218C35BBBF3ED44C22CBADDEDA85BC7871985148B71767658DD"
+    },
+    {
+      "path": "src/services/appUpdate.ts",
+      "sha256": "88AFFD60890AE0CCDB5935031F5FC24D791F9D79634662C961E4934BC77A460D"
+    },
+    {
+      "path": "src/services/assets.ts",
+      "sha256": "F48ECF7DD64BADE785F481F8A80F28495CE9BFF2A3F5D50EAB4D1FA37625F330"
+    },
+    {
+      "path": "src/services/audioRecorder.ts",
+      "sha256": "DD56221C1E03162CF1DEC6E3292EECA79B947D4905C4B1D81A648C164A17B7A6"
+    },
+    {
+      "path": "src/services/bi.ts",
+      "sha256": "7D0D6312C66B1F4DC085A718B1F5F4997939F82897F722731415ABFCBD5DA989"
+    },
+    {
+      "path": "src/services/bordro.ts",
+      "sha256": "7D4FF61E2C6F0786405F20C504316F27B8099161732DB39BC422E250A2976C31"
+    },
+    {
+      "path": "src/services/bordroEngine.ts",
+      "sha256": "2B424687CBADBB927C59871444A4B38FBB33063C356D4853C17FA93163135237"
+    },
+    {
+      "path": "src/services/bordroPdf.ts",
+      "sha256": "C640DBF388165AB8E45B61B65F4D8614D208D2F0B7BD9580DC43C016A0F67A2E"
+    },
+    {
+      "path": "src/services/calendar.ts",
+      "sha256": "312690D104A59139A440841AA76840B39D8C4488ABF7F9AE0458D8D3F6C959A4"
+    },
+    {
+      "path": "src/services/cashRegister.ts",
+      "sha256": "B594F8C4CF2D7096FF4AEB10099145F04866C86B6A9CEB8BB053E201D8D35563"
+    },
+    {
+      "path": "src/services/catalogOverrides.ts",
+      "sha256": "B5AF55103D688D85174365C007BE874CCD85254DC0D09DCE1CC71C5058AE98C1"
+    },
+    {
+      "path": "src/services/channels.ts",
+      "sha256": "62E5F555E3458044E78F29A3E7A9074482CEF949E550B1F6DB98149E230F4261"
+    },
+    {
+      "path": "src/services/codeQuality.ts",
+      "sha256": "907E70B0E00960BDE8DC53207F685AAA381A4C61D1DD975E3942D04C6B4A69AC"
+    },
+    {
+      "path": "src/services/coverage.ts",
+      "sha256": "111ECB13DFA52B6614F13B848492DA5107C3E650AFDF0E2D9C5621DF1B719589"
+    },
+    {
+      "path": "src/services/crashReporter.ts",
+      "sha256": "0C9B550CF4887C6F769AEF667D2ABAD3986E1B00356F2B2FB6CE8E715A5C10F4"
+    },
+    {
+      "path": "src/services/csvExport.ts",
+      "sha256": "A59DCD16E0967FD6F00C1E43D46DFA4483566CF49E46CA577217711FAEDFC333"
+    },
+    {
+      "path": "src/services/customerDocuments.ts",
+      "sha256": "0B6831A46DF6C510D7CAC89FB837378CB0C872E247EC991F7F9ACDFD5D2A495D"
+    },
+    {
+      "path": "src/services/customerExperience.ts",
+      "sha256": "17D742E4B93C67C93F760A3D05FD56981FF3CD8E1AC677C1B244BEC078D4E4A4"
+    },
+    {
+      "path": "src/services/customerHistory.ts",
+      "sha256": "192D5BB074FB5ACE12CFA8F239B81AEF2971300857535296F51AD94D2F058C1C"
+    },
+    {
+      "path": "src/services/customerPortal.ts",
+      "sha256": "905C285CB3230820CD454561B58EC0DC8423B5D0A2482DD90919CF4A70A8E12C"
+    },
+    {
+      "path": "src/services/customerRatings.ts",
+      "sha256": "3AD7A570FD70D31795B4A3362F10DEA83D69DA5A664B9CD05BE969B6F66A3A0B"
+    },
+    {
+      "path": "src/services/customerSites.ts",
+      "sha256": "C11F545AF7233AEDD891BCF4F497AD575CBFBB859C72DFB46D44568E45CE05C1"
+    },
+    {
+      "path": "src/services/deploy.ts",
+      "sha256": "7DF066AD683D42663F39D2A4FF08FF9CB366E905E6796B5D04443D4D2F40ED05"
+    },
+    {
+      "path": "src/services/docs.ts",
+      "sha256": "F4DCD76946B27279FC4A04B655B997F4180E9DD061317AED4DDBCF8016FC168C"
+    },
+    {
+      "path": "src/services/eInvoice.ts",
+      "sha256": "51F5A519F29CE849B92B4064C54A4034FEF57317DD557F6EAFCB6EFE35240838"
+    },
+    {
+      "path": "src/services/emailSchedules.ts",
+      "sha256": "13CAFFF55B25D77FB7FC3624552976A2357174781CE5D1C788585146164F6BDD"
+    },
+    {
+      "path": "src/services/energyReadings.ts",
+      "sha256": "87E9AD014F485AB235865B0F0101D20CF15D88614D31F325E752F0F3EB09BD63"
+    },
+    {
+      "path": "src/services/enterpriseIntegrations.ts",
+      "sha256": "952E0F74C71731CC47EECEE2C065CE9DD206D544DA7AC757284E7398687C1474"
+    },
+    {
+      "path": "src/services/equipment.ts",
+      "sha256": "4575815E3169C1303E81E1798DC7DF7021E56A782C27D45E046D726DA41BB158"
+    },
+    {
+      "path": "src/services/exec.ts",
+      "sha256": "33D33A5473579F67BB5ADA1BC810CE7B8C58AA36A092CDB1B0359CA99877B119"
+    },
+    {
+      "path": "src/services/expenses.ts",
+      "sha256": "1705E73102807276F806CA4D65553CB2E1B48C63075EEDC764239A12E7DD4DA8"
+    },
+    {
+      "path": "src/services/extensions.ts",
+      "sha256": "7D2CBC29AD8A6DC691B5AF37DC70D8B8529F3A9D6633224A42725FE658B240F3"
+    },
+    {
+      "path": "src/services/externalApiKeys.ts",
+      "sha256": "3CCB25DF6E58A78061F29915762659A1E44A125BF120359E05D1126000F55915"
+    },
+    {
+      "path": "src/services/feedback.ts",
+      "sha256": "C92661B358C17B4AC2E3F17FCCED73BD5CE2688247524C76E0E948DEBED8A4FD"
+    },
+    {
+      "path": "src/services/fieldOps.ts",
+      "sha256": "D96A01E5BAF75BDEA1C6136B4CD9A5A0B3DCFA49A6B68A8888D918958E5146CD"
+    },
+    {
+      "path": "src/services/formResponses.ts",
+      "sha256": "0F09039C80E1E7F7EA46885450869FE3DCB91FBFAAE2E6834EA0DD881ABC04C0"
+    },
+    {
+      "path": "src/services/formTemplates.ts",
+      "sha256": "6383C932E2BDAC6E95DAC5CBD76396C83BD0A806C510602A1D5655900E08A045"
+    },
+    {
+      "path": "src/services/fx.ts",
+      "sha256": "EBFC219D152E35675816F3950E5FD43B69083384C94AF907BB5BD16917E821C5"
+    },
+    {
+      "path": "src/services/gesProposals.ts",
+      "sha256": "BD60003EB9A4A675AC7F0ABA0ECD94A4FE2E857A5F90E5F61174ACB5631B2068"
+    },
+    {
+      "path": "src/services/goLive.ts",
+      "sha256": "26C7400CCE0FD5FF476003C13E13E2F2F40191943D4E65CC8AD7B52C73E306FC"
+    },
+    {
+      "path": "src/services/governance.ts",
+      "sha256": "D061B773765F0EC317F3C2B831BA3F28019C69E1A2D982DD0C82CF48040FD062"
+    },
+    {
+      "path": "src/services/inboxConnector.ts",
+      "sha256": "D05F1788F8686CDAB6433850427D2794B4D59E2C6C9DEB60AF81C7CC16E8A13B"
+    },
+    {
+      "path": "src/services/inspections.ts",
+      "sha256": "9EEDECB42EAB753AAA5D9DB6B490E9162D5DB4C5C8651CD0DF55FE787036FDA3"
+    },
+    {
+      "path": "src/services/integrations.ts",
+      "sha256": "DBB3A1A23F096D67E9691BA8BC3734D70C14FD03DE134667A69AA9BFAEC05CE1"
+    },
+    {
+      "path": "src/services/liveOps.ts",
+      "sha256": "2798D1C3DA3A42C6E3924AB6135E2A01A2E94E1678EA261D55D30E3A1A3A43E0"
+    },
+    {
+      "path": "src/services/location.ts",
+      "sha256": "489446FB3D83DDF4BA3956D781C0D0BBC1D8486A2F75C684C1C38B3C0A995CC2"
+    },
+    {
+      "path": "src/services/maintenancePlans.ts",
+      "sha256": "F328599435AE811AB1682919D1AC658B40088E4FC5DABE5265DEE111BC54C801"
+    },
+    {
+      "path": "src/services/materials.ts",
+      "sha256": "9E57C900F1687E366849B21699466E311D02DCDA980B02580B59A4008DC1E3F5"
+    },
+    {
+      "path": "src/services/messaging.ts",
+      "sha256": "1D4E358AFB00C2861A63D36B19E581DFB92537DFD1AB2CB59562BD067D049F47"
+    },
+    {
+      "path": "src/services/nearestAssign.ts",
+      "sha256": "36FE5A50CD4C9E2B29089BDBECE4DDDE73068FDC41F3E7DB6E9507FC2C65FF2C"
+    },
+    {
+      "path": "src/services/notificationPrefs.ts",
+      "sha256": "5502CFFCCBEC3748388702B5B78F8F855207CBCBFDC100488572AC3794ACB8CB"
+    },
+    {
+      "path": "src/services/notifications.ts",
+      "sha256": "DACD3E600C07F4629AB4B0473608197EF018A99AA65BF59DBAE77C8DF0A60A27"
+    },
+    {
+      "path": "src/services/officeWorkspace.ts",
+      "sha256": "535ADCEDC50354025A2F477F03B0461B6596C0C8AAD1EB38C268E203E5B228E2"
+    },
+    {
+      "path": "src/services/offline.ts",
+      "sha256": "B0F1481777F64B2C80C102354701C6F59A50C137A753EB9C1251787C69F1E1F6"
+    },
+    {
+      "path": "src/services/orders.ts",
+      "sha256": "F27424675828B7FE678F3012CFB7AFDC143E6C25DEE36306396F310121637574"
+    },
+    {
+      "path": "src/services/osos.ts",
+      "sha256": "EF10F94E618014B297E59B40EFDE5DAF2F76BDDE71A7421C07734838798EDDC8"
+    },
+    {
+      "path": "src/services/parasut.ts",
+      "sha256": "4E162F29A5BEA990E7024BE46FB46DA5975959B9A9A759703C9583BB75F3AE7B"
+    },
+    {
+      "path": "src/services/payments.ts",
+      "sha256": "93BA715245F8DD4014A5F576BBA617CAEC4D0173132E8B8CF6BC4DB7096E71FB"
+    },
+    {
+      "path": "src/services/payroll.ts",
+      "sha256": "381B4628CCC56C482E26E02208AA3F6F8B10671981AC8A8221E166AE3201F643"
+    },
+    {
+      "path": "src/services/payrollHr.ts",
+      "sha256": "B64F406C6E13B927ECDF84513EC5A8F265F95F144A1AFFC804238224384BDA3D"
+    },
+    {
+      "path": "src/services/pdf.ts",
+      "sha256": "D4F1851EBD7F13D9640189B09731307558EAB61B6AB5C2DF6E0C4717FD7F5478"
+    },
+    {
+      "path": "src/services/performance.ts",
+      "sha256": "74C62B4893CF296EAB4F83B252CB8DB56A5AF6C6888F8299E9FFF8D1FE03C8E2"
+    },
+    {
+      "path": "src/services/photoUpload.ts",
+      "sha256": "483B08EB789CAD51D126A581CD8CDDA7AE98315356BE1F0A37EDCD8B93B92766"
+    },
+    {
+      "path": "src/services/platform.ts",
+      "sha256": "2DB96BE4D86D0DB64AB344F36AE3DAF2E68C4943FC4D8FCCF5C8D7842D7089B6"
+    },
+    {
+      "path": "src/services/productItems.ts",
+      "sha256": "A97A2BB374CC5286921DBCE5BFDADBEAEE85374800E87066E5A24CE696015793"
+    },
+    {
+      "path": "src/services/productPricing.ts",
+      "sha256": "02CC9B2247B12B61E2D51D61C945EBF1BB0D866FC096D0144DF291B00B3F3793"
+    },
+    {
+      "path": "src/services/pushNotifications.ts",
+      "sha256": "DCDE12AD8B72BB567B9DF6B64AAE89F0226FEDCDBD1604E14E44CE268693521A"
+    },
+    {
+      "path": "src/services/quality.ts",
+      "sha256": "463FAF7D727AA8A7D424614C885FA6D7310F24D7E334F3360F9F9B3CA062EF62"
+    },
+    {
+      "path": "src/services/quoteEmail.ts",
+      "sha256": "B4183D68EA5A485ABDBF5E76C5018972252C27DB859AFEEF8D0D74F41D296EDF"
+    },
+    {
+      "path": "src/services/quoteFlow.ts",
+      "sha256": "652D36EEF8B88C0314AD4234F3F3514F72F9B5C4DE6795F32744F1BCD8BFC4FB"
+    },
+    {
+      "path": "src/services/quoteRevisions.ts",
+      "sha256": "2257A8E2E2614925D385D15B17584874635B336534EEC069782A1CA88EE0E9E1"
+    },
+    {
+      "path": "src/services/quoteTemplates.ts",
+      "sha256": "4307F4F73FC7BFBC1719DAA2945BD3CF56165ACE5F45D0DEB16E044D80FC8DBA"
+    },
+    {
+      "path": "src/services/receiptPdf.ts",
+      "sha256": "802BB7E36473F409DC26312966B0E8AB8B85473628C8A171CA2A81F1DA86E7A1"
+    },
+    {
+      "path": "src/services/recentPozes.ts",
+      "sha256": "AEB85A53ACAD9B9825C8011E88645B5F17516B90F6D16ADB1B739C8A8673B839"
+    },
+    {
+      "path": "src/services/recurringTasks.ts",
+      "sha256": "D9E63CBC1E5B92A17CB6466353094E501659767954C1975FE9B6772F39E78EC3"
+    },
+    {
+      "path": "src/services/reportPdf.ts",
+      "sha256": "A2B6D149ABA08209605D225156B0353A308478251F26CB1CA23F79F3E2978F12"
+    },
+    {
+      "path": "src/services/reports.ts",
+      "sha256": "7939A740DD8A42814E8189A2294F3EDE1F715B41FBB09E6FD6929C5CB90BB0EF"
+    },
+    {
+      "path": "src/services/reportSchedule.ts",
+      "sha256": "9591A17DF99DA8CAC174107DC90DB491D78113E52171E2FB847A3B5222EBECF4"
+    },
+    {
+      "path": "src/services/routeOptimizer.ts",
+      "sha256": "67A329011BBEF7EEE62953D5C5EB734D45A3C7E6ABCD077433AA575FF12B4141"
+    },
+    {
+      "path": "src/services/saas.ts",
+      "sha256": "F2083CB677D1A90F7A3BB0CC1551F134426E4865E5093CE12BDE7E5187954BCF"
+    },
+    {
+      "path": "src/services/salesVisits.ts",
+      "sha256": "30B8A133D2F1B829BA66FE280F65F90FE6719AF444C6C9E02621918ABF121D94"
+    },
+    {
+      "path": "src/services/scoring.ts",
+      "sha256": "0602AD517B9341DB87D8A09D6798D6E249587F51345629B550E49573762B70ED"
+    },
+    {
+      "path": "src/services/secCenter.ts",
+      "sha256": "383DCF935C0616363F476B5B29717637C05D9BAB08F21642E1A22659298815A9"
+    },
+    {
+      "path": "src/services/security.ts",
+      "sha256": "13DB2309A44AE4D8DC0B11E4D3D97991C7A9D70083A2C261872F38D92DCF9968"
+    },
+    {
+      "path": "src/services/slaWatcher.ts",
+      "sha256": "164F59927C0419CC80E5B09B7FB6351EBCC934D1C033C1C595B80EDB8AAA1663"
+    },
+    {
+      "path": "src/services/smartQuote.ts",
+      "sha256": "72B71D55DA5229D4D7440F3E2D706504351EFF7CA0600E102C8F014EB795D58A"
+    },
+    {
+      "path": "src/services/stock.ts",
+      "sha256": "DA3764146DAC67C1E72CD3081C41B9B078B1F122684DD057CC7B332EB1C81EF5"
+    },
+    {
+      "path": "src/services/supabase.ts",
+      "sha256": "1A7740579DD0384002A1EBF007D48209B8135494BBBA6011D225E4A5F134F0F3"
+    },
+    {
+      "path": "src/services/taskCollab.ts",
+      "sha256": "B7E8E95F2C1FEC08F53B76D91096C29F86E51D4F2925D01C7153FDAD347ADE41"
+    },
+    {
+      "path": "src/services/tasks.ts",
+      "sha256": "B2456081F0FA6CECC34CE29E5C6863BD9EF85DA829798A8AB5BEAF7030855F22"
+    },
+    {
+      "path": "src/services/todos.ts",
+      "sha256": "CEA3E2762C168C55A82DB0F7195F9E8D3E14B35F298FFE382CD91992F195E0CA"
+    },
+    {
+      "path": "src/services/transformerProposals.ts",
+      "sha256": "FCB5B054A50E5D5E0E21BC0C9F3259C314D795F74055FB9662D720A9AE54EE5F"
+    },
+    {
+      "path": "src/services/uat.ts",
+      "sha256": "D40AA77907C55E3BF280E88F757B2D5C851071FC849C0FEE17E30D4EF31376CD"
+    },
+    {
+      "path": "src/services/usageTracker.ts",
+      "sha256": "BBBAD894D48D57C5BB1B728A51DA8CE303D7552C807D6974BD3962338DDB6634"
+    },
+    {
+      "path": "src/services/userApprovals.ts",
+      "sha256": "656DCC12DDEC9F30AFBEC63EEDA0948EF4923551DCDF3D8657DCC8F3A4FF2C01"
+    },
+    {
+      "path": "src/services/userManagement.ts",
+      "sha256": "42D0695810781DE0A47D4115C7B1E1C219050C4A86ADFCE13F5A27F6803DA8FF"
+    },
+    {
+      "path": "src/services/users.ts",
+      "sha256": "18562E2486C5254FE160621E4F3E89F99904B78823C328966CFEABCD4CF6F7AF"
+    },
+    {
+      "path": "src/services/vehicleDamages.ts",
+      "sha256": "7370BE07F6FD5B289D17FF445D9D4032F2582B908DFCD8C01B94825D146BB7A7"
+    },
+    {
+      "path": "src/services/vehicleLogs.ts",
+      "sha256": "BEA596D4D353CB92984028E0C1C61EC1B6D97AEE816AD593CF2BCFC84D780775"
+    },
+    {
+      "path": "src/services/vehicleRoutes.ts",
+      "sha256": "1107037ED8E015E2DD9865D543FDA0509823AFC73CB28DF7D7A327F46469F7A9"
+    },
+    {
+      "path": "src/services/vehicles.ts",
+      "sha256": "8CCBB1BD400B302919B8E71090603C8971C35F423E0EECBBB894CFF6C841DA93"
+    },
+    {
+      "path": "src/services/warehouses.ts",
+      "sha256": "39694274F32A9F0895AA12526EE2F48491F54A830F50F7363A1FE94DB5C917D5"
+    },
+    {
+      "path": "src/services/workOrderFlow.ts",
+      "sha256": "3FFEBAB1C62249D51A9BA22989BFE1BD5AD96C53A4BB0A7E59CD85080B9DFAFA"
+    },
+    {
+      "path": "src/services/workOrderPdf.ts",
+      "sha256": "1628B1AB6A4CADD7E44E357E3477C147D223DEEA81DDFC1C7B2C916CEC2643A5"
+    },
+    {
+      "path": "src/services/agent/apolloTools.ts",
+      "sha256": "4065C5FF29D8E1504E21BD39CF4CFA734E109209BDE05466F364EF54350E8AE2"
+    },
+    {
+      "path": "src/services/agent/integrationStubs.ts",
+      "sha256": "29CD402934DC81F10886D7D1126ADCBC6236DD5D2270733007C0C7326C00831C"
+    },
+    {
+      "path": "src/services/agent/loop.ts",
+      "sha256": "5902D70E2430BAD918259C4A3AF5019630B0F32FF188F845AB51C48CA0B15926"
+    },
+    {
+      "path": "src/services/agent/suggestionStore.ts",
+      "sha256": "B673B7BBDE779972F0F71CAEFCC603A9AC9685424CE60BBABF2AF2AEBAEB76C1"
+    },
+    {
+      "path": "src/services/agent/tools.ts",
+      "sha256": "79EF13DDB18170629D616E664C47752DE26EA39D3B06F85F602187638D48644A"
+    },
+    {
+      "path": "src/services/agent/webTools.ts",
+      "sha256": "5CC2D2AA07C7ACDBBAAB60AD88051ED75D9E88EC481DBF42DFC44D88A3D53893"
+    },
+    {
+      "path": "src/shims/expo-image-manipulator.web.js",
+      "sha256": "B8DF8093C5F9A56A9B6EB9D282C9E05AE12FDFF69279F286775C571BEE3F3A49"
+    },
+    {
+      "path": "src/shims/expo-notifications.web.js",
+      "sha256": "DA01985E3508C821A67B96127D20DD6CD525A7347FD98CD8BFF38E81ACD1421D"
+    },
+    {
+      "path": "src/shims/expo-print.web.js",
+      "sha256": "0BA6A768BD862FCA10120ECD527D6C620A92AF2D539E460744FECE98D9D48B09"
+    },
+    {
+      "path": "src/shims/expo-sharing.web.js",
+      "sha256": "A2D117EC88BFB8774B442FCFAEE78F56C160665A16F7110CC689D9B36E8CC5AD"
+    },
+    {
+      "path": "src/shims/react-native-maps.web.tsx",
+      "sha256": "24B6276E9D5057BB506DEB49218733D2A625930BC6885EBF26EF17E47DD95211"
+    },
+    {
+      "path": "src/test-utils/renderScreen.tsx",
+      "sha256": "115B044D9670FBAEB2F097EEB22DDE7F5F57D9AC26529067DF7AB34CB7FE8A5E"
+    },
+    {
+      "path": "src/types/index.ts",
+      "sha256": "72CA1A1240BF20C2C5F06D26F1E0F84BDE6E8B1F06F51D6D01975C5D6C18BB18"
+    },
+    {
+      "path": "src/types/react-test-renderer.d.ts",
+      "sha256": "27E3FE208EB2B46C4E4D076AFEDC409F7B2B4D7D46247193BDB6D85FF24F04F8"
+    },
+    {
+      "path": "src/utils/a11y.ts",
+      "sha256": "BF1398B810692F97864FB6A5D1696F6857291D0B00FD8C6199A78B34DF9B5D02"
+    },
+    {
+      "path": "src/utils/date.ts",
+      "sha256": "2CCEF39E1F166C65EF11FD8EFBF304BE118E5350CEBA98212987B248FB48C87E"
+    },
+    {
+      "path": "src/utils/exportRows.ts",
+      "sha256": "FD90170CAE62AC1AB229BB5362804A8B73986B991D9FFB7C34A1E5AAF2DAC8BE"
+    },
+    {
+      "path": "src/utils/globalSearch.ts",
+      "sha256": "D74082CB6ED067666465AEFBFE3B61A8A50B63174C9A6672B6529AFF94150A99"
+    },
+    {
+      "path": "src/utils/image.ts",
+      "sha256": "821D26694EFFC8527766E67DACA57990ECCAE2464FABAE091D1647B4B03F8ECF"
+    },
+    {
+      "path": "src/utils/logger.ts",
+      "sha256": "3D08A391BB16A33255F6A2938AE5F124BDDD7EA964ED8DAF29E83524D34108F4"
+    },
+    {
+      "path": "src/utils/money.ts",
+      "sha256": "2905E8FBD15BB42D82C4350BB9A8119CE341819ED39B1A49556A754F61904809"
+    },
+    {
+      "path": "src/utils/numInput.ts",
+      "sha256": "80816E4779753FBA871865B9B69E87C73557493E3AA36FE490CB2705D20B6ECB"
+    },
+    {
+      "path": "src/utils/perf.ts",
+      "sha256": "628E83BB58CB4BE5E60B0CFE6C6F3775B15E43DDD58B85B4E86C95B4AF1759D0"
+    },
+    {
+      "path": "src/utils/quoteInsert.ts",
+      "sha256": "F1415A29ABA2325A0D62FC13E494BD86711395224E56653A3615EEC16D035374"
+    },
+    {
+      "path": "src/utils/quoteMath.ts",
+      "sha256": "0D41662C4DADFCEB98858D325B4628B37C1E3CDE0DD99060A9ADE8FA740D9DF7"
+    },
+    {
+      "path": "src/utils/quoteValidity.ts",
+      "sha256": "425901B6F44C342E8C99DB159863ECD2CA1BE526730C63D64DDF1B8266BD0206"
+    },
+    {
+      "path": "src/utils/quoteWarnings.ts",
+      "sha256": "B9F4CBE1F9E7A6C58D3C9431190BD6E75C7A001E3A3B273D1732A108939DB21D"
+    },
+    {
+      "path": "src/utils/search.ts",
+      "sha256": "253A47D85995F669439A5E78FE7AD7BC067BB1FCF5FFEC5326F8D08CC4DAFC27"
+    },
+    {
+      "path": "src/utils/sessionTimeout.ts",
+      "sha256": "397ED3C51732AA8C05ACAEAD9FB0D1DBF248031D01F5AFC6DB0DF72709F1926A"
+    },
+    {
+      "path": "src/utils/silenceWarnings.ts",
+      "sha256": "2930F8CF0E927D2274D3F91F923BC9187A0EE7D17AB126BA897DC70FB73457F3"
+    },
+    {
+      "path": "src/utils/urlGuard.ts",
+      "sha256": "A23863798475E78291393905352520B92911ABD13D6A897FE395DC7D8A7D484C"
+    },
+    {
+      "path": "src/utils/validators.ts",
+      "sha256": "B3DD9A00C8688317128BD69F5BE9313EF4122338C3458CFE472722541D06823B"
+    },
+    {
+      "path": "src/utils/webAlertShim.ts",
+      "sha256": "4DE059310953B4946D3877B09B9E24FD0B9A1FB49D8DD75E1E3255C9098A9439"
+    },
+    {
+      "path": "assets/adaptive-icon.png",
+      "sha256": "A79153315DDB948B96A0DAD00F660B9B76BCDDB9ECBC1F7883D6502712FED284"
+    },
+    {
+      "path": "assets/favicon.png",
+      "sha256": "EA643A74BC9AC7AA7465121BF30751953D2E047FD400F956C7E10BC9014A1500"
+    },
+    {
+      "path": "assets/icon.png",
+      "sha256": "6354F29652000351A56FB58E9722E51DC3677F9D022E37E07812C6B78323E8B6"
+    },
+    {
+      "path": "assets/logo.png",
+      "sha256": "D17F7EBA18D35F3810BDE6B6E1AFD72D1E4FCFF478D89AB67525C27D0C40509E"
+    },
+    {
+      "path": "assets/splash.png",
+      "sha256": "D17F7EBA18D35F3810BDE6B6E1AFD72D1E4FCFF478D89AB67525C27D0C40509E"
+    },
+    {
+      "path": "src/services/data/auditRepo.ts",
+      "sha256": "9B0BFA04EAE7D0FBB90CBF1832462F903C9C1FC27E7BCBCABDA375BFADD4985E"
+    },
+    {
+      "path": "src/services/data/checkinsRepo.ts",
+      "sha256": "43D8CCF4A6B2085BF1C21A20EE1B922862CC205C9D1A6B5978569A8FFA843790"
+    },
+    {
+      "path": "src/services/data/customersRepo.ts",
+      "sha256": "3FD639007AD25CF40919BE9A1B84C511E9F608C617C1E7CE2D57A266C666EA69"
+    },
+    {
+      "path": "src/services/data/employeesRepo.ts",
+      "sha256": "A07E29226C952EC0EFF46E4936AEEEFAFAD429EFF28DD018FF5BECD7E4CFA1B0"
+    },
+    {
+      "path": "src/services/data/geofencesRepo.ts",
+      "sha256": "A4D6EADC1C873FB5933124EE71C74DCC48274618F3B575382413E9FB604ECBB1"
+    },
+    {
+      "path": "src/services/data/index.ts",
+      "sha256": "D5BC980450B0825B4A7F4763B57D7603816ECECBD48984725D3B90B18EF76A31"
+    },
+    {
+      "path": "src/services/data/locationsRepo.ts",
+      "sha256": "0C5E6B8D835C869A5EB23AF9D98B835CAA28ED4F7AB914973672369A6087A644"
+    },
+    {
+      "path": "src/services/data/mappers.ts",
+      "sha256": "CD39C4415FBE7BBBB1DC4662FC345C8DB3AF66EE434636240A0DBA9961C3683C"
+    },
+    {
+      "path": "src/services/data/quotesRepo.ts",
+      "sha256": "EEFCD5B6BE1D9D811C6088496DF213FC8B2213D3C486DE0B17578C2988CFF7B6"
+    },
+    {
+      "path": "src/services/data/repository.ts",
+      "sha256": "27FBFDD5E8718C0377C4A5967FAC52050FC355002FB4C14EDF02739D74184468"
+    },
+    {
+      "path": "src/services/data/shiftsRepo.ts",
+      "sha256": "A40FA40EE484F8EC452AC7C3B8D0AFD7B1A97030E3282DB7B946327DDCD9EE19"
+    },
+    {
+      "path": "src/services/data/syncDrain.ts",
+      "sha256": "ADB497CBAC9E00936EEADACFEE2EE0524B11D9C833773E110E196A8EA889B4D9"
+    },
+    {
+      "path": "src/services/data/workOrdersRepo.ts",
+      "sha256": "02C63EA34B35A9E1679DDF043727069D16B99BAF64D72FDE89341A44187181A8"
+    }
+  ]
+}

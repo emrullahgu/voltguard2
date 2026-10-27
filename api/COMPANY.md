@@ -1,6 +1,20 @@
 # VoltGuard şirket uygulamaları
 
-Özel giriş `/calisan/uygulama/`; mevcut `/calisan/` çalışan panelindeki **Çalışan uygulamalarını aç** bağlantısından ulaşılır. Teklif, keşif-metraj, GES, görev, iş ve ürün takibi, akaryakıt, OSOS, haftalık enerji raporları, periyodik kontrol raporları, iki bordro sistemi, profil ve çalışan yönetimi aynı çalışan oturumundadır. Kaynak işlev envanteri `tools/staff-app/FEATURES.md` dosyasındadır.
+Özel giriş `/calisan/uygulama/`; mevcut `/calisan/` çalışan panelindeki **Çalışan uygulamalarını aç** bağlantısından ulaşılır. SahaTakip, teklif, keşif-metraj, GES, görev, iş ve ürün takibi, akaryakıt, OSOS, haftalık enerji raporları, periyodik kontrol raporları, iki bordro sistemi, profil ve çalışan yönetimi aynı çalışan oturumundadır. Kaynak işlev envanteri `tools/staff-app/FEATURES.md` dosyasındadır.
+
+## SahaTakip ve Ubuntu bağlantısı
+
+`/calisan/uygulama/?module=saha-takip`, SahaTakip çalışma alanını portalın içinde açar. Giriş, MFA, rol ve hesap iptali mevcut çalışan sisteminden gelir; SahaTakip için ikinci bir hesap oluşturulmaz. İş emirleri, müşteri ve teklif akışları ile kaynak uygulamanın web modülleri `tools/saha-app/` altında uyarlanır. Özgün `SahaTakip-main/` değiştirilmez ve hiçbir yayın paketine dahil edilmez. Kopyalanan kaynakların başlangıç özetleri `tools/saha-app/source-provenance.json` içindedir.
+
+Asıl veri kaynağı mevcut **Ubuntu/PostgreSQL sunucusundaki SahaTakip veritabanıdır**. Tarayıcı yalnız aynı kökendeki `/api/company.php` ile konuşur; `app_saha_*` işlemleri özel SSH köprüsünden `tools/ubuntu-saha-source.py` kaynak bağlayıcısına gider. Bağlayıcı, `sb-sahatakip-db` konteynerindeki mevcut veritabanının izinli `public` iş tablolarını canlı okur ve günceller. Müşteri, iş emri, teklif ve teklif satırları kendi mevcut tablolarında kalır; yeni portal için bunların ayrı bir kopyası oluşturulmaz. Tarayıcıdan eski Supabase API'sine, Auth servisine veya doğrudan veritabanına bağlantı kurulmaz. Ubuntu bağlantısı kesildiğinde yerel veriye otomatik geçiş yapılmaz.
+
+Kaynak tabloda bulunmayan modüller ile yeni çalışan kimliğinin eski zorunlu Auth/profil yabancı anahtarına yazılamadığı yeni kayıtlar, aynı SahaTakip veritabanındaki `voltguard_site.saha_records` özel uzantısında tutulur. Ortak modül kayıtları (`_cache`) ve yeni özel dosyalar (`_files`) da bu veritabanındadır; kişisel tercihler çalışan kimliğine bağlı özel `preferences` tablosundadır. İş modülü kayıtları ortak, bordro/puantaj kayıtları yetkiye bağlıdır. Bu kayıtlar, başka bir veritabanına veya tarayıcı depolamasına sessiz yedek olarak yazılmaz.
+
+Çalışan kimlikleri mevcut davet, parola ve zorunlu MFA sistemi üzerinden doğrulanır ve sunucuda kararlı saha kimliklerine eşlenir. Eski `auth.users` ve `profiles` kayıtları kopyalanmaz; eski kimlik, rol veya oturum yeni giriş yetkisi vermez. Gerekli yeni kimlik bağlantıları `voltguard_site.saha_native_rows` yan kayıtlarında, gerçek kaynak alanın değerine bağlı olarak tutulur. Eski uygulama bu alanı değiştirirse eşleme geçersizleşir; isim/e-posta benzerliği bordro erişimi vermez. Değişiklikler gerçek kaynak satır ve yan kayıt özetleriyle karşılaştırılıp tek işlemde yazılır; başka kullanıcının veya eski uygulamanın güncellemesi sessizce ezilmez. Bordro/personel ve mesaj/konum kayıtlarında ek sunucu yetkileri uygulanır.
+
+Saha HTML girişi `/calisan/uygulama/saha.php`, derlenmiş dosyalar `/calisan/uygulama/assets/saha/` ve ek dosyalar `/api/saha-asset.php` altında çalışan doğrulaması gerektirir. Bunlar herkese açık sayfa, statik paket veya service worker önbelleği değildir. Eski kayıtlardaki dosya bağlantıları da özel varlık kapısından sunulur; görünmeyen kayıt veya bordro alanı dosya erişimi vermez. Yeni bir kayda eski depodaki rastgele bir dosya adresini yazmak erişim yetkisi oluşturmaz. Harici AI, e-posta, SMS, ERP ve harita hizmetleri sunucuda ayrıca yapılandırılmadıkça işlem gerçekleştirmez; başarısızlık başarılı kayıt gibi sunulmaz.
+
+Kurulumda ayrıca `npm ci --prefix tools/saha-app --ignore-scripts --no-fund` çalıştırılır. `node tools/build-company.cjs` hem portalı hem SahaTakip web çıktısını derleyip erişim kapıları arkasına paketler. `calisan/uygulama/saha-entry.html` ve varlıklar elle düzenlenmez. `node tools/build-saha-schema.cjs`, `api/lib/sahatakip-schema.php` alan izinlerinden `tools/saha-source-schema.json` dosyasını üretir; bu dosya yalnızca şema bildirimidir ve iş verisi içermez. PHP API dosyaları, üretilmiş şema ve Ubuntu yardımcıları uyumlu sürümde birlikte dağıtılır. Mevcut iş verileri kaynak tablolardan doğrudan okunur; eski hesapların taşınması veya veri içe aktarımı giriş koşulu değildir.
 
 ## Çalıştırma ve derleme
 
@@ -19,13 +33,25 @@ Bağlantı ayarı web kökü dışındaki `<VG_DATA_DIR>/company/ubuntu.json` do
 | `version` | `1` |
 | `host` | Yayın sunucusunun SSH ayarında tanımlı hedef; bu geliştirme ortamında `sunucu` |
 | `helper` | Ubuntu’daki yardımcının mutlak yolu; bu kurulumda `/home/emrullah/voltguard-site-bridge/company_store.py` |
+| `sahaHelper` | İsteğe bağlı SahaTakip kaynak yardımcısı; bu kurulumda `/home/emrullah/voltguard-site-bridge/saha_store.py`. Belirtilmezse `helper` adı `company_store.py` olduğunda aynı dizindeki `saha_store.py` seçilir. |
 | `site` | Bu kurulum için bir kez üretilip korunan, 32–64 karakter uzunluğunda küçük harfli onaltılık kimlik |
 | `sshExecutable` | İsteğe bağlı SSH çalıştırıcısının tam yolu; varsayılan Windows OpenSSH veya `/usr/bin/ssh` |
 | `timeout` | İsteğe bağlı 5–45 saniye; varsayılan 25 |
 
 `site` değeri, yeni çalışan eşlemelerinin ve tercihlerinin kapsamını belirler; yedeklenmeli, rastgele yeniden oluşturulmamalıdır. SSH parola sormadan çalışır ve `StrictHostKeyChecking=yes` ile bilinen sunucu anahtarını doğrular. Ağ kesintisi, yanlış ayar, süresi aşılmış işlem veya geçersiz yanıt erişimi kapatır. Ubuntu ayarı varken yerel `state.json` dosyasına otomatik geçiş yapılmaz. Ayarı silmek bağlantıyı onarmak değildir; ayrı bir veri deposu seçer.
 
-Ubuntu’daki yardımcı ayarı `/home/emrullah/voltguard-site-bridge/config.json` içindedir; `container`, `database`, `user`, `catalogSources` alanlarını kullanır. Mevcut hedef `sb-voltguard-db` konteynerindeki `postgres` veritabanıdır. Yardımcı sadece izinli şirket tablolarını işler. `voltguard_site` özel şeması yeni çalışan eşlemelerini, kişisel tercihleri, işlem geçmişini, tekrar gönderim kayıtlarını ve eski şemada olmayan üç modül tablosunu saklar. Bu özel şemada RLS açıktır ve `PUBLIC`, `anon`, `authenticated` erişimi kaldırılır. Mevcut iş tablolarının RLS politikaları veya eski kimlik kayıtları değiştirilmez.
+Ana şirket yardımcısının ayarı `/home/emrullah/voltguard-site-bridge/config.json` içindedir; `container`, `database`, `user`, `catalogSources` alanlarını kullanır. Mevcut hedef `sb-voltguard-db` konteynerindeki `postgres` veritabanıdır. Bu ayar, katalog yolları ve mevcut PHP `helper`/`site` değerleri SahaTakip eklenirken korunur. Ana yardımcı yalnızca kendi izinli şirket tablolarını işler.
+
+SahaTakip kaynak yardımcısının ayrı ayarı `/home/emrullah/voltguard-site-bridge/saha-config.json` içindedir. `container`, `database`, `user` alanları mevcut SahaTakip veritabanını seçer; bu kurulumda hedef `sb-sahatakip-db` konteynerindeki `postgres` veritabanıdır. İki yardımcı aynı `vg-ubuntu-company/1` taşıma sözleşmesini kullanır; PHP yalnızca SahaTakip işlemlerini kaynak yardımcısına yönlendirir. Kaynak yardımcısı için ana `config.json` değiştirilmez.
+
+Ubuntu’daki sürüm güncellemesi şu dosyaları birlikte kapsar:
+
+1. `tools/ubuntu-company-bridge.py` güncel sürümü mevcut özel dizinde `company_store.py` olarak yerleştirilir; mevcut `config.json` üzerine yazılmaz.
+2. `tools/ubuntu-saha-source.py`, aynı dizine `saha_store.py`; üretilmiş `tools/saha-source-schema.json` ise `saha-source-schema.json` adıyla yerleştirilir. Kaynak yardımcı, yanındaki güncel `company_store.py` kodunu da kullanır.
+3. Yeni özel `saha-config.json` SahaTakip hedefini seçer. PHP bağlantısında gerekirse yalnız `sahaHelper` eklenir; ana şirket bağlantısı ve `site` kimliği korunur.
+4. Kaynak yardımcısının açık `--install` işlemi, standart girişte `{"op":"install"}` ile yalnız gerekli özel şemayı ve tabloları kurar. Günlük okuma/yazma istekleri kendiliğinden kurulum yapmaz. Kurulumdan sonra sağlık, yetkisiz erişim ve canlı kaynak okuma kontrolleri yapılır; gerçek iş tablosuna test kaydı yazılmaz.
+
+Her veritabanındaki `voltguard_site` özel şeması o bağlantının çalışan eşlemelerini, tercihlerini, atomik işlem/tekrar gönderim kayıtlarını ve gerekli uzantıları saklar. SahaTakip tarafında `saha_native_rows` kaynak alanına bağlı kimlik/alan eşlemelerini, `saha_records` özel modül kayıtları ve dosyaları tutar. Bu özel şemalarda RLS açıktır ve `PUBLIC`, `anon`, `authenticated` erişimi kaldırılır. Mevcut `public` iş tablolarının RLS politikaları ve eski Auth/profil kayıtları değiştirilmez.
 
 Yeni portalın erişim kararı PHP çalışan oturumu ve yardımcıdaki ek izin denetimlerinden gelir. Yardımcı Docker/PostgreSQL işletim yetkisi kullanır; genel Supabase oturumu bu bağlantının güvenlik sınırı değildir. Özel SSH anahtarının sahibini ve sunucuda çalıştırabileceği işlemleri sınırlandırın; üretimde bu bağlantıyı genel amaçlı işletmeci anahtarıyla paylaşmayın. Yardımcı ve özel ayar dosyaları webden açılan uygulamanın içine konmaz. Unix dosyalarını 0600, dizinleri 0700 ve Windows erişimini uygun kullanıcı ACL’leriyle koruyun.
 
@@ -38,7 +64,7 @@ Fatura ürünleri ve fiyat kaynakları Ubuntu’daki şu dosyalardan okunur; Git
 | `cablePrices` | `/home/emrullah/voltguard-portal/app/src/serer-kablo-fiyat.json` |
 | `packages` | `/home/emrullah/voltguard-portal/app/src/hazir-paketler.json` |
 
-Eski fatura satırları geçmiş fiyat olarak işaretlenir; teklif öncesi fiyat doğrulanabilir ve güncellenebilir. Kataloğa erişim de tamamlanmış çalışan oturumu gerektirir. Ubuntu yedeği mevcut iş tablolarına ek olarak `voltguard_site` şemasını ve özel bağlantı/katalog ayarlarını kapsamalıdır. Yeni sitenin `staff/` kimlik ve PDF deposu ayrıca korunur.
+Eski fatura satırları geçmiş fiyat olarak işaretlenir; teklif öncesi fiyat doğrulanabilir ve güncellenebilir. Kataloğa erişim de tamamlanmış çalışan oturumu gerektirir. Ubuntu yedeği her iki veritabanının mevcut iş tablolarını ve `voltguard_site` şemasını, ayrıca özel `config.json`, `saha-config.json` ve bağlantı/katalog ayarlarını kapsamalıdır. Yeni sitenin `staff/` kimlik ve PDF deposu ayrıca korunur.
 
 ## Ayrı yerel kurulum
 
@@ -73,6 +99,8 @@ Bu kurulumda **Ubuntu’daki merkezi iş kayıtları ve dosya içe aktarma** kul
 
 cPanel veya başka bir PHP sunucusunda SSH çalıştırıcısı ve `proc_open` izni, Ubuntu’ya özel ağ erişimi, SSH hedefi/anahtarı ve doğrulanmış `known_hosts` kaydı gerekir. Geliştirme bilgisayarındaki `sunucu` hedefi veya Tailscale oturumu bu sunucuya otomatik geçmez. Bağlantı ayarı ve anahtar özel dizinde tutulur; statik yayın paketine eklenmez. Genel veritabanı portu açmak, TLS veya SSH sunucu anahtarı doğrulamasını kapatmak bağlantı kurulumunun bir parçası değildir. Ubuntu’ya erişim sağlanamıyorsa şirket iş alanı hata verir; yeni çalışan giriş/PDF sistemi kendi özel deposunda çalışmaya devam eder.
 
+Netlify yayını yalnızca herkese açık statik siteyi içerir; özel çalışan uygulaması, SahaTakip HTML/varlıkları, PHP ve özel ayarlar bu pakete girmez. Bu bölümü kullanmak için cPanel/PHP yayını ve o sunucudan iki Ubuntu yardımcısına doğrulanmış SSH erişimi gerekir. Netlify'daki genel sitenin başarılı yayımlanması çalışan uygulamasının kurulmuş olduğunu göstermez.
+
 ## Kontrol
 
-`npm test` gerçek PHP/HTTP yetki, veri ve sürüm kontrollerini çalıştırır. `npm run test:staff-browser` giriş ve tam modül iş akışlarını yalnızca sentetik geçici kayıtlarla kontrol eder. `tools/tests/ubuntu-company-bridge-integration.py` ayrı, boş ve `vg_bridge_qa_` önekli veritabanı gerektirir; gerçek iş kayıtlarını kullanmaz. Ubuntu testleri gerçek PostgreSQL üzerinde okuma, çakışma, atomik geri alma, tekrar gönderim, kimlik eşleme, veritabanı tetikleyicileri ve özel tablo erişim sınırlarını sentetik verilerle denetler. Testler gerçek çalışanı, bordroyu ve özel kataloğu değiştirmez. Yayında ayrıca HTTPS, PHP/SSH çalıştırma, özel ağ erişimi, özel depo izinleri ve yetkisiz URL/varlık denemeleri kontrol edilmelidir.
+`npm test` gerçek PHP/HTTP yetki, veri ve sürüm kontrollerini çalıştırır. `npm run test:staff-browser` giriş ve tam modül iş akışlarını yalnızca sentetik geçici kayıtlarla kontrol eder. `tools/tests/ubuntu-company-bridge-integration.py` ana şirket bağlantısını, `tools/tests/saha-source-integration.py --config <özel-QA-ayar-yolu> --source <kaynak-yardımcı-yolu>` ise SahaTakip kaynak bağlantısını ayrı, boş ve `vg_bridge_qa_` önekli veritabanlarında denetler. Kaynak testi gerçek PostgreSQL üzerinde asıl tablolara yazma, bileşik/bigint anahtarlar, eski uygulama değişikliğinde çakışma, atomik geri alma, tekrar gönderim, bordro sahipliği, özel dosya yetkileri ve RLS sınırlarını sentetik verilerle doğrular. Üretim veritabanı adını reddeder; yeniden kullanım yalnızca işaretli sentetik fixture için açık `--reset-fixtures` seçeneğiyle yapılır. `tools/tests/saha-source-unit.test.cjs` ayrıca kaynak birim kontrollerini ve PHP/Ubuntu şema eşliğini denetler. Testler gerçek çalışanı, bordroyu ve özel kataloğu değiştirmez. Yayında ayrıca HTTPS, PHP/SSH çalıştırma, özel ağ erişimi, özel depo izinleri ve yetkisiz URL/varlık denemeleri kontrol edilmelidir.

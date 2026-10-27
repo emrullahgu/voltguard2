@@ -44,6 +44,6 @@ for (const file of rootFiles.concat(employeePages)) {
   fs.mkdirSync(path.dirname(target), {recursive:true});
   fs.copyFileSync(path.join(root, file), target);
 }
-for (const forbidden of ['api', 'tools', 'VoltGame', 'vesikalar', 'voltguardekleyelim', '.qa',
+for (const forbidden of ['api', 'tools', 'VoltGame', 'SahaTakip-main', 'vesikalar', 'voltguardekleyelim', '.qa',
   'calisan', 'hesap', 'contact.php']) assert.ok(!fs.existsSync(path.join(publish, forbidden)), 'Excluded from static publication: ' + forbidden);
 console.log('Netlify static release ready: site, 51 engineering tools, VoltSim, team and complete VoltGame. PHP and development sources excluded.');
