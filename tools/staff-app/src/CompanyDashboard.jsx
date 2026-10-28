@@ -1,5 +1,7 @@
 import React from 'react';
 import { dashboardSummary } from './dashboardSummary.mjs';
+import { getStaffCapabilities } from './supabaseClient';
+import { employeeSourceStatus } from './sourceConnection';
 
 const money = value => value.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
 const provided = value => typeof value === 'string' && value.trim() ? value : 'Belirtilmedi';
@@ -13,6 +15,8 @@ function Prices({ title, rows }) {
 }
 
 export default function CompanyDashboard({ invoice1, invoice2, cable, stats, products, onSelect }) {
+  const source = employeeSourceStatus(getStaffCapabilities().dataSource, typeof window === 'undefined' ? '' : window.location.hostname);
+  if (!source.available) return <section className="portal-source-warning" role="alert" data-company-source-unavailable=""><h2>Şirket kayıtlarına erişim bekleniyor</h2><p>{source.message}</p></section>;
   const summary = dashboardSummary(invoice1, invoice2, cable);
   const categories = stats.kategoriSayilari.filter(category => category.adet > 0);
   return <div className="space-y-6" data-company-dashboard="">

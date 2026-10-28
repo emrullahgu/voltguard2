@@ -20,7 +20,7 @@ function fixture({primaryFailure=false,notificationFailure=false,holdPrimary=fal
  let rejectPrimary=primaryFailure;
  const api=load('portal/api.ts',{
   './networkPolicy':{scopedFetch:async(url,options)=>{
-   if(url.includes('action=saha_bootstrap'))return {ok:true,status:200,json:async()=>({api:'vg-company/1',ok:true,csrf:'a'.repeat(64),data:{user:{id:'synthetic-native-user'},profile:{id:'synthetic-native-user',approval_status:'approved'},capabilities:{}}})};
+   if(url.includes('action=saha_bootstrap'))return {ok:true,status:200,json:async()=>({api:'vg-company/1',ok:true,csrf:'a'.repeat(64),data:{user:{id:'synthetic-native-user'},profile:{id:'synthetic-native-user',approval_status:'approved'},capabilities:{dataSource:'ubuntu'}}})};
    const args=JSON.parse(options.body).args;requests.push(args);
    const table=args.table;
    const optional=['audit_log','notifications','recent_pozes'].includes(table);

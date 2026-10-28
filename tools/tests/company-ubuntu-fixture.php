@@ -287,6 +287,38 @@ try {
         fixture_check($rejectedBrokenLink, true, 'Broken configuration symlink fails closed rather than activating local data');
         unlink($configFile);
     }
+    // Missing Saha configuration on production must never select an empty
+    // second store. The real authenticated account/MFA checks still apply.
+    $serverBefore = $_SERVER;
+    $callbackRuns = 0;
+    $readSaha = static function (array &$state, array $actor) use (&$callbackRuns): array {
+        $callbackRuns++;
+        return ['actor' => $actor['id'], 'records' => count($state['tables']['saha_records'])];
+    };
+    foreach ([
+        ['voltguard.example.test', '203.0.113.24'],
+        ['localhost', '203.0.113.24'],
+        ['voltguard.example.test', '127.0.0.1'],
+    ] as [$host, $peer]) {
+        $_SERVER['HTTP_HOST'] = $host; $_SERVER['REMOTE_ADDR'] = $peer;
+        $_SERVER['HTTP_X_FORWARDED_HOST'] = 'localhost'; $_SERVER['HTTP_X_FORWARDED_FOR'] = '127.0.0.1';
+        fixture_error(static function () use ($readSaha) { vg_company_store($readSaha, true); }, 503, 'company_saha_source_required', 'Production Saha cannot fall back from absent Ubuntu configuration');
+    }
+    fixture_check($callbackRuns, 0, 'Missing production source never invokes business callback');
+    fixture_check(is_file(vg_company_dir() . '/state.json'), false, 'Source configuration failure never creates local company state');
+    fixture_check(is_file(vg_company_dir() . '/store.lock'), false, 'Source configuration failure occurs before local store access');
+    fixture_check(vg_company_saha_source_status(null), ['required' => true, 'configured' => false, 'mode' => 'unconfigured', 'ready' => null], 'Production diagnostic distinguishes missing source from connectivity');
+    fixture_check(vg_company_saha_source_status($sahaConfig), ['required' => true, 'configured' => true, 'mode' => 'ubuntu', 'ready' => null], 'A configured source is not reported as connected without checking it');
+    $sessionBefore = $_SESSION['staff']; unset($_SESSION['staff']);
+    fixture_error(static function () use ($readSaha) { vg_company_store($readSaha, true); }, 401, 'staff_unauthorized', 'Source failure cannot bypass private employee authentication');
+    $_SESSION['staff'] = $sessionBefore;
+    foreach ([['localhost:4173', '127.0.0.1'], ['[::1]:4173', '::1']] as [$host, $peer]) {
+        $_SERVER['HTTP_HOST'] = $host; $_SERVER['REMOTE_ADDR'] = $peer;
+        fixture_check(vg_company_store($readSaha, true), ['actor' => 'synthetic-employee', 'records' => 0], 'Genuine loopback development retains authenticated synthetic local storage');
+        fixture_check($GLOBALS['vg_company_data_source'], 'local', 'Local development never inherits a stale Ubuntu source label');
+        fixture_check(vg_company_saha_source_status(null)['mode'], 'local-development', 'Local-only mode is explicit rather than an Ubuntu claim');
+    }
+    $_SERVER = $serverBefore;
     echo vg_json_encode(['ok' => true, 'checks' => $checks, 'sessionId' => session_id(), 'csrf' => vg_staff_csrf(), 'config' => $config]);
 } catch (Throwable $e) {
     fwrite(STDERR, get_class($e) . ': ' . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n");

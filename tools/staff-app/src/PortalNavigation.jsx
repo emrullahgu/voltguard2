@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from './SimpleAuth';
 import { getStaffCapabilities } from './supabaseClient';
 import { EMPLOYEE_MODULES, initialEmployeeModule, employeeModuleURL } from './employeeModules';
+import { employeeSourceStatus } from './sourceConnection';
 export const PORTAL_HOME = '/calisan/uygulama/';
 export const PORTAL_MODULES = EMPLOYEE_MODULES;
 export function canManagePayroll(user) { return Boolean(user?.approved && ['admin', 'payroll'].includes(user.role)); }
@@ -35,10 +36,11 @@ export default function PortalNavigation({ onProfile }) {
     catch (_) { /* AuthProvider displays the failure; keep the workspace open for retry. */ }
     finally { leaving.current = false; setSigningOut(false); }
   };
-  const source = getStaffCapabilities().dataSource;
+  const capabilities = getStaffCapabilities();
+  const source = employeeSourceStatus(capabilities.dataSource, window.location.hostname, capabilities.sahaSource);
   const role = { admin: 'Yönetici', payroll: 'Bordro yöneticisi', employee: 'Çalışan' }[currentUser?.role] || 'Çalışan';
   return <div className="portal-navigation no-print">
-    <div className="portal-navigation__identity"><a href={PORTAL_HOME} className="portal-navigation__title">Şirket uygulaması</a><p><span>{currentUser?.name || currentUser?.email}</span><span className="portal-navigation__role">{role}</span></p>{source === 'ubuntu' && <p className="portal-navigation__source">Kayıtlar: şirket sunucusu</p>}</div>
+    <div className="portal-navigation__identity"><a href={PORTAL_HOME} className="portal-navigation__title">Şirket uygulaması</a><p><span>{currentUser?.name || currentUser?.email}</span><span className="portal-navigation__role">{role}</span></p><p className={source.available && !source.development ? 'portal-navigation__source' : 'portal-source-warning'} role={source.available ? 'status' : 'alert'}><strong>{source.label}</strong>{source.message && <>. {source.message}</>}</p></div>
     {compact && <button type="button" id="portal-account-toggle" ref={menuButton} className="portal-navigation__toggle" aria-controls="portal-account-links" aria-expanded={menuOpen} onClick={() => setMenuOpen(open => !open)}>Çalışan menüsü</button>}
     <nav id="portal-account-links" aria-label="Şirket uygulaması bağlantıları" hidden={compact && !menuOpen}><a href="/calisan/">Çalışan paneli</a><a href="/araclar/">Hesap araçları</a>{currentUser?.role === 'admin' && <a href={portalModuleURL('admin')}>Çalışan yönetimi</a>}{onProfile ? <button type="button" data-portal-profile-trigger onClick={() => { setMenuOpen(false); onProfile(); }}>Profil ve güvenlik</button> : <a href={PORTAL_HOME+'?profil=1'}>Profil ve güvenlik</a>}<button type="button" data-vg-theme-toggle="" aria-label={document.documentElement.dataset.theme === 'dark' ? 'Açık temaya geç' : 'Koyu temaya geç'} aria-pressed={document.documentElement.dataset.theme === 'dark'}><span data-vg-theme-text="">Renk teması</span></button><button type="button" disabled={signingOut} aria-busy={signingOut} onClick={leave}>{signingOut ? 'Çıkış yapılıyor…' : 'Çıkış yap'}</button></nav>
   </div>;
