@@ -21,7 +21,7 @@ function transportFixture(){
  const child={location:{origin:'https://synthetic.invalid'},top:{location:{replace:()=>{}}},dispatchEvent:()=>{},addEventListener:()=>{}};
  const fetch=async(url,options)=>{
   calls.push({url,options});
-  if(url.includes('action=saha_bootstrap'))return {ok:true,status:200,json:async()=>({api:'vg-company/1',ok:true,csrf:'a'.repeat(64),data:{user:{id:'synthetic-staff'},profile:{id:'synthetic-staff',approval_status:'approved'},capabilities:{}}})};
+  if(url.includes('action=saha_bootstrap'))return {ok:true,status:200,json:async()=>({api:'vg-company/1',ok:true,csrf:'a'.repeat(64),data:{user:{id:'synthetic-staff'},profile:{id:'synthetic-staff',approval_status:'approved'},capabilities:{dataSource:'ubuntu'}}})};
   const payload=await next();return {ok:payload.ok,status:payload.status||200,json:async()=>payload};
  };
  const api=load('portal/api.ts',{'./networkPolicy':{scopedFetch:fetch},'./moduleHostBridge':{emitModuleEvent:(type,fields)=>notices.push({...fields,type})}}, {window:child,CustomEvent:class{constructor(type,args){this.type=type;this.detail=args?.detail;}}});

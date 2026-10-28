@@ -103,7 +103,27 @@ Belgelerde revizyon, puantaj ve bordroda yüklenmiş `updated_at` sürümü kull
 
 Bu kurulumda **Ubuntu’daki merkezi iş kayıtları ve dosya içe aktarma** kullanılır. Excel/JSON, tablo yapıştırma, kaydedilmiş sayaç ölçümleri, grafik ve raporlar çalışır. Merkezi veri bağlantısı canlı sayaç servisi değildir: KOSBİ/OSOS collector ve WorkTracker kapalı kalır; kapalı bir işlem başarı veya sahte ölçüm üretmez. Kaynakta gereken `Gunay/osos_collector.py` bulunmadığı için otomatik ölçüm varmış gibi çalıştırılmaz. Harici yapay zekâ yerine açıkça adlandırılmış, düzenlenebilir teklif/e-posta şablonları vardır; bu servislere şirket verisi veya gizli anahtar gönderilmez. E-posta eylemi kullanıcı tarafından gönderilebilen mail taslağı açar.
 
-## Başka yayın sunucusunda bağlantı
+## cPanel için HTTPS bağlantısı
+
+cPanel'in geliştirme bilgisayarındaki `sunucu` SSH adını veya Tailscale bağlantısını kullanabildiği varsayılmaz. Özel `<VG_DATA_DIR>/company/ubuntu.json` dosyası sürüm `2` ile sunucular arası HTTPS taşımasını seçebilir. Bu dosya Git'e, JavaScript'e veya `public_html` içine konmaz. Hazırlanan özel bağlantı dosyası yalnız ilgili cPanel kurulumuna yerleştirilir; mevcut dosya varsa değiştirmeden önce özel bir yedeği alınır.
+
+| Alan | HTTPS taşıması |
+| --- | --- |
+| `version` | `2` |
+| `transport` | `https` |
+| `endpoint` | İzinli sabit Ubuntu HTTPS köprüsü; başka adres, yönlendirme, sorgu veya bağlantı bilgisi kabul edilmez |
+| `keyId` | Kuruluma ait anahtar tanıtıcısı |
+| `secret` | Yalnız PHP ve Ubuntu'da tutulan, 32 baytlık anahtarın 64 karakterlik onaltılık gösterimi |
+| `site` | Korunan kurulum kimliği; mevcut çalışan eşlemelerinin ve tercihlerinin kapsamı değiştirilmez |
+| `timeout` | 5–45 saniye |
+
+PHP, mevcut çalışan oturumu ve yetki kontrollerinden sonra istek gövdesini, hedefi, zamanı ve tek kullanımlık nonce değerini HMAC ile imzalar. TLS sertifikası ve sunucu adı doğrulanır; HTTP'ye, SSH'ye veya yerel depoya otomatik geçiş yapılmaz. Ana şirket ve kaynak saha istekleri Ubuntu'daki ayrı, sabit yardımcıya yönlenir. Kaynak ek dosyaları da aynı yetkili taşıma üzerinden okunur.
+
+`tools/ubuntu-company-http.py` yalnız `127.0.0.1` üzerinde dinler. Mevcut HTTPS ters vekilinde yalnız köprünün tam yolu bu servise gider. Özel HTTP yapılandırması web kökü dışında tutulur; nonce deposu yeniden başlatmada da tekrar kullanımını reddeder. İstek boyutu, yanıt boyutu, süre ve eşzamanlılık sınırlıdır. Yardımcı yolu veya komut istemciden seçilemez; istek gövdeleri, kişisel kayıtlar ve anahtarlar erişim günlüğüne yazılmaz. Mevcut veritabanları, eski kimlik sistemi ve SQL kuralları bu taşıma kurulurken değiştirilmez.
+
+Canlı web isteğinde Ubuntu yapılandırması yoksa kaynak iş modülleri `company_saha_source_required` hatası verir. Boş yerel liste, mevcut şirket verisi gibi gösterilmez. Yalnız gerçek loopback adresinden, tam localhost adıyla açılan geliştirme ortamı yerel sentetik depoyu kullanabilir. Yönetici kaynak durumunda `configured` ile doğrulanmış bağlantı birbirinden ayrılır; yapılandırma dosyasının bulunması sağlık kanıtı değildir.
+
+## SSH ile başka yayın sunucusunda bağlantı
 
 cPanel veya başka bir PHP sunucusunda SSH çalıştırıcısı ve `proc_open` izni, Ubuntu’ya özel ağ erişimi, SSH hedefi/anahtarı ve doğrulanmış `known_hosts` kaydı gerekir. Geliştirme bilgisayarındaki `sunucu` hedefi veya Tailscale oturumu bu sunucuya otomatik geçmez. Bağlantı ayarı ve anahtar özel dizinde tutulur; statik yayın paketine eklenmez. Genel veritabanı portu açmak, TLS veya SSH sunucu anahtarı doğrulamasını kapatmak bağlantı kurulumunun bir parçası değildir. Ubuntu’ya erişim sağlanamıyorsa şirket iş alanı hata verir; yeni çalışan giriş/PDF sistemi kendi özel deposunda çalışmaya devam eder.
 

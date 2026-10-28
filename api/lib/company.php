@@ -68,10 +68,22 @@ function vg_company_catalog(): array {
     foreach ($catalog as $key => $value) if (!is_array($value)) throw new RuntimeException('invalid private catalog field');
     return array_merge($empty, $catalog);
 }
+/** Configuration is not connectivity: ready remains unknown until a source health check. */
+function vg_company_saha_source_status(?array $remote): array {
+    return ['required' => true, 'configured' => $remote !== null,
+        'mode' => $remote !== null ? 'ubuntu' : (vg_local_http_request() ? 'local-development' : 'unconfigured'), 'ready' => null];
+}
 function vg_company_store(callable $fn, bool $saha = false) {
     $remote = vg_company_ubuntu_config();
     if ($remote !== null && $saha) $remote = vg_company_saha_remote_config($remote);
     if ($remote !== null) return vg_company_ubuntu_store($fn, $remote);
+    if ($saha && !vg_local_http_request()) {
+        // An absent cPanel configuration must not create a second, empty source
+        // of company records. Only a real loopback development request may use it.
+        vg_staff_require_user();
+        vg_company_fail(503, 'company_saha_source_required', 'Çalışan uygulamalarının Ubuntu veri bağlantısı kurulmamış. Mevcut kayıtları açmak için yönetici sunucu bağlantısını tamamlamalı.');
+    }
+    $GLOBALS['vg_company_data_source'] = 'local';
     $dir = vg_company_dir(); $file = $dir . '/state.json'; $lock = @fopen($dir . '/store.lock', 'c');
     if ($lock === false || !flock($lock, LOCK_EX)) throw new RuntimeException('company store lock');
     @chmod($dir . '/store.lock', 0600);
@@ -478,12 +490,14 @@ function vg_company_run(): void {
             $remote = vg_company_ubuntu_config();
             if ($remote !== null) vg_company_ubuntu_call($remote, ['op' => 'health', 'actor' => ['id' => $u['id'], 'role' => $u['role']]]);
             $out = ['data' => ['online' => true, 'dataSource' => $remote === null ? 'local' : 'ubuntu']];
+            if ($u['role'] === 'admin') $out['data']['sahaSource'] = vg_company_saha_source_status($remote);
         } elseif ($action === 'saha_bootstrap') {
             if ($method !== 'GET') vg_company_fail(405, 'company_method');
             $out = vg_company_store(function (array &$s, array $actor) { return ['data' => vg_saha_rpc($s, $actor, 'app_saha_bootstrap', [])]; }, true);
         } elseif ($action === 'bootstrap') {
             if ($method !== 'GET') vg_company_fail(405, 'company_method');
             $out = vg_company_store(function (array &$s, array $actor) { return ['data' => ['user' => vg_company_user($actor), 'storage' => $s['storage'][$actor['id']] ?? [], 'catalog' => vg_company_catalog(), 'capabilities' => ['private' => true, 'operations' => true, 'payrollManage' => vg_company_manage($actor), 'employeeAdmin' => $actor['role'] === 'admin', 'dataSource' => $GLOBALS['vg_company_data_source'] ?? 'local', 'liveOSOS' => false, 'externalAI' => false]]]; });
+            if ($u['role'] === 'admin') $out['data']['capabilities']['sahaSource'] = vg_company_saha_source_status(vg_company_ubuntu_config());
         } else {
             if (!in_array($action, ['query', 'rpc', 'storage'], true)) vg_company_fail(404, 'company_action'); if ($method !== 'POST') vg_company_fail(405, 'company_method');
             vg_staff_write_guard(); $input = vg_json_body(2097152); vg_staff_rate('company-request-user', $u['id'], 1200, 900);

@@ -86,6 +86,10 @@ export function bootstrapPortal(force = false): Promise<PortalBootstrap> {
     if (!csrf || !data?.user?.id || data.profile?.id !== data.user.id || data.profile?.approval_status !== 'approved') {
       loginRequired(); throw new Error('Saha çalışan profili doğrulanamadı.');
     }
+    const localDevelopment = data.capabilities?.dataSource === 'local' && typeof window !== 'undefined' && ['localhost', '127.0.0.1', '::1', '[::1]'].includes(String(window.location.hostname).toLowerCase());
+    if (data.capabilities?.dataSource !== 'ubuntu' && !localDevelopment) {
+      throw Object.assign(new Error('Şirket sunucusu bağlantısı doğrulanamadı. Mevcut kayıtlarınızın görüntülenmesi için Ubuntu bağlantısı kurulmalıdır. Boş yerel kayıtlar şirket verisi olarak açılmadı.'), { code: 'company_source_unavailable' });
+    }
     if (identity && identity.user.id !== data.user.id) for (const clear of resetters) clear();
     identity = data; return data;
   })().catch((error) => { if (error?.status === 403) loginRequired(); throw error; }).finally(() => { booting = null; });
