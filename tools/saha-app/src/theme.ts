@@ -14,11 +14,9 @@ export const brand = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// Tema modu: ekranlar StyleSheet.create ile module-scope'ta
-// renkleri donduruyor. Bu yüzden mod, modül yüklenmeden ÖNCE
-// senkron olarak tespit edilmeli (çalışan bootstrap'ındaki tercih ve
-// global stamp). Mod değişimi themeMode.setThemeMode() içinden
-// yeniden yüklemeyle uygulanır.
+// Standalone source resolves its initial palette before StyleSheet.create.
+// Hosted web screens use live CSS variables so a site theme change does not
+// discard an unsaved form or reset the active module.
 // ─────────────────────────────────────────────────────────────
 export const THEME_STORAGE_KEY = 'sahatakip.themeMode';
 
@@ -46,14 +44,23 @@ try {
 const DARK_TOKENS = {
   bg: { primary: '#0a1628', secondary: '#0d1f3c', card: '#15283f' },
   border: { primary: '#29405a', secondary: '#425772' },
-  text: { primary: '#f1f5f9', secondary: '#cbd5e1', muted: '#94a3b8', faint: '#64748b' },
+  text: { primary: '#f1f5f9', secondary: '#cbd5e1', muted: '#94a3b8', faint: '#94a3b8' },
 };
 
 const LIGHT_TOKENS = {
   bg: { primary: '#f8fafc', secondary: '#f1f5f9', card: '#ffffff' },
   border: { primary: '#e2e8f0', secondary: '#cbd5e1' },
-  text: { primary: '#0a1628', secondary: '#334155', muted: '#475569', faint: '#64748b' },
+  text: { primary: '#0a1628', secondary: '#334155', muted: '#475569', faint: '#5b6b7c' },
 };
+
+export function getStatusTextTokens(mode: 'light'|'dark') {
+  return mode === 'dark'
+    ? { accent: '#fbbf24', info: '#93c5fd', warning: '#fcd34d', danger: '#fda4af' }
+    : { accent: '#92400e', info: '#1e3a5f', warning: '#92400e', danger: '#be123c' };
+}
+const statusText = getStatusTextTokens(__activeThemeMode);
+const hostedText = (variable: string, fallback: string) => typeof window !== 'undefined' && (window as any).VoltGuardEmployeeModules
+  ? `var(--vg-module-${variable}, ${fallback})` : fallback;
 
 export function getThemeTokens(mode: 'light'|'dark') { return mode === 'light' ? LIGHT_TOKENS : DARK_TOKENS; }
 export function getDisplayTokens(mode: 'light'|'dark') {
@@ -72,6 +79,7 @@ export const colors = {
   // Compatibility accent token — VoltGuard amber.
   emerald: {
     default: brand.green,
+    foreground: hostedText('accent-text', statusText.accent),
     light: brand.greenLight,
     dark: brand.greenDark,
     bg: 'rgba(245, 158, 11, 0.12)',
@@ -80,6 +88,7 @@ export const colors = {
   // SECONDARY (lacivert) — logo mavisi
   indigo: {
     default: brand.blue,
+    foreground: hostedText('info-text', statusText.info),
     dark: brand.blueDark,
     light: brand.blueLight,
     bg: 'rgba(10, 22, 40, 0.15)',
@@ -87,16 +96,19 @@ export const colors = {
   },
   blue: {
     default: brand.blueLight,
+    foreground: hostedText('info-text', statusText.info),
     bg: 'rgba(30, 58, 95, 0.12)',
     border: 'rgba(30, 58, 95, 0.30)',
   },
   amber: {
     default: '#fbbf24',
+    foreground: hostedText('warning-text', statusText.warning),
     bg: 'rgba(251, 191, 36, 0.12)',
     border: 'rgba(251, 191, 36, 0.30)',
   },
   rose: {
     default: '#f43f5e',
+    foreground: hostedText('danger-text', statusText.danger),
     bg: 'rgba(244, 63, 94, 0.12)',
     border: 'rgba(244, 63, 94, 0.30)',
   },
@@ -120,8 +132,8 @@ export const radius = {
 };
 
 export const typography = {
-  xs: 10,
-  sm: 12,
+  xs: 12,
+  sm: 14,
   base: 14,
   md: 16,
   lg: 18,

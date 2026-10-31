@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // Faz 49 — SecHubScreen
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -27,9 +29,7 @@ const TILES: Tile[] = [
 
 export default function SecHubScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
-  const tileW = `${100 / cols - 1}%`;
+  const { tileWidth: tileW, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md });
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -40,14 +40,14 @@ export default function SecHubScreen() {
           <Text style={s.heroS}>KVKK, yedekleme, denetim ve sağlık skoru</Text>
         </View>
 
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity key={t.route} style={[s.tile, { width: tileW as any, borderColor: t.color }]} onPress={() => nav.navigate(t.route as any)} activeOpacity={0.85}>
-              <View style={[s.tileIcon, { backgroundColor: t.color + '22' }]}>
-                <Ionicons name={t.icon as any} size={28} color={t.color} />
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card" key={t.route} style={[s.tile, { width: tileW, borderColor: t.color }, siteHubCardStyle()]} onPress={() => nav.navigate(t.route as any)} activeOpacity={0.85}>
+              <View testID="site-hub-icon" style={[s.tileIcon, { backgroundColor: t.color + '22' }, siteHubIconStyle()]}>
+                <Ionicons name={t.icon as any} size={siteHubIconSize(28)} color={siteHubIconColor(t.color)} />
               </View>
-              <Text style={s.tileT}>{t.title}</Text>
-              <Text style={s.tileD}>{t.desc}</Text>
+              <Text testID="site-hub-title" style={s.tileT}>{t.title}</Text>
+              <Text testID="site-hub-description" style={s.tileD}>{t.desc}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -56,7 +56,7 @@ export default function SecHubScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   scroll: { padding: spacing.md, gap: spacing.md },
   hero: { alignItems: 'center', gap: 6, paddingVertical: spacing.md },
@@ -67,4 +67,4 @@ const s = StyleSheet.create({
   tileIcon: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   tileT: { color: colors.text.primary, fontSize: typography.sm, fontWeight: '700', textAlign: 'center' },
   tileD: { color: colors.text.muted, fontSize: typography.xs, textAlign: 'center' },
-});
+}, { hideHero: true }));

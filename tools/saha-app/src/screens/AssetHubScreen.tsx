@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // Faz 46 — AssetHubScreen
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React, { useMemo, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -22,8 +24,7 @@ const TILES: { key: string; label: string; icon: any; color: string; nav: string
 
 export default function AssetHubScreen() {
   const nav = useNavigation<any>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md });
   const [counts, setCounts] = useState({ active: 0, broken: 0, total: 0, faults: 0, upcoming: 0, maint: 0 });
 
   const load = useCallback(async () => {
@@ -39,7 +40,7 @@ export default function AssetHubScreen() {
   }, []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  const tileStyle = useMemo(() => ({ width: `${100 / cols - 1}%` as any }), [cols]);
+  const tileStyle = useMemo(() => ({ width: tileWidth }), [tileWidth]);
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -63,11 +64,11 @@ export default function AssetHubScreen() {
             <Text style={s.kpiL}>Yaklaşan</Text>
           </View>
         </View>
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity key={t.key} style={[s.tile, tileStyle, { backgroundColor: t.color + '22', borderColor: t.color }]} onPress={() => nav.navigate(t.nav)}>
-              <Ionicons name={t.icon} size={28} color={t.color} />
-              <Text style={s.tileT}>{t.label}</Text>
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card" key={t.key} style={[s.tile, tileStyle, { backgroundColor: t.color + '22', borderColor: t.color }, siteHubCardStyle()]} onPress={() => nav.navigate(t.nav)}>
+              <Ionicons testID="site-hub-icon" name={t.icon} size={siteHubIconSize(28)} color={siteHubIconColor(t.color)} />
+              <Text testID="site-hub-title" style={s.tileT}>{t.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -76,7 +77,7 @@ export default function AssetHubScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   scroll: { padding: spacing.md, gap: spacing.md },
   hero: { alignItems: 'center', paddingVertical: spacing.md },
@@ -89,4 +90,4 @@ const s = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: '2%' as any, rowGap: spacing.md },
   tile: { padding: spacing.md, borderRadius: radius.md, borderWidth: 1, gap: 8, alignItems: 'center', justifyContent: 'center', minHeight: 100 },
   tileT: { color: colors.text.primary, fontSize: typography.sm, fontWeight: '700', textAlign: 'center' },
-});
+}, { hideHero: true }));

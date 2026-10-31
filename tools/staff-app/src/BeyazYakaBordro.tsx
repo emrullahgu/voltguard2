@@ -1003,7 +1003,7 @@ const BeyazYakaBordro: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Building className="text-indigo-600" size={32} />
               <div>
@@ -1011,7 +1011,7 @@ const BeyazYakaBordro: React.FC = () => {
                 <p className="text-gray-600">Maaşlı personel bordro yönetimi</p>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 shrink-0">
               <button
                 onClick={() => setActiveTab('summary')}
                 className={`px-4 py-2 rounded-lg font-medium ${
@@ -1084,9 +1084,9 @@ const BeyazYakaBordro: React.FC = () => {
 
             {/* çalışan Listesi */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">çalışan Listesi</h2>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={exportSummaryToExcel}
                     disabled={exportingSummary || loading || !employees.length}
@@ -1236,9 +1236,9 @@ const BeyazYakaBordro: React.FC = () => {
                   <>
                 {/* Bordro Formu */}
                 <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                  <div className="flex justify-between items-center mb-6">
+                  <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
                     <h2 className="text-2xl font-bold text-gray-800">Aylık Bordro - {selectedEmployee.name}</h2>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <button onClick={reloadCurrentPayroll} className="border border-gray-400 text-gray-700 px-3 py-2 rounded-lg flex items-center gap-2">
                         <RefreshCw size={18} /> Güncel dönemi yükle
                       </button>

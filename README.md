@@ -17,6 +17,8 @@ npm run preview
 
 Önizleme: `http://127.0.0.1:4173/araclar/`. Statik sayfalar, araçlar ve gerçek yayın güvenlik politikasıyla çalışır. PHP bulunduğunda üyelik, topluluk ve çalışan API'leri aynı adreste etkinleşir; `VG_PHP` ile PHP çalıştırıcısının tam yolu belirtilebilir. Bu cihazdaki doğrulanmış PHP çalıştırıcısı `.qa/php/runtime/php.exe` altındadır ve Git'e dahil değildir. PHP yoksa özel bölüm erişimi kapanır. İletişim formu canlı PHP sunucusu gerektirir. `npm run test:browser` Playwright ve Chrome bulunan ortamda araç tarayıcı kontrollerini çalıştırır.
 
+Gerçek çalışan önizlemesi `http://127.0.0.1:4173/calisan/uygulama/` adresidir ve mevcut çalışan girişi gerekir. `QA Yönetici` veya `Yerel geliştirme verileri` gösteren ayrı tarayıcı testleri gerçek kayıtların durumunu göstermez; bunlar kalıcı şirket verileriyle karıştırılmamalıdır. Görsel test ekranını gerçek veri önizlemesi olarak kullanıcıya sunmayın ve gerçek veriyi test deposuna taşımayın.
+
 Windows önizlemesinin üyelik, topluluk, çalışan hesabı ve özel PDF kayıtları `%LOCALAPPDATA%/VoltGuard/preview-data/<proje-özeti>` altında, web kökünün dışında tutulur. Şirket uygulaması Ubuntu bağlantısı yapılandırıldığında mevcut merkezi iş verilerini kullanır; bu bölümde yapılan gerçek kayıt değişiklikleri Ubuntu veritabanına yazılır. Testler ayrı geçici dizinler ve izole sentetik veritabanları kullanır; gerçek kullanıcıya, bordroya veya operasyon kaydına demo veri eklemez. Gerçek ilk yönetici daveti özel terminalden oluşturulur; kurulum için `api/STAFF.md` dosyasına bakın.
 
 ## Dosya düzeni
@@ -71,6 +73,8 @@ Varsayılan `?module=uygulamalar` ekranı 37 iş alanını aranabilir, kategoril
 
 Aktarılan ekranlar mevcut sayfanın DOM'unda açık bir ShadowRoot içine bağlanır; iframe, ikinci oturum ve eski projenin ayrı giriş/ana menü kabuğu kullanılmaz. `EmployeeModule.jsx` doğrulanmış özel modül varlıklarını yükleyip seçili ekranı açar; stiller mevcut siteyi etkilemeden ayrılır. Eski `/calisan/uygulama/saha.php` adresi çalışan doğrulamasından sonra uygulama kartlarına yönlenir. Runtime dosyalarının listesi yalnız oturum ve MFA gerektiren `/api/company.php?action=module_assets` üzerinden alınır; ham manifest webden okunamaz.
 
+Modül merkezleri sitenin ortak kart, Inter/Outfit yazı ve lacivert/kehribar renk düzenini kullanır. Mobil uygulamanın yinelenen renkli başlıkları, geliştirme etiketleri ve alt menü için ayrılmış boşlukları portalda gösterilmez. Normal ekranlar içerikleri kadar uzayarak sayfayla birlikte kayar; harita, görüşme, kanban ve çok uzun sanal listeler kendi çalışma alanlarını korur. Yazı tipi uyarlaması yalnız aktarılan uygulama kaynaklarına uygulanır; ikon kütüphanelerinin sembol yazı tipleri değiştirilmez.
+
 Aktarılan operasyon modülleri, Ubuntu’daki `sb-sahatakip-db` konteynerinin mevcut izinli `public` iş tablolarını `tools/ubuntu-saha-source.py` üzerinden doğrudan okur ve günceller. Müşteri, iş emri, teklif ve teklif satırları için ayrı bir başlangıç aktarımı veya yeni boş veri deposu kullanılmaz. Kaynakta bulunmayan kayıtlar, ortak modül kayıtları, özel dosyalar ve tercihler aynı veritabanının `voltguard_site` özel şemasında tutulur. Eski Auth hesapları ve profil kayıtları yeni çalışan sistemine kopyalanmaz; native profilin UUID/rol izdüşümü ve kaynak ilişkisine bağlı özel kimlik eşlemeleri korunur. `app_saha_*` adları ve depo anahtarları görünen menüden bağımsız veri sözleşmesidir.
 
 İzinli şema 72 koleksiyondur. Kaynakta bulunmayan `visits`, özel uzantıda tutulur; ziyaret giriş/çıkışı ve `location_checkins` olayları tek sunucu işleminde kaydedilir. Aktif ziyaret yeniden açılışta yüklenir; sahiplik, sürüm karşılaştırması ve tekrar gönderim denetlenir. Ekipman, enerji ölçümü, satış ziyareti, form yanıtı ve araç akışları reddedilen sunucu yazmasını önbellek başarısına çeviremez; okuma hatası boş veri sayılmaz.
@@ -84,6 +88,8 @@ Ubuntu modu yapılandırılmışken bağlantı hatası yerel boş kayda geçiş 
 Dosya içe aktarma çalışır. Canlı OSOS/KOSBİ collector ve WorkTracker bağlantıları servis kurulana kadar kapalıdır; merkezi Ubuntu veritabanını kullanmak bu harici servisleri açmaz. Teklif/e-posta yardımları düzenlenebilir şablonlardır. Kaynakta etkin olan PDF, Word, Excel, HTML ve yazdırma akışları korunur. Bordro, avans ve belge kayıtları sürüm çakışması ve tekrar gönderim kontrolleriyle kaydedilir.
 
 `npm run setup:staff` kilitli bağımlılıkları kurar. `npm run test:staff-browser` giriş, modül yerleşimleri, dosya çıktıları ve gerçek PHP üzerinde kayıt akışlarını geçici sentetik verilerle kontrol eder. Ubuntu bağlantısının SQL kontrolleri yalnızca ayrı, `vg_bridge_qa_` önekli boş test veritabanında sentetik kayıtlarla çalıştırılır. Gerçek yönetici hesabına veya bordrolara test kaydı yazılmaz. Özel bağlantı, katalog ve yerel kurulum ayrıntıları `api/COMPANY.md` içindedir.
+
+`npm run test:employee-layout`, katalogdaki bütün çalışan bölümlerini ve bölüm sekmelerini 320, 390, 768, 1024 ve 1440 piksel genişlikte gerçek PHP ve ayrı sentetik kayıtlarla açar. Sayfa taşmasını, modül sınırını aşan kontrolleri, kesilen düğme yazılarını ve daralıp kullanılamaz hale gelen form alanlarını denetler. Başarısız ekranların görüntüleri ve raporlar `.qa/employee-layout/` altında tutulur. `npm test`, ortak kart yerleşiminin ekran ve kaydırma çubuğu genişliklerine ilişkin sınır kontrollerini de içerir.
 
 ## Yayın
 

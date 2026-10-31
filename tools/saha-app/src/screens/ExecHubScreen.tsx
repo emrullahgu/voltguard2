@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // Faz 47 — ExecHubScreen
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -21,9 +23,8 @@ const TILES = [
 
 export default function ExecHubScreen() {
   const nav = useNavigation<any>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
-  const tileStyle = { width: `${100 / cols - 1}%` as any };
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md });
+  const tileStyle = { width: tileWidth };
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -33,11 +34,11 @@ export default function ExecHubScreen() {
           <Text style={s.heroT}>Stratejik Dashboard</Text>
           <Text style={s.heroS}>CEO ve üst yönetim için özet göstergeler</Text>
         </View>
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity key={t.key} style={[s.tile, tileStyle, { backgroundColor: t.color + '22', borderColor: t.color }]} onPress={() => nav.navigate(t.nav)}>
-              <Ionicons name={t.icon as any} size={28} color={t.color} />
-              <Text style={s.tileT}>{t.label}</Text>
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card" key={t.key} style={[s.tile, tileStyle, { backgroundColor: t.color + '22', borderColor: t.color }, siteHubCardStyle()]} onPress={() => nav.navigate(t.nav)}>
+              <Ionicons testID="site-hub-icon" name={t.icon as any} size={siteHubIconSize(28)} color={siteHubIconColor(t.color)} />
+              <Text testID="site-hub-title" style={s.tileT}>{t.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -46,7 +47,7 @@ export default function ExecHubScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   scroll: { padding: spacing.md, gap: spacing.md },
   hero: { alignItems: 'center', paddingVertical: spacing.md },
@@ -55,4 +56,4 @@ const s = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: '2%' as any, rowGap: spacing.md },
   tile: { padding: spacing.md, borderRadius: radius.md, borderWidth: 1, gap: 8, alignItems: 'center', justifyContent: 'center', minHeight: 100 },
   tileT: { color: colors.text.primary, fontSize: typography.sm, fontWeight: '700', textAlign: 'center' },
-});
+}, { hideHero: true }));

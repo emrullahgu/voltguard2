@@ -93,6 +93,16 @@ export async function setThemeMode(m: ThemeMode): Promise<void> {
   } catch {
     /* sessiz */
   }
+  if (typeof window !== 'undefined' && (window as any).VoltGuardEmployeeModules) {
+    const site = (window as any).VGTheme;
+    if (site?.set) site.set(m === 'system' ? null : effective);
+    else {
+      document.documentElement.dataset.theme = effective;
+      try { if (m === 'system') localStorage.removeItem('vg-theme'); else localStorage.setItem('vg-theme', effective); } catch { /* The current page can still change theme when storage is unavailable. */ }
+      document.dispatchEvent(new CustomEvent('vg:theme', { detail: { theme: effective } }));
+    }
+    return;
+  }
   if (effective === __activeThemeMode) return;
   try {
     (globalThis as any).__SAHATAKIP_THEME_RELOAD_DONE__ = false;
@@ -136,6 +146,16 @@ export function useTheme() {
 
   useEffect(() => {
     hydrateThemeMode().then(() => setMode(storedMode));
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !(window as any).VoltGuardEmployeeModules) return;
+    const update = (event: Event) => {
+      const value = (event as CustomEvent).detail?.theme;
+      if (value === 'light' || value === 'dark') { storedMode = value; setMode(value); }
+    };
+    document.addEventListener('vg:theme', update);
+    return () => document.removeEventListener('vg:theme', update);
   }, []);
 
   const effective: 'light' | 'dark' = useMemo(() => {

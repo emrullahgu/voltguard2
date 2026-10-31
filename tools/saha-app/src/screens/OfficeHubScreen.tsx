@@ -1,8 +1,10 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconStyle, siteHubIconColor, siteHubIconSize, siteHubStatStyle, siteHubStatColor } from '../portal/siteHubStyles';
 // OfficeHubScreen — "Ofis Takip" merkez ekranı (Notion benzeri ofis çalışma alanı).
 // Ofis ekibi (admin/manager/engineer) için: Çalışma Alanı (sayfa/blok), Panolar (kanban),
 // Toplantı Notları + mevcut ofis araçlarına kısayol. İstatistikler + son sayfalar.
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -17,9 +19,7 @@ const EMPTY: OfficeStats = { pages: 0, favorites: 0, boards: 0, openCards: 0, me
 
 export default function OfficeHubScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
-  const tileWidth = (Math.min(width, 1200) - spacing.lg * 2 - (cols - 1) * spacing.md) / cols;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: spacing.md, horizontalPadding: spacing.lg, maxWidth: 1200 });
   const [stats, setStats] = useState<OfficeStats>(EMPTY);
   const [recent, setRecent] = useState<OfficePage[]>([]);
 
@@ -71,12 +71,12 @@ export default function OfficeHubScreen() {
 
         {/* Ana modüller */}
         <Text style={s.sectionLabel}>Çalışma Alanı</Text>
-        <View style={[s.grid, { maxWidth: 1200, alignSelf: 'center', width: '100%' }]}>
+        <View style={[s.grid, { maxWidth: 1200, alignSelf: 'center', width: '100%' }]} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity key={t.key} style={[s.tile, { width: tileWidth }]} onPress={() => nav.navigate(t.key as any)} activeOpacity={0.85}>
-              <View style={[s.tileIcon, { backgroundColor: t.color }]}><Ionicons name={t.icon} size={22} color="#fff" /></View>
-              <Text style={s.tileLabel}>{t.label}</Text>
-              <Text style={s.tileDesc}>{t.desc}</Text>
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card" key={t.key} style={[s.tile, { width: tileWidth }, siteHubCardStyle()]} onPress={() => nav.navigate(t.key as any)} activeOpacity={0.85}>
+              <View testID="site-hub-icon" style={[s.tileIcon, { backgroundColor: t.color }, siteHubIconStyle()]}><Ionicons name={t.icon} size={siteHubIconSize(22)} color={siteHubIconColor("#fff")} /></View>
+              <Text testID="site-hub-title" style={s.tileLabel}>{t.label}</Text>
+              <Text testID="site-hub-description" style={s.tileDesc}>{t.desc}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -122,14 +122,14 @@ export default function OfficeHubScreen() {
 
 function Pill({ label, color, icon }: { label: string; color: string; icon: keyof typeof Ionicons.glyphMap }) {
   return (
-    <View style={[s.pill, { borderColor: color, backgroundColor: color + '22' }]}>
-      <Ionicons name={icon} size={12} color={color} />
-      <Text style={[s.pillText, { color }]}>{label}</Text>
+    <View style={[s.pill, { borderColor: color, backgroundColor: color + '22' }, siteHubStatStyle(color)]}>
+      <Ionicons name={icon} size={12} color={siteHubStatColor(color)} />
+      <Text style={[s.pillText, { color }, { color: siteHubStatColor(color) }]}>{label}</Text>
     </View>
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   content: { padding: spacing.lg, paddingBottom: 90, gap: spacing.md },
   hero: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: spacing.md, backgroundColor: brand.blue, borderRadius: radius.md },
@@ -154,4 +154,4 @@ const s = StyleSheet.create({
   shortcut: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, backgroundColor: colors.bg.secondary, borderWidth: 1, borderColor: colors.border.primary, borderRadius: radius.full },
   shortcutIcon: { width: 32, height: 32, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center' },
   shortcutLabel: { color: colors.text.primary, fontSize: typography.sm, fontWeight: '600' },
-});
+}, { hideHero: true }));

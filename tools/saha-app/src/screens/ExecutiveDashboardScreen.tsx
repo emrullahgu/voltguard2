@@ -1,6 +1,8 @@
+import { siteHubStyles } from '../portal/siteHubStyles';
 // ExecutiveDashboardScreen — POZ-DEV-431
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -16,8 +18,7 @@ function trendColor(direction: KpiDirection, trendPct?: number): string {
 }
 
 export default function ExecutiveDashboardScreen() {
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 3 : width >= 600 ? 2 : 1;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: spacing.sm, horizontalPadding: spacing.md, breakpoints: [[900, 3], [600, 2]] });
   const [filter, setFilter] = useState<KpiCard['category'] | 'all'>('all');
   const [kpis, setKpis] = useState<KpiCard[]>([]);
 
@@ -46,11 +47,11 @@ export default function ExecutiveDashboardScreen() {
             <Ionicons name="refresh-outline" size={14} color="#fff" />
           </TouchableOpacity>
         </View>
-        <View style={[s.grid, { gap: spacing.sm }]}>
+        <View style={[s.grid, { gap: spacing.sm }]} onLayout={onGridLayout}>
           {filtered.map(k => {
             const ratio = k.target ? Math.min(1, k.value / k.target) : 0;
             return (
-              <View key={k.id} style={[s.card, { width: cols === 1 ? '100%' : `${100 / cols - 1}%`, borderLeftColor: KPI_CATEGORY_COLOR[k.category] }]}>
+              <View key={k.id} style={[s.card, { width: tileWidth, borderLeftColor: KPI_CATEGORY_COLOR[k.category] }]}>
                 <Text style={s.label}>{k.label}</Text>
                 <Text style={[s.value, { color: KPI_CATEGORY_COLOR[k.category] }]}>{k.value.toLocaleString('tr-TR')}{k.unit ? ` ${k.unit}` : ''}</Text>
                 {k.trendPct !== undefined && (
@@ -77,7 +78,7 @@ export default function ExecutiveDashboardScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   toolbar: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md, gap: 6 },
   chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, borderWidth: 1, borderColor: colors.border.primary, backgroundColor: colors.bg.secondary },
@@ -94,4 +95,4 @@ const s = StyleSheet.create({
   barFg: { height: '100%', borderRadius: 3 },
   tgt: { color: colors.text.faint, fontSize: 10, marginTop: 2 },
   cat: { color: colors.text.faint, fontSize: 10, marginTop: 6, textTransform: 'uppercase', fontWeight: '700' },
-});
+}, { hideHero: false }));

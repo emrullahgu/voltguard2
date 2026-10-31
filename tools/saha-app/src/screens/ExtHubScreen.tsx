@@ -11,6 +11,7 @@ import {
 } from '../services/extensions';
 import type { ExtIntegration, RootStackParamList } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
 import { FlatList } from 'react-native';
 
@@ -20,9 +21,30 @@ export default function ExtHubScreen() {
   const nav = useNavigation<Nav>();
   const [list, setList] = useState<ExtIntegration[]>([]);
   const [sum, setSum] = useState<{ total: number; connected: number; pending: number; disconnected: number; error: number } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState(0);
   useFocusEffect(useCallback(() => {
-    (async () => { setList(await listExtIntegrations()); setSum(await getExtSummary()); })();
-  }, []));
+    let active = true;
+    setLoading(true);
+    setError(null);
+    (async () => {
+      try {
+        const integrations = await listExtIntegrations();
+        const summary = await getExtSummary();
+        if (active) { setList(integrations); setSum(summary); }
+      } catch (cause) {
+        if (active) {
+          setList([]);
+          setSum(null);
+          setError(cause instanceof Error ? cause.message : 'Dış hizmet bağlantısı kontrol edilemedi. Yeniden deneyin.');
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    })();
+    return () => { active = false; };
+  }, [refresh]));
 
   const grouped = list.reduce<Record<string, ExtIntegration[]>>((acc, it) => {
     (acc[it.category] = acc[it.category] || []).push(it); return acc;
@@ -53,7 +75,11 @@ export default function ExtHubScreen() {
           </>
         }
         ListEmptyComponent={
-          <EmptyState
+          loading ? <Text style={s.heroD} accessibilityLiveRegion="polite">Dış hizmet bağlantıları kontrol ediliyor…</Text> : error ? <ErrorState
+            title="Dış hizmetler kullanılamıyor"
+            message={error}
+            onRetry={() => setRefresh(value => value + 1)}
+          /> : <EmptyState
             icon="link-outline"
             title="Eklenti yok"
             subtitle="Henüz kullanılabilir bir dış entegrasyon bulunmuyor."

@@ -1,8 +1,8 @@
 'use strict';
 // Standalone synthetic catalog/quote fixture; never sends requests to the live site.
 const fs = require('node:fs'), path = require('node:path'), http = require('node:http'), os = require('node:os'), assert = require('node:assert/strict'), { spawnSync } = require('node:child_process');
-const gesPdfOnly = process.env.VG_GES_PDF_FOCUS === '1', sourceMode = process.env.VG_COMPANY_SOURCE === '1';
-const root = path.resolve(__dirname, '../..'), dist = path.join(root, 'tools/staff-app/dist'), output = path.join(root, gesPdfOnly ? '.qa/company-ges-pdf' : '.qa/company-dashboard-ges');
+const gesPdfOnly = process.env.VG_GES_PDF_FOCUS === '1', sourceMode = process.env.VG_COMPANY_SOURCE === '1', themeOnly=process.env.VG_COMPANY_THEME_FOCUS==='1';
+const root = path.resolve(__dirname, '../..'), dist = path.join(root, 'tools/staff-app/dist'), output = path.join(root, themeOnly?'.qa/company-dashboard-theme':gesPdfOnly ? '.qa/company-ges-pdf' : '.qa/company-dashboard-ges');
 const packages = process.env.VG_NODE_MODULES || path.join(os.homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules');
 const { chromium } = require(path.join(packages, 'playwright'));
 const JSZip = require(path.join(packages, 'jszip'));
@@ -10,6 +10,7 @@ const esbuild = require(path.join(root, 'tools/staff-app/node_modules/esbuild'))
 // Optional in-memory source entry allows focused QA before the coordinated build;
 // the committed production stylesheet still exercises its real workspace scope.
 const sourceBundle = sourceMode ? esbuild.buildSync({ entryPoints: [path.join(root, 'tools/staff-app/src/portal-main.jsx')], bundle: true, write: false, format: 'esm', platform: 'browser', target: 'es2022', loader: { '.css': 'empty' }, external: ['buffer'], define: { 'import.meta.env': '{"BASE_URL":"/calisan/uygulama/"}' }, logLevel: 'silent' }).outputFiles[0].text : null;
+const sourceTheme=sourceMode?require('../staff-app/scope-company-css.cjs').scopeCompanyCss(fs.readFileSync(path.join(root,'tools/staff-app/src/site-theme.css'),'utf8')):'';
 // The advanced PDF handler is currently a dormant fallback. Exercise its exact
 // source with real PDF/font libraries in this fixture, without exposing a test hook in the app.
 const appSource = fs.readFileSync(path.join(root, 'tools/staff-app/src/App.jsx'), 'utf8');
@@ -47,7 +48,7 @@ const server = http.createServer(async (req, res) => {
       }
       return json(res, { data: [] });
     }
-    if (url.pathname === '/calisan/uygulama/') { let html = fs.readFileSync(path.join(dist, 'index.html'), 'utf8').replace('</head>', '<link rel="stylesheet" href="/css/fonts.css"></head>'); if (sourceBundle) html = html.replace(/<script\b[^>]*type="module"[^>]*><\/script>/, '<script type="module" src="/__qa/source.js"></script>'); res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(html); }
+    if (url.pathname === '/calisan/uygulama/') { let html = fs.readFileSync(path.join(dist, 'index.html'), 'utf8').replace('</head>', '<link rel="stylesheet" href="/css/fonts.css">'+(sourceTheme?'<style>'+sourceTheme+'</style>':'')+'</head>'); if (sourceBundle) html = html.replace(/<script\b[^>]*type="module"[^>]*><\/script>/, '<script type="module" src="/__qa/source.js"></script>'); res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(html); }
     const file = url.pathname.startsWith('/calisan/uygulama/') ? path.resolve(dist, '.' + url.pathname.slice('/calisan/uygulama'.length)) : path.resolve(root, '.' + url.pathname);
     if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) { res.writeHead(404); return res.end(); }
     res.writeHead(200, { 'Content-Type': ({ '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.ttf': 'font/ttf', '.woff2': 'font/woff2' })[path.extname(file)] || 'application/octet-stream' }); fs.createReadStream(file).pipe(res);
@@ -60,6 +61,7 @@ async function check(name, action) { if (gesPdfOnly && !name.startsWith('GES PDF
   browser = await chromium.launch({ executablePath, headless: true });
   async function pageFor(variant, width = 1440) { const context = await browser.newContext({ viewport: { width, height: 1000 }, timezoneId: 'Europe/Istanbul', serviceWorkers: 'block' }); await context.addCookies([{ name: 'fixture_catalog', value: variant, url: base }]); const page = await context.newPage(); page.on('pageerror', error => report.errors.push(error.message)); page.on('dialog', dialog => dialog.type() === 'prompt' ? dialog.accept('Sentetik GES teklifi') : dialog.dismiss()); return { context, page }; }
   async function open(page, module) { await page.goto(base + '/calisan/uygulama/?module=' + module); await page.locator('.portal-app').waitFor(); await page.waitForTimeout(100); }
+  if(themeOnly){await require('./company-dashboard-theme-scenarios.cjs')({pageFor,open,check,output,report});return;}
   for (const width of [1440, 390]) await check('empty catalog gives truthful status and working quote action at ' + width, async () => {
     const { context, page } = await pageFor('empty', width); try {
       await open(page, 'dashboard'); const dashboard = page.locator('[data-company-dashboard]');
@@ -100,8 +102,8 @@ async function check(name, action) { if (gesPdfOnly && !name.startsWith('GES PDF
     const { context, page } = await pageFor('empty'); try {
       await open(page, 'manual');
       await page.getByPlaceholder('Örn: ABC Endüstri San. ve Tic. A.Ş.', { exact: true }).fill('Sentetik YG Tesisi');
-      await page.getByPlaceholder('Örn: Ahmet Yilmaz', { exact: true }).fill('Sentetik Yetkili');
-      await page.getByPlaceholder('Örn: Tekstil, Güçda', { exact: true }).fill('Sentetik sektör');
+      await page.getByPlaceholder('Örn: Ahmet Yılmaz', { exact: true }).fill('Sentetik Yetkili');
+      await page.getByPlaceholder('Örn: Tekstil, Gıda', { exact: true }).fill('Sentetik sektör');
       await page.getByPlaceholder('Örn: 1600 veya 1000+630', { exact: true }).fill('630');
       const persisted = page.waitForResponse(response => response.url().includes('action=query') && response.request().method() === 'POST' && response.request().postDataJSON()?.operation === 'insert');
       await page.getByRole('button', { name: 'Kaydet', exact: true }).click(); await persisted;

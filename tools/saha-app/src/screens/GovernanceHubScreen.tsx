@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // GovernanceHubScreen — POZ-DEV-350 Faz 35 hub
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -24,9 +26,7 @@ const TILES: { key: keyof RootStackParamList; label: string; icon: string; color
 
 export default function GovernanceHubScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
-  const tileW = (width - spacing.md * 2 - spacing.sm * (cols - 1)) / cols;
+  const { tileWidth: tileW, onGridLayout } = useMeasuredGrid({ gap: spacing.sm, horizontalPadding: spacing.md });
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -39,14 +39,14 @@ export default function GovernanceHubScreen() {
           </View>
         </View>
 
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity key={t.key} style={[s.tile, { width: tileW, borderLeftColor: t.color }]} onPress={() => nav.navigate(t.key as never)}>
-              <View style={[s.tileIcon, { backgroundColor: t.color + '22' }]}>
-                <Ionicons name={t.icon as never} size={22} color={t.color} />
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card" key={t.key} style={[s.tile, { width: tileW, borderLeftColor: t.color }, siteHubCardStyle()]} onPress={() => nav.navigate(t.key as never)}>
+              <View testID="site-hub-icon" style={[s.tileIcon, { backgroundColor: t.color + '22' }, siteHubIconStyle()]}>
+                <Ionicons name={t.icon as never} size={siteHubIconSize(22)} color={siteHubIconColor(t.color)} />
               </View>
-              <Text style={s.tileLabel}>{t.label}</Text>
-              <Text style={s.tileDesc} numberOfLines={2}>{t.desc}</Text>
+              <Text testID="site-hub-title" style={s.tileLabel}>{t.label}</Text>
+              <Text testID="site-hub-description" style={s.tileDesc} numberOfLines={2}>{t.desc}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -55,7 +55,7 @@ export default function GovernanceHubScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   content: { padding: spacing.md, gap: spacing.md },
   hero: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.md, backgroundColor: '#7c3aed', borderRadius: radius.md },
@@ -67,4 +67,4 @@ const s = StyleSheet.create({
   tileIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   tileLabel: { color: colors.text.primary, fontSize: typography.sm, fontWeight: '700' },
   tileDesc: { color: colors.text.muted, fontSize: typography.xs },
-});
+}, { hideHero: true }));

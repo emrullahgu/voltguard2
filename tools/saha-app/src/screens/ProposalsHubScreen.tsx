@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // ProposalsHubScreen — POZ-DEV-260 Teklif modülleri merkez
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -18,9 +20,7 @@ const TILES: { key: keyof RootStackParamList; label: string; desc: string; icon:
 
 export default function ProposalsHubScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
-  const tileWidth = (Math.min(width, 1200) - spacing.lg * 2 - (cols - 1) * spacing.md) / cols;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: spacing.md, horizontalPadding: spacing.lg, maxWidth: 1200 });
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
       <ScrollView contentContainerStyle={s.content}>
@@ -31,13 +31,13 @@ export default function ProposalsHubScreen() {
             <Text style={s.heroS}>Trafo · GES · Standart teklifler</Text>
           </View>
         </View>
-        <View style={[s.grid, { maxWidth: 1200, alignSelf: 'center', width: '100%' }]}>
+        <View style={[s.grid, { maxWidth: 1200, alignSelf: 'center', width: '100%' }]} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity key={t.key} style={[s.tile, { width: tileWidth }]} onPress={() => nav.navigate(t.key as never)} activeOpacity={0.85}>
-              <View style={[s.tileIcon, { backgroundColor: t.color }]}><Ionicons name={t.icon} size={22} color="#fff" /></View>
-              <Text style={s.tileLabel}>{t.label}</Text>
-              <Text style={s.tileDesc}>{t.desc}</Text>
-              <Text style={s.tilePoz}>{t.poz}</Text>
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card" key={t.key} style={[s.tile, { width: tileWidth }, siteHubCardStyle()]} onPress={() => nav.navigate(t.key as never)} activeOpacity={0.85}>
+              <View testID="site-hub-icon" style={[s.tileIcon, { backgroundColor: t.color }, siteHubIconStyle()]}><Ionicons name={t.icon} size={siteHubIconSize(22)} color={siteHubIconColor("#fff")} /></View>
+              <Text testID="site-hub-title" style={s.tileLabel}>{t.label}</Text>
+              <Text testID="site-hub-description" style={s.tileDesc}>{t.desc}</Text>
+
             </TouchableOpacity>
           ))}
         </View>
@@ -46,7 +46,7 @@ export default function ProposalsHubScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   content: { padding: spacing.lg, paddingBottom: 80, gap: spacing.md },
   hero: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: spacing.md, backgroundColor: '#f59e0b', borderRadius: radius.md },
@@ -59,4 +59,4 @@ const s = StyleSheet.create({
   tileLabel: { color: colors.text.primary, fontWeight: '800', fontSize: typography.sm },
   tileDesc: { color: colors.text.muted, fontSize: typography.xs, marginTop: 2 },
   tilePoz: { color: colors.text.faint, fontSize: 10, marginTop: 6, fontWeight: '700' },
-});
+}, { hideHero: true }));

@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, typography } from '../theme';
+import { colors, spacing, radius, brand } from '../theme';
 import { a11yButton } from '../utils/a11y';
 import FadeInView from './FadeInView';
 import PressableScale from './PressableScale';
@@ -25,20 +25,19 @@ export default function EmptyState({
   description,
   actionLabel,
   onAction,
-  iconColor = colors.emerald.default,
+  iconColor = colors.emerald.foreground,
 }: Props) {
   const sub = subtitle ?? description;
   return (
     <FadeInView style={s.container}>
-      {/* Yumuşak daire içinde ikon — modern "icon chip" */}
-      <View style={[s.iconWrap, { backgroundColor: iconColor + '1A', borderColor: iconColor + '33' }]}>
-        <Ionicons name={icon} size={40} color={iconColor} />
+      <View style={s.iconWrap}>
+        <Ionicons name={icon} size={22} color={iconColor} />
       </View>
       <Text style={s.title}>{title}</Text>
       {sub ? <Text style={s.subtitle}>{sub}</Text> : null}
       {actionLabel && onAction ? (
-        <PressableScale style={[s.button, { backgroundColor: iconColor }]} onPress={onAction} {...a11yButton(actionLabel)}>
-          <Ionicons name="add" size={18} color="#fff" />
+        <PressableScale style={s.button} onPress={onAction} {...a11yButton(actionLabel)}>
+          <Ionicons name="add" size={18} color={brand.onAmber} />
           <Text style={s.buttonText}>{actionLabel.replace(/^\+\s*/, '')}</Text>
         </PressableScale>
       ) : null}
@@ -47,30 +46,33 @@ export default function EmptyState({
 }
 
 const s = StyleSheet.create({
-  container: { padding: spacing.xl, alignItems: 'center', justifyContent: 'center' },
+  container: { padding: spacing.xxl, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg.card, borderWidth: 1, borderColor: colors.border.primary, borderRadius: radius.md },
   iconWrap: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    borderWidth: 1,
+    width: 42,
+    height: 42,
+    borderRadius: radius.sm,
+    backgroundColor: colors.emerald.bg,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
   },
   title: {
     color: colors.text.primary,
-    fontSize: typography.lg,
-    fontWeight: '800',
+    fontFamily: 'Outfit',
+    fontSize: 18,
+    lineHeight: 24,
+    fontWeight: '600',
     marginTop: spacing.xs,
     textAlign: 'center',
   },
   subtitle: {
     color: colors.text.muted,
-    fontSize: typography.sm,
+    fontFamily: 'Inter',
+    fontSize: 14,
     marginTop: spacing.xs,
     textAlign: 'center',
-    maxWidth: 360,
-    lineHeight: 20,
+    maxWidth: 560,
+    lineHeight: 22,
   },
   button: {
     flexDirection: 'row',
@@ -79,9 +81,11 @@ const s = StyleSheet.create({
     marginTop: spacing.lg,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm + 2,
-    borderRadius: radius.full,
+    borderRadius: radius.sm,
+    backgroundColor: brand.amber,
+    maxWidth: '100%',
     minHeight: 44,
     justifyContent: 'center',
   },
-  buttonText: { color: '#fff', fontWeight: '800', fontSize: typography.base },
+  buttonText: { flexShrink: 1, color: brand.onAmber, fontFamily: 'Outfit', fontWeight: '600', fontSize: 14, lineHeight: 20 },
 });

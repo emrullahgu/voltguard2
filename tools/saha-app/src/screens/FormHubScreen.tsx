@@ -1,7 +1,9 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconStyle, siteHubIconColor, siteHubIconSize, siteHubStatStyle, siteHubStatColor } from '../portal/siteHubStyles';
 // FormHubScreen — POZ-DEV-149 Form sistem merkez ekranı
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React, { useEffect, useState } from 'react';
 import { localDateISO } from '../utils/date';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -32,9 +34,7 @@ const TILES: Tile[] = [
 
 export default function FormHubScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
-  const tileWidth = (Math.min(width, 1200) - spacing.lg * 2 - (cols - 1) * spacing.md) / cols;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: spacing.md, horizontalPadding: spacing.lg, maxWidth: 1200 });
 
   const [tplCount, setTplCount] = useState(0);
   const [seedCount, setSeedCount] = useState(0);
@@ -75,20 +75,20 @@ export default function FormHubScreen() {
           <Pill label={`Bugün: ${todayCount}`} color="#f59e0b" icon="today-outline" />
         </View>
 
-        <View style={[styles.grid, { maxWidth: 1200, alignSelf: 'center', width: '100%' }]}>
+        <View style={[styles.grid, { maxWidth: 1200, alignSelf: 'center', width: '100%' }]} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card"
               key={String(t.key)}
-              style={[styles.tile, { width: tileWidth }]}
+              style={[styles.tile, { width: tileWidth }, siteHubCardStyle()]}
               onPress={() => nav.navigate(t.key as never)}
               activeOpacity={0.85}
             >
-              <View style={[styles.tileIcon, { backgroundColor: t.color }]}>
-                <Ionicons name={t.icon} size={22} color="#fff" />
+              <View testID="site-hub-icon" style={[styles.tileIcon, { backgroundColor: t.color }, siteHubIconStyle()]}>
+                <Ionicons name={t.icon} size={siteHubIconSize(22)} color={siteHubIconColor("#fff")} />
               </View>
-              <Text style={styles.tileLabel}>{t.label}</Text>
-              <Text style={styles.tileDesc}>{t.desc}</Text>
-              {t.poz && <Text style={styles.tilePoz}>{t.poz}</Text>}
+              <Text testID="site-hub-title" style={styles.tileLabel}>{t.label}</Text>
+              <Text testID="site-hub-description" style={styles.tileDesc}>{t.desc}</Text>
+
             </TouchableOpacity>
           ))}
         </View>
@@ -99,14 +99,14 @@ export default function FormHubScreen() {
 
 function Pill({ label, color, icon }: { label: string; color: string; icon: keyof typeof Ionicons.glyphMap }) {
   return (
-    <View style={[styles.pill, { borderColor: color, backgroundColor: color + '22' }]}>
-      <Ionicons name={icon} size={12} color={color} />
-      <Text style={[styles.pillText, { color }]}>{label}</Text>
+    <View style={[styles.pill, { borderColor: color, backgroundColor: color + '22' }, siteHubStatStyle(color)]}>
+      <Ionicons name={icon} size={12} color={siteHubStatColor(color)} />
+      <Text style={[styles.pillText, { color }, { color: siteHubStatColor(color) }]}>{label}</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   content: { padding: spacing.lg, paddingBottom: 80, gap: spacing.md },
   heroCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: spacing.md, backgroundColor: '#0ea5e9', borderRadius: radius.md },
@@ -122,4 +122,4 @@ const styles = StyleSheet.create({
   tileLabel: { color: colors.text.primary, fontWeight: '800', fontSize: typography.sm },
   tileDesc: { color: colors.text.muted, fontSize: typography.xs, marginTop: 2 },
   tilePoz: { color: colors.text.faint, fontSize: 10, marginTop: 6, fontWeight: '700' },
-});
+}, { hideHero: true }));

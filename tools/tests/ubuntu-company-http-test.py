@@ -274,7 +274,18 @@ class HttpBridgeTests(unittest.TestCase):
             while self.server.handler_slots._value != 0 and time.monotonic() < deadline:
                 time.sleep(0.01)
             self.assertEqual(self.server.handler_slots._value, 0)
-            self.assert_error(503, "bridge_http_busy")
+            # Admission rejects the accepted socket before reading headers.
+            # Read that response directly: uploading an HTTP body races the
+            # immediate close and can raise WinError 10053 on the client.
+            with socket.create_connection(("127.0.0.1", self.port), timeout=3) as rejected:
+                with closing(http.client.HTTPResponse(rejected)) as response:
+                    response.begin()
+                    result = json.loads(response.read())
+                    self.assertEqual(response.status, 503)
+                    self.assertEqual(result["protocol"], bridge.PROTOCOL)
+                    self.assertIs(result["ok"], False)
+                    self.assertEqual(result["code"], "bridge_http_busy")
+                    self.assertEqual(response.getheader("Cache-Control"), "no-store")
             self.assertEqual(self.count_nonces(), 0)
             self.assertEqual(self.calls(), [])
         finally:

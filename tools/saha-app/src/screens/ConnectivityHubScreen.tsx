@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // ConnectivityHubScreen — POZ-DEV-109 Veri kalıcılığı & Auth merkez ekranı
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -31,9 +33,7 @@ const TILES: Tile[] = [
 
 export default function ConnectivityHubScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : width >= 600 ? 2 : 1;
-  const tileWidth = (Math.min(width, 1200) - spacing.lg * 2 - (cols - 1) * spacing.md) / cols;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: spacing.md, horizontalPadding: spacing.lg, maxWidth: 1200, breakpoints: [[900, 4], [600, 2]] });
 
   const { profile, isDemoMode } = useAuth();
   const online = isOnlineMode();
@@ -61,20 +61,20 @@ export default function ConnectivityHubScreen() {
           <StatusPill label={isDemoMode ? 'Demo' : (profile?.role || 'guest').toUpperCase()} color="#8b5cf6" icon="person-outline" />
         </View>
 
-        <View style={[styles.grid, { maxWidth: 1200, alignSelf: 'center', width: '100%' }]}>
+        <View style={[styles.grid, { maxWidth: 1200, alignSelf: 'center', width: '100%' }]} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card"
               key={t.key}
-              style={[styles.tile, { width: tileWidth }]}
+              style={[styles.tile, { width: tileWidth }, siteHubCardStyle()]}
               onPress={() => nav.navigate(t.key as never)}
               activeOpacity={0.85}
             >
-              <View style={[styles.tileIcon, { backgroundColor: t.color }]}>
-                <Ionicons name={t.icon} size={22} color="#fff" />
+              <View testID="site-hub-icon" style={[styles.tileIcon, { backgroundColor: t.color }, siteHubIconStyle()]}>
+                <Ionicons name={t.icon} size={siteHubIconSize(22)} color={siteHubIconColor("#fff")} />
               </View>
-              <Text style={styles.tileLabel}>{t.label}</Text>
-              <Text style={styles.tileDesc}>{t.desc}</Text>
-              <Text style={styles.tilePoz}>{t.poz}</Text>
+              <Text testID="site-hub-title" style={styles.tileLabel}>{t.label}</Text>
+              <Text testID="site-hub-description" style={styles.tileDesc}>{t.desc}</Text>
+
             </TouchableOpacity>
           ))}
         </View>
@@ -92,7 +92,7 @@ function StatusPill({ label, color, icon }: { label: string; color: string; icon
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   content: { padding: spacing.lg, paddingBottom: 80 },
   heroCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: spacing.md, backgroundColor: '#0ea5e9', borderRadius: radius.md, marginBottom: spacing.md },
@@ -108,4 +108,4 @@ const styles = StyleSheet.create({
   tileLabel: { color: colors.text.primary, fontWeight: '800', fontSize: typography.sm },
   tileDesc: { color: colors.text.muted, fontSize: typography.xs, marginTop: 2 },
   tilePoz: { color: colors.text.faint, fontSize: 10, marginTop: 6, fontWeight: '700' },
-});
+}, { hideHero: true }));

@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // Faz 42 — FieldOpsHub
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -23,8 +25,7 @@ const TILES: { key: keyof RootStackParamList; label: string; icon: any; color: s
 
 export default function FieldOpsHubScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md });
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -34,11 +35,11 @@ export default function FieldOpsHubScreen() {
           <Text style={s.title}>Saha Operasyon</Text>
           <Text style={s.sub}>Hız, kalite ve disiplin tek panelde</Text>
         </View>
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity key={t.key as string} style={[s.tile, { width: `${100 / cols - 1}%` as any, backgroundColor: t.color }]} onPress={() => nav.navigate(t.key as any)}>
-              <Ionicons name={t.icon} size={32} color="#fff" />
-              <Text style={s.tileT}>{t.label}</Text>
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card" key={t.key as string} style={[s.tile, { width: tileWidth, backgroundColor: t.color }, siteHubCardStyle()]} onPress={() => nav.navigate(t.key as any)}>
+              <Ionicons testID="site-hub-icon" name={t.icon} size={siteHubIconSize(32)} color={siteHubIconColor("#fff")} />
+              <Text testID="site-hub-title" style={s.tileT}>{t.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -47,7 +48,7 @@ export default function FieldOpsHubScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   hero: { alignItems: 'center', paddingVertical: spacing.lg },
   title: { color: colors.text.primary, fontSize: typography.xxl, fontWeight: '800', marginTop: spacing.sm },
@@ -55,4 +56,4 @@ const s = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: '2%' as any, marginTop: spacing.md },
   tile: { padding: spacing.md, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm, minHeight: 110 },
   tileT: { color: '#fff', fontSize: typography.sm, fontWeight: '700', marginTop: 6 },
-});
+}, { hideHero: true }));

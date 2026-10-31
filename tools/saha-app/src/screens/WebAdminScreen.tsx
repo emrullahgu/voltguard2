@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // WebAdminScreen — POZ-DEV-095 web/admin layout hub (responsive grid)
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -31,10 +33,8 @@ const TILES: Tile[] = [
 
 export default function WebAdminScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 1100 ? 4 : width >= 750 ? 3 : width >= 520 ? 2 : 1;
+  const { tileWidth, columns: cols, onGridLayout } = useMeasuredGrid({ gap: spacing.md, horizontalPadding: spacing.lg, maxWidth: 1400, breakpoints: [[1100, 4], [750, 3], [520, 2]] });
   const gap = spacing.md;
-  const tileWidth = (Math.min(width, 1400) - spacing.lg * 2 - gap * (cols - 1)) / cols;
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
@@ -51,28 +51,28 @@ export default function WebAdminScreen() {
           </View>
         </View>
 
-        <View style={[styles.grid, { gap }]}>
+        <View style={[styles.grid, { gap }]} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card"
               key={t.route}
-              style={[styles.tile, { width: tileWidth, borderColor: t.color + '44' }]}
+              style={[styles.tile, { width: tileWidth, borderColor: t.color + '44' }, siteHubCardStyle()]}
               onPress={() => nav.navigate(t.route as never)}
               activeOpacity={0.85}
             >
-              <View style={[styles.tileIcon, { backgroundColor: t.color }]}>
-                <Ionicons name={t.icon} size={22} color="#fff" />
+              <View testID="site-hub-icon" style={[styles.tileIcon, { backgroundColor: t.color }, siteHubIconStyle()]}>
+                <Ionicons name={t.icon} size={siteHubIconSize(22)} color={siteHubIconColor("#fff")} />
               </View>
-              <Text style={styles.tileLabel}>{t.label}</Text>
-              <Text style={styles.tileDesc} numberOfLines={2}>{t.desc}</Text>
-              <Text style={[styles.tilePoz, { color: t.color }]}>{t.poz}</Text>
+              <Text testID="site-hub-title" style={styles.tileLabel}>{t.label}</Text>
+              <Text testID="site-hub-description" style={styles.tileDesc} numberOfLines={2}>{t.desc}</Text>
+
             </TouchableOpacity>
           ))}
         </View>
 
         <View style={styles.tipsCard}>
           <Text style={styles.tipsTitle}>İpuçları</Text>
-          <Tip text="Tüm liste ekranlarında üstteki arama çubuğunu kullanın (POZ-DEV-097)." />
-          <Tip text="Kullanıcı listesinde kayıtları basılı tutarak toplu işlem yapın (POZ-DEV-096)." />
+          <Tip text="Tüm liste ekranlarında üstteki arama çubuğunu kullanın." />
+          <Tip text="Kullanıcı listesinden kayıtları ve yetkileri yönetin." />
           <Tip text="Web tarayıcıdan açtığınızda yerleşim 4 sütuna kadar genişler." />
         </View>
       </ScrollView>
@@ -89,7 +89,7 @@ function Tip({ text }: { text: string }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   content: { padding: spacing.lg, paddingBottom: 80, maxWidth: 1400, alignSelf: 'center', width: '100%' },
   hero: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: spacing.md, backgroundColor: '#6366f1', borderRadius: radius.md, marginBottom: spacing.lg },
@@ -106,4 +106,4 @@ const styles = StyleSheet.create({
   tipsTitle: { color: colors.text.primary, fontWeight: '800', fontSize: typography.sm, marginBottom: spacing.sm },
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 6, marginBottom: 6 },
   tipText: { flex: 1, color: colors.text.muted, fontSize: typography.xs, lineHeight: 16 },
-});
+}, { hideHero: true }));

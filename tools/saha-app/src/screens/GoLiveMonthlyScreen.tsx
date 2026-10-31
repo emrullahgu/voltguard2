@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubStatStyle, siteHubStatColor } from '../portal/siteHubStyles';
 // Faz 55 — GoLiveMonthlyScreen (POZ-DEV-259)
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -11,9 +13,7 @@ import EmptyState from '../components/EmptyState';
 
 export default function GoLiveMonthlyScreen() {
   const [r, setR] = useState<GoLiveMonthlyReport | null>(null);
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
-  const tileW = `${100 / cols - 1}%`;
+  const { tileWidth: tileW, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md });
   useFocusEffect(useCallback(() => { (async () => setR(await getGoLiveMonthly()))(); }, []));
   if (!r) {
     return (
@@ -30,7 +30,7 @@ export default function GoLiveMonthlyScreen() {
           <Text style={s.heroT}>İlk Ay Performans Analizi</Text>
           <Text style={s.heroD}>Dönem: {r.month}</Text>
         </View>
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           <Kpi w={tileW} l="Günlük Aktif (Ort.)" v={r.avgDailyActive.toString()} c="#3b82f6" />
           <Kpi w={tileW} l="P95 Yanıt" v={`${r.p95LatencyMs}ms`} c="#06b6d4" />
           <Kpi w={tileW} l="Crash-Free" v={`%${r.crashFreeRate}`} c="#22c55e" />
@@ -55,16 +55,16 @@ export default function GoLiveMonthlyScreen() {
   );
 }
 
-function Kpi({ w, l, v, c }: { w: string; l: string; v: string; c: string }) {
+function Kpi({ w, l, v, c }: { w: number; l: string; v: string; c: string }) {
   return (
-    <View style={[s.kpi, { width: w as any, borderColor: c }]}>
+    <View style={[s.kpi, { width: w, borderColor: c }, siteHubStatStyle('#64748b')]}>
       <Text style={s.kpiL}>{l}</Text>
-      <Text style={[s.kpiV, { color: c }]}>{v}</Text>
+      <Text style={[s.kpiV, { color: c }, { color: siteHubStatColor('#64748b') }]}>{v}</Text>
     </View>
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   scroll: { padding: spacing.md, gap: spacing.sm },
   empty: { flex: 1, justifyContent: 'center', alignItems: 'center' },
@@ -83,4 +83,4 @@ const s = StyleSheet.create({
   numBox: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#ec4899', justifyContent: 'center', alignItems: 'center' },
   num: { color: '#fff', fontSize: 11, fontWeight: '800' },
   bullet: { flex: 1, color: colors.text.primary, fontSize: typography.xs, lineHeight: 18 },
-});
+}, { hideHero: false }));

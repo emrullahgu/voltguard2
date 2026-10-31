@@ -27,6 +27,7 @@ function fixture({role='engineer',externalAI=false}={}){
   if(name==='expo-font')return {loadAsync:async()=>{calls.fonts++;}};
   if(name==='./src/portal/api')return api;if(name==='./src/portal/moduleHostBridge')return bridge;
   if(name==='./src/portal/moduleEntryGate')return gate;
+  if(name==='./src/portal/documentLayout')return {observeModuleDocument:()=>({setRoute:()=>{},disconnect:()=>{}})};
   if(name==='./src/navigation')return navigation;if(name==='./App')return {default:()=>null};
   if(name.endsWith('.woff2'))return 'synthetic-font';throw new Error('Unexpected dependency '+name);
  },{document,window});

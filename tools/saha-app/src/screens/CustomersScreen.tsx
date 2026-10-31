@@ -84,7 +84,7 @@ export default function CustomersScreen() {
           activeOpacity={0.85}
           {...a11yButton('Müşterileri CSV olarak dışa aktar')}
         >
-          <Ionicons name="download-outline" size={18} color={colors.emerald.default} />
+          <Ionicons name="download-outline" size={18} color={colors.emerald.foreground} />
         </TouchableOpacity>
         {canWrite && (
           <TouchableOpacity
@@ -125,7 +125,7 @@ export default function CustomersScreen() {
             <View style={styles.avatar}>
               <Text style={styles.avatarText}>{item.shortName[0]?.toUpperCase() ?? '?'}</Text>
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={styles.details}>
               <Text style={styles.shortName}>{item.shortName}</Text>
               <Text style={styles.title} numberOfLines={1}>
                 {item.title}
@@ -191,6 +191,7 @@ const styles = StyleSheet.create({
   },
   search: {
     flex: 1,
+    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: 9,
   },
-  searchInput: { flex: 1, color: colors.text.primary, fontSize: typography.sm },
+  searchInput: { flex: 1, minWidth: 0, color: colors.text.primary, fontSize: typography.sm },
   addBtn: {
     width: 40,
     height: 40,
@@ -238,11 +239,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  avatarText: { color: brand.blueLight, fontWeight: '900', fontSize: typography.md },
+  avatarText: { color: colors.indigo.foreground, fontWeight: '900', fontSize: typography.md },
+  details: { flex: 1, minWidth: 0 },
   shortName: { color: colors.text.primary, fontWeight: '800', fontSize: typography.sm },
   title: { color: colors.text.muted, fontSize: typography.xs, marginTop: 2 },
-  metaRow: { flexDirection: 'row', gap: spacing.md, marginTop: 4 },
-  metaItem: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  metaText: { color: colors.text.faint, fontSize: 10 },
+  metaRow: { flexDirection: 'row', flexWrap: 'wrap', columnGap: spacing.md, rowGap: spacing.xs, marginTop: 4 },
+  metaItem: { flexDirection: 'row', alignItems: 'center', gap: 3, minWidth: 0, maxWidth: '100%', flexShrink: 1 },
+  metaText: { color: colors.text.faint, fontSize: typography.xs, flexShrink: 1 },
   deleteBtn: { padding: spacing.xs },
 });

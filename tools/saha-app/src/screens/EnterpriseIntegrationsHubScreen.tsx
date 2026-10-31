@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // EnterpriseIntegrationsHubScreen — POZ-DEV-453
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -28,8 +30,7 @@ const TILES: Tile[] = [
 
 export default function EnterpriseIntegrationsHubScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: spacing.sm, horizontalPadding: spacing.md });
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
       <ScrollView contentContainerStyle={{ padding: spacing.md }}>
@@ -38,11 +39,11 @@ export default function EnterpriseIntegrationsHubScreen() {
           <Text style={s.heroT}>Kurumsal Entegrasyonlar</Text>
           <Text style={s.heroD}>ERP, CRM, Webhook, API ve dış servisleri tek panelden yönet.</Text>
         </View>
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity key={t.key as string} onPress={() => nav.navigate(t.key as any)} style={[s.tile, { backgroundColor: t.color + '22', borderColor: t.color, width: `${100 / cols - 1}%` }]}>
-              <Ionicons name={t.icon} size={28} color={t.color} />
-              <Text style={s.tileT}>{t.label}</Text>
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card" key={t.key as string} onPress={() => nav.navigate(t.key as any)} style={[s.tile, { backgroundColor: t.color + '22', borderColor: t.color, width: tileWidth }, siteHubCardStyle()]}>
+              <Ionicons testID="site-hub-icon" name={t.icon} size={siteHubIconSize(28)} color={siteHubIconColor(t.color)} />
+              <Text testID="site-hub-title" style={s.tileT}>{t.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -51,7 +52,7 @@ export default function EnterpriseIntegrationsHubScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   hero: { alignItems: 'center', backgroundColor: '#3b82f622', padding: spacing.lg, borderRadius: radius.lg, borderWidth: 1, borderColor: '#3b82f6', marginBottom: spacing.md },
   heroT: { color: colors.text.primary, fontSize: typography.xl, fontWeight: '800', marginTop: spacing.sm },
@@ -59,4 +60,4 @@ const s = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, justifyContent: 'space-between' },
   tile: { padding: spacing.md, borderRadius: radius.md, borderWidth: 1, alignItems: 'center', gap: 6, marginBottom: spacing.sm },
   tileT: { color: colors.text.primary, fontSize: typography.xs, fontWeight: '700', textAlign: 'center' },
-});
+}, { hideHero: true }));

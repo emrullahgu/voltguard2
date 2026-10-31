@@ -1507,7 +1507,7 @@ export default function Osos() {
             </div>
             <div className="space-y-3">
               {measurements.map((m, idx) => (
-                <div key={m.id} className="p-3 bg-gray-50 rounded border grid grid-cols-6 gap-2 items-center">
+                <div key={m.id} className="p-3 bg-gray-50 rounded border grid grid-cols-2 lg:grid-cols-6 gap-2 items-center">
                   <input
                     type="text"
                     value={m.parametre}
@@ -1526,17 +1526,17 @@ export default function Osos() {
                     type="text"
                     value={m.birim}
                     onChange={(e) => handleMeasurementChange(m.id, 'birim', e.target.value)}
-                    className="p-2 border rounded text-sm w-20"
+                    className="p-2 border rounded text-sm w-full"
                     placeholder="Birim"
                   />
                   <input
                     type="text"
                     value={m.referans}
                     onChange={(e) => handleMeasurementChange(m.id, 'referans', e.target.value)}
-                    className="p-2 border rounded text-sm"
+                    className="p-2 border rounded text-sm col-span-2 lg:col-span-1"
                     placeholder="Referans"
                   />
-                  <div className="flex gap-1">
+                  <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 items-center col-span-2 lg:col-span-1">
                     <select
                       value={m.durum}
                       onChange={(e) => handleMeasurementChange(m.id, 'durum', e.target.value)}

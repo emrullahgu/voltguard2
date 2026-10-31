@@ -70,10 +70,10 @@ export default function RowMenu({ items, color, size = 18 }: Props) {
                   <Ionicons
                     name={it.icon}
                     size={18}
-                    color={it.destructive ? colors.rose.default : colors.text.primary}
+                    color={it.destructive ? colors.rose.foreground : colors.text.primary}
                   />
                 )}
-                <Text style={[styles.label, it.destructive && { color: colors.rose.default }]}>
+                <Text style={[styles.label, it.destructive && { color: colors.rose.foreground }]}>
                   {it.label}
                 </Text>
               </TouchableOpacity>

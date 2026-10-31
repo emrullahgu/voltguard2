@@ -1,6 +1,8 @@
+import { siteHubStyles } from '../portal/siteHubStyles';
 // Faz 55 — GoLiveMonitorScreen (POZ-DEV-254)
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -14,9 +16,7 @@ const TREND_COLOR: Record<GoLiveMonitorCard['trend'], string> = { up: '#22c55e',
 
 export default function GoLiveMonitorScreen() {
   const [cards, setCards] = useState<GoLiveMonitorCard[]>([]);
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
-  const tileW = `${100 / cols - 1}%`;
+  const { tileWidth: tileW, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md });
   useFocusEffect(useCallback(() => { (async () => setCards(await listGoLiveMonitor()))(); }, []));
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -33,11 +33,11 @@ export default function GoLiveMonitorScreen() {
             subtitle="Canlı izleme verileri toplanırken hata oluştu veya henüz veri yok."
           />
         ) : (
-          <View style={s.grid}>
+          <View style={s.grid} onLayout={onGridLayout}>
             {cards.map(c => {
               const col = GO_LIVE_HEALTH_COLOR[c.status];
               return (
-                <View key={c.id} style={[s.kpi, { width: tileW as any, borderColor: col }]}>
+                <View key={c.id} style={[s.kpi, { width: tileW, borderColor: col }]}>
                   <View style={s.kpiTop}>
                     <View style={[s.dot, { backgroundColor: col }]} />
                     <Ionicons name={TREND_ICON[c.trend] as any} size={16} color={TREND_COLOR[c.trend]} />
@@ -55,7 +55,7 @@ export default function GoLiveMonitorScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   scroll: { padding: spacing.md, gap: spacing.sm },
   heroCard: { backgroundColor: colors.bg.secondary, padding: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: '#22c55e', alignItems: 'center', gap: 4 },
@@ -69,4 +69,4 @@ const s = StyleSheet.create({
   kpiV: { fontSize: typography.xxl, fontWeight: '800' },
   kpiU: { fontSize: typography.sm, fontWeight: '600' },
   target: { color: colors.text.muted, fontSize: 10 },
-});
+}, { hideHero: false }));

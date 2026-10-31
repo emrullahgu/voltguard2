@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // Faz 58 — AdvHubScreen (POZ-DEV-285)
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -22,9 +24,7 @@ const TILES: Tile[] = [
 
 export default function AdvHubScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 3 : 2;
-  const tileW = `${100 / cols - 1}%`;
+  const { tileWidth: tileW, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md, breakpoints: [[900, 3], [520, 2]] });
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
       <ScrollView contentContainerStyle={s.scroll}>
@@ -33,12 +33,12 @@ export default function AdvHubScreen() {
           <Text style={s.heroT}>İleri Analitik & AI</Text>
           <Text style={s.heroD}>E-ticaret, çağrı merkezi, BI, sesli AI, tahsilat tahmini, RFM segmentasyon</Text>
         </View>
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity key={t.key} style={[s.tile, { width: tileW as any, borderColor: t.color }]} onPress={() => nav.navigate(t.key as any)} activeOpacity={0.85}>
-              <Ionicons name={t.icon as any} size={32} color={t.color} />
-              <Text style={s.tileL}>{t.label}</Text>
-              <Text style={s.tileD}>{t.desc}</Text>
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card" key={t.key} style={[s.tile, { width: tileW, borderColor: t.color }, siteHubCardStyle()]} onPress={() => nav.navigate(t.key as any)} activeOpacity={0.85}>
+              <Ionicons testID="site-hub-icon" name={t.icon as any} size={siteHubIconSize(32)} color={siteHubIconColor(t.color)} />
+              <Text testID="site-hub-title" style={s.tileL}>{t.label}</Text>
+              <Text testID="site-hub-description" style={s.tileD}>{t.desc}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -47,7 +47,7 @@ export default function AdvHubScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   scroll: { padding: spacing.md, gap: spacing.md },
   hero: { alignItems: 'center', paddingVertical: spacing.lg, gap: 6 },
@@ -57,4 +57,4 @@ const s = StyleSheet.create({
   tile: { padding: spacing.md, borderRadius: radius.md, borderWidth: 1, backgroundColor: colors.bg.secondary, alignItems: 'center', gap: 6, minHeight: 140, justifyContent: 'center', marginBottom: spacing.sm },
   tileL: { color: colors.text.primary, fontSize: typography.sm, fontWeight: '700', textAlign: 'center' },
   tileD: { color: colors.text.muted, fontSize: typography.xs, textAlign: 'center' },
-});
+}, { hideHero: true }));

@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconColor, siteHubIconSize, siteHubStatStyle, siteHubStatColor } from '../portal/siteHubStyles';
 // Faz 59 — OrdHubScreen (POZ-DEV-291)
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -20,9 +22,7 @@ const TILES: { label: string; icon: string; color: string; route: keyof RootStac
 
 export default function OrdHubScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
-  const tileW = `${100 / cols - 1}%`;
+  const { tileWidth: tileW, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md });
   const [sum, setSum] = useState<OrdSummary | null>(null);
   useFocusEffect(useCallback(() => { (async () => setSum(await getOrdSummary()))(); }, []));
 
@@ -43,16 +43,16 @@ export default function OrdHubScreen() {
           </View>
         )}
 
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card"
               key={t.route as string}
-              style={[s.tile, { width: tileW as any, borderColor: t.color }]}
+              style={[s.tile, { width: tileW, borderColor: t.color }, siteHubCardStyle()]}
               onPress={() => nav.navigate(t.route as any)}
               activeOpacity={0.85}
             >
-              <Ionicons name={t.icon as any} size={32} color={t.color} />
-              <Text style={s.tileT}>{t.label}</Text>
+              <Ionicons testID="site-hub-icon" name={t.icon as any} size={siteHubIconSize(32)} color={siteHubIconColor(t.color)} />
+              <Text testID="site-hub-title" style={s.tileT}>{t.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -76,14 +76,14 @@ export default function OrdHubScreen() {
 
 function Kpi({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <View style={[s.kpi, { borderColor: color }]}>
-      <Text style={[s.kpiV, { color }]}>{value}</Text>
+    <View style={[s.kpi, { borderColor: color }, siteHubStatStyle(color)]}>
+      <Text style={[s.kpiV, { color }, { color: siteHubStatColor(color) }]}>{value}</Text>
       <Text style={s.kpiL}>{label}</Text>
     </View>
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   scroll: { padding: spacing.md, gap: spacing.sm },
   hero: { alignItems: 'center', padding: spacing.md, gap: 6 },
@@ -102,4 +102,4 @@ const s = StyleSheet.create({
   dot: { width: 10, height: 10, borderRadius: 5 },
   statusL: { color: colors.text.primary, fontSize: typography.sm, flex: 1 },
   statusV: { color: colors.text.primary, fontSize: typography.sm, fontWeight: '700' },
-});
+}, { hideHero: true }));

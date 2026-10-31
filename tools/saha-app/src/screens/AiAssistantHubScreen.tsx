@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // AiAssistantHubScreen — Faz 41
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -29,8 +31,7 @@ const TILES: Tile[] = [
 
 export default function AiAssistantHubScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md });
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -42,18 +43,18 @@ export default function AiAssistantHubScreen() {
           <Text style={s.title}>AI Saha Asistanı</Text>
           <Text style={s.sub}>Akıllı öneri, otomatik özet, risk analizi</Text>
         </View>
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card"
               key={t.route}
-              style={[s.tile, { width: `${100 / cols - 1}%`, borderColor: t.color }]}
+              style={[s.tile, { width: tileWidth, borderColor: t.color }, siteHubCardStyle()]}
               onPress={() => nav.navigate(t.route as never)}
               activeOpacity={0.85}
             >
-              <View style={[s.tileIcon, { backgroundColor: t.color + '22' }]}>
-                <Ionicons name={t.icon} size={26} color={t.color} />
+              <View testID="site-hub-icon" style={[s.tileIcon, { backgroundColor: t.color + '22' }, siteHubIconStyle()]}>
+                <Ionicons name={t.icon} size={siteHubIconSize(26)} color={siteHubIconColor(t.color)} />
               </View>
-              <Text style={s.tileLabel}>{t.label}</Text>
+              <Text testID="site-hub-title" style={s.tileLabel}>{t.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -62,7 +63,7 @@ export default function AiAssistantHubScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   hero: { alignItems: 'center', marginBottom: spacing.md, gap: 6 },
   heroIcon: { width: 100, height: 100, borderRadius: 50, alignItems: 'center', justifyContent: 'center' },
@@ -72,4 +73,4 @@ const s = StyleSheet.create({
   tile: { backgroundColor: colors.bg.secondary, padding: spacing.md, borderRadius: radius.md, borderWidth: 1, alignItems: 'center', marginBottom: spacing.sm, gap: 8 },
   tileIcon: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
   tileLabel: { color: colors.text.primary, fontSize: typography.sm, fontWeight: '700', textAlign: 'center' },
-});
+}, { hideHero: true }));

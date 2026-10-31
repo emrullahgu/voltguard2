@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubStatStyle, siteHubStatColor } from '../portal/siteHubStyles';
 // Faz 56 — CovSummaryScreen (POZ-DEV-263)
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -12,9 +14,7 @@ import EmptyState from '../components/EmptyState';
 export default function CovSummaryScreen() {
   const [sum, setSum] = useState<CovSummary | null>(null);
   const [cats, setCats] = useState<CovCategory[]>([]);
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
-  const tileW = `${100 / cols - 1}%`;
+  const { tileWidth: tileW, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md });
   useFocusEffect(useCallback(() => { (async () => { setSum(await getCovSummary()); setCats(await listCovCategories()); })(); }, []));
   if (!sum) {
     return (
@@ -33,7 +33,7 @@ export default function CovSummaryScreen() {
           <Text style={s.coverageBig}>%{sum.coveragePercent}</Text>
           <Text style={s.coverageL}>Genel kapsam (Tamamlandı + 0.5 × Kısmen)</Text>
         </View>
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           <Kpi w={tileW} l="Tamamlandı" v={sum.doneCount} c="#22c55e" />
           <Kpi w={tileW} l="Kısmen" v={sum.partialCount} c="#f59e0b" />
           <Kpi w={tileW} l="Planlandı" v={sum.plannedCount} c="#3b82f6" />
@@ -73,16 +73,16 @@ export default function CovSummaryScreen() {
   );
 }
 
-function Kpi({ w, l, v, c }: { w: string; l: string; v: number; c: string }) {
+function Kpi({ w, l, v, c }: { w: number; l: string; v: number; c: string }) {
   return (
-    <View style={[s.kpi, { width: w as any, borderColor: c }]}>
-      <Text style={[s.kpiV, { color: c }]}>{v}</Text>
+    <View style={[s.kpi, { width: w, borderColor: c }, siteHubStatStyle('#64748b')]}>
+      <Text style={[s.kpiV, { color: c }, { color: siteHubStatColor('#64748b') }]}>{v}</Text>
       <Text style={s.kpiL}>{l}</Text>
     </View>
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   scroll: { padding: spacing.md, gap: spacing.sm },
   empty: { flex: 1, justifyContent: 'center', alignItems: 'center' },
@@ -105,4 +105,4 @@ const s = StyleSheet.create({
   legendRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   legendDot: { width: 10, height: 10, borderRadius: 5 },
   legendT: { color: colors.text.primary, fontSize: typography.xs, fontWeight: '700' },
-});
+}, { hideHero: false }));

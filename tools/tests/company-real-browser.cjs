@@ -10,9 +10,14 @@ const assert = require('node:assert/strict');
 const { spawn, spawnSync } = require('node:child_process');
 const root = path.resolve(__dirname, '../..');
 const ownWhiteOnly=process.argv.includes('--own-white-only');
+const nativeThemeOnly=process.argv.includes('--native-theme-only');
+const documentLayoutOnly=process.argv.includes('--document-layout-only');
+const layoutOnly=process.argv.includes('--layout-only');
+const layoutWidth=Number(process.argv.find(argument=>argument.startsWith('--layout-width='))?.slice(15)||1440);
+if(layoutOnly)assert.ok([1440,1024,768,390,320].includes(layoutWidth),'Supported layout viewport');
 const workflowArgument=process.argv.find(argument=>argument.startsWith('--workflows='));
 const selectedWorkflows=workflowArgument?new Set(workflowArgument.slice(12).split(',')):null;
-const output = path.join(root, process.env.VG_COMPANY_ADMIN_OUTPUT_FOCUS==='1'?'.qa/company-admin-outputs':process.env.VG_COMPANY_OUTPUT_FOCUS==='1'?(process.argv.includes('--payroll-only')?'.qa/company-payroll-outputs':process.env.VG_COMPANY_PROPOSAL_OUTPUT_FOCUS==='1'?'.qa/company-proposal-outputs':'.qa/company-outputs'):process.env.VG_COMPANY_SUBMIT_FOCUS==='1'?(process.argv.includes('--weekly-pdf-only')?'.qa/company-weekly-pdf':'.qa/company-submit'):ownWhiteOnly?'.qa/company-own-white':selectedWorkflows?'.qa/company-focused':'.qa/company-real');
+const output = path.join(root, nativeThemeOnly?'.qa/employee-native-theme':documentLayoutOnly?'.qa/employee-document-qa':layoutOnly?'.qa/employee-layout/'+layoutWidth:process.env.VG_COMPANY_ADMIN_OUTPUT_FOCUS==='1'?'.qa/company-admin-outputs':process.env.VG_COMPANY_OUTPUT_FOCUS==='1'?(process.argv.includes('--payroll-only')?'.qa/company-payroll-outputs':process.env.VG_COMPANY_PROPOSAL_OUTPUT_FOCUS==='1'?'.qa/company-proposal-outputs':'.qa/company-outputs'):process.env.VG_COMPANY_SUBMIT_FOCUS==='1'?(process.argv.includes('--weekly-pdf-only')?'.qa/company-weekly-pdf':'.qa/company-submit'):ownWhiteOnly?'.qa/company-own-white':selectedWorkflows?'.qa/company-focused':'.qa/company-real');
 const php = process.env.VG_PHP || path.join(root, '.qa/php/runtime/php.exe');
 const packages = process.env.VG_NODE_MODULES || process.env.VOLTGUARD_NODE_MODULES || path.join(os.homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules');
 const { chromium } = require(path.join(packages, 'playwright'));
@@ -151,6 +156,18 @@ async function run() {
       });
       return;
     }
+    if(nativeThemeOnly){
+      await require('./employee-native-theme-scenarios.cjs')({page,mount,workflow,check,report,output,base});
+      return;
+    }
+    if(documentLayoutOnly){
+      await require('./employee-document-scenarios.cjs')({page,mount,workflow,check,report,output,base});
+      return;
+    }
+    if(layoutOnly){
+      await require('./employee-layout-scenarios.cjs')({page,mount,workflow,check,report,output,base,modules,catalog:employeeManifest,widths:[layoutWidth]});
+      return;
+    }
     if(process.env.VG_COMPANY_ADMIN_OUTPUT_FOCUS==='1'){
       await require('./company-output-admin.cjs')({page,admin,employee,api,rows,waitRow,mount,fill,workflow,check,report,download,output,base,browser});
       return;
@@ -224,7 +241,7 @@ async function run() {
       await page.locator('tr').filter({hasText:'34 QA 001'}).locator('button').last().click();await page.waitForTimeout(300);check((await rows('fuel_records')).some(row=>row.id===item.id),false,'Real fuel deletion persists');
     });
     await workflow('yg-proposal-save-open-pdf-delete',async()=>{
-      await mount('manual');await page.getByPlaceholder('Örn: ABC Endüstri San. ve Tic. A.Ş.').fill('QA Test Tesisi');await page.getByPlaceholder('Örn: Ahmet Yilmaz').fill('QA Yetkili');await page.getByPlaceholder('Örn: Tekstil, Güçda').fill('QA Sektör');await page.getByPlaceholder('Örn: 1600 veya 1000+630').fill('630');
+      await mount('manual');await page.getByPlaceholder('Örn: ABC Endüstri San. ve Tic. A.Ş.').fill('QA Test Tesisi');await page.getByPlaceholder('Örn: Ahmet Yılmaz').fill('QA Yetkili');await page.getByPlaceholder('Örn: Tekstil, Gıda').fill('QA Sektör');await page.getByPlaceholder('Örn: 1600 veya 1000+630').fill('630');
       await page.getByRole('button',{name:'Kaydet',exact:true}).click();const item=await waitRow('proposals',row=>row.type==='yg'&&row.name.includes('QA Test Tesisi'));
       await mount('saved');await page.getByRole('button',{name:/Yükle|Yikle/}).first().click();
       await page.locator('[data-portal-module="proposal"]').waitFor({state:'visible'});

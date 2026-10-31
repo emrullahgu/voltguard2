@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // Faz 46 — EnergyAssetTypesScreen (POZ-DEV-169)
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -22,8 +24,7 @@ const TYPES: { key: EqAssetType; desc: string }[] = [
 
 export default function EnergyAssetTypesScreen() {
   const nav = useNavigation<any>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 3 : 2;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md, breakpoints: [[900, 3], [520, 2]] });
   const [items, setItems] = useState<EqAsset[]>([]);
 
   const load = useCallback(async () => { setItems(await listEqAssets()); }, []);
@@ -42,16 +43,16 @@ export default function EnergyAssetTypesScreen() {
           <Text style={s.sumV}>{items.length}</Text>
           <Text style={s.sumL}>Kayıtlı enerji ekipmanı</Text>
         </View>
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           {TYPES.map(t => (
-            <TouchableOpacity key={t.key} style={[s.card, { width: `${100 / cols - 1}%` as any, borderColor: EQ_TYPE_COLOR[t.key] }]}
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-row" key={t.key} style={[s.card, { width: tileWidth, borderColor: EQ_TYPE_COLOR[t.key] }, siteHubCardStyle()]}
               onPress={() => nav.navigate('AssetList')}>
-              <View style={[s.icon, { backgroundColor: EQ_TYPE_COLOR[t.key] + '33' }]}>
-                <Ionicons name={EQ_TYPE_ICON[t.key] as any} size={28} color={EQ_TYPE_COLOR[t.key]} />
+              <View testID="site-hub-icon" style={[s.icon, { backgroundColor: EQ_TYPE_COLOR[t.key] + '33' }, siteHubIconStyle()]}>
+                <Ionicons name={EQ_TYPE_ICON[t.key] as any} size={siteHubIconSize(28)} color={siteHubIconColor(EQ_TYPE_COLOR[t.key])} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={s.title}>{EQ_TYPE_LABEL[t.key]}</Text>
-                <Text style={s.desc} numberOfLines={2}>{t.desc}</Text>
+                <Text testID="site-hub-title" style={s.title}>{EQ_TYPE_LABEL[t.key]}</Text>
+                <Text testID="site-hub-description" style={s.desc} numberOfLines={2}>{t.desc}</Text>
               </View>
               <View style={[s.countBox, { backgroundColor: EQ_TYPE_COLOR[t.key] }]}>
                 <Text style={s.countT}>{counts[t.key]}</Text>
@@ -64,7 +65,7 @@ export default function EnergyAssetTypesScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   scroll: { padding: spacing.md, gap: spacing.md },
   summary: { padding: spacing.md, borderRadius: radius.md, backgroundColor: colors.bg.secondary, alignItems: 'center', borderWidth: 1, borderColor: colors.border.primary },
@@ -77,4 +78,4 @@ const s = StyleSheet.create({
   desc: { color: colors.text.muted, fontSize: 10, marginTop: 2 },
   countBox: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12, minWidth: 36, alignItems: 'center' },
   countT: { color: '#fff', fontWeight: '800', fontSize: typography.sm },
-});
+}, { hideHero: false }));

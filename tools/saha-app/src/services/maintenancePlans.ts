@@ -1,5 +1,6 @@
 // maintenancePlans.ts — POZ-DEV-085 Periyodik bakım planı (önleyici/düzeltici)
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { coalescePortalRead } from '../portal/coalescedRead';
 import { MaintenanceKind, MaintenancePlan } from '../types';
 import { supabase, SUPABASE_CONFIGURED } from './supabase';
 
@@ -50,7 +51,10 @@ function addDays(iso: string, days: number): string {
   return d.toISOString();
 }
 
-export async function listPlans(): Promise<MaintenancePlan[]> {
+export function listPlans(): Promise<MaintenancePlan[]> {
+  return coalescePortalRead(KEY, loadPlans);
+}
+async function loadPlans(): Promise<MaintenancePlan[]> {
   if (SUPABASE_CONFIGURED) {
     try {
       const { data, error } = await supabase.from('maintenance_plans').select('*').order('next_due_at', { ascending: true });

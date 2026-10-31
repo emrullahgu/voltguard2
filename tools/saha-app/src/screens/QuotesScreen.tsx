@@ -128,11 +128,11 @@ export default function QuotesScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <View>
+        <View style={styles.headerTitle}>
           <Text style={styles.title}>Teklifler</Text>
           <Text style={styles.subtitle}>Keşif metrajı ve fiyatlandırma</Text>
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+        <View style={styles.headerActions}>
           <TouchableOpacity
             style={styles.exportBtn}
             onPress={handleExport}
@@ -372,16 +372,21 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   header: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
     paddingBottom: spacing.sm,
+    gap: spacing.md,
   },
+  headerTitle: { flexGrow: 1, flexBasis: 200, minWidth: 0, maxWidth: '100%' },
+  headerActions: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: spacing.sm, maxWidth: '100%' },
   title: { fontSize: typography.xl, color: colors.text.primary, fontWeight: '900' },
   subtitle: { fontSize: typography.xs, color: colors.text.muted, marginTop: 2 },
   newBtn: {
     flexDirection: 'row',
+    flexShrink: 0,
     alignItems: 'center',
     gap: 4,
     backgroundColor: brand.green,
@@ -427,7 +432,7 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.lg,
     marginTop: spacing.sm,
   },
-  searchInput: { flex: 1, color: colors.text.primary, fontSize: typography.sm, paddingVertical: 4 },
+  searchInput: { flex: 1, minWidth: 0, color: colors.text.primary, fontSize: typography.sm, paddingVertical: 4 },
 
   dateRow: {
     flexDirection: 'row',
@@ -437,7 +442,10 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   dateInput: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: 150,
+    minWidth: 0,
+    maxWidth: '100%',
     backgroundColor: colors.bg.secondary,
     borderWidth: 1,
     borderColor: colors.border.primary,

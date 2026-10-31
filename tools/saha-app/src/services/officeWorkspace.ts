@@ -3,6 +3,7 @@
 // Kalıcılık deseni governance.ts ile aynı: Şirket sunucusu birincil + AsyncStorage cache
 // (offline/demo fallback). SUPABASE_CONFIGURED false ise yalnız yerel çalışır.
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { coalescePortalRead } from '../portal/coalescedRead';
 import { supabase, SUPABASE_CONFIGURED } from './supabase';
 import { newUuid } from './data/repository';
 import { localDateISO } from '../utils/date';
@@ -177,7 +178,10 @@ function pageFromRow(r: any): OfficePage {
   };
 }
 
-export async function listPages(): Promise<OfficePage[]> {
+export function listPages(): Promise<OfficePage[]> {
+  return coalescePortalRead(KEYS.pages, loadPages);
+}
+async function loadPages(): Promise<OfficePage[]> {
   if (SUPABASE_CONFIGURED) {
     try {
       const { data, error } = await supabase
@@ -411,7 +415,10 @@ function boardFromRow(r: any): OfficeBoard {
   };
 }
 
-export async function listBoards(): Promise<OfficeBoard[]> {
+export function listBoards(): Promise<OfficeBoard[]> {
+  return coalescePortalRead(KEYS.boards, loadBoards);
+}
+async function loadBoards(): Promise<OfficeBoard[]> {
   if (SUPABASE_CONFIGURED) {
     try {
       const { data, error } = await supabase
@@ -573,7 +580,10 @@ function meetingFromRow(r: any): OfficeMeeting {
   };
 }
 
-export async function listMeetings(): Promise<OfficeMeeting[]> {
+export function listMeetings(): Promise<OfficeMeeting[]> {
+  return coalescePortalRead(KEYS.meetings, loadMeetings);
+}
+async function loadMeetings(): Promise<OfficeMeeting[]> {
   if (SUPABASE_CONFIGURED) {
     try {
       const { data, error } = await supabase

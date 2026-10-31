@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator, AppState } from 'react-native';
+import { View, Text, ActivityIndicator, AppState } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -562,7 +562,7 @@ export default function ModuleNavigator({initialRoute='WorkOrders',initialParams
 
 function MainStack({ initialRoute }: { initialRoute: string }) {
   return (
-    <Stack.Navigator initialRouteName={initialRoute as any} screenOptions={{ headerShown: false }} screenListeners={{ beforeRemove: event => { if (getPendingWrites() > 0) event.preventDefault(); } }}>
+    <Stack.Navigator initialRouteName={initialRoute as any} screenOptions={{ headerShown: false, headerTitle: ({ children, tintColor }) => <Text accessibilityRole="header" style={{ fontFamily:'Outfit', fontSize:18, lineHeight:24, fontWeight:'600', color:tintColor || colors.text.primary }}>{children}</Text> }} screenListeners={{ beforeRemove: event => { if (getPendingWrites() > 0) event.preventDefault(); } }}>
       <Stack.Screen name="WorkOrders" component={WorkOrdersScreen} />
       <Stack.Screen name="Quotes" component={QuotesScreen} />
       <Stack.Screen name="Office" component={OfficeHubScreen} />

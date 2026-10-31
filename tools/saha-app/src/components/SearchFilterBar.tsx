@@ -1,8 +1,8 @@
 // SearchFilterBar — POZ-DEV-097 reusable advanced search + filter chips
 import React from 'react';
-import { View, TextInput, ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, radius, typography } from '../theme';
+import { colors, spacing, radius, brand } from '../theme';
 import { a11yButton, a11yInput, HIT_SLOP_8 } from '../utils/a11y';
 
 export interface FilterChip {
@@ -43,7 +43,7 @@ export default function SearchFilterBar({ value, onChange, placeholder = 'Ara…
         )}
       </View>
       {chips && chips.length > 0 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll} contentContainerStyle={{ paddingRight: spacing.lg }}>
+        <View style={styles.filters} accessibilityLabel="Kayıt filtreleri">
           {chips.map(c => {
             const active = c.key === activeKey;
             return (
@@ -64,23 +64,23 @@ export default function SearchFilterBar({ value, onChange, placeholder = 'Ara…
               </TouchableOpacity>
             );
           })}
-        </ScrollView>
+        </View>
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { marginBottom: spacing.sm },
-  searchBox: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: colors.bg.secondary, borderWidth: 1, borderColor: colors.border.primary, borderRadius: radius.md, paddingHorizontal: 12, paddingVertical: 8 },
-  input: { flex: 1, color: colors.text.primary, fontSize: typography.sm, padding: 0 },
-  chipsScroll: { marginTop: spacing.sm },
-  chip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: radius.full, borderWidth: 1, borderColor: colors.border.primary, backgroundColor: colors.bg.secondary, marginRight: 6 },
-  chipActive: { backgroundColor: '#6366f1', borderColor: '#6366f1' },
-  chipText: { color: colors.text.muted, fontSize: 11, fontWeight: '700' },
-  chipTextActive: { color: '#fff' },
-  countPill: { backgroundColor: 'rgba(255,255,255,0.06)', paddingHorizontal: 6, paddingVertical: 1, borderRadius: 10, minWidth: 18, alignItems: 'center' },
-  countPillActive: { backgroundColor: 'rgba(255,255,255,0.2)' },
-  countText: { color: colors.text.muted, fontSize: 10, fontWeight: '700' },
-  countTextActive: { color: '#fff' },
+  wrap: { marginBottom: spacing.md, gap: spacing.sm },
+  searchBox: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 44, backgroundColor: colors.bg.card, borderWidth: 1, borderColor: colors.border.primary, borderRadius: radius.sm, paddingHorizontal: 12, paddingVertical: 8 },
+  input: { flex: 1, minWidth: 0, color: colors.text.primary, fontFamily: 'Inter', fontSize: 14, lineHeight: 22, padding: 0 },
+  filters: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: spacing.sm },
+  chip: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, maxWidth: '100%', minHeight: 40, paddingHorizontal: 12, paddingVertical: 8, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.border.primary, backgroundColor: colors.bg.card },
+  chipActive: { backgroundColor: brand.amber, borderColor: brand.amber },
+  chipText: { flexShrink: 1, color: colors.text.secondary, fontFamily: 'Inter', fontSize: 13, lineHeight: 20, fontWeight: '600' },
+  chipTextActive: { color: brand.onAmber },
+  countPill: { backgroundColor: colors.bg.secondary, paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4, minWidth: 22, alignItems: 'center' },
+  countPillActive: { backgroundColor: 'rgba(10,22,40,0.1)' },
+  countText: { color: colors.text.muted, fontFamily: 'Inter', fontSize: 12, lineHeight: 18, fontWeight: '600' },
+  countTextActive: { color: brand.onAmber },
 });

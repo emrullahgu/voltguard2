@@ -1,6 +1,8 @@
+import { siteHubStyles, siteHubCardStyle, siteHubIconColor, siteHubIconSize } from '../portal/siteHubStyles';
 // BiHubScreen — POZ-DEV-430
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -28,8 +30,7 @@ const TILES = [
 
 export default function BiHubScreen() {
   const navigation = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 4 : 2;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: spacing.sm, horizontalPadding: spacing.md });
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
       <ScrollView contentContainerStyle={{ padding: spacing.md, paddingBottom: 80 }}>
@@ -38,11 +39,11 @@ export default function BiHubScreen() {
           <Text style={s.heroT}>BI & Karar Destek</Text>
           <Text style={s.heroS}>Tüm operasyonel veriniz tek panelde.</Text>
         </View>
-        <View style={[s.grid, { gap: spacing.sm }]}>
+        <View style={[s.grid, { gap: spacing.sm }]} onLayout={onGridLayout}>
           {TILES.map(t => (
-            <TouchableOpacity key={t.k} style={[s.tile, { width: `${100 / cols - 1}%`, backgroundColor: t.c + '22', borderColor: t.c }]} onPress={() => navigation.navigate(t.k as any)}>
-              <Ionicons name={t.i as any} size={28} color={t.c} />
-              <Text style={s.tileT}>{t.l}</Text>
+            <TouchableOpacity accessibilityRole="button" testID="site-hub-card" key={t.k} style={[s.tile, { width: tileWidth, backgroundColor: t.c + '22', borderColor: t.c }, siteHubCardStyle()]} onPress={() => navigation.navigate(t.k as any)}>
+              <Ionicons testID="site-hub-icon" name={t.i as any} size={siteHubIconSize(28)} color={siteHubIconColor(t.c)} />
+              <Text testID="site-hub-title" style={s.tileT}>{t.l}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -51,7 +52,7 @@ export default function BiHubScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   hero: { backgroundColor: colors.bg.secondary, borderRadius: radius.lg, padding: spacing.lg, alignItems: 'center', marginBottom: spacing.md, borderWidth: 1, borderColor: colors.border.primary },
   heroIcon: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#22c55e22', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm },
@@ -60,4 +61,4 @@ const s = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap' },
   tile: { padding: spacing.md, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center', borderWidth: 1, minHeight: 100 },
   tileT: { color: colors.text.primary, fontSize: typography.xs, fontWeight: '700', marginTop: spacing.xs, textAlign: 'center' },
-});
+}, { hideHero: true }));

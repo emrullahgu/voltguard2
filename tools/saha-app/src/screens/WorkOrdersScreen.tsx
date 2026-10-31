@@ -99,10 +99,11 @@ export default function WorkOrdersScreen() {
               <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </TouchableOpacity>
           )}
-          <View style={{ flex: 1 }}>
+          <View style={styles.headerTitle}>
             <Text style={styles.title}>İş Emirlerim</Text>
             <Text style={styles.subtitle}>Tarafınıza atanan iş emirleri</Text>
           </View>
+          <View style={styles.headerActions}>
           <TouchableOpacity
             style={styles.exportBtn}
             onPress={handleExport}
@@ -121,6 +122,7 @@ export default function WorkOrdersScreen() {
             <Ionicons name="add" size={18} color="#fff" />
             <Text style={styles.addBtnText}>İş Emri Ekle</Text>
           </TouchableOpacity>
+          </View>
         </View>
 
         {/* Search */}
@@ -282,13 +284,17 @@ const styles = StyleSheet.create({
   backBtn: { padding: 2 },
   header: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
     paddingTop: spacing.lg,
     marginBottom: spacing.md,
     gap: spacing.sm,
   },
+  headerTitle: { flexGrow: 1, flexBasis: 180, minWidth: 0, maxWidth: '100%' },
+  headerActions: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: spacing.sm, maxWidth: '100%' },
   addBtn: {
     flexDirection: 'row',
+    flexShrink: 0,
     alignItems: 'center',
     gap: 4,
     backgroundColor: colors.indigo.default,
@@ -323,15 +329,18 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
+    minWidth: 0,
     color: colors.text.primary,
     fontSize: typography.sm,
   },
   filterRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.sm,
     marginBottom: spacing.md,
   },
   filter: {
+    maxWidth: '100%',
     paddingHorizontal: spacing.md,
     paddingVertical: 6,
     borderRadius: radius.full,

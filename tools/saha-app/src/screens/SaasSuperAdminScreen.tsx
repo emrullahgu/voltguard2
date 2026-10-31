@@ -1,6 +1,8 @@
+import { siteHubStyles } from '../portal/siteHubStyles';
 // Faz 50 — SaasSuperAdminScreen (POZ-DEV-209)
+import { useMeasuredGrid } from '../portal/useMeasuredGrid';
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -13,8 +15,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 export default function SaasSuperAdminScreen() {
   const nav = useNavigation<Nav>();
-  const { width } = useWindowDimensions();
-  const cols = width >= 900 ? 3 : 2;
+  const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: '2%', horizontalPadding: spacing.md, breakpoints: [[900, 3], [520, 2]] });
   const [metrics, setMetrics] = useState<SaasSuperAdminMetric[]>([]);
   const [tenants, setTenants] = useState<SaasTenantSummary[]>([]);
   useFocusEffect(useCallback(() => {
@@ -33,9 +34,9 @@ export default function SaasSuperAdminScreen() {
           <Text style={s.heroD}>Tüm firmalar ve platform metrikleri</Text>
         </View>
 
-        <View style={s.grid}>
+        <View style={s.grid} onLayout={onGridLayout}>
           {metrics.map((m, idx) => (
-            <View key={idx} style={[s.metricCard, { width: `${100 / cols - 1}%` as any, borderColor: m.color }]}>
+            <View key={idx} style={[s.metricCard, { width: tileWidth, borderColor: m.color }]}>
               <Ionicons name={m.icon as any} size={24} color={m.color} />
               <Text style={[s.metricV, { color: m.color }]}>{m.value}</Text>
               <Text style={s.metricL}>{m.label}</Text>
@@ -85,7 +86,7 @@ export default function SaasSuperAdminScreen() {
   );
 }
 
-const s = StyleSheet.create({
+const s = StyleSheet.create(siteHubStyles({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   scroll: { padding: spacing.md, gap: spacing.sm },
   heroCard: { backgroundColor: colors.bg.secondary, padding: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: '#ef4444', alignItems: 'center', gap: 4 },
@@ -110,4 +111,4 @@ const s = StyleSheet.create({
   actions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm },
   actionBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, padding: spacing.sm, borderRadius: radius.sm },
   actionT: { color: '#fff', fontSize: typography.sm, fontWeight: '700' },
-});
+}, { hideHero: false }));
