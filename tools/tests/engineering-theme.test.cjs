@@ -51,7 +51,7 @@ test('Every native inline style parses with isolated workspace selectors', () =>
       count++;
     }
   }
-  assert.ok(count >= 51, 'All calculator styles were exercised');
+  assert.ok(count >= 54, 'All calculator styles were exercised');
 });
 
 test('Offline archives keep the shared site shell assets and integrated routes local', () => {
