@@ -125,7 +125,7 @@ test('Trusted CI runtime pins both mandatory compilers and protects manifest has
  const lock=fs.readFileSync(path.join(ci,'runtime/package-lock.json'));
  const dependencies=JSON.parse(manifest).dependencies,packages=JSON.parse(lock).packages;
  const sourcePackages=JSON.parse(fs.readFileSync(path.join(source,'package-lock.json'),'utf8')).packages;
- assert.equal(dependencies.typescript,'6.0.3');assert.equal(dependencies['@babel/core'],'7.29.0');
+ assert.equal(dependencies.typescript,'6.0.3');assert.equal(dependencies['@babel/core'],'7.29.7');
  for(const name of ['typescript','@babel/core']){
   assert.equal(packages['node_modules/'+name].version,sourcePackages['node_modules/'+name].version);
   assert.equal(packages['node_modules/'+name].integrity,sourcePackages['node_modules/'+name].integrity);

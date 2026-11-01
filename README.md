@@ -4,7 +4,7 @@ VoltGuard kurumsal sitesi; hizmet sayfaları, bilgi bankası, akademi, 17 mevcut
 
 ## Çalıştırma ve kontrol
 
-Node.js 24 veya üstü ile, proje kökünde:
+Node.js 24 veya üstü ve Python 3 ile, proje kökünde çalıştırın. Doğrulanan Python sürümü 3.12.10'dur; PHP test ve sunucu bağımlılıkları aşağıda açıklanır.
 
 ```text
 npm run setup:staff
@@ -14,6 +14,14 @@ npm run build
 npm test
 npm run preview
 ```
+
+`npm run build`, `tools/build-all.cjs` üzerinden on adımı sırayla çalıştırır. Her adımın adını ve süresini yazar; bir adım başarısız olur veya kesilirse sonraki çıktıları üretmeden durur ve hata koduyla çıkar. Python ve oyun/çalışan derleme bağımlılıkları uzun oyun derlemesinden önce kontrol edilir. `node tools/build-all.cjs --check` yalnız bu ön kontrolü, `--list` adım listesini çalıştırır. Python farklı bir yerdeyse `VG_PYTHON` ortam değişkenine çalıştırıcının tam yolunu verin.
+
+`npm test`, Node test koşucusuyla birim testlerini ve PHP/Python sarmalayıcılı entegrasyon testlerini çalıştırır; gerçek tarayıcı komutları aşağıda ayrıca listelenmiştir. GitHub Actions mevcut fatura kısıtı nedeniyle elle başlatılır ve test öncesi mühendislik çıktısını üretir. Ubuntu CI'nin ağsız konteyneri `tools/ci/` altında tanımlıdır. Test derleyicileri yerel Saha kurulumu veya CI'nin sabitlenmiş `NODE_PATH` paketlerinden alınır; bozuk yerel kurulum başka derleyiciyle gizlenmez.
+
+VoltSim kaynakları ve yeni modül ekleme adımları [geliştirme rehberinde](voltsim/README.md), ekli modül raporundaki 31 başlığın kaynaklarla karşılaştırması [denetim kaydında](tools/audit-report-reconciliation.json) bulunur.
+
+Bağımlılık taramasının kapsamı, uygulanan uyumlu yamalar ve büyük sürüm uyumluluk çalışması gerektiren kalan bulgular [bağımlılık incelemesinde](tools/dependency-audit-review.json) kayıtlıdır. CI derleyici kilidi güncellendiğinde kurulu Ubuntu imajının da ayrıca güncellenmesi gerekir; [CI kurulum rehberi](tools/ci/KURULUM.md) tam build context'ini ve özel token dosyasını koruyan adımları açıklar.
 
 Önizleme: `http://127.0.0.1:4173/araclar/`. Statik sayfalar, araçlar ve gerçek yayın güvenlik politikasıyla çalışır. PHP bulunduğunda üyelik, topluluk ve çalışan API'leri aynı adreste etkinleşir; `VG_PHP` ile PHP çalıştırıcısının tam yolu belirtilebilir. Bu cihazdaki doğrulanmış PHP çalıştırıcısı `.qa/php/runtime/php.exe` altındadır ve Git'e dahil değildir. PHP yoksa özel bölüm erişimi kapanır. İletişim formu canlı PHP sunucusu gerektirir. `npm run test:browser` Playwright ve Chrome bulunan ortamda araç tarayıcı kontrollerini çalıştırır.
 

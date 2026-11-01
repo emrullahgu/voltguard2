@@ -2,7 +2,7 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-const ts=require('../saha-app/node_modules/typescript');
+const ts=require('./test-dependencies.cjs').testDependency('typescript');
 
 function theme(hosted=false){
  const file=path.resolve(__dirname,'../saha-app/src/theme.ts');

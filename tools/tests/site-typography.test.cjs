@@ -2,7 +2,7 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-const ts=require('../saha-app/node_modules/typescript');
+const ts=require('./test-dependencies.cjs').testDependency('typescript');
 const root=path.resolve(__dirname,'../saha-app');
 
 function fixture(hosted=true,nested=false){
@@ -30,7 +30,7 @@ test('Site text supplies Inter while preserving explicit headings, refs and nest
 });
 
 test('Build rewrites only app Text imports; icon libraries and the adapter retain native Text',()=>{
- const babel=require('../staff-app/node_modules/@babel/core');
+ const babel=require('./test-dependencies.cjs').testDependency('@babel/core');
  const plugin=require('../saha-app/src/portal/scopedNetworkPlugin.cjs');
  const compile=(filename)=>babel.transformSync('import {Text, TextInput as Input, View} from "react-native"; const label = Text;', {filename,configFile:false,babelrc:false,plugins:[plugin]}).code;
  const own=compile(path.join(root,'src/screens/SyntheticScreen.js'));

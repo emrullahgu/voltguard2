@@ -2,7 +2,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path'), vm = require('node:vm');
-const ts = require('../saha-app/node_modules/typescript');
+const ts = require('./test-dependencies.cjs').testDependency('typescript');
 
 const flush = async () => { for (let index = 0; index < 12; index++) await Promise.resolve(); };
 

@@ -1,6 +1,6 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-const ts=require('../saha-app/node_modules/typescript'),source=path.resolve(__dirname,'../saha-app/src');
+const ts=require('./test-dependencies.cjs').testDependency('typescript'),source=path.resolve(__dirname,'../saha-app/src');
 const originalId='10000000-0000-4000-8000-000000000001',createdId='20000000-0000-4000-8000-000000000002';
 function load(file,deps){const filename=path.join(source,file),module={exports:{}};
   const code=ts.transpileModule(fs.readFileSync(filename,'utf8'),{fileName:filename,compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.React,esModuleInterop:true}}).outputText;

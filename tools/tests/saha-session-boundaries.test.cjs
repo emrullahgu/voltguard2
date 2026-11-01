@@ -1,6 +1,6 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-const ts=require('../saha-app/node_modules/typescript'),root=path.resolve(__dirname,'../saha-app/src');
+const ts=require('./test-dependencies.cjs').testDependency('typescript'),root=path.resolve(__dirname,'../saha-app/src');
 function load(file,deps,globals){
   const filename=path.join(root,file),module={exports:{}};
   const source=file==='portal/api.ts'&&process.env.VG_SESSION_SOURCE_BASELINE?fs.readFileSync(process.env.VG_SESSION_SOURCE_BASELINE,'utf8'):fs.readFileSync(filename,'utf8');

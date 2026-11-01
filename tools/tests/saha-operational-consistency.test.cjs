@@ -1,6 +1,6 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-const ts=require('../saha-app/node_modules/typescript'),root=path.resolve(__dirname,'../saha-app/src');
+const ts=require('./test-dependencies.cjs').testDependency('typescript'),root=path.resolve(__dirname,'../saha-app/src');
 const ID='10000000-0000-4000-8000-000000000001',CUSTOMER='20000000-0000-4000-8000-000000000002',stamp='2026-11-01T08:00:00.000Z';
 function load(file,deps){const filename=path.join(root,file),module={exports:{}};const code=ts.transpileModule(fs.readFileSync(filename,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,esModuleInterop:true,jsx:ts.JsxEmit.React}}).outputText;
  vm.runInNewContext(code,{module,exports:module.exports,require:name=>{if(!(name in deps))throw Error('Unexpected dependency '+name);return deps[name];},console,Date,Math,JSON,Number,Error,Promise,Map,Set,Object,Array},{filename});return module.exports;}

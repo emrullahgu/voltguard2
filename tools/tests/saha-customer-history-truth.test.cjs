@@ -1,7 +1,7 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-const ts=require('../saha-app/node_modules/typescript');
+const ts=require('./test-dependencies.cjs').testDependency('typescript');
 
 function renderCustomer(customerId){
   const customer={id:'synthetic-customer',shortName:'Sentetik Firma',title:'Sentetik Firma A.Ş.'},navigations=[],alerts=[];

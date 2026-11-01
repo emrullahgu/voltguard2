@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node tools/build-team.cjs && node tools/build-voltgame.cjs && node tools/build-voltsim.cjs && python tools/shell.py --quiet && node tools/build-staff.cjs && node tools/build-engineering.cjs && node tools/build-company.cjs && node tools/build-home-directory.cjs && node tools/build-search-index.cjs && python tools/sync-versions.py",
+    "build": "node tools/build-all.cjs",
     "build:game": "node tools/build-voltgame.cjs",
     "build:voltsim": "node tools/build-voltsim.cjs && python tools/shell.py --quiet",
     "setup:game": "npm ci --prefix tools/voltgame/tools --ignore-scripts --no-fund",

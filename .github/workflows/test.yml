@@ -54,5 +54,9 @@ jobs:
       - name: Saha test bağımlılıkları
         run: npm ci --prefix tools/saha-app --ignore-scripts --no-fund --no-audit
 
+      # Bu çıktı Git'te tutulmaz; mühendislik testleri temiz checkout'ta da okuyabilmeli.
+      - name: Mühendislik test çıktısını hazırla
+        run: node tools/build-engineering.cjs
+
       - name: Testler
         run: npm test

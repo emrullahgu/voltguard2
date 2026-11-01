@@ -1,7 +1,7 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-const ts=require('../saha-app/node_modules/typescript');
+const ts=require('./test-dependencies.cjs').testDependency('typescript');
 const source=path.resolve(__dirname,'../saha-app/src');
 const flush=async()=>{for(let index=0;index<24;index++)await Promise.resolve();};
 function load(file,dependencies){

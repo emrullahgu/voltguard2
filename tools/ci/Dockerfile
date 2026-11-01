@@ -5,10 +5,10 @@ FROM node:24-bookworm-slim AS test-runtime
 WORKDIR /opt/voltguard-ci
 COPY runtime/package.json runtime/package-lock.json ./
 RUN printf '%s  package.json\n%s  package-lock.json\n' \
-      'eec8926916ebc1d349cd22ed7b2b9a97522b119c8f3fd0560eb4fadc9e7c5376' \
-      '534accc822ba62b23206b82126425341c7c297befcc1a7c5e180edb2fccb0fc8' | sha256sum -c - \
+      '6ab30d1352b8c8283860438847be6eb851d3f4f8521939629591b8ac46914656' \
+      '1d3bcf08195f23614f6775698806264f657d3b16091aa467b9d978e5160069c5' | sha256sum -c - \
  && npm ci --prefix /opt/voltguard-ci --ignore-scripts --no-fund --no-audit --registry=https://registry.npmjs.org \
- && node -e 'const a=require("node:assert/strict");a.equal(require("typescript").version,"6.0.3");a.equal(require("@babel/core").version,"7.29.0");'
+ && node -e 'const a=require("node:assert/strict");a.equal(require("typescript").version,"6.0.3");a.equal(require("@babel/core").version,"7.29.7");'
 FROM php:8.3-cli-bookworm
 LABEL voltguard-ci=1
 COPY --from=test-runtime /usr/local/bin/node /usr/local/bin/node

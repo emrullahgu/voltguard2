@@ -28,14 +28,28 @@ read -rs -p "Token: " T && printf '%s' "$T" > ~/servisler/voltguard-ci/token && 
 ```
 
 ## Kurulum
+Komutları depo kökünden çalıştırın. Docker imajının `COPY runtime/...` adımı için
+hem `Dockerfile` hem sabitlenmiş `runtime/package.json` ve `runtime/package-lock.json`
+aynı build context'ine kopyalanmalıdır.
+
 ```bash
-mkdir -p ~/servisler/voltguard-ci/image
-install -m 755 voltguard-ci.sh ~/servisler/voltguard-ci/
-install -m 644 Dockerfile ~/servisler/voltguard-ci/image/
-docker build -t voltguard-ci:ilk ~/servisler/voltguard-ci/image
-sudo install -m 644 voltguard-ci.service voltguard-ci.timer /etc/systemd/system/
+VG_CI_ROOT="${VG_CI_HOME:-$HOME/servisler/voltguard-ci}"
+install -d -m 700 "$VG_CI_ROOT" "$VG_CI_ROOT/image" "$VG_CI_ROOT/image/runtime"
+install -m 755 tools/ci/voltguard-ci.sh "$VG_CI_ROOT/"
+install -m 644 tools/ci/Dockerfile "$VG_CI_ROOT/image/"
+install -m 644 tools/ci/runtime/package.json tools/ci/runtime/package-lock.json "$VG_CI_ROOT/image/runtime/"
+VG_CI_IMAGE="voltguard-ci:$(sha256sum "$VG_CI_ROOT/image/Dockerfile" | cut -c1-12)"
+docker build -t "$VG_CI_IMAGE" "$VG_CI_ROOT/image"
+sudo install -m 644 tools/ci/voltguard-ci.service tools/ci/voltguard-ci.timer /etc/systemd/system/
 sudo systemctl daemon-reload && sudo systemctl enable --now voltguard-ci.timer
 ```
+
+Depodaki Dockerfile veya derleyici kilidini güncellemek kurulu CI imajını kendiliğinden
+değiştirmez. Güvenilen kaynaklar incelendikten sonra `image/` altındaki bu üç dosyayı
+birlikte güncelleyin ve yukarıdaki özet etiketli imajı oluşturun. `token` dosyasını
+koruyun; Git'e veya Docker build context'ine kopyalamayın. Çalışan bir CI işi varsa
+imaj kaynaklarının güncellenmesini o iş tamamlandıktan sonra yapın. Başarılı yeni
+kurulumdan sonra zamanlayıcı yeni commit'leri yeni imajla sınar.
 
 ## İşletme
 ```bash
