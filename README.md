@@ -1,6 +1,6 @@
 # VoltGuard web sitesi
 
-VoltGuard kurumsal sitesi; hizmet sayfaları, bilgi bankası, akademi, 17 mevcut hesaplayıcı, mühendislik form kütüphanesi ve PHP üyelik sistemi içerir. `voltguardekleyelim` içindeki 51 açık erişimli mühendislik uygulaması aynı siteye `/araclar/` altında eklenmiştir.
+VoltGuard kurumsal sitesi; hizmet sayfaları, bilgi bankası, akademi, 17 mevcut hesaplayıcı, mühendislik form kütüphanesi ve PHP üyelik sistemi içerir. İlk aktarımdan genişletilen 54 açık erişimli mühendislik uygulaması aynı siteye `/araclar/` altında sunulur.
 
 ## Çalıştırma ve kontrol
 
@@ -57,7 +57,9 @@ Oyun site menüsünün altında kendi alanında çalışır; tam ekran düğmesi
 
 ## Entegrasyonda alınan kararlar
 
-51 araç `/araclar/<arac-adi>/` adreslerinden açılır. Kategori ve metin araması, yerel favoriler, PDF rapor, JSON proje yedeği ve çevrimdışı HTML/ZIP indirme özellikleri korunur. ENH, AG/OG dağıtım, GES, motor, devre, sinyal/RF, PCB ve sembol/şema araçları aynı katalogda bulunur. Kaynak ve yöntem açıklamaları ile lisans bildirimleri araçlarla birlikte yayınlanır.
+54 araç `/araclar/<arac-adi>/` adreslerinden açılır. Kategori ve metin araması, yerel favoriler, PDF rapor, JSON proje yedeği ve çevrimdışı HTML/ZIP indirme özellikleri korunur. ENH, AG/OG dağıtım, GES, motor, devre, sinyal/RF, PCB ve sembol/şema araçları aynı katalogda bulunur. Kaynak ve yöntem açıklamaları ile lisans bildirimleri araçlarla birlikte yayınlanır.
+
+Eğitim atölyeleri kategorisinde Fotondan Panele, Kaçak Akım ve İletken ve Boru araçları bulunur. Bu bağımsız görsel deneyler sırasıyla ideal hücre modelini, RCD akım dengesini ve faz/nötr iletkenlerinin manyetik çevrimini açık varsayımlarla anlatır; gerçek panel tasarımı, cihaz açma süresi veya boru sıcaklığı hesabı üretmez.
 
 Mevcut `/hesaplama/` ve `/hesaplama-araclari/` adresleri korunur. Ana menü, Mühendis Merkezi ve Hesap Araçları sayfasından yeni kataloğa ulaşılır. Canonical ve sosyal paylaşım adresleri `https://voltguard.com.tr/araclar/` temelini kullanır; araç sayfaları kök site haritasına eklenir.
 
@@ -103,7 +105,7 @@ Operasyon modüllerinin PHP API, Ubuntu yardımcıları ve alan şeması uyumlu 
 
 Yeni araçlar mevcut kök `sw.js` önbelleğini kullanır; ikinci bir service worker kurulmaz. PDF ve Excel bağımlılıkları yereldir, uzak Google Fonts çağrıları kaldırılmıştır. Araçların mühendislik yöntemleri ve geçerlilik sınırları `/araclar/yontem/` sayfasında açıklanır.
 
-Yeni bölümün tüm 55 sayfası sitenin gerçek ortak menüsünü, özgün VoltGuard amblemini (`public/voltguard-logo.webp`) ve altbilgisini kullanır. Lacivert/kehribar renkleri, Outfit başlık ve Inter metin yazı tipleri, kartlar, düğmeler ve form alanları mevcut siteyle eşleştirilmiştir. Araçların özgün stilleri `#vg-tool-workspace` içinde sınırlandırılır; ortak menüye sızmaz. `assets/host-theme.css` ortak görsel düzeni uygular. Çevrimdışı ZIP aynı yerel yazı tiplerini ve menü varlıklarını içerir; PDF raporlarına site menüsü eklenmez.
+Yeni bölümün tüm 58 sayfası sitenin gerçek ortak menüsünü, özgün VoltGuard amblemini (`public/voltguard-logo.webp`) ve altbilgisini kullanır. Lacivert/kehribar renkleri, Outfit başlık ve Inter metin yazı tipleri, kartlar, düğmeler ve form alanları mevcut siteyle eşleştirilmiştir. Araçların özgün stilleri `#vg-tool-workspace` içinde sınırlandırılır; ortak menüye sızmaz. `assets/host-theme.css` ortak görsel düzeni uygular. Çevrimdışı ZIP aynı yerel yazı tiplerini ve menü varlıklarını içerir; PDF raporlarına site menüsü eklenmez.
 
 ## Entegrasyon doğrulaması
 
