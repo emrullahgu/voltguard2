@@ -1,6 +1,8 @@
 // ErpSyncJobsScreen — POZ-DEV-456
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -11,21 +13,28 @@ import { listSyncJobs, startSyncJob, listConnections, ENTITY_LABEL, ERP_VENDOR_L
 const ENTITIES: ErpEntityKind[] = ['customer', 'stock', 'invoice', 'order'];
 
 export default function ErpSyncJobsScreen() {
+  const serviceState = useServiceLoad();
   const [jobs, setJobs] = useState<ErpSyncJob[]>([]);
   const [conns, setConns] = useState<ErpConnection[]>([]);
 
-  const load = useCallback(async () => {
+  const load = useCallback(() => serviceState.read(async () => {
     setJobs(await listSyncJobs());
     setConns(await listConnections());
-  }, []);
+  }), []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  const start = async (entity: ErpEntityKind) => {
-    if (!conns.length) { Alert.alert('ERP yok', 'Önce bağlantı ekle.'); return; }
+  const start = (entity: ErpEntityKind) => serviceState.action(async () => {
+    if (!conns.length) {
+      Alert.alert('ERP yok', 'Önce bağlantı ekle.');
+      return;
+    }
     const c = conns.find(x => x.status === 'connected') || conns[0];
     await startSyncJob(c.id, entity, 'pull');
     load();
-  };
+  });
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>

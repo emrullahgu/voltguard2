@@ -16,9 +16,10 @@ function uid(): string {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
-function fromRow(r: any): Material {
+function fromRow(r: any, serverRevision?: number): Material {
   return {
     id: r.id,
+    serverRevision,
     code: r.code ?? '',
     name: r.name ?? '',
     unit: r.unit ?? 'adet',
@@ -49,12 +50,12 @@ function toRow(m: Material): Record<string, any> {
 export async function listMaterials(): Promise<Material[]> {
   if (SUPABASE_CONFIGURED) {
     try {
-      const { data, error } = await supabase
+      const { data, error, versions } = await supabase
         .from('materials')
         .select('*')
         .order('created_at', { ascending: false });
       if (!error && data) {
-        const list = data.map(fromRow);
+        const list = data.map((row: any) => fromRow(row, versions?.[row.id]));
         await AsyncStorage.setItem(KEY, JSON.stringify(list));
         return list;
       }
@@ -83,33 +84,53 @@ export async function saveMaterials(list: Material[]) {
   await AsyncStorage.setItem(KEY, JSON.stringify(list));
 }
 
+async function cachedMaterials(): Promise<Material[]> {
+  const raw = await AsyncStorage.getItem(KEY);
+  const list = raw ? JSON.parse(raw) : [];
+  if (!Array.isArray(list)) throw new Error('Malzeme önbelleği doğrulanamadı. Listeyi yenileyin.');
+  return list;
+}
+async function cacheConfirmed(list: Material[]) {
+  await saveMaterials(list).catch(() => {});
+}
+function expectedVersion(id: string, revision?: number) {
+  if (!Number.isSafeInteger(revision) || revision! < 1) throw new Error('Malzeme sürümü eksik. Kaydı yeniden açın.');
+  return { [id]: revision! };
+}
+
 export async function upsertMaterial(m: Material) {
+  const all = await cachedMaterials();
   let saved: Material = m;
   if (SUPABASE_CONFIGURED) {
-    try {
-      const row = toRow(m);
-      const { data, error } = await supabase
+      const { data, error, versions } = await supabase
         .from('materials')
-        .upsert(row, { onConflict: 'id' })
+        .upsert(toRow(m), { onConflict: 'id' })
+        .expectVersions(UUID_RE.test(m.id) ? expectedVersion(m.id, m.serverRevision) : {})
         .select()
         .single();
-      if (!error && data) saved = fromRow(data);
-    } catch { /* ignore, keep local */ }
+      if (error) throw error;
+      if (!data?.id) throw new Error('Malzeme kaydı sunucudan doğrulanamadı. Yeniden göndermeden önce listeyi kontrol edin.');
+      saved = fromRow(data, versions?.[data.id]);
   }
-  const all = await listMaterials();
   const idx = all.findIndex(x => x.id === saved.id || x.id === m.id);
   if (idx >= 0) all[idx] = saved;
   else all.unshift(saved);
-  await saveMaterials(all);
+  if (SUPABASE_CONFIGURED) await cacheConfirmed(all);
+  else await saveMaterials(all);
   void auditRepo.logCurrent({ action: 'material.upsert', tableName: 'materials', refId: saved.id, meta: { code: saved.code, name: saved.name, price: (saved as any).price ?? (saved as any).unitPrice } });
 }
 
-export async function deleteMaterial(id: string) {
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try { await supabase.from('materials').delete().eq('id', id); } catch { /* ignore */ }
+export async function deleteMaterial(id: string, serverRevision?: number) {
+  const all = await cachedMaterials();
+  if (SUPABASE_CONFIGURED) {
+    const revision = serverRevision ?? all.find(m => m.id === id)?.serverRevision;
+    const { data, error } = await supabase.from('materials').delete().eq('id', id).expectVersions(expectedVersion(id, revision)).select('id');
+    if (error) throw error;
+    if (!Array.isArray(data) || !data.some((row: any) => row.id === id)) throw new Error('Malzeme silme işlemi doğrulanamadı. Listeyi yenileyin.');
   }
-  const all = await listMaterials();
-  await saveMaterials(all.filter(m => m.id !== id));
+  const next = all.filter(m => m.id !== id);
+  if (SUPABASE_CONFIGURED) await cacheConfirmed(next);
+  else await saveMaterials(next);
   void auditRepo.logCurrent({ action: 'material.delete', tableName: 'materials', refId: id });
 }
 

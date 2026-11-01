@@ -1,6 +1,8 @@
 // IntegrationErrorsScreen — POZ-DEV-467
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -11,12 +13,18 @@ import { listIntegrationErrors, resolveIntegrationError, resetIntegrationErrors,
 type F = 'all' | 'open' | 'resolved';
 
 export default function IntegrationErrorsScreen() {
+  const serviceState = useServiceLoad();
   const [items, setItems] = useState<IntegrationErrorLog[]>([]);
   const [f, setF] = useState<F>('open');
-  const load = useCallback(async () => { setItems(await listIntegrationErrors()); }, []);
+  const load = useCallback(() => serviceState.read(async () => {
+    setItems(await listIntegrationErrors());
+  }), []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const filtered = useMemo(() => items.filter(i => f === 'all' ? true : f === 'open' ? !i.resolved : i.resolved), [items, f]);
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -28,7 +36,10 @@ export default function IntegrationErrorsScreen() {
             </TouchableOpacity>
           ))}
         </View>
-        <TouchableOpacity onPress={async () => { await resetIntegrationErrors(); load(); }} style={s.reset}>
+        <TouchableOpacity onPress={() => serviceState.action(async () => {
+          await resetIntegrationErrors();
+          load();
+        })} style={s.reset}>
           <Ionicons name="refresh-outline" size={14} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -51,7 +62,10 @@ export default function IntegrationErrorsScreen() {
             <View style={s.foot}>
               <Text style={s.sub}>{new Date(item.occurredAt).toLocaleString('tr-TR')}</Text>
               {!item.resolved && (
-                <TouchableOpacity onPress={async () => { await resolveIntegrationError(item.id); load(); }} style={s.btn}>
+                <TouchableOpacity onPress={() => serviceState.action(async () => {
+                  await resolveIntegrationError(item.id);
+                  load();
+                })} style={s.btn}>
                   <Text style={s.btnT}>Çöz</Text>
                 </TouchableOpacity>
               )}

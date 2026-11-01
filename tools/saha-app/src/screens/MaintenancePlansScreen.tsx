@@ -1,5 +1,5 @@
 // MaintenancePlansScreen — POZ-DEV-085 Periyodik bakım planı
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, FlatList,
 } from 'react-native';
@@ -33,6 +33,8 @@ export default function MaintenancePlansScreen() {
   const filterCustomerId = route.params?.customerId;
 
   const [items, setItems] = useState<MaintenancePlan[]>([]);
+  const [busy, setBusy] = useState(false);
+  const changing = useRef(false);
   const [assetName, setAssetName] = useState<string>('');
   const [name, setName] = useState('');
   const [kind, setKind] = useState<MaintenanceKind>('preventive');
@@ -49,7 +51,7 @@ export default function MaintenancePlansScreen() {
       if (a) setAssetName(a.name);
     }
   }, [filterAssetId]);
-  useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
+  useFocusEffect(useCallback(() => { refresh().catch(error => Alert.alert('Planlar yüklenemedi', error?.message || 'Sunucu bağlantısını kontrol edin.')); }, [refresh]));
 
   const filtered = useMemo(() => {
     return items.filter(p => {
@@ -64,37 +66,38 @@ export default function MaintenancePlansScreen() {
     [filtered],
   );
 
+  const change = async (commit: () => Promise<unknown>, accepted?: () => void) => {
+    if (changing.current) return;
+    changing.current = true; setBusy(true);
+    try {
+      await commit();
+      accepted?.();
+      try { await refresh(); }
+      catch { Alert.alert('İşlem kaydedildi', 'Güncel liste yüklenemedi. İşlemi yeniden göndermeden listeyi yenileyin.'); }
+    } catch (error: any) {
+      Alert.alert('İşlem tamamlanamadı', error?.message || 'Sunucu bağlantısını kontrol edin.');
+    } finally { changing.current = false; setBusy(false); }
+  };
   const onAdd = async () => {
     if (!name.trim()) { Alert.alert('Eksik', 'Plan adı zorunlu.'); return; }
-    const freq = Number(frequencyDays) || 30;
+    const freq = Number(frequencyDays);
+    if (!Number.isInteger(freq) || freq < 1) { Alert.alert('Geçersiz süre', 'Frekans pozitif tam gün olmalıdır.'); return; }
     const customer = customers.find(c => c.id === customerId);
     const assignee = employees.find(e => e.id === assignedToId);
-    await createPlan({
-      name: name.trim(),
-      kind,
-      frequencyDays: freq,
-      assetId: filterAssetId,
-      assetName: filterAssetId ? assetName : undefined,
-      customerId,
-      customerName: customer ? (customer.title || customer.shortName) : undefined,
-      assignedToId,
-      assignedToName: assignee?.name,
-      active: true,
-      notes: notes.trim() || undefined,
-    });
-    setName(''); setNotes(''); setFrequencyDays('30');
-    await refresh();
+    await change(() => createPlan({
+      name: name.trim(), kind, frequencyDays: freq,
+      assetId: filterAssetId, assetName: filterAssetId ? assetName : undefined,
+      customerId, customerName: customer ? (customer.title || customer.shortName) : undefined,
+      assignedToId, assignedToName: assignee?.name, active: true, notes: notes.trim() || undefined,
+    }), () => { setName(''); setNotes(''); setFrequencyDays('30'); });
   };
 
-  const onMarkDone = async (p: MaintenancePlan) => {
-    await markDone(p.id);
-    await refresh();
-  };
+  const onMarkDone = (p: MaintenancePlan) => change(() => markDone(p.id, undefined, p.serverRevision));
 
   const onDelete = (p: MaintenancePlan) => {
     Alert.alert('Sil', `${p.name} silinsin mi?`, [
       { text: 'Vazgeç', style: 'cancel' },
-      { text: 'Sil', style: 'destructive', onPress: async () => { await deletePlan(p.id); await refresh(); } },
+      { text: 'Sil', style: 'destructive', onPress: () => change(() => deletePlan(p.id, p.serverRevision)) },
     ]);
   };
 
@@ -169,7 +172,7 @@ export default function MaintenancePlansScreen() {
         <Text style={styles.label}>Notlar</Text>
         <TextInput style={[styles.input, { minHeight: 48, textAlignVertical: 'top' }]} multiline value={notes} onChangeText={setNotes} placeholder="Açıklama" placeholderTextColor={colors.text.faint} />
 
-        <TouchableOpacity style={styles.addBtn} onPress={onAdd}>
+        <TouchableOpacity style={styles.addBtn} onPress={onAdd} disabled={busy}>
           <Ionicons name="add-circle-outline" size={16} color="#fff" />
           <Text style={styles.addText}>Plan Ekle</Text>
         </TouchableOpacity>
@@ -200,10 +203,10 @@ export default function MaintenancePlansScreen() {
                 </Text>
               </View>
               <View style={{ gap: 6 }}>
-                <TouchableOpacity style={[styles.miniBtn, { backgroundColor: brand.green }]} onPress={() => onMarkDone(p)}>
+                <TouchableOpacity style={[styles.miniBtn, { backgroundColor: brand.green }]} onPress={() => onMarkDone(p)} disabled={busy}>
                   <Ionicons name="checkmark" size={13} color="#fff" />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.miniBtn, { backgroundColor: colors.rose.default }]} onPress={() => onDelete(p)}>
+                <TouchableOpacity style={[styles.miniBtn, { backgroundColor: colors.rose.default }]} onPress={() => onDelete(p)} disabled={busy}>
                   <Ionicons name="trash-outline" size={13} color="#fff" />
                 </TouchableOpacity>
               </View>

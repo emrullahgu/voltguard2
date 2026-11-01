@@ -26,8 +26,8 @@ test('A stale vehicle form is rejected by real native CAS transport and does not
 });
 test('Vehicle deletion propagates native CAS failure and cannot claim success for zero affected rows',async()=>{
  const f=fixture(),vehicle=(await f.service.listVehicles())[0];f.remoteEdit();
- await assert.rejects(f.service.deleteVehicle(vehicle.id),e=>e.status===409);assert.ok(f.row());assert.equal(f.calls.at(-1).operation,'delete');
- await f.service.listVehicles();f.emptyDelete();await assert.rejects(f.service.deleteVehicle(vehicle.id),/doğrulanamadı/);assert.ok(f.row());
+ await assert.rejects(f.service.deleteVehicle(vehicle.id,vehicle.serverRevision),e=>e.status===409);assert.ok(f.row());assert.equal(f.calls.at(-1).operation,'delete');
+ const current=(await f.service.listVehicles())[0];f.emptyDelete();await assert.rejects(f.service.deleteVehicle(vehicle.id,current.serverRevision),/doğrulanamadı/);assert.ok(f.row());
 });
 test('Vehicle read failures remain errors instead of returning an empty or stale cached list',async()=>{
  const f=fixture();assert.equal((await f.service.listVehicles()).length,1);f.offline();

@@ -355,6 +355,10 @@ export default function QuoteDetailScreen() {
             <TouchableOpacity
               style={styles.shareBtn}
               onPress={async () => {
+                if (typeof window !== 'undefined' && !!(window as any).VoltGuardEmployeeModules) {
+                  showToast('Müşteri kabul bağlantısı bu portalda kullanılamıyor. Teklif kaydı değiştirilmedi ve bağlantı paylaşılmadı.', 'error');
+                  return;
+                }
                 const token = generateQuoteShareToken(quote.id);
                 if (!token) {
                   showToast('Link oluşturulamadı.', 'error');

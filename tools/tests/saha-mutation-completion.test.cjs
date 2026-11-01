@@ -7,7 +7,7 @@ const root=path.resolve(__dirname,'../saha-app/src');
 function load(file,stubs={},globals={}){
  const module={exports:{}};
  const code=ts.transpileModule(fs.readFileSync(path.join(root,file),'utf8'),{fileName:file,compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,esModuleInterop:true}}).outputText;
- vm.runInNewContext(code,{module,exports:module.exports,require:name=>{if(!(name in stubs))throw Error('Unexpected '+name);return stubs[name];},console:{warn:()=>{}},setTimeout,clearTimeout,Date,Math,JSON,Object,Map,Set,Promise,Error,AbortController,...globals},{filename:file});
+ vm.runInNewContext(code,{module,exports:module.exports,require:name=>{if(!(name in stubs))throw Error('Unexpected '+name);return stubs[name];},console:{warn:()=>{}},setTimeout,clearTimeout,Date,Math,JSON,Object,Map,Set,Promise,Error,AbortController,URLSearchParams,...globals},{filename:file});
  return module.exports;
 }
 const flush=async()=>{for(let i=0;i<40;i++)await Promise.resolve();};

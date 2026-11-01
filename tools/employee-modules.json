@@ -11,6 +11,16 @@
   ],
   "modules": [
     {
+      "id": "api-servisleri",
+      "label": "Canlı veri ve yapay zekâ",
+      "description": "Enerji piyasası verilerini ve seçilen yapay zekâ sağlayıcısını kullanın; API bağlantılarını deneyin.",
+      "group": "Enerji ve kontrol",
+      "variants": [
+        { "id": "veri", "label": "Veri servisleri", "route": "ConnectedData" },
+        { "id": "asistan", "label": "Bağlı yapay zekâ", "route": "ConnectedAi" }
+      ]
+    },
+    {
       "id": "dashboard",
       "label": "Ürün ve fiyat analizi",
       "description": "Geçmiş fatura ürünlerini, birim fiyatlarını ve katalog dağılımını inceleyin.",

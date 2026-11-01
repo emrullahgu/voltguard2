@@ -13,7 +13,7 @@ function load(relative,stubs={},globals={}){
  const source=fs.readFileSync(path.join(root,relative),'utf8');
  const code=ts.transpileModule(source,{fileName:relative,compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,esModuleInterop:true}}).outputText;
  const module={exports:{}};
- vm.runInNewContext(code,{module,exports:module.exports,require:ref=>{if(ref in stubs)return stubs[ref];throw new Error('Unexpected dependency '+ref);},console,Date,Math,Map,Set,JSON,Object,Array,Error,Promise,TextEncoder,AbortController,setTimeout,clearTimeout,...globals},{filename:relative});
+ vm.runInNewContext(code,{module,exports:module.exports,require:ref=>{if(ref in stubs)return stubs[ref];throw new Error('Unexpected dependency '+ref);},console,Date,Math,Map,Set,JSON,Object,Array,Error,Promise,TextEncoder,AbortController,URLSearchParams,setTimeout,clearTimeout,...globals},{filename:relative});
  return module.exports;
 }
 function transportFixture(){

@@ -11,6 +11,7 @@ import { RootStackParamList, FormResponse, FormTemplate } from '../types';
 import { listResponses } from '../services/formResponses';
 import { listTemplates } from '../services/formTemplates';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -27,13 +28,16 @@ export default function FormResponsesScreen() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState('');
 
   const load = useCallback(async () => {
+    setError('');
     try {
       const [resps, tpls] = await Promise.all([listResponses(), listTemplates()]);
       setResponses(resps);
       setTemplates(tpls);
-    } finally {
+    } catch (e: any) { setError(e?.message || 'Form yanıtları yüklenemedi.'); }
+    finally {
       setLoading(false);
       setRefreshing(false);
     }
@@ -61,6 +65,7 @@ export default function FormResponsesScreen() {
     return list;
   }, [responses, filterTemplateId, filterWorkOrderId, search]);
 
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="Form yanıtları yüklenemedi" message={error} onRetry={load} /></SafeAreaView>;
   if (loading) {
     return (
       <SafeAreaView style={styles.safe}>

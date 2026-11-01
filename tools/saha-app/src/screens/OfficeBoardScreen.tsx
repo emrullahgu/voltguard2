@@ -1,7 +1,7 @@
 // OfficeBoardScreen — kanban pano (Notion-database benzeri). Mobil-öncelikli:
 // tek-dokunuş kolon taşıma okları, satır-içi hızlı kart ekleme, kolon yönetimi
 // (ad/renk/sil/sırala), etiket + kontrol listesi, termin gecikme vurgusu, snap kaydırma.
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator,
   TextInput, Modal, Pressable, Alert, useWindowDimensions, Linking,
@@ -27,6 +27,9 @@ import { notifyUsers } from '../services/notifications';
 import { useAppContext } from '../context/AppContext';
 import { newUuid } from '../services/data/repository';
 import { localDateISO } from '../utils/date';
+import { createSnapshotSaveQueue, rebaseSnapshotDraft } from '../portal/snapshotSaveQueue';
+import OfficeWriteRecovery from '../components/OfficeWriteRecovery';
+import ErrorState from '../components/ErrorState';
 
 const ATTACH_ICON: Record<OfficeAttachment['kind'], keyof typeof Ionicons.glyphMap> = {
   image: 'image-outline', video: 'videocam-outline', pdf: 'document-text-outline', audio: 'musical-notes-outline', other: 'document-outline',
@@ -49,36 +52,105 @@ export default function OfficeBoardScreen() {
 
   const [board, setBoard] = useState<OfficeBoard | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [editing, setEditing] = useState<{ columnId: string; cardId: string } | null>(null);
   const [colMenu, setColMenu] = useState<string | null>(null);
   const [addingIn, setAddingIn] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const [remoteChanged, setRemoteChanged] = useState(false);
+  const [saveError, setSaveError] = useState(false);
+  const [recovery, setRecovery] = useState<OfficeBoard | null>(null);
+  const [checking, setChecking] = useState(false);
   // Mobilde yatay kanban dar geliyor → varsayılan dikey "liste" görünümü; geniş ekranda board.
   const [view, setView] = useState<'board' | 'list'>(width < 700 ? 'list' : 'board');
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dirtyRef = useRef(false);
+  const boardRef = useRef<OfficeBoard | null>(null);
+  const editorGeneration = useRef(0);
+  const editSerial = useRef(0);
+  const submittedSerial = useRef(0);
+  const saveQueue = useRef(createSnapshotSaveQueue<OfficeBoard>(saveBoard));
+  const alive = useRef(true);
+  const readRequest = useRef(0);
+  const currentBoardId = useRef(boardId);
+  currentBoardId.current = boardId;
+  useEffect(() => { alive.current = true; return () => { alive.current = false; readRequest.current++; }; }, []);
 
-  const load = useCallback(async () => {
-    if (!boardId) { setLoading(false); return; }
-    setBoard((await getBoard(boardId)) ?? null);
-    setLoading(false);
+  const load = useCallback(async (discardDraft = false) => {
+    if (!alive.current) return;
+    const request = ++readRequest.current, serial = editSerial.current, generation = editorGeneration.current;
+    const isCurrent = () => alive.current && request === readRequest.current && currentBoardId.current === boardId;
+    if (!discardDraft && dirtyRef.current && boardRef.current?.id === boardId) return;
+    setLoadError('');
+    if (!boardRef.current || boardRef.current.id !== boardId) setLoading(true);
+    try {
+    if (!boardId) throw new Error('Açılacak pano seçilmedi.');
+    const loaded = (await getBoard(boardId)) ?? null;
+    if (!isCurrent()) return;
+    if (editSerial.current !== serial || editorGeneration.current !== generation) { setRemoteChanged(true); return; }
+    if (!loaded) throw new Error('Pano bulunamadı. Listeyi yenileyin.');
+    if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null; }
+    boardRef.current = loaded;
+    editorGeneration.current++;
+    if (loaded) saveQueue.current.reset(loaded);
+    setRecovery(null); setSaveError(false);
+    editSerial.current = 0; submittedSerial.current = 0; dirtyRef.current = false;
+    setRemoteChanged(false);
+    setBoard(loaded);
+    } catch (error: any) { if (isCurrent()) setLoadError(error?.message || 'Ofis panosu yüklenemedi.'); }
+    finally { if (isCurrent()) setLoading(false); }
   }, [boardId]);
-  useFocusEffect(useCallback(() => { load(); }, [load]));
+  useFocusEffect(useCallback(() => { void load(); return () => { readRequest.current++; }; }, [load]));
   useFocusEffect(useCallback(() => {
-    const off = subscribeOffice('office_boards', () => { if (dirtyRef.current) setRemoteChanged(true); else load(); });
+    const off = subscribeOffice('office_boards', () => { if (!alive.current) return; if (dirtyRef.current) setRemoteChanged(true); else void load(); });
     return off;
   }, [load]));
 
-  const persist = (next: OfficeBoard, debounced = false) => {
-    dirtyRef.current = true;
+  const submit = useCallback((next: OfficeBoard, serial: number) => {
+    if (submittedSerial.current >= serial) return;
+    submittedSerial.current = serial;
+    const expectedGeneration = editorGeneration.current;
+    void saveQueue.current.save(next).then(saved => {
+      if (!alive.current || editorGeneration.current !== expectedGeneration || boardRef.current?.id !== saved.id) return;
+      boardRef.current = { ...boardRef.current, serverRevision: saved.serverRevision, updatedAt: saved.updatedAt };
+      setBoard(current => current?.id === saved.id ? { ...current, serverRevision: saved.serverRevision, updatedAt: saved.updatedAt } : current);
+      if (editSerial.current === serial) { dirtyRef.current = false; setSaveError(false); }
+    }).catch(() => { if (alive.current && editorGeneration.current === expectedGeneration) setSaveError(true); });
+  }, []);
+  useEffect(() => () => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
-    const run = () => saveBoard({ id: next.id, title: next.title, icon: next.icon, description: next.description, columns: next.columns })
-      .then(() => { dirtyRef.current = false; }).catch(() => {});
+    if (dirtyRef.current && boardRef.current) submit(boardRef.current, editSerial.current);
+  }, [submit]);
+  const persist = (next: OfficeBoard, debounced = false) => {
+    boardRef.current = next;
+    dirtyRef.current = true;
+    const serial = ++editSerial.current;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    const run = () => { saveTimer.current = null; submit(next, serial); };
     if (debounced) saveTimer.current = setTimeout(run, 600); else run();
   };
   const update = (mut: (b: OfficeBoard) => OfficeBoard, debounced = false) =>
     setBoard(prev => { if (!prev) return prev; const next = mut(prev); persist(next, debounced); return next; });
+
+  const checkCurrent = async () => {
+    if (checking || !boardId) return;
+    setChecking(true);
+    try {
+      const current = await getBoard(boardId);
+      if (!current) throw new Error('Sunucudaki pano bulunamadı. Taslağınız bu ekranda korunuyor.');
+      setRecovery(current); setSaveError(true);
+    } catch (error: any) { Alert.alert('Güncel kayıt yüklenemedi', error?.message || 'Bağlantıyı kontrol edin.'); }
+    finally { setChecking(false); }
+  };
+  const applyDraft = () => {
+    const draft = boardRef.current;
+    if (!draft || !recovery || draft.id !== recovery.id) return;
+    const next = rebaseSnapshotDraft(draft, recovery, ['title', 'icon', 'description', 'columns']);
+    editorGeneration.current++; saveQueue.current.reset(recovery);
+    editSerial.current = 0; submittedSerial.current = 0;
+    setRecovery(null); setRemoteChanged(false); setSaveError(false); setBoard(next);
+    persist(next, false);
+  };
 
   const setColumns = (columns: OfficeBoardColumn[], debounced = false) => update(b => ({ ...b, columns }), debounced);
 
@@ -122,11 +194,12 @@ export default function OfficeBoardScreen() {
     if (!board) return;
     Alert.alert('Panoyu sil', 'Bu pano ve tüm kartları silinecek.', [
       { text: 'Vazgeç', style: 'cancel' },
-      { text: 'Sil', style: 'destructive', onPress: async () => { try { await deleteBoard(board.id); nav.goBack(); } catch (e: any) { Alert.alert('Silinemedi', e?.message || 'Hata'); } } },
+      { text: 'Sil', style: 'destructive', onPress: async () => { try { await deleteBoard(board.id, board.serverRevision); nav.goBack(); } catch (e: any) { Alert.alert('Silinemedi', e?.message || 'Hata'); } } },
     ]);
   };
 
-  if (loading) return <SafeAreaView style={s.safe} edges={['bottom']}><View style={s.center}><ActivityIndicator color={brand.green} /></View></SafeAreaView>;
+  if (loadError && (!board || board.id !== boardId)) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Ofis panosu yüklenemedi" message={loadError} onRetry={() => { void load(); }} /></SafeAreaView>;
+  if (loading || board && board.id !== boardId) return <SafeAreaView style={s.safe} edges={['bottom']}><View style={s.center}><ActivityIndicator color={brand.green} /></View></SafeAreaView>;
   if (!board) return <SafeAreaView style={s.safe} edges={['bottom']}><View style={s.center}><Text style={s.muted}>Pano bulunamadı.</Text></View></SafeAreaView>;
 
   const editCard = editing ? board.columns.find(c => c.id === editing.columnId)?.cards.find(k => k.id === editing.cardId) : undefined;
@@ -189,8 +262,14 @@ export default function OfficeBoardScreen() {
         <TouchableOpacity onPress={onDeleteBoard} hitSlop={HS}><Ionicons name="trash-outline" size={20} color={colors.rose.default} /></TouchableOpacity>
       </View>
 
+      {saveError && <OfficeWriteRecovery checking={checking}
+        current={recovery ? { title: recovery.title, summary: recovery.columns.map(column => `${column.title}: ${column.cards.map(card => card.title).join(', ') || 'Boş'}`).join(' · ').slice(0, 600) } : null}
+        onCheck={checkCurrent} onOpen={() => { void load(true); }} onApply={applyDraft} />}
+      {!!loadError && <TouchableOpacity style={s.remoteBanner} accessibilityRole="button" accessibilityLabel="Ofis panosu bağlantısını yeniden kontrol et" onPress={() => { if (dirtyRef.current) void checkCurrent(); else void load(); }}>
+        <Text accessibilityRole="alert" style={s.remoteText}>{loadError} Görüntülenen kayıt ve taslak korunuyor. Yeniden kontrol etmek için dokunun.</Text>
+      </TouchableOpacity>}
       {remoteChanged && (
-        <TouchableOpacity style={s.remoteBanner} onPress={() => { setRemoteChanged(false); load(); }} activeOpacity={0.85}>
+        <TouchableOpacity style={s.remoteBanner} onPress={() => { if (dirtyRef.current) checkCurrent(); else load(); }} activeOpacity={0.85}>
           <Ionicons name="sync-outline" size={16} color="#fff" />
           <Text style={s.remoteText}>Pano güncellendi. Yenilemek için dokun.</Text>
         </TouchableOpacity>

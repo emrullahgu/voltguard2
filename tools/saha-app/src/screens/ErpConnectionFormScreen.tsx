@@ -1,6 +1,8 @@
 // ErpConnectionFormScreen — POZ-DEV-455
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
@@ -15,6 +17,7 @@ type R = RouteProp<RootStackParamList, 'ErpConnectionForm'>;
 const VENDORS: ErpVendor[] = ['logo', 'mikro', 'netsis', 'custom'];
 
 export default function ErpConnectionFormScreen() {
+  const serviceState = useServiceLoad();
   const nav = useNavigation<Nav>();
   const route = useRoute<R>();
   const id = route.params?.connectionId;
@@ -24,19 +27,30 @@ export default function ErpConnectionFormScreen() {
   const [apiKey, setApiKey] = useState('');
 
   useEffect(() => {
-    (async () => {
-      if (!id) return;
+    void serviceState.read(async () => {
       const all = await listConnections();
+      if (!id) return;
       const c = all.find(x => x.id === id);
-      if (c) { setVendor(c.vendor); setName(c.name); setBaseUrl(c.baseUrl || ''); setApiKey(c.apiKey || ''); }
-    })();
+      if (c) {
+        setVendor(c.vendor);
+        setName(c.name);
+        setBaseUrl(c.baseUrl || '');
+        setApiKey(c.apiKey || '');
+      }
+    });
   }, [id]);
 
-  const save = async () => {
-    if (!name.trim()) { Alert.alert('Eksik', 'Ad gerekli'); return; }
+  const save = () => serviceState.action(async () => {
+    if (!name.trim()) {
+      Alert.alert('Eksik', 'Ad gerekli');
+      return;
+    }
     await saveConnection({ id, vendor, name: name.trim(), baseUrl: baseUrl.trim() || undefined, apiKey: apiKey.trim() || undefined });
     nav.goBack();
-  };
+  });
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>

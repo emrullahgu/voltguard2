@@ -1,6 +1,8 @@
 // ApiUsageLogsScreen — POZ-DEV-466
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -12,15 +14,24 @@ const codeColor = (c: number) => c >= 500 ? '#ef4444' : c >= 400 ? '#f59e0b' : c
 const methodColor: Record<string, string> = { GET: '#22c55e', POST: '#0ea5e9', PUT: '#f59e0b', DELETE: '#ef4444', PATCH: '#a855f7' };
 
 export default function ApiUsageLogsScreen() {
+  const serviceState = useServiceLoad();
   const [items, setItems] = useState<ApiUsageLog[]>([]);
-  const load = useCallback(async () => { setItems(await listApiUsageLogs()); }, []);
+  const load = useCallback(() => serviceState.read(async () => {
+    setItems(await listApiUsageLogs());
+  }), []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
       <View style={s.bar}>
         <Text style={s.title}>API Kullanımı ({items.length})</Text>
-        <TouchableOpacity onPress={async () => { await resetApiUsageLogs(); load(); }} style={s.reset}>
+        <TouchableOpacity onPress={() => serviceState.action(async () => {
+          await resetApiUsageLogs();
+          load();
+        })} style={s.reset}>
           <Ionicons name="refresh-outline" size={14} color="#fff" />
         </TouchableOpacity>
       </View>

@@ -23,6 +23,7 @@ import {
 } from '../services/formTemplates';
 import { FormTemplate, FormTemplateCategory, RootStackParamList } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
 import { a11yButton } from '../utils/a11y';
 import { FlatList, RefreshControl } from 'react-native';
@@ -54,13 +55,16 @@ export default function FormTemplatesScreen() {
   const [filter, setFilter] = useState<(typeof CATEGORIES)[number]>('Tümü');
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
+    setError('');
     try {
       await ensureSeeded();
       setTemplates(await listTemplates());
-    } finally { setLoading(false); setLoaded(true); }
+    } catch (e: any) { setError(e?.message || 'Şablonlar yüklenemedi.'); }
+    finally { setLoading(false); setLoaded(true); }
   }, []);
 
   useFocusEffect(
@@ -82,13 +86,15 @@ export default function FormTemplatesScreen() {
           text: 'Sil',
           style: 'destructive',
           onPress: async () => {
-            try { await deleteTemplate(tpl.id); load(); }
+            try { await deleteTemplate(tpl.id, tpl.serverRevision); await load(); }
             catch (e: any) { Alert.alert('Hata', e?.message || 'Şablon silinemedi.'); }
           },
         },
       ],
     );
   };
+
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="Şablonlar yüklenemedi" message={error} onRetry={load} /></SafeAreaView>;
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>

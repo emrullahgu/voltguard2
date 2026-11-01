@@ -1,5 +1,5 @@
 // OfficeBoardsScreen — Ofis panoları listesi (Notion-database benzeri kanban panolar).
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, TextInput, Modal, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,6 +10,7 @@ import { RootStackParamList, OfficeBoard } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { listBoards, saveBoard, countCards, subscribeOffice } from '../services/officeWorkspace';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -18,13 +19,21 @@ export default function OfficeBoardsScreen() {
   const { user, profile } = useAuth();
   const [boards, setBoards] = useState<OfficeBoard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState('');
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState('');
   const [busy, setBusy] = useState(false);
+  const alive = useRef(true), readRequest = useRef(0);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; readRequest.current++; }; }, []);
 
   const refresh = useCallback(async () => {
-    try { setBoards((await listBoards()).filter(b => !b.archived)); }
-    finally { setLoading(false); }
+    if (!alive.current) return;
+    const request = ++readRequest.current, isCurrent = () => alive.current && readRequest.current === request;
+    setLoading(true); setLoadError('');
+    try { const rows = (await listBoards()).filter(b => !b.archived); if (isCurrent()) { setBoards(rows); setLoaded(true); } }
+    catch (error: any) { if (isCurrent()) setLoadError(error?.message || 'Ofis panoları yüklenemedi.'); }
+    finally { if (isCurrent()) setLoading(false); }
   }, []);
   useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
   useEffect(() => subscribeOffice('office_boards', refresh), [refresh]);
@@ -43,15 +52,17 @@ export default function OfficeBoardsScreen() {
     } finally { setBusy(false); }
   };
 
-  if (loading) {
+  if (loadError && !loaded) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Ofis panoları yüklenemedi" message={loadError} onRetry={() => { void refresh(); }} /></SafeAreaView>;
+  if (loading && !loaded) {
     return <SafeAreaView style={s.safe} edges={['bottom']}><View style={s.center}><ActivityIndicator color={brand.green} /></View></SafeAreaView>;
   }
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
       <ScrollView contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
+        {!!loadError && <ErrorState title="Ofis panoları yenilenemedi" message={loadError + ' Son doğrulanmış görünüm korunuyor.'} onRetry={() => { void refresh(); }} />}
         {boards.length === 0 ? (
-          <EmptyState icon="grid-outline" title="Henüz pano yok" description="Projeler ve girişimler için ilk kanban panonuzu oluşturun." />
+          !loadError && <EmptyState icon="grid-outline" title="Henüz pano yok" description="Projeler ve girişimler için ilk kanban panonuzu oluşturun." />
         ) : boards.map(b => (
           <TouchableOpacity key={b.id} style={s.card} onPress={() => nav.navigate('OfficeBoard', { boardId: b.id })} activeOpacity={0.85}>
             <Text style={s.cardIcon}>{b.icon}</Text>

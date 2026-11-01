@@ -215,6 +215,12 @@ class SourceTests(unittest.TestCase):
         records = {message["id"]: message}
         origins = {message["id"]: {"native": True, "raw": raw}}
         self.assertTrue(source.file_reference_allowed(records, origins, "chat-attachments", path))
+        raw["deleted_at"] = "2026-11-01T10:00:00Z"
+        self.assertFalse(source.file_reference_allowed(records, origins, "chat-attachments", path))
+        raw.pop("deleted_at")
+        message["payload"]["deleted_at"] = "2026-11-01T10:00:00Z"
+        self.assertFalse(source.file_reference_allowed(records, origins, "chat-attachments", path))
+        message["payload"].pop("deleted_at")
         message["collection"] = "customers"
         self.assertFalse(source.file_reference_allowed(records, origins, "chat-attachments", path))
         message["collection"] = "messages"

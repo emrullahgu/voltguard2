@@ -1,6 +1,6 @@
 // AssetDetailScreen — POZ-DEV-086
 // Cihaz detayı + okumalar + bakım planları + denetimler + uygunsuzluklar
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert,
 } from 'react-native';
@@ -15,6 +15,7 @@ import { listByAsset as readingsByAsset, READING_KIND_LABEL } from '../services/
 import { listByAsset as plansByAsset, MAINTENANCE_KIND_LABEL } from '../services/maintenancePlans';
 import { listInspections, listNonconformities, INSPECTION_TYPE_LABEL, SEVERITY_COLOR, NC_STATUS_LABEL } from '../services/inspections';
 import { Asset, EnergyReading, Inspection, MaintenancePlan, Nonconformity, RootStackParamList } from '../types';
+import ErrorState from '../components/ErrorState';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'AssetDetail'>;
 type RP = RouteProp<RootStackParamList, 'AssetDetail'>;
@@ -34,8 +35,13 @@ export default function AssetDetailScreen() {
   const [plans, setPlans] = useState<MaintenancePlan[]>([]);
   const [inspections, setInspections] = useState<Inspection[]>([]);
   const [ncs, setNcs] = useState<Nonconformity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const deleting = useRef(false);
 
   const refresh = useCallback(async () => {
+    setLoading(true); setError('');
+    try {
     const [a, rd, pl, ins, nc] = await Promise.all([
       getAsset(assetId),
       readingsByAsset(assetId),
@@ -43,15 +49,19 @@ export default function AssetDetailScreen() {
       listInspections(),
       listNonconformities(),
     ]);
-    setAsset(a || null);
+    if (!a) throw new Error('Cihaz kaydı bulunamadı. Listeyi yenileyin.');
+    setAsset(a);
     setReadings(rd);
     setPlans(pl);
     setInspections(ins.filter(i => i.assetId === assetId));
     setNcs(nc.filter(n => n.assetId === assetId));
+    } catch (e: any) { setError(e?.message || 'Cihaz bilgileri yüklenemedi.'); }
+    finally { setLoading(false); }
   }, [assetId]);
   useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
 
-  if (!asset) {
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="Cihaz işlemi tamamlanamadı" message={error} onRetry={refresh} /></SafeAreaView>;
+  if (loading || !asset) {
     return <SafeAreaView style={styles.safe}><Text style={styles.loading}>Yükleniyor…</Text></SafeAreaView>;
   }
 
@@ -60,7 +70,13 @@ export default function AssetDetailScreen() {
       { text: 'Vazgeç', style: 'cancel' },
       {
         text: 'Sil', style: 'destructive',
-        onPress: async () => { await deleteAsset(asset.id); nav.goBack(); },
+        onPress: async () => {
+          if (deleting.current) return;
+          deleting.current = true;
+          try { await deleteAsset(asset.id, asset.serverRevision); nav.goBack(); }
+          catch (e: any) { setError(e?.message || 'Cihaz silinemedi. Kaydı yeniden kontrol edin.'); }
+          finally { deleting.current = false; }
+        },
       },
     ]);
   };

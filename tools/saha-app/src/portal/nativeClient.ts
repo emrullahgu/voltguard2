@@ -10,7 +10,11 @@ class NativeQuery implements PromiseLike<any> {
   private args: any;
   private promise: Promise<any> | null = null;
   private rejectErrors=false;
-  constructor(table: string) { this.args = { table, operation: 'select', select: '*', filters: [], order: [], returning: true }; }
+  private expectedVersions: Record<string, number> | null = null;
+  constructor(table: string, private rememberVersions = true) { this.args = { table, operation: 'select', select: '*', filters: [], order: [], returning: true }; }
+  // Editors can pin the revision belonging to their loaded snapshot. An empty
+  // map deliberately means "new record", rather than the latest global read.
+  expectVersions(versions: Record<string, number>) { this.expectedVersions = { ...versions }; return this; }
   select(columns = '*', options: any = {}) { this.args.select = columns; this.args.returning = true; if (options.count) this.args.count = options.count; if (options.head) this.args.head = true; return this; }
   insert(rows: any, options: any = {}) { this.args.operation = 'insert'; this.args.rows = Array.isArray(rows) ? rows : [rows]; this.args.returning = false; Object.assign(this.args, options); return this; }
   update(row: any) { this.args.operation = 'update'; this.args.rows = row; this.args.returning = false; return this; }
@@ -40,11 +44,13 @@ class NativeQuery implements PromiseLike<any> {
   abortSignal(_signal: AbortSignal) { return this; }
   throwOnError() { this.rejectErrors=true;return this; }
   private async execute() {
-    const args = { ...this.args, versions: { ...(revisions[this.args.table] || {}) } };
+    const args = { ...this.args, versions: { ...(this.expectedVersions ?? revisions[this.args.table] ?? {}) } };
     const result: any = await portalRpc('app_saha_query', args);
-    for (const [table, versions] of Object.entries(result.tableVersions || {})) revisions[table] = { ...(revisions[table] || {}), ...(versions as any) };
-    revisions[args.table] = { ...(revisions[args.table] || {}), ...(result.versions || {}) };
-    return { data: result.data ?? null, count: result.count ?? null, error: null, status: 200, statusText: 'OK' };
+    if (this.rememberVersions) {
+      for (const [table, versions] of Object.entries(result.tableVersions || {})) revisions[table] = { ...(revisions[table] || {}), ...(versions as any) };
+      revisions[args.table] = { ...(revisions[args.table] || {}), ...(result.versions || {}) };
+    }
+    return { data: result.data ?? null, versions: result.versions || {}, count: result.count ?? null, error: null, status: 200, statusText: 'OK' };
   }
   then<TResult1 = any, TResult2 = never>(resolve?: ((value: any) => TResult1 | PromiseLike<TResult1>) | null, reject?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null): Promise<TResult1 | TResult2> {
     if (!this.promise) this.promise = this.execute().catch(error=>{if(this.rejectErrors)throw error;return {data:null,count:null,error,status:error.status||500,statusText:'Error'};});
@@ -62,7 +68,9 @@ function nativeChannel(_name: string) {
         try {
           for (const handler of handlers) {
             const table = handler.filter.table; if (!table) continue;
-            const query = new NativeQuery(table).select('*').limit(500);
+            // A change notification is not an editor reload. In particular a
+            // dirty form keeps its original CAS token until it accepts a reload.
+            const query = new NativeQuery(table, false).select('*').limit(500);
             const filter = handler.filter.filter || '';
             if (filter) {
               const match = /^([A-Za-z_][A-Za-z0-9_]*)=(eq|neq|is)\.(.+)$/.exec(filter);

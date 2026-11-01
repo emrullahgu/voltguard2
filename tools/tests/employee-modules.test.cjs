@@ -25,7 +25,7 @@ const user=role=>({id:'synthetic-native-employee',approved:true,role});
 
 test('Employee module manifest covers each imported native hub through a parent domain',()=>{
  const ids=new Set(),nativeRoutes=new Set();
- assert.equal(manifest.modules.length,37);
+ assert.equal(manifest.modules.length,38);
  assert.equal(new Set(manifest.groups).size,manifest.groups.length);
  for(const module of manifest.modules){
   assert.match(module.id,/^[a-z][a-z0-9-]+$/);assert.ok(!ids.has(module.id),'duplicate employee domain');ids.add(module.id);

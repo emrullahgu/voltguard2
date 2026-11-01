@@ -1,7 +1,7 @@
 import { siteHubStyles, siteHubCardStyle, siteHubIconStyle, siteHubIconColor, siteHubIconSize, siteHubStatStyle, siteHubStatColor } from '../portal/siteHubStyles';
 // FormHubScreen — POZ-DEV-149 Form sistem merkez ekranı
 import { useMeasuredGrid } from '../portal/useMeasuredGrid';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { localDateISO } from '../utils/date';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,6 +13,7 @@ import { colors, spacing, radius, typography } from '../theme';
 import { RootStackParamList } from '../types';
 import { listTemplates } from '../services/formTemplates';
 import { listResponses } from '../services/formResponses';
+import ErrorState from '../components/ErrorState';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -40,9 +41,11 @@ export default function FormHubScreen() {
   const [seedCount, setSeedCount] = useState(0);
   const [respCount, setRespCount] = useState(0);
   const [todayCount, setTodayCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    (async () => {
+  const load = useCallback(async () => {
+      setLoading(true); setError('');
       try {
         const [tpls, resps] = await Promise.all([listTemplates(), listResponses()]);
         setTplCount(tpls.length);
@@ -51,9 +54,10 @@ export default function FormHubScreen() {
         const today = localDateISO();
         // UTC slice yerine yerel gün karşılaştır (gece yarısı UTC+3 kayması).
         setTodayCount(resps.filter(r => r.createdAt && localDateISO(new Date(r.createdAt)) === today).length);
-      } catch {}
-    })();
+      } catch (e: any) { setError(e?.message || 'Form sayıları yüklenemedi.'); }
+      finally { setLoading(false); }
   }, []);
+  useEffect(() => { void load(); }, [load]);
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
@@ -69,10 +73,12 @@ export default function FormHubScreen() {
         </View>
 
         <View style={styles.statusRow}>
+          {error ? <View style={{ width: '100%' }}><ErrorState title="Form sayıları yüklenemedi" message={error} onRetry={load} /></View> : loading ? <Text style={{ color: colors.text.muted }}>Form sayıları yükleniyor…</Text> : <>
           <Pill label={`Şablon: ${tplCount}`} color="#0ea5e9" icon="albums-outline" />
           <Pill label={`Hazır: ${seedCount}`} color="#8b5cf6" icon="star-outline" />
           <Pill label={`Yanıt: ${respCount}`} color="#22c55e" icon="checkmark-circle-outline" />
           <Pill label={`Bugün: ${todayCount}`} color="#f59e0b" icon="today-outline" />
+          </>}
         </View>
 
         <View style={[styles.grid, { maxWidth: 1200, alignSelf: 'center', width: '100%' }]} onLayout={onGridLayout}>

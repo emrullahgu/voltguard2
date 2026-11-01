@@ -1,6 +1,8 @@
 // IntegrationWebhookDeliveriesScreen — POZ-DEV-464
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRoute, type RouteProp } from '@react-navigation/native';
 import { colors, spacing, radius, typography } from '../theme';
@@ -10,14 +12,18 @@ import { listWebhookDeliveriesV2 } from '../services/enterpriseIntegrations';
 type R = RouteProp<RootStackParamList, 'IntegrationWebhookDeliveries'>;
 
 export default function IntegrationWebhookDeliveriesScreen() {
+  const serviceState = useServiceLoad();
   const route = useRoute<R>();
   const webhookId = route.params?.webhookId;
   const [items, setItems] = useState<WebhookDelivery[]>([]);
-  const load = useCallback(async () => {
+  const load = useCallback(() => serviceState.read(async () => {
     const all = await listWebhookDeliveriesV2();
     setItems(webhookId ? all.filter(d => d.webhookId === webhookId) : all);
-  }, [webhookId]);
+  }), [webhookId]);
   useFocusEffect(useCallback(() => { load(); }, [load]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>

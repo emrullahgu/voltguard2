@@ -220,3 +220,35 @@ Deploy sonrası hızlı kontrol: `/api/lib/bootstrap.php`, `/api/README.md`, `/_
 Kapsamlı uçtan uca test betiği (Node 18+, bağımlılıksız) geliştirme ortamında tutulur:
 `node api-test.mjs --base https://staging.example --static` (kayıt, giriş kilidi, CSRF/Origin, veri senkronu, sınırlar,
 şifre değiştirme/sıfırlama, dışa aktarma ve hesap silme). Canlı sunucuda çalıştırırken kayıt IP sınırına (10/saat) dikkat edin.
+
+## Veri ve yapay zekâ bağlantıları
+
+`/api/integrations.php` yanıt sözleşmesi `vg-integrations/1`'dir. Genel araç `/araclar/canli-veri-merkezi/`; PVGIS ve NASA sorguları `/voltsim/ges/` içindedir. Çalışan panelinde **Canlı veri ve yapay zekâ** modülü, **Veri servisleri** ve **Bağlı yapay zekâ** ekranlarını açar. YG/GES tekliflerindeki kurlar önce önizlenir; açık kullanıcı işlemiyle taslağa uygulanır ve kaynak/tarih bilgisiyle kaydedilir.
+
+Anahtarlar yalnız sunucu ortam değişkenlerinden veya `VG_DATA_DIR/integrations-secrets.json` dosyasından okunur. Bu dosya web kökü dışında olmalı; depoya, tarayıcıya, `.env` içeren statik pakete veya sohbete eklenmemelidir. Üretimde dosyayı PHP kullanıcısıyla erişilebilen özel dizinde `0600`, dizini `0700` izinleriyle tutun. Anahtar varlığı başarılı bağlantı doğrulaması değildir.
+
+Windows yerel önizleme için Windows PowerShell 5.1'de `powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/configure-integrations.ps1` çalıştırılır. Giriş maskelidir; yalnız seçilen servisin yeni değerleri özel dosyaya kilit altında birleştirilir. Boş giriş mevcut değeri korur. Anahtarlar canlı sunucuya otomatik aktarılmaz.
+
+| Servis | Sunucu ayarları |
+| --- | --- |
+| Gemini | `VG_GEMINI_API_KEY`, isteğe bağlı `VG_GEMINI_MODEL` |
+| Groq | `VG_GROQ_API_KEY`, isteğe bağlı `VG_GROQ_MODEL` |
+| OpenRouter | `VG_OPENROUTER_API_KEY`, isteğe bağlı `VG_OPENROUTER_MODEL` (yalnız ücretsiz modeller) |
+| Cloudflare Workers AI | `VG_CLOUDFLARE_ACCOUNT_ID`, `VG_CLOUDFLARE_API_TOKEN`, isteğe bağlı `VG_CLOUDFLARE_AI_MODEL` |
+| OpenWeather | `VG_OPENWEATHER_API_KEY` |
+| IPinfo Lite | `VG_IPINFO_TOKEN` |
+| EPİAŞ | `VG_EPIAS_USERNAME` + `VG_EPIAS_PASSWORD` veya kısa süreli `VG_EPIAS_TGT` |
+| Unsplash | `VG_UNSPLASH_ACCESS_KEY` |
+| TMDB | `VG_TMDB_TOKEN`; üretimde ayrıca lisans sağlandıktan sonra `VG_TMDB_COMMERCIAL_LICENSE=1` |
+| NewsAPI | `VG_NEWSAPI_KEY`; üretime uygun plan sağlandıktan sonra `VG_NEWSAPI_PRODUCTION_ALLOWED=1` |
+| CoinGecko / GitHub | İsteğe bağlı `VG_COINGECKO_DEMO_KEY` / `VG_GITHUB_TOKEN` |
+
+PVGIS, NASA POWER, TCMB, Frankfurter, açık ExchangeRate-API, Nominatim, JSONPlaceholder ve DummyJSON için anahtar gerekmez. Nominatim yalnız kullanıcı düğmesiyle tesis adresi arar; otomatik tamamlama veya toplu sorgu yapılmaz. OpenWeather ücretsiz Current Weather uç noktasını kullanır. IPinfo Lite ülke/ASN sağlar; şehir koordinatı sunduğu varsayılmaz. Unsplash sonuçları kaynak ve fotoğrafçı bağlantılarıyla görüntülenir; kullanma/indirme işlemi sunulmaz. TMDB ticari lisansı ve NewsAPI üretim izni otomatik verilmez. Geliştirme istisnası hem `VG_INTEGRATIONS_LOCAL=1` hem gerçek loopback istemci ve yerel sunucu adı gerektirir; bu değişken üretimde etkinleştirilmemelidir.
+
+`GET action=status` yalnız durum ve uyarıları döndürür. Genel GET işlemleri: `pvgis`, `nasa_power`, `tcmb`, `frankfurter`, `exchange_rate`, `openweather`, `nominatim`, `coingecko`. EPİAŞ çalışan oturumu gerektirir; IPinfo, GitHub, Unsplash, TMDB, NewsAPI ve örnek veri alanı yönetici oturumuyla sınırlıdır. GitHub yalnız herkese açık depo alanlarını döndürür; örnek veriler şirket kayıtlarına yazılmaz.
+
+`POST action=ai_chat` çalışan MFA oturumu, aynı kaynak ve `X-VG-STAFF-CSRF` doğrulaması gerektirir. Seçilen sağlayıcıya yalnız açıkça gönderilen metin gider; şirket kayıtları kendiliğinden eklenmez, başka sağlayıcıya otomatik geçilmez, istemci isteği otomatik tekrarlanmaz. Model ve kota sağlayıcı hesabına bağlıdır. Ücretsiz kullanımın veri işleme koşulları ekran üzerinde gösterilir. Eski kapalı AI/ERP ekranlarının özelliği bu bağlantıyla açılmaz.
+
+İstekler sabit HTTPS kaynaklarına, genel IP çözümlemesi ve TLS doğrulamasıyla gönderilir; yönlendirme izlenmez. Yanıt boyutu ve süresi, kullanıcı/kaynak istek sayısı sınırlandırılır. Önbellek yalnız özel `integrations` dizinindedir, en fazla 512 sonuç / 32 MiB; geçersiz veya başarısız yanıt eski doğrulanmış sonucu değiştirmez. AI metinleri bu sonuç önbelleğine yazılmaz. EPİAŞ PTF birimi TRY/MWh ve ayrıca TRY/kWh olarak belirtilir; perakende fatura tarifesi değildir.
+
+Odaklı testler `tools/tests/integration-*.test.cjs`, `integrations-endpoint.test.cjs`, `saha-connected-*.test.cjs` dosyalarındadır. Tarayıcı doğrulamaları `node tools/tests/integration-public-browser.cjs`, `node tools/tests/integration-currency-browser.cjs` ve `node tools/tests/company-real-browser.cjs --record-only --record-suite=integration` ile izole verilerde çalışır. Anahtarı olan sağlayıcılar için gerçek bağlantı ayrıca kullanıcı sorgusuyla doğrulanmalıdır.

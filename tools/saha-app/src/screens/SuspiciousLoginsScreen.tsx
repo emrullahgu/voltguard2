@@ -1,20 +1,34 @@
 // SuspiciousLoginsScreen — POZ-DEV-362
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { colors, spacing, radius, typography } from '../theme';
 import { listSessions } from '../services/governance';
 import type { SessionLog } from '../types';
+import ErrorState from '../components/ErrorState';
 
 export default function SuspiciousLoginsScreen() {
   const [items, setItems] = useState<SessionLog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const hosted = typeof window !== 'undefined' && !!(window as any).VoltGuardEmployeeModules;
 
-  const load = useCallback(async () => { setItems(await listSessions()); }, []);
+  const load = useCallback(async () => {
+    setLoading(true); setError(null);
+    try {
+      if (hosted) throw new Error('Çalışan oturumlarını sağlayan denetim servisi bu portalda henüz bağlı değil. Kayıtlar doğrulanamadı.');
+      setItems(await listSessions());
+    } catch (failure: any) { setError(failure?.message || 'Oturum kayıtları yüklenemedi.'); }
+    finally { setLoading(false); }
+  }, [hosted]);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const suspicious = useMemo(() => items.filter(i => i.suspicious), [items]);
+
+  if (loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Kayıtlar yükleniyor" /></SafeAreaView>;
+  if (error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Şüpheli giriş denetimi kullanılamıyor" message={error} onRetry={load} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>

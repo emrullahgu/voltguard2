@@ -1,6 +1,8 @@
 // IntegrationApiKeysScreen — POZ-DEV-465
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -11,26 +13,44 @@ import { listApiKeysV2, createApiKeyV2, revokeApiKeyV2, deleteApiKeyV2 } from '.
 const SCOPES = ['read', 'write', 'admin', 'webhook'];
 
 export default function IntegrationApiKeysScreen() {
+  const serviceState = useServiceLoad();
   const [items, setItems] = useState<IntegrationApiKey[]>([]);
   const [modal, setModal] = useState(false);
   const [name, setName] = useState('');
   const [selected, setSelected] = useState<string[]>(['read']);
 
-  const load = useCallback(async () => { setItems(await listApiKeysV2()); }, []);
+  const load = useCallback(() => serviceState.read(async () => {
+    setItems(await listApiKeysV2());
+  }), []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const toggle = (sc: string) => setSelected(s => s.includes(sc) ? s.filter(x => x !== sc) : [...s, sc]);
-  const create = async () => {
-    if (!name.trim()) { Alert.alert('Eksik', 'Ad gerekli'); return; }
+  const create = () => serviceState.action(async () => {
+    if (!name.trim()) {
+      Alert.alert('Eksik', 'Ad gerekli');
+      return;
+    }
     await createApiKeyV2(name.trim(), selected);
-    setName(''); setSelected(['read']); setModal(false); load();
-  };
+    setName('');
+    setSelected(['read']);
+    setModal(false);
+    load();
+  });
   const revoke = (id: string) => Alert.alert('İptal', 'Anahtar iptal edilsin mi?', [
-    { text: 'Vazgeç' }, { text: 'İptal Et', style: 'destructive', onPress: async () => { await revokeApiKeyV2(id); load(); } },
+    { text: 'Vazgeç' }, { text: 'İptal Et', style: 'destructive', onPress: () => serviceState.action(async () => {
+      await revokeApiKeyV2(id);
+      load();
+    }) },
   ]);
   const remove = (id: string) => Alert.alert('Sil', 'Silinsin mi?', [
-    { text: 'Vazgeç' }, { text: 'Sil', style: 'destructive', onPress: async () => { await deleteApiKeyV2(id); load(); } },
+    { text: 'Vazgeç' }, { text: 'Sil', style: 'destructive', onPress: () => serviceState.action(async () => {
+      await deleteApiKeyV2(id);
+      load();
+    }) },
   ]);
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>

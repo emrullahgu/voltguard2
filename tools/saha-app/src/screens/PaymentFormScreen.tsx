@@ -57,17 +57,26 @@ export default function PaymentFormScreen() {
   const [receivedById, setReceivedById] = useState('');
   const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
+  const [loadedPayment, setLoadedPayment] = useState<Payment | null>(null);
+  const [loading, setLoading] = useState(!!editId);
+  const [error, setError] = useState('');
+  const savingRef = useRef(false);
+  const receivedAtRef = useRef(new Date().toISOString());
   // KARARLI id'ler: tahsilat ve kasa girişi atomik değil; kasa girişi koparsa kullanıcı
-  // "Kaydet"e tekrar basar. Aynı id ile retry -> upsert idempotent -> çift tahsilat/çift
-  // kasa girişi OLMAZ. Form mount başına sabit (yeni tahsilat); editId'de kullanılmaz.
+  // "Kaydet"e tekrar basar. Aynı içerik ve id ile retry mevcut tahsilatı doğrular;
+  // tahsilatı yeniden yazmaz. Kasa girişi kendi sabit id'sini kullanır.
   const payIdRef = useRef(newUuid());
   const cashIdRef = useRef(newUuid());
 
   useEffect(() => {
     (async () => {
       if (editId) {
+        setLoading(true); setError('');
+        try {
         const p = await getPayment(editId);
-        if (p) {
+        if (!p) throw new Error('Tahsilat kaydı bulunamadı. Listeyi yenileyin.');
+        setLoadedPayment(p);
+        {
           setCustomerId(p.customerId);
           setWorkOrderId(p.workOrderId ?? '');
           setQuoteId(p.quoteId ?? '');
@@ -78,6 +87,8 @@ export default function PaymentFormScreen() {
           setReceivedById(p.receivedById ?? '');
           setNote(p.note ?? '');
         }
+        } catch (e: any) { setError(e?.message || 'Tahsilat yüklenemedi.'); }
+        finally { setLoading(false); }
       }
     })();
   }, [editId]);
@@ -92,6 +103,7 @@ export default function PaymentFormScreen() {
   );
 
   const onSave = async () => {
+    if (savingRef.current || loading || (editId && !loadedPayment)) return;
     const amt = parseFloat(amount.replace(',', '.'));
     if (!customer) {
       Alert.alert('Eksik', 'Müşteri seçin.');
@@ -102,7 +114,7 @@ export default function PaymentFormScreen() {
       return;
     }
 
-    setSaving(true);
+    savingRef.current = true; setSaving(true); setError('');
     try {
       const vat = parseFloat(vatRate.replace(',', '.'));
       const base: Omit<Payment, 'id' | 'createdAt'> = {
@@ -113,7 +125,8 @@ export default function PaymentFormScreen() {
         amount: amt,
         method,
         status,
-        receivedAt: new Date().toISOString(),
+        receivedAt: loadedPayment?.receivedAt ?? receivedAtRef.current,
+        serverRevision: loadedPayment?.serverRevision,
         receivedBy: employee?.name,
         receivedById: employee?.id,
         vatRate: Number.isFinite(vat) ? vat : undefined,
@@ -125,13 +138,15 @@ export default function PaymentFormScreen() {
       try {
         if (editId) {
           saved = await updatePayment(editId, base);
+          if (saved) setLoadedPayment(saved);
         } else {
           saved = await createPayment({ ...base, id: payIdRef.current });
         }
       } catch (e: any) {
         // Tahsilatın KENDİSİ kaydedilemedi → dürüst hata; kararlı id sayesinde tekrar
-        // denemek çift kayıt YARATMAZ (upsert idempotent).
+        // denemek aynı içeriği doğrular; değiştirilmiş mevcut kaydı ezmez.
         Alert.alert('Hata', (editId ? 'Tahsilat güncellenemedi: ' : 'Tahsilat kaydedilemedi: ') + (e?.message || 'bilinmeyen hata'));
+        setError(e?.message || 'Tahsilat kaydedilmedi. Taslak bu ekranda duruyor.');
         return;
       }
 
@@ -163,11 +178,13 @@ export default function PaymentFormScreen() {
       }
 
       // Bildirim olayı (tahsilat + kasa girişi tamam)
+      let notificationNote = '';
       if (!editId && saved && status === 'received') {
-        await Notify.paymentReceived(customer.shortName, amt, saved.id);
+        try { await Notify.paymentReceived(customer.shortName, amt, saved.id); }
+        catch { notificationNote = '\nTahsilat kaydedildi ancak bildirim gönderilemedi.'; }
       }
 
-      Alert.alert('Tamam', editId ? 'Tahsilat güncellendi.' : 'Tahsilat kaydedildi.', [
+      Alert.alert('Tamam', (editId ? 'Tahsilat güncellendi.' : 'Tahsilat kaydedildi.') + notificationNote, [
         {
           text: 'Detay',
           onPress: () =>
@@ -176,6 +193,7 @@ export default function PaymentFormScreen() {
         { text: 'Kapat', onPress: () => navigation.goBack() },
       ]);
     } finally {
+      savingRef.current = false;
       setSaving(false);
     }
   };
@@ -184,6 +202,7 @@ export default function PaymentFormScreen() {
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.content}>
+        {!!error && <Text accessibilityRole="alert" style={{ color: colors.rose.default }}>{error}</Text>}
         <Text style={styles.title}>{editId ? 'Tahsilatı Düzenle' : 'Yeni Tahsilat'}</Text>
 
         <Text style={styles.label}>Müşteri *</Text>
@@ -324,7 +343,7 @@ export default function PaymentFormScreen() {
           multiline
         />
 
-        <TouchableOpacity style={styles.saveBtn} onPress={onSave} disabled={saving}>
+        <TouchableOpacity style={styles.saveBtn} onPress={onSave} disabled={saving || loading || (!!editId && !loadedPayment)}>
           <Ionicons name="save-outline" size={16} color="#fff" />
           <Text style={styles.saveBtnText}>{saving ? 'Kaydediliyor…' : 'Kaydet'}</Text>
         </TouchableOpacity>

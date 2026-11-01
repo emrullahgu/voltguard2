@@ -1,7 +1,7 @@
 // FormResponseDetailScreen — POZ-DEV-053
 // Tek bir form cevabını + revizyon geçmişini gösterir; düzenleme/silme.
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -30,6 +30,7 @@ import {
   RootStackParamList,
 } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'FormResponseDetail'>;
 type Rt = RouteProp<RootStackParamList, 'FormResponseDetail'>;
@@ -42,16 +43,23 @@ export default function FormResponseDetailScreen() {
   const [resp, setResp] = useState<FormResponse | null>(null);
   const [tpl, setTpl] = useState<FormTemplate | null>(null);
   const [revs, setRevs] = useState<FormResponseRevision[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [historyError, setHistoryError] = useState('');
+  const deleting = useRef(false);
 
   const load = useCallback(async () => {
+    setLoading(true); setError(''); setHistoryError('');
+    try {
     const r = await getResponse(responseId);
-    setResp(r);
-    if (r) {
+    if (!r) throw new Error('Form yanıtı bulunamadı. Listeyi yenileyin.');
       const t = await getTemplate(r.templateId);
+      setResp(r);
       setTpl(t);
-      const rv = await listRevisionsByResponse(r.id);
-      setRevs(rv);
-    }
+      try { setRevs(await listRevisionsByResponse(r.id)); }
+      catch { setRevs([]); setHistoryError('Revizyon geçmişi yüklenemedi.'); }
+    } catch (e: any) { setError(e?.message || 'Form yanıtı yüklenemedi.'); }
+    finally { setLoading(false); }
   }, [responseId]);
 
   useFocusEffect(
@@ -68,14 +76,18 @@ export default function FormResponseDetailScreen() {
         text: 'Sil',
         style: 'destructive',
         onPress: async () => {
-          await deleteResponse(resp.id);
-          navigation.goBack();
+          if (deleting.current) return;
+          deleting.current = true;
+          try { await deleteResponse(resp.id, resp.serverRevision); navigation.goBack(); }
+          catch (e: any) { setError(e?.message || 'Form yanıtı silinemedi.'); }
+          finally { deleting.current = false; }
         },
       },
     ]);
   };
 
-  if (!resp) {
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="Form işlemi tamamlanamadı" message={error} onRetry={load} /></SafeAreaView>;
+  if (loading || !resp) {
     return (
       <SafeAreaView style={styles.safe}>
         <EmptyState icon="clipboard-outline" title="Yükleniyor…" subtitle="Form cevabı sunucudan getiriliyor." />
@@ -131,6 +143,7 @@ export default function FormResponseDetailScreen() {
         )}
 
         <Text style={styles.section}>Revizyon Geçmişi ({revs.length})</Text>
+        {!!historyError && <Text accessibilityRole="alert" style={styles.muted}>{historyError}</Text>}
         {revs.map(r => (
           <View key={r.id} style={styles.revRow}>
             <View style={styles.revBadge}>

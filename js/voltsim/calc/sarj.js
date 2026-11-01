@@ -99,10 +99,14 @@
    * inp.points: [{ profile, stationP, capacity, soc0, soc1 (%), obcPhases, obcI, dcMax, eff (0–1), priority, active (bool), compatible (bool) }]
    * inp: siteKW (bağlantı/trafo sınırı), dlm (yük yönetimi), base {profile, peakKW}, pv {kWp, doy}, bat {kWh, kW, soc0 (%)},
    *      startHour, curve, tariff, dt, maxMin
+   * Bir araç hedefe ulaşınca aralık o anda kesilir; kalan güç aynı adımın kalanında yeniden paylaşılır.
    * Dönüş: t, grid, base, pv, bat (+deşarj/−şarj), chargers, P[i][], soc[i][], points[{finishMin, Egrid, Ebatt, cost, pausedMin}], özet.
+   * Güç örnekleri [t[i], t[i+1]) aralığı içindir; son örnek bitiş anındaki SOC/durumu gösterir, enerjiye eklenmez.
    */
   function simulateHub(inp) {
-    const pts = inp.points || [], n = pts.length, dt = inp.dt || 1, maxMin = inp.maxMin || 1440;
+    const pts = inp.points || [], dt = inp.dt === undefined ? 1 : inp.dt, maxMin = inp.maxMin === undefined ? 1440 : inp.maxMin;
+    if (!Number.isFinite(dt) || dt <= 0) throw new RangeError('Simülasyon adımı pozitif ve sonlu olmalı.');
+    if (!Number.isFinite(maxMin) || maxMin < 0) throw new RangeError('Simülasyon süresi sıfır veya pozitif ve sonlu olmalı.');
     const curve = inp.curve === 'constant' ? 'constant' : 'typical';
     const soc = pts.map(p => p.soc0 / 100), tgt = pts.map(p => p.soc1 / 100);
     const res = { t: [], grid: [], base: [], pv: [], bat: [], chargers: [], P: pts.map(() => []), soc: pts.map(() => []), paused: pts.map(() => []) };
@@ -110,52 +114,62 @@
     const bat = inp.bat && inp.bat.kWh > 0 ? { E: inp.bat.kWh * (inp.bat.soc0 === undefined ? 90 : inp.bat.soc0) / 100, max: inp.bat.kWh * 0.95, min: inp.bat.kWh * 0.1, kW: inp.bat.kW || 0 } : null;
     let t = 0, gridE = 0, peak = 0, peakAt = 0, overMin = 0, pvE = 0, batOut = 0;
     const live = i => pts[i].active && pts[i].compatible !== false && soc[i] < tgt[i] - 1e-9;
-    for (let k = 0; k <= maxMin / dt; k++) {
+    // Akış hesapları depoyu değiştirmez: tüm enerjiler yalnız gerçekleşen ortak aralıkla bütünlenir.
+    function flow(horizon) {
       const hour = (inp.startHour || 0) + t / 60;
       const base = inp.base ? baseLoadAt(inp.base.profile, hour, inp.base.peakKW || 0) : 0;
       const pv = inp.pv ? pvAt(inp.pv.kWp, hour, inp.pv.doy) : 0;
       const dem = pts.map((p, i) => (live(i) ? pointDemand(p, soc[i], curve) : { P: 0, min: 0 }));
-      const want = dem.reduce((a, d) => a + d.P, 0);
       // batarya: önce PV ve şebeke sınırına göre ne kadar destek verebileceği
       const headroom = inp.siteKW - base + pv;              // şarja ayrılabilecek güç (batarya hariç)
-      const batCan = bat ? Math.min(bat.kW, Math.max(0, (bat.E - bat.min) * 60 / dt)) : 0;
-      let alloc;
+      const batCan = bat ? Math.min(bat.kW, Math.max(0, (bat.E - bat.min) * 60 / horizon)) : 0;
+      let alloc, paused;
       if (inp.dlm) {
-        const a = allocate(dem.map((d, i) => ({ demand: d.P, min: d.min, priority: pts[i].priority })), Math.max(0, headroom) + batCan);
-        alloc = a.alloc; a.paused.forEach((ps, i) => { if (ps) { pr[i].pausedMin += dt; } res.paused[i].push(ps ? 1 : 0); });
-      } else { alloc = dem.map(d => d.P); pts.forEach((p, i) => res.paused[i].push(0)); }
+        const a = allocate(dem.map((d, i) => ({ demand: d.P, min: d.min, priority: pts[i].priority })), Math.max(0, headroom + batCan));
+        alloc = a.alloc; paused = a.paused;
+      } else { alloc = dem.map(d => d.P); paused = pts.map(() => false); }
       const chg = alloc.reduce((a, b) => a + b, 0);
       // batarya dağıtımı: şarj talebi bağlantı payını aşarsa deşarj; PV fazlası varsa şarj
       let bp = 0;
       if (bat) {
         const deficit = chg + base - pv - inp.siteKW;
         if (deficit > 1e-9) bp = Math.min(deficit, batCan);
-        else if (pv > base + chg) bp = -Math.min(bat.kW, pv - base - chg, Math.max(0, (bat.max - bat.E) * 60 / dt / 0.92));
-        bat.E -= (bp > 0 ? bp : bp * 0.92) * dt / 60;
+        else if (pv > base + chg) bp = -Math.min(bat.kW, pv - base - chg, Math.max(0, (bat.max - bat.E) * 60 / horizon / 0.92));
       }
       const grid = Math.max(0, base + chg - pv - bp);   // ihracat yok kabulü (fazla PV kırpılır)
-      res.t.push(t); res.grid.push(grid); res.base.push(base); res.pv.push(pv); res.bat.push(bp); res.chargers.push(chg);
-      if (grid > peak + 1e-9) { peak = grid; peakAt = t; }
-      if (grid > inp.siteKW + 1e-6) overMin += dt;
-      const price = priceAt(hour, inp.tariff);
       // şarj enerjisinin şebekeden gelen payı (PV/bataryadan karşılanan kısım ücretsiz kabul)
       const gridShare = chg > 1e-9 ? Math.max(0, Math.min(1, (grid - Math.max(0, base - pv)) / chg)) : 0;
-      pts.forEach((p, i) => {
-        res.P[i].push(alloc[i]); res.soc[i].push(soc[i] * 100);
-        if (alloc[i] <= 1e-9) return;
-        const eff = p.eff, Pb = alloc[i] * eff;
-        let step = dt, dE = Pb * dt / 60;
-        if (soc[i] + dE / p.capacity > tgt[i]) { dE = (tgt[i] - soc[i]) * p.capacity; step = dE / Pb * 60; }
-        soc[i] += dE / p.capacity;
-        const eg = alloc[i] * step / 60;
-        pr[i].Egrid += eg; pr[i].Ebatt += dE; pr[i].cost += eg * gridShare * price;
-        if (soc[i] >= tgt[i] - 1e-9 && pr[i].finishMin === null) pr[i].finishMin = t + step;
-      });
-      gridE += grid * dt / 60; pvE += pv * dt / 60; batOut += Math.max(0, bp) * dt / 60;
-      if (!pts.some((p, i) => live(i))) break;
-      t += dt;
-      void want;
+      return { base: base, pv: pv, alloc: alloc, paused: paused, chg: chg, bp: bp, grid: grid, gridShare: gridShare, price: priceAt(hour, inp.tariff) };
     }
+    function sample(f) {
+      res.t.push(t); res.grid.push(f.grid); res.base.push(f.base); res.pv.push(f.pv); res.bat.push(f.bp); res.chargers.push(f.chg);
+      pts.forEach((p, i) => { res.P[i].push(f.alloc[i]); res.soc[i].push(soc[i] * 100); res.paused[i].push(f.paused[i] ? 1 : 0); });
+    }
+    let boundary = 0;
+    while (t < maxMin && pts.some((p, i) => live(i))) {
+      if (t >= boundary - 1e-9) boundary = Math.min(maxMin, boundary + dt);
+      const horizon = boundary - t, f = flow(horizon);
+      let step = horizon;
+      pts.forEach((p, i) => {
+        if (f.alloc[i] > 1e-9) step = Math.min(step, (tgt[i] - soc[i]) * p.capacity * 60 / (f.alloc[i] * p.eff));
+      });
+      sample(f);
+      if (f.grid > peak + 1e-9) { peak = f.grid; peakAt = t; }
+      if (f.grid > inp.siteKW + 1e-6) overMin += step;
+      if (bat) bat.E -= (f.bp > 0 ? f.bp : f.bp * 0.92) * step / 60;
+      pts.forEach((p, i) => {
+        if (f.paused[i]) pr[i].pausedMin += step;
+        if (f.alloc[i] <= 1e-9) return;
+        const dE = Math.min((tgt[i] - soc[i]) * p.capacity, f.alloc[i] * p.eff * step / 60);
+        soc[i] = Math.min(tgt[i], soc[i] + dE / p.capacity);
+        const eg = dE / p.eff;
+        pr[i].Egrid += eg; pr[i].Ebatt += dE; pr[i].cost += eg * f.gridShare * f.price;
+        if (soc[i] >= tgt[i] - 1e-9 && pr[i].finishMin === null) { soc[i] = tgt[i]; pr[i].finishMin = t + step; }
+      });
+      gridE += f.grid * step / 60; pvE += f.pv * step / 60; batOut += Math.max(0, f.bp) * step / 60;
+      t = Math.min(maxMin, t + step);
+    }
+    sample(flow(dt)); // son SOC ve gerçek bitiş anı; bu örneğin süresi sıfırdır
     const finishes = pr.filter((p, i) => pts[i].active && pts[i].compatible !== false).map(p => p.finishMin);
     return Object.assign(res, {
       points: pr, minutes: t, peak: peak, peakAt: peakAt, overMin: overMin, gridE: gridE, pvE: pvE, batOut: batOut,

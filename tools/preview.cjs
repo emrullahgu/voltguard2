@@ -15,7 +15,7 @@ const origin = `http://127.0.0.1:${port}`;
 const workspaceHash = crypto.createHash('sha256').update(fs.realpathSync(root).toLowerCase()).digest('hex').slice(0, 20);
 const dataDirectory = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), '.local', 'share'), 'VoltGuard', 'preview-data', workspaceHash);
 const internalToken = crypto.randomBytes(32).toString('hex');
-const phpRoutes = new Set(['/api/auth.php', '/api/community.php', '/api/metrics.php', '/api/volthaber.php', '/api/staff.php', '/api/company.php',
+const phpRoutes = new Set(['/api/integrations.php', '/api/auth.php', '/api/community.php', '/api/metrics.php', '/api/volthaber.php', '/api/staff.php', '/api/company.php',
   '/api/company-asset.php', '/api/saha-asset.php', '/api/company-connectors.php', '/calisan/', '/calisan/index.php',
   '/calisan/uygulama', '/calisan/uygulama/', '/calisan/uygulama/saha.php', '/contact.php']);
 // Mirror the path-specific policies of .htaccess (VG_CSP_SITE / PRIVATE / APP / API).
@@ -97,7 +97,7 @@ async function startPhp() {
     '-d', 'display_errors=0', '-d', 'log_errors=1', '-d', 'upload_max_filesize=8M', '-d', 'post_max_size=10M',
     '-S', `127.0.0.1:${phpPort}`, '-t', root, path.join(root, 'tools/preview-router.php')], {
     cwd: root, windowsHide: true, stdio: ['ignore', 'ignore', 'pipe'],
-    env: { ...process.env, VG_DATA_DIR: dataDirectory, VG_STAFF_SITE_URL: origin, VG_SITE_URL: origin, VG_PREVIEW_INTERNAL_TOKEN: internalToken, VG_MAIL_OUTBOX: '1', VG_CONTACT_ALLOWED_ORIGINS: `${origin},http://localhost:${port}` }
+    env: { ...process.env, VG_INTEGRATIONS_LOCAL: '1', VG_DATA_DIR: dataDirectory, VG_STAFF_SITE_URL: origin, VG_SITE_URL: origin, VG_PREVIEW_INTERNAL_TOKEN: internalToken, VG_MAIL_OUTBOX: '1', VG_CONTACT_ALLOWED_ORIGINS: `${origin},http://localhost:${port}` }
   });
   // Request paths may contain sensitive query parameters. Never echo PHP access logs into the chat.
   phpChild.stderr.on('data', () => {});

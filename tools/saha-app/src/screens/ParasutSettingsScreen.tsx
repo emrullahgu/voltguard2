@@ -5,6 +5,7 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import ErrorState from '../components/ErrorState';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { colors, spacing, radius, typography } from '../theme';
@@ -20,6 +21,8 @@ export default function ParasutSettingsScreen() {
   const { hasPermission } = useAuth();
   const isAdmin = hasPermission('settings', 'W'); // admin
   const [settings, setSettings] = useState<ParasutSettings>({ enabled: false, invoicingEnabled: false, offersEnabled: false });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
@@ -27,11 +30,13 @@ export default function ParasutSettingsScreen() {
   const [bills, setBills] = useState<ParasutBill[]>([]);
   const [products, setProducts] = useState<ParasutProduct[]>([]);
 
-  useFocusEffect(useCallback(() => {
-    let alive = true;
-    loadParasutSettings().then(s => { if (alive) setSettings(s); });
-    return () => { alive = false; };
-  }, []));
+  const load = useCallback(async () => {
+    setLoading(true); setError(null);
+    try { setSettings(await loadParasutSettings()); }
+    catch (failure: any) { setError(failure?.message || 'Paraşüt ayarları yüklenemedi.'); }
+    finally { setLoading(false); }
+  }, []);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const update = async (patch: Partial<ParasutSettings>) => {
     if (!isAdmin) { Alert.alert('Yetki', 'Bu ayarı yalnızca yönetici değiştirebilir.'); return; }
@@ -39,23 +44,26 @@ export default function ParasutSettingsScreen() {
     try {
       const next = await saveParasutSettings(patch);
       setSettings(next);
-    } finally { setSaving(false); }
+    } catch (failure: any) { setError(failure?.message || 'Paraşüt ayarı kaydedilemedi.'); }
+    finally { setSaving(false); }
   };
 
   const onTest = async () => {
     setTesting(true);
-    const r = await testParasutConnection();
-    setTesting(false);
-    Alert.alert(r.ok ? 'Başarılı' : 'Hata', r.message);
+    try {
+      const r = await testParasutConnection();
+      Alert.alert(r.ok ? 'Başarılı' : 'Hata', r.message);
+    } catch (failure: any) { setError(failure?.message || 'Paraşüt bağlantısı doğrulanamadı.'); }
+    finally { setTesting(false); }
   };
 
   const fetchData = async () => {
     setLoadingData(true);
     try {
       const [inv, bil, prd] = await Promise.all([
-        listSalesInvoices({ 'page[size]': '10', sort: '-issue_date' } as any).catch(() => []),
-        listPurchaseBills({ 'page[size]': '10', sort: '-issue_date' } as any).catch(() => []),
-        listProducts({ 'page[size]': '10' }).catch(() => []),
+        listSalesInvoices({ 'page[size]': '10', sort: '-issue_date' } as any),
+        listPurchaseBills({ 'page[size]': '10', sort: '-issue_date' } as any),
+        listProducts({ 'page[size]': '10' }),
       ]);
       setInvoices(inv); setBills(bil); setProducts(prd);
       if (!inv.length && !bil.length && !prd.length) {
@@ -65,6 +73,9 @@ export default function ParasutSettingsScreen() {
       Alert.alert('Hata', e?.message || 'Veriler getirilemedi.');
     } finally { setLoadingData(false); }
   };
+
+  if (loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Paraşüt servisi kullanılamıyor" message={error} onRetry={load} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>

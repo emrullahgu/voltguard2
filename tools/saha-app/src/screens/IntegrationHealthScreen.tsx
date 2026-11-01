@@ -1,6 +1,8 @@
 // IntegrationHealthScreen — POZ-DEV-468
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -9,15 +11,24 @@ import type { IntegrationHealth } from '../types';
 import { listIntegrationHealth, refreshHealth, STATUS_COLOR, STATUS_LABEL } from '../services/enterpriseIntegrations';
 
 export default function IntegrationHealthScreen() {
+  const serviceState = useServiceLoad();
   const [items, setItems] = useState<IntegrationHealth[]>([]);
-  const load = useCallback(async () => { setItems(await listIntegrationHealth()); }, []);
+  const load = useCallback(() => serviceState.read(async () => {
+    setItems(await listIntegrationHealth());
+  }), []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
       <View style={s.bar}>
         <Text style={s.title}>Sağlık Durumu</Text>
-        <TouchableOpacity onPress={async () => { await refreshHealth(); load(); }} style={s.refresh}>
+        <TouchableOpacity onPress={() => serviceState.action(async () => {
+          await refreshHealth();
+          load();
+        })} style={s.refresh}>
           <Ionicons name="pulse-outline" size={14} color="#fff" />
           <Text style={s.refreshT}>Yenile</Text>
         </TouchableOpacity>

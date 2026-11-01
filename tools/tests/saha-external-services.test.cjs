@@ -38,8 +38,12 @@ function fixture(service) {
     return dependencies[name];
   }, Error, Promise, Object, console }, { filename });
   const render = () => { cursor = 0; tree = module.exports.default(); return tree; };
-  const list = () => tree.props.children[0];
-  return { render, list, focus: () => { cleanup?.(); cleanup = onFocus(); }, blur: () => cleanup?.() };
+  const nodes = () => {
+    const collect = value => Array.isArray(value) ? value.flatMap(collect) : value && typeof value === 'object'
+      ? [value, ...collect(value.props?.children || []), ...collect(value.props?.ListEmptyComponent || [])] : [value];
+    return collect(tree);
+  };
+  return { render, nodes, focus: () => { cleanup?.(); cleanup = onFocus(); }, blur: () => cleanup?.() };
 }
 
 test('Unconfigured external services show their failure and a retry instead of an empty list or unhandled rejection', async () => {
@@ -47,14 +51,14 @@ test('Unconfigured external services show their failure and a retry instead of a
   const message = 'Bu dış hizmet Ubuntu sunucusunda yapılandırılmadı. İşlem gerçekleştirilmedi.';
   const screen = fixture({ listExtIntegrations: async () => { calls++; throw Error(message); }, getExtSummary: async () => { throw Error('Summary must not run after failed listing'); } });
   screen.render(); screen.focus(); await flush(); screen.render();
-  const notice = screen.list().props.ListEmptyComponent;
+  const notice = screen.nodes().find(node => node?.type === 'ErrorState');
   assert.equal(notice.type, 'ErrorState');
   assert.equal(notice.props.title, 'Dış hizmetler kullanılamıyor');
   assert.equal(notice.props.message, message);
-  assert.equal(screen.list().props.data.length, 0);
+  assert.equal(screen.nodes().some(node => node?.type === 'FlatList'), false, 'Failed reads must not render a successful empty list');
   notice.props.onRetry(); screen.render(); screen.focus(); await flush(); screen.render();
   assert.equal(calls, 2);
-  assert.equal(screen.list().props.ListEmptyComponent.props.message, message);
+  assert.equal(screen.nodes().find(node => node?.type === 'ErrorState').props.message, message);
   screen.blur();
 });
 
@@ -63,6 +67,7 @@ test('A late external service result does not update a screen after it loses foc
   const screen = fixture({ listExtIntegrations: () => new Promise(resolve => { finish = resolve; }), getExtSummary: async () => ({ total: 1 }) });
   screen.render(); screen.focus(); screen.blur();
   finish([{ id: 'synthetic-connection', category: 'messaging' }]); await flush(); screen.render();
-  assert.equal(screen.list().props.data.length, 0);
-  assert.equal(screen.list().props.ListEmptyComponent.type, 'Text');
+  assert.equal(screen.nodes().some(node => node?.type === 'FlatList'), false, 'The blurred screen must not render the late successful result');
+  assert.equal(screen.nodes().some(node => node?.type === 'ErrorState'), false);
+  assert.ok(screen.nodes().includes('Dış hizmet bağlantıları kontrol ediliyor…'));
 });

@@ -19,6 +19,7 @@ import { colors, spacing, radius, typography, brand } from '../theme';
 import { listResponsesByWorkOrder } from '../services/formResponses';
 import { listTemplates, ensureSeeded } from '../services/formTemplates';
 import { FormResponse, FormTemplate, RootStackParamList } from '../types';
+import ErrorState from '../components/ErrorState';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'WorkOrderForms'>;
 type Rt = RouteProp<RootStackParamList, 'WorkOrderForms'>;
@@ -31,8 +32,12 @@ export default function WorkOrderFormsScreen() {
   const [responses, setResponses] = useState<FormResponse[]>([]);
   const [templates, setTemplates] = useState<FormTemplate[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
+    setLoading(true); setError('');
+    try {
     await ensureSeeded();
     const [rs, ts] = await Promise.all([
       listResponsesByWorkOrder(workOrderId),
@@ -40,6 +45,8 @@ export default function WorkOrderFormsScreen() {
     ]);
     setResponses(rs);
     setTemplates(ts);
+    } catch (e: any) { setError(e?.message || 'İş emri formları yüklenemedi.'); }
+    finally { setLoading(false); }
   }, [workOrderId]);
 
   useFocusEffect(
@@ -52,6 +59,9 @@ export default function WorkOrderFormsScreen() {
     setPickerOpen(false);
     navigation.navigate('FormFill', { templateId: tpl.id, workOrderId });
   };
+
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="İş emri formları yüklenemedi" message={error} onRetry={load} /></SafeAreaView>;
+  if (loading) return <SafeAreaView style={styles.safe}><Text>Yükleniyor…</Text></SafeAreaView>;
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>

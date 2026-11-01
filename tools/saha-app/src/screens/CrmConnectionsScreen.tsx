@@ -1,6 +1,8 @@
 // CrmConnectionsScreen — POZ-DEV-461
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -11,30 +13,45 @@ import { listCrmConnections, saveCrmConnection, deleteCrmConnection, importCrmCo
 const PROVIDERS: CrmProvider[] = ['hubspot', 'salesforce', 'zoho', 'pipedrive', 'custom'];
 
 export default function CrmConnectionsScreen() {
+  const serviceState = useServiceLoad();
   const [items, setItems] = useState<CrmConnection[]>([]);
   const [modal, setModal] = useState(false);
   const [provider, setProvider] = useState<CrmProvider>('hubspot');
   const [name, setName] = useState('');
   const [apiKey, setApiKey] = useState('');
 
-  const load = useCallback(async () => { setItems(await listCrmConnections()); }, []);
+  const load = useCallback(() => serviceState.read(async () => {
+    setItems(await listCrmConnections());
+  }), []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  const save = async () => {
-    if (!name.trim()) { Alert.alert('Eksik', 'Ad gerekli'); return; }
+  const save = () => serviceState.action(async () => {
+    if (!name.trim()) {
+      Alert.alert('Eksik', 'Ad gerekli');
+      return;
+    }
     await saveCrmConnection({ provider, name: name.trim(), apiKey: apiKey.trim() || undefined });
-    setName(''); setApiKey(''); setModal(false); load();
-  };
+    setName('');
+    setApiKey('');
+    setModal(false);
+    load();
+  });
 
-  const importNow = async (id: string) => {
+  const importNow = (id: string) => serviceState.action(async () => {
     const r = await importCrmContacts(id);
     Alert.alert('İçe Aktarım', `${r} kişi içe alındı.`);
     load();
-  };
+  });
 
   const remove = (id: string) => Alert.alert('Sil', 'Silinsin mi?', [
-    { text: 'Vazgeç' }, { text: 'Sil', style: 'destructive', onPress: async () => { await deleteCrmConnection(id); load(); } },
+    { text: 'Vazgeç' }, { text: 'Sil', style: 'destructive', onPress: () => serviceState.action(async () => {
+      await deleteCrmConnection(id);
+      load();
+    }) },
   ]);
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>

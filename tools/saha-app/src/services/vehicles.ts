@@ -19,9 +19,10 @@ function uid(): string {
   return `${hex(8)}-${hex(4)}-4${hex(3)}-${variant}${hex(3)}-${hex(12)}`;
 }
 
-function fromRow(r: any): Vehicle {
+function fromRow(r: any, serverRevision?: number): Vehicle {
   return {
     id: r.id,
+    serverRevision,
     plate: r.plate ?? '',
     brand: r.brand ?? undefined,
     model: r.model ?? undefined,
@@ -67,10 +68,10 @@ function toRow(v: Vehicle): Record<string, any> {
 }
 
 export async function listVehicles(): Promise<Vehicle[]> {
-  const { data, error } = await supabase.from('vehicles').select('*').order('created_at', { ascending: false });
+  const { data, error, versions } = await supabase.from('vehicles').select('*').order('created_at', { ascending: false });
   if (error) throw error;
   if (!Array.isArray(data)) throw new Error('Araç listesi sunucudan doğrulanamadı. Yeniden yükleyin.');
-  return data.map(fromRow);
+  return data.map((row: any) => fromRow(row, versions?.[row.id]));
 }
 
 export async function getVehicle(id: string): Promise<Vehicle | null> {
@@ -88,15 +89,20 @@ export async function findVehicleByPlate(plate: string): Promise<Vehicle | null>
 export async function upsertVehicle(v: Vehicle): Promise<Vehicle> {
   // Do not refresh rows before writing: the native query must retain the form's
   // previously observed CAS revision so another employee's edit is not overwritten.
-  const { data, error } = await supabase.from('vehicles').upsert(toRow(v), { onConflict: 'id' }).select().single();
+  const expected = v.serverRevision === undefined ? {} : expectedVersion(v.id, v.serverRevision);
+  const { data, error, versions } = await supabase.from('vehicles').upsert(toRow(v), { onConflict: 'id' }).expectVersions(expected).select().single();
   if (error) throw error;
   if (!data?.id) throw new Error('Araç işleminin sonucu doğrulanamadı. Yeniden göndermeden önce kayıt listesini kontrol edin.');
-  return fromRow(data);
+  return fromRow(data, versions?.[data.id]);
 }
 
-export async function deleteVehicle(id: string): Promise<void> {
+function expectedVersion(id: string, revision?: number) {
+  if (!Number.isSafeInteger(revision) || revision! < 1) throw new Error('Araç kaydının sürümü eksik. Kaydı yeniden açın.');
+  return { [id]: revision! };
+}
+export async function deleteVehicle(id: string, serverRevision?: number): Promise<void> {
   if (!id) throw new Error('Silinecek araç seçilmelidir.');
-  const { data, error } = await supabase.from('vehicles').delete().eq('id', id).select('id');
+  const { data, error } = await supabase.from('vehicles').delete().eq('id', id).expectVersions(expectedVersion(id, serverRevision)).select('id');
   if (error) throw error;
   if (!Array.isArray(data) || !data.some(row => row.id === id)) throw new Error('Araç silme işlemi doğrulanamadı. Güncel kayıt listesini kontrol edin.');
 }

@@ -16,6 +16,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { colors, spacing, radius, typography, brand } from '../theme';
 import { getVehicle } from '../services/vehicles';
+import ErrorState from '../components/ErrorState';
 import {
   listLogsByVehicle,
   fuelSummary,
@@ -52,8 +53,11 @@ export default function VehicleDetailScreen() {
   const [damages, setDamages] = useState<VehicleDamage[]>([]);
   const [fuel, setFuel] = useState<FuelSummary | null>(null);
   const [routeKm, setRouteKm] = useState(0);
+  const [error, setError] = useState('');
 
   const load = useCallback(async () => {
+    setError('');
+    try {
     const [v, l, d, f, r] = await Promise.all([
       getVehicle(vehicleId),
       listLogsByVehicle(vehicleId),
@@ -61,11 +65,13 @@ export default function VehicleDetailScreen() {
       fuelSummary(vehicleId),
       totalDistanceKm(vehicleId),
     ]);
+    if (!v) throw new Error('Araç kaydı bulunamadı. Listeyi yenileyin.');
     setVehicle(v);
     setLogs(l);
     setDamages(d);
     setFuel(f);
     setRouteKm(r);
+    } catch (e: any) { setError(e?.message || 'Araç bilgileri yüklenemedi.'); }
   }, [vehicleId]);
 
   useFocusEffect(
@@ -74,6 +80,7 @@ export default function VehicleDetailScreen() {
     }, [load]),
   );
 
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="Araç bilgileri yüklenemedi" message={error} onRetry={load} /></SafeAreaView>;
   if (!vehicle) {
     return (
       <SafeAreaView style={styles.safe}>
@@ -105,6 +112,7 @@ export default function VehicleDetailScreen() {
             )}
           </View>
           <TouchableOpacity
+            accessibilityRole="button" accessibilityLabel="Aracı düzenle"
             onPress={() => navigation.navigate('VehicleForm', { vehicleId: vehicle.id })}
             style={styles.editBtn}
           >

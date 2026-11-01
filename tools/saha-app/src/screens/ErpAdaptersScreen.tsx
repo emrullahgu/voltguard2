@@ -1,8 +1,9 @@
 // ErpAdaptersScreen — POZ-DEV-104
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Modal, TextInput, Switch } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Alert, Modal, TextInput, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import ErrorState from '../components/ErrorState';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { colors, spacing, radius, typography, brand } from '../theme';
@@ -29,7 +30,14 @@ export default function ErpAdaptersScreen() {
   const [fSyncInvoices, setFSyncInvoices] = useState(true);
   const [fSyncProducts, setFSyncProducts] = useState(false);
 
-  const refresh = useCallback(async () => { setList(await listErpAdapters()); }, []);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const refresh = useCallback(async () => {
+    setLoading(true); setError(null);
+    try { setList(await listErpAdapters()); }
+    catch (failure: any) { setError(failure?.message || 'Servis kayıtları yüklenemedi.'); }
+    finally { setLoading(false); }
+  }, []);
   useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
 
   const openNew = () => {
@@ -59,28 +67,29 @@ export default function ErpAdaptersScreen() {
       syncInvoices: fSyncInvoices,
       syncProducts: fSyncProducts,
     };
-    await upsertErpAdapter(next);
-    setShowForm(false);
-    await refresh();
+    try { await upsertErpAdapter(next); setShowForm(false); await refresh(); }
+    catch (failure: any) { setError(failure?.message || 'ERP adaptörü kaydedilemedi.'); }
   };
 
   const onDelete = (id: string) => {
     Alert.alert('Sil', 'Adaptör silinsin mi?', [
       { text: 'Vazgeç', style: 'cancel' },
-      { text: 'Sil', style: 'destructive', onPress: async () => { await deleteErpAdapter(id); await refresh(); } },
+      { text: 'Sil', style: 'destructive', onPress: async () => { try { await deleteErpAdapter(id); await refresh(); } catch (failure: any) { setError(failure?.message || 'ERP adaptörü silinemedi.'); } } },
     ]);
   };
 
   const onSync = async (id: string) => {
-    await mockSyncErp(id);
-    await refresh();
-    Alert.alert('Senkronizasyon', 'Demo modda başarılı.');
+    try { await mockSyncErp(id); await refresh(); Alert.alert('Senkronizasyon', 'Senkronizasyon tamamlandı.'); }
+    catch (failure: any) { setError(failure?.message || 'ERP senkronizasyonu tamamlanamadı.'); }
   };
 
   const onToggle = async (a: ErpAdapter) => {
-    await upsertErpAdapter({ ...a, active: !a.active });
-    await refresh();
+    try { await upsertErpAdapter({ ...a, active: !a.active }); await refresh(); }
+    catch (failure: any) { setError(failure?.message || 'ERP adaptörü değiştirilemedi.'); }
   };
+
+  if (loading) return <SafeAreaView style={styles.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (error) return <SafeAreaView style={styles.safe} edges={['bottom']}><ErrorState title="ERP adaptör servisi kullanılamıyor" message={error} onRetry={refresh} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>

@@ -8,8 +8,10 @@ import { colors, spacing, radius, typography } from '../theme';
 import { listCollectionForecasts, COLL_RISK_LABEL, COLL_RISK_COLOR } from '../services/advanced';
 import type { AdvCollectionForecast } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
+import { useServiceLoad } from '../portal/useServiceLoad';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
-import { FlatList } from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 import { useHasRole } from '../components/RoleGuard';
 
 export default function AdvCollectionForecastScreen() {
@@ -21,8 +23,12 @@ export default function AdvCollectionForecastScreen() {
 }
 
 function AdvCollectionForecastInner() {
+  const serviceState = useServiceLoad();
   const [items, setItems] = useState<AdvCollectionForecast[]>([]);
-  useFocusEffect(useCallback(() => { (async () => setItems(await listCollectionForecasts()))(); }, []));
+  useFocusEffect(useCallback(() => { void serviceState.read(async () => { setItems(await listCollectionForecasts()); }); }, [serviceState.read]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Hizmet bilgileri yükleniyor" color={colors.text.primary} /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Tahsilat tahmin servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   const total = items.reduce((a, x) => a + x.outstandingTotal, 0);
   const highRisk = items.filter(i => i.risk === 'high').length;

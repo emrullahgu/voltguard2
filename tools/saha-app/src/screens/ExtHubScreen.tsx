@@ -46,6 +46,9 @@ export default function ExtHubScreen() {
     return () => { active = false; };
   }, [refresh]));
 
+  if (loading) return <SafeAreaView style={s.safe} edges={['bottom']}><Text style={s.heroD} accessibilityLiveRegion="polite">Dış hizmet bağlantıları kontrol ediliyor…</Text></SafeAreaView>;
+  if (error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Dış hizmetler kullanılamıyor" message={error} onRetry={() => setRefresh(value => value + 1)} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
+
   const grouped = list.reduce<Record<string, ExtIntegration[]>>((acc, it) => {
     (acc[it.category] = acc[it.category] || []).push(it); return acc;
   }, {});

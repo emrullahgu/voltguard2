@@ -10,9 +10,10 @@ import { supabase, SUPABASE_CONFIGURED } from './supabase';
 const KEY = '@SahaTakip:form_templates';
 const SEED_FLAG = '@SahaTakip:form_templates_seeded_v1';
 
-function tplFromRow(r: any): FormTemplate {
+function tplFromRow(r: any, serverRevision?: number): FormTemplate {
   return {
     id: r.id,
+    serverRevision,
     name: r.name,
     category: r.category,
     description: r.description || '',
@@ -62,14 +63,12 @@ function seedTemplates(): FormTemplate[] {
 
 export async function listTemplates(): Promise<FormTemplate[]> {
   if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase.from('form_templates').select('*').order('updated_at', { ascending: false });
-      if (!error && data) {
-        const list = data.map(tplFromRow);
-        await AsyncStorage.setItem(KEY, JSON.stringify(list));
-        return list;
-      }
-    } catch { /* fallback */ }
+    const { data, error, versions } = await supabase.from('form_templates').select('*').order('updated_at', { ascending: false });
+    if (error) throw error;
+    if (!Array.isArray(data)) throw new Error('Şablon listesi sunucudan doğrulanamadı.');
+    const list = data.map((row: any) => tplFromRow(row, versions?.[row.id]));
+    await saveTemplates(list).catch(() => {});
+    return list;
   }
   try {
     const raw = await AsyncStorage.getItem(KEY);
@@ -95,38 +94,62 @@ export async function saveTemplates(list: FormTemplate[]) {
   await AsyncStorage.setItem(KEY, JSON.stringify(list));
 }
 
-export async function upsertTemplate(tpl: FormTemplate) {
+async function cachedTemplates(): Promise<FormTemplate[]> {
+  try {
+    const raw = await AsyncStorage.getItem(KEY), list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list : [];
+  } catch { return []; }
+}
+function expectedVersion(id: string, revision?: number) {
+  if (!Number.isSafeInteger(revision) || revision! < 1) throw new Error('Şablon sürümü eksik. Kaydı yeniden açın.');
+  return { [id]: revision! };
+}
+export async function upsertTemplate(tpl: FormTemplate): Promise<FormTemplate> {
   const updated: FormTemplate = { ...tpl, updatedAt: nowISO() };
+  let saved = updated;
   if (SUPABASE_CONFIGURED) {
-    try { await supabase.from('form_templates').upsert(tplToRow(updated)); } catch { /* offline */ }
+    const existing = tpl.serverRevision !== undefined || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tpl.id);
+    const row = tplToRow(updated);
+    let query;
+    if (existing) query = supabase.from('form_templates').update(row).eq('id', tpl.id).expectVersions(expectedVersion(tpl.id, tpl.serverRevision));
+    else { delete (row as any).id; query = supabase.from('form_templates').insert(row).expectVersions({}); }
+    const { data, error, versions } = await query.select().single();
+    if (error) throw error;
+    if (!data?.id || existing && data.id !== tpl.id) throw new Error('Şablon kaydının sonucu doğrulanamadı. Yeniden göndermeden önce listeyi kontrol edin.');
+    saved = tplFromRow(data, versions?.[data.id]);
   }
-  const all = await listTemplates();
-  const idx = all.findIndex(x => x.id === tpl.id);
-  if (idx >= 0) all[idx] = updated;
-  else all.unshift(updated);
-  await saveTemplates(all);
+  const all = await cachedTemplates();
+  const list = [saved, ...all.filter(x => x.id !== tpl.id && x.id !== saved.id)];
+  if (SUPABASE_CONFIGURED) await saveTemplates(list).catch(() => {});
+  else await saveTemplates(list);
+  return saved;
 }
 
-export async function deleteTemplate(id: string) {
+export async function deleteTemplate(id: string, serverRevision?: number) {
   if (SUPABASE_CONFIGURED) {
-    try { await supabase.from('form_templates').delete().eq('id', id); } catch { /* offline */ }
+    const { data, error } = await supabase.from('form_templates').delete().eq('id', id).expectVersions(expectedVersion(id, serverRevision)).select('id');
+    if (error) throw error;
+    if (!Array.isArray(data) || !data.some((row: any) => row.id === id)) throw new Error('Şablon silme işlemi doğrulanamadı. Listeyi yenileyin.');
   }
-  const all = await listTemplates();
-  await saveTemplates(all.filter(t => t.id !== id));
+  const all = await cachedTemplates();
+  if (SUPABASE_CONFIGURED) await saveTemplates(all.filter(t => t.id !== id)).catch(() => {});
+  else await saveTemplates(all.filter(t => t.id !== id));
 }
 
 export async function ensureSeeded() {
-  const flag = await AsyncStorage.getItem(SEED_FLAG);
+  const flag = await AsyncStorage.getItem(SEED_FLAG).catch(() => null);
   if (flag) return;
   const existing = await listTemplates();
   if (existing.length === 0) {
     const seeded = seedTemplates();
-    if (SUPABASE_CONFIGURED) {
-      try { await supabase.from('form_templates').insert(seeded.map(tplToRow)); } catch { /* offline */ }
+    if (seeded.length > 0) {
+      if (SUPABASE_CONFIGURED) {
+        try { await supabase.from('form_templates').insert(seeded.map(tplToRow)); } catch { /* offline */ }
+      }
+      await saveTemplates(seeded);
     }
-    await saveTemplates(seeded);
   }
-  await AsyncStorage.setItem(SEED_FLAG, '1');
+  await AsyncStorage.setItem(SEED_FLAG, '1').catch(() => {});
 }
 
 export function newEmptyTemplate(): FormTemplate {

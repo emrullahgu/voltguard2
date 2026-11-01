@@ -3,7 +3,9 @@
 // VoltSim şarj ek hesapları: yük paylaşımı (öncelik, IEC 61851-1 6 A alt sınırı), profiller, tarife, hub simülasyonu.
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
 const E = require(path.join(__dirname, '../../js/voltsim/engine.js'));
 const X = require(path.join(__dirname, '../../js/voltsim/calc/sarj.js'));
 
@@ -86,6 +88,121 @@ test('batarya tamponu tepe talebini bağlantı sınırında tutar ve süreyi kı
   const yes = X.simulateHub({ points: pts, siteKW: 60, dlm: true, curve: 'constant', bat: { kWh: 100, kW: 60, soc0: 100 } });
   assert.ok(yes.lastFinish < no.lastFinish, yes.lastFinish + ' < ' + no.lastFinish);
   assert.ok(yes.peak <= 60 + 1e-6);
+});
+
+const integral = (h, values) => h.t.slice(1).reduce((sum, t, i) => sum + values[i] * (t - h.t[i]) / 60, 0);
+function consistentSamples(h) {
+  assert.equal(h.t.at(-1), h.minutes, 'son örnek gerçek bitiş anında');
+  for (let i = 1; i < h.t.length; i++) assert.ok(h.t[i] > h.t[i - 1], 'örnek zamanları artar');
+  for (const values of [h.grid, h.base, h.pv, h.bat, h.chargers, ...h.P, ...h.soc, ...h.paused]) assert.equal(values.length, h.t.length);
+  near(integral(h, h.grid), h.gridE, 1e-8, 'şebeke enerjisi');
+  near(integral(h, h.pv), h.pvE, 1e-8, 'GES enerjisi');
+  near(integral(h, h.bat.map(p => Math.max(0, p))), h.batOut, 1e-8, 'batarya deşarjı');
+  near(integral(h, h.chargers), h.chargeE, 1e-8, 'tüm şarj enerjisi');
+  h.points.forEach((p, i) => near(integral(h, h.P[i]), p.Egrid, 1e-8, 'nokta ' + i));
+}
+
+test('DLM: baz yük bağlantıyı aşınca batarya önce bina açığını karşılar', () => {
+  const h = X.simulateHub({ points: [car({ profile: 'DC60', stationP: 60, eff: 0.94 })], siteKW: 50, dlm: true,
+    startHour: 10, curve: 'constant', base: { profile: 'office', peakKW: 60 }, bat: { kWh: 100, kW: 20, soc0: 90 }, maxMin: 1 });
+  near(h.base[0], 60, 1e-9); near(h.chargers[0], 10, 1e-9); near(h.bat[0], 20, 1e-9); near(h.grid[0], 50, 1e-9);
+  near(h.peak, 50, 1e-9); assert.equal(h.overMin, 0);
+  near(h.batEnd, 90 - 20 / 60, 1e-9);
+  consistentSamples(h);
+});
+
+test('DLM: batarya bina açığına yetmezse şarj durur ve kaçınılmaz aşım raporlanır', () => {
+  const h = X.simulateHub({ points: [car({ profile: 'DC60', stationP: 60 })], siteKW: 50, dlm: true,
+    startHour: 10, base: { profile: 'office', peakKW: 80 }, bat: { kWh: 100, kW: 20, soc0: 90 }, maxMin: 0.5 });
+  assert.equal(h.chargers[0], 0); near(h.grid[0], 60, 1e-9); near(h.overMin, 0.5, 1e-9);
+  assert.equal(h.points[0].finishMin, null);
+  consistentSamples(h);
+});
+
+test('son kısmi dakika: enerji, süre, son SOC ve maliyet aynı aralığı kullanır', () => {
+  const h = X.simulateHub({ points: [car({ profile: 'DC60', stationP: 60, eff: 0.94, soc0: 79, soc1: 80 })],
+    siteKW: 1000, dlm: true, curve: 'constant', tariff: { mode: 'single', single: 3 } });
+  near(h.gridE, 0.6 / 0.94, 1e-9); near(h.chargeE, 0.6 / 0.94, 1e-9);
+  near(h.minutes, 0.6, 1e-9); near(h.lastFinish, 0.6, 1e-9);
+  near(h.cost, 0.6 / 0.94 * 3, 1e-9);
+  assert.equal(h.soc[0].at(-1), 80); assert.equal(h.P[0].at(-1), 0); assert.equal(h.allDone, true);
+  consistentSamples(h);
+});
+
+test('tam dakikada bitiş veya süre sınırı fazladan bir dakika enerji üretmez', () => {
+  for (const maxMin of [0.25, 2, 2.5]) {
+    const h = X.simulateHub({ points: [car({ profile: 'DC60', stationP: 60, capacity: 60, eff: 1, soc0: 0, soc1: 100 })],
+      siteKW: 1000, dlm: true, curve: 'constant', dt: 2, maxMin });
+    near(h.gridE, maxMin, 1e-9); near(h.minutes, maxMin, 1e-9); near(h.soc[0].at(-1), maxMin / 60 * 100, 1e-9);
+    assert.equal(h.points[0].finishMin, null); assert.equal(h.allDone, false);
+    consistentSamples(h);
+  }
+  const done = X.simulateHub({ points: [car({ profile: 'DC60', stationP: 60, capacity: 10, eff: 1, soc0: 20, soc1: 30 })],
+    siteKW: 1000, dlm: true, curve: 'constant' });
+  near(done.minutes, 1, 1e-9); near(done.gridE, 1, 1e-9); assert.equal(done.soc[0].at(-1), 30);
+  consistentSamples(done);
+});
+
+test('bir araç bitince güç kalan araçlara aynı dakika içinde yeniden paylaşılır', () => {
+  const h = X.simulateHub({ points: [10, 20].map(capacity => car({ profile: 'DC60', stationP: 60, capacity, eff: 1, soc0: 79, soc1: 80 })),
+    siteKW: 60, dlm: true, curve: 'constant', tariff: { mode: 'single', single: 3 } });
+  near(h.points[0].finishMin, 0.2, 1e-9); near(h.points[1].finishMin, 0.3, 1e-9);
+  near(h.minutes, 0.3, 1e-9); near(h.gridE, 0.3, 1e-9); near(h.cost, 0.9, 1e-9);
+  near(h.P[0][1], 0, 1e-9); near(h.P[1][1], 60, 1e-9);
+  h.soc.forEach(s => assert.equal(s.at(-1), 80));
+  consistentSamples(h);
+});
+
+test('duraklatılan AC oturumun bekleme süresi kısmi bitişte tam dakikaya yuvarlanmaz', () => {
+  const h = X.simulateHub({ points: [car({ capacity: 10, soc0: 79, soc1: 80 }), car({ soc0: 20, soc1: 80 })],
+    siteKW: 6, dlm: true, curve: 'constant', maxMin: 2 });
+  near(h.points[0].finishMin, 0.1 / (6 * 0.9) * 60, 1e-9);
+  near(h.points[1].pausedMin, h.points[0].finishMin, 1e-9);
+  assert.ok(h.points[1].Egrid > 0);
+  consistentSamples(h);
+});
+
+test('kısmi bitişte bina, GES ve tampon batarya enerji dengesi korunur', () => {
+  for (const pvKWp of [0, 100, 250]) {
+    const h = X.simulateHub({ points: [car({ profile: 'DC60', stationP: 60, eff: 0.94, soc0: 79, soc1: 80 })],
+      siteKW: 50, dlm: true, startHour: 10, curve: 'constant', base: { profile: 'office', peakKW: 60 },
+      pv: { kWp: pvKWp, doy: 172 }, bat: { kWh: 100, kW: 20, soc0: 90 } });
+    const batCharge = integral(h, h.bat.map(p => Math.max(0, -p)));
+    const curtailed = integral(h, h.pv.map((pv, i) => Math.max(0, pv + Math.max(0, h.bat[i]) - h.base[i] - h.chargers[i] - Math.max(0, -h.bat[i]))));
+    near(h.gridE + h.pvE + h.batOut, integral(h, h.base) + h.chargeE + batCharge + curtailed, 1e-8);
+    near(h.batEnd, 90 - h.batOut + 0.92 * batCharge, 1e-8);
+    if (pvKWp === 250) assert.ok(batCharge > 0 && curtailed > 0, 'GES fazlası depoya ve kırpmaya gider');
+    assert.ok(h.peak <= 50 + 1e-9); assert.equal(h.soc[0].at(-1), 80);
+    consistentSamples(h);
+  }
+});
+
+test('sıfır süre enerji üretmez; geçersiz adım ve süreler reddedilir', () => {
+  const h = X.simulateHub({ points: [car()], siteKW: 50, dlm: true, maxMin: 0 });
+  assert.equal(h.minutes, 0); assert.equal(h.gridE, 0); assert.equal(h.chargeE, 0); assert.equal(h.soc[0][0], 20);
+  assert.equal(h.allDone, false); consistentSamples(h);
+  for (const dt of [0, -1, Infinity, NaN]) assert.throws(() => X.simulateHub({ points: [], dt }), RangeError);
+  for (const maxMin of [-1, Infinity, NaN]) assert.throws(() => X.simulateHub({ points: [], maxMin }), RangeError);
+});
+
+test('oynatma kesirli bitiş zamanındaki son SOC örneğini gösterir', () => {
+  let def;
+  const fmt = (value, digits = 1, unit = '') => Number(value).toFixed(digits) + (unit ? ' ' + unit : '');
+  const VS = { E: Object.assign({}, E, { ext: { sarj: X } }), fmt, fmtDuration: m => fmt(m, 1),
+    register: value => { def = value; }, toast() {} };
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../../js/voltsim/mod/sarj.js'), 'utf8'), { window: { VoltSim: VS } });
+  const state = def.defaults();
+  state.points = [state.points[3]];
+  Object.assign(state, { sel: 0, siteKW: 1000, baseProfile: 'none', curve: 'constant' });
+  Object.assign(state.points[0].car, { capacity: 60, soc0: 79, soc1: 80 });
+  const result = def.compute(state);
+  assert.equal(result.ok, true, (result.errors || []).join('; '));
+  const live = def.initLive(state), app = { state, live, validResult: result };
+  def.tick(app, 10);
+  assert.equal(live.done, true); near(live.t, 0.6, 1e-9);
+  const reading = def.readouts(result, state, live).find(r => r.label === 'Simülasyon saati');
+  assert.match(reading.value, /%80\.0$/);
+  assert.match(reading.sub, /şarj 0\.0 kW/);
 });
 
 test('uyumsuz soket: oturum enerji almaz', () => {

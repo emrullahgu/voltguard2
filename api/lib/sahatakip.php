@@ -65,12 +65,20 @@ function vg_saha_writable(array $s,array $u,string $table,?array $record,array $
     if($record && !vg_saha_visible($s,$u,$table,$record)) vg_company_fail(403,'saha_scope','Bu kayıt için erişiminiz yok.');
     if($table==='conversation_participants') {
         $cid=$row['conversation_id']??$old['conversation_id']??null; $conversation=vg_saha_find($s,'conversations',$cid);
+        if($old)foreach(['conversation_id','user_id']as $identity)if(array_key_exists($identity,$row)&&$row[$identity]!==$old[$identity])vg_company_fail(403,'saha_participant','Katılımcı kaydı başka bir görüşmeye veya çalışana taşınamaz.');
         $selfRead=$old&&($old['user_id']??null)===$me&&$operation==='update'&&!array_diff(array_keys($row),['last_read_at']);
-        if(!$selfRead&&(!$conversation || ($conversation['payload']['created_by']??null)!==$me)) vg_company_fail(403,'saha_participant','Görüşmenin katılımcılarını yalnızca görüşmeyi başlatan çalışan yönetebilir.');
+        $selfLeave=$old&&($old['user_id']??null)===$me&&$operation==='delete';
+        if(!$selfRead&&!$selfLeave&&(!$conversation || ($conversation['payload']['created_by']??null)!==$me)) vg_company_fail(403,'saha_participant','Görüşmenin katılımcılarını yalnızca görüşmeyi başlatan çalışan yönetebilir.');
         $allowed=array_column(vg_saha_profiles($u),'id'); if(!in_array($row['user_id']??$old['user_id']??null,$allowed,true)) vg_company_fail(422,'saha_participant','Etkin bir çalışan seçin.');
     } elseif($table==='messages') {
         $probe=['payload'=>array_merge($old??[],$row)]; if(!vg_saha_visible($s,$u,$table,$probe)) vg_company_fail(403,'saha_participant','Yalnızca katıldığınız görüşmeye mesaj yazabilirsiniz.');
         if($old && ($old['sender_id']??null)!==$me) vg_company_fail(403,'saha_owner','Yalnızca kendi mesajınızı değiştirebilirsiniz.');
+        $attachment=$probe['payload']['attachment_url']??null;
+        // Keep unchanged legacy attachments editable; new references must name this sender's upload.
+        if($operation!=='delete'&&$attachment!==null&&$attachment!==''&&(!$old||$attachment!==($old['attachment_url']??null))) {
+            $file=is_string($attachment)?vg_saha_find($s,'_files','chat-attachments:'.$attachment):null;
+            if(!$file||($file['created_by']??null)!==$u['id'])vg_company_fail(403,'saha_attachment_owner','Yalnızca kendi yüklediğiniz dosyayı mesaja ekleyebilirsiniz.');
+        }
     } elseif(in_array($table,VG_SAHA_PERSONAL,true)) {
         $owner=$row['user_id']??$old['user_id']??$me; if($owner!==$me && !$admin) vg_company_fail(403,'saha_owner','Yalnızca kendi kaydınızı değiştirebilirsiniz.');
     } elseif($old && !$admin && !vg_company_manage($u) && ($old['created_by']??null)!==$me && !in_array($table,['stock_balances','stock_movements','form_responses'],true)) {
@@ -117,7 +125,8 @@ function vg_saha_validate(string $table,array $row): void {
     foreach(['longitude','start_lng','end_lng','lng'] as $field) if(isset($row[$field]) && abs((float)$row[$field])>180) vg_company_fail(422,'saha_location');
 }
 function vg_saha_defaults(string $table): array {
-    $defaults=['quotes'=>['status'=>'Taslak','date'=>date('Y-m-d'),'subtotal'=>0,'vat_total'=>0,'grand_total'=>0,'revision'=>0,'images'=>[]], 'work_orders'=>['status'=>'Bekliyor','date'=>date('Y-m-d'),'job_type'=>'FIELD','priority'=>'Normal','assignment_status'=>'Atanmadı','materials_json'=>[],'time_logs_json'=>[],'other_cost'=>0,'labor_cost'=>0,'material_cost'=>0,'quote_amount'=>0,'profit'=>0], 'employees'=>['active'=>true,'daily_wage'=>0,'monthly_wage'=>0,'attendance_json'=>[]], 'quote_lines'=>['unit'=>'Adet','quantity'=>1,'material_price'=>0,'install_price'=>0,'dismantle_price'=>0,'with_dismantle'=>false,'overhead_pct'=>10,'profit_pct'=>15,'vat_pct'=>20,'discount_pct'=>0], 'shifts'=>['end_at'=>null,'break_minutes'=>0], 'notifications'=>['read'=>false], 'assets'=>['status'=>'active']];
+    $defaults=['quotes'=>['status'=>'Taslak','date'=>date('Y-m-d'),'subtotal'=>0,'vat_total'=>0,'grand_total'=>0,'revision'=>0,'images'=>[]], 'work_orders'=>['status'=>'Bekliyor','date'=>date('Y-m-d'),'job_type'=>'FIELD','priority'=>'Normal','assignment_status'=>'Atanmadı','materials_json'=>[],'time_logs_json'=>[],'other_cost'=>0,'labor_cost'=>0,'material_cost'=>0,'quote_amount'=>0,'profit'=>0], 'employees'=>['active'=>true,'daily_wage'=>0,'monthly_wage'=>0,'attendance_json'=>[]], 'quote_lines'=>['unit'=>'Adet','quantity'=>1,'material_price'=>0,'install_price'=>0,'dismantle_price'=>0,'with_dismantle'=>false,'overhead_pct'=>10,'profit_pct'=>15,'vat_pct'=>20,'discount_pct'=>0], 'shifts'=>['end_at'=>null,'break_minutes'=>0], 'notifications'=>['read'=>false]];
+    // Assets have no status column; their defaults must not inject one.
     return $defaults[$table]??[];
 }
 function vg_saha_filters(string $table,$filters): array {
@@ -149,7 +158,17 @@ function vg_saha_relation(array $s,array $u,string $table,array $row,string $tok
     foreach($records as $record) { $p=$record['payload']; if($other!=='profiles'&&!vg_saha_visible($s,$u,$other,$record))continue; if($forward?vg_company_equal($p['id']??null,$row[$forward]??null):vg_company_equal($p[$reverse]??null,$row['id']??null)) { $values[]=vg_saha_project($s,$u,$other,$p,$selection,$versions); if($other!=='profiles')$versions[$other][$p['id']]=$record['revision']; } }
     return [$alias,$forward?($values[0]??null):$values];
 }
+function vg_saha_message_deleted(array $row): bool {
+    return isset($row['deleted_at'])&&$row['deleted_at']!=='';
+}
+function vg_saha_public_payload(string $table,array $row): array {
+    // Keep the deletion marker and audit data in storage, but never return or
+    // match deleted content through public selects, filters or ordering.
+    if($table==='messages'&&vg_saha_message_deleted($row))foreach(['body','attachment_url','attachment_type','attachment_name']as $field)$row[$field]=null;
+    return $row;
+}
 function vg_saha_project(array $s,array $u,string $table,array $row,string $selection,array &$versions): array {
+    $row=vg_saha_public_payload($table,$row);
     if($table==='employees'&&!vg_company_manage($u)){
         $safe=['id','full_name','role','active','created_at','updated_at'];
         if($selection!=='*')foreach(explode(',',$selection)as $field)if(!in_array(trim($field),$safe,true))vg_company_fail(403,'saha_payroll','Maaş ve puantaj alanları için bordro yönetim yetkisi gerekiyor.');
@@ -169,7 +188,7 @@ function vg_saha_query(array &$s,array $u,array $a): array {
     if($table==='employees'&&!vg_company_manage($u)){foreach(array_merge($filters,$a['order']??[])as $used)if(!in_array($used['field']??null,['id','full_name','role','active','created_at','updated_at'],true))vg_company_fail(403,'saha_payroll');}
     $all=$table==='profiles'?array_combine(array_column($profiles=vg_saha_profiles($u),'id'),array_map(function($p){return ['payload'=>$p,'revision'=>1];},$profiles)):vg_saha_all($s,$table);
     if($latest){$newest=[];foreach($all as $record){$p=$record['payload'];$owner=$p['user_id']??$p['id'];$time=strtotime($p['recorded_at']??$p['created_at']??'')?:0;$old=$newest[$owner]??null;if(!$old||$time>(strtotime($old['payload']['recorded_at']??$old['payload']['created_at']??'')?:0))$newest[$owner]=$record;}$all=$newest;}
-    $selected=[];foreach($all as $id=>$r)if(($table==='profiles'||vg_saha_visible($s,$u,$table,$r))&&vg_saha_matches($r['payload'],$filters))$selected[$id]=$r;
+    $selected=[];foreach($all as $id=>$r)if(($table==='profiles'||vg_saha_visible($s,$u,$table,$r))&&vg_saha_matches(vg_saha_public_payload($table,$r['payload']),$filters))$selected[$id]=$r;
     $versions=$a['versions']??[];if(!is_array($versions))vg_company_fail(400,'saha_revision');$affected=[];
     if($op!=='select'){
         if(in_array($op,['update','delete'],true)&&!$filters)vg_company_fail(400,'saha_filter_required','Değiştirilecek kayıt seçilmelidir.');
@@ -182,7 +201,7 @@ function vg_saha_query(array &$s,array $u,array $a): array {
                 vg_saha_writable($s,$u,$table,$old,$item,$op);vg_saha_expect_version($old,$versions,$id);
                 if($op==='delete'){vg_saha_delete_references($s,$table,$id);unset($s['tables']['saha_records'][$old['id']]);vg_company_audit($s,$u,'saha:delete:'.$table,$id);$affected[$id]=$old;continue;}
                 $now=vg_company_time($old['payload']['updated_at']??null);$me=vg_saha_user_id($u);$payload['id']=$id;$payload['created_at']=$old['payload']['created_at']??$now;$payload['updated_at']=$now;$payload['created_by']=$old['payload']['created_by']??$me;$payload['updated_by']=$me;
-                foreach(VG_SAHA_ACTOR_FIELDS as $field)if(array_key_exists($field,$payload))$payload[$field]=$old['payload'][$field]??$me;
+                foreach(VG_SAHA_ACTOR_FIELDS as $field)if($field!=='updated_by'&&array_key_exists($field,$payload))$payload[$field]=$old['payload'][$field]??$me;
                 if(in_array($table,VG_SAHA_PERSONAL,true)||$table==='audit_log')$payload['user_id']=$old['payload']['user_id']??($u['role']==='admin'?($payload['user_id']??$me):$me);
                 if($table==='messages')$payload['sender_id']=$me;
                 foreach(['number'] as $unique)if(in_array($table,['quotes','work_orders'],true)&&isset($payload[$unique]))foreach($all as $other)if(($other['payload']['id']??null)!==$id&&($other['payload'][$unique]??null)===$payload[$unique])vg_company_fail(409,'23505','Kayıt numarası zaten kullanılıyor.');
@@ -193,7 +212,7 @@ function vg_saha_query(array &$s,array $u,array $a): array {
         $selected=$affected;
     }
     $rows=array_values($selected);$order=$a['order']??[];if(!is_array($order)||count($order)>5)vg_company_fail(400,'saha_order');foreach($order as $o)vg_saha_field($table,$o['field']??null);
-    usort($rows,function($x,$y)use($order){foreach($order as $o){$a=$x['payload'][$o['field']]??null;$b=$y['payload'][$o['field']]??null;$cmp=is_numeric($a)&&is_numeric($b)?((float)$a<=>(float)$b):strcmp((string)$a,(string)$b);if($cmp)return ($o['ascending']??true)?$cmp:-$cmp;}return strcmp((string)($x['payload']['id']??''),(string)($y['payload']['id']??''));});
+    usort($rows,function($x,$y)use($order,$table){$left=vg_saha_public_payload($table,$x['payload']);$right=vg_saha_public_payload($table,$y['payload']);foreach($order as $o){$a=$left[$o['field']]??null;$b=$right[$o['field']]??null;$cmp=is_numeric($a)&&is_numeric($b)?((float)$a<=>(float)$b):strcmp((string)$a,(string)$b);if($cmp)return ($o['ascending']??true)?$cmp:-$cmp;}return strcmp((string)($x['payload']['id']??''),(string)($y['payload']['id']??''));});
     $count=count($rows);$from=0;$limit=$a['limit']??1000;if(!is_int($limit)||$limit<1||$limit>5000)vg_company_fail(400,'saha_limit');if(isset($a['range'])){$range=$a['range'];if(!is_array($range)||count($range)!==2||!is_int($range[0])||!is_int($range[1])||$range[0]<0||$range[1]<$range[0]||$range[1]-$range[0]>=5000)vg_company_fail(400,'saha_range');$from=$range[0];$limit=min($limit,$range[1]-$from+1);}
     $rows=array_slice($rows,$from,$limit);$single=$a['single']??null;if(!in_array($single,[null,'one','maybe'],true))vg_company_fail(400,'saha_single');if(($single==='one'&&count($rows)!==1)||($single==='maybe'&&count($rows)>1))vg_company_fail(406,'PGRST116','Tek kayıt beklenirken farklı sayıda kayıt bulundu.');
     $tableVersions=[];$data=[];foreach($rows as $r){$p=$r['payload'];if($table!=='profiles')$tableVersions[$table][$p['id']]=$r['revision'];$data[]=vg_saha_project($s,$u,$table,$p,$selection,$tableVersions);}
@@ -231,7 +250,9 @@ function vg_saha_cache(array &$s,array $u,array $a): array {
 function vg_saha_asset_url(string $bucket,string $path): string {return '/api/saha-asset.php?bucket='.rawurlencode($bucket).'&path='.rawurlencode($path);}
 function vg_saha_asset_visible(array $s,array $u,array $record): bool {
     $p=$record['payload'];if($p['bucket']!=='chat-attachments'||($record['created_by']??null)===$u['id'])return true;
-    foreach(vg_saha_all($s,'messages')as $message)if(($message['payload']['attachment_url']??$message['payload']['attachment_path']??null)===$p['path']&&vg_saha_visible($s,$u,'messages',$message))return true;return false;
+    $owner=$record['created_by']??null;if(!is_string($owner)||$owner==='')return false;
+    // A stored forged reference must never turn knowledge of a path into file access.
+    foreach(vg_saha_all($s,'messages')as $message)if(!vg_saha_message_deleted($message['payload'])&&($message['payload']['attachment_url']??$message['payload']['attachment_path']??null)===$p['path']&&($message['payload']['sender_id']??null)===vg_saha_uuid($owner)&&vg_saha_visible($s,$u,'messages',$message))return true;return false;
 }
 function vg_saha_storage(array &$s,array $u,array $a): array {
     $op=$a['operation']??'';$bucket=$a['bucket']??'';$path=$a['path']??'';

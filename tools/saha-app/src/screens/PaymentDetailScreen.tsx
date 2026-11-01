@@ -26,6 +26,7 @@ import { generateAndShareReceiptPdf } from '../services/receiptPdf';
 import { queueFromPayment, submitRecord, listRecords, loadConfig } from '../services/eInvoice';
 import { useAppContext } from '../context/AppContext';
 import { Payment, RootStackParamList } from '../types';
+import ErrorState from '../components/ErrorState';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'PaymentDetail'>;
 type Rt = RouteProp<RootStackParamList, 'PaymentDetail'>;
@@ -49,17 +50,23 @@ export default function PaymentDetailScreen() {
   const [p, setP] = useState<Payment | null>(null);
   const [working, setWorking] = useState(false);
   const [einvoiceStatus, setEinvoiceStatus] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
   const load = useCallback(async () => {
+    setError('');
+    try {
     const x = await getPayment(paymentId);
+    if (!x) throw new Error('Tahsilat kaydı bulunamadı. Listeyi yenileyin.');
     setP(x);
     const records = await listRecords();
     const existing = records.find(r => r.paymentId === paymentId);
     setEinvoiceStatus(existing ? existing.status : null);
+    } catch (e: any) { setError(e?.message || 'Tahsilat yüklenemedi.'); }
   }, [paymentId]);
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="Tahsilat yüklenemedi" message={error} onRetry={load} /></SafeAreaView>;
   if (!p) {
     return (
       <SafeAreaView style={styles.safe}>
@@ -89,7 +96,7 @@ export default function PaymentDetailScreen() {
       const rec = await queueFromPayment(p, customer?.taxNumber);
       setEinvoiceStatus(rec.status);
       Alert.alert('E-Fatura', 'Kuyruğa eklendi.');
-    } finally {
+    } catch (e: any) { Alert.alert('E-Fatura', e?.message || 'Kuyruğa eklenemedi.'); } finally {
       setWorking(false);
     }
   };
@@ -113,7 +120,7 @@ export default function PaymentDetailScreen() {
         'E-Fatura',
         res.ok ? `Gönderildi (${res.status}).` : `Hata: ${res.message ?? 'Bilinmiyor'}`,
       );
-    } finally {
+    } catch (e: any) { Alert.alert('E-Fatura', e?.message || 'Gönderilemedi.'); } finally {
       setWorking(false);
     }
   };
@@ -127,7 +134,7 @@ export default function PaymentDetailScreen() {
         onPress: async () => {
           // deletePayment artık DB reddinde fırlatır → başarısızsa ekrandan ÇIKMA + dürüst hata.
           try {
-            await deletePayment(p.id);
+            await deletePayment(p.id, p.serverRevision);
             navigation.goBack();
           } catch (e: any) {
             Alert.alert('Silinemedi', e?.message || 'Tahsilat silinemedi.');

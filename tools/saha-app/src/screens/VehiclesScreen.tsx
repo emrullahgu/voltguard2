@@ -29,6 +29,7 @@ import {
 } from '../services/vehicles';
 import { Vehicle, RootStackParamList } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 import RowMenu from '../components/RowMenu';
 import PressableScale from '../components/PressableScale';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
@@ -42,10 +43,14 @@ export default function VehiclesScreen() {
   const [alerts, setAlerts] = useState<VehicleAlert[]>([]);
   const [search, setSearch] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState('');
 
   const load = useCallback(async () => {
+    setError('');
+    try {
     setItems(await listVehicles());
     setAlerts(await listVehicleAlerts(30));
+    } catch (e: any) { setError(e?.message || 'Araç listesi yüklenemedi.'); }
   }, []);
 
   const onRefresh = useCallback(async () => {
@@ -68,14 +73,17 @@ export default function VehiclesScreen() {
         text: 'Sil',
         style: 'destructive',
         onPress: async () => {
-          await deleteVehicle(v.id);
+          try {
+          await deleteVehicle(v.id, v.serverRevision);
           showToast(`${v.plate} silindi.`);
           load();
+          } catch (e: any) { Alert.alert('Silinemedi', e?.message || 'Araç silinemedi.'); }
         },
       },
     ]);
   };
 
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="Araç listesi yüklenemedi" message={error} onRetry={load} /></SafeAreaView>;
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <View style={styles.toolbar}>
@@ -155,7 +163,7 @@ export default function VehiclesScreen() {
                   items={[
                     { label: 'Detay', icon: 'eye-outline', onPress: () => navigation.navigate('VehicleDetail', { vehicleId: item.id }) },
                     { label: 'Düzenle', icon: 'create-outline', onPress: () => navigation.navigate('VehicleForm', { vehicleId: item.id }) },
-                    { label: 'Sil', icon: 'trash-outline', destructive: true, confirm: `"${item.plate}" silinsin mi?`, confirmTitle: 'Aracı Sil', onPress: async () => { await deleteVehicle(item.id); showToast(`${item.plate} silindi.`); load(); } },
+                    { label: 'Sil', icon: 'trash-outline', destructive: true, confirm: `"${item.plate}" silinsin mi?`, confirmTitle: 'Aracı Sil', onPress: async () => { try { await deleteVehicle(item.id,item.serverRevision); showToast(`${item.plate} silindi.`); load(); } catch (e: any) { Alert.alert('Silinemedi',e?.message||'Araç silinemedi.'); } } },
                   ]}
                 />
               </View>

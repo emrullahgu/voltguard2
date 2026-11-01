@@ -1,8 +1,9 @@
 // ErpConnectionsScreen — POZ-DEV-454
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import ErrorState from '../components/ErrorState';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList, ErpConnection } from '../types';
@@ -17,17 +18,26 @@ type Nav = NativeStackNavigationProp<RootStackParamList>;
 export default function ErpConnectionsScreen() {
   const nav = useNavigation<Nav>();
   const [items, setItems] = useState<ErpConnection[]>([]);
-  const load = useCallback(async () => { setItems(await listConnections()); }, []);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const load = useCallback(async () => {
+    setLoading(true); setError(null);
+    try { setItems(await listConnections()); }
+    catch (failure: any) { setError(failure?.message || 'Servis kayıtları yüklenemedi.'); }
+    finally { setLoading(false); }
+  }, []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const test = async (id: string) => {
-    const r = await testConnection(id);
-    Alert.alert('Test Sonucu', STATUS_LABEL[r]);
-    load();
+    try { const r = await testConnection(id); Alert.alert('Test Sonucu', STATUS_LABEL[r]); await load(); }
+    catch (failure: any) { setError(failure?.message || 'ERP bağlantısı doğrulanamadı.'); }
   };
   const remove = (id: string) => Alert.alert('Sil', 'Bağlantıyı silmek istiyor musun?', [
-    { text: 'Vazgeç' }, { text: 'Sil', style: 'destructive', onPress: async () => { await deleteConnection(id); load(); } },
+    { text: 'Vazgeç' }, { text: 'Sil', style: 'destructive', onPress: async () => { try { await deleteConnection(id); await load(); } catch (failure: any) { setError(failure?.message || 'ERP bağlantısı silinemedi.'); } } },
   ]);
+
+  if (loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="ERP bağlantı servisi kullanılamıyor" message={error} onRetry={load} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>

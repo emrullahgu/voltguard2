@@ -3,8 +3,8 @@ import { siteHubStyles, siteHubCardStyle, siteHubIconStyle, siteHubIconColor, si
 // Ofis ekibi (admin/manager/engineer) için: Çalışma Alanı (sayfa/blok), Panolar (kanban),
 // Toplantı Notları + mevcut ofis araçlarına kısayol. İstatistikler + son sayfalar.
 import { useMeasuredGrid } from '../portal/useMeasuredGrid';
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -12,6 +12,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { colors, spacing, radius, typography, brand } from '../theme';
 import { RootStackParamList, OfficePage } from '../types';
 import { officeStats, listPages, recentPageIds, orderByRecent, subscribeOffice, OfficeStats } from '../services/officeWorkspace';
+import ErrorState from '../components/ErrorState';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -22,15 +23,28 @@ export default function OfficeHubScreen() {
   const { tileWidth, onGridLayout } = useMeasuredGrid({ gap: spacing.md, horizontalPadding: spacing.lg, maxWidth: 1200 });
   const [stats, setStats] = useState<OfficeStats>(EMPTY);
   const [recent, setRecent] = useState<OfficePage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState('');
+  const alive = useRef(true), readRequest = useRef(0);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; readRequest.current++; }; }, []);
 
   const refresh = useCallback(async () => {
-    const [st, pages, ids] = await Promise.all([officeStats(), listPages(), recentPageIds()]);
+    if (!alive.current) return;
+    const request = ++readRequest.current, isCurrent = () => alive.current && readRequest.current === request;
+    setLoading(true); setLoadError('');
+    try {
+    const [st, pages, ids] = await Promise.all([officeStats(), listPages(), recentPageIds().catch(() => [])]);
+    if (!isCurrent()) return;
     setStats(st);
     const recentList = orderByRecent(pages, ids, 5);
     // Henüz hiç görüntüleme yoksa son güncellenenlere düş.
     setRecent(recentList.length > 0
       ? recentList
       : pages.filter(p => !p.archived).sort((a, b) => (b.updatedAt || b.createdAt).localeCompare(a.updatedAt || a.createdAt)).slice(0, 5));
+    setLoaded(true);
+    } catch (error: any) { if (isCurrent()) setLoadError(error?.message || 'Ofis özeti yüklenemedi.'); }
+    finally { if (isCurrent()) setLoading(false); }
   }, []);
   useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
   useEffect(() => subscribeOffice('office_pages', refresh), [refresh]);
@@ -61,13 +75,15 @@ export default function OfficeHubScreen() {
         </View>
 
         {/* İstatistik pill'leri */}
-        <View style={s.statusRow}>
+        {loading && !loaded && <ActivityIndicator accessibilityLabel="Ofis verileri yükleniyor" color={brand.green} />}
+        {!!loadError && <ErrorState title="Ofis özeti yüklenemedi" message={loadError + (loaded ? ' Son doğrulanmış görünüm korunuyor.' : '')} onRetry={() => { void refresh(); }} />}
+        {loaded && <View style={s.statusRow}>
           <Pill label={`${stats.pages} Sayfa`} color={brand.blue} icon="document-text-outline" />
           <Pill label={`${stats.boards} Pano`} color="#a855f7" icon="grid-outline" />
           <Pill label={`${stats.openCards} Kart`} color="#0ea5e9" icon="albums-outline" />
           <Pill label={`${stats.meetings} Toplantı`} color="#f59e0b" icon="people-outline" />
           <Pill label={`${stats.openActions} Açık Aksiyon`} color={stats.openActions > 0 ? '#ef4444' : '#64748b'} icon="alert-circle-outline" />
-        </View>
+        </View>}
 
         {/* Ana modüller */}
         <Text style={s.sectionLabel}>Çalışma Alanı</Text>

@@ -65,7 +65,7 @@ export default function WarehousesScreen() {
         text: 'Sil',
         style: 'destructive',
         onPress: async () => {
-          try { await deleteWarehouse(w.id); load(); }
+          try { await deleteWarehouse(w.id, w.serverRevision); await load(); }
           catch (e: any) { Alert.alert('Hata', e?.message || 'Silinemedi.'); }
         },
       },

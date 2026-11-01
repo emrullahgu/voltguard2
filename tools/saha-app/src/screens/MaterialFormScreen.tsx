@@ -35,6 +35,9 @@ export default function MaterialFormScreen() {
   const isEdit = !!editingId;
 
   const [form, setForm] = useState<Material>(newMaterial());
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const submitting = React.useRef(false);
 
   useEffect(() => {
     (async () => {
@@ -49,6 +52,7 @@ export default function MaterialFormScreen() {
     setForm(prev => ({ ...prev, [k]: v }));
 
   const save = async () => {
+    if (submitting.current) return;
     if (!form.name.trim()) {
       Alert.alert('Eksik', 'Malzeme adı girin.');
       return;
@@ -57,8 +61,10 @@ export default function MaterialFormScreen() {
       Alert.alert('Eksik', 'Malzeme kodu girin.');
       return;
     }
-    await upsertMaterial(form);
-    navigation.goBack();
+    submitting.current = true; setSaving(true); setSaveError(null);
+    try { await upsertMaterial(form); navigation.goBack(); }
+    catch (error: any) { setSaveError(error?.message || 'Malzeme kaydedilemedi. Taslağınız korunuyor.'); }
+    finally { submitting.current = false; setSaving(false); }
   };
 
   return (
@@ -68,6 +74,7 @@ export default function MaterialFormScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView contentContainerStyle={styles.content}>
+          {saveError && <Text accessibilityRole="alert" style={{ color: colors.rose.default }}>{saveError}</Text>}
           <Text style={styles.label}>Kod *</Text>
           <TextInput
             value={form.code}
@@ -162,10 +169,10 @@ export default function MaterialFormScreen() {
             multiline
           />
 
-          <TouchableOpacity style={styles.saveBtn} onPress={save} activeOpacity={0.85}>
+          <TouchableOpacity style={styles.saveBtn} onPress={save} disabled={saving} accessibilityState={{ busy: saving, disabled: saving }} activeOpacity={0.85}>
             <Ionicons name="save-outline" size={18} color="#fff" />
             <Text style={styles.saveText}>
-              {isEdit ? 'Güncelle' : 'Malzeme Ekle'}
+              {saving ? 'Kaydediliyor…' : isEdit ? 'Güncelle' : 'Malzeme Ekle'}
             </Text>
           </TouchableOpacity>
         </ScrollView>

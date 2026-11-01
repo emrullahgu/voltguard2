@@ -63,11 +63,11 @@ export default function CustomerFormScreen() {
   const enrich = async () => {
     const name = (form.title || form.shortName || '').trim();
     if (!name) { Alert.alert('Apollo', 'Önce firma adını (kısa ad/ünvan) girin.'); return; }
-    if (!(await isApolloConfigured())) { Alert.alert('Apollo', 'API anahtarı yok. Ayarlar → Harici API Anahtarları → Apollo.'); return; }
     // E-postadan domain çıkar (varsa daha güvenilir eşleşme)
     const domain = form.email && form.email.includes('@') ? form.email.split('@')[1] : undefined;
     setEnriching(true);
     try {
+      if (!(await isApolloConfigured())) { Alert.alert('Apollo', 'API anahtarı yok. Ayarlar → Harici API Anahtarları → Apollo.'); return; }
       const org = await enrichOrganization({ name, domain });
       if (!org) { Alert.alert('Apollo', 'Eşleşme bulunamadı.'); return; }
       // Yalnız BOŞ alanları doldur (kullanıcı verisini ezme).
@@ -223,17 +223,6 @@ export default function CustomerFormScreen() {
                   </Text>
                 </TouchableOpacity>
               )}
-            </View>
-          )}
-
-          {isEdit && (
-            <View style={styles.historySection}>
-              <Text style={styles.section}>Ziyaret Geçmişi</Text>
-              <View style={styles.historyCard}>
-                <HistoryRow date="Bugün 09:45" action="Check-in Yapıldı" icon="enter-outline" color={brand.green} />
-                <HistoryRow date="22 May 2026" action="Teklif Sunuldu" icon="document-text-outline" color={brand.blueLight} />
-                <HistoryRow date="15 May 2026" action="Periyodik Bakım" icon="construct-outline" color={colors.amber.default} />
-              </View>
             </View>
           )}
 
@@ -397,25 +386,4 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   linkBtnText: { color: brand.green, fontWeight: '800', fontSize: typography.xs },
-  historySection: { marginTop: spacing.lg },
-  historyCard: { backgroundColor: colors.bg.secondary, borderRadius: radius.md, padding: spacing.sm, borderWidth: 1, borderColor: colors.border.primary },
-  historyRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: colors.border.primary },
-  historyIcon: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  historyInfo: { flex: 1 },
-  historyDate: { color: colors.text.faint, fontSize: 10, fontWeight: '600' },
-  historyAction: { color: colors.text.primary, fontSize: typography.xs, fontWeight: '700', marginTop: 1 },
 });
-
-function HistoryRow({ date, action, icon, color }: { date: string; action: string; icon: any; color: string }) {
-  return (
-    <View style={styles.historyRow}>
-      <View style={[styles.historyIcon, { backgroundColor: color + '22' }]}>
-        <Ionicons name={icon} size={16} color={color} />
-      </View>
-      <View style={styles.historyInfo}>
-        <Text style={styles.historyDate}>{date}</Text>
-        <Text style={styles.historyAction}>{action}</Text>
-      </View>
-    </View>
-  );
-}

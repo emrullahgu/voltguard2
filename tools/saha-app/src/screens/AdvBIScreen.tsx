@@ -1,6 +1,6 @@
 // Faz 58 — AdvBIScreen (POZ-DEV-287)
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -8,8 +8,10 @@ import { colors, spacing, radius, typography } from '../theme';
 import { listBIDatasets, BI_STATUS_LABEL, BI_STATUS_COLOR } from '../services/advanced';
 import type { AdvBIDataset } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
+import { useServiceLoad } from '../portal/useServiceLoad';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
-import { FlatList } from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 
 const DEST_ICON: Record<AdvBIDataset['destination'], string> = {
   PowerBI: 'bar-chart', Looker: 'analytics', Metabase: 'pie-chart', Tableau: 'stats-chart',
@@ -19,8 +21,12 @@ const DEST_COLOR: Record<AdvBIDataset['destination'], string> = {
 };
 
 export default function AdvBIScreen() {
+  const serviceState = useServiceLoad();
   const [datasets, setDatasets] = useState<AdvBIDataset[]>([]);
-  useFocusEffect(useCallback(() => { (async () => setDatasets(await listBIDatasets()))(); }, []));
+  useFocusEffect(useCallback(() => { void serviceState.read(async () => { setDatasets(await listBIDatasets()); }); }, [serviceState.read]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Hizmet bilgileri yükleniyor" color={colors.text.primary} /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="BI servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   const totalRows = datasets.reduce((a, d) => a + d.rows, 0);
   const healthy = datasets.filter(d => d.status === 'healthy').length;
@@ -72,14 +78,6 @@ export default function AdvBIScreen() {
             </View>
           </View>
         )}
-        ListFooterComponent={
-          datasets.length > 0 ? (
-            <TouchableOpacity style={s.btn} activeOpacity={0.85} onPress={() => Alert.alert('Senkronizasyon', 'Tüm datasetler için manuel tetikleme gönderildi (demo).')}>
-              <Ionicons name="refresh" size={18} color="#fff" />
-              <Text style={s.btnT}>Tümünü Senkronize Et</Text>
-            </TouchableOpacity>
-          ) : null
-        }
       />
     </SafeAreaView>
   );

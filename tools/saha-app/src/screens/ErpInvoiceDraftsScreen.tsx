@@ -1,6 +1,8 @@
 // ErpInvoiceDraftsScreen — POZ-DEV-459
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -12,19 +14,25 @@ const STATUS_COLOR: Record<ErpInvoiceDraft['status'], string> = { draft: '#64748
 const STATUS_LABEL: Record<ErpInvoiceDraft['status'], string> = { draft: 'Taslak', sent: 'Gönderildi', accepted: 'Kabul', rejected: 'Reddedildi' };
 
 export default function ErpInvoiceDraftsScreen() {
+  const serviceState = useServiceLoad();
   const [items, setItems] = useState<ErpInvoiceDraft[]>([]);
-  const load = useCallback(async () => { setItems(await listInvoiceDrafts()); }, []);
+  const load = useCallback(() => serviceState.read(async () => {
+    setItems(await listInvoiceDrafts());
+  }), []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  const create = async () => {
+  const create = () => serviceState.action(async () => {
     await createInvoiceDraft({});
     load();
-  };
-  const send = async (id: string) => {
+  });
+  const send = (id: string) => serviceState.action(async () => {
     await sendInvoiceDraft(id);
     Alert.alert('Gönderildi', 'Fatura ERP\'ye iletildi.');
     load();
-  };
+  });
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>

@@ -12,6 +12,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { createSnapshotSaveQueue, rebaseSnapshotDraft } from '../portal/snapshotSaveQueue';
+import OfficeWriteRecovery from '../components/OfficeWriteRecovery';
+import ErrorState from '../components/ErrorState';
 import { colors, spacing, radius, typography, brand } from '../theme';
 import { RootStackParamList, OfficePage, OfficeBlock, OfficeBlockType } from '../types';
 import {
@@ -38,42 +41,74 @@ export default function OfficePageScreen() {
 
   const [page, setPage] = useState<OfficePage | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [subPages, setSubPages] = useState<OfficePage[]>([]);
   const [crumbs, setCrumbs] = useState<OfficePage[]>([]);
   const [showEmoji, setShowEmoji] = useState(false);
   const [typeMenuFor, setTypeMenuFor] = useState<{ blockId: string | null } | null>(null);
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [remoteChanged, setRemoteChanged] = useState(false);
+  const [recovery, setRecovery] = useState<OfficePage | null>(null);
+  const [checking, setChecking] = useState(false);
 
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pageRef = useRef<OfficePage | null>(null);
   const dirtyRef = useRef(false);
+  const editorGeneration = useRef(0);
+  const editSerial = useRef(0);
+  const submittedSerial = useRef(0);
+  const lastSubmission = useRef<Promise<void> | null>(null);
+  const saveQueue = useRef(createSnapshotSaveQueue<OfficePage>(savePage));
   const inputRefs = useRef<Record<string, TextInput | null>>({});
   const pendingFocus = useRef<string | null>(null);
+  const alive = useRef(true);
+  const readRequest = useRef(0);
+  const currentPageId = useRef(pageId);
+  currentPageId.current = pageId;
+  useEffect(() => { alive.current = true; return () => { alive.current = false; readRequest.current++; }; }, []);
 
-  const load = useCallback(async () => {
-    if (!pageId) { setLoading(false); return; }
+  const load = useCallback(async (discardDraft = false) => {
+    if (!alive.current) return;
+    const request = ++readRequest.current, serial = editSerial.current, generation = editorGeneration.current;
+    const isCurrent = () => alive.current && request === readRequest.current && currentPageId.current === pageId;
+    if (!discardDraft && dirtyRef.current && pageRef.current?.id === pageId) return;
+    setLoadError('');
+    if (!pageRef.current || pageRef.current.id !== pageId) setLoading(true);
+    try {
+    if (!pageId) throw new Error('Açılacak sayfa seçilmedi.');
     const all = await listPages();
+    if (!isCurrent()) return;
+    // A refresh that began while the editor was clean cannot discard later typing.
+    if (editSerial.current !== serial || editorGeneration.current !== generation) { setRemoteChanged(true); return; }
     const p = all.find(x => x.id === pageId) ?? null;
+    if (!p) throw new Error('Sayfa bulunamadı. Listeyi yenileyin.');
     setPage(p);
     pageRef.current = p;
+    if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null; }
+    editorGeneration.current++;
+    if (p) saveQueue.current.reset(p);
+    setRecovery(null);
+    editSerial.current = 0; submittedSerial.current = 0;
+    dirtyRef.current = false; setRemoteChanged(false); setStatus('idle');
     setSubPages(childrenOf(all, pageId));
     // breadcrumb zinciri (kök → bu sayfa)
     const chain: OfficePage[] = [];
-    let cur = p;
+    let cur: OfficePage | null = p;
     const byId = new Map(all.map(x => [x.id, x]));
     while (cur) { chain.unshift(cur); cur = cur.parentId ? byId.get(cur.parentId) ?? null : null; }
     setCrumbs(chain);
-    setLoading(false);
-    touchRecent(pageId);
+    void touchRecent(pageId).catch(() => {});
+    } catch (error: any) { if (isCurrent()) setLoadError(error?.message || 'Ofis sayfası yüklenemedi.'); }
+    finally { if (isCurrent()) setLoading(false); }
   }, [pageId]);
 
-  useFocusEffect(useCallback(() => { load(); }, [load]));
+  useFocusEffect(useCallback(() => { void load(); return () => { readRequest.current++; }; }, [load]));
 
   // Realtime: başka biri değiştirince, ben düzenlemiyorsam yenile; düzenliyorsam uyar.
   useEffect(() => {
     const off = subscribeOffice('office_pages', () => {
-      if (dirtyRef.current) setRemoteChanged(true); else load();
+      if (!alive.current) return;
+      if (dirtyRef.current) setRemoteChanged(true); else void load();
     });
     return off;
   }, [load]);
@@ -94,31 +129,35 @@ export default function OfficePageScreen() {
     requestAnimationFrame(() => tryFocus(5));
   });
 
+  const submit = useCallback((next: OfficePage, serial: number) => {
+    if (submittedSerial.current >= serial) return lastSubmission.current;
+    submittedSerial.current = serial;
+    if (alive.current) setStatus('saving');
+    const expectedGeneration = editorGeneration.current;
+    const request = saveQueue.current.save(next).then(saved => {
+      if (!alive.current || editorGeneration.current !== expectedGeneration || pageRef.current?.id !== saved.id) return;
+      pageRef.current = { ...pageRef.current, serverRevision: saved.serverRevision, updatedAt: saved.updatedAt };
+      setPage(current => current?.id === saved.id ? { ...current, serverRevision: saved.serverRevision, updatedAt: saved.updatedAt } : current);
+      if (editSerial.current === serial) { dirtyRef.current = false; setStatus('saved'); }
+    }).catch(() => { if (alive.current && editorGeneration.current === expectedGeneration) setStatus('error'); });
+    lastSubmission.current = request;
+    return request;
+  }, []);
+
   const persist = useCallback((next: OfficePage, debounced: boolean) => {
     pageRef.current = next;
     dirtyRef.current = true;
+    const serial = ++editSerial.current;
     if (saveTimer.current) clearTimeout(saveTimer.current);
-    const run = async () => {
-      setStatus('saving');
-      try {
-        await savePage({ id: next.id, title: next.title, icon: next.icon, blocks: next.blocks, isFavorite: next.isFavorite });
-        dirtyRef.current = false;
-        setStatus('saved');
-      } catch {
-        setStatus('error'); // sessiz kayıp YOK — banner gösterilir, yerel kopya durur
-      }
-    };
+    const run = () => { saveTimer.current = null; submit(next, serial); };
     if (debounced) saveTimer.current = setTimeout(run, 600); else run();
-  }, []);
+  }, [submit]);
 
   const flushNow = useCallback(() => {
     if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null; }
     const p = pageRef.current;
-    if (p && dirtyRef.current) {
-      savePage({ id: p.id, title: p.title, icon: p.icon, blocks: p.blocks, isFavorite: p.isFavorite })
-        .then(() => { dirtyRef.current = false; }).catch(() => setStatus('error'));
-    }
-  }, []);
+    if (p && dirtyRef.current) submit(p, editSerial.current);
+  }, [submit]);
 
   const update = useCallback((mut: (p: OfficePage) => OfficePage, debounced = false) => {
     setPage(prev => {
@@ -128,6 +167,26 @@ export default function OfficePageScreen() {
       return next;
     });
   }, [persist]);
+
+  const checkCurrent = async () => {
+    if (checking || !pageId) return;
+    setChecking(true);
+    try {
+      const current = await getPage(pageId);
+      if (!current) throw new Error('Sunucudaki sayfa bulunamadı. Taslağınız bu ekranda korunuyor.');
+      setRecovery(current); setStatus('error');
+    } catch (error: any) { Alert.alert('Güncel kayıt yüklenemedi', error?.message || 'Bağlantıyı kontrol edin.'); }
+    finally { setChecking(false); }
+  };
+  const applyDraft = () => {
+    const draft = pageRef.current;
+    if (!draft || !recovery || draft.id !== recovery.id) return;
+    const next = rebaseSnapshotDraft(draft, recovery, ['title', 'icon', 'blocks', 'isFavorite']);
+    editorGeneration.current++; saveQueue.current.reset(recovery);
+    editSerial.current = 0; submittedSerial.current = 0;
+    setRecovery(null); setRemoteChanged(false); setPage(next);
+    persist(next, false);
+  };
 
   // ── Başlık / ikon ──
   const setTitle = useCallback((title: string) => update(p => ({ ...p, title }), true), [update]);
@@ -219,7 +278,7 @@ export default function OfficePageScreen() {
       { text: 'Vazgeç', style: 'cancel' },
       {
         text: 'Sil', style: 'destructive', onPress: async () => {
-          try { await deletePage(page.id); nav.goBack(); }
+          try { await deletePage(page.id, page.serverRevision); nav.goBack(); }
           catch (e: any) { Alert.alert('Silinemedi', e?.message || 'Hata'); }
         },
       },
@@ -236,7 +295,8 @@ export default function OfficePageScreen() {
     return map;
   }, [page?.blocks]);
 
-  if (loading) {
+  if (loadError && (!page || page.id !== pageId)) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Ofis sayfası yüklenemedi" message={loadError} onRetry={() => { void load(); }} /></SafeAreaView>;
+  if (loading || page && page.id !== pageId) {
     return <SafeAreaView style={s.safe} edges={['bottom']}><View style={s.center}><ActivityIndicator color={brand.green} /></View></SafeAreaView>;
   }
   if (!page) {
@@ -268,14 +328,14 @@ export default function OfficePageScreen() {
           </TouchableOpacity>
         </View>
 
-        {status === 'error' && (
-          <TouchableOpacity style={s.errBanner} onPress={() => flushNow()} activeOpacity={0.85}>
-            <Ionicons name="cloud-offline-outline" size={16} color="#fff" />
-            <Text style={s.errText}>Sunucuya kaydedilemedi (yerel kopya güvende). Tekrar denemek için dokun.</Text>
-          </TouchableOpacity>
-        )}
+        {status === 'error' && <OfficeWriteRecovery checking={checking}
+          current={recovery ? { title: recovery.title, summary: recovery.blocks.map(block => block.text).filter(Boolean).join(' · ').slice(0, 600) } : null}
+          onCheck={checkCurrent} onOpen={() => { void load(true); }} onApply={applyDraft} />}
+        {!!loadError && <TouchableOpacity style={s.errBanner} accessibilityRole="button" accessibilityLabel="Ofis sayfası bağlantısını yeniden kontrol et" onPress={() => { if (dirtyRef.current) void checkCurrent(); else void load(); }}>
+          <Text accessibilityRole="alert" style={s.errText}>{loadError} Görüntülenen kayıt ve taslak korunuyor. Yeniden kontrol etmek için dokunun.</Text>
+        </TouchableOpacity>}
         {remoteChanged && (
-          <TouchableOpacity style={s.remoteBanner} onPress={() => { setRemoteChanged(false); load(); }} activeOpacity={0.85}>
+          <TouchableOpacity style={s.remoteBanner} onPress={() => { if (dirtyRef.current) checkCurrent(); else load(); }} activeOpacity={0.85}>
             <Ionicons name="sync-outline" size={16} color="#fff" />
             <Text style={s.errText}>Bu sayfa başka biri tarafından güncellendi. Yenilemek için dokun.</Text>
           </TouchableOpacity>

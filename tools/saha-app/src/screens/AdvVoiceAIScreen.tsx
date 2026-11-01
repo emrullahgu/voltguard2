@@ -1,6 +1,6 @@
 // Faz 58 — AdvVoiceAIScreen (POZ-DEV-288)
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -8,12 +8,18 @@ import { colors, spacing, radius, typography } from '../theme';
 import { listVoiceTranscripts, VOICE_CATEGORY_LABEL, VOICE_CATEGORY_COLOR } from '../services/advanced';
 import type { AdvVoiceTranscript } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
+import { useServiceLoad } from '../portal/useServiceLoad';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
-import { FlatList } from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 
 export default function AdvVoiceAIScreen() {
+  const serviceState = useServiceLoad();
   const [items, setItems] = useState<AdvVoiceTranscript[]>([]);
-  useFocusEffect(useCallback(() => { (async () => setItems(await listVoiceTranscripts()))(); }, []));
+  useFocusEffect(useCallback(() => { void serviceState.read(async () => { setItems(await listVoiceTranscripts()); }); }, [serviceState.read]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Hizmet bilgileri yükleniyor" color={colors.text.primary} /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Sesli yapay zekâ servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   const totalDur = items.reduce((a, x) => a + x.durationSec, 0);
   const avgConf = items.reduce((a, x) => a + x.confidence, 0) / Math.max(1, items.length);
@@ -38,11 +44,6 @@ export default function AdvVoiceAIScreen() {
               <Kpi label="Toplam Süre" value={`${Math.round(totalDur / 60)}dk`} color="#06b6d4" />
               <Kpi label="Doğruluk" value={`%${Math.round(avgConf * 100)}`} color="#22c55e" />
             </View>
-
-            <TouchableOpacity style={s.btn} activeOpacity={0.85} onPress={() => Alert.alert('Kayıt', 'Sesli not kaydı başlıyor (demo).')}>
-              <Ionicons name="mic" size={22} color="#fff" />
-              <Text style={s.btnT}>Yeni Sesli Not Kaydet</Text>
-            </TouchableOpacity>
 
             <Text style={s.sectionT}>Son Transkriptler</Text>
           </>

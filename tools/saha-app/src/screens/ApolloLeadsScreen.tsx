@@ -11,6 +11,8 @@ import { colors, spacing, radius, typography } from '../theme';
 import { useAppContext } from '../context/AppContext';
 import { newUuid } from '../services/data/repository';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
+import { useServiceLoad } from '../portal/useServiceLoad';
 import {
   searchOrganizations, searchPeople, isApolloConfigured,
   type ApolloOrganization, type ApolloPerson,
@@ -31,8 +33,9 @@ export default function ApolloLeadsScreen() {
   const [people, setPeople] = useState<ApolloPerson[]>([]);
   const [configured, setConfigured] = useState<boolean | null>(null);
   const [added, setAdded] = useState<Set<string>>(new Set());
+  const service = useServiceLoad();
 
-  useEffect(() => { isApolloConfigured().then(setConfigured); }, []);
+  useEffect(() => { void service.read(async () => { setConfigured(await isApolloConfigured()); }); }, [service.read]);
 
   const run = async () => {
     if (!keywords.trim() && !title.trim() && !location.trim()) {
@@ -95,6 +98,9 @@ export default function ApolloLeadsScreen() {
     if (!res.ok) return;
     setAdded(prev => new Set(prev).add(p.id || p.email || p.name || ''));
   };
+
+  if (service.loading) return <SafeAreaView style={s.safe} edges={['top']}><ActivityIndicator accessibilityLabel="Apollo servisi kontrol ediliyor" /></SafeAreaView>;
+  if (service.error) return <SafeAreaView style={s.safe} edges={['top']}><ErrorState title="Apollo servisi kullanılamıyor" message={service.error} onRetry={service.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>

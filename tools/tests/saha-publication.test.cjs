@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const vm = require('node:vm');
 const { packageExport, ASSET_BASE } = require('../build-saha.cjs');
 const root = path.resolve(__dirname, '../..');
 const read = relative => fs.readFileSync(path.join(root, relative), 'utf8');
@@ -28,6 +29,26 @@ function removeFixture(directory) {
   assert.equal(path.dirname(fs.realpathSync(directory)), expected);
   assert.match(path.basename(directory), /^vg-saha-package-/);
   fs.rmSync(directory, { recursive: true });
+}
+function publisherWithFaults(overrides) {
+  const filename = path.join(root, 'tools/build-saha.cjs'), module = { exports: {} };
+  vm.runInNewContext(fs.readFileSync(filename, 'utf8'), {
+    module, exports: module.exports, __dirname: path.dirname(filename), process, console,
+    Buffer, Atomics, Int32Array, SharedArrayBuffer,
+    require: name => name === 'node:fs' ? { ...fs, ...overrides } : require(name)
+  }, { filename });
+  return module.exports.packageExport;
+}
+function publicationSnapshot(directory) {
+  const files = {};
+  function visit(folder) {
+    for (const item of fs.readdirSync(folder, { withFileTypes: true })) {
+      const file = path.join(folder, item.name);
+      if (item.isDirectory()) visit(file);
+      else files[path.relative(directory, file)] = fs.readFileSync(file).toString('base64');
+    }
+  }
+  visit(directory); return files;
 }
 
 test('Employee module export publishes a private runtime manifest and excludes raw HTML/source metadata', () => {
@@ -79,6 +100,57 @@ test('A rejected Saha export preserves the last valid release', () => {
     assert.throws(() => packageExport(f.directory, f.dist), /external asset/);
     assert.equal(fs.readFileSync(output.entry).equals(before), true);
     assert.equal(fs.readFileSync(output.manifestFile).equals(beforeManifest), true);
+  } finally { removeFixture(f.directory); }
+});
+
+for (const name of ['entry', 'manifest']) test('Saha ' + name + ' write/commit failure preserves the complete previous package', () => {
+  for (const fault of ['write', 'commit']) {
+    const f = fixture();
+    try {
+      const output = packageExport(f.directory, f.dist), application = path.dirname(output.entry);
+      const before = publicationSnapshot(application);
+      f.write('_expo/static/js/web/index-test.js', 'window.__SYNTHETIC_NEW_RELEASE=true;');
+      f.write('new-release-only.js', 'window.__SYNTHETIC_NEW_FILE=true;');
+      const destination = name === 'entry' ? output.entry : output.manifestFile;
+      let injected = 0;
+      const fail = () => { injected++; const error = new Error('Synthetic metadata ' + name + ' ' + fault + ' failure'); error.code = 'EIO'; throw error; };
+      const publish = publisherWithFaults({
+        writeFileSync(file, ...args) {
+          if (fault === 'write' && (file === destination || path.basename(String(file)) === name + '.next')) fail();
+          return fs.writeFileSync(file, ...args);
+        },
+        renameSync(from, to) {
+          if (fault === 'commit' && to === destination && path.basename(from) === name + '.next') {
+            assert.equal(fs.existsSync(path.join(output.target, 'new-release-only.js')), true, 'Fault happens after installing the new asset directory');
+            fail();
+          }
+          return fs.renameSync(from, to);
+        }
+      });
+      assert.throws(() => publish(f.directory, f.dist), /Synthetic metadata/);
+      assert.equal(injected, 1, 'A nontransient I/O failure is never retried');
+      assert.deepEqual(publicationSnapshot(application), before, 'Old assets, entry and manifest are restored together without temporary leftovers');
+    } finally { removeFixture(f.directory); }
+  }
+});
+
+test('A transient Windows UNKNOWN metadata open is retried before publication', { skip: process.platform !== 'win32' }, () => {
+  const f = fixture();
+  try {
+    const output = packageExport(f.directory, f.dist);
+    f.write('new-release-only.js', 'window.__SYNTHETIC_RETRY_RELEASE=true;');
+    let attempts = 0;
+    const publish = publisherWithFaults({ writeFileSync(file, ...args) {
+      if (path.basename(String(file)) === 'entry.next' && attempts++ === 0) {
+        const error = new Error('Synthetic Windows file-sharing failure'); error.code = 'UNKNOWN'; error.errno = -4094; error.syscall = 'open'; throw error;
+      }
+      return fs.writeFileSync(file, ...args);
+    } });
+    publish(f.directory, f.dist);
+    assert.equal(attempts, 2);
+    assert.equal(fs.existsSync(path.join(output.target, 'new-release-only.js')), true);
+    const manifest = JSON.parse(fs.readFileSync(output.manifestFile, 'utf8'));
+    for (const url of [...manifest.scripts, ...manifest.styles]) assert.equal(fs.existsSync(path.join(output.target, url.slice(ASSET_BASE.length))), true);
   } finally { removeFixture(f.directory); }
 });
 

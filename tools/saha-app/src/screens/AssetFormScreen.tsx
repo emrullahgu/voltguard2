@@ -35,11 +35,16 @@ export default function AssetFormScreen() {
   const [warrantyEnd, setWarrantyEnd] = useState('');
   const [location, setLocation] = useState('');
   const [notes, setNotes] = useState('');
+  const [loading, setLoading] = useState(!!assetId);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
   const load = useCallback(async () => {
     if (!assetId) return;
+    setLoading(true); setError('');
+    try {
     const a = await getAsset(assetId);
-    if (!a) return;
+    if (!a) throw new Error('Cihaz kaydı bulunamadı. Listeyi yenileyin.');
     setEditing(a);
     setName(a.name);
     setCode(a.code || '');
@@ -53,10 +58,13 @@ export default function AssetFormScreen() {
     setWarrantyEnd(a.warrantyEnd || '');
     setLocation(a.location || '');
     setNotes(a.notes || '');
+    } catch (e: any) { setError(e?.message || 'Cihaz yüklenemedi.'); }
+    finally { setLoading(false); }
   }, [assetId]);
   useEffect(() => { load(); }, [load]);
 
   const onSave = async () => {
+    if (saving || loading || (assetId && !editing)) return;
     if (!name.trim()) {
       Alert.alert('Eksik', 'Cihaz adı zorunlu.');
       return;
@@ -77,18 +85,23 @@ export default function AssetFormScreen() {
       location: location.trim() || undefined,
       notes: notes.trim() || undefined,
     };
-    if (editing) {
-      await updateAsset(editing.id, payload);
-    } else {
-      await createAsset(payload);
-    }
-    nav.goBack();
+    setSaving(true); setError('');
+    try {
+      if (editing) {
+        await updateAsset(editing.id, { ...payload, serverRevision: editing.serverRevision });
+      } else {
+        await createAsset(payload);
+      }
+      nav.goBack();
+    } catch (e: any) { setError(e?.message || 'Cihaz kaydedilmedi. Taslak bu ekranda duruyor.'); }
+    finally { setSaving(false); }
   };
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.content}>
+        {!!error && <Text accessibilityRole="alert" style={{ color: colors.rose.default }}>{error}</Text>}
         <Text style={styles.label}>Cihaz Adı *</Text>
         <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="ör. Trafo TR-1" placeholderTextColor={colors.text.faint} />
 
@@ -136,9 +149,9 @@ export default function AssetFormScreen() {
         <Field label="Konum / Yer" value={location} onChange={setLocation} />
         <Field label="Notlar" value={notes} onChange={setNotes} multiline />
 
-        <TouchableOpacity style={styles.saveBtn} onPress={onSave}>
+        <TouchableOpacity style={styles.saveBtn} onPress={onSave} disabled={saving || loading || (!!assetId && !editing)} accessibilityRole="button">
           <Ionicons name="save-outline" size={16} color="#fff" />
-          <Text style={styles.saveText}>{editing ? 'Güncelle' : 'Kaydet'}</Text>
+          <Text style={styles.saveText}>{saving ? 'Kaydediliyor…' : loading ? 'Yükleniyor…' : editing ? 'Güncelle' : 'Kaydet'}</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

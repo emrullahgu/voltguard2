@@ -44,6 +44,20 @@ for (const file of rootFiles.concat(employeePages)) {
   fs.mkdirSync(path.dirname(target), {recursive:true});
   fs.copyFileSync(path.join(root, file), target);
 }
+// This host has no PHP runtime. Keep the public workshop explicit about its
+// dependencies and link private tools to the PHP host, never a blocked local URL.
+const dataCenter=path.join(publish,'araclar/canli-veri-merkezi/index.html');
+if(fs.existsSync(dataCenter)) {
+  let html=fs.readFileSync(dataCenter,'utf8');
+  const intro='<div class="intro">';
+  assert.ok(html.includes(intro),'Live-data workshop introduction exists.');
+  html=html.replace(intro,intro+'<p id="vg-data-host-notice" role="status"><strong>Netlify yayını:</strong> Bu adresteki sürüm statiktir. Canlı veri sorguları ve çalışan araçları PHP sunucusunda çalışır; cPanel yayını tamamlandığında <a href="https://voltguard.com.tr/araclar/canli-veri-merkezi/">canlı veri merkezinden</a> kullanılabilir. Bu sayfada sorgu düğmeleri kapalıdır.</p>');
+  html=html.replace(/href="\/calisan\/uygulama\//g,'href="https://voltguard.com.tr/calisan/uygulama/');
+  html=html.replace(/<form id="(?:addressForm|weatherForm|currencyForm)"[\s\S]*?<\/form>/g,form=>form.replace(/<button\b/g,'<button disabled'));
+  html=html.replace(/<button id="(?:cryptoButton|statusButton)"/g,button=>button+' disabled');
+  fs.writeFileSync(dataCenter,html);
+}
 for (const forbidden of ['api', 'tools', 'VoltGame', 'SahaTakip-main', 'vesikalar', 'voltguardekleyelim', '.qa',
   'calisan', 'hesap', 'contact.php']) assert.ok(!fs.existsSync(path.join(publish, forbidden)), 'Excluded from static publication: ' + forbidden);
-console.log('Netlify static release ready: site, 51 engineering tools, VoltSim, team and complete VoltGame. PHP and development sources excluded.');
+const tools=JSON.parse(fs.readFileSync(path.join(root,'araclar/tool-catalog.json'),'utf8'));
+console.log('Netlify static release ready: site, '+(Array.isArray(tools)?tools.length:require('./engineering/src/catalog.cjs').length)+' engineering tools, VoltSim, team and complete VoltGame. PHP and development sources excluded.');

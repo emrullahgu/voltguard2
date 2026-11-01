@@ -15,6 +15,8 @@ import { historicalInvoice1 as FaturaData, historicalInvoice2 as FaturaData2, ca
 import { normalizeHistoricalInvoice } from './historicalCatalog.mjs';
 import CompanyDashboard from './CompanyDashboard.jsx';
 import { calculateGESQuote } from './gesQuote.mjs';
+import CurrencyRatePanel from './CurrencyRatePanel.jsx';
+import { normalizeCurrencySnapshot, currencySnapshotMatchesRates } from './currencyRates.mjs';
 import {
   COMPANY_ADDRESS_LINE_1,
   COMPANY_ADDRESS_LINE_2,
@@ -264,6 +266,7 @@ const App = () => {
     USD: 40.00, // TL/USD
     EUR: 49.00  // TL/EUR
   });
+  const [exchangeRateSnapshots, setExchangeRateSnapshots] = useState({ yg: null, ges: null });
 
   
   // Editor Mode States
@@ -687,7 +690,12 @@ const App = () => {
   };
 
   // Each Save creates a named, server-confirmed quotation snapshot.
-  const reportMetadata=type=>({schemaVersion:1,currency:type==='yg'?currency:type==='ges'?'USD':'TRY',exchangeRates:cloneProposal(exchangeRates),logo});
+  const reportMetadata=type=>{
+    const required=type==='yg'?['USD','EUR']:['USD'];
+    const rates=type==='ges'?{USD:Number(gesForm.usdRate)}:exchangeRates;
+    const snapshot=currencySnapshotMatchesRates(exchangeRateSnapshots[type],rates,required)?normalizeCurrencySnapshot(exchangeRateSnapshots[type],required):null;
+    return {schemaVersion:1,currency:type==='yg'?currency:type==='ges'?'USD':'TRY',exchangeRates:cloneProposal(exchangeRates),exchangeRateSnapshot:snapshot,logo};
+  };
   const reportHTML=(id,previous)=>previous?sanitizeReportHTML(document.getElementById(id)?.innerHTML || previous):'';
   const saveProposal=async(type,raw,name)=>{
     if(savingProposal.current){alert('Kayıt devam ediyor. Lütfen tamamlanmasını bekleyin.');return null;}
@@ -713,6 +721,12 @@ const App = () => {
       const data=normalizeProposal(proposal.type,proposal.data,sanitizeReportHTML),reference=proposal.reference_no || data.referenceNo || data.calculated?.refNo || newDraftReference();
       if(proposal.type==='yg'){setCurrency(data.metadata.currency);setPreviousCurrency(data.metadata.currency);}
       if(proposal.type==='yg' && data.metadata.exchangeRates && Object.values(data.metadata.exchangeRates).every(value=>Number(value)>0))setExchangeRates(data.metadata.exchangeRates);
+      if(['yg','ges'].includes(proposal.type)){
+        const required=proposal.type==='yg'?['USD','EUR']:['USD'];
+        const rates=proposal.type==='ges'?{USD:Number(data.form?.usdRate)}:data.metadata.exchangeRates;
+        const snapshot=rates && currencySnapshotMatchesRates(data.metadata.exchangeRateSnapshot,rates,required)?normalizeCurrencySnapshot(data.metadata.exchangeRateSnapshot,required):null;
+        setExchangeRateSnapshots(previous=>({...previous,[proposal.type]:snapshot}));
+      }
       if(data.metadata.logo!==undefined)setLogo(data.metadata.logo);
       setProposalReferences(previous=>({...previous,[proposal.type]:reference}));
       switch(proposal.type){
@@ -2279,8 +2293,9 @@ const App = () => {
                       <input 
                         type="number" 
                         step="0.01"
+                        aria-label="YG dolar kuru (TL)"
                         value={exchangeRates.USD} 
-                        onChange={(e) => setExchangeRates({...exchangeRates, USD: parseFloat(e.target.value) || 1})}
+                        onChange={(e) => { setExchangeRates({...exchangeRates, USD: e.target.value}); setExchangeRateSnapshots(previous=>({...previous,yg:null})); }}
                         className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 outline-none" 
                       />
                       <span className="absolute right-3 top-2 text-gray-400 text-xs">TL/$</span>
@@ -2292,8 +2307,9 @@ const App = () => {
                       <input 
                         type="number" 
                         step="0.01"
+                        aria-label="YG euro kuru (TL)"
                         value={exchangeRates.EUR} 
-                        onChange={(e) => setExchangeRates({...exchangeRates, EUR: parseFloat(e.target.value) || 1})}
+                        onChange={(e) => { setExchangeRates({...exchangeRates, EUR: e.target.value}); setExchangeRateSnapshots(previous=>({...previous,yg:null})); }}
                         className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 outline-none" 
                       />
                       <span className="absolute right-3 top-2 text-gray-400 text-xs">TL/€</span>
@@ -2301,6 +2317,7 @@ const App = () => {
                   </div>
                 </div>
                 <p className="text-xs text-yellow-600 mt-1">⚠️ Para birimini değiştirdiğinizde tüm fiyatlar otomatik dönüştürülecektir.</p>
+                <CurrencyRatePanel codes={['USD','EUR']} appliedSnapshot={exchangeRateSnapshots.yg} onApply={snapshot=>{ if(!snapshot)return; setExchangeRates({...snapshot.rates}); setExchangeRateSnapshots(previous=>({...previous,yg:snapshot})); }} />
               </div>
               {/* Direk Tipi Ayarlari */}
               <div className="col-span-full border-t pt-4 mt-2">
@@ -2384,7 +2401,7 @@ const App = () => {
                       aria-invalid={gesError?.field === 'usdRate'}
                       aria-describedby="ges-validation"
                       value={gesForm.usdRate}
-                      onChange={(e) => setGesForm({...gesForm, usdRate: e.target.value})}
+                      onChange={(e) => { setGesForm({...gesForm, usdRate: e.target.value}); setExchangeRateSnapshots(previous=>({...previous,ges:null})); }}
                       step="0.01"
                       className="px-3 py-2 text-sm border rounded w-full"
                     />
@@ -2398,6 +2415,7 @@ const App = () => {
                       className="px-3 py-2 text-sm border rounded w-full"
                     />
                   </div>
+                  <CurrencyRatePanel codes={['USD']} appliedSnapshot={exchangeRateSnapshots.ges} onApply={snapshot=>{ if(!snapshot)return; setGesForm(previous=>({...previous,usdRate:snapshot.rates.USD})); setExchangeRateSnapshots(previous=>({...previous,ges:snapshot})); }} />
                   <div className="mt-3">
                     <label className="block text-xs font-medium text-gray-600 mb-1">Logo Yikle</label>
                     <input 

@@ -10,6 +10,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,6 +20,7 @@ import { colors, spacing, radius, typography, brand } from '../theme';
 import { listLogs, listLogsByVehicle, deleteLog } from '../services/vehicleLogs';
 import { listVehicles } from '../services/vehicles';
 import RowMenu from '../components/RowMenu';
+import ErrorState from '../components/ErrorState';
 import {
   VehicleLog,
   VehicleLogKind,
@@ -54,14 +56,18 @@ export default function VehicleLogsScreen() {
   const [vehicles, setVehicles] = useState<Record<string, Vehicle>>({});
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>(initialKind ?? 'Tümü');
   const [previewUri, setPreviewUri] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
   const load = useCallback(async () => {
+    setError('');
+    try {
     const all = vehicleId ? await listLogsByVehicle(vehicleId) : await listLogs();
     setItems(all);
     const vs = await listVehicles();
     const map: Record<string, Vehicle> = {};
     vs.forEach(v => (map[v.id] = v));
     setVehicles(map);
+    } catch (e: any) { setError(e?.message || 'Araç kayıtları yüklenemedi.'); }
   }, [vehicleId]);
 
   useFocusEffect(
@@ -72,6 +78,7 @@ export default function VehicleLogsScreen() {
 
   const filtered = filter === 'Tümü' ? items : items.filter(i => i.kind === filter);
 
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="Araç kayıtları yüklenemedi" message={error} onRetry={load} /></SafeAreaView>;
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <ScrollView
@@ -139,7 +146,7 @@ export default function VehicleLogsScreen() {
                 )}
                 <RowMenu
                   items={[
-                    { label: 'Sil', icon: 'trash-outline', destructive: true, confirm: `${m.label} kaydı silinsin mi?`, confirmTitle: 'Kaydı Sil', onPress: async () => { await deleteLog(l.id); load(); } },
+                    { label: 'Sil', icon: 'trash-outline', destructive: true, confirm: `${m.label} kaydı silinsin mi?`, confirmTitle: 'Kaydı Sil', onPress: async () => { try { await deleteLog(l.id,l.serverRevision); load(); } catch (e: any) { Alert.alert('Silinemedi',e?.message||'Araç kaydı silinemedi.'); } } },
                   ]}
                 />
               </View>

@@ -25,6 +25,7 @@ import {
 } from '../services/payments';
 import { Payment, RootStackParamList } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 import PressableScale from '../components/PressableScale';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
 import { useHasRole } from '../components/RoleGuard';
@@ -72,17 +73,19 @@ function PaymentsScreenInner() {
   const [items, setItems] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState('');
   const [statusFilter, setStatusFilter] = useState<Payment['status'] | 'all'>('all');
 
   const load = useCallback(async () => {
     setLoading(true);
+    setError('');
     try {
       const all = await listPayments();
       let filtered = all;
       if (filterCustomerId) filtered = filtered.filter(p => p.customerId === filterCustomerId);
       if (filterWorkOrderId) filtered = filtered.filter(p => p.workOrderId === filterWorkOrderId);
       setItems(filtered.sort((a, b) => b.receivedAt.localeCompare(a.receivedAt)));
-    } finally {
+    } catch (e: any) { setError(e?.message || 'Tahsilat listesi yüklenemedi.'); } finally {
       setLoading(false);
       setLoaded(true);
     }
@@ -112,7 +115,7 @@ function PaymentsScreenInner() {
         style: 'destructive',
         onPress: async () => {
           try {
-            await deletePayment(p.id);
+            await deletePayment(p.id, p.serverRevision);
             await load();
           } catch (e: any) {
             Alert.alert('Silinemedi', e?.message || 'Tahsilat silinemedi.');
@@ -122,6 +125,7 @@ function PaymentsScreenInner() {
     ]);
   };
 
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="Tahsilat listesi yüklenemedi" message={error} onRetry={load} /></SafeAreaView>;
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <View style={styles.toolbar}>

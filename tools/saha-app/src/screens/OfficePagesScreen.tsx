@@ -16,6 +16,7 @@ import {
   subscribeOffice, PAGE_TEMPLATES,
 } from '../services/officeWorkspace';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 const HS = { top: 8, bottom: 8, left: 8, right: 8 };
@@ -27,6 +28,8 @@ export default function OfficePagesScreen() {
   const [pages, setPages] = useState<OfficePage[]>([]);
   const [recent, setRecent] = useState<OfficePage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState('');
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [query, setQuery] = useState('');
   const [busy, setBusy] = useState(false);
@@ -34,17 +37,25 @@ export default function OfficePagesScreen() {
   const [actionFor, setActionFor] = useState<OfficePage | null>(null);
   const [moveFor, setMoveFor] = useState<OfficePage | null>(null);
   const autoExpanded = useRef(false);
+  const alive = useRef(true), readRequest = useRef(0);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; readRequest.current++; }; }, []);
 
   const refresh = useCallback(async () => {
-    const all = await listPages();
+    if (!alive.current) return;
+    const request = ++readRequest.current, isCurrent = () => alive.current && readRequest.current === request;
+    setLoading(true); setLoadError('');
+    try {
+    const [all, ids] = await Promise.all([listPages(), recentPageIds().catch(() => [])]);
+    if (!isCurrent()) return;
     setPages(all);
-    const ids = await recentPageIds();
     setRecent(orderByRecent(all, ids, 6));
     if (!autoExpanded.current) {
       autoExpanded.current = true;
       setExpanded(new Set(childrenOf(all, null).map(p => p.id))); // ilk seviye açık
     }
-    setLoading(false);
+    setLoaded(true);
+    } catch (error: any) { if (isCurrent()) setLoadError(error?.message || 'Ofis sayfaları yüklenemedi.'); }
+    finally { if (isCurrent()) setLoading(false); }
   }, []);
   useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
   useEffect(() => subscribeOffice('office_pages', refresh), [refresh]);
@@ -125,7 +136,8 @@ export default function OfficePagesScreen() {
     );
   };
 
-  if (loading) {
+  if (loadError && !loaded) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Ofis sayfaları yüklenemedi" message={loadError} onRetry={() => { void refresh(); }} /></SafeAreaView>;
+  if (loading && !loaded) {
     return <SafeAreaView style={s.safe} edges={['bottom']}><View style={s.center}><ActivityIndicator color={brand.green} /></View></SafeAreaView>;
   }
 
@@ -146,6 +158,7 @@ export default function OfficePagesScreen() {
       </View>
 
       <ScrollView contentContainerStyle={s.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        {!!loadError && <ErrorState title="Ofis sayfaları yenilenemedi" message={loadError + ' Son doğrulanmış görünüm korunuyor.'} onRetry={() => { void refresh(); }} />}
         {query.trim() ? (
           /* Arama sonuçları */
           hits.length === 0 ? (

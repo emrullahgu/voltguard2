@@ -66,9 +66,13 @@ module.exports = async function employeeLayouts({page, mount, workflow, check, r
       const item = catalog.modules.find(item => item.id === id);
       const variants = item?.variants?.length ? item.variants : [{id:'default'}];
       for (const variant of variants) await workflow(`layout:${id}:${variant.id}:${width}`,async () => {
-        const query = new URLSearchParams({module:id});
-        if (variant.id !== variants[0].id) query.set('bolum',variant.id);
-        await page.goto(base+'/calisan/uygulama/?'+query,{waitUntil:'domcontentloaded'});
+        if (variant === variants[0]) {
+          await page.goto(base+'/calisan/uygulama/?'+new URLSearchParams({module:id}),{waitUntil:'domcontentloaded'});
+        } else {
+          await page.locator('[data-employee-module-variants]').getByRole('button',{name:variant.label,exact:true}).click();
+          await page.waitForFunction(({id,section})=>{const query=new URLSearchParams(location.search);return query.get('module')===id&&query.get('bolum')===section;},{id,section:variant.id});
+          check(new URL(page.url()).searchParams.get('bolum'),variant.id,'Real section navigation retains the requested layout variant in its URL');
+        }
         await page.locator('[data-portal-module="'+id+'"]').waitFor({state:'visible'});
         await ready(variant.route);
         await page.waitForLoadState('networkidle');

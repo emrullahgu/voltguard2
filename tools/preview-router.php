@@ -16,6 +16,7 @@ if (!is_string($known) || strlen($known) !== 64 || !is_string($sent) || !hash_eq
 $rawPath = parse_url((string)($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH);
 $pathname = is_string($rawPath) ? rawurldecode($rawPath) : '';
 $routes = [
+    '/api/integrations.php' => '/api/integrations.php',
     '/api/auth.php' => '/api/auth.php',
     '/api/community.php' => '/api/community.php',
     '/api/metrics.php' => '/api/metrics.php',

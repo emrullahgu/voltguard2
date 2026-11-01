@@ -9,9 +9,10 @@ const KEY = '@SahaTakip:maintenance_plans';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function uuidOrNull(v?: string | null): string | null { return v && UUID_RE.test(v) ? v : null; }
 
-function planFromRow(r: any): MaintenancePlan {
+function planFromRow(r: any, serverRevision?: number): MaintenancePlan {
   return {
     id: r.id,
+    serverRevision,
     name: r.name,
     kind: r.kind,
     assetId: r.asset_id || undefined,
@@ -54,85 +55,95 @@ function addDays(iso: string, days: number): string {
 export function listPlans(): Promise<MaintenancePlan[]> {
   return coalescePortalRead(KEY, loadPlans);
 }
+async function cachedPlans(): Promise<MaintenancePlan[]> {
+  const raw = await AsyncStorage.getItem(KEY);
+  const list = raw ? JSON.parse(raw) : [];
+  if (!Array.isArray(list)) throw new Error('Bakım planı önbelleği doğrulanamadı. Listeyi yenileyin.');
+  return list;
+}
+async function cacheConfirmed(list: MaintenancePlan[]) {
+  // Cache maintenance cannot turn an acknowledged business write into a retry.
+  // The private transport already publishes any failed cache request to the UI.
+  await AsyncStorage.setItem(KEY, JSON.stringify(list)).catch(() => {});
+}
+function expectedVersion(id: string, revision?: number): Record<string, number> {
+  if (!Number.isSafeInteger(revision) || revision! < 1) throw new Error('Bakım planının sürümü eksik. Listeyi yenileyin.');
+  return { [id]: revision! };
+}
 async function loadPlans(): Promise<MaintenancePlan[]> {
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase.from('maintenance_plans').select('*').order('next_due_at', { ascending: true });
-      if (!error && data) {
-        const list = data.map(planFromRow);
-        await AsyncStorage.setItem(KEY, JSON.stringify(list));
-        return list;
-      }
-    } catch { /* fallback */ }
-  }
-  try {
-    const raw = await AsyncStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as MaintenancePlan[]) : [];
-  } catch {
-    return [];
-  }
+  if (!SUPABASE_CONFIGURED) return cachedPlans();
+  const { data, error, versions } = await supabase.from('maintenance_plans').select('*').order('next_due_at', { ascending: true });
+  if (error) throw error;
+  if (!Array.isArray(data)) throw new Error('Sunucu bakım planı listesi doğrulanamadı.');
+  const list = data.map((row: any) => planFromRow(row, versions?.[row.id]));
+  await cacheConfirmed(list);
+  return list;
 }
 
 export async function createPlan(
   input: Omit<MaintenancePlan, 'id' | 'createdAt' | 'nextDueAt'> & { nextDueAt?: string },
 ): Promise<MaintenancePlan> {
-  const all = await listPlans();
+  const all = await cachedPlans();
   const now = new Date().toISOString();
   let next: MaintenancePlan = {
-    ...input,
-    id: rid(),
-    nextDueAt: input.nextDueAt || addDays(now, input.frequencyDays || 30),
-    createdAt: now,
+    ...input, id: rid(),
+    nextDueAt: input.nextDueAt || addDays(now, input.frequencyDays || 30), createdAt: now,
   };
   if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase.from('maintenance_plans').insert(planToRow(next)).select().single();
-      if (!error && data) next = planFromRow(data);
-    } catch { /* offline */ }
-  }
-  all.unshift(next);
-  await AsyncStorage.setItem(KEY, JSON.stringify(all));
+    const { data, error, versions } = await supabase.from('maintenance_plans').insert(planToRow(next)).select().single();
+    if (error) throw error;
+    if (!data?.id) throw new Error('Sunucu bakım planı kaydını doğrulamadı. Tekrar göndermeden önce listeyi kontrol edin.');
+    next = planFromRow(data, versions?.[data.id]);
+    await cacheConfirmed([next, ...all.filter(plan => plan.id !== next.id)]);
+  } else await AsyncStorage.setItem(KEY, JSON.stringify([next, ...all]));
   return next;
 }
 
 export async function updatePlan(
-  id: string,
-  patch: Partial<MaintenancePlan>,
+  id: string, patch: Partial<MaintenancePlan>, serverRevision?: number,
 ): Promise<MaintenancePlan | undefined> {
-  const all = await listPlans();
+  // Never refresh the table before a mutation: that would replace the token
+  // belonging to the displayed record with a colleague's newer revision.
+  const all = await cachedPlans();
   const i = all.findIndex(p => p.id === id);
-  if (i < 0) return undefined;
-  all[i] = { ...all[i], ...patch, id: all[i].id };
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try {
-      const row: any = planToRow(all[i]);
-      delete row.created_at;
-      await supabase.from('maintenance_plans').update(row).eq('id', id);
-    } catch { /* offline */ }
+  if (i < 0) throw new Error('Bakım planı yüklenmedi. Listeyi yenileyin.');
+  let next = { ...all[i], ...patch, id };
+  if (SUPABASE_CONFIGURED) {
+    const row: any = planToRow(next); delete row.created_at;
+    const { data, error, versions } = await supabase.from('maintenance_plans')
+      .update(row).eq('id', id).expectVersions(expectedVersion(id, serverRevision ?? all[i].serverRevision)).select().single();
+    if (error) throw error;
+    if (!data?.id) throw new Error('Sunucu bakım planı değişikliğini doğrulamadı. Listeyi kontrol edin.');
+    next = planFromRow(data, versions?.[data.id]);
   }
-  await AsyncStorage.setItem(KEY, JSON.stringify(all));
-  return all[i];
+  all[i] = next;
+  if (SUPABASE_CONFIGURED) await cacheConfirmed(all);
+  else await AsyncStorage.setItem(KEY, JSON.stringify(all));
+  return next;
 }
 
-export async function deletePlan(id: string): Promise<void> {
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try { await supabase.from('maintenance_plans').delete().eq('id', id); } catch { /* offline */ }
+export async function deletePlan(id: string, serverRevision?: number): Promise<void> {
+  const all = await cachedPlans();
+  if (SUPABASE_CONFIGURED) {
+    const revision = serverRevision ?? all.find(plan => plan.id === id)?.serverRevision;
+    const { error } = await supabase.from('maintenance_plans').delete().eq('id', id).expectVersions(expectedVersion(id, revision));
+    if (error) throw error;
   }
-  const all = await listPlans();
   const next = all.filter(p => p.id !== id);
-  await AsyncStorage.setItem(KEY, JSON.stringify(next));
+  if (SUPABASE_CONFIGURED) await cacheConfirmed(next);
+  else await AsyncStorage.setItem(KEY, JSON.stringify(next));
 }
 
 // Bakım tamamlandığında nextDueAt'i ileri öteler
-export async function markDone(id: string, doneAt?: string): Promise<MaintenancePlan | undefined> {
-  const all = await listPlans();
+export async function markDone(id: string, doneAt?: string, serverRevision?: number): Promise<MaintenancePlan | undefined> {
+  const all = await cachedPlans();
   const p = all.find(x => x.id === id);
-  if (!p) return undefined;
+  if (!p) throw new Error('Bakım planı yüklenmedi. Listeyi yenileyin.');
   const t = doneAt || new Date().toISOString();
   return updatePlan(id, {
     lastDoneAt: t,
     nextDueAt: addDays(t, p.frequencyDays),
-  });
+  }, serverRevision ?? p.serverRevision);
 }
 
 export async function listByAsset(assetId: string): Promise<MaintenancePlan[]> {

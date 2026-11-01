@@ -65,8 +65,8 @@ export default function MaterialsScreen() {
         text: 'Sil',
         style: 'destructive',
         onPress: async () => {
-          await deleteMaterial(m.id);
-          load();
+          try { await deleteMaterial(m.id, m.serverRevision); await load(); }
+          catch (error: any) { Alert.alert('Silinemedi', error?.message || 'Malzeme silinemedi. Listeyi yenileyin.'); }
         },
       },
     ]);
@@ -158,7 +158,7 @@ export default function MaterialsScreen() {
               <RowMenu
                 items={[
                   { label: 'Düzenle', icon: 'create-outline', onPress: () => navigation.navigate('MaterialForm', { materialId: item.id }) },
-                  { label: 'Sil', icon: 'trash-outline', destructive: true, confirm: `"${item.name}" silinsin mi?`, confirmTitle: 'Malzeme Sil', onPress: async () => { await deleteMaterial(item.id); load(); } },
+                  { label: 'Sil', icon: 'trash-outline', destructive: true, confirm: `"${item.name}" silinsin mi?`, confirmTitle: 'Malzeme Sil', onPress: async () => { try { await deleteMaterial(item.id, item.serverRevision); await load(); } catch (error: any) { Alert.alert('Silinemedi', error?.message || 'Malzeme silinemedi. Listeyi yenileyin.'); } } },
                 ]}
               />
             </PressableScale>

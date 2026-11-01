@@ -16,9 +16,10 @@ function uid(): string {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
-function fromRow(r: any): Warehouse {
+function fromRow(r: any, serverRevision?: number): Warehouse {
   return {
     id: r.id,
+    serverRevision,
     name: r.name ?? '',
     kind: r.kind,
     responsibleId: r.responsible_id ?? undefined,
@@ -44,12 +45,12 @@ function toRow(w: Warehouse): Record<string, any> {
 export async function listWarehouses(): Promise<Warehouse[]> {
   if (SUPABASE_CONFIGURED) {
     try {
-      const { data, error } = await supabase
+      const { data, error, versions } = await supabase
         .from('warehouses')
         .select('*')
         .order('created_at', { ascending: false });
       if (!error && data) {
-        const list = data.map(fromRow);
+        const list = data.map((row: any) => fromRow(row, versions?.[row.id]));
         await AsyncStorage.setItem(KEY, JSON.stringify(list));
         return list;
       }
@@ -77,31 +78,52 @@ export async function saveWarehouses(list: Warehouse[]) {
   await AsyncStorage.setItem(KEY, JSON.stringify(list));
 }
 
+async function cachedWarehouses(): Promise<Warehouse[]> {
+  const raw = await AsyncStorage.getItem(KEY);
+  const list = raw ? JSON.parse(raw) : [];
+  if (!Array.isArray(list)) throw new Error('Depo önbelleği doğrulanamadı. Listeyi yenileyin.');
+  return list;
+}
+async function cacheConfirmed(list: Warehouse[]) {
+  await saveWarehouses(list).catch(() => {});
+}
+function expectedVersion(id: string, revision?: number) {
+  if (!Number.isSafeInteger(revision) || revision! < 1) throw new Error('Depo sürümü eksik. Kaydı yeniden açın.');
+  return { [id]: revision! };
+}
+
 export async function upsertWarehouse(w: Warehouse) {
+  const all = await cachedWarehouses();
   let saved: Warehouse = w;
   if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase
+      const { data, error, versions } = await supabase
         .from('warehouses')
         .upsert(toRow(w), { onConflict: 'id' })
+        .expectVersions(UUID_RE.test(w.id) ? expectedVersion(w.id, w.serverRevision) : {})
         .select()
         .single();
-      if (!error && data) saved = fromRow(data);
-    } catch { /* ignore */ }
+      if (error) throw error;
+      if (!data?.id) throw new Error('Depo kaydı sunucudan doğrulanamadı. Yeniden göndermeden önce listeyi kontrol edin.');
+      saved = fromRow(data, versions?.[data.id]);
   }
-  const all = await listWarehouses();
   const idx = all.findIndex(x => x.id === saved.id || x.id === w.id);
   if (idx >= 0) all[idx] = saved;
   else all.unshift(saved);
-  await saveWarehouses(all);
+  if (SUPABASE_CONFIGURED) await cacheConfirmed(all);
+  else await saveWarehouses(all);
 }
 
-export async function deleteWarehouse(id: string) {
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try { await supabase.from('warehouses').delete().eq('id', id); } catch { /* ignore */ }
+export async function deleteWarehouse(id: string, serverRevision?: number) {
+  const all = await cachedWarehouses();
+  if (SUPABASE_CONFIGURED) {
+    const revision = serverRevision ?? all.find(w => w.id === id)?.serverRevision;
+    const { data, error } = await supabase.from('warehouses').delete().eq('id', id).expectVersions(expectedVersion(id, revision)).select('id');
+    if (error) throw error;
+    if (!Array.isArray(data) || !data.some((row: any) => row.id === id)) throw new Error('Depo silme işlemi doğrulanamadı. Listeyi yenileyin.');
   }
-  const all = await listWarehouses();
-  await saveWarehouses(all.filter(w => w.id !== id));
+  const next = all.filter(w => w.id !== id);
+  if (SUPABASE_CONFIGURED) await cacheConfirmed(next);
+  else await saveWarehouses(next);
 }
 
 export function newWarehouse(kind: WarehouseKind = 'depo'): Warehouse {

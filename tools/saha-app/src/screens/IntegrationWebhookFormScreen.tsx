@@ -1,6 +1,8 @@
 // IntegrationWebhookFormScreen — POZ-DEV-463
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
@@ -13,6 +15,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList>;
 type R = RouteProp<RootStackParamList, 'IntegrationWebhookForm'>;
 
 export default function IntegrationWebhookFormScreen() {
+  const serviceState = useServiceLoad();
   const nav = useNavigation<Nav>();
   const route = useRoute<R>();
   const id = route.params?.webhookId;
@@ -22,19 +25,30 @@ export default function IntegrationWebhookFormScreen() {
   const [secret, setSecret] = useState('');
 
   useEffect(() => {
-    (async () => {
-      if (!id) return;
+    void serviceState.read(async () => {
       const all = await listWebhooksV2();
+      if (!id) return;
       const w = all.find(x => x.id === id);
-      if (w) { setName(w.name); setUrl(w.url); setEvent(w.event); setSecret(w.secret || ''); }
-    })();
+      if (w) {
+        setName(w.name);
+        setUrl(w.url);
+        setEvent(w.event);
+        setSecret(w.secret || '');
+      }
+    });
   }, [id]);
 
-  const save = async () => {
-    if (!name.trim() || !url.trim()) { Alert.alert('Eksik', 'Ad ve URL gerekli'); return; }
+  const save = () => serviceState.action(async () => {
+    if (!name.trim() || !url.trim()) {
+      Alert.alert('Eksik', 'Ad ve URL gerekli');
+      return;
+    }
     await saveWebhookV2({ id, name: name.trim(), url: url.trim(), event, secret: secret.trim() || undefined });
     nav.goBack();
-  };
+  });
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>

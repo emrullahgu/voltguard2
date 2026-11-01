@@ -1,20 +1,28 @@
 // QuoteToOrderScreen — POZ-DEV-460
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { colors, spacing, radius, typography } from '../theme';
 import type { QuoteOrderConversion } from '../types';
-import { listQuoteOrders, convertQuoteToOrder, ERP_VENDOR_LABEL, ERP_VENDOR_COLOR } from '../services/enterpriseIntegrations';
+import { listQuoteOrders, ERP_VENDOR_LABEL, ERP_VENDOR_COLOR } from '../services/enterpriseIntegrations';
 
 const STATUS_COLOR: Record<QuoteOrderConversion['status'], string> = { created: '#22c55e', pending: '#f59e0b', failed: '#ef4444' };
 const STATUS_LABEL: Record<QuoteOrderConversion['status'], string> = { created: 'Oluşturuldu', pending: 'Beklemede', failed: 'Hata' };
 
 export default function QuoteToOrderScreen() {
+  const serviceState = useServiceLoad();
   const [items, setItems] = useState<QuoteOrderConversion[]>([]);
-  const load = useCallback(async () => { setItems(await listQuoteOrders()); }, []);
+  const load = useCallback(() => serviceState.read(async () => {
+    setItems(await listQuoteOrders());
+  }), []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -22,7 +30,7 @@ export default function QuoteToOrderScreen() {
         data={items}
         keyExtractor={i => i.id}
         contentContainerStyle={{ padding: spacing.md, gap: 6, paddingBottom: 100 }}
-        ListEmptyComponent={<Text style={s.empty}>Henüz dönüşüm yok. + ile teklifi siparişe çevir.</Text>}
+        ListEmptyComponent={<Text style={s.empty}>Henüz doğrulanmış teklif-sipariş dönüşümü bulunmuyor.</Text>}
         renderItem={({ item }) => (
           <View style={s.card}>
             <View style={s.row}>
@@ -41,9 +49,7 @@ export default function QuoteToOrderScreen() {
           </View>
         )}
       />
-      <TouchableOpacity style={s.fab} onPress={async () => { await convertQuoteToOrder('mock-quote-' + Date.now(), 'Demo Müşteri', Math.round(Math.random() * 50000) + 5000, 'logo'); load(); }}>
-        <Ionicons name="add" size={28} color="#fff" />
-      </TouchableOpacity>
+
     </SafeAreaView>
   );
 }

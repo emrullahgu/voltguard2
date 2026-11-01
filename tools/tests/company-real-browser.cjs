@@ -13,11 +13,16 @@ const ownWhiteOnly=process.argv.includes('--own-white-only');
 const nativeThemeOnly=process.argv.includes('--native-theme-only');
 const documentLayoutOnly=process.argv.includes('--document-layout-only');
 const layoutOnly=process.argv.includes('--layout-only');
+const nestedOnly=process.argv.includes('--nested-only');
+const recordOnly=process.argv.includes('--record-only');
+const recordSuite=process.argv.find(argument=>argument.startsWith('--record-suite='))?.slice(15)||'field';
+if(recordOnly)assert.ok(['commerce','office','capability','field','forms','operational','session','integration'].includes(recordSuite),'Known record scenario suite');
+const nestedGroup=process.argv.find(argument=>argument.startsWith('--nested-group='))?.slice(15)||'single';
 const layoutWidth=Number(process.argv.find(argument=>argument.startsWith('--layout-width='))?.slice(15)||1440);
 if(layoutOnly)assert.ok([1440,1024,768,390,320].includes(layoutWidth),'Supported layout viewport');
 const workflowArgument=process.argv.find(argument=>argument.startsWith('--workflows='));
 const selectedWorkflows=workflowArgument?new Set(workflowArgument.slice(12).split(',')):null;
-const output = path.join(root, nativeThemeOnly?'.qa/employee-native-theme':documentLayoutOnly?'.qa/employee-document-qa':layoutOnly?'.qa/employee-layout/'+layoutWidth:process.env.VG_COMPANY_ADMIN_OUTPUT_FOCUS==='1'?'.qa/company-admin-outputs':process.env.VG_COMPANY_OUTPUT_FOCUS==='1'?(process.argv.includes('--payroll-only')?'.qa/company-payroll-outputs':process.env.VG_COMPANY_PROPOSAL_OUTPUT_FOCUS==='1'?'.qa/company-proposal-outputs':'.qa/company-outputs'):process.env.VG_COMPANY_SUBMIT_FOCUS==='1'?(process.argv.includes('--weekly-pdf-only')?'.qa/company-weekly-pdf':'.qa/company-submit'):ownWhiteOnly?'.qa/company-own-white':selectedWorkflows?'.qa/company-focused':'.qa/company-real');
+const output = path.join(root, recordOnly?'.qa/employee-records/'+recordSuite:nestedOnly?'.qa/employee-nested/'+nestedGroup:nativeThemeOnly?'.qa/employee-native-theme':documentLayoutOnly?'.qa/employee-document-qa':layoutOnly?'.qa/employee-layout/'+layoutWidth:process.env.VG_COMPANY_ADMIN_OUTPUT_FOCUS==='1'?'.qa/company-admin-outputs':process.env.VG_COMPANY_OUTPUT_FOCUS==='1'?(process.argv.includes('--payroll-only')?'.qa/company-payroll-outputs':process.env.VG_COMPANY_PROPOSAL_OUTPUT_FOCUS==='1'?'.qa/company-proposal-outputs':'.qa/company-outputs'):process.env.VG_COMPANY_SUBMIT_FOCUS==='1'?(process.argv.includes('--weekly-pdf-only')?'.qa/company-weekly-pdf':'.qa/company-submit'):ownWhiteOnly?'.qa/company-own-white':selectedWorkflows?'.qa/company-focused':'.qa/company-real');
 const php = process.env.VG_PHP || path.join(root, '.qa/php/runtime/php.exe');
 const packages = process.env.VG_NODE_MODULES || process.env.VOLTGUARD_NODE_MODULES || path.join(os.homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules');
 const { chromium } = require(path.join(packages, 'playwright'));
@@ -51,7 +56,8 @@ async function run() {
   const dataDir=path.join(sandbox,'VoltGuard/preview-data',hash);
   const base=`http://127.0.0.1:${await freePort()}`;
   const environment={...process.env,LOCALAPPDATA:sandbox,VG_PREVIEW_PORT:base.split(':').at(-1),VG_PHP:php,
-    VG_DATA_DIR:dataDir,VG_STAFF_SITE_URL:base,VG_SITE_URL:base,VG_MAIL_OUTBOX:'1'};
+    VG_DATA_DIR:dataDir,VG_STAFF_SITE_URL:base,VG_SITE_URL:base,VG_MAIL_OUTBOX:'1',
+    ...(recordOnly&&recordSuite==='integration'?require('./employee-record-integration-scenarios.cjs').environment:{})};
   const server=spawn(process.execPath,[path.join(root,'tools/preview.cjs')],{cwd:root,env:environment,stdio:['ignore','pipe','pipe','ipc'],windowsHide:true});
   server.stdout.resume(); server.stderr.resume();
   let browser;
@@ -80,9 +86,9 @@ async function run() {
     do {const found=(await rows(table)).find(predicate);if(found)return found;await new Promise(resolve=>setTimeout(resolve,100));}while(Date.now()<end);
     throw Error(`Expected saved record not found in ${table}.`);
   }
-  let page,phase='setup';
+  let page,phase='setup',activeWorkflow=null;
   async function mount(id) {
-    phase=id;
+    phase=activeWorkflow||id;
     await page.goto(base+'/calisan/uygulama/?module='+id,{waitUntil:'domcontentloaded',timeout:15000});
     await page.locator('[data-portal-module], .company-load-error').waitFor({state:'visible',timeout:15000});
     if(await page.locator('.company-load-error').count())throw Error(await page.locator('.company-load-error').innerText());
@@ -100,10 +106,11 @@ async function run() {
   }
   async function workflow(name,fn) {
     if(selectedWorkflows&&!selectedWorkflows.has(name))return;
-    phase=name;
+    const previousWorkflow=activeWorkflow;activeWorkflow=name;phase=name;
     const before=report.apiErrors.length;
     try {await fn();report.workflows.push({name,ok:true,apiErrors:report.apiErrors.length-before});}
     catch(error){report.workflows.push({name,ok:false,error:redact(error.message)});report.findings.push({phase:name,message:redact(error.message)});if(page)await page.screenshot({path:path.join(output,name.replace(/[^a-z0-9-]/gi,'-')+'-failure.png')}).catch(()=>{});}
+    finally{activeWorkflow=previousWorkflow;if(previousWorkflow)phase=previousWorkflow;}
     fs.writeFileSync(path.join(output,'report.json'),JSON.stringify(report,null,2));
     console.log(JSON.stringify({phase:name,...report.workflows.at(-1)}));
   }
@@ -133,13 +140,14 @@ async function run() {
     page=await context.newPage();page.setDefaultTimeout(10000);
     page.on('dialog',dialog=>{report.dialogs ||= [];report.dialogs.push({phase,type:dialog.type(),message:redact(dialog.message())});const action=dialog.type()==='confirm'&&/otomatik olarak doldurulsun/i.test(dialog.message())?dialog.dismiss():dialog.type()==='prompt'?dialog.accept(dialog.defaultValue()||'QA teklif'):dialog.accept();action.catch(error=>{if(!/Not attached to an active page|Target (page|context|browser).*closed/i.test(error.message))report.pageErrors.push({phase,message:redact(error.message)});});});
     page.on('pageerror',error=>report.pageErrors.push({phase,message:redact(error.message)}));
-    page.on('console',message=>{if(message.type()==='error')report.consoleErrors.push({phase,message:redact(message.text())});});
+    page.on('console',message=>{if(message.type()==='error')report.consoleErrors.push({phase,message:redact(message.text()),url:message.location().url});});
     page.on('response',async response=>{
       const pathname=new URL(response.url()).pathname;
       if(response.status()>=400&&pathname.startsWith('/api/')){
         let payload;try{payload=await response.json();}catch{payload={};}
         const request=response.request();let input={};try{input=request.postDataJSON()||{};}catch{}
-        report.apiErrors.push({phase,path:pathname,status:response.status(),error:payload.error,message:redact(payload.message||''),action:new URL(response.url()).searchParams.get('action'),table:input.table,operation:input.operation,select:input.select,filters:input.filters?.map(({op,field})=>({op,field})),rpc:input.name,sahaFunction:input.name==='app_saha_function'?input.args?.name:undefined});
+        const query=input.name==='app_saha_query'?input.args||{}:input;
+        report.apiErrors.push({phase,path:pathname,status:response.status(),error:payload.error,message:redact(payload.message||''),action:new URL(response.url()).searchParams.get('action'),table:query.table,operation:query.operation,select:query.select,filters:query.filters?.map(({op,field})=>({op,field})),rpc:input.name,sahaFunction:input.name==='app_saha_function'?input.args?.name:undefined,requestKey:crypto.createHash('sha256').update(request.postData()||'').digest('hex')});
       }
     });
     if(ownWhiteOnly){
@@ -166,6 +174,20 @@ async function run() {
     }
     if(layoutOnly){
       await require('./employee-layout-scenarios.cjs')({page,mount,workflow,check,report,output,base,modules,catalog:employeeManifest,widths:[layoutWidth]});
+      return;
+    }
+    if(nestedOnly){
+      await require('./employee-nested-browser-scenarios.cjs')({page,workflow,check,report,output,base,modules});
+      return;
+    }
+    if(recordOnly){
+      const ctx={page,admin,employee,api,rows,waitRow,mount,workflow,check,report,output,base,browser};
+      ctx.ui=await require('./employee-record-browser-helper.cjs')(ctx);
+      const scenario=recordSuite==='forms'?'employee-form-consistency-scenarios':recordSuite==='operational'?'employee-operational-consistency-scenarios':recordSuite==='session'?'employee-session-boundary-scenarios':'employee-record-'+recordSuite+'-scenarios';
+      await require('./'+scenario+'.cjs')(ctx);
+      report.recordCoverage.scanFinished=true;
+      report.recordCoverage.finishedAt=new Date().toISOString();
+      ctx.ui.save();
       return;
     }
     if(process.env.VG_COMPANY_ADMIN_OUTPUT_FOCUS==='1'){

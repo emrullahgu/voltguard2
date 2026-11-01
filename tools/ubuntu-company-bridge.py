@@ -125,6 +125,10 @@ def saha_find(records, collection, identifier):
     return next((row for row in records.values() if row.get("collection") == collection and row.get("record_id") == identifier), None)
 
 
+def saha_message_deleted(payload):
+    return payload.get("deleted_at") not in (None, "")
+
+
 def saha_visible(actor, row, records):
     collection, payload, me = row.get("collection"), row.get("payload", {}), saha_staff_id(actor["id"])
     if collection in SAHA_DENIED:
@@ -146,7 +150,10 @@ def saha_visible(actor, row, records):
     if collection == "audit_log":
         return actor["role"] == "admin" or payload.get("user_id") == me
     if collection == "_files" and payload.get("bucket") == "chat-attachments" and row.get("created_by") != actor["id"]:
-        return any(other.get("collection") == "messages" and other.get("payload", {}).get("attachment_url") == payload.get("path") and saha_visible(actor, other, records) for other in records.values())
+        owner = row.get("created_by")
+        if not isinstance(owner, str) or not owner:
+            return False
+        return any(other.get("collection") == "messages" and not saha_message_deleted(other.get("payload", {})) and other.get("payload", {}).get("attachment_url") == payload.get("path") and other.get("payload", {}).get("sender_id") == saha_staff_id(owner) and saha_visible(actor, other, records) for other in records.values())
     return True
 
 
@@ -224,13 +231,23 @@ def saha_validate_change(actor, old, desired, records):
     if collection == "conversation_participants":
         parent = saha_find(records, "conversations", payload.get("conversation_id"))
         old_payload = (old or {}).get("payload", {})
+        if old and any(payload.get(field) != old_payload.get(field) for field in ("conversation_id", "user_id")):
+            raise BridgeError("bridge_saha_participant", 403)
         changed = {key for key in set(old_payload) | set(payload) if old_payload.get(key) != payload.get(key)}
         self_read = old and desired and old_payload.get("user_id") == me and changed <= {"last_read_at", "updated_at", "updated_by"}
-        if not self_read and (not parent or parent.get("payload", {}).get("created_by") != me):
+        self_leave = old and desired is None and old_payload.get("user_id") == me
+        if not self_read and not self_leave and (not parent or parent.get("payload", {}).get("created_by") != me):
             raise BridgeError("bridge_saha_participant", 403)
     elif collection == "messages":
         if not saha_visible(actor, row, records) or payload.get("sender_id") != me:
             raise BridgeError("bridge_saha_participant", 403)
+        attachment = payload.get("attachment_url")
+        # Existing native attachments retain their legacy source-storage path.
+        # A new/changed reference can only grant access to this sender's upload.
+        if desired and attachment not in (None, "") and (not old or attachment != old.get("payload", {}).get("attachment_url")):
+            file = saha_find(records, "_files", "chat-attachments:" + attachment) if isinstance(attachment, str) else None
+            if not file or file.get("created_by") != actor["id"]:
+                raise BridgeError("bridge_saha_attachment_owner", 403)
     elif collection == "_files":
         if old and old.get("created_by") != actor["id"] and actor["role"] != "admin":
             raise BridgeError("bridge_saha_owner", 403)

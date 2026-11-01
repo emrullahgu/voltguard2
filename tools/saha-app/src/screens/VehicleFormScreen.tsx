@@ -49,12 +49,19 @@ export default function VehicleFormScreen() {
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [plateError, setPlateError] = useState<string | null>(null);
   const savingRef = useRef(false);
+  const [loading, setLoading] = useState(isEdit);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
     (async () => {
       if (isEdit && editingId) {
+        setLoading(true); setLoadError('');
+        try {
         const v = await getVehicle(editingId);
-        if (v) setForm(v);
+        if (!v) throw new Error('Araç kaydı bulunamadı. Listeyi yenileyin.');
+        setForm(v);
+        } catch (e: any) { setLoadError(e?.message || 'Araç yüklenemedi.'); }
+        finally { setLoading(false); }
       }
     })();
   }, [isEdit, editingId]);
@@ -63,6 +70,7 @@ export default function VehicleFormScreen() {
     setForm(prev => ({ ...prev, [k]: v }));
 
   const save = async () => {
+    if (loading || (isEdit && form.id !== editingId)) return;
     if (!form.plate.trim()) {
       setPlateError('Plaka zorunludur.');
       return;
@@ -90,6 +98,7 @@ export default function VehicleFormScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView contentContainerStyle={styles.content}>
+          {!!loadError && <Text accessibilityRole="alert" style={styles.errorText}>{loadError}</Text>}
           <Text style={styles.label}>Plaka *</Text>
           <TextInput
             value={form.plate}
@@ -259,7 +268,7 @@ export default function VehicleFormScreen() {
             style={[styles.saveBtn, status === 'saved' && styles.saveBtnDone, status === 'saving' && { opacity: 0.7 }]}
             onPress={save}
             activeOpacity={0.85}
-            disabled={status !== 'idle'}
+            disabled={status !== 'idle' || loading || (isEdit && form.id !== editingId)}
           >
             {status === 'saving' ? (
               <ActivityIndicator size="small" color="#fff" />

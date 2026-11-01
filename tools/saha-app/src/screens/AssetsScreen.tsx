@@ -1,7 +1,7 @@
 // AssetsScreen — POZ-DEV-086 Cihaz/ekipman listesi
 import React, { useCallback, useState, useMemo } from 'react';
 import {
-  View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Alert,
+  View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Alert, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,6 +13,7 @@ import { a11yButton, a11yInput } from '../utils/a11y';
 import { listAssets, deleteAsset, ASSET_TYPES, ASSET_TYPE_LABEL } from '../services/assets';
 import { Asset, AssetType, RootStackParamList } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Assets'>;
@@ -25,9 +26,14 @@ export default function AssetsScreen() {
   const [items, setItems] = useState<Asset[]>([]);
   const [q, setQ] = useState('');
   const [typeFilter, setTypeFilter] = useState<AssetType | 'all'>(route.params?.type ?? 'all');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   const refresh = useCallback(async () => {
-    setItems(await listAssets());
+    setLoading(true); setError('');
+    try { setItems(await listAssets()); }
+    catch (e: any) { setError(e?.message || 'Cihaz listesi yüklenemedi.'); }
+    finally { setLoading(false); }
   }, []);
   useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
 
@@ -35,7 +41,7 @@ export default function AssetsScreen() {
     Alert.alert('Cihazı sil', `"${item.name}" silinsin mi?`, [
       { text: 'Vazgeç', style: 'cancel' },
       { text: 'Sil', style: 'destructive', onPress: async () => {
-        try { await deleteAsset(item.id); refresh(); }
+        try { await deleteAsset(item.id, item.serverRevision); await refresh(); }
         catch (e: any) { Alert.alert('Hata', e?.message || 'Silinemedi.'); }
       } },
     ]);
@@ -57,6 +63,9 @@ export default function AssetsScreen() {
       return true;
     });
   }, [items, q, typeFilter, filterCustomerId]);
+
+  if (loading) return <SafeAreaView style={styles.safe}><ActivityIndicator accessibilityLabel="Cihazlar yükleniyor" /></SafeAreaView>;
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="Cihaz listesi yüklenemedi" message={error} onRetry={refresh} /></SafeAreaView>;
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>

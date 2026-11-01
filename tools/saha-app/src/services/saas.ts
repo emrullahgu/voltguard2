@@ -184,10 +184,10 @@ export async function listSaasUsage(): Promise<SaasUsageMetric[]> {
 // --- Branding
 export async function getSaasBranding(): Promise<SaasBrandingConfig> {
   return getOrSeed<SaasBrandingConfig>(K.branding, {
-    tenantId: 't1', tenantName: 'ACME Solar A.Ş.',
+    tenantId: '', tenantName: '',
     primaryColor: '#0ea5e9', accentColor: '#a855f7',
-    emailFromName: 'ACME Solar Saha Ekibi',
-    customDomain: 'saha.acmesolar.com', customDomainVerified: true,
+    emailFromName: '',
+    customDomain: '', customDomainVerified: false,
   });
 }
 
@@ -235,10 +235,10 @@ export async function getSaasSuperAdminMetrics(): Promise<SaasSuperAdminMetric[]
   const trialT = tenants.filter(t => t.status === 'trial').length;
   const churnT = tenants.filter(t => t.status === 'cancelled' || t.status === 'suspended').length;
   return [
-    { label: 'Toplam MRR', value: `₺${totalMrr.toLocaleString('tr-TR')}`, delta: 12.4, icon: 'trending-up', color: '#22c55e' },
-    { label: 'Aktif Firma', value: String(activeT), delta: 8.1, icon: 'business', color: '#0ea5e9' },
-    { label: 'Deneme', value: String(trialT), delta: 25.0, icon: 'flask', color: '#f59e0b' },
-    { label: 'Kayıp/Askıda', value: String(churnT), delta: -5.0, icon: 'alert-circle', color: '#ef4444' },
+    { label: 'Toplam MRR', value: `₺${totalMrr.toLocaleString('tr-TR')}`, icon: 'trending-up', color: '#22c55e' },
+    { label: 'Aktif Firma', value: String(activeT), icon: 'business', color: '#0ea5e9' },
+    { label: 'Deneme', value: String(trialT), icon: 'flask', color: '#f59e0b' },
+    { label: 'Kayıp/Askıda', value: String(churnT), icon: 'alert-circle', color: '#ef4444' },
     { label: 'Toplam Kullanıcı', value: String(tenants.reduce((a, t) => a + t.users, 0)), icon: 'people', color: '#a855f7' },
     { label: 'Toplam Depolama', value: `${(tenants.reduce((a, t) => a + t.storageMb, 0) / 1024).toFixed(1)} GB`, icon: 'cloud', color: '#06b6d4' },
   ];

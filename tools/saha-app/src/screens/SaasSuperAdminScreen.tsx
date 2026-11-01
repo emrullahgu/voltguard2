@@ -40,12 +40,12 @@ export default function SaasSuperAdminScreen() {
               <Ionicons name={m.icon as any} size={24} color={m.color} />
               <Text style={[s.metricV, { color: m.color }]}>{m.value}</Text>
               <Text style={s.metricL}>{m.label}</Text>
-              {m.delta !== undefined && (
+              {m.delta !== undefined ? (
                 <View style={s.deltaRow}>
                   <Ionicons name={m.delta >= 0 ? 'arrow-up' : 'arrow-down'} size={11} color={m.delta >= 0 ? '#22c55e' : '#ef4444'} />
                   <Text style={[s.deltaT, { color: m.delta >= 0 ? '#22c55e' : '#ef4444' }]}>%{Math.abs(m.delta).toFixed(1)}</Text>
                 </View>
-              )}
+              ) : <Text style={[s.deltaT, { color: colors.text.muted }]}>Karşılaştırma yok</Text>}
             </View>
           ))}
         </View>

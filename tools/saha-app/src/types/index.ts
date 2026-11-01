@@ -336,6 +336,7 @@ export type FormTemplateCategory =
 
 export interface FormTemplate {
   id: string;
+  serverRevision?: number;
   name: string;
   category: FormTemplateCategory;
   description?: string;
@@ -364,6 +365,7 @@ export interface FormResponseRevision {
 
 export interface FormResponse {
   id: string;
+  serverRevision?: number;
   templateId: string;
   templateName: string;
   workOrderId?: string;
@@ -381,6 +383,7 @@ export interface FormResponse {
 export type WarehouseKind = 'depo' | 'arac' | 'personel';
 
 export interface Warehouse {
+  serverRevision?: number;
   id: string;
   name: string;
   kind: WarehouseKind;
@@ -392,6 +395,7 @@ export interface Warehouse {
 }
 
 export interface Material {
+  serverRevision?: number;
   id: string;
   code: string;
   name: string;
@@ -438,6 +442,7 @@ export interface StockMovement {
 // FAZ 8 — Araç Takibi (POZ-DEV-060..063)
 // =============================================================
 export interface Vehicle {
+  serverRevision?: number;
   id: string;
   plate: string;
   brand?: string;
@@ -468,6 +473,8 @@ export type VehicleLogKind =
   | 'insurance';
 
 export interface VehicleLog {
+  serverRevision?: number;
+  vehicleSyncWarning?: string;
   id: string;
   vehicleId: string;
   kind: VehicleLogKind;
@@ -619,6 +626,7 @@ export type PaymentMethod = 'cash' | 'card' | 'transfer' | 'check' | 'other';
 export type PaymentStatus = 'received' | 'pending' | 'cancelled' | 'refunded';
 
 export interface Payment {
+  serverRevision?: number;
   id: string;
   customerId: string;
   customerName: string;
@@ -732,6 +740,7 @@ export type AssetType =
 
 export interface Asset {
   id: string;
+  serverRevision?: number;
   code?: string;           // QR / barkod
   name: string;
   type: AssetType;
@@ -798,6 +807,7 @@ export type MaintenanceKind = 'preventive' | 'corrective';
 
 export interface MaintenancePlan {
   id: string;
+  serverRevision?: number;
   name: string;
   kind: MaintenanceKind;
   assetId?: string;
@@ -3902,6 +3912,7 @@ export interface OfficeBlock {
 
 export interface OfficePage {
   id: string;
+  serverRevision?: number;
   parentId: string | null;   // iç içe (alt-sayfa) ağacı
   title: string;
   icon: string;              // emoji
@@ -3953,6 +3964,7 @@ export interface OfficeBoardColumn {
 }
 export interface OfficeBoard {
   id: string;
+  serverRevision?: number;
   title: string;
   icon: string;
   description?: string;
@@ -3972,6 +3984,7 @@ export interface OfficeActionItem {
 }
 export interface OfficeMeeting {
   id: string;
+  serverRevision?: number;
   title: string;
   date: string;              // YYYY-MM-DD
   time?: string;             // HH:mm
@@ -4011,6 +4024,8 @@ export interface Bordro {
 }
 
 export type RootStackParamList = {
+  ConnectedAi: undefined;
+  ConnectedData: undefined;
   MainTabs: undefined;
   Company: undefined;
   Expenses: undefined;

@@ -1,6 +1,8 @@
 // Faz 57 — ExtLogsScreen (POZ-DEV-275)
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRoute, type RouteProp } from '@react-navigation/native';
@@ -24,15 +26,19 @@ const LEVEL_LABEL: Record<ExtLogEntry['level'], string> = {
 };
 
 export default function ExtLogsScreen() {
+  const serviceState = useServiceLoad();
   const { params } = useRoute<R>();
   const [it, setIt] = useState<ExtIntegration | null>(null);
   const [logs, setLogs] = useState<ExtLogEntry[]>([]);
   useFocusEffect(useCallback(() => {
-    (async () => {
-      setIt((await getExtIntegration(params.id)) ?? null);
-      setLogs(await getExtLogs(params.id));
-    })();
-  }, [params.id]));
+    void serviceState.read(async () => {
+      setIt((await getExtIntegration(params?.id)) ?? null);
+      setLogs(await getExtLogs(params?.id));
+    });
+  }, [params?.id]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>

@@ -42,6 +42,9 @@ export default function WarehouseFormScreen() {
   const isEdit = !!editingId;
 
   const [form, setForm] = useState<Warehouse>(newWarehouse('depo'));
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const submitting = React.useRef(false);
 
   useEffect(() => {
     (async () => {
@@ -56,12 +59,15 @@ export default function WarehouseFormScreen() {
     setForm(prev => ({ ...prev, [k]: v }));
 
   const save = async () => {
+    if (submitting.current) return;
     if (!form.name.trim()) {
       Alert.alert('Eksik', 'Ad girin.');
       return;
     }
-    await upsertWarehouse(form);
-    navigation.goBack();
+    submitting.current = true; setSaving(true); setSaveError(null);
+    try { await upsertWarehouse(form); navigation.goBack(); }
+    catch (error: any) { setSaveError(error?.message || 'Depo kaydedilemedi. Taslağınız korunuyor.'); }
+    finally { submitting.current = false; setSaving(false); }
   };
 
   return (
@@ -71,6 +77,7 @@ export default function WarehouseFormScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView contentContainerStyle={styles.content}>
+          {saveError && <Text accessibilityRole="alert" style={{ color: colors.rose.default }}>{saveError}</Text>}
           <Text style={styles.label}>Tip *</Text>
           <View style={styles.chipRow}>
             {(['depo', 'arac', 'personel'] as WarehouseKind[]).map(k => (
@@ -133,10 +140,10 @@ export default function WarehouseFormScreen() {
             multiline
           />
 
-          <TouchableOpacity style={styles.saveBtn} onPress={save} activeOpacity={0.85}>
+          <TouchableOpacity style={styles.saveBtn} onPress={save} disabled={saving} accessibilityState={{ busy: saving, disabled: saving }} activeOpacity={0.85}>
             <Ionicons name="save-outline" size={18} color="#fff" />
             <Text style={styles.saveText}>
-              {isEdit ? 'Güncelle' : 'Kaydet'}
+              {saving ? 'Kaydediliyor…' : isEdit ? 'Güncelle' : 'Kaydet'}
             </Text>
           </TouchableOpacity>
         </ScrollView>

@@ -74,7 +74,7 @@ def resolve(path):
         return ROOT / 'teklif-araclari.html'
     file = ROOT / path.lstrip('/')
     if file.is_dir():
-        return file / 'index.html'
+        return file / ('index.html' if (file / 'index.html').is_file() or not (file / 'index.php').is_file() else 'index.php')
     if file.exists():
         return file
     # Public articles are PHP routes backed by the published snapshot, not one

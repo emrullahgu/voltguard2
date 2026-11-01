@@ -11,6 +11,7 @@ import { RootStackParamList, FormResponse, FormTemplate } from '../types';
 import { listResponses } from '../services/formResponses';
 import { listTemplates } from '../services/formTemplates';
 import MiniBarChart from '../components/MiniBarChart';
+import ErrorState from '../components/ErrorState';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -28,13 +29,16 @@ export default function FormStatsScreen() {
   const [templates, setTemplates] = useState<FormTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState('');
 
   const load = useCallback(async () => {
+    setError('');
     try {
       const [resps, tpls] = await Promise.all([listResponses(), listTemplates()]);
       setResponses(resps);
       setTemplates(tpls);
-    } finally {
+    } catch (e: any) { setError(e?.message || 'Form istatistikleri yüklenemedi.'); }
+    finally {
       setLoading(false);
       setRefreshing(false);
     }
@@ -66,6 +70,7 @@ export default function FormStatsScreen() {
   const maxCat = byCategory[0]?.count || 1;
   const maxTpl = byTemplate[0]?.count || 1;
 
+  if (error) return <SafeAreaView style={styles.safe}><ErrorState title="Form istatistikleri yüklenemedi" message={error} onRetry={load} /></SafeAreaView>;
   if (loading) {
     return (
       <SafeAreaView style={styles.safe}>

@@ -8,8 +8,10 @@ import { colors, spacing, radius, typography } from '../theme';
 import { listEcomChannels, listEcomOrders, ECOM_STATUS_LABEL, ECOM_STATUS_COLOR } from '../services/advanced';
 import type { AdvEcomChannel, AdvEcomOrder } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
+import { useServiceLoad } from '../portal/useServiceLoad';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
-import { FlatList } from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 
 const STATUS_BG: Record<AdvEcomChannel['status'], string> = {
   connected: '#22c55e', pending: '#f59e0b', disconnected: '#64748b',
@@ -19,11 +21,15 @@ const STATUS_LBL: Record<AdvEcomChannel['status'], string> = {
 };
 
 export default function AdvEcommerceScreen() {
+  const serviceState = useServiceLoad();
   const [channels, setChannels] = useState<AdvEcomChannel[]>([]);
   const [orders, setOrders] = useState<AdvEcomOrder[]>([]);
   useFocusEffect(useCallback(() => {
-    (async () => { setChannels(await listEcomChannels()); setOrders(await listEcomOrders()); })();
-  }, []));
+    void serviceState.read(async () => { const [nextChannels, nextOrders] = await Promise.all([listEcomChannels(), listEcomOrders()]); setChannels(nextChannels); setOrders(nextOrders); });
+  }, [serviceState.read]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Hizmet bilgileri yükleniyor" color={colors.text.primary} /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="E-ticaret servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   const totalRevenue = channels.reduce((a, c) => a + c.revenueToday, 0);
   const totalOrders = channels.reduce((a, c) => a + c.ordersToday, 0);

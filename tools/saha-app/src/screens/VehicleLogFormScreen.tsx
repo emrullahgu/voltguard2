@@ -1,7 +1,7 @@
 // VehicleLogFormScreen — POZ-DEV-061
 // Km / yakıt / bakım / muayene / sigorta kaydı.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -54,12 +54,21 @@ export default function VehicleLogFormScreen() {
   const [note, setNote] = useState('');
   const [receiptUri, setReceiptUri] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
+  const [loadedLog, setLoadedLog] = useState<VehicleLog | null>(null);
+  const [loading, setLoading] = useState(!!logId);
+  const [error, setError] = useState('');
+  const savingRef = useRef(false);
+  const acknowledgedRef = useRef(false);
 
   useEffect(() => {
     (async () => {
       if (logId) {
+        setLoading(true); setError('');
+        try {
         const l = await getLog(logId);
-        if (l) {
+        if (!l) throw new Error('Araç kaydı bulunamadı. Listeyi yenileyin.');
+        setLoadedLog(l);
+        {
           setKind(l.kind);
           setKm(l.km !== undefined ? String(l.km) : '');
           setLiters(l.liters !== undefined ? String(l.liters) : '');
@@ -70,6 +79,8 @@ export default function VehicleLogFormScreen() {
           setNote(l.note ?? '');
           setReceiptUri(l.receiptUri);
         }
+        } catch (e: any) { setError(e?.message || 'Araç kaydı yüklenemedi.'); }
+        finally { setLoading(false); }
       }
     })();
   }, [logId]);
@@ -99,7 +110,7 @@ export default function VehicleLogFormScreen() {
   }, [kind, liters, unitPrice, totalCost]);
 
   const save = async () => {
-    if (saving) return;
+    if (savingRef.current || acknowledgedRef.current || loading || (logId && !loadedLog)) return;
     if (kind === 'km' && !km) { Alert.alert('Eksik', 'Km değeri girin.'); return; }
     if (kind === 'fuel' && !liters) { Alert.alert('Eksik', 'Litre girin.'); return; }
     if ((kind === 'inspection' || kind === 'insurance') && !dueAt.trim()) {
@@ -115,16 +126,13 @@ export default function VehicleLogFormScreen() {
       return;
     }
 
-    setSaving(true);
+    savingRef.current = true; setSaving(true); setError('');
     try {
       // Yeni seçilen yerel fişi Storage'a yükle (online ise URL, değilse local kalır).
       let finalReceipt = receiptUri;
-      if (receiptUri && !receiptUri.startsWith('http')) {
-        try {
+      if (receiptUri && !/^https?:\/\//.test(receiptUri) && !receiptUri.startsWith('/api/saha-asset.php?')) {
           finalReceipt = await uploadPhoto(receiptUri, `vehicle-receipts/${vehicleId}`);
-        } catch {
-          finalReceipt = receiptUri; // yükleme başarısız → local uri ile devam
-        }
+          setReceiptUri(finalReceipt);
       }
 
       const log: Omit<VehicleLog, 'id' | 'createdAt'> = {
@@ -140,16 +148,18 @@ export default function VehicleLogFormScreen() {
         receiptUri: finalReceipt || undefined,
       };
 
-      if (logId) {
-        const existing = await getLog(logId);
-        if (existing) await updateLog({ ...existing, ...log });
-      } else {
-        await addLog(log);
+      const saved = logId && loadedLog ? await updateLog({...loadedLog,...log}) : await addLog(log);
+      acknowledgedRef.current = true;
+      if (saved.vehicleSyncWarning) {
+        Alert.alert('Kayıt tamamlandı', saved.vehicleSyncWarning, [{text:'Tamam',onPress:()=>navigation.goBack()}]);
+        return;
       }
       navigation.goBack();
     } catch (e: any) {
+      setError(e?.message || 'Araç kaydı kaydedilemedi. Taslak bu ekranda duruyor.');
       Alert.alert('Hata', e?.message ?? 'Kaydedilemedi.');
     } finally {
+      savingRef.current = false;
       setSaving(false);
     }
   };
@@ -161,6 +171,7 @@ export default function VehicleLogFormScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView contentContainerStyle={styles.content}>
+          {!!error && <Text accessibilityRole="alert" style={{color:colors.rose.default}}>{error}</Text>}
           <Text style={styles.label}>Kayıt Türü</Text>
           <View style={styles.chipRow}>
             {KINDS.map(k => (
@@ -292,7 +303,7 @@ export default function VehicleLogFormScreen() {
             style={[styles.saveBtn, saving && { opacity: 0.6 }]}
             onPress={save}
             activeOpacity={0.85}
-            disabled={saving}
+            disabled={saving || loading || acknowledgedRef.current || (!!logId && !loadedLog)}
           >
             <Ionicons name="save-outline" size={18} color="#fff" />
             <Text style={styles.saveText}>{saving ? 'Kaydediliyor…' : 'Kaydet'}</Text>

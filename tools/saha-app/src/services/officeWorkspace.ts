@@ -1,7 +1,7 @@
 // officeWorkspace.ts — Ofis Takip (Notion benzeri ofis çalışma alanı) veri katmanı.
 // Üç varlık: Sayfa (blok editör + alt-sayfa ağacı), Pano (kanban), Toplantı notu.
-// Kalıcılık deseni governance.ts ile aynı: Şirket sunucusu birincil + AsyncStorage cache
-// (offline/demo fallback). SUPABASE_CONFIGURED false ise yalnız yerel çalışır.
+// Sunucu onayı kalıcılığın kaynağıdır. Önbellek yalnız doğrulanmış kayıtları tutar.
+// SUPABASE_CONFIGURED false ise yalnız yerel çalışır.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { coalescePortalRead } from '../portal/coalescedRead';
 import { supabase, SUPABASE_CONFIGURED } from './supabase';
@@ -25,38 +25,23 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const uuidOrNull = (v?: string | null): string | null => (v && UUID_RE.test(v) ? v : null);
 
 async function loadList<T>(key: string): Promise<T[]> {
-  try {
-    const raw = await AsyncStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T[]) : [];
-  } catch { return []; }
+  const raw = await AsyncStorage.getItem(key);
+  const list = raw ? JSON.parse(raw) : [];
+  if (!Array.isArray(list)) throw new Error('Ofis kayıt önbelleği doğrulanamadı. Listeyi yenileyin.');
+  return list;
 }
 async function saveList<T>(key: string, list: T[]): Promise<void> {
   await AsyncStorage.setItem(key, JSON.stringify(list));
 }
-
-// ── Pending outbox ──────────────────────────────────────────
-// DB'ye yazılamayan (RLS/ağ) kayıtların id'leri. listX() sunucudan tazelerken
-// bu id'lere ait yerel kopyalar EZİLMEZ — böylece "local-first" sözü tazelemeden
-// sonra da korunur (Req#3 dürüstlük: sessiz veri kaybı yok).
-const PEND = { pages: 'office_pend_pages_v1', boards: 'office_pend_boards_v1', meetings: 'office_pend_meet_v1' };
-async function getPending(key: string): Promise<string[]> {
-  try { const raw = await AsyncStorage.getItem(key); return raw ? JSON.parse(raw) : []; } catch { return []; }
+async function cacheConfirmed<T>(key: string, list: T[]) {
+  // An optional cache failure must not invite resubmission of an accepted save.
+  // PrivateStorage reports its own failure through the portal notice channel.
+  await saveList(key, list).catch(() => {});
 }
-async function addPending(key: string, id: string): Promise<void> {
-  const ids = await getPending(key);
-  if (!ids.includes(id)) await AsyncStorage.setItem(key, JSON.stringify([...ids, id]));
-}
-async function clearPending(key: string, id: string): Promise<void> {
-  const ids = await getPending(key);
-  if (ids.includes(id)) await AsyncStorage.setItem(key, JSON.stringify(ids.filter(x => x !== id)));
-}
-/** Sunucu listesine, henüz senkronlanmamış (pending) yerel kayıtları geri ekler. */
-function mergePending<T extends { id: string }>(server: T[], cache: T[], pendingIds: string[]): T[] {
-  if (!pendingIds.length) return server;
-  const serverIds = new Set(server.map(x => x.id));
-  const byId = new Map(cache.map(x => [x.id, x]));
-  const extra = pendingIds.filter(id => !serverIds.has(id)).map(id => byId.get(id)).filter(Boolean) as T[];
-  return [...server, ...extra];
+function snapshotVersions(record: { id: string; serverRevision?: number }): Record<string, number> {
+  if (record.serverRevision === undefined) return {};
+  if (!Number.isSafeInteger(record.serverRevision) || record.serverRevision < 1) throw new Error('Ofis kaydının sürümü geçersiz. Listeyi yenileyin.');
+  return { [record.id]: record.serverRevision };
 }
 
 const now = () => new Date().toISOString();
@@ -161,9 +146,10 @@ function pageToRow(p: OfficePage) {
     updated_at: p.updatedAt ?? p.createdAt,
   };
 }
-function pageFromRow(r: any): OfficePage {
+function pageFromRow(r: any, serverRevision?: number): OfficePage {
   return {
     id: r.id,
+    serverRevision,
     parentId: r.parent_id ?? null,
     title: r.title ?? '',
     icon: r.icon ?? '📄',
@@ -182,20 +168,13 @@ export function listPages(): Promise<OfficePage[]> {
   return coalescePortalRead(KEYS.pages, loadPages);
 }
 async function loadPages(): Promise<OfficePage[]> {
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase
-        .from('office_pages').select('*').order('order_index', { ascending: true });
-      if (!error && data) {
-        const server = data.map(pageFromRow);
-        const pending = await getPending(PEND.pages);
-        const merged = pending.length ? mergePending(server, await loadList<OfficePage>(KEYS.pages), pending) : server;
-        await saveList(KEYS.pages, merged);
-        return merged;
-      }
-    } catch { /* offline fallback */ }
-  }
-  return loadList<OfficePage>(KEYS.pages);
+  if (!SUPABASE_CONFIGURED) return loadList<OfficePage>(KEYS.pages);
+  const { data, error, versions } = await supabase.from('office_pages').select('*').order('order_index', { ascending: true });
+  if (error) throw error;
+  if (!Array.isArray(data)) throw new Error('Sunucu ofis kayıt listesi doğrulanamadı.');
+  const list = data.map((row: any) => pageFromRow(row, versions?.[row.id]));
+  await cacheConfirmed(KEYS.pages, list);
+  return list;
 }
 
 /** Belirli ebeveynin (null = kök) arşivlenmemiş alt sayfaları, sıraya göre. */
@@ -227,26 +206,21 @@ export async function savePage(
     page = normalizeNewPage(input);
     list.unshift(page);
   }
-  // LOCAL-FIRST: önce yerele yaz — DB hata verse bile kullanıcı verisi KAYBOLMAZ.
-  await saveList(KEYS.pages, list);
   if (SUPABASE_CONFIGURED) {
-    // DÜRÜSTLÜK: DB reddederse (RLS) fırlat — sahte "kaydedildi" yok. Yerel kopya + outbox durur.
-    const { data, error } = await supabase
-      .from('office_pages').upsert(pageToRow(page)).select().single();
-    if (error) { await addPending(PEND.pages, page.id); throw new Error(`Sayfa kaydedilemedi: ${error.message}`); }
-    await clearPending(PEND.pages, page.id);
-    if (data) {
-      page = pageFromRow(data);
-      const fresh = await loadList<OfficePage>(KEYS.pages);
-      await saveList(KEYS.pages, fresh.map(p => (p.id === page.id ? page : p)));
-    }
-  }
+    const { data, error, versions } = await supabase.from('office_pages')
+      .upsert(pageToRow(page)).expectVersions(snapshotVersions(page)).select().single();
+    if (error) throw error;
+    if (!data?.id) throw new Error('Sunucu sayfa kaydını doğrulamadı. Tekrar göndermeden önce kayıtları kontrol edin.');
+    page = pageFromRow(data, versions?.[data.id]);
+    await cacheConfirmed(KEYS.pages, list.map(p => p.id === page.id ? page : p));
+  } else await saveList(KEYS.pages, list);
   return page;
 }
 
 function normalizeNewPage(input: Partial<OfficePage>): OfficePage {
   return {
     id: input.id || newUuid(),
+    serverRevision: input.serverRevision,
     parentId: input.parentId ?? null,
     title: input.title ?? 'Adsız sayfa',
     icon: input.icon ?? '📄',
@@ -262,7 +236,7 @@ function normalizeNewPage(input: Partial<OfficePage>): OfficePage {
 }
 
 /** Sayfayı ve TÜM alt ağacını siler (Şirket sunucusu'te FK cascade; yerelde elle). */
-export async function deletePage(id: string): Promise<void> {
+export async function deletePage(id: string, serverRevision?: number): Promise<void> {
   const list = await loadList<OfficePage>(KEYS.pages);
   const toDelete = new Set<string>();
   const collect = (pid: string) => {
@@ -272,16 +246,20 @@ export async function deletePage(id: string): Promise<void> {
   };
   collect(id);
   if (SUPABASE_CONFIGURED) {
-    const { error } = await supabase.from('office_pages').delete().in('id', Array.from(toDelete));
+    const expected = Object.assign({}, ...list.filter(p => toDelete.has(p.id)).map(snapshotVersions));
+    if (serverRevision !== undefined) Object.assign(expected, snapshotVersions({ id, serverRevision }));
+    const { error } = await supabase.from('office_pages').delete().in('id', Array.from(toDelete)).expectVersions(expected);
     if (error) throw new Error(`Sayfa silinemedi: ${error.message}`);
   }
-  await saveList(KEYS.pages, list.filter(p => !toDelete.has(p.id)));
+  const next = list.filter(p => !toDelete.has(p.id));
+  if (SUPABASE_CONFIGURED) await cacheConfirmed(KEYS.pages, next);
+  else await saveList(KEYS.pages, next);
 }
 
 export async function toggleFavorite(id: string): Promise<void> {
   const p = await getPage(id);
   if (!p) return;
-  await savePage({ id, isFavorite: !p.isFavorite });
+  await savePage({ id, serverRevision: p.serverRevision, isFavorite: !p.isFavorite });
 }
 
 /** id'in kendisi + tüm alt ağacı (taşımada döngüyü önlemek için). Döngüye karşı guard'lı. */
@@ -302,7 +280,9 @@ export async function movePage(id: string, newParentId: string | null): Promise<
       throw new Error('Bir sayfa kendi alt sayfasının altına taşınamaz.');
     }
   }
-  await savePage({ id, parentId: newParentId, orderIndex: Date.now() });
+  const page = await getPage(id);
+  if (!page) throw new Error('Sayfa bulunamadı. Listeyi yenileyin.');
+  await savePage({ id, serverRevision: page.serverRevision, parentId: newParentId, orderIndex: Date.now() });
 }
 
 /**
@@ -321,7 +301,7 @@ export async function reorderSibling(all: OfficePage[], id: string, dir: -1 | 1)
   // Yeni konuma göre kesin artan orderIndex (adım 1000) — eşit-index no-op'unu engeller.
   for (let k = 0; k < ordered.length; k++) {
     const want = (k + 1) * 1000;
-    if (ordered[k].orderIndex !== want) await savePage({ id: ordered[k].id, orderIndex: want });
+    if (ordered[k].orderIndex !== want) await savePage({ id: ordered[k].id, serverRevision: ordered[k].serverRevision, orderIndex: want });
   }
 }
 
@@ -397,9 +377,10 @@ function boardToRow(b: OfficeBoard) {
     updated_at: b.updatedAt ?? b.createdAt,
   };
 }
-function boardFromRow(r: any): OfficeBoard {
+function boardFromRow(r: any, serverRevision?: number): OfficeBoard {
   return {
     id: r.id,
+    serverRevision,
     title: r.title ?? '',
     icon: r.icon ?? '📋',
     description: r.description ?? undefined,
@@ -419,20 +400,13 @@ export function listBoards(): Promise<OfficeBoard[]> {
   return coalescePortalRead(KEYS.boards, loadBoards);
 }
 async function loadBoards(): Promise<OfficeBoard[]> {
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase
-        .from('office_boards').select('*').order('created_at', { ascending: false });
-      if (!error && data) {
-        const server = data.map(boardFromRow);
-        const pending = await getPending(PEND.boards);
-        const merged = pending.length ? mergePending(server, await loadList<OfficeBoard>(KEYS.boards), pending) : server;
-        await saveList(KEYS.boards, merged);
-        return merged;
-      }
-    } catch { /* offline fallback */ }
-  }
-  return loadList<OfficeBoard>(KEYS.boards);
+  if (!SUPABASE_CONFIGURED) return loadList<OfficeBoard>(KEYS.boards);
+  const { data, error, versions } = await supabase.from('office_boards').select('*').order('created_at', { ascending: false });
+  if (error) throw error;
+  if (!Array.isArray(data)) throw new Error('Sunucu ofis kayıt listesi doğrulanamadı.');
+  const list = data.map((row: any) => boardFromRow(row, versions?.[row.id]));
+  await cacheConfirmed(KEYS.boards, list);
+  return list;
 }
 
 export async function getBoard(id: string): Promise<OfficeBoard | undefined> {
@@ -449,6 +423,7 @@ export async function saveBoard(input: Partial<OfficeBoard> & { id?: string }): 
   } else {
     board = {
       id: input.id || newUuid(),
+      serverRevision: input.serverRevision,
       title: input.title ?? 'Adsız pano',
       icon: input.icon ?? '📋',
       description: input.description,
@@ -461,29 +436,28 @@ export async function saveBoard(input: Partial<OfficeBoard> & { id?: string }): 
     };
     list.unshift(board);
   }
-  // LOCAL-FIRST: önce yerele yaz — DB hata verse bile veri kaybolmaz.
-  await saveList(KEYS.boards, list);
   if (SUPABASE_CONFIGURED) {
-    const { data, error } = await supabase
-      .from('office_boards').upsert(boardToRow(board)).select().single();
-    if (error) { await addPending(PEND.boards, board.id); throw new Error(`Pano kaydedilemedi: ${error.message}`); }
-    await clearPending(PEND.boards, board.id);
-    if (data) {
-      board = boardFromRow(data);
-      const fresh = await loadList<OfficeBoard>(KEYS.boards);
-      await saveList(KEYS.boards, fresh.map(b => (b.id === board.id ? board : b)));
-    }
-  }
+    const { data, error, versions } = await supabase.from('office_boards')
+      .upsert(boardToRow(board)).expectVersions(snapshotVersions(board)).select().single();
+    if (error) throw error;
+    if (!data?.id) throw new Error('Sunucu pano kaydını doğrulamadı. Tekrar göndermeden önce kayıtları kontrol edin.');
+    board = boardFromRow(data, versions?.[data.id]);
+    await cacheConfirmed(KEYS.boards, list.map(b => b.id === board.id ? board : b));
+  } else await saveList(KEYS.boards, list);
   return board;
 }
 
-export async function deleteBoard(id: string): Promise<void> {
+export async function deleteBoard(id: string, serverRevision?: number): Promise<void> {
+  const list = await loadList<OfficeBoard>(KEYS.boards);
   if (SUPABASE_CONFIGURED) {
-    const { error } = await supabase.from('office_boards').delete().eq('id', id);
+    const snapshot = list.find(record => record.id === id);
+    const { error } = await supabase.from('office_boards').delete().eq('id', id)
+      .expectVersions(snapshotVersions({ id, serverRevision: serverRevision ?? snapshot?.serverRevision }));
     if (error) throw new Error(`Pano silinemedi: ${error.message}`);
   }
-  const list = await loadList<OfficeBoard>(KEYS.boards);
-  await saveList(KEYS.boards, list.filter(b => b.id !== id));
+  const next = list.filter(record => record.id !== id);
+  if (SUPABASE_CONFIGURED) await cacheConfirmed(KEYS.boards, next);
+  else await saveList(KEYS.boards, next);
 }
 
 export function newCard(title: string): OfficeBoardCard {
@@ -564,9 +538,10 @@ function meetingToRow(m: OfficeMeeting) {
     updated_at: m.updatedAt ?? m.createdAt,
   };
 }
-function meetingFromRow(r: any): OfficeMeeting {
+function meetingFromRow(r: any, serverRevision?: number): OfficeMeeting {
   return {
     id: r.id,
+    serverRevision,
     title: r.title ?? '',
     date: r.date ?? localDateISO(),
     time: r.time ?? undefined,
@@ -584,21 +559,13 @@ export function listMeetings(): Promise<OfficeMeeting[]> {
   return coalescePortalRead(KEYS.meetings, loadMeetings);
 }
 async function loadMeetings(): Promise<OfficeMeeting[]> {
-  if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase
-        .from('office_meetings').select('*').order('date', { ascending: false });
-      if (!error && data) {
-        const server = data.map(meetingFromRow);
-        const pending = await getPending(PEND.meetings);
-        const merged = pending.length ? mergePending(server, await loadList<OfficeMeeting>(KEYS.meetings), pending) : server;
-        await saveList(KEYS.meetings, merged);
-        return merged;
-      }
-    } catch { /* offline fallback */ }
-  }
-  const list = await loadList<OfficeMeeting>(KEYS.meetings);
-  return list.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  if (!SUPABASE_CONFIGURED) return (await loadList<OfficeMeeting>(KEYS.meetings)).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const { data, error, versions } = await supabase.from('office_meetings').select('*').order('date', { ascending: false });
+  if (error) throw error;
+  if (!Array.isArray(data)) throw new Error('Sunucu ofis kayıt listesi doğrulanamadı.');
+  const list = data.map((row: any) => meetingFromRow(row, versions?.[row.id]));
+  await cacheConfirmed(KEYS.meetings, list);
+  return list;
 }
 
 export async function getMeeting(id: string): Promise<OfficeMeeting | undefined> {
@@ -615,6 +582,7 @@ export async function saveMeeting(input: Partial<OfficeMeeting> & { id?: string 
   } else {
     m = {
       id: input.id || newUuid(),
+      serverRevision: input.serverRevision,
       title: input.title ?? 'Toplantı',
       date: input.date ?? localDateISO(),
       time: input.time,
@@ -628,29 +596,28 @@ export async function saveMeeting(input: Partial<OfficeMeeting> & { id?: string 
     };
     list.unshift(m);
   }
-  // LOCAL-FIRST: önce yerele yaz — DB hata verse bile veri kaybolmaz.
-  await saveList(KEYS.meetings, list);
   if (SUPABASE_CONFIGURED) {
-    const { data, error } = await supabase
-      .from('office_meetings').upsert(meetingToRow(m)).select().single();
-    if (error) { await addPending(PEND.meetings, m.id); throw new Error(`Toplantı kaydedilemedi: ${error.message}`); }
-    await clearPending(PEND.meetings, m.id);
-    if (data) {
-      m = meetingFromRow(data);
-      const fresh = await loadList<OfficeMeeting>(KEYS.meetings);
-      await saveList(KEYS.meetings, fresh.map(x => (x.id === m.id ? m : x)));
-    }
-  }
+    const { data, error, versions } = await supabase.from('office_meetings')
+      .upsert(meetingToRow(m)).expectVersions(snapshotVersions(m)).select().single();
+    if (error) throw error;
+    if (!data?.id) throw new Error('Sunucu toplantı kaydını doğrulamadı. Tekrar göndermeden önce kayıtları kontrol edin.');
+    m = meetingFromRow(data, versions?.[data.id]);
+    await cacheConfirmed(KEYS.meetings, list.map(x => x.id === m.id ? m : x));
+  } else await saveList(KEYS.meetings, list);
   return m;
 }
 
-export async function deleteMeeting(id: string): Promise<void> {
+export async function deleteMeeting(id: string, serverRevision?: number): Promise<void> {
+  const list = await loadList<OfficeMeeting>(KEYS.meetings);
   if (SUPABASE_CONFIGURED) {
-    const { error } = await supabase.from('office_meetings').delete().eq('id', id);
+    const snapshot = list.find(record => record.id === id);
+    const { error } = await supabase.from('office_meetings').delete().eq('id', id)
+      .expectVersions(snapshotVersions({ id, serverRevision: serverRevision ?? snapshot?.serverRevision }));
     if (error) throw new Error(`Toplantı silinemedi: ${error.message}`);
   }
-  const list = await loadList<OfficeMeeting>(KEYS.meetings);
-  await saveList(KEYS.meetings, list.filter(m => m.id !== id));
+  const next = list.filter(record => record.id !== id);
+  if (SUPABASE_CONFIGURED) await cacheConfirmed(KEYS.meetings, next);
+  else await saveList(KEYS.meetings, next);
 }
 
 export function newActionItem(text: string): OfficeActionItem {

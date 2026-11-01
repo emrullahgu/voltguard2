@@ -1,7 +1,7 @@
 // FormBuilderScreen — POZ-DEV-050
 // Şablon meta + alan ekle/sil/sırala/düzenle.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { colors, spacing, radius, typography, brand } from '../theme';
+import ErrorState from '../components/ErrorState';
 import {
   getTemplate,
   upsertTemplate,
@@ -66,16 +67,25 @@ export default function FormBuilderScreen() {
 
   const [tpl, setTpl] = useState<FormTemplate>(newEmptyTemplate());
   const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState('');
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
+  const submitting = useRef(false);
 
   useEffect(() => {
     (async () => {
+      setLoaded(false); setLoadError('');
+      try {
       if (isEdit && editingId) {
         const t = await getTemplate(editingId);
-        if (t) setTpl(t);
+        if (!t) throw new Error('Şablon bulunamadı. Listeyi yenileyin.');
+        setTpl(t);
       }
-      setLoaded(true);
+      } catch (e: any) { setLoadError(e?.message || 'Şablon yüklenemedi.'); }
+      finally { setLoaded(true); }
     })();
-  }, [isEdit, editingId]);
+  }, [isEdit, editingId, loadAttempt]);
 
   const update = <K extends keyof FormTemplate>(k: K, v: FormTemplate[K]) =>
     setTpl(prev => ({ ...prev, [k]: v }));
@@ -108,6 +118,7 @@ export default function FormBuilderScreen() {
   };
 
   const save = async () => {
+    if (submitting.current || !loaded || loadError) return;
     if (!tpl.name.trim()) {
       Alert.alert('Eksik', 'Şablon adı girin.');
       return;
@@ -120,10 +131,14 @@ export default function FormBuilderScreen() {
       Alert.alert('Eksik', 'Tüm alanların etiketi olmalı.');
       return;
     }
-    await upsertTemplate(tpl);
-    Alert.alert('Kaydedildi', 'Şablon kaydedildi.', [
-      { text: 'Tamam', onPress: () => navigation.goBack() },
-    ]);
+    submitting.current = true; setSaving(true); setError('');
+    try {
+      const saved = await upsertTemplate(tpl); setTpl(saved);
+      Alert.alert('Kaydedildi', 'Şablon kaydedildi.', [
+        { text: 'Tamam', onPress: () => navigation.goBack() },
+      ]);
+    } catch (e: any) { setError(e?.message || 'Şablon kaydedilemedi. Taslak bu ekranda duruyor.'); }
+    finally { submitting.current = false; setSaving(false); }
   };
 
   if (!loaded) {
@@ -133,6 +148,7 @@ export default function FormBuilderScreen() {
       </SafeAreaView>
     );
   }
+  if (loadError) return <SafeAreaView style={styles.safe}><ErrorState title="Şablon yüklenemedi" message={loadError} onRetry={() => setLoadAttempt(value => value + 1)} /></SafeAreaView>;
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
@@ -141,6 +157,7 @@ export default function FormBuilderScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView contentContainerStyle={styles.content}>
+          {!!error && <Text accessibilityRole="alert" style={{ color: colors.rose.default }}>{error}</Text>}
           <Text style={styles.label}>Şablon Adı *</Text>
           <TextInput
             value={tpl.name}
@@ -208,10 +225,10 @@ export default function FormBuilderScreen() {
             ))}
           </View>
 
-          <TouchableOpacity style={styles.saveBtn} onPress={save} activeOpacity={0.85}>
+          <TouchableOpacity style={styles.saveBtn} onPress={save} disabled={saving} activeOpacity={0.85}>
             <Ionicons name="save-outline" size={18} color="#fff" />
             <Text style={styles.saveBtnText}>
-              {isEdit ? 'Güncelle' : 'Şablonu Kaydet'}
+              {saving ? 'Kaydediliyor…' : isEdit ? 'Güncelle' : 'Şablonu Kaydet'}
             </Text>
           </TouchableOpacity>
         </ScrollView>

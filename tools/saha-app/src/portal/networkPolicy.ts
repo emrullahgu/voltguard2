@@ -1,6 +1,6 @@
 /* Pure source-local request policy. Never replace host fetch, XHR or WebSocket. */
 const nativeFetch = globalThis.fetch.bind(globalThis);
-const allowed = new Set(['/api/company.php', '/api/staff.php', '/api/saha-asset.php', '/api/company-asset.php']);
+const allowed = new Set(['/api/company.php', '/api/staff.php', '/api/saha-asset.php', '/api/company-asset.php', '/api/integrations.php']);
 export function assertModuleRequest(input: any) {
   const raw = typeof input === 'string' ? input : input?.url || String(input);
   const url = new URL(raw, window.location.origin);

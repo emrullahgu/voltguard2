@@ -92,7 +92,9 @@ async function main() {
               brokenImages:[...document.images].filter(img => img.complete && !img.naturalWidth && img.getAttribute('src')).map(img => img.getAttribute('src')),
             })));
             if (a11yMode) {
-              await page.addScriptTag({path:axePath});
+              // Run audit instrumentation through the debugger so strict login
+              // CSP remains enabled and does not block an injected inline tag.
+              await page.evaluate(fs.readFileSync(axePath, 'utf8'));
               item.accessibility = await page.evaluate(async () => (await axe.run(document, {
                 runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']},
               })).violations.map(issue => ({id:issue.id,impact:issue.impact,help:issue.help,

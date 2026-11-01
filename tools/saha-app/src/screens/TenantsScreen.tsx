@@ -56,7 +56,7 @@ export default function TenantsScreen() {
           </PressableScale>
         )}
       />
-      <TouchableOpacity style={s.fab} onPress={() => nav.navigate('TenantForm', {})}>
+      <TouchableOpacity accessibilityRole="button" accessibilityLabel="Yeni firma ekle" style={s.fab} onPress={() => nav.navigate('TenantForm', {})}>
         <Ionicons name="add" size={28} color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>

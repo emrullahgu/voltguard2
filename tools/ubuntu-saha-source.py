@@ -93,7 +93,7 @@ def file_reference_allowed(visible,origins,bucket,name):
   origin=origins[k]
   if not origin['native']:continue
   raw=origin['raw']
-  if bucket=='chat-attachments' and (row['collection']!='messages' or not name.startswith(str(raw.get('sender_id'))+'/')):continue
+  if bucket=='chat-attachments' and (row['collection']!='messages' or b.saha_message_deleted(raw) or b.saha_message_deleted(row['payload']) or not name.startswith(str(raw.get('sender_id'))+'/')):continue
   if bucket=='customer-docs' and row['collection'] not in {'customer_documents','quotes','quote_revisions'}:continue
   if has_reference(raw,bucket,name) and has_protected_reference(row['payload'],bucket,name):return True
  return False

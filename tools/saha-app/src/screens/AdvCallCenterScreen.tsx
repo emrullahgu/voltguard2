@@ -12,8 +12,10 @@ import {
 } from '../services/advanced';
 import type { AdvCallAgent, AdvCallRecord } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
+import { useServiceLoad } from '../portal/useServiceLoad';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
-import { FlatList } from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 
 function fmt(sec: number): string {
   if (sec === 0) return '-';
@@ -22,11 +24,15 @@ function fmt(sec: number): string {
 }
 
 export default function AdvCallCenterScreen() {
+  const serviceState = useServiceLoad();
   const [agents, setAgents] = useState<AdvCallAgent[]>([]);
   const [records, setRecords] = useState<AdvCallRecord[]>([]);
   useFocusEffect(useCallback(() => {
-    (async () => { setAgents(await listCallAgents()); setRecords(await listCallRecords()); })();
-  }, []));
+    void serviceState.read(async () => { const [nextAgents, nextRecords] = await Promise.all([listCallAgents(), listCallRecords()]); setAgents(nextAgents); setRecords(nextRecords); });
+  }, [serviceState.read]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Hizmet bilgileri yükleniyor" color={colors.text.primary} /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Çağrı merkezi servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   const totalCalls = agents.reduce((a, x) => a + x.calls, 0);
   const avgSat = agents.filter(a => a.satisfaction > 0).reduce((a, x) => a + x.satisfaction, 0) / Math.max(1, agents.filter(a => a.satisfaction > 0).length);

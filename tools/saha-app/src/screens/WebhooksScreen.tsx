@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Modal, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import ErrorState from '../components/ErrorState';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { colors, spacing, radius, typography, brand } from '../theme';
@@ -24,7 +25,14 @@ export default function WebhooksScreen() {
   const [fEvents, setFEvents] = useState<WebhookEvent[]>([]);
   const [testingId, setTestingId] = useState<string | null>(null);
 
-  const refresh = useCallback(async () => { setList(await listWebhooks()); }, []);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const refresh = useCallback(async () => {
+    setLoading(true); setError(null);
+    try { setList(await listWebhooks()); }
+    catch (failure: any) { setError(failure?.message || 'Servis kayıtları yüklenemedi.'); }
+    finally { setLoading(false); }
+  }, []);
   useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
 
   const openNew = () => {
@@ -42,30 +50,35 @@ export default function WebhooksScreen() {
     const next: Webhook = editing
       ? { ...editing, label: fLabel.trim(), url: fUrl.trim(), secret: fSecret.trim() || undefined, events: fEvents }
       : makeWebhook({ label: fLabel.trim(), url: fUrl.trim(), secret: fSecret.trim() || undefined, events: fEvents });
-    await upsertWebhook(next);
-    setShowForm(false);
-    await refresh();
+    try {
+      await upsertWebhook(next); setShowForm(false); await refresh();
+    } catch (failure: any) { setError(failure?.message || 'Webhook kaydedilemedi.'); }
   };
 
   const onToggle = async (w: Webhook) => {
-    await upsertWebhook({ ...w, active: !w.active });
-    await refresh();
+    try { await upsertWebhook({ ...w, active: !w.active }); await refresh(); }
+    catch (failure: any) { setError(failure?.message || 'Webhook değiştirilemedi.'); }
   };
 
   const onDelete = (id: string) => {
     Alert.alert('Sil', 'Webhook silinsin mi?', [
       { text: 'Vazgeç', style: 'cancel' },
-      { text: 'Sil', style: 'destructive', onPress: async () => { await deleteWebhook(id); await refresh(); } },
+      { text: 'Sil', style: 'destructive', onPress: async () => { try { await deleteWebhook(id); await refresh(); } catch (failure: any) { setError(failure?.message || 'Webhook silinemedi.'); } } },
     ]);
   };
 
   const onTest = async (w: Webhook) => {
     setTestingId(w.id);
-    const r = await testWebhook(w);
-    setTestingId(null);
-    Alert.alert(r.ok ? 'Başarılı' : 'Başarısız', r.ok ? `HTTP ${r.status}` : (r.error || 'Bilinmeyen hata'));
-    await refresh();
+    try {
+      const r = await testWebhook(w);
+      Alert.alert(r.ok ? 'Başarılı' : 'Başarısız', r.ok ? `HTTP ${r.status}` : (r.error || 'Bilinmeyen hata'));
+      await refresh();
+    } catch (failure: any) { setError(failure?.message || 'Webhook testi tamamlanamadı.'); }
+    finally { setTestingId(null); }
   };
+
+  if (loading) return <SafeAreaView style={styles.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (error) return <SafeAreaView style={styles.safe} edges={['bottom']}><ErrorState title="Webhook servisi kullanılamıyor" message={error} onRetry={refresh} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>

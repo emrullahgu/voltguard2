@@ -1,6 +1,8 @@
 // IntegrationWebhooksScreen — POZ-DEV-462
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Switch } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Alert, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -12,19 +14,28 @@ import { listWebhooksV2, deleteWebhookV2, toggleWebhookV2, triggerWebhookV2 } fr
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 export default function IntegrationWebhooksScreen() {
+  const serviceState = useServiceLoad();
   const nav = useNavigation<Nav>();
   const [items, setItems] = useState<IntegrationWebhook[]>([]);
-  const load = useCallback(async () => { setItems(await listWebhooksV2()); }, []);
+  const load = useCallback(() => serviceState.read(async () => {
+    setItems(await listWebhooksV2());
+  }), []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const remove = (id: string) => Alert.alert('Sil', 'Silinsin mi?', [
-    { text: 'Vazgeç' }, { text: 'Sil', style: 'destructive', onPress: async () => { await deleteWebhookV2(id); load(); } },
+    { text: 'Vazgeç' }, { text: 'Sil', style: 'destructive', onPress: () => serviceState.action(async () => {
+      await deleteWebhookV2(id);
+      load();
+    }) },
   ]);
-  const test = async (id: string) => {
+  const test = (id: string) => serviceState.action(async () => {
     const ok = await triggerWebhookV2(id);
     Alert.alert('Test', ok ? 'Başarılı' : 'Başarısız');
     load();
-  };
+  });
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -41,7 +52,10 @@ export default function IntegrationWebhooksScreen() {
                 <Text style={s.n}>{item.name}</Text>
                 <Text style={s.sub} numberOfLines={1}>{item.event} · {item.url}</Text>
               </View>
-              <Switch value={item.isActive} onValueChange={async () => { await toggleWebhookV2(item.id); load(); }} />
+              <Switch value={item.isActive} onValueChange={() => serviceState.action(async () => {
+                await toggleWebhookV2(item.id);
+                load();
+              })} />
             </View>
             <View style={s.foot}>
               <Text style={s.sub}>Başarısız: {item.failureCount}</Text>

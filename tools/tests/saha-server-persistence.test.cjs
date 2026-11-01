@@ -32,12 +32,13 @@ for(const c of cases)test(c.table+': denied writes/read failures keep cache inta
  const f=fixture(c.table,c.file),s=f.service;f.rejectWrite(true);
  await assert.rejects(s[c.create](c.input),e=>e.status===409);assert.equal(f.cacheWrites(),0);assert.equal(f.row(),null);
  f.rejectWrite(false);const created=await s[c.create](c.input);assert.equal(created.id,f.row().id);assert.ok(f.cacheWrites()>0);
- assert.equal((await s[c.list]())[0].id,created.id);f.remoteEdit();
+ const loaded=(await s[c.list]())[0];assert.equal(loaded.id,created.id);f.remoteEdit();
  const snapshot=JSON.stringify([...f.cache]),before=f.calls.length;
- await assert.rejects(s[c.update](created.id,c.patch),e=>e.status===409);assert.equal(JSON.stringify([...f.cache]),snapshot);
+ const patchFor=record=>c.table==='assets'?{...c.patch,serverRevision:record.serverRevision}:c.patch;
+ await assert.rejects(s[c.update](created.id,patchFor(loaded),undefined,undefined,c.table==='form_responses'?loaded:undefined),e=>e.status===409);assert.equal(JSON.stringify([...f.cache]),snapshot);
  assert.equal(f.calls.length,before+1,'Mutation must not refresh away the form CAS revision');assert.equal(f.calls.at(-1).operation,'update');
- await s[c.list]();assert.ok(await s[c.update](created.id,c.patch));f.remoteEdit();
- const cacheBeforeDelete=JSON.stringify([...f.cache]);await assert.rejects(s[c.remove](created.id),e=>e.status===409);assert.ok(f.row());assert.equal(JSON.stringify([...f.cache]),cacheBeforeDelete);
+ const fresh=(await s[c.list]())[0],updated=await s[c.update](created.id,patchFor(fresh),undefined,undefined,c.table==='form_responses'?fresh:undefined);assert.ok(updated);f.remoteEdit();
+ const cacheBeforeDelete=JSON.stringify([...f.cache]);await assert.rejects(s[c.remove](created.id,updated.serverRevision),e=>e.status===409);assert.ok(f.row());assert.equal(JSON.stringify([...f.cache]),cacheBeforeDelete);
  f.rejectRead(true);const writes=f.cacheWrites();await assert.rejects(s[c.list](),/Synthetic server read failure/);assert.equal(f.cacheWrites(),writes);assert.equal(JSON.stringify([...f.cache]),cacheBeforeDelete);
- f.rejectRead(false);await s[c.list]();await s[c.remove](created.id);assert.equal(f.row(),null);
+ f.rejectRead(false);const current=(await s[c.list]())[0];await s[c.remove](created.id,current.serverRevision);assert.equal(f.row(),null);
 });

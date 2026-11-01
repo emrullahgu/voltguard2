@@ -12,9 +12,10 @@ const KEY = '@SahaTakip:vehicle_logs';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-function fromRow(r: any): VehicleLog {
+function fromRow(r: any, serverRevision?: number): VehicleLog {
   return {
     id: r.id,
+    serverRevision,
     vehicleId: r.vehicle_id,
     kind: r.kind,
     km: r.km == null ? undefined : Number(r.km),
@@ -54,18 +55,16 @@ function uid(): string {
 
 export async function listLogs(): Promise<VehicleLog[]> {
   if (SUPABASE_CONFIGURED) {
-    try {
-      const { data, error } = await supabase
+      const { data, error, versions } = await supabase
         .from('vehicle_logs')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(500);
-      if (!error && data) {
-        const list = data.map(fromRow);
-        await AsyncStorage.setItem(KEY, JSON.stringify(list));
-        return list;
-      }
-    } catch { /* fallback */ }
+      if (error) throw error;
+      if (!Array.isArray(data)) throw new Error('Araç kayıtları sunucudan doğrulanamadı.');
+      const list = data.map((row: any) => fromRow(row, versions?.[row.id]));
+      await cacheConfirmed(list);
+      return list;
   }
   try {
     const raw = await AsyncStorage.getItem(KEY);
@@ -95,28 +94,40 @@ export async function getLog(id: string): Promise<VehicleLog | null> {
 async function saveAll(list: VehicleLog[]) {
   await AsyncStorage.setItem(KEY, JSON.stringify(list));
 }
+async function cachedLogs(): Promise<VehicleLog[]> {
+  try { const raw=await AsyncStorage.getItem(KEY),list=raw?JSON.parse(raw):[];return Array.isArray(list)?list:[]; }
+  catch { return []; }
+}
+async function cacheConfirmed(list: VehicleLog[]) { await saveAll(list).catch(() => {}); }
+function expectedVersion(id: string, revision?: number) {
+  if (!Number.isSafeInteger(revision)||revision!<1) throw new Error('Araç kaydının sürümü eksik. Kaydı yeniden açın.');
+  return {[id]:revision!};
+}
 
 export async function addLog(input: Omit<VehicleLog, 'id' | 'createdAt'>): Promise<VehicleLog> {
-  const log: VehicleLog = {
+  let log: VehicleLog = {
     id: uid(),
     createdAt: new Date().toISOString(),
     ...input,
   };
-  if (SUPABASE_CONFIGURED && UUID_RE.test(input.vehicleId)) {
-    try {
-      const { data, error } = await supabase.from('vehicle_logs').insert(toRow(log)).select().single();
-      if (!error && data) {
-        log.id = data.id;
-        log.createdAt = data.created_at ?? log.createdAt;
-      }
-    } catch { /* keep local */ }
+  if (SUPABASE_CONFIGURED) {
+      if (!UUID_RE.test(input.vehicleId)) throw new Error('Geçerli bir araç kaydı seçin.');
+      const { data, error, versions } = await supabase.from('vehicle_logs').insert(toRow(log)).expectVersions({}).select().single();
+      if (error) throw error;
+      if (!data?.id) throw new Error('Araç kaydı sunucudan doğrulanamadı. Yeniden göndermeden önce listeyi kontrol edin.');
+      log=fromRow(data,versions?.[data.id]);
   }
-  const all = await listLogs();
-  await saveAll([log, ...all]);
+  const all = await cachedLogs();
+  if (SUPABASE_CONFIGURED) await cacheConfirmed([log,...all.filter(item=>item.id!==log.id)]);
+  else await saveAll([log,...all.filter(item=>item.id!==log.id)]);
 
-  // Aracın km/sigorta/muayene alanlarını otomatik güncelle
+  // The log is already durable. A separate derived vehicle update must not
+  // make its caller retry this primary insert and create a duplicate log.
+  if (typeof input.km !== 'number' && !((input.kind==='inspection'||input.kind==='insurance')&&input.dueAt)) return log;
+  try {
   const v = await getVehicle(input.vehicleId);
-  if (v) {
+  if (!v) throw new Error('Araç bulunamadı.');
+  {
     let updated = false;
     const next = { ...v };
     if (typeof input.km === 'number' && (!v.kmTotal || input.km > v.kmTotal)) {
@@ -133,28 +144,34 @@ export async function addLog(input: Omit<VehicleLog, 'id' | 'createdAt'>): Promi
     }
     if (updated) await upsertVehicle(next);
   }
+  } catch {
+    log={...log,vehicleSyncWarning:'Kayıt kaydedildi ancak araç kilometre/vade bilgileri güncellenemedi. Araç bilgilerini ayrıca kontrol edin; bu kaydı yeniden eklemeyin.'};
+  }
 
   return log;
 }
 
-export async function updateLog(log: VehicleLog) {
-  if (SUPABASE_CONFIGURED && UUID_RE.test(log.id)) {
-    try { await supabase.from('vehicle_logs').update(toRow(log)).eq('id', log.id); } catch { /* ignore */ }
+export async function updateLog(log: VehicleLog): Promise<VehicleLog> {
+  let saved=log;
+  if (SUPABASE_CONFIGURED) {
+    const {data,error,versions}=await supabase.from('vehicle_logs').update(toRow(log)).eq('id',log.id).expectVersions(expectedVersion(log.id,log.serverRevision)).select().single();
+    if(error)throw error;
+    if(data?.id!==log.id)throw new Error('Araç kaydı güncellemesi doğrulanamadı. Listeyi kontrol edin.');
+    saved=fromRow(data,versions?.[data.id]);
   }
-  const all = await listLogs();
-  const idx = all.findIndex(l => l.id === log.id);
-  if (idx >= 0) {
-    all[idx] = log;
-    await saveAll(all);
-  }
+  const all = await cachedLogs(),next=[saved,...all.filter(item=>item.id!==saved.id)];
+  if(SUPABASE_CONFIGURED)await cacheConfirmed(next);else await saveAll(next);
+  return saved;
 }
 
-export async function deleteLog(id: string) {
-  if (SUPABASE_CONFIGURED && UUID_RE.test(id)) {
-    try { await supabase.from('vehicle_logs').delete().eq('id', id); } catch { /* ignore */ }
+export async function deleteLog(id: string, serverRevision?: number) {
+  if (SUPABASE_CONFIGURED) {
+    const {data,error}=await supabase.from('vehicle_logs').delete().eq('id',id).expectVersions(expectedVersion(id,serverRevision)).select('id');
+    if(error)throw error;
+    if(!Array.isArray(data)||!data.some((row: any)=>row.id===id))throw new Error('Araç kaydı silme işlemi doğrulanamadı. Listeyi yenileyin.');
   }
-  const all = await listLogs();
-  await saveAll(all.filter(l => l.id !== id));
+  const all = await cachedLogs();
+  if(SUPABASE_CONFIGURED)await cacheConfirmed(all.filter(l=>l.id!==id));else await saveAll(all.filter(l=>l.id!==id));
 }
 
 // Yakıt verimliliği özeti (vehicleId için)

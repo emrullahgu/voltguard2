@@ -6,7 +6,7 @@ const root=path.resolve(__dirname,'../..');
 function load(file,stubs={},globals={}){
  const module={exports:{}};
  const code=ts.transpileModule(fs.readFileSync(path.join(root,file),'utf8'),{fileName:file,compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,esModuleInterop:true}}).outputText;
- vm.runInNewContext(code,{module,exports:module.exports,require:name=>{if(!(name in stubs))throw new Error('Unexpected dependency '+name);return stubs[name];},console,Promise,Map,Set,Array,Object,String,Error,AbortController,setTimeout,clearTimeout,...globals},{filename:file});
+ vm.runInNewContext(code,{module,exports:module.exports,require:name=>{if(!(name in stubs))throw new Error('Unexpected dependency '+name);return stubs[name];},console,Promise,Map,Set,Array,Object,String,Error,AbortController,URLSearchParams,setTimeout,clearTimeout,...globals},{filename:file});
  return module.exports;
 }
 const policy=load('tools/staff-app/src/sourceConnection.js');

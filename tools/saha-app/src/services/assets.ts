@@ -10,9 +10,10 @@ const KEY = '@SahaTakip:assets';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function uuidOrNull(v?: string | null): string | null { return v && UUID_RE.test(v) ? v : null; }
 
-function fromRow(r: any, prev?: Asset): Asset {
+function fromRow(r: any, prev?: Partial<Asset>, serverRevision?: number): Asset {
   return {
     id: r.id,
+    serverRevision,
     code: r.code ?? undefined,
     name: r.name ?? '',
     type: r.type,
@@ -56,18 +57,32 @@ function rid(): string {
 }
 
 async function cachedAssets(): Promise<Asset[]> {
-  const raw = await AsyncStorage.getItem(KEY);
-  const list = raw ? JSON.parse(raw) : [];
-  if (!Array.isArray(list)) throw new Error('Kayıt önbelleği doğrulanamadı. Listeyi yenileyin.');
-  return list;
+  try {
+    const raw = await AsyncStorage.getItem(KEY);
+    const list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list.filter(item => item && typeof item.id === 'string') : [];
+  } catch { return []; }
+}
+async function cacheConfirmed(list: Asset[]) {
+  // Cache refresh cannot turn an acknowledged server save into a failed save.
+  await AsyncStorage.setItem(KEY, JSON.stringify(list)).catch(() => {});
+}
+function expectedVersion(id: string, revision?: number) {
+  if (!Number.isSafeInteger(revision) || revision! < 1) throw new Error('Cihaz kaydının sürümü eksik. Kaydı yeniden açın.');
+  return { [id]: revision! };
+}
+function patchRow(id: string, patch: Partial<Asset>) {
+  const fields: Record<string,string> = { code:'code',name:'name',type:'type',customerId:'customer_id',siteId:'site_id',serialNo:'serial_no',manufacturer:'manufacturer',model:'model',power:'power',installDate:'install_date',warrantyEnd:'warranty_end',location:'location',notes:'notes' };
+  const mapped = toRow({ ...patch, id } as Asset);
+  return Object.fromEntries(Object.entries(fields).filter(([field]) => Object.prototype.hasOwnProperty.call(patch, field)).map(([,column]) => [column, mapped[column]]));
 }
 export async function listAssets(): Promise<Asset[]> {
-  const {data,error} = await supabase.from('assets').select('*').order('created_at',{ascending:false});
+  const {data,error,versions} = await supabase.from('assets').select('*').order('created_at',{ascending:false});
   if (error) throw error;
   if (!Array.isArray(data)) throw new Error('Sunucu kayıt listesi doğrulanamadı.');
   const previous=new Map((await cachedAssets()).map(item=>[item.id,item]));
-  const list=data.map((row:any)=>fromRow(row,previous.get(row.id)));
-  await AsyncStorage.setItem(KEY,JSON.stringify(list));
+  const list=data.map((row:any)=>fromRow(row,previous.get(row.id),versions?.[row.id]));
+  await cacheConfirmed(list);
   return list;
 }
 
@@ -78,34 +93,32 @@ export async function getAsset(id: string): Promise<Asset | undefined> {
 
 export async function createAsset(input:Omit<Asset,'id'|'createdAt'>):Promise<Asset> {
   const draft:Asset={...input,id:rid(),createdAt:new Date().toISOString()};
-  const {data,error}=await supabase.from('assets').insert(toRow(draft)).select().single();
+  const {data,error,versions}=await supabase.from('assets').insert(toRow(draft)).expectVersions({}).select().single();
   if(error)throw error;
   if(!data?.id)throw new Error('Kayıt sonucu doğrulanamadı. Yeniden göndermeden önce listeyi kontrol edin.');
-  const saved=fromRow(data,draft),all=await cachedAssets();
-  await AsyncStorage.setItem(KEY,JSON.stringify([saved,...all.filter(item=>item.id!==saved.id)]));
+  const saved=fromRow(data,draft,versions?.[data.id]),all=await cachedAssets();
+  await cacheConfirmed([saved,...all.filter(item=>item.id!==saved.id)]);
   void auditRepo.logCurrent({action:'asset.create',tableName:'assets',refId:saved.id,meta:{type:saved.type,name:saved.name}});
   return saved;
 }
 export async function updateAsset(id:string,patch:Partial<Asset>):Promise<Asset|undefined> {
-  // Use the previously loaded DTO; a fresh server read would silently advance
-  // the native CAS revision and overwrite a concurrent employee edit.
-  const all=await cachedAssets(),previous=all.find(item=>item.id===id);
-  if(!previous)throw new Error('Güncel kayıt yüklenmeli. Listeyi yenileyin.');
-  const draft={...previous,...patch,id};
-  const {data,error}=await supabase.from('assets').update(toRow(draft)).eq('id',id).select().single();
+  // The editor's version belongs to its visible DTO, never a later global read.
+  const versionsExpected=expectedVersion(id,patch.serverRevision);
+  const {data,error,versions}=await supabase.from('assets').update(patchRow(id,patch)).eq('id',id).expectVersions(versionsExpected).select().single();
   if(error)throw error;
-  if(!data?.id)throw new Error('Güncelleme sonucu doğrulanamadı. Listeyi kontrol edin.');
-  const saved=fromRow(data,draft);
-  await AsyncStorage.setItem(KEY,JSON.stringify(all.map(item=>item.id===id?saved:item)));
+  if(data?.id!==id)throw new Error('Güncelleme sonucu doğrulanamadı. Listeyi kontrol edin.');
+  const all=await cachedAssets(),previous=all.find(item=>item.id===id);
+  const saved=fromRow(data,{...previous,...patch},versions?.[data.id]);
+  await cacheConfirmed([saved,...all.filter(item=>item.id!==id)]);
   void auditRepo.logCurrent({action:'asset.update',tableName:'assets',refId:id});
   return saved;
 }
-export async function deleteAsset(id:string):Promise<void> {
-  const {data,error}=await supabase.from('assets').delete().eq('id',id).select('id');
+export async function deleteAsset(id:string,serverRevision?:number):Promise<void> {
+  const {data,error}=await supabase.from('assets').delete().eq('id',id).expectVersions(expectedVersion(id,serverRevision)).select('id');
   if(error)throw error;
   if(!Array.isArray(data)||!data.some(row=>row.id===id))throw new Error('Silme işlemi doğrulanamadı. Listeyi kontrol edin.');
   const all=await cachedAssets();
-  await AsyncStorage.setItem(KEY,JSON.stringify(all.filter(item=>item.id!==id)));
+  await cacheConfirmed(all.filter(item=>item.id!==id));
   void auditRepo.logCurrent({action:'asset.delete',tableName:'assets',refId:id});
 }
 

@@ -1,6 +1,6 @@
 # VoltGuard web sitesi
 
-VoltGuard kurumsal sitesi; hizmet sayfaları, bilgi bankası, akademi, 17 mevcut hesaplayıcı, mühendislik form kütüphanesi ve PHP üyelik sistemi içerir. `voltguardekleyelim` içindeki 51 açık erişimli mühendislik uygulaması aynı siteye `/araclar/` altında eklenmiştir.
+VoltGuard kurumsal sitesi; hizmet sayfaları, bilgi bankası, akademi, 17 mevcut hesaplayıcı, mühendislik form kütüphanesi ve PHP üyelik sistemi içerir. İlk aktarımdan genişletilen 55 açık erişimli mühendislik uygulaması aynı siteye `/araclar/` altında sunulur.
 
 ## Çalıştırma ve kontrol
 
@@ -31,7 +31,7 @@ Windows önizlemesinin üyelik, topluluk, çalışan hesabı ve özel PDF kayıt
 - `api/`: PHP üyelik ve hesap verisi API'si; kurulum ve depolama ayrıntıları `api/README.md` içindedir.
 - `topluluk.html`, `api/community.php`: herkesin okuyup üyelik olmadan yorum ve yanıt yazabildiği bölüm. Moderatör kurulumu `api/COMMUNITY.md` içinde.
 - `calisan/`, `api/staff.php`: davetli çalışan sistemi, zorunlu doğrulayıcı uygulama, kişiye özel bordro ve PDF erişimi. `api/STAFF.md` kurulum ve yetkileri açıklar.
-- `tools/staff-app/`, `tools/saha-app/`, `tools/employee-modules.json`, `calisan/uygulama/`, `api/company.php`: tek çalışan portalının kaynakları, ortak modül/rol kataloğu ve korumalı yayını. Kaynak modüller 37 iş alanında birleştirilir; eski projenin ayrı uygulaması, menüsü veya iframe'i açılmaz. `api/lib/company-ubuntu.php` özel SSH bağlantısını, `tools/ubuntu-company-bridge.py` mevcut şirket verilerini, `tools/ubuntu-saha-source.py` ise mevcut saha iş tablolarına canlı erişimi sağlar. `tools/saha-source-schema.json`, PHP alan izinlerinden üretilen şema bildirimidir; iş verisi içermez. `api/COMPANY.md` kurulum ve yetkileri, `tools/staff-app/FEATURES.md` kaynak özelliklerinin envanterini açıklar.
+- `tools/staff-app/`, `tools/saha-app/`, `tools/employee-modules.json`, `calisan/uygulama/`, `api/company.php`: tek çalışan portalının kaynakları, ortak modül/rol kataloğu ve korumalı yayını. Kaynak modüller 38 iş alanında birleştirilir; eski projenin ayrı uygulaması, menüsü veya iframe'i açılmaz. `api/lib/company-ubuntu.php` özel SSH bağlantısını, `tools/ubuntu-company-bridge.py` mevcut şirket verilerini, `tools/ubuntu-saha-source.py` ise mevcut saha iş tablolarına canlı erişimi sağlar. `tools/saha-source-schema.json`, PHP alan izinlerinden üretilen şema bildirimidir; iş verisi içermez. `api/COMPANY.md` kurulum ve yetkileri, `tools/staff-app/FEATURES.md` kaynak özelliklerinin envanterini açıklar.
 - `tools/engineering/`: yeni araçların düzenlenebilir, seçilmiş kaynakları, kaynak/lisans kayıtları ve regresyon kontrolleri.
 - `tools/build-engineering.cjs`: kaynakları derler, ana alan adına ve düz araç yollarına uyarlar; yayın dosyalarını ve çevrimdışı ZIP paketini üretir.
 - `araclar/`: doğrudan yayınlanabilir çıktı. Bu klasördeki değişiklikleri kaynak tarafında yapıp yeniden derleyin.
@@ -57,7 +57,9 @@ Oyun site menüsünün altında kendi alanında çalışır; tam ekran düğmesi
 
 ## Entegrasyonda alınan kararlar
 
-51 araç `/araclar/<arac-adi>/` adreslerinden açılır. Kategori ve metin araması, yerel favoriler, PDF rapor, JSON proje yedeği ve çevrimdışı HTML/ZIP indirme özellikleri korunur. ENH, AG/OG dağıtım, GES, motor, devre, sinyal/RF, PCB ve sembol/şema araçları aynı katalogda bulunur. Kaynak ve yöntem açıklamaları ile lisans bildirimleri araçlarla birlikte yayınlanır.
+54 araç `/araclar/<arac-adi>/` adreslerinden açılır. Kategori ve metin araması, yerel favoriler, PDF rapor, JSON proje yedeği ve çevrimdışı HTML/ZIP indirme özellikleri korunur. ENH, AG/OG dağıtım, GES, motor, devre, sinyal/RF, PCB ve sembol/şema araçları aynı katalogda bulunur. Kaynak ve yöntem açıklamaları ile lisans bildirimleri araçlarla birlikte yayınlanır.
+
+Eğitim atölyeleri kategorisinde Fotondan Panele, Kaçak Akım ve İletken ve Boru araçları bulunur. Bu bağımsız görsel deneyler sırasıyla ideal hücre modelini, RCD akım dengesini ve faz/nötr iletkenlerinin manyetik çevrimini açık varsayımlarla anlatır; gerçek panel tasarımı, cihaz açma süresi veya boru sıcaklığı hesabı üretmez.
 
 Mevcut `/hesaplama/` ve `/hesaplama-araclari/` adresleri korunur. Ana menü, Mühendis Merkezi ve Hesap Araçları sayfasından yeni kataloğa ulaşılır. Canonical ve sosyal paylaşım adresleri `https://voltguard.com.tr/araclar/` temelini kullanır; araç sayfaları kök site haritasına eklenir.
 
@@ -91,6 +93,14 @@ Dosya içe aktarma çalışır. Canlı OSOS/KOSBİ collector ve WorkTracker bağ
 
 `npm run test:employee-layout`, katalogdaki bütün çalışan bölümlerini ve bölüm sekmelerini 320, 390, 768, 1024 ve 1440 piksel genişlikte gerçek PHP ve ayrı sentetik kayıtlarla açar. Sayfa taşmasını, modül sınırını aşan kontrolleri, kesilen düğme yazılarını ve daralıp kullanılamaz hale gelen form alanlarını denetler. Başarısız ekranların görüntüleri ve raporlar `.qa/employee-layout/` altında tutulur. `npm test`, ortak kart yerleşiminin ekran ve kaydırma çubuğu genişliklerine ilişkin sınır kontrollerini de içerir.
 
+`npm run test:employee-consistency`, derlenmiş portal ve gerçek PHP üzerinde eşzamanlı ofis düzenleme çakışmasını ve reddedilen bakım planı kaydını geçici sentetik verilerle denetler. Sunucu reddinde taslağın korunmasını, kaydın önbellekte başarılı sayılmamasını ve açık yeniden deneme sonrası kalıcılığı doğrular.
+
+`npm run test:employee-nested`, katalog girişlerinden görünür gezinme kartlarına tıklayarak alt ekranları ayrı sentetik çalışan depolarında açar; rota, içerik, taşma ve JavaScript/API hatalarını raporlar. `.qa/employee-nested/coverage-report.json`, gerçekten ziyaret edilen ekranları, zorunlu kayıt parametresi isteyen veya görünür gezinme yolu bulunamayan ekranlardan ayrı tutar. Katalog yerleşim testi bütün alt ekranların iş akışlarının test edildiği anlamına gelmez. Derleme ve tarayıcı testleri aynı anda çalıştırılmamalıdır; testler tamamlanmış tek bir yayın paketini okumalıdır.
+
+`npm run test:employee-records`, gerçek PHP API'siyle geçici kayıtlar oluşturup görünür kontrol ve liste satırlarından detay/form ekranlarına gider. Cihaz, malzeme ve depo kaydı reddedildiğinde taslağı ve sunucu/önbellek tutarlılığını; açık yeniden denemede kalıcılığı denetler. Dört senaryo grubu aynı derlenmiş paket üzerinde ayrı sentetik verilerle çalışır. `.qa/employee-records/coverage-report.json`, yalnız aynı pakette başarıyla biten turları birleştirir; kapalı AI/entegrasyon servislerini, çözülemeyen gezinme yollarını ve gerçek donanım gerektiren kontrolleri ayrıca belirtir. Kamera/NFC izin ve eksik modül durumlarının açılması fiziksel tarama doğrulaması değildir.
+
+`npm run test:employee-deep`, form, araç/tahsilat ve oturum sınırlarını üç ayrı geçici veri kümesinde test eder. Gerçek sunucu sürümü değiştirildikten sonra eski formun reddini, taslağın korunmasını ve açık yeniden yükleme sonrası kalıcılığı doğrular. Oturum testi, iki sentetik MFA hesabı arasında gerçek çalışan çerezini değiştirip önceki hesaba ait başarılı yanıtı geciktirir; yeni hesabın ekranı ve özel önbelleği denetlenir. Bu testte yalnız izinli katalog girişleriyle açık runtime mount/unmount arayüzü kullanılır. `.qa/employee-deep/report.json`, aynı yayın paketinde tamamlanan tüm grupları ve özellikle beklenen reddetmeleri ayrı gösterir.
+
 ## Yayın
 
 `npm run build` çıktısı `araclar/` ve korumalı `calisan/uygulama/` altında tutulur ve cPanel yayın listesine eklenmiştir. cPanel'deki yayın işlemi hazır statik çıktıyı kopyalar; sunucuda Node kurulumu gerektirmez. Araç kaynakları değiştiğinde çıktıyı yeniden üretip kaynak ve yayın dosyalarını birlikte sürümleyin.
@@ -103,7 +113,7 @@ Operasyon modüllerinin PHP API, Ubuntu yardımcıları ve alan şeması uyumlu 
 
 Yeni araçlar mevcut kök `sw.js` önbelleğini kullanır; ikinci bir service worker kurulmaz. PDF ve Excel bağımlılıkları yereldir, uzak Google Fonts çağrıları kaldırılmıştır. Araçların mühendislik yöntemleri ve geçerlilik sınırları `/araclar/yontem/` sayfasında açıklanır.
 
-Yeni bölümün tüm 55 sayfası sitenin gerçek ortak menüsünü, özgün VoltGuard amblemini (`public/voltguard-logo.webp`) ve altbilgisini kullanır. Lacivert/kehribar renkleri, Outfit başlık ve Inter metin yazı tipleri, kartlar, düğmeler ve form alanları mevcut siteyle eşleştirilmiştir. Araçların özgün stilleri `#vg-tool-workspace` içinde sınırlandırılır; ortak menüye sızmaz. `assets/host-theme.css` ortak görsel düzeni uygular. Çevrimdışı ZIP aynı yerel yazı tiplerini ve menü varlıklarını içerir; PDF raporlarına site menüsü eklenmez.
+Yeni bölümün tüm 59 sayfası sitenin gerçek ortak menüsünü, özgün VoltGuard amblemini (`public/voltguard-logo.webp`) ve altbilgisini kullanır. Lacivert/kehribar renkleri, Outfit başlık ve Inter metin yazı tipleri, kartlar, düğmeler ve form alanları mevcut siteyle eşleştirilmiştir. Araçların özgün stilleri `#vg-tool-workspace` içinde sınırlandırılır; ortak menüye sızmaz. `assets/host-theme.css` ortak görsel düzeni uygular. Çevrimdışı ZIP aynı yerel yazı tiplerini ve menü varlıklarını içerir; PDF raporlarına site menüsü eklenmez.
 
 ## Entegrasyon doğrulaması
 

@@ -1,6 +1,8 @@
 // Faz 57 — ExtConfigScreen (POZ-DEV-274)
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Switch, Alert } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, TextInput, Switch, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
@@ -13,24 +15,28 @@ type R = RouteProp<RootStackParamList, 'ExtConfig'>;
 type Nav = NativeStackNavigationProp<RootStackParamList, 'ExtConfig'>;
 
 export default function ExtConfigScreen() {
+  const serviceState = useServiceLoad();
   const { params } = useRoute<R>();
   const nav = useNavigation<Nav>();
   const [it, setIt] = useState<ExtIntegration | null>(null);
   const [values, setValues] = useState<Record<string, string | boolean>>({});
 
   useFocusEffect(useCallback(() => {
-    (async () => {
-      const i = await getExtIntegration(params.id);
+    void serviceState.read(async () => {
+      const i = await getExtIntegration(params?.id);
       setIt(i ?? null);
       if (i) {
         const initial: Record<string, string | boolean> = {};
         i.fields.forEach(f => { initial[f.key] = f.kind === 'toggle' ? false : ''; });
         setValues(initial);
       }
-    })();
-  }, [params.id]));
+    });
+  }, [params?.id]));
 
   const set = (k: string, v: string | boolean) => setValues(prev => ({ ...prev, [k]: v }));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   if (!it) return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -71,14 +77,7 @@ export default function ExtConfigScreen() {
         </View>
 
         <View style={s.actions}>
-          <TouchableOpacity style={[s.btn, { backgroundColor: it.color }]} activeOpacity={0.85} onPress={() => Alert.alert('Test', `${it.name} bağlantı testi sahte ortamda başarılı.`)}>
-            <Ionicons name="flash" size={18} color="#fff" />
-            <Text style={s.btnT}>Bağlantıyı Test Et</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[s.btn, { backgroundColor: '#22c55e' }]} activeOpacity={0.85} onPress={() => Alert.alert('Kaydedildi', `${it.name} ayarları kaydedildi (demo).`)}>
-            <Ionicons name="save" size={18} color="#fff" />
-            <Text style={s.btnT}>Kaydet</Text>
-          </TouchableOpacity>
+          <Text style={s.heroD}>Yapılandırma ve bağlantı testi servisi henüz bağlı değil.</Text>
           <TouchableOpacity style={[s.btn, { backgroundColor: '#3b82f6' }]} activeOpacity={0.85} onPress={() => nav.navigate('ExtLogs', { id: it.id })}>
             <Ionicons name="list" size={18} color="#fff" />
             <Text style={s.btnT}>Logları Gör</Text>

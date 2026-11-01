@@ -1,6 +1,6 @@
 // Faz 50 — SaasBrandingScreen (POZ-DEV-207)
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -17,11 +17,6 @@ export default function SaasBrandingScreen() {
 
   const patch = async (p: Partial<SaasBrandingConfig>) => setB(await updateSaasBranding(p));
 
-  const verifyDomain = async () => {
-    await patch({ customDomainVerified: true });
-    Alert.alert('Doğrulandı', 'Alan adı DNS doğrulaması başarılı.');
-  };
-
   if (!b) return <SafeAreaView style={s.safe} />;
 
   return (
@@ -31,7 +26,7 @@ export default function SaasBrandingScreen() {
           <View style={[s.logoBox, { borderColor: b.accentColor }]}>
             <Ionicons name="business" size={28} color="#fff" />
           </View>
-          <Text style={s.previewT}>{b.tenantName}</Text>
+          <Text style={s.previewT}>{b.tenantName || 'Firma kimliği yapılandırılmadı'}</Text>
           <Text style={s.previewD}>Önizleme</Text>
         </View>
 
@@ -82,14 +77,11 @@ export default function SaasBrandingScreen() {
           />
           <View style={[s.verifyPill, { backgroundColor: (b.customDomainVerified ? '#22c55e' : '#f59e0b') + '33', borderColor: b.customDomainVerified ? '#22c55e' : '#f59e0b' }]}>
             <Ionicons name={b.customDomainVerified ? 'checkmark-circle' : 'time'} size={14} color={b.customDomainVerified ? '#22c55e' : '#f59e0b'} />
-            <Text style={[s.verifyT, { color: b.customDomainVerified ? '#22c55e' : '#f59e0b' }]}>{b.customDomainVerified ? 'Doğrulandı' : 'Bekliyor'}</Text>
+            <Text style={[s.verifyT, { color: b.customDomainVerified ? '#22c55e' : '#f59e0b' }]}>{b.customDomainVerified ? 'Doğrulandı' : b.customDomain ? 'Doğrulanmadı' : 'Alan adı tanımlanmadı'}</Text>
           </View>
         </View>
         {!b.customDomainVerified && b.customDomain && (
-          <TouchableOpacity style={s.verifyBtn} onPress={verifyDomain} activeOpacity={0.85}>
-            <Ionicons name="shield-checkmark" size={16} color="#fff" />
-            <Text style={s.verifyBtnT}>Alan Adını Doğrula</Text>
-          </TouchableOpacity>
+          <Text style={s.section}>DNS doğrulama servisi bağlı değil. Alan adı doğrulanmadı.</Text>
         )}
       </ScrollView>
     </SafeAreaView>

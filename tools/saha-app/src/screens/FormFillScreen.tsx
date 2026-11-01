@@ -1,7 +1,7 @@
 // FormFillScreen — POZ-DEV-052, 053
 // Dinamik form doldurma. Yeni cevap oluşturur veya mevcut cevabı revize eder.
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 
 import { colors, spacing, radius, typography, brand } from '../theme';
+import ErrorState from '../components/ErrorState';
 import { getTemplate } from '../services/formTemplates';
 import {
   getResponse,
@@ -29,6 +30,7 @@ import {
 } from '../services/formResponses';
 import {
   FormTemplate,
+  FormResponse,
   FormField,
   FormFieldValue,
   RootStackParamList,
@@ -47,18 +49,33 @@ export default function FormFillScreen() {
   const [values, setValues] = useState<Record<string, FormFieldValue>>({});
   const [reason, setReason] = useState('');
   const [loaded, setLoaded] = useState(false);
+  const [response, setResponse] = useState<FormResponse | null>(null);
+  const [loadError, setLoadError] = useState('');
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [completed, setCompleted] = useState(false);
+  const [savedResponse, setSavedResponse] = useState<FormResponse | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
+  const submitting = useRef(false);
+  const committed = useRef(false);
 
   useEffect(() => {
     (async () => {
+      setLoaded(false); setLoadError('');
+      try {
       const t = await getTemplate(templateId);
+      if (!t) throw new Error('Şablon bulunamadı. Listeyi yenileyin.');
       setTpl(t);
       if (isEdit && responseId) {
         const r = await getResponse(responseId);
-        if (r) setValues(r.values);
+        if (!r) throw new Error('Form yanıtı bulunamadı. Listeyi yenileyin.');
+        if (r.templateId !== templateId) throw new Error('Form yanıtının şablonu doğrulanamadı.');
+        setResponse(r); setValues(r.values);
       }
-      setLoaded(true);
+      } catch (e: any) { setLoadError(e?.message || 'Form yüklenemedi.'); }
+      finally { setLoaded(true); }
     })();
-  }, [templateId, responseId, isEdit]);
+  }, [templateId, responseId, isEdit, loadAttempt]);
 
   const setVal = (id: string, v: FormFieldValue) =>
     setValues(prev => ({ ...prev, [id]: v }));
@@ -66,8 +83,9 @@ export default function FormFillScreen() {
   const validate = (): string | null => {
     if (!tpl) return 'Şablon yok';
     for (const f of tpl.fields) {
-      if (!f.required) continue;
       const v = values[f.id];
+      if (f.type === 'number' && v !== undefined && v !== null && v !== '' && (typeof v !== 'number' || !Number.isFinite(v))) return `"${f.label}" geçerli bir sayı olmalı.`;
+      if (!f.required) continue;
       if (v === undefined || v === null || v === '' ||
         (Array.isArray(v) && v.length === 0)) {
         return `"${f.label}" zorunlu.`;
@@ -77,14 +95,21 @@ export default function FormFillScreen() {
   };
 
   const onSubmit = async () => {
+    if (submitting.current || committed.current || !loaded || loadError) return;
     const err = validate();
     if (err) {
       Alert.alert('Eksik', err);
       return;
     }
     if (!tpl) return;
+    submitting.current = true; setSaving(true); setError('');
+    try {
     if (isEdit && responseId) {
-      await updateResponse(responseId, values, undefined, reason || 'Düzenleme');
+      if (!response) throw new Error('Güncel form kaydı ve sürümü yüklenmeli.');
+      const saved = await updateResponse(responseId, values, undefined, reason || 'Düzenleme', response);
+      if (!saved) throw new Error('Form güncellemesinin sonucu doğrulanamadı.');
+      setSavedResponse(saved);
+      committed.current = true; setCompleted(true);
       Alert.alert('Güncellendi', 'Form güncellendi.', [
         { text: 'Tamam', onPress: () => navigation.goBack() },
       ]);
@@ -95,6 +120,8 @@ export default function FormFillScreen() {
         workOrderId,
         values,
       });
+      setSavedResponse(created);
+      committed.current = true; setCompleted(true);
       Alert.alert('Kaydedildi', 'Form kaydedildi.', [
         {
           text: 'Detay',
@@ -104,6 +131,8 @@ export default function FormFillScreen() {
         { text: 'Tamam', onPress: () => navigation.goBack() },
       ]);
     }
+    } catch (e: any) { setError(e?.message || 'Form kaydedilmedi. Taslak bu ekranda duruyor.'); }
+    finally { submitting.current = false; setSaving(false); }
   };
 
   const progress = useMemo(() => {
@@ -116,10 +145,16 @@ export default function FormFillScreen() {
     return Math.round((filled / tpl.fields.length) * 100);
   }, [tpl, values]);
 
+  if (loadError) return <SafeAreaView style={styles.safe}><ErrorState title="Form yüklenemedi" message={loadError} onRetry={() => setLoadAttempt(value => value + 1)} /></SafeAreaView>;
+  if (completed && savedResponse) return <SafeAreaView style={styles.safe}><View style={styles.content}>
+    <Text style={styles.title}>Form kaydedildi.</Text>
+    <TouchableOpacity style={styles.submitBtn} accessibilityRole="button" onPress={() => navigation.replace('FormResponseDetail', { responseId: savedResponse.id })}><Text style={styles.submitText}>Detayı Aç</Text></TouchableOpacity>
+    <TouchableOpacity style={styles.submitBtn} accessibilityRole="button" onPress={() => navigation.goBack()}><Text style={styles.submitText}>Geri Dön</Text></TouchableOpacity>
+  </View></SafeAreaView>;
   if (!loaded || !tpl) {
     return (
       <SafeAreaView style={styles.safe}>
-        <Text style={styles.loading}>{loaded ? 'Şablon bulunamadı.' : 'Yükleniyor…'}</Text>
+        <Text accessibilityRole={loadError ? 'alert' : undefined} style={styles.loading}>{loadError || (loaded ? 'Şablon bulunamadı.' : 'Yükleniyor…')}</Text>
       </SafeAreaView>
     );
   }
@@ -143,6 +178,7 @@ export default function FormFillScreen() {
         </View>
 
         <ScrollView contentContainerStyle={styles.content}>
+          {!!error && <Text accessibilityRole="alert" style={{ color: colors.rose.default }}>{error}</Text>}
           {tpl.fields.map(f => (
             <FieldRenderer
               key={f.id}
@@ -168,11 +204,12 @@ export default function FormFillScreen() {
           <TouchableOpacity
             style={styles.submitBtn}
             onPress={onSubmit}
+            disabled={saving || completed}
             activeOpacity={0.85}
           >
             <Ionicons name={isEdit ? 'save-outline' : 'checkmark-circle-outline'} size={18} color="#fff" />
             <Text style={styles.submitText}>
-              {isEdit ? 'Revizyonu Kaydet' : 'Formu Tamamla'}
+              {completed ? 'Kaydedildi' : saving ? 'Kaydediliyor…' : isEdit ? 'Revizyonu Kaydet' : 'Formu Tamamla'}
             </Text>
           </TouchableOpacity>
         </ScrollView>

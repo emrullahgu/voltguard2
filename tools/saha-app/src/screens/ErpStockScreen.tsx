@@ -1,6 +1,8 @@
 // ErpStockScreen — POZ-DEV-458
+import { useServiceLoad } from '../portal/useServiceLoad';
+import ErrorState from '../components/ErrorState';
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -9,15 +11,24 @@ import type { ErpStockMapping } from '../types';
 import { listErpStock, resetErpStock, ERP_VENDOR_LABEL, ERP_VENDOR_COLOR } from '../services/enterpriseIntegrations';
 
 export default function ErpStockScreen() {
+  const serviceState = useServiceLoad();
   const [items, setItems] = useState<ErpStockMapping[]>([]);
-  const load = useCallback(async () => { setItems(await listErpStock()); }, []);
+  const load = useCallback(() => serviceState.read(async () => {
+    setItems(await listErpStock());
+  }), []);
   useFocusEffect(useCallback(() => { load(); }, [load]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Servis kontrol ediliyor" /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Entegrasyon servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
       <View style={s.bar}>
         <Text style={s.title}>Stok Eşleme ({items.length})</Text>
-        <TouchableOpacity onPress={async () => { await resetErpStock(); load(); }} style={s.reset}>
+        <TouchableOpacity onPress={() => serviceState.action(async () => {
+          await resetErpStock();
+          load();
+        })} style={s.reset}>
           <Ionicons name="refresh-outline" size={14} color="#fff" />
         </TouchableOpacity>
       </View>

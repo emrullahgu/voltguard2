@@ -102,4 +102,5 @@ module.exports=async function employeeScenarios({page,admin,api,mount,workflow,c
   await host().getByRole('button',{name:'Yeni teklif oluştur',exact:true}).waitFor({state:'visible'});await reload('Quotes');await host().getByText(quote.title,{exact:true}).first().waitFor({state:'visible'});check(await host().getByText(quote.title,{exact:true}).first().isVisible(),true,'Saved quote returns automatically to the list and survives remount');
   report.employeeQuoteId=quote.id;await page.screenshot({path:path.join(output,'employee-quote-desktop.png'),fullPage:true});
  });
+ await require('./employee-consistency-scenarios.cjs')({page,admin,api,mount,workflow,check,report,output,ready,host,rows,saved});
 };

@@ -58,7 +58,7 @@ function hostedFile(url) {
   const file = path.resolve(project, '.' + decodeURIComponent(url.pathname));
   assert.ok(file === project || file.startsWith(project + path.sep), url.href);
   assert.ok(fs.existsSync(file), 'Missing local target ' + url.pathname);
-  return fs.statSync(file).isDirectory() ? path.join(file, 'index.html') : file;
+  return fs.statSync(file).isDirectory() ? path.join(file, fs.existsSync(path.join(file,'index.html'))?'index.html':'index.php') : file;
 }
 function zipEntries() {
   const zip = fs.readFileSync(path.join(library, 'downloads/voltguard-cevrimdisi.zip'));
@@ -80,9 +80,9 @@ function zipEntries() {
   return entries;
 }
 
-test('51 calculators publish once at flat routes with distinct canonical metadata', () => {
-  assert.equal(catalog.length, 51);
-  assert.equal(pages.length, 55);
+test('55 tools publish once at flat routes with distinct canonical metadata', () => {
+  assert.equal(catalog.length, 55);
+  assert.equal(pages.length, catalog.length + 4);
   assert.ok(!fs.existsSync(path.join(library, 'araclar')));
   const titles = new Set(), descriptions = new Set();
   for (const file of pages) {
@@ -209,7 +209,7 @@ test('Offline ZIP opens every local tool and information link as an explicit fil
   for (const notice of JSON.parse(read('shared/third-party-notices.json'))) assert.ok(entries.has('vendor/' + notice.file));
 });
 
-test('Root sitemap contains all 55 integrated URLs and preserves existing calculators', () => {
+test('Root sitemap contains all integrated URLs and preserves existing calculators', () => {
   const xml = fs.readFileSync(path.join(project, 'sitemap.xml'), 'utf8');
   const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
   const integrated = urls.filter(url => url.startsWith(origin + '/araclar/'));

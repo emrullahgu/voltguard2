@@ -8,14 +8,20 @@ import { colors, spacing, radius, typography } from '../theme';
 import { listRfmCustomers, RFM_SEGMENT_LABEL, RFM_SEGMENT_COLOR, RFM_SEGMENT_ICON } from '../services/advanced';
 import type { AdvRfmCustomer, AdvRfmSegment } from '../types';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
+import { useServiceLoad } from '../portal/useServiceLoad';
 import { FLATLIST_DEFAULTS } from '../utils/perf';
-import { FlatList } from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 
 const SEGMENTS: AdvRfmSegment[] = ['champions', 'loyal', 'potential', 'new', 'at_risk', 'hibernating', 'lost'];
 
 export default function AdvRfmScreen() {
+  const serviceState = useServiceLoad();
   const [items, setItems] = useState<AdvRfmCustomer[]>([]);
-  useFocusEffect(useCallback(() => { (async () => setItems(await listRfmCustomers()))(); }, []));
+  useFocusEffect(useCallback(() => { void serviceState.read(async () => { setItems(await listRfmCustomers()); }); }, [serviceState.read]));
+
+  if (serviceState.loading) return <SafeAreaView style={s.safe} edges={['bottom']}><ActivityIndicator accessibilityLabel="Hizmet bilgileri yükleniyor" color={colors.text.primary} /></SafeAreaView>;
+  if (serviceState.error) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="RFM servisi kullanılamıyor" message={serviceState.error} onRetry={serviceState.retry} retryLabel="Yeniden kontrol et" /></SafeAreaView>;
 
   const counts = SEGMENTS.reduce<Record<AdvRfmSegment, number>>((acc, seg) => {
     acc[seg] = items.filter(i => i.segment === seg).length; return acc;

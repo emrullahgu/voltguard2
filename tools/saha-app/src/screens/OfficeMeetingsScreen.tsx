@@ -1,5 +1,5 @@
 // OfficeMeetingsScreen — toplantı notları listesi (Ofis Takip).
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import { colors, spacing, radius, typography, brand } from '../theme';
 import { RootStackParamList, OfficeMeeting } from '../types';
 import { listMeetings, subscribeOffice } from '../services/officeWorkspace';
 import EmptyState from '../components/EmptyState';
+import ErrorState from '../components/ErrorState';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -16,23 +17,33 @@ export default function OfficeMeetingsScreen() {
   const nav = useNavigation<Nav>();
   const [meetings, setMeetings] = useState<OfficeMeeting[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState('');
+  const alive = useRef(true), readRequest = useRef(0);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; readRequest.current++; }; }, []);
 
   const refresh = useCallback(async () => {
-    try { setMeetings(await listMeetings()); }
-    finally { setLoading(false); }
+    if (!alive.current) return;
+    const request = ++readRequest.current, isCurrent = () => alive.current && readRequest.current === request;
+    setLoading(true); setLoadError('');
+    try { const rows = await listMeetings(); if (isCurrent()) { setMeetings(rows); setLoaded(true); } }
+    catch (error: any) { if (isCurrent()) setLoadError(error?.message || 'Toplantı listesi yüklenemedi.'); }
+    finally { if (isCurrent()) setLoading(false); }
   }, []);
   useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
   useEffect(() => subscribeOffice('office_meetings', refresh), [refresh]);
 
-  if (loading) {
+  if (loadError && !loaded) return <SafeAreaView style={s.safe} edges={['bottom']}><ErrorState title="Toplantılar yüklenemedi" message={loadError} onRetry={() => { void refresh(); }} /></SafeAreaView>;
+  if (loading && !loaded) {
     return <SafeAreaView style={s.safe} edges={['bottom']}><View style={s.center}><ActivityIndicator color={brand.green} /></View></SafeAreaView>;
   }
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
       <ScrollView contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
+        {!!loadError && <ErrorState title="Toplantılar yenilenemedi" message={loadError + ' Son doğrulanmış görünüm korunuyor.'} onRetry={() => { void refresh(); }} />}
         {meetings.length === 0 ? (
-          <EmptyState icon="people-outline" title="Toplantı notu yok" description="İlk toplantı notunuzu oluşturun — katılımcılar, gündem, aksiyon maddeleri." />
+          !loadError && <EmptyState icon="people-outline" title="Toplantı notu yok" description="İlk toplantı notunuzu oluşturun — katılımcılar, gündem, aksiyon maddeleri." />
         ) : meetings.map(m => {
           const open = m.actionItems.filter(a => !a.done).length;
           return (

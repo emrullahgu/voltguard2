@@ -3,12 +3,9 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, Platform} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { colors, spacing, radius, typography } from '../theme';
-import type { RootStackParamList } from '../types';
 
-type Nav = NativeStackNavigationProp<RootStackParamList>;
+const UNAVAILABLE_MESSAGE = 'Sipariş kayıt servisi henüz kullanılamıyor. Bilgileriniz bu ekranda duruyor; sunucuya kaydedilmedi ve gönderilmedi.';
 
 interface DraftItem {
   id: string;
@@ -18,7 +15,6 @@ interface DraftItem {
 }
 
 export default function OrdFormScreen() {
-  const nav = useNavigation<Nav>();
   const [customer, setCustomer] = useState('');
   const [paymentTerms, setPaymentTerms] = useState('30 gün vadeli');
   const [notes, setNotes] = useState('');
@@ -35,20 +31,17 @@ export default function OrdFormScreen() {
   const vat = subtotal * 0.20;
   const total = subtotal + vat;
 
-  const save = (asDraft: boolean) => {
+  const save = () => {
     if (!customer) { Alert.alert('Uyarı', 'Müşteri seçiniz'); return; }
     if (items.length === 0 || items.some(i => !i.productName)) { Alert.alert('Uyarı', 'En az bir ürün ekleyiniz'); return; }
-    Alert.alert(
-      asDraft ? 'Taslak Kaydedildi' : 'Sipariş Gönderildi',
-      `${items.length} kalem, toplam ₺${total.toLocaleString('tr-TR')} (demo).`,
-      [{ text: 'Tamam', onPress: () => nav.goBack() }]
-    );
+    Alert.alert('Sipariş kaydedilemedi', UNAVAILABLE_MESSAGE);
   };
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={s.scroll}>
+        <Text accessibilityRole="alert" style={s.serviceNotice}>{UNAVAILABLE_MESSAGE}</Text>
         <Text style={s.sectionT}>Müşteri Bilgileri</Text>
         <View style={s.field}>
           <Text style={s.lbl}>Müşteri *</Text>
@@ -132,11 +125,11 @@ export default function OrdFormScreen() {
         />
 
         <View style={s.actions}>
-          <TouchableOpacity style={[s.btn, { backgroundColor: colors.bg.secondary, borderWidth: 1, borderColor: colors.border.primary }]} onPress={() => save(true)} activeOpacity={0.85}>
+          <TouchableOpacity style={[s.btn, { backgroundColor: colors.bg.secondary, borderWidth: 1, borderColor: colors.border.primary }]} onPress={save} activeOpacity={0.85}>
             <Ionicons name="save" size={16} color={colors.text.primary} />
             <Text style={[s.btnT, { color: colors.text.primary }]}>Taslak Kaydet</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[s.btn, { backgroundColor: '#f97316' }]} onPress={() => save(false)} activeOpacity={0.85}>
+          <TouchableOpacity style={[s.btn, { backgroundColor: '#f97316' }]} onPress={save} activeOpacity={0.85}>
             <Ionicons name="send" size={16} color="#fff" />
             <Text style={s.btnT}>Gönder</Text>
           </TouchableOpacity>
@@ -159,6 +152,7 @@ function Row({ label, value, bold }: { label: string; value: string; bold?: bool
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg.primary },
   scroll: { padding: spacing.md, gap: spacing.sm },
+  serviceNotice: { color: colors.text.primary, backgroundColor: colors.bg.secondary, padding: spacing.md, borderWidth: 1, borderColor: colors.border.primary, borderRadius: radius.sm, fontSize: typography.sm },
   sectionT: { color: colors.text.primary, fontSize: typography.md, fontWeight: '800', marginTop: spacing.sm },
   sectionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.sm },
   addBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#22c55e', paddingHorizontal: 12, paddingVertical: 6, borderRadius: radius.sm },
