@@ -201,6 +201,23 @@ function vg_company_ubuntu_same_actor(array $before, int $expectedEpoch): array 
     if ($after['id'] !== $before['id'] || ($_SESSION['staff']['epoch'] ?? null) !== $expectedEpoch || $after['role'] !== $before['role']) vg_company_fail(401, 'staff_identity', 'Çalışan oturumu değişti. Yeniden giriş yapın.');
     return $after;
 }
+
+/** Resume the original authenticated request without issuing a replacement browser cookie. */
+function vg_company_ubuntu_resume_staff(string $sessionId, array $actor, int $epoch, $csrf): void {
+    if (session_status() === PHP_SESSION_ACTIVE || session_name() !== VG_STAFF_COOKIE) vg_company_fail(401, 'staff_identity', 'Çalışan oturumu değişti. Yeniden giriş yapın.');
+    // Cached pre-snapshot values are not evidence that this session still exists.
+    $_SESSION = [];
+    session_id($sessionId);
+    if (!@session_start(['use_cookies' => false, 'use_strict_mode' => true])) vg_company_fail(503, 'staff_unavailable', 'Çalışan oturumu doğrulanamadı.');
+    if (session_id() !== $sessionId) {
+        // Strict mode may replace an ID deleted by concurrent logout/login.
+        // Abort that empty replacement and never overwrite the newer login cookie.
+        session_abort(); $_SESSION = [];
+        vg_company_fail(401, 'staff_identity', 'Çalışan oturumu değişti. Yeniden giriş yapın.');
+    }
+    vg_company_ubuntu_same_actor($actor, $epoch);
+    if (($_SESSION['staff_csrf'] ?? null) !== $csrf) vg_company_fail(401, 'staff_identity', 'Çalışan oturumu değişti. Yeniden giriş yapın.');
+}
 function vg_company_ubuntu_result($result, array $canonical) {
     if (!is_array($result) || !array_key_exists('data', $result)) return $result;
     // Only refresh values the caller may already see: the response row was masked (hidden personal fields unset)
@@ -220,7 +237,14 @@ function vg_company_ubuntu_store(callable $fn, array $config, ?callable $transpo
     $actor = vg_staff_require_user();
     $epoch = $_SESSION['staff']['epoch'] ?? null;
     if (!is_int($epoch)) vg_company_fail(401, 'staff_identity');
+    $sessionId = session_id();
+    $sessionCsrf = $_SESSION['staff_csrf'] ?? null;
+    if ($sessionId === '' || session_status() !== PHP_SESSION_ACTIVE) vg_company_fail(401, 'staff_identity');
     $wireActor = ['id' => $actor['id'], 'role' => $actor['role']];
+    // Parallel reads must not queue behind a slow remote snapshot. Native
+    // password/admin operations bypass this adapter and keep normal rotation.
+    if (!session_write_close()) vg_company_fail(503, 'staff_unavailable', 'Çalışan oturumu doğrulanamadı.');
+    $_SESSION = [];
     $response = vg_company_ubuntu_call($config, ['op' => 'snapshot', 'actor' => $wireActor], $transport);
     $state = $response['state'] ?? null; $tokens = $response['snapshot'] ?? null;
     if (!is_array($state) || ($state['version'] ?? null) !== 1 || !is_array($state['tables'] ?? null) || !is_array($state['storage'] ?? null) || !is_array($state['audit'] ?? null) || !is_int($state['sequence'] ?? null) || !is_array($tokens['rows'] ?? null) || !is_array($tokens['prefs'] ?? null)) vg_company_fail(503, 'company_ubuntu_response');
@@ -238,7 +262,7 @@ function vg_company_ubuntu_store(callable $fn, array $config, ?callable $transpo
         $GLOBALS['vg_company_ubuntu_catalog'] = $catalog;
     }
     $GLOBALS['vg_company_data_source'] = 'ubuntu';
-    vg_company_ubuntu_same_actor($actor, $epoch); $before = $state;
+    vg_company_ubuntu_resume_staff($sessionId, $actor, $epoch, $sessionCsrf); $before = $state;
     $result = $fn($state, $actor);
     $changes = [];
     foreach ($state['tables'] as $table => $records) {
