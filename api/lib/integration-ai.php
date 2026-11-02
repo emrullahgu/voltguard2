@@ -11,7 +11,7 @@ function vg_int_ai_definitions(): array
 {
     return [
         'gemini' => ['label' => 'Google Gemini', 'key' => 'VG_GEMINI_API_KEY', 'modelKey' => 'VG_GEMINI_MODEL',
-            'defaultModel' => 'gemini-3.8-flash', 'privacyUrl' => 'https://ai.google.dev/gemini-api/docs/pricing',
+            'defaultModel' => 'gemini-3.5-flash-lite', 'privacyUrl' => 'https://ai.google.dev/gemini-api/docs/pricing',
             'notice' => 'İleti Google’a gönderilir. Ücretsiz katmanda içerik Google ürünlerini geliştirmek için kullanılabilir.'],
         'groq' => ['label' => 'Groq', 'key' => 'VG_GROQ_API_KEY', 'modelKey' => 'VG_GROQ_MODEL',
             'defaultModel' => 'openai/gpt-oss-20b', 'privacyUrl' => 'https://console.groq.com/docs/your-data',
@@ -126,7 +126,15 @@ function vg_int_ai(array $input, ?callable $fetch = null): array
         $url = 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($model) . ':generateContent';
         $headers['x-goog-api-key'] = $key;
         $contents = array_map(static function (array $message): array { return ['role' => $message['role'] === 'assistant' ? 'model' : 'user', 'parts' => [['text' => $message['content']]]]; }, $messages);
-        $body = ['systemInstruction' => ['parts' => [['text' => $system]]], 'contents' => $contents, 'generationConfig' => ['maxOutputTokens' => $tokens, 'temperature' => 0.2]];
+        $generation = ['maxOutputTokens' => $tokens];
+        // These supported text-model settings control reasoning latency without
+        // guessing capabilities for an administrator's image or future model.
+        if ($model === 'gemini-3.5-flash-lite') $generation['thinkingConfig'] = ['thinkingLevel' => 'minimal'];
+        elseif ($model === 'gemini-3.8-flash') $generation['thinkingConfig'] = ['thinkingLevel' => 'low'];
+        // Gemini 3+ deprecates sampling overrides. Keep the existing legacy
+        // behavior without adding unsupported thinking levels or Pro budgets.
+        if (preg_match('/^gemini-([0-9]+)(?:\.|-)/D', $model, $version) && (int)$version[1] < 3) $generation['temperature'] = 0.2;
+        $body = ['systemInstruction' => ['parts' => [['text' => $system]]], 'contents' => $contents, 'generationConfig' => $generation];
     } else {
         array_unshift($messages, ['role' => 'system', 'content' => $system]);
         $headers['Authorization'] = 'Bearer ' . $key;

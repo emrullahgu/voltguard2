@@ -16,6 +16,7 @@ function reject(input,code='invalid_ai_input') { const result=run({input});asser
 test('AI status describes configuration only and never returns credentials or account IDs',()=>{
   const configured=run({action:'status'});assert.equal(configured.requests.length,0);
   assert.deepEqual(Object.keys(configured.result),['gemini','groq','openrouter','cloudflare']);
+  assert.equal(configured.result.gemini.model,'gemini-3.5-flash-lite');
   for(const item of Object.values(configured.result)) {assert.equal(item.configured,true);assert.match(item.privacyUrl,/^https:\/\//);}
   for(const secret of Object.values(secrets))assert.equal(JSON.stringify(configured).includes(secret),false);
   const missing=run({action:'status',secrets:{}});for(const item of Object.values(missing.result))assert.equal(item.configured,false);
@@ -55,9 +56,32 @@ test('Groq sends fixed server instructions, text-only bounded history and a comp
 test('Gemini keeps API keys out of URL and omits hidden thought parts',()=>{
   const r=chat('gemini',{candidates:[{content:{parts:[{thought:true,text:'Gizli düşünce'},{text:'Açık yanıt'}]},finishReason:'MAX_TOKENS'}],usageMetadata:{promptTokenCount:10,candidatesTokenCount:5,totalTokenCount:15}});
   const request=r.requests[0],body=JSON.parse(request.options.body);
-  assert.match(request.url,/\/gemini-3\.8-flash:generateContent$/);assert.equal(request.url.includes('fixture-gemini'),false);assert.equal(request.options.headers['x-goog-api-key'],'fixture-gemini');
-  assert.equal(body.systemInstruction.parts.length,1);assert.deepEqual(body.contents.map(item=>item.role),['user','model','user']);assert.equal(body.generationConfig.maxOutputTokens,1024);
+  assert.match(request.url,/\/gemini-3\.5-flash-lite:generateContent$/);assert.equal(request.url.includes('fixture-gemini'),false);assert.equal(request.options.headers['x-goog-api-key'],'fixture-gemini');
+  assert.equal(body.systemInstruction.parts.length,1);assert.deepEqual(body.contents.map(item=>item.role),['user','model','user']);
+  assert.deepEqual(body.generationConfig,{maxOutputTokens:1024,thinkingConfig:{thinkingLevel:'minimal'}});
   assert.equal(r.result.text,'Açık yanıt');assert.equal(r.result.truncated,true);
+});
+test('An explicitly configured Gemini 3.8 uses supported low thinking without deprecated sampling parameters',()=>{
+  const r=run({secrets:{...secrets,VG_GEMINI_MODEL:'gemini-3.8-flash'},input:{provider:'gemini',prompt:'Sentetik kısa deneme',maxOutputTokens:256},response:{status:200,json:{candidates:[{content:{parts:[{text:'Kısa yanıt'}]},finishReason:'STOP'}]}}});
+  assert.equal(r.ok,true);assert.equal(r.requests.length,1);assert.equal(r.result.model,'gemini-3.8-flash');
+  const request=r.requests[0],body=JSON.parse(request.options.body);
+  assert.match(request.url,/\/gemini-3\.8-flash:generateContent$/);
+  assert.deepEqual(body.generationConfig,{maxOutputTokens:256,thinkingConfig:{thinkingLevel:'low'}});
+  assert.equal(request.options.timeout,25);
+});
+test('Legacy Gemini 2.5 keeps its request settings and receives no unsupported level or forced Pro budget',()=>{
+  for(const model of ['gemini-2.5-flash','gemini-2.5-pro']){
+    const r=run({secrets:{...secrets,VG_GEMINI_MODEL:model},input:{provider:'gemini',prompt:'Sentetik eski model denemesi'},response:{status:200,json:{candidates:[{content:{parts:[{text:'Eski model yanıtı'}]}}]}}});
+    assert.equal(r.ok,true);assert.equal(r.requests.length,1);assert.equal(r.result.model,model);
+    assert.deepEqual(JSON.parse(r.requests[0].options.body).generationConfig,{maxOutputTokens:1024,temperature:0.2});
+  }
+});
+test('Gemini image and unknown future models receive no invented thinking controls or deprecated sampling',()=>{
+  for(const model of ['gemini-3.1-flash-lite-image','gemini-9.0-flash']){
+    const r=run({secrets:{...secrets,VG_GEMINI_MODEL:model},input:{provider:'gemini',prompt:'Sentetik model yapılandırma denemesi'},response:{status:200,json:{candidates:[{content:{parts:[{text:'Sentetik yanıt'}]}}]}}});
+    assert.equal(r.ok,true);assert.equal(r.requests.length,1);assert.equal(r.result.model,model);
+    assert.deepEqual(JSON.parse(r.requests[0].options.body).generationConfig,{maxOutputTokens:1024});
+  }
 });
 test('Gemini blocked content is a clear failure and never an empty success',()=>{
   for(const json of [{promptFeedback:{blockReason:'SAFETY'}},{candidates:[{finishReason:'SAFETY',content:{parts:[{text:'not exposed'}]}}]}]){

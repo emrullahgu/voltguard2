@@ -257,6 +257,12 @@ Windows yerel önizleme için Windows PowerShell 5.1'de `powershell.exe -NoProfi
 | NewsAPI | `VG_NEWSAPI_KEY`; üretime uygun plan sağlandıktan sonra `VG_NEWSAPI_PRODUCTION_ALLOWED=1` |
 | CoinGecko / GitHub | İsteğe bağlı `VG_COINGECKO_DEMO_KEY` / `VG_GITHUB_TOKEN` |
 
+Gemini varsayılanı `gemini-3.5-flash-lite`, düşünme düzeyi `minimal`dir. Bu metin asistanında kısa yanıtın istek süresi
+sınırına sığması için seçilir; sağlayıcı gecikmesi veya kota garantisi vermez. `VG_GEMINI_MODEL=gemini-3.8-flash`
+açıkça ayarlanırsa desteklenen `low` düzeyi kullanılır. Gemini 3 ve sonraki sürümlere eski `temperature` ayarı gönderilmez;
+2.5 modellerinin mevcut istek ayarları korunur. Görsel veya bilinmeyen model adları için düşünme parametresi tahmin edilmez.
+Model değiştirme veya başka sağlayıcıya geçiş otomatik yapılmaz.
+
 PVGIS, NASA POWER, TCMB, Frankfurter, açık ExchangeRate-API, Nominatim, JSONPlaceholder ve DummyJSON için anahtar gerekmez. Nominatim yalnız kullanıcı düğmesiyle tesis adresi arar; otomatik tamamlama veya toplu sorgu yapılmaz. OpenWeather ücretsiz Current Weather uç noktasını kullanır. IPinfo Lite ülke/ASN sağlar; şehir koordinatı sunduğu varsayılmaz. Unsplash sonuçları kaynak ve fotoğrafçı bağlantılarıyla görüntülenir; kullanma/indirme işlemi sunulmaz. TMDB ticari lisansı ve NewsAPI üretim izni otomatik verilmez. Geliştirme istisnası hem `VG_INTEGRATIONS_LOCAL=1` hem gerçek loopback istemci ve yerel sunucu adı gerektirir; bu değişken üretimde etkinleştirilmemelidir.
 
 `GET action=status` yalnız durum ve uyarıları döndürür. Genel GET işlemleri: `pvgis`, `nasa_power`, `tcmb`, `frankfurter`, `exchange_rate`, `openweather`, `nominatim`, `coingecko`. EPİAŞ çalışan oturumu gerektirir; IPinfo, GitHub, Unsplash, TMDB, NewsAPI ve örnek veri alanı yönetici oturumuyla sınırlıdır. GitHub yalnız herkese açık depo alanlarını döndürür; örnek veriler şirket kayıtlarına yazılmaz.
