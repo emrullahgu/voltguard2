@@ -184,6 +184,7 @@ function vg_staff_session_start(): void {
     if (isset($_COOKIE[VG_STAFF_COOKIE]) && (!is_string($_COOKIE[VG_STAFF_COOKIE]) || preg_match('/^[A-Za-z0-9,-]{22,256}$/', $_COOKIE[VG_STAFF_COOKIE]) !== 1)) unset($_COOKIE[VG_STAFF_COOKIE]);
     ini_set('session.save_handler', 'files');
     session_save_path($dir);
+    ini_set('session.use_cookies', '1');
     ini_set('session.use_strict_mode', '1');
     ini_set('session.use_only_cookies', '1');
     ini_set('session.use_trans_sid', '0');
