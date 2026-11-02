@@ -17,7 +17,7 @@ async function freePort() {
   return port;
 }
 async function run() {
-let child;
+let child, productionChild;
 try {
   const result = spawnSync(php, ['-n', path.join(__dirname, 'company-ubuntu-fixture.php')], {
     env: { ...process.env, VG_DATA_DIR: temporary, VG_STORE: 'json', VG_STAFF_SITE_URL: 'http://127.0.0.1:4173' },
@@ -90,11 +90,52 @@ try {
   equal(response.data.error, 'company_unavailable', 'Nonregular configured source never activates local business state');
   fs.rmdirSync(configuration);
   assert.equal(fs.existsSync(path.join(temporary, 'company/state.json')), false, 'Remote adapter must never create a silent local company fallback.');
+  // A private Temp-only router models TLS termination and a production peer.
+  // It is never installed in the application or reachable outside loopback.
+  const router = path.join(temporary, 'production-router.php');
+  const phpLiteral = value => "'" + value.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
+  fs.writeFileSync(router, "<?php\n$_SERVER['HTTPS']='on';\n$_SERVER['HTTP_HOST']='production.example.test';\n$_SERVER['REMOTE_ADDR']='203.0.113.24';\nrequire " + phpLiteral(path.join(root, 'api/company.php')) + ";\n");
+  const productionBase = `http://127.0.0.1:${await freePort()}`;
+  productionChild = spawn(php, ['-n', '-S', productionBase.slice(7), '-t', root, router], {
+    env: { ...process.env, VG_DATA_DIR: temporary, VG_STORE: 'json', VG_STAFF_SITE_URL: 'https://production.example.test' },
+    stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true,
+  });
+  productionChild.stdout.resume(); productionChild.stderr.resume();
+  async function productionRequest(body, authenticated = true, csrf = true) {
+    const headers = authenticated ? { Cookie: `VGSTAFF=${report.sessionId}` } : {};
+    if (body !== undefined) Object.assign(headers, { Origin: 'https://production.example.test', 'Content-Type': 'application/json', ...(csrf ? { 'X-VG-STAFF-CSRF': report.csrf } : {}) });
+    const response = await fetch(`${productionBase}/api/company.php?action=${body === undefined ? 'saha_bootstrap' : 'rpc'}`, { method: body === undefined ? 'GET' : 'POST', headers, body: body === undefined ? undefined : JSON.stringify(body) });
+    return { status: response.status, headers: response.headers, data: await response.json() };
+  }
+  for (let attempt = 0; attempt < 100; attempt++) {
+    try { await productionRequest(undefined, false); break; }
+    catch { if (attempt === 99) throw new Error('Production-context PHP fixture could not start'); await new Promise(resolve => setTimeout(resolve, 30)); }
+  }
+  response = await productionRequest(undefined, false);
+  equal(response.status, 401, 'Production source readiness stays behind employee authentication');
+  equal(response.data.error, 'staff_unauthorized', 'Missing source is not a guest authorization shortcut');
+  response = await productionRequest({name:'app_saha_query',args:{table:'customers',operation:'select'}}, true, false);
+  equal(response.status, 403, 'Production native source gate retains write-endpoint CSRF checks');
+  equal(response.data.error, 'staff_csrf', 'CSRF is checked before source routing');
+  response = await productionRequest();
+  equal(response.status, 503, 'Real production GET cannot return a healthy empty native source');
+  equal(response.data.error, 'company_saha_source_required', 'Missing production source has a specific nonsecret configuration error');
+  equal(response.headers.get('cache-control').includes('no-store'), true, 'Source setup failures remain private and uncached');
+  response = await productionRequest({name:'app_saha_query',args:{table:'customers',operation:'insert',rows:[{short_name:'Must not be stored',title:'Synthetic source gate'}]}});
+  equal(response.status, 503, 'Missing production source rejects business inserts as well as bootstrap reads');
+  equal(response.data.error, 'company_saha_source_required', 'A write cannot create a second source of business truth');
+  equal(fs.existsSync(path.join(temporary,'company/state.json')), false, 'Rejected production insert leaves no local data file');
+  fs.writeFileSync(configuration, JSON.stringify({...report.config,sahaHelper:'/home/fixture/saha_store.py'}));
+  response = await productionRequest();
+  equal(response.status, 503, 'Configured unavailable source remains an explicit transport failure');
+  equal(response.data.error, 'company_ubuntu_unavailable', 'Configured native source retains its existing source-helper routing');
+  equal(fs.existsSync(path.join(temporary,'company/state.json')), false, 'A failing configured helper never falls back to local business data');
+  fs.unlinkSync(configuration);
   console.log(`Ubuntu company adapter: ${report.checks + httpChecks} checks passed; synthetic transport and private Temp staff data only.`);
 } finally {
-  if (child) {
-    child.kill();
-    await new Promise(resolve => { if (child.exitCode !== null) resolve(); else { child.once('exit', resolve); setTimeout(resolve, 3000); } });
+  for (const server of [child, productionChild]) if (server) {
+    server.kill();
+    await new Promise(resolve => { if (server.exitCode !== null) resolve(); else { server.once('exit', resolve); setTimeout(resolve, 3000); } });
   }
   const target = fs.realpathSync(temporary);
   const tempRoot = fs.realpathSync(os.tmpdir());

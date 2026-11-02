@@ -6,19 +6,24 @@
 /vesikalar/
 # Supplied game checkout stays local; maintained source is in tools/voltgame/.
 /VoltGame/
+/SahaTakip-main/
+/tools/saha-app/dist/
+/tools/saha-app/.expo/
 /tools/voltgame/.build/
 /tools/voltgame/tools/test/out/
 /tools/engineering/dist/
 /tools/engineering/storage-map.json
 /.qa/
-/output/pdf/
-/tmp/pdfs/
+/output/
+/tmp/
+/__MACOSX/
 # Local preview configuration and nested agent checkouts.
 /.claude/
 # User supplied footage and full quality local exports; curated web film is public/video.
 /Tanıtım Videosu/
 /VoltGuardKimdir.mp4
 /.netlify-publish/
+/.netlify/
 __pycache__/
 node_modules/
 /tools/staff-app/dist/

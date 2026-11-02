@@ -1,0 +1,537 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-01T14:49:51.550Z",
+  "baselineCommit": "d88f8c7bd3b91bdae54103faa466823c17df9020",
+  "scope": {
+    "projects": [
+      "tools/staff-app",
+      "tools/saha-app",
+      "tools/voltgame/tools",
+      "tools/ci/runtime"
+    ],
+    "excluded": [
+      "Ignored legacy/imported projects",
+      "Production-server dependencies and installed Ubuntu CI image"
+    ],
+    "commands": [
+      "npm audit --json",
+      "npm audit --json --omit=dev"
+    ],
+    "interpretation": "Counts are vulnerable package entries, including findings propagated to dependent packages. They are not distinct proven production exploits. npm --omit=dev is a dependency classification, not browser-bundle reachability analysis.",
+    "advisorySnapshotOnly": true,
+    "auditFixForceUsed": false,
+    "productionOrDatabaseWrites": false
+  },
+  "projects": [
+    {
+      "name": "staff",
+      "directory": "tools/staff-app",
+      "before": {
+        "full": {
+          "info": 0,
+          "low": 0,
+          "moderate": 2,
+          "high": 0,
+          "critical": 0,
+          "total": 2
+        },
+        "omitDev": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        }
+      },
+      "after": {
+        "full": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "omitDev": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        }
+      }
+    },
+    {
+      "name": "saha",
+      "directory": "tools/saha-app",
+      "before": {
+        "full": {
+          "info": 0,
+          "low": 6,
+          "moderate": 32,
+          "high": 9,
+          "critical": 0,
+          "total": 47
+        },
+        "omitDev": {
+          "info": 0,
+          "low": 2,
+          "moderate": 14,
+          "high": 9,
+          "critical": 0,
+          "total": 25
+        }
+      },
+      "after": {
+        "full": {
+          "info": 0,
+          "low": 5,
+          "moderate": 32,
+          "high": 9,
+          "critical": 0,
+          "total": 46
+        },
+        "omitDev": {
+          "info": 0,
+          "low": 1,
+          "moderate": 20,
+          "high": 9,
+          "critical": 0,
+          "total": 30
+        }
+      }
+    },
+    {
+      "name": "game",
+      "directory": "tools/voltgame/tools",
+      "before": {
+        "full": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "omitDev": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        }
+      },
+      "after": {
+        "full": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "omitDev": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        }
+      }
+    },
+    {
+      "name": "ci",
+      "directory": "tools/ci/runtime",
+      "before": {
+        "full": {
+          "info": 0,
+          "low": 1,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 1
+        },
+        "omitDev": {
+          "info": 0,
+          "low": 1,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 1
+        }
+      },
+      "after": {
+        "full": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "omitDev": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        }
+      }
+    }
+  ],
+  "appliedPatches": {
+    "packageVersionChanges": [
+      {
+        "directory": "tools/staff-app",
+        "packagePath": "node_modules/postcss-selector-parser",
+        "before": "6.1.4",
+        "after": "6.1.5"
+      },
+      {
+        "directory": "tools/staff-app",
+        "packagePath": "node_modules/vite",
+        "before": "6.4.4",
+        "after": "6.4.5"
+      },
+      {
+        "directory": "tools/saha-app",
+        "packagePath": "node_modules/@babel/core",
+        "before": "7.29.0",
+        "after": "7.29.7"
+      },
+      {
+        "directory": "tools/ci/runtime",
+        "packagePath": "node_modules/@babel/core",
+        "before": "7.29.0",
+        "after": "7.29.7"
+      }
+    ],
+    "additionalPackageVersionChanges": 0,
+    "actualLocalVersions": {
+      "staffVite": "6.4.5",
+      "staffSelectorParser": "6.1.5",
+      "sahaBabel": "7.29.7",
+      "sahaTypeScript": "6.0.3",
+      "ciManifestBabel": "7.29.7"
+    },
+    "commands": [
+      {
+        "directory": "tools/staff-app",
+        "command": "npm install --save-dev --save-exact vite@6.4.5 --ignore-scripts --no-fund --no-audit"
+      },
+      {
+        "directory": "tools/staff-app",
+        "command": "npm update postcss-selector-parser --ignore-scripts --no-fund --no-audit"
+      },
+      {
+        "directory": "tools/saha-app",
+        "command": "npm install --save-dev --save-exact @babel/core@7.29.7 --ignore-scripts --no-fund --no-audit"
+      },
+      {
+        "directory": "tools/ci/runtime",
+        "command": "npm install --package-lock-only --save-exact @babel/core@7.29.7 --ignore-scripts --no-fund --no-audit"
+      }
+    ],
+    "advisoryReferences": [
+      "https://github.com/advisories/GHSA-8g5g-mxqh-grgj",
+      "https://github.com/advisories/GHSA-rj75-hqrm-r3gf",
+      "https://github.com/advisories/GHSA-4x5r-pxfx-6jf8"
+    ],
+    "compatibility": "Vite and Babel remain on their current major versions. The selector parser remains in Tailwind existing ^6.1.2 range. No overrides, forced major upgrades, or Expo/React Navigation migrations were applied.",
+    "installationWarnings": "Saha installation still reported pre-existing Expo peer constraints, including expo-constants and expo-font. These packages were not changed by this patch."
+  },
+  "sahaLockfileClassification": {
+    "unchangedVersionRecordsWithNpmMetadataUpdates": 78,
+    "changedFields": [
+      "dev",
+      "devOptional"
+    ],
+    "dependencyVersionsAndIntegrityUnchangedForTheseRecords": true,
+    "addedToOmitDevAudit": [
+      "@jest/transform",
+      "@react-native/jest-preset",
+      "@react-native/virtualized-lists",
+      "babel-jest",
+      "babel-plugin-istanbul",
+      "react-native",
+      "test-exclude"
+    ],
+    "removedFromOmitDevAudit": [
+      "@babel/core",
+      "@react-native-community/datetimepicker"
+    ],
+    "explanation": "npm recalculated dev/devOptional reachability while updating Babel. Seven existing moderate entries entered the omit-dev view; Babel was patched and one existing moderate entry left that view. Thus omit-dev changed from 25 to 30 while the full audit improved from 47 to 46. No new package version or full-audit vulnerability was introduced. The npm-generated metadata was retained."
+  },
+  "remainingHighFindings": {
+    "count": 9,
+    "distinctHighSeverityLeafAdvisories": 2,
+    "entries": [
+      {
+        "name": "@expo/cli",
+        "severity": "high",
+        "packagePaths": [
+          "tools/saha-app/node_modules/@expo/cli"
+        ],
+        "installedVersions": [
+          "56.1.27"
+        ],
+        "via": [
+          "@expo/config",
+          "@expo/config-plugins",
+          "@expo/inline-modules",
+          "@expo/metro-config",
+          "@expo/prebuild-config",
+          "glob",
+          "zod"
+        ],
+        "rootAdvisory": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+        "alsoInOmitDev": true
+      },
+      {
+        "name": "@react-navigation/bottom-tabs",
+        "severity": "high",
+        "packagePaths": [
+          "tools/saha-app/node_modules/@react-navigation/bottom-tabs"
+        ],
+        "installedVersions": [
+          "6.6.1"
+        ],
+        "via": [
+          "@react-navigation/elements",
+          "@react-navigation/native"
+        ],
+        "rootAdvisory": "https://github.com/advisories/GHSA-qr28-fpjm-wq7f",
+        "alsoInOmitDev": true
+      },
+      {
+        "name": "@react-navigation/core",
+        "severity": "high",
+        "packagePaths": [
+          "tools/saha-app/node_modules/@react-navigation/core"
+        ],
+        "installedVersions": [
+          "6.4.17"
+        ],
+        "via": [
+          "query-string"
+        ],
+        "rootAdvisory": "https://github.com/advisories/GHSA-qr28-fpjm-wq7f",
+        "alsoInOmitDev": true
+      },
+      {
+        "name": "@react-navigation/elements",
+        "severity": "high",
+        "packagePaths": [
+          "tools/saha-app/node_modules/@react-navigation/elements"
+        ],
+        "installedVersions": [
+          "1.3.31"
+        ],
+        "via": [
+          "@react-navigation/native"
+        ],
+        "rootAdvisory": "https://github.com/advisories/GHSA-qr28-fpjm-wq7f",
+        "alsoInOmitDev": true
+      },
+      {
+        "name": "@react-navigation/native",
+        "severity": "high",
+        "packagePaths": [
+          "tools/saha-app/node_modules/@react-navigation/native"
+        ],
+        "installedVersions": [
+          "6.1.18"
+        ],
+        "via": [
+          "@react-navigation/core"
+        ],
+        "rootAdvisory": "https://github.com/advisories/GHSA-qr28-fpjm-wq7f",
+        "alsoInOmitDev": true
+      },
+      {
+        "name": "@react-navigation/native-stack",
+        "severity": "high",
+        "packagePaths": [
+          "tools/saha-app/node_modules/@react-navigation/native-stack"
+        ],
+        "installedVersions": [
+          "6.11.0"
+        ],
+        "via": [
+          "@react-navigation/elements",
+          "@react-navigation/native"
+        ],
+        "rootAdvisory": "https://github.com/advisories/GHSA-qr28-fpjm-wq7f",
+        "alsoInOmitDev": true
+      },
+      {
+        "name": "decode-uri-component",
+        "severity": "high",
+        "packagePaths": [
+          "tools/saha-app/node_modules/decode-uri-component"
+        ],
+        "installedVersions": [
+          "0.2.2"
+        ],
+        "via": [
+          {
+            "name": "decode-uri-component",
+            "severity": "moderate",
+            "advisory": "https://github.com/advisories/GHSA-vcc3-ghjq-m6fr"
+          },
+          {
+            "name": "decode-uri-component",
+            "severity": "high",
+            "advisory": "https://github.com/advisories/GHSA-qr28-fpjm-wq7f"
+          }
+        ],
+        "rootAdvisory": "https://github.com/advisories/GHSA-qr28-fpjm-wq7f",
+        "alsoInOmitDev": true
+      },
+      {
+        "name": "query-string",
+        "severity": "high",
+        "packagePaths": [
+          "tools/saha-app/node_modules/query-string"
+        ],
+        "installedVersions": [
+          "7.1.3"
+        ],
+        "via": [
+          "decode-uri-component"
+        ],
+        "rootAdvisory": "https://github.com/advisories/GHSA-qr28-fpjm-wq7f",
+        "alsoInOmitDev": true
+      },
+      {
+        "name": "zod",
+        "severity": "high",
+        "packagePaths": [
+          "tools/saha-app/node_modules/zod"
+        ],
+        "installedVersions": [
+          "3.25.76"
+        ],
+        "via": [
+          {
+            "name": "zod",
+            "severity": "high",
+            "advisory": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5"
+          }
+        ],
+        "rootAdvisory": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+        "alsoInOmitDev": true
+      }
+    ],
+    "decoder": {
+      "installedVersion": "0.2.2",
+      "fixedVersion": "0.5.1",
+      "dependencyPath": [
+        "@react-navigation/native@6.1.18",
+        "@react-navigation/core@6.4.17",
+        "query-string@7.1.3",
+        "decode-uri-component@0.2.2"
+      ],
+      "advisories": [
+        "https://github.com/advisories/GHSA-qr28-fpjm-wq7f",
+        "https://github.com/advisories/GHSA-vcc3-ghjq-m6fr"
+      ],
+      "inputRequirement": "Attacker-controlled malformed percent-encoded strings must reach the decoder; the high advisory concerns CPU exhaustion.",
+      "sourceEvidence": [
+        {
+          "file": "tools/saha-app/src/navigation/index.tsx",
+          "line": 559,
+          "observation": "NavigationContainer explicitly sets linking.enabled=false and prefixes=[]."
+        },
+        {
+          "file": "tools/saha-app/node_modules/@react-navigation/native/src/useLinking.tsx",
+          "line": 147,
+          "observation": "The standard incoming URL parsing path is guarded by the linking enabled flag."
+        },
+        {
+          "file": "tools/saha-app/node_modules/query-string/index.js",
+          "line": 3,
+          "observation": "Query-string 7 imports the decoder through CommonJS require and calls it as a function."
+        }
+      ],
+      "bundleStatus": "Decoder code is present in the shipped Saha JavaScript bundle. Disabled navigation linking reduces the standard URL input path; it does not prove the decoder unreachable through every dependency call.",
+      "exploitReproducedInApplication": false,
+      "upgradeConstraint": "The patched decoder is ESM-only and outside query-string 7 ^0.2.2 dependency range. A direct override can break module/API compatibility. npm proposes React Navigation major updates.",
+      "nextStep": "Review a compatible navigation migration or bounded upstream decoder mitigation with route/query regression coverage before changing this chain."
+    },
+    "zod": {
+      "installedVersion": "3.25.76",
+      "fixedVersion": "4.6.6",
+      "dependencyPath": [
+        "expo@56.0.8",
+        "@expo/cli@56.1.27",
+        "zod@3.25.76"
+      ],
+      "advisory": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+      "inputRequirement": "Oversized untrusted collections must reach affected constrained-collection validation; the advisory concerns memory exhaustion.",
+      "observedImports": [
+        {
+          "file": "tools/saha-app/node_modules/@expo/cli/build/src/start/server/createMCPDevToolsExtensionSchema.js",
+          "line": 12
+        },
+        {
+          "file": "tools/saha-app/node_modules/@expo/cli/build/src/start/server/DevToolsPlugin.schema.js",
+          "line": 20
+        }
+      ],
+      "sourceAndBundleAssessment": "No direct Saha application-source zod import was found. Observed imports are Expo development-server schema code. Zod/Expo schema markers were absent from the inspected release bundle. This finding is a build/development dependency surface, not evidence of an exposed browser validator.",
+      "exploitReproducedInApplication": false,
+      "upgradeConstraint": "The published patched Zod 4 release is outside Expo CLI ^3.25.76 range. No patched Zod 3 release was found in the reviewed registry version list. A blind major override is not compatible evidence.",
+      "nextStep": "Track an Expo-compatible upstream fix or separately review a narrow mitigation. Keep development servers isolated from untrusted input."
+    },
+    "policy": "Do not run npm audit fix --force or install suggested Expo downgrades/React Navigation major changes without a separate compatibility review. Remaining moderate/low entries are also unresolved; a zero-vulnerability claim is not warranted."
+  },
+  "bundleInspection": {
+    "url": "/calisan/uygulama/assets/saha/_expo/static/js/web/index-78a2a6bc335d15362bc4f0dfa4435e82.js",
+    "bytes": 5168413,
+    "zodErrorMarker": false,
+    "zodKindMarker": false,
+    "expoDevToolsSchemaMarker": false,
+    "decoderMarkerInSource": true,
+    "decoderMarkerInBundle": true,
+    "limitation": "String-marker inspection supports but does not replace a source-map/module reachability analysis."
+  },
+  "ciRuntimeSourceUpdate": {
+    "manifestAndLockPins": [
+      {
+        "file": "tools/ci/runtime/package.json",
+        "sha256": "6ab30d1352b8c8283860438847be6eb851d3f4f8521939629591b8ac46914656"
+      },
+      {
+        "file": "tools/ci/runtime/package-lock.json",
+        "sha256": "1d3bcf08195f23614f6775698806264f657d3b16091aa467b9d978e5160069c5"
+      }
+    ],
+    "dockerfile": "tools/ci/Dockerfile",
+    "dockerBabelAssertion": "7.29.7",
+    "typeScriptVersionUnchanged": "6.0.3",
+    "installedServerImageUpdated": false,
+    "requiredOperationalFollowUp": "The Ubuntu CI host uses its installed Dockerfile/runtime copy. Git source updates alone do not rebuild that image. Refresh the reviewed runtime files and rebuild/verify the image manually before claiming that host runs Babel 7.29.7.",
+    "githubActionsTriggerUnchanged": "workflow_dispatch only; intentional billing restriction and external Ubuntu CI remain in effect."
+  },
+  "validation": {
+    "affectedTestsWithUpdatedLocalCompilers": {
+      "passed": 152,
+      "failed": 0
+    },
+    "sourceOnlySandboxWithNodePathCompilers": {
+      "passed": 143,
+      "failed": 0,
+      "sourceLocalNodeModulesPresent": false
+    },
+    "versionChangesVerifiedAgainstBaselineLocks": true,
+    "ciDockerChecksumsVerifiedAgainstSourceBytes": true,
+    "liveServerOrInstalledCiImageVerificationPerformed": false,
+    "limitation": "Focused local checks and isolated CI-layout simulation do not replace production account workflows or verification of the installed remote CI image."
+  }
+}

@@ -546,12 +546,19 @@
       let self = 0;
       for (let m = 1; m <= 12; m++) {
         const day = pvgis ? null : dayProfile(m, (Tmin + Tmax) / 2);
+        // PVGIS supplies kWh/month. Scale the synthetic hourly shape to kWh/day before comparing it with load.
+        const solarWeights = pvgis ? Array.from({ length: 24 }, (_, h) => {
+          const sun = sunPosition(p.lat, p.lon, MONTH_MID[m - 1], h + 0.5, 3);
+          return Math.max(0, Math.sin(Math.max(sun.elevation, 0) * DEG));
+        }) : null;
+        const solarWeightSum = solarWeights ? solarWeights.reduce((sum, weight) => sum + weight, 0) : 0;
+        const solarScale = solarWeightSum > 0 ? monthly[m - 1] / MONTH_DAYS[m - 1] / solarWeightSum : 0;
         const loadDay = consumption / 365 / wSum; // kWh / ağırlık birimi
         let selfDay = 0, prodDay = 0;
         for (let h = 0; h < 24; h++) {
           let prodH;
           if (day) prodH = day.pts.filter(pt => pt.t >= h && pt.t < h + 1).reduce((a, pt) => a + pt.Pac / 6, 0);
-          else { const s = sunPosition(p.lat, p.lon, MONTH_MID[m - 1], h + 0.5, 3); prodH = Math.max(0, Math.sin(Math.max(s.elevation, 0) * DEG)); }
+          else prodH = solarWeights[h] * solarScale;
           prodDay += prodH;
           const loadH = loadDay * prof.w(h + 0.5);
           // hafta sonu tüketimi düşük profillerde yalnızca iş günü oranı kadar eşleşir
@@ -577,7 +584,7 @@
         checks.push(check('area', 'Çatı alanı yeterliliği', area <= p.roofArea * 0.85 ? 'ok' : 'warn', 'Gerekli ≈ ' + round(area, 0) + ' m² / kullanılabilir (%85) ' + round(p.roofArea * 0.85, 0) + ' m²'));
       }
       if (consumption > 0) checks.push(check('cap2', 'Yıllık üretim / tüketim', annual <= 2 * consumption ? 'ok' : 'warn', 'Üretim ' + round(annual / Math.max(consumption, 1), 2) + '× tüketim. Güncel Lisanssız Üretim Yönetmeliği, tüketimle ilişkili tesislerde yıllık üretimi ilişkili tüketimin iki katıyla sınırlar; saatlik mahsuplaşma uygulanır. Güncel metni doğrulayın.', 'Lisanssız Üretim Yönetmeliği'));
-      checks.push(check('data', 'Işınım verisi', pvgis ? 'ok' : 'info', pvgis ? 'Aylık değerler kullanıcı tarafından girilen PVGIS çıktısından.' : 'Açık gök modeli × bulutluluk senaryosu. Sahaya özgü üretim için PVGIS gibi ölçüm tabanlı veri girin.'));
+      checks.push(check('data', 'Işınım verisi', pvgis ? 'ok' : 'info', pvgis ? 'Sağlanan aylık nihai AC üretim değerleri kullanılır; kaynağı ve dönemi doğrulayın.' : 'Açık gök modeli × bulutluluk senaryosu. Sahaya özgü üretim için PVGIS gibi uzun dönem ışınım verisi girin.'));
 
       return result(v, {
         kWp: kWp, Pac: p.Pac, dcac: dcac, nStrings: nStrings, sun: sun, shade: shade, rowShade: rowShade,
@@ -587,10 +594,10 @@
       }, checks, {
         assumptions: [
           'Güneş konumu: Spencer deklinasyonu ve zaman denklemi, UTC+3.',
-          pvgis ? 'Aylık üretim: kullanıcının girdiği PVGIS kWh/kWp değerleri (PVGIS kayıpları dahil kabul edilir).' : 'Işınım: Meinel açık gök modeli; bulut etkisi Kasten–Czeplak. Bu bir senaryodur, sahaya özgü kesin üretim değildir.',
+          pvgis ? 'Aylık/yıllık üretim: sağlanan kWh/kWp değerleri (PVGIS kayıpları dahil kabul edilir). Anlık/günlük eğriler ayrı bir açık gök senaryosudur.' : 'Işınım: Meinel açık gök modeli; bulut etkisi Kasten–Czeplak. Bu bir senaryodur, sahaya özgü kesin üretim değildir.',
           'Düzlem ışınımı: izotropik gök (Liu–Jordan), albedo ' + p.albedo + '.',
           'Hücre sıcaklığı NOCT modeli; güç sıcaklık katsayısı γPmax.',
-          'Sistem kayıpları %' + p.dcLoss + ' (inverter hariç) kullanıcı varsayımıdır; %14 başlangıç değeri PVGIS’in genel varsayılanıdır (orada inverter kaybı dahil), tesise özgü ölçülmüş bir değer değildir. İnverter verimi %' + p.invEff + ' ayrıca uygulanır.',
+          (pvgis ? 'Yalnız anlık/günlük senaryo: ' : '') + 'Sistem kayıpları %' + p.dcLoss + ' (inverter hariç) kullanıcı varsayımıdır; %14 başlangıç değeri PVGIS’in genel varsayılanıdır (orada inverter kaybı dahil), tesise özgü ölçülmüş bir değer değildir. İnverter verimi %' + p.invEff + ' ayrıca uygulanır.',
           'Gölge: sıra arası geometrik gölge, doğrusal kayıp; uyumsuzluk (mismatch) ve bypass diyot etkileri dahil değildir.',
           'Öz tüketim: seçilen tüketim profiline göre saatlik eşleşme; gerçek yük verisi ile değişir.',
           'Ekonomik sonuç kullanıcının girdiği fiyat ve yatırım bedeline dayanır; vergi, finansman ve tarife değişimleri dahil değildir.'

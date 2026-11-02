@@ -1,0 +1,69 @@
+// Faz 43 — PozLibraryScreen
+import React, { useCallback, useState } from 'react';
+import { matchesAnyField } from '../utils/search';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Switch } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import { colors, spacing, radius, typography } from '../theme';
+import type { PozLibraryItem } from '../types';
+import { listSharedPoz, setSharedPozActive } from '../services/catalogOverrides';
+
+export default function PozLibraryScreen() {
+  const [items, setItems] = useState<PozLibraryItem[]>([]);
+  const [q, setQ] = useState('');
+  const [error, setError] = useState('');
+  const load = useCallback(async () => { try { setItems(await listSharedPoz()); setError(''); } catch (e: any) { setError(e?.message || 'Katalog alınamadı.'); } }, []);
+  useFocusEffect(useCallback(() => { void load(); }, [load]));
+
+  const filtered = items.filter(i => matchesAnyField([i.code, i.name, i.category], q));
+
+  return (
+    <SafeAreaView style={s.safe} edges={['bottom']}>
+      <View style={s.search}>
+        <Ionicons name="search" size={16} color={colors.text.muted} />
+        <TextInput style={s.input} value={q} onChangeText={setQ} placeholder="POZ ara..." placeholderTextColor={colors.text.faint} />
+      </View>
+      {error ? <Text accessibilityRole="alert" style={{ color: '#b91c1c', padding: spacing.md }}>{error}</Text> : null}
+      <FlatList
+        data={filtered}
+        keyExtractor={i => i.id}
+        contentContainerStyle={{ padding: spacing.md, gap: 6 }}
+        ListEmptyComponent={<Text style={{ color: colors.text.muted, padding: spacing.md }}>{error ? 'Katalog sunucudan alınamadı.' : 'Henüz katalog kaydı yok. İçe aktarma veya ürün ekleme ekranını kullanın.'}</Text>}
+        renderItem={({ item }) => (
+          <View style={s.card}>
+            <View style={{ flex: 1 }}>
+              <View style={s.head}>
+                <View style={s.catChip}><Text style={s.catChipT}>{item.category}</Text></View>
+                <Text style={s.code}>{item.code}</Text>
+              </View>
+              <Text style={s.name}>{item.name}</Text>
+              <View style={s.priceRow}>
+                <Text style={s.pL}>İşçilik: ₺{item.laborCost.toLocaleString('tr-TR')}</Text>
+                <Text style={s.pM}>Malzeme: ₺{item.materialCost.toLocaleString('tr-TR')}</Text>
+                <Text style={s.pT}>Toplam: ₺{(item.laborCost + item.materialCost).toLocaleString('tr-TR')}/{item.unit}</Text>
+              </View>
+            </View>
+            <Switch value={item.active} onValueChange={async () => { try { await setSharedPozActive(item.id, !item.active); await load(); } catch (e: any) { setError(e?.message || 'Katalog kaydı değiştirilemedi.'); } }} />
+          </View>
+        )}
+      />
+    </SafeAreaView>
+  );
+}
+
+const s = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.bg.primary },
+  search: { flexDirection: 'row', alignItems: 'center', gap: 6, padding: spacing.sm, margin: spacing.sm, backgroundColor: colors.bg.secondary, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.border.primary },
+  input: { flex: 1, color: colors.text.primary, padding: 0 },
+  card: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.sm, backgroundColor: colors.bg.secondary, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.border.primary },
+  head: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  catChip: { backgroundColor: '#8b5cf6', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 999 },
+  catChipT: { color: '#fff', fontSize: 10, fontWeight: '800' },
+  code: { color: '#0ea5e9', fontSize: typography.xs, fontWeight: '800' },
+  name: { color: colors.text.primary, fontSize: typography.sm, fontWeight: '700', marginTop: 4 },
+  priceRow: { marginTop: 4, gap: 2 },
+  pL: { color: colors.text.muted, fontSize: 10 },
+  pM: { color: colors.text.muted, fontSize: 10 },
+  pT: { color: '#22c55e', fontSize: typography.xs, fontWeight: '700' },
+});

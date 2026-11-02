@@ -8,6 +8,7 @@ require __DIR__ . '/api/lib/validate.php';
 require __DIR__ . '/api/lib/mailer.php';
 require __DIR__ . '/api/lib/enquiry.php';
 require __DIR__ . '/api/lib/metrics.php';
+require __DIR__ . '/api/lib/turnstile.php';
 
 function vg_contact_string(string $key): string
 {
@@ -34,50 +35,6 @@ function vg_contact_origin_allowed(string $url, bool $originOnly): bool
     $extra = getenv('VG_CONTACT_ALLOWED_ORIGINS');
     if (is_string($extra)) foreach (explode(',', $extra) as $value) $allowed[] = rtrim(trim($value), '/');
     return in_array($origin, $allowed, true);
-}
-
-/** Server verification is mandatory whenever Turnstile is configured. */
-function vg_contact_verify_captcha(string $secret, string $token): void
-{
-    if ($token === '') {
-        /* A configured secret with no token usually means the public site key in the HTML is still a placeholder,
-           so no widget could be shown. Fail closed (spam protection stays on) but make the cause visible. */
-        error_log('VoltGuard contact: Turnstile secret is set but the form sent no token (check data-sitekey in index.html, sor.html, fabrika-cozumleri.html)');
-        vg_fail(422, 'captcha_required', 'Güvenlik doğrulaması yüklenemedi. Sayfayı yenileyip tekrar deneyin; sorun sürerse bizi telefonla veya info@voltguard.com.tr adresinden arayın.');
-    }
-    if (strlen($token) > 2048) {
-        vg_fail(422, 'captcha_required', 'Lütfen güvenlik doğrulamasını tamamlayın.');
-    }
-    $payload = http_build_query(['secret' => $secret, 'response' => $token, 'remoteip' => vg_client_ip()]);
-    $raw = false;
-    $status = 0;
-    if (function_exists('curl_init')) {
-        $curl = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
-        if ($curl !== false) {
-            curl_setopt_array($curl, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $payload,
-                CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 3, CURLOPT_TIMEOUT => 10,
-                CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded']]);
-            $raw = curl_exec($curl);
-            $status = (int)curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            curl_close($curl);
-        }
-    } else {
-        $context = stream_context_create(['http' => ['method' => 'POST',
-            'header' => "Content-Type: application/x-www-form-urlencoded\r\n", 'content' => $payload,
-            'timeout' => 10, 'follow_location' => 0, 'ignore_errors' => true]]);
-        $raw = @file_get_contents('https://challenges.cloudflare.com/turnstile/v0/siteverify', false, $context, 0, 16385);
-        if (isset($http_response_header[0]) && preg_match('/\s([0-9]{3})\s/', $http_response_header[0], $match)) $status = (int)$match[1];
-    }
-    if (!is_string($raw) || strlen($raw) > 16384 || $status !== 200) {
-        vg_fail(502, 'captcha_unavailable', 'Güvenlik doğrulama servisine erişilemedi. Lütfen yeniden deneyin.');
-    }
-    $result = json_decode($raw, true);
-    $expected = strtolower(getenv('TURNSTILE_EXPECTED_HOSTNAME') ?: 'voltguard.com.tr');
-    $host = is_array($result) && is_string($result['hostname'] ?? null) ? strtolower($result['hostname']) : '';
-    if (!is_array($result) || ($result['success'] ?? null) !== true
-        || !in_array($host, [$expected, 'www.' . $expected], true)) {
-        vg_fail(422, 'captcha_invalid', 'Güvenlik doğrulaması geçersiz. Lütfen yeniden deneyin.');
-    }
 }
 
 /** Magaza talep niyetleri (iletisim.html magazaTalep.intent) ve e-posta konusundaki etiketleri. */
@@ -213,12 +170,12 @@ function vg_contact_submit(): array
     $outcome = vg_enquiry_once($requestId, $fingerprint, function (string $reference) use ($name, $phone, $email, $subject, $subjects, $message, $captcha, $simulation, $talep, $label, $preview): void {
         $retry = vg_rl_hit('contact_ip', vg_rl_ip_key(), 5, 600);
         if ($retry > 0) vg_too_many($retry, 'Çok fazla mesaj gönderdiniz. Lütfen birkaç dakika sonra yeniden deneyin.');
-        $secret = getenv('TURNSTILE_SECRET_KEY');
-        $captchaOn = is_string($secret) && $secret !== '' && $secret !== 'REPLACE_WITH_TURNSTILE_SECRET_KEY';
+        $turnstile = vg_turnstile_config();
+        $captchaOn = $turnstile['secretKey'] !== '';
         /* Site-wide ceiling protects the mailbox from distributed floods; stricter while bot verification is off. */
         $global = vg_rl_hit('contact_global', 'all', $captchaOn ? 120 : 40, 3600);
         if ($global > 0) vg_too_many($global, 'Şu anda çok sayıda mesaj alınıyor. Lütfen biraz sonra tekrar deneyin veya bizi telefonla arayın.');
-        if ($captchaOn) vg_contact_verify_captcha($secret, $captcha);
+        if ($captchaOn) vg_turnstile_verify($turnstile, $captcha);
         elseif (!$preview) error_log('VoltGuard contact: TURNSTILE_SECRET_KEY is not configured; bot verification is off (see api/README.md)');
         if (!vg_mail_can_send()) vg_fail(503, 'mail_unavailable', 'Talebiniz şu anda iletilemedi. Lütfen telefonla iletişime geçin.');
         $body = "Yeni {$label} ({$reference}):\n\nAd Soyad: {$name}\nTelefon: " . ($phone ?: '-') . "\nE-posta: " . ($email ?: '-')

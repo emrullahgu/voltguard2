@@ -44,6 +44,7 @@ if (strpos($pathname, '/magaza-gorsel/') === 0 || $pathname === '/magaza-gorsel'
     exit;
 }
 $routes = [
+    '/api/integrations.php' => '/api/integrations.php',
     '/api/auth.php' => '/api/auth.php',
     '/api/community.php' => '/api/community.php',
     '/api/metrics.php' => '/api/metrics.php',
@@ -52,12 +53,14 @@ $routes = [
     '/api/staff.php' => '/api/staff.php',
     '/api/company.php' => '/api/company.php',
     '/api/company-asset.php' => '/api/company-asset.php',
+    '/api/saha-asset.php' => '/api/saha-asset.php',
     '/api/company-connectors.php' => '/api/company-connectors.php',
     '/contact.php' => '/contact.php',
     '/calisan/' => '/calisan/index.php',
     '/calisan/index.php' => '/calisan/index.php',
     '/calisan/uygulama' => '/calisan/uygulama/index.php',
     '/calisan/uygulama/' => '/calisan/uygulama/index.php',
+    '/calisan/uygulama/saha.php' => '/calisan/uygulama/saha.php',
 ];
 /* Magaza sayfalari magaza/index.php tarafindan REQUEST_URI'ye gore uretilir (.htaccess ile ayni yollar). */
 if (preg_match('#^/magaza/(?:(?:kategori|urun)/[a-z0-9-]+/?|ara/?|odeme\.html|(?:on-bilgilendirme-formu|mesafeli-satis-sozlesmesi|iade-ve-cayma|kvkk-aydinlatma|odeme-ve-teslimat)\.html|sitemap(?:-[0-9]{1,4})?\.xml)?$#D', $pathname) === 1) {
@@ -81,7 +84,7 @@ header('X-Content-Type-Options: nosniff');
 if (!is_file($root . $target)) {
     http_response_code(503);
     header('Cache-Control: no-store');
-    if (strpos($target, '/api/company') === 0) {
+    if (strpos($target, '/api/company') === 0 || $target === '/api/saha-asset.php') {
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['api' => 'vg-company/1', 'ok' => false, 'error' => 'unavailable', 'message' => 'Çalışan hizmeti şu anda kullanılamıyor.']);
     } else {

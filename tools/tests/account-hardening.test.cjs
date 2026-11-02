@@ -41,15 +41,19 @@ test('Credential forms never fall back to GET', () => {
 test('.htaccess applies path-specific CSP; private areas allow no inline script or eval', () => {
   const htaccess = read('.htaccess');
   const policies = Object.fromEntries([...htaccess.matchAll(/Header always set Content-Security-Policy "([^"]+)" env=VG_CSP_([A-Z]+)/g)].map(m => [m[2], m[1]]));
-  assert.deepEqual(Object.keys(policies).sort(), ['API', 'APP', 'PRIVATE', 'SITE']);
+  assert.deepEqual(Object.keys(policies).sort(), ['API', 'APP', 'PRIVATE', 'SAHA', 'SITE']);
   // Tools that read "the" site policy take the first occurrence: it must stay the general one.
   assert.equal(htaccess.match(/Header always set Content-Security-Policy\s+"([^"]+)"/)[1], policies.SITE);
   assert.doesNotMatch(policies.PRIVATE, /unsafe-inline'[^;]*;?\s*style|script-src[^;]*unsafe/);
   assert.match(policies.PRIVATE, /script-src 'self' 'inline-speculation-rules';/);
   assert.match(policies.PRIVATE, /frame-ancestors 'none'/);
   assert.doesNotMatch(policies.APP, /script-src[^;]*unsafe-inline/);
+  assert.match(policies.SAHA, /script-src 'self';/);
+  assert.doesNotMatch(policies.SAHA, /script-src[^;]*unsafe/);
+  assert.match(policies.SAHA, /frame-ancestors 'self'/);
   assert.match(policies.API, /^default-src 'none'/);
   assert.match(htaccess, /SetEnvIfNoCase Request_URI "\^\/\(hesap\|calisan\)\(\/\|\$\)" VG_CSP_PRIVATE=1 !VG_CSP_SITE/);
+  assert.ok(htaccess.includes('SetEnvIfNoCase Request_URI "^/calisan/uygulama/saha\\.php$" VG_CSP_SAHA=1 !VG_CSP_APP !VG_CSP_PRIVATE !VG_CSP_SITE'));
   assert.match(htaccess, /<IfModule !mod_setenvif\.c>[\s\S]*Content-Security-Policy/, 'Without mod_setenvif the general policy still applies');
 });
 

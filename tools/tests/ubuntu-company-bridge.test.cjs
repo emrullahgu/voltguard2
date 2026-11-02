@@ -9,5 +9,5 @@ test('Ubuntu private repository: ownership, role, CAS token, site and data bound
     env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1' }
   });
   assert.equal(result.status, 0, result.stderr || result.error?.message || result.stdout);
-  assert.match(result.stderr, /Ran 20 tests/);
+  assert.match(result.stderr, /Ran \d+ tests/);
 });

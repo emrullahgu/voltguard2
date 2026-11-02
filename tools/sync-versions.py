@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SKIP = {'.git', 'node_modules', 'VoltGame', 'voltguardekleyelim', 'vesikalar', '.qa', '.netlify-publish', '__pycache__', 'Tanıtım Videosu', '.claude'}
+SKIP = {'.git', 'node_modules', 'VoltGame', 'SahaTakip-main', 'voltguardekleyelim', 'vesikalar', '.qa', '.netlify-publish', '__pycache__', 'Tanıtım Videosu', '.claude'}
 REF = re.compile(r'((?:href|src)=")(/?)((?:css|js)/[A-Za-z0-9_./-]+\.(?:css|js))\?v=([A-Za-z0-9_-]+)(")')
 _cache = {}
 

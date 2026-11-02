@@ -36,7 +36,7 @@
       consumption: 450000, profile: 'tek', price: 5, exportPrice: 3, capex: 4800000,
       obsOn: false, obsX: 0, obsZ: 0, obsW: 3, obsD: 2, obsH: 2.5,
       invOff: [], showStrings: true,
-      pvgisMonthly: null, pvgisSource: ''
+      pvgisMonthly: null, pvgisSource: '', pvgisLoss: 14, pvgisMeta: null, nasaClimate: null
     });
   }
 
@@ -58,6 +58,78 @@
     return vals;
   }
   const fmtMonthly = v => Array.isArray(v) ? v.map(x => fmt(x, 1)).join('; ') : '';
+  function energyInputs(s, action) {
+    const ll = latLon(s);
+    return action === 'pvgis' ? Object.assign(ll, { peakPower: 1, tilt: Number(s.tilt), azimuth: Number(s.azimuth), loss: s.pvgisLoss === undefined ? 14 : Number(s.pvgisLoss) }) : ll;
+  }
+  function pvgisSource(d) { return 'PVGIS ' + d.version + ' · ' + d.source.dataset + ' · ' + d.dataPeriod.startYear + '–' + d.dataPeriod.endYear + ' · ' + d.retrievedAt.slice(0, 10); }
+  function pvgisApi(s) {
+    const d = s.pvgisMeta;
+    return !!(d && d.provider === 'PVGIS' && d.source && typeof d.source.dataset === 'string' && d.dataPeriod && typeof d.retrievedAt === 'string' &&
+      Array.isArray(d.monthly) && Array.isArray(s.pvgisMonthly) && d.monthly.length === 12 &&
+      s.pvgisSource === pvgisSource(d) && d.monthly.every((m, i) => m && Number.isFinite(m.specificKwhPerKwp) && m.specificKwhPerKwp === s.pvgisMonthly[i]));
+  }
+  function sameEnergyInputs(a, b) { return !!b && Object.keys(a).every(k => a[k] === b[k]); }
+  function pvgisCurrent(s) { return !pvgisApi(s) || sameEnergyInputs(energyInputs(s, 'pvgis'), s.pvgisMeta.inputs); }
+  function usesPvgis(s) { return Array.isArray(s.pvgisMonthly) && pvgisCurrent(s); }
+  function validateEnergy(d, action, input) {
+    if (!d || !d.inputs || !Array.isArray(d.monthly) || d.monthly.length !== 12 || !d.source ||
+        typeof d.retrievedAt !== 'string' || !Number.isFinite(Date.parse(d.retrievedAt)) ||
+        !sameEnergyInputs(input, d.inputs)) throw new Error('Servisin kaynak bilgisi veya sorgu girdileri doğrulanamadı.');
+    if (action === 'pvgis' && (d.provider !== 'PVGIS' || typeof d.version !== 'string' || typeof d.source.dataset !== 'string' ||
+        !d.dataPeriod || !Number.isInteger(d.dataPeriod.startYear) || !Number.isInteger(d.dataPeriod.endYear))) throw new Error('PVGIS veri dönemi doğrulanamadı.');
+    if (action === 'nasa_power' && (d.provider !== 'NASA POWER' || !d.dataPeriod || typeof d.dataPeriod.description !== 'string')) throw new Error('NASA POWER veri dönemi doğrulanamadı.');
+    d.monthly.forEach((m, i) => {
+      if (m.month !== i + 1 || (action === 'pvgis' ? !Number.isFinite(m.specificKwhPerKwp) || m.specificKwhPerKwp < 0 || m.specificKwhPerKwp > 1000 :
+        !Number.isFinite(m.irradiationKwhPerM2Day) || m.irradiationKwhPerM2Day < 0 || m.irradiationKwhPerM2Day > 20 || !Number.isFinite(m.temperatureC) || m.temperatureC < -100 || m.temperatureC > 80)) throw new Error('Servis 12 geçerli aylık değer döndürmedi.');
+    });
+    return d;
+  }
+  async function fetchEnergy(app, action) {
+    const L = app.live, state = app.state;
+    if (L.energyBusy) return;
+    const input = energyInputs(state, action), fingerprint = JSON.stringify(input);
+    const confirmedValues = () => JSON.stringify(action === 'pvgis' ? [state.pvgisMonthly, state.pvgisSource] : state.nasaClimate);
+    const confirmedFingerprint = confirmedValues();
+    const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 35000);
+    L.energyBusy = action; L.energyMessage = (action === 'pvgis' ? 'PVGIS üretim' : 'NASA POWER iklim') + ' verisi alınıyor…';
+    app.renderControls();
+    try {
+      const query = new URLSearchParams(Object.assign({ action: action }, input));
+      const response = await window.fetch('/api/integrations.php?' + query, { method: 'GET', credentials: 'same-origin', cache: 'no-store', redirect: 'error', signal: controller.signal, headers: { Accept: 'application/json' } });
+      const payload = await response.json();
+      if (!response.ok || !payload || payload.api !== 'vg-integrations/1' || payload.ok !== true) throw new Error(payload && payload.error && payload.error.message || 'Veri servisine şu anda ulaşılamıyor.');
+      const data = validateEnergy(payload.data, action, input);
+      if (app._disposed || app.state !== state || JSON.stringify(energyInputs(app.state, action)) !== fingerprint || confirmedValues() !== confirmedFingerprint) {
+        L.energyMessage = 'Sorgu sırasında girdiler değişti; yanıt uygulanmadı. Güncel girdilerle yeniden alın.';
+        return;
+      }
+      if (action === 'pvgis') {
+        state.pvgisMonthly = data.monthly.map(m => m.specificKwhPerKwp);
+        state.pvgisSource = pvgisSource(data); state.pvgisMeta = data;
+        L.energyMessage = 'PVGIS verisi doğrulandı; aylık ve yıllık üretime uygulandı.';
+      } else {
+        state.nasaClimate = data;
+        L.energyMessage = 'NASA POWER iklim ortalamaları alındı; üretim ve tasarım sıcaklıkları değiştirilmedi.';
+      }
+      app.invalidate();
+      VS.toast(L.energyMessage, 'ok');
+    } catch (error) {
+      L.energyMessage = error.name === 'AbortError' ? 'Veri servisi zamanında yanıt vermedi. Son doğrulanmış veri korundu.' : String(error.message || 'Veri alınamadı.').slice(0, 220) + ' Son doğrulanmış veri korundu.';
+      if (!app._disposed) VS.toast(L.energyMessage, 'warn');
+    } finally {
+      clearTimeout(timer); L.energyBusy = null;
+      if (!app._disposed) app.renderControls();
+    }
+  }
+  function climateNote(s) {
+    const d = s.nasaClimate;
+    if (!d || !Array.isArray(d.monthly) || !d.dataPeriod || typeof d.retrievedAt !== 'string') return null;
+    if (!sameEnergyInputs(energyInputs(s, 'nasa_power'), d.inputs)) return { type: 'note', text: 'NASA POWER verisi önceki koordinata ait. Güncel konum için yeniden alın.' };
+    const m = d.monthly[Number(s.month) - 1];
+    if (!m) return null;
+    return { type: 'note', text: 'NASA POWER · ' + MONTHS[Number(s.month) - 1] + ': yatay yüzey ışınımı ' + fmt(m.irradiationKwhPerM2Day, 2) + ' kWh/m²/gün; 2 m hava sıcaklığı ' + fmt(m.temperatureC, 1) + ' °C. ' + d.dataPeriod.description + '. Alındı: ' + d.retrievedAt.slice(0, 10) + '. Bu iklim ortalamasıdır; panel üretimi veya tasarım uç sıcaklığı değildir.' };
+  }
   function sunDir(T, sun, out) {
     // sahne: +x doğu, +z güney, +y yukarı. Motor azimutu güneyden, batı pozitif.
     const el = sun.elevation * DEG, az = sun.azimuth * DEG;
@@ -93,6 +165,9 @@
       pitch: s.roof === 'trapez' ? 0 : s.pitch,
       obstacleShade: obs ? obs.frac : 0
     });
+    if (!pvgisCurrent(s)) inp.pvgisMonthly = null;
+    // PVGIS's monofacial AC result is final; the local bifacial scenario only affects instantaneous/day curves.
+    else if (pvgisApi(s) && gain > 0) inp.pvgisMonthly = s.pvgisMonthly.map(value => value / (1 + gain));
     return { ll: ll, Ns: Ns, plan: plan, fleet: fleet, gain: gain, lossRaw: lossRaw, ly: ly, obs: obs, inp: inp };
   }
 
@@ -128,6 +203,11 @@
     const r = G.compute(m.inp);
     if (errs.length) { r.errors = r.errors.concat(errs); r.ok = false; }
     if (!r.ok) return r;
+    const dataCheck = r.checks.find(c => c.id === 'data');
+    if (dataCheck && pvgisApi(s)) {
+      dataCheck.status = pvgisCurrent(s) ? 'ok' : 'warn';
+      dataCheck.detail = pvgisCurrent(s) ? s.pvgisSource + '. Uzun dönem model tahmini; nihai AC değerlerine kayıp tekrar uygulanmaz.' : 'PVGIS sorgusundan sonra konum, eğim, azimut veya PVGIS kaybı değişti. Önceki veri saklandı; yeni veri alınana kadar yıllık sonuç açık gök senaryosudur.';
+    }
     const v = r.values, ck = (id, label, status, detail, ref) => r.checks.push({ id: id, label: label, status: status, detail: detail, ref: ref || null });
     const Np = m.plan.maxPerMppt;
     ck('inputs', 'MPPT giriş sayısı', m.plan.overInputs ? 'fail' : 'ok', m.plan.nStrings + ' string → ' + m.plan.M + ' MPPT (' + s.invCount + ' × ' + s.nMppt + '); MPPT başına en çok ' + Np + ' string / ' + s.inPerMppt + ' giriş.' + (m.plan.overInputs ? ' Giriş yetmiyor: dış birleştirme kutusu, daha fazla MPPT veya inverter gerekir.' : ''));
@@ -162,6 +242,7 @@
       'Kirlenme kaybı sistem kaybıyla çarpımsal birleştirilir.',
       'Engel gölgesi: ışın–kutu kesişimiyle modül başına 15 nokta (büyük dizilerde 6); anlık değer motorun direkt ışınım gölgesine eklenir, sıra gölgesiyle örtüşme çift sayılabilir.'
     ]);
+    if (pvgisApi(s) && pvgisCurrent(s)) r.assumptions.push(s.pvgisSource + '; PVGIS sorgusu: ' + s.pvgisMeta.inputs.lat + ', ' + s.pvgisMeta.inputs.lon + '; eğim ' + s.pvgisMeta.inputs.tilt + '°; azimut ' + s.pvgisMeta.inputs.azimuth + '° (0 güney, batı +); toplam PVGIS kaybı %' + s.pvgisMeta.inputs.loss + '. Aylık/yıllık üretim tek yüzlü kristal silisyum, serbest montaj içindir; yerel bifasiyal, gölge, bulut, inverter ve sıcaklık kontrolleri anlık/günlük senaryoyu etkiler.');
     r.formulas = r.formulas.concat(['Kayıp = 1 − (1 − sistem)(1 − kirlenme)', 'String sigortası: (Np − 1)·1,25·Isc > I_mod,maks ⇒ gerekli; 1,5·Isc ≤ In ≤ 2,4·Isc']);
     v.ext = { installedKWp: Number(s.nMod) * Number(s.Pmod) / 1000, gain: m.gain, nStrings: m.plan.nStrings, M: m.plan.M, maxPerMppt: Np, offInv: m.fleet.offInv, offStrings: m.fleet.offStrings, obsFrac: m.obs ? m.obs.frac : 0, obsClash: m.obs ? m.obs.clash.length : 0, obsLoss: obsLoss, nowLoad: nowLoad, expCut: ex ? ex.cutKWh : 0, expNowCut: s.expLimit ? Math.max(0, v.now.Pac / 1000 - nowLoad - Number(s.expKW)) : 0, lossRaw: m.lossRaw };
     // büyük diziler JSON'a girmesin
@@ -193,7 +274,7 @@
           onChange: (v, a) => { const c = G.CITIES[v]; if (c) { a.state.lat = c[0]; a.state.lon = c[1]; } a.renderControls(); a.invalidate(); } },
         custom ? { type: 'number', key: 'lat', label: 'Enlem', min: 35, max: 43, step: 0.01, unit: '°', digits: 2, help: 'Türkiye sınırları için 35–43° K.' } : null,
         custom ? { type: 'number', key: 'lon', label: 'Boylam', min: 25, max: 45, step: 0.01, unit: '°', digits: 2 } : null,
-        { type: 'select', key: 'month', label: 'Ay (temsilî gün)', options: MONTHS.map((m, i) => [i + 1, m]) },
+        { type: 'select', key: 'month', label: 'Ay (temsilî gün)', rebuild: true, options: MONTHS.map((m, i) => [i + 1, m]) },
         { type: 'range', key: 'hour', label: 'Saat (yerel, UTC+3)', min: 4, max: 21, step: 0.25, fmt: fmtHour, help: '“Simülasyonu başlat” günü saat saat oynatır (1 saat ≈ 2 s).' },
         { type: 'range', key: 'Ta', label: 'Ortam sıcaklığı', min: -20, max: 45, step: 1, unit: '°C', help: 'Anlık hesapta seçili saatin sıcaklığı; günlük eğride bu değer etrafında ±6 °C gün içi değişim varsayılır.' },
         { type: 'range', key: 'cloud', label: 'Bulutluluk', min: 0, max: 1, step: 0.05, fmt: v => '%' + fmt(v * 100, 0), help: 'Senaryo girdisidir (Kasten–Czeplak). Sahaya özgü üretim için aşağıya PVGIS verisi girin.' },
@@ -285,11 +366,17 @@
         { type: 'number', key: 'capex', label: 'Yatırım bedeli', min: 0, max: 1e10, step: 10000, unit: 'TL' },
         { type: 'note', text: 'Fiyat ve yatırım bedeli örnektir; güncel tarifeniz ve teklif fiyatınızla değiştirin. Vergi, finansman ve tarife değişimi dahil değildir.' }
       ] },
-      { title: 'PVGIS verisi (isteğe bağlı)', items: [
-        { type: 'note', html: 'Aylık özgül üretimi (kWh/kWp, 12 değer) <a class="vs-jump" href="https://re.jrc.ec.europa.eu/pvg_tools/tr/" target="_blank" rel="noopener">PVGIS</a> aracından alıp buraya girin; kaynak ve tarihi aşağıya kendiniz yazın. Veri girilmezse yıllık sonuç sahaya özgü üretim değil, <b>açık gök × bulutluluk senaryosudur</b>.' },
+      { title: 'PVGIS üretim ve NASA iklim verisi', items: [
+        { type: 'note', text: 'Seçili konum, eğim ve azimutla PVGIS 5.3 aylık AC üretimini alın. Azimut: 0° güney, +90° batı, −90° doğu. 1 kWp kristal silisyum, serbest montaj ve arazi ufku kullanılır. Bina/engel gölgeleri ve tesisin inverter kırpması sorguya dahil değildir.' },
+        { type: 'number', key: 'pvgisLoss', label: 'PVGIS toplam sistem kaybı (inverter dahil)', min: 0, max: 100, step: 0.5, unit: '%', rebuild: true, help: 'PVGIS sorgusuna gönderilir. %14 genel başlangıç varsayımıdır; tesise göre değiştirin. Sonuçtaki nihai AC üretime yerel sistem kaybı ve inverter verimi tekrar uygulanmaz.' },
+        { type: 'buttons', items: [{ label: app.live.energyBusy === 'pvgis' ? 'PVGIS alınıyor…' : 'PVGIS üretimini al', onClick: a => fetchEnergy(a, 'pvgis') }, { label: app.live.energyBusy === 'nasa_power' ? 'NASA POWER alınıyor…' : 'NASA POWER iklimini al', onClick: a => fetchEnergy(a, 'nasa_power') }] },
+        app.live.energyMessage ? { type: 'note', text: app.live.energyMessage } : null,
+        pvgisApi(s) ? { type: 'note', text: pvgisCurrent(s) ? s.pvgisSource + ' · Aylık/yıllık üretime uygulanıyor. Anlık ve günlük eğriler yerel senaryo modelidir.' : 'Saklanan PVGIS verisi önceki sorgu girdilerine ait. Güncel sorguyu alın; bu sırada yıllık sonuç açık gök senaryosudur.' } : null,
+        climateNote(s),
+        { type: 'note', html: 'İsterseniz <a class="vs-jump" href="https://re.jrc.ec.europa.eu/pvg_tools/tr/" target="_blank" rel="noopener">PVGIS</a> çıktısından aylık özgül üretimi ve kaynağı elle de girebilirsiniz. Veri yoksa yıllık sonuç <b>açık gök × bulutluluk senaryosudur</b>. NASA iklim ortalamaları üretime otomatik çevrilmez.' },
         { type: 'text', key: 'pvgisMonthly', label: 'Aylık kWh/kWp (Oca → Ara)', multiline: true, placeholder: 'ör. 68; 84; 121; …  (12 değer)', parse: parseMonthly, format: fmtMonthly },
         { type: 'text', key: 'pvgisSource', label: 'Veri kaynağı ve tarihi', placeholder: 'ör. PVGIS-SARAH3, 23.10.2026', parse: v => String(v).trim().slice(0, 120) },
-        s.pvgisMonthly ? { type: 'buttons', items: [{ label: 'PVGIS verisini kaldır', onClick: a => { a.state.pvgisMonthly = null; a.renderControls(); a.invalidate(); } }] } : null
+        s.pvgisMonthly ? { type: 'buttons', items: [{ label: 'PVGIS verisini kaldır', onClick: a => { a.state.pvgisMonthly = null; a.state.pvgisMeta = null; a.state.pvgisSource = ''; a.renderControls(); a.invalidate(); } }] } : null
       ] },
       { title: 'Görünüm', items: [
         { type: 'toggle', key: 'showStrings', label: 'Modülleri MPPT’ye göre renklendir' },
@@ -336,8 +423,8 @@
       { label: 'Vmp aralığı', value: fmt(st.vmpHot, 0) + '–' + fmt(st.vmpCold, 0) + ' V', level: st0('mpptLo') === 'ok' && st0('mpptHi') === 'ok' ? 'ok' : 'warn', sub: 'MPPT ' + s.mpptMin + '–' + s.mpptMax + ' V' },
       { label: 'String / MPPT', value: x.nStrings + ' / ' + x.M, level: lv('inputs'), sub: 'MPPT başına en çok ' + x.maxPerMppt + ' string · ' + s.inPerMppt + ' giriş' },
       { label: 'Günlük enerji', value: VS.fmtEnergy(v.today.Eac), sub: MONTHS[s.month - 1] + (v.today.Eclip > 0.05 ? ' · kırpma ' + VS.fmtEnergy(v.today.Eclip) : ' · temsilî gün') },
-      { label: 'Yıllık enerji', value: VS.fmtEnergy(v.annual), sub: s.pvgisMonthly ? 'PVGIS verisi (kullanıcı)' : 'açık gök × bulut senaryosu' },
-      { label: 'Özgül verim', value: fmt(v.specYield, 0, 'kWh/kWp'), sub: 'kayıp %' + fmt(x.lossRaw, 1) + (s.soiling > 0 ? ' (kirlenme dahil)' : '') },
+      { label: 'Yıllık enerji', value: VS.fmtEnergy(v.annual), sub: usesPvgis(s) ? pvgisApi(s) ? 'PVGIS 5.3 · uzun dönem tek yüzlü tahmin' : 'Aylık veri (kullanıcı)' : 'açık gök × bulut senaryosu' },
+      { label: 'Özgül verim', value: fmt(v.specYield, 0, 'kWh/kWp'), sub: usesPvgis(s) ? 'Aylık nihai AC verisindeki kayıplar dahil' : 'kayıp %' + fmt(x.lossRaw, 1) + (s.soiling > 0 ? ' (kirlenme dahil)' : '') },
       { label: 'Öz tüketim', value: '%' + fmt(v.selfRatio * 100, 0), sub: 'şebekeye ' + VS.fmtEnergy(v.exported) },
       { label: 'Geri dönüş (basit)', value: v.payback ? fmt(v.payback, 1, 'yıl') : '—', sub: 'yıllık kazanç ' + fmt(v.saving, 0, 'TL') }
     ];

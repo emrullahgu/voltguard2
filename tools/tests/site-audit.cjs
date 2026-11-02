@@ -32,7 +32,7 @@ function chromePath() {
 }
 
 // sayfa listesi: dosya sistemi → yayındaki adres
-const SKIP = new Set(['.git', 'tools', 'VoltGame', 'voltguardekleyelim', 'vesikalar', '.qa', 'node_modules', '.netlify-publish', 'api', 'public', 'calisan', '.claude', 'Tanıtım Videosu']);
+const SKIP = new Set(['.git', 'tools', 'VoltGame', 'SahaTakip-main', 'voltguardekleyelim', 'vesikalar', '.qa', 'node_modules', '.netlify-publish', 'api', 'public', 'calisan', '.claude', 'Tanıtım Videosu']);
 function walk(dir, acc) {
   for (const e of fs.readdirSync(path.join(root, dir), { withFileTypes: true })) {
     const rel = dir ? dir + '/' + e.name : e.name;

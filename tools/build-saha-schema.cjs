@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const source=fs.readFileSync(path.join(root,'api/lib/sahatakip-schema.php'),'utf8');
+const match=source.match(/<<<'SCHEMA'\r?\n([\s\S]*?)\r?\nSCHEMA/);
+if(!match)throw new Error('Reviewed Saha schema declarations are missing.');
+const schema=JSON.parse(match[1]);
+fs.writeFileSync(path.join(root,'tools/saha-source-schema.json'),JSON.stringify(schema,null,2)+'\n');
+console.log('Private Saha source schema prepared ('+Object.keys(schema).length+' collections).');

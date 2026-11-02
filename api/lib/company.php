@@ -3,6 +3,7 @@
 declare(strict_types=1);
 if (!defined('VG_API')) { http_response_code(404); exit; }
 require_once __DIR__ . '/company-ubuntu.php';
+require_once __DIR__ . '/sahatakip.php';
 
 function vg_company_schema(): array {
     static $schema;
@@ -10,6 +11,7 @@ function vg_company_schema(): array {
     $fields = [
         'proposals' => 'type name data reference_no',
         'company_documents' => 'kind record_id payload revision',
+        'saha_records' => 'collection record_id payload revision',
         'products' => 'name category price original_name is_new is_active',
         'urun_takip' => 'urun_adi kategori marka model miktar birim lokasyon aciklama seri_no tarih user_email',
         'gorevler' => 'baslik aciklama durum oncelik atanan_kisi baslangic_tarihi bitis_tarihi notlar',
@@ -66,9 +68,22 @@ function vg_company_catalog(): array {
     foreach ($catalog as $key => $value) if (!is_array($value)) throw new RuntimeException('invalid private catalog field');
     return array_merge($empty, $catalog);
 }
-function vg_company_store(callable $fn) {
+/** Configuration is not connectivity: ready remains unknown until a source health check. */
+function vg_company_saha_source_status(?array $remote): array {
+    return ['required' => true, 'configured' => $remote !== null,
+        'mode' => $remote !== null ? 'ubuntu' : (vg_local_http_request() ? 'local-development' : 'unconfigured'), 'ready' => null];
+}
+function vg_company_store(callable $fn, bool $saha = false) {
     $remote = vg_company_ubuntu_config();
+    if ($remote !== null && $saha) $remote = vg_company_saha_remote_config($remote);
     if ($remote !== null) return vg_company_ubuntu_store($fn, $remote);
+    if ($saha && !vg_local_http_request()) {
+        // An absent cPanel configuration must not create a second, empty source
+        // of company records. Only a real loopback development request may use it.
+        vg_staff_require_user();
+        vg_company_fail(503, 'company_saha_source_required', 'Çalışan uygulamalarının Ubuntu veri bağlantısı kurulmamış. Mevcut kayıtları açmak için yönetici sunucu bağlantısını tamamlamalı.');
+    }
+    $GLOBALS['vg_company_data_source'] = 'local';
     $dir = vg_company_dir(); $file = $dir . '/state.json'; $lock = @fopen($dir . '/store.lock', 'c');
     if ($lock === false || !flock($lock, LOCK_EX)) throw new RuntimeException('company store lock');
     @chmod($dir . '/store.lock', 0600);
@@ -239,6 +254,7 @@ function vg_company_stamp(array $u, array $row, ?array $old = null): array { $ti
 
 function vg_company_query(array &$s, array $u, array $input): array {
     $table = $input['table'] ?? ''; $op = $input['operation'] ?? '';
+    if ($table === 'saha_records') vg_company_fail(403, 'saha_private', 'SahaTakip kayıtlarını korunan SahaTakip işlemiyle açın.');
     if (!is_string($table) || !isset(vg_company_schema()[$table]) || !in_array($op, ['select', 'insert', 'update', 'delete', 'upsert'], true)) vg_company_fail(400, 'company_query', 'Desteklenmeyen şirket işlemi.');
     $filters = vg_company_filters($table, $input['filters'] ?? []);
     vg_company_projection($s, $table, [], $input['select'] ?? '*');
@@ -329,6 +345,7 @@ function vg_company_other_advance_month(array $s, array $advance, ?string $origi
     return false;
 }
 function vg_company_rpc(array &$s, array $u, string $name, array $a) {
+    if (strpos($name, 'app_saha_') === 0) return vg_saha_rpc($s, $u, $name, $a);
     if ($name === 'app_portal_identity') return vg_company_user($u);
     if (in_array($name, ['app_onayli', 'app_admin', 'app_portal_bordro'], true)) return $name === 'app_onayli' || ($name === 'app_admin' ? $u['role'] === 'admin' : vg_company_manage($u));
     if ($name === 'app_change_own_password') {
@@ -443,18 +460,44 @@ function vg_company_staff_role($role, $bordro): string {
     return $role === 'admin' ? 'admin' : (($role === 'payroll' || $bordro) ? 'payroll' : 'employee');
 }
 
+function vg_company_module_assets(): array {
+    $root = realpath(dirname(__DIR__, 2) . '/calisan/uygulama');
+    $file = $root ? $root . '/employee-modules-manifest.json' : '';
+    if (!$root || !is_file($file) || is_link($file) || filesize($file) > 8192) vg_company_fail(503, 'company_module_assets', 'Modül dosyaları henüz hazır değil.');
+    $manifest = json_decode((string)file_get_contents($file), true);
+    if (!is_array($manifest) || ($manifest['version'] ?? null) !== 1) vg_company_fail(503, 'company_module_assets');
+    foreach (['scripts' => 'm?js', 'styles' => 'css'] as $kind => $extension) {
+        $values = $manifest[$kind] ?? null;
+        if (!is_array($values) || count($values) > 8 || ($kind === 'scripts' && !$values)) vg_company_fail(503, 'company_module_assets');
+        foreach ($values as $url) {
+            if (!is_string($url) || strpos($url, '..') !== false || !preg_match('#^/calisan/uygulama/assets/saha/[A-Za-z0-9/_., @()+-]+\\.' . $extension . '$#D', $url)) vg_company_fail(503, 'company_module_assets');
+            $asset = realpath(dirname(__DIR__, 2) . $url);
+            if (!$asset || strpos(str_replace('\\', '/', $asset), str_replace('\\', '/', $root) . '/assets/saha/') !== 0 || !is_file($asset)) vg_company_fail(503, 'company_module_assets');
+        }
+    }
+    return ['scripts' => array_values($manifest['scripts']), 'styles' => array_values($manifest['styles'])];
+}
+
 function vg_company_run(): void {
     ob_start();
     try {
         vg_check_fetch_site(); vg_staff_session_start(); $u = vg_staff_require_user(); $action = vg_action(); $method = vg_method();
-        if ($action === 'health') {
+        if ($action === 'module_assets') {
+            if ($method !== 'GET') vg_company_fail(405, 'company_method');
+            $out = ['data' => vg_company_module_assets()];
+        } elseif ($action === 'health') {
             if ($method !== 'GET') vg_company_fail(405, 'company_method');
             $remote = vg_company_ubuntu_config();
             if ($remote !== null) vg_company_ubuntu_call($remote, ['op' => 'health', 'actor' => ['id' => $u['id'], 'role' => $u['role']]]);
             $out = ['data' => ['online' => true, 'dataSource' => $remote === null ? 'local' : 'ubuntu']];
+            if ($u['role'] === 'admin') $out['data']['sahaSource'] = vg_company_saha_source_status($remote);
+        } elseif ($action === 'saha_bootstrap') {
+            if ($method !== 'GET') vg_company_fail(405, 'company_method');
+            $out = vg_company_store(function (array &$s, array $actor) { return ['data' => vg_saha_rpc($s, $actor, 'app_saha_bootstrap', [])]; }, true);
         } elseif ($action === 'bootstrap') {
             if ($method !== 'GET') vg_company_fail(405, 'company_method');
             $out = vg_company_store(function (array &$s, array $actor) { return ['data' => ['user' => vg_company_user($actor), 'storage' => $s['storage'][$actor['id']] ?? [], 'catalog' => vg_company_catalog(), 'capabilities' => ['private' => true, 'operations' => true, 'payrollManage' => vg_company_manage($actor), 'employeeAdmin' => $actor['role'] === 'admin', 'dataSource' => $GLOBALS['vg_company_data_source'] ?? 'local', 'liveOSOS' => false, 'externalAI' => false]]]; });
+            if ($u['role'] === 'admin') $out['data']['capabilities']['sahaSource'] = vg_company_saha_source_status(vg_company_ubuntu_config());
         } else {
             if (!in_array($action, ['query', 'rpc', 'storage'], true)) vg_company_fail(404, 'company_action'); if ($method !== 'POST') vg_company_fail(405, 'company_method');
             vg_staff_write_guard(); $input = vg_json_body(2097152); vg_staff_rate('company-request-user', $u['id'], 1200, 900);
@@ -468,7 +511,7 @@ function vg_company_run(): void {
             };
             $native = ($action === 'query' && ($input['table'] ?? null) === 'users') || ($action === 'rpc' && in_array($input['name'] ?? null, ['app_portal_identity','app_onayli','app_admin','app_portal_bordro','app_portal_account_audit','app_portal_invite','app_portal_recover_mfa','app_portal_update_user','app_change_own_password'], true));
             if ($native) { $empty = ['version' => 1, 'tables' => [], 'storage' => [], 'sequence' => 0, 'audit' => []]; $out = $handler($empty, vg_staff_require_user()); }
-            else $out = vg_company_store($handler);
+            else $out = vg_company_store($handler, $action === 'rpc' && is_string($input['name'] ?? null) && strpos($input['name'], 'app_saha_') === 0);
         }
         vg_discard_output(); vg_common_headers(200, []); echo vg_json_encode(vg_company_wire(['api' => 'vg-company/1', 'ok' => true, 'csrf' => vg_staff_csrf()] + $out));
     } catch (VgHttpError $e) { vg_discard_output(); vg_common_headers($e->status, $e->headers); echo vg_json_encode(['api' => 'vg-company/1', 'ok' => false, 'error' => $e->errCode, 'message' => $e->getMessage()] + $e->extra); }

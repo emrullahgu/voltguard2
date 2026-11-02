@@ -119,7 +119,7 @@
     if (s.deadline > 0) ck.push({ id: 'deadline', label: 'Hedef süre', status: hub.allDone && hub.lastFinish <= s.deadline ? 'ok' : 'warn', detail: 'Tüm araçlar ' + (hub.allDone ? dur(hub.lastFinish) : 'bitmiyor') + ' / hedef ' + dur(s.deadline), ref: null });
     if (s.pvKWp > 0 || s.batKWh > 0) ck.push({ id: 'der', label: 'GES / batarya katkısı', status: 'info', detail: 'GES ' + fmt(hub.pvE, 1) + ' kWh (açık gün)' + (s.batKWh > 0 ? ' · batarya deşarj ' + fmt(hub.batOut, 1) + ' kWh' : ''), ref: null });
     r.assumptions = r.assumptions.filter(a => a.indexOf('Eşzamanlı noktalar') < 0).concat([
-      'Şarj merkezi: her nokta kendi aracı, bataryası ve SOC’siyle 1 dk adımla simüle edilir; paylaşım önceliğe göre (yüksek öncelik önce), kademe içinde eşit su doldurma.',
+      'Şarj merkezi: her nokta kendi aracı, bataryası ve SOC’siyle en çok 1 dk adımla simüle edilir; araç hedefe ulaştığında aralık bölünür ve güç yeniden paylaşılır. Paylaşım önceliğe göre (yüksek öncelik önce), kademe içinde eşit su doldurma.',
       'AC oturumlarda en küçük akım 6 A’dir (IEC 61851-1 kontrol pilotu); yetmeyen güçte oturum duraklatılır. DC’de alt sınır yok kabul edildi.',
       'Bina baz yükü temsili saatlik profil; GES motorun güneş konumu/açık gök modeliyle (20° eğim, güney, PR 0,80); şebekeye ihracat yok (fazla GES kırpılır).',
       'Batarya yalnız bağlantı sınırını aşan talebi karşılar ve GES fazlasıyla şarj olur (%92 verim, %10–95 SOC).',
@@ -132,7 +132,11 @@
 
   /* ---------------------------------------------------------------- oynatma */
   const rate = (s, h) => (s.speed === 'auto' ? Math.max(0.5, (h.minutes || 1) / 40) : Number(s.speed) || 1);
-  function at(h, t) { const i = Math.max(0, Math.min(h.t.length - 1, Math.floor(t))); return i; }
+  function at(h, t) {
+    let lo = 0, hi = h.t.length - 1;
+    while (lo < hi) { const mid = Math.ceil((lo + hi) / 2); if (h.t[mid] <= t) lo = mid; else hi = mid - 1; }
+    return lo;
+  }
   function tick(app, dt) {
     const r = app.validResult; if (!r || !r.values.hub) return false;
     const h = r.values.hub, L = app.live, s = app.state;

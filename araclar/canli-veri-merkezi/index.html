@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Canlı Veri Merkezi | VoltGuard</title><meta name="description" content="Tesis adresini bulun, hava durumunu ve günlük döviz kurlarını kaynak ve tarihle görüntüleyin; enerji ve yapay zekâ araçlarına ulaşın."><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#0a1628"><link rel="canonical" href="https://voltguard.com.tr/araclar/canli-veri-merkezi/"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="Canlı Veri Merkezi | VoltGuard"><meta property="og:description" content="Tesis adresini bulun, hava durumunu ve günlük döviz kurlarını kaynak ve tarihle görüntüleyin; enerji ve yapay zekâ araçlarına ulaşın."><meta property="og:url" content="https://voltguard.com.tr/araclar/canli-veri-merkezi/"><meta property="og:image" content="https://voltguard.com.tr/araclar/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/voltguard-icon-64.png" type="image/png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Canlı Veri Merkezi","url":"https://voltguard.com.tr/araclar/canli-veri-merkezi/","description":"Tesis adresini bulun, hava durumunu ve günlük döviz kurlarını kaynak ve tarihle görüntüleyin; enerji ve yapay zekâ araçlarına ulaşın.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":0,"priceCurrency":"TRY"},"publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VoltGuard","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Canlı Veri Merkezi","item":"https://voltguard.com.tr/araclar/canli-veri-merkezi/"}]}]}</script><link rel="stylesheet" href="../shared/tool-shell.css"><link rel="stylesheet" href="../shared/export.css"><style>
+#vg-tool-workspace{color-scheme:dark}:where(#vg-tool-workspace) *{box-sizing:border-box}#vg-tool-workspace{margin:0;background:#081321;color:#e6eef7;font:16px/1.6 system-ui,sans-serif}:where(#vg-tool-workspace) main{max-width:1180px;margin:auto;padding:24px}:where(#vg-tool-workspace) a{color:#70e0c2}:where(#vg-tool-workspace) h2{margin:0 0 12px;font-size:23px}:where(#vg-tool-workspace) h3{font-size:18px}:where(#vg-tool-workspace) .intro{padding:24px;border-left:3px solid #58d6b0;background:var(--panel,#102235);color:var(--ink,#e6eef7);border-radius:8px;margin-bottom:24px}:where(#vg-tool-workspace) .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}:where(#vg-tool-workspace) .card{min-width:0;padding:24px;border:1px solid #2a4157;border-radius:16px;background:#102034}:where(#vg-tool-workspace) .card p{color:var(--ink2,#b6c9da)}:where(#vg-tool-workspace) .form-row{display:flex;flex-wrap:wrap;gap:12px}:where(#vg-tool-workspace) label{display:block;flex:1;min-width:110px;font-size:14px}:where(#vg-tool-workspace) input,:where(#vg-tool-workspace) select,:where(#vg-tool-workspace) button{font:inherit}:where(#vg-tool-workspace) input,:where(#vg-tool-workspace) select{display:block;width:100%;margin:6px 0 14px;border:1px solid #526a82;border-radius:7px;padding:11px;background:#081827;color:#f1f6fb}:where(#vg-tool-workspace) button,:where(#vg-tool-workspace) .button{display:inline-block;border:0;border-radius:8px;background:#54d2ad;color:#05241f;padding:12px 17px;font-weight:700;cursor:pointer;text-decoration:none}:where(#vg-tool-workspace) button:disabled{opacity:.6;cursor:wait}:where(#vg-tool-workspace) button.secondary{background:#263f54;color:#dce8f2}:where(#vg-tool-workspace) button:focus-visible,:where(#vg-tool-workspace) a:focus-visible,:where(#vg-tool-workspace) input:focus-visible,:where(#vg-tool-workspace) select:focus-visible{outline:3px solid #ffcd69;outline-offset:3px}:where(#vg-tool-workspace) .result{margin-top:16px;overflow-wrap:anywhere;white-space:normal}:where(#vg-tool-workspace) .result:empty{display:none}:where(#vg-tool-workspace) .error{color:var(--red,#b91c1c)}:where(#vg-tool-workspace) .small{font-size:13px;color:#b6c9da}:where(#vg-tool-workspace) .status-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}:where(#vg-tool-workspace) .status-item{border:1px solid #30485d;border-radius:9px;padding:16px}:where(#vg-tool-workspace) .status-item p{margin:6px 0;font-size:13px}:where(#vg-tool-workspace) .badge{display:block;color:var(--ink,#71dfbc);font-size:13px}:where(#vg-tool-workspace) .badge.off{color:var(--accent-ink,#ffd28b)}:where(#vg-tool-workspace) table{border-collapse:collapse;width:100%;font-size:14px}:where(#vg-tool-workspace) td,:where(#vg-tool-workspace) th{padding:9px;text-align:left;border-bottom:1px solid #344c62}:where(#vg-tool-workspace) .scroll{overflow-x:auto}:where(#vg-tool-workspace) #locations button{display:block;margin:10px 0;text-align:left;width:100%}:where(#vg-tool-workspace) .links{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}:where(#vg-tool-workspace) .wide{grid-column:1/-1}:where(#vg-tool-workspace) .metric{font-size:30px;font-weight:700;color:var(--ink,#76e3c4)}:where(#vg-tool-workspace) .reading{border-left:2px solid #5dcfae;padding-left:14px;margin:10px 0}:where(#vg-tool-workspace) .result dl{display:grid;grid-template-columns:1fr 1fr;gap:6px}:where(#vg-tool-workspace) .result dt,:where(#vg-tool-workspace) .result dd{margin:0} @media(max-width:700px){:where(#vg-tool-workspace) main{padding:14px}:where(#vg-tool-workspace) .grid,:where(#vg-tool-workspace) .status-list{grid-template-columns:1fr}:where(#vg-tool-workspace) .card{padding:18px}:where(#vg-tool-workspace) .result dl{grid-template-columns:1fr}:where(#vg-tool-workspace) .wide{grid-column:auto}}
+:where(#vg-tool-workspace) a.button{color:var(--ink,#05241f)!important;background:var(--primary,#54d2ad)}:where(#vg-tool-workspace) #printReport{display:none}@media print{:where(#vg-tool-workspace) main{display:none}:where(#vg-tool-workspace) #printReport{display:block;background:white;color:#111;padding:12mm;font:12px/1.5 Arial}:where(#vg-tool-workspace) #printReport section{break-inside:avoid;border-bottom:1px solid #bbb;margin-bottom:15px}:where(#vg-tool-workspace) #printReport a{color:#111!important}:where(#vg-tool-workspace) #printReport :is(p,.small,.metric,.reading){color:#222!important;background:white!important}}
+</style><link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=5c8e44a56be2"><script src="/js/vg-shell.js?v=c97b3cdc9a27" defer></script><script src="/js/vg-metrics.js?v=906f1f067ec5" defer data-vg-online-only></script><script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer data-vg-online-only></script><meta name="color-scheme" content="light dark"><script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script><style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}</style><link rel="stylesheet" href="../assets/host-theme.css?v=91900d9408e4"></head><body data-vg-tool="canli-veri-merkezi" data-vg-title="Canlı Veri Merkezi" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+<header data-vg-no-print class="vg-header doc-header" id="vgHeader">
+  <div class="vg-header__bar vg-wrap">
+    <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+      <img class="vg-brand__image" src="/public/voltguard-logo-transparent.webp" width="50" height="50" alt="" decoding="async">
+      <span class="vg-brand__copy" aria-hidden="true">
+        <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+        <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+      </span>
+    </a>
+    <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+    <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+    <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+      <ul class="vg-nav__list">
+        <li class="vg-nav__home"><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdHizmetler">Hizmetler</button>
+          <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdHizmetler">
+            <div class="vg-dd__cols">
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblTrafo">Trafo ve yüksek gerilim</span>
+                <ul aria-labelledby="vgDdLblTrafo">
+                  <li><a class="vg-dd__link" href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/trafo-bakimi.html">Trafo ve OG Hücre Bakımı</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+                </ul>
+              </div>
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblOlcum">Ölçüm, kontrol ve verimlilik</span>
+                <ul aria-labelledby="vgDdLblOlcum">
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+                </ul>
+              </div>
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblProje">Proje, uygulama ve otomasyon</span>
+                <ul aria-labelledby="vgDdLblProje">
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="vg-dd__foot">
+              <a class="vg-dd__more" href="/hizmetler/" data-vg-match="/hizmetler/">Tüm hizmetler</a>
+              <a class="vg-dd__more" href="/fabrika-cozumleri.html">Fabrikalar için çözümler</a>
+            </div>
+          </div>
+        </li>
+        <li><a class="vg-nav__link" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKurumsal">Kurumsal</button>
+          <div class="vg-dd__menu" id="vgDdKurumsal">
+            <ul>
+              <li><a class="vg-dd__link" href="/hakkimizda.html">Hakkımızda</a></li>
+              <li><a class="vg-dd__link" href="/projeler.html">Projeler ve Referanslar</a></li>
+              <li><a class="vg-dd__link" href="/haberler.html">Sahadan Haberler</a></li>
+              <li><a class="vg-dd__link" href="/ekibimiz.html">Ekibimiz</a></li>
+                <li><a class="vg-dd__link" href="/dokumanlar.html">Belgeler ve İndirmeler</a></li>
+              <li><a class="vg-dd__link" href="/iletisim.html">İletişim</a></li>
+              <li><a class="vg-dd__link" href="/calisan/giris.html">Çalışan Girişi</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a class="vg-nav__link" href="/teknik-kaynaklar.html" data-vg-match="/teknik-kaynaklar.html">Teknik Kaynaklar</a></li>
+        <li class="vg-nav__feature"><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/"><svg class="vg-nav__feature-icon" viewBox="0 0 24 24" width="22" height="22" focusable="false" aria-hidden="true"><path d="m12 3 9 5v8l-9 5-9-5V8zm0 10 9-5M12 13 3 8m9 5v8"/></svg>VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+        <li class="vg-nav__feature"><a class="vg-nav__link" href="/voltgame.html"><svg class="vg-nav__feature-icon" viewBox="0 0 24 24" width="22" height="22" focusable="false" aria-hidden="true"><path d="M7 7h10a4 4 0 0 1 4 3.4l1 6.2a2.5 2.5 0 0 1-4.2 2.2L15 16H9l-2.8 2.8A2.5 2.5 0 0 1 2 16.6l1-6.2A4 4 0 0 1 7 7Z"/><path d="M7 10v4m-2-2h4m7-1h.01M19 13h.01"/></svg>VoltGame</a></li>
+        <li class="vg-nav__feature"><a class="vg-nav__link" href="/volthaber/" data-vg-match="/volthaber/"><svg class="vg-nav__feature-icon" viewBox="0 0 24 24" width="22" height="22" focusable="false" aria-hidden="true"><path d="M5 4h15v15a2 2 0 0 1-2 2H5a3 3 0 0 1-3-3V8h3m0-4v14a1 1 0 0 1-2 0"/><path d="M9 8h7m-7 4h7m-7 4h3m3 0h1"/></svg>VoltHaber</a></li>
+      </ul>
+      <div class="vg-nav__foot">
+        <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
+      </div>
+    </nav>
+    <div class="vg-actions">
+      <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+      <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+      <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
+    </div>
+  </div>
+  <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+</header><div id="main" tabindex="-1"><div id="vg-top"><div class="vg-topline"><nav class="vg-links" aria-label="Araç menüsü"><a class="vg-back" href="../#araclar">← Tüm araçlar</a><a class="vg-back" href="/hesaplama-araclari/">Pratik hesaplar →</a><a class="vg-back" href="/">VoltGuard ana sayfa ↗</a></nav></div><p class="vg-crumb">Güneş enerjisi / Canlı Veri Merkezi</p><h1>Canlı Veri Merkezi</h1><p class="vg-description">Tesis adresini bulun, hava durumunu ve günlük döviz kurlarını kaynak ve tarihle görüntüleyin; enerji ve yapay zekâ araçlarına ulaşın.</p><details><summary>Girdiler, sonuçlar ve hesap yöntemi</summary><div class="vg-method"><strong>Girdiler:</strong> Adres veya koordinat, kur kaynağı, para birimi ve tutar.<br><strong>Çıktılar:</strong> Adres koordinatları, hava verisi, günlük döviz dönüşümü, BTC/ETH fiyatları ve servislerin yapılandırma durumu.<br><strong>Yöntem:</strong> Kullanıcı isteğiyle sunucu üzerinden resmî veri servisleri; kaynak, zaman ve birim bilgisi korunur. Kur ve piyasa verisi gösterge niteliğindedir. <a href="../yontem/">Kaynak ve geçerlilik bilgileri →</a></div></details></div><div id="vg-tool-workspace"><main>
+<div class="intro"><h2>Tesisiniz için güncel veriler</h2><p>Bir adres bulun, koordinata göre havayı inceleyin veya günlük kurla dönüşüm yapın. Her sonuç kendi kaynağı ve tarihiyle gösterilir. Bağlantılar yalnız düğmeye bastığınızda sorgulanır.</p><div class="links"><a class="button" href="/voltsim/ges/">PVGIS ve NASA ile GES hesabı →</a><a href="/calisan/uygulama/?module=api-servisleri&amp;bolum=asistan">Çalışan yapay zekâ asistanı →</a><a href="/calisan/uygulama/?module=api-servisleri&amp;bolum=veri">EPİAŞ ve API deneme alanı →</a></div></div>
+<div class="grid">
+<section class="card"><h2>Tesis adresi ve koordinat</h2><form id="addressForm"><label for="address">Türkiye’de tesis adresi<input id="address" required minlength="3" maxlength="180" placeholder="Örnek: Bornova, İzmir" autocomplete="off"></label><button type="submit">Adresi ara</button></form><p class="small">Arama yalnız bu düğmeyle yapılır. Adres sağlayıcıya gönderilir. <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap katkıcıları</a> · <a href="https://operations.osmfoundation.org/policies/nominatim/" target="_blank" rel="noopener">Kullanım ilkesi</a></p><div id="locations" class="result" aria-live="polite"></div></section>
+<section class="card"><h2>Konuma göre hava</h2><form id="weatherForm"><div class="form-row"><label for="lat">Enlem (°)<input id="lat" type="number" min="-90" max="90" step="any" value="38.4237" required></label><label for="lon">Boylam (°)<input id="lon" type="number" min="-180" max="180" step="any" value="27.1428" required></label></div><button type="submit">Hava verisini getir</button></form><p class="small">OpenWeather anlık gözlemi. Sıcaklık °C, rüzgâr m/s; mühendislik tasarım sıcaklığı yerine kullanılmaz.</p><div id="weatherResult" class="result" aria-live="polite"></div></section>
+<section class="card"><h2>Döviz dönüşümü</h2><form id="currencyForm"><label for="rateSource">Veri kaynağı<select id="rateSource"><option value="tcmb">TCMB — döviz satış</option><option value="frankfurter">Frankfurter — ECB</option><option value="exchange_rate">ExchangeRate-API — günlük</option></select></label><div class="form-row"><label for="base">Kaynak para<select id="base"><option>USD</option><option>EUR</option><option>TRY</option><option>GBP</option><option>JPY</option></select></label><label for="quote">Hedef para<select id="quote"><option>TRY</option><option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option></select></label></div><label for="amount">Tutar<input id="amount" type="number" min="0" max="1000000000" step="any" value="100" required></label><button type="submit">Kuru getir ve dönüştür</button></form><p class="small">Günlük gösterge verisidir; banka işlem fiyatı değildir. Kaydedilmiş teklifleri değiştirmez.</p><div id="currencyResult" class="result" aria-live="polite"></div></section>
+<section class="card"><h2>Kripto piyasa göstergesi</h2><p>Bitcoin ve Ethereum için TRY ve USD fiyatları; kaynak güncelleme saatiyle birlikte.</p><button id="cryptoButton" type="button">Fiyatları getir</button><div id="cryptoResult" class="result" aria-live="polite"></div><p class="small">Veri: <a href="https://www.coingecko.com/" target="_blank" rel="noopener">CoinGecko</a>. Gösterge amaçlıdır; teklif kuruna otomatik uygulanmaz.</p></section>
+<section class="card wide"><h2>Bağlı servisler</h2><p>Yapılandırma durumu bağlantının başarıyla sorgulandığı anlamına gelmez. Anahtarlar sunucuda tutulur. EPİAŞ çalışan girişi; geliştirme ve içerik denemeleri yönetici girişi gerektirir.</p><button id="statusButton" type="button" class="secondary">Yapılandırma durumunu göster</button><div id="statusResult" class="result status-list" aria-live="polite"></div></section>
+</div></main><section id="printReport" aria-label="Kaynak ve tarihli veri raporu"></section><script>
+(()=>{'use strict';let selectedLocation=null;const $=id=>document.getElementById(id),number=n=>n===null||n===undefined?'Veri yok':Number(n).toLocaleString('tr-TR',{maximumFractionDigits:6});const el=(tag,text,parent)=>{const node=document.createElement(tag);node.textContent=text;if(parent)parent.appendChild(node);return node};const stamp=s=>{const date=new Date(s);return Number.isNaN(date.getTime())?String(s):date.toLocaleString('tr-TR')};
+async function request(action,params={}){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),28000);try{const qs=new URLSearchParams({...params,action});const response=await fetch('/api/integrations.php?'+qs,{headers:{Accept:'application/json'},credentials:'same-origin',cache:'no-store',signal:controller.signal});const payload=await response.json().catch(()=>{throw Error('Bu yayın ortamında veri API’si kullanılamıyor. PHP sunucu bağlantısı gerekir.')});if(payload.api!=='vg-integrations/1'||typeof payload.ok!=='boolean')throw Error('Veri API yanıtı doğrulanamadı.');if(!response.ok||!payload.ok)throw Error(payload.message||'Veri alınamadı.');return payload.data}finally{clearTimeout(timer)}}
+function provenance(box,data){const source=data.source;if(source?.url&&/^https:\/\//.test(source.url)){const p=el('p','Kaynak: ',box),a=el('a',source.name||data.provider,p);a.href=source.url;a.target='_blank';a.rel='noopener';p.className='small'}if(data.retrievedAt)el('p','Alınma: '+stamp(data.retrievedAt)+(data.cache?.hit?' · önbellekten':''),box).className='small'}
+async function run(button,box,action,params,render){if(button.disabled)return;button.disabled=true;const loading=el('p','Veri isteniyor…');box.prepend(loading);try{const data=await request(action,params);const next=document.createElement('div');render(data,next);provenance(next,data);box.replaceChildren(...next.childNodes)}catch(error){loading.remove();const p=el('p',error.name==='AbortError'?'Veri kaynağı zamanında yanıt vermedi. Yeniden deneyebilirsiniz.':error.message,box);p.className='error';p.setAttribute('role','alert')}finally{loading.remove();button.disabled=false}}
+$('addressForm').addEventListener('submit',event=>{event.preventDefault();run(event.submitter||$('addressForm').querySelector('button'),$('locations'),'nominatim',{q:$('address').value},(data,box)=>{if(!Array.isArray(data.items))throw Error('Adres yanıtı doğrulanamadı.');if(!data.items.length)el('p','Bu adres için sonuç bulunamadı.',box);data.items.forEach(item=>{const b=el('button',item.label+' · '+number(item.lat)+', '+number(item.lon),box);b.type='button';b.className='secondary';b.addEventListener('click',()=>{selectedLocation={label:item.label,lat:item.lat,lon:item.lon,provider:data.provider,source:data.source?{...data.source}:null,retrievedAt:data.retrievedAt,cache:data.cache?{...data.cache}:null};$('lat').value=item.lat;$('lon').value=item.lon;$('weatherForm').scrollIntoView({behavior:'smooth',block:'center'});$('lat').focus()})})})});
+$('weatherForm').addEventListener('submit',event=>{event.preventDefault();const inputs={lat:$('lat').value,lon:$('lon').value};run(event.submitter||$('weatherForm').querySelector('button'),$('weatherResult'),'openweather',inputs,(data,box)=>{const coords=Number.isFinite(data.inputs?.lat)&&Number.isFinite(data.inputs?.lon)?data.inputs:{lat:Number(inputs.lat),lon:Number(inputs.lon)};el('div',number(data.temperatureC)+' °C',box).className='metric';el('p','Konum: '+(typeof data.location==='string'&&data.location?data.location+' · ':'')+number(coords.lat)+'°, '+number(coords.lon)+'°',box);el('p',data.description,box);el('p','Bağıl nem: %'+number(data.humidityPercent)+' · Rüzgâr: '+number(data.windSpeedMps)+' m/s',box);el('p','Gözlem: '+stamp(data.observedAt)+(data.stale?' · Güncelliğini kontrol edin.':''),box)})});
+$('currencyForm').addEventListener('submit',event=>{event.preventDefault();const base=$('base').value,quote=$('quote').value,amount=Number($('amount').value),action=$('rateSource').value;run(event.submitter||$('currencyForm').querySelector('button'),$('currencyResult'),action,{base,quotes:quote,quote,amount:String(amount),rateType:'forex_selling'},(data,box)=>{const rate=data.rates?.[quote];if(!Number.isFinite(rate)||rate<=0)throw Error('Seçilen para birimi için kur bulunamadı.');el('div',number(amount*rate)+' '+quote,box).className='metric';el('p',number(amount)+' '+base+' × '+number(rate)+' '+quote+'/'+base,box);el('p','Kur tarihi: '+(data.date||'Kaynak gözlem tarihine bakın.'),box);if(data.providerName)el('p',data.providerName,box);const a=typeof data.attribution==='string'?data.attribution:data.attribution?.text||data.attribution?.label;if(a)el('p',a,box);if(!data.source)data.source={name:data.providerName||data.provider,url:action==='tcmb'?'https://www.tcmb.gov.tr/kurlar/today.xml':action==='frankfurter'?'https://frankfurter.dev/':'https://www.exchangerate-api.com/'};})});
+$('cryptoButton').addEventListener('click',()=>run($('cryptoButton'),$('cryptoResult'),'coingecko',{},(data,box)=>{data.items.forEach(item=>{const card=el('div','',box);card.className='reading';el('h3',item.symbol,card);el('p',number(item.prices.TRY)+' TRY · '+number(item.prices.USD)+' USD',card);el('p','Güncelleme: '+stamp(item.observedAt)+(item.stale?' · Eski veri':''),card).className='small'})}));
+$('statusButton').addEventListener('click',()=>run($('statusButton'),$('statusResult'),'status',{},(data,box)=>{for(const [id,item] of Object.entries({...data.services,...data.ai})){const card=el('div','',box);card.className='status-item';el('strong',item.label,card);const available=item.available===undefined?item.configured:item.available;const badge=el('span',available?'Sorgulanabilir':item.configured?'Kullanım izni gerekli':'Sunucu anahtarı gerekli',card);badge.className='badge'+(available?'':' off');el('p',item.notice,card);if(item.private)el('small',item.access==='admin'?'Yönetici deneme alanı':'Çalışan girişi',card)}}));
+function buildReport(){const host=$('printReport');host.replaceChildren();const results=[['locations','Tesis konumu'],['weatherResult','Hava gözlemi'],['currencyResult','Kur dönüşümü'],['cryptoResult','Kripto piyasa göstergesi']].filter(([id])=>id==='locations'?Boolean(selectedLocation):$(id).querySelector('p:not(.error),.reading,.metric'));if(!results.length)return;el('h2','VoltGuard · Veri raporu',host);el('p','Rapor zamanı: '+new Date().toLocaleString('tr-TR'),host);results.forEach(([id,title])=>{const section=el('section','',host);el('h3',title,section);if(id==='locations'){el('p',selectedLocation.label+' · '+number(selectedLocation.lat)+'°, '+number(selectedLocation.lon)+'°',section);provenance(section,selectedLocation);return;}const copy=$(id).cloneNode(true);copy.removeAttribute('id');copy.querySelectorAll('.error,button').forEach(node=>node.remove());section.appendChild(copy)});el('p','Veriler kaynakta belirtilen zaman ve varsayımlara aittir. Güncel işlem kuru veya perakende elektrik tarifesi değildir.',host)}window.buildReport=buildReport;window.addEventListener('beforeprint',buildReport);
+})();
+</script></div><div id="vg-origin">VoltGuard · Açık kaynak uyarlamaları ve yeni araçlar · <a href="../yontem/">Yöntem ve kaynaklar</a></div><script src="../shared/export.js" defer></script><script>try{localStorage.setItem('voltguard:recent',JSON.stringify({slug:"canli-veri-merkezi",name:"Canlı Veri Merkezi"}))}catch(e){}if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script></div><footer data-vg-no-print class="footer vg-footer" id="vgFooter" role="contentinfo">
+  <div class="vg-footer__cta">
+    <div class="vg-wrap vg-footer__cta-in">
+      <div class="vg-footer__cta-text">
+        <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+        <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+      </div>
+      <div class="vg-footer__cta-btns">
+        <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
+        <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="vg-wrap">
+    <div class="vg-footer__grid">
+      <div class="vg-footer__brand">
+        <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+          <img class="vg-brand__image" src="/public/voltguard-logo-transparent.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+          <span class="vg-brand__copy" aria-hidden="true">
+            <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+            <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+          </span>
+        </a>
+        <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+        <ul class="vg-footer__contact">
+          <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+          <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+          <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+        </ul>
+        <address class="vg-footer__addr"><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span>Ege Teknopark, Bornova / İzmir</span></address>
+      </div>
+      <nav class="vg-footer__nav" aria-label="Alt menü">
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Hizmetler</h3>
+          <ul>
+            <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+            <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+            <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Periyodik Kontrol</a></li>
+            <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon</a></li>
+            <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kurumsal</h3>
+          <ul>
+            <li><a href="/hakkimizda.html">Hakkımızda</a></li>
+            <li><a href="/projeler.html">Projeler ve Referanslar</a></li>
+            <li><a href="/haberler.html">Sahadan Haberler</a></li>
+            <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/dokumanlar.html">Belgeler ve İndirmeler</a></li>
+            <li><a href="/iletisim.html">İletişim ve Teklif</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kaynaklar</h3>
+          <ul>
+            <li><a href="/teknik-kaynaklar.html">Teknik Kaynaklar</a></li>
+            <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="/akademi.html">Akademi</a></li>
+            <li><a href="/muhendis-merkezi.html">Mühendis Merkezi</a></li>
+            <li><a href="/volthaber/">VoltHaber</a></li>
+            <li><a href="/sor.html">VoltGuard’a Sor</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Araçlar ve Hesap</h3>
+          <ul>
+            <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+            <li><a href="/araclar/">Mühendislik Uygulamaları</a></li>
+            <li><a href="/voltsim/">VoltSim 3D</a></li>
+            <li><a href="/voltgame.html">VoltGame</a></li>
+            <li><a href="/topluluk.html">Topluluk</a></li>
+            <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+            <li><a href="/calisan/giris.html">Çalışan Girişi</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="vg-footer__bottom">
+      <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+      <div class="vg-footer__social">
+        <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </div>
+</footer></body></html>

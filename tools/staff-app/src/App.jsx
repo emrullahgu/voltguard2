@@ -3,6 +3,8 @@ import React, { useState, useMemo, useRef, lazy, Suspense } from 'react';
 import { Calculator, FileText, Settings, Search, Save, Download, Printer, X, Edit3, ChevronRight, CheckCircle, Lightbulb, Zap, Mail, TrendingDown, RefreshCw, UserPlus, Users, MapPin, Percent, UploadCloud, Sparkles, Copy, Type, Bold, Italic, AlignLeft, AlignCenter, AlignRight, FileSpreadsheet, Hammer, Plus, Trash2, Cable, Wrench, Clock, Star, Banknote, Menu, ExternalLink, Fuel, Briefcase, BarChart3, Package } from 'lucide-react';
 import { useAuth } from './SimpleAuth';
 import { PORTAL_MODULES, initialPortalModule } from './PortalNavigation';
+import { MODULE_GROUPS, availableModules, findEmployeeModule, moduleVariants, selectedVariant } from './employeeModules';
+import EmployeeHome from './EmployeeHome.jsx';
 import { createReportPDF, exportHTMLReport, reportFileName } from './pdfReport';
 import * as XLSX from 'xlsx';
 import { calculateYGQuote, calculatePeriodicQuote, normalizeProposal, cloneProposal, newDraftReference, normalizeKesifSnapshot } from './proposalSnapshots.mjs';
@@ -13,6 +15,8 @@ import { historicalInvoice1 as FaturaData, historicalInvoice2 as FaturaData2, ca
 import { normalizeHistoricalInvoice } from './historicalCatalog.mjs';
 import CompanyDashboard from './CompanyDashboard.jsx';
 import { calculateGESQuote } from './gesQuote.mjs';
+import CurrencyRatePanel from './CurrencyRatePanel.jsx';
+import { normalizeCurrencySnapshot, currencySnapshotMatchesRates } from './currencyRates.mjs';
 import {
   COMPANY_ADDRESS_LINE_1,
   COMPANY_ADDRESS_LINE_2,
@@ -36,6 +40,7 @@ const HaftalikRaporlama = lazy(() => import('./HaftalikRaporlama.jsx'));
 const UrunTakip = lazy(() => import('./UrunTakip.jsx'));
 const PeriyodikKontrol = lazy(() => import('./PeriyodikKontrol.jsx'));
 const SimpleAdminPanel = lazy(() => import('./SimpleAdminPanel.jsx'));
+const EmployeeModule = lazy(() => import('./EmployeeModule.jsx'));
 const ModuleLoading = () => <div role="status" aria-live="polite" className="p-6 bg-white rounded-lg border border-gray-200">Bölüm yükleniyor…</div>;
 
 // Fatura verilerini birleitir ve normalize et
@@ -176,24 +181,49 @@ const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const moduleButtonRef = useRef(null);
   const moduleCloseRef = useRef(null);
-  const setActiveTab = (module) => {
-    if (!PORTAL_MODULES.some(item => item.id === module && (!item.adminOnly || currentUser?.role === 'admin'))) return;
-    if (module === activeTab) return;
-    if (module !== activeTab && !window.dispatchEvent(new CustomEvent('vg:before-module-change',{cancelable:true,detail:{from:activeTab,to:module}}))) return;
-    updateActiveTab(module);
+  const currentModule = findEmployeeModule(activeTab, currentUser);
+  const [variantId, setVariantId] = useState(() => selectedVariant(currentModule, currentUser)?.id || '');
+  const [nativeRefresh, setNativeRefresh] = useState(0);
+  const variants = moduleVariants(currentModule, currentUser);
+  const activeVariant = variants.find(item => item.id === variantId) || variants[0] || null;
+  const [moduleSearch, setModuleSearch] = useState('');
+  const setActiveTab = (module, variant) => {
+    const target = findEmployeeModule(module, currentUser);
+    if (!target) return;
+    const targetVariants = moduleVariants(target, currentUser);
+    const nextVariant = targetVariants.find(item => item.id === variant) || targetVariants[0];
+    if (module === activeTab && (nextVariant?.id || '') === (activeVariant?.id || '')) return;
+    if (!window.dispatchEvent(new CustomEvent('vg:before-module-change', { cancelable: true, detail: { from: activeTab, to: module, variant: nextVariant?.id } }))) return;
+    updateActiveTab(module); setVariantId(nextVariant?.id || '');
     const next = new URL(window.location.href);
     next.searchParams.set('module', module);
+    if (nextVariant && nextVariant !== targetVariants[0]) next.searchParams.set('bolum', nextVariant.id); else next.searchParams.delete('bolum');
     window.history.pushState({}, '', next);
   };
   React.useEffect(() => {
     const onHistory = () => {
       const next = initialPortalModule(currentUser);
-      if (next !== activeTab && !window.dispatchEvent(new CustomEvent('vg:before-module-change',{cancelable:true,detail:{from:activeTab,to:next}}))) { const url = new URL(window.location.href); url.searchParams.set('module',activeTab); window.history.pushState({},'',url); return; }
-      updateActiveTab(next);
+      const nextVariant = selectedVariant(findEmployeeModule(next, currentUser), currentUser)?.id || '';
+      if ((next !== activeTab || nextVariant !== (activeVariant?.id || '')) && !window.dispatchEvent(new CustomEvent('vg:before-module-change', { cancelable: true, detail: { from: activeTab, to: next } }))) {
+        const url = new URL(window.location.href); url.searchParams.set('module', activeTab);
+        if (activeVariant?.id) url.searchParams.set('bolum', activeVariant.id); else url.searchParams.delete('bolum');
+        window.history.pushState({}, '', url); return;
+      }
+      updateActiveTab(next); setVariantId(nextVariant);
     };
     window.addEventListener('popstate', onHistory);
     return () => window.removeEventListener('popstate', onHistory);
-  }, [currentUser?.role,activeTab]);
+  }, [currentUser?.role, activeTab, activeVariant?.id]);
+  const previousRoute = useRef(`${activeTab}:${activeVariant?.id || ''}`);
+  React.useEffect(() => {
+    const route = `${activeTab}:${activeVariant?.id || ''}`;
+    if (previousRoute.current === route) return;
+    previousRoute.current = route;
+    const frame = window.requestAnimationFrame(() => {
+      moduleButtonRef.current?.closest('.portal-module-toolbar')?.scrollIntoView({ block:'start', behavior:'instant' });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeTab, activeVariant?.id]);
   React.useEffect(() => {
     if (!isSidebarOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -236,6 +266,7 @@ const App = () => {
     USD: 40.00, // TL/USD
     EUR: 49.00  // TL/EUR
   });
+  const [exchangeRateSnapshots, setExchangeRateSnapshots] = useState({ yg: null, ges: null });
 
   
   // Editor Mode States
@@ -659,7 +690,12 @@ const App = () => {
   };
 
   // Each Save creates a named, server-confirmed quotation snapshot.
-  const reportMetadata=type=>({schemaVersion:1,currency:type==='yg'?currency:type==='ges'?'USD':'TRY',exchangeRates:cloneProposal(exchangeRates),logo});
+  const reportMetadata=type=>{
+    const required=type==='yg'?['USD','EUR']:['USD'];
+    const rates=type==='ges'?{USD:Number(gesForm.usdRate)}:exchangeRates;
+    const snapshot=currencySnapshotMatchesRates(exchangeRateSnapshots[type],rates,required)?normalizeCurrencySnapshot(exchangeRateSnapshots[type],required):null;
+    return {schemaVersion:1,currency:type==='yg'?currency:type==='ges'?'USD':'TRY',exchangeRates:cloneProposal(exchangeRates),exchangeRateSnapshot:snapshot,logo};
+  };
   const reportHTML=(id,previous)=>previous?sanitizeReportHTML(document.getElementById(id)?.innerHTML || previous):'';
   const saveProposal=async(type,raw,name)=>{
     if(savingProposal.current){alert('Kayıt devam ediyor. Lütfen tamamlanmasını bekleyin.');return null;}
@@ -685,6 +721,12 @@ const App = () => {
       const data=normalizeProposal(proposal.type,proposal.data,sanitizeReportHTML),reference=proposal.reference_no || data.referenceNo || data.calculated?.refNo || newDraftReference();
       if(proposal.type==='yg'){setCurrency(data.metadata.currency);setPreviousCurrency(data.metadata.currency);}
       if(proposal.type==='yg' && data.metadata.exchangeRates && Object.values(data.metadata.exchangeRates).every(value=>Number(value)>0))setExchangeRates(data.metadata.exchangeRates);
+      if(['yg','ges'].includes(proposal.type)){
+        const required=proposal.type==='yg'?['USD','EUR']:['USD'];
+        const rates=proposal.type==='ges'?{USD:Number(data.form?.usdRate)}:data.metadata.exchangeRates;
+        const snapshot=rates && currencySnapshotMatchesRates(data.metadata.exchangeRateSnapshot,rates,required)?normalizeCurrencySnapshot(data.metadata.exchangeRateSnapshot,required):null;
+        setExchangeRateSnapshots(previous=>({...previous,[proposal.type]:snapshot}));
+      }
       if(data.metadata.logo!==undefined)setLogo(data.metadata.logo);
       setProposalReferences(previous=>({...previous,[proposal.type]:reference}));
       switch(proposal.type){
@@ -1931,7 +1973,7 @@ const App = () => {
       ['Tarih:', new Date().toLocaleDateString('tr-TR')],
       [],
       ['FİRMA BİLGİLERİ'],
-      ['Firma Unvani:', selectedCompany.name],
+      ['Firma Unvanı:', selectedCompany.name],
       ['Yetkili:', selectedCompany.contactName],
       ['Sektör:', selectedCompany.sector],
       ['Tesis Tipi:', selectedCompany.type === 'direk' ? 'Direk Tipi' : selectedCompany.type === 'uretim' ? 'Üretim tesisi' : 'Bina Tipi'],
@@ -2066,6 +2108,7 @@ const App = () => {
 
   // --- UI Components ---
   const printRoot = { proposal: '#printable-paper', ges: '#ges-printable-area', periodic: '#periodic-printable-paper', kesif: '#kesif-printable-paper', kontrol: '#periodic-control-report', osos: '#osos-printable-report', 'haftalik-raporlama': '#haftalik-rapor-printable' }[activeTab];
+  const showQuoteTools = ['dashboard', 'manual', 'periodic', 'ges', 'kesif', 'saved', 'proposal'].includes(activeTab);
 
   return (
     <div className="portal-app bg-gray-50 text-gray-800 font-sans" data-portal-module={activeTab}>
@@ -2129,7 +2172,7 @@ const App = () => {
 `}</style>
       
       {/* Header */}
-      <header className="bg-blue-900 text-white shadow-lg no-print">
+      {showQuoteTools && <header className="bg-blue-900 text-white shadow-lg no-print">
         <div className="container mx-auto px-3 md:px-6 py-3 md:py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center space-x-2 md:space-x-3">
             <Calculator className="h-6 w-6 md:h-8 md:w-8 text-yellow-400" />
@@ -2153,10 +2196,10 @@ const App = () => {
             </button>
           </div>
         </div>
-      </header>
+      </header>}
 
       {/* Settings Panel (Collapsible) */}
-      {isSettingsOpen && (
+      {showQuoteTools && isSettingsOpen && (
         <div className="bg-white border-b border-gray-200 shadow-inner">
           <div className="container mx-auto px-3 md:px-6 py-4 md:py-6">
             <h3 className="font-semibold text-gray-700 mb-3 md:mb-4 flex items-center text-sm md:text-base">
@@ -2250,8 +2293,9 @@ const App = () => {
                       <input 
                         type="number" 
                         step="0.01"
+                        aria-label="YG dolar kuru (TL)"
                         value={exchangeRates.USD} 
-                        onChange={(e) => setExchangeRates({...exchangeRates, USD: parseFloat(e.target.value) || 1})}
+                        onChange={(e) => { setExchangeRates({...exchangeRates, USD: e.target.value}); setExchangeRateSnapshots(previous=>({...previous,yg:null})); }}
                         className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 outline-none" 
                       />
                       <span className="absolute right-3 top-2 text-gray-400 text-xs">TL/$</span>
@@ -2263,8 +2307,9 @@ const App = () => {
                       <input 
                         type="number" 
                         step="0.01"
+                        aria-label="YG euro kuru (TL)"
                         value={exchangeRates.EUR} 
-                        onChange={(e) => setExchangeRates({...exchangeRates, EUR: parseFloat(e.target.value) || 1})}
+                        onChange={(e) => { setExchangeRates({...exchangeRates, EUR: e.target.value}); setExchangeRateSnapshots(previous=>({...previous,yg:null})); }}
                         className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 outline-none" 
                       />
                       <span className="absolute right-3 top-2 text-gray-400 text-xs">TL/€</span>
@@ -2272,9 +2317,10 @@ const App = () => {
                   </div>
                 </div>
                 <p className="text-xs text-yellow-600 mt-1">⚠️ Para birimini değiştirdiğinizde tüm fiyatlar otomatik dönüştürülecektir.</p>
+                <CurrencyRatePanel codes={['USD','EUR']} appliedSnapshot={exchangeRateSnapshots.yg} onApply={snapshot=>{ if(!snapshot)return; setExchangeRates({...snapshot.rates}); setExchangeRateSnapshots(previous=>({...previous,yg:snapshot})); }} />
               </div>
               {/* Direk Tipi Ayarlari */}
-              <div className="md:col-span-3 border-t pt-4 mt-2">
+              <div className="col-span-full border-t pt-4 mt-2">
                  <p className="text-xs font-bold text-gray-500 mb-2">DiREK TİPi TRAFOLAR (EMO Madde 3.1)</p>
                  <div className="grid grid-cols-3 gap-4">
                     <div>
@@ -2300,7 +2346,8 @@ const App = () => {
       <aside id="portal-modules" className="portal-module-drawer no-print" hidden={!isSidebarOpen} role="dialog" aria-modal="true" aria-labelledby="portal-module-title">
         <div className="portal-module-drawer__heading"><h2 id="portal-module-title">Şirket modülleri</h2><button type="button" ref={moduleCloseRef} onClick={() => { setIsSidebarOpen(false); moduleButtonRef.current?.focus(); }} aria-label="Modül menüsünü kapat"><X size={22} /></button></div>
         <nav aria-label="Şirket modülleri">
-          {['Teklifler', 'İş ve kayıtlar', 'Enerji ve kontrol', 'Bordro', ...(currentUser?.role === 'admin' ? ['Yönetim'] : [])].map(group => <div className="portal-module-group" key={group}><h3>{group}</h3>{PORTAL_MODULES.filter(item => item.group === group && (!item.adminOnly || currentUser?.role === 'admin')).map(item => <button type="button" key={item.id} disabled={item.draftOnly && !selectedCompany} aria-current={activeTab === item.id ? 'page' : undefined} onClick={() => { setActiveTab(item.id); setIsSidebarOpen(false); moduleButtonRef.current?.focus(); }}><span>{item.label}</span><ChevronRight size={16} /></button>)}</div>)}
+          <label className="employee-drawer-search"><Search size={18} aria-hidden="true" /><span className="sr-only">Modüllerde ara</span><input type="search" placeholder="Modül ara…" value={moduleSearch} onChange={event => setModuleSearch(event.target.value)} /></label>
+          {MODULE_GROUPS.map(group => { const items = availableModules(currentUser).filter(item => item.group === group && [item.label, item.description, ...(item.variants || []).map(variant => variant.label)].join(' ').toLocaleLowerCase('tr-TR').includes(moduleSearch.trim().toLocaleLowerCase('tr-TR'))); return items.length ? <div className="portal-module-group" key={group}><h3>{group}</h3>{items.map(item => <button type="button" key={item.id} disabled={item.draftOnly && !selectedCompany} aria-current={activeTab === item.id ? 'page' : undefined} onClick={() => { setActiveTab(item.id); setIsSidebarOpen(false); moduleButtonRef.current?.focus(); }}><span>{item.label}</span><ChevronRight size={16} /></button>)}</div> : null; })}
 
         </nav>
       </aside>
@@ -2310,15 +2357,19 @@ const App = () => {
         
         <div className="portal-module-toolbar no-print"><button type="button" ref={moduleButtonRef} onClick={() => setIsSidebarOpen(true)} aria-expanded={isSidebarOpen} aria-controls="portal-modules"><Menu size={20} /> Modüller</button><p>{PORTAL_MODULES.find(item => item.id === activeTab)?.label}</p></div>
 
+        {activeTab === 'uygulamalar' && <EmployeeHome user={currentUser} onSelect={setActiveTab} />}
+        {activeTab !== 'uygulamalar' && <header className="employee-domain-heading"><div><p className="employee-eyebrow">{currentModule?.group}</p><h1>{currentModule?.label}</h1><p>{currentModule?.description}</p></div><div className="employee-domain-actions">{activeVariant?.route && <button type="button" onClick={() => setNativeRefresh(value => value + 1)}><RefreshCw size={16} /> Kayıtları yenile</button>}<button type="button" onClick={() => setActiveTab('uygulamalar')}>Tüm uygulamalar <ChevronRight size={17} /></button></div></header>}
+        {variants.length > 1 && <nav className="employee-domain-tabs" data-employee-module-variants="" aria-label={`${currentModule?.label} bölümleri`}>{variants.map(variant => <button type="button" key={variant.id} aria-current={activeVariant?.id === variant.id ? 'page' : undefined} onClick={() => setActiveTab(activeTab, variant.id)}>{variant.label}</button>)}</nav>}
+        {activeVariant?.route ? <Suspense fallback={<ModuleLoading />}><EmployeeModule route={activeVariant.route} title={currentModule?.label} refreshKey={nativeRefresh} /></Suspense> : <>
         {/* GES Teklifi Tab */}
         {activeTab === 'ges' && (
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-4 md:gap-6 h-auto lg:h-[calc(100vh-200px)]">
+          <div className="max-w-7xl mx-auto flex flex-col xl:flex-row gap-4 md:gap-6 h-auto xl:h-[calc(100vh-200px)]">
             {/* Sol Panel - Editir */}
-            <div className="w-full lg:w-5/12 bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col overflow-hidden">
+            <div className="w-full xl:w-5/12 bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col overflow-hidden">
               <div className="bg-gradient-to-r from-yellow-600 to-orange-600 px-4 md:px-6 py-3 md:py-4 border-b border-yellow-800 shrink-0">
                 <h2 className="text-base md:text-lg font-bold text-white flex items-center">
                   <Zap className="mr-2 h-4 w-4 md:h-5 md:w-5"/>
-                  GES Teklifi Editiri
+                  GES Teklifi Editörü
                 </h2>
                 <p className="text-yellow-100 text-[10px] md:text-xs mt-1">Güneş Enerjisi Sistemi Fiyat Teklifi</p>
               </div>
@@ -2350,7 +2401,7 @@ const App = () => {
                       aria-invalid={gesError?.field === 'usdRate'}
                       aria-describedby="ges-validation"
                       value={gesForm.usdRate}
-                      onChange={(e) => setGesForm({...gesForm, usdRate: e.target.value})}
+                      onChange={(e) => { setGesForm({...gesForm, usdRate: e.target.value}); setExchangeRateSnapshots(previous=>({...previous,ges:null})); }}
                       step="0.01"
                       className="px-3 py-2 text-sm border rounded w-full"
                     />
@@ -2364,6 +2415,7 @@ const App = () => {
                       className="px-3 py-2 text-sm border rounded w-full"
                     />
                   </div>
+                  <CurrencyRatePanel codes={['USD']} appliedSnapshot={exchangeRateSnapshots.ges} onApply={snapshot=>{ if(!snapshot)return; setGesForm(previous=>({...previous,usdRate:snapshot.rates.USD})); setExchangeRateSnapshots(previous=>({...previous,ges:snapshot})); }} />
                   <div className="mt-3">
                     <label className="block text-xs font-medium text-gray-600 mb-1">Logo Yikle</label>
                     <input 
@@ -2386,7 +2438,7 @@ const App = () => {
 
                 {/* Hizli Paket Yikleyici */}
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <div className="flex items-end gap-2">
+                  <div className="portal-ges-package">
                     <div className="flex-1">
                       <label className="block text-xs font-medium text-gray-600 mb-1">Kurulu Güç (kW)</label>
                       <input 
@@ -2400,10 +2452,10 @@ const App = () => {
                         className="px-3 py-2 text-sm border rounded w-full"
                       />
                     </div>
-                    <div className="flex gap-1">
+                    <div className="portal-ges-package__actions">
                       <button 
                         onClick={loadDefaultGESPackage}
-                        className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded text-xs font-semibold transition h-[38px]"
+                        className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded text-xs font-semibold transition min-h-[42px]"
                         title="12kW Ev Tipi Paket"
                       >
                         <Users className="w-3 h-3 inline mr-1"/>
@@ -2411,7 +2463,7 @@ const App = () => {
                       </button>
                       <button 
                         onClick={loadCommercialGESPackage}
-                        className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded text-xs font-semibold transition h-[38px]"
+                        className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded text-xs font-semibold transition min-h-[42px]"
                         title="25kW Ticari Paket"
                       >
                         <Hammer className="w-3 h-3 inline mr-1"/>
@@ -2642,20 +2694,20 @@ const App = () => {
                   <div className="space-y-2 max-h-64 overflow-y-auto">
                     {gesItems.map((item, idx) => (
                       <div key={idx} className="bg-white p-3 rounded border border-gray-200 shadow-sm hover:shadow-md transition">
-                        <div className="flex gap-2 mb-2">
+                        <div className="portal-ges-description mb-2">
                           <input 
                             type="text" 
                             placeholder="Marka"
                             value={item.brand}
                             onChange={(e) => updateGESItem(idx, 'brand', e.target.value)}
-                            className="w-1/4 border px-2 py-1 rounded text-xs focus:ring-2 focus:ring-yellow-300 outline-none"
+                            className="border px-2 py-1 rounded text-xs focus:ring-2 focus:ring-yellow-300 outline-none"
                           />
                           <input 
                             type="text" 
                             placeholder="ürün Açıklaması"
                             value={item.desc}
                             onChange={(e) => updateGESItem(idx, 'desc', e.target.value)}
-                            className="w-3/4 border px-2 py-1 rounded text-xs focus:ring-2 focus:ring-yellow-300 outline-none"
+                            className="border px-2 py-1 rounded text-xs focus:ring-2 focus:ring-yellow-300 outline-none"
                           />
                           <button 
                             onClick={() => removeGESRow(idx)}
@@ -2665,8 +2717,8 @@ const App = () => {
                             <Trash2 className="w-4 h-4"/>
                           </button>
                         </div>
-                        <div className="flex gap-2">
-                          <div className="flex-1 flex items-center border rounded px-2 bg-gray-50">
+                        <div className="portal-ges-values">
+                          <div className="portal-ges-value border rounded px-2 bg-gray-50">
                             <span className="text-xs text-gray-500 mr-1">Adet:</span>
                             <input 
                               type="text"
@@ -2679,7 +2731,7 @@ const App = () => {
                               className="w-full bg-transparent py-1 outline-none text-right text-sm focus:bg-white"
                             />
                           </div>
-                          <div className="flex-1 flex items-center border rounded px-2 bg-gray-50">
+                          <div className="portal-ges-value border rounded px-2 bg-gray-50">
                             <span className="text-xs text-gray-500 mr-1">Birim($):</span>
                             <input 
                               type="text"
@@ -2693,7 +2745,7 @@ const App = () => {
                               className="w-full bg-transparent py-1 outline-none text-right text-sm focus:bg-white"
                             />
                           </div>
-                          <div className="flex-1 flex items-center border rounded px-2 bg-blue-50">
+                          <div className="portal-ges-value border rounded px-2 bg-blue-50">
                             <span className="text-xs text-blue-700 mr-1">Toplam:</span>
                             <span className="text-sm font-bold text-blue-800">{(() => { const qty=parseDecimal(item.qty,null),price=parseDecimal(item.price,null);return qty!==null&&qty>0&&price!==null&&price>=0?'$'+(qty*price).toFixed(2):'—'; })()}</span>
                           </div>
@@ -2708,7 +2760,7 @@ const App = () => {
                   <h3 className="text-sm font-bold text-yellow-800 uppercase mb-3">Ek Hizmetler & Kar marjı</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between items-center gap-2">
-                      <span className="flex-1">Montaj ve iilik (%)</span>
+                      <span className="flex-1">Montaj ve işçilik (%)</span>
                       <input 
                         type="text"
                         inputMode="decimal"
@@ -2817,7 +2869,7 @@ const App = () => {
             </div>
 
             {/* Sai Panel - inizleme */}
-            <div className="w-7/12 bg-gray-200 rounded-xl overflow-auto p-8 flex flex-col items-center gap-6">
+            <div className="w-full xl:w-7/12 bg-gray-200 rounded-xl overflow-auto p-8 flex flex-col items-center gap-6">
               
               {/* Editor Mode Banner */}
               {gesEditorMode && (
@@ -2841,7 +2893,7 @@ const App = () => {
                     <button 
                       onClick={() => document.execCommand('bold')}
                       className="p-2 hover:bg-gray-100 rounded border border-gray-300"
-                      title="Kalin"
+                      title="Kalın"
                     >
                       <Bold className="w-4 h-4"/>
                     </button>
@@ -2855,7 +2907,7 @@ const App = () => {
                     <button 
                       onClick={() => document.execCommand('underline')}
                       className="p-2 hover:bg-gray-100 rounded border border-gray-300"
-                      title="Alti izili"
+                      title="Altı çizili"
                     >
                       <Type className="w-4 h-4"/>
                     </button>
@@ -2864,9 +2916,9 @@ const App = () => {
                       onChange={(e) => document.execCommand('fontSize', false, e.target.value)}
                       className="px-2 py-1 border border-gray-300 rounded text-sm"
                     >
-                      <option value="">Yazi Boyutu</option>
-                      <option value="1">çok Kiik</option>
-                      <option value="2">Kiik</option>
+                      <option value="">Yazı Boyutu</option>
+                      <option value="1">Çok Küçük</option>
+                      <option value="2">Küçük</option>
                       <option value="3">Normal</option>
                       <option value="4">Büyük</option>
                       <option value="5">Çok Büyük</option>
@@ -3401,7 +3453,7 @@ const App = () => {
                       {proposal.data.form && (
                         <>
                           <div className="flex items-center justify-between">
-                            <span>Miteri:</span>
+                            <span>Müşteri:</span>
                             <span className="font-semibold truncate max-w-[150px]">{proposal.data.form.customerName}</span>
                           </div>
                           <div className="flex items-center justify-between">
@@ -3442,9 +3494,9 @@ const App = () => {
              allSavedProposals.ges.length === 0 && (
               <div className="bg-white rounded-xl shadow-lg p-12 text-center">
                 <Save className="w-16 h-16 text-gray-300 mx-auto mb-4"/>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">Heniz Kaydedilmi Teklif Yok</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">Henüz Kaydedilmiş Teklif Yok</h3>
                 <p className="text-gray-600 mb-6">
-                  Teklif formlarinda "Kaydet" butonunu kullanarak tekliflerinizi kaydedebilirsiniz.
+                  Teklif formlarında "Kaydet" butonunu kullanarak tekliflerinizi kaydedebilirsiniz.
                 </p>
                 <div className="flex gap-3 justify-center">
                   <button
@@ -3551,8 +3603,8 @@ const App = () => {
              <form onSubmit={handleManualSubmit} className="p-8 space-y-6">
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="col-span-2">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Firma Unvani</label>
+                    <div className="col-span-full">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Firma Unvanı</label>
                         <input 
                             required
                             type="text" 
@@ -3563,17 +3615,17 @@ const App = () => {
                         />
                     </div>
 
-                    <div className="col-span-2">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Yetkili adı Soyadi</label>
+                    <div className="col-span-full">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Yetkili Adı Soyadı</label>
                         <input 
                             required
                             type="text" 
-                            placeholder="Örn: Ahmet Yilmaz"
+                            placeholder="Örn: Ahmet Yılmaz"
                             value={manualForm.contactName}
                             onChange={(e) => setManualForm({...manualForm, contactName: e.target.value})}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-blue-50"
                         />
-                        <p className="text-xs text-gray-500 mt-1">Teklif mektubunda "Sayın [Ad Soyad] Yetkilisi" ieklinde kullanilacaktir.</p>
+                        <p className="text-xs text-gray-500 mt-1">Teklif mektubunda "Sayın [Ad Soyad] Yetkilisi" şeklinde kullanılacaktır.</p>
                     </div>
 
                     <div>
@@ -3581,7 +3633,7 @@ const App = () => {
                         <input 
                             required
                             type="text" 
-                            placeholder="Örn: Tekstil, Güçda"
+                            placeholder="Örn: Tekstil, Gıda"
                             value={manualForm.sector}
                             onChange={(e) => setManualForm({...manualForm, sector: e.target.value})}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
@@ -3614,14 +3666,14 @@ const App = () => {
                             />
                             <Zap className="absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">Birden fazla trafo için '+' ile ayirabilirsiniz.</p>
+                        <p className="text-xs text-gray-500 mt-1">Birden fazla trafo için '+' ile ayırabilirsiniz.</p>
                     </div>
 
                      {/* Yeni Eklenen Alan: Bölge/iehir Seimi */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
                             <MapPin className="w-4 h-4 mr-1 text-blue-600"/>
-                            Bölge/iehir (katsayı)
+                            Bölge/şehir (katsayı)
                         </label>
                         <div className="relative">
                             <select 
@@ -3658,15 +3710,15 @@ const App = () => {
                             onChange={(e) => setManualForm({...manualForm, customDiscount: parseFloat(e.target.value) || 0})}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-bold text-blue-800"
                         />
-                         <p className="text-xs text-gray-500 mt-1">Varsayilan: %{params.discountRate}</p>
+                         <p className="text-xs text-gray-500 mt-1">Varsayılan: %{params.discountRate}</p>
                     </div>
                 </div>
 
-                <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <div className="text-sm text-gray-500">
+                <div className="portal-quote-footer pt-4 border-t border-gray-100">
+                    <div className="portal-quote-footer__note text-sm text-gray-500">
                         <span className="font-bold text-blue-900">Hesap kapsamı:</span> {params.year} referans değerleri, {manualForm.region} katsayısı ve girilen %{manualForm.customDiscount} iskonto kullanılır. İki hücre temel kapsamdır; ek hücreler dahil değildir. Güncel ücret koşullarını teklif sorumlusu doğrular.
                     </div>
-                    <div className="flex gap-3">
+                    <div className="portal-quote-footer__actions">
                         <button 
                             type="button"
                             onClick={saveYGProposal}
@@ -3703,7 +3755,7 @@ const App = () => {
               <div className="space-y-4">
                 {/* Miteri Bilgileri */}
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                  <h3 className="text-sm font-semibold text-blue-800 mb-2">Miteri Bilgileri</h3>
+                  <h3 className="text-sm font-semibold text-blue-800 mb-2">Müşteri Bilgileri</h3>
                   <div className="grid gap-3">
                     <input 
                       type="text" 
@@ -4139,7 +4191,7 @@ const App = () => {
               <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
                 <h3 className="text-md font-bold text-gray-800 mb-4 flex items-center">
                   <Users className="w-5 h-5 mr-2 text-orange-600"/>
-                  Miteri Bilgileri
+                  Müşteri Bilgileri
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -4154,10 +4206,10 @@ const App = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Yetkili adı Soyadi</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Yetkili Adı Soyadı</label>
                     <input 
                       type="text" 
-                      placeholder="Örn: Ahmet Yilmaz"
+                      placeholder="Örn: Ahmet Yılmaz"
                       value={kesifCustomer.contactName}
                       onChange={(e) => setKesifCustomer({...kesifCustomer, contactName: e.target.value})}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition"
@@ -4190,7 +4242,7 @@ const App = () => {
               <div className="bg-gradient-to-br from-cyan-50 to-blue-50 p-6 rounded-xl border-2 border-cyan-200 shadow-lg">
                 <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
                   <Zap className="w-6 h-6 mr-2 text-cyan-600"/>
-                  ? Hızlı Teklif Arailari
+                  Hızlı Teklif Araçları
                 </h3>
                 
                 {/* Hizli Eriim Butonlari */}
@@ -4201,7 +4253,7 @@ const App = () => {
                     className="bg-white hover:bg-blue-50 border-2 border-blue-300 text-blue-700 px-4 py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 shadow"
                   >
                     <FileText className="w-4 h-4"/>
-                    Kayitli Teklifler
+                    Kayıtlı Teklifler
                     {savedQuotations.length > 0 && (
                       <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">{savedQuotations.length}</span>
                     )}
@@ -4422,7 +4474,7 @@ const App = () => {
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="font-bold text-blue-800 flex items-center">
                         <FileText className="w-4 h-4 mr-2"/>
-                        Kayitli Teklifler ({savedQuotations.length})
+                        Kayıtlı Teklifler ({savedQuotations.length})
                       </h4>
                       <button
                         type="button"
@@ -4474,7 +4526,7 @@ const App = () => {
                   className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 px-6 rounded-lg font-bold transition shadow-lg flex items-center justify-center gap-2"
                 >
                   <Sparkles className="w-6 h-6"/>
-                  ? Hazir Paket Ekle (Hızlı Teklif)
+                  Hazır Paket Ekle (Hızlı Teklif)
                 </button>
                 <p className="text-xs text-center text-gray-600 mt-2">
                   Kompanzasyon, ADP, Aydinlatma gibi hazir paketlerle hızlı teklif oluşturun
@@ -4541,7 +4593,7 @@ const App = () => {
                     }`}
                   >
                     <Wrench className="w-4 h-4 inline mr-2"/>
-                    Hizmet/iilik
+                    Hizmet/işçilik
                   </button>
                 </div>
 
@@ -4831,7 +4883,7 @@ const App = () => {
                       }}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
                     >
-                      <option value="">-- Kategori Seiçiniz --</option>
+                      <option value="">-- Kategori Seçiniz --</option>
                       {KabloFiyatData.kategoriler.map((kategori) => (
                         <option key={kategori.id} value={kategori.id}>
                           {kategori.ad}
@@ -4858,7 +4910,7 @@ const App = () => {
                         }}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition"
                       >
-                        <option value="">-- Kablo Seiçiniz --</option>
+                        <option value="">-- Kablo Seçiniz --</option>
                         {KabloFiyatData.kategoriler
                           .find(k => k.id === selectedCategoryForKesif)
                           ?.urunler.map((urun) => (
@@ -4872,7 +4924,7 @@ const App = () => {
 
                   {/* Fiyat Seimi */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Fiyat Seimi</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Fiyat Seçimi</label>
                     <div className="flex gap-4">
                       <label className="flex items-center">
                         <input 
@@ -4941,10 +4993,10 @@ const App = () => {
                 {productType === 'hizmet' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Hizmet/iilik adı *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Hizmet/işçilik Adı *</label>
                     <input 
                       type="text" 
-                      placeholder="Örn: iilik, Devreye Alma, Mihendislik Hizmeti"
+                      placeholder="Örn: İşçilik, Devreye Alma, Mühendislik Hizmeti"
                       value={hizmetAdi}
                       onChange={(e) => setHizmetAdi(e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
@@ -5320,7 +5372,7 @@ const App = () => {
                 className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white py-4 px-6 rounded-lg font-bold text-lg transition shadow-lg flex items-center justify-center"
               >
                 <FileText className="w-6 h-6 mr-3"/>
-                Teklif Önizlemesine Güçt
+                Teklif Önizlemesine Geç
               </button>
 
             </form>
@@ -5347,7 +5399,7 @@ const App = () => {
                   className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3 rounded-lg mb-3 transition shadow disabled:opacity-50"
                 >
                   <Mail className="h-5 w-5" />
-                  <span>? Teklif Sunum E-postası Yaz</span>
+                  <span>Teklif Sunum E-postası Yaz</span>
                 </button>
 
                 <button 
@@ -5356,7 +5408,7 @@ const App = () => {
                   className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white py-3 rounded-lg mb-3 transition shadow disabled:opacity-50"
                 >
                   <TrendingDown className="h-5 w-5" />
-                  <span>? Sektörel Enerji İpuçları</span>
+                  <span>Sektörel Enerji İpuçları</span>
                 </button>
 
                 {aiLoading && (
@@ -5375,7 +5427,7 @@ const App = () => {
                             <Copy className="h-4 w-4" />
                         </button>
                         <h4 className="text-xs font-bold text-gray-500 uppercase mb-2">
-                            {aiActiveFeature === 'email' ? 'E-posta Taslai' : 'Sektörel Tavsiyeler'}
+                            {aiActiveFeature === 'email' ? 'E-posta Taslağı' : 'Sektörel Tavsiyeler'}
                         </h4>
                         <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans leading-relaxed">
                             {aiOutput}
@@ -5525,7 +5577,7 @@ const App = () => {
                     <button 
                       onClick={() => document.execCommand('bold')}
                       className="p-2 hover:bg-gray-100 rounded border border-gray-300"
-                      title="Kalin"
+                      title="Kalın"
                     >
                       <Bold className="w-4 h-4"/>
                     </button>
@@ -5539,7 +5591,7 @@ const App = () => {
                     <button 
                       onClick={() => document.execCommand('underline')}
                       className="p-2 hover:bg-gray-100 rounded border border-gray-300"
-                      title="Alti izili"
+                      title="Altı çizili"
                     >
                       <Type className="w-4 h-4"/>
                     </button>
@@ -5548,9 +5600,9 @@ const App = () => {
                       onChange={(e) => document.execCommand('fontSize', false, e.target.value)}
                       className="px-2 py-1 border border-gray-300 rounded text-sm"
                     >
-                      <option value="">Yazi Boyutu</option>
-                      <option value="1">çok Kiik</option>
-                      <option value="2">Kiik</option>
+                      <option value="">Yazı Boyutu</option>
+                      <option value="1">Çok Küçük</option>
+                      <option value="2">Küçük</option>
                       <option value="3">Normal</option>
                       <option value="4">Büyük</option>
                       <option value="5">Çok Büyük</option>
@@ -5563,8 +5615,8 @@ const App = () => {
                       <option value="">Renk</option>
                       <option value="#000000">Siyah</option>
                       <option value="#1E3A8A">Mavi</option>
-                      <option value="#DC2626">Kirmizi</option>
-                      <option value="#059669">Yeil</option>
+                      <option value="#DC2626">Kırmızı</option>
+                      <option value="#059669">Yeşil</option>
                       <option value="#D97706">Turuncu</option>
                     </select>
                     <div className="w-px h-6 bg-gray-300"></div>
@@ -5585,7 +5637,7 @@ const App = () => {
                     <button 
                       onClick={() => document.execCommand('justifyRight')}
                       className="p-2 hover:bg-gray-100 rounded border border-gray-300"
-                      title="Saia Hizala"
+                      title="Sağa Hizala"
                     >
                       <AlignRight className="w-4 h-4"/>
                     </button>
@@ -5637,7 +5689,7 @@ const App = () => {
                                 {pageIndex === 0 && (
                                   <>
                                     <div className="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
-                                      <h3 className="text-[10pt] font-bold text-blue-800 mb-3 uppercase tracking-wide">Miteri Bilgileri</h3>
+                                      <h3 className="text-[10pt] font-bold text-blue-800 mb-3 uppercase tracking-wide">Müşteri Bilgileri</h3>
                                       <div className="grid grid-cols-2 gap-3 text-[9pt]">
                                         <div><strong>Firma/Kurum:</strong> {selectedCompany.name}</div>
                                         {selectedCompany.contactName && <div><strong>Yetkili:</strong> {selectedCompany.contactName}</div>}
@@ -6035,6 +6087,7 @@ const App = () => {
           </div>
         )}
 
+        </>}
       </div>
 
       {/* Hazir Paket Modal */}
@@ -6045,7 +6098,7 @@ const App = () => {
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Sparkles className="w-6 h-6 text-yellow-300"/>
-                <h2 className="text-xl font-bold text-white">Hazir Paket Seimi - Hızlı Teklif</h2>
+                <h2 className="text-xl font-bold text-white">Hazır Paket Seçimi - Hızlı Teklif</h2>
               </div>
               <button
                 onClick={() => {
@@ -6083,7 +6136,7 @@ const App = () => {
                     onChange={(e) => setPaketKarMarji(parseInt(e.target.value) || 30)}
                     className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-center font-bold text-green-700"
                   />
-                  <span className="text-sm text-gray-600">Ali fiyatlarına %{paketKarMarji} kar eklenir</span>
+                  <span className="text-sm text-gray-600">Alış fiyatlarına %{paketKarMarji} kar eklenir</span>
                 </div>
               </div>
             </div>
@@ -6122,7 +6175,7 @@ const App = () => {
             {selectedHazirPaket && (
               <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
                 <h3 className="text-sm font-bold text-gray-800 mb-3">
-                  ?? {HazirPaketler.paketler.find(p => p.id === selectedHazirPaket)?.ad} - ürün Listesi
+                  {HazirPaketler.paketler.find(p => p.id === selectedHazirPaket)?.ad} - Ürün Listesi
                 </h3>
                 <div className="max-h-48 overflow-y-auto bg-white rounded-lg border border-gray-200 p-3">
                   <table className="w-full text-xs">
@@ -6152,7 +6205,7 @@ const App = () => {
             {/* Footer */}
             <div className="px-6 py-4 bg-gray-100 border-t border-gray-200 flex items-center justify-between">
               <div className="text-sm text-gray-600">
-                <span className="font-semibold text-gray-800">{HazirPaketler.paketler.length}</span> farkli hazir paket mevcut
+                <span className="font-semibold text-gray-800">{HazirPaketler.paketler.length}</span> farklı hazır paket mevcut
               </div>
               <div className="flex gap-3">
                 <button
@@ -6214,8 +6267,8 @@ const App = () => {
                     <p className="text-sm text-gray-700 flex items-start gap-2">
                       <Lightbulb className="w-5 h-5 text-yellow-500 shrink-0 mt-0.5"/>
                       <span>
-                        <span className="font-bold text-indigo-700">Duzenleme ipucu:</span> Metni istediginiz gibi duzenleyebilir, 
-                        ardindan kopyalayip e-posta programiniza yapistirabilirsiniz.
+                        <span className="font-bold text-indigo-700">Düzenleme ipucu:</span> Metni istediğiniz gibi düzenleyebilir,
+                        ardından kopyalayıp e-posta programınıza yapıştırabilirsiniz.
                       </span>
                     </p>
                   </div>

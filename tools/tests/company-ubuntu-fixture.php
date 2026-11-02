@@ -117,6 +117,22 @@ try {
     file_put_contents(vg_company_dir() . '/catalog.json', vg_json_encode(['historicalInvoice1' => [['name' => 'Local catalog must not replace remote']], 'historicalInvoice2' => [], 'cablePrices' => [], 'packages' => []]));
     fixture_check(vg_company_catalog()['historicalInvoice1'], [], 'Configured Ubuntu catalog is authoritative over local cached catalog');
 
+    // Original Saha data is a separate source and deliberately has no company price catalog.
+    $sahaConfig = vg_company_saha_remote_config(array_merge($config, ['sahaHelper' => '/home/fixture/saha_store.py']));
+    fixture_check($sahaConfig['helper'], '/home/fixture/saha_store.py', 'Saha transport selects its private source helper');
+    fixture_check($sahaConfig['sahaSource'], true, 'Saha catalog exemption is stamped only by internal routing');
+    $sahaResponse = fixture_snapshot_response($state); unset($sahaResponse['catalog']);
+    $companyCatalog = ['historicalInvoice1' => [['name' => 'Company catalog remains authoritative']], 'historicalInvoice2' => [], 'cablePrices' => [], 'packages' => []];
+    $GLOBALS['vg_company_ubuntu_catalog'] = $companyCatalog;
+    $sahaSnapshot = vg_company_ubuntu_store(static function (array &$s, array $actor) { return ['data' => ['actor' => $actor['id'], 'version' => $s['version']]]; }, $sahaConfig, static function () use ($sahaResponse) { return $sahaResponse; });
+    fixture_check($sahaSnapshot['data'], ['actor' => 'synthetic-employee', 'version' => 1], 'Actual PHP adapter accepts authenticated catalog-free Saha snapshots');
+    fixture_check($GLOBALS['vg_company_ubuntu_catalog'], $companyCatalog, 'Saha snapshot cannot replace the existing company catalog');
+    unset($GLOBALS['vg_company_ubuntu_catalog']);
+    vg_company_ubuntu_store(static function () { return []; }, $sahaConfig, static function () use ($sahaResponse) { return $sahaResponse; });
+    fixture_check(array_key_exists('vg_company_ubuntu_catalog', $GLOBALS), false, 'Saha snapshot does not synthesize a global company catalog');
+    fixture_error(static function () use ($config, $sahaResponse) { vg_company_ubuntu_store(static function () { return []; }, $config, static function () use ($sahaResponse) { return $sahaResponse; }); }, 503, 'company_ubuntu_catalog', 'Main company adapter still requires the complete catalog');
+    $GLOBALS['vg_company_ubuntu_catalog'] = $companyCatalog;
+
     $server->rewriteCanonical = static function (array $row): array { if (isset($row['updated_at'])) $row['updated_at'] = '2026-10-13T12:00:00.123456+00:00'; return $row; };
     $oldToken = $server->token($state['tables']['products']['old-product']);
     $result = fixture_query($server, $config, 'products', 'update', ['rows' => ['price' => 12], 'filters' => [['op' => 'eq', 'field' => 'id', 'value' => 'old-product']], 'single' => 'one']);
@@ -238,6 +254,7 @@ try {
     $invalidConfigs = [
         '{broken',
         vg_json_encode(array_merge($config, ['password' => 'unexpected field'])),
+        vg_json_encode(array_merge($config, ['sahaSource' => true])),
         vg_json_encode(array_merge($config, ['host' => 'host; unsafe-command'])),
         vg_json_encode(array_merge($config, ['helper' => '/home/fixture/../secret.py'])),
         vg_json_encode(array_merge($config, ['site' => 'not-a-site-identity'])),
@@ -270,6 +287,38 @@ try {
         fixture_check($rejectedBrokenLink, true, 'Broken configuration symlink fails closed rather than activating local data');
         unlink($configFile);
     }
+    // Missing Saha configuration on production must never select an empty
+    // second store. The real authenticated account/MFA checks still apply.
+    $serverBefore = $_SERVER;
+    $callbackRuns = 0;
+    $readSaha = static function (array &$state, array $actor) use (&$callbackRuns): array {
+        $callbackRuns++;
+        return ['actor' => $actor['id'], 'records' => count($state['tables']['saha_records'])];
+    };
+    foreach ([
+        ['voltguard.example.test', '203.0.113.24'],
+        ['localhost', '203.0.113.24'],
+        ['voltguard.example.test', '127.0.0.1'],
+    ] as [$host, $peer]) {
+        $_SERVER['HTTP_HOST'] = $host; $_SERVER['REMOTE_ADDR'] = $peer;
+        $_SERVER['HTTP_X_FORWARDED_HOST'] = 'localhost'; $_SERVER['HTTP_X_FORWARDED_FOR'] = '127.0.0.1';
+        fixture_error(static function () use ($readSaha) { vg_company_store($readSaha, true); }, 503, 'company_saha_source_required', 'Production Saha cannot fall back from absent Ubuntu configuration');
+    }
+    fixture_check($callbackRuns, 0, 'Missing production source never invokes business callback');
+    fixture_check(is_file(vg_company_dir() . '/state.json'), false, 'Source configuration failure never creates local company state');
+    fixture_check(is_file(vg_company_dir() . '/store.lock'), false, 'Source configuration failure occurs before local store access');
+    fixture_check(vg_company_saha_source_status(null), ['required' => true, 'configured' => false, 'mode' => 'unconfigured', 'ready' => null], 'Production diagnostic distinguishes missing source from connectivity');
+    fixture_check(vg_company_saha_source_status($sahaConfig), ['required' => true, 'configured' => true, 'mode' => 'ubuntu', 'ready' => null], 'A configured source is not reported as connected without checking it');
+    $sessionBefore = $_SESSION['staff']; unset($_SESSION['staff']);
+    fixture_error(static function () use ($readSaha) { vg_company_store($readSaha, true); }, 401, 'staff_unauthorized', 'Source failure cannot bypass private employee authentication');
+    $_SESSION['staff'] = $sessionBefore;
+    foreach ([['localhost:4173', '127.0.0.1'], ['[::1]:4173', '::1']] as [$host, $peer]) {
+        $_SERVER['HTTP_HOST'] = $host; $_SERVER['REMOTE_ADDR'] = $peer;
+        fixture_check(vg_company_store($readSaha, true), ['actor' => 'synthetic-employee', 'records' => 0], 'Genuine loopback development retains authenticated synthetic local storage');
+        fixture_check($GLOBALS['vg_company_data_source'], 'local', 'Local development never inherits a stale Ubuntu source label');
+        fixture_check(vg_company_saha_source_status(null)['mode'], 'local-development', 'Local-only mode is explicit rather than an Ubuntu claim');
+    }
+    $_SERVER = $serverBefore;
     echo vg_json_encode(['ok' => true, 'checks' => $checks, 'sessionId' => session_id(), 'csrf' => vg_staff_csrf(), 'config' => $config]);
 } catch (Throwable $e) {
     fwrite(STDERR, get_class($e) . ': ' . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n");

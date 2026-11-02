@@ -5,8 +5,8 @@ deployment:
     # ONEMLI - cPanel deploy gorev listesi YAML olarak ayristirilir; bir gorev
     # satirinda iki-nokta+bosluk iceren komut (eski Turnstile echo uyarisi gibi)
     # ayristirmayi bozar ve deploy'u sessizce durdururdu. Gorev satirlarina iki-nokta+bosluk YAZMAYIN.
-    # Turnstile gizli anahtari (TURNSTILE_SECRET_KEY) sunucuda ortam degiskeni olarak set edilir; herkese acik
-    # site anahtari index.html icinde depoda tutulur (her deploy index.html dosyasinin uzerine yazar).
+    # Turnstile gizli anahtari ortamda veya docroot disi VG_DATA_DIR/turnstile-config.json icinde tutulur.
+    # Herkese acik site anahtari iletisim.html, sor.html ve fabrika-cozumleri.html icinde depodadir.
     #
     # SIRALAMA (guvenli deploy)
     #  1) Statik varliklar (fonts, css, js, assets, public) - HTML'den ONCE. Sayfalar css/js'i ?v=<surum> ile ister
@@ -25,7 +25,7 @@ deployment:
     - export VG_STAGEPATH=/home/voltgua2/vg-deploy-stage/
     - /bin/mkdir -p $VG_STAGEPATH
     # Sozdizimi hatali PHP canliya gitmesin. php komutu bulunamazsa adim atlanir, hata bulursa deploy burada durur.
-    - if command -v php >/dev/null 2>&1; then for f in api/*.php api/lib/*.php contact.php calisan/index.php calisan/uygulama/index.php volthaber/index.php magaza/index.php; do php -l "$f" >/dev/null || exit 1; done; fi
+    - if command -v php >/dev/null 2>&1; then for f in api/*.php api/lib/*.php contact.php calisan/index.php calisan/uygulama/index.php calisan/uygulama/saha.php volthaber/index.php magaza/index.php; do php -l "$f" >/dev/null || exit 1; done; fi
     # Install private URL protection before any private file is copied into the web root.
     - /bin/cp .htaccess $DEPLOYPATH
     # ----- 1) Statik varliklar -----

@@ -27,6 +27,8 @@ function pruneGenerated(directory){
  if(fs.lstatSync(absolute).isSymbolicLink())throw new Error('Generated assets cannot use directory links.');
  const actual=fs.realpathSync(absolute);if(!actual.startsWith(realTarget+path.sep))throw new Error('Generated assets escaped the company output.');
  for(const item of fs.readdirSync(absolute,{withFileTypes:true})){
+  // The independent Expo build replaces this protected subtree after Vite finishes.
+  if(relative==='assets'&&item.name==='saha')continue;
   const file=path.join(absolute,item.name);
   if(item.isSymbolicLink())throw new Error('Generated assets cannot use file links.');
   if(item.isDirectory()){pruneGenerated(file);if(fs.readdirSync(file).length===0)fs.rmdirSync(file);}
@@ -34,4 +36,5 @@ function pruneGenerated(directory){
  }
 }
 for(const folder of ['assets','fonts','licenses'])pruneGenerated(path.join(target,folder));
+require('./build-saha.cjs').build(root);
 console.log('Employee application built; HTML and all assets require employee authorization.');

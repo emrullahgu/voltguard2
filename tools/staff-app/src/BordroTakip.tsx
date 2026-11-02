@@ -2347,7 +2347,7 @@ TÜM TAKSİT PLANINI silmek istiyor musunuz?
 
       {/* HEADER */}
       <header className="bg-blue-900 text-white p-4 shadow-lg sticky top-0 z-40">
-        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
+        <div className="container mx-auto flex flex-col xl:flex-row flex-wrap justify-between items-center gap-3">
           <div className="flex items-center space-x-3">
             <Calculator className="w-8 h-8 text-yellow-400" />
             <div>
@@ -2357,24 +2357,24 @@ TÜM TAKSİT PLANINI silmek istiyor musunuz?
           </div>
           
           {/* TAB MENÜSÜ */}
-          <div className="flex bg-blue-800 p-1 rounded-lg">
+          <div className="flex flex-wrap bg-blue-800 p-1 rounded-lg">
              <button 
                 onClick={() => setActiveTab('summary')}
-                className={`flex items-center px-4 py-2 rounded-md text-sm font-bold transition-all ${activeTab === 'summary' ? 'bg-white text-blue-900 shadow' : 'text-blue-200 hover:text-white'}`}
+                className={`flex items-center shrink-0 px-4 py-2 rounded-md text-sm font-bold transition-all ${activeTab === 'summary' ? 'bg-white text-blue-900 shadow' : 'text-blue-200 hover:text-white'}`}
              >
                 <LayoutGrid className="w-4 h-4 mr-2"/>
                 GENEL BAKIŞ
              </button>
              <button 
                 onClick={() => setActiveTab('detail')}
-                className={`flex items-center px-4 py-2 rounded-md text-sm font-bold transition-all ${activeTab === 'detail' ? 'bg-white text-blue-900 shadow' : 'text-blue-200 hover:text-white'}`}
+                className={`flex items-center shrink-0 px-4 py-2 rounded-md text-sm font-bold transition-all ${activeTab === 'detail' ? 'bg-white text-blue-900 shadow' : 'text-blue-200 hover:text-white'}`}
              >
                 <List className="w-4 h-4 mr-2"/>
                 PERSONEL DETAY
              </button>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center justify-center gap-2">
             {/* Excel Import */}
             <div className="relative">
               <input 
@@ -2543,12 +2543,12 @@ TÜM TAKSİT PLANINI silmek istiyor musunuz?
         {/* VIEW 1: ÖZET TABLO */}
         {activeTab === 'summary' && (
             <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
+                <div className="p-4 border-b bg-gray-50 flex flex-wrap justify-between items-center gap-3">
                     <h2 className="font-bold text-gray-700 flex items-center text-lg">
                         <LayoutGrid className="w-5 h-5 mr-2 text-blue-600"/>
                         MAAŞ İCMAL TABLOSU ({currentYear}-{currentMonth + 1})
                     </h2>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-wrap gap-2">
                         <button 
                             onClick={exportToExcel}
                             className="bg-green-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-green-700 flex items-center shadow"

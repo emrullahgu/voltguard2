@@ -2,16 +2,30 @@
 
 ## Site sahibinin sunucuda yapması gerekenler (kontrol listesi)
 
-1. **Cloudflare Turnstile (iletişim / teklif / "Sor" formları)** — iki parça birlikte ayarlanır:
-   - Herkese açık *site anahtarı*: `index.html`, `sor.html`, `fabrika-cozumleri.html` içindeki
-     `data-sitekey="REPLACE_WITH_TURNSTILE_SITE_KEY"` değerini Cloudflare panelindeki site anahtarıyla değiştirin.
-     Anahtar yer tutucu kaldıkça sayfalar Turnstile betiğini **hiç yüklemez** (bozuk kutu görünmez).
-   - Gizli anahtar: sunucuda `TURNSTILE_SECRET_KEY` ortam değişkeni. **Gizli anahtarı yalnızca site anahtarı sayfalara
-     yazıldıktan sonra tanımlayın.** Gizli anahtar var ama formda jeton yoksa `contact.php` güvenli tarafta kalır (422
+1. **Cloudflare Turnstile (iletişim / teklif / "Sor" formları)** — widget oluşturuldu; gizli anahtarın PHP sunucusuna aktarılması ayrıca gerekir:
+   - Herkese açık *site anahtarı* `0x4AAAAAAFwNZyiBH3W2zOCa`, `iletisim.html`, `sor.html` ve `fabrika-cozumleri.html`
+     içinde tanımlıdır. Cloudflare widget modu **Managed**, izin verilen hostname değerleri `voltguard.com.tr` ve
+     `voltguard2.netlify.app`; pre-clearance kapalıdır. Bu açık anahtar gizli anahtarın yerini tutmaz.
+   - Gizli anahtar: sunucuda `TURNSTILE_SECRET_KEY` ortam değişkeni veya web kökü dışındaki özel veri dizininde
+     `turnstile-config.json` dosyası. Dosya biçimi: `{"secretKey":"SUNUCUDAKI_GIZLI_ANAHTAR","expectedHostname":"voltguard.com.tr"}`.
+     Dosya yalnızca PHP kullanıcısınca okunabilir olmalı (Unix: `0600`; dizin: `0700`); anahtar Git'e, HTML'e veya
+     `.htaccess` dosyasına yazılmaz. **Gizli anahtarı yalnızca site anahtarı sayfalara yazıldıktan sonra tanımlayın.**
+     Gizli anahtar var ama formda jeton yoksa `contact.php` güvenli tarafta kalır (422
      "Güvenlik doğrulaması yüklenemedi") ve `error_log`a yapılandırma uyarısı yazar.
-   - Gizli anahtar yoksa formlar çalışır; koruma alan doğrulama, bal tuzağı, IP başına 10 dakikada 5 ve site geneli
+     Üretim dosyası bu bilgisayarda `%LOCALAPPDATA%/VoltGuard/deployment-secrets/turnstile-config.json` altında,
+     yalnızca mevcut Windows kullanıcısına açık izinlerle saklanır; Git deposunda bulunmaz. cPanel tarafındaki
+     `VG_DATA_DIR/turnstile-config.json` konumuna özel aktarım yapılmalıdır; sunucuda doğrulanmadan PHP tarafında koruma etkin sayılmaz.
+   - Dolu ortam değerleri dosyadan önce gelir: `TURNSTILE_SECRET_KEY`, `TURNSTILE_EXPECTED_HOSTNAME`. Hostname değeri
+     yalnızca alan adı olmalı; URL, yol veya port içermez. Varsayılan `voltguard.com.tr` ve `www` karşılığı kabul edilir.
+     Özel dosya varsa geçerli JSON nesnesi olmalı; `secretKey` zorunlu, `expectedHostname` isteğe bağlıdır. Hatalı, fazla
+     büyük veya sembolik bağlantı olan dosya, ortam değeri olsa bile `503 configuration_invalid` döndürür; koruma sessizce kapanmaz.
+   - Gizli anahtar ve özel yapılandırma dosyası yoksa formlar çalışır; koruma alan doğrulama, bal tuzağı, IP başına 10 dakikada 5 ve site geneli
      saatte 40 mesaj sınırıdır (Turnstile açıkken saatte 120). Her gönderimde `error_log`a "bot doğrulaması kapalı" yazılır.
-   - Deploy sonrası bir test mesajı gönderip `info@voltguard.com.tr` kutusunda görün.
+   - İzole doğrulama: `node --test tools/tests/turnstile.test.cjs`. Testler geçici özel dizin, kapalı gerçek posta
+     fonksiyonu ve önizleme outbox modu kullanır; canlı posta veya veritabanına yazmaz. Gerçek widget ve sağlayıcı
+     bağlantısı ayrıca doğrulanmalıdır; Netlify statik vitrini PHP çalıştırmaz ve `/contact.php` isteği `404` döner.
+     Cloudflare'ın resmî test gizli anahtarları yalnızca açıkça `VG_MAIL_OUTBOX=1` ayarlanmış önizlemede kabul edilir;
+     posta teslimi etkin ortamda bu anahtarlar `503 configuration_invalid` ile reddedilir.
 2. **Ortam değişkenleri `.htaccess` ile verilmez**: deploy `.htaccess` dosyasının üzerine yazar ve `SetEnv` satırları kaybolur.
    cPanel → *MultiPHP INI Editor / LiteSpeed* ya da hosting panelinin ortam değişkeni ekranını kullanın
    (LiteSpeed'de `lsapi` için `.user.ini` docroot **dışındaki** PHP yapılandırmasıyla). Varsayılanlar canlı için uygundur;
@@ -220,3 +234,41 @@ Deploy sonrası hızlı kontrol: `/api/lib/bootstrap.php`, `/api/README.md`, `/_
 Kapsamlı uçtan uca test betiği (Node 18+, bağımlılıksız) geliştirme ortamında tutulur:
 `node api-test.mjs --base https://staging.example --static` (kayıt, giriş kilidi, CSRF/Origin, veri senkronu, sınırlar,
 şifre değiştirme/sıfırlama, dışa aktarma ve hesap silme). Canlı sunucuda çalıştırırken kayıt IP sınırına (10/saat) dikkat edin.
+
+## Veri ve yapay zekâ bağlantıları
+
+`/api/integrations.php` yanıt sözleşmesi `vg-integrations/1`'dir. Genel araç `/araclar/canli-veri-merkezi/`; PVGIS ve NASA sorguları `/voltsim/ges/` içindedir. Çalışan panelinde **Canlı veri ve yapay zekâ** modülü, **Veri servisleri** ve **Bağlı yapay zekâ** ekranlarını açar. YG/GES tekliflerindeki kurlar önce önizlenir; açık kullanıcı işlemiyle taslağa uygulanır ve kaynak/tarih bilgisiyle kaydedilir.
+
+Anahtarlar yalnız sunucu ortam değişkenlerinden veya `VG_DATA_DIR/integrations-secrets.json` dosyasından okunur. Bu dosya web kökü dışında olmalı; depoya, tarayıcıya, `.env` içeren statik pakete veya sohbete eklenmemelidir. Üretimde dosyayı PHP kullanıcısıyla erişilebilen özel dizinde `0600`, dizini `0700` izinleriyle tutun. Anahtar varlığı başarılı bağlantı doğrulaması değildir.
+
+Windows yerel önizleme için Windows PowerShell 5.1'de `powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/configure-integrations.ps1` çalıştırılır. Giriş maskelidir; yalnız seçilen servisin yeni değerleri özel dosyaya kilit altında birleştirilir. Boş giriş mevcut değeri korur. Anahtarlar canlı sunucuya otomatik aktarılmaz.
+
+| Servis | Sunucu ayarları |
+| --- | --- |
+| Gemini | `VG_GEMINI_API_KEY`, isteğe bağlı `VG_GEMINI_MODEL` |
+| Groq | `VG_GROQ_API_KEY`, isteğe bağlı `VG_GROQ_MODEL` |
+| OpenRouter | `VG_OPENROUTER_API_KEY`, isteğe bağlı `VG_OPENROUTER_MODEL` (yalnız ücretsiz modeller) |
+| Cloudflare Workers AI | `VG_CLOUDFLARE_ACCOUNT_ID`, `VG_CLOUDFLARE_API_TOKEN`, isteğe bağlı `VG_CLOUDFLARE_AI_MODEL` |
+| OpenWeather | `VG_OPENWEATHER_API_KEY` |
+| IPinfo Lite | `VG_IPINFO_TOKEN` |
+| EPİAŞ | `VG_EPIAS_USERNAME` + `VG_EPIAS_PASSWORD` veya kısa süreli `VG_EPIAS_TGT` |
+| Unsplash | `VG_UNSPLASH_ACCESS_KEY` |
+| TMDB | `VG_TMDB_TOKEN`; üretimde ayrıca lisans sağlandıktan sonra `VG_TMDB_COMMERCIAL_LICENSE=1` |
+| NewsAPI | `VG_NEWSAPI_KEY`; üretime uygun plan sağlandıktan sonra `VG_NEWSAPI_PRODUCTION_ALLOWED=1` |
+| CoinGecko / GitHub | İsteğe bağlı `VG_COINGECKO_DEMO_KEY` / `VG_GITHUB_TOKEN` |
+
+Gemini varsayılanı `gemini-3.5-flash-lite`, düşünme düzeyi `minimal`dir. Bu metin asistanında kısa yanıtın istek süresi
+sınırına sığması için seçilir; sağlayıcı gecikmesi veya kota garantisi vermez. `VG_GEMINI_MODEL=gemini-3.8-flash`
+açıkça ayarlanırsa desteklenen `low` düzeyi kullanılır. Gemini 3 ve sonraki sürümlere eski `temperature` ayarı gönderilmez;
+2.5 modellerinin mevcut istek ayarları korunur. Görsel veya bilinmeyen model adları için düşünme parametresi tahmin edilmez.
+Model değiştirme veya başka sağlayıcıya geçiş otomatik yapılmaz.
+
+PVGIS, NASA POWER, TCMB, Frankfurter, açık ExchangeRate-API, Nominatim, JSONPlaceholder ve DummyJSON için anahtar gerekmez. Nominatim yalnız kullanıcı düğmesiyle tesis adresi arar; otomatik tamamlama veya toplu sorgu yapılmaz. OpenWeather ücretsiz Current Weather uç noktasını kullanır. IPinfo Lite ülke/ASN sağlar; şehir koordinatı sunduğu varsayılmaz. Unsplash sonuçları kaynak ve fotoğrafçı bağlantılarıyla görüntülenir; kullanma/indirme işlemi sunulmaz. TMDB ticari lisansı ve NewsAPI üretim izni otomatik verilmez. Geliştirme istisnası hem `VG_INTEGRATIONS_LOCAL=1` hem gerçek loopback istemci ve yerel sunucu adı gerektirir; bu değişken üretimde etkinleştirilmemelidir.
+
+`GET action=status` yalnız durum ve uyarıları döndürür. Genel GET işlemleri: `pvgis`, `nasa_power`, `tcmb`, `frankfurter`, `exchange_rate`, `openweather`, `nominatim`, `coingecko`. EPİAŞ çalışan oturumu gerektirir; IPinfo, GitHub, Unsplash, TMDB, NewsAPI ve örnek veri alanı yönetici oturumuyla sınırlıdır. GitHub yalnız herkese açık depo alanlarını döndürür; örnek veriler şirket kayıtlarına yazılmaz.
+
+`POST action=ai_chat` çalışan MFA oturumu, aynı kaynak ve `X-VG-STAFF-CSRF` doğrulaması gerektirir. Seçilen sağlayıcıya yalnız açıkça gönderilen metin gider; şirket kayıtları kendiliğinden eklenmez, başka sağlayıcıya otomatik geçilmez, istemci isteği otomatik tekrarlanmaz. Model ve kota sağlayıcı hesabına bağlıdır. Ücretsiz kullanımın veri işleme koşulları ekran üzerinde gösterilir. Eski kapalı AI/ERP ekranlarının özelliği bu bağlantıyla açılmaz.
+
+İstekler sabit HTTPS kaynaklarına, genel IP çözümlemesi ve TLS doğrulamasıyla gönderilir; yönlendirme izlenmez. Yanıt boyutu ve süresi, kullanıcı/kaynak istek sayısı sınırlandırılır. Önbellek yalnız özel `integrations` dizinindedir, en fazla 512 sonuç / 32 MiB; geçersiz veya başarısız yanıt eski doğrulanmış sonucu değiştirmez. AI metinleri bu sonuç önbelleğine yazılmaz. EPİAŞ PTF birimi TRY/MWh ve ayrıca TRY/kWh olarak belirtilir; perakende fatura tarifesi değildir.
+
+Odaklı testler `tools/tests/integration-*.test.cjs`, `integrations-endpoint.test.cjs`, `saha-connected-*.test.cjs` dosyalarındadır. Tarayıcı doğrulamaları `node tools/tests/integration-public-browser.cjs`, `node tools/tests/integration-currency-browser.cjs` ve `node tools/tests/company-real-browser.cjs --record-only --record-suite=integration` ile izole verilerde çalışır. Anahtarı olan sağlayıcılar için gerçek bağlantı ayrıca kullanıcı sorgusuyla doğrulanmalıdır.

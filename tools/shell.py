@@ -53,7 +53,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SHELL_DIR = ROOT / 'tools' / 'shell'
 # The engineering builder applies these shared fragments itself; never rewrite its source or output here.
 SKIP_DIRS = {'.git', '.github', 'node_modules', 'tools', '__pycache__', '.vscode', '.idea', '.netlify',
-             'voltguardekleyelim', 'araclar', 'vesikalar', 'VoltGame', 'voltgame', '.netlify-publish', '.qa', '.claude'}
+             'voltguardekleyelim', 'araclar', 'vesikalar', 'VoltGame', 'voltgame', 'SahaTakip-main', '.netlify-publish', '.qa', '.claude'}
 
 FONTS_LINK = ('<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800'
               '&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">')
@@ -367,6 +367,9 @@ def discover(args_files):
         return [(Path(f) if Path(f).is_absolute() else Path.cwd() / f).resolve() for f in args_files]
     out = []
     for directory, names, files in os.walk(ROOT):
+        if Path(directory).relative_to(ROOT).as_posix() == 'calisan/uygulama':
+            names[:] = []
+            continue  # Its gated HTML is produced by the staff and Saha builders.
         names[:] = [name for name in names if name not in SKIP_DIRS]
         out.extend(Path(directory) / name for name in files
                    if name.endswith('.html') and not (Path(directory).name == 'calisan' and name.startswith('shared-')))

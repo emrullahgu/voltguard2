@@ -1,20 +1,31 @@
 # VoltGuard web sitesi
 
-VoltGuard kurumsal sitesi; hizmet sayfaları, bilgi bankası, akademi, 17 mevcut hesaplayıcı, mühendislik form kütüphanesi ve PHP üyelik sistemi içerir. `voltguardekleyelim` içindeki 51 açık erişimli mühendislik uygulaması aynı siteye `/araclar/` altında eklenmiştir.
+VoltGuard kurumsal sitesi; hizmet sayfaları, bilgi bankası, akademi, 17 mevcut hesaplayıcı, mühendislik form kütüphanesi ve PHP üyelik sistemi içerir. İlk aktarımdan genişletilen 55 açık erişimli mühendislik uygulaması aynı siteye `/araclar/` altında sunulur.
 
 ## Çalıştırma ve kontrol
 
-Node.js 24 veya üstü ile, proje kökünde:
+Node.js 24 veya üstü ve Python 3 ile, proje kökünde çalıştırın. Doğrulanan Python sürümü 3.12.10'dur; PHP test ve sunucu bağımlılıkları aşağıda açıklanır.
 
 ```text
 npm run setup:staff
+npm ci --prefix tools/saha-app --ignore-scripts --no-fund
 npm run setup:game
 npm run build
 npm test
 npm run preview
 ```
 
+`npm run build`, `tools/build-all.cjs` üzerinden on adımı sırayla çalıştırır. Her adımın adını ve süresini yazar; bir adım başarısız olur veya kesilirse sonraki çıktıları üretmeden durur ve hata koduyla çıkar. Python ve oyun/çalışan derleme bağımlılıkları uzun oyun derlemesinden önce kontrol edilir. `node tools/build-all.cjs --check` yalnız bu ön kontrolü, `--list` adım listesini çalıştırır. Python farklı bir yerdeyse `VG_PYTHON` ortam değişkenine çalıştırıcının tam yolunu verin.
+
+`npm test`, Node test koşucusuyla birim testlerini ve PHP/Python sarmalayıcılı entegrasyon testlerini çalıştırır; gerçek tarayıcı komutları aşağıda ayrıca listelenmiştir. GitHub Actions mevcut fatura kısıtı nedeniyle elle başlatılır ve test öncesi mühendislik çıktısını üretir. Ubuntu CI'nin ağsız konteyneri `tools/ci/` altında tanımlıdır. Test derleyicileri yerel Saha kurulumu veya CI'nin sabitlenmiş `NODE_PATH` paketlerinden alınır; bozuk yerel kurulum başka derleyiciyle gizlenmez.
+
+VoltSim kaynakları ve yeni modül ekleme adımları [geliştirme rehberinde](voltsim/README.md), ekli modül raporundaki 31 başlığın kaynaklarla karşılaştırması [denetim kaydında](tools/audit-report-reconciliation.json) bulunur.
+
+Bağımlılık taramasının kapsamı, uygulanan uyumlu yamalar ve büyük sürüm uyumluluk çalışması gerektiren kalan bulgular [bağımlılık incelemesinde](tools/dependency-audit-review.json) kayıtlıdır. CI derleyici kilidi güncellendiğinde kurulu Ubuntu imajının da ayrıca güncellenmesi gerekir; [CI kurulum rehberi](tools/ci/KURULUM.md) tam build context'ini ve özel token dosyasını koruyan adımları açıklar.
+
 Önizleme: `http://127.0.0.1:4173/araclar/`. Statik sayfalar, araçlar ve gerçek yayın güvenlik politikasıyla çalışır. PHP bulunduğunda üyelik, topluluk ve çalışan API'leri aynı adreste etkinleşir; `VG_PHP` ile PHP çalıştırıcısının tam yolu belirtilebilir. Bu cihazdaki doğrulanmış PHP çalıştırıcısı `.qa/php/runtime/php.exe` altındadır ve Git'e dahil değildir. PHP yoksa özel bölüm erişimi kapanır. İletişim formu canlı PHP sunucusu gerektirir. `npm run test:browser` Playwright ve Chrome bulunan ortamda araç tarayıcı kontrollerini çalıştırır.
+
+Gerçek çalışan önizlemesi `http://127.0.0.1:4173/calisan/uygulama/` adresidir ve mevcut çalışan girişi gerekir. `QA Yönetici` veya `Yerel geliştirme verileri` gösteren ayrı tarayıcı testleri gerçek kayıtların durumunu göstermez; bunlar kalıcı şirket verileriyle karıştırılmamalıdır. Görsel test ekranını gerçek veri önizlemesi olarak kullanıcıya sunmayın ve gerçek veriyi test deposuna taşımayın.
 
 Windows önizlemesinin üyelik, topluluk, çalışan hesabı ve özel PDF kayıtları `%LOCALAPPDATA%/VoltGuard/preview-data/<proje-özeti>` altında, web kökünün dışında tutulur. Şirket uygulaması Ubuntu bağlantısı yapılandırıldığında mevcut merkezi iş verilerini kullanır; bu bölümde yapılan gerçek kayıt değişiklikleri Ubuntu veritabanına yazılır. Testler ayrı geçici dizinler ve izole sentetik veritabanları kullanır; gerçek kullanıcıya, bordroya veya operasyon kaydına demo veri eklemez. Gerçek ilk yönetici daveti özel terminalden oluşturulur; kurulum için `api/STAFF.md` dosyasına bakın.
 
@@ -28,7 +39,7 @@ Windows önizlemesinin üyelik, topluluk, çalışan hesabı ve özel PDF kayıt
 - `api/`: PHP üyelik ve hesap verisi API'si; kurulum ve depolama ayrıntıları `api/README.md` içindedir.
 - `topluluk.html`, `api/community.php`: herkesin okuyup üyelik olmadan yorum ve yanıt yazabildiği bölüm. Moderatör kurulumu `api/COMMUNITY.md` içinde.
 - `calisan/`, `api/staff.php`: davetli çalışan sistemi, zorunlu doğrulayıcı uygulama, kişiye özel bordro ve PDF erişimi. `api/STAFF.md` kurulum ve yetkileri açıklar.
-- `tools/staff-app/`, `calisan/uygulama/`, `api/company.php`: 17 şirket uygulamasının düzenlenebilir kaynakları, korumalı yayın çıktısı ve özel kayıt API’si. `api/lib/company-ubuntu.php` ve `tools/ubuntu-company-bridge.py` mevcut Ubuntu veritabanına özel SSH bağlantısını sağlar. `api/COMPANY.md` kurulum ve yetkileri, `tools/staff-app/FEATURES.md` kaynak özelliklerinin envanterini açıklar.
+- `tools/staff-app/`, `tools/saha-app/`, `tools/employee-modules.json`, `calisan/uygulama/`, `api/company.php`: tek çalışan portalının kaynakları, ortak modül/rol kataloğu ve korumalı yayını. Kaynak modüller 38 iş alanında birleştirilir; eski projenin ayrı uygulaması, menüsü veya iframe'i açılmaz. `api/lib/company-ubuntu.php` özel SSH bağlantısını, `tools/ubuntu-company-bridge.py` mevcut şirket verilerini, `tools/ubuntu-saha-source.py` ise mevcut saha iş tablolarına canlı erişimi sağlar. `tools/saha-source-schema.json`, PHP alan izinlerinden üretilen şema bildirimidir; iş verisi içermez. `api/COMPANY.md` kurulum ve yetkileri, `tools/staff-app/FEATURES.md` kaynak özelliklerinin envanterini açıklar.
 - `tools/engineering/`: yeni araçların düzenlenebilir, seçilmiş kaynakları, kaynak/lisans kayıtları ve regresyon kontrolleri.
 - `tools/build-engineering.cjs`: kaynakları derler, ana alan adına ve düz araç yollarına uyarlar; yayın dosyalarını ve çevrimdışı ZIP paketini üretir.
 - `araclar/`: doğrudan yayınlanabilir çıktı. Bu klasördeki değişiklikleri kaynak tarafında yapıp yeniden derleyin.
@@ -54,7 +65,9 @@ Oyun site menüsünün altında kendi alanında çalışır; tam ekran düğmesi
 
 ## Entegrasyonda alınan kararlar
 
-51 araç `/araclar/<arac-adi>/` adreslerinden açılır. Kategori ve metin araması, yerel favoriler, PDF rapor, JSON proje yedeği ve çevrimdışı HTML/ZIP indirme özellikleri korunur. ENH, AG/OG dağıtım, GES, motor, devre, sinyal/RF, PCB ve sembol/şema araçları aynı katalogda bulunur. Kaynak ve yöntem açıklamaları ile lisans bildirimleri araçlarla birlikte yayınlanır.
+54 araç `/araclar/<arac-adi>/` adreslerinden açılır. Kategori ve metin araması, yerel favoriler, PDF rapor, JSON proje yedeği ve çevrimdışı HTML/ZIP indirme özellikleri korunur. ENH, AG/OG dağıtım, GES, motor, devre, sinyal/RF, PCB ve sembol/şema araçları aynı katalogda bulunur. Kaynak ve yöntem açıklamaları ile lisans bildirimleri araçlarla birlikte yayınlanır.
+
+Eğitim atölyeleri kategorisinde Fotondan Panele, Kaçak Akım ve İletken ve Boru araçları bulunur. Bu bağımsız görsel deneyler sırasıyla ideal hücre modelini, RCD akım dengesini ve faz/nötr iletkenlerinin manyetik çevrimini açık varsayımlarla anlatır; gerçek panel tasarımı, cihaz açma süresi veya boru sıcaklığı hesabı üretmez.
 
 Mevcut `/hesaplama/` ve `/hesaplama-araclari/` adresleri korunur. Ana menü, Mühendis Merkezi ve Hesap Araçları sayfasından yeni kataloğa ulaşılır. Canonical ve sosyal paylaşım adresleri `https://voltguard.com.tr/araclar/` temelini kullanır; araç sayfaları kök site haritasına eklenir.
 
@@ -66,9 +79,19 @@ Orijinal aktarımın şirket uygulaması, operasyon dosyaları, arşivleri ve ö
 
 `/calisan/` panelinden **Çalışan uygulamalarını aç** bağlantısı ile `/calisan/uygulama/` adresine ulaşılır. Teklif ve keşif-metraj, GES, görev/iş/ürün takibi, akaryakıt, OSOS dosya raporları, haftalık enerji raporları, periyodik kontrol, mavi ve beyaz yaka bordro, profil ve çalışan yönetimi birlikte çalışır. İş verileri mevcut Ubuntu/PostgreSQL veritabanından, fatura ürünleri, kablo fiyatları ve hazır paketler Ubuntu’daki özel katalog dosyalarından alınır; tarayıcı paketine veya Git’e gerçek fiyat satırları gömülmez.
 
+Varsayılan `?module=uygulamalar` ekranı 37 iş alanını aranabilir, kategorili kartlarla sunar. Müşteriler, iş emirleri, stok, filo, ofis, takvim ve diğer iş alanları aynı **Modüller** menüsünden doğrudan açılır; aynı alandaki eski ve yeni işlevler bölüm sekmelerinde birlikte bulunur. Katalogdaki 61 ekran girişi tüm 46 modül merkezini ve `Employees` personel listesini kapsar. `?module=musteriler&bolum=liste` gibi bağlantılar seçili iş alanını ve bölümünü korur. Görünür modüller, bölümler ve izinler `tools/employee-modules.json` kataloğundan gelir. Farklı kaynaklardaki kayıtlar ada, plakaya veya benzer tablo adına göre otomatik birleştirilmez. Personel ve hesap bağlantıları bölümü mevcut personel detayındaki ücret, puantaj ve açık hesap eşleme akışını kullanır. Kurulmamış yapay zekâ bağlantısı görünür bir çalışma modülü gibi sunulmaz.
+
+Aktarılan ekranlar mevcut sayfanın DOM'unda açık bir ShadowRoot içine bağlanır; iframe, ikinci oturum ve eski projenin ayrı giriş/ana menü kabuğu kullanılmaz. `EmployeeModule.jsx` doğrulanmış özel modül varlıklarını yükleyip seçili ekranı açar; stiller mevcut siteyi etkilemeden ayrılır. Eski `/calisan/uygulama/saha.php` adresi çalışan doğrulamasından sonra uygulama kartlarına yönlenir. Runtime dosyalarının listesi yalnız oturum ve MFA gerektiren `/api/company.php?action=module_assets` üzerinden alınır; ham manifest webden okunamaz.
+
+Modül merkezleri sitenin ortak kart, Inter/Outfit yazı ve lacivert/kehribar renk düzenini kullanır. Mobil uygulamanın yinelenen renkli başlıkları, geliştirme etiketleri ve alt menü için ayrılmış boşlukları portalda gösterilmez. Normal ekranlar içerikleri kadar uzayarak sayfayla birlikte kayar; harita, görüşme, kanban ve çok uzun sanal listeler kendi çalışma alanlarını korur. Yazı tipi uyarlaması yalnız aktarılan uygulama kaynaklarına uygulanır; ikon kütüphanelerinin sembol yazı tipleri değiştirilmez.
+
+Aktarılan operasyon modülleri, Ubuntu’daki `sb-sahatakip-db` konteynerinin mevcut izinli `public` iş tablolarını `tools/ubuntu-saha-source.py` üzerinden doğrudan okur ve günceller. Müşteri, iş emri, teklif ve teklif satırları için ayrı bir başlangıç aktarımı veya yeni boş veri deposu kullanılmaz. Kaynakta bulunmayan kayıtlar, ortak modül kayıtları, özel dosyalar ve tercihler aynı veritabanının `voltguard_site` özel şemasında tutulur. Eski Auth hesapları ve profil kayıtları yeni çalışan sistemine kopyalanmaz; native profilin UUID/rol izdüşümü ve kaynak ilişkisine bağlı özel kimlik eşlemeleri korunur. `app_saha_*` adları ve depo anahtarları görünen menüden bağımsız veri sözleşmesidir.
+
+İzinli şema 72 koleksiyondur. Kaynakta bulunmayan `visits`, özel uzantıda tutulur; ziyaret giriş/çıkışı ve `location_checkins` olayları tek sunucu işleminde kaydedilir. Aktif ziyaret yeniden açılışta yüklenir; sahiplik, sürüm karşılaştırması ve tekrar gönderim denetlenir. Ekipman, enerji ölçümü, satış ziyareti, form yanıtı ve araç akışları reddedilen sunucu yazmasını önbellek başarısına çeviremez; okuma hatası boş veri sayılmaz.
+
 Operasyon kayıtları şirket çalışanları arasında paylaşılır. Normal çalışan kendi bordrosunu okur; yönetici ve bordro sorumlusu bordroları yönetir. Hesap açma/yetki verme yalnızca yöneticidedir. Özel uygulamanın HTML, JavaScript, logo ve yazı tipleri dahil bütün dosyaları çalışan oturumu ve tamamlanmış doğrulama gerektirir. Bu bölüm çevrimdışı önbelleğe girmez.
 
-Ubuntu bağlantısı PHP sunucusundan özel SSH üzerinden yapılır; anahtar, bağlantı ayarı ve veritabanı yetkisi tarayıcıya gönderilmez. Davet, şifre, zorunlu MFA, çalışan yetkileri ve `/calisan/` panelinin özel PDF deposu yeni site sisteminde kalır. Eski Supabase hesabı yeni çalışan hesabı yerine kullanılmaz. Eski personel kaydını yeni çalışan hesabına yalnızca yetkili bordro yöneticisi açıkça bağlayabilir; e-posta veya ad benzerliği bordro erişimi vermez.
+Ubuntu bağlantısı PHP sunucusundan imzalı HTTPS veya özel SSH üzerinden yapılır; anahtar, bağlantı ayarı ve veritabanı yetkisi tarayıcıya gönderilmez. Davet, şifre, zorunlu MFA, çalışan yetkileri ve `/calisan/` panelinin özel PDF deposu yeni site sisteminde kalır. Eski Supabase hesabı yeni çalışan hesabı yerine kullanılmaz. Eski personel kaydını yeni çalışan hesabına yalnızca yetkili bordro yöneticisi açıkça bağlayabilir; e-posta veya ad benzerliği bordro erişimi vermez.
 
 Ubuntu modu yapılandırılmışken bağlantı hatası yerel boş kayda geçiş yapmaz; uygulama hatayı bildirir ve kayıt başarısı göstermez. Yerel dosya deposu yalnızca ayrı, açıkça yerel kurulmuş ortamlar ve sentetik testler içindir. Ubuntu’daki kayıtlarda sürüm karşılaştırması ve atomik işlemler eski uygulamada aynı anda yapılan değişikliklerin ezilmesini önler.
 
@@ -76,17 +99,29 @@ Dosya içe aktarma çalışır. Canlı OSOS/KOSBİ collector ve WorkTracker bağ
 
 `npm run setup:staff` kilitli bağımlılıkları kurar. `npm run test:staff-browser` giriş, modül yerleşimleri, dosya çıktıları ve gerçek PHP üzerinde kayıt akışlarını geçici sentetik verilerle kontrol eder. Ubuntu bağlantısının SQL kontrolleri yalnızca ayrı, `vg_bridge_qa_` önekli boş test veritabanında sentetik kayıtlarla çalıştırılır. Gerçek yönetici hesabına veya bordrolara test kaydı yazılmaz. Özel bağlantı, katalog ve yerel kurulum ayrıntıları `api/COMPANY.md` içindedir.
 
+`npm run test:employee-layout`, katalogdaki bütün çalışan bölümlerini ve bölüm sekmelerini 320, 390, 768, 1024 ve 1440 piksel genişlikte gerçek PHP ve ayrı sentetik kayıtlarla açar. Sayfa taşmasını, modül sınırını aşan kontrolleri, kesilen düğme yazılarını ve daralıp kullanılamaz hale gelen form alanlarını denetler. Başarısız ekranların görüntüleri ve raporlar `.qa/employee-layout/` altında tutulur. `npm test`, ortak kart yerleşiminin ekran ve kaydırma çubuğu genişliklerine ilişkin sınır kontrollerini de içerir.
+
+`npm run test:employee-consistency`, derlenmiş portal ve gerçek PHP üzerinde eşzamanlı ofis düzenleme çakışmasını ve reddedilen bakım planı kaydını geçici sentetik verilerle denetler. Sunucu reddinde taslağın korunmasını, kaydın önbellekte başarılı sayılmamasını ve açık yeniden deneme sonrası kalıcılığı doğrular.
+
+`npm run test:employee-nested`, katalog girişlerinden görünür gezinme kartlarına tıklayarak alt ekranları ayrı sentetik çalışan depolarında açar; rota, içerik, taşma ve JavaScript/API hatalarını raporlar. `.qa/employee-nested/coverage-report.json`, gerçekten ziyaret edilen ekranları, zorunlu kayıt parametresi isteyen veya görünür gezinme yolu bulunamayan ekranlardan ayrı tutar. Katalog yerleşim testi bütün alt ekranların iş akışlarının test edildiği anlamına gelmez. Derleme ve tarayıcı testleri aynı anda çalıştırılmamalıdır; testler tamamlanmış tek bir yayın paketini okumalıdır.
+
+`npm run test:employee-records`, gerçek PHP API'siyle geçici kayıtlar oluşturup görünür kontrol ve liste satırlarından detay/form ekranlarına gider. Cihaz, malzeme ve depo kaydı reddedildiğinde taslağı ve sunucu/önbellek tutarlılığını; açık yeniden denemede kalıcılığı denetler. Dört senaryo grubu aynı derlenmiş paket üzerinde ayrı sentetik verilerle çalışır. `.qa/employee-records/coverage-report.json`, yalnız aynı pakette başarıyla biten turları birleştirir; kapalı AI/entegrasyon servislerini, çözülemeyen gezinme yollarını ve gerçek donanım gerektiren kontrolleri ayrıca belirtir. Kamera/NFC izin ve eksik modül durumlarının açılması fiziksel tarama doğrulaması değildir.
+
+`npm run test:employee-deep`, form, araç/tahsilat ve oturum sınırlarını üç ayrı geçici veri kümesinde test eder. Gerçek sunucu sürümü değiştirildikten sonra eski formun reddini, taslağın korunmasını ve açık yeniden yükleme sonrası kalıcılığı doğrular. Oturum testi, iki sentetik MFA hesabı arasında gerçek çalışan çerezini değiştirip önceki hesaba ait başarılı yanıtı geciktirir; yeni hesabın ekranı ve özel önbelleği denetlenir. Bu testte yalnız izinli katalog girişleriyle açık runtime mount/unmount arayüzü kullanılır. `.qa/employee-deep/report.json`, aynı yayın paketinde tamamlanan tüm grupları ve özellikle beklenen reddetmeleri ayrı gösterir.
+
 ## Yayın
 
 `npm run build` çıktısı `araclar/` ve korumalı `calisan/uygulama/` altında tutulur ve cPanel yayın listesine eklenmiştir. cPanel'deki yayın işlemi hazır statik çıktıyı kopyalar; sunucuda Node kurulumu gerektirmez. Araç kaynakları değiştiğinde çıktıyı yeniden üretip kaynak ve yayın dosyalarını birlikte sürümleyin.
 
 Apache/LiteSpeed yönlendirmeleri `.htaccess`, Netlify karşılıkları `netlify.toml` içindedir. Dizinlerin `index.html` adresleri sonu `/` olan canonical adrese yönlenir. `tools/` ve orijinal aktarım klasörü doğrudan web erişimine kapalıdır. Netlify PHP çalıştırmadığı için üyelik, topluluk, iletişim ve çalışan bölümü için cPanel/PHP kurulumu gerekir. Çalışan hesabı ve PDF verileri web kökünün dışındaki özel dizinde bulunmalı; canlı sunucuda ilk yönetici ayrıca kurulmalıdır. Yerel davet ve oturumlar canlı sunucuya taşınmaz.
 
-Ubuntu verilerini kullanan cPanel veya başka bir yayın sunucusunda PHP’nin SSH işlemini başlatabilmesi, Ubuntu’ya özel ağ erişimi, SSH kullanıcı/anahtarı, doğrulanmış `known_hosts` kaydı ve özel `company/ubuntu.json` yapılandırması ayrıca gerekir. Geliştirme bilgisayarının Tailscale/SSH ayarları başka sunucuya kendiliğinden geçmez. Ubuntu bağlantısı doğrulanmadan bu bölüm yerel kopyaya yönlendirilmemelidir. Yayın sunucusundaki özel ayarlar ve SSH anahtarı site dosyalarıyla birlikte yayımlanmaz.
+Ubuntu verilerini kullanan cPanel için özel `company/ubuntu.json` sürüm 2, PHP'den imzalı HTTPS köprüsünü seçer; `proc_open`, SSH veya Tailscale istemcisi gerektirmez. Yalnız loopback dinleyen `tools/ubuntu-company-http.py`, mevcut HTTPS ters vekilindeki tam bir yoldan erişilir; imza, zaman, kalıcı nonce ve sabit yardımcı/yetki denetimleri kullanılır. Mevcut SSH sürüm 1 ayrıca korunur; bu taşıma için yayın sunucusunda SSH ve doğrulanmış `known_hosts` gerekir. Geliştirme bilgisayarının bağlantı ayarı cPanel'e kendiliğinden taşınmaz. Kaynak modüllerinde canlı bağlantı ayarı yoksa boş yerel kayıtlar gösterilmez. Özel bağlantı dosyası web kökünün dışında tutulur ve site dosyalarıyla yayımlanmaz. Kurulum ve doğrulama `api/COMPANY.md` içindedir.
+
+Operasyon modüllerinin PHP API, Ubuntu yardımcıları ve alan şeması uyumlu tutulur; mevcut `config.json`, `saha-config.json`, katalog yolları ve PHP `helper`/`site` değerleri korunur. Kaynak yardımcısının adı `saha_store.py` olarak kalır. Mevcut kuruluma 72. ziyaret koleksiyonunu ekleyen güncelleme yalnız güncel `company_store.py` ve `saha-source-schema.json` dosyalarını doğrulanmış özet ve yedekle değiştirir; SQL kurulumu veya gerçek kayıt yazımı gerektirmez. Ayrıntılı kurulum `api/COMPANY.md` içindedir. Netlify bu özel dosyaları yayımlamaz; çalışan portalı cPanel/PHP sunucusunda çalışır.
 
 Yeni araçlar mevcut kök `sw.js` önbelleğini kullanır; ikinci bir service worker kurulmaz. PDF ve Excel bağımlılıkları yereldir, uzak Google Fonts çağrıları kaldırılmıştır. Araçların mühendislik yöntemleri ve geçerlilik sınırları `/araclar/yontem/` sayfasında açıklanır.
 
-Yeni bölümün tüm 55 sayfası sitenin gerçek ortak menüsünü, özgün VoltGuard amblemini (`public/voltguard-logo.webp`) ve altbilgisini kullanır. Lacivert/kehribar renkleri, Outfit başlık ve Inter metin yazı tipleri, kartlar, düğmeler ve form alanları mevcut siteyle eşleştirilmiştir. Araçların özgün stilleri `#vg-tool-workspace` içinde sınırlandırılır; ortak menüye sızmaz. `assets/host-theme.css` ortak görsel düzeni uygular. Çevrimdışı ZIP aynı yerel yazı tiplerini ve menü varlıklarını içerir; PDF raporlarına site menüsü eklenmez.
+Yeni bölümün tüm 59 sayfası sitenin gerçek ortak menüsünü, özgün VoltGuard amblemini (`public/voltguard-logo.webp`) ve altbilgisini kullanır. Lacivert/kehribar renkleri, Outfit başlık ve Inter metin yazı tipleri, kartlar, düğmeler ve form alanları mevcut siteyle eşleştirilmiştir. Araçların özgün stilleri `#vg-tool-workspace` içinde sınırlandırılır; ortak menüye sızmaz. `assets/host-theme.css` ortak görsel düzeni uygular. Çevrimdışı ZIP aynı yerel yazı tiplerini ve menü varlıklarını içerir; PDF raporlarına site menüsü eklenmez.
 
 ## Entegrasyon doğrulaması
 

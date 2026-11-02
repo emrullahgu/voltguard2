@@ -1,0 +1,1 @@
+import React,{useEffect} from 'react'; import {View,Text} from 'react-native'; export default function NativeSecurity(){useEffect(()=>{window.top!.location.replace('/calisan/');},[]);return <View><Text>Çalışan güvenlik sayfası açılıyor…</Text></View>;}

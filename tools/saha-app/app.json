@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "VoltGuard Saha",
+    "slug": "voltguard-employee-saha",
+    "version": "1.0.0",
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png"
+    },
+    "experiments": {
+      "baseUrl": "/calisan/uygulama/assets/saha"
+    }
+  }
+}

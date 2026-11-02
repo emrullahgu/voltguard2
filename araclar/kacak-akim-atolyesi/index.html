@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kaçak Akım Atölyesi | VoltGuard</title><meta name="description" content="Faz, nötr ve kaçak akımın RCD toroidindeki dengesini görün; 30–500 mA anma değerlerini karşılaştırın."><meta name="robots" content="index,follow,max-image-preview:large"><meta name="theme-color" content="#0a1628"><link rel="canonical" href="https://voltguard.com.tr/araclar/kacak-akim-atolyesi/"><meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="VoltGuard"><meta property="og:title" content="Kaçak Akım Atölyesi | VoltGuard"><meta property="og:description" content="Faz, nötr ve kaçak akımın RCD toroidindeki dengesini görün; 30–500 mA anma değerlerini karşılaştırın."><meta property="og:url" content="https://voltguard.com.tr/araclar/kacak-akim-atolyesi/"><meta property="og:image" content="https://voltguard.com.tr/araclar/assets/voltguard-icon-512.png"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/voltguard-icon-64.png" type="image/png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Kaçak Akım Atölyesi","url":"https://voltguard.com.tr/araclar/kacak-akim-atolyesi/","description":"Faz, nötr ve kaçak akımın RCD toroidindeki dengesini görün; 30–500 mA anma değerlerini karşılaştırın.","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"tr-TR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":0,"priceCurrency":"TRY"},"publisher":{"@type":"Organization","name":"VoltGuard","url":"https://voltguard.com.tr"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VoltGuard","item":"https://voltguard.com.tr/"},{"@type":"ListItem","position":2,"name":"Kaçak Akım Atölyesi","item":"https://voltguard.com.tr/araclar/kacak-akim-atolyesi/"}]}]}</script><link rel="stylesheet" href="../shared/tool-shell.css"><link rel="stylesheet" href="../shared/export.css"><style>
+:where(#vg-tool-workspace) *{box-sizing:border-box}#vg-tool-workspace{margin:0;background:#f3f6fa;color:#162b43;font:15px/1.6 'Segoe UI',Arial,sans-serif}:where(#vg-tool-workspace) .rcd-lab{max-width:1180px;padding:22px 18px;margin:auto}:where(#vg-tool-workspace) .rcd-intro{max-width:76ch;color:#51677e}:where(#vg-tool-workspace) .rcd-grid{display:grid;grid-template-columns:minmax(270px,.8fr) minmax(0,1.7fr);gap:20px;align-items:start}:where(#vg-tool-workspace) .rcd-panel{background:#fff;border:1px solid #dce4ed;border-radius:16px;padding:22px;margin:0 0 20px}:where(#vg-tool-workspace) .rcd-panel h2{font-size:21px;margin:0 0 12px}:where(#vg-tool-workspace) .rcd-panel h3{font-size:17px;margin:20px 0 10px}:where(#vg-tool-workspace) .rcd-kicker{color:#a16400;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}:where(#vg-tool-workspace) .rcd-field{display:block;font-weight:650;margin:15px 0}:where(#vg-tool-workspace) .rcd-field input,:where(#vg-tool-workspace) .rcd-field select{display:block;width:100%;min-width:0;margin:6px 0;padding:10px 12px;border:1px solid #b4c5d6;border-radius:8px;font:inherit;color:#16324c;background:#fff}:where(#vg-tool-workspace) .rcd-field small{display:block;font-weight:400;color:#526a80}:where(#vg-tool-workspace) .rcd-actions{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px}:where(#vg-tool-workspace) .rcd-actions button{cursor:pointer;min-height:42px;border:1px solid #ccd8e4;border-radius:8px;background:#eef4fa;color:#1c4265;font:650 13px 'Segoe UI',Arial,sans-serif;padding:9px 12px}:where(#vg-tool-workspace) .rcd-actions button:hover{background:#dfeaf5}:where(#vg-tool-workspace) .rcd-actions button:focus-visible,:where(#vg-tool-workspace) .rcd-field :focus-visible{outline:3px solid #eab23f;outline-offset:3px}:where(#vg-tool-workspace) .rcd-actions .rcd-primary{color:#fff;background:#143754;border-color:#143754}:where(#vg-tool-workspace) .rcd-note{font-size:13px;color:#4e647a}:where(#vg-tool-workspace) .rcd-error{padding:12px;border-radius:9px;background:#fff0f0;color:#9b2736}:where(#vg-tool-workspace) .rcd-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}:where(#vg-tool-workspace) .rcd-stat{padding:14px;background:#f0f5fa;border-radius:10px;font-size:12px;color:#4e657b}:where(#vg-tool-workspace) .rcd-stat strong{display:block;color:#153652;font-size:23px;overflow-wrap:anywhere}:where(#vg-tool-workspace) .rcd-diagram{display:block;width:100%;height:auto;background:#f5f8fc;border:1px solid #dce6f0;border-radius:12px}:where(#vg-tool-workspace) .rcd-diagram text{font:15px 'Segoe UI',Arial,sans-serif;fill:#193b59}:where(#vg-tool-workspace) .rcd-diagram .rcd-small{font-size:12px}:where(#vg-tool-workspace) .rcd-diagram .rcd-wire{fill:none;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}:where(#vg-tool-workspace) .rcd-status{padding:14px 16px;border-radius:10px;background:#e9f3ef;border-left:4px solid #3d7b60}:where(#vg-tool-workspace) .rcd-status[data-zone="possible"]{background:#fff4dc;border-left-color:#bb800e}:where(#vg-tool-workspace) .rcd-status[data-zone="required"]{background:#feeeeb;border-left-color:#c05240}:where(#vg-tool-workspace) .rcd-status strong{display:block;font-size:16px}:where(#vg-tool-workspace) .rcd-status p{margin:4px 0 0;font-size:14px}:where(#vg-tool-workspace) .rcd-table-wrap{overflow-x:auto}:where(#vg-tool-workspace) .rcd-table{width:100%;border-collapse:collapse;font-size:13px}:where(#vg-tool-workspace) .rcd-table th,:where(#vg-tool-workspace) .rcd-table td{text-align:left;padding:11px 9px;border-bottom:1px solid #dde6ef;vertical-align:top}:where(#vg-tool-workspace) .rcd-table th{color:#4c657e;font-size:12px}:where(#vg-tool-workspace) .rcd-table tr[data-selected="true"]{background:#fff4d7}:where(#vg-tool-workspace) .rcd-zone{display:inline-block;padding:3px 7px;border-radius:5px;background:#e9f3ef;white-space:normal}:where(#vg-tool-workspace) .rcd-zone[data-zone="possible"]{background:#fff1cc}:where(#vg-tool-workspace) .rcd-zone[data-zone="required"]{background:#fbe7e3}:where(#vg-tool-workspace) .rcd-lesson{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}:where(#vg-tool-workspace) .rcd-lesson article{padding:16px;border-radius:10px;background:#f2f6fa}:where(#vg-tool-workspace) .rcd-lesson h3{margin:0 0 8px}:where(#vg-tool-workspace) .rcd-lesson p{margin:0;font-size:14px}:where(#vg-tool-workspace) .rcd-formula{padding:14px 16px;background:#edf3f9;border-radius:8px;font-family:ui-monospace,Consolas,monospace;overflow-wrap:anywhere}:where(#vg-tool-workspace) .rcd-detail{border-top:1px solid #dce6ef;padding:12px 0}:where(#vg-tool-workspace) .rcd-detail summary{cursor:pointer;font-weight:650}:where(#vg-tool-workspace) .rcd-detail p{margin:10px 0}:where(#vg-tool-workspace) .rcd-source{font-size:13px;color:#50687f}:where(#vg-tool-workspace) .rcd-source a{color:#1a627e;text-underline-offset:3px}:where(#vg-tool-workspace) .rcd-report-inputs{font-size:13px;color:#52677c}@media(max-width:800px){:where(#vg-tool-workspace) .rcd-grid{grid-template-columns:1fr}:where(#vg-tool-workspace) .rcd-lesson{grid-template-columns:1fr}:where(#vg-tool-workspace) .rcd-panel{padding:17px}:where(#vg-tool-workspace) .rcd-stats{gap:7px}:where(#vg-tool-workspace) .rcd-stat{padding:10px}:where(#vg-tool-workspace) .rcd-stat strong{font-size:19px}:where(#vg-tool-workspace) .rcd-lab{padding:16px 12px}}@media(max-width:400px){:where(#vg-tool-workspace) .rcd-stats{grid-template-columns:1fr}:where(#vg-tool-workspace) .rcd-stat strong{font-size:22px}}@media print{:where(#vg-tool-workspace) .rcd-controls{display:none!important}:where(#vg-tool-workspace) .rcd-grid{display:block}:where(#vg-tool-workspace) .rcd-lab{padding:0}:where(#vg-tool-workspace) .rcd-panel{border:0;padding:8px}:where(#vg-tool-workspace) .rcd-lesson{grid-template-columns:repeat(3,minmax(0,1fr))}:where(#vg-tool-workspace) .rcd-stats,:where(#vg-tool-workspace) .rcd-diagram,:where(#vg-tool-workspace) tr{break-inside:avoid}}
+:where(#vg-tool-workspace) .rcd-lab [hidden]{display:none!important}
+</style><link rel="stylesheet" href="../shared/tool-theme.css"><link rel="stylesheet" href="/css/fonts.css?v=3680cd14c522"><link rel="stylesheet" href="/css/fa-subset.css?v=1eb3ee5f5be2"><link rel="stylesheet" href="/css/vg-shell.css?v=5c8e44a56be2"><script src="/js/vg-shell.js?v=c97b3cdc9a27" defer></script><script src="/js/vg-metrics.js?v=906f1f067ec5" defer data-vg-online-only></script><script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer data-vg-online-only></script><meta name="color-scheme" content="light dark"><script data-vg-theme-init>(function(d){var t,m;try{t=localStorage.getItem('vg-theme')}catch(e){}if(t!=='dark'&&t!=='light'){try{m=matchMedia('(prefers-color-scheme: dark)').matches}catch(e){}t=m?'dark':'light'}d.documentElement.setAttribute('data-theme',t)})(document)</script><style>:root{color-scheme:light}:root[data-theme=dark]{color-scheme:dark;background:#0a1220}</style><link rel="stylesheet" href="../assets/host-theme.css?v=91900d9408e4"></head><body data-vg-tool="kacak-akim-atolyesi" data-vg-title="Kaçak Akım Atölyesi" data-vg-vendor-base="../vendor/" data-vg-storage-keys="[]" class="vg-engineering vg-engineering--tool"><a class="skip-to-content" href="#main">Ana içeriğe geç</a>
+<header data-vg-no-print class="vg-header doc-header" id="vgHeader">
+  <div class="vg-header__bar vg-wrap">
+    <a class="vg-brand" href="/" aria-label="VoltGuard Ana Sayfa">
+      <img class="vg-brand__image" src="/public/voltguard-logo-transparent.webp" width="50" height="50" alt="" decoding="async">
+      <span class="vg-brand__copy" aria-hidden="true">
+        <span class="logo-mark"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+        <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+      </span>
+    </a>
+    <a class="vg-search vg-search--bar" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+    <button class="vg-burger" id="vgBurger" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="vgNav"><span></span><span></span><span></span></button>
+    <nav class="vg-nav" id="vgNav" aria-label="Ana menü">
+      <ul class="vg-nav__list">
+        <li class="vg-nav__home"><a class="vg-nav__link" href="/">Ana Sayfa</a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdHizmetler">Hizmetler</button>
+          <div class="vg-dd__menu vg-dd__menu--mega" id="vgDdHizmetler">
+            <div class="vg-dd__cols">
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblTrafo">Trafo ve yüksek gerilim</span>
+                <ul aria-labelledby="vgDdLblTrafo">
+                  <li><a class="vg-dd__link" href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/trafo-bakimi.html">Trafo ve OG Hücre Bakımı</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/trafo-merkezi-kurulumu.html">Trafo Merkezi Kurulumu</a></li>
+                </ul>
+              </div>
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblOlcum">Ölçüm, kontrol ve verimlilik</span>
+                <ul aria-labelledby="vgDdLblOlcum">
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-periyodik-kontrol.html">Elektrik Periyodik Kontrol</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/topraklama-olcumu.html">Topraklama Ölçümü</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/enerji-kalitesi-olcumu.html">Enerji Kalitesi Ölçümü</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon Panosu</a></li>
+                </ul>
+              </div>
+              <div class="vg-dd__group">
+                <span class="vg-dd__label" id="vgDdLblProje">Proje, uygulama ve otomasyon</span>
+                <ul aria-labelledby="vgDdLblProje">
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-projesi.html">Elektrik Projesi</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-pano-imalati.html">Elektrik Pano İmalatı</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/elektrik-taahhut.html">Elektrik Taahhüt</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/plc-scada-otomasyon.html">PLC ve SCADA Otomasyon</a></li>
+                  <li><a class="vg-dd__link" href="/hizmetler/fabrika-cati-ges.html">Fabrika Çatı GES</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="vg-dd__foot">
+              <a class="vg-dd__more" href="/hizmetler/" data-vg-match="/hizmetler/">Tüm hizmetler</a>
+              <a class="vg-dd__more" href="/fabrika-cozumleri.html">Fabrikalar için çözümler</a>
+            </div>
+          </div>
+        </li>
+        <li><a class="vg-nav__link" href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+        <li class="vg-dd" data-vg-dd>
+          <button class="vg-nav__link vg-dd__btn" type="button" aria-expanded="false" aria-controls="vgDdKurumsal">Kurumsal</button>
+          <div class="vg-dd__menu" id="vgDdKurumsal">
+            <ul>
+              <li><a class="vg-dd__link" href="/hakkimizda.html">Hakkımızda</a></li>
+              <li><a class="vg-dd__link" href="/projeler.html">Projeler ve Referanslar</a></li>
+              <li><a class="vg-dd__link" href="/haberler.html">Sahadan Haberler</a></li>
+              <li><a class="vg-dd__link" href="/ekibimiz.html">Ekibimiz</a></li>
+                <li><a class="vg-dd__link" href="/dokumanlar.html">Belgeler ve İndirmeler</a></li>
+              <li><a class="vg-dd__link" href="/iletisim.html">İletişim</a></li>
+              <li><a class="vg-dd__link" href="/calisan/giris.html">Çalışan Girişi</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a class="vg-nav__link" href="/teknik-kaynaklar.html" data-vg-match="/teknik-kaynaklar.html">Teknik Kaynaklar</a></li>
+        <li class="vg-nav__feature"><a class="vg-nav__link vg-nav__link--sim" href="/voltsim/" data-vg-match="/voltsim/"><svg class="vg-nav__feature-icon" viewBox="0 0 24 24" width="22" height="22" focusable="false" aria-hidden="true"><path d="m12 3 9 5v8l-9 5-9-5V8zm0 10 9-5M12 13 3 8m9 5v8"/></svg>VoltSim<span class="vg-new" aria-hidden="true">3D</span></a></li>
+        <li class="vg-nav__feature"><a class="vg-nav__link" href="/voltgame.html"><svg class="vg-nav__feature-icon" viewBox="0 0 24 24" width="22" height="22" focusable="false" aria-hidden="true"><path d="M7 7h10a4 4 0 0 1 4 3.4l1 6.2a2.5 2.5 0 0 1-4.2 2.2L15 16H9l-2.8 2.8A2.5 2.5 0 0 1 2 16.6l1-6.2A4 4 0 0 1 7 7Z"/><path d="M7 10v4m-2-2h4m7-1h.01M19 13h.01"/></svg>VoltGame</a></li>
+        <li class="vg-nav__feature"><a class="vg-nav__link" href="/volthaber/" data-vg-match="/volthaber/"><svg class="vg-nav__feature-icon" viewBox="0 0 24 24" width="22" height="22" focusable="false" aria-hidden="true"><path d="M5 4h15v15a2 2 0 0 1-2 2H5a3 3 0 0 1-3-3V8h3m0-4v14a1 1 0 0 1-2 0"/><path d="M9 8h7m-7 4h7m-7 4h3m3 0h1"/></svg>VoltHaber</a></li>
+      </ul>
+      <div class="vg-nav__foot">
+        <button class="vg-theme vg-theme--row" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg><span class="vg-theme__txt" data-vg-theme-text>Koyu tema</span></button>
+        <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+        <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
+      </div>
+    </nav>
+    <div class="vg-actions">
+      <button class="vg-theme" type="button" data-vg-theme-toggle aria-pressed="false" aria-label="Koyu temaya geç" title="Koyu temaya geç"><svg class="vg-theme__moon" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="vg-theme__sun" viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+      <a class="vg-search" href="/arama.html" aria-label="Sitede ara" data-vg-match="/arama.html"></a>
+      <a class="vg-account" data-vg-account data-vg-match="/hesap/" href="/hesap/giris.html">Üye Girişi</a>
+      <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
+    </div>
+  </div>
+  <div class="vg-scrim" data-vg-scrim aria-hidden="true"></div>
+</header><div id="main" tabindex="-1"><div id="vg-top"><div class="vg-topline"><nav class="vg-links" aria-label="Araç menüsü"><a class="vg-back" href="../#araclar">← Tüm araçlar</a><a class="vg-back" href="/hesaplama-araclari/">Pratik hesaplar →</a><a class="vg-back" href="/">VoltGuard ana sayfa ↗</a></nav></div><p class="vg-crumb">Eğitim atölyeleri / Kaçak Akım Atölyesi</p><h1>Kaçak Akım Atölyesi</h1><p class="vg-description">Faz, nötr ve kaçak akımın RCD toroidindeki dengesini görün; 30–500 mA anma değerlerini karşılaştırın.</p><details><summary>Girdiler, sonuçlar ve hesap yöntemi</summary><div class="vg-method"><strong>Girdiler:</strong> Yük akımı (A RMS), toroid dışından dönen kaçak akım (mA RMS) ve 30/100/300/500 mA RCD anma değeri.<br><strong>Çıktılar:</strong> Faz/nötr şeması, artık akım, seçili AC deney bölgesi, dört anma değerinin karşılaştırması ve PDF/proje çıktıları.<br><strong>Yöntem:</strong> Tek fazlı 50 Hz, aynı faz açısındaki sinüzoidal AC akımların farkı; 0,5×IΔn ve IΔn deney bölgeleri. Açma süresi hesaplanmaz. <a href="../yontem/">Kaynak ve geçerlilik bilgileri →</a></div></details></div><div id="vg-tool-workspace"><main class="rcd-lab">
+<p class="rcd-intro">Fazdan çıkan akımın tamamı nötrden dönmezse ne olur? Yükü ve kaçak akımı değiştirin; toroidin gördüğü farkı ve dört farklı anma değerinin açma bölgelerini karşılaştırın.</p>
+<div class="rcd-grid"><section class="rcd-panel rcd-controls"><div class="rcd-kicker">01 · Devreyi değiştir</div><h2>Akım dengesi</h2><form id="rcd-form">
+<label class="rcd-field" for="rcd-load">Yük akımı (A RMS)<input id="rcd-load" inputmode="decimal" value="10" required><small>Yükün faz ve nötrden geçen dengeli akımı.</small></label>
+<label class="rcd-field" for="rcd-leak">Toprağa kaçak akım (mA RMS)<input id="rcd-leak" inputmode="decimal" value="20" required><small>Fazdan beslenen, toroidin dışından dönen ek akım.</small></label>
+<label class="rcd-field" for="rcd-rating">Seçili RCD · IΔn<select id="rcd-rating"><option value="30">30 mA</option><option value="100">100 mA</option><option value="300">300 mA</option><option value="500">500 mA</option></select></label>
+<div class="rcd-actions"><button class="rcd-primary" type="submit">Dengeyi hesapla</button><button id="rcd-reset" type="button" class="secondary">Sıfırla</button></div>
+<h3>Hazır deneyler</h3><div class="rcd-actions"><button type="button" data-rcd-preset="balanced" class="secondary">Dengeli devre · 0 mA</button><button type="button" data-rcd-preset="tolerance" class="secondary">Tolerans bölgesi · 20 mA</button><button type="button" data-rcd-preset="trip" class="secondary">Anma üzeri · 45 mA</button><button type="button" data-rcd-preset="compare" class="secondary">Eşikleri karşılaştır · 200 mA</button></div></form>
+<p id="rcd-error" class="rcd-error" role="alert" hidden></p><p class="rcd-note">Bu deney 50 Hz sinüzoidal AC artık akım içindir. Gerçek cihazın açma süresini, seçiciliğini veya tesis uygunluğunu hesaplamaz.</p></section>
+<section class="rcd-panel" id="printReport"><div class="rcd-kicker">02 · Farkı izle</div><h2>Toroid ne görüyor?</h2><p id="rcd-input-summary" class="rcd-report-inputs"></p>
+<svg class="rcd-diagram" viewBox="0 0 720 360" role="img" aria-labelledby="rcd-circuit-title rcd-circuit-desc"><title id="rcd-circuit-title">RCD faz, nötr ve kaçak akım devresi</title><desc id="rcd-circuit-desc">Faz ve nötr toroidin içinden geçer. Koruma iletkeni toroidin dışındadır. Kaçak akım faz ile nötr akımının farkını oluşturur.</desc><defs><marker id="rcd-arrow-l" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#b85b36"/></marker><marker id="rcd-arrow-n" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#3478ae"/></marker></defs><rect x="29" y="80" width="97" height="166" rx="12" fill="#e5edf5" stroke="#b6c9d9"/><text x="77" y="153" text-anchor="middle">Kaynak</text><text x="77" y="176" class="rcd-small" text-anchor="middle">50 Hz AC</text><ellipse cx="323" cy="169" rx="74" ry="99" fill="#e5edf4" stroke="#92aabe" stroke-width="4"/><ellipse cx="323" cy="169" rx="42" ry="70" fill="#f5f8fc" stroke="#b1c4d4" stroke-width="2"/><path class="rcd-wire" d="M126 118H574" stroke="#b85b36"/><path class="rcd-wire" d="M574 222H126" stroke="#3478ae"/><path d="M170 118H214" stroke="#b85b36" stroke-width="3" marker-end="url(#rcd-arrow-l)"/><path d="M213 222H169" stroke="#3478ae" stroke-width="3" marker-end="url(#rcd-arrow-n)"/><rect x="574" y="85" width="116" height="165" rx="12" fill="#e5edf5" stroke="#b6c9d9"/><text x="631" y="156" text-anchor="middle">Yük</text><text id="rcd-svg-load" x="631" y="179" text-anchor="middle" class="rcd-small">10 A</text><text id="rcd-svg-phase" x="161" y="95">L · 10,02 A</text><text id="rcd-svg-neutral" x="159" y="254">N · 10 A</text><path id="rcd-leak-path" class="rcd-wire" d="M511 118V294H632V322" stroke="#3a8168" stroke-dasharray="8 6"/><path d="M612 322H652M618 330H646M625 338H639" stroke="#3a8168" stroke-width="3"/><text id="rcd-svg-leak" x="450" y="316" text-anchor="end" class="rcd-small">Kaçak · 20 mA</text><text x="323" y="40" text-anchor="middle">RCD · ortak toroid</text><text id="rcd-svg-residual" x="323" y="175" text-anchor="middle" font-weight="700">Δ 20 mA</text><text x="323" y="286" text-anchor="middle" class="rcd-small">L ve N içinden · PE dışından</text><circle cx="511" cy="118" r="5" fill="#b85b36"/></svg>
+<div class="rcd-stats"><div class="rcd-stat">Faz akımı · IL<strong id="rcd-phase">—</strong></div><div class="rcd-stat">Nötr dönüşü · IN<strong id="rcd-neutral">—</strong></div><div class="rcd-stat">Artık akım · IΔ<strong id="rcd-residual">—</strong></div></div>
+<div class="rcd-status" id="rcd-status" role="status" aria-live="polite"><strong id="rcd-status-title"></strong><p id="rcd-status-note"></p></div>
+<h3>Aynı kaçak, farklı IΔn</h3><div class="rcd-table-wrap"><table class="rcd-table"><thead><tr><th scope="col">Anma değeri</th><th scope="col">0,5 × IΔn</th><th scope="col">IΔ / IΔn</th><th scope="col">AC deney bölgesi</th></tr></thead><tbody id="rcd-comparison"></tbody></table></div>
+<p class="rcd-note">Tablo, açma öncesindeki akım değerlerini karşılaştırır. 0,5 × IΔn değerinde açmama; 0,5 × IΔn ile IΔn arasında olası açma; IΔn ve üzerinde ise belirtilen AC deney koşullarında açma şartı gösterilir. Gerçek eşik ve süre cihazın tipine ve deney şartlarına bağlıdır.</p>
+<h3>Hesap yöntemi ve sınırları</h3><p class="rcd-formula">IN = Iyük · IL = Iyük + Ikaçak / 1000<br>IΔ = |IL − IN| × 1000 = Ikaçak (mA)</p><p class="rcd-note">Tek fazlı, 50 Hz ve aynı faz açısındaki sinüzoidal AC akımları için eğitim modelidir. Farklı faz açılarındaki RMS akımları genel olarak doğrudan çıkarılamaz. Gerçek RCD anlık akım toplamını algılar. Açma süresi, seçicilik, DC bileşeni, harmonikler ve cihaz arızası modellenmez. Ayrı RCCB aşırı yük/kısa devre koruması sağlamaz; artık akım oluşmayan temaslar algılanmayabilir. Sonuçlar güvenli temas akımı veya tesis uygunluk onayı değildir.</p><p class="rcd-source">Teknik kaynaklar: <a href="https://www.electrical-installation.org/enwiki/Sensitivity_of_RCDs_to_disturbances" target="_blank" rel="noopener">Schneider Electric · açma toleransı</a>, <a href="https://www.electrical-installation.org/enwiki/Types_of_RCDs" target="_blank" rel="noopener">RCD tipleri</a>, <a href="https://doepke.co.uk/technical-publications/rcd-testing-18th-edition-basics/" target="_blank" rel="noopener">Doepke · AC deney koşulları</a>. Bağımsız VoltGuard eğitim uygulaması.</p></section></div>
+<section class="rcd-panel" id="rcd-learning"><div class="rcd-kicker">03 · Mantığı kur</div><h2>Üç noktada kaçak akım koruması</h2><div class="rcd-lesson"><article><h3>Akımları karşılaştırır</h3><p>Yük akımı ortak toroidde birbirini dengeler. Toroidin dışından dönen artık akım bu dengeyi bozar. PE, ortak toroidin içinden geçirilmez.</p></article><article><h3>Anma değeri tek eşik değildir</h3><p>30 mA etiketi, her cihazın tam 30,000 mA'da açtığı anlamına gelmez. Sinüzoidal AC deneyinde bir açma tolerans aralığı vardır.</p></article><article><h3>Dalga biçimi önemlidir</h3><p>AC, A, F ve B tanımları algılanan artık akım dalga biçimlerini belirtir. Otomatik sigortalardaki B/C/D açma eğrileriyle karıştırılmaz.</p></article></div>
+<details class="rcd-detail"><summary>AC, A, F ve B tipleri nasıl ayrılır?</summary><p><strong>AC:</strong> Sinüzoidal alternatif artık akım. <strong>A:</strong> Buna ek olarak darbeli DC artık akım. <strong>F:</strong> A tipine ek olarak belirli karma frekanslı artık akımlar. <strong>B:</strong> Bunlara ek olarak düzgün DC ve cihazın tanımlı frekans aralığındaki akımlar. Seçim, ekipmanın üretici bilgileri ve tesis koşullarıyla yapılır; bu atölye bir tip seçme tablosu değildir.</p></details>
+<details class="rcd-detail"><summary>RCD hangi durumları tek başına çözmez?</summary><p>Ayrı bir RCCB aşırı yük ve kısa devre koruması sağlamaz; RCBO bu işlevleri birleştirir. Faz ile nötr arasında toroidde dengeli kalan bir temas, artık akım oluşturmayabilir. RCD, bütün elektrik çarpmalarını engellediği veya bir akım seviyesinin güvenli olduğu anlamına gelmez. Burada insan vücudu akımı, yaralanma olasılığı veya güvenli temas süresi modellenmez.</p></details>
+<details class="rcd-detail"><summary>Bu sayfadaki hesap modeli ve kaynaklar</summary><p class="rcd-formula">IN = Iyük<br>IL = Iyük + Ikaçak / 1000<br>IΔ = |IL − IN| × 1000 = Ikaçak (mA)<br>Oran = IΔ / IΔn</p><p class="rcd-note">Tek fazlı, 50 Hz sinüzoidal akımların aynı fazda olduğu basit eğitim modeli kullanılır. Farklı faz açılarındaki RMS değerlerini doğrudan çıkarmak genel olarak geçerli değildir; gerçek RCD anlık akımların toplamını algılar. Kaçak akımın kaynağı ve dönüş yolu şemada ideal kabul edilir. Açma süresi, selektif/gecikmeli tipler, DC bileşeni, harmonikler, topraklama direnci ve mekanik cihaz arızası hesaplanmaz.</p><p class="rcd-source">Bağımsız VoltGuard eğitim uygulaması. Teknik kaynaklar: <a href="https://www.electrical-installation.org/enwiki/Sensitivity_of_RCDs_to_disturbances" target="_blank" rel="noopener">Schneider Electric · açma toleransı</a>, <a href="https://www.electrical-installation.org/enwiki/Types_of_RCDs" target="_blank" rel="noopener">Schneider Electric · RCD tipleri</a>, <a href="https://doepke.co.uk/technical-publications/rcd-testing-18th-edition-basics/" target="_blank" rel="noopener">Doepke · AC deney koşulları</a>. Kaynaklar 31.10.2026 tarihinde incelendi. Kod, metin ve çizim VoltGuard için hazırlanmıştır.</p></details></section></main>
+<script data-vg-core="rcd-lab">
+(function(root){'use strict';
+const ratings=[30,100,300,500],defaults={load:'10',leak:'20',rating:'30'},zones={none:{title:'Açmama bölgesi',note:'Sinüzoidal AC deneyinde artık akım 0,5 × IΔn değerini aşmıyor. Bu bölge, temasın güvenli olduğu anlamına gelmez.'},possible:{title:'Açma mümkün · tolerans bölgesi',note:'Artık akım 0,5 × IΔn üzerinde, IΔn altında. Uygun bir cihaz bu aralıkta açabilir; kesin açma veya açmama sonucu verilemez.'},required:{title:'AC deneyinde açma gerekir',note:'Artık akım IΔn değerine ulaşıyor veya aşıyor. Uygun ve çalışan cihaz, standardın belirtilen sinüzoidal AC deney koşullarında açmalıdır. Bu ekran açma süresi vermez.'}};
+function number(value,label){if(typeof value!=='number'&&typeof value!=='string')throw Error(label+': sayı gerekir.');const s=String(value).trim();if(!/^[+]?(?:\d+(?:[.,]\d*)?|[.,]\d+)$/.test(s))throw Error(label+': geçerli, pozitif veya sıfır bir sayı girin.');const n=Number(s.replace(',','.'));if(!Number.isFinite(n))throw Error(label+': sonlu sayı gerekir.');return n;}
+function normalize(p){if(!p||typeof p!=='object'||Array.isArray(p))throw Error('Devre girdileri geçersiz.');const load=number(p.load,'Yük akımı'),leak=number(p.leak,'Kaçak akım'),rating=number(p.rating,'Anma değeri');if(load>1000||leak>10000)throw Error('Yük 0–1000 A, kaçak 0–10000 mA aralığında olmalıdır.');if(!ratings.includes(rating))throw Error('Anma değeri 30, 100, 300 veya 500 mA olmalıdır.');return{load,leak,rating};}
+function classify(leak,rating){const ratio=leak/rating,zone=leak<=rating*.5?'none':leak<rating?'possible':'required';return{rating,ratio,half:rating*.5,zone,...zones[zone]};}
+function analyze(raw){const p=normalize(raw);return{...p,phase:p.load+p.leak/1000,neutral:p.load,residual:p.leak,selected:classify(p.leak,p.rating),comparison:ratings.map(r=>classify(p.leak,r))};}
+function importState(s){if(!s||s.version!==1||s.tool!=='kacak-akim-atolyesi'||!s.values||typeof s.values!=='object'||Array.isArray(s.values)||Object.keys(s.values).length!==3||Object.keys(defaults).some(k=>typeof s.values[k]!=='string'||s.values[k].length>50))throw Error('Kaçak Akım Atölyesi proje dosyası geçersiz.');normalize(s.values);return{...s.values};}
+const api={ratings,defaults,normalize,classify,analyze,importState};root.VGRCDLab=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;if(typeof document==='undefined')return;
+const $=id=>document.getElementById(id),fmt=(v,digits=6)=>v.toLocaleString('tr-TR',{maximumSignificantDigits:digits}),ids=Object.keys(defaults);let result=null;
+function values(){return Object.fromEntries(ids.map(k=>[k,$('rcd-'+k).value]));}function state(){return{version:1,tool:'kacak-akim-atolyesi',values:values()};}
+function calculate(){try{result=analyze(values());document.documentElement.dataset.vgInvalid='false';$('rcd-error').hidden=true;$('printReport').hidden=false;$('rcd-input-summary').textContent='Yük: '+fmt(result.load)+' A · Kaçak: '+fmt(result.leak)+' mA · Seçili IΔn: '+result.rating+' mA · 50 Hz sinüzoidal AC';$('rcd-phase').textContent=fmt(result.phase)+' A';$('rcd-neutral').textContent=fmt(result.neutral)+' A';$('rcd-residual').textContent=fmt(result.residual)+' mA';$('rcd-svg-load').textContent=fmt(result.load)+' A';$('rcd-svg-phase').textContent='L · '+fmt(result.phase)+' A';$('rcd-svg-neutral').textContent='N · '+fmt(result.neutral)+' A';$('rcd-svg-leak').textContent='Kaçak · '+fmt(result.leak)+' mA';$('rcd-svg-residual').textContent='Δ '+fmt(result.residual)+' mA';$('rcd-leak-path').setAttribute('opacity',result.leak>0?'1':'.25');$('rcd-status').dataset.zone=result.selected.zone;$('rcd-status-title').textContent=result.rating+' mA · '+result.selected.title;$('rcd-status-note').textContent=result.selected.note;$('rcd-comparison').replaceChildren();for(const c of result.comparison){const tr=document.createElement('tr');tr.dataset.selected=String(c.rating===result.rating);for(const text of[c.rating+' mA'+(c.rating===result.rating?' · seçili':''),fmt(c.half)+' mA',fmt(c.ratio,4)+' ×']){const td=document.createElement('td');td.textContent=text;tr.append(td);}const td=document.createElement('td'),span=document.createElement('span');span.className='rcd-zone';span.dataset.zone=c.zone;span.textContent=c.title;td.append(span);tr.append(td);$('rcd-comparison').append(tr);}return result;}catch(e){result=null;document.documentElement.dataset.vgInvalid='true';$('rcd-error').textContent=e.message;$('rcd-error').hidden=false;$('printReport').hidden=true;return null;}}
+function setValues(v){for(const k of ids)$('rcd-'+k).value=v[k];calculate();}function setState(s){const validated=importState(s);setValues(validated);}function buildReport(){if(!calculate())throw Error('Rapor için devre girdilerini düzeltin.');return $('printReport');}
+$('rcd-form').addEventListener('submit',e=>{e.preventDefault();calculate();});$('rcd-form').addEventListener('input',calculate);$('rcd-form').addEventListener('change',calculate);$('rcd-reset').addEventListener('click',()=>setValues(defaults));const presets={balanced:{load:'10',leak:'0',rating:'30'},tolerance:defaults,trip:{load:'10',leak:'45',rating:'30'},compare:{load:'10',leak:'200',rating:'30'}};for(const b of document.querySelectorAll('[data-rcd-preset]'))b.addEventListener('click',()=>setValues(presets[b.dataset.rcdPreset]));root.VoltGuardExportAdapter={getState:state,setState,flush:calculate,buildReport};root.buildReport=buildReport;root.VGRCDLabUI={calculate,state,setState};calculate();
+})(typeof window!=='undefined'?window:globalThis);
+</script></div><div id="vg-origin">VoltGuard · Açık kaynak uyarlamaları ve yeni araçlar · <a href="../yontem/">Yöntem ve kaynaklar</a></div><script src="../shared/export.js" defer></script><script>try{localStorage.setItem('voltguard:recent',JSON.stringify({slug:"kacak-akim-atolyesi",name:"Kaçak Akım Atölyesi"}))}catch(e){}if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script></div><footer data-vg-no-print class="footer vg-footer" id="vgFooter" role="contentinfo">
+  <div class="vg-footer__cta">
+    <div class="vg-wrap vg-footer__cta-in">
+      <div class="vg-footer__cta-text">
+        <strong>Fabrikanız için ücretsiz keşif ve teklif</strong>
+        <span>Elektrik, otomasyon ve enerji ihtiyacınızı yerinde birlikte değerlendirelim.</span>
+      </div>
+      <div class="vg-footer__cta-btns">
+        <a class="vg-cta" href="/iletisim.html#iletisim">Teklif Al</a>
+        <a class="vg-cta vg-cta--ghost" href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="vg-wrap">
+    <div class="vg-footer__grid">
+      <div class="vg-footer__brand">
+        <a href="/" class="vg-footer__logo" aria-label="VoltGuard Ana Sayfa">
+          <img class="vg-brand__image" src="/public/voltguard-logo-transparent.webp" width="50" height="50" alt="" loading="lazy" decoding="async">
+          <span class="vg-brand__copy" aria-hidden="true">
+            <span class="logo-mark logo-mark--footer"><span class="logo-mark__volt">Volt</span><span class="logo-mark__guard">Guard</span></span>
+            <span class="logo-mark__tagline" lang="en">ENGINEERING SOLUTIONS</span>
+          </span>
+        </a>
+        <p class="vg-footer__desc">Elektrik tesisleri, otomasyon ve enerji sistemleri için keşif, proje, uygulama ve bakım. Ege Teknopark, İzmir.</p>
+        <ul class="vg-footer__contact">
+          <li><a href="tel:+905454346735"><i class="fas fa-phone-alt" aria-hidden="true"></i> 0545 434 67 35</a></li>
+          <li><a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp ile yazın</a></li>
+          <li><a href="mailto:info@voltguard.com.tr"><i class="fas fa-envelope" aria-hidden="true"></i> info@voltguard.com.tr</a></li>
+        </ul>
+        <address class="vg-footer__addr"><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span>Ege Teknopark, Bornova / İzmir</span></address>
+      </div>
+      <nav class="vg-footer__nav" aria-label="Alt menü">
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Hizmetler</h3>
+          <ul>
+            <li><a href="/hizmetler/">Tüm Hizmetler</a></li>
+            <li><a href="/hizmetler/trafo-isletme-sorumlulugu.html">Trafo İşletme Sorumluluğu</a></li>
+            <li><a href="/hizmetler/elektrik-periyodik-kontrol.html">Periyodik Kontrol</a></li>
+            <li><a href="/hizmetler/harmonik-filtreli-kompanzasyon.html">Kompanzasyon</a></li>
+            <li><a href="/fabrika-cozumleri.html">Fabrikalar İçin</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kurumsal</h3>
+          <ul>
+            <li><a href="/hakkimizda.html">Hakkımızda</a></li>
+            <li><a href="/projeler.html">Projeler ve Referanslar</a></li>
+            <li><a href="/haberler.html">Sahadan Haberler</a></li>
+            <li><a href="/ekibimiz.html">Ekibimiz</a></li>
+              <li><a href="/dokumanlar.html">Belgeler ve İndirmeler</a></li>
+            <li><a href="/iletisim.html">İletişim ve Teklif</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Kaynaklar</h3>
+          <ul>
+            <li><a href="/teknik-kaynaklar.html">Teknik Kaynaklar</a></li>
+            <li><a href="/bilgi-bankasi.html">Bilgi Bankası</a></li>
+            <li><a href="/akademi.html">Akademi</a></li>
+            <li><a href="/muhendis-merkezi.html">Mühendis Merkezi</a></li>
+            <li><a href="/volthaber/">VoltHaber</a></li>
+            <li><a href="/sor.html">VoltGuard’a Sor</a></li>
+          </ul>
+        </div>
+        <div class="vg-footer__col">
+          <h3 class="vg-footer__h">Araçlar ve Hesap</h3>
+          <ul>
+            <li><a href="/hesaplama-araclari/">Hesap Araçları</a></li>
+            <li><a href="/araclar/">Mühendislik Uygulamaları</a></li>
+            <li><a href="/voltsim/">VoltSim 3D</a></li>
+            <li><a href="/voltgame.html">VoltGame</a></li>
+            <li><a href="/topluluk.html">Topluluk</a></li>
+            <li><a href="/hesap/giris.html">Üye Girişi</a></li>
+            <li><a href="/calisan/giris.html">Çalışan Girişi</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="vg-footer__bottom">
+      <p>&copy; <span data-vg-year>2026</span> VoltGuard. Tüm hakları saklıdır. &middot; <a href="/gizlilik.html" class="vg-footer__legal">Gizlilik &amp; Çerez Politikası</a></p>
+      <div class="vg-footer__social">
+        <a href="https://www.instagram.com/voltguard_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.linkedin.com/company/voltguard" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="https://wa.me/905454346735" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </div>
+</footer></body></html>

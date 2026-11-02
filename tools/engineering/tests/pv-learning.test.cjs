@@ -1,0 +1,11 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+const pv=require('../src/shared/pv-learning.js');
+const run=p=>pv.analyze({...pv.defaults,...p});
+const near=(a,b,t=1e-9)=>assert.ok(Math.abs(a-b)<t*Math.max(1,Math.abs(b)),`${a} != ${b}`);
+test('PV ideal reference endpoints follow supplied cell Isc and Voc',()=>{const short=run({voltage:0}),open=run({voltage:100});near(short.i,10);near(short.v,0);near(short.power,0);near(open.v,39);near(open.i,0);near(open.power,0)});
+test('Series cells scale voltage and power without multiplying current',()=>{const cell=run({cells:1}),module=run({cells:60});near(module.voc,60*cell.voc);near(module.vmp,60*cell.vmp);near(module.pmp,60*cell.pmp);near(module.imp,cell.imp)});
+test('MPP satisfies independent derivative and exceeds every sampled point',()=>{const r=run(),a=pv.constants.ideality*pv.constants.K*pv.constants.temperature/pv.constants.Q*60;const derivative=r.imp-r.vmp*pv.constants.i0/a*Math.exp(r.vmp/a);near(derivative,0,1e-8);for(const p of r.points)assert.ok(p[2]<=r.pmp+1e-8);assert.ok(r.vmp>0&&r.vmp<r.voc)});
+test('Darkness produces finite zero output; half irradiance halves Isc, not Voc',()=>{const dark=run({irradiance:0});for(const k of ['voc','vmp','imp','pmp','v','i','power'])near(dark[k],0);const half=run({irradiance:500}),full=run();near(half.iph,5);assert.ok(half.voc>full.voc*.8&&half.voc<full.voc);assert.ok(half.pmp>0&&half.pmp<full.pmp)});
+test('Photon energy uses exact SI constants and is independent of broadband IV model',()=>{near(pv.photonEnergy(1000),1.2398419843320026);assert.equal(run({wavelength:1300}).canExcite,false);assert.equal(run({wavelength:350}).canExcite,true);near(run({wavelength:1300}).pmp,run({wavelength:350}).pmp)});
+test('PV validates range, integer, empty, NaN and Turkish decimal inputs',()=>{for(const p of [{cells:0},{cells:2.5},{irradiance:-1},{voltage:101},{wavelength:NaN},{lesson:4},{cells:''}])assert.throws(()=>run(p));near(run({irradiance:'500,5'}).iph,5.005);for(const irradiance of [0,.001,1200])for(const cells of [1,120])assert.doesNotThrow(()=>run({irradiance,cells}))});

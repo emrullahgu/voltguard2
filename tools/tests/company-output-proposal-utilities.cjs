@@ -28,7 +28,7 @@ module.exports=async function(ctx){
   }
   await workflow('yg-editor-archive-local-draft-copy-and-print',async()=>{
     await mount('manual');await page.getByPlaceholder('Örn: ABC Endüstri San. ve Tic. A.Ş.').fill('QA Editör YG');
-    await page.getByPlaceholder('Örn: Ahmet Yilmaz').fill('QA Yetkili');await page.getByPlaceholder('Örn: Tekstil, Güçda').fill('QA Sektör');await page.getByPlaceholder('Örn: 1600 veya 1000+630').fill('630');
+    await page.getByPlaceholder('Örn: Ahmet Yılmaz').fill('QA Yetkili');await page.getByPlaceholder('Örn: Tekstil, Gıda').fill('QA Sektör');await page.getByPlaceholder('Örn: 1600 veya 1000+630').fill('630');
     await page.getByRole('button',{name:'Hesapla ve Teklif Oluştur',exact:true}).click();
     await page.locator('#printable-paper').waitFor();
     const draft=page.getByRole('button',{name:/Teklif Sunum E-postası Yaz/});await draft.click();
