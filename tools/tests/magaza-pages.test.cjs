@@ -14,6 +14,7 @@ const gen = require('./fixtures/magaza/katalog-uret.cjs');
 const root = path.resolve(__dirname, '../..');
 const php = process.env.VG_PHP || [path.join(root, '.qa/php/runtime/php.exe'), path.resolve(root, '../../../.qa/php/runtime/php.exe')].find(f => fs.existsSync(f)) || path.join(root, '.qa/php/runtime/php.exe');   // git worktree: ana kopyanın .qa/php'si
 const fx = path.join(root, 'tools/tests/fixtures/magaza');
+const FIRMA_BOS = path.join(fx, 'firma-bos.json');   // satıcı kimliği eksik (kapalı mağaza); gerçek firma.json artık dolu
 const fxCatalog = path.join(fx, 'katalog');
 const router = path.join(fx, 'pages/router.php');
 const P1 = '/magaza/urun/deneme-marka-dm-450-450w-gunes-paneli/';
@@ -119,7 +120,7 @@ test('nakliye ürünü teklif düğmesi gösterir; sepete ekle yok', async () =>
 });
 
 test('varsayılan satıcı (boş alanlar): kapalı mağaza bandı, sepete ekleme yok', async () => {
-  await withShop({}, null, async s => {
+  await withShop({firma: FIRMA_BOS}, null, async s => {
     for (const p of ['/magaza/', '/magaza/kategori/gunes-panelleri/', P1, '/magaza/ara/?q=deneme']) {
       const r = await get(s, p);
       assert.equal(r.status, 200, p);
@@ -415,15 +416,21 @@ test('P1-01/02/03: sayfalarda yer tutucu ve taslak bandı yok; ödeme sayfası s
   }
   // sipariş belgesindeki satıcı bloğu: boş alanın satırı yok, köşeli parantezli yer tutucu yok
   const code = "define('VG_API', 1); require 'api/lib/bootstrap.php'; require 'api/lib/magaza-belge.php';"
-    + " echo vgm_doc_seller(json_decode(file_get_contents('api/lib/magaza/firma.json'), true)), \"\\n---\\n\","
-    + " vgm_doc_seller(json_decode(file_get_contents('tools/tests/fixtures/magaza/firma-tam.json'), true));";
+    + " echo vgm_doc_seller(json_decode(file_get_contents('tools/tests/fixtures/magaza/firma-bos.json'), true)), \"\\n---\\n\","
+    + " vgm_doc_seller(json_decode(file_get_contents('tools/tests/fixtures/magaza/firma-tam.json'), true)), \"\\n---\\n\","
+    + " vgm_doc_seller(json_decode(file_get_contents('api/lib/magaza/firma.json'), true));";
   const r = spawnSync(php, ['-n', '-r', code], {cwd: root, encoding: 'utf8'});
   assert.equal(r.status, 0, r.stderr + r.stdout);
-  const [def, full] = r.stdout.split('\n---\n');
+  const [def, full, real] = r.stdout.split('\n---\n');
   assert.doesNotMatch(def, /\[|yayından önce|null/); assert.doesNotMatch(def, /MERSİS|Vergi No/);
   assert.match(def, /^Unvan: Voltguard/); assert.match(def, /Adres \(cayma ve diğer bildirimler için\): Ege Teknopark/);
   assert.match(full, /Vergi No: 0000000001/); assert.match(full, /MERSİS No: 0000000000000001/); assert.doesNotMatch(full, /KEP adresi/, 'kep null: satır yok');
-  await withShop({}, null, async s => {   // gerçek firma.json: site anahtarı ve VKN henüz yok
+  assert.doesNotMatch(full, /Merkez/, 'merkezAdres yoksa tek adres satırı');
+  // gerçek firma.json: ticaret sicilindeki merkez ile işyeri (bildirim) adresi ayrı satırlarda (TTK md. 39/2; MSY md. 5/1-b,c)
+  assert.match(real, /\nMerkez \(ticaret sicilinde tescilli\) adres: Adalet Mah\. Manas Bul\. Folkart Towers No: 39 İç Kapı No: 2511 Bayraklı \/ İzmir\n/);
+  assert.match(real, /\nİşyeri adresi \(cayma, iade ve diğer bildirimler için\): Erzene Mah\. Ankara Cad\. No: 172\/69 İç Kapı No: 043 Bornova \/ İzmir\n/);
+  assert.doesNotMatch(real, /\[|null|Adres \(cayma/);
+  await withShop({firma: FIRMA_BOS}, null, async s => {   // eksik satıcı: site anahtarı ve VKN yok
     const od = await get(s, '/magaza/odeme.html');
     assert.equal(od.status, 200); assert.match(od.type, /text\/html/);
     assert.match(od.text, /<div class="cf-turnstile" data-sitekey="" data-vgm-sitekey/); assert.doesNotMatch(od.text, /REPLACE_WITH/);
@@ -470,7 +477,7 @@ test('P1-09/10/11: metre birimi, adet kuralları, stok/termin, kart kodu satır�
     const fr = await get(s, FREIGHT);   // nakliye: nedene özel çağrı
     assert.match(fr.text, /data-intent="nakliye">Nakliye dahil teklif alın<\/a>/); assert.match(fr.text, /Nakliye ve termin il bazında teklifle bildirilir/);
   });
-  await withShop({}, null, async s => {   // kapalı mağaza: kartlarda "closed" çipi tekrar etmez, band kapatılabilir
+  await withShop({firma: FIRMA_BOS}, null, async s => {   // kapalı mağaza: kartlarda "closed" çipi tekrar etmez, band kapatılabilir
     const cat = await get(s, '/magaza/kategori/gunes-panelleri/');
     assert.doesNotMatch(cat.text, /vgm-chip--(?:ok|quote)">/); assert.match(cat.text, /data-vgm-banner-close/);
     const prod = await get(s, P1);
@@ -518,7 +525,8 @@ test('P1-07/12/13: mobil chrome, teklif/proforma akışı ve havale güveni (sta
   assert.match(sepet, /<ol class="vgm-progress"[^>]*><li aria-current="step">Sepet<\/li>/); assert.match(sepet, /Son ödeme: sipariş \+ 24 saat/);
   assert.match(sepet, /data-vgm-cart-quote>Sepeti teklife çevir \/ proforma iste<\/button>/);
   const od = read('magaza/odeme.html');
-  assert.match(od, /Ödeme yapılmadan sipariş kesinleşmez/); assert.match(od, /<!--vgm:satici-->[\s\S]*class="vgm-seller"[\s\S]*<!--\/vgm:satici-->/);
+  assert.match(od, /Siparişi onaylamanızla sözleşme kurulur ve ödeme yükümlülüğü doğar\./); assert.doesNotMatch(od, /kesinleşmez|iptal edilebilir/);
+  assert.match(od, /data-vgm-submit>Siparişi onayla – ödeme yükümlülüğü doğar<\/button>/); assert.match(od, /<!--vgm:satici-->[\s\S]*class="vgm-seller"[\s\S]*<!--\/vgm:satici-->/);
   const css = read('css/magaza.css');
   for (const sel of ['.vgm-sticky {', '.vgm-progress {', '.vgm-payinfo {', '.vgm-seller {', '.vgm-card__code {', '.vgm-card__add {', '.vgm-stock {', '.vgm-banner__close {', '.vgm-bar__search {'])
     assert.ok(css.includes(sel), sel);
@@ -558,7 +566,7 @@ test('P1-01/02: hukuki sayfaların satıcı tablosu ve belge sürümü firma.jso
     const iade = await get(s, '/magaza/iade-ve-cayma.html');
     assert.match(iade.text, /Adres: <!--vgm:adres-->Test Mah\. Örnek Sok\. No:1 Bornova<!--\/vgm:adres-->/, 'örnek cayma formu tam adresi kullanır');
   });
-  await withShop({}, null, async s => {   // gerçek firma.json: boş alanların satırı yok
+  await withShop({firma: FIRMA_BOS}, null, async s => {   // eksik satıcı: boş alanların satırı yok
     const r = await get(s, '/magaza/on-bilgilendirme-formu.html');
     const dl = r.text.split('<!--vgm:satici-dl-->')[1].split('<!--/vgm:satici-dl-->')[0];
     assert.match(dl, /<dt>Unvan<\/dt>/); assert.doesNotMatch(dl, /MERSİS|Vergi dairesi|null|\[/);
@@ -614,7 +622,7 @@ test('P1-15: fiyat sıralaması kartta görünen KDV dahil TL ile (marj ve KDV %
 });
 
 test('inceleme: teklif bağlantısı JS\'siz konu/ürün seçer; form sıfırlanınca mağaza talebi temizlenir; mobil şerit/özet/band', async () => {
-  await withShop({}, null, async s => {
+  await withShop({firma: FIRMA_BOS}, null, async s => {
     const prod = await get(s, P1);
     assert.match(prod.text, /href="\/iletisim\.html\?konu=magaza&amp;urun=vgm-9001&amp;niyet=haber#iletisim" data-vgm-quote/);
   });
@@ -923,4 +931,38 @@ test("mobil (tarayıcı): teknik özellik paneli 390 px'te seçili süzgeç yokk
       await wide.close();
     } finally { await b.close(); }
   });
+});
+
+/* ------------------------------------------------------------------------------------------------ hukuki inceleme (2026-11-02) */
+
+test('hukuki inceleme: cayma/iade, sözleşme kuruluşu, garanti, satıcı adresi ve TASLAK ibaresi metinlerde düzeltilmiş', () => {
+  const code = "define('VG_API', 1); require 'api/lib/bootstrap.php'; require 'api/lib/magaza.php'; require 'api/lib/magaza-belge.php';"
+    + " $f = json_decode(file_get_contents('api/lib/magaza/firma.json'), true);"
+    + " $ctx = vgm_doc_context(['items' => [], 'totals' => ['tryGross' => 0]], $f, []);"
+    + " echo vgm_doc_preinfo($ctx), \"\n---\n\", vgm_doc_contract($ctx);";
+  const r = spawnSync(php, ['-n', '-d', 'extension_dir=' + path.join(path.dirname(php), 'ext'), '-d', 'extension=mbstring', '-r', code], {cwd: root, encoding: 'utf8'});
+  assert.equal(r.status, 0, r.stderr + r.stdout);
+  const [pre, con] = r.stdout.split('\n---\n');
+  const firma = JSON.parse(fs.readFileSync(path.join(root, 'api/lib/magaza/firma.json'), 'utf8'));
+  assert.equal(firma.belgeOnay, true); assert.match(firma.merkezAdres, /Folkart Towers/);
+  assert.match(pre, /^ÖN BİLGİLENDİRME FORMU\n/); assert.match(con, /^MESAFELİ SATIŞ SÖZLEŞMESİ\n/);
+  const pages = ['on-bilgilendirme-formu', 'mesafeli-satis-sozlesmesi', 'iade-ve-cayma', 'odeme-ve-teslimat', 'kvkk-aydinlatma', 'odeme']
+    .map(n => fs.readFileSync(path.join(root, 'magaza', n + '.html'), 'utf8'));
+  for (const t of [pre, con, ...pages]) {
+    assert.doesNotMatch(t, /TASLAK|alıcı lehine|tüketici lehine|kargo bedeli (?:alıcıya|size) ait|kargo firmasına teslim edildiği tarihten|hazır olduğunda|tedarikçi kaydı|Sevk belgesi|kesinleşmez/);
+  }
+  for (const t of [pre, con]) {
+    assert.match(t, /cayma bildiriminin kendisine ulaştığı tarihten itibaren en geç 14 gün içinde/);
+    assert.match(t, /alıcıdan hangi kargo firmasını kullanırsa kullansın iade masrafı talep edilmez/);
+    assert.match(t, /ürünle birlikte kâğıt üzerinde veya elektronik ortamda teslim edilir/);
+    assert.match(t, /2026 yılı için 186\.000 TL/); assert.match(t, /Siparişin onaylanmasıyla sözleşme kurulur/);
+    assert.match(t, /Merkez \(ticaret sicilinde tescilli\) adres: Adalet Mah/);
+  }
+  assert.match(con, /Alıcı tüketici ise taraflar 6502 sayılı/); assert.match(con, /ayıpsız ve sağlam olarak teslim eder/);
+  const kvkk = pages[4];
+  assert.doesNotMatch(kvkk, /KEP adresimize|Türkiye’deki ziyaretçiler için kullanılmaz/); assert.match(kvkk, /Cloudflare’in yurt dışındaki sunucularına aktarılır/);
+  const giz = fs.readFileSync(path.join(root, 'gizlilik.html'), 'utf8');
+  for (const k of ['vg_magaza_sepet_v1', 'vg_magaza_urunler_v1', 'vg_magaza_son_siparis_v1', 'vg_magaza_band_kapali_v1', '/magaza/kvkk-aydinlatma.html'])
+    assert.ok(giz.includes(k), 'gizlilik: ' + k);
+  assert.match(giz, /Voltguard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi/); assert.match(giz, /No: 172\/69 İç Kapı No: 043/);
 });

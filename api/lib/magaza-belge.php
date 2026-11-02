@@ -2,7 +2,8 @@
 /*
  * VoltGuard Magaza belgeleri ve e-postalari: on bilgilendirme formu, mesafeli satis sozlesmesi, siparis ve durum
  * e-postalari. Odeme sayfasinda gosterilen metin, musteriye e-postayla giden ve sipariste saklanan metin AYNI
- * fonksiyonlardan uretilir (tek kaynak). Metinler TASLAKTIR: yayina almadan once hukuki inceleme gerekir.
+ * fonksiyonlardan uretilir (tek kaynak). Metinler 2026-11-02 tarihli ic hukuki incelemeden gecti (firma.json belgeSurumu);
+ * metin degisirse belgeSurumu guncellenir.
  */
 declare(strict_types=1);
 
@@ -22,14 +23,22 @@ function vgm_doc_context(array $order, array $firma, array $config): array
 
 /**
  * Satici kimligi: firma.json'da dolu olan alanlar yazilir, bos (null) alanlarin satiri atlanir; koseli parantezli yer tutucu
- * ASLA basilmaz (P1-01). Adres bossa kisa adres (adresKisa) kullanilir.
+ * ASLA basilmaz (P1-01). Adres bossa kisa adres (adresKisa) kullanilir. merkezAdres (ticaret sicilinde tescilli merkez)
+ * isyeri adresinden farkliysa iki ayri satir yazilir (TTK md. 39/2; MSY md. 5/1-b,c).
  */
 function vgm_doc_seller(array $f): string
 {
     $val = static fn($v): string => is_string($v) && trim($v) !== '' ? trim($v) : '';
-    $rows = [
-        ['Unvan', $val($f['unvan'] ?? null)],
-        ['Adres (cayma ve diğer bildirimler için)', $val($f['adres'] ?? null) !== '' ? $val($f['adres']) : $val($f['adresKisa'] ?? null)],
+    $adres = $val($f['adres'] ?? null) !== '' ? $val($f['adres']) : $val($f['adresKisa'] ?? null);
+    $merkez = $val($f['merkezAdres'] ?? null);
+    $rows = [['Unvan', $val($f['unvan'] ?? null)]];
+    if ($merkez !== '' && $merkez !== $adres) {
+        $rows[] = ['Merkez (ticaret sicilinde tescilli) adres', $merkez];
+        $rows[] = ['İşyeri adresi (cayma, iade ve diğer bildirimler için)', $adres];
+    } else {
+        $rows[] = ['Adres (cayma ve diğer bildirimler için)', $adres];
+    }
+    $rows = array_merge($rows, [
         ['Telefon', $val($f['telefon'] ?? null)],
         ['E-posta', $val($f['eposta'] ?? null)],
         ['Web sitesi', $val($f['web'] ?? null) !== '' ? $val($f['web']) : 'https://voltguard.com.tr'],
@@ -41,7 +50,7 @@ function vgm_doc_seller(array $f): string
         ['Taahhüt edilen / ödenen sermaye', $val($f['sermaye'] ?? null)],
         ['KEP adresi', $val($f['kep'] ?? null)],
         ['ETBİS kaydı', $val($f['etbis'] ?? null)],
-    ];
+    ]);
     $lines = [];
     foreach ($rows as $r) {
         if ($r[1] !== '') {
@@ -112,8 +121,9 @@ function vgm_doc_payment(array $ctx): string
         . 'Ödeme süresi: sipariş anından itibaren ' . $ctx['paymentHours'] . " saat.\n"
         . 'Son ödeme zamanı: ' . (isset($o['payBy']) ? vgm_local((int)$o['payBy']) . ' TSİ' : 'sipariş onayında bildirilir') . "\n"
         . "Bu sipariş için TL tutar sabittir; ödeme gününe kadar kur değişiminden etkilenmez.\n"
-        . "Süresinde tam tutar ödenmezse sipariş bedelsiz iptal olur; eksik tutarda ödeme yapılmışsa sipariş yine iptal olur ve ödenen kısım "
-        . "en geç 14 gün içinde iade edilir. İptalden sonra güncel fiyatla yeni sipariş verilebilir.";
+        . "Süresinde tam tutar ödenmezse sipariş bedelsiz iptal olur. Eksik ödeme yapılmışsa satıcı bunu alıcıya e-postayla bildirir; fark süre "
+        . "sonuna kadar tamamlanmazsa sipariş iptal olur ve ödenen kısım en geç 14 gün içinde iade edilir. İptalden sonra güncel fiyatla yeni "
+        . "sipariş verilebilir.";
 }
 
 /** Siparis numarasi, tarih ve belge surumu. */
@@ -148,8 +158,6 @@ function vgm_doc_delivery(): string
 /** Cayma hakki: sure, bildirim, geri gonderim, iade, istisnalar. */
 function vgm_doc_withdrawal(array $f): string
 {
-    $carrier = is_string($f['iadeKargo'] ?? null) && trim($f['iadeKargo']) !== ''
-        ? trim($f['iadeKargo']) : 'cayma bildiriminin alınmasından sonra alıcıya e-postayla bildirilir';
     return "Alıcı tüketici ise herhangi bir gerekçe göstermeksizin ve cezai şart ödemeksizin 14 gün içinde sözleşmeden cayabilir. "
         . "Süre, ürünün alıcıya veya alıcının belirlediği üçüncü kişiye (kargo firması hariç) teslim edildiği gün başlar; birden fazla "
         . "parça halinde teslim edilen siparişlerde son parçanın teslim alındığı gün başlar. Alıcı, ürün teslim edilmeden önce de cayma "
@@ -159,14 +167,13 @@ function vgm_doc_withdrawal(array $f): string
         . "e-posta veya form kullanılması, telefonla bildirildiyse e-postayla da teyit edilmesi önerilir. Örnek cayma formu "
         . vg_site_url() . "/magaza/iade-ve-cayma.html sayfasındadır; formun kullanılması zorunlu değildir. Satıcı, bildirimin ulaştığını "
         . "e-postayla teyit eder.\n"
-        . "Ürünün geri gönderilmesi: alıcı, cayma bildiriminden itibaren 14 gün içinde (bu süre satıcının alıcı lehine uyguladığı süredir) ürünü, varsa aksesuar ve belgeleriyle birlikte "
-        . 'satıcının bildireceği iade adresine gönderir. İade için belirlenen kargo firması: ' . $carrier . '. '
-        . "Ürün bu kargo firmasıyla gönderilirse iade kargo ücreti alıcıdan alınmaz. Alıcı başka bir kargo firması kullanırsa "
-        . "cayma hakkı ortadan kalkmaz; yalnızca iade kargo bedeli alıcıya ait olabilir.\n"
-        . "Bedelin iadesi: satıcı, ürünün iade için belirtilen kargo firmasına teslim edildiği tarihten (ürün henüz teslim edilmemişse "
-        . "cayma bildiriminin ulaştığı tarihten) itibaren en geç 14 gün içinde, kargo ücreti dahil tahsil ettiği tüm tutarı tek seferde ve "
-        . "alıcıya hiçbir masraf yüklemeden, ödemenin yapıldığı banka hesabına ya da alıcının kendi adına kayıtlı olarak bildirdiği "
-        . "IBAN'a havale/EFT ile iade eder.\n"
+        . "Ürünün geri gönderilmesi: alıcı, cayma bildiriminden itibaren 14 gün içinde ürünü, varsa aksesuar ve belgeleriyle birlikte "
+        . "satıcının bildireceği iade adresine gönderir. İade gönderisinin masrafı satıcıya aittir; alıcıdan hangi kargo firmasını kullanırsa "
+        . "kullansın iade masrafı talep edilmez. Satıcı, alıcının bulunduğu yerde şubesi olmayan durumlarda ürünü ek ücret almadan "
+        . "alıcıdan teslim alır.\n"
+        . "Bedelin iadesi: satıcı, cayma bildiriminin kendisine ulaştığı tarihten itibaren en geç 14 gün içinde, ürünün alıcıya teslim "
+        . "masrafları (kargo ücreti) dahil tahsil ettiği tüm ödemeleri tek seferde ve alıcıya hiçbir masraf yüklemeden, ödemenin yapıldığı "
+        . "banka hesabına ya da alıcının kendi adına kayıtlı olarak bildirdiği IBAN'a havale/EFT ile iade eder.\n"
         . "Alıcı, cayma süresi içinde ürünü işleyişine, teknik özelliklerine ve kullanım talimatlarına uygun kullanmadığı takdirde "
         . "oluşan değişiklik ve bozulmalardan sorumludur.\n"
         . "Cayma hakkı kullanılamayan ürünler: alıcının istekleri veya kişisel ihtiyaçları doğrultusunda hazırlanan ürünler (örneğin "
@@ -186,9 +193,8 @@ function vgm_doc_defects(): string
         . "30 iş günü içinde yerine getirilir. Ayıplı maldan sorumluluk teslim tarihinden itibaren 2 yıllık zamanaşımına tabidir; "
         . "teslimden sonraki 6 ay içinde ortaya çıkan ayıpların teslim anında var olduğu kabul edilir.\n"
         . "Garanti: Garanti Belgesi Yönetmeliği kapsamındaki ürünlerde (örneğin evlerde kullanılan güneş enerjisi sistemleri, "
-        . "akümülatörler, kesintisiz güç kaynakları, invertörler ve regülatörler) garanti süresi teslimden itibaren en az 2 yıldır ve "
-        . "garanti belgesi ve Türkçe kullanım kılavuzu, ürün bazında hazır olduğunda alıcıya kâğıt üzerinde veya elektronik ortamda iletilir; "
-        . "bu belgeleri satıcıdan talep edebilirsiniz. "
+        . "akümülatörler, kesintisiz güç kaynakları, invertörler ve regülatörler) garanti süresi teslimden itibaren en az 2 yıldır. "
+        . "Garanti belgesi ile Türkçe tanıtma ve kullanma kılavuzu ürünle birlikte kâğıt üzerinde veya elektronik ortamda teslim edilir. "
         . "Diğer ürünlerde üretici garantisi varsa süresi ürün sayfasında belirtilir. Garanti, satıcının yasal ayıp sorumluluğunu "
         . "ortadan kaldırmaz.";
 }
@@ -197,24 +203,27 @@ function vgm_doc_defects(): string
 function vgm_doc_disputes(array $f): string
 {
     return 'Talep ve şikâyetler için: ' . $f['eposta'] . ', ' . $f['telefon'] . ".\n"
-        . "Tüketici, uyuşmazlıklarda Ticaret Bakanlığınca her yıl ilan edilen parasal sınırlar içinde yerleşim yerindeki veya "
-        . "işlemin yapıldığı yerdeki tüketici hakem heyetine, bu sınırların üzerindeki uyuşmazlıklarda arabulucuya başvurduktan "
-        . "sonra tüketici mahkemesine başvurabilir.";
+        . "Tüketici, uyuşmazlıklarda Ticaret Bakanlığınca her yıl ilan edilen parasal sınırlar içinde (2026 yılı için 186.000 TL'nin "
+        . "altındaki uyuşmazlıklarda) yerleşim yerindeki veya işlemin yapıldığı yerdeki tüketici hakem heyetine e-Devlet (TÜBİS) üzerinden "
+        . "veya dilekçeyle; bu sınırın üzerindeki uyuşmazlıklarda 6502 sayılı Kanun md. 73/A uyarınca dava açmadan önce arabulucuya "
+        . "başvurduktan sonra tüketici mahkemesine başvurabilir.";
 }
 
 /** Fatura bilgisi. */
 function vgm_doc_invoice(): string
 {
     return "Satış faturası satıcı tarafından e-Arşiv fatura olarak düzenlenir ve alıcının e-posta adresine elektronik ortamda "
-        . "gönderilir. Sevk belgesi düzenlemesi tedarikçiyle birlikte sağlanır. Kurumsal alıcılarda fatura, siparişte bildirilen unvan, vergi dairesi ve vergi numarasıyla düzenlenir.";
+        . "gönderilir. Ürün VoltGuard'ın anlaşmalı tedarikçisinin deposundan gönderilebilir; bu durumda da satıcı ve fatura düzenleyen "
+        . "VoltGuard'dır. Kurumsal alıcılarda fatura, siparişte bildirilen unvan, vergi dairesi ve vergi numarasıyla düzenlenir.";
 }
 
 /** Siparisin verilmesi, duzeltilmesi, teyidi ve metnin saklanmasi (6563 md. 3-4). */
 function vgm_doc_formation(): string
 {
     return "Sipariş, ödeme sayfasında bilgilerin girilmesi, ön bilgilendirme formunun ve mesafeli satış sözleşmesinin "
-        . "onaylanması ve \"Siparişi onayla ve gönder\" düğmesine basılmasıyla verilir. Onaydan önce sepet ve form bilgileri "
-        . "gözden geçirilip düzeltilebilir. Siparişi göndermekle alıcı ödeme yükümlülüğü altına girer. Sipariş, alındığı ekranda ve "
+        . "onaylanması ve \"Siparişi onayla – ödeme yükümlülüğü doğar\" düğmesine basılmasıyla verilir. Onaydan önce sepet ve form "
+        . "bilgileri gözden geçirilip düzeltilebilir. Siparişin onaylanmasıyla sözleşme kurulur ve alıcı ödeme yükümlülüğü altına girer; "
+        . "süresinde tam tutar ödenmezse sipariş bedelsiz iptal olur. Sipariş, alındığı ekranda ve "
         . "e-postayla gecikmeksizin teyit edilir. Bu form ve sözleşme sipariş kaydıyla birlikte 3 yıl saklanır, alıcının e-posta "
         . "adresine gönderilir ve talep halinde yeniden iletilir.";
 }
@@ -252,7 +261,9 @@ function vgm_doc_contract(array $ctx): string
         . "MADDE 1 – TARAFLAR\nSATICI\n" . vgm_doc_seller($f) . "\n\nALICI\n" . vgm_doc_buyer($o) . "\n\n"
         . "MADDE 2 – KONU VE KAPSAM\nİşbu sözleşmenin konusu, alıcının satıcıya ait " . vg_site_url() . "/magaza/ adresinden "
         . "elektronik ortamda sipariş verdiği, aşağıda nitelikleri ve satış fiyatı belirtilen ürünlerin satışı ve teslimidir. "
-        . "Taraflar, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümlerine tabidir. "
+        . "Alıcı tüketici ise taraflar 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümlerine "
+        . "tabidir. Ürünü ticari veya mesleki amaçla satın alan alıcılar bakımından Türk Borçlar Kanunu ve Türk Ticaret Kanunu hükümleri "
+        . "uygulanır. "
         . "Ön bilgilendirme formu bu sözleşmenin ayrılmaz parçasıdır.\n\n"
         . "MADDE 3 – ÜRÜNLER VE BEDEL\nÜrünlerin marka, model, ana teknik özellikleri ve ürün başına tahmini teslim süresi aşağıda yer alır. "
         . "Tüm fiyatlar Türk lirası ve KDV dahildir.\n" . vgm_doc_items($o) . "\n"
@@ -261,8 +272,8 @@ function vgm_doc_contract(array $ctx): string
         . "yapılan ödemeler en geç 14 gün içinde ödemenin geldiği hesaba iade edilir; alıcı aynı ürünler için açıkça yeni sipariş verir ve yeni ön "
         . "bilgilendirme formunu onaylarsa ödeme yeni siparişe mahsup edilebilir.\n\n"
         . "MADDE 5 – TESLİMAT\n" . vgm_doc_delivery() . "\n\n"
-        . "MADDE 6 – SATICININ DİĞER YÜKÜMLÜLÜKLERİ\nSatıcı ürünü sözleşmeye ve ürün sayfasındaki bilgilere uygun, sağlam ve "
-        . "varsa Türkçe kullanım kılavuzu ve garanti belgesini alıcıya iletir.\n" . vgm_doc_invoice() . "\n\n"
+        . "MADDE 6 – SATICININ DİĞER YÜKÜMLÜLÜKLERİ\nSatıcı ürünü sözleşmeye ve ürün sayfasındaki bilgilere uygun, ayıpsız ve "
+        . "sağlam olarak teslim eder; varsa Türkçe tanıtma ve kullanma kılavuzu ile garanti belgesini ürünle birlikte alıcıya iletir.\n" . vgm_doc_invoice() . "\n\n"
         . "MADDE 7 – ALICININ YÜKÜMLÜLÜKLERİ\nAlıcı, ödemeyi belirtilen süre içinde ve sipariş numarasını açıklamaya yazarak "
         . "yapar; siparişte verdiği iletişim, fatura ve teslimat bilgilerinin doğru olmasından sorumludur.\n\n"
         . "MADDE 8 – CAYMA HAKKI\n" . vgm_doc_withdrawal($f) . "\n\n"
@@ -281,7 +292,7 @@ function vgm_mail_order_customer(array $order, array $ctx): bool
         . 'Siparişiniz ' . $order['ref'] . " numarasıyla alındı. Teşekkür ederiz.\n\n"
         . "ÖDEME BİLGİLERİ\n" . vgm_doc_payment($ctx) . "\n\n"
         . "SİPARİŞ ÖZETİ\n" . vgm_doc_items($order) . "\n\n"
-        . "SATICI (fatura ve tedarikçi kaydınız için)\n" . vgm_doc_seller($ctx['firma']) . "\n\n"
+        . "SATICI BİLGİLERİ (sözleşmenin tarafı ve faturayı düzenleyen satıcı)\n" . vgm_doc_seller($ctx['firma']) . "\n\n"
         . 'Siparişinizi ' . vg_site_url() . '/magaza/siparis-takip.html adresinden sipariş numaranız ve e-posta adresinizle takip edebilirsiniz.' . "\n\n"
         . str_repeat('-', 60) . "\n" . ($order['docs']['preInfo'] ?? '') . "\n" . str_repeat('-', 60) . "\n" . ($order['docs']['contract'] ?? '') . "\n\n"
         . "VoltGuard\n" . vg_site_url() . "\n";

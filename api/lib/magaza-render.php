@@ -1514,7 +1514,7 @@ function vgmr_gallery(array $p, array $images): string
         }
         $h .= '</ul>';
     }
-    return $h . '</div>';
+    return $h . '<p class="vgm-fine vgm-gallery__note">Görseller temsilidir; ürünün marka ve modeli ürün bilgilerinde belirtilen şekildedir.</p></div>';
 }
 
 /** Stok ve termin satirlari (P1-10): tedarikci stogu (son kontrol) ve tahmini kargoya verilis. */
@@ -1830,9 +1830,13 @@ function vgmr_seller_rows(array $f, bool $full = false): array
     $adres = vgmr_firma_str($f, 'adres') !== '' ? vgmr_firma_str($f, 'adres') : vgmr_firma_str($f, 'adresKisa');
     $vd = vgmr_firma_str($f, 'vergiDairesi');
     $vkn = vgmr_firma_str($f, 'vkn');
-    $rows = [['Unvan', vgmr_firma_str($f, 'unvan')], ['Adres', $adres],
+    $merkez = vgmr_firma_str($f, 'merkezAdres');
+    /* Tescilli merkez isyerinden farkliysa ikisi ayri satirda (TTK md. 39/2; MSY md. 5/1-b,c); bildirim adresi isyeridir. */
+    $addr = $merkez !== '' && $merkez !== $adres
+        ? [['Merkez adresi (ticaret sicili)', $merkez], ['İşyeri ve bildirim adresi', $adres]] : [['Adres', $adres]];
+    $rows = array_merge([['Unvan', vgmr_firma_str($f, 'unvan')]], $addr, [
         ['Vergi dairesi / no', $vd !== '' && $vkn !== '' ? $vd . ' / ' . $vkn : ($vkn !== '' ? $vkn : $vd)],
-        ['MERSİS no', vgmr_firma_str($f, 'mersis')]];
+        ['MERSİS no', vgmr_firma_str($f, 'mersis')]]);
     if ($full) {
         $rows[] = ['Ticaret sicil no', vgmr_firma_str($f, 'ticaretSicil')];
         $rows[] = ['KEP adresi', vgmr_firma_str($f, 'kep')];

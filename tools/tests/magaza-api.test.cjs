@@ -288,11 +288,11 @@ test('Mağaza API: fiyat, sepet, sipariş, durum, panel ve sızıntı denetimi',
   }
 });
 
-test('Mağaza API: satıcı kimliği eksikken (gerçek firma.json) sipariş alınmaz', async () => {
+test('Mağaza API: satıcı kimliği eksikken (firma-bos.json) sipariş alınmaz', async () => {
   const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'voltguard-magaza-closed-'));
   const data = path.join(sandbox, 'data'); fs.mkdirSync(data);
   writeState(data);
-  const srv = await server(data, { VG_MAGAZA_FIRMA: '' });
+  const srv = await server(data, { VG_MAGAZA_FIRMA: path.join(fixtures, 'firma-bos.json') });
   try {
     const anon = client(srv.base);
     const r = await anon.call('magaza', 'fiyatlar', { query: IDS });

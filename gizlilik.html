@@ -225,7 +225,7 @@
 
   <main id="main" tabindex="-1">
     <h1>Gizlilik ve Çerez Politikası</h1>
-    <p class="updated">Son güncelleme: 23 Ekim 2026</p>
+    <p class="updated">Son güncelleme: 2 Kasım 2026</p>
 
     <p>
       Bu metin, <strong>VoltGuard</strong> tarafından işletilen <a href="https://voltguard.com.tr">voltguard.com.tr</a>
@@ -236,12 +236,15 @@
     <h2>1. Veri Sorumlusu</h2>
     <p>
       <strong>VoltGuard</strong> &mdash; Yetkili: Emrullah GÜNAY<br>
-      Unvan: VoltGuard Elektrik Elektronik ve Mekanik Mühendisliği Limited şirketi<br>
-      Adres: Ege Üniversitesi Kampüsü Erzene Mahallesi Ankara Caddesi No:172/69, Ege Teknopark TGB Turkuaz B Blok İç Kapı No:43 Kat:2 BB43, Bornova / İzmir<br>
+      Unvan: Voltguard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi<br>
+      Adres: Erzene Mah. Ankara Cad. No: 172/69 İç Kapı No: 043 Bornova / İzmir (Ege Teknopark)<br>
+      Merkez (ticaret sicilinde tescilli) adres: Adalet Mah. Manas Bul. Folkart Towers No: 39 İç Kapı No: 2511 Bayraklı / İzmir<br>
+      MERSİS: 0925132490000001 &middot; İzmir Ticaret Sicil No: 272837<br>
       E-posta: <a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a> &middot; Telefon: <a href="tel:+905454346735">0545 434 67 35</a>
     </p>
 
     <h2 id="iletisim-verileri">2. İletişim ve Teknik Soru Formları</h2>
+    <p><strong>Mağaza siparişleri:</strong> VoltGuard Mağaza’da sipariş verdiğinizde işlenen kişisel veriler ayrı bir aydınlatma metniyle açıklanır: <a href="/magaza/kvkk-aydinlatma.html">KVKK Aydınlatma Metni: Mağaza Siparişleri</a>.</p>
     <p>
       Web sitemizde dört tür veri söz konusudur: (a) iletişim formu ve &ldquo;VoltGuard&rsquo;a Sor&rdquo; formu aracılığıyla bizzat ilettiğiniz veriler,
       (b) siteyi ziyaret ettiğinizde teknik olarak oluşan veriler, (c) VoltGuard hesabı oluşturursanız hesabınızda saklanan veriler ve
@@ -327,9 +330,9 @@
       <tbody>
         <tr>
           <td>Cloudflare Turnstile</td>
-          <td>Form gönderiminde bot/spam koruması. Yapılandırıldığında devreye girer; yapılandırılmadığı sürece yüklenmez ve form, gizli bal tuzağı alanı ile sunucu tarafı hız sınırı ile korunur.</td>
-          <td>Cloudflare (ABD/AB)</td>
-          <td><span class="tag tag--opt">Yapılandırmaya bağlı</span></td>
+          <td>İletişim ve mağaza sipariş formlarında bot/spam koruması. Mağaza sipariş formunda her zaman kullanılır; diğer formlarda yapılandırıldığında devreye girer, yapılandırılmadığı sürece yüklenmez ve form, gizli bal tuzağı alanı ile sunucu tarafı hız sınırı ile korunur. Doğrulama sırasında IP adresiniz ve tarayıcı/cihaz bilgileriniz Cloudflare’in yurt dışındaki sunucularına aktarılır; hukuki sebep meşru menfaattir (KVKK md. 5/2-f). Yurt dışına aktarım için KVKK md. 9/4 uyarınca Cloudflare ile standart sözleşme düzenlenir ve sözleşme imzadan sonra 5 iş günü içinde Kişisel Verileri Koruma Kurumu’na bildirilir.</td>
+          <td>Cloudflare, Inc. (ABD/AB)</td>
+          <td><span class="tag tag--req">Zorunlu &mdash; mağaza siparişinde</span></td>
         </tr>
         <tr>
           <td>Yerel depolama: form hızı</td>
@@ -360,6 +363,12 @@
           <td><code>vg_guest_favorites_v1</code>, <code>vg_guest_history_v1</code> (giriş yapmadan kaydettiğiniz favori araçlar ve hesaplamalar; giriş veya kayıt sırasında seçerseniz hesabınıza aktarılır ve tarayıcıdan silinir, seçmezseniz yalnızca bu tarayıcıda kalır), <code>vg_auth_hint_v1</code> (yalnızca bu tarayıcıda oturum açıldığını gösteren işaret; kişisel veri içermez), <code>vg_legacy_state_v1</code> (eski sürüm kayıtları için verdiğiniz karar). Sekme belleğinde (sessionStorage) <code>vg_acct_cache_v1</code>: hesabınızdaki verilerin sayfalar arasında hızlı gösterimi için sekmeye özel geçici kopya; sekmeyi kapattığınızda veya çıkış yaptığınızda silinir. <code>vg_rescue_v1</code>: oturumunuz sunucuda sona erdiğinde henüz kaydedilememiş değişiklikleriniz; yalnızca aynı hesapla yeniden giriş yaptığınızda hesabınıza kaydedilir, başka bir hesapla giriş yapıldığında, çıkış yaptığınızda veya 24 saat sonra silinir. Yine sekme belleğinde <code>vg_flash_v1</code> (sayfa geçişinden sonra bir kez gösterilen bilgi mesajı) ve <code>vg_reset_email</code> (giriş sayfasından şifre sıfırlamaya geçerken yazdığınız e-posta adresi; adres çubuğuna yazılmaz, okunduktan hemen sonra silinir). Eski sürümden kalabilecek <code>vg_users_v1</code>, <code>vg_session_v1</code>, <code>vg_history_v1</code>, <code>vg_favorites_v1</code>, <code>vg_projects_v1</code>, <code>vg_documents_v1</code> anahtarları, kayıtlar hesabınıza taşındığında veya silmeyi seçtiğinizde kaldırılır.</td>
           <td>Tarayıcınız</td>
           <td><span class="tag tag--opt">Opsiyonel &mdash; araçları kullanırsanız</span></td>
+        </tr>
+        <tr>
+          <td>Yerel depolama: Mağaza</td>
+          <td><code>vg_magaza_sepet_v1</code> (sepetinizdeki ürün kodları ve adetleri; sipariş alınınca silinir), <code>vg_magaza_urunler_v1</code> (sepet düzenleme için ürün adı yedeği), <code>vg_magaza_band_kapali_v1</code> (kapattığınız bilgi bandının hatırlanması). Sekme belleğinde (sessionStorage) <code>vg_magaza_son_siparis_v1</code>: son siparişinizin ödeme bilgileri; ad, e-posta veya adres içermez. Bu kayıtlar yalnızca tarayıcınızda tutulur ve hizmetin çalışması için zorunludur.</td>
+          <td>Tarayıcınız</td>
+          <td><span class="tag tag--req">Zorunlu &mdash; mağazayı kullanırsanız</span></td>
         </tr>
         <tr>
           <td>Yerel depolama: Fabrika Çözümleri</td>

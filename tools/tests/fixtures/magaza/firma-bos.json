@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "unvan": "Voltguard Elektrik Elektronik Ve Mekanik Müh. Ltd. Şti.",
+  "kisaAd": "VoltGuard",
+  "adres": null,
+  "adresKisa": "Ege Teknopark, Bornova / İzmir",
+  "il": "İzmir",
+  "telefon": "0545 434 67 35",
+  "eposta": "info@voltguard.com.tr",
+  "web": "https://voltguard.com.tr",
+  "mersis": null,
+  "vkn": null,
+  "vergiDairesi": null,
+  "ticaretSicil": null,
+  "kep": null,
+  "etbis": null,
+  "mudur": null,
+  "sermaye": null,
+  "iadeKargo": null,
+  "banka": {
+    "ad": "Enpara Bank A.Ş.",
+    "hesapSahibi": "Voltguard Elektrik Elektronik Ve Mekanik Müh.Ltd.Şti.",
+    "iban": "TR85 0015 7000 0000 0204 9277 72",
+    "paraBirimi": "TRY"
+  },
+  "belgeSurumu": "2026-10-27",
+  "belgeOnay": false,
+  "turnstileSiteKey": null,
+  "not": "Test verisi: satıcı kimliği eksik (kapalı mağaza) durumu. Gerçek firma.json doldurulduğu için testler bu dosyayı kullanır."
+}
