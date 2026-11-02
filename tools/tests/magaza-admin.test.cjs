@@ -702,6 +702,26 @@ test('panel handles price entry, held changes, filters and cron health', () => {
   assert.equal(panel.summaryText(null), '');
 });
 
+test('panel shows resource measurements in Turkish units and distinguishes unavailable values from zero', () => {
+  const panel = require(panelJs);
+  assert.equal(panel.summaryText({checked: 5, cpuUserSeconds: 0.057165, cpuSystemSeconds: 0.014992, peakMemoryBytes: 14680064}),
+    'kontrol edilen: 5 · CPU (kullanıcı): 0,057165 sn · CPU (sistem): 0,014992 sn · tepe bellek: 14 MiB');
+  assert.equal(panel.summaryText({cpuUserSeconds: 0, cpuSystemSeconds: '1234.5', peakMemoryBytes: 14942208}),
+    'CPU (kullanıcı): 0 sn · CPU (sistem): 1.234,5 sn · tepe bellek: 14,25 MiB');
+  assert.equal(panel.summaryText({cpuUserSeconds: 0.0000001, peakMemoryBytes: 1}),
+    'CPU (kullanıcı): <0,000001 sn · tepe bellek: <0,01 MiB');
+  assert.equal(panel.summaryText({cpuUserSeconds: null, cpuSystemSeconds: undefined, peakMemoryBytes: ''}),
+    'CPU (kullanıcı): ölçülemedi · CPU (sistem): ölçülemedi · tepe bellek: ölçülemedi');
+  for (const invalid of [false, true, {}, [], NaN, Infinity, -1, 'bozuk', 1e100]) {
+    assert.equal(panel.summaryText({cpuUserSeconds: invalid}), 'CPU (kullanıcı): ölçülemedi');
+    assert.equal(panel.summaryText({peakMemoryBytes: invalid}), 'tepe bellek: ölçülemedi');
+  }
+  assert.equal(panel.summaryText({peakMemoryBytes: 0}), 'tepe bellek: ölçülemedi');
+  assert.equal(panel.summaryText({peakMemoryBytes: 1.5}), 'tepe bellek: ölçülemedi');
+  assert.equal(panel.summaryText({unknown: 12.5, empty: '', absent: null, enabled: true, nested: {count: 2}}),
+    'unknown: 12.5 · enabled: evet · nested: count: 2');
+});
+
 test('panel explains 401/403/409/429 and network errors clearly', () => {
   const e401 = panel.explainError({status: 401, message: 'x'});
   assert.equal(e401.kind, 'auth');

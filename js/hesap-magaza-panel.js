@@ -55,9 +55,10 @@
   };
   var SUMMARY_LABELS = {
     checked: 'kontrol edilen', ok: 'güncel', held: 'onay bekleyen', error: 'hatalı', unavailable: 'stokta yok', skipped: 'atlanan',
-    left: 'sonraki çalışmaya kalan', due: 'zamanı gelen', rateUpdated: 'kur güncellendi', rateError: 'kur hatası', seconds: 'süre (sn)'
+    left: 'sonraki çalışmaya kalan', due: 'zamanı gelen', rateUpdated: 'kur güncellendi', rateError: 'kur hatası', seconds: 'süre (sn)',
+    cpuUserSeconds: 'CPU (kullanıcı)', cpuSystemSeconds: 'CPU (sistem)', peakMemoryBytes: 'tepe bellek'
   };
-  // Cron her 10 dakikada bir, en çok 240 sn çalışır; zamanı gelen ürünleri sırayla kontrol eder (api/MAGAZA.md "Kurulum").
+  // Cron her 10 dakikada bir, varsayılan en çok 540 sn çalışır; zamanı gelen ürünleri sırayla kontrol eder (api/MAGAZA.md "Kurulum").
   var CRON_COMMAND = '*/10 * * * * VG_DATA_DIR=/home/voltgua2/vg-data /usr/local/bin/php /home/voltgua2/public_html/api/lib/magaza-cron.php >/dev/null 2>&1';
   var CRON_OK_MS = 30 * 60 * 1000;               // sunucudaki eşik (VGM_HEALTHY_AFTER, 30 dakika)
   var CRON_LATE_MS = 6 * 3600 * 1000;            // 6 saate kadar gecikmiş, sonrası çalışmıyor
@@ -475,15 +476,27 @@
     }
     return calc;
   }
+  function isResourceMetric(k) { return k === 'cpuUserSeconds' || k === 'cpuSystemSeconds' || k === 'peakMemoryBytes'; }
+  function resourceMetricText(k, value) {
+    if ((typeof value !== 'number' && typeof value !== 'string') || (typeof value === 'string' && !value.trim())) return 'ölçülemedi';
+    var n = Number(value);
+    if (!isFinite(n) || n < 0 || n > 9007199254740991) return 'ölçülemedi';
+    if (k === 'peakMemoryBytes') {
+      if (n === 0 || Math.floor(n) !== n) return 'ölçülemedi';
+      var mib = n / 1048576;
+      return mib < 0.01 ? '<0,01 MiB' : fmtNum(mib, 2).replace(/,?0+$/, '') + ' MiB';
+    }
+    return n > 0 && n < 0.000001 ? '<0,000001 sn' : fmtNum(n, 6).replace(/,?0+$/, '') + ' sn';
+  }
   function summaryText(v) {
     if (v === null || v === undefined || v === '') return '';
     if (typeof v === 'string') return v;
     if (typeof v === 'number' || typeof v === 'boolean') return String(v);
     if (Array.isArray(v)) return v.map(summaryText).join(', ');
     if (typeof v === 'object') {
-      return Object.keys(v).filter(function (k) { return v[k] !== null && v[k] !== undefined && v[k] !== ''; }).map(function (k) {
+      return Object.keys(v).filter(function (k) { return isResourceMetric(k) || (v[k] !== null && v[k] !== undefined && v[k] !== ''); }).map(function (k) {
         var x = v[k];
-        return (SUMMARY_LABELS[k] || k) + ': ' + (x === true ? 'evet' : x === false ? 'hayır' : summaryText(x));
+        return (SUMMARY_LABELS[k] || k) + ': ' + (isResourceMetric(k) ? resourceMetricText(k, x) : x === true ? 'evet' : x === false ? 'hayır' : summaryText(x));
       }).join(' · ');
     }
     return '';
@@ -1440,7 +1453,7 @@
       var cmdText = h('code', { class: 'mgp-mono', text: H.CRON_COMMAND });
       var copied = h('span', { class: 'mgp-muted', role: 'status' });
       statusBox.appendChild(card('Zamanlanmış görev (cPanel → Cron Jobs)', h('div', null, [
-        h('p', { class: 'mgp-muted', text: 'Fiyat ve kur kontrolü sunucuda her 6 saatte bir çalışmalıdır. Depo bu görevi kurmaz; sunucuda bir kez ekleyin:' }),
+        h('p', { class: 'mgp-muted', text: 'Fiyat ve kur kontrolü sunucuda her 10 dakikada bir çalışmalıdır. Depo bu görevi kurmaz; sunucuda bir kez ekleyin:' }),
         h('pre', { class: 'mgp-code', tabindex: '0' }, cmdText),
         h('div', { class: 'mgp-actions' }, [btn('Komutu kopyala', 'ghost', function () {
           copyText(H.CRON_COMMAND).then(function (ok) { copied.textContent = ok ? 'Kopyalandı.' : 'Kopyalanamadı; metni elle seçin.'; });
