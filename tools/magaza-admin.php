@@ -12,6 +12,8 @@
  *   php tools/magaza-admin.php set-status <referans> <durum> [--note ..] [--public-note ..] [--tracking "Firma|Kod"] [--notify]
  *   php tools/magaza-admin.php status [--json]              panel "Durum" sekmesiyle ayni veri
  *   php tools/magaza-admin.php check [--product vgm-0001]   fiyat/kur kontrolunu simdi calistir
+ *   php tools/magaza-admin.php gorsel-yukle <zip|klasor> --hedef <docroot>/magaza-gorsel [--deneme]
+ *                                                           urun gorsellerini medya deposuna kopyala (VG_DATA_DIR gerekmez)
  *
  * Cikis kodlari: 0 basarili, 1 basarisiz, 2 kullanim hatasi. VG_DATA_DIR (sunucunun ozel veri klasoru) zorunludur.
  * Cikti operatorun terminaline gider: tedarikci adresleri ve maliyetler burada gorunebilir; hicbir dosyaya veya
@@ -41,6 +43,9 @@ unset($lib, $optional);
 $_SERVER['DOCUMENT_ROOT'] = dirname(__DIR__);
 
 const VGMA_PANEL_LIMIT = 25;
+const VGMA_IMPORT_MAX = 67108864;        // tek dosyali yapilandirma (50.000 urun / 150.000 kaynak ~30 MB)
+const VGMA_MEDIA_MAX = 15728640;         // tek gorsel en cok 15 MiB
+const VGMA_MEDIA_RE = '#^[0-9a-f]{2}/[a-z0-9-]{3,90}\.[0-9a-f]{8}(-t)?\.webp$#D';
 
 function vgma_usage(): string
 {
@@ -56,6 +61,8 @@ function vgma_usage(): string
         . "                                [--tracking \"Firma|Kod\"] [--notify]\n"
         . "  php tools/magaza-admin.php status [--json]              Mağaza durumu (panelin Durum sekmesiyle aynı)\n"
         . "  php tools/magaza-admin.php check [--product vgm-0001]   Fiyat ve kur kontrolünü şimdi çalıştırır\n"
+        . "  php tools/magaza-admin.php gorsel-yukle <zip|klasör> --hedef <docroot>/magaza-gorsel [--deneme]\n"
+        . "                                Ürün görsellerini medya deposuna kopyalar (yalnızca <2 hane>/<ad>.<özet>(-t).webp)\n"
         . "Durumlar: " . implode(', ', array_keys(VGM_STATUS_LABELS)) . "\n"
         . "VG_DATA_DIR ortam değişkeni sunucunun özel veri klasörünü göstermelidir.\n";
 }
@@ -221,10 +228,11 @@ function vgma_cmd_import(array $pos, array $opt): int
     }
     $file = $pos[0];
     $size = is_file($file) && is_readable($file) ? filesize($file) : false;
-    if ($size === false || $size > 1048576) {
-        vgma_err('Dosya okunamadı ya da 1 MiB sınırını aşıyor.');
+    if ($size === false || $size > VGMA_IMPORT_MAX) {
+        vgma_err('Dosya okunamadı ya da 64 MiB sınırını aşıyor.');
         return 1;
     }
+    @ini_set('memory_limit', '1536M');
     $raw = (string)file_get_contents($file);
     if (substr($raw, 0, 3) === "\xEF\xBB\xBF") {
         $raw = substr($raw, 3);
@@ -248,16 +256,10 @@ function vgma_cmd_import(array $pos, array $opt): int
     foreach ($clean['sources'] as $list) {
         $sources += count($list);
     }
-    $unsourced = 0;
-    foreach (vgm_catalog()['products'] as $id => $p) {
-        if (!isset($clean['sources'][$id])) {
-            $unsourced++;
-        }
-    }
+    $unsourced = max(0, count(vgm_known_ids()) - count($clean['sources']));
     if (!isset($opt['dry-run'])) {
-        vgm_locked(true, function (string $dir) use ($clean): void {
-            vgm_write($dir, 'kaynaklar.json', $clean);
-        });
+        /* Ayarlar kaynaklar.json'a; kaynaklar kaynak/<parca>.json'a (yeni klasorde yazilip eskisiyle yer degistirir). */
+        vgm_config_store($clean);
     }
     echo (isset($opt['dry-run']) ? 'Doğrulama başarılı (dosya yazılmadı)' : 'Yapılandırma içe aktarıldı') . ': '
         . count($clean['sources']) . ' üründe toplam ' . $sources . " kaynak, mağaza " . ($clean['open'] ? 'AÇIK' : 'kapalı') . ".\n";
@@ -273,8 +275,9 @@ function vgma_cmd_import(array $pos, array $opt): int
 
 function vgma_cmd_export_config(): int
 {
+    @ini_set('memory_limit', '1536M');
     $config = vgm_locked(false, function (string $dir): array {
-        return vgm_config($dir);
+        return vgm_config_export($dir);
     });
     /* Bos haritalar JSON'da [] degil {} olsun (disa aktarilan dosya dogrudan duzenlenip tekrar yuklenebilir). */
     foreach (['byCategory', 'byProduct'] as $key) {
@@ -282,8 +285,10 @@ function vgma_cmd_export_config(): int
             $config['margin'][$key] = new stdClass();
         }
     }
-    if (empty($config['sources'])) {
-        $config['sources'] = new stdClass();
+    foreach (['sources', 'suppliers'] as $key) {
+        if (empty($config[$key])) {
+            $config[$key] = new stdClass();
+        }
     }
     echo vg_json_encode($config, true) . "\n";
     return 0;
@@ -484,7 +489,7 @@ function vgma_cmd_set_status(array $pos, array $opt): int
 function vgma_summary_text(array $s): string
 {
     $labels = ['checked' => 'kontrol edilen', 'ok' => 'güncel', 'held' => 'onay bekleyen', 'error' => 'hatalı', 'unavailable' => 'stokta yok',
-        'skipped' => 'atlanan'];
+        'skipped' => 'atlanan', 'left' => 'sonraki çalışmaya kalan', 'due' => 'zamanı gelen'];
     $parts = [];
     foreach ($labels as $key => $label) {
         if (isset($s[$key]) && is_numeric($s[$key])) {
@@ -523,6 +528,9 @@ function vgma_cmd_status(array $opt): int
     $cron = (array)($s['cron'] ?? []);
     echo 'Fiyat kontrolü (cron): son çalışma ' . vgma_when($cron['lastRunAt'] ?? 0) . ' (' . (($cron['healthy'] ?? false) ? 'sağlıklı' : 'SAĞLIKSIZ: cron çalışmıyor olabilir') . ')'
         . (is_array($cron['summary'] ?? null) ? '; son özet: ' . vgma_summary_text($cron['summary']) : '') . "\n";
+    if (isset($cron['freshShare']) && is_numeric($cron['freshShare'])) {
+        echo 'Son 48 saatte doğrulanmış fiyat oranı (kaynağı olan ürünler): %' . number_format((float)$cron['freshShare'] * 100, 1, ',', '.') . "\n";
+    }
     $c = (array)($s['counts'] ?? []);
     echo 'Ürün fiyatları (kaynağı olan ürünler): güncel ' . (int)($c['ok'] ?? 0) . ', onay bekleyen ' . (int)($c['held'] ?? 0) . ', hatalı ' . (int)($c['error'] ?? 0)
         . ', stokta yok ' . (int)($c['unavailable'] ?? 0) . ', fiyat teyidi eski ' . (int)($c['stale'] ?? 0) . '; kaynağı olmayan ' . (int)($c['noSource'] ?? 0)
@@ -544,7 +552,23 @@ function vgma_cmd_check(array $opt): int
         vgma_err('Fiyat kontrol modülü (api/lib/magaza-kaynak.php) bulunamadı; kontrol çalıştırılamıyor.');
         return 1;
     }
-    $result = vgm_refresh($id !== null ? ['ids' => [$id]] : []);
+    $lock = null;
+    if ($id === null) {
+        /* Tam calisma cron ile ayni kilidi alir: ayni anda iki zamanlanmis calisma olmaz. */
+        $lock = @fopen(vgm_dir() . '/cron.lock', 'c+');
+        if ($lock === false || !flock($lock, LOCK_EX | LOCK_NB)) {
+            vgma_err('Zamanlanmış fiyat kontrolü şu anda çalışıyor; bitince yeniden deneyin.');
+            return 1;
+        }
+    }
+    try {
+        $result = vgm_refresh($id !== null ? ['ids' => [$id]] : []);
+    } finally {
+        if (is_resource($lock)) {
+            flock($lock, LOCK_UN);
+            fclose($lock);
+        }
+    }
     echo 'Kontrol tamamlandı: ' . vgma_summary_text($result) . ".\n";
     if (isset($result['rateError'])) {
         vgma_err('Uyarı: kur alınamadı (' . (string)$result['rateError'] . ').');
@@ -554,6 +578,134 @@ function vgma_cmd_check(array $opt): int
         }
     }
     return 0;
+}
+
+/* ------------------------------------------------------------------ medya deposu */
+
+/** Dosyanin ilk baytlari RIFF....WEBP mi? */
+function vgma_is_webp(string $head): bool
+{
+    return strlen($head) >= 12 && substr($head, 0, 4) === 'RIFF' && substr($head, 8, 4) === 'WEBP';
+}
+
+/** Kaynak goreli yolu: "magaza-gorsel/" on eki atilir; ters bolu duz boluye cevrilir. */
+function vgma_media_rel(string $name): string
+{
+    $rel = ltrim(str_replace('\\', '/', $name), '/');
+    if (strpos($rel, 'magaza-gorsel/') === 0) {
+        $rel = substr($rel, strlen('magaza-gorsel/'));
+    }
+    return $rel;
+}
+
+/**
+ * Gorsel paketini (zip ya da klasor) medya deposuna kopyalar. Yalnizca <2 hane>/<ad>.<8 hane>(-t).webp adlari ve RIFF/WEBP
+ * basligi olan dosyalar alinir; ayni adla farkli bir dosya varsa uzerine yazilmaz (catisma). Hedefte gecici dosya +
+ * rename; dosyalar 0644, klasorler 0755 (web sunucusu okuyabilmeli).
+ */
+function vgma_cmd_media(array $pos, array $opt): int
+{
+    if (count($pos) !== 1 || !isset($opt['hedef']) || trim((string)$opt['hedef']) === '') {
+        vgma_err("Kaynak zip/klasör ve --hedef <docroot>/magaza-gorsel verin.\n" . vgma_usage());
+        return 2;
+    }
+    $source = $pos[0];
+    $target = rtrim(str_replace('\\', '/', (string)$opt['hedef']), '/');
+    $dry = isset($opt['deneme']);
+    if (basename($target) !== 'magaza-gorsel') {
+        vgma_err('--hedef klasörünün adı magaza-gorsel olmalı (ör. /home/voltgua2/public_html/magaza-gorsel).');
+        return 2;
+    }
+    /* Girdiler: [goreli ad => okuyucu] */
+    $entries = [];
+    if (is_dir($source)) {
+        $base = rtrim(str_replace('\\', '/', (string)realpath($source)), '/');
+        $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS));
+        foreach ($it as $f) {
+            if ($f->isFile()) {
+                $path = str_replace('\\', '/', $f->getPathname());
+                $entries[] = [vgma_media_rel(substr($path, strlen($base) + 1)), $path, null, (int)$f->getSize()];
+            }
+        }
+    } elseif (is_file($source) && preg_match('/\.zip$/i', $source) === 1) {
+        if (!class_exists('ZipArchive')) {
+            vgma_err('Bu PHP kurulumunda zip eklentisi yok; paketi açıp klasör olarak verin.');
+            return 1;
+        }
+        $zip = new ZipArchive();
+        if ($zip->open($source) !== true) {
+            vgma_err('Zip dosyası açılamadı.');
+            return 1;
+        }
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $st = $zip->statIndex($i);
+            if (is_array($st) && substr((string)$st['name'], -1) !== '/') {
+                $entries[] = [vgma_media_rel((string)$st['name']), null, [$zip, $i], (int)$st['size']];
+            }
+        }
+    } else {
+        vgma_err('Kaynak bir klasör ya da .zip dosyası olmalı.');
+        return 2;
+    }
+    /* Hedef klasor ancak kaynak gecerliyse (ve --deneme degilse) olusturulur. */
+    if (!is_dir($target) && !$dry && !@mkdir($target, 0755, true) && !is_dir($target)) {
+        vgma_err('Hedef klasör oluşturulamadı: ' . $target);
+        return 1;
+    }
+    $n = ['copied' => 0, 'same' => 0, 'conflict' => 0, 'badName' => 0, 'notWebp' => 0];
+    foreach ($entries as $e) {
+        list($rel, $path, $zipRef, $size) = $e;
+        if (preg_match(VGMA_MEDIA_RE, $rel) !== 1) {
+            $n['badName']++;
+            continue;
+        }
+        if ($size < 12 || $size > VGMA_MEDIA_MAX) {
+            $n['notWebp']++;
+            continue;
+        }
+        $data = $path !== null ? @file_get_contents($path, false, null, 0, VGMA_MEDIA_MAX + 1) : $zipRef[0]->getFromIndex($zipRef[1], VGMA_MEDIA_MAX + 1);
+        if (!is_string($data) || strlen($data) > VGMA_MEDIA_MAX || !vgma_is_webp(substr($data, 0, 12))) {
+            $n['notWebp']++;
+            continue;
+        }
+        $dest = $target . '/' . $rel;
+        if (is_file($dest)) {
+            if (hash_file('sha256', $dest) === hash('sha256', $data)) {
+                $n['same']++;
+            } else {
+                $n['conflict']++;
+                vgma_err('Çakışma (üzerine yazılmadı): ' . $rel);
+            }
+            continue;
+        }
+        if (!$dry) {
+            $dirName = dirname($dest);
+            if (!is_dir($dirName) && !@mkdir($dirName, 0755, true) && !is_dir($dirName)) {
+                vgma_err('Klasör oluşturulamadı: ' . $dirName);
+                return 1;
+            }
+            $tmp = $dest . '.' . bin2hex(random_bytes(6)) . '.tmp';
+            if (@file_put_contents($tmp, $data) !== strlen($data) || !@rename($tmp, $dest)) {
+                @unlink($tmp);
+                vgma_err('Yazılamadı: ' . $rel);
+                return 1;
+            }
+            @chmod($dest, 0644);
+        }
+        $n['copied']++;
+    }
+    if (isset($zip)) {
+        $zip->close();
+    }
+    echo ($dry ? 'Deneme (hiçbir şey yazılmadı): ' : 'Görseller: ') . ($dry ? 'kopyalanacak ' : 'kopyalanan ') . $n['copied'] . ', zaten var ' . $n['same']
+        . ', çakışan ' . $n['conflict'] . ' (üzerine yazılmadı), geçersiz ad ' . $n['badName'] . ', WebP değil ' . $n['notWebp'] . ".\n";
+    if ($n['badName'] > 0) {
+        /* Gecersiz adli dosya (.htaccess, .php, fazladan klasor...) kopyalanmadi; ama paket Dosya Yoneticisi ile acilirsa
+           hepsi sunucuya gecer. Bu yuzden paket temiz sayilmaz: cikis 1. */
+        vgma_err('Paket yalnızca <2 hane>/<ad>.<8 hane>(-t).webp dosyaları içermeli; ' . $n['badName']
+            . ' geçersiz adlı dosya var (kopyalanmadı). Bu paketi cPanel Dosya Yöneticisi ile açmayın; dosyaları çıkarıp yeniden paketleyin.');
+    }
+    return $n['conflict'] > 0 || $n['notWebp'] > 0 || $n['badName'] > 0 ? 1 : 0;
 }
 
 /* ------------------------------------------------------------------ giris */
@@ -569,7 +721,7 @@ function vgma_main(array $argv): int
     $spec = [
         'grant' => [[], []], 'revoke' => [[], []], 'list' => [[], []], 'import' => [[], ['dry-run']], 'export-config' => [[], []],
         'orders' => [['status'], []], 'order' => [[], ['json']], 'set-status' => [['note', 'public-note', 'tracking'], ['notify']],
-        'status' => [[], ['json']], 'check' => [['product'], []],
+        'status' => [[], ['json']], 'check' => [['product'], []], 'gorsel-yukle' => [['hedef'], ['deneme']],
     ];
     if (!isset($spec[$cmd])) {
         vgma_err($cmd === '' ? vgma_usage() : 'Bilinmeyen komut: ' . $cmd . "\n" . vgma_usage());
@@ -584,6 +736,9 @@ function vgma_main(array $argv): int
     if (in_array($cmd, ['list', 'export-config', 'orders', 'status', 'check'], true) && $pos) {
         vgma_err("Bu komut konumsal argüman almaz.\n" . vgma_usage());
         return 2;
+    }
+    if ($cmd === 'gorsel-yukle') {
+        return vgma_cmd_media($pos, $opt);
     }
     if (!is_string(getenv('VG_DATA_DIR')) || trim((string)getenv('VG_DATA_DIR')) === '') {
         vgma_err("VG_DATA_DIR değişkenini API'nin mevcut özel veri klasörüne ayarlayın.");

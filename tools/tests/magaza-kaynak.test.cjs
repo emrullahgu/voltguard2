@@ -9,9 +9,10 @@ const os = require('node:os');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { spawn, spawnSync } = require('node:child_process');
+const ozel = require('./fixtures/magaza/ozel.cjs');
 
 const root = path.resolve(__dirname, '../..');
-const phpBin = process.env.VG_PHP || path.join(root, '.qa/php/runtime/php.exe');
+const phpBin = process.env.VG_PHP || [path.join(root, '.qa/php/runtime/php.exe'), path.resolve(root, '../../../.qa/php/runtime/php.exe')].find(f => fs.existsSync(f)) || path.join(root, '.qa/php/runtime/php.exe');   // git worktree: ana kopyanın .qa/php'si
 const fx = path.join(root, 'tools/tests/fixtures/magaza');
 const kdir = path.join(fx, 'kaynak');
 const runner = path.join(kdir, 'run.php');
@@ -24,7 +25,7 @@ const sha1 = s => crypto.createHash('sha1').update(s).digest('hex');
 const pageUrl = id => `https://tedarikci-bir.example/urun/${id}`;
 
 function baseEnv() {
-  const env = { ...process.env, VG_MAGAZA_CATALOG: path.join(fx, 'katalog.json'), VG_MAGAZA_FIRMA: path.join(fx, 'firma-tam.json') };
+  const env = { ...process.env, VG_MAGAZA_CATALOG: path.join(fx, 'katalog'), VG_MAGAZA_FIRMA: path.join(fx, 'firma-tam.json') };
   delete env.VG_MAGAZA_FIXTURE_DIR; delete env.VG_DATA_DIR; delete env.VG_RATE_SCALE;
   return env;
 }
@@ -82,8 +83,8 @@ function sandbox(t) {
     status(url, code) { clear(url); fs.writeFileSync(file(url, String(code)), ''); },
     redirect(url, loc) { clear(url); fs.writeFileSync(file(url, 'redirect'), loc); },
     rates(usd = 40, eur = 46, date) { fs.writeFileSync(path.join(pages, 'tcmb-today.xml'), tcmb(usd, eur, date)); },
-    // magaza/ klasörüne doğrudan yapılandırma yazar (CLI testleri için)
-    config(sources, extra) { fs.mkdirSync(path.join(data, 'magaza'), { recursive: true }); fs.writeFileSync(path.join(data, 'magaza', 'kaynaklar.json'), JSON.stringify(cfg(sources, extra))); },
+    // magaza/ klasörüne doğrudan parçalı yapılandırma yazar (kaynaklar.json ayarlar + kaynak/<parça>.json; CLI testleri için)
+    config(sources, extra) { ozel.writeConfig(data, cfg(sources, extra)); },
     refresh(payload, overrideEnv) { return run({ op: 'refresh', ...payload }, overrideEnv || env); },
   };
   return sb;
@@ -191,7 +192,7 @@ test('ayrıştırıcı: öncelik sırası, bozuk veri, para birimi, kodlama ve b
     { html: wrap(ldTag(product({ '@type': 'Offer', price: '10.00', priceCurrency: 'TRY' })) + og('20.00'), micro('30.00') + '<p class="price">999,00 TL</p>') },
     // 1: Product var ama fiyatı yok -> microdata'ya düşer
     { html: wrap(ldTag(product(null)), micro('30.00')) },
-    // 2: fiyat 0 -> yok sayılır, OG'ye düşer
+    // 2: ürünün kendi teklifi açıkça 0 -> no_price; OG/platform yedeğine (başka bir fiyata) DÜŞMEZ
     { html: wrap(ldTag(product({ '@type': 'Offer', price: '0', priceCurrency: 'TRY' })) + og('20.00')) },
     // 3: USD
     { html: wrap(ldTag(product({ '@type': 'Offer', price: '640.00', priceCurrency: 'USD' }))) },
@@ -221,7 +222,7 @@ test('ayrıştırıcı: öncelik sırası, bozuk veri, para birimi, kodlama ve b
   const r = run({ op: 'parse_many', items });
   assert.equal(r[0].price, 10); assert.equal(r[0].method, 'jsonld');
   assert.equal(r[1].price, 30); assert.equal(r[1].method, 'microdata');
-  assert.equal(r[2].price, 20); assert.equal(r[2].method, 'og');
+  assert.equal(r[2].ok, false); assert.equal(r[2].error, 'no_price'); assert.equal(r[2].price, null); assert.equal(r[2].method, 'jsonld');
   assert.equal(r[3].currency, 'USD'); assert.equal(r[3].price, 640);
   assert.equal(r[4].ok, false); assert.equal(r[4].error, 'unsupported_currency');
   assert.equal(r[5].ok, true); assert.equal(r[5].price, 5.5);
@@ -247,12 +248,107 @@ test('ayrıştırıcı: öncelik sırası, bozuk veri, para birimi, kodlama ve b
   const enc = run({ op: 'parse', file: legacy });
   assert.equal(enc.ok, true); assert.equal(enc.price, 99.9); assert.equal(enc.name, 'Güneş Paneli İnverter');
 
-  // 2 MiB sınırı: ilk 2 MiB içindeki JSON-LD okunur, sonrası okunmaz
-  const filler = '<div>dolgu dolgu dolgu</div>'.repeat(90000);
-  const early = run({ op: 'parse', html: wrap(ldTag(product({ '@type': 'Offer', price: '15', priceCurrency: 'TRY' })), filler) });
-  assert.equal(early.price, 15);
-  const late = run({ op: 'parse', html: wrap('', filler + ldTag(product({ '@type': 'Offer', price: '15', priceCurrency: 'TRY' }))) });
-  assert.equal(late.ok, false); assert.equal(late.error, 'no_price');
+  // 8 MiB sınırı: 2-3 MiB'lik (mega menülü) sayfanın SONUNDAKİ JSON-LD ve ana fiyat bloğu okunur; 8 MiB sonrası okunmaz
+  const filler = '<div>dolgu dolgu dolgu</div>'.repeat(90000);                       // ~2,5 MiB
+  const bigPage = path.join(dir, 'buyuk.html');
+  fs.writeFileSync(bigPage, wrap('', filler + ldTag(product({ '@type': 'Offer', price: '15', priceCurrency: 'TRY' }))));
+  assert.ok(fs.statSync(bigPage).size > 2.2 * 1024 * 1024);
+  const late = run({ op: 'parse', file: bigPage });
+  assert.equal(late.ok, true, late.error); assert.equal(late.price, 15); assert.equal(late.method, 'jsonld');
+  const hugePage = path.join(dir, 'dev.html');
+  fs.writeFileSync(hugePage, wrap('', filler.repeat(4) + ldTag(product({ '@type': 'Offer', price: '15', priceCurrency: 'TRY' }))));
+  assert.ok(fs.statSync(hugePage).size > 8 * 1024 * 1024);
+  const cut = run({ op: 'parse', file: hugePage });
+  assert.equal(cut.ok, false); assert.equal(cut.error, 'no_price');
+});
+
+test('ayrıştırıcı: kalibrasyonda bulunan hata türleri yanlış fiyat yerine belirli hata kodu verir', t => {
+  const F = (file, extra = {}) => ({ file: path.join(kdir, file), ...extra });
+  const cases = [
+    // 1) ürünün kendi fiyatı 0 (JSON-LD teklifi 0.00, gizli fiyat alanı 0,00, ana fiyat 0,00): ilgili ürün kartlarının fiyatına düşülmez
+    [F('zero-price-cards.html'), { ok: false, price: null, error: 'no_price', method: 'jsonld', candidates: [], sku: 'VK 90442029' }],
+    // 1b) yapısal veri yok, ana fiyat öğesi boş ve gizli alan 0: platform yedeği kart fiyatını (1.025,62 / 1.080,00) döndürmez
+    [F('zero-price-platform.html'), { ok: false, price: null, error: 'no_price' }],
+    // 2) "N adet ve katlarıyla" metni + adet girdisi data-minimum: birim fiyat okunur ama min_quantity (minQty=305)
+    [F('min-qty-text.html'), { ok: false, price: 23.45, error: 'min_quantity', minQty: 305, method: 'jsonld' }],
+    // 2b) adet girdisi paket katı (data-market-price="500" / value=500)
+    [F('min-qty-input.html'), { ok: false, price: 0.38, error: 'min_quantity', minQty: 500, method: 'microdata', sku: '517008' }],
+    // 2c) fiyatı değiştiren seçenek listesi (metre); sıralama listesi seçenek sayılmaz
+    [F('options-select.html'), { ok: false, price: 1140, error: 'price_options', method: 'og', image: 'https://tedarikci-bir.example/Resimler/Urunler/u7872.jpg' }],
+    // 2d) yalnız renk sıcaklığı seçimi fiyatı değiştirmez
+    [F('options-colour.html'), { ok: true, price: 116.6, error: '', vatIncluded: true }],
+    // 3) KDV dahil mağazada "TL + KDV" etiketli net fiyat: vatIncluded=false bayrağıyla döner (vgm_fetch_offer reddeder)
+    [F('vat-net-label.html'), { ok: true, price: 1.64, vatIncluded: false, available: false, method: 'jsonld' }],
+    // 3b) aynı ürünün "+ KDV" ve "(KDV Dahil)" iki fiyatı (oran 1,20): KDV dahil olan alınır
+    [F('vat-two-prices.html'), { ok: true, price: 21686.4, vatIncluded: true, candidates: [21686.4], method: 'platform:ticimax' }],
+    // 3c) görünür etiket yok, platform verisinde kdvDahil=false
+    [F('vat-flag-json.html'), { ok: true, price: 6102, vatIncluded: false }],
+    // 4) açıklamaya yapıştırılmış ikinci (eski) Product JSON-LD platformun teklifini ezemez: varyant verisiyle tutan 1254.83
+    [F('jsonld-pasted-second.html'), { ok: true, price: 1254.83, method: 'jsonld', mpn: '8690000000017', sku: 'PD304017', candidates: [1254.83] }],
+    // 4b) iki Product JSON-LD çelişir, hiçbiri açıkça sayfanın kendisi değil: ambiguous_price
+    [F('jsonld-pasted-ambiguous.html'), { ok: false, error: 'ambiguous_price', candidates: [935.28, 1254.83] }],
+    // 6) indirimli platform sayfası: üstü çizili liste fiyatı (product-price-old) hiç okunmaz, yalnız indirimli fiyat
+    [F('ideasoft-discount.html'), { ok: true, price: 35552.29, currency: 'TRY', method: 'platform:ideasoft', candidates: [35552.29] }],
+    // 6b) varyant verisinde fiyatlar sayfa fiyatından farklı: price_options
+    [F('variants-mismatch.html'), { ok: false, price: 80850, error: 'price_options', method: 'jsonld' }],
+    // 6c) tüm varyantlar sayfa fiyatında: seçenek fiyatı değiştirmiyor
+    [F('variants-same.html'), { ok: true, price: 11500, available: false, error: '' }],
+    // 7) marka "false" boş sayılır; yer tutucu görsel görsel değildir (JSON-LD image ve og:image)
+    [F('brand-false-placeholder.html'), { ok: true, price: 10620.63, brand: null, image: null, sku: 'KKM', vatIncluded: true }],
+  ];
+  const got = run({ op: 'parse_many', items: cases.map(c => c[0]) });
+  cases.forEach((c, i) => {
+    for (const [key, want] of Object.entries(c[1])) assert.deepEqual(got[i][key], want, `${path.basename(c[0].file)} -> ${key}`);
+  });
+  // 1c) aynı platform sınıfı ilgili ürün kartında da var: kart (related / product-item) okunmaz, ana fiyat alınır;
+  //     kart kapsayıcısı dışında ikinci bir fiyat varsa tahmin edilmez (ambiguous_price)
+  const discount = fs.readFileSync(path.join(kdir, 'ideasoft-discount.html'), 'utf8');
+  const cards = discount.replace('</body>', '<div class="related"><div class="product-item"><div class="product-price"><div class="product-price-old">9.000,00 TL</div><div class="product-price-new">7.500,00 TL</div></div></div></div></body>');
+  const carded = run({ op: 'parse', html: cards });
+  assert.equal(carded.ok, true, carded.error); assert.equal(carded.price, 35552.29); assert.deepEqual(carded.candidates, [35552.29]);
+  const loose = run({ op: 'parse', html: discount.replace('</body>', '<div class="kampanya"><div class="product-price-new">7.500,00 TL</div></div></body>') });
+  assert.equal(loose.ok, false); assert.equal(loose.error, 'ambiguous_price'); assert.deepEqual(loose.candidates, [7500, 35552.29]);
+  // 1d) gizli fiyat alanı da yoksa: ana fiyat öğesi boş, fiyatlı olan yalnız ilgili ürün kartları -> no_price (kart fiyatı değil)
+  const noHidden = fs.readFileSync(path.join(kdir, 'zero-price-platform.html'), 'utf8').replace(/<input type="hidden"[^>]*>/g, '');
+  const nh = run({ op: 'parse', html: noHidden });
+  assert.equal(nh.ok, false); assert.equal(nh.error, 'no_price'); assert.equal(nh.price, null);
+  // 1e) mega menü / vitrin / kaydırıcı / mini sepet içindeki kart fiyatları (aynı platform sınıfı) okunmaz; ana fiyat okunur
+  const menuCard = n => `<li class="dropdown"><div class="product-thumb"><p class="price"><span class="price-new">${n},00 TL</span></p></div></li>`;
+  const megaMenu = `<header><nav class="mega-menu"><ul>${[101, 202, 303].map(menuCard).join('')}</ul></nav></header>`;
+  const ocMain = '<div id="content"><h1>Deneme Ürün</h1><ul class="list-unstyled"><li><span class="price-new">2.350,00 TL</span></li></ul></div>';
+  const ocCarousel = '<div class="owl-carousel"><div class="item"><span class="price-new">404,00 TL</span></div></div>';
+  const oc = run({ op: 'parse', html: `<html><body>${megaMenu}${ocMain}${ocCarousel}</body></html>` });
+  assert.equal(oc.ok, true, oc.error); assert.equal(oc.price, 2350); assert.equal(oc.method, 'platform:opencart');
+  const ocNoMain = run({ op: 'parse', html: `<html><body>${megaMenu}<div id="content"><h1>Deneme Ürün</h1></div>${ocCarousel}</body></html>` });
+  assert.equal(ocNoMain.ok, false); assert.equal(ocNoMain.error, 'no_price');
+  // WooCommerce: "related products" bölümündeki p.price kartı okunmaz
+  const wooRelated = '<section class="related products"><ul class="products"><li class="product"><p class="price"><span class="woocommerce-Price-amount amount">555,00&nbsp;₺</span></p></li></ul></section>';
+  const woo = run({ op: 'parse', html: `<html><body><div class="summary"><h1>X</h1></div>${wooRelated}</body></html>` });
+  assert.equal(woo.ok, false); assert.equal(woo.error, 'no_price');
+  // microdata'da "KDV hariç" / JSON-LD'de 0 fiyatlı priceSpecification da no_price
+  const zeroSpec = run({ op: 'parse', html: '<html><body><div itemscope itemtype="https://schema.org/Product"><div itemprop="offers" itemscope><meta itemprop="price" content="0.00"></div></div><div class="card"><span class="product-current-price">99,00 TL</span></div></body></html>' });
+  assert.equal(zeroSpec.ok, false); assert.equal(zeroSpec.error, 'no_price');
+
+  // vgm_fetch_offer: KDV bayrağı kaynak kaydıyla çelişirse vat_mismatch; min adet ve seçenek hataları aynen geçer
+  const sb = sandbox(t);
+  const product = { id: 'vgm-9001', vat: 20, mpn: null, gtin: null };
+  const offer = (file, srcOver = {}) => {
+    sb.page(U, fs.readFileSync(path.join(kdir, file), 'utf8'));
+    return run({ op: 'offer', src: src(U, srcOver), product }, sb.env);
+  };
+  assert.deepEqual(offer('vat-net-label.html', { vatIncluded: true }), { error: 'vat_mismatch' });
+  assert.deepEqual(offer('vat-net-label.html', { vatIncluded: false }), { price: 1.64, currency: 'TRY', vatIncluded: false, discount: 0, available: false, method: 'jsonld' });
+  assert.deepEqual(offer('vat-flag-json.html', { vatIncluded: true }), { error: 'vat_mismatch' });
+  assert.equal(offer('vat-two-prices.html', { vatIncluded: true }).price, 21686.4);
+  assert.deepEqual(offer('vat-two-prices.html', { vatIncluded: false }), { error: 'vat_mismatch' });
+  assert.equal(offer('brand-false-placeholder.html', { vatIncluded: true }).price, 10620.63);    // "KDV Dahildir" + kaynak KDV dahil
+  assert.deepEqual(offer('min-qty-text.html'), { error: 'min_quantity' });
+  assert.deepEqual(offer('min-qty-input.html'), { error: 'min_quantity' });
+  assert.deepEqual(offer('options-select.html'), { error: 'price_options' });
+  assert.deepEqual(offer('variants-mismatch.html'), { error: 'price_options' });
+  assert.deepEqual(offer('zero-price-cards.html'), { error: 'no_price' });
+  assert.deepEqual(offer('jsonld-pasted-ambiguous.html'), { error: 'ambiguous_price' });
+  assert.equal(offer('jsonld-pasted-second.html').price, 1254.83);
 });
 
 /* ------------------------------------------------------------------------------------------------ SSRF */
@@ -474,6 +570,9 @@ test('vgm_refresh (cron): ok, KDV/indirim/USD dönüşümü, gone -> unavailable
   assert.equal(items['vgm-9004'].costTry, 88800); assert.ok(Math.abs(items['vgm-9004'].costUsd - 1850) < 1e-3);
   // vgm-9005: 404 -> unavailable
   assert.equal(items['vgm-9005'].status, 'unavailable'); assert.equal(items['vgm-9005'].available, false); assert.equal(items['vgm-9005'].note, 'http_404');
+  // sorunlu ürünler fiyat-durum.json'da (panel tüm parçaları taramaz)
+  assert.deepEqual(r1.prices.problems, { 'vgm-9005': 'unavailable' });
+  assert.deepEqual(r1.queue['vgm-9001'].slice(2), ['ok', 'tedarikci-bir.example', 0]); assert.ok(r1.queue['vgm-9001'][0] > 0);
   // tam çalışma kalp atışı yazar
   assert.ok(Math.abs(r1.prices.lastRunAt - now()) <= 15);
   assert.equal(r1.prices.lastRunSummary.checked, 5);
@@ -485,7 +584,8 @@ test('vgm_refresh (cron): ok, KDV/indirim/USD dönüşümü, gone -> unavailable
   sb.page(pageUrl('vgm-9001'), ld({ mpn: 'DM-450', price: '3431.26' }));
   sb.page(pageUrl('vgm-9003'), ld({ mpn: 'DM-C16', price: '110' }));
   sb.page(pageUrl('vgm-9005'), ld({ mpn: 'DM-MM1', price: '1700' }));
-  const r2 = sb.refresh({ opts: { ids: null, live: false, spacing: 0, budget: 60 } });
+  // age: 0 -> zamanlayıcı yeni kontrol edilmiş ürünleri de yeniden alır (varsayılan: 20 saat sonra)
+  const r2 = sb.refresh({ opts: { ids: null, live: false, spacing: 0, budget: 60, age: 0 } });
   assert.deepEqual(pick(r2.summary, ['checked', 'ok', 'held', 'unavailable', 'rateUpdated']), { checked: 5, ok: 4, held: 1, unavailable: 0, rateUpdated: false });
   const i2 = r2.prices.items;
   assert.equal(i2['vgm-9001'].status, 'held'); assert.equal(i2['vgm-9001'].costTry, 2450.9);        // kabul edilen fiyat korunur
@@ -494,6 +594,10 @@ test('vgm_refresh (cron): ok, KDV/indirim/USD dönüşümü, gone -> unavailable
   assert.equal(i2['vgm-9003'].costTry, 99); assert.equal(i2['vgm-9003'].status, 'ok');
   assert.equal(i2['vgm-9005'].status, 'ok'); assert.equal(i2['vgm-9005'].available, true); assert.equal(i2['vgm-9005'].costTry, 1700);
   assert.ok(i2['vgm-9001'].history.length >= 2);
+  assert.deepEqual(r2.prices.problems, { 'vgm-9001': 'held' });
+  // varsayılan yaş (20 saat): az önce kontrol edilen ürünler yeniden getirilmez
+  const r3 = sb.refresh({ opts: { ids: null, live: false, spacing: 0, budget: 60 } });
+  assert.deepEqual(pick(r3.summary, ['checked', 'due', 'left', 'skipped']), { checked: 0, due: 0, left: 0, skipped: 0 });
 });
 
 test('vgm_refresh: kaynak önceliği, gone zinciri sürdürür, tüm kaynaklar gone ise unavailable, hata ve kimlik uyuşmazlığı', t => {
@@ -578,7 +682,8 @@ test('vgm_price: kimlik uyuşmazlığı/belirsiz fiyat hatası siparişi engelle
   const price = (item, at = now0) => run({ op: 'price', product: p, item: { costUsd: 51.06, checkedAt: now0 - 3600, available: true, source: 0, history: [], ...item }, rate, config, open: true, now: at });
   const ok = price({ status: 'ok' });
   assert.equal(ok.orderable, true); assert.equal(ok.reason, 'ok');
-  for (const note of ['identity_mismatch', 'http_503; identity_mismatch', 'ambiguous_price']) {
+  // görünen fiyat ödenecek fiyat değil (başka ürün, çelişki, KDV hariç, en az adet, fiyatı değiştiren seçenek): satılmaz
+  for (const note of ['identity_mismatch', 'http_503; identity_mismatch', 'ambiguous_price', 'vat_mismatch', 'min_quantity', 'price_options']) {
     const r = price({ status: 'error', note });
     assert.equal(r.orderable, false, note); assert.equal(r.reason, 'error', note);
   }
@@ -636,14 +741,14 @@ test('vgm_refresh: kur yoksa/eskiyse, rates:false, max, bütçe ve aynı sunucuy
   r = sb.refresh({ opts: { ids: [], live: false, spacing: 0 } });
   assert.equal(r.summary.rateUpdated, true); assert.equal(r.rate.usdTry, 41);
   // 48 saatten eski okunmuş kur güvenilmez: ürünler getirilmez
-  r = sb.refresh({ rate: { ...old, fetchedAt: now() - 3 * 86400 }, opts: { ids: null, spacing: 0, rates: false } });
+  r = sb.refresh({ rate: { ...old, fetchedAt: now() - 3 * 86400 }, opts: { ids: null, spacing: 0, rates: false, age: 0 } });
   assert.deepEqual(pick(r.summary, ['checked', 'skipped', 'rateError']), { checked: 0, skipped: 3, rateError: 'no_rate' });
 
   // max: en çok 2 getirme
   sb = sandbox(t); sb.rates(40, 46);
   for (const id of Object.keys(sources)) sb.page(pageUrl(id), ld({ mpn: MPN[id], price: GOOD[id] }));
   r = sb.refresh({ config: cfg(sources), opts: { ids: null, spacing: 0, max: 2 } });
-  assert.deepEqual(pick(r.summary, ['checked', 'skipped']), { checked: 2, skipped: 1 });
+  assert.deepEqual(pick(r.summary, ['checked', 'skipped', 'left', 'due']), { checked: 2, skipped: 0, left: 1, due: 3 });
   // adil sıra: bir sonraki çalışma önceki çalışmada atlananı alır
   r = sb.refresh({ opts: { ids: null, spacing: 0, max: 1 } });
   const attempted = Object.entries(r.prices.items).filter(([, v]) => v.lastAttemptAt).length;
@@ -662,7 +767,7 @@ test('vgm_refresh: kur yoksa/eskiyse, rates:false, max, bütçe ve aynı sunucuy
   sb = sandbox(t); sb.rates(40, 46);
   for (const id of Object.keys(two)) sb.page(pageUrl(id), ld({ mpn: MPN[id], price: GOOD[id] }));
   r = sb.refresh({ config: cfg(two), opts: { ids: null, spacing: 30, budget: 3 } });
-  assert.deepEqual(pick(r.summary, ['checked', 'skipped']), { checked: 1, skipped: 1 });
+  assert.deepEqual(pick(r.summary, ['checked', 'skipped', 'left']), { checked: 1, skipped: 0, left: 1 });
 });
 
 test('vgm_refresh (canlı): yalnız bayat ve yakın zamanda denenmemiş ürünler; hız sınırı; kalp atışı yok', t => {
@@ -729,7 +834,7 @@ test('cron: --status, tam çalışma, --product, --rates, --parse, --check-url v
   // tam çalışma
   const full = cron([], sb.env);
   assert.equal(full.status, 0, full.stdout + full.stderr);
-  assert.match(full.stdout, /checked=5 ok=4 held=0 error=0 unavailable=1 skipped=0 rateUpdated=yes/);
+  assert.match(full.stdout, /checked=5 ok=4 held=0 error=0 unavailable=1 skipped=0 left=0 due=5 rateUpdated=yes/);
   st = JSON.parse(cron(['--status'], sb.env).stdout);
   assert.equal(st.healthy, true); assert.equal(st.stale, 1);                      // unavailable ürünün checkedAt'i yok -> bayat sayılır
   assert.deepEqual(st.counts, { ok: 4, held: 0, error: 0, unavailable: 1, unchecked: 0 });
@@ -737,10 +842,21 @@ test('cron: --status, tam çalışma, --product, --rates, --parse, --check-url v
   assert.equal(st.summary.checked, 5);
   assert.equal(st.rate.usdTry, 40); assert.equal(st.rate.ok, true);
   assert.doesNotMatch(JSON.stringify(st), /tedarikci|example|https?:/i);
-  // 13 saatten eski çalışma "sağlıksız"
-  const statusLate = run({ op: 'status', now: now() + 14 * 3600 }, sb.env);
+  // cron her 10 dakikada bir: 30 dakikadan eski çalışma "sağlıksız"
+  const statusLate = run({ op: 'status', now: now() + 31 * 60 }, sb.env);
   assert.equal(statusLate.healthy, false);
-  assert.equal(run({ op: 'status', now: now() + 12 * 3600 }, sb.env).healthy, true);
+  assert.equal(run({ op: 'status', now: now() + 20 * 60 }, sb.env).healthy, true);
+  assert.equal(st.freshShare, 0.8); assert.equal(st.fresh, 4);
+  assert.deepEqual(st.capacity, { fetchesPerHour: null, cycleHours: null, ok: true }, 'az örnekli çalışmada tahmin yok');
+  // kapasite: son çalışmanın hızıyla tüm ürünlerin bir turu 48 saati aşıyorsa sağlıklı sayılmaz
+  const durumFile = path.join(sb.data, 'magaza', 'fiyat-durum.json');
+  const durum = JSON.parse(fs.readFileSync(durumFile, 'utf8'));
+  fs.writeFileSync(durumFile, JSON.stringify({ ...durum, lastRunAt: now(), lastRunSummary: { ...durum.lastRunSummary, fetches: 20, seconds: 100000, budget: 10 } }));
+  const slow = run({ op: 'status', now: now() }, sb.env);
+  assert.equal(slow.healthy, false); assert.equal(slow.capacity.ok, false); assert.ok(slow.capacity.cycleHours > 48);
+  fs.writeFileSync(durumFile, JSON.stringify({ ...durum, lastRunAt: now(), lastRunSummary: { ...durum.lastRunSummary, fetches: 200, seconds: 200, budget: 540 } }));
+  const fast = run({ op: 'status', now: now() }, sb.env);
+  assert.equal(fast.healthy, true); assert.deepEqual(fast.capacity, { fetchesPerHour: 3240, cycleHours: 0, ok: true });
 
   // --product
   const one = JSON.parse(cron(['--product', 'vgm-9001'], sb.env).stdout);
@@ -780,6 +896,16 @@ test('cron: aynı anda ikinci tam çalışma başlamaz (cron.lock)', async t => 
   assert.equal(st.lastRunAt, null);                                                // çalışma yapılmadı
 });
 
+test('cron: cron.lock açılamıyorsa (izin/yol sorunu) "başka çalışma" sayılmaz; hata ve çıkış 1', t => {
+  const sb = sandbox(t);
+  const std = standard(sb);
+  sb.config(std.sources);
+  fs.mkdirSync(path.join(sb.data, 'magaza', 'cron.lock'));                         // dosya yerine klasör: fopen başarısız
+  const res = cron([], sb.env);
+  assert.equal(res.status, 1);
+  assert.match(res.stderr, /cron\.lock açılamadı/); assert.doesNotMatch(res.stdout, /atlandı/);
+});
+
 /* ------------------------------------------------------------------------------------------------ modül kuralları */
 
 test('modül kuralları: dürüst bot kimliği, PHP 7.4 uyumu, açık depoda tedarikçi alan adı yok', () => {
@@ -809,4 +935,171 @@ test('modül kuralları: dürüst bot kimliği, PHP 7.4 uyumu, açık depoda ted
     }
   }
   assert.deepEqual([...new Set(leaks)], []);
+});
+
+/* ------------------------------------------------------------------------------------------------ zamanlayıcı (ölçek) */
+
+test('zamanlayıcı sırası: önce hiç denenmemiş, sonra en eski doğrulama (48 saate en yakın), en sonda hiç doğrulanamamış; 20 saat / geri çekilen yeniden deneme', () => {
+  const t = 1800000000;
+  const H = 3600;
+  const queue = {
+    'vgm-0001': [t - 30 * H, t - 30 * H, 'ok'],         // 30 saat önce doğrulandı: zamanı geldi
+    'vgm-0002': [t - 10 * H, t - 10 * H, 'ok'],         // 10 saat önce: henüz değil
+    'vgm-0003': [0, 0, null],                            // hiç denenmedi: en başta
+    'vgm-0004': [0, t - 3 * H, 'error'],                 // hiç doğrulanamadı, 3 saat önce denendi: yeniden (2 saat)
+    'vgm-0005': [0, t - 1 * H, 'error'],                 // 1 saat önce denendi: bekler
+    'vgm-0006': [t - 40 * H, t - 3 * H, 'error'],        // 40 saat önceki doğrulama, son deneme başarısız: yeniden
+    'vgm-0007': [t - 45 * H, t - 30 * 60, 'held'],       // 30 dk önce onaya düştü: bekler
+    'vgm-0008': [t - 21 * H, t - 21 * H, 'ok'],          // 21 saat: zamanı geldi
+    'vgm-0009': [0, 0, null],
+  };
+  assert.deepEqual(run({ op: 'due', queue, now: t }), ['vgm-0003', 'vgm-0009', 'vgm-0006', 'vgm-0001', 'vgm-0008', 'vgm-0004']);
+  // yaş ayarlanabilir (cron --yas): 35 saatte yalnız başarısız denemeler ve hiç denenmemişler
+  assert.deepEqual(run({ op: 'due', queue, now: t, age: 35 * H }), ['vgm-0003', 'vgm-0009', 'vgm-0006', 'vgm-0004']);
+  assert.deepEqual(run({ op: 'due', queue: {}, now: t }), []);
+  // geri çekilme: ardışık n. hatadan sonra min(2 saat x 2^(n-1), 20 saat) beklenir
+  const backoff = {
+    'vgm-0010': [0, t - 3 * H, 'error', 'a.example', 2],      // 2 hata: 4 saat bekler
+    'vgm-0011': [0, t - 5 * H, 'error', 'a.example', 2],      // 5 saat önce: yeniden
+    'vgm-0012': [0, t - 10 * H, 'error', 'a.example', 6],     // 6 hata: 20 saat tavanı
+    'vgm-0013': [0, t - 21 * H, 'error', 'a.example', 9],     // tavan geçti: yeniden
+    'vgm-0014': [t - 46 * H, t - 3 * H, 'error', 'a.example', 1],
+  };
+  assert.deepEqual(run({ op: 'due', queue: backoff, now: t }), ['vgm-0014', 'vgm-0013', 'vgm-0011']);
+});
+
+test('zamanlayıcı: sunucular serpiştirilir, her sunucuya kendi aralığından (suppliers.spacing) sık istek gitmez', t => {
+  const sb = sandbox(t);
+  sb.rates(40, 46);
+  const A = 'tedarikci-bir.example', B = 'tedarikci-iki.example';
+  const url = (host, id) => `https://${host}/urun/${id}`;
+  const sources = {
+    'vgm-9001': [src(url(A, 'vgm-9001'))], 'vgm-9002': [src(url(A, 'vgm-9002'))], 'vgm-9003': [src(url(A, 'vgm-9003'))],
+    'vgm-9004': [src(url(B, 'vgm-9004'))], 'vgm-9005': [src(url(B, 'vgm-9005'))],
+  };
+  for (const [id, list] of Object.entries(sources)) sb.page(list[0].url, ld({ mpn: MPN[id], price: GOOD[id] }));
+  fs.writeFileSync(path.join(sb.pages, 'getirme.log'), '');
+  const config = cfg(sources, { suppliers: { [A]: { spacing: 1 }, [B]: { spacing: 0.4 } } });
+  const r = sb.refresh({ config, opts: { ids: null, budget: 30 } });
+  assert.deepEqual(pick(r.summary, ['checked', 'ok', 'left', 'skipped', 'due']), { checked: 5, ok: 5, left: 0, skipped: 0, due: 5 });
+  const log = fs.readFileSync(path.join(sb.pages, 'getirme.log'), 'utf8').trim().split('\n').map(l => { const [at, host] = l.split(' '); return { at: Number(at), host }; });
+  assert.deepEqual(log.map(x => x.host), [A, B, B, A, A], 'A beklerken B işlenir (sıra: öncelik + hazır olan sunucu)');
+  const gaps = host => log.filter(x => x.host === host).map((x, i, all) => (i ? x.at - all[i - 1].at : null)).filter(v => v !== null);
+  for (const g of gaps(A)) assert.ok(g >= 0.99, `A aralığı ${g}`);
+  for (const g of gaps(B)) assert.ok(g >= 0.39, `B aralığı ${g}`);
+  assert.ok(log[1].at - log[0].at < 0.5, 'ikinci istek ilk sunucunun aralığını beklemez (başka sunucu)');
+});
+
+test('zamanlayıcı: pencere sunucu başına kuyruklanır; sıra başını tek tedarikçi doldursa da diğer sunucu aynı çalışmada işlenir', t => {
+  const sb = sandbox(t);
+  sb.rates(40, 46);
+  const A = 'tedarikci-bir.example', B = 'tedarikci-iki.example';
+  // A'da sıra başında 80 ürün (hiç denenmemiş; pencere en çok 50 = max(50, max x 2)); B'nin tek ürünü sıranın sonunda
+  const sources = {};
+  for (let i = 0; i < 80; i++) { const id = `vgm-${1000 + i}`; sources[id] = [src(`https://${A}/urun/${id}`)]; }
+  sources['vgm-9005'] = [src(`https://${B}/urun/vgm-9005`)];
+  sb.page(sources['vgm-9005'][0].url, ld({ mpn: MPN['vgm-9005'], price: GOOD['vgm-9005'] }));
+  const r = sb.refresh({ config: cfg(sources, { suppliers: { [A]: { spacing: 1 } } }), opts: { ids: null, budget: 5, max: 2 } });
+  assert.equal(r.prices.items['vgm-9005'] && r.prices.items['vgm-9005'].status, 'ok', 'B sunucusu aynı çalışmada getirildi');
+  assert.equal(r.summary.due, 81);
+  // A için en çok ceil(5 / 1) + 20 = 25 ürün pencereye alındı (geri kalanlar sonraki çalışmaya)
+  assert.equal(r.summary.left, 81 - 26);
+});
+
+test('zamanlayıcı: kalıcı hatalı ürünler sunucunun kapasitesini tüketmez; 48 saate yaklaşan doğrulanmış ürün önce alınır', t => {
+  const sb = sandbox(t);
+  const std = standard(sb);
+  const H = 3600;
+  const failing = id => ({ status: 'error', note: 'identity_mismatch', lastAttemptAt: now() - 3 * H, history: [[now() - 3 * H, null, 'error']] });
+  const prices = { version: 1, lastRunAt: null, lastRunSummary: null, items: {
+    'vgm-9001': failing('vgm-9001'), 'vgm-9002': failing('vgm-9002'), 'vgm-9003': failing('vgm-9003'),
+    'vgm-9004': okItem('vgm-9004', { checkedAt: now() - 46 * H, lastAttemptAt: now() - 46 * H }) } };
+  sb.page(pageUrl('vgm-9004'), ld({ mpn: MPN['vgm-9004'], price: '1850', currency: 'USD' }));
+  // bir çalışmada tek getirme: hiç doğrulanamamış 3 ürün (ve hiç denenmemiş vgm-9005 dışında) değil, 46 saatlik ürün
+  sb.status(pageUrl('vgm-9005'), 404);
+  const rate = { version: 1, usdTry: 40, eurTry: 46, date: new Date().toISOString().slice(0, 10), fetchedAt: now(), source: 'test' };
+  let r = sb.refresh({ config: std.config, prices, rate, opts: { ids: null, max: 2, spacing: 0, rates: false } });
+  const attempted = Object.keys(r.prices.items).filter(id => (r.prices.items[id].lastAttemptAt || 0) >= now() - 60).sort();
+  assert.deepEqual(attempted, ['vgm-9004', 'vgm-9005'], 'önce hiç denenmemiş, sonra 48 saate yakın doğrulanmış ürün');
+  assert.ok(r.prices.items['vgm-9004'].checkedAt >= now() - 60);
+});
+
+test('zamanlayıcı: son tarihte durur, işlenenler parça parça kaydedilir, kalanlar sonraki çalışmaya kalır', t => {
+  const sb = sandbox(t);
+  sb.rates(40, 46);
+  const ids = ['vgm-9001', 'vgm-9002', 'vgm-9003', 'vgm-9004', 'vgm-9005'];
+  const sources = Object.fromEntries(ids.map((id, i) => [id, [src(`https://tedarikci-${i + 1}.example/urun/${id}`)]]));
+  for (const id of ids) sb.page(sources[id][0].url, ld({ mpn: MPN[id], price: GOOD[id] }));
+  fs.writeFileSync(path.join(sb.pages, 'gecikme'), '0.6');
+  // parallel: 1 -> sunucular sırayla (eş zamanlılık testi ayrı); kur hazır (gecikme kur getirmesine de uygulanır);
+  // 1,5 sn bütçede 0,6 sn'lik 2-3 getirme
+  const rate = { version: 1, usdTry: 40, eurTry: 46, date: new Date().toISOString().slice(0, 10), fetchedAt: now(), source: 'test' };
+  const r = sb.refresh({ config: cfg(sources), rate, opts: { ids: null, budget: 1.5, parallel: 1, rates: false } });
+  const s = r.summary;
+  assert.ok(s.checked >= 2 && s.checked <= 3, `kontrol edilen ${s.checked}`);
+  assert.equal(s.checked + s.left, 5); assert.equal(s.skipped, 0);
+  assert.ok(s.seconds <= 3, `süre ${s.seconds}`);
+  const done = Object.keys(r.prices.items).filter(id => r.prices.items[id].status === 'ok');
+  assert.equal(done.length, s.checked, 'işlenen her ürün kaydedildi');
+  assert.deepEqual(Object.keys(r.queue).sort(), ids);
+  assert.equal(ids.filter(id => r.queue[id][0] > 0).length, s.checked);
+  assert.ok(Math.abs(r.prices.lastRunAt - now()) <= 15, 'kalp atışı yazıldı');
+  // sonraki çalışma kalanları (hiç denenmemiş) önce alır
+  fs.rmSync(path.join(sb.pages, 'gecikme'));
+  const r2 = sb.refresh({ opts: { ids: null, budget: 30, spacing: 0 } });
+  assert.deepEqual(pick(r2.summary, ['checked', 'left', 'due']), { checked: 5 - s.checked, left: 0, due: 5 - s.checked });
+});
+
+test('zamanlayıcı: farklı sunucular eş zamanlı getirilir (curl_multi); aynı sunucuda tek istek ve aralık korunur', t => {
+  const sb = sandbox(t);
+  sb.rates(40, 46);
+  const ids = ['vgm-9001', 'vgm-9002', 'vgm-9003', 'vgm-9004', 'vgm-9005'];
+  // 4 farklı sunucu + vgm-9005 dördüncü sunucuda (aynı sunucuya ikinci istek, aralık 0,3 sn)
+  const hostOf = i => `https://tedarikci-${Math.min(i + 1, 4)}.example/urun/`;
+  const sources = Object.fromEntries(ids.map((id, i) => [id, [src(hostOf(i) + id)]]));
+  for (const id of ids) sb.page(sources[id][0].url, ld({ mpn: MPN[id], price: GOOD[id] }));
+  fs.writeFileSync(path.join(sb.pages, 'gecikme'), '0.5');
+  fs.writeFileSync(path.join(sb.pages, 'getirme.log'), '');
+  const rate = { version: 1, usdTry: 40, eurTry: 46, date: new Date().toISOString().slice(0, 10), fetchedAt: now(), source: 'test' };
+  const r = sb.refresh({ config: cfg(sources), rate, opts: { ids: null, budget: 10, spacing: 0.3, rates: false } });
+  assert.deepEqual(pick(r.summary, ['checked', 'ok', 'left', 'fetches']), { checked: 5, ok: 5, left: 0, fetches: 5 });
+  assert.ok(r.summary.seconds < 1.6, `eş zamanlı: ${r.summary.seconds} sn (sırayla en az 2,5 sn olurdu)`);
+  const log = fs.readFileSync(path.join(sb.pages, 'getirme.log'), 'utf8').trim().split('\n').map(l => { const [at, host] = l.split(' '); return { at: Number(at), host }; });
+  const first = log.slice(0, 4);
+  assert.deepEqual(new Set(first.map(x => x.host)).size, 4, 'ilk 4 istek 4 ayrı sunucuya');
+  assert.ok(first[3].at - first[0].at < 0.3, 'dört istek birlikte başlar');
+  const same = log.filter(x => x.host === 'tedarikci-4.example');
+  assert.equal(same.length, 2);
+  assert.ok(same[1].at - same[0].at >= 0.5 + 0.3 - 0.02, `aynı sunucuda ikinci istek ilkinin bitişi + aralık sonrası: ${same[1].at - same[0].at}`);
+  // ayrıştırma hataları eş zamanlı akışta doğru ürüne yazılır
+  for (const id of ids) assert.equal(r.prices.items[id].status, 'ok', id);
+  assert.equal(r.prices.items['vgm-9004'].costTry, 88800);
+});
+
+test('zamanlayıcı: katalogdan kaldırılmış ürün getirilmez ve sıradan silinir', t => {
+  const sb = sandbox(t);
+  sb.rates(40, 46);
+  sb.page(pageUrl('vgm-9001'), ld({ mpn: 'DM-450', price: GOOD['vgm-9001'] }));
+  const r = sb.refresh({ config: cfg({ 'vgm-9001': [src(pageUrl('vgm-9001'))], 'vgm-9998': [src(pageUrl('vgm-9998'))] }), opts: { ids: null, spacing: 0 } });
+  assert.deepEqual(pick(r.summary, ['checked', 'ok', 'skipped', 'due']), { checked: 1, ok: 1, skipped: 1, due: 2 });
+  assert.deepEqual(Object.keys(r.queue), ['vgm-9001']);
+});
+
+test('eski tek dosyalı özel veri (kaynaklar.json içinde sources + fiyatlar.json) ilk kullanımda parçalara taşınır', t => {
+  const sb = sandbox(t);
+  const sources = { 'vgm-9001': [src(pageUrl('vgm-9001'))], 'vgm-9002': [src(pageUrl('vgm-9002'), { priority: 2 })] };
+  const prices = { version: 1, lastRunAt: 1790000000, lastRunSummary: { checked: 2 }, items: {
+    'vgm-9001': okItem('vgm-9001'), 'vgm-9002': okItem('vgm-9002', { status: 'held', held: { costTry: 1 } }) } };
+  const r = run({ op: 'legacy', config: cfg(sources, { open: true, margin: { default: 0.2, byCategory: {}, byProduct: {} } }), prices }, sb.env);
+  assert.ok(!r.files.includes('fiyatlar.json'), 'fiyatlar.json taşındıktan sonra silinir');
+  for (const f of ['kaynaklar.json', 'kaynak/0090.json', 'fiyat/0090.json', 'fiyat-sira.json', 'fiyat-durum.json']) assert.ok(r.files.includes(f), f);
+  assert.equal(r.config.open, true); assert.equal(r.config.margin.default, 0.2); assert.equal(r.config.sources, undefined);
+  assert.deepEqual(Object.keys(r.sources), ['vgm-9001', 'vgm-9002']);
+  assert.equal(r.sources['vgm-9002'][0].url, pageUrl('vgm-9002'));
+  assert.equal(r.prices.items['vgm-9001'].costTry, COST['vgm-9001'][0]);
+  assert.equal(r.prices.lastRunAt, 1790000000);
+  assert.deepEqual(r.prices.problems, { 'vgm-9002': 'held' });
+  assert.deepEqual(Object.keys(r.queue).sort(), ['vgm-9001', 'vgm-9002']);
+  const raw = JSON.parse(fs.readFileSync(path.join(sb.data, 'magaza', 'kaynaklar.json'), 'utf8'));
+  assert.equal(raw.sources, undefined, 'ayarlar dosyasında kaynak kalmaz');
 });

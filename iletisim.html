@@ -273,9 +273,10 @@
                   <option value="otomasyon">Otomasyon Sistemleri</option>
                   <option value="mekanik">Mekanik Sistemler</option>
                   <option value="diger">Diğer / Genel Danışmanlık</option>
+                  <option value="magaza">Mağaza / Ürün Teklifi</option>
                 </select>
               </div>
-              <!-- contact.php yalnızca 5 "subject" değerini kabul eder; seçilen hizmet js/main.js ile mesajın başına eklenir. -->
+              <!-- contact.php yalnızca listelenen "subject" değerlerini kabul eder; seçilen hizmet js/main.js ile mesajın başına eklenir. "magaza": mağaza teklif/proforma talepleri (js/magaza.js). -->
               <div class="form__group">
                 <label for="service" class="form__label">İlgilendiğiniz hizmet <span class="form__optional">(isteğe bağlı)</span></label>
                 <select id="service" name="service" class="form__input">
@@ -328,6 +329,7 @@
             </div>
 
             <input type="hidden" id="formTimestamp" name="formTimestamp" value="">
+            <input type="hidden" id="magazaTalep" name="magazaTalep" value="">
 
             <button type="submit" class="btn btn--accent btn--full">
               <i class="fas fa-paper-plane" aria-hidden="true"></i> Talebi Gönder
@@ -553,8 +555,52 @@
       document.head.appendChild(script);
     }());
   </script>
+  <script>
+    /* Mağaza teklif/proforma talebi (js/magaza.js quoteDraft; P1-12): taslak "magaza" konusuyla gelirse konu seçilir ve ürün
+       listesi (id, model, adet, adres) gizli "magazaTalep" alanında yapılandırılmış taşınır. Taslağın metnini js/main.js
+       tüketir; bu betik yalnızca okur (main.js'den önce çalışır). ?konu=magaza&q=<model> (mağaza araması boş sonuç) ve
+       ?konu=magaza&urun=<id>&niyet=<intent> (JS/oturum deposu olmadan ürün teklif bağlantısı) da desteklenir. */
+    (function () {
+      var form = document.getElementById('contactForm');
+      var subject = form && form.querySelector('#subject'), message = form && form.querySelector('#message'), payload = form && form.querySelector('#magazaTalep');
+      if (!subject || !message || !payload) return;
+      var draft = null, params = null;
+      try { draft = JSON.parse(window.sessionStorage.getItem('vgContactDraft') || 'null'); } catch (e) { draft = null; }
+      try { params = new URLSearchParams(window.location.search); } catch (e) { params = null; }
+      var fromDraft = draft && typeof draft === 'object' && draft.subject === 'magaza';
+      var fromUrl = params && params.get('konu') === 'magaza';
+      if (!fromDraft && !fromUrl) return;
+      if (!subject.value) { subject.value = 'magaza'; subject.setAttribute('data-auto', '1'); }
+      var ID = /^vgm-[0-9]{4,6}$/, URL_RE = /^\/magaza\/urun\/[a-z0-9-]+\/$/;
+      var items = [];
+      if (fromDraft && draft.magaza && Array.isArray(draft.magaza.items)) {
+        draft.magaza.items.slice(0, 40).forEach(function (it) {
+          if (!it || typeof it !== 'object') return;
+          var qty = parseInt(it.qty, 10);
+          items.push({ id: ID.test(String(it.id || '')) ? String(it.id) : '', mpn: String(it.mpn || '').replace(/[<>]/g, '').slice(0, 80),
+            qty: qty > 0 && qty < 100000 ? qty : 1, url: URL_RE.test(String(it.url || '')) ? String(it.url) : '' });
+        });
+      }
+      var q = fromUrl ? String(params.get('q') || '').replace(/[<>\u0000-\u001f]/g, '').trim().slice(0, 80) : '';
+      var urun = fromUrl ? String(params.get('urun') || '') : '';
+      if (!items.length && ID.test(urun)) items.push({ id: urun, mpn: '', qty: 1, url: '' });
+      var INTENT = /^(teklif|proforma|nakliye|alternatif|haber)$/, niyet = fromUrl ? String(params.get('niyet') || '') : '';
+      var intent = fromDraft && draft.magaza && INTENT.test(String(draft.magaza.intent || '')) ? draft.magaza.intent : (INTENT.test(niyet) ? niyet : (q ? 'tedarik' : 'teklif'));
+      payload.value = JSON.stringify({ v: 1, intent: intent, items: items, q: q });
+      if (!fromDraft && q && !message.value.trim()) {
+        message.value = '[Mağaza] Katalogda bulamadığım ürün için tedarik ve fiyat teklifi rica ediyorum.\nAranan model/ürün: ' + q + '\nAdet:\nFirma / VKN:\nTeslimat ili:';
+        message.setAttribute('data-auto', '1');
+      } else if (!fromDraft && ID.test(urun) && !message.value.trim()) {
+        message.value = '[Mağaza] Ürün kodu ' + urun + ' için güncel fiyat ve stok teklifi rica ediyorum.\nAdet:\nFirma / VKN:\nTeslimat ili:';
+        message.setAttribute('data-auto', '1');
+      }
+      subject.addEventListener('change', function () { if (subject.value !== 'magaza') payload.value = ''; });
+      /* gizli alanda .value varsayılan değeri de değiştirir; form.reset() sonrası eski ürün listesi sonraki talebe taşınmasın */
+      form.addEventListener('reset', function () { payload.value = ''; });
+    }());
+  </script>
   <script src="/js/vg-quote.js?v=f22d85594f5a" defer></script>
-  <script src="/js/main.js?v=d00592ae170e" defer></script>
+  <script src="/js/main.js?v=69bc2e299dc8" defer></script>
   <script src="/js/voltguard-auth.js?v=b453c7bd4e89" defer></script>
   <noscript>
     <style>

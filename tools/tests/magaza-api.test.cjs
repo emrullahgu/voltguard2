@@ -9,28 +9,30 @@ const os = require('node:os');
 const path = require('node:path');
 const net = require('node:net');
 const { spawn } = require('node:child_process');
+const ozel = require('./fixtures/magaza/ozel.cjs');
 
 const root = path.resolve(__dirname, '../..');
-const php = process.env.VG_PHP || path.join(root, '.qa/php/runtime/php.exe');
+const php = process.env.VG_PHP || [path.join(root, '.qa/php/runtime/php.exe'), path.resolve(root, '../../../.qa/php/runtime/php.exe')].find(f => fs.existsSync(f)) || path.join(root, '.qa/php/runtime/php.exe');   // git worktree: ana kopyanın .qa/php'si
 const fixtures = path.join(root, 'tools/tests/fixtures/magaza');
 const REF = /^VGS-\d{6}-[A-HJ-NP-Z2-9]{5}$/;
 const IBAN = JSON.parse(fs.readFileSync(path.join(fixtures, 'firma-tam.json'), 'utf8')).banka.iban;
 const SUPPLIER = 'tedarikci-bir.example.test';
+const IDS = { ids: 'vgm-9001,vgm-9002,vgm-9003,vgm-9004,vgm-9005' };
 const now = Math.floor(Date.now() / 1000);
 
 function writeState(data, { open = true } = {}) {
   const dir = path.join(data, 'magaza');
   fs.mkdirSync(dir, { recursive: true });
   const src = id => [{ url: `https://${SUPPLIER}/urun/${id}`, supplier: SUPPLIER, vatIncluded: true, currency: 'TRY', priority: 1, discount: 0 }];
-  fs.writeFileSync(path.join(dir, 'kaynaklar.json'), JSON.stringify({ version: 1, open, margin: { default: 0.15, byCategory: {}, byProduct: {} },
+  ozel.writeConfig(data, { version: 1, open, margin: { default: 0.15, byCategory: {}, byProduct: {} },
     shipping: { feeTry: 0, freeOverTry: 0 }, paymentHours: 24, fxBuffer: 0, blockedSuppliers: [],
-    sources: { 'vgm-9001': src('9001'), 'vgm-9002': src('9002'), 'vgm-9003': src('9003'), 'vgm-9004': src('9004'), 'vgm-9005': src('9005') } }));
+    sources: { 'vgm-9001': src('9001'), 'vgm-9002': src('9002'), 'vgm-9003': src('9003'), 'vgm-9004': src('9004'), 'vgm-9005': src('9005') } });
   const item = (costUsd, extra = {}) => ({ status: 'ok', costTry: Math.round(costUsd * 40 * 1.2 * 100) / 100, costUsd, rateAtCheck: 40,
     checkedAt: now - 3600, lastAttemptAt: now - 3600, source: 0, method: 'jsonld', available: true, note: '', held: null, history: [], ...extra });
-  fs.writeFileSync(path.join(dir, 'fiyatlar.json'), JSON.stringify({ version: 1, lastRunAt: now - 3600, lastRunSummary: null, items: {
+  ozel.writePrices(data, { lastRunAt: now - 600, lastRunSummary: null, items: {
     'vgm-9001': item(100), 'vgm-9002': item(500, { checkedAt: now - 49 * 3600, lastAttemptAt: now - 49 * 3600 }),
     'vgm-9003': item(2.5, { status: 'held', held: { costTry: 200, costUsd: 4.1667, rateAtCheck: 40, at: now - 60, source: 0, method: 'jsonld', prevCostTry: 120, available: true } }),
-    'vgm-9004': item(1500), 'vgm-9005': item(30) } }));
+    'vgm-9004': item(1500), 'vgm-9005': item(30) } });
   const today = new Date(Date.now() + 3 * 3600 * 1000).toISOString().slice(0, 10);
   fs.writeFileSync(path.join(dir, 'kur.json'), JSON.stringify({ version: 1, usdTry: 40, eurTry: 45, date: today, fetchedAt: now - 600, source: 'test' }));
 }
@@ -42,7 +44,7 @@ async function server(data, extraEnv = {}) {
   const empty = fs.mkdtempSync(path.join(os.tmpdir(), 'voltguard-magaza-fixture-'));
   const child = spawn(php, ['-n', '-S', `127.0.0.1:${port}`, '-t', root], {
     env: { ...process.env, VG_DATA_DIR: data, VG_STORE: 'json', VG_MAIL_OUTBOX: '1', VG_RATE_SCALE: '10', TURNSTILE_SECRET_KEY: '',
-      VG_MAGAZA_CATALOG: path.join(fixtures, 'katalog.json'), VG_MAGAZA_FIRMA: path.join(fixtures, 'firma-tam.json'),
+      VG_MAGAZA_CATALOG: path.join(fixtures, 'katalog'), VG_MAGAZA_FIRMA: path.join(fixtures, 'firma-tam.json'),
       VG_MAGAZA_FIXTURE_DIR: empty, ...extraEnv },
     stdio: ['ignore', 'ignore', 'pipe'], windowsHide: true });
   const logs = []; child.stderr.on('data', c => logs.push(String(c)));
@@ -91,6 +93,12 @@ test('Mağaza API: fiyat, sepet, sipariş, durum, panel ve sızıntı denetimi',
   try {
     // ---------------------------------------------------------------- fiyatlar
     let r = await anon.call('magaza', 'fiyatlar');
+    assert.equal(r.status, 422, 'fiyatlar needs ?ids= (no public action iterates the whole catalog)'); assert.equal(r.body.error, 'invalid_ids');
+    r = await anon.call('magaza', 'fiyatlar', { query: { ids: Array.from({ length: 101 }, (_, i) => `vgm-${1000 + i}`).join(',') } });
+    assert.equal(r.status, 422, 'at most 100 ids');
+    r = await anon.call('magaza', 'fiyatlar', { query: { ids: 'vgm-9001,vgm-9999,../x' } });
+    assert.deepEqual(Object.keys(r.body.items), ['vgm-9001'], 'unknown and malformed ids are skipped');
+    r = await anon.call('magaza', 'fiyatlar', { query: IDS });
     assert.equal(r.status, 200); assert.equal(r.body.ok, true); assert.equal(r.body.open, true); publicTexts.push(r.text);
     const items = r.body.items;
     assert.deepEqual(Object.keys(items).sort(), ['vgm-9001', 'vgm-9002', 'vgm-9003', 'vgm-9004', 'vgm-9005']);
@@ -246,13 +254,18 @@ test('Mağaza API: fiyat, sepet, sipariş, durum, panel ve sızıntı denetimi',
     assert.equal(r.status, 200);
     const held = r.body.items.find(i => i.id === 'vgm-9003');
     assert.equal(held.status, 'held'); assert.equal(held.sources[0].supplier, SUPPLIER);
+    assert.deepEqual(r.body.items.map(i => i.id), ['vgm-9003'], 'without ?q= only problem products (fiyat-durum.json) are listed');
+    assert.equal(r.body.problems, 1); assert.equal(r.body.products, 5);
+    assert.equal(r.body.counts.held, 1); assert.equal(r.body.counts.stale, 1); assert.equal(r.body.counts.noSource, 0);
+    r = await staff.call('magaza', 'panel_prices', { query: { q: 'vgm-9001' } });
+    assert.deepEqual(r.body.items.map(i => [i.id, i.match]), [['vgm-9001', true], ['vgm-9003', false]], 'an id query adds that product');
     r = await staff.call('magaza', 'panel_price_decide', { body: { id: 'vgm-9003', decision: 'approve', note: 'Tedarikçi zam yaptı' } });
     assert.equal(r.status, 200); assert.equal(r.body.item.status, 'ok'); assert.equal(r.body.item.costTry, 200);
     r = await staff.call('magaza', 'panel_price_decide', { body: { id: 'vgm-9002', decision: 'manual', costTry: 24000 } });
     assert.equal(r.status, 422); assert.equal(r.body.error, 'note_required');
     r = await staff.call('magaza', 'panel_price_decide', { body: { id: 'vgm-9002', decision: 'manual', costTry: 24000, note: 'Telefonla teyit' } });
     assert.equal(r.status, 200); assert.equal(r.body.item.status, 'ok'); assert.match(r.body.item.method, /^manual:/);
-    r = await anon.call('magaza', 'fiyatlar');
+    r = await anon.call('magaza', 'fiyatlar', { query: IDS });
     assert.equal(r.body.items['vgm-9002'].orderable, true); assert.equal(r.body.items['vgm-9003'].orderable, true);
 
     r = await staff.call('magaza', 'panel_status');
@@ -282,7 +295,7 @@ test('Mağaza API: satıcı kimliği eksikken (gerçek firma.json) sipariş alı
   const srv = await server(data, { VG_MAGAZA_FIRMA: '' });
   try {
     const anon = client(srv.base);
-    const r = await anon.call('magaza', 'fiyatlar');
+    const r = await anon.call('magaza', 'fiyatlar', { query: IDS });
     assert.equal(r.status, 200); assert.equal(r.body.open, false);
     assert.equal(r.body.items['vgm-9001'].reason, 'closed'); assert.equal(r.body.items['vgm-9001'].tryGross, 5520);
   } finally {
@@ -301,8 +314,7 @@ test('Mağaza API: sipariş anında fiyat yeniden denetlenir; jeton opak; durumd
     const items = [{ id: 'vgm-9001', qty: 1 }];
     const quote = async () => (await anon.call('magaza', 'sepet', { body: { items }, csrf: false })).body.quote.token;
     const place = (token, id) => anon.call('magaza', 'siparis', { body: { requestId: id, quote: token, items, ...customer() }, csrf: false });
-    const pricesFile = path.join(data, 'magaza', 'fiyatlar.json');
-    const edit = fn => { const j = JSON.parse(fs.readFileSync(pricesFile, 'utf8')); fn(j.items['vgm-9001']); fs.writeFileSync(pricesFile, JSON.stringify(j)); };
+    const edit = fn => ozel.editPrice(data, 'vgm-9001', fn);
 
     // SEC-2: jeton çözülünce USD fiyat/kur görünmemeli
     const token = await quote();
@@ -351,4 +363,81 @@ test('Mağaza API: sipariş anında fiyat yeniden denetlenir; jeton opak; durumd
     await srv.stop();
     fs.rmSync(sandbox, { recursive: true, force: true });
   }
+});
+
+/* ------------------------------------------------------------------------------------------------ P1-09/10/03/01 */
+
+/** Test kataloğunun kopyası: vgm-9001 metre ile (en az 100 m, 50 m katları, 100 m rulo, 3 gün); olcu-ve-test kategorisi 5 gün. */
+function rulesCatalog(dir) {
+  const K = require('../magaza/katalog-ortak.cjs');
+  const model = K.loadDir(path.join(fixtures, 'katalog'));
+  Object.assign(model.products.find(p => p.id === 'vgm-9001'), { unit: 'metre', maxQty: 900, minQty: 100, step: 50, packQty: 100 });
+  K.writeDir(dir, K.buildFiles(K.normalize(model)));
+  // deliveryDays katalog yazıcısının şemasında henüz yok (ux-backlog P1-10): okuyucuyu sınamak için dosyaya doğrudan yazılır
+  const shard = path.join(dir, 'urun', K.shardOf('vgm-9001') + '.json');
+  const urun = JSON.parse(fs.readFileSync(shard, 'utf8')); urun.products['vgm-9001'].deliveryDays = 3; fs.writeFileSync(shard, JSON.stringify(urun));
+  const katFile = path.join(dir, 'kategoriler.json');
+  const kat = JSON.parse(fs.readFileSync(katFile, 'utf8')); kat.categories.find(c => c.id === 'olcu-ve-test').deliveryDays = 5; fs.writeFileSync(katFile, JSON.stringify(kat));
+  return dir;
+}
+
+test('P1-09/10/01: adet kuralları sunucuda (qty_step), sepet satırı minQty/step/packQty/unit/deliveryDays, belgede termin', async () => {
+  const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'voltguard-magaza-rules-'));
+  const data = path.join(sandbox, 'data'); fs.mkdirSync(data);
+  const catalog = rulesCatalog(path.join(sandbox, 'katalog'));
+  writeState(data);
+  const srv = await server(data, { VG_MAGAZA_CATALOG: catalog });
+  const anon = client(srv.base);
+  try {
+    for (const [items, code] of [[[{ id: 'vgm-9001', qty: 50 }], 'qty_step'], [[{ id: 'vgm-9001', qty: 120 }], 'qty_step'],
+      [[{ id: 'vgm-9001', qty: 100 }, { id: 'vgm-9001', qty: 25 }], 'qty_step'], [[{ id: 'vgm-9001', qty: 950 }], 'qty_limit']]) {
+      const r = await anon.call('magaza', 'sepet', { body: { items }, csrf: false });
+      assert.equal(r.status, 422, JSON.stringify(items)); assert.equal(r.body.error, code, JSON.stringify(items));
+      if (code === 'qty_step') assert.match(r.body.message, /en az 100 metre ve 50 metre katları ile sipariş edilebilir/);
+    }
+    let r = await anon.call('magaza', 'sepet', { body: { items: [{ id: 'vgm-9001', qty: 100 }, { id: 'vgm-9001', qty: 50 }, { id: 'vgm-9005', qty: 3 }] }, csrf: false });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    const line = r.body.lines.find(l => l.id === 'vgm-9001'), mm = r.body.lines.find(l => l.id === 'vgm-9005');
+    assert.equal(line.qty, 150);
+    assert.deepEqual([line.unit, line.minQty, line.step, line.packQty, line.maxQty, line.deliveryDays], ['metre', 100, 50, 100, 900, 3]);
+    assert.deepEqual([mm.unit, mm.minQty, mm.step, mm.packQty, mm.deliveryDays], ['adet', 1, 1, null, 5], 'kategori varsayılan termini');
+    const items = [{ id: 'vgm-9001', qty: 150 }, { id: 'vgm-9005', qty: 3 }];
+    const pre = await anon.call('magaza', 'onbilgi', { body: { quote: r.body.quote.token, items, ...customer() }, csrf: false });
+    assert.equal(pre.status, 200, JSON.stringify(pre.body));
+    assert.match(pre.body.preInfo, /150 metre ×/); assert.match(pre.body.preInfo, /Tahmini teslim süresi: 3 gün/); assert.match(pre.body.preInfo, /Tahmini teslim süresi: 5 gün/);
+    // P1-01 (c): sipariş belgeleri ve müşteri e-postasında yer tutucu, boş alan ya da "yayından önce" notu yok
+    for (const doc of [pre.body.preInfo, pre.body.contract]) assert.doesNotMatch(doc, /\[|yayından önce|\bnull\b|undefined/);
+    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-rules-00000001', quote: r.body.quote.token, items, ...customer() }, csrf: false });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    const mail = outbox(data).find(m => recipient(m) === 'musteri@example.test');
+    const text = mail.split(/\r?\n\r?\n/).slice(1).join('\n');   // 8bit gövde
+    assert.match(text, /Tahmini teslim süresi: 3 gün/);
+    assert.doesNotMatch(text, /\[|yayından önce|\bnull\b|undefined/);
+    assert.doesNotMatch(srv.logs.join(''), /Fatal error|Warning:|Notice:/);
+  } finally {
+    await srv.stop();
+    fs.rmSync(sandbox, { recursive: true, force: true });
+  }
+});
+
+test('P1-03: üretimde Turnstile anahtarı (site ya da gizli) yoksa sipariş 503 captcha_unconfigured; önizlemede anahtarsız çalışır', async () => {
+  const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'voltguard-magaza-captcha-'));
+  const data = path.join(sandbox, 'data'); fs.mkdirSync(data);
+  writeState(data);
+  const noSite = path.join(sandbox, 'firma.json');
+  fs.writeFileSync(noSite, JSON.stringify({ ...JSON.parse(fs.readFileSync(path.join(fixtures, 'firma-tam.json'), 'utf8')), turnstileSiteKey: null }));
+  for (const env of [{ VG_MAIL_OUTBOX: '', TURNSTILE_SECRET_KEY: '' }, { VG_MAIL_OUTBOX: '', TURNSTILE_SECRET_KEY: 'REPLACE_WITH_TURNSTILE_SECRET_KEY' },
+    { VG_MAIL_OUTBOX: '', TURNSTILE_SECRET_KEY: 'gizli-test-anahtari', VG_MAGAZA_FIRMA: noSite }]) {
+    const srv = await server(data, env);
+    try {
+      const anon = client(srv.base);
+      const cart = await anon.call('magaza', 'sepet', { body: { items: [{ id: 'vgm-9001', qty: 1 }] }, csrf: false });
+      assert.equal(cart.status, 200, 'sepet ve fiyat anahtarsız da çalışır');
+      const r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-captcha-000001', quote: cart.body.quote.token, items: [{ id: 'vgm-9001', qty: 1 }], ...customer() }, csrf: false });
+      assert.equal(r.status, 503, JSON.stringify(env)); assert.equal(r.body.error, 'captcha_unconfigured');
+      assert.match(r.body.message, /güvenlik doğrulaması henüz yapılandırılmadı.*0545 434 67 35/);
+      assert.equal(outbox(data).length, 0);
+    } finally { await srv.stop(); }
+  }
+  fs.rmSync(sandbox, { recursive: true, force: true });
 });

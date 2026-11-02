@@ -9,9 +9,10 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const {spawnSync} = require('node:child_process');
+const ozel = require('./fixtures/magaza/ozel.cjs');
 
 const root = path.resolve(__dirname, '../..');
-const php = process.env.VG_PHP || path.join(root, '.qa/php/runtime/php.exe');
+const php = process.env.VG_PHP || [path.join(root, '.qa/php/runtime/php.exe'), path.resolve(root, '../../../.qa/php/runtime/php.exe')].find(f => fs.existsSync(f)) || path.join(root, '.qa/php/runtime/php.exe');   // git worktree: ana kopyanın .qa/php'si
 const cli = path.join(root, 'tools/magaza-admin.php');
 const lib = path.join(root, 'api/lib') + path.sep;
 const fixtures = path.join(__dirname, 'fixtures/magaza');
@@ -36,7 +37,7 @@ const write = (name, value) => {
 function env(data, extra = {}) {
   return {
     ...process.env, VG_STORE: 'json', VG_DATA_DIR: data, VG_MAIL_OUTBOX: '', VG_SITE_URL: '',
-    VG_MAGAZA_CATALOG: path.join(fixtures, 'katalog.json'), VG_MAGAZA_FIRMA: path.join(fixtures, 'firma-tam.json'),
+    VG_MAGAZA_CATALOG: path.join(fixtures, 'katalog'), VG_MAGAZA_FIRMA: path.join(fixtures, 'firma-tam.json'),
     VG_MAGAZA_FIXTURE_DIR: emptyFixtureDir, ...extra,
   };
 }
@@ -250,7 +251,10 @@ test('import writes a clean config; export-config round-trips it byte for byte',
   assert.equal(imported.status, 0, imported.err);
   assert.match(imported.out, /içe aktarıldı: 2 üründe toplam 3 kaynak, mağaza kapalı/);
   assert.match(imported.out, /3 üründe kaynak yok/);
-  const stored = readPrivate(data, 'kaynaklar.json');
+  const settings = readPrivate(data, 'kaynaklar.json');
+  assert.equal('sources' in settings, false, 'sources live in kaynak/<shard>.json, not in kaynaklar.json');
+  assert.deepEqual(fs.readdirSync(privateFile(data, 'kaynak')), ['0090.json']);
+  const stored = ozel.readConfig(data);
   assert.equal(stored.version, 1);
   assert.equal(stored.margin.default, 0.2);
   assert.equal(stored.margin.byCategory.inverterler, 0.1);
@@ -310,7 +314,7 @@ test('status mirrors panel_status (same function) and reports health, rate and o
   const now = NOW();
   const day = new Date(now * 1000 + 3 * 3600 * 1000).toISOString().slice(0, 10);
   seedFile(data, 'kur.json', {version: 1, usdTry: 41.1234, date: day, fetchedAt: now - 60, source: 'TCMB today.xml ForexSelling'});
-  seedFile(data, 'fiyatlar.json', {version: 1, items: {}, lastRunAt: now - 3600, lastRunSummary: {checked: 2, ok: 2, held: 0, error: 0, unavailable: 0, skipped: 0, rateUpdated: true, seconds: 3.2}});
+  ozel.writePrices(data, {items: {}, lastRunAt: now - 600, lastRunSummary: {checked: 2, ok: 2, held: 0, error: 0, unavailable: 0, skipped: 0, rateUpdated: true, seconds: 3.2}});
   seedOrders(data, orderRecord(REF_A, 'odeme_bekleniyor'), orderRecord(REF_B, 'odeme_bekleniyor', {payBy: now + 3600}));
   r = run(data, ['status', '--json']);
   const t = JSON.parse(r.out);
@@ -635,14 +639,16 @@ test('panel handles price entry, held changes, filters and cron health', () => {
 
   const now = Date.UTC(2026, 9, 27, 12, 0, 0);
   const ago = hours => new Date(now - hours * 3600 * 1000).toISOString();
-  assert.equal(panel.cronHealth(ago(6), now).level, 'ok');
-  assert.equal(panel.cronHealth(ago(12), now).level, 'ok');
-  assert.equal(panel.cronHealth(ago(20), now).level, 'late');
-  assert.equal(panel.cronHealth(ago(40), now).level, 'down');
+  assert.equal(panel.cronHealth(ago(0.1), now).level, 'ok', 'cron runs every 10 minutes');
+  assert.equal(panel.cronHealth(ago(0.45), now).level, 'ok', 'server threshold: 30 minutes');
+  assert.equal(panel.cronHealth(ago(1), now).level, 'late');
+  assert.equal(panel.cronHealth(ago(5), now).level, 'late');
+  assert.equal(panel.cronHealth(ago(7), now).level, 'down');
   assert.equal(panel.cronHealth(null, now).level, 'down');
   assert.equal(panel.cronState({healthy: true}, ago(40), now).level, 'ok', 'the server flag wins');
   assert.equal(panel.cronState({healthy: false, lastRunAt: ago(2)}, null, now).level, 'late');
-  assert.equal(panel.cronState(null, ago(2), now).level, 'ok');
+  assert.equal(panel.cronState(null, ago(0.2), now).level, 'ok');
+  assert.equal(panel.cronState(null, ago(2), now).level, 'late');
   assert.equal(panel.isStaleCheck(ago(47), now), false);
   assert.equal(panel.isStaleCheck(ago(49), now), true);
   assert.equal(panel.isStaleCheck(null, now), true);

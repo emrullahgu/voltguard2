@@ -108,6 +108,8 @@ deployment:
     - /bin/mv $DEPLOYPATH/volthaber.new $DEPLOYPATH/volthaber
     # VoltGuard Magaza; vitrin, kategori ve urun sayfalarini magaza/index.php guncel fiyatla uretir (.htaccess).
     # Tedarik kaynaklari, fiyat kontrolleri ve siparisler vg-data/magaza/ altindadir; hicbir gorev oraya dokunmaz.
+    # Urun gorselleri medya deposu $DEPLOYPATH/magaza-gorsel/ git'te DEGILDIR (api/MAGAZA.md "Medya deposu"): bu dosya
+    # yalnizca adi yazili klasorleri kopyalar/siler; magaza-gorsel/ icin hicbir satir EKLEMEYIN (deploy gorselleri silerdi).
     - /bin/rm -rf $DEPLOYPATH/magaza.new
     - /bin/cp -R magaza $DEPLOYPATH/magaza.new
     - /bin/rm -rf $DEPLOYPATH/magaza

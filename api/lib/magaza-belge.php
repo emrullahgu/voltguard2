@@ -20,26 +20,41 @@ function vgm_doc_context(array $order, array $firma, array $config): array
     return ['order' => $order, 'firma' => $firma, 'paymentHours' => (int)($config['paymentHours'] ?? 24)];
 }
 
-const VGM_PLACEHOLDER = '[... yayından önce eklenecek]';
-
+/**
+ * Satici kimligi: firma.json'da dolu olan alanlar yazilir, bos (null) alanlarin satiri atlanir; koseli parantezli yer tutucu
+ * ASLA basilmaz (P1-01). Adres bossa kisa adres (adresKisa) kullanilir.
+ */
 function vgm_doc_seller(array $f): string
 {
-    $val = static fn($v): string => is_string($v) && trim($v) !== '' ? $v : VGM_PLACEHOLDER;
-    return implode("\n", [
-        'Unvan: ' . $val($f['unvan'] ?? null),
-        'Adres (cayma ve diğer bildirimler için): ' . $val($f['adres'] ?? null),
-        'Telefon: ' . $val($f['telefon'] ?? null),
-        'E-posta: ' . $val($f['eposta'] ?? null),
-        'Web sitesi: ' . $val($f['web'] ?? 'https://voltguard.com.tr'),
-        'MERSİS No: ' . $val($f['mersis'] ?? null),
-        'Vergi Dairesi: ' . $val($f['vergiDairesi'] ?? null),
-        'Vergi No: ' . $val($f['vkn'] ?? null),
-        'Ticaret Sicil No: ' . $val($f['ticaretSicil'] ?? null),
-        'Müdür(ler): ' . $val($f['mudur'] ?? null),
-        'Taahhüt edilen / ödenen sermaye: ' . $val($f['sermaye'] ?? null),
-        'KEP adresi: ' . $val($f['kep'] ?? null),
-        'ETBİS kaydı: ' . $val($f['etbis'] ?? null),
-    ]);
+    $val = static fn($v): string => is_string($v) && trim($v) !== '' ? trim($v) : '';
+    $rows = [
+        ['Unvan', $val($f['unvan'] ?? null)],
+        ['Adres (cayma ve diğer bildirimler için)', $val($f['adres'] ?? null) !== '' ? $val($f['adres']) : $val($f['adresKisa'] ?? null)],
+        ['Telefon', $val($f['telefon'] ?? null)],
+        ['E-posta', $val($f['eposta'] ?? null)],
+        ['Web sitesi', $val($f['web'] ?? null) !== '' ? $val($f['web']) : 'https://voltguard.com.tr'],
+        ['MERSİS No', $val($f['mersis'] ?? null)],
+        ['Vergi Dairesi', $val($f['vergiDairesi'] ?? null)],
+        ['Vergi No', $val($f['vkn'] ?? null)],
+        ['Ticaret Sicil No', $val($f['ticaretSicil'] ?? null)],
+        ['Müdür(ler)', $val($f['mudur'] ?? null)],
+        ['Taahhüt edilen / ödenen sermaye', $val($f['sermaye'] ?? null)],
+        ['KEP adresi', $val($f['kep'] ?? null)],
+        ['ETBİS kaydı', $val($f['etbis'] ?? null)],
+    ];
+    $lines = [];
+    foreach ($rows as $r) {
+        if ($r[1] !== '') {
+            $lines[] = $r[0] . ': ' . $r[1];
+        }
+    }
+    return implode("\n", $lines);
+}
+
+/** Belge basligindaki "(TASLAK)" eki: firma.json belgeOnay true olana kadar yazilir (P1-02). */
+function vgm_doc_draft_tag(array $f): string
+{
+    return ($f['belgeOnay'] ?? false) === true ? '' : ' (TASLAK)';
 }
 
 function vgm_doc_buyer(array $o): string
@@ -133,8 +148,8 @@ function vgm_doc_delivery(): string
 /** Cayma hakki: sure, bildirim, geri gonderim, iade, istisnalar. */
 function vgm_doc_withdrawal(array $f): string
 {
-    $carrier = is_string($f['iadeKargo'] ?? null) && $f['iadeKargo'] !== ''
-        ? $f['iadeKargo'] : VGM_PLACEHOLDER;
+    $carrier = is_string($f['iadeKargo'] ?? null) && trim($f['iadeKargo']) !== ''
+        ? trim($f['iadeKargo']) : 'cayma bildiriminin alınmasından sonra alıcıya e-postayla bildirilir';
     return "Alıcı tüketici ise herhangi bir gerekçe göstermeksizin ve cezai şart ödemeksizin 14 gün içinde sözleşmeden cayabilir. "
         . "Süre, ürünün alıcıya veya alıcının belirlediği üçüncü kişiye (kargo firması hariç) teslim edildiği gün başlar; birden fazla "
         . "parça halinde teslim edilen siparişlerde son parçanın teslim alındığı gün başlar. Alıcı, ürün teslim edilmeden önce de cayma "
@@ -209,7 +224,7 @@ function vgm_doc_preinfo(array $ctx): string
 {
     $o = $ctx['order'];
     $f = $ctx['firma'];
-    return "ÖN BİLGİLENDİRME FORMU (TASLAK)\n" . vgm_doc_meta($ctx) . "\n\n"
+    return 'ÖN BİLGİLENDİRME FORMU' . vgm_doc_draft_tag($f) . "\n" . vgm_doc_meta($ctx) . "\n\n"
         . "Bu form, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği uyarınca sipariş "
         . "verilmeden önce alıcıyı bilgilendirmek için düzenlenmiştir. Form, mesafeli satış sözleşmesinin ayrılmaz parçasıdır ve "
         . "taraflar açıkça kararlaştırmadıkça değiştirilemez.\n\n"
@@ -233,7 +248,7 @@ function vgm_doc_contract(array $ctx): string
 {
     $o = $ctx['order'];
     $f = $ctx['firma'];
-    return "MESAFELİ SATIŞ SÖZLEŞMESİ (TASLAK)\n" . vgm_doc_meta($ctx) . "\n\n"
+    return 'MESAFELİ SATIŞ SÖZLEŞMESİ' . vgm_doc_draft_tag($f) . "\n" . vgm_doc_meta($ctx) . "\n\n"
         . "MADDE 1 – TARAFLAR\nSATICI\n" . vgm_doc_seller($f) . "\n\nALICI\n" . vgm_doc_buyer($o) . "\n\n"
         . "MADDE 2 – KONU VE KAPSAM\nİşbu sözleşmenin konusu, alıcının satıcıya ait " . vg_site_url() . "/magaza/ adresinden "
         . "elektronik ortamda sipariş verdiği, aşağıda nitelikleri ve satış fiyatı belirtilen ürünlerin satışı ve teslimidir. "
@@ -266,6 +281,7 @@ function vgm_mail_order_customer(array $order, array $ctx): bool
         . 'Siparişiniz ' . $order['ref'] . " numarasıyla alındı. Teşekkür ederiz.\n\n"
         . "ÖDEME BİLGİLERİ\n" . vgm_doc_payment($ctx) . "\n\n"
         . "SİPARİŞ ÖZETİ\n" . vgm_doc_items($order) . "\n\n"
+        . "SATICI (fatura ve tedarikçi kaydınız için)\n" . vgm_doc_seller($ctx['firma']) . "\n\n"
         . 'Siparişinizi ' . vg_site_url() . '/magaza/siparis-takip.html adresinden sipariş numaranız ve e-posta adresinizle takip edebilirsiniz.' . "\n\n"
         . str_repeat('-', 60) . "\n" . ($order['docs']['preInfo'] ?? '') . "\n" . str_repeat('-', 60) . "\n" . ($order['docs']['contract'] ?? '') . "\n\n"
         . "VoltGuard\n" . vg_site_url() . "\n";

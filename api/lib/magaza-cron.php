@@ -3,15 +3,19 @@
  * VoltGuard Magaza fiyat/kur denetimi (cron). Yalnizca sunucu terminalinden; HTTP ile calismaz (api/lib/ .htaccess ile
  * kapali, ayrica PHP_SAPI denetimi). api/ her deploy'da sunucuya kopyalanir; tools/ kopyalanmaz, bu yuzden cron
  * gorevi bu dosyayi cagirmalidir. Kurulum: api/MAGAZA.md "Kurulum".
- *   VG_DATA_DIR=/home/voltgua2/vg-data php api/lib/magaza-cron.php                 tum urunler + TCMB kuru (en cok 900 sn)
+ *   VG_DATA_DIR=/home/voltgua2/vg-data php api/lib/magaza-cron.php [--sure 540] [--yas 20]
+ *                                         zamani gelen urunler + TCMB kuru; en cok --sure sn (varsayilan 540), basarili
+ *                                         kontrolden --yas saat sonra yeniden (varsayilan 20; 48 saat penceresinin icinde)
  *   ... php api/lib/magaza-cron.php --product vgm-0001                             tek urun (kalp atisi yazmaz)
  *   ... php api/lib/magaza-cron.php --rates                                        yalniz TCMB kuru
  *   ... php api/lib/magaza-cron.php --status                                       son calisma, sayimlar, kur (JSON)
  *   php api/lib/magaza-cron.php --parse dosya.html [--url https://ornek.test/urun] yerel sayfayi ayristirir (veri yazmaz)
  *   php api/lib/magaza-cron.php --check-url https://ornek.test/urun [--allow ornek.test]
  *                                                                                  SSRF + izinli alan adi denetimi (yalnizca DNS)
- * Her tam calisma fiyatlar.json'a kalp atisi (lastRunAt, lastRunSummary) yazar; panel cron'un gercekten calisip
- * calismadigini buradan gosterir (13 saatten eskiyse "saglikli degil"). Ayni anda iki tam calisma olmaz (cron.lock).
+ * Cron her 10 dakikada bir calisir (crontab satiri: api/MAGAZA.md "Kurulum"). Her zamanlanmis calisma fiyat-durum.json'a kalp atisi (lastRunAt,
+ * lastRunSummary) yazar; panel cron'un gercekten calisip calismadigini buradan gosterir (30 dakikadan eskiyse "saglikli
+ * degil"). Calismalar ust uste binmez: cron.lock beklemeden alinir, aliniyorsa calisma atlanir. Ilerleme her 20 sonucta
+ * bir parca parca yazilir; sure dolunca kalan urunler bir sonraki calismaya kalir.
  * Cikti adres, alan adi veya maliyet icermez.
  */
 declare(strict_types=1);
@@ -67,7 +71,7 @@ try {
         $summary = vgm_refresh(['ids' => [$id], 'live' => false, 'budget' => 120, 'max' => 10, 'spacing' => 2,
             'rates' => true, 'heartbeat' => false]);
         $item = vgm_locked(false, function (string $dir) use ($id): ?array {
-            return vgm_prices_state($dir)['items'][$id] ?? null;
+            return vgm_price_item($dir, $id);
         });
         $view = is_array($item) ? array_intersect_key($item, array_flip(['status', 'costTry', 'costUsd', 'checkedAt',
             'lastAttemptAt', 'available', 'method', 'note', 'held'])) : null;
@@ -83,13 +87,26 @@ try {
             'rate' => $rate === null ? null : array_intersect_key($rate, array_flip(['usdTry', 'eurTry', 'date', 'fetchedAt']))], true) . "\n";
         exit($summary['rateUpdated'] ? 0 : 1);
     }
-    // tam calisma: ayni anda ikinci bir calisma baslamaz
+    $sure = $opt('--sure');
+    $yas = $opt('--yas');
+    if (($sure !== null && (preg_match('/^[0-9]{1,4}$/D', $sure) !== 1 || (int)$sure < 10 || (int)$sure > 3600))
+        || ($yas !== null && (preg_match('/^[0-9]{1,3}$/D', $yas) !== 1 || (int)$yas < 1 || (int)$yas > 47))) {
+        fwrite(STDERR, "--sure 10-3600 saniye, --yas 1-47 saat olmalı.\n");
+        exit(2);
+    }
+    // tam calisma: ayni anda ikinci bir calisma baslamaz (kilit beklenmez; calisan varsa bu calisma atlanir)
     $lock = @fopen(vgm_dir() . '/cron.lock', 'c+');
-    if ($lock === false || !flock($lock, LOCK_EX | LOCK_NB)) {
+    if ($lock === false) {
+        // izin/yol sorunu baska bir calisma degildir: cron hatasi olarak gorunmeli (yoksa zamanlayici sessizce durur)
+        fwrite(STDERR, "Mağaza fiyat denetimi başarısız: cron.lock açılamadı (özel veri klasörünün izinlerini kontrol edin).\n");
+        exit(1);
+    }
+    if (!flock($lock, LOCK_EX | LOCK_NB)) {
         echo "Başka bir fiyat denetimi çalışıyor; bu çalışma atlandı.\n";
         exit(0);
     }
-    $summary = vgm_refresh(['ids' => null, 'live' => false, 'budget' => 900, 'spacing' => 2, 'rates' => true]);
+    $summary = vgm_refresh(['ids' => null, 'live' => false, 'budget' => $sure !== null ? (int)$sure : VGM_CRON_BUDGET,
+        'age' => $yas !== null ? (int)$yas * 3600 : VGM_RECHECK_AGE, 'rates' => true]);
     $parts = [];
     foreach ($summary as $key => $value) {
         $parts[] = $key . '=' . (is_bool($value) ? ($value ? 'yes' : 'no') : (string)$value);

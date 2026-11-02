@@ -24,5 +24,6 @@
     "paraBirimi": "TRY"
   },
   "belgeSurumu": "2026-10-27",
+  "turnstileSiteKey": "0x4AAAAAAATestSiteKey0001",
   "not": "Yalnızca otomatik testler için sentetik satıcı kimliği."
 }

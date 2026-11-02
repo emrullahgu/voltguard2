@@ -30,6 +30,19 @@ function cspFor(pathname) {
   return csp;
 }
 const maxProxyBody = 10 * 1024 * 1024;
+// Mağaza ürün görselleri git dışındaki medya deposundan (sunucuda <docroot>/magaza-gorsel/): yerelde VG_MAGAZA_MEDIA.
+const mediaDirectory = process.env.VG_MAGAZA_MEDIA
+  || (process.platform === 'win32' && process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, 'VoltGuard', 'magaza-gorsel') : path.join(os.homedir(), '.voltguard', 'magaza-gorsel'));
+const mediaPath = /^\/magaza-gorsel\/([0-9a-f]{2}\/[a-z0-9-]{3,90}\.[0-9a-f]{8}(?:-t)?\.webp)$/;
+function serveMedia(req, res, rel) {
+  const file = path.join(mediaDirectory, ...rel.split('/'));
+  let stat;
+  try { stat = fs.statSync(file); } catch (_) { return fail(res, 404, 'Görsel bulunamadı.'); }
+  if (!stat.isFile()) return fail(res, 404, 'Görsel bulunamadı.');
+  res.writeHead(200, { 'Content-Type': 'image/webp', 'Content-Length': stat.size, 'Cache-Control': 'public, max-age=31536000, immutable' });
+  if (req.method === 'HEAD') return res.end();
+  fs.createReadStream(file).on('error', () => res.destroy()).pipe(res);
+}
 const hopHeaders = new Set(['connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'transfer-encoding', 'upgrade']);
 const types = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -176,13 +189,18 @@ const server = http.createServer((req, res) => {
   if (phpRoutes.has(pathname)) return proxyPhp(req, res, pathname);
   // Mağaza vitrini, kategori ve ürün sayfaları sunucuda istek anındaki fiyatla üretilir (.htaccess ile aynı yollar).
   if (pathname === '/magaza') return redirect('/magaza/');
-  if (/^\/magaza\/(?:(?:kategori|urun)\/[a-z0-9-]+\/?|sitemap\.xml)?$/.test(pathname)) return proxyPhp(req, res, '/magaza/index.php');
+  if (/^\/magaza\/(?:(?:kategori|urun)\/[a-z0-9-]+\/?|ara\/?|odeme\.html|(?:on-bilgilendirme-formu|mesafeli-satis-sozlesmesi|iade-ve-cayma|kvkk-aydinlatma|odeme-ve-teslimat)\.html|sitemap(?:-\d{1,4})?\.xml)?$/.test(pathname)) return proxyPhp(req, res, '/magaza/index.php');
   if (/^\/calisan\/uygulama\/(?:assets|fonts|licenses)\/.+/.test(pathname) || pathname === '/calisan/uygulama/fatura_logo.png') {
     const file = pathname.slice('/calisan/uygulama/'.length);
     const query = new URLSearchParams(url.search);
     query.delete('file');
     query.set('file', file);
     return proxyPhp(req, res, '/api/company-asset.php', '/api/company-asset.php?' + query.toString());
+  }
+  if (/^\/magaza-gorsel(?:\/|$)/.test(pathname)) {
+    const media = mediaPath.exec(pathname);
+    if (!media || !['GET', 'HEAD'].includes(req.method)) return fail(res, 404, 'Görsel bulunamadı.');
+    return serveMedia(req, res, media[1]);
   }
   if (/^\/voltgame\/?$/i.test(pathname)) return redirect('/voltgame.html');
   if (blockedPath(pathname)) return fail(res, 404, 'Sayfa bulunamadı.');

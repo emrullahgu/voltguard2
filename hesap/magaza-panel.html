@@ -183,7 +183,7 @@
         <div class="mgp-stats" data-mgp-price-stats></div>
         <div class="mgp-bar">
           <label class="mgp-sr" for="f-q">Ürün ara</label>
-          <input id="f-q" type="search" maxlength="80" placeholder="Ürün adı, kimlik veya kategori" autocomplete="off">
+          <input id="f-q" type="search" maxlength="80" placeholder="Ürün adı, marka, model kodu veya kimlik" autocomplete="off">
           <label class="mgp-sr" for="f-status">Durum süzgeci</label>
           <select id="f-status">
             <option value="">Tüm ürünler</option>
@@ -195,7 +195,9 @@
             <option value="blocked">Siparişe kapalı</option>
           </select>
           <button type="button" class="mgp-btn mgp-btn--ghost" data-mgp-prices-reload>Listeyi yenile</button>
+          <button type="button" class="mgp-btn mgp-btn--ghost" data-mgp-prices-batch>Sıradakileri şimdi kontrol et</button>
         </div>
+        <p class="mgp-muted">Liste onay bekleyen, hatalı ve stokta olmayan ürünleri gösterir; diğer ürünler için adını, markasını, model kodunu ya da kimliğini arayın. Fiyatlar her 10 dakikada bir sırayla kontrol edilir (her ürün en geç 20 saatte bir).</p>
         <div class="mgp-card" data-mgp-manual hidden></div>
         <div class="mgp-table-wrap">
           <table class="mgp-table mgp-table--prices">
@@ -327,6 +329,6 @@
   <!--/vg:footer-->
   <script src="../js/voltguard-auth.js?v=b453c7bd4e89"></script>
   <script src="../js/vg-account.js?v=b21f9249a0ae"></script>
-  <script src="../js/hesap-magaza-panel.js?v=bb404604e13d"></script>
+  <script src="../js/hesap-magaza-panel.js?v=034cbf56af56"></script>
 </body>
 </html>

@@ -48,7 +48,7 @@
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/style.css?v=f5a7da9dd78a">
-  <link rel="stylesheet" href="/css/magaza.css?v=d8981068da85">
+  <link rel="stylesheet" href="/css/magaza.css?v=4f22e8feefa2">
 </head>
 <body class="doc-shell vgm-page">
   <!--vg:header-->
@@ -148,7 +148,6 @@
       <nav class="vgm-crumb" aria-label="Sayfa yolu"><ol><li><a href="/">Ana sayfa</a></li><li><a href="/magaza/">Mağaza</a></li><li><span aria-current="page">İade ve cayma</span></li></ol></nav>
       <header class="vgm-head"><h1>İade ve Cayma Hakkı</h1><p class="vgm-lead">Ürünü geri göndermek, cayma hakkınızı kullanmak veya ayıplı bir ürün için hakkınızı aramak istediğinizde izleyeceğiniz adımlar.</p></header>
       <div class="vgm-legal">
-        <p class="vgm-notice vgm-notice--warn"><strong>Taslak – hukuki inceleme önerilir.</strong> Bu metin yayına hazırlık aşamasındadır; köşeli parantez içindeki bilgiler yayından önce tamamlanacaktır. Son güncelleme: 27.10.2026.</p>
         <section id="ozet" aria-labelledby="ozet-h">
           <h2 id="ozet-h">Kısaca</h2>
           <ul>
@@ -178,7 +177,7 @@
           </ol>
           <h3>Örnek cayma formu</h3>
           <pre class="vgm-doc__text">Kime: Voltguard Elektrik Elektronik Ve Mekanik Müh. Ltd. Şti.
-Adres: [Tam adres yayından önce eklenecek]
+Adres: <!--vgm:adres-->Ege Teknopark, Bornova / İzmir<!--/vgm:adres-->
 E-posta: info@voltguard.com.tr
 
 Bu formla aşağıdaki ürünlerin satışına ilişkin sözleşmeden cayma hakkımı kullandığımı bildiririm.
@@ -194,7 +193,7 @@ Tarih:
         </section>
         <section id="kargo" aria-labelledby="kargo-h">
           <h2 id="kargo-h">İade kargo ücreti</h2>
-          <p>İade için anlaşmalı kargo firmamız: <span class="vgm-todo">[Anlaşmalı kargo firmasının adı yayından önce eklenecek]</span>. Ürünü bu firmayla, size bildirdiğimiz iade bilgileriyle gönderirseniz iade kargo ücreti sizden alınmaz. Farklı bir kargo firması kullanırsanız cayma hakkınız ortadan kalkmaz; yalnızca iade kargo bedeli size ait olabilir.</p>
+          <p>İade için kullanılacak anlaşmalı kargo firması ve iade adresi, cayma bildiriminizi aldığımızda size e-postayla bildirilir. Ürünü bu firmayla, size bildirdiğimiz iade bilgileriyle gönderirseniz iade kargo ücreti sizden alınmaz. Farklı bir kargo firması kullanırsanız cayma hakkınız ortadan kalkmaz; yalnızca iade kargo bedeli size ait olabilir.</p>
         </section>
         <section id="geri-odeme" aria-labelledby="geri-odeme-h">
           <h2 id="geri-odeme-h">Bedelin iadesi</h2>
@@ -230,11 +229,23 @@ Tarih:
           <p>Garanti Belgesi Yönetmeliği kapsamındaki ürünlerde (örneğin evlerde kullanılan güneş enerjisi sistemleri, akümülatörler, kesintisiz güç kaynakları, invertörler ve regülatörler) garanti süresi teslim tarihinden itibaren en az 2 yıldır. Garanti belgesi ve Türkçe kullanım kılavuzu, ürün bazında hazır olduğunda size kâğıt üzerinde veya elektronik ortamda iletilir; belgeleri bizden talep edebilirsiniz. Fatura garanti belgesinin yerine geçmez.</p>
           <p>Diğer ürünlerde üretici garantisi varsa süresi ürün sayfasında belirtilir. Garanti, yukarıdaki yasal haklarınızı sınırlamaz.</p>
         </section>
+        <section id="satici" aria-labelledby="satici-h">
+          <h2 id="satici-h">Satıcı bilgileri</h2>
+          <p>Cayma ve ayıp bildirimlerinizi aşağıdaki satıcı bilgilerine yapabilirsiniz.</p>
+          <!--vgm:satici-dl--><dl>
+            <dt>Unvan</dt><dd>Voltguard Elektrik Elektronik Ve Mekanik Müh. Ltd. Şti.</dd>
+            <dt>Adres</dt><dd>Ege Teknopark, Bornova / İzmir</dd>
+            <dt>Telefon</dt><dd><a href="tel:+905454346735">0545 434 67 35</a></dd>
+            <dt>E-posta</dt><dd><a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a></dd>
+            <dt>Web sitesi</dt><dd><a href="https://voltguard.com.tr">https://voltguard.com.tr</a></dd>
+          </dl><!--/vgm:satici-dl-->
+        </section>
         <section id="uyusmazlik" aria-labelledby="uyusmazlik-h">
           <h2 id="uyusmazlik-h">Şikâyet ve uyuşmazlık</h2>
           <p>Talep ve şikâyetleriniz için <a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a> adresine yazabilir veya <a href="tel:+905454346735">0545 434 67 35</a> numarasını arayabilirsiniz. Uyuşmazlık halinde, Ticaret Bakanlığınca her yıl ilan edilen parasal sınırlar içinde yerleşim yerinizdeki veya işlemin yapıldığı yerdeki tüketici hakem heyetine, bu sınırların üzerindeki uyuşmazlıklarda arabulucuya başvurduktan sonra tüketici mahkemesine başvurabilirsiniz.</p>
         </section>
       </div>
+      <p class="vgm-fine vgm-legal__meta"><!--vgm:belge-meta-->Belge sürümü: 2026-10-27 · Son güncelleme: 27.10.2026<!--/vgm:belge-meta--></p>
       <nav class="vgm-legal-nav" aria-label="Mağaza hukuki metinleri"><strong>Diğer mağaza metinleri</strong><ul><li><a href="/magaza/odeme-ve-teslimat.html">Ödeme ve teslimat</a></li><li><a href="/magaza/iade-ve-cayma.html" aria-current="page">İade ve cayma</a></li><li><a href="/magaza/on-bilgilendirme-formu.html">Ön bilgilendirme formu</a></li><li><a href="/magaza/mesafeli-satis-sozlesmesi.html">Mesafeli satış sözleşmesi</a></li><li><a href="/magaza/kvkk-aydinlatma.html">KVKK aydınlatma metni</a></li><li><a href="/gizlilik.html">Gizlilik ve çerez politikası</a></li></ul></nav>
     </div>
   </main>
@@ -333,6 +344,6 @@ Tarih:
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/magaza.js?v=ecbd70a2a19b" defer></script>
+  <script src="/js/magaza.js?v=a8497a471aca" defer></script>
 </body>
 </html>

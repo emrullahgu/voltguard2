@@ -2,7 +2,8 @@
  * VoltGuard – magaza.js  (VoltGuard Mağaza tarayıcı davranışı; window.VGMagaza)
  * Çerçeve yok. Sayfaya göre bölümler kendiliğinden etkinleşir:
  *   tüm mağaza sayfaları  sepet rozeti [data-vgm-cart-count], "Sepete ekle" [data-vgm-add], "Teklif isteyin" [data-vgm-quote]
- *   vitrin                 arama / kategori / marka filtresi ve sıralama (sunucu çıktısı üzerinde, aşamalı iyileştirme)
+ *   kategori               marka / teknik / sıralama süzgeci [data-vgm-filter]: "Uygula" kanonik adrese gider (sunucu süzer ve sayfalar;
+ *                          JS yoksa düz GET formu). Eski istemci tarafı süzgeç [data-vgm-tools] yalnızca o işaret varsa çalışır.
  *   ürün                   görsel galerisi
  *   /magaza/sepet.html     [data-vgm-cart-page]       POST /api/magaza.php?action=sepet
  *   /magaza/odeme.html     [data-vgm-checkout-page]   sepet, onbilgi, siparis
@@ -21,7 +22,8 @@
   var API = '/api/magaza.php';
   var ID_RE = /^vgm-[0-9]{4,6}$/;
   var MAX_LINES = 40;
-  var MAX_QTY = 999;
+  var MAX_QTY = 999;     // api/lib/magaza.php VGM_MAX_QTY ve katalog şeması (maxQty 1–999) ile aynı
+  var MAX_PACK = 9999;  // VGM_MAX_PACK (packQty 1–9999)
   var CONTACT = '/iletisim.html#iletisim';
   var memory = {};                          // depolama kullanılamıyorsa bu sayfa oturumu için yedek
 
@@ -211,44 +213,162 @@
     window.addEventListener('storage', function (ev) { if (ev.key === CART_KEY || ev.key === null) { updateBadges(); cartListeners.forEach(function (fn) { fn(); }); } });
     window.addEventListener('pageshow', function (ev) { if (ev.persisted) updateBadges(); });
     updateBadges();
+    initChrome();
   }
 
-  function boxOf(node) { return closest(node, '.vgm-buy') || document; }
-  function qtyOf(box, max) {
+  /* ------------------------------------------------------------------ mobil chrome: arama düğmesi, band, lead, yapışkan fiyat (P1-07) */
+  var BANNER_KEY = 'vg_magaza_band_kapali_v1';
+  function initChrome() {
+    $$('[data-vgm-bar]').forEach(function (bar) {
+      var toggle = $('[data-vgm-search-toggle]', bar), input = $('input[type="search"]', bar);
+      if (!toggle || !input) return;
+      bar.setAttribute('data-vgm-js', '');
+      if (input.value) bar.setAttribute('data-search-open', '');
+      toggle.addEventListener('click', function () {
+        var open = !bar.hasAttribute('data-search-open');
+        if (open) bar.setAttribute('data-search-open', ''); else bar.removeAttribute('data-search-open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) { try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); } }
+      });
+    });
+    $$('[data-vgm-banner]').forEach(function (band) {
+      var close = $('[data-vgm-banner-close]', band);
+      if (kvGet(BANNER_KEY) === '1') { band.hidden = true; return; }
+      if (close) close.addEventListener('click', function () { band.hidden = true; kvSet(BANNER_KEY, '1'); });
+    });
+    $$('[data-vgm-clamp]').forEach(function (lead) {
+      if (lead.scrollHeight <= lead.clientHeight + 2) return;
+      var more = el('button', { type: 'button', class: 'vgm-link vgm-lead__more', 'aria-expanded': 'false' }, ['devamı']);
+      more.addEventListener('click', function () {
+        var open = !lead.hasAttribute('data-open');
+        if (open) lead.setAttribute('data-open', ''); else lead.removeAttribute('data-open');
+        more.textContent = open ? 'daha az' : 'devamı';
+        more.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      lead.parentNode.insertBefore(more, lead.nextSibling);
+    });
+    var sticky = $('[data-vgm-sticky]'), buy = $('#satin-al');
+    if (sticky && buy && typeof window.IntersectionObserver === 'function') {
+      /* Şerit, kutunun tamamı değil eylem satırı (adet + Sepete ekle/Teklif) görünene kadar gösterilir (P1-07): telefonda
+         kutunun üst kısmı görünürken düğme ekran altında kalabiliyor. Sayfa sonundaki yardım kutusu ya da site alt bilgisi
+         görününce şerit gizlenir: alt bilginin son satırlarını örtmez ve sayfaya yer tutucu boşluk eklemek gerekmez. */
+      var row = $('.vgm-buy__row', buy) || buy, rowSeen = true, endSeen = false;
+      var ends = [$('.vgm-help'), $('footer')].filter(Boolean);
+      var sync = function () { sticky.hidden = rowSeen || endSeen || window.innerWidth >= 992; };
+      var io = new window.IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { rowSeen = e.isIntersecting; });
+        sync();
+      }, { threshold: 0.9 });
+      io.observe(row);
+      if (ends.length) {
+        var seen = [];
+        var endIo = new window.IntersectionObserver(function (entries) {
+          entries.forEach(function (e) { seen[ends.indexOf(e.target)] = e.isIntersecting; });
+          endSeen = seen.some(Boolean);
+          sync();
+        });
+        ends.forEach(function (n) { endIo.observe(n); });
+      }
+      sticky.addEventListener('click', function (ev) {
+        if (!closest(ev.target, '[data-vgm-sticky-go]')) return;
+        ev.preventDefault();
+        focusEl($('[data-vgm-add], [data-vgm-quote], [data-vgm-qty]', buy) || buy);
+      });
+    }
+  }
+
+  /* Satış birimi (katalog "unit"): adet etiketi ve fiyat eki; js tarafında yalnızca gösterim (P1-09). */
+  var UNITS = { adet: ['adet', ''], metre: ['m', '/ m'], paket: ['paket', '/ paket'], 'takım': ['takım', '/ takım'], kutu: ['kutu', '/ kutu'], rulo: ['rulo', '/ rulo'], kg: ['kg', '/ kg'], set: ['set', '/ set'] };
+  function unitOf(key) { return UNITS[key] || UNITS.adet; }
+  function boxOf(node) { return closest(node, '.vgm-buy, .vgm-card__add, .vgm-line') || document; }
+  /* Adet: en az (min) ve adım (step) kurallarına yuvarlanır; en çok (max) ile sınırlanır. */
+  function snapQty(n, min, step, max) {
+    var lo = Math.max(1, min || 1), st = Math.max(1, step || 1), hi = max || MAX_QTY;
+    var q = toQty(n, hi) || lo;
+    if (q < lo) q = lo;
+    if (st > 1) q = Math.ceil(q / st) * st;
+    if (q > hi) q = Math.floor(hi / st) * st || lo;
+    return Math.max(1, q);
+  }
+  function qtyOf(box, max, min, step) {
     var input = $('[data-vgm-qty]', box);
-    var q = input ? toQty(input.value, max || MAX_QTY) : 1;
-    if (input) input.value = String(q || 1);
-    return q || 1;
+    var raw = input ? input.value : 1;
+    var q = snapQty(raw, min || (input && parseInt(input.getAttribute('min'), 10)) || 1, step || (input && parseInt(input.getAttribute('step'), 10)) || 1, max || MAX_QTY);
+    if (input) input.value = String(q);
+    return q;
   }
 
   function onAdd(btn) {
     var id = btn.getAttribute('data-vgm-add') || '';
     if (!ID_RE.test(id)) return;
     var max = toQty(btn.getAttribute('data-max'), MAX_QTY) || MAX_QTY;
+    var min = toQty(btn.getAttribute('data-min'), max) || 1, step = toQty(btn.getAttribute('data-step'), max) || 1;
+    var unit = unitOf(btn.getAttribute('data-unit') || 'adet')[0];
     var box = boxOf(btn), live = $('[data-vgm-live]', box);
-    var qty = qtyOf(box, max);
+    var qty = qtyOf(box, max, min, step);
     var h1 = $('h1');
-    rememberInfo(id, h1 ? h1.textContent : id, (location.pathname.match(/^\/magaza\/urun\/([a-z0-9-]+)\/?$/) || [])[1] || '', max);
+    var name = trim(btn.getAttribute('data-name')) || (h1 ? h1.textContent : id);
+    var slug = trim(btn.getAttribute('data-slug')) || (location.pathname.match(/^\/magaza\/urun\/([a-z0-9-]+)\/?$/) || [])[1] || '';
+    rememberInfo(id, name, slug, max);
     var r = addToCart(id, qty, max);
     if (!live) return;
     clear(live);
     if (!r.ok) { live.textContent = r.message; return; }
-    live.appendChild(document.createTextNode((r.capped ? 'Sepette en fazla ' + max + ' adet olabilir; sepetinizde şu an ' + r.qty + ' adet var. ' : qty + ' adet sepete eklendi. ')));
+    if (r.capped) {
+      live.appendChild(document.createTextNode('Sepette en fazla ' + max + ' ' + unit + ' olabilir; sepetinizde şu an ' + r.qty + ' ' + unit + ' var. '));
+      live.appendChild(el('a', { class: 'vgm-link', href: CONTACT, 'data-vgm-quote': '', 'data-id': id, 'data-name': name, 'data-model': trim(btn.getAttribute('data-model')), 'data-qty': String(qty), 'data-intent': 'proforma' }, ['Bu adet için proforma isteyin']));
+      live.appendChild(document.createTextNode(' · '));
+    } else {
+      live.appendChild(document.createTextNode(qty + ' ' + unit + ' sepete eklendi. '));
+    }
     live.appendChild(el('a', { class: 'vgm-link', href: '/magaza/sepet.html' }, ['Sepete git']));
   }
 
+  /* Teklif isteği taslağı: iletişim formuna (subject "magaza") yapılandırılmış ürün listesiyle taşınır (P1-12). */
+  var INTENTS = { teklif: 'güncel fiyat ve stok teklifi', proforma: 'proforma fatura', nakliye: 'nakliye dahil teklif', alternatif: 'alternatif ürün önerisi', haber: 'siparişe açılınca bilgilendirme' };
+  function quoteDraft(items, intent, extra) {
+    var what = INTENTS[intent] || INTENTS.teklif;
+    var lines = ['[Mağaza] Aşağıdaki ürün(ler) için ' + what + ' rica ediyorum.', ''];
+    items.forEach(function (it, i) {
+      lines.push((i + 1) + ') ' + it.name + (it.mpn ? ' — model: ' + it.mpn : '') + ' — adet: ' + it.qty + (it.unit && it.unit !== 'adet' ? ' ' + unitOf(it.unit)[0] : '')
+        + (it.url ? ' — ' + location.origin + it.url : ''));
+    });
+    if (extra) lines.push('', extra);
+    lines.push('', 'Firma / VKN:', 'Teslimat ili:', 'İstenen termin:');
+    var text = lines.join('\n').slice(0, 1000);
+    try {
+      window.sessionStorage.setItem('vgContactDraft', JSON.stringify({ subject: 'magaza', text: text, complete: false,
+        magaza: { intent: intent, items: items.map(function (it) { return { id: it.id, mpn: it.mpn, qty: it.qty, url: it.url }; }) } }));
+    } catch (e) { /* bağlantı yine de iletişim formuna gider */ }
+    return text;
+  }
   function onQuote(link) {
-    var name = trim(link.getAttribute('data-name')).slice(0, 160), model = trim(link.getAttribute('data-model')).slice(0, 80);
-    var qty = qtyOf(boxOf(link), MAX_QTY);
-    var text = '[Mağaza] ' + name + (model ? ' (' + model + ')' : '') + ' için güncel fiyat ve stok teklifi rica ediyorum. Adet: ' + qty;
-    try { window.sessionStorage.setItem('vgContactDraft', JSON.stringify({ subject: 'elektrik', text: text, complete: false })); } catch (e) { /* bağlantı yine de iletişim formuna gider */ }
+    var id = trim(link.getAttribute('data-id')), name = trim(link.getAttribute('data-name')).slice(0, 160), model = trim(link.getAttribute('data-model')).slice(0, 80);
+    var url = trim(link.getAttribute('data-url')) || (id ? '' : location.pathname);
+    if (!/^\/magaza\/urun\/[a-z0-9-]+\/$/.test(url)) url = '';
+    var qty = toQty(link.getAttribute('data-qty'), MAX_QTY) || qtyOf(boxOf(link), MAX_QTY);
+    var box = boxOf(link), add = $('[data-vgm-add], [data-vgm-qty]', box);
+    var unit = add && add.getAttribute('data-unit') ? add.getAttribute('data-unit') : (link.getAttribute('data-unit') || 'adet');
+    quoteDraft([{ id: ID_RE.test(id) ? id : '', name: name || id, mpn: model, qty: qty, unit: unit, url: url }], link.getAttribute('data-intent') || 'teklif');
+  }
+  /* Sepet -> teklif / proforma: tüm satırlar (ad, model, adet, adres) iletişim formuna taşınır. */
+  function onCartQuote(btn, lines) {
+    var info = readInfo();
+    var items = readCart().map(function (r) {
+      var l = (lines || []).filter(function (x) { return x.id === r.id; })[0] || {};
+      var slug = l.slug || (info[r.id] && info[r.id].s) || '';
+      return { id: r.id, name: l.name || (info[r.id] && info[r.id].n) || r.id, mpn: l.mpn || '', qty: r.qty, unit: l.unit || 'adet', url: slug ? '/magaza/urun/' + slug + '/' : '' };
+    });
+    if (!items.length) return;
+    quoteDraft(items, 'proforma');
+    window.location.href = CONTACT;
   }
 
   function onThumb(thumb) {
     var gallery = closest(thumb, '[data-vgm-gallery]'), main = gallery && $('[data-vgm-main]', gallery);
     if (!main) return;
     var src = thumb.getAttribute('data-src');
-    if (!/^\/public\/[A-Za-z0-9_.\/-]+$/.test(src || '') || src.indexOf('..') !== -1) return;
+    if (!/^\/(?:public\/[A-Za-z0-9_.\/-]+|magaza-gorsel\/[0-9a-f]{2}\/[a-z0-9-]{3,90}\.[0-9a-f]{8}(?:-t)?\.webp)$/.test(src || '') || src.indexOf('..') !== -1) return;
     main.src = src;
     main.alt = thumb.getAttribute('data-alt') || '';
     var w = parseInt(thumb.getAttribute('data-w'), 10), h = parseInt(thumb.getAttribute('data-h'), 10);
@@ -319,6 +439,42 @@
     apply();
   }
 
+  /* ------------------------------------------------------------------ kategori: marka / sıralama süzgeci */
+  /* Sunucu formu GET ile işler. Seçim değişince sayfa YENİLENMEZ (WCAG 3.2.2): kullanıcı birden çok süzgeci seçip görünür
+     "Uygula" düğmesine basar. JS varsa gönderim kanonik adrese gider: parametre sırası formun data-vgm-params listesi
+     (sunucudaki sırayla aynı: marka, kutup, akim, egri, ka, kesit, faz, kw, sirala), bir süzgecin değerleri virgülle
+     (kutup=1P,3P), varsayılanlar (boş değer, önerilen sıralama) yazılmaz, sayfa 1'e dönülür. */
+  function initFilter() {
+    /* Telefonda teknik özellik paneli seçili süzgeç yoksa kapalı başlar: bunu ilk boyamadan önce sunucunun </details>
+       sonrasına yazdığı satır içi betik yapar (bu dosya defer ile yüklenir; burada kapatmak geç kalıp düzeni kaydırıyordu).
+       Burada yalnızca ekran genişleyince (döndürme, pencere büyütme) panel yeniden açılır. */
+    var mq = window.matchMedia && window.matchMedia('(max-width: 47.99rem)');
+    var facets = $$('[data-vgm-facets]');
+    if (mq && facets.length) {
+      var onWidth = function () { if (!mq.matches) facets.forEach(function (d) { d.setAttribute('open', ''); }); };
+      if (mq.addEventListener) mq.addEventListener('change', onWidth); else if (mq.addListener) mq.addListener(onWidth);
+    }
+    $$('[data-vgm-filter]').forEach(function (form) {
+      form.addEventListener('submit', function (ev) {
+        var order = String(form.getAttribute('data-vgm-params') || '').split(',').filter(Boolean);
+        var values = {};
+        $$('select[name], input[name]', form).forEach(function (s) {
+          if (s.disabled || ((s.type === 'checkbox' || s.type === 'radio') && !s.checked)) return;
+          var name = String(s.name).replace(/\[\]$/, '');
+          if (!s.value || (name === 'sirala' && s.value === 'onerilen')) return;
+          if (order.indexOf(name) === -1) order.push(name);
+          (values[name] = values[name] || []).push(s.value);
+        });
+        var parts = [];
+        order.forEach(function (name) {
+          if (values[name]) parts.push(encodeURIComponent(name) + '=' + values[name].map(encodeURIComponent).join(','));
+        });
+        ev.preventDefault();
+        window.location.href = (form.getAttribute('action') || location.pathname) + (parts.length ? '?' + parts.join('&') : '');
+      });
+    });
+  }
+
   /* ------------------------------------------------------------------ toplam kutusu (sepet ve ödeme) */
   function renderTotals(root, totals, shipping, hasQuote) {
     function set(key, text) { $$('[data-vgm-t="' + key + '"]', root).forEach(function (n) { n.textContent = text; }); }
@@ -374,25 +530,34 @@
       writeCart(items);
     }
     function lineNode(line, info) {
-      var id = line.id, max = (info && info.m) || MAX_QTY;
+      var id = line.id, max = toQty(line.maxQty, MAX_QTY) || (info && info.m) || MAX_QTY;
+      var min = toQty(line.minQty, max) || 1, step = toQty(line.step, max) || 1;
       var name = line.name || (info && info.n) || id;
+      var unit = unitOf(line.unit || 'adet');
       var href = line.slug ? '/magaza/urun/' + line.slug + '/' : (info && info.s ? '/magaza/urun/' + info.s + '/' : '/magaza/');
-      var input = el('input', { type: 'number', min: 1, max: max, step: 1, value: line.qty, inputmode: 'numeric', 'aria-label': name + ' adedi', 'data-id': id });
+      var input = el('input', { type: 'number', min: min, max: max, step: step, value: line.qty, inputmode: 'numeric', 'aria-label': name + ' ' + (unit[0] === 'adet' ? 'adedi' : 'miktarı (' + unit[0] + ')'), 'data-id': id, 'data-vgm-qty': '' });
       var left = el('div', { class: 'vgm-line__info' }, [
-        line.brand ? el('p', { class: 'vgm-line__brand', text: line.brand }) : null,
+        line.brand || line.mpn ? el('p', { class: 'vgm-line__brand' }, [line.brand || '', line.brand && line.mpn ? ' · ' : '', line.mpn ? el('span', { class: 'vgm-mono', text: line.mpn }) : null]) : null,
         el('a', { class: 'vgm-line__name', href: href, text: name })
       ]);
       if (line.orderable && typeof line.unitTryGross === 'number') {
-        left.appendChild(el('p', { class: 'vgm-line__unit', text: 'Birim fiyat: ' + fmtTry(line.unitTryGross) + ' (KDV dahil)' + (line.checkedAt ? ' · Fiyat güncelleme tarihi: ' + fmtDateTime(line.checkedAt) : '') }));
+        left.appendChild(el('p', { class: 'vgm-line__unit', text: 'Birim fiyat: ' + fmtTry(line.unitTryGross) + (unit[1] ? ' ' + unit[1] : '') + ' (KDV dahil)' + (line.checkedAt ? ' · Fiyat güncelleme tarihi: ' + fmtDateTime(line.checkedAt) : '') }));
+      } else if (!line.orderable && typeof line.unitTryGross === 'number') {
+        left.appendChild(el('p', { class: 'vgm-line__unit', text: 'Birim fiyat (bilgi amaçlı): ' + fmtTry(line.unitTryGross) + (unit[1] ? ' ' + unit[1] : '') + ' (KDV dahil)' }));
+      }
+      var pack = toQty(line.packQty, MAX_PACK) || 0;
+      if (unit[0] !== 'adet' || min > 1 || step > 1 || pack > 1) {
+        left.appendChild(el('p', { class: 'vgm-line__unit', text: ((line.unit || 'adet') !== 'adet' && UNITS[line.unit] ? ucFirst(line.unit) + ' ile satılır' : 'Sipariş adedi') + (min > 1 ? ' · en az ' + min : '') + (step > 1 ? ' · ' + step + ' katlarında' : '') + (pack > 1 ? ' · paket: ' + pack + ' ' + unit[0] : '') }));
       }
       if (line.reasonText && !line.orderable) {
         left.appendChild(el('p', { class: 'vgm-line__warn', role: 'alert' }, [line.reasonText + ' ',
-          el('a', { href: CONTACT, 'data-vgm-quote': '', 'data-name': name, 'data-model': '' }, ['Teklif isteyin'])]));
+          el('a', { href: CONTACT, 'data-vgm-quote': '', 'data-id': id, 'data-name': name, 'data-model': line.mpn || '', 'data-unit': line.unit || 'adet', 'data-qty': String(line.qty), 'data-url': line.slug ? '/magaza/urun/' + line.slug + '/' : '', 'data-intent': line.reason === 'freight' ? 'nakliye' : (line.reason === 'unavailable' ? 'alternatif' : 'teklif') },
+            [line.reason === 'freight' ? 'Nakliye dahil teklif alın' : (line.reason === 'unavailable' ? 'Alternatif önerin' : 'Teklif isteyin')])]));
       }
       var total = line.orderable && typeof line.lineTryGross === 'number'
-        ? el('p', { class: 'vgm-line__total' }, [fmtTry(line.lineTryGross)])
+        ? el('p', { class: 'vgm-line__total' }, [fmtTry(line.lineTryGross), el('small', { text: line.qty + ' ' + unit[0] })])
         : el('p', { class: 'vgm-line__total' }, ['Teklif ile']);
-      return el('li', { class: 'vgm-line', 'data-id': id }, [
+      var li = el('li', { class: 'vgm-line', 'data-id': id, 'data-max': String(max), 'data-min': String(min), 'data-step': String(step) }, [
         left,
         el('div', { class: 'vgm-line__qty' }, [
           el('button', { type: 'button', 'data-act': 'dec', 'aria-label': 'Azalt: ' + name }, ['−']), input,
@@ -400,7 +565,13 @@
         total,
         el('button', { type: 'button', class: 'vgm-link vgm-line__rm', 'data-act': 'rm', 'aria-label': 'Sepetten çıkar: ' + name }, ['Sepetten çıkar'])
       ]);
+      /* En çok adedin üstü: kapmak yerine proforma yolu (P1-12). */
+      var cap = el('p', { class: 'vgm-line__cap', hidden: true }, ['En fazla ' + max + ' ' + unit[0] + ' sipariş verilebilir. ',
+        el('a', { class: 'vgm-link', href: CONTACT, 'data-vgm-quote': '', 'data-id': id, 'data-name': name, 'data-model': line.mpn || '', 'data-unit': line.unit || 'adet', 'data-url': line.slug ? '/magaza/urun/' + line.slug + '/' : '', 'data-intent': 'proforma' }, ['Bu adet için proforma isteyin'])]);
+      left.appendChild(cap);
+      return li;
     }
+    function ucFirst(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
     function restoreFocus(prev) {
       if (!prev) return;
       var li = $('.vgm-line[data-id="' + prev.id + '"]', linesEl);
@@ -414,6 +585,7 @@
 
     function render(data) {
       var prev = activeLine(), info = readInfo();
+      lastLines = data.lines || [];
       clear(linesEl);
       (data.lines || []).forEach(function (l) { linesEl.appendChild(lineNode(l, info[l.id])); });
       var hasQuote = !!(data.quote && data.quote.token);
@@ -475,11 +647,13 @@
       var li = btn && closest(btn, '.vgm-line');
       if (!btn || !li) return;
       var id = li.getAttribute('data-id'), input = $('input', li), act = btn.getAttribute('data-act');
-      var max = parseInt(input.getAttribute('max'), 10) || MAX_QTY;
+      var max = parseInt(input.getAttribute('max'), 10) || MAX_QTY, min = parseInt(input.getAttribute('min'), 10) || 1, step = parseInt(input.getAttribute('step'), 10) || 1;
       if (act === 'rm') { removeFromCart([id]); load(); return; }
-      var q = toQty(input.value, MAX_QTY) || 1;
-      if (act === 'inc') q = Math.min(q + 1, max);
-      if (act === 'dec') q = Math.max(q - 1, 1);
+      var q = toQty(input.value, MAX_QTY) || min;
+      var capNote = $('.vgm-line__cap', li);
+      if (act === 'inc') { q = q + step; if (q > max) { q = max; if (capNote) capNote.hidden = false; } else if (capNote) capNote.hidden = true; }
+      if (act === 'dec') { q = Math.max(q - step, min); if (capNote) capNote.hidden = true; }
+      q = snapQty(q, min, step, max);
       input.value = String(q);
       setQty(id, q);
       scheduleLoad();
@@ -487,12 +661,16 @@
     linesEl.addEventListener('change', function (ev) {
       var input = ev.target;
       if (!input || input.tagName !== 'INPUT') return;
-      var li = closest(input, '.vgm-line'), max = parseInt(input.getAttribute('max'), 10) || MAX_QTY;
-      var q = toQty(input.value, max) || 1;
+      var li = closest(input, '.vgm-line'), max = parseInt(input.getAttribute('max'), 10) || MAX_QTY, min = parseInt(input.getAttribute('min'), 10) || 1, step = parseInt(input.getAttribute('step'), 10) || 1;
+      var wanted = toQty(input.value, MAX_QTY) || min, capNote = $('.vgm-line__cap', li);
+      var q = snapQty(wanted, min, step, max);
+      if (capNote) capNote.hidden = wanted <= max;
       input.value = String(q);
       setQty(li.getAttribute('data-id'), q);
       scheduleLoad();
     });
+    var cartQuote = $('[data-vgm-cart-quote]', root), lastLines = [];
+    if (cartQuote) cartQuote.addEventListener('click', function () { onCartQuote(cartQuote, lastLines); });
     notices.addEventListener('click', function (ev) { if (closest(ev.target, '[data-act="retry"]')) load(); });
     clearBtn.addEventListener('click', function () {
       if (window.confirm('Sepetteki tüm ürünler çıkarılsın mı?')) { writeCart([]); load(); }
@@ -955,10 +1133,37 @@
     });
   }
 
+  /* ------------------------------------------------------------------ yatay kaydırılan çip satırları (dar ekran) */
+  /* Alt kategori / arama daraltma çipleri dar ekranda tek satırda yatay kayar (css/magaza.css). Kenar solmaları yalnızca o
+     yönde gizli çip varken görünür (data-fade="start end"); seçili çip görünür alana alınır. Çipler bağlantı olduğundan
+     Tab ile gezilir, odaklanan çip tarayıcı tarafından görünüme kaydırılır. */
+  function initScrollers() {
+    $$('[data-vgm-scroller]').forEach(function (nav) {
+      var list = $('ul', nav);
+      if (!list) return;
+      var update = function () {
+        var max = list.scrollWidth - list.clientWidth, x = list.scrollLeft, f = [];
+        if (max > 2 && x > 2) f.push('start');
+        if (max > 2 && x < max - 2) f.push('end');
+        nav.setAttribute('data-fade', f.join(' '));
+      };
+      var cur = $('[aria-current="page"]', list);
+      if (cur && list.scrollWidth > list.clientWidth) {
+        var li = cur.parentNode;
+        list.scrollLeft = Math.max(0, li.offsetLeft - 24);   // ul position: relative (css)
+      }
+      list.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    });
+  }
+
   /* ------------------------------------------------------------------ başlat */
   function init() {
     initGlobal();
+    initScrollers();
     initTools();
+    initFilter();
     var cart = $('[data-vgm-cart-page]'), checkout = $('[data-vgm-checkout-page]'), track = $('[data-vgm-track-page]');
     if (cart) initCartPage(cart);
     if (checkout) initCheckoutPage(checkout);

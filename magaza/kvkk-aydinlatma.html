@@ -48,7 +48,7 @@
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/style.css?v=f5a7da9dd78a">
-  <link rel="stylesheet" href="/css/magaza.css?v=d8981068da85">
+  <link rel="stylesheet" href="/css/magaza.css?v=4f22e8feefa2">
 </head>
 <body class="doc-shell vgm-page">
   <!--vg:header-->
@@ -148,20 +148,19 @@
       <nav class="vgm-crumb" aria-label="Sayfa yolu"><ol><li><a href="/">Ana sayfa</a></li><li><a href="/magaza/">Mağaza</a></li><li><span aria-current="page">KVKK aydınlatma metni</span></li></ol></nav>
       <header class="vgm-head"><h1>KVKK Aydınlatma Metni: Mağaza Siparişleri</h1><p class="vgm-lead">Sipariş verdiğinizde hangi kişisel verilerinizi, hangi amaçla ve hangi hukuki sebeple işlediğimizi, kimlerle paylaştığımızı ve haklarınızı açıklar.</p></header>
       <div class="vgm-legal">
-        <p class="vgm-notice vgm-notice--warn"><strong>Taslak – hukuki inceleme önerilir.</strong> Bu metin yayına hazırlık aşamasındadır; köşeli parantez içindeki bilgiler yayından önce tamamlanacaktır. Son güncelleme: 27.10.2026.</p>
         <section id="giris" aria-labelledby="giris-h">
           <h2 id="giris-h">Bu metin neyi kapsar?</h2>
           <p>Bu aydınlatma metni, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) md. 10 uyarınca, VoltGuard Mağaza’da sipariş verdiğinizde, siparişinizi takip ettiğinizde ve iade, cayma veya şikâyet talebinde bulunduğunuzda işlenen kişisel verileri açıklar. Sitemizin genel kullanımı ve çerezler için <a href="/gizlilik.html">Gizlilik ve Çerez Politikası</a> geçerlidir.</p>
         </section>
         <section id="sorumlu" aria-labelledby="sorumlu-h">
           <h2 id="sorumlu-h">Veri sorumlusu</h2>
-          <dl>
+          <!--vgm:satici-dl--><dl>
             <dt>Unvan</dt><dd>Voltguard Elektrik Elektronik Ve Mekanik Müh. Ltd. Şti.</dd>
-            <dt>Adres</dt><dd><span class="vgm-todo">[Tam adres yayından önce eklenecek]</span> (Ege Teknopark, Bornova / İzmir)</dd>
-            <dt>E-posta</dt><dd><a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a></dd>
-            <dt>KEP adresi</dt><dd><span class="vgm-todo">[KEP adresi yayından önce eklenecek]</span></dd>
+            <dt>Adres</dt><dd>Ege Teknopark, Bornova / İzmir</dd>
             <dt>Telefon</dt><dd><a href="tel:+905454346735">0545 434 67 35</a></dd>
-          </dl>
+            <dt>E-posta</dt><dd><a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a></dd>
+            <dt>Web sitesi</dt><dd><a href="https://voltguard.com.tr">https://voltguard.com.tr</a></dd>
+          </dl><!--/vgm:satici-dl-->
         </section>
         <section id="veriler" aria-labelledby="veriler-h">
           <h2 id="veriler-h">Hangi verileri işliyoruz?</h2>
@@ -195,8 +194,8 @@
             <li><strong>Ürünü bizim adımıza paketleyip kargoya veren tedarikçiler:</strong> yalnızca gönderim için gereken ad soyad, telefon ve teslimat adresi. Ödeme, fatura ve diğer bilgileriniz tedarikçiyle paylaşılmaz.</li>
             <li><strong>Mali müşavirimiz ve Gelir İdaresi Başkanlığı (e-Arşiv fatura sistemi):</strong> fatura ve muhasebe kayıtları için gereken kimlik, adres, vergi ve sipariş bilgileri.</li>
             <li><strong>Bankamız:</strong> ödeme alınması ve bedel iadesi için gereken ödeme ve hesap bilgileri.</li>
-            <li><strong>Barındırma ve e-posta hizmeti aldığımız şirketler:</strong> sipariş kaydının saklanması ve e-postaların iletilmesi için, veri işleyen sıfatıyla. Bu şirketlerin bulunduğu ülke ve yurt dışındaysa KVKK md. 9 dayanağı: <span class="vgm-todo">[Ülke ve md. 9 dayanağı yayından önce eklenecek]</span>.</li>
-            <li><strong>Güvenlik doğrulaması:</strong> sipariş formunda güvenlik doğrulaması kullanıldığında bu doğrulama Cloudflare, Inc. tarafından sağlanan Turnstile hizmetiyle yapılır; bu sırada IP adresiniz ve tarayıcı bilgileriniz yurt dışındaki sunuculara iletilebilir. Bu aktarım için KVKK md. 9 kapsamında standart sözleşmenin imzalanması ve Kurum’a bildirilmesi yayından önce tamamlanacaktır; tamamlanmadıkça güvenlik doğrulaması Türkiye’deki ziyaretçiler için kullanılmayacaktır.</li>
+            <li><strong>Barındırma ve e-posta hizmeti aldığımız şirketler:</strong> sipariş kaydının saklanması ve e-postaların iletilmesi için, veri işleyen sıfatıyla. Bu şirketler yurt dışındaysa aktarım yalnızca KVKK md. 9’daki şartlar sağlandığında yapılır.</li>
+            <li><strong>Güvenlik doğrulaması:</strong> sipariş formunda güvenlik doğrulaması kullanıldığında bu doğrulama Cloudflare, Inc. tarafından sağlanan Turnstile hizmetiyle yapılır; bu sırada IP adresiniz ve tarayıcı bilgileriniz yurt dışındaki sunuculara iletilebilir. Bu aktarım, KVKK md. 9 kapsamındaki şartlar (standart sözleşme ve Kurum’a bildirim) sağlanmadan yapılmaz; şartlar sağlanana kadar güvenlik doğrulaması Türkiye’deki ziyaretçiler için kullanılmaz.</li>
             <li><strong>Yetkili kamu kurum ve kuruluşları, tüketici hakem heyetleri ve mahkemeler:</strong> kanuni talep veya uyuşmazlık halinde.</li>
           </ul>
         </section>
@@ -228,6 +227,7 @@
           <p>Başvurunuzu kimliğinizi doğrulayabileceğimiz şekilde, kayıtlı e-posta adresinizden <a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a> adresine, KEP adresimize veya yazılı olarak adresimize iletebilirsiniz. Başvurunuzda ad soyadınızı, iletişim bilginizi, varsa sipariş numaranızı ve talebinizi belirtin. Başvurunuzu niteliğine göre en kısa sürede ve en geç 30 gün içinde ücretsiz olarak sonuçlandırırız.</p>
         </section>
       </div>
+      <p class="vgm-fine vgm-legal__meta"><!--vgm:belge-meta-->Belge sürümü: 2026-10-27 · Son güncelleme: 27.10.2026<!--/vgm:belge-meta--></p>
       <nav class="vgm-legal-nav" aria-label="Mağaza hukuki metinleri"><strong>Diğer mağaza metinleri</strong><ul><li><a href="/magaza/odeme-ve-teslimat.html">Ödeme ve teslimat</a></li><li><a href="/magaza/iade-ve-cayma.html">İade ve cayma</a></li><li><a href="/magaza/on-bilgilendirme-formu.html">Ön bilgilendirme formu</a></li><li><a href="/magaza/mesafeli-satis-sozlesmesi.html">Mesafeli satış sözleşmesi</a></li><li><a href="/magaza/kvkk-aydinlatma.html" aria-current="page">KVKK aydınlatma metni</a></li><li><a href="/gizlilik.html">Gizlilik ve çerez politikası</a></li></ul></nav>
     </div>
   </main>
@@ -326,6 +326,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/magaza.js?v=ecbd70a2a19b" defer></script>
+  <script src="/js/magaza.js?v=a8497a471aca" defer></script>
 </body>
 </html>

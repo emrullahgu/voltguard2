@@ -494,6 +494,9 @@
       clearInvalidState(contactForm);
       if (messageField) { delete messageField.dataset.auto; delete messageField.dataset.prefillComplete; }
       if (subjectSel) delete subjectSel.dataset.auto;
+      /* Mağaza talebi (gizli alan): reset() varsayılana döner ve gizli alanda varsayılan son atanan değerdir; açıkça boşalt. */
+      var magazaTalep = qs('#magazaTalep', contactForm);
+      if (magazaTalep) magazaTalep.value = '';
       if (timestampField) timestampField.value = String(Date.now());
       syncCounter();
     };

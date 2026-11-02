@@ -11,7 +11,9 @@ oranini bozmadan ortalar; meta veriyi (EXIF, konum, renk profili disi) atar ve i
     public/magaza/<slug>.<ozet8>-400.webp   400 x 400 (liste karti)
 
 <ozet8> cikti iceriginin SHA-256 ozetidir: gorsel degisirse adres de degisir (sunucu gorselleri 1 yil
-"immutable" onbellekte tutar). Cikti: katalog.json "images" ogesi olarak JSON satiri.
+"immutable" onbellekte tutar). Cikti: urun kaydinin "images" ogesi olarak JSON satiri (katalog v2: urun kaydi
+tools/magaza/katalog-derle.cjs --ekle ile yazilir; buyuk katalogun gorselleri git disindaki medya deposundadir,
+api/MAGAZA.md "Medya deposu").
 
 KULLANIM
   python tools/magaza/gorsel-hazirla.py <kaynak-dosya> <slug> --alt "Marka Model ... onden gorunum"

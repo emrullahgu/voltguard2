@@ -80,6 +80,74 @@ function vg_contact_verify_captcha(string $secret, string $token): void
     }
 }
 
+/** Magaza talep niyetleri (iletisim.html magazaTalep.intent) ve e-posta konusundaki etiketleri. */
+const VG_CONTACT_MAGAZA_INTENTS = ['teklif' => 'Teklif', 'proforma' => 'Proforma', 'nakliye' => 'Nakliye', 'alternatif' => 'Alternatif',
+    'haber' => 'Haber ver', 'tedarik' => 'Tedarik'];
+
+/**
+ * Magaza talebi (P1-12): iletisim.html gizli "magazaTalep" alani, {"v":1,"intent","items":[{id,mpn,qty,url}],"q"}.
+ * Bicim bozuksa null (talep yine mesaj metniyle iletilir). Gecersiz satirlar atlanir; kimligi ve modeli olmayan satir
+ * tutulmaz; en cok 40 satir. Kisisel veri tasimaz (urun kimligi, model, adet, urun adresi, aranan metin).
+ */
+function vg_contact_magaza_talep(string $raw): ?array
+{
+    if ($raw === '' || strlen($raw) > 8192) return null;
+    $data = json_decode($raw, true, 6);
+    if (!is_array($data) || ($data['v'] ?? null) !== 1 || !is_string($data['intent'] ?? null)
+        || !isset(VG_CONTACT_MAGAZA_INTENTS[$data['intent']]) || !is_array($data['items'] ?? null)) return null;
+    $items = [];
+    foreach (array_slice(array_values($data['items']), 0, 40) as $it) {
+        if (!is_array($it)) continue;
+        $id = is_string($it['id'] ?? null) ? $it['id'] : '';
+        $url = is_string($it['url'] ?? null) ? $it['url'] : '';
+        $mpn = is_string($it['mpn'] ?? null) ? trim($it['mpn']) : '';
+        $qty = $it['qty'] ?? null;
+        if (($id !== '' && preg_match('/^vgm-[0-9]{4,6}$/D', $id) !== 1)
+            || ($url !== '' && preg_match('#^/magaza/urun/[a-z0-9-]{3,90}/$#D', $url) !== 1)
+            || !is_int($qty) || $qty < 1 || $qty > 99999
+            || vg_strlen($mpn) > 80 || preg_match('/[\x00-\x1F\x7F<>]/', $mpn) === 1
+            || ($id === '' && $mpn === '')) continue;
+        $items[] = ['id' => $id, 'mpn' => $mpn, 'qty' => $qty, 'url' => $url];
+    }
+    $q = is_string($data['q'] ?? null) ? trim($data['q']) : '';
+    if (vg_strlen($q) > 80 || preg_match('/[\x00-\x1F\x7F<>]/', $q) === 1) $q = '';
+    if (!$items && $q === '') return null;
+    return ['v' => 1, 'intent' => $data['intent'], 'items' => $items, 'q' => $q];
+}
+
+/** E-posta govdesi icin magaza talebi bolumu (insan okunur satirlar + yapilandirilmis JSON). */
+function vg_contact_magaza_text(array $t): string
+{
+    $lines = ['Mağaza talebi (' . VG_CONTACT_MAGAZA_INTENTS[$t['intent']] . '):'];
+    foreach ($t['items'] as $i => $it) {
+        $lines[] = ($i + 1) . '. ' . ($it['id'] !== '' ? $it['id'] : 'kimliksiz') . ($it['mpn'] !== '' ? ' · model ' . $it['mpn'] : '')
+            . ' · adet ' . $it['qty'] . ($it['url'] !== '' ? ' · https://voltguard.com.tr' . $it['url'] : '');
+    }
+    if ($t['q'] !== '') $lines[] = 'Aranan: ' . $t['q'];
+    $lines[] = 'Yapılandırılmış veri: ' . vg_json_encode($t);
+    return implode("\n", $lines);
+}
+
+/** Magaza talep kaydi: ozel veri klasorunde aylik JSON satirlari (talep no, zaman, talep; kisisel veri yok). */
+function vg_contact_magaza_store(string $reference, array $t): void
+{
+    try {
+        $base = vg_private_data_directory(vg_data_dir());
+        $dir = vg_private_data_directory($base . '/magaza-talep', $base);
+        $file = $dir . '/' . gmdate('Y-m') . '.jsonl';
+        if (is_file($file) && (int)@filesize($file) > 8388608) {
+            error_log('VoltGuard contact: magaza talep log is full (' . basename($file) . ')');
+            return;
+        }
+        if (@file_put_contents($file, vg_json_encode(['ref' => $reference, 'at' => vg_now()] + $t) . "\n", FILE_APPEND | LOCK_EX) === false) {
+            error_log('VoltGuard contact: magaza talep record write failed');
+        }
+        @chmod($file, 0600);
+    } catch (Throwable $e) {
+        error_log('VoltGuard contact: magaza talep record failed (' . get_class($e) . ')');
+    }
+}
+
 /**
  * Iletisim formu (kind=contact) ve teklif sihirbazi (kind=quote) ayni dogrulama, hiz siniri ve teslim yolunu kullanir.
  * Basari yaniti yalnizca e-posta gonderim sistemine (onizlemede outbox/) teslim edildikten sonra verilir ve talep
@@ -112,7 +180,8 @@ function vg_contact_submit(): array
     $captcha = vg_contact_string('cf-turnstile-response');
     $requestId = vg_enquiry_request_id(vg_contact_string('requestId'));
     $subjects = ['elektrik' => 'Elektrik Hizmetleri', 'elektronik' => 'Elektronik ve Gömülü Sistemler',
-        'otomasyon' => 'Otomasyon Sistemleri', 'mekanik' => 'Mekanik Sistemler', 'diger' => 'Diğer / Genel Danışmanlık'];
+        'otomasyon' => 'Otomasyon Sistemleri', 'mekanik' => 'Mekanik Sistemler', 'diger' => 'Diğer / Genel Danışmanlık',
+        'magaza' => 'Mağaza / Ürün Teklifi'];
     if ($website !== '') vg_fail(422, 'rejected', 'Form gönderilemedi. Lütfen alanları kontrol edin.');
     if (vg_strlen($name) < 2 || vg_strlen($name) > 100 || preg_match('/[\x00-\x1F\x7F<>]/', $name)) {
         vg_fail(422, 'invalid_name', 'Lütfen geçerli bir ad soyad girin.');
@@ -130,6 +199,7 @@ function vg_contact_submit(): array
         vg_fail(422, 'invalid_message', 'Mesaj 20–1000 karakter olmalı ve kontrol karakteri içermemeli.');
     }
     $simulation = $kind === 'quote' ? vg_enquiry_simulation(vg_contact_string('simulation'), vg_contact_string('simulationConsent')) : null;
+    $talep = $subject === 'magaza' ? vg_contact_magaza_talep(vg_contact_string('magazaTalep')) : null;
     // The visitor's clock is untrusted; this is a form marker, never proof of human interaction.
     if (preg_match('/^[1-9][0-9]{0,15}$/D', $timestamp) !== 1) vg_fail(422, 'invalid_form', 'Form bilgisi eksik. Lütfen sayfayı yenileyip yeniden deneyin.');
     // A contact request does not require a general-purpose personal-data consent checkbox.
@@ -138,9 +208,9 @@ function vg_contact_submit(): array
     vg_schedule_gc();
     vg_enquiry_schedule_gc();
     $preview = getenv('VG_MAIL_OUTBOX') === '1';
-    $fingerprint = hash('sha256', vg_json_encode([$kind, $name, $phone, $email, $subject, $message, $simulation]));
+    $fingerprint = hash('sha256', vg_json_encode([$kind, $name, $phone, $email, $subject, $message, $simulation, $talep]));
     $label = $kind === 'quote' ? 'Teklif talebi' : 'İletişim talebi';
-    $outcome = vg_enquiry_once($requestId, $fingerprint, function (string $reference) use ($name, $phone, $email, $subject, $subjects, $message, $captcha, $simulation, $label, $preview): void {
+    $outcome = vg_enquiry_once($requestId, $fingerprint, function (string $reference) use ($name, $phone, $email, $subject, $subjects, $message, $captcha, $simulation, $talep, $label, $preview): void {
         $retry = vg_rl_hit('contact_ip', vg_rl_ip_key(), 5, 600);
         if ($retry > 0) vg_too_many($retry, 'Çok fazla mesaj gönderdiniz. Lütfen birkaç dakika sonra yeniden deneyin.');
         $secret = getenv('TURNSTILE_SECRET_KEY');
@@ -153,10 +223,13 @@ function vg_contact_submit(): array
         if (!vg_mail_can_send()) vg_fail(503, 'mail_unavailable', 'Talebiniz şu anda iletilemedi. Lütfen telefonla iletişime geçin.');
         $body = "Yeni {$label} ({$reference}):\n\nAd Soyad: {$name}\nTelefon: " . ($phone ?: '-') . "\nE-posta: " . ($email ?: '-')
             . "\nHizmet Alanı: {$subjects[$subject]}\nTarih: " . vg_local_time(time()) . " (TSİ)\n\nMesaj:\n{$message}\n"
-            . ($simulation ? "\n" . vg_enquiry_simulation_text($simulation) . "\n" : '');
-        if (!vg_mail_send('info@voltguard.com.tr', 'VoltGuard ' . $label . ' ' . $reference . ' - ' . $subjects[$subject], $body, 'contact', $email ?: null)) {
+            . ($simulation ? "\n" . vg_enquiry_simulation_text($simulation) . "\n" : '')
+            . ($talep ? "\n" . vg_contact_magaza_text($talep) . "\n" : '');
+        $tag = $talep ? '[' . VG_CONTACT_MAGAZA_INTENTS[$talep['intent']] . '] ' : '';
+        if (!vg_mail_send('info@voltguard.com.tr', 'VoltGuard ' . $label . ' ' . $reference . ' - ' . $tag . $subjects[$subject], $body, 'contact', $email ?: null)) {
             vg_fail(503, 'mail_unavailable', 'Talebiniz iletilemedi. Lütfen telefonla iletişime geçin.');
         }
+        if ($talep) vg_contact_magaza_store($reference, $talep);
     });
     $ref = $outcome['reference'];
     $text = $preview

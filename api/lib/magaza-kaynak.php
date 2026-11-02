@@ -1,12 +1,13 @@
 <?php
 /*
  * VoltGuard Magaza tedarikci fiyat okuma (tasarim: api/MAGAZA.md).
- *  - SSRF korumali, IP'ye sabitlenmis HTTPS getirme (yalnizca kaynak kaydindaki alan adi, en fazla 3 yonlendirme)
+ *  - SSRF korumali, IP'ye sabitlenmis HTTPS getirme (yalnizca kaynak kaydindaki alan adi, en fazla 3 yonlendirme);
+ *    zamanlayicida farkli sunuculara curl_multi ile es zamanli (vgm_fetch_start / vgm_fetch_drive)
  *  - teklif ayristirma: JSON-LD > microdata > OG meta > dar platform yedekleri; celisen fiyatta "ambiguous_price"
  *  - TCMB doviz satis kuru (today.xml)
  *  - zamanlanmis (cron) ve canli (sepet adimi) fiyat yenileme: ag islemi kilit DISINDA, her urunun sonucu kisa
  *    yazma kilidiyle islenir
- * Tedarikci adresleri yalnizca ozel veri klasorundeki kaynaklar.json'dan gelir. Bu dosya hicbir tedarikci adi
+ * Tedarikci adresleri yalnizca ozel veri klasorundeki kaynak/<parca>.json dosyalarindan gelir. Bu dosya hicbir tedarikci adi
  * icermez; hata kodlari ve ozetler adres, alan adi veya maliyet icermez.
  * Test modu: VG_MAGAZA_FIXTURE_DIR verilirse ag yerine <dizin>/<sha1(url)>.html (200), .403/.404/.410/.429/.500/.503
  * (durum kodu) ve .redirect (Location) okunur; TCMB icin <dizin>/tcmb-today.xml.
@@ -19,7 +20,8 @@ if (!defined('VG_API')) {
 }
 
 const VGM_FETCH_UA = 'Mozilla/5.0 (compatible; VoltGuardFiyat/1.0; +https://voltguard.com.tr/magaza/)';
-const VGM_FETCH_MAX_BYTES = 2097152;     // 2 MiB (acilmis govde)
+const VGM_FETCH_MAX_BYTES = 8388608;     // 8 MiB (acilmis govde; mega menulu sayfalar 2-3 MiB olabilir)
+const VGM_FETCH_PARALLEL = 6;            // zamanlayicida ayni anda en cok bu kadar (farkli sunucu) istek; bellek sinirina gore azalir
 const VGM_FETCH_TIMEOUT = 12;
 const VGM_FETCH_CONNECT_TIMEOUT = 6;
 const VGM_RATE_FETCH_TIMEOUT = 30;       // TCMB kuru: tek kaynak, yavas TLS el sikismasina tolerans
@@ -27,7 +29,13 @@ const VGM_FETCH_MAX_REDIRECTS = 3;
 const VGM_TCMB_URL = 'https://www.tcmb.gov.tr/kurlar/today.xml';
 const VGM_RATE_REFRESH_AFTER = 21600;    // cron kuru 6 saatten eskiyse yeniler
 const VGM_VALUE_MAX = 1000000000;
-const VGM_HEALTHY_AFTER = 46800;         // son zamanlanmis calisma en fazla 13 saat once
+const VGM_HEALTHY_AFTER = 1800;          // son zamanlanmis calisma en fazla 30 dakika once (cron her 10 dakikada)
+const VGM_CRON_BUDGET = 540;             // zamanlanmis calisma suresi (sn; magaza-cron.php --sure); cron */10, cron.lock ust uste binmeyi onler
+const VGM_RECHECK_AGE = 72000;           // basarili kontrolden 20 saat sonra yeniden kontrol (48 saat penceresinin icinde)
+const VGM_RETRY_AFTER = 7200;            // ilk basarisiz denemeden 2 saat sonra yeniden dene; her ardisik hatada iki katina (en cok $age)
+const VGM_CRON_WINDOW = 6000;            // bir calismada kuyruga alinan en cok urun (tum sunucular)
+const VGM_HOST_SLACK = 20;               // sunucu basina kuyruk: ceil(butce / aralik) + bu kadar
+const VGM_DNS_TTL = 300;                 // ayni calismada cozulmus adres bu kadar sn yeniden kullanilir
 
 /* ------------------------------------------------------------------ sayi ayristirma */
 
@@ -186,6 +194,26 @@ function vgm_ip_blocked(string $ip): bool
 
 /** Adi cozer; tum adresler herkese acik olmali. Dondurur: kullanilacak IP. Hata kodu $why'a yazilir. */
 function vgm_resolve_public(string $host, string &$why): string
+{
+    /* Ayni sunucuya ard arda istekler (zamanlayici) her seferinde A + AAAA sorgusu yapmaz: basarili cozum VGM_DNS_TTL sn
+       saklanir. Engelli adres ya da cozum hatasi saklanmaz. */
+    static $cache = [];
+    $why = '';
+    $hit = $cache[$host] ?? null;
+    if (is_array($hit) && microtime(true) - $hit[1] < VGM_DNS_TTL) {
+        return $hit[0];
+    }
+    $ip = vgm_resolve_public_once($host, $why);
+    if ($ip !== '') {
+        if (count($cache) >= 256) {
+            array_shift($cache);
+        }
+        $cache[$host] = [$ip, microtime(true)];
+    }
+    return $ip;
+}
+
+function vgm_resolve_public_once(string $host, string &$why): string
 {
     $why = '';
     $ips = [];
@@ -372,10 +400,21 @@ function vgm_fixture_dir(): string
     return is_string($d) && trim($d) !== '' ? rtrim(str_replace('\\', '/', trim($d)), '/') : '';
 }
 
-/** Test modu tek istek: <sha1(url)>.html / .<durum> / .redirect; TCMB icin tcmb-today.xml. */
+/** Test modu: <dizin>/gecikme (sn, en cok 5) her istegi o kadar surdurur; es zamanli istekler birlikte beklenir. */
+function vgm_fixture_delay(string $dir): float
+{
+    return is_file($dir . '/gecikme') ? max(0.0, min(5.0, (float)trim((string)file_get_contents($dir . '/gecikme')))) : 0.0;
+}
+
+/** Test modu tek istek: <sha1(url)>.html / .<durum> / .redirect; TCMB icin tcmb-today.xml. Beklemez (vgm_fetch_drive bekler). */
 function vgm_fixture_once(string $dir, string $url, string &$why): array
 {
     $isRate = $url === VGM_TCMB_URL;
+    if (!$isRate && is_file($dir . '/getirme.log')) {
+        /* Yalniz testler: her istek "baslangic-zamani alan-adi" satiri olarak eklenir (sunucu araligi, serpistirme, es
+           zamanlilik ve son tarih testleri). */
+        @file_put_contents($dir . '/getirme.log', sprintf("%.4f %s\n", microtime(true), (string)parse_url($url, PHP_URL_HOST)), FILE_APPEND);
+    }
     $base = $dir . '/' . ($isRate ? 'tcmb-today' : sha1($url));
     foreach ([403, 404, 410, 429, 500, 503] as $code) {
         if (is_file($base . '.' . $code)) {
@@ -398,82 +437,130 @@ function vgm_fixture_once(string $dir, string $url, string &$why): array
     return ['status' => 200, 'location' => '', 'body' => $body];
 }
 
-/** Tek GET istegi, cozulmus IP'ye sabitlenmis. Dondurur: ['status','location','body'] veya hata ([] + $why). */
-function vgm_http_once(string $host, string $ip, string $path, string &$why): array
+/** curl tutamaci anahtari (PHP 8: nesne, PHP 7: kaynak). */
+function vgm_curl_key($ch): int
 {
-    $accept = 'text/html,application/xhtml+xml;q=0.9,application/xml;q=0.8';
-    $lang = 'tr-TR,tr;q=0.9,en;q=0.5';
-    $timeout = vgm_fetch_limit();
-    $timeoutMs = $timeout * 1000;
+    return is_object($ch) ? spl_object_id($ch) : (int)$ch;
+}
+
+/**
+ * Sunucu basina yeniden kullanilan curl tutamaclari (ayni calismada keep-alive: her istekte yeni TLS el sikismasi yok).
+ * 'take': havuzdan alir (yoksa yeni acar; alinan tutamac havuzda kalmaz, ayni sunucuya ikinci es zamanli istek yeni
+ * tutamac alir). 'give': geri koyar ($ok degilse kapatir; havuz 16'yi asarsa en eskisi kapatilir). Secenekler her
+ * istekte curl_reset ile sifirlanir (acik baglanti korunur).
+ */
+function vgm_curl_pool(string $op, string $host, string $ip, $ch = null, bool $ok = true)
+{
+    static $pool = [];
+    $key = $host . '|' . $ip;
+    if ($op === 'take') {
+        if (isset($pool[$key])) {
+            $ch = $pool[$key];
+            unset($pool[$key]);
+            curl_reset($ch);
+            return $ch;
+        }
+        return curl_init();
+    }
+    if ($ch === null) {
+        return null;
+    }
+    if (!$ok || isset($pool[$key])) {
+        curl_close($ch);
+        return null;
+    }
+    if (count($pool) >= 16) {
+        $oldKey = array_key_first($pool);
+        curl_close($pool[$oldKey]);
+        unset($pool[$oldKey]);
+    }
+    $pool[$key] = $ch;
+    return null;
+}
+
+/** Tek curl_multi tutamaci (butun es zamanli istekler). */
+function vgm_multi()
+{
+    static $mh = null;
+    if ($mh === null) {
+        $mh = curl_multi_init();
+    }
+    return $mh;
+}
+
+/** Ucusta olan istekler (curl tutamaci anahtari => istek): tamamlanma bildirimi hangi surus cagrisinda gelirse gelsin islenir. */
+function &vgm_req_registry(): array
+{
+    static $reg = [];
+    return $reg;
+}
+
+/** Istegin etkin zaman asimi (ms): vgm_fetch_limit, canli son tarih (vgm_fetch_deadline) ile kisalir. */
+function vgm_req_timeout_ms(): int
+{
+    $timeoutMs = vgm_fetch_limit() * 1000;
     $deadline = vgm_fetch_deadline();
     if ($deadline !== null) {
         $timeoutMs = max(300, min($timeoutMs, (int)floor(($deadline - microtime(true)) * 1000)));
-        $timeout = max(1, (int)ceil($timeoutMs / 1000));
     }
-    if (function_exists('curl_init')) {
-        $buf = '';
-        $status = 0;
-        $location = '';
-        $tooBig = false;
-        $ch = curl_init('https://' . $host . $path);
-        $pin = strpos($ip, ':') !== false ? '[' . $ip . ']' : $ip;
-        $options = [
-            CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_TIMEOUT_MS => $timeoutMs,
-            CURLOPT_CONNECTTIMEOUT_MS => $timeoutMs > VGM_FETCH_TIMEOUT * 1000 ? intdiv($timeoutMs, 2) : min(VGM_FETCH_CONNECT_TIMEOUT * 1000, $timeoutMs),
-            CURLOPT_USERAGENT => VGM_FETCH_UA,
-            CURLOPT_RESOLVE => [$host . ':443:' . $pin],
-            CURLOPT_HTTPHEADER => ['Accept: ' . $accept, 'Accept-Language: ' . $lang],
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_SSL_VERIFYHOST => 2,
-            CURLOPT_ENCODING => '',
-            CURLOPT_NOSIGNAL => true,
-            CURLOPT_HEADERFUNCTION => function ($c, $line) use (&$status, &$location) {
-                if (preg_match('#^HTTP/\S+\s+(\d{3})#', $line, $m) === 1) {
-                    $status = (int)$m[1];
-                    $location = '';
-                } elseif (stripos($line, 'location:') === 0) {
-                    $location = trim(substr($line, 9));
-                }
-                return strlen($line);
-            },
-            CURLOPT_WRITEFUNCTION => function ($c, $chunk) use (&$buf, &$tooBig) {
-                if (strlen($buf) + strlen($chunk) > VGM_FETCH_MAX_BYTES) {
-                    $tooBig = true;
-                    return -1;
-                }
-                $buf .= $chunk;
-                return strlen($chunk);
-            },
-        ];
-        if (defined('CURLOPT_PROTOCOLS_STR')) {
-            $options[CURLOPT_PROTOCOLS_STR] = 'https';
-        } elseif (defined('CURLPROTO_HTTPS')) {
-            $options[CURLOPT_PROTOCOLS] = CURLPROTO_HTTPS;
-        }
-        if (PHP_OS_FAMILY === 'Windows' && defined('CURLSSLOPT_NATIVE_CA')) {
-            $options[CURLOPT_SSL_OPTIONS] = CURLSSLOPT_NATIVE_CA;
-        }
-        curl_setopt_array($ch, $options);
-        $ok = curl_exec($ch);
-        $err = curl_errno($ch);
-        curl_close($ch);
-        if ($tooBig) {
-            $why = 'too_large';
-            return [];
-        }
-        if ($ok === false) {
-            $why = 'network_error_' . $err;
-            return [];
-        }
-        return ['status' => $status, 'location' => $location, 'body' => $buf];
+    return $timeoutMs;
+}
+
+/** Tek GET isteginin curl secenekleri: cozulmus IP'ye sabitlenmis, yalniz https, govde siniri VGM_FETCH_MAX_BYTES. */
+function vgm_curl_options(stdClass $r): array
+{
+    $timeoutMs = vgm_req_timeout_ms();
+    $pin = strpos($r->ip, ':') !== false ? '[' . $r->ip . ']' : $r->ip;
+    $options = [
+        CURLOPT_URL => 'https://' . $r->host . $r->path,
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_TIMEOUT_MS => $timeoutMs,
+        CURLOPT_CONNECTTIMEOUT_MS => $timeoutMs > VGM_FETCH_TIMEOUT * 1000 ? intdiv($timeoutMs, 2) : min(VGM_FETCH_CONNECT_TIMEOUT * 1000, $timeoutMs),
+        CURLOPT_USERAGENT => VGM_FETCH_UA,
+        CURLOPT_RESOLVE => [$r->host . ':443:' . $pin],
+        CURLOPT_HTTPHEADER => ['Accept: text/html,application/xhtml+xml;q=0.9,application/xml;q=0.8', 'Accept-Language: tr-TR,tr;q=0.9,en;q=0.5'],
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2,
+        CURLOPT_ENCODING => '',
+        CURLOPT_NOSIGNAL => true,
+        CURLOPT_HEADERFUNCTION => function ($c, $line) use ($r) {
+            if (preg_match('#^HTTP/\S+\s+(\d{3})#', $line, $m) === 1) {
+                $r->status = (int)$m[1];
+                $r->location = '';
+            } elseif (stripos($line, 'location:') === 0) {
+                $r->location = trim(substr($line, 9));
+            }
+            return strlen($line);
+        },
+        CURLOPT_WRITEFUNCTION => function ($c, $chunk) use ($r) {
+            if (strlen($r->buf) + strlen($chunk) > VGM_FETCH_MAX_BYTES) {
+                $r->big = true;
+                return -1;
+            }
+            $r->buf .= $chunk;
+            return strlen($chunk);
+        },
+    ];
+    if (defined('CURLOPT_PROTOCOLS_STR')) {
+        $options[CURLOPT_PROTOCOLS_STR] = 'https';
+    } elseif (defined('CURLPROTO_HTTPS')) {
+        $options[CURLOPT_PROTOCOLS] = CURLPROTO_HTTPS;
     }
-    // curl yoksa: PHP akis sarmalayicisi; IP'ye baglanip SNI/sertifika adi olarak gercek ad kullanilir.
+    if (PHP_OS_FAMILY === 'Windows' && defined('CURLSSLOPT_NATIVE_CA')) {
+        $options[CURLOPT_SSL_OPTIONS] = CURLSSLOPT_NATIVE_CA;
+    }
+    return $options;
+}
+
+/** curl yoksa: PHP akis sarmalayicisi (es zamansiz); IP'ye baglanip SNI/sertifika adi olarak gercek ad kullanilir. */
+function vgm_http_stream(string $host, string $ip, string $path, string &$why): array
+{
+    $timeoutMs = vgm_req_timeout_ms();
     $ctx = stream_context_create([
         'http' => ['method' => 'GET', 'timeout' => $timeoutMs / 1000, 'follow_location' => 0, 'max_redirects' => 0,
             'ignore_errors' => true, 'protocol_version' => 1.0,
-            'header' => "Host: " . $host . "\r\nUser-Agent: " . VGM_FETCH_UA . "\r\nAccept: " . $accept
-                . "\r\nAccept-Language: " . $lang . "\r\nConnection: close\r\n"],
+            'header' => "Host: " . $host . "\r\nUser-Agent: " . VGM_FETCH_UA . "\r\nAccept: text/html,application/xhtml+xml;q=0.9,application/xml;q=0.8"
+                . "\r\nAccept-Language: tr-TR,tr;q=0.9,en;q=0.5\r\nConnection: close\r\n"],
         'ssl' => ['peer_name' => $host, 'verify_peer' => true, 'verify_peer_name' => true, 'SNI_enabled' => true],
     ]);
     $target = 'https://' . (strpos($ip, ':') !== false ? '[' . $ip . ']' : $ip) . $path;
@@ -524,41 +611,266 @@ function vgm_http_once(string $host, string $ip, string $path, string &$why): ar
 }
 
 /**
+ * Es zamanli getirme istegi baslatir (nesne: url, allow, hop, done, why, status, body ...). Her adimda (ilk istek ve her
+ * yonlendirme) adres yeniden denetlenir (https, izinli alan adi, herkese acik IP) ve istek o IP'ye sabitlenir. Sonuc
+ * vgm_fetch_drive ile beklenir: done=true olunca why ('' basarili) / status / body okunur. Yalniz izinli alan adlari.
+ */
+function vgm_fetch_start(string $url, array $allowHosts): stdClass
+{
+    $r = new stdClass();
+    $r->url = $url;
+    $r->allow = $allowHosts;
+    $r->hop = 0;
+    $r->done = false;
+    $r->why = '';
+    $r->status = 0;
+    $r->location = '';
+    $r->body = '';
+    $r->buf = '';
+    $r->big = false;
+    $r->host = '';
+    $r->ip = '';
+    $r->path = '/';
+    $r->ch = null;
+    $r->pending = null;   // test modu: hazir yanit
+    $r->readyAt = null;   // test modu: yanitin hazir olacagi an
+    vgm_req_begin($r);
+    return $r;
+}
+
+/** Istegi (ya da yonlendirme adimini) baslatir. */
+function vgm_req_begin(stdClass $r): void
+{
+    $deadline = vgm_fetch_deadline();
+    if ($deadline !== null && $deadline - microtime(true) < 1.0) {
+        vgm_req_finish($r, 'budget');
+        return;
+    }
+    if ($r->hop > VGM_FETCH_MAX_REDIRECTS) {
+        vgm_req_finish($r, 'too_many_redirects');
+        return;
+    }
+    $fixture = vgm_fixture_dir();
+    $why = '';
+    $target = vgm_check_fetch_url($r->url, $why, $r->allow, $fixture !== '');
+    if (!$target) {
+        vgm_req_finish($r, $why);
+        return;
+    }
+    list($r->host, $r->ip, $r->path) = $target;
+    if ($fixture !== '') {
+        $res = vgm_fixture_once($fixture, $r->url, $why);
+        if (!$res) {
+            vgm_req_finish($r, $why);
+            return;
+        }
+        $r->pending = $res;
+        $r->readyAt = microtime(true) + vgm_fixture_delay($fixture);
+        return;
+    }
+    if (!function_exists('curl_multi_init')) {
+        $res = vgm_http_stream($r->host, $r->ip, $r->path, $why);
+        if (!$res) {
+            vgm_req_finish($r, $why);
+            return;
+        }
+        vgm_req_response($r, $res);
+        return;
+    }
+    $r->buf = '';
+    $r->big = false;
+    $r->status = 0;
+    $r->location = '';
+    $r->ch = vgm_curl_pool('take', $r->host, $r->ip);
+    curl_setopt_array($r->ch, vgm_curl_options($r));
+    $reg = &vgm_req_registry();
+    $reg[vgm_curl_key($r->ch)] = $r;
+    curl_multi_add_handle(vgm_multi(), $r->ch);
+}
+
+/** Istek hata ile biter (govde yok). */
+function vgm_req_finish(stdClass $r, string $why): void
+{
+    $r->why = $why;
+    $r->body = '';
+    $r->buf = '';
+    $r->pending = null;
+    $r->readyAt = null;
+    $r->done = true;
+}
+
+/** Bir adimin yaniti: yonlendirme ise sonraki adim (yeniden denetim), 200 ise govde, degilse http_<durum>. */
+function vgm_req_response(stdClass $r, array $res): void
+{
+    $r->status = (int)$res['status'];
+    $r->pending = null;
+    $r->readyAt = null;
+    if ($r->status >= 300 && $r->status < 400 && (string)$res['location'] !== '') {
+        $r->url = vgm_resolve_location($r->url, (string)$res['location']);
+        $r->hop++;
+        vgm_req_begin($r);
+        return;
+    }
+    if ($r->status !== 200) {
+        vgm_req_finish($r, 'http_' . $r->status);
+        return;
+    }
+    $r->body = (string)$res['body'];
+    $r->buf = '';
+    $r->done = true;
+}
+
+/** curl adimi tamamlandi: tutamac cokludan alinir, havuza doner; hata / cok buyuk / yanit islenir. */
+function vgm_curl_finish(stdClass $r, int $errno): void
+{
+    $ch = $r->ch;
+    $r->ch = null;
+    $reg = &vgm_req_registry();
+    unset($reg[vgm_curl_key($ch)]);
+    curl_multi_remove_handle(vgm_multi(), $ch);
+    vgm_curl_pool('give', $r->host, $r->ip, $ch, $errno === 0 && !$r->big);
+    if ($r->big) {
+        vgm_req_finish($r, 'too_large');
+        return;
+    }
+    if ($errno !== 0) {
+        vgm_req_finish($r, 'network_error_' . $errno);
+        return;
+    }
+    $body = $r->buf;
+    $r->buf = '';
+    vgm_req_response($r, ['status' => $r->status, 'location' => $r->location, 'body' => $body]);
+}
+
+/** Ucustaki istegi birakir (son tarih): tutamac kapatilir, istek 'abandoned' ile biter. */
+function vgm_fetch_abort(stdClass $r): void
+{
+    if ($r->ch !== null) {
+        $ch = $r->ch;
+        $r->ch = null;
+        $reg = &vgm_req_registry();
+        unset($reg[vgm_curl_key($ch)]);
+        curl_multi_remove_handle(vgm_multi(), $ch);
+        vgm_curl_pool('give', $r->host, $r->ip, $ch, false);
+    }
+    if (!$r->done) {
+        vgm_req_finish($r, 'abandoned');
+    }
+}
+
+/**
+ * Istekleri surer: curl_multi ile tum ucustaki istekler ilerletilir (bu listede olmayanlar da), yonlendirmeler yeniden
+ * baslatilir; test modunda hazir yanitlar readyAt gelince islenir (es zamanli isteklerin gecikmeleri birlikte beklenir).
+ * $until (microtime) verilirse o ana kadar; verilmezse $reqs'in hepsi bitene kadar doner.
+ */
+function vgm_fetch_drive(array $reqs, ?float $until = null): void
+{
+    while (true) {
+        $now = microtime(true);
+        $wake = INF;
+        $active = 0;
+        foreach ($reqs as $r) {
+            if ($r->done) {
+                continue;
+            }
+            if ($r->pending !== null && $now >= $r->readyAt) {
+                vgm_req_response($r, $r->pending);
+            }
+            if ($r->done) {
+                continue;
+            }
+            if ($r->pending !== null) {
+                $wake = min($wake, (float)$r->readyAt);
+            } elseif ($r->ch !== null) {
+                $active++;
+            }
+        }
+        $running = 0;
+        if ($active > 0) {
+            $mh = vgm_multi();
+            do {
+                $mrc = curl_multi_exec($mh, $running);
+            } while ($mrc === CURLM_CALL_MULTI_PERFORM);
+            $finished = 0;
+            while (($info = curl_multi_info_read($mh)) !== false) {
+                $reg = &vgm_req_registry();
+                $hit = $reg[vgm_curl_key($info['handle'])] ?? null;
+                if ($hit instanceof stdClass) {
+                    vgm_curl_finish($hit, (int)$info['result']);
+                } else {
+                    curl_multi_remove_handle($mh, $info['handle']);
+                }
+                $finished++;
+            }
+            if ($finished > 0) {
+                continue;   // yanitlar yonlendirme baslatmis ya da istekleri bitirmis olabilir: tur basa doner
+            }
+        }
+        $allDone = true;
+        foreach ($reqs as $r) {
+            if (!$r->done) {
+                $allDone = false;
+                break;
+            }
+        }
+        if ($allDone) {
+            return;
+        }
+        $now = microtime(true);
+        if ($until !== null && $now >= $until) {
+            return;
+        }
+        $sleepUntil = $until === null ? $wake : min($wake, $until);
+        if ($active > 0) {
+            $t = $sleepUntil === INF ? 1.0 : max(0.0, min(1.0, $sleepUntil - $now));
+            if ($running > 0) {
+                if (curl_multi_select(vgm_multi(), $t) === -1) {
+                    usleep(10000);
+                }
+            }
+        } elseif ($sleepUntil === INF) {
+            return;
+        } else {
+            usleep((int)ceil(max(0.0, $sleepUntil - $now) * 1000000));
+        }
+    }
+}
+
+/**
  * GET: yonlendirmeleri (en fazla 3) her adimda yeniden denetleyerek getirir. Basarisizlikta '' doner; neden $why'da
  * (kod, adres icermez), son HTTP durumu $status'ta. Yalnizca https ve $allowHosts icindeki alan adlari.
  */
 function vgm_fetch(string $url, array $allowHosts, string &$why, int &$status): string
 {
-    $status = 0;
-    $why = '';
-    $fixture = vgm_fixture_dir();
-    for ($hop = 0; $hop <= VGM_FETCH_MAX_REDIRECTS; $hop++) {
-        $deadline = vgm_fetch_deadline();
-        if ($deadline !== null && $deadline - microtime(true) < 1.0) {
-            $why = 'budget';
-            return '';
-        }
-        $target = vgm_check_fetch_url($url, $why, $allowHosts, $fixture !== '');
-        if (!$target) {
-            return '';
-        }
-        $res = $fixture !== '' ? vgm_fixture_once($fixture, $url, $why) : vgm_http_once($target[0], $target[1], $target[2], $why);
-        if (!$res) {
-            return '';
-        }
-        $status = (int)$res['status'];
-        if ($status >= 300 && $status < 400 && (string)$res['location'] !== '') {
-            $url = vgm_resolve_location($url, (string)$res['location']);
-            continue;
-        }
-        if ($status !== 200) {
-            $why = 'http_' . $status;
-            return '';
-        }
-        return (string)$res['body'];
+    $r = vgm_fetch_start($url, $allowHosts);
+    vgm_fetch_drive([$r], null);
+    $why = $r->why;
+    $status = $r->status;
+    return $r->why === '' ? $r->body : '';
+}
+
+/**
+ * Zamanlayicida ayni anda kac (farkli sunucu) istek: VGM_FETCH_PARALLEL, bellek sinirina gore azalir. Her ucustaki istek
+ * en cok VGM_FETCH_MAX_BYTES govde tutar; ayristirma (sirayla, tek sayfa) icin 8 x sinir pay birakilir. Sinirsiz
+ * bellekte (memory_limit -1) tam sayi.
+ */
+function vgm_fetch_parallel(?string $memoryLimit = null): int
+{
+    $limit = trim((string)($memoryLimit ?? ini_get('memory_limit')));
+    if ($limit === '' || $limit === '-1') {
+        return VGM_FETCH_PARALLEL;
     }
-    $why = 'too_many_redirects';
-    return '';
+    $unit = strtoupper(substr($limit, -1));
+    $bytes = (float)$limit;
+    if ($unit === 'K') {
+        $bytes *= 1024;
+    } elseif ($unit === 'M') {
+        $bytes *= 1048576;
+    } elseif ($unit === 'G') {
+        $bytes *= 1073741824;
+    }
+    $free = $bytes - memory_get_usage() - 8 * VGM_FETCH_MAX_BYTES;
+    return max(1, min(VGM_FETCH_PARALLEL, (int)floor($free / VGM_FETCH_MAX_BYTES)));
 }
 
 /* ------------------------------------------------------------------ HTML yardimcilari */
@@ -602,6 +914,16 @@ function vgm_plain(string $s, int $max = 200): string
     $s = (string)preg_replace('/[\x00-\x1F\x7F]+/', ' ', $s);
     $s = (string)preg_replace('/[ \t\x{00A0}]+/u', ' ', $s);
     return vgm_clip(trim($s), $max);
+}
+
+/**
+ * Etiketleri atar (strip_tags yerine). PHP strip_tags bir oznitelik icindeki tek tirnaktan ("L'oreal") sonra eslesen
+ * tirnaga kadar her seyi etiket sayar ve sayfanin kalanini yutar; o zaman KDV ve adet denetimleri metni goremez.
+ */
+function vgm_strip_tags(string $s): string
+{
+    $t = preg_replace('/<[^<>]*>/', ' ', $s);
+    return is_string($t) ? $t : strip_tags($s);
 }
 
 /** <!-- ... --> yorumlarini atar (kapanmayan yorum: gerisi de). */
@@ -689,12 +1011,14 @@ function vgm_attrs(string $s): array
 
 /**
  * Oznitelik metninde $needleRegex (hazir kacisli desen) gecen etiketleri tarar. Dondurur: [['tag','attrs','text'], ...];
- * text, etiketin icerigi (ayni etiketin ilk kapanisina kadar, en fazla 400 bayt) sade metin olarak.
+ * text, etiketin icerigi (ayni etiketin ilk kapanisina kadar, en fazla 400 bayt) sade metin olarak; at: etiketin bayt konumu.
  */
 function vgm_scan_tags(string $html, string $needleRegex, int $limit = 400): array
 {
     $out = [];
-    $re = '/<([a-zA-Z][a-zA-Z0-9]*)\b([^<>]*' . $needleRegex . '[^<>]*)>/i';
+    // sinirli tekrar: cok uzun oznitelikli (satir ici base64 gorsel) etiketlerde PCRE geri izleme siniri asilip tum tarama
+    // bos donmesin
+    $re = '/<([a-zA-Z][a-zA-Z0-9]*)\b([^<>]{0,4000}?' . $needleRegex . '[^<>]{0,4000})>/i';
     if (preg_match_all($re, $html, $m, PREG_SET_ORDER | PREG_OFFSET_CAPTURE) === false) {
         return $out;
     }
@@ -708,7 +1032,7 @@ function vgm_scan_tags(string $html, string $needleRegex, int $limit = 400): arr
         if ($close !== false) {
             $chunk = substr($chunk, 0, $close);
         }
-        $out[] = ['tag' => $tag, 'attrs' => vgm_attrs($hit[2][0]), 'text' => vgm_plain(strip_tags($chunk))];
+        $out[] = ['tag' => $tag, 'attrs' => vgm_attrs($hit[2][0]), 'text' => vgm_plain(vgm_strip_tags($chunk)), 'at' => (int)$hit[0][1]];
     }
     return $out;
 }
@@ -777,14 +1101,14 @@ function vgm_entry(float $price, $currency, ?bool $available, bool $range): arra
 }
 
 /** Product.offers -> fiyat kayitlari (Offer, liste, AggregateOffer yalniz lowPrice=highPrice/offerCount=1, priceSpecification). */
-function vgm_ld_offer_entries($offers, array &$entries, array $index, int $depth, $parentCurrency, ?bool $parentAvail): void
+function vgm_ld_offer_entries($offers, array &$entries, array $index, int $depth, $parentCurrency, ?bool $parentAvail, bool &$zero = false): void
 {
     if ($depth > 4 || !is_array($offers)) {
         return;
     }
     if (vgm_is_list($offers)) {
         foreach (array_slice($offers, 0, 50) as $o) {
-            vgm_ld_offer_entries($o, $entries, $index, $depth + 1, $parentCurrency, $parentAvail);
+            vgm_ld_offer_entries($o, $entries, $index, $depth + 1, $parentCurrency, $parentAvail, $zero);
         }
         return;
     }
@@ -802,7 +1126,7 @@ function vgm_ld_offer_entries($offers, array &$entries, array $index, int $depth
     }
     if (in_array('aggregateoffer', $types, true)) {
         $before = count($entries);
-        vgm_ld_offer_entries($offers['offers'] ?? null, $entries, $index, $depth + 1, $currency, $avail);
+        vgm_ld_offer_entries($offers['offers'] ?? null, $entries, $index, $depth + 1, $currency, $avail, $zero);
         if (count($entries) > $before) {
             return;
         }
@@ -827,6 +1151,11 @@ function vgm_ld_offer_entries($offers, array &$entries, array $index, int $depth
         $entries[] = vgm_entry($price, $currency, $avail, false);
         return;
     }
+    if (vgm_is_zero($offers['price'] ?? null)) {
+        // acikca 0 fiyat ("fiyat sorunuz", fiyatsiz urun): sayfanin kendi fiyati yok; yedek seviyelere dusulmez
+        $zero = true;
+        return;
+    }
     $specs = $offers['priceSpecification'] ?? null;
     if (!is_array($specs)) {
         return;
@@ -844,6 +1173,9 @@ function vgm_ld_offer_entries($offers, array &$entries, array $index, int $depth
         }
         $sv = vgm_price_value($sp['price'] ?? null);
         if ($sv === null) {
+            if (vgm_is_zero($sp['price'] ?? null)) {
+                $zero = true;
+            }
             continue;
         }
         $cur = array_key_exists('priceCurrency', $sp) ? vgm_currency($sp['priceCurrency']) : null;
@@ -925,8 +1257,10 @@ function vgm_ld_url_matches(array $node, string $page): bool
     $key = vgm_url_key($page, $page);
     $urls = [$node['url'] ?? null, $node['@id'] ?? null];
     $offer = $node['offers'] ?? null;
-    if (is_array($offer) && !vgm_is_list($offer)) {
-        $urls[] = $offer['url'] ?? null;
+    foreach (is_array($offer) ? (vgm_is_list($offer) ? array_slice($offer, 0, 10) : [$offer]) : [] as $o) {
+        if (is_array($o)) {
+            $urls[] = $o['url'] ?? null;
+        }
     }
     foreach ($urls as $u) {
         if (is_string($u) && $u !== '' && $key !== '' && vgm_url_key($u, $page) === $key) {
@@ -936,8 +1270,17 @@ function vgm_ld_url_matches(array $node, string $page): bool
     return false;
 }
 
-/** JSON-LD seviyesi: bulunan fiyat kayitlari + kimlik; hic fiyat yoksa null. */
-function vgm_level_jsonld(string $html, string $url): ?array
+/**
+ * JSON-LD seviyesi: bulunan fiyat kayitlari + kimlik; hic fiyat yoksa null. Urunun teklifi acikca 0 ise (ve hicbir Product
+ * pozitif fiyat vermiyorsa) 'zero' => true doner: ayristirici no_price der, microdata/platform yedeklerine DUSMEZ (yoksa
+ * sayfadaki baska urun kartinin fiyati okunabilir).
+ * Fiyatlari farkli birden cok Product varsa: (1) fiyati platformun kendi varyant verisindeki ($variantPrices,
+ * vgm_variant_prices) fiyatlardan olan tek aday, (2) fiyati sayfanin JSON-LD disindaki verisinde (platform durumu, gizli
+ * fiyat alani, gorunen metin; $evidence) da gecen tek aday, (3) adresi sayfanin kendisi olan tek aday secilir; hicbiri tek
+ * aday vermezse tum fiyatlar birlesir (ambiguous_price). Aciklamaya elle yapistirilmis eski bir Product boylece platformun
+ * kendi teklifini ezemez.
+ */
+function vgm_level_jsonld(string $html, string $url, string $evidence = '', ?array $variantPrices = null): ?array
 {
     $products = [];
     $index = [];
@@ -948,15 +1291,19 @@ function vgm_level_jsonld(string $html, string $url): ?array
         }
     }
     $cands = [];
+    $zeroNode = null;
     foreach ($products as $node) {
         $entries = [];
-        vgm_ld_offer_entries($node['offers'] ?? null, $entries, $index, 0, null, null);
+        $zero = false;
+        vgm_ld_offer_entries($node['offers'] ?? null, $entries, $index, 0, null, null, $zero);
         if ($entries) {
             $cands[] = ['node' => $node, 'entries' => $entries];
+        } elseif ($zero && $zeroNode === null) {
+            $zeroNode = $node;
         }
     }
     if (!$cands) {
-        return null;
+        return $zeroNode === null ? null : ['method' => 'jsonld', 'entries' => [], 'ident' => vgm_ld_identity($zeroNode), 'zero' => true];
     }
     $chosen = $cands[0];
     $merged = $cands[0]['entries'];
@@ -973,12 +1320,48 @@ function vgm_level_jsonld(string $html, string $url): ?array
         };
         $sigs = array_unique(array_map($sig, $cands));
         if (count($sigs) > 1) {
-            $byUrl = array_values(array_filter($cands, function (array $c) use ($url): bool {
-                return vgm_ld_url_matches($c['node'], $url);
-            }));
-            if (count($byUrl) === 1) {
-                $chosen = $byUrl[0];
-                $merged = $byUrl[0]['entries'];
+            $pick = [];
+            if ($variantPrices) {
+                $pick = array_values(array_filter($cands, function (array $c) use ($variantPrices): bool {
+                    foreach ($c['entries'] as $e) {
+                        $hit = false;
+                        foreach ($variantPrices as $vp) {
+                            $hit = $hit || abs($vp - $e['price']) < 0.005;
+                        }
+                        if (!$hit) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }));
+                if (count(array_unique(array_map($sig, $pick))) > 1) {
+                    $pick = [];
+                }
+            }
+            if (!$pick && $evidence !== '') {
+                $pick = array_values(array_filter($cands, function (array $c) use ($evidence): bool {
+                    foreach ($c['entries'] as $e) {
+                        if (!vgm_price_seen($evidence, (float)$e['price'])) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }));
+                if (count(array_unique(array_map($sig, $pick))) > 1) {
+                    $pick = [];
+                }
+            }
+            if (!$pick) {
+                $pick = array_values(array_filter($cands, function (array $c) use ($url): bool {
+                    return vgm_ld_url_matches($c['node'], $url);
+                }));
+                if (count($pick) !== 1) {
+                    $pick = [];
+                }
+            }
+            if ($pick) {
+                $chosen = $pick[0];
+                $merged = $pick[0]['entries'];
             } else {
                 $merged = [];
                 foreach ($cands as $c) {
@@ -1043,6 +1426,7 @@ function vgm_level_microdata(string $html): ?array
     $currencies = [];
     $avail = [];
     $ident = [];
+    $zeros = [];
     $seg = 0;
     foreach (vgm_itemprops($html) as $prop) {
         if ($prop['scope']) {
@@ -1060,6 +1444,9 @@ function vgm_level_microdata(string $html): ?array
                 case 'lowprice':
                 case 'highprice':
                     $v = vgm_parse_number($val, $prop['machine']);
+                    if ($v === null && $n === 'price' && vgm_is_zero($val)) {
+                        $zeros[] = [$seg, 0.0];
+                    }
                     if ($v !== null) {
                         if ($n === 'price') {
                             $prices[] = [$seg, $v];
@@ -1123,7 +1510,8 @@ function vgm_level_microdata(string $html): ?array
         $entries[] = vgm_entry($lowV, null, null, $highV === null || abs($lowV - $highV) >= 0.005);
     }
     if (!$entries) {
-        return null;
+        // urunun kendi fiyati acikca 0: no_price (OG/platform yedeklerine dusulmez)
+        return $keep($zeros) ? ['method' => 'microdata', 'entries' => [], 'ident' => $ident, 'zero' => true] : null;
     }
     $currencies = array_values(array_unique($currencies));
     $cur = count($currencies) === 1 ? $currencies[0] : null;
@@ -1176,17 +1564,31 @@ function vgm_level_meta(string $html): ?array
 }
 
 /**
- * Dar platform yedekleri (WooCommerce, OpenCart, Ticimax, IdeaSoft, T-Soft). Her biri yalniz kendi ayirt edici
- * sinif adini okur; birden cok fiyat bulunursa ayristirici "ambiguous_price" der (tahmin yok).
+ * Dar platform yedekleri (WooCommerce, OpenCart, Ticimax, IdeaSoft, T-Soft). Her biri yalniz urunun ANA fiyat ogesinin
+ * kendi ayirt edici sinif adini okur: urun kartlari / ilgili urunler (farkli sarmalayici siniflar) ve ustu cizili, liste,
+ * "indirimsiz" fiyat siniflari hic okunmaz. Birden cok fiyat bulunursa ayristirici "ambiguous_price" der (tahmin yok).
+ * Ana fiyat ogesi acikca 0 gosteriyorsa 'zero' => true (no_price; baska yedege gecilmez).
  */
 function vgm_level_platform(string $html): ?array
 {
-    $classText = function (array $classes) use ($html): array {
+    $cards = null;
+    $inCard = function (int $at) use (&$cards, $html): bool {
+        if ($cards === null) {
+            $cards = vgm_card_ranges($html);
+        }
+        foreach ($cards as $r) {
+            if ($at >= $r[0] && $at < $r[1]) {
+                return true;
+            }
+        }
+        return false;
+    };
+    $classText = function (array $classes) use ($html, $inCard): array {
         $texts = [];
         foreach ($classes as $cls) {
-            foreach (vgm_scan_tags($html, preg_quote($cls, '/'), 80) as $el) {
+            foreach (vgm_scan_tags($html, preg_quote($cls, '/'), 200) as $el) {
                 $tokens = preg_split('/\s+/', (string)($el['attrs']['class'] ?? '') . ' ' . (string)($el['attrs']['id'] ?? '')) ?: [];
-                if (in_array($cls, $tokens, true) && $el['text'] !== '') {
+                if (in_array($cls, $tokens, true) && $el['text'] !== '' && !vgm_reference_class($tokens) && !$inCard($el['at'])) {
                     $texts[] = $el['text'];
                 }
             }
@@ -1194,32 +1596,36 @@ function vgm_level_platform(string $html): ?array
         return $texts;
     };
     $finders = [
-        'woocommerce' => function () use ($html): array {
+        'woocommerce' => function () use ($html, $inCard): array {
             $texts = [];
             if (stripos($html, 'woocommerce-Price-amount') === false
-                || preg_match_all('~<p\b[^>]*\bclass\s*=\s*(["\'])([^"\']*)\1[^>]*>(.*?)</p>~is', $html, $m, PREG_SET_ORDER) === false) {
+                || preg_match_all('~<p\b[^>]*\bclass\s*=\s*(["\'])([^"\']*)\1[^>]*>(.*?)</p>~is', $html, $m, PREG_SET_ORDER | PREG_OFFSET_CAPTURE) === false) {
                 return $texts;
             }
             foreach ($m as $blk) {
-                if (!in_array('price', preg_split('/\s+/', $blk[2]) ?: [], true)) {
+                if (!in_array('price', preg_split('/\s+/', $blk[2][0]) ?: [], true) || $inCard((int)$blk[0][1])) {
                     continue;
                 }
-                $block = $blk[3];
+                $block = $blk[3][0];
                 if (preg_match_all('~<ins\b[^>]*>(.*?)</ins>~is', $block, $ins) > 0) {
                     $block = implode(' ', $ins[1]);
                 }
+                $block = (string)preg_replace('~<del\b.*?</del>~is', ' ', $block);
                 foreach (array_slice(explode('woocommerce-Price-amount', $block), 1) as $seg) {
                     $gt = strpos($seg, '>');
-                    $texts[] = vgm_plain(strip_tags($gt === false ? $seg : substr($seg, $gt + 1)), 80);
+                    $texts[] = vgm_plain(vgm_strip_tags($gt === false ? $seg : substr($seg, $gt + 1)), 80);
                 }
             }
             return $texts;
         },
-        'opencart' => function () use ($classText, $html): array {
+        'opencart' => function () use ($classText, $html, $inCard): array {
             $texts = $classText(['price-new']);
-            if (!$texts && preg_match_all('~<li>\s*<h2[^>]*>\s*([^<]{1,40}?)\s*</h2>\s*</li>~i', $html, $m) > 0) {
-                foreach ($m[1] as $t) {
-                    $t = vgm_plain($t, 40);
+            if (!$texts && preg_match_all('~<li>\s*<h2[^>]*>\s*([^<]{1,40}?)\s*</h2>\s*</li>~i', $html, $m, PREG_OFFSET_CAPTURE) > 0) {
+                foreach ($m[1] as $hit) {
+                    if ($inCard((int)$hit[1])) {
+                        continue;
+                    }
+                    $t = vgm_plain($hit[0], 40);
                     if (preg_match('/^(?:[\x{20BA}$\x{20AC}]\s*)?[0-9][0-9.,\s]*\s*(?:TL|TRY|USD|EUR|[\x{20BA}$\x{20AC}])?$/u', $t) === 1) {
                         $texts[] = $t;
                     }
@@ -1231,7 +1637,8 @@ function vgm_level_platform(string $html): ?array
             return $classText(['spanFiyat', 'spnFiyat']);
         },
         'ideasoft' => function () use ($classText): array {
-            return $classText(['product-current-price', 'product-price']);
+            // yalniz ana fiyat ogesi; "product-price" sarmalayicisi kartlarda da kullanilir ve once ustu cizili fiyati icerir
+            return $classText(['product-current-price', 'product-price-new']);
         },
         'tsoft' => function () use ($classText): array {
             return $classText(['currentPrice', 'product-detail-price']);
@@ -1239,18 +1646,462 @@ function vgm_level_platform(string $html): ?array
     ];
     foreach ($finders as $name => $find) {
         $entries = [];
+        $zero = false;
         foreach ($find() as $t) {
             $price = vgm_parse_number($t, false);
             if ($price !== null) {
                 $cur = vgm_currency_in_text($t);
                 $entries[] = vgm_entry($price, $cur, null, false);
+            } elseif (vgm_is_zero($t)) {
+                $zero = true;
             }
         }
         if ($entries) {
             return ['method' => 'platform:' . $name, 'entries' => $entries, 'ident' => []];
         }
+        if ($zero) {
+            return ['method' => 'platform:' . $name, 'entries' => [], 'ident' => [], 'zero' => true];
+        }
     }
     return null;
+}
+
+/**
+ * Urun karti / ilgili urunler / menu kapsayicilarinin bayt araliklari [[bas, son], ...]: sinifi ya da kimligi kart,
+ * vitrin, kaydirici, "benzer/ilgili/onerilen urunler", mega menu, mini sepet olan ogeler ile header/nav/footer/aside.
+ * Kapanis etiketleri yigitla izlenir; kapanmayan oge sayfa sonuna kadar sayilir (ihtiyatli: en kotu no_price). Platform
+ * yedekleri bu araliklardaki fiyatlari okumaz; urunun kendi fiyati yokken baska urunun kart fiyati fiyat sanilmaz.
+ */
+function vgm_card_ranges(string $html): array
+{
+    $ranges = [];
+    if (preg_match_all('~<(/?)(div|section|article|aside|nav|header|footer|ul|ol|li|form)\b([^<>]{0,4000}?)(/?)>~i', $html, $m, PREG_SET_ORDER | PREG_OFFSET_CAPTURE) === false) {
+        return $ranges;
+    }
+    $cardRe = '/related|similar|recommend|benzer|ilgili|onerilen|\x{00F6}nerilen|cross-?sell|up-?sell|complementary|carousel|showcase|vitrin|mega-?menu|dropdown|owl-|swiper|slick|product-?(?:item|card|thumb|grid|layout|tile|box)\b|productitem|productcard|urun-?kart|mini-?cart|cart-?(?:dropdown|preview|summary)/iu';
+    $stack = [];
+    foreach ($m as $t) {
+        $name = strtolower($t[2][0]);
+        if ($t[1][0] === '/') {
+            for ($k = count($stack) - 1; $k >= 0; $k--) {
+                if ($stack[$k][0] === $name) {
+                    if ($stack[$k][1]) {
+                        $ranges[] = [$stack[$k][2], (int)$t[0][1]];
+                    }
+                    array_splice($stack, $k);
+                    break;
+                }
+            }
+            continue;
+        }
+        if ($t[4][0] === '/') {
+            continue;
+        }
+        $card = in_array($name, ['nav', 'header', 'footer', 'aside'], true);
+        if (!$card && preg_match('/\b(?:class|id)\s*=/i', $t[3][0]) === 1) {
+            $a = vgm_attrs($t[3][0]);
+            $card = preg_match($cardRe, (string)($a['class'] ?? '') . ' ' . (string)($a['id'] ?? '')) === 1;
+        }
+        $stack[] = [$name, $card, (int)$t[0][1]];
+    }
+    foreach ($stack as $open) {
+        if ($open[1]) {
+            $ranges[] = [$open[2], strlen($html)];
+        }
+    }
+    return $ranges;
+}
+
+/** Sinif/kimlik belirtecleri ustu cizili, liste, eski ya da indirimsiz fiyati mi gosteriyor? */
+function vgm_reference_class(array $tokens): bool
+{
+    foreach ($tokens as $t) {
+        if ($t !== '' && preg_match('/old|eski|not-?discounted|indirimsiz|strike|line-?through|list-?price|piyasa|regular|was-?price|compare/i', $t) === 1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/* ------------------------------------------------------------------ sayfa baglami: sifir fiyat, KDV, adet, secenek */
+
+/** Acikca sifir fiyat mi ("0", "0.00", "0,00 TL", 0)? Bos deger sifir sayilmaz. */
+function vgm_is_zero($v): bool
+{
+    if (is_int($v) || is_float($v)) {
+        return (float)$v === 0.0;
+    }
+    if (!is_string($v)) {
+        return false;
+    }
+    $v = trim(str_replace("\xC2\xA0", ' ', $v));
+    return $v !== '' && strlen($v) <= 40 && preg_match('/^[^0-9]{0,12}0+(?:[.,]0+)?[^0-9]{0,24}$/D', $v) === 1;
+}
+
+/** Satir ici base64 gorseller (data: URI) yer tutucuya indirgenir: bellek ve PCRE geri izleme siniri (buyuk sayfalar). */
+function vgm_drop_data_uris(string $html): string
+{
+    if (stripos($html, 'data:') === false) {
+        return $html;
+    }
+    $out = preg_replace('~data:[a-z0-9.+-]{1,40}/[a-z0-9.+-]{1,80}(?:;[a-z0-9=._-]{1,40}){0,4},[^"\'\s<>()]{256,}+~i', 'data:,', $html);
+    return is_string($out) ? $out : $html;
+}
+
+/** Etiketleri atilmis, varliklari cozulmus, bosluklari sadelestirilmis sayfa metni (scriptsiz HTML'den). */
+function vgm_page_text(string $plain): string
+{
+    $t = vgm_strip_tags($plain);
+    $t = html_entity_decode($t, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $t = str_replace(["\xC2\xA0", "\xE2\x80\xAF", "\xE2\x80\x89"], ' ', $t);
+    $t = preg_replace('/\s+/', ' ', $t);
+    return is_string($t) ? $t : '';
+}
+
+/** Fiyatin sayfada yazilabilecegi bicimler (1.254,83, 1254,83, 1,254.83; makinede 1254.83; tam sayida 1254 ve 1.254). */
+function vgm_price_forms(float $p, bool $machine): array
+{
+    $cents = (int)round($p * 100);
+    $int = intdiv($cents, 100);
+    $frac = sprintf('%02d', $cents % 100);
+    $forms = [number_format($p, 2, ',', '.'), $int . ',' . $frac, number_format($p, 2, '.', ',')];
+    if ($machine) {
+        $forms[] = $int . '.' . $frac;
+        if ($frac[1] === '0') {
+            $forms[] = $int . '.' . $frac[0];
+        }
+    }
+    if ($frac === '00') {
+        $forms[] = (string)$int;
+        $forms[] = number_format($p, 0, ',', '.');
+    }
+    return array_values(array_unique($forms));
+}
+
+/** Fiyat metinde (sayi siniriyla) geciyor mu? */
+function vgm_price_seen(string $text, float $p): bool
+{
+    foreach (vgm_price_forms($p, true) as $f) {
+        if (preg_match('/(?<![0-9.,])' . preg_quote($f, '/') . '(?![0-9]|[.,][0-9])/', $text) === 1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Sayfanin gosterdigi KDV durumu, secilen fiyatin GORUNEN yazimina gore: hemen ardinda "+ KDV" / "KDV haric" / "KDV'siz"
+ * ya da onunde "KDV haric:" etiketi varsa false (net fiyat); "KDV dahil" ise true; iz yoksa platform verisindeki acik
+ * bayrak (kdvDahil / vatIncluded / valueAddedTaxIncluded; tum gecisler ayni olmali); o da yoksa null.
+ * Ayni fiyatin herhangi bir yaziminda net isareti varsa sonuc false olur (ihtiyatli).
+ */
+function vgm_vat_flag(string $text, string $raw, float $price): ?bool
+{
+    $i = '(?:I|i|\xC4\xB0|\xC4\xB1)';
+    // "KDV Haric: 1.242,00" bir sonraki degerin etiketidir, bu fiyatin eki degil (iki nokta ile ayrilir)
+    $netAfter = '/^\s*(?:TL|TRY|\xE2\x82\xBA|USD|EUR|\$|\xE2\x82\xAC)?\s*(?:\+\s*KDV|\(?\s*KDV\s*HAR' . $i . '(?:\xC3\x87|\xC3\xA7|C)(?!\s*:)|KDV\'?\s*S' . $i . 'Z)/i';
+    $grossAfter = '/^\s*(?:TL|TRY|\xE2\x82\xBA|USD|EUR|\$|\xE2\x82\xAC)?\s*\(?\s*KDV\s*DAH' . $i . 'L(?!\s*:)/i';
+    $netBefore = '/KDV\s*HAR' . $i . '(?:\xC3\x87|\xC3\xA7|C)\s*(?:F' . $i . 'YAT' . $i . '?)?\s*:?\s*(?:TL|\xE2\x82\xBA)?\s*$/i';
+    $grossBefore = '/KDV\s*DAH' . $i . 'L\s*(?:F' . $i . 'YAT' . $i . '?)?\s*:?\s*(?:TL|\xE2\x82\xBA)?\s*$/i';
+    $net = false;
+    $gross = false;
+    foreach (vgm_price_forms($price, false) as $f) {
+        if (preg_match_all('/(?<![0-9.,])' . preg_quote($f, '/') . '(?![0-9]|[.,][0-9])/', $text, $m, PREG_OFFSET_CAPTURE) < 1) {
+            continue;
+        }
+        foreach (array_slice($m[0], 0, 50) as $hit) {
+            $at = (int)$hit[1];
+            $after = substr($text, $at + strlen($hit[0]), 40);
+            $before = substr($text, max(0, $at - 40), min(40, $at));
+            if (preg_match($netAfter, $after) === 1 || preg_match($netBefore, $before) === 1) {
+                $net = true;
+            } elseif (preg_match($grossAfter, $after) === 1 || preg_match($grossBefore, $before) === 1) {
+                $gross = true;
+            }
+        }
+    }
+    if ($net) {
+        return false;
+    }
+    if ($gross) {
+        return true;
+    }
+    if ($raw !== '' && preg_match_all('/"(?:kdvDahil|kdv_dahil|vatIncluded|valueAddedTaxIncluded)"\s*:\s*(true|false)\b/i', $raw, $fm) > 0) {
+        $flags = array_values(array_unique(array_map('strtolower', $fm[1])));
+        if (count($flags) === 1) {
+            return $flags[0] === 'true';
+        }
+    }
+    return null;
+}
+
+/** Sayfanin kendi gizli fiyat alanlari (product-price, product-price-vat-include, ...) var, hepsi 0 ya da bos, en az biri 0 mi? */
+function vgm_own_price_zero(string $plain): bool
+{
+    if (preg_match_all('/<input\b[^<>]{0,600}\b(?:id|name)\s*=\s*["\']?(?:product[-_]?price(?:[-_]vat[-_]include)?|productPrice|urun[-_]?fiyat)["\'\s\/>][^<>]{0,600}>/i', $plain, $m) < 1) {
+        return false;
+    }
+    $zero = false;
+    foreach (array_slice($m[0], 0, 10) as $tag) {
+        $a = vgm_attrs(substr($tag, 6, -1));
+        $v = trim((string)($a['value'] ?? ''));
+        if (strtolower((string)($a['type'] ?? '')) !== 'hidden' || ($v !== '' && !vgm_is_zero($v))) {
+            return false;
+        }
+        $zero = $zero || $v !== '';
+    }
+    return $zero;
+}
+
+/**
+ * En az siparis / kat adedi (>1) ya da null. Kaynaklar: "N adet ve katlariyla", "en az N adet", "minimum siparis N" metni;
+ * sayfadaki ILK adet girdisinin (urun kartlarindan once gelen ana form) min / step / value / data-minimum... oznitelikleri
+ * ve hemen onundeki sarmalayicinin data-market-price / data-increment / data-minimum oznitelikleri.
+ */
+function vgm_min_qty(string $plain, string $text): ?int
+{
+    $best = 0;
+    $take = function ($v) use (&$best): void {
+        $v = trim(str_replace(',', '.', (string)$v));
+        if (preg_match('/^[0-9]{1,6}(?:\.0+)?$/D', $v) === 1 && (int)$v > 1) {
+            $best = max($best, (int)$v);
+        }
+    };
+    $i = '(?:I|i|\xC4\xB0|\xC4\xB1)';
+    if (preg_match('/([0-9]{1,6})\s*(?:adet|metre|mt|paket|koli|kutu|rulo)?\s*ve\s*katlar/i', $text, $m) === 1) {
+        $take($m[1]);
+    }
+    if (preg_match('/en\s*az\s*([0-9]{1,6})\s*(?:adet|metre|mt|paket|koli|kutu|rulo)\b/i', $text, $m) === 1) {
+        $take($m[1]);
+    }
+    if (preg_match('/minimum\s*(?:s' . $i . 'par' . $i . '\S*\s*)?(?:m' . $i . 'ktar\S*|adet\S*)\s*:?\s*([0-9]{1,6})\b/i', $text, $m) === 1) {
+        $take($m[1]);
+    }
+    if (preg_match_all('/<input\b[^<>]{0,2000}>/i', $plain, $tags, PREG_OFFSET_CAPTURE) > 0) {
+        foreach (array_slice($tags[0], 0, 400) as $tag) {
+            $a = vgm_attrs(substr($tag[0], 6, -1));
+            $type = strtolower((string)($a['type'] ?? 'text'));
+            $key = (string)($a['name'] ?? '') . ' ' . (string)($a['id'] ?? '');
+            if (in_array($type, ['hidden', 'checkbox', 'radio', 'submit', 'button', 'email', 'password', 'search', 'tel'], true)
+                || preg_match('/quantity|qty|productcount|(?:^|[-_\[\s])(?:adet|miktar)(?:$|[-_\]\s])/i', $key) !== 1) {
+                continue;
+            }
+            foreach (['min', 'step', 'value', 'data-min', 'data-minimum', 'data-min-qty', 'data-minqty', 'data-minimum-multiple', 'data-step'] as $k) {
+                if (isset($a[$k])) {
+                    $take($a[$k]);
+                }
+            }
+            $lead = substr($plain, max(0, (int)$tag[1] - 600), min(600, (int)$tag[1]));
+            if (preg_match_all('/\bdata-(?:market-price|increment|minimum|min|min-qty|step)\s*=\s*["\']?([0-9]+(?:[.,][0-9]+)?)/i', $lead, $w) > 0) {
+                foreach ($w[1] as $v) {
+                    $take($v);
+                }
+            }
+            break;   // yalniz ilk (ana) adet girdisi
+        }
+    }
+    return $best > 1 ? $best : null;
+}
+
+/** $s[$at] '{' ya da '[' iken dengeli JSON parcasini dondurur (dizeler dikkate alinir); bulunamazsa null. */
+function vgm_json_slice(string $s, int $at, int $max = 2097152): ?string
+{
+    $depth = 0;
+    $inStr = false;
+    $n = min(strlen($s), $at + $max);
+    for ($k = $at; $k < $n; $k++) {
+        $c = $s[$k];
+        if ($inStr) {
+            if ($c === '\\') {
+                $k++;
+            } elseif ($c === '"') {
+                $inStr = false;
+            }
+            continue;
+        }
+        if ($c === '"') {
+            $inStr = true;
+        } elseif ($c === '{' || $c === '[') {
+            $depth++;
+        } elseif ($c === '}' || $c === ']') {
+            $depth--;
+            if ($depth === 0) {
+                return substr($s, $at, $k - $at + 1);
+            }
+        }
+    }
+    return null;
+}
+
+/** Fiyat anahtari mi (price, fiyat, sellPrice, discountPrice, finalPrice...; liste/piyasa/net/alis fiyatlari degil)? */
+function vgm_variant_price_key(string $k): bool
+{
+    $k = strtolower(str_replace(['_', '-'], '', $k));
+    return in_array($k, ['price', 'fiyat', 'sellprice', 'saleprice', 'salesprice', 'discountprice', 'discountedprice', 'finalprice',
+        'indirimlifiyat', 'indirimlifiyati', 'satisfiyati', 'satisfiyat'], true);
+}
+
+/** Bir varyant kaydindaki odenecek fiyat: fiyat anahtarlarindaki pozitif degerlerin en kucugu (indirimli < satis). */
+function vgm_variant_price($v, int $depth = 0): ?float
+{
+    if (!is_array($v) || $depth > 3) {
+        return null;
+    }
+    $best = null;
+    foreach (array_slice($v, 0, 60, true) as $k => $x) {
+        $p = null;
+        if (is_string($k) && vgm_variant_price_key($k) && !is_array($x)) {
+            if (is_int($x) || is_float($x)) {
+                $p = vgm_price_value($x);
+            } elseif (is_string($x)) {
+                $p = preg_match('/[\s,]|TL|\xE2\x82\xBA/', $x) === 1 ? vgm_parse_number($x, false) : vgm_parse_number($x, true);
+            }
+        } elseif (is_array($x)) {
+            $p = vgm_variant_price($x, $depth + 1);
+        }
+        if ($p !== null && ($best === null || $p < $best)) {
+            $best = $p;
+        }
+    }
+    return $best;
+}
+
+/** Varyant kayitlari: liste ya da nesne; tek alt nesneli sarmalayicilar ({count, summary: {...}}) acilir. */
+function vgm_variant_entries($v, int $depth = 0): array
+{
+    if (!is_array($v)) {
+        return [];
+    }
+    $kids = array_values(array_filter(array_slice($v, 0, 200), 'is_array'));
+    if (!vgm_is_list($v) && count($kids) === 1 && $depth < 2) {
+        return vgm_variant_entries($kids[0], $depth + 1);
+    }
+    return $kids;
+}
+
+/**
+ * Urunun kendi varyant verisindeki varyant fiyatlari (her varyant icin odenecek fiyat) ya da null (varyant verisi yok).
+ * Kaynaklar: Next.js __NEXT_DATA__ props.pageProps.{product, pageSpecificData}.variants ve satir ici script'te
+ * "variants: {...}" / "variants = [...]" JS nesnesi (ilk cozulebilen). Ilgili urunlerin verisi okunmaz.
+ */
+function vgm_variant_prices(string $raw): ?array
+{
+    $sets = [];
+    if (preg_match('~<script\b[^>]*\bid\s*=\s*["\']__NEXT_DATA__["\'][^>]*>(.*?)</script~is', $raw, $nd) === 1) {
+        $data = json_decode($nd[1], true, 128);
+        $pp = is_array($data) ? ($data['props']['pageProps'] ?? null) : null;
+        if (is_array($pp)) {
+            foreach (['product', 'pageSpecificData'] as $k) {
+                $node = $pp[$k] ?? null;
+                if (is_array($node) && !isset($node['variants']) && is_array($node['product'] ?? null)) {
+                    $node = $node['product'];
+                }
+                if (is_array($node) && is_array($node['variants'] ?? null)) {
+                    $sets[] = $node['variants'];
+                    break;
+                }
+            }
+        }
+    }
+    if (!$sets) {
+        $js = (string)preg_replace('~<script\b[^>]*(?:__NEXT_DATA__|application/ld\+json)[^>]*>.*?</script>~is', '', $raw);
+        if (preg_match_all('/[{,;\s]["\']?variants["\']?\s*[:=]\s*(?=[\[{])/', $js, $m, PREG_OFFSET_CAPTURE) > 0) {
+            foreach (array_slice($m[0], 0, 5) as $hit) {
+                $slice = vgm_json_slice($js, (int)$hit[1] + strlen($hit[0]));
+                $data = $slice === null ? null : json_decode($slice, true, 64);
+                if (is_array($data)) {
+                    $sets[] = $data;
+                    break;
+                }
+            }
+        }
+    }
+    if (!$sets) {
+        return null;
+    }
+    $prices = [];
+    foreach (vgm_variant_entries($sets[0]) as $entry) {
+        $p = vgm_variant_price($entry);
+        if ($p !== null) {
+            $prices[] = $p;
+        }
+    }
+    return $prices ?: null;
+}
+
+/**
+ * Fiyati degistirebilen urun secenegi var mi? Dondurur: null ya da neden ('variants', 'variant_mismatch', 'option').
+ * 1) Urunun varyant verisi varsa: farkli varyant fiyatlari ya da sayfa fiyatinin hicbir varyantla tutmamasi -> secenek;
+ *    tum varyantlar sayfa fiyatinda ise secenekler fiyati degistirmiyor demektir.
+ * 2) Varyant verisi yoksa: urun secenegi <select>'leri (variant/option/secenek/drpN...; siralama, para birimi, taksit,
+ *    dil vb. degil) en az iki gercek secenekle. Yalniz renk / renk sicakligi secimi fiyat degistirmez sayilir; fiyat farki
+ *    yazan ("+150 TL") ya da adet, metre, paket, guc, boy vb. (ve bilinmeyen) secimler ihtiyatla secenek sayilir.
+ */
+function vgm_price_options(?array $vp, string $plain, float $price): ?string
+{
+    if ($vp !== null) {
+        $distinct = [];
+        foreach ($vp as $p) {
+            $distinct[(string)(int)round($p * 100)] = $p;
+        }
+        if (count($distinct) > 1) {
+            return 'variants';
+        }
+        return abs((float)reset($distinct) - $price) > 0.011 ? 'variant_mismatch' : null;
+    }
+    if (stripos($plain, '<select') === false
+        || preg_match_all('~<select\b([^<>]{0,3000})>(.*?)</select\s*>~is', $plain, $sel, PREG_SET_ORDER | PREG_OFFSET_CAPTURE) < 1) {
+        return null;
+    }
+    foreach (array_slice($sel, 0, 60) as $s) {
+        $a = vgm_attrs($s[1][0]);
+        $ident = '';
+        foreach ($a as $k => $v) {
+            $ident .= ' ' . $k . '=' . $v;
+        }
+        if (preg_match('/variant|varyas|option|se(?:c|\xC3\xA7)enek|drp[0-9]|attribute|ozellik|\xC3\xB6zellik/i', $ident) !== 1
+            || preg_match('/sort|s(?:i|\xC4\xB1)rala|order|currency|d(?:o|\xC3\xB6)viz|lang|country|(?:u|\xC3\xBC)lke|city|(?:s|\xC5\x9F)ehir|il(?:c|\xC3\xA7)e|taksit|bank|rating|puan|yorum|review|comment|filt|kategori|categor|limit|per-?page|sayfa/i', $ident) === 1) {
+            continue;
+        }
+        $real = [];
+        if (preg_match_all('~<option\b([^<>]*)>(.*?)(?=<option\b|$)~is', $s[2][0], $opts, PREG_SET_ORDER) > 0) {
+            foreach (array_slice($opts, 0, 100) as $o) {
+                $oa = vgm_attrs($o[1]);
+                $text = vgm_plain(vgm_strip_tags($o[2]), 120);
+                $value = trim((string)($oa['value'] ?? $text));
+                if ($text === '' || in_array($value, ['', '0', '-1'], true) || isset($oa['disabled'])
+                    || preg_match('/^\W*(?:se(?:\x{00E7}|\x{00C7}|c|C)(?:i|I|\x{0130}|\x{0131})n(?:i|I|\x{0130}|\x{0131})z|l(?:\x{00FC}|\x{00DC}|u|U)tfen|choose|select|please)/iu', $text) === 1) {
+                    continue;
+                }
+                $real[] = $text;
+            }
+        }
+        if (count($real) < 2) {
+            continue;
+        }
+        $joined = implode(' | ', $real);
+        if (preg_match('/[+\-]\s*[0-9][0-9.,]*\s*(?:TL|TRY|\x{20BA}|USD|EUR|\$|\x{20AC})|\(\s*\+\s*[0-9]/iu', $joined) === 1) {
+            return 'option';
+        }
+        $lead = vgm_page_text(substr($plain, max(0, (int)$s[0][1] - 400), min(400, (int)$s[0][1])));
+        $label = (string)($a['title'] ?? '') . ' ' . (string)($a['aria-label'] ?? '') . ' ' . (string)($a['data-variant-name'] ?? '')
+            . ' ' . substr($lead, -80);
+        $colour = preg_match('/renk|color|colour|desen|pattern/i', $label) === 1;
+        $kelvin = count(array_filter($real, function (string $t): bool {
+            return preg_match('/^\s*[0-9]{4,5}\s*K\b/i', $t) === 1;
+        })) === count($real);
+        if ($colour || $kelvin) {
+            continue;
+        }
+        return 'option';
+    }
+    return null;
+}
+
+/** Yer tutucu urun gorseli ("gorsel hazirlaniyor", nopic, no-image, placeholder...) mi? */
+function vgm_placeholder_image(string $u): bool
+{
+    return preg_match('~(?:gorsel|g\xC3\xB6rsel|resim)[-_]?(?:hazirlaniyor|haz\xC4\xB1rlan\xC4\xB1yor|yok)|urun[-_]?gorseli[-_]?hazir|nopic|no[-_]?(?:image|photo|picture|img)|noimage|placeholder|default[-_](?:product|image)|resimyok|image[-_]?coming|coming[-_]?soon~i', $u) === 1;
 }
 
 /* ------------------------------------------------------------------ teklif ayristirma */
@@ -1258,7 +2109,8 @@ function vgm_level_platform(string $html): ?array
 function vgm_offer_blank(): array
 {
     return ['ok' => false, 'price' => null, 'currency' => null, 'available' => null, 'name' => null, 'brand' => null,
-        'gtin' => null, 'mpn' => null, 'sku' => null, 'image' => null, 'method' => null, 'candidates' => [], 'error' => ''];
+        'gtin' => null, 'mpn' => null, 'sku' => null, 'image' => null, 'method' => null, 'candidates' => [], 'error' => '',
+        'vatIncluded' => null, 'minQty' => null];
 }
 
 /** Seviye sonucunu ayristirici ciktisina cevirir: tek fiyat, para birimi, stok; celiskide ambiguous_price. */
@@ -1268,10 +2120,17 @@ function vgm_level_result(array $level, string $url): array
     $r['method'] = $level['method'];
     foreach (['name', 'brand', 'gtin', 'mpn', 'sku', 'image'] as $k) {
         $v = $level['ident'][$k] ?? null;
-        $r[$k] = is_string($v) && $v !== '' ? $v : null;
+        $r[$k] = is_string($v) && $v !== '' && !in_array(strtolower(trim($v)), ['false', 'null', 'undefined', 'none', 'n/a', '-'], true) ? $v : null;
     }
     if ($r['image'] !== null && preg_match('#^https?://#i', $r['image']) !== 1) {
         $r['image'] = vgm_resolve_location($url, $r['image']);
+    }
+    if ($r['image'] !== null && vgm_placeholder_image($r['image'])) {
+        $r['image'] = null;
+    }
+    if (!empty($level['zero'])) {
+        $r['error'] = 'no_price';
+        return $r;
     }
     $prices = [];
     $range = false;
@@ -1308,6 +2167,13 @@ function vgm_level_result(array $level, string $url): array
 /**
  * Urun sayfasindan tek bir teklif cikarir. Oncelik: JSON-LD Product > microdata > meta product:price:amount /
  * og:price:amount > dar platform yedekleri; kazanan seviyede celisen fiyat varsa ok=false, error='ambiguous_price'.
+ * Ek kurallar (yanlis fiyat = maliyetin altinda satis; emin olunamayan her durumda ok=false):
+ *  - urunun kendi fiyati acikca 0 (JSON-LD/microdata teklifi, ana fiyat ogesi ya da gizli fiyat alani): 'no_price';
+ *    yedek seviyeye (baska urun kartinin fiyatina) dusulmez
+ *  - en az siparis / kat adedi > 1: 'min_quantity' (minQty dolu)
+ *  - fiyati degistiren secenek/varyant: 'price_options'
+ *  - vatIncluded: sayfanin gosterdigi KDV durumu (true/false/null; vgm_vat_flag). Ayni urunun net (+ KDV) ve KDV dahil
+ *    iki fiyati belirsizlik yaratiyorsa ve oran gecerli bir KDV oraniysa KDV dahil olan alinir.
  * Fiyat hic bulunamazsa error='no_price'. Stok yalniz yapisal veriden (schema.org availability).
  */
 function vgm_parse_offer(string $html, string $url): array
@@ -1320,17 +2186,69 @@ function vgm_parse_offer(string $html, string $url): array
     if (strlen($html) > VGM_FETCH_MAX_BYTES) {
         $html = substr($html, 0, VGM_FETCH_MAX_BYTES);
     }
-    $html = vgm_strip_comments(vgm_utf8($html));
-    $level = vgm_level_jsonld($html, $url);
+    $html = vgm_strip_comments(vgm_utf8(vgm_drop_data_uris($html)));
+    $plain = vgm_strip_elements($html, ['script', 'style', 'template']);
+    $evidence = (string)preg_replace('~<script\b[^>]*application/ld\+json[^>]*>.*?</script\s*>~is', ' ', $html);
+    $variants = vgm_variant_prices($html);
+    $level = vgm_level_jsonld($html, $url, $evidence, $variants);
+    unset($evidence);
     if ($level === null) {
-        $plain = vgm_strip_elements($html, ['script', 'style', 'template']);
         $level = vgm_level_microdata($plain) ?? vgm_level_meta($plain) ?? vgm_level_platform($plain);
     }
     if ($level === null) {
         $r['error'] = 'no_price';
         return $r;
     }
-    return vgm_level_result($level, $url);
+    $r = vgm_level_result($level, $url);
+    if ($r['image'] === null && preg_match('~<meta\b[^<>]*\bproperty\s*=\s*["\']og:image["\'][^<>]*>~i', $plain, $og) === 1) {
+        $img = vgm_plain((string)(vgm_attrs(substr($og[0], 5, -1))['content'] ?? ''), 500);
+        if ($img !== '' && !vgm_placeholder_image($img)) {
+            $r['image'] = preg_match('#^https?://#i', $img) === 1 ? $img : vgm_resolve_location($url, $img);
+        }
+    }
+    if ($r['error'] === 'no_price') {
+        return $r;
+    }
+    if (vgm_own_price_zero($plain)) {
+        // sayfanin kendi fiyat alani 0 ("fiyat sorunuz"): baska bir okumaya guvenilmez
+        $r['ok'] = false;
+        $r['price'] = null;
+        $r['error'] = 'no_price';
+        return $r;
+    }
+    $text = vgm_page_text($plain);
+    if (!$r['ok'] && $r['error'] === 'ambiguous_price' && count($r['candidates']) === 2) {
+        list($lo, $hi) = $r['candidates'];
+        $vatRatio = false;
+        foreach ([1.01, 1.08, 1.10, 1.18, 1.20] as $k) {
+            $vatRatio = $vatRatio || abs($hi / $lo - $k) <= 0.002;
+        }
+        if ($vatRatio && vgm_vat_flag($text, '', $lo) === false && vgm_vat_flag($text, '', $hi) === true) {
+            $level['entries'] = array_values(array_filter($level['entries'], function (array $e) use ($hi): bool {
+                return abs($e['price'] - $hi) < 0.005;
+            }));
+            $image = $r['image'];
+            $r = vgm_level_result($level, $url);
+            $r['image'] = $image;
+        }
+    }
+    if (!$r['ok']) {
+        return $r;
+    }
+    $r['vatIncluded'] = vgm_vat_flag($text, $html, (float)$r['price']);
+    $min = vgm_min_qty($plain, $text);
+    if ($min !== null) {
+        $r['ok'] = false;
+        $r['minQty'] = $min;
+        $r['error'] = 'min_quantity';
+        return $r;
+    }
+    if (vgm_price_options($variants, $plain, (float)$r['price']) !== null) {
+        $r['ok'] = false;
+        $r['error'] = 'price_options';
+        return $r;
+    }
+    return $r;
 }
 
 /* ------------------------------------------------------------------ kimlik dogrulama ve tedarikci teklifi */
@@ -1366,7 +2284,9 @@ function vgm_identity_ok(array $page, array $product): bool
 
 /**
  * Kaynak kaydindan teklif: vgm_apply_check'e uygun dizi veya hata ['error'=>kod, 'gone'=>true (404/410)].
- * Yalniz kaynagin kendi alan adi izinlidir. Kimlik (GTIN/MPN) celisirse 'identity_mismatch'.
+ * Yalniz kaynagin kendi alan adi izinlidir. Kimlik (GTIN/MPN) celisirse 'identity_mismatch'; sayfanin gosterdigi KDV
+ * durumu kaynak kaydindaki vatIncluded ile celisirse 'vat_mismatch' (net fiyat KDV dahil sanilip maliyetin altina
+ * satilmaz). Zamanlayici ayni mantigi es zamanli getirmeyle vgm_offer_from_fetch uzerinden kullanir.
  */
 function vgm_fetch_offer(array $src, array $product): array
 {
@@ -1378,6 +2298,13 @@ function vgm_fetch_offer(array $src, array $product): array
     $why = '';
     $status = 0;
     $html = vgm_fetch($url, [$supplier], $why, $status);
+    return vgm_offer_from_fetch($html, $why, $status, $src, $product);
+}
+
+/** Getirme sonucundan (govde, hata kodu, HTTP durumu) teklif: vgm_fetch_offer'in ayristirma ve denetim yarisi. */
+function vgm_offer_from_fetch(string $html, string $why, int $status, array $src, array $product): array
+{
+    $url = is_string($src['url'] ?? null) ? $src['url'] : '';
     if ($html === '') {
         if ($status === 404 || $status === 410) {
             return ['error' => 'http_' . $status, 'gone' => true];
@@ -1391,12 +2318,16 @@ function vgm_fetch_offer(array $src, array $product): array
     if (!vgm_identity_ok($o, $product)) {
         return ['error' => 'identity_mismatch'];
     }
+    $vatIncluded = ($src['vatIncluded'] ?? true) !== false;
+    if ($o['vatIncluded'] !== null && $o['vatIncluded'] !== $vatIncluded) {
+        return ['error' => 'vat_mismatch'];
+    }
     $fallback = is_string($src['currency'] ?? null) ? strtoupper($src['currency']) : 'TRY';
     $discount = $src['discount'] ?? 0;
     return [
         'price' => (float)$o['price'],
         'currency' => is_string($o['currency']) ? $o['currency'] : $fallback,
-        'vatIncluded' => ($src['vatIncluded'] ?? true) !== false,
+        'vatIncluded' => $vatIncluded,
         'discount' => is_int($discount) || is_float($discount) ? $discount : 0,
         'available' => $o['available'] ?? true,
         'method' => (string)$o['method'],
@@ -1474,7 +2405,7 @@ function vgm_fetch_rates(string &$why, ?int $timeout = null): ?array
 
 /* ------------------------------------------------------------------ fiyat yenileme (cron ve canli) */
 
-/** Kaynaklari oncelik sirasiyla dondurur; anahtar kaynagin kaynaklar.json'daki sirasidir. */
+/** Kaynaklari oncelik sirasiyla dondurur; anahtar kaynagin kaynak listesindeki sirasidir. */
 function vgm_sources_ordered(array $sources): array
 {
     $keys = array_keys($sources);
@@ -1490,64 +2421,135 @@ function vgm_sources_ordered(array $sources): array
     return $out;
 }
 
-/** Ayni sunucuya istekler arasi bekleme; butce yetmezse false. */
-function vgm_wait_host(array $lastHit, string $host, float $spacing, float $deadline): bool
+/**
+ * Zamanlayici sirasi: kontrol zamani gelen urunler, aciliyet sirasiyla. Once hic denenmemisler; sonra dogrulanmis fiyati
+ * olanlar en eski dogrulamadan (48 saat sinirina en yakin) baslayarak; en sonda hic dogrulanamamislar. Basarili son kontrol
+ * $age sn bekler; basarisiz deneme geri cekilir: min($retry x 2^(ardisik hata - 1), $age). Boylece kalici hatali urunler
+ * sunucunun kapasitesini tuketmez ve dogrulanmis urunler 48 saat penceresinin icinde kalir.
+ * $queue: fiyat-sira.json items (id => [checkedAt, lastAttemptAt, durum, sunucu, ardisikHata]).
+ */
+function vgm_due_order(array $queue, int $now, int $age, int $retry): array
 {
-    if ($spacing <= 0 || !isset($lastHit[$host])) {
-        return true;
+    $ids = [];
+    $group = [];
+    $key = [];
+    foreach ($queue as $id => $e) {
+        $checked = is_array($e) ? (int)($e[0] ?? 0) : 0;
+        $attempt = is_array($e) ? (int)($e[1] ?? 0) : 0;
+        $succeeded = $checked > 0 && $checked >= $attempt;
+        $fails = $succeeded ? 0 : max(1, is_array($e) ? (int)($e[4] ?? 1) : 1);
+        $wait = $succeeded ? $age : (int)min($age, $retry * (2 ** min(16, $fails - 1)));
+        if ($attempt > 0 && $now - $attempt < $wait) {
+            continue;
+        }
+        $ids[] = (string)$id;
+        $group[] = $attempt === 0 ? 0 : ($checked > 0 ? 1 : 2);
+        $key[] = $checked > 0 ? $checked : $attempt;
     }
-    $wait = $lastHit[$host] + $spacing - microtime(true);
-    if ($wait <= 0) {
-        return true;
+    if (!$ids) {
+        return [];
     }
-    if (microtime(true) + $wait >= $deadline) {
-        return false;
-    }
-    usleep((int)ceil($wait * 1000000));
-    return true;
+    $names = $ids;
+    array_multisort($group, SORT_ASC, SORT_NUMERIC, $key, SORT_ASC, SORT_NUMERIC, $names, SORT_ASC, SORT_STRING, $ids);
+    return $ids;
 }
 
 /**
- * Fiyat/kur yenileme. opts: ids (dizi|null = kaynagi olan tum urunler), live (bool), budget (sn), max (getirme sayisi),
- * spacing (ayni sunucuya istekler arasi sn; cron 2, canli 0), rates (false: kur hic getirilmez), forceRates (kur yasina
- * bakmadan yenile), heartbeat (lastRunAt/lastRunSummary yaz; varsayilan: canli degil ve ids null).
+ * Bekleyen sonuclari isler: her urunun guncel kaydina vgm_apply_check uygulanir, parcalar/sira/durum tek yazma kilidinde
+ * yazilir. $pending: id => [urun, kaynak indeksi, sonuc, kurlar, zaman]. Dondurur: id => yeni durum.
+ */
+function vgm_refresh_flush(array $pending): array
+{
+    if (!$pending) {
+        return [];
+    }
+    return (array)vgm_locked(true, function (string $dir) use ($pending): array {
+        $current = vgm_price_items($dir, array_keys($pending));
+        $new = [];
+        $statuses = [];
+        foreach ($pending as $id => $row) {
+            list($p, $used, $result, $rates, $at) = $row;
+            $new[$id] = vgm_apply_check($current[$id] ?? null, $p, (int)$used, $result, $rates, $at);
+            $statuses[$id] = (string)($new[$id]['status'] ?? 'error');
+        }
+        vgm_prices_put($dir, $new);
+        return $statuses;
+    });
+}
+
+/**
+ * Fiyat/kur yenileme.
+ * opts: ids (dizi = yalnizca bu urunler; null = zamanlayici: kontrol zamani gelen urunler, vgm_due_order), live (bool),
+ * budget (sn; cron 540, canli 8), max (getirme sayisi), spacing (ayni sunucuya istekler arasi varsayilan sn; kaynaklar.json
+ * suppliers.<alan>.spacing her zaman once gelir; verilmezse 1, canli kontrolde 0), age (basarili kontrolden sonra yeniden
+ * kontrol, sn; varsayilan VGM_RECHECK_AGE), rates (false: kur hic getirilmez), forceRates, heartbeat (lastRunAt/
+ * lastRunSummary yaz; varsayilan: canli degil ve ids null).
+ * Sunucular arasi serpistirme ve es zamanlilik: siradaki urunler ilk kaynaklarinin sunucusuna gore kuyruklanir; farkli
+ * sunuculara ayni anda en cok `parallel` (varsayilan vgm_fetch_parallel: VGM_FETCH_PARALLEL, bellege gore) istek
+ * curl_multi ile yurutulur, her sunucuda tek istek ve kendi araligi. Bos yuvaya bekleme suresi dolmus sunucularin en
+ * oncelikli urunu alinir; hicbiri hazir degilse en erken hazir olan beklenir. Son tarihte durur (ucustaki istekler
+ * birakilir, left); ilerleme her 20 sonucta ya da 15 sn'de bir (ve sonda) parca parca yazilir.
  * Canli: yalniz checkedAt'i VGM_LIVE_RECHECK_AFTER'dan eski ve lastAttemptAt'i VGM_LIVE_MIN_INTERVAL'dan eski urunler,
- * kur yalniz yoksa; ayrica vg_rl_hit('vgm_live', 'all', 30, 60). Ag islemi kilit DISINDA; her sonuc kisa yazma kilidiyle.
- * Dondurur: {checked, ok, held, error, unavailable, skipped, rateUpdated, seconds} (+ rateError).
+ * kur yalniz yoksa; ayrica vg_rl_hit('vgm_live', 'all', 30, 60). Ag islemi kilit DISINDA.
+ * Dondurur: {checked, ok, held, error, unavailable, skipped (denenemeyen: kaynak/urun/kur yok, canlida taze ya da hiz
+ * siniri), left (sure ya da getirme siniri yuzunden sirasi gelmeyen; sonraki calismaya kalir), due (zamani gelen ya da
+ * istenen urun sayisi), rateUpdated, seconds} (+ rateError).
  */
 function vgm_refresh(array $opts): array
 {
     $start = microtime(true);
     $live = ($opts['live'] ?? false) === true;
-    $budget = isset($opts['budget']) && is_numeric($opts['budget']) ? max(1.0, (float)$opts['budget']) : ($live ? 8.0 : 900.0);
+    $budget = isset($opts['budget']) && is_numeric($opts['budget']) ? max(1.0, (float)$opts['budget']) : ($live ? 8.0 : (float)VGM_CRON_BUDGET);
     $maxFetch = isset($opts['max']) && is_numeric($opts['max']) ? max(0, (int)$opts['max']) : ($live ? 6 : PHP_INT_MAX);
-    $spacing = isset($opts['spacing']) && is_numeric($opts['spacing']) ? max(0.0, (float)$opts['spacing']) : ($live ? 0.0 : 2.0);
-    $ids = isset($opts['ids']) && is_array($opts['ids']) ? array_values(array_filter($opts['ids'], 'is_string')) : null;
+    $defaultSpacing = isset($opts['spacing']) && is_numeric($opts['spacing']) ? max(0.0, (float)$opts['spacing']) : ($live ? 0.0 : 1.0);
+    $age = isset($opts['age']) && is_numeric($opts['age']) ? max(0, (int)$opts['age']) : VGM_RECHECK_AGE;
+    $ids = isset($opts['ids']) && is_array($opts['ids']) ? array_values(array_unique(array_filter($opts['ids'], 'is_string'))) : null;
     $deadline = $start + $budget;
     if ($live) {
         vgm_fetch_deadline($deadline);
     }
-    $summary = ['checked' => 0, 'ok' => 0, 'held' => 0, 'error' => 0, 'unavailable' => 0, 'skipped' => 0,
+    $summary = ['checked' => 0, 'ok' => 0, 'held' => 0, 'error' => 0, 'unavailable' => 0, 'skipped' => 0, 'left' => 0, 'due' => 0,
         'rateUpdated' => false, 'seconds' => 0.0];
     try {
-        list($config, $state, $rate) = vgm_locked(false, function (string $dir): array {
-            return [vgm_config($dir), vgm_prices_state($dir), vgm_rate_state($dir)];
-        });
-        // urunler
-        $catalog = vgm_catalog()['products'];
-        $candidates = [];
-        foreach ($ids ?? array_keys($catalog) as $id) {
-            if (isset($catalog[$id]) && !isset($candidates[$id]) && ($sources = vgm_sources($config, $id)) !== []) {
-                $candidates[$id] = vgm_sources_ordered($sources);
+        // aday urunler: verilen kimlikler ya da zamanlayici sirasi
+        if ($ids === null) {
+            list($config, $rate, $queue) = vgm_locked(true, function (string $dir): array {
+                return [vgm_config($dir), vgm_rate_state($dir), vgm_queue_read($dir, true)['items']];
+            });
+            $order = vgm_due_order($queue, time(), $age, VGM_RETRY_AFTER);
+            $hostOf = [];
+            foreach ($order as $id) {
+                $hostOf[$id] = is_array($queue[$id] ?? null) ? (string)($queue[$id][3] ?? '') : '';
             }
+            unset($queue);
+            $items = [];
+        } else {
+            list($config, $rate, $items) = vgm_locked(false, function (string $dir) use ($ids): array {
+                return [vgm_config($dir), vgm_rate_state($dir), vgm_price_items($dir, $ids)];
+            });
+            $order = $ids;
+            usort($order, function (string $a, string $b) use ($items): int {
+                $x = (int)($items[$a]['lastAttemptAt'] ?? 0);
+                $y = (int)($items[$b]['lastAttemptAt'] ?? 0);
+                return $x <=> $y ?: strcmp($a, $b);
+            });
         }
+        $summary['due'] = count($order);
         // kur (ag islemi kilit disinda)
         $needRate = $rate === null || ($opts['forceRates'] ?? false) === true
             || (!$live && time() - (int)($rate['fetchedAt'] ?? 0) > VGM_RATE_REFRESH_AFTER);
         // canli kontrolde kaynakli urun yoksa ya da kur getirmesi sik tekrarlaniyorsa herkese acik istek TCMB'ye cikmaz
-        if ($live && $needRate && ($opts['forceRates'] ?? false) !== true
-            && ($candidates === [] || vg_rl_hit('vgm_live_rate', 'all', 2, 300) > 0)) {
-            $needRate = false;
+        if ($live && $needRate && ($opts['forceRates'] ?? false) !== true) {
+            $hasSource = false;
+            foreach ($order as $id) {
+                if (vgm_product($id) !== null && vgm_sources($config, $id) !== []) {
+                    $hasSource = true;
+                    break;
+                }
+            }
+            if (!$hasSource || vg_rl_hit('vgm_live_rate', 'all', 2, 300) > 0) {
+                $needRate = false;
+            }
         }
         if (($opts['rates'] ?? true) !== false && $needRate) {
             $why = '';
@@ -1556,120 +2558,255 @@ function vgm_refresh(array $opts): array
             if ($fresh !== null) {
                 vgm_locked(true, function (string $dir) use ($fresh): void {
                     vgm_write($dir, 'kur.json', $fresh);
+                    vgm_status_update($dir, ['rate' => ['at' => time(), 'ok' => true, 'error' => null]]);
                 });
                 $rate = $fresh;
                 $summary['rateUpdated'] = true;
             } else {
                 $summary['rateError'] = $why;
+                vgm_locked(true, function (string $dir) use ($why): void {
+                    vgm_status_update($dir, ['rate' => ['at' => time(), 'ok' => false, 'error' => $why]]);
+                });
             }
         }
-        if (!vgm_rate_ok($rate, time())) {
-            // guvenilir kur yokken maliyet USD'ye cevrilemez; bos yere getirme yapilmaz
-            if ($candidates) {
-                $summary['rateError'] = $summary['rateError'] ?? 'no_rate';
-            }
-            $summary['skipped'] = count($candidates);
-            $candidates = [];
-        }
-        uksort($candidates, function ($a, $b) use ($state): int {
-            $x = (int)($state['items'][$a]['lastAttemptAt'] ?? 0);
-            $y = (int)($state['items'][$b]['lastAttemptAt'] ?? 0);
-            return $x <=> $y ?: strcmp((string)$a, (string)$b);
-        });
-        $rates = ['USD' => (float)($rate['usdTry'] ?? 0), 'EUR' => is_numeric($rate['eurTry'] ?? null) ? (float)$rate['eurTry'] : null];
-        $queue = array_keys($candidates);
-        $lastHit = [];
-        $fetches = 0;
-        while ($queue) {
-            if (microtime(true) >= $deadline || $fetches >= $maxFetch) {
-                break;
-            }
-            $pick = 0;
-            if ($spacing > 0) {
-                foreach ($queue as $qi => $qid) {
-                    $first = reset($candidates[$qid]);
-                    $h = vgm_host((string)($first['url'] ?? ''));
-                    if (!isset($lastHit[$h]) || microtime(true) - $lastHit[$h] >= $spacing) {
-                        $pick = $qi;
-                        break;
-                    }
+        // sunucu kuyruklari: zamanlayicida sirasi gelen ilk VGM_CRON_WINDOW urun (bir calismada getirilebilecekten fazlasi),
+        // ids verildiyse hepsi. Kaynaklar parca parca okunur (her kaynak parcasi bir kez); urun kaydi yalnizca getirme
+        // aninda okunur (katalogdan kaldirilmis urun orada atlanir ve siradan silinir).
+        $hosts = [];
+        $sourcesOf = [];
+        $rank = [];
+        $spacingOf = function (string $host) use ($config, $defaultSpacing, $live): float {
+            return $live ? $defaultSpacing : vgm_spacing($config, $host, $defaultSpacing);
+        };
+        if ($ids === null) {
+            /* Pencere sunucu basina kuyruklanir: her sunucudan en cok bu calismada getirilebilecek kadar (butce / aralik +
+               pay) urun alinir. Sira basini tek bir tedarikci doldursa da diger sunucular ayni calismada islenir. */
+            $total = max(50, $maxFetch === PHP_INT_MAX ? VGM_CRON_WINDOW : $maxFetch * 2);
+            $taken = [];
+            $window = [];
+            foreach ($order as $id) {
+                $h = $hostOf[$id] ?? '';
+                $cap = (int)ceil($budget / max(0.25, $spacingOf($h))) + VGM_HOST_SLACK;
+                if (($taken[$h] ?? 0) >= $cap) {
+                    continue;
+                }
+                $taken[$h] = ($taken[$h] ?? 0) + 1;
+                $window[] = $id;
+                if (count($window) >= $total) {
+                    break;
                 }
             }
-            $id = $queue[$pick];
-            array_splice($queue, $pick, 1);
-            if ($live) {
-                $item = $state['items'][$id] ?? null;
-                $checkedAt = is_array($item) && is_int($item['checkedAt'] ?? null) ? $item['checkedAt'] : 0;
-                $attemptAt = is_array($item) && is_int($item['lastAttemptAt'] ?? null) ? $item['lastAttemptAt'] : 0;
-                $now = time();
-                if ($now - $checkedAt <= VGM_LIVE_RECHECK_AFTER || $now - $attemptAt <= VGM_LIVE_MIN_INTERVAL) {
+        } else {
+            $window = $order;
+        }
+        $summary['left'] = count($order) - count($window);
+        $lists = vgm_sources_many($config, $window);
+        $n = 0;
+        foreach ($window as $id) {
+            $sources = $lists[$id] ?? [];
+            if ($sources === []) {
+                if ($ids === null) {
                     $summary['skipped']++;
-                    continue;
                 }
-                if (vg_rl_hit('vgm_live', 'all', 30, 60) > 0) {
-                    $summary['skipped'] += 1 + count($queue);
-                    $queue = [];
-                    break;
-                }
-            }
-            $p = $catalog[$id];
-            $errors = [];
-            $result = null;
-            $gone = null;
-            $used = null;
-            foreach ($candidates[$id] as $idx => $src) {
-                $host = vgm_host((string)($src['url'] ?? ''));
-                if ($fetches >= $maxFetch || microtime(true) >= $deadline || !vgm_wait_host($lastHit, $host, $spacing, $deadline)) {
-                    break;
-                }
-                $fetches++;
-                vgm_fetch_limit((int)ceil($deadline - microtime(true)));
-                $offer = vgm_fetch_offer($src, $p);
-                $lastHit[$host] = microtime(true);
-                if (isset($offer['error'])) {
-                    /* Kaldirilmis (404/410) kaynak sonraki kaynagi gizlemez; tum kaynaklar kaldirilmissa urun stokta yok. */
-                    if (!empty($offer['gone'])) {
-                        $gone = $gone ?? $offer;
-                    } else {
-                        $errors[] = (string)$offer['error'];
-                    }
-                    $used = $used ?? $idx;
-                    continue;
-                }
-                $result = $offer;
-                $used = $idx;
-                break;
-            }
-            if ($result === null && $errors === [] && $gone !== null) {
-                $result = $gone;
-            }
-            if ($result === null && $errors === []) {
-                $summary['skipped']++;
                 continue;
             }
-            if ($result === null) {
-                $result = ['error' => implode(', ', array_values(array_unique($errors)))];
-            }
-            $applied = vgm_locked(true, function (string $dir) use ($id, $p, $used, $result, $rates): array {
-                $st = vgm_prices_state($dir);
-                $new = vgm_apply_check($st['items'][$id] ?? null, $p, (int)$used, $result, $rates, time());
-                $st['items'][$id] = $new;
-                vgm_write($dir, 'fiyatlar.json', $st);
-                return $new;
-            });
-            $summary['checked']++;
-            $status = (string)($applied['status'] ?? 'error');
-            $summary[in_array($status, ['ok', 'held', 'unavailable'], true) ? $status : 'error']++;
+            $sourcesOf[$id] = vgm_sources_ordered($sources);
+            $first = reset($sourcesOf[$id]);
+            $host = vgm_host((string)($first['url'] ?? ''));
+            $hosts[$host][] = $id;
+            $rank[$id] = $n++;
         }
-        $summary['skipped'] += count($queue);
+        unset($lists);
+        if (!vgm_rate_ok($rate, time())) {
+            // guvenilir kur yokken maliyet USD'ye cevrilemez; bos yere getirme yapilmaz
+            if ($sourcesOf) {
+                $summary['rateError'] = $summary['rateError'] ?? 'no_rate';
+            }
+            $summary['skipped'] += count($sourcesOf);
+            $hosts = [];
+        }
+        $dead = [];
+        $rates = ['USD' => (float)($rate['usdTry'] ?? 0), 'EUR' => is_numeric($rate['eurTry'] ?? null) ? (float)$rate['eurTry'] : null];
+        $lastHit = [];
+        $fetches = 0;
+        $pending = [];
+        $lastFlush = microtime(true);
+        $record = function (array $statuses) use (&$summary): void {
+            foreach ($statuses as $status) {
+                $summary['checked']++;
+                $summary[in_array($status, ['ok', 'held', 'unavailable'], true) ? $status : 'error']++;
+            }
+        };
+        /* Es zamanli getirme: farkli sunuculara ayni anda en cok $parallel istek (curl_multi), her sunucuda tek istek ve
+           kendi araligi. Urun isi: siradaki kaynak indeksi, biriken hatalar; kaynak basarisizsa is bir sonraki kaynagin
+           sunucu kuyrugunun basina doner (oncelik sirasi korunur). */
+        $parallel = isset($opts['parallel']) && is_numeric($opts['parallel']) ? max(1, min(VGM_FETCH_PARALLEL, (int)$opts['parallel'])) : vgm_fetch_parallel();
+        $jobs = [];      // id => ['idx', 'errors', 'gone', 'used', 'p']
+        $flight = [];    // sunucu => ['id', 'key', 'src', 'req']
+        $stop = false;   // canli hiz siniri: yeni getirme baslatilmaz
+        $readyAtOf = function (string $h) use (&$lastHit, $spacingOf): float {
+            return isset($lastHit[$h]) ? $lastHit[$h] + $spacingOf($h) : 0.0;
+        };
+        $settle = function (string $id, $key, array $offer) use (&$jobs, &$hosts, &$pending, &$lastFlush, &$sourcesOf, &$rates, &$record): void {
+            $result = null;
+            if (isset($offer['error'])) {
+                /* Kaldirilmis (404/410) kaynak sonraki kaynagi gizlemez; tum kaynaklar kaldirilmissa urun stokta yok. */
+                if (!empty($offer['gone'])) {
+                    $jobs[$id]['gone'] = $jobs[$id]['gone'] ?? $offer;
+                } else {
+                    $jobs[$id]['errors'][] = (string)$offer['error'];
+                }
+                $jobs[$id]['used'] = $jobs[$id]['used'] ?? $key;
+                $jobs[$id]['idx']++;
+                $keys = array_keys($sourcesOf[$id]);
+                if (isset($keys[$jobs[$id]['idx']])) {
+                    // siradaki kaynak: o sunucunun kuyrugunun basina
+                    $nextHost = vgm_host((string)($sourcesOf[$id][$keys[$jobs[$id]['idx']]]['url'] ?? ''));
+                    if (!isset($hosts[$nextHost])) {
+                        $hosts[$nextHost] = [];
+                    }
+                    array_unshift($hosts[$nextHost], $id);
+                    return;
+                }
+                $result = $jobs[$id]['errors'] === [] && $jobs[$id]['gone'] !== null
+                    ? $jobs[$id]['gone']
+                    : ['error' => implode(', ', array_values(array_unique($jobs[$id]['errors'])))];
+            } else {
+                $result = $offer;
+                $jobs[$id]['used'] = $key;
+            }
+            $pending[$id] = [$jobs[$id]['p'], (int)$jobs[$id]['used'], $result, $rates, time()];
+            unset($jobs[$id]);
+            if (count($pending) >= 20 || microtime(true) - $lastFlush >= 15) {
+                $record(vgm_refresh_flush($pending));
+                $pending = [];
+                $lastFlush = microtime(true);
+            }
+        };
+        while ($hosts || $flight) {
+            $now = microtime(true);
+            // 1) bos yuvalara, bekleme suresi dolmus sunuculardan en oncelikli urunlerin istekleri
+            while (!$stop && $hosts && count($flight) < $parallel && $now < $deadline && $fetches < $maxFetch) {
+                $pickHost = null;
+                $bestRank = PHP_INT_MAX;
+                foreach ($hosts as $h => $list) {
+                    if (!isset($flight[$h]) && $readyAtOf((string)$h) <= $now && $rank[$list[0]] < $bestRank) {
+                        $pickHost = (string)$h;
+                        $bestRank = $rank[$list[0]];
+                    }
+                }
+                if ($pickHost === null) {
+                    break;
+                }
+                $id = array_shift($hosts[$pickHost]);
+                if (!$hosts[$pickHost]) {
+                    unset($hosts[$pickHost]);
+                }
+                if (!isset($jobs[$id])) {
+                    if ($live) {
+                        $item = $items[$id] ?? null;
+                        $checkedAt = is_array($item) && is_int($item['checkedAt'] ?? null) ? $item['checkedAt'] : 0;
+                        $attemptAt = is_array($item) && is_int($item['lastAttemptAt'] ?? null) ? $item['lastAttemptAt'] : 0;
+                        $t = time();
+                        if ($t - $checkedAt <= VGM_LIVE_RECHECK_AFTER || $t - $attemptAt <= VGM_LIVE_MIN_INTERVAL) {
+                            $summary['skipped']++;
+                            continue;
+                        }
+                        if (vg_rl_hit('vgm_live', 'all', 30, 60) > 0) {
+                            $left = 1;
+                            foreach ($hosts as $list) {
+                                $left += count($list);
+                            }
+                            $summary['skipped'] += $left;
+                            $hosts = [];
+                            $stop = true;
+                            break;
+                        }
+                    }
+                    $p = vgm_product($id);
+                    if ($p === null) {
+                        // katalogdan kaldirilmis (kaynak/fiyat kaydi kalmis) urun: getirilmez, zamanlayici sirasindan silinir
+                        $summary['skipped']++;
+                        $dead[] = $id;
+                        continue;
+                    }
+                    $jobs[$id] = ['idx' => 0, 'errors' => [], 'gone' => null, 'used' => null, 'p' => $p];
+                }
+                $keys = array_keys($sourcesOf[$id]);
+                $key = $keys[$jobs[$id]['idx']];
+                $src = $sourcesOf[$id][$key];
+                $url = is_string($src['url'] ?? null) ? $src['url'] : '';
+                $supplier = is_string($src['supplier'] ?? null) ? $src['supplier'] : '';
+                if ($url === '' || $supplier === '') {
+                    $settle($id, $key, ['error' => 'bad_source']);
+                    continue;
+                }
+                $fetches++;
+                vgm_fetch_limit((int)ceil($deadline - $now));
+                $flight[$pickHost] = ['id' => $id, 'key' => $key, 'src' => $src, 'req' => vgm_fetch_start($url, [$supplier])];
+                $now = microtime(true);
+            }
+            if (!$flight) {
+                // ucusta istek yok: en erken hazir olacak sunucu beklenir; son tarih ya da getirme siniri ise bitti
+                if (!$hosts || $stop || $now >= $deadline || $fetches >= $maxFetch) {
+                    break;
+                }
+                $earliestAt = INF;
+                foreach ($hosts as $h => $list) {
+                    $earliestAt = min($earliestAt, $readyAtOf((string)$h));
+                }
+                if ($earliestAt >= $deadline) {
+                    break;
+                }
+                usleep((int)ceil(max(0.0, $earliestAt - $now) * 1000000));
+                continue;
+            }
+            // 2) surus: bos yuva varsa en erken hazir olacak sunucuya, yoksa en cok 1 sn ya da son tarihe kadar
+            $until = $deadline;
+            if (!$stop && count($flight) < $parallel && $fetches < $maxFetch) {
+                foreach ($hosts as $h => $list) {
+                    if (!isset($flight[$h])) {
+                        $until = min($until, max($now, $readyAtOf((string)$h)));
+                    }
+                }
+            }
+            vgm_fetch_drive(array_column($flight, 'req'), min($until, $now + 1.0));
+            // 3) tamamlananlar: ayristirma ve sonuc (hata ise siradaki kaynak)
+            foreach ($flight as $h => $f) {
+                if (!$f['req']->done) {
+                    continue;
+                }
+                unset($flight[$h]);
+                $lastHit[$h] = microtime(true);
+                $req = $f['req'];
+                $settle($f['id'], $f['key'], vgm_offer_from_fetch($req->body, $req->why, $req->status, $f['src'], $jobs[$f['id']]['p']));
+                $req->body = '';
+            }
+            if (microtime(true) >= $deadline) {
+                break;
+            }
+        }
+        // son tarihte ucusta kalan istekler birakilir; yarim kalan isler ve sirasi gelmeyenler bir sonraki calismaya kalir (left)
+        foreach ($flight as $f) {
+            vgm_fetch_abort($f['req']);
+            $summary['left']++;
+        }
+        $record(vgm_refresh_flush($pending));
+        foreach ($hosts as $list) {
+            $summary['left'] += count($list);
+        }
+        if ($dead && $ids === null) {
+            vgm_locked(true, function (string $dir) use ($dead): void {
+                vgm_queue_forget($dir, $dead);
+            });
+        }
         $summary['seconds'] = round(microtime(true) - $start, 1);
+        $summary['fetches'] = $fetches;
+        $summary['budget'] = $budget;
         $heartbeat = array_key_exists('heartbeat', $opts) ? $opts['heartbeat'] === true : (!$live && $ids === null);
         if ($heartbeat) {
             vgm_locked(true, function (string $dir) use ($summary): void {
-                $st = vgm_prices_state($dir);
-                $st['lastRunAt'] = time();
-                $st['lastRunSummary'] = $summary;
-                vgm_write($dir, 'fiyatlar.json', $st);
+                vgm_status_update($dir, ['lastRunAt' => time(), 'lastRunSummary' => $summary]);
             });
         }
         return $summary;
@@ -1679,37 +2816,48 @@ function vgm_refresh(array $opts): array
     }
 }
 
-/** Zamanlanmis calisma ozeti (cron --status ve panel): son calisma, sayimlar, bayat urun sayisi, kur. */
+/**
+ * Zamanlanmis calisma ozeti (cron --status ve panel): son calisma, sayimlar, bayat urun sayisi, taze kontrol orani, kur.
+ * Yalnizca fiyat-sira.json ve fiyat-durum.json okunur. healthy: son calisma 30 dakika icinde.
+ */
 function vgm_refresh_status(int $now): array
 {
-    list($config, $state, $rate) = vgm_locked(false, function (string $dir): array {
-        return [vgm_config($dir), vgm_prices_state($dir), vgm_rate_state($dir)];
+    vgm_queue_ensure();
+    list($queue, $status, $rate) = vgm_locked(false, function (string $dir): array {
+        return [vgm_queue_read($dir)['items'], vgm_status_read($dir), vgm_rate_state($dir)];
     });
     $counts = ['ok' => 0, 'held' => 0, 'error' => 0, 'unavailable' => 0, 'unchecked' => 0];
     $stale = 0;
-    $products = 0;
-    foreach (vgm_catalog()['products'] as $id => $p) {
-        if (vgm_sources($config, $id) === []) {
-            continue;
-        }
-        $products++;
-        $item = $state['items'][$id] ?? null;
-        $st = is_array($item) ? (string)($item['status'] ?? 'error') : 'unchecked';
+    foreach ($queue as $e) {
+        $st = is_array($e) && is_string($e[2] ?? null) ? $e[2] : 'unchecked';
         $counts[isset($counts[$st]) ? $st : 'error']++;
-        $at = is_array($item) && is_int($item['checkedAt'] ?? null) ? $item['checkedAt'] : 0;
+        $at = is_array($e) ? (int)($e[0] ?? 0) : 0;
         if ($at === 0 || $now - $at > VGM_PRICE_MAX_AGE) {
             $stale++;
         }
     }
-    $last = is_int($state['lastRunAt'] ?? null) ? $state['lastRunAt'] : null;
+    $products = count($queue);
+    $last = is_int($status['lastRunAt'] ?? null) ? $status['lastRunAt'] : null;
+    /* Kapasite tahmini: son calismanin getirme hizi (getirme / sn) x saatte 6 calisma x butce. Tum urunlerin bir turu
+       bu hizla 48 saati asiyorsa fiyatlar bayatlar: saglikli sayilmaz. Az ornekli (< 20 getirme) calismada tahmin yok. */
+    $sum = is_array($status['lastRunSummary'] ?? null) ? $status['lastRunSummary'] : [];
+    $fetches = (int)($sum['fetches'] ?? 0);
+    $secs = (float)($sum['seconds'] ?? 0);
+    $runBudget = (float)($sum['budget'] ?? VGM_CRON_BUDGET);
+    $perHour = $fetches >= 20 && $secs > 0 ? $fetches / $secs * min(3600.0, $runBudget * 6) : null;
+    $cycleHours = $perHour !== null && $perHour > 0 ? round($products / $perHour, 1) : null;
+    $capacityOk = $cycleHours === null || $cycleHours * 3600 <= VGM_PRICE_MAX_AGE;
     return [
         'lastRunAt' => $last,
         'lastRunAtIso' => $last !== null ? vg_iso($last) : null,
-        'summary' => $state['lastRunSummary'] ?? null,
-        'healthy' => $last !== null && $now - $last <= VGM_HEALTHY_AFTER,
+        'summary' => $status['lastRunSummary'] ?? null,
+        'healthy' => $last !== null && $now - $last <= VGM_HEALTHY_AFTER && $capacityOk,
+        'capacity' => ['fetchesPerHour' => $perHour !== null ? (int)round($perHour) : null, 'cycleHours' => $cycleHours, 'ok' => $capacityOk],
         'products' => $products,
         'counts' => $counts,
         'stale' => $stale,
+        'fresh' => $products - $stale,
+        'freshShare' => $products > 0 ? round(($products - $stale) / $products, 4) : null,
         'rate' => $rate === null ? null : [
             'usdTry' => (float)$rate['usdTry'],
             'eurTry' => is_numeric($rate['eurTry'] ?? null) ? (float)$rate['eurTry'] : null,

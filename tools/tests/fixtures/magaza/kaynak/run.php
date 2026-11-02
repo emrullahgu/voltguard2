@@ -18,6 +18,65 @@ if (!is_array($in)) {
     exit(2);
 }
 
+/* Ozel veriyi parcali bicimde yazar (kaynaklar.json ayarlar, kaynak/<parca>.json); sira dosyasi yeniden kurulur. */
+function t_write_config(string $d, array $config): void
+{
+    $sources = is_array($config['sources'] ?? null) ? $config['sources'] : [];
+    unset($config['sources']);
+    vgm_write($d, 'kaynaklar.json', $config);
+    vgm_rmdir($d . '/kaynak');
+    $shards = [];
+    foreach ($sources as $id => $list) {
+        $shards[vgm_shard_of((string)$id)][$id] = $list;
+    }
+    foreach ($shards as $s => $map) {
+        vgm_write($d, 'kaynak/' . $s . '.json', $map, 16777216);
+    }
+    @unlink($d . '/fiyat-sira.json');
+    vgm_sources_raw('');
+}
+
+function t_write_prices(string $d, array $state): void
+{
+    vgm_rmdir($d . '/fiyat');
+    $byShard = [];
+    foreach ((array)($state['items'] ?? []) as $id => $item) {
+        $byShard[vgm_shard_of((string)$id)][$id] = $item;
+    }
+    foreach ($byShard as $s => $map) {
+        vgm_write($d, 'fiyat/' . $s . '.json', $map);
+    }
+    vgm_status_update($d, ['lastRunAt' => $state['lastRunAt'] ?? null, 'lastRunSummary' => $state['lastRunSummary'] ?? null, 'problems' => []]);
+    @unlink($d . '/fiyat-sira.json');
+}
+
+/** Tum fiyat parcalari + fiyat-durum.json: {items, lastRunAt, lastRunSummary, problems}. */
+function t_read_prices(string $d): array
+{
+    $items = [];
+    $files = glob($d . '/fiyat/*.json') ?: [];
+    sort($files);
+    foreach ($files as $f) {
+        $items += vgm_read_map($d, 'fiyat/' . basename($f));
+    }
+    ksort($items);
+    $s = vgm_status_read($d);
+    return ['items' => $items, 'lastRunAt' => $s['lastRunAt'] ?? null, 'lastRunSummary' => $s['lastRunSummary'] ?? null,
+        'problems' => $s['problems']];
+}
+
+/** Ozel klasordeki dosyalar (goreli, sirali). */
+function t_files(string $d): array
+{
+    $out = [];
+    $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($d, FilesystemIterator::SKIP_DOTS));
+    foreach ($it as $f) {
+        $out[] = str_replace('\\', '/', substr($f->getPathname(), strlen($d) + 1));
+    }
+    sort($out);
+    return $out;
+}
+
 try {
     $out = null;
     switch ((string)($in['op'] ?? '')) {
@@ -73,18 +132,81 @@ try {
             break;
         case 'refresh':
             $dir = vgm_locked(true, function (string $d) use ($in): string {
-                foreach (['config' => 'kaynaklar.json', 'prices' => 'fiyatlar.json', 'rate' => 'kur.json'] as $key => $file) {
-                    if (isset($in[$key])) {
-                        vgm_write($d, $file, (array)$in[$key]);
-                    }
+                if (isset($in['config'])) {
+                    t_write_config($d, (array)$in['config']);
+                }
+                if (isset($in['prices'])) {
+                    t_write_prices($d, (array)$in['prices']);
+                }
+                if (isset($in['rate'])) {
+                    vgm_write($d, 'kur.json', (array)$in['rate']);
                 }
                 return $d;
             });
             $summary = vgm_refresh((array)($in['opts'] ?? []));
             $state = vgm_locked(false, function (string $d): array {
-                return [vgm_prices_state($d), vgm_rate_state($d)];
+                return [t_read_prices($d), vgm_rate_state($d), vgm_queue_read($d)];
             });
-            $out = ['summary' => $summary, 'prices' => $state[0], 'rate' => $state[1], 'dir' => $dir];
+            $out = ['summary' => $summary, 'prices' => $state[0], 'rate' => $state[1], 'queue' => $state[2]['items'], 'dir' => $dir];
+            break;
+        case 'legacy':
+            /* Eski tek dosyali ozel veri (kaynaklar.json icinde sources + fiyatlar.json) ilk kilitte parcalara tasinir. */
+            $d = vgm_dir();
+            file_put_contents($d . '/kaynaklar.json', json_encode($in['config']));
+            file_put_contents($d . '/fiyatlar.json', json_encode($in['prices']));
+            $state = vgm_locked(false, function (string $dd): array {
+                return [vgm_config($dd), t_read_prices($dd), vgm_queue_read($dd)['items']];
+            });
+            $out = ['files' => t_files($d), 'config' => $state[0], 'prices' => $state[1], 'queue' => $state[2],
+                'sources' => vgm_sources_many($state[0], array_keys((array)($in['config']['sources'] ?? [])))];
+            break;
+        case 'due':
+            $out = vgm_due_order((array)$in['queue'], (int)$in['now'], (int)($in['age'] ?? 72000), (int)($in['retry'] ?? 7200));
+            break;
+        case 'catalog':
+            /* Katalog okuma API'si (VG_MAGAZA_CATALOG dizini): istenen sorgularin sonuclari. */
+            $out = [];
+            foreach ((array)$in['calls'] as $call) {
+                $fn = (string)$call[0];
+                $arg = $call[1] ?? null;
+                if ($fn === 'categories') {
+                    $r = [];
+                    foreach (vgm_categories() as $id => $c) {
+                        $r[] = [$id, $c['parent'], $c['children'], $c['count']];
+                    }
+                    $out[] = $r;
+                } elseif ($fn === 'list') {
+                    $out[] = array_map(function (array $c): array {
+                        return [$c['id'], $c['category']];
+                    }, vgm_list((string)$arg));
+                } elseif ($fn === 'product') {
+                    $p = vgm_product((string)$arg);
+                    $out[] = $p === null ? null : [$p['id'], $p['slug'], $p['category'], $p['vat'], $p['maxQty']];
+                } elseif ($fn === 'slug') {
+                    $p = vgm_product_by_slug((string)$arg);
+                    $out[] = $p === null ? null : $p['id'];
+                } elseif ($fn === 'search') {
+                    $r = vgm_search((string)$arg, (int)($call[2] ?? 96));
+                    $out[] = ['ids' => array_column($r['items'], 'id'), 'total' => $r['total']];
+                } elseif ($fn === 'ids') {
+                    $n = 0;
+                    $first = null;
+                    foreach (vgm_product_ids() as $id => $cat) {
+                        $first = $first ?? [$id, $cat];
+                        $n++;
+                    }
+                    $out[] = ['count' => $n, 'first' => $first];
+                } elseif ($fn === 'manifest') {
+                    $out[] = vgm_manifest();
+                } else {
+                    $out[] = 'unknown';
+                }
+            }
+            break;
+        case 'queue':
+            $out = vgm_locked(false, function (string $d): array {
+                return ['queue' => vgm_queue_read($d)['items'], 'status' => vgm_status_read($d), 'files' => t_files($d)];
+            });
             break;
         case 'price':
             $out = vgm_price((array)$in['product'], isset($in['item']) ? (array)$in['item'] : null, isset($in['rate']) ? (array)$in['rate'] : null,

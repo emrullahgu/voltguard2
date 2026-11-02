@@ -4,6 +4,8 @@
  * Herkese acik: fiyatlar (GET), sepet, onbilgi, siparis, durum (POST). Panel islemleri: oturum (VGSESS) + Origin +
  * X-VG-CSRF + sunucuda atanmis magaza yetkisi (tools/magaza-admin.php grant). Herkese acik yanitlarda tedarikci,
  * maliyet, marj ve USD tutar YOKTUR (api/MAGAZA.md kural 5 ve sahibin "sayfada TL" karari).
+ * Hicbir islem tum urunleri dolasmaz (50.000 urun): fiyatlar yalnizca istenen kimlikleri, panel sorun listesini
+ * (fiyat-durum.json) ve sayimlari (fiyat-sira.json, manifest.json) okur.
  */
 declare(strict_types=1);
 
@@ -103,13 +105,23 @@ function vgm_public_action(string $action, array $body, int $now): array
         if (($retry = vg_rl_hit('vgm_read', vg_rl_ip_key(), 240, 60)) > 0) {
             vg_too_many($retry);
         }
-        list($config, $state, $rate) = vgm_locked(false, function (string $dir): array {
-            return [vgm_config($dir), vgm_prices_state($dir), vgm_rate_state($dir)];
+        /* ?ids=vgm-0101,vgm-0102 (en cok 100): yalnizca istenen urunlerin fiyati. */
+        $ids = array_values(array_unique(array_filter(explode(',', vgm_get_param('ids')), function (string $id): bool {
+            return vgm_id_valid($id);
+        })));
+        if (!$ids || count($ids) > 100) {
+            vg_fail(422, 'invalid_ids', 'En az bir, en çok 100 ürün kimliği verin (?ids=vgm-0101,vgm-0102).');
+        }
+        list($config, $state, $rate) = vgm_locked(false, function (string $dir) use ($ids): array {
+            return [vgm_config($dir), vgm_price_items($dir, $ids), vgm_rate_state($dir)];
         });
         $open = vgm_shop_open($config);
         $items = [];
-        foreach (vgm_catalog()['products'] as $id => $p) {
-            $items[$id] = vgm_public_price(vgm_price($p, $state['items'][$id] ?? null, $rate, $config, $open, $now));
+        foreach ($ids as $id) {
+            $p = vgm_product($id);
+            if ($p !== null) {
+                $items[$id] = vgm_public_price(vgm_price($p, $state[$id] ?? null, $rate, $config, $open, $now));
+            }
         }
         return ['open' => $open, 'rate' => vgm_rate_ok($rate, $now) ? ['date' => (string)$rate['date']] : null, 'items' => $items,
             'generatedAt' => vg_iso($now)];
@@ -205,27 +217,33 @@ function vgm_panel_price_row(array $p, ?array $s, ?array $rate, array $config, b
         'method' => $s['method'] ?? null, 'sources' => $sources];
 }
 
-function vgm_panel_status(int $now): array
+/** Sira dosyasindan sayimlar (kaynagi olan urunler) ve kaynaksiz urun sayisi (manifest). */
+function vgm_panel_counts(array $queue, int $products, int $now): array
 {
-    list($config, $state, $rate, $orders) = vgm_locked(false, function (string $dir): array {
-        return [vgm_config($dir), vgm_prices_state($dir), vgm_rate_state($dir), vgm_orders_read($dir)['orders']];
-    });
-    $open = vgm_shop_open($config);
     $counts = ['ok' => 0, 'held' => 0, 'error' => 0, 'unavailable' => 0, 'stale' => 0, 'noSource' => 0];
-    foreach (vgm_catalog()['products'] as $id => $p) {
-        $s = $state['items'][$id] ?? null;
-        if (vgm_sources($config, $id) === []) {
-            $counts['noSource']++;
-            continue;
-        }
-        $st = (string)($s['status'] ?? 'error');
+    foreach ($queue as $e) {
+        $st = is_array($e) && is_string($e[2] ?? null) ? $e[2] : 'error';
         if (isset($counts[$st])) {
             $counts[$st]++;
         }
-        if (!isset($s['checkedAt']) || $now - (int)$s['checkedAt'] > VGM_PRICE_MAX_AGE) {
+        $at = is_array($e) ? (int)($e[0] ?? 0) : 0;
+        if ($at === 0 || $now - $at > VGM_PRICE_MAX_AGE) {
             $counts['stale']++;
         }
     }
+    $counts['noSource'] = max(0, $products - count($queue));
+    return $counts;
+}
+
+function vgm_panel_status(int $now): array
+{
+    vgm_queue_ensure();
+    list($config, $queue, $status, $rate, $orders) = vgm_locked(false, function (string $dir): array {
+        return [vgm_config($dir), vgm_queue_read($dir)['items'], vgm_status_read($dir), vgm_rate_state($dir), vgm_orders_read($dir)['orders']];
+    });
+    $open = vgm_shop_open($config);
+    $products = vgm_manifest()['products'];
+    $counts = vgm_panel_counts($queue, $products, $now);
     $awaiting = 0;
     $overdue = 0;
     foreach ($orders as $o) {
@@ -236,14 +254,17 @@ function vgm_panel_status(int $now): array
             }
         }
     }
-    $last = is_int($state['lastRunAt'] ?? null) ? $state['lastRunAt'] : null;
+    $last = is_int($status['lastRunAt'] ?? null) ? $status['lastRunAt'] : null;
+    $healthyAfter = defined('VGM_HEALTHY_AFTER') ? (int)constant('VGM_HEALTHY_AFTER') : 1800;
+    $sourced = count($queue);
     return ['open' => $open, 'configOpen' => ($config['open'] ?? false) === true, 'firmaMissing' => vgm_firma_missing(vgm_firma()),
         'rate' => $rate !== null ? ['usdTry' => (float)$rate['usdTry'], 'date' => (string)($rate['date'] ?? ''),
             'fetchedAt' => isset($rate['fetchedAt']) ? vg_iso((int)$rate['fetchedAt']) : null, 'ok' => vgm_rate_ok($rate, $now)] : null,
-        'cron' => ['lastRunAt' => $last !== null ? vg_iso($last) : null, 'healthy' => $last !== null && $now - $last <= 46800,
-            'summary' => $state['lastRunSummary'] ?? null],
+        'cron' => ['lastRunAt' => $last !== null ? vg_iso($last) : null, 'healthy' => $last !== null && $now - $last <= $healthyAfter,
+            'summary' => $status['lastRunSummary'] ?? null,
+            'freshShare' => $sourced > 0 ? round(($sourced - $counts['stale']) / $sourced, 4) : null],
         'counts' => $counts, 'orders' => ['awaitingPayment' => $awaiting, 'overdue' => $overdue],
-        'products' => count(vgm_catalog()['products'])];
+        'products' => $products];
 }
 
 function vgm_panel_action(string $action, array $body, array $user, int $now): array
@@ -268,16 +289,45 @@ function vgm_panel_action(string $action, array $body, array $user, int $now): a
             unset($order['_mailSent']);
             return ['order' => $order, 'allowed' => VGM_TRANSITIONS[$order['status']] ?? [], 'mailSent' => $mailSent];
         case 'panel_prices':
-            list($config, $state, $rate) = vgm_locked(false, function (string $dir): array {
-                return [vgm_config($dir), vgm_prices_state($dir), vgm_rate_state($dir)];
+            /* Sorunlu urunler (fiyat-durum.json, en cok 300) + ?q= ile aranan urunler (kimlik ya da ad/marka/model, en cok 50). */
+            $q = vg_text(vgm_get_param('q'), 80);
+            vgm_queue_ensure();
+            list($config, $status, $rate, $queue) = vgm_locked(false, function (string $dir): array {
+                return [vgm_config($dir), vgm_status_read($dir), vgm_rate_state($dir), vgm_queue_read($dir)['items']];
+            });
+            $problemIds = array_keys($status['problems']);
+            sort($problemIds, SORT_STRING);
+            $ids = [];
+            $matched = [];
+            if ($q !== '') {
+                if (vgm_id_valid(strtolower($q))) {
+                    $matched[strtolower($q)] = true;
+                } else {
+                    foreach (vgm_search($q, 50, false)['items'] as $card) {
+                        $matched[$card['id']] = true;
+                    }
+                }
+                $ids = array_keys($matched);
+            }
+            foreach (array_slice($problemIds, 0, 300) as $id) {
+                $ids[] = (string)$id;
+            }
+            $ids = array_values(array_unique($ids));
+            $prices = vgm_locked(false, function (string $dir) use ($ids): array {
+                return vgm_price_items($dir, $ids);
             });
             $open = vgm_shop_open($config);
             $items = [];
-            foreach (vgm_catalog()['products'] as $id => $p) {
-                $items[] = vgm_panel_price_row($p, $state['items'][$id] ?? null, $rate, $config, $open, $now);
+            foreach ($ids as $id) {
+                $p = vgm_product($id);
+                if ($p !== null) {
+                    $items[] = vgm_panel_price_row($p, $prices[$id] ?? null, $rate, $config, $open, $now) + ['match' => isset($matched[$id])];
+                }
             }
-            return ['rate' => $rate, 'lastRunAt' => isset($state['lastRunAt']) ? vg_iso((int)$state['lastRunAt']) : null,
-                'lastRunSummary' => $state['lastRunSummary'] ?? null, 'items' => $items];
+            $products = vgm_manifest()['products'];
+            return ['rate' => $rate, 'lastRunAt' => isset($status['lastRunAt']) ? vg_iso((int)$status['lastRunAt']) : null,
+                'lastRunSummary' => $status['lastRunSummary'] ?? null, 'items' => $items, 'query' => $q,
+                'problems' => count($problemIds), 'counts' => vgm_panel_counts($queue, $products, $now), 'products' => $products];
         case 'panel_price_decide':
             $id = is_string($body['id'] ?? null) ? $body['id'] : '';
             $p = vgm_product($id);
@@ -294,8 +344,7 @@ function vgm_panel_action(string $action, array $body, array $user, int $now): a
                 vg_fail(422, 'note_required', 'Elle girilen fiyatın kaynağını not olarak yazın (ör. tedarikçiyle telefonda teyit).');
             }
             $item = vgm_locked(true, function (string $dir) use ($p, $decision, $note, $cost, $body, $user, $now): array {
-                $state = vgm_prices_state($dir);
-                $item = $state['items'][$p['id']] ?? null;
+                $item = vgm_price_item($dir, $p['id']);
                 if ($decision === 'manual') {
                     $rate = vgm_rate_state($dir);
                     if (!vgm_rate_ok($rate, $now)) {
@@ -311,14 +360,15 @@ function vgm_panel_action(string $action, array $body, array $user, int $now): a
                     }
                     $item = vgm_decide_held($item, $decision, $note, $now);
                 }
-                $state['items'][$p['id']] = $item;
-                vgm_write($dir, 'fiyatlar.json', $state);
+                vgm_prices_put($dir, [$p['id'] => $item]);
                 return $item;
             });
             return ['item' => $item];
         case 'panel_check_now':
+            /* {id}: tek urun; {batch: true}: zamani gelen en cok 5 urun (istek suresi icinde, kalp atisi yazmaz). */
+            $batch = ($body['batch'] ?? false) === true;
             $id = is_string($body['id'] ?? null) ? $body['id'] : '';
-            if (vgm_product($id) === null) {
+            if (!$batch && vgm_product($id) === null) {
                 vg_fail(422, 'invalid_request', 'Ürün bulunamadı.');
             }
             if (!function_exists('vgm_refresh')) {
@@ -327,9 +377,26 @@ function vgm_panel_action(string $action, array $body, array $user, int $now): a
             if (($retry = vg_rl_hit('vgm_check', $user['id'], 20, 600)) > 0) {
                 vg_too_many($retry);
             }
+            if ($batch) {
+                /* Zamanlanmis calismayla ayni kilit: cron calisiyorsa ayni urunler iki kez getirilmez. */
+                $lock = @fopen(vgm_dir() . '/cron.lock', 'c+');
+                if ($lock === false || !flock($lock, LOCK_EX | LOCK_NB)) {
+                    if ($lock !== false) {
+                        fclose($lock);
+                    }
+                    vg_fail(409, 'cron_running', 'Zamanlanmış fiyat kontrolü şu anda çalışıyor; birkaç dakika sonra yeniden deneyin.');
+                }
+                try {
+                    $summary = vgm_refresh(['ids' => null, 'live' => false, 'budget' => 20, 'max' => 5, 'rates' => true, 'heartbeat' => false]);
+                } finally {
+                    flock($lock, LOCK_UN);
+                    fclose($lock);
+                }
+                return ['item' => null, 'summary' => $summary];
+            }
             $summary = vgm_refresh(['ids' => [$id], 'live' => false, 'budget' => 25, 'max' => 3, 'spacing' => 0, 'rates' => true]);
             $item = vgm_locked(false, function (string $dir) use ($id): ?array {
-                return vgm_prices_state($dir)['items'][$id] ?? null;
+                return vgm_price_item($dir, $id);
             });
             return ['item' => $item, 'summary' => $summary];
         case 'panel_status':

@@ -27,6 +27,12 @@ const VGM_MAX_FILE = 4194304;            // ozel JSON dosyalari (4 MiB)
 const VGM_ORDERS_MAX = 33554432;         // siparisler.json (32 MiB)
 const VGM_REF_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const VGM_DEFAULT_VAT = 20;
+/* Adet sinirlari katalog semasiyla ayni (tools/magaza/katalog-ortak.cjs: maxQty 1-999, packQty 1-9999; js/magaza.js MAX_QTY).
+   Metreyle satilan kablolarda da en cok 999 m tek sipariste; daha fazlasi proforma ile (tools/tests/magaza-api.test.cjs). */
+const VGM_MAX_QTY = 999;
+const VGM_MAX_PACK = 9999;
+const VGM_DEFAULT_MAX_QTY = 50;
+const VGM_SHARD_CACHE = 16;              // bellekte tutulan en cok urun/kaynak parcasi (uzun cron calismasi; ~1 MB/parca)
 const VGM_STATUS_LABELS = [
     'odeme_bekleniyor' => 'Ödeme bekleniyor',
     'odeme_alindi' => 'Ödeme alındı',
@@ -61,7 +67,17 @@ function vgm_dir(): string
 /** Tum magaza yazmalari tek kilitte; okumalar paylasimli kilitte. */
 function vgm_locked(bool $write, callable $work)
 {
+    static $migrated = [];
     $dir = vgm_dir();
+    if (!isset($migrated[$dir])) {
+        /* Eski tek dosyali ozel veri (kaynaklar.json icinde sources, fiyatlar.json) ilk kullanimda parcalara tasinir. */
+        $migrated[$dir] = true;
+        if (vgm_legacy_present($dir)) {
+            vgm_locked(true, function (string $d): void {
+                vgm_migrate_legacy($d);
+            });
+        }
+    }
     $file = $dir . '/store.lock';
     $fp = @fopen($file, 'c+');
     if ($fp === false) {
@@ -113,6 +129,10 @@ function vgm_write(string $dir, string $name, array $state, int $max = VGM_MAX_F
         vg_fail(507, 'storage_full', 'Mağaza kayıt sınırına ulaşıldı. Lütfen bizi telefonla arayın.');
     }
     $file = $dir . '/' . $name;
+    $parent = dirname($file);
+    if (!is_dir($parent) && !@mkdir($parent, 0700, true) && !is_dir($parent)) {
+        vg_unavailable('magaza storage directory cannot be created');
+    }
     $tmp = $file . '.' . bin2hex(random_bytes(8)) . '.tmp';
     $fp = @fopen($tmp, 'x+b');
     if ($fp === false) {
@@ -133,7 +153,16 @@ function vgm_write(string $dir, string $name, array $state, int $max = VGM_MAX_F
         }
         fclose($fp);
         $fp = null;
-        if (!@rename($tmp, $file)) {
+        // Windows'ta hedef dosyayi baska bir surec (onizleme sunucusu) o an okurken rename basarisiz olur; kisa
+        // aralikla birkac kez denenir. Linux'ta rename ilk denemede atomiktir.
+        $renamed = false;
+        for ($try = 0; $try < 8 && !$renamed; $try++) {
+            if ($try > 0) {
+                usleep(25000 * $try);
+            }
+            $renamed = @rename($tmp, $file);
+        }
+        if (!$renamed) {
             vg_unavailable('magaza atomic replacement failed');
         }
         @chmod($file, 0600);
@@ -147,9 +176,9 @@ function vgm_write(string $dir, string $name, array $state, int $max = VGM_MAX_F
     }
 }
 
-/* ------------------------------------------------------------------ herkese acik katalog ve satici */
+/* ------------------------------------------------------------------ herkese acik katalog (v2, parcali) ve satici */
 
-/** Katalog/satici dosyasi. VG_MAGAZA_CATALOG / VG_MAGAZA_FIRMA yalnizca testlerde sentetik veri icin verilir. */
+/** Satici dosyasi. VG_MAGAZA_FIRMA yalnizca testlerde sentetik veri icin verilir. */
 function vgm_lib_file(string $name, string $env): string
 {
     $override = getenv($env);
@@ -159,60 +188,382 @@ function vgm_lib_file(string $name, string $env): string
     return __DIR__ . '/magaza/' . $name;
 }
 
-/** api/lib/magaza/katalog.json: urunler id ile, slug -> id ve siralanmis kategoriler. Bozuk kayit atlanir. */
-function vgm_catalog(): array
+/** Katalog dizini (api/lib/magaza/katalog/). VG_MAGAZA_CATALOG (dizin) yalnizca testlerde ve sentetik veriyle verilir. */
+function vgm_catalog_dir(): string
 {
-    static $catalog = null;
-    if ($catalog !== null) {
-        return $catalog;
+    $override = getenv('VG_MAGAZA_CATALOG');
+    if (is_string($override) && $override !== '' && is_dir($override)) {
+        return rtrim(str_replace('\\', '/', $override), '/');
     }
-    $raw = @file_get_contents(vgm_lib_file('katalog.json', 'VG_MAGAZA_CATALOG'));
-    $data = is_string($raw) ? json_decode($raw, true, 64) : null;
-    if (!is_array($data) || ($data['version'] ?? null) !== 1 || !is_array($data['products'] ?? null)
-        || !is_array($data['categories'] ?? null)) {
+    return __DIR__ . '/magaza/katalog';
+}
+
+/** Kimligin sayisal kismi / 100, dort haneli (urun/<parca>.json ve ozel fiyat/kaynak parcalari). */
+function vgm_shard_of(string $id): string
+{
+    return sprintf('%04d', intdiv((int)substr($id, 4), 100));
+}
+
+function vgm_id_valid(string $id): bool
+{
+    return preg_match('/^vgm-[0-9]{4,6}$/D', $id) === 1;
+}
+
+/** Katalog dosyasi (yoksa null; bozuksa 503). $max: bayt siniri. */
+function vgm_catalog_json(string $rel, int $max = 67108864): ?array
+{
+    $file = vgm_catalog_dir() . '/' . $rel;
+    if (!is_file($file)) {
+        return null;
+    }
+    $raw = @file_get_contents($file, false, null, 0, $max + 1);
+    $data = is_string($raw) && strlen($raw) <= $max ? json_decode($raw, true, 32) : null;
+    if (!is_array($data)) {
+        vg_unavailable('magaza catalog file is invalid (' . $rel . ')');
+    }
+    return $data;
+}
+
+/**
+ * Kategoriler (sira: order, sonra id). Her kayitta 'children' (alt kategori kimlikleri, sirali) ve 'count'
+ * (alt kategoriler dahil urun sayisi) bulunur. kategoriler.json yoksa/bozuksa 503.
+ */
+function vgm_categories(): array
+{
+    static $cache = [];
+    $dir = vgm_catalog_dir();
+    if (isset($cache[$dir])) {
+        return $cache[$dir];
+    }
+    $data = vgm_catalog_json('kategoriler.json', 4194304);
+    if ($data === null || ($data['version'] ?? null) !== 2 || !is_array($data['categories'] ?? null)) {
         vg_unavailable('magaza catalog is invalid');
     }
-    $categories = [];
+    $cats = [];
     foreach ($data['categories'] as $c) {
         if (is_array($c) && is_string($c['id'] ?? null) && preg_match('/^[a-z0-9-]{2,60}$/D', $c['id']) === 1) {
-            $categories[$c['id']] = $c;
+            $c['parent'] = is_string($c['parent'] ?? null) ? $c['parent'] : null;
+            $c['count'] = is_int($c['count'] ?? null) ? $c['count'] : 0;
+            $c['children'] = [];
+            $cats[$c['id']] = $c;
         }
     }
-    uasort($categories, function (array $a, array $b): int {
-        return ((int)($a['order'] ?? 0)) <=> ((int)($b['order'] ?? 0));
+    uasort($cats, function (array $a, array $b): int {
+        return ((int)($a['order'] ?? 0)) <=> ((int)($b['order'] ?? 0)) ?: strcmp((string)$a['id'], (string)$b['id']);
     });
-    $products = [];
-    $slugs = [];
-    foreach ($data['products'] as $p) {
-        if (!is_array($p) || !is_string($p['id'] ?? null) || preg_match('/^vgm-[0-9]{4,6}$/D', $p['id']) !== 1
-            || !is_string($p['slug'] ?? null) || preg_match('/^[a-z0-9-]{3,90}$/D', $p['slug']) !== 1
-            || !is_string($p['name'] ?? null) || !isset($categories[$p['category'] ?? ''])
-            || isset($products[$p['id']]) || isset($slugs[$p['slug']])) {
-            continue;
+    foreach ($cats as $id => $c) {
+        if ($c['parent'] !== null) {
+            if (isset($cats[$c['parent']]) && $cats[$c['parent']]['parent'] === null) {
+                $cats[$c['parent']]['children'][] = $id;
+            } else {
+                $cats[$id]['parent'] = null;   // gecersiz ust kategori: ust duzey sayilir
+            }
         }
-        $p['vat'] = is_int($p['vat'] ?? null) && $p['vat'] >= 0 && $p['vat'] <= 30 ? $p['vat'] : VGM_DEFAULT_VAT;
-        $p['shipping'] = ($p['shipping'] ?? '') === 'nakliye' ? 'nakliye' : 'kargo';
-        $p['maxQty'] = is_int($p['maxQty'] ?? null) && $p['maxQty'] >= 1 && $p['maxQty'] <= 999 ? $p['maxQty'] : 50;
-        $products[$p['id']] = $p;
-        $slugs[$p['slug']] = $p['id'];
     }
-    return $catalog = ['categories' => $categories, 'products' => $products, 'slugs' => $slugs];
-}
-
-function vgm_product(string $id): ?array
-{
-    return vgm_catalog()['products'][$id] ?? null;
-}
-
-function vgm_product_by_slug(string $slug): ?array
-{
-    $c = vgm_catalog();
-    return isset($c['slugs'][$slug]) ? $c['products'][$c['slugs'][$slug]] : null;
+    return $cache[$dir] = $cats;
 }
 
 function vgm_category(string $id): ?array
 {
-    return vgm_catalog()['categories'][$id] ?? null;
+    return vgm_categories()[$id] ?? null;
+}
+
+/** Katalogdaki urun sayisi (manifest.json). */
+function vgm_manifest(): array
+{
+    $m = vgm_catalog_json('manifest.json', 65536);
+    return ['products' => is_array($m) && is_int($m['products'] ?? null) ? $m['products'] : 0,
+        'generatedAt' => is_array($m) && is_string($m['generatedAt'] ?? null) ? $m['generatedAt'] : null];
+}
+
+/** Liste karti ya da urun kaydi: varsayilanlar (KDV, gonderim, en cok adet). */
+function vgm_product_defaults(array $p): array
+{
+    $p['vat'] = is_int($p['vat'] ?? null) && $p['vat'] >= 0 && $p['vat'] <= 30 ? $p['vat'] : VGM_DEFAULT_VAT;
+    $p['shipping'] = ($p['shipping'] ?? '') === 'nakliye' ? 'nakliye' : 'kargo';
+    $p['maxQty'] = is_int($p['maxQty'] ?? null) && $p['maxQty'] >= 1 && $p['maxQty'] <= VGM_MAX_QTY ? $p['maxQty'] : VGM_DEFAULT_MAX_QTY;
+    /* Adet kurallari (P1-09; katalog dogrulayicisi: minQty step kati, ikisi de <= maxQty). Tutarsiz deger sayfadaki
+       vgmr_qty_rules ile ayni sekilde duzeltilir: en az adet adimin katina yukari yuvarlanir, maxQty'yi asamaz. */
+    $step = is_int($p['step'] ?? null) && $p['step'] >= 1 ? min($p['step'], $p['maxQty']) : 1;
+    $min = is_int($p['minQty'] ?? null) && $p['minQty'] >= 1 ? min($p['minQty'], $p['maxQty']) : 1;
+    if ($min % $step !== 0) {
+        $min = min((int)ceil($min / $step) * $step, $p['maxQty']);
+    }
+    $p['minQty'] = $min;
+    $p['step'] = $step;
+    $p['packQty'] = is_int($p['packQty'] ?? null) && $p['packQty'] >= 1 && $p['packQty'] <= VGM_MAX_PACK ? $p['packQty'] : null;
+    /* Tahmini kargoya verilis suresi (gun, 1-30; P1-10): istege bagli; gecersizse alan kaldirilir (kategori varsayilani). */
+    if (!is_int($p['deliveryDays'] ?? null) || $p['deliveryDays'] < 1 || $p['deliveryDays'] > 30) {
+        unset($p['deliveryDays']);
+    }
+    return $p;
+}
+
+/**
+ * Tahmini kargoya verilis suresi (gun, 1-30; P1-10): urunun deliveryDays'i, yoksa yaprak kategorisinin, yoksa ust
+ * kategorisinin deliveryDays'i, yoksa null (= "en gec 30 gun"). Sepet satiri, siparis kaydi/belgeleri ve urun sayfasi ayni
+ * degeri kullanir.
+ */
+function vgm_delivery_days(array $p): ?int
+{
+    $ok = function ($d): bool {
+        return is_int($d) && $d >= 1 && $d <= 30;
+    };
+    if ($ok($p['deliveryDays'] ?? null)) {
+        return $p['deliveryDays'];
+    }
+    $c = vgm_category((string)($p['category'] ?? ''));
+    for ($depth = 0; is_array($c) && $depth < 2; $depth++) {
+        if ($ok($c['deliveryDays'] ?? null)) {
+            return $c['deliveryDays'];
+        }
+        $c = is_string($c['parent'] ?? null) ? vgm_category($c['parent']) : null;
+    }
+    return null;
+}
+
+function vgm_record_ok($p): bool
+{
+    return is_array($p) && is_string($p['id'] ?? null) && vgm_id_valid($p['id'])
+        && is_string($p['slug'] ?? null) && preg_match('/^[a-z0-9-]{3,90}$/D', $p['slug']) === 1 && is_string($p['name'] ?? null);
+}
+
+/** Bir kategorinin kendi liste dosyasi (alt kategoriler haric); kartlarda 'category' alani vardir. */
+function vgm_list_file(string $categoryId): array
+{
+    $data = vgm_catalog_json('liste/' . $categoryId . '.json');
+    $cards = [];
+    if ($data !== null && ($data['version'] ?? null) === 2 && is_array($data['items'] ?? null)) {
+        foreach ($data['items'] as $card) {
+            if (vgm_record_ok($card)) {
+                $card['category'] = $categoryId;
+                $cards[] = vgm_product_defaults($card);
+            }
+        }
+    }
+    return $cards;
+}
+
+/**
+ * Kategorinin liste kartlari (yazici sirasi: marka, sonra ad). Ust kategoride kendi listesi ve alt kategorilerin
+ * listeleri (alt kategori sirasiyla) birlestirilir. Her kartta 'category' (kartin bulundugu yaprak kategori) vardir.
+ */
+function vgm_list(string $categoryId): array
+{
+    static $cache = [];
+    $c = vgm_category($categoryId);
+    if ($c === null) {
+        return [];
+    }
+    $out = [];
+    foreach (array_merge([$categoryId], $c['children']) as $cid) {
+        $key = vgm_catalog_dir() . '|' . $cid;
+        if (!isset($cache[$key])) {
+            $cache[$key] = vgm_list_file((string)$cid);
+        }
+        foreach ($cache[$key] as $card) {
+            $out[] = $card;
+        }
+    }
+    return $out;
+}
+
+/** Tek urun: yalnizca kendi parcasi okunur (en cok VGM_SHARD_CACHE parca bellekte tutulur). */
+function vgm_product(string $id): ?array
+{
+    static $shards = [];
+    if (!vgm_id_valid($id)) {
+        return null;
+    }
+    $key = vgm_catalog_dir() . '|' . vgm_shard_of($id);
+    if (!array_key_exists($key, $shards)) {
+        if (count($shards) >= VGM_SHARD_CACHE) {
+            array_shift($shards);
+        }
+        $data = vgm_catalog_json('urun/' . vgm_shard_of($id) . '.json');
+        $shards[$key] = $data !== null && ($data['version'] ?? null) === 2 && is_array($data['products'] ?? null) ? $data['products'] : [];
+    }
+    $p = $shards[$key][$id] ?? null;
+    if (!vgm_record_ok($p) || $p['id'] !== $id || vgm_category((string)($p['category'] ?? '')) === null) {
+        return null;
+    }
+    return vgm_product_defaults($p);
+}
+
+/** Adresten urun: slug/<md5 ilk 2 hane>.json + urunun parcasi (iki dosya). */
+function vgm_product_by_slug(string $slug): ?array
+{
+    if (preg_match('/^[a-z0-9-]{3,90}$/D', $slug) !== 1) {
+        return null;
+    }
+    $map = vgm_catalog_json('slug/' . substr(md5($slug), 0, 2) . '.json', 4194304);
+    $id = is_array($map) && is_string($map[$slug] ?? null) ? $map[$slug] : null;
+    $p = $id !== null ? vgm_product($id) : null;
+    return $p !== null && $p['slug'] === $slug ? $p : null;
+}
+
+/** Arama icin Turkce harfleri ASCII'ye indirger (tools/magaza/katalog-ortak.cjs fold ile ayni). */
+function vgm_fold(string $s): string
+{
+    $s = strtr($s, ['İ' => 'i', 'I' => 'i', 'ı' => 'i', 'Ç' => 'c', 'ç' => 'c', 'Ğ' => 'g', 'ğ' => 'g', 'Ö' => 'o', 'ö' => 'o',
+        'Ş' => 's', 'ş' => 's', 'Ü' => 'u', 'ü' => 'u', 'Â' => 'a', 'â' => 'a', 'Î' => 'i', 'î' => 'i', 'Û' => 'u', 'û' => 'u']);
+    return strtolower($s);
+}
+
+/**
+ * Sorgu terimleri (P1-04): katlanmis, ondalik virgul noktaya ("2,5" -> "2.5"), en cok 8 terim. Her terim bir
+ * alternatif listesidir (biri gecse yeter): tire/nokta/alt cizgi/egik cizgi soyulmus model yazimi da aranir
+ * (5SV5344-6 -> [5sv5344-6, 5sv53446]).
+ */
+function vgm_search_terms(string $q): array
+{
+    $q = (string)preg_replace('/(\d),(\d)/', '$1.$2', vgm_fold(trim($q)));
+    $terms = preg_split('/\s+/', $q, -1, PREG_SPLIT_NO_EMPTY);
+    $out = [];
+    foreach (array_slice(is_array($terms) ? $terms : [], 0, 8) as $t) {
+        $bare = (string)preg_replace('/[-._\/]+/', '', $t);
+        $out[] = $bare !== '' && $bare !== $t ? [$t, $bare] : [$t];
+    }
+    return $out;
+}
+
+/**
+ * Urun arama (arama sayfasi ve personel paneli; P1-04/05). arama.json satiri [id, metin, kategori, anahtarlar, adUzunlugu]
+ * (tools/magaza/katalog-ortak.cjs searchRow). Once tum terimler (AND) aranir; hic sonuc yoksa ve birden cok terim varsa
+ * ($fallback) en az bir terim (OR, mode "or" = "Benzer sonuclar"). Puan: tam model/GTIN (1000) > model on eki (600) >
+ * tum terimler adda (300; kismen terim basina 60) + eslesen terim basina 100 - kisa ad onceligi; esitlikte dizin sirasi.
+ * Doner: items (ilk $limit kart, puan sirasiyla), total, mode, all (kimlik => yaprak kategori, tum isabetler puan
+ * sirasiyla; sayfalama/daraltma icin), facets.category (yaprak kategori => sayi). Marka sayimi liste dosyasi okumayi
+ * gerektirdiginden cagirana (vgm_cards_for) birakilir.
+ */
+function vgm_search(string $q, int $limit = 96, bool $fallback = true): array
+{
+    $alts = vgm_search_terms($q);
+    $empty = ['items' => [], 'total' => 0, 'mode' => 'and', 'all' => [], 'facets' => ['category' => []]];
+    if (!$alts) {
+        return $empty;
+    }
+    $qKey = (string)preg_replace('/[-._\/\s]+/', '', (string)preg_replace('/(\d),(\d)/', '$1.$2', vgm_fold(trim($q))));
+    $prefixRe = strlen($qKey) >= 4 ? '/ ' . preg_quote($qKey, '/') . '[a-z0-9]/' : null;
+    $data = vgm_catalog_json('arama.json');
+    $rows = is_array($data) && ($data['version'] ?? null) === 2 && is_array($data['items'] ?? null) ? $data['items'] : [];
+    unset($data);
+    $need = count($alts);
+    $scored = [];   // id => [puan, sira, kategori]
+    $mode = 'and';
+    foreach ($fallback && $need > 1 ? ['and', 'or'] : ['and'] as $mode) {
+        foreach ($rows as $i => $row) {
+            if (!is_array($row) || !is_string($row[1] ?? null)) {
+                continue;
+            }
+            $text = $row[1];
+            $matched = 0;
+            foreach ($alts as $alt) {
+                foreach ($alt as $t) {
+                    if (strpos($text, $t) !== false) {
+                        $matched++;
+                        break;
+                    }
+                }
+            }
+            if ($matched === 0 || ($mode === 'and' && $matched < $need)) {
+                continue;
+            }
+            $nameLen = is_int($row[4] ?? null) && $row[4] > 0 ? min($row[4], strlen($text)) : strlen($text);
+            $name = substr($text, 0, $nameLen);
+            $keys = ' ' . (is_string($row[3] ?? null) ? $row[3] : '') . ' ';
+            $score = 0;
+            if ($qKey !== '' && strpos($keys, ' ' . $qKey . ' ') !== false) {
+                $score += 1000;
+            } elseif ($prefixRe !== null && preg_match($prefixRe, $keys) === 1) {
+                $score += 600;
+            }
+            $inName = 0;
+            foreach ($alts as $alt) {
+                foreach ($alt as $t) {
+                    if (strpos($name, $t) !== false) {
+                        $inName++;
+                        break;
+                    }
+                }
+            }
+            $score += ($inName === $need ? 300 : $inName * 60) + $matched * 100 - min(99, intdiv($nameLen, 2));
+            $scored[(string)$row[0]] = [$score, $i, (string)($row[2] ?? '')];
+        }
+        if ($scored) {
+            break;
+        }
+    }
+    unset($rows);
+    if (!$scored) {
+        return $empty;
+    }
+    uasort($scored, function (array $a, array $b): int {
+        return $b[0] <=> $a[0] ?: $a[1] <=> $b[1];
+    });
+    $all = [];
+    $cats = [];
+    foreach ($scored as $id => $v) {
+        $all[(string)$id] = $v[2];
+        $cats[$v[2]] = ($cats[$v[2]] ?? 0) + 1;
+    }
+    unset($scored);
+    $items = $limit > 0 ? array_values(vgm_cards_for(array_slice($all, 0, $limit, true))) : [];
+    return ['items' => $items, 'total' => count($all), 'mode' => $mode, 'all' => $all, 'facets' => ['category' => $cats]];
+}
+
+/**
+ * Kimlik => yaprak kategori listesindeki urunlerin liste kartlari (ayni sirayla; kimlik => kart). Her yaprak kategorinin
+ * liste dosyasi onbelleksiz (vgm_list_file) bir kez okunur ve yalnizca istenen kartlar tutulur: en yuksek bellek = en
+ * buyuk tek liste. Katalogdan kalkmis kimlikler atlanir.
+ */
+function vgm_cards_for(array $idToCat): array
+{
+    $byCat = [];
+    foreach ($idToCat as $id => $cat) {
+        $byCat[(string)$cat][(string)$id] = true;
+    }
+    $cards = [];
+    foreach ($byCat as $cat => $ids) {
+        if (vgm_category((string)$cat) === null) {
+            continue;
+        }
+        $list = vgm_list_file((string)$cat);
+        foreach ($list as $card) {
+            if (isset($ids[$card['id']])) {
+                $cards[$card['id']] = $card;
+            }
+        }
+        unset($list);
+    }
+    $out = [];
+    foreach (array_keys($idToCat) as $id) {
+        if (isset($cards[(string)$id])) {
+            $out[(string)$id] = $cards[(string)$id];
+        }
+    }
+    return $out;
+}
+
+/**
+ * Tum liste kartlari (kategori sirasiyla, dosya dosya; bellekte tek liste tutulur). YALNIZCA cron, yonetim araci ve
+ * site haritasi icindir; herkese acik sayfa ve API istekleri kullanmaz.
+ */
+function vgm_all_cards(): Generator
+{
+    foreach (vgm_categories() as $cid => $c) {
+        foreach (vgm_list_file((string)$cid) as $card) {
+            yield $card;
+        }
+    }
+}
+
+/** Tum urun kimlikleri: kimlik => yaprak kategori (vgm_all_cards ile ayni kisit). */
+function vgm_product_ids(): Generator
+{
+    foreach (vgm_all_cards() as $card) {
+        yield $card['id'] => $card['category'];
+    }
 }
 
 /** api/lib/magaza/firma.json: satici kimligi ve banka bilgisi (herkese acik). */
@@ -269,27 +620,204 @@ function vgm_iban_valid(string $iban): bool
     return $rem === 1;
 }
 
-/* ------------------------------------------------------------------ ozel yapilandirma (kaynaklar.json) */
+/* ------------------------------------------------------------------ ozel yapilandirma ve parcali ozel veri */
+/*
+ * vgm_dir()/ altinda (api/MAGAZA.md "Ozel veri"):
+ *   kaynaklar.json        ayarlar (open, margin, shipping, paymentHours, fxBuffer, blockedSuppliers, suppliers)
+ *   kaynak/<parca>.json   {id: [kaynaklar]}         fiyat/<parca>.json  {id: fiyat kaydi}
+ *   fiyat-sira.json       {version: 1, format: 2, items: {id: [checkedAt, lastAttemptAt, durum, sunucu, ardisikHata]}}  zamanlayici
+ *                         ve sayimlar (sunucu: ilk kaynagin alan adi; zamanlayici sunucu basina kuyruklar)
+ *   fiyat-durum.json      {version, lastRunAt, lastRunSummary, rate, problems: {id: durum}}  panel ozeti
+ * Parca = vgm_shard_of(id). Herkese acik istekler yalnizca ilgili urunun parcasini okur.
+ */
 
 function vgm_config_default(): array
 {
     return ['version' => 1, 'open' => false,
         'margin' => ['default' => 0.15, 'byCategory' => [], 'byProduct' => []],
         'shipping' => ['feeTry' => 0.0, 'freeOverTry' => 0.0],
-        'paymentHours' => 24, 'fxBuffer' => 0.0, 'sources' => [], 'blockedSuppliers' => []];
+        'paymentHours' => 24, 'fxBuffer' => 0.0, 'blockedSuppliers' => [], 'suppliers' => []];
 }
 
-/** Cagiran kilidi tutar. Dosya yoksa varsayilan (kapali magaza, kaynak yok). */
+/** Ayarlar (kaynaklar haric). Cagiran kilidi tutar. Dosya yoksa varsayilan (kapali magaza, kaynak yok). */
 function vgm_config(string $dir): array
 {
-    $config = vgm_read($dir, 'kaynaklar.json', vgm_config_default());
-    return array_replace(vgm_config_default(), $config);
+    $config = array_replace(vgm_config_default(), vgm_read($dir, 'kaynaklar.json', vgm_config_default()));
+    unset($config['sources']);
+    return $config;
+}
+
+/** Parcali duz harita dosyasi ({anahtar: deger}); yoksa bos. Bozuksa 503. */
+function vgm_read_map(string $dir, string $rel, int $max = VGM_MAX_FILE): array
+{
+    $file = $dir . '/' . $rel;
+    if (!is_file($file)) {
+        return [];
+    }
+    $bytes = @filesize($file);
+    if ($bytes === false || $bytes > $max) {
+        vg_unavailable('magaza stored file exceeds limits');
+    }
+    $raw = @file_get_contents($file, false, null, 0, $max + 1);
+    $map = is_string($raw) ? json_decode($raw, true, 64) : null;
+    if (!is_array($map)) {
+        vg_unavailable('magaza stored JSON is invalid (' . $rel . ')');
+    }
+    return $map;
+}
+
+/** Parca yazar (bos harita dosyayi siler). Cagiran ozel kilidi tutar. */
+function vgm_write_map(string $dir, string $rel, array $map): void
+{
+    if ($map === []) {
+        if (is_file($dir . '/' . $rel)) {
+            @unlink($dir . '/' . $rel);
+        }
+        return;
+    }
+    vgm_write($dir, $rel, $map, VGM_MAX_FILE);
+}
+
+/** Bir urunun ham kaynak listesi (kaynak/<parca>.json; parcalar bellekte sinirli tutulur). '' onbellegi bosaltir. */
+function vgm_sources_raw(string $id): array
+{
+    static $cache = [];
+    if ($id === '') {
+        $cache = [];
+        return [];
+    }
+    if (!vgm_id_valid($id)) {
+        return [];
+    }
+    $dir = vgm_dir();
+    $key = $dir . '|' . vgm_shard_of($id);
+    if (!array_key_exists($key, $cache)) {
+        if (count($cache) >= VGM_SHARD_CACHE) {
+            array_shift($cache);
+        }
+        $cache[$key] = vgm_read_map($dir, 'kaynak/' . vgm_shard_of($id) . '.json', 16777216);
+    }
+    return is_array($cache[$key][$id] ?? null) ? $cache[$key][$id] : [];
+}
+
+/** Ayarlar + tum kaynaklar (export-config ve testler). Cagiran kilidi tutar. */
+function vgm_config_export(string $dir): array
+{
+    $config = vgm_config($dir);
+    $sources = [];
+    $files = glob($dir . '/kaynak/*.json');
+    sort($files, SORT_STRING);
+    foreach ($files ?: [] as $file) {
+        foreach (vgm_read_map($dir, 'kaynak/' . basename($file), 16777216) as $id => $list) {
+            if (is_array($list) && $list) {
+                $sources[$id] = $list;
+            }
+        }
+    }
+    $config['sources'] = $sources;
+    return $config;
+}
+
+/** Klasoru icerigiyle siler (yalnizca vgm_dir() altindaki gecici kaynak klasorleri). */
+function vgm_rmdir(string $dir): void
+{
+    if (!is_dir($dir)) {
+        return;
+    }
+    foreach (scandir($dir) ?: [] as $f) {
+        if ($f !== '.' && $f !== '..') {
+            $path = $dir . '/' . $f;
+            is_dir($path) ? vgm_rmdir($path) : @unlink($path);
+        }
+    }
+    @rmdir($dir);
+}
+
+/**
+ * Temizlenmis yapilandirmayi yazar (tools/magaza-admin.php import): kaynaklar KILIT DISINDA yeni bir gecici klasorde
+ * parcalanir (50.000 urunde saniyeler surer; bu sirada sayfalar, sepet ve cron calismaya devam eder). Ozel kilit altinda
+ * yalnizca klasor yer degistirir (yarim yazilmis kaynak listesi hic gorunmez), ayarlar kaynaklar.json'a yazilir ve
+ * zamanlayici sirasi bellekteki kaynaklardan + fiyat parcalarindan kurulur. Dondurur: {products, sources, shards}.
+ */
+function vgm_config_store(array $clean): array
+{
+    $sources = is_array($clean['sources'] ?? null) ? $clean['sources'] : [];
+    unset($clean['sources']);
+    ksort($sources, SORT_STRING);
+    $shards = [];
+    $count = 0;
+    foreach ($sources as $id => $list) {
+        $shards[vgm_shard_of((string)$id)][$id] = $list;
+        $count += count($list);
+    }
+    vgm_locked(false, function (string $dir): void {
+        // eski bicimden gecis (vgm_locked) staging'den once tamamlanir
+    });
+    $tmp = vgm_dir() . '/kaynak.yeni-' . bin2hex(random_bytes(6));
+    if (!@mkdir($tmp, 0700)) {
+        vg_unavailable('magaza source staging directory cannot be created');
+    }
+    try {
+        foreach ($shards as $shard => $map) {
+            vgm_write($tmp, $shard . '.json', $map, 16777216);
+        }
+    } catch (Throwable $e) {
+        vgm_rmdir($tmp);
+        throw $e;
+    }
+    $old = vgm_dir() . '/kaynak.eski-' . bin2hex(random_bytes(6));
+    try {
+        return vgm_locked(true, function (string $dir) use ($clean, $sources, $shards, $count, $tmp, $old): array {
+            $live = $dir . '/kaynak';
+            if (is_dir($live) && !@rename($live, $old)) {
+                vg_unavailable('magaza source directory cannot be replaced');
+            }
+            if (!@rename($tmp, $live)) {
+                if (is_dir($old)) {
+                    @rename($old, $live);
+                }
+                vg_unavailable('magaza source directory cannot be replaced');
+            }
+            /* Bos haritalar dosyada {} olarak durur (export-config ile ayni bicim). */
+            foreach (['byCategory', 'byProduct'] as $key) {
+                if (isset($clean['margin']) && is_array($clean['margin']) && empty($clean['margin'][$key])) {
+                    $clean['margin'][$key] = new stdClass();
+                }
+            }
+            if (empty($clean['suppliers'])) {
+                $clean['suppliers'] = new stdClass();
+            }
+            vgm_write($dir, 'kaynaklar.json', $clean);
+            vgm_sources_raw('');
+            vgm_queue_store($dir, vgm_queue_build($dir, $sources));
+            return ['products' => count($sources), 'sources' => $count, 'shards' => count($shards)];
+        });
+    } finally {
+        // gecici ve eski klasorler kilit birakildiktan sonra silinir
+        vgm_rmdir($tmp);
+        if (is_dir(dirname($old) . '/kaynak')) {
+            vgm_rmdir($old);   // geri alma da basarisizsa eski kaynaklar elle kurtarilmak uzere kalir
+        }
+    }
 }
 
 function vgm_host(string $url): string
 {
     $host = parse_url($url, PHP_URL_HOST);
     return is_string($host) ? (string)preg_replace('/^www\./', '', strtolower($host)) : '';
+}
+
+/** Katalogdaki urun kimlikleri kumesi (yalnizca import dogrulamasi; liste dosyalari bir kez taranir). */
+function vgm_known_ids(): array
+{
+    static $ids = null;
+    if ($ids === null) {
+        $ids = [];
+        foreach (vgm_product_ids() as $id => $cat) {
+            $ids[$id] = true;
+        }
+    }
+    return $ids;
 }
 
 /**
@@ -299,8 +827,8 @@ function vgm_host(string $url): string
 function vgm_config_clean(array $in, array &$errors): array
 {
     $errors = [];
-    $catalog = vgm_catalog();
     $out = vgm_config_default();
+    $out['sources'] = [];
     $ratio = function ($v, string $where, float $max) use (&$errors): ?float {
         if (!is_int($v) && !is_float($v)) {
             $errors[] = $where . ': sayı olmalı';
@@ -319,14 +847,14 @@ function vgm_config_clean(array $in, array &$errors): array
     $margin = is_array($in['margin'] ?? null) ? $in['margin'] : [];
     $out['margin']['default'] = $ratio($margin['default'] ?? 0.15, 'margin.default', 1.0) ?? 0.15;
     foreach ((array)($margin['byCategory'] ?? []) as $cat => $v) {
-        if (!isset($catalog['categories'][$cat])) {
+        if (vgm_category((string)$cat) === null) {
             $errors[] = 'margin.byCategory: bilinmeyen kategori ' . $cat;
         } elseif (($m = $ratio($v, 'margin.byCategory.' . $cat, 1.0)) !== null) {
             $out['margin']['byCategory'][$cat] = $m;
         }
     }
     foreach ((array)($margin['byProduct'] ?? []) as $id => $v) {
-        if (!isset($catalog['products'][$id])) {
+        if (!isset(vgm_known_ids()[$id])) {
             $errors[] = 'margin.byProduct: bilinmeyen ürün ' . $id;
         } elseif (($m = $ratio($v, 'margin.byProduct.' . $id, 1.0)) !== null) {
             $out['margin']['byProduct'][$id] = $m;
@@ -352,8 +880,22 @@ function vgm_config_clean(array $in, array &$errors): array
         $blocked[$h] = true;
     }
     $out['blockedSuppliers'] = array_keys($blocked);
+    /* Tedarikci basina istekler arasi en az bekleme (robots.txt Crawl-delay); belirtilmeyen sunucuda 1 sn. */
+    foreach ((array)($in['suppliers'] ?? []) as $host => $opts) {
+        $h = is_string($host) ? (string)preg_replace('/^www\./', '', strtolower(trim($host))) : '';
+        if (preg_match('/^[a-z0-9.-]{3,100}$/D', $h) !== 1 || !is_array($opts)) {
+            $errors[] = 'suppliers: geçersiz alan adı ' . (string)$host;
+            continue;
+        }
+        $spacing = $ratio($opts['spacing'] ?? 1, 'suppliers.' . $h . '.spacing', 300.0);
+        if ($spacing !== null) {
+            $out['suppliers'][$h] = ['spacing' => $spacing];
+        }
+    }
+    ksort($out['suppliers'], SORT_STRING);
+    $known = isset($in['sources']) && is_array($in['sources']) && $in['sources'] ? vgm_known_ids() : [];
     foreach ((array)($in['sources'] ?? []) as $id => $list) {
-        if (!isset($catalog['products'][$id])) {
+        if (!isset($known[$id])) {
             $errors[] = 'sources: bilinmeyen ürün ' . $id;
             continue;
         }
@@ -414,7 +956,10 @@ function vgm_config_clean(array $in, array &$errors): array
 function vgm_margin(array $config, array $p): float
 {
     $m = is_array($config['margin'] ?? null) ? $config['margin'] : [];
-    foreach ([$m['byProduct'][$p['id']] ?? null, $m['byCategory'][$p['category']] ?? null, $m['default'] ?? null] as $v) {
+    $cat = (string)($p['category'] ?? '');
+    $parent = $cat !== '' && is_array($c = vgm_category($cat)) ? (string)($c['parent'] ?? '') : '';
+    foreach ([$m['byProduct'][$p['id']] ?? null, $m['byCategory'][$cat] ?? null, $parent !== '' ? ($m['byCategory'][$parent] ?? null) : null,
+        $m['default'] ?? null] as $v) {
         if ((is_int($v) || is_float($v)) && $v >= 0 && $v <= 1) {
             return (float)$v;
         }
@@ -428,12 +973,13 @@ function vgm_shop_open(array $config): bool
     return ($config['open'] ?? false) === true && vgm_firma_missing(vgm_firma()) === [];
 }
 
-/** Urunun engellenmemis kaynaklari (oncelik sirasiyla). */
+/** Urunun engellenmemis kaynaklari (oncelik sirasiyla). $config['sources'] verilmisse (eski bicim/testler) o kullanilir. */
 function vgm_sources(array $config, string $id): array
 {
     $blocked = array_flip((array)($config['blockedSuppliers'] ?? []));
+    $list = array_key_exists('sources', $config) ? (array)($config['sources'][$id] ?? []) : vgm_sources_raw($id);
     $out = [];
-    foreach ((array)($config['sources'][$id] ?? []) as $i => $src) {
+    foreach ($list as $i => $src) {
         if (is_array($src) && !isset($blocked[$src['supplier'] ?? ''])) {
             $out[$i] = $src;
         }
@@ -441,11 +987,363 @@ function vgm_sources(array $config, string $id): array
     return $out;
 }
 
+/**
+ * Birden cok urunun engellenmemis kaynaklari: id => [kaynak sirasi => kaynak]. Her kaynak parcasi bir kez okunur
+ * (zamanlayici penceresi; onbellege alinmaz). $config['sources'] verilmisse (eski bicim/testler) o kullanilir.
+ */
+function vgm_sources_many(array $config, array $ids): array
+{
+    if (array_key_exists('sources', $config)) {
+        $out = [];
+        foreach ($ids as $id) {
+            if (is_string($id) && ($list = vgm_sources($config, $id)) !== []) {
+                $out[$id] = $list;
+            }
+        }
+        return $out;
+    }
+    $byShard = [];
+    foreach ($ids as $id) {
+        if (is_string($id) && vgm_id_valid($id)) {
+            $byShard[vgm_shard_of($id)][] = $id;
+        }
+    }
+    $blocked = array_flip((array)($config['blockedSuppliers'] ?? []));
+    $dir = vgm_dir();
+    $out = [];
+    foreach ($byShard as $shard => $want) {
+        $map = vgm_read_map($dir, 'kaynak/' . $shard . '.json', 16777216);
+        foreach ($want as $id) {
+            foreach (is_array($map[$id] ?? null) ? $map[$id] : [] as $i => $src) {
+                if (is_array($src) && !isset($blocked[$src['supplier'] ?? ''])) {
+                    $out[$id][$i] = $src;
+                }
+            }
+        }
+    }
+    return $out;
+}
+
+/** Tedarikci sunucusuna istekler arasi en az bekleme (sn): suppliers.<alan>.spacing, yoksa $default. */
+function vgm_spacing(array $config, string $host, float $default): float
+{
+    $s = $config['suppliers'][$host]['spacing'] ?? null;
+    return (is_int($s) || is_float($s)) && $s >= 0 ? (float)$s : $default;
+}
+
 /* ------------------------------------------------------------------ calisma durumu (fiyat, kur) */
 
-function vgm_prices_state(string $dir): array
+/** Istenen urunlerin fiyat kayitlari (yalnizca ilgili parcalar okunur): id => kayit. Kilit gerekmez (atomik yazma). */
+function vgm_price_items(string $dir, array $ids): array
 {
-    return vgm_read($dir, 'fiyatlar.json', ['version' => 1, 'items' => [], 'lastRunAt' => null, 'lastRunSummary' => null]);
+    $byShard = [];
+    foreach ($ids as $id) {
+        if (is_string($id) && vgm_id_valid($id)) {
+            $byShard[vgm_shard_of($id)][$id] = true;
+        }
+    }
+    $out = [];
+    foreach ($byShard as $shard => $want) {
+        $map = vgm_read_map($dir, 'fiyat/' . $shard . '.json');
+        foreach ($want as $id => $true) {
+            if (is_array($map[$id] ?? null)) {
+                $out[$id] = $map[$id];
+            }
+        }
+    }
+    return $out;
+}
+
+function vgm_price_item(string $dir, string $id): ?array
+{
+    return vgm_price_items($dir, [$id])[$id] ?? null;
+}
+
+/** fiyat-durum.json: son zamanlanmis calisma, ozet, kur denemesi ve sorunlu urunler (id => held|error|unavailable). */
+function vgm_status_read(string $dir): array
+{
+    $s = vgm_read($dir, 'fiyat-durum.json', ['version' => 1, 'lastRunAt' => null, 'lastRunSummary' => null, 'rate' => null, 'problems' => []]);
+    $s['problems'] = is_array($s['problems'] ?? null) ? $s['problems'] : [];
+    return $s;
+}
+
+const VGM_QUEUE_FORMAT = 2;              // fiyat-sira.json "format" (version 1 kalir; vgm_read)
+
+/**
+ * Sira kaydi: [checkedAt, lastAttemptAt, durum|null, sunucu, ardisik basarisiz deneme]. Sunucu: ilk (en oncelikli)
+ * kaynagin alan adi; zamanlayici kuyrugu sunucu basina boler. Ardisik hata gecmisten sayilir (geri cekilme).
+ */
+function vgm_queue_entry(?array $item, string $host = ''): array
+{
+    return [is_array($item) && is_int($item['checkedAt'] ?? null) ? $item['checkedAt'] : 0,
+        is_array($item) && is_int($item['lastAttemptAt'] ?? null) ? $item['lastAttemptAt'] : 0,
+        is_array($item) && is_string($item['status'] ?? null) ? $item['status'] : null,
+        $host, vgm_queue_fails($item)];
+}
+
+/** Son basarili kontrolden (ya da personel kararindan) bu yana ardisik basarisiz/onay bekleyen deneme sayisi. */
+function vgm_queue_fails(?array $item): int
+{
+    if (!is_array($item)) {
+        return 0;
+    }
+    $checked = is_int($item['checkedAt'] ?? null) ? $item['checkedAt'] : 0;
+    $attempt = is_int($item['lastAttemptAt'] ?? null) ? $item['lastAttemptAt'] : 0;
+    if ($attempt === 0 || ($checked > 0 && $checked >= $attempt)) {
+        return 0;
+    }
+    $n = 0;
+    $history = is_array($item['history'] ?? null) ? $item['history'] : [];
+    for ($i = count($history) - 1; $i >= 0; $i--) {
+        $h = $history[$i];
+        $st = is_array($h) && is_string($h[2] ?? null) ? $h[2] : '';
+        if (!in_array($st, ['error', 'held', 'unavailable'], true) || ($st === 'unavailable' && ($h[1] ?? null) !== null)) {
+            break;
+        }
+        $n++;
+    }
+    return max(1, $n);
+}
+
+/** Kaynak listesinden zamanlayici sunucusu: en oncelikli kaynagin alan adi. */
+function vgm_queue_host(array $sources): string
+{
+    $best = null;
+    $bestPriority = PHP_INT_MAX;
+    foreach ($sources as $src) {
+        $p = is_array($src) && is_int($src['priority'] ?? null) ? $src['priority'] : 100;
+        if (is_array($src) && $p < $bestPriority) {
+            $best = $src;
+            $bestPriority = $p;
+        }
+    }
+    return is_array($best) ? vgm_host((string)($best['url'] ?? '')) : '';
+}
+
+/** Sirayi bellekteki kaynak listesinden kurar (import); yalnizca ilgili fiyat parcalari okunur. Kaynaklar id sirali. */
+function vgm_queue_build(string $dir, array $sources): array
+{
+    $items = [];
+    $shard = null;
+    $prices = [];
+    foreach ($sources as $id => $list) {
+        if (!is_array($list) || !$list) {
+            continue;
+        }
+        $s = vgm_shard_of((string)$id);
+        if ($s !== $shard) {
+            $shard = $s;
+            $prices = vgm_read_map($dir, 'fiyat/' . $s . '.json');
+        }
+        $items[$id] = vgm_queue_entry(is_array($prices[$id] ?? null) ? $prices[$id] : null, vgm_queue_host($list));
+    }
+    return ['version' => 1, 'format' => VGM_QUEUE_FORMAT, 'items' => $items];
+}
+
+/**
+ * Sira ve sorun listesini kaynak/ ve fiyat/ parcalarindan yeniden kurar (import, eski bicimden gecis, sira dosyasi
+ * yoksa). 50.000 urunde birkac saniye surer; herkese acik isteklerde cagrilmaz.
+ */
+function vgm_queue_rebuild(string $dir): array
+{
+    $items = [];
+    $files = glob($dir . '/kaynak/*.json') ?: [];
+    sort($files, SORT_STRING);
+    foreach ($files as $file) {
+        $name = basename($file);
+        if (preg_match('/^[0-9]{4}\.json$/D', $name) !== 1) {
+            continue;
+        }
+        $prices = vgm_read_map($dir, 'fiyat/' . $name);
+        foreach (vgm_read_map($dir, 'kaynak/' . $name, 16777216) as $id => $list) {
+            if (is_array($list) && $list) {
+                $items[$id] = vgm_queue_entry(is_array($prices[$id] ?? null) ? $prices[$id] : null, vgm_queue_host($list));
+            }
+        }
+    }
+    return ['version' => 1, 'format' => VGM_QUEUE_FORMAT, 'items' => $items];
+}
+
+/** Sirayi ve fiyat-durum.json'daki sorun listesini birlikte yazar. Cagiran ozel kilidi tutar. */
+function vgm_queue_store(string $dir, array $queue): void
+{
+    $problems = [];
+    foreach ($queue['items'] as $id => $e) {
+        if (in_array($e[2] ?? null, ['held', 'error', 'unavailable'], true)) {
+            $problems[$id] = $e[2];
+        }
+    }
+    ksort($problems, SORT_STRING);
+    vgm_write($dir, 'fiyat-sira.json', $queue, 16777216);
+    $status = vgm_status_read($dir);
+    $status['problems'] = $problems;
+    vgm_write($dir, 'fiyat-durum.json', $status, 16777216);
+}
+
+/**
+ * Zamanlayici sirasi (kaynagi olan urunler). Dosya yoksa parcalardan kurulur; $store ise (ozel kilit gerekir) yazilir ve
+ * eski surum sira (sunucu/hata sayisi olmayan v1) da yeniden kurulur. $store olmadan eski surum oldugu gibi okunur
+ * (eksik alanlar: sunucu '', hata 0).
+ */
+function vgm_queue_read(string $dir, bool $store = false): array
+{
+    $q = is_file($dir . '/fiyat-sira.json') ? vgm_read($dir, 'fiyat-sira.json', ['version' => 1, 'items' => []], 16777216) : null;
+    if ($q === null || ($store && ($q['format'] ?? 1) !== VGM_QUEUE_FORMAT)) {
+        $queue = vgm_queue_rebuild($dir);
+        if ($store) {
+            vgm_queue_store($dir, $queue);
+        }
+        return $queue;
+    }
+    $q['items'] = is_array($q['items'] ?? null) ? $q['items'] : [];
+    return $q;
+}
+
+/**
+ * Sira dosyasi yoksa (ilk kurulum, elle duzenleme) parcalardan kurup sorun listesiyle birlikte yazar; varsa hicbir sey
+ * yapmaz (tek is_file). Panel ve durum okumalari bundan sonra fiyat-sira.json / fiyat-durum.json'a guvenebilir.
+ */
+function vgm_queue_ensure(): void
+{
+    if (is_file(vgm_dir() . '/fiyat-sira.json')) {
+        return;
+    }
+    vgm_locked(true, function (string $dir): void {
+        vgm_queue_read($dir, true);
+    });
+}
+
+/**
+ * Fiyat kayitlarini yazar: her parca bir kez okunup yazilir, sira ve sorun listesi guncellenir. Cagiran ozel kilidi tutar.
+ * $items: id => kayit.
+ */
+function vgm_prices_put(string $dir, array $items): void
+{
+    if (!$items) {
+        return;
+    }
+    $byShard = [];
+    foreach ($items as $id => $item) {
+        $byShard[vgm_shard_of((string)$id)][$id] = $item;
+    }
+    foreach ($byShard as $shard => $set) {
+        $map = vgm_read_map($dir, 'fiyat/' . $shard . '.json');
+        foreach ($set as $id => $item) {
+            $map[$id] = $item;
+        }
+        ksort($map, SORT_STRING);
+        vgm_write_map($dir, 'fiyat/' . $shard . '.json', $map);
+    }
+    if (!is_file($dir . '/fiyat-sira.json')) {
+        vgm_queue_store($dir, vgm_queue_rebuild($dir));
+        return;
+    }
+    $queue = vgm_queue_read($dir);
+    $status = vgm_status_read($dir);
+    foreach ($items as $id => $item) {
+        $list = vgm_sources_raw((string)$id);
+        if (isset($queue['items'][$id]) || $list !== []) {
+            $queue['items'][$id] = vgm_queue_entry($item, $list !== [] ? vgm_queue_host($list) : (string)($queue['items'][$id][3] ?? ''));
+            if (in_array($item['status'] ?? null, ['held', 'error', 'unavailable'], true)) {
+                $status['problems'][$id] = $item['status'];
+            } else {
+                unset($status['problems'][$id]);
+            }
+        }
+    }
+    ksort($status['problems'], SORT_STRING);
+    vgm_write($dir, 'fiyat-sira.json', $queue, 16777216);
+    vgm_write($dir, 'fiyat-durum.json', $status, 16777216);
+}
+
+/** Katalogda artik olmayan urunleri zamanlayici sirasindan ve sorun listesinden siler. Cagiran ozel kilidi tutar. */
+function vgm_queue_forget(string $dir, array $ids): void
+{
+    if (!$ids || !is_file($dir . '/fiyat-sira.json')) {
+        return;
+    }
+    $queue = vgm_queue_read($dir);
+    $status = vgm_status_read($dir);
+    foreach ($ids as $id) {
+        unset($queue['items'][$id], $status['problems'][$id]);
+    }
+    vgm_write($dir, 'fiyat-sira.json', $queue, 16777216);
+    vgm_write($dir, 'fiyat-durum.json', $status, 16777216);
+}
+
+/** Durum dosyasini gunceller (kalp atisi, kur denemesi). Cagiran ozel kilidi tutar. */
+function vgm_status_update(string $dir, array $change): void
+{
+    $status = vgm_status_read($dir);
+    foreach ($change as $k => $v) {
+        $status[$k] = $v;
+    }
+    vgm_write($dir, 'fiyat-durum.json', $status, 16777216);
+}
+
+/**
+ * Eski tek dosyali ozel veriyi (kaynaklar.json icinde sources, fiyatlar.json) parcali bicime tasir. Ozel kilit altinda,
+ * sureç basina bir kez (vgm_locked) denetlenir; tasinan fiyatlar.json silinir, ayarlar korunur.
+ */
+function vgm_legacy_present(string $dir): bool
+{
+    if (is_file($dir . '/fiyatlar.json')) {
+        return true;
+    }
+    $file = $dir . '/kaynaklar.json';
+    if (!is_file($file)) {
+        return false;
+    }
+    $raw = @file_get_contents($file, false, null, 0, VGM_MAX_FILE + 1);
+    return is_string($raw) && strpos($raw, '"sources"') !== false;
+}
+
+function vgm_migrate_legacy(string $dir): void
+{
+    if (!vgm_legacy_present($dir)) {
+        return;
+    }
+    $raw = vgm_read($dir, 'kaynaklar.json', vgm_config_default());
+    if (array_key_exists('sources', $raw)) {
+        $sources = is_array($raw['sources']) ? $raw['sources'] : [];
+        unset($raw['sources']);
+        $shards = [];
+        foreach ($sources as $id => $list) {
+            if (is_string($id) && vgm_id_valid($id) && is_array($list) && $list) {
+                $shards[vgm_shard_of($id)][$id] = array_values($list);
+            }
+        }
+        foreach (glob($dir . '/kaynak/*.json') ?: [] as $f) {
+            @unlink($f);
+        }
+        foreach ($shards as $shard => $map) {
+            ksort($map, SORT_STRING);
+            vgm_write($dir, 'kaynak/' . $shard . '.json', $map, 16777216);
+        }
+        vgm_write($dir, 'kaynaklar.json', $raw);
+    }
+    if (is_file($dir . '/fiyatlar.json')) {
+        $old = vgm_read($dir, 'fiyatlar.json', ['version' => 1, 'items' => []]);
+        $items = [];
+        foreach ((array)($old['items'] ?? []) as $id => $item) {
+            if (is_string($id) && vgm_id_valid($id) && is_array($item)) {
+                $items[$id] = $item;
+            }
+        }
+        $byShard = [];
+        foreach ($items as $id => $item) {
+            $byShard[vgm_shard_of($id)][$id] = $item;
+        }
+        foreach ($byShard as $shard => $map) {
+            ksort($map, SORT_STRING);
+            vgm_write($dir, 'fiyat/' . $shard . '.json', $map);
+        }
+        vgm_status_update($dir, ['lastRunAt' => is_int($old['lastRunAt'] ?? null) ? $old['lastRunAt'] : null,
+            'lastRunSummary' => $old['lastRunSummary'] ?? null]);
+        @unlink($dir . '/fiyatlar.json');
+    }
+    vgm_sources_raw('');
+    vgm_queue_store($dir, vgm_queue_rebuild($dir));
 }
 
 function vgm_rate_state(string $dir): ?array
@@ -482,7 +1380,7 @@ function vgm_iso_time($v): ?int
 }
 
 /**
- * Gosterilecek ve tahsil edilecek fiyat. $s: fiyatlar.json'daki kayit (yoksa katalogdaki listUsd kullanilir).
+ * Gosterilecek ve tahsil edilecek fiyat. $s: fiyat/<parca>.json'daki kayit (yoksa katalogdaki listUsd kullanilir).
  * Donus: usdNet (KDV haric USD), tryNet, tryGross (KDV dahil TL), vat, checkedAt, rateDate, basis (live|list|null),
  * orderable ve reason (ok|closed|stale|held|error|unavailable|no_rate|no_source|freight).
  */
@@ -532,8 +1430,9 @@ function vgm_price(array $p, ?array $s, ?array $rate, array $config, bool $open,
         $out['reason'] = 'held';
     } elseif ($status === 'unavailable') {
         $out['reason'] = 'unavailable';
-    } elseif ($status === 'error' && preg_match('/identity_mismatch|ambiguous_price/', (string)($s['note'] ?? '')) === 1) {
-        /* Sayfa baska bir urunu ya da celiskili fiyat gosteriyor: son kabul edilen fiyat 48 saat dolmadan da satilmaz.
+    } elseif ($status === 'error' && preg_match('/identity_mismatch|ambiguous_price|vat_mismatch|min_quantity|price_options/', (string)($s['note'] ?? '')) === 1) {
+        /* Sayfa baska bir urunu, celiskili fiyat, KDV haric fiyat, en az siparis adedi ya da fiyati degistiren secenek
+           gosteriyor: gorunen fiyat odenecek fiyat degildir, son kabul edilen fiyat 48 saat dolmadan da satilmaz.
            Gecici ag hatalarinda son dogrulanmis fiyat 48 saat boyunca gecerli kalir. */
         $out['reason'] = 'error';
     } elseif ($out['checkedAt'] === null || $now - $out['checkedAt'] > VGM_PRICE_MAX_AGE) {
@@ -695,6 +1594,16 @@ function vgm_cart_items($items): array
             vg_fail(422, 'qty_limit', $p['name'] . ' için en fazla ' . $p['maxQty'] . ' ' . ($p['unit'] ?? 'adet') . ' sipariş verilebilir; daha fazlası için teklif isteyin.');
         }
     }
+    /* Adet kurallari (P1-09) birlestirilmis toplam adet uzerinden: en az minQty ve minQty'den itibaren step katlari. */
+    foreach ($out as $id => $total) {
+        $p = vgm_product((string)$id);
+        if ($total < $p['minQty'] || ($total - $p['minQty']) % $p['step'] !== 0) {
+            $unit = (string)($p['unit'] ?? 'adet');
+            vg_fail(422, 'qty_step', $p['name'] . ' en az ' . $p['minQty'] . ' ' . $unit
+                . ($p['step'] > 1 ? ' ve ' . $p['step'] . ' ' . $unit . ' katları ile' : '') . ' sipariş edilebilir.',
+                [], [], ['id' => (string)$id, 'minQty' => $p['minQty'], 'step' => $p['step']]);
+        }
+    }
     return $out;
 }
 
@@ -732,8 +1641,8 @@ function vgm_token_decode(string $purpose, string $token, int $now): ?array
  */
 function vgm_quote(array $cart, int $now): array
 {
-    list($config, $state, $rate) = vgm_locked(false, function (string $dir): array {
-        return [vgm_config($dir), vgm_prices_state($dir), vgm_rate_state($dir)];
+    list($config, $items, $rate) = vgm_locked(false, function (string $dir) use ($cart): array {
+        return [vgm_config($dir), vgm_price_items($dir, array_keys($cart)), vgm_rate_state($dir)];
     });
     $open = vgm_shop_open($config);
     $lines = [];
@@ -744,14 +1653,15 @@ function vgm_quote(array $cart, int $now): array
     $warnings = [];
     foreach ($cart as $id => $qty) {
         $p = vgm_product($id);
-        $price = vgm_price($p, $state['items'][$id] ?? null, $rate, $config, $open, $now);
+        $price = vgm_price($p, $items[$id] ?? null, $rate, $config, $open, $now);
         /* Musteriye USD tutar gosterilmez (sahibin karari); USD yalnizca imzali jetonda ve siparis kaydinda. */
         $line = ['id' => $id, 'slug' => $p['slug'], 'name' => $p['name'], 'brand' => $p['brand'] ?? '', 'qty' => $qty,
             'unit' => $p['unit'] ?? 'adet', 'vat' => $price['vat'],
             'unitTryNet' => $price['tryNet'], 'unitTryGross' => $price['tryGross'], 'lineTryGross' => null,
             'checkedAt' => $price['checkedAt'] !== null ? vg_iso($price['checkedAt']) : null,
             'orderable' => $price['orderable'], 'reason' => $price['reason'], 'reasonText' => vgm_reason_text($price['reason']),
-            'mpn' => $p['mpn'] ?? '', 'specs' => vgm_specs_snapshot($p), 'deliveryDays' => isset($p['deliveryDays']) ? (int)$p['deliveryDays'] : null,
+            'mpn' => $p['mpn'] ?? '', 'specs' => vgm_specs_snapshot($p), 'deliveryDays' => vgm_delivery_days($p),
+            'minQty' => $p['minQty'], 'step' => $p['step'], 'packQty' => $p['packQty'], 'maxQty' => $p['maxQty'],
             'customMade' => ($p['customMade'] ?? false) === true];
         if ($price['orderable']) {
             $lineNet = vgm_round2($price['tryNet'] * $qty);

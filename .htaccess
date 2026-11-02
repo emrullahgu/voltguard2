@@ -149,13 +149,22 @@
   RewriteRule ^volthaber/((kategori|etiket)/[a-z0-9-]+/?|[a-z0-9-]+/?|(sitemap|rss)\.xml)$ /volthaber/index.php [L,QSA]
 
   # VoltGuard Magaza: vitrin, kategori ve urun sayfalari sunucuda PHP ile, istek anindaki guncel fiyatla uretilir
-  # (api/MAGAZA.md). Sepet, odeme, siparis takibi ve hukuki sayfalar magaza/ altinda statik .html dosyalaridir;
+  # (api/MAGAZA.md). Sepet ve siparis takibi magaza/ altinda statik .html dosyalaridir (odeme ve hukuki sayfalar asagida);
   # uzantisiz adresleri asagidaki genel klasor kurali .html adresine yonlendirir.
   RewriteRule ^magaza$ /magaza/ [R=301,L]
   RewriteCond %{THE_REQUEST} \s/magaza/index\.(html|php)[\s?]
   RewriteRule ^magaza/index\.(html|php)$ /magaza/ [R=301,L]
   RewriteRule ^magaza/$ /magaza/index.php [L,QSA]
-  RewriteRule ^magaza/((kategori|urun)/[a-z0-9-]+/?|sitemap\.xml)$ /magaza/index.php [L,QSA]
+  RewriteRule ^magaza/((kategori|urun)/[a-z0-9-]+/?|ara/?|sitemap(-[0-9]{1,4})?\.xml)$ /magaza/index.php [L,QSA]
+  # Odeme sayfasi: statik sablon + firma.json Turnstile site anahtari (vgmr_render_checkout_html)
+  RewriteRule ^magaza/odeme\.html$ /magaza/index.php [L,QSA]
+  # Hukuki sayfalar: statik sablon + firma.json satici tablosu ve belge surumu (vgmr_render_legal_html; P1-01/02)
+  RewriteRule ^magaza/(on-bilgilendirme-formu|mesafeli-satis-sozlesmesi|iade-ve-cayma|kvkk-aydinlatma|odeme-ve-teslimat)\.html$ /magaza/index.php [L,QSA]
+  # Magaza medya deposu (<docroot>/magaza-gorsel/, git ve deploy disi; api/MAGAZA.md "Medya deposu"): yalnizca
+  # <2 hane>/<ad>.<8 hane ozet>(-t).webp dosyalari sunulur (asagidaki "Gorseller" kurali: 1 yil immutable). Klasor
+  # adresleri, baska uzantilar ve kurala uymayan her ad reddedilir (403; listeleme ve betik calistirma yok).
+  RewriteRule ^magaza-gorsel/[0-9a-f]{2}/[a-z0-9-]{3,90}\.[0-9a-f]{8}(-t)?\.webp$ - [L]
+  RewriteRule ^magaza-gorsel(/|$) - [F,L,NC]
 
   # --- Klasor ve uzantisiz adresler -------------------------------------------------------
   # Ayni adli klasor + .html sayfasi (sor/ + sor.html, akademi/ + akademi.html) olan adreslerde mod_dir,

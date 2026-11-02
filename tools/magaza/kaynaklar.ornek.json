@@ -10,6 +10,7 @@
   "paymentHours": 24,
   "fxBuffer": 0,
   "blockedSuppliers": ["sikayeti-cok.example"],
+  "suppliers": {"tedarikci-bir.example": {"spacing": 2}},
   "sources": {
     "vgm-0101": [
       {"url": "https://tedarikci-bir.example/urun/ornek-model", "supplier": "tedarikci-bir.example", "vatIncluded": true, "currency": "TRY", "priority": 1},

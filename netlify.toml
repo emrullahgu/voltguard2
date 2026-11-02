@@ -82,6 +82,12 @@
   to = "https://voltguard.com.tr/magaza/:splat"
   status = 301
 
+# Magaza urun gorselleri git disindaki medya deposundadir (sunucuda <docroot>/magaza-gorsel/).
+[[redirects]]
+  from = "/magaza-gorsel/*"
+  to = "https://voltguard.com.tr/magaza-gorsel/:splat"
+  status = 301
+
 [[redirects]]
   from = "/hesaplama-araclari/"
   to = "/teklif-araclari.html"

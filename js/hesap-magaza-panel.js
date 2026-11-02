@@ -51,9 +51,12 @@
   };
   var SUMMARY_LABELS = {
     checked: 'kontrol edilen', ok: 'güncel', held: 'onay bekleyen', error: 'hatalı', unavailable: 'stokta yok', skipped: 'atlanan',
-    rateUpdated: 'kur güncellendi', rateError: 'kur hatası', seconds: 'süre (sn)'
+    left: 'sonraki çalışmaya kalan', due: 'zamanı gelen', rateUpdated: 'kur güncellendi', rateError: 'kur hatası', seconds: 'süre (sn)'
   };
-  var CRON_COMMAND = '0 */6 * * * VG_DATA_DIR=/home/voltgua2/vg-data /usr/local/bin/php /home/voltgua2/public_html/api/lib/magaza-cron.php >/dev/null 2>&1';
+  // Cron her 10 dakikada bir, en çok 240 sn çalışır; zamanı gelen ürünleri sırayla kontrol eder (api/MAGAZA.md "Kurulum").
+  var CRON_COMMAND = '*/10 * * * * VG_DATA_DIR=/home/voltgua2/vg-data /usr/local/bin/php /home/voltgua2/public_html/api/lib/magaza-cron.php >/dev/null 2>&1';
+  var CRON_OK_MS = 30 * 60 * 1000;               // sunucudaki eşik (VGM_HEALTHY_AFTER, 30 dakika)
+  var CRON_LATE_MS = 6 * 3600 * 1000;            // 6 saate kadar gecikmiş, sonrası çalışmıyor
 
   /* ================================================================== saf yardımcılar */
 
@@ -366,14 +369,25 @@
       return d !== 0 ? d : str(a.name).localeCompare(str(b.name), 'tr');
     });
   }
-  /** Cron (her 6 saatte bir) sağlığı: sunucudaki eşikle (13 saat) aynı; 26 saate kadar gecikmiş, sonrası çalışmıyor. */
+  /** Cron (her 10 dakikada bir) sağlığı: sunucudaki eşikle (30 dakika) aynı; 6 saate kadar gecikmiş, sonrası çalışmıyor. */
   function cronHealth(lastRun, nowMs) {
     var ms = toMs(lastRun);
     if (!isFinite(ms)) return { level: 'down', label: 'Hiç çalışmadı' };
     var age = (nowMs === undefined ? Date.now() : nowMs) - ms;
-    if (age <= 13 * 3600 * 1000) return { level: 'ok', label: 'Çalışıyor' };
-    if (age <= 26 * 3600 * 1000) return { level: 'late', label: 'Gecikmiş' };
+    if (age <= CRON_OK_MS) return { level: 'ok', label: 'Çalışıyor' };
+    if (age <= CRON_LATE_MS) return { level: 'late', label: 'Gecikmiş' };
     return { level: 'down', label: 'Çalışmıyor' };
+  }
+  /**
+   * Fiyat sekmesi sayaçları: sunucunun tüm katalog sayımları (panel_prices.counts; 50.000 ürün tarayıcıya gelmez)
+   * varsa onlar, yoksa listedeki ürünlerden hesaplanır.
+   */
+  function priceStats(server, items) {
+    var c = server && server.counts && typeof server.counts === 'object' ? server.counts : null;
+    if (!c) return priceCounts(items);
+    var n = function (v) { var x = Number(v); return isFinite(x) && x >= 0 ? x : 0; };
+    return { total: n(server.products), orderable: null, held: n(c.held), error: n(c.error), unavailable: n(c.unavailable), stale: n(c.stale),
+      ok: n(c.ok), noSource: n(c.noSource), problems: n(server.problems) };
   }
   /** Panel durumundaki cron bilgisi (healthy bayrağı varsa o, yoksa son çalışma zamanından hesaplanır). */
   function cronState(cron, lastRun, nowMs) {
@@ -411,7 +425,7 @@
     allowedActions: allowedActions, allowedFromStatus: allowedFromStatus, isOverdue: isOverdue, httpsUrl: httpsUrl,
     mailHref: mailHref, telHref: telHref, buildChange: buildChange, explainError: explainError, parseDay: parseDay,
     todayIso: todayIso, validateExportRange: validateExportRange, quickRange: quickRange, parseTry: parseTry,
-    buildManualPrice: buildManualPrice, buildDecision: buildDecision, heldInfo: heldInfo, priceCounts: priceCounts,
+    buildManualPrice: buildManualPrice, buildDecision: buildDecision, heldInfo: heldInfo, priceCounts: priceCounts, priceStats: priceStats,
     priceMatches: priceMatches, sortPrices: sortPrices, cronHealth: cronHealth, cronState: cronState, summaryText: summaryText,
     isStaleCheck: isStaleCheck
   };
@@ -877,16 +891,20 @@
     }
 
     /* ================================================================== FİYATLAR */
-    var P = { items: [], rate: null, rateOk: null, lastRunAt: null, lastRunSummary: null, cron: null, page: 1, seq: 0, manualId: '' };
+    /* Katalog 50.000 ürüne kadar büyüdüğü için liste tüm ürünleri getirmez: sunucu sorunlu ürünleri (onay bekleyen,
+       hatalı, stokta yok; en çok 300) ve arama kutusundaki sözcükle eşleşenleri (ad, marka, model, GTIN ya da kimlik;
+       en çok 50) döndürür. Sayaçlar tüm kataloğun sunucu sayımlarıdır. */
+    var P = { items: [], rate: null, rateOk: null, lastRunAt: null, lastRunSummary: null, cron: null, server: null, q: '', page: 1, seq: 0, manualId: '' };
     var priceBody = $('[data-mgp-prices-body]'), priceStats = $('[data-mgp-price-stats]'), pricePager = $('[data-mgp-prices-pager]');
     var priceQ = $('#f-q'), priceStatus = $('#f-status'), manualBox = $('[data-mgp-manual]');
 
-    /** panel_prices + panel_status (kur geçerliliği ve cron sağlığı için). quiet: tabloyu "Yükleniyor" ile boşaltmadan yenile. */
+    /** panel_prices (?q=) + panel_status (kur geçerliliği ve cron sağlığı için). quiet: tabloyu "Yükleniyor" ile boşaltmadan yenile. */
     function loadPrices(quiet) {
       var seq = ++P.seq;
+      P.q = H.clean(priceQ.value, 80);
       if (quiet !== true) clear(priceBody).appendChild(h('tr', null, h('td', { colspan: 7, class: 'mgp-muted', text: 'Yükleniyor…' })));
       var status = api('panel_status').then(function (s) { return s; }, function () { return null; });
-      return api('panel_prices').then(function (j) {
+      return api('panel_prices', { query: P.q ? '&q=' + enc(P.q) : '' }).then(function (j) {
         return status.then(function (s) {
           if (seq !== P.seq) return;
           P.items = Array.isArray(j.items) ? j.items : [];
@@ -895,6 +913,7 @@
           P.lastRunAt = j.lastRunAt;
           P.lastRunSummary = j.lastRunSummary;
           P.cron = s && s.cron ? s.cron : null;
+          P.server = { counts: j.counts, products: j.products, problems: j.problems, query: H.str(j.query) };
           renderPrices();
         });
       }).catch(function (e) {
@@ -909,19 +928,36 @@
     }
     function renderPriceStats() {
       var now = Date.now();
-      var counts = H.priceCounts(P.items);
+      var counts = H.priceStats(P.server, P.items);
       var health = H.cronState(P.cron, P.lastRunAt, now);
       var rate = P.rate || {};
       clear(priceStats);
       priceStats.appendChild(h('div', { class: 'mgp-stat mgp-stat--wide' }, [
-        h('b', { text: H.fmtDateTime(P.lastRunAt) }), h('span', { text: 'Son otomatik fiyat kontrolü' }),
+        h('b', { text: H.fmtDateTime(P.lastRunAt) }), h('span', { text: 'Son otomatik fiyat kontrolü (her 10 dakikada bir)' }),
         h('div', null, [pill(health.label, 'cron-' + health.level), ' ', h('span', { class: 'mgp-muted', text: H.summaryText(P.lastRunSummary) })])
       ]));
       priceStats.appendChild(stat('TCMB USD döviz satış kuru' + (rate.date ? ' · ' + H.fmtDate(rate.date) : ''), rate.usdTry ? H.fmtNum(rate.usdTry, 4) + ' ₺' : '–',
         P.rateOk === false || !rate.usdTry ? h('div', null, pill('Kur güncel değil: sipariş alınamaz', 'late')) : null));
-      [['total', 'Toplam ürün'], ['orderable', 'Siparişe açık'], ['held', 'Onay bekleyen'], ['error', 'Hatalı'], ['unavailable', 'Stokta yok'], ['stale', 'Fiyat teyidi eski']].forEach(function (k) {
-        priceStats.appendChild(stat(k[1], String(counts[k[0]])));
+      [['total', 'Toplam ürün'], ['ok', 'Güncel fiyatlı'], ['orderable', 'Siparişe açık'], ['held', 'Onay bekleyen'], ['error', 'Hatalı'], ['unavailable', 'Stokta yok'],
+        ['stale', 'Fiyat teyidi eski'], ['noSource', 'Kaynağı olmayan']].forEach(function (k) {
+        if (counts[k[0]] !== null && counts[k[0]] !== undefined) priceStats.appendChild(stat(k[1], String(counts[k[0]])));
       });
+    }
+    /** Arama sözcüğü sunucuya gönderildiyse sunucunun eşleştirdiği satırlar (match) da gösterilir (marka/model eşleşmesi). */
+    function priceVisible(it) {
+      var f = { q: priceQ.value, status: priceStatus.value };
+      if (it.match === true && P.server && P.server.query && H.fold(P.server.query) === H.fold(H.clean(priceQ.value, 80))) f.q = '';
+      return H.priceMatches(it, f);
+    }
+    /** Zamanı gelen birkaç ürünü (en çok 5) hemen kontrol ettirir; cron'u beklemeden kuyruğu ilerletmek için. */
+    function checkBatch(holder) {
+      setBusy(holder, true);
+      return post('panel_check_now', { batch: true }).then(function (j) {
+        var s = j && j.summary && typeof j.summary === 'object' ? j.summary : null;
+        var res = s && s.rateError && Number(s.checked) === 0 ? { kind: 'warn', text: 'Kontrol yapılamadı: TCMB kuru alınamadı (' + H.str(s.rateError) + ').' }
+          : { kind: 'ok', text: s && Number(s.checked) > 0 ? 'Sıradaki ürünler kontrol edildi (' + H.summaryText(s) + ').' : 'Şu anda kontrol zamanı gelmiş ürün yok.' };
+        return loadPrices(true).then(function () { say(res.kind, res.text); });
+      }).catch(function (e) { fail(e); }).then(function () { setBusy(holder, false); });
     }
 
     function priceRow(it) {
@@ -975,11 +1011,14 @@
 
     function renderPrices() {
       renderPriceStats();
-      var filtered = H.sortPrices(P.items).filter(function (it) { return H.priceMatches(it, { q: priceQ.value, status: priceStatus.value }); });
+      var filtered = H.sortPrices(P.items).filter(priceVisible);
       var pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE_PRICES));
       P.page = Math.min(Math.max(1, P.page), pages);
       clear(priceBody);
-      if (!filtered.length) priceBody.appendChild(h('tr', null, h('td', { colspan: 7, class: 'mgp-muted', text: P.items.length ? 'Bu süzgece uyan ürün yok.' : 'Katalogda ürün yok.' })));
+      if (!filtered.length) {
+        priceBody.appendChild(h('tr', null, h('td', { colspan: 7, class: 'mgp-muted', text: P.items.length ? 'Bu süzgece uyan ürün yok.'
+          : P.q ? 'Aramanızla eşleşen ürün yok.' : 'Sorunlu ürün yok. Bir ürünü görmek için adını, model kodunu ya da kimliğini arayın.' })));
+      }
       filtered.slice((P.page - 1) * PAGE_SIZE_PRICES, P.page * PAGE_SIZE_PRICES).forEach(function (it) { priceBody.appendChild(priceRow(it)); });
       clear(pricePager);
       pricePager.appendChild(btn('‹ Önceki', 'ghost', function () { P.page--; renderPrices(); }, { disabled: P.page <= 1 }));
@@ -1052,7 +1091,15 @@
     function closeManual() { P.manualId = ''; manualBox.hidden = true; clear(manualBox); }
 
     $('[data-mgp-prices-reload]').addEventListener('click', function () { loadPrices(); });
+    var batchBtn = $('[data-mgp-prices-batch]');
+    batchBtn.addEventListener('click', function () { checkBatch(batchBtn.parentNode); });
     [priceQ, priceStatus].forEach(function (el) { el.addEventListener('input', function () { P.page = 1; renderPrices(); }); el.addEventListener('change', function () { P.page = 1; renderPrices(); }); });
+    /* Arama sözcüğü sunucuya da gönderilir (yazmayı bitirince): listede olmayan ürünler de bulunur. */
+    var searchTimer = null;
+    priceQ.addEventListener('input', function () {
+      win.clearTimeout(searchTimer);
+      searchTimer = win.setTimeout(function () { if (H.clean(priceQ.value, 80) !== P.q) loadPrices(true); }, 450);
+    });
 
     /* ================================================================== DURUM */
     var statusBox = $('[data-mgp-status]');

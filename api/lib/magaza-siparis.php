@@ -231,18 +231,19 @@ function vgm_order_draft(array $quote, array $clean, array $config, int $now): a
         $qty = (int)$l[1];
         $items[] = ['id' => $p['id'], 'name' => $p['name'], 'brand' => $p['brand'] ?? '', 'mpn' => $p['mpn'] ?? '', 'qty' => $qty,
             'unit' => $p['unit'] ?? 'adet', 'vat' => (int)$l[5], 'unitUsdNet' => (float)$l[2], 'unitTryNet' => (float)$l[3],
-            'unitTryGross' => (float)$l[4], 'lineTryNet' => vgm_round2((float)$l[3] * $qty), 'lineTryGross' => vgm_round2((float)$l[4] * $qty)];
+            'unitTryGross' => (float)$l[4], 'lineTryNet' => vgm_round2((float)$l[3] * $qty), 'lineTryGross' => vgm_round2((float)$l[4] * $qty),
+            'deliveryDays' => vgm_delivery_days($p)];
     }
     return ['ref' => null, 'createdAt' => $now, 'payBy' => $now + 3600 * (int)($config['paymentHours'] ?? 24),
         'status' => 'odeme_bekleniyor'] + $clean + ['items' => $items, 'totals' => $quote['totals'], 'rate' => $quote['rate']];
 }
 
 /** Siparis anindaki tedarik kaynaklari (yalnizca personel; herkese acik gorunumde yok). */
-function vgm_sources_snapshot(array $items, array $config, array $state): array
+function vgm_sources_snapshot(array $items, array $config, array $prices): array
 {
     $out = [];
     foreach ($items as $it) {
-        $s = $state['items'][$it['id']] ?? [];
+        $s = $prices[$it['id']] ?? [];
         $list = [];
         foreach (vgm_sources($config, $it['id']) as $i => $src) {
             $used = (int)($s['source'] ?? -1) === (int)$i;
@@ -262,12 +263,36 @@ function vgm_order_docs(array $order, array $config): array
 }
 
 /**
+ * Uretimde bot dogrulamasi yapilandirilmamissa (firma.json turnstileSiteKey ya da TURNSTILE_SECRET_KEY bos/yer tutucu)
+ * siparis alinmaz: 503 captcha_unconfigured (P1-03). Onizleme ve testler (VG_MAIL_OUTBOX=1: e-posta outbox/'a yazilir)
+ * anahtarsiz calisir.
+ */
+function vgm_captcha_ready_or_fail(): void
+{
+    if (getenv('VG_MAIL_OUTBOX') === '1') {
+        return;
+    }
+    $firma = vgm_firma();
+    $siteKey = $firma['turnstileSiteKey'] ?? null;
+    $secret = getenv('TURNSTILE_SECRET_KEY');
+    $placeholder = function ($v): bool {
+        return !is_string($v) || trim($v) === '' || strpos($v, 'REPLACE_WITH') === 0;
+    };
+    if ($placeholder($siteKey) || $placeholder($secret)) {
+        error_log('VoltGuard magaza: order refused, Turnstile is not configured (firma.json turnstileSiteKey / TURNSTILE_SECRET_KEY)');
+        vg_fail(503, 'captcha_unconfigured', 'Sipariş güvenlik doğrulaması henüz yapılandırılmadı. Lütfen bizi arayın: '
+            . (is_string($firma['telefon'] ?? null) && trim($firma['telefon']) !== '' ? trim($firma['telefon']) : '0545 434 67 35') . '.');
+    }
+}
+
+/**
  * Siparis olusturur (api: action=siparis). $guard: tekrar korumasinin icinde, yeni bir siparis olusturulmadan once
  * calisir (hiz siniri, bot dogrulamasi); ayni istegin tekrari onu yeniden calistirmaz.
  * @return array{order: array, duplicate: bool}
  */
 function vgm_order_create(array $in, int $now, ?callable $guard = null): array
 {
+    vgm_captcha_ready_or_fail();
     $requestId = is_string($in['requestId'] ?? null) ? $in['requestId'] : '';
     if (preg_match('/^[A-Za-z0-9_-]{16,64}$/D', $requestId) !== 1) {
         vg_fail(400, 'invalid_request', 'Sipariş bilgisi eksik. Sayfayı yenileyip yeniden deneyin.');
@@ -284,8 +309,12 @@ function vgm_order_create(array $in, int $now, ?callable $guard = null): array
     if ($errors) {
         vg_fail(422, 'invalid_order', 'Lütfen işaretli alanları düzeltin.', $errors);
     }
-    list($config, $state, $rate) = vgm_locked(false, function (string $dir): array {
-        return [vgm_config($dir), vgm_prices_state($dir), vgm_rate_state($dir)];
+    $lineIds = [];
+    foreach ($quote['lines'] as $l) {
+        $lineIds[] = (string)$l[0];
+    }
+    list($config, $state, $rate) = vgm_locked(false, function (string $dir) use ($lineIds): array {
+        return [vgm_config($dir), vgm_price_items($dir, $lineIds), vgm_rate_state($dir)];
     });
     if (!vgm_shop_open($config)) {
         vg_fail(503, 'shop_closed', 'Mağazamız henüz siparişe açık değil. Ürün için teklif isteyebilirsiniz.');
@@ -294,7 +323,7 @@ function vgm_order_create(array $in, int $now, ?callable $guard = null): array
        Tahsil edilen tutar yine imzali TL tutaridir. */
     foreach ($quote['lines'] as $l) {
         $p = vgm_product((string)$l[0]);
-        if ($p === null || !vgm_price($p, $state['items'][$p['id']] ?? null, $rate, $config, true, $now)['orderable']) {
+        if ($p === null || !vgm_price($p, $state[$p['id']] ?? null, $rate, $config, true, $now)['orderable']) {
             vg_fail(409, 'quote_expired', 'Fiyat teyidinin süresi doldu ya da sepet değişti. Güncel fiyatları aldık; lütfen toplamı kontrol edip yeniden onaylayın.');
         }
     }
