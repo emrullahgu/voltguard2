@@ -48,7 +48,7 @@
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/style.css?v=f5a7da9dd78a">
-  <link rel="stylesheet" href="/css/magaza.css?v=4f22e8feefa2">
+  <link rel="stylesheet" href="/css/magaza.css?v=814ded0c99eb">
 </head>
 <body class="doc-shell vgm-page">
   <!--vg:header-->
@@ -147,7 +147,7 @@
     <div class="vgm-wrap">
       <nav class="vgm-crumb" aria-label="Sayfa yolu"><ol><li><a href="/">Ana sayfa</a></li><li><a href="/magaza/">Mağaza</a></li><li><span aria-current="page">Sepet</span></li></ol></nav>
       <ol class="vgm-progress" aria-label="Sipariş adımları"><li aria-current="step">Sepet</li><li>Bilgiler</li><li>Onay</li></ol>
-      <header class="vgm-head"><h1>Sepetiniz</h1><p class="vgm-lead">Fiyatlar Türk lirası ve KDV dahildir. Sepetteki fiyatlar her adımda sunucudan yeniden alınır; ödeme havale/EFT ile yapılır.</p></header>
+      <header class="vgm-head"><h1>Sepetiniz</h1><p class="vgm-lead">Fiyatlar Türk lirası ve KDV dahildir. Sepetinizi doldurun; fiyatı doğrulanmış ürünler için sipariş oluşturabilir ya da sepetin tamamını tek seferde teklif olarak gönderebilirsiniz.</p></header>
 
       <div data-vgm-cart-page>
         <noscript><div class="vgm-notice vgm-notice--warn">Sepet için tarayıcınızda JavaScript açık olmalıdır. Sipariş veya teklif için <a href="/iletisim.html#iletisim">bize yazabilirsiniz</a>.</div></noscript>
@@ -158,20 +158,55 @@
           <div class="vgm-cart__main">
             <ul class="vgm-lines" data-vgm-lines aria-label="Sepetteki ürünler"></ul>
             <p class="vgm-actions"><a class="vgm-link" href="/magaza/">&larr; Alışverişe devam et</a><button type="button" class="vgm-link" data-vgm-clear>Sepeti boşalt</button></p>
+
+            <section class="vgm-cq" id="sepet-teklif" data-vgm-cq aria-labelledby="vgm-cq-h" hidden>
+              <h2 id="vgm-cq-h" tabindex="-1">Sepeti teklif olarak gönderin</h2>
+              <p class="vgm-cq__lead">Sepetinizdeki <strong data-vgm-cq-count>tüm ürünler</strong> model kodu, adet ve gösterilen fiyatlarıyla tek bir talep olarak bize ulaşır. Fiyatı teyit edilmesi gereken ürünler dahil, güncel fiyat ve termini içeren teklifimizi size iletiriz. Teklif talebi bağlayıcı değildir.</p>
+              <form class="vgm-form vgm-cq__form" data-vgm-cq-form novalidate>
+                <div class="vgm-errsum" data-vgm-errors role="alert" tabindex="-1" hidden></div>
+                <div class="vgm-cols vgm-cols--2">
+                  <div class="vgm-field"><label for="cq-name">Ad soyad <span class="req" aria-hidden="true">*</span></label><input id="cq-name" name="name" type="text" autocomplete="name" maxlength="100" required></div>
+                  <div class="vgm-field"><label for="cq-company">Firma (isteğe bağlı)</label><input id="cq-company" name="company" type="text" autocomplete="organization" maxlength="120"></div>
+                  <div class="vgm-field"><label for="cq-phone">Telefon <span class="req" aria-hidden="true">*</span></label><input id="cq-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" required></div>
+                  <div class="vgm-field"><label for="cq-email">E-posta</label><input id="cq-email" name="email" type="email" autocomplete="email" maxlength="254"><span class="vgm-field__hint">Teklifi e-postayla almak için yazın.</span></div>
+                  <div class="vgm-field"><label for="cq-vkn">Vergi kimlik no (firma, isteğe bağlı)</label><input id="cq-vkn" name="vkn" type="text" inputmode="numeric" maxlength="10" pattern="[0-9]{10}"><span class="vgm-field__hint">Bireysel talepte T.C. kimlik numarası gerekmez.</span></div>
+                  <div class="vgm-field"><label for="cq-city">Teslimat ili</label><input id="cq-city" name="city" type="text" autocomplete="address-level1" maxlength="40"></div>
+                  <div class="vgm-field vgm-span-2"><label for="cq-note">Not (isteğe bağlı)</label><textarea id="cq-note" name="note" rows="3" maxlength="400" placeholder="Termin, marka tercihi, proforma ihtiyacı…"></textarea></div>
+                </div>
+                <div class="vgm-hp" aria-hidden="true"><label for="cq-web">Web sitesi</label><input id="cq-web" type="text" name="website" tabindex="-1" autocomplete="off"></div>
+                <div class="vgm-captcha" data-vgm-captcha>
+                  <div class="cf-turnstile" data-sitekey="0x4AAAAAAFwNZyiBH3W2zOCa" data-theme="auto" data-language="tr" data-retry="auto"></div>
+                </div>
+                <p class="vgm-fine">Adınız, iletişim bilgileriniz, varsa firma adı ve vergi kimlik numarası ile sepet içeriği teklif talebinizi değerlendirmek ve yanıtlamak için VoltGuard tarafından işlenir. <a href="/gizlilik.html#iletisim-verileri">İletişim formu aydınlatması</a>.</p>
+                <div class="vgm-submit">
+                  <p class="vgm-status" data-vgm-status role="status" aria-live="polite"></p>
+                  <button type="submit" class="vgm-btn vgm-btn--primary" data-vgm-cq-submit>Teklif talebini gönder</button>
+                </div>
+              </form>
+              <div class="vgm-notice vgm-notice--ok vgm-cq__done" data-vgm-cq-done tabindex="-1" hidden>
+                <p><strong>Teklif talebiniz alındı.</strong> <span data-vgm-cq-msg></span></p>
+                <p class="vgm-cq__ref">Talep numaranız: <strong class="vgm-mono" data-vgm-cq-ref></strong></p>
+                <p class="vgm-actions"><button type="button" class="vgm-btn vgm-btn--ghost vgm-btn--sm" data-vgm-cq-clear>Sepeti boşalt</button><a class="vgm-link" href="/magaza/">Alışverişe devam et</a></p>
+              </div>
+            </section>
           </div>
           <aside class="vgm-summary-box" aria-labelledby="vgm-sum-h">
-            <h2 id="vgm-sum-h">Sipariş özeti</h2>
+            <h2 id="vgm-sum-h">Sepet özeti</h2>
             <dl class="vgm-totals" data-vgm-totals aria-live="polite">
               <div><dt>Ara toplam (KDV hariç)</dt><dd data-vgm-t="tryNet">—</dd></div>
               <div><dt>KDV</dt><dd data-vgm-t="tryVat">—</dd></div>
               <div><dt>Kargo</dt><dd data-vgm-t="shippingTry">—</dd></div>
-              <div class="vgm-totals__grand"><dt>Toplam (KDV dahil)</dt><dd data-vgm-t="tryGross">—</dd></div>
+              <div class="vgm-totals__grand"><dt>Sipariş toplamı (KDV dahil)</dt><dd data-vgm-t="tryGross">—</dd></div>
             </dl>
+            <div class="vgm-estimate" data-vgm-estimate aria-live="polite" hidden></div>
             <p class="vgm-expiry" data-vgm-expiry></p>
-            <a class="vgm-btn vgm-btn--primary vgm-btn--block" href="/magaza/odeme.html" data-vgm-checkout-link>Siparişe devam et</a>
-            <p class="vgm-fine">Fiyatlar her gün TCMB döviz kuruyla güncellenir. Ödeme yalnızca havale/EFT ile alınır; kredi kartı kabul edilmez. <strong>Son ödeme: sipariş + 24 saat.</strong></p>
-            <p class="vgm-actions vgm-summary-box__quote"><button type="button" class="vgm-btn vgm-btn--ghost vgm-btn--sm vgm-btn--block" data-vgm-cart-quote>Sepeti teklife çevir / proforma iste</button></p>
-            <p class="vgm-fine">Toplu alım, nakliyeli ürün veya kurumsal proforma için sepetinizdeki ürünler model kodu ve adetleriyle teklif formuna taşınır.</p>
+            <div class="vgm-cart__why" data-vgm-why role="status" aria-live="polite"></div>
+            <div class="vgm-cart__acts">
+              <a class="vgm-btn vgm-btn--primary vgm-btn--block" href="/magaza/odeme.html" data-vgm-checkout-link>Sipariş oluştur</a>
+              <button type="button" class="vgm-btn vgm-btn--ghost vgm-btn--block" data-vgm-cq-open aria-controls="sepet-teklif" aria-expanded="false">Sepeti teklif olarak gönder</button>
+            </div>
+            <p class="vgm-fine">Sipariş yalnızca fiyatı son 48 saatte doğrulanmış ürünlerle oluşturulur; ödeme havale/EFT ile alınır. <strong>Son ödeme: sipariş + 24 saat.</strong> Teklif talebi sepetin tamamı için, mağaza siparişe açılmadan da gönderilebilir.</p>
+            <p class="vgm-fine">Fiyatlar her gün TCMB döviz kuruyla güncellenir. Kredi kartı kabul edilmez.</p>
           </aside>
         </div>
 
@@ -278,6 +313,7 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/magaza.js?v=a8497a471aca" defer></script>
+  <script src="/js/vg-quote.js?v=f22d85594f5a" defer></script>
+  <script src="/js/magaza.js?v=2fc273150f75" defer></script>
 </body>
 </html>

@@ -151,7 +151,7 @@ test('50.000 ürün: ürün, kategori (ilk/son sayfa), üst kategori, arama ve s
       assert.match(html, /<a class="vgm-subcat" aria-current="page" href="\/magaza\/kategori\/ust-01\/">Tümü/);
     });
     await timed('arama', `/magaza/ara/?q=${encodeURIComponent('SN-0012')}`, undefined, html => assert.match(html, /ürün bulundu/));
-    await timed('vitrin', '/magaza/', undefined, html => assert.match(html, /50000 ürün/));
+    await timed('vitrin', '/magaza/', undefined, html => assert.match(html, /50\.000 ürün/));
     await timed('sepet fiyatlama', '/api/magaza.php?action=sepet', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Origin: s.base },
       body: JSON.stringify({ items: cart.map(id => ({ id, qty: 2 })) }),

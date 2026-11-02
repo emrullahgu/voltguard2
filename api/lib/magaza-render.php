@@ -26,8 +26,8 @@ const VGMR_SORT_LIVE_MAX = 3000;         // fiyat siralamasi bu kart sayisina ka
 const VGMR_SORT_CACHE_TTL = 900;          // fiyat siralamasi TL haritasi onbellegi zaman dilimi, sn (vgmr_sort_tl_map)
 /** Telefonda (dar ekran) secili suzgec yokken teknik ozellik panelini ilk boyamadan once kapatan satir ici betik (vgmr_facets_html). */
 const VGMR_FACETS_NARROW_JS = '<script>(function(d){if(d&&window.matchMedia&&matchMedia("(max-width: 47.99rem)").matches&&!d.querySelector("input:checked"))d.removeAttribute("open")})(document.currentScript&&document.currentScript.previousElementSibling)</script>';
-const VGMR_LIST_SHOW_MAX = 604800;       // liste fiyati (basis=list) en cok 7 gunlukse gosterilir (P1-08; siparis 48 saat kurali ayri)
-const VGMR_LAST_SHOW_MAX = 2592000;      // 48 saati gecmis son dogrulanan fiyat en cok 30 gun gosterilir (P1-08)
+const VGMR_LIST_SHOW_MAX = VGM_LIST_SHOW_MAX;   // api/lib/magaza.php vgm_price_display
+const VGMR_LAST_SHOW_MAX = VGM_LAST_SHOW_MAX;
 /** Sunucuda firma.json'dan doldurulan hukuki sayfalar (vgmr_render_legal_html; .htaccess ile ayni liste). */
 const VGMR_LEGAL_PAGES = ['on-bilgilendirme-formu', 'mesafeli-satis-sozlesmesi', 'iade-ve-cayma', 'kvkk-aydinlatma', 'odeme-ve-teslimat'];
 const VGMR_SITEMAP_LIMIT = 10000;        // site haritasi parcasinda en cok adres
@@ -286,26 +286,7 @@ function vgmr_price_visible(array $price): bool
  */
 function vgmr_price_display(array $price, ?int $now = null): ?string
 {
-    if ($price['tryGross'] === null) {
-        return null;
-    }
-    if (vgmr_price_visible($price)) {
-        return 'verified';
-    }
-    if (!in_array($price['reason'], ['stale', 'no_source'], true) || !is_int($price['checkedAt'] ?? null)) {
-        return null;
-    }
-    $age = ($now ?? (is_int($price['now'] ?? null) ? $price['now'] : time())) - $price['checkedAt'];
-    if ($age < -3600) {
-        return null;   // gelecekteki tarih: bozuk kayit
-    }
-    if ($price['basis'] === 'list') {
-        return $age <= VGMR_LIST_SHOW_MAX ? 'list' : null;
-    }
-    if ($price['basis'] === 'live' && $price['reason'] === 'stale') {
-        return $age <= VGMR_LAST_SHOW_MAX ? 'last' : null;
-    }
-    return null;
+    return vgm_price_display($price, $now ?? (is_int($price['now'] ?? null) ? $price['now'] : time()));
 }
 
 /** Gosterim durumu (vgmr_price sonucunda hazir; dogrudan vgm_price sonucu icin burada hesaplanir). */
@@ -622,16 +603,17 @@ function vgmr_card(array $p, array $ctx): string
         $h .= '<span class="vgm-chip vgm-chip--' . $chip[0] . '">' . vgmr_esc($chip[1]) . '</span>';
     }
     $h .= '</p>';
-    if ($price['orderable']) {
-        $q = vgmr_qty_rules($p);
-        $qid = 'vgm-cq-' . preg_replace('/[^a-z0-9-]/', '', (string)$p['id']);
-        $ctxName = $mpn !== '' ? $mpn : vgmr_clip($title, 60);   // her kartta ayirt edilebilir erisilebilir ad
-        $h .= '<div class="vgm-card__add"><label class="vgm-sr" for="' . $qid . '">' . vgmr_esc($unit[1] . ' – ' . $ctxName) . '</label>'
-            . '<input id="' . $qid . '" type="number" inputmode="numeric" min="' . $q['min'] . '" max="' . $q['max'] . '" step="' . $q['step'] . '" value="' . $q['min'] . '" data-vgm-qty>'
-            . '<button type="button" class="vgm-btn vgm-btn--primary vgm-btn--sm" data-vgm-add="' . vgmr_esc((string)$p['id']) . '" data-max="' . $q['max'] . '" data-min="' . $q['min']
-            . '" data-step="' . $q['step'] . '" data-name="' . vgmr_esc($name) . '" data-slug="' . vgmr_esc((string)$p['slug']) . '" data-unit="' . vgmr_esc($unit[0]) . '">+ Sepete ekle<span class="vgm-sr"> – ' . vgmr_esc($ctxName) . '</span></button>'
-            . '<p class="vgm-card__live" role="status" aria-live="polite" data-vgm-live></p></div>';
-    }
+    /* Sepet once (sahibin karari, 2026-11-02): fiyati gosterilen ya da gosterilmeyen HER urun sepete eklenebilir; sepet
+       siparis (yalnizca dogrulanmis fiyatli satirlar, magaza acikken) ya da tek seferde teklif olarak gonderilir. */
+    $q = vgmr_qty_rules($p);
+    $qid = 'vgm-cq-' . preg_replace('/[^a-z0-9-]/', '', (string)$p['id']);
+    $ctxName = $mpn !== '' ? $mpn : vgmr_clip($title, 60);   // her kartta ayirt edilebilir erisilebilir ad
+    $h .= '<div class="vgm-card__add"><label class="vgm-sr" for="' . $qid . '">' . vgmr_esc($unit[1] . ' – ' . $ctxName) . '</label>'
+        . '<input id="' . $qid . '" type="number" inputmode="numeric" min="' . $q['min'] . '" max="' . $q['max'] . '" step="' . $q['step'] . '" value="' . $q['min'] . '" data-vgm-qty>'
+        . '<button type="button" class="vgm-btn vgm-btn--primary vgm-btn--sm" data-vgm-add="' . vgmr_esc((string)$p['id']) . '" data-max="' . $q['max'] . '" data-min="' . $q['min']
+        . '" data-step="' . $q['step'] . '" data-name="' . vgmr_esc($name) . '" data-slug="' . vgmr_esc((string)$p['slug']) . '" data-unit="' . vgmr_esc($unit[0])
+        . '" data-orderable="' . ($price['orderable'] ? '1' : '0') . '">+ Sepete ekle<span class="vgm-sr"> – ' . vgmr_esc($ctxName) . '</span></button>'
+        . '<p class="vgm-card__live" role="status" aria-live="polite" data-vgm-live></p></div>';
     return $h . '</div></div></li>';
 }
 
@@ -707,6 +689,44 @@ function vgmr_featured(int $max = 8): array
     return $out;
 }
 
+const VGMR_HUB_SUBS = 6;                 // vitrin kategori kartinda en cok alt kategori (urun sayisina gore)
+
+/**
+ * Vitrin kategori karti: simge, ad, urun sayisi ve en kalabalik VGMR_HUB_SUBS alt kategori tek bir kartta; altta
+ * "Tümünü gör (N)". Kart esit yukseklikte (izgara satiri), icerik dogal akar; alt kategori listesi kartin DISINA tasmaz.
+ */
+function vgmr_hub_tile(array $cats, string $id, array $c): string
+{
+    $name = vgmr_cat_name($c, $id);
+    $href = '/magaza/kategori/' . vgmr_esc($id) . '/';
+    $subs = [];
+    foreach ($c['children'] as $child) {
+        $cc = $cats[$child] ?? null;
+        if ($cc !== null && $cc['count'] > 0) {
+            $subs[] = [(string)$child, $cc];
+        }
+    }
+    usort($subs, function (array $a, array $b): int {
+        return [(int)$b[1]['count'], $a[0]] <=> [(int)$a[1]['count'], $b[0]];
+    });
+    $hid = 'vgm-cat-' . preg_replace('/[^a-z0-9-]/', '', $id);
+    $h = '<li class="vgm-cats__item"><article class="vgm-cat" aria-labelledby="' . $hid . '">'
+        . '<a class="vgm-cat__head" href="' . $href . '"><span class="vgm-cat__ico">' . vgmr_cat_icon($id) . '</span>'
+        . '<span class="vgm-cat__title"><span class="vgm-cat__name" id="' . $hid . '">' . vgmr_esc($name) . '</span>'
+        . '<span class="vgm-cat__count">' . number_format((int)$c['count'], 0, ',', '.') . ' ürün</span></span></a>';
+    if ($subs) {
+        $h .= '<ul class="vgm-cat__subs" aria-label="' . vgmr_esc($name) . ' alt kategorileri">';
+        foreach (array_slice($subs, 0, VGMR_HUB_SUBS) as $s) {
+            $h .= '<li><a href="/magaza/kategori/' . vgmr_esc($s[0]) . '/"><span class="vgm-cat__sub">' . vgmr_esc(vgmr_cat_name($s[1], $s[0])) . '</span>'
+                . '<span class="vgm-cat__n">' . number_format((int)$s[1]['count'], 0, ',', '.') . '<span class="vgm-sr"> ürün</span></span></a></li>';
+        }
+        $h .= '</ul>';
+    }
+    $more = 'Tümünü gör (' . number_format((int)$c['count'], 0, ',', '.') . ' ürün)';
+    return $h . '<a class="vgm-cat__all" href="' . $href . '">' . vgmr_esc($more) . '<span class="vgm-sr"> – ' . vgmr_esc($name) . '</span><span aria-hidden="true"> →</span></a>'
+        . '</article></li>';
+}
+
 /** Vitrin: /magaza/ — ust kategoriler (sayilar ve alt kategori baglantilari), arama ve one cikan urunler. */
 function vgmr_render_hub(array $ctx): array
 {
@@ -730,21 +750,9 @@ function vgmr_render_hub(array $ctx): array
             if ($c['parent'] !== null || $c['count'] < 1) {
                 continue;
             }
-            $subs = '';
-            foreach ($c['children'] as $child) {
-                $cc = $cats[$child] ?? null;
-                if ($cc !== null && $cc['count'] > 0) {
-                    $subs .= '<li><a href="/magaza/kategori/' . vgmr_esc((string)$child) . '/">' . vgmr_esc(vgmr_cat_name($cc, (string)$child))
-                        . ' <span class="vgm-count">(' . (int)$cc['count'] . ')</span></a></li>';
-                }
-            }
-            $tiles .= '<li class="vgm-cats__item"><a class="vgm-cat" href="/magaza/kategori/' . vgmr_esc((string)$id) . '/">' . vgmr_cat_icon((string)$id)
-                . '<span class="vgm-cat__name">' . vgmr_esc(vgmr_cat_name($c, (string)$id)) . '</span>'
-                . '<span class="vgm-cat__count">' . (int)$c['count'] . ' ürün</span></a>'
-                . ($subs !== '' ? '<ul class="vgm-cat__subs" aria-label="' . vgmr_esc(vgmr_cat_name($c, (string)$id)) . ' alt kategorileri">' . $subs . '</ul>' : '')
-                . '</li>';
+            $tiles .= vgmr_hub_tile($cats, (string)$id, $c);
         }
-        $main .= '<section class="vgm-section" aria-labelledby="vgm-cats-h"><h2 id="vgm-cats-h">Kategoriler <span class="vgm-count">(' . $total . ' ürün)</span></h2>'
+        $main .= '<section class="vgm-section" aria-labelledby="vgm-cats-h"><h2 id="vgm-cats-h">Kategoriler <span class="vgm-count">(' . number_format((int)$total, 0, ',', '.') . ' ürün)</span></h2>'
             . '<ul class="vgm-cats">' . $tiles . '</ul></section>';
         $featured = vgmr_featured();
         if ($featured) {
@@ -1546,6 +1554,18 @@ function vgmr_quote_link(array $p, string $label, string $class, string $intent 
         . '" data-model="' . vgmr_esc(trim(vgmr_str($p['mpn'] ?? ''))) . '" data-url="' . vgmr_esc('/magaza/urun/' . $p['slug'] . '/') . '" data-intent="' . vgmr_esc($intent) . '">' . vgmr_esc($label) . '</a>';
 }
 
+/** Urun sayfasi bilgi kutusu: siparis verilemeyen urunun kisa nedeni (sepet once; "teklif isteyin" cagrisi ayrica yazilir). */
+const VGMR_BUY_REASON = [
+    'closed' => 'Mağazamız çok yakında siparişe açılacak.',
+    'stale' => 'Fiyat teyidi bekleniyor; sipariş için fiyatın yeniden doğrulanması gerekir.',
+    'held' => 'Tedarik fiyatı değişti; ekibimiz kontrol ediyor.',
+    'error' => 'Fiyat şu anda doğrulanamadı.',
+    'unavailable' => 'Tedarik stoğunda yok; benzer ürün veya termin önerebiliriz.',
+    'no_rate' => 'Döviz kuru güncelleniyor.',
+    'no_source' => 'Bu ürünün fiyatı teklifle bildirilir.',
+    'freight' => 'Ağır/hacimli ürün; nakliye dahil fiyat teklifle bildirilir.',
+];
+
 function vgmr_buy_box(array $p, array $price, array $ctx): string
 {
     $q = vgmr_qty_rules($p);
@@ -1565,30 +1585,34 @@ function vgmr_buy_box(array $p, array $price, array $ctx): string
         $rules[] = 'paket: ' . $q['pack'] . ' ' . $unit[3];
     }
     $unitNote = $unit[0] !== 'adet' ? ucfirst($unit[0]) . ' ile satılır' . ($rules ? ' (' . implode(', ', $rules) . ')' : '') . '.' : ($rules ? 'Sipariş adedi: ' . implode(', ', $rules) . '.' : '');
+    $add = '<button type="button" class="vgm-btn vgm-btn--primary" data-vgm-add="' . vgmr_esc((string)$p['id']) . '" data-max="' . $q['max'] . '" data-min="' . $q['min'] . '" data-step="' . $q['step']
+        . '" data-unit="' . vgmr_esc($unit[0]) . '" data-orderable="' . ($price['orderable'] ? '1' : '0') . '">Sepete ekle</button>';
+    $live = '<p class="vgm-buy__live" role="status" aria-live="polite" data-vgm-live></p>'
+        . '<noscript><p class="vgm-fine">Sepet için tarayıcınızda JavaScript açık olmalıdır. Sipariş veya teklif için <a href="' . VGMR_CONTACT . '">bize yazabilirsiniz</a>.</p></noscript>';
     if ($price['orderable']) {
-        $h .= '<div class="vgm-buy__row">' . $qty
-            . '<button type="button" class="vgm-btn vgm-btn--primary" data-vgm-add="' . vgmr_esc((string)$p['id']) . '" data-max="' . $q['max'] . '" data-min="' . $q['min'] . '" data-step="' . $q['step']
-            . '" data-unit="' . vgmr_esc($unit[0]) . '">Sepete ekle</button></div>'
-            . '<p class="vgm-buy__live" role="status" aria-live="polite" data-vgm-live></p>'
-            . '<noscript><p class="vgm-fine">Sepet için tarayıcınızda JavaScript açık olmalıdır. Sipariş için <a href="' . VGMR_CONTACT . '">bize yazabilirsiniz</a>.</p></noscript>'
+        $h .= '<div class="vgm-buy__row">' . $qty . $add . '</div>' . $live
             . vgmr_stock_html($p, $price)
             . '<ul class="vgm-facts"><li>Ödeme yalnızca havale/EFT ile alınır.</li><li>Faturalı satış; fiyata KDV dahildir.</li>'
             . ($unitNote !== '' ? '<li>' . vgmr_esc($unitNote) . '</li>' : '')
             . '<li>En fazla ' . $q['max'] . ' ' . vgmr_esc($unit[3]) . ' sipariş verilebilir; daha fazlası için ' . vgmr_quote_link($p, 'proforma isteyin', 'vgm-link', 'proforma') . '.</li></ul>';
     } else {
+        /* Sepet once (2026-11-02): siparis verilemeyen urun de sepete eklenir; sepet tek seferde teklif olarak gonderilir.
+           Tek urunluk teklif baglantisi ikincil kalir (nedene gore: alternatif, nakliye, haber ver). */
         $h .= '<div class="vgm-notice vgm-notice--info" role="note"><strong>Şu anda çevrim içi sipariş verilemiyor.</strong> '
-            . vgmr_esc(vgm_reason_text($reason)) . '</div>';
-        /* CTA nedene gore (P1-12): kapali -> acilinca haber ver + teklif; nakliye -> nakliye dahil teklif; tedarikte yok -> alternatif oner (adet yok). */
+            . vgmr_esc((VGMR_BUY_REASON[$reason] ?? VGMR_BUY_REASON['error']) . ' Ürünü sepete ekleyin; sepetinizdeki tüm ürünler için tek seferde teklif isteyebilirsiniz.') . '</div>'
+            . '<div class="vgm-buy__row">' . $qty . $add . '</div>' . $live;
+        $alt = [];
         if ($reason === 'unavailable') {
-            $h .= '<div class="vgm-buy__row">' . vgmr_quote_link($p, 'Alternatif ürün önerin', 'vgm-btn vgm-btn--primary', 'alternatif') . '</div>';
-        } elseif ($reason === 'closed') {
-            $h .= '<div class="vgm-buy__row">' . $qty . vgmr_quote_link($p, 'Teklif isteyin', 'vgm-btn vgm-btn--primary', 'teklif') . '</div>'
-                . '<p class="vgm-buy__notify">' . vgmr_quote_link($p, 'Siparişe açılınca haber verin', 'vgm-link', 'haber') . '</p>';
+            $alt[] = vgmr_quote_link($p, 'Alternatif ürün önerin', 'vgm-link', 'alternatif');
         } elseif ($reason === 'freight') {
-            $h .= '<div class="vgm-buy__row">' . $qty . vgmr_quote_link($p, 'Nakliye dahil teklif alın', 'vgm-btn vgm-btn--primary', 'nakliye') . '</div>';
+            $alt[] = vgmr_quote_link($p, 'Yalnızca bu ürün için nakliye dahil teklif alın', 'vgm-link', 'nakliye');
         } else {
-            $h .= '<div class="vgm-buy__row">' . $qty . vgmr_quote_link($p, 'Teklif isteyin', 'vgm-btn vgm-btn--primary', 'teklif') . '</div>';
+            $alt[] = vgmr_quote_link($p, 'Yalnızca bu ürün için teklif isteyin', 'vgm-link', 'teklif');
         }
+        if ($reason === 'closed') {
+            $alt[] = vgmr_quote_link($p, 'Siparişe açılınca haber verin', 'vgm-link', 'haber');
+        }
+        $h .= '<p class="vgm-buy__alt">' . implode('<span aria-hidden="true"> · </span>', $alt) . '</p>';
         $h .= vgmr_stock_html($p, $price);
         if ($unitNote !== '') {
             $h .= '<p class="vgm-fine">' . vgmr_esc($unitNote) . '</p>';
@@ -1606,7 +1630,7 @@ function vgmr_sticky_buy(array $p, array $price): string
         ? '<span class="vgm-sticky__amount">' . vgmr_esc(vgm_fmt_try((float)$price['tryGross'])) . ($unit[2] !== '' ? ' <small>' . vgmr_esc($unit[2]) . '</small>' : '') . '</span><small class="vgm-sticky__vat">KDV dahil'
             . ($display === 'list' ? ' · liste fiyatı' : ($display === 'last' ? ' · son doğrulanan' : '')) . '</small>'
         : '<span class="vgm-sticky__amount vgm-sticky__amount--none">Fiyat için teklif</span>';
-    $label = $price['orderable'] ? 'Sepete ekle' : ($price['reason'] === 'unavailable' ? 'Alternatif öner' : ($price['reason'] === 'freight' ? 'Nakliye dahil teklif' : 'Teklif iste'));
+    $label = 'Sepete ekle';
     return '<div class="vgm-sticky" data-vgm-sticky hidden><div class="vgm-wrap vgm-sticky__in"><p class="vgm-sticky__price">' . $amount . '</p>'
         . '<a class="vgm-btn vgm-btn--primary vgm-btn--sm" href="#satin-al" data-vgm-sticky-go>' . vgmr_esc($label) . '</a></div></div>';
 }

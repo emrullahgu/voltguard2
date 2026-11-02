@@ -72,13 +72,13 @@ test('P1-12: contact.php magazaTalep yapılandırılmış talebi doğrular, e-po
     await srv.stop();
     assert.doesNotMatch(srv.logs.join(''), /Fatal error|Warning:|Notice:|Deprecated:/);
   }
-  // bozuk/bilinmeyen niyet, yanlış sürüm ya da 8 KB üstü: talep yok sayılır, mesaj yine iletilir (etiketsiz, kayıt yok).
+  // bozuk/bilinmeyen niyet, yanlış sürüm ya da 16 KB üstü: talep yok sayılır, mesaj yine iletilir (etiketsiz, kayıt yok).
   // Ayrı veri klasörü: IP başına 10 dakikada 5 mesaj sınırı.
   const data2 = fs.mkdtempSync(path.join(scratch, 'veri-'));
   const srv2 = await server(data2);
   try {
     const good = {v: 1, intent: 'teklif', q: '', items: [{id: 'vgm-9001', mpn: 'DM-450', qty: 1, url: ''}]};
-    for (const [i, raw] of [JSON.stringify({...good, intent: 'satin-al'}), '{bozuk', JSON.stringify({...good, v: 2}), JSON.stringify({...good, q: 'x'.repeat(9000)})].entries()) {
+    for (const [i, raw] of [JSON.stringify({...good, intent: 'satin-al'}), '{bozuk', JSON.stringify({...good, v: 2}), JSON.stringify({...good, q: 'x'.repeat(17000)})].entries()) {
       const r = await post(srv2.base, form('mtalep-bozuk-00000' + i, {magazaTalep: raw}));
       assert.equal(r.status, 200, raw.slice(0, 40));
       const mail = mailFor(data2, r.body.reference);
@@ -127,4 +127,51 @@ test('P1-10: deliveryDays ürün > yaprak kategori > üst kategori > yok (en ge�
     vgm_delivery_days(['category' => 'alt', 'deliveryDays' => 0]), vgm_delivery_days(['category' => 'tek']), vgm_delivery_days(['category' => 'yok']),
     array_key_exists('deliveryDays', vgm_product_defaults(['deliveryDays' => 31]))]);`, {VG_MAGAZA_CATALOG: dir});
   assert.deepEqual(out, [5, 2, 1, 5, null, null, false]);
+});
+
+test('sepet önce: sepetin tamamı tek teklif talebi (intent "sepet"; ad, adet, gösterilen fiyat ve dayanağı); tekrar koruması', async () => {
+  const data = fs.mkdtempSync(path.join(scratch, 'veri-'));
+  const srv = await server(data);
+  try {
+    const talep = {v: 1, intent: 'sepet', q: '', items: [
+      {id: 'vgm-9001', mpn: 'DM-450', name: 'Deneme Marka DM-450 450 W Güneş Paneli', qty: 4, url: '/magaza/urun/deneme-marka-dm-450-450w-gunes-paneli/', price: 5760, basis: 'verified'},
+      {id: 'vgm-9006', mpn: 'LM-10', name: 'Liste Marka LM-10 C10 Otomatik Sigorta', qty: 12, url: '', price: 480.5, basis: 'list'},
+      {id: 'vgm-9003', mpn: 'DM-C16', name: 'Sigorta <script>', qty: 2, url: '', price: null, basis: 'verified'},   // ad temizlenir; fiyatsız -> none
+      {id: 'vgm-9004', mpn: 'DM-BAT', name: 'Akü', qty: 1, url: '', price: -5, basis: 'uydurma'},                   // geçersiz fiyat/dayanak -> null/none
+      {id: 'vgm-9005', mpn: 'DM-TR', name: 'Trafo', qty: 1, url: '', price: 96000, basis: 'verified', freight: true},  // nakliyeli: fiyata nakliye dahil değil
+      {id: 'vgm-9007', mpn: 'DM-KB', name: 'Kablo', qty: 3, url: '', price: 150, basis: 'last', freight: 'evet'}]};      // boolean olmayan işaret yok sayılır
+    const fields = form('msepet-0000000001', {message: '[Mağaza] Sepet teklif talebi – 4 kalem.\nFirma: Sentetik Ltd.\n\nÜrünler:\n1) DM-450 — 4 adet', magazaTalep: JSON.stringify(talep)});
+    const ok = await post(srv.base, fields);
+    assert.equal(ok.status, 200, JSON.stringify(ok.body)); assert.match(ok.body.reference, /^VG-\d{6}-[A-HJ-NP-Z2-9]{5}$/);
+    const mail = mailFor(data, ok.body.reference);
+    assert.match(subjectOf(mail), /\[Sepet teklifi\] Mağaza \/ Ürün Teklifi$/);
+    const body = bodyOf(mail);
+    assert.match(body, /1\. vgm-9001 · model DM-450 · Deneme Marka DM-450 450 W Güneş Paneli · adet 4 · 5\.760,00 TL \(KDV dahil, doğrulanmış fiyat\)/);
+    assert.match(body, /2\. vgm-9006 · model LM-10 · Liste Marka LM-10 C10 Otomatik Sigorta · adet 12 · 480,50 TL \(KDV dahil, liste fiyatı, siparişte teyit edilir\)/);
+    assert.match(body, /3\. vgm-9003 · model DM-C16 · adet 2 · fiyat teklifle bildirilir/);
+    assert.match(body, /4\. vgm-9004 · model DM-BAT · Akü · adet 1 · fiyat teklifle bildirilir/);
+    assert.match(body, /5\. vgm-9005 · model DM-TR · Trafo · adet 1 · 96\.000,00 TL \(KDV dahil, doğrulanmış fiyat, nakliye hariç\)/);
+    assert.match(body, /6\. vgm-9007 · model DM-KB · Kablo · adet 3 · 150,00 TL \(KDV dahil, son doğrulanan fiyat, siparişte teyit edilir\)/);
+    const rec = records(data).at(-1);
+    assert.equal(rec.intent, 'sepet'); assert.equal(rec.items.length, 6);
+    assert.deepEqual(rec.items.map(i => [i.name, i.price, i.basis]), [['Deneme Marka DM-450 450 W Güneş Paneli', 5760, 'verified'], ['Liste Marka LM-10 C10 Otomatik Sigorta', 480.5, 'list'], ['', null, 'none'], ['Akü', null, 'none'], ['Trafo', 96000, 'verified'], ['Kablo', 150, 'last']]);
+    assert.deepEqual(rec.items.map(i => i.freight === true), [false, false, false, false, true, false]);
+    assert.doesNotMatch(JSON.stringify(rec), /Sentetik Alıcı|0232|example\.test/, 'kayıtta kişisel veri yok');
+    // aynı talep kimliği + içerik: ikinci e-posta yok, aynı numara
+    const n = outbox(data).length;
+    const again = await post(srv.base, fields);
+    assert.equal(again.status, 200); assert.equal(again.body.reference, ok.body.reference); assert.equal(again.body.duplicate, true);
+    assert.equal(outbox(data).length, n);
+    // eski niyetlerde (teklif/proforma) ad ve fiyat alanları taşınmaz
+    const old = await post(srv.base, form('msepet-0000000002', {magazaTalep: JSON.stringify({...talep, intent: 'proforma'})}));
+    assert.equal(old.status, 200); assert.equal(records(data).at(-1).items[0].price, undefined);
+    // 40 kalemlik sepet (100 karakterlik adlarla) 16 KB sınırına sığar
+    const big = {v: 1, intent: 'sepet', q: '', items: Array.from({length: 40}, (_, i) => ({id: `vgm-${9100 + i}`, mpn: 'MODEL-' + i, name: 'Schneider Electric Kompakt Şalter NSX ' + 'X'.repeat(60) + i, qty: 999, url: '/magaza/urun/uzun-bir-urun-adresi-' + i + '/', price: 123456.78, basis: 'last'}))};
+    assert.ok(Buffer.byteLength(JSON.stringify(big)) < 16384);
+    const b = await post(srv.base, form('msepet-0000000003', {magazaTalep: JSON.stringify(big)}));
+    assert.equal(b.status, 200); assert.equal(records(data).at(-1).items.length, 40);
+  } finally {
+    await srv.stop();
+    assert.doesNotMatch(srv.logs.join(''), /Fatal error|Warning:|Notice:|Deprecated:/);
+  }
 });

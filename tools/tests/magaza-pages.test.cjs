@@ -68,8 +68,15 @@ test('açık mağaza: vitrin, kategori ve ürün TL fiyatı KDV dahil gösterir;
     assert.match(hub.text, /Faturalı satış/); assert.match(hub.text, /Mühendis desteği/);
     assert.doesNotMatch(hub.text, /Mağazamız çok yakında siparişe açılıyor/);
     assert.match(hub.text, /data-vgm-cart-count/);
-    // üst kategori kutusu: sayı ve alt kategori bağlantısı
-    assert.match(hub.text, /href="\/magaza\/kategori\/gunes-panelleri\/">[\s\S]*?1 ürün<\/span><\/a><ul class="vgm-cat__subs"[^>]*><li><a href="\/magaza\/kategori\/monokristal-paneller\/">Monokristal Paneller <span class="vgm-count">\(1\)<\/span>/);
+    // üst kategori kartı (2026-11-02 düzeltmesi): simge, ad, sayı, alt kategoriler ve "Tümünü gör" TEK kartın içinde;
+    // alt kategori listesi kartın dışına (bir sonraki satırın üstüne) taşmaz
+    assert.match(hub.text, /<li class="vgm-cats__item"><article class="vgm-cat" aria-labelledby="vgm-cat-gunes-panelleri"><a class="vgm-cat__head" href="\/magaza\/kategori\/gunes-panelleri\/">[\s\S]*?1 ürün<\/span><\/span><\/a><ul class="vgm-cat__subs"[^>]*><li><a href="\/magaza\/kategori\/monokristal-paneller\/"><span class="vgm-cat__sub">Monokristal Paneller<\/span><span class="vgm-cat__n">1<span class="vgm-sr"> ürün<\/span><\/span><\/a><\/li><\/ul><a class="vgm-cat__all" href="\/magaza\/kategori\/gunes-panelleri\/">Tümünü gör \(1 ürün\)/);
+    const tiles = hub.text.match(/<li class="vgm-cats__item">[\s\S]*?<\/article><\/li>/g) || [];
+    assert.ok(tiles.length >= 2, 'vitrinde kategori kartları');
+    for (const t of tiles) {
+      assert.equal((t.match(/<article/g) || []).length, 1, 'her kart tek article');
+      assert.ok(t.indexOf('vgm-cat__subs') === -1 || t.indexOf('vgm-cat__subs') < t.indexOf('</article>'), 'alt kategori listesi kartın içinde');
+    }
     assert.doesNotMatch(hub.text, /kategori\/kablolar\//, 'ürünü olmayan kategori vitrinde yok');
     const cat = await get(s, '/magaza/kategori/gunes-panelleri/');
     assert.equal(cat.status, 200); assert.ok(cat.text.includes('5.760,00 ₺'), 'üst kategori alt kategorinin ürünlerini listeler');
@@ -104,31 +111,35 @@ test('açık mağaza: vitrin, kategori ve ürün TL fiyatı KDV dahil gösterir;
   });
 });
 
-test('nakliye ürünü teklif düğmesi gösterir; sepete ekle yok', async () => {
+test('sepet önce: nakliye ürünü sepete eklenir (sipariş edilemez işaretiyle); tek ürün teklifi ikincil bağlantı', async () => {
   await withShop({firma: path.join(fx, 'firma-tam.json')}, null, async s => {
     const p = await get(s, FREIGHT);
     assert.equal(p.status, 200);
-    assert.match(p.text, /data-vgm-quote/); assert.match(p.text, /Teklif isteyin/); assert.match(p.text, /Mühendisimize sorun/);
+    assert.match(p.text, /<button type="button" class="vgm-btn vgm-btn--primary" data-vgm-add="[^"]+"[^>]*data-orderable="0">Sepete ekle<\/button>/);
+    assert.match(p.text, /<p class="vgm-buy__alt"><a class="vgm-link"[^>]*data-vgm-quote[^>]*data-intent="nakliye">Yalnızca bu ürün için nakliye dahil teklif alın<\/a><\/p>/);
+    assert.match(p.text, /sepetinizdeki tüm ürünler için tek seferde teklif isteyebilirsiniz/); assert.match(p.text, /Mühendisimize sorun/);
     assert.match(p.text, /href="\/sor\.html"/);
-    assert.doesNotMatch(p.text, /data-vgm-add/); assert.doesNotMatch(p.text, /Sepete ekle/);
+    assert.doesNotMatch(p.text, /class="vgm-btn vgm-btn--primary"[^>]*data-vgm-quote/, 'tek ürün teklifi birincil düğme değil');
     const stale = await get(s, '/magaza/urun/deneme-marka-dm-c16-c16-otomatik-sigorta/');
     // P1-08: 3 günlük canlı fiyat "son doğrulanan fiyat" olarak gösterilir; sipariş (48 saat kuralı) ve Offer yok
     assert.match(stale.text, /Fiyat teyidi bekleniyor/); assert.ok(stale.text.includes('144,00 ₺'));
     assert.match(stale.text, /<p class="vgm-price__basis" data-vgm-basis="last">Son doğrulanan tedarik fiyatı \(bugünkü kurla\) · <time datetime="[^"]+">3 gün önce doğrulandı<\/time><\/p>/);
-    assert.doesNotMatch(stale.text, /"offers"/); assert.doesNotMatch(stale.text, /data-vgm-add/); assert.doesNotMatch(stale.text, /"product:price/);
+    assert.doesNotMatch(stale.text, /"offers"/); assert.match(stale.text, /data-vgm-add="[^"]+"[^>]*data-orderable="0"/); assert.doesNotMatch(stale.text, /"product:price/);
   });
 });
 
-test('varsayılan satıcı (boş alanlar): kapalı mağaza bandı, sepete ekleme yok', async () => {
+test('varsayılan satıcı (boş alanlar): kapalı mağaza bandı; ürünler yine sepete eklenir (sipariş edilemez işaretiyle)', async () => {
   await withShop({firma: FIRMA_BOS}, null, async s => {
     for (const p of ['/magaza/', '/magaza/kategori/gunes-panelleri/', P1, '/magaza/ara/?q=deneme']) {
       const r = await get(s, p);
       assert.equal(r.status, 200, p);
       assert.match(r.text, /Mağazamız çok yakında siparişe açılıyor/, p);
-      assert.doesNotMatch(r.text, /data-vgm-add/, p); assert.doesNotMatch(r.text, /Sepete ekle/, p);
+      assert.match(r.text, /Sepete ekle/, p);
+      assert.doesNotMatch(r.text, /data-vgm-add="[^"]+"[^>]*data-orderable="1"/, p + ': kapalı mağazada hiçbir ürün siparişe hazır işaretlenmez');
     }
     const prod = await get(s, P1);
-    assert.match(prod.text, /Teklif isteyin/); assert.ok(prod.text.includes('5.760,00 ₺'));
+    assert.match(prod.text, /data-vgm-add="vgm-9001"[^>]*data-orderable="0">Sepete ekle<\/button>/);
+    assert.match(prod.text, /Yalnızca bu ürün için teklif isteyin/); assert.ok(prod.text.includes('5.760,00 ₺'));
     assert.equal(ldBlocks(prod.text).find(b => b['@type'] === 'Product').offers.availability, 'https://schema.org/PreOrder');
   });
 });
@@ -460,7 +471,7 @@ test('P1-09/10/11: metre birimi, adet kuralları, stok/termin, kart kodu satır�
     assert.equal(prod.status, 200);
     assert.match(prod.text, /5\.760,00 ₺ <span class="vgm-price__unit">\/ m<\/span><\/span> <span class="vgm-price__vat">KDV dahil \(%20\), m başına<\/span>/);
     assert.match(prod.text, /<label for="vgm-qty">Metre<\/label><input id="vgm-qty" type="number" inputmode="numeric" min="100" max="900" step="50" value="100" data-vgm-qty>/);
-    assert.match(prod.text, /data-vgm-add="vgm-9001" data-max="900" data-min="100" data-step="50" data-unit="metre"/);
+    assert.match(prod.text, /data-vgm-add="vgm-9001" data-max="900" data-min="100" data-step="50" data-unit="metre" data-orderable="1"/);
     assert.match(prod.text, /Metre ile satılır \(en az 100 m, 50 m katlarında, paket: 100 m\)\./);
     assert.match(prod.text, /<ul class="vgm-stock" aria-label="Stok ve termin"><li>(?:<strong>Tedarikçi stoğu: (?:var|yok)<\/strong>|Stok durumu siparişte teyit edilir)/);
     assert.match(prod.text, /Tahmini kargoya veriliş: en geç 30 gün \(ödeme sonrası\)/);
@@ -475,7 +486,7 @@ test('P1-09/10/11: metre birimi, adet kuralları, stok/termin, kart kodu satır�
     assert.doesNotMatch(card, /KDV dahil/, 'KDV notu kartta tekrarlanmaz');
     assert.equal((cat.text.match(/class="vgm-grid__note"/g) || []).length, 1);
     const fr = await get(s, FREIGHT);   // nakliye: nedene özel çağrı
-    assert.match(fr.text, /data-intent="nakliye">Nakliye dahil teklif alın<\/a>/); assert.match(fr.text, /Nakliye ve termin il bazında teklifle bildirilir/);
+    assert.match(fr.text, /data-intent="nakliye">Yalnızca bu ürün için nakliye dahil teklif alın<\/a>/); assert.match(fr.text, /Nakliye ve termin il bazında teklifle bildirilir/);
   });
   await withShop({firma: FIRMA_BOS}, null, async s => {   // kapalı mağaza: kartlarda "closed" çipi tekrar etmez, band kapatılabilir
     const cat = await get(s, '/magaza/kategori/gunes-panelleri/');
@@ -519,11 +530,19 @@ test('P1-07/12/13: mobil chrome, teklif/proforma akışı ve havale güveni (sta
   assert.match(il, /draft\.subject === 'magaza'/); assert.match(il, /params\.get\('konu'\) === 'magaza'/);
   assert.match(read('contact.php'), /'magaza' => 'Mağaza \/ Ürün Teklifi'/);
   const js = read('js/magaza.js');
-  assert.match(js, /setItem\('vgContactDraft', JSON\.stringify\(\{ subject: 'magaza'/); assert.match(js, /\[data-vgm-cart-quote\]/);
+  assert.match(js, /setItem\('vgContactDraft', JSON\.stringify\(\{ subject: 'magaza'/);
+  // sepet önce: sepet sayfası tüm sepeti tek teklif olarak contact.php'ye gönderir (vg-quote.js; magazaTalep intent "sepet")
+  assert.match(js, /intent: 'sepet'/); assert.match(js, /kind: 'contact', subject: 'magaza'/); assert.match(js, /window\.VGQuote\.send\(fields\)/);
+  assert.match(js, /window\.VGQuote\.requestId\(\)/, 'aynı içerik aynı talep kimliğiyle (tekrar koruması)');
+  assert.match(js, /setCheckout\(hasQuote && data\.orderable === true\)/, '"Sipariş oluştur" yalnızca sepetin tamamı siparişe hazırken');
+  assert.match(js, /if \(!st\.items\.length \|\| st\.skipped\.length\)/, 'ödeme sayfası fiyatı teyit edilmemiş satırı sessizce dışarıda bırakmaz');
   assert.match(js, /IntersectionObserver/); assert.match(js, /vg_magaza_band_kapali_v1/);
   const sepet = read('magaza/sepet.html');
   assert.match(sepet, /<ol class="vgm-progress"[^>]*><li aria-current="step">Sepet<\/li>/); assert.match(sepet, /Son ödeme: sipariş \+ 24 saat/);
-  assert.match(sepet, /data-vgm-cart-quote>Sepeti teklife çevir \/ proforma iste<\/button>/);
+  assert.match(sepet, /data-vgm-checkout-link>Sipariş oluştur<\/a>/); assert.match(sepet, /data-vgm-cq-open[^>]*>Sepeti teklif olarak gönder<\/button>/);
+  assert.match(sepet, /<section class="vgm-cq" id="sepet-teklif" data-vgm-cq/); assert.match(sepet, /name="website"/);
+  assert.ok(sepet.indexOf('/js/vg-quote.js') > 0 && sepet.indexOf('/js/vg-quote.js') < sepet.indexOf('/js/magaza.js'), 'vg-quote.js magaza.js öncesinde');
+  assert.equal(il.match(/class="cf-turnstile"\s+data-sitekey="([^"]+)"/)[1], sepet.match(/class="cf-turnstile" data-sitekey="([^"]+)"/)[1], 'iletişim formuyla aynı Turnstile anahtarı (contact.php)');
   const od = read('magaza/odeme.html');
   assert.match(od, /Siparişi onaylamanızla sözleşme kurulur ve ödeme yükümlülüğü doğar\./); assert.doesNotMatch(od, /kesinleşmez|iptal edilebilir/);
   assert.match(od, /data-vgm-submit>Siparişi onayla – ödeme yükümlülüğü doğar<\/button>/); assert.match(od, /<!--vgm:satici-->[\s\S]*class="vgm-seller"[\s\S]*<!--\/vgm:satici-->/);
@@ -813,11 +832,22 @@ test('P1-08: fiyat gösterimi siparişten ayrı (verified | list ≤ 7 gün | la
       [vgmr_ago($now - 60, $now), vgmr_ago($now - 86400, $now), vgmr_ago($now - 5 * 86400, $now)],
       vgmr_chip($c(['reason' => 'stale', 'basis' => 'list', 'checkedAt' => $now - 86400, 'display' => 'list'])),
       vgmr_chip($c(['reason' => 'stale', 'basis' => 'live', 'checkedAt' => $now - 31 * 86400, 'display' => null])),
+      [vgmr_price_display($c(['reason' => 'freight', 'basis' => 'live', 'checkedAt' => $now - 3600]), $now),
+       vgmr_price_display($c(['reason' => 'freight', 'basis' => 'list', 'checkedAt' => $now - 3600]), $now),
+       vgmr_price_display($c(['reason' => 'freight', 'basis' => 'list', 'checkedAt' => $now - 8 * 86400]), $now),
+       vgmr_price_display($c(['reason' => 'freight', 'basis' => 'live', 'checkedAt' => $now - 3 * 86400]), $now),
+       vgmr_price_display($c(['reason' => 'freight', 'basis' => 'live', 'checkedAt' => $now - 31 * 86400]), $now),
+       vgmr_price_display($c(['reason' => 'freight', 'basis' => 'live', 'checkedAt' => null]), $now),
+       vgmr_price_display($c(['reason' => 'unavailable', 'basis' => 'live', 'checkedAt' => $now - 3600]), $now),
+       vgmr_price_display($c(['reason' => 'unavailable', 'basis' => 'list', 'checkedAt' => $now - 86400]), $now),
+       vgmr_price_display($c(['reason' => 'unavailable', 'basis' => 'live', 'checkedAt' => $now - 31 * 86400]), $now)],
     ], JSON_UNESCAPED_UNICODE);`);
   assert.deepEqual(out.slice(0, 13), ['verified', 'verified', 'list', 'list', null, 'last', null, null, null, null, null, null, null]);
   assert.deepEqual(out[13], ['bugün', 'dün', '5 gün önce']);
   assert.equal(out[14], null, 'liste fiyatında "Fiyat teyidi bekleniyor" rozeti yerine gri etiket');
   assert.deepEqual(out[15], ['wait', 'Fiyat teyidi bekleniyor']);
+  // nakliyeli / stokta olmayan ürün 48 saat kontrolünden önce ayrılır: "doğrulanmış" yalnızca 48 saat içindeki canlı fiyat
+  assert.deepEqual(out[16], ['verified', 'list', null, 'last', null, null, 'verified', 'list', null]);
 });
 
 test('P1-08: liste fiyatı kartta ve ürün sayfasında gri etiketle; sepete ekleme, Offer ve product:price yok; eski liste fiyatı gizli', async () => {
@@ -830,7 +860,8 @@ test('P1-08: liste fiyatı kartta ve ürün sayfasında gri etiketle; sepete ekl
     const cat = await get(s, '/magaza/kategori/koruma-cihazlari/');
     const card = id => cat.text.split(`data-id="${id}"`)[1].split('</li>')[0];
     assert.match(card('vgm-9006'), /<p class="vgm-price vgm-price--soft"><span class="vgm-price__amount">480,00 ₺<\/span><\/p><p class="vgm-price__basis" data-vgm-basis="list">Liste fiyatı – siparişte teyit edilir · <time datetime="[^"]+">dün güncellendi<\/time><\/p>/);
-    assert.doesNotMatch(card('vgm-9006'), /Fiyat teyidi bekleniyor|data-vgm-add/);
+    assert.doesNotMatch(card('vgm-9006'), /Fiyat teyidi bekleniyor/);
+    assert.match(card('vgm-9006'), /data-vgm-add="vgm-9006"[^>]*data-orderable="0">\+ Sepete ekle/, 'liste fiyatlı ürün sepete eklenir; sipariş edilemez işaretli');
     assert.match(card('vgm-9007'), /Güncel fiyat için teklif isteyin/, '7 günden eski liste fiyatı gösterilmez');
     assert.match(card('vgm-9003'), /data-vgm-basis="last">Son doğrulanan tedarik fiyatı \(bugünkü kurla\)/);
     const prod = await get(s, '/magaza/urun/liste-marka-lm-10-c10-otomatik-sigorta/');
@@ -838,7 +869,7 @@ test('P1-08: liste fiyatı kartta ve ürün sayfasında gri etiketle; sepete ekl
     assert.match(prod.text, /data-vgm-basis="list">Liste fiyatı – siparişte teyit edilir/);
     assert.match(prod.text, /Bu fiyat bilgi amaçlıdır; sipariş, tedarik fiyatı son 48 saat içinde doğrulandığında açılır\./);
     assert.match(prod.text, /<small class="vgm-sticky__vat">KDV dahil · liste fiyatı<\/small>/);
-    assert.match(prod.text, /Şu anda çevrim içi sipariş verilemiyor/); assert.doesNotMatch(prod.text, /data-vgm-add/);
+    assert.match(prod.text, /Şu anda çevrim içi sipariş verilemiyor/); assert.match(prod.text, /data-vgm-add="vgm-9006"[^>]*data-orderable="0"/);
     const product = ldBlocks(prod.text).find(b => b['@type'] === 'Product');
     assert.equal(product.offers, undefined, 'yapılandırılmış veride yalnızca doğrulanmış fiyat'); assert.doesNotMatch(prod.text, /product:price/);
     // doğrulanmış fiyat aynı kalır: etiket yok, Offer var
@@ -846,7 +877,7 @@ test('P1-08: liste fiyatı kartta ve ürün sayfasında gri etiketle; sepete ekl
     assert.doesNotMatch(p1.text, /vgm-price__basis/); assert.equal(ldBlocks(p1.text).find(b => b['@type'] === 'Product').offers.price, '5760.00');
     // fiyat sıralaması gösterilen TL ile (son doğrulanan 144 TL < liste 480 TL); fiyatı gösterilmeyen en sonda
     assert.deepEqual(cardIds((await get(s, '/magaza/kategori/koruma-cihazlari/?sirala=fiyat-artan')).text), ['vgm-9003', 'vgm-9006', 'vgm-9007']);
-    assert.doesNotMatch((await get(s, '/magaza/ara/?q=LM-10')).text, /data-vgm-add/);
+    assert.match((await get(s, '/magaza/ara/?q=LM-10')).text, /data-vgm-add="vgm-9006"[^>]*data-orderable="0"/);
   });
 });
 
@@ -965,4 +996,20 @@ test('hukuki inceleme: cayma/iade, sözleşme kuruluşu, garanti, satıcı adres
   for (const k of ['vg_magaza_sepet_v1', 'vg_magaza_urunler_v1', 'vg_magaza_son_siparis_v1', 'vg_magaza_band_kapali_v1', '/magaza/kvkk-aydinlatma.html'])
     assert.ok(giz.includes(k), 'gizlilik: ' + k);
   assert.match(giz, /Voltguard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi/); assert.match(giz, /No: 172\/69 İç Kapı No: 043/);
+});
+
+test('vitrin kategori kartı: en kalabalık 6 alt kategori sayılarıyla, boş alt kategori yok, "Tümünü gör (N ürün)", tek article', () => {
+  const out = phpEval(`$cats = ['ust' => ['parent' => null, 'count' => 1234, 'name' => 'Üst & Koruma', 'children' => ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'bos']]];
+    foreach (['a' => 5, 'b' => 900, 'c' => 40, 'd' => 7, 'e' => 120, 'f' => 3, 'g' => 60, 'h' => 99, 'bos' => 0] as $k => $n) { $cats[$k] = ['parent' => 'ust', 'count' => $n, 'name' => 'Alt ' . strtoupper($k), 'children' => []]; }
+    echo json_encode(vgmr_hub_tile($cats, 'ust', $cats['ust']), JSON_UNESCAPED_UNICODE);`);
+  assert.match(out, /^<li class="vgm-cats__item"><article class="vgm-cat" aria-labelledby="vgm-cat-ust">[\s\S]*<\/article><\/li>$/);
+  assert.equal((out.match(/<article/g) || []).length, 1);
+  assert.match(out, /<span class="vgm-cat__name" id="vgm-cat-ust">Üst &amp; Koruma<\/span><span class="vgm-cat__count">1\.234 ürün<\/span>/);
+  const subs = [...out.matchAll(/<span class="vgm-cat__sub">([^<]+)<\/span><span class="vgm-cat__n">(\d+)/g)].map(m => [m[1], Number(m[2])]);
+  assert.deepEqual(subs, [['Alt B', 900], ['Alt E', 120], ['Alt H', 99], ['Alt G', 60], ['Alt C', 40], ['Alt D', 7]], 'ürün sayısına göre en çok 6 alt kategori');
+  assert.doesNotMatch(out, /kategori\/bos\//, 'ürünü olmayan alt kategori yok');
+  assert.match(out, /<a class="vgm-cat__all" href="\/magaza\/kategori\/ust\/">Tümünü gör \(1\.234 ürün\)<span class="vgm-sr"> – Üst &amp; Koruma<\/span>/);
+  const css = fs.readFileSync(path.join(root, 'css/magaza.css'), 'utf8');
+  for (const rule of ['.vgm-cats__item { display: flex;', '.vgm-cat__all { margin-top: auto;', 'repeat(4, minmax(0, 1fr))', 'repeat(3, minmax(0, 1fr))', 'repeat(2, minmax(0, 1fr))'])
+    assert.ok(css.includes(rule), rule);
 });

@@ -39,16 +39,20 @@ function vg_contact_origin_allowed(string $url, bool $originOnly): bool
 
 /** Magaza talep niyetleri (iletisim.html magazaTalep.intent) ve e-posta konusundaki etiketleri. */
 const VG_CONTACT_MAGAZA_INTENTS = ['teklif' => 'Teklif', 'proforma' => 'Proforma', 'nakliye' => 'Nakliye', 'alternatif' => 'Alternatif',
-    'haber' => 'Haber ver', 'tedarik' => 'Tedarik'];
+    'haber' => 'Haber ver', 'tedarik' => 'Tedarik', 'sepet' => 'Sepet teklifi'];
+/** Sepet teklifinde satirin gosterilen fiyat dayanagi (js/magaza.js; api/lib/magaza.php vgm_price_display). */
+const VG_CONTACT_MAGAZA_BASIS = ['verified' => 'doğrulanmış fiyat', 'list' => 'liste fiyatı, siparişte teyit edilir', 'last' => 'son doğrulanan fiyat, siparişte teyit edilir', 'none' => 'fiyat teklifle bildirilir'];
 
 /**
  * Magaza talebi (P1-12): iletisim.html gizli "magazaTalep" alani, {"v":1,"intent","items":[{id,mpn,qty,url}],"q"}.
+ * Sepet teklifi (intent "sepet", /magaza/sepet.html) satirlari ayrica urun adini (name), gosterilen KDV dahil birim TL
+ * fiyatini (price; yoksa null), fiyat dayanagini (basis) ve nakliye haric fiyat isaretini (freight) tasir; bunlar bilgi amaclidir, fiyat teklifi personel verir.
  * Bicim bozuksa null (talep yine mesaj metniyle iletilir). Gecersiz satirlar atlanir; kimligi ve modeli olmayan satir
- * tutulmaz; en cok 40 satir. Kisisel veri tasimaz (urun kimligi, model, adet, urun adresi, aranan metin).
+ * tutulmaz; en cok 40 satir. Kisisel veri tasimaz (urun kimligi, model, ad, adet, fiyat, urun adresi, aranan metin).
  */
 function vg_contact_magaza_talep(string $raw): ?array
 {
-    if ($raw === '' || strlen($raw) > 8192) return null;
+    if ($raw === '' || strlen($raw) > 16384) return null;
     $data = json_decode($raw, true, 6);
     if (!is_array($data) || ($data['v'] ?? null) !== 1 || !is_string($data['intent'] ?? null)
         || !isset(VG_CONTACT_MAGAZA_INTENTS[$data['intent']]) || !is_array($data['items'] ?? null)) return null;
@@ -64,7 +68,19 @@ function vg_contact_magaza_talep(string $raw): ?array
             || !is_int($qty) || $qty < 1 || $qty > 99999
             || vg_strlen($mpn) > 80 || preg_match('/[\x00-\x1F\x7F<>]/', $mpn) === 1
             || ($id === '' && $mpn === '')) continue;
-        $items[] = ['id' => $id, 'mpn' => $mpn, 'qty' => $qty, 'url' => $url];
+        $row = ['id' => $id, 'mpn' => $mpn, 'qty' => $qty, 'url' => $url];
+        if ($data['intent'] === 'sepet') {
+            $name = is_string($it['name'] ?? null) ? trim(preg_replace('/\s+/u', ' ', $it['name']) ?? '') : '';
+            if (vg_strlen($name) > 160 || preg_match('/[\x00-\x1F\x7F<>]/', $name) === 1) $name = '';
+            $price = $it['price'] ?? null;
+            $price = (is_int($price) || is_float($price)) && $price > 0 && $price < 1e9 ? round((float)$price, 2) : null;
+            $basis = is_string($it['basis'] ?? null) && isset(VG_CONTACT_MAGAZA_BASIS[$it['basis']]) ? $it['basis'] : 'none';
+            if ($price === null) $basis = 'none';
+            $row += ['name' => $name, 'price' => $price, 'basis' => $basis];
+            /* Agir/hacimli urun (vgm_price reason "freight"): gosterilen fiyata nakliye dahil degildir. */
+            if (($it['freight'] ?? null) === true) $row['freight'] = true;
+        }
+        $items[] = $row;
     }
     $q = is_string($data['q'] ?? null) ? trim($data['q']) : '';
     if (vg_strlen($q) > 80 || preg_match('/[\x00-\x1F\x7F<>]/', $q) === 1) $q = '';
@@ -78,7 +94,10 @@ function vg_contact_magaza_text(array $t): string
     $lines = ['Mağaza talebi (' . VG_CONTACT_MAGAZA_INTENTS[$t['intent']] . '):'];
     foreach ($t['items'] as $i => $it) {
         $lines[] = ($i + 1) . '. ' . ($it['id'] !== '' ? $it['id'] : 'kimliksiz') . ($it['mpn'] !== '' ? ' · model ' . $it['mpn'] : '')
-            . ' · adet ' . $it['qty'] . ($it['url'] !== '' ? ' · https://voltguard.com.tr' . $it['url'] : '');
+            . (($it['name'] ?? '') !== '' ? ' · ' . $it['name'] : '')
+            . ' · adet ' . $it['qty']
+            . (array_key_exists('basis', $it) ? ' · ' . ($it['price'] !== null ? number_format((float)$it['price'], 2, ',', '.') . ' TL (KDV dahil, ' . VG_CONTACT_MAGAZA_BASIS[$it['basis']] . (!empty($it['freight']) ? ', nakliye hariç' : '') . ')' : VG_CONTACT_MAGAZA_BASIS['none']) : '')
+            . ($it['url'] !== '' ? ' · https://voltguard.com.tr' . $it['url'] : '');
     }
     if ($t['q'] !== '') $lines[] = 'Aranan: ' . $t['q'];
     $lines[] = 'Yapılandırılmış veri: ' . vg_json_encode($t);

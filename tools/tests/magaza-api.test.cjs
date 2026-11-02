@@ -441,3 +441,60 @@ test('P1-03: üretimde Turnstile anahtarı (site ya da gizli) yoksa sipariş 503
   }
   fs.rmSync(sandbox, { recursive: true, force: true });
 });
+
+test('sepet önce: sipariş edilemeyen satırlar sepette (teklif için) gösterim kuralıyla döner; sipariş ucu yalnızca imzalı, siparişe hazır satırları kabul eder', async () => {
+  const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'voltguard-magaza-sepet-once-'));
+  const data = path.join(sandbox, 'data'); fs.mkdirSync(data);
+  writeState(data);
+  const srv = await server(data);
+  const anon = client(srv.base);
+  try {
+    const mixed = [{ id: 'vgm-9001', qty: 1 }, { id: 'vgm-9002', qty: 2 }, { id: 'vgm-9003', qty: 1 }, { id: 'vgm-9004', qty: 1 }];
+    let r = await anon.call('magaza', 'sepet', { body: { items: mixed }, csrf: false });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    const cart = r.body, line = id => cart.lines.find(l => l.id === id);
+    assert.equal(cart.open, true); assert.equal(cart.orderable, false, 'sepetin tamamı siparişe hazır değil');
+    assert.equal(cart.lines.length, 4, 'sipariş edilemeyen satırlar da sepette kalır');
+    assert.equal(line('vgm-9001').orderable, true); assert.equal(line('vgm-9001').display, 'verified'); assert.equal(line('vgm-9001').lineTryGross, 5520);
+    assert.equal(line('vgm-9004').orderable, false); assert.equal(line('vgm-9004').reason, 'freight'); assert.equal(line('vgm-9004').display, 'verified');
+    assert.equal(line('vgm-9004').unitTryGross, 82800); assert.equal(line('vgm-9004').lineEstimate, 82800); assert.equal(line('vgm-9004').lineTryGross, null);
+    assert.equal(line('vgm-9003').reason, 'held'); assert.equal(line('vgm-9003').display, null, 'bekletilen fiyat gösterilmez');
+    assert.equal(line('vgm-9003').unitTryGross, null); assert.equal(line('vgm-9003').unitTryNet, null); assert.equal(line('vgm-9003').lineEstimate, undefined);
+    const l2 = line('vgm-9002');
+    assert.equal(l2.orderable, false);
+    if (l2.display === null) assert.equal(l2.unitTryGross, null);
+    else { assert.equal(l2.display, 'last'); assert.equal(l2.lineEstimate, Math.round(l2.unitTryGross * 2 * 100) / 100); }
+    assert.equal(cart.totals.tryGross, 5520, 'sipariş toplamına yalnızca siparişe hazır satır girer');
+    assert.equal(cart.estimate.tryGross, Math.round((5520 + 82800 + (l2.lineEstimate || 0)) * 100) / 100, 'bilgi amaçlı tahmin gösterilen fiyatlarla');
+    assert.equal(cart.estimate.unpriced, l2.display === null ? 2 : 1);
+    assert.ok(cart.quote && cart.quote.token, 'imzalı jeton yalnızca siparişe hazır satırları taşır');
+
+    // Sipariş ucu: jetonda olmayan (sipariş edilemeyen) satır eklenirse reddedilir; e-posta yok
+    const before = outbox(data).length;
+    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-sepet-once-0001', quote: cart.quote.token, items: mixed, ...customer() }, csrf: false });
+    assert.equal(r.status, 409); assert.equal(r.body.error, 'quote_expired');
+    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-sepet-once-0002', quote: cart.quote.token, items: [{ id: 'vgm-9001', qty: 1 }, { id: 'vgm-9004', qty: 1 }], ...customer() }, csrf: false });
+    assert.equal(r.status, 409); assert.equal(r.body.error, 'quote_expired', 'nakliye satırı siparişe sokulamaz');
+    assert.equal(outbox(data).length, before);
+
+    // Sepetin tamamı siparişe hazırsa "orderable": true
+    r = await anon.call('magaza', 'sepet', { body: { items: [{ id: 'vgm-9001', qty: 1 }, { id: 'vgm-9005', qty: 2 }] }, csrf: false });
+    assert.equal(r.body.orderable, true); assert.equal(r.body.estimate.unpriced, 0);
+
+    // Kapalı mağaza: sepet yine fiyatlanır (teklif için), sipariş edilemez; sipariş ucu 503 shop_closed
+    const okToken = r.body.quote.token;
+    writeState(data, { open: false });
+    r = await anon.call('magaza', 'sepet', { body: { items: [{ id: 'vgm-9001', qty: 3 }, { id: 'vgm-9003', qty: 1 }] }, csrf: false });
+    assert.equal(r.status, 200); assert.equal(r.body.open, false); assert.equal(r.body.orderable, false); assert.equal(r.body.quote, null);
+    assert.equal(r.body.lines[0].reason, 'closed'); assert.equal(r.body.lines[0].display, 'verified'); assert.equal(r.body.lines[0].lineEstimate, 16560);
+    assert.equal(r.body.estimate.tryGross, 16560); assert.equal(r.body.estimate.unpriced, 1);
+    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-sepet-once-0003', quote: okToken, items: [{ id: 'vgm-9001', qty: 1 }, { id: 'vgm-9005', qty: 2 }], ...customer() }, csrf: false });
+    assert.equal(r.status, 503); assert.equal(r.body.error, 'shop_closed');
+    assert.equal(outbox(data).length, before);
+    assert.doesNotMatch(JSON.stringify(cart), /costUsd|usdNet|tedarikci-bir/);
+  } finally {
+    await srv.stop();
+    assert.doesNotMatch(srv.logs.join(''), /Fatal error|Warning:|Notice:|Deprecated:/);
+    fs.rmSync(sandbox, { recursive: true, force: true });
+  }
+});

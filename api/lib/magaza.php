@@ -21,6 +21,8 @@ const VGM_RATE_FETCH_MAX_AGE = 172800;   // kur en fazla 48 saat once TCMB'den o
 const VGM_RATE_MAX_AGE = 864000;         // TCMB yayin tarihi en fazla 10 gun once (uzun bayram tatilleri)
 const VGM_HOLD_RATIO = 0.25;             // kabul edilen fiyata gore +-%25'ten buyuk degisim personel onayi bekler
 const VGM_QUOTE_TTL = 1800;              // sepet fiyat jetonu 30 dakika gecerli
+const VGM_LIST_SHOW_MAX = 604800;        // liste fiyati (basis=list) en cok 7 gunlukse gosterilir (P1-08; siparis 48 saat kurali ayri)
+const VGM_LAST_SHOW_MAX = 2592000;       // 48 saati gecmis son dogrulanan fiyat en cok 30 gun gosterilir (P1-08)
 const VGM_MAX_LINES = 40;
 const VGM_HISTORY = 20;
 const VGM_MAX_FILE = 4194304;            // ozel JSON dosyalari (4 MiB)
@@ -1453,6 +1455,40 @@ function vgm_price(array $p, ?array $s, ?array $rate, array $config, bool $open,
     return $out;
 }
 
+/**
+ * Fiyat GOSTERIM durumu (P1-08; urun sayfasi, kartlar ve sepet ayni kurali kullanir; siparis 48 saat kuralina bagli kalir):
+ * verified (guncel dogrulanmis fiyat) | list (liste fiyati, en cok 7 gun) | last (48 saati gecmis son dogrulanan, en cok
+ * 30 gun) | null (fiyat gosterilmez: "teklifle bildirilir"). Bekletilen, hatali ya da kursuz fiyat gosterilmez.
+ */
+function vgm_price_display(array $price, int $now): ?string
+{
+    if ($price['tryGross'] === null) {
+        return null;
+    }
+    if (in_array($price['reason'], ['ok', 'closed'], true)) {
+        return 'verified';   // vgm_price bu iki durumu yalnizca 48 saat icindeki canli fiyata verir
+    }
+    /* freight/unavailable 48 saat kontrolunden ONCE belirlenir: yas ve dayanak burada ayrica denetlenir. */
+    $ageChecked = in_array($price['reason'], ['freight', 'unavailable'], true);
+    if ((!$ageChecked && !in_array($price['reason'], ['stale', 'no_source'], true)) || !is_int($price['checkedAt'] ?? null)) {
+        return null;
+    }
+    $age = $now - $price['checkedAt'];
+    if ($age < -3600) {
+        return null;   // gelecekteki tarih: bozuk kayit
+    }
+    if ($price['basis'] === 'list') {
+        return $age <= VGM_LIST_SHOW_MAX ? 'list' : null;
+    }
+    if ($ageChecked && $price['basis'] === 'live' && $age <= VGM_PRICE_MAX_AGE) {
+        return 'verified';
+    }
+    if ($price['basis'] === 'live' && ($price['reason'] === 'stale' || $ageChecked)) {
+        return $age <= VGM_LAST_SHOW_MAX ? 'last' : null;
+    }
+    return null;
+}
+
 /** Sipariş verilemeyen fiyatin musteriye gosterilecek aciklamasi. */
 function vgm_reason_text(string $reason): string
 {
@@ -1651,13 +1687,19 @@ function vgm_quote(array $cart, int $now): array
     $tryGross = 0.0;
     $usdNet = 0.0;
     $warnings = [];
+    $estimate = 0.0;
+    $unpriced = 0;
     foreach ($cart as $id => $qty) {
         $p = vgm_product($id);
         $price = vgm_price($p, $items[$id] ?? null, $rate, $config, $open, $now);
-        /* Musteriye USD tutar gosterilmez (sahibin karari); USD yalnizca imzali jetonda ve siparis kaydinda. */
+        /* Musteriye USD tutar gosterilmez (sahibin karari); USD yalnizca imzali jetonda ve siparis kaydinda.
+           Sepet siparis edilemeyen satirlari da tasir (sepeti teklif olarak gonderme): bu satirlarin birim fiyati yalnizca
+           urun sayfasinda gosterilen kuralla (vgm_price_display: verified/list/last) dondurulur, toplama ve jetona girmez. */
+        $display = vgm_price_display($price, $now);
         $line = ['id' => $id, 'slug' => $p['slug'], 'name' => $p['name'], 'brand' => $p['brand'] ?? '', 'qty' => $qty,
             'unit' => $p['unit'] ?? 'adet', 'vat' => $price['vat'],
-            'unitTryNet' => $price['tryNet'], 'unitTryGross' => $price['tryGross'], 'lineTryGross' => null,
+            'unitTryNet' => $display !== null ? $price['tryNet'] : null, 'unitTryGross' => $display !== null ? $price['tryGross'] : null,
+            'display' => $display, 'lineTryGross' => null,
             'checkedAt' => $price['checkedAt'] !== null ? vg_iso($price['checkedAt']) : null,
             'orderable' => $price['orderable'], 'reason' => $price['reason'], 'reasonText' => vgm_reason_text($price['reason']),
             'mpn' => $p['mpn'] ?? '', 'specs' => vgm_specs_snapshot($p), 'deliveryDays' => vgm_delivery_days($p),
@@ -1671,8 +1713,16 @@ function vgm_quote(array $cart, int $now): array
             $tryGross += $lineGross;
             $usdNet += $price['usdNet'] * $qty;
             $signed[] = [$id, $qty, $price['usdNet'], $price['tryNet'], $price['tryGross'], $price['vat']];
+            $estimate += $lineGross;
         } else {
             $warnings[] = $p['name'] . ': ' . vgm_reason_text($price['reason']);
+            if ($display !== null) {
+                /* Bilgi amacli satir tutari (teklif/sepet ozeti); siparis toplamina ve jetona girmez. */
+                $line['lineEstimate'] = vgm_round2($price['tryGross'] * $qty);
+                $estimate += $line['lineEstimate'];
+            } else {
+                $unpriced++;
+            }
         }
         $lines[] = $line;
     }
@@ -1690,7 +1740,11 @@ function vgm_quote(array $cart, int $now): array
             'rate' => ['usdTry' => (float)$rate['usdTry'], 'date' => (string)$rate['date']]]),
             'expiresAt' => vg_iso($exp)];
     }
-    return ['open' => $open, 'lines' => $lines, 'totals' => $totals, 'quote' => $quote, 'warnings' => $warnings,
+    /* Sepetin tamami siparise donusturulebilir mi (sepet sayfasindaki "Sipariş oluştur" yalnizca bu durumda acilir);
+       siparis ucu bundan bagimsiz olarak jeton + magaza acik + satir bazinda yeniden denetimle korunur. */
+    return ['open' => $open, 'orderable' => $open && $lines !== [] && count($signed) === count($lines),
+        'lines' => $lines, 'totals' => $totals, 'quote' => $quote, 'warnings' => $warnings,
+        'estimate' => ['tryGross' => vgm_round2($estimate), 'unpriced' => $unpriced],
         'rate' => vgm_rate_ok($rate, $now) ? ['usdTry' => (float)$rate['usdTry'], 'date' => (string)$rate['date']] : null,
         'shipping' => ['feeTry' => vgm_round2($fee), 'freeOverTry' => vgm_round2($freeOver)]];
 }
