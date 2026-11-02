@@ -1,8 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { loadEmployeeRuntime } from './employeeRuntime';
+import ConnectedServices from './ConnectedServices';
+import { isConnectedServiceRoute } from './connectedServicesTransport';
 
 const SAVING = 'Kaydınız sunucuya yazılıyor. İşlem tamamlandığında bölüm değiştirebilirsiniz.';
 export default function EmployeeModule({ route, title, refreshKey = 0 }) {
+  if (isConnectedServiceRoute(route)) return <ConnectedServices key={route} route={route} title={title} refreshKey={refreshKey} />;
+  return <NativeEmployeeModule route={route} title={title} refreshKey={refreshKey} />;
+}
+function NativeEmployeeModule({ route, title, refreshKey = 0 }) {
   const host = useRef(null), controller = useRef(null), currentRoute = useRef(route), status = useRef({ pending: 0, error: null });
   const [state, setState] = useState('loading'), [message, setMessage] = useState(''), [write, setWrite] = useState(status.current), [attempt, setAttempt] = useState(0);
   const previousRefresh = useRef(refreshKey);

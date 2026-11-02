@@ -1,4 +1,4 @@
-import{c as p,p as c,q as l}from"./SimpleAppWithAuth-Ct-ppnP_.js";/**
+import{c as p,p as c,q as l}from"./SimpleAppWithAuth-CSQ2qg4V.js";/**
  * @license lucide-react v0.469.0 - ISC
  *
  * This source code is licensed under the ISC license.

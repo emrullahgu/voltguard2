@@ -1,4 +1,4 @@
-import{c as eb}from"./SimpleAppWithAuth-Ct-ppnP_.js";import{l as Jn,m as ue,r as N,R as T}from"./index-mE_5vEFz.js";/**
+import{c as eb}from"./SimpleAppWithAuth-CSQ2qg4V.js";import{l as Jn,m as ue,r as N,R as T}from"./index-CaMz0Qtg.js";/**
  * @license lucide-react v0.469.0 - ISC
  *
  * This source code is licensed under the ISC license.

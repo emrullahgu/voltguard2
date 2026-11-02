@@ -1,4 +1,4 @@
-import{c}from"./SimpleAppWithAuth-Ct-ppnP_.js";/**
+import{c}from"./SimpleAppWithAuth-CSQ2qg4V.js";/**
  * @license lucide-react v0.469.0 - ISC
  *
  * This source code is licensed under the ISC license.

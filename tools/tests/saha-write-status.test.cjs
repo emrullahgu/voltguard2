@@ -116,8 +116,10 @@ test('The native employee host blocks active writes and releases its notice afte
  },useState:initial=>{const index=stateIndex++;if(!(index in states))states[index]=initial;return [states[index],value=>{states[index]=typeof value==='function'?value(states[index]):value;}];},useEffect:(effect,deps)=>{const index=effectIndex++,previous=effects[index];if(!previous||deps.some((value,i)=>value!==previous[i])){effects[index]=deps;effect();}}};
  const window={addEventListener:(name,fn)=>handlers.set(name,fn),removeEventListener:()=>{}};
  const runtime={mount:async(host,options)=>{assert.equal(host,refs[0].current);assert.equal(options.route,'Customers');onEvent=options.onEvent;return controller;}};
- const Wrapper=load('../../staff-app/src/EmployeeModule.jsx',{'react':react,'./employeeRuntime':{loadEmployeeRuntime:async()=>({runtime,styles:[]})}},{window,document:{documentElement:{dataset:{theme:'light'}}}}).default;
- const render=refreshKey=>{stateIndex=0;refIndex=0;effectIndex=0;return Wrapper({route:'Customers',title:'Müşteriler',refreshKey});};
+ const ConnectedServices=()=>{throw Error('An ordinary record route must still use the native employee host.');};
+ const Wrapper=load('../../staff-app/src/EmployeeModule.jsx',{'react':react,'./employeeRuntime':{loadEmployeeRuntime:async()=>({runtime,styles:[]})},'./ConnectedServices':ConnectedServices,
+  './connectedServicesTransport':{isConnectedServiceRoute:route=>['ConnectedAi','ConnectedData'].includes(route)}},{window,document:{documentElement:{dataset:{theme:'light'}}}}).default;
+ const render=refreshKey=>{stateIndex=0;refIndex=0;effectIndex=0;const native=Wrapper({route:'Customers',title:'Müşteriler',refreshKey});assert.notEqual(native.type,ConnectedServices);assert.equal(typeof native.type,'function');return native.type(native.props);};
  render(0);
  await Promise.resolve();await Promise.resolve();await Promise.resolve();
  assert.equal(typeof onEvent,'function');assert.equal(handlers.has('message'),false,'window messages cannot forge native controller events');
