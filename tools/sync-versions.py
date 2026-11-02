@@ -14,7 +14,8 @@ de degismez, degisince otomatik yenilenir.
 
 Kapsam: kok ve icerik klasorlerindeki *.html, *.php ve tools/shell/head.html. Uretilen klasorler
 (araclar/, voltsim/ ve VoltGame) kendi ureticileriyle ayni kurali kullanir; burada da denetlenir.
-Yalnizca /css/ ve /js/ altindaki (ya da goreli css/, js/) dosyalar ele alinir; harici adreslere dokunulmaz.
+Yalnizca css/js dosyalari ele alinir; ../ ile baslayan yollar sayfanin klasorune gore cozulur.
+Harici adreslere ve depo disindaki dosyalara dokunulmaz.
 """
 import hashlib
 import re
@@ -23,16 +24,22 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SKIP = {'.git', 'node_modules', 'VoltGame', 'SahaTakip-main', 'voltguardekleyelim', 'vesikalar', '.qa', '.netlify-publish', '__pycache__', 'Tanıtım Videosu', '.claude'}
-REF = re.compile(r'((?:href|src)=")(/?)((?:css|js)/[A-Za-z0-9_./-]+\.(?:css|js))\?v=([A-Za-z0-9_-]+)(")')
+REF = re.compile(r'((?:href|src)=")((?:\.\./)+|/?)((?:css|js)/[A-Za-z0-9_./-]+\.(?:css|js))\?v=([A-Za-z0-9_-]+)(")')
 _cache = {}
 
 
-def rev(rel):
-    if rel not in _cache:
-        f = ROOT / rel
+def rev(rel, page):
+    f = ((page.parent / rel) if rel.startswith('../') else (ROOT / rel.lstrip('/'))).resolve()
+    try:
+        parts = f.relative_to(ROOT).parts
+    except ValueError:
+        return None
+    if parts and parts[0] in SKIP:
+        return None
+    if f not in _cache:
         # CRLF/LF farkı yok sayılır: Windows çalışma kopyası ile Linux'taki (CI, Netlify) git içeriği aynı özeti verir
-        _cache[rel] = hashlib.sha256(f.read_bytes().replace(b'\r\n', b'\n')).hexdigest()[:12] if f.is_file() else None
-    return _cache[rel]
+        _cache[f] = hashlib.sha256(f.read_bytes().replace(b'\r\n', b'\n')).hexdigest()[:12] if f.is_file() else None
+    return _cache[f]
 
 
 def files():
@@ -52,9 +59,10 @@ def main():
         raw = p.read_bytes()
         text = raw.decode('utf-8')
         def sub(m):
-            r = rev(m.group(3))
+            rel = m.group(2) + m.group(3)
+            r = rev(rel, p)
             if r is None:
-                missing.append(f'{p.relative_to(ROOT).as_posix()}: {m.group(3)}')
+                missing.append(f'{p.relative_to(ROOT).as_posix()}: {rel}')
                 return m.group(0)
             if m.group(4) != r:
                 stale.append(f'{p.relative_to(ROOT).as_posix()}: {m.group(3)} {m.group(4)} -> {r}')

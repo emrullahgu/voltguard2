@@ -3,6 +3,24 @@
    önizleme HTML'i yalnızca sunucunun sınırlı Markdown çıktısıdır. Otomatik yayın veya paylaşım yoktur. */
 (function () {
   'use strict';
+  function schedulerText(scheduler, formatDateTime) {
+    var s = scheduler && typeof scheduler === 'object' && !Array.isArray(scheduler) ? scheduler : {};
+    var text = typeof s.message === 'string' ? s.message : 'Zamanlanmış tarama bilgisi alınamadı.';
+    if (typeof s.lastCronAt === 'string' && s.lastCronAt) {
+      text += ' Son zamanlanmış çalışma: ' + (typeof formatDateTime === 'function' ? formatDateTime(s.lastCronAt) : s.lastCronAt) + '.';
+    }
+    if (s.lastCronMode === 'draft-only') text += ' Çalışma modu: Yalnız taslak.';
+    else if (s.lastCronMode === 'full') text += ' Çalışma modu: Tam tarama.';
+    else if (s.lastCronMode !== undefined && s.lastCronMode !== null && s.lastCronMode !== '') text += ' Çalışma modu: Bilinmiyor.';
+    return text;
+  }
+  function renderScheduler(element, scheduler, formatDateTime) {
+    if (!element) return;
+    element.className = 'vhp-alert vhp-alert--' + (scheduler && scheduler.healthy === true ? 'ok' : 'error');
+    element.textContent = schedulerText(scheduler, formatDateTime);
+  }
+  if (typeof module !== 'undefined' && module.exports) module.exports = { schedulerText: schedulerText, renderScheduler: renderScheduler };
+  if (typeof document === 'undefined') return;
   var doc = document;
   var gate = doc.querySelector('[data-vhp-gate]');
   if (!window.VG || !window.VG.Auth || !window.VG.AccountUI) {
@@ -333,8 +351,7 @@
     api('sources').then(function (j) {
       sources = j.items; setMeta({ categories: j.categories });
       var sc = $('[data-sched]');
-      sc.className = 'vhp-alert vhp-alert--' + (j.scheduler.healthy ? 'ok' : 'error');
-      sc.textContent = j.scheduler.message + (j.scheduler.lastCronAt ? ' Son zamanlanmış çalışma: ' + fmt(j.scheduler.lastCronAt) + '.' : '');
+      renderScheduler(sc, j.scheduler, fmt);
       tb.innerHTML = j.items.map(function (s) {
         return row([
           '<strong>' + esc(s.name) + '</strong><br><small>' + esc(s.feedUrl) + '</small>',
