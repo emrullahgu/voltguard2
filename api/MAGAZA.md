@@ -400,10 +400,42 @@ Sepet adımındaki canlı yeniden kontrol değişmedi: 6 saatten eski fiyatlar, 
  docs {preInfo: metin, contract: metin},        ← müşterinin onayladığı metnin kendisi (kalıcı kayıt)
  history [{at, status, by, note (iç), publicNote}],
  tracking null | {company, code, url},
+ member? {id: 'u…', linkedAt, via: checkout|claim},   ← site üye hesabı bağlantısı (yalnızca sunucu yazar)
+ memberUnlinkedAt?,                                     ← üye hesabını sildiyse (sipariş yasal süre boyunca kalır)
  private {sources {id: [{supplier, url, costTry, checkedAt}]}}}   ← ASLA herkese açık yanıtta yok
 ```
 
-`vgm_order_public()` müşteriye gösterilebilecek alanları döndürür (iç not, `private`, maliyet yok).
+`vgm_order_public()` müşteriye gösterilebilecek alanları döndürür (iç not, `private`, maliyet yok);
+`vgm_order_customer_view()` buna ödeme bilgisini ekler (sipariş takibi ve Hesabım › Siparişlerim aynı görünümü kullanır).
+
+## Üye hesabı ve Siparişlerim (`api/lib/magaza-uye.php`)
+
+Mağazanın ayrı hesap sistemi yoktur; sitenin üye hesabı (`api/auth.php`, `VGSESS` oturumu) kullanılır.
+
+- **Ödeme sayfası:** `hesap_profil` (GET) üyeyi ve onayla kaydedilmiş son fatura/teslimat bilgisini döndürür; çerez yoksa
+  oturum açmadan `{user: null}`. Form boş alanlara doldurulur; üye değilse "Üye girişi yap / Üye ol" (`?next=/magaza/odeme.html`,
+  sepet localStorage'da korunur), misafir sipariş açık kalır.
+- **Siparişi bağlama:** `siparis` yalnızca `VGSESS` çerezi + oturumun `X-VG-CSRF` jetonu geldiğinde oturumu okur
+  (`vgm_checkout_member`) ve `order.member` yazar. İstemcinin gönderdiği hiçbir üye alanı kullanılmaz; üye kimliği tekrar
+  korumasının parmak izine girmez. Yanıttaki `account {linked, saved}` gerçek kaydı söyler: `X-VG-CSRF` gönderildiği hâlde oturum doğrulanamadıysa
+  (süre doldu, başka sekmede çıkış/giriş) `{linked:false, saved:false}` döner ve uyarı gösterilir; istemci de üye olarak
+  gönderdiği siparişte `account` yoksa aynı uyarıyı gösterir. "Bilgilerimi kaydet" kutusu hiçbir zaman önceden işaretlenmez;
+  kayıt varsa etiket "bu siparişteki bilgilerle güncelle" der. Kayıtlı bilgide T.C. kimlik no saklanmaz (`hesap_profil` de döndürmez).
+- **Eski misafir siparişleri:** üye kaydı e-postayı doğrulamadığı için yalnızca e-posta eşleşmesiyle bağlama YAPILMAZ.
+  `hesap_dogrula_gonder` hesabın e-postasına 6 haneli kod (15 dk, 5 deneme, HMAC özetiyle saklanır) gönderir; sınırlar e-posta adresine bağlıdır ve hesap silinip aynı
+  adresle yeniden kayıt olunsa da sürer: adres başına saatte 3 / günde 6 kod, günde 10 hatalı deneme (aşılınca 429), ayrıca uid
+  başına saatte 3 ve IP başına saatte 10 kod; `hesap_dogrula`
+  adresi doğrular ve aynı e-postalı, hiçbir üyeye bağlı olmayan siparişleri `via: claim` ile bağlar. Doğrulanmış üyede
+  `hesap_siparisler` sonradan verilen misafir siparişlerini de kendiliğinden ekler (önce paylaşımlı kilitle aday aranır; yazma
+  kilidi yalnızca bağlanacak sipariş varsa alınır). E-posta değişirse doğrulama geçersizdir.
+- **Okuma:** `hesap_siparisler` (liste, en çok 200), `hesap_siparis?ref=` (ayrıntı: ürünler, toplamlar, ödeme/IBAN, kargo,
+  geçmiş, adresler, onaylanan Ön Bilgilendirme Formu ve sözleşme metni; TCKN son 2 hane). Başka üyenin ya da bağsız sipariş
+  404 döner (varlığı belli edilmez). `hesap_sahiplen`, `hesap_adres_sil` (POST). Tüm üye uçları oturum + Origin + CSRF ister.
+- **Veri:** `uyeler.json {version:1, members: {uid: {verified {email, at}, verify {hash, exp, tries}, saved {customer, billing,
+  shippingAddress, savedAt}}}}`. Hesap silinince (`vg_h_delete_account`) bağlantılar ve üye kaydı silinir, siparişler kalır;
+  hesap silmenin sonraki adımı başarısız olursa `vgm_member_restore` bağlantıları ve kaydı geri yazar (bellekteki geri alma kaydıyla);
+  hesap dışa aktarma `shop` altında bağlı sipariş özetlerini ve kayıtlı bilgileri içerir.
+- **Panel:** `panel_order` yanıtında `memberInfo {id, name, email, via, linkedAt, exists}`, `panel_orders` satırında `member`.
 
 ## Modül sözleşmeleri
 

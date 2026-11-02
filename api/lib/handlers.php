@@ -80,6 +80,23 @@ function vg_verify_user_password(VgStore $store, array $user, $password, string 
     }
 }
 
+/**
+ * Magaza uye baglantisi (api/lib/magaza-uye.php). Magaza kodu yalnizca hesap silme ve disa aktarmada, gerektiginde
+ * yuklenir; magaza kurulu degilse (dosya yok) sessizce atlanir.
+ */
+function vg_magaza_member_lib(): bool
+{
+    static $loaded = null;
+    if ($loaded === null) {
+        $loaded = is_file(__DIR__ . '/magaza.php') && is_file(__DIR__ . '/magaza-uye.php');
+        if ($loaded) {
+            require_once __DIR__ . '/magaza.php';
+            require_once __DIR__ . '/magaza-uye.php';
+        }
+    }
+    return $loaded;
+}
+
 function vg_validation_failed(array $errors): void
 {
     vg_fail(422, 'validation', 'Lütfen işaretli alanları kontrol edin.', $errors);
@@ -311,8 +328,23 @@ function vg_h_delete_account(VgStore $store, array $body): array
         vg_validation_failed(['confirm' => 'Silme işlemini onaylamak için kutuyu işaretleyin.']);
     }
     vg_verify_user_password($store, $user, $body['password'] ?? '', 'password');
+    /* Magaza: siparislerdeki uye baglantisi ve kayitli fatura/teslimat bilgisi silinir; siparis kayitlari yasal saklama
+       suresince kalir. Bu adim basarisiz olursa hesap silinmez (503), kullanici yeniden dener. Hesap silme sonraki
+       adimda basarisiz olursa baglantilar geri yazilir: hesap duruyorsa Siparislerim sessizce bosalmaz. */
+    $shopUndo = vg_magaza_member_lib() ? vgm_member_forget($user['id'], vg_now()) : null;
     require_once __DIR__ . '/community.php';
-    vg_community_delete_account($store, $user['id']);
+    try {
+        vg_community_delete_account($store, $user['id']);
+    } catch (Throwable $e) {
+        if ($shopUndo !== null && ($shopUndo['unlinked'] > 0 || $shopUndo['entry'] !== null)) {
+            try {
+                vgm_member_restore($user['id'], $shopUndo);
+            } catch (Throwable $restoreError) {
+                error_log('VoltGuard magaza: member links not restored after failed account deletion (' . get_class($restoreError) . ')');
+            }
+        }
+        throw $e;
+    }
     vg_rl_clear('login_email', $user['email']);
     vg_rl_clear('login_email_ip', $user['email'] . '|' . vg_rl_ip_key());
     vg_session_destroy();
@@ -575,6 +607,15 @@ function vg_h_export(VgStore $store, array $body): array
     } catch (VgHttpError $e) {
         $collections['communityComments'] = null;
         $collections['communityCommentsNote'] = 'Topluluk yorumları şu anda okunamadı; daha sonra tekrar indirin veya info@voltguard.com.tr adresinden isteyin.';
+    }
+    /* Hesaba bagli magaza siparisleri ve kayitli odeme sayfasi bilgileri de kisisel veridir. */
+    if (vg_magaza_member_lib()) {
+        try {
+            $collections['shop'] = vgm_member_export($user['id']);
+        } catch (VgHttpError $e) {
+            $collections['shop'] = null;
+            $collections['shopNote'] = 'Mağaza sipariş kayıtları şu anda okunamadı; daha sonra tekrar indirin veya info@voltguard.com.tr adresinden isteyin.';
+        }
     }
     $doc = [
         'format' => 'voltguard-account-export/1',

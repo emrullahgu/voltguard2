@@ -12,5 +12,6 @@ require __DIR__ . '/lib/magaza.php';
 require __DIR__ . '/lib/magaza-belge.php';
 require __DIR__ . '/lib/magaza-siparis.php';
 require __DIR__ . '/lib/magaza-kaynak.php';
+require __DIR__ . '/lib/magaza-uye.php';
 require __DIR__ . '/lib/magaza-api.php';
 vgm_api_run();

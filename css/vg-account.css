@@ -191,6 +191,9 @@ a.vg-stat { display: grid; gap: .1rem; text-decoration: none; color: inherit; tr
 a.vg-stat:hover { border-color: var(--clr-accent); box-shadow: var(--shadow-md); transform: translateY(-1px); }
 a.vg-stat:focus-visible { outline: 3px solid var(--clr-accent-text); outline-offset: 2px; }
 .vg-stat__value .vg-skel { width: 2.5rem; height: 1.9rem; margin: .2rem 0; }
+.vg-stat--wide { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1rem; }
+.vg-stat--wide .vg-stat__label { font-weight: 700; color: var(--th-heading); }
+.vg-stat--wide .vg-stat__label i { color: var(--clr-accent-text); margin-right: .3rem; }
 @media (prefers-reduced-motion: reduce) { a.vg-stat:hover { transform: none; } }
 
 /* Liste öğeleri */

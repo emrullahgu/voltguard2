@@ -1,7 +1,9 @@
 <?php
 /*
  * VoltGuard Magaza JSON API yonlendiricisi (api/magaza.php). Zarf uyelik API'siyle aynidir: {"api":"vg-auth/1","ok":...}.
- * Herkese acik: fiyatlar (GET), sepet, onbilgi, siparis, durum (POST). Panel islemleri: oturum (VGSESS) + Origin +
+ * Herkese acik: fiyatlar (GET), sepet, onbilgi, siparis, durum (POST). Uye (sitenin uye hesabi, api/lib/magaza-uye.php):
+ * hesap_profil, hesap_siparisler, hesap_siparis (GET), hesap_dogrula_gonder, hesap_dogrula, hesap_sahiplen, hesap_adres_sil
+ * (POST; oturum + Origin + X-VG-CSRF); her uye yalnizca kendine bagli siparisleri gorur. Panel islemleri: oturum (VGSESS) + Origin +
  * X-VG-CSRF + sunucuda atanmis magaza yetkisi (tools/magaza-admin.php grant). Herkese acik yanitlarda tedarikci,
  * maliyet, marj ve USD tutar YOKTUR (api/MAGAZA.md kural 5 ve sahibin "sayfada TL" karari).
  * Hicbir islem tum urunleri dolasmaz (50.000 urun): fiyatlar yalnizca istenen kimlikleri, panel sorun listesini
@@ -20,6 +22,9 @@ function vgm_api_routes(): array
         'fiyatlar' => ['GET', 'public'], 'sepet' => ['POST', 'public'], 'onbilgi' => ['POST', 'public'],
         'siparis' => ['POST', 'public'], 'durum' => ['POST', 'public'],
         'panel_me' => ['GET', 'session'],
+        'hesap_profil' => ['GET', 'member'], 'hesap_siparisler' => ['GET', 'member'], 'hesap_siparis' => ['GET', 'member'],
+        'hesap_dogrula_gonder' => ['POST', 'member'], 'hesap_dogrula' => ['POST', 'member'], 'hesap_sahiplen' => ['POST', 'member'],
+        'hesap_adres_sil' => ['POST', 'member'],
         'panel_orders' => ['GET', 'panel'], 'panel_order' => ['GET', 'panel'], 'panel_order_update' => ['POST', 'panel'],
         'panel_prices' => ['GET', 'panel'], 'panel_price_decide' => ['POST', 'panel'], 'panel_check_now' => ['POST', 'panel'],
         'panel_status' => ['GET', 'panel'], 'panel_export' => ['POST', 'panel'],
@@ -79,6 +84,122 @@ function vgm_live_recheck(array $ids): void
     } catch (Throwable $e) {
         error_log('VoltGuard magaza: live recheck failed (' . get_class($e) . ')');
     }
+}
+
+/* ------------------------------------------------------------------ uye hesabi (api/lib/magaza-uye.php) */
+
+/**
+ * Siparis gonderen ziyaretci uye girisi yapmis mi? Uye kimligi YALNIZCA sunucudaki oturumdan okunur (istemci girdisi
+ * yok sayilir) ve yalnizca oturumun CSRF jetonu da gonderildiyse kullanilir. Cerez yoksa oturum dosyasi acilmaz.
+ */
+function vgm_checkout_member(): ?array
+{
+    $sent = (string)($_SERVER['HTTP_X_VG_CSRF'] ?? '');
+    if (!isset($_COOKIE[VG_SESSION_NAME]) || $sent === '') {
+        return null;
+    }
+    $store = vg_store();
+    vg_session_start();
+    $known = isset($_SESSION['csrf']) && is_string($_SESSION['csrf']) ? $_SESSION['csrf'] : '';
+    $user = $known !== '' && hash_equals($known, $sent) ? vg_session_user($store) : null;
+    session_write_close();
+    return $user !== null && vgm_uid_valid($user['id'] ?? null) ? $user : null;
+}
+
+/** T.C. kimlik no uyeye de tam gosterilmez (son 2 hane). */
+function vgm_mask_tckn(string $t): string
+{
+    return $t === '' ? '' : str_repeat('•', max(0, strlen($t) - 2)) . substr($t, -2);
+}
+
+/** Odeme sayfasi on doldurma: uye profili + (onayla kaydedilmis) son fatura/teslimat bilgisi. */
+function vgm_member_profile(?array $user): array
+{
+    if ($user === null) {
+        return ['user' => null, 'saved' => null, 'verified' => false];
+    }
+    $entry = vgm_member_entry((string)$user['id']);
+    $saved = is_array($entry['saved'] ?? null) ? $entry['saved'] : null;
+    if ($saved !== null) {
+        $saved['savedAt'] = vg_iso((int)($saved['savedAt'] ?? 0));
+        if (is_array($saved['billing'] ?? null)) {
+            $saved['billing']['tckn'] = '';   // kayitli bilgide T.C. kimlik no tutulmaz/gosterilmez (vgm_member_save_profile)
+        }
+    }
+    return ['user' => ['name' => (string)$user['name'], 'email' => (string)$user['email'], 'phone' => (string)($user['phone'] ?? ''),
+        'company' => (string)($user['company'] ?? '')], 'saved' => $saved,
+        'verified' => vgm_member_verified($entry, vg_normalize_email($user['email'] ?? ''))];
+}
+
+/** Siparislerim satiri: musteri gorunumunden kisaltilmis ozet. */
+function vgm_member_order_row(array $o, int $now): array
+{
+    $v = vgm_order_customer_view($o, $now);
+    $first = $o['items'][0]['name'] ?? '';
+    return ['reference' => $v['reference'], 'createdAt' => $v['createdAt'], 'status' => $v['status'], 'statusLabel' => $v['statusLabel'],
+        'payBy' => $v['payBy'], 'payOverdue' => $v['payOverdue'], 'payment' => $v['payment'], 'totalTry' => (float)$o['totals']['tryGross'],
+        'itemCount' => count($o['items']), 'firstItem' => (string)$first, 'tracking' => $v['tracking'],
+        'linkedVia' => (string)($o['member']['via'] ?? 'checkout')];
+}
+
+function vgm_member_action(string $action, array $body, array $user, int $now): array
+{
+    $uid = (string)$user['id'];
+    $email = vg_normalize_email($user['email'] ?? '');
+    switch ($action) {
+        case 'hesap_siparisler':
+            $entry = vgm_member_entry($uid);
+            $verified = vgm_member_verified($entry, $email);
+            /* E-postasi dogrulanmis uyede, girissiz verilmis ayni e-postali siparisler kendiliginden hesaba eklenir. */
+            $claimed = $verified ? vgm_member_claim($uid, $email, $now) : [];
+            $orders = vgm_member_orders_raw($uid);
+            $rows = [];
+            foreach (array_slice($orders, 0, VGM_MEMBER_ORDERS_MAX) as $o) {
+                $rows[] = vgm_member_order_row($o, $now);
+            }
+            return ['orders' => $rows, 'total' => count($orders), 'verified' => $verified, 'email' => $email,
+                'claimed' => count($claimed), 'hasSaved' => is_array($entry['saved'] ?? null)];
+        case 'hesap_siparis':
+            $ref = strtoupper(trim(vgm_get_param('ref')));
+            $o = vgm_reference_valid($ref) ? vgm_order_get($ref) : null;
+            /* Baska uyenin ya da bagsiz siparis: var olup olmadigi da belli edilmez. */
+            if ($o === null || ($o['member']['id'] ?? null) !== $uid) {
+                vg_fail(404, 'not_found', 'Sipariş bulunamadı ya da hesabınıza bağlı değil.');
+            }
+            $v = vgm_order_customer_view($o, $now);
+            $b = $o['billing'];
+            $b['tckn'] = vgm_mask_tckn((string)($b['tckn'] ?? ''));
+            $v['customer'] = $o['customer'];
+            $v['billing'] = $b;
+            $v['shippingAddress'] = $o['shippingAddress'];
+            $v['notes'] = (string)($o['notes'] ?? '');
+            $v['docs'] = ['preInfo' => (string)($o['docs']['preInfo'] ?? ''), 'contract' => (string)($o['docs']['contract'] ?? '')];
+            $v['consents'] = isset($o['consents']['preInfo']) ? ['preInfo' => vg_iso((int)$o['consents']['preInfo']),
+                'contract' => vg_iso((int)$o['consents']['contract']), 'docVersion' => (string)($o['consents']['docVersion'] ?? '')] : null;
+            $v['linkedVia'] = (string)($o['member']['via'] ?? 'checkout');
+            return ['order' => $v];
+        case 'hesap_dogrula_gonder':
+            if (!vgm_member_verify_send($user, $now)) {
+                vg_fail(503, 'mail_failed', 'Doğrulama e-postası şu anda gönderilemedi. Lütfen biraz sonra tekrar deneyin.');
+            }
+            return ['sent' => true, 'message' => 'Doğrulama kodu ' . $email . ' adresine gönderildi. Kod 15 dakika geçerlidir.'];
+        case 'hesap_dogrula':
+            vgm_member_verify_check($user, is_string($body['code'] ?? null) ? $body['code'] : '', $now);
+            $claimed = vgm_member_claim($uid, $email, $now);
+            return ['verified' => true, 'claimed' => count($claimed), 'message' => $claimed
+                ? 'E-posta adresiniz doğrulandı. Bu adresle verilen ' . count($claimed) . ' sipariş hesabınıza eklendi.'
+                : 'E-posta adresiniz doğrulandı. Bu adresle üye girişi yapmadan verilmiş başka sipariş bulunmadı.'];
+        case 'hesap_sahiplen':
+            if (!vgm_member_verified(vgm_member_entry($uid), $email)) {
+                vg_fail(403, 'email_unverified', 'Önce e-posta adresinizi doğrulayın; siparişler yalnızca doğrulanmış adrese eklenir.');
+            }
+            $claimed = vgm_member_claim($uid, $email, $now);
+            return ['claimed' => count($claimed)];
+        case 'hesap_adres_sil':
+            return ['removed' => vgm_member_forget_saved($uid)];
+    }
+    vg_fail(404, 'unknown_action', 'Geçersiz işlem.');
+    return [];
 }
 
 function vgm_public_action(string $action, array $body, int $now): array
@@ -146,8 +267,27 @@ function vgm_public_action(string $action, array $body, int $now): array
             }
             vgm_verify_captcha($captcha);
         };
-        $result = vgm_order_create($body, $now, $guard);
+        $member = vgm_checkout_member();
+        /* Istemci uye oturumuyla gonderdi (CSRF basligi var) ama oturum dogrulanamadiysa (suresi doldu, baska sekmede
+           cikis/giris) siparis yine alinir; baglanmadigi durust bildirilir, sessizce "kaydedildi" denmez. */
+        $memberClaimed = (string)($_SERVER['HTTP_X_VG_CSRF'] ?? '') !== '';
+        $result = vgm_order_create($body, $now, $guard, $member !== null ? (string)$member['id'] : null);
         $o = $result['order'];
+        $account = $memberClaimed ? ['linked' => false, 'saved' => false] : null;
+        if ($member !== null) {
+            $linked = ($o['member']['id'] ?? null) === $member['id'];
+            $saved = false;
+            if ($linked && ($body['saveDetails'] ?? false) === true) {
+                try {
+                    vgm_member_save_profile((string)$member['id'], $result['clean'], $now);
+                    $saved = true;
+                } catch (Throwable $e) {
+                    /* Siparis alindi; kayitli bilgi yazilamadiysa siparis basarisiz sayilmaz, durum durust bildirilir. */
+                    error_log('VoltGuard magaza: saved checkout details not written (' . get_class($e) . ')');
+                }
+            }
+            $account = ['linked' => $linked, 'saved' => $saved];
+        }
         $f = vgm_firma();
         $preview = getenv('VG_MAIL_OUTBOX') === '1';
         $mailed = ($o['mail']['customer'] ?? true) === true;
@@ -163,7 +303,8 @@ function vgm_public_action(string $action, array $body, int $now): array
         return ['reference' => $o['ref'], 'amountTry' => (float)$o['totals']['tryGross'], 'amountText' => $amount,
             'payBy' => vg_iso((int)$o['payBy']), 'payByText' => vgm_local((int)$o['payBy']) . ' (TSİ)',
             'bank' => ['ad' => $f['banka']['ad'], 'hesapSahibi' => $f['banka']['hesapSahibi'], 'iban' => $f['banka']['iban']],
-            'message' => $message, 'duplicate' => $result['duplicate'], 'mailSent' => $mailed, 'preview' => $preview];
+            'message' => $message, 'duplicate' => $result['duplicate'], 'mailSent' => $mailed, 'preview' => $preview,
+            'account' => $account];
     }
     if ($action === 'durum') {
         if (($retry = vg_rl_hit('vgm_status', vg_rl_ip_key(), 20, 600)) > 0) {
@@ -260,7 +401,14 @@ function vgm_panel_action(string $action, array $body, array $user, int $now): a
             if ($order === null) {
                 vg_fail(404, 'not_found', 'Sipariş bulunamadı.');
             }
-            return ['order' => $order, 'allowed' => VGM_TRANSITIONS[$order['status']] ?? []];
+            $memberInfo = null;
+            if (isset($order['member']['id']) && is_string($order['member']['id'])) {
+                $u = vg_store()->findUserById($order['member']['id']);
+                $memberInfo = ['id' => $order['member']['id'], 'via' => (string)($order['member']['via'] ?? ''),
+                    'linkedAt' => vg_iso((int)($order['member']['linkedAt'] ?? 0)), 'exists' => $u !== null,
+                    'name' => $u !== null ? (string)$u['name'] : '', 'email' => $u !== null ? (string)$u['email'] : ''];
+            }
+            return ['order' => $order, 'allowed' => VGM_TRANSITIONS[$order['status']] ?? [], 'memberInfo' => $memberInfo];
         case 'panel_order_update':
             $ref = is_string($body['ref'] ?? null) ? strtoupper($body['ref']) : '';
             if (!vgm_reference_valid($ref)) {
@@ -425,6 +573,15 @@ function vgm_api_run(): void
         if ($method === 'POST' && (!isset($_COOKIE[VG_SESSION_NAME]) || (string)($_SERVER['HTTP_X_VG_CSRF'] ?? '') === '')) {
             vg_fail(403, 'csrf', 'Güvenlik doğrulaması başarısız oldu. Sayfayı yenileyip tekrar deneyin.');
         }
+        if ($role === 'member' && !isset($_COOKIE[VG_SESSION_NAME])) {
+            /* Oturum cerezi olmayan ziyaretci: oturum dosyasi acilmaz (odeme sayfasi her ziyaretcide hesap_profil sorar). */
+            if ($action === 'hesap_profil') {
+                vg_send(200, ['ok' => true, 'service' => VGM_SERVICE] + vgm_member_profile(null));
+                vg_finish_and_run_jobs();
+                return;
+            }
+            vg_fail(401, 'unauthorized', 'Siparişlerinizi görmek için üye girişi yapın.');
+        }
         $store = vg_store();
         vg_session_start();
         if ($method === 'POST') {
@@ -436,6 +593,23 @@ function vgm_api_run(): void
         if ($action === 'panel_me') {
             vg_send(200, ['ok' => true, 'service' => VGM_SERVICE, 'user' => $user ? ['id' => $user['id'], 'name' => $user['name']] : null,
                 'panel' => vgm_is_panel($user), 'csrf' => $csrf]);
+            vg_finish_and_run_jobs();
+            return;
+        }
+        if ($role === 'member') {
+            if ($action === 'hesap_profil') {
+                vg_send(200, ['ok' => true, 'service' => VGM_SERVICE] + vgm_member_profile($user) + ['csrf' => $csrf]);
+                vg_finish_and_run_jobs();
+                return;
+            }
+            if ($user === null) {
+                vg_fail(401, 'unauthorized', 'Siparişlerinizi görmek için üye girişi yapın.');
+            }
+            if (($retry = vg_rl_hit('vgm_member', $user['id'], 300, 600)) > 0) {
+                vg_too_many($retry);
+            }
+            vg_send(200, ['ok' => true, 'service' => VGM_SERVICE] + vgm_member_action($action, $body, $user, $now) + ['csrf' => $csrf]);
+            vg_schedule_gc();
             vg_finish_and_run_jobs();
             return;
         }

@@ -498,3 +498,220 @@ test('sepet önce: sipariş edilemeyen satırlar sepette (teklif için) gösteri
     fs.rmSync(sandbox, { recursive: true, force: true });
   }
 });
+
+test('üye hesabı: sipariş oturumdan bağlanır, üye yalnızca kendi siparişini görür, eski siparişler yalnızca doğrulanmış e-postayla eklenir', async () => {
+  const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'voltguard-magaza-uye-'));
+  const data = path.join(sandbox, 'data'); fs.mkdirSync(data);
+  writeState(data);
+  const srv = await server(data);
+  const anon = client(srv.base);
+  const orders = () => JSON.parse(fs.readFileSync(path.join(data, 'magaza', 'siparisler.json'), 'utf8')).orders;
+  const FORGED = 'u' + '0'.repeat(24);
+  const place = async (actor, requestId, email, { csrf = false, extra = {} } = {}) => {
+    const items = [{ id: 'vgm-9005', qty: 1 }];
+    const q = await actor.call('magaza', 'sepet', { body: { items }, csrf: false });
+    assert.equal(q.status, 200, JSON.stringify(q.body));
+    return actor.call('magaza', 'siparis', { csrf, body: { requestId, quote: q.body.quote.token, items,
+      ...customer({ customer: { name: 'Sentetik Üye', email, phone: '0532 000 00 00' } }), ...extra } });
+  };
+  const register = async (name, email) => {
+    const c = client(srv.base);
+    await c.call('auth', 'me');
+    const r = await c.call('auth', 'register', { body: { name, email, password: 'Deneme12345', consent: true } });
+    assert.equal(r.status, 201, JSON.stringify(r.body));
+    c.id = r.body.user.id;
+    return c;
+  };
+  try {
+    // Misafir siparişleri (üye girişi yok); istemcinin gönderdiği üye kimliği yok sayılır
+    let r = await place(anon, 'req-uye-guest-00001', 'alice@example.test', { extra: { member: { id: FORGED }, memberId: FORGED } });
+    assert.equal(r.status, 200, JSON.stringify(r.body)); assert.equal(r.body.account, null);
+    const guestA = r.body.reference;
+    r = await place(anon, 'req-uye-guest-00002', 'kurban@example.test');
+    const guestVictim = r.body.reference;
+    assert.equal(orders()[guestA].member, undefined, 'misafir siparişine istemci girdisinden üye bağlanmaz');
+
+    // Oturumsuz üye uçları
+    r = await anon.call('magaza', 'hesap_profil');
+    assert.equal(r.status, 200); assert.equal(r.body.user, null);
+    assert.ok(!anon.cookies.has('VGSESS'), 'çerezsiz profil sorgusu oturum açmaz');
+    r = await anon.call('magaza', 'hesap_siparisler'); assert.equal(r.status, 401);
+    r = await anon.call('magaza', 'hesap_siparis', { query: { ref: guestA } }); assert.equal(r.status, 401);
+    r = await anon.call('magaza', 'hesap_sahiplen', { body: {}, csrf: false }); assert.equal(r.status, 403);
+
+    // Üye: profil, oturumdan bağlanan sipariş ve kayıtlı bilgi
+    const alice = await register('Alice Sentetik', 'alice@example.test');
+    r = await alice.call('magaza', 'hesap_profil');
+    assert.equal(r.status, 200); assert.equal(r.body.user.email, 'alice@example.test'); assert.equal(r.body.saved, null); assert.equal(r.body.verified, false);
+    assert.ok(r.body.csrf);
+    r = await place(alice, 'req-uye-alice-00001', 'alice-fatura@example.test', { csrf: alice.csrf, extra: { saveDetails: true, member: { id: FORGED } } });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    assert.deepEqual(r.body.account, { linked: true, saved: true });
+    const linked = r.body.reference;
+    assert.equal(orders()[linked].member.id, alice.id, 'üye kimliği oturumdan (sahte kimlik yok sayılır)');
+    assert.equal(orders()[linked].member.via, 'checkout');
+    // CSRF jetonu olmadan (çerez olsa bile) bağlanmaz
+    r = await place(alice, 'req-uye-alice-00002', 'alice@example.test');
+    assert.equal(r.status, 200); assert.equal(r.body.account, null);
+    const unlinkedOwn = r.body.reference;
+    assert.equal(orders()[unlinkedOwn].member, undefined);
+    // Yanlış CSRF jetonu (oturum başka sekmede değişti): sipariş alınır, bağlanmadığı açıkça bildirilir (sahte başarı yok)
+    r = await place(alice, 'req-uye-alice-00003', 'alice@example.test', { csrf: 'yanlis-jeton' });
+    assert.equal(r.status, 200); assert.deepEqual(r.body.account, { linked: false, saved: false }); assert.equal(orders()[r.body.reference].member, undefined);
+    const unlinkedOwn2 = r.body.reference;
+
+    r = await alice.call('magaza', 'hesap_profil');
+    assert.equal(r.body.saved.billing.company, 'Sentetik Sanayi Ltd. Şti.'); assert.equal(r.body.saved.customer.phone, '0532 000 00 00');
+
+    // Liste: doğrulanmamış e-postada misafir siparişleri EKLENMEZ
+    r = await alice.call('magaza', 'hesap_siparisler');
+    assert.equal(r.status, 200); assert.equal(r.body.verified, false); assert.equal(r.body.claimed, 0);
+    assert.deepEqual(r.body.orders.map(o => o.reference), [linked]);
+    assert.equal(r.body.orders[0].payment.iban, IBAN); assert.equal(r.body.hasSaved, true);
+    r = await alice.call('magaza', 'hesap_sahiplen', { body: {} });
+    assert.equal(r.status, 403); assert.equal(r.body.error, 'email_unverified');
+    assert.equal(orders()[guestA].member, undefined);
+
+    // Ayrıntı: belgeler var, tedarikçi/USD/özel alan yok
+    r = await alice.call('magaza', 'hesap_siparis', { query: { ref: linked } });
+    assert.equal(r.status, 200);
+    assert.match(r.body.order.docs.preInfo, /^ÖN BİLGİLENDİRME FORMU/); assert.match(r.body.order.docs.contract, /MESAFELİ SATIŞ SÖZLEŞMESİ/);
+    assert.equal(r.body.order.payment.iban, IBAN); assert.equal(r.body.order.history[0].status, 'odeme_bekleniyor');
+    assert.doesNotMatch(r.text, /tedarikci-bir|costTry|usdNet|unitUsdNet|"private"|ipHash|"member"/);
+    r = await alice.call('magaza', 'hesap_siparis', { query: { ref: guestA } });
+    assert.equal(r.status, 404, 'bağlı olmayan sipariş açılmaz');
+
+    // Başka üye: Alice'in siparişini göremez; misafir sipariş e-postasıyla kayıt olsa da doğrulamadan ekleyemez
+    const mallory = await register('Mallory Sentetik', 'kurban@example.test');
+    r = await mallory.call('magaza', 'hesap_siparis', { query: { ref: linked } });
+    assert.equal(r.status, 404); assert.doesNotMatch(r.text, /alice/i);
+    r = await mallory.call('magaza', 'hesap_siparisler');
+    assert.equal(r.body.orders.length, 0); assert.equal(r.body.verified, false);
+    r = await mallory.call('magaza', 'hesap_sahiplen', { body: {} });
+    assert.equal(r.status, 403);
+    assert.equal(orders()[guestVictim].member, undefined, 'doğrulanmamış e-posta misafir siparişini sahiplenemez');
+    // Üye uçlarında CSRF zorunlu
+    r = await mallory.call('magaza', 'hesap_dogrula_gonder', { body: {}, csrf: 'yanlis' });
+    assert.equal(r.status, 403);
+
+    // E-posta doğrulama: kod hesabın e-postasına gider; yanlış kod reddedilir; doğru kod eski siparişleri ekler
+    const before = new Set(outbox(data));   // dosya adları sıralı değil: önceki postalar küme farkıyla ayrılır
+    r = await alice.call('magaza', 'hesap_dogrula_gonder', { body: {} });
+    assert.equal(r.status, 200, JSON.stringify(r.body)); assert.equal(r.body.sent, true);
+    const mail = outbox(data).filter(m => !before.has(m)).find(m => recipient(m) === 'alice@example.test' && /^\s{4}\d{6}\s*$/m.test(m));
+    assert.ok(mail, 'kod hesabın e-postasına gönderilir');
+    const code = /^\s{4}(\d{6})\s*$/m.exec(mail)[1];
+    r = await alice.call('magaza', 'hesap_dogrula', { body: { code: code === '000000' ? '111111' : '000000' } });
+    assert.equal(r.status, 422); assert.equal(r.body.error, 'wrong_code');
+    assert.equal(orders()[guestA].member, undefined);
+    r = await mallory.call('magaza', 'hesap_dogrula', { body: { code } });
+    assert.notEqual(r.status, 200, 'başka üyenin kodu işe yaramaz');
+    r = await alice.call('magaza', 'hesap_dogrula', { body: { code } });
+    assert.equal(r.status, 200, JSON.stringify(r.body)); assert.equal(r.body.verified, true); assert.equal(r.body.claimed, 3);
+    for (const ref of [guestA, unlinkedOwn, unlinkedOwn2]) { assert.equal(orders()[ref].member.id, alice.id); assert.equal(orders()[ref].member.via, 'claim'); }
+    assert.equal(orders()[guestVictim].member, undefined, 'başka e-postanın siparişi eklenmez');
+    r = await alice.call('magaza', 'hesap_siparisler');
+    assert.equal(r.body.verified, true); assert.equal(r.body.orders.length, 4);
+    // Doğrulanmış üye: sonradan misafir olarak verilen sipariş listede kendiliğinden eklenir
+    r = await place(anon, 'req-uye-guest-00003', 'ALICE@example.test');
+    const later = r.body.reference;
+    r = await alice.call('magaza', 'hesap_siparisler');
+    assert.equal(r.body.claimed, 1); assert.ok(r.body.orders.some(o => o.reference === later));
+    r = await mallory.call('magaza', 'hesap_siparis', { query: { ref: later } });
+    assert.equal(r.status, 404);
+
+    // Personel paneli üye bağlantısını görür
+    const staff = await register('Mağaza Personeli', 'personel-uye@example.test');
+    fs.writeFileSync(path.join(data, 'magaza', 'panel.json'), JSON.stringify({ version: 1, users: { [staff.id]: { email: 'x', grantedAt: now } } }));
+    r = await staff.call('magaza', 'panel_order', { query: { ref: linked } });
+    assert.equal(r.status, 200); assert.equal(r.body.memberInfo.id, alice.id); assert.equal(r.body.memberInfo.email, 'alice@example.test');
+    assert.equal(r.body.memberInfo.via, 'checkout');
+    r = await staff.call('magaza', 'panel_orders');
+    assert.equal(r.body.orders.find(o => o.ref === linked).member, 'checkout');
+    assert.equal(r.body.orders.find(o => o.ref === guestVictim).member, null);
+
+    // Kayıtlı bilgi silinir; dışa aktarma bağlı siparişleri içerir; hesap silinince bağlantı kalkar, sipariş kalır
+    r = await alice.call('magaza', 'hesap_adres_sil', { body: {} });
+    assert.equal(r.body.removed, true);
+    r = await alice.call('magaza', 'hesap_profil'); assert.equal(r.body.saved, null);
+    r = await alice.call('auth', 'export');
+    assert.equal(r.status, 200);
+    const exp = JSON.parse(r.text);
+    assert.equal(exp.shop.orders.length, 5); assert.equal(exp.shop.verifiedEmail.email, 'alice@example.test');
+    assert.doesNotMatch(r.text, /tedarikci-bir|usdNet/);
+    r = await alice.call('auth', 'delete_account', { body: { confirm: true, password: 'Deneme12345' } });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    const after = orders();
+    assert.ok(after[linked], 'sipariş kaydı yasal süre boyunca kalır');
+    for (const ref of [linked, guestA, later]) { assert.equal(after[ref].member, undefined); assert.ok(after[ref].memberUnlinkedAt); }
+    const members = JSON.parse(fs.readFileSync(path.join(data, 'magaza', 'uyeler.json'), 'utf8')).members;
+    assert.equal(members[alice.id], undefined);
+  } finally {
+    await srv.stop();
+    assert.doesNotMatch(srv.logs.join(''), /Fatal error|Warning:|Notice:|Deprecated:/);
+    fs.rmSync(sandbox, { recursive: true, force: true });
+  }
+});
+
+test('üye hesabı: doğrulama kodu tahmini e-posta adresine göre sınırlanır (hesap silinip yeniden açılsa da), T.C. kimlik no kayıtlı bilgide tutulmaz', async () => {
+  const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'voltguard-magaza-uye-sinir-'));
+  const data = path.join(sandbox, 'data'); fs.mkdirSync(data);
+  writeState(data);
+  const srv = await server(data, { VG_RATE_SCALE: '1' });
+  const register = async (email) => {
+    const c = client(srv.base);
+    await c.call('auth', 'me');
+    const r = await c.call('auth', 'register', { body: { name: 'Sentetik Saldırgan', email, password: 'Deneme12345', consent: true } });
+    assert.equal(r.status, 201, JSON.stringify(r.body));
+    c.id = r.body.user.id;
+    await c.call('magaza', 'hesap_profil');
+    return c;
+  };
+  const codeFor = (before) => {
+    const mail = outbox(data).filter(m => !before.has(m)).find(m => recipient(m) === 'hedef@example.test' && /^\s{4}\d{6}\s*$/m.test(m));
+    assert.ok(mail); return /^\s{4}(\d{6})\s*$/m.exec(mail)[1];
+  };
+  const wrong = (code) => String((Number(code) + 1) % 1000000).padStart(6, '0');
+  try {
+    let atk = await register('hedef@example.test');
+    // Kayıtlı bilgi: T.C. kimlik no saklanmaz ve hesap_profil ile okunamaz
+    const items = [{ id: 'vgm-9005', qty: 1 }];
+    let r = await atk.call('magaza', 'sepet', { body: { items }, csrf: false });
+    r = await atk.call('magaza', 'siparis', { csrf: atk.csrf, body: { requestId: 'req-uye-tckn-000001', quote: r.body.quote.token, items, saveDetails: true,
+      ...customer({ customer: { name: 'Sentetik Üye', email: 'hedef@example.test', phone: '0532 000 00 00' },
+        billing: { type: 'bireysel', tckn: '10000000146', address: 'Sentetik Mah. Deneme Sok. No:1', city: 'İzmir', district: 'Konak' } }) } });
+    assert.equal(r.status, 200, JSON.stringify(r.body)); assert.deepEqual(r.body.account, { linked: true, saved: true });
+    r = await atk.call('magaza', 'hesap_profil');
+    assert.equal(r.body.saved.billing.type, 'bireysel'); assert.equal(r.body.saved.billing.tckn, '');
+    assert.doesNotMatch(r.text, /10000000146/);
+    assert.doesNotMatch(fs.readFileSync(path.join(data, 'magaza', 'uyeler.json'), 'utf8'), /10000000146/);
+
+    // İki kod × 5 hatalı deneme = adres başına günlük 10 hata; sonra kilit
+    let before = new Set(outbox(data));
+    r = await atk.call('magaza', 'hesap_dogrula_gonder', { body: {} }); assert.equal(r.status, 200, JSON.stringify(r.body));
+    let code = codeFor(before);
+    for (let i = 0; i < 5; i++) { r = await atk.call('magaza', 'hesap_dogrula', { body: { code: wrong(code) } }); assert.equal(r.status, 422); }
+    r = await atk.call('magaza', 'hesap_dogrula', { body: { code } }); assert.equal(r.status, 410, 'kod başına 5 deneme');
+    before = new Set(outbox(data));
+    r = await atk.call('magaza', 'hesap_dogrula_gonder', { body: {} }); assert.equal(r.status, 200);
+    code = codeFor(before);
+    for (let i = 0; i < 5; i++) { r = await atk.call('magaza', 'hesap_dogrula', { body: { code: wrong(code) } }); assert.equal(r.status, 422); }
+    r = await atk.call('magaza', 'hesap_dogrula_gonder', { body: {} });
+    assert.equal(r.status, 429, 'günlük hata sınırı dolunca yeni kod da verilmez');
+
+    // Hesabı silip aynı e-postayla yeniden kayıt (yeni uid): sınır e-postaya bağlı olduğu için sürer
+    r = await atk.call('auth', 'delete_account', { body: { confirm: true, password: 'Deneme12345' } });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    const again = await register('hedef@example.test');
+    assert.notEqual(again.id, atk.id);
+    r = await again.call('magaza', 'hesap_dogrula_gonder', { body: {} });
+    assert.equal(r.status, 429, JSON.stringify(r.body));
+    r = await again.call('magaza', 'hesap_dogrula', { body: { code: '123456' } });
+    assert.equal(r.status, 429, JSON.stringify(r.body));
+    assert.equal(JSON.parse(fs.readFileSync(path.join(data, 'magaza', 'uyeler.json'), 'utf8')).members[again.id], undefined);
+  } finally {
+    await srv.stop();
+    assert.doesNotMatch(srv.logs.join(''), /Fatal error|Warning:|Notice:|Deprecated:/);
+    fs.rmSync(sandbox, { recursive: true, force: true });
+  }
+});

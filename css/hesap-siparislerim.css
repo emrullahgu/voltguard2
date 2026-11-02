@@ -1,0 +1,102 @@
+/* hesap/siparislerim.html: üyenin mağaza siparişleri. Yalnızca tema tokenları (css/vg-shell.css): açık ve koyu temada çalışır. */
+.so-msg { margin-bottom: 1rem; }
+.so-count { margin: 0 0 .75rem; color: var(--clr-text-muted); font-size: .88rem; }
+.so-orders { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; }
+.so-card { border: 1px solid var(--th-border); border-radius: 12px; background: var(--th-surface); padding: 1rem 1.15rem; display: grid; gap: .45rem; min-width: 0; }
+.so-card__head, .so-detail__head { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; }
+.so-card__ref { font-weight: 700; font-size: 1.02rem; color: var(--th-heading); text-decoration: none; }
+.so-card__ref:hover, .so-card__ref:focus-visible { color: var(--clr-accent-text); text-decoration: underline; }
+.so-card__meta { margin: 0; color: var(--th-text-2); font-size: .9rem; }
+.so-card__meta strong { color: var(--th-heading); }
+.so-card__items { margin: 0; color: var(--th-text); font-size: .92rem; overflow-wrap: anywhere; }
+.so-card__foot { margin: .2rem 0 0; }
+.so-mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; letter-spacing: .02em; overflow-wrap: anywhere; }
+
+.so-chip { display: inline-block; font-size: .76rem; font-weight: 700; padding: .15rem .6rem; border-radius: 999px; background: var(--th-surface-4); color: var(--th-text-2); }
+.so-chip--wait { background: var(--th-tint-amber-2); color: var(--th-amber-ink-2); }
+.so-chip--info { background: var(--th-tint-blue-2); color: var(--th-blue-ink); }
+.so-chip--ok { background: var(--th-tint-green-2); color: var(--th-green-ink); }
+.so-chip--off { background: var(--th-tint-red-2); color: var(--th-red-ink); }
+
+.so-pay { border: 1px solid var(--th-amber-line); background: var(--th-tint-amber); color: var(--th-text); border-radius: 10px; padding: .8rem 1rem; display: grid; gap: .5rem; }
+.so-pay--late { border-color: var(--th-red-line); background: var(--th-tint-red); }
+.so-pay p { margin: 0; font-size: .9rem; }
+.so-pay a { color: inherit; font-weight: 700; }
+.so-pay__dl { margin: 0; display: grid; gap: .35rem; }
+.so-pay__dl > div { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: .5rem; align-items: baseline; }
+.so-pay__dl dt { font-size: .8rem; font-weight: 600; color: var(--th-text-2); }
+.so-pay__dl dd { margin: 0; font-weight: 600; color: var(--th-heading); overflow-wrap: anywhere; }
+.so-copy { margin-left: .35rem; font: 600 .75rem var(--font-body); padding: .15rem .5rem; border-radius: 6px; border: 1px solid var(--th-border-strong); background: var(--th-surface); color: var(--th-heading); cursor: pointer; }
+.so-copy:hover { border-color: var(--clr-accent); }
+.so-copy:focus-visible { outline: 3px solid var(--clr-accent-text); outline-offset: 2px; }
+.so-track { margin: 0; font-size: .9rem; color: var(--th-text); }
+.so-track i { color: var(--clr-accent-text); margin-right: .25rem; }
+.so-track a { color: var(--clr-accent-text); font-weight: 600; }
+
+.so-extra { display: grid; gap: .9rem; margin-top: 1.25rem; }
+.so-box { border: 1px dashed var(--th-border-strong); border-radius: 12px; padding: 1rem 1.15rem; background: var(--th-surface-2); display: grid; gap: .6rem; }
+.so-box h2 { margin: 0 !important; font-size: 1rem !important; }
+.so-box p { margin: 0; color: var(--th-text); font-size: .92rem; }
+.so-verify { display: grid; gap: .6rem; justify-items: start; }
+.so-code { display: grid; gap: .6rem; width: 100%; max-width: 30rem; }
+.so-code input { max-width: 12rem; font-size: 1.15rem; letter-spacing: .25em; }
+.so-code__btns { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+.so-back { margin: 0 0 .75rem; }
+.so-back a { color: var(--clr-accent-text); font-weight: 600; text-decoration: none; }
+.so-back a:hover { text-decoration: underline; }
+.so-detail { display: grid; gap: 1rem; scroll-margin-top: calc(var(--vg-header-h, 64px) + 1rem); }
+.so-detail:focus { outline: none; }
+.so-detail__head h2 { margin: 0 !important; }
+.so-detail__head h2:focus { outline: none; }
+.so-part { border-top: 1px solid var(--th-border); padding-top: 1rem; display: grid; gap: .65rem; min-width: 0; }
+.so-part h3 { margin: 0 !important; }
+.so-fine { margin: 0; font-size: .85rem; color: var(--clr-text-muted); }
+.so-fine a { color: var(--clr-accent-text); }
+
+.so-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.so-step { padding: .55rem .6rem; border: 1px solid var(--th-border); border-radius: 8px; background: var(--th-surface); font-size: .8rem; font-weight: 600; color: var(--th-muted); text-align: center; }
+.so-step[data-state="done"] { background: var(--th-tint-green); border-color: var(--th-green-line); color: var(--th-green-ink); }
+.so-step[data-state="current"] { background: var(--th-tint-amber); border-color: var(--clr-accent); color: var(--th-amber-ink-2); box-shadow: inset 0 0 0 1px var(--clr-accent); }
+
+.so-table-wrap { overflow-x: auto; }
+.so-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.so-table th, .so-table td { padding: .55rem .6rem; border-bottom: 1px solid var(--th-border); text-align: left; vertical-align: top; color: var(--th-text); }
+.so-table th { font-size: .78rem; font-weight: 700; color: var(--th-text-2); background: var(--th-surface-2); }
+.so-table .so-num { text-align: right; white-space: nowrap; }
+.so-sub { display: block; font-size: .78rem; color: var(--clr-text-muted); }
+.so-totals { margin: 0 0 0 auto; display: grid; gap: .25rem; width: 100%; max-width: 22rem; }
+.so-totals > div { display: flex; justify-content: space-between; gap: 1rem; font-size: .9rem; color: var(--th-text); }
+.so-totals dt { color: var(--th-text-2); }
+.so-totals dd { margin: 0; font-weight: 600; }
+.so-totals__grand { border-top: 1px solid var(--th-border-strong); padding-top: .35rem; margin-top: .15rem; }
+.so-totals__grand dt, .so-totals__grand dd { font-weight: 800; color: var(--th-heading); }
+
+.so-addrs { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .75rem; }
+.so-addr { border: 1px solid var(--th-border); border-radius: 10px; padding: .75rem .9rem; background: var(--th-surface); min-width: 0; }
+.so-addr h4 { margin: 0 0 .35rem; font: 700 .82rem var(--font-heading); color: var(--th-text-2); text-transform: uppercase; letter-spacing: .04em; }
+.so-addr p { margin: 0; font-size: .9rem; color: var(--th-text); overflow-wrap: anywhere; }
+.so-history { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; font-size: .88rem; color: var(--th-text); }
+.so-history time { color: var(--clr-text-muted); margin-right: .35rem; }
+.so-doc { border: 1px solid var(--th-border); border-radius: 10px; background: var(--th-surface); }
+.so-doc summary { cursor: pointer; padding: .7rem .9rem; font-weight: 700; color: var(--th-heading); }
+.so-doc summary:focus-visible { outline: 3px solid var(--clr-accent-text); outline-offset: 2px; border-radius: 10px; }
+.so-doc__text { margin: 0; padding: .8rem .9rem; max-height: 22rem; overflow: auto; white-space: pre-wrap; word-break: break-word; font: .9rem/1.55 var(--font-body); color: var(--th-text); border-top: 1px solid var(--th-border); background: var(--th-surface-2); }
+
+@media (max-width: 640px) {
+  .so-card { padding: .9rem; }
+  .so-pay__dl > div { grid-template-columns: minmax(0, 1fr); gap: .1rem; }
+  .so-steps { grid-template-columns: minmax(0, 1fr); }
+  .so-step { text-align: left; }
+  .so-table thead { display: none; }
+  .so-table, .so-table tbody, .so-table tr, .so-table td { display: block; width: 100%; }
+  .so-table tr { border-bottom: 1px solid var(--th-border); padding: .4rem 0; }
+  .so-table td { border: 0; padding: .15rem 0; }
+  .so-table td.so-num { text-align: left; }
+  .so-table td[data-label]:not(:first-child)::before { content: attr(data-label) ': '; color: var(--clr-text-muted); font-size: .8rem; }
+  .so-totals { max-width: none; }
+}
+@media print {
+  .so-noprint, .vg-panel__nav, .vg-header, .vg-footer, .so-extra { display: none !important; }
+  .so-doc[open] .so-doc__text, .so-doc__text { max-height: none; }
+}

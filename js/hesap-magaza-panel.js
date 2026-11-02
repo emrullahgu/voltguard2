@@ -664,7 +664,8 @@
       if (overdue) status.appendChild(pill('Ödeme süresi geçti', 'late'));
       tr.appendChild(h('td', { 'data-label': 'Sipariş no' }, h('button', { type: 'button', class: 'mgp-link mgp-mono', text: H.str(o.ref), on: { click: function () { gotoOrder(o.ref); } } })));
       tr.appendChild(h('td', { 'data-label': 'Tarih', text: H.fmtDateTime(o.createdAt) }));
-      tr.appendChild(h('td', { 'data-label': 'Müşteri', text: H.str(o.customerName) || '–' }));
+      tr.appendChild(h('td', { 'data-label': 'Müşteri' }, [H.str(o.customerName) || '–', o.member ? ' ' : null,
+        o.member ? h('span', { class: 'mgp-pill mgp-pill--public', title: o.member === 'claim' ? 'Üye, e-postasını doğrulayarak hesabına ekledi' : 'Üye girişi yapılarak verildi', text: 'Üye' }) : null]));
       tr.appendChild(h('td', { 'data-label': 'İl', text: H.str(o.city) || '–' }));
       tr.appendChild(h('td', { 'data-label': 'Tutar (KDV dahil)', class: 'mgp-num', text: H.fmtTry(o.amountTry) }));
       tr.appendChild(h('td', { 'data-label': 'Kalem', class: 'mgp-num', text: H.str(o.itemCount) }));
@@ -706,6 +707,8 @@
       clear(orderDetail).appendChild(h('p', { class: 'mgp-muted', role: 'status', text: 'Sipariş yükleniyor…' }));
       return api('panel_order', { query: '&ref=' + enc(ref) }).then(function (j) {
         if (seq !== O.detailSeq) return;
+        O.memberRef = ref;
+        O.memberInfo = j.memberInfo || null;
         renderDetail(j.order, j.allowed);
       }).catch(function (e) {
         if (seq !== O.detailSeq) return;
@@ -842,6 +845,16 @@
       return form;
     }
 
+    /* Siparişin bağlı olduğu site üyesi (sunucu oturumdan işaretler; müşteri e-postasıyla karıştırılmaz). */
+    function memberLine(order) {
+      var m = O.memberRef === order.ref ? O.memberInfo : null;
+      if (!order.member || !order.member.id) return h('span', { class: 'mgp-muted', text: 'Yok (üye girişi yapılmadan verildi)' });
+      if (!m) return h('span', { class: 'mgp-mono', text: H.str(order.member.id) });
+      var via = m.via === 'claim' ? 'üye e-postasını doğrulayıp ekledi' : 'üye girişiyle verildi';
+      if (!m.exists) return h('span', { class: 'mgp-muted', text: 'Üye hesabı artık yok (' + via + ')' });
+      return h('span', null, [H.str(m.name) + ' · ', link(H.str(m.email), H.mailHref(m.email)), h('span', { class: 'mgp-muted', text: ' · ' + via + ', ' + H.fmtDateTime(m.linkedAt) })]);
+    }
+
     function renderDetail(order, allowed) {
       clear(orderDetail);
       if (!order || typeof order !== 'object') { orderDetail.appendChild(h('p', { text: 'Sipariş bulunamadı.' })); return; }
@@ -859,7 +872,8 @@
 
       var billingType = b.type === 'kurumsal' ? 'Kurumsal' : b.type === 'bireysel' ? 'Bireysel' : H.str(b.type);
       orderDetail.appendChild(h('div', { class: 'mgp-grid' }, [
-        card('Müşteri', dl([['Ad soyad', H.str(c.name)], ['E-posta', link(H.str(c.email), H.mailHref(c.email))], ['Telefon', link(H.str(c.phone), H.telHref(c.phone))]])),
+        card('Müşteri', dl([['Ad soyad', H.str(c.name)], ['E-posta', link(H.str(c.email), H.mailHref(c.email))], ['Telefon', link(H.str(c.phone), H.telHref(c.phone))],
+          ['Üye hesabı', memberLine(order)]])),
         card('Fatura bilgileri', dl([['Fatura türü', billingType], ['Ad soyad', H.str(b.name)], ['T.C. kimlik no', H.str(b.tckn)], ['Şirket unvanı', H.str(b.company)],
           ['Vergi dairesi', H.str(b.taxOffice)], ['Vergi kimlik no', H.str(b.vkn)], ['Adres', H.str(b.address)], ['İlçe / il', cityLine(b)]])),
         card('Teslimat adresi', dl([['Alıcı', H.str(s.name)], ['Telefon', link(H.str(s.phone), H.telHref(s.phone))], ['Adres', H.str(s.address)], ['İlçe / il', cityLine(s)], ['Posta kodu', H.str(s.postalCode)]])),

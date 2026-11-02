@@ -620,6 +620,15 @@ body:has(.vgm--cart) .vg-footer__cta, body:has(.vgm--checkout) .vg-footer__cta {
 .vgm-pay dd.vgm-mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; letter-spacing: .03em; font-size: 1.05rem; }
 .vgm-pay .vgm-btn { min-height: 38px; }
 .vgm-success__note { margin-top: 1rem; }
+[data-vgm-account-note] { margin-top: 1rem; }
+[data-vgm-account-note] a { color: inherit; font-weight: 700; }
+
+/* ---------- Üyelik kutusu (ödeme sayfası; site üye hesabı) ---------- */
+.vgm-account { display: grid; gap: .5rem; padding: .9rem 1.1rem; border: 1px solid var(--th-blue-line); border-radius: var(--vgm-r); background: var(--th-tint-blue); color: var(--th-text); font-size: .93rem; }
+.vgm-account--in { border-color: var(--th-green-line); background: var(--th-tint-green); }
+.vgm-account strong { color: var(--th-heading); }
+.vgm-account .vgm-actions { margin: 0; }
+.vgm-account .vgm-fine { margin: 0; }
 .vgm-success__seller { margin-top: 1rem; }
 
 /* ---------- Sipariş takibi ---------- */

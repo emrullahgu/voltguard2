@@ -288,9 +288,11 @@ function vgm_captcha_ready_or_fail(): void
 /**
  * Siparis olusturur (api: action=siparis). $guard: tekrar korumasinin icinde, yeni bir siparis olusturulmadan once
  * calisir (hiz siniri, bot dogrulamasi); ayni istegin tekrari onu yeniden calistirmaz.
- * @return array{order: array, duplicate: bool}
+ * $memberId: SUNUCUDA oturumdan okunan uye kimligi (api/lib/magaza-api.php); istemci girdisinden ASLA alinmaz. Tekrar
+ * korumasinin parmak izine girmez: ayni istek giris yapildiktan sonra tekrarlansa da ayni siparis doner.
+ * @return array{order: array, duplicate: bool, clean: array}
  */
-function vgm_order_create(array $in, int $now, ?callable $guard = null): array
+function vgm_order_create(array $in, int $now, ?callable $guard = null, ?string $memberId = null): array
 {
     vgm_captcha_ready_or_fail();
     $requestId = is_string($in['requestId'] ?? null) ? $in['requestId'] : '';
@@ -330,7 +332,7 @@ function vgm_order_create(array $in, int $now, ?callable $guard = null): array
     $draft = vgm_order_draft($quote, $clean, $config, $now);
     $fingerprint = hash('sha256', vg_json_encode([$clean, $quote['lines'], $quote['totals'], $quote['rate']]));
     $created = null;
-    $outcome = vgm_order_once($requestId, $fingerprint, function () use ($draft, $config, $state, $now, $guard, &$created): string {
+    $outcome = vgm_order_once($requestId, $fingerprint, function () use ($draft, $config, $state, $now, $guard, $memberId, &$created): string {
         if ($guard !== null) {
             $guard();
         }
@@ -342,6 +344,9 @@ function vgm_order_create(array $in, int $now, ?callable $guard = null): array
             'ipHash' => hash_hmac('sha256', 'magaza-ip' . "\0" . vg_client_ip(), vg_secret())];
         $order['history'] = [['at' => $now, 'status' => 'odeme_bekleniyor', 'by' => 'sistem', 'note' => '', 'publicNote' => '']];
         $order['tracking'] = null;
+        if ($memberId !== null && preg_match('/^u[0-9a-f]{24}$/D', $memberId) === 1) {
+            $order['member'] = ['id' => $memberId, 'linkedAt' => $now, 'via' => 'checkout'];
+        }
         $order['private'] = ['sources' => vgm_sources_snapshot($order['items'], $config, $state)];
         $order = vgm_locked(true, function (string $dir) use ($order, $config): array {
             $all = vgm_orders_read($dir);
@@ -374,7 +379,7 @@ function vgm_order_create(array $in, int $now, ?callable $guard = null): array
     if ($order === null) {
         vg_unavailable('order record missing after idempotent replay');
     }
-    return ['order' => $order, 'duplicate' => $outcome['duplicate']];
+    return ['order' => $order, 'duplicate' => $outcome['duplicate'], 'clean' => $clean];
 }
 
 /* ------------------------------------------------------------------ okuma, guncelleme */
@@ -398,10 +403,18 @@ function vgm_order_lookup(string $ref, string $email): ?array
     if ($order === null || !hash_equals((string)$order['customer']['email'], $email)) {
         return null;
     }
+    return vgm_order_customer_view($order, time());
+}
+
+/**
+ * Siparis sahibine gosterilen gorunum (takip sayfasi ve Hesabim > Siparislerim ayni fonksiyonu kullanir): tedarikci,
+ * maliyet, USD kuru, ic not ve ozel alanlar yok. Odeme bekleyen ve suresi dolmamis sipariste havale bilgisi eklenir.
+ */
+function vgm_order_customer_view(array $order, int $now): array
+{
     $pub = vgm_order_public($order);
     /* Musteriye USD kuru gosterilmez; yalnizca tarih. */
     $pub['rate'] = isset($order['rate']['date']) ? ['date' => (string)$order['rate']['date']] : null;
-    $now = time();
     $pub['payOverdue'] = false;
     $pub['payment'] = null;
     if (($order['status'] ?? '') === 'odeme_bekleniyor') {
@@ -490,7 +503,7 @@ function vgm_order_matches(array $o, string $q): bool
         return true;
     }
     $hay = vg_lower(implode(' ', [$o['ref'], $o['customer']['name'], $o['customer']['email'], $o['customer']['phone'],
-        $o['billing']['company'] ?? '', $o['shippingAddress']['city'] ?? '']));
+        $o['billing']['company'] ?? '', $o['shippingAddress']['city'] ?? '', $o['member']['id'] ?? '']));
     return strpos($hay, vg_lower($q)) !== false;
 }
 
@@ -518,7 +531,8 @@ function vgm_orders_list(array $filter, ?int $now = null): array
             'statusLabel' => VGM_STATUS_LABELS[$o['status']] ?? $o['status'], 'customerName' => $o['customer']['name'],
             'city' => $o['shippingAddress']['city'] ?? '', 'amountTry' => (float)$o['totals']['tryGross'],
             'itemCount' => count($o['items']), 'payBy' => vg_iso((int)$o['payBy']),
-            'overdue' => $o['status'] === 'odeme_bekleniyor' && (int)$o['payBy'] < $now, '_t' => (int)$o['createdAt']];
+            'overdue' => $o['status'] === 'odeme_bekleniyor' && (int)$o['payBy'] < $now,
+            'member' => isset($o['member']['id']) ? (string)($o['member']['via'] ?? 'checkout') : null, '_t' => (int)$o['createdAt']];
     }
     usort($rows, function (array $a, array $b): int {
         return $b['_t'] <=> $a['_t'];

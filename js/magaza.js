@@ -177,6 +177,7 @@
   function request(action, body, opts) {
     var init = { method: body ? 'POST' : 'GET', headers: { 'Accept': 'application/json' }, credentials: 'same-origin', cache: 'no-store' };
     if (body) { init.headers['Content-Type'] = 'application/json'; init.body = JSON.stringify(body); }
+    if (opts && opts.csrf) init.headers['X-VG-CSRF'] = String(opts.csrf);   // üye oturumu (sipariş hesaba bağlanır)
     var timeout = (opts && opts.timeout) || 25000, ctl = null, timer = null, timedOut = false;
     if (typeof window.AbortController === 'function') {
       ctl = new window.AbortController();
@@ -941,8 +942,10 @@
     var consents = $$('[data-vgm-consent]', form), reWrap = $('[data-vgm-reconfirm-wrap]', form), reBox = $('[data-vgm-reconfirm]', form), reText = $('[data-vgm-reconfirm-text]', form);
     var honeypot = $('[name="website"]', form), mini = $('[data-vgm-mini]', root), totalsEl = $('[data-vgm-totals]', root), expiryEl = $('[data-vgm-expiry]', root);
     var captcha = setupCaptcha(form);
+    var accountBox = $('[data-vgm-account]', root), saveWrap = $('[data-vgm-save-wrap]', form), saveBox = $('[data-vgm-save]', form);
     var st = { quote: null, items: [], skipped: [], totals: null, open: false, expiry: null, docs: { preInfo: '', contract: '' }, docsShown: false,
-      docsSeq: 0, docsTimer: null, expiryTimer: null, requestId: '', requestFp: '', submitting: false, needReconfirm: false };
+      docsSeq: 0, docsTimer: null, expiryTimer: null, requestId: '', requestFp: '', submitting: false, needReconfirm: false,
+      member: null, csrf: '', touched: false };
 
     function view(which) {
       stateEl.hidden = which !== 'state';
@@ -975,6 +978,66 @@
         billing: b, shippingAddress: s, notes: val('notes'),
         consents: { preInfo: !!(field('consents.preInfo') || {}).checked, contract: !!(field('consents.contract') || {}).checked }
       };
+    }
+
+    /* ---- site üyeliği: aynı hesap (Hesabım), ayrı mağaza hesabı yok ----
+       Üye girişi yapılmışsa bilgiler profilden (ve üyenin onayıyla kaydedilmiş son fatura/teslimat bilgisinden) doldurulur;
+       sipariş hesaba sunucuda, oturumdan bağlanır. Üye değilse giriş / kayıt seçeneği gösterilir, misafir sipariş açık kalır. */
+    var BACK = '/magaza/odeme.html';
+    function renderAccount() {
+      if (!accountBox) return;
+      clear(accountBox);
+      var u = st.member;
+      if (u) {
+        accountBox.className = 'vgm-account vgm-account--in';
+        accountBox.appendChild(el('p', {}, [el('strong', { text: 'Üye girişi yaptınız: ' }), String(u.name || '') + (u.email ? ' (' + u.email + ')' : '')]));
+        accountBox.appendChild(el('p', { class: 'vgm-fine' }, ['Bu sipariş hesabınıza kaydedilir. Durumunu, ödeme bilgilerini ve belgelerini ',
+          el('a', { href: '/hesap/siparislerim.html' }, ['Hesabım › Siparişlerim']), ' sayfasından izleyebilirsiniz.']));
+      } else {
+        accountBox.className = 'vgm-account';
+        accountBox.appendChild(el('p', {}, [el('strong', { text: 'Üye misiniz? ' }),
+          'Giriş yaparsanız bilgileriniz doldurulur, sipariş hesabınıza kaydedilir ve tüm siparişlerinizi tek yerden izlersiniz. Sepetiniz korunur.']));
+        accountBox.appendChild(el('p', { class: 'vgm-actions' }, [
+          el('a', { class: 'vgm-btn vgm-btn--ghost vgm-btn--sm', href: '/hesap/giris.html?next=' + encodeURIComponent(BACK) }, ['Üye girişi yap']),
+          el('a', { class: 'vgm-btn vgm-btn--ghost vgm-btn--sm', href: '/hesap/kayit.html?next=' + encodeURIComponent(BACK) }, ['Üye ol'])]));
+        accountBox.appendChild(el('p', { class: 'vgm-fine', text: 'Üye olmadan da sipariş verebilirsiniz.' }));
+      }
+      accountBox.hidden = false;
+      if (saveWrap) saveWrap.hidden = !u;
+    }
+    function headerAccount() {
+      $$('[data-vg-account]').forEach(function (a) {
+        a.setAttribute('href', '/hesap/panel.html'); a.textContent = 'Hesabım'; a.setAttribute('data-vg-state', 'in');
+      });
+    }
+    function prefill(user, saved) {
+      function put(name, v) { var f = field(name); if (f && !trim(f.value) && v) f.value = String(v); }
+      var sc = saved && saved.customer || {}, sb = saved && saved.billing || null, ss = saved && saved.shippingAddress || null;
+      put('customer.name', sc.name || user.name);
+      put('customer.email', user.email);
+      put('customer.phone', sc.phone || user.phone);
+      if (sb) {
+        if (!st.touched && sb.type === 'kurumsal') { var k = $('input[name="billing.type"][value="kurumsal"]', form); if (k) k.checked = true; syncBilling(); }
+        ['company', 'taxOffice', 'vkn', 'address', 'city', 'district'].forEach(function (n) { put('billing.' + n, sb[n]); });
+      } else if (user.company) {
+        put('billing.company', user.company);
+      }
+      if (ss && ss.sameAsBilling === false && !st.touched) {
+        same.checked = false; syncShip();
+        ['name', 'phone', 'address', 'city', 'district', 'postalCode'].forEach(function (n) { put('shippingAddress.' + n, ss[n]); });
+      }
+      /* Kutu hiçbir zaman önceden işaretlenmez (KVKK: kayıt üyenin isteğiyle). Kayıt varsa etiket, işaretlenirse
+         kayıtlı bilgilerin bu siparişteki bilgilerle DEĞİŞTİRİLECEĞİNİ açıkça söyler. */
+      var saveLabel = saveWrap && $('[data-vgm-save-label]', saveWrap);
+      if (saveLabel && saved) saveLabel.textContent = 'Kayıtlı fatura ve teslimat bilgilerimi bu siparişteki bilgilerle güncelle (isteğe bağlı; T.C. kimlik no kaydedilmez. Hesabım › Siparişlerim sayfasından istediğiniz zaman silebilirsiniz).';
+    }
+    function loadMember() {
+      return request('hesap_profil', null, { timeout: 12000 }).then(function (d) {
+        st.csrf = typeof d.csrf === 'string' ? d.csrf : '';
+        st.member = d.user && typeof d.user === 'object' ? d.user : null;
+        renderAccount();
+        if (st.member) { headerAccount(); prefill(st.member, d.saved && typeof d.saved === 'object' ? d.saved : null); }
+      }, function () { st.member = null; renderAccount(); });
     }
 
     /* ---- sepet / fiyat teyidi ---- */
@@ -1145,6 +1208,8 @@
       clearErrors();
       var body = payload();
       var fp = JSON.stringify([body.quote, body.items, body.customer, body.billing, body.shippingAddress, body.notes]);
+      body.saveDetails = !!(st.member && saveBox && saveBox.checked);
+      st.submitMember = !!st.member;
       if (!st.requestId || fp !== st.requestFp) { st.requestId = randomId('o'); st.requestFp = fp; }
       body.requestId = st.requestId;
       body.website = honeypot ? honeypot.value : '';
@@ -1154,7 +1219,7 @@
       submitBtn.disabled = true;
       form.setAttribute('aria-busy', 'true');
       status('Siparişiniz gönderiliyor…');
-      request('siparis', body, { timeout: 45000 }).then(onSuccess, onFailure).then(function () {
+      request('siparis', body, { timeout: 45000, csrf: st.member ? st.csrf : '' }).then(onSuccess, onFailure).then(function () {
         st.submitting = false;
         form.removeAttribute('aria-busy');
         if (!success.hidden) return;
@@ -1165,7 +1230,9 @@
       var done = {
         reference: String(data.reference || ''), amountTry: data.amountTry, amountText: String(data.amountText || ''), payBy: String(data.payBy || ''),
         payByText: String(data.payByText || ''), bank: data.bank && typeof data.bank === 'object' ? data.bank : {}, message: String(data.message || ''),
-        mailSent: data.mailSent !== false, duplicate: data.duplicate === true
+        mailSent: data.mailSent !== false, duplicate: data.duplicate === true,
+        account: data.account && typeof data.account === 'object' ? { linked: data.account.linked === true, saved: data.account.saved === true }
+          : (st.submitMember ? { linked: false, saved: false } : null)   // üye olarak gönderildi ama sunucu bağlantıyı teyit etmedi
       };
       kvSet(DONE_KEY, JSON.stringify(done), true);
       removeFromCart(st.items.map(function (i) { return i.id; }));
@@ -1204,6 +1271,22 @@
       setPay('iban', String(bank.iban || ''));
       var msg = $('[data-vgm-success-msg]', success);
       msg.textContent = (done.message || 'Siparişiniz alındı.') + (fresh ? '' : ' (Bu bilgiler yalnızca bu tarayıcı oturumunda saklanır.)');
+      var acct = $('[data-vgm-account-note]', success);
+      if (acct) {
+        clear(acct);
+        var a = done.account;
+        acct.hidden = !a;
+        if (a && a.linked) {
+          acct.className = 'vgm-notice vgm-notice--ok vgm-noprint';
+          acct.appendChild(document.createTextNode('Sipariş üye hesabınıza kaydedildi' + (a.saved ? '; fatura ve teslimat bilgileriniz sonraki siparişler için saklandı' : '') + '. '));
+          acct.appendChild(el('a', { href: '/hesap/siparislerim.html' }, ['Hesabım › Siparişlerim']));
+        } else if (a) {
+          acct.className = 'vgm-notice vgm-notice--warn vgm-noprint';
+          acct.appendChild(document.createTextNode('Oturumunuz sipariş sırasında doğrulanamadığı için sipariş hesabınıza bağlanamadı; sipariş geçerlidir. E-postanızı '));
+          acct.appendChild(el('a', { href: '/hesap/siparislerim.html' }, ['Siparişlerim']));
+          acct.appendChild(document.createTextNode(' sayfasında doğrulayarak bu siparişi hesabınıza ekleyebilirsiniz.'));
+        }
+      }
       var track = $('[data-vgm-track-link]', success);
       if (track && /^VGS-[0-9]{6}-[A-Z0-9]{5}$/.test(done.reference)) track.setAttribute('href', '/magaza/siparis-takip.html?ref=' + encodeURIComponent(done.reference));
       clear(notices);
@@ -1234,7 +1317,7 @@
     function syncBilling() { var k = billingType() === 'kurumsal'; kurumsal.hidden = !k; bireysel.hidden = k; }
     function syncShip() { shipBox.hidden = same.checked; }
     form.addEventListener('submit', onSubmit);
-    form.addEventListener('input', function (ev) { if (ev.target && ev.target.type !== 'checkbox' && ev.target !== honeypot) scheduleDocs(800); });
+    form.addEventListener('input', function (ev) { if (ev.target && ev.target.type !== 'checkbox' && ev.target !== honeypot) { st.touched = true; scheduleDocs(800); } });
     form.addEventListener('change', function (ev) {
       var t = ev.target;
       if (!t) return;
@@ -1254,9 +1337,11 @@
     }
     view('state');
     stateEl.textContent = 'Fiyatlar kontrol ediliyor…';
+    var memberReady = loadMember();
     request('sepet', { items: items }, { timeout: 30000 }).then(function (data) {
       applyQuote(data);
-      if (st.items.length) scheduleDocs(0);
+      /* Belge metni üye bilgileri doldurulduktan sonra hazırlanır (alıcı adı ve adresi metne girer). */
+      if (st.items.length) memberReady.then(function () { scheduleDocs(0); });
     }, function (err) {
       clear(notices);
       var retry = el('button', { type: 'button', class: 'vgm-btn vgm-btn--ghost vgm-btn--sm' }, ['Tekrar dene']);

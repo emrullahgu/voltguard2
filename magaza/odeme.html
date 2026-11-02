@@ -48,7 +48,7 @@
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/style.css?v=f5a7da9dd78a">
-  <link rel="stylesheet" href="/css/magaza.css?v=814ded0c99eb">
+  <link rel="stylesheet" href="/css/magaza.css?v=4829f1d2eaee">
 </head>
 <body class="doc-shell vgm-page">
   <!--vg:header-->
@@ -167,6 +167,7 @@
           </dl>
           <p class="vgm-fine vgm-success__seller"><!--vgm:satici-kisa--><strong>Satıcı:</strong> Voltguard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi · Merkez adresi (ticaret sicili): Adalet Mah. Manas Bul. Folkart Towers No: 39 İç Kapı No: 2511 Bayraklı / İzmir · İşyeri ve bildirim adresi: Erzene Mah. Ankara Cad. No: 172/69 İç Kapı No: 043 Bornova / İzmir · Vergi dairesi / no: Hasan Tahsin / 9251324900 · MERSİS no: 0925132490000001 · 0545 434 67 35 · info@voltguard.com.tr.<!--/vgm:satici-kisa--> Fatura ve muhasebe kaydı için satıcı bilgileri sipariş e-postanızda ve <a href="/magaza/odeme-ve-teslimat.html#satici">ödeme ve teslimat</a> sayfasındadır.</p>
           <div class="vgm-notice vgm-notice--warn vgm-success__note"><strong>Açıklama alanına sipariş numaranızı yazın.</strong> Havale/EFT açıklamasındaki sipariş numarası ödemenizi eşleştirmemizi sağlar. Ödeme hesabımıza geçtikten sonra siparişiniz hazırlanır; son ödeme zamanına kadar tam tutar ödenmeyen siparişler bedelsiz iptal olur.</div>
+          <p class="vgm-notice vgm-noprint" data-vgm-account-note hidden></p>
           <p class="vgm-status vgm-noprint" data-vgm-copy-status role="status" aria-live="polite"></p>
           <p class="vgm-actions vgm-noprint"><button type="button" class="vgm-btn vgm-btn--primary" data-vgm-print>Yazdır</button><a class="vgm-btn vgm-btn--ghost" href="/magaza/siparis-takip.html" data-vgm-track-link>Siparişi takip et</a><a class="vgm-link" href="/magaza/">Alışverişe devam et</a></p>
         </section>
@@ -180,6 +181,7 @@
         <div class="vgm-checkout" data-vgm-checkout hidden>
           <form class="vgm-form" data-vgm-form novalidate autocomplete="on">
             <div class="vgm-errsum" data-vgm-errors role="alert" tabindex="-1" hidden></div>
+            <div class="vgm-account" data-vgm-account role="region" aria-label="Üyelik" hidden></div>
 
             <fieldset class="vgm-fieldset">
               <legend>İletişim bilgileri</legend>
@@ -223,6 +225,8 @@
                 <div class="vgm-field"><label for="s-postal">Posta kodu (isteğe bağlı)</label><input id="s-postal" name="shippingAddress.postalCode" type="text" inputmode="numeric" autocomplete="shipping postal-code" maxlength="5"></div>
               </div>
             </fieldset>
+
+            <div class="vgm-field" data-vgm-save-wrap hidden><label class="vgm-check"><input type="checkbox" name="saveDetails" data-vgm-save> <span data-vgm-save-label>Fatura ve teslimat bilgilerimi sonraki siparişlerimde kullanmak üzere üye hesabıma kaydet (isteğe bağlı; T.C. kimlik no kaydedilmez. Hesabım › Siparişlerim sayfasından istediğiniz zaman silebilirsiniz).</span></label></div>
 
             <div class="vgm-field"><label for="f-notes">Sipariş notu (isteğe bağlı)</label><textarea id="f-notes" name="notes" rows="3" maxlength="1000"></textarea></div>
 
@@ -370,6 +374,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/magaza.js?v=2fc273150f75" defer></script>
+  <script src="/js/magaza.js?v=07e3346f8d67" defer></script>
 </body>
 </html>
