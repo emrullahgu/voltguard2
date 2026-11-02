@@ -23,7 +23,7 @@ deployment:
     # Runtime veri (kullanici, oturum) docroot DISINDA tutulur; _vgdata/ ve vg-data/ klasorlerine hicbir gorev dokunmaz.
     # PHP CLI 8.3+ zorunlu. Tum yayin kaynaklari ve alt dizinlerdeki PHP, hedeflere dokunulmadan denetlenir.
     # Bu hostingte dogrulanan PHP 8.3 yolu, web PHP secimiyle aynidir; PATH'teki baska surume gecilmez.
-    - /bin/sh tools/cpanel-deploy-preflight.sh --php /opt/alt/php83/usr/bin/php
+    - /bin/sh tools/cpanel-deploy-preflight.sh --php /opt/alt/php83/usr/bin/php || exit 1
     - export DEPLOYPATH=/home/voltgua2/public_html/
     - export VG_STAGEPATH=/home/voltgua2/vg-deploy-stage/
     - /bin/mkdir -p $VG_STAGEPATH

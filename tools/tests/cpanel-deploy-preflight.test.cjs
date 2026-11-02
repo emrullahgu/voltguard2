@@ -44,7 +44,7 @@ function contents(directory) {
 test('cPanel preflight is the first deployment task, before any target mutation', () => {
   const source = fs.readFileSync(path.join(root, '.cpanel.yml'), 'utf8');
   const tasks = source.split(/\r?\n/).filter(line => /^\s*- /.test(line)).map(line => line.trim().slice(2));
-  assert.equal(tasks[0], '/bin/sh tools/cpanel-deploy-preflight.sh --php /opt/alt/php83/usr/bin/php');
+  assert.equal(tasks[0], '/bin/sh tools/cpanel-deploy-preflight.sh --php /opt/alt/php83/usr/bin/php || exit 1');
   assert(!tasks[0].includes(': '), 'The cPanel task must remain a YAML scalar.');
   assert(!source.includes('if command -v php'), 'PHP must not be optional.');
   assert(!fs.readFileSync(scriptSource).includes(13), 'The Linux shell source must retain LF endings.');
@@ -72,6 +72,22 @@ test('missing PHP stops before a following target write', {skip:!linux}, () => {
     const result = spawnSync('/bin/sh', ['-ec', 'sh tools/cpanel-deploy-preflight.sh --php /definitely/no/php; printf changed > "$1"', 'runner', target], {cwd:home, encoding:'utf8', timeout:20000});
     assert.ifError(result.error); assert.notEqual(result.status, 0);
     assert.match(result.stderr, /php_cli_unavailable/);
+    assert.equal(fs.readFileSync(target, 'utf8'), 'unchanged');
+  } finally { clean(home); }
+});
+
+test('the actual first deployment task stops a shell without errexit before a later target write', {skip:!linux}, () => {
+  const home = fixture();
+  try {
+    fs.writeFileSync(path.join(home, 'api/lib/magaza/nested.php'), '<?php function broken( {');
+    const target = path.join(home, 'target-must-stay'); fs.writeFileSync(target, 'unchanged');
+    const task = fs.readFileSync(path.join(root, '.cpanel.yml'), 'utf8').split(/\r?\n/)
+      .find(line => /^\s*- /.test(line)).trim().slice(2);
+    // Only substitute the hosting-specific PHP path; retain the recipe's exact control flow.
+    const command = task.replace('/opt/alt/php83/usr/bin/php', '"$1"') + '\nprintf changed > "$2"';
+    const result = spawnSync('/bin/sh', ['-c', command, 'runner', php, target], {cwd:home, encoding:'utf8', timeout:20000});
+    assert.ifError(result.error); assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /php_syntax_check_failed/);
     assert.equal(fs.readFileSync(target, 'utf8'), 'unchanged');
   } finally { clean(home); }
 });
