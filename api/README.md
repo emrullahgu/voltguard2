@@ -272,3 +272,34 @@ PVGIS, NASA POWER, TCMB, Frankfurter, açık ExchangeRate-API, Nominatim, JSONPl
 İstekler sabit HTTPS kaynaklarına, genel IP çözümlemesi ve TLS doğrulamasıyla gönderilir; yönlendirme izlenmez. Yanıt boyutu ve süresi, kullanıcı/kaynak istek sayısı sınırlandırılır. Önbellek yalnız özel `integrations` dizinindedir, en fazla 512 sonuç / 32 MiB; geçersiz veya başarısız yanıt eski doğrulanmış sonucu değiştirmez. AI metinleri bu sonuç önbelleğine yazılmaz. EPİAŞ PTF birimi TRY/MWh ve ayrıca TRY/kWh olarak belirtilir; perakende fatura tarifesi değildir.
 
 Odaklı testler `tools/tests/integration-*.test.cjs`, `integrations-endpoint.test.cjs`, `saha-connected-*.test.cjs` dosyalarındadır. Tarayıcı doğrulamaları `node tools/tests/integration-public-browser.cjs`, `node tools/tests/integration-currency-browser.cjs` ve `node tools/tests/company-real-browser.cjs --record-only --record-suite=integration` ile izole verilerde çalışır. Anahtarı olan sağlayıcılar için gerçek bağlantı ayrıca kullanıcı sorgusuyla doğrulanmalıdır.
+
+## Salt okunur saklama envanteri
+
+`tools/retention-audit.php`, yalnız sunucu terminalinde mevcut bir özel veri dizinini inceler. Dizin açıkça ve
+mutlak yol olarak verilmelidir; ortam değişkeni veya varsayılan canlı dizin kullanılmaz. Araç uygulama
+başlatma yardımcılarını yüklemez, dizin/dosya oluşturmaz, izin veya içerik değiştirmez ve temizlik yapmaz.
+Dosya okuması, dosya sisteminin yönettiği erişim zamanını güncelleyebilir.
+
+```sh
+php tools/retention-audit.php --data-dir /tam/yol/ozel-veri --docroot /tam/yol/public_html
+```
+
+JSON çıktı yalnız sabit kapsamların dosya sayısı, boyutu, değiştirilme zamanına göre yaş grupları ve hata
+sayılarını içerir. Dosya adı/yolu, kişi, e-posta, IP, talep numarası veya dosya gövdesi yazdırılmaz. Yalnız
+`requests` ve `rl` içindeki sınırlı tekrar-koruma/sayaç metadata JSON'ları doğrulanır. Entegrasyon önbelleğinde
+sağlayıcı oturum biletleri bulunabileceği için gövdeler ve `expires` alanı okunmaz. Sipariş ve mağaza talep
+dosyaları da yalnız dosya bilgileriyle sayılır; posta, yapılandırma, anahtar, oturum, bordro ve yedek içeriği
+bu kapsama girmez. Sembolik bağlantılar, junction ve hard link hedefleri dışlanır.
+
+Varsayılan sınırlar 10.000 dizin girdisi, 5 saniye ve toplam 8 MiB metadata okumasıdır. `--max-entries` ile
+en çok 10.000, `--max-seconds` ile en çok 30 saniye seçilebilir. Çıkış kodu `0` tamamlanan, `1` kısmi/hatalı
+envanter, `2` kullanım hatasıdır; eksik kapsam `complete` ve `incompleteReasons` alanlarında görünür.
+Yaş grupları, yasal saklama süresinin başlangıcı veya silme onayı değildir. İş kayıtlarının saklama/imha
+kararı, posta ve yedek kopyalarıyla birlikte şirketçe ayrıca belirlenir.
+
+İletişim tekrar-koruma temizliği, `requests/.records.lock` dosyasını kalıcı koordinasyon kilidi olarak
+kullanır. Dosya silinmez; çalışan veya aynı kayıtta sıraya girmiş bir talep varken temizlik atlanır.
+Bu düzenin ilk yayınında eski PHP istekleri ve yanıt sonrası temizlikleri tamamlanmadan yeni sürümle
+karışık çalışma güvenli sayılmaz: kısa bir gönderim bakım aralığı ve çalışan eski işlerin bittiğinin teyidi gerekir.
+
+İzole doğrulama: `node --test tools/tests/retention-audit.test.cjs tools/tests/enquiry-gc-consistency.test.cjs`.
