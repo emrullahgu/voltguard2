@@ -15,14 +15,17 @@ const phpPath = file => JSON.stringify(path.join(root, file).replace(/\\/g, '/')
 const secret = 'isolated-turnstile-privacy-fixture-secret';
 const token = 'synthetic-token+privacy/with=value&proof';
 const addresses = ['198.51.100.79', '2001:db8:ad00::44'];
+// PHP builds can include cURL even with -n; remove the native functions before installing these network-free stubs.
+const transportFunctions = ['curl_init', 'curl_setopt_array', 'curl_exec', 'curl_getinfo', 'curl_close'];
+const phpArgs = ['-n', '-d', `disable_functions=mail,${transportFunctions.join(',')}`];
 let checkedRuntime = false;
 
 function runtime() {
   if (checkedRuntime) return;
-  const probe = spawnSync(php, ['-n', '-r', 'echo json_encode(["curl"=>function_exists("curl_init")]);'],
+  const probe = spawnSync(php, [...phpArgs, '-r', `echo json_encode(array_map('function_exists', ${JSON.stringify(transportFunctions)}));`],
     {encoding: 'utf8', windowsHide: true, timeout: 5000});
   assert.equal(probe.status, 0, probe.stderr || probe.error?.message);
-  assert.equal(JSON.parse(probe.stdout).curl, false, 'The isolated -n PHP runtime must allow the network-free cURL stubs.');
+  assert.deepEqual(JSON.parse(probe.stdout), transportFunctions.map(() => false), 'The isolated PHP runtime must allow every network-free cURL stub.');
   checkedRuntime = true;
 }
 
@@ -77,7 +80,7 @@ echo json_encode(['outcome'=>$outcome,'requests'=>$requests]);
 `);
     const env = {...process.env, VG_DATA_DIR: path.join(directory, 'private'), VG_MAIL_OUTBOX: '1',
       TURNSTILE_SECRET_KEY: secret, TURNSTILE_EXPECTED_HOSTNAME: 'voltguard.com.tr'};
-    const run = spawnSync(php, ['-n', '-d', 'disable_functions=mail', file],
+    const run = spawnSync(php, [...phpArgs, file],
       {env, encoding: 'utf8', windowsHide: true, timeout: 10000});
     assert.equal(run.status, 0, run.stderr || run.error?.message);
     assert.doesNotMatch(run.stderr, /Warning:|Notice:|Fatal error/);
