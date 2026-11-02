@@ -157,6 +157,7 @@ function vg_turnstile_verify(array $config, string $token): void
         vg_fail(422, 'captcha_required', 'Güvenlik doğrulaması yüklenemedi. Sayfayı yenileyip tekrar deneyin; sorun sürerse bizi telefonla veya info@voltguard.com.tr adresinden arayın.');
     }
     if (strlen($token) > 2048) vg_fail(422, 'captcha_required', 'Lütfen güvenlik doğrulamasını tamamlayın.');
-    $response = vg_turnstile_request(http_build_query(['secret' => $config['secretKey'], 'response' => $token, 'remoteip' => vg_client_ip()]));
+    // Siteverify's optional remoteip is omitted to avoid forwarding the visitor IP again.
+    $response = vg_turnstile_request(http_build_query(['secret' => $config['secretKey'], 'response' => $token]));
     vg_turnstile_validate_response($response['body'], $response['status'], $config['expectedHostname']);
 }
