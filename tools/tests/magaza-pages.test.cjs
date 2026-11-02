@@ -900,7 +900,7 @@ test('mobil: alt kategori çipleri tek satır yatay kayar (solma kenarları, kla
     assert.match(sub.text, /<nav class="vgm-subcats" aria-label="Alt kategoriler" data-vgm-scroller><ul><li><a class="vgm-subcat" href="\/magaza\/kategori\/gunes-panelleri\/">/);
   });
   const css = fs.readFileSync(path.join(root, 'css/magaza.css'), 'utf8'), js = fs.readFileSync(path.join(root, 'js/magaza.js'), 'utf8');
-  const narrow = css.split('@media (max-width: 47.99rem) {\n  .vgm-subcats {')[1] || '';
+  const narrow = css.replace(/\r\n/g, '\n').split('@media (max-width: 47.99rem) {\n  .vgm-subcats {')[1] || '';
   assert.match(narrow, /flex-wrap: nowrap; overflow-x: auto;/); assert.match(narrow, /mask-image: linear-gradient\(to right, transparent 0, #000 var\(--vgm-fade-s\)/);
   assert.match(narrow, /\.vgm-subcats\[data-fade~="end"\] \{ --vgm-fade-e: 2\.25rem; \}/); assert.match(narrow, /\.vgm-subcats li \{ flex: none;/);
   assert.match(js, /function initScrollers\(\)/); assert.match(js, /nav\.setAttribute\('data-fade', f\.join\(' '\)\)/); assert.match(js, /initScrollers\(\);/);
@@ -991,7 +991,12 @@ test('hukuki inceleme: cayma/iade, sözleşme kuruluşu, garanti, satıcı adres
   }
   assert.match(con, /Alıcı tüketici ise taraflar 6502 sayılı/); assert.match(con, /ayıpsız ve sağlam olarak teslim eder/);
   const kvkk = pages[4];
-  assert.doesNotMatch(kvkk, /KEP adresimize|Türkiye’deki ziyaretçiler için kullanılmaz/); assert.match(kvkk, /Cloudflare’in yurt dışındaki sunucularına aktarılır/);
+  assert.doesNotMatch(kvkk, /KEP adresimize|Türkiye’deki ziyaretçiler için kullanılmaz/);
+  assert.match(kvkk, /IP adresiniz, TLS parmak izi, tarayıcı bilgileri/);
+  assert.match(kvkk, /Cloudflare tarafından işlenir ve yurt dışına aktarılabilir/);
+  assert.match(kvkk, /siteyi koruma hizmetinde veri işleyen/);
+  assert.match(kvkk, /bot tespitini geliştirme amacıyla yaptığı işlemede ayrıca veri sorumlusu/);
+  assert.match(kvkk, /tarafların imzalarının tamamlanmasından itibaren beş iş günü içinde Kişisel Verileri Koruma Kurumuna/);
   const giz = fs.readFileSync(path.join(root, 'gizlilik.html'), 'utf8');
   for (const k of ['vg_magaza_sepet_v1', 'vg_magaza_urunler_v1', 'vg_magaza_son_siparis_v1', 'vg_magaza_band_kapali_v1', '/magaza/kvkk-aydinlatma.html'])
     assert.ok(giz.includes(k), 'gizlilik: ' + k);

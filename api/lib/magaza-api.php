@@ -45,7 +45,8 @@ function vgm_verify_captcha(string $token): void
     if ($token === '' || strlen($token) > 2048) {
         vg_fail(422, 'captcha_required', 'Güvenlik doğrulaması yüklenemedi. Sayfayı yenileyip tekrar deneyin.');
     }
-    $payload = http_build_query(['secret' => $secret, 'response' => $token, 'remoteip' => vg_client_ip()]);
+    // Siteverify's optional remoteip is omitted to avoid forwarding the visitor IP again.
+    $payload = http_build_query(['secret' => $secret, 'response' => $token]);
     $raw = false;
     $status = 0;
     if (function_exists('curl_init')) {
