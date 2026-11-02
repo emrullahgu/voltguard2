@@ -65,11 +65,32 @@ bilemez; panel ve `--status` yalnızca kaydedilmiş çalışmaları gösterir ("
 kalır). `tools/` deploy edilmediği için cron görevi `api/lib/volthaber-cron.php` dosyasını çağırmalıdır:
 
 ```
-*/30 * * * * VG_DATA_DIR=/home/voltgua2/vg-data /usr/local/bin/php /home/voltgua2/public_html/api/lib/volthaber-cron.php >/dev/null 2>&1
+7,37 * * * * VG_DATA_DIR=/home/voltgua2/vg-data /usr/local/bin/php /home/voltgua2/public_html/api/lib/volthaber-cron.php --draft-only >/dev/null 2>&1
 ```
 
 PHP yolu ve veri dizini sunucuda doğrulanmalıdır (`which php`, mevcut `VG_DATA_DIR`). Kurulumdan sonra
 `... php api/lib/volthaber-cron.php --status` çıktısında `"healthy": true` görülmelidir.
+
+Önerilen `--draft-only` kipi, etkin ve kullanım koşulları geçerli kaynaklardan yalnızca yeni taslak ekler.
+Mevcut yazıların durumunu/tarihini değiştirmez ve eski taslakları temizlemez. Saklanan mevcut kayıtların
+ek alanları da korunur. Dokunulmamış otomatik taslak sayısı 500'e, toplam yazı sayısı 3.000'e veya yazı
+dosyası 16 MiB sınırına ulaşırsa yeni öğe eklemek yerine `capacity skipped` sonucu verir. Bu öğeler
+`seen` listesine eklenmez; editör gelen kutusunda yer açınca sonraki taramada yeniden denenebilir.
+Kaynak çalışma bilgileri, tarama günlüğü ve zamanlayıcı kalp atışı yine güncellenir; bülten gönderilmez.
+
+`--draft-only` olmadan çalışan mevcut tam kip ve editörün elle taraması önceki davranışını korur:
+zamanı gelen planlı yazıların durumunu `published` yapabilir ve dokunulmamış otomatik taslakları 60 gün /
+500 kayıt kuralıyla temizleyebilir. Salt taslak kipi mevcut yayın takvimini durdurmaz: okur sayfaları,
+önceden planlanmış bir yazıyı zamanı geldiğinde zaten gösterir.
+
+CLI çalışmaları kalıcı `volthaber/cron.lock` üzerinde beklemeden kilit alır; başka bir CLI taraması
+çalışıyorsa ikinci çalışma atlanır. Kilit dosyası silinmemelidir. `--status`, kaydedilmiş `lastCronMode`
+değerini de gösterir; `healthy` yalnız zamanlayıcının yakın zamanda çalıştığını belirtir, bütün kaynakların
+başarıyla okunduğu anlamına gelmez. Kaynak hataları ayrıca incelenmelidir. Bilinmeyen, yinelenen ve
+birbiriyle çelişen CLI seçenekleri uygulama başlatılmadan reddedilir (`--help` kullanımını gösterir).
+
+İzole doğrulama: `node --test tools/tests/volthaber-draft-cron.test.cjs`. Gerçek CLI, sentetik özel veri ve
+yerel RSS dosyaları kullanılır; canlı veri, sağlayıcı çağrısı veya gerçek e-posta gönderimi yoktur.
 
 ## Kurallar
 

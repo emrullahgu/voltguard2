@@ -101,15 +101,21 @@ try {
         fwrite(STDERR, "Mağaza fiyat denetimi başarısız: cron.lock açılamadı (özel veri klasörünün izinlerini kontrol edin).\n");
         exit(1);
     }
-    if (!flock($lock, LOCK_EX | LOCK_NB)) {
-        echo "Başka bir fiyat denetimi çalışıyor; bu çalışma atlandı.\n";
-        exit(0);
+    $wouldBlock = 0;
+    if (!@flock($lock, LOCK_EX | LOCK_NB, $wouldBlock)) {
+        fclose($lock);
+        if ($wouldBlock === 1) {
+            echo "Başka bir fiyat denetimi çalışıyor; bu çalışma atlandı.\n";
+            exit(0);
+        }
+        fwrite(STDERR, "Mağaza fiyat denetimi başarısız: cron.lock kilidi alınamadı.\n");
+        exit(1);
     }
     $summary = vgm_refresh(['ids' => null, 'live' => false, 'budget' => $sure !== null ? (int)$sure : VGM_CRON_BUDGET,
         'age' => $yas !== null ? (int)$yas * 3600 : VGM_RECHECK_AGE, 'rates' => true]);
     $parts = [];
     foreach ($summary as $key => $value) {
-        $parts[] = $key . '=' . (is_bool($value) ? ($value ? 'yes' : 'no') : (string)$value);
+        $parts[] = $key . '=' . (is_bool($value) ? ($value ? 'yes' : 'no') : ($value === null ? 'null' : (string)$value));
     }
     echo implode(' ', $parts) . "\n";
     flock($lock, LOCK_UN);

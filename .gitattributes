@@ -26,6 +26,7 @@
 
 # Private cPanel cron wrappers run with /bin/sh, including after a Windows checkout.
 /tools/run-retention-snapshot.sh text eol=lf
+/tools/cpanel-deploy-preflight.sh text eol=lf
 
 # PDF streams and cross-reference offsets must retain their exact bytes.
 *.pdf binary

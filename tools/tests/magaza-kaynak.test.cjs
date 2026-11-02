@@ -840,6 +840,12 @@ test('cron: --status, tam çalışma, --product, --rates, --parse, --check-url v
   assert.deepEqual(st.counts, { ok: 4, held: 0, error: 0, unavailable: 1, unchecked: 0 });
   assert.ok(Math.abs(st.lastRunAt - now()) <= 30); assert.match(st.lastRunAtIso, /^\d{4}-\d{2}-\d{2}T/);
   assert.equal(st.summary.checked, 5);
+  for (const field of ['cpuUserSeconds', 'cpuSystemSeconds']) {
+    assert.equal(typeof st.summary[field], 'number'); assert.ok(st.summary[field] >= 0, field);
+    assert.equal(Number(full.stdout.match(new RegExp(`${field}=([0-9.]+)`))[1]), st.summary[field], `${field} persisted and printed`);
+  }
+  assert.ok(Number.isSafeInteger(st.summary.peakMemoryBytes) && st.summary.peakMemoryBytes > 0);
+  assert.match(full.stdout, new RegExp(`peakMemoryBytes=${st.summary.peakMemoryBytes}(?: |$)`));
   assert.equal(st.rate.usdTry, 40); assert.equal(st.rate.ok, true);
   assert.doesNotMatch(JSON.stringify(st), /tedarikci|example|https?:/i);
   // cron her 10 dakikada bir: 30 dakikadan eski çalışma "sağlıksız"
@@ -904,6 +910,47 @@ test('cron: cron.lock açılamıyorsa (izin/yol sorunu) "başka çalışma" say�
   const res = cron([], sb.env);
   assert.equal(res.status, 1);
   assert.match(res.stderr, /cron\.lock açılamadı/); assert.doesNotMatch(res.stdout, /atlandı/);
+});
+
+test('cron: unavailable CPU and peak-memory measurements persist and print null rather than zero', t => {
+  const sb = sandbox(t); sb.config({}); sb.rates();
+  const res = php(['-d', 'disable_functions=getrusage,memory_get_peak_usage', cronFile, '--sure', '10'], { env: sb.env });
+  assert.equal(res.status, 0, res.stdout + res.stderr);
+  const summary = JSON.parse(fs.readFileSync(path.join(sb.data, 'magaza', 'fiyat-durum.json'), 'utf8')).lastRunSummary;
+  for (const field of ['cpuUserSeconds', 'cpuSystemSeconds', 'peakMemoryBytes']) {
+    assert.equal(summary[field], null, field); assert.match(res.stdout, new RegExp(`${field}=null(?: |$)`));
+  }
+  assert.equal(summary.checked, 0); assert.equal(summary.fetches, 0);
+});
+
+test('cron: CPU telemetry uses window deltas and rejects missing or regressing counters', t => {
+  if (Number(php(['-r', 'echo PHP_MAJOR_VERSION;']).stdout) < 8) return t.skip('Fault injection requires PHP 8 disabled-builtin replacement.');
+  const start = { 'ru_utime.tv_sec': 100, 'ru_utime.tv_usec': 900000, 'ru_stime.tv_sec': 40, 'ru_stime.tv_usec': 900000 };
+  const finish = { 'ru_utime.tv_sec': 101, 'ru_utime.tv_usec': 100000, 'ru_stime.tv_sec': 41, 'ru_stime.tv_usec': 50000 };
+  const incomplete = { 'ru_utime.tv_sec': 99, 'ru_utime.tv_usec': 900000, 'ru_stime.tv_sec': 41 };
+  for (const [last, expected] of [[finish, [0.2, 0.15]], [incomplete, [null, null]]]) {
+    const sb = sandbox(t); sb.config({}); sb.rates();
+    const inject = path.join(sb.pages, 'cpu-samples.php');
+    fs.writeFileSync(inject, '<?php function getrusage(int $mode = 0) { static $i = 0; $samples = json_decode(' + JSON.stringify(JSON.stringify([start, last])) + ', true); return $samples[min($i++, 1)]; }');
+    const res = php(['-d', 'disable_functions=getrusage', '-d', `auto_prepend_file=${inject}`, cronFile], { env: sb.env });
+    assert.equal(res.status, 0, res.stdout + res.stderr);
+    const summary = JSON.parse(fs.readFileSync(path.join(sb.data, 'magaza', 'fiyat-durum.json'), 'utf8')).lastRunSummary;
+    assert.deepEqual([summary.cpuUserSeconds, summary.cpuSystemSeconds], expected);
+    assert.equal(summary.checked, 0); assert.equal(summary.fetches, 0);
+  }
+});
+
+test('cron: a locking error is not successful contention and does not run a price refresh', t => {
+  const sb = sandbox(t); sb.config({}); sb.rates();
+  // PHP 8 permits a disabled builtin to be replaced in this isolated process. Other fixture locks have no contenders.
+  const version = php(['-r', 'echo PHP_MAJOR_VERSION;']);
+  if (Number(version.stdout) < 8) return t.skip('Fault injection requires PHP 8 disabled-builtin replacement.');
+  const inject = path.join(sb.pages, 'flock-error.php');
+  fs.writeFileSync(inject, '<?php function flock($stream, $operation, &$wouldBlock = null): bool { $wouldBlock = 0; return basename(stream_get_meta_data($stream)["uri"]) !== "cron.lock"; }');
+  const res = php(['-d', 'disable_functions=flock', '-d', `auto_prepend_file=${inject}`, cronFile], { env: sb.env });
+  assert.equal(res.status, 1); assert.equal(res.stdout, '');
+  assert.match(res.stderr, /cron\.lock kilidi alınamadı/); assert(!res.stderr.includes(sb.data));
+  assert.equal(JSON.parse(cron(['--status'], sb.env).stdout).lastRunAt, null);
 });
 
 /* ------------------------------------------------------------------------------------------------ modül kuralları */

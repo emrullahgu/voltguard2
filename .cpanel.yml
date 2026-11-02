@@ -21,11 +21,12 @@ deployment:
     # yarida kesilirse canli klasore dokunulmaz; silme ile yeniden adlandirma arasindaki bosluk milisaniyelerdir.
     # Yeniden adlandirilan/silinen dosyalar sunucuda kalmaz. tools/, txt/ ve .git bilerek DEPLOY EDILMEZ.
     # Runtime veri (kullanici, oturum) docroot DISINDA tutulur; _vgdata/ ve vg-data/ klasorlerine hicbir gorev dokunmaz.
+    # PHP CLI 8.3+ zorunlu. Tum yayin kaynaklari ve alt dizinlerdeki PHP, hedeflere dokunulmadan denetlenir.
+    # Bu hostingte dogrulanan PHP 8.3 yolu, web PHP secimiyle aynidir; PATH'teki baska surume gecilmez.
+    - /bin/sh tools/cpanel-deploy-preflight.sh --php /opt/alt/php83/usr/bin/php
     - export DEPLOYPATH=/home/voltgua2/public_html/
     - export VG_STAGEPATH=/home/voltgua2/vg-deploy-stage/
     - /bin/mkdir -p $VG_STAGEPATH
-    # Sozdizimi hatali PHP canliya gitmesin. php komutu bulunamazsa adim atlanir, hata bulursa deploy burada durur.
-    - if command -v php >/dev/null 2>&1; then for f in api/*.php api/lib/*.php contact.php calisan/index.php calisan/uygulama/index.php calisan/uygulama/saha.php volthaber/index.php magaza/index.php; do php -l "$f" >/dev/null || exit 1; done; fi
     # Install private URL protection before any private file is copied into the web root.
     - /bin/cp .htaccess $DEPLOYPATH
     # ----- 1) Statik varliklar -----

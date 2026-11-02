@@ -572,7 +572,8 @@ function vh_fetch_body(array $source, string &$why, int &$status): string
 }
 
 /**
- * Etkin kaynaklari tarar. $opts: sourceId (tek kaynak), force (editor; 5 dk), trigger ('cron'|'editor'), budget (sn).
+ * Etkin kaynaklari tarar. $opts: sourceId (tek kaynak), force (editor; 5 dk), trigger ('cron'|'editor'), budget (sn),
+ * draftOnly (yalnizca yeni taslak ekler; mevcut kayitlari yayinlamaz, temizlemez veya yeniden normalizasyonla yazmaz).
  * Ag istekleri kilit DISINDA yapilir; sonuclar tek ozel kilitte birlestirilir.
  */
 function vh_run_fetch(array $opts): array
@@ -582,6 +583,7 @@ function vh_run_fetch(array $opts): array
     $interval = !empty($opts['force']) ? VH_FETCH_FORCE_INTERVAL : VH_FETCH_MIN_INTERVAL;
     $budget = (float)($opts['budget'] ?? 25);
     $trigger = (string)($opts['trigger'] ?? 'cron');
+    $draftOnly = ($opts['draftOnly'] ?? false) === true;
     $plan = vh_locked(false, function (string $dir) use ($only) {
         return vh_sources($dir);
     });
@@ -591,7 +593,7 @@ function vh_run_fetch(array $opts): array
         if ($only !== '' && $src['id'] !== $only) {
             continue;
         }
-        if ($only === '' && empty($src['enabled'])) {
+        if (($only === '' || $draftOnly) && empty($src['enabled'])) {
             continue;
         }
         if (($src['format'] ?? '') === 'none') {
@@ -624,10 +626,19 @@ function vh_run_fetch(array $opts): array
             'added' => 0, 'httpStatus' => $status, 'ms' => (int)round((microtime(true) - $t0) * 1000), '_items' => $items, '_src' => $src, 'fetched' => true];
     }
     // Sonuclari birlestir.
-    return vh_locked(true, function (string $dir) use ($results, $now, $trigger) {
+    return vh_locked(true, function (string $dir) use ($results, $now, $trigger, $draftOnly) {
         $sources = vh_sources($dir);
         $state = vh_articles($dir);
-        $published = vh_materialize_schedule($state, $now);
+        // Lookup state may normalize records and merge virtual seeds. In append-only mode preserve
+        // every originally stored record verbatim; only newly constructed drafts enter saved state.
+        $stored = $draftOnly && is_file($dir . '/articles.json')
+            ? vh_read($dir, 'articles.json', ['version' => 1, 'articles' => []], VH_MAX_BYTES) : $state;
+        $storedBytes = $draftOnly ? strlen(vg_json_encode($stored)) : 0;
+        $untouched = 0;
+        if ($draftOnly) foreach ($state['articles'] as $a) {
+            if ($a['origin'] === 'ingest' && $a['status'] === 'draft' && $a['updatedAt'] === $a['createdAt']) $untouched++;
+        }
+        $published = $draftOnly ? 0 : vh_materialize_schedule($state, $now);
         $changed = $published > 0;
         $out = [];
         foreach ($results as $r) {
@@ -643,14 +654,35 @@ function vh_run_fetch(array $opts): array
                         if (in_array($key, $seen, true)) {
                             continue;
                         }
-                        $seen[] = $key;
+                        if (!$draftOnly) $seen[] = $key;
                         if ($item['publishedAt'] !== null && $item['publishedAt'] < $now - VH_FETCH_MAX_AGE) {
+                            if ($draftOnly) $seen[] = $key;
                             continue;
                         }
                         if (vh_ingest_exists($state, $item)) {
+                            if ($draftOnly) $seen[] = $key;
                             continue;
                         }
-                        vh_add_ingest_draft($state, $r['_src'], $item, $now);
+                        if ($draftOnly) {
+                            $draft = vh_make_ingest_draft($state, $r['_src'], $item, $now);
+                            $memberBytes = strlen(vg_json_encode([$draft['id'] => $draft])) - 2
+                                + (count($stored['articles']) > 0 ? 1 : 0);
+                            $capacity = $untouched >= VH_MAX_INGEST_DRAFTS ? 'inbox_full'
+                                : (count($state['articles']) >= VH_MAX_ARTICLES ? 'article_limit'
+                                    : ($storedBytes + $memberBytes > VH_MAX_BYTES ? 'storage_full' : ''));
+                            if ($capacity !== '') {
+                                $r['capacitySkipped'] = ($r['capacitySkipped'] ?? 0) + 1;
+                                $r['capacityReason'] = $capacity;
+                                continue; // Retriable after an editor frees capacity; do not mark seen.
+                            }
+                            $state['articles'][$draft['id']] = $draft;
+                            $stored['articles'][$draft['id']] = $draft;
+                            $storedBytes += $memberBytes;
+                            $untouched++;
+                            $seen[] = $key;
+                        } else {
+                            vh_add_ingest_draft($state, $r['_src'], $item, $now);
+                        }
                         $r['added']++;
                         $changed = true;
                     }
@@ -664,15 +696,17 @@ function vh_run_fetch(array $opts): array
             $out[] = $r;
         }
         if ($changed) {
-            vh_prune_inbox($state);
-            vh_save_articles($dir, $state);
+            if (!$draftOnly) vh_prune_inbox($state);
+            vh_save_articles($dir, $draftOnly ? $stored : $state);
         }
         // Zamanlayici kalp atisi: panel ve durum bilgisi zamanlanmis taramanin gercekten calisip calismadigini buradan okur.
         $sched = is_array($sources['scheduler'] ?? null) ? $sources['scheduler'] : [];
         $sched['lastRunAt'] = $now;
         $sched['lastTrigger'] = $trigger;
+        $sched['lastRunMode'] = $draftOnly ? 'draft-only' : 'full';
         if ($trigger === 'cron') {
             $sched['lastCronAt'] = $now;
+            $sched['lastCronMode'] = $draftOnly ? 'draft-only' : 'full';
         }
         $sources['scheduler'] = $sched;
         vh_write($dir, 'sources.json', $sources, 4194304);
@@ -696,7 +730,14 @@ function vh_ingest_exists(array $state, array $item): bool
 
 function vh_add_ingest_draft(array &$state, array $src, array $item, int $now): void
 {
-    $id = 'a' . bin2hex(random_bytes(8));
+    $draft = vh_make_ingest_draft($state, $src, $item, $now);
+    $state['articles'][$draft['id']] = $draft;
+}
+
+/** Construct one draft without changing the supplied article state. */
+function vh_make_ingest_draft(array $state, array $src, array $item, int $now): array
+{
+    do { $id = 'a' . bin2hex(random_bytes(8)); } while (isset($state['articles'][$id]));
     $title = $item['title'];
     if (vg_strlen($title) < VH_TITLE_MIN) {
         $title = $title . ' – ' . $src['name'];
@@ -711,7 +752,7 @@ function vh_add_ingest_draft(array &$state, array $src, array $item, int $now): 
         $slug = substr($base, 0, 84) . '-' . $n++;
     }
     $link = $item['link'] !== '' ? $item['link'] : (string)($src['fallbackLink'] ?? '');
-    $state['articles'][$id] = vh_normalize_article([
+    return vh_normalize_article([
         'id' => $id, 'slug' => $slug, 'title' => vg_substr($title, VH_TITLE_MAX), 'summary' => '', 'summaryBy' => null, 'body' => '', 'bodyHtml' => '',
         'category' => vh_guess_category($item['title'], (string)$src['category']), 'tags' => [], 'type' => 'kaynak',
         'source' => ['name' => $src['name'], 'url' => $link,
@@ -758,6 +799,7 @@ function vh_scheduler_status(array $sourcesState): array
     return [
         'lastCronAt' => $cron ? vg_iso($cron) : null,
         'lastRunAt' => isset($s['lastRunAt']) ? vg_iso((int)$s['lastRunAt']) : null,
+        'lastCronMode' => in_array($s['lastCronMode'] ?? null, ['draft-only', 'full'], true) ? $s['lastCronMode'] : null,
         'healthy' => $healthy,
         'message' => $cron === 0 ? 'Zamanlanmış tarama hiç çalışmamış: sunucuda cron görevi kurulu değil veya çalışmıyor. Tarama yalnızca "Şimdi tara" ile yapılır.'
             : ($healthy ? 'Zamanlanmış tarama çalışıyor.' : 'Zamanlanmış tarama 2 saatten uzun süredir çalışmadı; cron görevini kontrol edin.'),

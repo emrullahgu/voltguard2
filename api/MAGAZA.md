@@ -379,7 +379,12 @@ başını tek tedarikçi doldursa da diğer sunucular aynı çalışmada işleni
 öncelikli ürünü alınır; hiçbiri hazır değilse en erken hazır olan beklenir. Son tarihte durur (uçuştaki istekler bırakılır);
 ilerleme her 20 sonuçta (ya da 15 sn'de) bir parça parça yazılır, kalanlar sonraki çalışmaya kalır. Katalogdan kaldırılmış ürün getirilmez ve sıradan silinir. Kur yenileme mantığı aynıdır (6 saatten eskiyse TCMB).
 Her zamanlanmış çalışma `fiyat-durum.json`'a kalp atışı (`lastRunAt`, `lastRunSummary`: `checked, ok, held, error,
-unavailable, skipped, left, due, rateUpdated, seconds, fetches, budget`) yazar. Sağlık (`vgm_refresh_status`, `--status`):
+unavailable, skipped, left, due, rateUpdated, seconds, fetches, budget`) yazar. `cpuUserSeconds` ve `cpuSystemSeconds`,
+yenileme çağrısının başı ve sonu arasındaki PHP sürecinin kendi kullanıcı/sistem CPU süreleridir; ağda bekleme süresi
+değildir. `peakMemoryBytes` PHP sürecinin o ana kadarki en yüksek ayrılmış belleğidir; yalnız bu çağrının artışı değildir.
+Ölçüm kullanılamıyorsa bu alanlar JSON'da ve cron çıktısında `null` olur. Bu metrikler tek başına hosting CPU sınır
+olayının nedenini kanıtlamaz; zamanları ve diğer sunucu günlükleriyle birlikte değerlendirilir.
+Sağlık (`vgm_refresh_status`, `--status`):
 son çalışma 30 dakika içinde, son 48 saatte doğrulanmış fiyat oranı (`freshShare`) ve kapasite tahmini (`capacity`:
 `fetchesPerHour` = son çalışmanın getirme hızı × saatte 6 × bütçe, `cycleHours` = ürün sayısı / bu hız; en az 20 getirmeli
 çalışmada). Tahmini tur 48 saati aşarsa `healthy` false olur (panelde "sağlıklı değil").
