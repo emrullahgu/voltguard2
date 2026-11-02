@@ -2498,6 +2498,7 @@ function vgm_refresh_flush(array $pending): array
 function vgm_refresh(array $opts): array
 {
     $start = microtime(true);
+    $cpuStart = function_exists('getrusage') ? @getrusage() : false;
     $live = ($opts['live'] ?? false) === true;
     $budget = isset($opts['budget']) && is_numeric($opts['budget']) ? max(1.0, (float)$opts['budget']) : ($live ? 8.0 : (float)VGM_CRON_BUDGET);
     $maxFetch = isset($opts['max']) && is_numeric($opts['max']) ? max(0, (int)$opts['max']) : ($live ? 6 : PHP_INT_MAX);
@@ -2801,6 +2802,18 @@ function vgm_refresh(array $opts): array
             });
         }
         $summary['seconds'] = round(microtime(true) - $start, 1);
+        // Self CPU covers this refresh window; peak memory belongs to the PHP process, not just this function.
+        $cpuEnd = function_exists('getrusage') ? @getrusage() : false;
+        foreach (['cpuUserSeconds' => 'utime', 'cpuSystemSeconds' => 'stime'] as $field => $kind) {
+            $parts = [$cpuStart['ru_' . $kind . '.tv_sec'] ?? null, $cpuStart['ru_' . $kind . '.tv_usec'] ?? null,
+                $cpuEnd['ru_' . $kind . '.tv_sec'] ?? null, $cpuEnd['ru_' . $kind . '.tv_usec'] ?? null];
+            $valid = count(array_filter($parts, 'is_int')) === 4 && min($parts) >= 0
+                && $parts[1] < 1000000 && $parts[3] < 1000000;
+            $delta = $valid ? ($parts[2] - $parts[0]) + ($parts[3] - $parts[1]) / 1000000 : -1;
+            $summary[$field] = $delta >= 0 ? round($delta, 6) : null;
+        }
+        $peak = function_exists('memory_get_peak_usage') ? memory_get_peak_usage(true) : null;
+        $summary['peakMemoryBytes'] = is_int($peak) && $peak > 0 ? $peak : null;
         $summary['fetches'] = $fetches;
         $summary['budget'] = $budget;
         $heartbeat = array_key_exists('heartbeat', $opts) ? $opts['heartbeat'] === true : (!$live && $ids === null);
