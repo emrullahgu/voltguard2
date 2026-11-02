@@ -58,8 +58,8 @@ function makeWorker(html) {
 }
 
 function addTheme(html, hosted) {
-  const logo = hosted ? '/public/voltguard-logo.webp'
-    : 'data:image/webp;base64,' + fs.readFileSync(path.join(project, 'public/voltguard-logo.webp')).toString('base64');
+  const logo = hosted ? '/public/voltguard-logo-koyu.webp'
+    : 'data:image/webp;base64,' + fs.readFileSync(path.join(project, 'public/voltguard-logo-koyu.webp')).toString('base64');
   const fonts = hosted ? '<link rel="stylesheet" href="/css/fonts.css?v=20261011">\n' : '';
   const head = fonts + '<style id="voltgame-brand-theme">\n' + palette + (hosted ? hostFonts : '') + '</style>\n';
   if (!html.includes('</head>') || !html.includes('<span class="brand">VOLTGUARD</span>')) throw new Error('Game shell structure changed.');

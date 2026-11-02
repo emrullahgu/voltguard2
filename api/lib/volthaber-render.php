@@ -61,7 +61,7 @@ function vh_meta(array $m): string
     $desc = $m['desc'];
     $url = $m['url'];
     $robots = $m['robots'] ?? 'index, follow, max-image-preview:large, max-snippet:-1';
-    $img = $m['image'] ?? VH_SITE . '/public/og-image.png';
+    $img = $m['image'] ?? VH_SITE . '/public/og-voltguard.png';
     $out = '  <title>' . vh_esc($title) . "</title>\n"
         . '  <meta name="description" content="' . vh_esc($desc) . "\">\n"
         . '  <meta name="robots" content="' . vh_esc($robots) . "\">\n"
@@ -497,7 +497,7 @@ function vh_render_article(array $state, array $views, array $a): array
     $modified = max($ts, (int)$a['revisedAt']);
     $crumb = [['Ana Sayfa', '/'], ['VoltHaber', '/volthaber/'], [$catName, '/volthaber/kategori/' . $a['category'] . '/'], [$a['title'], '/volthaber/' . $a['slug'] . '/']];
     $desc = $a['seo']['description'] !== '' ? $a['seo']['description'] : vh_plain($a['summary'], 165);
-    $img = $a['image'] ? (strpos($a['image']['url'], '/') === 0 ? VH_SITE . $a['image']['url'] : $a['image']['url']) : VH_SITE . '/public/og-image.png';
+    $img = $a['image'] ? (strpos($a['image']['url'], '/') === 0 ? VH_SITE . $a['image']['url'] : $a['image']['url']) : VH_SITE . '/public/og-voltguard.png';
     $authorName = $a['author']['name'] !== '' ? $a['author']['name'] : 'VoltGuard';
     $articleLd = [
         '@context' => 'https://schema.org', '@type' => 'Article', '@id' => $url . '#article',
@@ -505,7 +505,7 @@ function vh_render_article(array $state, array $views, array $a): array
         'datePublished' => vg_iso($ts), 'dateModified' => vg_iso($modified), 'articleSection' => $catName,
         'keywords' => implode(', ', $a['tags']), 'mainEntityOfPage' => $url,
         'author' => $a['author']['id'] === null ? ['@type' => 'Organization', 'name' => $authorName, 'url' => VH_SITE . '/'] : ['@type' => 'Person', 'name' => $authorName],
-        'publisher' => ['@type' => 'Organization', '@id' => VH_SITE . '/#organization', 'name' => 'VoltGuard', 'logo' => ['@type' => 'ImageObject', 'url' => VH_SITE . '/public/voltguard-logo.webp']],
+        'publisher' => ['@type' => 'Organization', '@id' => VH_SITE . '/#organization', 'name' => 'VoltGuard', 'logo' => ['@type' => 'ImageObject', 'url' => VH_SITE . '/public/voltguard-logo-koyu.webp']],
         'isPartOf' => ['@type' => 'WebSite', '@id' => VH_SITE . '/#website'],
     ];
     $srcUrls = array_values(array_filter(array_column(vh_all_sources($a), 'url')));

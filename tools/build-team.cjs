@@ -71,10 +71,10 @@ const html=`<!DOCTYPE html>
   <meta property="og:title" content="Ekibimiz | VoltGuard">
   <meta property="og:description" content="VoltGuard'ın mühendis, ofis ve saha ekibi: dört birimde 26 kişi.">
   <meta property="og:url" content="https://voltguard.com.tr/ekibimiz.html">
-  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-voltguard.png">
   <meta property="og:locale" content="tr_TR">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="/public/favicon-32.png" type="image/png">
+  <link rel="icon" href="/public/favicon-koyu-32.png" type="image/png">
   <link rel="stylesheet" href="/css/team.css?v=20261015b">
   <script src="/js/voltguard-auth.js?v=20261013a" defer></script>
   <script src="/js/team.js?v=20261013b" defer></script>
@@ -105,7 +105,7 @@ const html=`<!DOCTYPE html>
     </section>
     <section class="team-tree team-wrap" id="calisma-agaci" aria-labelledby="tree-title">
       <div class="team-section-heading"><div><p class="team-eyebrow">ORGANİZASYON</p><h2 id="tree-title">Birimlerimiz</h2></div><p>Mühendislik, ofis, Ar-Ge<br>ve saha uygulaması.</p></div>
-      <div class="team-tree__root"><img class="team-tree__brand" src="/public/voltguard-logo.webp" width="45" height="45" alt=""><div><strong>Volt<span>Guard</span></strong><small>ÇALIŞMA AĞACIMIZ</small></div><span class="team-tree__total">26 kişi</span></div>
+      <div class="team-tree__root"><img class="team-tree__brand" src="/public/voltguard-logo-koyu.webp" width="45" height="45" alt=""><div><strong>Volt<span>Guard</span></strong><small>ÇALIŞMA AĞACIMIZ</small></div><span class="team-tree__total">26 kişi</span></div>
       <div class="team-tree__branches">${branches}</div>
     </section>
     <section class="team-roster team-wrap" id="kadro" aria-labelledby="roster-title">

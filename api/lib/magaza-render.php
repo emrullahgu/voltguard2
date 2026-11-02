@@ -1802,7 +1802,7 @@ function vgmr_render_product(array $ctx, string $slug): ?array
     }
     $descMeta = $summary !== '' ? vgmr_clip($summary, 150) : vgmr_clip((string)$p['name'] . ' – teknik özellikler, fiyat ve sipariş bilgisi.', 150);
     $m = ['title' => (string)$p['name'] . ' – Fiyat ve Özellikler | ' . VGMR_TITLE_SUFFIX, 'desc' => $descMeta, 'url' => $url, 'type' => 'product',
-        'image' => $images ? VGMR_SITE . $images[0]['src'] : VGMR_SITE . '/public/og-image.png', 'ld' => [$ldProduct, vgmr_breadcrumb_ld($crumbs)]];
+        'image' => $images ? VGMR_SITE . $images[0]['src'] : VGMR_SITE . '/public/og-voltguard.png', 'ld' => [$ldProduct, vgmr_breadcrumb_ld($crumbs)]];
     if ($priceStr !== null) {
         $m['price'] = $priceStr;
     }

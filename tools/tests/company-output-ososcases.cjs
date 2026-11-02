@@ -215,11 +215,11 @@ module.exports = async function outputOsosKesifCases(ctx) {
     const name = prefix + 'Logo ve Yazdırma';
     await prepareManualOSOS(name);
     const logoSettings = page.getByRole('heading', { name: 'Logo Ayarları', exact: true }).locator('xpath=..');
-    const logoURL = new URL('/public/favicon-32.png', page.url()).href;
+    const logoURL = new URL('/public/favicon-koyu-32.png', page.url()).href;
     await page.getByPlaceholder('https://ornek.com/logo.png', { exact: true }).fill(logoURL);
     await logoSettings.getByRole('button', { name: 'Güncelle', exact: true }).click();
     check(await logoSettings.locator('img[alt="Logo"]').getAttribute('src'), logoURL, 'OSOS logo URL change uses the selected same-origin image');
-    await logoSettings.locator('input[type=file]').setInputFiles(path.resolve(__dirname, '../../public/favicon-32.png'));
+    await logoSettings.locator('input[type=file]').setInputFiles(path.resolve(__dirname, '../../public/favicon-koyu-32.png'));
     await page.waitForFunction(() => [...document.querySelectorAll('img[alt="Logo"]')].some(image => image.src.startsWith('data:image/png;base64,')));
     const acceptedLogo=await logoSettings.locator('img[alt="Logo"]').getAttribute('src');
     await logoSettings.locator('input[type=file]').setInputFiles({name:'qa-unsupported-logo.svg',mimeType:'image/svg+xml',buffer:Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"/>')});

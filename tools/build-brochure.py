@@ -175,7 +175,7 @@ def outside(c):
 
     # Cover: compact original brand treatment and real work photography.
     x = 2*PW+M
-    c.drawImage(ImageReader(str(ROOT/'public/voltguard-logo.webp')), x, H-76, 44, 44, mask='auto')
+    c.drawImage(ImageReader(str(ROOT/'public/voltguard-logo-koyu.webp')), x, H-76, 44, 44, mask='auto')
     word_x = x+54
     txt(c, 'Volt<font color="#20BCD9">Guard</font>', word_x, 34, PW-2*M-54, 26, 30, WHITE, True, 33)
     txt(c, 'ENGINEERING SOLUTIONS', word_x+1, 67, PW-2*M-54, 6.9, 9, '#D4DEEB', max_height=10)

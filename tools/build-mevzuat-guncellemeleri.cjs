@@ -57,7 +57,7 @@ function render() {
   const title = 'Elektrik Mevzuatı Değişiklikleri 2025–2026 | VoltGuard';
   const desc = `Elektrik, enerji, şarj, GES/RES ve iş güvenliği yönetmeliklerinde 2025–2026'da Resmî Gazete'de yayımlanan ${list.length} değişiklik: tarih, sayı, kapsam ve resmî metin bağlantıları.`;
   const ld = { '@context': 'https://schema.org', '@graph': [
-    { '@type': 'Article', '@id': URL + '#article', headline: 'Elektrik Mevzuatı Değişiklikleri 2025–2026', description: desc, inLanguage: 'tr-TR', image: 'https://voltguard.com.tr/public/og-image.png',
+    { '@type': 'Article', '@id': URL + '#article', headline: 'Elektrik Mevzuatı Değişiklikleri 2025–2026', description: desc, inLanguage: 'tr-TR', image: 'https://voltguard.com.tr/public/og-voltguard.png',
       datePublished: '2026-10-24', dateModified: checkedIso, author: { '@type': 'Organization', '@id': 'https://voltguard.com.tr/#organization', name: 'VoltGuard' },
       publisher: { '@id': 'https://voltguard.com.tr/#organization' }, mainEntityOfPage: URL, isPartOf: { '@type': 'WebSite', '@id': 'https://voltguard.com.tr/#website' } },
     { '@type': 'BreadcrumbList', itemListElement: [

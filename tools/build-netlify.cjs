@@ -25,7 +25,7 @@ for (const file of Object.values(manifest.files)) {
 }
 const worker = fs.readFileSync(path.join(root, 'public/voltgame/solver-worker.js'));
 assert.equal(crypto.createHash('sha256').update(worker).digest('hex'), manifest.workerSHA256);
-for (const file of ['ekibimiz.html', 'voltgame.html', 'public/voltguard-logo.webp', 'araclar/index.html']) {
+for (const file of ['ekibimiz.html', 'voltgame.html', 'public/voltguard-logo-koyu.webp', 'araclar/index.html']) {
   assert.ok(fs.statSync(path.join(root, file)).isFile(), 'Release asset: ' + file);
 }
 if (fs.existsSync(publish)) {

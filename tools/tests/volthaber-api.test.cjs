@@ -186,7 +186,7 @@ async function run() {
     await expect(editor, 'save', { body: { ...draft, category: 'yok' } }, 422, 'invalid_field');
     await expect(editor, 'save', { body: { ...draft, source: { name: 'Örnek', url: 'http://example.com/haber' } } }, 422, 'invalid_field');
     await expect(editor, 'save', { body: { ...draft, source: { name: 'Örnek', url: 'javascript:alert(1)' } } }, 422, 'invalid_field');
-    await expect(editor, 'save', { body: { ...draft, image: { url: '/public/og-image.png', credit: 'VoltGuard' } } }, 422, 'invalid_field');
+    await expect(editor, 'save', { body: { ...draft, image: { url: '/public/og-voltguard.png', credit: 'VoltGuard' } } }, 422, 'invalid_field');
     await expect(editor, 'save', { body: { ...draft, related: [{ url: 'https://evil.example/', label: 'Dış' }] } }, 422, 'invalid_field');
     await expect(editor, 'save', { body: { ...draft, slug: 'kategori' } }, 422, 'invalid_field');
     await expect(editor, 'save', { body: { ...draft, title: 'Başlık‮ters çevrilmiş metin denemesi' } }, 422, 'invalid_field');
@@ -194,7 +194,7 @@ async function run() {
     // ---------------------------------------------------------------- escaping + publish rules
     const hostile = { ...draft, ...complete(), title: 'Ölçüm <b>kalın</b> & "tırnak" içeren başlık örneği',
       body: '## Bölüm\n\n<script>alert(1)</script> metin **kalın** [kötü](javascript:alert(1)) [iyi](https://www.epdk.gov.tr/) [iç](/voltsim/ges/)\n\n- madde <img src=x onerror=alert(1)>',
-      image: { url: '/public/og-image.png', credit: 'VoltGuard arşivi', rightsNote: 'VoltGuard tarafından üretildi, kendi görselimiz.' } };
+      image: { url: '/public/og-voltguard.png', credit: 'VoltGuard arşivi', rightsNote: 'VoltGuard tarafından üretildi, kendi görselimiz.' } };
     r = await expect(editor, 'save', { body: hostile }, 201);
     const hostileId = r.body.item.id;
     const html = r.body.item.bodyHtml;

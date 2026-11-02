@@ -29,7 +29,7 @@
    ===================================================== */
 'use strict';
 
-const VERSION = '2026-10-27.1';
+const VERSION = '2026-11-02.1';
 const PREFIX = 'vgsw-';
 const CACHE_STATIC = PREFIX + 'static-' + VERSION;
 const CACHE_PAGES = PREFIX + 'pages-' + VERSION;
@@ -51,8 +51,8 @@ const SHELL_FIXED = [
   '/js/vg-shell.js',
   '/js/main.js',
   '/js/voltguard-auth.js',
-  '/public/icon-192.png',
-  '/public/voltguard-logo.webp'
+  '/public/icon-koyu-192.png',
+  '/public/voltguard-logo-koyu.webp'
 ];
 const SHELL_PAGES = ['/404.html'];  // '/' ayrıca kurulumda indirilir
 

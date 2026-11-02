@@ -35,12 +35,12 @@ function metaHead({ title, desc, url, type = 'article', robots = 'index, follow,
   <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(desc)}">
   <meta property="og:url" content="${url}">
-  <meta property="og:image" content="https://voltguard.com.tr/public/og-image.png">
+  <meta property="og:image" content="https://voltguard.com.tr/public/og-voltguard.png">
   <meta property="og:site_name" content="VoltGuard">
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:locale" content="tr_TR">
-  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/public/favicon-koyu-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon-koyu.png">
   <link rel="stylesheet" href="/css/style.css?v=0">
 ${extra}</head>`;
 }

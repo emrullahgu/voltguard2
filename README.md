@@ -49,7 +49,7 @@ Windows önizlemesinin üyelik, topluluk, çalışan hesabı ve özel PDF kayıt
 
 Ana sayfadaki `/#referanslar` bölümünde DİMES, ROKETSAN, TUSAŞ, TÜBİTAK, Ege Üniversitesi, ERDEMİR, VESTEL, HABAŞ ve EKTAM gösterilir. Referans listesi kullanıcının sağladığı kurum adlarına dayanır; kurumların resmî siteleri yalnızca özgün logoların kaynağıdır. DİMES için yalnızca kurum adı ve logo yayımlanır; hizmet anlatımı veya şirket içi rapor verileri eklenmez. Logolar `public/referanslar/` altında, kaynak adresleri ve dosya doğrulama bilgileri `tools/reference-logos.json` içinde tutulur.
 
-Ortak menü ve altbilgi, `public/logo.png` içindeki özgün VoltGuard ambleminin web için hazırlanan `public/voltguard-logo.webp` sürümünü kullanır. Referans logoları özgün renk ve oranlarıyla sunulur.
+Ortak menü ve altbilgi, `public/logo.png` içindeki özgün VoltGuard ambleminin web için hazırlanan `public/voltguard-logo-koyu.webp` sürümünü kullanır. Referans logoları özgün renk ve oranlarıyla sunulur.
 
 ## VoltGame
 
@@ -121,7 +121,7 @@ Operasyon modüllerinin PHP API, Ubuntu yardımcıları ve alan şeması uyumlu 
 
 Yeni araçlar mevcut kök `sw.js` önbelleğini kullanır; ikinci bir service worker kurulmaz. PDF ve Excel bağımlılıkları yereldir, uzak Google Fonts çağrıları kaldırılmıştır. Araçların mühendislik yöntemleri ve geçerlilik sınırları `/araclar/yontem/` sayfasında açıklanır.
 
-Yeni bölümün tüm 59 sayfası sitenin gerçek ortak menüsünü, özgün VoltGuard amblemini (`public/voltguard-logo.webp`) ve altbilgisini kullanır. Lacivert/kehribar renkleri, Outfit başlık ve Inter metin yazı tipleri, kartlar, düğmeler ve form alanları mevcut siteyle eşleştirilmiştir. Araçların özgün stilleri `#vg-tool-workspace` içinde sınırlandırılır; ortak menüye sızmaz. `assets/host-theme.css` ortak görsel düzeni uygular. Çevrimdışı ZIP aynı yerel yazı tiplerini ve menü varlıklarını içerir; PDF raporlarına site menüsü eklenmez.
+Yeni bölümün tüm 59 sayfası sitenin gerçek ortak menüsünü, özgün VoltGuard amblemini (`public/voltguard-logo-koyu.webp`) ve altbilgisini kullanır. Lacivert/kehribar renkleri, Outfit başlık ve Inter metin yazı tipleri, kartlar, düğmeler ve form alanları mevcut siteyle eşleştirilmiştir. Araçların özgün stilleri `#vg-tool-workspace` içinde sınırlandırılır; ortak menüye sızmaz. `assets/host-theme.css` ortak görsel düzeni uygular. Çevrimdışı ZIP aynı yerel yazı tiplerini ve menü varlıklarını içerir; PDF raporlarına site menüsü eklenmez.
 
 ## Entegrasyon doğrulaması
 

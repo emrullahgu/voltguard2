@@ -195,12 +195,12 @@ function head(o) {
   <meta property="og:title" content="${esc(o.ogTitle || o.title)}">
   <meta property="og:description" content="${esc(o.description)}">
   <meta property="og:url" content="${SITE}${o.url}">
-  <meta property="og:image" content="${SITE}${o.image || '/public/og-image.png'}">
+  <meta property="og:image" content="${SITE}${o.image || '/public/og-voltguard.png'}">
   <meta property="og:locale" content="tr_TR">
   <meta property="og:site_name" content="VoltGuard">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/public/favicon-koyu-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon-koyu.png">
   <link rel="stylesheet" href="/css/voltsim.css?v=${rev('/css/voltsim.css')}">
 ${o.scripts || ''}  <script type="application/ld+json">${JSON.stringify(o.ld)}</script>
 </head>`;

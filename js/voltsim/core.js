@@ -1593,7 +1593,7 @@
     const blocks = [];
     // başlık, bölümün ilk parçasıyla aynı blokta tutulur (sayfa sonunda yetim başlık kalmaz)
     const section = (head, parts) => { (parts.length ? parts : ['']).forEach((p, i) => blocks.push((i ? '' : head) + p)); };
-    blocks.push('<header class="rp-head"><img src="/public/voltguard-logo.webp" alt="" width="54" height="54"><div><strong>VoltGuard · VoltSim Teknik Raporu</strong><span>' + esc(d.title) + '</span></div><div class="rp-meta">' + esc(now.toLocaleDateString('tr-TR')) + ' ' + esc(now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })) + '<br>Motor sürümü ' + esc(E.version) + '</div></header>');
+    blocks.push('<header class="rp-head"><img src="/public/voltguard-logo-koyu.webp" alt="" width="54" height="54"><div><strong>VoltGuard · VoltSim Teknik Raporu</strong><span>' + esc(d.title) + '</span></div><div class="rp-meta">' + esc(now.toLocaleDateString('tr-TR')) + ' ' + esc(now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })) + '<br>Motor sürümü ' + esc(E.version) + '</div></header>');
     blocks.push('<p class="rp-disc"><b>Önemli:</b> VoltSim mühendislik eğitimi ve ön değerlendirme amacıyla hazırlanmıştır. Nihai proje, ekipman seçimi, uygulama ve mevzuat uygunluğu yetkili mühendis tarafından değerlendirilmelidir. Bu rapor resmî proje onayı veya mevzuata uygunluk belgesi değildir.</p>');
     if (snap) blocks.push('<figure class="rp-fig"><img src="' + snap + '" alt=""><figcaption>Simülasyon görünümü</figcaption></figure>');
     const inputs = flatInputs(this);
