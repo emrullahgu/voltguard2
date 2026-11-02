@@ -21,6 +21,73 @@ const VG_ENQ_SIM_MAX = 16000;               // simulasyon ozeti JSON ust siniri 
 const VG_ENQ_SIM_KINDS = ['trafo' => 'Trafo', 'pano' => 'Elektrik pano', 'komp' => 'Kompanzasyon', 'ges' => 'GES'];
 const VG_ENQ_REF_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
+/** Resolve the same private directory for writers and GC; never traverse a requests symlink. */
+function vg_enquiry_directory(bool $create): ?string
+{
+    $base = vg_private_data_directory(vg_data_dir());
+    $candidate = $base . '/requests';
+    clearstatcache(true, $candidate);
+    $actual = realpath($candidate);
+    $normalize = static function (string $path): string { return strtolower(rtrim(str_replace('\\', '/', $path), '/')); };
+    // Windows junctions may not report is_link(); reject aliases even when their target is another private child.
+    if (is_link($candidate) || ($actual !== false && $normalize($actual) !== $normalize($candidate))) {
+        if ($create) vg_unavailable('request directory cannot be a symbolic link');
+        return null;
+    }
+    if (!$create && !is_dir($candidate)) return null;
+    return vg_private_data_directory($candidate, $base);
+}
+
+/** Both the opened handle and its current path must name the same regular, non-symlink file. */
+function vg_enquiry_regular_handle($fp, string $file): bool
+{
+    clearstatcache(true, $file);
+    if (is_link($file)) return false;
+    $opened = fstat($fp);
+    $named = @lstat($file);
+    return is_array($opened) && is_array($named)
+        && ($opened['mode'] & 0170000) === 0100000 && ($named['mode'] & 0170000) === 0100000
+        && $opened['dev'] === $named['dev'] && $opened['ino'] === $named['ino'];
+}
+
+/**
+ * Permanent coordination inode: writers hold SH before opening a record, including while waiting on its EX lock.
+ * GC takes EX non-blocking, so it cannot detach an inode from an active or queued writer. Never unlink this file.
+ * @return resource|null
+ */
+function vg_enquiry_coordination(string $dir, bool $gc = false)
+{
+    $file = $dir . '/.records.lock';
+    clearstatcache(true, $file);
+    if (is_link($file) || (file_exists($file) && !is_file($file))) {
+        if (!$gc) vg_unavailable('request coordination file is invalid');
+        return null;
+    }
+    // x+ creates without following a link; r+ never creates the target of a concurrently introduced dangling link.
+    $fp = @fopen($file, 'x+');
+    if ($fp === false) {
+        clearstatcache(true, $file);
+        if (!is_link($file) && is_file($file)) $fp = @fopen($file, 'r+');
+    }
+    if ($fp === false) {
+        if (!$gc) vg_unavailable('request coordination file cannot be opened');
+        return null;
+    }
+    if (!vg_enquiry_regular_handle($fp, $file) || !flock($fp, $gc ? LOCK_EX | LOCK_NB : LOCK_SH)) {
+        fclose($fp);
+        if (!$gc) vg_unavailable('request coordination file cannot be locked');
+        return null;
+    }
+    if (!vg_enquiry_regular_handle($fp, $file)) {
+        flock($fp, LOCK_UN);
+        fclose($fp);
+        if (!$gc) vg_unavailable('request coordination file changed');
+        return null;
+    }
+    @chmod($file, 0600);
+    return $fp;
+}
+
 /** Turkiye telefonu: cep (5xx), sabit hat (2xx-4xx) veya 850; 0 / 90 / +90 onekli ya da oneksiz. */
 function vg_enquiry_phone_ok(string $phone): bool
 {
@@ -146,13 +213,17 @@ function vg_enquiry_once(string $requestId, string $fingerprint, callable $deliv
         $deliver($reference);
         return ['reference' => $reference, 'duplicate' => false];
     }
-    $base = vg_private_data_directory(vg_data_dir());
-    $dir = vg_private_data_directory($base . '/requests', $base);
+    $dir = vg_enquiry_directory(true);
     $file = $dir . '/' . hash_hmac('sha256', 'enquiry' . "\0" . $requestId, vg_secret()) . '.json';
-    $fp = @fopen($file, 'c+');
-    if ($fp === false) vg_unavailable('request record cannot be opened');
+    $coordination = vg_enquiry_coordination($dir);
+    $fp = null;
     try {
+        clearstatcache(true, $file);
+        if (is_link($file) || (file_exists($file) && !is_file($file))) vg_unavailable('request record is invalid');
+        $fp = @fopen($file, 'c+');
+        if ($fp === false) vg_unavailable('request record cannot be opened');
         if (!flock($fp, LOCK_EX)) vg_unavailable('request record cannot be locked');
+        if (!vg_enquiry_regular_handle($fp, $file)) vg_unavailable('request record changed');
         $raw = stream_get_contents($fp);
         $record = is_string($raw) && $raw !== '' ? json_decode($raw, true) : null;
         if (is_array($record) && is_string($record['reference'] ?? null) && is_string($record['fp'] ?? null)) {
@@ -170,9 +241,13 @@ function vg_enquiry_once(string $requestId, string $fingerprint, callable $deliv
         @chmod($file, 0600);
         return ['reference' => $reference, 'duplicate' => false];
     } finally {
-        /* Teslim edilemeyen talebin bos kaydi silinmez: bekleyen ikinci istek ayni dosyayi kilitliyor olabilir (GC siler). */
-        @flock($fp, LOCK_UN);
-        fclose($fp);
+        /* Close the record before releasing SH, including failed delivery and a writer queued on its EX lock. */
+        if (is_resource($fp)) {
+            @flock($fp, LOCK_UN);
+            fclose($fp);
+        }
+        @flock($coordination, LOCK_UN);
+        fclose($coordination);
     }
 }
 
@@ -183,16 +258,28 @@ function vg_enquiry_schedule_gc(): void
 
 function vg_enquiry_gc(): void
 {
-    $dir = vg_data_dir() . '/requests';
-    $dh = @opendir($dir);
-    if ($dh === false) return;
-    $start = microtime(true);
-    $limit = time() - VG_ENQ_KEEP;
-    while (($f = readdir($dh)) !== false) {
-        if (microtime(true) - $start > VG_GC_BUDGET) break;
-        if (substr($f, -5) !== '.json') continue;
-        $mt = @filemtime($dir . '/' . $f);
-        if ($mt !== false && $mt < $limit) @unlink($dir . '/' . $f);
+    try { $dir = vg_enquiry_directory(false); } catch (Throwable $error) { return; }
+    if ($dir === null) return;
+    $coordination = vg_enquiry_coordination($dir, true);
+    if ($coordination === null) return;
+    $dh = false;
+    try {
+        $dh = @opendir($dir);
+        if ($dh === false) return;
+        $start = microtime(true);
+        $limit = time() - VG_ENQ_KEEP;
+        while (($f = readdir($dh)) !== false) {
+            if (microtime(true) - $start > VG_GC_BUDGET) break;
+            if (preg_match('/^[a-f0-9]{64}\.json$/D', $f) !== 1) continue;
+            $file = $dir . '/' . $f;
+            clearstatcache(true, $file);
+            if (is_link($file) || !is_file($file)) continue;
+            $mt = @filemtime($file);
+            if ($mt !== false && $mt < $limit) @unlink($file);
+        }
+    } finally {
+        if (is_resource($dh)) closedir($dh);
+        @flock($coordination, LOCK_UN);
+        fclose($coordination);
     }
-    closedir($dh);
 }

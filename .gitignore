@@ -4,6 +4,8 @@
 # Rebuildable public sources are curated under tools/engineering/ instead.
 /voltguardekleyelim/
 /vesikalar/
+# Original company records include signatures and identity documents; keep them local.
+/VoltGuard Evraklar/
 # Supplied game checkout stays local; maintained source is in tools/voltgame/.
 /VoltGame/
 /SahaTakip-main/

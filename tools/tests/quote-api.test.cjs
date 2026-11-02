@@ -92,7 +92,12 @@ test('Quote requests get a reference once; retries, double clicks and changed co
       '- Önerilen trafo: 1000 kVA', '- Güç faktörü 0,9 kabul edildi.', 'keşif ve ölçüm yapılmadan fiyat']) assert.ok(simMail.includes(text), text);
 
     // Tekrar kaydı kişisel veri içermez.
-    const records = fs.readdirSync(path.join(data, 'requests'));
+    const requestFiles = fs.readdirSync(path.join(data, 'requests'));
+    const coordination = path.join(data, 'requests', '.records.lock');
+    assert.ok(requestFiles.includes('.records.lock'));
+    assert.ok(fs.lstatSync(coordination).isFile() && !fs.lstatSync(coordination).isSymbolicLink());
+    assert.equal(fs.readFileSync(coordination, 'utf8'), '', 'The permanent coordination file contains no personal data.');
+    const records = requestFiles.filter(file => file !== '.records.lock');
     assert.ok(records.length >= 3); for (const file of records) {
       assert.match(file, /^[a-f0-9]{64}\.json$/);
       const text = fs.readFileSync(path.join(data, 'requests', file), 'utf8');
