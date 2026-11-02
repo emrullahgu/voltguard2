@@ -15,6 +15,16 @@ const origin = `http://127.0.0.1:${port}`;
 const workspaceHash = crypto.createHash('sha256').update(fs.realpathSync(root).toLowerCase()).digest('hex').slice(0, 20);
 const dataDirectory = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), '.local', 'share'), 'VoltGuard', 'preview-data', workspaceHash);
 const internalToken = crypto.randomBytes(32).toString('hex');
+// Official Cloudflare test keys stay in this loopback-only development server,
+// never in the maintained HTML or the published static release.
+const turnstileForms = new Set(['/iletisim.html', '/sor.html', '/fabrika-cozumleri.html']);
+const turnstileTestSitekey = '1x00000000000000000000AA';
+const turnstileTestSecret = '1x0000000000000000000000000000000AA';
+function previewTurnstile(html) {
+  const notice = '<p class="form__consent" data-vg-preview-turnstile role="status">Önizleme: güvenlik doğrulaması test anahtarıyla çalışır; gerçek e-posta gönderilmez.</p>';
+  return html.replace(/data-sitekey="[^"]*"/g, `data-sitekey="${turnstileTestSitekey}"`)
+    .replace(/(<div\b[^>]*\bdata-sitekey="[^"]*"[^>]*>)/, notice + '$1');
+}
 const phpRoutes = new Set(['/api/integrations.php', '/api/auth.php', '/api/community.php', '/api/metrics.php', '/api/volthaber.php', '/api/staff.php', '/api/company.php',
   '/api/company-asset.php', '/api/saha-asset.php', '/api/company-connectors.php', '/calisan/', '/calisan/index.php',
   '/calisan/uygulama', '/calisan/uygulama/', '/calisan/uygulama/saha.php', '/contact.php']);
@@ -73,6 +83,18 @@ function phpRuntime() {
   const extensionDirectory = fs.existsSync(adjacent) ? adjacent : configuration.extensionDir;
   const flags = ['-n', '-d', `extension_dir=${extensionDirectory}`];
   for (const extension of required) if (!modules.has(extension)) flags.push('-d', `extension=${extension}`);
+  // PHP's bundled Windows runtime has no php.ini. Reuse an existing trusted CA
+  // bundle rather than weakening certificate validation for outbound API calls.
+  const regularFile = candidate => { try { return fs.statSync(candidate).isFile(); } catch (_) { return false; } };
+  let caFile = null;
+  if (process.env.VG_PHP_CA_FILE) {
+    caFile = path.resolve(process.env.VG_PHP_CA_FILE);
+    if (!regularFile(caFile)) throw new Error('VG_PHP_CA_FILE mevcut bir sertifika dosyası olmalı.');
+  } else if (process.platform === 'win32') {
+    const git = path.join(process.env.ProgramFiles || 'C:/Program Files', 'Git');
+    caFile = [path.join(git, 'usr/ssl/certs/ca-bundle.crt'), path.join(git, 'mingw64/etc/ssl/certs/ca-bundle.crt')].find(regularFile) || null;
+  }
+  if (caFile) flags.push('-d', `openssl.cafile=${caFile}`, '-d', `curl.cainfo=${caFile}`);
   const verify = spawnSync(executable, [...flags, '-r', 'echo json_encode(get_loaded_extensions());'], { encoding: 'utf8', windowsHide: true, timeout: 5000 });
   if (verify.error || verify.status !== 0) return null;
   try {
@@ -97,7 +119,9 @@ async function startPhp() {
     '-d', 'display_errors=0', '-d', 'log_errors=1', '-d', 'upload_max_filesize=8M', '-d', 'post_max_size=10M',
     '-S', `127.0.0.1:${phpPort}`, '-t', root, path.join(root, 'tools/preview-router.php')], {
     cwd: root, windowsHide: true, stdio: ['ignore', 'ignore', 'pipe'],
-    env: { ...process.env, VG_INTEGRATIONS_LOCAL: '1', VG_DATA_DIR: dataDirectory, VG_STAFF_SITE_URL: origin, VG_SITE_URL: origin, VG_PREVIEW_INTERNAL_TOKEN: internalToken, VG_MAIL_OUTBOX: '1', VG_CONTACT_ALLOWED_ORIGINS: `${origin},http://localhost:${port}` }
+    env: { ...process.env, VG_INTEGRATIONS_LOCAL: '1', VG_DATA_DIR: dataDirectory, VG_STAFF_SITE_URL: origin, VG_SITE_URL: origin, VG_PREVIEW_INTERNAL_TOKEN: internalToken, VG_MAIL_OUTBOX: '1', VG_CONTACT_ALLOWED_ORIGINS: `${origin},http://localhost:${port}`,
+      // The live dummy Siteverify response uses example.com, independent of the loopback page host.
+      TURNSTILE_SECRET_KEY: turnstileTestSecret, TURNSTILE_EXPECTED_HOSTNAME: 'example.com' }
   });
   // Request paths may contain sensitive query parameters. Never echo PHP access logs into the chat.
   phpChild.stderr.on('data', () => {});
@@ -206,6 +230,11 @@ const server = http.createServer((req, res) => {
     if (blockedPath(actualPath) || !types[path.extname(actual).toLowerCase()]) return fail(res, 404, 'Sayfa bulunamadı.');
     const stat = fs.statSync(actual);
     if (!stat.isFile()) return fail(res, 404, 'Sayfa bulunamadı.');
+    if (turnstileForms.has(actualPath)) {
+      const html = Buffer.from(previewTurnstile(fs.readFileSync(actual, 'utf8')), 'utf8');
+      res.writeHead(200, { 'Content-Type': types['.html'], 'Content-Length': html.length, 'Accept-Ranges': 'none' });
+      return res.end(req.method === 'HEAD' ? undefined : html);
+    }
     const headers = { 'Content-Type': types[path.extname(actual).toLowerCase()] || 'application/octet-stream', 'Content-Length': stat.size, 'Accept-Ranges': 'bytes' };
     // Native video seeking asks for individual byte ranges. Stream only that
     // range instead of repeatedly sending the complete corporate video.

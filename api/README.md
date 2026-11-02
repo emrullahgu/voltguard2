@@ -2,16 +2,30 @@
 
 ## Site sahibinin sunucuda yapması gerekenler (kontrol listesi)
 
-1. **Cloudflare Turnstile (iletişim / teklif / "Sor" formları)** — iki parça birlikte ayarlanır:
-   - Herkese açık *site anahtarı*: `index.html`, `sor.html`, `fabrika-cozumleri.html` içindeki
-     `data-sitekey="REPLACE_WITH_TURNSTILE_SITE_KEY"` değerini Cloudflare panelindeki site anahtarıyla değiştirin.
-     Anahtar yer tutucu kaldıkça sayfalar Turnstile betiğini **hiç yüklemez** (bozuk kutu görünmez).
-   - Gizli anahtar: sunucuda `TURNSTILE_SECRET_KEY` ortam değişkeni. **Gizli anahtarı yalnızca site anahtarı sayfalara
-     yazıldıktan sonra tanımlayın.** Gizli anahtar var ama formda jeton yoksa `contact.php` güvenli tarafta kalır (422
+1. **Cloudflare Turnstile (iletişim / teklif / "Sor" formları)** — widget oluşturuldu; gizli anahtarın PHP sunucusuna aktarılması ayrıca gerekir:
+   - Herkese açık *site anahtarı* `0x4AAAAAAFwNZyiBH3W2zOCa`, `iletisim.html`, `sor.html` ve `fabrika-cozumleri.html`
+     içinde tanımlıdır. Cloudflare widget modu **Managed**, izin verilen hostname değerleri `voltguard.com.tr` ve
+     `voltguard2.netlify.app`; pre-clearance kapalıdır. Bu açık anahtar gizli anahtarın yerini tutmaz.
+   - Gizli anahtar: sunucuda `TURNSTILE_SECRET_KEY` ortam değişkeni veya web kökü dışındaki özel veri dizininde
+     `turnstile-config.json` dosyası. Dosya biçimi: `{"secretKey":"SUNUCUDAKI_GIZLI_ANAHTAR","expectedHostname":"voltguard.com.tr"}`.
+     Dosya yalnızca PHP kullanıcısınca okunabilir olmalı (Unix: `0600`; dizin: `0700`); anahtar Git'e, HTML'e veya
+     `.htaccess` dosyasına yazılmaz. **Gizli anahtarı yalnızca site anahtarı sayfalara yazıldıktan sonra tanımlayın.**
+     Gizli anahtar var ama formda jeton yoksa `contact.php` güvenli tarafta kalır (422
      "Güvenlik doğrulaması yüklenemedi") ve `error_log`a yapılandırma uyarısı yazar.
-   - Gizli anahtar yoksa formlar çalışır; koruma alan doğrulama, bal tuzağı, IP başına 10 dakikada 5 ve site geneli
+     Üretim dosyası bu bilgisayarda `%LOCALAPPDATA%/VoltGuard/deployment-secrets/turnstile-config.json` altında,
+     yalnızca mevcut Windows kullanıcısına açık izinlerle saklanır; Git deposunda bulunmaz. cPanel tarafındaki
+     `VG_DATA_DIR/turnstile-config.json` konumuna özel aktarım yapılmalıdır; sunucuda doğrulanmadan PHP tarafında koruma etkin sayılmaz.
+   - Dolu ortam değerleri dosyadan önce gelir: `TURNSTILE_SECRET_KEY`, `TURNSTILE_EXPECTED_HOSTNAME`. Hostname değeri
+     yalnızca alan adı olmalı; URL, yol veya port içermez. Varsayılan `voltguard.com.tr` ve `www` karşılığı kabul edilir.
+     Özel dosya varsa geçerli JSON nesnesi olmalı; `secretKey` zorunlu, `expectedHostname` isteğe bağlıdır. Hatalı, fazla
+     büyük veya sembolik bağlantı olan dosya, ortam değeri olsa bile `503 configuration_invalid` döndürür; koruma sessizce kapanmaz.
+   - Gizli anahtar ve özel yapılandırma dosyası yoksa formlar çalışır; koruma alan doğrulama, bal tuzağı, IP başına 10 dakikada 5 ve site geneli
      saatte 40 mesaj sınırıdır (Turnstile açıkken saatte 120). Her gönderimde `error_log`a "bot doğrulaması kapalı" yazılır.
-   - Deploy sonrası bir test mesajı gönderip `info@voltguard.com.tr` kutusunda görün.
+   - İzole doğrulama: `node --test tools/tests/turnstile.test.cjs`. Testler geçici özel dizin, kapalı gerçek posta
+     fonksiyonu ve önizleme outbox modu kullanır; canlı posta veya veritabanına yazmaz. Gerçek widget ve sağlayıcı
+     bağlantısı ayrıca doğrulanmalıdır; Netlify statik vitrini PHP çalıştırmaz ve `/contact.php` isteği `404` döner.
+     Cloudflare'ın resmî test gizli anahtarları yalnızca açıkça `VG_MAIL_OUTBOX=1` ayarlanmış önizlemede kabul edilir;
+     posta teslimi etkin ortamda bu anahtarlar `503 configuration_invalid` ile reddedilir.
 2. **Ortam değişkenleri `.htaccess` ile verilmez**: deploy `.htaccess` dosyasının üzerine yazar ve `SetEnv` satırları kaybolur.
    cPanel → *MultiPHP INI Editor / LiteSpeed* ya da hosting panelinin ortam değişkeni ekranını kullanın
    (LiteSpeed'de `lsapi` için `.user.ini` docroot **dışındaki** PHP yapılandırmasıyla). Varsayılanlar canlı için uygundur;
