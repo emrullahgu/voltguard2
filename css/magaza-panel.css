@@ -62,6 +62,7 @@
 .mgp-pager { display: flex; gap: .8rem; align-items: center; justify-content: center; padding: .8rem 0; }
 
 .mgp-pill { display: inline-block; font-size: .72rem; font-weight: 700; padding: .12rem .5rem; border-radius: 999px; background: var(--th-surface-4); color: var(--th-text-2); margin: 0 .25rem .15rem 0; }
+.mgp-pill--s-teyit_bekliyor { background: var(--th-tint-violet); color: var(--th-violet-ink); }
 .mgp-pill--s-odeme_bekleniyor, .mgp-pill--p-held, .mgp-pill--cron-late { background: var(--th-tint-amber-2); color: var(--th-amber-ink-2); }
 .mgp-pill--s-odeme_alindi, .mgp-pill--s-kargoda, .mgp-pill--public { background: var(--th-tint-blue-2); color: var(--th-blue-ink); }
 .mgp-pill--s-tedarikte { background: var(--th-tint-violet); color: var(--th-violet-ink); }
@@ -102,6 +103,21 @@
 .mgp-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
 .mgp-code { margin: 0 0 .6rem; padding: .75rem .9rem; border-radius: 8px; background: var(--th-code-bg); color: var(--th-text); overflow-x: auto; font-size: .8rem; white-space: pre-wrap; overflow-wrap: anywhere; }
 
+/* Teyitli sipariş talebi: satır bazında fiyat/adet düzenleme, tedarikçi son kontrolü ve ret. */
+.mgp-confirm { display: grid; gap: .9rem; min-width: 0; }
+.mgp-card--confirm { border-color: var(--th-border-strong); }
+.mgp-in { font: inherit; font-size: .9rem; padding: .4rem .5rem; border: 1px solid var(--th-input-border); border-radius: 7px; background: var(--th-input-bg); color: var(--th-text); box-sizing: border-box; min-width: 0; }
+.mgp-in--qty { width: 5rem; }
+.mgp-in--money { width: 9rem; text-align: right; font-variant-numeric: tabular-nums; }
+.mgp-in[aria-invalid="true"] { border-color: var(--th-red-ink); }
+.mgp-tr--removed td { opacity: .55; }
+.mgp-tr--removed td:first-child strong { text-decoration: line-through; }
+.mgp-aid-acts { margin-top: .35rem; }
+.mgp-aid-acts .mgp-btn { padding: .25rem .5rem; font-size: .78rem; }
+.mgp-field__label { font-size: .82rem; font-weight: 600; }
+.mgp-confirm__total { font-size: 1.25rem; color: var(--th-heading); font-variant-numeric: tabular-nums; }
+.mgp-reject .mgp-field select { max-width: 22rem; }
+
 @media (min-width: 700px) {
   .mgp-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .mgp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -120,6 +136,7 @@
   .mgp-table td > .mgp-pill { justify-self: start; }
   .mgp-table td[colspan]::before { content: none; }
   .mgp-table .mgp-num { text-align: left; white-space: normal; }
+  .mgp-in--money, .mgp-in--qty { width: 100%; max-width: 12rem; text-align: left; }
   .mgp-dl { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .mgp-dl dd { margin-bottom: .45rem; }
 }

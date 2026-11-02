@@ -64,9 +64,9 @@ test('açık mağaza: vitrin, kategori ve ürün TL fiyatı KDV dahil gösterir;
     assert.match(hub.type, /text\/html/);
     assert.equal(hub.cache, 'no-cache');
     for (const price of ['5.760,00 ₺', '28.800,00 ₺', '88.800,00 ₺', '1.728,00 ₺']) assert.ok(hub.text.includes(price), price);
-    assert.match(hub.text, /Havale\/EFT ile ödeme/); assert.match(hub.text, /Fiyatlar her gün doğrulanır/);
+    assert.match(hub.text, /Önce teyit, sonra ödeme/); assert.match(hub.text, /Fiyatlar her gün doğrulanır/);
     assert.match(hub.text, /Faturalı satış/); assert.match(hub.text, /Mühendis desteği/);
-    assert.doesNotMatch(hub.text, /Mağazamız çok yakında siparişe açılıyor/);
+    assert.doesNotMatch(hub.text, /Sipariş talepleri çok yakında açılıyor/);
     assert.match(hub.text, /data-vgm-cart-count/);
     // üst kategori kartı (2026-11-02 düzeltmesi): simge, ad, sayı, alt kategoriler ve "Tümünü gör" TEK kartın içinde;
     // alt kategori listesi kartın dışına (bir sonraki satırın üstüne) taşmaz
@@ -117,7 +117,7 @@ test('sepet önce: nakliye ürünü sepete eklenir (sipariş edilemez işaretiyl
     assert.equal(p.status, 200);
     assert.match(p.text, /<button type="button" class="vgm-btn vgm-btn--primary" data-vgm-add="[^"]+"[^>]*data-orderable="0">Sepete ekle<\/button>/);
     assert.match(p.text, /<p class="vgm-buy__alt"><a class="vgm-link"[^>]*data-vgm-quote[^>]*data-intent="nakliye">Yalnızca bu ürün için nakliye dahil teklif alın<\/a><\/p>/);
-    assert.match(p.text, /sepetinizdeki tüm ürünler için tek seferde teklif isteyebilirsiniz/); assert.match(p.text, /Mühendisimize sorun/);
+    assert.match(p.text, /Fiyat ve stok teyitle bildirilir\./); assert.match(p.text, /sipariş talebi gönderebilir ya da teklif isteyebilirsiniz; kesin tutar teyit e-postasıyla gelir, öncesinde ödeme yapılmaz/); assert.match(p.text, /Mühendisimize sorun/);
     assert.match(p.text, /href="\/sor\.html"/);
     assert.doesNotMatch(p.text, /class="vgm-btn vgm-btn--primary"[^>]*data-vgm-quote/, 'tek ürün teklifi birincil düğme değil');
     const stale = await get(s, '/magaza/urun/deneme-marka-dm-c16-c16-otomatik-sigorta/');
@@ -133,7 +133,7 @@ test('varsayılan satıcı (boş alanlar): kapalı mağaza bandı; ürünler yin
     for (const p of ['/magaza/', '/magaza/kategori/gunes-panelleri/', P1, '/magaza/ara/?q=deneme']) {
       const r = await get(s, p);
       assert.equal(r.status, 200, p);
-      assert.match(r.text, /Mağazamız çok yakında siparişe açılıyor/, p);
+      assert.match(r.text, /Sipariş talepleri çok yakında açılıyor/, p);
       assert.match(r.text, /Sepete ekle/, p);
       assert.doesNotMatch(r.text, /data-vgm-add="[^"]+"[^>]*data-orderable="1"/, p + ': kapalı mağazada hiçbir ürün siparişe hazır işaretlenmez');
     }
@@ -393,7 +393,7 @@ test('sayfa kabuğu eşit (shell.py --check); işlem sayfaları noindex, hukuki 
       // Hukuki metinler herkese açık ve sitemapte; taslak bandı yok (P1-02), sürüm satırı var; tedarikçi adı / USD içermez
       assert.match(html, /<meta name="robots" content="index, follow">/, f);
       assert.ok(sitemap.includes('<loc>https://voltguard.com.tr/' + f + '</loc>'), f + ' sitemapte');
-      assert.doesNotMatch(html, /Taslak/, f); assert.match(html, /Belge sürümü: \d{4}-\d{2}-\d{2} · Son güncelleme: \d{2}\.\d{2}\.\d{4}/, f);
+      assert.doesNotMatch(html, /Taslak/, f); assert.match(html, /Belge sürümü: \d{4}-\d{2}-\d{2}(?:\.[1-9]\d?)? · Son güncelleme: \d{2}\.\d{2}\.\d{4}/, f);
       assert.doesNotMatch(html, /USD|dolar/i, f);
     } else {
       assert.match(html, /<meta name="robots" content="noindex/, f);
@@ -446,17 +446,18 @@ test('P1-01/02/03: sayfalarda yer tutucu ve taslak bandı yok; ödeme sayfası s
     assert.equal(od.status, 200); assert.match(od.type, /text\/html/);
     assert.match(od.text, /<div class="cf-turnstile" data-sitekey="" data-vgm-sitekey/); assert.doesNotMatch(od.text, /REPLACE_WITH/);
     const box = od.text.split('<!--vgm:satici-->')[1].split('<!--/vgm:satici-->')[0];
-    assert.match(box, /Havale\/EFT · Enpara Bank A\.Ş\. · siparişten sonra 24 saat içinde/);
-    assert.match(box, /TR85 \*\*\*\* \*\*\*\* \*\*\*\* \*\*\*\* 9277 72/); assert.doesNotMatch(od.text, /0015 7000/, 'IBAN siparişten önce tam gösterilmez');
+    assert.match(box, /Havale\/EFT · Enpara Bank A\.Ş\. · stok ve fiyat teyidinden sonra, 24 saat içinde/);
+    assert.match(box, /<dt>IBAN<\/dt><dd>Teyit e-postasıyla gönderilir/);
+    assert.doesNotMatch(od.text, /0015 7000|9277 72|TR85 \*/, 'teyitli talep: IBAN (maskeli dahil) talep sayfasında gösterilmez');
     assert.doesNotMatch(box, /Vergi dairesi|MERSİS|null/);
-    assert.match(od.text, /<ol class="vgm-progress"[^>]*><li class="vgm-progress__done"><a href="\/magaza\/sepet\.html">Sepet<\/a><\/li><li aria-current="step">Bilgiler<\/li><li>Onay<\/li><\/ol>/);
+    assert.match(od.text, /<ol class="vgm-progress"[^>]*><li class="vgm-progress__done"><a href="\/magaza\/sepet\.html">Sepet<\/a><\/li><li aria-current="step">Bilgiler<\/li><li>Teyit<\/li><\/ol>/);
   });
   await withShop({firma: path.join(fx, 'firma-tam.json')}, null, async s => {
     const od = await get(s, '/magaza/odeme.html');
     assert.match(od.text, /data-sitekey="0x4AAAAAAATestSiteKey0001" data-vgm-sitekey/);
     const box = od.text.split('<!--vgm:satici-->')[1].split('<!--/vgm:satici-->')[0];
     assert.match(box, /Sentetik Test Elektrik Ltd\. Şti\.<br>Test Mah\. Örnek Sok\. No:1 Bornova<br>Vergi dairesi \/ no: Test VD \/ 0000000001<br>MERSİS no: 0000000000000001/);
-    assert.match(box, /TR33 \*\*\*\* \*\*\*\* \*\*\*\* \*\*\*\* 8413 26/); assert.match(box, /href="tel:\+905454346735"/);
+    assert.doesNotMatch(od.text, /TR33|8413 26/, 'firma.json IBAN talep sayfasına yazılmaz'); assert.match(box, /href="tel:\+905454346735"/);
     assert.match(od.text, /<!--vgm:satici-kisa--><strong>Satıcı:<\/strong> Sentetik Test Elektrik Ltd\. Şti\. · Test Mah\. Örnek Sok\. No:1 Bornova · Vergi dairesi \/ no: Test VD \/ 0000000001/);
   });
 });
@@ -534,18 +535,21 @@ test('P1-07/12/13: mobil chrome, teklif/proforma akışı ve havale güveni (sta
   // sepet önce: sepet sayfası tüm sepeti tek teklif olarak contact.php'ye gönderir (vg-quote.js; magazaTalep intent "sepet")
   assert.match(js, /intent: 'sepet'/); assert.match(js, /kind: 'contact', subject: 'magaza'/); assert.match(js, /window\.VGQuote\.send\(fields\)/);
   assert.match(js, /window\.VGQuote\.requestId\(\)/, 'aynı içerik aynı talep kimliğiyle (tekrar koruması)');
-  assert.match(js, /setCheckout\(hasQuote && data\.orderable === true\)/, '"Sipariş oluştur" yalnızca sepetin tamamı siparişe hazırken');
-  assert.match(js, /if \(!st\.items\.length \|\| st\.skipped\.length\)/, 'ödeme sayfası fiyatı teyit edilmemiş satırı sessizce dışarıda bırakmaz');
+  assert.match(js, /setCheckout\(data\.requestable === true\)/, '"Sipariş talebi gönder" mağaza açıkken (sunucu "requestable")');
+  assert.match(js, /st\.items = lines\.map\(function \(l\) \{ return \{ id: l\.id, qty: l\.qty \}; \}\);/, 'talep sepetin TAMAMINI taşır (fiyatsız satır teyitte)');
+  assert.doesNotMatch(js, /quote: st\.quote|data-vgm-pay="iban"|bank\.iban/, 'talep sayfası fiyat jetonu ve IBAN kullanmaz');
   assert.match(js, /IntersectionObserver/); assert.match(js, /vg_magaza_band_kapali_v1/);
   const sepet = read('magaza/sepet.html');
-  assert.match(sepet, /<ol class="vgm-progress"[^>]*><li aria-current="step">Sepet<\/li>/); assert.match(sepet, /Son ödeme: sipariş \+ 24 saat/);
-  assert.match(sepet, /data-vgm-checkout-link>Sipariş oluştur<\/a>/); assert.match(sepet, /data-vgm-cq-open[^>]*>Sepeti teklif olarak gönder<\/button>/);
+  assert.match(sepet, /<ol class="vgm-progress"[^>]*><li aria-current="step">Sepet<\/li>/); assert.match(sepet, /Önce teyit, sonra ödeme\./);
+  assert.match(sepet, /teyit gelmeden ödeme yapmayın/); assert.match(sepet, /data-vgm-checkout-link>Sipariş talebi gönder<\/a>/); assert.match(sepet, /data-vgm-cq-open[^>]*>Sepeti teklif olarak gönder<\/button>/);
   assert.match(sepet, /<section class="vgm-cq" id="sepet-teklif" data-vgm-cq/); assert.match(sepet, /name="website"/);
   assert.ok(sepet.indexOf('/js/vg-quote.js') > 0 && sepet.indexOf('/js/vg-quote.js') < sepet.indexOf('/js/magaza.js'), 'vg-quote.js magaza.js öncesinde');
   assert.equal(il.match(/class="cf-turnstile"\s+data-sitekey="([^"]+)"/)[1], sepet.match(/class="cf-turnstile" data-sitekey="([^"]+)"/)[1], 'iletişim formuyla aynı Turnstile anahtarı (contact.php)');
   const od = read('magaza/odeme.html');
-  assert.match(od, /Siparişi onaylamanızla sözleşme kurulur ve ödeme yükümlülüğü doğar\./); assert.doesNotMatch(od, /kesinleşmez|iptal edilebilir/);
-  assert.match(od, /data-vgm-submit>Siparişi onayla – ödeme yükümlülüğü doğar<\/button>/); assert.match(od, /<!--vgm:satici-->[\s\S]*class="vgm-seller"[\s\S]*<!--\/vgm:satici-->/);
+  assert.match(od, /Bu adımda ödeme yapılmaz ve IBAN gösterilmez\./); assert.match(od, /Sözleşme, teyit e-postasındaki kesin tutarı süresi içinde ödemenizle kurulur\./); assert.match(od, /Talebiniz sizi bağlamaz/);
+  assert.doesNotMatch(od, /kesinleşmez|iptal edilebilir|ödeme yükümlülüğü doğar|bu teyitle kurulur|satın alma teklifinizdir/);
+  assert.match(od, /data-vgm-submit>Sipariş talebi gönder<\/button>/); assert.match(od, /Teyit gelmeden ödeme yapmayın\./);
+  assert.doesNotMatch(od, /0015 7000|data-vgm-pay=/, 'talep sayfasında IBAN ve ödeme alanı yok'); assert.match(od, /<!--vgm:satici-->[\s\S]*class="vgm-seller"[\s\S]*<!--\/vgm:satici-->/);
   const css = read('css/magaza.css');
   for (const sel of ['.vgm-sticky {', '.vgm-progress {', '.vgm-payinfo {', '.vgm-seller {', '.vgm-card__code {', '.vgm-card__add {', '.vgm-stock {', '.vgm-banner__close {', '.vgm-bar__search {'])
     assert.ok(css.includes(sel), sel);
@@ -559,7 +563,7 @@ const LEGAL = ['on-bilgilendirme-formu', 'mesafeli-satis-sozlesmesi', 'iade-ve-c
 test('P1-01/02: hukuki sayfaların satıcı tablosu ve belge sürümü firma.json\'dan (sunucuda); statik yedek firma.json ile aynı sürümde', async () => {
   const firma = JSON.parse(fs.readFileSync(path.join(root, 'api/lib/magaza/firma.json'), 'utf8'));
   const tam = JSON.parse(fs.readFileSync(path.join(fx, 'firma-tam.json'), 'utf8'));
-  const [y, m, d] = firma.belgeSurumu.split('-');
+  const [, y, m, d] = /^(\d{4})-(\d{2})-(\d{2})(?:\.[1-9]\d?)?$/.exec(firma.belgeSurumu);   // aynı gün revizyonu: YYYY-AA-GG.N
   for (const n of LEGAL) {   // statik yedek: işaretler var, sürüm satırı firma.json belgeSurumu ile aynı
     const html = fs.readFileSync(path.join(root, 'magaza', n + '.html'), 'utf8');
     assert.match(html, /<!--vgm:satici-dl--><dl>[\s\S]*?<\/dl><!--\/vgm:satici-dl-->/, n);
@@ -867,9 +871,9 @@ test('P1-08: liste fiyatı kartta ve ürün sayfasında gri etiketle; sepete ekl
     const prod = await get(s, '/magaza/urun/liste-marka-lm-10-c10-otomatik-sigorta/');
     assert.equal(prod.status, 200); assert.ok(prod.text.includes('480,00 ₺'));
     assert.match(prod.text, /data-vgm-basis="list">Liste fiyatı – siparişte teyit edilir/);
-    assert.match(prod.text, /Bu fiyat bilgi amaçlıdır; sipariş, tedarik fiyatı son 48 saat içinde doğrulandığında açılır\./);
+    assert.match(prod.text, /Bu fiyat bilgi amaçlıdır; kesin fiyat ve stok, sipariş talebinizden sonra teyitle bildirilir\./);
     assert.match(prod.text, /<small class="vgm-sticky__vat">KDV dahil · liste fiyatı<\/small>/);
-    assert.match(prod.text, /Şu anda çevrim içi sipariş verilemiyor/); assert.match(prod.text, /data-vgm-add="vgm-9006"[^>]*data-orderable="0"/);
+    assert.match(prod.text, /Şu anda çevrim içi sipariş verilemiyor|Fiyat ve stok teyitle bildirilir/); assert.match(prod.text, /data-vgm-add="vgm-9006"[^>]*data-orderable="0"/);
     const product = ldBlocks(prod.text).find(b => b['@type'] === 'Product');
     assert.equal(product.offers, undefined, 'yapılandırılmış veride yalnızca doğrulanmış fiyat'); assert.doesNotMatch(prod.text, /product:price/);
     // doğrulanmış fiyat aynı kalır: etiket yok, Offer var
@@ -986,10 +990,26 @@ test('hukuki inceleme: cayma/iade, sözleşme kuruluşu, garanti, satıcı adres
     assert.match(t, /cayma bildiriminin kendisine ulaştığı tarihten itibaren en geç 14 gün içinde/);
     assert.match(t, /alıcıdan hangi kargo firmasını kullanırsa kullansın iade masrafı talep edilmez/);
     assert.match(t, /ürünle birlikte kâğıt üzerinde veya elektronik ortamda teslim edilir/);
-    assert.match(t, /2026 yılı için 186\.000 TL/); assert.match(t, /Siparişin onaylanmasıyla sözleşme kurulur/);
+    assert.match(t, /2026 yılı için 186\.000 TL/);
+    assert.match(t, /Sipariş talebi alıcıyı bağlamaz; satıcıdan stok ve fiyat teyidiyle kesin teklif istenmesidir\. Bu aşamada ödeme istenmez/);
+    assert.match(t, /Teyit e-postası satıcının bağlayıcı teklifidir: kesin birim fiyatları, kargo ücretini, tüm vergiler dahil toplam\s+tutarı/);
+    assert.match(t, /farklar teyit\s+e-postasında ayrıca belirtilir/);
+    assert.match(t, /Sözleşme, teyit e-postasındaki kesin tutarın süresi içinde ödenmesiyle kurulur/);
+    assert.match(t, /Alıcı süresi içinde ödeme yapmazsa sözleşme kurulmaz/);
+    assert.doesNotMatch(t, /göndermesiyle kurulur|satın alma teklifidir|bu teyitle kurulur/);
+    assert.match(t, /talep bedelsiz sona erer; bu durumda alıcıdan hiçbir ödeme alınmamış olur/);
+    assert.match(t, /Teslim süresi, sipariş talebinin satıcıya ulaştığı andan itibaren en geç 30 gündür/);
+    assert.match(t, /Bu aşamada ödeme yapmayın/); assert.doesNotMatch(t, /IBAN: TR|Siparişin onaylanmasıyla sözleşme kurulur/);
     assert.match(t, /Merkez \(ticaret sicilinde tescilli\) adres: Adalet Mah/);
   }
   assert.match(con, /Alıcı tüketici ise taraflar 6502 sayılı/); assert.match(con, /ayıpsız ve sağlam olarak teslim eder/);
+  assert.match(con, /kesin tutarlı form ve sözleşme teyit e-postasıyla yeniden iletilir\. Sözleşme, teyit\s+e-postasındaki kesin tutarın süresi içinde ödenmesiyle kurulur/); assert.match(con, /Alıcı, satıcının teyit e-postası gelmeden ödeme yapmaz/);
+  // statik hukuki sayfalar aynı kuruluş modelini söyler; IBAN talep aşamasında yayımlanmaz
+  for (const n of [0, 1, 3]) {
+    assert.match(pages[n], /Sözleşme, teyit e-postasındaki kesin tutarın süresi içinde ödenmesiyle kurulur|Sözleşme, (?:bu|teyit e-postasındaki) kesin tutarı süresi içinde ödemenizle kurulur/, 'hukuki sayfa ' + n);
+    assert.doesNotMatch(pages[n], /0015 7000|Siparişi onayla – ödeme yükümlülüğü doğar|Siparişin onaylanmasıyla sözleşme kurulur|göndermesiyle kurulur|teyit e-postasıyla kurulur|satın alma teklif/, 'hukuki sayfa ' + n);
+  }
+  assert.match(pages[3], /<h2 id="talep-h">Sipariş talebi ve teyit<\/h2>/); assert.match(pages[3], /Teyit e-postası gelmeden ödeme yapmayın/);
   const kvkk = pages[4];
   assert.doesNotMatch(kvkk, /KEP adresimize|Türkiye’deki ziyaretçiler için kullanılmaz/);
   assert.match(kvkk, /IP adresiniz, TLS parmak izi, tarayıcı bilgileri/);

@@ -41,14 +41,14 @@
   <noscript><style>.vg-burger,.vg-theme{display:none!important}.vg-dd:hover .vg-dd__menu,.vg-dd:focus-within .vg-dd__menu{opacity:1!important;visibility:visible!important;transform:none!important}@media (max-width:79.99rem){.vg-nav{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;max-height:none!important}.vg-header{height:auto!important}.vg-header__bar{flex-wrap:wrap;min-height:60px;height:auto!important}.vg-nav{width:100%}.vg-dd__menu{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important}}</style></noscript>
   <!--/vg:head-->
   <meta name="color-scheme" content="light dark">
-  <title>Ödeme ve Sipariş | VoltGuard Mağaza</title>
-  <meta name="description" content="VoltGuard Mağaza sipariş formu: fatura ve teslimat bilgileri, ön bilgilendirme formu, mesafeli satış sözleşmesi ve havale/EFT ödeme bilgileri.">
+  <title>Sipariş Talebi | VoltGuard Mağaza</title>
+  <meta name="description" content="VoltGuard Mağaza sipariş talebi: fatura ve teslimat bilgileri, ön bilgilendirme formu ve mesafeli satış sözleşmesi. Stok ve fiyat teyidinden sonra kesin tutar ve havale/EFT bilgileri e-postayla gönderilir.">
   <meta name="robots" content="noindex, nofollow">
   <link rel="canonical" href="https://voltguard.com.tr/magaza/odeme.html">
   <link rel="icon" type="image/png" href="/public/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/style.css?v=f5a7da9dd78a">
-  <link rel="stylesheet" href="/css/magaza.css?v=4829f1d2eaee">
+  <link rel="stylesheet" href="/css/magaza.css?v=d5fa91cfd722">
 </head>
 <body class="doc-shell vgm-page">
   <!--vg:header-->
@@ -145,36 +145,34 @@
   <main class="vgm vgm--checkout" id="main" tabindex="-1">
     <div class="vgm-bar"><div class="vgm-wrap vgm-bar__in"><nav class="vgm-bar__nav" aria-label="Mağaza menüsü"><a class="vgm-bar__brand" href="/magaza/">Mağaza</a><a class="vgm-bar__opt" href="/magaza/siparis-takip.html">Sipariş takibi</a><a class="vgm-bar__opt" href="/magaza/odeme-ve-teslimat.html">Ödeme ve teslimat</a></nav><a class="vgm-bar__cart" href="/magaza/sepet.html" data-vgm-cart-link><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 4h2.2l2.1 10.2a1.5 1.5 0 0 0 1.5 1.2h8.4a1.5 1.5 0 0 0 1.4-1l2-6.4H6.1"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg><span class="vgm-bar__label">Sepet</span><span class="vgm-badge" data-vgm-cart-count hidden>0</span></a></div></div>
     <div class="vgm-wrap">
-      <nav class="vgm-crumb" aria-label="Sayfa yolu"><ol><li><a href="/">Ana sayfa</a></li><li><a href="/magaza/">Mağaza</a></li><li><a href="/magaza/sepet.html">Sepet</a></li><li><span aria-current="page">Ödeme ve sipariş</span></li></ol></nav>
-      <ol class="vgm-progress" aria-label="Sipariş adımları"><li class="vgm-progress__done"><a href="/magaza/sepet.html">Sepet</a></li><li aria-current="step">Bilgiler</li><li>Onay</li></ol>
-      <header class="vgm-head"><h1>Ödeme ve sipariş</h1><p class="vgm-lead">Bilgilerinizi girin, sözleşme metinlerini okuyup onaylayın. Ödeme yalnızca havale/EFT ile alınır; banka bilgileri sipariş sonrası gösterilir ve e-postayla gönderilir.</p></header>
+      <nav class="vgm-crumb" aria-label="Sayfa yolu"><ol><li><a href="/">Ana sayfa</a></li><li><a href="/magaza/">Mağaza</a></li><li><a href="/magaza/sepet.html">Sepet</a></li><li><span aria-current="page">Sipariş talebi</span></li></ol></nav>
+      <ol class="vgm-progress" aria-label="Sipariş adımları"><li class="vgm-progress__done"><a href="/magaza/sepet.html">Sepet</a></li><li aria-current="step">Bilgiler</li><li>Teyit</li></ol>
+      <header class="vgm-head"><h1>Sipariş talebi</h1><p class="vgm-lead">Bilgilerinizi girin, metinleri okuyup onaylayın ve talebinizi gönderin. <strong>Bu adımda ödeme yapılmaz.</strong> Stok ve fiyatı tedarikçimizle teyit edip en geç 1 iş günü içinde kesin tutarı ve havale/EFT bilgilerini e-postayla göndeririz.</p></header>
 
       <div data-vgm-checkout-page>
-        <noscript><div class="vgm-notice vgm-notice--warn">Sipariş vermek için tarayıcınızda JavaScript açık olmalıdır. Yardım için <a href="/iletisim.html#iletisim">bize yazabilirsiniz</a>.</div></noscript>
-        <p class="vgm-state" data-vgm-state role="status" aria-live="polite">Sipariş bilgileriniz yükleniyor…</p>
+        <noscript><div class="vgm-notice vgm-notice--warn">Sipariş talebi göndermek için tarayıcınızda JavaScript açık olmalıdır. Yardım için <a href="/iletisim.html#iletisim">bize yazabilirsiniz</a>.</div></noscript>
+        <p class="vgm-state" data-vgm-state role="status" aria-live="polite">Sepetiniz hazırlanıyor…</p>
         <div data-vgm-notices role="status" aria-live="polite"></div>
 
         <section class="vgm-success" data-vgm-success tabindex="-1" aria-labelledby="vgm-succ-h" hidden>
           <div class="vgm-success__head"><span class="vgm-success__tick" aria-hidden="true">✓</span>
-            <div><h2 id="vgm-succ-h">Siparişiniz alındı</h2><p class="vgm-lead" data-vgm-success-msg></p></div></div>
+            <div><h2 id="vgm-succ-h">Sipariş talebiniz alındı</h2><p class="vgm-lead" data-vgm-success-msg></p></div></div>
           <dl class="vgm-pay">
-            <div><dt>Sipariş numaranız</dt><dd class="vgm-mono" data-vgm-pay="reference"></dd><button type="button" class="vgm-btn vgm-btn--ghost vgm-noprint" data-vgm-copy="reference">Kopyala</button></div>
-            <div><dt>Ödenecek tutar (KDV dahil)</dt><dd data-vgm-pay="amount"></dd><button type="button" class="vgm-btn vgm-btn--ghost vgm-noprint" data-vgm-copy="amount">Kopyala</button></div>
-            <div><dt>Son ödeme zamanı</dt><dd data-vgm-pay="payBy"></dd></div>
-            <div><dt>Banka</dt><dd data-vgm-pay="bankName"></dd></div>
-            <div><dt>Hesap sahibi</dt><dd data-vgm-pay="holder"></dd><button type="button" class="vgm-btn vgm-btn--ghost vgm-noprint" data-vgm-copy="holder">Kopyala</button></div>
-            <div><dt>IBAN</dt><dd class="vgm-mono" data-vgm-pay="iban"></dd><button type="button" class="vgm-btn vgm-btn--ghost vgm-noprint" data-vgm-copy="iban">Kopyala</button></div>
+            <div><dt>Sipariş numaranız</dt><dd class="vgm-mono" data-vgm-done="reference"></dd><button type="button" class="vgm-btn vgm-btn--ghost vgm-noprint" data-vgm-copy="reference">Kopyala</button></div>
+            <div><dt>Durum</dt><dd>Stok ve fiyat teyidi bekleniyor</dd></div>
+            <div><dt>Tahmini tutar (KDV dahil)</dt><dd data-vgm-done="estimate"></dd></div>
+            <div><dt>Yanıt süresi</dt><dd data-vgm-done="respond"></dd></div>
           </dl>
-          <p class="vgm-fine vgm-success__seller"><!--vgm:satici-kisa--><strong>Satıcı:</strong> Voltguard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi · Merkez adresi (ticaret sicili): Adalet Mah. Manas Bul. Folkart Towers No: 39 İç Kapı No: 2511 Bayraklı / İzmir · İşyeri ve bildirim adresi: Erzene Mah. Ankara Cad. No: 172/69 İç Kapı No: 043 Bornova / İzmir · Vergi dairesi / no: Hasan Tahsin / 9251324900 · MERSİS no: 0925132490000001 · 0545 434 67 35 · info@voltguard.com.tr.<!--/vgm:satici-kisa--> Fatura ve muhasebe kaydı için satıcı bilgileri sipariş e-postanızda ve <a href="/magaza/odeme-ve-teslimat.html#satici">ödeme ve teslimat</a> sayfasındadır.</p>
-          <div class="vgm-notice vgm-notice--warn vgm-success__note"><strong>Açıklama alanına sipariş numaranızı yazın.</strong> Havale/EFT açıklamasındaki sipariş numarası ödemenizi eşleştirmemizi sağlar. Ödeme hesabımıza geçtikten sonra siparişiniz hazırlanır; son ödeme zamanına kadar tam tutar ödenmeyen siparişler bedelsiz iptal olur.</div>
+          <div class="vgm-notice vgm-notice--warn vgm-success__note"><strong>Teyit gelmeden ödeme yapmayın.</strong> Stok ve fiyatı teyit ettiğimizde kesin tutarı, IBAN’ı ve son ödeme zamanını e-postayla göndeririz. Sözleşme, bu kesin tutarı süresi içinde ödemenizle kurulur; ödeme süresi teyitten itibaren 24 saattir. Teyit edemezsek (stok yoksa veya fiyat değiştiyse) talebiniz bedelsiz kapanır; sizden hiçbir ödeme alınmaz.</div>
+          <p class="vgm-fine vgm-success__seller"><!--vgm:satici-kisa--><strong>Satıcı:</strong> Voltguard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi · Merkez adresi (ticaret sicili): Adalet Mah. Manas Bul. Folkart Towers No: 39 İç Kapı No: 2511 Bayraklı / İzmir · İşyeri ve bildirim adresi: Erzene Mah. Ankara Cad. No: 172/69 İç Kapı No: 043 Bornova / İzmir · Vergi dairesi / no: Hasan Tahsin / 9251324900 · MERSİS no: 0925132490000001 · 0545 434 67 35 · info@voltguard.com.tr.<!--/vgm:satici-kisa--> Satıcı bilgileri talep e-postanızda ve <a href="/magaza/odeme-ve-teslimat.html#satici">ödeme ve teslimat</a> sayfasındadır.</p>
           <p class="vgm-notice vgm-noprint" data-vgm-account-note hidden></p>
           <p class="vgm-status vgm-noprint" data-vgm-copy-status role="status" aria-live="polite"></p>
-          <p class="vgm-actions vgm-noprint"><button type="button" class="vgm-btn vgm-btn--primary" data-vgm-print>Yazdır</button><a class="vgm-btn vgm-btn--ghost" href="/magaza/siparis-takip.html" data-vgm-track-link>Siparişi takip et</a><a class="vgm-link" href="/magaza/">Alışverişe devam et</a></p>
+          <p class="vgm-actions vgm-noprint"><a class="vgm-btn vgm-btn--primary" href="/magaza/siparis-takip.html" data-vgm-track-link>Talebi takip et</a><button type="button" class="vgm-btn vgm-btn--ghost" data-vgm-print>Yazdır</button><a class="vgm-link" href="/magaza/">Alışverişe devam et</a></p>
         </section>
 
         <section class="vgm-empty-state" data-vgm-empty hidden>
           <h2>Sepetiniz boş</h2>
-          <p>Sipariş verebilmek için önce sepetinize ürün ekleyin.</p>
+          <p>Sipariş talebi göndermek için önce sepetinize ürün ekleyin.</p>
           <p class="vgm-actions"><a class="vgm-btn vgm-btn--primary" href="/magaza/">Mağazaya git</a><a class="vgm-link" href="/magaza/siparis-takip.html">Mevcut siparişimi takip et</a></p>
         </section>
 
@@ -232,18 +230,13 @@
 
             <section class="vgm-docs-panel" aria-labelledby="vgm-docs-h">
               <h2 id="vgm-docs-h">Ön bilgilendirme ve sözleşme</h2>
-              <p class="vgm-fine">Aşağıdaki metinler girdiğiniz bilgilerle doldurulur ve siparişinizle birlikte kaydedilir; e-postanıza aynı metinler gönderilir. Onay vermeden önce okuyun.</p>
+              <p class="vgm-fine">Aşağıdaki metinler girdiğiniz bilgilerle doldurulur ve talebinizle birlikte kaydedilir; e-postanıza aynı metinler gönderilir. Bu aşamadaki tutarlar tahminidir: stok ve fiyat teyidinden sonra kesin tutarlarla düzenlenen metinler ödeme bilgileriyle birlikte e-postayla gelir. Onay vermeden önce okuyun.</p>
               <div class="vgm-doc"><h3 id="vgm-doc-pre-h">Ön Bilgilendirme Formu</h3><p class="vgm-doc__state" data-vgm-doc-state="preInfo">Metin hazırlanıyor…</p><pre class="vgm-doc__text" data-vgm-doc="preInfo" tabindex="0" aria-labelledby="vgm-doc-pre-h" hidden></pre></div>
               <div class="vgm-doc"><h3 id="vgm-doc-con-h">Mesafeli Satış Sözleşmesi</h3><p class="vgm-doc__state" data-vgm-doc-state="contract">Metin hazırlanıyor…</p><pre class="vgm-doc__text" data-vgm-doc="contract" tabindex="0" aria-labelledby="vgm-doc-con-h" hidden></pre></div>
               <div class="vgm-field" data-vgm-consent-field="consents.preInfo"><label class="vgm-check"><input type="checkbox" name="consents.preInfo" data-vgm-consent disabled required> <span>Ön Bilgilendirme Formu’nu okudum ve onaylıyorum. <span class="req" aria-hidden="true">*</span></span></label></div>
-              <div class="vgm-field" data-vgm-consent-field="consents.contract"><label class="vgm-check"><input type="checkbox" name="consents.contract" data-vgm-consent disabled required> <span>Mesafeli Satış Sözleşmesi’ni okudum ve onaylıyorum. <span class="req" aria-hidden="true">*</span></span></label></div>
+              <div class="vgm-field" data-vgm-consent-field="consents.contract"><label class="vgm-check"><input type="checkbox" name="consents.contract" data-vgm-consent disabled required> <span>Mesafeli Satış Sözleşmesi’ni okudum ve onaylıyorum; sözleşmenin VoltGuard stok ve fiyatı teyit edip teyit e-postasını gönderdiğinde kurulacağını biliyorum. <span class="req" aria-hidden="true">*</span></span></label></div>
               <p class="vgm-fine">Kişisel verilerin işlenmesine ilişkin <a href="/magaza/kvkk-aydinlatma.html" target="_blank" rel="noopener">aydınlatma metnini</a> okuyabilirsiniz; bu metin bilgilendirme amaçlıdır ve onay gerektirmez.</p>
             </section>
-
-            <div class="vgm-notice vgm-notice--warn" data-vgm-reconfirm-wrap hidden>
-              <label class="vgm-check"><input type="checkbox" data-vgm-reconfirm> <span data-vgm-reconfirm-text>Güncel toplam tutarı onaylıyorum.</span></label>
-            </div>
-
             <div class="vgm-hp" aria-hidden="true"><label for="f-web">Web sitesi</label><input id="f-web" type="text" name="website" tabindex="-1" autocomplete="off"></div>
 
             <div class="vgm-captcha" data-vgm-captcha>
@@ -253,25 +246,24 @@
 
             <div class="vgm-submit">
               <p class="vgm-status" data-vgm-status role="status" aria-live="polite"></p>
-              <button type="submit" class="vgm-btn vgm-btn--primary vgm-btn--block" data-vgm-submit>Siparişi onayla – ödeme yükümlülüğü doğar</button>
-              <p class="vgm-fine"><strong>Siparişi onaylamanızla sözleşme kurulur ve ödeme yükümlülüğü doğar.</strong> IBAN ve sipariş numaranız siparişten hemen sonra ekranda gösterilir ve e-postanıza gönderilir. Ödeme için siparişten itibaren 24 saatiniz vardır; bu süre içinde tam tutar ödenmezse sipariş bedelsiz iptal olur ve sizden hiçbir ücret istenmez.</p>
-              <p class="vgm-fine">Ödeme yalnızca havale/EFT ile yapılır; kredi kartı kabul edilmez. Kişisel verileriniz sipariş ve fatura sürecinde işlenir; ayrıntılar için <a href="/magaza/kvkk-aydinlatma.html" target="_blank" rel="noopener">KVKK aydınlatma metnini</a> okuyabilirsiniz.</p>
+              <button type="submit" class="vgm-btn vgm-btn--primary vgm-btn--block" data-vgm-submit>Sipariş talebi gönder</button>
+              <p class="vgm-fine"><strong>Bu adımda ödeme yapılmaz ve IBAN gösterilmez.</strong> Talebiniz sizi bağlamaz; bizden kesin teklif istemenizdir. Stok ve fiyatı teyit edip en geç 1 iş günü içinde kesin tutarı, IBAN’ı ve son ödeme zamanını e-postayla göndeririz. Sözleşme, teyit e-postasındaki kesin tutarı süresi içinde ödemenizle kurulur. Ödeme süresi teyitten itibaren 24 saattir; ödeme yapmazsanız sözleşme kurulmaz ve talebiniz bedelsiz kapanır. Teyit edemezsek talebiniz bedelsiz kapanır.</p>
+              <p class="vgm-fine">Ödeme, teyitten sonra yalnızca havale/EFT ile yapılır; kredi kartı kabul edilmez. Kişisel verileriniz sipariş ve fatura sürecinde işlenir; ayrıntılar için <a href="/magaza/kvkk-aydinlatma.html" target="_blank" rel="noopener">KVKK aydınlatma metnini</a> okuyabilirsiniz.</p>
             </div>
           </form>
 
           <aside class="vgm-summary-box" aria-labelledby="vgm-sum-h">
-            <h2 id="vgm-sum-h">Sipariş özeti</h2>
+            <h2 id="vgm-sum-h">Talep özeti</h2>
             <ul class="vgm-mini" data-vgm-mini></ul>
-            <dl class="vgm-totals" data-vgm-totals aria-live="polite">
-              <div><dt>Ara toplam (KDV hariç)</dt><dd data-vgm-t="tryNet">—</dd></div>
-              <div><dt>KDV</dt><dd data-vgm-t="tryVat">—</dd></div>
-              <div><dt>Kargo</dt><dd data-vgm-t="shippingTry">—</dd></div>
-              <div class="vgm-totals__grand"><dt>Toplam (KDV dahil)</dt><dd data-vgm-t="tryGross">—</dd></div>
+            <dl class="vgm-totals" data-vgm-estimate aria-live="polite">
+              <div class="vgm-totals__grand"><dt>Tahmini tutar (KDV dahil)</dt><dd>—</dd></div>
+              <div><dt>Kargo</dt><dd>Teyitte bildirilir</dd></div>
+              <div><dt>Kesin tutar</dt><dd>Teyit e-postasında</dd></div>
             </dl>
-            <p class="vgm-expiry" data-vgm-expiry></p>
-            <p class="vgm-fine">Fiyatlar her gün TCMB döviz kuruyla güncellenir; siparişte gördüğünüz Türk lirası tutar sabitlenir.</p>
+            <p class="vgm-fine" data-vgm-estimate-note>Gösterilen fiyatlarla, bilgi amaçlıdır.</p>
+            <p class="vgm-fine">Fiyatlar her gün TCMB döviz kuruyla güncellenir. Kesin Türk lirası tutar teyitte sabitlenir ve ödeme gününe kadar değişmez.</p>
             <!--vgm:satici-->
-            <dl class="vgm-payinfo" aria-label="Ödeme bilgileri"><div><dt>Ödeme</dt><dd>Havale/EFT · Enpara Bank A.Ş. · siparişten sonra 24 saat içinde</dd></div><div><dt>Hesap sahibi</dt><dd>Voltguard Elektrik Elektronik Ve Mekanik Müh.Ltd.Şti.</dd></div><div><dt>IBAN</dt><dd class="vgm-mono">TR85 **** **** **** **** 9277 72 <span class="vgm-payinfo__note">(tamamı sipariş sonrası)</span></dd></div></dl><section class="vgm-seller" aria-labelledby="vgm-seller-h"><h3 id="vgm-seller-h">Satıcı</h3><p>Voltguard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi<br>Merkez adresi (ticaret sicili): Adalet Mah. Manas Bul. Folkart Towers No: 39 İç Kapı No: 2511 Bayraklı / İzmir<br>İşyeri ve bildirim adresi: Erzene Mah. Ankara Cad. No: 172/69 İç Kapı No: 043 Bornova / İzmir<br>Vergi dairesi / no: Hasan Tahsin / 9251324900<br>MERSİS no: 0925132490000001<br><a href="tel:+905454346735">0545 434 67 35</a><br><a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a></p><p class="vgm-fine"><a href="/magaza/odeme-ve-teslimat.html#satici">Satıcı bilgileri ve ödeme şartları</a></p></section>
+            <dl class="vgm-payinfo" aria-label="Ödeme bilgileri"><div><dt>Ödeme</dt><dd>Havale/EFT · Enpara Bank A.Ş. · stok ve fiyat teyidinden sonra, 24 saat içinde</dd></div><div><dt>IBAN</dt><dd>Teyit e-postasıyla gönderilir <span class="vgm-payinfo__note">(teyit gelmeden ödeme yapmayın)</span></dd></div></dl><section class="vgm-seller" aria-labelledby="vgm-seller-h"><h3 id="vgm-seller-h">Satıcı</h3><p>Voltguard Elektrik Elektronik ve Mekanik Mühendisliği Limited Şirketi<br>Merkez adresi (ticaret sicili): Adalet Mah. Manas Bul. Folkart Towers No: 39 İç Kapı No: 2511 Bayraklı / İzmir<br>İşyeri ve bildirim adresi: Erzene Mah. Ankara Cad. No: 172/69 İç Kapı No: 043 Bornova / İzmir<br>Vergi dairesi / no: Hasan Tahsin / 9251324900<br>MERSİS no: 0925132490000001<br><a href="tel:+905454346735">0545 434 67 35</a><br><a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a></p><p class="vgm-fine"><a href="/magaza/odeme-ve-teslimat.html#satici">Satıcı bilgileri ve ödeme şartları</a></p></section>
             <!--/vgm:satici-->
             <p class="vgm-actions"><a class="vgm-link" href="/magaza/sepet.html">Sepeti düzenle</a></p>
           </aside>
@@ -374,6 +366,6 @@
     </div>
   </footer>
   <!--/vg:footer-->
-  <script src="/js/magaza.js?v=07e3346f8d67" defer></script>
+  <script src="/js/magaza.js?v=102e1fc8f925" defer></script>
 </body>
 </html>

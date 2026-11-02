@@ -35,7 +35,12 @@ const VGM_MAX_QTY = 999;
 const VGM_MAX_PACK = 9999;
 const VGM_DEFAULT_MAX_QTY = 50;
 const VGM_SHARD_CACHE = 16;              // bellekte tutulan en cok urun/kaynak parcasi (uzun cron calismasi; ~1 MB/parca)
+/* Teyitli siparis talebi (sahibin karari, 2026-11-02): musteri once "teyit_bekliyor" durumunda bir TALEP gonderir (IBAN
+   ve odeme istenmez); personel stok ve fiyati teyit edince (vgm_order_confirm) kesin tutar sabitlenir ve "odeme_bekleniyor"a
+   gecilir, teyit edilemezse (vgm_order_reject) talep bedelsiz "iptal" olur. Bu iki gecis yalnizca o fonksiyonlarla yapilir;
+   genel durum guncellemesi (vgm_order_update) teyit_bekliyor durumundan hicbir yere gecemez. */
 const VGM_STATUS_LABELS = [
+    'teyit_bekliyor' => 'Teyit bekleniyor',
     'odeme_bekleniyor' => 'Ödeme bekleniyor',
     'odeme_alindi' => 'Ödeme alındı',
     'tedarikte' => 'Tedarik ediliyor',
@@ -45,6 +50,7 @@ const VGM_STATUS_LABELS = [
     'iade' => 'İade edildi',
 ];
 const VGM_TRANSITIONS = [
+    'teyit_bekliyor' => [],
     'odeme_bekleniyor' => ['odeme_alindi', 'iptal'],
     'odeme_alindi' => ['tedarikte', 'iptal'],
     'tedarikte' => ['kargoda', 'iptal'],
@@ -53,6 +59,7 @@ const VGM_TRANSITIONS = [
     'iptal' => [],
     'iade' => [],
 ];
+const VGM_CONFIRM_BUSINESS_DAYS = 1;   // talebe en gec 1 is gunu icinde yanit (teyit ya da ret)
 /* firma.json: bu alanlardan biri bossa magaza siparise kapalidir (6563 / Mesafeli Sozlesmeler: satici kimligi). */
 const VGM_FIRMA_REQUIRED = ['unvan', 'adres', 'il', 'telefon', 'eposta', 'mersis', 'vkn', 'vergiDairesi', 'iadeKargo', 'mudur', 'sermaye'];
 
@@ -1494,7 +1501,7 @@ function vgm_reason_text(string $reason): string
 {
     $map = [
         'ok' => '',
-        'closed' => 'Mağazamız çok yakında siparişe açılacak. Bu ürün için şimdiden teklif isteyebilirsiniz.',
+        'closed' => 'Mağazamız çok yakında sipariş taleplerine açılacak. Bu ürün için şimdiden teklif isteyebilirsiniz.',
         'stale' => 'Fiyat teyidi bekleniyor. Güncel fiyat ve stok için teklif isteyin.',
         'held' => 'Tedarik fiyatı değişti; ekibimiz kontrol ediyor. Güncel fiyat için teklif isteyin.',
         'error' => 'Fiyat şu anda doğrulanamadı. Güncel fiyat için teklif isteyin.',
@@ -1742,7 +1749,9 @@ function vgm_quote(array $cart, int $now): array
     }
     /* Sepetin tamami siparise donusturulebilir mi (sepet sayfasindaki "Sipariş oluştur" yalnizca bu durumda acilir);
        siparis ucu bundan bagimsiz olarak jeton + magaza acik + satir bazinda yeniden denetimle korunur. */
-    return ['open' => $open, 'orderable' => $open && $lines !== [] && count($signed) === count($lines),
+    /* requestable: teyitli siparis talebi (vgm_order_create) — magaza aciksa sepetteki HER satir talep edilebilir (fiyat
+       teyitte kesinlesir). orderable eski anlami korur: tum satirlar son 48 saatte dogrulanmis (bilgi/etiket icin). */
+    return ['open' => $open, 'requestable' => $open && $lines !== [], 'orderable' => $open && $lines !== [] && count($signed) === count($lines),
         'lines' => $lines, 'totals' => $totals, 'quote' => $quote, 'warnings' => $warnings,
         'estimate' => ['tryGross' => vgm_round2($estimate), 'unpriced' => $unpriced],
         'rate' => vgm_rate_ok($rate, $now) ? ['usdTry' => (float)$rate['usdTry'], 'date' => (string)$rate['date']] : null,
@@ -1845,13 +1854,31 @@ function vgm_specs_snapshot(array $p): array
     return $out;
 }
 
-/** Musteriye gosterilebilecek siparis gorunumu: tedarikci, maliyet ve ic notlar yok. */
+/**
+ * Tutarlar tahmini mi (talep asamasi)? Teyit edilmis kayit (confirmedAt) ve teyitli talep akisindan once dogrudan siparisle
+ * olusan eski kayit (consents.stage yok; tutar siparis aninda sabitlenmisti) kesin tutarlidir. Teyit bekleyen talep, teyit
+ * edilmeden kapanan talep (ret/iptal) ve odeme sayfasindaki taslak (durum yok) tahminidir. Belge asamasi da buna gore secilir.
+ */
+function vgm_order_is_estimate(array $o): bool
+{
+    if (isset($o['confirmedAt']) && is_int($o['confirmedAt'])) {
+        return false;
+    }
+    $status = $o['status'] ?? null;
+    if ($status === null || $status === 'teyit_bekliyor') {
+        return true;
+    }
+    return ($o['consents']['stage'] ?? null) === 'talep';
+}
+
+/** Musteriye gosterilebilecek siparis gorunumu: tedarikci, maliyet ve ic notlar yok. Talep asamasinda fiyat null olabilir. */
 function vgm_order_public(array $o): array
 {
     $items = [];
     foreach ($o['items'] as $it) {
         $items[] = ['name' => $it['name'], 'brand' => $it['brand'] ?? '', 'mpn' => $it['mpn'] ?? '', 'qty' => $it['qty'],
-            'unit' => $it['unit'] ?? 'adet', 'unitTryGross' => $it['unitTryGross'], 'lineTryGross' => $it['lineTryGross']];
+            'unit' => $it['unit'] ?? 'adet', 'unitTryGross' => $it['unitTryGross'] ?? null, 'lineTryGross' => $it['lineTryGross'] ?? null,
+            'priceBasis' => $it['priceBasis'] ?? null];
     }
     $history = [];
     foreach ($o['history'] as $h) {
@@ -1859,9 +1886,34 @@ function vgm_order_public(array $o): array
             'note' => (string)($h['publicNote'] ?? '')];
     }
     return ['reference' => $o['ref'], 'createdAt' => vg_iso((int)$o['createdAt']), 'status' => $o['status'],
-        'statusLabel' => VGM_STATUS_LABELS[$o['status']] ?? $o['status'], 'payBy' => vg_iso((int)$o['payBy']),
-        'items' => $items, 'totals' => array_diff_key($o['totals'], ['usdNet' => 1]), 'rate' => $o['rate'], 'history' => $history,
+        'statusLabel' => VGM_STATUS_LABELS[$o['status']] ?? $o['status'],
+        'payBy' => isset($o['payBy']) && is_int($o['payBy']) ? vg_iso($o['payBy']) : null,
+        'respondBy' => isset($o['respondBy']) && is_int($o['respondBy']) ? vg_iso($o['respondBy']) : null,
+        'confirmedAt' => isset($o['confirmedAt']) && is_int($o['confirmedAt']) ? vg_iso($o['confirmedAt']) : null,
+        'estimate' => vgm_order_is_estimate($o), 'items' => $items,
+        'totals' => array_diff_key($o['totals'], ['usdNet' => 1]), 'rate' => $o['rate'] ?? null, 'history' => $history,
         'tracking' => $o['tracking'] ?? null];
+}
+
+/**
+ * Talebe yanit son zamani: $days is gunu sonra ayni saat (Cumartesi/Pazar atlanir; TSI). Resmi tatiller hesaba katilmaz;
+ * metinler "en gec 1 is gunu" der, bu zaman musteriye bilgi icin gosterilir.
+ */
+function vgm_respond_by(int $now, int $days = VGM_CONFIRM_BUSINESS_DAYS): int
+{
+    try {
+        $d = (new DateTime('@' . $now))->setTimezone(new DateTimeZone('Europe/Istanbul'));
+    } catch (Throwable $e) {
+        return $now + 86400 * max(1, $days);
+    }
+    $left = max(1, $days);
+    while ($left > 0) {
+        $d->modify('+1 day');
+        if ((int)$d->format('N') <= 5) {
+            $left--;
+        }
+    }
+    return $d->getTimestamp();
 }
 
 /* ------------------------------------------------------------------ panel yetkisi */

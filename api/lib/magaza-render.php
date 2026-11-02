@@ -19,7 +19,7 @@ const VGMR_SITE = 'https://voltguard.com.tr';
 const VGMR_TITLE_SUFFIX = 'VoltGuard Mağaza';
 const VGMR_CONTACT = '/iletisim.html#iletisim';
 const VGMR_NOTE_RATE = 'Fiyatlar her gün TCMB döviz kuruyla güncellenir';
-const VGMR_CLOSED = 'Mağazamız çok yakında siparişe açılıyor';
+const VGMR_CLOSED = 'Sipariş talepleri çok yakında açılıyor';
 const VGMR_LIST_LIMIT = 400;
 const VGMR_PAGE_SIZE = 48;               // kategori sayfasinda urun
 const VGMR_SORT_LIVE_MAX = 3000;         // fiyat siralamasi bu kart sayisina kadar gorunen TL ile (vgmr_sort_cards)
@@ -35,7 +35,7 @@ const VGMR_SORTS = ['onerilen' => 'Önerilen sıra', 'fiyat-artan' => 'Fiyat (ar
 /** Satis birimi: [adet etiketi, fiyat eki, kisa ad]. Katalog "unit" alani (tools/magaza/katalog-ortak.cjs UNITS). */
 const VGMR_UNITS = ['adet' => ['Adet', '', 'adet'], 'metre' => ['Metre', '/ m', 'm'], 'paket' => ['Paket', '/ paket', 'paket'], 'takım' => ['Takım', '/ takım', 'takım'],
     'kutu' => ['Kutu', '/ kutu', 'kutu'], 'rulo' => ['Rulo', '/ rulo', 'rulo'], 'kg' => ['Kilogram', '/ kg', 'kg'], 'set' => ['Set', '/ set', 'set']];
-const VGMR_NOTE_VAT = 'Fiyatlar Türk lirası ve KDV dahildir; listelenen fiyatlar bağlayıcı teklif değildir, sipariş anında TL olarak sabitlenir.';
+const VGMR_NOTE_VAT = 'Fiyatlar Türk lirası ve KDV dahildir; listelenen fiyatlar bağlayıcı teklif değildir; kesin TL tutar stok ve fiyat teyidinde sabitlenir.';
 
 /* ------------------------------------------------------------------ yardimcilar */
 
@@ -105,7 +105,7 @@ function vgmr_meta(array $m): string
     $desc = (string)$m['desc'];
     $url = (string)$m['url'];
     $robots = (string)($m['robots'] ?? 'index, follow, max-image-preview:large, max-snippet:-1');
-    $img = (string)($m['image'] ?? VGMR_SITE . '/public/og-image.png');
+    $img = (string)($m['image'] ?? VGMR_SITE . '/public/og-magaza.png');
     $out = '  <title>' . vgmr_esc($title) . "</title>\n"
         . '  <meta name="description" content="' . vgmr_esc($desc) . "\">\n"
         . '  <meta name="robots" content="' . vgmr_esc($robots) . "\">\n"
@@ -115,6 +115,7 @@ function vgmr_meta(array $m): string
         . '  <meta property="og:description" content="' . vgmr_esc($desc) . "\">\n"
         . '  <meta property="og:url" content="' . vgmr_esc($url) . "\">\n"
         . '  <meta property="og:image" content="' . vgmr_esc($img) . "\">\n"
+        . (isset($m['image']) ? '' : "  <meta property=\"og:image:width\" content=\"1200\">\n  <meta property=\"og:image:height\" content=\"630\">\n")
         . "  <meta property=\"og:site_name\" content=\"VoltGuard\">\n  <meta property=\"og:locale\" content=\"tr_TR\">\n"
         . "  <meta name=\"twitter:card\" content=\"summary_large_image\">\n";
     foreach ($m['links'] ?? [] as $link) {
@@ -337,8 +338,8 @@ function vgmr_price_html(array $price, bool $full, array $p = []): string
     if ($full) {
         if ($soft) {
             $h .= '<p class="vgm-price__meta">' . ($display === 'list'
-                ? 'Bu fiyat bilgi amaçlıdır; sipariş, tedarik fiyatı son 48 saat içinde doğrulandığında açılır.'
-                : 'Tedarik fiyatının son doğrulaması 48 saati geçti; TL tutarı bugünkü kurla hesaplanmıştır. Sipariş için fiyatın yeniden doğrulanması gerekir.') . '</p>';
+                ? 'Bu fiyat bilgi amaçlıdır; kesin fiyat ve stok, sipariş talebinizden sonra teyitle bildirilir.'
+                : 'Tedarik fiyatının son doğrulaması 48 saati geçti; TL tutarı bugünkü kurla hesaplanmıştır. Kesin fiyat sipariş talebinizden sonra teyitle bildirilir.') . '</p>';
         } elseif ($price['checkedAt'] !== null) {
             $h .= '<p class="vgm-price__meta">Fiyat güncelleme tarihi: <time datetime="' . vgmr_esc(vg_iso((int)$price['checkedAt'])) . '">'
                 . vgmr_esc(vgm_local((int)$price['checkedAt'])) . '</time> (' . vgmr_esc(vgmr_ago((int)$price['checkedAt'], $now)) . ')</p>';
@@ -558,7 +559,7 @@ function vgmr_strip_brand(string $name, string $brand): string
 
 function vgmr_trust(): string
 {
-    $items = [['Havale/EFT ile ödeme', 'Sipariş sonrası IBAN ve sipariş numaranız gösterilir.'],
+    $items = [['Önce teyit, sonra ödeme', 'Stok ve fiyatı teyit eder, kesin tutarı ve IBAN’ı e-postayla göndeririz.'],
         ['Fiyatlar her gün doğrulanır', 'Tedarik fiyatı ve TCMB kuru güncel tutulur.'],
         ['Faturalı satış', 'Tüm fiyatlar Türk lirası ve KDV dahildir.'],
         ['Mühendis desteği', 'Doğru ürünü seçmek için mühendislerimize sorun.']];
@@ -1556,7 +1557,7 @@ function vgmr_quote_link(array $p, string $label, string $class, string $intent 
 
 /** Urun sayfasi bilgi kutusu: siparis verilemeyen urunun kisa nedeni (sepet once; "teklif isteyin" cagrisi ayrica yazilir). */
 const VGMR_BUY_REASON = [
-    'closed' => 'Mağazamız çok yakında siparişe açılacak.',
+    'closed' => 'Mağazamız çok yakında sipariş taleplerine açılacak.',
     'stale' => 'Fiyat teyidi bekleniyor; sipariş için fiyatın yeniden doğrulanması gerekir.',
     'held' => 'Tedarik fiyatı değişti; ekibimiz kontrol ediyor.',
     'error' => 'Fiyat şu anda doğrulanamadı.',
@@ -1592,14 +1593,18 @@ function vgmr_buy_box(array $p, array $price, array $ctx): string
     if ($price['orderable']) {
         $h .= '<div class="vgm-buy__row">' . $qty . $add . '</div>' . $live
             . vgmr_stock_html($p, $price)
-            . '<ul class="vgm-facts"><li>Ödeme yalnızca havale/EFT ile alınır.</li><li>Faturalı satış; fiyata KDV dahildir.</li>'
+            . '<ul class="vgm-facts"><li>Sepetten sipariş talebi gönderin; stok ve fiyat teyidinden sonra ödeme havale/EFT ile alınır.</li><li>Faturalı satış; fiyata KDV dahildir.</li>'
             . ($unitNote !== '' ? '<li>' . vgmr_esc($unitNote) . '</li>' : '')
             . '<li>En fazla ' . $q['max'] . ' ' . vgmr_esc($unit[3]) . ' sipariş verilebilir; daha fazlası için ' . vgmr_quote_link($p, 'proforma isteyin', 'vgm-link', 'proforma') . '.</li></ul>';
     } else {
         /* Sepet once (2026-11-02): siparis verilemeyen urun de sepete eklenir; sepet tek seferde teklif olarak gonderilir.
            Tek urunluk teklif baglantisi ikincil kalir (nedene gore: alternatif, nakliye, haber ver). */
-        $h .= '<div class="vgm-notice vgm-notice--info" role="note"><strong>Şu anda çevrim içi sipariş verilemiyor.</strong> '
-            . vgmr_esc((VGMR_BUY_REASON[$reason] ?? VGMR_BUY_REASON['error']) . ' Ürünü sepete ekleyin; sepetinizdeki tüm ürünler için tek seferde teklif isteyebilirsiniz.') . '</div>'
+        /* Teyitli siparis talebi: magaza aciksa bu urun de sepetten talep edilir; fiyat/stok personel teyidinde kesinlesir. */
+        $h .= ($reason === 'closed' || !$ctx['open']
+            ? '<div class="vgm-notice vgm-notice--info" role="note"><strong>Şu anda çevrim içi sipariş verilemiyor.</strong> '
+                . vgmr_esc((VGMR_BUY_REASON[$reason] ?? VGMR_BUY_REASON['error']) . ' Ürünü sepete ekleyin; sepetinizdeki tüm ürünler için tek seferde teklif isteyebilirsiniz.') . '</div>'
+            : '<div class="vgm-notice vgm-notice--info" role="note"><strong>Fiyat ve stok teyitle bildirilir.</strong> '
+                . vgmr_esc((VGMR_BUY_REASON[$reason] ?? VGMR_BUY_REASON['error']) . ' Ürünü sepete ekleyip sipariş talebi gönderebilir ya da teklif isteyebilirsiniz; kesin tutar teyit e-postasıyla gelir, öncesinde ödeme yapılmaz.') . '</div>')
             . '<div class="vgm-buy__row">' . $qty . $add . '</div>' . $live;
         $alt = [];
         if ($reason === 'unavailable') {
@@ -1739,7 +1744,7 @@ function vgmr_render_product(array $ctx, string $slug): ?array
             . '<p class="vgm-fine">Belgeler üreticinin kendi sayfasında açılır.</p></section>';
     }
     $details .= '<section class="vgm-block" id="teslimat-iade" aria-labelledby="vgm-ship-h"><h2 id="vgm-ship-h">Teslimat ve iade</h2>'
-        . '<ul class="vgm-facts"><li><strong>Ödeme:</strong> Yalnızca havale/EFT. Siparişten sonra IBAN ve sipariş numaranız ekranda gösterilir ve e-postayla gönderilir.</li>'
+        . '<ul class="vgm-facts"><li><strong>Ödeme:</strong> Yalnızca havale/EFT. Sipariş talebinizden sonra stok ve fiyatı teyit eder, kesin tutarı ve IBAN’ı e-postayla göndeririz; teyit gelmeden ödeme yapmayın.</li>'
         . '<li><strong>Teslimat:</strong> Siparişiniz ödemeniz hesabımıza geçtikten sonra hazırlanır ve kargoyla gönderilir. Ayrıntılar için '
         . '<a href="/magaza/odeme-ve-teslimat.html">ödeme ve teslimat</a> sayfasına bakın.</li>'
         . '<li><strong>İade ve cayma:</strong> Tüketici olarak yasal cayma hakkınız saklıdır; koşullar ve istisnalar '
@@ -1834,7 +1839,7 @@ function vgmr_firma_str(array $f, string $key): string
     return is_string($f[$key] ?? null) ? trim($f[$key]) : '';
 }
 
-/** IBAN maskesi: ilk ve son iki grup acik ("TR85 **** **** **** **** 9277 72"); tamami siparis sonrasi gosterilir. */
+/** IBAN maskesi: ilk ve son iki grup acik ("TR85 **** **** **** **** 9277 72"). Teyitli talepte odeme sayfasinda kullanilmaz. */
 function vgmr_iban_mask(string $iban): string
 {
     $g = preg_split('/\s+/', trim($iban), -1, PREG_SPLIT_NO_EMPTY);
@@ -1905,11 +1910,14 @@ function vgmr_legal_seller_dl(array $f): string
     return $h . '          </dl>';
 }
 
-/** Hukuki belge alt bilgisi: firma.json belgeSurumu (YYYY-AA-GG) surum ve son guncelleme tarihi olarak (P1-02). */
+/**
+ * Hukuki belge alt bilgisi: firma.json belgeSurumu (YYYY-AA-GG, ayni gun ikinci revizyon YYYY-AA-GG.N) surum ve son
+ * guncelleme tarihi olarak (P1-02).
+ */
 function vgmr_legal_meta(array $f): ?string
 {
     $v = vgmr_firma_str($f, 'belgeSurumu');
-    if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D', $v, $m) !== 1 || !checkdate((int)$m[2], (int)$m[3], (int)$m[1])) {
+    if (preg_match('/^(\d{4})-(\d{2})-(\d{2})(?:\.[1-9]\d?)?$/D', $v, $m) !== 1 || !checkdate((int)$m[2], (int)$m[3], (int)$m[1])) {
         return null;
     }
     return 'Belge sürümü: ' . $v . ' · Son güncelleme: ' . $m[3] . '.' . $m[2] . '.' . $m[1];
@@ -1947,17 +1955,17 @@ function vgmr_render_legal_html(string $name): ?string
     return $html;
 }
 
-/** Odeme ozet kutusu: odeme sekli, hesap sahibi, maskeli IBAN ve kompakt satici blogu. */
+/**
+ * Talep ozet kutusu: odeme sekli ve kompakt satici blogu. Teyitli siparis talebi (sahibin karari, 2026-11-02): bu sayfada
+ * IBAN (maskeli dahil) ve hesap bilgisi GOSTERILMEZ; ödeme bilgisi yalnizca personel teyidinden sonra e-postayla gider.
+ */
 function vgmr_checkout_seller_html(array $f): string
 {
     $bank = is_array($f['banka'] ?? null) ? $f['banka'] : [];
     $bankName = is_string($bank['ad'] ?? null) ? trim($bank['ad']) : '';
-    $holder = is_string($bank['hesapSahibi'] ?? null) ? trim($bank['hesapSahibi']) : '';
-    $mask = vgmr_iban_mask(is_string($bank['iban'] ?? null) ? $bank['iban'] : '');
     $h = '<dl class="vgm-payinfo" aria-label="Ödeme bilgileri"><div><dt>Ödeme</dt><dd>Havale/EFT' . ($bankName !== '' ? ' · ' . vgmr_esc($bankName) : '')
-        . ' · siparişten sonra 24 saat içinde</dd></div>'
-        . ($holder !== '' ? '<div><dt>Hesap sahibi</dt><dd>' . vgmr_esc($holder) . '</dd></div>' : '')
-        . ($mask !== '' ? '<div><dt>IBAN</dt><dd class="vgm-mono">' . vgmr_esc($mask) . ' <span class="vgm-payinfo__note">(tamamı sipariş sonrası)</span></dd></div>' : '')
+        . ' · stok ve fiyat teyidinden sonra, 24 saat içinde</dd></div>'
+        . '<div><dt>IBAN</dt><dd>Teyit e-postasıyla gönderilir <span class="vgm-payinfo__note">(teyit gelmeden ödeme yapmayın)</span></dd></div>'
         . '</dl>';
     $lines = [];
     foreach (vgmr_seller_rows($f) as $r) {

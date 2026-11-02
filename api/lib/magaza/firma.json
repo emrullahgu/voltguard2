@@ -24,7 +24,7 @@
     "iban": "TR85 0015 7000 0000 0204 9277 72",
     "paraBirimi": "TRY"
   },
-  "belgeSurumu": "2026-11-02",
+  "belgeSurumu": "2026-11-02.2",
   "belgeOnay": true,
   "turnstileSiteKey": "0x4AAAAAAFwNZyiBH3W2zOCa",
   "not": "adres, mersis, vkn, vergiDairesi, iadeKargo, mudur, sermaye alanları doldurulmadan mağaza siparişe açılmaz (api/MAGAZA.md). merkezAdres: ticaret sicilinde tescilli merkez (kuruluş gazetesi); adres: vergi levhasındaki işyeri (cayma, iade ve diğer bildirimler). Merkez nakli tescil edilirse merkezAdres boşaltılır ve tek adres kullanılır. iadeKargo: iade için ad verilmiş bir taşıyıcı yok; bu nedenle metinler iade masrafının her durumda satıcıya ait olduğunu söyler (MSY md. 5/1-g, 12/5). kep ve etbis yayın öncesi tamamlanmalı (ETBİS kaydı olmadan mağaza açılmaz). Hukuki metinler 2026-11-02 tarihli iç incelemeden geçti; belgeOnay true iken sipariş belgelerinde \"(TASLAK)\" yazmaz. turnstileSiteKey: Cloudflare Turnstile herkese açık site anahtarı (magaza/odeme.html data-sitekey; boşsa doğrulama gösterilmez). Yurt dışı aktarım için Cloudflare ile KVKK md. 9 standart sözleşmesi imzalanıp 5 iş günü içinde Kurum'a bildirilmelidir."

@@ -15,13 +15,15 @@
   var REF_RE = /^VGS-[0-9]{6}-[A-HJ-NP-Z2-9]{5}$/;
 
   var STATUS_LABELS = {
-    odeme_bekleniyor: 'Ödeme bekleniyor', odeme_alindi: 'Ödeme alındı', tedarikte: 'Tedarik ediliyor',
+    teyit_bekliyor: 'Teyit bekleniyor', odeme_bekleniyor: 'Ödeme bekleniyor', odeme_alindi: 'Ödeme alındı', tedarikte: 'Tedarik ediliyor',
     kargoda: 'Kargoya verildi', teslim_edildi: 'Teslim edildi', iptal: 'İptal edildi', iade: 'İade edildi'
   };
-  var STATUS_ORDER = ['odeme_bekleniyor', 'odeme_alindi', 'tedarikte', 'kargoda', 'teslim_edildi', 'iptal', 'iade'];
+  var STATUS_ORDER = ['teyit_bekliyor', 'odeme_bekleniyor', 'odeme_alindi', 'tedarikte', 'kargoda', 'teslim_edildi', 'iptal', 'iade'];
   /* Sunucudaki VGM_TRANSITIONS aynası: yalnızca sunucu "allowed" göndermezse yedek olarak kullanılır. */
+  /* teyit_bekliyor: genel durum düğmesi yok; talep yalnızca "Onayla ve ödeme bilgisi gönder" (panel_order_confirm) ya da
+     "Reddet" (panel_order_reject) ile ilerler. */
   var TRANSITIONS = {
-    odeme_bekleniyor: ['odeme_alindi', 'iptal'], odeme_alindi: ['tedarikte', 'iptal'], tedarikte: ['kargoda', 'iptal'],
+    teyit_bekliyor: [], odeme_bekleniyor: ['odeme_alindi', 'iptal'], odeme_alindi: ['tedarikte', 'iptal'], tedarikte: ['kargoda', 'iptal'],
     kargoda: ['teslim_edildi', 'iade', 'iptal'], teslim_edildi: ['iade'], iptal: [], iade: []
   };
   var ACTIONS = {
@@ -34,6 +36,8 @@
   };
   var ACTION_ORDER = ['odeme_alindi', 'tedarikte', 'kargoda', 'teslim_edildi', 'iade', 'iptal'];
   var NOTE_MAX = 1000, PUBLIC_NOTE_MAX = 600;     // sunucu: vgm_order_update (iç not 1000, müşteri notu 600)
+  var MAX_UNIT_TRY = 100000000, MAX_SHIP_TRY = 1000000, MAX_LINE_QTY = 999;   // sunucu: vgm_order_confirm / vgm_money_in
+  var REJECT_REASONS = [['stok_yok', 'Stok yok'], ['fiyat_degisti', 'Fiyat değişti'], ['diger', 'Diğer (gerekçe yazın)']];
   var PRICE_STATUS = { ok: 'Güncel', held: 'Onay bekliyor', error: 'Hata', unavailable: 'Stokta yok' };
   var PRICE_REASONS = {
     ok: 'Siparişe açık', closed: 'Mağaza kapalı', stale: 'Fiyat 48 saatten eski', held: 'Onay bekliyor',
@@ -222,6 +226,79 @@
     if (note) body.note = note;
     if (pub) body.publicNote = pub;
     return { ok: Object.keys(errors).length === 0, errors: errors, body: body };
+  }
+
+  /** Kuruş hassasiyetinde yuvarlama (sunucu vgm_round2 ile aynı). */
+  function round2(n) { return Math.round((Number(n) + Number.EPSILON) * 100) / 100; }
+
+  /**
+   * Teyit gövdesi (panel_order_confirm, ref hariç) ve istemci doğrulaması. rows: [{id, qty, max (talepteki adet; teyitte
+   * adet yalnızca azaltılabilir), unit (TL, KDV dahil; metin ya da sayı), remove}], shipping: kargo (TL, KDV dahil; boş = 0).
+   * Çıkarılan satır gönderilmez; en az bir satır kalmalı. Hatalar ürün kimliğiyle anahtarlanır (sunucu "lines.<id>.qty" ile
+   * aynı; çıkarılan satırlar sırayı kaydırmaz). Dönüş: {ok, errors: {"<id>.qty"|"<id>.unit"|shipping|lines}, body, total}.
+   */
+  function buildConfirm(rows, shipping, form) {
+    form = form || {};
+    var errors = {}, lines = [], total = 0;
+    (Array.isArray(rows) ? rows : []).forEach(function (r) {
+      if (!r || r.remove === true) return;
+      var id = str(r.id);
+      var max = typeof r.max === 'number' && r.max >= 1 ? Math.min(Math.floor(r.max), MAX_LINE_QTY) : MAX_LINE_QTY;
+      /* Adet bağlayıcı tutara girer: "2.5" ya da "3 adet" sessizce kırpılmaz, hata verilir. */
+      var qtyText = typeof r.qty === 'number' ? String(r.qty) : str(r.qty).trim();
+      var qty = /^\d{1,4}$/.test(qtyText) ? parseInt(qtyText, 10) : NaN;
+      var unit = typeof r.unit === 'number' ? r.unit : parseTry(r.unit);
+      if (!(qty >= 1 && qty <= max)) errors[id + '.qty'] = max < MAX_LINE_QTY ? 'Adet 1–' + max + ' arası tam sayı olmalı (talepteki adetten fazla olamaz).' : 'Adet 1–' + max + ' arası tam sayı olmalı.';
+      if (!(typeof unit === 'number' && isFinite(unit) && unit > 0 && unit <= MAX_UNIT_TRY)) errors[id + '.unit'] = 'KDV dahil birim fiyatı TL olarak girin.';
+      else unit = round2(unit);
+      if (!errors[id + '.qty'] && !errors[id + '.unit']) { lines.push({ id: id, qty: qty, unitTryGross: unit }); total += round2(unit * qty); }
+    });
+    if (!lines.length && !Object.keys(errors).length) errors.lines = 'En az bir ürün kalmalı; hiçbiri teyit edilemiyorsa talebi reddedin.';
+    var ship = str(shipping).trim() === '' ? 0 : (typeof shipping === 'number' ? shipping : parseTry(shipping));
+    if (!(typeof ship === 'number' && isFinite(ship) && ship >= 0 && ship <= MAX_SHIP_TRY)) errors.shipping = 'Kargo ücretini TL olarak girin (ücretsizse 0).';
+    else ship = round2(ship);
+    var body = { lines: lines, shippingTry: typeof ship === 'number' && isFinite(ship) ? ship : 0 };
+    var note = clean(form.note, NOTE_MAX), pub = clean(form.publicNote, PUBLIC_NOTE_MAX);
+    if (note) body.note = note;
+    if (pub) body.publicNote = pub;
+    return { ok: Object.keys(errors).length === 0, errors: errors, body: body, total: round2(total + body.shippingTry) };
+  }
+
+  /**
+   * Sunucunun teyit doğrulama hataları (422 fields: "lines.<id>.qty", "lines.<id>.unitTryGross", shippingTry) buildConfirm
+   * anahtarlarına ("<id>.qty", "<id>.unit", shipping) çevrilir; satır, ürün kimliğiyle bulunur.
+   */
+  function confirmServerErrors(fields) {
+    var out = {};
+    if (!fields || typeof fields !== 'object') return out;
+    Object.keys(fields).forEach(function (k) {
+      var m = /^lines\.(.+)\.(qty|unitTryGross)$/.exec(k);
+      if (m) out[m[1] + (m[2] === 'qty' ? '.qty' : '.unit')] = str(fields[k]);
+      else if (k === 'shippingTry') out.shipping = str(fields[k]);
+    });
+    return out;
+  }
+
+  /** Ret gövdesi (panel_order_reject, ref hariç): neden zorunlu; "diger"de müşteriye gerekçe (en az 3 karakter) zorunlu. */
+  function buildReject(reason, form) {
+    form = form || {};
+    var errors = {};
+    var known = REJECT_REASONS.some(function (r) { return r[0] === reason; });
+    var pub = clean(form.publicNote, PUBLIC_NOTE_MAX), note = clean(form.note, NOTE_MAX);
+    if (!known) errors.reason = 'Ret nedenini seçin.';
+    if (reason === 'diger' && pub.length < 3) errors.publicNote = 'Müşteriye iletilecek gerekçeyi yazın.';
+    var body = { reason: known ? reason : '' };
+    if (pub) body.publicNote = pub;
+    if (note) body.note = note;
+    return { ok: Object.keys(errors).length === 0, errors: errors, body: body };
+  }
+
+  /** Teyit bekleyen talebin yanıt süresi geçti mi (sunucu bayrağı respondLate, yoksa respondBy). */
+  function isRespondLate(o, nowMs) {
+    if (!o || typeof o !== 'object' || o.status !== 'teyit_bekliyor') return false;
+    if (typeof o.respondLate === 'boolean') return o.respondLate;
+    var due = toMs(o.respondBy);
+    return isFinite(due) && due < (nowMs === undefined ? Date.now() : nowMs);
   }
 
   /** 401/403/409/429 ve diğer hatalar için net Türkçe açıklama. */
@@ -427,7 +504,8 @@
     todayIso: todayIso, validateExportRange: validateExportRange, quickRange: quickRange, parseTry: parseTry,
     buildManualPrice: buildManualPrice, buildDecision: buildDecision, heldInfo: heldInfo, priceCounts: priceCounts, priceStats: priceStats,
     priceMatches: priceMatches, sortPrices: sortPrices, cronHealth: cronHealth, cronState: cronState, summaryText: summaryText,
-    isStaleCheck: isStaleCheck
+    isStaleCheck: isStaleCheck, buildConfirm: buildConfirm, confirmServerErrors: confirmServerErrors, buildReject: buildReject, isRespondLate: isRespondLate, round2: round2,
+    REJECT_REASONS: REJECT_REASONS
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = H;
@@ -527,6 +605,7 @@
       var e = new Error((j && j.message) || 'İşlem tamamlanamadı.');
       e.status = r.status;
       e.code = j && j.error;
+      e.fields = j && j.fields && typeof j.fields === 'object' ? j.fields : null;
       e.retryAfter = parseInt(r.headers.get('Retry-After') || '', 10) || (j && Number(j.retryAfter)) || 0;
       return e;
     }
@@ -662,15 +741,19 @@
       var tr = h('tr', { class: 'mgp-tr' + (overdue ? ' mgp-tr--overdue' : '') });
       var status = h('td', { 'data-label': 'Durum' }, [pill(o.statusLabel || H.statusLabel(o.status), 's-' + H.str(o.status).replace(/[^a-z_]/g, ''))]);
       if (overdue) status.appendChild(pill('Ödeme süresi geçti', 'late'));
+      if (H.isRespondLate(o, Date.now())) status.appendChild(pill('Yanıt süresi geçti', 'late'));
       tr.appendChild(h('td', { 'data-label': 'Sipariş no' }, h('button', { type: 'button', class: 'mgp-link mgp-mono', text: H.str(o.ref), on: { click: function () { gotoOrder(o.ref); } } })));
       tr.appendChild(h('td', { 'data-label': 'Tarih', text: H.fmtDateTime(o.createdAt) }));
       tr.appendChild(h('td', { 'data-label': 'Müşteri' }, [H.str(o.customerName) || '–', o.member ? ' ' : null,
         o.member ? h('span', { class: 'mgp-pill mgp-pill--public', title: o.member === 'claim' ? 'Üye, e-postasını doğrulayarak hesabına ekledi' : 'Üye girişi yapılarak verildi', text: 'Üye' }) : null]));
       tr.appendChild(h('td', { 'data-label': 'İl', text: H.str(o.city) || '–' }));
-      tr.appendChild(h('td', { 'data-label': 'Tutar (KDV dahil)', class: 'mgp-num', text: H.fmtTry(o.amountTry) }));
+      tr.appendChild(h('td', { 'data-label': 'Tutar (KDV dahil)', class: 'mgp-num' }, o.estimate === true
+        ? [h('span', { class: 'mgp-muted', text: '~' }), Number(o.amountTry) > 0 ? H.fmtTry(o.amountTry) : 'fiyat yok', h('div', { class: 'mgp-muted', text: 'tahmini' + (Number(o.unpriced) > 0 ? ' · ' + o.unpriced + ' ürün fiyatsız' : '') })]
+        : [H.fmtTry(o.amountTry)]));
       tr.appendChild(h('td', { 'data-label': 'Kalem', class: 'mgp-num', text: H.str(o.itemCount) }));
       tr.appendChild(status);
-      tr.appendChild(h('td', { 'data-label': 'Ödeme son tarihi', text: o.status === 'odeme_bekleniyor' ? H.fmtDateTime(o.payBy) : '–' }));
+      tr.appendChild(h('td', { 'data-label': 'Son tarih', text: o.status === 'odeme_bekleniyor' ? 'Ödeme: ' + H.fmtDateTime(o.payBy)
+        : (o.status === 'teyit_bekliyor' ? 'Yanıt: ' + H.fmtDateTime(o.respondBy) : '–') }));
       return tr;
     }
 
@@ -709,6 +792,8 @@
         if (seq !== O.detailSeq) return;
         O.memberRef = ref;
         O.memberInfo = j.memberInfo || null;
+        O.aidRef = ref;
+        O.confirmAid = j.confirmAid || null;
         renderDetail(j.order, j.allowed);
       }).catch(function (e) {
         if (seq !== O.detailSeq) return;
@@ -845,6 +930,184 @@
       return form;
     }
 
+    /* ---------------------------------------------------------- teyitli sipariş talebi: onay / ret
+       Talep "teyit_bekliyor" iken personel her satırın stok ve fiyatını tedarikçiyle teyit eder. Sunucu (panel_order_confirm)
+       girilen KDV dahil birim fiyatları ve kargo ücretini sabitler, ödeme süresini başlatır ve IBAN'lı teyit e-postasını
+       gönderir; ret (panel_order_reject) talebi bedelsiz kapatır. Tedarikçi son kontrolü yalnızca bu panelde görünür. */
+    function reloadOrder(ref) {
+      return api('panel_order', { query: '&ref=' + enc(ref) }).then(function (d) {
+        if (O.ref !== ref) return;
+        O.memberRef = ref; O.memberInfo = d.memberInfo || null; O.aidRef = ref; O.confirmAid = d.confirmAid || null;
+        renderDetail(d.order, d.allowed);
+      });
+    }
+    function aidCell(it, a, onUse, ref) {
+      var td = h('td', { 'data-label': 'Tedarikçi son kontrol (personel)', class: 'mgp-staff' });
+      if (!a) { td.appendChild(h('span', { class: 'mgp-muted', text: 'Kayıt yok (ürün katalogdan kalkmış olabilir).' })); return td; }
+      var box = h('div');
+      box.appendChild(pill(H.PRICE_STATUS[a.status] || (a.status ? H.str(a.status) : 'Kontrol edilmedi'), 'p-' + (H.str(a.status).replace(/[^a-z]/g, '') || 'none')));
+      if (a.available === false) box.appendChild(pill('Stokta yok', 'late'));
+      box.appendChild(h('div', { text: 'Alış ' + H.fmtTry(a.costTry) + ' · öneri ' + H.fmtTry(a.tryGross) + (a.margin !== null && a.margin !== undefined ? ' (marj %' + H.fmtNum(Number(a.margin) * 100, 0) + ')' : '') }));
+      box.appendChild(h('div', { class: a.fresh ? 'mgp-muted' : 'mgp-late', text: a.checkedAt ? 'Kontrol: ' + H.fmtDateTime(a.checkedAt) + ' (' + H.ageText(a.checkedAt, Date.now()) + ')' : 'Hiç doğrulanmadı' }));
+      if (!a.orderable && a.reasonText) box.appendChild(h('div', { class: 'mgp-muted mgp-note-line', text: H.str(a.reasonText) }));
+      (Array.isArray(a.sources) ? a.sources : []).slice(0, 3).forEach(function (s) {
+        var url = H.httpsUrl(s.url);
+        box.appendChild(h('div', { class: 'mgp-src' }, url ? h('a', { href: url, target: '_blank', rel: 'noopener noreferrer', text: H.str(s.supplier) || url }) : H.str(s.supplier)));
+      });
+      var acts = h('div', { class: 'mgp-actions mgp-aid-acts' });
+      if (typeof a.tryGross === 'number') acts.appendChild(btn('Öneriyi kullan', 'ghost', function () { onUse(a.tryGross); }));
+      acts.appendChild(btn('Şimdi kontrol et', 'ghost', function (e) {
+        var b = e && e.currentTarget;
+        if (b) b.disabled = true;
+        post('panel_check_now', { id: it.id }).then(function () { return reloadOrder(ref); }).then(function () { say('ok', it.name + ': tedarikçi fiyatı yeniden kontrol edildi.'); }, function (err) { if (b) b.disabled = false; fail(err); });
+      }));
+      box.appendChild(acts);
+      td.appendChild(box);
+      return td;
+    }
+    function confirmCard(order) {
+      var aid = O.aidRef === order.ref && O.confirmAid ? O.confirmAid : null;
+      var lines = aid && aid.lines && typeof aid.lines === 'object' ? aid.lines : {};
+      var items = Array.isArray(order.items) ? order.items : [];
+      var wrap = h('div', { class: 'mgp-confirm' });
+      var form = h('form', { class: 'mgp-form', novalidate: true, autocomplete: 'off', on: { submit: function (e) { e.preventDefault(); } } });
+      form.appendChild(h('p', { class: 'mgp-muted mgp-hint', text: 'Her ürünün stok ve fiyatını tedarikçiyle teyit edin. Müşteriye gidecek KDV dahil birim fiyatı düzeltin; adet yalnızca azaltılabilir (talepteki adetten fazlası teyit edilemez), teyit edilemeyen ürünü çıkarın. Talepten farklar müşteriye teyit e-postasında ayrıca bildirilir. Onayladığınızda tutarlar sabitlenir, ödeme süresi (' + (aid && aid.paymentHours ? aid.paymentHours : 24) + ' saat) başlar ve müşteriye IBAN’lı teyit e-postası ile kesin ön bilgilendirme formu ve sözleşme gider.' }));
+      var rows = [];
+      var tb = h('tbody');
+      var head = ['Ürün', 'Talep', 'Adet', 'Birim fiyat (TL, KDV dahil)', 'Satır', 'Tedarikçi son kontrol (personel)', 'Çıkar'];
+      items.forEach(function (it, i) {
+        var a = lines[it.id] || null;
+        var start = typeof it.unitTryGross === 'number' ? it.unitTryGross : (a && typeof a.tryGross === 'number' ? a.tryGross : null);
+        var name = H.str(it.name);
+        var maxQty = typeof it.qty === 'number' && it.qty >= 1 ? it.qty : 1;
+        var qtyIn = h('input', { type: 'number', min: '1', max: String(maxQty), step: '1', inputmode: 'numeric', value: String(it.qty), 'aria-label': 'Adet (en çok ' + maxQty + '): ' + name, class: 'mgp-in mgp-in--qty' });
+        var unitIn = h('input', { type: 'text', inputmode: 'decimal', value: start !== null ? H.fmtNum(start, 2) : '', placeholder: 'ör. 1.250,00', 'aria-label': 'KDV dahil birim fiyat: ' + name, class: 'mgp-in mgp-in--money' });
+        var rm = h('input', { type: 'checkbox', 'aria-label': 'Talepten çıkar: ' + name });
+        var lineEl = h('td', { 'data-label': head[4], class: 'mgp-num' });
+        var err = h('p', { class: 'mgp-err', role: 'alert', hidden: true });
+        var tr = h('tr', null, [
+          h('td', { 'data-label': head[0] }, [h('strong', { text: name }), h('div', { class: 'mgp-muted', text: [H.str(it.brand), H.str(it.mpn), H.str(it.id)].filter(Boolean).join(' · ') }),
+            it.freight ? pill('Nakliye ürünü', 'late') : null, err]),
+          h('td', { 'data-label': head[1], class: 'mgp-num' }, [it.qty + ' ' + (H.str(it.unit) || 'adet'), h('div', { class: 'mgp-muted', text: typeof it.unitTryGross === 'number' ? '× ' + H.fmtTry(it.unitTryGross) + ' (tahmini)' : 'fiyatsız talep' })]),
+          h('td', { 'data-label': head[2] }, qtyIn),
+          h('td', { 'data-label': head[3] }, unitIn),
+          lineEl,
+          aidCell(it, a, function (v) { unitIn.value = H.fmtNum(v, 2); recalc(); }, order.ref),
+          h('td', { 'data-label': head[6] }, h('label', { class: 'mgp-check' }, [rm, ' Çıkar']))
+        ]);
+        rows.push({ id: it.id, max: maxQty, qtyIn: qtyIn, unitIn: unitIn, rm: rm, lineEl: lineEl, err: err, tr: tr });
+        tb.appendChild(tr);
+      });
+      var thead = h('thead', null, h('tr', null, head.map(function (t) { return h('th', { scope: 'col', text: t }); })));
+      form.appendChild(h('div', { class: 'mgp-table-wrap' }, h('table', { class: 'mgp-table mgp-table--confirm' }, [h('caption', { class: 'mgp-sr', text: 'Teyit edilecek ürünler' }), thead, tb])));
+
+      var est = 0;
+      items.forEach(function (it) { if (typeof it.lineTryGross === 'number') est += it.lineTryGross; });
+      var ship = aid && aid.shipping ? aid.shipping : { feeTry: 0, freeOverTry: 0 };
+      var shipStart = ship.feeTry > 0 && !(ship.freeOverTry > 0 && est >= ship.freeOverTry) ? ship.feeTry : 0;
+      var shipF = field('c-ship', 'Kargo / nakliye ücreti (TL, KDV dahil; ücretsizse 0)', 'input', { type: 'text', inputmode: 'decimal', value: H.fmtNum(shipStart, 2) },
+        ship.feeTry > 0 ? 'Mağaza ayarı: ' + H.fmtTry(ship.feeTry) + (ship.freeOverTry > 0 ? ' · ' + H.fmtTry(ship.freeOverTry) + ' üzeri ücretsiz' : '') : 'Mağaza ayarında kargo ücreti yok.');
+      var totalEl = h('strong', { class: 'mgp-confirm__total', 'aria-live': 'polite' });
+      var pubF = field('c-pub', 'Müşteriye not (teyit e-postasında ve takip sayfasında görünür; isteğe bağlı)', 'textarea', { rows: 2, maxlength: 600 });
+      var noteF = field('c-note', 'İç not (yalnızca personel)', 'textarea', { rows: 2, maxlength: 1000 }, 'Örn. tedarikçiyle telefonda teyit, stok adedi, termin.');
+      append(form, [h('div', { class: 'mgp-row' }, [shipF.wrap, h('div', { class: 'mgp-field' }, [h('span', { class: 'mgp-field__label', text: 'Müşteriye gidecek toplam (KDV dahil)' }), totalEl])]), pubF.wrap, noteF.wrap]);
+
+      function collect() {
+        return rows.map(function (r) { return { id: r.id, max: r.max, qty: r.qtyIn.value, unit: r.unitIn.value, remove: r.rm.checked }; });
+      }
+      function recalc() {
+        var built = H.buildConfirm(collect(), shipF.input.value, {});
+        rows.forEach(function (r, i) {
+          r.tr.classList.toggle('mgp-tr--removed', r.rm.checked);
+          var qv = String(r.qtyIn.value).trim(), q = /^\d{1,4}$/.test(qv) ? parseInt(qv, 10) : 0, u = H.parseTry(r.unitIn.value);
+          r.lineEl.textContent = r.rm.checked ? 'çıkarıldı' : (q > 0 && u > 0 ? H.fmtTry(H.round2(u * q)) : '–');
+          void i;
+        });
+        totalEl.textContent = built.ok ? H.fmtTry(built.total) : '–';
+        return built;
+      }
+      form.addEventListener('input', recalc);
+      form.addEventListener('change', recalc);
+      recalc();
+
+      function showConfirmErrors(built) {
+        var first = null;
+        rows.forEach(function (r) {
+          var kq = r.id + '.qty', ku = r.id + '.unit';
+          var m = built.errors[kq] || built.errors[ku] || '';
+          r.err.hidden = !m; r.err.textContent = m;
+          r.qtyIn.setAttribute('aria-invalid', built.errors[kq] ? 'true' : 'false');
+          r.unitIn.setAttribute('aria-invalid', built.errors[ku] ? 'true' : 'false');
+          if (!first && built.errors[kq]) first = r.qtyIn;
+          if (!first && built.errors[ku]) first = r.unitIn;
+        });
+        showErrors([[shipF, built.errors.shipping]]);
+        if (built.errors.lines) say('warn', built.errors.lines);
+        if (first) first.focus();
+      }
+      var confirmBtn = btn('Onayla ve ödeme bilgisi gönder', 'primary', function () {
+        var built = recalc();
+        var full = H.buildConfirm(collect(), shipF.input.value, { publicNote: pubF.input.value, note: noteF.input.value });
+        showConfirmErrors(built);
+        if (!full.ok) return;
+        var removed = rows.filter(function (r) { return r.rm.checked; }).length;
+        confirmAction({ title: 'Talebi onayla', message: order.ref + ' için ' + full.body.lines.length + ' ürün' + (removed ? ' (' + removed + ' ürün çıkarıldı)' : '') + ', toplam ' + H.fmtTry(full.total)
+          + ' (KDV dahil) sabitlenecek ve müşteriye IBAN’lı teyit e-postası gönderilecek. Sözleşme, müşteri bu tutarı süresi içinde öderse kurulur. Devam edilsin mi?', confirmText: 'Onayla ve gönder' }).then(function (ok) {
+          if (!ok) return;
+          full.body.ref = order.ref;
+          setBusy(wrap, true);
+          return post('panel_order_confirm', full.body).then(function (j) {
+            if (O.ref !== order.ref) return;
+            say('ok', 'Talep onaylandı: ' + H.fmtTry(j.order && j.order.totals ? j.order.totals.tryGross : full.total) + '. Müşteriye ödeme bilgileri e-postayla gönderildi; ödeme süresi başladı.');
+            O.confirmAid = null;
+            renderDetail(j.order, j.allowed);
+          });
+        }).catch(function (e) {
+          setBusy(wrap, false);
+          var serverErrors = e && e.status === 422 ? H.confirmServerErrors(e.fields) : {};
+          if (Object.keys(serverErrors).length) showConfirmErrors({ errors: serverErrors });
+          var x = fail(e);
+          if (x.refresh && O.ref === order.ref) openOrder(order.ref).then(function () { fail(e); });
+        });
+      });
+      form.appendChild(h('div', { class: 'mgp-actions' }, [confirmBtn]));
+      wrap.appendChild(form);
+
+      /* Ret: talep bedelsiz kapanır (ödeme hiç istenmedi). */
+      var reason = h('select', { id: 'r-reason', 'aria-describedby': 'r-reason-err' }, [h('option', { value: '', text: 'Neden seçin…' })].concat(H.REJECT_REASONS.map(function (r) { return h('option', { value: r[0], text: r[1] }); })));
+      var reasonErr = h('p', { class: 'mgp-err', id: 'r-reason-err', role: 'alert', hidden: true });
+      var rPub = field('r-pub', 'Müşteriye gerekçe ("Diğer" için zorunlu; standart cümleye eklenir)', 'textarea', { rows: 2, maxlength: 600 });
+      var rNote = field('r-note', 'İç not', 'textarea', { rows: 2, maxlength: 1000 });
+      var rej = h('form', { class: 'mgp-form mgp-reject', novalidate: true, autocomplete: 'off', on: { submit: function (e) { e.preventDefault(); } } });
+      append(rej, [h('fieldset', { class: 'mgp-fieldset' }, [h('legend', { text: 'Teyit edilemiyorsa: talebi reddet' }),
+        h('div', { class: 'mgp-field' }, [h('label', { for: 'r-reason', text: 'Ret nedeni' }), reason, reasonErr]), rPub.wrap, rNote.wrap,
+        h('p', { class: 'mgp-muted mgp-hint', text: 'Talep "İptal edildi" olur ve müşteriye bedelsiz kapatıldığını, ödeme alınmadığını bildiren e-posta gider.' }),
+        h('div', { class: 'mgp-actions' }, [btn('Reddet (stok yok / fiyat değişti)', 'danger', function () {
+          var built = H.buildReject(reason.value, { publicNote: rPub.input.value, note: rNote.input.value });
+          reasonErr.hidden = !built.errors.reason; reasonErr.textContent = built.errors.reason || '';
+          reason.setAttribute('aria-invalid', built.errors.reason ? 'true' : 'false');
+          showErrors([[rPub, built.errors.publicNote]]);
+          if (built.errors.reason) { reason.focus(); return; }
+          if (!built.ok) return;
+          confirmAction({ title: 'Talebi reddet', message: order.ref + ' numaralı talep bedelsiz kapatılacak ve müşteriye e-posta gönderilecek. Bu işlem geri alınamaz. Devam edilsin mi?', confirmText: 'Reddet', danger: true }).then(function (ok) {
+            if (!ok) return;
+            built.body.ref = order.ref;
+            setBusy(wrap, true);
+            return post('panel_order_reject', built.body).then(function (j) {
+              if (O.ref !== order.ref) return;
+              say(j.mailSent === false ? 'warn' : 'ok', j.mailSent === false ? 'Talep reddedildi; ancak müşteri e-postası gönderilemedi. Müşteriyi başka yoldan bilgilendirin.' : 'Talep reddedildi ve müşteriye bildirildi.');
+              renderDetail(j.order, j.allowed);
+            });
+          }).catch(function (e) {
+            setBusy(wrap, false);
+            var x = fail(e);
+            if (x.refresh && O.ref === order.ref) openOrder(order.ref).then(function () { fail(e); });
+          });
+        })])])]);
+      wrap.appendChild(rej);
+      return wrap;
+    }
+
     /* Siparişin bağlı olduğu site üyesi (sunucu oturumdan işaretler; müşteri e-postasıyla karıştırılmaz). */
     function memberLine(order) {
       var m = O.memberRef === order.ref ? O.memberInfo : null;
@@ -866,6 +1129,7 @@
         title,
         pill(H.statusLabel(order.status), 's-' + H.str(order.status).replace(/[^a-z_]/g, '')),
         overdue ? pill('Ödeme süresi geçti', 'late') : null,
+        H.isRespondLate(order, Date.now()) ? pill('Yanıt süresi geçti', 'late') : null,
         h('span', { class: 'mgp-muted', text: 'Oluşturma: ' + H.fmtDateTime(order.createdAt) })
       ]);
       orderDetail.appendChild(head);
@@ -880,27 +1144,41 @@
         card('Müşteri notu', H.str(order.notes) ? h('p', { class: 'mgp-pre', text: H.str(order.notes) }) : h('p', { class: 'mgp-muted', text: 'Not yok.' }))
       ]));
 
-      orderDetail.appendChild(card('Ürünler', itemsTable(order)));
+      var pending = order.status === 'teyit_bekliyor';
+      var estimate = pending || !order.confirmedAt && !!(t && t.unpriced !== undefined);
+      if (pending) {
+        orderDetail.appendChild(card('Teyit: stok ve fiyat', confirmCard(order), 'mgp-card--actions mgp-card--confirm'));
+      } else {
+        orderDetail.appendChild(card('Ürünler', itemsTable(order)));
+      }
 
       var tracking = order.tracking && typeof order.tracking === 'object' ? order.tracking : null;
       orderDetail.appendChild(h('div', { class: 'mgp-grid' }, [
-        card('Toplamlar', dl([
+        card(estimate ? 'Talep tutarı (tahmini)' : 'Toplamlar', estimate ? dl([
+          ['Tahmini toplam (gösterilen fiyatlarla, KDV dahil)', h('strong', { text: H.fmtTry(t.tryGross) })],
+          ['Fiyatı olmayan satır', H.str(t.unpriced || 0)],
+          ['Kargo', 'Teyitte girilecek'],
+          ['Talep anı kuru', r.usdTry ? H.fmtNum(r.usdTry, 4) + ' ₺/USD · TCMB ' + H.fmtDate(r.date) : '']
+        ]) : dl([
           ['Ara toplam (KDV hariç)', H.fmtTry(t.tryNet)], ['KDV', H.fmtTry(t.tryVat)], ['Kargo', H.fmtTry(t.shippingTry)],
           ['Genel toplam (KDV dahil)', h('strong', { text: H.fmtTry(t.tryGross) })],
           ['USD, KDV hariç (yalnızca personel)', h('span', { class: 'mgp-staff', text: H.fmtUsd(t.usdNet) })],
-          ['Sipariş anı kuru', r.usdTry ? H.fmtNum(r.usdTry, 4) + ' ₺/USD · TCMB ' + H.fmtDate(r.date) : '']
+          ['Teyit anı kuru', r.usdTry ? H.fmtNum(r.usdTry, 4) + ' ₺/USD · TCMB ' + H.fmtDate(r.date) : ''],
+          ['Teyit', order.confirmedAt ? H.fmtDateTime(order.confirmedAt) + (order.confirmedBy ? ' · ' + H.str(order.confirmedBy) : '') : '']
         ])),
         card('Ödeme (havale / EFT)', dl([
           ['Ödeme referansı (açıklama)', h('strong', { class: 'mgp-mono', text: H.str(order.ref) })],
-          ['Beklenen tutar', H.fmtTry(t.tryGross)],
+          ['Beklenen tutar', pending ? 'Teyitten sonra' : H.fmtTry(t.tryGross)],
+          ['Yanıt son zamanı', pending ? H.fmtDateTime(order.respondBy) : ''],
           ['Son ödeme zamanı', order.status === 'odeme_bekleniyor' ? H.fmtDateTime(order.payBy) : ''],
-          ['Onaylanan belgeler', order.consents && order.consents.preInfo ? 'Ön bilgilendirme ' + H.fmtDateTime(order.consents.preInfo) + ' · Sözleşme ' + H.fmtDateTime(order.consents.contract) + (order.consents.docVersion ? ' · sürüm ' + H.str(order.consents.docVersion) : '') : '']
+          ['Onaylanan belgeler', order.consents && order.consents.preInfo ? 'Talepte ' + H.fmtDateTime(order.consents.preInfo) + (order.consents.docVersion ? ' · sürüm ' + H.str(order.consents.docVersion) : '')
+            + (order.confirmedAt ? ' · kesin metinler teyitte gönderildi' : '') : '']
         ])),
         card('Kargo takibi', tracking ? dl([['Firma', H.str(tracking.company)], ['Takip kodu', h('span', { class: 'mgp-mono', text: H.str(tracking.code) })], ['Takip adresi', link(H.str(tracking.url), H.httpsUrl(tracking.url), true)]]) : h('p', { class: 'mgp-muted', text: 'Henüz kargoya verilmedi.' }))
       ]));
 
       orderDetail.appendChild(card('Geçmiş', historyList(order)));
-      orderDetail.appendChild(card('İşlem', actionForm(order, allowed), 'mgp-card--actions'));
+      if (!pending) orderDetail.appendChild(card('İşlem', actionForm(order, allowed), 'mgp-card--actions'));
       title.focus();
     }
 
@@ -1155,7 +1433,7 @@
           ['Son çalışma', H.fmtDateTime(cron.lastRunAt) + (cron.lastRunAt ? ' (' + H.ageText(cron.lastRunAt, now) + ')' : '')],
           ['Durum', pill(health.label, 'cron-' + health.level)], ['Son çalışma özeti', H.summaryText(cron.summary)]
         ])),
-        card('Siparişler', dl([['Ödeme bekleyen', H.str(orders.awaitingPayment)], ['Ödeme süresi geçen', h('strong', { class: Number(orders.overdue) > 0 ? 'mgp-late' : null, text: H.str(orders.overdue) })]])),
+        card('Siparişler', dl([['Teyit bekleyen talep', h('strong', { class: Number(orders.confirmLate) > 0 ? 'mgp-late' : null, text: H.str(orders.awaitingConfirm || 0) + (Number(orders.confirmLate) > 0 ? ' (' + orders.confirmLate + ' yanıt süresi geçti)' : '') })], ['Ödeme bekleyen', H.str(orders.awaitingPayment)], ['Ödeme süresi geçen', h('strong', { class: Number(orders.overdue) > 0 ? 'mgp-late' : null, text: H.str(orders.overdue) })]])),
         card('Ürün fiyatları (kaynağı olan ürünler)', Object.keys(counts).length ? dl(Object.keys(counts).map(function (k) { return [H.COUNT_LABELS[k] || k, H.str(counts[k])]; })) : h('p', { class: 'mgp-muted', text: 'Veri yok.' }))
       ]));
 

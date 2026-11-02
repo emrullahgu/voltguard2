@@ -129,42 +129,49 @@ test('Mağaza API: fiyat, sepet, sipariş, durum, panel ve sızıntı denetimi',
     assert.ok(cart.quote && cart.quote.token); assert.ok(cart.warnings.some(w => w.includes('Deneme Marka DM-INV-5K')));
     const items2 = [{ id: 'vgm-9001', qty: 2 }, { id: 'vgm-9005', qty: 1 }];
 
-    // ---------------------------------------------------------------- ön bilgilendirme
-    r = await anon.call('magaza', 'onbilgi', { body: { quote: cart.quote.token, items: items2, ...customer() }, csrf: false });
+    // ---------------------------------------------------------------- ön bilgilendirme (talep aşaması: tahmini tutar, IBAN yok)
+    r = await anon.call('magaza', 'onbilgi', { body: { items: items2, ...customer() }, csrf: false });
     assert.equal(r.status, 200); publicTexts.push(r.text);
-    for (const t of ['Sentetik Test Elektrik Ltd. Şti.', IBAN, '12.696,00 ₺', 'Sentetik Sanayi Ltd. Şti.', 'CAYMA']) assert.ok((r.body.preInfo + r.body.contract).includes(t), t);
-    r = await anon.call('magaza', 'onbilgi', { body: { quote: cart.quote.token.slice(0, -2) + 'AA', items: items2, ...customer() }, csrf: false });
-    assert.equal(r.status, 409); assert.equal(r.body.error, 'quote_expired');
+    for (const t of ['Sentetik Test Elektrik Ltd. Şti.', '12.696,00 ₺', 'Sentetik Sanayi Ltd. Şti.', 'CAYMA', 'Bu aşamada ödeme yapmayın',
+      'Aşama: sipariş talebi', 'Sözleşme, teyit e-postasındaki kesin tutarın süresi içinde ödenmesiyle kurulur', 'Teyit e-postası satıcının bağlayıcı teklifidir']) assert.ok((r.body.preInfo + r.body.contract).includes(t), t);
+    assert.ok(!(r.body.preInfo + r.body.contract).includes(IBAN), 'talep belgelerinde IBAN yok');
+    assert.ok(!(r.body.preInfo + r.body.contract).includes('Test Bank'), 'talep belgelerinde banka yok');
+    r = await anon.call('magaza', 'onbilgi', { body: { items: [{ id: 'vgm-0000', qty: 1 }], ...customer() }, csrf: false });
+    assert.equal(r.status, 422); assert.equal(r.body.error, 'unknown_product');
 
-    // ---------------------------------------------------------------- sipariş doğrulama
-    const order = (id, over = {}) => ({ requestId: id, quote: cart.quote.token, items: items2, ...customer(over) });
+    // ---------------------------------------------------------------- talep doğrulama
+    const order = (id, over = {}) => ({ requestId: id, items: items2, ...customer(over) });
     r = await anon.call('magaza', 'siparis', { body: order('req-consent-000001', { consents: {} }), csrf: false });
     assert.equal(r.status, 422); assert.equal(r.body.error, 'invalid_order');
     assert.ok(r.body.fields['consents.preInfo'] && r.body.fields['consents.contract']);
     r = await anon.call('magaza', 'siparis', { body: order('req-vkn-0000000001', { billing: { ...customer().billing, vkn: '1234567891' } }), csrf: false });
     assert.equal(r.status, 422); assert.ok(r.body.fields['billing.vkn']);
-    r = await anon.call('magaza', 'siparis', { body: { ...order('req-mismatch-00001'), items: [{ id: 'vgm-9001', qty: 3 }, { id: 'vgm-9005', qty: 1 }] }, csrf: false });
-    assert.equal(r.status, 409); assert.equal(r.body.error, 'quote_expired');
+    r = await anon.call('magaza', 'siparis', { body: { ...order('req-unknown-000001'), items: [{ id: 'vgm-0000', qty: 1 }] }, csrf: false });
+    assert.equal(r.status, 422); assert.equal(r.body.error, 'unknown_product');
     r = await anon.call('magaza', 'siparis', { body: order('req-honeypot-00001', { website: 'http://spam' }), csrf: false });
     assert.equal(r.status, 422); assert.equal(r.body.error, 'rejected');
-    assert.equal(outbox(data).length, 0, 'Reddedilen siparişler e-posta üretmez');
+    assert.equal(outbox(data).length, 0, 'Reddedilen talepler e-posta üretmez');
 
-    // ---------------------------------------------------------------- başarılı sipariş
+    // ---------------------------------------------------------------- başarılı talep: teyit bekliyor, IBAN/ödeme talebi yok
     r = await anon.call('magaza', 'siparis', { body: order('req-success-000001'), csrf: false });
     assert.equal(r.status, 200, JSON.stringify(r.body)); publicTexts.push(r.text);
     const placed = r.body;
-    assert.match(placed.reference, REF); assert.equal(placed.amountTry, 12696); assert.equal(placed.bank.iban, IBAN);
-    assert.equal(placed.duplicate, false); assert.equal(placed.mailSent, true);
-    assert.ok(Math.abs(Date.parse(placed.payBy) / 1000 - (now + 24 * 3600)) < 120);
+    assert.match(placed.reference, REF); assert.equal(placed.status, 'teyit_bekliyor'); assert.equal(placed.estimateTry, 12696);
+    assert.equal(placed.bank, undefined); assert.equal(placed.payBy, undefined); assert.ok(!r.text.includes(IBAN), 'talep yanıtında IBAN yok');
+    assert.equal(placed.duplicate, false); assert.equal(placed.mailSent, true); assert.equal(placed.responseDays, 1);
+    assert.ok(Date.parse(placed.respondBy) / 1000 > now + 23 * 3600, 'yanıt süresi en az 1 iş günü sonrası');
+    assert.match(placed.message, /Teyit gelmeden ödeme yapmayın/);
     let mails = outbox(data);
     assert.equal(mails.length, 2);
     const toCustomer = mails.find(m => recipient(m) === 'musteri@example.test');
     const toStaff = mails.find(m => recipient(m) === 'info@voltguard.com.tr');
     assert.ok(toCustomer && toStaff);
-    for (const t of [placed.reference, IBAN, '12.696,00 ₺', 'Hesap sahibi']) assert.ok(toCustomer.includes(t), 'müşteri e-postası: ' + t);
+    for (const t of [placed.reference, '12.696,00 ₺', 'TEYİT GELMEDEN ÖDEME YAPMAYIN', 'stok ve fiyat teyidinden sonra kesin tutar ve ödeme bilgileri', 'en geç 1 iş günü'])
+      assert.ok(toCustomer.includes(t), 'müşteri e-postası: ' + t);
+    assert.ok(!toCustomer.includes(IBAN) && !toCustomer.includes('Hesap sahibi'), 'talep e-postasında IBAN/hesap yok');
     assert.doesNotMatch(toCustomer, /example\.test\/urun|USD/);
     assert.ok(toStaff.includes(`https://${SUPPLIER}/urun/9001`), 'personel e-postası tedarik kaynağını içerir');
-    assert.ok(subject(toCustomer).includes(placed.reference));
+    assert.ok(subject(toCustomer).includes(placed.reference)); assert.match(subject(toCustomer), /teyit bekleniyor/);
 
     // Tekrar koruması: aynı kimlik + içerik → aynı numara, yeni e-posta yok; değişmiş içerik → 409
     r = await anon.call('magaza', 'siparis', { body: order('req-success-000001'), csrf: false });
@@ -176,7 +183,9 @@ test('Mağaza API: fiyat, sepet, sipariş, durum, panel ve sızıntı denetimi',
     // ---------------------------------------------------------------- durum sorgusu
     r = await anon.call('magaza', 'durum', { body: { reference: placed.reference, email: 'MUSTERI@example.test' }, csrf: false });
     assert.equal(r.status, 200); publicTexts.push(r.text);
-    assert.equal(r.body.order.status, 'odeme_bekleniyor'); assert.equal(r.body.order.items.length, 2);
+    assert.equal(r.body.order.status, 'teyit_bekliyor'); assert.equal(r.body.order.items.length, 2);
+    assert.equal(r.body.order.payment, null); assert.equal(r.body.order.estimate, true); assert.match(r.body.order.paymentNote, /teyit gelmeden ödeme yapmayın/);
+    assert.ok(!r.text.includes(IBAN));
     assert.equal(r.body.order.private, undefined); assert.equal(r.body.order.totals.usdNet, undefined);
     for (const [ref, email] of [[placed.reference, 'baska@example.test'], ['VGS-000000-AAAAA', 'musteri@example.test'], ['../x', 'x']]) {
       r = await anon.call('magaza', 'durum', { body: { reference: ref, email }, csrf: false });
@@ -184,9 +193,7 @@ test('Mağaza API: fiyat, sepet, sipariş, durum, panel ve sızıntı denetimi',
     }
 
     // ---------------------------------------------------------------- formül enjeksiyonu için ikinci sipariş
-    r = await anon.call('magaza', 'sepet', { body: { items: [{ id: 'vgm-9005', qty: 1 }] }, csrf: false });
-    const q2 = r.body.quote.token;
-    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-formula-000001', quote: q2, items: [{ id: 'vgm-9005', qty: 1 }],
+    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-formula-000001', items: [{ id: 'vgm-9005', qty: 1 }],
       ...customer({ customer: { name: '=Sentetik Formül', email: 'formul@example.test', phone: '0232 000 00 00' }, billing: { type: 'bireysel', tckn: '', address: 'Sentetik Mah. Deneme Sok. No:1', city: 'İzmir', district: 'Konak' } }) }, csrf: false });
     assert.equal(r.status, 200, JSON.stringify(r.body));
     const second = r.body.reference;
@@ -199,8 +206,9 @@ test('Mağaza API: fiyat, sepet, sipariş, durum, panel ve sızıntı denetimi',
     writeState(data, { open: false });
     r = await anon.call('magaza', 'sepet', { body: { items: [{ id: 'vgm-9001', qty: 1 }] }, csrf: false });
     assert.equal(r.body.open, false); assert.equal(r.body.quote, null); assert.equal(r.body.lines[0].reason, 'closed');
+    assert.equal(r.body.requestable, false);
     r = await anon.call('magaza', 'siparis', { body: order('req-closed-0000001'), csrf: false });
-    assert.equal(r.status, 503); assert.equal(r.body.error, 'shop_closed');
+    assert.equal(r.status, 503); assert.equal(r.body.error, 'shop_closed'); assert.match(r.body.message, /çok yakında açılıyor.*teklif/);
     // durum dosyaları yeniden yazıldı; siparişler korunur
     writeState(data);
 
@@ -223,16 +231,103 @@ test('Mağaza API: fiyat, sepet, sipariş, durum, panel ve sızıntı denetimi',
     assert.equal(r.body.panel, true);
 
     r = await staff.call('magaza', 'panel_orders');
-    assert.equal(r.status, 200); assert.equal(r.body.total, 2); assert.equal(r.body.counts.odeme_bekleniyor, 2);
+    assert.equal(r.status, 200); assert.equal(r.body.total, 2); assert.equal(r.body.counts.teyit_bekliyor, 2); assert.equal(r.body.counts.odeme_bekleniyor, 0);
+    assert.equal(r.body.orders[0].estimate, true); assert.ok(r.body.orders[0].respondBy);
+    r = await staff.call('magaza', 'panel_orders', { query: { status: 'teyit_bekliyor' } });
+    assert.equal(r.body.total, 2, 'durum süzgeci: teyit bekleyen talepler');
     r = await staff.call('magaza', 'panel_orders', { query: { q: 'formül' } });
     assert.equal(r.body.total, 1);
     r = await staff.call('magaza', 'panel_order', { query: { ref: placed.reference } });
-    assert.equal(r.status, 200); assert.deepEqual(r.body.allowed, ['odeme_alindi', 'iptal']);
+    assert.equal(r.status, 200); assert.deepEqual(r.body.allowed, []);
     assert.equal(r.body.order.private.sources['vgm-9001'][0].supplier, SUPPLIER);
     assert.equal(r.body.order.items[0].unitUsdNet, 115);
+    // teyit yardımı: tedarikçinin son fiyat kontrolü satır başına (yalnızca personel)
+    const aid = r.body.confirmAid;
+    assert.equal(aid.lines['vgm-9001'].tryGross, 5520); assert.equal(aid.lines['vgm-9001'].sources[0].supplier, SUPPLIER);
+    assert.equal(aid.lines['vgm-9001'].fresh, true); assert.equal(aid.paymentHours, 24);
 
-    // durum geçişleri
+    // müşteri (ya da yetkisiz üye) talebi onaylayamaz/reddedemez; genel durum güncellemesi teyidi atlayamaz
+    const confirmBody = { ref: placed.reference, lines: [{ id: 'vgm-9001', qty: 2, unitTryGross: 5000 }, { id: 'vgm-9005', qty: 1, unitTryGross: 1700.5 }],
+      shippingTry: 150, publicNote: 'Stok teyit edildi; 2 iş günü içinde kargoda.', note: 'Tedarikçi telefonla teyit etti' };
+    r = await anon.call('magaza', 'panel_order_confirm', { body: confirmBody, csrf: false });
+    assert.equal(r.status, 403); assert.equal(r.body.error, 'csrf');
+    const outsider = client(srv.base);
+    await outsider.call('auth', 'me');
+    r = await outsider.call('auth', 'register', { body: { name: 'Sentetik Müşteri', email: `musteri-uye-${process.pid}@example.test`, password: 'Deneme12345', consent: true } });
+    assert.equal(r.status, 201);
+    for (const action of ['panel_order_confirm', 'panel_order_reject']) {
+      r = await outsider.call('magaza', action, { body: { ...confirmBody, reason: 'stok_yok' } });
+      assert.equal(r.status, 403, action); assert.equal(r.body.error, 'forbidden');
+    }
+    const baseMails = outbox(data).length;
     const upd = (body, csrf) => staff.call('magaza', 'panel_order_update', { body: { ref: placed.reference, ...body }, csrf });
+    r = await upd({ status: 'odeme_alindi' }); assert.equal(r.status, 409); assert.equal(r.body.error, 'confirm_required');
+    r = await staff.call('magaza', 'panel_order_confirm', { body: { ...confirmBody, lines: [{ id: 'vgm-9001', qty: 2, unitTryGross: -5 }] } });
+    assert.equal(r.status, 422); assert.ok(r.body.fields['lines.vgm-9001.unitTryGross'], 'hata ürün kimliğiyle anahtarlanır');
+    // adet yalnızca azaltılabilir: talepte 2 adet olan ürün 3 adetle teyit edilemez (bağlayıcı teklif istenmeyen mal içermez)
+    r = await staff.call('magaza', 'panel_order_confirm', { body: { ...confirmBody, lines: [{ id: 'vgm-9001', qty: 3, unitTryGross: 5000 }, { id: 'vgm-9005', qty: 1, unitTryGross: 1700.5 }] } });
+    assert.equal(r.status, 422); assert.match(r.body.fields['lines.vgm-9001.qty'], /talepteki adetten/); assert.equal(r.body.fields['lines.vgm-9005.qty'], undefined);
+    r = await staff.call('magaza', 'panel_order_confirm', { body: { ...confirmBody, lines: [{ id: 'vgm-9002', qty: 1, unitTryGross: 10 }] } });
+    assert.equal(r.status, 422); assert.equal(r.body.error, 'invalid_lines', 'talepte olmayan ürün eklenemez');
+    assert.equal(outbox(data).length, baseMails, 'geçersiz teyit e-posta üretmez');
+    // e-posta gönderilemezse teyit kaydedilmez: 503, talep teyit_bekliyor kalır, ödeme süresi başlamaz, tekrar denenebilir
+    const outDir = path.join(data, 'outbox'), outAside = path.join(data, 'outbox-aside');
+    fs.renameSync(outDir, outAside); fs.writeFileSync(outDir, 'aktarım yok');
+    try {
+      r = await staff.call('magaza', 'panel_order_confirm', { body: confirmBody });
+      assert.equal(r.status, 503, JSON.stringify(r.body)); assert.equal(r.body.error, 'mail_failed'); assert.match(r.body.message, /Teyit kaydedilmedi/);
+    } finally { fs.rmSync(outDir); fs.renameSync(outAside, outDir); }
+    r = await staff.call('magaza', 'panel_order', { query: { ref: placed.reference } });
+    assert.equal(r.body.order.status, 'teyit_bekliyor'); assert.equal(r.body.order.payBy ?? null, null); assert.equal(r.body.order.confirmedAt, undefined);
+    assert.equal(r.body.order.confirming, undefined, 'teyit kilidi kaldırıldı'); assert.ok(r.body.order.mail.confirmFailedAt);
+    r = await anon.call('magaza', 'durum', { body: { reference: placed.reference, email: 'musteri@example.test' }, csrf: false });
+    assert.equal(r.body.order.estimate, true); assert.equal(r.body.order.payment ?? null, null, 'ödeme bilgisi yok');
+
+    // personel teyidi: düzenlenen fiyatlar + kargo → kesin tutar, ödeme bekleniyor, 24 saat, IBAN'lı belgeler ve e-posta
+    r = await staff.call('magaza', 'panel_order_confirm', { body: confirmBody });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    const confirmed = r.body.order;
+    assert.equal(confirmed.status, 'odeme_bekleniyor'); assert.equal(r.body.mailSent, true); assert.deepEqual(r.body.allowed, ['odeme_alindi', 'iptal']);
+    assert.equal(confirmed.totals.tryGross, 2 * 5000 + 1700.5 + 150); assert.equal(confirmed.totals.shippingTry, 150);
+    assert.equal(confirmed.items[0].lineTryGross, 10000); assert.equal(confirmed.items[0].requested.unitTryGross, 5520);
+    assert.ok(Math.abs(confirmed.payBy - (confirmed.confirmedAt + 24 * 3600)) < 2, 'ödeme süresi teyitten başlar');
+    for (const t of [IBAN, '11.850,50 ₺', '5.000,00 ₺', '150,00 ₺ (KDV dahil)', 'Aşama: satıcı teyidi', placed.reference])
+      assert.ok((confirmed.docs.preInfo + confirmed.docs.contract).includes(t), 'kesin belgeler: ' + t);
+    assert.ok(!confirmed.docs.preInfo.includes('Bu aşamada ödeme yapmayın'));
+    assert.ok(confirmed.request.docs.preInfo.includes('Bu aşamada ödeme yapmayın'), 'talep aşaması belgeleri saklanır');
+    mails = outbox(data);
+    assert.equal(mails.length, baseMails + 1);
+    const confirmMail = mails.find(m => recipient(m) === 'musteri@example.test' && /teyit edildi/.test(subject(m)));
+    assert.ok(confirmMail, 'teyit e-postası');
+    for (const t of [IBAN, '11.850,50 ₺', placed.reference, 'Stok teyit edildi; 2 iş günü içinde kargoda.', 'Bu e-posta bağlayıcı teklifimizdir',
+      'son ödeme zamanına kadar ödediğinizde mesafeli satış sözleşmesi kurulur', 'TALEBİNİZE GÖRE DEĞİŞİKLİKLER',
+      'birim fiyat tahmini 5.520,00 ₺ yerine 5.000,00 ₺ (KDV dahil)', 'birim fiyat tahmini 1.656,00 ₺ yerine 1.700,50 ₺ (KDV dahil)'])
+      assert.ok(confirmMail.includes(t), 'teyit e-postası: ' + t);
+    assert.doesNotMatch(confirmMail, /tedarikci-bir|Tedarikçi telefonla teyit etti|USD/);
+    r = await staff.call('magaza', 'panel_order_confirm', { body: confirmBody });
+    assert.equal(r.status, 409); assert.equal(r.body.error, 'not_awaiting_confirm', 'ikinci teyit yok');
+    r = await anon.call('magaza', 'durum', { body: { reference: placed.reference, email: 'musteri@example.test' }, csrf: false });
+    assert.equal(r.body.order.status, 'odeme_bekleniyor'); assert.equal(r.body.order.payment.iban, IBAN); assert.equal(r.body.order.payment.amountTry, 11850.5);
+    assert.equal(r.body.order.estimate, false);
+    assert.doesNotMatch(r.text, /Tedarikçi telefonla|tedarikci-bir/);
+    const confirmEntry = r.body.order.history.find(h => h.status === 'odeme_bekleniyor');
+    assert.match(confirmEntry.note, /Stok teyit edildi; 2 iş günü içinde kargoda\. Talebinize göre değişiklikler: .*5\.520,00 ₺ yerine 5\.000,00 ₺/, 'farklar takip geçmişinde');
+    assert.ok(confirmed.docs.preInfo.includes('Sipariş talebine göre değişiklikler:') && confirmed.docs.contract.includes('Sipariş talebine göre değişiklikler:'), 'farklar kesin belgelerde');
+
+    // ret: ikinci talep stok yok → iptal (bedelsiz), müşteriye e-posta, IBAN yok
+    r = await staff.call('magaza', 'panel_order_reject', { body: { ref: second, reason: 'yok-boyle' } });
+    assert.equal(r.status, 422);
+    r = await staff.call('magaza', 'panel_order_reject', { body: { ref: second, reason: 'diger' } });
+    assert.equal(r.status, 422); assert.equal(r.body.error, 'note_required');
+    r = await staff.call('magaza', 'panel_order_reject', { body: { ref: second, reason: 'stok_yok', publicNote: 'Benzer ürün önerebiliriz.' } });
+    assert.equal(r.status, 200, JSON.stringify(r.body)); assert.equal(r.body.order.status, 'iptal'); assert.equal(r.body.mailSent, true);
+    const rejectMail = outbox(data).find(m => recipient(m) === 'formul@example.test' && /teyit edilemedi/.test(subject(m)));
+    assert.ok(rejectMail); assert.ok(rejectMail.includes('bedelsiz') && rejectMail.includes('stoğunda bulunamadı') && rejectMail.includes('Benzer ürün önerebiliriz.'));
+    assert.ok(!rejectMail.includes(IBAN));
+    r = await staff.call('magaza', 'panel_order_reject', { body: { ref: second, reason: 'stok_yok' } });
+    assert.equal(r.status, 409);
+
+    // durum geçişleri (teyit edilmiş sipariş)
     r = await upd({ status: 'kargoda' }); assert.equal(r.status, 409); assert.equal(r.body.error, 'invalid_transition');
     r = await upd({ status: 'odeme_alindi' }, false); assert.equal(r.status, 403); assert.equal(r.body.error, 'csrf');
     r = await upd({ status: 'odeme_alindi', note: 'Enpara hesabına geçti' }); assert.equal(r.status, 200); assert.equal(r.body.order.status, 'odeme_alindi');
@@ -269,7 +364,7 @@ test('Mağaza API: fiyat, sepet, sipariş, durum, panel ve sızıntı denetimi',
     assert.equal(r.body.items['vgm-9002'].orderable, true); assert.equal(r.body.items['vgm-9003'].orderable, true);
 
     r = await staff.call('magaza', 'panel_status');
-    assert.equal(r.body.open, true); assert.deepEqual(r.body.firmaMissing, []); assert.equal(r.body.orders.awaitingPayment, 1);
+    assert.equal(r.body.open, true); assert.deepEqual(r.body.firmaMissing, []); assert.equal(r.body.orders.awaitingPayment, 0); assert.equal(r.body.orders.awaitingConfirm, 0);
 
     // CSV
     r = await staff.call('magaza', 'panel_export', { body: {} });
@@ -304,7 +399,18 @@ test('Mağaza API: satıcı kimliği eksikken (firma-bos.json) sipariş alınmaz
   }
 });
 
-test('Mağaza API: sipariş anında fiyat yeniden denetlenir; jeton opak; durumda ödeme bilgisi', async () => {
+/** Mağaza yetkili personel (panel.json'a yazılır). */
+async function panelStaff(base, data, email = `personel-${process.pid}-${Math.random().toString(36).slice(2, 8)}@example.test`) {
+  const staff = client(base);
+  await staff.call('auth', 'me');
+  const r = await staff.call('auth', 'register', { body: { name: 'Mağaza Personeli', email, password: 'Deneme12345', consent: true } });
+  assert.equal(r.status, 201, JSON.stringify(r.body));
+  staff.id = r.body.user.id;
+  fs.writeFileSync(path.join(data, 'magaza', 'panel.json'), JSON.stringify({ version: 1, users: { [staff.id]: { email: 'x', grantedAt: now } } }));
+  return staff;
+}
+
+test('teyitli talep: fiyatı doğrulanmamış/bekletilen/stoksuz ürün de talep edilir; jeton opak; teyitten sonra durumda ödeme bilgisi', async () => {
   const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'voltguard-magaza-recheck-'));
   const data = path.join(sandbox, 'data'); fs.mkdirSync(data);
   writeState(data);
@@ -312,40 +418,51 @@ test('Mağaza API: sipariş anında fiyat yeniden denetlenir; jeton opak; durumd
   try {
     const anon = client(srv.base);
     const items = [{ id: 'vgm-9001', qty: 1 }];
-    const quote = async () => (await anon.call('magaza', 'sepet', { body: { items }, csrf: false })).body.quote.token;
-    const place = (token, id) => anon.call('magaza', 'siparis', { body: { requestId: id, quote: token, items, ...customer() }, csrf: false });
+    const place = id => anon.call('magaza', 'siparis', { body: { requestId: id, items, ...customer() }, csrf: false });
     const edit = fn => ozel.editPrice(data, 'vgm-9001', fn);
 
-    // SEC-2: jeton çözülünce USD fiyat/kur görünmemeli
-    const token = await quote();
+    // SEC-2: sepet jetonu çözülünce USD fiyat/kur görünmemeli
+    const token = (await anon.call('magaza', 'sepet', { body: { items }, csrf: false })).body.quote.token;
     const decoded = Buffer.from(token.split('.')[0].replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('latin1');
     assert.doesNotMatch(decoded, /usdTry|usdNet|"lines"|vgm-9001/);
     assert.doesNotMatch(token, /\./, 'Jeton imzalı JSON biçiminde olmamalı');
 
-    // SEC-1: 48 saati geçen / stokta olmayan ürün eski jetonla sipariş edilemez
-    edit(i => { i.checkedAt = now - 50 * 3600; });
-    let r = await place(token, 'req-stale-0000000001');
-    assert.equal(r.status, 409); assert.equal(r.body.error, 'quote_expired');
+    // Fiyatı bekletilen ürün: talep alınır, fiyat "teyitte bildirilir" (gösterilmeyen fiyat talebe girmez)
+    edit(i => { i.status = 'held'; });
+    const pre = await anon.call('magaza', 'onbilgi', { body: { items, ...customer() }, csrf: false });
+    assert.equal(pre.status, 200);
+    assert.match(pre.body.preInfo, /fiyat teyitte bildirilir/); assert.match(pre.body.preInfo, /1 ürünün fiyatı tahmine dahil değildir/);
+    let r = await place('req-held-00000000001');
+    assert.equal(r.status, 200, JSON.stringify(r.body)); assert.equal(r.body.unpriced, 1); assert.equal(r.body.estimateTry, 0);
+    const heldRef = r.body.reference;
+    // 48 saati geçmiş ve stoksuz ürün de talep edilir (karar personelde)
+    edit(i => { i.status = 'ok'; i.checkedAt = now - 50 * 3600; });
+    r = await place('req-stale-0000000001'); assert.equal(r.status, 200);
     edit(i => { i.checkedAt = now - 3600; i.status = 'unavailable'; i.available = false; });
-    r = await place(token, 'req-unavail-000000001');
-    assert.equal(r.status, 409); assert.equal(r.body.error, 'quote_expired');
-    edit(i => { i.status = 'held'; i.available = true; });
-    r = await place(token, 'req-held-00000000001');
-    assert.equal(r.status, 409); assert.equal(r.body.error, 'quote_expired');
-    assert.equal(outbox(data).length, 0);
-    edit(i => { i.status = 'ok'; });
-    const t2 = await quote();
-
-    // F7: önbilgilendirme metni sipariş kaydı/e-postası ile aynı (sipariş numarası hariç)
-    const pre = await anon.call('magaza', 'onbilgi', { body: { quote: t2, items, ...customer() }, csrf: false });
-    r = await place(t2, 'req-ok-0000000000001');
+    r = await place('req-unavail-000000001'); assert.equal(r.status, 200);
+    edit(i => { i.status = 'ok'; i.available = true; });
+    r = await place('req-ok-0000000000001');
     assert.equal(r.status, 200, JSON.stringify(r.body));
     const ref = r.body.reference;
-    const mail = outbox(data).find(m => recipient(m) === 'musteri@example.test');
-    assert.ok(mail && !/son ödeme: /.test(pre.body.contract + pre.body.preInfo));
-    assert.match(pre.body.preInfo + pre.body.contract, /\d{2}\.\d{2}\.\d{4} tarihli TCMB/);
+    assert.equal(r.body.estimateTry, 5520);
+    assert.ok(!outbox(data).some(m => m.includes(IBAN)), 'hiçbir talep e-postasında IBAN yok');
 
-    // UX-2: durum sayfası ödeme bilgilerini verir; USD kuru yok
+    // Talep aşamasında durum: ödeme bilgisi yok
+    r = await anon.call('magaza', 'durum', { body: { reference: ref, email: 'musteri@example.test' }, csrf: false });
+    assert.equal(r.body.order.payment, null); assert.equal(r.body.order.status, 'teyit_bekliyor'); assert.ok(r.body.order.respondBy);
+
+    // Personel teyidi: fiyatı olmayan talep de girilen fiyatla teyit edilir
+    const staff = await panelStaff(srv.base, data);
+    r = await staff.call('magaza', 'panel_order', { query: { ref: heldRef } });
+    assert.equal(r.body.confirmAid.lines['vgm-9001'].reason, 'ok');
+    r = await staff.call('magaza', 'panel_order_confirm', { body: { ref: heldRef, lines: [{ id: 'vgm-9001', qty: 1, unitTryGross: 6000 }], shippingTry: 0 } });
+    assert.equal(r.status, 200, JSON.stringify(r.body)); assert.equal(r.body.order.totals.tryGross, 6000);
+    assert.match(r.body.order.docs.preInfo, /Kargo: Ücretsiz/);
+    r = await staff.call('magaza', 'panel_order_confirm', { body: { ref, lines: [{ id: 'vgm-9001', qty: 1, unitTryGross: 5520 }], shippingTry: 0 } });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    assert.match(r.body.order.docs.preInfo + r.body.order.docs.contract, /\d{2}\.\d{2}\.\d{4} tarihli TCMB/);
+
+    // UX-2: teyitten sonra durum sayfası ödeme bilgilerini verir; USD kuru yok
     r = await anon.call('magaza', 'durum', { body: { reference: ref, email: 'musteri@example.test' }, csrf: false });
     assert.equal(r.status, 200);
     const o = r.body.order;
@@ -402,12 +519,12 @@ test('P1-09/10/01: adet kuralları sunucuda (qty_step), sepet satırı minQty/st
     assert.deepEqual([line.unit, line.minQty, line.step, line.packQty, line.maxQty, line.deliveryDays], ['metre', 100, 50, 100, 900, 3]);
     assert.deepEqual([mm.unit, mm.minQty, mm.step, mm.packQty, mm.deliveryDays], ['adet', 1, 1, null, 5], 'kategori varsayılan termini');
     const items = [{ id: 'vgm-9001', qty: 150 }, { id: 'vgm-9005', qty: 3 }];
-    const pre = await anon.call('magaza', 'onbilgi', { body: { quote: r.body.quote.token, items, ...customer() }, csrf: false });
+    const pre = await anon.call('magaza', 'onbilgi', { body: { items, ...customer() }, csrf: false });
     assert.equal(pre.status, 200, JSON.stringify(pre.body));
     assert.match(pre.body.preInfo, /150 metre ×/); assert.match(pre.body.preInfo, /Tahmini teslim süresi: 3 gün/); assert.match(pre.body.preInfo, /Tahmini teslim süresi: 5 gün/);
     // P1-01 (c): sipariş belgeleri ve müşteri e-postasında yer tutucu, boş alan ya da "yayından önce" notu yok
     for (const doc of [pre.body.preInfo, pre.body.contract]) assert.doesNotMatch(doc, /\[|yayından önce|\bnull\b|undefined/);
-    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-rules-00000001', quote: r.body.quote.token, items, ...customer() }, csrf: false });
+    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-rules-00000001', items, ...customer() }, csrf: false });
     assert.equal(r.status, 200, JSON.stringify(r.body));
     const mail = outbox(data).find(m => recipient(m) === 'musteri@example.test');
     const text = mail.split(/\r?\n\r?\n/).slice(1).join('\n');   // 8bit gövde
@@ -433,7 +550,7 @@ test('P1-03: üretimde Turnstile anahtarı (site ya da gizli) yoksa sipariş 503
       const anon = client(srv.base);
       const cart = await anon.call('magaza', 'sepet', { body: { items: [{ id: 'vgm-9001', qty: 1 }] }, csrf: false });
       assert.equal(cart.status, 200, 'sepet ve fiyat anahtarsız da çalışır');
-      const r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-captcha-000001', quote: cart.body.quote.token, items: [{ id: 'vgm-9001', qty: 1 }], ...customer() }, csrf: false });
+      const r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-captcha-000001', items: [{ id: 'vgm-9001', qty: 1 }], ...customer() }, csrf: false });
       assert.equal(r.status, 503, JSON.stringify(env)); assert.equal(r.body.error, 'captcha_unconfigured');
       assert.match(r.body.message, /güvenlik doğrulaması henüz yapılandırılmadı.*0545 434 67 35/);
       assert.equal(outbox(data).length, 0);
@@ -442,7 +559,7 @@ test('P1-03: üretimde Turnstile anahtarı (site ya da gizli) yoksa sipariş 503
   fs.rmSync(sandbox, { recursive: true, force: true });
 });
 
-test('sepet önce: sipariş edilemeyen satırlar sepette (teklif için) gösterim kuralıyla döner; sipariş ucu yalnızca imzalı, siparişe hazır satırları kabul eder', async () => {
+test('sepet önce: sipariş edilemeyen satırlar sepette gösterim kuralıyla döner; teyitli talep sepetin tamamını kabul eder (fiyatsız satır teyitte)', async () => {
   const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'voltguard-magaza-sepet-once-'));
   const data = path.join(sandbox, 'data'); fs.mkdirSync(data);
   writeState(data);
@@ -468,29 +585,34 @@ test('sepet önce: sipariş edilemeyen satırlar sepette (teklif için) gösteri
     assert.equal(cart.estimate.tryGross, Math.round((5520 + 82800 + (l2.lineEstimate || 0)) * 100) / 100, 'bilgi amaçlı tahmin gösterilen fiyatlarla');
     assert.equal(cart.estimate.unpriced, l2.display === null ? 2 : 1);
     assert.ok(cart.quote && cart.quote.token, 'imzalı jeton yalnızca siparişe hazır satırları taşır');
+    assert.equal(cart.requestable, true, 'mağaza açıkken her sepet satırı talep edilebilir');
 
-    // Sipariş ucu: jetonda olmayan (sipariş edilemeyen) satır eklenirse reddedilir; e-posta yok
+    // Teyitli talep: sepetin TAMAMI (nakliye, bekletilen, eski fiyatlı satırlar dahil) tek talep olur; fiyatsız satır "teyitte"
     const before = outbox(data).length;
-    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-sepet-once-0001', quote: cart.quote.token, items: mixed, ...customer() }, csrf: false });
-    assert.equal(r.status, 409); assert.equal(r.body.error, 'quote_expired');
-    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-sepet-once-0002', quote: cart.quote.token, items: [{ id: 'vgm-9001', qty: 1 }, { id: 'vgm-9004', qty: 1 }], ...customer() }, csrf: false });
-    assert.equal(r.status, 409); assert.equal(r.body.error, 'quote_expired', 'nakliye satırı siparişe sokulamaz');
-    assert.equal(outbox(data).length, before);
+    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-sepet-once-0001', items: mixed, ...customer() }, csrf: false });
+    assert.equal(r.status, 200, JSON.stringify(r.body)); assert.equal(r.body.status, 'teyit_bekliyor');
+    assert.equal(r.body.estimateTry, cart.estimate.tryGross, 'tahmini tutar sepetteki tahminle aynı');
+    assert.equal(r.body.unpriced, cart.estimate.unpriced);
+    const rec = JSON.parse(fs.readFileSync(path.join(data, 'magaza', 'siparisler.json'), 'utf8')).orders[r.body.reference];
+    assert.equal(rec.items.length, 4); assert.equal(rec.items.find(i => i.id === 'vgm-9003').unitTryGross, null);
+    assert.equal(rec.items.find(i => i.id === 'vgm-9004').freight, true); assert.equal(rec.payBy, null);
+    assert.match(rec.docs.preInfo, /Ağır\/hacimli ürün: nakliye ücreti teyitte bildirilir/);
+    assert.equal(outbox(data).length, before + 2);
 
-    // Sepetin tamamı siparişe hazırsa "orderable": true
+    // Sepetin tamamı 48 saatte doğrulanmışsa "orderable": true (etiket bilgisi)
     r = await anon.call('magaza', 'sepet', { body: { items: [{ id: 'vgm-9001', qty: 1 }, { id: 'vgm-9005', qty: 2 }] }, csrf: false });
     assert.equal(r.body.orderable, true); assert.equal(r.body.estimate.unpriced, 0);
 
-    // Kapalı mağaza: sepet yine fiyatlanır (teklif için), sipariş edilemez; sipariş ucu 503 shop_closed
-    const okToken = r.body.quote.token;
+    // Kapalı mağaza: sepet yine fiyatlanır (teklif için), talep alınmaz; sipariş ucu 503 shop_closed
     writeState(data, { open: false });
     r = await anon.call('magaza', 'sepet', { body: { items: [{ id: 'vgm-9001', qty: 3 }, { id: 'vgm-9003', qty: 1 }] }, csrf: false });
     assert.equal(r.status, 200); assert.equal(r.body.open, false); assert.equal(r.body.orderable, false); assert.equal(r.body.quote, null);
     assert.equal(r.body.lines[0].reason, 'closed'); assert.equal(r.body.lines[0].display, 'verified'); assert.equal(r.body.lines[0].lineEstimate, 16560);
     assert.equal(r.body.estimate.tryGross, 16560); assert.equal(r.body.estimate.unpriced, 1);
-    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-sepet-once-0003', quote: okToken, items: [{ id: 'vgm-9001', qty: 1 }, { id: 'vgm-9005', qty: 2 }], ...customer() }, csrf: false });
+    assert.equal(r.body.requestable, false);
+    r = await anon.call('magaza', 'siparis', { body: { requestId: 'req-sepet-once-0003', items: [{ id: 'vgm-9001', qty: 1 }, { id: 'vgm-9005', qty: 2 }], ...customer() }, csrf: false });
     assert.equal(r.status, 503); assert.equal(r.body.error, 'shop_closed');
-    assert.equal(outbox(data).length, before);
+    assert.equal(outbox(data).length, before + 2);
     assert.doesNotMatch(JSON.stringify(cart), /costUsd|usdNet|tedarikci-bir/);
   } finally {
     await srv.stop();
@@ -511,7 +633,7 @@ test('üye hesabı: sipariş oturumdan bağlanır, üye yalnızca kendi sipariş
     const items = [{ id: 'vgm-9005', qty: 1 }];
     const q = await actor.call('magaza', 'sepet', { body: { items }, csrf: false });
     assert.equal(q.status, 200, JSON.stringify(q.body));
-    return actor.call('magaza', 'siparis', { csrf, body: { requestId, quote: q.body.quote.token, items,
+    return actor.call('magaza', 'siparis', { csrf, body: { requestId, items,
       ...customer({ customer: { name: 'Sentetik Üye', email, phone: '0532 000 00 00' } }), ...extra } });
   };
   const register = async (name, email) => {
@@ -567,7 +689,9 @@ test('üye hesabı: sipariş oturumdan bağlanır, üye yalnızca kendi sipariş
     r = await alice.call('magaza', 'hesap_siparisler');
     assert.equal(r.status, 200); assert.equal(r.body.verified, false); assert.equal(r.body.claimed, 0);
     assert.deepEqual(r.body.orders.map(o => o.reference), [linked]);
-    assert.equal(r.body.orders[0].payment.iban, IBAN); assert.equal(r.body.hasSaved, true);
+    assert.equal(r.body.orders[0].status, 'teyit_bekliyor'); assert.equal(r.body.orders[0].payment, null, 'teyitten önce ödeme bilgisi yok');
+    assert.equal(r.body.orders[0].estimate, true); assert.ok(r.body.orders[0].respondBy); assert.match(r.body.orders[0].paymentNote, /teyit gelmeden/);
+    assert.ok(!r.text.includes(IBAN)); assert.equal(r.body.hasSaved, true);
     r = await alice.call('magaza', 'hesap_sahiplen', { body: {} });
     assert.equal(r.status, 403); assert.equal(r.body.error, 'email_unverified');
     assert.equal(orders()[guestA].member, undefined);
@@ -576,10 +700,23 @@ test('üye hesabı: sipariş oturumdan bağlanır, üye yalnızca kendi sipariş
     r = await alice.call('magaza', 'hesap_siparis', { query: { ref: linked } });
     assert.equal(r.status, 200);
     assert.match(r.body.order.docs.preInfo, /^ÖN BİLGİLENDİRME FORMU/); assert.match(r.body.order.docs.contract, /MESAFELİ SATIŞ SÖZLEŞMESİ/);
-    assert.equal(r.body.order.payment.iban, IBAN); assert.equal(r.body.order.history[0].status, 'odeme_bekleniyor');
+    assert.equal(r.body.order.payment, null); assert.equal(r.body.order.history[0].status, 'teyit_bekliyor');
+    assert.match(r.body.order.docs.preInfo, /Bu aşamada ödeme yapmayın/); assert.ok(!r.text.includes(IBAN));
     assert.doesNotMatch(r.text, /tedarikci-bir|costTry|usdNet|unitUsdNet|"private"|ipHash|"member"/);
     r = await alice.call('magaza', 'hesap_siparis', { query: { ref: guestA } });
     assert.equal(r.status, 404, 'bağlı olmayan sipariş açılmaz');
+
+    // Personel teyit eder: üye hesabında durum "Ödeme bekleniyor", ödeme bilgisi ve kesin belgeler görünür
+    const teyitci = await panelStaff(srv.base, data);
+    r = await teyitci.call('magaza', 'panel_order_confirm', { body: { ref: linked, lines: [{ id: 'vgm-9005', qty: 1, unitTryGross: 1700 }], shippingTry: 0 } });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    r = await alice.call('magaza', 'hesap_siparisler');
+    assert.equal(r.body.orders[0].status, 'odeme_bekleniyor'); assert.equal(r.body.orders[0].statusLabel, 'Ödeme bekleniyor');
+    assert.equal(r.body.orders[0].payment.iban, IBAN); assert.equal(r.body.orders[0].totalTry, 1700); assert.equal(r.body.orders[0].estimate, false);
+    r = await alice.call('magaza', 'hesap_siparis', { query: { ref: linked } });
+    assert.deepEqual(r.body.order.history.map(h => h.status), ['teyit_bekliyor', 'odeme_bekleniyor']);
+    assert.ok(r.body.order.docs.preInfo.includes(IBAN) && r.body.order.docs.preInfo.includes('1.700,00 ₺'));
+    assert.doesNotMatch(r.text, /tedarikci-bir|costTry|usdNet|unitUsdNet|"private"|ipHash|"member"|"request"/);
 
     // Başka üye: Alice'in siparişini göremez; misafir sipariş e-postasıyla kayıt olsa da doğrulamadan ekleyemez
     const mallory = await register('Mallory Sentetik', 'kurban@example.test');
@@ -612,6 +749,14 @@ test('üye hesabı: sipariş oturumdan bağlanır, üye yalnızca kendi sipariş
     assert.equal(orders()[guestVictim].member, undefined, 'başka e-postanın siparişi eklenmez');
     r = await alice.call('magaza', 'hesap_siparisler');
     assert.equal(r.body.verified, true); assert.equal(r.body.orders.length, 4);
+    // Reddedilen talep üye hesabında "İptal edildi" olarak, müşteriye görünür gerekçeyle görünür
+    r = await teyitci.call('magaza', 'panel_order_reject', { body: { ref: guestA, reason: 'fiyat_degisti' } });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    r = await alice.call('magaza', 'hesap_siparisler');
+    const rej = r.body.orders.find(o => o.reference === guestA);
+    assert.equal(rej.status, 'iptal'); assert.equal(rej.payment, null);
+    r = await alice.call('magaza', 'hesap_siparis', { query: { ref: guestA } });
+    assert.match(r.body.order.history[r.body.order.history.length - 1].note, /bedelsiz kapatıldı.*Tedarik fiyatı değiştiği/);
     // Doğrulanmış üye: sonradan misafir olarak verilen sipariş listede kendiliğinden eklenir
     r = await place(anon, 'req-uye-guest-00003', 'ALICE@example.test');
     const later = r.body.reference;
@@ -677,7 +822,7 @@ test('üye hesabı: doğrulama kodu tahmini e-posta adresine göre sınırlanır
     // Kayıtlı bilgi: T.C. kimlik no saklanmaz ve hesap_profil ile okunamaz
     const items = [{ id: 'vgm-9005', qty: 1 }];
     let r = await atk.call('magaza', 'sepet', { body: { items }, csrf: false });
-    r = await atk.call('magaza', 'siparis', { csrf: atk.csrf, body: { requestId: 'req-uye-tckn-000001', quote: r.body.quote.token, items, saveDetails: true,
+    r = await atk.call('magaza', 'siparis', { csrf: atk.csrf, body: { requestId: 'req-uye-tckn-000001', items, saveDetails: true,
       ...customer({ customer: { name: 'Sentetik Üye', email: 'hedef@example.test', phone: '0532 000 00 00' },
         billing: { type: 'bireysel', tckn: '10000000146', address: 'Sentetik Mah. Deneme Sok. No:1', city: 'İzmir', district: 'Konak' } }) } });
     assert.equal(r.status, 200, JSON.stringify(r.body)); assert.deepEqual(r.body.account, { linked: true, saved: true });

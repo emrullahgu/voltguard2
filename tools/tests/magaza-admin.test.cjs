@@ -307,7 +307,7 @@ test('status mirrors panel_status (same function) and reports health, rate and o
   assert.equal(s.rate, null);
   assert.equal(s.cron.healthy, false);
   assert.equal(s.counts.noSource, 5);
-  assert.deepEqual(s.orders, {awaitingPayment: 0, overdue: 0});
+  assert.deepEqual(s.orders, {awaitingPayment: 0, overdue: 0, awaitingConfirm: 0, confirmLate: 0});
   assert.match(run(data, ['status']).out, /KAPALI/);
 
   assert.equal(run(data, ['import', write('kaynak.json', goodConfig())]).status, 0);
@@ -322,7 +322,7 @@ test('status mirrors panel_status (same function) and reports health, rate and o
   assert.equal(t.rate.usdTry, 41.1234);
   assert.equal(t.cron.healthy, true);
   assert.equal(t.counts.noSource, 3);
-  assert.deepEqual(t.orders, {awaitingPayment: 2, overdue: 1});
+  assert.deepEqual(t.orders, {awaitingPayment: 2, overdue: 1, awaitingConfirm: 0, confirmLate: 0});
   const text = run(data, ['status']).out;
   assert.match(text, /41,1234 ₺/);
   assert.match(text, /sağlıklı/);
@@ -558,6 +558,52 @@ test('panel overdue logic follows the server flag, else payBy while awaiting pay
   assert.equal(panel.isOverdue(null, now), false);
 });
 
+test('panel builds the confirmation of an order request (prices, quantities, removed lines, shipping) and the rejection', () => {
+  let c = panel.buildConfirm([
+    {id: 'vgm-9001', qty: '2', unit: '5.000,00'},
+    {id: 'vgm-9005', qty: 1, unit: '1700,5'},
+    {id: 'vgm-9003', qty: 1, unit: '', remove: true},
+  ], '150', {publicNote: ' 2 iş günü içinde kargoda ', note: ''});
+  assert.equal(c.ok, true, JSON.stringify(c.errors));
+  assert.deepEqual(c.body, {lines: [{id: 'vgm-9001', qty: 2, unitTryGross: 5000}, {id: 'vgm-9005', qty: 1, unitTryGross: 1700.5}], shippingTry: 150, publicNote: '2 iş günü içinde kargoda'});
+  assert.equal(c.total, 11850.5, 'customer total incl. VAT and shipping');
+  assert.equal(panel.buildConfirm([{id: 'a', qty: 1, unit: '100'}], '', {}).body.shippingTry, 0, 'empty shipping = free');
+  c = panel.buildConfirm([{id: 'a', qty: '0', unit: 'abc'}, {id: 'b', qty: 1000, unit: '-5'}], 'x', {});
+  assert.equal(c.ok, false);
+  assert.ok(c.errors['a.qty'] && c.errors['a.unit'] && c.errors['b.qty'] && c.errors['b.unit'] && c.errors.shipping, 'errors keyed by product id');
+  // a removed row above does not shift the error onto another row
+  c = panel.buildConfirm([{id: 'x', qty: 1, unit: '10', remove: true}, {id: 'y', qty: 'abc', unit: '10'}], '0', {});
+  assert.ok(c.errors['y.qty'] && !c.errors['0.qty'] && !c.errors['1.qty']);
+  // quantity becomes binding: decimals or text are errors, not silently truncated; never above the requested quantity
+  for (const q of ['2.5', '2,5', '3 adet', '1e1', ' ', '-1']) assert.ok(panel.buildConfirm([{id: 'a', qty: q, unit: '10'}], '0', {}).errors['a.qty'], 'qty ' + JSON.stringify(q));
+  assert.equal(panel.buildConfirm([{id: 'a', qty: ' 2 ', max: 2, unit: '10'}], '0', {}).ok, true);
+  c = panel.buildConfirm([{id: 'a', qty: '3', max: 2, unit: '10'}], '0', {});
+  assert.ok(!c.ok && /talepteki adetten/.test(c.errors['a.qty']), 'cannot exceed the requested quantity');
+  assert.deepEqual(panel.confirmServerErrors({'lines.vgm-9001.qty': 'q', 'lines.vgm-9005.unitTryGross': 'u', shippingTry: 's', other: 'x'}),
+    {'vgm-9001.qty': 'q', 'vgm-9005.unit': 'u', shipping: 's'}, 'server 422 fields map to rows by product id');
+  c = panel.buildConfirm([{id: 'a', qty: 1, unit: '10', remove: true}], '0', {});
+  assert.ok(!c.ok && /reddedin/.test(c.errors.lines), 'removing every line asks for a rejection instead');
+  assert.equal(panel.buildConfirm([{id: 'a', qty: 3, unit: '0,333'}], '0', {}).ok, false, 'at most 2 decimals (parseTry)');
+  assert.equal(panel.buildConfirm([{id: 'a', qty: 3, unit: 33.333}], 0, {}).body.lines[0].unitTryGross, 33.33);
+
+  let r = panel.buildReject('', {});
+  assert.ok(!r.ok && r.errors.reason);
+  r = panel.buildReject('diger', {publicNote: 'x'});
+  assert.ok(!r.ok && r.errors.publicNote, '"other" needs a customer-visible reason');
+  r = panel.buildReject('stok_yok', {publicNote: '', note: ' iç '});
+  assert.deepEqual(r, {ok: true, errors: {}, body: {reason: 'stok_yok', note: 'iç'}});
+  assert.deepEqual(panel.REJECT_REASONS.map(x => x[0]), ['stok_yok', 'fiyat_degisti', 'diger']);
+  const server = JSON.parse(runPhp(tmp(), "require_once $argv[1] . 'magaza-siparis.php'; echo json_encode(array_keys(VGM_REJECT_REASONS));", [lib]));
+  assert.deepEqual(panel.REJECT_REASONS.map(x => x[0]), server, 'reject reasons match the server');
+
+  const now = Date.UTC(2026, 10, 2, 12, 0, 0);
+  assert.equal(panel.isRespondLate({status: 'teyit_bekliyor', respondBy: new Date(now - 1000).toISOString()}, now), true);
+  assert.equal(panel.isRespondLate({status: 'teyit_bekliyor', respondBy: new Date(now + 1000).toISOString()}, now), false);
+  assert.equal(panel.isRespondLate({status: 'teyit_bekliyor', respondLate: false, respondBy: new Date(now - 1000).toISOString()}, now), false, 'server flag wins');
+  assert.equal(panel.isRespondLate({status: 'odeme_bekleniyor', respondBy: new Date(now - 1000).toISOString()}, now), false);
+  assert.deepEqual(panel.allowedFromStatus('teyit_bekliyor'), [], 'no generic status button while a request awaits confirmation');
+});
+
 test('panel validates the CSV date range', () => {
   const today = '2026-10-27';
   assert.deepEqual(panel.validateExportRange('', '', today), {ok: true, errors: {}, from: '', to: ''});
@@ -745,4 +791,23 @@ test('panel asset versions in the page match the file contents (tools/sync-versi
     const rev = crypto.createHash('sha256').update(Buffer.from(bytes, 'latin1')).digest('hex').slice(0, 12);
     assert.ok(html.includes(`../${rel}?v=${rev}`), `${rel} reference must carry ?v=${rev}`);
   }
+});
+
+test('legacy direct orders (no talep stage) keep fixed amounts; confirmation changes are summarised for the customer', {skip: !hasOrderModule}, () => {
+  const dir = lib.split(path.sep).join('/');
+  const code = `define('VG_API', true); require '${dir}bootstrap.php';
+    foreach (['magaza.php', 'magaza-belge.php', 'magaza-siparis.php'] as $f) require_once '${dir}' . $f;
+    $legacy = ['status' => 'odeme_bekleniyor', 'consents' => ['preInfo' => 1, 'contract' => 1], 'createdAt' => 1];
+    echo json_encode([vgm_order_is_estimate($legacy), vgm_doc_context($legacy, [], [])['stage'],
+      vgm_order_is_estimate(['status' => 'teyit_bekliyor', 'consents' => ['stage' => 'talep']]),
+      vgm_order_is_estimate(['status' => 'iptal', 'consents' => ['stage' => 'talep']]), vgm_order_is_estimate([]),
+      vgm_confirm_changes(['request' => ['items' => [['id' => 'a', 'name' => 'A', 'qty' => 3, 'unit' => 'adet', 'unitTryGross' => 100.0],
+        ['id' => 'b', 'name' => 'B', 'qty' => 1, 'unitTryGross' => null], ['id' => 'c', 'name' => 'C', 'qty' => 2, 'unit' => 'm', 'unitTryGross' => 10.0]]],
+        'items' => [['id' => 'a', 'qty' => 2, 'unitTryGross' => 100.0], ['id' => 'b', 'qty' => 1, 'unitTryGross' => 50.0]]])], JSON_UNESCAPED_UNICODE);`;
+  const r = spawnSync(php, ['-n', '-r', code], {encoding: 'utf8', windowsHide: true});
+  assert.equal(r.status, 0, r.stderr || r.stdout);
+  const [legacyEstimate, legacyStage, waiting, rejected, draft, changes] = JSON.parse(r.stdout);
+  assert.equal(legacyEstimate, false, 'old direct order shows its fixed amount, not "Tahmini tutar"'); assert.equal(legacyStage, 'teyit');
+  assert.equal(waiting, true); assert.equal(rejected, true, 'rejected request stays an estimate'); assert.equal(draft, true, 'checkout draft');
+  assert.deepEqual(changes, ['A: adet 3 adet yerine 2 adet', 'B: birim fiyat teyitte belirlendi, 50,00 ₺ (KDV dahil)', 'C (2 m) teyit edilemedi ve siparişten çıkarıldı']);
 });

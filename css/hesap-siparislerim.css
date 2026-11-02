@@ -20,6 +20,7 @@
 
 .so-pay { border: 1px solid var(--th-amber-line); background: var(--th-tint-amber); color: var(--th-text); border-radius: 10px; padding: .8rem 1rem; display: grid; gap: .5rem; }
 .so-pay--late { border-color: var(--th-red-line); background: var(--th-tint-red); }
+.so-pay--wait { border-color: var(--th-blue-line); background: var(--th-tint-blue); }
 .so-pay p { margin: 0; font-size: .9rem; }
 .so-pay a { color: inherit; font-weight: 700; }
 .so-pay__dl { margin: 0; display: grid; gap: .35rem; }

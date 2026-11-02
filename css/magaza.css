@@ -581,6 +581,7 @@ body:has(.vgm--cart) .vg-footer__cta, body:has(.vgm--checkout) .vg-footer__cta {
 .vgm-mini { list-style: none; display: grid; gap: .5rem; margin: 0 0 1rem; padding: 0 0 1rem; border-bottom: 1px solid var(--th-border); font-size: .88rem; }
 .vgm-mini li { display: flex; justify-content: space-between; gap: .75rem; }
 .vgm-mini span:last-child { white-space: nowrap; font-weight: 600; color: var(--th-heading); }
+.vgm-mini span.vgm-mini__soft { color: var(--th-text-2); font-weight: 500; }
 
 /* ---------- Ödeme formu ---------- */
 .vgm-form { display: grid; gap: 1.25rem; }

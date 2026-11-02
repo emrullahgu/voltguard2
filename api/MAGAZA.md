@@ -386,6 +386,28 @@ son çalışma 30 dakika içinde, son 48 saatte doğrulanmış fiyat oranı (`fr
 
 Sepet adımındaki canlı yeniden kontrol değişmedi: 6 saatten eski fiyatlar, toplam 8 sn, en çok 6 getirme.
 
+## Teyitli sipariş talebi (sahibin kararı, 2026-11-02)
+
+"Kendimizi garantiye almak için … parayı öder ben ürünü bulamam, bir zorunluluğum olmasın." Doğrudan sipariş + IBAN
+akışı (48 saat doğrulanmış satırlar) kaldırıldı; yerine:
+
+1. **Talep** (`siparis`, yalnızca `open: true` iken; hız sınırı, Turnstile `vgm_turnstile_config`, `requestId` tekrar
+   koruması aynı): sepetin TAMAMI `[{id, qty}]` olarak gelir, fiyatı sunucu gösterim kuralıyla (`vgm_price_display`)
+   bilgi amaçlı hesaplar (fiyatı gösterilmeyen satır `null` = "fiyat teyitte bildirilir"). Durum `teyit_bekliyor`,
+   `payBy: null`, `respondBy` = 1 iş günü (`VGM_CONFIRM_BUSINESS_DAYS`). Yanıtta, e-postada ve belgelerde IBAN/ödeme
+   talebi YOK; "teyit gelmeden ödeme yapmayın". Belgeler talep aşaması metniyle (`stage: talep`) üretilir.
+2. **Teyit** (`panel_order_confirm`, yalnızca personel): `lines [{id, qty, unitTryGross}]` (talepteki ürünler; eksik
+   satır = çıkarıldı), `shippingTry`, `publicNote?`, `note?`. Tutarlar sabitlenir, `odeme_bekleniyor`, `payBy` =
+   teyit + `paymentHours`, kesin tutarlı form + sözleşme (`stage: teyit`, IBAN'lı) üretilir ve e-postayla gider;
+   talep aşaması kaydı `request {items, totals, docs, respondBy}` içinde saklanır. Teyit e-postası satıcının bağlayıcı
+   teklifidir (talepten farklar e-postada ve geçmişte, `vgm_confirm_changes`); sözleşme müşteri kesin tutarı süresinde
+   ödeyince kurulur. E-posta gönderilemezse teyit kaydedilmez (503 `mail_failed`, talep `teyit_bekliyor` kalır).
+3. **Ret** (`panel_order_reject`): `reason` stok_yok | fiyat_degisti | diger (+`publicNote`), durum `iptal`
+   (bedelsiz), müşteriye e-posta. `vgm_order_update` `teyit_bekliyor`dan hiçbir duruma geçirmez (`confirm_required`).
+
+Panel: talep ayrıntısında satır bazında adet/birim fiyat düzenleme, çıkarma, kargo, notlar ve tedarikçinin son
+fiyat kontrolü (`confirmAid`, yalnızca personel; "Şimdi kontrol et" = `panel_check_now`).
+
 ## Sipariş kaydı (`siparisler.json` → `orders[ref]`)
 
 ```

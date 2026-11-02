@@ -9,7 +9,7 @@
   var esc = UI.esc;
   var API = '/api/magaza.php';
   var REF_RE = /^VGS-[0-9]{6}-[A-HJ-NP-Z2-9]{5}$/;
-  var STEPS = [['odeme_bekleniyor', 'Ödeme bekleniyor'], ['odeme_alindi', 'Ödeme alındı'], ['tedarikte', 'Tedarik ediliyor'], ['kargoda', 'Kargoya verildi'], ['teslim_edildi', 'Teslim edildi']];
+  var STEPS = [['teyit_bekliyor', 'Teyit bekleniyor'], ['odeme_bekleniyor', 'Ödeme bekleniyor'], ['odeme_alindi', 'Ödeme alındı'], ['tedarikte', 'Tedarik ediliyor'], ['kargoda', 'Kargoya verildi'], ['teslim_edildi', 'Teslim edildi']];
   var listEl = document.getElementById('so-list');
   var detailEl = document.getElementById('so-detail');
   var extraEl = document.getElementById('so-extra');
@@ -52,15 +52,20 @@
     try { return d.toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
     catch (e) { return UI.fmtDateTime(iso); }
   }
-  function tone(status) { return status === 'iptal' || status === 'iade' ? 'off' : status === 'teslim_edildi' ? 'ok' : status === 'odeme_bekleniyor' ? 'wait' : 'info'; }
+  function tone(status) { return status === 'iptal' || status === 'iade' ? 'off' : status === 'teslim_edildi' ? 'ok' : status === 'odeme_bekleniyor' || status === 'teyit_bekliyor' ? 'wait' : 'info'; }
   function chip(o) { return '<span class="so-chip so-chip--' + tone(o.status) + '">' + esc(o.statusLabel || o.status) + '</span>'; }
   function say(kind, text) {
     if (!text) { msgEl.hidden = true; msgEl.innerHTML = ''; return; }
     UI.alertBox(msgEl, kind, text);
   }
 
-  /* Ödeme bekleyen sipariş: havale/EFT bilgisi (sunucu yalnızca süre dolmadıysa döndürür). */
+  /* Teyit bekleyen talep: ödeme bilgisi YOK (teyit gelmeden ödeme yapılmaz). Ödeme bekleyen (teyit edilmiş) sipariş:
+     havale/EFT bilgisi (sunucu yalnızca süre dolmadıysa döndürür). */
   function paymentBox(o) {
+    if (o.status === 'teyit_bekliyor') {
+      return '<div class="so-pay so-pay--wait" role="note"><p><strong>Stok ve fiyat teyidi bekleniyor.</strong> Teyitten sonra kesin tutar ve ödeme bilgileri e-postayla gönderilir'
+        + (o.respondBy ? ' (yanıt: en geç ' + esc(fmtDT(o.respondBy)) + ' TSİ)' : '') + '. <strong>Teyit gelmeden ödeme yapmayın.</strong> Teyit edemezsek talebiniz bedelsiz kapanır.</p></div>';
+    }
     if (o.status !== 'odeme_bekleniyor') return '';
     if (o.payOverdue) {
       return '<div class="so-pay so-pay--late" role="note"><p><strong>Son ödeme süresi doldu.</strong> Ödeme yapmadan önce lütfen bizimle iletişime geçin: <a href="tel:+905454346735">0545 434 67 35</a> · <a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a>.</p></div>';
@@ -109,7 +114,9 @@
         var more = o.itemCount > 1 ? ' ve ' + (o.itemCount - 1) + ' ürün daha' : '';
         return '<li class="so-card">' +
           '<div class="so-card__head"><a class="so-card__ref so-mono" href="#' + esc(o.reference) + '" aria-label="Sipariş ' + esc(o.reference) + ' ayrıntıları">' + esc(o.reference) + '</a>' + chip(o) + '</div>' +
-          '<p class="so-card__meta">' + esc(fmtDT(o.createdAt)) + ' · ' + esc(o.itemCount) + ' kalem · <strong>' + esc(fmtTry(o.totalTry)) + '</strong> (KDV dahil)</p>' +
+          '<p class="so-card__meta">' + esc(fmtDT(o.createdAt)) + ' · ' + esc(o.itemCount) + ' kalem · ' + (o.estimate
+            ? (o.totalTry > 0 ? 'tahmini <strong>' + esc(fmtTry(o.totalTry)) + '</strong> (KDV dahil' + (o.unpriced > 0 ? '; ' + esc(o.unpriced) + ' ürün teyitte' : '') + ')' : 'fiyat teyitte bildirilir')
+            : '<strong>' + esc(fmtTry(o.totalTry)) + '</strong> (KDV dahil)') + '</p>' +
           '<p class="so-card__items">' + esc(o.firstItem) + esc(more) + '</p>' +
           paymentBox(o) + trackingLine(o.tracking) +
           '<p class="so-card__foot"><a class="vg-btn vg-btn--ghost vg-btn--sm" href="#' + esc(o.reference) + '">Ayrıntılar ve belgeler</a></p>' +
@@ -213,12 +220,15 @@
       (o.items || []).map(function (it) {
         var sub = [it.brand, it.mpn].filter(Boolean).join(' · ');
         return '<tr><td data-label="Ürün">' + esc(it.name) + (sub ? '<span class="so-sub">' + esc(sub) + '</span>' : '') + '</td><td data-label="Miktar" class="so-num">' + esc(it.qty) + ' ' + esc(it.unit || 'adet') + '</td>' +
-          '<td data-label="Birim fiyat" class="so-num">' + esc(fmtTry(it.unitTryGross)) + '</td><td data-label="Tutar" class="so-num">' + esc(fmtTry(it.lineTryGross)) + '</td></tr>';
+          '<td data-label="Birim fiyat" class="so-num">' + (typeof it.unitTryGross === 'number' ? esc(fmtTry(it.unitTryGross)) : 'Teyitte') + '</td><td data-label="Tutar" class="so-num">' + (typeof it.lineTryGross === 'number' ? esc(fmtTry(it.lineTryGross)) : 'Teyitte') + '</td></tr>';
       }).join('') + '</tbody></table></div>' +
-      '<dl class="so-totals">' + row('Ara toplam (KDV hariç)', esc(fmtTry(t.tryNet))) + row('KDV', esc(fmtTry(t.tryVat))) +
-      row('Kargo', typeof t.shippingTry === 'number' && t.shippingTry > 0 ? esc(fmtTry(t.shippingTry)) : 'Ücretsiz') +
-      '<div class="so-totals__grand"><dt>Toplam (KDV dahil)</dt><dd>' + esc(fmtTry(t.tryGross)) + '</dd></div></dl>' +
-      (o.rate && o.rate.date ? '<p class="so-fine">Fiyatlar ' + esc(o.rate.date.split('-').reverse().join('.')) + ' tarihli TCMB kuruyla hesaplanıp sipariş anında Türk lirası olarak sabitlendi.</p>' : '');
+      (o.estimate
+        ? '<dl class="so-totals">' + row('Kargo', 'Teyitte bildirilir') + '<div class="so-totals__grand"><dt>Tahmini tutar (KDV dahil)</dt><dd>' + (t.tryGross > 0 ? esc(fmtTry(t.tryGross)) : '—') + '</dd></div></dl>'
+          + '<p class="so-fine">Talepteki fiyatlar bilgi amaçlıdır. Kesin tutar stok ve fiyat teyidinde sabitlenir ve e-postayla bildirilir.</p>'
+        : '<dl class="so-totals">' + row('Ara toplam (KDV hariç)', esc(fmtTry(t.tryNet))) + row('KDV', esc(fmtTry(t.tryVat))) +
+          row('Kargo', typeof t.shippingTry === 'number' && t.shippingTry > 0 ? esc(fmtTry(t.shippingTry)) : 'Ücretsiz') +
+          '<div class="so-totals__grand"><dt>Toplam (KDV dahil)</dt><dd>' + esc(fmtTry(t.tryGross)) + '</dd></div></dl>' +
+          '<p class="so-fine">Fiyatlar ' + (o.confirmedAt ? esc(fmtDT(o.confirmedAt)) + ' tarihli stok ve fiyat teyidinde' : 'teyitte') + ' Türk lirası olarak sabitlendi' + (o.rate && o.rate.date ? ' (' + esc(o.rate.date.split('-').reverse().join('.')) + ' tarihli TCMB kuru)' : '') + '.</p>');
     var b = o.billing || {}, s = o.shippingAddress || {};
     var billing = { name: b.type === 'kurumsal' ? '' : b.name, company: b.type === 'kurumsal' ? b.company : '', address: b.address, district: b.district, city: b.city };
     var billExtra = b.type === 'kurumsal' ? 'Vergi dairesi / no: ' + (b.taxOffice || '') + ' / ' + (b.vkn || '') : (b.tckn ? 'T.C. kimlik no: ' + b.tckn : '');
@@ -233,9 +243,9 @@
     };
     detailEl.innerHTML =
       '<p class="so-back so-noprint"><a href="#" data-back><i class="fas fa-arrow-left" aria-hidden="true"></i> Tüm siparişlerim</a></p>' +
-      '<div class="so-detail__head"><h2 tabindex="-1" id="so-detail-h">Sipariş <span class="so-mono">' + esc(o.reference) + '</span></h2>' + chip(o) + '</div>' +
-      '<p class="so-card__meta">Sipariş tarihi: ' + esc(fmtDT(o.createdAt)) + (o.linkedVia === 'claim' ? ' · Üye girişi yapılmadan verildi; doğrulanmış e-postanızla hesabınıza eklendi.' : '') + '</p>' +
-      (off ? '<div class="vg-acct-alert vg-acct-alert--error" role="note"><i class="fas fa-circle-xmark" aria-hidden="true"></i><div class="vg-acct-alert__body"><p>Bu sipariş ' + (status === 'iptal' ? 'iptal edildi.' : 'iade edildi.') + '</p></div></div>' : '') +
+      '<div class="so-detail__head"><h2 tabindex="-1" id="so-detail-h">' + (status === 'teyit_bekliyor' ? 'Sipariş talebi' : 'Sipariş') + ' <span class="so-mono">' + esc(o.reference) + '</span></h2>' + chip(o) + '</div>' +
+      '<p class="so-card__meta">Talep tarihi: ' + esc(fmtDT(o.createdAt)) + (o.confirmedAt ? ' · Teyit: ' + esc(fmtDT(o.confirmedAt)) : '') + (o.linkedVia === 'claim' ? ' · Üye girişi yapılmadan verildi; doğrulanmış e-postanızla hesabınıza eklendi.' : '') + '</p>' +
+      (off ? '<div class="vg-acct-alert vg-acct-alert--error" role="note"><i class="fas fa-circle-xmark" aria-hidden="true"></i><div class="vg-acct-alert__body"><p>' + (status === 'iade' ? 'Bu sipariş iade edildi.' : (seen.odeme_bekleniyor ? 'Bu sipariş iptal edildi.' : 'Bu talep teyit edilemedi ve bedelsiz kapatıldı; sizden ödeme alınmadı.')) + '</p></div></div>' : '') +
       steps + paymentBox(o) + trackingLine(o.tracking) +
       '<section class="so-part"><h3>Ürünler ve tutar</h3>' + items + '</section>' +
       '<section class="so-part"><h3>Fatura ve teslimat</h3><div class="so-addrs">' +
@@ -245,7 +255,7 @@
       '</div>' + (o.notes ? '<p class="so-fine"><strong>Sipariş notunuz:</strong> ' + esc(o.notes) + '</p>' : '') + '</section>' +
       (hist ? '<section class="so-part"><h3>Sipariş geçmişi</h3><ul class="so-history">' + hist + '</ul></section>' : '') +
       '<section class="so-part"><h3>Sipariş belgeleri</h3>' +
-      (cons ? '<p class="so-fine">Siparişte onayladığınız metinler (onay: ' + esc(fmtDT(cons.preInfo)) + (cons.docVersion ? ' · belge sürümü ' + esc(cons.docVersion) : '') + '). Aynı metinler sipariş e-postanızda da yer alır.</p>' : '') +
+      (cons ? '<p class="so-fine">' + (o.confirmedAt ? 'Teyitte kesin tutarlarla düzenlenen metinler (talepte onayladığınız: ' : 'Talepte onayladığınız metinler (onay: ') + esc(fmtDT(cons.preInfo)) + (cons.docVersion ? ' · belge sürümü ' + esc(cons.docVersion) : '') + '). Aynı metinler e-postanızda da yer alır.</p>' : '') +
       (docBlock('preInfo', 'Ön Bilgilendirme Formu') + docBlock('contract', 'Mesafeli Satış Sözleşmesi') || '<p class="so-fine">Bu sipariş için kayıtlı belge metni bulunamadı; e-postanızdaki metinler geçerlidir.</p>') +
       '<p class="so-fine"><a href="/magaza/iade-ve-cayma.html">İade ve cayma koşulları</a> · <a href="/magaza/odeme-ve-teslimat.html">Ödeme ve teslimat</a> · Sorularınız için <a href="mailto:info@voltguard.com.tr">info@voltguard.com.tr</a></p></section>' +
       '<p class="so-noprint"><button type="button" class="vg-btn vg-btn--ghost vg-btn--sm" data-print><i class="fas fa-print" aria-hidden="true"></i> Yazdır</button></p>';

@@ -18,7 +18,7 @@
   var VERSION = '1';
   var CART_KEY = 'vg_magaza_sepet_v1';      // [{id, qty}]
   var INFO_KEY = 'vg_magaza_urunler_v1';    // {id: {n: ad, s: slug, m: en fazla adet}} (yalnızca hata durumunda sepet düzenleme yedeği)
-  var DONE_KEY = 'vg_magaza_son_siparis_v1';// son siparişin ödeme bilgileri (yalnızca oturum; kişisel veri yok)
+  var DONE_KEY = 'vg_magaza_son_siparis_v1';// son talebin numarası, tahmini tutarı ve yanıt süresi (yalnızca oturum; kişisel veri yok)
   var API = '/api/magaza.php';
   var ID_RE = /^vgm-[0-9]{4,6}$/;
   var MAX_LINES = 40;
@@ -85,7 +85,6 @@
     return { d: pad2(d.getUTCDate()), m: pad2(d.getUTCMonth() + 1), y: d.getUTCFullYear(), h: pad2(d.getUTCHours()), i: pad2(d.getUTCMinutes()) };
   }
   function fmtDateTime(iso) { var p = trParts(iso); return p ? p.d + '.' + p.m + '.' + p.y + ' ' + p.h + ':' + p.i : ''; }
-  function fmtTime(iso) { var p = trParts(iso); return p ? p.h + ':' + p.i : ''; }
   function fmtDay(ymd) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ymd || '')); return m ? m[3] + '.' + m[2] + '.' + m[1] : ''; }
 
   /* ------------------------------------------------------------------ depolama (hatalara karşı korumalı) */
@@ -500,54 +499,25 @@
     });
   }
 
-  /* ------------------------------------------------------------------ toplam kutusu (sepet ve ödeme) */
-  function renderTotals(root, totals, shipping, hasQuote) {
-    /* Değişmeyen metin yeniden yazılmaz: canlı bölgede (aria-live) her adet değişiminde aynı tutarlar okunmasın. */
-    function set(key, text) { $$('[data-vgm-t="' + key + '"]', root).forEach(function (n) { if (n.textContent !== text) n.textContent = text; }); }
-    if (!totals || !hasQuote) { ['tryNet', 'tryVat', 'shippingTry', 'tryGross'].forEach(function (k) { set(k, '—'); }); return; }
-    set('tryNet', fmtTry(totals.tryNet));
-    set('tryVat', fmtTry(totals.tryVat));
-    var ship = typeof totals.shippingTry === 'number' ? totals.shippingTry : 0;
-    var hint = '';
-    if (ship > 0 && shipping && shipping.freeOverTry > 0) hint = ' (' + fmtTry(shipping.freeOverTry) + ' ve üzeri siparişlerde ücretsiz)';
-    set('shippingTry', ship > 0 ? fmtTry(ship) + hint : 'Ücretsiz');
-    set('tryGross', fmtTry(totals.tryGross));
-  }
-  function expiryText(quote) {
-    if (!quote || !quote.expiresAt) return '';
-    var t = fmtTime(quote.expiresAt);
-    return t ? 'Bu fiyatlar 30 dakika geçerlidir (son geçerlilik: ' + t + ').' : '';
-  }
-  function untilExpiry(quote) {
-    var t = quote && quote.expiresAt ? Date.parse(quote.expiresAt) : NaN;
-    return isFinite(t) ? Math.max(1000, Math.min(t - Date.now() + 500, 2147000000)) : 0;
-  }
-  function notice(container, kind, message, extra) {
-    clear(container);
-    if (!message) return null;
-    var box = el('div', { class: 'vgm-notice vgm-notice--' + kind }, [message]);
-    if (extra) box.appendChild(extra);
-    container.appendChild(box);
-    return box;
-  }
-
   /* ------------------------------------------------------------------ sepet sayfası
      Sepet önce (sahibin kararı, 2026-11-02): her ürün sepete eklenir. Sepet iki yoldan biriyle gönderilir:
        (a) "Sepeti teklif olarak gönder": tüm satırlar (id, model, ad, adet, gösterilen birim fiyat ve dayanağı) tek talep olarak
            /contact.php'ye (kind=contact, subject=magaza, magazaTalep intent "sepet"; js/vg-quote.js) gider; mağaza kapalıyken de çalışır.
-       (b) "Sipariş oluştur": yalnızca mağaza açık VE sepetin TAMAMI siparişe hazırken (sunucu yanıtı "orderable"; 48 saat
-           kuralı canlı yeniden denetimden sonra) /magaza/odeme.html'e gider; değilse nedeni yazılır ve (a)'ya yönlendirilir. */
+       (b) "Sipariş talebi gönder" (TEYİTLİ SİPARİŞ TALEBİ, sahibin kararı 2026-11-02): mağaza açıksa (sunucu yanıtı
+           "requestable") sepetin TAMAMI /magaza/odeme.html'den talep olarak gönderilir; fiyatı gösterilmeyen satır "fiyat
+           teyitte bildirilir" olarak girer. Kesin tutar ve IBAN yalnızca personelin stok/fiyat teyidinden sonra e-postayla
+           gelir. Mağaza kapalıysa nedeni yazılır ve (a)'ya yönlendirilir. */
   var LINE_TAGS = {
-    closed: ['info', 'Doğrulanmış fiyat · mağaza siparişe açılınca sipariş verilebilir'],
-    freight: ['warn', 'Nakliye dahil fiyat teklifle bildirilir'],
-    unavailable: ['warn', 'Tedarik stoğunda yok · alternatif önerilir'],
-    held: ['warn', 'Tedarik fiyatı değişti · fiyat teklifle bildirilir'],
-    no_rate: ['warn', 'Kur güncelleniyor · fiyat siparişte teyit edilir']
+    closed: ['info', 'Doğrulanmış fiyat · sipariş talepleri çok yakında açılıyor'],
+    freight: ['warn', 'Ağır/hacimli ürün · nakliye ücreti teyitte bildirilir'],
+    unavailable: ['warn', 'Tedarik stoğunda görünmüyor · teyitte termin veya alternatif bildirilir'],
+    held: ['warn', 'Tedarik fiyatı değişti · fiyat teyitte bildirilir'],
+    no_rate: ['warn', 'Kur güncelleniyor · fiyat teyitte bildirilir']
   };
   function lineTag(line) {
-    if (line.orderable) return ['ok', 'Siparişe hazır · fiyat son 48 saatte doğrulandı'];
+    if (line.orderable) return ['ok', 'Fiyat son 48 saatte doğrulandı · stok teyitle kesinleşir'];
     if (LINE_TAGS[line.reason]) return LINE_TAGS[line.reason];
-    return line.display === 'list' || line.display === 'last' ? ['warn', 'Fiyat siparişte teyit edilir'] : ['warn', 'Fiyat teklifle bildirilir'];
+    return line.display === 'list' || line.display === 'last' ? ['warn', 'Gösterilen fiyat bilgi amaçlı · kesin fiyat teyitte'] : ['warn', 'Fiyat teyitte bildirilir'];
   }
 
   function initCartPage(root) {
@@ -555,14 +525,14 @@
     var linesEl = $('[data-vgm-lines]', root), emptyEl = $('[data-vgm-empty]', root), totalsEl = $('[data-vgm-totals]', root);
     var expiryEl = $('[data-vgm-expiry]', root), checkout = $('[data-vgm-checkout-link]', root), clearBtn = $('[data-vgm-clear]', root);
     var whyEl = $('[data-vgm-why]', root), estEl = $('[data-vgm-estimate]', root), cqOpen = $('[data-vgm-cq-open]', root);
-    var seq = 0, loadTimer = null, expiryTimer = null, canCheckout = false, lastLines = [];
+    var seq = 0, loadTimer = null, canCheckout = false, lastLines = [];
 
     function view(which) {
       stateEl.hidden = which !== 'state';
       wrap.hidden = which !== 'cart';
       emptyEl.hidden = which !== 'empty';
     }
-    /* Sipariş mümkünse "Sipariş oluştur" birincil, değilse "Sepeti teklif olarak gönder" birincil (sepet önce). */
+    /* Talep mümkünse "Sipariş talebi gönder" birincil, değilse "Sepeti teklif olarak gönder" birincil (sepet önce). */
     function setCheckout(ok) {
       canCheckout = ok;
       if (ok) { checkout.removeAttribute('aria-disabled'); checkout.removeAttribute('tabindex'); }
@@ -609,7 +579,7 @@
       var total;
       if (line.orderable && typeof line.lineTryGross === 'number') total = el('p', { class: 'vgm-line__total' }, [fmtTry(line.lineTryGross), el('small', { text: line.qty + ' ' + unit[0] })]);
       else if (typeof line.lineEstimate === 'number') total = el('p', { class: 'vgm-line__total vgm-line__total--soft' }, [fmtTry(line.lineEstimate), el('small', { text: line.qty + ' ' + unit[0] + ' · bilgi amaçlı' })]);
-      else total = el('p', { class: 'vgm-line__total vgm-line__total--soft' }, ['Teklifle', el('small', { text: line.qty + ' ' + unit[0] })]);
+      else total = el('p', { class: 'vgm-line__total vgm-line__total--soft' }, ['Teyitte', el('small', { text: line.qty + ' ' + unit[0] })]);
       var li = el('li', { class: 'vgm-line', 'data-id': id, 'data-max': String(max), 'data-min': String(min), 'data-step': String(step), 'data-orderable': line.orderable ? '1' : '0' }, [
         left,
         el('div', { class: 'vgm-line__qty' }, [
@@ -636,28 +606,17 @@
     }
 
     /* Neden bildirimi yalnızca içeriği değişince yeniden kurulur: kutu canlı bölgedir (role=status) ve her adet değişiminde
-       aynı uzun metnin yeniden okunmaması gerekir; durum değişince (kapalı / teyit bekleyen ürünler / siparişe hazır) okunur. */
+       aynı uzun metnin yeniden okunmaması gerekir; durum değişince (kapalı / talep açık) okunur. */
     var whyKey = '';
     function clearWhy() { whyKey = ''; clear(whyEl); }
     function renderWhy(data) {
-      var lines = data.lines || [];
-      var pending = lines.filter(function (l) { return !l.orderable; });
-      var key = data.orderable === true ? 'ok' : (data.open !== true ? 'closed' : 'lines|' + (pending.length < lines.length ? '1|' : '0|')
-        + pending.map(function (l) { return l.name; }).join(''));
+      var key = data.requestable === true ? 'ok' : 'closed';
       if (key === whyKey && (key === 'ok' || whyEl.firstChild)) return;
       clear(whyEl);
       whyKey = key;
-      if (data.orderable === true) return;
-      var box;
-      if (data.open !== true) {
-        box = el('div', { class: 'vgm-notice vgm-notice--warn', 'data-vgm-why-kind': 'closed' }, [el('strong', { text: 'Sipariş henüz açık değil. ' }),
-          'Mağazamız çok yakında siparişe açılıyor. Sepetinizi şimdi teklif olarak gönderin; güncel fiyat ve termini size iletelim.']);
-      } else {
-        box = el('div', { class: 'vgm-notice vgm-notice--warn', 'data-vgm-why-kind': 'lines' }, [el('strong', { text: 'Sipariş için fiyat teyidi gereken ürünler var. ' }),
-          'Sipariş oluşturmak için sepetteki tüm ürünlerin fiyatı son 48 saatte doğrulanmış olmalı: ' + pending.map(function (l) { return l.name; }).join(', ') + '. Sepeti teklif olarak gönderebilir ya da bu ürünleri çıkarabilirsiniz. ']);
-        if (pending.length < lines.length) box.appendChild(el('button', { type: 'button', class: 'vgm-link', 'data-act': 'drop-pending' }, ['Bu ürünleri sepetten çıkar']));
-      }
-      whyEl.appendChild(box);
+      if (key === 'ok') return;
+      whyEl.appendChild(el('div', { class: 'vgm-notice vgm-notice--warn', 'data-vgm-why-kind': 'closed' }, [el('strong', { text: 'Sipariş talepleri çok yakında açılıyor. ' }),
+        'Şimdilik sepetinizi teklif olarak gönderin; güncel fiyat, stok ve termini size iletelim.']));
     }
 
     function render(data) {
@@ -665,36 +624,28 @@
       lastLines = data.lines || [];
       clear(linesEl);
       lastLines.forEach(function (l) { linesEl.appendChild(lineNode(l, info[l.id])); });
-      var hasQuote = !!(data.quote && data.quote.token);
-      renderTotals(totalsEl, data.totals, data.shipping, hasQuote && data.orderable === true);
-      expiryEl.textContent = hasQuote && data.orderable ? expiryText(data.quote) : '';
+      /* Teyitli talep: sepette bağlayıcı sipariş toplamı yoktur; gösterilen fiyatlarla bilgi amaçlı tahmin (sunucunun hesapladığı). */
+      totalsEl.hidden = true;
+      expiryEl.textContent = '';
       var est = data.estimate && typeof data.estimate.tryGross === 'number' ? data.estimate : null;
-      /* Sipariş verilemeyen sepette sipariş toplamı yerine bilgi amaçlı tahmini tutar (sunucunun hesapladığı; fiyat hesaplanmaz). */
-      var ordering = hasQuote && data.orderable === true;
-      totalsEl.hidden = !ordering;
-      var estKey = est && !ordering ? [est.tryGross, est.unpriced].join('|') : '';
+      var estKey = est ? [est.tryGross, est.unpriced].join('|') : '';
       if (estKey !== estEl.getAttribute('data-vgm-est-key') || (estKey && !estEl.firstChild)) {
-      estEl.setAttribute('data-vgm-est-key', estKey);
-      clear(estEl);
-      if (est && !ordering) {
-        if (est.tryGross > 0) estEl.appendChild(el('p', { class: 'vgm-estimate__row' }, [el('span', { text: 'Tahmini tutar (KDV dahil)' }), el('strong', { text: fmtTry(est.tryGross) })]));
-        estEl.appendChild(el('p', { class: 'vgm-estimate__note', text: (est.tryGross > 0 ? 'Gösterilen fiyatlarla, bilgi amaçlıdır; kesin fiyat teklifte bildirilir.' : 'Fiyatlar teklifle bildirilir.')
-          + (est.unpriced > 0 && est.tryGross > 0 ? ' ' + est.unpriced + ' ürünün fiyatı tahmine dahil değil.' : '') }));
-        estEl.hidden = false;
-      } else { estEl.hidden = true; }
+        estEl.setAttribute('data-vgm-est-key', estKey);
+        clear(estEl);
+        if (est) {
+          if (est.tryGross > 0) estEl.appendChild(el('p', { class: 'vgm-estimate__row' }, [el('span', { text: 'Tahmini tutar (KDV dahil)' }), el('strong', { text: fmtTry(est.tryGross) })]));
+          estEl.appendChild(el('p', { class: 'vgm-estimate__note', text: (est.tryGross > 0 ? 'Gösterilen fiyatlarla, bilgi amaçlıdır. ' : '')
+            + 'Kesin tutar ve kargo ücreti, stok ve fiyat teyidinden sonra e-postayla bildirilir.'
+            + (est.unpriced > 0 && est.tryGross > 0 ? ' ' + est.unpriced + ' ürünün fiyatı tahmine dahil değil.' : '') }));
+          estEl.hidden = false;
+        } else { estEl.hidden = true; }
       }
       clear(notices);
       renderWhy(data);
-      setCheckout(hasQuote && data.orderable === true);
+      setCheckout(data.requestable === true);
       updateCq();
       view('cart');
       restoreFocus(prev);
-      window.clearTimeout(expiryTimer);
-      var wait = hasQuote ? untilExpiry(data.quote) : 0;
-      if (wait) expiryTimer = window.setTimeout(function () {
-        notice(notices, 'info', 'Fiyat geçerlilik süresi doldu; güncel fiyatlar alınıyor.');
-        load();
-      }, wait);
     }
 
     function renderError(err, items) {
@@ -703,8 +654,7 @@
       lastLines = [];
       items.forEach(function (r) { linesEl.appendChild(lineNode({ id: r.id, qty: r.qty, name: (info[r.id] && info[r.id].n) || r.id }, info[r.id])); });
       $$('.vgm-line__total', linesEl).forEach(function (n) { n.parentNode.removeChild(n); });
-      renderTotals(totalsEl, null, null, false);
-      totalsEl.hidden = false;
+      totalsEl.hidden = true;
       expiryEl.textContent = '';
       estEl.hidden = true;
       estEl.removeAttribute('data-vgm-est-key');
@@ -765,11 +715,6 @@
       input.value = String(q);
       setQty(li.getAttribute('data-id'), q);
       scheduleLoad();
-    });
-    whyEl.addEventListener('click', function (ev) {
-      if (!closest(ev.target, '[data-act="drop-pending"]')) return;
-      removeFromCart(lastLines.filter(function (l) { return !l.orderable; }).map(function (l) { return l.id; }));
-      load();
     });
     notices.addEventListener('click', function (ev) { if (closest(ev.target, '[data-act="retry"]')) load(); });
     clearBtn.addEventListener('click', function () {
@@ -934,18 +879,20 @@
     };
   }
 
+  /* TEYİTLİ SİPARİŞ TALEBİ (sahibin kararı, 2026-11-02): bu sayfa ödeme ALMAZ. Alıcı formu ve belgeleri onaylayıp sepetin
+     tamamını talep olarak gönderir; IBAN gösterilmez, ödeme istenmez. VoltGuard stok ve fiyatı teyit edince kesin tutar,
+     IBAN ve kesin belgeler e-postayla gelir (sözleşme kesin tutarın süresinde ödenmesiyle kurulur); teyit edilemezse talep bedelsiz kapanır. */
   function initCheckoutPage(root) {
     var stateEl = $('[data-vgm-state]', root), notices = $('[data-vgm-notices]', root), success = $('[data-vgm-success]', root);
     var emptyEl = $('[data-vgm-empty]', root), wrap = $('[data-vgm-checkout]', root), form = $('[data-vgm-form]', root);
     var errBox = $('[data-vgm-errors]', form), statusEl = $('[data-vgm-status]', form), submitBtn = $('[data-vgm-submit]', form);
     var same = $('[data-vgm-same]', form), shipBox = $('[data-vgm-ship]', form), bireysel = $('[data-vgm-bireysel]', form), kurumsal = $('[data-vgm-kurumsal]', form);
-    var consents = $$('[data-vgm-consent]', form), reWrap = $('[data-vgm-reconfirm-wrap]', form), reBox = $('[data-vgm-reconfirm]', form), reText = $('[data-vgm-reconfirm-text]', form);
-    var honeypot = $('[name="website"]', form), mini = $('[data-vgm-mini]', root), totalsEl = $('[data-vgm-totals]', root), expiryEl = $('[data-vgm-expiry]', root);
+    var consents = $$('[data-vgm-consent]', form);
+    var honeypot = $('[name="website"]', form), mini = $('[data-vgm-mini]', root), estEl = $('[data-vgm-estimate]', root);
     var captcha = setupCaptcha(form);
     var accountBox = $('[data-vgm-account]', root), saveWrap = $('[data-vgm-save-wrap]', form), saveBox = $('[data-vgm-save]', form);
-    var st = { quote: null, items: [], skipped: [], totals: null, open: false, expiry: null, docs: { preInfo: '', contract: '' }, docsShown: false,
-      docsSeq: 0, docsTimer: null, expiryTimer: null, requestId: '', requestFp: '', submitting: false, needReconfirm: false,
-      member: null, csrf: '', touched: false };
+    var st = { items: [], lines: [], open: false, docs: { preInfo: '', contract: '' }, docsShown: false,
+      docsSeq: 0, docsTimer: null, requestId: '', requestFp: '', submitting: false, member: null, csrf: '', touched: false };
 
     function view(which) {
       stateEl.hidden = which !== 'state';
@@ -962,7 +909,7 @@
     function billingType() { var r = $('input[name="billing.type"]:checked', form); return r && r.value === 'kurumsal' ? 'kurumsal' : 'bireysel'; }
     function status(text, kind) { statusEl.textContent = text || ''; if (kind) statusEl.setAttribute('data-kind', kind); else statusEl.removeAttribute('data-kind'); }
 
-    /* ---- sunucuya giden gövde ---- */
+    /* ---- sunucuya giden gövde: sepet [{id, qty}] + form; fiyat GÖNDERİLMEZ (sunucu hesaplar) ---- */
     function payload() {
       var type = billingType(), isSame = same.checked;
       var b = { type: type, address: val('billing.address'), city: val('billing.city'), district: val('billing.district') };
@@ -973,7 +920,7 @@
         city: val('shippingAddress.city'), district: val('shippingAddress.district'), postalCode: val('shippingAddress.postalCode')
       };
       return {
-        quote: st.quote || '', items: st.items,
+        items: st.items,
         customer: { name: val('customer.name'), email: val('customer.email'), phone: val('customer.phone') },
         billing: b, shippingAddress: s, notes: val('notes'),
         consents: { preInfo: !!(field('consents.preInfo') || {}).checked, contract: !!(field('consents.contract') || {}).checked }
@@ -982,7 +929,7 @@
 
     /* ---- site üyeliği: aynı hesap (Hesabım), ayrı mağaza hesabı yok ----
        Üye girişi yapılmışsa bilgiler profilden (ve üyenin onayıyla kaydedilmiş son fatura/teslimat bilgisinden) doldurulur;
-       sipariş hesaba sunucuda, oturumdan bağlanır. Üye değilse giriş / kayıt seçeneği gösterilir, misafir sipariş açık kalır. */
+       talep hesaba sunucuda, oturumdan bağlanır. Üye değilse giriş / kayıt seçeneği gösterilir, misafir talep açık kalır. */
     var BACK = '/magaza/odeme.html';
     function renderAccount() {
       if (!accountBox) return;
@@ -991,16 +938,16 @@
       if (u) {
         accountBox.className = 'vgm-account vgm-account--in';
         accountBox.appendChild(el('p', {}, [el('strong', { text: 'Üye girişi yaptınız: ' }), String(u.name || '') + (u.email ? ' (' + u.email + ')' : '')]));
-        accountBox.appendChild(el('p', { class: 'vgm-fine' }, ['Bu sipariş hesabınıza kaydedilir. Durumunu, ödeme bilgilerini ve belgelerini ',
+        accountBox.appendChild(el('p', { class: 'vgm-fine' }, ['Bu talep hesabınıza kaydedilir. Teyit durumunu, teyitten sonra ödeme bilgilerini ve belgeleri ',
           el('a', { href: '/hesap/siparislerim.html' }, ['Hesabım › Siparişlerim']), ' sayfasından izleyebilirsiniz.']));
       } else {
         accountBox.className = 'vgm-account';
         accountBox.appendChild(el('p', {}, [el('strong', { text: 'Üye misiniz? ' }),
-          'Giriş yaparsanız bilgileriniz doldurulur, sipariş hesabınıza kaydedilir ve tüm siparişlerinizi tek yerden izlersiniz. Sepetiniz korunur.']));
+          'Giriş yaparsanız bilgileriniz doldurulur, talep hesabınıza kaydedilir ve tüm siparişlerinizi tek yerden izlersiniz. Sepetiniz korunur.']));
         accountBox.appendChild(el('p', { class: 'vgm-actions' }, [
           el('a', { class: 'vgm-btn vgm-btn--ghost vgm-btn--sm', href: '/hesap/giris.html?next=' + encodeURIComponent(BACK) }, ['Üye girişi yap']),
           el('a', { class: 'vgm-btn vgm-btn--ghost vgm-btn--sm', href: '/hesap/kayit.html?next=' + encodeURIComponent(BACK) }, ['Üye ol'])]));
-        accountBox.appendChild(el('p', { class: 'vgm-fine', text: 'Üye olmadan da sipariş verebilirsiniz.' }));
+        accountBox.appendChild(el('p', { class: 'vgm-fine', text: 'Üye olmadan da sipariş talebi gönderebilirsiniz.' }));
       }
       accountBox.hidden = false;
       if (saveWrap) saveWrap.hidden = !u;
@@ -1027,9 +974,9 @@
         ['name', 'phone', 'address', 'city', 'district', 'postalCode'].forEach(function (n) { put('shippingAddress.' + n, ss[n]); });
       }
       /* Kutu hiçbir zaman önceden işaretlenmez (KVKK: kayıt üyenin isteğiyle). Kayıt varsa etiket, işaretlenirse
-         kayıtlı bilgilerin bu siparişteki bilgilerle DEĞİŞTİRİLECEĞİNİ açıkça söyler. */
+         kayıtlı bilgilerin bu talepteki bilgilerle DEĞİŞTİRİLECEĞİNİ açıkça söyler. */
       var saveLabel = saveWrap && $('[data-vgm-save-label]', saveWrap);
-      if (saveLabel && saved) saveLabel.textContent = 'Kayıtlı fatura ve teslimat bilgilerimi bu siparişteki bilgilerle güncelle (isteğe bağlı; T.C. kimlik no kaydedilmez. Hesabım › Siparişlerim sayfasından istediğiniz zaman silebilirsiniz).';
+      if (saveLabel && saved) saveLabel.textContent = 'Kayıtlı fatura ve teslimat bilgilerimi bu talepteki bilgilerle güncelle (isteğe bağlı; T.C. kimlik no kaydedilmez. Hesabım › Siparişlerim sayfasından istediğiniz zaman silebilirsiniz).';
     }
     function loadMember() {
       return request('hesap_profil', null, { timeout: 12000 }).then(function (d) {
@@ -1040,70 +987,38 @@
       }, function () { st.member = null; renderAccount(); });
     }
 
-    /* ---- sepet / fiyat teyidi ---- */
-    function applyQuote(data) {
+    /* ---- sepet: tüm satırlar talebe girer; tutarlar bilgi amaçlı ---- */
+    function applyCart(data) {
       var lines = data.lines || [];
-      st.open = data.open === true;
-      st.items = lines.filter(function (l) { return l.orderable; }).map(function (l) { return { id: l.id, qty: l.qty }; });
-      st.skipped = lines.filter(function (l) { return !l.orderable; });
-      st.quote = data.quote && data.quote.token ? data.quote.token : null;
-      st.totals = data.totals || null;
-      st.expiry = data.quote || null;
+      st.open = data.requestable === true;
+      st.lines = lines;
+      st.items = lines.map(function (l) { return { id: l.id, qty: l.qty }; });
       clear(mini);
-      lines.filter(function (l) { return l.orderable; }).forEach(function (l) {
-        mini.appendChild(el('li', {}, [el('span', { text: l.qty + ' × ' + l.name }), el('span', { text: fmtTry(l.lineTryGross) })]));
+      lines.forEach(function (l) {
+        var amount = typeof l.lineTryGross === 'number' ? fmtTry(l.lineTryGross) : (typeof l.lineEstimate === 'number' ? fmtTry(l.lineEstimate) : 'Fiyat teyitte');
+        mini.appendChild(el('li', {}, [el('span', { text: l.qty + ' × ' + l.name }), el('span', { class: typeof l.lineTryGross === 'number' || typeof l.lineEstimate === 'number' ? '' : 'vgm-mini__soft', text: amount })]));
       });
-      renderTotals(totalsEl, data.totals, data.shipping, !!st.quote);
-      expiryEl.textContent = st.quote ? expiryText(data.quote) : '';
-      window.clearTimeout(st.expiryTimer);
-      var wait = st.quote ? untilExpiry(data.quote) : 0;
-      if (wait) st.expiryTimer = window.setTimeout(function () { requote('expired'); }, wait);
+      var est = data.estimate && typeof data.estimate.tryGross === 'number' ? data.estimate : { tryGross: 0, unpriced: 0 };
+      clear(estEl);
+      estEl.appendChild(el('div', { class: 'vgm-totals__grand' }, [el('dt', { text: 'Tahmini tutar (KDV dahil)' }), el('dd', { text: est.tryGross > 0 ? fmtTry(est.tryGross) : '—' })]));
+      estEl.appendChild(el('div', {}, [el('dt', { text: 'Kargo' }), el('dd', { text: 'Teyitte bildirilir' })]));
+      estEl.appendChild(el('div', {}, [el('dt', { text: 'Kesin tutar' }), el('dd', { text: 'Teyit e-postasında' })]));
+      var note = $('[data-vgm-estimate-note]', root);
+      if (note) note.textContent = 'Gösterilen fiyatlarla, bilgi amaçlıdır.' + (est.unpriced > 0 ? ' ' + est.unpriced + ' ürünün fiyatı teyitte bildirilir ve tahmine dahil değildir.' : '');
       clear(notices);
       if (!st.open) notices.appendChild(el('div', { class: 'vgm-notice vgm-notice--warn', role: 'alert' }, [
-        'Mağazamız çok yakında siparişe açılıyor. Şu anda sipariş verilemiyor; ', el('a', { href: CART_QUOTE }, ['sepetinizi teklif olarak gönderebilirsiniz']), '.']));
-      /* Sipariş yalnızca sepetin TAMAMI siparişe hazırsa oluşturulur (sepet sayfasındaki "Sipariş oluştur" ile aynı kural);
-         fiyatı teyit edilmemiş satırlar sessizce dışarıda bırakılmaz. */
-      if (st.skipped.length && st.open) {
-        notices.appendChild(el('div', { class: 'vgm-notice vgm-notice--warn', role: 'alert' }, [
-          'Şu ürünlerin fiyatı sipariş için henüz doğrulanmadı: ' + st.skipped.map(function (l) { return l.name; }).join(', ') + '. ',
-          el('a', { href: '/magaza/sepet.html' }, ['Sepette bu ürünleri çıkarın']), ' ya da ', el('a', { href: CART_QUOTE }, ['sepeti teklif olarak gönderin']), '.']));
-      }
-      if (!st.items.length || st.skipped.length) {
-        if (!st.items.length && !st.skipped.length) notices.appendChild(el('div', { class: 'vgm-notice vgm-notice--err', role: 'alert' }, ['Sepetinizde sipariş verilebilir ürün yok. ', el('a', { href: '/magaza/sepet.html' }, ['Sepete dön'])]));
-        st.items = [];
+        el('strong', { text: 'Sipariş talepleri çok yakında açılıyor. ' }), 'Şu anda talep gönderilemiyor; ', el('a', { href: CART_QUOTE }, ['sepetinizi teklif olarak gönderebilirsiniz']), '.']));
+      if (!st.items.length) {
+        notices.appendChild(el('div', { class: 'vgm-notice vgm-notice--err', role: 'alert' }, ['Sepetiniz boş. ', el('a', { href: '/magaza/' }, ['Mağazaya dön'])]));
         view('state'); stateEl.hidden = true;
-        wrap.hidden = true;
         return;
       }
       submitBtn.disabled = !st.open;
-      if (!st.open) status('Sipariş verilebilmesi için mağazanın açılması gerekiyor.', 'err'); else if (statusEl.getAttribute('data-kind') === 'err') status('');
+      if (!st.open) status('Talep gönderilebilmesi için mağazanın sipariş taleplerine açılması gerekiyor.', 'err'); else if (statusEl.getAttribute('data-kind') === 'err') status('');
       view('form');
     }
 
-    /* Fiyat jetonu yenilenir. reason: 'expired' (sessiz yenileme) | 'submit' (siparişte jeton süresi doldu: yeni toplamı onaylat). */
-    function requote(reason) {
-      var before = st.totals ? st.totals.tryGross : null;
-      var items = readCart();
-      if (!items.length) return Promise.resolve();
-      return request('sepet', { items: items }, { timeout: 30000 }).then(function (data) {
-        applyQuote(data);
-        scheduleDocs(0);
-        var after = data.totals ? data.totals.tryGross : null;
-        if (reason === 'submit') {
-          if (before !== null && after !== null && Math.abs(after - before) > 0.004) {
-            st.needReconfirm = true;
-            reWrap.hidden = false; reBox.checked = false;
-            reText.textContent = 'Fiyatlar güncellendi: önceki toplam ' + fmtTry(before) + ', yeni toplam ' + fmtTry(after) + '. Yeni toplam tutarı onaylıyorum.';
-            status('Toplam tutar değişti. Yeni tutarı ve belge metinlerini onaylayıp siparişi yeniden gönderin.', 'err');
-            focusEl(reBox);
-          } else {
-            status('Fiyat teyidiniz yenilendi; tutar değişmedi. Siparişi yeniden gönderebilirsiniz.');
-          }
-        }
-      }, function (err) { status(err.message, 'err'); });
-    }
-
-    /* ---- Ön Bilgilendirme Formu ve sözleşme önizlemesi ---- */
+    /* ---- Ön Bilgilendirme Formu ve sözleşme önizlemesi (talep aşaması metni: tahmini tutar, IBAN yok) ---- */
     function setDocs(pre, con) {
       var changed = st.docsShown && (pre !== st.docs.preInfo || con !== st.docs.contract);
       st.docs = { preInfo: pre, contract: con };
@@ -1130,14 +1045,13 @@
       st.docsShown = false;
     }
     function fetchDocs() {
-      if (!st.quote || !st.items.length) return;
+      if (!st.items.length) return;
       var mine = ++st.docsSeq;
       request('onbilgi', payload()).then(function (d) {
         if (mine !== st.docsSeq) return;
         setDocs(typeof d.preInfo === 'string' ? d.preInfo : '', typeof d.contract === 'string' ? d.contract : '');
       }, function (err) {
         if (mine !== st.docsSeq) return;
-        if (err.code === 'quote_expired') { requote('expired'); return; }
         docsError(err.message + ' Sayfayı yenileyip tekrar deneyin.');
       });
     }
@@ -1194,12 +1108,11 @@
       }
       if (!(field('consents.preInfo') || {}).checked) out.push({ name: 'consents.preInfo', message: 'Ön Bilgilendirme Formu’nu okuyup onaylamanız gerekir.' });
       if (!(field('consents.contract') || {}).checked) out.push({ name: 'consents.contract', message: 'Mesafeli Satış Sözleşmesi’ni okuyup onaylamanız gerekir.' });
-      if (st.needReconfirm && !reBox.checked) out.push({ name: null, message: 'Güncellenen toplam tutarı onaylayın.' });
       if (captcha.enabled && !captcha.token()) out.push({ name: null, message: 'Lütfen güvenlik doğrulamasını tamamlayın.' });
       return out;
     }
 
-    /* ---- gönderim ---- */
+    /* ---- gönderim (aynı içerik yeniden gönderilirse aynı talep kimliği: sunucu ikinci kaydı açmaz) ---- */
     function onSubmit(ev) {
       ev.preventDefault();
       if (st.submitting) return;
@@ -1207,7 +1120,7 @@
       if (problems.length) { showErrors(problems); status(''); return; }
       clearErrors();
       var body = payload();
-      var fp = JSON.stringify([body.quote, body.items, body.customer, body.billing, body.shippingAddress, body.notes]);
+      var fp = JSON.stringify([body.items, body.customer, body.billing, body.shippingAddress, body.notes]);
       body.saveDetails = !!(st.member && saveBox && saveBox.checked);
       st.submitMember = !!st.member;
       if (!st.requestId || fp !== st.requestFp) { st.requestId = randomId('o'); st.requestFp = fp; }
@@ -1218,7 +1131,7 @@
       st.submitting = true;
       submitBtn.disabled = true;
       form.setAttribute('aria-busy', 'true');
-      status('Siparişiniz gönderiliyor…');
+      status('Sipariş talebiniz gönderiliyor…');
       request('siparis', body, { timeout: 45000, csrf: st.member ? st.csrf : '' }).then(onSuccess, onFailure).then(function () {
         st.submitting = false;
         form.removeAttribute('aria-busy');
@@ -1228,20 +1141,20 @@
     }
     function onSuccess(data) {
       var done = {
-        reference: String(data.reference || ''), amountTry: data.amountTry, amountText: String(data.amountText || ''), payBy: String(data.payBy || ''),
-        payByText: String(data.payByText || ''), bank: data.bank && typeof data.bank === 'object' ? data.bank : {}, message: String(data.message || ''),
+        reference: String(data.reference || ''), estimateTry: data.estimateTry, estimateText: String(data.estimateText || ''),
+        unpriced: Number(data.unpriced) || 0, respondBy: String(data.respondBy || ''), respondByText: String(data.respondByText || ''),
+        responseDays: Number(data.responseDays) || 1, message: String(data.message || ''),
         mailSent: data.mailSent !== false, duplicate: data.duplicate === true,
         account: data.account && typeof data.account === 'object' ? { linked: data.account.linked === true, saved: data.account.saved === true }
           : (st.submitMember ? { linked: false, saved: false } : null)   // üye olarak gönderildi ama sunucu bağlantıyı teyit etmedi
       };
       kvSet(DONE_KEY, JSON.stringify(done), true);
       removeFromCart(st.items.map(function (i) { return i.id; }));
-      window.clearTimeout(st.expiryTimer); window.clearTimeout(st.docsTimer);
+      window.clearTimeout(st.docsTimer);
       showSuccess(done, true);
     }
     function onFailure(err) {
       captcha.reset();
-      if (err.code === 'quote_expired') { status('Fiyat teyidinin süresi doldu; güncel fiyatlar alınıyor…'); return requote('submit'); }
       if (err.fields && Object.keys(err.fields).length) {
         var list = [];
         Object.keys(err.fields).forEach(function (k) { list.push({ name: k, message: String(err.fields[k]) }); });
@@ -1251,7 +1164,7 @@
       }
       if (err.code === 'shop_closed') { st.open = false; submitBtn.disabled = true; }
       if (err.kind === 'network' || err.kind === 'timeout' || err.kind === 'bad') {
-        status(err.message + ' Siparişiniz alınmış olabilir; yeniden göndermeniz güvenlidir, aynı sipariş iki kez oluşturulmaz.', 'err');
+        status(err.message + ' Talebiniz alınmış olabilir; yeniden göndermeniz güvenlidir, aynı talep iki kez oluşturulmaz.', 'err');
       } else {
         status(err.message, 'err');
       }
@@ -1259,18 +1172,15 @@
       return null;
     }
 
-    /* ---- sipariş tamamlandı ---- */
-    function setPay(key, text) { var n = $('[data-vgm-pay="' + key + '"]', success); if (n) n.textContent = text; }
+    /* ---- talep alındı (ödeme bilgisi YOK: teyit e-postasıyla gelir) ---- */
+    function setDone(key, text) { var n = $('[data-vgm-done="' + key + '"]', success); if (n) n.textContent = text; }
     function showSuccess(done, fresh) {
-      var bank = done.bank || {};
-      setPay('reference', done.reference);
-      setPay('amount', done.amountText || fmtTry(done.amountTry));
-      setPay('payBy', done.payByText || fmtDateTime(done.payBy));
-      setPay('bankName', String(bank.ad || ''));
-      setPay('holder', String(bank.hesapSahibi || ''));
-      setPay('iban', String(bank.iban || ''));
+      setDone('reference', done.reference);
+      setDone('estimate', (done.estimateTry > 0 ? (done.estimateText || fmtTry(done.estimateTry)) : 'Fiyat teyitte bildirilir')
+        + (done.unpriced > 0 && done.estimateTry > 0 ? ' (+' + done.unpriced + ' ürün teyitte)' : ''));
+      setDone('respond', 'En geç ' + (done.responseDays || 1) + ' iş günü' + (done.respondByText ? ' · ' + done.respondByText : (done.respondBy ? ' · ' + fmtDateTime(done.respondBy) + ' (TSİ)' : '')));
       var msg = $('[data-vgm-success-msg]', success);
-      msg.textContent = (done.message || 'Siparişiniz alındı.') + (fresh ? '' : ' (Bu bilgiler yalnızca bu tarayıcı oturumunda saklanır.)');
+      msg.textContent = (done.message || 'Sipariş talebiniz alındı.') + (fresh ? '' : ' (Bu bilgiler yalnızca bu tarayıcı oturumunda saklanır.)');
       var acct = $('[data-vgm-account-note]', success);
       if (acct) {
         clear(acct);
@@ -1278,13 +1188,13 @@
         acct.hidden = !a;
         if (a && a.linked) {
           acct.className = 'vgm-notice vgm-notice--ok vgm-noprint';
-          acct.appendChild(document.createTextNode('Sipariş üye hesabınıza kaydedildi' + (a.saved ? '; fatura ve teslimat bilgileriniz sonraki siparişler için saklandı' : '') + '. '));
+          acct.appendChild(document.createTextNode('Talep üye hesabınıza kaydedildi' + (a.saved ? '; fatura ve teslimat bilgileriniz sonraki siparişler için saklandı' : '') + '. '));
           acct.appendChild(el('a', { href: '/hesap/siparislerim.html' }, ['Hesabım › Siparişlerim']));
         } else if (a) {
           acct.className = 'vgm-notice vgm-notice--warn vgm-noprint';
-          acct.appendChild(document.createTextNode('Oturumunuz sipariş sırasında doğrulanamadığı için sipariş hesabınıza bağlanamadı; sipariş geçerlidir. E-postanızı '));
+          acct.appendChild(document.createTextNode('Oturumunuz gönderim sırasında doğrulanamadığı için talep hesabınıza bağlanamadı; talep geçerlidir. E-postanızı '));
           acct.appendChild(el('a', { href: '/hesap/siparislerim.html' }, ['Siparişlerim']));
-          acct.appendChild(document.createTextNode(' sayfasında doğrulayarak bu siparişi hesabınıza ekleyebilirsiniz.'));
+          acct.appendChild(document.createTextNode(' sayfasında doğrulayarak bu talebi hesabınıza ekleyebilirsiniz.'));
         }
       }
       var track = $('[data-vgm-track-link]', success);
@@ -1294,7 +1204,7 @@
       focusEl(success);
     }
     function copyValue(key) {
-      var n = $('[data-vgm-pay="' + key + '"]', success), text = n ? trim(n.textContent) : '';
+      var n = $('[data-vgm-done="' + key + '"]', success), text = n ? trim(n.textContent) : '';
       var out = $('[data-vgm-copy-status]', success);
       function ok() { out.textContent = 'Kopyalandı.'; }
       function fail() { out.textContent = 'Kopyalanamadı; metni seçip kopyalayın.'; }
@@ -1331,15 +1241,15 @@
     var done = parseJson(kvGet(DONE_KEY, true), null);
     var items = readCart();
     if (!items.length) {
-      if (done && done.reference) { showSuccess(done, false); return; }
+      if (done && done.reference && !done.bank) { showSuccess(done, false); return; }
       view('empty');
       return;
     }
     view('state');
-    stateEl.textContent = 'Fiyatlar kontrol ediliyor…';
+    stateEl.textContent = 'Sepetiniz hazırlanıyor…';
     var memberReady = loadMember();
     request('sepet', { items: items }, { timeout: 30000 }).then(function (data) {
-      applyQuote(data);
+      applyCart(data);
       /* Belge metni üye bilgileri doldurulduktan sonra hazırlanır (alıcı adı ve adresi metne girer). */
       if (st.items.length) memberReady.then(function () { scheduleDocs(0); });
     }, function (err) {
@@ -1354,7 +1264,7 @@
   }
 
   /* ------------------------------------------------------------------ sipariş takibi */
-  var STEPS = [['odeme_bekleniyor', 'Ödeme bekleniyor'], ['odeme_alindi', 'Ödeme alındı'], ['tedarikte', 'Tedarik ediliyor'], ['kargoda', 'Kargoya verildi'], ['teslim_edildi', 'Teslim edildi']];
+  var STEPS = [['teyit_bekliyor', 'Teyit bekleniyor'], ['odeme_bekleniyor', 'Ödeme bekleniyor'], ['odeme_alindi', 'Ödeme alındı'], ['tedarikte', 'Tedarik ediliyor'], ['kargoda', 'Kargoya verildi'], ['teslim_edildi', 'Teslim edildi']];
 
   function initTrackPage(root) {
     var form = $('[data-vgm-track-form]', root), result = $('[data-vgm-track-result]', root), errBox = $('[data-vgm-errors]', form);
@@ -1382,16 +1292,33 @@
       var seen = {};
       (o.history || []).forEach(function (h) { seen[h.status] = true; });
       var head = el('section', { class: 'vgm-block' }, [
-        el('h2', { text: 'Sipariş ' + String(o.reference || '') }),
+        el('h2', { text: (status === 'teyit_bekliyor' ? 'Sipariş talebi ' : 'Sipariş ') + String(o.reference || '') }),
         el('p', {}, [el('span', { class: 'vgm-chip vgm-chip--' + (status === 'iptal' || status === 'iade' ? 'off' : (status === 'teslim_edildi' ? 'ok' : 'wait')), text: String(o.statusLabel || status) })]),
-        el('p', { class: 'vgm-fine', text: 'Sipariş tarihi: ' + fmtDateTime(o.createdAt) })
+        el('p', { class: 'vgm-fine', text: 'Talep tarihi: ' + fmtDateTime(o.createdAt) + (o.confirmedAt ? ' · Teyit: ' + fmtDateTime(o.confirmedAt) : '') })
       ]);
+      if (status === 'teyit_bekliyor') {
+        head.appendChild(el('div', { class: 'vgm-notice vgm-notice--info', style: 'margin-top:.9rem' }, [el('strong', { text: 'Teyit gelmeden ödeme yapmayın. ' }),
+          'Stok ve fiyatı teyit ettikten sonra kesin tutarı ve ödeme bilgilerini e-postayla göndereceğiz' + (o.respondBy ? ' (yanıt: en geç ' + fmtDateTime(o.respondBy) + ' TSİ)' : '') + '. Teyit edemezsek talebiniz bedelsiz kapanır.']));
+      }
       if (status === 'odeme_bekleniyor') {
-        head.appendChild(el('div', { class: 'vgm-notice vgm-notice--warn', style: 'margin-top:.9rem' }, [
-          'Ödemeniz bekleniyor. Havale/EFT açıklamasına sipariş numaranızı yazın. Son ödeme zamanı: ' + fmtDateTime(o.payBy) + ' (TSİ).']));
+        var p = o.payment && typeof o.payment === 'object' ? o.payment : null;
+        if (p) {
+          head.appendChild(el('div', { class: 'vgm-notice vgm-notice--warn', style: 'margin-top:.9rem' }, [
+            'Stok ve fiyat teyit edildi; ödemeniz bekleniyor. Havale/EFT açıklamasına sipariş numaranızı yazın. Son ödeme zamanı: ' + fmtDateTime(o.payBy) + ' (TSİ).']));
+          head.appendChild(el('dl', { class: 'vgm-pay' }, [
+            el('div', {}, [el('dt', { text: 'Ödenecek tutar (KDV dahil)' }), el('dd', { text: String(p.amountText || fmtTry(p.amountTry)) })]),
+            el('div', {}, [el('dt', { text: 'Banka' }), el('dd', { text: String(p.bank || '') })]),
+            el('div', {}, [el('dt', { text: 'Hesap sahibi' }), el('dd', { text: String(p.holder || '') })]),
+            el('div', {}, [el('dt', { text: 'IBAN' }), el('dd', { class: 'vgm-mono', text: String(p.iban || '') })]),
+            el('div', {}, [el('dt', { text: 'Açıklama' }), el('dd', { class: 'vgm-mono', text: String(p.description || o.reference || '') })])]));
+        } else if (o.paymentNote) {
+          head.appendChild(el('div', { class: 'vgm-notice vgm-notice--warn', style: 'margin-top:.9rem' }, [String(o.paymentNote)]));
+        }
       }
       if (status === 'iptal' || status === 'iade') {
-        head.appendChild(el('div', { class: 'vgm-notice vgm-notice--err', style: 'margin-top:.9rem' }, ['Bu sipariş ' + (status === 'iptal' ? 'iptal edildi.' : 'iade edildi.')]));
+        var wasRequest = !seen.odeme_bekleniyor;
+        head.appendChild(el('div', { class: 'vgm-notice vgm-notice--err', style: 'margin-top:.9rem' }, [status === 'iade' ? 'Bu sipariş iade edildi.'
+          : (wasRequest ? 'Bu talep teyit edilemedi ve bedelsiz kapatıldı; sizden ödeme alınmadı.' : 'Bu sipariş iptal edildi.')]));
       }
       result.appendChild(head);
 
@@ -1417,13 +1344,16 @@
 
       var list = el('ul', { class: 'vgm-mini' });
       (o.items || []).forEach(function (it) {
-        list.appendChild(el('li', {}, [el('span', { text: (it.qty || 0) + ' × ' + String(it.name || '') }), el('span', { text: fmtTry(it.lineTryGross) })]));
+        list.appendChild(el('li', {}, [el('span', { text: (it.qty || 0) + ' × ' + String(it.name || '') }), el('span', { text: typeof it.lineTryGross === 'number' ? fmtTry(it.lineTryGross) : 'Fiyat teyitte' })]));
       });
       var t = o.totals || {};
-      result.appendChild(el('section', { class: 'vgm-block' }, [el('h2', { text: 'Siparişteki ürünler' }), list, el('dl', { class: 'vgm-totals' }, [
-        trackRow('Ara toplam (KDV hariç)', fmtTry(t.tryNet)), trackRow('KDV', fmtTry(t.tryVat)),
-        trackRow('Kargo', typeof t.shippingTry === 'number' && t.shippingTry > 0 ? fmtTry(t.shippingTry) : 'Ücretsiz'),
-        el('div', { class: 'vgm-totals__grand' }, [el('dt', { text: 'Toplam (KDV dahil)' }), el('dd', { text: fmtTry(t.tryGross) })])])]));
+      var totals = o.estimate === true
+        ? [trackRow('Kargo', 'Teyitte bildirilir'), el('div', { class: 'vgm-totals__grand' }, [el('dt', { text: 'Tahmini tutar (KDV dahil)' }), el('dd', { text: t.tryGross > 0 ? fmtTry(t.tryGross) : '—' })])]
+        : [trackRow('Ara toplam (KDV hariç)', fmtTry(t.tryNet)), trackRow('KDV', fmtTry(t.tryVat)),
+          trackRow('Kargo', typeof t.shippingTry === 'number' && t.shippingTry > 0 ? fmtTry(t.shippingTry) : 'Ücretsiz'),
+          el('div', { class: 'vgm-totals__grand' }, [el('dt', { text: 'Toplam (KDV dahil)' }), el('dd', { text: fmtTry(t.tryGross) })])];
+      result.appendChild(el('section', { class: 'vgm-block' }, [el('h2', { text: o.estimate === true ? 'Talepteki ürünler (tahmini fiyatlar)' : 'Siparişteki ürünler' }), list,
+        el('dl', { class: 'vgm-totals' }, totals)]));
 
       var hist = el('ul', { class: 'vgm-history' });
       (o.history || []).slice().reverse().forEach(function (h) {
@@ -1440,7 +1370,7 @@
       $$('[aria-invalid]', form).forEach(function (n) { n.removeAttribute('aria-invalid'); });
       var ref = trim(refInput.value).toUpperCase(), email = trim(mailInput.value);
       if (!/^VGS-[0-9]{6}-[A-Z0-9]{5}$/.test(ref)) { problem('Sipariş numarasını “VGS-261027-ABC23” biçiminde girin.', refInput); return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { problem('Sipariş verirken kullandığınız geçerli e-posta adresini girin.', mailInput); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { problem('Talepte kullandığınız geçerli e-posta adresini girin.', mailInput); return; }
       busy = true; submitBtn.disabled = true; statusEl.textContent = 'Sipariş sorgulanıyor…';
       clear(result);
       request('durum', { reference: ref, email: email }).then(function (d) {

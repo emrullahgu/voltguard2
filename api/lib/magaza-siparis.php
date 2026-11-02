@@ -1,9 +1,10 @@
 <?php
 /*
- * VoltGuard Magaza siparis is mantigi (api/MAGAZA.md "Sipariş kaydı"): girdi dogrulama, imzali fiyat jetonu, tekrar
- * korumasi, kayit, e-postalar, durum gecisleri, liste ve muhasebe CSV'si. API (api/lib/magaza-api.php) ve
- * tools/magaza-admin.php ayni fonksiyonlari kullanir. Siparis TL tutari sepet adiminda imzalanan jetondan gelir;
- * istemcinin gonderdigi hicbir fiyata guvenilmez.
+ * VoltGuard Magaza siparis is mantigi (api/MAGAZA.md "Sipariş kaydı"): girdi dogrulama, tekrar korumasi, TEYITLI
+ * SIPARIS TALEBI (talep -> personel teyidi -> odeme), kayit, e-postalar, durum gecisleri, liste ve muhasebe CSV'si. API
+ * (api/lib/magaza-api.php) ve tools/magaza-admin.php ayni fonksiyonlari kullanir. Talepteki fiyatlar bilgi amaclidir ve
+ * sunucuda hesaplanir; baglayici TL tutari yalnizca personel teyidinde (vgm_order_confirm) sabitlenir. Istemcinin
+ * gonderdigi hicbir fiyata guvenilmez.
  */
 declare(strict_types=1);
 
@@ -148,28 +149,6 @@ function vgm_order_input(array $in, array &$errors, bool $strict = true): array
 
 /* ------------------------------------------------------------------ jeton -> siparis */
 
-/** Jeton satirlarinin [{id, qty}] listesi istemcinin sepetiyle birebir ayni mi? */
-function vgm_quote_matches(array $quote, $items): bool
-{
-    if (!is_array($items)) {
-        return false;
-    }
-    $want = [];
-    foreach ($quote['lines'] as $l) {
-        $want[(string)$l[0]] = (int)$l[1];
-    }
-    $got = [];
-    foreach ($items as $row) {
-        if (!is_array($row) || !is_string($row['id'] ?? null) || !is_int($row['qty'] ?? null) || isset($got[$row['id']])) {
-            return false;
-        }
-        $got[$row['id']] = $row['qty'];
-    }
-    ksort($want);
-    ksort($got);
-    return $want === $got;
-}
-
 /** Akis sifresi (HMAC-SHA256 CTR) + etiket: tarayici jetonun icindeki USD fiyat ve kuru okuyamaz. PHP 7.4, eklenti gerektirmez. */
 function vgm_seal_stream(string $key, string $nonce, int $len): string
 {
@@ -209,33 +188,52 @@ function vgm_quote_unseal(string $sealed): ?string
     return $cipher ^ vgm_seal_stream($base . 'enc', $nonce, strlen($cipher));
 }
 
-function vgm_quote_or_fail(string $token, $items, int $now): array
+/**
+ * Siparis TALEBI taslagi (teyitli siparis, sahibin karari 2026-11-02). $cart: vgm_cart_items() ciktisi (her urun talep
+ * edilebilir). Satir fiyatlari BILGI AMACLIDIR: urun sayfasindaki gosterim kuraliyla (vgm_price_display: verified | list |
+ * last) gosterilen birim fiyat, yoksa null ("fiyat teyitte bildirilir"). Baglayici tutar personel teyidinde
+ * (vgm_order_confirm) sabitlenir; bu asamada IBAN ve odeme istenmez. ref bos.
+ */
+function vgm_request_draft(array $cart, array $clean, array $config, int $now): array
 {
-    $inner = vgm_quote_unseal($token);
-    $quote = $inner !== null ? vgm_token_decode('quote', $inner, $now) : null;
-    if ($quote === null || !is_array($quote['lines'] ?? null) || !$quote['lines'] || !vgm_quote_matches($quote, $items)) {
-        vg_fail(409, 'quote_expired', 'Fiyat teyidinin süresi doldu ya da sepet değişti. Güncel fiyatları aldık; lütfen toplamı kontrol edip yeniden onaylayın.');
-    }
-    return $quote;
-}
-
-/** Jetondan (sunucunun imzaladigi fiyatlar) ve dogrulanmis formdan siparis taslagi; ref bos. */
-function vgm_order_draft(array $quote, array $clean, array $config, int $now): array
-{
+    list($state, $rate) = vgm_locked(false, function (string $dir) use ($cart): array {
+        return [vgm_price_items($dir, array_keys($cart)), vgm_rate_state($dir)];
+    });
+    $open = vgm_shop_open($config);
     $items = [];
-    foreach ($quote['lines'] as $l) {
-        $p = vgm_product((string)$l[0]);
+    $net = 0.0;
+    $gross = 0.0;
+    $unpriced = 0;
+    foreach ($cart as $id => $qty) {
+        $p = vgm_product((string)$id);
         if ($p === null) {
-            vg_fail(409, 'quote_expired', 'Sepetteki bir ürün artık satışta değil. Sepetinizi yenileyin.');
+            vg_fail(422, 'unknown_product', 'Sepetteki bir ürün artık satışta değil. Sepetinizi yenileyin.');
         }
-        $qty = (int)$l[1];
-        $items[] = ['id' => $p['id'], 'name' => $p['name'], 'brand' => $p['brand'] ?? '', 'mpn' => $p['mpn'] ?? '', 'qty' => $qty,
-            'unit' => $p['unit'] ?? 'adet', 'vat' => (int)$l[5], 'unitUsdNet' => (float)$l[2], 'unitTryNet' => (float)$l[3],
-            'unitTryGross' => (float)$l[4], 'lineTryNet' => vgm_round2((float)$l[3] * $qty), 'lineTryGross' => vgm_round2((float)$l[4] * $qty),
-            'deliveryDays' => vgm_delivery_days($p)];
+        $price = vgm_price($p, $state[$p['id']] ?? null, $rate, $config, $open, $now);
+        $display = vgm_price_display($price, $now);
+        $vat = (int)$price['vat'];
+        $it = ['id' => $p['id'], 'name' => $p['name'], 'brand' => $p['brand'] ?? '', 'mpn' => $p['mpn'] ?? '', 'qty' => (int)$qty,
+            'unit' => $p['unit'] ?? 'adet', 'vat' => $vat, 'specs' => vgm_specs_snapshot($p), 'deliveryDays' => vgm_delivery_days($p),
+            'customMade' => ($p['customMade'] ?? false) === true, 'freight' => $price['reason'] === 'freight',
+            'priceBasis' => $display, 'unitUsdNet' => $display !== null ? $price['usdNet'] : null,
+            'unitTryNet' => null, 'unitTryGross' => null, 'lineTryNet' => null, 'lineTryGross' => null];
+        if ($display !== null) {
+            $it['unitTryNet'] = (float)$price['tryNet'];
+            $it['unitTryGross'] = (float)$price['tryGross'];
+            $it['lineTryNet'] = vgm_round2((float)$price['tryNet'] * $qty);
+            $it['lineTryGross'] = vgm_round2((float)$price['tryGross'] * $qty);
+            $net += $it['lineTryNet'];
+            $gross += $it['lineTryGross'];
+        } else {
+            $unpriced++;
+        }
+        $items[] = $it;
     }
-    return ['ref' => null, 'createdAt' => $now, 'payBy' => $now + 3600 * (int)($config['paymentHours'] ?? 24),
-        'status' => 'odeme_bekleniyor'] + $clean + ['items' => $items, 'totals' => $quote['totals'], 'rate' => $quote['rate']];
+    return ['ref' => null, 'createdAt' => $now, 'status' => 'teyit_bekliyor', 'payBy' => null, 'respondBy' => vgm_respond_by($now)]
+        + $clean + ['items' => $items,
+        'totals' => ['tryNet' => vgm_round2($net), 'tryVat' => vgm_round2($gross - $net), 'shippingTry' => null,
+            'tryGross' => vgm_round2($gross), 'unpriced' => $unpriced],
+        'rate' => vgm_rate_ok($rate, $now) ? ['usdTry' => (float)$rate['usdTry'], 'date' => (string)$rate['date']] : null];
 }
 
 /** Siparis anindaki tedarik kaynaklari (yalnizca personel; herkese acik gorunumde yok). */
@@ -286,10 +284,10 @@ function vgm_captcha_ready_or_fail(): void
 }
 
 /**
- * Siparis olusturur (api: action=siparis). $guard: tekrar korumasinin icinde, yeni bir siparis olusturulmadan once
- * calisir (hiz siniri, bot dogrulamasi); ayni istegin tekrari onu yeniden calistirmaz.
- * $memberId: SUNUCUDA oturumdan okunan uye kimligi (api/lib/magaza-api.php); istemci girdisinden ASLA alinmaz. Tekrar
- * korumasinin parmak izine girmez: ayni istek giris yapildiktan sonra tekrarlansa da ayni siparis doner.
+ * Siparis TALEBI olusturur (api: action=siparis). Durum "teyit_bekliyor"; IBAN ve odeme talebi YOK. $guard: tekrar
+ * korumasinin icinde, yeni bir kayit olusturulmadan once calisir (hiz siniri, bot dogrulamasi); ayni istegin tekrari onu
+ * yeniden calistirmaz. $memberId: SUNUCUDA oturumdan okunan uye kimligi (api/lib/magaza-api.php); istemci girdisinden ASLA
+ * alinmaz ve tekrar korumasinin parmak izine girmez: ayni istek giris yapildiktan sonra tekrarlansa da ayni kayit doner.
  * @return array{order: array, duplicate: bool, clean: array}
  */
 function vgm_order_create(array $in, int $now, ?callable $guard = null, ?string $memberId = null): array
@@ -297,57 +295,49 @@ function vgm_order_create(array $in, int $now, ?callable $guard = null, ?string 
     vgm_captcha_ready_or_fail();
     $requestId = is_string($in['requestId'] ?? null) ? $in['requestId'] : '';
     if (preg_match('/^[A-Za-z0-9_-]{16,64}$/D', $requestId) !== 1) {
-        vg_fail(400, 'invalid_request', 'Sipariş bilgisi eksik. Sayfayı yenileyip yeniden deneyin.');
+        vg_fail(400, 'invalid_request', 'Talep bilgisi eksik. Sayfayı yenileyip yeniden deneyin.');
     }
     if (($in['website'] ?? '') !== '') {
-        vg_fail(422, 'rejected', 'Sipariş gönderilemedi. Lütfen alanları kontrol edin.');
+        vg_fail(422, 'rejected', 'Talep gönderilemedi. Lütfen alanları kontrol edin.');
     }
     if (!is_string($in['formTimestamp'] ?? null) || preg_match('/^[1-9][0-9]{0,15}$/D', $in['formTimestamp']) !== 1) {
         vg_fail(422, 'invalid_form', 'Form bilgisi eksik. Lütfen sayfayı yenileyip yeniden deneyin.');
     }
     $errors = [];
     $clean = vgm_order_input($in, $errors);
-    $quote = vgm_quote_or_fail(is_string($in['quote'] ?? null) ? $in['quote'] : '', $in['items'] ?? null, $now);
+    $cart = vgm_cart_items($in['items'] ?? null);
     if ($errors) {
         vg_fail(422, 'invalid_order', 'Lütfen işaretli alanları düzeltin.', $errors);
     }
-    $lineIds = [];
-    foreach ($quote['lines'] as $l) {
-        $lineIds[] = (string)$l[0];
-    }
-    list($config, $state, $rate) = vgm_locked(false, function (string $dir) use ($lineIds): array {
-        return [vgm_config($dir), vgm_price_items($dir, $lineIds), vgm_rate_state($dir)];
+    $config = vgm_locked(false, function (string $dir): array {
+        return vgm_config($dir);
     });
     if (!vgm_shop_open($config)) {
-        vg_fail(503, 'shop_closed', 'Mağazamız henüz siparişe açık değil. Ürün için teklif isteyebilirsiniz.');
+        vg_fail(503, 'shop_closed', 'Sipariş talepleri çok yakında açılıyor. Şimdilik sepetinizi teklif olarak gönderebilirsiniz.');
     }
-    /* Jeton 30 dk gecerlidir; siparis aninda her satirin 48 saat, bekletme, stok ve kimlik kosulu yeniden denetlenir.
-       Tahsil edilen tutar yine imzali TL tutaridir. */
-    foreach ($quote['lines'] as $l) {
-        $p = vgm_product((string)$l[0]);
-        if ($p === null || !vgm_price($p, $state[$p['id']] ?? null, $rate, $config, true, $now)['orderable']) {
-            vg_fail(409, 'quote_expired', 'Fiyat teyidinin süresi doldu ya da sepet değişti. Güncel fiyatları aldık; lütfen toplamı kontrol edip yeniden onaylayın.');
-        }
-    }
-    $draft = vgm_order_draft($quote, $clean, $config, $now);
-    $fingerprint = hash('sha256', vg_json_encode([$clean, $quote['lines'], $quote['totals'], $quote['rate']]));
+    $cartKey = $cart;
+    ksort($cartKey);
+    $fingerprint = hash('sha256', vg_json_encode(['talep-v2', $clean, $cartKey]));
     $created = null;
-    $outcome = vgm_order_once($requestId, $fingerprint, function () use ($draft, $config, $state, $now, $guard, $memberId, &$created): string {
+    $outcome = vgm_order_once($requestId, $fingerprint, function () use ($cart, $clean, $config, $now, $guard, $memberId, &$created): string {
         if ($guard !== null) {
             $guard();
         }
         if (!vg_mail_can_send()) {
-            vg_fail(503, 'mail_unavailable', 'Sipariş şu anda alınamıyor. Lütfen bizi telefonla arayın.');
+            vg_fail(503, 'mail_unavailable', 'Talep şu anda alınamıyor. Lütfen bizi telefonla arayın.');
         }
-        $order = $draft;
+        $order = vgm_request_draft($cart, $clean, $config, $now);
         $order['consents'] = ['preInfo' => $now, 'contract' => $now, 'docVersion' => (string)(vgm_firma()['belgeSurumu'] ?? ''),
-            'ipHash' => hash_hmac('sha256', 'magaza-ip' . "\0" . vg_client_ip(), vg_secret())];
-        $order['history'] = [['at' => $now, 'status' => 'odeme_bekleniyor', 'by' => 'sistem', 'note' => '', 'publicNote' => '']];
+            'stage' => 'talep', 'ipHash' => hash_hmac('sha256', 'magaza-ip' . "\0" . vg_client_ip(), vg_secret())];
+        $order['history'] = [['at' => $now, 'status' => 'teyit_bekliyor', 'by' => 'sistem', 'note' => '', 'publicNote' => '']];
         $order['tracking'] = null;
         if ($memberId !== null && preg_match('/^u[0-9a-f]{24}$/D', $memberId) === 1) {
             $order['member'] = ['id' => $memberId, 'linkedAt' => $now, 'via' => 'checkout'];
         }
-        $order['private'] = ['sources' => vgm_sources_snapshot($order['items'], $config, $state)];
+        $prices = vgm_locked(false, function (string $dir) use ($cart): array {
+            return vgm_price_items($dir, array_keys($cart));
+        });
+        $order['private'] = ['sources' => vgm_sources_snapshot($order['items'], $config, $prices)];
         $order = vgm_locked(true, function (string $dir) use ($order, $config): array {
             $all = vgm_orders_read($dir);
             do {
@@ -359,10 +349,9 @@ function vgm_order_create(array $in, int $now, ?callable $guard = null, ?string 
             vgm_orders_write($dir, $all);
             return $order;
         });
-        $ctx = vgm_doc_context($order, vgm_firma(), $config);
-        $mail = ['customer' => vgm_mail_order_customer($order, $ctx), 'staff' => vgm_mail_order_staff($order)];
+        $mail = ['customer' => vgm_mail_request_customer($order), 'staff' => vgm_mail_request_staff($order)];
         if (!$mail['customer'] || !$mail['staff']) {
-            error_log('VoltGuard magaza: order mail not handed to transport (' . ($mail['customer'] ? 'staff' : 'customer') . ')');
+            error_log('VoltGuard magaza: request mail not handed to transport (' . ($mail['customer'] ? 'staff' : 'customer') . ')');
         }
         $order['mail'] = $mail;
         vgm_locked(true, function (string $dir) use ($order): void {
@@ -380,6 +369,268 @@ function vgm_order_create(array $in, int $now, ?callable $guard = null, ?string 
         vg_unavailable('order record missing after idempotent replay');
     }
     return ['order' => $order, 'duplicate' => $outcome['duplicate'], 'clean' => $clean];
+}
+
+/** Personelin girdigi TL tutari (KDV dahil): sayi, 0 < x <= 100.000.000 ($allowZero: 0 da olur), kurus hassasiyeti. */
+function vgm_money_in($v, bool $allowZero = false): ?float
+{
+    if (!(is_int($v) || is_float($v)) || !is_finite((float)$v)) {
+        return null;
+    }
+    $f = vgm_round2((float)$v);
+    if ($f > 100000000 || $f < 0 || (!$allowZero && $f <= 0)) {
+        return null;
+    }
+    return $f;
+}
+
+/** Teyit kilidinin gecerlilik suresi (sn): e-posta gonderilirken ikinci teyit/ret beklenir; surec coktuyse kilit kendiliginden duser. */
+const VGM_CONFIRM_CLAIM_SECONDS = 120;
+
+/** Baska bir oturum bu talebi su anda teyit ediyor mu (e-posta gonderimi suruyor)? */
+function vgm_confirm_claimed(array $o, int $now): bool
+{
+    $at = $o['confirming']['at'] ?? null;
+    return is_int($at) && $now - $at < VGM_CONFIRM_CLAIM_SECONDS;
+}
+
+/**
+ * Personel teyidi (api: panel_order_confirm; personel yetkisi sunucuda denetlenir, musteri bu islemi yapamaz).
+ * $in: lines [{id, qty, unitTryGross}] (yalnizca talepteki urunler; listede olmayan satir kaldirilir; adet yalnizca
+ * azaltilabilir: 1 <= qty <= talepteki adet ve urunun minQty/step kurali), shippingTry (KDV dahil, 0 = ucretsiz),
+ * publicNote?, note?. Hata alanlari urun kimligiyle: "lines.<id>.qty", "lines.<id>.unitTryGross".
+ *
+ * Teyit e-postasi saticinin baglayici teklifidir (kesin tutar, IBAN, kesin tutarli form ve sozlesme, talepten farklar);
+ * sozlesme musteri bu tutari suresinde odeyince kurulur. Bu nedenle e-posta teslim edilmeden teyit KAYDEDILMEZ:
+ *  1) kilit altinda dogrulanir, teyitli kayit hesaplanir ve talep "confirming" ile kisa sureli isaretlenir;
+ *  2) e-posta gonderilir;
+ *  3) gonderildiyse teyit yazilir (odeme_bekleniyor, payBy = teyit + paymentHours); gonderilemediyse isaret kaldirilir,
+ *     talep teyit_bekliyor kalir ve 503 mail_failed doner (personel tekrar dener; odeme suresi baslamaz).
+ * Yalnizca teyit_bekliyor durumundaki talep teyit edilir (ikinci teyit 409).
+ */
+function vgm_order_confirm(string $ref, array $in, array $actor, int $now): array
+{
+    $lines = $in['lines'] ?? null;
+    if (!is_array($lines) || $lines === [] || array_keys($lines) !== range(0, count($lines) - 1) || count($lines) > VGM_MAX_LINES) {
+        vg_fail(422, 'invalid_lines', 'Teyit için en az bir ürün satırı gerekli.');
+    }
+    $want = [];
+    $errors = [];
+    foreach ($lines as $row) {
+        $id = is_array($row) && is_string($row['id'] ?? null) ? $row['id'] : '';
+        $qty = is_array($row) ? ($row['qty'] ?? null) : null;
+        $unit = is_array($row) ? vgm_money_in($row['unitTryGross'] ?? null) : null;
+        if ($id === '' || !vgm_id_valid($id) || isset($want[$id])) {
+            vg_fail(422, 'invalid_lines', 'Ürün satırları okunamadı. Sayfayı yenileyip tekrar deneyin.');
+        }
+        if (!is_int($qty) || $qty < 1 || $qty > VGM_MAX_QTY) {
+            $errors['lines.' . $id . '.qty'] = 'Adet 1 ile ' . VGM_MAX_QTY . ' arasında tam sayı olmalı.';
+        }
+        if ($unit === null) {
+            $errors['lines.' . $id . '.unitTryGross'] = 'KDV dahil birim fiyatı TL olarak girin.';
+        }
+        $want[$id] = ['qty' => is_int($qty) ? $qty : 0, 'unit' => $unit];
+    }
+    $ship = vgm_money_in($in['shippingTry'] ?? 0, true);
+    if ($ship === null || $ship > 1000000) {
+        $errors['shippingTry'] = 'Kargo ücretini TL olarak girin (ücretsizse 0).';
+    }
+    if ($errors) {
+        vg_fail(422, 'invalid_confirm', 'Lütfen işaretli alanları düzeltin.', $errors);
+    }
+    $publicNote = vg_text($in['publicNote'] ?? '', 600, true);
+    $note = vg_text($in['note'] ?? '', 1000, true);
+    $config = vgm_locked(false, function (string $dir): array {
+        return vgm_config($dir);
+    });
+    $by = vg_text($actor['name'] ?? 'personel', 80);
+    $token = bin2hex(random_bytes(8));
+    /* 1) dogrula, hesapla, kisa sureli isaretle (yazilan tek degisiklik "confirming"). */
+    $staged = vgm_locked(true, function (string $dir) use ($ref, $want, $ship, $publicNote, $note, $by, $config, $now, $token): array {
+        $all = vgm_orders_read($dir);
+        if (!isset($all['orders'][$ref])) {
+            vg_fail(404, 'not_found', 'Sipariş bulunamadı.');
+        }
+        $o = $all['orders'][$ref];
+        if ($o['status'] !== 'teyit_bekliyor') {
+            vg_fail(409, 'not_awaiting_confirm', 'Bu talep teyit beklemiyor ("' . (VGM_STATUS_LABELS[$o['status']] ?? $o['status']) . '"). Sayfayı yenileyin.');
+        }
+        if (vgm_confirm_claimed($o, $now)) {
+            vg_fail(409, 'confirm_in_progress', 'Bu talep şu anda başka bir oturumda teyit ediliyor. Birkaç saniye sonra sayfayı yenileyin.');
+        }
+        $byId = [];
+        foreach ($o['items'] as $it) {
+            $byId[$it['id']] = $it;
+        }
+        $errors = [];
+        foreach ($want as $id => $w) {
+            if (!isset($byId[$id])) {
+                vg_fail(422, 'invalid_lines', 'Teyit yalnızca talepteki ürünleri içerebilir.');
+            }
+            $requested = (int)$byId[$id]['qty'];
+            $unitName = (string)($byId[$id]['unit'] ?? 'adet');
+            if ($w['qty'] > $requested) {
+                $errors['lines.' . $id . '.qty'] = 'Adet talepteki adetten (' . $requested . ' ' . $unitName . ') fazla olamaz; teyitte adet yalnızca azaltılabilir.';
+                continue;
+            }
+            $p = vgm_product((string)$id);
+            if ($p !== null && $w['qty'] !== $requested && ($w['qty'] < $p['minQty'] || ($w['qty'] - $p['minQty']) % $p['step'] !== 0)) {
+                $errors['lines.' . $id . '.qty'] = 'Bu ürün en az ' . $p['minQty'] . ' ' . $unitName
+                    . ($p['step'] > 1 ? ' ve ' . $p['step'] . ' ' . $unitName . ' katları ile' : '') . ' satılır.';
+            }
+        }
+        if ($errors) {
+            vg_fail(422, 'invalid_confirm', 'Lütfen işaretli alanları düzeltin.', $errors);
+        }
+        $rate = vgm_rate_state($dir);
+        $rateOk = vgm_rate_ok($rate, $now);
+        $items = [];
+        $net = 0.0;
+        $gross = 0.0;
+        $usd = 0.0;
+        foreach ($want as $id => $w) {
+            $it = $byId[$id];
+            $vat = (int)$it['vat'];
+            $unitNet = vgm_round2($w['unit'] / (1 + $vat / 100));
+            $lineGross = vgm_round2($w['unit'] * $w['qty']);
+            $lineNet = vgm_round2($lineGross / (1 + $vat / 100));
+            $it['requested'] = ['qty' => $it['qty'], 'unitTryGross' => $it['unitTryGross'] ?? null, 'priceBasis' => $it['priceBasis'] ?? null];
+            $it['qty'] = $w['qty'];
+            $it['unitTryGross'] = $w['unit'];
+            $it['unitTryNet'] = $unitNet;
+            $it['lineTryGross'] = $lineGross;
+            $it['lineTryNet'] = $lineNet;
+            $it['priceBasis'] = 'confirmed';
+            $it['unitUsdNet'] = $rateOk ? vgm_round2($unitNet / (float)$rate['usdTry']) : null;
+            $net += $lineNet;
+            $gross += $lineGross;
+            $usd += $rateOk ? $unitNet / (float)$rate['usdTry'] * $w['qty'] : 0;
+            $items[] = $it;
+        }
+        $removed = array_values(array_diff(array_keys($byId), array_keys($want)));
+        $c = $o;
+        $c['request'] = ['items' => $o['items'], 'totals' => $o['totals'], 'docs' => $o['docs'] ?? null, 'respondBy' => $o['respondBy'] ?? null];
+        $c['items'] = $items;
+        $c['totals'] = ['tryNet' => vgm_round2($net), 'tryVat' => vgm_round2($gross - $net), 'shippingTry' => $ship,
+            'tryGross' => vgm_round2($gross + $ship), 'usdNet' => $rateOk ? vgm_round2($usd) : null];
+        $c['rate'] = $rateOk ? ['usdTry' => (float)$rate['usdTry'], 'date' => (string)$rate['date']] : ($o['rate'] ?? null);
+        $c['status'] = 'odeme_bekleniyor';
+        $c['confirmedAt'] = $now;
+        $c['confirmedBy'] = $by;
+        $c['payBy'] = $now + 3600 * (int)($config['paymentHours'] ?? 24);
+        $c['docs'] = vgm_order_docs($c, $config);
+        $c['consents']['confirmedDocVersion'] = (string)(vgm_firma()['belgeSurumu'] ?? '');
+        /* Talepten farklar musteriye gorunur (e-posta, belgeler, takip gecmisi); ic not yalnizca personel. */
+        $changes = vgm_confirm_changes($c);
+        $public = $publicNote !== '' ? $publicNote : 'Stok ve fiyat teyit edildi; ödeme bilgileri e-postayla gönderildi.';
+        if ($changes) {
+            $public .= ' Talebinize göre değişiklikler: ' . implode('; ', $changes) . '.';
+        }
+        $c['history'][] = ['at' => $now, 'status' => 'odeme_bekleniyor', 'by' => $by,
+            'note' => trim($note . ($removed ? ($note !== '' ? ' ' : '') . '[Çıkarılan ürün: ' . implode(', ', $removed) . ']' : '')),
+            'publicNote' => $public];
+        unset($c['confirming']);
+        $all['orders'][$ref]['confirming'] = ['at' => $now, 'token' => $token, 'by' => $by];
+        vgm_orders_write($dir, $all);
+        return ['order' => $c, 'changes' => $changes];
+    });
+    /* 2) baglayici teklif: e-posta. */
+    $order = $staged['order'];
+    $sent = vgm_mail_confirm_customer($order, vgm_doc_context($order, vgm_firma(), $config), $publicNote, $staged['changes']);
+    if (!$sent) {
+        error_log('VoltGuard magaza: confirmation mail not handed to transport; confirmation not recorded');
+    }
+    /* 3) gonderildiyse teyidi yaz; gonderilemediyse isareti kaldir (talep teyit_bekliyor kalir, odeme suresi baslamaz). */
+    $saved = vgm_locked(true, function (string $dir) use ($ref, $order, $sent, $token, $now): ?array {
+        $all = vgm_orders_read($dir);
+        $cur = $all['orders'][$ref] ?? null;
+        if ($cur === null || ($cur['confirming']['token'] ?? null) !== $token || $cur['status'] !== 'teyit_bekliyor') {
+            error_log('VoltGuard magaza: confirmation claim lost for ' . $ref);
+            vg_fail(409, 'confirm_conflict', 'Talep bu sırada değişti. Sayfayı yenileyip durumu kontrol edin.');
+        }
+        unset($cur['confirming']);
+        if (!$sent) {
+            $cur['mail']['confirmFailedAt'] = $now;
+            $all['orders'][$ref] = $cur;
+            vgm_orders_write($dir, $all);
+            return null;
+        }
+        /* Esas alinan kayit guncel kayit (bu arada uye baglama gibi alanlar degismis olabilir); teyit alanlari uzerine yazilir. */
+        foreach (['request', 'items', 'totals', 'rate', 'status', 'confirmedAt', 'confirmedBy', 'payBy', 'docs'] as $k) {
+            $cur[$k] = $order[$k];
+        }
+        $cur['consents']['confirmedDocVersion'] = $order['consents']['confirmedDocVersion'];
+        $cur['history'][] = end($order['history']);
+        $cur['mail']['confirm'] = true;
+        unset($cur['mail']['confirmFailedAt']);
+        $all['orders'][$ref] = $cur;
+        vgm_orders_write($dir, $all);
+        return $cur;
+    });
+    if ($saved === null) {
+        vg_fail(503, 'mail_failed', 'Teyit e-postası gönderilemedi. Teyit kaydedilmedi; talep "Teyit bekleniyor" durumunda kaldı ve ödeme süresi başlamadı. Biraz sonra tekrar deneyin.');
+    }
+    $saved['_mailSent'] = true;
+    return $saved;
+}
+
+/** Ret nedenleri (panel secimi) ve musteriye giden standart cumle. */
+const VGM_REJECT_REASONS = [
+    'stok_yok' => 'Ürün tedarikçi stoğunda bulunamadı.',
+    'fiyat_degisti' => 'Tedarik fiyatı değiştiği için talepteki koşullarla teyit edemedik.',
+    'diger' => '',
+];
+
+/**
+ * Talebi reddeder (api: panel_order_reject): durum iptal (bedelsiz); bu asamada odeme hic istenmemistir. $in: reason
+ * (stok_yok|fiyat_degisti|diger), publicNote? (musteriye; "diger"de zorunlu), note? (ic not). Musteriye e-posta gider.
+ */
+function vgm_order_reject(string $ref, array $in, array $actor, int $now): array
+{
+    $reason = is_string($in['reason'] ?? null) ? $in['reason'] : '';
+    if (!array_key_exists($reason, VGM_REJECT_REASONS)) {
+        vg_fail(422, 'invalid_reason', 'Ret nedenini seçin.', ['reason' => 'Ret nedenini seçin.']);
+    }
+    $publicNote = vg_text($in['publicNote'] ?? '', 600, true);
+    $note = vg_text($in['note'] ?? '', 1000, true);
+    if ($reason === 'diger' && vg_strlen($publicNote) < 3) {
+        vg_fail(422, 'note_required', 'Müşteriye iletilecek gerekçeyi yazın.', ['publicNote' => 'Müşteriye iletilecek gerekçeyi yazın.']);
+    }
+    $message = trim(VGM_REJECT_REASONS[$reason] . ($publicNote !== '' ? ' ' . $publicNote : ''));
+    $order = vgm_locked(true, function (string $dir) use ($ref, $reason, $message, $note, $actor, $now): array {
+        $all = vgm_orders_read($dir);
+        if (!isset($all['orders'][$ref])) {
+            vg_fail(404, 'not_found', 'Sipariş bulunamadı.');
+        }
+        $o = $all['orders'][$ref];
+        if ($o['status'] !== 'teyit_bekliyor') {
+            vg_fail(409, 'not_awaiting_confirm', 'Bu talep teyit beklemiyor ("' . (VGM_STATUS_LABELS[$o['status']] ?? $o['status']) . '"). Sayfayı yenileyin.');
+        }
+        if (vgm_confirm_claimed($o, $now)) {
+            vg_fail(409, 'confirm_in_progress', 'Bu talep şu anda başka bir oturumda teyit ediliyor. Birkaç saniye sonra sayfayı yenileyin.');
+        }
+        $by = vg_text($actor['name'] ?? 'personel', 80);
+        $o['status'] = 'iptal';
+        $o['rejected'] = ['at' => $now, 'reason' => $reason, 'by' => $by];
+        $o['history'][] = ['at' => $now, 'status' => 'iptal', 'by' => $by, 'note' => $note !== '' ? $note : 'Talep teyit edilemedi (' . $reason . ').',
+            'publicNote' => trim('Talebiniz teyit edilemedi ve bedelsiz kapatıldı. ' . $message)];
+        $all['orders'][$ref] = $o;
+        vgm_orders_write($dir, $all);
+        return $o;
+    });
+    $sent = vgm_mail_reject_customer($order, $message);
+    if (!$sent) {
+        error_log('VoltGuard magaza: rejection mail not handed to transport');
+    }
+    vgm_locked(true, function (string $dir) use ($ref, $sent): void {
+        $all = vgm_orders_read($dir);
+        if (isset($all['orders'][$ref])) {
+            $all['orders'][$ref]['mail']['reject'] = $sent;
+            vgm_orders_write($dir, $all);
+        }
+    });
+    $order['_mailSent'] = $sent;
+    return $order;
 }
 
 /* ------------------------------------------------------------------ okuma, guncelleme */
@@ -408,7 +659,8 @@ function vgm_order_lookup(string $ref, string $email): ?array
 
 /**
  * Siparis sahibine gosterilen gorunum (takip sayfasi ve Hesabim > Siparislerim ayni fonksiyonu kullanir): tedarikci,
- * maliyet, USD kuru, ic not ve ozel alanlar yok. Odeme bekleyen ve suresi dolmamis sipariste havale bilgisi eklenir.
+ * maliyet, USD kuru, ic not ve ozel alanlar yok. Havale bilgisi YALNIZCA teyit edilmis (odeme_bekleniyor) ve suresi
+ * dolmamis sipariste eklenir; teyit bekleyen talepte odeme bilgisi yoktur.
  */
 function vgm_order_customer_view(array $order, int $now): array
 {
@@ -417,6 +669,9 @@ function vgm_order_customer_view(array $order, int $now): array
     $pub['rate'] = isset($order['rate']['date']) ? ['date' => (string)$order['rate']['date']] : null;
     $pub['payOverdue'] = false;
     $pub['payment'] = null;
+    if (($order['status'] ?? '') === 'teyit_bekliyor') {
+        $pub['paymentNote'] = 'Talebiniz stok ve fiyat teyidi bekliyor. Teyitten sonra kesin tutar ve ödeme bilgileri e-postayla gönderilir; teyit gelmeden ödeme yapmayın.';
+    }
     if (($order['status'] ?? '') === 'odeme_bekleniyor') {
         if ((int)$order['payBy'] < $now) {
             $pub['payOverdue'] = true;
@@ -461,6 +716,9 @@ function vgm_order_update(string $ref, array $change, array $actor, int $now): a
         }
         $o = $all['orders'][$ref];
         if ($status !== null && $status !== $o['status']) {
+            if ($o['status'] === 'teyit_bekliyor') {
+                vg_fail(409, 'confirm_required', 'Teyit bekleyen talep yalnızca "Onayla ve ödeme bilgisi gönder" ya da "Reddet" ile ilerler.');
+            }
             if (!isset(VGM_STATUS_LABELS[$status]) || !vgm_transition_ok($o['status'], $status)) {
                 vg_fail(409, 'invalid_transition', '"' . (VGM_STATUS_LABELS[$o['status']] ?? $o['status']) . '" durumundan "'
                     . (VGM_STATUS_LABELS[$status] ?? $status) . '" durumuna geçilemez.');
@@ -530,8 +788,11 @@ function vgm_orders_list(array $filter, ?int $now = null): array
         $rows[] = ['ref' => $o['ref'], 'createdAt' => vg_iso((int)$o['createdAt']), 'status' => $o['status'],
             'statusLabel' => VGM_STATUS_LABELS[$o['status']] ?? $o['status'], 'customerName' => $o['customer']['name'],
             'city' => $o['shippingAddress']['city'] ?? '', 'amountTry' => (float)$o['totals']['tryGross'],
-            'itemCount' => count($o['items']), 'payBy' => vg_iso((int)$o['payBy']),
-            'overdue' => $o['status'] === 'odeme_bekleniyor' && (int)$o['payBy'] < $now,
+            'estimate' => vgm_order_is_estimate($o), 'unpriced' => (int)($o['totals']['unpriced'] ?? 0),
+            'itemCount' => count($o['items']), 'payBy' => isset($o['payBy']) ? vg_iso((int)$o['payBy']) : null,
+            'respondBy' => isset($o['respondBy']) ? vg_iso((int)$o['respondBy']) : null,
+            'overdue' => $o['status'] === 'odeme_bekleniyor' && (int)($o['payBy'] ?? 0) < $now,
+            'respondLate' => $o['status'] === 'teyit_bekliyor' && isset($o['respondBy']) && (int)$o['respondBy'] < $now,
             'member' => isset($o['member']['id']) ? (string)($o['member']['via'] ?? 'checkout') : null, '_t' => (int)$o['createdAt']];
     }
     usort($rows, function (array $a, array $b): int {
@@ -594,8 +855,9 @@ function vgm_orders_csv(array $filter): string
         $lines[] = implode(';', array_map('vgm_csv_cell', [$o['ref'], vgm_local($t), VGM_STATUS_LABELS[$o['status']] ?? $o['status'],
             $o['customer']['name'], $o['customer']['email'], $o['customer']['phone'], $b['type'], $b['tckn'], $b['company'], $b['taxOffice'],
             $b['vkn'], $b['address'], $b['city'], $b['district'], $items, (float)$o['totals']['tryNet'], (float)$o['totals']['tryVat'],
-            (float)$o['totals']['shippingTry'], (float)$o['totals']['tryGross'], number_format((float)$o['rate']['usdTry'], 4, ',', ''),
-            $o['rate']['date'], isset($o['paidAt']) ? vgm_local((int)$o['paidAt']) : '']));
+            (float)($o['totals']['shippingTry'] ?? 0), (float)$o['totals']['tryGross'],
+            isset($o['rate']['usdTry']) ? number_format((float)$o['rate']['usdTry'], 4, ',', '') : '',
+            (string)($o['rate']['date'] ?? ''), isset($o['paidAt']) ? vgm_local((int)$o['paidAt']) : '']));
     }
     return "\xEF\xBB\xBF" . implode("\r\n", $lines) . "\r\n";
 }

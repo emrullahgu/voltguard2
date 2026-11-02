@@ -1,7 +1,8 @@
 <?php
 /*
  * VoltGuard Magaza JSON API yonlendiricisi (api/magaza.php). Zarf uyelik API'siyle aynidir: {"api":"vg-auth/1","ok":...}.
- * Herkese acik: fiyatlar (GET), sepet, onbilgi, siparis, durum (POST). Uye (sitenin uye hesabi, api/lib/magaza-uye.php):
+ * Herkese acik: fiyatlar (GET), sepet, onbilgi, siparis (TEYITLI SIPARIS TALEBI: IBAN yok), durum (POST). Talebi yalnizca
+ * personel teyit eder ya da reddeder (panel_order_confirm / panel_order_reject); musteri tarafinda bu islem yoktur. Uye (sitenin uye hesabi, api/lib/magaza-uye.php):
  * hesap_profil, hesap_siparisler, hesap_siparis (GET), hesap_dogrula_gonder, hesap_dogrula, hesap_sahiplen, hesap_adres_sil
  * (POST; oturum + Origin + X-VG-CSRF); her uye yalnizca kendine bagli siparisleri gorur. Panel islemleri: oturum (VGSESS) + Origin +
  * X-VG-CSRF + sunucuda atanmis magaza yetkisi (tools/magaza-admin.php grant). Herkese acik yanitlarda tedarikci,
@@ -26,6 +27,7 @@ function vgm_api_routes(): array
         'hesap_dogrula_gonder' => ['POST', 'member'], 'hesap_dogrula' => ['POST', 'member'], 'hesap_sahiplen' => ['POST', 'member'],
         'hesap_adres_sil' => ['POST', 'member'],
         'panel_orders' => ['GET', 'panel'], 'panel_order' => ['GET', 'panel'], 'panel_order_update' => ['POST', 'panel'],
+        'panel_order_confirm' => ['POST', 'panel'], 'panel_order_reject' => ['POST', 'panel'],
         'panel_prices' => ['GET', 'panel'], 'panel_price_decide' => ['POST', 'panel'], 'panel_check_now' => ['POST', 'panel'],
         'panel_status' => ['GET', 'panel'], 'panel_export' => ['POST', 'panel'],
     ];
@@ -138,6 +140,8 @@ function vgm_member_order_row(array $o, int $now): array
     $first = $o['items'][0]['name'] ?? '';
     return ['reference' => $v['reference'], 'createdAt' => $v['createdAt'], 'status' => $v['status'], 'statusLabel' => $v['statusLabel'],
         'payBy' => $v['payBy'], 'payOverdue' => $v['payOverdue'], 'payment' => $v['payment'], 'totalTry' => (float)$o['totals']['tryGross'],
+        'estimate' => $v['estimate'], 'unpriced' => (int)($o['totals']['unpriced'] ?? 0), 'respondBy' => $v['respondBy'],
+        'paymentNote' => $v['paymentNote'] ?? null,
         'itemCount' => count($o['items']), 'firstItem' => (string)$first, 'tracking' => $v['tracking'],
         'linkedVia' => (string)($o['member']['via'] ?? 'checkout')];
 }
@@ -246,14 +250,14 @@ function vgm_public_action(string $action, array $body, int $now): array
         if (($retry = vg_rl_hit('vgm_doc', vg_rl_ip_key(), 120, 600)) > 0) {
             vg_too_many($retry);
         }
-        $q = vgm_quote_or_fail(is_string($body['quote'] ?? null) ? $body['quote'] : '', $body['items'] ?? null, $now);
+        /* Talep asamasi belgeleri (tahmini tutarlar, IBAN yok): sunucu fiyatlari kendisi hesaplar. */
+        $cart = vgm_cart_items($body['items'] ?? null);
         $errors = [];
         $clean = vgm_order_input($body, $errors, false);
         $config = vgm_locked(false, function (string $dir): array {
             return vgm_config($dir);
         });
-        $draft = vgm_order_draft($q, $clean, $config, $now);
-        $draft['createdAt'] = $now;
+        $draft = vgm_request_draft($cart, $clean, $config, $now);
         return vgm_order_docs($draft, $config);
     }
     if ($action === 'siparis') {
@@ -288,21 +292,24 @@ function vgm_public_action(string $action, array $body, int $now): array
             }
             $account = ['linked' => $linked, 'saved' => $saved];
         }
-        $f = vgm_firma();
         $preview = getenv('VG_MAIL_OUTBOX') === '1';
         $mailed = ($o['mail']['customer'] ?? true) === true;
-        $amount = vgm_fmt_try((float)$o['totals']['tryGross']);
+        $respond = isset($o['respondBy']) && is_int($o['respondBy']) ? $o['respondBy'] : null;
+        $respondText = $respond !== null ? vgm_local($respond) . ' (TSİ)' : '';
         $message = $result['duplicate']
-            ? 'Bu sipariş daha önce ' . $o['ref'] . ' numarasıyla alınmıştı; tekrar kaydedilmedi.'
-            : 'Siparişiniz ' . $o['ref'] . ' numarasıyla alındı. ' . $amount . ' tutarındaki ödemeyi aşağıdaki hesaba havale/EFT ile yapın ve açıklama alanına sipariş numaranızı yazın.';
+            ? 'Bu talep daha önce ' . $o['ref'] . ' numarasıyla alınmıştı; tekrar kaydedilmedi.'
+            : 'Sipariş talebiniz ' . $o['ref'] . ' numarasıyla alındı. Stok ve fiyatı teyit ettikten sonra kesin tutarı ve ödeme bilgilerini '
+                . 'en geç ' . VGM_CONFIRM_BUSINESS_DAYS . ' iş günü içinde e-postayla göndereceğiz. Teyit gelmeden ödeme yapmayın.';
         if (!$mailed) {
-            $message .= ' Onay e-postası şu anda gönderilemedi; lütfen bu sayfadaki ödeme bilgilerini kaydedin. Ekibimiz sizinle iletişime geçecek.';
+            $message .= ' Bilgilendirme e-postası şu anda gönderilemedi; ekibimiz sizinle iletişime geçecek.';
         } elseif ($preview) {
             $message .= ' (Önizleme: e-posta gönderilmez.)';
         }
-        return ['reference' => $o['ref'], 'amountTry' => (float)$o['totals']['tryGross'], 'amountText' => $amount,
-            'payBy' => vg_iso((int)$o['payBy']), 'payByText' => vgm_local((int)$o['payBy']) . ' (TSİ)',
-            'bank' => ['ad' => $f['banka']['ad'], 'hesapSahibi' => $f['banka']['hesapSahibi'], 'iban' => $f['banka']['iban']],
+        /* Talep yaniti: odeme bilgisi (banka, IBAN, son odeme) YOKTUR; yalnizca tahmini tutar ve yanit suresi. */
+        return ['reference' => $o['ref'], 'status' => $o['status'], 'estimateTry' => (float)$o['totals']['tryGross'],
+            'estimateText' => vgm_fmt_try((float)$o['totals']['tryGross']), 'unpriced' => (int)($o['totals']['unpriced'] ?? 0),
+            'respondBy' => $respond !== null ? vg_iso($respond) : null, 'respondByText' => $respondText,
+            'responseDays' => VGM_CONFIRM_BUSINESS_DAYS,
             'message' => $message, 'duplicate' => $result['duplicate'], 'mailSent' => $mailed, 'preview' => $preview,
             'account' => $account];
     }
@@ -340,6 +347,39 @@ function vgm_panel_price_row(array $p, ?array $s, ?array $rate, array $config, b
         'method' => $s['method'] ?? null, 'sources' => $sources];
 }
 
+/**
+ * Teyit yardimi (yalnizca personel): talepteki her urun icin tedarikcinin SON fiyat kontrolu (alis, KDV dahil satis onerisi,
+ * durum, kontrol zamani, kaynaklar) ve magazanin kargo ayari. Personel "Şimdi kontrol et" ile panel_check_now'i calistirip
+ * bu yardimi yeniler. Musteriye hicbir yerde gosterilmez.
+ */
+function vgm_panel_confirm_aid(array $order, int $now): array
+{
+    $ids = array_map(function (array $it): string {
+        return (string)$it['id'];
+    }, $order['items']);
+    list($config, $prices, $rate) = vgm_locked(false, function (string $dir) use ($ids): array {
+        return [vgm_config($dir), vgm_price_items($dir, $ids), vgm_rate_state($dir)];
+    });
+    $lines = [];
+    foreach ($ids as $id) {
+        $p = vgm_product($id);
+        if ($p === null) {
+            $lines[$id] = null;
+            continue;
+        }
+        $row = vgm_panel_price_row($p, $prices[$id] ?? null, $rate, $config, true, $now);
+        $row['reasonText'] = vgm_reason_text($row['reason']);
+        $row['fresh'] = is_int($prices[$id]['checkedAt'] ?? null) && $now - (int)$prices[$id]['checkedAt'] <= VGM_PRICE_MAX_AGE;
+        $row['available'] = $prices[$id]['available'] ?? null;
+        $row['maxQty'] = (int)$p['maxQty'];
+        $lines[$id] = $row;
+    }
+    $ship = is_array($config['shipping'] ?? null) ? $config['shipping'] : [];
+    return ['lines' => $lines, 'shipping' => ['feeTry' => (float)($ship['feeTry'] ?? 0), 'freeOverTry' => (float)($ship['freeOverTry'] ?? 0)],
+        'paymentHours' => (int)($config['paymentHours'] ?? 24),
+        'rate' => vgm_rate_ok($rate, $now) ? ['usdTry' => (float)$rate['usdTry'], 'date' => (string)$rate['date']] : null];
+}
+
 /** Sira dosyasindan sayimlar (kaynagi olan urunler) ve kaynaksiz urun sayisi (manifest). */
 function vgm_panel_counts(array $queue, int $products, int $now): array
 {
@@ -369,7 +409,15 @@ function vgm_panel_status(int $now): array
     $counts = vgm_panel_counts($queue, $products, $now);
     $awaiting = 0;
     $overdue = 0;
+    $confirm = 0;
+    $confirmLate = 0;
     foreach ($orders as $o) {
+        if ($o['status'] === 'teyit_bekliyor') {
+            $confirm++;
+            if (isset($o['respondBy']) && (int)$o['respondBy'] < $now) {
+                $confirmLate++;
+            }
+        }
         if ($o['status'] === 'odeme_bekleniyor') {
             $awaiting++;
             if ((int)$o['payBy'] < $now) {
@@ -386,7 +434,7 @@ function vgm_panel_status(int $now): array
         'cron' => ['lastRunAt' => $last !== null ? vg_iso($last) : null, 'healthy' => $last !== null && $now - $last <= $healthyAfter,
             'summary' => $status['lastRunSummary'] ?? null,
             'freshShare' => $sourced > 0 ? round(($sourced - $counts['stale']) / $sourced, 4) : null],
-        'counts' => $counts, 'orders' => ['awaitingPayment' => $awaiting, 'overdue' => $overdue],
+        'counts' => $counts, 'orders' => ['awaitingPayment' => $awaiting, 'overdue' => $overdue, 'awaitingConfirm' => $confirm, 'confirmLate' => $confirmLate],
         'products' => $products];
 }
 
@@ -408,7 +456,18 @@ function vgm_panel_action(string $action, array $body, array $user, int $now): a
                     'linkedAt' => vg_iso((int)($order['member']['linkedAt'] ?? 0)), 'exists' => $u !== null,
                     'name' => $u !== null ? (string)$u['name'] : '', 'email' => $u !== null ? (string)$u['email'] : ''];
             }
-            return ['order' => $order, 'allowed' => VGM_TRANSITIONS[$order['status']] ?? [], 'memberInfo' => $memberInfo];
+            return ['order' => $order, 'allowed' => VGM_TRANSITIONS[$order['status']] ?? [], 'memberInfo' => $memberInfo,
+                'confirmAid' => $order['status'] === 'teyit_bekliyor' ? vgm_panel_confirm_aid($order, $now) : null];
+        case 'panel_order_confirm':
+        case 'panel_order_reject':
+            $ref = is_string($body['ref'] ?? null) ? strtoupper($body['ref']) : '';
+            if (!vgm_reference_valid($ref)) {
+                vg_fail(422, 'invalid_reference', 'Geçersiz sipariş numarası.');
+            }
+            $order = $action === 'panel_order_confirm' ? vgm_order_confirm($ref, $body, $actor, $now) : vgm_order_reject($ref, $body, $actor, $now);
+            $mailSent = $order['_mailSent'];
+            unset($order['_mailSent']);
+            return ['order' => $order, 'allowed' => VGM_TRANSITIONS[$order['status']] ?? [], 'mailSent' => $mailSent];
         case 'panel_order_update':
             $ref = is_string($body['ref'] ?? null) ? strtoupper($body['ref']) : '';
             if (!vgm_reference_valid($ref)) {
