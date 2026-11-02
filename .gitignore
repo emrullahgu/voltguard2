@@ -26,6 +26,17 @@
 /.netlify/
 __pycache__/
 node_modules/
+# Expo emits reviewed static icon fonts below this dependency-shaped asset path.
+# Keep every other dependency file ignored, including all tools/**/node_modules.
+!/calisan/uygulama/assets/saha/assets/node_modules/
+/calisan/uygulama/assets/saha/assets/node_modules/**
+!/calisan/uygulama/assets/saha/assets/node_modules/@expo/
+!/calisan/uygulama/assets/saha/assets/node_modules/@expo/vector-icons/
+!/calisan/uygulama/assets/saha/assets/node_modules/@expo/vector-icons/build/
+!/calisan/uygulama/assets/saha/assets/node_modules/@expo/vector-icons/build/vendor/
+!/calisan/uygulama/assets/saha/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/
+!/calisan/uygulama/assets/saha/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/
+!/calisan/uygulama/assets/saha/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/*.ttf
 /tools/staff-app/dist/
 # Existing invoice and price catalogues are imported into private runtime storage.
 /tools/staff-app/fatura/
