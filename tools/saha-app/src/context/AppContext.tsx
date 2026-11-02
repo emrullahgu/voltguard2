@@ -224,13 +224,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         if (failed > 0) showToast(`${failed} işlem senkronize edilemedi.`, 'error');
       });
     }
-    // Periyodik şablonları kontrol et (POZ-DEV-029)
-    if (userId) runDueTemplates().then(newOrders => {
-      if (newOrders.length) {
-        setWorkOrders(prev => [...newOrders, ...prev.filter(order => !newOrders.some(created => created.id === order.id))]);
-        showToast(`${newOrders.length} periyodik görev oluşturuldu.`);
-      }
-    }).catch(error => showToast('Periyodik görevler kaydedilemedi: ' + (error?.message || 'Sunucu hatası.'), 'error'));
+    // Opening or refreshing a workspace only reads records. Creating due
+    // recurring work orders requires the explicit generateFromRecurring action.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, isDemoMode]);
 

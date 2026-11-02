@@ -9,8 +9,8 @@ function load(file,requireModule){
  vm.runInNewContext(code,{module,exports:module.exports,require:requireModule,console:{...console,warn:()=>{}},Promise,Date,Math,Set,Map,Object,Array,Error,setTimeout,clearTimeout},{filename:file});return module.exports;
 }
 const tick=async()=>{for(let i=0;i<8;i++)await Promise.resolve();};
-function providerFixture(initialMode='pending'){
- const states=[],effects=[];let stateIndex=0,effectIndex=0,mode=initialMode;const pending=[];
+function providerFixture(initialMode='pending',recurringOrders=[]){
+ const states=[],effects=[];let stateIndex=0,effectIndex=0,mode=initialMode,recurringCalls=0;const pending=[];
  const react={createContext:()=>({Provider:'AppContext'}),createElement:(type,props,...children)=>({type,props:{...props,children}}),useContext:()=>{},useState:initial=>{const index=stateIndex++;if(!(index in states))states[index]=typeof initial==='function'?initial():initial;return [states[index],update=>{states[index]=typeof update==='function'?update(states[index]):update;}];},useEffect:(effect,deps)=>{const index=effectIndex++;if(!effects[index]||deps.some((value,i)=>value!==effects[index].deps[i]))effects[index]={effect,deps,pending:true};}};
  // Refs share the persistent hook slots without scheduling a state update.
  react.useRef=initial=>react.useState(()=>({current:initial}))[0];
@@ -21,15 +21,29 @@ function providerFixture(initialMode='pending'){
   if(name==='../services/data')return data;
   if(name==='./AuthContext')return {useAuth:()=>({session:{user:{id:'synthetic-native-staff'}},isDemoMode:false})};
   if(name==='../data/initialData')return {INITIAL_WORK_ORDERS:[],INITIAL_EMPLOYEES:[]};
-  if(name==='../services/recurringTasks')return {runDueTemplates:async()=>[]};
+  if(name==='../services/recurringTasks')return {runDueTemplates:async()=>{recurringCalls++;return recurringOrders;}};
   if(name==='../services/slaWatcher')return {checkSlaBreaches:async()=>{}};
   if(name==='../utils/date')return {localDateISO:()=> '2026-10-28'};
   if(name.startsWith('../services/')||name.startsWith('../utils/'))return {};
   throw new Error('Unexpected provider dependency '+name);
  });
  const render=()=>{stateIndex=0;effectIndex=0;return app.AppProvider({children:null}).props.value;};
- return {render,start:()=>{for(const item of effects)if(item.pending){item.pending=false;item.effect();}},resolve:()=>pending.forEach(release=>release()),pending,setMode:value=>{mode=value;}};
+ return {render,start:()=>{for(const item of effects)if(item.pending){item.pending=false;item.effect();}},resolve:()=>pending.forEach(release=>release()),pending,setMode:value=>{mode=value;},recurringCalls:()=>recurringCalls};
 }
+
+test('Opening and refreshing a workspace never creates recurring orders; the explicit action still does',async()=>{
+ const generated={id:'synthetic-explicit-recurring-order',client:'Synthetic customer',serviceName:'Synthetic scheduled maintenance',status:'Bekliyor'};
+ const f=providerFixture('ready',[generated]);
+ f.render();f.start();await tick();const ready=f.render();
+ assert.equal(ready.hasCanonicalData,true);assert.equal(f.recurringCalls(),0,'Mount must not send the mutating due-template RPC.');
+ await ready.refresh();const refreshed=f.render();
+ assert.equal(refreshed.hasCanonicalData,true);assert.equal(f.recurringCalls(),0,'Refreshing canonical lists must remain read-only.');
+ assert.equal(refreshed.workOrders.some(order=>order.id===generated.id),false);
+ assert.equal(await refreshed.generateFromRecurring(),1,'Explicit manual generation returns the server-confirmed result.');
+ assert.equal(f.recurringCalls(),1,'Only the explicit generation action invokes the mutation once.');
+ const completed=f.render();assert.equal(completed.workOrders.some(order=>order.id===generated.id),true);
+ assert.equal(completed.workOrders.some(order=>order.id==='synthetic-workOrders'),true,'Existing confirmed work orders remain visible.');
+});
 test('Canonical provider starts syncing and confirms all four repository reads before readiness',async()=>{
  const f=providerFixture();const initial=f.render();assert.equal(initial.syncState,'syncing');assert.equal(initial.hasCanonicalData,false);
  f.start();assert.equal(f.pending.length,4);assert.equal(f.render().hasCanonicalData,false);
