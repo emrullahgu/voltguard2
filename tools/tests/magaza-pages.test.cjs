@@ -13,6 +13,31 @@ const K = require('../magaza/katalog-ortak.cjs');
 const gen = require('./fixtures/magaza/katalog-uret.cjs');
 const root = path.resolve(__dirname, '../..');
 const php = process.env.VG_PHP || [path.join(root, '.qa/php/runtime/php.exe'), path.resolve(root, '../../../.qa/php/runtime/php.exe')].find(f => fs.existsSync(f)) || path.join(root, '.qa/php/runtime/php.exe');   // git worktree: ana kopyanın .qa/php'si
+let cachedMbstringPhpArgs;
+function phpArgsWithMbstring() {
+  if (cachedMbstringPhpArgs) return cachedMbstringPhpArgs;
+  const probe = (args, description) => {
+    const result = spawnSync(php, [...args, '-r', 'echo extension_loaded("mbstring") && function_exists("mb_strlen") && function_exists("mb_substr") && function_exists("mb_strtolower") ? "ready" : "missing";'],
+      {encoding: 'utf8', windowsHide: true, timeout: 5000});
+    const context = `PHP mbstring probe (${description})`;
+    assert.equal(result.status, 0, `${context} failed: ${result.error?.message || result.stderr || result.stdout}`);
+    assert.equal(result.stderr, '', `${context} emitted a startup diagnostic: ${result.stderr}`);
+    assert.match(result.stdout, /^(?:ready|missing)$/, `${context} emitted unexpected output: ${result.stdout}`);
+    return result.stdout === 'ready';
+  };
+  const args = ['-n'];
+  // Linux PHP can compile mbstring in; loading it again would corrupt JSON output with a startup warning.
+  if (!probe(args, 'built-in support')) {
+    const dll = path.join(path.dirname(php), 'ext', 'php_mbstring.dll');
+    const localWindowsDll = process.platform === 'win32' && fs.existsSync(dll);
+    if (localWindowsDll) args.push('-d', 'extension_dir=' + path.dirname(dll));
+    args.push('-d', 'extension=mbstring');
+    assert.ok(probe(args, localWindowsDll ? 'existing Windows DLL' : 'PHP default module directory'),
+      'PHP mbstring is unavailable; install or enable it in the selected test runtime.');
+  }
+  cachedMbstringPhpArgs = Object.freeze(args);
+  return cachedMbstringPhpArgs;
+}
 const fx = path.join(root, 'tools/tests/fixtures/magaza');
 const FIRMA_BOS = path.join(fx, 'firma-bos.json');   // satıcı kimliği eksik (kapalı mağaza); gerçek firma.json artık dolu
 const fxCatalog = path.join(fx, 'katalog');
@@ -602,7 +627,7 @@ test('kart/etiket yardımcıları: gün aralığı, tel: adresi, marka ilk sözc
     + " echo json_encode([array_map('vgmr_days_label', [1, 2, 3, 7]), array_map('vgmr_tel_href', ['0545 434 67 35', '+90 545 434 67 35', '545 434 67 35', '905454346735']),"
     + " vgmr_card_title('HES H07V-K (NYAF) 1x2,5 mm² Kablo', 'HES Kablo'), vgmr_card_title('Schneider A9F74116 iC60N', 'Schneider Electric'),"
     + " vgmr_card_title('Schneider Electric A9F74116', 'Schneider Electric'), vgmr_card_title('AB 123', 'AB Kablo'), vgmr_card_title('HESAP 1', 'HES Kablo')], JSON_UNESCAPED_UNICODE);";
-  const r = spawnSync(php, ['-n', '-d', 'extension_dir=' + path.join(path.dirname(php), 'ext'), '-d', 'extension=mbstring', '-r', code], {cwd: root, encoding: 'utf8'});
+  const r = spawnSync(php, [...phpArgsWithMbstring(), '-r', code], {cwd: root, encoding: 'utf8'});
   assert.equal(r.status, 0, r.stderr + r.stdout);
   const [days, tels, ...titles] = JSON.parse(r.stdout);
   assert.deepEqual(days, ['1', '1–2', '1–3', '7'], '"1–1 gün" yazılmaz');
@@ -808,7 +833,7 @@ test('P1-10: deliveryDays ürün kaydından, yoksa kategori varsayılanından (s
 /* ------------------------------------------------------------------------------------------------ ölçekte fiyat gösterimi ve mobil */
 
 const phpEval = code => {
-  const r = spawnSync(php, ['-n', '-d', 'extension_dir=' + path.join(path.dirname(php), 'ext'), '-d', 'extension=mbstring', '-r',
+  const r = spawnSync(php, [...phpArgsWithMbstring(), '-r',
     "define('VG_API', 1); require 'api/lib/bootstrap.php'; require 'api/lib/store.php'; require 'api/lib/security.php'; require 'api/lib/magaza.php'; require 'api/lib/magaza-render.php'; " + code],
   {cwd: root, encoding: 'utf8'});
   assert.equal(r.status, 0, r.stderr + r.stdout);
@@ -975,7 +1000,7 @@ test('hukuki inceleme: cayma/iade, sözleşme kuruluşu, garanti, satıcı adres
     + " $f = json_decode(file_get_contents('api/lib/magaza/firma.json'), true);"
     + " $ctx = vgm_doc_context(['items' => [], 'totals' => ['tryGross' => 0]], $f, []);"
     + " echo vgm_doc_preinfo($ctx), \"\n---\n\", vgm_doc_contract($ctx);";
-  const r = spawnSync(php, ['-n', '-d', 'extension_dir=' + path.join(path.dirname(php), 'ext'), '-d', 'extension=mbstring', '-r', code], {cwd: root, encoding: 'utf8'});
+  const r = spawnSync(php, [...phpArgsWithMbstring(), '-r', code], {cwd: root, encoding: 'utf8'});
   assert.equal(r.status, 0, r.stderr + r.stdout);
   const [pre, con] = r.stdout.split('\n---\n');
   const firma = JSON.parse(fs.readFileSync(path.join(root, 'api/lib/magaza/firma.json'), 'utf8'));
