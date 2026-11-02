@@ -7,6 +7,7 @@ require __DIR__ . '/lib/store.php';
 require __DIR__ . '/lib/security.php';
 require __DIR__ . '/lib/validate.php';
 require __DIR__ . '/lib/mailer.php';
+require __DIR__ . '/lib/turnstile.php';
 require __DIR__ . '/lib/magaza.php';
 require __DIR__ . '/lib/magaza-belge.php';
 require __DIR__ . '/lib/magaza-siparis.php';

@@ -33,48 +33,29 @@ function vgm_get_param(string $key): string
 }
 
 /** Bot dogrulamasi (contact.php ile ayni kurallar): gizli anahtar tanimliysa jeton zorunlu ve sunucuda dogrulanir. */
-function vgm_verify_captcha(string $token): void
+/** Ortam degiskeni varsa ozel dizine hic dokunmadan onu kullanir; yoksa iletisim formlarinin ortak ayari (dosya). */
+function vgm_turnstile_config(): array
 {
     $secret = getenv('TURNSTILE_SECRET_KEY');
-    if (!is_string($secret) || $secret === '' || $secret === 'REPLACE_WITH_TURNSTILE_SECRET_KEY') {
+    if (is_string($secret) && trim($secret) !== '' && $secret !== 'REPLACE_WITH_TURNSTILE_SECRET_KEY') {
+        $host = getenv('TURNSTILE_EXPECTED_HOSTNAME');
+        return ['secretKey' => vg_turnstile_secret_value($secret),
+            'expectedHostname' => is_string($host) && trim($host) !== '' ? vg_turnstile_hostname_value($host) : 'voltguard.com.tr'];
+    }
+    return vg_turnstile_config();
+}
+
+function vgm_verify_captcha(string $token): void
+{
+    // Iletisim formlariyla ayni yapilandirma: TURNSTILE_SECRET_KEY ortami ya da VG_DATA_DIR/turnstile-config.json
+    $config = vgm_turnstile_config();
+    if ($config['secretKey'] === '') {
         if (getenv('VG_MAIL_OUTBOX') !== '1') {
-            error_log('VoltGuard magaza: TURNSTILE_SECRET_KEY is not configured; bot verification is off');
+            error_log('VoltGuard magaza: Turnstile secret is not configured; bot verification is off');
         }
         return;
     }
-    if ($token === '' || strlen($token) > 2048) {
-        vg_fail(422, 'captcha_required', 'Güvenlik doğrulaması yüklenemedi. Sayfayı yenileyip tekrar deneyin.');
-    }
-    // Siteverify's optional remoteip is omitted to avoid forwarding the visitor IP again.
-    $payload = http_build_query(['secret' => $secret, 'response' => $token]);
-    $raw = false;
-    $status = 0;
-    if (function_exists('curl_init')) {
-        $curl = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
-        if ($curl !== false) {
-            curl_setopt_array($curl, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $payload, CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_CONNECTTIMEOUT => 3, CURLOPT_TIMEOUT => 10, CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded']]);
-            $raw = curl_exec($curl);
-            $status = (int)curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            curl_close($curl);
-        }
-    } else {
-        $context = stream_context_create(['http' => ['method' => 'POST', 'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
-            'content' => $payload, 'timeout' => 10, 'follow_location' => 0, 'ignore_errors' => true]]);
-        $raw = @file_get_contents('https://challenges.cloudflare.com/turnstile/v0/siteverify', false, $context, 0, 16385);
-        if (isset($http_response_header[0]) && preg_match('/\s([0-9]{3})\s/', $http_response_header[0], $m)) {
-            $status = (int)$m[1];
-        }
-    }
-    if (!is_string($raw) || strlen($raw) > 16384 || $status !== 200) {
-        vg_fail(502, 'captcha_unavailable', 'Güvenlik doğrulama servisine erişilemedi. Lütfen yeniden deneyin.');
-    }
-    $result = json_decode($raw, true);
-    $expected = strtolower(getenv('TURNSTILE_EXPECTED_HOSTNAME') ?: 'voltguard.com.tr');
-    $host = is_array($result) && is_string($result['hostname'] ?? null) ? strtolower($result['hostname']) : '';
-    if (!is_array($result) || ($result['success'] ?? null) !== true || !in_array($host, [$expected, 'www.' . $expected], true)) {
-        vg_fail(422, 'captcha_invalid', 'Güvenlik doğrulaması geçersiz. Lütfen yeniden deneyin.');
-    }
+    vg_turnstile_verify($config, $token);
 }
 
 /** Herkese acik fiyat gorunumu (USD ve tedarikci bilgisi yok). */

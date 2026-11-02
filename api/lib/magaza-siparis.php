@@ -263,7 +263,7 @@ function vgm_order_docs(array $order, array $config): array
 }
 
 /**
- * Uretimde bot dogrulamasi yapilandirilmamissa (firma.json turnstileSiteKey ya da TURNSTILE_SECRET_KEY bos/yer tutucu)
+ * Uretimde bot dogrulamasi yapilandirilmamissa (firma.json turnstileSiteKey ya da gizli anahtar: TURNSTILE_SECRET_KEY / VG_DATA_DIR/turnstile-config.json)
  * siparis alinmaz: 503 captcha_unconfigured (P1-03). Onizleme ve testler (VG_MAIL_OUTBOX=1: e-posta outbox/'a yazilir)
  * anahtarsiz calisir.
  */
@@ -274,7 +274,7 @@ function vgm_captcha_ready_or_fail(): void
     }
     $firma = vgm_firma();
     $siteKey = $firma['turnstileSiteKey'] ?? null;
-    $secret = getenv('TURNSTILE_SECRET_KEY');
+    $secret = vgm_turnstile_config()['secretKey'];
     $placeholder = function ($v): bool {
         return !is_string($v) || trim($v) === '' || strpos($v, 'REPLACE_WITH') === 0;
     };
