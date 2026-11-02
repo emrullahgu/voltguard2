@@ -387,7 +387,8 @@ FileETag MTime Size
 # ─────────────────────────────────────
 # Protect sensitive files
 # ─────────────────────────────────────
-<FilesMatch "(?i)(^error_log$|~$|\.(env|log|ini|bak|sql|sh|yml|yaml|lock|inc|conf|dist|swp|sqlite3?|db|toml|ps1|py|md|pem|key)$)">
+# error_log'un donmus/sikistirilmis kopyalari da ozel kalir.
+<FilesMatch "(?i)(^error_log(?:[._-].*)?$|~$|\.(env|log|ini|bak|sql|sh|yml|yaml|lock|inc|conf|dist|swp|sqlite3?|db|toml|ps1|py|md|pem|key)$)">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>
