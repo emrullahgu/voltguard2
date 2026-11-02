@@ -303,3 +303,26 @@ Bu düzenin ilk yayınında eski PHP istekleri ve yanıt sonrası temizlikleri t
 karışık çalışma güvenli sayılmaz: kısa bir gönderim bakım aralığı ve çalışan eski işlerin bittiğinin teyidi gerekir.
 
 İzole doğrulama: `node --test tools/tests/retention-audit.test.cjs tools/tests/enquiry-gc-consistency.test.cjs`.
+
+### cPanel ile günlük envanter raporu
+
+`tools/run-retention-snapshot.sh`, aynı dizindeki `retention-audit.php` aracını çalıştırıp son iki teknik
+raporu saklar. İki betiği web kökü ve özel uygulama verisinin dışında bir bakım dizinine kopyalayın.
+Rapor dizini önceden oluşturulmalı, hesap sahibine ait ve `0700` izinli olmalıdır. Linux `flock`,
+`realpath`, `stat` ve `mktemp` araçları gerekir. PHP yolu, veri dizini, web kökü ve rapor dizini açıkça
+verilir; betik varsayılan canlı konum seçmez.
+
+```sh
+# cPanel Cron İşleri: her gün sunucunun yerel saatine göre 03:17.
+17 3 * * * /bin/sh /home/kullanici/vg-ops/run-retention-snapshot.sh --php /usr/local/bin/php --data-dir /home/kullanici/vg-data --docroot /home/kullanici/public_html --output-dir /home/kullanici/vg-ops/reports >/dev/null 2>&1
+```
+
+Kalıcı `inventory.lock` eşzamanlı çalışmayı önler. `latest.json` ve `previous.json` raporları `0600`
+izinlidir ve atomik olarak değiştirilir; günlükler sınırsız büyümez. Kısmi tarama veya araç hatası da
+güncel raporda `ok: false` olarak görünür. Raporun `checkedAt` alanını da kontrol edin: görev hiç
+başlayamazsa veya rapor dizinine yazılamazsa son dosyanın zamanı eski kalır. cPanel Dosya Yöneticisi
+ile raporları görüntüleyebilirsiniz. Bu görev e-posta göndermez ve uygulama kaydı silmez.
+
+Bu rapor bir yedek, çalışma süresi izleyicisi veya imha kararı değildir; yalnız yukarıdaki sabit
+envanter kapsamlarını inceler. Sunucu dışı yedekleme ve ayrı Ubuntu verilerinin korunması ayrıca
+kurulmalıdır. Üretim cron'unu etkinleştirmeden önce aynı komutun ilk raporunu ve dosya izinlerini doğrulayın.
